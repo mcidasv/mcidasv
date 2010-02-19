@@ -33,6 +33,7 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.concurrentList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.concurrentMap;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.set;
 
 import java.io.File;
 import java.io.IOException;

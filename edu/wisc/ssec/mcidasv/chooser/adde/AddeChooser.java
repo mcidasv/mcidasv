@@ -103,10 +103,14 @@ import edu.wisc.ssec.mcidasv.ParameterSet;
 import edu.wisc.ssec.mcidasv.PersistenceManager;
 import edu.wisc.ssec.mcidasv.ResourceManager;
 import edu.wisc.ssec.mcidasv.servermanager.AddeAccount;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry;
 import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
 import edu.wisc.ssec.mcidasv.servermanager.EntryTransforms;
+import edu.wisc.ssec.mcidasv.servermanager.LocalEntryEditor;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry;
+import edu.wisc.ssec.mcidasv.servermanager.RemoteEntryEditor;
 import edu.wisc.ssec.mcidasv.servermanager.TabbedAddeManager;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EditorAction;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.ui.ParameterTree;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
@@ -123,8 +127,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser implements Constants {
 
     private static final Logger logger = LoggerFactory.getLogger(AddeChooser.class);
-//    private static final Logger logger = Logger.getLogger(AddeChooser.class);
-    
+
     private JComboBox serverSelector;
 
     /** List of descriptors */
@@ -540,7 +543,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         lastServerGroup = group;
         lastServer = server;
     }
-    
+
     private boolean isLastServer(String name, String group) {
         assert lastServer != null;
         assert lastServerName != null;
@@ -550,7 +553,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 
     @EventSubscriber(eventClass=EntryStore.Event.class)
     public void onServerManagerDataEvent(EntryStore.Event evt) {
-        logger.debug("onServerManagerDataEvent: chooser={} evt={}", this.getDataType(), evt);
+        EntryStore servManager = ((McIDASV)getIdv()).getServerManager();
+        logger.debug("onServerManagerDataEvent: evt={} server={}", evt, servManager.getLastAdded());
         this.updateServerList();
     }
 
@@ -559,13 +563,42 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         logger.debug("onWindowEvent: it worked!!");
     }
 
+    private boolean addingServer = false;
+
+    private static int getServerIndex(final Object server, final JComboBox serverSelector) {
+        String name = null;
+        if (server instanceof AddeServer)
+            name = ((AddeServer)server).getName();
+        else if (server instanceof AddeEntry)
+            name = ((AddeEntry)server).getAddress();
+        else 
+            name = server.toString();
+
+        if (name.equalsIgnoreCase("localhost") || (name.equals("127.0.0.1")))
+            return 0;
+        
+        for (int i = 0; i < serverSelector.getItemCount(); i++) {
+            Object item = serverSelector.getItemAt(i);
+            String tmpName;
+            if (item instanceof AddeServer)
+                tmpName = ((AddeServer)item).getName();
+            else
+                tmpName = item.toString();
+            
+            if (name.equals(tmpName))
+                return i;
+        }
+        
+        return -1;
+    }
+    
     /**
      * Get the selected AddeServer
      *
      * @return the server or null
      */
     protected AddeServer getAddeServer() {
-        if (lastServerName != null && lastServerName.equals("unset")) {
+        if (addingServer || (lastServerName != null && lastServerName.equals("unset"))) {
             logger.debug("getAddeServer: adding server; returning null");
             return null;
         }
@@ -581,6 +614,55 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             logger.debug("getAddeServer: returning normal server={}", server.getName());
             return (AddeServer)selected;
         } else if ((selected != null) && (selected instanceof String)) {
+            if (addingServer) {
+                return null;
+            } else {
+                addingServer = true;
+                ignoreStateChangedEvents = true;
+            }
+
+            EntryStore servManager = ((McIDASV)getIdv()).getServerManager();
+            String server = (String)selected;
+            EditorAction editorAction = EditorAction.INVALID;
+            if (!server.equalsIgnoreCase("localhost") && !server.equalsIgnoreCase("127.0.0.1")) {
+                RemoteEntryEditor editor = new RemoteEntryEditor(null, true, null, servManager);
+                editor.setVisible(true);
+                editorAction = editor.getEditorAction();
+                logger.debug("remote entry: action={}", editorAction.name());
+            } else {
+                LocalEntryEditor editor = new LocalEntryEditor(null, true, null, servManager);
+                editor.setVisible(true);
+                editorAction = editor.getEditorAction();
+                logger.debug("local entry: action={}", editorAction.name());
+            }
+
+            int servIndex = 0;
+            int groupIndex = 0;
+            
+            if (editorAction != EditorAction.CANCELLED || editorAction != EditorAction.INVALID) {
+                List<AddeEntry> added = servManager.getLastAddedByType(EntryTransforms.strToEntryType(getDataType()));
+                if (!added.isEmpty()) {
+                    // JFDI
+//                    serverSelector.setSelectedIndex(0);
+//                    groupSelector.setSelectedIndex(0);
+                    servIndex = getServerIndex(added.get(0), serverSelector);
+                } else {
+                    // select the first entry in the selector?
+//                    serverSelector.setSelectedIndex(0);
+//                    groupSelector.setSelectedIndex(0);
+                }
+            } else {
+                // select the first entry in the selector?
+//                serverSelector.setSelectedIndex(0);
+//                groupSelector.setSelectedIndex(0);
+            }
+
+            serverSelector.setSelectedIndex(servIndex);
+            groupSelector.setSelectedIndex(groupIndex);
+
+            addingServer = false;
+            ignoreStateChangedEvents = false;
+
 //            System.err.println("* getAddeServer: whoop whoop="+selected);
 //            String name = (String)selected;
 //            String group = getGroup(true);

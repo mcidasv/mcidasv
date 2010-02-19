@@ -47,17 +47,25 @@ import javax.swing.JFileChooser;
 import javax.swing.JList;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry.AddeFormat;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EditorAction;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVTextField;
 
 
 public class LocalEntryEditor extends javax.swing.JDialog {
 
+    private static final Logger logger = LoggerFactory.getLogger(LocalEntryEditor.class);
+
     private final TabbedAddeManager managerController;
     private final EntryStore entryStore;
 
     private String selectedPath = "";
+
+    private EditorAction editorAction = EditorAction.INVALID;
 
     /** Creates new form LocalEntryEditor */
     public LocalEntryEditor(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store) {
@@ -72,6 +80,14 @@ public class LocalEntryEditor extends javax.swing.JDialog {
         this.managerController = manager;
         this.entryStore = store;
         initComponents(entry);
+    }
+
+    public EditorAction getEditorAction() {
+        return editorAction;
+    }
+
+    private void setEditorAction(final EditorAction editorAction) {
+        this.editorAction = editorAction;
     }
 
     @SuppressWarnings("unchecked")
@@ -201,7 +217,7 @@ public class LocalEntryEditor extends javax.swing.JDialog {
 
     private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {
         selectedPath = getDataDirectory("");
-        System.err.println("browseButton: path="+selectedPath);
+        logger.debug("browseButton: path={}", selectedPath);
         if (selectedPath.length() != 0) {
             if (selectedPath.length() > 19) {
                 directoryButton.setText(selectedPath.substring(0, 16) + "...");
@@ -229,11 +245,13 @@ public class LocalEntryEditor extends javax.swing.JDialog {
 
     private void addEntry() {
         Set<LocalAddeEntry> addedEntries = pollWidgets();
-        System.err.println("ugh:"+addedEntries);
+        logger.debug("ugh: {}", addedEntries);
         entryStore.addEntries(addedEntries);
         if (isDisplayable())
             dispose();
-        managerController.refreshDisplay();
+
+        if (managerController != null)
+            managerController.refreshDisplay();
     }
 
     /**

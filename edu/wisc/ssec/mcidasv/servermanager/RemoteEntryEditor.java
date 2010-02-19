@@ -49,8 +49,12 @@ import java.util.StringTokenizer;
 
 import javax.swing.SwingWorker;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeVerification.AddeStatus;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EditorAction;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
@@ -58,6 +62,8 @@ import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 public class RemoteEntryEditor extends javax.swing.JDialog {
+
+    private static final Logger logger = LoggerFactory.getLogger(RemoteEntryEditor.class);
 
     private static final String PREF_ENTERED_USER = "mcv.servers.defaultuser";
     private static final String PREF_ENTERED_PROJ = "mcv.servers.defaultproj";
@@ -92,6 +98,8 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
 
     private RemoteAddeEntry entry;
 
+    private EditorAction editorAction = EditorAction.INVALID;
+
     /** Creates new form RemoteEntryEditor */
     public RemoteEntryEditor(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store) {
         super(manager, modal);
@@ -109,39 +117,13 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         initComponents(entry);
     }
 
-//   /**
-//     * Populates the applicable components with values dictated by the entries
-//     * within {@link #currentEntries}. Primarily useful for editing entries.
-//     */
-//    private void fillComponentsOld() {
-//        if (currentEntries.isEmpty())
-//            return;
-//
-//        List<RemoteAddeEntry> entries = new ArrayList<RemoteAddeEntry>(currentEntries);
-//        RemoteAddeEntry entry = entries.get(0); // currently only allowing single selection. this'll have to change.
-//        serverField.setText(entry.getAddress());
-////        groupField.setText(entry.getGroup());
-//
-//        if (entry.getAccount() != RemoteAddeEntry.DEFAULT_ACCOUNT) {
-//            acctBox.setSelected(true);
-//            userField.setText(entry.getAccount().getUsername());
-//            projField.setText(entry.getAccount().getProject());
-//        }
-//
-//        // ugh
-//        if (entry.getEntryType() == EntryType.IMAGE)
-//            imageBox.setSelected(true);
-//        else if (entry.getEntryType() == EntryType.POINT)
-//            pointBox.setSelected(true);
-//        else if (entry.getEntryType() == EntryType.GRID)
-//            gridBox.setSelected(true);
-//        else if (entry.getEntryType() == EntryType.TEXT)
-//            textBox.setSelected(true);
-//        else if (entry.getEntryType() == EntryType.NAV)
-//            navBox.setSelected(true);
-//        else if (entry.getEntryType() == EntryType.RADAR)
-//            radarBox.setSelected(true);
-//    }
+    public EditorAction getEditorAction() {
+        return editorAction;
+    }
+
+    private void setEditorAction(final EditorAction editorAction) {
+        this.editorAction = editorAction;
+    }
 
     /**
      * Poll the various UI components and attempt to construct valid ADDE
@@ -213,7 +195,8 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         entryStore.addEntries(addedEntries);
         if (isDisplayable())
             dispose();
-        managerController.refreshDisplay();
+        if (managerController != null)
+            managerController.refreshDisplay();
     }
 
     /**
@@ -259,17 +242,11 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         } else {
             setStatus("Server verification complete.");
             imageBox.setSelected(validTypes.contains(EntryType.IMAGE));
-//            imageValid = validTypes.contains(EntryType.IMAGE);
             pointBox.setSelected(validTypes.contains(EntryType.POINT));
-//            pointValid = validTypes.contains(EntryType.POINT)
             gridBox.setSelected(validTypes.contains(EntryType.GRID));
-//            gridValid = validTypes.contains(EntryType.GRID);
             textBox.setSelected(validTypes.contains(EntryType.TEXT));
-//            textValid = validTypes.contains(EntryType.TEXT);
             navBox.setSelected(validTypes.contains(EntryType.NAV));
-//            navValid = validTypes.contains(EntryType.NAV);
             radarBox.setSelected(validTypes.contains(EntryType.RADAR));
-//            radarValid = validTypes.contains(EntryType.RADAR);
         }
     }
 
@@ -280,7 +257,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
 //        
 //        
 //    }
-    
+
     /**
      * Displays a short status message in {@link #statusLabel}.
      *
@@ -629,28 +606,32 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     }
 
     private void verifyAddButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        System.err.println("remote entry editor: Verify+Add");
+        logger.debug("remote entry editor: Verify+Add");
 //        runOnEDT(new Runnable() {
 //            public void run() {
                 verifyInput();
-                if (!anyBadFields())
+                if (!anyBadFields()) {
+                    setEditorAction(EditorAction.ADDED_VERIFIED);
                     addEntry();
+                }
 //            }
 //        });
     }
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        setEditorAction(EditorAction.CANCELLED);
         if (isDisplayable())
             dispose();
     }
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {
+        setEditorAction(EditorAction.CANCELLED);
         if (isDisplayable())
             dispose();
     }
 
     private void verifyServerActionPerformed(java.awt.event.ActionEvent evt) {
-        System.err.println("verify button!");
+        logger.debug("remote entry editor: verify button!");
 //        runOnEDT(new Runnable() {
 //            public void run() {
                 verifyInput();
@@ -659,29 +640,13 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     }
 
     private void addServerActionPerformed(java.awt.event.ActionEvent evt) {
-        runOnEDT(new Runnable() {
-            public void run() {
-                addEntry();
-            }
-        });
-    }
-
-    /**
-    * @param args the command line arguments
-    */
-//    public static void main(String args[]) {
-//        java.awt.EventQueue.invokeLater(new Runnable() {
+        setEditorAction(EditorAction.ADDED);
+//        runOnEDT(new Runnable() {
 //            public void run() {
-//                RemoteEntryEditor dialog = new RemoteEntryEditor(new javax.swing.JFrame(), true);
-//                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-//                    public void windowClosing(java.awt.event.WindowEvent e) {
-//                        System.exit(0);
-//                    }
-//                });
-//                dialog.setVisible(true);
+                addEntry();
 //            }
 //        });
-//    }
+    }
 
     // Variables declaration - do not modify
     private javax.swing.JCheckBox acctBox;
