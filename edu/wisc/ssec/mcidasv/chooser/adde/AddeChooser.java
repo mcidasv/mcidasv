@@ -424,7 +424,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * Sort the groups alphabetically
      */
     public void updateGroups() {
-        if (groupSelector == null || getAddeServer() == null)
+        if (addingServer || groupSelector == null || getAddeServer() == null)
             return;
 
         Object selected = groupSelector.getSelectedItem();
@@ -597,7 +597,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * @return the server or null
      */
     protected AddeServer getAddeServer() {
-        if (addingServer || ignoreStateChangedEvents || (lastServerName != null && lastServerName.equals("unset"))) {
+        if (lastServerName != null && lastServerName.equals("unset")) {
             return null;
         }
 
@@ -610,15 +610,21 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             setLastServer(server.getName(), getGroup(true), server);
             return (AddeServer)selected;
         } else if ((selected != null) && (selected instanceof String)) {
-            if (addingServer) {
-                return null;
-            } else {
-                addingServer = true;
-                ignoreStateChangedEvents = true;
-            }
 
             EntryStore servManager = ((McIDASV)getIdv()).getServerManager();
             String server = (String)selected;
+            String group = getGroup(true);
+
+            if (isBadServer(server, group)) {
+                logger.debug("getAddeServer: returning null; known bad server; server={} group={}", server, group);
+                return null;
+            }
+
+            if (isLastServer(server, group)) {
+                logger.debug("getAddeServer: returning last server name; server={} group={}", server, group);
+                return lastServer;
+            }
+
             EditorAction editorAction = EditorAction.INVALID;
             if (!server.equalsIgnoreCase("localhost") && !server.equalsIgnoreCase("127.0.0.1")) {
                 RemoteEntryEditor editor = new RemoteEntryEditor(null, true, null, servManager);
@@ -633,18 +639,28 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             int servIndex = 0;
             int groupIndex = 0;
 
-            if (editorAction != EditorAction.CANCELLED || editorAction != EditorAction.INVALID) {
-                List<AddeEntry> added = servManager.getLastAddedByType(EntryTransforms.strToEntryType(getDataType()));
+            if (editorAction != EditorAction.CANCELLED && editorAction != EditorAction.INVALID) {
+
+                List<AddeServer> added = EntryTransforms.convertMcvServers(servManager.getLastAddedByType(EntryTransforms.strToEntryType(getDataType())));
+                AddeServer first = null;
                 if (!added.isEmpty()) {
-                    servIndex = getServerIndex(added.get(0), serverSelector);
+                    first = added.get(0);
+                    servIndex = getServerIndex(first, serverSelector);
+                    setLastServer(server, group, first);
                 } 
+
+                serverSelector.setSelectedIndex(servIndex);
+                groupSelector.setSelectedIndex(groupIndex);
+
+                return first;
+            } else {
+                logger.debug("getAddeServer: returning null due to cancel request");
+                setBadServer(server, group);
+                return null;
             }
 
-            serverSelector.setSelectedIndex(servIndex);
-            groupSelector.setSelectedIndex(groupIndex);
-
-            addingServer = false;
-            ignoreStateChangedEvents = false;
+            
+            
         } else if (selected == null) {
             logger.debug("getAddeServer: null object in selector; returning null");
         } else {
