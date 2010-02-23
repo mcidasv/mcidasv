@@ -266,12 +266,12 @@ public class ScatterDisplay extends DisplayControlImpl {
         probeY.doMakeProbe(Color.red, dspMasterY);
 	
 	ctw = new ColorTableWidget(
-                 new ImageControl((HydraRGBDisplayable)dspMasterX.getDisplayables(3), getDisplayConventions()),
+                 new ImageControl((HydraRGBDisplayable)dspMasterX.getDisplayables(0), getDisplayConventions()),
                     ColorTableManager.getManager(), clrTableX, rangeX);
 	ctwCompX = ctw.getLegendPanel(BOTTOM_LEGEND);
 
 	ctw = new ColorTableWidget(
-                 new ImageControl((HydraRGBDisplayable)dspMasterY.getDisplayables(3), getDisplayConventions()),
+                 new ImageControl((HydraRGBDisplayable)dspMasterY.getDisplayables(0), getDisplayConventions()),
                     ColorTableManager.getManager(), clrTableY, rangeY);
 	ctwCompY = ctw.getLegendPanel(BOTTOM_LEGEND);
 
@@ -659,8 +659,8 @@ public class ScatterDisplay extends DisplayControlImpl {
       HydraRGBDisplayable imageDsp = new HydraRGBDisplayable("image", imageRangeType, null, false, null);
 
       imageDsp.setData(image);
-      addMapDisplayables(mapProjDsp);
       dspMaster.addDisplayable(imageDsp);
+      addMapDisplayables(mapProjDsp);
 
       if (mask_image != null) {
         RGBDisplayable maskDsp = 
