@@ -265,16 +265,17 @@ public class ScatterDisplay extends DisplayControlImpl {
         probeX.doMakeProbe(Color.red, dspMasterX);
         probeY.doMakeProbe(Color.red, dspMasterY);
 	
-	ctw = new ColorTableWidget(
-                 new ImageControl((HydraRGBDisplayable)dspMasterX.getDisplayables(0), getDisplayConventions()),
+        ImageControl dCntrl = new ImageControl((HydraRGBDisplayable)dspMasterX.getDisplayables(0), getDisplayConventions());
+	ctw = new ColorTableWidget(dCntrl,
                     ColorTableManager.getManager(), clrTableX, rangeX);
 	ctwCompX = ctw.getLegendPanel(BOTTOM_LEGEND);
+        dCntrl.ctw = ctw;
 
-	ctw = new ColorTableWidget(
-                 new ImageControl((HydraRGBDisplayable)dspMasterY.getDisplayables(0), getDisplayConventions()),
+        dCntrl = new ImageControl((HydraRGBDisplayable)dspMasterY.getDisplayables(0), getDisplayConventions());
+	ctw = new ColorTableWidget(dCntrl,
                     ColorTableManager.getManager(), clrTableY, rangeY);
 	ctwCompY = ctw.getLegendPanel(BOTTOM_LEGEND);
-
+        dCntrl.ctw = ctw;
 
         return true;
     }
@@ -793,6 +794,7 @@ public class ScatterDisplay extends DisplayControlImpl {
     private class ImageControl extends DisplayControlImpl {
       HydraRGBDisplayable rgbDisp;
       DisplayConventions dc;
+      ColorTableWidget ctw;
 
       ImageControl(HydraRGBDisplayable rgbDisp, DisplayConventions dc) {
         super();
@@ -806,6 +808,40 @@ public class ScatterDisplay extends DisplayControlImpl {
 
       public DisplayConventions getDisplayConventions() {
         return dc;
+      }
+
+      public void setColorTable(ColorTable ct) {
+        try {
+          ctw.setColorTable(ct);
+          ScalarMap colorMap = rgbDisp.getColorMap();
+          BaseColorControl clrCntrl = (BaseColorControl) colorMap.getControl();
+
+          // Force incoming color dimension to that of the colorMap
+          //
+          int numComps = clrCntrl.getNumberOfComponents();
+          float[][] clrTable = ct.getColorTable();
+          float[][] newTable = null;
+          if (numComps != clrTable.length) {
+            if (numComps < clrTable.length) {
+              newTable = new float[numComps][];
+              for (int k=0; k<numComps; k++) {
+                System.arraycopy(clrTable[k], 0, newTable[k], 0, clrTable[k].length);
+              }
+            }
+            else if (numComps > clrTable.length) {
+              newTable = new float[numComps][];
+              for (int k=0; k<clrTable.length; k++) {
+                System.arraycopy(clrTable[k], 0, newTable[k], 0, clrTable[k].length);
+              }
+              newTable[3] = new float[clrTable[0].length];
+            }
+          }
+
+          clrCntrl.setTable(ct.getColorTable());
+        } 
+        catch (Exception e) {
+          System.out.println(e);
+        }
       }
     }
 
@@ -1336,7 +1372,6 @@ public class ScatterDisplay extends DisplayControlImpl {
      float maskVal = 0;
      LineDrawing selectCurve;
 
- 
      ScatterCurveSelector(DisplayMaster master) throws VisADException, RemoteException {
        this(master, Color.green, 0f);
      }
