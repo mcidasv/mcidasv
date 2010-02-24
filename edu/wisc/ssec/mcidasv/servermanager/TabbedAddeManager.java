@@ -49,46 +49,95 @@ import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.servermanager.McservEvent.McservStatus;
 
 /**
+ * This class is the GUI frontend to {@link EntryStore} (the server manager).
+ * It allows users to manipulate their local and remote ADDE data.
  * 
- * TODO:
- *   - LOL :(
+ * TODO(jon):
  *   - don't forget to persist tab choice and window position. maybe also the
  *     "positions" of the scrollpanes (if possible).
- *
+ *   - GUI could look much better.
+ *   - finish up the javadocs.
  */
+@SuppressWarnings("serial")
 public class TabbedAddeManager extends javax.swing.JFrame implements McservListener {
 
-    public enum Event { OPENED, HIDDEN, SHOWN, CLOSED };
+    /** Path to the help resources. */
+    private static final String HELP_TOP_DIR = "/docs/userguide";
 
+    /** Help target for the remote servers. */
+    private static final String REMOTE_HELP_TARGET = "idv.tools.remotedata";
+
+    /** Help target for the local servers. */
+    private static final String LOCAL_HELP_TARGET = "idv.tools.localdata";
+
+    /** ID used to save/restore the last visible tab between sessions. */
+    private static final String LAST_TAB = "mcv.adde.lasttab";
+
+    /** Pretty typical logger object. */
     final static Logger logger = LoggerFactory.getLogger(TabbedAddeManager.class);
 
+    /**
+     * These are the various {@literal "events"} that the server manager GUI
+     * supports. These are published via the wonderful {@link EventBus#publish(Object)} method.
+     */
+    public enum Event { 
+        /** The GUI was created. */
+        OPENED,
+        /** The GUI was hidden/minimized/etc. */
+        HIDDEN,
+        /** GUI was unhidden or some such thing. */
+        SHOWN,
+        /** The GUI was closed. */
+        CLOSED
+    };
+
+    /** Reference back to the McV god object. */
     private final McIDASV mcv;
 
+    /** Reference to the actual server manager. */
     private final EntryStore entryStore;
 
+    /** The currently selected {@link RemoteAddeEntry} or {@code null} if nothing is selected. */
     private RemoteAddeEntry selectedRemoteEntry = null;
 
+    /** The currently selected {@link LocalAddeEntry} or {@code null} if nothing is selected. */
     private LocalAddeEntry selectedLocalEntry = null;
 
+    // TODO(jon): think about removing these
     private boolean hasRemoteSelection = false;
     private boolean hasLocalSelection = false;
 
-    /** Creates new form TabbedAddeManager */
+    /**
+     * Creates a standalone server manager GUI.
+     */
     public TabbedAddeManager() {
         this.mcv = null;
         this.entryStore = null;
         initComponents();
     }
 
+    /**
+     * Creates a server manager GUI that's linked back to the rest of McIDAS-V.
+     * 
+     * @param mcv The {@link McIDASV} reference.
+     * 
+     * @throws NullPointerException if {@code mcv} is {@code null}.
+     */
     public TabbedAddeManager(final McIDASV mcv) {
         if (mcv == null)
-            throw new NullPointerException("uh oh");
+            throw new NullPointerException("Cannot pass a null McIDAS-V object");
         this.mcv = mcv;
         this.entryStore = mcv.getServerManager();
         entryStore.addMcservListener(this);
         initComponents();
     }
 
+    /**
+     * If the GUI isn't shown, this method will display things. If the GUI <i>is 
+     * shown</i>, bring it to the front.
+     * 
+     * <p>This method publishes {@link Event#SHOWN}.
+     */
     public void showManager() {
         if (!isVisible()) {
             setVisible(true);
@@ -98,6 +147,9 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
         EventBus.publish(Event.SHOWN);
     }
 
+    /**
+     * Closes and disposes (if needed) the GUI.
+     */
     public void closeManager() {
         EventBus.publish(Event.CLOSED);
         entryStore.removeMcservListener(this);
@@ -131,20 +183,16 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
     public void removeRemoteEntry(final RemoteAddeEntry entry) {
         if (entry == null)
             return;
-
         boolean success = entryStore.removeEntry(entry);
         if (success) {
             int index = ((RemoteAddeTableModel)remoteTable.getModel()).getRowForEntry(entry);
-//            System.err.println("removed=true oldindex="+index);
             if (index >= 0)
                 ((RemoteAddeTableModel)remoteTable.getModel()).fireTableRowsDeleted(index, index);
             refreshDisplay();
-//            repaint();
             remoteTable.revalidate();
         } else {
-//            System.err.println("err... hmm? could not remove "+entry);
+            logger.debug("removeRemoteEntry: could not remove {}", entry);
         }
-//        entryStore.dumpInternalStore();
     }
 
     public void showLocalEditor() {
@@ -173,13 +221,11 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
             refreshDisplay();
             localEntries.revalidate();
         } else {
-//            System.err.println("golly mister i just couldn't remove "+entry);
+            logger.debug("removeLocalEntry: could not remove {}", entry);
         }
-//        entryStore.dumpInternalStore();
     }
 
     public void importMctable(final String path) {
-//        System.err.println("import mctable: file="+path);
         Set<RemoteAddeEntry> imported = EntryTransforms.extractMctableEntries(path);
         entryStore.addEntries(imported);
         refreshDisplay();
@@ -191,7 +237,6 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
     }
 
     public void mcservUpdated(final McservEvent event) {
-//        System.err.println("adde manager: "+event);
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 if (event.getStatus() == McservStatus.STARTED)
@@ -214,6 +259,7 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">
     private void initComponents() {
+        ucar.unidata.ui.Help.setTopDir(HELP_TOP_DIR);
 
         tabbedPane = new javax.swing.JTabbedPane();
         remoteTab = new javax.swing.JPanel();
@@ -252,7 +298,8 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
         });
 
         remoteTable.setModel(new RemoteAddeTableModel(entryStore));
-        remoteTable.setColumnSelectionAllowed(true);
+        remoteTable.setColumnSelectionAllowed(false);
+        remoteTable.setRowSelectionAllowed(true);
         remoteTable.getTableHeader().setReorderingAllowed(false);
         remoteScroller.setViewportView(remoteTable);
         remoteTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
@@ -340,7 +387,8 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
         tabbedPane.addTab("Remote Data", remoteTab);
 
         localEntries.setModel(new LocalAddeTableModel(entryStore));
-        localEntries.setColumnSelectionAllowed(true);
+        localEntries.setColumnSelectionAllowed(false);
+        localEntries.setRowSelectionAllowed(true);
         localEntries.getTableHeader().setReorderingAllowed(false);
         localEntriesScroller.setViewportView(localEntries);
         localEntries.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
@@ -487,12 +535,13 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
                 .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE))
         );
 
+        tabbedPane.setSelectedIndex(getLastTab());
         tabbedPane.getAccessibleContext().setAccessibleName("Remote Data");
         tabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
-//                System.err.println("tabbed pane changed: "+tabbedPane.getSelectedIndex());
                 boolean hasSelection = false;
-                if (tabbedPane.getSelectedIndex() == 0)
+                int index = tabbedPane.getSelectedIndex();
+                if (index == 0)
                     hasSelection = hasRemoteSelection;
                 else
                     hasSelection = hasLocalSelection;
@@ -501,6 +550,7 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
                 editEntryItem.setEnabled(hasSelection);
                 removeEntryButton.setEnabled(hasSelection);
                 removeEntryItem.setEnabled(hasSelection);
+                setLastTab(index);
             }
         });
 
@@ -518,11 +568,9 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
 
         hasRemoteSelection = !((ListSelectionModel)e.getSource()).isSelectionEmpty();
         if (!hasRemoteSelection) {
-//            System.err.println("remote valueChanged: empty!");
             setSelectedRemoteEntry(null);
         } else {
             int index = ((ListSelectionModel)e.getSource()).getMinSelectionIndex();
-//            System.err.println("remote valueChanged: index="+index);
             RemoteAddeEntry entry = ((RemoteAddeTableModel)remoteTable.getModel()).getEntryAtRow(index);
             setSelectedRemoteEntry(entry);
         }
@@ -538,11 +586,9 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
 
         hasLocalSelection = !((ListSelectionModel)e.getSource()).isSelectionEmpty();
         if (!hasLocalSelection) {
-//            System.err.println("local valueChanged: empty!");
             setSelectedLocalEntry(null);
         } else {
             int index = ((ListSelectionModel)e.getSource()).getMinSelectionIndex();
-//            System.err.println("local valueChanged: index="+index);
             LocalAddeEntry entry = ((LocalAddeTableModel)localEntries.getModel()).getEntryAtRow(index);
             setSelectedLocalEntry(entry);
         }
@@ -553,7 +599,6 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
     }
 
     private void setSelectedRemoteEntry(final RemoteAddeEntry e) {
-//        System.err.println("selected remote="+e);
         selectedRemoteEntry = e;
     }
 
@@ -562,7 +607,6 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
     }
 
     private void setSelectedLocalEntry(final LocalAddeEntry e) {
-//        System.err.println("selected local="+e);
         selectedLocalEntry = e;
     }
 
@@ -597,15 +641,11 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
     }
 
     private void remoteHelpItemActionPerformed(java.awt.event.ActionEvent evt) {
-        // ucar.unidata.ui.Help.setTopDir("/docs/userguide");
-        // ucar.unidata.ui.Help.getDefaultHelp().gotoTarget("idv.tools.remotedata");
-        System.err.println("remoteHelpItemActionPerformed: TODO");
+        ucar.unidata.ui.Help.getDefaultHelp().gotoTarget(REMOTE_HELP_TARGET);
     }
 
     private void localHelpItemActionPerformed(java.awt.event.ActionEvent evt) {
-        // ucar.unidata.ui.Help.setTopDir("/docs/userguide");
-        // ucar.unidata.ui.Help.getDefaultHelp().gotoTarget("idv.tools.localdata");
-        System.err.println("localHelpItemActionPerformed: TODO");
+        ucar.unidata.ui.Help.getDefaultHelp().gotoTarget(LOCAL_HELP_TARGET);
     }
 
     private void editEntryButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -634,16 +674,42 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
         if (ret == JFileChooser.APPROVE_OPTION) {
             importMctable(fc.getSelectedFile().getPath());
         } else {
-            System.err.println("import mctable: no selection");
+            logger.debug("import mctable: no selection");
         }
+    }
+
+    /**
+     * Returns the index of the user's last server manager tab.
+     */
+    private int getLastTab() {
+        int index = 0;
+        McIDASV mcv = McIDASV.getStaticMcv();
+        if (mcv != null)
+            index = mcv.getObjectStore().get(LAST_TAB, 0);
+        return index;
+    }
+
+    /**
+     * Saves the index of the last server manager tab the user was looking at.
+     */
+    private void setLastTab(final int index) {
+        int okayIndex = ((index >= 0) && (index < 2)) ? index : 0;
+        McIDASV mcv = McIDASV.getStaticMcv();
+        if (mcv == null)
+            return;
+        mcv.getObjectStore().put(LAST_TAB, okayIndex);
+        mcv.getObjectStore().saveIfNeeded();
     }
 
     private static class RemoteAddeTableModel extends AbstractTableModel {
 
         /** Labels that appear as the column headers. */
         private final String[] columnNames = {
-            "Alias", "Server", "Group", "Username", "Project #", "Type", "Source", "Validity"
+            "Server", "Group", "Username", "Project #", "Type", "Source", "Validity"
         };
+//        private final String[] columnNames = {
+//            "Alias", "Server", "Group", "Username", "Project #", "Type", "Source", "Validity"
+//        };
 
         /** Entries that currently populate the server manager. */
         private final List<RemoteAddeEntry> entries = arrList();
@@ -724,16 +790,27 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
                 throw new IndexOutOfBoundsException(); // questionable...
 
             switch (column) {
-                case 0: return entry.getEntryAlias();
-                case 1: return entry.getAddress();
-                case 2: return entry.getGroup();
-                case 3: return entry.getAccount().getUsername();
-                case 4: return entry.getAccount().getProject();
-                case 5: return entry.getEntryType();
-                case 6: return entry.getEntrySource();
-                case 7: return entry.getEntryValidity();
+                case 0: return entry.getAddress();
+                case 1: return entry.getGroup();
+                case 2: return entry.getAccount().getUsername();
+                case 3: return entry.getAccount().getProject();
+                case 4: return entry.getEntryType();
+                case 5: return entry.getEntrySource();
+                case 6: return entry.getEntryValidity();
                 default: throw new IndexOutOfBoundsException();
             }
+
+//            switch (column) {
+//                case 0: return entry.getEntryAlias();
+//                case 1: return entry.getAddress();
+//                case 2: return entry.getGroup();
+//                case 3: return entry.getAccount().getUsername();
+//                case 4: return entry.getAccount().getProject();
+//                case 5: return entry.getEntryType();
+//                case 6: return entry.getEntrySource();
+//                case 7: return entry.getEntryValidity();
+//                default: throw new IndexOutOfBoundsException();
+//            }
         }
 
         /**
@@ -747,14 +824,14 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
 
         @Override public boolean isCellEditable(final int row, final int column) {
             switch (column) {
-                case 0: return true;
+//                case 0: return true; // hiding alias stuff for now
+                case 0: return false;
                 case 1: return false;
                 case 2: return false;
                 case 3: return false;
                 case 4: return false;
-                case 5: return false;
-                case 6: return true;
-                case 7: return false;
+                case 5: return true;
+                case 6: return false;
                 default: throw new IndexOutOfBoundsException();
             }
         }
@@ -764,8 +841,11 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
 
         /** Labels that appear as the column headers. */
         private final String[] columnNames = {
-            "Alias", "Dataset (e.g. MYDATA)", "Image Type (e.g. JAN 07 GOES)", "Format", "Directory"
+            "Dataset (e.g. MYDATA)", "Image Type (e.g. JAN 07 GOES)", "Format", "Directory"
         };
+//        private final String[] columnNames = {
+//            "Alias", "Dataset (e.g. MYDATA)", "Image Type (e.g. JAN 07 GOES)", "Format", "Directory"
+//        };
 
         /** Entries that currently populate the server manager. */
         private final List<LocalAddeEntry> entries = arrList();
@@ -844,13 +924,19 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
             LocalAddeEntry entry = entries.get(row);
             if (entry == null)
                 throw new IndexOutOfBoundsException(); // still questionable...
-            
+//            switch (column) {
+//                case 0: return entry.getEntryAlias();
+//                case 1: return entry.getGroup();
+//                case 2: return entry.getName();
+//                case 3: return entry.getFormat().getTooltip();
+//                case 4: return entry.getMask();
+//                default: throw new IndexOutOfBoundsException();
+//            }
             switch (column) {
-                case 0: return entry.getEntryAlias();
-                case 1: return entry.getGroup();
-                case 2: return entry.getName();
-                case 3: return entry.getFormat().getTooltip();
-                case 4: return entry.getMask();
+                case 0: return entry.getGroup();
+                case 1: return entry.getName();
+                case 2: return entry.getFormat().getTooltip();
+                case 3: return entry.getMask();
                 default: throw new IndexOutOfBoundsException();
             }
         }

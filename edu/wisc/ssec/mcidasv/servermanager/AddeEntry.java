@@ -31,7 +31,7 @@ package edu.wisc.ssec.mcidasv.servermanager;
 
 public interface AddeEntry {
 
-    public enum EditorAction { ADDED, CANCELLED, VERIFIED, ADDED_VERIFIED, INVALID };
+    public enum EditorAction { ADDED, CANCELLED, VERIFIED, ADDED_VERIFIED, EDITED, EDITED_VERIFIED, INVALID };
 
     /** Represents the {@literal "no accounting"} entries. */
     public static final AddeAccount DEFAULT_ACCOUNT = new AddeAccount("idv", "0");

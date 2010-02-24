@@ -64,9 +64,14 @@ import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
+import edu.wisc.ssec.mcidasv.util.Contract;
 
-// the preference "view"... doesn't allow adding or deleting, though does
-// allow visibility toggling (and probably reordering...)
+/**
+ * The ADDE Server preference panel is <b>almost</b> a read-only {@literal "view"}
+ * of the current state of the server manager. The only thing that users can 
+ * change from here is the visibility of the individual {@link AddeEntry}s, 
+ * though there has been some talk of allowing for reordering.
+ */
 public class AddePreferences {
 
     private static final Logger logger = LoggerFactory.getLogger(AddePreferences.class);
@@ -108,6 +113,21 @@ public class AddePreferences {
     /** Contains the lists of ADDE servers that we'll use as content. */
     private final EntryStore entryStore;
 
+    /** Panel that contains the various {@link AddeEntry}s. */
+    private JPanel cbPanel = null;
+
+    /**
+     * Allows the user to enable all {@link AddeEntry}s, <b><i>without</i></b> 
+     * disabling the preference panel.
+     */
+    private JButton allOn = null;
+
+    /**
+     * Allows the user to disable all {@link AddeEntry}s, <b><i>without</i></b> 
+     * disabling the preference panel.
+     */
+    private JButton allOff = null;
+
     /**
      * Prepares a new preference panel based upon the supplied 
      * {@link EntryStore}.
@@ -120,28 +140,33 @@ public class AddePreferences {
     public AddePreferences(final EntryStore entryStore) {
         if (entryStore == null)
             throw new NullPointerException("EntryStore cannot be null");
-
         this.entryStore = entryStore;
     }
 
+    /**
+     * Adds the various {@link AddePrefConglomeration} objects to the {@code prefManager}.
+     * 
+     * @param prefManager McIDAS-V's {@link PreferenceManager}. Should not be {@code null}.
+     */
     public void addPanel(McIdasPreferenceManager prefManager) {
-        AddePrefConglomeration eww = buildPanel();
-
+        AddePrefConglomeration notPretty = buildPanel((McIDASV)prefManager.getIdv());
         // add the panel, listeners, and so on to the preference manager.
-        prefManager.add(eww.getName(), "blah", eww.getEntryListener(), 
-            eww.getEntryPanel(), eww.getEntryToggles());
-
+        prefManager.add(notPretty.getName(), "blah", notPretty.getEntryListener(), 
+            notPretty.getEntryPanel(), notPretty.getEntryToggles());
     }
+
     /**
      * Builds the remote server preference panel, using the given 
      * {@link McIdasPreferenceManager}.
      * 
-     * @param prefManager The {@code McIdasPreferenceManager} that will 
-     * contain this preference panel. Cannot be {@code null}.
+     * @param mcv Reference to the McIDAS-V object; mostly used to control the 
+     * server manager GUI. Cannot be {@code null}.
      * 
-     * @throws NullPointerException if {@code prefManager} is {@code null}.
+     * @return An object containing the various components required of a 
+     * preference panel.
      */
-    public AddePrefConglomeration buildPanel() {
+    public AddePrefConglomeration buildPanel(final McIDASV mcv) {
+        Contract.notNull(mcv, "Cannot build a preference panel with a null McIDASV object");
         Map<EntryType, Set<AddeEntry>> entries = 
             entryStore.getVerifiedEntriesByTypes();
 
@@ -180,13 +205,13 @@ public class AddePreferences {
 
         // create the basic pref panel
         // TODO(jon): determine dimensions more intelligently!
-        final JPanel cbPanel = GuiUtils.top(GuiUtils.vbox(compList));
+        cbPanel = GuiUtils.top(GuiUtils.vbox(compList));
         JScrollPane cbScroller = new JScrollPane(cbPanel);
         cbScroller.getVerticalScrollBar().setUnitIncrement(10);
         cbScroller.setPreferredSize(new Dimension(300, 300));
 
         // handle the user opting to enable all servers
-        final JButton allOn = new JButton("All on");
+        allOn = new JButton("All on");
         allOn.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
                 for (CheckboxCategoryPanel cbcp : typePanels)
@@ -195,7 +220,7 @@ public class AddePreferences {
         });
 
         // handle the user opting to disable all servers
-        final JButton allOff = new JButton("All off");
+        allOff = new JButton("All off");
         allOff.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
                 for (CheckboxCategoryPanel cbcp : typePanels)
@@ -207,8 +232,7 @@ public class AddePreferences {
         final JButton addServer = new JButton("Add ADDE Servers...");
         addServer.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
-//                System.err.println("LOOK AT ME");
-                logger.debug("adde prefs: add server button");
+                mcv.showServerManager();
             }
         });
 
@@ -216,8 +240,7 @@ public class AddePreferences {
         final JButton importServers = new JButton("Import Servers...");
         importServers.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
-//                System.err.println("LOOK AT ME");
-                logger.debug("adde prefs: import server button");
+                mcv.showServerManager();
             }
         });
 
@@ -234,11 +257,9 @@ public class AddePreferences {
             new JRadioButton("Use all ADDE entries", useAll);
         useAllBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                GuiUtils.enableTree(cbPanel, !useAllBtn.isSelected());
-                GuiUtils.enableTree(allOn, !useAllBtn.isSelected());
-                GuiUtils.enableTree(allOff, !useAllBtn.isSelected());
+                setGUIEnabled(!useAllBtn.isSelected());
+                // TODO(jon): use an enum; use the eventbus
                 setSpecifyServers("ALL");
-
             }
         });
 
@@ -247,19 +268,15 @@ public class AddePreferences {
             new JRadioButton("Use selected ADDE entries:", specify);
         useTheseBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                GuiUtils.enableTree(cbPanel, !useAllBtn.isSelected());
-                GuiUtils.enableTree(allOn, !useAllBtn.isSelected());
-                GuiUtils.enableTree(allOff, !useAllBtn.isSelected());
+                setGUIEnabled(!useAllBtn.isSelected());
+                // TODO(jon): use an enum; use the eventbus
                 setSpecifyServers("SPECIFY");
             }
         });
         GuiUtils.buttonGroup(useAllBtn, useTheseBtn);
 
         // force the selection state
-        // TODO(jon): extract this out into its own method.
-        GuiUtils.enableTree(cbPanel, !useAllBtn.isSelected());
-        GuiUtils.enableTree(allOn, !useAllBtn.isSelected());
-        GuiUtils.enableTree(allOff, !useAllBtn.isSelected());
+        setGUIEnabled(!useAllBtn.isSelected());
 
         JPanel widgetPanel =
             GuiUtils.topCenter(
@@ -302,35 +319,39 @@ public class AddePreferences {
                         updated = true;
                     e.setEntryStatus(nextStatus);
                 }
-
-                if (updated) {
+                if (updated)
                     EventBus.publish(EntryStore.Event.UPDATE);
-                }
             }
         };
-
         return new AddePrefConglomeration(Constants.PREF_LIST_ADDE_SERVERS, entryListener, entryPanel, entryToggles);
     }
 
-    public static class AddePrefConglomeration {
-        private final String name;
-        private final PreferenceManager entryListener;
-        private final JPanel entryPanel;
-        private final Map<AddeEntry, JCheckBox> entryToggles;
-
-        public AddePrefConglomeration(String name, PreferenceManager entryListener, JPanel entryPanel, Map<AddeEntry, JCheckBox> entryToggles) {
-            this.name = name;
-            this.entryListener = entryListener;
-            this.entryPanel = entryPanel;
-            this.entryToggles = entryToggles;
-        }
-        
-        public String getName() { return name; }
-        public PreferenceManager getEntryListener() { return entryListener; }
-        public JPanel getEntryPanel() { return entryPanel; }
-        public Map<AddeEntry, JCheckBox> getEntryToggles() { return entryToggles; }
+    /**
+     * Enables or disables:<ul>
+     * <li>{@link JPanel} containing the {@link AddeEntry}s ({@link #cbPanel}).</li>
+     * <li>{@link JButton} that enables all available {@code AddeEntry}s ({@link #allOn}).</li>
+     * <li>{@code JButton} that disables all available {@code AddeEntry}s ({@link #allOff}).</li>
+     * </ul>
+     * Enabling the components allows the user to pick and choose servers, while
+     * disabling enables all servers.
+     * 
+     * @param enabled {@code true} enables the components and {@code false} disables.
+     */
+    public void setGUIEnabled(final boolean enabled) {
+        if (cbPanel != null)
+            GuiUtils.enableTree(cbPanel, enabled);
+        if (allOn != null)
+            GuiUtils.enableTree(allOn, enabled);
+        if (allOff != null)
+            GuiUtils.enableTree(allOff, enabled);
     }
-    
+
+    /**
+     * Sets the value of the {@link #PREF_LIST_SPECIFY} preference to 
+     * {@code value}. 
+     * 
+     * @param value New value to associate with {@code PREF_LIST_SPECIFY}.
+     */
     private void setSpecifyServers(final String value) {
         McIDASV mcv = McIDASV.getStaticMcv();
         if (mcv == null)
@@ -338,6 +359,11 @@ public class AddePreferences {
         mcv.getStore().put(PREF_LIST_SPECIFY, value);
     }
 
+    /**
+     * Returns the value of the {@link #PREF_LIST_SPECIFY} preference. Defaults
+     * to {@literal "ALL"}.
+     */
+    // TODO(jon): use an enum
     private String getSpecifyServers() {
         McIDASV mcv = McIDASV.getStaticMcv();
         if (mcv == null)
@@ -345,12 +371,24 @@ public class AddePreferences {
         return mcv.getStore().get(PREF_LIST_SPECIFY, "ALL");
     }
 
-    // getTopPanel seems to break CheckboxCategoryPanel
-    private void setCategoryPanelIcon(final CheckboxCategoryPanel panel, final Icon newIcon) {
-        JPanel topPanel = panel.getTopPanel();
-//        System.err.println("comp count: "+topPanel.getComponentCount());
-        for (int i = 0; i < topPanel.getComponentCount(); i++) {
-//            System.err.println("comp idx="+i+" comp="+topPanel.getComponent(i));
+    /**
+     * This class is essentially a specialized tuple of the different things 
+     * that {@link IdvPreferenceManager} requires.
+     */
+    public static class AddePrefConglomeration {
+        private final String name;
+        private final PreferenceManager entryListener;
+        private final JPanel entryPanel;
+        private final Map<AddeEntry, JCheckBox> entryToggles;
+        public AddePrefConglomeration(String name, PreferenceManager entryListener, JPanel entryPanel, Map<AddeEntry, JCheckBox> entryToggles) {
+            this.name = name;
+            this.entryListener = entryListener;
+            this.entryPanel = entryPanel;
+            this.entryToggles = entryToggles;
         }
+        public String getName() { return name; }
+        public PreferenceManager getEntryListener() { return entryListener; }
+        public JPanel getEntryPanel() { return entryPanel; }
+        public Map<AddeEntry, JCheckBox> getEntryToggles() { return entryToggles; }
     }
 }

@@ -565,20 +565,30 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 
     private boolean addingServer = false;
 
-    private static int getServerIndex(final Object server, final JComboBox serverSelector) {
+    /**
+     * 
+     * 
+     * @param needle
+     * @param haystack
+     * 
+     * @return
+     */
+    private static int getSelectorIndex(final Object needle, final JComboBox haystack) {
         String name = null;
-        if (server instanceof AddeServer)
-            name = ((AddeServer)server).getName();
-        else if (server instanceof AddeEntry)
-            name = ((AddeEntry)server).getAddress();
+        if (needle instanceof AddeServer)
+            name = ((AddeServer)needle).getName();
+        else if (needle instanceof Group)
+            name = ((Group)needle).getName();
+        else if (needle instanceof AddeEntry)
+            name = ((AddeEntry)needle).getAddress();
         else 
-            name = server.toString();
+            name = needle.toString();
 
         if (name.equalsIgnoreCase("localhost") || (name.equals("127.0.0.1")))
             return 0;
 
-        for (int i = 0; i < serverSelector.getItemCount(); i++) {
-            Object item = serverSelector.getItemAt(i);
+        for (int i = 0; i < haystack.getItemCount(); i++) {
+            Object item = haystack.getItemAt(i);
             String tmpName;
             if (item instanceof AddeServer)
                 tmpName = ((AddeServer)item).getName();
@@ -627,11 +637,11 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 
             EditorAction editorAction = EditorAction.INVALID;
             if (!server.equalsIgnoreCase("localhost") && !server.equalsIgnoreCase("127.0.0.1")) {
-                RemoteEntryEditor editor = new RemoteEntryEditor(null, true, null, servManager);
+                RemoteEntryEditor editor = new RemoteEntryEditor(servManager, server, "");
                 editor.setVisible(true);
                 editorAction = editor.getEditorAction();
             } else {
-                LocalEntryEditor editor = new LocalEntryEditor(null, true, null, servManager);
+                LocalEntryEditor editor = new LocalEntryEditor(servManager, group);
                 editor.setVisible(true);
                 editorAction = editor.getEditorAction();
             }
@@ -645,7 +655,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
                 AddeServer first = null;
                 if (!added.isEmpty()) {
                     first = added.get(0);
-                    servIndex = getServerIndex(first, serverSelector);
+                    servIndex = getSelectorIndex(first, serverSelector);
                     setLastServer(server, group, first);
                 } 
 

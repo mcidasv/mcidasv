@@ -337,7 +337,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         EntryStore remoteAddeStore = ((McIDASV)getIdv()).getServerManager();
         AddePreferences prefs = new AddePreferences(remoteAddeStore);
 //        prefs.addPanel(this);
-        AddePrefConglomeration eww = prefs.buildPanel();
+        AddePrefConglomeration eww = prefs.buildPanel((McIDASV)getIdv());
         String name = "SERVER MANAGER";
         mainPane.add(name, eww.getEntryPanel());
         ((CardLayout)mainPane.getLayout()).show(mainPane, name);

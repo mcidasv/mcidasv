@@ -29,13 +29,10 @@
  */
 package edu.wisc.ssec.mcidasv.servermanager;
 
-import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 import static javax.swing.GroupLayout.DEFAULT_SIZE;
 import static javax.swing.GroupLayout.PREFERRED_SIZE;
-import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
 import static javax.swing.GroupLayout.Alignment.TRAILING;
-import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
 import java.awt.Component;
@@ -50,45 +47,74 @@ import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry.AddeFormat;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EditorAction;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVTextField;
 
-
+/**
+ * A dialog that allows the user to define or modify {@link LocalAddeEntry}s.
+ */
+@SuppressWarnings("serial")
 public class LocalEntryEditor extends javax.swing.JDialog {
 
     private static final Logger logger = LoggerFactory.getLogger(LocalEntryEditor.class);
 
+    /** Property ID for the last directory selected. */
+    private static final String PROP_LAST_PATH = "mcv.localdata.lastpath";
+
+    /** The server manager GUI. Be aware that this can be {@code null}. */
     private final TabbedAddeManager managerController;
+
+    /** Reference back to the server manager. */
     private final EntryStore entryStore;
 
+    private final LocalAddeEntry currentEntry;
+
+    /** Either the path to an ADDE directory as selected by the user or an empty {@link String}. */
     private String selectedPath = "";
 
+    /** The last dialog action performed by the user. */
     private EditorAction editorAction = EditorAction.INVALID;
 
-    /** Creates new form LocalEntryEditor */
+    private final String datasetText;
+
+    /**
+     * Creates a modal local ADDE data editor. It's pretty useful when adding
+     * from a chooser.
+     * 
+     * @param entryStore The server manager. Should not be {@code null}.
+     * @param group Name of the group/dataset containing the desired data. Be aware that {@code null} is okay.
+     */
+    public LocalEntryEditor(final EntryStore entryStore, final String group) {
+        super((javax.swing.JDialog)null, true);
+        this.managerController = null;
+        this.entryStore = entryStore;
+        this.datasetText = group;
+        this.currentEntry = null;
+        initComponents(LocalAddeEntry.INVALID_ENTRY);
+    }
+
+    // TODO(jon): hold back on javadocs, this is likely to change
     public LocalEntryEditor(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store) {
         super(manager, modal);
         this.managerController = manager;
         this.entryStore = store;
+        this.datasetText = null;
+        this.currentEntry = null;
         initComponents(LocalAddeEntry.INVALID_ENTRY);
     }
 
+    // TODO(jon): hold back on javadocs, this is likely to change
     public LocalEntryEditor(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store, final LocalAddeEntry entry) {
         super(manager, modal);
         this.managerController = manager;
         this.entryStore = store;
+        this.datasetText = null;
+        this.currentEntry = entry;
         initComponents(entry);
-    }
-
-    public EditorAction getEditorAction() {
-        return editorAction;
-    }
-
-    private void setEditorAction(final EditorAction editorAction) {
-        this.editorAction = editorAction;
     }
 
     @SuppressWarnings("unchecked")
@@ -108,10 +134,16 @@ public class LocalEntryEditor extends javax.swing.JDialog {
         addButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
+        if (initEntry == LocalAddeEntry.INVALID_ENTRY) {
+            setTitle("Add Local Dataset");
+        } else {
+            setTitle("Edit Local Dataset");
+        }
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Add Local Dataset");
-
         mainPanel.setLayout(new java.awt.GridBagLayout());
+
+        if (datasetText != null)
+            datasetField.setText(datasetText);
 
         datasetLabel.setText("Dataset (e.g. MYDATA):");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -172,10 +204,21 @@ public class LocalEntryEditor extends javax.swing.JDialog {
 
         buttonPanel.setLayout(new java.awt.GridBagLayout());
 
-        addButton.setText("Add Dataset");
+        if (initEntry == LocalAddeEntry.INVALID_ENTRY) {
+            addButton.setText("Add Dataset");
+        } else {
+            addButton.setText("Save Changes");
+            datasetField.setText(initEntry.getGroup());
+            typeField.setText(initEntry.getName());
+            directoryButton.setText(getShortString(EntryTransforms.demungeFileMask(initEntry.getFileMask())));
+            formatComboBox.setSelectedItem(initEntry.getFormat());
+        }
         addButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addButtonActionPerformed(evt);
+                if (initEntry == LocalAddeEntry.INVALID_ENTRY)
+                    addButtonActionPerformed(evt);
+                else
+                    editButtonActionPerformed(evt);
             }
         });
         buttonPanel.add(addButton, new java.awt.GridBagConstraints());
@@ -208,16 +251,25 @@ public class LocalEntryEditor extends javax.swing.JDialog {
                 .addComponent(buttonPanel, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
                 .addContainerGap(DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
         pack();
     }// </editor-fold>
 
+    /**
+     * Triggered when the {@literal "add"} button is clicked.
+     */
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {
         addEntry();
     }
 
+    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        editEntry();
+    }
+
+    /**
+     * Triggered when the {@literal "file picker"} button is clicked.
+     */
     private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        selectedPath = getDataDirectory("");
+        selectedPath = getDataDirectory(getLastPath());
         logger.debug("browseButton: path={}", selectedPath);
         if (selectedPath.length() != 0) {
             if (selectedPath.length() > 19) {
@@ -227,13 +279,42 @@ public class LocalEntryEditor extends javax.swing.JDialog {
                 directoryButton.setText(selectedPath);
             }
         }
+        setLastPath(selectedPath);
     }
 
+    private String getLastPath() {
+        McIDASV mcv = McIDASV.getStaticMcv();
+        String path = "";
+        if (mcv != null)
+            return mcv.getObjectStore().get(PROP_LAST_PATH, "");
+        return path;
+    }
+
+    public void setLastPath(final String path) {
+        String okayPath = (path != null) ? path : "";
+        logger.debug("setLastPath: parent={}", new File(path).getParent());
+        McIDASV mcv = McIDASV.getStaticMcv();
+        if (mcv != null) {
+            mcv.getObjectStore().put(PROP_LAST_PATH, okayPath);
+            mcv.getObjectStore().saveIfNeeded();
+        }
+    }
+
+    /**
+     * Calls {@link #dispose} if the dialog is visible.
+     */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (isDisplayable())
             dispose();
     }
 
+    /**
+     * Poll the various UI components and attempt to construct valid ADDE
+     * entries based upon the information provided by the user.
+     * 
+     * @return {@link Set} of entries that represent the user's input, or an
+     * empty {@code Set} if the input was somehow invalid.
+     */
     private Set<LocalAddeEntry> pollWidgets() {
         String group = datasetField.getText();
         String name = typeField.getText();
@@ -243,23 +324,39 @@ public class LocalEntryEditor extends javax.swing.JDialog {
         return Collections.singleton(entry);
     }
 
+    /**
+     * Creates new {@link LocalAddeEntry}s based upon the contents of the dialog
+     * and adds {@literal "them"} to the managed servers. If the dialog is
+     * displayed, we call {@link #dispose()} and attempt to refresh the
+     * server manager GUI if it is available.
+     */
     private void addEntry() {
         Set<LocalAddeEntry> addedEntries = pollWidgets();
-        logger.debug("ugh: {}", addedEntries);
         entryStore.addEntries(addedEntries);
         if (isDisplayable())
             dispose();
+        if (managerController != null)
+            managerController.refreshDisplay();
+    }
 
+    private void editEntry() {
+        Set<LocalAddeEntry> newEntries = pollWidgets();
+        Set<LocalAddeEntry> currentEntries = Collections.singleton(currentEntry);
+        entryStore.replaceEntries(currentEntries, newEntries);
+        if (isDisplayable())
+            dispose();
         if (managerController != null)
             managerController.refreshDisplay();
     }
 
     /**
-     * Get a short directory name representation, suitable for a button label
+     * Get a short directory name representation, suitable for a button label.
      * 
-     * @param longString
+     * @param longString Initial {@link String}. {@code null is bad}!
      * 
-     * @return
+     * @return If {@code longString} is longer than 19 characters, the 
+     * first 16 characters of {@code longString} (and {@literal "..."}) are 
+     * returned. Otherwise an unmodified {@code longString} is returned.
      */
     private String getShortString(final String longString) {
         String shortString = longString;
@@ -271,9 +368,10 @@ public class LocalEntryEditor extends javax.swing.JDialog {
     /**
      * Ask the user for a data directory from which to create a MASK=
      * 
-     * @param
+     * @param startDir If this is a valid path, then the file picker will (presumably)
+     * use that as its initial location. Should not be {@code null}?
      * 
-     * @return
+     * @return Either a path to a data directory or {@code startDir}.
      */
     private String getDataDirectory(final String startDir) {
         JFileChooser fileChooser = new JFileChooser(startDir);
@@ -288,6 +386,23 @@ public class LocalEntryEditor extends javax.swing.JDialog {
         }
     }
 
+    /**
+     * @see #editorAction
+     */
+    public EditorAction getEditorAction() {
+        return editorAction;
+    }
+
+    /**
+     * @see #editorAction
+     */
+    private void setEditorAction(final EditorAction editorAction) {
+        this.editorAction = editorAction;
+    }
+
+    /**
+     * Dave's nice combobox tooltip renderer!
+     */
     private class TooltipComboBoxRenderer extends BasicComboBoxRenderer {
         @Override public Component getListCellRendererComponent(JList list, 
             Object value, int index, boolean isSelected, boolean cellHasFocus) 

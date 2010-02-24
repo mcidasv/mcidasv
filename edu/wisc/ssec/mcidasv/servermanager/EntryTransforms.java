@@ -90,11 +90,17 @@ public class EntryTransforms {
     /** No sense in rebuilding things that don't need to be rebuilt. */
     private static final Matcher hostMatcher = hostPattern.matcher("");
 
+    // TODO(jon): plz to be removing these
     private static final String cygwinPrefix = "/cygdrive/";
     private static final int cygwinPrefixLength = cygwinPrefix.length();
 
+    /** This is a utility class. Don't create it! */
     private EntryTransforms() { }
 
+    /**
+     * {@link Function} that transforms an {@link AddeServer} into a {@link RemoteAddeEntry}.
+     */
+    // TODO(jon): shouldn't this use AddeEntry rather than RemoteAddeEntry?
     public static final Function<AddeServer, RemoteAddeEntry> convertIdvServer = new Function<AddeServer, RemoteAddeEntry>() {
         public RemoteAddeEntry apply(final AddeServer arg) {
             String hostname = arg.toString().toLowerCase();
@@ -251,13 +257,21 @@ public class EntryTransforms {
                                             .build();
                     es.add(e);
                 }
-
-                // anything else?
             }
         }
         return es;
     }
 
+    /**
+     * Converts a given {@link EntryType} to its {@link String} representation}.
+     * Note that the resulting {@code String} is lowercase.
+     * 
+     * @param type The type to convert. Cannot be {@code null}.
+     * 
+     * @return
+     * 
+     * @throws NullPointerException if {@code type} is {@code null}.
+     */
     public static String entryTypeToStr(final EntryType type) {
         Contract.notNull(type);
         return type.toString().toLowerCase();
@@ -331,13 +345,13 @@ public class EntryTransforms {
     }
 
     /**
-     * Attempts to convert a {@link String} to an {@link EntryStatus}.
+     * Attempts to convert a {@link String} into an {@link EntryStatus}.
      * 
      * @param s {@code String} representation of an {@code EntryStatus}. 
      * Cannot be {@code null}.
      * 
      * @return Uses {@link EntryStatus#valueOf(String)} to convert {@code s}
-     * to an {@code EntryStatus} and returns. If no conversion was possible, 
+     * into an {@code EntryStatus} and returns. If no conversion was possible, 
      * returns {@link EntryStatus#DISABLED}.
      * 
      * @throws NullPointerException if {@code s} is {@code null}.
@@ -353,6 +367,26 @@ public class EntryTransforms {
         return status;
     }
 
+    /**
+     * Attempts to convert a {@link String} into a member of {@link AddeFormat}.
+     * This method does a little bit of magic with the incoming {@code String}:
+     * <ol>
+     *   <li>spaces are replaced with underscores</li>
+     *   <li>dashes ({@literal "-"}) are removed</li>
+     * </ol>
+     * This was done because older {@literal "RESOLV.SRV"} files permitted the
+     * {@literal "MCV"} key to contain spaces or dashes, and that doesn't play
+     * so well with Java's enums.
+     * 
+     * @param s {@code String} representation of an {@code AddeFormat}. Cannot 
+     * be {@code null}.
+     * 
+     * @return Uses {@link AddeFormat#valueOf(String)} to convert <i>the modified</i>
+     * {@code String} into an {@code AddeFormat} and returns. If no conversion
+     * was possible, returns {@link AddeFormat#INVALID}.
+     * 
+     * @throws NullPointerException if {@code s} is {@code null}.
+     */
     public static AddeFormat strToAddeFormat(final String s) {
         AddeFormat format = AddeFormat.INVALID;
         Contract.notNull(s);
@@ -576,18 +610,7 @@ public class EntryTransforms {
 //            }
 //            // filename mask
             if ("MASK".equals(pair[0])) {
-                int index = pair[1].indexOf("/*");
-                if (index >= 0) {
-                    String tmpFileMask = pair[1].substring(0, index);
-                    /** Look for "cygwinPrefix" at start of string and munge accordingly */
-                    if (tmpFileMask.length() > cygwinPrefixLength+1 &&
-                            tmpFileMask.substring(0,cygwinPrefixLength).equals(cygwinPrefix)) {
-                        String driveLetter = tmpFileMask.substring(cygwinPrefixLength,cygwinPrefixLength+1).toUpperCase();
-                        pair[1] = driveLetter + ':' + tmpFileMask.substring(cygwinPrefixLength+1).replace('/', '\\');
-                    } else {
-                        pair[1] = tmpFileMask;
-                    }
-                }
+                pair[1] = demungeFileMask(pair[1]);
             }
             keyVals.put(pair[0], pair[1]);
         }
@@ -671,6 +694,52 @@ public class EntryTransforms {
     }
 
     /**
+     * De-munges file mask strings.
+     * 
+     * @throws NullPointerException if {@code path} is {@code null}. 
+     */
+    public static String demungeFileMask(final String path) {
+        Contract.notNull(path, "how dare you! null paths cannot be munged!");
+        int index = path.indexOf("/*");
+        if (index < 0)
+            return path;
+
+        String tmpFileMask = path.substring(0, index);
+        /** Look for "cygwinPrefix" at start of string and munge accordingly */
+        if (tmpFileMask.length() > cygwinPrefixLength+1 &&
+            tmpFileMask.substring(0,cygwinPrefixLength).equals(cygwinPrefix)) {
+            String driveLetter = tmpFileMask.substring(cygwinPrefixLength,cygwinPrefixLength+1).toUpperCase();
+            return driveLetter + ':' + tmpFileMask.substring(cygwinPrefixLength+1).replace('/', '\\');
+        } else {
+            return tmpFileMask;
+        }
+    }
+
+    /**
+     * Munges a file mask {@link String} into something {@literal "RESOLV.SRV"}
+     * expects.
+     * 
+     * <p>Munging is only needed for Windows users--the process converts 
+     * back slashes into forward slashes and prefixes with {@literal "/cygdrive/"}.
+     * 
+     * @throws NullPointerException if {@code mask} is {@code null}.
+     */
+    public static String mungeFileMask(final String mask) {
+        Contract.notNull(mask, "Cannot further munge this mask; it was null upon arriving");
+        StringBuilder s = new StringBuilder(100);
+        if (mask.length() > 3 && mask.substring(1, 2).equals(":")) {
+            String newFileMask = mask;
+            String driveLetter = newFileMask.substring(0,1).toLowerCase();
+            newFileMask = newFileMask.substring(3);
+            newFileMask = newFileMask.replace('\\', '/');
+            s.append("/cygdrive/").append(driveLetter).append("/").append(newFileMask);
+        } else {
+            s.append("").append(mask);
+        }
+        return s.toString();
+    }
+
+    /**
      * Converts a {@link Collection} of {@link LocalAddeEntry}s into a {@link List}
      * of {@code String}s. 
      * 
@@ -700,7 +769,7 @@ public class EntryTransforms {
         AddeFormat format = entry.getFormat();
         ServerName servName = format.getServerName();
 
-        StringBuffer s = new StringBuffer(100);
+        StringBuilder s = new StringBuilder(100);
         if (entry.getEntryStatus() != EntryStatus.ENABLED)
             s.append("#");
         s.append("N1=").append(entry.getGroup().toUpperCase())
