@@ -373,7 +373,7 @@ public class AddePreferences {
 
     /**
      * This class is essentially a specialized tuple of the different things 
-     * that {@link IdvPreferenceManager} requires.
+     * required by the {@link ucar.unidata.idv.IdvPreferenceManager}.
      */
     public static class AddePrefConglomeration {
         private final String name;

@@ -51,13 +51,10 @@ import edu.wisc.ssec.mcidasv.servermanager.McservEvent.McservStatus;
 /**
  * This class is the GUI frontend to {@link EntryStore} (the server manager).
  * It allows users to manipulate their local and remote ADDE data.
- * 
- * TODO(jon):
- *   - don't forget to persist tab choice and window position. maybe also the
- *     "positions" of the scrollpanes (if possible).
- *   - GUI could look much better.
- *   - finish up the javadocs.
  */
+// TODO(jon): don't forget to persist tab choice and window position. maybe also the "positions" of the scrollpanes (if possible).
+// TODO(jon): GUI could look much better.
+// TODO(jon): finish up the javadocs.
 @SuppressWarnings("serial")
 public class TabbedAddeManager extends javax.swing.JFrame implements McservListener {
 
