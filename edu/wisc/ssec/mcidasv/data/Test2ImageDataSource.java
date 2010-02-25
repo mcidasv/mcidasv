@@ -754,6 +754,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         iml = new ArrayList();
 
         if (dataSelection == null) return null;
+        setDataSelection(dataSelection);
         GeoSelection geoSelection = dataSelection.getGeoSelection(true);
         if (geoSelection == null) return null;
         if (this.lastGeoSelection == null) this.lastGeoSelection = geoSelection;
