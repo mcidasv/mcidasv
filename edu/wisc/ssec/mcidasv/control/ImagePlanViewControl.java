@@ -246,6 +246,8 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
         try {
             this.dataSelection = dataChoice.getDataSelection();
             ImageSequenceImpl seq = null;
+            if (dataSelection == null)
+                dataSelection = dataSource.getDataSelection();
             if (dataSelection == null) {
                 image = (FlatField)dataSource.getData(dataChoice, null, props);
                 if (image == null) {
