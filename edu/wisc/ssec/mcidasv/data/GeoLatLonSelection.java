@@ -1734,7 +1734,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             convertToLatLon();
         }
 
-
         double baseLResNew = dir.getCenterLatitudeResolution();
         double baseEResNew = dir.getCenterLongitudeResolution();
 /*
@@ -1806,5 +1805,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         setNumLines(lSizeNew);
         setNumEles(eSizeNew);
 
+        getGeoLocationInfo();
     }
 }
