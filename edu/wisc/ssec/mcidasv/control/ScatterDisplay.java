@@ -823,24 +823,23 @@ public class ScatterDisplay extends DisplayControlImpl {
           float[][] newTable = null;
           if (numComps != clrTable.length) {
             if (numComps < clrTable.length) {
-              newTable = new float[numComps][];
+              newTable = new float[numComps][clrTable[0].length];
               for (int k=0; k<numComps; k++) {
-                System.arraycopy(clrTable[k], 0, newTable[k], 0, clrTable[k].length);
+                System.arraycopy(clrTable[k], 0, newTable[k], 0, newTable[0].length);
               }
             }
             else if (numComps > clrTable.length) {
-              newTable = new float[numComps][];
+              newTable = new float[numComps][clrTable[0].length];
               for (int k=0; k<clrTable.length; k++) {
-                System.arraycopy(clrTable[k], 0, newTable[k], 0, clrTable[k].length);
+                System.arraycopy(clrTable[k], 0, newTable[k], 0, newTable[0].length);
               }
               newTable[3] = new float[clrTable[0].length];
             }
           }
-
-          clrCntrl.setTable(ct.getColorTable());
+          clrCntrl.setTable(newTable);
         } 
         catch (Exception e) {
-          System.out.println(e);
+          LogUtil.logException("Problem changing color table", e);
         }
       }
     }
