@@ -29,6 +29,11 @@
  */
 package edu.wisc.ssec.mcidasv.servermanager;
 
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
+
 public class RemoteAddeEntry implements AddeEntry {
 
     public static final RemoteAddeEntry INVALID_ENTRY = new Builder("localhost", "BIGBAD").invalidate().build();
@@ -162,7 +167,7 @@ public class RemoteAddeEntry implements AddeEntry {
      * Determines whether or not the given object is equivalent to this ADDE 
      * entry.
      * 
-     * @param o Object to test against. {@code null} values are okay, but 
+     * @param obj Object to test against. {@code null} values are okay, but 
      * return {@code false}.
      * 
      * @return {@code true} if the given object is the same as this ADDE 
@@ -335,7 +340,7 @@ public class RemoteAddeEntry implements AddeEntry {
          * 
          * @return Current {@literal "builder"} for an ADDE entry.
          * 
-         * @throw NullPointerException if {@code description} is {@code null}.
+         * @throws NullPointerException if {@code description} is {@code null}.
          */
         public Builder description(final String description) {
             if (description == null)
@@ -394,7 +399,7 @@ public class RemoteAddeEntry implements AddeEntry {
          * called, {@code entryStatus} will default to 
          * {@link EntryStatus#ENABLED}.
          * 
-         * @param entryType ADDE entry {@literal "status"}.
+         * @param entryStatus ADDE entry {@literal "status"}.
          * 
          * @return Current {@literal "builder"} for an ADDE entry.
          */

@@ -35,6 +35,11 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
+
 /**
  * 
  * 
@@ -44,7 +49,8 @@ public class LocalAddeEntry implements AddeEntry {
 
     static final Logger logger = LoggerFactory.getLogger(LocalAddeEntry.class);
 
-    /** */
+    /** Represents a {@literal "bad"} local ADDE entry. */
+    // seriously, don't use null unless you REALLY need it.
     public static final LocalAddeEntry INVALID_ENTRY = new Builder("INVALID", "INVALID", "/dev/null", AddeFormat.INVALID).build();
 
     /** */
@@ -53,6 +59,7 @@ public class LocalAddeEntry implements AddeEntry {
     /** */
     private static final int CYGWIN_PREFIX_LEN = CYGWIN_PREFIX.length();
 
+    /** */
     private EntryStatus entryStatus = EntryStatus.INVALID;
 
     /** N1 */
@@ -84,64 +91,103 @@ public class LocalAddeEntry implements AddeEntry {
         MODR, MSGT, MTST, SMIN, TMIN, INVALID;
     }
 
-    // TODO(jon): can i remove the shortName field and just use the enumeration name instead? 
+    /**
+     * The various kinds of local ADDE data understood by McIDAS-V, along with
+     * some helpful metadata.
+     * 
+     * <p><ul>
+     * <li>{@literal "Human readable"} format names ({@link #friendlyName}).</li>
+     * <li>Optional tooltip description ({@link #tooltip}).</li>
+     * <li>Type of data ({@link #type}).</li>
+     * <li>File naming pattern {@link #fileFilter}.</li>
+     * </ul>
+     * 
+     * <p>None of {@code AddeFormat}'s fields should contain {@code null}.
+     */
     public enum AddeFormat {
-        INVALID(ServerName.INVALID, "", EntryType.INVALID),
+        INVALID(ServerName.INVALID, "", "", EntryType.INVALID),
         MCIDAS_AREA(ServerName.AREA, "McIDAS AREA"),
-        AMSRE_L1B(ServerName.AMSR, "AMSR-E Level 1b"),
+        AMSRE_L1B(ServerName.AMSR, "AMSR-E L 1b", "AMSR-E Level 1b"),
         AMSRE_RAIN_PRODUCT(ServerName.AMRR, "AMSR-E Rain Product"),
         GINI(ServerName.GINI, "GINI"),
-        LRIT_GOES9(ServerName.FSDX, "EUMETCast LRIT GOES-9"),
-        LRIT_GOES10(ServerName.FSDX, "EUMETCast LRIT GOES-10"),
-        LRIT_GOES11(ServerName.FSDX, "EUMETCast LRIT GOES-11"),
-        LRIT_GOES12(ServerName.FSDX, "EUMETCast LRIT GOES-12"),
-        LRIT_MET5(ServerName.FSDX, "EUMETCast LRIT MET-5"),
-        LRIT_MET7(ServerName.FSDX, "EUMETCast LRIT MET-7"),
-        LRIT_MTSAT1R(ServerName.FSDX, "EUMETCast LRIT MTSAT-1R"),
+        LRIT_GOES9(ServerName.FSDX, "LRIT GOES-9", "EUMETCast LRIT GOES-9"),
+        LRIT_GOES10(ServerName.FSDX, "LRIT GOES-10", "EUMETCast LRIT GOES-10"),
+        LRIT_GOES11(ServerName.FSDX, "LRIT GOES-11", "EUMETCast LRIT GOES-11"),
+        LRIT_GOES12(ServerName.FSDX, "LRIT GOES-12", "EUMETCast LRIT GOES-12"),
+        LRIT_MET5(ServerName.FSDX, "LRIT MET-5", "EUMETCast LRIT MET-5"),
+        LRIT_MET7(ServerName.FSDX, "LRIT MET-7", "EUMETCast LRIT MET-7"),
+        LRIT_MTSAT1R(ServerName.FSDX, "LRIT MTSAT-1R", "EUMETCast LRIT MTSAT-1R"),
         METEOSAT_OPENMTP(ServerName.OMTP, "Meteosat OpenMTP"),
-        METOP_AVHRR_L1B(ServerName.LV1B, "Metop AVHRR Level 1b"),
-        MODIS_L1B_MOD02(ServerName.MODS, "MODIS Level 1b"),
-        MODIS_L2_MOD06(ServerName.MODX, "MODIS Level 2 (Cloud Top Properties)"),
-        MODIS_L2_MOD07(ServerName.MODX, "MODIS Level 2 (Atmospheric Profile)"),
-        MODIS_L2_MOD35(ServerName.MODX, "MODIS Level 2 (Cloud Mask)"),
-        MODIS_L2_MOD04(ServerName.MOD4, "MODIS Level 2 (Aerosol)"),
-        MODIS_L2_MOD28(ServerName.MOD8, "MODIS Level 2 (Sea Surface Temperature)"),
-        MODIS_L2_MODR(ServerName.MODR, "MODIS Level 2 (Corrected Reflectance)"),
-        MSG_HRIT_FD(ServerName.MSGT, "MSG HRIT (Full Disk)"),
-        MSG_HRIT_HRV(ServerName.MSGT,"MSG HRIT (High Resolution Visible)"),
+        METOP_AVHRR_L1B(ServerName.LV1B, "Metop AVHRR L 1b", "Metop AVHRR Level 1b"),
+        MODIS_L1B_MOD02(ServerName.MODS, "MOD 02 - Level-1B Calibrated Geolocated Radiances", "MODIS Level 1b"),
+        MODIS_L2_MOD06(ServerName.MODX, "MOD 06 - Cloud Product", "MODIS Level 2 (Cloud Top Properties)"),
+        MODIS_L2_MOD07(ServerName.MODX, "MOD 07 - Atmospheric Profiles", "MODIS Level 2 (Atmospheric Profile)"),
+        MODIS_L2_MOD35(ServerName.MODX, "MOD 35 - Cloud Mask", "MODIS Level 2 (Cloud Mask)"),
+        MODIS_L2_MOD04(ServerName.MOD4, "MOD 04 - Aerosol Product", "MODIS Level 2 (Aerosol)"),
+        MODIS_L2_MOD28(ServerName.MOD8, "MOD 28 - Sea Surface Temperature", "MODIS Level 2 (Sea Surface Temperature)"),
+        MODIS_L2_MODR(ServerName.MODR, "MOD R - Corrected Reflectance", "MODIS Level 2 (Corrected Reflectance)"),
+        MSG_HRIT_FD(ServerName.MSGT, "MSG HRIT FD", "MSG HRIT (Full Disk)"),
+        MSG_HRIT_HRV(ServerName.MSGT, "MSG HRIT HRV", "MSG HRIT (High Resolution Visible)"),
         MTSAT_HRIT(ServerName.MTST, "MTSAT HRIT"),
-        NOAA_AVHRR_L1B(ServerName.LV1B, "NOAA AVHRR Level 1b"),
-        SSMI(ServerName.SMIN, "Terrascan netCDF (SMIN)"),
-        TRMM(ServerName.TMIN, "Terrascan netCDF (TMIN)");
+        NOAA_AVHRR_L1B(ServerName.LV1B, "NOAA AVHRR L 1b", "NOAA AVHRR Level 1b"),
+        SSMI(ServerName.SMIN, "SSMI", "Terrascan netCDF (SMIN)"),
+        TRMM(ServerName.TMIN, "TRMM", "Terrascan netCDF (TMIN)");
 
         /** Name of the server (should be four characters). */
         private final ServerName servName;
 
-        /** Long description. */
+        /** {@literal "Human readable"} format name. This is returned by {@link #toString()}. */
+        private final String friendlyName;
+
+        /** Description of the format. */
         private final String tooltip;
 
         /** Data type. Corresponds to {@code TYPE} in {@literal "RESOLV.SRV"}. */
         private final EntryType type;
 
-        /** */
+        /** 
+         * Filename pattern used when listing files in a directory. 
+         * If {@link #servName} is {@link ServerName#MSGT} then 
+         * {@literal "*PRO*"} is used, otherwise {@literal "*"}. 
+         */
         private final String fileFilter;
 
-        AddeFormat(final ServerName servName, final String tooltip) {
-            this(servName, tooltip, EntryType.IMAGE);
-        }
-
-        AddeFormat(final ServerName servName, final String tooltip, final EntryType type) {
+        /**
+         * Builds an {@literal "ADDE format"} and its associated metadata in 
+         * a typesafe way.
+         * 
+         * @param servName {@link ServerName} that McIDAS-X uses for this format. 
+         * @param friendlyName {@literal "Human readable"} name of the format; returned by {@link #toString()}.
+         * @param tooltip If non-empty, this is used as a tooltip in the local entry editor.
+         * @param type Only use {@link EntryType#IMAGE} for the time being?
+         */
+        private AddeFormat(final ServerName servName, final String friendlyName, final String tooltip, final EntryType type) {
             this.servName = servName;
+            this.friendlyName = friendlyName;
             this.tooltip = tooltip;
             this.type = type;
             this.fileFilter = (servName != ServerName.MSGT) ? "*" : "*PRO*";
+        }
+
+        /**
+         * Builds an {@literal "ADDE Format"} <b>without</b> a tooltip.
+         */
+        private AddeFormat(final ServerName servName, final String friendlyName) {
+            this(servName, friendlyName, "", EntryType.IMAGE);
+        }
+
+        /**
+         * Builds an {@literal "ADDE Format"} <b>with</b> a tooltip.
+         */
+        private AddeFormat(final ServerName servName, final String friendlyName, final String tooltip) {
+            this(servName, friendlyName, tooltip, EntryType.IMAGE);
         }
 
         public ServerName getServerName() { return servName; }
         public String getTooltip() { return tooltip; }
         public EntryType getType() { return type; }
         public String getFileFilter() { return fileFilter; }
-        @Override public String toString() { return tooltip; }
+        @Override public String toString() { return friendlyName; }
     }
 
     private LocalAddeEntry(final Builder builder) {

@@ -74,7 +74,8 @@ public interface AddeEntry {
 
         /**
          * Represents an {@literal "invalid"} {@code EntrySource}. Useful for
-         * {@link #INVALID_ENTRY}.
+         * invalid entry objects ({@link RemoteAddeEntry#INVALID_ENTRY} and 
+         * {@link LocalAddeEntry#INVALID_ENTRY}).
          */
         INVALID
     };

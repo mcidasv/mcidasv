@@ -270,7 +270,6 @@ public class LocalEntryEditor extends javax.swing.JDialog {
      */
     private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {
         selectedPath = getDataDirectory(getLastPath());
-        logger.debug("browseButton: path={}", selectedPath);
         if (selectedPath.length() != 0) {
             if (selectedPath.length() > 19) {
                 directoryButton.setText(selectedPath.substring(0, 16) + "...");
@@ -318,7 +317,7 @@ public class LocalEntryEditor extends javax.swing.JDialog {
     private Set<LocalAddeEntry> pollWidgets() {
         String group = datasetField.getText();
         String name = typeField.getText();
-        String mask = selectedPath;
+        String mask = getLastPath();
         AddeFormat format = (AddeFormat)formatComboBox.getSelectedItem();
         LocalAddeEntry entry = new LocalAddeEntry.Builder(name, group, mask, format).status(EntryStatus.ENABLED).build();
         return Collections.singleton(entry);
@@ -374,8 +373,9 @@ public class LocalEntryEditor extends javax.swing.JDialog {
      * @return Either a path to a data directory or {@code startDir}.
      */
     private String getDataDirectory(final String startDir) {
-        JFileChooser fileChooser = new JFileChooser(startDir);
+        JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fileChooser.setSelectedFile(new File(startDir));
         switch (fileChooser.showOpenDialog(this)) {
             case JFileChooser.APPROVE_OPTION:
                 return fileChooser.getSelectedFile().getAbsolutePath();
