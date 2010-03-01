@@ -972,6 +972,10 @@ public class McIDASV extends IntegratedDataViewer {
         return addeEntries;
     }
 
+    public McvDataManager getMcvDataManager() {
+        return (McvDataManager)getDataManager();
+    }
+
     /**
      * Get McIDASV. 
      * @see ucar.unidata.idv.IdvBase#getIdv()

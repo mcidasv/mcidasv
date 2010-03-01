@@ -71,6 +71,7 @@ import visad.Data;
 import visad.VisADException;
 import visad.georef.MapProjection;
 import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.control.LinearCombo.Combination;
 import edu.wisc.ssec.mcidasv.control.LinearCombo.Selector;
 import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
@@ -113,7 +114,7 @@ public class HydraCombo extends HydraControl {
 
     @Override public boolean init(final DataChoice choice)
         throws VisADException, RemoteException {
-        
+        ((McIDASV)getIdv()).getMcvDataManager().setHydraControl(choice, this);
         dataChoice = choice;
         List<DataSource> sources = new ArrayList<DataSource>();
         choice.getDataSources(sources);
@@ -128,6 +129,8 @@ public class HydraCombo extends HydraControl {
         display = new MultiSpectralDisplay((DirectDataChoice)choice);
         display.setWaveNumber(fieldSelectorChannel);
         display.setDisplayControl(this);
+
+        ((McIDASV)getIdv()).getMcvDataManager().setMultiSpectralDisplay(choice, display);
 
         comboPanel = new CombinationPanel(this);
         if (!persistable.isEmpty()) {

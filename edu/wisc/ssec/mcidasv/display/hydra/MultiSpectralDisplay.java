@@ -48,6 +48,7 @@ import javax.swing.JComboBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.control.HydraCombo;
 import edu.wisc.ssec.mcidasv.control.HydraControl;
 import edu.wisc.ssec.mcidasv.control.LinearCombo;

@@ -73,6 +73,7 @@ import visad.Real;
 import visad.VisADException;
 import visad.georef.MapProjection;
 import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
@@ -120,6 +121,8 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         choice.getDataSources(sources);
         dataChoice = choice;
 
+        ((McIDASV)getIdv()).getMcvDataManager().setHydraControl(choice, this);
+
         source = ((MultiSpectralDataSource)sources.get(0));
         sourceFile = source.getDatasetName();
 
@@ -142,7 +145,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         display = new MultiSpectralDisplay((DirectDataChoice)choice);
         display.setWaveNumber(fieldSelectorChannel);
         display.setDisplayControl(this);
-
+        ((McIDASV)getIdv()).getMcvDataManager().setMultiSpectralDisplay(choice, display);
         return true;
     }
 

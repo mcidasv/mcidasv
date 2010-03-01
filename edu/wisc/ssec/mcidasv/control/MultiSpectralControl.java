@@ -147,6 +147,7 @@ public class MultiSpectralControl extends HydraControl {
     @Override public boolean init(final DataChoice choice)
         throws VisADException, RemoteException 
     {
+        ((McIDASV)getIdv()).getMcvDataManager().setHydraControl(choice, this);
         Hashtable props = choice.getProperties();
         PARAM = (String) props.get(MultiSpectralDataSource.paramKey);
 
@@ -162,6 +163,9 @@ public class MultiSpectralControl extends HydraControl {
         display.setWaveNumber(fieldSelectorChannel);
 
         displayMaster = getViewManager().getMaster();
+
+        // map the data choice to display.
+        ((McIDASV)getIdv()).getMcvDataManager().setMultiSpectralDisplay(choice, display);
 
         //- intialize the Displayable with data before adding to DisplayControl
         DisplayableData imageDisplay = display.getImageDisplay();

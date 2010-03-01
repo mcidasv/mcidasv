@@ -32,12 +32,22 @@ package edu.wisc.ssec.mcidasv.data;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
+import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataContext;
 import ucar.unidata.data.DataManager;
 import ucar.unidata.data.DataSource;
+
 import ucar.unidata.util.TwoFacedObject;
+
 import ucar.unidata.xml.XmlResourceCollection;
+
+import edu.wisc.ssec.mcidasv.control.HydraControl;
+import edu.wisc.ssec.mcidasv.control.MultiSpectralControl;
+
+import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 
 /**
  * <p>
@@ -60,6 +70,9 @@ public class McvDataManager extends DataManager {
      */
     private static final String STILL_LUCKY_ID = "file.any";
 
+    private final Map<DataChoice, HydraControl> hydraDataToControl = new HashMap<DataChoice, HydraControl>();
+    private final Map<DataChoice, MultiSpectralDisplay> hydraDataToDisplay = new HashMap<DataChoice, MultiSpectralDisplay>();
+
     /**
      * Default constructor.
      */
@@ -76,6 +89,30 @@ public class McvDataManager extends DataManager {
      */
     public McvDataManager(final DataContext dataContext) {
         super(dataContext);
+    }
+
+    public boolean containsHydraControl(final DataChoice choice) {
+        return hydraDataToControl.containsKey(choice);
+    }
+
+    public boolean containsMultiSpectralDisplay(final DataChoice choice) {
+        return hydraDataToDisplay.containsKey(choice);
+    }
+
+    public void setHydraControl(final DataChoice choice, final HydraControl control) {
+        hydraDataToControl.put(choice, control);
+    }
+
+    public void setMultiSpectralDisplay(final DataChoice choice, final MultiSpectralDisplay display) {
+        hydraDataToDisplay.put(choice, display);
+    }
+
+    public HydraControl getHydraControl(final DataChoice choice) {
+        return hydraDataToControl.get(choice);
+    }
+
+    public MultiSpectralDisplay getMultiSpectralDisplay(final DataChoice choice) {
+        return hydraDataToDisplay.get(choice);
     }
 
     /**
