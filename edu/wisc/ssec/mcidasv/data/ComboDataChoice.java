@@ -50,6 +50,16 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.wisc.ssec.mcidasv.control.LinearCombo;
+import edu.wisc.ssec.mcidasv.control.LinearCombo.Selector;
+import edu.wisc.ssec.mcidasv.control.LinearCombo.SelectorUpdateEvent;
 
 
 /**
@@ -59,8 +69,16 @@ import java.util.Vector;
  * @version $Revision$
  */
 public class ComboDataChoice extends DataChoice {
+
+
+    private static final Logger logger = LoggerFactory.getLogger(ComboDataChoice.class);
+
     private static final List<DataCategory> CATEGORIES = 
         DataCategory.parseCategories("MultiSpectral;IMAGE;");
+
+    private final List<DataChangeListener> listeners = new CopyOnWriteArrayList<DataChangeListener>();
+
+    private DataSource dataSource;
 
     /** The data */
     private Data data;
@@ -69,7 +87,9 @@ public class ComboDataChoice extends DataChoice {
     /**
      *  The bean constructor. We need this for xml decoding.
      */
-    public ComboDataChoice() {}
+    public ComboDataChoice() {
+        AnnotationProcessor.process(this);
+    }
 
 
     /**
@@ -80,6 +100,7 @@ public class ComboDataChoice extends DataChoice {
      */
     public ComboDataChoice(ComboDataChoice other) {
         super(other);
+        AnnotationProcessor.process(this);
         this.data = other.data;
     }
 
@@ -91,12 +112,14 @@ public class ComboDataChoice extends DataChoice {
      */
     public ComboDataChoice(String name, List categories, Hashtable props) {
         super(Math.random(), name, name, categories, props);
+        AnnotationProcessor.process(this);
     }
 
     public ComboDataChoice(final String id, final String name, final Hashtable props, 
         final Data data) 
     {
         super(id, name, name, CATEGORIES, props);
+        AnnotationProcessor.process(this);
         this.data = data;
     }
 
@@ -111,6 +134,27 @@ public class ComboDataChoice extends DataChoice {
 
     public void setData(Data data) {
       this.data = data;
+    }
+
+    @EventSubscriber(eventClass=SelectorUpdateEvent.class)
+    public void onSelectorUpdate(SelectorUpdateEvent event) {
+        logger.debug("onSelUpdate: name={}, event={}", name, event);
+        Selector selector = (Selector)event.getSrc();
+        this.data = selector.getData();
+        if (dataSource != null)
+            dataSource.reloadData();
+
+        for (DataChangeListener listener : listeners) {
+            listener.dataChanged();
+        }
+    }
+
+    public void setDataSource(final DataSource source) {
+        dataSource = source;
+    }
+
+    public DataSource getDataSource() {
+        return dataSource;
     }
 
     /**
@@ -145,7 +189,14 @@ public class ComboDataChoice extends DataChoice {
      *
      * @param listener listener
      */
-    public void addDataChangeListener(DataChangeListener listener) {}
+    public void addDataChangeListener(DataChangeListener listener) {
+        if (listener == null)
+            return;
+        listeners.add(listener);
+        
+        if (dataSource != null)
+            dataSource.addDataChangeListener(listener);
+    }
 
 
     /**
@@ -153,9 +204,12 @@ public class ComboDataChoice extends DataChoice {
      *
      * @param listener The {@link DataChangeListener} to remove.
      */
-    public void removeDataChangeListener(DataChangeListener listener) {}
-
-
-
+    public void removeDataChangeListener(DataChangeListener listener) {
+        if (listener == null)
+            return;
+        listeners.remove(listener);
+        if (dataSource != null)
+            dataSource.removeDataChangeListener(listener);
+    }
 }
 

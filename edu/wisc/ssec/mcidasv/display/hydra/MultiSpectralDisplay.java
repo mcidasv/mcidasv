@@ -45,10 +45,14 @@ import java.util.Map;
 
 import javax.swing.JComboBox;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.wisc.ssec.mcidasv.control.HydraCombo;
 import edu.wisc.ssec.mcidasv.control.HydraControl;
 import edu.wisc.ssec.mcidasv.control.LinearCombo;
 import edu.wisc.ssec.mcidasv.control.HydraCombo.CombinationPanel;
+import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
 import edu.wisc.ssec.mcidasv.data.hydra.GrabLineRendererJ3D;
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource;
@@ -84,6 +88,8 @@ import visad.VisADException;
 import visad.bom.RubberBandBoxRendererJ3D;
 
 public class MultiSpectralDisplay implements DisplayListener {
+
+    private static final Logger logger = LoggerFactory.getLogger(ComboDataChoice.class);
 
     private static final String DISP_NAME = "Spectrum";
     private static int cnt = 1;
@@ -270,22 +276,30 @@ public class MultiSpectralDisplay implements DisplayListener {
         new RubberBandBox(this, xmap, ymap);
 
         if (displayControl == null) { //- add in a ref for the default spectrum, ie no DisplayControl
-          DataReferenceImpl spectrumRef = new DataReferenceImpl(hashCode() + "_spectrumRef");
-          spectrumRef.setData(spectrum);
-          addRef(spectrumRef, Color.WHITE);
+            DataReferenceImpl spectrumRef = new DataReferenceImpl(hashCode() + "_spectrumRef");
+            spectrumRef.setData(spectrum);
+            addRef(spectrumRef, Color.WHITE);
         }
 
         if (data.hasBandNames()) {
-          bandSelectComboBox = new JComboBox(data.getBandNames().toArray());
-          bandSelectComboBox.setSelectedItem(data.init_bandName);
-          bandSelectComboBox.addActionListener(new ActionListener() {
-            HashMap bandNameMap = data.getBandNameMap();
-            public void actionPerformed(ActionEvent e) {
-              String bandName = (String) bandSelectComboBox.getSelectedItem();
-              float channel = ((Float)bandNameMap.get(bandName)).floatValue();
-              setWaveNumber(channel);
-            }
-          });
+            bandSelectComboBox = new JComboBox(data.getBandNames().toArray());
+            bandSelectComboBox.setSelectedItem(data.init_bandName);
+            bandSelectComboBox.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    String bandName = (String)bandSelectComboBox.getSelectedItem();
+                    if (bandName == null)
+                        return;
+
+                    HashMap<String, Float> bandMap = data.getBandNameMap();
+                    if (bandMap == null)
+                        return;
+
+                    if (!bandMap.containsKey(bandName))
+                        return;
+
+                    setWaveNumber(bandMap.get(bandName));
+                }
+            });
         }
     }
 

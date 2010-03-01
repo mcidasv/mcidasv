@@ -51,6 +51,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import org.bushe.swing.event.EventBus;
 import org.python.core.PyDictionary;
 import org.python.core.PyFloat;
 import org.python.core.PyInteger;
@@ -83,6 +84,13 @@ import edu.wisc.ssec.mcidasv.jython.ConsoleCallback;
 
 public class LinearCombo extends HydraControl implements ConsoleCallback {
 
+    public static final String HYDRA_HELP_ID = "idv.controls.hydra.linearcombinationcontrol";
+    public static final String HYDRA_SRC = "/edu/wisc/ssec/mcidasv/resources/python/linearcombo/hydra.py";
+    public static final String CONSOLE_IDV_OBJECT = "_idv";
+    public static final String CONSOLE_CONTROL_OBJECT = "_linearCombo";
+    public static final String CONSOLE_OBJECT = "_jythonConsole";
+    public static final String CONSOLE_DATA_OBJECT = "_data";
+
     private Console console;
 
     private MultiSpectralDisplay display;
@@ -104,15 +112,13 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 
     public LinearCombo() {
         super();
-        setHelpUrl("idv.controls.hydra.linearcombinationcontrol");
+        setHelpUrl(HYDRA_HELP_ID);
     }
 
     @Override public boolean init(final DataChoice choice) throws VisADException, RemoteException {
         List<DataSource> sources = new ArrayList<DataSource>();
         choice.getDataSources(sources);
         dataChoice = choice;
-
-
 
         source = ((MultiSpectralDataSource)sources.get(0));
         sourceFile = source.getDatasetName();
@@ -126,12 +132,12 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         console = new Console();
         console.setCallbackHandler(this);
 
-        console.injectObject("_idv", new PyJavaInstance(getIdv()));
-        console.injectObject("_linearCombo", new PyJavaInstance(this));
-        console.injectObject("_jythonConsole", new PyJavaInstance(console));
-        console.injectObject("_data", new PyJavaInstance(source.getMultiSpectralData(choice)));
+        console.injectObject(CONSOLE_IDV_OBJECT, new PyJavaInstance(getIdv()));
+        console.injectObject(CONSOLE_CONTROL_OBJECT, new PyJavaInstance(this));
+        console.injectObject(CONSOLE_OBJECT, new PyJavaInstance(console));
+        console.injectObject(CONSOLE_DATA_OBJECT, new PyJavaInstance(source.getMultiSpectralData(choice)));
 
-        console.runFile("__main__", "/edu/wisc/ssec/mcidasv/resources/python/linearcombo/hydra.py");
+        console.runFile("__main__", HYDRA_SRC);
 
         display = new MultiSpectralDisplay((DirectDataChoice)choice);
         display.setWaveNumber(fieldSelectorChannel);
@@ -212,6 +218,26 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         String cmd = 
             String.format("_linearCombo.moveSelector('%s', %f)", id, wavenum);
         console.addPretendHistory(cmd);
+//        EventBus.publish(new SelectorUpdateEvent(id, wavenum, this));
+    }
+
+    public static class SelectorUpdateEvent {
+        final String id;
+        final float wavenum;
+        final Object src;
+        
+        public SelectorUpdateEvent(final String id, final float wavenum, final Object src) {
+            this.id = id;
+            this.wavenum = wavenum;
+            this.src = src;
+        }
+
+        public String getId() { return id; }
+        public float getWavenum() { return wavenum; }
+        public Object getSrc() { return src; }
+        public String toString() {
+            return String.format("[SelectorUpdateEvent@%x: id=%s, wavenum=%s, src=%s]", hashCode(), id, wavenum, src);
+        }
     }
 
     protected void addSelector(final Selector selector) throws Exception {
@@ -480,6 +506,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
             waveNumber = newChannel;
             try {
                 display.setSelectorValue(ID, waveNumber);
+                EventBus.publish(new SelectorUpdateEvent(ID, waveNumber, this));
             } catch (Exception e) {
                 LogUtil.logException("Selector.setWaveNumber", e);
             }
