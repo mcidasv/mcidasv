@@ -165,7 +165,7 @@ public class MultiSpectralControl extends HydraControl {
         displayMaster = getViewManager().getMaster();
 
         // map the data choice to display.
-        ((McIDASV)getIdv()).getMcvDataManager().setMultiSpectralDisplay(choice, display);
+        ((McIDASV)getIdv()).getMcvDataManager().setHydraDisplay(choice, display);
 
         //- intialize the Displayable with data before adding to DisplayControl
         DisplayableData imageDisplay = display.getImageDisplay();

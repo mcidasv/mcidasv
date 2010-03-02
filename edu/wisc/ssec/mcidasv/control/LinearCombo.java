@@ -145,7 +145,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         display = new MultiSpectralDisplay((DirectDataChoice)choice);
         display.setWaveNumber(fieldSelectorChannel);
         display.setDisplayControl(this);
-        ((McIDASV)getIdv()).getMcvDataManager().setMultiSpectralDisplay(choice, display);
+        ((McIDASV)getIdv()).getMcvDataManager().setHydraDisplay(choice, display);
         return true;
     }
 

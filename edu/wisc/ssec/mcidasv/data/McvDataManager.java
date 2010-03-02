@@ -95,7 +95,7 @@ public class McvDataManager extends DataManager {
         return hydraDataToControl.containsKey(choice);
     }
 
-    public boolean containsMultiSpectralDisplay(final DataChoice choice) {
+    public boolean containsHydraDisplay(final DataChoice choice) {
         return hydraDataToDisplay.containsKey(choice);
     }
 
@@ -103,7 +103,7 @@ public class McvDataManager extends DataManager {
         hydraDataToControl.put(choice, control);
     }
 
-    public void setMultiSpectralDisplay(final DataChoice choice, final MultiSpectralDisplay display) {
+    public void setHydraDisplay(final DataChoice choice, final MultiSpectralDisplay display) {
         hydraDataToDisplay.put(choice, display);
     }
 
@@ -111,7 +111,7 @@ public class McvDataManager extends DataManager {
         return hydraDataToControl.get(choice);
     }
 
-    public MultiSpectralDisplay getMultiSpectralDisplay(final DataChoice choice) {
+    public MultiSpectralDisplay getHydraDisplay(final DataChoice choice) {
         return hydraDataToDisplay.get(choice);
     }
 

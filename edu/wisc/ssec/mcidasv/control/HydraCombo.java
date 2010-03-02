@@ -130,7 +130,7 @@ public class HydraCombo extends HydraControl {
         display.setWaveNumber(fieldSelectorChannel);
         display.setDisplayControl(this);
 
-        ((McIDASV)getIdv()).getMcvDataManager().setMultiSpectralDisplay(choice, display);
+        ((McIDASV)getIdv()).getMcvDataManager().setHydraDisplay(choice, display);
 
         comboPanel = new CombinationPanel(this);
         if (!persistable.isEmpty()) {
