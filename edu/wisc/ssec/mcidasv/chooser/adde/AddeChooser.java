@@ -326,7 +326,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
 
     /**
-     * Reload the list of servers if they have changed
+     * Force a reload of the available servers and groups.
      */
     public void updateServerList() {
         updateServers();
@@ -334,7 +334,9 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
 
     /**
-     * Sort the servers alphabetically
+     * Returns a {@link Map} with {@code user} and {@code proj} keys. The values
+     * are either the accounting information associated with {@code server} or
+     * the {@link AddeEntry#DEFAULT_ACCOUNT} values.
      */
     private Map<String, String> getAccounting(final AddeServer server) {
         Map<String, String> acctInfo = new HashMap<String, String>();
@@ -343,8 +345,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         String strType = this.getDataType();
         EntryType type = EntryTransforms.strToEntryType(strType);
         List<String> groups = entryStore.getGroupsFor(name, type);
-        String user = RemoteAddeEntry.DEFAULT_ACCOUNT.getUsername();
-        String proj = RemoteAddeEntry.DEFAULT_ACCOUNT.getProject();
+        String user = AddeEntry.DEFAULT_ACCOUNT.getUsername();
+        String proj = AddeEntry.DEFAULT_ACCOUNT.getProject();
         if (!groups.isEmpty()) {
             String group = groups.get(0);
             AddeAccount acct = entryStore.getAccountingFor(name, group, type);
@@ -394,7 +396,9 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         if (!addeServers.isEmpty()) {
             if (selected == null || !containsServerName(addeServers, selected))
                 selected = serverSelector.getItemAt(0);
-            serverSelector.setSelectedItem(selected);
+
+            int index = getSelectorIndex(selected, serverSelector);
+            serverSelector.setSelectedIndex((index < 0) ? 0 : index);
         }
     }
 

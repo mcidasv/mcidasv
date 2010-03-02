@@ -242,6 +242,8 @@ public class EntryTransforms {
                                             .source(source)
                                             .type(type)
                                             .description(description)
+                                            .validity(EntryValidity.VERIFIED)
+                                            .status(EntryStatus.ENABLED)
                                             .build();
                     es.add(e);
                 }
@@ -254,6 +256,8 @@ public class EntryTransforms {
                                             .Builder(address, name)
                                             .source(source)
                                             .description(description)
+                                            .validity(EntryValidity.VERIFIED)
+                                            .status(EntryStatus.ENABLED)
                                             .build();
                     es.add(e);
                 }
