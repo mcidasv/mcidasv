@@ -211,7 +211,7 @@ public final class XPathUtils {
         Contract.notNull(xmlFile);
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
+        factory.setNamespaceAware(false);
         try {
             DocumentBuilder builder = factory.newDocumentBuilder();
             return builder.parse(xmlFile);
@@ -224,7 +224,7 @@ public final class XPathUtils {
         Contract.notNull(xmlFile);
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
+        factory.setNamespaceAware(false);
         try {
             DocumentBuilder builder = factory.newDocumentBuilder();
             return builder.parse(xmlFile);
@@ -237,7 +237,7 @@ public final class XPathUtils {
         Contract.notNull(in);
         
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
+        factory.setNamespaceAware(false);
         try {
             DocumentBuilder builder = factory.newDocumentBuilder();
             return builder.parse(in);
