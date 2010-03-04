@@ -28,6 +28,8 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
+package edu.wisc.ssec.mcidasv.util;
+
 import static edu.wisc.ssec.mcidasv.Constants.PROP_VERSION_MAJOR;
 import static edu.wisc.ssec.mcidasv.Constants.PROP_VERSION_MINOR;
 import static edu.wisc.ssec.mcidasv.Constants.PROP_VERSION_RELEASE;

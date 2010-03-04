@@ -85,6 +85,9 @@ public class LocalAddeEntry implements AddeEntry {
 
     /** C */
     private final String name;
+    
+    
+    private String asStringId;
 
     public enum ServerName {
         AREA, AMSR, AMRR, GINI, FSDX, OMTP, LV1B, MODS, MODX, MOD4, MOD8, 
@@ -265,8 +268,8 @@ public class LocalAddeEntry implements AddeEntry {
     public String getFileMask() {
         return fileMask;
     }
-    
-    public String getName() {
+
+    @Override public String getName() {
         return name;
     }
 
@@ -277,7 +280,7 @@ public class LocalAddeEntry implements AddeEntry {
     public String getStart() {
         return start;
     }
-    
+
     public String getEnd() {
         return end;
     }
@@ -294,10 +297,7 @@ public class LocalAddeEntry implements AddeEntry {
         return "N";
     }
 
-
-
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result
@@ -308,8 +308,7 @@ public class LocalAddeEntry implements AddeEntry {
         return result;
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -349,6 +348,12 @@ public class LocalAddeEntry implements AddeEntry {
             return false;
         }
         return true;
+    }
+
+    @Override public String asStringId() {
+        if (asStringId == null)
+            asStringId = "localhost!"+group+'!'+EntryType.IMAGE.name()+'!'+name;
+        return asStringId;
     }
 
     @Override public String toString() {

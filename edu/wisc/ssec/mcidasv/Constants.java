@@ -158,9 +158,11 @@ public interface Constants extends IdvConstants {
 	/** Gail's server preference manager. */
 	public static final String PREF_LIST_ADDE_SERVERS = "ADDE Servers";
 
-        /** server state preference. Holds the last server/group used */
-        public static final String PREF_SERVERSTATE =
-            "idv.chooser.adde.serverstate";
+    /** Server state preference ID prefix. Holds the last server/group used. */
+    public static final String PREF_SERVERSTATE = "idv.chooser.adde.serverstate";
+
+    /** The server/group to use if there is no value associated with {@link #PREF_SERVERSTATE}. */
+    public static final String[] DEFAULT_SERVERSTATE = new String[] { "adde.ucar.edu", "RTIMAGES" };
 
 	/** Advanced prefs for IDV, Java, and McIDAS-X. */
 	public static final String PREF_LIST_ADVANCED = "Advanced";

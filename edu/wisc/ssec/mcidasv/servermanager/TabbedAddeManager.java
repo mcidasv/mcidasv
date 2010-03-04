@@ -305,6 +305,12 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
                 remoteSelectionModelChanged(e);
             }
         });
+        remoteTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(final java.awt.event.MouseEvent e) {
+                if (e.getClickCount() == 2)
+                    showRemoteEditor(selectedRemoteEntry);
+            }
+        });
 
         newEntryButton.setText("Add New Server");
         newEntryButton.addActionListener(new java.awt.event.ActionListener() {
@@ -392,6 +398,12 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
         localEntries.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(final ListSelectionEvent e) {
                 localSelectionModelChanged(e);
+            }
+        });
+        localEntries.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(final java.awt.event.MouseEvent e) {
+                if (e.getClickCount() == 2)
+                    showLocalEditor(selectedLocalEntry);
             }
         });
 
@@ -932,7 +944,7 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
             switch (column) {
                 case 0: return entry.getGroup();
                 case 1: return entry.getName();
-                case 2: return entry.getFormat().getTooltip();
+                case 2: return entry.getFormat();
                 case 3: return entry.getMask();
                 default: throw new IndexOutOfBoundsException();
             }

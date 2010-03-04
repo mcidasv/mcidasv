@@ -27,6 +27,7 @@
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
+
 package edu.wisc.ssec.mcidasv.servermanager;
 
 public interface AddeEntry {
@@ -88,6 +89,7 @@ public interface AddeEntry {
 
     public String getAddress();
     public String getGroup();
+    public String getName();
     public AddeAccount getAccount();
     public EntryType getEntryType();
     public EntryValidity getEntryValidity();
@@ -98,4 +100,7 @@ public interface AddeEntry {
 
     public void setEntryStatus(final EntryStatus newStatus);
     public void setEntryAlias(final String newAlias);
+
+    public String asStringId();
+    public String toString();
 }

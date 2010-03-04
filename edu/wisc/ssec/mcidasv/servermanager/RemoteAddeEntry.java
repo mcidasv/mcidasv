@@ -27,6 +27,7 @@
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
+
 package edu.wisc.ssec.mcidasv.servermanager;
 
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
@@ -47,9 +48,9 @@ public class RemoteAddeEntry implements AddeEntry {
     /** The {@literal "dataset"} of this entry. */
     private final String group;
 
-    /** Err... */
-    // TODO(jon): wait, what is this?
-    private final String description;
+//    /** Err... */
+//    // TODO(jon): wait, what is this?
+//    private final String description;
 
     /** This entry's type. */
     private EntryType entryType;
@@ -65,6 +66,8 @@ public class RemoteAddeEntry implements AddeEntry {
 
     /** Allows the user to refer to this entry with an arbitrary name. */
     private String entryAlias = "";
+
+    private String asStringId;
 
     /** 
      * Used so that the hashCode of this entry is not needlessly 
@@ -83,7 +86,7 @@ public class RemoteAddeEntry implements AddeEntry {
         this.account = builder.account;
         this.address = builder.address;
         this.group = builder.group;
-        this.description = builder.description;
+//        this.description = builder.description;
         this.entryType = builder.entryType;
         this.entryValidity = builder.entryValidity;
         this.entrySource = builder.entrySource;
@@ -102,6 +105,10 @@ public class RemoteAddeEntry implements AddeEntry {
      */
     public String getGroup() {
         return group;
+    }
+
+    public String getName() {
+        return "$";
     }
 
     /**
@@ -233,8 +240,15 @@ public class RemoteAddeEntry implements AddeEntry {
         return result;
     }
 
+    public String asStringId() {
+        if (asStringId == null)
+            asStringId = address+'!'+group+'!'+entryType.name();
+        return asStringId;
+    }
+
     public String toString() {
-        return String.format("[RemoteAddeEntry@%x: address=%s, group=%s, entryType=%s, entryValidity=%s, account=%s, description=%s, status=%s]", hashCode(), address, group, entryType, entryValidity, account, description, entryStatus.name());
+//        return String.format("[RemoteAddeEntry@%x: address=%s, group=%s, entryType=%s, entryValidity=%s, account=%s, description=%s, status=%s]", hashCode(), address, group, entryType, entryValidity, account, description, entryStatus.name());
+        return String.format("[RemoteAddeEntry@%x: address=%s, group=%s, entryType=%s, entryValidity=%s, account=%s, status=%s]", hashCode(), address, group, entryType, entryValidity, account, entryStatus.name());
     }
 
     /**
@@ -331,23 +345,23 @@ public class RemoteAddeEntry implements AddeEntry {
             return this;
         }
 
-        /**
-         * Optional {@literal "parameter"} for an ADDE entry. Allows you to
-         * set {@link RemoteAddeEntry#description}. If this method is not 
-         * called, {@code description} will default to {@literal ""}.
-         * 
-         * @param description Description field. Cannot be {@code null}.
-         * 
-         * @return Current {@literal "builder"} for an ADDE entry.
-         * 
-         * @throws NullPointerException if {@code description} is {@code null}.
-         */
-        public Builder description(final String description) {
-            if (description == null)
-                throw new NullPointerException("Description cannot be null");
-            this.description = description;
-            return this;
-        }
+//        /**
+//         * Optional {@literal "parameter"} for an ADDE entry. Allows you to
+//         * set {@link RemoteAddeEntry#description}. If this method is not 
+//         * called, {@code description} will default to {@literal ""}.
+//         * 
+//         * @param description Description field. Cannot be {@code null}.
+//         * 
+//         * @return Current {@literal "builder"} for an ADDE entry.
+//         * 
+//         * @throws NullPointerException if {@code description} is {@code null}.
+//         */
+//        public Builder description(final String description) {
+//            if (description == null)
+//                throw new NullPointerException("Description cannot be null");
+//            this.description = description;
+//            return this;
+//        }
 
         /**
          * Optional {@literal "parameter"} for an ADDE entry. Allows you to

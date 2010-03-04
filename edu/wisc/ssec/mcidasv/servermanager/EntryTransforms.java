@@ -27,6 +27,7 @@
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
+
 package edu.wisc.ssec.mcidasv.servermanager;
 
 import static ucar.unidata.xml.XmlUtil.findChildren;
@@ -118,7 +119,7 @@ public class EntryTransforms {
         return addeEntries;
     }
 
-    public static List<AddeServer> convertMcvServers(final Collection<AddeEntry> entries) {
+    public static Set<AddeServer> convertMcvServers(final Collection<AddeEntry> entries) {
         Set<AddeServer> addeServs = newLinkedHashSet();
         Set<String> addrs = newLinkedHashSet();
         for (AddeEntry e : entries) {
@@ -145,7 +146,7 @@ public class EntryTransforms {
             addeServs.add(addeServ);
             addrs.add(addr);
         }
-        return arrList(addeServs);
+        return addeServs;
     }
 
     /**
@@ -186,8 +187,8 @@ public class EntryTransforms {
                         .type(entryType)
                         .status(entryStatus)
                         .source(entrySource)
-                        .validity(EntryValidity.VERIFIED)
-                        .description(description);
+                        .validity(EntryValidity.VERIFIED);
+
 //                System.err.println("AWWWOOOOOGAAA: remove that .validity(EntryValidity.VERIFIED) junk!");
                 if (((user != null) && (proj != null)) && ((user.length() > 0) && (proj.length() > 0)))
                     incomplete = incomplete.account(user, proj);
@@ -241,7 +242,8 @@ public class EntryTransforms {
                                             .Builder(address, name)
                                             .source(source)
                                             .type(type)
-                                            .description(description)
+                                            .validity(EntryValidity.VERIFIED)
+                                            .status(EntryStatus.ENABLED)
                                             .validity(EntryValidity.VERIFIED)
                                             .status(EntryStatus.ENABLED)
                                             .build();
@@ -255,7 +257,8 @@ public class EntryTransforms {
                     RemoteAddeEntry e = new RemoteAddeEntry
                                             .Builder(address, name)
                                             .source(source)
-                                            .description(description)
+                                            .validity(EntryValidity.VERIFIED)
+                                            .status(EntryStatus.ENABLED)
                                             .validity(EntryValidity.VERIFIED)
                                             .status(EntryStatus.ENABLED)
                                             .build();
