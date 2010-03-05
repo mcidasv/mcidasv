@@ -826,6 +826,8 @@ public class MultiSpectralDataSource extends HydraDataSource {
          multiSpectData_s.add(aggr);
 
 
+         categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
+
          hasImagePreview = true;
          hasChannelSelect = true;
          hasBandNames = true;
@@ -1005,11 +1007,17 @@ public class MultiSpectralDataSource extends HydraDataSource {
                   if ((props != null) && (props.get(MultiDimensionSubset.key) != null)) {
                     subset = (HashMap) ((MultiDimensionSubset)props.get(MultiDimensionSubset.key)).getSubset();
                     if (props.containsKey(SpectrumAdapter.channelIndex_name)) {
-                      double[] coords = (double[]) subset.get(SpectrumAdapter.channelIndex_name);
                       int idx = ((Integer) props.get(SpectrumAdapter.channelIndex_name)).intValue();
-                      coords[0] = (double)idx;
-                      coords[1] = (double)idx;
-                      coords[2] = (double)1;
+                      double[] coords = (double[]) subset.get(SpectrumAdapter.channelIndex_name);
+                      if (coords == null) {
+                        coords = new double[] {(double)idx, (double)idx, (double)1};
+                        subset.put(SpectrumAdapter.channelIndex_name, coords);
+                      }
+                      else {
+                        coords[0] = (double)idx;
+                        coords[1] = (double)idx;
+                        coords[2] = (double)1;
+                      }
                     }
                   }
                 }
