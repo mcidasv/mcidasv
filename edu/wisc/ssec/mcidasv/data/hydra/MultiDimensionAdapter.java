@@ -172,6 +172,10 @@ public abstract class MultiDimensionAdapter {
        float[] float_range = processRange((short[])range, subset);
        f_field = makeFlatField(domainSet, new float[][] {float_range});
      }
+     else if (arrayType == Byte.TYPE) {
+       float[] float_range = processRange((byte[])range, subset);
+       f_field = makeFlatField(domainSet, new float[][] {float_range});
+     }
 
      return f_field;
    }
@@ -187,6 +191,17 @@ public abstract class MultiDimensionAdapter {
        return f_range;
      }
      else { 
+       return rangeProcessor.processRange(range, (HashMap)subset);
+     }
+   }
+
+   public float[] processRange(byte[] range, Object subset) {
+     if (rangeProcessor == null) {
+       float[] f_range = new float[range.length];
+       for (int i=0; i<range.length;i++) f_range[i] = (float) range[i];
+       return f_range;
+     }
+     else {
        return rangeProcessor.processRange(range, (HashMap)subset);
      }
    }

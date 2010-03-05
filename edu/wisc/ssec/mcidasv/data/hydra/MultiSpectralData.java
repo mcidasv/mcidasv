@@ -66,6 +66,7 @@ public class MultiSpectralData {
   String sensorName = null;
   String platformName = null;
   String paramName = null;
+  String inputParamName = null;
   String name = null;
 
   public float init_wavenumber = 919.50f;
@@ -81,10 +82,11 @@ public class MultiSpectralData {
   
 
   public MultiSpectralData(SwathAdapter swathAdapter, SpectrumAdapter spectrumAdapter,
-                           String paramName, String sensorName, String platformName) {
+                           String inputParamName, String paramName, String sensorName, String platformName) {
     this.swathAdapter = swathAdapter;
     this.spectrumAdapter = spectrumAdapter;
     this.paramName = paramName;
+    this.inputParamName = inputParamName;
     this.name = swathAdapter.getArrayName();
 
     if (spectrumAdapter != null) {
@@ -104,7 +106,7 @@ public class MultiSpectralData {
 
   public MultiSpectralData(SwathAdapter swathAdapter, SpectrumAdapter spectrumAdapter,
                            String sensorName, String platformName) {
-    this(swathAdapter, spectrumAdapter, "BrightnessTemp", sensorName, platformName);
+    this(swathAdapter, spectrumAdapter, "Radiance", "BrightnessTemp", sensorName, platformName);
   }
 
   public MultiSpectralData(SwathAdapter swathAdapter, SpectrumAdapter spectrumAdapter) {
@@ -169,7 +171,10 @@ public class MultiSpectralData {
       FunctionType new_type = new FunctionType(f_type.getDomain(), RealType.getRealType("BrightnessTemp"));
       new_image = new FlatField(new_type, image.getDomainSet());
       float[][] values = image.getFloats(false);
-      float[] bt_values = radianceToBrightnessTemp(values[0], channel, platformName, sensorName);
+      float[] bt_values = values[0];
+      if (inputParamName == "Radiance") {
+        bt_values = radianceToBrightnessTemp(values[0], channel, platformName, sensorName);
+      }
       new_image.setSamples(new float[][] {bt_values}, false);
     }
     else if (param.equals("Reflectance")) {
@@ -192,7 +197,10 @@ public class MultiSpectralData {
       FunctionType new_type = new FunctionType(f_type.getDomain(), RealType.getRealType("BrightnessTemp"));
       float[][] channels = ((SampledSet)spectrum.getDomainSet()).getSamples(false);
       float[][] values = spectrum.getFloats(false);
-      float[] bt_values = radianceToBrightnessTempSpectrum(values[0], channels[0], platformName, sensorName);
+      float[] bt_values = values[0];
+      if (inputParamName == "Radiance") {
+        bt_values = radianceToBrightnessTempSpectrum(values[0], channels[0], platformName, sensorName);
+      }
       new_spectrum = new FlatField(new_type, spectrum.getDomainSet());
       new_spectrum.setSamples(new float[][] {bt_values}, true);
     }

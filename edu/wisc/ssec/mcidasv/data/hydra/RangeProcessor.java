@@ -59,11 +59,12 @@ public class RangeProcessor {
   float[] scale = null;
   float[] offset = null;
   float[] missing = null;
-  float[] low = new float[] {Float.MIN_VALUE};
+  float[] low = new float[] {-Float.MAX_VALUE};
   float[] high = new float[] {Float.MAX_VALUE};
   float[] valid_range = new float[2];
-  float valid_low  = Float.MIN_VALUE;
+  float valid_low  = -Float.MAX_VALUE;
   float valid_high = Float.MAX_VALUE;
+  boolean unpack = false;
 
   public RangeProcessor() {
   }
@@ -71,6 +72,10 @@ public class RangeProcessor {
   public RangeProcessor(MultiDimensionReader reader, HashMap metadata) throws Exception {
     this.reader = reader;
     this.metadata = metadata;
+
+    if (metadata.get("unpack") != null) {
+      unpack = true;
+    }
 
     HDFArray scaleAttr = reader.getArrayAttribute((String)metadata.get("array_name"), (String)metadata.get("scale_name"));
 
@@ -119,6 +124,11 @@ public class RangeProcessor {
       missing = new float[attr.length];
       for (int k=0; k<attr.length; k++) missing[k] = (float) attr[k];
     }
+    else if (offsetAttr.getType().equals(Integer.TYPE)) {
+      int[] attr = (int[]) offsetAttr.getArray();
+      missing = new float[attr.length];
+      for (int k=0; k<attr.length; k++) missing[k] = (float) attr[k];
+    }
     if (offsetAttr.getType().equals(Double.TYPE)) {
       double[] attr = (double[]) offsetAttr.getArray();
       missing = new float[attr.length];
@@ -154,8 +164,10 @@ public class RangeProcessor {
 
   public float[] processRange(short[] values, HashMap subset) {
      int channelIndex = 0;
-     if (subset.get(SpectrumAdapter.channelIndex_name) != null) {
-       channelIndex  = (int) ((double[])subset.get(SpectrumAdapter.channelIndex_name))[0];
+     if (subset != null) {
+       if (subset.get(SpectrumAdapter.channelIndex_name) != null) {
+         channelIndex  = (int) ((double[])subset.get(SpectrumAdapter.channelIndex_name))[0];
+       }
      }
      float[] new_values = new float[values.length];
      for (int k=0; k<values.length;k++) {
@@ -164,7 +176,12 @@ public class RangeProcessor {
          new_values[k] = Float.NaN;
        }
        else {
-         new_values[k] = scale[channelIndex]*(val - offset[channelIndex]);
+         if (unpack) {
+           new_values[k] = scale[channelIndex]*(val) + offset[channelIndex];
+         }
+         else {
+           new_values[k] = scale[channelIndex]*(val - offset[channelIndex]);
+         }
        }
      }
      return new_values;
@@ -178,12 +195,60 @@ public class RangeProcessor {
          new_values[k] = Float.NaN;
        }
        else {
-         new_values[k] = scale[k]*(val - offset[k]);
+         if (unpack) {
+           new_values[k] = scale[k]*val + offset[k];
+         }
+         else {
+           new_values[k] = scale[k]*(val - offset[k]);
+         }
        }
      }
      return new_values;
   }
 
+  public float[] processRange(byte[] values, HashMap subset) {
+     int channelIndex = 0;
+     if (subset != null) {
+       if (subset.get(SpectrumAdapter.channelIndex_name) != null) {
+         channelIndex  = (int) ((double[])subset.get(SpectrumAdapter.channelIndex_name))[0];
+       }
+     }
+     float[] new_values = new float[values.length];
+     for (int k=0; k<values.length;k++) {
+       float val = (float) values[k];
+       if ((val == missing[0]) || (val < low[0]) || (val > high[0])) {
+         new_values[k] = Float.NaN;
+       }
+       else {
+         if (unpack) {
+           new_values[k] = scale[channelIndex]*(val) + offset[channelIndex];
+         }
+         else {
+           new_values[k] = scale[channelIndex]*(val - offset[channelIndex]);
+         }
+       }
+     }
+     return new_values;
+  }
+
+  public float[] processRange(byte[] values) {
+     float[] new_values = new float[values.length];
+     for (int k=0; k<values.length;k++) {
+       float val = (float) values[k];
+       if ((val == missing[0]) || (val < low[0]) || (val > high[0])) {
+         new_values[k] = Float.NaN;
+       }
+       else {
+         if (unpack) {
+           new_values[k] = scale[k]*val + offset[k];
+         }
+         else {
+           new_values[k] = scale[k]*(val - offset[k]);
+         }
+       }
+     }
+     return new_values;
+  }
 
 }
 

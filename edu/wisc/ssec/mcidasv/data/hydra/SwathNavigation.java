@@ -231,6 +231,32 @@ public class SwathNavigation implements Navigation  {
                        geo_count[idx_order[0]], geo_count[idx_order[1]],
                            null, null, null, false);
     }
+    else if (type == Short.TYPE) {
+      short[] values = reader.getShortArray(lon_array_name, geo_start, geo_count, geo_stride);
+      HashMap metadata = new HashMap();
+      metadata.put("array_name", lon_array_name);
+      metadata.put("scale_name", "SCALE_FACTOR");
+      metadata.put("offset_name", "ADD_OFFSET");
+      metadata.put("fill_value_name", "_FILLVALUE");
+      RangeProcessor rangeProcessor = RangeProcessor.createRangeProcessor(reader, metadata);
+      float[] lonValues = rangeProcessor.processRange(values, null);
+      
+      values = reader.getShortArray(lat_array_name, geo_start, geo_count, geo_stride);
+      metadata = new HashMap();
+      metadata.put("array_name", lat_array_name);
+      metadata.put("scale_name", "SCALE_FACTOR");
+      metadata.put("offset_name", "ADD_OFFSET");
+      metadata.put("fill_value_name", "_FILLVALUE");
+      rangeProcessor = RangeProcessor.createRangeProcessor(reader, metadata);
+      float[] latValues = rangeProcessor.processRange(values, null);
+
+
+      gset = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple,
+                     new float[][] {lonValues, latValues},
+                         geo_count[idx_order[0]], geo_count[idx_order[1]],
+                            null, null, null, false, false);
+
+    }
     return gset;
   }
 

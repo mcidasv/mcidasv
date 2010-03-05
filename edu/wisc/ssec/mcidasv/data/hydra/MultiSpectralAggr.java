@@ -82,7 +82,7 @@ public class MultiSpectralAggr extends MultiSpectralData {
     numAdapters = adapters.length;
     int[] numBandsAdapter = new int[numAdapters];
     offset = new int[numAdapters];
-    Gridded1DSet[] spectrumDomains = new Gridded1DSet[numAdapters];
+    SampledSet[] spectrumDomains = new SampledSet[numAdapters];
 
     if (adapters[0].spectrumAdapter.hasBandNames()) {
       hasBandNames = true;
@@ -96,7 +96,7 @@ public class MultiSpectralAggr extends MultiSpectralData {
 
     numBands = 0;
     for (int k=0; k<numAdapters; k++) {
-      Gridded1DSet set = adapters[k].spectrumAdapter.getDomainSet();
+      SampledSet set = adapters[k].spectrumAdapter.getDomainSet();
       spectrumDomains[k] = set;
       numBandsAdapter[k] = set.getLength();
       offset[k] = numBands;

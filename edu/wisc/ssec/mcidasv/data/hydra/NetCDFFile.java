@@ -31,11 +31,13 @@
 package edu.wisc.ssec.mcidasv.data.hydra;
 
 import ucar.nc2.*;
+import ucar.nc2.ncml.NcMLReader;
 import ucar.ma2.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.net.URL;
 
 
 public class NetCDFFile implements MultiDimensionReader {
@@ -50,7 +52,13 @@ public class NetCDFFile implements MultiDimensionReader {
 
 
    public NetCDFFile(String filename) throws Exception {
+     if (filename.endsWith(".ncml")) {
+     URL url = new URL("file://"+filename);
+     ncfile = NcMLReader.readNcML(url.toString(), null);
+     }
+     else {
      ncfile = NetcdfFile.open(filename);
+     }
      
      Iterator varIter = ncfile.getVariables().iterator();
      while(varIter.hasNext()) {

@@ -35,7 +35,10 @@ import visad.Set;
 import visad.FlatField;
 import visad.FunctionType;
 import visad.RealType;
+import visad.RealTupleType;
 import visad.Gridded1DSet;
+import visad.SampledSet;
+import visad.SingletonSet;
 import visad.QuickSort;
 import visad.Unit;
 import visad.ScaledUnit;
@@ -94,9 +97,9 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
   }
 
   int numChannels;
-  int channelIndex;
+  int channelIndex = -1;
   int[] channel_sort;
-  Gridded1DSet domainSet;
+  SampledSet domainSet;
   RealType channelRealType;
   RealType spectrumRangeType;
   FunctionType spectrumType;
@@ -116,8 +119,11 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
 
   private void init() {
     for (int k=0; k<array_rank;k++) {
-      if ( ((String)metadata.get(channelIndex_name)).equals(array_dim_names[k]) ) {
-        channelIndex = k;
+      String name = (String) metadata.get(channelIndex_name);
+      if (name != null) {
+        if ( name.equals(array_dim_names[k]) ) {
+          channelIndex = k;
+        }
       }
     }
 
@@ -158,22 +164,32 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
   }
 
   public int computeNumChannels() {
-    return array_dim_lengths[channelIndex];
+    if (channelIndex == -1) {
+      return 1;
+    } 
+    else {
+      return array_dim_lengths[channelIndex];
+    }
   }
 
   public Set makeDomain(Object subset) throws Exception {
     return null;
   }
 
-  public Gridded1DSet getDomainSet() throws Exception {
+  public SampledSet getDomainSet() throws Exception {
     return domainSet;
   }
 
-  private Gridded1DSet makeDomainSet() throws Exception {
+  private SampledSet makeDomainSet() throws Exception {
     RealType domainType = makeSpectrumDomainType();
     float[] channels = getChannels();
     channel_sort = QuickSort.sort(channels);
-    Gridded1DSet domainSet = new Gridded1DSet(domainType, new float[][] {channels}, numChannels);
+    if (numChannels == 1) {
+      domainSet = new SingletonSet(new RealTupleType(domainType), new double[] {(double)channels[0]}, null, null, null);
+    }
+    else {
+      domainSet = new Gridded1DSet(domainType, new float[][] {channels}, numChannels);
+    }
     return domainSet;
   }
 
@@ -214,7 +230,7 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
     return spectrumRangeType;
   }
 
-  private FlatField makeFlatField(Gridded1DSet domainSet, float[][] range) throws Exception {
+  private FlatField makeFlatField(SampledSet domainSet, float[][] range) throws Exception {
     FlatField field = new FlatField(spectrumType, domainSet);
     float[] sorted_range = new float[numChannels];
     for (int k=0; k<numChannels; k++) sorted_range[k] = range[0][channel_sort[k]];
@@ -222,7 +238,7 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
     return field;
   }
 
-  private FlatField makeFlatField(Gridded1DSet domainSet, double[][] range) throws Exception {
+  private FlatField makeFlatField(SampledSet domainSet, double[][] range) throws Exception {
     FlatField field = new FlatField(spectrumType, domainSet);
     double[] sorted_range = new double[numChannels];
     for (int k=0; k<numChannels; k++) sorted_range[k] = range[0][channel_sort[k]];
@@ -247,6 +263,11 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
       float[] float_range = processRange((short[])range);
       f_field = makeFlatField(domainSet, new float[][] {float_range});
     }
+    else if (arrayType == Byte.TYPE) {
+      float[] float_range = processRange((byte[])range);
+      f_field = makeFlatField(domainSet, new float[][] {float_range});
+    }
+
     return f_field;
   }
 
@@ -259,6 +280,10 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
   }
 
   public float[] processRange(short[] range) {
+    return rangeProcessor.processRange(range);
+  }
+
+  public float[] processRange(byte[] range) {
     return rangeProcessor.processRange(range);
   }
 
