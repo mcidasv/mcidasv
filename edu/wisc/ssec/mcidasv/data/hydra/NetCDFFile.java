@@ -53,11 +53,11 @@ public class NetCDFFile implements MultiDimensionReader {
 
    public NetCDFFile(String filename) throws Exception {
      if (filename.endsWith(".ncml")) {
-     URL url = new URL("file://"+filename);
-     ncfile = NcMLReader.readNcML(url.toString(), null);
+       URL url = new URL("file://"+filename);
+       ncfile = NcMLReader.readNcML(url.toString(), null);
      }
      else {
-     ncfile = NetcdfFile.open(filename);
+       ncfile = NetcdfFile.open(filename);
      }
      
      Iterator varIter = ncfile.getVariables().iterator();
