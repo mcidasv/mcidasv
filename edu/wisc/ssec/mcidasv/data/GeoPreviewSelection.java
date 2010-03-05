@@ -37,6 +37,8 @@ import edu.wisc.ssec.mcidasv.control.LambertAEA;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.net.URL;
 import java.rmi.RemoteException;
 
@@ -59,6 +61,7 @@ import ucar.visad.display.MapLines;
 import visad.*;
 import visad.data.mcidas.AREACoordinateSystem;
 import visad.data.mcidas.BaseMapAdapter;
+import ucar.visad.display.LineDrawing;
 import visad.georef.MapProjection;
 
 
@@ -76,11 +79,12 @@ public class GeoPreviewSelection extends DataSelectionComponent {
       DisplayMaster dspMaster;
 
       final private GeoSubsetRubberBandBox rbb;
-      private GeoSubsetRubberBandBox box;
       private int lineMag;
       private int elementMag;
 
       private GeoLatLonSelection laloSel;
+
+      private LineDrawing box;
                                     
       public GeoPreviewSelection(DataSourceImpl dataSource,
              DataChoice dataChoice, FlatField image,
@@ -93,6 +97,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
         this.image = image;
         this.laloSel = laLoSel;
         this.sampleProjection = sample;
+
         if (lMag > 0)
             this.lineMag = lMag;
         if (eMag > 0)
@@ -156,10 +161,8 @@ public class GeoPreviewSelection extends DataSelectionComponent {
         }
 
         if (showPreview) dspMaster.addDisplayable(imageDsp);
-
         rbb =
             new GeoSubsetRubberBandBox(isLL, image, ((MapProjectionDisplay)mapProjDsp).getDisplayCoordinateSystem(), 1);
-        GeoSubsetRubberBandBox box = rbb;
         MapViewManager mvm = new MapViewManager(dataSource.getDataContext().getIdv());
         IdvObjectStore store = dataSource.getDataContext().getIdv().getStore();
         rbb.setColor((Color)store.get(mvm.PREF_FGCOLOR));
@@ -171,6 +174,9 @@ public class GeoPreviewSelection extends DataSelectionComponent {
            }
         });
         dspMaster.addDisplayable(rbb);
+        box = new LineDrawing("box");
+        box.setColor((Color)store.get(mvm.PREF_FGCOLOR));
+        dspMaster.addDisplayable(box);
 
         dspMaster.draw();
         ScalarMap colorMap = imageDsp.getColorMap();
@@ -215,6 +221,15 @@ public class GeoPreviewSelection extends DataSelectionComponent {
         try {
           JPanel panel = new JPanel(new BorderLayout());
           panel.add("Center", dspMaster.getDisplayComponent());
+          FocusListener focusChange = new FocusListener() {
+              public void focusGained(FocusEvent fe) {
+                  drawBox();
+              }
+              public void focusLost(FocusEvent fe) {
+              }
+          };
+          panel.addFocusListener(focusChange);
+          drawBox();
           return panel;
         }
         catch (Exception e) {
@@ -222,7 +237,6 @@ public class GeoPreviewSelection extends DataSelectionComponent {
         }
         return null;
       }
-                                                                                                                                       
 
       private void forceCoords() {
           float[] extrms = rbb.getRanges();
@@ -230,6 +244,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
           y_coords[0] = (double)extrms[1];
           x_coords[1] = (double)extrms[2];
           y_coords[1] = (double)extrms[3];
+
           int line = (int)y_coords[1];
           int ele = (int)x_coords[1];
           if ((laloSel != null) && (line > 0) && (ele > 0)) {
@@ -286,14 +301,21 @@ public class GeoPreviewSelection extends DataSelectionComponent {
       }
            
       public void applyToDataSelection(DataSelection dataSelection) {
+      }
+
+      public void drawBox() {
+          double[][] latlon = laloSel.latLon;
+          try {
+              Gridded2DSet set = new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple,
+                  new float[][] {
+                { (float)latlon[0][1], (float)latlon[0][2], (float)latlon[0][4],
+                  (float)latlon[0][3], (float)latlon[0][1] },
+                { (float)latlon[1][1], (float)latlon[1][2], (float)latlon[1][4],
+                  (float)latlon[1][3], (float)latlon[1][1] }
+                }, 5);
+              box.setData(set);
+          } catch (Exception e) {
+              System.out.println("GeoPreviewSelection applyToDataSelection: e=" + e);
+          }
      }
-
-
-      public GeoSubsetRubberBandBox getRBB() {
-          return rbb;
-      }
-
-      public void setRBB(GeoSubsetRubberBandBox rubberBBox) {
-          box = rubberBBox;
-      }
 }
