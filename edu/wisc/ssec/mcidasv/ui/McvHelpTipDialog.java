@@ -34,6 +34,7 @@ package edu.wisc.ssec.mcidasv.ui;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -57,6 +58,7 @@ import javax.swing.JScrollPane;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.text.html.HTMLDocument;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -207,6 +209,9 @@ public class McvHelpTipDialog extends JDialog implements Constants, HyperlinkLis
 		messageText.setEditable(false);
 		messageText.addHyperlinkListener(this);
 		messageText.setContentType("text/html");
+		Font font = javax.swing.UIManager.getFont("Label.font");
+		String rule = "body { font-family:"+font.getFamily()+"; font-size:"+font.getSize()+"pt; }";
+		((HTMLDocument)messageText.getDocument()).getStyleSheet().addRule(rule);
 		//        messageText.setBackground(new JPanel().getBackground());
 		JScrollPane scroller = GuiUtils.makeScrollPane(messageText, 0, 0);
 		scroller.setBorder(BorderFactory.createLoweredBevelBorder());
