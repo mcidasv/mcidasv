@@ -31,14 +31,61 @@
 package edu.wisc.ssec.mcidasv;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.wisc.ssec.mcidasv.servermanager.LocalEntryEditor;
 
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.PluginManager;
+import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
+import ucar.unidata.util.ResourceCollection;
 
 public class McvPluginManager extends PluginManager {
+
+    private static final Logger logger = LoggerFactory.getLogger(LocalEntryEditor.class);
+
     public McvPluginManager(IntegratedDataViewer idv) {
         super(idv);
+    }
+
+    @Override protected void loadPlugins() throws Exception {
+        ResourceCollection rc = getResourceManager().getResources(
+            getResourceManager().RSC_PLUGINS);
+
+        for (int i = 0; i < rc.size(); i++) {
+            String path = rc.get(i).toString();
+            if (!rc.isWritable(i))
+                continue;
+
+            logger.debug("loadPlugins: path={}", path);
+            File pluginDir = new File(path);
+            File[] plugins = pluginDir.listFiles();
+            if (plugins == null)
+                continue;
+
+            for (File plugin : plugins) {
+                String current = plugin.getName();
+                if (current.startsWith(".tmp.") || current.endsWith(".deletethis"))
+                    continue;
+
+                if (current.startsWith("http%3A%2F%2Fwww.unidata")) {
+                    String newName = "http%3A%2F%2Fwww.ssec.wisc.edu%2Fmcidas%2Fsoftware%2Fv%2Fresources%2Fplugins%2F"+IOUtil.getFileTail(decode(current));
+                    logger.debug("  current={}", current);
+                    logger.debug("  newName={}\n",newName);
+                    File checkExisting = new File(plugin.getParent(), newName);
+                    if (checkExisting.exists())
+                        logger.debug("    newName already exists...");
+                    else
+                        logger.debug("    rename plugin...");
+                }
+            }
+        }
+        super.loadPlugins();
     }
 
     /**
