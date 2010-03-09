@@ -473,7 +473,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         if (datasetText != null)
             datasetField.setText(datasetText);
 
-        acctBox.setText("Specify accounting informaton:");
+        acctBox.setText("Specify accounting information:");
         acctBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 acctBoxActionPerformed(evt);

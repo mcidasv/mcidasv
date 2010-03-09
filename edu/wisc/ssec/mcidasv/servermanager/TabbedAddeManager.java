@@ -312,14 +312,14 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
             }
         });
 
-        newEntryButton.setText("Add New Server");
+        newEntryButton.setText("Add New Dataset");
         newEntryButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newEntryButtonActionPerformed(evt);
             }
         });
 
-        editEntryButton.setText("Edit Server");
+        editEntryButton.setText("Edit Dataset");
         editEntryButton.setEnabled(false);
         editEntryButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -327,7 +327,7 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
             }
         });
 
-        removeEntryButton.setText("Remove Server");
+        removeEntryButton.setText("Remove Dataset");
         removeEntryButton.setEnabled(false);
         removeEntryButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
