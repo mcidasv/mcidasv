@@ -30,18 +30,65 @@
 
 package edu.wisc.ssec.mcidasv.servermanager;
 
+/**
+ * Represents a source of ADDE data. An ADDE entry may describe a dataset on
+ * remote servers or the user's own machine.
+ */
 public interface AddeEntry {
 
-    public enum EditorAction { ADDED, CANCELLED, VERIFIED, ADDED_VERIFIED, EDITED, EDITED_VERIFIED, INVALID };
+    /** Represents the possible actions that an ADDE editor can perform. */
+    public enum EditorAction {
+        /** Created a new entry; hasn't been verified. */
+        ADDED,
 
-    /** Represents the {@literal "no accounting"} entries. */
-    public static final AddeAccount DEFAULT_ACCOUNT = new AddeAccount("idv", "0");
+        /** Canceled out of creating or editing an entry. */
+        CANCELLED,
+
+        /** Verified the contents of the editor GUI. */
+        VERIFIED,
+
+        /** Created a new, verified entry. */
+        ADDED_VERIFIED,
+
+        /** Updated an existing entry without verifying changes. */
+        EDITED,
+
+        /** Updated an entry and verified the changes. */
+        EDITED_VERIFIED,
+
+        /** Editor GUI performed some {@literal "invalid"} action. */
+        INVALID
+    };
 
     /** Type of chooser this should appear under. */
-    public enum EntryType { IMAGE, POINT, GRID, TEXT, NAV, RADAR, UNKNOWN, INVALID }
+    public enum EntryType {
+        /** {@link edu.wisc.ssec.mcidasv.chooser.adde.AddeImageChooser} */
+        IMAGE,
+
+        /** {@link edu.wisc.ssec.mcidasv.chooser.adde.AddePointDataChooser} */
+        POINT,
+
+        /** */
+        GRID,
+
+        /** {@link edu.wisc.ssec.mcidasv.chooser.adde.AddeFrontChooser} */
+        TEXT,
+
+        /** */
+        NAV,
+
+        /** {@link edu.wisc.ssec.mcidasv.chooser.adde.AddeRadarChooser} */
+        RADAR,
+
+        /** */
+        UNKNOWN,
+
+        /** */
+        INVALID
+    };
 
     /** Sort of a {@literal "misc"} status field... */
-    public enum EntryValidity { 
+    public enum EntryValidity {
         /** Entry has been verified by connecting to the server. */
         VERIFIED, 
 
@@ -59,11 +106,12 @@ public interface AddeEntry {
          */
         DELETED,
 
+        /** Entry is invalid in some way. */
         INVALID
     };
 
     /** Where did this entry come from? */
-    public enum EntrySource { 
+    public enum EntrySource {
         /** Entry originated from McIDAS-V. */
         SYSTEM, 
 
@@ -85,22 +133,89 @@ public interface AddeEntry {
      * Has the user elected to disable this entry from appearing in its 
      * relevant chooser? 
      */
-    public enum EntryStatus { ENABLED, DISABLED, INVALID };
+    public enum EntryStatus {
+        /** Entry is valid and toggled on. */
+        ENABLED,
 
+        /** Entry is valid and toggled off. */
+        DISABLED,
+
+        /** Something is wrong with this entry. */
+        INVALID
+    };
+
+    /** Represents the {@literal "no accounting"} entries. */
+    public static final AddeAccount DEFAULT_ACCOUNT = 
+        new AddeAccount("idv", "0");
+
+    /**
+     * Address of the server associated with the current entry. 
+     * {@link LocalAddeEntry}s will return {@code localhost}.
+     */
     public String getAddress();
-    public String getGroup();
-    public String getName();
-    public AddeAccount getAccount();
-    public EntryType getEntryType();
-    public EntryValidity getEntryValidity();
-    public EntrySource getEntrySource();
-    public EntryStatus getEntryStatus();
-    public String getEntryText();
-    public String getEntryAlias(); // TODO(jon): integrate with parameter sets one fine day?
 
+    /**
+     * Dataset/group located on the server.
+     */
+    public String getGroup();
+
+    // TODO(jon): what part of a resolv.srv does this represent?
+    public String getName();
+
+    /**
+     * Accounting information associated with the current entry. If the server
+     * does not require accounting information, this method returns 
+     * {@link #DEFAULT_ACCOUNT}.
+     */
+    public AddeAccount getAccount();
+
+    /**
+     * Type of chooser this entry should appear under.
+     */
+    public EntryType getEntryType();
+
+    /**
+     * Does this entry represent a {@literal "valid"} ADDE server.
+     */
+    public EntryValidity getEntryValidity();
+
+    /**
+     * Source that specified this entry. For example; allows you to 
+     * distinguish {@literal "system"} entries (which cannot be removed, only 
+     * disabled) from entries created by the user (full control).
+     */
+    public EntrySource getEntrySource();
+
+    /**
+     * GUI status of the entry. Differs from {@link EntryValidity} in that 
+     * {@code EntryStatus} controls this entry showing up in a chooser and has
+     * nothing to do with whether or not the entry is a valid ADDE server.
+     */
+    public EntryStatus getEntryStatus();
+
+    /**
+     * Handy {@code String} representation of this ADDE entry. Currently looks
+     * like {@code ADDRESS/GROUP}, but this is subject to change.
+     */
+    public String getEntryText();
+
+    // TODO(jon): should this be removed? this makes the entries mutable!
     public void setEntryStatus(final EntryStatus newStatus);
+
+    // TODO(jon): integrate with parameter sets one fine day?
+    public String getEntryAlias();
+
+    // TODO(jon): should this be removed? this makes the entries mutable!
     public void setEntryAlias(final String newAlias);
 
+    /**
+     * Currently used as a identifier for convenient storage by the server 
+     * manager.
+     */
     public String asStringId();
+
+    /**
+     * String representation of this entry.
+     */
     public String toString();
 }
