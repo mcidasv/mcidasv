@@ -56,6 +56,7 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import edu.wisc.ssec.mcidasv.util.McVTextField;
 
 /**
  * Simple dialog that allows the user to define or modify {@link RemoteAddeEntry}s.
@@ -103,6 +104,11 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
 
     /** Initial contents of {@link #datasetField}. Be aware that {@code null} is allowed. */
     private final String datasetText;
+
+    private boolean inErrorState = false;
+
+    // if we decide to restore error overlays for known "bad" values.
+//    private Set<RemoteAddeEntry> invalidEntries = CollectionHelpers.newLinkedHashSet();
 
     /**
      * Populates the server and dataset text fields with given {@link String}s.
@@ -422,10 +428,10 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         serverLabel = new javax.swing.JLabel();
         serverField = new javax.swing.JTextField();
         datasetLabel = new javax.swing.JLabel();
-        datasetField = new javax.swing.JTextField();
+        datasetField = new McVTextField();
         acctBox = new javax.swing.JCheckBox();
         userLabel = new javax.swing.JLabel();
-        userField = new javax.swing.JTextField();
+        userField = new McVTextField();
         projLabel = new javax.swing.JLabel();
         projField = new javax.swing.JTextField();
         capBox = new javax.swing.JCheckBox();
@@ -442,6 +448,10 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         verifyServer = new javax.swing.JButton();
         addServer = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
+
+        boolean forceCaps = getForceMcxCaps();
+        datasetField.setUppercase(forceCaps);
+        userField.setUppercase(forceCaps);
 
         if (initEntry == RemoteAddeEntry.INVALID_ENTRY)
             setTitle("Define New Remote Dataset");
@@ -477,6 +487,38 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         projField.setEnabled(acctBox.isSelected());
 
         capBox.setText("Automatically capitalize dataset and username?");
+        capBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                capBoxActionPerformed(evt);
+            }
+        });
+
+        javax.swing.event.DocumentListener inputListener = new javax.swing.event.DocumentListener() {
+            public void changedUpdate(javax.swing.event.DocumentEvent evt) {
+                reactToValueChanges();
+            }
+            public void insertUpdate(javax.swing.event.DocumentEvent evt) {
+                if (inErrorState) {
+                    verifyAddButton.setEnabled(true);
+                    verifyServer.setEnabled(true);
+                    inErrorState = false;
+                    resetBadFields();
+                }
+            }
+            public void removeUpdate(javax.swing.event.DocumentEvent evt) {
+                if (inErrorState) {
+                    verifyAddButton.setEnabled(true);
+                    verifyServer.setEnabled(true);
+                    inErrorState = false;
+                    resetBadFields();
+                }
+            }
+        };
+
+        serverField.getDocument().addDocumentListener(inputListener);
+        datasetField.getDocument().addDocumentListener(inputListener);
+        userField.getDocument().addDocumentListener(inputListener);
+        projField.getDocument().addDocumentListener(inputListener);
 
         javax.swing.GroupLayout entryPanelLayout = new javax.swing.GroupLayout(entryPanel);
         entryPanel.setLayout(entryPanelLayout);
@@ -525,22 +567,39 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
 
         typePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Dataset Types"));
 
+        java.awt.event.ActionListener typeInputListener = new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                if (inErrorState) {
+                    verifyAddButton.setEnabled(true);
+                    verifyServer.setEnabled(true);
+                    inErrorState = false;
+                    resetBadFields();
+                }
+            }
+        };
+
         imageBox.setText("Image");
+        imageBox.addActionListener(typeInputListener);
         typePanel.add(imageBox);
 
         pointBox.setText("Point");
+        pointBox.addActionListener(typeInputListener);
         typePanel.add(pointBox);
 
         gridBox.setText("Grid");
+        gridBox.addActionListener(typeInputListener);
         typePanel.add(gridBox);
 
         textBox.setText("Text");
+        textBox.addActionListener(typeInputListener);
         typePanel.add(textBox);
 
         navBox.setText("Navigation");
+        navBox.addActionListener(typeInputListener);
         typePanel.add(navBox);
 
         radarBox.setText("Radar");
+        radarBox.addActionListener(typeInputListener);
         typePanel.add(radarBox);
 
         statusPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Status"));
@@ -682,26 +741,32 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     }// </editor-fold>
 
     private void acctBoxActionPerformed(java.awt.event.ActionEvent evt) {
-        McVGuiUtils.runOnEDT(new Runnable() {
-            public void run() {
-                boolean enabled = acctBox.isSelected();
-                userField.setEnabled(enabled);
-                projField.setEnabled(enabled);
-            }
-        });
+        boolean enabled = acctBox.isSelected();
+        userField.setEnabled(enabled);
+        projField.setEnabled(enabled);
+    }
+
+    private void capBoxActionPerformed(java.awt.event.ActionEvent evt) {
+        boolean forceCaps = capBox.isSelected();
+        datasetField.setUppercase(forceCaps);
+        userField.setUppercase(forceCaps);
+        if (!forceCaps)
+            return;
+        datasetField.setText(datasetField.getText().toUpperCase());
+        userField.setText(userField.getText().toUpperCase());
     }
 
     private void verifyAddButtonActionPerformed(java.awt.event.ActionEvent evt) {
         logger.debug("remote entry editor: Verify+Add");
-//        runOnEDT(new Runnable() {
-//            public void run() {
-                verifyInput();
-                if (!anyBadFields()) {
-                    setEditorAction(EditorAction.ADDED_VERIFIED);
-                    addEntry();
-                }
-//            }
-//        });
+        verifyInput();
+        if (!anyBadFields()) {
+            setEditorAction(EditorAction.ADDED_VERIFIED);
+            addEntry();
+        } else {
+            inErrorState = true;
+            verifyAddButton.setEnabled(false);
+            verifyServer.setEnabled(false);
+        }
     }
 
     private void verifyEditButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -710,6 +775,10 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         if (!anyBadFields()) {
             setEditorAction(EditorAction.EDITED_VERIFIED);
             editEntry();
+        } else {
+            inErrorState = true;
+            verifyAddButton.setEnabled(false);
+            verifyServer.setEnabled(false);
         }
     }
 
@@ -727,25 +796,35 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
 
     private void verifyServerActionPerformed(java.awt.event.ActionEvent evt) {
         logger.debug("remote entry editor: verify button!");
-//        runOnEDT(new Runnable() {
-//            public void run() {
-                verifyInput();
-//            }
-//        });
+        verifyInput();
+        if (anyBadFields()) {
+            // save poll widget state
+            // toggle a "listen for *any* input event" switch to on
+//            invalidEntries.clear();
+//            invalidEntries.addAll(pollWidgets(false));
+            inErrorState = true;
+            verifyAddButton.setEnabled(false);
+            verifyServer.setEnabled(false);
+        }
     }
 
     private void addServerActionPerformed(java.awt.event.ActionEvent evt) {
         setEditorAction(EditorAction.ADDED);
-//        runOnEDT(new Runnable() {
-//            public void run() {
-                addEntry();
-//            }
-//        });
+        addEntry();
     }
-    
+
     private void editServerActionPerformed(java.awt.event.ActionEvent evt) {
         setEditorAction(EditorAction.EDITED);
         editEntry();
+    }
+
+    private void reactToValueChanges() {
+        if (inErrorState) {
+            verifyAddButton.setEnabled(true);
+            verifyServer.setEnabled(true);
+            inErrorState = false;
+            resetBadFields();
+        }
     }
 
     // Variables declaration - do not modify
@@ -753,7 +832,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     private javax.swing.JButton addServer;
     private javax.swing.JButton cancelButton;
     private javax.swing.JCheckBox capBox;
-    private javax.swing.JTextField datasetField;
+    private McVTextField datasetField;
     private javax.swing.JLabel datasetLabel;
     private javax.swing.JPanel entryPanel;
     private javax.swing.JCheckBox gridBox;
@@ -769,7 +848,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     private javax.swing.JPanel statusPanel;
     private javax.swing.JCheckBox textBox;
     private javax.swing.JPanel typePanel;
-    private javax.swing.JTextField userField;
+    private McVTextField userField;
     private javax.swing.JLabel userLabel;
     private javax.swing.JButton verifyAddButton;
     private javax.swing.JButton verifyServer;
