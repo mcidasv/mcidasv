@@ -170,6 +170,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
           public void doAction()
              throws VisADException, RemoteException
            {
+              eraseBox();
               forceCoords();
            }
         });
@@ -228,8 +229,8 @@ public class GeoPreviewSelection extends DataSelectionComponent {
               public void focusLost(FocusEvent fe) {
               }
           };
-          panel.addFocusListener(focusChange);
           drawBox();
+          panel.addFocusListener(focusChange);
           return panel;
         }
         catch (Exception e) {
@@ -303,7 +304,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
       public void applyToDataSelection(DataSelection dataSelection) {
       }
 
-      public void drawBox() {
+      private void drawBox() {
           double[][] latlon = laloSel.latLon;
           try {
               Gridded2DSet set = new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple,
@@ -315,7 +316,20 @@ public class GeoPreviewSelection extends DataSelectionComponent {
                 }, 5);
               box.setData(set);
           } catch (Exception e) {
-              System.out.println("GeoPreviewSelection applyToDataSelection: e=" + e);
+              System.out.println("GeoPreviewSelection drawBox: e=" + e);
+          }
+     }
+
+      private void eraseBox() {
+          try {
+              Gridded2DSet set = new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple,
+                  new float[][] {
+                { (float)0.0, (float)0.0 },
+                { (float)0.0, (float)0.0 },
+                }, 2);
+              box.setData(set);
+          } catch (Exception e) {
+              System.out.println("GeoPreviewSelection eraseBox: e=" + e);
           }
      }
 }
