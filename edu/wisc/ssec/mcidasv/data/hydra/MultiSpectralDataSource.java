@@ -182,8 +182,16 @@ public class MultiSpectralDataSource extends HydraDataSource {
     }
 
     public void setup() throws Exception {
+        String name = (new File(filename)).getName();
+
         try {
+          if (name.startsWith("NSS.HRPT.NP") && name.endsWith("obs.hdf")) { // get file union
+            Object union = NetCDFFile.makeUnion(filename);
+            reader = new NetCDFFile(union);
+          }
+          else {
             reader = new NetCDFFile(filename);
+          }
         }
         catch (Exception e) {
           e.printStackTrace();
@@ -192,7 +200,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
                                                                                                                                                      
         Hashtable<String, String[]> properties = new Hashtable<String, String[]>(); 
 
-        String name = (new File(filename)).getName();
+        //String name = (new File(filename)).getName();
 
         multiSpectData_s.clear();
 

@@ -38,6 +38,14 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.net.URL;
+import java.net.URL;
+import java.io.InputStream;
+import java.io.ByteArrayInputStream;
+
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.XMLOutputter;
+import org.jdom.Document;
+import org.jdom.Element;
 
 
 public class NetCDFFile implements MultiDimensionReader {
@@ -51,6 +59,42 @@ public class NetCDFFile implements MultiDimensionReader {
    NetcdfFile ncfile = null;
 
 
+   public static Object makeUnion(String filename) throws Exception {
+     String other = new String(filename);
+     other = other.replace("obs", "nav");
+     Object obj = new Object();
+     URL url = obj.getClass().getResource("/edu/wisc/ssec/mcidasv/data/hydra/resources/union.ncml");
+     SAXBuilder builder = new SAXBuilder(false);
+     Document doc = null;
+
+     try {
+       doc = builder.build(url);
+     } catch (Exception e) {
+       e.printStackTrace();
+     }
+     Element root = doc.getRootElement();
+
+     List list = root.getChildren();
+
+     list = ((Element)list.get(1)).getChildren();
+
+     org.jdom.Attribute attr1 = (org.jdom.Attribute) (((Element)list.get(0)).getAttributes()).get(0);
+     attr1.setValue(filename);
+
+     org.jdom.Attribute attr2 = (org.jdom.Attribute) (((Element)list.get(1)).getAttributes()).get(0);
+     attr2.setValue(other);
+
+     XMLOutputter xmlOut = new XMLOutputter();
+     String newStr = xmlOut.outputString(doc);
+     ByteArrayInputStream is = new ByteArrayInputStream(newStr.getBytes());
+     return is;
+   }
+
+   public NetCDFFile(Object is) throws Exception {
+     ncfile = NcMLReader.readNcML((InputStream)is, null);
+     init();
+   }
+
    public NetCDFFile(String filename) throws Exception {
      if (filename.endsWith(".ncml")) {
        URL url = new URL("file://"+filename);
@@ -59,7 +103,10 @@ public class NetCDFFile implements MultiDimensionReader {
      else {
        ncfile = NetcdfFile.open(filename);
      }
+     init();
+   }
      
+   private void init() throws Exception {
      Iterator varIter = ncfile.getVariables().iterator();
      while(varIter.hasNext()) {
        Variable var = (Variable) varIter.next();
