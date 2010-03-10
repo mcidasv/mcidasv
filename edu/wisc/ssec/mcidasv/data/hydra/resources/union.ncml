@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<netcdf xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2">
+
+  <attribute name="title" type="string" value="Union"/>
+
+  <aggregation type="union">
+     <netcdf location="NSS.HRPT.NP.D10063.S1830.E1845.B0551818.WI.obs.hdf"/>
+     <netcdf location="NSS.HRPT.NP.D10063.S1830.E1845.B0551818.WI.nav.hdf"/>	
+  </aggregation>
+
+
+</netcdf>
