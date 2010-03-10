@@ -5,8 +5,8 @@
   <attribute name="title" type="string" value="Union"/>
 
   <aggregation type="union">
-     <netcdf location="NSS.HRPT.NP.D10063.S1830.E1845.B0551818.WI.obs.hdf"/>
-     <netcdf location="NSS.HRPT.NP.D10063.S1830.E1845.B0551818.WI.nav.hdf"/>	
+     <netcdf location="file1"/>
+     <netcdf location="file2"/>	
   </aggregation>
 
 
