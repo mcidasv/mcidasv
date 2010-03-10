@@ -186,8 +186,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
         try {
           if (name.startsWith("NSS.HRPT.NP") && name.endsWith("obs.hdf")) { // get file union
-            Object union = NetCDFFile.makeUnion(filename);
-            reader = new NetCDFFile(union);
+            reader = NetCDFFile.makeUnion(filename);
           }
           else {
             reader = new NetCDFFile(filename);
@@ -200,7 +199,6 @@ public class MultiSpectralDataSource extends HydraDataSource {
                                                                                                                                                      
         Hashtable<String, String[]> properties = new Hashtable<String, String[]>(); 
 
-        //String name = (new File(filename)).getName();
 
         multiSpectData_s.clear();
 

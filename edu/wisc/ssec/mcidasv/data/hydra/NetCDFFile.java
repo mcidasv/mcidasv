@@ -59,7 +59,7 @@ public class NetCDFFile implements MultiDimensionReader {
    NetcdfFile ncfile = null;
 
 
-   public static Object makeUnion(String filename) throws Exception {
+   public static NetCDFFile makeUnion(String filename) throws Exception {
      String other = new String(filename);
      other = other.replace("obs", "nav");
      Object obj = new Object();
@@ -87,11 +87,11 @@ public class NetCDFFile implements MultiDimensionReader {
      XMLOutputter xmlOut = new XMLOutputter();
      String newStr = xmlOut.outputString(doc);
      ByteArrayInputStream is = new ByteArrayInputStream(newStr.getBytes());
-     return is;
+     return new NetCDFFile(is);
    }
 
-   public NetCDFFile(Object is) throws Exception {
-     ncfile = NcMLReader.readNcML((InputStream)is, null);
+   public NetCDFFile(InputStream is) throws Exception {
+     ncfile = NcMLReader.readNcML(is, null);
      init();
    }
 
