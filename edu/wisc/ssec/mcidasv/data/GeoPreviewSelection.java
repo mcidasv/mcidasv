@@ -61,6 +61,7 @@ import ucar.visad.display.MapLines;
 import visad.*;
 import visad.data.mcidas.AREACoordinateSystem;
 import visad.data.mcidas.BaseMapAdapter;
+import ucar.visad.display.Displayable;
 import ucar.visad.display.LineDrawing;
 import visad.georef.MapProjection;
 
@@ -174,7 +175,8 @@ public class GeoPreviewSelection extends DataSelectionComponent {
               forceCoords();
            }
         });
-        dspMaster.addDisplayable(rbb);
+        addRBB();
+        //dspMaster.addDisplayable(rbb);
         box = new LineDrawing("box");
         box.setColor((Color)store.get(mvm.PREF_FGCOLOR));
         dspMaster.addDisplayable(box);
@@ -309,6 +311,12 @@ public class GeoPreviewSelection extends DataSelectionComponent {
 
       private void drawBox() {
           double[][] latlon = laloSel.latLon;
+          for (int i=0; i<2; i++) {
+              for (int j=0; j<5; j++) {
+                  Double val = new Double(latlon[i][j]);
+                  if (val.isNaN()) return;
+              }
+          }
           try {
               Gridded2DSet set = new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple,
                   new float[][] {
@@ -318,9 +326,11 @@ public class GeoPreviewSelection extends DataSelectionComponent {
                   (float)latlon[1][3], (float)latlon[1][1] }
                 }, 5);
               box.setData(set);
+              removeRBB();
           } catch (Exception e) {
               System.out.println("GeoPreviewSelection drawBox: e=" + e);
           }
+          addRBB();
      }
 
       private void eraseBox() {
@@ -333,5 +343,39 @@ public class GeoPreviewSelection extends DataSelectionComponent {
               box.setData(set);
           } catch (Exception e) {
           }
+          addRBB();
+     }
+
+     private boolean rBBPresent() {
+         Displayable[] dsps = dspMaster.getDisplayables();
+         if (dsps.length > 0) {
+             for (int i = 0; i<dsps.length; i++) {
+                 Displayable disp = dsps[i];
+                 if (disp == (Displayable)rbb) {
+                     return true;
+                 }
+             }
+         }
+         return false;
+     }
+
+     private void removeRBB() {
+         if (rBBPresent()) {
+             try {
+                 dspMaster.removeDisplayable(rbb);
+             } catch (Exception e) {
+                 System.out.println("removeRBB e=" + e);
+             }
+         }
+     }
+
+     private void addRBB() {
+         if (!rBBPresent()) {
+             try {
+                 dspMaster.addDisplayable(rbb);
+             } catch (Exception e) {
+                 System.out.println("addRBB e=" + e);
+             }
+         }
      }
 }
