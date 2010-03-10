@@ -37,8 +37,8 @@ import edu.wisc.ssec.mcidasv.control.LambertAEA;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.net.URL;
 import java.rmi.RemoteException;
 
@@ -222,15 +222,18 @@ public class GeoPreviewSelection extends DataSelectionComponent {
         try {
           JPanel panel = new JPanel(new BorderLayout());
           panel.add("Center", dspMaster.getDisplayComponent());
-          FocusListener focusChange = new FocusListener() {
-              public void focusGained(FocusEvent fe) {
+          panel.addComponentListener (new ComponentListener() {
+              public void componentHidden(ComponentEvent ce) {
+              }
+              public void componentShown(ComponentEvent ce) {
                   drawBox();
               }
-              public void focusLost(FocusEvent fe) {
+              public void componentMoved(ComponentEvent ce) {
               }
-          };
+              public void componentResized(ComponentEvent ce) {
+              }
+          });
           drawBox();
-          panel.addFocusListener(focusChange);
           return panel;
         }
         catch (Exception e) {
@@ -329,7 +332,6 @@ public class GeoPreviewSelection extends DataSelectionComponent {
                 }, 2);
               box.setData(set);
           } catch (Exception e) {
-              System.out.println("GeoPreviewSelection eraseBox: e=" + e);
           }
      }
 }
