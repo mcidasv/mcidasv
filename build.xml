@@ -27,7 +27,7 @@
 		value="McIDAS-V_${mcidasv.version.major}.${mcidasv.version.minor}${mcidasv.version.release}_source.jar" />
 
 	<!-- Binary file definitions -->
-	<property name="java.bin" location="../jdk1.5.0_12/bin/java" />
+	<property name="java.bin" location="../java_jdk/bin/java" />
 	<property name="jhindexer.bin" location="../jh2.0/javahelp/bin/jhindexer" />
 	<property name="install4jc.bin" location="${base.dir}/../install4j/bin/install4jc" />
 
