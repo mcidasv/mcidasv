@@ -310,6 +310,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
       }
 
       private void drawBox() {
+          removeRBB();
           double[][] latlon = laloSel.latLon;
           for (int i=0; i<2; i++) {
               for (int j=0; j<5; j++) {
@@ -329,11 +330,9 @@ public class GeoPreviewSelection extends DataSelectionComponent {
                   (float)latlon[1][3], (float)latlon[1][1] }
                 }, 5);
               box.setData(set);
-              removeRBB();
           } catch (Exception e) {
               System.out.println("GeoPreviewSelection drawBox: e=" + e);
           }
-          addRBB();
      }
 
       private void eraseBox() {
@@ -370,6 +369,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
                  System.out.println("removeRBB e=" + e);
              }
          }
+         addRBB();
      }
 
      private void addRBB() {
