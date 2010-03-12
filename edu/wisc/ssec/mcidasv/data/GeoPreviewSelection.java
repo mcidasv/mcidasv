@@ -314,7 +314,10 @@ public class GeoPreviewSelection extends DataSelectionComponent {
           for (int i=0; i<2; i++) {
               for (int j=0; j<5; j++) {
                   Double val = new Double(latlon[i][j]);
-                  if (val.isNaN()) return;
+                  if (val.isNaN()) {
+                      eraseBox();
+                      return;
+                  }
               }
           }
           try {
