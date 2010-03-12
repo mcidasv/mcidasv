@@ -43,6 +43,7 @@
         <mapID target="idv.controls.imagesequencecontrol"            url="controls/ImagePlanViewControl.html" />
         <mapID target="idv.controls.jythoncontrol"                   url="controls/JythonControl.html" />
         <mapID target="idv.controls.legends"                         url="controls/index.html#legends" />
+		<mapID target="idv.controls.level2.radarcrosssectioncontrol" url="controls/level2/RadarIsosurfaceControl.html" />
         <mapID target="idv.controls.level2.radarisosurfacecontrol"   url="controls/level2/RadarIsosurfaceControl.html" />
         <mapID target="idv.controls.level2.radarsweepcontrol"        url="controls/level2/RadarSweepControl.html" />
         <mapID target="idv.controls.level2.radarvolumecontrol"       url="controls/level2/RadarVolumeControl.html" />

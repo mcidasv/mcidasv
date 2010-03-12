@@ -144,9 +144,10 @@
 		
 		<div class="indented" id="layercontrols_2_2">
         	<span class="link" onClick="setPage('controls/level2/RadarSweepControl.html');">Radar Sweep Controls</span><br>
-        	<span class="link" onClick="setPage('controls/level2/RhiControl.html');">RHI Display Controls </span><br>
+        	<span class="link" onClick="setPage('controls/level2/RhiControl.html');">Radar RHI Display Controls </span><br>
         	<span class="link" onClick="setPage('controls/level2/RadarVolumeControl.html');">Radar Volume Controls</span><br>
-        	<span class="link" onClick="setPage('controls/level2/RadarIsosurfaceControl.html');">Isosurface Controls </span><br>
+        	<span class="link" onClick="setPage('controls/level2/RadarIsosurfaceControl.html');">Radar Isosurface Controls </span><br>
+			<span class="link" onClick="setPage('controls/level2/RadarCrossSectionControl.html');">Radar Cross Section Controls</span>
 		</div>
 		
         <span class="link" onClick="setPage('controls/misc/RadarGridControl.html');">Range Rings</span><br>

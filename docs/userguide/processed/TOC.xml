@@ -199,9 +199,10 @@
         <tocitem text="WSR-88D Level III Control" target="idv.controls.leveliiicontrol"/>
         <tocitem text="Level 2 Radar Display Controls" target="idv.page_level2radardisplaycontrols">
         <tocitem text="Radar Sweep Controls" target="idv.controls.level2.radarsweepcontrol"/>
-        <tocitem text="RHI Display Controls" target="idv.controls.level2.rhicontrol"/>
+        <tocitem text="Radar RHI Display Controls" target="idv.controls.level2.rhicontrol"/>
         <tocitem text="Radar Volume Controls" target="idv.controls.level2.radarvolumecontrol"/>
-        <tocitem text="Isosurface Controls" target="idv.controls.level2.radarisosurfacecontrol"/>
+        <tocitem text="Radar Isosurface Controls" target="idv.controls.level2.radarisosurfacecontrol"/>
+		<tocitem text="Radar Cross Section Controls" target="idv.controls.level2.radarcrosssectioncontrol"/>
         </tocitem>
         <tocitem text="Range Rings" target="idv.controls.misc.radargridcontrol"/>
         </tocitem>

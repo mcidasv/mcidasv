@@ -190,13 +190,27 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/index.ht
 <ul>
   <li><strong>Visible</strong></li>
   <li style="list-style: none">
-    <div class="menudesc">check box allows you to toggle visibility.</div>
+    <div class="menudesc">Checkbox allows you to toggle visibility.</div>
+  </li>
+  <li><strong>Lock Visibility</strong></li>
+  <li style="list-style: none">
+    <div class="menudesc">Checkbox allows you to toggle the visibility lock (see <a href="#visibility">visibility
+    cycling</a> below).</div>
   </li>
   <li><strong>Bring To Front</strong></li>
   <li style="list-style: none">
     <div class="menudesc">If this display is showing at the same level in 3D
       as another (e.g., satellite and radar images in the same display), you
       can use this menu to select which display is on top.</div>
+  </li>
+  <li><strong>Show View Window</strong></li>
+  <li style="list-style: none">
+    <div class="menudesc">Show the View Window that holds this layer control.</div>
+  </li>
+  <li><strong>Use Times in Animation</strong></li>
+  <li style="list-style: none">
+    <div class="menudesc">For layers that have a time associated with them, you
+      can select whether the times are used to calculate the animation steps.</div>
   </li>
   <li><strong>Display List</strong></li>
   <li style="list-style: none">
@@ -279,8 +293,15 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/index.ht
     Scale</strong> tab allows you to configure where the color scale bar is shown.
     The <strong>Spatial Subset</strong> tab allows you to define further
     spatial subsetting of the data.</p>
-
-<div class="pagesubtitle">Display Visibility<a name="visibility" id="visibility"></a></div>
+<a name="colorscale" id="visibility"></a><div class="pagesubtitle">Color Scale</div>
+<p>For those controls that include color tables, you can display the color 
+scale (legend) in the main view window.  Use the options under the  <strong>Color
+Scale</strong> tab to configure the positioning and
+labelling of the color scale.</p>
+<div class="images"><img src="images/ColorScale.gif" alt="Color Scale Properties"><a name="image3" id="image3"></a> <br>
+  <span class="caption">Image 3: Color Scale Properties</span></div>
+  <p></p>
+<a name="visibility" id="visibility"></a><div class="pagesubtitle">Display Visibility</div>
 <p><ul>
   <li>In the legend the <strong>Display Visibility</strong> checkbox to the left
     of the label can be used to toggle the visibility of that layer.</li>
