@@ -428,8 +428,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                             laLoSel.setPreviewLineRes(this.previewLineRes);
                             laLoSel.setPreviewEleRes(this.previewEleRes);
                             laLoSel.update(previewDir, this.previewProjection, previewNav,
-                                           coordType, coords, baseLResOld, baseEResOld,
-                                           lMagOld, eMagOld, lSizeOld, eSizeOld);
+                                           coordType, coords);
                         } else {
                             laLoSel = new GeoLatLonSelection(this, 
                                           dataChoice, this.initProps, this.previewProjection,
