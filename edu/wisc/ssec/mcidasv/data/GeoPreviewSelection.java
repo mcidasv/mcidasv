@@ -131,8 +131,8 @@ public class GeoPreviewSelection extends DataSelectionComponent {
             mapLines.setColor(java.awt.Color.cyan);
             mapProjDsp.addDisplayable(mapLines);
         } catch (Exception excp) {
-            System.out.println("Can't open map file " + mapSource);
-            System.out.println(excp);
+            System.err.println("Can't open map file " + mapSource);
+            System.err.println(excp);
         }
 
         mapLines  = new MapLines("maplines");
@@ -144,8 +144,8 @@ public class GeoPreviewSelection extends DataSelectionComponent {
             mapLines.setColor(java.awt.Color.cyan);
             mapProjDsp.addDisplayable(mapLines);
         } catch (Exception excp) {
-            System.out.println("Can't open map file " + mapSource);
-            System.out.println(excp);
+            System.err.println("Can't open map file " + mapSource);
+            System.err.println(excp);
         }
 
         mapLines  = new MapLines("maplines");
@@ -157,8 +157,8 @@ public class GeoPreviewSelection extends DataSelectionComponent {
             mapLines.setColor(java.awt.Color.cyan);
             mapProjDsp.addDisplayable(mapLines);
         } catch (Exception excp) {
-            System.out.println("Can't open map file " + mapSource);
-            System.out.println(excp);
+            System.err.println("Can't open map file " + mapSource);
+            System.err.println(excp);
         }
 
         if (showPreview) dspMaster.addDisplayable(imageDsp);
@@ -214,7 +214,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
          try {
            mp = new LambertAEA(rect);
          } catch (Exception e) {
-             System.out.println(" getDataProjection"+e);
+             System.err.println("GeoPreviewSelection getDataProjection: e="+e);
          }
          return mp;
       }
@@ -239,7 +239,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
           return panel;
         }
         catch (Exception e) {
-          System.out.println(e);
+          System.err.println("GeoPreviewSelection doMakeContents: e=" + e);
         }
         return null;
       }
@@ -331,7 +331,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
                 }, 5);
               box.setData(set);
           } catch (Exception e) {
-              System.out.println("GeoPreviewSelection drawBox: e=" + e);
+              System.err.println("GeoPreviewSelection drawBox: e=" + e);
           }
      }
 
@@ -344,6 +344,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
                 }, 2);
               box.setData(set);
           } catch (Exception e) {
+              System.err.println("GeoPreviewSelection eraseBox: e=" + e);
           }
           addRBB();
      }
@@ -366,7 +367,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
              try {
                  dspMaster.removeDisplayable(rbb);
              } catch (Exception e) {
-                 System.out.println("removeRBB e=" + e);
+                 System.err.println("GeoPreviewSelection removeRBB: e=" + e);
              }
          }
          addRBB();
@@ -377,7 +378,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
              try {
                  dspMaster.addDisplayable(rbb);
              } catch (Exception e) {
-                 System.out.println("addRBB e=" + e);
+                 System.err.println("GeoPreviewSelection addRBB: e=" + e);
              }
          }
      }
