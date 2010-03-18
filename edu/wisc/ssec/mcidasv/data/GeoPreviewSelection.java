@@ -78,6 +78,8 @@ public class GeoPreviewSelection extends DataSelectionComponent {
       double[] y_coords = new double[2];
       MapProjectionDisplayJ3D mapProjDsp;
       DisplayMaster dspMaster;
+      MapViewManager mvm;
+      IdvObjectStore store;
 
       final private GeoSubsetRubberBandBox rbb;
       private int lineMag;
@@ -164,8 +166,8 @@ public class GeoPreviewSelection extends DataSelectionComponent {
         if (showPreview) dspMaster.addDisplayable(imageDsp);
         rbb =
             new GeoSubsetRubberBandBox(isLL, image, ((MapProjectionDisplay)mapProjDsp).getDisplayCoordinateSystem(), 1);
-        MapViewManager mvm = new MapViewManager(dataSource.getDataContext().getIdv());
-        IdvObjectStore store = dataSource.getDataContext().getIdv().getStore();
+        mvm = new MapViewManager(dataSource.getDataContext().getIdv());
+        store = dataSource.getDataContext().getIdv().getStore();
         rbb.setColor((Color)store.get(mvm.PREF_FGCOLOR));
         rbb.addAction(new CellImpl() {
           public void doAction()
@@ -176,10 +178,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
            }
         });
         addRBB();
-        //dspMaster.addDisplayable(rbb);
-        box = new LineDrawing("box");
-        box.setColor((Color)store.get(mvm.PREF_FGCOLOR));
-        dspMaster.addDisplayable(box);
+        makeBox();
 
         dspMaster.draw();
         ScalarMap colorMap = imageDsp.getColorMap();
@@ -310,6 +309,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
       }
 
       private void drawBox() {
+          if (box == null) makeBox();
           removeRBB();
           double[][] latlon = laloSel.latLon;
           for (int i=0; i<2; i++) {
@@ -335,9 +335,23 @@ public class GeoPreviewSelection extends DataSelectionComponent {
           }
      }
 
+     private void makeBox() {
+         if (box == null) {
+             try {
+                 box = new LineDrawing("box");
+                 box.setColor((Color)store.get(mvm.PREF_FGCOLOR));
+                 dspMaster.addDisplayable(box);
+             } catch (Exception e) {
+                 System.err.println("GeoPreviewSelection makeBox: e=" + e);
+             }
+         }
+     }
+
       private void eraseBox() {
+          Gridded2DSet set = null;
+          if (box == null) makeBox();
           try {
-              Gridded2DSet set = new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple,
+              set = new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple,
                   new float[][] {
                 { (float)0.0, (float)0.0 },
                 { (float)0.0, (float)0.0 },
