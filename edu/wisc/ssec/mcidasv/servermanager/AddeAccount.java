@@ -143,4 +143,11 @@ public class AddeAccount {
     public String toString() {
         return String.format("[AddeAccount@%x: username=%s, project=%s]", hashCode(), username, project);
     }
+
+    /**
+     * 
+     */
+    protected String friendlyString() {
+        return username+" / "+project;
+    }
 }

@@ -412,8 +412,8 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     private static boolean getForceMcxCaps() {
         McIDASV mcv = McIDASV.getStaticMcv();
         if (mcv == null)
-            return false;
-        return mcv.getStore().get(PREF_FORCE_CAPS, false);
+            return true;
+        return mcv.getStore().get(PREF_FORCE_CAPS, true);
     }
 
     /** This method is called from within the constructor to
@@ -487,6 +487,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         projField.setEnabled(acctBox.isSelected());
 
         capBox.setText("Automatically capitalize dataset and username?");
+        capBox.setSelected(forceCaps);
         capBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 capBoxActionPerformed(evt);
@@ -750,6 +751,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         boolean forceCaps = capBox.isSelected();
         datasetField.setUppercase(forceCaps);
         userField.setUppercase(forceCaps);
+        setForceMcxCaps(forceCaps);
         if (!forceCaps)
             return;
         datasetField.setText(datasetField.getText().toUpperCase());
@@ -757,7 +759,6 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     }
 
     private void verifyAddButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        logger.debug("remote entry editor: Verify+Add");
         verifyInput();
         if (!anyBadFields()) {
             setEditorAction(EditorAction.ADDED_VERIFIED);
@@ -770,7 +771,6 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     }
 
     private void verifyEditButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        logger.debug("remote entry editor: Verify+Edit");
         verifyInput();
         if (!anyBadFields()) {
             setEditorAction(EditorAction.EDITED_VERIFIED);
@@ -795,7 +795,6 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     }
 
     private void verifyServerActionPerformed(java.awt.event.ActionEvent evt) {
-        logger.debug("remote entry editor: verify button!");
         verifyInput();
         if (anyBadFields()) {
             // save poll widget state

@@ -336,6 +336,11 @@ public class EntryStore {
         return groups;
     }
 
+    protected List<AddeEntry> searchWithPrefix(final String prefix) {
+        Map<String, AddeEntry> prefixed = trie.getPrefixedBy(prefix);
+        return arrList(prefixed.values());
+    }
+
     /**
      * Returns the {@link Set} of {@link AddeEntry} addresses stored
      * in this {@code EntryStore}.

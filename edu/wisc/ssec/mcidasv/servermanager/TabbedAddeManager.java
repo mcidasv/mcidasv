@@ -714,11 +714,8 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
 
         /** Labels that appear as the column headers. */
         private final String[] columnNames = {
-            "Server", "Group", "Username", "Project #", "Type", "Source", "Validity"
+            "Dataset", "Accounting", "Types", "Source", "Validity"
         };
-//        private final String[] columnNames = {
-//            "Alias", "Server", "Group", "Username", "Project #", "Type", "Source", "Validity"
-//        };
 
         /** Entries that currently populate the server manager. */
         private final List<RemoteAddeEntry> entries = arrList();
@@ -799,27 +796,20 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
                 throw new IndexOutOfBoundsException(); // questionable...
 
             switch (column) {
-                case 0: return entry.getAddress();
-                case 1: return entry.getGroup();
-                case 2: return entry.getAccount().getUsername();
-                case 3: return entry.getAccount().getProject();
-                case 4: return entry.getEntryType();
-                case 5: return entry.getEntrySource();
-                case 6: return entry.getEntryValidity();
+                case 0: return entry.getEntryText();
+                case 1: return formattedAccounting(entry);
+                case 2: return entry.getEntryType();
+                case 3: return entry.getEntrySource();
+                case 4: return entry.getEntryValidity();
                 default: throw new IndexOutOfBoundsException();
             }
+        }
 
-//            switch (column) {
-//                case 0: return entry.getEntryAlias();
-//                case 1: return entry.getAddress();
-//                case 2: return entry.getGroup();
-//                case 3: return entry.getAccount().getUsername();
-//                case 4: return entry.getAccount().getProject();
-//                case 5: return entry.getEntryType();
-//                case 6: return entry.getEntrySource();
-//                case 7: return entry.getEntryValidity();
-//                default: throw new IndexOutOfBoundsException();
-//            }
+        private static String formattedAccounting(final RemoteAddeEntry entry) {
+            AddeAccount acct = entry.getAccount();
+            if (acct == RemoteAddeEntry.DEFAULT_ACCOUNT)
+                return "public dataset";
+            return acct.friendlyString();
         }
 
         /**
