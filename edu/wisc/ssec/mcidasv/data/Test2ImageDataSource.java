@@ -441,8 +441,8 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                                      this.laLoSel, this.previewProjection,
                                      this.lineMag, this.elementMag, this.showPreview);
                 } catch (Exception e) {
-                    //System.out.println("Can't make selection components e="+e);
-                    //System.out.println("\n" + baseSource);
+                    System.err.println("Can't make selection components e="+e);
+                    System.err.println("\n" + baseSource);
                     getDataContext().getIdv().showNormalCursor();
                 }
                 this.haveDataSelectionComponents = true;
@@ -451,6 +451,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 components.add(laLoSel);
             }
         }
+        if (previewSel != null) previewSel.drawBox();
         getDataContext().getIdv().showNormalCursor();
     }
 

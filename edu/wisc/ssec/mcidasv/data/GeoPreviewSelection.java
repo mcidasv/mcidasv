@@ -234,7 +234,6 @@ public class GeoPreviewSelection extends DataSelectionComponent {
               public void componentResized(ComponentEvent ce) {
               }
           });
-          drawBox();
           return panel;
         }
         catch (Exception e) {
@@ -308,10 +307,11 @@ public class GeoPreviewSelection extends DataSelectionComponent {
       public void applyToDataSelection(DataSelection dataSelection) {
       }
 
-      private void drawBox() {
+      protected void drawBox() {
           if (box == null) makeBox();
           removeRBB();
-          double[][] latlon = laloSel.latLon;
+          double[][] latlon = laloSel.getLatLonPoints();
+          if (latlon == null) return;
           for (int i=0; i<2; i++) {
               for (int j=0; j<5; j++) {
                   Double val = new Double(latlon[i][j]);
