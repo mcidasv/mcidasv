@@ -759,6 +759,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          aggr.init_wavenumber = 3.740f;
          aggr.init_bandName = aggr.getBandNameFromWaveNumber(aggr.init_wavenumber);
          aggr.setDataRange(new float[] {180f, 340f});
+         multiSpectData = aggr;
          multiSpectData_s.add(aggr);
 
          //- now do the reflective bands
