@@ -49,6 +49,16 @@
     displaycategory="Imagery"
     properties="windowVisible=true;displayName=LinearCombo"/>
   <control
+     id="imagecontour"
+     categories="IMAGE-*-*"
+     class="ucar.unidata.idv.control.ContourPlanViewControl"
+     doeslevels="true"
+     icon="/ucar/unidata/idv/images/planviewcontour.png"
+     label="Image Contours"
+     displaycategory="Imagery">
+       <property name="viewManagerClassNames" value="ucar.unidata.idv.MapViewManager"/>
+  </control>
+  <control
     id="scatter"
     categories="IMAGE-*-*;;MultiSpectral;;GRID-2D-*;"
     class="edu.wisc.ssec.mcidasv.control.ScatterDisplay"
