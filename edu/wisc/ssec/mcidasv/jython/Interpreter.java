@@ -64,7 +64,7 @@ public class Interpreter extends InteractiveInterpreter {
      * 
      * <p>Additionally, the &quot;__main__&quot; module is imported by default 
      * so that the locals namespace makes sense.
-     * 
+ * 
      * @param state The system state you want to use with the interpreter.
      * @param stdout The stream Jython will use for standard output.
      * @param stderr The stream Jython will use for error output.

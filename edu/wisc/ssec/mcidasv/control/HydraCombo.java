@@ -53,7 +53,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
-import org.python.core.PyJavaInstance;
+//import org.python.core.PyJavaInstance;
 import org.python.core.PyObject;
 
 import ucar.unidata.data.DataChoice;
@@ -317,14 +317,14 @@ public class HydraCombo extends HydraControl {
 
         public void ranBlock(final String line) {
             PyObject jythonObj = console.getJythonObject("combo");
-            if (jythonObj instanceof PyJavaInstance) {
+//            if (jythonObj instanceof PyJavaInstance) {
                 Object combination = jythonObj.__tojava__(Object.class);
                 if (combination instanceof Combination) {
                     control.addCombination((Combination)combination);
                     control.getComputeButton().setEnabled(true);
                     control.showNormalCursor();
                 }
-            }
+//            }
         }
 
         public void updateSelector(final String id, final float channel) {
@@ -381,7 +381,8 @@ public class HydraCombo extends HydraControl {
                     tmp = new MultispectralSelectorWrapper(var, mappedColor, control, console);
                 addSelector(tmp.getSelector(), false);
                 wrapperMap.put(tmp.getSelector().getId(), tmp);
-                console.injectObject(var, new PyJavaInstance(tmp.getSelector()));
+//                console.injectObject(var, new PyJavaInstance(tmp.getSelector()));
+                console.injectObject(var, tmp.getSelector());
                 return tmp;
             } catch (Exception e) { 
                 LogUtil.logException("HydraCombo.makeWrapper", e);

@@ -43,7 +43,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.border.BevelBorder;
 
-import org.python.core.PyJavaInstance;
+//import org.python.core.PyJavaInstance;
 import org.python.core.PyObject;
 
 // TODO(jon): this will need to be reconsidered, but it's fine for the current
@@ -129,8 +129,8 @@ public class DefaultMenuWrangler implements MenuWrangler {
             PyObject value = entry.getValue();
 
             Class<?> c = value.getClass();
-            if (value instanceof PyJavaInstance)
-                c = value.__tojava__(Object.class).getClass();
+//            if (value instanceof PyJavaInstance)
+//                c = value.__tojava__(Object.class).getClass();
 
             String itemName = key + ": " + c.getSimpleName();
 

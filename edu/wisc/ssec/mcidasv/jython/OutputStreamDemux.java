@@ -88,32 +88,37 @@ public class OutputStreamDemux extends ByteArrayOutputStream {
     @Override public void write(int b) {
         streamMap.get(id()).write(b);
     }
-    
+
     @Override public void reset() {
         streamMap.get(id()).reset();
     }
-    
+
     @Override public int size() {
         return streamMap.get(id()).size();
     }
-    
+
     @Override public byte[] toByteArray() {
         return streamMap.get(id()).toByteArray();
     }
-    
+
     @Deprecated @Override public String toString(int hibyte) {
         return streamMap.get(id()).toString();
     }
-    
+
     @Override public String toString(String charsetName) throws UnsupportedEncodingException {
         return streamMap.get(id()).toString(charsetName);
     }
-    
+
     @Override public void writeTo(OutputStream out) throws IOException {
         streamMap.get(id()).writeTo(out);
     }
-    
+
     @Override public String toString() {
-        return streamMap.get(id()).toString();
+        ByteArrayOutputStream stream = streamMap.get(id());
+        if (stream == null)
+            return "null";
+        else
+            return stream.toString();
+//        return streamMap.get(id()).toString();
     }
 }

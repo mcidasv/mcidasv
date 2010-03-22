@@ -72,7 +72,7 @@ import javax.swing.text.StyleConstants;
 
 import org.python.core.Py;
 import org.python.core.PyFrame;
-import org.python.core.PyJavaInstance;
+//import org.python.core.PyJavaInstance;
 import org.python.core.PyList;
 import org.python.core.PyObject;
 import org.python.core.PyString;
@@ -210,8 +210,11 @@ public class Console implements Runnable, KeyListener {
      * @param name Object name as it will appear within the interpreter.
      * @param pyObject Object to place in the interpreter's local namespace.
      */
-    public void injectObject(final String name, final PyObject pyObject) {
-        jythonRunner.queueObject(name, pyObject);
+//    public void injectObject(final String name, final PyObject pyObject) {
+//        jythonRunner.queueObject(name, pyObject);
+//    }
+    public void injectObject(final String name, final Object object) {
+        jythonRunner.queueObject(name, object);
     }
 
     public void ejectObjectByName(final String name) {
@@ -524,8 +527,8 @@ public class Console implements Runnable, KeyListener {
         Map<String, PyObject> locals = getLocalNamespace();
         for (Map.Entry<String, PyObject> entry : locals.entrySet()) {
             PyObject val = entry.getValue();
-            if (val instanceof PyJavaInstance)
-                javaMap.put(entry.getKey(), val.__tojava__(Object.class));
+//            if (val instanceof PyJavaInstance)
+//                javaMap.put(entry.getKey(), val.__tojava__(Object.class));
         }
 
         return javaMap;

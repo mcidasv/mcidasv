@@ -33,7 +33,6 @@ package edu.wisc.ssec.mcidasv.control;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,26 +51,26 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import org.bushe.swing.event.EventBus;
+
 import org.python.core.PyDictionary;
 import org.python.core.PyFloat;
 import org.python.core.PyInteger;
-import org.python.core.PyJavaInstance;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSource;
 import ucar.unidata.data.DirectDataChoice;
-import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Range;
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.view.geoloc.MapProjectionDisplay;
 import ucar.visad.display.DisplayMaster;
+
 import visad.ConstantMap;
 import visad.Data;
 import visad.Real;
 import visad.VisADException;
 import visad.georef.MapProjection;
+
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
@@ -135,10 +134,14 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         console = new Console();
         console.setCallbackHandler(this);
 
-        console.injectObject(CONSOLE_IDV_OBJECT, new PyJavaInstance(getIdv()));
-        console.injectObject(CONSOLE_CONTROL_OBJECT, new PyJavaInstance(this));
-        console.injectObject(CONSOLE_OBJECT, new PyJavaInstance(console));
-        console.injectObject(CONSOLE_DATA_OBJECT, new PyJavaInstance(source.getMultiSpectralData(choice)));
+//        console.injectObject(CONSOLE_IDV_OBJECT, new PyJavaInstance(getIdv()));
+//        console.injectObject(CONSOLE_CONTROL_OBJECT, new PyJavaInstance(this));
+//        console.injectObject(CONSOLE_OBJECT, new PyJavaInstance(console));
+//        console.injectObject(CONSOLE_DATA_OBJECT, new PyJavaInstance(source.getMultiSpectralData(choice)));
+        console.injectObject(CONSOLE_IDV_OBJECT, getIdv());
+        console.injectObject(CONSOLE_CONTROL_OBJECT, this);
+        console.injectObject(CONSOLE_OBJECT, console);
+        console.injectObject(CONSOLE_DATA_OBJECT, source.getMultiSpectralData(choice));
 
         console.runFile("__main__", HYDRA_SRC);
 

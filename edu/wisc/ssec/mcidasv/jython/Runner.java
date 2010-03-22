@@ -56,13 +56,13 @@ public class Runner extends Thread {
      * Acts like a global output stream that redirects data to whichever 
      * {@link Console} matches the current thread name.
      */
-    private static final OutputStreamDemux STD_OUT = new OutputStreamDemux();
+    private final OutputStreamDemux STD_OUT = new OutputStreamDemux();
 
     /** 
      * Acts like a global error stream that redirects data to whichever 
      * {@link Console} matches the current thread name.
      */
-    private static final OutputStreamDemux STD_ERR = new OutputStreamDemux();
+    private final OutputStreamDemux STD_ERR = new OutputStreamDemux();
 
     /** Queue of {@link Command}s awaiting execution. */
     private final BlockingQueue<Command> queue = 
@@ -167,10 +167,13 @@ public class Runner extends Thread {
      * @param name Object name as it will appear to {@code interpreter}.
      * @param pyObject Object to put in {@code interpreter}'s local namespace.
      */
-    public void queueObject(final String name,
-        final PyObject pyObject) 
-    {
-        queueCommand(new InjectCommand(console, name, pyObject));
+//    public void queueObject(final String name,
+//        final PyObject pyObject) 
+//    {
+//        queueCommand(new InjectCommand(console, name, pyObject));
+//    }
+    public void queueObject(final String name, final Object object) {
+        queueCommand(new InjectCommand(console, name, object));
     }
 
     /**

@@ -141,12 +141,52 @@ class LineCommand extends Command {
  * variable into the local namespace of an {@link Interpreter}. This is useful
  * for allowing Jython to manipulate objects created by the IDV or McIDAS-V.
  */
+//class InjectCommand extends Command {
+//    /** Name Jython will use to refer to {@link #pyObject}. */
+//    private String name;
+//
+//    /** Wrapper around the Java object that is being injected. */
+//    private PyObject pyObject;
+//
+//    /**
+//     * Creates an injection command based upon the specified name and object.
+//     * 
+//     * @param console Likely not required in this context!
+//     * @param name Name Jython will use to refer to {@code pyObject}.
+//     * @param pyObject Wrapper around the Java object that is being injected.
+//     */
+//    public InjectCommand(final Console console, final String name, 
+//        final PyObject pyObject) 
+//    {
+//        super(console);
+//        this.name = name;
+//        this.pyObject = pyObject;
+//    }
+//
+//    /**
+//     * Attempts to inject a variable created in Java into the local namespace 
+//     * of {@code interpreter}.
+//     * 
+//     * @param interpreter Interpreter that will execute this command.
+//     * 
+//     * @throws Exception if {@link Interpreter#set(String, PyObject)} had 
+//     * problems.
+//     */
+//    public void execute(final Interpreter interpreter) throws Exception {
+//        interpreter.set(name, pyObject);
+//    }
+//
+//    @Override public String toString() {
+//        return "[InjectCommand@" + Integer.toHexString(hashCode()) + 
+//            ": name=" + name + ", pyObject=" + pyObject + "]";
+//    }
+//}
 class InjectCommand extends Command {
     /** Name Jython will use to refer to {@link #pyObject}. */
     private String name;
 
     /** Wrapper around the Java object that is being injected. */
-    private PyObject pyObject;
+    private Object object;
 
     /**
      * Creates an injection command based upon the specified name and object.
@@ -156,11 +196,11 @@ class InjectCommand extends Command {
      * @param pyObject Wrapper around the Java object that is being injected.
      */
     public InjectCommand(final Console console, final String name, 
-        final PyObject pyObject) 
+        final Object object) 
     {
         super(console);
         this.name = name;
-        this.pyObject = pyObject;
+        this.object = object;
     }
 
     /**
@@ -173,12 +213,12 @@ class InjectCommand extends Command {
      * problems.
      */
     public void execute(final Interpreter interpreter) throws Exception {
-        interpreter.set(name, pyObject);
+        interpreter.set(name, object);
     }
 
     @Override public String toString() {
         return "[InjectCommand@" + Integer.toHexString(hashCode()) + 
-            ": name=" + name + ", pyObject=" + pyObject + "]";
+            ": name=" + name + ", object=" + object + "]";
     }
 }
 
