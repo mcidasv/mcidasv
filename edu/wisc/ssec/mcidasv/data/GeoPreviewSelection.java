@@ -168,7 +168,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
             new GeoSubsetRubberBandBox(isLL, image, ((MapProjectionDisplay)mapProjDsp).getDisplayCoordinateSystem(), 1);
         mvm = new MapViewManager(dataSource.getDataContext().getIdv());
         store = dataSource.getDataContext().getIdv().getStore();
-        rbb.setColor((Color)store.get(mvm.PREF_FGCOLOR));
+        rbb.setColor((Color)store.get(mvm.PREF_FGCOLOR, Color.GREEN));
         rbb.addAction(new CellImpl() {
           public void doAction()
              throws VisADException, RemoteException
@@ -339,7 +339,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
          if (box == null) {
              try {
                  box = new LineDrawing("box");
-                 box.setColor((Color)store.get(mvm.PREF_FGCOLOR));
+                 box.setColor((Color)store.get(mvm.PREF_FGCOLOR, Color.GREEN));
                  dspMaster.addDisplayable(box);
              } catch (Exception e) {
                  System.err.println("GeoPreviewSelection makeBox: e=" + e);
