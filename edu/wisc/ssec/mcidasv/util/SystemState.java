@@ -288,7 +288,7 @@ public class SystemState {
      * {@link Properties} file format.
      */
     public String getStateAsString(final boolean firehose) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder(20000);
 
         Map<String, String> versions = ((StateManager)mcv.getStateManager()).getVersionInfo();
         Properties sysProps = System.getProperties();
@@ -296,46 +296,47 @@ public class SystemState {
         Map<String, String> machineProps = queryMachine();
         Map<String, Object> mcvProps = queryMcvState();
 
-        buf.append("Software Versions:\n");
-        buf.append("McIDAS-V: "+versions.get("mcv.version.general")+" ("+versions.get("mcv.version.build")+")\n");
-        buf.append("IDV:      "+versions.get("idv.version.general")+" ("+versions.get("idv.version.build")+")\n\n");
+        buf.append("Software Versions:");
+        buf.append("\nMcIDAS-V: ").append(versions.get("mcv.version.general")).append(" (").append(versions.get("mcv.version.build")).append(')');
+        buf.append("\nIDV:      ").append(versions.get("idv.version.general")).append(" (").append(versions.get("idv.version.build")).append(')');
 
-        buf.append("Operating System:\n");
-        buf.append("Name:         "+sysProps.getProperty("os.name")+"\n");
-        buf.append("Version:      "+sysProps.getProperty("os.version")+"\n");
-        buf.append("Architecture: "+sysProps.getProperty("os.arch")+"\n\n");
+        buf.append("\n\nOperating System:");
+        buf.append("\nName:         ").append(sysProps.getProperty("os.name"));
+        buf.append("\nVersion:      ").append(sysProps.getProperty("os.version"));
+        buf.append("\nArchitecture: ").append(sysProps.getProperty("os.arch"));
 
-        buf.append("Java:\n");
-        buf.append("Version: "+sysProps.getProperty("java.version")+"\n");
-        buf.append("Vendor:  "+sysProps.getProperty("java.vendor")+"\n");
-        buf.append("Home:    "+sysProps.getProperty("java.home")+"\n\n");
+        buf.append("\n\nJava:");
+        buf.append("\nVersion: ").append(sysProps.getProperty("java.version"));
+        buf.append("\nVendor:  ").append(sysProps.getProperty("java.vendor"));
+        buf.append("\nHome:    ").append(sysProps.getProperty("java.home"));
 
-        buf.append("Java 3D:\n");
-        buf.append("Version:  "+j3dProps.get("j3d.version")+"\n");
-        buf.append("Vendor:   "+j3dProps.get("j3d.vendor")+"\n");
-        buf.append("Renderer: "+j3dProps.get("renderer")+"\n");
+        buf.append("\n\nJava 3D:");
+        buf.append("\nRenderer: ").append(j3dProps.get("j3d.renderer"));
+        buf.append("\nPipeline: ").append(j3dProps.get("j3d.pipeline"));
+        buf.append("\nVendor:   ").append(j3dProps.get("j3d.vendor"));
+        buf.append("\nVersion:  ").append(j3dProps.get("j3d.version"));
 
         if (firehose) {
-            buf.append("\n\nFirehose:\n");
+            buf.append("\n\n\nFirehose:\n");
             // get software versions
             for (Entry<String, String> entry : versions.entrySet())
-                buf.append(entry.getKey()+"="+entry.getValue()+"\n");
+                buf.append(entry.getKey()).append('=').append(entry.getValue()).append('\n');
 
             // get machine properties
             for (Entry<String, String> entry : queryMachine().entrySet())
-                buf.append(entry.getKey()+"="+entry.getValue()+"\n");
+                buf.append(entry.getKey()).append('=').append(entry.getValue()).append('\n');
 
             // get java system properties
             for (Entry<Object, Object> entry : System.getProperties().entrySet())
-                buf.append(entry.getKey()+"="+entry.getValue()+"\n");
+                buf.append(entry.getKey()).append('=').append(entry.getValue()).append('\n');
 
             // get java3d/jogl properties
             for (Entry<String, Object> entry : queryJava3d().entrySet())
-                buf.append(entry.getKey()+"="+entry.getValue()+"\n");
+                buf.append(entry.getKey()).append('=').append(entry.getValue()).append('\n');
 
             // get idv/mcv properties
             for (Entry<String, Object> entry : queryMcvState().entrySet())
-                buf.append(entry.getKey()+"="+entry.getValue()+"\n");
+                buf.append(entry.getKey()).append('=').append(entry.getValue()).append('\n');
         }
         return buf.toString();
     }
