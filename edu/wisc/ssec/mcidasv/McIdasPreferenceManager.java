@@ -184,9 +184,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     /** Help McV remember the last preference panel the user selected. */
     private static final String LAST_PREF_PANEL = "mcv.prefs.lastpanel";
 
-    // TODO(jon): this should be really temporary
-    private static final String PREF_GLOBE_BGCOLOR = "View.GlobeBackgroundColor";
-
     private static final String LEGEND_TEMPLATE_DATA = "%datasourcename% - %displayname%";
     private static final String DISPLAY_LIST_TEMPLATE_DATA = "%datasourcename% - %displayname% " + UtcDate.MACRO_TIMESTAMP;
 
@@ -969,8 +966,8 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         panelPanel.setBorder(BorderFactory.createTitledBorder("Panel Configuration"));
 
         final JComponent[] globeBg = 
-            GuiUtils.makeColorSwatchWidget(getStore().get(PREF_GLOBE_BGCOLOR, 
-                Color.DARK_GRAY), "Set Globe Background Color");
+          GuiUtils.makeColorSwatchWidget(mappy.getGlobeBackgroundColorToUse(), 
+              "Set Globe Background Color");
         final JComponent[] bgComps =
             GuiUtils.makeColorSwatchWidget(getStore().get(MapViewManager.PREF_BGCOLOR,
                 mappy.getBackground()), "Set Background Color");
@@ -1083,7 +1080,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                 theStore.put(MapViewManager.PREF_BORDERCOLOR, border[0].getBackground());
                 theStore.put(MapViewManager.PREF_DISPLAYLISTFONT, fontSelector.getFont());
                 theStore.put(MapViewManager.PREF_DISPLAYLISTCOLOR, dlColorWidget.getSwatchColor());
-                theStore.put(PREF_GLOBE_BGCOLOR, globeBg[0].getBackground());
+                theStore.put(MapViewManager.PREF_GLOBEBACKGROUND, globeBg[0].getBackground());
                 ViewManager.setHighlightBorder(border[0].getBackground());
             }
         };
