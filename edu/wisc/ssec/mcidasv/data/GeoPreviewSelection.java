@@ -225,8 +225,10 @@ public class GeoPreviewSelection extends DataSelectionComponent {
           panel.add("Center", dspMaster.getDisplayComponent());
           panel.addComponentListener (new ComponentListener() {
               public void componentHidden(ComponentEvent ce) {
+                  dspMaster.getDisplayComponent().setVisible(false);
               }
               public void componentShown(ComponentEvent ce) {
+                  dspMaster.getDisplayComponent().setVisible(true);
                   drawBox();
               }
               public void componentMoved(ComponentEvent ce) {
