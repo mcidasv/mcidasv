@@ -116,30 +116,9 @@ public class RGBCompositeControl extends DisplayControlImpl {
      grnMap.resetAutoScale();
      bluMap.resetAutoScale();
 
-     /**
-     redMap.addScalarMapListener(new ScalarMapListener() {
-       public void controlChanged(ScalarMapControlEvent event) throws RemoteException, VisADException {
-       }
-
-       public void mapChanged(ScalarMapEvent event) throws RemoteException, VisADException {
-         if (event.getId() == event.AUTO_SCALE) {
-            ScalarMap smap = event.getScalarMap();
-            double[] rng = smap.getRange();
-            String name = smap.getScalarName();
-            if (name.startsWith("redimage")) {
-              redRange[0] = rng[0];
-              redRange[1] = rng[1];
-            } else if (name.startsWith("grnimage")) {
-              grnRange[0] = rng[0];
-              grnRange[1] = rng[1];
-            } else if (name.startsWith("bluimage")) {
-              bluRange[0] = rng[0];
-              bluRange[1] = rng[1];
-            }
-         }
-       }
-     });
-     **/
+     redMap.addScalarMapListener(new ColorMapListener(redMap));
+     grnMap.addScalarMapListener(new ColorMapListener(grnMap));
+     bluMap.addScalarMapListener(new ColorMapListener(bluMap));
 
      addDisplayable(imageDisplay, FLAG_COLORTABLE);
      imageDisplay.loadData(imageField);
@@ -237,20 +216,31 @@ public class RGBCompositeControl extends DisplayControlImpl {
      return panel;
    }
 
- /***
-    @Override public MapProjection getDataProjection() {
-        MapProjection mp = null;
-        Rectangle2D rect =
-            MultiSpectralData.getLonLatBoundingBox((FlatField)imageField);
+  private class ColorMapListener implements ScalarMapListener {
 
-        try {
-            mp = new LambertAEA(rect);
-        } catch (Exception e) {
-            logException("MultiSpectralControl.getDataProjection", e);
-        }
+    ScalarMap clrMap;
 
-        return mp;
+    double[] range = new double[2];
+
+    ColorMapListener(ScalarMap clrMap) {
+      this.clrMap = clrMap;
     }
- ***/
+
+    public void controlChanged(ScalarMapControlEvent event) throws RemoteException, VisADException {
+    }
+
+    public void mapChanged(ScalarMapEvent event) throws RemoteException, VisADException {
+      if (event.getId() == event.AUTO_SCALE) {
+            double[] rng = clrMap.getRange();
+            range[0] = rng[0];
+            range[1] = rng[1];
+      }
+      else if (event.getId() == event.MANUAL) {
+            double[] rng = clrMap.getRange();
+            range[0] = rng[0];
+            range[1] = rng[1];
+      }
+    }
+  }
 
 }
