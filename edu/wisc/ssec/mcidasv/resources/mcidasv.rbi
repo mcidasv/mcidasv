@@ -390,6 +390,9 @@
     <resource label="Image Filter Routines" location="%APPPATH%/python/imageFilters.py">
       <property name="category" value="System"/>
     </resource>
+    <resource label="Hydra" location="%APPPATH%/python/utilities/combineRGB.py">
+      <property name="category" value="System"/>
+    </resource>
     <resource label="Image Routines" location="%IDVPATH%/python/image.py">
       <property name="category" value="System"/>
     </resource>
