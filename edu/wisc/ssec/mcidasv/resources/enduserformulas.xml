@@ -156,4 +156,11 @@
     </categories>
     <operands/>
   </derived>
+  <derived description="Three Color (RGB) Image (Auto-scale)" formula="mycombineRGB(red, green, blue)" id="RGBautoscale" isdefault="false" isenduser="true">
+    <categories>
+      <category display="true" value="Imagery"/>
+      <category value="display:rgbcomposite"/>
+    </categories>
+    <operands categories=""/>
+  </derived>
 </derived_parameters>
