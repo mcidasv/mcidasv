@@ -178,17 +178,6 @@ public class MultiDimensionDataSource extends HydraDataSource {
     }
 
     public void setup() throws Exception {
-        /*
-        try {
-          if ( filename.endsWith(".hdf") ) {
-            reader = new HDF4File(filename);
-          }
-        }
-        catch (Exception e) {
-          System.out.println("cannot create HDF4 reader for file:"+filename+" e= "+e);
-          throw new VisADException();
-        }
-        */
 
         try {
             reader = new NetCDFFile(filename);
@@ -197,7 +186,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
           e.printStackTrace();
           System.out.println("cannot create NetCDF reader for file: "+filename);
         }
-                                                                                                                                                     
+
         adapters = new MultiDimensionAdapter[2];
         Hashtable<String, String[]> properties = new Hashtable<String, String[]>(); 
 
@@ -351,16 +340,20 @@ public class MultiDimensionDataSource extends HydraDataSource {
        }
        else {
           HashMap table = SwathAdapter.getEmptyMetadataTable();
-          table.put("array_name", "MODIS_SWATH_Type_L1B/Data Fields/EV_1KM_Emissive");
-          table.put("lon_array_name", "pixel_longitude");
-          table.put("lat_array_name", "pixel_latitude");
-          table.put("XTrack", "elements");
-          table.put("Track", "lines");
-          table.put("geo_Track", "lines");
-          table.put("geo_XTrack", "elements");
+          table.put("array_name", "All_Data/VIIRS-SST-EDR_All/BulkSeaSurfaceTemperature");
+          table.put("array_dimension_names", new String[] {"Track", "XTrack"});
+          table.put("lon_array_name", "All_Data/VIIRS-MOD-GEO-TC_All/Longitude");
+          table.put("lat_array_name", "All_Data/VIIRS-MOD-GEO-TC_All/Latitude");
+          table.put("lon_array_dimension_names", new String[] {"Track", "XTrack"});
+          table.put("lat_array_dimension_names", new String[] {"Track", "XTrack"});
+          table.put("XTrack", "XTrack");
+          table.put("Track", "Track");
+          table.put("geo_Track", "Track");
+          table.put("geo_XTrack", "XTrack");
           table.put("scale_name", "scale_factor");
           table.put("offset_name", "add_offset");
           table.put("fill_value_name", "_FillValue");
+          System.out.println(reader);
           adapters[0] = new SwathAdapter(reader, table);
           categories = DataCategory.parseCategories("2D grid;GRID-2D;");
           defaultSubset = adapters[0].getDefaultSubset();
