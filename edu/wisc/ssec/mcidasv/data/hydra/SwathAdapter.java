@@ -63,8 +63,11 @@ public class SwathAdapter extends MultiDimensionAdapter {
       static String geo_track_name = "geo_Track";
       static String geo_xtrack_name  = "geo_XTrack";
       static String array_name = "array_name";
+      static String array_dimension_names = "array_dimension_names";
       static String lon_array_name = "lon_array_name";
       static String lat_array_name = "lat_array_name";
+      static String lon_array_dimension_names = "lon_array_dimension_names";
+      static String lat_array_dimension_names = "lat_array_dimension_names";
       static String range_name = "range_name";
       static String product_name = "product_name";
       static String scale_name = "scale_name";
@@ -119,12 +122,15 @@ public class SwathAdapter extends MultiDimensionAdapter {
       public static HashMap getEmptyMetadataTable() {
         HashMap<String, String> metadata = new HashMap<String, String>();
         metadata.put(array_name, null);
+        metadata.put(array_dimension_names, null);
         metadata.put(track_name, null);
         metadata.put(xtrack_name, null);
         metadata.put(geo_track_name, null);
         metadata.put(geo_xtrack_name, null);
         metadata.put(lon_array_name, null);
         metadata.put(lat_array_name, null);
+        metadata.put(lon_array_dimension_names, null);
+        metadata.put(lat_array_dimension_names, null);
         metadata.put(scale_name, null);
         metadata.put(offset_name, null);
         metadata.put(fill_value_name, null);

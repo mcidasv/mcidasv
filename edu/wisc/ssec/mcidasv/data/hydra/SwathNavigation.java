@@ -92,8 +92,21 @@ public class SwathNavigation implements Navigation  {
     lon_array_name = (String)metadata.get(SwathAdapter.lon_array_name);
     lat_array_name = (String)metadata.get(SwathAdapter.lat_array_name);
 
-    String[] lon_dim_names = reader.getDimensionNames(lon_array_name);
-    String[] lat_dim_names = reader.getDimensionNames(lat_array_name);
+    String[] lon_dim_names = null;
+    String[] lat_dim_names = null;
+
+    String[] lonDimNames = (String[]) metadata.get(SwathAdapter.lon_array_dimension_names); 
+    String[] latDimNames = (String[]) metadata.get(SwathAdapter.lat_array_dimension_names); 
+
+    if (lonDimNames != null) {
+      lon_dim_names = lonDimNames;
+      lat_dim_names = latDimNames;
+    }
+    else {
+      lon_dim_names = reader.getDimensionNames(lon_array_name);
+      lat_dim_names = reader.getDimensionNames(lat_array_name);
+    }
+
     int[] lon_dim_lengths = reader.getDimensionLengths(lon_array_name);
     int[] lat_dim_lengths = reader.getDimensionLengths(lat_array_name);
 

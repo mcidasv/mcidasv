@@ -77,7 +77,15 @@ public abstract class MultiDimensionAdapter {
 
    private void init() {
      this.arrayName = (String) metadata.get("array_name");
-     array_dim_names = reader.getDimensionNames(arrayName);
+
+     String[] suppliedDimNames = (String[]) metadata.get("array_dimension_names");
+     if (suppliedDimNames != null) {
+       array_dim_names = suppliedDimNames;
+     }
+     else {
+       array_dim_names = reader.getDimensionNames(arrayName);
+     }
+
      array_dim_lengths = reader.getDimensionLengths(arrayName);
      array_rank = array_dim_lengths.length;
      arrayType = reader.getArrayType(arrayName);
