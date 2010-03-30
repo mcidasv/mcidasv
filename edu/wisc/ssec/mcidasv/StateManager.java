@@ -30,13 +30,7 @@
 
 package edu.wisc.ssec.mcidasv;
 
-import static edu.wisc.ssec.mcidasv.Constants.PROP_BUILD_DATE;
-import static edu.wisc.ssec.mcidasv.Constants.PROP_VERSION_MAJOR;
-import static edu.wisc.ssec.mcidasv.Constants.PROP_VERSION_MINOR;
-
-import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -61,12 +55,8 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 	private String version;
 	private String versionAbout;
 	
-	/** action listener */
-	private ActionListener actionListener;
-	
 	public StateManager(IntegratedDataViewer idv) {
 		super(idv);
-		actionListener = getIdv();
 	}
 	
 	/**
@@ -90,7 +80,7 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 	 * @param url  the link definition
 	 */
 	public void click(String url) {
-		actionListener.actionPerformed(new ActionEvent(this, 0, url));
+		getIdv().actionPerformed(new ActionEvent(this, 0, url));
 	}
 	
 	public String getOSName() {
@@ -198,7 +188,7 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 	public String getMcIdasVersionLatest() {
 		String version = "";
 		try {
-			version = IOUtil.readContents(Constants.HOMEPAGE_URL + "/" + Constants.VERSION_URL + "?requesting=" + getMcIdasVersion() + "&os=" + getOSName(), "");
+			version = IOUtil.readContents(Constants.HOMEPAGE_URL+'/'+Constants.VERSION_URL+"?requesting="+getMcIdasVersion()+"&os="+getOSName(), "");
 		} catch (Exception e) {}
 		return version.trim();
 	}
@@ -209,7 +199,7 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 	public String getNoticeLatest() {
 		String notice = "";
 		try {
-			notice = IOUtil.readContents(Constants.HOMEPAGE_URL + "/" + Constants.NOTICE_URL + "?requesting=" + getMcIdasVersion() + "&os=" + getOSName(), "");
+			notice = IOUtil.readContents(Constants.HOMEPAGE_URL+"/"+Constants.NOTICE_URL+"?requesting="+getMcIdasVersion()+"&os="+getOSName(), "");
 		} catch (Exception e) {}
 		return notice.trim();
 	}
@@ -384,7 +374,7 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 			BufferedReader in = new BufferedReader(fstream);
 		    String line;
 		    while ((line = in.readLine()) != null) {
-		    	notice += line + "\n";
+		    	notice += line + '\n';
 		    }
 			in.close();
 		} catch (Exception e){
