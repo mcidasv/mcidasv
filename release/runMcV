@@ -33,6 +33,12 @@ HEAP_DEFAULT=512M
 # Controls whether or not the welcome window appears (0 = no, 1 = yes)
 SHOW_WELCOME="0"
 
+# TEMP: default value for enabling concurrent mark-sweep GC
+# USE_CMSGC="0"
+
+# TEMP?: default value for the visad.java3d.geometryByRef property
+# GEOMETRY_BY_REF="true"
+
 # Put the log files in the user's .mcidasv directory (which should be writeable)
 MCV_LOG="${MCV_USERPATH}/mcidasv.log"
 MCV_LOG_LINES=10000
@@ -127,16 +133,23 @@ else
     DEFAULT_BUNDLE=""
 fi
 
-# temporary! determine whether or not the new server manager should be enabled.
-if [ "${USE_NEWSERVERMANAGER}" = "1" ]; then
-    NEW_SERV_MAN="-newservmanager"
+# TEMP!: toggles the CMS collector
+if [ "${USE_CMSGC}" = "1" ]; then
+    JVM_ARGS="-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=128m"
 else
-    NEW_SERV_MAN=""
+    JVM_ARGS=""
+fi
+
+# TEMP?: toggles the visad.java3d.geometryByRef property
+if [ "${USE_GEOBYREF}" = "0" ]; then
+    GEOMETRY_BY_REF="false"
+else
+    GEOMETRY_BY_REF="true"
 fi
 
 # Gather up previously set values.
-JAVA_FLAGS="-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN}"
-MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Didv.3d=${IDV_3D} -Didv.sysmem=${SYS_MEM} ${DEFAULT_BUNDLE} ${NEW_SERV_MAN}"
+JAVA_FLAGS="-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${JVM_ARGS}"
+MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Dvisad.java3d.geometryByRef=${GEOMETRY_BY_REF} -Didv.3d=${IDV_3D} -Didv.sysmem=${SYS_MEM} ${DEFAULT_BUNDLE}"
 echo "mcv flags: ${MCV_FLAGS}"
 ################################################################################
 # OS specific settings

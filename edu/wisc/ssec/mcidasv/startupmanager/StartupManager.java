@@ -62,6 +62,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
@@ -80,6 +81,7 @@ import edu.wisc.ssec.mcidasv.startupmanager.options.DirectoryOption;
 import edu.wisc.ssec.mcidasv.startupmanager.options.MemoryOption;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster;
 import edu.wisc.ssec.mcidasv.startupmanager.options.SliderOption;
+import edu.wisc.ssec.mcidasv.startupmanager.options.TextOption;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 import javax.swing.ToolTipManager;
@@ -423,8 +425,10 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         BooleanOption use3d = (BooleanOption)optMaster.getOption("USE_3DSTUFF");
         BooleanOption defaultBundle = (BooleanOption)optMaster.getOption("DEFAULT_LAYOUT");
         BooleanOption useDirect3d = (BooleanOption)optMaster.getOption("D3DREND");
-        BooleanOption useNewServManager = (BooleanOption)optMaster.getOption("USE_NEWSERVERMANAGER");
+        BooleanOption useBadLineFix = (BooleanOption)optMaster.getOption("USE_GEOBYREF");
+        BooleanOption useCmsCollector = (BooleanOption)optMaster.getOption("USE_CMSGC");
         DirectoryOption startupBundle = (DirectoryOption)optMaster.getOption("STARTUP_BUNDLE");
+        TextOption jvmArgs = (TextOption)optMaster.getOption("JVM_ARGS");
 
         JPanel startupPanel = new JPanel();
         startupPanel.setBorder(BorderFactory.createTitledBorder("Startup Options"));
@@ -453,9 +457,11 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         JPanel bundlePanel = McVGuiUtils.makeLabeledComponent(startupBundle.getLabel()+":",
             McVGuiUtils.topBottom(startupBundlePanel, defaultBundleCheckBox, McVGuiUtils.Prefer.TOP));
 
-        JCheckBox newServManagerCheckBox = (JCheckBox)useNewServManager.getComponent();
-        newServManagerCheckBox.setText(useNewServManager.getLabel());
-        JPanel miscPanel = McVGuiUtils.makeLabeledComponent("Misc:", newServManagerCheckBox);
+        JCheckBox useBadLineFixCheckBox = (JCheckBox)useBadLineFix.getComponent();
+        JCheckBox useCmsCollectorCheckBox = (JCheckBox)useCmsCollector.getComponent();
+        useBadLineFixCheckBox.setText(useBadLineFix.getLabel());
+        useCmsCollectorCheckBox.setText(useCmsCollector.getLabel());
+        JPanel miscPanel = McVGuiUtils.makeLabeledComponent("Misc:", McVGuiUtils.topBottom(useBadLineFixCheckBox, useCmsCollectorCheckBox, McVGuiUtils.Prefer.TOP));
 
         javax.swing.GroupLayout panelLayout = new javax.swing.GroupLayout(startupPanel);
         startupPanel.setLayout(panelLayout);
@@ -475,7 +481,8 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bundlePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(miscPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(miscPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            )
         );
 
         return startupPanel;

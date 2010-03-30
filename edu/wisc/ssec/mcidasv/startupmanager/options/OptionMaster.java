@@ -63,7 +63,11 @@ public enum OptionMaster {
          * Not sure why, but it shouldn't hurt other users.  Investigate after Alpha10
          */
         { "D3DREND", "  Enable Direct3D", "", Type.BOOLEAN, OptionPlatform.WINDOWS, Visibility.VISIBLE },
-        { "USE_NEWSERVERMANAGER", "Enable new server manager", "0", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
+        // mcidasv enables this (the actual property is "visad.java3d.geometryByRef")
+        // by default in mcidasv.properties.
+        { "USE_GEOBYREF", "Enable geometry by reference", "1", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
+        // temp bandaid for people suffering from permgen problems.
+        { "USE_CMSGC", "Enable concurrent mark-sweep garbage collector", "0", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
     };
 
     /**
@@ -266,7 +270,7 @@ public enum OptionMaster {
                 if (line.startsWith("#"))
                     continue;
 
-                contents = new String(line);
+                contents = line.replace("=\"", "=");
                 String[] chunks = contents.replace("SET ", "").split("=");
                 if (chunks.length == 2) {
                     Option option = getOption(chunks[0]);

@@ -60,11 +60,18 @@ jre\bin\javaw.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow
 if ERRORLEVEL 1 GOTO end
 )
 
-REM use new server manager
-if "%USE_NEWSERVERMANAGER%"=="1" (
-SET NEW_SERV_MAN=-newservmanager
+REM temp: toggles the CMS collector
+IF "%USE_CMSGC%"=="1" (
+SET JVM_ARGS=-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=128m
 ) ELSE (
-SET NEW_SERV_MAN=
+SET JVM_ARGS=
+)
+
+REM temp?: toggles the visad.java3d.geometryByRef property
+IF "%USE_GEOBYREF%"=="0" (
+SET GEOMETRY_BY_REF=false
+) ELSE (
+SET GEOMETRY_BY_REF=true
 )
 
 REM Get the amount of system memorys
@@ -74,7 +81,7 @@ FOR /F "tokens=*" %%i IN ('jre\bin\java.exe -cp mcidasv.jar edu.wisc.ssec.mcidas
 SET /a SYS_MEM=0
 FOR /F %%i IN ('jre\bin\java.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
 
-SET MCV_FLAGS=-Didv.3d=%ENABLE_3D% -Didv.sysmem=%SYS_MEM% %NEW_SERV_MAN%
+SET MCV_FLAGS=-Didv.3d=%ENABLE_3D% -Didv.sysmem=%SYS_MEM% -Dvisad.java3d.geometryByRef=%GEOMETRY_BY_REF%
 
 REM Append the specified startup bundle to the args getting passed to Mcv
 IF DEFINED STARTUP_BUNDLE SET MCV_FLAGS=%MCV_FLAGS% -bundle %STARTUP_BUNDLE%
@@ -124,8 +131,8 @@ date /t >>"%MCV_LOG%"
 time /t >>"%MCV_LOG%"
 @echo %SYS_VER% >>"%MCV_LOG%"
 @echo %SYS_MEM% MB system memory >>"%MCV_LOG%"
-@echo Command line: jre\bin\javaw.exe -Xmx%HEAP_SIZE% %D3D_FLAG% -cp idv.jar -jar mcidasv.jar %MCV_FLAGS% %MCV_PARAMS%
+@echo Command line: jre\bin\javaw.exe -Xmx%HEAP_SIZE% %JVM_ARGS% %D3D_FLAG% -cp idv.jar -jar mcidasv.jar %MCV_FLAGS% %MCV_PARAMS%
 
-start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %D3D_FLAG% -cp idv.jar -jar mcidasv.jar %MCV_FLAGS% %MCV_PARAMS% >>"%MCV_LOG%" 2>&1
+start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %JVM_ARGS% %D3D_FLAG% -cp idv.jar -jar mcidasv.jar %MCV_FLAGS% %MCV_PARAMS% >>"%MCV_LOG%" 2>&1
 
 :end
