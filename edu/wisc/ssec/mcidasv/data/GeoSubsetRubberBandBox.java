@@ -34,11 +34,14 @@ import edu.wisc.ssec.mcidasv.data.hydra.MyRubberBandBoxRendererJ3D;
 import edu.wisc.ssec.mcidasv.data.hydra.SubsetRubberBandBox;
 //import edu.wisc.ssec.mcidasv.data.hydra.DataToDisplayCoordinateSystem;
 
+import ucar.unidata.view.geoloc.MapProjectionDisplay;
 import ucar.visad.display.Displayable;
+import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.LineDrawing;
 
 import visad.*;
 import visad.bom.*;
+import visad.georef.MapProjection;
 
 import java.rmi.RemoteException;
 
@@ -69,6 +72,7 @@ public class GeoSubsetRubberBandBox extends SubsetRubberBandBox {
     private CoordinateSystem dataCS;
 
     private CoordinateSystem displayCS;
+    private DisplayMaster dispMaster;
 
     private GeoDataToDisplayCoordinateSystem new_cs;
 
@@ -190,6 +194,11 @@ public class GeoSubsetRubberBandBox extends SubsetRubberBandBox {
         super(that);
     }
 
+    protected void setDisplayMaster(DisplayMaster dspMaster) {
+        dispMaster = dspMaster;
+        new_cs.setDisplayMaster(dispMaster);
+    }
+
     public float[] getRanges() {
         float[] extrms = new_cs.getExtremes();
         new_cs.resetExtremes();
@@ -201,6 +210,11 @@ class GeoDataToDisplayCoordinateSystem extends CoordinateSystem {
   private CoordinateSystem dataCS;
   private CoordinateSystem displayCS;
   private boolean isLL;
+  private MapProjectionDisplay mapProjDisp;
+  private double scaleX;
+  private double scaleY;
+  private double offsetX;
+  private double offsetY;
 
   private float lineLo;
   private float lineHi;
@@ -216,6 +230,20 @@ class GeoDataToDisplayCoordinateSystem extends CoordinateSystem {
     } catch (Exception e) {
         System.out.println("e=" + e);
     }
+  }
+
+  protected void setDisplayMaster(DisplayMaster dspMaster) {
+      if (dspMaster instanceof MapProjectionDisplay) {
+          mapProjDisp = (MapProjectionDisplay)dspMaster;
+          this.mapProjDisp = mapProjDisp;
+          MapProjection mapProj = mapProjDisp.getMapProjection();
+          java.awt.geom.Rectangle2D bounds =
+             mapProj.getDefaultMapArea();
+          scaleX  = bounds.getWidth() / 2.0;
+          scaleY  = bounds.getHeight() / 2.0;
+          offsetX = bounds.getX() + scaleX;
+          offsetY = bounds.getY() + scaleY;
+      }
   }
 
   public float[] getExtremes() {
@@ -248,11 +276,37 @@ class GeoDataToDisplayCoordinateSystem extends CoordinateSystem {
   }
 
   public float[][] fromReference(float[][] values) throws VisADException {
-    //- if (isLL) values = reverseArrayOrder(values);
-    float[][] new_values = displayCS.fromReference(values);
-    if (isLL) new_values = reverseArrayOrder(new_values);
-    new_values = dataCS.fromReference(new float[][] {new_values[1], new_values[0], new_values[2]});
+/*
+    System.out.println("  fromReference:");
+    System.out.println("      displayCS=" + displayCS);
+    System.out.println("      values in: [0][0]=" + values[0][0] + " [1][0]=" + values[1][0]);
+*/
+    float[][] new_values = bypassReference(values);
+    //System.out.println("     new_values: [0][0]=" + new_values[0][0] + " [1][0]=" + new_values[1][0]);
     return new_values;
+  }
+
+  /**
+   * Transform display XYZ values to latitude/longitude/altitude
+   *
+   * @param  xyz  array of Display.DisplaySpatialCartesianTuple XYZ values
+   * @return array of display lat/lon/alt values.
+   *
+   * @throws VisADException  can't create the necessary VisAD object
+   */
+  private float[][] bypassReference(float[][] xyz) throws VisADException {
+      if ((xyz == null) || (xyz[0].length < 1)) {
+          return xyz;
+      }
+      int numpoints = xyz[0].length;
+      for (int i = 0; i < numpoints; i++) {
+          if (Float.isNaN(xyz[0][i]) || Float.isNaN(xyz[0][i])) {
+              continue;
+          }
+          xyz[0][i] = (float) (xyz[0][i] * scaleX + offsetX);
+          xyz[1][i] = (float) (xyz[1][i] * scaleY + offsetY);
+      }
+      return xyz;
   }
 
   public double[][] toReference(double[][] values) throws VisADException {
