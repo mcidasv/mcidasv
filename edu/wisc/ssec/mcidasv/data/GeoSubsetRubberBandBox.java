@@ -268,21 +268,60 @@ class GeoDataToDisplayCoordinateSystem extends CoordinateSystem {
     if (values[1][0] < lineLo) lineLo = values[1][0];
     if (values[1][0] > lineHi) lineHi = values[1][0];
 
-    //- if (isLL) values = reverseArrayOrder(values);
-    float[][] new_values = dataCS.toReference(values);
-    if (isLL) new_values = reverseArrayOrder(new_values);
-    new_values = displayCS.toReference(new float[][] {new_values[1], new_values[0], new_values[2]});
+    float[][] new_values = bypassToReference(values);
     return new_values;
   }
 
+  private float[][] bypassToReference(float[][] xyz) {
+    if ((xyz == null) || (xyz[0].length < 1)) {
+        return xyz;
+    }
+    int numpoints = xyz[0].length;
+    float x, y;
+    float[]t2ax = xyz[0];
+    float[]t2ay = xyz[1];
+    for (int i = 0; i < numpoints; i++) {
+        float t2x = t2ax[i];
+        float t2y = t2ay[i];
+        if (t2x!=t2x || t2y!=t2y) {
+            x = Float.NaN;
+            y = Float.NaN;
+        } else {
+            x = (float) ((t2x - offsetX) / scaleX);
+            y = (float) ((t2y - offsetY) / scaleY);
+        }
+        xyz[0][i] = x;
+        xyz[1][i] = y;
+    }
+    return xyz;
+  }
+
+  private double[][] bypassToReference(double[][] xyz) {
+    if ((xyz == null) || (xyz[0].length < 1)) {
+        return xyz;
+    }
+    int numpoints = xyz[0].length;
+    double x, y;
+    double[]t2ax = xyz[0];
+    double[]t2ay = xyz[1];
+    for (int i = 0; i < numpoints; i++) {
+        double t2x = t2ax[i];
+        double t2y = t2ay[i];
+        if (t2x!=t2x || t2y!=t2y) {
+            x = Double.NaN;
+            y = Double.NaN;
+        } else {
+            x = (double) ((t2x - offsetX) / scaleX);
+            y = (double) ((t2y - offsetY) / scaleY);
+        }
+        xyz[0][i] = x;
+        xyz[1][i] = y;
+    }
+    return xyz;
+  }
+
   public float[][] fromReference(float[][] values) throws VisADException {
-/*
-    System.out.println("  fromReference:");
-    System.out.println("      displayCS=" + displayCS);
-    System.out.println("      values in: [0][0]=" + values[0][0] + " [1][0]=" + values[1][0]);
-*/
-    float[][] new_values = bypassReference(values);
-    //System.out.println("     new_values: [0][0]=" + new_values[0][0] + " [1][0]=" + new_values[1][0]);
+    float[][] new_values = bypassFromReference(values);
     return new_values;
   }
 
@@ -294,7 +333,7 @@ class GeoDataToDisplayCoordinateSystem extends CoordinateSystem {
    *
    * @throws VisADException  can't create the necessary VisAD object
    */
-  private float[][] bypassReference(float[][] xyz) throws VisADException {
+  private float[][] bypassFromReference(float[][] xyz) throws VisADException {
       if ((xyz == null) || (xyz[0].length < 1)) {
           return xyz;
       }
@@ -309,20 +348,29 @@ class GeoDataToDisplayCoordinateSystem extends CoordinateSystem {
       return xyz;
   }
 
+  private double[][] bypassFromReference(double[][] xyz) throws VisADException {
+      if ((xyz == null) || (xyz[0].length < 1)) {
+          return xyz;
+      }
+      int numpoints = xyz[0].length;
+      for (int i = 0; i < numpoints; i++) {
+          if (Double.isNaN(xyz[0][i]) || Double.isNaN(xyz[0][i])) {
+              continue;
+          }
+          xyz[0][i] = (float) (xyz[0][i] * scaleX + offsetX);
+          xyz[1][i] = (float) (xyz[1][i] * scaleY + offsetY);
+      }
+      return xyz;
+  }
+
   public double[][] toReference(double[][] values) throws VisADException {
-    //- if (isLL) values = reverseArrayOrder(values);
-    double[][] new_values = dataCS.toReference(values);
-    if (isLL) new_values = reverseArrayOrder(new_values);
-    new_values = displayCS.toReference(new double[][] {new_values[1], new_values[0], new_values[2]});
+    double[][] new_values = bypassToReference(values);
     return new_values;
   }
 
 
   public double[][] fromReference(double[][] values) throws VisADException {
-    //- if (isLL) values = reverseArrayOrder(values);
-    double[][] new_values = displayCS.fromReference(values);
-    if (isLL) new_values = reverseArrayOrder(new_values);
-    new_values = dataCS.fromReference(new double[][] {new_values[1], new_values[0], new_values[2]});
+    double[][] new_values = bypassFromReference(values);
     return new_values;
   }
 
