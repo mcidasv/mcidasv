@@ -296,30 +296,6 @@ class GeoDataToDisplayCoordinateSystem extends CoordinateSystem {
     return xyz;
   }
 
-  private double[][] bypassToReference(double[][] xyz) {
-    if ((xyz == null) || (xyz[0].length < 1)) {
-        return xyz;
-    }
-    int numpoints = xyz[0].length;
-    double x, y;
-    double[]t2ax = xyz[0];
-    double[]t2ay = xyz[1];
-    for (int i = 0; i < numpoints; i++) {
-        double t2x = t2ax[i];
-        double t2y = t2ay[i];
-        if (t2x!=t2x || t2y!=t2y) {
-            x = Double.NaN;
-            y = Double.NaN;
-        } else {
-            x = (double) ((t2x - offsetX) / scaleX);
-            y = (double) ((t2y - offsetY) / scaleY);
-        }
-        xyz[0][i] = x;
-        xyz[1][i] = y;
-    }
-    return xyz;
-  }
-
   public float[][] fromReference(float[][] values) throws VisADException {
     float[][] new_values = bypassFromReference(values);
     return new_values;
@@ -348,29 +324,20 @@ class GeoDataToDisplayCoordinateSystem extends CoordinateSystem {
       return xyz;
   }
 
-  private double[][] bypassFromReference(double[][] xyz) throws VisADException {
-      if ((xyz == null) || (xyz[0].length < 1)) {
-          return xyz;
-      }
-      int numpoints = xyz[0].length;
-      for (int i = 0; i < numpoints; i++) {
-          if (Double.isNaN(xyz[0][i]) || Double.isNaN(xyz[0][i])) {
-              continue;
-          }
-          xyz[0][i] = (float) (xyz[0][i] * scaleX + offsetX);
-          xyz[1][i] = (float) (xyz[1][i] * scaleY + offsetY);
-      }
-      return xyz;
-  }
-
   public double[][] toReference(double[][] values) throws VisADException {
-    double[][] new_values = bypassToReference(values);
+    //- if (isLL) values = reverseArrayOrder(values);
+    double[][] new_values = dataCS.toReference(values);
+    if (isLL) new_values = reverseArrayOrder(new_values);
+    new_values = displayCS.toReference(new double[][] {new_values[1], new_values[0], new_values[2]});
     return new_values;
   }
 
 
   public double[][] fromReference(double[][] values) throws VisADException {
-    double[][] new_values = bypassFromReference(values);
+    //- if (isLL) values = reverseArrayOrder(values);
+    double[][] new_values = displayCS.fromReference(values);
+    if (isLL) new_values = reverseArrayOrder(new_values);
+    new_values = dataCS.fromReference(new double[][] {new_values[1], new_values[0], new_values[2]});
     return new_values;
   }
 
