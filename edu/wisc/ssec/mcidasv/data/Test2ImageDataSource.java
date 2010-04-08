@@ -81,6 +81,8 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     public final static String UNIT_KEY = "unit";
     public final static String PREVIEW_KEY = "preview";
     public final static String SPAC_KEY = "spac";
+    public final static String SPACING_BRIT = "1";
+    public final static String SPACING_NON_BRIT = "4";
 
     /** The first projection we find */
     protected ProjectionImpl sampleProjection;
@@ -463,6 +465,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         BandInfo bi = null;
         String saveBand = getKey(source, BAND_KEY);
         int bandIdx = 0;
+        List<TwoFacedObject> calList = null;
         try {
             Object dcObj = dataChoice.getId();
             if (dcObj instanceof BandInfo) {
@@ -474,19 +477,34 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 bi = bandInfos.get(bandIdx);
                 this.showPreview = false;
             }
-            source = replaceKey(source, BAND_KEY, (Object)(bi.getBandNumber()));
+            // pull out the list of cal units, we'll need for type check later...
+            calList = bi.getCalibrationUnits();
+            source = replaceKey(source, BAND_KEY, (Object) (bi.getBandNumber()));
+            // if we're replacing the band, replace cal type with preferred  
+            // type for that band
+            source = replaceKey(source, UNIT_KEY, (Object) bi.getPreferredUnit());
         } catch (Exception excp) {
             handlePreviewImageError(1, excp);
         }
         String name = dataChoice.getName();
         int idx = name.lastIndexOf("_");
-        String unit = name.substring(idx+1);
+        String unit = name.substring(idx + 1);
+        
+        // if this is not a valid cal unit (e.g. could be set to a plugin formula name)
+        // set it to something valid
+        boolean validCal = false;
+        for (TwoFacedObject tfo : calList) {
+        	if (unit.equals((String) tfo.getId())) {
+        		validCal = true;
+        		break;
+        	}
+        }
+        if (! validCal) {
+        	unit = bi.getPreferredUnit();
+        }
+        
         if (getKey(source, UNIT_KEY).equals(""))
             source = replaceKey(source, UNIT_KEY, (Object)(unit));
-        if (unit.equals("BRIT"))
-            source = replaceKey(source, SPAC_KEY, (Object)"1");
-        else
-            source = replaceKey(source, SPAC_KEY, (Object)"4");
 
         AddeImageDescriptor aid = null;
         while (aid == null) {
@@ -548,10 +566,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         src = replaceKey(src, MAG_KEY, (Object)(lMag + " " + eMag));
         src = replaceKey(src, BAND_KEY, (Object)(bi.getBandNumber()));
         src = replaceKey(src, UNIT_KEY, (Object)(unit));
-        if (unit.equals("BRIT"))
-            src = replaceKey(src, SPAC_KEY, (Object)"1");
-        else
-            src = replaceKey(src, SPAC_KEY, (Object)"4");
 
         try {
             aid = new AddeImageDescriptor(src);
@@ -595,6 +609,10 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
     private String replaceKey(String src, String key, Object val) {
         String returnString = src;
+        // make sure we got valid key/val pair
+        if ((key == null) || (val == null)) {
+        	return returnString;
+        }
         key = key.toUpperCase() + "=";
         if (returnString.contains(key)) {
             String[] segs = returnString.split(key);
@@ -611,6 +629,13 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         else {
             returnString = returnString + "&" + key + val;
         } 
+        // if key is for cal units, and it was changed to BRIT,
+        // must change the spacing key too 
+        if ((key.equals(UNIT_KEY + "=")) && (val.equals("BRIT"))) {
+        	returnString = replaceKey(returnString, SPAC_KEY, SPAC_KEY, SPACING_BRIT);
+        } else {
+        	returnString = replaceKey(returnString, SPAC_KEY, SPAC_KEY, SPACING_NON_BRIT); 
+        }
         return returnString;
     }
 
@@ -1001,10 +1026,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     String unit = name.substring(idx+1);
                     if (getKey(src, UNIT_KEY).equals(""))
                         src = replaceKey(src, UNIT_KEY, (Object)(unit));
-                    if (unit.equals("BRIT"))
-                        src = replaceKey(src, SPAC_KEY, (Object)"1");
-                    else
-                        src = replaceKey(src, SPAC_KEY, (Object)"4");
 
                     AreaFile af = new AreaFile(src);
                     AreaDirectory ad = af.getAreaDirectory();
