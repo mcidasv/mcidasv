@@ -153,16 +153,26 @@
 		" />
 	</panel>
 
+	<!-- IDV RAOB CHOOSERS -->
 	<panel title="Local" category="Point Observations&gt;Soundings"
-		layout="border" tabtooltip="For accessing local RAOB soundings">
-		<chooser id="chooser.raob.file" title="Local" menutitle="Sounding Data-Local"
-			helppath="idv.data.choosers.raobchooser" class="edu.wisc.ssec.mcidasv.chooser.RaobChooser" />
+		layout="border" tabtooltip="For accessing RAOB data">
+		<chooser
+			id="chooser.raob.file"
+			title="Soundings: Local"
+			menutitle="Sounding Data-Local"
+			helppath="idv.data.choosers.raobchooser"
+			class="ucar.unidata.idv.chooser.RaobChooser"
+			showserver="false"/>
 	</panel>
-
 	<panel title="Remote" category="Point Observations&gt;Soundings"
-		layout="border" tabtooltip="For accessing ADDE RAOB soundings">
-		<chooser id="chooser.raob.remote" title="Remote" menutitle="Sounding Data-Remote"
-			helppath="idv.data.choosers.raobchooser" class="edu.wisc.ssec.mcidasv.chooser.adde.AddeRaobChooser" />
+		layout="border" tabtooltip="For accessing RAOB data">
+		<chooser
+			id="chooser.raob.remote"
+			title="Soundings: Remote"
+			menutitle="Sounding Data-Remote"
+			helppath="idv.data.choosers.raobchooser"
+			class="ucar.unidata.idv.chooser.RaobChooser"
+			showserver="true"/>
 	</panel>
 
 	<panel title="Wind Profiler" category="Point Observations"
@@ -364,6 +374,23 @@
 			class="ucar.unidata.idv.chooser.PollingFileChooser" filecount="1" />
 	</panel>
 	-->
+
+	<!-- MCIDASV RAOB CHOOSERS -->
+	<panel layout="border" category="Under Development&gt;Soundings"
+		categorycomponent="true">
+		<html text="Updating GUI layout" />
+	</panel>
+	<panel title="Local" category="Point Observations&gt;Soundings"
+		layout="border" tabtooltip="For accessing local RAOB soundings">
+		<chooser id="chooser.raob.file_new" title="Local" menutitle="Sounding Data-Local"
+			helppath="idv.data.choosers.raobchooser" class="edu.wisc.ssec.mcidasv.chooser.RaobChooser" />
+	</panel>
+	<panel title="Remote" category="Point Observations&gt;Soundings"
+		layout="border" tabtooltip="For accessing ADDE RAOB soundings">
+		<chooser id="chooser.raob.remote_new" title="Remote" menutitle="Sounding Data-Remote"
+			helppath="idv.data.choosers.raobchooser" class="edu.wisc.ssec.mcidasv.chooser.adde.AddeRaobChooser" />
+	</panel>
+
 
 
 
