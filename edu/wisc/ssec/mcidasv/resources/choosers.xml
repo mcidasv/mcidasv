@@ -380,12 +380,12 @@
 		categorycomponent="true">
 		<html text="Updating GUI layout" />
 	</panel>
-	<panel title="Local" category="Point Observations&gt;Soundings"
+	<panel title="Local" category="Under Development&gt;Soundings"
 		layout="border" tabtooltip="For accessing local RAOB soundings">
 		<chooser id="chooser.raob.file_new" title="Local" menutitle="Sounding Data-Local"
 			helppath="idv.data.choosers.raobchooser" class="edu.wisc.ssec.mcidasv.chooser.RaobChooser" />
 	</panel>
-	<panel title="Remote" category="Point Observations&gt;Soundings"
+	<panel title="Remote" category="Under Development&gt;Soundings"
 		layout="border" tabtooltip="For accessing ADDE RAOB soundings">
 		<chooser id="chooser.raob.remote_new" title="Remote" menutitle="Sounding Data-Remote"
 			helppath="idv.data.choosers.raobchooser" class="edu.wisc.ssec.mcidasv.chooser.adde.AddeRaobChooser" />
