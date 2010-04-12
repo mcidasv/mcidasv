@@ -42,10 +42,12 @@ import java.util.concurrent.Callable;
 
 import edu.wisc.ssec.mcidas.adde.AddeServerInfo;
 import edu.wisc.ssec.mcidas.adde.AddeTextReader;
-import edu.wisc.ssec.mcidasv.addemanager.AddeEntry;
+import edu.wisc.ssec.mcidasv.util.Contract;
 
 
 public class RemoteAddeVerification {
+
+    public static final int ADDE_PORT = 112;
 
     /** Possible entry verification states. */
     public enum AddeStatus { PREFLIGHT, BAD_SERVER, BAD_ACCOUNTING, NO_METADATA, OK, BAD_GROUP };
@@ -75,8 +77,7 @@ public class RemoteAddeVerification {
      * @see AddeStatus
      */
     public static AddeStatus checkEntry(final RemoteAddeEntry entry) {
-        if (entry == null)
-            throw new NullPointerException("Cannot check a null entry");
+        Contract.notNull(entry, "Cannot check a null entry");
 
         if (!checkHost(entry))
             return AddeStatus.BAD_SERVER;
@@ -119,29 +120,41 @@ public class RemoteAddeVerification {
      * {@link String}.
      */
     public static Set<String> readPublicGroups(final RemoteAddeEntry entry) {
-        if (entry == null)
-            throw new NullPointerException("entry cannot be null");
-        if (entry.getAddress() == null)
-            throw new NullPointerException();
-        if (entry.getAddress().length() == 0)
-            throw new IllegalArgumentException();
+        Contract.notNull(entry, "entry cannot be null");
+        Contract.notNull(entry.getAddress());
+        Contract.checkArg((entry.getAddress().length() == 0));
 
         String user = entry.getAccount().getUsername();
-        if (user == null || user.length() == 0)
+        if (user == null || user.length() == 0) {
             user = RemoteAddeEntry.DEFAULT_ACCOUNT.getUsername();
+        }
 
         String proj = entry.getAccount().getProject();
-        if (proj == null || proj.length() == 0)
+        if (proj == null || proj.length() == 0) {
             proj = RemoteAddeEntry.DEFAULT_ACCOUNT.getProject();
+        }
 
         String url = String.format(publicSrvFormat, entry.getAddress(), user, proj);
 
         Set<String> groups = newLinkedHashSet();
 
         AddeTextReader reader = new AddeTextReader(url);
-        if (reader.getStatus().equals("OK"))
-            for (String line : (List<String>)reader.getLinesOfText())
-                groups.add(new AddeEntry(line).getGroup());
+        if (reader.getStatus().equals("OK")) {
+            for (String line : (List<String>)reader.getLinesOfText()) {
+                String[] pairs = line.trim().split(",");
+                for (String pair : pairs) {
+                    if (pair == null || pair.length() == 0 || !pair.startsWith("N1")) {
+                        continue;
+                    }
+                    String[] keyval = pair.split("=");
+                    if (keyval.length != 2 || keyval[0].length() == 0 || keyval[1].length() == 0 || !keyval[0].equals("N1")) {
+                        continue;
+                    }
+                    groups.add(keyval[1]);
+                }
+//                groups.add(new AddeEntry(line).getGroup());
+            }
+        }
 
         return groups;
     }
@@ -157,13 +170,12 @@ public class RemoteAddeVerification {
      * @throws NullPointerException if {@code entry} is null.
      */
     public static boolean checkHost(final RemoteAddeEntry entry) {
-        if (entry == null)
-            throw new NullPointerException("descriptor cannot be null");
+        Contract.notNull(entry, "descriptor cannot be null");
         String host = entry.getAddress();
         Socket socket = null;
         boolean connected = false;
         try { 
-            socket = new Socket(host, 112);
+            socket = new Socket(host, ADDE_PORT);
             connected = true;
         } catch (UnknownHostException e) {
             connected = false;
@@ -191,9 +203,7 @@ public class RemoteAddeVerification {
      * @see #checkHost(RemoteAddeEntry)
      */
     public Set<RemoteAddeEntry> checkHosts(final Set<RemoteAddeEntry> entries) {
-        if (entries == null)
-            throw new NullPointerException("descriptors cannot be null");
-
+        Contract.notNull(entries, "descriptors cannot be null");
         Set<RemoteAddeEntry> goodEntries = newLinkedHashSet();
         Set<String> checkedHosts = newLinkedHashSet();
         Map<String, Boolean> hostStatus = newMap();
@@ -240,8 +250,7 @@ public class RemoteAddeVerification {
          * @throws NullPointerException if {@code entry} is {@code null}.
          */
         public StatusWrapper(final RemoteAddeEntry entry) {
-            if (entry == null)
-                throw new NullPointerException("cannot create a entry/status pair with a null descriptor");
+            Contract.notNull(entry, "cannot create a entry/status pair with a null descriptor");
             this.entry = entry;
         }
 
@@ -277,8 +286,7 @@ public class RemoteAddeVerification {
     private class VerifyEntryTask implements Callable<StatusWrapper> {
         private final StatusWrapper entryStatus;
         public VerifyEntryTask(final StatusWrapper descStatus) {
-            if (descStatus == null)
-                throw new NullPointerException("cannot verify or set status of a null descriptor/status pair");
+            Contract.notNull(descStatus, "cannot verify or set status of a null descriptor/status pair");
             this.entryStatus = descStatus;
         }
 

@@ -42,11 +42,13 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
 import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.annotation.EventSubscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
-import edu.wisc.ssec.mcidasv.servermanager.McservEvent.McservStatus;
+import edu.wisc.ssec.mcidasv.servermanager.AddeThread.McservEvent;
+import edu.wisc.ssec.mcidasv.util.Contract;
 
 /**
  * This class is the GUI frontend to {@link EntryStore} (the server manager).
@@ -56,7 +58,7 @@ import edu.wisc.ssec.mcidasv.servermanager.McservEvent.McservStatus;
 // TODO(jon): GUI could look much better.
 // TODO(jon): finish up the javadocs.
 @SuppressWarnings("serial")
-public class TabbedAddeManager extends javax.swing.JFrame implements McservListener {
+public class TabbedAddeManager extends javax.swing.JFrame {
 
     /** Path to the help resources. */
     private static final String HELP_TOP_DIR = "/docs/userguide";
@@ -89,7 +91,7 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
     };
 
     /** Reference back to the McV god object. */
-    private final McIDASV mcv;
+//    private final McIDASV mcv;
 
     /** Reference to the actual server manager. */
     private final EntryStore entryStore;
@@ -108,7 +110,6 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
      * Creates a standalone server manager GUI.
      */
     public TabbedAddeManager() {
-        this.mcv = null;
         this.entryStore = null;
         initComponents();
     }
@@ -120,12 +121,9 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
      * 
      * @throws NullPointerException if {@code mcv} is {@code null}.
      */
-    public TabbedAddeManager(final McIDASV mcv) {
-        if (mcv == null)
-            throw new NullPointerException("Cannot pass a null McIDAS-V object");
-        this.mcv = mcv;
-        this.entryStore = mcv.getServerManager();
-        entryStore.addMcservListener(this);
+    public TabbedAddeManager(final EntryStore entryStore) {
+        Contract.notNull(entryStore, "Cannot pass a null server manager");
+        this.entryStore = entryStore;
         initComponents();
     }
 
@@ -149,7 +147,6 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
      */
     public void closeManager() {
         EventBus.publish(Event.CLOSED);
-        entryStore.removeMcservListener(this);
         if (isDisplayable())
             dispose();
     }
@@ -233,17 +230,29 @@ public class TabbedAddeManager extends javax.swing.JFrame implements McservListe
         entryStore.restartLocalServer();
     }
 
+    @EventSubscriber(eventClass=McservEvent.class)
     public void mcservUpdated(final McservEvent event) {
+        final String msg;
+        switch (event) {
+            case ACTIVE:
+                msg = "Local servers are already running.";
+                break;
+            case DIED:
+                msg = "Local servers quit unexpectedly...";
+                break;
+            case STARTED:
+                msg = "Local servers are listening on port "+EntryStore.getLocalPort();
+                break;
+            case STOPPED:
+                msg = "Local servers have been stopped.";
+                break;
+            default:
+                msg = "Unknown local servers status: "+event.toString();
+                break;
+        }
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                if (event.getStatus() == McservStatus.STARTED)
-                    statusLabel.setText("Local server is listening on port "+entryStore.getLocalPort());
-                else if (event.getStatus() == McservStatus.STOPPED)
-                    statusLabel.setText("Local server was stopped.");
-                else if (event.getStatus() == McservStatus.RESTARTED)
-                    statusLabel.setText("Local server restarted and is listening on port "+entryStore.getLocalPort());
-                else if (event.getStatus() == McservStatus.DIED)
-                    statusLabel.setText("Local server quit unexpectedly...");
+                statusLabel.setText(msg);
             }
         });
     }

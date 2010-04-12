@@ -88,7 +88,6 @@ import ucar.unidata.xml.XmlUtil;
 import visad.VisADException;
 
 import edu.wisc.ssec.mcidasv.JythonManager;
-import edu.wisc.ssec.mcidasv.addemanager.AddeManager;
 import edu.wisc.ssec.mcidasv.chooser.McIdasChooserManager;
 import edu.wisc.ssec.mcidasv.control.LambertAEA;
 import edu.wisc.ssec.mcidasv.data.McvDataManager;
@@ -113,7 +112,7 @@ import edu.wisc.ssec.mcidasv.util.WebBrowser;
 @SuppressWarnings("unchecked")
 public class McIDASV extends IntegratedDataViewer {
 
-//    private static final Logger logger = Logger.getLogger(McIDASV.class);
+    private static final Logger logger = LoggerFactory.getLogger(McIDASV.class);
 
     /** 
      * Path to a {@literal "session"} file--it's created upon McIDAS-V 
@@ -149,9 +148,6 @@ public class McIDASV extends IntegratedDataViewer {
 
     /** The chooser manager */
     protected McIdasChooserManager chooserManager;
-
-    /** The ADDE manager */
-    protected static AddeManager addeManager;
 
     /** The http based monitor to dump stack traces and shutdown the IDV */
     private McIDASVMonitor mcvMonitor;
@@ -395,19 +391,6 @@ public class McIDASV extends IntegratedDataViewer {
         for (String arg : getArgsManager().getOriginalArgs())
             args.add(arg);
         return args;
-    }
-    
-    /**
-     * Make edu.wisc.ssec.mcidasv.JythonManager
-     * Factory method to create the
-     * {@link JythonManager}
-     *
-     * @return The  jython manager
-     */
-    @Override
-    protected JythonManager doMakeJythonManager() {
-        return (JythonManager) makeManager(JythonManager.class,
-                                           new Object[] { idv });
     }
 
     /**
@@ -868,6 +851,20 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
+     * Make edu.wisc.ssec.mcidasv.JythonManager
+     * Factory method to create the
+     * {@link JythonManager}
+     *
+     * @return The  jython manager
+     */
+    @Override protected JythonManager doMakeJythonManager() {
+//        return (JythonManager) makeManager(JythonManager.class,
+//                                           new Object[] { idv });
+        logger.info("doMakeJythonManager");
+        return new JythonManager(this);
+    }
+
+    /**
      * Factory method to create the {@link IdvUIManager}. Here we create our 
      * own UI manager so it can do McV specific things.
      *
@@ -878,7 +875,7 @@ public class McIDASV extends IntegratedDataViewer {
     @Override
     protected IdvChooserManager doMakeIdvChooserManager() {
         chooserManager = (McIdasChooserManager)makeManager(
-            McIdasChooserManager.class, new Object[] { idv });
+            McIdasChooserManager.class, new Object[] { this });
         chooserManager.init();
         return chooserManager;
     }
@@ -893,7 +890,7 @@ public class McIDASV extends IntegratedDataViewer {
      */
     @Override
     protected IdvUIManager doMakeIdvUIManager() {
-        return new UIManager(idv);
+        return new UIManager(this);
     }
 
     /**
@@ -903,7 +900,7 @@ public class McIDASV extends IntegratedDataViewer {
     @Override
     protected VMManager doMakeVMManager() {
         // what an ugly class name :(
-        return new ViewManagerManager(idv);
+        return new ViewManagerManager(this);
     }
 
     /**
@@ -912,7 +909,7 @@ public class McIDASV extends IntegratedDataViewer {
      */
     @Override
     protected IdvPreferenceManager doMakePreferenceManager() {
-        return new McIdasPreferenceManager(idv);
+        return new McIdasPreferenceManager(this);
     }
 
     /**
@@ -923,7 +920,7 @@ public class McIDASV extends IntegratedDataViewer {
      * @see ucar.unidata.idv.IdvBase#doMakePersistenceManager()
      */
     @Override protected IdvPersistenceManager doMakePersistenceManager() {
-        return new PersistenceManager(idv);
+        return new PersistenceManager(this);
     }
 
     /**
@@ -957,7 +954,7 @@ public class McIDASV extends IntegratedDataViewer {
      */
     public void showServerManager() {
         if (tabbedAddeManager == null)
-            tabbedAddeManager = new TabbedAddeManager(this);
+            tabbedAddeManager = new TabbedAddeManager(getServerManager());
         tabbedAddeManager.showManager();
     }
 
@@ -966,7 +963,7 @@ public class McIDASV extends IntegratedDataViewer {
      */
     public EntryStore getServerManager() {
         if (addeEntries == null) {
-            addeEntries = new EntryStore(this);
+            addeEntries = new EntryStore(getStore(), getResourceManager());
             addeEntries.startLocalServer(false);
         }
         return addeEntries;
@@ -981,7 +978,7 @@ public class McIDASV extends IntegratedDataViewer {
      * @see ucar.unidata.idv.IdvBase#getIdv()
      */
     @Override public IntegratedDataViewer getIdv() {
-        return idv;
+        return this;
     }
 
     /**
@@ -992,9 +989,8 @@ public class McIDASV extends IntegratedDataViewer {
      * 
      * @see ucar.unidata.idv.IdvBase#doMakeArgsManager(java.lang.String[])
      */
-    @Override
-    protected ArgsManager doMakeArgsManager(String[] args) {
-        return new ArgumentManager(idv, args);
+    @Override protected ArgsManager doMakeArgsManager(String[] args) {
+        return new ArgumentManager(this, args);
     }
 
     /**
@@ -1004,35 +1000,31 @@ public class McIDASV extends IntegratedDataViewer {
      * 
      * @see ucar.unidata.idv.IdvBase#doMakeDataManager()
      */
-    @Override
-    protected DataManager doMakeDataManager() {
-        return new McvDataManager(idv);
+    @Override protected DataManager doMakeDataManager() {
+        return new McvDataManager(this);
     }
 
     /**
      * Make the McIDAS-V {@link StateManager}.
      * @see ucar.unidata.idv.IdvBase#doMakeStateManager()
      */
-    @Override
-    protected StateManager doMakeStateManager() {
-        return new StateManager(idv);
+    @Override protected StateManager doMakeStateManager() {
+        return new StateManager(this);
     }
 
     /**
      * Make the McIDAS-V {@link ResourceManager}.
      * @see ucar.unidata.idv.IdvBase#doMakeResourceManager()
      */
-    @Override
-    protected IdvResourceManager doMakeResourceManager() {
-        return new ResourceManager(idv);
+    @Override protected IdvResourceManager doMakeResourceManager() {
+        return new ResourceManager(this);
     }
 
     /**
      * Make the {@link McIdasColorTableManager}.
      * @see ucar.unidata.idv.IdvBase#doMakeColorTableManager()
      */
-    @Override
-    protected ColorTableManager doMakeColorTableManager() {
+    @Override protected ColorTableManager doMakeColorTableManager() {
         return new McIdasColorTableManager();
     }
 
@@ -1043,9 +1035,8 @@ public class McIDASV extends IntegratedDataViewer {
      * 
      * @see ucar.unidata.idv.IdvBase#doMakePluginManager()
      */
-    @Override
-    protected PluginManager doMakePluginManager() {
-        return new McvPluginManager(idv);
+    @Override protected PluginManager doMakePluginManager() {
+        return new McvPluginManager(this);
     }
 
 //    /**
@@ -1054,7 +1045,7 @@ public class McIDASV extends IntegratedDataViewer {
 //     */
 //    @Override
 //    protected IdvProjectionManager doMakeIdvProjectionManager() {
-//    	return new McIDASVProjectionManager(idv);
+//    	return new McIDASVProjectionManager(this);
 //    }
     
     /**
@@ -1282,8 +1273,6 @@ public class McIDASV extends IntegratedDataViewer {
         SESSION_FILE = getSessionFilePath();
     }
 
-    final static Logger logger = LoggerFactory.getLogger(McIDASV.class);
-    
     /**
      * The main. Configure the logging and create the McIdasV
      * 
@@ -1301,8 +1290,6 @@ public class McIDASV extends IntegratedDataViewer {
         createSessionFile(SESSION_FILE);
         LogUtil.configure();
         McIDASV myself = new McIDASV(args);
-//        addeManager = new AddeManager(myself);
-//        addeManager.startLocalServer();
     }
 
     /**
