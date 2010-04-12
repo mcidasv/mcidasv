@@ -201,6 +201,8 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 		try {
 			notice = IOUtil.readContents(Constants.HOMEPAGE_URL+"/"+Constants.NOTICE_URL+"?requesting="+getMcIdasVersion()+"&os="+getOSName(), "");
 		} catch (Exception e) {}
+		if (notice.indexOf("<notice>")<0) notice="";
+		notice = notice.replaceAll("<[/?]notice>","");
 		return notice.trim();
 	}
 
