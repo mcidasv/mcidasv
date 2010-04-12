@@ -67,7 +67,6 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
 import edu.wisc.ssec.mcidasv.servermanager.AddeThread.McservEvent;
 import edu.wisc.ssec.mcidasv.util.Contract;
-import edu.wisc.ssec.mcidasv.util.GenericEvent;
 import edu.wisc.ssec.mcidasv.util.trie.CharSequenceKeyAnalyzer;
 import edu.wisc.ssec.mcidasv.util.trie.PatriciaTrie;
 
