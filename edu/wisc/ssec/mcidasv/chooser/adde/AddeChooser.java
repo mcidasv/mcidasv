@@ -488,12 +488,13 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         logger.debug("loadServerState: selecting server={} chooser={}", server, this.getDataType());
         serverSelector.setSelectedItem(server);
         setGroups();
+        updateGroups();
         if (serverState[1] != null) {
-            AddeServer.Group group =
-                (AddeServer.Group) server.findGroup(serverState[1]);
-            if (group != null) {
-                logger.debug("loadServerState: selecting group={} chooser={}", group, this.getDataType());
-                groupSelector.setSelectedItem(group);
+            Group group = new Group(getDataType(), serverState[1], serverState[1]);
+            int index = getSelectorIndex(group, groupSelector);
+            if (index >= 0) {
+                logger.debug("loadServerState: selecting index={} group={} chooser={}", new Object[] { index, group, this.getDataType() });
+                groupSelector.setSelectedIndex(index);
             } else {
                 logger.debug("loadServerState: group == null chooser={}", this.getDataType());
             }
@@ -1252,6 +1253,16 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             map.put("group", "");
         }
         return map;
+    }
+
+    /**
+     * Saves the currently selected server and group to a chooser-specific 
+     * preference. Preference ID is {@code PREF_SERVERSTATE+'.'+getId()}.
+     */
+    @Override public void saveServerState() {
+        String[] serverState = { getServer(), getGroup() };
+        getIdv().getStore().put(PREF_SERVERSTATE+'.'+getId(), serverState);
+        getIdv().getStore().save();
     }
 
     /**
