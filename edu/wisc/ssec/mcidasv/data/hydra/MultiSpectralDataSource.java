@@ -230,7 +230,6 @@ public class MultiSpectralDataSource extends HydraDataSource {
           multiSpectData = new MultiSpectralData(swathAdapter, spectrumAdapter);
           DataCategory.createCategory("MultiSpectral");
           categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
-          //-hasImagePreview = true;
           hasChannelSelect = true;
           multiSpectData.init_wavenumber = 919.5f; 
           multiSpectData_s.add(multiSpectData);
@@ -1013,6 +1012,21 @@ public class MultiSpectralDataSource extends HydraDataSource {
                   Hashtable props = dataSelection.getProperties();
                   if ((props != null) && (props.get(MultiDimensionSubset.key) != null)) {
                     subset = (HashMap) ((MultiDimensionSubset)props.get(MultiDimensionSubset.key)).getSubset();
+                    if (props.containsKey(SpectrumAdapter.channelIndex_name)) {
+                      int idx = ((Integer) props.get(SpectrumAdapter.channelIndex_name)).intValue();
+                      double[] coords = (double[]) subset.get(SpectrumAdapter.channelIndex_name);
+                      if (coords == null) {
+                        coords = new double[] {(double)idx, (double)idx, (double)1};
+                        subset.put(SpectrumAdapter.channelIndex_name, coords);
+                      }
+                      else {
+                        coords[0] = (double)idx;
+                        coords[1] = (double)idx;
+                        coords[2] = (double)1;
+                      }
+                    }
+                  }
+                  else if ((props != null) && (subset != null)) {
                     if (props.containsKey(SpectrumAdapter.channelIndex_name)) {
                       int idx = ((Integer) props.get(SpectrumAdapter.channelIndex_name)).intValue();
                       double[] coords = (double[]) subset.get(SpectrumAdapter.channelIndex_name);
