@@ -88,6 +88,11 @@ public class GeoPreviewSelection extends DataSelectionComponent {
       private GeoLatLonSelection laloSel;
 
       private LineDrawing box;
+
+      private static int previewLineMag = 0;
+      private static int previewEleMag = 0;
+      private static int previewXDim = 0;
+      private static int previewYDim = 0;
                                     
       public GeoPreviewSelection(DataSourceImpl dataSource,
              DataChoice dataChoice, FlatField image,
@@ -106,6 +111,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
         if (eMag > 0)
             this.elementMag = eMag;
         sample = getDataProjection();
+        Rectangle2D mapArea = sample.getDefaultMapArea();
 
         if (this.sampleProjection == null) {
             this.sampleProjection = sample;
@@ -250,6 +256,9 @@ public class GeoPreviewSelection extends DataSelectionComponent {
           y_coords[0] = (double)extrms[1];
           x_coords[1] = (double)extrms[2];
           y_coords[1] = (double)extrms[3];
+          //System.out.println("\nforceCoords:");
+          //System.out.println("    x: " + x_coords[0] + " - " + x_coords[1]);
+          //System.out.println("    y: " + y_coords[0] + " - " + y_coords[1]);
 
           int line = (int)y_coords[1];
           int ele = (int)x_coords[1];
@@ -259,6 +268,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
               if (laloSel.getIsLineEle()) laloSel.flipLocationPanel(0);
               int lineMid = (int)((y_coords[0] + y_coords[1])/2.0 + 0.5);
               int eleMid = (int)((x_coords[0] + x_coords[1])/2.0 + 0.5);
+              //System.out.println("    lineMid: " + lineMid + " eleMid: " + eleMid);
               laloSel.convertToLatLon(eleMid, lineMid);
               double uLLine = y_coords[1];
               double uLEle = x_coords[0];
@@ -274,8 +284,19 @@ public class GeoPreviewSelection extends DataSelectionComponent {
               }
               laloSel.setULCoords(uLEle, uLLine);
 
-              AREACoordinateSystem mcs = (AREACoordinateSystem)sampleProjection;
-              int[] dirBlk = mcs.getDirBlock();
+              if ((previewXDim == 0) || (previewYDim == 0)) {
+                  AREACoordinateSystem mcs = (AREACoordinateSystem)sampleProjection;
+                  Rectangle2D mapArea = mcs.getDefaultMapArea();
+                  previewXDim = new Long(new Double(mapArea.getMaxX() - mapArea.getMinX()).longValue()).intValue();
+                  previewYDim = new Long(new Double(mapArea.getMaxY() - mapArea.getMinY()).longValue()).intValue();
+              
+                  int[] dirBlk = mcs.getDirBlock();
+                  previewLineMag = dirBlk[11];
+                  previewEleMag = dirBlk[12];
+              }
+              //System.out.println("    previewLineMag=" + previewLineMag + " previewEleMag=" + previewEleMag);
+              //System.out.println("    previewYDim=" + previewYDim + " previewXDim=" + previewXDim);
+
               int linRes = laloSel.getPreviewLineRes();
               int eleRes = laloSel.getPreviewEleRes();
 
@@ -291,7 +312,32 @@ public class GeoPreviewSelection extends DataSelectionComponent {
               } else if (elementMag < 0) {
                   width *= -elementMag;
               }
-
+              //System.out.println("    height: " + height + " width: " + width);
+/*
+              int[][] areaCoords = new int[2][5];
+              int centerEle = eleMid * previewEleMag;
+              int centerLin = (previewYDim - 1 - lineMid) * previewLineMag;
+              int deltaEle = width/2;
+              int deltaLin = height/2;
+              areaCoords[0][0] = centerEle;
+              areaCoords[1][0] = centerLin;
+              areaCoords[0][1] = centerEle - deltaEle;
+              areaCoords[1][1] = centerLin - deltaLin;
+              areaCoords[0][2] = centerEle + deltaEle;
+              areaCoords[1][2] = centerLin - deltaLin;
+              areaCoords[0][3] = centerEle - deltaEle;
+              areaCoords[1][3] = centerLin + deltaLin;
+              areaCoords[0][4] = centerEle + deltaEle;
+              areaCoords[1][4] = centerLin + deltaLin;
+              System.out.println("\n Predicted Area Coordinates\n");
+              System.out.println("Center      Line: " + areaCoords[1][0] + " Element: " + areaCoords[0][0]);
+              System.out.println("Upper Left  Line: " + areaCoords[1][1] + " Element: " + areaCoords[0][1]);
+              System.out.println("Upper Right Line: " + areaCoords[1][2] + " Element: " + areaCoords[0][2]);
+              System.out.println("Lower Left  Line: " + areaCoords[1][3] + " Element: " + areaCoords[0][3]);
+              System.out.println("Lower Right Line: " + areaCoords[1][4] + " Element: " + areaCoords[0][4]);
+              System.out.println("\n");
+              areaCoords[1][3] = centerLin + deltaLin;
+*/
               laloSel.setNumLines(height);
               laloSel.setNumEles(width);
               laloSel.setLineMag(1);
