@@ -252,15 +252,15 @@ public class GeoPreviewSelection extends DataSelectionComponent {
 
       private void forceCoords() {
           float[] extrms = rbb.getRanges();
-          if ((extrms[0] > extrms[1]) ||
-              (extrms[2] > extrms[3])) return;
+          if ((extrms[0] > extrms[2]) ||
+              (extrms[1] > extrms[3])) return;
           x_coords[0] = (double)extrms[0];
           y_coords[0] = (double)extrms[1];
           x_coords[1] = (double)extrms[2];
           y_coords[1] = (double)extrms[3];
-          //System.out.println("\nforceCoords:");
-          //System.out.println("    x: " + x_coords[0] + " - " + x_coords[1]);
-          //System.out.println("    y: " + y_coords[0] + " - " + y_coords[1]);
+          System.out.println("\nforceCoords:");
+          System.out.println("    x: " + x_coords[0] + " - " + x_coords[1]);
+          System.out.println("    y: " + y_coords[0] + " - " + y_coords[1]);
 
           //int line = (int)y_coords[1];
           //int ele = (int)x_coords[1];
