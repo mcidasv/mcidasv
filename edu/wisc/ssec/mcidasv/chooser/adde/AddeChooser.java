@@ -575,43 +575,57 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 
     @EventSubscriber(eventClass=TabbedAddeManager.Event.class)
     public void onServerManagerWindowEvent(TabbedAddeManager.Event evt) {
-        logger.debug("onWindowEvent: it worked!!");
+        logger.debug("onServerManagerWindowEvent: caught event bus obj");
     }
 
     private boolean addingServer = false;
 
     /**
+     * Search a given {@link JComboBox} for the index of a given object. Mostly
+     * useful for searching {@link #serverSelector} or {@link #groupSelector}.
      * 
+     * @param needle An object. {@code null} values are permitted.
+     * @param haystack {@code JComboBox} to search. {@code null} values are 
+     * permitted, but return {@code -1}.
      * 
-     * @param needle
-     * @param haystack
-     * 
-     * @return
+     * @return Either the index of {@code needle} within {@code haystack}, or
+     * {@code -1} if {@code needle} could not be found (or {@code haystack} is 
+     * {@code null}).
      */
-    private static int getSelectorIndex(final Object needle, final JComboBox haystack) {
-        String name = null;
-        if (needle instanceof AddeServer)
-            name = ((AddeServer)needle).getName();
-        else if (needle instanceof Group)
-            name = ((Group)needle).getName();
-        else if (needle instanceof AddeEntry)
-            name = ((AddeEntry)needle).getAddress();
-        else 
-            name = needle.toString();
+    protected static int getSelectorIndex(final Object needle, 
+        final JComboBox haystack) 
+    {
+        if (haystack == null) {
+            return -1;
+        }
 
-        if (name.equalsIgnoreCase("localhost") || (name.equals("127.0.0.1")))
+        String name = null;
+        if (needle instanceof AddeServer) {
+            name = ((AddeServer)needle).getName();
+        } else if (needle instanceof Group) {
+            name = ((Group)needle).getName();
+        } else if (needle instanceof AddeEntry) {
+            name = ((AddeEntry)needle).getAddress();
+        } else {
+            name = needle.toString();
+        }
+
+        if (name.equalsIgnoreCase("localhost") || (name.equals("127.0.0.1"))) {
             return 0;
+        }
 
         for (int i = 0; i < haystack.getItemCount(); i++) {
             Object item = haystack.getItemAt(i);
             String tmpName;
-            if (item instanceof AddeServer)
+            if (item instanceof AddeServer) {
                 tmpName = ((AddeServer)item).getName();
-            else
+            } else {
                 tmpName = item.toString();
+            }
 
-            if (name.equals(tmpName))
+            if (name.equals(tmpName)) {
                 return i;
+            }
         }
         return -1;
     }

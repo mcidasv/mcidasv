@@ -371,11 +371,12 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         }
         serverSelector.setSelectedItem(server);
         setGroups();
+        updateGroups();
         if (serverState[1] != null) {
-            AddeServer.Group group =
-                (AddeServer.Group) server.findGroup(serverState[1]);
-            if (group != null) {
-                groupSelector.setSelectedItem(group);
+            Group group = new Group(getDataType(), serverState[1], serverState[1]);
+            int index = getSelectorIndex(group, groupSelector);
+            if (index >= 0) {
+                groupSelector.setSelectedIndex(index);
             }
         }
         if (server.getIsLocal()) {
