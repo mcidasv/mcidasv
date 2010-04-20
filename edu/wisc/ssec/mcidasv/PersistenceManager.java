@@ -92,7 +92,6 @@ import edu.wisc.ssec.mcidasv.probes.ReadoutProbe;
 import edu.wisc.ssec.mcidasv.ui.McvComponentGroup;
 import edu.wisc.ssec.mcidasv.ui.McvComponentHolder;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
-import edu.wisc.ssec.mcidasv.util.CompGroups;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.XPathUtils;
 import edu.wisc.ssec.mcidasv.util.XmlUtil;
@@ -949,7 +948,7 @@ public class PersistenceManager extends IdvPersistenceManager {
                     continue;
 
                 IdvComponentGroup group = (IdvComponentGroup)comp;
-                holders.addAll(CompGroups.getComponentHolders(group));
+                holders.addAll(McVGuiUtils.getComponentHolders(group));
             }
         } else {
             holders.add(makeDynSkin(window));
@@ -981,7 +980,7 @@ public class PersistenceManager extends IdvPersistenceManager {
                             ((IdvComponentGroup)comp).getDisplayComponents());
 
                 for (IdvComponentHolder holder : holders) {
-                    if (!CompGroups.isDynamicSkin(holder))
+                    if (!McVGuiUtils.isDynamicSkin(holder))
                         continue;
                     List<ViewManager> tmpvms = holder.getViewManagers();
                     for (ViewManager vm : tmpvms) {
@@ -1186,7 +1185,7 @@ public class PersistenceManager extends IdvPersistenceManager {
         // remove their ViewManagers from the bundle's list of ViewManagers!
         // remember, because they are dynamic skins, the ViewManagers should
         // not exist until the skin is built.
-        if (CompGroups.hasDynamicSkins(windows))
+        if (McVGuiUtils.hasDynamicSkins(windows))
             mapDynamicSkins(windows);
 
         List<WindowInfo> newWindows;
@@ -1278,7 +1277,7 @@ public class PersistenceManager extends IdvPersistenceManager {
                     continue;
 
                 IdvComponentGroup group = (IdvComponentGroup)entry.getValue();
-                if (CompGroups.hasNestedGroups(group))
+                if (McVGuiUtils.hasNestedGroups(group))
                     entry.setValue(flattenGroup(group));
             }
         }
@@ -1297,7 +1296,7 @@ public class PersistenceManager extends IdvPersistenceManager {
         flat.setUniqueId(nested.getUniqueId());
 
         List<IdvComponentHolder> holders = 
-            CompGroups.getComponentHolders(nested);
+            McVGuiUtils.getComponentHolders(nested);
 
         for (IdvComponentHolder holder : holders) {
             flat.addComponent(holder);
@@ -1316,7 +1315,7 @@ public class PersistenceManager extends IdvPersistenceManager {
             new ArrayList<IdvComponentHolder>(group.getDisplayComponents());
 
         for (IdvComponentHolder holder : newHolders)
-            if (CompGroups.isUIHolder(holder))
+            if (McVGuiUtils.isUIHolder(holder))
                 newHolders.remove(holder);
 
         return newHolders;
@@ -1371,7 +1370,7 @@ public class PersistenceManager extends IdvPersistenceManager {
 
                 // filter out any holders that don't contain view managers
                 for (IdvComponentHolder holder : holders)
-                    if (!CompGroups.isUIHolder(holder))
+                    if (!McVGuiUtils.isUIHolder(holder))
                         newHolders.add(holder);
 
                 g.setDisplayComponents(newHolders);

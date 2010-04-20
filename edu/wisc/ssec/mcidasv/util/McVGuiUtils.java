@@ -30,6 +30,8 @@
 
 package edu.wisc.ssec.mcidasv.util;
 
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -38,6 +40,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -52,8 +55,17 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+import ucar.unidata.idv.MapViewManager;
+import ucar.unidata.idv.ViewManager;
+import ucar.unidata.idv.ui.IdvComponentGroup;
+import ucar.unidata.idv.ui.IdvComponentHolder;
+import ucar.unidata.idv.ui.IdvWindow;
+import ucar.unidata.idv.ui.WindowInfo;
+import ucar.unidata.ui.ComponentHolder;
 import ucar.unidata.util.GuiUtils;
 import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.ui.McvComponentGroup;
+import edu.wisc.ssec.mcidasv.ui.McvComponentHolder;
 
 
 public class McVGuiUtils implements Constants {
@@ -853,5 +865,353 @@ public class McVGuiUtils implements Constants {
         } else {
             SwingUtilities.invokeLater(r);
         }
+    }
+    
+    public static List<ViewManager> getViewManagers(final WindowInfo info) {
+        List<ViewManager> vms = arrList();
+        for (IdvComponentHolder holder : getComponentHolders(info)) {
+            vms.addAll(holder.getViewManagers());
+        }
+        return vms;
+    }
+    
+    public static List<ViewManager> getViewManagers(final IdvWindow window) {
+        List<ViewManager> vms = arrList();
+        vms.addAll(window.getViewManagers());
+
+        for (IdvComponentHolder holder : getComponentHolders(window)) {
+            vms.addAll(holder.getViewManagers());
+        }
+        return vms;
+    }
+    
+    /**
+     * @return Whether or not {@code h} contains some UI component like
+     * the dashboard of field selector. Yes, it can happen!
+     */
+    public static boolean isUIHolder(final IdvComponentHolder h) {
+        if (h.getType().equals(McvComponentHolder.TYPE_DYNAMIC_SKIN))
+            return false;
+        return h.getViewManagers().isEmpty();
+    }
+
+    /**
+     * @return Whether or not {@code h} is a dynamic skin.
+     */
+    public static boolean isDynamicSkin(final IdvComponentHolder h) {
+        return (h.getType().equals(McvComponentHolder.TYPE_DYNAMIC_SKIN));
+    }
+
+    /**
+     * @return Whether or not {@code windows} has at least one dynamic
+     * skin.
+     */
+    public static boolean hasDynamicSkins(final List<WindowInfo> windows) {
+        for (WindowInfo window : windows)
+            for (IdvComponentHolder holder : getComponentHolders(window))
+                if (isDynamicSkin(holder))
+                    return true;
+        return false;
+    }
+
+    /**
+     * @return The component holders within <code>windowInfo</code>.
+     * @see #getComponentHolders(IdvComponentGroup)
+     */
+    public static List<IdvComponentHolder> getComponentHolders(
+        final WindowInfo windowInfo) {
+        List<IdvComponentHolder> holders = arrList();
+
+        Collection<Object> comps =
+            windowInfo.getPersistentComponents().values();
+
+        for (Object comp : comps) {
+            if (!(comp instanceof IdvComponentGroup))
+                continue;
+
+            holders.addAll(getComponentHolders((IdvComponentGroup)comp));
+        }
+        return holders;
+    }
+
+    /**
+     * @return The component holders within {@code idvWindow}.
+     * @see #getComponentHolders(IdvComponentGroup)
+     */
+    public static List<IdvComponentHolder> getComponentHolders(
+        final IdvWindow idvWindow) 
+    {
+        List<IdvComponentHolder> holders = arrList();
+        for (IdvComponentGroup group : (List<IdvComponentGroup>)idvWindow.getComponentGroups())
+            holders.addAll(getComponentHolders(group));
+        return holders;
+    }
+
+    /**
+     * @return <b>Recursively</b> searches {@code group} to find any 
+     * component holders.
+     */
+    public static List<IdvComponentHolder> getComponentHolders(
+        final IdvComponentGroup group) 
+    {
+        List<IdvComponentHolder> holders = arrList();
+        List<ComponentHolder> comps = group.getDisplayComponents();
+        if (comps.isEmpty())
+            return holders;
+
+        for (ComponentHolder comp : comps) {
+            if (comp instanceof IdvComponentGroup)
+                holders.addAll(getComponentHolders((IdvComponentGroup)comp));
+            else if (comp instanceof IdvComponentHolder)
+                holders.add((IdvComponentHolder)comp);
+        }
+
+        return holders;
+    }
+
+    /**
+     * @return <b>Recursively</b> searches {@code group} for any nested
+     * component groups.
+     */
+    public static List<IdvComponentGroup> getComponentGroups(
+        final IdvComponentGroup group) 
+    {
+        List<IdvComponentGroup> groups = arrList();
+        groups.add(group);
+
+        List<ComponentHolder> comps = group.getDisplayComponents();
+        if (comps.isEmpty())
+            return groups;
+
+        for (ComponentHolder comp : comps)
+            if (comp instanceof IdvComponentGroup)
+                groups.addAll(getComponentGroups((IdvComponentGroup)comp));
+        return groups;
+    }
+
+    /**
+     * @return Component groups contained in {@code window}.
+     * @see #getComponentGroups(IdvComponentGroup)
+     */
+    public static List<IdvComponentGroup> getComponentGroups(
+        final WindowInfo window) 
+    {
+        Collection<Object> comps = window.getPersistentComponents().values();
+        for (Object comp : comps)
+            if (comp instanceof IdvComponentGroup)
+                return getComponentGroups((IdvComponentGroup)comp);
+        return arrList();
+    }
+
+    /**
+     * @return Component groups contained in {@code windows}.
+     * @see #getComponentGroups(IdvComponentGroup)
+     */
+    public static List<IdvComponentGroup> getComponentGroups(
+        final List<WindowInfo> windows) 
+    {
+        List<IdvComponentGroup> groups = arrList();
+        for (WindowInfo window : windows)
+            groups.addAll(getComponentGroups(window));
+        return groups;
+    }
+
+    /**
+     * @return The component group within {@code window}.
+     */
+    public static IdvComponentGroup getComponentGroup(final IdvWindow window) {
+        List<IdvComponentGroup> groups = window.getComponentGroups();
+        if (!groups.isEmpty())
+            return groups.get(0);
+        return null;
+    }
+
+    /**
+     * @return Whether or not {@code group} contains any component
+     *         groups.
+     */
+    public static boolean hasNestedGroups(final IdvComponentGroup group) {
+        List<ComponentHolder> comps = group.getDisplayComponents();
+        for (ComponentHolder comp : comps)
+            if (comp instanceof IdvComponentGroup)
+                return true;
+        return false;
+    }
+
+    /**
+     * @return All active component holders in McIDAS-V.
+     */
+    // TODO: needs update for nested groups
+    public static List<IdvComponentHolder> getAllComponentHolders() {
+        List<IdvComponentHolder> holders = arrList();
+        for (IdvComponentGroup g : getAllComponentGroups())
+            holders.addAll(g.getDisplayComponents());
+        return holders;
+    }
+
+    /**
+     * @return All active component groups in McIDAS-V.
+     */
+    // TODO: needs update for nested groups
+    public static List<IdvComponentGroup> getAllComponentGroups() {
+        List<IdvComponentGroup> groups = arrList();
+        for (IdvWindow w : getAllDisplayWindows())
+            groups.addAll(w.getComponentGroups());
+        return groups;
+    }
+
+    /**
+     * @return All windows that contain at least one component group.
+     */
+    public static List<IdvWindow> getAllDisplayWindows() {
+        List<IdvWindow> windows = arrList();
+        for (IdvWindow w : (List<IdvWindow>)IdvWindow.getWindows())
+            if (!w.getComponentGroups().isEmpty())
+                windows.add(w);
+        return windows;
+    }
+
+    /**
+     * @return The component holder positioned after the active component holder.
+     */
+    public static IdvComponentHolder getAfterActiveHolder() {
+        return getAfterHolder(getActiveComponentHolder());
+    }
+
+    /**
+     * @return The component holder positioned before the active component holder.
+     */
+    public static IdvComponentHolder getBeforeActiveHolder() {
+        return getBeforeHolder(getActiveComponentHolder());
+    }
+
+    /**
+     * @return The active component holder in the active window.
+     */
+    public static IdvComponentHolder getActiveComponentHolder() {
+        IdvWindow window = IdvWindow.getActiveWindow();
+        McvComponentGroup group = (McvComponentGroup)getComponentGroup(window);
+        return (IdvComponentHolder)group.getActiveComponentHolder();
+    }
+
+    /**
+     * @return The component holder positioned after {@code current}.
+     */
+    public static IdvComponentHolder getAfterHolder(
+        final IdvComponentHolder current) 
+    {
+        List<IdvComponentHolder> holders = getAllComponentHolders();
+        int currentIndex = holders.indexOf(current);
+        return holders.get( (currentIndex + 1) % holders.size());
+    }
+
+    /**
+     * @return The component holder positioned before {@code current}.
+     */
+    public static IdvComponentHolder getBeforeHolder(
+        final IdvComponentHolder current) 
+    {
+        List<IdvComponentHolder> holders = getAllComponentHolders();
+        int currentIndex = holders.indexOf(current);
+
+        int newidx = (currentIndex - 1) % holders.size();
+        if (newidx == -1)
+            newidx = holders.size() - 1;
+
+        return holders.get(newidx);
+    }
+
+    /**
+     * @param w {@link IdvWindow} whose component groups you want (as 
+     * {@link McvComponentGroup}s).
+     * @return A {@link List} of {@code McvComponentGroup}s or an empty list. 
+     * If there were no {@code McvComponentGroup}s in {@code w}, 
+     * <b>or</b> if {@code w} is {@code null}, an empty {@code List} is returned.
+     */
+    public static List<McvComponentGroup> idvGroupsToMcv(final IdvWindow w) {
+        if (w == null)
+            return Collections.emptyList();
+        final List<McvComponentGroup> groups = arrList();
+        for (IdvComponentGroup group : w.getComponentGroups())
+            groups.add((McvComponentGroup)group);
+        return groups;
+    }
+    
+    public static void compGroup(final IdvComponentGroup g) {
+        compGroup(g, 0);
+    }
+    
+    public static void compGroup(final IdvComponentGroup g, final int level) {
+        p("Comp Group", level);
+        p("  name=" + g.getName(), level);
+        p("  id=" + g.getUniqueId(), level);
+        p("  layout=" + g.getLayout(), level);
+        p("  comp count=" + g.getDisplayComponents().size() + ": ", level);
+//        List<IdvComponentGroup> gs = new ArrayList<IdvComponentGroup>();
+//        List<IdvComponentHolder> hs = new ArrayList<IdvComponentHolder>();
+        for (Object comp : g.getDisplayComponents()) {
+            if (comp instanceof IdvComponentHolder)
+                compHolder((IdvComponentHolder)comp, level+1);
+            else if (comp instanceof IdvComponentGroup)
+                compGroup((IdvComponentGroup)comp, level+1);
+            else
+                p("    umm=" + comp.getClass().getName(), level);
+        }
+    }
+    
+    public static void compHolder(final IdvComponentHolder h, final int level) {
+        p("Comp Holder", level);
+        p("  cat=" + h.getCategory(), level);
+        p("  name=" + h.getName(), level);
+        p("  id=" + h.getUniqueId(), level);
+        if (h.getViewManagers() == null) {
+            System.err.println("  null vms!");
+            return;
+        }
+        p("  vm count=" + h.getViewManagers().size() + ": ", level);
+        for (ViewManager vm : (List<ViewManager>)h.getViewManagers()) {
+            p("    " + vmType(vm) + "=" + vm.getViewDescriptor().getName(), level);
+        }
+    }
+
+    public static List<ViewManager> findvms(final List<WindowInfo> windows) {
+        List<ViewManager> vms = new ArrayList<ViewManager>();
+        
+        for (WindowInfo window : windows) {
+            for (IdvComponentHolder h : getComponentHolders(window)) {
+//              for (ViewManager vm : (List<ViewManager>)h.getViewManagers()) {
+//                  
+//              }
+                if (h.getViewManagers() != null)
+                    vms.addAll((List<ViewManager>)h.getViewManagers());
+                else
+                    System.err.println(h.getUniqueId() + " has no vms!");
+            }
+        }
+        
+        for (ViewManager vm : vms) 
+            System.err.println("vm=" + vm.getViewDescriptor().getName());
+        
+        return vms;
+    }
+    
+    private static String vmType(final ViewManager vm) {
+        if (vm instanceof MapViewManager)
+            if (((MapViewManager)vm).getUseGlobeDisplay())
+                return "Globe";
+            else
+                return "Map";
+        return "Other";
+    }
+    
+    private static String pad(final String str, final int pad) {
+        char[] padding = new char[pad*2];
+        for (int i = 0; i < pad*2; i++)
+            padding[i] = ' ';
+        return new String(padding).concat(str);
+    }
+    
+    private static void p(final String str, final int padding) {
+        System.err.println(pad(str, padding));
     }
 }

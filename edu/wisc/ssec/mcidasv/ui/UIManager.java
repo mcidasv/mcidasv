@@ -29,7 +29,6 @@
  */
 package edu.wisc.ssec.mcidasv.ui;
 
-import edu.wisc.ssec.mcidasv.monitors.Monitoring;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.list;
 import static edu.wisc.ssec.mcidasv.util.XPathUtils.elements;
@@ -37,7 +36,6 @@ import static edu.wisc.ssec.mcidasv.util.XPathUtils.elements;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -53,12 +51,10 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
@@ -80,7 +76,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -98,7 +93,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
-import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -108,6 +102,8 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -142,7 +138,6 @@ import ucar.unidata.util.Msg;
 import ucar.unidata.util.ObjectListener;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
-import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
 
@@ -150,12 +145,8 @@ import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.PersistenceManager;
 import edu.wisc.ssec.mcidasv.StateManager;
-import edu.wisc.ssec.mcidasv.monitors.MonitorManager;
-import edu.wisc.ssec.mcidasv.monitors.MonitorManager.MonitorType;
-import edu.wisc.ssec.mcidasv.monitors.memory.MemoryPanel;
 import edu.wisc.ssec.mcidasv.supportform.McvStateCollector;
 import edu.wisc.ssec.mcidasv.supportform.SupportForm;
-import edu.wisc.ssec.mcidasv.util.CompGroups;
 import edu.wisc.ssec.mcidasv.util.Contract;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.MemoryMonitor;
@@ -523,8 +514,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
             List<IdvComponentHolder> holdersBefore = new ArrayList<IdvComponentHolder>();
             List<IdvWindow> windowsBefore = new ArrayList<IdvWindow>();
             if (didRemoveAll) {
-                holdersBefore.addAll(CompGroups.getAllComponentHolders());
-                windowsBefore.addAll(CompGroups.getAllDisplayWindows());
+                holdersBefore.addAll(McVGuiUtils.getAllComponentHolders());
+                windowsBefore.addAll(McVGuiUtils.getAllDisplayWindows());
             }
 
             for (WindowInfo info : (List<WindowInfo>)windows) {
@@ -532,7 +523,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 makeBundledDisplays(info, okToMerge, mergeLayers, fromCollab);
 
                 if (mergeLayers)
-                    holdersBefore.addAll(CompGroups.getComponentHolders(info));
+                    holdersBefore.addAll(McVGuiUtils.getComponentHolders(info));
             }
 //            System.err.println("holdersBefore="+holdersBefore);
             // no reason to kill the displays if there aren't any windows in the
@@ -562,10 +553,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         // mop up any windows that no longer have component holders.
         for (IdvWindow window : oldWindows) {
-            IdvComponentGroup group = CompGroups.getComponentGroup(window);
+            IdvComponentGroup group = McVGuiUtils.getComponentGroup(window);
 
             List<IdvComponentHolder> holders =
-                CompGroups.getComponentHolders(group);
+                McVGuiUtils.getComponentHolders(group);
 
             // if the old set of holders contains all of this window's
             // holders, this window can be deleted:
@@ -672,8 +663,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     private void mergeLayers(final WindowInfo info, final IdvWindow window, final boolean fromCollab) {
-        List<ViewManager> newVms = CompGroups.getViewManagers(info);
-        List<ViewManager> oldVms = CompGroups.getViewManagers(window);
+        List<ViewManager> newVms = McVGuiUtils.getViewManagers(info);
+        List<ViewManager> oldVms = McVGuiUtils.getViewManagers(window);
 
         if (oldVms.size() == newVms.size()) {
             List<ViewManager> merged = new ArrayList<ViewManager>();
@@ -903,11 +894,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
         renderer.setClosedIcon(null);
         tree.setCellRenderer(renderer);
 
-        for (IdvWindow w : CompGroups.getAllDisplayWindows()) {
+        for (IdvWindow w : McVGuiUtils.getAllDisplayWindows()) {
             String title = w.getTitle();
             TwoFacedObject winTFO = new TwoFacedObject(title, w);
             DefaultMutableTreeNode winNode = new DefaultMutableTreeNode(winTFO);
-            for (IdvComponentHolder h : CompGroups.getComponentHolders(w)) {
+            for (IdvComponentHolder h : McVGuiUtils.getComponentHolders(w)) {
                 String hName = h.getName();
                 TwoFacedObject tmp = new TwoFacedObject(hName, h);
                 DefaultMutableTreeNode holderNode = new DefaultMutableTreeNode(tmp);
@@ -1464,13 +1455,27 @@ public class UIManager extends IdvUIManager implements ActionListener {
             for (IdvAction action : actions.getActionsForGroup(group)) {
                 String cmd = (makeCall) ? action.getCommand() : action.getId();
                 String desc = action.getAttribute(ActionAttribute.DESCRIPTION);
-                items.add(GuiUtils.makeMenuItem(desc, obj, method, cmd));
+//                items.add(GuiUtils.makeMenuItem(desc, obj, method, cmd));
+                items.add(makeMenuItem(desc, obj, method, cmd));
             }
-            menu.add(GuiUtils.makeMenu(group, items));
+//            menu.add(GuiUtils.makeMenu(group, items));
+            menu.add(makeMenu(group, items));
         }
         return menu;
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(UIManager.class);
+    
+    public static JMenuItem makeMenuItem(String label, Object obj, String method, Object arg) {
+        logger.debug("makeMenuItem: label={} method={} obj={}", new Object[] { label, method, obj.toString() });
+        return GuiUtils.makeMenuItem(label, obj, method);
+    }
+    
+    public static JMenu makeMenu(String name, List menuItems) {
+        logger.debug("makeMenu: name={}", name);
+        return GuiUtils.makeMenu(name, menuItems);
+    }
+    
     /**
      * Returns the collection of action identifiers.
      * 
@@ -1905,7 +1910,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             initTabNavActions();
         }
 
-        if (CompGroups.getAllComponentHolders().size() <= 1)
+        if (McVGuiUtils.getAllComponentHolders().size() <= 1)
             return;
 
         menu.addSeparator();
@@ -1914,7 +1919,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         menu.add(new JMenuItem(prevDisplayAction));
         menu.add(new JMenuItem(showDisplayAction));
 
-        if (CompGroups.getAllComponentGroups().size() > 0)
+        if (McVGuiUtils.getAllComponentGroups().size() > 0)
             menu.addSeparator();
 
         Msg.translateTree(menu);
@@ -2091,7 +2096,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             if (ACTION_NAME.equals(cmd)) {
                 showDisplaySelector();
             } else {
-                List<IdvComponentHolder> holders = CompGroups.getAllComponentHolders();
+                List<IdvComponentHolder> holders = McVGuiUtils.getAllComponentHolders();
                 McvComponentHolder holder = null;
                 int index = 0;
                 try {
@@ -2115,7 +2120,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         }
 
         public void actionPerformed(ActionEvent e) {
-            McvComponentHolder prev = (McvComponentHolder)CompGroups.getBeforeActiveHolder();
+            McvComponentHolder prev = (McvComponentHolder)McVGuiUtils.getBeforeActiveHolder();
             if (prev != null)
                 prev.setAsActiveTab();
         }
@@ -2131,7 +2136,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         }
 
         public void actionPerformed(ActionEvent e) {
-            McvComponentHolder next = (McvComponentHolder)CompGroups.getAfterActiveHolder();
+            McvComponentHolder next = (McvComponentHolder)McVGuiUtils.getAfterActiveHolder();
             if (next != null)
                 next.setAsActiveTab();
         }
@@ -2195,7 +2200,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 final String name = names.get(names.size() - 1);
 
                 IdvWindow window = IdvWindow.getActiveWindow();
-                for (final McvComponentGroup group : CompGroups.idvGroupsToMcv(window)) {
+                for (final McvComponentGroup group : McVGuiUtils.idvGroupsToMcv(window)) {
                     JMenuItem mi = new JMenuItem(name);
 
                     mi.addActionListener(new ActionListener() {
@@ -2362,7 +2367,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     public void createNewTab(final String skinId) {
         IdvComponentGroup group = 
-            CompGroups.getComponentGroup(IdvWindow.getActiveWindow());
+            McVGuiUtils.getComponentGroup(IdvWindow.getActiveWindow());
 
         if (skinIds.containsKey(skinId))
             group.makeSkin(skinIds.get(skinId));
