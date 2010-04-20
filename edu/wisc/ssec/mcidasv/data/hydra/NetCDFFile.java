@@ -97,7 +97,7 @@ public class NetCDFFile implements MultiDimensionReader {
 
    public NetCDFFile(String filename) throws Exception {
      if (filename.endsWith(".ncml")) {
-       URL url = new URL("file://"+filename);
+       URL url = new URL("file:"+filename);
        ncfile = NcMLReader.readNcML(url.toString(), null);
      }
      else {
