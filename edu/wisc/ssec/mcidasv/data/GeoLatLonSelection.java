@@ -1768,6 +1768,13 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         this.sampleProjection = sample;
         this.previewDir = dir;
         this.previewNav = nav;
+        try {
+            int areaLinRes = previewDir.getValue(11);
+            int areaEleRes = previewDir.getValue(12);
+            previewNav.setRes(areaLinRes, areaEleRes);
+         } catch (Exception e) {
+            System.out.println("update e=" + e);
+         }
 
         setCoordinateType(coordType);
         if (coordType.equals(TYPE_LATLON)) {
