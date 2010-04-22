@@ -37,25 +37,42 @@ import static javax.swing.GroupLayout.Alignment.TRAILING;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newMap;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.set;
 import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.runOnEDT;
 
 import java.awt.Color;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ucar.unidata.util.LogUtil;
+
+import edu.wisc.ssec.mcidas.adde.AddeServerInfo;
+import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 import edu.wisc.ssec.mcidasv.McIDASV;
-import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeVerification.AddeStatus;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EditorAction;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import edu.wisc.ssec.mcidasv.util.Contract;
 import edu.wisc.ssec.mcidasv.util.McVTextField;
 
 /**
@@ -65,6 +82,21 @@ import edu.wisc.ssec.mcidasv.util.McVTextField;
 public class RemoteEntryEditor extends javax.swing.JDialog {
 
     private static final Logger logger = LoggerFactory.getLogger(RemoteEntryEditor.class);
+
+    /** Default port for remote ADDE servers. */
+    public static final int ADDE_PORT = 112;
+
+    /** Possible entry verification states. */
+    public enum AddeStatus { PREFLIGHT, BAD_SERVER, BAD_ACCOUNTING, NO_METADATA, OK, BAD_GROUP };
+
+    /** Number of threads in the thread pool. */
+    private static final int POOL = 5;
+
+    /** 
+     * {@link String#format(String, Object...)}-friendly string for building a
+     * request to read a server's PUBLIC.SRV.
+     */
+    private static final String publicSrvFormat = "adde://%s/text?compress=gzip&port=112&debug=false&version=1&user=%s&proj=%s&file=PUBLIC.SRV";
 
     /** Whether or not to input in the dataset, username, and project fields should be uppercased. */
     private static final String PREF_FORCE_CAPS = "mcv.servers.forcecaps";
@@ -85,7 +117,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      * Contains any {@code JTextField}s that may be in an invalid
      * (to McIDAS-V) state.
      */
-    private final Set<javax.swing.JTextField> badFields = CollectionHelpers.newLinkedHashSet();
+    private final Set<javax.swing.JTextField> badFields = newLinkedHashSet();
 
     /** The server manager GUI. Be aware that this can be {@code null}. */
     private final TabbedAddeManager managerController;
@@ -94,7 +126,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     private final EntryStore entryStore;
 
     /** Current contents of the editor. */
-    private final Set<RemoteAddeEntry> currentEntries = CollectionHelpers.newLinkedHashSet();
+    private final Set<RemoteAddeEntry> currentEntries = newLinkedHashSet();
 
     /** The last dialog action performed by the user. */
     private EditorAction editorAction = EditorAction.INVALID;
@@ -105,6 +137,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     /** Initial contents of {@link #datasetField}. Be aware that {@code null} is allowed. */
     private final String datasetText;
 
+    /** Whether or not the editor is prompting the user to adjust input. */
     private boolean inErrorState = false;
 
     // if we decide to restore error overlays for known "bad" values.
@@ -174,7 +207,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         }
 
         // determine the "valid" types
-        Set<EntryType> enabledTypes = CollectionHelpers.newLinkedHashSet();
+        Set<EntryType> enabledTypes = newLinkedHashSet();
         if (!ignoreCheckboxes) {
             if (imageBox.isSelected())
                 enabledTypes.add(EntryType.IMAGE);
@@ -197,13 +230,13 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
 
         // deal with the user trying to add multiple groups at once (even though this UI doesn't work right with it)
         StringTokenizer tok = new StringTokenizer(dataset, ",");
-        Set<String> newDatasets = CollectionHelpers.newLinkedHashSet();
+        Set<String> newDatasets = newLinkedHashSet();
         while (tok.hasMoreTokens()) {
             newDatasets.add(tok.nextToken().trim());
         }
 
         // create a new entry for each group and its valid types.
-        Set<RemoteAddeEntry> entries = CollectionHelpers.newLinkedHashSet();
+        Set<RemoteAddeEntry> entries = newLinkedHashSet();
         for (String newGroup : newDatasets) {
             for (EntryType type : enabledTypes) {
                 RemoteAddeEntry.Builder builder = new RemoteAddeEntry.Builder(host, newGroup).type(type).validity(EntryValidity.VERIFIED).source(EntrySource.USER);
@@ -251,59 +284,93 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      * {@literal "valid"}.
      */
     private void verifyInput() {
-        Set<RemoteAddeEntry> entries = pollWidgets(true);
-        Set<EntryType> validTypes = CollectionHelpers.newLinkedHashSet();
-        for (RemoteAddeEntry entry : entries) {
-            EntryType type = entry.getEntryType();
-            if (validTypes.contains(type))
-                continue;
-
-            String server = entry.getAddress();
-            String dataset = entry.getGroup();
-
-            setStatus("Checking "+server+'/'+dataset+" for accessible "+type+" data...");
-            AddeStatus status = RemoteAddeVerification.checkEntry(entry);
-            if (status == AddeStatus.OK) {
-                setStatus("Verified that "+server+'/'+dataset+" has accessible "+type+" data.");
-                validTypes.add(type);
-            } else if (status == AddeStatus.BAD_SERVER) {
-                setStatus("Could not connect to "+server);
+//        Set<RemoteAddeEntry> unverifiedEntries = pollWidgets(true);
+//        Set<EntryType> validTypes = CollectionHelpers.newLinkedHashSet();
+//        for (RemoteAddeEntry entry : entries) {
+//            EntryType type = entry.getEntryType();
+//            if (validTypes.contains(type))
+//                continue;
+//
+//            String server = entry.getAddress();
+//            String dataset = entry.getGroup();
+//
+//            setStatus("Checking "+server+'/'+dataset+" for accessible "+type+" data...");
+//            AddeStatus status = RemoteAddeVerification.checkEntry(entry);
+//            if (status == AddeStatus.OK) {
+//                setStatus("Verified that "+server+'/'+dataset+" has accessible "+type+" data.");
+//                validTypes.add(type);
+//            } else if (status == AddeStatus.BAD_SERVER) {
+//                setStatus("Could not connect to "+server);
+//                setBadField(serverField, true);
+//                return;
+//            } else if (status == AddeStatus.BAD_ACCOUNTING) {
+//                setStatus("Could not access "+server+'/'+dataset+" with current accounting information...");
+//                setBadField(userField, true);
+//                setBadField(projField, true);
+//                return;
+//            } else if (status == AddeStatus.BAD_GROUP) {
+//                // err...
+//            } else {
+//                setStatus("Unknown status returned: "+status);
+//                return;
+//            }
+//        }
+        resetBadFields();
+        Set<RemoteAddeEntry> unverifiedEntries = pollWidgets(true);
+        
+        // the editor GUI only works with one server address at a time. so 
+        // although there may be several RemoteAddeEntry objs, they'll all have
+        // the same address and the follow *isn't* as dumb as it looks!
+        if (!unverifiedEntries.isEmpty()) {
+            if (!checkHost(unverifiedEntries.toArray(new RemoteAddeEntry[0])[0])) {
+                setStatus("Could not connect to the given server.");
                 setBadField(serverField, true);
                 return;
-            } else if (status == AddeStatus.BAD_ACCOUNTING) {
-                setStatus("Could not access "+server+'/'+dataset+" with current accounting information...");
-                setBadField(userField, true);
-                setBadField(projField, true);
-                return;
-            } else if (status == AddeStatus.BAD_GROUP) {
-                // err...
-            } else {
-                setStatus("Unknown status returned: "+status);
-                return;
             }
+        } else {
+            setStatus("Please specify ");
+            setBadField(serverField, true);
+            return;
         }
-
-        if (validTypes.isEmpty()) {
+        
+        setStatus("Contacting server...");
+        Set<RemoteAddeEntry> verifiedEntries = checkGroups(unverifiedEntries);
+        if (!verifiedEntries.isEmpty()) {
+            for (RemoteAddeEntry verifiedEntry : verifiedEntries) {
+                switch (verifiedEntry.getEntryType()) {
+                    case IMAGE:
+                        imageBox.setSelected(true); break;
+                    case POINT:
+                        pointBox.setSelected(true); break;
+                    case GRID:
+                        gridBox.setSelected(true); break;
+                    case TEXT:
+                        textBox.setSelected(true); break;
+                    case NAV:
+                        navBox.setSelected(true); break;
+                    case RADAR:
+                        radarBox.setSelected(true); break;
+                }
+            }
+            setStatus("Verification complete.");
+        } else {
             setStatus("Could not verify any types of data...");
             setBadField(datasetField, true);
-        } else {
-            setStatus("Server verification complete.");
-            imageBox.setSelected(validTypes.contains(EntryType.IMAGE));
-            pointBox.setSelected(validTypes.contains(EntryType.POINT));
-            gridBox.setSelected(validTypes.contains(EntryType.GRID));
-            textBox.setSelected(validTypes.contains(EntryType.TEXT));
-            navBox.setSelected(validTypes.contains(EntryType.NAV));
-            radarBox.setSelected(validTypes.contains(EntryType.RADAR));
         }
-    }
 
-//    private class Verifier extends SwingWorker<Set<EntryType>, AddeStatus> {
-//        protected Set<EntryType> doInBackground() throws Exception {
-//            
+//        if (validTypes.isEmpty()) {
+//            setStatus("Could not verify any types of data...");
+//            setBadField(datasetField, true);
+//        } else {
+//            setStatus("Server verification complete.");
+//            imageBox.setSelected(validTypes.contains(EntryType.IMAGE));
+//            pointBox.setSelected(validTypes.contains(EntryType.POINT));
+//            gridBox.setSelected(validTypes.contains(EntryType.GRID));
+//            textBox.setSelected(validTypes.contains(EntryType.TEXT));
+//            navBox.setSelected(validTypes.contains(EntryType.NAV));
+//            radarBox.setSelected(validTypes.contains(EntryType.RADAR));
 //        }
-//        
-//        
-//    }
+    }
 
     /**
      * Displays a short status message in {@link #statusLabel}.
@@ -312,6 +379,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      */
     private void setStatus(final String msg) {
         assert msg != null;
+        logger.debug("setStatus: msg={}", msg);
         runOnEDT(new Runnable() {
             public void run() {
                 statusLabel.setText(msg);
@@ -826,6 +894,232 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         }
     }
 
+    /**
+     * Attempt to verify a {@link Set} of {@link RemoteAddeEntry}s. Useful for
+     * checking a {@literal "MCTABLE.TXT"} after importing.
+     * 
+     * @param entries {@code Set} of remote ADDE entries to validate. Cannot 
+     * be {@code null}.
+     * 
+     * @return {@code Set} of {@code RemoteAddeEntry}s that McIDAS-V was able
+     * to connect to. 
+     * 
+     * @throws NullPointerException if {@code entries} is {@code null}.
+     * 
+     * @see #checkHost(RemoteAddeEntry)
+     */
+    public Set<RemoteAddeEntry> checkHosts(final Set<RemoteAddeEntry> entries) {
+        Contract.notNull(entries, "entries cannot be null");
+        Set<RemoteAddeEntry> goodEntries = newLinkedHashSet();
+        Set<String> checkedHosts = newLinkedHashSet();
+        Map<String, Boolean> hostStatus = newMap();
+        for (RemoteAddeEntry entry : entries) {
+            String host = entry.getAddress();
+            if (hostStatus.get(host) == Boolean.FALSE) {
+                continue;
+            } else if (hostStatus.get(host) == Boolean.TRUE) {
+                goodEntries.add(entry);
+            } else {
+                checkedHosts.add(host);
+                boolean connected = checkHost(entry);
+
+                if (connected) {
+                    goodEntries.add(entry);
+                    hostStatus.put(host, Boolean.TRUE);
+                } else {
+                    hostStatus.put(host, Boolean.FALSE);
+                }
+            }
+        }
+        return goodEntries;
+    }
+
+//    YOU REALLY WANT TO PORT checkGroups
+    public Set<RemoteAddeEntry> checkGroups(final Set<RemoteAddeEntry> entries) {
+        Contract.notNull(entries, "entries cannot be null");
+        if (entries.isEmpty()) {
+            return Collections.emptySet();
+        }
+
+        Set<RemoteAddeEntry> verified = newLinkedHashSet();
+        ExecutorService exec = Executors.newFixedThreadPool(POOL);
+        CompletionService<StatusWrapper> ecs = new ExecutorCompletionService<StatusWrapper>(exec);
+
+        // submit new verification tasks to the pool's queue ... (apologies for the pun?)
+        for (RemoteAddeEntry entry : entries) {
+            StatusWrapper pairing = new StatusWrapper(entry);
+            ecs.submit(new VerifyEntryTask(pairing));
+        }
+
+        // use completion service magic to only deal with finished verification tasks
+        try {
+            for (int i = 0; i < entries.size(); i++) {
+                StatusWrapper pairing = ecs.take().get();
+                RemoteAddeEntry entry = pairing.getEntry();
+                AddeStatus status = pairing.getStatus();
+                setStatus(entry.getEntryText()+": attempting verification...");
+                if (status == AddeStatus.OK) {
+                    verified.add(entry);
+                    setStatus("Found accessible "+entry.getEntryType().toString().toLowerCase()+" data.");
+                } else if (status != AddeStatus.BAD_GROUP) {
+                    setStatus("Could not access "+entry.getGroup());
+                    setBadField(datasetField, true);
+                } else if (status == AddeStatus.BAD_SERVER) {
+                    setStatus("Could not connect to "+entry.getAddress());
+                    setBadField(serverField, true);
+                } else if (status == AddeStatus.BAD_ACCOUNTING) {
+                    setStatus("Could not access "+entry.getEntryText()+" with current accounting information...");
+                    setBadField(userField, true);
+                    setBadField(projField, true);
+                } else {
+                    setStatus("Unknown verification status: '"+status+".' Spooky!");
+                }
+            }
+        } catch (InterruptedException e) {
+            LogUtil.logException("interrupted while checking ADDE entries", e);
+        } catch (ExecutionException e) {
+            LogUtil.logException("ADDE validation execution error", e);
+        } finally {
+            exec.shutdown();
+        }
+        setStatus("Finished verifying.");
+        return verified;
+    }
+
+    /**
+     * Attempts to verify whether or not the information in a given 
+     * {@link RemoteAddeEntry} represents a valid remote ADDE server. If not,
+     * the method tries to determine which parts of the entry are invalid.
+     * 
+     * @param entry The {@code RemoteAddeEntry} to check. Cannot be 
+     * {@code null}.
+     * 
+     * @return The {@link AddeStatus} that represents the verification status
+     * of {@code entry}.
+     * 
+     * @throws NullPointerException if {@code entry} is {@code null}.
+     * 
+     * @see AddeStatus
+     */
+    public static AddeStatus checkEntry(final RemoteAddeEntry entry) {
+        Contract.notNull(entry, "Cannot check a null entry");
+
+        if (!checkHost(entry)) {
+            return AddeStatus.BAD_SERVER;
+        }
+
+        String server = entry.getAddress();
+        String type = entry.getEntryType().toString();
+        String username = entry.getAccount().getUsername();
+        String project = entry.getAccount().getProject();
+        String[] servers = { server };
+        AddeServerInfo serverInfo = new AddeServerInfo(servers);
+
+        // I just want to go on the record here: 
+        // AddeServerInfo#setUserIDAndProjString(String) was not a good API 
+        // decision.
+        serverInfo.setUserIDandProjString("user="+username+"&proj="+project);
+        int status = serverInfo.setSelectedServer(server, type);
+        if (status == -2) {
+            return AddeStatus.NO_METADATA;
+        }
+        if (status == -1) {
+            return AddeStatus.BAD_ACCOUNTING;
+        }
+
+        serverInfo.setSelectedGroup(entry.getGroup());
+        String[] datasets = serverInfo.getDatasetList();
+        if (datasets != null && datasets.length > 0) {
+            return AddeStatus.OK;
+        } else {
+            return AddeStatus.BAD_GROUP;
+        }
+    }
+
+    /**
+     * Tries to connect to a given {@link RemoteAddeEntry} and read the list
+     * of ADDE {@literal "groups"} available to the public.
+     * 
+     * @param entry The {@code RemoteAddeEntry} to query. Cannot be {@code null}.
+     * 
+     * @return The {@link Set} of public groups on {@code entry}.
+     * 
+     * @throws NullPointerException if {@code entry} is {@code null}.
+     * @throws IllegalArgumentException if the server address is an empty 
+     * {@link String}.
+     */
+    public static Set<String> readPublicGroups(final RemoteAddeEntry entry) {
+        Contract.notNull(entry, "entry cannot be null");
+        Contract.notNull(entry.getAddress());
+        Contract.checkArg((entry.getAddress().length() == 0));
+
+        String user = entry.getAccount().getUsername();
+        if (user == null || user.length() == 0) {
+            user = RemoteAddeEntry.DEFAULT_ACCOUNT.getUsername();
+        }
+
+        String proj = entry.getAccount().getProject();
+        if (proj == null || proj.length() == 0) {
+            proj = RemoteAddeEntry.DEFAULT_ACCOUNT.getProject();
+        }
+
+        String url = String.format(publicSrvFormat, entry.getAddress(), user, proj);
+
+        Set<String> groups = newLinkedHashSet();
+
+        AddeTextReader reader = new AddeTextReader(url);
+        if (reader.getStatus().equals("OK")) {
+            for (String line : (List<String>)reader.getLinesOfText()) {
+                String[] pairs = line.trim().split(",");
+                for (String pair : pairs) {
+                    if (pair == null || pair.length() == 0 || !pair.startsWith("N1")) {
+                        continue;
+                    }
+                    String[] keyval = pair.split("=");
+                    if (keyval.length != 2 || keyval[0].length() == 0 || keyval[1].length() == 0 || !keyval[0].equals("N1")) {
+                        continue;
+                    }
+                    groups.add(keyval[1]);
+                }
+//                groups.add(new AddeEntry(line).getGroup());
+            }
+        }
+
+        return groups;
+    }
+
+    /**
+     * Determines whether or not the server specified in {@code entry} is
+     * listening on port 112.
+     * 
+     * @param entry Descriptor containing the server to check.
+     * 
+     * @return {@code true} if a connection was opened, {@code false} otherwise.
+     * 
+     * @throws NullPointerException if {@code entry} is null.
+     */
+    public static boolean checkHost(final RemoteAddeEntry entry) {
+        Contract.notNull(entry, "entry cannot be null");
+        String host = entry.getAddress();
+        Socket socket = null;
+        boolean connected = false;
+        try { 
+            socket = new Socket(host, ADDE_PORT);
+            connected = true;
+        } catch (UnknownHostException e) {
+            logger.debug("checkHost: can't resolve IP for '{}'", entry.getAddress());
+            connected = false;
+        } catch (IOException e) {
+            logger.debug("checkHost: IO problem while connecting to '{}': {}", entry.getAddress(), e.getMessage());
+            connected = false;
+        }
+        try {
+            socket.close();
+        } catch (Exception e) {}
+        logger.debug("checkHost: host={} result={}", entry.getAddress(), connected);
+        return connected;
+    }
+    
     // Variables declaration - do not modify
     private javax.swing.JCheckBox acctBox;
     private javax.swing.JButton addServer;
@@ -852,4 +1146,73 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     private javax.swing.JButton verifyAddButton;
     private javax.swing.JButton verifyServer;
     // End of variables declaration
+
+    /**
+     * Associates a {@link RemoteAddeEntry} with one of the states from 
+     * {@link AddeStatus}.
+     */
+    private static class StatusWrapper {
+        /** */
+        private final RemoteAddeEntry entry;
+
+        /** Current {@literal "status"} of {@link #entry}. */
+        private AddeStatus status;
+
+        /**
+         * Builds an entry/status pairing.
+         * 
+         * @param entry The {@code RemoteAddeEntry} to wrap up.
+         * 
+         * @throws NullPointerException if {@code entry} is {@code null}.
+         */
+        public StatusWrapper(final RemoteAddeEntry entry) {
+            Contract.notNull(entry, "cannot create a entry/status pair with a null descriptor");
+            this.entry = entry;
+        }
+
+        /**
+         * Set the {@literal "status"} of this {@link #entry} to a given 
+         * {@link AddeStatus}.
+         * 
+         * @param status New status of {@code entry}.
+         */
+        public void setStatus(AddeStatus status) {
+            this.status = status;
+        }
+
+        /**
+         * Returns the current {@literal "status"} of {@link #entry}.
+         * 
+         * @return One of {@link AddeStatus}.
+         */
+        public AddeStatus getStatus() {
+            return status;
+        }
+
+        /**
+         * Returns the {@link RemoteAddeEntry} stored in this wrapper.
+         * 
+         * @return {@link #entry}
+         */
+        public RemoteAddeEntry getEntry() {
+            return entry;
+        }
+    }
+
+    /**
+     * Represents an ADDE entry verification task. These are executed asynchronously 
+     * by the completion service within {@link RemoteEntryEditor#checkGroups(Set)}.
+     */
+    private class VerifyEntryTask implements Callable<StatusWrapper> {
+        private final StatusWrapper entryStatus;
+        public VerifyEntryTask(final StatusWrapper descStatus) {
+            Contract.notNull(descStatus, "cannot verify or set status of a null descriptor/status pair");
+            this.entryStatus = descStatus;
+        }
+
+        public StatusWrapper call() throws Exception {
+            entryStatus.setStatus(checkEntry(entryStatus.getEntry()));
+            return entryStatus;
+        }
+    }
 }

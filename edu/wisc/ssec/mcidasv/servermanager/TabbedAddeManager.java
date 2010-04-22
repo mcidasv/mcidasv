@@ -117,9 +117,9 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     /**
      * Creates a server manager GUI that's linked back to the rest of McIDAS-V.
      * 
-     * @param mcv The {@link McIDASV} reference.
+     * @param entryStore Server manager reference.
      * 
-     * @throws NullPointerException if {@code mcv} is {@code null}.
+     * @throws NullPointerException if {@code entryStore} is {@code null}.
      */
     public TabbedAddeManager(final EntryStore entryStore) {
         Contract.notNull(entryStore, "Cannot pass a null server manager");
