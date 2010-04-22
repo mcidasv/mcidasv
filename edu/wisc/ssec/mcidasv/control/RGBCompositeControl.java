@@ -37,9 +37,13 @@ import ucar.unidata.util.Range;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.GuiUtils;
 
+import ucar.unidata.util.LogUtil;
+
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FlowLayout;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 
@@ -89,6 +93,18 @@ public class RGBCompositeControl extends DisplayControlImpl {
 
    private final JTextField gammaTxtFld =
         new JTextField(Float.toString(1f), 12);
+   private final JTextField redLowTxtFld =
+        new JTextField(Float.toString(1f), 12);
+   private final JTextField redHighTxtFld =
+        new JTextField(Float.toString(1f), 12);
+   private final JTextField grnLowTxtFld =
+        new JTextField(Float.toString(1f), 12);
+   private final JTextField grnHighTxtFld =
+        new JTextField(Float.toString(1f), 12);
+   private final JTextField bluLowTxtFld =
+        new JTextField(Float.toString(1f), 12);
+   private final JTextField bluHighTxtFld =
+        new JTextField(Float.toString(1f), 12);
 
 
    public RGBCompositeControl() {
@@ -116,9 +132,9 @@ public class RGBCompositeControl extends DisplayControlImpl {
      grnMap.resetAutoScale();
      bluMap.resetAutoScale();
 
-     redMap.addScalarMapListener(new ColorMapListener(redMap));
-     grnMap.addScalarMapListener(new ColorMapListener(grnMap));
-     bluMap.addScalarMapListener(new ColorMapListener(bluMap));
+     redMap.addScalarMapListener(new ColorMapListener(redMap, redRange, redLowTxtFld, redHighTxtFld));
+     grnMap.addScalarMapListener(new ColorMapListener(grnMap, grnRange, grnLowTxtFld, grnHighTxtFld));
+     bluMap.addScalarMapListener(new ColorMapListener(bluMap, bluRange, bluLowTxtFld, bluHighTxtFld));
 
      addDisplayable(imageDisplay, FLAG_COLORTABLE);
      imageDisplay.loadData(imageField);
@@ -133,16 +149,40 @@ public class RGBCompositeControl extends DisplayControlImpl {
    }
 
 
-   public void setRedRange(float lo, float hi) throws VisADException, RemoteException {
-     redMap.setRange(lo, hi);
+   public void updateRedRange(double lo, double hi) {
+     redRange[0] = lo;
+     redRange[1] = hi;
+     try {
+       redMap.setRange(lo, hi);
+     } catch (VisADException ex) {
+       LogUtil.logException("redMap.setRange", ex);
+     } catch (RemoteException ex) {
+       LogUtil.logException("redMap.setRange", ex);
+     }
    }
 
-   public void setGrnRange(float lo, float hi) throws VisADException, RemoteException {
-     grnMap.setRange(lo, hi);
+   public void updateGrnRange(double lo, double hi) {
+     grnRange[0] = lo;
+     grnRange[1] = hi;
+     try {
+       grnMap.setRange(lo, hi);
+     } catch (VisADException ex) {
+       LogUtil.logException("grnMap.setRange", ex);
+     } catch (RemoteException ex) {
+       LogUtil.logException("grnMap.setRange", ex);
+     }
    }
 
-   public void setBluRange(float lo, float hi) throws VisADException, RemoteException {
-     bluMap.setRange(lo, hi);
+   public void updateBluRange(double lo, double hi) {
+     bluRange[0] = lo;
+     bluRange[1] = hi;
+     try {
+       bluMap.setRange(lo, hi);
+     } catch (VisADException ex) {
+       LogUtil.logException("bluMap.setRange", ex);
+     } catch (RemoteException ex) {
+       LogUtil.logException("bluMap.setRange", ex);
+     }
    }
 
    public void setRedGamma(float gamma) {
@@ -180,8 +220,8 @@ public class RGBCompositeControl extends DisplayControlImpl {
        ((BaseColorControl)grnMap.getControl()).setTable(newGrnTbl);
        ((BaseColorControl)bluMap.getControl()).setTable(newBluTbl);
        displayMaster.setDisplayActive();
-     } catch(Exception e) {
-       e.printStackTrace();
+     } catch(Exception ex) {
+       LogUtil.logException("setDisplayInactive", ex);
      }
    }
 
@@ -200,7 +240,11 @@ public class RGBCompositeControl extends DisplayControlImpl {
    }
 
    public Container doMakeContents() {
-     JPanel panel = new JPanel(new FlowLayout());
+
+     JPanel bigPanel = new JPanel(new BorderLayout());
+     JPanel subPanel = new JPanel(new GridLayout(4,1));
+
+     JPanel gammaPanel = new JPanel(new FlowLayout());
           final JLabel nameLabel = new JLabel("Gamma: ");
 
           gammaTxtFld.addActionListener(new ActionListener() {
@@ -210,20 +254,88 @@ public class RGBCompositeControl extends DisplayControlImpl {
               }
           });
 
-     panel.add(nameLabel);
-     panel.add(gammaTxtFld);
+     gammaPanel.add(nameLabel);
+     gammaPanel.add(gammaTxtFld);
 
-     return panel;
+     JPanel redPanel = new JPanel(new FlowLayout());
+     redPanel.add(new JLabel("Red range: "));
+   
+     redLowTxtFld.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
+            String tmp = redLowTxtFld.getText().trim();
+            updateRedRange(Double.valueOf(tmp), redRange[1]);
+         }
+     });
+     redPanel.add(redLowTxtFld);
+     redHighTxtFld.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
+            String tmp = redHighTxtFld.getText().trim();
+            updateRedRange(redRange[0], Double.valueOf(tmp));
+         }
+     });
+     redPanel.add(redHighTxtFld);
+
+     JPanel grnPanel = new JPanel(new FlowLayout());
+     grnPanel.add(new JLabel("Green range: "));
+   
+     grnLowTxtFld.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
+            String tmp = grnLowTxtFld.getText().trim();
+            updateGrnRange(Double.valueOf(tmp), grnRange[1]);
+         }
+     });
+     grnPanel.add(grnLowTxtFld);
+     grnHighTxtFld.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
+            String tmp = grnHighTxtFld.getText().trim();
+            updateGrnRange(grnRange[0], Double.valueOf(tmp));
+         }
+     });
+     grnPanel.add(grnHighTxtFld);
+
+
+     JPanel bluPanel = new JPanel(new FlowLayout());
+     bluPanel.add(new JLabel("Blue range: "));
+   
+     bluLowTxtFld.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
+            String tmp = bluLowTxtFld.getText().trim();
+            updateBluRange(Double.valueOf(tmp), bluRange[1]);
+         }
+     });
+     bluPanel.add(bluLowTxtFld);
+     bluHighTxtFld.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
+            String tmp = bluHighTxtFld.getText().trim();
+            updateBluRange(bluRange[0], Double.valueOf(tmp));
+         }
+     });
+     bluPanel.add(bluHighTxtFld);
+
+     subPanel.add(redPanel);
+     subPanel.add(grnPanel);
+     subPanel.add(bluPanel);
+     subPanel.add(gammaPanel);
+
+     bigPanel.add(subPanel, BorderLayout.NORTH);
+
+     return bigPanel;
    }
 
-  private class ColorMapListener implements ScalarMapListener {
-
+  private class ColorMapListener implements ScalarMapListener
+  {
     ScalarMap clrMap;
 
-    double[] range = new double[2];
+    double[] range = null;
 
-    ColorMapListener(ScalarMap clrMap) {
+    JTextField lowTxtFld;
+    JTextField highTxtFld;
+
+    ColorMapListener(ScalarMap clrMap, double[] range, JTextField lowTxtFld, JTextField highTxtFld) {
       this.clrMap = clrMap;
+      this.lowTxtFld = lowTxtFld;
+      this.highTxtFld = highTxtFld;
+      this.range = range;
     }
 
     public void controlChanged(ScalarMapControlEvent event) throws RemoteException, VisADException {
@@ -234,6 +346,8 @@ public class RGBCompositeControl extends DisplayControlImpl {
             double[] rng = clrMap.getRange();
             range[0] = rng[0];
             range[1] = rng[1];
+            lowTxtFld.setText(Float.toString((float)rng[0]));
+            highTxtFld.setText(Float.toString((float)rng[1]));
       }
       else if (event.getId() == event.MANUAL) {
             double[] rng = clrMap.getRange();
@@ -242,5 +356,6 @@ public class RGBCompositeControl extends DisplayControlImpl {
       }
     }
   }
+
 
 }
