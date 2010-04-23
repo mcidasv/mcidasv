@@ -39,6 +39,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.*;
 import java.awt.Insets;
+import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -298,6 +299,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       private JPanel lineElementAreaReadoutPanel;
 
       private GuiUtils.CardLayoutPanel readoutPanel;
+
 
       public GeoLatLonSelection(DataSourceImpl dataSource,
              DataChoice dataChoice, Hashtable initProps, MapProjection sample,
@@ -853,6 +855,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
               LatLonWidget llw = (LatLonWidget)readoutLLWidget.get(i);
               llw.setLatLon(latLon[0][i], latLon[1][i]);
           }
+          setLatitude(latLon[0][0]);
+          setLongitude(latLon[1][0]);
           for (int i=0; i<5; i++) {
               JTextField linField = (JTextField)readoutImageLinFld.get(i);
               Double dbl = new Double(imageEL[1][i]);
@@ -880,6 +884,14 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   eleField.setText(trimCoord(areaEL[0][i]));
               else
                   eleField.setText(Misc.MISSING);
+          }
+          String type = getCoordinateType();
+          if (type.equals(TYPE_IMAGE)) {
+              setElement((int)(imageEL[0][0] + 0.5));
+              setLine((int)(imageEL[1][0] + 0.5));
+          } else if (type.equals(TYPE_AREA)) {
+              setElement((int)(areaEL[0][0] + 0.5));
+              setLine((int)(areaEL[1][0] + 0.5));
           }
       }
 
@@ -1459,15 +1471,21 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             if (type.equals(TYPE_LATLON)) {
                 ll[0][0] = getLatitude();
                 ll[1][0] = getLongitude();
+                el = macs.fromReference(ll);
             } else {
                 el[0][0] = (double)getElement();
                 el[1][0] = (double)getLine();
-                if (type.equals(TYPE_IMAGE)) {
+                int[] dirB = macs.getDirBlock();
+                int previewLineMag = dirB[11];
+                int previewEleMag = dirB[12];
+                if (type.equals(TYPE_IMAGE)) 
                     el = areaNav.imageCoordToAreaCoord(el);
-                }
-                ll = previewNav.toLatLon(el);
+                Rectangle2D mapArea = macs.getDefaultMapArea();
+                int previewXDim = new Long(new Double(mapArea.getMaxX() - mapArea.getMinX()).longValue()).intValue();
+                int previewYDim = new Long(new Double(mapArea.getMaxY() - mapArea.getMinY()).longValue()).intValue();
+                el[0][0] = el[0][0] / previewEleMag;
+                el[1][0] = previewYDim - 1 - el[1][0] / previewLineMag;
             }
-            el = macs.fromReference(ll);
         } catch (Exception e) {
             System.out.println("convertToDisplayCoords e=" + e);
         }
@@ -1482,9 +1500,9 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             ll[0][0] = getLatitude();
             ll[1][0] = getLongitude();
             String coordType = getCoordinateType();
-            el = previewNav.toLinEle(ll);
+            el = this.previewNav.toLinEle(ll);
             if (coordType.equals(TYPE_IMAGE))
-                el = previewNav.areaCoordToImageCoord(el);
+                el = this.previewNav.areaCoordToImageCoord(el);
             setLine((int)el[1][0]);
             setElement((int)el[0][0]);
             getGeoLocationInfo();
@@ -1750,7 +1768,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
     protected void update(AreaDirectory dir, MapProjection sample, AREAnav nav, 
                           String coordType, double[] coords) {
-
         double baseLResOld = getBaseLRes();
         double baseEResOld = getBaseERes();
         double lDMagOld = getDLineMag();
@@ -1765,20 +1782,14 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         System.out.println("    coordType=" + coordType);
         System.out.println("    coordcs=" + coords);
 */
-        this.sampleProjection = sample;
-        
-        this.previewDir = dir;
-        this.previewNav = nav;
-
         setCoordinateType(coordType);
         if (coordType.equals(TYPE_LATLON)) {
             setLatitude(coords[0]);
             setLongitude(coords[1]);
             convertToLinEle();
-        } else {
+        } else if (coordType.equals(TYPE_AREA)) {
             setLine((int)coords[0]);
             setElement((int)coords[1]);
-            convertToLatLon();
         }
 
         double baseLResNew = dir.getCenterLatitudeResolution();
