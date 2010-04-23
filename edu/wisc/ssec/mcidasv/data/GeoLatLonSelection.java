@@ -853,8 +853,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
               LatLonWidget llw = (LatLonWidget)readoutLLWidget.get(i);
               llw.setLatLon(latLon[0][i], latLon[1][i]);
           }
-          setLatitude(latLon[0][0]);
-          setLongitude(latLon[1][0]);
           for (int i=0; i<5; i++) {
               JTextField linField = (JTextField)readoutImageLinFld.get(i);
               Double dbl = new Double(imageEL[1][i]);
@@ -882,14 +880,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   eleField.setText(trimCoord(areaEL[0][i]));
               else
                   eleField.setText(Misc.MISSING);
-          }
-          String type = getCoordinateType();
-          if (type.equals(TYPE_IMAGE)) {
-              setElement((int)(imageEL[0][0] + 0.5));
-              setLine((int)(imageEL[1][0] + 0.5));
-          } else if (type.equals(TYPE_AREA)) {
-              setElement((int)(areaEL[0][0] + 0.5));
-              setLine((int)(areaEL[1][0] + 0.5));
           }
       }
 
@@ -1439,28 +1429,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         }
     }
 
-    private void convertToLatLon(float lRes, float eRes) {
-        double[][] el = new double[2][1];
-        el[0][0] = getElement();
-        el[1][0] = getLine();
-        double[][] ll = new double[2][1];
-        String coordType = (String)coordinateTypeComboBox.getSelectedItem();
-        if (coordType.equals(TYPE_IMAGE))
-            el = previewNav.imageCoordToAreaCoord(el);
-        try {
-            AREACoordinateSystem macs = (AREACoordinateSystem)sampleProjection;
-            AREAnav saveNav = this.previewNav;
-            this.previewNav.setRes(lRes, eRes);
-            ll = macs.toReference(el);
-            this.previewNav = saveNav;
-            setLatitude(ll[0][0]);
-            setLongitude(ll[1][0]);
-            getGeoLocationInfo();
-        } catch (Exception e) {
-            System.out.println("convertToLatLon e=" + e);
-        }
-    }
-
     protected void convertToLatLon(int ele, int lin) {
         try {
             double[][] el = new double[2][1];
@@ -1497,7 +1465,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                 if (type.equals(TYPE_IMAGE)) {
                     el = areaNav.imageCoordToAreaCoord(el);
                 }
-                ll = this.previewNav.toLatLon(el);
+                ll = previewNav.toLatLon(el);
             }
             el = macs.fromReference(ll);
         } catch (Exception e) {
@@ -1514,9 +1482,9 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             ll[0][0] = getLatitude();
             ll[1][0] = getLongitude();
             String coordType = getCoordinateType();
-            el = this.previewNav.toLinEle(ll);
+            el = previewNav.toLinEle(ll);
             if (coordType.equals(TYPE_IMAGE))
-                el = this.previewNav.areaCoordToImageCoord(el);
+                el = previewNav.areaCoordToImageCoord(el);
             setLine((int)el[1][0]);
             setElement((int)el[0][0]);
             getGeoLocationInfo();
@@ -1782,16 +1750,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
     protected void update(AreaDirectory dir, MapProjection sample, AREAnav nav, 
                           String coordType, double[] coords) {
-        float lRes = nav.getLRes();
-        float eRes = nav.getERes();
-        try {
-            if (this.previewNav != null) {
-                lRes = previewNav.getLRes();
-                eRes=  previewNav.getERes();
-            }
-        } catch (Exception e) {
-            System.out.println("test e=" + e);
-        }
 
         double baseLResOld = getBaseLRes();
         double baseEResOld = getBaseERes();
@@ -1807,17 +1765,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         System.out.println("    coordType=" + coordType);
         System.out.println("    coordcs=" + coords);
 */
-
         this.sampleProjection = sample;
+        
         this.previewDir = dir;
         this.previewNav = nav;
-        try {
-            int areaLinRes = previewDir.getValue(11);
-            int areaEleRes = previewDir.getValue(12);
-            previewNav.setRes(areaLinRes, areaEleRes);
-         } catch (Exception e) {
-            System.out.println("update e=" + e);
-         }
 
         setCoordinateType(coordType);
         if (coordType.equals(TYPE_LATLON)) {
@@ -1827,7 +1778,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         } else {
             setLine((int)coords[0]);
             setElement((int)coords[1]);
-            convertToLatLon(lRes, eRes);
+            convertToLatLon();
         }
 
         double baseLResNew = dir.getCenterLatitudeResolution();
