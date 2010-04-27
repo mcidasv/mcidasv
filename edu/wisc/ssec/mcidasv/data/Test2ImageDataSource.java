@@ -774,6 +774,18 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                                 DataSelection dataSelection,
                                 Hashtable requestProperties)
             throws VisADException, RemoteException {
+/*
+        System.out.println("\ngetDataInner:");
+        System.out.println("    dataChoice=" + dataChoice);
+        System.out.println("    category=" + category);
+        System.out.println("    dataSelection=" + dataSelection + "\n");
+        Enumeration propEnum = requestProperties.keys();
+        for (int i=0; propEnum.hasMoreElements(); i++) {
+            String key = propEnum.nextElement().toString();
+            System.out.println("    key=" + key + " val=" + requestProperties.get(key));
+        }
+        System.out.println("\n");
+*/
         sampleRanges = null;
 
         iml = new ArrayList();
@@ -833,9 +845,11 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     protected ImageSequence makeImageSequence(DataChoice dataChoice,
             DataSelection subset)
             throws VisADException, RemoteException {
-        //System.out.println("Test2ImageDataSource makeImageSequence:");
-        //System.out.println("    dataChoice=" + dataChoice);
-        //System.out.println("    subset=" + subset);
+/*
+        System.out.println("Test2ImageDataSource makeImageSequence:");
+        System.out.println("    dataChoice=" + dataChoice);
+        System.out.println("    subset=" + subset);
+*/
         Hashtable subsetProperties = subset.getProperties();
         Enumeration propEnum = subsetProperties.keys();
         int numLines = 0;
@@ -1124,7 +1138,13 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                                         boolean fromSequence, 
                                         String readLabel, DataSelection subset)
             throws VisADException, RemoteException {
-
+/*
+        System.out.println("makeImage:");
+        System.out.println("    aid=" + aid);
+        System.out.println("    rangeType=" + rangeType);
+        System.out.println("    fromSequence=" + fromSequence);
+        System.out.println("    readLabel=" + readLabel);
+*/
         if (aid == null) {
             return null;
         }
@@ -1196,6 +1216,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     || (aid.getIsRelative() && (currentDirs == null))) {
                 areaDir = null;
             }
+            //areaDir = null; /* ?????????????????? */
 
             if (areaDir != null) {
                 int hash = ((aii != null)
