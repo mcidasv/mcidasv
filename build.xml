@@ -19,6 +19,11 @@
 	<property name="doc.dir" location="${base.dir}/docs" />
 	<property name="javadoc.dir" location="${doc.dir}/javadoc" />
 	<property name="userguide.dir" location="${doc.dir}/userguide" />
+	<property name="heap.dir" location="/tmp/javaheaps" />
+
+	<!-- For example: "/Applications/McIDAS/adde" on OS X and NOT "/Applications/McIDAS/adde/bin" -->
+	<!-- <property name="addeservs.dir" location="/path/to/local/adde/root" /> --> 
+	<property name="addeservs.dir" location="/Applications/McIDAS/adde" />
 
 	<!-- Attempt to load the version property file -->
 	<property file="${resource.dir}/version.properties" />
@@ -66,6 +71,8 @@
 	<!-- Run target options -->
 	<property name="run.smallheap" value="512m" />
 	<property name="run.largeheap" value="1024m" />
+	
+	<property name="logback.default.config" value="edu/wisc/ssec/mcidasv/resources/logback.xml" />
 
 	<!-- Nightly build properties -->
 	<property name="cvs.root" value="${user.name}@cvs.ssec.wisc.edu:/cvsroot" />
@@ -83,13 +90,16 @@
 	<!-- Javadoc options -->
 	<property name="javadoc.level" value="private" />
 
+  <!-- The CLASSPATH specified within McV's manifest -->
+  <property name="jar.base.classpath" value="logback-core-0.9.12.jar logback-classic-0.9.12.jar logback-examples-0.9.12.jar idv.jar mcv_userguide.jar swing-layout-1.0.3.jar eventbus-1.3.jar" />
+	
   <!-- List of McIDAS-V jars -->
   <fileset id="mcv.libs" dir="${lib.dir}">
     <include name="swing-layout-1.0.3.jar" />
     <include name="eventbus-1.3.jar" />
-    <include name="logback-core-0.9.18.jar" />
-    <include name="logback-classic-0.9.18.jar" />
-    <include name="logback-examples-0.9.18.jar" />
+    <include name="logback-core-0.9.12.jar" />
+    <include name="logback-classic-0.9.12.jar" />
+    <include name="logback-examples-0.9.12.jar" />
   </fileset>
 
 	<!-- List of IDV jars -->
@@ -281,24 +291,23 @@
 		</jar>
 	</target>
 
-	<!-- Jar the base application jar file -->
-	<target name="jar.base" description="Jar the base application jar file">
-		<mkdir dir="${dist.dir}" />
-		<tstamp prefix="jar" />
-		<jar destfile="${dist.dir}/${app.jarname}">
-			<fileset dir="${base.dir}">
-				<patternset refid="jar.includes" />
-			</fileset>
-
-			<manifest>
-				<attribute name="Build-By" value="${user.name}" />
-				<attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
-				<attribute name="Class-Path"
-					value="idv.jar mcv_userguide.jar swing-layout-1.0.3.jar eventbus-1.3.jar" />
-				<attribute name="Main-Class" value="${app.mainclass}" />
-			</manifest>
-		</jar>
-	</target>
+  <!-- Jar the base application jar file -->
+  <target name="jar.base" description="Jar the base application jar file">
+    <mkdir dir="${dist.dir}" />
+    <tstamp prefix="jar" />
+    <jar destfile="${dist.dir}/${app.jarname}">
+      <fileset dir="${base.dir}">
+        <patternset refid="jar.includes" />
+      </fileset>
+      <manifest>
+        <attribute name="Build-By" value="${user.name}" />
+        <attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
+        <!--<attribute name="Class-Path" value="logback-core-0.9.12.jar logback-classic-0.9.12.jar logback-examples-0.9.12.jar idv.jar mcv_userguide.jar swing-layout-1.0.3.jar eventbus-1.3.jar" />-->
+        <attribute name="Class-Path" value="${jar.base.classpath}" />
+        <attribute name="Main-Class" value="${app.mainclass}" />
+      </manifest>
+    </jar>
+  </target>
 
 	<!-- Create jar files and documentation -->
 	<target name="jar"
@@ -393,16 +402,31 @@
 		</signjar>
 	</target>
 
-	<!-- Run McIDAS-V application (small memory) -->
-	<target name="run" depends="jar"
-		description="Run McIDAS-V application (small memory)">
-		<java classname="${app.mainclass}" fork="true" maxmemory="${run.smallheap}">
-			<classpath>
-				<path refid="app.classpath" />
-				<pathelement location="${dist.dir}/${app.jarname}" />
-			</classpath>
-		</java>
-	</target>
+  <!-- Run McIDAS-V application (small memory) -->
+  <target name="run" depends="jar" description="Run McIDAS-V application (small memory)">
+    <java classname="${app.mainclass}" fork="true" maxmemory="${run.smallheap}">
+      <classpath>
+        <path refid="app.classpath" />
+        <pathelement location="${dist.dir}/${app.jarname}" />
+      </classpath>
+      <!-- Disables bytecode verification; seems to bring the snappy  -->
+      <!-- <jvmarg value="-noverify" /> -->
+
+      <!-- This will make the JVM output the contents of the heap upon You can 
+           control the output directory and/or filename with HeapDumpPath... 
+           but it requires HeapDumpOnOutOfMemoryError to be enabled. -->
+      <!-- <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" /> -->
+      <!-- <jvmarg value="-XX:HeapDumpPath=${heap.dir}" /> -->
+
+      <!-- Allows you to point at arbitrary local ADDE servers -->
+      <!-- <sysproperty key="debug.localadde.rootdir" value="${addeservs.dir}" /> -->
+
+      <!-- Forces McIDAS-V to use Apple's Aqua L&F (only on OS X) -->
+      <!-- <arg value="-forceaqua" /> -->
+
+      <sysproperty key="logback.configurationFile" value="${logback.default.config}" />
+    </java>
+  </target>
 
   <!-- Run McIDAS-V application (large memory) -->
   <target name="runlarge" depends="jar" description="Run McIDAS-V application (large memory)">
@@ -411,8 +435,22 @@
         <path refid="app.classpath" />
         <pathelement location="${dist.dir}/${app.jarname}" />
       </classpath>
-      <sysproperty key="debug.localadde.rootdir" value="/Applications/McIDAS-V/adde" />
-      <arg value="-forceaqua"/>
+      <!-- Disables bytecode verification; seems to bring the snappy  -->
+      <!-- <jvmarg value="-noverify" /> -->
+
+      <!-- This will make the JVM output the contents of the heap upon You can 
+           control the output directory and/or filename with HeapDumpPath... 
+           but it requires HeapDumpOnOutOfMemoryError to be enabled. -->
+      <!-- <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" /> -->
+      <!-- <jvmarg value="-XX:HeapDumpPath=${heap.dir}" /> -->
+
+      <!-- Allows you to point at arbitrary local ADDE servers -->
+      <!-- <sysproperty key="debug.localadde.rootdir" value="${addeservs.dir}" /> -->
+
+      <!-- Forces McIDAS-V to use Apple's Aqua L&F (only on OS X) -->
+      <!-- <arg value="-forceaqua" /> -->
+
+      <sysproperty key="logback.configurationFile" value="${logback.default.config}" />
     </java>
   </target>
 
