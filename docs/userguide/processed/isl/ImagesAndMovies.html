@@ -97,6 +97,48 @@ imagetemplate=&quot;image_%count%_%time:yyyyMMddHHmm%&quot;
 </pre>
 The generic date format can contain a specification that is used by the Java <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/text/SimpleDateFormat.html">SimpleDateFormat</a> and
 is described in <a href="BasicTags.html#simpledateformat">Basic Tags</a>. <a name="imagesmanipulation" id="imagesmanipulation"></a>
+<div class="pagesubtitle">KML Attributes</div>
+<p>
+The movie tag also supports a set of KML specific attributes that allow you to configure the generated KML file.
+</p>
+<blockquote>
+  <pre>
+      &lt;<a href="ImagesAndMovies.html#movie">movie</a>
+         <span class="xmlattr">file</span>=&quot;test.kmz&quot;
+         <span class="xmlattr">kml_desc</span>=&quot;&lt;a <span class="xmlattr">href</span>=&quot;${wwwroot}/${bundle}&quot;&gt;Run in the IDV&lt;/a&gt; (Needs Java Webstart)&quot;
+			<span class="xmlattr">kml_name</span>=&quot;${label}&quot;
+         <span class="xmlattr">kml_visibility</span>=&quot;0&quot;
+         <span class="xmlattr">kml_open</span>=&quot;0&quot;&gt;
+</pre>
+</blockquote>
+
+<ul>
+<li> <i>kml_desc</i> is the description for the KML Folder that holds the images. It can contain html.</li>
+<li> <i>kml_name</i> is the folder name.</li>
+<li> <i>kml_visibility</i> specifies whether the images are shown initially or not.</li>
+<li> <i>kml_open</i> specifies whether the Folder is open or not.</li>
+</ul>
+
+
+
+
+<p>
+<b>Using your own images</b>
+</p>
+<p>
+You can also use any number of  contained <i>fileset</i> tags to define a custom list of images
+that are used instead of the default images derived from an animation capture.</p>
+
+<blockquote><pre>
+&lt;<a href="ImagesAndMovies.html#movie">movie</a> <span class="xmlattr">file</span>=&quot;test.mov&quot;&gt;
+   &lt;<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">file</span>=&quot;image1.png&quot;/&gt;
+
+   &lt;<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">file</span>=&quot;image2.png&quot;/&gt;
+   &lt;<a href="FileTags.html#fileset">fileset</a> <span class="xmlattr">file</span>=&quot;image3.png&quot;/&gt;
+&lt;/<a href="ImagesAndMovies.html#movie">movie</a>&gt;
+
+</pre></blockquote>
+
 <div class="pagesubtitle">Images Manipulation</div>
 There are a set of tags that can be contained by both the <a href="ImagesAndMovies.html#image">image</a> and <a href="ImagesAndMovies.html#movie">movie</a> tags
 that support processing of the image. Most of these tags work on the initial
@@ -248,21 +290,24 @@ display=&quot;The id of a display which we use its data's map projection to clip
 <p>The <em>clip</em> tag allows you to clip the image. The clipping can either
   be defined in lat/lon coordinates, with x/y image coordinates or from the projection
   used from a display. The image coordinates can be specified as percentages.</p>
+<p>Clip in image space:</p>
 <blockquote>
   <pre>
-Clip in image space:
 &lt;<a href="ImagesAndMovies.html#clip">clip</a> <span class="xmlattr">top</span>=&quot;10&quot; <span class="xmlattr">bottom</span>=&quot;0&quot; <span class="xmlattr">left</span>=&quot;10%&quot; <span class="xmlattr">right</span>=&quot;0&quot;/&gt;
-
-Clip in lat/lon space:
+</pre>
+</blockquote>
+<p>Clip in lat/lon space:</p>
+<blockquote><pre>
 &lt;<a href="ImagesAndMovies.html#clip">clip</a> <span class="xmlattr">north</span>=&quot;40&quot; <span class="xmlattr">south</span>=&quot;30&quot; <span class="xmlattr">east</span>=&quot;-80&quot; <span class="xmlattr">west</span>=&quot;-90&quot;/&gt;
 </pre>
 </blockquote>
-If there is a <em>display</em> attribute defined then we get the lat/lon bounds
+<p>If there is a <em>display</em> attribute defined then we get the lat/lon bounds
 of its data to clip with. Use the display control Properties dialog to set the
-id that you reference in the ISL.
+id that you reference in the ISL.</p>
+
+<p>Clip using a display id:</p>
 <blockquote>
-  <pre>
-Clip using a display id:
+<pre>
 &lt;<a href="ImagesAndMovies.html#clip">clip</a> <span class="xmlattr">display</span>=&quot;displayid&quot;/&gt;
 </pre>
 </blockquote>
@@ -270,55 +315,54 @@ Clip using a display id:
 <div class="pagesubsubtitle">&lt;<a name="matte" id="matte"></a><em>matte</em>&gt; Matte
   an image</div>
 &lt;matte <br>
-background=&quot;color name or r,g,b" <br>
-top="pixel spacing" <br>
-bottom="pixel spacing" <br>
-left="pixel spacing" <br>
-right="pixel spacing" <br>
-space="pixel spacing" <br>
-hspace="pixel spacing" <br>
-vspace="pixel spacing" &gt;
+background=&quot;color name or r,g,b&quot;<br>
+top=&quot;pixel spacing&quot; <br>
+bottom=&quot;pixel spacing&quot; <br>
+left=&quot;pixel spacing&quot; <br>
+right=&quot;pixel spacing&quot; <br>
+space=&quot;pixel spacing&quot; <br>
+hspace=&quot;pixel spacing&quot; <br>
+vspace=&quot;pixel spacing&quot; &gt;
 <p>The <em>matte</em> tag allows you to add a space around any of the sides of
   an image. e.g:</p>
 <blockquote>
   <pre>
-&lt;<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">top</span>="100" <span class="xmlattr">bottom</span>="20"/&gt;
+&lt;<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">top</span>=&quot;100&quot; <span class="xmlattr">bottom</span>=&quot;20&quot;/&gt;
 </pre>
 </blockquote>
-You can also simply specify a <em>space</em>, <em>hspace</em> (horizontal space),
-or <em>vspace</em> (vertical space) attributes:
+<p>You can also simply specify a <em>space</em>, <em>hspace</em> (horizontal space), or <em>vspace</em> (vertical space) attributes:</p>
 <blockquote>
   <pre>
-&lt;<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">space</span>="10"/&gt;
+&lt;<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">space</span>=&quot;10&quot;/&gt;
 
-&lt;<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">hspace</span>="20"/&gt;
+&lt;<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">hspace</span>=&quot;20&quot;/&gt;
 
-&lt;<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">vspace</span>="20"/&gt;
+&lt;<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">vspace</span>=&quot;20&quot;/&gt;
 </pre>
 </blockquote>
-You can also specify a background color. The color can be a named color or a
-comma separated list of red/green/blue values:
+<p>You can also specify a background color. The color can be a named color or a
+comma separated list of red/green/blue values:</p>
 <blockquote>
   <pre>
-&lt;<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">top</span>="100"  <span class="xmlattr">background</span>="black"/&gt;
+&lt;<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">top</span>=&quot;100&quot;  <span class="xmlattr">background</span>=&quot;black&quot;/&gt;
 or:
-&lt;<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">top</span>="100"  <span class="xmlattr">background</span>="red,green,blue values"/&gt;
+&lt;<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">top</span>=&quot;100&quot;  <span class="xmlattr">background</span>=&quot;red,green,blue values&quot;/&gt;
 </pre>
 </blockquote>
 <hr>
 <div class="pagesubsubtitle">&lt;<a name="overlay" id="overlay"></a><em>overlay</em>&gt; Annotate
   an image with text or a logo</div>
 &lt;overlay <br>
-image="file or url to image" <br>
-text="text to draw" <br>
-place="rectangle point on base image" <br>
-anchor="rectangle point on overlay" <br>
-fontsize="font size for text" <br>
-fontface="font face for text" <br>
-color="color for text" &gt;
+image=&quot;file or url to image&quot; <br>
+text=&quot;text to draw&quot; <br>
+place=&quot;rectangle point on base image&quot; <br>
+anchor=&quot;rectangle point on overlay&quot; <br>
+fontsize=&quot;font size for text&quot; <br>
+fontface=&quot;font face for text&quot; <br>
+color=&quot;color for text&quot; &gt;
 <p>The <em>overlay</em> tag allows you to add an icon or text as an image overlay.
   You can either specify and image or text. The <em>place</em> and <em>anchor</em> tags
-  specify the location of the overlay. They take the form: "rectpoint,offsetx,offsety" Where
+  specify the location of the overlay. They take the form: &quot;rectpoint,offsetx,offsety&quot; Where
   rectpoint is a point on a rectangle:</p>
 <pre>
    UL    UM    UR
@@ -328,86 +372,106 @@ color="color for text" &gt;
    R=right,L=left
 </pre>
 The offsetx and offsety are optional. The idea is you define a point on the base
-image, e.g., the upper left corner ("ul"). Then you define an anchor point on
+image, e.g., the upper left corner (&quot;ul&quot;). Then you define an anchor point on
 the overlay that will be placed at the place point. So for example, if you wanted
 the upper left corner of the image overlay to be drawn 10 pixels right and 20
 pixels below the upper left corner of the base image then you would do:
 <pre>
-   place="UL,10,20" anchor="UL"
+   place=&quot;UL,10,20&quot; anchor=&quot;UL&quot;
 </pre>
 If you wanted some text overlay to be placed so that its bottom center was in
 the middle of the image, 30 pixels from the bottom of the image you do:
 <pre>
-   place="LM,0,-30" anchor="LM"
+   place=&quot;LM,0,-30&quot; anchor=&quot;LM&quot;
 </pre>
 If you wanted some overlay to be placed so that its upper right was placed at
 the center of the image you do:
 <pre>
-   place="M" anchor="UR"
+   place=&quot;M&quot; anchor=&quot;UR&quot;
 </pre>
+<hr><div class="pagesubsubtitle">&lt;<a name="displaylist"></a><i>displaylist</i>&gt; Render the display list</div> &lt;displaylist <br>&nbsp;&nbsp;&nbsp;&nbsp;valign=&quot;'bottom' or 'top'&quot;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;mattebg=&quot;&lt;color&gt; If defined then we matte the
+image with the given color the size that the display list takes up&quot;
+
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;fontsize=&quot;optional font size&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;fontface=&quot;optional font face&quot;&gt;
+<p>The <i>displaylist</i> tag renders the display list (normally shown at the bottom of the view)
+directly into the image. The text rendering is a bit higher quality because we are using
+direct Java drawing code and not the 3D rendering. Also, you can matte an image and then render
+the list of displays in the matted area.</p>
+<p>You will want to turn off the visibility of the display list for the view (under View-&gt;Show-&gt;Display List menu)
+when you save the bundle.</p>
+
+<hr><div class="pagesubsubtitle">&lt;<a name="show"></a><i>show</i>&gt; Show the current image in a dialog</div> &lt;show <br>&nbsp;&nbsp;&nbsp;&nbsp;message=&quot;optional message to show&quot;&gt;
+<p>You can use the <i>show</i> tag inside an <i>image</i> or <i>movie</i> tag to show
+the current image in a dialog. This allows you to see what is going on and debug your isl image
+generation.</p>
+
 <hr>
 <div class="pagesubsubtitle">&lt;<a name="resize" id="resize"></a><em>resize</em>&gt; Resize
   an image</div>
 &lt;resize <br>
-width="pixels or percent" <br>
-height="pixels or percent" &gt;
+width=&quot;pixels or percent&quot;&quot; <br>
+height=&quot;pixels or percent&quot; &gt;
 <p>The <em>resize</em> tag allows you to resize an image. You specify either
   a width or a height:</p>
 <blockquote>
   <pre>
-&lt;<a href="ImagesAndMovies.html#resize">resize</a> <span class="xmlattr">width</span>="200"/&gt;
+&lt;<a href="ImagesAndMovies.html#resize">resize</a> <span class="xmlattr">width</span>=&quot;200&quot;/&gt;
 
-&lt;<a href="ImagesAndMovies.html#resize">resize</a> <span class="xmlattr">height</span>="150"/&gt;
+&lt;<a href="ImagesAndMovies.html#resize">resize</a> <span class="xmlattr">height</span>=&quot;150&quot;/&gt;
 </pre>
 </blockquote>
 The width or height can also be a percentage:
 <blockquote>
   <pre>
-&lt;<a href="ImagesAndMovies.html#resize">resize</a> <span class="xmlattr">width</span>="50%"/&gt;
+&lt;<a href="ImagesAndMovies.html#resize">resize</a> <span class="xmlattr">width</span>=&quot;50%&quot;/&gt;
 
-&lt;<a href="ImagesAndMovies.html#resize">resize</a> <span class="xmlattr">height</span>="10%"/&gt;
+&lt;<a href="ImagesAndMovies.html#resize">resize</a> <span class="xmlattr">height</span>=&quot;10%&quot;/&gt;
 </pre>
 </blockquote>
 <hr>
 <div class="pagesubsubtitle">&lt;<a name="thumbnail" id="thumbnail"></a><em>thumbnail</em>&gt; Generate
   a thumbnail of an image</div>
 &lt;thumbnail <br>
-file="image file name" <br>
-width="pixels or percent" <br>
-height="pixels or percent" &gt;
+file=&quot;image file name&quot; <br>
+width=&quot;pixels or percent&quot; <br>
+height=&quot;pixels or percent&quot; &gt;
 <p>The <em>thumbnail</em> tag is just like the resize tag except that it will
   also write out the image. e.g:</p>
 <blockquote>
   <pre>
-&lt;<a href="ImagesAndMovies.html#thumbnail">thumbnail</a> <span class="xmlattr">width</span>="50%" <span class="xmlattr">file</span>="thumbnail.png"/&gt;
+&lt;<a href="ImagesAndMovies.html#thumbnail">thumbnail</a> <span class="xmlattr">width</span>=&quot;50%&quot; <span class="xmlattr">file</span>=&quot;thumbnail.png&quot;/&gt;
 </pre>
 </blockquote>
 <hr>
 <div class="pagesubsubtitle">&lt;<a name="write" id="write"></a><em>write</em>&gt; Write
   out an image</div>
 &lt;write <br>
-<strong>file</strong>="file to write to" &gt;
+<strong>file</strong>=&quot;file to write to&quot; &gt;
 <p>The <em>write</em> tag allows you to write out an intermediate image file
   at any time.</p>
 <blockquote>
   <pre>
-    &lt;<a href="ImagesAndMovies.html#write">write</a> <span class="xmlattr">file</span>="somefile.png"/&gt;
+    &lt;<a href="ImagesAndMovies.html#write">write</a> <span class="xmlattr">file</span>=&quot;somefile.png&quot;/&gt;
 </pre>
 </blockquote>
 <hr>
 <div class="pagesubsubtitle">&lt;<a name="colorbar" id="colorbar"></a><em>colorbar</em>&gt; Add
   a color bar to an image</div>
 &lt;colorbar <br>
-width="bar width" <br>
-height="bar height" <br>
-orientation="tick mark location, 'right', 'left', 'bottom', 'top'" <br>
-tickmarks="number of tick marks" <br>
-interval="interval value" <br>
-values="comma separated list of values" <br>
-place="rectangle location" <br>
-anchor rectangle location="showlines" <br>
-'true' or 'false', draw tick lines="linecolor" <br>
-line color="" &gt;
+width=&quot;bar width&quot; <br>
+height=&quot;bar height&quot; <br>
+orientation=&quot;tick mark location, 'right', 'left', 'bottom', 'top'&quot; <br>
+tickmarks=&quot;number of tick marks&quot; <br>
+interval=&quot;interval value&quot; <br>
+values=&quot;comma separated list of values&quot; <br>
+place=&quot;rectangle location&quot; <br>
+anchor rectangle location=&quot;showlines&quot; <br>
+'true' or 'false', draw tick lines=&quot;linecolor&quot; <br>
+line color=&quot;&quot;&quot; &gt;
 <p>The <em>colorbar</em> tag allows you to add a color bar from the color tables
   in the layer controls. Currently, it does not do a perfect job when there are
   more than one color tables present.</p>
@@ -419,27 +483,111 @@ line color="" &gt;
   value interval or a specific list of values.</p>
 <p>The location of the color bar is defined using the anchor and place points
   as described for the <a href="ImagesAndMovies.html#overlay">overlay</a> tag.</p>
+Here is an example that loads a bundle, creates an image, mattes the image and then shows the color bar of a display
+with id &quot;planview&quot;.
+&quot;<blockquote><pre>&lt;?xml <span class="xmlattr">version</span>=&quot;1.0&quot; <span class="xmlattr">encoding</span>=&quot;ISO-8859-1&quot;?&gt;
+
+&lt;<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">debug</span>=&quot;true&quot; <span class="xmlattr">loop</span>=&quot;1&quot; <span class="xmlattr">offscreen</span>=&quot;true&quot; <span class="xmlattr">sleep</span>=&quot;60.0minutes&quot;&gt;
+  &lt;<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">clear</span>=&quot;true&quot; <span class="xmlattr">file</span>=&quot;${islpath}/<a href="ImagesAndMovies.html#colorbar">colorbar</a>.xidv&quot; <span class="xmlattr">wait</span>=&quot;true&quot;/&gt;
+
+  &lt;<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>=&quot;${islpath}/<a href="ImagesAndMovies.html#colorbar">colorbar</a>.png&quot;&gt;
+     &lt;<a href="ImagesAndMovies.html#matte">matte</a> <span class="xmlattr">space</span>=&quot;100&quot; <span class="xmlattr">background</span>=&quot;gray&quot;/&gt;
+
+     &lt;<a href="ImagesAndMovies.html#colorbar">colorbar</a> <span class="xmlattr">display</span>=&quot;planview&quot; <span class="xmlattr">orientation</span>=&quot;top&quot; <span class="xmlattr">tickmarks</span>=&quot;3&quot; <span class="xmlattr">width</span>=&quot;400&quot; <span class="xmlattr">showlines</span>=&quot;true&quot;  <span class="xmlattr">anchor</span>=&quot;LM&quot; <span class="xmlattr">place</span>=&quot;UM,0,100&quot; <span class="xmlattr">showunit</span>=&quot;true&quot;/&gt;
+
+     &lt;<a href="ImagesAndMovies.html#colorbar">colorbar</a> <span class="xmlattr">display</span>=&quot;planview&quot; <span class="xmlattr">orientation</span>=&quot;bottom&quot; <span class="xmlattr">tickmarks</span>=&quot;3&quot; <span class="xmlattr">width</span>=&quot;400&quot; <span class="xmlattr">showlines</span>=&quot;true&quot;  <span class="xmlattr">anchor</span>=&quot;UM&quot; <span class="xmlattr">place</span>=&quot;LM,0,-100&quot; <span class="xmlattr">showunit</span>=&quot;true&quot;/&gt;
+
+     &lt;<a href="ImagesAndMovies.html#colorbar">colorbar</a> <span class="xmlattr">display</span>=&quot;planview&quot; <span class="xmlattr">orientation</span>=&quot;top&quot; <span class="xmlattr">tickmarks</span>=&quot;3&quot; <span class="xmlattr">width</span>=&quot;400&quot; <span class="xmlattr">showlines</span>=&quot;true&quot;  <span class="xmlattr">anchor</span>=&quot;LM&quot; <span class="xmlattr">place</span>=&quot;LM&quot; <span class="xmlattr">showunit</span>=&quot;true&quot;/&gt;
+
+     &lt;<a href="ImagesAndMovies.html#colorbar">colorbar</a> <span class="xmlattr">display</span>=&quot;planview&quot; <span class="xmlattr">orientation</span>=&quot;left&quot; <span class="xmlattr">tickmarks</span>=&quot;3&quot; <span class="xmlattr">width</span>=&quot;&quot;20&quot; <span class="xmlattr">height</span>=&quot;400&quot; <span class="xmlattr">showlines</span>=&quot;true&quot;  <span class="xmlattr">anchor</span>=&quot;MR&quot; <span class="xmlattr">place</span>=&quot;ML,100,0&quot; <span class="xmlattr">showunit</span>=&quot;true&quot;/&gt;
+
+     &lt;<a href="ImagesAndMovies.html#colorbar">colorbar</a> <span class="xmlattr">display</span>=&quot;planview&quot; <span class="xmlattr">orientation</span>=&quot;left&quot; <span class="xmlattr">tickmarks</span>=&quot;3&quot; <span class="xmlattr">width</span>=&quot;20&quot; <span class="xmlattr">height</span>=&quot;400&quot; <span class="xmlattr">showlines</span>=&quot;true&quot;  <span class="xmlattr">anchor</span>=&quot;MR&quot; <span class="xmlattr">place</span>=&quot;MR&quot; <span class="xmlattr">showunit</span>=&quot;true&quot;/&gt;
+
+  &lt;/<a href="ImagesAndMovies.html#image">image</a>&gt;
+&lt;/<a href="BasicTags.html#isl">isl</a>&gt;
+<a href="colorbar.isl"><img src="Folder.gif" border="0">colorbar.isl</a></pre></blockquote>
+That makes:
+<div class="cimg"><img  src="images/colorbar.png"  alt="images/colorbar.png"></div>
+<p></p>
+
+  <hr><div class="pagesubsubtitle">&lt;<a name="kmlcolorbar"></a><i>kmlcolorbar</i>&gt; Write a colorbar into the kmz file</div> &lt;kmlcolorbar <br>&nbsp;&nbsp;&nbsp;&nbsp;width=&quot;width of color bar image&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;height=&quot;height of color bar image&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;file=&quot;file to write color bar image to&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;space=&quot;extra padding around image&quot;
+
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;suffix=&quot;label suffix - can include  &quot;%unit%&amp;quot&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;kml.name=&quot;Name used in kml for this image&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;kml.overlayXY.x=&quot;see below&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;kml.overlayXY.y=&quot;see below&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;kml.overlayXY.xunits=&quot;see below&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;kml.overlayXY.yunits=&quot;see below&quot;
+
+<br>&nbsp;&nbsp;&nbsp;&nbsp;kml.screenXY.x=&quot;see below&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;kml.screenXY.y=&quot;see below&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;kml.screenXY.xunits=&quot;see below&quot;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;kml.screenXY.yunits=&quot;see below&quot;&gt;
+<p>The <i>kmlcolorbar</i> tag acts just like the  <i>colorbar</i> tag but is intended to generate a separate
+color bar image (written to the file specified by the <i>file</i>  attribute) and include it into a KMZ file.</p>
+<p>All of the <i>kml.</i> attributes are simply passed into the generated KML file and are used to place the image
+into Google Earth. These attributes are the attributes and tags in the KML.
+For example, the attribute <i>kml.overlayXY.x</i> ends up being the <i>x</i> attribute
+of the <i>overlayXY</i> tag in the KML.
+See here <a href="http://code.google.com/apis/kml/documentation/kmlreference.html#screenoverlay">
+http://code.google.com/apis/kml/documentation/kmlreference.html#screenoverlay</a> for more info on the KML.</p>
+
+<p>Here is an example:</p>
+
+<blockquote><pre>&lt;?xml <span class="xmlattr">version</span>=&quot;1.0&quot; <span class="xmlattr">encoding</span>=&quot;ISO-8859-1&quot;?&gt;
+&lt;<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">debug</span>=&quot;true&quot; <span class="xmlattr">loop</span>=&quot;1&quot; <span class="xmlattr">offscreen</span>=&quot;true&quot; <span class="xmlattr">sleep</span>=&quot;60.0minutes&quot;&gt;
+
+  &lt;<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">clear</span>=&quot;true&quot; <span class="xmlattr">file</span>=&quot;${islpath}/testtwoview.xidv&quot; <span class="xmlattr">wait</span>=&quot;true&quot;/&gt;
+  &lt;<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>=&quot;${islpath}/test.kmz&quot;&gt;
+
+  &lt;<a href="ImagesAndMovies.html#kmlcolorbar">kmlcolorbar</a>  <span class="xmlattr">width</span>=&quot;400&quot; <span class="xmlattr">height</span>=&quot;20&quot;
+        <span class="xmlattr">showlines</span>=&quot;true&quot; <span class="xmlattr">tickmarks</span>=&quot;4&quot;  <span class="xmlattr">fontsize</span>=&quot;12&quot; <span class="xmlattr">background</span>=&quot;white&quot; <span class="xmlattr">color</span>=&quot;black&quot;
+
+        <span class="xmlattr">file</span>=&quot;${islpath}/testcolorbar.png&quot; <span class="xmlattr">space</span>=&quot;20&quot; <span class="xmlattr">suffix</span>=&quot; %unit%&quot;
+        <span class="xmlattr">kml.name</span>=&quot;Color bar&quot;
+        <span class="xmlattr">kml.overlayXY.x</span>=&quot;0&quot; <span class="xmlattr">kml.overlayXY.y</span>=&quot;1&quot; <span class="xmlattr">kml.overlayXY.xunits</span>=&quot;fraction&quot; <span class="xmlattr">kml.overlayXY.yunits</span>=&quot;fraction&quot;
+
+        <span class="xmlattr">kml.screenXY.x</span>=&quot;10&quot; <span class="xmlattr">kml.screenXY.y</span>=&quot;1&quot; <span class="xmlattr">kml.screenXY.xunits</span>=&quot;pixels&quot; <span class="xmlattr">kml.screenXY.yunits</span>=&quot;fraction&quot;/&gt;
+  &lt;/<a href="ImagesAndMovies.html#image">image</a>&gt;
+
+  
+&lt;/<a href="BasicTags.html#isl">isl</a>&gt;
+<a href="kmlcolorbar.isl"><img src="Folder.gif" border="0">kmlcolorbar.isl</a></pre></blockquote>
+
 <hr>
 <div class="pagesubsubtitle">&lt;<a name="transparent" id="transparent"></a><em>transparent</em>&gt; Set
   transparency on an image</div>
 &lt;transparent <br>
-<strong>color</strong>="color to set to transparent" &gt;
+<strong>color</strong>=&quot;color to set to transparent&quot; &gt;
 <p>The <em>transparent</em> tag allows you to set a particular color in an image
   to be transparent.</p>
 <blockquote>
   <pre>
-&lt;<a href="ImagesAndMovies.html#transparent">transparent</a> <span class="xmlattr">color</span>="black"/&gt;
+&lt;<a href="ImagesAndMovies.html#transparent">transparent</a> <span class="xmlattr">color</span>=&quot;black&quot;/&gt;
 or:
-&lt;<a href="ImagesAndMovies.html#transparent">transparent</a> <span class="xmlattr">color</span>="red,green,blue"/&gt;
+&lt;<a href="ImagesAndMovies.html#transparent">transparent</a> <span class="xmlattr">color</span>=&quot;red,green,blue&quot;/&gt;
 </pre>
+</blockquote>
+<hr>
+<div class="pagesubsubtitle">&lt;<a name="bgtransparent" id="bgtransparent"></a><em>backgroundtransparent</em>&gt; Set
+  transparency on an image. Use the background color of the view.</div>
+<p>The <em>backgroundtransparent</em> tag allows you to use the background color
+  of the view as the transparent color in the image..</p>
+<blockquote>
+  <pre>
+&lt;backgroundtransparent/&gt;</pre>
 </blockquote>
 <hr>
 <div class="pagesubsubtitle">&lt;<a name="split" id="split"></a><em>split</em>&gt; Split
   an image into sub-images</div>
 &lt;split <br>
-<strong>file</strong>="base file name" <br>
-columns="number of columns" <br>
-rows="number of rows" &gt;
+<strong>file</strong>=&quot;base file name&quot; <br>
+columns=&quot;number of columns&quot; <br>
+rows=&quot;number of rows&quot; &gt;
 <p>The <em>split</em> tag splits up an image by a given number of rows and columns.
   The file attribute should contain properties for each image: ${row}, ${column}
   and ${count}.</p>
