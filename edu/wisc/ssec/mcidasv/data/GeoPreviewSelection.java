@@ -236,6 +236,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
               public void componentShown(ComponentEvent ce) {
                   dspMaster.getDisplayComponent().setVisible(true);
                   drawBox();
+                  rbb.resetExtremes();
               }
               public void componentMoved(ComponentEvent ce) {
               }
@@ -256,9 +257,9 @@ public class GeoPreviewSelection extends DataSelectionComponent {
           y_coords[0] = (double)extrms[1];
           x_coords[1] = (double)extrms[2];
           y_coords[1] = (double)extrms[3];
-          //System.out.println("\nforceCoords:");
-          //System.out.println("    x: " + x_coords[0] + " - " + x_coords[1]);
-          //System.out.println("    y: " + y_coords[0] + " - " + y_coords[1]);
+          int height = (int)(y_coords[1] - y_coords[0]);
+          int width = (int)(x_coords[1] - x_coords[0]);
+          if ((height < 1) || (width < 1)) return;
 
           int line = (int)y_coords[1];
           int ele = (int)x_coords[1];
@@ -268,16 +269,13 @@ public class GeoPreviewSelection extends DataSelectionComponent {
               if (laloSel.getIsLineEle()) laloSel.flipLocationPanel(0);
               int lineMid = (int)((y_coords[0] + y_coords[1])/2.0 + 0.5);
               int eleMid = (int)((x_coords[0] + x_coords[1])/2.0 + 0.5);
-              //System.out.println("    lineMid: " + lineMid + " eleMid: " + eleMid);
               laloSel.convertToLatLon(eleMid, lineMid);
               double uLLine = y_coords[1];
               double uLEle = x_coords[0];
-              int height = (int)(y_coords[1] - y_coords[0]);
               if (height < 0) {
                   height *= -1;
                   uLLine = y_coords[0];
               }
-              int width = (int)(x_coords[1] - x_coords[0]);
               if (width < 0) {
                   width *= -1;
                   uLEle = x_coords[1];
@@ -294,8 +292,6 @@ public class GeoPreviewSelection extends DataSelectionComponent {
                   previewLineMag = dirBlk[11];
                   previewEleMag = dirBlk[12];
               }
-              //System.out.println("    previewLineMag=" + previewLineMag + " previewEleMag=" + previewEleMag);
-              //System.out.println("    previewYDim=" + previewYDim + " previewXDim=" + previewXDim);
 
               int linRes = laloSel.getPreviewLineRes();
               int eleRes = laloSel.getPreviewEleRes();
@@ -312,7 +308,6 @@ public class GeoPreviewSelection extends DataSelectionComponent {
               } else if (elementMag < 0) {
                   width *= -elementMag;
               }
-              //System.out.println("    height: " + height + " width: " + width);
 /*
               int[][] areaCoords = new int[2][5];
               int centerEle = eleMid * previewEleMag;
@@ -358,25 +353,36 @@ public class GeoPreviewSelection extends DataSelectionComponent {
       protected void drawBox() {
           if (box == null) makeBox();
           removeRBB();
-          double[][] latlon = laloSel.getLatLonPoints();
-          if (latlon == null) return;
+
+          double[][] elelin = laloSel.getDisplayELPoints();
+          if (elelin == null) return;
           for (int i=0; i<2; i++) {
               for (int j=0; j<5; j++) {
-                  Double val = new Double(latlon[i][j]);
+                  Double val = new Double(elelin[i][j]);
                   if (val.isNaN()) {
                       eraseBox();
                       return;
                   }
               }
           }
+
+          float[][] floatVals = new float[][] {
+                { (float)elelin[0][0], (float)elelin[0][1], (float)elelin[0][2],
+                  (float)elelin[0][3], (float)elelin[0][4] },
+                { (float)elelin[1][0], (float)elelin[1][1], (float)elelin[1][2],
+                  (float)elelin[1][3], (float)elelin[1][4] }};
+
+          float[][] dispVals = new float[][] {
+                { floatVals[0][1], floatVals[0][2], floatVals[0][4],
+                  floatVals[0][3], floatVals[0][1] },
+                { floatVals[1][1], floatVals[1][2], floatVals[1][4],
+                  floatVals[1][3], floatVals[1][1] }
+                };
+
           try {
-              Gridded2DSet set = new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple,
-                  new float[][] {
-                { (float)latlon[0][1], (float)latlon[0][2], (float)latlon[0][4],
-                  (float)latlon[0][3], (float)latlon[0][1] },
-                { (float)latlon[1][1], (float)latlon[1][2], (float)latlon[1][4],
-                  (float)latlon[1][3], (float)latlon[1][1] }
-                }, 5);
+              float[][] refVals = rbb.getDisplayCoordSystem().toReference(dispVals);
+              Gridded2DSet set = new Gridded2DSet(RealTupleType.SpatialCartesian2DTuple,
+                refVals, 5);
               box.setData(set);
           } catch (Exception e) {
               System.err.println("GeoPreviewSelection drawBox: e=" + e);
