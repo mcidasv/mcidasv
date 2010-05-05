@@ -86,6 +86,10 @@ public class RGBCompositeControl extends DisplayControlImpl {
    final double[] grnRange = new double[] {Double.NaN, Double.NaN};
    final double[] bluRange = new double[] {Double.NaN, Double.NaN};
 
+   final double[] initRedRange = new double[] {Double.NaN, Double.NaN};
+   final double[] initGrnRange = new double[] {Double.NaN, Double.NaN};
+   final double[] initBluRange = new double[] {Double.NaN, Double.NaN};
+
    FieldImpl imageField = null;
 
 
@@ -132,9 +136,9 @@ public class RGBCompositeControl extends DisplayControlImpl {
      grnMap.resetAutoScale();
      bluMap.resetAutoScale();
 
-     redMap.addScalarMapListener(new ColorMapListener(redMap, redRange, redLowTxtFld, redHighTxtFld));
-     grnMap.addScalarMapListener(new ColorMapListener(grnMap, grnRange, grnLowTxtFld, grnHighTxtFld));
-     bluMap.addScalarMapListener(new ColorMapListener(bluMap, bluRange, bluLowTxtFld, bluHighTxtFld));
+     redMap.addScalarMapListener(new ColorMapListener(redMap, initRedRange, redRange, redLowTxtFld, redHighTxtFld));
+     grnMap.addScalarMapListener(new ColorMapListener(grnMap, initGrnRange, grnRange, grnLowTxtFld, grnHighTxtFld));
+     bluMap.addScalarMapListener(new ColorMapListener(bluMap, initBluRange, bluRange, bluLowTxtFld, bluHighTxtFld));
 
      addDisplayable(imageDisplay, FLAG_COLORTABLE);
      imageDisplay.loadData(imageField);
@@ -274,6 +278,17 @@ public class RGBCompositeControl extends DisplayControlImpl {
          }
      });
      redPanel.add(redHighTxtFld);
+     JButton button = new JButton("reset");
+     redPanel.add(button);
+     button.addActionListener(new ActionListener() {
+       public void actionPerformed(ActionEvent e) {
+         updateRedRange(initRedRange[0], initRedRange[1]);
+         redRange[0] = initRedRange[0];
+         redRange[1] = initRedRange[1];
+         redLowTxtFld.setText(Float.toString((float)redRange[0]));
+         redHighTxtFld.setText(Float.toString((float)redRange[1]));
+       }
+     });
 
      JPanel grnPanel = new JPanel(new FlowLayout());
      grnPanel.add(new JLabel("Green range: "));
@@ -292,6 +307,18 @@ public class RGBCompositeControl extends DisplayControlImpl {
          }
      });
      grnPanel.add(grnHighTxtFld);
+     button = new JButton("reset");
+     grnPanel.add(button);
+     button.addActionListener(new ActionListener() {
+       public void actionPerformed(ActionEvent e) {
+         updateGrnRange(initGrnRange[0], initGrnRange[1]);
+         grnRange[0] = initGrnRange[0];
+         grnRange[1] = initGrnRange[1];
+         grnLowTxtFld.setText(Float.toString((float)grnRange[0]));
+         grnHighTxtFld.setText(Float.toString((float)grnRange[1]));
+       }
+     });
+
 
 
      JPanel bluPanel = new JPanel(new FlowLayout());
@@ -311,6 +338,18 @@ public class RGBCompositeControl extends DisplayControlImpl {
          }
      });
      bluPanel.add(bluHighTxtFld);
+     button = new JButton("reset");
+     bluPanel.add(button);
+     button.addActionListener(new ActionListener() {
+       public void actionPerformed(ActionEvent e) {
+         updateBluRange(initBluRange[0], initBluRange[1]);
+         bluRange[0] = initBluRange[0];
+         bluRange[1] = initBluRange[1];
+         bluLowTxtFld.setText(Float.toString((float)bluRange[0]));
+         bluHighTxtFld.setText(Float.toString((float)bluRange[1]));
+       }
+     });
+
 
      subPanel.add(redPanel);
      subPanel.add(grnPanel);
@@ -327,15 +366,17 @@ public class RGBCompositeControl extends DisplayControlImpl {
     ScalarMap clrMap;
 
     double[] range = null;
+    double[] initRange = null;
 
     JTextField lowTxtFld;
     JTextField highTxtFld;
 
-    ColorMapListener(ScalarMap clrMap, double[] range, JTextField lowTxtFld, JTextField highTxtFld) {
+    ColorMapListener(ScalarMap clrMap, double[] initRange, double[] range, JTextField lowTxtFld, JTextField highTxtFld) {
       this.clrMap = clrMap;
       this.lowTxtFld = lowTxtFld;
       this.highTxtFld = highTxtFld;
       this.range = range;
+      this.initRange = initRange;
     }
 
     public void controlChanged(ScalarMapControlEvent event) throws RemoteException, VisADException {
@@ -346,6 +387,8 @@ public class RGBCompositeControl extends DisplayControlImpl {
             double[] rng = clrMap.getRange();
             range[0] = rng[0];
             range[1] = rng[1];
+            initRange[0] = rng[0];
+            initRange[1] = rng[1];
             lowTxtFld.setText(Float.toString((float)rng[0]));
             highTxtFld.setText(Float.toString((float)rng[1]));
       }
