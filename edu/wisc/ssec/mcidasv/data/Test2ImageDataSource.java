@@ -779,6 +779,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         System.out.println("    dataChoice=" + dataChoice);
         System.out.println("    category=" + category);
         System.out.println("    dataSelection=" + dataSelection + "\n");
+
         Enumeration propEnum = requestProperties.keys();
         for (int i=0; propEnum.hasMoreElements(); i++) {
             String key = propEnum.nextElement().toString();
@@ -826,7 +827,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
      */
     private boolean hasBandInfo(DataChoice dataChoice) {
         Object id = dataChoice.getId();
-        return dataChoice.getId() instanceof BandInfo;
+        return id instanceof BandInfo;
     }
 
     /** _more_ */
@@ -1216,7 +1217,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     || (aid.getIsRelative() && (currentDirs == null))) {
                 areaDir = null;
             }
-            //areaDir = null; /* ?????????????????? */
 
             if (areaDir != null) {
                 int hash = ((aii != null)
@@ -1240,6 +1240,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     saveLineMag = laLoSel.getLineMag();
                     saveEleMag = laLoSel.getElementMag();
                 } catch (Exception e) {
+                    System.out.println("makeImage error reading from laLoSel e=" + e);
                     savePlace = getSavePlace();
                     laLoSel.setPlace(savePlace);
                     saveLat = getSaveLat();
@@ -1431,7 +1432,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                             newLinRes = newAd.getValue(11);
                             newEleRes = newAd.getValue(12);
                         } catch (Exception e) {
-                            //System.out.println("can't reset resolution.  e=" + e);
+                            System.out.println("can't reset resolution.  e=" + e);
                         }
 
                         double[][] projCoords = new double[2][2];
