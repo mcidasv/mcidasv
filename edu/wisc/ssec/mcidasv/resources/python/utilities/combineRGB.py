@@ -8,4 +8,4 @@ def mycombineRGB(red, green, blue):
   red=GridUtil.setParamType(red,makeRealType("redimage%d" % uniqueID), 0)
   green=GridUtil.setParamType(green,makeRealType("greenimage%d" % uniqueID),0)
   blue=GridUtil.setParamType(blue,makeRealType("blueimage%d" % uniqueID),0)
-  return FieldImpl.combine([red,green,blue], FieldImpl.NEAREST_NEIGHBOR, FieldImpl.NO_ERRORS, 0, 0)
+  return DerivedGridFactory.combineGrids([red,green,blue],1)
