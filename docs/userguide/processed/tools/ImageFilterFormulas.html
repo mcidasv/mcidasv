@@ -39,11 +39,30 @@ A set of formulas that apply filters to image data.
   filter to an image by comparing each element to the elements of another image.
   Use this filter to mask off a portion of the first source image. </p>
   <br>
-<p style="padding:0;margin-left:20;margin-top:0">Input parameters: </p>
-<ul>
-  <i>replace</i>&nbsp;&nbsp;&nbsp;&nbsp;replacement value (default=minimum value in either dataset<p></p>
-  <i>constant</i>&nbsp;&nbsp;&nbsp;&nbsp;additive constant (default=0)
-</ul>
+
+<table>
+  <tr>
+  <td valign="top" rowspan="1" colspan="3">
+   <p>Input parameters: </p>
+   </td>
+  </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p>replace</p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>replacement value (default=minimum value in either dataset)</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="2" valign="top">
+   <p>constant</p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>additive constant (default=0)</p>
+   </td>
+   </tr>
+</table>
 <p><strong>Core Image Filter (brkpoint1, brkpoint2, replace1, replace2) </strong>:</p>
 <p style="padding:0;margin-left:20;margin-top:0">This formula applies a core
   filter to two images by comparing elements to breakpoints. The resulting image
