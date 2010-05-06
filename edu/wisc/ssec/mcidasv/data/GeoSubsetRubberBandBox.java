@@ -144,7 +144,7 @@ public class GeoSubsetRubberBandBox extends SubsetRubberBandBox {
              new CartesianProductCoordinateSystem(new CoordinateSystem[] {dataCS, iCS});
 
         new_cs = new GeoDataToDisplayCoordinateSystem(isLL, cs, displayCS);
-        new_cs.resetExtremes();
+        resetExtremes();
         
 
         DisplayRealType displayLineType =
@@ -201,8 +201,16 @@ public class GeoSubsetRubberBandBox extends SubsetRubberBandBox {
 
     public float[] getRanges() {
         float[] extrms = new_cs.getExtremes();
-        new_cs.resetExtremes();
+        resetExtremes();
         return extrms;
+    }
+
+    protected void resetExtremes() {
+        new_cs.resetExtremes();
+    }
+
+    protected GeoDataToDisplayCoordinateSystem getDisplayCoordSystem() {
+        return new_cs;
     }
 }
 
@@ -263,6 +271,7 @@ class GeoDataToDisplayCoordinateSystem extends CoordinateSystem {
   }
 
   public float[][] toReference(float[][] values) throws VisADException {
+
     if (values[0][0] < eleLo) eleLo = values[0][0];
     if (values[0][0] > eleHi) eleHi = values[0][0];
     if (values[1][0] < lineLo) lineLo = values[1][0];
