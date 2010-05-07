@@ -55,7 +55,7 @@ A set of formulas that apply filters to image data.
    </td>
    </tr>
    <tr>
-   <td width="70" colspan="1" rowspan="2" valign="top">
+   <td width="70" colspan="1" rowspan="1" valign="top">
    <p>constant</p>
    </td>
    <td width="660" colspan="2" rowspan="1" valign="top">
@@ -67,15 +67,147 @@ A set of formulas that apply filters to image data.
 <p style="padding:0;margin-left:20;margin-top:0">This formula applies a core
   filter to two images by comparing elements to breakpoints. The resulting image
 has only two values.</p>
+<table>
+  <tr>
+  <td valign="top" rowspan="1" colspan="2">
+   <p>Input parameters: </p>
+   </td>
+  </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p>brkpoint1</p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>breakpoint value (default=minimum value in either sdataset)</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p>brkpoint2 </p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>breakpoint value (default=maximum value in either sdataset)</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top"><p>replace1</p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>success condition replacement value (default=maximum value in either dataset)</p>
+   </td>
+   </tr>
+      </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top"><p>replace2 </p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>failure condition replacement value (default=minimum value in either dataset)</p>
+   </td>
+   </tr>
+  <tr>
+  <td valign="top" rowspan="1" colspan="2">
+   <p>Equation for each ddataset element: </p>
+   </td>
+  </tr>
+  <tr>
+<td valign="top" rowspan="1" colspan="1">
+<p class="CellBody"><a name="pgfId-1072405" id="pgfId-1072405"></a>&nbsp;</p>
+</td>
+<td valign="top" rowspan="1" colspan="2">
+<p>if (sdataset1 &gt; brkpoint1) and (sdataset2 &gt; brkpoint2) <br>
+then ddataset = replace1<br>
+else ddatset = replace2</p>
+</td>
+</tr>
+</table>
 <p><strong>Discriminate Image Filter (brkpoint1, brkpoint2, brkpoint3, brkpoint4,
     replace) </strong>:</p>
 <p style="padding:0;margin-left:20;margin-top:0">This formula applies a discriminate
   filter to two images by comparing elements in each image to different high
   and low breakpoints. Use this filter to mask off a portion of the first source
   image.</p>
+  <table>
+  <tr>
+  <td valign="top" rowspan="1" colspan="2">
+   <p>Input parameters: </p>
+   </td>
+  </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p>brkpoint1</p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>low end breakpoint value for sdataset1 (default=minimum value in either
+     sdataset)</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p>brkpoint2 </p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>high end breakpoint value for sdataset1 (default=maximum value in either
+     sdataset)</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top"><p>brkpoint3</p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>low end breakpoint value for sdataset2 (default=minimum value in either
+     sdataset)</p>
+   </td>
+   </tr>
+      </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top"><p>brkpoint4</p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>high end breakpoint value for sdataset2 (default=maximum value in either
+     sdataset)</p>
+   </td>
+   </tr>
+      <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top"><p>replace</p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>failure condition replacement value (default=minimum value in either dataset)</p>
+   </td>
+   </tr>
+  <tr>
+  <td valign="top" rowspan="1" colspan="2">
+   <p>Equation for each ddataset element: </p>
+   </td>
+  </tr>
+  <tr>
+<td valign="top" rowspan="1" colspan="1">
+<p class="CellBody"><a name="pgfId-1072405" id="pgfId-1072405"></a>&nbsp;</p>
+</td>
+<td valign="top" rowspan="1" colspan="2">
+<p>if (brkpoint1 &lt; sdataset1 &lt; brkpoint2) and (brkpoint3 &lt; sdataset2 &lt; brkpoint2) <br>
+then ddataset = sdataset1 <br>
+else ddatset = replace</p>
+</td>
+</tr>
+</table>
 <p><strong>Gradient Image Filter </strong>:</p>
 <p style="padding:0;margin-left:20;margin-top:0">This formula applies a gradient
 filter to the source image.</p>
+<table>
+  <tr>
+  <td valign="top" rowspan="1" colspan="2">
+   <p>Equation for each ddataset element: </p>
+   </td>
+  </tr>
+  <tr>
+<td valign="top" rowspan="1" colspan="1">
+<p>&nbsp;</p>
+</td>
+<td valign="top" rowspan="1" colspan="2">
+<p><em>ddataset</em> = ABSOLUTE(<em>sdataset</em><sub>n</sub> - (<em>sdataset</em><sub>n+1</sub>) )</p>
+</td>
+</tr>
+</table>
 <p><strong>High Pass 2D Image Filter </strong>:</p>
 <p style="padding:0;margin-left:20;margin-top:0">This formula applies a two-dimensional
   high-pass filter to each element in the source image. It eliminates low-frequency
