@@ -29,17 +29,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageFilter
   <hr align="center">
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
-<div class="pagetitle">Discription of Formulas</div>
-<a name="grid" id="grid"></a> The follow describes each formula included in the
-Formulas section of McIDAS-V.
-<h3>Formulas: Image Filters </h3>
-A set of formulas that apply filters to image data.
-<p><strong>Cloud Image Filter (replace, constant) </strong> :</p>
-<p style="padding:0;margin-left:20;margin-top:0">This formula applies a cloud
+<div class="pagetitle">Discription of Formulas - Image Filters </div>
+<p>The follow describes each formula included in the Image Filter Formulas section
+  of McIDAS-V.</p><br>
+<p><strong>Cloud Image Filter (replace, constant)</strong></p>
+<p>This formula applies a cloud
   filter to an image by comparing each element to the elements of another image.
   Use this filter to mask off a portion of the first source image. </p>
-  <br>
-
 <table>
   <tr>
   <td valign="top" rowspan="1" colspan="3">
@@ -48,23 +44,23 @@ A set of formulas that apply filters to image data.
   </tr>
    <tr>
    <td width="70" colspan="1" rowspan="1" valign="top">
-   <p>replace</p>
+   <p><em>replace</em></p>
    </td>
    <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>replacement value (default=minimum value in either dataset)</p>
+   <p>replacement value (default=minimum value in either <em>sdataset</em>)</p>
    </td>
    </tr>
    <tr>
    <td width="70" colspan="1" rowspan="1" valign="top">
-   <p>constant</p>
+   <p><em>constant</em></p>
    </td>
    <td width="660" colspan="2" rowspan="1" valign="top">
    <p>additive constant (default=0)</p>
    </td>
    </tr>
 </table>
-<p><strong>Core Image Filter (brkpoint1, brkpoint2, replace1, replace2) </strong>:</p>
-<p style="padding:0;margin-left:20;margin-top:0">This formula applies a core
+<p><strong>Core Image Filter (brkpoint1, brkpoint2, replace1, replace2)</strong></p>
+<p>This formula applies a core
   filter to two images by comparing elements to breakpoints. The resulting image
 has only two values.</p>
 <table>
@@ -75,38 +71,37 @@ has only two values.</p>
   </tr>
    <tr>
    <td width="70" colspan="1" rowspan="1" valign="top">
-   <p>brkpoint1</p>
+   <p><em>brkpoint1</em></p>
    </td>
    <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>breakpoint value (default=minimum value in either sdataset)</p>
+   <p>breakpoint value (default=minimum value in either <em>sdataset</em>)</p>
    </td>
    </tr>
    <tr>
    <td width="70" colspan="1" rowspan="1" valign="top">
-   <p>brkpoint2 </p>
+   <p><em>brkpoint2 </em></p>
    </td>
    <td width="660" colspan="2" rowspan="1" valign="top">
-   <p>breakpoint value (default=maximum value in either sdataset)</p>
+   <p>breakpoint value (default=maximum value in either <em>sdataset</em>)</p>
    </td>
    </tr>
    <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top"><p>replace1</p>
+   <td width="70" colspan="1" rowspan="1" valign="top"><p><em>replace1</em></p>
    </td>
    <td width="660" colspan="2" rowspan="1" valign="top">
-   <p>success condition replacement value (default=maximum value in either dataset)</p>
+   <p>success condition replacement value (default=maximum value in either <em>sdataset</em>)</p>
    </td>
    </tr>
-      </tr>
    <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top"><p>replace2 </p>
+   <td width="70" colspan="1" rowspan="1" valign="top"><p><em>replace2 </em></p>
    </td>
    <td width="660" colspan="2" rowspan="1" valign="top">
-   <p>failure condition replacement value (default=minimum value in either dataset)</p>
+   <p>failure condition replacement value (default=minimum value in either <em>sdataset</em>)</p>
    </td>
    </tr>
   <tr>
   <td valign="top" rowspan="1" colspan="2">
-   <p>Equation for each ddataset element: </p>
+   <p>Equation for each <em>ddataset</em> element: </p>
    </td>
   </tr>
   <tr>
@@ -114,15 +109,15 @@ has only two values.</p>
 <p class="CellBody"><a name="pgfId-1072405" id="pgfId-1072405"></a>&nbsp;</p>
 </td>
 <td valign="top" rowspan="1" colspan="2">
-<p>if (sdataset1 &gt; brkpoint1) and (sdataset2 &gt; brkpoint2) <br>
-then ddataset = replace1<br>
-else ddatset = replace2</p>
+<p>if (<em>sdataset1</em> &gt; <em>brkpoint1</em>) and (<em>sdataset2</em> &gt; <em>brkpoint2</em>) <br>
+then <em>ddataset</em> = <em>replace1</em><br>
+else <em>ddataset</em> = <em>replace2</em></p>
 </td>
 </tr>
 </table>
 <p><strong>Discriminate Image Filter (brkpoint1, brkpoint2, brkpoint3, brkpoint4,
-    replace) </strong>:</p>
-<p style="padding:0;margin-left:20;margin-top:0">This formula applies a discriminate
+    replace)</strong></p>
+<p>This formula applies a discriminate
   filter to two images by comparing elements in each image to different high
   and low breakpoints. Use this filter to mask off a portion of the first source
   image.</p>
@@ -134,49 +129,48 @@ else ddatset = replace2</p>
   </tr>
    <tr>
    <td width="70" colspan="1" rowspan="1" valign="top">
-   <p>brkpoint1</p>
+   <p><em>brkpoint1</em></p>
    </td>
    <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>low end breakpoint value for sdataset1 (default=minimum value in either
-     sdataset)</p>
+   <p>low end breakpoint value for <em>sdataset1</em> (default=minimum value in either
+     <em>sdataset</em>)</p>
    </td>
    </tr>
    <tr>
    <td width="70" colspan="1" rowspan="1" valign="top">
-   <p>brkpoint2 </p>
+   <p><em>brkpoint2 </em></p>
    </td>
    <td width="660" colspan="2" rowspan="1" valign="top">
-   <p>high end breakpoint value for sdataset1 (default=maximum value in either
-     sdataset)</p>
+   <p>high end breakpoint value for <em>sdataset1</em> (default=maximum value in either
+     <em>sdataset</em>)</p>
    </td>
    </tr>
    <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top"><p>brkpoint3</p>
+   <td width="70" colspan="1" rowspan="1" valign="top"><p><em>brkpoint3</em></p>
    </td>
    <td width="660" colspan="2" rowspan="1" valign="top">
-   <p>low end breakpoint value for sdataset2 (default=minimum value in either
-     sdataset)</p>
+   <p>low end breakpoint value for <em>sdataset2</em> (default=minimum value in either
+     <em>sdataset</em>)</p>
    </td>
    </tr>
-      </tr>
    <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top"><p>brkpoint4</p>
+   <td width="70" colspan="1" rowspan="1" valign="top"><p><em>brkpoint4</em></p>
    </td>
    <td width="660" colspan="2" rowspan="1" valign="top">
-   <p>high end breakpoint value for sdataset2 (default=maximum value in either
-     sdataset)</p>
+   <p>high end breakpoint value for <em>sdataset2</em> (default=maximum value in either
+     <em>sdataset</em>)</p>
    </td>
    </tr>
       <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top"><p>replace</p>
+   <td width="70" colspan="1" rowspan="1" valign="top"><p><em>replace</em></p>
    </td>
    <td width="660" colspan="2" rowspan="1" valign="top">
-   <p>failure condition replacement value (default=minimum value in either dataset)</p>
+   <p>failure condition replacement value (default=minimum value in either <em>sdataset</em>)</p>
    </td>
    </tr>
   <tr>
   <td valign="top" rowspan="1" colspan="2">
-   <p>Equation for each ddataset element: </p>
+   <p>Equation for each <em>ddataset</em> element: </p>
    </td>
   </tr>
   <tr>
@@ -184,66 +178,335 @@ else ddatset = replace2</p>
 <p class="CellBody"><a name="pgfId-1072405" id="pgfId-1072405"></a>&nbsp;</p>
 </td>
 <td valign="top" rowspan="1" colspan="2">
-<p>if (brkpoint1 &lt; sdataset1 &lt; brkpoint2) and (brkpoint3 &lt; sdataset2 &lt; brkpoint2) <br>
-then ddataset = sdataset1 <br>
-else ddatset = replace</p>
+<p>if (<em>brkpoint1</em> &lt; <em>sdataset1</em> &lt; <em>brkpoint2</em>) and (<em>brkpoint3</em> &lt; <em>sdataset2</em> &lt; <em>brkpoint2</em>) <br>
+then <em>ddataset</em> = <em>sdataset1</em> <br>
+else <em>ddataset</em> = <em>replace</em></p>
 </td>
 </tr>
 </table>
-<p><strong>Gradient Image Filter </strong>:</p>
-<p style="padding:0;margin-left:20;margin-top:0">This formula applies a gradient
-filter to the source image.</p>
+<p><strong>Gradient Image Filter</strong></p>
+<p>This formula applies a gradient filter to the source image.</p>
 <table>
   <tr>
   <td valign="top" rowspan="1" colspan="2">
-   <p>Equation for each ddataset element: </p>
+   <p>Equation for each <em>ddataset</em> element: </p>
    </td>
   </tr>
+  <tr>
+<td valign="top" rowspan="1" colspan="1" width="70">
+<p>&nbsp;</p>
+</td>
+<td valign="top" rowspan="1" colspan="2" width="660">
+<p><em>ddataset</em> = ABSOLUTE(<em>sdataset</em><sub>n</sub> - (<em>sdataset</em><sub>n+1</sub>) )</p>
+</td>
+</tr>
+</table>
+<p><strong>High Pass 2D Image Filter</strong></p>
+<p>This formula applies a two-dimensional
+  high-pass filter to each element in the source image. It eliminates low-frequency
+  deviations by clustering them around the distribution's midpoint. A sample
+  average is calculated by the program using values in a two-dimensional region
+  around the source element.</p>
+  <table>
+  <tr>
+  <td valign="top" rowspan="1" colspan="2">
+   <p>Equation for each <em>ddataset</em> element: </p>
+   </td>
+  </tr>
+  <tr>
+<td valign="top" rowspan="1" colspan="1" width="70">
+<p>&nbsp;</p>
+</td>
+<td valign="top" rowspan="1" colspan="2" width="660">
+<p><em>ddataset</em> = (<em>sdataset</em> - (sample average ) + (sample midpoint)
+  )</p>
+</td>
+</tr>
+</table>
+
+<p><strong>High Pass Image Filter (radius, leak)</strong></p>
+<p>This formula applies a one-dimensional
+  high-pass filter to each element in the source image. It eliminates low-frequency
+  deviations by clustering them around the distribution's midpoint. A sample
+  average is determined using values on either side of the source element and
+  the percentage of filter efficiency.</p>
+    <table>
+  <tr>
+  <td valign="top" rowspan="1" colspan="2">
+   <p>Input parameters: </p>
+   </td>
+  </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>radius</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>sample length surrounding the source element; used for sample average (default=50)</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>efficiency</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>filter efficiency (default=100)</p>
+   </td>
+   </tr>
+   <tr>
+  <td valign="top" rowspan="1" colspan="2">
+   <p>Equation for each <em>ddataset</em> element: </p>
+   </td></tr>
   <tr>
 <td valign="top" rowspan="1" colspan="1">
 <p>&nbsp;</p>
 </td>
 <td valign="top" rowspan="1" colspan="2">
-<p><em>ddataset</em> = ABSOLUTE(<em>sdataset</em><sub>n</sub> - (<em>sdataset</em><sub>n+1</sub>) )</p>
+<p><em>ddataset</em> = (<em>sdataset</em> - (sample average) + (sample midpoint) )</p>
 </td>
 </tr>
 </table>
-<p><strong>High Pass 2D Image Filter </strong>:</p>
-<p style="padding:0;margin-left:20;margin-top:0">This formula applies a two-dimensional
-  high-pass filter to each element in the source image. It eliminates low-frequency
-  deviations by clustering them around the distribution's midpoint. A sample
-  average is calculated by the program using values in a two-dimensional region
-  around the source element.</p>
-<p><strong>High Pass Image Filter (radius, leak) </strong>:</p>
-<p style="padding:0;margin-left:20;margin-top:0">This formula applies a one-dimensional
-  high-pass filter to each element in the source image. It eliminates low-frequency
-  deviations by clustering them around the distribution's midpoint. A sample
-  average is determined using values on either side of the source element and
-  the percentage of filter efficiency.</p>
-<p><strong>Hole Image Filter (brkpoint1, brkpoint2) </strong>:</p>
-<p style="padding:0;margin-left:20;margin-top:0">This formula searches for missing
+<p><strong>Hole Image Filter (brkpoint1, brkpoint2)</strong></p>
+<p>This formula searches for missing
   data and fills the holes in the image using the average of the surrounding
   element values.</p>
-<p><strong>Low Pass 2D Image Filter (linecoef, elecoef) </strong>:</p>
-<p style="padding:0;margin-left:20;margin-top:0">This formula applies a two-dimensional
+  <table>
+  <tr>
+  <td valign="top" rowspan="1" colspan="2">
+   <p>Input parameters: </p>
+   </td>
+  </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>brkpoint1</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>low end breakpoint value (default=minimum <em>sdataset</em> value)</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>brkpoint2 </em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>high end breakpoint value (default=maximum <em>sdataset</em> value)</p>
+   </td>
+   </tr>
+  <tr>
+  <td valign="top" rowspan="1" colspan="2">
+   <p>Equation for each <em>ddataset</em> element: </p>
+   </td>
+  </tr>
+  <tr>
+<td valign="top" rowspan="1" colspan="1">
+<p class="CellBody"><a name="pgfId-1072405" id="pgfId-1072405"></a>&nbsp;</p>
+</td>
+<td valign="top" rowspan="1" colspan="2">
+<p>if (<em>brkpoint1</em> &lt; <em>sdataset</em> &lt; <em>brkpoint2</em>)<br>
+then <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element values) <br>
+else <em>ddataset</em> = <em>sdataset</em> </p>
+</td>
+</tr>
+</table>
+<p><strong>Low Pass 2D Image Filter (linecoef, elecoef)</strong></p>
+<p>This formula applies a two-dimensional
   low-pass filter to each element in the source image. It eliminates high-frequency
   deviations by replacing the source image data values with the average of the
   values in the sample defined with the line and element coefficients.</p>
-<p><strong>Low Pass Image Filter (radius, leak) </strong>:</p>
-<p style="padding:0;margin-left:20;margin-top:0">This formula applies a one-dimensional
+    <table>
+  <tr>
+  <td valign="top" rowspan="1" colspan="2">
+   <p>Input parameters: </p>
+   </td>
+  </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>linecoef</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>line coefficient; 0.0 &lt; <em>linecoef</em> &lt; 1.0 (default=0.5)</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>elecoef</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>element coefficient; 0.0 &lt; <em>elecoef</em> &lt; 1.0 (default=<em>linecoef</em>)</p>
+   </td>
+   </tr>
+  <tr>
+  <td valign="top" rowspan="1" colspan="2">
+   <p>Equation for each <em>ddataset</em> element: </p>
+   </td>
+  </tr>
+  <tr>
+<td valign="top" rowspan="1" colspan="1">
+<p class="CellBody"><a name="pgfId-1072405" id="pgfId-1072405"></a>&nbsp;</p>
+</td>
+<td valign="top" rowspan="1" colspan="2">
+<p><em>ddataset</em> = (sample average)</p>
+</td>
+</tr>
+</table>
+<p><strong>Low Pass Image Filter (radius, leak)</strong></p>
+<p>This formula applies a one-dimensional
   low-pass filter to each element of the source image. It eliminates high-frequency
   deviations by replacing the source image data values with the average of the
   values on either side of the source element. The sample average is determined
   using the percentage of filter efficiency.</p>
-<p><strong>Replace Image  Filter (replaceVal, bline, eline, belem, eelem)</strong>:</p>
-<p style="padding:0;margin-left:20;margin-top:0">This formula replaces selected
+      <table>
+  <tr>
+  <td valign="top" rowspan="1" colspan="2">
+   <p>Input parameters: </p>
+   </td>
+  </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>radius</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>sample length in pixels surrounding the source element; used for sample
+     average (default=50)</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>leak</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>filter efficiency (default=100)</p>
+   </td>
+   </tr>
+  <tr>
+  <td valign="top" rowspan="1" colspan="2">
+   <p>Equation for each <em>ddataset</em> element: </p>
+   </td>
+  </tr>
+  <tr>
+<td valign="top" rowspan="1" colspan="1">
+<p class="CellBody"><a name="pgfId-1072405" id="pgfId-1072405"></a>&nbsp;</p>
+</td>
+<td valign="top" rowspan="1" colspan="2">
+<p><em>ddataset</em> = (sample average)</p>
+</td>
+</tr>
+</table>
+<p><strong>Replace Image  Filter (replaceVal, bline, eline, belem, eelem)</strong></p>
+<p>This formula replaces selected
   elements in the defined region of the source image with the specified replacement
   value.</p>
-<p><strong>Shot Image Filter (bline, eline, pdiff) </strong>:</p>
-<p style="padding:0;margin-left:20;margin-top:0">This formula cleans an image
+    <table>
+  <tr>
+  <td valign="top" rowspan="1" colspan="2">
+   <p>Input parameters: </p>
+   </td>
+  </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>replaceVal</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>replacement value (default=0)</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>bline</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>beginning line in the source image region (default=first line)</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top"><p><em>eline</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>ending line in the source image region (default=last line)</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top"><p><em>belem</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>beginning element in the source image region (default=first element)</p>
+   </td>
+   </tr>
+      <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top"><p><em>eelem</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>ending element in the source image region (default=last element)</p>
+   </td>
+   </tr>
+  <tr>
+  <td valign="top" rowspan="1" colspan="2">
+   <p>Equation for each <em>ddataset</em> element: </p>
+   </td>
+  </tr>
+  <tr>
+<td valign="top" rowspan="1" colspan="1">
+<p class="CellBody"><a name="pgfId-1072405" id="pgfId-1072405"></a>&nbsp;</p>
+</td>
+<td valign="top" rowspan="1" colspan="2">
+<p>if <em>sdataset</em> lies outside the region defined by the line and element
+  ranges<br>
+then <em>ddataset</em> = <em>sdataset</em><br>
+else <em>ddataset</em> = <em>replaceVal</em> </p>
+</td>
+</tr>
+</table>
+<p><strong>Shot Image Filter (bline, eline, pdiff)</strong></p>
+<p>This formula cleans an image
   by applying a shot noise filter to each element in the source image. Each element
   is compared to the elements on either side and replaced if the values are significantly
   different.</p>
+    <table>
+  <tr>
+  <td valign="top" rowspan="1" colspan="2">
+   <p>Input parameters: </p>
+   </td>
+  </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>bline</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>beginning line in the source image to clean (default=first line)</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>eline</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>ending line in the source image to clean (default=last line)</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top"><p><em>pdiff</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>maximum percentage of the product range to allow before a new value for
+     the pixel is derived using the<br>
+average of two adjacent pixels (default=15)</p>
+   </td>
+   </tr>
+  <tr>
+  <td valign="top" rowspan="1" colspan="2">
+   <p>Equation for each <em>ddataset</em> element: </p>
+   </td>
+  </tr>
+  <tr>
+<td valign="top" rowspan="1" colspan="1">
+<p class="CellBody"><a name="pgfId-1072405" id="pgfId-1072405"></a>&nbsp;</p>
+</td>
+<td valign="top" rowspan="1" colspan="2">
+<p>if the difference between <em>sdataset</em> and the surrounding elements is &lt; <em>pdiff</em> <br>
+then <em>ddataset</em> = <em>sdataset</em><br>
+else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element values) </p>
+</td>
+</tr>
+</table>
 <div class="childlist">
 <table width="100%"></table>
 </div>
