@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Description of Formulas - Miscellaneous</title>
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<!-- InstanceBeginEditable name="CurrentFile" -->
+<script language="javascript" type="text/javascript">
+function setParentPage() { if (parent.setPage) parent.setPage('tools/MiscellaneousFormulas.html',true); }
+</script>
+<!-- InstanceEndEditable -->
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+<body onLoad="setParentPage();">
+<div class="TopTitleNav">
+  <p class="style2" style="text-align:left; "> 
+  	[<!-- InstanceBeginEditable name="GoToPrevious" --><a href="Formulas.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	<span style="padding-left: 15px; "> 
+	[<!-- InstanceBeginEditable name="GoToNext" --><a href="GridFormulas.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	</span> </p>
+  <hr align="center">
+</div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Description of Formulas - Miscellaneous </div>
+<p>The follow describes each formula included in the Miscellaneous Formulas section
+  of McIDAS-V.</p>
+<br>
+<p><strong>Any Field </strong></p>
+<p>This formula lets you define a grid diagnostic to perform. </p>
+<table>
+  <tr>
+  <td valign="top" rowspan="1" colspan="3">
+   <p>Input parameters: </p>
+   </td>
+  </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>gddiag</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>grid diagnostic. For more information see the Grid Diagnostics section
+     of the <a href="JythonLib.html">Jython
+     Library</a>. </p>
+   </td>
+   </tr>
+</table>
+<p><strong>Change Unit   (name, unitSpec)</strong></p>
+<p>This formula obtains the latitude coordinate from the grid and returns a grid
+  of the latitudes at each point.</p>
+<table>
+  <tr>
+  <td valign="top" rowspan="1" colspan="3">
+   <p>Input parameters: </p>
+   </td>
+  </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>name</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>grid diagnostic. For more information see the Grid Diagnostics section
+     of the <a href="JythonLib.html">Jython
+     Library</a>. </p>
+   </td>
+   </tr>
+      <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>unitSpec</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>grid diagnostic. For more information see the Grid Diagnostics section
+     of the <a href="JythonLib.html">Jython
+     Library</a>. </p>
+   </td>
+   </tr>
+</table>
+<p><strong>Define a formula   (formula)</strong></p>
+<p>This formula calculates horizontal advection from U and V components.</p>
+  <table>
+  <tr>
+  <td valign="top" rowspan="1" colspan="2">
+   <p>Input parameters: </p>
+   </td>
+  </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>scalar</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>scalar parameter</p>
+   </td>
+   </tr>
+</table>
+<p><strong>Make a time sequence from single time grid/images</strong></p>
+<p>This formula merges a set of single time grids or images into a time sequence.</p>
+<br>
+<p><strong>Negate a Field</strong></p>
+<p>This formula calculates a layer difference between a field at two different
+  levels.</p>
+<br>
+  <p><strong>Simple difference a-b</strong></p>
+  <p>This formula calculates the wind shear between discreet layers.</p>
+    <table>
+  <tr>
+  <td valign="top" rowspan="1" colspan="2">
+   <p>Input parameters: </p>
+   </td>
+  </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>top</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>top layer  (default=500)</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>bottom</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>bottom layer  (default=850)</p>
+   </td>
+   </tr>
+</table>
+<div class="childlist">
+<table width="100%"></table>
+</div>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav">
+  <hr align="center">
+  <p class="style2" style="text-align:left; "> 
+  	[<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="Formulas.html">Go to Previous</a><!-- InstanceEndEditable -->] 
+	<span style="padding-left: 15px; "> 
+	[<!-- InstanceBeginEditable name="GoToNext2" --><a href="GridFormulas.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	</span></p>
+</div>
+</body>
+<!-- InstanceEnd --></html>

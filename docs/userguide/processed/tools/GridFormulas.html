@@ -3,13 +3,13 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>Description of Formulas</title>
+<title>Description of Formulas - Grids</title>
 <!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
 <!-- InstanceBeginEditable name="CurrentFile" -->
 <script language="javascript" type="text/javascript">
-function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageFilterFormulas.html',true); }
+function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormulas.html',true); }
 </script>
 <!-- InstanceEndEditable -->
 <style type="text/css">
@@ -22,7 +22,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageFilter
 <body onLoad="setParentPage();">
 <div class="TopTitleNav">
   <p class="style2" style="text-align:left; "> 
-  	[<!-- InstanceBeginEditable name="GoToPrevious" --><a href="Formulas.html">Go to Previous</a><!-- InstanceEndEditable -->]
+  	[<!-- InstanceBeginEditable name="GoToPrevious" --><a href="MiscellaneousFormulas.html">Go to Previous</a><!-- InstanceEndEditable -->]
 	<span style="padding-left: 15px; "> 
 	[<!-- InstanceBeginEditable name="GoToNext" --><a href="ImageFilterFormulas.html">Go to Next</a><!-- InstanceEndEditable -->] 
 	</span> </p>
@@ -284,58 +284,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageFilter
    </td>
    </tr>
 </table>
-<p><strong>Speed from two components  (x, y)</strong></p>
-<p>This formula cleans an image
-  by applying a shot noise filter to each element in the source image. Each element
-  is compared to the elements on either side and replaced if the values are significantly
-  different.</p>
-    <table>
-  <tr>
-  <td valign="top" rowspan="1" colspan="2">
-   <p>Input parameters: </p>
-   </td>
-  </tr>
-   <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top">
-   <p><em>bline</em></p>
-   </td>
-   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>beginning line in the source image to clean (default=first line)</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top">
-   <p><em>eline</em></p>
-   </td>
-   <td width="660" colspan="2" rowspan="1" valign="top">
-   <p>ending line in the source image to clean (default=last line)</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top"><p><em>pdiff</em></p>
-   </td>
-   <td width="660" colspan="2" rowspan="1" valign="top">
-   <p>maximum percentage of the product range to allow before a new value for
-     the pixel is derived using the<br>
-average of two adjacent pixels (default=15)</p>
-   </td>
-   </tr>
-  <tr>
-  <td valign="top" rowspan="1" colspan="2">
-   <p>Equation for each <em>ddataset</em> element: </p>
-   </td>
-  </tr>
-  <tr>
-<td valign="top" rowspan="1" colspan="1">
-<p class="CellBody"><a name="pgfId-1072405" id="pgfId-1072405"></a>&nbsp;</p>
-</td>
-<td valign="top" rowspan="1" colspan="2">
-<p>if the difference between <em>sdataset</em> and the surrounding elements is &lt; <em>pdiff</em> <br>
-then <em>ddataset</em> = <em>sdataset</em><br>
-else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element values) </p>
-</td>
-</tr>
-</table>
+<p><strong>Speed from two components</strong></p>
+<p>This formula calculates from an x and y component.</p>
+<br>
 <p><strong>Wind Shear Vectors  (top, bottom)</strong></p>
 <p>This formula calculates the u and v layer difference and returns a vector.</p>
     <table>
@@ -410,10 +361,10 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
   </tr>
    <tr>
    <td width="70" colspan="1" rowspan="1" valign="top">
-   <p><em>bline</em></p>
+   <p><em>&nbsp;</em></p>
    </td>
    <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>beginning line in the source image to clean (default=first line)</p>
+   <p>D(T) = D(T) + D(T-1) </p>
    </td>
    </tr>
 </table>
@@ -424,7 +375,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 <div class="BottomTitleNav">
   <hr align="center">
   <p class="style2" style="text-align:left; "> 
-  	[<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="Formulas.html">Go to Previous</a><!-- InstanceEndEditable -->] 
+  	[<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="MiscellaneousFormulas.html">Go to Previous</a><!-- InstanceEndEditable -->] 
 	<span style="padding-left: 15px; "> 
 	[<!-- InstanceBeginEditable name="GoToNext2" --><a href="ImageFilterFormulas.html">Go to Next</a><!-- InstanceEndEditable -->] 
 	</span></p>
