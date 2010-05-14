@@ -133,7 +133,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('Faq.html',true); 
 </div>
 <div class="faq-question">
 <ul class="noindent">
-<li><a class="faq-question-link" href="#noaskexit">How can stop McIDAS-V from asking if I really want to exit?</a></li>
+<li><a class="faq-question-link" href="#noaskexit">How can I stop McIDAS-V from
+    asking if I really want to exit?</a></li>
 </ul>
 </div>
 <div class="faq-question">
@@ -614,7 +615,7 @@ application/x-java-jnlp-file JNLP
   color table, see the <a href="tools/ColorTableEditor.html">Color Table Editor</a> documentation.</div>
 <a name="noaskexit" id="noaskexit"></a>
 <div class="faq-question">
-<h4>Q. How can stop McIDAS-V from asking if I really want to exit?</h4>
+<h4>Q. How can I stop McIDAS-V from asking if I really want to exit?</h4>
 </div>
 <div class="faq-answer"><strong>A.</strong> Many features of McIDAS-V can be
   changed though the User Preferences dialog. Use the <strong>Edit-&gt;Preferences</strong> menu
@@ -668,7 +669,18 @@ so it can be used for heights above 80 km.</div>
 <div class="faq-question">
 <h4>Q. Can I view Level II Radar data in McIDAS-V?</h4>
 </div>
-<div class="faq-answer"><strong>A.</strong> McIDAS-V can load Level II radar products through the <strong>Radar-&gt;Level II-&gt;Remote</strong> chooser which connects to an ADDE server. The Level II data is supplied as volume-scan files, each file having all data from one WSR-88D radar for all sweeps for one "time". Archived Level II radar files can be displayed through the <strong>Radar-&gt;Level II-&gt;Local</strong> file chooser. The files should be stored on your file system with each station's files in a directory (folder) whose directory name is the station 4-character ID (e.g., KTLX for Oklahoma City). In some cases the data files do not have any location information in them and McIDAS-V uses the directory name as a first guess at the station location. Archived Level II data is available from the <a href="http://www.ncdc.noaa.gov/" target="_blank">National Climatic Data Center (NCDC)</a>.</div>
+<div class="faq-answer"><strong>A.</strong> McIDAS-V can load Level II radar
+  products through the <strong>Radar-&gt;Level II-&gt;Remote</strong> chooser
+  which connects to an ADDE server. The Level II data is supplied as volume-scan
+  files, each file having all data from one WSR-88D radar for all sweeps for
+  one &quot;time<span class="faq-answer">&quot;</span>. Archived Level II radar files can be displayed through the <strong>Radar-&gt;Level
+  II-&gt;Local</strong> file chooser. The files should be stored on your file
+  system with each station's files in a directory (folder) whose directory name
+  is the station 4-character ID (e.g., KTLX for Oklahoma City). In some cases
+  the data files do not have any location information in them and McIDAS-V uses
+  the directory name as a first guess at the station location. Archived Level
+  II data is available from the <a href="http://www.ncdc.noaa.gov/" target="_blank">National
+  Climatic Data Center (NCDC)</a>.</div>
 
 <a name="faq1_cat4_25" id="faq1_cat4_25"></a>
 <div class="faq-question">
@@ -722,7 +734,7 @@ so it can be used for heights above 80 km.</div>
       visad.UnitException: visad.UnitException: Set: units dimension 1 does
         not match Domain dimension 2
 </pre>
-<p>the files may not have a "time" dimension defined in them. It is recommended
+<p>the files may not have a <span class="faq-answer">&quot;</span>time<span class="faq-answer">&quot;</span> dimension defined in them. It is recommended
   that you use the NetCDF Markup Language (NcML) to aggregate the files. See <a href="http://www.unidata.ucar.edu/software/netcdf/ncml/v2.2/Aggregation.html" target="_blank">http://www.unidata.ucar.edu/software/netcdf/ncml/v2.2/Aggregation.html</a> for
   more information on aggregating files.</p>
 </div>
@@ -746,7 +758,7 @@ so it can be used for heights above 80 km.</div>
   <ul>
 <li>Right click on the Windows Desktop and select Properties from the pop-up menu.</li>
 <li>From the Settings tab, make sure the color quality is 16 bit.</li>
-<li>Click the Advanced button and select the OpenGL tab. Depending on your card, either click the button for Force 16 bit buffer (or something like that) or click on the Compatibility settings button and click the "Force 16 bit" radio button.</li>
+<li>Click the Advanced button and select the OpenGL tab. Depending on your card, either click the button for Force 16 bit buffer (or something like that) or click on the Compatibility settings button and click the <span class="faq-answer">&quot;</span>Force 16 bit<span class="faq-answer">&quot;</span> radio button.</li>
 <li>Click the OK buttons to exit the Display Properties dialog.</li>
 <li>Try McIDAS-V again and see if it works better.</li>
 <li>If not, try using the Direct-X installer instead of the OpenGL installer.</li>
@@ -799,18 +811,18 @@ command="java -Xmx512m -Didv.enableStereo=true -Dj3d.sharedstereozbuffer=true -j
 </div>
 <div class="faq-answer"><strong>A.</strong> If you have a firewall and are trying
   to get data from the remote servers (image, radar, point, upper air and profiler
-  data), error messages such as "Error opening connection ... Operation timed
-  out" or "No Data Available" may occur. For these servers to send data, your
+  data), error messages such as <span class="faq-answer">&quot;</span>Error opening connection ... Operation timed
+  out<span class="faq-answer">&quot;</span> or <span class="faq-answer">&quot;</span>No Data Available<span class="faq-answer">&quot;</span> may occur. For these servers to send data, your
   firewall software must allow connections on ports 112 (ADDE) and 8080 (THREDDS
   Data Server).</div>
 
 <a name="dri" id="dri"></a>
 <div class="faq-question">
-<h4>Q. Why do I get an error that starts something like "Unexpected Signal :
-  11 occurred at PC=0x6F79CE1" when starting McIDAS-V under Linux?</h4>
+<h4>Q. Why do I get an error that starts something like <span class="faq-answer">&quot;</span>Unexpected Signal :
+  11 occurred at PC=0x6F79CE1<span class="faq-answer">&quot;</span> when starting McIDAS-V under Linux?</h4>
 </div>
-<div class="faq-answer"><strong>A.</strong> If the error message also includes a line that is looking for a Library with "dri" in it's name (e.g.: Library=/usr/X11R6/lib/modules/dri/i915_dri.so), it means that you are trying to load the DRI library in your X server which is not compatible with Java 3D. You need to comment out the line:
-<div style="margin-left: 2em">Load "dri"</div>
+<div class="faq-answer"><strong>A.</strong> If the error message also includes a line that is looking for a Library with <span class="faq-answer">&quot;</span>dri<span class="faq-answer">&quot;</span> in it's name (e.g.: Library=/usr/X11R6/lib/modules/dri/i915_dri.so), it means that you are trying to load the DRI library in your X server which is not compatible with Java 3D. You need to comment out the line:
+<div style="margin-left: 2em">Load <span class="faq-answer">&quot;</span>dri<span class="faq-answer">&quot;</span></div>
 <p>in your X server configuration file (xorg.conf or XF86Config).</p>
 </div>
 </div>
@@ -828,7 +840,7 @@ command="java -Xmx512m -Didv.enableStereo=true -Dj3d.sharedstereozbuffer=true -j
 <em>You have no write premissions for this directory. Please choose another one.</em>
 <br>
 <h4>Solution</h4>
-<p>Browse for a writable directory (e.g. /Users/mcuser/McIDAS-V). Under "Select Additional Tasks", uncheck "Create Launcher and Configuration shortcuts in Applications folder"</p>
+<p>Browse for a writable directory (e.g. /Users/mcuser/McIDAS-V). Under <span class="faq-answer">&quot;</span>Select Additional Tasks<span class="faq-answer">&quot;</span>, uncheck <span class="faq-answer">&quot;</span>Create Launcher and Configuration shortcuts in Applications folder<span class="faq-answer">&quot;</span></p>
 <a name="osx-shortcut" id="osx-shortcut"></a>
 <h4>Error #3 - On Mac OS X only</h4>
 <pre>
@@ -836,7 +848,7 @@ At Extracting files... McIDAS-V Configuration.app/Contents/Info.plist
 /Applications/McIDAS-V Configuration.app/Contents/Info.plist
 Could not create this file.&nbsp; Shall I try again?</pre>
 <h4>Solution</h4>
-<p>Click "Cancel" and restart the installer. Follow instructions under Error
+<p>Click <span class="faq-answer">&quot;</span>Cancel<span class="faq-answer">&quot;</span> and restart the installer. Follow instructions under Error
   #2 above.</p>
 </div>
 
@@ -861,7 +873,7 @@ run anyway.</pre>
 <h4>Error #2</h4>
 <pre>JAVA 3D ERROR: GLX extension is not supported
 GLX version 1.3 or higher is required.</pre>
-<p><em>This error messages echoes to the terminal window. I also get an error popup window stating "Could not create a graphics configuration. Please contact McIDAS-V users support or see the FAQ." At this point the McIDAS-V startup scroll bar just keeps doing it's thing until I press "ok" in the error popup window at which point the startup exits back to the terminal window.</em></p>
+<p><em>This error messages echoes to the terminal window. I also get an error popup window stating <span class="faq-answer">&quot;</span>Could not create a graphics configuration. Please contact McIDAS-V users support or see the FAQ.<span class="faq-answer">&quot;</span> At this point the McIDAS-V startup scroll bar just keeps doing it's thing until I press <span class="faq-answer">&quot;</span>ok<span class="faq-answer">&quot;</span> in the error popup window at which point the startup exits back to the terminal window.</em></p>
 <h4>Solution</h4>
 <p>GLX is an extension that must be supported by the graphics card.&nbsp; This error is most likely occurring because the graphics drivers for RHEL are not properly configured.</p>
 <p>Assuming that the latest graphics drivers are installed, they must be configured in the window system configuration file... since RHEL uses Xorg, look in the file</p>
@@ -870,20 +882,20 @@ GLX version 1.3 or higher is required.</pre>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;/etc/X11/xorg.conf</p>
 
 <br>
-<p>and see if there are any references to "GLX" or "glx" (and possibly "dri").&nbsp; If there are, try uncommenting them and rebooting.</p>
+<p>and see if there are any references to <span class="faq-answer">&quot;</span>GLX<span class="faq-answer">&quot;</span> or <span class="faq-answer">&quot;</span>glx<span class="faq-answer">&quot;</span> (and possibly <span class="faq-answer">&quot;</span>dri<span class="faq-answer">&quot;</span>).&nbsp; If there are, try uncommenting them and rebooting.</p>
 <a name="firewall" id="firewall"></a>
 <h4>Error #3</h4>
 <p><em>I have the viewing and data windows and a user's guide up. But so far I can't talk to any of the listed data servers. The errors are just 'connection refused' and 'no public datasets found' on every server I've tried.</em></p>
 <h4>Solution</h4>
-<p>If you have a firewall and are trying to get data from the remote servers (image, radar, point, upper air and profiler data), error messages such as "Error opening connection ... Operation timed out" or "No Data Available" are normal.&nbsp; For these servers to send data, your firewall software must allow connections on ports 112 (ADDE) and 8080 (THREDDS Data Server).</p>
+<p>If you have a firewall and are trying to get data from the remote servers (image, radar, point, upper air and profiler data), error messages such as <span class="faq-answer">&quot;</span>Error opening connection ... Operation timed out<span class="faq-answer">&quot;</span> or <span class="faq-answer">&quot;</span>No Data Available<span class="faq-answer">&quot;</span> are normal.&nbsp; For these servers to send data, your firewall software must allow connections on ports 112 (ADDE) and 8080 (THREDDS Data Server).</p>
 <a name="multiple-monitor" id="multiple-monitors"></a>
 <h4>Error #4</h4>
 <p> If I move the McIDAS-V windows to Monitor2 of my two-monitor
     system, some things don't work correctly. For example, if I try to add a
-    new tab the data display section of the main display window goes blank ("grays
-    out"),
-	or if I try to run a bundle it fails with, "<em>Error loading bundle C:<path and bundle file name> adding
-	a container to a container on a different GraphicsDevice</em>". </p>
+    new tab the data display section of the main display window goes blank (<span class="faq-answer">&quot;</span>grays
+    out<span class="faq-answer">&quot;</span>),
+	or if I try to run a bundle it fails with, <span class="faq-answer">&quot;</span><em>Error loading bundle C:<path and bundle file name> adding
+	a container to a container on a different GraphicsDevice</em><span class="faq-answer">&quot;</span>. </p>
 <h4>Solution</h4>
 <p>Some graphics card/driver combinations don't allow these functions to work
   in Monitor2 of two-monitor systems. For now, you can simply move the McIDAS-V
