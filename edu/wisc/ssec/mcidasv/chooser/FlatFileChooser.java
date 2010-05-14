@@ -334,6 +334,7 @@ public class FlatFileChooser extends IdvChooser implements Constants {
     		fr.close();
     		String first80 = new String(first80c);
     		clearValues();
+    		boolean doStride = false;
     		if (IOUtil.hasSuffix(thisFile.getName(), ".gif") ||
     				IOUtil.hasSuffix(thisFile.getName(), ".jpg") ||
     				IOUtil.hasSuffix(thisFile.getName(), ".png")) {
@@ -348,25 +349,30 @@ public class FlatFileChooser extends IdvChooser implements Constants {
     		else if (first80.indexOf("                     Space Science & Engineering Center") >= 0) {
     			dataFileDescription.setText("McIDAS-X AXFORM header file");
     			processAxformHeaderFile(thisFile);
+    			doStride = true;
     		}
     		else if (first80.indexOf("ENVI") >= 0) {
     			dataFileDescription.setText("ENVI header file");
     			processEnviHeaderFile(thisFile);
+    			doStride = true;
     		}
     		else {
     			dataFileDescription.setText("Binary, ASCII or Image data");
     			processGenericFile(thisFile);
+    			doStride = true;
     		}
     		
             // Default the stride
             int newStride = 1;
-            String textLinesText = textLines.getText();
-            String textElementsText = textElements.getText();
-            if (!(textLinesText.equalsIgnoreCase("") || textElementsText.equalsIgnoreCase(""))) {
-	            int myLines = Integer.parseInt(textLinesText);
-	            int myElements = Integer.parseInt(textElementsText);
-	            if (myLines > maxDefDim || myElements > maxDefDim) {
-	            	newStride = Math.max((int)Math.ceil((float)myLines/(float)maxDefDim), (int)Math.ceil((float)myElements/(float)maxDefDim));
+            if (doStride) {
+	            String textLinesText = textLines.getText();
+	            String textElementsText = textElements.getText();
+	            if (!(textLinesText.equalsIgnoreCase("") || textElementsText.equalsIgnoreCase(""))) {
+		            int myLines = Integer.parseInt(textLinesText);
+		            int myElements = Integer.parseInt(textElementsText);
+		            if (myLines > maxDefDim || myElements > maxDefDim) {
+		            	newStride = Math.max((int)Math.ceil((float)myLines/(float)maxDefDim), (int)Math.ceil((float)myElements/(float)maxDefDim));
+		            }
 	            }
             }
     		textStride.setText(Integer.toString(newStride));
