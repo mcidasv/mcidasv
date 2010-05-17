@@ -63,7 +63,7 @@ public class McIdasColorTableManager extends ColorTableManager {
 
     /** File filter used for {@literal "HYDRA"} color tables */
     public static final PatternFileFilter FILTER_HYDRA =
-        new PatternFileFilter(".+\\.ascii", "HYDRA color table (*.ascii)", ".ascii");
+        new PatternFileFilter(".+\\.ascii", "3-column RGB color table (*.ascii)", ".ascii");
 
     /** File filter used for McIDAS-X {@literal "enhancement files"} */
     public static final PatternFileFilter FILTER_ET =
