@@ -122,16 +122,16 @@
         <span class="link" onClick="setPage('controls/ValuePlotControl.html');">Value Plot Controls </span><br>
       </div>
 
-      <span class="toggle" onClick="toggleChildren(this,'layercontrols_2');">+</span>
+      <span class="toggle" onClick="toggleChildren(this,'layercontrols_2_1');">+</span>
       <span class="link" onClick="setPage('page_satelliteandradardisplays.html');">Satellite and Radar Displays</span><br>
 
-      <div class="indented" id="layercontrols_2">
+      <div class="indented" id="layercontrols_2_1">
         <span class="link" onClick="setPage('controls/ImagePlanViewControl.html');">Image Controls</span><br>
 		
-		<span class="toggle" onClick="toggleChildren(this,'layercontrols_2_1');">+</span>
+		<span class="toggle" onClick="toggleChildren(this,'layercontrols_2_1_1');">+</span>
 		<span class="link" onClick="setPage('controls/hydra/index.html');">HYDRA Controls</span><br>
 		
-		<div class="indented" id="layercontrols_2_1">
+		<div class="indented" id="layercontrols_2_1_1">
 			<span class="link" onClick="setPage('controls/hydra/MultispectralDisplayControl.html');">MultiSpectral Display Controls</span><br>
 			<span class="link" onClick="setPage('controls/hydra/LinearCombinationControl.html');">Linear Combination Controls</span><br>
 			<span class="link" onClick="setPage('controls/hydra/ChannelCombinationControl.html');">4 Channel Combination Controls</span><br>
@@ -189,6 +189,7 @@
         <span class="link" onClick="setPage('controls/ObsListControl.html');">Observation List Controls</span><br>
 		<span class="link" onClick="setPage('controls/ObjectiveAnalysis.html');">Gridded Point Data</span><br>
         <span class="link" onClick="setPage('controls/AerologicalSoundingControl.html');">Sounding Display Controls</span><br>
+		<span class="link" onClick="setPage('controls/FrontControl.html');">Front Controls</span><br>
         <span class="link" onClick="setPage('controls/StationLocationControl.html');">Location Controls</span><br>
         <span class="link" onClick="setPage('controls/WorldWindControl.html');">WorldWind Controls</span><br>
         <span class="link" onClick="setPage('controls/TrackControl.html');">Track Controls</span><br>

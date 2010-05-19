@@ -194,7 +194,7 @@
 		<tocitem text="HYDRA Controls" target="idv.controls.hydra.index">
 		<tocitem text="MultiSpectral Display Controls" target="idv.controls.hydra.multispectraldisplaycontrol"/>
 		<tocitem text="Linear Combination Controls" target="idv.controls.hydra.linearcombinationcontrol"/>
-		<tocitem text="4 Channel Combination Controls" target="idv.controls.hydra.channelcombinationcontrols"/>
+		<tocitem text="4 Channel Combination Controls" target="idv.controls.hydra.channelcombinationcontrol"/>
 		</tocitem>
         <tocitem text="WSR-88D Level III Control" target="idv.controls.leveliiicontrol"/>
         <tocitem text="Level 2 Radar Display Controls" target="idv.page_level2radardisplaycontrols">
