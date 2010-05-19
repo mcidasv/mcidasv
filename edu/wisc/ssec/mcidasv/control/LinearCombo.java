@@ -50,8 +50,6 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import org.bushe.swing.event.EventBus;
-
 import org.python.core.PyDictionary;
 import org.python.core.PyFloat;
 import org.python.core.PyInteger;
@@ -224,26 +222,6 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         String cmd = 
             String.format("_linearCombo.moveSelector('%s', %f)", id, wavenum);
         console.addPretendHistory(cmd);
-//        EventBus.publish(new SelectorUpdateEvent(id, wavenum, this));
-    }
-
-    public static class SelectorUpdateEvent {
-        final String id;
-        final float wavenum;
-        final Object src;
-        
-        public SelectorUpdateEvent(final String id, final float wavenum, final Object src) {
-            this.id = id;
-            this.wavenum = wavenum;
-            this.src = src;
-        }
-
-        public String getId() { return id; }
-        public float getWavenum() { return wavenum; }
-        public Object getSrc() { return src; }
-        public String toString() {
-            return String.format("[SelectorUpdateEvent@%x: id=%s, wavenum=%s, src=%s]", hashCode(), id, wavenum, src);
-        }
     }
 
     protected void addSelector(final Selector selector) throws Exception {
@@ -333,12 +311,17 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 //        return console;
 //    }
 
+    /**
+     * Called after Jython's internals have finished processing {@code line}
+     * (and before control is given back to the user).
+     * 
+     * <p>This is where {@code LinearCombo} controls map Jython names to Java
+     * objects.
+     */
     public void ranBlock(final String line) {
         List<DragLine> dragLines = display.getSelectors();
         Map<String, Object> javaObjects = console.getJavaInstances();
-
         Set<String> ids = getSelectorIds(javaObjects);
-
         for (DragLine dragLine : dragLines) {
             String lineId = dragLine.getControlId();
             if (!ids.contains(lineId)) {
@@ -512,7 +495,6 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
             waveNumber = newChannel;
             try {
                 display.setSelectorValue(ID, waveNumber);
-                EventBus.publish(new SelectorUpdateEvent(ID, waveNumber, this));
             } catch (Exception e) {
                 LogUtil.logException("Selector.setWaveNumber", e);
             }

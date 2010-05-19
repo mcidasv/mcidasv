@@ -885,7 +885,6 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
     public void addChoice(String name, Data data) {
         ComboDataChoice combo = new ComboDataChoice(name + hashCode(), name, new Hashtable(), data);
-        combo.setDataSource(this);
         addDataChoice(combo);
         getDataContext().dataSourceChanged(this);
     }
@@ -1010,8 +1009,8 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
               if (dataSelection != null) {
                   Hashtable props = dataSelection.getProperties();
-                  if ((props != null) && (props.get(MultiDimensionSubset.key) != null)) {
-                    subset = (HashMap) ((MultiDimensionSubset)props.get(MultiDimensionSubset.key)).getSubset();
+                  subset = (HashMap)((MultiDimensionSubset)props.get(MultiDimensionSubset.key)).getSubset();
+                  if (props != null) {
                     if (props.containsKey(SpectrumAdapter.channelIndex_name)) {
                       int idx = ((Integer) props.get(SpectrumAdapter.channelIndex_name)).intValue();
                       double[] coords = (double[]) subset.get(SpectrumAdapter.channelIndex_name);

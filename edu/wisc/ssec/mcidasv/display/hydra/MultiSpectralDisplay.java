@@ -36,7 +36,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Enumeration;
@@ -45,18 +44,11 @@ import java.util.Map;
 
 import javax.swing.JComboBox;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.control.HydraCombo;
 import edu.wisc.ssec.mcidasv.control.HydraControl;
 import edu.wisc.ssec.mcidasv.control.LinearCombo;
-import edu.wisc.ssec.mcidasv.control.HydraCombo.CombinationPanel;
-import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
 import edu.wisc.ssec.mcidasv.data.hydra.GrabLineRendererJ3D;
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
-import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
@@ -64,7 +56,6 @@ import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Range;
 import ucar.visad.display.DisplayableData;
 import ucar.visad.display.XYDisplay;
 
@@ -89,8 +80,6 @@ import visad.VisADException;
 import visad.bom.RubberBandBoxRendererJ3D;
 
 public class MultiSpectralDisplay implements DisplayListener {
-
-    private static final Logger logger = LoggerFactory.getLogger(ComboDataChoice.class);
 
     private static final String DISP_NAME = "Spectrum";
     private static int cnt = 1;

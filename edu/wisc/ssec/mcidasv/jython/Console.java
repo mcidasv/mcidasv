@@ -35,14 +35,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -52,33 +48,24 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.swing.Action;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
-import javax.swing.border.BevelBorder;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
-import javax.swing.text.Keymap;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
-import org.python.core.Py;
-import org.python.core.PyFrame;
-//import org.python.core.PyJavaInstance;
+import org.python.core.PyJavaInstance;
 import org.python.core.PyList;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PyStringMap;
 import org.python.core.PyTuple;
-import org.python.core.__builtin__;
 import org.python.util.InteractiveConsole;
 
 // TODO(jon): Console should become an interface. there is no reason people 
@@ -527,8 +514,9 @@ public class Console implements Runnable, KeyListener {
         Map<String, PyObject> locals = getLocalNamespace();
         for (Map.Entry<String, PyObject> entry : locals.entrySet()) {
             PyObject val = entry.getValue();
-//            if (val instanceof PyJavaInstance)
-//                javaMap.put(entry.getKey(), val.__tojava__(Object.class));
+            if (val instanceof PyJavaInstance) {
+                javaMap.put(entry.getKey(), val.__tojava__(Object.class));
+            }
         }
 
         return javaMap;
