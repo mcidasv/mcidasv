@@ -30,7 +30,10 @@
 package edu.wisc.ssec.mcidasv.servermanager;
 
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -97,20 +100,22 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     private final EntryStore entryStore;
 
     /** The currently selected {@link RemoteAddeEntry} or {@code null} if nothing is selected. */
-    private RemoteAddeEntry selectedRemoteEntry = null;
+//    private RemoteAddeEntry selectedRemoteEntry = null;
+
+    private final List<RemoteAddeEntry> selectedRemoteEntries;
 
     /** The currently selected {@link LocalAddeEntry} or {@code null} if nothing is selected. */
-    private LocalAddeEntry selectedLocalEntry = null;
+//    private LocalAddeEntry selectedLocalEntry = null;
 
-    // TODO(jon): think about removing these
-    private boolean hasRemoteSelection = false;
-    private boolean hasLocalSelection = false;
+    private final List<LocalAddeEntry> selectedLocalEntries;
 
     /**
      * Creates a standalone server manager GUI.
      */
     public TabbedAddeManager() {
         this.entryStore = null;
+        this.selectedLocalEntries = arrList();
+        this.selectedRemoteEntries = arrList();
         initComponents();
     }
 
@@ -124,6 +129,8 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     public TabbedAddeManager(final EntryStore entryStore) {
         Contract.notNull(entryStore, "Cannot pass a null server manager");
         this.entryStore = entryStore;
+        this.selectedLocalEntries = arrList();
+        this.selectedRemoteEntries = arrList();
         initComponents();
     }
 
@@ -147,51 +154,67 @@ public class TabbedAddeManager extends javax.swing.JFrame {
      */
     public void closeManager() {
         EventBus.publish(Event.CLOSED);
-        if (isDisplayable())
+        if (isDisplayable()) {
             dispose();
+        }
     }
 
     // TODO(jon): still needs to refresh the local table.
     protected void refreshDisplay() {
         ((RemoteAddeTableModel)remoteTable.getModel()).refreshEntries();
         ((LocalAddeTableModel)localEntries.getModel()).refreshEntries();
-//        boolean anySelected = (remoteTable.getSelectedRowCount() == 0);
-//        editEntryButton.setEnabled(anySelected);
-//        removeEntryButton.setEnabled(anySelected);
     }
 
     public void showRemoteEditor() {
-        if (tabbedPane.getSelectedIndex() != 0)
+        if (tabbedPane.getSelectedIndex() != 0) {
             tabbedPane.setSelectedIndex(0);
+        }
         RemoteEntryEditor editor = new RemoteEntryEditor(this, true, this, entryStore);
         editor.setVisible(true);
     }
 
     public void showRemoteEditor(final RemoteAddeEntry entry) {
-        if (tabbedPane.getSelectedIndex() != 0)
+        if (tabbedPane.getSelectedIndex() != 0) {
             tabbedPane.setSelectedIndex(0);
+        }
         RemoteEntryEditor editor = new RemoteEntryEditor(this, true, this, entryStore, entry);
         editor.setVisible(true);
     }
 
-    public void removeRemoteEntry(final RemoteAddeEntry entry) {
-        if (entry == null)
+    public void removeRemoteEntries(final List<RemoteAddeEntry> entries) {
+        if (entries == null) {
             return;
-        boolean success = entryStore.removeEntry(entry);
-        if (success) {
-            int index = ((RemoteAddeTableModel)remoteTable.getModel()).getRowForEntry(entry);
-            if (index >= 0)
-                ((RemoteAddeTableModel)remoteTable.getModel()).fireTableRowsDeleted(index, index);
+        }
+        if (entryStore.removeEntries(entries)) {
+            RemoteAddeTableModel tableModel = ((RemoteAddeTableModel)remoteTable.getModel());
+            int first = Integer.MAX_VALUE;
+            int last = Integer.MIN_VALUE;
+            for (RemoteAddeEntry entry : entries) {
+                int index = tableModel.getRowForEntry(entry);
+                if (index < 0) {
+                    continue;
+                } else {
+                    if (index < first) {
+                        first = index;
+                    }
+                    if (index > last) {
+                        last = index;
+                    }
+                }
+            }
+            tableModel.fireTableRowsDeleted(first, last);
             refreshDisplay();
             remoteTable.revalidate();
+            remoteTable.setRowSelectionInterval(first, first);
         } else {
-            logger.debug("removeRemoteEntry: could not remove {}", entry);
+            logger.debug("removeRemoteEntries: could not remove entries={}", entries);
         }
     }
 
     public void showLocalEditor() {
-        if (tabbedPane.getSelectedIndex() != 1)
+        if (tabbedPane.getSelectedIndex() != 1) {
             tabbedPane.setSelectedIndex(1);
+        }
         LocalEntryEditor editor = new LocalEntryEditor(this, true, this, entryStore);
         editor.setVisible(true);
     }
@@ -203,19 +226,33 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         editor.setVisible(true);
     }
 
-    public void removeLocalEntry(final LocalAddeEntry entry) {
-        if (entry == null)
+    public void removeLocalEntries(final List<LocalAddeEntry> entries) {
+        if (entries == null) {
             return;
-
-        boolean success = entryStore.removeEntry(entry);
-        if (success) {
-            int index = ((LocalAddeTableModel)localEntries.getModel()).getRowForEntry(entry);
-            if (index >= 0)
-                ((LocalAddeTableModel)localEntries.getModel()).fireTableRowsDeleted(index, index);
+        }
+        if (entryStore.removeEntries(entries)) {
+            LocalAddeTableModel tableModel = ((LocalAddeTableModel)localEntries.getModel());
+            int first = Integer.MAX_VALUE;
+            int last = Integer.MIN_VALUE;
+            for (LocalAddeEntry entry : entries) {
+                int index = tableModel.getRowForEntry(entry);
+                if (index < 0) {
+                    continue;
+                } else {
+                    if (index < first) {
+                        first = index;
+                    }
+                    if (index > last) {
+                        last = index;
+                    }
+                }
+            }
+            tableModel.fireTableRowsDeleted(first, last);
             refreshDisplay();
             localEntries.revalidate();
+            localEntries.setRowSelectionInterval(first, first);
         } else {
-            logger.debug("removeLocalEntry: could not remove {}", entry);
+            logger.debug("removeLocalEntries: could not remove entries={}", entries);
         }
     }
 
@@ -308,7 +345,8 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         remoteTable.setRowSelectionAllowed(true);
         remoteTable.getTableHeader().setReorderingAllowed(false);
         remoteScroller.setViewportView(remoteTable);
-        remoteTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+//        remoteTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        remoteTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         remoteTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(final ListSelectionEvent e) {
                 remoteSelectionModelChanged(e);
@@ -316,8 +354,9 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         });
         remoteTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(final java.awt.event.MouseEvent e) {
-                if (e.getClickCount() == 2)
-                    showRemoteEditor(selectedRemoteEntry);
+                if ((e.getClickCount() == 2) && (hasSingleRemoteSelection())) {
+                    showRemoteEditor(getSingleRemoteSelection());
+                }
             }
         });
 
@@ -411,8 +450,9 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         });
         localEntries.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(final java.awt.event.MouseEvent e) {
-                if (e.getClickCount() == 2)
-                    showLocalEditor(selectedLocalEntry);
+                if ((e.getClickCount() == 2) && (hasSingleLocalSelection())) {
+                    showLocalEditor(getSingleLocalSelection());
+                }
             }
         });
 
@@ -559,10 +599,11 @@ public class TabbedAddeManager extends javax.swing.JFrame {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 boolean hasSelection = false;
                 int index = tabbedPane.getSelectedIndex();
-                if (index == 0)
-                    hasSelection = hasRemoteSelection;
-                else
-                    hasSelection = hasLocalSelection;
+                if (index == 0) {
+                    hasSelection = hasRemoteSelection();
+                } else {
+                    hasSelection = hasLocalSelection();
+                }
 
                 editEntryButton.setEnabled(hasSelection);
                 editEntryItem.setEnabled(hasSelection);
@@ -581,55 +622,140 @@ public class TabbedAddeManager extends javax.swing.JFrame {
      * @param e
      */
     private void remoteSelectionModelChanged(final ListSelectionEvent e) {
-        if (e.getValueIsAdjusting())
+        if (e.getValueIsAdjusting()) {
             return;
-
-        hasRemoteSelection = !((ListSelectionModel)e.getSource()).isSelectionEmpty();
-        if (!hasRemoteSelection) {
-            setSelectedRemoteEntry(null);
-        } else {
-            int index = ((ListSelectionModel)e.getSource()).getMinSelectionIndex();
-            RemoteAddeEntry entry = ((RemoteAddeTableModel)remoteTable.getModel()).getEntryAtRow(index);
-            setSelectedRemoteEntry(entry);
         }
-        editEntryButton.setEnabled(hasRemoteSelection);
-        editEntryItem.setEnabled(hasRemoteSelection);
-        removeEntryButton.setEnabled(hasRemoteSelection);
-        removeEntryItem.setEnabled(hasRemoteSelection);
+        ListSelectionModel selModel = (ListSelectionModel)e.getSource();
+//        hasRemoteSelection = !selModel.isSelectionEmpty();
+        List<RemoteAddeEntry> selectedEntries;
+        if (selModel.isSelectionEmpty()) {
+            selectedEntries = Collections.emptyList();
+        } else {
+            int min = selModel.getMinSelectionIndex();
+            int max = selModel.getMaxSelectionIndex();
+            RemoteAddeTableModel tableModel = ((RemoteAddeTableModel)remoteTable.getModel());
+            selectedEntries = arrList();
+            for (int i = min; i <= max; i++) {
+                if (selModel.isSelectedIndex(i)) {
+                    selectedEntries.add(tableModel.getEntryAtRow(i));
+                }
+            }
+        }
+
+        setSelectedRemoteEntries(selectedEntries);
+
+        // the current "edit" dialog doesn't work so well with multiple 
+        // servers/datasets, so only allow the user to edit entries one at a time.
+//        boolean singleSelection = hasSingleRemoteSelection();
+//        editEntryButton.setEnabled(hasRemoteSelection && singleSelection);
+//        editEntryItem.setEnabled(hasRemoteSelection && singleSelection);
+//
+//        removeEntryButton.setEnabled(hasRemoteSelection);
+//        removeEntryItem.setEnabled(hasRemoteSelection);
+        boolean singleSelection = selectedEntries.size() == 1;
+        editEntryButton.setEnabled(singleSelection);
+        editEntryItem.setEnabled(singleSelection);
+
+        boolean hasSelection = !selectedEntries.isEmpty();
+        removeEntryButton.setEnabled(hasSelection);
+        removeEntryItem.setEnabled(hasSelection);
     }
 
     private void localSelectionModelChanged(final ListSelectionEvent e) {
-        if (e.getValueIsAdjusting())
+        if (e.getValueIsAdjusting()) {
             return;
-
-        hasLocalSelection = !((ListSelectionModel)e.getSource()).isSelectionEmpty();
-        if (!hasLocalSelection) {
-            setSelectedLocalEntry(null);
-        } else {
-            int index = ((ListSelectionModel)e.getSource()).getMinSelectionIndex();
-            LocalAddeEntry entry = ((LocalAddeTableModel)localEntries.getModel()).getEntryAtRow(index);
-            setSelectedLocalEntry(entry);
         }
-        editEntryButton.setEnabled(hasLocalSelection);
-        editEntryItem.setEnabled(hasLocalSelection);
-        removeEntryButton.setEnabled(hasLocalSelection);
-        removeEntryItem.setEnabled(hasLocalSelection);
+        ListSelectionModel selModel = (ListSelectionModel)e.getSource();
+//        hasLocalSelection = !selModel.isSelectionEmpty();
+        List<LocalAddeEntry> selectedEntries;
+        if (selModel.isSelectionEmpty()) {
+            selectedEntries = Collections.emptyList();
+        } else {
+            int min = selModel.getMinSelectionIndex();
+            int max = selModel.getMaxSelectionIndex();
+            LocalAddeTableModel tableModel = ((LocalAddeTableModel)localEntries.getModel());
+            selectedEntries = arrList();
+            for (int i = min; i <= max; i++) {
+                if (selModel.isSelectedIndex(i)) {
+                    selectedEntries.add(tableModel.getEntryAtRow(i));
+                }
+            }
+        }
+
+        setSelectedLocalEntries(selectedEntries);
+
+        // the current "edit" dialog doesn't work so well with multiple 
+        // servers/datasets, so only allow the user to edit entries one at a time.
+//        boolean singleSelection = hasSingleLocalSelection();
+//        editEntryButton.setEnabled(hasLocalSelection && singleSelection);
+//        editEntryItem.setEnabled(hasLocalSelection && singleSelection);
+//
+//        removeEntryButton.setEnabled(hasLocalSelection);
+//        removeEntryItem.setEnabled(hasLocalSelection);
+        boolean singleSelection = selectedEntries.size() == 1;
+        editEntryButton.setEnabled(singleSelection);
+        editEntryItem.setEnabled(singleSelection);
+
+        boolean hasSelection = !selectedEntries.isEmpty();
+        removeEntryButton.setEnabled(hasSelection);
+        removeEntryItem.setEnabled(hasSelection);
     }
 
-    private void setSelectedRemoteEntry(final RemoteAddeEntry e) {
-        selectedRemoteEntry = e;
+    private boolean hasRemoteSelection() {
+        return !selectedRemoteEntries.isEmpty();
+    }
+    private boolean hasLocalSelection() {
+        return !selectedLocalEntries.isEmpty();
+    }
+    
+    private boolean hasSingleRemoteSelection() {
+        return selectedRemoteEntries.size() == 1;
     }
 
-    private RemoteAddeEntry getSelectedRemoteEntry() {
-        return selectedRemoteEntry;
+    private boolean hasSingleLocalSelection() {
+        return selectedLocalEntries.size() == 1;
     }
 
-    private void setSelectedLocalEntry(final LocalAddeEntry e) {
-        selectedLocalEntry = e;
+    private RemoteAddeEntry getSingleRemoteSelection() {
+        if (selectedRemoteEntries.isEmpty() || !hasSingleRemoteSelection()) {
+            return RemoteAddeEntry.INVALID_ENTRY;
+        } else {
+            return selectedRemoteEntries.get(0);
+        }
     }
 
-    private LocalAddeEntry getSelectedLocalEntry() {
-        return selectedLocalEntry;
+    private LocalAddeEntry getSingleLocalSelection() {
+        if (selectedLocalEntries.isEmpty() || !hasSingleLocalSelection()) {
+            return LocalAddeEntry.INVALID_ENTRY;
+        } else {
+            return selectedLocalEntries.get(0);
+        }
+    }
+
+    private void setSelectedRemoteEntries(final Collection<RemoteAddeEntry> entries) {
+        selectedRemoteEntries.clear();
+        selectedRemoteEntries.addAll(entries);
+    }
+
+    private List<RemoteAddeEntry> getSelectedRemoteEntries() {
+        if (selectedRemoteEntries.isEmpty()) {
+            return Collections.emptyList();
+        } else {
+            return arrList(selectedRemoteEntries);
+        }
+    }
+
+    private void setSelectedLocalEntries(final Collection<LocalAddeEntry> entries) {
+        selectedLocalEntries.clear();
+        selectedLocalEntries.addAll(entries);
+    }
+
+    private List<LocalAddeEntry> getSelectedLocalEntries() {
+        if (selectedLocalEntries.isEmpty()) {
+            return Collections.emptyList();
+        } else {
+            return arrList(selectedLocalEntries);
+        }
     }
 
     private void newEntryButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -667,17 +793,19 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     }
 
     private void editEntryButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        if (tabbedPane.getSelectedIndex() == 0)
-            showRemoteEditor(getSelectedRemoteEntry());
-        else
-            showLocalEditor(getSelectedLocalEntry());
+        if (tabbedPane.getSelectedIndex() == 0) {
+            showRemoteEditor(getSingleRemoteSelection());
+        } else {
+            showLocalEditor(getSingleLocalSelection());
+        }
     }
 
     private void removeEntryButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        if (tabbedPane.getSelectedIndex() == 0)
-            removeRemoteEntry(getSelectedRemoteEntry());
-        else
-            removeLocalEntry(getSelectedLocalEntry());
+        if (tabbedPane.getSelectedIndex() == 0) {
+            removeRemoteEntries(getSelectedRemoteEntries());
+        } else {
+            removeLocalEntries(getSelectedLocalEntries());
+        }
     }
 
     // TODO(jon): this needs to remember the directory (and if sensible the filename)
@@ -754,7 +882,8 @@ public class TabbedAddeManager extends javax.swing.JFrame {
             return entries.indexOf(entry);
         }
 
-        protected List<RemoteAddeEntry> getSelectedEntries(final int[] rows) {
+
+        protected List<RemoteAddeEntry> getSelectedEntries2(final int[] rows) {
             List<RemoteAddeEntry> selected = arrList();
             int rowCount = entries.size();
             for (int i = 0; i < rows.length; i++) {
