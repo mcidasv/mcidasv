@@ -1026,6 +1026,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
              dataSelection.putProperty(PROP_SIZE, (nlins + " " + neles));
          }
          dataChoice.setDataSelection(dataSelection);
+         this.dataSource.setDataSelection(dataSelection);
       }
 
     public GeoLocationInfo getGeoLocationInfo() {
