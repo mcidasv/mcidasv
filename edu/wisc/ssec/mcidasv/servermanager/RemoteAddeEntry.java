@@ -132,6 +132,10 @@ public class RemoteAddeEntry implements AddeEntry {
         return entryValidity;
     }
 
+    public void setEntryValidity(final EntryValidity entryValidity) {
+        this.entryValidity = entryValidity;
+    }
+
     /**
      * @return {@link #entrySource}
      */

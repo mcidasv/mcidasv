@@ -55,6 +55,8 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import ucar.unidata.idv.IdvResourceManager;
@@ -407,7 +409,7 @@ public class EntryTransforms {
     }
 
     // TODO(jon): re-add verify flag?
-    protected static Set<RemoteAddeEntry> extractMctableEntries(final String path) {
+    protected static Set<RemoteAddeEntry> extractMctableEntries(final String path, final String username, final String project) {
         Set<RemoteAddeEntry> entries = newLinkedHashSet();
 
         try {
@@ -456,7 +458,7 @@ public class EntryTransforms {
             if (validFile) {
                 Map<String, String> datasetsToIp = mapDatasetsToIp(datasetToHost, hostToIp);
                 Map<String, String> ipToName = mapIpToName(hosts);
-                List<RemoteAddeEntry> l = mapDatasetsToName(datasetsToIp, ipToName);
+                List<RemoteAddeEntry> l = mapDatasetsToName(datasetsToIp, ipToName, username, project);
                 entries.addAll(l);
             } else {
                 entries = Collections.emptySet();
@@ -478,23 +480,33 @@ public class EntryTransforms {
      * 
      * @param datasetToHost {@code Map} of ADDE groups to host names.
      * @param hostToIp {@code Map} of host names to IP addresses.
+     * @param username
+     * @param project
      * 
      * @return
      */
     private static List<RemoteAddeEntry> mapDatasetsToName(
-        final Map<String, String> datasetToHost, final Map<String, String> hostToIp) 
+        final Map<String, String> datasetToHost, final Map<String, String> hostToIp, final String username, final String project) 
     {
+        boolean defaultAcct = false;
+        AddeAccount defAcct = AddeEntry.DEFAULT_ACCOUNT;
+        if (defAcct.getUsername().equalsIgnoreCase(username) && defAcct.getProject().equals(project)) {
+            defaultAcct = true;
+        }
         List<RemoteAddeEntry> entries = arrList();
-        for(Entry<String, String> entry : datasetToHost.entrySet()) {
+        for (Entry<String, String> entry : datasetToHost.entrySet()) {
             String dataset = entry.getKey();
             String ip = entry.getValue();
             String name = ip;
-            if (hostToIp.containsKey(ip))
+            if (hostToIp.containsKey(ip)) {
                 name = hostToIp.get(ip);
-
-            RemoteAddeEntry e = new RemoteAddeEntry.Builder(name, dataset)
-                                    .source(EntrySource.MCTABLE).build();
-            entries.add(e);
+            }
+            RemoteAddeEntry.Builder builder = new RemoteAddeEntry.Builder(name, dataset)
+                                                  .source(EntrySource.MCTABLE);
+            if (!defaultAcct) {
+                builder.account(username, project);
+            }
+            entries.add(builder.build());
         }
         return entries;
     }

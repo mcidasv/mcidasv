@@ -101,10 +101,13 @@ public interface AddeEntry {
     /** Sort of a {@literal "misc"} status field... */
     public enum EntryValidity {
         /** Entry has been verified by connecting to the server. */
-        VERIFIED, 
+        VERIFIED,
 
         /** Unknown whether or not this entry actually works. */
-        UNVERIFIED, 
+        UNVERIFIED,
+
+        /** Entry is being checked for validity. */
+        VALIDATING,
 
         /** 
          * User has elected to remove this entry. This is an unfortunate 

@@ -30,6 +30,7 @@
 package edu.wisc.ssec.mcidasv.servermanager;
 
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 import static edu.wisc.ssec.mcidasv.util.Contract.notNull;
 
 import java.io.File;
@@ -37,10 +38,17 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import java_cup.internal_error;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -57,7 +65,9 @@ import org.slf4j.LoggerFactory;
 import ucar.unidata.util.LogUtil;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
 import edu.wisc.ssec.mcidasv.servermanager.AddeThread.McservEvent;
+import edu.wisc.ssec.mcidasv.servermanager.RemoteEntryEditor.AddeStatus;
 import edu.wisc.ssec.mcidasv.util.McVTextField.Prompt;
 
 /**
@@ -215,7 +225,9 @@ public class TabbedAddeManager extends javax.swing.JFrame {
             tableModel.fireTableRowsDeleted(first, last);
             refreshDisplay();
             remoteTable.revalidate();
-            remoteTable.setRowSelectionInterval(first, first);
+            if (first < remoteTable.getRowCount()) {
+                remoteTable.setRowSelectionInterval(first, first);
+            }
         } else {
             logger.debug("removeRemoteEntries: could not remove entries={}", entries);
         }
@@ -266,8 +278,8 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         }
     }
 
-    public void importMctable(final String path) {
-        Set<RemoteAddeEntry> imported = EntryTransforms.extractMctableEntries(path);
+    public void importMctable(final String path, final String username, final String project) {
+        final Set<RemoteAddeEntry> imported = EntryTransforms.extractMctableEntries(path, username, project);
         if (imported == Collections.EMPTY_SET) {
             LogUtil.userErrorMessage("Selection does not appear to a valid MCTABLE.TXT file:\n"+path);
         } else {
@@ -275,6 +287,13 @@ public class TabbedAddeManager extends javax.swing.JFrame {
             entryStore.addEntries(imported);
             refreshDisplay();
             repaint();
+            Runnable r = new Runnable() {
+                public void run() {
+                    checkDatasets(imported);
+                }
+            };
+            Thread t = new Thread(r);
+            t.start();
         }
     }
 
@@ -867,7 +886,18 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         if (ret == JFileChooser.APPROVE_OPTION) {
             File f = fc.getSelectedFile();
             String path = f.getPath();
-            importMctable(path);
+
+            String forceUser = importUser.getText();
+            if (forceUser.length() == 0) {
+                forceUser = AddeEntry.DEFAULT_ACCOUNT.getUsername();
+            }
+
+            String forceProj = importProject.getText();
+            if (forceProj.length() == 0) {
+                forceProj = AddeEntry.DEFAULT_ACCOUNT.getProject();
+            }
+
+            importMctable(path, forceUser, forceProj);
             // don't worry about file validity; i'll just assume the user clicked
             // on the wrong entry by accident.
             setLastImportPath(f.getParent());
@@ -921,6 +951,70 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         }
         mcv.getObjectStore().put(LAST_TAB, okayIndex);
         mcv.getObjectStore().saveIfNeeded();
+    }
+    private final int POOL = 2;
+    public Set<RemoteAddeEntry> checkDatasets(final Collection<RemoteAddeEntry> entries) {
+        notNull(entries, "can't check a null collection of entries");
+        if (entries.isEmpty()) {
+            return Collections.emptySet();
+        }
+
+        Set<RemoteAddeEntry> valid = newLinkedHashSet();
+        ExecutorService exec = Executors.newFixedThreadPool(POOL);
+        CompletionService<RemoteAddeEntry> ecs = new ExecutorCompletionService<RemoteAddeEntry>(exec);
+        
+        final RemoteAddeTableModel tableModel = (RemoteAddeTableModel)remoteTable.getModel();
+        
+        for (RemoteAddeEntry entry : entries) {
+            entry.setEntryValidity(EntryValidity.VALIDATING);
+            logger.trace("checkDatasets: submitting entry={}", entry);
+            ecs.submit(new CheckEntryTask(entry));
+            final int row = tableModel.getRowForEntry(entry);
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    tableModel.fireTableRowsUpdated(row, row);
+                }
+            });
+        }
+
+        try {
+        for (int i = 0; i < entries.size(); i++) {
+            RemoteAddeEntry checkedEntry = ecs.take().get();
+            logger.trace("checkDatasets: removing entry={}", checkedEntry);
+            final int row = tableModel.getRowForEntry(checkedEntry);
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    tableModel.fireTableRowsUpdated(row, row);
+                }
+            });
+            if (checkedEntry.getEntryValidity() == EntryValidity.VERIFIED) {
+                valid.add(checkedEntry);
+            }
+        }
+        } catch (InterruptedException e) {
+            LogUtil.logException("Interrupted while validating entries", e);
+        } catch (ExecutionException e) {
+            LogUtil.logException("ADDE validation execution error", e);
+        } finally {
+            exec.shutdown();
+        }
+        return valid;
+    }
+
+    private class CheckEntryTask implements Callable<RemoteAddeEntry> {
+        private final RemoteAddeEntry entry;
+        public CheckEntryTask(final RemoteAddeEntry entry) {
+            notNull(entry);
+            this.entry = entry;
+        }
+        public RemoteAddeEntry call() {
+            AddeStatus status = RemoteEntryEditor.checkEntry(entry);
+            switch (status) {
+                case OK: entry.setEntryValidity(EntryValidity.VERIFIED); break;
+                default: entry.setEntryValidity(EntryValidity.INVALID); break;
+            }
+            return entry;
+        }
     }
 
     private static class RemoteAddeTableModel extends AbstractTableModel {
@@ -1020,7 +1114,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
 
         private static String formattedAccounting(final RemoteAddeEntry entry) {
             AddeAccount acct = entry.getAccount();
-            if (acct == RemoteAddeEntry.DEFAULT_ACCOUNT) {
+            if (acct == AddeEntry.DEFAULT_ACCOUNT) {
                 return "public dataset";
             }
             return acct.friendlyString();

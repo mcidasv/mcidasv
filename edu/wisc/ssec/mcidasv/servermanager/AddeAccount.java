@@ -50,11 +50,12 @@ public class AddeAccount {
      * {@code null}.
      */
     public AddeAccount(final String user, final String proj) {
-        if (user == null)
+        if (user == null) {
             throw new NullPointerException();
-        if (proj == null)
+        }
+        if (proj == null) {
             throw new NullPointerException();
-
+        }
         username = user;
         project = proj;
     }
