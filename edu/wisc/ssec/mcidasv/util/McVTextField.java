@@ -30,15 +30,26 @@
 
 package edu.wisc.ssec.mcidasv.util;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import javax.swing.InputVerifier;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.JTextComponent;
 import javax.swing.text.PlainDocument;
 
 /**
@@ -333,5 +344,115 @@ public class McVTextField extends JTextField {
 			hasPatterns = true;
 		}
 		
+	}
+
+	public static class Prompt extends JLabel implements FocusListener, DocumentListener {
+
+	    public enum FocusBehavior { ALWAYS, FOCUS_GAINED, FOCUS_LOST };
+
+	    private final JTextComponent component;
+
+	    private final Document document;
+
+	    private FocusBehavior focus;
+
+	    private boolean showPromptOnce;
+
+	    private int focusLost;
+
+	    public Prompt(final JTextComponent component, final String text) {
+	        this(component, FocusBehavior.FOCUS_LOST, text);
+	    }
+
+	    public Prompt(final JTextComponent component, final FocusBehavior focusBehavior, final String text) {
+	        this.component = component;
+	        setFocusBehavior(focusBehavior);
+
+	        document = component.getDocument();
+
+	        setText(text);
+	        setFont(component.getFont());
+	        setForeground(component.getForeground());
+	        setHorizontalAlignment(JLabel.LEADING);
+	        setEnabled(false);
+
+	        component.addFocusListener(this);
+	        document.addDocumentListener(this);
+
+	        component.setLayout(new BorderLayout());
+	        component.add(this);
+	        checkForPrompt();
+	    }
+
+	    public FocusBehavior getFocusBehavior() {
+	        return focus;
+	    }
+
+	    public void setFocusBehavior(final FocusBehavior focus) {
+	        this.focus = focus;
+	    }
+
+	    public boolean getShowPromptOnce() {
+	        return showPromptOnce;
+	    }
+
+	    public void setShowPromptOnce(final boolean showPromptOnce) {
+	        this.showPromptOnce = showPromptOnce;
+	    }
+
+	    /**
+	     * Check whether the prompt should be visible or not. The visibility
+	     * will change on updates to the Document and on focus changes.
+	     */
+	    private void checkForPrompt() {
+	        // text has been entered, remove the prompt
+	        if (document.getLength() > 0) {
+	            setVisible(false);
+	            return;
+	        }
+
+	        // prompt has already been shown once, remove it
+	        if (showPromptOnce && focusLost > 0) {
+	            setVisible(false);
+	            return;
+	        }
+
+	        // check the behavior property and component focus to determine if the
+	        // prompt should be displayed.
+	        if (component.hasFocus()) {
+	            if (focus == FocusBehavior.ALWAYS || focus == FocusBehavior.FOCUS_GAINED) {
+	                setVisible(true);
+	            } else {
+	                setVisible(false);
+	            }
+	        } else {
+	            if (focus == FocusBehavior.ALWAYS || focus == FocusBehavior.FOCUS_LOST) {
+	                setVisible( true);
+	            } else {
+	                setVisible(false);
+	            }
+	        }
+	    }
+
+	    // from FocusListener
+	    public void focusGained(FocusEvent e) {
+	        checkForPrompt();
+	    }
+
+	    public void focusLost(FocusEvent e) {
+	        focusLost++;
+	        checkForPrompt();
+	    }
+
+	    // from DocumentListener
+	    public void insertUpdate(DocumentEvent e) {
+	        checkForPrompt();
+	    }
+
+	    public void removeUpdate(DocumentEvent e) {
+	        checkForPrompt();
+	    }
+
+	    public void changedUpdate(DocumentEvent e) {}
 	}
 }

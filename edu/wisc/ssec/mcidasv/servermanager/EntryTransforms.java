@@ -46,6 +46,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -424,6 +425,7 @@ public class EntryTransforms {
             hosts.put("LOCAL-DATA", blah);
             hostToIp.put("LOCAL-DATA", "LOCAL-DATA");
 
+            boolean validFile = false;
             while ((line = reader.readLine()) != null) {
                 routeMatcher.reset(line);
                 hostMatcher.reset(line);
@@ -432,6 +434,7 @@ public class EntryTransforms {
                     String dataset = routeMatcher.group(1);
                     String host = routeMatcher.group(2).toLowerCase();
                     datasetToHost.put(dataset, host);
+                    validFile = true;
                 }
                 else if (hostMatcher.find()) {
                     String name = hostMatcher.group(1).toLowerCase();
@@ -446,13 +449,18 @@ public class EntryTransforms {
 
                     hostToIp.put(name, ip);
                     hostToIp.put(ip, ip); // HACK :(
+                    validFile = true;
                 }
             }
 
-            Map<String, String> datasetsToIp = mapDatasetsToIp(datasetToHost, hostToIp);
-            Map<String, String> ipToName = mapIpToName(hosts);
-            List<RemoteAddeEntry> l = mapDatasetsToName(datasetsToIp, ipToName);
-            entries.addAll(l);
+            if (validFile) {
+                Map<String, String> datasetsToIp = mapDatasetsToIp(datasetToHost, hostToIp);
+                Map<String, String> ipToName = mapIpToName(hosts);
+                List<RemoteAddeEntry> l = mapDatasetsToName(datasetsToIp, ipToName);
+                entries.addAll(l);
+            } else {
+                entries = Collections.emptySet();
+            }
             is.close();
         } catch (IOException e) {
             LogUtil.logException("Reading file: "+path, e);
@@ -548,13 +556,15 @@ public class EntryTransforms {
             String line = null;
             while ((line = br.readLine()) != null) {
                 line = line.trim();
-                if (line.length() == 0)
+                if (line.length() == 0) {
                     continue;
+                }
                 servers.add(readResolvLine(line));
             }
         } finally {
-            if (br != null)
+            if (br != null) {
                 br.close();
+            }
         }
         return servers;
     }

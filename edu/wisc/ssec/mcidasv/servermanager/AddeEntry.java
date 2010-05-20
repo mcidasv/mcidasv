@@ -30,6 +30,8 @@
 
 package edu.wisc.ssec.mcidasv.servermanager;
 
+import edu.wisc.ssec.mcidasv.annotations.PersistableEnum;
+
 /**
  * Represents a source of ADDE data. An ADDE entry may describe a dataset on
  * remote servers or the user's own machine.
@@ -37,6 +39,7 @@ package edu.wisc.ssec.mcidasv.servermanager;
 public interface AddeEntry {
 
     /** Represents the possible actions that an ADDE editor can perform. */
+    @PersistableEnum
     public enum EditorAction {
         /** Created a new entry; hasn't been verified. */
         ADDED,
@@ -57,10 +60,11 @@ public interface AddeEntry {
         EDITED_VERIFIED,
 
         /** Editor GUI performed some {@literal "invalid"} action. */
-        INVALID
+        INVALID;
     };
 
     /** Type of chooser this should appear under. */
+    
     public enum EntryType {
         /** {@link edu.wisc.ssec.mcidasv.chooser.adde.AddeImageChooser} */
         IMAGE,
@@ -84,9 +88,16 @@ public interface AddeEntry {
         UNKNOWN,
 
         /** */
-        INVALID
-    };
+        INVALID;
 
+        public static EntryType fromStr(final String str) {
+            return EntryType.valueOf(str);
+        }
+        public static String toStr(final EntryType type) {
+            return type.name();
+        }
+    };
+    
     /** Sort of a {@literal "misc"} status field... */
     public enum EntryValidity {
         /** Entry has been verified by connecting to the server. */
@@ -107,7 +118,14 @@ public interface AddeEntry {
         DELETED,
 
         /** Entry is invalid in some way. */
-        INVALID
+        INVALID;
+
+        public static EntryValidity fromStr(final String str) {
+            return EntryValidity.valueOf(str);
+        }
+        public static String toStr(final EntryValidity validity) {
+            return validity.name();
+        }
     };
 
     /** Where did this entry come from? */
@@ -126,7 +144,14 @@ public interface AddeEntry {
          * invalid entry objects ({@link RemoteAddeEntry#INVALID_ENTRY} and 
          * {@link LocalAddeEntry#INVALID_ENTRY}).
          */
-        INVALID
+        INVALID;
+        
+        public static EntrySource fromStr(final String str) {
+            return EntrySource.valueOf(str);
+        }
+        public static String toStr(final EntrySource source) {
+            return source.name();
+        }
     };
 
     /** 
@@ -141,7 +166,15 @@ public interface AddeEntry {
         DISABLED,
 
         /** Something is wrong with this entry. */
-        INVALID
+        INVALID;
+
+        public static EntryStatus fromStr(final String str) {
+            return EntryStatus.valueOf(str);
+        }
+
+        public static String toStr(final EntryType type) {
+            return type.name();
+        }
     };
 
     /** Represents the {@literal "no accounting"} entries. */

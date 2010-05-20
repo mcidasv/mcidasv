@@ -30,14 +30,18 @@
 package edu.wisc.ssec.mcidasv.servermanager;
 
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
-import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
+import static edu.wisc.ssec.mcidasv.util.Contract.notNull;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.BoxLayout;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -46,12 +50,15 @@ import javax.swing.table.AbstractTableModel;
 
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.EventSubscriber;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ucar.unidata.util.LogUtil;
+
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.servermanager.AddeThread.McservEvent;
-import edu.wisc.ssec.mcidasv.util.Contract;
+import edu.wisc.ssec.mcidasv.util.McVTextField.Prompt;
 
 /**
  * This class is the GUI frontend to {@link EntryStore} (the server manager).
@@ -62,6 +69,9 @@ import edu.wisc.ssec.mcidasv.util.Contract;
 // TODO(jon): finish up the javadocs.
 @SuppressWarnings("serial")
 public class TabbedAddeManager extends javax.swing.JFrame {
+
+    /** Pretty typical logger object. */
+    private final static Logger logger = LoggerFactory.getLogger(TabbedAddeManager.class);
 
     /** Path to the help resources. */
     private static final String HELP_TOP_DIR = "/docs/userguide";
@@ -75,8 +85,8 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     /** ID used to save/restore the last visible tab between sessions. */
     private static final String LAST_TAB = "mcv.adde.lasttab";
 
-    /** Pretty typical logger object. */
-    final static Logger logger = LoggerFactory.getLogger(TabbedAddeManager.class);
+    /** ID used to save/restore the last directory that contained a MCTABLE.TXT. */
+    private static final String LAST_IMPORTED = "mcv.adde.lastmctabledir";
 
     /**
      * These are the various {@literal "events"} that the server manager GUI
@@ -127,7 +137,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
      * @throws NullPointerException if {@code entryStore} is {@code null}.
      */
     public TabbedAddeManager(final EntryStore entryStore) {
-        Contract.notNull(entryStore, "Cannot pass a null server manager");
+        notNull(entryStore, "Cannot pass a null server manager");
         this.entryStore = entryStore;
         this.selectedLocalEntries = arrList();
         this.selectedRemoteEntries = arrList();
@@ -258,9 +268,14 @@ public class TabbedAddeManager extends javax.swing.JFrame {
 
     public void importMctable(final String path) {
         Set<RemoteAddeEntry> imported = EntryTransforms.extractMctableEntries(path);
-        entryStore.addEntries(imported);
-        refreshDisplay();
-        repaint();
+        if (imported == Collections.EMPTY_SET) {
+            LogUtil.userErrorMessage("Selection does not appear to a valid MCTABLE.TXT file:\n"+path);
+        } else {
+            // verify entries first!
+            entryStore.addEntries(imported);
+            refreshDisplay();
+            repaint();
+        }
     }
 
     public void restartLocalServer() {
@@ -345,7 +360,6 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         remoteTable.setRowSelectionAllowed(true);
         remoteTable.getTableHeader().setReorderingAllowed(false);
         remoteScroller.setViewportView(remoteTable);
-//        remoteTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         remoteTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         remoteTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(final ListSelectionEvent e) {
@@ -618,7 +632,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
 
     /**
      * I respond to events! Yyyyaaaaaaayyyyyy!!!!
-     * nasd
+     * 
      * @param e
      */
     private void remoteSelectionModelChanged(final ListSelectionEvent e) {
@@ -626,7 +640,6 @@ public class TabbedAddeManager extends javax.swing.JFrame {
             return;
         }
         ListSelectionModel selModel = (ListSelectionModel)e.getSource();
-//        hasRemoteSelection = !selModel.isSelectionEmpty();
         List<RemoteAddeEntry> selectedEntries;
         if (selModel.isSelectionEmpty()) {
             selectedEntries = Collections.emptyList();
@@ -646,12 +659,6 @@ public class TabbedAddeManager extends javax.swing.JFrame {
 
         // the current "edit" dialog doesn't work so well with multiple 
         // servers/datasets, so only allow the user to edit entries one at a time.
-//        boolean singleSelection = hasSingleRemoteSelection();
-//        editEntryButton.setEnabled(hasRemoteSelection && singleSelection);
-//        editEntryItem.setEnabled(hasRemoteSelection && singleSelection);
-//
-//        removeEntryButton.setEnabled(hasRemoteSelection);
-//        removeEntryItem.setEnabled(hasRemoteSelection);
         boolean singleSelection = selectedEntries.size() == 1;
         editEntryButton.setEnabled(singleSelection);
         editEntryItem.setEnabled(singleSelection);
@@ -666,7 +673,6 @@ public class TabbedAddeManager extends javax.swing.JFrame {
             return;
         }
         ListSelectionModel selModel = (ListSelectionModel)e.getSource();
-//        hasLocalSelection = !selModel.isSelectionEmpty();
         List<LocalAddeEntry> selectedEntries;
         if (selModel.isSelectionEmpty()) {
             selectedEntries = Collections.emptyList();
@@ -686,13 +692,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
 
         // the current "edit" dialog doesn't work so well with multiple 
         // servers/datasets, so only allow the user to edit entries one at a time.
-//        boolean singleSelection = hasSingleLocalSelection();
-//        editEntryButton.setEnabled(hasLocalSelection && singleSelection);
-//        editEntryItem.setEnabled(hasLocalSelection && singleSelection);
-//
-//        removeEntryButton.setEnabled(hasLocalSelection);
-//        removeEntryItem.setEnabled(hasLocalSelection);
-        boolean singleSelection = selectedEntries.size() == 1;
+        boolean singleSelection = (selectedEntries.size() == 1);
         editEntryButton.setEnabled(singleSelection);
         editEntryItem.setEnabled(singleSelection);
 
@@ -709,27 +709,27 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     }
     
     private boolean hasSingleRemoteSelection() {
-        return selectedRemoteEntries.size() == 1;
+        return (selectedRemoteEntries.size() == 1);
     }
 
     private boolean hasSingleLocalSelection() {
-        return selectedLocalEntries.size() == 1;
+        return (selectedLocalEntries.size() == 1);
     }
 
     private RemoteAddeEntry getSingleRemoteSelection() {
-        if (selectedRemoteEntries.isEmpty() || !hasSingleRemoteSelection()) {
-            return RemoteAddeEntry.INVALID_ENTRY;
-        } else {
-            return selectedRemoteEntries.get(0);
+        RemoteAddeEntry entry = RemoteAddeEntry.INVALID_ENTRY;
+        if (selectedRemoteEntries.size() == 1) {
+            entry = selectedRemoteEntries.get(0);
         }
+        return entry;
     }
 
     private LocalAddeEntry getSingleLocalSelection() {
-        if (selectedLocalEntries.isEmpty() || !hasSingleLocalSelection()) {
-            return LocalAddeEntry.INVALID_ENTRY;
-        } else {
-            return selectedLocalEntries.get(0);
+        LocalAddeEntry entry = LocalAddeEntry.INVALID_ENTRY;
+        if (selectedLocalEntries.size() == 1) {
+            entry = selectedLocalEntries.get(0);
         }
+        return entry;
     }
 
     private void setSelectedRemoteEntries(final Collection<RemoteAddeEntry> entries) {
@@ -808,19 +808,93 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         }
     }
 
-    // TODO(jon): this needs to remember the directory (and if sensible the filename)
+    private JPanel makeFileChooserAccessory() {
+        JPanel accessory = new JPanel();
+        accessory.setLayout(new BoxLayout(accessory, BoxLayout.PAGE_AXIS));
+        importAccountBox = new javax.swing.JCheckBox("Use ADDE Accounting?");
+        importAccountBox.setSelected(false);
+        importAccountBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                boolean selected = importAccountBox.isSelected();
+                importUser.setEnabled(selected);
+                importProject.setEnabled(selected);
+            }
+        });
+        String clientProp = "JComponent.sizeVariant";
+        String propVal = "mini";
+
+        importUser = new javax.swing.JTextField();
+        importUser.putClientProperty(clientProp, propVal);
+        Prompt userPrompt = new Prompt(importUser, "Username");
+        userPrompt.putClientProperty(clientProp, propVal);
+        importUser.setEnabled(importAccountBox.isSelected());
+
+        importProject = new javax.swing.JTextField();
+        Prompt projPrompt = new Prompt(importProject, "Project Number");
+        projPrompt.putClientProperty(clientProp, propVal);
+        importProject.putClientProperty(clientProp, propVal);
+        importProject.setEnabled(importAccountBox.isSelected());
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(accessory);
+        accessory.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(importAccountBox)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(importProject, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(importUser, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(importAccountBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(importUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(importProject, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(55, Short.MAX_VALUE))
+        );
+        return accessory;
+    }
+
     private void importButtonActionPerformed(java.awt.event.ActionEvent evt) {
-//        // launch file picker
-//        // get path from file picker
-//        String path = "";
-//        importMctable(path);
-        JFileChooser fc = new JFileChooser();
+        JFileChooser fc = new JFileChooser(getLastImportPath());
+        fc.setAccessory(makeFileChooserAccessory());
         fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         int ret = fc.showOpenDialog(TabbedAddeManager.this);
         if (ret == JFileChooser.APPROVE_OPTION) {
-            importMctable(fc.getSelectedFile().getPath());
-        } else {
-            logger.debug("import mctable: no selection");
+            File f = fc.getSelectedFile();
+            String path = f.getPath();
+            importMctable(path);
+            // don't worry about file validity; i'll just assume the user clicked
+            // on the wrong entry by accident.
+            setLastImportPath(f.getParent());
+        }
+    }
+
+    /**
+     * Returns the directory that contained the most recently imported MCTABLE.TXT.
+     */
+    private String getLastImportPath() {
+        String path = "";
+        McIDASV mcv = McIDASV.getStaticMcv();
+        if (mcv != null) {
+            path = mcv.getObjectStore().get(LAST_IMPORTED, "");
+        }
+        return path;
+    }
+
+    /**
+     * Saves the directory that contained the most recently imported MCTABLE.TXT.
+     */
+    private void setLastImportPath(final String path) {
+        String okayPath = (path == null) ? "" : path;
+        McIDASV mcv = McIDASV.getStaticMcv();
+        if (mcv != null) {
+            mcv.getObjectStore().put(LAST_IMPORTED, okayPath);
+            mcv.getObjectStore().saveIfNeeded();
         }
     }
 
@@ -830,8 +904,9 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     private int getLastTab() {
         int index = 0;
         McIDASV mcv = McIDASV.getStaticMcv();
-        if (mcv != null)
+        if (mcv != null) {
             index = mcv.getObjectStore().get(LAST_TAB, 0);
+        }
         return index;
     }
 
@@ -841,8 +916,9 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     private void setLastTab(final int index) {
         int okayIndex = ((index >= 0) && (index < 2)) ? index : 0;
         McIDASV mcv = McIDASV.getStaticMcv();
-        if (mcv == null)
+        if (mcv == null) {
             return;
+        }
         mcv.getObjectStore().put(LAST_TAB, okayIndex);
         mcv.getObjectStore().saveIfNeeded();
     }
@@ -860,9 +936,13 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         /** {@link EntryStore} used to query and apply changes. */
         private final EntryStore entryStore;
 
+        /**
+         * 
+         * 
+         * @param entryStore
+         */
         public RemoteAddeTableModel(final EntryStore entryStore) {
-            if (entryStore == null)
-                throw new NullPointerException("Cannot query a null EntryStore");
+            notNull(entryStore, "Cannot query a null EntryStore");
             this.entryStore = entryStore;
             entries.addAll(entryStore.getRemoteEntries());
         }
@@ -878,24 +958,18 @@ public class TabbedAddeManager extends javax.swing.JFrame {
             return entries.get(row);
         }
 
+        /**
+         * Returns the index of the given {@code entry}.
+         * 
+         * @see List#indexOf(Object)
+         */
         protected int getRowForEntry(final RemoteAddeEntry entry) {
             return entries.indexOf(entry);
         }
 
-
-        protected List<RemoteAddeEntry> getSelectedEntries2(final int[] rows) {
-            List<RemoteAddeEntry> selected = arrList();
-            int rowCount = entries.size();
-            for (int i = 0; i < rows.length; i++) {
-                int tmpIdx = rows[i];
-                if ((tmpIdx >= 0) && (tmpIdx < rowCount))
-                    selected.add(entries.get(tmpIdx));
-                else
-                    throw new IndexOutOfBoundsException();
-            }
-            return selected;
-        }
-
+        /**
+         * Clears and re-adds all {@link RemoteAddeEntry}s within {@link #entries}. 
+         */
         public void refreshEntries() {
             entries.clear();
             entries.addAll(entryStore.getRemoteEntries());
@@ -930,8 +1004,9 @@ public class TabbedAddeManager extends javax.swing.JFrame {
          */
         @Override public Object getValueAt(int row, int column) {
             RemoteAddeEntry entry = entries.get(row);
-            if (entry == null)
+            if (entry == null) {
                 throw new IndexOutOfBoundsException(); // questionable...
+            }
 
             switch (column) {
                 case 0: return entry.getEntryText();
@@ -945,8 +1020,9 @@ public class TabbedAddeManager extends javax.swing.JFrame {
 
         private static String formattedAccounting(final RemoteAddeEntry entry) {
             AddeAccount acct = entry.getAccount();
-            if (acct == RemoteAddeEntry.DEFAULT_ACCOUNT)
+            if (acct == RemoteAddeEntry.DEFAULT_ACCOUNT) {
                 return "public dataset";
+            }
             return acct.friendlyString();
         }
 
@@ -991,8 +1067,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         private final EntryStore entryStore;
 
         public LocalAddeTableModel(final EntryStore entryStore) {
-            if (entryStore == null)
-                throw new NullPointerException("Cannot query a null EntryStore");
+            notNull(entryStore, "Cannot query a null EntryStore");
             this.entryStore = entryStore;
             entries.addAll(entryStore.getLocalEntries());
         }
@@ -1017,10 +1092,11 @@ public class TabbedAddeManager extends javax.swing.JFrame {
             int rowCount = entries.size();
             for (int i = 0; i < rows.length; i++) {
                 int tmpIdx = rows[i];
-                if ((tmpIdx >= 0) && (tmpIdx < rowCount))
+                if ((tmpIdx >= 0) && (tmpIdx < rowCount)) {
                     selected.add(entries.get(tmpIdx));
-                else
+                } else {
                     throw new IndexOutOfBoundsException();
+                }
             }
             return selected;
         }
@@ -1127,5 +1203,9 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     private javax.swing.JLabel statusLabel;
     private javax.swing.JPanel statusPanel;
     private javax.swing.JTabbedPane tabbedPane;
+    private javax.swing.JCheckBox importAccountBox;
+    private javax.swing.JTextField importUser;
+    private javax.swing.JTextField importProject;
     // End of variables declaration
+    
 }

@@ -209,24 +209,31 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         // determine the "valid" types
         Set<EntryType> enabledTypes = newLinkedHashSet();
         if (!ignoreCheckboxes) {
-            if (imageBox.isSelected())
+            if (imageBox.isSelected()) {
                 enabledTypes.add(EntryType.IMAGE);
-            if (pointBox.isSelected())
+            }
+            if (pointBox.isSelected()) {
                 enabledTypes.add(EntryType.POINT);
-            if (gridBox.isSelected())
+            }
+            if (gridBox.isSelected()) {
                 enabledTypes.add(EntryType.GRID);
-            if (textBox.isSelected())
+            }
+            if (textBox.isSelected()) {
                 enabledTypes.add(EntryType.TEXT);
-            if (navBox.isSelected())
+            }
+            if (navBox.isSelected()) {
                 enabledTypes.add(EntryType.NAV);
-            if (radarBox.isSelected())
+            }
+            if (radarBox.isSelected()) {
                 enabledTypes.add(EntryType.RADAR);
+            }
         } else {
             enabledTypes.addAll(set(EntryType.IMAGE, EntryType.POINT, EntryType.GRID, EntryType.TEXT, EntryType.NAV, EntryType.RADAR));
         }
 
-        if (enabledTypes.isEmpty())
+        if (enabledTypes.isEmpty()) {
             enabledTypes.add(EntryType.UNKNOWN);
+        }
 
         // deal with the user trying to add multiple groups at once (even though this UI doesn't work right with it)
         StringTokenizer tok = new StringTokenizer(dataset, ",");
