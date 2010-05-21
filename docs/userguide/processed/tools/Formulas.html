@@ -30,7 +30,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/Formulas.ht
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Formulas</div>
-McIDAS-V provides techniques to make computations with data sources, and display the results. The simplest technique is using McIDAS-V "formulas" which are named one-line mathematical expressions. The steps for computing and displaying an McIDAS-V formula are
+McIDAS-V provides techniques to make computations with data sources, and display the results. The simplest technique is using McIDAS-V &quot;formulas&quot; which are named one-line mathematical expressions. The steps for computing and displaying an McIDAS-V formula are
 <ul>
 <li>Defining an McIDAS-V formula by name, description, and mathematical formula.</li>
 <li>Saving the formula.</li>
@@ -46,10 +46,10 @@ item. This brings up the <strong>Formula Editor</strong> dialog box used to defi
 actual formula.</p>
 <p>If the formula name matches a name in the main Tools Menu <a href="../ui/Menus.html#tools"><strong>Parameter defaults</strong></a>, then color tables and other settings may be automatically assigned, which may or may not be desirable for you. For example, if you choose a formula named T its displays would get the color tables associated with temperature.</p>
 <p>In the formula itself you can use common mathematical operators much as +, -, * for multiply, / for divide, and ** for power. Other Jython operations such as sqrt(a), max(b), pow(a,b), and sin(c) are available. In the <a href="Jython.html">Jython Methods</a> section of the User Guide you will see how to write complete complete multi-line functions or methods in Jython that you can call in one-line formulas.</p>
-<p>The variable names in the formula definition, such as "NIR" in the figure above, are operands and do <em>not</em> need to exactly match any particular parameter name in any data source; the association is made later, in the parameter selection step.</p>
-<p>Do not use spaces in formula variable names, such as "wind speed." The formula is an expression in the Jython language. Start each variable name with a letter.</p>
+<p>The variable names in the formula definition, such as &quot;NIR&quot; in the figure above, are operands and do <em>not</em> need to exactly match any particular parameter name in any data source; the association is made later, in the parameter selection step.</p>
+<p>Do not use spaces in formula variable names, such as &quot;wind speed.&quot; The formula is an expression in the Jython language. Start each variable name with a letter.</p>
 <p>It is best to use variable names that suggest the parameter data they represent, so that later you can easily remember what the variables should represent. Use names like Temp500m, RelHum_surf, absvort, sst_jan, density, or whatever makes sense to you. If you use a variable names like V1 and V2, then later when the formula requests which real parameter name goes with which variable name you may be puzzled which is which.</p>
-<p>Variable names can have extra "syntactic sugar" attached to them that McIDAS-V uses for a variety of purposes. The "sugar" consists of a set of name/value pairs contained in brackets ("[...]") after the variable name.</p>
+<p>Variable names can have extra &quot;syntactic sugar&quot; attached to them that McIDAS-V uses for a variety of purposes. The &quot;sugar&quot; consists of a set of name/value pairs contained in brackets (&quot;[...]&quot;) after the variable name.</p>
 <p>For example, normally variables are used to select and define data choices. You can also have variables that are simple text input from a user. For example, evaluating the following expression:</p>
 <pre>
    someProcedure(someValue[isuser=true])
@@ -63,7 +63,7 @@ You can specify the types of data that can be selected for a variable with the <
 <pre>
    someProcedure(someDataValue[categories=param:ALTITUDE])
 </pre>
-If you want multiple data categories separate them with a ";":
+If you want multiple data categories separate them with a &quot;;&quot;:
 <pre>
    someProcedure(someDataValue[categories=param:ALTITUDE;param:elevation])
 </pre>
@@ -73,14 +73,14 @@ If you only want to select 3D grids do:
 </pre>
 If you only want to select 3D or 2D grids do:
 <pre>
-   someProcedure(someDataValue[categories=GRID-3D-*;GRID-2D-*"])
+   someProcedure(someDataValue[categories=GRID-3D-*;GRID-2D-*&quot;])
 </pre>
 You can also specify a regular expression pattern that is used to pre-select the first data choice whose description matches the pattern.
 <pre>
    someProcedure(someValue[pattern=some_pattern])
 </pre>
 <p>In the advanced section you can enter a description of the formula, its group or category and you can define what types of displays are applicable for the given formula (the default is to be able to use all displays).</p>
-<p>The group is used to display the formula in the Field Selector window and can be any alphanumeric text including spaces, numbers, and punctuation characters. Hyphens ("-") define sub-categories.</p>
+<p>The group is used to display the formula in the Field Selector window and can be any alphanumeric text including spaces, numbers, and punctuation characters. Hyphens (&quot;-&quot;) define sub-categories.</p>
 <p>To save the formula, click on <strong>Add formula</strong>. A new entry appears in the selector panel. By right clicking on the formula entry in the Field Selector window you can edit the formula. To remove a formula, click on <strong>Remove Formula</strong> in the pull down menu.</p>
 <div class="pagesubtitle">Different data sources and automatic navigation</div>
 McIDAS-V hides much of the computational complexity. You can write a simple formula such as (CT*1.8 + 32.0) - dewptF and McIDAS-V will automatically apply the calculation to every element in large 3D grids referred to as CT and dewptF. No loops over grid points are needed; and you don't even need to know anything about how the grid is defined, mapped on the Earth, or the data format. You can even use different sources for the individual parameters, for example, CT can come from an Eta model output grid and dewptF from your own local weather model. The two grids need hot have the same grid point locations nor the same areal coverage. The results are computed in the area of overlap, on the grid points locations of the first grid. Interpolation is automatically applied where needed.
