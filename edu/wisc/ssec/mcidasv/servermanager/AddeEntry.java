@@ -30,7 +30,6 @@
 
 package edu.wisc.ssec.mcidasv.servermanager;
 
-import edu.wisc.ssec.mcidasv.annotations.PersistableEnum;
 
 /**
  * Represents a source of ADDE data. An ADDE entry may describe a dataset on
@@ -39,7 +38,7 @@ import edu.wisc.ssec.mcidasv.annotations.PersistableEnum;
 public interface AddeEntry {
 
     /** Represents the possible actions that an ADDE editor can perform. */
-    @PersistableEnum
+//    @PersistableEnum
     public enum EditorAction {
         /** Created a new entry; hasn't been verified. */
         ADDED,
