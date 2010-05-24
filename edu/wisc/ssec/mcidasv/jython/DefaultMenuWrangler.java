@@ -253,16 +253,18 @@ public class DefaultMenuWrangler implements MenuWrangler {
         }
 
         @Override public boolean validConsoleState() {
-            if (console == null || console.getTextPane() == null)
+            if (console == null || console.getTextPane() == null) {
                 return false;
+            }
 
             Clipboard clippy =
                 Toolkit.getDefaultToolkit().getSystemClipboard();
             Transferable contents = clippy.getContents(null);
-            if (contents != null)
-                if (contents.isDataFlavorSupported(DataFlavor.stringFlavor))
+            if (contents != null) {
+                if (contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                     return true;
-
+                }
+            }
             return false;
         }
 
@@ -282,8 +284,9 @@ public class DefaultMenuWrangler implements MenuWrangler {
         }
 
         @Override public boolean validConsoleState() {
-            if (console == null || console.getTextPane() == null)
+            if (console == null || console.getTextPane() == null) {
                 return false;
+            }
             return true;
         }
 
@@ -306,8 +309,9 @@ public class DefaultMenuWrangler implements MenuWrangler {
         }
 
         @Override public boolean validConsoleState() {
-            if (console == null || console.getTextPane() == null)
+            if (console == null || console.getTextPane() == null) {
                 return false;
+            }
             return true;
         }
 

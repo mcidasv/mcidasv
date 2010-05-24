@@ -74,8 +74,9 @@ public abstract class ConsoleAction extends TextAction {
     protected Console getSourceConsole(final ActionEvent e) {
         if (console.getTextPane() != e.getSource()) {
             Console other = mapping.get((JTextPane)e.getSource());
-            if (other != null)
+            if (other != null) {
                 return other;
+            }
         }
         return console;
     }

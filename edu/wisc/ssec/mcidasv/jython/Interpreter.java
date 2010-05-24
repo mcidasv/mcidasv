@@ -146,18 +146,22 @@ public class Interpreter extends InteractiveInterpreter {
      */
     public void handleStreams(final Console console, final String command) {
         String output = clearStream(command, stdout);
-        if (output.length() != 0)
-            if (command != null)
+        if (output.length() != 0) {
+            if (command != null) {
                 console.result(output);
-            else
+            } else {
                 console.generatedOutput(output);
+            }
+        }
 
         String error = clearStream(command, stderr);
-        if (error.length() != 0)
-            if (command != null)
+        if (error.length() != 0) {
+            if (command != null) {
                 console.error(error);
-            else
+            } else {
                 console.generatedError(error);
+            }
+        }
     }
 
     /**

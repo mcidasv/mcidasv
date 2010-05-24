@@ -136,6 +136,12 @@
 		<include name="edu/wisc/ssec/mcidasv/Constants.class" />
 		<include name="edu/**/images/mcidasv_logo.gif" />
 	</patternset>
+	
+  <!-- Files that needed by the Jython console JAR. -->
+  <patternset id="jython.includes">
+    <include name="edu/wisc/ssec/mcidasv/util/Contract.class" />
+    <include name="edu/wisc/ssec/mcidasv/jython/**/*.class" />
+  </patternset>
 
 	<!-- Print out some of the setting for this build file -->
 	<target name="info" description="Print various significant property values">
@@ -261,35 +267,23 @@
 		</jar>
 	</target>
 
-	<!-- Build only the jython console -->
-	<target name="build.jython" description="Build only the jython console">
-		<delete failonerror="false">
-			<fileset dir="${jython.dir}" includes="**/*.class" />
-		</delete>
-		<javac classpath="${jython.lib}" debug="${debug.flag}"
-			deprecation="${deprecation.flag}" source="${source.ver}" srcdir="${jython.dir}"
-			target="${target.ver}">
-			<compilerarg value="-Xlint" />
-		</javac>
-	</target>
-
-	<!-- Create the standalone Jython console jar file -->
-	<target name="jar.jython" depends="build.jython"
-		description="Create the standalone Jython console jar file">
-		<mkdir dir="${dist.dir}" />
-		<tstamp prefix="jar" />
-		<jar destfile="${dist.dir}/${jython.jarfile}">
-			<fileset dir="${base.dir}">
-				<include name="edu/wisc/ssec/mcidasv/jython/**/*.class" />
-			</fileset>
-			<manifest>
-				<attribute name="Build-By" value="${user.name}" />
-				<attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
-				<attribute name="Class-Path" value="jython.jar" />
-				<attribute name="Main-Class" value="${jython.class}" />
-			</manifest>
-		</jar>
-	</target>
+  <!-- Create the standalone Jython console jar file -->
+  <target name="jar.jython" depends="build"
+          description="Create the standalone Jython console jar file">
+    <mkdir dir="${dist.dir}" />
+    <tstamp prefix="jar" />
+    <jar destfile="${dist.dir}/${jython.jarfile}">
+      <fileset dir="${base.dir}">
+        <patternset refid="jython.includes" />
+      </fileset>
+      <manifest>
+        <attribute name="Build-By" value="${user.name}" />
+        <attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
+        <attribute name="Class-Path" value="jython.jar ncIdv.jar logback-core-0.9.12.jar logback-classic-0.9.12.jar logback-examples-0.9.12.jar eventbus-1.3.jar" />
+        <attribute name="Main-Class" value="${jython.class}" />
+      </manifest>
+    </jar>
+  </target>
 
   <!-- Jar the base application jar file -->
   <target name="jar.base" description="Jar the base application jar file">
@@ -302,7 +296,6 @@
       <manifest>
         <attribute name="Build-By" value="${user.name}" />
         <attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
-        <!--<attribute name="Class-Path" value="logback-core-0.9.12.jar logback-classic-0.9.12.jar logback-examples-0.9.12.jar idv.jar mcv_userguide.jar swing-layout-1.0.3.jar eventbus-1.3.jar" />-->
         <attribute name="Class-Path" value="${jar.base.classpath}" />
         <attribute name="Main-Class" value="${app.mainclass}" />
       </manifest>

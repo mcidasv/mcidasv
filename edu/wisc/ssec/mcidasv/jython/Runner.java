@@ -30,6 +30,8 @@
 
 package edu.wisc.ssec.mcidasv.jython;
 
+import static edu.wisc.ssec.mcidasv.util.Contract.notNull;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -56,37 +58,55 @@ public class Runner extends Thread {
      * Acts like a global output stream that redirects data to whichever 
      * {@link Console} matches the current thread name.
      */
-    private final OutputStreamDemux STD_OUT = new OutputStreamDemux();
+    private final OutputStreamDemux STD_OUT;
 
     /** 
      * Acts like a global error stream that redirects data to whichever 
      * {@link Console} matches the current thread name.
      */
-    private final OutputStreamDemux STD_ERR = new OutputStreamDemux();
+    private final OutputStreamDemux STD_ERR;
 
     /** Queue of {@link Command}s awaiting execution. */
-    private final BlockingQueue<Command> queue = 
-        new ArrayBlockingQueue<Command>(QUEUE_CAPACITY, true);
+    private final BlockingQueue<Command> queue;
 
+    /** */
     private final Console console;
 
-    private final PySystemState systemState = new PySystemState();
+    /** */
+    private final PySystemState systemState;
 
     /** The Jython interpreter that will actually run the queued commands. */
-    private final Interpreter interpreter = 
-        new Interpreter(systemState, STD_OUT, STD_ERR);
+    private final Interpreter interpreter;
 
     /** Not in use yet. */
     private boolean interrupted = false;
 
+    /**
+     * 
+     * 
+     * @param console
+     */
     public Runner(final Console console) {
         this(console, Collections.<String>emptyList());
     }
 
+    /**
+     * 
+     * 
+     * @param console
+     * @param commands
+     */
     public Runner(final Console console, final List<String> commands) {
+        notNull(console, commands);
         this.console = console;
-        for (String command : commands)
+        this.STD_ERR = new OutputStreamDemux();
+        this.STD_OUT = new OutputStreamDemux();
+        this.queue = new ArrayBlockingQueue<Command>(QUEUE_CAPACITY, true);
+        this.systemState = new PySystemState();
+        this.interpreter = new Interpreter(systemState, STD_OUT, STD_ERR);
+        for (String command : commands) {
             queueLine(command);
+        }
     }
 
     /**

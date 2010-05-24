@@ -30,6 +30,8 @@
 
 package edu.wisc.ssec.mcidasv.jython;
 
+import static edu.wisc.ssec.mcidasv.util.Contract.notNull;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -67,6 +69,8 @@ import org.python.core.PyString;
 import org.python.core.PyStringMap;
 import org.python.core.PyTuple;
 import org.python.util.InteractiveConsole;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // TODO(jon): Console should become an interface. there is no reason people 
 //            should have to deal with the UI stuff when they only want to use
@@ -78,14 +82,16 @@ public class Console implements Runnable, KeyListener {
     /** Color of the Jython text as it is being entered. */
     protected static final Color TXT_NORMAL = Color.BLACK;
 
-    /** Color of text coming from &quot;stdout&quot;. */
+    /** Color of text coming from {@literal "stdout"}. */
     protected static final Color TXT_GOOD = Color.BLUE;
 
     /** Not used just yet... */
     protected static final Color TXT_WARN = Color.ORANGE;
 
-    /** Color of text coming from &quot;stderr&quot;. */
+    /** Color of text coming from {@literal "stderr"}. */
     protected static final Color TXT_ERROR = Color.RED;
+
+    private static final Logger logger = LoggerFactory.getLogger(Console.class);
 
     /** Offset array used when actual offsets cannot be determined. */
     private static final int[] BAD_OFFSETS = { -1, -1 };
@@ -140,8 +146,7 @@ public class Console implements Runnable, KeyListener {
      * @param initialCommands Jython statements to execute.
      */
     public Console(final List<String> initialCommands) {
-        if (initialCommands == null)
-            throw new NullPointerException("List of initial commands cannot be null");
+        notNull(initialCommands, "List of initial commands cannot be null");
         jythonRunner = new Runner(this, initialCommands);
         jythonRunner.start();
         panel = new JPanel(new BorderLayout());
@@ -211,9 +216,11 @@ public class Console implements Runnable, KeyListener {
     // TODO(jon): may not need this one.
     public void ejectObject(final PyObject pyObject) {
         Map<String, PyObject> locals = getLocalNamespace();
-        for (Map.Entry<String, PyObject> entry : locals.entrySet())
-            if (pyObject == entry.getValue())
+        for (Map.Entry<String, PyObject> entry : locals.entrySet()) {
+            if (pyObject == entry.getValue()) {
                 jythonRunner.queueRemoval(entry.getKey());
+            }
+        }
     }
 
     /**
@@ -242,8 +249,9 @@ public class Console implements Runnable, KeyListener {
      * @param text The error message.
      */
     public void error(final String text) {
-        if (getLineText(getLineCount()-1).trim().length() > 0)
+        if (getLineText(getLineCount()-1).trim().length() > 0) {
             insert(TXT_ERROR, "\n");
+        }
         insert(TXT_ERROR, "\n" + text);
     }
 
@@ -251,8 +259,9 @@ public class Console implements Runnable, KeyListener {
      * Shows the normal Jython prompt.
      */
     public void prompt() {
-        if (getLineText(getLineCount()-1).trim().length() > 0)
+        if (getLineText(getLineCount()-1).trim().length() > 0) {
             insert(TXT_NORMAL, "\n");
+        }
         insert(TXT_NORMAL, PS1);
     }
 
@@ -264,8 +273,9 @@ public class Console implements Runnable, KeyListener {
      * @see #generatedError(String)
      */
     public void generatedOutput(final String text) {
-        if (getPromptLength(getLineText(getLineCount()-1)) > 0)
+        if (getPromptLength(getLineText(getLineCount()-1)) > 0) {
             insert(TXT_GOOD, "\n");
+        }
         insert(TXT_GOOD, text);
     }
 
@@ -279,8 +289,9 @@ public class Console implements Runnable, KeyListener {
      * @param text The error message.
      */
     public void generatedError(final String text) {
-        if (getPromptLength(getLineText(getLineCount()-1)) > 0)
+        if (getPromptLength(getLineText(getLineCount()-1)) > 0) {
             insert(TXT_ERROR, "\n"+text);
+        }
         insert(TXT_ERROR, text);
     }
 
@@ -326,8 +337,9 @@ public class Console implements Runnable, KeyListener {
         assert text != null : text;
 
         int position = textPane.getCaretPosition();
-        if (!canInsertAt(position))
+        if (!canInsertAt(position)) {
             return;
+        }
 
         SimpleAttributeSet style = new SimpleAttributeSet();
         style.addAttribute(StyleConstants.Foreground, color);
@@ -352,8 +364,9 @@ public class Console implements Runnable, KeyListener {
     private boolean canInsertAt(final int position) {
         assert position >= 0;
 
-        if (!onLastLine())
+        if (!onLastLine()) {
             return false;
+        }
 
         int lineNumber = getCaretLine();
         String currentLine = getLineText(lineNumber);
@@ -379,9 +392,9 @@ public class Console implements Runnable, KeyListener {
     }
 
     public int[] getLineOffsets(final int lineNumber) {
-        if (lineNumber >= getLineCount())
+        if (lineNumber >= getLineCount()) {
             return BAD_OFFSETS;
-
+        }
         int start = getLineOffsetStart(lineNumber);
         int end = getLineOffsetEnd(lineNumber);
         return new int[] { start, end };
@@ -451,8 +464,9 @@ public class Console implements Runnable, KeyListener {
      */
     public String getLineJython(final int lineNumber) {
         String text = getLineText(lineNumber);
-        if (text == null)
+        if (text == null) {
             return null;
+        }
 
         int start = getPromptLength(text);
 
@@ -468,12 +482,13 @@ public class Console implements Runnable, KeyListener {
      * @return Either the prompt length or zero if there was none.
      */
     public static int getPromptLength(final String line) {
-        if (line.startsWith(PS1))
+        if (line.startsWith(PS1)) {
             return PS1.length();
-        else if (line.startsWith(PS2))
+        } else if (line.startsWith(PS2)) {
             return PS2.length();
-        else
+        } else {
             return 0;
+        }
     }
 
     /**
@@ -486,19 +501,18 @@ public class Console implements Runnable, KeyListener {
      * @throws NullPointerException if the new handler is null.
      */
     public void setCallbackHandler(final ConsoleCallback newHandler) {
-        if (newHandler == null)
-            throw new NullPointerException("Callback handler cannot be null");
-
+        notNull(newHandler, "Callback handler cannot be null");
         jythonRunner.setCallbackHandler(newHandler);
     }
 
     public Set<String> getJythonReferencesTo(final Object obj) {
-        if (obj == null)
-            throw new NullPointerException("Cannot find references to a null object");
+        notNull(obj, "Cannot find references to a null object");
         Set<String> refs = new TreeSet<String>();
-        for (Map.Entry<String, Object> entry : getJavaInstances().entrySet())
-            if (obj == entry.getValue())
+        for (Map.Entry<String, Object> entry : getJavaInstances().entrySet()) {
+            if (obj == entry.getValue()) {
                 refs.add(entry.getKey());
+            }
+        }
         return refs;
     }
 
@@ -510,7 +524,6 @@ public class Console implements Runnable, KeyListener {
      */
     public Map<String, Object> getJavaInstances() {
         Map<String, Object> javaMap = new HashMap<String, Object>();
-
         Map<String, PyObject> locals = getLocalNamespace();
         for (Map.Entry<String, PyObject> entry : locals.entrySet()) {
             PyObject val = entry.getValue();
@@ -518,7 +531,6 @@ public class Console implements Runnable, KeyListener {
                 javaMap.put(entry.getKey(), val.__tojava__(Object.class));
             }
         }
-
         return javaMap;
     }
 
@@ -532,8 +544,9 @@ public class Console implements Runnable, KeyListener {
      */
     public PyObject getJythonObject(final String var) {
         PyStringMap locals = jythonRunner.copyLocals();
-        if (locals == null)
+        if (locals == null) {
             return null;
+        }
         return locals.__finditem__(var);
     }
 
@@ -566,9 +579,7 @@ public class Console implements Runnable, KeyListener {
     public void handleHome() {
         String line = getLineText(getCaretLine());
         int[] offsets = getLineOffsets(getCaretLine());
-
         int linePosition = getPromptLength(line);
-
         textPane.setCaretPosition(offsets[0] + linePosition);
     }
 
@@ -582,30 +593,33 @@ public class Console implements Runnable, KeyListener {
     }
 
     public void handleUp() {
-        System.err.println("handleUp");
+        logger.trace("handleUp");
     }
 
     public void handleDown() {
-        System.err.println("handleDown");
+        logger.trace("handleDown");
     }
 
     // TODO(jon): what about selected regions?
     // TODO(jon): what about multi lines?
     public void handleDelete() {
-        if (!onLastLine())
+        if (!onLastLine()) {
             return;
+        }
 
         String line = getLineText(getCaretLine());
-        if (line == null)
+        if (line == null) {
             return;
+        }
 
         int position = textPane.getCaretPosition();
         int start = getPromptLength(line);
 
         // don't let the user delete parts of PS1 or PS2
         int lineStart = getLineOffsetStart(getCaretLine());
-        if (((position-1)-lineStart) < start)
+        if (((position-1)-lineStart) < start) {
             return;
+        }
 
         try {
             document.remove(position - 1, 1);
@@ -625,13 +639,15 @@ public class Console implements Runnable, KeyListener {
     // replicate the enter block at the end of the document?
     public void handleEnter() {
         String line = getLineJython(getCaretLine());
-        if (line == null)
+        if (line == null) {
             line = "";
+        }
 
-        if (onLastLine())
+        if (onLastLine()) {
             queueLine(line);
-        else
+        } else {
             insert(TXT_NORMAL, line);
+        }
     }
 
     /**
@@ -749,10 +765,12 @@ public class Console implements Runnable, KeyListener {
         public HistoryEntry() {}
 
         public HistoryEntry(final HistoryType type, final String entry) {
-            if (type == null)
+            if (type == null) {
                 throw new NullPointerException("type cannot be null");
-            if (entry == null)
+            }
+            if (entry == null) {
                 throw new NullPointerException("entry cannot be null");
+            }
 
             this.type = type;
             this.entry = entry;
@@ -763,8 +781,9 @@ public class Console implements Runnable, KeyListener {
         }
 
         public void setEntry(final String entry) {
-            if (entry == null)
+            if (entry == null) {
                 throw new NullPointerException("entry cannot be null");
+            }
             this.entry = entry;
         }
 
@@ -773,8 +792,9 @@ public class Console implements Runnable, KeyListener {
         }
 
         public void setType(final HistoryType type) {
-            if (type == null)
+            if (type == null) {
                 throw new NullPointerException("type cannot be null");
+            }
             this.type = type;
         }
 
@@ -798,26 +818,29 @@ public class Console implements Runnable, KeyListener {
         }
 
         private void checkPopup(final MouseEvent e) {
-            if (!e.isPopupTrigger())
+            if (!e.isPopupTrigger()) {
                 return;
-
+            }
             JPopupMenu popup = menuWrangler.buildMenu();
             popup.show(textPane, e.getX(), e.getY());
         }
     }
 
     public static String getUserPath(String[] args) {
-        for (int i = 0; i < args.length; i++)
-            if (args[i].equals("-userpath") && (i+1) < args.length)
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("-userpath") && (i+1) < args.length) {
                 return args[i+1];
+            }
+        }
         return System.getProperty("user.home");
     }
     
     public static void main(String[] args) {
         String os = System.getProperty("os.name");
         String sep = "/";
-        if (os.startsWith("Windows"))
+        if (os.startsWith("Windows")) {
             sep = "\\";
+        }
         String pythonHome = getUserPath(args);
 
         Properties systemProperties = System.getProperties();
