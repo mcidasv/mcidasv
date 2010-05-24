@@ -29,6 +29,8 @@
  */
 package edu.wisc.ssec.mcidasv.util;
 
+import java.util.List;
+
 /**
  * This is a {@literal "convenience"} class--use these methods to reduce 
  * boilerplate parameter verification. For example:
@@ -102,6 +104,15 @@ public final class Contract {
         return object;
     }
 
+    public static <T> List<T> noNulls(String message, T... objects) {
+        for (T object : objects) {
+            if (object == null) {
+                throw new NullPointerException(message);
+            }
+        }
+        return CollectionHelpers.list(objects);
+    }
+
     /**
      * Ensures the {@literal "truth"} of an expression involving parameters 
      * passed to the calling method.
@@ -151,5 +162,21 @@ public final class Contract {
         }
     }
 
-//    public static void instanceOf() 
+    public static void instanceOf(Object object, Class<?> clazz) {
+        if (!clazz.isInstance(object)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public static void instanceOf(Object message, Object object, Class<?> clazz) {
+        if (!clazz.isInstance(object)) {
+            throw new IllegalArgumentException(String.valueOf(message));
+        }
+    }
+
+    public static boolean isInstanceOf(Object object, Class<?> clazz) {
+        notNull(object);
+        notNull(clazz);
+        return clazz.isInstance(object);
+    }
 }
