@@ -37,6 +37,8 @@ import static javax.swing.GroupLayout.Alignment.TRAILING;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
+import static edu.wisc.ssec.mcidasv.util.Contract.checkArg;
+import static edu.wisc.ssec.mcidasv.util.Contract.notNull;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newMap;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.set;
@@ -256,6 +258,15 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         return entries;
     }
 
+    private void disposeDisplayable(final boolean refreshManager) {
+        if (isDisplayable()) {
+            dispose();
+        }
+        if (refreshManager && managerController != null) {
+            managerController.refreshDisplay();
+        }
+    }
+
     /**
      * Creates new {@link RemoteAddeEntry}s based upon the contents of the dialog
      * and adds {@literal "them"} to the managed servers. If the dialog is
@@ -265,10 +276,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     private void addEntry() {
         Set<RemoteAddeEntry> addedEntries = pollWidgets(false);
         entryStore.addEntries(addedEntries);
-        if (isDisplayable())
-            dispose();
-        if (managerController != null)
-            managerController.refreshDisplay();
+        disposeDisplayable(true);
     }
 
     /**
@@ -280,10 +288,8 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     private void editEntry() {
         Set<RemoteAddeEntry> newEntries = pollWidgets(false);
         entryStore.replaceEntries(currentEntries, newEntries);
-        if (isDisplayable())
-            dispose();
-        if (managerController != null)
-            managerController.refreshDisplay();
+        logger.trace("editEntry: currentEntries={}", currentEntries);
+        disposeDisplayable(true);
     }
 
     /**
@@ -446,8 +452,9 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      */
     private void resetBadFields() {
         Set<javax.swing.JTextField> fields = new LinkedHashSet<javax.swing.JTextField>(badFields);
-        for (javax.swing.JTextField field : fields)
+        for (javax.swing.JTextField field : fields) {
             setBadField(field, false);
+        }
     }
 
     /**
@@ -474,8 +481,9 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      */
     private static void setForceMcxCaps(final boolean value) {
         McIDASV mcv = McIDASV.getStaticMcv();
-        if (mcv == null)
+        if (mcv == null) {
             return;
+        }
         mcv.getStore().put(PREF_FORCE_CAPS, value);
     }
 
@@ -486,8 +494,9 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      */
     private static boolean getForceMcxCaps() {
         McIDASV mcv = McIDASV.getStaticMcv();
-        if (mcv == null)
+        if (mcv == null) {
             return true;
+        }
         return mcv.getStore().get(PREF_FORCE_CAPS, true);
     }
 
@@ -528,10 +537,11 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         datasetField.setUppercase(forceCaps);
         userField.setUppercase(forceCaps);
 
-        if (initEntry == RemoteAddeEntry.INVALID_ENTRY)
+        if (initEntry == RemoteAddeEntry.INVALID_ENTRY) {
             setTitle("Define New Remote Dataset");
-        else
+        } else {
             setTitle("Edit Remote Dataset");
+        }
         setResizable(false);
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -541,12 +551,14 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         });
 
         serverLabel.setText("Server:");
-        if (serverText != null)
+        if (serverText != null) {
             serverField.setText(serverText);
+        }
 
         datasetLabel.setText("Dataset:");
-        if (datasetText != null)
+        if (datasetText != null) {
             datasetField.setText(datasetText);
+        }
 
         acctBox.setText("Specify accounting information:");
         acctBox.addActionListener(new java.awt.event.ActionListener() {
@@ -698,10 +710,11 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
                 .addContainerGap(DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        if (initEntry == RemoteAddeEntry.INVALID_ENTRY)
+        if (initEntry == RemoteAddeEntry.INVALID_ENTRY) {
             verifyAddButton.setText("Verify and Add Server");
-        else
+        } else {
             verifyAddButton.setText("Verify and Save Changes");
+        }
         verifyAddButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 if (initEntry == RemoteAddeEntry.INVALID_ENTRY)
@@ -711,26 +724,29 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
             }
         });
 
-        if (initEntry == RemoteAddeEntry.INVALID_ENTRY)
+        if (initEntry == RemoteAddeEntry.INVALID_ENTRY) {
             verifyServer.setText("Verify Server");
-        else
+        } else {
             verifyServer.setText("Verify Changes");
+        }
         verifyServer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 verifyServerActionPerformed(evt);
             }
         });
 
-        if (initEntry == RemoteAddeEntry.INVALID_ENTRY)
+        if (initEntry == RemoteAddeEntry.INVALID_ENTRY) {
             addServer.setText("Add Server");
-        else
+        } else {
             addServer.setText("Save Changes");
+        }
         addServer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                if (initEntry == RemoteAddeEntry.INVALID_ENTRY)
+                if (initEntry == RemoteAddeEntry.INVALID_ENTRY) {
                     addServerActionPerformed(evt);
-                else
+                } else {
                     editServerActionPerformed(evt);
+                }
             }
         });
 
@@ -827,8 +843,9 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         datasetField.setUppercase(forceCaps);
         userField.setUppercase(forceCaps);
         setForceMcxCaps(forceCaps);
-        if (!forceCaps)
+        if (!forceCaps) {
             return;
+        }
         datasetField.setText(datasetField.getText().toUpperCase());
         userField.setText(userField.getText().toUpperCase());
     }
@@ -859,14 +876,12 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
         setEditorAction(EditorAction.CANCELLED);
-        if (isDisplayable())
-            dispose();
+        disposeDisplayable(false);
     }
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {
         setEditorAction(EditorAction.CANCELLED);
-        if (isDisplayable())
-            dispose();
+        disposeDisplayable(false);
     }
 
     private void verifyServerActionPerformed(java.awt.event.ActionEvent evt) {
@@ -1009,7 +1024,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      * @see AddeStatus
      */
     public static AddeStatus checkEntry(final RemoteAddeEntry entry) {
-        Contract.notNull(entry, "Cannot check a null entry");
+        notNull(entry, "Cannot check a null entry");
 
         if (!checkHost(entry)) {
             return AddeStatus.BAD_SERVER;
@@ -1056,9 +1071,9 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      * {@link String}.
      */
     public static Set<String> readPublicGroups(final RemoteAddeEntry entry) {
-        Contract.notNull(entry, "entry cannot be null");
-        Contract.notNull(entry.getAddress());
-        Contract.checkArg((entry.getAddress().length() == 0));
+        notNull(entry, "entry cannot be null");
+        notNull(entry.getAddress());
+        checkArg((entry.getAddress().length() == 0));
 
         String user = entry.getAccount().getUsername();
         if (user == null || user.length() == 0) {
@@ -1106,7 +1121,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      * @throws NullPointerException if {@code entry} is null.
      */
     public static boolean checkHost(final RemoteAddeEntry entry) {
-        Contract.notNull(entry, "entry cannot be null");
+        notNull(entry, "entry cannot be null");
         String host = entry.getAddress();
         Socket socket = null;
         boolean connected = false;
@@ -1173,7 +1188,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
          * @throws NullPointerException if {@code entry} is {@code null}.
          */
         public StatusWrapper(final RemoteAddeEntry entry) {
-            Contract.notNull(entry, "cannot create a entry/status pair with a null descriptor");
+            notNull(entry, "cannot create a entry/status pair with a null descriptor");
             this.entry = entry;
         }
 
@@ -1213,7 +1228,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     private class VerifyEntryTask implements Callable<StatusWrapper> {
         private final StatusWrapper entryStatus;
         public VerifyEntryTask(final StatusWrapper descStatus) {
-            Contract.notNull(descStatus, "cannot verify or set status of a null descriptor/status pair");
+            notNull(descStatus, "cannot verify or set status of a null descriptor/status pair");
             this.entryStatus = descStatus;
         }
 

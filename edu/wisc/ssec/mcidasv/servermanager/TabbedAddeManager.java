@@ -32,6 +32,7 @@ package edu.wisc.ssec.mcidasv.servermanager;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 import static edu.wisc.ssec.mcidasv.util.Contract.notNull;
+import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.runOnEDT;
 
 import java.io.File;
 import java.util.Collection;
@@ -60,9 +61,9 @@ import org.bushe.swing.event.annotation.EventSubscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.util.LogUtil;
 
-import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
 import edu.wisc.ssec.mcidasv.servermanager.AddeThread.McservEvent;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteEntryEditor.AddeStatus;
@@ -96,6 +97,9 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     /** ID used to save/restore the last directory that contained a MCTABLE.TXT. */
     private static final String LAST_IMPORTED = "mcv.adde.lastmctabledir";
 
+    /** Size of the ADDE entry verification thread pool. */
+    private static final int POOL = 2;
+
     /**
      * These are the various {@literal "events"} that the server manager GUI
      * supports. These are published via the wonderful {@link EventBus#publish(Object)} method.
@@ -115,7 +119,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
 //    private final McIDASV mcv;
 
     /** Reference to the actual server manager. */
-    private final EntryStore entryStore;
+    private final EntryStore serverManager;
 
     /** The currently selected {@link RemoteAddeEntry} or {@code null} if nothing is selected. */
 //    private RemoteAddeEntry selectedRemoteEntry = null;
@@ -131,7 +135,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
      * Creates a standalone server manager GUI.
      */
     public TabbedAddeManager() {
-        this.entryStore = null;
+        this.serverManager = null;
         this.selectedLocalEntries = arrList();
         this.selectedRemoteEntries = arrList();
         initComponents();
@@ -146,7 +150,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
      */
     public TabbedAddeManager(final EntryStore entryStore) {
         notNull(entryStore, "Cannot pass a null server manager");
-        this.entryStore = entryStore;
+        this.serverManager = entryStore;
         this.selectedLocalEntries = arrList();
         this.selectedRemoteEntries = arrList();
         initComponents();
@@ -180,14 +184,14 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     // TODO(jon): still needs to refresh the local table.
     protected void refreshDisplay() {
         ((RemoteAddeTableModel)remoteTable.getModel()).refreshEntries();
-        ((LocalAddeTableModel)localEntries.getModel()).refreshEntries();
+        ((LocalAddeTableModel)localTable.getModel()).refreshEntries();
     }
 
     public void showRemoteEditor() {
         if (tabbedPane.getSelectedIndex() != 0) {
             tabbedPane.setSelectedIndex(0);
         }
-        RemoteEntryEditor editor = new RemoteEntryEditor(this, true, this, entryStore);
+        RemoteEntryEditor editor = new RemoteEntryEditor(this, true, this, serverManager);
         editor.setVisible(true);
     }
 
@@ -195,7 +199,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         if (tabbedPane.getSelectedIndex() != 0) {
             tabbedPane.setSelectedIndex(0);
         }
-        RemoteEntryEditor editor = new RemoteEntryEditor(this, true, this, entryStore, entry);
+        RemoteEntryEditor editor = new RemoteEntryEditor(this, true, this, serverManager, entry);
         editor.setVisible(true);
     }
 
@@ -203,7 +207,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         if (entries == null) {
             return;
         }
-        if (entryStore.removeEntries(entries)) {
+        if (serverManager.removeEntries(entries)) {
             RemoteAddeTableModel tableModel = ((RemoteAddeTableModel)remoteTable.getModel());
             int first = Integer.MAX_VALUE;
             int last = Integer.MIN_VALUE;
@@ -235,14 +239,15 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         if (tabbedPane.getSelectedIndex() != 1) {
             tabbedPane.setSelectedIndex(1);
         }
-        LocalEntryEditor editor = new LocalEntryEditor(this, true, this, entryStore);
+        LocalEntryEditor editor = new LocalEntryEditor(this, true, this, serverManager);
         editor.setVisible(true);
     }
 
     public void showLocalEditor(final LocalAddeEntry entry) {
-        if (tabbedPane.getSelectedIndex() != 1)
+        if (tabbedPane.getSelectedIndex() != 1) {
             tabbedPane.setSelectedIndex(1);
-        LocalEntryEditor editor = new LocalEntryEditor(this, true, this, entryStore, entry);
+        }
+        LocalEntryEditor editor = new LocalEntryEditor(this, true, this, serverManager, entry);
         editor.setVisible(true);
     }
 
@@ -250,8 +255,8 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         if (entries == null) {
             return;
         }
-        if (entryStore.removeEntries(entries)) {
-            LocalAddeTableModel tableModel = ((LocalAddeTableModel)localEntries.getModel());
+        if (serverManager.removeEntries(entries)) {
+            LocalAddeTableModel tableModel = ((LocalAddeTableModel)localTable.getModel());
             int first = Integer.MAX_VALUE;
             int last = Integer.MIN_VALUE;
             for (LocalAddeEntry entry : entries) {
@@ -269,8 +274,8 @@ public class TabbedAddeManager extends javax.swing.JFrame {
             }
             tableModel.fireTableRowsDeleted(first, last);
             refreshDisplay();
-            localEntries.revalidate();
-            localEntries.setRowSelectionInterval(first, first);
+            localTable.revalidate();
+            localTable.setRowSelectionInterval(first, first);
         } else {
             logger.debug("removeLocalEntries: could not remove entries={}", entries);
         }
@@ -282,7 +287,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
             LogUtil.userErrorMessage("Selection does not appear to a valid MCTABLE.TXT file:\n"+path);
         } else {
             // verify entries first!
-            entryStore.addEntries(imported);
+            serverManager.addEntries(imported);
             refreshDisplay();
             repaint();
             Runnable r = new Runnable() {
@@ -296,7 +301,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     }
 
     public void restartLocalServer() {
-        entryStore.restartLocalServer();
+        serverManager.restartLocalServer();
     }
 
     @EventSubscriber(eventClass=McservEvent.class)
@@ -347,7 +352,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         importButton = new javax.swing.JButton();
         localTab = new javax.swing.JPanel();
         localEntriesScroller = new javax.swing.JScrollPane();
-        localEntries = new javax.swing.JTable();
+        localTable = new javax.swing.JTable();
         statusPanel = new javax.swing.JPanel();
         statusLabel = new javax.swing.JLabel();
         restartButton = new javax.swing.JButton();
@@ -372,7 +377,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
             }
         });
 
-        remoteTable.setModel(new RemoteAddeTableModel(entryStore));
+        remoteTable.setModel(new RemoteAddeTableModel(serverManager));
         remoteTable.setColumnSelectionAllowed(false);
         remoteTable.setRowSelectionAllowed(true);
         remoteTable.getTableHeader().setReorderingAllowed(false);
@@ -468,18 +473,18 @@ public class TabbedAddeManager extends javax.swing.JFrame {
 
         tabbedPane.addTab("Remote Data", remoteTab);
 
-        localEntries.setModel(new LocalAddeTableModel(entryStore));
-        localEntries.setColumnSelectionAllowed(false);
-        localEntries.setRowSelectionAllowed(true);
-        localEntries.getTableHeader().setReorderingAllowed(false);
-        localEntriesScroller.setViewportView(localEntries);
-        localEntries.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        localEntries.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+        localTable.setModel(new LocalAddeTableModel(serverManager));
+        localTable.setColumnSelectionAllowed(false);
+        localTable.setRowSelectionAllowed(true);
+        localTable.getTableHeader().setReorderingAllowed(false);
+        localEntriesScroller.setViewportView(localTable);
+        localTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        localTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(final ListSelectionEvent e) {
                 localSelectionModelChanged(e);
             }
         });
-        localEntries.addMouseListener(new java.awt.event.MouseAdapter() {
+        localTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(final java.awt.event.MouseEvent e) {
                 if ((e.getClickCount() == 2) && (hasSingleLocalSelection())) {
                     showLocalEditor(getSingleLocalSelection());
@@ -487,7 +492,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
             }
         });
 
-        if (!entryStore.checkLocalServer()) {
+        if (!serverManager.checkLocalServer()) {
             statusLabel.setText("Local server is not running.");
             restartButton.setText("Start Me!");
         }
@@ -641,6 +646,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
                 removeEntryButton.setEnabled(hasSelection);
                 removeEntryItem.setEnabled(hasSelection);
                 setLastTab(index);
+                adjustLabels();
             }
         });
 
@@ -696,7 +702,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         } else {
             int min = selModel.getMinSelectionIndex();
             int max = selModel.getMaxSelectionIndex();
-            LocalAddeTableModel tableModel = ((LocalAddeTableModel)localEntries.getModel());
+            LocalAddeTableModel tableModel = ((LocalAddeTableModel)localTable.getModel());
             selectedEntries = arrList();
             for (int i = min; i <= max; i++) {
                 if (selModel.isSelectedIndex(i)) {
@@ -752,6 +758,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     private void setSelectedRemoteEntries(final Collection<RemoteAddeEntry> entries) {
         selectedRemoteEntries.clear();
         selectedRemoteEntries.addAll(entries);
+        adjustLabels();
     }
 
     private List<RemoteAddeEntry> getSelectedRemoteEntries() {
@@ -765,6 +772,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     private void setSelectedLocalEntries(final Collection<LocalAddeEntry> entries) {
         selectedLocalEntries.clear();
         selectedLocalEntries.addAll(entries);
+        adjustLabels();
     }
 
     private List<LocalAddeEntry> getSelectedLocalEntries() {
@@ -823,6 +831,22 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         } else {
             removeLocalEntries(getSelectedLocalEntries());
         }
+    }
+
+    private void adjustLabels() {
+        runOnEDT(new Runnable() {
+            public void run() {
+                boolean hasPlural = false;
+                if (tabbedPane.getSelectedIndex() == 0) {
+                    hasPlural = (selectedRemoteEntries.size() > 1);
+                } else {
+                    hasPlural = (selectedLocalEntries.size() > 1);
+                }
+                String text = (hasPlural) ? "Remove Entries" : "Remove Entry";
+                removeEntryItem.setText(text);
+                removeEntryButton.setText(text);
+            }
+        });
     }
 
     private JPanel makeFileChooserAccessory() {
@@ -906,12 +930,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
      * Returns the directory that contained the most recently imported MCTABLE.TXT.
      */
     private String getLastImportPath() {
-        String path = "";
-        McIDASV mcv = McIDASV.getStaticMcv();
-        if (mcv != null) {
-            path = mcv.getObjectStore().get(LAST_IMPORTED, "");
-        }
-        return path;
+        return serverManager.getIdvStore().get(LAST_IMPORTED, "");
     }
 
     /**
@@ -919,23 +938,16 @@ public class TabbedAddeManager extends javax.swing.JFrame {
      */
     private void setLastImportPath(final String path) {
         String okayPath = (path == null) ? "" : path;
-        McIDASV mcv = McIDASV.getStaticMcv();
-        if (mcv != null) {
-            mcv.getObjectStore().put(LAST_IMPORTED, okayPath);
-            mcv.getObjectStore().saveIfNeeded();
-        }
+        IdvObjectStore store = serverManager.getIdvStore();
+        store.put(LAST_IMPORTED, okayPath);
+        store.saveIfNeeded();
     }
 
     /**
      * Returns the index of the user's last server manager tab.
      */
     private int getLastTab() {
-        int index = 0;
-        McIDASV mcv = McIDASV.getStaticMcv();
-        if (mcv != null) {
-            index = mcv.getObjectStore().get(LAST_TAB, 0);
-        }
-        return index;
+        return serverManager.getIdvStore().get(LAST_TAB, 0);
     }
 
     /**
@@ -943,14 +955,11 @@ public class TabbedAddeManager extends javax.swing.JFrame {
      */
     private void setLastTab(final int index) {
         int okayIndex = ((index >= 0) && (index < 2)) ? index : 0;
-        McIDASV mcv = McIDASV.getStaticMcv();
-        if (mcv == null) {
-            return;
-        }
-        mcv.getObjectStore().put(LAST_TAB, okayIndex);
-        mcv.getObjectStore().saveIfNeeded();
+        IdvObjectStore store = serverManager.getIdvStore();
+        store.put(LAST_TAB, okayIndex);
+        store.saveIfNeeded();
     }
-    private final int POOL = 2;
+
     public Set<RemoteAddeEntry> checkDatasets(final Collection<RemoteAddeEntry> entries) {
         notNull(entries, "can't check a null collection of entries");
         if (entries.isEmpty()) {
@@ -960,15 +969,15 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         Set<RemoteAddeEntry> valid = newLinkedHashSet();
         ExecutorService exec = Executors.newFixedThreadPool(POOL);
         CompletionService<RemoteAddeEntry> ecs = new ExecutorCompletionService<RemoteAddeEntry>(exec);
-        
+
         final RemoteAddeTableModel tableModel = (RemoteAddeTableModel)remoteTable.getModel();
-        
+
         for (RemoteAddeEntry entry : entries) {
             entry.setEntryValidity(EntryValidity.VALIDATING);
             logger.trace("checkDatasets: submitting entry={}", entry);
             ecs.submit(new CheckEntryTask(entry));
             final int row = tableModel.getRowForEntry(entry);
-            SwingUtilities.invokeLater(new Runnable() {
+            runOnEDT(new Runnable() {
                 public void run() {
                     tableModel.fireTableRowsUpdated(row, row);
                 }
@@ -976,19 +985,19 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         }
 
         try {
-        for (int i = 0; i < entries.size(); i++) {
-            RemoteAddeEntry checkedEntry = ecs.take().get();
-            logger.trace("checkDatasets: removing entry={}", checkedEntry);
-            final int row = tableModel.getRowForEntry(checkedEntry);
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    tableModel.fireTableRowsUpdated(row, row);
+            for (int i = 0; i < entries.size(); i++) {
+                RemoteAddeEntry checkedEntry = ecs.take().get();
+                logger.trace("checkDatasets: removing entry={}", checkedEntry);
+                final int row = tableModel.getRowForEntry(checkedEntry);
+                runOnEDT(new Runnable() {
+                    public void run() {
+                        tableModel.fireTableRowsUpdated(row, row);
+                    }
+                });
+                if (checkedEntry.getEntryValidity() == EntryValidity.VERIFIED) {
+                    valid.add(checkedEntry);
                 }
-            });
-            if (checkedEntry.getEntryValidity() == EntryValidity.VERIFIED) {
-                valid.add(checkedEntry);
             }
-        }
         } catch (InterruptedException e) {
             LogUtil.logException("Interrupted while validating entries", e);
         } catch (ExecutionException e) {
@@ -1276,7 +1285,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator fileSeparator1;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JButton importButton;
-    private javax.swing.JTable localEntries;
+    private javax.swing.JTable localTable;
     private javax.swing.JScrollPane localEntriesScroller;
     private javax.swing.JMenuItem localHelpItem;
     private javax.swing.JPanel localTab;
