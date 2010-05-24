@@ -29,40 +29,127 @@
  */
 package edu.wisc.ssec.mcidasv.util;
 
-// TODO(jon): think about introducing preconditions and postconditions.
+/**
+ * This is a {@literal "convenience"} class--use these methods to reduce 
+ * boilerplate parameter verification. For example:
+ * <pre>
+ * if (str == null) {
+ *     throw new NullPointerException("null is bad");
+ * }</pre>
+ * can be replaced with
+ * <pre>
+ * notNull(str, "null is bad");</pre>
+ * 
+ * Remember that these methods are used to signal an error in the <b>calling</b>
+ * method!
+ */
 public final class Contract {
     private Contract() { }
 
+    /**
+     * Ensures that a parameter passed to the calling method is not 
+     * {@code null}.
+     * 
+     * @param object Object to test.
+     * 
+     * @return {@code object}, if it is not {@code null}.
+     * 
+     * @throws NullPointerException if {@code object} is {@code null}.
+     */
     public static <T> T notNull(T object) {
-        if (object == null)
+        if (object == null) {
             throw new NullPointerException();
+        }
         return object;
     }
 
+    /**
+     * Ensures that a parameter passed to the calling method is not 
+     * {@code null}.
+     * 
+     * @param object Object to test.
+     * @param message Exception message to use if {@code object} is 
+     * {@code null}.
+     * 
+     * @return {@code object}, if it is not {@code null}.
+     * 
+     * @throws NullPointerException if {@code object} is {@code null}.
+     */
     public static <T> T notNull(T object, Object message) {
-        if (object == null)
+        if (object == null) {
             throw new NullPointerException(String.valueOf(message));
+        }
         return object;
     }
 
+    /**
+     * Ensures that a parameter passed to the calling method is not 
+     * {@code null}.
+     * 
+     * @param object Object to test.
+     * @param format Template used to create an exception if {@code object} is 
+     * {@code null}. Uses {@link String#format(String, Object...)}.
+     * @param values Values to use within {@code format}.
+     * 
+     * @return {@code object}, if it is not {@code null}.
+     * 
+     * @throws NullPointerException if {@code object} is {@code null}.
+     */
     public static <T> T notNull(T object, String format, Object... values) {
-        if (object == null)
+        if (object == null) {
             throw new NullPointerException(String.format(format, values));
+        }
         return object;
     }
 
+    /**
+     * Ensures the {@literal "truth"} of an expression involving parameters 
+     * passed to the calling method.
+     * 
+     * @param expression A boolean expression to test.
+     * 
+     * @throws IllegalArgumentException if {@code expression} is {@code false}.
+     */
     public static void checkArg(boolean expression) {
-        if (!expression)
+        if (!expression) {
             throw new IllegalArgumentException();
+        }
     }
 
+    /**
+     * Ensures the {@literal "truth"} of an expression involving parameters 
+     * passed to the calling method.
+     * 
+     * @param expression A boolean expression to test.
+     * @param message Exception message to use if {@code expression} is 
+     * {@code false}.
+     * 
+     * @throws IllegalArgumentException if {@code expression} is {@code false}.
+     */
     public static void checkArg(boolean expression, Object message) {
-        if (!expression)
+        if (!expression) {
             throw new IllegalArgumentException(String.valueOf(message));
+        }
     }
 
-    public static void checkArg(boolean expression, String format, Object... values) {
-        if (!expression)
+    /**
+     * Ensures the {@literal "truth"} of an expression involving parameters 
+     * passed to the calling method.
+     * 
+     * @param expression A boolean expression to test.
+     * @param format Template used to create an exception if {@code expression} is 
+     * {@code false}. Uses {@link String#format(String, Object...)}.
+     * @param values Values to use within {@code format}.
+     * 
+     * @throws IllegalArgumentException if {@code expression} is {@code false}.
+     */
+    public static void checkArg(boolean expression, String format, 
+        Object... values) 
+    {
+        if (!expression) {
             throw new IllegalArgumentException(String.format(format, values));
+        }
     }
+
+//    public static void instanceOf() 
 }
