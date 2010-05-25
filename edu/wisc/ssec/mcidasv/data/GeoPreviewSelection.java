@@ -89,11 +89,6 @@ public class GeoPreviewSelection extends DataSelectionComponent {
 
       private LineDrawing box;
 
-      private static int previewLineMag = 0;
-      private static int previewEleMag = 0;
-      private static int previewXDim = 0;
-      private static int previewYDim = 0;
-                                    
       public GeoPreviewSelection(DataSourceImpl dataSource,
              DataChoice dataChoice, FlatField image,
              GeoLatLonSelection laLoSel,
@@ -261,15 +256,9 @@ public class GeoPreviewSelection extends DataSelectionComponent {
           int width = (int)(x_coords[1] - x_coords[0]);
           if ((height < 1) || (width < 1)) return;
 
-          int line = (int)y_coords[1];
-          int ele = (int)x_coords[1];
-          if ((laloSel != null) && (line > 0) && (ele > 0)) {
-              laloSel.setCoordinateType(laloSel.TYPE_LATLON);
-              laloSel.setPlace(laloSel.PLACE_CENTER);
-              if (laloSel.getIsLineEle()) laloSel.flipLocationPanel(0);
+          if (laloSel != null) {
               int lineMid = (int)((y_coords[0] + y_coords[1])/2.0 + 0.5);
               int eleMid = (int)((x_coords[0] + x_coords[1])/2.0 + 0.5);
-              laloSel.convertToLatLon(eleMid, lineMid);
               double uLLine = y_coords[1];
               double uLEle = x_coords[0];
               if (height < 0) {
@@ -280,17 +269,12 @@ public class GeoPreviewSelection extends DataSelectionComponent {
                   width *= -1;
                   uLEle = x_coords[1];
               }
-              laloSel.setULCoords(uLEle, uLLine);
 
-              if ((previewXDim == 0) || (previewYDim == 0)) {
-                  AREACoordinateSystem mcs = (AREACoordinateSystem)sampleProjection;
-                  Rectangle2D mapArea = mcs.getDefaultMapArea();
-                  previewXDim = new Long(new Double(mapArea.getMaxX() - mapArea.getMinX()).longValue()).intValue();
-                  previewYDim = new Long(new Double(mapArea.getMaxY() - mapArea.getMinY()).longValue()).intValue();
-              
-                  int[] dirBlk = mcs.getDirBlock();
-                  previewLineMag = dirBlk[11];
-                  previewEleMag = dirBlk[12];
+              int line = lineMid;
+              int ele = eleMid;
+              if (laloSel.getPlace().equals(laloSel.PLACE_ULEFT)) {
+                  line = (int)Math.floor(uLLine + 0.5);
+                  ele = (int)Math.floor(uLEle + 0.5);
               }
 
               int linRes = laloSel.getPreviewLineRes();
@@ -308,42 +292,20 @@ public class GeoPreviewSelection extends DataSelectionComponent {
               } else if (elementMag < 0) {
                   width *= -elementMag;
               }
-/*
-              int[][] areaCoords = new int[2][5];
-              int centerEle = eleMid * previewEleMag;
-              int centerLin = (previewYDim - 1 - lineMid) * previewLineMag;
-              int deltaEle = width/2;
-              int deltaLin = height/2;
-              areaCoords[0][0] = centerEle;
-              areaCoords[1][0] = centerLin;
-              areaCoords[0][1] = centerEle - deltaEle;
-              areaCoords[1][1] = centerLin - deltaLin;
-              areaCoords[0][2] = centerEle + deltaEle;
-              areaCoords[1][2] = centerLin - deltaLin;
-              areaCoords[0][3] = centerEle - deltaEle;
-              areaCoords[1][3] = centerLin + deltaLin;
-              areaCoords[0][4] = centerEle + deltaEle;
-              areaCoords[1][4] = centerLin + deltaLin;
-              System.out.println("\n Predicted Area Coordinates\n");
-              System.out.println("Center      Line: " + areaCoords[1][0] + " Element: " + areaCoords[0][0]);
-              System.out.println("Upper Left  Line: " + areaCoords[1][1] + " Element: " + areaCoords[0][1]);
-              System.out.println("Upper Right Line: " + areaCoords[1][2] + " Element: " + areaCoords[0][2]);
-              System.out.println("Lower Left  Line: " + areaCoords[1][3] + " Element: " + areaCoords[0][3]);
-              System.out.println("Lower Right Line: " + areaCoords[1][4] + " Element: " + areaCoords[0][4]);
-              System.out.println("\n");
-              areaCoords[1][3] = centerLin + deltaLin;
-*/
+
+              int lineMag = 1;
+              int eleMag = 1;
               laloSel.setNumLines(height);
               laloSel.setNumEles(width);
-              laloSel.setLineMag(1);
-              laloSel.setElementMag(1);
-              laloSel.lineMagSlider.setValue(1);
+              laloSel.setLineMag(lineMag);
+              laloSel.setElementMag(eleMag);
+              laloSel.lineMagSlider.setValue(lineMag);
               laloSel.setLRes(-1.0);
               laloSel.lineMagSliderChanged(false);
-              laloSel.elementMagSlider.setValue(1);
+              laloSel.elementMagSlider.setValue(eleMag);
               laloSel.setERes(-1.0);
               laloSel.elementMagSliderChanged(false);
-              laloSel.getGeoLocationInfo();
+              laloSel.getGeoLocationInfo(line, ele);
           }
       }
            

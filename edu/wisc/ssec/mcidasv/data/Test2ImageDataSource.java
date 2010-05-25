@@ -518,7 +518,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 ++bandIdx;
             }
         }
-        previewDir = getPreviewDirectory(aid); 
+        previewDir = getPreviewDirectory(aid);
         int eMag = 1;
         int lMag = 1;
         int eSize = 1;
@@ -774,29 +774,34 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                                 DataSelection dataSelection,
                                 Hashtable requestProperties)
             throws VisADException, RemoteException {
-/*
-        System.out.println("\ngetDataInner:");
-        System.out.println("    dataChoice=" + dataChoice);
-        System.out.println("    category=" + category);
-        System.out.println("    dataSelection=" + dataSelection + "\n");
 
-        Enumeration propEnum = requestProperties.keys();
-        for (int i=0; propEnum.hasMoreElements(); i++) {
-            String key = propEnum.nextElement().toString();
-            System.out.println("    key=" + key + " val=" + requestProperties.get(key));
-        }
-        System.out.println("\n");
-*/
-        sampleRanges = null;
-
+        Data img = null;
         iml = new ArrayList();
 
         if (dataSelection == null) return null;
         setDataSelection(dataSelection);
         GeoSelection geoSelection = dataSelection.getGeoSelection(true);
         if (geoSelection == null) return null;
+
         if (this.lastGeoSelection == null) this.lastGeoSelection = geoSelection;
         this.selectionProps = dataSelection.getProperties();
+        Enumeration propEnum = this.selectionProps.keys();
+        for (int i=0; propEnum.hasMoreElements(); i++) {
+            String key = propEnum.nextElement().toString();
+            if (key.compareToIgnoreCase(LATLON_KEY) == 0) {
+                String val = (String)this.selectionProps.get(key);
+                if (val.contains("NaN")) {
+                    return img;
+                }
+            }
+            if (key.compareToIgnoreCase(LINELE_KEY) == 0) {
+                String val = (String)this.selectionProps.get(key);
+                if (val.contains("NaN")) {
+                    return img;
+                }
+            }
+        }
+
         if (this.selectionProps.containsKey("MAG")) {
             String str = (String)this.selectionProps.get("MAG");
             String[] strs = StringUtil.split(str, " ", 2);
@@ -804,7 +809,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             this.elementMag = new Integer(strs[1]).intValue();
         }
         this.choiceName = dataChoice.getName();
-        Data img = null;
         try {
             img = super.getDataInner(dataChoice, category, dataSelection, requestProperties);
         } catch (Exception e) {
@@ -846,11 +850,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     protected ImageSequence makeImageSequence(DataChoice dataChoice,
             DataSelection subset)
             throws VisADException, RemoteException {
-/*
-        System.out.println("Test2ImageDataSource makeImageSequence:");
-        System.out.println("    dataChoice=" + dataChoice);
-        System.out.println("    subset=" + subset);
-*/
+
         Hashtable subsetProperties = subset.getProperties();
         Enumeration propEnum = subsetProperties.keys();
         int numLines = 0;
@@ -1139,13 +1139,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                                         boolean fromSequence, 
                                         String readLabel, DataSelection subset)
             throws VisADException, RemoteException {
-/*
-        System.out.println("makeImage:");
-        System.out.println("    aid=" + aid);
-        System.out.println("    rangeType=" + rangeType);
-        System.out.println("    fromSequence=" + fromSequence);
-        System.out.println("    readLabel=" + readLabel);
-*/
+
         if (aid == null) {
             return null;
         }
