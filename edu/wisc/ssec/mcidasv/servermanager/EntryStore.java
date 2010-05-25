@@ -358,6 +358,16 @@ public class EntryStore {
         return addresses;
     }
 
+    protected Set<String> getRemoteEntryTexts() {
+        Set<String> strs = newLinkedHashSet();
+        for (AddeEntry entry : trie.values()) {
+            if (entry instanceof RemoteAddeEntry) {
+                strs.add(entry.getEntryText());
+            }
+        }
+        return strs;
+    }
+    
     /**
      * Returns the {@link Set} of {@literal "groups"} associated with the 
      * given {@code address}.

@@ -30,14 +30,20 @@
 
 package edu.wisc.ssec.mcidasv.servermanager;
 
+import java.util.Collections;
+import java.util.List;
+
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
+import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 
 public class RemoteAddeEntry implements AddeEntry {
 
     public static final RemoteAddeEntry INVALID_ENTRY = new Builder("localhost", "BIGBAD").invalidate().build();
+
+    public static final List<RemoteAddeEntry> INVALID_ENTRIES = Collections.singletonList(INVALID_ENTRY);
 
     /** Holds the accounting information for this entry. */
     private final AddeAccount account;

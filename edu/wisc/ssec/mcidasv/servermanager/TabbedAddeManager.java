@@ -64,9 +64,12 @@ import org.slf4j.LoggerFactory;
 import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.util.LogUtil;
 
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
 import edu.wisc.ssec.mcidasv.servermanager.AddeThread.McservEvent;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteEntryEditor.AddeStatus;
+import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import edu.wisc.ssec.mcidasv.util.McVTextField.Prompt;
 
 /**
@@ -195,11 +198,11 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         editor.setVisible(true);
     }
 
-    public void showRemoteEditor(final RemoteAddeEntry entry) {
+    public void showRemoteEditor(final List<RemoteAddeEntry> entries) {
         if (tabbedPane.getSelectedIndex() != 0) {
             tabbedPane.setSelectedIndex(0);
         }
-        RemoteEntryEditor editor = new RemoteEntryEditor(this, true, this, serverManager, entry);
+        RemoteEntryEditor editor = new RemoteEntryEditor(this, true, this, serverManager, entries);
         editor.setVisible(true);
     }
 
@@ -391,7 +394,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         remoteTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(final java.awt.event.MouseEvent e) {
                 if ((e.getClickCount() == 2) && (hasSingleRemoteSelection())) {
-                    showRemoteEditor(getSingleRemoteSelection());
+                    showRemoteEditor(getSelectedRemoteEntries());
                 }
             }
         });
@@ -662,6 +665,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         if (e.getValueIsAdjusting()) {
             return;
         }
+        int selectedRowCount = 0;
         ListSelectionModel selModel = (ListSelectionModel)e.getSource();
         List<RemoteAddeEntry> selectedEntries;
         if (selModel.isSelectionEmpty()) {
@@ -673,7 +677,8 @@ public class TabbedAddeManager extends javax.swing.JFrame {
             selectedEntries = arrList();
             for (int i = min; i <= max; i++) {
                 if (selModel.isSelectedIndex(i)) {
-                    selectedEntries.add(tableModel.getEntryAtRow(i));
+                    selectedEntries.addAll(tableModel.getEntriesAtRow(i));
+                    selectedRowCount++;
                 }
             }
         }
@@ -682,11 +687,12 @@ public class TabbedAddeManager extends javax.swing.JFrame {
 
         // the current "edit" dialog doesn't work so well with multiple 
         // servers/datasets, so only allow the user to edit entries one at a time.
-        boolean singleSelection = selectedEntries.size() == 1;
+        boolean singleSelection = selectedRowCount == 1;
         editEntryButton.setEnabled(singleSelection);
         editEntryItem.setEnabled(singleSelection);
 
-        boolean hasSelection = !selectedEntries.isEmpty();
+//        boolean hasSelection = !selectedEntries.isEmpty();
+        boolean hasSelection = selectedRowCount >= 1;
         removeEntryButton.setEnabled(hasSelection);
         removeEntryItem.setEnabled(hasSelection);
     }
@@ -727,24 +733,26 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     private boolean hasRemoteSelection() {
         return !selectedRemoteEntries.isEmpty();
     }
+
     private boolean hasLocalSelection() {
         return !selectedLocalEntries.isEmpty();
     }
-    
+
     private boolean hasSingleRemoteSelection() {
-        return (selectedRemoteEntries.size() == 1);
+        String entryText = null;
+        for (RemoteAddeEntry entry : selectedRemoteEntries) {
+            if (entryText == null) {
+                entryText = entry.getEntryText();
+            }
+            if (!entry.getEntryText().equals(entryText)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private boolean hasSingleLocalSelection() {
         return (selectedLocalEntries.size() == 1);
-    }
-
-    private RemoteAddeEntry getSingleRemoteSelection() {
-        RemoteAddeEntry entry = RemoteAddeEntry.INVALID_ENTRY;
-        if (selectedRemoteEntries.size() == 1) {
-            entry = selectedRemoteEntries.get(0);
-        }
-        return entry;
     }
 
     private LocalAddeEntry getSingleLocalSelection() {
@@ -758,6 +766,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     private void setSelectedRemoteEntries(final Collection<RemoteAddeEntry> entries) {
         selectedRemoteEntries.clear();
         selectedRemoteEntries.addAll(entries);
+        logger.trace("setSelected: entries={}", entries);
         adjustLabels();
     }
 
@@ -819,7 +828,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
 
     private void editEntryButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (tabbedPane.getSelectedIndex() == 0) {
-            showRemoteEditor(getSingleRemoteSelection());
+            showRemoteEditor(getSelectedRemoteEntries());
         } else {
             showLocalEditor(getSingleLocalSelection());
         }
@@ -1032,8 +1041,10 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         };
 
         /** Entries that currently populate the server manager. */
-        private final List<RemoteAddeEntry> entries = arrList();
+        private final List<RemoteAddeEntry> entries;
 
+        private final List<String> servers;
+        
         /** {@link EntryStore} used to query and apply changes. */
         private final EntryStore entryStore;
 
@@ -1045,7 +1056,8 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         public RemoteAddeTableModel(final EntryStore entryStore) {
             notNull(entryStore, "Cannot query a null EntryStore");
             this.entryStore = entryStore;
-            entries.addAll(entryStore.getRemoteEntries());
+            this.entries = arrList(entryStore.getRemoteEntries());
+            this.servers = arrList(entryStore.getRemoteEntryTexts());
         }
 
         /**
@@ -1055,8 +1067,16 @@ public class TabbedAddeManager extends javax.swing.JFrame {
          * 
          * @return The {@code RemoteAddeEntry} at the index specified by {@code row}.
          */
-        protected RemoteAddeEntry getEntryAtRow(final int row) {
-            return entries.get(row);
+        protected List<RemoteAddeEntry> getEntriesAtRow(final int row) {
+//            return entries.get(row);
+            String server = servers.get(row).replace('/', '!');
+            List<RemoteAddeEntry> matches = arrList();
+            for (AddeEntry entry : entryStore.searchWithPrefix(server)) {
+                if (entry instanceof RemoteAddeEntry) {
+                    matches.add((RemoteAddeEntry)entry);
+                }
+            }
+            return matches;
         }
 
         /**
@@ -1065,7 +1085,21 @@ public class TabbedAddeManager extends javax.swing.JFrame {
          * @see List#indexOf(Object)
          */
         protected int getRowForEntry(final RemoteAddeEntry entry) {
-            return entries.indexOf(entry);
+//            return entries.indexOf(entry);
+//            String needle = entry.getEntryText();
+//            int i = 0;
+//            for (String hay : servers) {
+//                if (hay.equals(needle)) {
+//                    return i;
+//                }
+//                i++;
+//            }
+//            return -1;
+            return getRowForEntry(entry.getEntryText());
+        }
+        
+        protected int getRowForEntry(final String entryText) {
+            return servers.indexOf(entryText);
         }
 
         /**
@@ -1073,7 +1107,9 @@ public class TabbedAddeManager extends javax.swing.JFrame {
          */
         public void refreshEntries() {
             entries.clear();
+            servers.clear();
             entries.addAll(entryStore.getRemoteEntries());
+            servers.addAll(entryStore.getRemoteEntryTexts());
             this.fireTableDataChanged();
         }
 
@@ -1090,7 +1126,8 @@ public class TabbedAddeManager extends javax.swing.JFrame {
          * Returns the number of entries being managed.
          */
         @Override public int getRowCount() {
-            return entries.size();
+//            return entries.size();
+            return servers.size();
         }
 
         /**
@@ -1104,27 +1141,108 @@ public class TabbedAddeManager extends javax.swing.JFrame {
          * @throws IndexOutOfBoundsException
          */
         @Override public Object getValueAt(int row, int column) {
-            RemoteAddeEntry entry = entries.get(row);
-            if (entry == null) {
-                throw new IndexOutOfBoundsException(); // questionable...
-            }
+//            RemoteAddeEntry entry = entries.get(row);
+            RemoteAddeEntry entry = null;
+            String serverText = servers.get(row);
+//            if (entry == null) {
+//                throw new IndexOutOfBoundsException(); // questionable...
+//            }
 
             switch (column) {
-                case 0: return entry.getEntryText();
-                case 1: return formattedAccounting(entry);
-                case 2: return entry.getEntryType();
-                case 3: return entry.getEntrySource();
-                case 4: return entry.getEntryValidity();
+                case 0: return serverText;
+                case 1: return formattedAccounting(serverText, entryStore);
+                case 2: return formattedTypes(serverText, entryStore);
+                case 3: return formattedSource(serverText, entryStore);
+                case 4: return formattedValidity(serverText, entryStore);
                 default: throw new IndexOutOfBoundsException();
             }
+            
+//            switch (column) {
+//                case 0: return entry.getEntryText();
+//                case 1: return formattedAccounting(entry);
+//                case 2: return entry.getEntryType();
+//                case 3: return entry.getEntrySource();
+//                case 4: return entry.getEntryValidity();
+//                default: throw new IndexOutOfBoundsException();
+//            }
         }
 
-        private static String formattedAccounting(final RemoteAddeEntry entry) {
-            AddeAccount acct = entry.getAccount();
-            if (acct == AddeEntry.DEFAULT_ACCOUNT) {
+//        private static String formattedAccounting(final RemoteAddeEntry entry) {
+//            AddeAccount acct = entry.getAccount();
+//            if (acct == AddeEntry.DEFAULT_ACCOUNT) {
+//                return "public dataset";
+//            }
+//            return acct.friendlyString();
+//        }
+        private static String formattedSource(final String serv, final EntryStore manager) {
+            List<AddeEntry> matches = manager.searchWithPrefix(serv.replace('/', '!'));
+            EntrySource source = EntrySource.INVALID;
+            if (!matches.isEmpty()) {
+                source = matches.get(0).getEntrySource();
+            }
+            return source.toString();
+        }
+        private static String formattedValidity(final String serv, final EntryStore manager) {
+            List<AddeEntry> matches = manager.searchWithPrefix(serv.replace('/', '!'));
+            EntryValidity validity = EntryValidity.INVALID;
+            if (!matches.isEmpty()) {
+                validity = matches.get(0).getEntryValidity();
+            }
+            return validity.toString();
+        }
+        private static String formattedAccounting(final String serv, final EntryStore manager) {
+//            AddeAccount acct = entry.getAccount();
+//            if (acct == AddeEntry.DEFAULT_ACCOUNT) {
+//                return "public dataset";
+//            }
+//            return acct.friendlyString();
+            List<AddeEntry> matches = manager.searchWithPrefix(serv.replace('/', '!'));
+            AddeAccount acct = AddeEntry.DEFAULT_ACCOUNT;
+            if (!matches.isEmpty()) {
+                acct = matches.get(0).getAccount();
+            }
+            if (AddeEntry.DEFAULT_ACCOUNT.equals(acct)) {
                 return "public dataset";
             }
             return acct.friendlyString();
+        }
+
+        private static String formattedTypes(final String serv, final EntryStore manager) {
+            String[] chunks = serv.split("/");
+            Set<EntryType> types = Collections.emptySet();
+            if (chunks.length == 2) {
+                types = manager.getTypes(chunks[0], chunks[1]);
+            }
+            
+ 
+            
+            StringBuilder sb = new StringBuilder(25);
+            if (types.contains(EntryType.IMAGE)) {
+                sb.append("IMAGE ");
+            } else {
+                sb.append("image ");
+            }
+            if (types.contains(EntryType.GRID)) {
+                sb.append("GRID ");
+            } else {
+                sb.append("grid ");
+            }
+            if (types.contains(EntryType.POINT)) {
+                sb.append("POINT ");
+            } else {
+                sb.append("point ");
+            }
+            if (types.contains(EntryType.RADAR)) {
+                sb.append("RADAR ");
+            } else {
+                sb.append("radar ");
+            }
+            if (types.contains(EntryType.NAV)) {
+                sb.append("NAV ");
+            } else {
+                sb.append("nav ");
+            }
+            return sb.toString();
         }
 
         /**

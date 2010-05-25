@@ -68,7 +68,6 @@ import ucar.unidata.util.LogUtil;
 
 import edu.wisc.ssec.mcidas.adde.AddeServerInfo;
 import edu.wisc.ssec.mcidas.adde.AddeTextReader;
-import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EditorAction;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
@@ -162,28 +161,29 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         this.managerController = null;
         this.serverText = address;
         this.datasetText = group;
-        initComponents(RemoteAddeEntry.INVALID_ENTRY);
+        initComponents(RemoteAddeEntry.INVALID_ENTRIES);
     }
 
     // TODO(jon): hold back on javadocs, this is likely to change
     public RemoteEntryEditor(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store) {
-        super(manager, modal);
-        this.entryStore = store;
-        this.managerController = manager;
-        this.serverText = null;
-        this.datasetText = null;
-        initComponents(RemoteAddeEntry.INVALID_ENTRY);
+        this(parent, modal, manager, store, RemoteAddeEntry.INVALID_ENTRIES);
+    }
+
+    public RemoteEntryEditor(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store, final RemoteAddeEntry entry) {
+        this(parent, modal, manager, store, CollectionHelpers.list(entry));
     }
 
     // TODO(jon): hold back on javadocs, this is likely to change
-    public RemoteEntryEditor(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store, final RemoteAddeEntry entry) {
+    public RemoteEntryEditor(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store, final List<RemoteAddeEntry> entries) {
         super(manager, modal);
         this.entryStore = store;
         this.managerController = manager;
         this.serverText = null;
         this.datasetText = null;
-        currentEntries.add(entry);
-        initComponents(entry);
+        if (entries != RemoteAddeEntry.INVALID_ENTRIES) {
+            currentEntries.addAll(entries);
+        }
+        initComponents(entries);
     }
 
     /**
@@ -370,19 +370,6 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
             setStatus("Could not verify any types of data...");
             setBadField(datasetField, true);
         }
-
-//        if (validTypes.isEmpty()) {
-//            setStatus("Could not verify any types of data...");
-//            setBadField(datasetField, true);
-//        } else {
-//            setStatus("Server verification complete.");
-//            imageBox.setSelected(validTypes.contains(EntryType.IMAGE));
-//            pointBox.setSelected(validTypes.contains(EntryType.POINT));
-//            gridBox.setSelected(validTypes.contains(EntryType.GRID));
-//            textBox.setSelected(validTypes.contains(EntryType.TEXT));
-//            navBox.setSelected(validTypes.contains(EntryType.NAV));
-//            radarBox.setSelected(validTypes.contains(EntryType.RADAR));
-//        }
     }
 
     /**
@@ -479,12 +466,8 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      * 
      * @see #getForceMcxCaps()
      */
-    private static void setForceMcxCaps(final boolean value) {
-        McIDASV mcv = McIDASV.getStaticMcv();
-        if (mcv == null) {
-            return;
-        }
-        mcv.getStore().put(PREF_FORCE_CAPS, value);
+    private void setForceMcxCaps(final boolean value) {
+        entryStore.getIdvStore().put(PREF_FORCE_CAPS, value);
     }
 
     /**
@@ -492,14 +475,11 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      * 
      * @see #setForceMcxCaps(boolean)
      */
-    private static boolean getForceMcxCaps() {
-        McIDASV mcv = McIDASV.getStaticMcv();
-        if (mcv == null) {
-            return true;
-        }
-        return mcv.getStore().get(PREF_FORCE_CAPS, true);
+    private boolean getForceMcxCaps() {
+        return entryStore.getIdvStore().get(PREF_FORCE_CAPS, true);
     }
 
+    // TODO(jon): oh man clean this junk up
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -507,7 +487,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">
-    private void initComponents(final RemoteAddeEntry initEntry) {
+    private void initComponents(final List<RemoteAddeEntry> initEntries) {
         entryPanel = new javax.swing.JPanel();
         serverLabel = new javax.swing.JLabel();
         serverField = new javax.swing.JTextField();
@@ -537,7 +517,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         datasetField.setUppercase(forceCaps);
         userField.setUppercase(forceCaps);
 
-        if (initEntry == RemoteAddeEntry.INVALID_ENTRY) {
+        if (initEntries == RemoteAddeEntry.INVALID_ENTRIES) {
             setTitle("Define New Remote Dataset");
         } else {
             setTitle("Edit Remote Dataset");
@@ -710,21 +690,21 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
                 .addContainerGap(DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        if (initEntry == RemoteAddeEntry.INVALID_ENTRY) {
+        if (initEntries == RemoteAddeEntry.INVALID_ENTRIES) {
             verifyAddButton.setText("Verify and Add Server");
         } else {
             verifyAddButton.setText("Verify and Save Changes");
         }
         verifyAddButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                if (initEntry == RemoteAddeEntry.INVALID_ENTRY)
+                if (initEntries == RemoteAddeEntry.INVALID_ENTRIES)
                     verifyAddButtonActionPerformed(evt);
                 else
                     verifyEditButtonActionPerformed(evt);
             }
         });
 
-        if (initEntry == RemoteAddeEntry.INVALID_ENTRY) {
+        if (initEntries == RemoteAddeEntry.INVALID_ENTRIES) {
             verifyServer.setText("Verify Server");
         } else {
             verifyServer.setText("Verify Changes");
@@ -735,14 +715,14 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
             }
         });
 
-        if (initEntry == RemoteAddeEntry.INVALID_ENTRY) {
+        if (initEntries == RemoteAddeEntry.INVALID_ENTRIES) {
             addServer.setText("Add Server");
         } else {
             addServer.setText("Save Changes");
         }
         addServer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                if (initEntry == RemoteAddeEntry.INVALID_ENTRY) {
+                if (initEntries == RemoteAddeEntry.INVALID_ENTRIES) {
                     addServerActionPerformed(evt);
                 } else {
                     editServerActionPerformed(evt);
@@ -795,7 +775,8 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
                 .addContainerGap(17, Short.MAX_VALUE))
         );
 
-        if (initEntry != null && !initEntry.equals(RemoteAddeEntry.INVALID_ENTRY)) {
+        if (initEntries != null && !initEntries.equals(RemoteAddeEntry.INVALID_ENTRIES)) {
+            RemoteAddeEntry initEntry = initEntries.get(0);
             serverField.setText(initEntry.getAddress());
             datasetField.setText(initEntry.getGroup());
 
@@ -807,26 +788,29 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
                 projField.setText(initEntry.getAccount().getProject());
             }
 
-            switch (initEntry.getEntryType()) {
-                case IMAGE:
-                    imageBox.setSelected(true);
-                    break;
-                case POINT:
-                    pointBox.setSelected(true);
-                    break;
-                case GRID:
-                    gridBox.setSelected(true);
-                    break;
-                case TEXT:
-                    textBox.setSelected(true);
-                    break;
-                case NAV:
-                    navBox.setSelected(true);
-                    break;
-                case RADAR:
-                    radarBox.setSelected(true);
-                    break;
+            for (EntryType type : EntryTransforms.findEntryTypes(initEntries)) {
+                switch (type) {
+                    case IMAGE:
+                        imageBox.setSelected(true);
+                        break;
+                    case POINT:
+                        pointBox.setSelected(true);
+                        break;
+                    case GRID:
+                        gridBox.setSelected(true);
+                        break;
+                    case TEXT:
+                        textBox.setSelected(true);
+                        break;
+                    case NAV:
+                        navBox.setSelected(true);
+                        break;
+                    case RADAR:
+                        radarBox.setSelected(true);
+                        break;
+                }
             }
+
         }
 
         pack();

@@ -47,7 +47,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -114,6 +116,14 @@ public class EntryTransforms {
             return new RemoteAddeEntry.Builder(hostname, "temp").build();
         }
     };
+
+    public static Set<EntryType> findEntryTypes(final Collection<? extends AddeEntry> entries) {
+        Set<EntryType> types = new HashSet<EntryType>();
+        for (AddeEntry entry : entries) {
+            types.add(entry.getEntryType());
+        }
+        return EnumSet.copyOf(types);
+    }
 
     // converts a list of AddeServers to a set of RemoteAddeEntry
     public static Set<RemoteAddeEntry> convertIdvServers(final List<AddeServer> idvServers) {

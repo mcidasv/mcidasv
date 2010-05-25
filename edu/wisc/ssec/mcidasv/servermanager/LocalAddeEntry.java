@@ -29,15 +29,14 @@
  */
 package edu.wisc.ssec.mcidasv.servermanager;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
-import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
-import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 
 /**
@@ -52,6 +51,8 @@ public class LocalAddeEntry implements AddeEntry {
     /** Represents a {@literal "bad"} local ADDE entry. */
     // seriously, don't use null unless you REALLY need it.
     public static final LocalAddeEntry INVALID_ENTRY = new Builder("INVALID", "INVALID", "/dev/null", AddeFormat.INVALID).build();
+
+    public static final List<LocalAddeEntry> INVALID_ENTRIES = Collections.singletonList(INVALID_ENTRY);
 
     /** */
     private static final String CYGWIN_PREFIX = "/cygdrive/";
