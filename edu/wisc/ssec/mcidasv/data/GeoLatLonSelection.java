@@ -856,11 +856,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
               LatLonWidget llw = (LatLonWidget)readoutLLWidget.get(i);
               llw.setLatLon(latLon[0][i], latLon[1][i]);
           }
-          String plc = getPlace();
-          int pos = 0;
-          if (plc.equals(PLACE_ULEFT)) pos = 1;
-          setLatitude(latLon[0][pos]);
-          setLongitude(latLon[1][pos]);
+
           for (int i=0; i<5; i++) {
               JTextField linField = (JTextField)readoutImageLinFld.get(i);
               Double dbl = new Double(imageEL[1][i]);
@@ -888,14 +884,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   eleField.setText(trimCoord(areaEL[0][i]));
               else
                   eleField.setText(Misc.MISSING);
-          }
-          String type = getCoordinateType();
-          if (type.equals(TYPE_IMAGE)) {
-              setElement((int)(imageEL[0][pos] + 0.5));
-              setLine((int)(imageEL[1][pos] + 0.5));
-          } else if (type.equals(TYPE_AREA)) {
-              setElement((int)(areaEL[0][pos] + 0.5));
-              setLine((int)(areaEL[1][pos] + 0.5));
           }
       }
 
@@ -1481,13 +1469,15 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                 int[] dirB = macs.getDirBlock();
                 int previewLineMag = dirB[11];
                 int previewEleMag = dirB[12];
+                int dirLMag = previewDir.getValue(11);
+                int dirEMag = previewDir.getValue(12);
                 if (type.equals(TYPE_IMAGE))
                     el = areaNav.imageCoordToAreaCoord(el);
                 Rectangle2D mapArea = macs.getDefaultMapArea();
                 int previewXDim = new Long(new Double(mapArea.getMaxX() - mapArea.getMinX()).longValue()).intValue();
                 int previewYDim = new Long(new Double(mapArea.getMaxY() - mapArea.getMinY()).longValue()).intValue();
-                el[0][pos] = el[0][pos] / previewEleMag;
-                el[1][pos] = previewYDim - 1 - el[1][pos] / previewLineMag;
+                el[0][pos] = el[0][pos] * dirEMag / previewEleMag;
+                el[1][pos] = previewYDim - 1 - el[1][pos] * dirLMag / previewLineMag;;
             }
         } catch (Exception e) {
             System.out.println("convertToDisplayCoords e=" + e);
