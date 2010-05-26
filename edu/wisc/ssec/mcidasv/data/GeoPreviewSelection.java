@@ -306,6 +306,16 @@ public class GeoPreviewSelection extends DataSelectionComponent {
               laloSel.setERes(-1.0);
               laloSel.elementMagSliderChanged(false);
               laloSel.getGeoLocationInfo(line, ele);
+              int pos = 0;
+              if (laloSel.getPlace().equals(laloSel.PLACE_ULEFT)) pos = 1;
+              double[][] ll = laloSel.getLatLonPoints();
+              laloSel.setLatitude(ll[0][pos]);
+              laloSel.setLongitude(ll[1][pos]);
+              double[][] el = laloSel.getEleLinPoints();
+              ele = (int)Math.floor(el[0][pos] + 0.5);
+              line = (int)Math.floor(el[1][pos] + 0.5);
+              laloSel.setElement(ele);
+              laloSel.setLine(line);
           }
       }
            
