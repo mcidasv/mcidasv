@@ -898,6 +898,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
        * Change coordinate type panel
        */
       protected void flipLocationPanel(int locPanel) {
+          System.out.println("flipLocationPanel:");
           int nowPlaying = locationPanel.getVisibleIndex();
           if (locPanel > 0) {
               if (nowPlaying == 0) {
@@ -908,17 +909,19 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
               String loc = getPlace();
               int indx = 0;
               if (loc.equals(PLACE_ULEFT)) indx = 1;
-              int ele = 0;
-              int lin = 0;
+              int ele = -1;
+              int lin = -1;
               if (type.equals(TYPE_IMAGE)) {
-                  ele = (int)Math.floor(imageEL[0][indx] + 0.5);
-                  lin = (int)Math.floor(imageEL[1][indx] + 0.5);
+                  if (imageEL[0][indx] != dNaN)
+                      ele = (int)Math.floor(imageEL[0][indx] + 0.5);
+                  if (imageEL[1][indx] != dNaN)
+                      lin = (int)Math.floor(imageEL[1][indx] + 0.5);
               } else if (type.equals(TYPE_AREA)) {
-                  ele = (int)Math.floor(areaEL[0][indx] + 0.5);
-                  lin = (int)Math.floor(areaEL[1][indx] + 0.5);
+                  if (areaEL[0][indx] != dNaN)
+                      ele = (int)Math.floor(areaEL[0][indx] + 0.5);
+                  if (areaEL[1][indx] != dNaN)
+                      lin = (int)Math.floor(areaEL[1][indx] + 0.5);
               }
-              if (lin == 0) lin = -1;
-              if (ele == 0) ele = -1;
               setElement(ele);
               setLine(lin);
           } else {
