@@ -106,7 +106,6 @@ public class GeoPreviewSelection extends DataSelectionComponent {
         if (eMag > 0)
             this.elementMag = eMag;
         sample = getDataProjection();
-        Rectangle2D mapArea = sample.getDefaultMapArea();
 
         if (this.sampleProjection == null) {
             this.sampleProjection = sample;
@@ -252,6 +251,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
           y_coords[0] = (double)extrms[1];
           x_coords[1] = (double)extrms[2];
           y_coords[1] = (double)extrms[3];
+
           int height = (int)(y_coords[1] - y_coords[0]);
           int width = (int)(x_coords[1] - x_coords[0]);
           if ((height < 1) || (width < 1)) return;
@@ -293,6 +293,19 @@ public class GeoPreviewSelection extends DataSelectionComponent {
                   width *= -elementMag;
               }
 
+              Rectangle2D mapArea = sampleProjection.getDefaultMapArea();
+              double previewXDim = mapArea.getWidth();
+              double previewYDim = mapArea.getHeight();
+              double dLin = (double)line;
+              double dEle = (double)ele;
+              if ((line < 0) || (dLin > previewYDim) ||
+                  (ele < 0) || (dEle > previewXDim)) {
+                  line = -1;
+                  ele = -1;
+                  height = 0;
+                  width = 0;
+              }
+
               int lineMag = 1;
               int eleMag = 1;
               laloSel.setNumLines(height);
@@ -308,12 +321,14 @@ public class GeoPreviewSelection extends DataSelectionComponent {
               laloSel.getGeoLocationInfo(line, ele);
               int pos = 0;
               if (laloSel.getPlace().equals(laloSel.PLACE_ULEFT)) pos = 1;
-              double[][] ll = laloSel.getLatLonPoints();
-              laloSel.setLatitude(ll[0][pos]);
-              laloSel.setLongitude(ll[1][pos]);
-              double[][] el = laloSel.getEleLinPoints();
-              ele = (int)Math.floor(el[0][pos] + 0.5);
-              line = (int)Math.floor(el[1][pos] + 0.5);
+              double[][] pts = laloSel.getLatLonPoints();
+              laloSel.setLatitude(pts[0][pos]);
+              laloSel.setLongitude(pts[1][pos]);
+              pts = laloSel.getImagePoints();
+              if (laloSel.getCoordinateType().equals(laloSel.TYPE_AREA))
+                  pts = laloSel.getAreaPoints();
+              ele = (int)Math.floor(pts[0][pos] + 0.5);
+              line = (int)Math.floor(pts[1][pos] + 0.5);
               laloSel.setElement(ele);
               laloSel.setLine(line);
           }
