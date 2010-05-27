@@ -898,7 +898,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
        * Change coordinate type panel
        */
       protected void flipLocationPanel(int locPanel) {
-          System.out.println("flipLocationPanel:");
           int nowPlaying = locationPanel.getVisibleIndex();
           if (locPanel > 0) {
               if (nowPlaying == 0) {
