@@ -782,6 +782,8 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         setDataSelection(dataSelection);
         GeoSelection geoSelection = dataSelection.getGeoSelection(true);
         if (geoSelection == null) return null;
+        boolean validState = geoSelection.getHasValidState();
+        if (!validState) return null;
 
         if (this.lastGeoSelection == null) this.lastGeoSelection = geoSelection;
         this.selectionProps = dataSelection.getProperties();
