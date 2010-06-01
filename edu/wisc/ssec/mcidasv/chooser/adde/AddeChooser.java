@@ -434,7 +434,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 
         List<Group> groups = CollectionHelpers.arrList();
         if (isLocalServer()) {
-            groups.addAll(servManager.getIdvStyleLocalGroups(true));
+            groups.addAll(servManager.getIdvStyleLocalGroups());
         } else {
             String sel = null;
             Object obj = serverSelector.getSelectedItem();
@@ -450,15 +450,16 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             }
 
             EntryType selType = EntryTransforms.strToEntryType(getGroupType());
-            groups.addAll(servManager.getIdvStyleRemoteGroups(true, sel, selType));
+            groups.addAll(servManager.getIdvStyleRemoteGroups(sel, selType));
         }
         logger.info("updateGroups: selected={} (type={}) chooser={} contents={}", new Object[] { serverSelector.getSelectedItem(), serverSelector.getSelectedItem().getClass().getName(), this.getDataType(), groups});
         Comparator<Group> byGroup = new GroupComparator();
         Collections.sort(groups, byGroup);
         GuiUtils.setListData(groupSelector, groups);
         if (!groups.isEmpty()) {
-            if (selected == null || !containsGroupName(groups, selected))
+            if (selected == null || !containsGroupName(groups, selected)) {
                 selected = groupSelector.getItemAt(0);
+            }
             groupSelector.setSelectedItem(selected);
         }
     }

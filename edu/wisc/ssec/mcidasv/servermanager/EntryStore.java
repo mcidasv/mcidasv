@@ -551,19 +551,11 @@ public class EntryStore {
         EventBus.publish(Event.REPLACEMENT);
     }
 
-    /**
-     * Returns <i>all</i> local ADDE groups, even if some entries are disabled
-     * or invalid.
-     */
-    public Set<AddeServer.Group> getIdvStyleLocalGroups() {
-        return getIdvStyleLocalGroups(false);
-    }
-
     // if true, filters out disabled local groups; if false, returns all local groups
-    public Set<AddeServer.Group> getIdvStyleLocalGroups(final boolean filterDisabled) {
+    public Set<AddeServer.Group> getIdvStyleLocalGroups() {
         Set<AddeServer.Group> idvGroups = newLinkedHashSet();
         for (LocalAddeEntry entry : getLocalEntries()) {
-            if (!filterDisabled || (entry.getEntryStatus() == EntryStatus.ENABLED && entry.getEntryValidity() == EntryValidity.VERIFIED)) {
+            if (entry.getEntryStatus() == EntryStatus.ENABLED && entry.getEntryValidity() == EntryValidity.VERIFIED) {
                 String group = entry.getGroup();
                 AddeServer.Group idvGroup = new AddeServer.Group("IMAGE", group, group);
                 idvGroups.add(idvGroup);
@@ -572,23 +564,11 @@ public class EntryStore {
         return idvGroups;
     }
 
-//    public Set<AddeServer> getIdvStyleLocalEntries() {
-//        return newLinkedHashSet();
-//    }
-
     public Set<AddeServer.Group> getIdvStyleRemoteGroups(final String server, final String typeAsStr) {
-        return getIdvStyleRemoteGroups(false, server, typeAsStr);
+        return getIdvStyleRemoteGroups(server, EntryTransforms.strToEntryType(typeAsStr));
     }
 
     public Set<AddeServer.Group> getIdvStyleRemoteGroups(final String server, final EntryType type) {
-        return getIdvStyleRemoteGroups(false, server, type);
-    }
-
-    public Set<AddeServer.Group> getIdvStyleRemoteGroups(final boolean filterDisabled, final String server, final String typeAsStr) {
-        return getIdvStyleRemoteGroups(filterDisabled, server, EntryTransforms.strToEntryType(typeAsStr));
-    }
-
-    public Set<AddeServer.Group> getIdvStyleRemoteGroups(final boolean filterDisabled, final String server, final EntryType type) {
         Set<AddeServer.Group> idvGroups = newLinkedHashSet();
         String typeStr = type.name();
         for (AddeEntry matched : trie.getPrefixedBy(server).values()) {
@@ -596,17 +576,13 @@ public class EntryStore {
                 continue;
             }
 
-            if (!filterDisabled || (matched.getEntryStatus() == EntryStatus.ENABLED && matched.getEntryValidity() == EntryValidity.VERIFIED)) {
+            if (matched.getEntryStatus() == EntryStatus.ENABLED && matched.getEntryValidity() == EntryValidity.VERIFIED && matched.getEntryType() == type) {
                 String group = matched.getGroup();
                 idvGroups.add(new AddeServer.Group(typeStr, group, group));
             }
         }
         return idvGroups;
     }
-
-//    public Set<AddeServer> getIdvStyleRemoteEntries() {
-//        return newLinkedHashSet();
-//    }
 
     public List<AddeServer> getIdvStyleEntries() {
         return arrList(EntryTransforms.convertMcvServers(getEntrySet()));
