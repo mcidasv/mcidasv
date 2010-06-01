@@ -4,12 +4,13 @@
     <!-- encoders are assigned the type
          ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
     <layout class="ch.qos.logback.classic.PatternLayout">
-      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %method: %msg%n</pattern>
     </layout>
   </appender>
 
   <!-- disable logging within mcv (by default) -->
   <logger name="edu.wisc.ssec.mcidasv" level="OFF"/>
+  <!-- <logger name="edu.wisc.ssec.mcidasv" level="TRACE"/> -->
 
   <root level="INFO">
     <appender-ref ref="STDOUT" />
