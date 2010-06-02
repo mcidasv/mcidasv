@@ -42,7 +42,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
@@ -54,7 +53,6 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.UIDefaults;
 
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -65,6 +63,7 @@ import org.w3c.dom.Element;
 import ucar.unidata.data.DataManager;
 import ucar.unidata.idv.ArgsManager;
 import ucar.unidata.idv.ControlDescriptor;
+import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IdvResourceManager;
@@ -182,32 +181,31 @@ public class McIDASV extends IntegratedDataViewer {
         // Keep this code around for reference--this requires MacMenuManager.java and MRJToolkit.
         // We use OSXAdapter instead now, but it is unclear which is the preferred method.
         // Let's use the one that works.
-//    	if (isMac()) {
-//    		try {
-//    			Object[] constructor_args = { this };
-//    			Class[] arglist = { McIDASV.class };
-//    			Class mac_class = Class.forName("edu.wisc.ssec.mcidasv.MacMenuManager");
-//    			Constructor new_one = mac_class.getConstructor(arglist);
-//    			new_one.newInstance(constructor_args);
-//    		}
-//    		catch(Exception e) {
-//    			System.out.println(e);
-//    		}
-//    	}
+//        if (isMac()) {
+//            try {
+//                Object[] constructor_args = { this };
+//                Class[] arglist = { McIDASV.class };
+//                Class mac_class = Class.forName("edu.wisc.ssec.mcidasv.MacMenuManager");
+//                Constructor new_one = mac_class.getConstructor(arglist);
+//                new_one.newInstance(constructor_args);
+//            }
+//            catch(Exception e) {
+//                System.out.println(e);
+//            }
+//        }
 
         // Set up our application to respond to the Mac OS X application menu
         registerForMacOSXEvents();
 
         // This doesn't always look good... but keep it here for future reference
-        if (false) {
-        	UIDefaults def = javax.swing.UIManager.getLookAndFeelDefaults();
-        	Enumeration defkeys = def.keys();
-        	while (defkeys.hasMoreElements()) {
-        		Object item = defkeys.nextElement();
-        		if (item.toString().indexOf("selectionBackground") > 0)
-        			def.put(item, Constants.MCV_BLUE);
-        	}
-        }
+//        UIDefaults def = javax.swing.UIManager.getLookAndFeelDefaults();
+//        Enumeration defkeys = def.keys();
+//        while (defkeys.hasMoreElements()) {
+//            Object item = defkeys.nextElement();
+//            if (item.toString().indexOf("selectionBackground") > 0) {
+//                def.put(item, Constants.MCV_BLUE);
+//            }
+//        }
 
         // we're tired of the IDV's default missing image, so reset it
         GuiUtils.MISSING_IMAGE = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/mcidasv-round22.png";
@@ -252,9 +250,10 @@ public class McIDASV extends IntegratedDataViewer {
     // TODO: we probably don't want our own copy of this in the long run...
     // all we did was change "IDV" to "McIDAS-V"
     @Override protected void startMonitor() {
-        if (mcvMonitor != null) 
+        if (mcvMonitor != null) {
             return;
-        final String monitorPort = getProperty(PROP_MONITORPORT,"");
+        }
+        final String monitorPort = getProperty(PROP_MONITORPORT, "");
         if (monitorPort!=null && monitorPort.trim().length()>0 && !monitorPort.trim().equals("none")) {
             Misc.run(new Runnable() {
                 public void run() {
@@ -346,8 +345,6 @@ public class McIDASV extends IntegratedDataViewer {
                 element.setAttribute("fileMask", entry.getMask());
                 element.setAttribute("name", entry.getName());
                 element.setAttribute("status", entry.getEntryStatus().name());
-//              element.setAttribute("description", entry.getFormat().getTooltip());
-//              element.setAttribute("type", entry.getEntryType().name());
                 return element;
             }
             public Object createObject(XmlEncoder e, Element element) {
@@ -360,8 +357,6 @@ public class McIDASV extends IntegratedDataViewer {
                 String fileMask = XmlUtil.getAttribute(element, "fileMask");
                 String name = XmlUtil.getAttribute(element, "name");
                 String status = XmlUtil.getAttribute(element, "status", "ENABLED");
-//              String description = XmlUtil.getAttribute(element, "description");
-//              EntryType type = EntryTransforms.strToEntryType(XmlUtil.getAttribute(element, "type"));
                 LocalAddeEntry.Builder builder = new LocalAddeEntry.Builder(name, group, fileMask, format).range(start, end).descriptor(descriptor).realtime(realtime).status(status);
                 return builder.build();
             }
@@ -388,8 +383,9 @@ public class McIDASV extends IntegratedDataViewer {
      */
     public List<String> getCommandLineArgs() {
         List<String> args = new ArrayList<String>();
-        for (String arg : getArgsManager().getOriginalArgs())
+        for (String arg : getArgsManager().getOriginalArgs()) {
             args.add(arg);
+        }
         return args;
     }
 
@@ -481,8 +477,9 @@ public class McIDASV extends IntegratedDataViewer {
             continueWarning = false;
         }
 
-        if (reallyRemove)
+        if (reallyRemove) {
             super.removeAllDataSources();
+        }
 
         return continueWarning;
     }
@@ -527,8 +524,9 @@ public class McIDASV extends IntegratedDataViewer {
             continueWarning = false;
         }
 
-        if (reallyRemove)
+        if (reallyRemove) {
             super.removeAllDisplays();
+        }
 
         return continueWarning;
     }
@@ -538,9 +536,10 @@ public class McIDASV extends IntegratedDataViewer {
      * necessary.
      */
     @Override public void removeAllDataSources() {
-        boolean showWarning = getStore().get(Constants.PREF_CONFIRM_REMOVE_DATA, true);
+        IdvObjectStore store = getStore();
+        boolean showWarning = store.get(Constants.PREF_CONFIRM_REMOVE_DATA, true);
         showWarning = removeAllData(showWarning);
-        getStore().put(Constants.PREF_CONFIRM_REMOVE_DATA, showWarning);
+        store.put(Constants.PREF_CONFIRM_REMOVE_DATA, showWarning);
     }
 
     /**
@@ -548,9 +547,10 @@ public class McIDASV extends IntegratedDataViewer {
      * necessary.
      */
     @Override public void removeAllDisplays() {
-        boolean showWarning = getStore().get(Constants.PREF_CONFIRM_REMOVE_LAYERS, true);
+        IdvObjectStore store = getStore();
+        boolean showWarning = store.get(Constants.PREF_CONFIRM_REMOVE_LAYERS, true);
         showWarning = removeAllLayers(showWarning);
-        getStore().put(Constants.PREF_CONFIRM_REMOVE_LAYERS, showWarning);
+        store.put(Constants.PREF_CONFIRM_REMOVE_LAYERS, showWarning);
     }
 
     /**
@@ -575,7 +575,8 @@ public class McIDASV extends IntegratedDataViewer {
             removeAllLayers(false);
         }
 
-        boolean showWarning = getStore().get(Constants.PREF_CONFIRM_REMOVE_BOTH, true);
+        IdvObjectStore store = getStore();
+        boolean showWarning = store.get(Constants.PREF_CONFIRM_REMOVE_BOTH, true);
         if (showWarning) {
             Set<WarningResult> result = showWarningDialog(
                 "Confirm Removal",
@@ -599,7 +600,7 @@ public class McIDASV extends IntegratedDataViewer {
             removeAllLayers(false);
         }
 
-        getStore().put(Constants.PREF_CONFIRM_REMOVE_BOTH, continueWarning);
+        store.put(Constants.PREF_CONFIRM_REMOVE_BOTH, continueWarning);
     }
 
     /**
@@ -641,12 +642,14 @@ public class McIDASV extends IntegratedDataViewer {
             options[1]);                 // initial?
 
         WarningResult button = WarningResult.CANCEL;
-        if (result == JOptionPane.YES_OPTION)
+        if (result == JOptionPane.YES_OPTION) {
             button = WarningResult.OK;
+        }
 
         WarningResult show = WarningResult.HIDE;
-        if (box.isSelected())
+        if (box.isSelected()) {
             show = WarningResult.SHOW;
+        }
 
         return EnumSet.of(button, show);
     }
@@ -674,8 +677,9 @@ public class McIDASV extends IntegratedDataViewer {
     {
         ViewManager vm = 
             getVMManager().findOrCreateViewManager(viewDescriptor, properties);
-        if (vm == null)
+        if (vm == null) {
             vm = super.getViewManager(viewDescriptor, newWindow, properties);
+        }
         return vm;
     }
 
@@ -776,8 +780,9 @@ public class McIDASV extends IntegratedDataViewer {
     @Override public void initDone() {
         super.initDone();
         GuiUtils.setApplicationTitle("");
-        if (cleanExit || getArgsManager().getIsOffScreen())
+        if (cleanExit || getArgsManager().getIsOffScreen()) {
             return;
+        }
 
         String msg = "The previous McIDAS-V session did not exit cleanly.<br>"+ 
                      "Do you want to send the log file to the McIDAS Help Desk?";
@@ -788,8 +793,9 @@ public class McIDASV extends IntegratedDataViewer {
         }
 
         boolean continueAsking = getStore().get("mcv.crash.boom.send.report", true);
-        if (!continueAsking)
+        if (!continueAsking) {
             return;
+        }
 
         Set<WarningResult> result = showWarningDialog(
                 "Report Crash",
@@ -800,8 +806,9 @@ public class McIDASV extends IntegratedDataViewer {
                 "Do not report");
 
         getStore().put("mcv.crash.boom.send.report", result.contains(WarningResult.SHOW));
-        if (!result.contains(WarningResult.OK))
+        if (!result.contains(WarningResult.OK)) {
             return;
+        }
 
         getIdvUIManager().showSupportForm();
     }
@@ -829,15 +836,17 @@ public class McIDASV extends IntegratedDataViewer {
     {
         boolean overwriteData = false;
         if (filename == null) {
-            if (overwriteDataCbx.getToolTipText() == null)
+            if (overwriteDataCbx.getToolTipText() == null) {
                 overwriteDataCbx.setToolTipText("Change the file paths that the data sources use");
+            }
 
             filename = FileManager.getReadFile("Open File",
                 ((ArgumentManager)getArgsManager()).getBundleFilters(true), 
                 GuiUtils.top(overwriteDataCbx));
 
-            if (filename == null)
+            if (filename == null) {
                 return;
+            }
 
             overwriteData = overwriteDataCbx.isSelected();
         }
@@ -945,16 +954,18 @@ public class McIDASV extends IntegratedDataViewer {
      */
     @EventSubscriber(eventClass=TabbedAddeManager.Event.class)
     public void onServerManagerWindowEvent(TabbedAddeManager.Event evt) {
-        if (evt == TabbedAddeManager.Event.CLOSED)
+        if (evt == TabbedAddeManager.Event.CLOSED) {
             tabbedAddeManager = null;
+        }
     }
 
     /**
      * Creates (if needed) the server manager GUI and displays it.
      */
     public void showServerManager() {
-        if (tabbedAddeManager == null)
+        if (tabbedAddeManager == null) {
             tabbedAddeManager = new TabbedAddeManager(getServerManager());
+        }
         tabbedAddeManager.showManager();
     }
 
@@ -1091,11 +1102,13 @@ public class McIDASV extends IntegratedDataViewer {
      */
     public static boolean isUnixLike() {
         String osName = System.getProperty("os.name");
-        if (osName == null)
+        if (osName == null) {
             throw new RuntimeException("no os.name system property!");
+        }
 
-        if (System.getProperty("os.name").startsWith("Windows"))
+        if (System.getProperty("os.name").startsWith("Windows")) {
             return false;
+        }
         return true;
     }
 
@@ -1111,8 +1124,9 @@ public class McIDASV extends IntegratedDataViewer {
      */
     public static boolean isWindows() {
         String osName = System.getProperty("os.name");
-        if (osName == null)
+        if (osName == null) {
             throw new RuntimeException("no os.name system property!");
+        }
 
         return osName.startsWith("Windows");
     }
@@ -1131,12 +1145,14 @@ public class McIDASV extends IntegratedDataViewer {
      * {@code java.home}.
      */
     public static String getJavaDriveLetter() {
-        if (!isWindows())
+        if (!isWindows()) {
             return "";
+        }
 
         String home = System.getProperty("java.home");
-        if (home == null)
+        if (home == null) {
             throw new RuntimeException("no java.home system property!");
+        }
 
         return home.substring(0, 2);
     }
@@ -1161,8 +1177,9 @@ public class McIDASV extends IntegratedDataViewer {
         PrintStream p;
 
         File dir = new File(StartupManager.INSTANCE.getPlatform().getUserDirectory());
-        if (!dir.exists())
+        if (!dir.exists()) {
             dir.mkdir();
+        }
 
         try {
             out = new FileOutputStream(path);
@@ -1215,16 +1232,19 @@ public class McIDASV extends IntegratedDataViewer {
      * @see #hadCleanExit(String)
      */
     private static void removeSessionFile(final String path) {
-        if (path == null)
+        if (path == null) {
             return;
+        }
 
         File f = new File(path);
 
-        if (!f.exists() || !f.canWrite() || f.isDirectory())
+        if (!f.exists() || !f.canWrite() || f.isDirectory()) {
             return;
+        }
 
-        if (!f.delete())
+        if (!f.delete()) {
             throw new AssertionError("Could not delete session file");
+        }
     }
 
     /**
@@ -1283,10 +1303,9 @@ public class McIDASV extends IntegratedDataViewer {
     public static void main(String[] args) throws Exception {
         logger.info("Starting McIDAS-V");
         applyArgs(args);
-        cleanExit = hadCleanExit(SESSION_FILE);
-        if (!cleanExit)
+        if (!hadCleanExit(SESSION_FILE)) {
             previousStart = extractDate(SESSION_FILE);
-
+        }
         createSessionFile(SESSION_FILE);
         LogUtil.configure();
         McIDASV myself = new McIDASV(args);
