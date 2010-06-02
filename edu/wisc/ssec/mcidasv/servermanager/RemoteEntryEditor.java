@@ -61,6 +61,8 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.swing.SwingUtilities;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -288,7 +290,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     private void editEntry() {
         Set<RemoteAddeEntry> newEntries = pollWidgets(false);
         entryStore.replaceEntries(currentEntries, newEntries);
-        logger.trace("editEntry: currentEntries={}", currentEntries);
+        logger.trace("currentEntries={}", currentEntries);
         disposeDisplayable(true);
     }
 
@@ -379,7 +381,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      */
     private void setStatus(final String msg) {
         assert msg != null;
-        logger.debug("setStatus: msg={}", msg);
+        logger.debug("msg={}", msg);
         runOnEDT(new Runnable() {
             public void run() {
                 statusLabel.setText(msg);
@@ -488,6 +490,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">
     private void initComponents(final List<RemoteAddeEntry> initEntries) {
+        assert SwingUtilities.isEventDispatchThread();
         entryPanel = new javax.swing.JPanel();
         serverLabel = new javax.swing.JLabel();
         serverField = new javax.swing.JTextField();
@@ -775,12 +778,12 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
                 .addContainerGap(17, Short.MAX_VALUE))
         );
 
-        if (initEntries != null && !initEntries.equals(RemoteAddeEntry.INVALID_ENTRIES)) {
+        if (initEntries != null && !RemoteAddeEntry.INVALID_ENTRIES.equals(initEntries)) {
             RemoteAddeEntry initEntry = initEntries.get(0);
             serverField.setText(initEntry.getAddress());
             datasetField.setText(initEntry.getGroup());
 
-            if (!initEntry.getAccount().equals(RemoteAddeEntry.DEFAULT_ACCOUNT)) {
+            if (!RemoteAddeEntry.DEFAULT_ACCOUNT.equals(initEntry.getAccount())) {
                 acctBox.setSelected(true);
                 userField.setEnabled(true);
                 userField.setText(initEntry.getAccount().getUsername());
@@ -817,12 +820,14 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     }// </editor-fold>
 
     private void acctBoxActionPerformed(java.awt.event.ActionEvent evt) {
+        assert SwingUtilities.isEventDispatchThread();
         boolean enabled = acctBox.isSelected();
         userField.setEnabled(enabled);
         projField.setEnabled(enabled);
     }
 
     private void capBoxActionPerformed(java.awt.event.ActionEvent evt) {
+        assert SwingUtilities.isEventDispatchThread();
         boolean forceCaps = capBox.isSelected();
         datasetField.setUppercase(forceCaps);
         userField.setUppercase(forceCaps);
@@ -892,6 +897,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     }
 
     private void reactToValueChanges() {
+        assert SwingUtilities.isEventDispatchThread();
         if (inErrorState) {
             verifyAddButton.setEnabled(true);
             verifyServer.setEnabled(true);
@@ -927,9 +933,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
                 goodEntries.add(entry);
             } else {
                 checkedHosts.add(host);
-                boolean connected = checkHost(entry);
-
-                if (connected) {
+                if (checkHost(entry)) {
                     goodEntries.add(entry);
                     hostStatus.put(host, Boolean.TRUE);
                 } else {
@@ -1113,16 +1117,16 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
             socket = new Socket(host, ADDE_PORT);
             connected = true;
         } catch (UnknownHostException e) {
-            logger.debug("checkHost: can't resolve IP for '{}'", entry.getAddress());
+            logger.debug("can't resolve IP for '{}'", entry.getAddress());
             connected = false;
         } catch (IOException e) {
-            logger.debug("checkHost: IO problem while connecting to '{}': {}", entry.getAddress(), e.getMessage());
+            logger.debug("IO problem while connecting to '{}': {}", entry.getAddress(), e.getMessage());
             connected = false;
         }
         try {
             socket.close();
         } catch (Exception e) {}
-        logger.debug("checkHost: host={} result={}", entry.getAddress(), connected);
+        logger.debug("host={} result={}", entry.getAddress(), connected);
         return connected;
     }
     

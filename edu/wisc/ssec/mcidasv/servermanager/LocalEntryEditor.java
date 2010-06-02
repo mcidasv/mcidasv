@@ -284,14 +284,15 @@ public class LocalEntryEditor extends javax.swing.JDialog {
     private String getLastPath() {
         McIDASV mcv = McIDASV.getStaticMcv();
         String path = "";
-        if (mcv != null)
+        if (mcv != null) {
             return mcv.getObjectStore().get(PROP_LAST_PATH, "");
+        }
         return path;
     }
 
     public void setLastPath(final String path) {
         String okayPath = (path != null) ? path : "";
-        logger.debug("setLastPath: parent={}", new File(path).getParent());
+        logger.debug("parent={}", new File(path).getParent());
         McIDASV mcv = McIDASV.getStaticMcv();
         if (mcv != null) {
             mcv.getObjectStore().put(PROP_LAST_PATH, okayPath);
@@ -303,8 +304,9 @@ public class LocalEntryEditor extends javax.swing.JDialog {
      * Calls {@link #dispose} if the dialog is visible.
      */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        if (isDisplayable())
+        if (isDisplayable()) {
             dispose();
+        }
     }
 
     /**
@@ -332,10 +334,12 @@ public class LocalEntryEditor extends javax.swing.JDialog {
     private void addEntry() {
         Set<LocalAddeEntry> addedEntries = pollWidgets();
         entryStore.addEntries(addedEntries);
-        if (isDisplayable())
+        if (isDisplayable()) {
             dispose();
-        if (managerController != null)
+        }
+        if (managerController != null) {
             managerController.refreshDisplay();
+        }
     }
 
     private void editEntry() {

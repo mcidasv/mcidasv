@@ -30,16 +30,12 @@
 package edu.wisc.ssec.mcidasv.servermanager;
 
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
-import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.set;
 
 import java.awt.event.ActionEvent;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
-import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
@@ -52,9 +48,6 @@ import edu.wisc.ssec.mcidasv.McIDASV;
 // control over the available entries.
 public class AddeManager extends javax.swing.JPanel {
 
-    /** Reference back to the {@literal "main"} McIDAS-V object. */
-    private final McIDASV mcv;
-
     /** 
      * The {@link EntryStore} that contains the set of servers being 
      * managed. 
@@ -65,7 +58,6 @@ public class AddeManager extends javax.swing.JPanel {
 
     /** Creates new form RemoteAddeManager */
     public AddeManager(final McIDASV mcv, final EntryStore entryStore) {
-        this.mcv = mcv;
         this.entryStore = entryStore;
         initComponents();
     }
@@ -216,8 +208,9 @@ public class AddeManager extends javax.swing.JPanel {
      * @param e
      */
     private void selectionModelChanged(final ListSelectionEvent e) {
-        if (e.getValueIsAdjusting())
+        if (e.getValueIsAdjusting()) {
             return;
+        }
 
         boolean isEmpty = ((ListSelectionModel)e.getSource()).isSelectionEmpty();
         if (isEmpty) {
@@ -276,8 +269,9 @@ public class AddeManager extends javax.swing.JPanel {
      * the {@code frame}.
      */
     private void closeManager(final JFrame frame) {
-        if (frame.isDisplayable())
+        if (frame.isDisplayable()) {
             frame.dispose();
+        }
     }
 
     /**
@@ -335,8 +329,9 @@ public class AddeManager extends javax.swing.JPanel {
          * @throws NullPointerException if {@code entryStore} is {@code null}.
          */
         public AddeManagerTableModel(final EntryStore entryStore) {
-            if (entryStore == null)
+            if (entryStore == null) {
                 throw new NullPointerException("Cannot query a null EntryStore");
+            }
             this.entryStore = entryStore;
             entries.addAll(entryStore.getEntrySet());
         }
@@ -396,10 +391,11 @@ public class AddeManager extends javax.swing.JPanel {
             int rowCount = entries.size();
             for (int i = 0; i < rows.length; i++) {
                 int tmpIdx = rows[i];
-                if ((tmpIdx >= 0) && (tmpIdx < rowCount))
+                if ((tmpIdx >= 0) && (tmpIdx < rowCount)) {
                     selected.add(entries.get(tmpIdx));
-                else
+                } else {
                     throw new IndexOutOfBoundsException();
+                }
             }
             return selected;
         }
@@ -409,9 +405,9 @@ public class AddeManager extends javax.swing.JPanel {
          */
         public Object getValueAt(int row, int column) {
             AddeEntry entry = entries.get(row);
-            if (entry == null)
+            if (entry == null) {
                 throw new IndexOutOfBoundsException(); // questionable...
-
+            }
             switch (column) {
                 case 0: return entry.getAddress();
                 case 1: return entry.getGroup();

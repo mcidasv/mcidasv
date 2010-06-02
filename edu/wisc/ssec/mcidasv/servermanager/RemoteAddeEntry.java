@@ -37,7 +37,6 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
-import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 
 public class RemoteAddeEntry implements AddeEntry {
 
@@ -92,7 +91,6 @@ public class RemoteAddeEntry implements AddeEntry {
         this.account = builder.account;
         this.address = builder.address;
         this.group = builder.group;
-//        this.description = builder.description;
         this.entryType = builder.entryType;
         this.entryValidity = builder.entryValidity;
         this.entrySource = builder.entrySource;
@@ -165,8 +163,9 @@ public class RemoteAddeEntry implements AddeEntry {
     }
 
     public void setEntryAlias(final String newAlias) {
-        if (newAlias == null)
+        if (newAlias == null) {
             throw new NullPointerException("Null aliases are not allowable.");
+        }
         entryAlias = newAlias;
     }
 
@@ -251,13 +250,13 @@ public class RemoteAddeEntry implements AddeEntry {
     }
 
     public String asStringId() {
-        if (asStringId == null)
+        if (asStringId == null) {
             asStringId = address+'!'+group+'!'+entryType.name();
+        }
         return asStringId;
     }
 
     public String toString() {
-//        return String.format("[RemoteAddeEntry@%x: address=%s, group=%s, entryType=%s, entryValidity=%s, account=%s, description=%s, status=%s]", hashCode(), address, group, entryType, entryValidity, account, description, entryStatus.name());
         return String.format("[RemoteAddeEntry@%x: address=%s, group=%s, entryType=%s, entryValidity=%s, account=%s, status=%s]", hashCode(), address, group, entryType, entryValidity, account, entryStatus.name());
     }
 
@@ -326,10 +325,12 @@ public class RemoteAddeEntry implements AddeEntry {
          * {@code group} is {@code null}.
          */
         public Builder(final String address, final String group) {
-            if (address == null)
+            if (address == null) {
                 throw new NullPointerException("ADDE address cannot be null");
-            if (group == null)
+            }
+            if (group == null) {
                 throw new NullPointerException("ADDE group cannot be null");
+            }
 
             this.address = address.toLowerCase();
             this.group = group;
@@ -354,24 +355,6 @@ public class RemoteAddeEntry implements AddeEntry {
             account = new AddeAccount(username, project);
             return this;
         }
-
-//        /**
-//         * Optional {@literal "parameter"} for an ADDE entry. Allows you to
-//         * set {@link RemoteAddeEntry#description}. If this method is not 
-//         * called, {@code description} will default to {@literal ""}.
-//         * 
-//         * @param description Description field. Cannot be {@code null}.
-//         * 
-//         * @return Current {@literal "builder"} for an ADDE entry.
-//         * 
-//         * @throws NullPointerException if {@code description} is {@code null}.
-//         */
-//        public Builder description(final String description) {
-//            if (description == null)
-//                throw new NullPointerException("Description cannot be null");
-//            this.description = description;
-//            return this;
-//        }
 
         /**
          * Optional {@literal "parameter"} for an ADDE entry. Allows you to

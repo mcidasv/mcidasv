@@ -74,6 +74,8 @@ import edu.wisc.ssec.mcidasv.util.Contract;
  */
 public class AddePreferences {
 
+    public enum Selection { ALL_ENTRIES, SPECIFIED_ENTRIES };
+    
     private static final Logger logger = LoggerFactory.getLogger(AddePreferences.class);
 
     /** 
@@ -138,8 +140,9 @@ public class AddePreferences {
      * @throws NullPointerException if {@code entryStore} is {@code null}.
      */
     public AddePreferences(final EntryStore entryStore) {
-        if (entryStore == null)
+        if (entryStore == null) {
             throw new NullPointerException("EntryStore cannot be null");
+        }
         this.entryStore = entryStore;
     }
 
@@ -179,6 +182,9 @@ public class AddePreferences {
         // create checkboxes for each AddeEntry and add 'em to the appropriate 
         // CheckboxCategoryPanel 
         for (EntryType type : EntryType.values()) {
+            if (EntryType.INVALID.equals(type)) {
+                continue;
+            }
             final Set<AddeEntry> subset = entries.get(type);
             Set<String> observedEntries = new HashSet<String>(subset.size());
             final CheckboxCategoryPanel typePanel = 
@@ -186,8 +192,9 @@ public class AddePreferences {
 
             for (AddeEntry entry : subset) {
                 String entryText = entry.getEntryText();
-                if (observedEntries.contains(entryText))
+                if (observedEntries.contains(entryText)) {
                     continue;
+                }
 
                 boolean enabled = (entry.getEntryStatus() == EntryStatus.ENABLED);
                 JCheckBox cbx = new JCheckBox(entryText, enabled);
@@ -214,8 +221,9 @@ public class AddePreferences {
         allOn = new JButton("All on");
         allOn.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
-                for (CheckboxCategoryPanel cbcp : typePanels)
+                for (CheckboxCategoryPanel cbcp : typePanels) {
                     cbcp.toggleAll(true);
+                }
             }
         });
 
@@ -223,8 +231,9 @@ public class AddePreferences {
         allOff = new JButton("All off");
         allOff.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
-                for (CheckboxCategoryPanel cbcp : typePanels)
+                for (CheckboxCategoryPanel cbcp : typePanels) {
                     cbcp.toggleAll(false);
+                }
             }
         });
 
@@ -246,7 +255,7 @@ public class AddePreferences {
 
         boolean useAll = false;
         boolean specify = false;
-        if (getSpecifyServers().equals("ALL")) {
+        if (Selection.ALL_ENTRIES.equals(getSpecifyServers())) {
             useAll = true;
         } else {
             specify = true;
@@ -258,8 +267,9 @@ public class AddePreferences {
         useAllBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 setGUIEnabled(!useAllBtn.isSelected());
-                // TODO(jon): use an enum; use the eventbus
-                setSpecifyServers("ALL");
+                // TODO(jon): use the eventbus
+                setSpecifyServers(Selection.ALL_ENTRIES);
+                EventBus.publish(EntryStore.Event.UPDATE); // doesn't work...
             }
         });
 
@@ -269,8 +279,9 @@ public class AddePreferences {
         useTheseBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 setGUIEnabled(!useAllBtn.isSelected());
-                // TODO(jon): use an enum; use the eventbus
-                setSpecifyServers("SPECIFY");
+                // TODO(jon): use the eventbus
+                setSpecifyServers(Selection.SPECIFIED_ENTRIES);
+                EventBus.publish(EntryStore.Event.UPDATE); // doesn't work...
             }
         });
         GuiUtils.buttonGroup(useAllBtn, useTheseBtn);
@@ -306,21 +317,22 @@ public class AddePreferences {
                     (Map<AddeEntry, JCheckBox>)data;
 
                 boolean updated = false;
-                for (Entry<AddeEntry, JCheckBox> entry : 
-                    toggles.entrySet()) 
-                {
+                for (Entry<AddeEntry, JCheckBox> entry : toggles.entrySet()) {
                     AddeEntry e = entry.getKey();
                     JCheckBox c = entry.getValue();
 
                     EntryStatus currentStatus = e.getEntryStatus();
                     EntryStatus nextStatus = (c.isSelected()) ? EntryStatus.ENABLED : EntryStatus.DISABLED;
 
-                    if (currentStatus != nextStatus)
+                    if (currentStatus != nextStatus) {
                         updated = true;
+                    }
                     e.setEntryStatus(nextStatus);
                 }
-                if (updated)
+
+                if (updated) {
                     EventBus.publish(EntryStore.Event.UPDATE);
+                }
             }
         };
         return new AddePrefConglomeration(Constants.PREF_LIST_ADDE_SERVERS, entryListener, entryPanel, entryToggles);
@@ -338,12 +350,15 @@ public class AddePreferences {
      * @param enabled {@code true} enables the components and {@code false} disables.
      */
     public void setGUIEnabled(final boolean enabled) {
-        if (cbPanel != null)
+        if (cbPanel != null) {
             GuiUtils.enableTree(cbPanel, enabled);
-        if (allOn != null)
+        }
+        if (allOn != null) {
             GuiUtils.enableTree(allOn, enabled);
-        if (allOff != null)
+        }
+        if (allOff != null) {
             GuiUtils.enableTree(allOff, enabled);
+        }
     }
 
     /**
@@ -352,23 +367,26 @@ public class AddePreferences {
      * 
      * @param value New value to associate with {@code PREF_LIST_SPECIFY}.
      */
-    private void setSpecifyServers(final String value) {
-        McIDASV mcv = McIDASV.getStaticMcv();
-        if (mcv == null)
-            return;
-        mcv.getStore().put(PREF_LIST_SPECIFY, value);
+    private void setSpecifyServers(final Selection entrySelection) {
+        entryStore.getIdvStore().put(PREF_LIST_SPECIFY, entrySelection.toString());
     }
 
     /**
      * Returns the value of the {@link #PREF_LIST_SPECIFY} preference. Defaults
      * to {@literal "ALL"}.
      */
-    // TODO(jon): use an enum
-    private String getSpecifyServers() {
-        McIDASV mcv = McIDASV.getStaticMcv();
-        if (mcv == null)
-            return "ALL";
-        return mcv.getStore().get(PREF_LIST_SPECIFY, "ALL");
+    private Selection getSpecifyServers() {
+        String saved = entryStore.getIdvStore().get(PREF_LIST_SPECIFY, Selection.ALL_ENTRIES.toString());
+        Selection entrySelection;
+        if ("ALL".equalsIgnoreCase(saved)) {
+            entrySelection = Selection.ALL_ENTRIES;
+        } else if ("SPECIFY".equalsIgnoreCase(saved)) {
+            entrySelection = Selection.SPECIFIED_ENTRIES;
+        } else {
+            entrySelection = Selection.valueOf(saved);
+        }
+        
+        return entrySelection;
     }
 
     /**

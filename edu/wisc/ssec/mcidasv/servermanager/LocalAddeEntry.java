@@ -242,8 +242,9 @@ public class LocalAddeEntry implements AddeEntry {
 
     // TODO(jon): fix this noop
     @Override public void setEntryAlias(final String newAlias) {
-        if (newAlias == null)
+        if (newAlias == null) {
             throw new NullPointerException("Null aliases are not allowable.");
+        }
     }
 
     @Override public void setEntryStatus(EntryStatus newStatus) {
@@ -287,14 +288,16 @@ public class LocalAddeEntry implements AddeEntry {
     }
 
     public boolean isValid() {
-        if ((group.length() == 0) || (descriptor.length() == 0) || (name.length() == 0))
+        if ((group.length() == 0) || (descriptor.length() == 0) || (name.length() == 0)) {
             return false;
+        }
         return true;
     }
 
     public String getRealtimeAsString() {
-        if (realtime)
+        if (realtime) {
             return "Y";
+        }
         return "N";
     }
 
@@ -352,8 +355,9 @@ public class LocalAddeEntry implements AddeEntry {
     }
 
     @Override public String asStringId() {
-        if (asStringId == null)
+        if (asStringId == null) {
             asStringId = "localhost!"+group+'!'+EntryType.IMAGE.name()+'!'+name;
+        }
         return asStringId;
     }
 
@@ -385,8 +389,9 @@ public class LocalAddeEntry implements AddeEntry {
         private ServerName safeKind = ServerName.INVALID;
 
         public Builder(final Map<String, String> map) {
-            if (!map.containsKey("C") || !map.containsKey("N1") || !map.containsKey("MASK") || !map.containsKey("MCV"))
+            if (!map.containsKey("C") || !map.containsKey("N1") || !map.containsKey("MASK") || !map.containsKey("MCV")) {
                 throw new IllegalArgumentException("");
+            }
 
             this.name = map.get("C");
             this.group = map.get("N1");
@@ -410,8 +415,9 @@ public class LocalAddeEntry implements AddeEntry {
         }
 
         public Builder descriptor(final String descriptor) {
-            if (descriptor != null)
+            if (descriptor != null) {
                 this.descriptor = descriptor;
+            }
             return this;
         }
 
@@ -419,14 +425,16 @@ public class LocalAddeEntry implements AddeEntry {
         // should probably ignore case and accept "YES"/"NO"/"ARCHIVE"
         // in addition to the normal boolean conversion from String
         public Builder realtime(final String realtimeAsStr) {
-            if (realtimeAsStr == null)
+            if (realtimeAsStr == null) {
                 return this;
+            }
 
-            if ("Y".equalsIgnoreCase(realtimeAsStr) || "YES".equalsIgnoreCase(realtimeAsStr))
+            if ("Y".equalsIgnoreCase(realtimeAsStr) || "YES".equalsIgnoreCase(realtimeAsStr)) {
                 this.realtime = true;
-            else
+            } else {
                 this.realtime = Boolean.valueOf(realtimeAsStr);
-             return this;
+            }
+            return this;
         }
 
         public Builder realtime(final boolean realtime) {
@@ -436,15 +444,17 @@ public class LocalAddeEntry implements AddeEntry {
 
         // my assumption is that if "format" is known, you can infer "type"
         public Builder type(final EntryType type) {
-            if (type != null)
+            if (type != null) {
                 this.type = type;
+            }
             return this;
         }
 
         // my assumption is that if "format" is known, you can infer "kind"
         public Builder kind(final String kind) {
-            if (kind == null)
+            if (kind == null) {
                 return this;
+            }
 
             this.kind = kind;
             try {
@@ -456,14 +466,16 @@ public class LocalAddeEntry implements AddeEntry {
         }
 
         public Builder start(final String start) {
-            if (start != null)
+            if (start != null) {
                 this.start = start;
+            }
             return this;
         }
 
         public Builder end(final String end) {
-            if (end != null)
+            if (end != null) {
                 this.end = end;
+            }
             return this;
         }
 
@@ -476,14 +488,16 @@ public class LocalAddeEntry implements AddeEntry {
         }
 
         public Builder status(final String status) {
-            if (status != null && status.length() > 0)
+            if (status != null && status.length() > 0) {
                 this.status = EntryTransforms.strToEntryStatus(status);
+            }
             return this;
         }
 
         public Builder status(final EntryStatus status) {
-            if (status != null)
+            if (status != null) {
                 this.status = status;
+            }
             return this;
         }
 
