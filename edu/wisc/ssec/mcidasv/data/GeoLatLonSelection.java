@@ -186,6 +186,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       JLabel lineMagLbl = new JLabel();
       JLabel lineResLbl = new JLabel();
 
+       JLabel rawSizeLbl = new JLabel();
+
       /** Widget for the element magnfication in the advanced section */
       protected JSlider elementMagSlider;
 
@@ -632,7 +634,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
                   lineMax = previewDirBlk[8] * previewDirBlk[11];
                   eleMax = previewDirBlk[9] * previewDirBlk[12];
-                  JLabel rawSizeLbl = new JLabel(" Raw size: " + lineMax + " X " + eleMax);
+                  rawSizeLbl = new JLabel(" Raw size: " + lineMax + " X " + eleMax);
                   JPanel sizePanel =
                       GuiUtils.left(GuiUtils.doLayout(new Component[] {
                           numLinesFld,
@@ -1971,5 +1973,11 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             System.out.println("e=" + e);
         }
         getGeoLocationInfo(line, ele);
+
+        try {
+            rawSizeLbl.setText(" Raw size: " + dir.getLines() + " X " + dir.getElements());
+        } catch (Exception e) {
+            System.out.println("updating raw size: e=" + e);
+        }
     }
 }
