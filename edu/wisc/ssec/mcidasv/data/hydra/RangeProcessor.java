@@ -31,6 +31,7 @@
 package edu.wisc.ssec.mcidasv.data.hydra;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class RangeProcessor {
 
@@ -59,14 +60,32 @@ public class RangeProcessor {
   float[] scale = null;
   float[] offset = null;
   float[] missing = null;
-  float[] low = new float[] {-Float.MAX_VALUE};
-  float[] high = new float[] {Float.MAX_VALUE};
-  float[] valid_range = new float[2];
+  float[] valid_range = null;
   float valid_low  = -Float.MAX_VALUE;
   float valid_high = Float.MAX_VALUE;
+  float[] low = new float[] {-Float.MAX_VALUE};
+  float[] high = new float[] {Float.MAX_VALUE};
   boolean unpack = false;
 
+  int scaleOffsetLen = 1;
+
+  String multiScaleDimName = SpectrumAdapter.channelIndex_name;
+
   public RangeProcessor() {
+  }
+
+  public RangeProcessor(float scale, float offset, float valid_low, float valid_high, float missing) {
+    this.scale = new float[] {scale};
+    this.offset = new float[] {offset};
+    this.missing = new float[] {missing};
+    this.valid_low = valid_low;
+    this.valid_high = valid_high;
+  }
+
+
+  public RangeProcessor(MultiDimensionReader reader, HashMap metadata, String multiScaleDimName) throws Exception {
+    this(reader, metadata);
+    this.multiScaleDimName = multiScaleDimName;
   }
 
   public RangeProcessor(MultiDimensionReader reader, HashMap metadata) throws Exception {
@@ -77,89 +96,70 @@ public class RangeProcessor {
       unpack = true;
     }
 
-    HDFArray scaleAttr = reader.getArrayAttribute((String)metadata.get("array_name"), (String)metadata.get("scale_name"));
+    String array_name = (String) metadata.get("array_name");
 
-    if (scaleAttr.getType().equals(Float.TYPE)) {
-      float[] attr = (float[]) scaleAttr.getArray();
-      scale = new float[attr.length];
-      for (int k=0; k<attr.length; k++) scale[k] = attr[k];
-    }
-    else if (scaleAttr.getType().equals(Short.TYPE)) {
-      short[] attr = (short[]) scaleAttr.getArray();
-      scale = new float[attr.length];
-      for (int k=0; k<attr.length; k++) scale[k] = (float) attr[k];
-    }
-    if (scaleAttr.getType().equals(Double.TYPE)) {
-      double[] attr = (double[]) scaleAttr.getArray();
-      scale = new float[attr.length];
-      for (int k=0; k<attr.length; k++) scale[k] = (float) attr[k];
-    }
+    scale = getAttributeAsFloatArray(array_name, (String) metadata.get("scale_name"));
 
-    HDFArray offsetAttr = reader.getArrayAttribute((String)metadata.get("array_name"), (String)metadata.get("offset_name"));
+    offset = getAttributeAsFloatArray(array_name, (String) metadata.get("offset_name"));
 
-    if (offsetAttr.getType().equals(Float.TYPE)) {
-      float[] attr = (float[]) offsetAttr.getArray();
-      offset = new float[attr.length];
-      for (int k=0; k<attr.length; k++) offset[k] = attr[k];
+    if (scale.length != offset.length) {
+      throw new Exception("RangeProcessor: scale and offset array lengths must be equal");
     }
-    else if (offsetAttr.getType().equals(Short.TYPE)) {
-      short[] attr = (short[]) offsetAttr.getArray();
-      offset = new float[attr.length];
-      for (int k=0; k<attr.length; k++) offset[k] = (float) attr[k];
-    }
-    if (offsetAttr.getType().equals(Double.TYPE)) {
-      double[] attr = (double[]) offsetAttr.getArray();
-      offset = new float[attr.length];
-      for (int k=0; k<attr.length; k++) offset[k] = (float) attr[k];
-    }
+    scaleOffsetLen = scale.length;
 
-    offsetAttr = reader.getArrayAttribute((String)metadata.get("array_name"), (String)metadata.get("fill_value_name"));
-    if (offsetAttr.getType().equals(Float.TYPE)) {
-      float[] attr = (float[]) offsetAttr.getArray();
-      missing = new float[attr.length];
-      for (int k=0; k<attr.length; k++) missing[k] = attr[k];
-    }
-    else if (offsetAttr.getType().equals(Short.TYPE)) {
-      short[] attr = (short[]) offsetAttr.getArray();
-      missing = new float[attr.length];
-      for (int k=0; k<attr.length; k++) missing[k] = (float) attr[k];
-    }
-    else if (offsetAttr.getType().equals(Integer.TYPE)) {
-      int[] attr = (int[]) offsetAttr.getArray();
-      missing = new float[attr.length];
-      for (int k=0; k<attr.length; k++) missing[k] = (float) attr[k];
-    }
-    if (offsetAttr.getType().equals(Double.TYPE)) {
-      double[] attr = (double[]) offsetAttr.getArray();
-      missing = new float[attr.length];
-      for (int k=0; k<attr.length; k++) missing[k] = (float) attr[k];
-    }
+
+    missing = getAttributeAsFloatArray(array_name, (String) metadata.get("fill_value_name"));
 
     String metaStr = (String)metadata.get("valid_range");
     if (metaStr != null) {
-    HDFArray attrObj = reader.getArrayAttribute((String)metadata.get("array_name"), (String)metadata.get("valid_range"));
-    if (attrObj != null) {
-    if (attrObj.getType().equals(Float.TYPE)) {
-      float[] attr = (float[]) attrObj.getArray();
-      for (int k=0; k<attr.length; k++) valid_range[k] = attr[k];
-    }
-    else if (attrObj.getType().equals(Short.TYPE)) {
-      short[] attr = (short[]) attrObj.getArray();
-      for (int k=0; k<attr.length; k++) valid_range[k] = (float) attr[k];
-    }
-    if (attrObj.getType().equals(Double.TYPE)) {
-      double[] attr = (double[]) attrObj.getArray();
-      for (int k=0; k<attr.length; k++) valid_range[k] = (float) attr[k];
-    }
-    valid_low = valid_range[0];
-    valid_high = valid_range[1];
-    if (valid_range[0] > valid_range[1]) {
-      valid_low = valid_range[1];
-      valid_high = valid_range[0];
-    }
-    }
+
+      valid_range = getAttributeAsFloatArray(array_name, metaStr);
+      if (valid_range != null) {
+
+        valid_low = valid_range[0];
+        valid_high = valid_range[1];
+
+        if (valid_range[0] > valid_range[1]) {
+          valid_low = valid_range[1];
+          valid_high = valid_range[0];
+        }
+      }
     }
 
+  }
+
+  public float[] getAttributeAsFloatArray(String arrayName, String attrName) 
+         throws Exception 
+  {
+    float[] fltArray = null;
+    HDFArray arrayAttr = reader.getArrayAttribute(arrayName, attrName);
+
+    if (arrayAttr != null) {
+
+      if (arrayAttr.getType().equals(Float.TYPE)) {
+        float[] attr = (float[]) arrayAttr.getArray();
+        fltArray = new float[attr.length];
+        for (int k=0; k<attr.length; k++) fltArray[k] = attr[k];
+      }
+      else if (arrayAttr.getType().equals(Short.TYPE)) {
+        short[] attr = (short[]) arrayAttr.getArray();
+        fltArray = new float[attr.length];
+        for (int k=0; k<attr.length; k++) fltArray[k] = (float) attr[k];
+      }
+      else if (arrayAttr.getType().equals(Integer.TYPE)) {
+        int[] attr = (int[]) arrayAttr.getArray();
+        fltArray = new float[attr.length];
+        for (int k=0; k<attr.length; k++) fltArray[k] = (float) attr[k];
+      }
+      else if (arrayAttr.getType().equals(Double.TYPE)) {
+        double[] attr = (double[]) arrayAttr.getArray();
+        fltArray = new float[attr.length];
+        for (int k=0; k<attr.length; k++) fltArray[k] = (float) attr[k];
+      }
+
+    }
+
+    return fltArray;
   }
 
   public float[] processRange(short[] values, HashMap subset) {
@@ -186,6 +186,7 @@ public class RangeProcessor {
      }
      return new_values;
   }
+
 
   public float[] processRange(short[] values) {
      float[] new_values = new float[values.length];
