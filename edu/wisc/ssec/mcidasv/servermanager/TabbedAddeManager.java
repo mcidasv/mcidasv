@@ -34,12 +34,10 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 import static edu.wisc.ssec.mcidasv.util.Contract.notNull;
 import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.runOnEDT;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Insets;
 import java.io.File;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -53,26 +51,20 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.plaf.UIResource;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -103,6 +95,13 @@ public class TabbedAddeManager extends javax.swing.JFrame {
 
     /** Pretty typical logger object. */
     private final static Logger logger = LoggerFactory.getLogger(TabbedAddeManager.class);
+
+    private static final Icon system = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/padlock_closed.png");
+    private static final Icon mctable = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/bug.png");
+    private static final Icon user = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/hand_pro.png");
+    private static final Icon invalid = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/emotion_sad.png");
+//  private static final ImageIcon verified = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/emotion_smile.png");
+    private static final Icon unverified = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/eye_inv.png");
 
     /** Path to the help resources. */
     private static final String HELP_TOP_DIR = "/docs/userguide";
@@ -426,7 +425,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         newEntryButton.setText("Add New Dataset");
         newEntryButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                newEntryButtonActionPerformed(evt);
+                showRemoteEditor();
             }
         });
 
@@ -434,15 +433,23 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         editEntryButton.setEnabled(false);
         editEntryButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editEntryButtonActionPerformed(evt);
+                if (tabbedPane.getSelectedIndex() == 0) {
+                    showRemoteEditor(getSelectedRemoteEntries());
+                } else {
+                    showLocalEditor(getSingleLocalSelection());
+                }
             }
         });
 
-        removeEntryButton.setText("Remove Dataset");
+        removeEntryButton.setText("Remove Selection");
         removeEntryButton.setEnabled(false);
         removeEntryButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                removeEntryButtonActionPerformed(evt);
+                if (tabbedPane.getSelectedIndex() == 0) {
+                    removeRemoteEntries(getSelectedRemoteEntries());
+                } else {
+                    removeLocalEntries(getSelectedLocalEntries());
+                }
             }
         });
 
@@ -529,7 +536,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         }
         restartButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                restartButtonActionPerformed(evt);
+                restartLocalServer();
             }
         });
 
@@ -577,7 +584,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         newRemoteItem.setText("New Remote Dataset");
         newRemoteItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                newRemoteItemActionPerformed(evt);
+                showRemoteEditor();
             }
         });
         fileMenu.add(newRemoteItem);
@@ -585,7 +592,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         newLocalItem.setText("New Local Dataset");
         newLocalItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                newLocalItemActionPerformed(evt);
+                showLocalEditor();
             }
         });
         fileMenu.add(newLocalItem);
@@ -594,7 +601,8 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         closeItem.setText("Close");
         closeItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                closeManager(evt);
+                logger.debug("evt={}", evt.toString());
+                closeManager();
             }
         });
         fileMenu.add(closeItem);
@@ -606,15 +614,23 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         editEntryItem.setEnabled(false);
         editEntryItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editEntryButtonActionPerformed(evt);
+                if (tabbedPane.getSelectedIndex() == 0) {
+                    showRemoteEditor(getSelectedRemoteEntries());
+                } else {
+                    showLocalEditor(getSingleLocalSelection());
+                }
             }
         });
 
-        removeEntryItem.setText("Remove Entry");
+        removeEntryItem.setText("Remove Selection");
         removeEntryItem.setEnabled(false);
         removeEntryItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                removeEntryButtonActionPerformed(evt);
+                if (tabbedPane.getSelectedIndex() == 0) {
+                    removeRemoteEntries(getSelectedRemoteEntries());
+                } else {
+                    removeLocalEntries(getSelectedLocalEntries());
+                }
             }
         });
         editMenu.add(editEntryItem);
@@ -626,7 +642,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         remoteHelpItem.setText("Show Remote Data Help");
         remoteHelpItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                remoteHelpItemActionPerformed(evt);
+                ucar.unidata.ui.Help.getDefaultHelp().gotoTarget(REMOTE_HELP_TARGET);
             }
         });
         helpMenu.add(remoteHelpItem);
@@ -634,7 +650,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         localHelpItem.setText("Show Local Data Help");
         localHelpItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                localHelpItemActionPerformed(evt);
+                ucar.unidata.ui.Help.getDefaultHelp().gotoTarget(LOCAL_HELP_TARGET);
             }
         });
         helpMenu.add(localHelpItem);
@@ -673,7 +689,6 @@ public class TabbedAddeManager extends javax.swing.JFrame {
                 removeEntryButton.setEnabled(hasSelection);
                 removeEntryItem.setEnabled(hasSelection);
                 setLastTab(index);
-                adjustLabels();
             }
         });
 
@@ -694,30 +709,14 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         int headerWidth = 0;
         int cellWidth = 0;
         Object[] longValues = model.getLongValues();
-        TableCellRenderer headerRenderer =
-            table.getTableHeader().getDefaultRenderer();
+        TableCellRenderer headerRenderer = table.getTableHeader().getDefaultRenderer();
 
         for (int i = 0; i < model.getColumnCount(); i++) {
             column = table.getColumnModel().getColumn(i);
-
-            comp = headerRenderer.getTableCellRendererComponent(
-                                 null, column.getHeaderValue(),
-                                 false, false, 0, 0);
+            comp = headerRenderer.getTableCellRendererComponent(null, column.getHeaderValue(), false, false, 0, 0);
             headerWidth = comp.getPreferredSize().width;
-
-            comp = table.getDefaultRenderer(model.getColumnClass(i)).
-                             getTableCellRendererComponent(
-                                 table, longValues[i],
-                                 false, false, 0, i);
+            comp = table.getDefaultRenderer(model.getColumnClass(i)).getTableCellRendererComponent(table, longValues[i], false, false, 0, i);
             cellWidth = comp.getPreferredSize().width;
-
-//            if (DEBUG) {
-//                System.out.println("Initializing width of column "
-//                                   + i + ". "
-//                                   + "headerWidth = " + headerWidth
-//                                   + "; cellWidth = " + cellWidth);
-//            }
-
             column.setPreferredWidth(Math.max(headerWidth, cellWidth));
         }
     }
@@ -758,7 +757,6 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         editEntryButton.setEnabled(singleSelection);
         editEntryItem.setEnabled(singleSelection);
 
-//        boolean hasSelection = !selectedEntries.isEmpty();
         boolean hasSelection = selectedRowCount >= 1;
         removeEntryButton.setEnabled(hasSelection);
         removeEntryItem.setEnabled(hasSelection);
@@ -797,10 +795,18 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         removeEntryItem.setEnabled(hasSelection);
     }
 
+    /**
+     * Checks to see if {@link #selectedRemoteEntries} contains any 
+     * {@link RemoteAddeEntry}s.
+     */
     private boolean hasRemoteSelection() {
         return !selectedRemoteEntries.isEmpty();
     }
 
+    /**
+     * Checks to see if {@link {@link #selectedLocalEntries} contains any 
+     * {@link LocalAddeEntry}s.
+     */
     private boolean hasLocalSelection() {
         return !selectedLocalEntries.isEmpty();
     }
@@ -834,7 +840,6 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         selectedRemoteEntries.clear();
         selectedRemoteEntries.addAll(entries);
         logger.trace("entries={}", entries);
-        adjustLabels();
     }
 
     private List<RemoteAddeEntry> getSelectedRemoteEntries() {
@@ -848,7 +853,6 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     private void setSelectedLocalEntries(final Collection<LocalAddeEntry> entries) {
         selectedLocalEntries.clear();
         selectedLocalEntries.addAll(entries);
-        adjustLabels();
     }
 
     private List<LocalAddeEntry> getSelectedLocalEntries() {
@@ -859,70 +863,9 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         }
     }
 
-    private void newEntryButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        showRemoteEditor();
-    }
-
     private void formWindowClosed(java.awt.event.WindowEvent evt) {
         logger.debug("evt={}", evt.toString());
         closeManager();
-    }
-
-    private void closeManager(java.awt.event.ActionEvent evt) {
-        logger.debug("evt={}", evt.toString());
-        closeManager();
-    }
-
-    private void newLocalItemActionPerformed(java.awt.event.ActionEvent evt) {
-        showLocalEditor();
-    }
-
-    private void newRemoteItemActionPerformed(java.awt.event.ActionEvent evt) {
-        showRemoteEditor();
-    }
-
-    private void restartButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        restartLocalServer();
-    }
-
-    private void remoteHelpItemActionPerformed(java.awt.event.ActionEvent evt) {
-        ucar.unidata.ui.Help.getDefaultHelp().gotoTarget(REMOTE_HELP_TARGET);
-    }
-
-    private void localHelpItemActionPerformed(java.awt.event.ActionEvent evt) {
-        ucar.unidata.ui.Help.getDefaultHelp().gotoTarget(LOCAL_HELP_TARGET);
-    }
-
-    private void editEntryButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        if (tabbedPane.getSelectedIndex() == 0) {
-            showRemoteEditor(getSelectedRemoteEntries());
-        } else {
-            showLocalEditor(getSingleLocalSelection());
-        }
-    }
-
-    private void removeEntryButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        if (tabbedPane.getSelectedIndex() == 0) {
-            removeRemoteEntries(getSelectedRemoteEntries());
-        } else {
-            removeLocalEntries(getSelectedLocalEntries());
-        }
-    }
-
-    private void adjustLabels() {
-        runOnEDT(new Runnable() {
-            public void run() {
-                boolean hasPlural = false;
-                if (tabbedPane.getSelectedIndex() == 0) {
-                    hasPlural = (selectedRemoteEntries.size() > 1);
-                } else {
-                    hasPlural = (selectedLocalEntries.size() > 1);
-                }
-                String text = (hasPlural) ? "Remove Entries" : "Remove Entry";
-                removeEntryItem.setText(text);
-                removeEntryButton.setText(text);
-            }
-        });
     }
 
     private JPanel makeFileChooserAccessory() {
@@ -1016,9 +959,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
      */
     private void setLastImportPath(final String path) {
         String okayPath = (path == null) ? "" : path;
-        IdvObjectStore store = serverManager.getIdvStore();
-        store.put(LAST_IMPORTED, okayPath);
-        store.saveIfNeeded();
+        serverManager.getIdvStore().put(LAST_IMPORTED, okayPath);
     }
 
     /**
@@ -1035,7 +976,6 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         int okayIndex = ((index >= 0) && (index < 2)) ? index : 0;
         IdvObjectStore store = serverManager.getIdvStore();
         store.put(LAST_TAB, okayIndex);
-        store.saveIfNeeded();
     }
 
     public Set<RemoteAddeEntry> checkDatasets(final Collection<RemoteAddeEntry> entries) {
@@ -1104,25 +1044,24 @@ public class TabbedAddeManager extends javax.swing.JFrame {
 
     private static class RemoteAddeTableModel extends AbstractTableModel {
 
+        // TODO(jon): these constants can go once things calm down
         private static final int VALID = 0;
         private static final int SOURCE = 1;
         private static final int DATASET = 2;
         private static final int ACCT = 3;
         private static final int TYPES = 4;
-        
+
         /** Labels that appear as the column headers. */
         private final String[] columnNames = {
             "Valid", "Source", "Dataset", "Accounting", "Data Types"
         };
-
-        /** Entries that currently populate the server manager. */
-//        private final List<RemoteAddeEntry> entries;
 
         private final List<String> servers;
 
         /** {@link EntryStore} used to query and apply changes. */
         private final EntryStore entryStore;
 
+        // TODO(jon): no need for longvals anymore, just set column width
         private final Object[] longValues;
 
         /**
@@ -1203,15 +1142,15 @@ public class TabbedAddeManager extends javax.swing.JFrame {
          * 
          * @throws IndexOutOfBoundsException
          */
-//        "Dataset", "Accounting", "Data Types", "Source", "Validity"
         @Override public Object getValueAt(int row, int column) {
             String serverText = servers.get(row);
+            String prefix = serverText.replace('/', '!');
             switch (column) {
-                case VALID: return formattedValidity(serverText, entryStore);
-                case SOURCE: return formattedSource(serverText, entryStore);
+                case VALID: return formattedValidity(prefix, entryStore);
+                case SOURCE: return formattedSource(prefix, entryStore);
                 case DATASET: return serverText;
-                case ACCT: return formattedAccounting(serverText, entryStore);
-                case TYPES: return formattedTypes(serverText, entryStore);
+                case ACCT: return formattedAccounting(prefix, entryStore);
+                case TYPES: return formattedTypes(prefix, entryStore);
                 default: throw new IndexOutOfBoundsException();
             }
         }
@@ -1248,7 +1187,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         }
 
         private static String formattedSource(final String serv, final EntryStore manager) {
-            List<AddeEntry> matches = manager.searchWithPrefix(serv.replace('/', '!'));
+            List<AddeEntry> matches = manager.searchWithPrefix(serv);
             EntrySource source = EntrySource.INVALID;
             if (!matches.isEmpty()) {
                 source = matches.get(0).getEntrySource();
@@ -1257,7 +1196,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         }
 
         private static String formattedValidity(final String serv, final EntryStore manager) {
-            List<AddeEntry> matches = manager.searchWithPrefix(serv.replace('/', '!'));
+            List<AddeEntry> matches = manager.searchWithPrefix(serv);
             EntryValidity validity = EntryValidity.INVALID;
             if (!matches.isEmpty()) {
                 validity = matches.get(0).getEntryValidity();
@@ -1266,7 +1205,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         }
 
         private static String formattedAccounting(final String serv, final EntryStore manager) {
-            List<AddeEntry> matches = manager.searchWithPrefix(serv.replace('/', '!'));
+            List<AddeEntry> matches = manager.searchWithPrefix(serv);
             AddeAccount acct = AddeEntry.DEFAULT_ACCOUNT;
             if (!matches.isEmpty()) {
                 acct = matches.get(0).getAccount();
@@ -1278,7 +1217,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         }
 
         private static boolean hasType(final String serv, final EntryStore manager, final EntryType type) {
-            String[] chunks = serv.split("/");
+            String[] chunks = serv.split("!");
             Set<EntryType> types = Collections.emptySet();
             if (chunks.length == 2) {
                 types = manager.getTypes(chunks[0], chunks[1]);
@@ -1287,7 +1226,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         }
 
         private static String formattedTypes(final String serv, final EntryStore manager) {
-            String[] chunks = serv.split("/");
+            String[] chunks = serv.split("!");
             Set<EntryType> types = Collections.emptySet();
             if (chunks.length == 2) {
                 types = manager.getTypes(chunks[0], chunks[1]);
@@ -1311,26 +1250,12 @@ public class TabbedAddeManager extends javax.swing.JFrame {
             return columnNames[column];
         }
 
-        public Class<?> getColumnClass(final int column) {
-            switch (column) {
-                case VALID: return String.class; // valid
-                case SOURCE: return String.class; // src
-                case DATASET: return String.class; // server
-                case ACCT: return String.class;// acct
-                case TYPES: return String.class;// types
-                default: throw new IndexOutOfBoundsException();
-            }
+        @Override public Class<?> getColumnClass(final int column) {
+            return String.class;
         }
 
         @Override public boolean isCellEditable(final int row, final int column) {
-            switch (column) {
-                case VALID: return false;
-                case SOURCE: return false;
-                case DATASET: return false;
-                case ACCT: return false;
-                case TYPES: return false;
-                default: throw new IndexOutOfBoundsException();
-            }
+            return false;
         }
     }
 
@@ -1340,9 +1265,6 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         private final String[] columnNames = {
             "Dataset (e.g. MYDATA)", "Image Type (e.g. JAN 07 GOES)", "Format", "Directory"
         };
-//        private final String[] columnNames = {
-//            "Alias", "Dataset (e.g. MYDATA)", "Image Type (e.g. JAN 07 GOES)", "Format", "Directory"
-//        };
 
         /** Entries that currently populate the server manager. */
         private final List<LocalAddeEntry> entries;
@@ -1419,16 +1341,10 @@ public class TabbedAddeManager extends javax.swing.JFrame {
          */
         @Override public Object getValueAt(int row, int column) {
             LocalAddeEntry entry = entries.get(row);
-            if (entry == null)
+            if (entry == null) {
                 throw new IndexOutOfBoundsException(); // still questionable...
-//            switch (column) {
-//                case 0: return entry.getEntryAlias();
-//                case 1: return entry.getGroup();
-//                case 2: return entry.getName();
-//                case 3: return entry.getFormat().getTooltip();
-//                case 4: return entry.getMask();
-//                default: throw new IndexOutOfBoundsException();
-//            }
+            }
+
             switch (column) {
                 case 0: return entry.getGroup();
                 case 1: return entry.getName();
@@ -1454,52 +1370,56 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     // a "mctable" entry icon (similar to above, but with a prominent "X")
     // a "user" entry icon (no idea yet!)
     public class EntrySourceRenderer extends DefaultTableCellRenderer {
-        private ImageIcon system = new ImageIcon(getClass().getResource("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/padlock_closed.png"));
-        private ImageIcon mctable = new ImageIcon(getClass().getResource("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/bug.png"));
-        private ImageIcon user = new ImageIcon(getClass().getResource("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/hand_pro.png"));
+
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             EntrySource source = EntrySource.valueOf((String)value);
+            EntrySourceRenderer renderer = (EntrySourceRenderer)comp;
+            Icon icon = null;
+            String tooltip = null;
             switch (source) {
                 case SYSTEM:
-                    ((EntrySourceRenderer)comp).setIcon(system);
-                    ((EntrySourceRenderer)comp).setToolTipText("Default dataset and cannot be removed, only disabled.");
+                    icon = system;
+                    tooltip = "Default dataset and cannot be removed, only disabled.";
                     break;
                 case MCTABLE:
-                    ((EntrySourceRenderer)comp).setIcon(mctable);
-                    ((EntrySourceRenderer)comp).setToolTipText("Dataset imported from a MCTABLE.TXT.");
+                    icon = mctable;
+                    tooltip = "Dataset imported from a MCTABLE.TXT.";
                     break;
                 case USER:
-                    ((EntrySourceRenderer)comp).setIcon(user);
-                    ((EntrySourceRenderer)comp).setToolTipText("Dataset created or altered by you!");
+                    icon = user;
+                    tooltip = "Dataset created or altered by you!";
                     break;
             }
-            ((EntrySourceRenderer)comp).setText(null);
+            renderer.setIcon(icon);
+            renderer.setToolTipText(tooltip);
+            renderer.setText(null);
             return comp;
         }
     }
 
     public class EntryValidityRenderer extends DefaultTableCellRenderer {
-        private ImageIcon invalid = new ImageIcon(getClass().getResource("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/emotion_sad.png"));
-//        private ImageIcon verified = new ImageIcon(getClass().getResource("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/emotion_smile.png"));
-        private ImageIcon unverified = new ImageIcon(getClass().getResource("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/eye_inv.png"));
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             EntryValidity validity = EntryValidity.valueOf((String)value);
+            EntryValidityRenderer renderer = (EntryValidityRenderer)comp;
+            Icon icon = null;
+            String tooltip = null;
             switch (validity) {
                 case INVALID:
-                    ((EntryValidityRenderer)comp).setIcon(invalid);
-                    ((EntryValidityRenderer)comp).setToolTipText("Dataset verification failed.");
+                    icon = invalid;
+                    tooltip = "Dataset verification failed.";
                     break;
                 case VERIFIED:
-                    ((EntryValidityRenderer)comp).setIcon(null);
                     break;
                 case UNVERIFIED:
-                    ((EntryValidityRenderer)comp).setIcon(unverified);
-                    ((EntryValidityRenderer)comp).setToolTipText("Dataset has not been verified.");
+                    icon = unverified;
+                    tooltip = "Dataset has not been verified.";
                     break;
             }
-            ((EntryValidityRenderer)comp).setText(null);
+            renderer.setIcon(icon);
+            renderer.setToolTipText(tooltip);
+            renderer.setText(null);
             return comp;
         }
     }
@@ -1508,7 +1428,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
 
         private Font bold;
         private Font boldItalic;
-        
+
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             Font currentFont = comp.getFont();
@@ -1527,6 +1447,15 @@ public class TabbedAddeManager extends javax.swing.JFrame {
             }
             return comp;
         }
+    }
+
+    private static Icon icon(final String path) {
+        URL resource = TabbedAddeManager.class.getResource(path);
+        if (resource == null) {
+            logger.error("bad icon path: \"{}\"", path);
+            return null;
+        }
+        return new ImageIcon(resource);
     }
 
     /**

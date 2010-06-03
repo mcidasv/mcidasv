@@ -486,7 +486,7 @@ public class EntryStore {
 
         boolean val = true;
         for (AddeEntry entry : removedEntries) {
-            if (val) {
+            if (val && !entry.getEntrySource().equals(EntrySource.SYSTEM)) {
                 val = (trie.remove(entry.asStringId()) != null);
             }
         }
