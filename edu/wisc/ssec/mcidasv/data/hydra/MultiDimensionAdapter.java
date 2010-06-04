@@ -171,9 +171,11 @@ public abstract class MultiDimensionAdapter {
      Object range = readArray(subset);
 
      if (arrayType == Float.TYPE) {
-       f_field = makeFlatField(domainSet, new float[][] {(float[])range});
+       float[] new_range = processRange((float[]) range, subset);
+       f_field = makeFlatField(domainSet, new float[][] {(float[])new_range});
      }
      else if (arrayType == Double.TYPE) {
+       double[] new_range = processRange((double[]) range, subset);
        f_field = makeFlatField(domainSet, new double[][] {(double[])range});
      }
      else if (arrayType == Short.TYPE) {
@@ -213,6 +215,25 @@ public abstract class MultiDimensionAdapter {
        return rangeProcessor.processRange(range, (HashMap)subset);
      }
    }
+
+   public float[] processRange(float[] range, Object subset) {
+     if (rangeProcessor == null) {
+       return range;
+     }
+     else {
+       return rangeProcessor.processRange(range, (HashMap)subset);
+     }
+   }
+
+   public double[] processRange(double[] range, Object subset) {
+     if (rangeProcessor == null) {
+       return range;
+     }
+     else {
+       return rangeProcessor.processRange(range, (HashMap)subset);
+     }
+   }
+
 
    public Object readArray(Object subset) throws Exception {
      Subset select = getIndexes((HashMap)subset);

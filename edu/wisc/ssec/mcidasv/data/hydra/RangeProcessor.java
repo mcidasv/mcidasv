@@ -65,6 +65,7 @@ public class RangeProcessor {
   float valid_high = Float.MAX_VALUE;
   float[] low = new float[] {-Float.MAX_VALUE};
   float[] high = new float[] {Float.MAX_VALUE};
+
   boolean unpack = false;
 
   int scaleOffsetLen = 1;
@@ -164,11 +165,13 @@ public class RangeProcessor {
 
   public float[] processRange(short[] values, HashMap subset) {
      int channelIndex = 0;
+
      if (subset != null) {
        if (subset.get(SpectrumAdapter.channelIndex_name) != null) {
          channelIndex  = (int) ((double[])subset.get(SpectrumAdapter.channelIndex_name))[0];
        }
      }
+
      float[] new_values = new float[values.length];
      for (int k=0; k<values.length;k++) {
        float val = (float) values[k];
@@ -186,6 +189,57 @@ public class RangeProcessor {
      }
      return new_values;
   }
+
+  public float[] processRange(float[] values, HashMap subset) {
+    float[] new_values = null;
+
+    if ((missing != null) || (valid_range != null)) {
+      new_values = new float[values.length];
+    }
+    else {
+      return values;
+    }
+    
+    float val;
+
+    for (int k=0; k<values.length; k++) {
+      val = values[k];
+      if ((missing != null) && (val == missing[0])) {
+        new_values[k] = Float.NaN;
+      }
+      if ((valid_range != null) && ((val < low[0]) || (val > high[0]))) {
+        new_values[k] = Float.NaN;
+      }
+    }
+
+    return new_values;
+  }
+
+  public double[] processRange(double[] values, HashMap subset) {
+    double[] new_values = null;
+
+    if ((missing != null) || (valid_range != null)) {
+      new_values = new double[values.length];
+    }
+    else {
+      return values;
+    }
+
+    double val;
+
+    for (int k=0; k<values.length; k++) {
+      val = values[k];
+      if ((missing != null) && (val == missing[0])) {
+        new_values[k] = Double.NaN;
+      }
+      if ((valid_range != null) && ((val < low[0]) || (val > high[0]))) {
+        new_values[k] = Double.NaN;
+      }
+    }
+
+    return new_values;
+  }
+
 
 
   public float[] processRange(short[] values) {
@@ -209,11 +263,13 @@ public class RangeProcessor {
 
   public float[] processRange(byte[] values, HashMap subset) {
      int channelIndex = 0;
+
      if (subset != null) {
        if (subset.get(SpectrumAdapter.channelIndex_name) != null) {
          channelIndex  = (int) ((double[])subset.get(SpectrumAdapter.channelIndex_name))[0];
        }
      }
+
      float[] new_values = new float[values.length];
      for (int k=0; k<values.length;k++) {
        float val = (float) values[k];
