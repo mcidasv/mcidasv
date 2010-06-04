@@ -167,6 +167,7 @@ public class EntryStore {
     }
 
     protected String[] getWindowsAddeEnv() {
+/*
         String driveLetter = McIDASV.getJavaDriveLetter();
         return new String[] {
             "PATH=" + ADDE_BIN,
@@ -178,6 +179,21 @@ public class EntryStore {
             "SYSTEMDRIVE=" + driveLetter,
             "SYSTEMROOT=" + driveLetter + "\\Windows",
             "HOMEDRIVE=" + driveLetter,
+            "HOMEPATH=\\Windows"
+        };
+*/
+        // Drive letters should come from environment
+        // Java drive is not necessarily system drive
+        return new String[] {
+            "PATH=" + ADDE_BIN,
+            "MCPATH=" + USER_DIRECTORY+':'+ADDE_DATA,
+            "MCNOPREPEND=1",
+            "MCTRACE=" + MCTRACE,
+            "MCJAVAPATH=" + System.getProperty("java.home"),
+            "MCBUFRJARPATH=" + ADDE_BIN,
+            "SYSTEMDRIVE=" + System.getenv("SystemDrive"),
+            "SYSTEMROOT=" + System.getenv("SystemRoot"),
+            "HOMEDRIVE=" + System.getenv("HOMEDRIVE"),
             "HOMEPATH=\\Windows"
         };
     }
