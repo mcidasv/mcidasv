@@ -97,7 +97,7 @@ public class NetCDFFile implements MultiDimensionReader {
 
    public NetCDFFile(String filename) throws Exception {
      if (filename.endsWith(".ncml")) {
-       URL url = new URL("file:"+filename);
+       URL url = new URL("file://" + filename);
        ncfile = NcMLReader.readNcML(url.toString(), null);
      }
      else {
@@ -106,6 +106,11 @@ public class NetCDFFile implements MultiDimensionReader {
      init();
    }
      
+   public NetCDFFile(String filename, org.jdom.Element root) throws Exception {
+	  ncfile = NcMLReader.readNcML(filename, root, null);
+	  init();
+   }
+   
    private void init() throws Exception {
      Iterator varIter = ncfile.getVariables().iterator();
      while(varIter.hasNext()) {
@@ -264,6 +269,10 @@ public class NetCDFFile implements MultiDimensionReader {
      return varMap;
    }
 
+   public NetcdfFile getNetCDFFile() {
+	   return ncfile;
+   }
+   
    public static void main(String[] args) throws Exception {
      NetCDFFile ncfile = new NetCDFFile(args[0]);
      ncfile.close();
