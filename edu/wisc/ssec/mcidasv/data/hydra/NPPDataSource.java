@@ -318,13 +318,23 @@ public class NPPDataSource extends HydraDataSource {
     							List al = v.getAttributes();
     							int[] shape = v.getShape();
     							List<Dimension> dl = v.getDimensions();
+    							boolean xScanOk = false;
+    							boolean yScanOk = false;
     							for (Dimension d : dl) {
-    								System.err.println("Dimension length: " + d.getLength());
-    								// XXX temp hack, just to see if we can get it to work...
-    								if ((d.getLength() == XSCAN) || (d.getLength() == YSCAN)) {
-    									useThis = true;
+    								// in order to consider this a displayable product, make sure
+    								// both scan direction dimensions are present and look like a granule
+    								if (d.getLength() == XSCAN) {
+    									xScanOk = true;
     								}
+    								if (d.getLength() == YSCAN) {
+    									yScanOk = true;
+    								}    								
     							}
+    							
+    							if (xScanOk && yScanOk) {
+    								useThis = true;
+    							}
+    							
     							if (useThis) { 
     								// loop through the variable list again, looking for a corresponding "Factors"
     								float scaleVal = 1f;
