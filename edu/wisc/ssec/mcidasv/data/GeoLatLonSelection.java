@@ -143,6 +143,14 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         "Magnification:", "", "", "Selected Area: "
       };
 
+      private static final String[] readoutLabels = {
+          "Center     ",
+          "Upper Left ",
+          "Upper Right",
+          "Lower Left ",
+          "Lower Right"
+      };
+
       private String kmLbl = " km";
 
       /** Input for lat/lon center point */
@@ -266,6 +274,9 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       private static AREAnav previewNav;
       private AREAnav areaNav;
 
+      private List latLonLbls = new ArrayList();
+      private List linEleImageLbls = new ArrayList();
+      private List linEleAreaLbls = new ArrayList();
       private JPanel latLonPanel;
       private JPanel lineElementPanel;
 
@@ -788,100 +799,17 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
               } else if (prop.equals(PROP_READOUT)) {
                   allComps.add(new JLabel(" "));
                   allComps.add(new JLabel(" "));
-
                   for (int i=0; i<5; i++) {
-                      LatLonWidget llw = new LatLonWidget();
-                      readoutLLWidget.add(llw);
-                      JTextField lat = (JTextField)llw.getLatField();
-                      JTextField lon = (JTextField)llw.getLonField();
-                      lat.setEditable(false);
-                      lon.setEditable(false);
-                      readoutLatFld.add(lat);
-                      readoutLonFld.add(lon);
-                  }
-
-                  List latLbl = new ArrayList();
-                  List lonLbl = new ArrayList();
-                  for (int i=0; i<5; i++)
-                      lonLbl.add(GuiUtils.getFixedWidthLabel(" Lon: "));
-                  latLbl.add(GuiUtils.getFixedWidthLabel("Center      Lat: "));
-                  latLbl.add(GuiUtils.getFixedWidthLabel("Upper Left  Lat: "));
-                  latLbl.add(GuiUtils.getFixedWidthLabel("Upper Right Lat: "));
-                  latLbl.add(GuiUtils.getFixedWidthLabel("Lower Left  Lat: "));
-                  latLbl.add(GuiUtils.getFixedWidthLabel("Lower Right Lat: "));
-
-                  JPanel[] panels = new JPanel[5];
-                  for (int i=0; i<5; i++) {
-                      Component[] comps = new Component[] { 
-                      (Component)latLbl.get(i),
-                      (Component)readoutLatFld.get(i), 
-                      (Component)lonLbl.get(i),
-                      (Component)readoutLonFld.get(i)};
-                      panels[i] = GuiUtils.left(GuiUtils.doLayout(comps,
-                      4, GuiUtils.WT_N, GuiUtils.WT_N));
+                      latLonLbls.add(GuiUtils.getFixedWidthLabel(" "));
+                      linEleImageLbls.add(GuiUtils.getFixedWidthLabel(" "));
+                      linEleAreaLbls.add(GuiUtils.getFixedWidthLabel(" "));
                   }
                   latLonReadoutPanel = GuiUtils.left(GuiUtils.doLayout(
-                      panels, 1, GuiUtils.WT_N, GuiUtils.WT_Y));
-
-                  for (int i=0; i<5; i++) {
-                      JTextField imageLin = new JTextField("", 4);
-                      JTextField imageEle = new JTextField("", 4);
-                      imageLin.setEditable(false);
-                      imageEle.setEditable(false);
-                      readoutImageLinFld.add(imageLin);
-                      readoutImageEleFld.add(imageEle);
-
-                      JTextField areaLin = new JTextField("", 4);
-                      JTextField areaEle = new JTextField("", 4);
-                      areaLin.setEditable(false);
-                      areaEle.setEditable(false);
-                      readoutAreaLinFld.add(areaLin);
-                      readoutAreaEleFld.add(areaEle);
-                  }
-
-                  List linLbl = new ArrayList();
-                  List eleLbl = new ArrayList();
-                  for (int i=0; i<5; i++)
-                      eleLbl.add(GuiUtils.getFixedWidthLabel(" Element: "));
-                  linLbl.add(GuiUtils.getFixedWidthLabel("Center      Line: "));
-                  linLbl.add(GuiUtils.getFixedWidthLabel("Upper Left  Line: "));
-                  linLbl.add(GuiUtils.getFixedWidthLabel("Upper Right Line: "));
-                  linLbl.add(GuiUtils.getFixedWidthLabel("Lower Left  Line: "));
-                  linLbl.add(GuiUtils.getFixedWidthLabel("Lower Right Line: "));
-                  panels = new JPanel[5];
-                  for (int i=0; i<5; i++) {
-                      Component[] comps = new Component[] { 
-                      (Component)linLbl.get(i),
-                      (Component)readoutImageLinFld.get(i), 
-                      (Component)eleLbl.get(i),
-                      (Component)readoutImageEleFld.get(i)};
-                      panels[i] = GuiUtils.left(GuiUtils.doLayout(comps,
-                      4, GuiUtils.WT_N, GuiUtils.WT_N));
-                  }
+                      latLonLbls, 1, GuiUtils.WT_N, GuiUtils.WT_Y));
                   lineElementImageReadoutPanel = GuiUtils.left(GuiUtils.doLayout(
-                      panels, 1, GuiUtils.WT_N, GuiUtils.WT_Y));
-
-                  linLbl = new ArrayList();
-                  eleLbl = new ArrayList();
-                  for (int i=0; i<5; i++)
-                      eleLbl.add(GuiUtils.getFixedWidthLabel(" Element: "));
-                  linLbl.add(GuiUtils.getFixedWidthLabel("Center      Line: "));
-                  linLbl.add(GuiUtils.getFixedWidthLabel("Upper Left  Line: "));
-                  linLbl.add(GuiUtils.getFixedWidthLabel("Upper Right Line: "));
-                  linLbl.add(GuiUtils.getFixedWidthLabel("Lower Left  Line: "));
-                  linLbl.add(GuiUtils.getFixedWidthLabel("Lower Right Line: "));
-                  panels = new JPanel[5];
-                  for (int i=0; i<5; i++) {
-                      Component[] comps = new Component[] {
-                      (Component)linLbl.get(i),
-                      (Component)readoutAreaLinFld.get(i),
-                      (Component)eleLbl.get(i),
-                      (Component)readoutAreaEleFld.get(i)};
-                      panels[i] = GuiUtils.left(GuiUtils.doLayout(comps,
-                      4, GuiUtils.WT_N, GuiUtils.WT_N));
-                  }
+                      linEleImageLbls, 1, GuiUtils.WT_N, GuiUtils.WT_Y));
                   lineElementAreaReadoutPanel = GuiUtils.left(GuiUtils.doLayout(
-                      panels, 1, GuiUtils.WT_N, GuiUtils.WT_Y));
+                      linEleAreaLbls, 1, GuiUtils.WT_N, GuiUtils.WT_Y));
 
                   readoutPanel = new GuiUtils.CardLayoutPanel();
                   readoutPanel.addCard(latLonReadoutPanel);
@@ -909,44 +837,56 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       }
 
       private void updateReadout() {
+          int numCols = 7;
           for (int i=0; i<5; i++) {
-              LatLonWidget llw = (LatLonWidget)readoutLLWidget.get(i);
-              llw.setLatLon(latLon[0][i], latLon[1][i]);
-          }
+              String str = readoutLabels[i] +
+                           " Lat: " + formatDoubleCoord(numCols, latLon[0][i]) +
+                           " Lon: " + formatDoubleCoord(numCols, latLon[1][i]);
+              ((JLabel)latLonLbls.get(i)).setText(str);
 
-          for (int i=0; i<5; i++) {
-              JTextField linField = (JTextField)readoutImageLinFld.get(i);
-              Double dbl = new Double(imageEL[1][i]);
-              if (!dbl.isNaN()) 
-                  linField.setText(trimCoord(imageEL[1][i]));
-              else
-                  linField.setText(Misc.MISSING);
-              JTextField eleField = (JTextField)readoutImageEleFld.get(i);
-              dbl = new Double(imageEL[0][i]);
-              if (!dbl.isNaN()) 
-                  eleField.setText(trimCoord(imageEL[0][i]));
-              else
-                  eleField.setText(Misc.MISSING);
-          }
-          for (int i=0; i<5; i++) {
-              JTextField linField = (JTextField)readoutAreaLinFld.get(i);
-              Double dbl = new Double(areaEL[1][i]);
-              if (!dbl.isNaN()) 
-                  linField.setText(trimCoord(areaEL[1][i]));
-              else
-                  linField.setText(Misc.MISSING);
-              JTextField eleField = (JTextField)readoutAreaEleFld.get(i);
-              dbl = new Double(areaEL[0][i]);
-              if (!dbl.isNaN()) 
-                  eleField.setText(trimCoord(areaEL[0][i]));
-              else
-                  eleField.setText(Misc.MISSING);
+              String lineStr = formatIntegerCoord(numCols, imageEL[1][i]);
+              String eleStr = formatIntegerCoord(numCols, imageEL[0][i]);
+              str = readoutLabels[i] + " Line: " + lineStr +
+                                       " Element: " + eleStr;
+              ((JLabel)linEleImageLbls.get(i)).setText(str);
+
+              lineStr = formatIntegerCoord(numCols, areaEL[1][i]);
+              eleStr = formatIntegerCoord(numCols, areaEL[0][i]);
+              str = readoutLabels[i] + " Line: " + lineStr +
+                                       " Element: " + eleStr;
+              ((JLabel)linEleAreaLbls.get(i)).setText(str);
           }
       }
 
-      private String trimCoord(double val) {
-          int ival = (int)Math.floor(val + 0.5);
-          return Integer.toString(ival);
+      private String formatIntegerCoord(int cols, double val) {
+          String outStr = Misc.MISSING;
+          Double dbl = new Double(val);
+          if (!dbl.isNaN()) {
+              int ival = (int)Math.floor(val + 0.5);
+              outStr = Integer.toString(ival);
+          }
+          int len = outStr.length() + 1;
+          while (len < cols) {
+              outStr = new String(" ").concat(outStr);
+              len++;
+          }
+          return outStr;
+      }
+
+      private String formatDoubleCoord(int cols, double val) {
+          String outStr = Misc.MISSING;
+          Double dbl = new Double(val);
+          if (!dbl.isNaN()) {
+              outStr = Double.toString(val);
+              if (outStr.length() > cols)
+                  outStr = outStr.substring(0, cols);
+          }
+          int len = outStr.length();
+          while (len < cols) {
+              outStr = new String(" ").concat(outStr);
+              len++;
+          }
+          return outStr;
       }
 
       /**
