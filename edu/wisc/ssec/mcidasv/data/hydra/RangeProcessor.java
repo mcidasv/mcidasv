@@ -371,8 +371,27 @@ public class RangeProcessor {
 	
 	public float[] processRange(byte[] values) {
 		float[] new_values = new float[values.length];
+
+
+                // if we are working with unsigned data, need to convert missing vals to unsigned too
+                if (unsigned) {
+                        if (missing != null) {
+                                for (int i = 0; i < missing.length; i++) {
+                                        missing[i] = (float) unsignedByteToInt((byte) missing[i]);
+                                }
+                        }
+                }
+
+                float val = 0f;
+                int i = 0;
+
+
 		for (int k = 0; k < values.length; k++) {
-			float val = (float) values[k];
+			val = (float) values[k];
+                        if (unsigned) {
+                                i = unsignedByteToInt(values[k]);
+                                val = (float) i;
+                        }
 			if ((val == missing[0]) || (val < low[0]) || (val > high[0])) {
 				new_values[k] = Float.NaN;
 			}
@@ -396,8 +415,26 @@ public class RangeProcessor {
 	
 	public float[] processRange(short[] values) {
 		float[] new_values = new float[values.length];
+
+                // if we are working with unsigned data, need to convert missing vals to unsigned too
+                if (unsigned) {
+                        if (missing != null) {
+                                for (int i = 0; i < missing.length; i++) {
+                                        missing[i] = (float) unsignedShortToInt((short) missing[i]);
+                                }
+                        }
+                }
+
+                float val = 0f;
+                int i = 0;
+
+
 		for (int k = 0; k < values.length; k++) {
-			float val = (float) values[k];
+			val = (float) values[k];
+                        if (unsigned) {
+                                i = unsignedShortToInt(values[k]);
+                                val = (float) i;
+                        }
 			if ((val == missing[0]) || (val < low[0]) || (val > high[0])) {
 				new_values[k] = Float.NaN;
 			}
