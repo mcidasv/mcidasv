@@ -1114,12 +1114,14 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
          System.out.println("    4: " + displayEL[1][4] + " " + displayEL[0][4]);
 */
          areaEL = displayCoordToAreaCoord(displayEL);
+/*
          if (type.equals(TYPE_AREA)) {
              double line = (double)getLine();
              double element = (double)getElement();
              if (areaEL[0][pos] != element) areaEL[0][pos] = element;
              if (areaEL[1][pos] != line) areaEL[1][pos] = line;
          }
+*/
 /*
          System.out.println("\nArea:");
          System.out.println("    0: " + areaEL[1][0] + " " + areaEL[0][0]);
@@ -1133,13 +1135,14 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
          } catch (Exception e) {
              System.out.println("Error converting input lat/lon e=" + e);
          }
-
+/*
          if (type.equals(TYPE_LATLON)) {
              double lat = getLatitude();
              double lon = getLongitude();
              if (latLon[0][pos] != lat) latLon[0][pos] = lat;
              if (latLon[1][pos] != lon) latLon[1][pos] = lon;
          }
+*/
 /*
          System.out.println("\nLat/Lon:");
          System.out.println("    0: " + latLon[0][0] + " " + latLon[1][0]);
@@ -1158,12 +1161,14 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
          if (latLon[1][3] < minLon) minLon = latLon[1][3];
 
          imageEL = previewNav.areaCoordToImageCoord(areaEL);
+/*
          if (type.equals(TYPE_IMAGE)) {
              double line = (double)getLine();
              double element = (double)getElement();
              if (imageEL[0][pos] != element) imageEL[0][pos] = element;
              if (imageEL[1][pos] != line) imageEL[1][pos] = line;
          }
+*/
 /*
          System.out.println("\nImage:");
          System.out.println("    0: " + imageEL[1][0] + " " + imageEL[0][0]);
