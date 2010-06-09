@@ -57,6 +57,8 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import ucar.unidata.idv.IdvResourceManager;
@@ -80,6 +82,8 @@ import edu.wisc.ssec.mcidasv.util.functional.Function;
 // and so on.
 public class EntryTransforms {
 
+    private static final Logger logger = LoggerFactory.getLogger(EntryTransforms.class);
+    
     /** Matches dataset routing information in a MCTABLE file. */
     private static final Pattern routePattern = 
         Pattern.compile("^ADDE_ROUTE_(.*)=(.*)$");
@@ -211,6 +215,23 @@ public class EntryTransforms {
         return entries;
     }
 
+    public static Set<RemoteAddeEntry> createEntriesFrom(final RemoteAddeEntry entry) {
+        Set<RemoteAddeEntry> entries = newLinkedHashSet();
+        RemoteAddeEntry.Builder incomp = 
+            new RemoteAddeEntry.Builder(entry.getAddress(), entry.getGroup())
+            .account(entry.getAccount().getUsername(), entry.getAccount().getProject())
+            .source(entry.getEntrySource()).status(entry.getEntryStatus())
+            .validity(entry.getEntryValidity());
+        for (EntryType type : EnumSet.of(EntryType.IMAGE, EntryType.GRID, EntryType.POINT, EntryType.TEXT, EntryType.RADAR, EntryType.NAV)) {
+            if (!type.equals(entry.getEntryType())) {
+                entries.add(incomp.type(type).build());
+            }
+        }
+        logger.trace("built entries={}", entries);
+        return entries;
+    }
+
+    
     /**
      * Converts the XML contents of {@link IdvResourceManager#RSC_ADDESERVER} 
      * to a {@link Set} of {@link RemoteAddeEntry}s.
@@ -514,6 +535,8 @@ public class EntryTransforms {
             if (!defaultAcct) {
                 builder.account(username, project);
             }
+            RemoteAddeEntry remoteEntry = builder.build();
+            logger.trace("built entry={}", remoteEntry);
             entries.add(builder.build());
         }
         return entries;

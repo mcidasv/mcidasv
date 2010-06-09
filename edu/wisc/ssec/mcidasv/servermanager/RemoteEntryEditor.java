@@ -996,6 +996,10 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         return verified;
     }
 
+    public static AddeStatus checkEntry(final RemoteAddeEntry entry) {
+        return checkEntry(true, entry);
+    }
+
     /**
      * Attempts to verify whether or not the information in a given 
      * {@link RemoteAddeEntry} represents a valid remote ADDE server. If not,
@@ -1011,10 +1015,10 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      * 
      * @see AddeStatus
      */
-    public static AddeStatus checkEntry(final RemoteAddeEntry entry) {
+    public static AddeStatus checkEntry(final boolean checkHost, final RemoteAddeEntry entry) {
         notNull(entry, "Cannot check a null entry");
 
-        if (!checkHost(entry)) {
+        if (checkHost && !checkHost(entry)) {
             return AddeStatus.BAD_SERVER;
         }
 

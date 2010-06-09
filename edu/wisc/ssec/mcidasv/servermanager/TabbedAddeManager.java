@@ -36,8 +36,9 @@ import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.runOnEDT;
 
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -51,20 +52,33 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.swing.BoxLayout;
+import javax.swing.GroupLayout;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.LayoutStyle;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -73,6 +87,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ucar.unidata.idv.IdvObjectStore;
+import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
@@ -91,7 +106,7 @@ import edu.wisc.ssec.mcidasv.util.McVTextField.Prompt;
 // TODO(jon): GUI could look much better.
 // TODO(jon): finish up the javadocs.
 @SuppressWarnings("serial")
-public class TabbedAddeManager extends javax.swing.JFrame {
+public class TabbedAddeManager extends JFrame {
 
     /** Pretty typical logger object. */
     private final static Logger logger = LoggerFactory.getLogger(TabbedAddeManager.class);
@@ -119,7 +134,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     private static final String LAST_IMPORTED = "mcv.adde.lastmctabledir";
 
     /** Size of the ADDE entry verification thread pool. */
-    private static final int POOL = 2;
+    private static final int POOL = 5;
 
     /**
      * These are the various {@literal "events"} that the server manager GUI
@@ -363,39 +378,39 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         assert SwingUtilities.isEventDispatchThread();
         ucar.unidata.ui.Help.setTopDir(HELP_TOP_DIR);
 
-        tabbedPane = new javax.swing.JTabbedPane();
-        remoteTab = new javax.swing.JPanel();
+        tabbedPane = new JTabbedPane();
+        remoteTab = new JPanel();
         remoteTable = new BetterJTable();
         remoteScroller = BetterJTable.createStripedJScrollPane(remoteTable);
 
-        actionPanel = new javax.swing.JPanel();
-        newEntryButton = new javax.swing.JButton();
-        editEntryButton = new javax.swing.JButton();
-        removeEntryButton = new javax.swing.JButton();
-        importButton = new javax.swing.JButton();
-        localTab = new javax.swing.JPanel();
-        localEntriesScroller = new javax.swing.JScrollPane();
-        localTable = new javax.swing.JTable();
-        statusPanel = new javax.swing.JPanel();
-        statusLabel = new javax.swing.JLabel();
-        restartButton = new javax.swing.JButton();
-        menuBar = new javax.swing.JMenuBar();
-        fileMenu = new javax.swing.JMenu();
-        newRemoteItem = new javax.swing.JMenuItem();
-        newLocalItem = new javax.swing.JMenuItem();
-        fileSeparator1 = new javax.swing.JPopupMenu.Separator();
-        closeItem = new javax.swing.JMenuItem();
-        editMenu = new javax.swing.JMenu();
-        editEntryItem = new javax.swing.JMenuItem();
-        removeEntryItem = new javax.swing.JMenuItem();
-        helpMenu = new javax.swing.JMenu();
-        remoteHelpItem = new javax.swing.JMenuItem();
-        localHelpItem = new javax.swing.JMenuItem();
+        actionPanel = new JPanel();
+        newEntryButton = new JButton();
+        editEntryButton = new JButton();
+        removeEntryButton = new JButton();
+        importButton = new JButton();
+        localTab = new JPanel();
+        localTable = new BetterJTable();
+        localScroller = BetterJTable.createStripedJScrollPane(localTable);
+        statusPanel = new JPanel();
+        statusLabel = new JLabel();
+        restartButton = new JButton();
+        menuBar = new JMenuBar();
+        fileMenu = new JMenu();
+        newRemoteItem = new JMenuItem();
+        newLocalItem = new JMenuItem();
+        fileSeparator1 = new JPopupMenu.Separator();
+        closeItem = new JMenuItem();
+        editMenu = new JMenu();
+        editEntryItem = new JMenuItem();
+        removeEntryItem = new JMenuItem();
+        helpMenu = new JMenu();
+        remoteHelpItem = new JMenuItem();
+        localHelpItem = new JMenuItem();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("ADDE Data Manager");
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosed(java.awt.event.WindowEvent evt) {
+        addWindowListener(new WindowAdapter() {
+            public void windowClosed(WindowEvent evt) {
                 formWindowClosed(evt);
             }
         });
@@ -405,7 +420,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         remoteTable.setRowSelectionAllowed(true);
         remoteTable.getTableHeader().setReorderingAllowed(false);
         remoteTable.setFont(UIManager.getFont("Table.font").deriveFont(11.0f));
-        remoteTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        remoteTable.getColumnModel().getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         remoteTable.setDefaultRenderer(String.class, new TextRenderer());
         remoteTable.getColumnModel().getColumn(0).setCellRenderer(new EntryValidityRenderer());
         remoteTable.getColumnModel().getColumn(1).setCellRenderer(new EntrySourceRenderer());
@@ -460,49 +475,49 @@ public class TabbedAddeManager extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout actionPanelLayout = new javax.swing.GroupLayout(actionPanel);
+        GroupLayout actionPanelLayout = new GroupLayout(actionPanel);
         actionPanel.setLayout(actionPanelLayout);
         actionPanelLayout.setHorizontalGroup(
-            actionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            actionPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(actionPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(newEntryButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(editEntryButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(removeEntryButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(importButton)
                 .addContainerGap(77, Short.MAX_VALUE))
         );
         actionPanelLayout.setVerticalGroup(
-            actionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(actionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+            actionPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(actionPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                 .addComponent(newEntryButton)
                 .addComponent(editEntryButton)
                 .addComponent(removeEntryButton)
                 .addComponent(importButton))
         );
 
-        javax.swing.GroupLayout remoteTabLayout = new javax.swing.GroupLayout(remoteTab);
+        GroupLayout remoteTabLayout = new GroupLayout(remoteTab);
         remoteTab.setLayout(remoteTabLayout);
         remoteTabLayout.setHorizontalGroup(
-            remoteTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, remoteTabLayout.createSequentialGroup()
+            remoteTabLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(GroupLayout.Alignment.TRAILING, remoteTabLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(remoteTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(remoteScroller, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE)
-                    .addComponent(actionPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(remoteTabLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                    .addComponent(remoteScroller, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE)
+                    .addComponent(actionPanel, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         remoteTabLayout.setVerticalGroup(
-            remoteTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            remoteTabLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(remoteTabLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(remoteScroller, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(actionPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(remoteScroller, GroupLayout.PREFERRED_SIZE, 291, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(actionPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         tabbedPane.addTab("Remote Data", remoteTab);
@@ -511,8 +526,8 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         localTable.setColumnSelectionAllowed(false);
         localTable.setRowSelectionAllowed(true);
         localTable.getTableHeader().setReorderingAllowed(false);
-        localEntriesScroller.setViewportView(localTable);
-        localTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        localScroller.setViewportView(localTable);
+        localTable.getColumnModel().getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         localTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(final ListSelectionEvent e) {
                 localSelectionModelChanged(e);
@@ -540,40 +555,40 @@ public class TabbedAddeManager extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout statusPanelLayout = new javax.swing.GroupLayout(statusPanel);
+        GroupLayout statusPanelLayout = new GroupLayout(statusPanel);
         statusPanel.setLayout(statusPanelLayout);
         statusPanelLayout.setHorizontalGroup(
-            statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statusPanelLayout.createSequentialGroup()
+            statusPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(GroupLayout.Alignment.TRAILING, statusPanelLayout.createSequentialGroup()
                 .addComponent(statusLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 314, Short.MAX_VALUE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 314, Short.MAX_VALUE)
                 .addComponent(restartButton))
         );
         statusPanelLayout.setVerticalGroup(
-            statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+            statusPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(statusPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                 .addComponent(restartButton)
                 .addComponent(statusLabel))
         );
 
-        javax.swing.GroupLayout localTabLayout = new javax.swing.GroupLayout(localTab);
+        GroupLayout localTabLayout = new GroupLayout(localTab);
         localTab.setLayout(localTabLayout);
         localTabLayout.setHorizontalGroup(
-            localTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, localTabLayout.createSequentialGroup()
+            localTabLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(GroupLayout.Alignment.TRAILING, localTabLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(localTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(localEntriesScroller, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE)
-                    .addComponent(statusPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(localTabLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                    .addComponent(localScroller, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE)
+                    .addComponent(statusPanel, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         localTabLayout.setVerticalGroup(
-            localTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            localTabLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(localTabLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(localEntriesScroller, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(statusPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(localScroller, GroupLayout.PREFERRED_SIZE, 289, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(statusPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(13, Short.MAX_VALUE))
         );
 
@@ -659,23 +674,23 @@ public class TabbedAddeManager extends javax.swing.JFrame {
 
         setJMenuBar(menuBar);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 558, Short.MAX_VALUE)
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 558, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE))
+                .addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE))
         );
 
         tabbedPane.setSelectedIndex(getLastTab());
         tabbedPane.getAccessibleContext().setAccessibleName("Remote Data");
-        tabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+        tabbedPane.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent evt) {
                 boolean hasSelection = false;
                 int index = tabbedPane.getSelectedIndex();
                 if (index == 0) {
@@ -691,37 +706,9 @@ public class TabbedAddeManager extends javax.swing.JFrame {
                 setLastTab(index);
             }
         });
-
-        
-        initColumnSizes(remoteTable);
         pack();
     }// </editor-fold>
 
-    /*
-     * This method picks good column sizes.
-     * If all column heads are wider than the column's cells'
-     * contents, then you can just use column.sizeWidthToFit().
-     */
-    private void initColumnSizes(final JTable table) {
-        RemoteAddeTableModel model = (RemoteAddeTableModel)table.getModel();
-        TableColumn column = null;
-        Component comp = null;
-        int headerWidth = 0;
-        int cellWidth = 0;
-        Object[] longValues = model.getLongValues();
-        TableCellRenderer headerRenderer = table.getTableHeader().getDefaultRenderer();
-
-        for (int i = 0; i < model.getColumnCount(); i++) {
-            column = table.getColumnModel().getColumn(i);
-            comp = headerRenderer.getTableCellRendererComponent(null, column.getHeaderValue(), false, false, 0, 0);
-            headerWidth = comp.getPreferredSize().width;
-            comp = table.getDefaultRenderer(model.getColumnClass(i)).getTableCellRendererComponent(table, longValues[i], false, false, 0, i);
-            cellWidth = comp.getPreferredSize().width;
-            column.setPreferredWidth(Math.max(headerWidth, cellWidth));
-        }
-    }
-
-    
     /**
      * I respond to events! Yyyyaaaaaaayyyyyy!!!!
      * 
@@ -733,14 +720,14 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         }
         int selectedRowCount = 0;
         ListSelectionModel selModel = (ListSelectionModel)e.getSource();
-        List<RemoteAddeEntry> selectedEntries;
+        Set<RemoteAddeEntry> selectedEntries;
         if (selModel.isSelectionEmpty()) {
-            selectedEntries = Collections.emptyList();
+            selectedEntries = Collections.emptySet();
         } else {
             int min = selModel.getMinSelectionIndex();
             int max = selModel.getMaxSelectionIndex();
             RemoteAddeTableModel tableModel = ((RemoteAddeTableModel)remoteTable.getModel());
-            selectedEntries = arrList();
+            selectedEntries = newLinkedHashSet();
             for (int i = min; i <= max; i++) {
                 if (selModel.isSelectedIndex(i)) {
                     selectedEntries.addAll(tableModel.getEntriesAtRow(i));
@@ -767,14 +754,14 @@ public class TabbedAddeManager extends javax.swing.JFrame {
             return;
         }
         ListSelectionModel selModel = (ListSelectionModel)e.getSource();
-        List<LocalAddeEntry> selectedEntries;
+        Set<LocalAddeEntry> selectedEntries;
         if (selModel.isSelectionEmpty()) {
-            selectedEntries = Collections.emptyList();
+            selectedEntries = Collections.emptySet();
         } else {
             int min = selModel.getMinSelectionIndex();
             int max = selModel.getMaxSelectionIndex();
             LocalAddeTableModel tableModel = ((LocalAddeTableModel)localTable.getModel());
-            selectedEntries = arrList();
+            selectedEntries = newLinkedHashSet();
             for (int i = min; i <= max; i++) {
                 if (selModel.isSelectedIndex(i)) {
                     selectedEntries.add(tableModel.getEntryAtRow(i));
@@ -839,7 +826,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     private void setSelectedRemoteEntries(final Collection<RemoteAddeEntry> entries) {
         selectedRemoteEntries.clear();
         selectedRemoteEntries.addAll(entries);
-        logger.trace("entries={}", entries);
+        logger.trace("remote entries={}", entries);
     }
 
     private List<RemoteAddeEntry> getSelectedRemoteEntries() {
@@ -853,6 +840,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     private void setSelectedLocalEntries(final Collection<LocalAddeEntry> entries) {
         selectedLocalEntries.clear();
         selectedLocalEntries.addAll(entries);
+        logger.trace("local entries={}", entries);
     }
 
     private List<LocalAddeEntry> getSelectedLocalEntries() {
@@ -872,7 +860,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         assert SwingUtilities.isEventDispatchThread();
         JPanel accessory = new JPanel();
         accessory.setLayout(new BoxLayout(accessory, BoxLayout.PAGE_AXIS));
-        importAccountBox = new javax.swing.JCheckBox("Use ADDE Accounting?");
+        importAccountBox = new JCheckBox("Use ADDE Accounting?");
         importAccountBox.setSelected(false);
         importAccountBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -884,37 +872,37 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         String clientProp = "JComponent.sizeVariant";
         String propVal = "mini";
 
-        importUser = new javax.swing.JTextField();
+        importUser = new JTextField();
         importUser.putClientProperty(clientProp, propVal);
         Prompt userPrompt = new Prompt(importUser, "Username");
         userPrompt.putClientProperty(clientProp, propVal);
         importUser.setEnabled(importAccountBox.isSelected());
 
-        importProject = new javax.swing.JTextField();
+        importProject = new JTextField();
         Prompt projPrompt = new Prompt(importProject, "Project Number");
         projPrompt.putClientProperty(clientProp, propVal);
         importProject.putClientProperty(clientProp, propVal);
         importProject.setEnabled(importAccountBox.isSelected());
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(accessory);
+        GroupLayout layout = new GroupLayout(accessory);
         accessory.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addComponent(importAccountBox)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(importProject, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(importUser, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(importProject, GroupLayout.Alignment.LEADING)
+                    .addComponent(importUser, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(importAccountBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(importUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(importProject, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(importUser, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(importProject, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(55, Short.MAX_VALUE))
         );
         return accessory;
@@ -978,6 +966,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         store.put(LAST_TAB, okayIndex);
     }
 
+    // stupid adde.ucar.edu entries never seem to time out! great! making the gui hang is just so awesome!
     public Set<RemoteAddeEntry> checkDatasets(final Collection<RemoteAddeEntry> entries) {
         notNull(entries, "can't check a null collection of entries");
         if (entries.isEmpty()) {
@@ -986,35 +975,56 @@ public class TabbedAddeManager extends javax.swing.JFrame {
 
         Set<RemoteAddeEntry> valid = newLinkedHashSet();
         ExecutorService exec = Executors.newFixedThreadPool(POOL);
-        CompletionService<RemoteAddeEntry> ecs = new ExecutorCompletionService<RemoteAddeEntry>(exec);
-
+//        CompletionService<RemoteAddeEntry> ecs = new ExecutorCompletionService<RemoteAddeEntry>(exec);
+        CompletionService<List<RemoteAddeEntry>> ecs = new ExecutorCompletionService<List<RemoteAddeEntry>>(exec);
         final RemoteAddeTableModel tableModel = (RemoteAddeTableModel)remoteTable.getModel();
 
         for (RemoteAddeEntry entry : entries) {
-            entry.setEntryValidity(EntryValidity.VALIDATING);
-            logger.trace("submitting entry={}", entry);
-            ecs.submit(new CheckEntryTask(entry));
-            final int row = tableModel.getRowForEntry(entry);
-            runOnEDT(new Runnable() {
-                public void run() {
-                    tableModel.fireTableRowsUpdated(row, row);
-                }
-            });
+//            ecs.submit(new CheckEntryTask(entry));
+//            logger.trace("submitting entry={}", entry);
+//            final int row = tableModel.getRowForEntry(entry);
+//            runOnEDT(new Runnable() {
+//                public void run() {
+//                    tableModel.fireTableRowsUpdated(row, row);
+//                }
+//            });
+            ecs.submit(new BetterCheckTask(entry));
+          logger.trace("submitting entry={}", entry);
+          final int row = tableModel.getRowForEntry(entry);
+          runOnEDT(new Runnable() {
+              public void run() {
+                  tableModel.fireTableRowsUpdated(row, row);
+              }
+          });
         }
 
         try {
             for (int i = 0; i < entries.size(); i++) {
-                RemoteAddeEntry checkedEntry = ecs.take().get();
-                logger.trace("removing entry={}", checkedEntry);
-                final int row = tableModel.getRowForEntry(checkedEntry);
-                runOnEDT(new Runnable() {
-                    public void run() {
-                        tableModel.fireTableRowsUpdated(row, row);
-                    }
-                });
-                if (checkedEntry.getEntryValidity() == EntryValidity.VERIFIED) {
-                    valid.add(checkedEntry);
+
+                List<RemoteAddeEntry> checkedEntries = ecs.take().get();
+                if (!checkedEntries.isEmpty()) {
+                    final int row = tableModel.getRowForEntry(checkedEntries.get(0));
+                    runOnEDT(new Runnable() {
+                        public void run() {
+                            tableModel.fireTableRowsUpdated(row, row);
+                        }
+                    });
+                } else {
+                    
                 }
+                valid.addAll(checkedEntries);
+//              RemoteAddeEntry checkedEntry = ecs.take().get();
+//                logger.trace("removing entry={}", checkedEntry);
+//                final int row = tableModel.getRowForEntry(checkedEntry);
+//                runOnEDT(new Runnable() {
+//                    public void run() {
+//                        tableModel.fireTableRowsUpdated(row, row);
+//                    }
+//                });
+//                if (checkedEntry.getEntryValidity() == EntryValidity.VERIFIED) {
+//                    valid.add(checkedEntry);
+//                }
+                valid.addAll(checkedEntries);
             }
         } catch (InterruptedException e) {
             LogUtil.logException("Interrupted while validating entries", e);
@@ -1026,11 +1036,40 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         return valid;
     }
 
+
+    private class BetterCheckTask implements Callable<List<RemoteAddeEntry>> {
+        private final RemoteAddeEntry entry;
+        public BetterCheckTask(final RemoteAddeEntry entry) {
+            this.entry = entry;
+            this.entry.setEntryValidity(EntryValidity.VALIDATING);
+        }
+        public List<RemoteAddeEntry> call() {
+            List<RemoteAddeEntry> valid = arrList();
+            if (RemoteEntryEditor.checkHost(entry)) {
+                for (RemoteAddeEntry tmp : EntryTransforms.createEntriesFrom(entry)) {
+                    if (RemoteEntryEditor.checkEntry(false, tmp) == AddeStatus.OK) {
+                        tmp.setEntryValidity(EntryValidity.VERIFIED);
+                        valid.add(tmp);
+                    }
+                }
+            }
+            if (!valid.isEmpty()) {
+                entry.setEntryValidity(EntryValidity.VERIFIED);
+                serverManager.replaceEntries(Collections.singletonList(entry), valid);
+            } else {
+                entry.setEntryValidity(EntryValidity.INVALID);
+            }
+            return valid;
+        }
+
+    }
+    
     private class CheckEntryTask implements Callable<RemoteAddeEntry> {
         private final RemoteAddeEntry entry;
         public CheckEntryTask(final RemoteAddeEntry entry) {
             notNull(entry);
             this.entry = entry;
+            this.entry.setEntryValidity(EntryValidity.VALIDATING);
         }
         public RemoteAddeEntry call() {
             AddeStatus status = RemoteEntryEditor.checkEntry(entry);
@@ -1061,9 +1100,6 @@ public class TabbedAddeManager extends javax.swing.JFrame {
         /** {@link EntryStore} used to query and apply changes. */
         private final EntryStore entryStore;
 
-        // TODO(jon): no need for longvals anymore, just set column width
-        private final Object[] longValues;
-
         /**
          * 
          * 
@@ -1073,7 +1109,6 @@ public class TabbedAddeManager extends javax.swing.JFrame {
             notNull(entryStore, "Cannot query a null EntryStore");
             this.entryStore = entryStore;
             this.servers = arrList(entryStore.getRemoteEntryTexts());
-            this.longValues = findLongValues();
         }
 
         /**
@@ -1153,37 +1188,6 @@ public class TabbedAddeManager extends javax.swing.JFrame {
                 case TYPES: return formattedTypes(prefix, entryStore);
                 default: throw new IndexOutOfBoundsException();
             }
-        }
-
-        private Object[] findLongValues() {
-            String[] values = new String[] { "", "", "", "", "" };
-            for (String server : servers) {
-                String acct = formattedAccounting(server, entryStore);
-                String types = formattedTypes(server, entryStore);
-                String src = formattedSource(server, entryStore);
-                String valid = formattedSource(server, entryStore);
-                
-                if (server.length() > values[DATASET].length()) {
-                    values[DATASET] = server;
-                }
-                if (acct.length() > values[ACCT].length()) {
-                    values[ACCT] = acct;
-                }
-                if (types.length() > values[TYPES].length()) {
-                    values[TYPES] = types;
-                }
-                if (src.length() > values[SOURCE].length()) {
-                    values[SOURCE] = src;
-                }
-                if (valid.length() > values[VALID].length()) {
-                    values[VALID] = valid;
-                }
-            }
-            return values;
-        }
-
-        protected Object[] getLongValues() {
-            return longValues;
         }
 
         private static String formattedSource(final String serv, final EntryStore manager) {
@@ -1404,6 +1408,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
             EntryValidity validity = EntryValidity.valueOf((String)value);
             EntryValidityRenderer renderer = (EntryValidityRenderer)comp;
             Icon icon = null;
+            String msg = null;
             String tooltip = null;
             switch (validity) {
                 case INVALID:
@@ -1416,10 +1421,13 @@ public class TabbedAddeManager extends javax.swing.JFrame {
                     icon = unverified;
                     tooltip = "Dataset has not been verified.";
                     break;
+                case VALIDATING:
+                    msg = "Checking...";
+                    break;
             }
             renderer.setIcon(icon);
             renderer.setToolTipText(tooltip);
-            renderer.setText(null);
+            renderer.setText(msg);
             return comp;
         }
     }
@@ -1450,12 +1458,7 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     }
 
     private static Icon icon(final String path) {
-        URL resource = TabbedAddeManager.class.getResource(path);
-        if (resource == null) {
-            logger.error("bad icon path: \"{}\"", path);
-            return null;
-        }
-        return new ImageIcon(resource);
+        return GuiUtils.getImageIcon(path, TabbedAddeManager.class, true);
     }
 
     /**
@@ -1470,36 +1473,36 @@ public class TabbedAddeManager extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify
-    private javax.swing.JPanel actionPanel;
-    private javax.swing.JMenuItem closeItem;
-    private javax.swing.JButton editEntryButton;
-    private javax.swing.JMenu fileMenu;
-    private javax.swing.JMenu editMenu;
-    private javax.swing.JPopupMenu.Separator fileSeparator1;
-    private javax.swing.JMenu helpMenu;
-    private javax.swing.JButton importButton;
-    private javax.swing.JTable localTable;
-    private javax.swing.JScrollPane localEntriesScroller;
-    private javax.swing.JMenuItem localHelpItem;
-    private javax.swing.JPanel localTab;
-    private javax.swing.JMenuBar menuBar;
-    private javax.swing.JButton newEntryButton;
-    private javax.swing.JMenuItem newLocalItem;
-    private javax.swing.JMenuItem newRemoteItem;
-    private javax.swing.JMenuItem remoteHelpItem;
-    private javax.swing.JMenuItem editEntryItem;
-    private javax.swing.JMenuItem removeEntryItem;
-    private javax.swing.JScrollPane remoteScroller;
-    private javax.swing.JPanel remoteTab;
-    private javax.swing.JTable remoteTable;
-    private javax.swing.JButton removeEntryButton;
-    private javax.swing.JButton restartButton;
-    private javax.swing.JLabel statusLabel;
-    private javax.swing.JPanel statusPanel;
-    private javax.swing.JTabbedPane tabbedPane;
-    private javax.swing.JCheckBox importAccountBox;
-    private javax.swing.JTextField importUser;
-    private javax.swing.JTextField importProject;
+    private JPanel actionPanel;
+    private JMenuItem closeItem;
+    private JButton editEntryButton;
+    private JMenu fileMenu;
+    private JMenu editMenu;
+    private JPopupMenu.Separator fileSeparator1;
+    private JMenu helpMenu;
+    private JButton importButton;
+    private JTable localTable;
+    private JScrollPane localScroller;
+    private JMenuItem localHelpItem;
+    private JPanel localTab;
+    private JMenuBar menuBar;
+    private JButton newEntryButton;
+    private JMenuItem newLocalItem;
+    private JMenuItem newRemoteItem;
+    private JMenuItem remoteHelpItem;
+    private JMenuItem editEntryItem;
+    private JMenuItem removeEntryItem;
+    private JScrollPane remoteScroller;
+    private JPanel remoteTab;
+    private JTable remoteTable;
+    private JButton removeEntryButton;
+    private JButton restartButton;
+    private JLabel statusLabel;
+    private JPanel statusPanel;
+    private JTabbedPane tabbedPane;
+    private JCheckBox importAccountBox;
+    private JTextField importUser;
+    private JTextField importProject;
     // End of variables declaration
     
 }
