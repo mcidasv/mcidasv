@@ -102,8 +102,6 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -1464,18 +1462,23 @@ public class UIManager extends IdvUIManager implements ActionListener {
         return menu;
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(UIManager.class);
-    
-    public static JMenuItem makeMenuItem(String label, Object obj, String method, Object arg) {
-        logger.debug("makeMenuItem: label={} method={} obj={}", new Object[] { label, method, obj.toString() });
-        return GuiUtils.makeMenuItem(label, obj, method);
+    /**
+     * @see GuiUtils#makeMenuItem(String, Object, String, Object)
+     */
+    public static JMenuItem makeMenuItem(String label, Object obj, 
+        String method, Object arg) 
+    {
+        return GuiUtils.makeMenuItem(label, obj, method, arg);
     }
-    
+
+    /**
+     * @see GuiUtils#makeMenu(String, List)
+     */
+    @SuppressWarnings("unchecked")
     public static JMenu makeMenu(String name, List menuItems) {
-        logger.debug("makeMenu: name={}", name);
         return GuiUtils.makeMenu(name, menuItems);
     }
-    
+
     /**
      * Returns the collection of action identifiers.
      * 
