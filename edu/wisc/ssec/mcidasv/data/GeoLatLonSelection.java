@@ -633,7 +633,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                       "/auxdata/ui/icons/arrow_out.png", this,
                       "setToFullResolution");
                   fullResBtn.setContentAreaFilled(false);
-                  fullResBtn.setToolTipText("Set to full resolution");
+                  fullResBtn.setToolTipText("Set fields to retrieve full image");
 
                   lockBtn =
                           GuiUtils.getToggleImageButton(IdvUIManager.ICON_UNLOCK,
@@ -936,8 +936,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
        */
       public void setToFullResolution() {
           amSettingProperties = true;
-          setIsLineEle(true);
-          coordinateTypeComboBox.setSelectedItem(TYPE_IMAGE);
           setPlace(PLACE_CENTER);
           setLatitude(new Double(previewDir.getCenterLatitude()));
           setLongitude(new Double(previewDir.getCenterLongitude()));
