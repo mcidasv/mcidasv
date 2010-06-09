@@ -140,7 +140,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       /** This is the list of labels used for the advanced gui */
       private static final String[] ADVANCED_LABELS = {
         "Coordinate Type:", "Placement:", "Location:", "   Image Size:",
-        "Magnification:", "", "", "Selected Area: "
+        "Magnification:", "", "", "Approx. Area: "
       };
 
       private static final String[] readoutLabels = {
@@ -546,9 +546,11 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                       eleStr =Integer.toString(this.element);
                   }
                   centerLineFld    = new JTextField(lineStr, 3);
+                  centerLineFld.addActionListener(latLonChange);
                   centerLineFld.addFocusListener(linEleFocusChange);
                   final String lineField = "";
                   centerElementFld = new JTextField(eleStr, 3);
+                  centerElementFld.addActionListener(latLonChange);
                   centerElementFld.addFocusListener(linEleFocusChange);
                   final JButton centerPopupBtn =
                       GuiUtils.getImageButton(
@@ -954,6 +956,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
           setERes(-1.0);
           elementMagSliderChanged(false);
           getGeoLocationInfo();
+
           amSettingProperties = false;
       }
 
@@ -1061,6 +1064,9 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
          geoLocInfo = null;
 
          String plc = getPlace();
+         int pos = 0;
+         if (plc.equals(PLACE_ULEFT)) pos = 1;
+         String type = getCoordinateType();
 
          AREACoordinateSystem macs = (AREACoordinateSystem)sampleProjection;
          Rectangle2D mapArea = macs.getDefaultMapArea();
@@ -1108,6 +1114,12 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
          System.out.println("    4: " + displayEL[1][4] + " " + displayEL[0][4]);
 */
          areaEL = displayCoordToAreaCoord(displayEL);
+         if (type.equals(TYPE_AREA)) {
+             double line = (double)getLine();
+             double element = (double)getElement();
+             if (areaEL[0][pos] != element) areaEL[0][pos] = element;
+             if (areaEL[1][pos] != line) areaEL[1][pos] = line;
+         }
 /*
          System.out.println("\nArea:");
          System.out.println("    0: " + areaEL[1][0] + " " + areaEL[0][0]);
@@ -1120,6 +1132,13 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
              latLon = macs.toReference(displayEL);
          } catch (Exception e) {
              System.out.println("Error converting input lat/lon e=" + e);
+         }
+
+         if (type.equals(TYPE_LATLON)) {
+             double lat = getLatitude();
+             double lon = getLongitude();
+             if (latLon[0][pos] != lat) latLon[0][pos] = lat;
+             if (latLon[1][pos] != lon) latLon[1][pos] = lon;
          }
 /*
          System.out.println("\nLat/Lon:");
@@ -1139,6 +1158,12 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
          if (latLon[1][3] < minLon) minLon = latLon[1][3];
 
          imageEL = previewNav.areaCoordToImageCoord(areaEL);
+         if (type.equals(TYPE_IMAGE)) {
+             double line = (double)getLine();
+             double element = (double)getElement();
+             if (imageEL[0][pos] != element) imageEL[0][pos] = element;
+             if (imageEL[1][pos] != line) imageEL[1][pos] = line;
+         }
 /*
          System.out.println("\nImage:");
          System.out.println("    0: " + imageEL[1][0] + " " + imageEL[0][0]);
@@ -1147,7 +1172,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
          System.out.println("    3: " + imageEL[1][3] + " " + imageEL[0][3]);
          System.out.println("    4: " + imageEL[1][4] + " " + imageEL[0][4]);
 */
-
          updateReadout();
 
          geoLocInfo = new GeoLocationInfo(maxLat, minLon, minLat, maxLon);
