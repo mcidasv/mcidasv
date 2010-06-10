@@ -59,43 +59,6 @@ import edu.wisc.ssec.mcidasv.StateManager;
 
 public class SystemState {
 
-//    private static List<Group> ordering = list(Group.VERSIONS, Group.MCVPROPS, Group.IDVPROPS, Group.SYSTEM, Group.MISC);
-//
-//    public enum Group {
-//        IDVPROPS("IDV Properties"),
-//        MCVPROPS("McIDAS-V Properties"),
-//        VERSIONS("Version Information"),
-//        MISC("Misc Properties"),
-//        SYSTEM("Computer Properties");
-//
-//        private final String name;
-//
-//        private Group(final String name) {
-//            this.name = name;
-//        }
-//
-//        public String getName() {
-//            return name;
-//        }
-//    };
-
-    /** Reference to the McIDAS-V {@literal "god object."} */
-    private final McIDASV mcv;
-
-    /**
-     * Creates a new {@code SystemState} that can be used to gather information
-     * about the state of {@literal "this"} computer.
-     * 
-     * @param mcv Used to query McIDAS-V about its state. Should not be {@code null}.
-     */
-    public SystemState(final McIDASV mcv) {
-        this.mcv = mcv;
-    }
-
-//    public static List<Group> getOrdering() {
-//        return ordering;
-//    }
-
     /**
      * Attempt to invoke {@code OperatingSystemMXBean.methodName} via 
      * reflection.
@@ -109,7 +72,7 @@ public class SystemState {
      * @return Either the result of the {@code methodName} call or 
      * {@code defaultValue}.
      */
-    private <T> T hackyMethodCall(final String methodName, final T defaultValue) {
+    private static <T> T hackyMethodCall(final String methodName, final T defaultValue) {
         assert methodName != null : "Cannot invoke a null method name";
         assert methodName.length() > 0: "Cannot invoke an empty method name";
         OperatingSystemMXBean osBean = 
@@ -144,7 +107,7 @@ public class SystemState {
      * @return Map of properties that contains interesting information about
      * the hardware McIDAS-V is using.
      */
-    public Map<String, String> queryOpSysProps() {
+    public static Map<String, String> queryOpSysProps() {
         Map<String, String> properties = new LinkedHashMap<String, String>();
         long committed = hackyMethodCall("getCommittedVirtualMemorySize", Long.MIN_VALUE);
         long freeMemory = hackyMethodCall("getFreePhysicalMemorySize", Long.MIN_VALUE);
@@ -171,7 +134,7 @@ public class SystemState {
      * 
      * @return Map of properties that describes the user's machine.
      */
-    public Map<String, String> queryMachine() {
+    public static Map<String, String> queryMachine() {
         Map<String, String> props = new LinkedHashMap<String, String>();
 
         // cpu count and whatnot
@@ -206,7 +169,7 @@ public class SystemState {
      * @return As much information as Java 3D can provide.
      */
     @SuppressWarnings("unchecked") // casting to Object, so this should be fine.
-    public Map<String, Object> queryJava3d() {
+    public static Map<String, Object> queryJava3d() {
         Map<String, Object> props = new LinkedHashMap<String, Object>();
         Map<String, Object> universeProps = 
             (Map<String, Object>)VirtualUniverse.getProperties();
@@ -226,7 +189,8 @@ public class SystemState {
      * 
      * @return Information about the state of McIDAS-V.
      */
-    public Map<String, Object> queryMcvState() {
+    // need: argsmanager, resource manager
+    public static Map<String, Object> queryMcvState(final McIDASV mcv) {
         Map<String, Object> props = new LinkedHashMap<String, Object>();
 
         ArgsManager args = mcv.getArgsManager();
@@ -243,18 +207,20 @@ public class SystemState {
         for (IdvResource resource : resources) {
             String id = resource.getId();
             props.put(id+".description", resource.getDescription());
-            if (resource.getPattern() == null)
+            if (resource.getPattern() == null) {
                 props.put(id+".pattern", "null");
-            else
+            } else {
                 props.put(id+".pattern", resource.getPattern());
+            }
 
             ResourceCollection rc = mcv.getResourceManager().getResources(resource);
             List<String> specified = new ArrayList<String>();
             List<String> valid = new ArrayList<String>();
             for (int i = 0; i < rc.size(); i++) {
                 specified.add((String)rc.get(i));
-                if (rc.isValid(i))
+                if (rc.isValid(i)) {
                     valid.add((String)rc.get(i));
+                }
             }
 
             props.put(id+".specified", specified);
@@ -273,8 +239,8 @@ public class SystemState {
      * 
      * @see #getStateAsString(boolean)
      */
-    public String getStateAsString() {
-        return getStateAsString(false);
+    public static String getStateAsString(final McIDASV mcv) {
+        return getStateAsString(mcv, false);
     }
 
     /**
@@ -287,113 +253,59 @@ public class SystemState {
      * {@code KEY=VALUE\n}. This is so we kinda-sorta conform to the standard
      * {@link Properties} file format.
      */
-    public String getStateAsString(final boolean firehose) {
+    public static String getStateAsString(final McIDASV mcv, final boolean firehose) {
         StringBuilder buf = new StringBuilder(20000);
 
         Map<String, String> versions = ((StateManager)mcv.getStateManager()).getVersionInfo();
         Properties sysProps = System.getProperties();
         Map<String, Object> j3dProps = queryJava3d();
         Map<String, String> machineProps = queryMachine();
-        Map<String, Object> mcvProps = queryMcvState();
+        Map<String, Object> mcvProps = queryMcvState(mcv);
 
-        buf.append("Software Versions:");
-        buf.append("\nMcIDAS-V: ").append(versions.get("mcv.version.general")).append(" (").append(versions.get("mcv.version.build")).append(')');
-        buf.append("\nIDV:      ").append(versions.get("idv.version.general")).append(" (").append(versions.get("idv.version.build")).append(')');
-
-        buf.append("\n\nOperating System:");
-        buf.append("\nName:         ").append(sysProps.getProperty("os.name"));
-        buf.append("\nVersion:      ").append(sysProps.getProperty("os.version"));
-        buf.append("\nArchitecture: ").append(sysProps.getProperty("os.arch"));
-
-        buf.append("\n\nJava:");
-        buf.append("\nVersion: ").append(sysProps.getProperty("java.version"));
-        buf.append("\nVendor:  ").append(sysProps.getProperty("java.vendor"));
-        buf.append("\nHome:    ").append(sysProps.getProperty("java.home"));
-
-        buf.append("\n\nJava 3D:");
-        buf.append("\nRenderer: ").append(j3dProps.get("j3d.renderer"));
-        buf.append("\nPipeline: ").append(j3dProps.get("j3d.pipeline"));
-        buf.append("\nVendor:   ").append(j3dProps.get("j3d.vendor"));
-        buf.append("\nVersion:  ").append(j3dProps.get("j3d.version"));
+        buf.append("Software Versions:")
+            .append("\nMcIDAS-V: ").append(versions.get("mcv.version.general")).append(" (").append(versions.get("mcv.version.build")).append(')')
+            .append("\nIDV:      ").append(versions.get("idv.version.general")).append(" (").append(versions.get("idv.version.build")).append(')')
+            .append("\n\nOperating System:")
+            .append("\nName:         ").append(sysProps.getProperty("os.name"))
+            .append("\nVersion:      ").append(sysProps.getProperty("os.version"))
+            .append("\nArchitecture: ").append(sysProps.getProperty("os.arch"))
+            .append("\n\nJava:")
+            .append("\nVersion: ").append(sysProps.getProperty("java.version"))
+            .append("\nVendor:  ").append(sysProps.getProperty("java.vendor"))
+            .append("\nHome:    ").append(sysProps.getProperty("java.home"))
+            .append("\n\nJava 3D:")
+            .append("\nRenderer: ").append(j3dProps.get("j3d.renderer"))
+            .append("\nPipeline: ").append(j3dProps.get("j3d.pipeline"))
+            .append("\nVendor:   ").append(j3dProps.get("j3d.vendor"))
+            .append("\nVersion:  ").append(j3dProps.get("j3d.version"));
 
         if (firehose) {
             buf.append("\n\n\nFirehose:\n");
             // get software versions
-            for (Entry<String, String> entry : versions.entrySet())
+            for (Entry<String, String> entry : versions.entrySet()) {
                 buf.append(entry.getKey()).append('=').append(entry.getValue()).append('\n');
+            }
 
             // get machine properties
-            for (Entry<String, String> entry : queryMachine().entrySet())
+            for (Entry<String, String> entry : machineProps.entrySet()) {
                 buf.append(entry.getKey()).append('=').append(entry.getValue()).append('\n');
+            }
 
             // get java system properties
-            for (Entry<Object, Object> entry : System.getProperties().entrySet())
+            for (Entry<Object, Object> entry : sysProps.entrySet()) {
                 buf.append(entry.getKey()).append('=').append(entry.getValue()).append('\n');
+            }
 
             // get java3d/jogl properties
-            for (Entry<String, Object> entry : queryJava3d().entrySet())
+            for (Entry<String, Object> entry : j3dProps.entrySet()) {
                 buf.append(entry.getKey()).append('=').append(entry.getValue()).append('\n');
+            }
 
             // get idv/mcv properties
-            for (Entry<String, Object> entry : queryMcvState().entrySet())
+            for (Entry<String, Object> entry : mcvProps.entrySet()) {
                 buf.append(entry.getKey()).append('=').append(entry.getValue()).append('\n');
+            }
         }
         return buf.toString();
     }
-    
-    // each entry should have:
-    // group
-    // "human" name
-    // property id
-    // short description
-    // value
-
-//    public static class SystemStateProperty {
-//        private final Group grouping;
-//        private final String property;
-//        private final String name;
-//        private final String description;
-//        private final String value;
-//
-//        private SystemStateProperty(final Builder builder) {
-//            this.grouping = builder.grouping;
-//            this.property = builder.property;
-//            this.name = (builder.name.length() == 0) ? this.property : builder.name;
-//            this.description = builder.description;
-//            this.value = builder.value;
-//        }
-//    }
-//
-//    public static class Builder {
-//        private final String property;
-//        private final String value;
-//
-//        private Group grouping = Group.MISC;
-//        private String name = "";
-//        private String description = "";
-//
-//        public Builder(final String property, final String value) {
-//            this.property = property;
-//            this.value = value;
-//        }
-//
-//        public Builder group(final Group grouping) {
-//            this.grouping = grouping;
-//            return this;
-//        }
-//
-//        public Builder name(final String name) {
-//            this.name = name;
-//            return this;
-//        }
-//
-//        public Builder desc(final String description) {
-//            this.description = description;
-//            return this;
-//        }
-//
-//        public SystemStateProperty build() {
-//            return new SystemStateProperty(this);
-//        }
-//    }
 }
