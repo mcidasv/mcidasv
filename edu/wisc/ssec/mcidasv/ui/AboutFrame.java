@@ -92,7 +92,8 @@ public class AboutFrame extends javax.swing.JFrame {
     }
 
     private String getSystemInformation() {
-        return new SystemState(mcv).getStateAsString(true);
+//        return new SystemState(mcv).getStateAsString(true);
+        return SystemState.getStateAsString(mcv, true);
     }
 
     /** This method is called from within the constructor to
