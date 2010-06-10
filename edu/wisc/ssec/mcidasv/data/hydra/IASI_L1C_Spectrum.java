@@ -105,7 +105,7 @@ public class IASI_L1C_Spectrum extends SpectrumAdapter {
      return super.getData(new_subset);
    }
 
-  public float[] processRange(short[] range) {
+  public float[] processRange(short[] range, Object subset) {
     return IASI_L1C_Utility.getDecodedIASISpectra(range, null);
   }
 

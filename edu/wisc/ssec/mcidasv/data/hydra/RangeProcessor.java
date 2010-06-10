@@ -203,11 +203,11 @@ public class RangeProcessor {
 	 */
 	
 	public float[] processRange(byte[] values, HashMap subset) {
-		int channelIndex = 0;
+		int soIndex = 0;  // scale/offset index
 	
 		if (subset != null) {
-			if (subset.get(SpectrumAdapter.channelIndex_name) != null) {
-				channelIndex  = (int) ((double[])subset.get(SpectrumAdapter.channelIndex_name))[0];
+			if (subset.get(multiScaleDimName) != null) {
+				soIndex  = (int) ((double[])subset.get(multiScaleDimName))[0];
 			}
 		}
 	
@@ -236,10 +236,10 @@ public class RangeProcessor {
 			}
 			else {
 				if (unpack) {
-					new_values[k] = scale[channelIndex] * (val) + offset[channelIndex];
+					new_values[k] = scale[soIndex] * (val) + offset[soIndex];
 				}
 				else {
-					new_values[k] = scale[channelIndex] * (val - offset[channelIndex]);
+					new_values[k] = scale[soIndex] * (val - offset[soIndex]);
 				}
 			}
 		}
@@ -254,11 +254,11 @@ public class RangeProcessor {
 	 */
 	
 	public float[] processRange(short[] values, HashMap subset) {
-		int channelIndex = 0;
+		int soIndex = 0;  // scale/offset index
 
 		if (subset != null) {
-			if (subset.get(SpectrumAdapter.channelIndex_name) != null) {
-				channelIndex  = (int) ((double[])subset.get(SpectrumAdapter.channelIndex_name))[0];
+			if (subset.get(multiScaleDimName) != null) {
+				soIndex  = (int) ((double[])subset.get(multiScaleDimName))[0];
 			}
 		}
 
@@ -287,10 +287,10 @@ public class RangeProcessor {
 			}
 			else {
 				if (unpack) {
-					new_values[k] = (scale[channelIndex] * val) + offset[channelIndex];
+					new_values[k] = (scale[soIndex] * val) + offset[soIndex];
 				}
 				else {
-					new_values[k] = scale[channelIndex] * (val - offset[channelIndex]);
+					new_values[k] = scale[soIndex] * (val - offset[soIndex]);
 				}
 			}
 		}
@@ -369,9 +369,8 @@ public class RangeProcessor {
 	 * @return
 	 */
 	
-	public float[] processRange(byte[] values) {
+	public float[] processAlongBandDim(byte[] values) {
 		float[] new_values = new float[values.length];
-
 
                 // if we are working with unsigned data, need to convert missing vals to unsigned too
                 if (unsigned) {
@@ -384,7 +383,6 @@ public class RangeProcessor {
 
                 float val = 0f;
                 int i = 0;
-
 
 		for (int k = 0; k < values.length; k++) {
 			val = (float) values[k];
@@ -413,7 +411,7 @@ public class RangeProcessor {
 	 * @return
 	 */
 	
-	public float[] processRange(short[] values) {
+	public float[] processAlongBandDim(short[] values) {
 		float[] new_values = new float[values.length];
 
                 // if we are working with unsigned data, need to convert missing vals to unsigned too
@@ -427,7 +425,6 @@ public class RangeProcessor {
 
                 float val = 0f;
                 int i = 0;
-
 
 		for (int k = 0; k < values.length; k++) {
 			val = (float) values[k];
@@ -449,6 +446,10 @@ public class RangeProcessor {
 		}
 		return new_values;
 	}
+
+        public void setMultiScaleDimName(String multiScaleDimName) {
+             this.multiScaleDimName = multiScaleDimName;
+        }
 
 }
 

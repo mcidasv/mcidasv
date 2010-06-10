@@ -78,18 +78,22 @@ public class AIRS_L1B_Spectrum extends SpectrumAdapter {
     return srf_centroid_freq;
   }
 
-  public float[] processRange(float[] range) {
+  //public float[] processRange(float[] range) {
+  public float[] processRange(float[] range, Object subset) {
     for (int k=0; k<numChannels; k++) {
       if (radiance_quality[k] != 0) range[k] = Float.NaN;
     }
-    return range;
+    float[] new_range = sortRange(range);
+    return new_range;
   }
 
-  public double[] processRange(double[] range) {
+  //public double[] processRange(double[] range) {
+  public double[] processRange(double[] range, Object subset) {
     for (int k=0; k<numChannels; k++) {
       if (radiance_quality[k] != 0) range[k] = Double.NaN;
     }
-    return range;
+    double[] new_range = sortRange(range);
+    return new_range;
   }
 
 

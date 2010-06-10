@@ -142,7 +142,7 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
 
     try {
       domainSet = makeDomainSet();
-      makeSpectrumRangeType();
+      rangeType = makeSpectrumRangeType();
       spectrumType = new FunctionType(channelRealType, spectrumRangeType);
     } catch (Exception e) {
       e.printStackTrace();
@@ -173,7 +173,7 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
   }
 
   public Set makeDomain(Object subset) throws Exception {
-    return null;
+    return domainSet;
   }
 
   public SampledSet getDomainSet() throws Exception {
@@ -230,61 +230,33 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
     return spectrumRangeType;
   }
 
-  private FlatField makeFlatField(SampledSet domainSet, float[][] range) throws Exception {
-    FlatField field = new FlatField(spectrumType, domainSet);
+  float[] sortRange(float[] range) {
     float[] sorted_range = new float[numChannels];
-    for (int k=0; k<numChannels; k++) sorted_range[k] = range[0][channel_sort[k]];
-    field.setSamples(new float[][] {sorted_range});
-    return field;
+    for (int k=0; k<numChannels; k++) sorted_range[k] = range[channel_sort[k]];
+    return sorted_range;
   }
 
-  private FlatField makeFlatField(SampledSet domainSet, double[][] range) throws Exception {
-    FlatField field = new FlatField(spectrumType, domainSet);
-    double[] sorted_range = new double[numChannels];
-    for (int k=0; k<numChannels; k++) sorted_range[k] = range[0][channel_sort[k]];
-    field.setSamples(new double[][] {sorted_range});
-    return field;
+  double[] sortRange(double[] range) {
+    double[] sorted_range =  new double[numChannels];
+    for (int k=0; k<numChannels; k++) sorted_range[k] = range[channel_sort[k]];
+    return sorted_range;
   }
 
-  public FlatField getData(Object subset) throws Exception {
-    FlatField f_field = null;
 
-    Object range = readArray(subset);
-
-    if (arrayType == Float.TYPE) {
-      float[] new_range = processRange((float[])range);
-      f_field = makeFlatField(domainSet, new float[][] {(float[])range});
-    }
-    else if (arrayType == Double.TYPE) {
-      double[] new_range = processRange((double[])range);
-      f_field = makeFlatField(domainSet, new double[][] {(double[])range});
-    }
-    else if (arrayType == Short.TYPE) {
-      float[] float_range = processRange((short[])range);
-      f_field = makeFlatField(domainSet, new float[][] {float_range});
-    }
-    else if (arrayType == Byte.TYPE) {
-      float[] float_range = processRange((byte[])range);
-      f_field = makeFlatField(domainSet, new float[][] {float_range});
-    }
-
-    return f_field;
-  }
-
-  public float[] processRange(float[] range) {
+  public float[] processRange(float[] range, Object subset) {
     return range;
   }
 
-  public double[] processRange(double[] range) {
+  public double[] processRange(double[] range, Object subset) {
     return range;
   }
 
-  public float[] processRange(short[] range) {
-    return rangeProcessor.processRange(range);
+  public float[] processRange(short[] range, Object subset) {
+     return rangeProcessor.processAlongBandDim(range);
   }
 
-  public float[] processRange(byte[] range) {
-    return rangeProcessor.processRange(range);
+  public float[] processRange(byte[] range, Object subset) {
+     return rangeProcessor.processAlongBandDim(range);
   }
 
   public void setRangeProcessor(RangeProcessor rangeProcessor) {
