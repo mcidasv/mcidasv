@@ -43,6 +43,8 @@ import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.Part;
 import org.apache.commons.httpclient.methods.multipart.PartSource;
 import org.apache.commons.httpclient.methods.multipart.StringPart;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.WrapperException;
@@ -50,6 +52,8 @@ import ucar.unidata.util.WrapperException;
 import edu.wisc.ssec.mcidasv.util.BackgroundTask;
 
 public class Submitter extends BackgroundTask<String> {
+
+    private static final Logger logger = LoggerFactory.getLogger(Submitter.class);
 
     /** We'll follow up to this many redirects for {@code requestUrl}. */
     private static final int POST_ATTEMPTS = 5;
@@ -154,23 +158,25 @@ public class Submitter extends BackgroundTask<String> {
         parts.add(new StringPart("form_data[cc_user]", Boolean.toString(form.getSendCopy())));
 
         // attach the files the user has explicitly attached.
-        if (form.hasAttachmentOne())
+        if (form.hasAttachmentOne()) {
             parts.add(buildRealFilePart("form_data[att_two]", form.getAttachmentOne()));
-        if (form.hasAttachmentTwo())
+        }
+        if (form.hasAttachmentTwo()) {
             parts.add(buildRealFilePart("form_data[att_three]", form.getAttachmentTwo()));
-
+        }
         // if the user wants, attach an XML bundle of the state
-        if (form.canBundleState() && form.getSendBundle())
+        if (form.canBundleState() && form.getSendBundle()) {
             parts.add(buildFakeFilePart("form_data[att_state]", form.getBundledStateName(), form.getBundledState()));
+        }
 
         // attach system properties
         parts.add(buildFakeFilePart("form_data[att_extra]", form.getExtraStateName(), form.getExtraState()));
 
-        if (form.canSendLog())
+        if (form.canSendLog()) {
             parts.add(buildRealFilePart("form_data[att_log]", form.getLogPath()));
+        }
 
         Part[] arr = parts.toArray(new Part[0]);
-
         MultipartRequestEntity mpr = new MultipartRequestEntity(arr, method.getParams());
         method.setRequestEntity(mpr);
         return method;
@@ -185,12 +191,12 @@ public class Submitter extends BackgroundTask<String> {
                 client.executeMethod(method);
                 if (method.getStatusCode() >= 300 && method.getStatusCode() <= 399) {
                     Header location = method.getResponseHeader("location");
-                    if (location == null)
+                    if (location == null) {
                         return "Error: No 'location' given on the redirect";
-
+                    }
                     validFormUrl = location.getValue();
                     if (method.getStatusCode() == 301) {
-                        System.err.println("Warning: form post has been permanently moved to:" + validFormUrl);
+                        logger.warn("form post has been permanently moved to: {}", validFormUrl);
                     }
                     continue;
                 }
@@ -203,14 +209,16 @@ public class Submitter extends BackgroundTask<String> {
     }
 
     @Override protected void onCompletion(String result, Throwable exception, boolean cancelled) {
-//        System.err.println("onCompletion: result="+result+" exception="+exception+" cancelled="+cancelled);
-        if (cancelled)
+        logger.trace("result={} exception={} cancelled={}", new Object[] { result, exception, cancelled });
+        if (cancelled) {
             return;
+        }
 
-        if (exception == null)
+        if (exception == null) {
             form.showSuccess();
-        else
+        } else {
             form.showFailure(exception.getMessage());
+        }
     }
 
 }

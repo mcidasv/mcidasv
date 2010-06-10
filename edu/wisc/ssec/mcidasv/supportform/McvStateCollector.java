@@ -45,9 +45,6 @@ public class McvStateCollector implements StateCollector {
     /** Reference used to query McIDAS-V's application state. */
     private final McIDASV mcv;
 
-    /** Queried for system information. */
-    private final SystemState systemState;
-
     /** Name of the attachment used for the system state bundle. */
     private static final String BUNDLE = "bundle" + Constants.SUFFIX_MCV;
 
@@ -61,10 +58,10 @@ public class McvStateCollector implements StateCollector {
      * @param mcv The McIDAS-V reference that we'll interrogate.
      */
     public McvStateCollector(final McIDASV mcv) {
-        if (mcv == null)
+        if (mcv == null) {
             throw new NullPointerException(); // TODO: message
+        }
         this.mcv = mcv;
-        this.systemState = new SystemState(mcv);
     }
 
     /**
@@ -90,10 +87,11 @@ public class McvStateCollector implements StateCollector {
 
     public String getLogPath() {
         String logPath = System.getProperty("user.home");
-        if (System.getProperty("os.name", "").startsWith("Windows"))
+        if (System.getProperty("os.name", "").startsWith("Windows")) {
             logPath += "\\.mcidasv\\mcidasv.log";
-        else
+        } else {
             logPath += "/.mcidasv/mcidasv.log";
+        }
         return logPath;
     }
 
@@ -106,26 +104,56 @@ public class McvStateCollector implements StateCollector {
      * {@link Properties} file format.
      */
     public String getContentsAsString() {
-        Map<Object, Object> props = new LinkedHashMap<Object, Object>();
+//        Map<Object, Object> props = new LinkedHashMap<Object, Object>();
 
-        // get versions
-        props.putAll(((StateManager)mcv.getStateManager()).getVersionInfo());
+        Map<String, String> versions = ((StateManager)mcv.getStateManager()).getVersionInfo();
+        Properties sysProps = System.getProperties();
+        Map<String, Object> j3dProps = SystemState.queryJava3d();
+        Map<String, String> machineProps = SystemState.queryMachine();
+        Map<String, Object> mcvProps = SystemState.queryMcvState(mcv);
+
+        StringBuffer buf = new StringBuffer(20000);
+        buf.append("# Software Versions:")
+            .append("\n# McIDAS-V: ").append(versions.get("mcv.version.general")).append(" (").append(versions.get("mcv.version.build")).append(')')
+            .append("\n# IDV:      ").append(versions.get("idv.version.general")).append(" (").append(versions.get("idv.version.build")).append(')')
+            .append("\n\n# Operating System:")
+            .append("\n# Name:         ").append(sysProps.getProperty("os.name"))
+            .append("\n# Version:      ").append(sysProps.getProperty("os.version"))
+            .append("\n# Architecture: ").append(sysProps.getProperty("os.arch"))
+            .append("\n\n# Java:")
+            .append("\n# Version: ").append(sysProps.getProperty("java.version"))
+            .append("\n# Vendor:  ").append(sysProps.getProperty("java.vendor"))
+            .append("\n# Home:    ").append(sysProps.getProperty("java.home"))
+            .append("\n\n# Java 3D:")
+            .append("\n# Renderer: ").append(j3dProps.get("j3d.renderer"))
+            .append("\n# Pipeline: ").append(j3dProps.get("j3d.pipeline"))
+            .append("\n# Vendor:   ").append(j3dProps.get("j3d.vendor"))
+            .append("\n# Version:  ").append(j3dProps.get("j3d.version"));
+
+        // get software versions
+        for (Entry<String, String> entry : versions.entrySet()) {
+            buf.append(entry.getKey()).append('=').append(entry.getValue()).append('\n');
+        }
 
         // get machine properties
-        props.putAll(systemState.queryMachine());
+        for (Entry<String, String> entry : machineProps.entrySet()) {
+            buf.append(entry.getKey()).append('=').append(entry.getValue()).append('\n');
+        }
 
         // get java system properties
-        props.putAll(System.getProperties());
+        for (Entry<Object, Object> entry : sysProps.entrySet()) {
+            buf.append(entry.getKey()).append('=').append(entry.getValue()).append('\n');
+        }
 
         // get java3d/jogl properties
-        props.putAll(systemState.queryJava3d());
+        for (Entry<String, Object> entry : j3dProps.entrySet()) {
+            buf.append(entry.getKey()).append('=').append(entry.getValue()).append('\n');
+        }
 
         // get idv/mcv properties
-        props.putAll(systemState.queryMcvState());
-
-        StringBuffer buf = new StringBuffer();
-        for (Entry<Object, Object> entry : props.entrySet())
-            buf.append(entry.getKey()+"="+entry.getValue()+"\n");
+        for (Entry<String, Object> entry : mcvProps.entrySet()) {
+            buf.append(entry.getKey()).append('=').append(entry.getValue()).append('\n');
+        }
 
         return buf.toString();
     }

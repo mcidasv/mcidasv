@@ -56,6 +56,7 @@ import ucar.unidata.idv.ui.IdvUIManager;
 
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import edu.wisc.ssec.mcidasv.util.BackgroundTask;
+import edu.wisc.ssec.mcidasv.util.Contract;
 
 public class SupportForm extends javax.swing.JFrame {
 
@@ -70,10 +71,8 @@ public class SupportForm extends javax.swing.JFrame {
     private final CancelListener listener = new CancelListener();
 
     public SupportForm(IdvObjectStore store, StateCollector collector) {
-        if (store == null)
-            throw new NullPointerException(); // TODO: message
-        if (collector == null)
-            throw new NullPointerException(); // TODO: message
+        Contract.notNull(store);
+        Contract.notNull(collector);
         this.store = store;
         this.collector = collector;
         unpersistInput();
@@ -312,20 +311,23 @@ public class SupportForm extends javax.swing.JFrame {
     }
 
     private void attachmentOneFieldMouseClicked(java.awt.event.MouseEvent evt) {
-        if (attachmentOneField.getText().length() == 0)
+        if (attachmentOneField.getText().length() == 0) {
             attachFileToField(attachmentOneField);
+        }
     }
 
     private void attachmentTwoFieldMouseClicked(java.awt.event.MouseEvent evt) {
-        if (attachmentTwoField.getText().length() == 0)
+        if (attachmentTwoField.getText().length() == 0) {
             attachFileToField(attachmentTwoField);
+        }
     }
 
     private static void attachFileToField(final JTextField field) {
         String current = field.getText();
         JFileChooser jfc = new JFileChooser(current);
-        if (jfc.showOpenDialog(field) == JFileChooser.APPROVE_OPTION)
+        if (jfc.showOpenDialog(field) == JFileChooser.APPROVE_OPTION) {
             field.setText(jfc.getSelectedFile().toString());
+        }
     }
 
     /**
@@ -336,14 +338,18 @@ public class SupportForm extends javax.swing.JFrame {
      * input, {@code false} otherwise.
      */
     private boolean validInput() {
-        if (userField.getText().length() == 0)
+        if (userField.getText().length() == 0) {
             return false;
-        if (emailField.getText().length() == 0)
+        }
+        if (emailField.getText().length() == 0) {
             return false;
-        if (subjectField.getText().length() == 0)
+        }
+        if (subjectField.getText().length() == 0) {
             return false;
-        if (descriptionArea.getText().length() == 0)
+        }
+        if (descriptionArea.getText().length() == 0) {
             return false;
+        }
         return true;
     }
 
@@ -480,8 +486,9 @@ public class SupportForm extends javax.swing.JFrame {
 
     public boolean canSendLog() {
         String path = collector.getLogPath();
-        if (path == null || path.length() == 0)
+        if (path == null || path.length() == 0) {
             return false;
+        }
         return new File(path).exists();
     }
 
@@ -497,23 +504,20 @@ public class SupportForm extends javax.swing.JFrame {
     // TODO: dialogs are bad news hares.
     public void showFailure(final String reason) {
         String msg = "";
-        if (reason == null || reason.length() == 0)
+        if (reason == null || reason.length() == 0) {
             msg = "Error sending request, could not determine cause.";
-        else
+        } else {
             msg = "Error sending request:\n"+reason;
-
+        }
         JOptionPane.showMessageDialog(this, msg, "Problem sending support request", JOptionPane.ERROR_MESSAGE);
     }
 
     private class CancelListener implements ActionListener {
         BackgroundTask<?> task;
         public void actionPerformed(ActionEvent e) {
-//            System.err.println("cancel clicked");
             if (task != null) {
                 task.cancel(true);
-            } else {
-//                System.err.println("no task to cancel...");
-            }
+            } 
             setVisible(false);
             dispose();
         }
@@ -579,8 +583,9 @@ public class SupportForm extends javax.swing.JFrame {
             Component aComponent) 
         {
             int idx = ordering.indexOf(aComponent) - 1;
-            if (idx < 0)
+            if (idx < 0) {
                 idx = ordering.size() - 1;
+            }
             return ordering.get(idx);
         }
 
