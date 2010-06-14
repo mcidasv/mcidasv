@@ -590,14 +590,16 @@ public class NPPDataSource extends HydraDataSource {
               }  
               subset = select.getSubset();
 
-              Hashtable props = dataSelection.getProperties();
-              if (props != null) {
-                if (props.containsKey(SpectrumAdapter.channelIndex_name)) {
-                  double[] coords = (double[]) subset.get(SpectrumAdapter.channelIndex_name);
-                  int idx = ((Integer) props.get(SpectrumAdapter.channelIndex_name)).intValue();
-                  coords[0] = (double)idx;
-                  coords[1] = (double)idx;
-                  coords[2] = (double)1;
+              if (dataSelection != null) {
+                Hashtable props = dataSelection.getProperties();
+                if (props != null) {
+                  if (props.containsKey(SpectrumAdapter.channelIndex_name)) {
+                    double[] coords = (double[]) subset.get(SpectrumAdapter.channelIndex_name);
+                    int idx = ((Integer) props.get(SpectrumAdapter.channelIndex_name)).intValue();
+                    coords[0] = (double)idx;
+                    coords[1] = (double)idx;
+                    coords[2] = (double)1;
+                  }
                 }
               }
             }
@@ -669,7 +671,7 @@ public class NPPDataSource extends HydraDataSource {
 
       if (hasImagePreview) {
         try {
-          FlatField image = multiSpectData.getImage(multiSpectData.init_wavenumber, defaultSubset);
+          FlatField image = (FlatField) dataChoice.getData(null);
           components.add(new PreviewSelection(dataChoice, image, null));
         } catch (Exception e) {
           System.out.println("Can't make PreviewSelection: "+e);
