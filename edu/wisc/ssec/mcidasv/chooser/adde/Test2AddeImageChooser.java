@@ -631,6 +631,12 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         );
 
         setInnerPanel(myPanel);
+        descriptorComboBox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == e.DESELECTED)
+                    lastAD = null;
+            }
+        });
         return super.doMakeContents(true);
     }
 
