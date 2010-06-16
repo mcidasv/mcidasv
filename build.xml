@@ -143,6 +143,23 @@
     <include name="edu/wisc/ssec/mcidasv/jython/**/*.class" />
   </patternset>
 
+  <!-- Controls the status of Java's assertion feature. -->
+  <assertions id="mcv.assertions">
+    <!-- Enable all assertions: -->
+    <!-- <enable/> -->
+
+    <!-- Disable all assertions (remember the system assert attr above! -->
+    <!-- <disable/> -->
+    <disable/>
+
+    <!-- 
+      Enable assertions for the Mcv choosers, but disable any assertions in 
+      VisAD's HDF5 package:
+    -->
+    <!-- <enable package="edu.wisc.ssec.mcidasv.chooser"/> -->
+    <!-- <disable package="visad.data.hdf5"/> -->
+  </assertions>
+	
 	<!-- Print out some of the setting for this build file -->
 	<target name="info" description="Print various significant property values">
 		<echo>
@@ -402,6 +419,7 @@
         <path refid="app.classpath" />
         <pathelement location="${dist.dir}/${app.jarname}" />
       </classpath>
+    	<assertions refid="mcv.assertions"/>
       <!-- Disables bytecode verification; seems to bring the snappy  -->
       <!-- <jvmarg value="-noverify" /> -->
 
@@ -428,6 +446,7 @@
         <path refid="app.classpath" />
         <pathelement location="${dist.dir}/${app.jarname}" />
       </classpath>
+      <assertions refid="mcv.assertions"/>
       <!-- Disables bytecode verification; seems to bring the snappy  -->
       <!-- <jvmarg value="-noverify" /> -->
 
