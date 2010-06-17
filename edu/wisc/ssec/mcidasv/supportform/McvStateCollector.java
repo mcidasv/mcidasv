@@ -86,13 +86,7 @@ public class McvStateCollector implements StateCollector {
     }
 
     public String getLogPath() {
-        String logPath = System.getProperty("user.home");
-        if (System.getProperty("os.name", "").startsWith("Windows")) {
-            logPath += "\\.mcidasv\\mcidasv.log";
-        } else {
-            logPath += "/.mcidasv/mcidasv.log";
-        }
-        return logPath;
+        return mcv.getUserFile("mcidasv.log");
     }
 
     /**

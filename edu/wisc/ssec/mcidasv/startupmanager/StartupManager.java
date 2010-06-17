@@ -124,7 +124,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         /** Instance of windows-specific platform information. */
         WINDOWS("\\", "runMcV-Prefs.bat", "\r\n");
 
-        /** Path to the user's {@literal ".mcidasv"} directory. */
+        /** Path to the user's {@literal "userpath"} directory. */
         private String userDirectory;
 
         /** The path to the user's copy of the startup preferences. */
@@ -168,7 +168,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             if (pathSeparator.length() == 0 || defaultPrefs.length() == 0)
                 throw new IllegalArgumentException("");
 
-            this.userDirectory = System.getProperty("user.home") + pathSeparator + ".mcidasv";
+            this.userDirectory = System.getProperty("user.home") + pathSeparator + "McIDAS-V.user";
             this.userPrefs = userDirectory + pathSeparator + defaultPrefs;
             this.defaultPrefs = defaultPrefs;
             this.newLine = newLine;
@@ -176,7 +176,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         }
 
         /**
-         * Sets the path to the user's .mcidasv directory explicitly.
+         * Sets the path to the user's userpath directory explicitly.
          * 
          * @param path New path.
          */
@@ -214,12 +214,22 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         }
 
         /**
-         * Returns the path to the user's {@literal ".mcidasv"} directory.
+         * Returns the path to the user's {@literal "userpath"} directory.
          * 
          * @return Path to the user's directory.
          */
         public String getUserDirectory() {
             return userDirectory;
+        }
+        
+        /**
+         * Returns the path to a file in the user's {@literal "userpath"} directory
+         * 
+         * @param filename
+         * @return Path to a file in the user's directory.
+         */
+        public String getUserFile(String filename) {
+        	return getUserDirectory()+pathSeparator+filename;
         }
 
         public String getUserBundles() {
@@ -709,7 +719,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
 
     public static Properties getDefaultProperties() {
         Properties props = new Properties();
-        props.setProperty("userpath", String.format("%s%s.mcidasv", System.getProperty("user.home"), File.separator));
+        props.setProperty("userpath", String.format("%s%sMcIDAS-V.user", System.getProperty("user.home"), File.separator));
         props.setProperty(Constants.PROP_SYSMEM, "0");
         return props;
     }

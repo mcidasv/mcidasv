@@ -1,6 +1,6 @@
 @ECHO OFF
 
-SET MCV_USERPATH=%USERPROFILE%\.mcidasv
+SET MCV_USERPATH=%USERPROFILE%\McIDAS-V.user
 SET MCV_PARAMS=%*
 
 REM Check for -userpath parameter
@@ -18,13 +18,18 @@ GOTO checkparameters
 
 :endparameters
 
+REM Check for old style default userpath
+IF EXIST %USERPROFILE%\.mcidasv (
+IF NOT EXIST "%MCV_USERPATH%" XCOPY "%USERPROFILE%\.mcidasv" "%MCV_USERPATH%"
+)
+
 REM Default heap size to use if none can be determined
 SET HEAP_DEFAULT=512M
 
 REM Controls whether or not the welcome window appears (0 = no, 1 = yes)
 SET SHOW_WELCOME=0
 
-REM Put the log files in the user's .mcidasv directory (which should be writeable)
+REM Put the log files in the user's MCV_USERPATH directory (which should be writeable)
 SET MCV_LOG=%MCV_USERPATH%\mcidasv.log
 SET MCV_LOG_LINES=10000
 
@@ -32,16 +37,16 @@ REM Always run the default prefs; user can override as much as they want
 IF NOT EXIST runMcV-Prefs.bat echo This script must be run from within the McIDAS-V installation directory && goto end
 CALL runMcV-Prefs.bat
 
-REM Toggle the welcome window if .mcidasv does not exist
+REM Toggle the welcome window if MCV_USERPATH does not exist
 IF NOT EXIST "%MCV_USERPATH%" SET SHOW_WELCOME=1
 
-REM Create .mcidasv directory if it doesn't already exist
+REM Create MCV_USERPATH directory if it doesn't already exist
 IF NOT EXIST "%MCV_USERPATH%" mkdir "%MCV_USERPATH%"
 
-REM Copy prefs to .mcidasv directory if it doesn't already exist
-IF NOT EXIST "%MCV_USERPATH%\runMcV-Prefs.bat" copy runMcV-Prefs.bat "%MCV_USERPATH%\runMcV-Prefs.bat"
+REM Copy prefs to MCV_USERPATH directory if it doesn't already exist
+IF NOT EXIST "%MCV_USERPATH%\runMcV-Prefs.bat" COPY runMcV-Prefs.bat "%MCV_USERPATH%\runMcV-Prefs.bat"
 
-REM If .mcidas\runMcV-Prefs.bat exists, call it to populate the current environment
+REM If MCV_USERPATH\runMcV-Prefs.bat exists, call it to populate the current environment
 IF EXIST "%MCV_USERPATH%\runMcV-Prefs.bat" CALL "%MCV_USERPATH%\runMcV-Prefs.bat"
 
 SET ENABLE_3D=true
@@ -81,7 +86,7 @@ FOR /F "tokens=*" %%i IN ('jre\bin\java.exe -cp mcidasv.jar edu.wisc.ssec.mcidas
 SET /a SYS_MEM=0
 FOR /F %%i IN ('jre\bin\java.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
 
-SET MCV_FLAGS=-Didv.3d=%ENABLE_3D% -Didv.sysmem=%SYS_MEM% -Dvisad.java3d.geometryByRef=%GEOMETRY_BY_REF%
+SET MCV_FLAGS=-Didv.3d=%ENABLE_3D% -Didv.sysmem=%SYS_MEM% -Dvisad.java3d.geometryByRef=%GEOMETRY_BY_REF% -userpath %MCV_USERPATH%
 
 REM Append the specified startup bundle to the args getting passed to Mcv
 IF DEFINED STARTUP_BUNDLE SET MCV_FLAGS=%MCV_FLAGS% -bundle %STARTUP_BUNDLE%

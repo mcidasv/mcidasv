@@ -94,7 +94,7 @@ public class EntryStore {
     /** Path to mcservl. */
     private final String ADDE_MCSERVL;
 
-    /** Path to the user's {@literal ".mcidasv"} directory. */
+    /** Path to the user's {@literal "userpath"} directory. */
     private final String USER_DIRECTORY;
 
     /** Path to the user's {@literal "RESOLV.SRV"}. */
@@ -130,14 +130,18 @@ public class EntryStore {
         this.lastAdded = arrList();
         AnnotationProcessor.process(this);
 
-        USER_DIRECTORY = store.getUserDirectory().toString();
+//        USER_DIRECTORY = store.getUserDirectory().toString();
+        McIDASV mcv = McIDASV.getStaticMcv();
+        USER_DIRECTORY = mcv.getUserDirectory();
+        ADDE_RESOLV = mcv.getUserFile("RESOLV.SRV");
         MCTRACE = "0";
+        
         if (McIDASV.isWindows()) {
             ADDE_MCSERVL = ADDE_BIN + "\\mcservl.exe";
-            ADDE_RESOLV = USER_DIRECTORY + "\\RESOLV.SRV";
+//            ADDE_RESOLV = USER_DIRECTORY + "\\RESOLV.SRV";
         } else {
             ADDE_MCSERVL = ADDE_BIN + "/mcservl";
-            ADDE_RESOLV = USER_DIRECTORY + "/RESOLV.SRV";
+//            ADDE_RESOLV = USER_DIRECTORY + "/RESOLV.SRV";
         }
 
         try {

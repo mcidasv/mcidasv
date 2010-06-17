@@ -1,6 +1,6 @@
 #!/bin/sh
 
-MCV_USERPATH="${HOME}/.mcidasv"
+MCV_USERPATH="${HOME}/McIDAS-V.user"
 MCV_PARAMS="$@"
 
 # Check for -userpath parameter
@@ -13,6 +13,13 @@ while [ "$1" != "" ]; do
 		shift
 	fi
 done
+
+# Check for old style default userpath
+if [ -d "${HOME}/.mcidasv" ]; then
+	if [ ! -d "${MCV_USERPATH}" ]; then
+		cp -R "${HOME}/.mcidasv" "${MCV_USERPATH}"
+	fi
+fi
 
 # Change to the directory that the script resides in before executing
 HAVEWHICH=`which which >/dev/null 2>&1`
@@ -27,12 +34,12 @@ fi
 dirname=`dirname "$scriptname"`
 cd "$dirname"
 
-# Create .mcidasv directory if it doesn't already exist
+# Create MCV_USERPATH directory if it doesn't already exist
 if [ ! -d "${MCV_USERPATH}" ]; then
 	mkdir -p "${MCV_USERPATH}"
 fi
 
-# Copy prefs to .mcidasv directory if it doesn't already exist
+# Copy prefs to MCV_USERPATH directory if it doesn't already exist
 if [ ! -f "${MCV_USERPATH}/runMcV.prefs" ]; then
 	cp runMcV.prefs "${MCV_USERPATH}/runMcV.prefs"
 fi

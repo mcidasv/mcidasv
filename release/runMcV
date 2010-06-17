@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MCV_USERPATH="${HOME}/.mcidasv"
+MCV_USERPATH="${HOME}/McIDAS-V.user"
 MCV_PARAMS="$@"
 
 # Check for -userpath parameter
@@ -13,6 +13,13 @@ while [ "$1" != "" ]; do
 		shift
 	fi
 done
+
+# Check for old style default userpath
+if [ -d "${HOME}/.mcidasv" ]; then
+	if [ ! -d "${MCV_USERPATH}" ]; then
+		cp -R "${HOME}/.mcidasv" "${MCV_USERPATH}"
+	fi
+fi
 
 # Change to the directory that the script resides in before executing
 HAVEWHICH=`which which >/dev/null 2>&1`
@@ -39,7 +46,7 @@ SHOW_WELCOME="0"
 # TEMP?: default value for the visad.java3d.geometryByRef property
 # GEOMETRY_BY_REF="true"
 
-# Put the log files in the user's .mcidasv directory (which should be writeable)
+# Put the log files in the user's MCV_USERPATH directory (which should be writeable)
 MCV_LOG="${MCV_USERPATH}/mcidasv.log"
 MCV_LOG_LINES=10000
 
@@ -51,7 +58,7 @@ else
 	. ./runMcV.prefs
 fi
 
-# Create .mcidasv directory if it doesn't already exist
+# Create MCV_USERPATH directory if it doesn't already exist
 if [ ! -d "${MCV_USERPATH}" ]; then
 	mkdir -p "${MCV_USERPATH}"
 	
@@ -59,12 +66,12 @@ if [ ! -d "${MCV_USERPATH}" ]; then
 	SHOW_WELCOME="1"
 fi
 
-# Copy prefs to .mcidasv directory if it doesn't already exist
+# Copy prefs to MCV_USERPATH directory if it doesn't already exist
 if [ ! -f "${MCV_USERPATH}/runMcV.prefs" ]; then
 	cp runMcV.prefs "${MCV_USERPATH}/runMcV.prefs"
 fi
 
-# If .mcidas/runMcV.prefs exists, source it to populate the current environment
+# If MCV_USERPATH/runMcV.prefs exists, source it to populate the current environment
 if [ -f "${MCV_USERPATH}/runMcV.prefs" ]; then
 	. "${MCV_USERPATH}/runMcV.prefs"
 fi
@@ -149,7 +156,7 @@ fi
 
 # Gather up previously set values.
 JAVA_FLAGS="-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${JVM_ARGS}"
-MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Dvisad.java3d.geometryByRef=${GEOMETRY_BY_REF} -Didv.3d=${IDV_3D} -Didv.sysmem=${SYS_MEM} ${DEFAULT_BUNDLE}"
+MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Dvisad.java3d.geometryByRef=${GEOMETRY_BY_REF} -Didv.3d=${IDV_3D} -Didv.sysmem=${SYS_MEM} ${DEFAULT_BUNDLE} -userpath ${MCV_USERPATH}"
 echo "mcv flags: ${MCV_FLAGS}"
 ################################################################################
 # OS specific settings

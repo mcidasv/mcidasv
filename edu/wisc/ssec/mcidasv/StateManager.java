@@ -45,6 +45,8 @@ import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
+
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.Misc;
@@ -360,12 +362,7 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 	}
 	
 	private String getNoticePath() {
-        String noticePath = System.getProperty("user.home");
-        if (System.getProperty("os.name", "").startsWith("Windows"))
-        	noticePath += "\\.mcidasv\\notice.txt";
-        else
-        	noticePath += "/.mcidasv/notice.txt";
-        return noticePath;
+        return StartupManager.INSTANCE.getPlatform().getUserFile("notice.txt");
 	}
 
 	//TODO: change the hardcoded .mcidasv directories

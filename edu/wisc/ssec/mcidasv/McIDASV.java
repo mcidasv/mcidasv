@@ -1076,6 +1076,20 @@ public class McIDASV extends IntegratedDataViewer {
         }
         return btn;
     }
+    
+    /**
+     * Return the current {@literal "userpath"}
+     */
+    public String getUserDirectory() {
+    	return StartupManager.INSTANCE.getPlatform().getUserDirectory();
+    }
+    
+    /**
+     * Return the path to a file within {@literal "userpath"}
+     */
+    public String getUserFile(String filename) {
+    	return StartupManager.INSTANCE.getPlatform().getUserFile(filename);
+    }
 
     /**
      * Are we on a Mac?  Used to build the MRJ handlers
@@ -1159,7 +1173,7 @@ public class McIDASV extends IntegratedDataViewer {
 
     /**
      * Attempts to create a {@literal "session"} file. This method will create
-     * a {@literal "~/.mcidasv"} if it does not already exist. 
+     * a {@literal "userpath"} if it does not already exist. 
      * 
      * @param path Path of the session file that should get created. 
      * {@code null} values are not allowed, and sufficient priviledges are 
@@ -1276,8 +1290,7 @@ public class McIDASV extends IntegratedDataViewer {
      * @see #SESSION_FILE
      */
     public static String getSessionFilePath() {
-        return StartupManager.INSTANCE.getPlatform().getUserDirectory() + 
-            File.separator + "session.tmp";
+        return StartupManager.INSTANCE.getPlatform().getUserFile("session.tmp");
     }
 
     /**
