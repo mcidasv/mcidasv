@@ -20,7 +20,7 @@ GOTO checkparameters
 
 REM Check for old style default userpath
 IF EXIST %USERPROFILE%\.mcidasv (
-IF NOT EXIST "%MCV_USERPATH%" XCOPY "%USERPROFILE%\.mcidasv" "%MCV_USERPATH%"
+IF NOT EXIST "%MCV_USERPATH%" XCOPY /E /I /K /Q /Y "%USERPROFILE%\.mcidasv" "%MCV_USERPATH%"
 )
 
 REM Default heap size to use if none can be determined
@@ -86,7 +86,7 @@ FOR /F "tokens=*" %%i IN ('jre\bin\java.exe -cp mcidasv.jar edu.wisc.ssec.mcidas
 SET /a SYS_MEM=0
 FOR /F %%i IN ('jre\bin\java.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
 
-SET MCV_FLAGS=-Didv.3d=%ENABLE_3D% -Didv.sysmem=%SYS_MEM% -Dvisad.java3d.geometryByRef=%GEOMETRY_BY_REF% -userpath %MCV_USERPATH%
+SET MCV_FLAGS=-Didv.3d=%ENABLE_3D% -Didv.sysmem=%SYS_MEM% -Dvisad.java3d.geometryByRef=%GEOMETRY_BY_REF% -userpath "%MCV_USERPATH%"
 
 REM Append the specified startup bundle to the args getting passed to Mcv
 IF DEFINED STARTUP_BUNDLE SET MCV_FLAGS=%MCV_FLAGS% -bundle %STARTUP_BUNDLE%
