@@ -35,6 +35,7 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -55,7 +56,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -127,11 +134,13 @@ import edu.wisc.ssec.mcidasv.util.XmlUtil;
  */
 public class PersistenceManager extends IdvPersistenceManager {
 
+    private static final Logger logger = LoggerFactory.getLogger(PersistenceManager.class);
+    
     /**
      * Macro used as a place holder for wherever the IDV decides to place 
      * extracted contents of a bundle. 
      */
-    private static final String MACRO_ZIDVPATH = "%"+PROP_ZIDVPATH+"%";
+    private static final String MACRO_ZIDVPATH = '%'+PROP_ZIDVPATH+'%';
 
     static ucar.unidata.util.LogUtil.LogCategory log_ =
         ucar.unidata.util.LogUtil.getLogInstance(IdvManager.class.getName());
@@ -158,7 +167,7 @@ public class PersistenceManager extends IdvPersistenceManager {
     private static final String TAG_FOLDER = "folder";
     private static final String TAG_DEFAULT = "default";
     private static final String ATTR_NAME = "name";
-    
+
     /**
      * Java requires this constructor. 
      */
@@ -197,44 +206,48 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     public boolean getMergeBundledLayers() {
-//        System.err.println("getMergeBundledLayers="+mergeBundledLayers);
+        logger.trace("mergeBundledLayers={}", mergeBundledLayers);
         return mergeBundledLayers;
     }
 
     private void setMergeBundledLayers(final boolean newValue) {
-//        System.err.println("setMergeBundledLayers: old="+mergeBundledLayers+" new="+newValue);
+        logger.trace("old={} new={}", mergeBundledLayers, newValue);
         mergeBundledLayers = newValue;
     }
 
     @Override public boolean getSaveDataSources() {
         boolean result = false;
-        if (!savingDefaultLayout)
+        if (!savingDefaultLayout) {
             result = super.getSaveDataSources();
-//        System.err.println("getSaveDataSources="+result+" savingDefaultLayout="+savingDefaultLayout);
+        }
+        logger.trace("getSaveDataSources={} savingDefaultLayout={}", result, savingDefaultLayout);
         return result;
     }
 
     @Override public boolean getSaveDisplays() {
         boolean result = false;
-        if (!savingDefaultLayout)
+        if (!savingDefaultLayout) {
             result = super.getSaveDisplays();
-//        System.err.println("getSaveDisplays="+result+" savingDefaultLayout="+savingDefaultLayout);
+        }
+        logger.trace("getSaveDisplays={} savingDefaultLayout={}", result, savingDefaultLayout);
         return result;
     }
 
     @Override public boolean getSaveViewState() {
         boolean result = true;
-        if (!savingDefaultLayout)
+        if (!savingDefaultLayout) {
             result = super.getSaveViewState();
-//        System.err.println("getSaveViewState="+result+" savingDefaultLayout="+savingDefaultLayout);
+        }
+        logger.trace("getSaveViewState={} savingDefaultLayout={}", result, savingDefaultLayout);
         return result;
     }
 
     @Override public boolean getSaveJython() {
         boolean result = false;
-        if (!savingDefaultLayout)
+        if (!savingDefaultLayout) {
             result = super.getSaveJython();
-//        System.err.println("getSaveJython="+result+" savingDefaultLayout="+savingDefaultLayout);
+        }
+        logger.trace("getSaveJython={} savingDefaultLayout={}", result, savingDefaultLayout);
         return result;
     }
 
@@ -244,8 +257,9 @@ public class PersistenceManager extends IdvPersistenceManager {
         File f = new File(layoutFile);
         if (f.exists()) {
             boolean result = GuiUtils.showYesNoDialog(null, "Saving a new default layout will overwrite your existing default layout. Do you wish to continue?", "Overwrite Confirmation");
-            if (!result)
+            if (!result) {
                 return;
+            }
         }
 
         savingDefaultLayout = true;
@@ -267,15 +281,17 @@ public class PersistenceManager extends IdvPersistenceManager {
     {
         // add in some extra versioning information
         StateManager stateManager = (StateManager)getIdv().getStateManager();
-        if (data != null)
+        if (data != null) {
             data.put("mcvversion", stateManager.getVersionInfo());
+        }
 
         // remove ReadoutProbes from the list
         if (displayControls != null) {
             List<DisplayControl> newControls = new ArrayList<DisplayControl>();
             for (DisplayControl dc : (List<DisplayControl>)displayControls) {
-                if (!(dc instanceof ReadoutProbe))
+                if (!(dc instanceof ReadoutProbe)) {
                     newControls.add(dc);
+                }
             }
             displayControls = newControls;
         }
@@ -290,15 +306,17 @@ public class PersistenceManager extends IdvPersistenceManager {
 
         Collections.addAll(dirs, getStore().getLocalBundlesDir());
 
-        if (sitePath != null)
+        if (sitePath != null) {
             dirs.add(IOUtil.joinDir(sitePath, IdvObjectStore.DIR_BUNDLES));
+        }
 
         for (String top : dirs) {
             List<File> subdirs = 
                 IOUtil.getDirectories(Collections.singletonList(top), true);
-            for (File subdir : subdirs)
+            for (File subdir : subdirs) {
                 loadBundlesInDirectory(allBundles, 
                     fileToCategories(top, subdir.getPath()), subdir);
+            }
         }
         return allBundles;
     }
@@ -310,9 +328,10 @@ public class PersistenceManager extends IdvPersistenceManager {
 
         for (int i = 0; i < localBundles.length; i++) {
             String filename = IOUtil.joinDir(file.toString(), localBundles[i]);
-            if (ArgumentManager.isBundle(filename))
+            if (ArgumentManager.isBundle(filename)) {
                 allBundles.add(new SavedBundle(filename,
                     IOUtil.stripExtension(localBundles[i]), categories, true));
+            }
         }
     }
 
@@ -367,8 +386,9 @@ public class PersistenceManager extends IdvPersistenceManager {
             // ok[0] = did the user press cancel 
             boolean[] ok = getPreferenceManager().getDoRemoveBeforeOpening(name);
 
-            if (!ok[0])
+            if (!ok[0]) {
                 return false;
+            }
 
             if (!ok[1] && !ok[2]) {
                 removeAll = false;
@@ -392,7 +412,7 @@ public class PersistenceManager extends IdvPersistenceManager {
             }
 
 //          System.err.println("ok[1]= "+ok[1]+" ok[2]="+ok[2]);
-//          System.err.println("removeAll="+removeAll+" shouldMerge="+shouldMerge+" mergeLayers="+mergeLayers);
+          System.err.println("removeAll="+removeAll+" shouldMerge="+shouldMerge+" mergeLayers="+mergeLayers);
 
             setMergeBundledLayers(mergeLayers);
 
@@ -405,8 +425,9 @@ public class PersistenceManager extends IdvPersistenceManager {
                 getIdv().removeAllDataSources();
             }
 
-            if (ok.length == 4)
+            if (ok.length == 4) {
                 limitNewWindows = ok[3];
+            }
         }
 
         // the UI manager may need to know which ViewManager was active *before*
@@ -429,9 +450,8 @@ public class PersistenceManager extends IdvPersistenceManager {
         String bundleContents = null;
         try {
             //Is this a zip file
-            //            System.err.println ("file "  + xmlFile);
+            logger.trace("bundle file={} isZipped={}", xmlFile, ArgumentManager.isZippedBundle(xmlFile));
             if (ArgumentManager.isZippedBundle(xmlFile)) {
-                //                System.err.println (" is zidv");
                 boolean ask   = getStore().get(PREF_ZIDV_ASK, true);
                 boolean toTmp = getStore().get(PREF_ZIDV_SAVETOTMP, true);
                 String  dir   = getStore().get(PREF_ZIDV_DIRECTORY, "");
@@ -464,7 +484,7 @@ public class PersistenceManager extends IdvPersistenceManager {
                                                     new Insets(5, 0, 0, 0)));
 
                     contents = GuiUtils.inset(contents, 5);
-                    if ( !GuiUtils.showOkCancelDialog(null, "Zip file data",
+                    if (!GuiUtils.showOkCancelDialog(null, "Zip file data",
                             contents, null)) {
                         return false;
                     }
@@ -500,12 +520,15 @@ public class PersistenceManager extends IdvPersistenceManager {
                         bundleContents = new String(IOUtil.readBytes(zin,
                                 null, false));
                     } else {
+//                        String xmlPath = IOUtil.joinDir(tmpDir, entryName);
                         if (IOUtil.writeTo(zin, new FileOutputStream(IOUtil.joinDir(tmpDir, entryName))) < 0) {
                             return false;
                         }
+//                        doXslTransform(xmlPath, "/tmp/bundle-transformed.xml");
                     }
                 }
             } else {
+//                doXslTransform(xmlFile, "/tmp/bundle-transformed.xml");
                 Trace.call1("Decode.readContents");
                 bundleContents = IOUtil.readContents(xmlFile);
                 Trace.call2("Decode.readContents");
@@ -521,7 +544,8 @@ public class PersistenceManager extends IdvPersistenceManager {
                 bundleContents = StringUtil.substitute(bundleContents, 
                     OLD_SOURCE_MACRO, NEW_SOURCE_MACRO);
             }
-
+            
+            
             Trace.call1("Decode.decodeXml");
             decodeXml(bundleContents, false, xmlFile, name, true,
                       shouldMerge, bundleProperties, removeAll,
@@ -536,6 +560,15 @@ public class PersistenceManager extends IdvPersistenceManager {
             }
             return false;
         }
+    }
+    
+    private void doXslTransform(final String xmlPath, final String xmlOutput) throws FileNotFoundException, TransformerException {
+        String xslPath = "/edu/wisc/ssec/mcidasv/resources/idv2mcidasv.xsl";
+        TransformerFactory cybertron = TransformerFactory.newInstance();
+        Transformer soundwave = cybertron.newTransformer(new javax.xml.transform.stream.StreamSource(xslPath));
+        soundwave.transform(
+            new javax.xml.transform.stream.StreamSource(xmlPath),
+            new javax.xml.transform.stream.StreamResult(new FileOutputStream(xmlOutput)));
     }
 
     // replace "old" references in a bundle's XML to the "new" classes.
@@ -641,8 +674,9 @@ public class PersistenceManager extends IdvPersistenceManager {
 
         if ( !fromCollab) {
             showWaitCursor();
-            if (showDialog)
+            if (showDialog) {
                 loadDialog.showDialog();
+            }
         }
 
         if (xmlFile != null) {
@@ -653,8 +687,9 @@ public class PersistenceManager extends IdvPersistenceManager {
         getStateManager().putProperty(PROP_LOADINGXML, true);
         try {
             xml = applyPropertiesToBundle(xml);
-            if (xml == null)
+            if (xml == null) {
                 return;
+            }
 
 //            checkForBadMaps(xmlFile);
 
@@ -692,23 +727,26 @@ public class PersistenceManager extends IdvPersistenceManager {
                 }
             }
         } catch (Throwable exc) {
-            if (xmlFile != null)
+            if (xmlFile != null) {
                 logException("Error loading bundle: " + xmlFile, exc);
-            else
+            } else {
                 logException("Error loading bundle", exc);
+            }
 
             inError = true;
         }
 
-        if (!fromCollab)
+        if (!fromCollab) {
             showNormalCursor();
+        }
 
         getStateManager().putProperty(PROP_BUNDLEPATH, "");
         getStateManager().putProperty(PROP_ZIDVPATH, "");
         getStateManager().putProperty(PROP_LOADINGXML, false);
 
-        if (!inError && getIdv().getInteractiveMode() && xmlFile != null)
+        if (!inError && getIdv().getInteractiveMode() && xmlFile != null) {
             getIdv().addToHistoryList(xmlFile);
+        }
 
         loadDialog.dispose();
         if (loadDialog.getShouldRemoveItems()) {
@@ -717,7 +755,7 @@ public class PersistenceManager extends IdvPersistenceManager {
                 try {
                     ((DisplayControl) displayControls.get(i)).doRemove();
                 } catch (Exception exc) {
-                    // Ignore the exception
+                    logger.warn("unexpected exception={}", exc);
                 }
             }
             List dataSources = loadDialog.getDataSources();
@@ -734,15 +772,14 @@ public class PersistenceManager extends IdvPersistenceManager {
         String xpath = "//property[@name=\"InitialMap\"]/string|//property[@name=\"MapStates\"]//property[@name=\"Source\"]/string";
         for (Node node : XPathUtils.nodes(bundlePath, xpath)) {
             String mapPath = node.getTextContent();
-//        System.err.println("nodeval:"+nodes.item(i).getTextContent());
             if (mapPath.contains("_dir/")) { // hahaha this needs some work
                 List<String> toks = StringUtil.split(mapPath, "_dir/");
                 if (toks.size() == 2) {
                     String plugin = toks.get(0).replace("/", "");
-                    System.err.println("plugin:"+plugin+" map:"+mapPath);
+                    logger.trace("plugin: {} map: {}", plugin, mapPath);
                 }
             } else {
-                System.err.println("normal map:"+mapPath);
+                logger.trace("normal map: {}", mapPath);
             }
         }
     }
@@ -784,8 +821,9 @@ public class PersistenceManager extends IdvPersistenceManager {
                 window.getPersistentComponents().values();
 
             for (Object comp : comps) {
-                if (!(comp instanceof IdvComponentGroup))
+                if (!(comp instanceof IdvComponentGroup)) {
                     continue;
+                }
 
                 IdvComponentGroup group = (IdvComponentGroup)comp;
                 List<IdvComponentHolder> holders =
@@ -793,7 +831,7 @@ public class PersistenceManager extends IdvPersistenceManager {
 
                 for (IdvComponentHolder holder : holders) {
                     if (holder.getViewManagers() != null) {
-//                        System.err.println("extracted: " + holder.getViewManagers().size());
+                        logger.trace("extracted: {}", holder.getViewManagers().size());
                         newList.addAll(holder.getViewManagers());
                     }
                 }
@@ -910,8 +948,9 @@ public class PersistenceManager extends IdvPersistenceManager {
                 new Hashtable<String, McvComponentGroup>();
 
             List<IdvComponentHolder> holders = buildHolders(window);
-            for (IdvComponentHolder holder : holders)
+            for (IdvComponentHolder holder : holders) {
                 group.addComponent(holder);
+            }
 
             persist.put("comp1", group);
             WindowInfo newWindow = new WindowInfo();
@@ -944,8 +983,9 @@ public class PersistenceManager extends IdvPersistenceManager {
                 window.getPersistentComponents().values();
 
             for (Object comp : comps) {
-                if (!(comp instanceof IdvComponentGroup))
+                if (!(comp instanceof IdvComponentGroup)) {
                     continue;
+                }
 
                 IdvComponentGroup group = (IdvComponentGroup)comp;
                 holders.addAll(McVGuiUtils.getComponentHolders(group));
@@ -972,16 +1012,18 @@ public class PersistenceManager extends IdvPersistenceManager {
                 window.getPersistentComponents().values();
 
             for (Object comp : comps) {
-                if (!(comp instanceof IdvComponentGroup))
+                if (!(comp instanceof IdvComponentGroup)) {
                     continue;
+                }
 
                 List<IdvComponentHolder> holders = 
                     new ArrayList<IdvComponentHolder>(
                             ((IdvComponentGroup)comp).getDisplayComponents());
 
                 for (IdvComponentHolder holder : holders) {
-                    if (!McVGuiUtils.isDynamicSkin(holder))
+                    if (!McVGuiUtils.isDynamicSkin(holder)) {
                         continue;
+                    }
                     List<ViewManager> tmpvms = holder.getViewManagers();
                     for (ViewManager vm : tmpvms) {
                         vms.add(vm);
@@ -1023,8 +1065,9 @@ public class PersistenceManager extends IdvPersistenceManager {
 
         for (DataSourceImpl d : ds) {
             boolean isBulk = isBulkDataSource(d);
-            if (!isBulk)
+            if (!isBulk) {
                 continue;
+            }
 
             // err... now do the macro sub and replace the contents of 
             // data paths with the singular element in temp paths?
@@ -1050,10 +1093,11 @@ public class PersistenceManager extends IdvPersistenceManager {
         if (properties.containsKey("bulk.load")) {
             // woohoo! no need to do the guesswork.
             Object value = properties.get("bulk.load");
-            if (value instanceof String)
+            if (value instanceof String) {
                 return Boolean.valueOf((String)value);
-            else if (value instanceof Boolean)
+            } else if (value instanceof Boolean) {
                 return (Boolean)value;
+            }
         }
 
         DataSourceDescriptor desc = d.getDescriptor();
@@ -1061,11 +1105,13 @@ public class PersistenceManager extends IdvPersistenceManager {
 
         List filePaths = d.getDataPaths();
         List tempPaths = d.getTmpPaths();
-        if (filePaths == null || filePaths.isEmpty())
+        if (filePaths == null || filePaths.isEmpty()) {
             return false;
+        }
 
-        if (tempPaths == null || tempPaths.isEmpty())
+        if (tempPaths == null || tempPaths.isEmpty()) {
             return false;
+        }
 
         // the least-involved heuristic i've found is:
         // localFiles == true
@@ -1155,8 +1201,9 @@ public class PersistenceManager extends IdvPersistenceManager {
         List<WindowInfo> windows = (List)ht.get(ID_WINDOWS);
 
         List<DataSourceImpl> dataSources = (List)ht.get("datasources");
-        if (dataSources != null)
+        if (dataSources != null) {
             fixBulkDataSources(dataSources);
+        }
 
         // older hydra bundles may contain ReadoutProbes in the list of
         // display controls. these are not needed, so they get removed.
@@ -1185,14 +1232,16 @@ public class PersistenceManager extends IdvPersistenceManager {
         // remove their ViewManagers from the bundle's list of ViewManagers!
         // remember, because they are dynamic skins, the ViewManagers should
         // not exist until the skin is built.
-        if (McVGuiUtils.hasDynamicSkins(windows))
+        if (McVGuiUtils.hasDynamicSkins(windows)) {
             mapDynamicSkins(windows);
+        }
 
         List<WindowInfo> newWindows;
-        if (limitNewWindows && windows.size() > 1)
+        if (limitNewWindows && windows.size() > 1) {
             newWindows = injectComponentGroups(windows);
-        else
+        } else {
             newWindows = betterInject(windows);
+        }
 
 //          if (limitNewWindows && windows.size() > 1) {
 //              // make a single new window with a single component group. 
@@ -1219,7 +1268,6 @@ public class PersistenceManager extends IdvPersistenceManager {
 
         // no longer needed; the bundle is done loading.
         UIManager.savedViewManagers.clear();
-        
         bundleLoading = false;
     }
 
@@ -1273,12 +1321,14 @@ public class PersistenceManager extends IdvPersistenceManager {
             Hashtable<String, Object> persist = window.getPersistentComponents();
             Set<Map.Entry<String, Object>> blah = persist.entrySet();
             for (Map.Entry<String, Object> entry : blah) {
-                if (!(entry.getValue() instanceof IdvComponentGroup))
+                if (!(entry.getValue() instanceof IdvComponentGroup)) {
                     continue;
+                }
 
                 IdvComponentGroup group = (IdvComponentGroup)entry.getValue();
-                if (McVGuiUtils.hasNestedGroups(group))
+                if (McVGuiUtils.hasNestedGroups(group)) {
                     entry.setValue(flattenGroup(group));
+                }
             }
         }
     }
@@ -1314,9 +1364,11 @@ public class PersistenceManager extends IdvPersistenceManager {
         List<IdvComponentHolder> newHolders = 
             new ArrayList<IdvComponentHolder>(group.getDisplayComponents());
 
-        for (IdvComponentHolder holder : newHolders)
-            if (McVGuiUtils.isUIHolder(holder))
+        for (IdvComponentHolder holder : newHolders) {
+            if (McVGuiUtils.isUIHolder(holder)) {
                 newHolders.remove(holder);
+            }
+        }
 
         return newHolders;
     }
@@ -1327,9 +1379,11 @@ public class PersistenceManager extends IdvPersistenceManager {
      */
     // TODO: not a fan of this method.
     protected static void populateEssentialLists(final String[] ids, final Hashtable<String, Object> table) {
-        for (String id : ids)
-            if (table.get(id) == null)
+        for (String id : ids) {
+            if (table.get(id) == null) {
                 table.put(id, new ArrayList<Object>());
+            }
+        }
     }
 
     /**
@@ -1362,16 +1416,19 @@ public class PersistenceManager extends IdvPersistenceManager {
                 IdvComponentGroup g = e.getValue();
 
                 List<IdvComponentHolder> holders = g.getDisplayComponents();
-                if (holders == null || holders.isEmpty())
+                if (holders == null || holders.isEmpty()) {
                     continue;
+                }
 
                 List<IdvComponentHolder> newHolders = 
                     new ArrayList<IdvComponentHolder>();
 
                 // filter out any holders that don't contain view managers
-                for (IdvComponentHolder holder : holders)
-                    if (!McVGuiUtils.isUIHolder(holder))
+                for (IdvComponentHolder holder : holders) {
+                    if (!McVGuiUtils.isUIHolder(holder)) {
                         newHolders.add(holder);
+                    }
+                }
 
                 g.setDisplayComponents(newHolders);
             }
@@ -1413,9 +1470,11 @@ public class PersistenceManager extends IdvPersistenceManager {
 
             StringBuffer props = new StringBuffer(DYNSKIN_PROPS_GENERAL);
 
-            if (vm instanceof MapViewManager)
-                if (((MapViewManager)vm).getUseGlobeDisplay())
+            if (vm instanceof MapViewManager) {
+                if (((MapViewManager)vm).getUseGlobeDisplay()) {
                     props.append(DYNSKIN_PROPS_GLOBE);
+                }
+            }
 
             view.setAttribute(DYNSKIN_ATTR_PROPS, props.toString());
 
