@@ -56,8 +56,7 @@ public class OutputStreamDemux extends ByteArrayOutputStream {
     public synchronized void addStream(final Console console, final Interpreter interpreter, final OutputType type) {
         notNull(console, "Cannot provide a null Jython console");
         notNull(interpreter, "Cannot provide a null Jython interpreter");
-        notNull(type, "Cannot provide a null output type");
-        this.type = type;
+        this.type = notNull(type, "Cannot provide a null output type");
         String threadId = id();
         streamMap.put(threadId, new ByteArrayOutputStream());
         interpreterMap.put(threadId, interpreter);

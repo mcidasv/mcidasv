@@ -31,7 +31,6 @@
 package edu.wisc.ssec.mcidasv.jython;
 
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 
 import org.python.core.PyModule;
 import org.python.core.PyStringMap;
@@ -104,8 +103,9 @@ public class Interpreter extends InteractiveInterpreter {
      * @return False if Jython did something. True if more input is needed.
      */
     public boolean push(Console console, final String line) {
-        if (buffer.length() > 0)
-            buffer.append("\n");
+        if (buffer.length() > 0) {
+            buffer.append('\n');
+        }
 
         thinking = true;
         buffer.append(line);

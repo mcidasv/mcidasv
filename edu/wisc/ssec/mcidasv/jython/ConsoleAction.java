@@ -42,6 +42,7 @@ import javax.swing.text.TextAction;
 
 import edu.wisc.ssec.mcidasv.jython.Console.Actions;
 
+// TODO(jon): there has to be a less repetitive way...
 public abstract class ConsoleAction extends TextAction {
     protected static final Map<JTextPane, Console> mapping = new ConcurrentHashMap<JTextPane, Console>();
     protected Console console;
@@ -129,6 +130,15 @@ class EndAction extends ConsoleAction {
 
     public void actionPerformed(final ActionEvent e) {
         getSourceConsole(e).handleEnd();
+    }
+}
+
+class TabAction extends ConsoleAction {
+    public TabAction(final Console console, final Actions type) {
+        super(console, type);
+    }
+    public void actionPerformed(final ActionEvent e) {
+        getSourceConsole(e).handleTab();
     }
 }
 

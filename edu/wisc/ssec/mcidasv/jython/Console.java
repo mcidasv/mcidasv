@@ -91,6 +91,7 @@ public class Console implements Runnable, KeyListener {
     /** Color of text coming from {@literal "stderr"}. */
     protected static final Color TXT_ERROR = Color.RED;
 
+    /** {@link Logger} object for Jython consoles. */
     private static final Logger logger = LoggerFactory.getLogger(Console.class);
 
     /** Offset array used when actual offsets cannot be determined. */
@@ -102,6 +103,9 @@ public class Console implements Runnable, KeyListener {
     /** Prompt that indicates more input is needed. */
     private static final String PS2 = "... ";
 
+    /** Actual {@link String} of whitespace to insert for blocks and whatnot. */
+    private static final String WHITESPACE = "    ";
+
     /** Not used yet. */
     private static final String BANNER = InteractiveConsole.getDefaultBanner();
 
@@ -110,7 +114,7 @@ public class Console implements Runnable, KeyListener {
 
     /** Jython statements entered by the user. */
     // TODO(jon): consider implementing a limit to the number of lines stored?
-    private final List<String> jythonHistory = new ArrayList<String>();
+    private final List<String> jythonHistory;
 
     /** Thread that handles Jython command execution. */
     private Runner jythonRunner;
@@ -130,7 +134,7 @@ public class Console implements Runnable, KeyListener {
     /** Title of the console window. */
     private String windowTitle = "Super Happy Jython Fun Console "+hashCode();
 
-    private MenuWrangler menuWrangler = new DefaultMenuWrangler(this);
+    private MenuWrangler menuWrangler;
 
     /**
      * Build a console with no initial commands.
@@ -147,8 +151,11 @@ public class Console implements Runnable, KeyListener {
      */
     public Console(final List<String> initialCommands) {
         notNull(initialCommands, "List of initial commands cannot be null");
+        jythonHistory = new ArrayList<String>();
         jythonRunner = new Runner(this, initialCommands);
         jythonRunner.start();
+        // err, shouldn't the gui stuff be done explicitly in the EDT!?
+        menuWrangler = new DefaultMenuWrangler(this);
         panel = new JPanel(new BorderLayout());
         textPane = new JTextPane();
         document = textPane.getDocument();
@@ -158,13 +165,14 @@ public class Console implements Runnable, KeyListener {
             showBanner(); 
             document.createPosition(document.getLength() - 1);
         } catch (BadLocationException e) {
-            e.printStackTrace();
+            logger.error("had difficulties setting up the console msg", e);
         }
 
         new EndAction(this, Actions.END);
         new EnterAction(this, Actions.ENTER);
         new DeleteAction(this, Actions.DELETE);
         new HomeAction(this, Actions.HOME);
+        new TabAction(this, Actions.TAB);
 //        new UpAction(this, Actions.UP);
 //        new DownAction(this, Actions.DOWN);
 
@@ -200,7 +208,7 @@ public class Console implements Runnable, KeyListener {
      * as {@code test}.
      * 
      * @param name Object name as it will appear within the interpreter.
-     * @param pyObject Object to place in the interpreter's local namespace.
+     * @param object Object to place in the interpreter's local namespace.
      */
 //    public void injectObject(final String name, final PyObject pyObject) {
 //        jythonRunner.queueObject(name, pyObject);
@@ -230,7 +238,6 @@ public class Console implements Runnable, KeyListener {
      * @param path The path to the Jython file.
      */
     public void runFile(final String name, final String path) {
-//        jythonRunner.queueFile(this, name, path);
         jythonRunner.queueFile(name, path);
     }
 
@@ -240,7 +247,7 @@ public class Console implements Runnable, KeyListener {
      * @param text The message to display.
      */
     public void result(final String text) {
-        insert(TXT_GOOD, "\n" + text);
+        insert(TXT_GOOD, '\n'+text);
     }
 
     /**
@@ -250,9 +257,9 @@ public class Console implements Runnable, KeyListener {
      */
     public void error(final String text) {
         if (getLineText(getLineCount()-1).trim().length() > 0) {
-            insert(TXT_ERROR, "\n");
+            endln(TXT_ERROR);
         }
-        insert(TXT_ERROR, "\n" + text);
+        insert(TXT_ERROR, '\n'+text);
     }
 
     /**
@@ -260,7 +267,7 @@ public class Console implements Runnable, KeyListener {
      */
     public void prompt() {
         if (getLineText(getLineCount()-1).trim().length() > 0) {
-            insert(TXT_NORMAL, "\n");
+            endln(TXT_NORMAL);
         }
         insert(TXT_NORMAL, PS1);
     }
@@ -274,7 +281,7 @@ public class Console implements Runnable, KeyListener {
      */
     public void generatedOutput(final String text) {
         if (getPromptLength(getLineText(getLineCount()-1)) > 0) {
-            insert(TXT_GOOD, "\n");
+            endln(TXT_GOOD);
         }
         insert(TXT_GOOD, text);
     }
@@ -290,7 +297,7 @@ public class Console implements Runnable, KeyListener {
      */
     public void generatedError(final String text) {
         if (getPromptLength(getLineText(getLineCount()-1)) > 0) {
-            insert(TXT_ERROR, "\n"+text);
+            insert(TXT_ERROR, '\n'+text);
         }
         insert(TXT_ERROR, text);
     }
@@ -299,9 +306,13 @@ public class Console implements Runnable, KeyListener {
      * Shows the prompt that indicates more input is needed.
      */
     public void moreInput() {
-        insert(TXT_NORMAL, "\n" + PS2);
+        insert(TXT_NORMAL, '\n'+PS2);
     }
 
+    public void moreInput(final int blockLevel) {
+        
+    }
+    
     /**
      * Will eventually display an initial greeting to the user.
      * 
@@ -312,6 +323,15 @@ public class Console implements Runnable, KeyListener {
         document.remove(0, document.getLength());
         prompt();
         textPane.requestFocus();
+    }
+
+    /** 
+     * Inserts a newline character at the end of the input.
+     * 
+     * @param color Perhaps this should go!?
+     */
+    protected void endln(final Color color) {
+        insert(color, "\n");
     }
 
     /**
@@ -347,7 +367,8 @@ public class Console implements Runnable, KeyListener {
         try {
             document.insertString(position, text, style);
         } catch (BadLocationException e) {
-            e.printStackTrace();
+            logger.trace("position={}", position);
+            logger.error("couldn't insert text", e);
         }
     }
 
@@ -492,6 +513,35 @@ public class Console implements Runnable, KeyListener {
     }
 
     /**
+     * Returns the {@literal "block depth"} of a given line of Jython.
+     * 
+     * <p>Examples:<pre>
+     * "print 'x'"         -> 0
+     * "    print 'x'"     -> 1
+     * "            die()" -> 3
+     * </pre>
+     * 
+     * @param line Line to test. Can't be {@code null}.
+     * @param whitespace The indent {@link String} used with {@code line}. Can't be {@code null}.
+     * 
+     * @return Either the block depth ({@code >= 0}) or {@code -1} if there was an error.
+     */
+    // TODO(jon): maybe need to explicitly use getLineJython?
+    public static int getBlockDepth(final String line, final String whitespace) {
+        int indent = whitespace.length();
+        int blockDepth = 0;
+        int tmpIndex = 0;
+        while ((tmpIndex+indent) < line.length()) {
+            int stop = tmpIndex + indent;
+            if (line.substring(tmpIndex, stop).trim().length() != 0) {
+                break;
+            }
+            tmpIndex += indent;
+            blockDepth++;
+        }
+        return blockDepth;
+    }
+    /**
      * Registers a new callback handler with the console. Note that to maximize
      * utility, this method also registers the same handler with 
      * {@link #jythonRunner}.
@@ -600,6 +650,16 @@ public class Console implements Runnable, KeyListener {
         logger.trace("handleDown");
     }
 
+    /**
+     * Inserts the contents of {@link #WHITESPACE} wherever the cursor is 
+     * located.
+     */
+    // TODO(jon): completion!
+    public void handleTab() {
+        logger.trace("handling tab!");
+        insertAtCaret(TXT_NORMAL, WHITESPACE);
+    }
+
     // TODO(jon): what about selected regions?
     // TODO(jon): what about multi lines?
     public void handleDelete() {
@@ -624,7 +684,7 @@ public class Console implements Runnable, KeyListener {
         try {
             document.remove(position - 1, 1);
         } catch (BadLocationException e) {
-            e.printStackTrace();
+            logger.error("failed to backspace at position={}", (position-1));
         }
     }
 
@@ -731,6 +791,7 @@ public class Console implements Runnable, KeyListener {
     }
 
     public enum Actions {
+        TAB("jython.tab", KeyEvent.VK_TAB, 0),
         DELETE("jython.delete", KeyEvent.VK_BACK_SPACE, 0),
         END("jython.end", KeyEvent.VK_END, 0),
         ENTER("jython.enter", KeyEvent.VK_ENTER, 0),
