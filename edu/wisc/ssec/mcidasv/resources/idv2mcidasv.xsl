@@ -1,10 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<xsl:template match="//object[@class='ucar.unidata.idv.ui.WindowInfo']/property">
-		<property name="PersistentComponents">
-		<object class="java.util.Hashtable">
-		<xsl:apply-templates />
-		</object>
-		</property>
-	</xsl:template>
+    <xsl:output method="xml" indent="yes"/>
+
+    <!-- this copies over all XML that *does not* match another template -->
+    <!-- apparently known as the "identity template" -->
+    <xsl:template match="@* | node()">
+        <xsl:copy>
+            <xsl:apply-templates select="@* | node()"/>
+        </xsl:copy>
+    </xsl:template>
+
+    <!-- attach the relevant component group stuff to the end of each WindowInfo -->
+    <!-- i'm probably being really sloppy (like with the xsl:copy stuff) -->
+    <xsl:template match="//object[@class='ucar.unidata.idv.ui.WindowInfo']">
+        <xsl:copy>
+            <!-- copy over the contents of the WindowInfo -->
+            <xsl:apply-templates select="@*|node()"/>
+            <!-- insert the component group-->
+            <property name="PersistentComponents">
+                <object class="java.util.Hashtable">
+                    <method name="put">
+                        <string><![CDATA[nodeid3]]></string>
+                        <object class="edu.wisc.ssec.mcidasv.ui.McvComponentGroup" id="id8">
+                            <property name="ActiveComponentHolder">
+                                <object class="edu.wisc.ssec.mcidasv.ui.McvComponentHolder" id="id9">
+                                    <string>very, very, very close!</string>
+                                    <!-- this currently copies over EVERY mapviewmanager; need to limit it to the ones within the current WindowInfo-->
+                                    <xsl:copy-of select="//object[@class='ucar.unidata.idv.MapViewManager']"/>
+                                </object>
+                            </property>
+                        </object>
+                    </method>
+                </object>
+            </property> 
+        </xsl:copy>
+    </xsl:template>
+
+    <!-- plonk down my stupid debug test wherever there might be a match for the given xpath-->
+    <xsl:template match="//object[@class='ucar.unidata.idv.ui.WindowInfo']/property[@name='ViewManagers']/object[@class='java.util.ArrayList']/method[@name='add']">
+        <property name="whatevs">
+            <boolean>true</boolean>
+        </property>
+    </xsl:template>
+
 </xsl:stylesheet>
