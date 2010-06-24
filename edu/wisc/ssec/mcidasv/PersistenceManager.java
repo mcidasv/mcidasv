@@ -38,6 +38,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -56,10 +58,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -561,14 +566,14 @@ public class PersistenceManager extends IdvPersistenceManager {
             return false;
         }
     }
-    
-    private void doXslTransform(final String xmlPath, final String xmlOutput) throws FileNotFoundException, TransformerException {
-        String xslPath = "/edu/wisc/ssec/mcidasv/resources/idv2mcidasv.xsl";
+
+    private void doXslTransform(final String xmlPath, final String xmlOutput) throws TransformerException, IOException {
+        URL xslPath = getClass().getResource("/edu/wisc/ssec/mcidasv/resources/idv2mcidasv.xsl");
         TransformerFactory cybertron = TransformerFactory.newInstance();
-        Transformer soundwave = cybertron.newTransformer(new javax.xml.transform.stream.StreamSource(xslPath));
+        Transformer soundwave = cybertron.newTransformer(new StreamSource(xslPath.openStream()));
         soundwave.transform(
-            new javax.xml.transform.stream.StreamSource(xmlPath),
-            new javax.xml.transform.stream.StreamResult(new FileOutputStream(xmlOutput)));
+            new StreamSource(xmlPath),
+            new StreamResult(new FileOutputStream(xmlOutput)));
     }
 
     // replace "old" references in a bundle's XML to the "new" classes.
@@ -1060,8 +1065,9 @@ public class PersistenceManager extends IdvPersistenceManager {
         String zidvPath = getStateManager().getProperty(PROP_ZIDVPATH, "");
 
         // bail out if the macro replacement cannot work
-        if (zidvPath.length() == 0)
+        if (zidvPath.length() == 0) {
             return;
+        }
 
         for (DataSourceImpl d : ds) {
             boolean isBulk = isBulkDataSource(d);
