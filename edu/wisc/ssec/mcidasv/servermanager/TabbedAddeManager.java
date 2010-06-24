@@ -77,6 +77,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableColumnModelEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -115,7 +116,7 @@ public class TabbedAddeManager extends JFrame {
     private static final Icon mctable = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/bug.png");
     private static final Icon user = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/hand_pro.png");
     private static final Icon invalid = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/emotion_sad.png");
-//  private static final ImageIcon verified = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/emotion_smile.png");
+//    private static final Icon verified = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/emotion_smile.png");
     private static final Icon unverified = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/eye_inv.png");
 
     /** Path to the help resources. */
@@ -134,7 +135,7 @@ public class TabbedAddeManager extends JFrame {
     private static final String LAST_IMPORTED = "mcv.adde.lastmctabledir";
 
     /** Size of the ADDE entry verification thread pool. */
-    private static final int POOL = 5;
+    private static final int POOL = 2;
 
     /**
      * These are the various {@literal "events"} that the server manager GUI
@@ -422,6 +423,11 @@ public class TabbedAddeManager extends JFrame {
         remoteTable.setFont(UIManager.getFont("Table.font").deriveFont(11.0f));
         remoteTable.getColumnModel().getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         remoteTable.setDefaultRenderer(String.class, new TextRenderer());
+        remoteTable.getColumnModel().getColumn(0).setPreferredWidth(10);
+        remoteTable.getColumnModel().getColumn(1).setPreferredWidth(10);
+//        remoteTable.getColumnModel().getColumn(2).setPreferredWidth(10);
+        remoteTable.getColumnModel().getColumn(3).setPreferredWidth(50);
+        remoteTable.getColumnModel().getColumn(4).setPreferredWidth(50);
         remoteTable.getColumnModel().getColumn(0).setCellRenderer(new EntryValidityRenderer());
         remoteTable.getColumnModel().getColumn(1).setCellRenderer(new EntrySourceRenderer());
         remoteTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -975,55 +981,35 @@ public class TabbedAddeManager extends JFrame {
 
         Set<RemoteAddeEntry> valid = newLinkedHashSet();
         ExecutorService exec = Executors.newFixedThreadPool(POOL);
-//        CompletionService<RemoteAddeEntry> ecs = new ExecutorCompletionService<RemoteAddeEntry>(exec);
         CompletionService<List<RemoteAddeEntry>> ecs = new ExecutorCompletionService<List<RemoteAddeEntry>>(exec);
         final RemoteAddeTableModel tableModel = (RemoteAddeTableModel)remoteTable.getModel();
 
+        // place entries
         for (RemoteAddeEntry entry : entries) {
-//            ecs.submit(new CheckEntryTask(entry));
-//            logger.trace("submitting entry={}", entry);
-//            final int row = tableModel.getRowForEntry(entry);
-//            runOnEDT(new Runnable() {
-//                public void run() {
-//                    tableModel.fireTableRowsUpdated(row, row);
-//                }
-//            });
             ecs.submit(new BetterCheckTask(entry));
-          logger.trace("submitting entry={}", entry);
-          final int row = tableModel.getRowForEntry(entry);
-          runOnEDT(new Runnable() {
-              public void run() {
-                  tableModel.fireTableRowsUpdated(row, row);
-              }
-          });
+            logger.trace("submitting entry={}", entry);
+            final int row = tableModel.getRowForEntry(entry);
+            runOnEDT(new Runnable() {
+                public void run() {
+                    tableModel.fireTableRowsUpdated(row, row);
+                }
+            });
         }
 
+        // work through the entries
         try {
             for (int i = 0; i < entries.size(); i++) {
-
-                List<RemoteAddeEntry> checkedEntries = ecs.take().get();
+                final List<RemoteAddeEntry> checkedEntries = ecs.take().get();
                 if (!checkedEntries.isEmpty()) {
                     final int row = tableModel.getRowForEntry(checkedEntries.get(0));
                     runOnEDT(new Runnable() {
                         public void run() {
+                            List<RemoteAddeEntry> oldEntries = tableModel.getEntriesAtRow(row);
+                            serverManager.replaceEntries(oldEntries, checkedEntries);
                             tableModel.fireTableRowsUpdated(row, row);
                         }
                     });
-                } else {
-                    
                 }
-                valid.addAll(checkedEntries);
-//              RemoteAddeEntry checkedEntry = ecs.take().get();
-//                logger.trace("removing entry={}", checkedEntry);
-//                final int row = tableModel.getRowForEntry(checkedEntry);
-//                runOnEDT(new Runnable() {
-//                    public void run() {
-//                        tableModel.fireTableRowsUpdated(row, row);
-//                    }
-//                });
-//                if (checkedEntry.getEntryValidity() == EntryValidity.VERIFIED) {
-//                    valid.add(checkedEntry);
-//                }
                 valid.addAll(checkedEntries);
             }
         } catch (InterruptedException e) {
@@ -1055,7 +1041,7 @@ public class TabbedAddeManager extends JFrame {
             }
             if (!valid.isEmpty()) {
                 entry.setEntryValidity(EntryValidity.VERIFIED);
-                serverManager.replaceEntries(Collections.singletonList(entry), valid);
+//                serverManager.replaceEntries(Collections.singletonList(entry), valid);
             } else {
                 entry.setEntryValidity(EntryValidity.INVALID);
             }

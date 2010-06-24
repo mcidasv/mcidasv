@@ -48,8 +48,11 @@ import java.awt.Color;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -350,27 +353,34 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         
         setStatus("Contacting server...");
         Set<RemoteAddeEntry> verifiedEntries = checkGroups(unverifiedEntries);
+        EnumSet<EntryType> presentTypes = EnumSet.noneOf(EntryType.class);
         if (!verifiedEntries.isEmpty()) {
             for (RemoteAddeEntry verifiedEntry : verifiedEntries) {
-                switch (verifiedEntry.getEntryType()) {
-                    case IMAGE:
-                        imageBox.setSelected(true); break;
-                    case POINT:
-                        pointBox.setSelected(true); break;
-                    case GRID:
-                        gridBox.setSelected(true); break;
-                    case TEXT:
-                        textBox.setSelected(true); break;
-                    case NAV:
-                        navBox.setSelected(true); break;
-                    case RADAR:
-                        radarBox.setSelected(true); break;
-                }
+                presentTypes.add(verifiedEntry.getEntryType());
+//                switch (verifiedEntry.getEntryType()) {
+//                    case IMAGE:
+//                        imageBox.setSelected(true); break;
+//                    case POINT:
+//                        pointBox.setSelected(true); break;
+//                    case GRID:
+//                        gridBox.setSelected(true); break;
+//                    case TEXT:
+//                        textBox.setSelected(true); break;
+//                    case NAV:
+//                        navBox.setSelected(true); break;
+//                    case RADAR:
+//                        radarBox.setSelected(true); break;
+//                }
             }
-            setStatus("Verification complete.");
+          imageBox.setSelected(presentTypes.contains(EntryType.IMAGE));
+          pointBox.setSelected(presentTypes.contains(EntryType.POINT));
+          gridBox.setSelected(presentTypes.contains(EntryType.GRID));
+          textBox.setSelected(presentTypes.contains(EntryType.TEXT));
+          navBox.setSelected(presentTypes.contains(EntryType.NAV));
+          radarBox.setSelected(presentTypes.contains(EntryType.RADAR));
         } else {
-            setStatus("Could not verify any types of data...");
-            setBadField(datasetField, true);
+//            setStatus("Could not verify any types of data...");
+//            setBadField(datasetField, true);
         }
     }
 
@@ -821,9 +831,12 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
 
     private void acctBoxActionPerformed(java.awt.event.ActionEvent evt) {
         assert SwingUtilities.isEventDispatchThread();
+        resetBadFields();
         boolean enabled = acctBox.isSelected();
         userField.setEnabled(enabled);
         projField.setEnabled(enabled);
+        verifyAddButton.setEnabled(true);
+        verifyServer.setEnabled(true);
     }
 
     private void capBoxActionPerformed(java.awt.event.ActionEvent evt) {
@@ -952,9 +965,11 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         }
 
         Set<RemoteAddeEntry> verified = newLinkedHashSet();
+        EnumSet<AddeStatus> statuses = EnumSet.noneOf(AddeStatus.class);
         ExecutorService exec = Executors.newFixedThreadPool(POOL);
         CompletionService<StatusWrapper> ecs = new ExecutorCompletionService<StatusWrapper>(exec);
-
+        Map<RemoteAddeEntry, AddeStatus> entry2Status = new LinkedHashMap<RemoteAddeEntry, AddeStatus>(entries.size());
+        
         // submit new verification tasks to the pool's queue ... (apologies for the pun?)
         for (RemoteAddeEntry entry : entries) {
             StatusWrapper pairing = new StatusWrapper(entry);
@@ -968,23 +983,54 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
                 RemoteAddeEntry entry = pairing.getEntry();
                 AddeStatus status = pairing.getStatus();
                 setStatus(entry.getEntryText()+": attempting verification...");
+                statuses.add(status);
+                entry2Status.put(entry, status);
                 if (status == AddeStatus.OK) {
                     verified.add(entry);
                     setStatus("Found accessible "+entry.getEntryType().toString().toLowerCase()+" data.");
-                } else if (status != AddeStatus.BAD_GROUP) {
-                    setStatus("Could not access "+entry.getGroup());
-                    setBadField(datasetField, true);
-                } else if (status == AddeStatus.BAD_SERVER) {
-                    setStatus("Could not connect to "+entry.getAddress());
-                    setBadField(serverField, true);
-                } else if (status == AddeStatus.BAD_ACCOUNTING) {
-                    setStatus("Could not access "+entry.getEntryText()+" with current accounting information...");
-                    setBadField(userField, true);
-                    setBadField(projField, true);
-                } else {
-                    setStatus("Unknown verification status: '"+status+".' Spooky!");
                 }
+//                if (status == AddeStatus.OK) {
+//                    verified.add(entry);
+//                    setStatus("Found accessible "+entry.getEntryType().toString().toLowerCase()+" data.");
+//                } else if (status != AddeStatus.BAD_GROUP) {
+//                    setStatus("Could not locate "+entry.getEntryType()+" data within "+entry.getGroup());
+//                    if (!statuses.contains(AddeStatus.OK)) {
+//                        setBadField(datasetField, true);
+//                    }
+//                    //                    setBadField(datasetField, true);
+//                } else if (status == AddeStatus.BAD_SERVER) {
+//                    setStatus("Could not connect to "+entry.getAddress());
+//                    if (!statuses.contains(AddeStatus.OK)) {
+//                        
+//                    }
+////                    setBadField(serverField, true);
+//                } else if (status == AddeStatus.BAD_ACCOUNTING) {
+//                    setStatus("Could not access "+entry.getEntryText()+" with current accounting information...");
+////                    setBadField(userField, true);
+////                    setBadField(projField, true);
+//                } else {
+//                    setStatus("Unknown verification status: '"+status+".' Spooky!");
+//                }
             }
+//            if (!statuses.contains(AddeStatus.OK)) {
+//                if (statuses.contains(AddeStatus.BAD_ACCOUNTING)) {
+//                    setStatus("Incorrect accounting information.");
+//                    setBadField(userField, true);
+//                    setBadField(projField, true);
+//                } else if (statuses.contains(AddeStatus.BAD_GROUP)) {
+//                    setStatus("Dataset does not appear to be valid.");
+//                    setBadField(datasetField, true);
+//                } else if (statuses.contains(AddeStatus.BAD_SERVER)) {
+//                    setStatus("Could not connect to the ADDE server.");
+//                    setBadField(serverField, true);
+//                } else {
+//                    logger.warn("guru meditation error: statuses={}", statuses);
+//                }
+//            } else {
+//                setStatus("Finished verifying.");
+//            }
+            
+            
         } catch (InterruptedException e) {
             LogUtil.logException("interrupted while checking ADDE entries", e);
         } catch (ExecutionException e) {
@@ -992,7 +1038,25 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         } finally {
             exec.shutdown();
         }
-        setStatus("Finished verifying.");
+        
+        if (!statuses.contains(AddeStatus.OK)) {
+            if (statuses.contains(AddeStatus.BAD_ACCOUNTING)) {
+                setStatus("Incorrect accounting information.");
+                setBadField(userField, true);
+                setBadField(projField, true);
+            } else if (statuses.contains(AddeStatus.BAD_GROUP)) {
+                setStatus("Dataset does not appear to be valid.");
+                setBadField(datasetField, true);
+            } else if (statuses.contains(AddeStatus.BAD_SERVER)) {
+                setStatus("Could not connect to the ADDE server.");
+                setBadField(serverField, true);
+            } else {
+                logger.warn("guru meditation error: statuses={}", statuses);
+            }
+        } else {
+            setStatus("Finished verifying.");
+        }
+        
         return verified;
     }
 
@@ -1048,7 +1112,27 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         } else {
             return AddeStatus.BAD_GROUP;
         }
+        
     }
+
+    private static Map<RemoteAddeEntry, AddeStatus> bulkPut(final Collection<RemoteAddeEntry> entries, final AddeStatus status) {
+        Map<RemoteAddeEntry, AddeStatus> map = new LinkedHashMap<RemoteAddeEntry, AddeStatus>(entries.size());
+        for (RemoteAddeEntry entry : entries) {
+            map.put(entry, status);
+        }
+        return map;
+    }
+    
+//    public static Map<RemoteAddeEntry, AddeStatus> checkEntries(final boolean checkHost, final List<RemoteAddeEntry> entries) {
+//        notNull(entries);
+//        
+//        RemoteAddeEntry first = entries.get(0);
+//        if (checkHost && !checkHost(first)) {
+//            return bulkPut(entries, AddeStatus.BAD_SERVER);
+//        }
+//        
+//        
+//    }
 
     /**
      * Tries to connect to a given {@link RemoteAddeEntry} and read the list
