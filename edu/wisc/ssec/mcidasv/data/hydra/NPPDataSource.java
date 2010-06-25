@@ -41,11 +41,17 @@ import edu.wisc.ssec.mcidasv.control.LambertAEA;
 
 import java.rmi.RemoteException;
 
+import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.TreeSet;
 
 // import thredds.catalog.ThreddsMetadata.Variable;
 import ucar.ma2.DataType;
@@ -78,7 +84,10 @@ import visad.data.mcidas.BaseMapAdapter;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
+
+import java.util.TimeZone;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -86,6 +95,8 @@ import javax.swing.event.*;
 import org.jdom.Attribute;
 import org.jdom.Namespace;
 import org.jdom.output.XMLOutputter;
+
+import com.google.protobuf.TextFormat.ParseException;
 
 import java.awt.geom.Rectangle2D;
 
@@ -127,13 +138,14 @@ public class NPPDataSource extends HydraDataSource {
     /** Sources file */
     protected String filename;
 
-    protected MultiDimensionReader reader;
+    //protected MultiDimensionReader netCDFReader;
+    protected MultiDimensionReader nppAggReader;
 
     protected MultiDimensionAdapter[] adapters = null;
 
     protected SpectrumAdapter spectrumAdapter;
 
-    private static final String DATA_DESCRIPTION = "Multi Dimension Data";
+    private static final String DATA_DESCRIPTION = "NPP Data";
 
     private HashMap defaultSubset;
     public TrackAdapter track_adapter;
@@ -146,8 +158,12 @@ public class NPPDataSource extends HydraDataSource {
     
     private HashMap geoHM;
     
-    private static int XSCAN = 768;
-    private static int YSCAN = 3200;
+    private static int[] XSCAN_POSSIBILITIES = { 96, 768 };
+    private static int[] YSCAN_POSSIBILITIES = { 508, 3200 };    
+    private int inTrackDimensionLength = -1;
+    
+    // date formatter for converting NPP day/time to something we can use
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss.SSS");
 
     /**
      * Zero-argument constructor for construction via unpersistence.
@@ -184,9 +200,13 @@ public class NPPDataSource extends HydraDataSource {
                                  List newSources, Hashtable properties)
             throws VisADException {
         super(descriptor, newSources, DATA_DESCRIPTION, properties);
-        System.out.println("NPPDataSource constructor called, filename: " + (String) sources.get(0));
+        System.out.println("NPPDataSource constructor called, file count: " + sources.size());
 
         this.filename = (String)sources.get(0);
+        
+        for (Object o : sources) {
+        	System.out.println("NPP source file: " + (String) o);
+        }
 
         try {
           setup();
@@ -199,13 +219,19 @@ public class NPPDataSource extends HydraDataSource {
 
     public void setup() throws Exception {
 
-    	// looking to populate 3 things - path to lat, path to lon, path to products
+    	// looking to populate 3 things - path to lat, path to lon, path to relevant products
     	String pathToLat = null;
     	String pathToLon = null;
     	String geoProductID = null;
-    	ArrayList<String> pathToProducts = new ArrayList<String>();
+    	TreeSet<String> pathToProducts = new TreeSet<String>();
     	ArrayList<String> unsignedFlags = new ArrayList<String>();
     	ArrayList<String> unpackFlags = new ArrayList<String>();
+    	// time for each product in milliseconds since epoch
+    	ArrayList<Long> productTimes = new ArrayList<Long>();
+    	// aggregations will use sets of NetCDFFile readers
+    	ArrayList<NetCDFFile> ncdfal = new ArrayList<NetCDFFile>();
+    	    	
+    	sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
     	
     	// set up a temporary hashmap for geo products.  This will move to a utility
     	// class once we shake out the issues
@@ -224,181 +250,253 @@ public class NPPDataSource extends HydraDataSource {
     	geoHM.put("VIIRS-IMG-EDR-GEO", "GIGTO");
     	geoHM.put("VIIRS-IMG-GEO", "GIMGO");
     	geoHM.put("VIIRS-IMG-GEO-TC", "GITCO");
-    	
+    	geoHM.put("VIIRS-CLD-AGG-GEO", "GCLDO");
+    	   	
     	try {
-    		System.err.println("Setting up data adapter for file: " + filename);
-    		// need to open the main NetCDF file to determine the geolocation product
-    		NetcdfFile ncfile = null;
-    		try {
-    			System.err.println("Trying to open file: " + filename);
-    			ncfile = NetcdfFile.open(filename);
-    			ucar.nc2.Attribute a = ncfile.findGlobalAttribute("N_GEO_Ref");
-    			System.err.println("Value of GEO global attribute: " + a.getStringValue());
-    			geoProductID = mapGeoRefToProductID(a.getStringValue());
-    			System.err.println("Value of corresponding Product ID: " + geoProductID);
-    		} catch (Exception e) {
-    			System.err.println("Exception during open file: " + filename);
-    			e.printStackTrace();
-    		} finally {
-    			ncfile.close();
+    		
+    		// for each source file provided get the nominal time
+    		for (int fileCount = 0; fileCount < sources.size(); fileCount++) {
+	    		// need to open the main NetCDF file to determine the geolocation product
+	    		NetcdfFile ncfile = null;
+	    		String fileAbsPath = null;
+	    		try {
+	    			fileAbsPath = (String) sources.get(fileCount);
+		    		System.err.println("Trying to open file: " + fileAbsPath);
+		    		ncfile = NetcdfFile.open(fileAbsPath);
+		    		ucar.nc2.Attribute a = ncfile.findGlobalAttribute("N_GEO_Ref");
+		    		System.err.println("Value of GEO global attribute: " + a.getStringValue());
+		    		geoProductID = mapGeoRefToProductID(a.getStringValue());
+		    		System.err.println("Value of corresponding Product ID: " + geoProductID);
+	    	    	Group rg = ncfile.getRootGroup();
+
+	    	    	System.err.println("Root group name: " + rg.getName());
+	    	    	List<Group> gl = rg.getGroups();
+	    	    	if (gl != null) {
+	    	    		for (Group g : gl) {
+	    	    			System.err.println("Group name: " + g.getName());
+	    	    			// when we find the Data_Products group, go down another group level and pull out 
+	    	    			// what we will use for nominal day and time (for now anyway).
+	    	    			// XXX TJJ fileCount check is so we don't count the GEO file in time array!
+	    	    			if (g.getName().contains("Data_Products") && (fileCount != sources.size())) {
+	    	    				boolean foundDateTime = false;
+	    	    				List<Group> dpg = g.getGroups();
+	    	    				for (Group subG : dpg) {
+	    	    					List<Variable> vl = subG.getVariables();
+	    	    					for (Variable v : vl) {
+	    	    						ucar.nc2.Attribute aDate = v.findAttribute("AggregateBeginningDate");
+	    	    						ucar.nc2.Attribute aTime = v.findAttribute("AggregateBeginningTime");
+	    	    						// did we find the attributes we are looking for?
+	    	    						if ((aDate != null) && (aTime != null)) {
+	    	    							String sDate = aDate.getStringValue();
+	    	    							String sTime = aTime.getStringValue();
+	    	    							System.err.println("For day/time, using: " + sDate + sTime.substring(0, sTime.indexOf('Z') - 3));
+	    	    							Date d = sdf.parse(sDate + sTime.substring(0, sTime.indexOf('Z') - 3));
+	    	    							productTimes.add(new Long(d.getTime()));
+	    	    							System.err.println("ms since epoch: " + d.getTime());
+	    	    							foundDateTime = true;
+	    	    							break;
+	    	    						}
+	    	    					}
+	    	    					if (foundDateTime) break;
+	    	    				}
+	    	    				if (! foundDateTime) {
+	    	    					throw new VisADException("No date time found in NPP granule");
+	    	    				}
+	    	    			}	    	    			
+	    	    		}
+	    	    	}
+	    		} catch (Exception e) {
+	    			System.err.println("Exception during open file: " + fileAbsPath);
+	    			e.printStackTrace();
+	    		} finally {
+	    			ncfile.close();
+	    		}
     		}
     		
-			// build an XML (NCML actually) representation of the union aggregation of these two files
-			Namespace ns = Namespace.getNamespace("http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2");
-			org.jdom.Element root = new org.jdom.Element("netcdf", ns);
-			org.jdom.Document document = new org.jdom.Document(root);
-			//document.setDocType(docType)
-			org.jdom.Element agg = new org.jdom.Element("aggregation", ns);
-			agg.setAttribute("type", "union");
-			org.jdom.Element fData = new org.jdom.Element("netcdf", ns);
-			fData.setAttribute("location", filename);
-			org.jdom.Element fGeo  = new org.jdom.Element("netcdf", ns);
-			//String geoFilename = filename.replaceFirst("VSSTO", geoProductID);
-			String geoFilename = filename.substring(0, filename.lastIndexOf(File.separatorChar) + 1);
-			geoFilename += geoProductID;
-			geoFilename += filename.substring(filename.lastIndexOf(File.separatorChar) + 6);
-			System.err.println("Cobbled together GEO file name: " + geoFilename);
-			fGeo.setAttribute("location", geoFilename);
-			agg.addContent(fData);
-			agg.addContent(fGeo);
-			root.addContent(agg);    
-		    XMLOutputter xmlOut = new XMLOutputter();
-		    String ncmlStr = xmlOut.outputString(document);
-		    ByteArrayInputStream is = new ByteArrayInputStream(ncmlStr.getBytes());			
-		    reader = new NetCDFFile(is);
+    		for (Long l : productTimes) {
+    			System.err.println("Product time: " + l);
+    		}
+    		
+    		// build each union aggregation element
+    		for (int elementNum = 0; elementNum < sources.size(); elementNum++) {
+    			String s = (String) sources.get(elementNum);
+    			
+    			// build an XML (NCML actually) representation of the union aggregation of these two files
+    			Namespace ns = Namespace.getNamespace("http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2");
+    			org.jdom.Element root = new org.jdom.Element("netcdf", ns);
+    			org.jdom.Document document = new org.jdom.Document(root);
+
+    			org.jdom.Element agg = new org.jdom.Element("aggregation", ns);
+    			agg.setAttribute("type", "union");
+        		
+    			org.jdom.Element fData = new org.jdom.Element("netcdf", ns);
+    			fData.setAttribute("location", s);
+    			org.jdom.Element fGeo  = new org.jdom.Element("netcdf", ns);
+
+    			String geoFilename = s.substring(0, s.lastIndexOf(File.separatorChar) + 1);
+    			geoFilename += geoProductID;
+    			geoFilename += s.substring(s.lastIndexOf(File.separatorChar) + 6);
+    			System.err.println("Cobbled together GEO file name: " + geoFilename);
+    			fGeo.setAttribute("location", geoFilename);
+    			agg.addContent(fData);
+    			agg.addContent(fGeo);
+    			root.addContent(agg);    
+    		    XMLOutputter xmlOut = new XMLOutputter();
+    		    String ncmlStr = xmlOut.outputString(document);
+    		    ByteArrayInputStream is = new ByteArrayInputStream(ncmlStr.getBytes());			
+    		    MultiDimensionReader netCDFReader = new NetCDFFile(is);
+    		    
+    	    	// let's try and look through the NetCDF reader and see what we can learn...
+    	    	NetcdfFile ncdff = ((NetCDFFile) netCDFReader).getNetCDFFile();
+    	    	
+    	    	Group rg = ncdff.getRootGroup();
+
+    	    	List<Group> gl = rg.getGroups();
+    	    	if (gl != null) {
+    	    		for (Group g : gl) {
+    	    			System.err.println("Group name: " + g.getName());
+    	    			// XXX just temporary - we are looking through All_Data, finding displayable data
+    	    			if (g.getName().contains("All_Data")) {
+    	    				List<Group> adg = g.getGroups();
+    	    				// again, iterate through
+    	    				for (Group subG : adg) {
+    	    					System.err.println("Sub group name: " + subG.getName());
+    	    					String subName = subG.getName();
+    	    					if (subName.contains("-GEO")) {
+    	    						// this is the geolocation data
+    	    						List<Variable> vl = subG.getVariables();
+    	    						for (Variable v : vl) {
+    	    							if (v.getName().contains("Latitude")) {
+    	    								pathToLat = v.getName();
+    	        							System.err.println("Lat/Lon Variable: " + v.getName());
+    	    							}
+    	    							if (v.getName().contains("Longitude")) {
+    	    								pathToLon = v.getName();
+    	        							System.err.println("Lat/Lon Variable: " + v.getName());
+    	    							}
+    	    						} 
+    	    					} else {
+    	    						// this is the product data
+    	    						List<Variable> vl = subG.getVariables();
+    	    						for (Variable v : vl) {
+    	    							boolean useThis = false;
+    	    							String vName = v.getName();
+    	    							System.err.println("Variable: " + vName);
+    	    							String firstChar = vName.substring(0, 1);
+    	    							DataType dt = v.getDataType();
+    	    							if ((dt.getSize() != 4) && (dt.getSize() != 2) && (dt.getSize() != 1)) {
+    	    								System.err.println("Skipping data of size: " + dt.getSize());
+    	    								continue;
+    	    							}
+    	    							List al = v.getAttributes();
+    	    							int[] shape = v.getShape();
+    	    							List<Dimension> dl = v.getDimensions();
+    	    							if (dl.size() > 2) {
+    	    								System.err.println("Skipping data of dimension: " + dl.size());
+    	    								continue;
+    	    							}
+    	    							boolean xScanOk = false;
+    	    							boolean yScanOk = false;
+    	    							for (Dimension d : dl) {
+    	    								// in order to consider this a displayable product, make sure
+    	    								// both scan direction dimensions are present and look like a granule
+    	    								for (int xIdx = 0; xIdx < XSCAN_POSSIBILITIES.length; xIdx++) {
+    	    									if (d.getLength() == XSCAN_POSSIBILITIES[xIdx]) {
+    	    										xScanOk = true;
+    	    										break;
+    	    									}
+    	    								}
+    	    								for (int yIdx = 0; yIdx < YSCAN_POSSIBILITIES.length; yIdx++) {
+    	    									if (d.getLength() == YSCAN_POSSIBILITIES[yIdx]) {
+    	    										yScanOk = true;
+    	    										inTrackDimensionLength = YSCAN_POSSIBILITIES[yIdx];
+    	    										break;
+    	    									}
+    	    								}   								
+    	    							}
+    	    							
+    	    							if (xScanOk && yScanOk) {
+    	    								useThis = true;
+    	    							}
+    	    							
+    	    							if (useThis) { 
+    	    								// loop through the variable list again, looking for a corresponding "Factors"
+    	    								float scaleVal = 1f;
+    	    								float offsetVal = 0f;
+    	    								boolean unpackFlag = false;
+    	    								
+    	    								// for variable list
+    	    								//   if name startswith first char of this variable, and ends with Factors
+    	    								//     get the data, data1 = scale, data2 = offset
+    	    								//     create and poke attributes with this data
+    	    								//   endif
+    	    								// endfor
+    	    								
+    	    								for (Variable fV : vl) {
+    	    									if ((fV.getName().startsWith(firstChar)) && (fV.getName().endsWith("Factors"))) {
+    	    										System.err.println("Pulling scale and offset values from variable: " + fV.getName());
+    	    										ucar.ma2.Array a = fV.read();
+    	    										ucar.ma2.Index i = a.getIndex();
+    	    										scaleVal = a.getFloat(i);
+    	    										System.err.println("Scale value: " + scaleVal);
+    	    										i.incr();
+    	    										offsetVal = a.getFloat(i);
+    	    										System.err.println("Offset value: " + offsetVal);
+    	    										unpackFlag = true;
+    	    										break;
+    	    									}
+    	    								}
+
+    	    								// poke in scale/offset attributes for now
+
+    	    								ucar.nc2.Attribute a1 = new ucar.nc2.Attribute("scale_factor", scaleVal);
+    	    								v.addAttribute(a1);
+    	    								ucar.nc2.Attribute a2 = new ucar.nc2.Attribute("add_offset", offsetVal);
+    	    								v.addAttribute(a2);   		
+    	    								ucar.nc2.Attribute aFill = v.findAttribute("_FillValue");
+    	    								if (aFill != null) {
+    	    									System.err.println("_FillValue attribute value: " + aFill.getNumericValue());
+    	    								}
+    	    								ucar.nc2.Attribute aUnsigned = v.findAttribute("_Unsigned");
+    	    								if (aUnsigned != null) {
+    	    									System.err.println("_Unsigned attribute value: " + aUnsigned.getStringValue());
+    	    									unsignedFlags.add(aUnsigned.getStringValue());
+    	    								} else {
+    	    									unsignedFlags.add("false");
+    	    								}
+    	    								
+    	    								if (unpackFlag) {
+    	    									unpackFlags.add("true");
+    	    								} else {
+    	    									unpackFlags.add("false");
+    	    								}
+    	    								
+    	    								System.err.println("Adding product: " + v.getName());
+    	    								pathToProducts.add(v.getName());
+    	    								
+    	    							}
+    	    						}    						
+    	   						
+    	    					}
+    	    				}
+    	    			}
+    	    		}
+    	    	}
+    	    	
+    		    ncdfal.add((NetCDFFile) netCDFReader);
+    		}
+    		
     	} catch (Exception e) {
     		e.printStackTrace();
-    		System.out.println("cannot create NPP reader for file: " + filename);
+    		System.out.println("cannot create NetCDF reader for files selected");
     	}
     	
-    	// let's try and look through the reader and see what we can learn...
-    	NetcdfFile ncdff = ((NetCDFFile) reader).getNetCDFFile();
-    	
-    	Group rg = ncdff.getRootGroup();
-    	System.err.println("Root group name: " + rg.getName());
-    	List<Group> gl = rg.getGroups();
-    	// count the number of adapters we'll need
-    	int aCount = 0;
-    	if (gl != null) {
-    		for (Group g : gl) {
-    			System.err.println("Group name: " + g.getName());
-    			// XXX just temporary - we are looking through All_Data, finding displayable data
-    			if (g.getName().contains("All_Data")) {
-    				List<Group> adg = g.getGroups();
-    				// again, iterate through
-    				for (Group subG : adg) {
-    					System.err.println("Sub group name: " + subG.getName());
-    					String subName = subG.getName();
-    					if (subName.contains("MOD-GEO")) {
-    						// this is the geolocation data
-    						List<Variable> vl = subG.getVariables();
-    						for (Variable v : vl) {
-    							if (v.getName().contains("Latitude")) {
-    								pathToLat = v.getName();
-        							System.err.println("Lat/Lon Variable: " + v.getName());
-    							}
-    							if (v.getName().contains("Longitude")) {
-    								pathToLon = v.getName();
-        							System.err.println("Lat/Lon Variable: " + v.getName());
-    							}
-    						} 
-    					} else {
-    						// this is the product data
-    						List<Variable> vl = subG.getVariables();
-    						for (Variable v : vl) {
-    							boolean useThis = false;
-    							String vName = v.getName();
-    							System.err.println("Variable: " + vName);
-    							String firstChar = vName.substring(0, 1);
-    							DataType dt = v.getDataType();
-    							if ((dt.getSize() != 4) && (dt.getSize() != 2) && (dt.getSize() != 1)) {
-    								System.err.println("Skipping data of size: " + dt.getSize());
-    								continue;
-    							}
-    							List al = v.getAttributes();
-    							int[] shape = v.getShape();
-    							List<Dimension> dl = v.getDimensions();
-    							boolean xScanOk = false;
-    							boolean yScanOk = false;
-    							for (Dimension d : dl) {
-    								// in order to consider this a displayable product, make sure
-    								// both scan direction dimensions are present and look like a granule
-    								if (d.getLength() == XSCAN) {
-    									xScanOk = true;
-    								}
-    								if (d.getLength() == YSCAN) {
-    									yScanOk = true;
-    								}    								
-    							}
-    							
-    							if (xScanOk && yScanOk) {
-    								useThis = true;
-    							}
-    							
-    							if (useThis) { 
-    								// loop through the variable list again, looking for a corresponding "Factors"
-    								float scaleVal = 1f;
-    								float offsetVal = 0f;
-    								boolean unpackFlag = false;
-    								
-    								// for variable list
-    								//   if name startswith first char of this variable, and ends with Factors
-    								//     get the data, data1 = scale, data2 = offset
-    								//     create and poke attributes with this data
-    								//   endif
-    								// endfor
-    								
-    								for (Variable fV : vl) {
-    									if ((fV.getName().startsWith(firstChar)) && (fV.getName().endsWith("Factors"))) {
-    										ucar.ma2.Array a = fV.read();
-    										ucar.ma2.Index i = a.getIndex();
-    										scaleVal = a.getFloat(i);
-    										System.err.println("Scale value: " + scaleVal);
-    										i.incr();
-    										offsetVal = a.getFloat(i);
-    										System.err.println("Offset value: " + offsetVal);
-    										unpackFlag = true;
-    										break;
-    									}
-    								}
-
-    								// poke in scale/offset attributes for now
-
-    								ucar.nc2.Attribute a1 = new ucar.nc2.Attribute("scale_factor", scaleVal);
-    								v.addAttribute(a1);
-    								ucar.nc2.Attribute a2 = new ucar.nc2.Attribute("add_offset", offsetVal);
-    								v.addAttribute(a2);   		
-    								ucar.nc2.Attribute aFill = v.findAttribute("_FillValue");
-    								System.err.println("_FillValue attribute value: " + aFill.getNumericValue());
-    								ucar.nc2.Attribute aUnsigned = v.findAttribute("_Unsigned");
-    								if (aUnsigned != null) {
-    									System.err.println("_Unsigned attribute value: " + aUnsigned.getStringValue());
-    									unsignedFlags.add(aUnsigned.getStringValue());
-    								} else {
-    									unsignedFlags.add("false");
-    								}
-    								
-    								if (unpackFlag) {
-    									unpackFlags.add("true");
-    								} else {
-    									unpackFlags.add("false");
-    								}
-    								
-    								System.err.println("Adding product: " + v.getName());
-    								pathToProducts.add(v.getName());
-    								
-    							}
-    						}    						
-   						
-    					}
-    				}
-    			}
-    		}
-    	}
+    	// initialize the aggregation reader object
+    	nppAggReader = new GranuleAggregation(ncdfal, inTrackDimensionLength, 1);
 
     	// make sure we found valid data
     	if (pathToProducts.size() == 0) {
-    		throw new VisADException("No data found in file selected");
+    		throw new VisADException("No data found in files selected");
     	}
     	
     	System.err.println("Number of adapters needed: " + pathToProducts.size());
@@ -409,10 +507,13 @@ public class NPPDataSource extends HydraDataSource {
 
     	// test code block for NPP data
     	
-    	for (int pIdx = 0; pIdx < pathToProducts.size(); pIdx++) {
+    	Iterator iterator = pathToProducts.iterator();
+    	int pIdx = 0;
+    	while (iterator.hasNext()) {
+    		String pStr = (String) iterator.next();
     		System.err.println("Working on adapter number " + (pIdx + 1));
         	HashMap table = SwathAdapter.getEmptyMetadataTable();
-        	table.put("array_name", (String) pathToProducts.get(pIdx));
+        	table.put("array_name", pStr);
         	table.put("array_dimension_names", new String[] {"Track", "XTrack"});
         	table.put("lon_array_name", pathToLon);
         	table.put("lat_array_name", pathToLat);
@@ -433,7 +534,9 @@ public class NPPDataSource extends HydraDataSource {
         	if (unpackFlagStr.equals("true")) {
         		table.put("unpack", "true");
         	}
-        	adapters[pIdx] = new SwathAdapter(reader, table);
+        	// pass in a GranuleAggregation reader...
+        	adapters[pIdx] = new SwathAdapter(nppAggReader, table);
+    		pIdx++;
     	}
 
     	categories = DataCategory.parseCategories("2D grid;GRID-2D;");
@@ -443,11 +546,11 @@ public class NPPDataSource extends HydraDataSource {
     }
 
     public void initAfterUnpersistence() {
-      try {
-        setup();
-      } 
-      catch (Exception e) {
-      }
+    	try {
+    		setup();
+    	} 
+    	catch (Exception e) {
+    	}
     }
 
     /**
