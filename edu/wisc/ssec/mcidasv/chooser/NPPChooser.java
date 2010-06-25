@@ -98,10 +98,12 @@ public class NPPChooser extends FileChooser {
      * @param f name of file to test
      * @return
      */
+    
     private boolean isNPPFile(File f) {
     	 	
-    	String nppRegex = "\\w\\w\\w\\w\\w_npp_d\\d\\d\\d\\d\\d\\d\\d\\d_t\\d\\d\\d\\d\\d\\d_e\\d\\d\\d\\d\\d\\d_b\\d\\d\\d\\d\\d_c\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d_\\w\\w\\w_OPS_SEG.h5";
-    	
+    	String nppRegex1 = "\\w\\w\\w\\w\\w_npp_d\\d\\d\\d\\d\\d\\d\\d\\d_t\\d\\d\\d\\d\\d\\d_e\\d\\d\\d\\d\\d\\d_b\\d\\d\\d\\d\\d_c\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d_\\w\\w\\w_OPS_SEG.h5";
+    	String nppRegex2 = "\\w\\w\\w\\w\\w_npp_d\\d\\d\\d\\d\\d\\d\\d\\d_t\\d\\d\\d\\d\\d\\d\\d_e\\d\\d\\d\\d\\d\\d\\d_b\\d\\d\\d\\d\\d_c\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d_noaa_ada.h5";
+
     	boolean isNPP = false;
     	
     	String fileNameRelative = f.getName();
@@ -113,7 +115,9 @@ public class NPPChooser extends FileChooser {
     	// just see if it matches the regular expression for now
     	// XXX at some point we should check all valid product ids
     	
-    	if (fileNameRelative.matches(nppRegex)) {
+    	if (	(fileNameRelative.matches(nppRegex1)) ||
+    			(fileNameRelative.matches(nppRegex2)) )
+    	{
     		isNPP = true;
     	// don't go any further if file does not match NPP data product regex
     	} else {
@@ -134,6 +138,7 @@ public class NPPChooser extends FileChooser {
     	if (fileNameRelative.startsWith("GIGTO")) isNPP = false;
     	if (fileNameRelative.startsWith("GIMGO")) isNPP = false;
     	if (fileNameRelative.startsWith("GITCO")) isNPP = false;
+    	if (fileNameRelative.startsWith("GCLDO")) isNPP = false;
     	
     	// but make sure a geolocation file is present if it IS a valid NPP data file!
 		// first, create the corresponding GEO loc file name
@@ -204,6 +209,7 @@ public class NPPChooser extends FileChooser {
     	geoHM.put("VIIRS-IMG-EDR-GEO", "GIGTO");
     	geoHM.put("VIIRS-IMG-GEO", "GIMGO");
     	geoHM.put("VIIRS-IMG-GEO-TC", "GITCO");
+    	geoHM.put("VIIRS-CLD-AGG-GEO", "GCLDO");
     	String s = null;
     	if (geoHM != null) {
     		s = (String) geoHM.get(geoRef);
@@ -308,7 +314,7 @@ public class NPPChooser extends FileChooser {
         public NPPFileChooser(String path) {
             super(path);
             setControlButtonsAreShown(false);
-            setMultiSelectionEnabled(false);
+            setMultiSelectionEnabled(true);
             setAcceptAllFileFilterUsed(false);
             processChildren(this);
         }
