@@ -182,7 +182,6 @@ public class Console implements Runnable, KeyListener {
         textPane.addKeyListener(this);
         textPane.addMouseListener(new PopupListener());
     }
-    
 
     /**
      * Returns the panel containing the various UI components.
@@ -298,8 +297,9 @@ public class Console implements Runnable, KeyListener {
     public void generatedError(final String text) {
         if (getPromptLength(getLineText(getLineCount()-1)) > 0) {
             insert(TXT_ERROR, '\n'+text);
+        } else {
+            insert(TXT_ERROR, text);
         }
-        insert(TXT_ERROR, text);
     }
 
     /**
@@ -312,7 +312,7 @@ public class Console implements Runnable, KeyListener {
     public void moreInput(final int blockLevel) {
         
     }
-    
+
     /**
      * Will eventually display an initial greeting to the user.
      * 
@@ -392,6 +392,7 @@ public class Console implements Runnable, KeyListener {
         int lineNumber = getCaretLine();
         String currentLine = getLineText(lineNumber);
         int[] offsets = getLineOffsets(lineNumber);
+        logger.debug("position={} offsets[0]={} promptLen={}", new Object[] { position, offsets[0], getPromptLength(currentLine)});
         return ((position - offsets[0]) >= getPromptLength(currentLine));
     }
 
@@ -416,6 +417,7 @@ public class Console implements Runnable, KeyListener {
         if (lineNumber >= getLineCount()) {
             return BAD_OFFSETS;
         }
+        // TODO(jon): possible inline these calls?
         int start = getLineOffsetStart(lineNumber);
         int end = getLineOffsetEnd(lineNumber);
         return new int[] { start, end };
@@ -488,9 +490,7 @@ public class Console implements Runnable, KeyListener {
         if (text == null) {
             return null;
         }
-
         int start = getPromptLength(text);
-
         return text.substring(start, text.length() - 1);
     }
 
@@ -498,11 +498,14 @@ public class Console implements Runnable, KeyListener {
      * Returns the length of {@link #PS1} or {@link #PS2} depending on the 
      * contents of the specified line.
      * 
-     * @param line The line in question.
+     * @param line The line in question. Cannot be {@code null}.
      * 
      * @return Either the prompt length or zero if there was none.
+     * 
+     * @throws NullPointerException if {@code line} is {@code null}.
      */
     public static int getPromptLength(final String line) {
+        notNull(line, "Null lines do not have prompt lengths");
         if (line.startsWith(PS1)) {
             return PS1.length();
         } else if (line.startsWith(PS2)) {
@@ -558,6 +561,7 @@ public class Console implements Runnable, KeyListener {
     public Set<String> getJythonReferencesTo(final Object obj) {
         notNull(obj, "Cannot find references to a null object");
         Set<String> refs = new TreeSet<String>();
+        // TODO(jon): possibly inline getJavaInstances()?
         for (Map.Entry<String, Object> entry : getJavaInstances().entrySet()) {
             if (obj == entry.getValue()) {
                 refs.add(entry.getKey());
@@ -627,9 +631,9 @@ public class Console implements Runnable, KeyListener {
      * IDLE.
      */
     public void handleHome() {
-        String line = getLineText(getCaretLine());
-        int[] offsets = getLineOffsets(getCaretLine());
-        int linePosition = getPromptLength(line);
+        int caretPosition = getCaretLine();
+        int[] offsets = getLineOffsets(caretPosition);
+        int linePosition = getPromptLength(getLineText(caretPosition));
         textPane.setCaretPosition(offsets[0] + linePosition);
     }
 
@@ -768,16 +772,24 @@ public class Console implements Runnable, KeyListener {
         frame.setVisible(true);
     }
 
+    /**
+     * Noop.
+     */
     public void keyPressed(final KeyEvent e) { }
+
+    /**
+     * Noop.
+     */
     public void keyReleased(final KeyEvent e) { }
 
     // this is weird: hasAction is always false
     // seems to work so long as the ConsoleActions fire first...
     // might want to look at default actions again
     public void keyTyped(final KeyEvent e) {
-//        System.err.println("keyTyped: hasAction=" + hasAction(textPane, e) + " key=" + e.getKeyChar());
-        if (!hasAction(textPane, e) && !onLastLine()) {
-//            System.err.println("keyTyped: hasAction=" + hasAction(textPane, e) + " lastLine=" + onLastLine());
+        logger.trace("hasAction={} key={}", hasAction(textPane, e), e.getKeyChar());
+        int caretPosition = textPane.getCaretPosition();
+        if (!hasAction(textPane, e) && !canInsertAt(caretPosition)) {
+            logger.trace("hasAction={} lastLine={}", hasAction(textPane, e), onLastLine());
             e.consume();
         }
     }
@@ -790,6 +802,9 @@ public class Console implements Runnable, KeyListener {
         return (jtp.getKeymap().getAction(stroke) != null);
     }
 
+    /**
+     * Maps a {@literal "jython action"} to a keystroke.
+     */
     public enum Actions {
         TAB("jython.tab", KeyEvent.VK_TAB, 0),
         DELETE("jython.delete", KeyEvent.VK_BACK_SPACE, 0),
@@ -826,37 +841,24 @@ public class Console implements Runnable, KeyListener {
         public HistoryEntry() {}
 
         public HistoryEntry(final HistoryType type, final String entry) {
-            if (type == null) {
-                throw new NullPointerException("type cannot be null");
-            }
-            if (entry == null) {
-                throw new NullPointerException("entry cannot be null");
-            }
+            this.type = notNull(type, "type cannot be null");
+            this.entry = notNull(entry, "entry cannot be null");
+        }
 
-            this.type = type;
-            this.entry = entry;
+        public void setEntry(final String entry) {
+            this.entry = notNull(entry, "entry cannot be null");
+        }
+
+        public void setType(final HistoryType type) {
+            this.type = notNull(type, "type cannot be null");
         }
 
         public String getEntry() {
             return entry;
         }
 
-        public void setEntry(final String entry) {
-            if (entry == null) {
-                throw new NullPointerException("entry cannot be null");
-            }
-            this.entry = entry;
-        }
-
         public HistoryType getType() {
             return type;
-        }
-
-        public void setType(final HistoryType type) {
-            if (type == null) {
-                throw new NullPointerException("type cannot be null");
-            }
-            this.type = type;
         }
 
         @Override public String toString() {
@@ -889,13 +891,13 @@ public class Console implements Runnable, KeyListener {
 
     public static String getUserPath(String[] args) {
         for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("-userpath") && (i+1) < args.length) {
+            if ("-userpath".equals(args[i]) && (i+1) < args.length) {
                 return args[i+1];
             }
         }
         return System.getProperty("user.home");
     }
-    
+
     public static void main(String[] args) {
         String os = System.getProperty("os.name");
         String sep = "/";

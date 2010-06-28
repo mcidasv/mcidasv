@@ -49,21 +49,21 @@ public class Interpreter extends InteractiveInterpreter {
     private ByteArrayOutputStream stdout;
 
     /** Whether or not jython needs more input to run something. */
-    private boolean moreInput = false;
+    private boolean moreInput;
 
     /** A hook that allows external classes to respond to events. */
-    private ConsoleCallback callback = new DummyCallbackHandler();
+    private ConsoleCallback callback;
 
     /** Whether or not Jython is working on something */
-    private boolean thinking = false;
+    private boolean thinking;
 
     /**
      * Creates a Jython interpreter based upon the specified system state and
      * whose output streams are mapped to the specified byte streams.
      * 
-     * <p>Additionally, the &quot;__main__&quot; module is imported by default 
-     * so that the locals namespace makes sense.
- * 
+     * <p>Additionally, the {@literal "__main__"} module is imported by 
+     * default so that the locals namespace makes sense.
+     * 
      * @param state The system state you want to use with the interpreter.
      * @param stdout The stream Jython will use for standard output.
      * @param stderr The stream Jython will use for error output.
@@ -75,6 +75,9 @@ public class Interpreter extends InteractiveInterpreter {
         super(null, state);
         this.stdout = stdout;
         this.stderr = stderr;
+        this.callback = new DummyCallbackHandler();
+        this.moreInput = false;
+        this.thinking = false;
 
         setOut(stdout);
         setErr(stderr);
@@ -130,6 +133,8 @@ public class Interpreter extends InteractiveInterpreter {
     }
 
     /**
+     * 
+     * 
      * @return Whether or not Jython needs more input to run something.
      */
     public boolean needMoreInput() {

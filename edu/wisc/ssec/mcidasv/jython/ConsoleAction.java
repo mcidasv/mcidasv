@@ -134,6 +134,8 @@ class EndAction extends ConsoleAction {
 }
 
 class TabAction extends ConsoleAction {
+    private static final long serialVersionUID = 2303773619117479801L;
+
     public TabAction(final Console console, final Actions type) {
         super(console, type);
     }

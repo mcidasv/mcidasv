@@ -41,6 +41,9 @@ import org.python.core.PyObject;
 import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.wisc.ssec.mcidasv.jython.OutputStreamDemux.OutputType;
 
 /**
@@ -50,6 +53,8 @@ import edu.wisc.ssec.mcidasv.jython.OutputStreamDemux.OutputType;
  * no {@code Command}s to execute.
  */
 public class Runner extends Thread {
+
+    private static final Logger logger = LoggerFactory.getLogger(Runner.class);
 
     /** The maximum number of {@link Command}s that can be queued. */
     private static final int QUEUE_CAPACITY = 10;
@@ -116,7 +121,6 @@ public class Runner extends Thread {
      * @param newCallback The callback handler to register.
      */
     protected void setCallbackHandler(final ConsoleCallback newCallback) {
-//        interpreter.setCallbackHandler(newCallback);
         queueCommand(new RegisterCallbackCommand(console, newCallback));
     }
 
@@ -233,8 +237,7 @@ public class Runner extends Thread {
         try {
             queue.put(command);
         } catch (InterruptedException e) {
-            System.err.println("Runner.queueCommand: " + e.getMessage());
-            System.err.println("Runner.queueCommand: command: " + command);
+            logger.warn("msg='{}' command='{}'", e.getMessage(), command);
         }
     }
 

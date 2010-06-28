@@ -30,6 +30,8 @@
 
 package edu.wisc.ssec.mcidasv.jython;
 
+import static edu.wisc.ssec.mcidasv.util.Contract.notNull;
+
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -43,12 +45,16 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.border.BevelBorder;
 
-//import org.python.core.PyJavaInstance;
 import org.python.core.PyObject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // TODO(jon): this will need to be reconsidered, but it's fine for the current
 // console.
 public class DefaultMenuWrangler implements MenuWrangler {
+
+    private static final Logger logger = LoggerFactory.getLogger(DefaultMenuWrangler.class);
 
     /** The {@link Console} whose menus we're {@literal "wrangling"}. */
     private final Console console;
@@ -69,9 +75,7 @@ public class DefaultMenuWrangler implements MenuWrangler {
     private final SelectBufferAction selectAction;
 
     public DefaultMenuWrangler(final Console console) {
-        if (console == null)
-            throw new NullPointerException("Cannot provide a null console.");
-        this.console = console;
+        this.console = notNull(console, "Cannot provide a null console");
 
         cutAction = new CutTextAction(console);
         copyAction = new CopyTextAction(console);
@@ -99,7 +103,7 @@ public class DefaultMenuWrangler implements MenuWrangler {
      * Don't need to handle this just yet.
      */
     public void stateChanged() {
-        System.err.println("noop");
+        logger.trace("noop!");
     }
 
     /**
@@ -198,13 +202,14 @@ public class DefaultMenuWrangler implements MenuWrangler {
         }
 
         @Override public boolean validConsoleState() {
-            if (console == null || console.getTextPane() == null)
+            if (console == null || console.getTextPane() == null) {
                 return false;
+            }
 
             String selection = console.getTextPane().getSelectedText();
-            if (selection != null && selection.length() > 0)
+            if (selection != null && selection.length() > 0) {
                 return true;
-
+            }
             return false;
         }
 
@@ -226,11 +231,15 @@ public class DefaultMenuWrangler implements MenuWrangler {
         }
 
         @Override public boolean validConsoleState() {
-            if (console == null || console.getTextPane() == null)
+            if (console == null || console.getTextPane() == null) {
                 return false;
+            }
+
             String selection = console.getTextPane().getSelectedText();
-            if (selection != null && selection.length() > 0)
+            if (selection != null && selection.length() > 0) {
                 return true;
+            }
+
             return false;
         }
 
