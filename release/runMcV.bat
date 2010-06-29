@@ -22,7 +22,7 @@ REM Check for old style default userpath
 IF EXIST %USERPROFILE%\.mcidasv (
 	IF NOT EXIST "%MCV_USERPATH%" (
 		echo Copying files to new user path: %MCV_USERPATH%
-		XCOPY "%USERPROFILE%\.mcidasv" "%MCV_USERPATH%"
+		XCOPY "%USERPROFILE%\.mcidasv" "%MCV_USERPATH%" /E /C /I /K /Q
 	)
 )
 
