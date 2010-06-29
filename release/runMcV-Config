@@ -1,6 +1,11 @@
 #!/bin/sh
 
-MCV_USERPATH="${HOME}/McIDAS-V.user"
+DOCUMENT_DIRECTORY=${HOME}
+if [ `uname -s` = "Darwin" ]; then
+	DOCUMENT_DIRECTORY=${HOME}/Documents
+fi
+
+MCV_USERPATH="${DOCUMENT_DIRECTORY}/McIDAS-V"
 MCV_PARAMS="$@"
 
 # Check for -userpath parameter
@@ -17,6 +22,7 @@ done
 # Check for old style default userpath
 if [ -d "${HOME}/.mcidasv" ]; then
 	if [ ! -d "${MCV_USERPATH}" ]; then
+		echo "Copying files to new user path: ${MCV_USERPATH}..."
 		cp -R "${HOME}/.mcidasv" "${MCV_USERPATH}"
 	fi
 fi

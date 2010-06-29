@@ -1,6 +1,6 @@
 @ECHO OFF
 
-SET MCV_USERPATH=%USERPROFILE%\McIDAS-V.user
+SET MCV_USERPATH=%USERPROFILE%\McIDAS-V
 SET MCV_PARAMS=%*
 
 REM Check for -userpath parameter
@@ -20,7 +20,10 @@ GOTO checkparameters
 
 REM Check for old style default userpath
 IF EXIST %USERPROFILE%\.mcidasv (
-IF NOT EXIST "%MCV_USERPATH%" XCOPY /E /I /K /Q /Y "%USERPROFILE%\.mcidasv" "%MCV_USERPATH%"
+	IF NOT EXIST "%MCV_USERPATH%" (
+		echo Copying files to new user path: %MCV_USERPATH%
+		XCOPY "%USERPROFILE%\.mcidasv" "%MCV_USERPATH%"
+	)
 )
 
 REM Default heap size to use if none can be determined

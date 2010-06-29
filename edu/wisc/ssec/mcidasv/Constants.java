@@ -327,4 +327,7 @@ public interface Constants extends IdvConstants {
 
     /** Identifier for the {@literal "monitor panel"} window component. */
     public static final String COMP_MONITORPANEL = "mcv.monitorpanel";
+    
+    /** Default user directory name */
+    public static final String USER_DIRECTORY_NAME = "McIDAS-V";
 }

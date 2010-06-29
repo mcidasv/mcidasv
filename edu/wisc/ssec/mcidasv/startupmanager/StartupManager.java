@@ -30,7 +30,6 @@
 
 package edu.wisc.ssec.mcidasv.startupmanager;
 
-import edu.wisc.ssec.mcidasv.ArgumentManager;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
@@ -62,33 +61,27 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 
 import ucar.unidata.ui.Help;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.StringUtil;
-
+import edu.wisc.ssec.mcidasv.ArgumentManager;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.startupmanager.options.BooleanOption;
 import edu.wisc.ssec.mcidasv.startupmanager.options.DirectoryOption;
 import edu.wisc.ssec.mcidasv.startupmanager.options.MemoryOption;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster;
-import edu.wisc.ssec.mcidasv.startupmanager.options.SliderOption;
 import edu.wisc.ssec.mcidasv.startupmanager.options.TextOption;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
-import javax.swing.ToolTipManager;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
 
 // using an enum to enforce singleton-ness is a hack, but it's been pretty 
 // effective. OptionMaster is used in a similar way. The remaining enums are 
@@ -168,7 +161,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             if (pathSeparator.length() == 0 || defaultPrefs.length() == 0)
                 throw new IllegalArgumentException("");
 
-            this.userDirectory = System.getProperty("user.home") + pathSeparator + "McIDAS-V.user";
+            this.userDirectory = System.getProperty("user.home") + pathSeparator + Constants.USER_DIRECTORY_NAME;
             this.userPrefs = userDirectory + pathSeparator + defaultPrefs;
             this.defaultPrefs = defaultPrefs;
             this.newLine = newLine;
@@ -719,7 +712,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
 
     public static Properties getDefaultProperties() {
         Properties props = new Properties();
-        props.setProperty("userpath", String.format("%s%sMcIDAS-V.user", System.getProperty("user.home"), File.separator));
+        props.setProperty("userpath", String.format("%s%s%s", System.getProperty("user.home"), File.separator, Constants.USER_DIRECTORY_NAME));
         props.setProperty(Constants.PROP_SYSMEM, "0");
         return props;
     }
