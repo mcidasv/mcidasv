@@ -81,13 +81,13 @@ public abstract class Command {
      */
     protected InputStream getInputStream(final String path) throws Exception {
         File f = new File(path);
-        if (f.exists())
+        if (f.exists()) {
             return f.toURI().toURL().openStream();
-
+        }
         URL url = getClass().getResource(path);
-        if (url != null) 
+        if (url != null) { 
             return url.openStream();
-
+        }
         return null;
     }
 }
@@ -306,8 +306,9 @@ class RegisterCallbackCommand extends Command {
     }
 
     public void execute(final Interpreter interpreter) throws Exception {
-        if (interpreter == null)
+        if (interpreter == null) {
             throw new NullPointerException("Interpreter is null!");
+        }
         interpreter.setCallbackHandler(callback);
     }
 }
@@ -359,9 +360,9 @@ class LoadFileCommand extends Command {
      */
     public void execute(final Interpreter interpreter) throws Exception {
         InputStream stream = getInputStream(path);
-        if (stream == null)
+        if (stream == null) {
             return;
-
+        }
         PyStringMap locals = (PyStringMap)interpreter.getLocals();
         PyObject currentName = locals.__getitem__(new PyString("__name__"));
         locals.__setitem__("__name__", new PyString(name));

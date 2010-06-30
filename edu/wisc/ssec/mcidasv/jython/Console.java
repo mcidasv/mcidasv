@@ -544,6 +544,7 @@ public class Console implements Runnable, KeyListener {
         }
         return blockDepth;
     }
+
     /**
      * Registers a new callback handler with the console. Note that to maximize
      * utility, this method also registers the same handler with 

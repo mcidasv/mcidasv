@@ -35,10 +35,8 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -60,7 +58,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
@@ -68,6 +65,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -100,6 +98,7 @@ import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.Trace;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlResourceCollection;
+
 import edu.wisc.ssec.mcidasv.probes.ReadoutProbe;
 import edu.wisc.ssec.mcidasv.ui.McvComponentGroup;
 import edu.wisc.ssec.mcidasv.ui.McvComponentHolder;
@@ -567,8 +566,12 @@ public class PersistenceManager extends IdvPersistenceManager {
         }
     }
 
-    private void doXslTransform(final String xmlPath, final String xmlOutput) throws TransformerException, IOException {
-        URL xslPath = getClass().getResource("/edu/wisc/ssec/mcidasv/resources/idv2mcidasv.xsl");
+    public static final String xslpath = "/edu/wisc/ssec/mcidasv/resources/idv2mcidasv.xsl";
+    public static final String xmlinput = "~/data/xslt-bundles/default-idv.xidv";
+    public static final String xmloutput = "~/data/xslt-bundles/output.xidv";
+
+    public static void doXslTransform(final String xslfile, final String xmlPath, final String xmlOutput) throws TransformerException, IOException {
+        URL xslPath = PersistenceManager.class.getResource(xslfile);
         TransformerFactory cybertron = TransformerFactory.newInstance();
         Transformer soundwave = cybertron.newTransformer(new StreamSource(xslPath.openStream()));
         soundwave.transform(
