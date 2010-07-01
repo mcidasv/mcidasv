@@ -16,6 +16,7 @@
       <xsl:copy>
         <!-- copy over the contents of the WindowInfo -->
         <xsl:apply-templates select="@* | node()"/>
+        <xsl:if test="not(descendant::property[@name='PersistentComponents'])">
         <!-- insert the component group-->
         <property name="PersistentComponents">
           <object class="java.util.Hashtable">
@@ -27,8 +28,7 @@
                     <property name="ViewManagers">
                       <object class="java.util.ArrayList">
                         <method name="add">
-                          <!-- this currently copies over EVERY mapviewmanager; need to limit it to the ones within the current WindowInfo-->
-                          <xsl:copy-of select="//object[@class='ucar.unidata.idv.MapViewManager']"/>
+                          <xsl:copy-of select="property/object/method/object[@class='ucar.unidata.idv.MapViewManager']"/>
                         </method>
                       </object>
                     </property>
@@ -37,13 +37,27 @@
               </object>
             </method>
           </object>
-        </property> 
+        </property>
+        </xsl:if>
       </xsl:copy>
     </xsl:template>
 
     <!-- plonk down my stupid debug test wherever there might be a match for the given xpath-->
     <xsl:template match="//object[@class='ucar.unidata.idv.ui.WindowInfo']/property[@name='ViewManagers']/object[@class='java.util.ArrayList']">
         <object class="java.util.ArrayList"/>
+    </xsl:template>
+
+    <xsl:template match="//object[@class='ucar.unidata.idv.ui.IdvComponentGroup']">
+        <xsl:element name="dumb">
+            <xsl:attribute name="class">
+                <xsl:value-of select="edu.wisc.ssec.mcidasv.ui.McvComponentGroup"/>
+            </xsl:attribute>
+            <xsl:when test="@id">
+                <xsl:attribute name="id">
+                    <xsl:value-of select="@id"/>
+                </xsl:attribute>
+            </xsl:when>
+        </xsl:element>
     </xsl:template>
 
 </xsl:stylesheet>
