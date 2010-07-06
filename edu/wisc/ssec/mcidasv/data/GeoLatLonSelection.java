@@ -711,7 +711,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                       "Change the line magnification");
                   lineMagSlider.setToolTipText(
                       "Slide to set line magnification factor");
-                  String str = "Mag=";
+                  String str = "Line Mag=";
                   this.lineMag = getLineMag();
                   lineMagFld = new JTextField(Integer.toString(this.lineMag),3);
                   lineMagFld.addFocusListener(lineMagFocusChange);
@@ -785,7 +785,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   eleMagFld = new JTextField(Integer.toString(this.elementMag),3);
                   eleMagFld.addFocusListener(eleMagFocusChange);
                   eleMagFld.addActionListener(eleMagChange);
-                  String str = "Mag=";
+                  String str = "Ele  Mag=";
                   elementMagLbl =
                       GuiUtils.getFixedWidthLabel(StringUtil.padLeft(str, 4));
                   str = truncateNumericString(Double.toString(baseERes*Math.abs(getElementMag())), 1);
