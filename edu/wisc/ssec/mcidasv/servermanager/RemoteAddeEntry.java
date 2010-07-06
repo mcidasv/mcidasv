@@ -257,7 +257,7 @@ public class RemoteAddeEntry implements AddeEntry {
     }
 
     public String toString() {
-        return String.format("[RemoteAddeEntry@%x: address=%s, group=%s, entryType=%s, entryValidity=%s, account=%s, status=%s]", hashCode(), address, group, entryType, entryValidity, account, entryStatus.name());
+        return String.format("[RemoteAddeEntry@%x: address=%s, group=%s, entryType=%s, entryValidity=%s, account=%s, status=%s, source=%s]", hashCode(), address, group, entryType, entryValidity, account, entryStatus.name(), entrySource);
     }
 
     /**

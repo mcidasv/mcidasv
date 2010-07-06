@@ -244,11 +244,18 @@ public class TabbedAddeManager extends JFrame {
         if (entries == null) {
             return;
         }
-        if (serverManager.removeEntries(entries)) {
+        List<RemoteAddeEntry> removable = arrList(entries.size());
+        for (RemoteAddeEntry entry : entries) {
+//            if (!EntrySource.SYSTEM.equals(entry.getEntrySource())) {
+            if (entry.getEntrySource() != EntrySource.SYSTEM) {
+                removable.add(entry);
+            }
+        }
+        if (serverManager.removeEntries(removable)) {
             RemoteAddeTableModel tableModel = ((RemoteAddeTableModel)remoteTable.getModel());
             int first = Integer.MAX_VALUE;
             int last = Integer.MIN_VALUE;
-            for (RemoteAddeEntry entry : entries) {
+            for (RemoteAddeEntry entry : removable) {
                 int index = tableModel.getRowForEntry(entry);
                 if (index < 0) {
                     continue;
@@ -261,14 +268,15 @@ public class TabbedAddeManager extends JFrame {
                     }
                 }
             }
-            tableModel.fireTableRowsDeleted(first, last);
+            tableModel.fireTableDataChanged();
+//            tableModel.fireTableRowsDeleted(first, last);
             refreshDisplay();
             remoteTable.revalidate();
             if (first < remoteTable.getRowCount()) {
                 remoteTable.setRowSelectionInterval(first, first);
             }
         } else {
-            logger.debug("could not remove entries={}", entries);
+            logger.debug("could not remove entries={}", removable);
         }
     }
 
@@ -724,6 +732,7 @@ public class TabbedAddeManager extends JFrame {
         if (e.getValueIsAdjusting()) {
             return;
         }
+
         int selectedRowCount = 0;
         ListSelectionModel selModel = (ListSelectionModel)e.getSource();
         Set<RemoteAddeEntry> selectedEntries;
@@ -736,12 +745,20 @@ public class TabbedAddeManager extends JFrame {
             selectedEntries = newLinkedHashSet();
             for (int i = min; i <= max; i++) {
                 if (selModel.isSelectedIndex(i)) {
-                    selectedEntries.addAll(tableModel.getEntriesAtRow(i));
+                    List<RemoteAddeEntry> entries = tableModel.getEntriesAtRow(i);
+                    selectedEntries.addAll(entries);
                     selectedRowCount++;
                 }
             }
         }
 
+        boolean onlyDefaultEntries = true;
+        for (RemoteAddeEntry entry : selectedEntries) {
+            if (entry.getEntrySource() != EntrySource.SYSTEM) {
+                onlyDefaultEntries = false;
+                break;
+            }
+        }
         setSelectedRemoteEntries(selectedEntries);
 
         // the current "edit" dialog doesn't work so well with multiple 
@@ -750,7 +767,7 @@ public class TabbedAddeManager extends JFrame {
         editEntryButton.setEnabled(singleSelection);
         editEntryItem.setEnabled(singleSelection);
 
-        boolean hasSelection = selectedRowCount >= 1;
+        boolean hasSelection = (selectedRowCount >= 1) && (!onlyDefaultEntries);
         removeEntryButton.setEnabled(hasSelection);
         removeEntryItem.setEnabled(hasSelection);
     }
@@ -1047,9 +1064,8 @@ public class TabbedAddeManager extends JFrame {
             }
             return valid;
         }
-
     }
-    
+
     private class CheckEntryTask implements Callable<RemoteAddeEntry> {
         private final RemoteAddeEntry entry;
         public CheckEntryTask(final RemoteAddeEntry entry) {
@@ -1180,7 +1196,12 @@ public class TabbedAddeManager extends JFrame {
             List<AddeEntry> matches = manager.searchWithPrefix(serv);
             EntrySource source = EntrySource.INVALID;
             if (!matches.isEmpty()) {
-                source = matches.get(0).getEntrySource();
+                for (AddeEntry entry : matches) {
+                    if (entry.getEntrySource() == EntrySource.USER) {
+                        return EntrySource.USER.toString();
+                    }
+                }
+              source = matches.get(0).getEntrySource();
             }
             return source.toString();
         }

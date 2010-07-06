@@ -507,13 +507,12 @@ public class EntryStore {
         boolean val = true;
         boolean tmpVal = true;
         for (AddeEntry entry : removedEntries) {
-            if (EntrySource.SYSTEM.equals(entry.getEntrySource())) {
-                continue;
-            }
-            tmpVal = (trie.remove(entry.asStringId()) != null);
-            logger.trace("attempted bulk remove={} status={}", entry, tmpVal);
-            if (!tmpVal) {
-                val = tmpVal;
+            if (entry.getEntrySource() != EntrySource.SYSTEM) {
+                tmpVal = (trie.remove(entry.asStringId()) != null);
+                logger.trace("attempted bulk remove={} status={}", entry, tmpVal);
+                if (!tmpVal) {
+                    val = tmpVal;
+                }
             }
         }
         Event evt = (val) ? Event.REMOVAL : Event.FAILURE; 

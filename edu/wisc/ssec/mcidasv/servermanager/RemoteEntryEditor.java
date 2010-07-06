@@ -214,32 +214,32 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         }
 
         // determine the "valid" types
-        Set<EntryType> enabledTypes = newLinkedHashSet();
+        Set<EntryType> selectedTypes = newLinkedHashSet();
         if (!ignoreCheckboxes) {
             if (imageBox.isSelected()) {
-                enabledTypes.add(EntryType.IMAGE);
+                selectedTypes.add(EntryType.IMAGE);
             }
             if (pointBox.isSelected()) {
-                enabledTypes.add(EntryType.POINT);
+                selectedTypes.add(EntryType.POINT);
             }
             if (gridBox.isSelected()) {
-                enabledTypes.add(EntryType.GRID);
+                selectedTypes.add(EntryType.GRID);
             }
             if (textBox.isSelected()) {
-                enabledTypes.add(EntryType.TEXT);
+                selectedTypes.add(EntryType.TEXT);
             }
             if (navBox.isSelected()) {
-                enabledTypes.add(EntryType.NAV);
+                selectedTypes.add(EntryType.NAV);
             }
             if (radarBox.isSelected()) {
-                enabledTypes.add(EntryType.RADAR);
+                selectedTypes.add(EntryType.RADAR);
             }
         } else {
-            enabledTypes.addAll(set(EntryType.IMAGE, EntryType.POINT, EntryType.GRID, EntryType.TEXT, EntryType.NAV, EntryType.RADAR));
+            selectedTypes.addAll(set(EntryType.IMAGE, EntryType.POINT, EntryType.GRID, EntryType.TEXT, EntryType.NAV, EntryType.RADAR));
         }
 
-        if (enabledTypes.isEmpty()) {
-            enabledTypes.add(EntryType.UNKNOWN);
+        if (selectedTypes.isEmpty()) {
+            selectedTypes.add(EntryType.UNKNOWN);
         }
 
         // deal with the user trying to add multiple groups at once (even though this UI doesn't work right with it)
@@ -252,12 +252,26 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         // create a new entry for each group and its valid types.
         Set<RemoteAddeEntry> entries = newLinkedHashSet();
         for (String newGroup : newDatasets) {
-            for (EntryType type : enabledTypes) {
+            for (EntryType type : selectedTypes) {
                 RemoteAddeEntry.Builder builder = new RemoteAddeEntry.Builder(host, newGroup).type(type).validity(EntryValidity.VERIFIED).source(EntrySource.USER);
                 if (acctBox.isSelected()) {
                     builder = builder.account(username, project);
                 }
-                entries.add(builder.build());
+                RemoteAddeEntry newEntry = builder.build();
+                List<AddeEntry> matches = entryStore.searchWithPrefix(newEntry.asStringId());
+                if (matches.isEmpty()) {
+                    entries.add(newEntry);
+                } else if (matches.size() == 1) {
+                    AddeEntry matchedEntry = matches.get(0);
+                    if (matchedEntry.getEntrySource() != EntrySource.SYSTEM) {
+                        entries.add(newEntry);
+                    } else {
+                        entries.add((RemoteAddeEntry)matchedEntry);
+                    }
+                } else {
+                    // err... wtf?
+                }
+//                entries.add(builder.build());
             }
         }
         return entries;
@@ -350,37 +364,20 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
             setBadField(serverField, true);
             return;
         }
-        
+
         setStatus("Contacting server...");
         Set<RemoteAddeEntry> verifiedEntries = checkGroups(unverifiedEntries);
         EnumSet<EntryType> presentTypes = EnumSet.noneOf(EntryType.class);
         if (!verifiedEntries.isEmpty()) {
             for (RemoteAddeEntry verifiedEntry : verifiedEntries) {
                 presentTypes.add(verifiedEntry.getEntryType());
-//                switch (verifiedEntry.getEntryType()) {
-//                    case IMAGE:
-//                        imageBox.setSelected(true); break;
-//                    case POINT:
-//                        pointBox.setSelected(true); break;
-//                    case GRID:
-//                        gridBox.setSelected(true); break;
-//                    case TEXT:
-//                        textBox.setSelected(true); break;
-//                    case NAV:
-//                        navBox.setSelected(true); break;
-//                    case RADAR:
-//                        radarBox.setSelected(true); break;
-//                }
             }
-          imageBox.setSelected(presentTypes.contains(EntryType.IMAGE));
-          pointBox.setSelected(presentTypes.contains(EntryType.POINT));
-          gridBox.setSelected(presentTypes.contains(EntryType.GRID));
-          textBox.setSelected(presentTypes.contains(EntryType.TEXT));
-          navBox.setSelected(presentTypes.contains(EntryType.NAV));
-          radarBox.setSelected(presentTypes.contains(EntryType.RADAR));
-        } else {
-//            setStatus("Could not verify any types of data...");
-//            setBadField(datasetField, true);
+            imageBox.setSelected(presentTypes.contains(EntryType.IMAGE));
+            pointBox.setSelected(presentTypes.contains(EntryType.POINT));
+            gridBox.setSelected(presentTypes.contains(EntryType.GRID));
+            textBox.setSelected(presentTypes.contains(EntryType.TEXT));
+            navBox.setSelected(presentTypes.contains(EntryType.NAV));
+            radarBox.setSelected(presentTypes.contains(EntryType.RADAR));
         }
     }
 
@@ -790,6 +787,14 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
 
         if (initEntries != null && !RemoteAddeEntry.INVALID_ENTRIES.equals(initEntries)) {
             RemoteAddeEntry initEntry = initEntries.get(0);
+            boolean hasSystemEntry = false;
+            for (RemoteAddeEntry entry : initEntries) {
+                if (entry.getEntrySource() == EntrySource.SYSTEM) {
+                    initEntry = entry;
+                    hasSystemEntry = true;
+                    break;
+                }
+            }
             serverField.setText(initEntry.getAddress());
             datasetField.setText(initEntry.getGroup());
 
@@ -801,33 +806,43 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
                 projField.setText(initEntry.getAccount().getProject());
             }
 
-            for (EntryType type : EntryTransforms.findEntryTypes(initEntries)) {
-                switch (type) {
-                    case IMAGE:
-                        imageBox.setSelected(true);
-                        break;
-                    case POINT:
-                        pointBox.setSelected(true);
-                        break;
-                    case GRID:
-                        gridBox.setSelected(true);
-                        break;
-                    case TEXT:
-                        textBox.setSelected(true);
-                        break;
-                    case NAV:
-                        navBox.setSelected(true);
-                        break;
-                    case RADAR:
-                        radarBox.setSelected(true);
-                        break;
-                }
+            if (hasSystemEntry) {
+                serverField.setEnabled(false);
+                datasetField.setEnabled(false);
+                acctBox.setEnabled(false);
+                userField.setEnabled(false);
+                projField.setEnabled(false);
+                capBox.setEnabled(false);
             }
 
+            for (RemoteAddeEntry entry : initEntries) {
+                boolean nonDefaultSource = entry.getEntrySource() != EntrySource.SYSTEM;
+                if (entry.getEntryType() == EntryType.IMAGE) {
+                    imageBox.setSelected(true);
+                    imageBox.setEnabled(nonDefaultSource);
+                } else if (entry.getEntryType() == EntryType.POINT) {
+                    pointBox.setSelected(true);
+                    pointBox.setEnabled(nonDefaultSource);
+                } else if (entry.getEntryType() == EntryType.GRID) {
+                    gridBox.setSelected(true);
+                    gridBox.setEnabled(nonDefaultSource);
+                } else if (entry.getEntryType() == EntryType.TEXT) {
+                    textBox.setSelected(true);
+                    textBox.setEnabled(nonDefaultSource);
+                } else if (entry.getEntryType() == EntryType.NAV) {
+                    navBox.setSelected(true);
+                    navBox.setEnabled(nonDefaultSource);
+                } else if (entry.getEntryType() == EntryType.RADAR) {
+                    radarBox.setSelected(true);
+                    radarBox.setEnabled(nonDefaultSource);
+                }
+            }
         }
 
         pack();
     }// </editor-fold>
+    
+
 
     private void acctBoxActionPerformed(java.awt.event.ActionEvent evt) {
         assert SwingUtilities.isEventDispatchThread();
