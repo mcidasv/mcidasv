@@ -946,9 +946,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
           setLatitude(new Double(previewDir.getCenterLatitude()));
           setLongitude(new Double(previewDir.getCenterLongitude()));
           convertToLinEle();
-
-          setNumLines(previewDirBlk[8]);
-          setNumEles(previewDirBlk[9]);
+          setNumLines(maxLines);
+          setNumEles(maxEles);
           setLineMag(1);
           setDLineMag(1.0);
           setElementMag(1);
