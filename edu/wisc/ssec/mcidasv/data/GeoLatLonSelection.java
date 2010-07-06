@@ -324,7 +324,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
              DataChoice dataChoice, Hashtable initProps, MapProjection sample,
              AreaDirectory dir, AREAnav nav) 
               throws VisADException, RemoteException {
-          super("Lat/Lon");
+          super("Advanced");
 
           if (dataSource != lastDataSource) this.resetLatLon = true;
           lastDataSource = dataSource;
