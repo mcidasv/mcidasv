@@ -18,13 +18,17 @@ GOTO checkparameters
 
 :endparameters
 
-REM Check for old style default userpath
+REM Initialize new userpath
+IF NOT EXIST "%MCV_USERPATH%" GOTO inituserpath
+ELSE GOTO hasuserpath
+
+:inituserpath
 IF EXIST %USERPROFILE%\.mcidasv (
-	IF NOT EXIST "%MCV_USERPATH%" (
-		echo Copying files to new user path: %MCV_USERPATH%
-		XCOPY "%USERPROFILE%\.mcidasv" "%MCV_USERPATH%" /E /C /I /K /Q
-	)
+	echo Copying files to new user path: %MCV_USERPATH%
+	XCOPY "%USERPROFILE%\.mcidasv" "%MCV_USERPATH%" /E /C /I /K /Q
 )
+
+:hasuserpath
 
 REM Default heap size to use if none can be determined
 SET HEAP_DEFAULT=512M
