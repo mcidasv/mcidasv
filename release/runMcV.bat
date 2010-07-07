@@ -22,7 +22,7 @@ REM Initialize new userpath
 IF EXIST "%MCV_USERPATH%" GOTO hasuserpath
 
 :inituserpath
-IF EXIST %USERPROFILE%\.mcidasv (
+IF EXIST "%USERPROFILE%\.mcidasv" (
 	echo Copying files to new user path: %MCV_USERPATH%
 	XCOPY "%USERPROFILE%\.mcidasv" "%MCV_USERPATH%" /E /C /I /K /Q
 )
