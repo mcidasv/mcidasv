@@ -71,12 +71,13 @@ public class GranuleAggregation implements MultiDimensionReader {
    
    private int granuleCount = -1;
    private int granuleLength = -1;
-   private int inTrackDimension = -1;
+   private int inTrackIndex = -1;
 
-   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, int granuleLength, int inTrackDimension) throws Exception {
+   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, int granuleLength, int inTrackIndex) throws Exception {
 	   if (ncdfal == null) throw new Exception("No data: empty NPP aggregation object");
+	   System.err.println("granule length: " + granuleLength);
 	   this.granuleLength = granuleLength;
-	   this.inTrackDimension = inTrackDimension;
+	   this.inTrackIndex = inTrackIndex;
 	   init(ncdfal);
    }
   
@@ -202,7 +203,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   }
 			   
 			   // XXX TJJ - temp hack.  How to know for certain the InTrack dimension?
-			   dimLengths[dimLengths.length - 1] = dimLengths[dimLengths.length - 1] * granuleCount;
+			   dimLengths[inTrackIndex] = dimLengths[inTrackIndex] * granuleCount;
 			   
 			   varDimNames.put(varName, dimNames);
 			   varDimLengths.put(varName, dimLengths);
@@ -253,13 +254,18 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   int dimensionCount = start.length;
 	   
 	   // which granules will we be dealing with?
-	   // XXX TJJ need SURE way to determine InTrack index!
-	   int inTrackIndex = count.length - 1;
 	   int loGranuleId = start[inTrackIndex] / granuleLength;
 	   int hiGranuleId = (start[inTrackIndex] + ((count[inTrackIndex] - 1) * stride[inTrackIndex])) / granuleLength;
 	   
 	   // next, we break out the offsets, counts, and strides for each granule
 	   int granuleSpan = hiGranuleId - loGranuleId + 1;
+	   System.err.println("readArray req, loGran: " + loGranuleId + ", hiGran: " + 
+			   hiGranuleId + ", granule span: " + granuleSpan + ", dimCount: " + dimensionCount);
+	   for (int i = 0; i < dimensionCount; i++) {
+		   System.err.println("start[" + i + "]: " + start[i]);
+		   System.err.println("count[" + i + "]: " + count[i]);
+		   System.err.println("stride[" + i + "]: " + stride[i]);
+	   }
 	   int [][] startSet = new int [granuleSpan][dimensionCount];
 	   int [][] countSet = new int [granuleSpan][dimensionCount];
 	   int [][] strideSet = new int [granuleSpan][dimensionCount];
@@ -277,17 +283,21 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   // for the inTrackIndex, it's not so easy...
 				   // for first granule, start is what's passed in
 				   if (i == 0) {
-					   startSet[i][j] = start[j];
+					   startSet[i][j] = start[j] % granuleLength;
 				   } else {
 					   startSet[i][j] = (granuleLength - start[j]) % stride[j];
 				   }
 				   // counts may be different for start, end, and middle granules
 				   if (i == 0) {
-					   countSet[i][j] = (granuleLength - start[i]) / stride[j];
+					   if ((granuleLength - start[j]) < (count[j] / stride[j])) {					   
+						   countSet[i][j] = (granuleLength - start[j]) / stride[j];
+					   } else {
+						   countSet[i][j] = count[j];
+					   }
 					   countSubtotal += countSet[i][j];
 				   } else {
 					   // middle grandules
-					   if (i < (granuleSpan -1)) {
+					   if (i < (granuleSpan - 1)) {
 						   countSet[i][j] = granuleLength / stride[j];
 						   countSubtotal += countSet[i][j];
 					   } else {
@@ -303,22 +313,22 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   
 	   int totalLength = 0;
 	   ArrayList<Array> arrayList = new ArrayList<Array>();
-	   for (int granuleId = loGranuleId; granuleId <= hiGranuleId; granuleId++) {
-		   Variable var = varMapList.get(granuleId).get(array_name);
+	   for (int granuleIdx = 0; granuleIdx < granuleSpan; granuleIdx++) {
+		   Variable var = varMapList.get(loGranuleId + granuleIdx).get(array_name);
 
 		   if (var instanceof Structure) {
 			   // what to do here?
 		   } else {
 			   ArrayList<Range> rangeList = new ArrayList<Range>();
-			   for (int dimensionId = 0; dimensionId < dimensionCount; dimensionId++) {
-				   System.err.println("Creating new Range: " + startSet[granuleId][dimensionId] +
-						   ", " + (countSet[granuleId][dimensionId] - 1) + ", " + strideSet[granuleId][dimensionId]);
+			   for (int dimensionIdx = 0; dimensionIdx < dimensionCount; dimensionIdx++) {
+				   System.err.println("Creating new Range: " + startSet[granuleIdx][dimensionIdx] +
+						   ", " + (startSet[granuleIdx][dimensionIdx] + countSet[granuleIdx][dimensionIdx] - 1) + ", " + strideSet[granuleIdx][dimensionIdx]);
 				   Range range = new Range(
-						   startSet[granuleId][dimensionId], 
-						   countSet[granuleId][dimensionId] - 1,
-						   strideSet[granuleId][dimensionId]
+						   startSet[granuleIdx][dimensionIdx], 
+						   startSet[granuleIdx][dimensionIdx] + countSet[granuleIdx][dimensionIdx] - 1,
+						   strideSet[granuleIdx][dimensionIdx]
 				   );
-				   rangeList.add(dimensionId, range);
+				   rangeList.add(dimensionIdx, range);
 			   }
 			   Array subarray = var.read(rangeList);
 			   //dataType = subarray.getElementType();
