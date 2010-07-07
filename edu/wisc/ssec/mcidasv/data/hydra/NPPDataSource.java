@@ -152,14 +152,14 @@ public class NPPDataSource extends HydraDataSource {
     private MultiSpectralData multiSpectData;
 
     private List categories;
-    private boolean hasImagePreview = false;
+    private boolean hasImagePreview = true;
     private boolean hasTrackPreview = false;
     private boolean hasChannelSelect = false;
     
     private HashMap geoHM;
     
-    private static int[] XSCAN_POSSIBILITIES = { 96, 768 };
-    private static int[] YSCAN_POSSIBILITIES = { 508, 3200 };    
+    private static int[] YSCAN_POSSIBILITIES = { 96, 768 };
+    private static int[] XSCAN_POSSIBILITIES = { 508, 3200 };    
     private int inTrackDimensionLength = -1;
     
     // date formatter for converting NPP day/time to something we can use
@@ -492,7 +492,7 @@ public class NPPDataSource extends HydraDataSource {
     	}
     	
     	// initialize the aggregation reader object
-    	nppAggReader = new GranuleAggregation(ncdfal, inTrackDimensionLength, 1);
+    	nppAggReader = new GranuleAggregation(ncdfal, inTrackDimensionLength, 0);
 
     	// make sure we found valid data
     	if (pathToProducts.size() == 0) {
@@ -504,8 +504,6 @@ public class NPPDataSource extends HydraDataSource {
     	Hashtable<String, String[]> properties = new Hashtable<String, String[]>(); 
 
     	String name = (new File(filename)).getName();
-
-    	// test code block for NPP data
     	
     	Iterator iterator = pathToProducts.iterator();
     	int pIdx = 0;
