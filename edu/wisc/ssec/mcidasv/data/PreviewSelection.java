@@ -82,10 +82,6 @@ import visad.*;
 import visad.bom.RubberBandBoxRendererJ3D;
 import visad.java3d.DisplayImplJ3D;
 import visad.java3d.TwoDDisplayRendererJ3D;
-import ucar.unidata.idv.ViewManager;
-import ucar.unidata.idv.ViewDescriptor;
-import ucar.unidata.idv.MapViewManager;
-import ucar.unidata.idv.control.DisplayControlBase;
 import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
 import ucar.unidata.view.geoloc.MapProjectionDisplay;
 import java.awt.Component;
@@ -126,6 +122,11 @@ public class PreviewSelection extends DataSelectionComponent {
 
       public PreviewSelection(DataChoice dataChoice, FlatField image,
              MapProjection sample) throws VisADException, RemoteException {
+        this(dataChoice, image, sample, null, null);
+      }
+
+      public PreviewSelection(DataChoice dataChoice, FlatField image,
+             MapProjection sample, Range displayRange, byte[][] colorTable) throws VisADException, RemoteException {
         super("Region");
 
         this.dataChoice = dataChoice;
@@ -263,10 +264,7 @@ public class PreviewSelection extends DataSelectionComponent {
         double min;
         double dMax = imageRange.getMax();
         String name = this.dataChoice.getName();
-        DataSelection ds = this.dataChoice.getDataSelection();
-        if (ds != null) {
-            GeoSelection gs = ds.getGeoSelection();
-         }
+
         if (name.endsWith("BRIT")) {
            double dMin = imageRange.getMin();
            min = dMax;
