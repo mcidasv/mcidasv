@@ -19,8 +19,7 @@ GOTO checkparameters
 :endparameters
 
 REM Initialize new userpath
-IF NOT EXIST "%MCV_USERPATH%" GOTO inituserpath
-ELSE GOTO hasuserpath
+IF EXIST "%MCV_USERPATH%" GOTO hasuserpath
 
 :inituserpath
 IF EXIST %USERPROFILE%\.mcidasv (
