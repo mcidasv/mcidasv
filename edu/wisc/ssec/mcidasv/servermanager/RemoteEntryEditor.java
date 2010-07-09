@@ -126,7 +126,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     private final Set<javax.swing.JTextField> badFields = newLinkedHashSet();
 
     /** The server manager GUI. Be aware that this can be {@code null}. */
-    private TabbedAddeManager managerController;
+//    private TabbedAddeManager managerController;
 
     /** Reference back to the server manager. */
     private final EntryStore entryStore;
@@ -317,40 +317,9 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      * {@literal "valid"}.
      */
     private void verifyInput() {
-//        Set<RemoteAddeEntry> unverifiedEntries = pollWidgets(true);
-//        Set<EntryType> validTypes = CollectionHelpers.newLinkedHashSet();
-//        for (RemoteAddeEntry entry : entries) {
-//            EntryType type = entry.getEntryType();
-//            if (validTypes.contains(type))
-//                continue;
-//
-//            String server = entry.getAddress();
-//            String dataset = entry.getGroup();
-//
-//            setStatus("Checking "+server+'/'+dataset+" for accessible "+type+" data...");
-//            AddeStatus status = RemoteAddeVerification.checkEntry(entry);
-//            if (status == AddeStatus.OK) {
-//                setStatus("Verified that "+server+'/'+dataset+" has accessible "+type+" data.");
-//                validTypes.add(type);
-//            } else if (status == AddeStatus.BAD_SERVER) {
-//                setStatus("Could not connect to "+server);
-//                setBadField(serverField, true);
-//                return;
-//            } else if (status == AddeStatus.BAD_ACCOUNTING) {
-//                setStatus("Could not access "+server+'/'+dataset+" with current accounting information...");
-//                setBadField(userField, true);
-//                setBadField(projField, true);
-//                return;
-//            } else if (status == AddeStatus.BAD_GROUP) {
-//                // err...
-//            } else {
-//                setStatus("Unknown status returned: "+status);
-//                return;
-//            }
-//        }
         resetBadFields();
         Set<RemoteAddeEntry> unverifiedEntries = pollWidgets(true);
-        
+
         // the editor GUI only works with one server address at a time. so 
         // although there may be several RemoteAddeEntry objs, they'll all have
         // the same address and the follow *isn't* as dumb as it looks!
@@ -1001,48 +970,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
                     verified.add(entry);
                     setStatus("Found accessible "+entry.getEntryType().toString().toLowerCase()+" data.");
                 }
-//                if (status == AddeStatus.OK) {
-//                    verified.add(entry);
-//                    setStatus("Found accessible "+entry.getEntryType().toString().toLowerCase()+" data.");
-//                } else if (status != AddeStatus.BAD_GROUP) {
-//                    setStatus("Could not locate "+entry.getEntryType()+" data within "+entry.getGroup());
-//                    if (!statuses.contains(AddeStatus.OK)) {
-//                        setBadField(datasetField, true);
-//                    }
-//                    //                    setBadField(datasetField, true);
-//                } else if (status == AddeStatus.BAD_SERVER) {
-//                    setStatus("Could not connect to "+entry.getAddress());
-//                    if (!statuses.contains(AddeStatus.OK)) {
-//                        
-//                    }
-////                    setBadField(serverField, true);
-//                } else if (status == AddeStatus.BAD_ACCOUNTING) {
-//                    setStatus("Could not access "+entry.getEntryText()+" with current accounting information...");
-////                    setBadField(userField, true);
-////                    setBadField(projField, true);
-//                } else {
-//                    setStatus("Unknown verification status: '"+status+".' Spooky!");
-//                }
             }
-//            if (!statuses.contains(AddeStatus.OK)) {
-//                if (statuses.contains(AddeStatus.BAD_ACCOUNTING)) {
-//                    setStatus("Incorrect accounting information.");
-//                    setBadField(userField, true);
-//                    setBadField(projField, true);
-//                } else if (statuses.contains(AddeStatus.BAD_GROUP)) {
-//                    setStatus("Dataset does not appear to be valid.");
-//                    setBadField(datasetField, true);
-//                } else if (statuses.contains(AddeStatus.BAD_SERVER)) {
-//                    setStatus("Could not connect to the ADDE server.");
-//                    setBadField(serverField, true);
-//                } else {
-//                    logger.warn("guru meditation error: statuses={}", statuses);
-//                }
-//            } else {
-//                setStatus("Finished verifying.");
-//            }
-            
-            
         } catch (InterruptedException e) {
             LogUtil.logException("interrupted while checking ADDE entries", e);
         } catch (ExecutionException e) {
