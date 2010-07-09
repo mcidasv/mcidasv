@@ -125,9 +125,6 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      */
     private final Set<javax.swing.JTextField> badFields = newLinkedHashSet();
 
-    /** The server manager GUI. Be aware that this can be {@code null}. */
-//    private TabbedAddeManager managerController;
-
     /** Reference back to the server manager. */
     private final EntryStore entryStore;
 
@@ -163,7 +160,6 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     public RemoteEntryEditor(EntryStore entryStore, String address, String group) {
         super((javax.swing.JDialog)null, true);
         this.entryStore = entryStore;
-        this.managerController = null;
         this.serverText = address;
         this.datasetText = group;
         initComponents(RemoteAddeEntry.INVALID_ENTRIES);
@@ -182,7 +178,6 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     public RemoteEntryEditor(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store, final List<RemoteAddeEntry> entries) {
         super(manager, modal);
         this.entryStore = store;
-        this.managerController = manager;
         this.serverText = null;
         this.datasetText = null;
         if (entries != RemoteAddeEntry.INVALID_ENTRIES) {
