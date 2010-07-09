@@ -8,11 +8,12 @@
     </layout>
   </appender>
 
-  <!-- disable logging within mcv (by default) -->
+  <!-- logging is disabled within mcv (by default) -->
+  <!-- valid levels are: TRACE, DEBUG, INFO, WARN, ERROR, OFF -->
   <logger name="edu.wisc.ssec.mcidasv" level="OFF"/>
-  <!-- <logger name="edu.wisc.ssec.mcidasv" level="TRACE"/> -->
 
   <root level="INFO">
     <appender-ref ref="STDOUT" />
   </root>
+  
 </configuration>
