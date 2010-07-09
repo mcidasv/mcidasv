@@ -52,6 +52,10 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileView;
 
 import org.jdom.Namespace;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.w3c.dom.Document;
 
 import ucar.nc2.NetcdfFile;
@@ -59,13 +63,15 @@ import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.StringUtil;
+
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 public class NPPChooser extends FileChooser {
 
 	private static final long serialVersionUID = 1L;
+	private static final Logger logger = LoggerFactory.getLogger(NPPChooser.class);
     
-    private NPPFilter hf = null;
+    private NPPFilter nppf = null;
 
     private IntegratedDataViewer idv = getIdv();
 
@@ -147,22 +153,21 @@ public class NPPChooser extends FileChooser {
 		boolean noGeo = false;
 		NetcdfFile ncfile = null;
 		try {
-			System.err.println("Trying to open file: " + fileNameAbsolute);
+			logger.info("Trying to open file: " + fileNameAbsolute);
 			ncfile = NetcdfFile.open(fileNameAbsolute);
 			ucar.nc2.Attribute a = ncfile.findGlobalAttribute("N_GEO_Ref");
 			// if no GEO attribute, we can't visualize this NPP data file, don't include it
 			if (a == null) {
 				noGeo = true;
 			} else {
-    			System.err.println("Value of GEO global attribute: " + a.getStringValue());
+    			logger.info("Value of GEO global attribute: " + a.getStringValue());
     			geoProductID = mapGeoRefToProductID(a.getStringValue());
-    			System.err.println("Value of corresponding Product ID: " + geoProductID);
+    			logger.info("Value of corresponding Product ID: " + geoProductID);
 			}
 		} catch (Exception e) {
-			System.err.println("Exception during open file: " + fileNameAbsolute);
+			logger.error("Exception during open file: " + fileNameAbsolute);
 			e.printStackTrace();
 		} finally {
-			System.err.println("In finally clause for open file: " + fileNameAbsolute);
 			try {
 				ncfile.close();
 			} catch (IOException ioe) {
@@ -182,10 +187,10 @@ public class NPPChooser extends FileChooser {
 			File geoFile = new File(geoFilename);
 			
 			if (geoFile.exists()) {
-				System.out.println("GEO file FOUND: " + geoFilename);
+				logger.info("GEO file FOUND: " + geoFilename);
 			    isNPP = true;
 			} else {
-				System.out.println("GEO file NOT found: " + geoFilename);
+				logger.info("GEO file NOT found: " + geoFilename);
 				isNPP = false;
 			}    
 			
@@ -455,8 +460,8 @@ public class NPPChooser extends FileChooser {
         fileChooser.setAcceptAllFileFilterUsed(false);
         
         String extraFilter = "";
-        hf = new NPPFilter(extraFilter);
-        fileChooser.setFileFilter(hf);
+        nppf = new NPPFilter(extraFilter);
+        fileChooser.setFileFilter(nppf);
 
         return centerPanel;
     }
