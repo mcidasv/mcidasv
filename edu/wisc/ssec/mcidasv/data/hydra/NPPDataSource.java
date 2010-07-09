@@ -53,7 +53,9 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.TreeSet;
 
-// import thredds.catalog.ThreddsMetadata.Variable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ucar.ma2.DataType;
 import ucar.nc2.Dimension;
 import ucar.nc2.Group;
@@ -135,7 +137,9 @@ import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 
 public class NPPDataSource extends HydraDataSource {
 
-    /** Sources file */
+	private static final Logger logger = LoggerFactory.getLogger(NPPDataSource.class);
+	
+	/** Sources file */
     protected String filename;
 
     //protected MultiDimensionReader netCDFReader;
@@ -184,7 +188,7 @@ public class NPPDataSource extends HydraDataSource {
                                  String fileName, Hashtable properties)
             throws VisADException {
         this(descriptor, Misc.newList(fileName), properties);
-        System.out.println("NPPDataSource called, single file selected: " + fileName);
+        logger.trace("NPPDataSource called, single file selected: " + fileName);
     }
 
     /**
@@ -200,12 +204,12 @@ public class NPPDataSource extends HydraDataSource {
                                  List newSources, Hashtable properties)
             throws VisADException {
         super(descriptor, newSources, DATA_DESCRIPTION, properties);
-        System.out.println("NPPDataSource constructor called, file count: " + sources.size());
+        logger.debug("NPPDataSource constructor called, file count: " + sources.size());
 
-        this.filename = (String)sources.get(0);
+        this.filename = (String) sources.get(0);
         
         for (Object o : sources) {
-        	System.out.println("NPP source file: " + (String) o);
+        	logger.debug("NPP source file: " + (String) o);
         }
 
         try {
@@ -261,19 +265,19 @@ public class NPPDataSource extends HydraDataSource {
 	    		String fileAbsPath = null;
 	    		try {
 	    			fileAbsPath = (String) sources.get(fileCount);
-		    		System.err.println("Trying to open file: " + fileAbsPath);
+		    		logger.debug("Trying to open file: " + fileAbsPath);
 		    		ncfile = NetcdfFile.open(fileAbsPath);
 		    		ucar.nc2.Attribute a = ncfile.findGlobalAttribute("N_GEO_Ref");
-		    		System.err.println("Value of GEO global attribute: " + a.getStringValue());
+		    		logger.debug("Value of GEO global attribute: " + a.getStringValue());
 		    		geoProductID = mapGeoRefToProductID(a.getStringValue());
-		    		System.err.println("Value of corresponding Product ID: " + geoProductID);
+		    		logger.debug("Value of corresponding Product ID: " + geoProductID);
 	    	    	Group rg = ncfile.getRootGroup();
 
-	    	    	System.err.println("Root group name: " + rg.getName());
+	    	    	logger.debug("Root group name: " + rg.getName());
 	    	    	List<Group> gl = rg.getGroups();
 	    	    	if (gl != null) {
 	    	    		for (Group g : gl) {
-	    	    			System.err.println("Group name: " + g.getName());
+	    	    			logger.debug("Group name: " + g.getName());
 	    	    			// when we find the Data_Products group, go down another group level and pull out 
 	    	    			// what we will use for nominal day and time (for now anyway).
 	    	    			// XXX TJJ fileCount check is so we don't count the GEO file in time array!
@@ -289,10 +293,10 @@ public class NPPDataSource extends HydraDataSource {
 	    	    						if ((aDate != null) && (aTime != null)) {
 	    	    							String sDate = aDate.getStringValue();
 	    	    							String sTime = aTime.getStringValue();
-	    	    							System.err.println("For day/time, using: " + sDate + sTime.substring(0, sTime.indexOf('Z') - 3));
+	    	    							logger.debug("For day/time, using: " + sDate + sTime.substring(0, sTime.indexOf('Z') - 3));
 	    	    							Date d = sdf.parse(sDate + sTime.substring(0, sTime.indexOf('Z') - 3));
 	    	    							productTimes.add(new Long(d.getTime()));
-	    	    							System.err.println("ms since epoch: " + d.getTime());
+	    	    							logger.debug("ms since epoch: " + d.getTime());
 	    	    							foundDateTime = true;
 	    	    							break;
 	    	    						}
@@ -306,7 +310,7 @@ public class NPPDataSource extends HydraDataSource {
 	    	    		}
 	    	    	}
 	    		} catch (Exception e) {
-	    			System.err.println("Exception during open file: " + fileAbsPath);
+	    			logger.debug("Exception during open file: " + fileAbsPath);
 	    			e.printStackTrace();
 	    		} finally {
 	    			ncfile.close();
@@ -314,7 +318,7 @@ public class NPPDataSource extends HydraDataSource {
     		}
     		
     		for (Long l : productTimes) {
-    			System.err.println("Product time: " + l);
+    			logger.debug("Product time: " + l);
     		}
     		
     		// build each union aggregation element
@@ -336,7 +340,7 @@ public class NPPDataSource extends HydraDataSource {
     			String geoFilename = s.substring(0, s.lastIndexOf(File.separatorChar) + 1);
     			geoFilename += geoProductID;
     			geoFilename += s.substring(s.lastIndexOf(File.separatorChar) + 6);
-    			System.err.println("Cobbled together GEO file name: " + geoFilename);
+    			logger.debug("Cobbled together GEO file name: " + geoFilename);
     			fGeo.setAttribute("location", geoFilename);
     			agg.addContent(fData);
     			agg.addContent(fGeo);
@@ -354,13 +358,13 @@ public class NPPDataSource extends HydraDataSource {
     	    	List<Group> gl = rg.getGroups();
     	    	if (gl != null) {
     	    		for (Group g : gl) {
-    	    			System.err.println("Group name: " + g.getName());
+    	    			logger.debug("Group name: " + g.getName());
     	    			// XXX just temporary - we are looking through All_Data, finding displayable data
     	    			if (g.getName().contains("All_Data")) {
     	    				List<Group> adg = g.getGroups();
     	    				// again, iterate through
     	    				for (Group subG : adg) {
-    	    					System.err.println("Sub group name: " + subG.getName());
+    	    					logger.debug("Sub group name: " + subG.getName());
     	    					String subName = subG.getName();
     	    					if (subName.contains("-GEO")) {
     	    						// this is the geolocation data
@@ -368,11 +372,11 @@ public class NPPDataSource extends HydraDataSource {
     	    						for (Variable v : vl) {
     	    							if (v.getName().contains("Latitude")) {
     	    								pathToLat = v.getName();
-    	        							System.err.println("Lat/Lon Variable: " + v.getName());
+    	        							logger.debug("Lat/Lon Variable: " + v.getName());
     	    							}
     	    							if (v.getName().contains("Longitude")) {
     	    								pathToLon = v.getName();
-    	        							System.err.println("Lat/Lon Variable: " + v.getName());
+    	        							logger.debug("Lat/Lon Variable: " + v.getName());
     	    							}
     	    						} 
     	    					} else {
@@ -381,18 +385,18 @@ public class NPPDataSource extends HydraDataSource {
     	    						for (Variable v : vl) {
     	    							boolean useThis = false;
     	    							String vName = v.getName();
-    	    							System.err.println("Variable: " + vName);
+    	    							logger.debug("Variable: " + vName);
     	    							String firstChar = vName.substring(0, 1);
     	    							DataType dt = v.getDataType();
     	    							if ((dt.getSize() != 4) && (dt.getSize() != 2) && (dt.getSize() != 1)) {
-    	    								System.err.println("Skipping data of size: " + dt.getSize());
+    	    								logger.debug("Skipping data of size: " + dt.getSize());
     	    								continue;
     	    							}
     	    							List al = v.getAttributes();
     	    							int[] shape = v.getShape();
     	    							List<Dimension> dl = v.getDimensions();
     	    							if (dl.size() > 2) {
-    	    								System.err.println("Skipping data of dimension: " + dl.size());
+    	    								logger.debug("Skipping data of dimension: " + dl.size());
     	    								continue;
     	    							}
     	    							boolean xScanOk = false;
@@ -434,14 +438,14 @@ public class NPPDataSource extends HydraDataSource {
     	    								
     	    								for (Variable fV : vl) {
     	    									if ((fV.getName().startsWith(firstChar)) && (fV.getName().endsWith("Factors"))) {
-    	    										System.err.println("Pulling scale and offset values from variable: " + fV.getName());
+    	    										logger.debug("Pulling scale and offset values from variable: " + fV.getName());
     	    										ucar.ma2.Array a = fV.read();
     	    										ucar.ma2.Index i = a.getIndex();
     	    										scaleVal = a.getFloat(i);
-    	    										System.err.println("Scale value: " + scaleVal);
+    	    										logger.debug("Scale value: " + scaleVal);
     	    										i.incr();
     	    										offsetVal = a.getFloat(i);
-    	    										System.err.println("Offset value: " + offsetVal);
+    	    										logger.debug("Offset value: " + offsetVal);
     	    										unpackFlag = true;
     	    										break;
     	    									}
@@ -455,11 +459,11 @@ public class NPPDataSource extends HydraDataSource {
     	    								v.addAttribute(a2);   		
     	    								ucar.nc2.Attribute aFill = v.findAttribute("_FillValue");
     	    								if (aFill != null) {
-    	    									System.err.println("_FillValue attribute value: " + aFill.getNumericValue());
+    	    									logger.debug("_FillValue attribute value: " + aFill.getNumericValue());
     	    								}
     	    								ucar.nc2.Attribute aUnsigned = v.findAttribute("_Unsigned");
     	    								if (aUnsigned != null) {
-    	    									System.err.println("_Unsigned attribute value: " + aUnsigned.getStringValue());
+    	    									logger.debug("_Unsigned attribute value: " + aUnsigned.getStringValue());
     	    									unsignedFlags.add(aUnsigned.getStringValue());
     	    								} else {
     	    									unsignedFlags.add("false");
@@ -471,7 +475,7 @@ public class NPPDataSource extends HydraDataSource {
     	    									unpackFlags.add("false");
     	    								}
     	    								
-    	    								System.err.println("Adding product: " + v.getName());
+    	    								logger.debug("Adding product: " + v.getName());
     	    								pathToProducts.add(v.getName());
     	    								
     	    							}
@@ -488,7 +492,7 @@ public class NPPDataSource extends HydraDataSource {
     		
     	} catch (Exception e) {
     		e.printStackTrace();
-    		System.out.println("cannot create NetCDF reader for files selected");
+    		logger.error("cannot create NetCDF reader for files selected");
     	}
     	
     	// initialize the aggregation reader object
@@ -499,7 +503,7 @@ public class NPPDataSource extends HydraDataSource {
     		throw new VisADException("No data found in files selected");
     	}
     	
-    	System.err.println("Number of adapters needed: " + pathToProducts.size());
+    	logger.debug("Number of adapters needed: " + pathToProducts.size());
     	adapters = new MultiDimensionAdapter[pathToProducts.size()];
     	Hashtable<String, String[]> properties = new Hashtable<String, String[]>(); 
 
@@ -509,7 +513,7 @@ public class NPPDataSource extends HydraDataSource {
     	int pIdx = 0;
     	while (iterator.hasNext()) {
     		String pStr = (String) iterator.next();
-    		System.err.println("Working on adapter number " + (pIdx + 1));
+    		logger.debug("Working on adapter number " + (pIdx + 1));
         	HashMap table = SwathAdapter.getEmptyMetadataTable();
         	table.put("array_name", pStr);
         	table.put("array_dimension_names", new String[] {"Track", "XTrack"});
@@ -565,7 +569,7 @@ public class NPPDataSource extends HydraDataSource {
     			} 
     			catch (Exception e) {
     				e.printStackTrace();
-    				System.out.println("doMakeDataChoice failed");
+    				logger.error("doMakeDataChoice failed");
     			}
 
     			if (choice != null) {
@@ -666,7 +670,7 @@ public class NPPDataSource extends HydraDataSource {
         	}
         }
         
-        System.err.println("Found dataChoice index: " + aIdx);
+        logger.debug("Found dataChoice index: " + aIdx);
         adapter = adapters[aIdx];
 
         try {
@@ -711,7 +715,7 @@ public class NPPDataSource extends HydraDataSource {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("getData exception e=" + e);
+            logger.error("getData exception e=" + e);
         }
         return data;
     }
@@ -775,7 +779,7 @@ public class NPPDataSource extends HydraDataSource {
           FlatField image = (FlatField) dataChoice.getData(null);
           components.add(new PreviewSelection(dataChoice, image, null));
         } catch (Exception e) {
-          System.out.println("Can't make PreviewSelection: "+e);
+          logger.error("Can't make PreviewSelection: "+e);
           e.printStackTrace();
         }
       }
@@ -784,7 +788,7 @@ public class NPPDataSource extends HydraDataSource {
           FlatField track = track_adapter.getData(track_adapter.getDefaultSubset());
           components.add(new NPPTrackSelection(dataChoice, track));
         } catch (Exception e) {
-          System.out.println("Can't make PreviewSelection: "+e);
+          logger.error("Can't make PreviewSelection: "+e);
           e.printStackTrace();
         }
       }
@@ -801,42 +805,45 @@ public class NPPDataSource extends HydraDataSource {
 
 class NPPChannelSelection extends DataSelectionComponent {
 
-   DataChoice dataChoice;
-   MultiSpectralDisplay display;
+	private static final Logger logger = LoggerFactory.getLogger(NPPChannelSelection.class);
+	DataChoice dataChoice;
+	MultiSpectralDisplay display;
 
-   NPPChannelSelection(DataChoice dataChoice) throws Exception {
-     super("Channels");
-     this.dataChoice = dataChoice;
-     display = new MultiSpectralDisplay((DirectDataChoice)dataChoice);
-     display.showChannelSelector();
-   }
+	NPPChannelSelection(DataChoice dataChoice) throws Exception {
+		super("Channels");
+		this.dataChoice = dataChoice;
+		display = new MultiSpectralDisplay((DirectDataChoice)dataChoice);
+		display.showChannelSelector();
+	}
 
-  protected JComponent doMakeContents() {
-    try {
-      JPanel panel = new JPanel(new BorderLayout());
-      panel.add("Center", display.getDisplayComponent());
-      return panel;
-    }
-    catch (Exception e) {
-      System.out.println(e);
-    }
-    return null;
-  }
-                                                                                                                                                   
-                                                                                                                                                   
-  public void applyToDataSelection(DataSelection dataSelection) {
-      try {
-        dataSelection.putProperty(Constants.PROP_CHAN, display.getWaveNumber());
-        dataSelection.putProperty(SpectrumAdapter.channelIndex_name, display.getChannelIndex());
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-  }
+	protected JComponent doMakeContents() {
+		try {
+			JPanel panel = new JPanel(new BorderLayout());
+			panel.add("Center", display.getDisplayComponent());
+			return panel;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+
+	public void applyToDataSelection(DataSelection dataSelection) {
+		try {
+			dataSelection.putProperty(Constants.PROP_CHAN, display.getWaveNumber());
+			dataSelection.putProperty(SpectrumAdapter.channelIndex_name, display.getChannelIndex());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 }
 
 
 class NPPTrackSelection extends DataSelectionComponent {
+	
+	private static final Logger logger = LoggerFactory.getLogger(NPPTrackSelection.class);
       DataChoice dataChoice;
       FlatField track;
 
@@ -875,9 +882,9 @@ class NPPTrackSelection extends DataSelectionComponent {
             mapLines.setMapLines(mapAdapter.getData());
             mapLines.setColor(java.awt.Color.cyan);
             mapProjDsp.addDisplayable(mapLines);
-        } catch (Exception excp) {
-            System.out.println("Can't open map file " + mapSource);
-            System.out.println(excp);
+        } catch (Exception e) {
+            logger.error("Can't open map file " + mapSource);
+            e.printStackTrace();
         }
                                                                                                                                                      
         mapLines  = new MapLines("maplines");
@@ -888,9 +895,9 @@ class NPPTrackSelection extends DataSelectionComponent {
             mapLines.setMapLines(mapAdapter.getData());
             mapLines.setColor(java.awt.Color.cyan);
             mapProjDsp.addDisplayable(mapLines);
-        } catch (Exception excp) {
-            System.out.println("Can't open map file " + mapSource);
-            System.out.println(excp);
+        } catch (Exception e) {
+            logger.error("Can't open map file " + mapSource);
+            e.printStackTrace();
         }
                                                                                                                                                      
         mapLines  = new MapLines("maplines");
@@ -901,9 +908,9 @@ class NPPTrackSelection extends DataSelectionComponent {
             mapLines.setMapLines(mapAdapter.getData());
             mapLines.setColor(java.awt.Color.cyan);
             mapProjDsp.addDisplayable(mapLines);
-        } catch (Exception excp) {
-            System.out.println("Can't open map file " + mapSource);
-            System.out.println(excp);
+        } catch (Exception e) {
+            logger.error("Can't open map file " + mapSource);
+            e.printStackTrace();
         }
 
         final LineDrawing selectBox = new LineDrawing("select");
@@ -944,7 +951,7 @@ class NPPTrackSelection extends DataSelectionComponent {
          try {
            mp = new ProjectionCoordinateSystem(new LatLonProjection());
          } catch (Exception e) {
-             System.out.println(" getDataProjection"+e);
+             logger.error(" getDataProjection"+e);
          }
          return mp;
        }
@@ -977,7 +984,7 @@ class NPPTrackSelection extends DataSelectionComponent {
           return panel;
         }
         catch (Exception e) {
-          System.out.println(e);
+          e.printStackTrace();
         }
         return null;
       }

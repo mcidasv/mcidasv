@@ -35,6 +35,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.Index2D;
@@ -60,7 +63,9 @@ import ucar.nc2.ncml.NcMLReader;
 
 public class GranuleAggregation implements MultiDimensionReader {
  
-   // this structure holds the NcML readers that get passed in 
+	private static final Logger logger = LoggerFactory.getLogger(GranuleAggregation.class);
+	
+	// this structure holds the NcML readers that get passed in 
    ArrayList<NetcdfFile> nclist = new ArrayList<NetcdfFile>();
    
    // need an ArrayList for each variable hashmap structure
@@ -75,7 +80,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 
    public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, int granuleLength, int inTrackIndex) throws Exception {
 	   if (ncdfal == null) throw new Exception("No data: empty NPP aggregation object");
-	   System.err.println("granule length: " + granuleLength);
+	   logger.trace("granule length: " + granuleLength);
 	   this.granuleLength = granuleLength;
 	   this.inTrackIndex = inTrackIndex;
 	   init(ncdfal);
@@ -90,10 +95,10 @@ public class GranuleAggregation implements MultiDimensionReader {
    }
 
    public int[] getDimensionLengths(String array_name) {
-	   System.err.println("GranuleAggregation.getDimensionLengths, requested: " + array_name);
+	   logger.trace("GranuleAggregation.getDimensionLengths, requested: " + array_name);
 	   int[] lengths = varDimLengthsList.get(0).get(array_name);
 	   for (int i = 0; i < lengths.length; i++) {
-		   System.err.println("Length: " + lengths[i]);
+		   logger.trace("Length: " + lengths[i]);
 	   }
      return varDimLengthsList.get(0).get(array_name);
    }
@@ -125,7 +130,7 @@ public class GranuleAggregation implements MultiDimensionReader {
    public HDFArray getArrayAttribute(String array_name, String attr_name) throws Exception {
      Variable var = varMapList.get(0).get(array_name);
      Attribute attr = var.findAttribute(attr_name);
-     System.err.println("GranuleAggregation.getArrayAttribute: " + var.getName());
+     logger.trace("GranuleAggregation.getArrayAttribute: " + var.getName());
      Array attrVals = attr.getValues();
      DataType dataType = attr.getDataType();
      Object array = attrVals.copyTo1DJavaArray();
@@ -195,7 +200,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   while (dimIter.hasNext()) {
 				   Dimension dim = (Dimension) dimIter.next();
 				   String dimName = dim.getName();
-				   System.err.println("GranuleAggregation init, variable: " + varName + ", dimension name: " + dimName);
+				   logger.trace("GranuleAggregation init, variable: " + varName + ", dimension name: " + dimName);
 				   if (dimName == null) dimName = "dim"+cnt;
 				   dimNames[cnt] = dimName;
 				   dimLengths[cnt] = dim.getLength();
@@ -259,12 +264,12 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   
 	   // next, we break out the offsets, counts, and strides for each granule
 	   int granuleSpan = hiGranuleId - loGranuleId + 1;
-	   System.err.println("readArray req, loGran: " + loGranuleId + ", hiGran: " + 
+	   logger.trace("readArray req, loGran: " + loGranuleId + ", hiGran: " + 
 			   hiGranuleId + ", granule span: " + granuleSpan + ", dimCount: " + dimensionCount);
 	   for (int i = 0; i < dimensionCount; i++) {
-		   System.err.println("start[" + i + "]: " + start[i]);
-		   System.err.println("count[" + i + "]: " + count[i]);
-		   System.err.println("stride[" + i + "]: " + stride[i]);
+		   logger.trace("start[" + i + "]: " + start[i]);
+		   logger.trace("count[" + i + "]: " + count[i]);
+		   logger.trace("stride[" + i + "]: " + stride[i]);
 	   }
 	   int [][] startSet = new int [granuleSpan][dimensionCount];
 	   int [][] countSet = new int [granuleSpan][dimensionCount];
@@ -321,7 +326,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 		   } else {
 			   ArrayList<Range> rangeList = new ArrayList<Range>();
 			   for (int dimensionIdx = 0; dimensionIdx < dimensionCount; dimensionIdx++) {
-				   System.err.println("Creating new Range: " + startSet[granuleIdx][dimensionIdx] +
+				   logger.trace("Creating new Range: " + startSet[granuleIdx][dimensionIdx] +
 						   ", " + (startSet[granuleIdx][dimensionIdx] + countSet[granuleIdx][dimensionIdx] - 1) + ", " + strideSet[granuleIdx][dimensionIdx]);
 				   Range range = new Range(
 						   startSet[granuleIdx][dimensionIdx], 
