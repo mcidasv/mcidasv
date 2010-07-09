@@ -131,7 +131,7 @@
   <derived
      id="replaceFilter"
      description="Replace Image Filter"
-     formula="replaceFilter(image,replaceVal[isuser=true,default=0], bline[isuser=true,default=Default],eline[isuser=true,default=Default],belem[isuser=true,default=Default],eelem[isuser=true,default=Default])"
+     formula="replaceFilter(image,replaceVal[isuser=true,default=0], bline[isuser=true,default=Default],eline[isuser=true,default=Default],belem[isuser=true,default=Default],eelem[isuser=true,default=Default],sourceval[isuser=true,default=Default])"
      isenduser="true"
      isdefault="false">
     <categories>

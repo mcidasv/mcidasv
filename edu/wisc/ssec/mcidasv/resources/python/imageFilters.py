@@ -1,7 +1,6 @@
-from visad.python.JPythonMethods import *
-
 def cloudFilter(sdataset1,sdataset2,user_replace='Default',user_constant=0):
   """ 
+      from visad.python.JPythonMethods import getMinMax
       cloud filter from McIDAS-X - requires 2 source datasets
       user_replace: replacement value  (default=minimum value in either sdataset1 or sdataset2)
       user_constant: additive constant (default=0)
@@ -17,10 +16,10 @@ def cloudFilter(sdataset1,sdataset2,user_replace='Default',user_constant=0):
   for t in range(data1.getDomainSet().getLength()):
      range1 = data1.getSample(t)
      vals1 = range1.getFloats(0)
-     min1=int(min(min(vals1)))
+     min1=int(min(vals1[0]))
      range2 = data2.getSample(t)
      vals2 = range2.getFloats(0)
-     min2=int(min(min(vals2))) 
+     min2=int(min(vals2[0])) 
      if (replace == 'Default'):
         replace=min([min1, min2])
      domain=GridUtil.getSpatialDomain(range1)
@@ -34,15 +33,15 @@ def cloudFilter(sdataset1,sdataset2,user_replace='Default',user_constant=0):
            if (line1 <= line2 + constant):
              vals1[0][i*element_size+j] = replace
                 
-     post_hi = int(max(max(vals1)))
-     post_low = int(min(min(vals1))) 
+     post_hi = int(max(vals1[0]))
+     post_low = int(min(vals1[0])) 
      lookup=contrast(post_low,post_hi,post_low,post_hi)
      vals1=modify(vals1,element_size,line_size,post_low,lookup) 
      range1.setSamples(vals1)
 
   return data1
 
-def replaceFilter(sdataset,user_replaceVal=0,user_bline='Default',user_eline='Default',user_belem='Default',user_eelem='Default'):
+def replaceFilter(sdataset,user_replaceVal=0,user_bline='Default',user_eline='Default',user_belem='Default',user_eelem='Default',user_sourceval='Default'):
   """ 
       replace filter from McIDAS-X 
       user_replace : replacement value  (default=0)
@@ -50,6 +49,9 @@ def replaceFilter(sdataset,user_replaceVal=0,user_bline='Default',user_eline='De
       user_eline   : ending line in the source image region    (default=last line)
       user_belem   : beginning element in the source image region (default=first element)
       user_eelem   : ending element in the source image region    (default=last element)
+      user_sourceval: source image values in the region to replace user_replace; specify values
+                      in the list format, e.g. val1 val2 val3 etc., 
+                      or a range format, e.g. bval-eval (default=0-255)
   """  
   newData = sdataset.clone()
   replaceVal=int(user_replaceVal)
@@ -69,7 +71,24 @@ def replaceFilter(sdataset,user_replaceVal=0,user_bline='Default',user_eline='De
     belem=0
   if (eelem != 'Default'):
      eelem=int(eelem)
-    
+  
+  """
+     sourceVal can either be specified in list format: val1 val2 val3
+                  or in a range format, bval-eval (default = 0-255)
+  """
+  if (user_sourceval != 'Default'):   
+     if '-' in user_sourceval:
+         tempVal1 = [ int(m) for m in user_sourceval.split('-')]
+         tempVal = range(tempVal1[0],tempVal1[1] + 1)
+     else:
+         tempVal = user_sourceval.split()
+  
+  else:
+     tempVal = range(0, 256)
+  
+  sourceVal = [ float(m) for m in tempVal ]
+  print sourceVal       
+         
   for t in range(newData.getDomainSet().getLength()):
      rangeObject = newData.getSample(t)
      vals = rangeObject.getFloats(0)
@@ -84,11 +103,12 @@ def replaceFilter(sdataset,user_replaceVal=0,user_bline='Default',user_eline='De
      for i in range(line_size)[bline:eline]:
         for j in range(element_size)[belem:eelem]:
            line = vals[0][i*element_size+j]
-           if ((j >= belem and j <= eelem) and (i >= bline and i <= eline)):
+           """ if ((j >= belem and j <= eelem) and (i >= bline and i <= eline) or (line in sourceVal)): """
+           if (line in sourceVal):
               line=replaceVal
-           vals[0][j*line_size+i] = line
+           vals[0][i*element_size+j] = line
      
-     rangeObject.setSamples(vals,1)
+     rangeObject.setSamples(vals)
 
   return newData
 
@@ -128,8 +148,9 @@ def shotFilter(sdataset,user_bline='Default',user_eline='Default',user_pdiff=15)
    for t in range(newData.getDomainSet().getLength()):
      rangeObject = newData.getSample(t)
      vals = rangeObject.getFloats(0)
-     high = int(max(max(vals)))
-     low = int(min(min(vals))) 
+     high = int(max(vals[0]))
+     low = int(min(vals[0]))
+     print high, low, max(vals[0]), min(vals[0])
      pointDiff = int((high - low + 1)*(filter_diff/100.0))    
      domain=GridUtil.getSpatialDomain(rangeObject)
               
@@ -158,8 +179,8 @@ def shotFilter(sdataset,user_bline='Default',user_eline='Default',user_pdiff=15)
            continue
          
          vals[0][i*element_size + j] = (left + right)/2
-            
-     rangeObject.setSamples(vals,1)
+     
+     rangeObject.setSamples(vals)
    
    return newData
 
@@ -195,11 +216,11 @@ def coreFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Defa
       range1=data1.getSample(t)
       range2=data2.getSample(t)
       vals1=range1.getFloats(0)
-      max1=int(max(max(vals1)))
-      min1=int(min(min(vals1)))
+      max1=int(max(vals1[0]))
+      min1=int(min(vals1[0]))
       vals2=range2.getFloats(0)
-      max2=int(max(max(vals2)))
-      min2=int(min(min(vals2)))
+      max2=int(max(vals2[0]))
+      min2=int(min(vals2[0]))
       if (brkpoint1 == 'Default'):
          brkpoint1=min([min1, min2])
       if (brkpoint2 == 'Default'):
@@ -252,11 +273,11 @@ def discriminateFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoin
       range1=data1.getSample(t)
       range2=data2.getSample(t)
       vals1=range1.getFloats(0)
-      max1=int(max(max(vals1)))
-      min1=int(min(min(vals1)))
+      max1=int(max(vals1[0]))
+      min1=int(min(vals1[0]))
       vals2=range2.getFloats(0)
-      max2=int(max(max(vals2)))
-      min2=int(min(min(vals2)))
+      max2=int(max(vals2[0]))
+      min2=int(min(vals2[0]))
       if (brkpoint1 == 'Default'):
          brkpoint1=min([min1, min2])
       if (brkpoint2 == 'Default'):
@@ -275,8 +296,8 @@ def discriminateFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoin
             if (vals1[0][i*element_size+j] < brkpoint1 or vals1[0][i*element_size+j] > brkpoint2 or vals2[0][i*element_size+j] < brkpoint3 or vals2[0][i*element_size+j] > brkpoint4):
                vals1[0][i*element_size + j]=replace
       
-      post_hi = int(max(max(vals1)))
-      post_low = int(min(min(vals1))) 
+      post_hi = int(max(vals1[0]))
+      post_low = int(min(vals1[0])) 
       lookup=contrast(post_low,post_hi,post_low,post_hi)
       vals1=modify(vals1,element_size,line_size,post_low,lookup) 
       range1.setSamples(vals1)      
@@ -304,11 +325,11 @@ def mergeFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Def
       range1=data1.getSample(t)
       range2=data2.getSample(t)
       vals1=range1.getFloats(0)
-      max1=int(max(max(vals1)))
-      min1=int(min(min(vals1)))
+      max1=int(max(vals1[0]))
+      min1=int(min(vals1[0]))
       vals2=range2.getFloats(0)
-      max2=int(max(max(vals2)))
-      min2=int(min(min(vals2)))
+      max2=int(max(vals2[0]))
+      min2=int(min(vals2[0]))
       if (brkpoint1 == 'Default'):
          brkpoint1=min([min1, min2])
       if (brkpoint2 == 'Default'):
@@ -321,8 +342,8 @@ def mergeFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Def
             if (vals1[0][i*element_size+j] < brkpoint1 or vals1[0][i*element_size+j] > brkpoint2):
                vals1[0][i*element_size + j]=vals2[0][i*element_size + j] - constant
                
-      post_hi = int(max(max(vals1)))
-      post_low = int(min(min(vals1))) 
+      post_hi = int(max(vals1[0]))
+      post_low = int(min(vals1[0])) 
       lookup=contrast(post_low,post_hi,post_low,post_hi)
       vals1=modify(vals1,element_size,line_size,post_low,lookup)       
       range1.setSamples(vals1)
@@ -335,8 +356,8 @@ def gradientFilter(sdataset):
    for t in range(newData.getDomainSet().getLength()):
      rangeObject = newData.getSample(t)
      vals = rangeObject.getFloats(0)
-     in_hi = int(max(max(vals)))
-     in_low = int(min(min(vals))) 
+     in_hi = int(max(vals[0]))
+     in_low = int(min(vals[0])) 
      domain=GridUtil.getSpatialDomain(rangeObject)
                    
      [element_size,line_size]=domain.getLengths()
@@ -348,8 +369,8 @@ def gradientFilter(sdataset):
        """ set last value to zero """
        vals[0][i*element_size + j + 1] = 0
      
-     post_hi = int(max(max(vals)))
-     post_low = int(min(min(vals))) 
+     post_hi = int(max(vals[0]))
+     post_low = int(min(vals[0])) 
       
      lookup=contrast(post_low,post_hi,post_low,post_hi)
      vals=modify(vals,element_size,line_size,post_low,lookup) 
@@ -373,8 +394,8 @@ def passFilter(sdataset,user_passname,user_radius=50,user_leak=100):
    for t in xrange(len(newData)):
      rangeObject = newData.getSample(t)
      vals = rangeObject.getFloats()
-     in_hi = int(max(max(vals)))
-     in_low = int(min(min(vals))) 
+     in_hi = int(max(vals[0]))
+     in_low = int(min(vals[0])) 
      midpoint = (in_hi - in_low)/2 + in_low
      domain=GridUtil.getSpatialDomain(rangeObject)
      [element_size,line_size]=domain.getLengths()
@@ -411,8 +432,8 @@ def passFilter(sdataset,user_passname,user_radius=50,user_leak=100):
           radiusArray.append(int(vals[0][i*element_size + mright]))
           nsum = sum(radiusArray)
             
-     post_hi = int(max(max(vals)))
-     post_low = int(min(min(vals))) 
+     post_hi = int(max(vals[0]))
+     post_low = int(min(vals[0])) 
      
      lookup=contrast(post_low,post_hi,post_low,post_hi)
      vals=modify(vals,element_size,line_size,post_low,lookup) 
@@ -472,8 +493,8 @@ def lowPass2DFilter(sdataset,user_linecoef=0.5,user_elecoef=0.5):
         
         realLine=vals[0][i*element_size:i*element_size+element_size].tolist()
 
-     post_hi = int(max(max(vals)))
-     post_low = int(min(min(vals))) 
+     post_hi = int(max(vals[0]))
+     post_low = int(min(vals[0])) 
      lookup=contrast(post_low,post_hi,post_low,post_hi)
      vals=modify(vals,element_size,line_size,post_low,lookup) 
      rangeObject.setSamples(vals)
@@ -508,8 +529,8 @@ def highPass2DFilter(sdataset):
             vals[0][i * element_size + j] = 0
      
      vals[0] = firstLine + vals[0][0:(line_size-1)*element_size]
-     post_hi = int(max(max(vals)))
-     post_low = int(min(min(vals))) 
+     post_hi = int(max(vals[0]))
+     post_low = int(min(vals[0])) 
      lookup=contrast(post_low,post_hi,post_low,post_hi)
      vals=modify(vals,element_size,line_size,post_low,lookup)
      rangeObject.setSamples(vals)
@@ -551,8 +572,8 @@ def holeFilter(sdataset,user_brkpoint1=0,user_brkpoint2=1):
                for fill in range(element_size)[j:k]:
                   vals[0][i*element_size + fill] = (vals[0][i*element_size + j - 1] + vals[0][i*element_size+k])/2
                
-     post_hi = int(max(max(vals)))
-     post_low = int(min(min(vals))) 
+     post_hi = int(max(vals[0]))
+     post_low = int(min(vals[0])) 
      lookup=contrast(post_low,post_hi,post_low,post_hi)
      vals=modify(vals,element_size,line_size,post_low,lookup) 
      rangeObject.setSamples(vals)
