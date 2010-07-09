@@ -32,39 +32,28 @@ package edu.wisc.ssec.mcidasv.chooser;
 
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+
 import java.io.File;
 import java.io.IOException;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.Icon;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileView;
 
-import org.jdom.Namespace;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.w3c.dom.Document;
-
 import ucar.nc2.NetcdfFile;
-import ucar.unidata.idv.IntegratedDataViewer;
-import ucar.unidata.idv.chooser.IdvChooserManager;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.StringUtil;
 
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import ucar.unidata.idv.chooser.IdvChooserManager;
+import ucar.unidata.util.StringUtil;
 
 public class NPPChooser extends FileChooser {
 
@@ -73,8 +62,6 @@ public class NPPChooser extends FileChooser {
     
     private NPPFilter nppf = null;
 
-    private IntegratedDataViewer idv = getIdv();
-
     /**
      * Create the chooser with the given manager and xml
      *
@@ -82,6 +69,7 @@ public class NPPChooser extends FileChooser {
      * @param root The xml
      *
      */
+    
     public NPPChooser(IdvChooserManager mgr, org.w3c.dom.Element root) {
         super(mgr, root);
     }
