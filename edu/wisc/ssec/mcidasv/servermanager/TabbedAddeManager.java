@@ -77,7 +77,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableColumnModelEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -137,6 +136,9 @@ public class TabbedAddeManager extends JFrame {
     /** Size of the ADDE entry verification thread pool. */
     private static final int POOL = 2;
 
+    // not the best idea, bub.
+    private static TabbedAddeManager staticTabbedManager;
+
     /**
      * These are the various {@literal "events"} that the server manager GUI
      * supports. These are published via the wonderful {@link EventBus#publish(Object)} method.
@@ -193,6 +195,10 @@ public class TabbedAddeManager extends JFrame {
         initComponents();
     }
 
+    protected static TabbedAddeManager getTabbedManager() {
+        return staticTabbedManager;
+    }
+
     /**
      * If the GUI isn't shown, this method will display things. If the GUI <i>is 
      * shown</i>, bring it to the front.
@@ -205,6 +211,7 @@ public class TabbedAddeManager extends JFrame {
         } else {
             toFront();
         }
+        staticTabbedManager = this;
         EventBus.publish(Event.SHOWN);
     }
 
@@ -212,6 +219,7 @@ public class TabbedAddeManager extends JFrame {
      * Closes and disposes (if needed) the GUI.
      */
     public void closeManager() {
+        staticTabbedManager = null;
         EventBus.publish(Event.CLOSED);
         if (isDisplayable()) {
             dispose();

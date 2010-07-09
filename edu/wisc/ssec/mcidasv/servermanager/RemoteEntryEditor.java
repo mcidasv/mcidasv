@@ -111,7 +111,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     private static final Color ERROR_FIELD_COLOR = Color.PINK;
 
     /** Text {@link Color} of an {@literal "invalid"} {@link javax.swing.JTextField}. */
-    private static final Color ERROR_TEXT_COLOR = Color.white;
+    private static final Color ERROR_TEXT_COLOR = Color.WHITE;
 
     /** Background {@link Color} of a {@literal "valid"} {@link javax.swing.JTextField}. */
     private static final Color NORMAL_FIELD_COLOR = Color.WHITE;
@@ -126,7 +126,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     private final Set<javax.swing.JTextField> badFields = newLinkedHashSet();
 
     /** The server manager GUI. Be aware that this can be {@code null}. */
-    private final TabbedAddeManager managerController;
+    private TabbedAddeManager managerController;
 
     /** Reference back to the server manager. */
     private final EntryStore entryStore;
@@ -269,9 +269,9 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
                         entries.add((RemoteAddeEntry)matchedEntry);
                     }
                 } else {
-                    // err... wtf?
+                    // results should only be empty or a single entry
+                    logger.warn("server manager returned unexpected results={}", matches);
                 }
-//                entries.add(builder.build());
             }
         }
         return entries;
@@ -281,8 +281,9 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         if (isDisplayable()) {
             dispose();
         }
-        if (refreshManager && managerController != null) {
-            managerController.refreshDisplay();
+        TabbedAddeManager tmpController = TabbedAddeManager.getTabbedManager();
+        if (refreshManager && tmpController != null) {
+            tmpController.refreshDisplay();
         }
     }
 
@@ -838,11 +839,8 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
                 }
             }
         }
-
         pack();
     }// </editor-fold>
-    
-
 
     private void acctBoxActionPerformed(java.awt.event.ActionEvent evt) {
         assert SwingUtilities.isEventDispatchThread();
@@ -972,7 +970,6 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         return goodEntries;
     }
 
-//    YOU REALLY WANT TO PORT checkGroups
     public Set<RemoteAddeEntry> checkGroups(final Set<RemoteAddeEntry> entries) {
         Contract.notNull(entries, "entries cannot be null");
         if (entries.isEmpty()) {
@@ -984,7 +981,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         ExecutorService exec = Executors.newFixedThreadPool(POOL);
         CompletionService<StatusWrapper> ecs = new ExecutorCompletionService<StatusWrapper>(exec);
         Map<RemoteAddeEntry, AddeStatus> entry2Status = new LinkedHashMap<RemoteAddeEntry, AddeStatus>(entries.size());
-        
+
         // submit new verification tasks to the pool's queue ... (apologies for the pun?)
         for (RemoteAddeEntry entry : entries) {
             StatusWrapper pairing = new StatusWrapper(entry);
@@ -1053,7 +1050,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         } finally {
             exec.shutdown();
         }
-        
+
         if (!statuses.contains(AddeStatus.OK)) {
             if (statuses.contains(AddeStatus.BAD_ACCOUNTING)) {
                 setStatus("Incorrect accounting information.");
@@ -1137,17 +1134,6 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         }
         return map;
     }
-    
-//    public static Map<RemoteAddeEntry, AddeStatus> checkEntries(final boolean checkHost, final List<RemoteAddeEntry> entries) {
-//        notNull(entries);
-//        
-//        RemoteAddeEntry first = entries.get(0);
-//        if (checkHost && !checkHost(first)) {
-//            return bulkPut(entries, AddeStatus.BAD_SERVER);
-//        }
-//        
-//        
-//    }
 
     /**
      * Tries to connect to a given {@link RemoteAddeEntry} and read the list
@@ -1194,10 +1180,8 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
                     }
                     groups.add(keyval[1]);
                 }
-//                groups.add(new AddeEntry(line).getGroup());
             }
         }
-
         return groups;
     }
 
@@ -1232,7 +1216,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         logger.debug("host={} result={}", entry.getAddress(), connected);
         return connected;
     }
-    
+
     // Variables declaration - do not modify
     private javax.swing.JCheckBox acctBox;
     private javax.swing.JButton addServer;
