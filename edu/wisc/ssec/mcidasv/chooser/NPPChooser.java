@@ -30,6 +30,8 @@
 
 package edu.wisc.ssec.mcidasv.chooser;
 
+import edu.wisc.ssec.mcidasv.data.hydra.JPSSUtilities;
+
 import java.awt.Component;
 import java.awt.Container;
 
@@ -37,7 +39,6 @@ import java.io.File;
 import java.io.IOException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.Icon;
@@ -149,7 +150,7 @@ public class NPPChooser extends FileChooser {
 				noGeo = true;
 			} else {
     			logger.info("Value of GEO global attribute: " + a.getStringValue());
-    			geoProductID = mapGeoRefToProductID(a.getStringValue());
+    			geoProductID = JPSSUtilities.mapGeoRefToProductID(a.getStringValue());
     			logger.info("Value of corresponding Product ID: " + geoProductID);
 			}
 		} catch (Exception e) {
@@ -185,29 +186,6 @@ public class NPPChooser extends FileChooser {
 		}
     	
     	return isNPP;
-    }
-    
-    public String mapGeoRefToProductID(String geoRef) {
-    	HashMap geoHM = new HashMap();
-    	geoHM.put("ATMS-SDR-GEO", "GATMO");
-    	geoHM.put("CrIMSS-AUX-EDR", "GCRIO");
-    	geoHM.put("CrIS-SDR-GEO", "GCRSO");
-    	geoHM.put("VIIRS-MOD-EDR-GEO", "GMGTO");
-    	geoHM.put("VIIRS-MOD-GEO", "GMODO");
-    	geoHM.put("VIIRS-MOD-GEO-TC", "GMTCO");
-    	geoHM.put("VIIRS-MOD-MAP-IP", "IVMIM");
-    	geoHM.put("VIIRS-MOD-UNAGG-GEO", "VMUGE");
-    	geoHM.put("VIIRS-NCC-EDR-GEO", "GNCCO");
-    	geoHM.put("VIIRS-DNB-GEO", "GDNBO");
-    	geoHM.put("VIIRS-IMG-EDR-GEO", "GIGTO");
-    	geoHM.put("VIIRS-IMG-GEO", "GIMGO");
-    	geoHM.put("VIIRS-IMG-GEO-TC", "GITCO");
-    	geoHM.put("VIIRS-CLD-AGG-GEO", "GCLDO");
-    	String s = null;
-    	if (geoHM != null) {
-    		s = (String) geoHM.get(geoRef);
-    	}
-    	return s;
     }
     
    
@@ -246,7 +224,7 @@ public class NPPChooser extends FileChooser {
 
         // maintain an array of "seen" patterns, so we only identify data
     	// once for a particular type and time (instead of for each segment).
-    	ArrayList seenPatterns = new ArrayList();
+    	ArrayList<String> seenPatterns = new ArrayList<String>();
     	
     	String extraFilter = "";
     	
@@ -400,7 +378,7 @@ public class NPPChooser extends FileChooser {
         if (files == null) {
             return (String[]) null;
         }
-        Vector v = new Vector();
+        Vector<String> v = new Vector<String>();
         String fileNotExistsError = "";
 
         // NOTE:  If multiple files are selected, then missing files

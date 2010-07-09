@@ -31,13 +31,20 @@
 package edu.wisc.ssec.mcidasv.data.hydra;
 
 import edu.wisc.ssec.mcidasv.Constants;
-import edu.wisc.ssec.mcidasv.data.PreviewSelection;
-
 import edu.wisc.ssec.mcidasv.data.HydraDataSource;
-import edu.wisc.ssec.mcidasv.data.hydra.ProfileAlongTrack;
-import edu.wisc.ssec.mcidasv.data.hydra.ProfileAlongTrack3D;
-import edu.wisc.ssec.mcidasv.data.hydra.Calipso2D;
-import edu.wisc.ssec.mcidasv.control.LambertAEA;
+import edu.wisc.ssec.mcidasv.data.PreviewSelection;
+import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+
+import java.net.URL;
 
 import java.rmi.RemoteException;
 
@@ -45,13 +52,21 @@ import java.text.SimpleDateFormat;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.TreeSet;
+
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import org.jdom.Namespace;
+import org.jdom.output.XMLOutputter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,69 +80,39 @@ import ucar.nc2.Variable;
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
-import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DataSelectionComponent;
+import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.data.GeoSelection;
-import ucar.unidata.data.GeoSelectionPanel;
 
+import ucar.unidata.geoloc.projection.LatLonProjection;
 import ucar.unidata.util.Misc;
-import ucar.unidata.idv.ViewContext;
 
-import visad.Data;
-import visad.FlatField;
-import visad.GriddedSet;
-import visad.Gridded2DSet;
-import visad.SampledSet;
-import visad.VisADException;
-import visad.georef.MapProjection;
-import visad.data.mcidas.BaseMapAdapter;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
-
-import java.util.TimeZone;
-
-import javax.swing.*;
-import javax.swing.event.*;
-
-import org.jdom.Attribute;
-import org.jdom.Namespace;
-import org.jdom.output.XMLOutputter;
-
-import com.google.protobuf.TextFormat.ParseException;
-
-import java.awt.geom.Rectangle2D;
-
-import visad.*;
-import visad.bom.RubberBandBoxRendererJ3D;
-import visad.java3d.DisplayImplJ3D;
-import visad.java3d.TwoDDisplayRendererJ3D;
-import ucar.unidata.idv.ViewManager;
-import ucar.unidata.idv.ViewDescriptor;
-import ucar.unidata.idv.MapViewManager;
-import ucar.unidata.idv.control.DisplayControlBase;
-import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
 import ucar.unidata.view.geoloc.MapProjectionDisplay;
-import java.awt.Component;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import ucar.visad.display.XYDisplay;
-import ucar.visad.display.MapLines;
-import ucar.visad.display.DisplayMaster;
-import ucar.visad.display.LineDrawing;
-import ucar.visad.display.RubberBandBox;
+import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
 
 import ucar.visad.ProjectionCoordinateSystem;
-import ucar.unidata.geoloc.projection.LatLonProjection;
 
-import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
+import ucar.visad.display.DisplayMaster;
+import ucar.visad.display.LineDrawing;
+import ucar.visad.display.MapLines;
+import ucar.visad.display.RubberBandBox;
+
+import visad.CellImpl;
+import visad.Data;
+import visad.FlatField;
+import visad.Gridded2DSet;
+import visad.GriddedSet;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.SampledSet;
+import visad.UnionSet;
+import visad.VisADException;
+
+import visad.data.mcidas.BaseMapAdapter;
+
+import visad.georef.MapProjection;
 
 /**
  * A data source for NPOESS Preparatory Project (NPP) data
@@ -159,8 +144,6 @@ public class NPPDataSource extends HydraDataSource {
     private boolean hasImagePreview = true;
     private boolean hasTrackPreview = false;
     private boolean hasChannelSelect = false;
-    
-    private HashMap geoHM;
     
     private static int[] YSCAN_POSSIBILITIES = { 96, 768 };
     private static int[] XSCAN_POSSIBILITIES = { 508, 3200 };    
@@ -236,25 +219,6 @@ public class NPPDataSource extends HydraDataSource {
     	ArrayList<NetCDFFile> ncdfal = new ArrayList<NetCDFFile>();
     	    	
     	sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-    	
-    	// set up a temporary hashmap for geo products.  This will move to a utility
-    	// class once we shake out the issues
-    	// TODO - what we said above
-    	geoHM = new HashMap();
-    	geoHM.put("ATMS-SDR-GEO", "GATMO");
-    	geoHM.put("CrIMSS-AUX-EDR", "GCRIO");
-    	geoHM.put("CrIS-SDR-GEO", "GCRSO");
-    	geoHM.put("VIIRS-MOD-EDR-GEO", "GMGTO");
-    	geoHM.put("VIIRS-MOD-GEO", "GMODO");
-    	geoHM.put("VIIRS-MOD-GEO-TC", "GMTCO");
-    	geoHM.put("VIIRS-MOD-MAP-IP", "IVMIM");
-    	geoHM.put("VIIRS-MOD-UNAGG-GEO", "VMUGE");
-    	geoHM.put("VIIRS-NCC-EDR-GEO", "GNCCO");
-    	geoHM.put("VIIRS-DNB-GEO", "GDNBO");
-    	geoHM.put("VIIRS-IMG-EDR-GEO", "GIGTO");
-    	geoHM.put("VIIRS-IMG-GEO", "GIMGO");
-    	geoHM.put("VIIRS-IMG-GEO-TC", "GITCO");
-    	geoHM.put("VIIRS-CLD-AGG-GEO", "GCLDO");
     	   	
     	try {
     		
@@ -269,7 +233,7 @@ public class NPPDataSource extends HydraDataSource {
 		    		ncfile = NetcdfFile.open(fileAbsPath);
 		    		ucar.nc2.Attribute a = ncfile.findGlobalAttribute("N_GEO_Ref");
 		    		logger.debug("Value of GEO global attribute: " + a.getStringValue());
-		    		geoProductID = mapGeoRefToProductID(a.getStringValue());
+		    		geoProductID = JPSSUtilities.mapGeoRefToProductID(a.getStringValue());
 		    		logger.debug("Value of corresponding Product ID: " + geoProductID);
 	    	    	Group rg = ncfile.getRootGroup();
 
@@ -393,7 +357,7 @@ public class NPPDataSource extends HydraDataSource {
     	    								continue;
     	    							}
     	    							List al = v.getAttributes();
-    	    							int[] shape = v.getShape();
+
     	    							List<Dimension> dl = v.getDimensions();
     	    							if (dl.size() > 2) {
     	    								logger.debug("Skipping data of dimension: " + dl.size());
@@ -608,14 +572,6 @@ public class NPPDataSource extends HydraDataSource {
 
     public String getDatasetName() {
       return filename;
-    }
-
-    public String mapGeoRefToProductID(String geoRef) {
-    	String s = null;
-    	if (geoHM != null) {
-    		s = (String) geoHM.get(geoRef);
-    	}
-    	return s;
     }
     
     public void setDatasetName(String name) {
