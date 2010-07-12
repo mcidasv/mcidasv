@@ -354,7 +354,7 @@ if (context.getInstallationDirectory().getPath().equals(disallowed)) {
     Util.showErrorMessage(notice);
     allowed = false;
 }
-else if (disallowed_file.exists() {
+else if (disallowed_file.exists()) {
     if (mcv_jar_file.exists()) {
         String notice = disallowed + " appears to contain a previous McIDAS-V installation.\n\n";
         notice += "Starting with 1.0beta6 user data is stored here.\nPlease uninstall McIDAS-V from this location before continuing.";
