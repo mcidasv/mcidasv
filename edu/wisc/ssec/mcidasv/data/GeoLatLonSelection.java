@@ -1388,6 +1388,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         try {
             val = new Integer(eleMagFld.getText().trim()).intValue();
         } catch (Exception e) {
+            System.out.println(" setElementMag e=" + e);
+            return;
         }
         setElementMag(val);
     }
@@ -1750,7 +1752,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             elementMagLbl.setText("Ele  Mag=");
             eleMagFld.setText(new Integer(value).toString());
             String str = " Res=" +
-                truncateNumericString(Double.toString(baseLRes*Math.abs(value)), 1);
+                truncateNumericString(Double.toString(baseERes*Math.abs(value)), 1);
             elementResLbl.setText(StringUtil.padLeft(str, 4) + kmLbl);
 
             if (autoSetSize) {
