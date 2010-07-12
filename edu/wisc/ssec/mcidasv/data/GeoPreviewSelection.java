@@ -318,19 +318,25 @@ public class GeoPreviewSelection extends DataSelectionComponent {
               laloSel.elementMagSlider.setValue(eleMag);
               laloSel.setERes(-1.0);
               laloSel.elementMagSliderChanged(false);
+
               laloSel.getGeoLocationInfo(line, ele);
+              String type = laloSel.getCoordinateType();
               int pos = 0;
               if (laloSel.getPlace().equals(laloSel.PLACE_ULEFT)) pos = 1;
-              double[][] pts = laloSel.getLatLonPoints();
-              laloSel.setLatitude(pts[0][pos]);
-              laloSel.setLongitude(pts[1][pos]);
-              pts = laloSel.getImagePoints();
-              if (laloSel.getCoordinateType().equals(laloSel.TYPE_AREA))
-                  pts = laloSel.getAreaPoints();
-              ele = (int)Math.floor(pts[0][pos] + 0.5);
-              line = (int)Math.floor(pts[1][pos] + 0.5);
-              laloSel.setElement(ele);
-              laloSel.setLine(line);
+              if (type.equals(laloSel.TYPE_LATLON)) {
+                  double[][] pts = laloSel.getLatLonPoints();
+                  laloSel.setLatitude(pts[0][pos]);
+                  laloSel.setLongitude(pts[1][pos]);
+                  laloSel.convertToLineEle();
+              } else {
+                  double[][] pts = laloSel.getImagePoints();
+                  if (type.equals(laloSel.TYPE_AREA))
+                      pts = laloSel.getAreaPoints();
+                  laloSel.setElement((int)Math.floor(pts[0][pos] + 0.5));
+                  laloSel.setLine((int)Math.floor(pts[0][pos] + 0.5));
+                  laloSel.setLineElement();
+                  laloSel.convertToLatLon();
+              }
           }
       }
            
