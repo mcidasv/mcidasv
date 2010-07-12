@@ -404,12 +404,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
                     String coordType = "";
                     double coords[] = { 0.0, 0.0 };
-                    double baseLResOld = 0.0;
-                    double baseEResOld = 0.0;
-                    int lMagOld = 0;
-                    int eMagOld = 0;
-                    int lSizeOld = 0;
-                    int eSizeOld = 0;
                     if (!basically) {
                         if (laLoSel != null) {
                             coordType = laLoSel.getCoordinateType();
@@ -420,13 +414,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                                 coords[0] = (double)laLoSel.getLine();
                                 coords[1] = (double)laLoSel.getElement();
                             }
-                            baseLResOld = laLoSel.getBaseLRes();
-                            baseEResOld = laLoSel.getBaseERes();
-                            lMagOld = laLoSel.getLineMag();
-                            eMagOld = laLoSel.getElementMag();
-                            lSizeOld = laLoSel.getNumLines();
-                            eSizeOld = laLoSel.getNumEles();
-
                             laLoSel.setPreviewLineRes(this.previewLineRes);
                             laLoSel.setPreviewEleRes(this.previewEleRes);
                             laLoSel.update(previewDir, this.previewProjection, previewNav,
