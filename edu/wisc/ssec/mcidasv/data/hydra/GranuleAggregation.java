@@ -40,7 +40,6 @@ import org.slf4j.LoggerFactory;
 
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
-import ucar.ma2.Index2D;
 import ucar.ma2.Range;
 import ucar.ma2.StructureData;
 import ucar.ma2.StructureMembers;
@@ -50,7 +49,6 @@ import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Structure;
 import ucar.nc2.Variable;
-import ucar.nc2.ncml.NcMLReader;
 
 /**
  * This file should be renamed - think about that Tommy.
@@ -128,31 +126,31 @@ public class GranuleAggregation implements MultiDimensionReader {
    }
 
    public HDFArray getArrayAttribute(String array_name, String attr_name) throws Exception {
-     Variable var = varMapList.get(0).get(array_name);
-     Attribute attr = var.findAttribute(attr_name);
-     logger.trace("GranuleAggregation.getArrayAttribute: " + var.getName());
-     Array attrVals = attr.getValues();
-     DataType dataType = attr.getDataType();
-     Object array = attrVals.copyTo1DJavaArray();
-     
-     HDFArray harray = null;
+	   Variable var = varMapList.get(0).get(array_name);
+	   Attribute attr = var.findAttribute(attr_name);
+	   logger.trace("GranuleAggregation.getArrayAttribute: " + var.getName());
+	   Array attrVals = attr.getValues();
+	   DataType dataType = attr.getDataType();
+	   Object array = attrVals.copyTo1DJavaArray();
 
-     if (dataType.getPrimitiveClassType() == Float.TYPE) {
-       harray = HDFArray.make((float[])array);
-     }
-     else if (dataType.getPrimitiveClassType() == Double.TYPE) {
-       harray = HDFArray.make((double[])array);
-     }
-     else if (dataType == DataType.STRING) {
-       harray = HDFArray.make((String[])array);
-     }
-     else if (dataType.getPrimitiveClassType() == Short.TYPE) {
-       harray = HDFArray.make((short[])array);
-     }
-     else if (dataType.getPrimitiveClassType() == Integer.TYPE) {
-       harray = HDFArray.make((int[])array);
-     }
-     return harray;
+	   HDFArray harray = null;
+
+	   if (dataType.getPrimitiveClassType() == Float.TYPE) {
+		   harray = HDFArray.make((float[])array);
+	   }
+	   else if (dataType.getPrimitiveClassType() == Double.TYPE) {
+		   harray = HDFArray.make((double[])array);
+	   }
+	   else if (dataType == DataType.STRING) {
+		   harray = HDFArray.make((String[])array);
+	   }
+	   else if (dataType.getPrimitiveClassType() == Short.TYPE) {
+		   harray = HDFArray.make((short[])array);
+	   }
+	   else if (dataType.getPrimitiveClassType() == Integer.TYPE) {
+		   harray = HDFArray.make((int[])array);
+	   }
+	   return harray;
    }
 
    public void close() throws Exception {
@@ -318,27 +316,33 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   
 	   int totalLength = 0;
 	   ArrayList<Array> arrayList = new ArrayList<Array>();
-	   for (int granuleIdx = 0; granuleIdx < granuleSpan; granuleIdx++) {
-		   Variable var = varMapList.get(loGranuleId + granuleIdx).get(array_name);
+	   for (int granuleIdx = 0; granuleIdx < granuleCount; granuleIdx++) {
+		   if ((granuleIdx >= loGranuleId) && (granuleIdx <= hiGranuleId)) {
+			   Variable var = varMapList.get(loGranuleId + granuleIdx).get(array_name);
 
-		   if (var instanceof Structure) {
-			   // what to do here?
-		   } else {
-			   ArrayList<Range> rangeList = new ArrayList<Range>();
-			   for (int dimensionIdx = 0; dimensionIdx < dimensionCount; dimensionIdx++) {
-				   logger.trace("Creating new Range: " + startSet[granuleIdx][dimensionIdx] +
-						   ", " + (startSet[granuleIdx][dimensionIdx] + countSet[granuleIdx][dimensionIdx] - 1) + ", " + strideSet[granuleIdx][dimensionIdx]);
-				   Range range = new Range(
-						   startSet[granuleIdx][dimensionIdx], 
-						   startSet[granuleIdx][dimensionIdx] + countSet[granuleIdx][dimensionIdx] - 1,
-						   strideSet[granuleIdx][dimensionIdx]
-				   );
-				   rangeList.add(dimensionIdx, range);
+			   if (var instanceof Structure) {
+				   // what to do here?
+			   } else {
+				   ArrayList<Range> rangeList = new ArrayList<Range>();
+				   for (int dimensionIdx = 0; dimensionIdx < dimensionCount; dimensionIdx++) {
+					   logger.trace("Creating new Range: " + startSet[granuleIdx][dimensionIdx] +
+							   ", " + (startSet[granuleIdx][dimensionIdx] + countSet[granuleIdx][dimensionIdx] - 1) + ", " + strideSet[granuleIdx][dimensionIdx]);
+					   Range range = new Range(
+							   startSet[granuleIdx][dimensionIdx], 
+							   startSet[granuleIdx][dimensionIdx] + countSet[granuleIdx][dimensionIdx] - 1,
+							   strideSet[granuleIdx][dimensionIdx]
+					   );
+					   rangeList.add(dimensionIdx, range);
+				   }
+				   Array subarray = var.read(rangeList);
+				   //dataType = subarray.getElementType();
+				   totalLength += subarray.getSize();
+				   arrayList.add(subarray);
 			   }
-			   Array subarray = var.read(rangeList);
-			   //dataType = subarray.getElementType();
-			   totalLength += subarray.getSize();
-			   arrayList.add(subarray);
+			   // put in an empty ArrayList placeholder to retain a slot for each granule
+		   } else {
+			   Array emptyArray = null;
+			   arrayList.add(emptyArray);
 		   }
 	   }
 	   
@@ -346,6 +350,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   Object o = java.lang.reflect.Array.newInstance(getArrayType(array_name), totalLength);
 	   int destPos = 0;
 	   for (Array a : arrayList) {
+		   if (a == null) continue;
 		   Object primArray = a.copyTo1DJavaArray();
 		   System.arraycopy(primArray, 0, o, destPos, (int) a.getSize());
 		   destPos += a.getSize();
