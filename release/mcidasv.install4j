@@ -339,8 +339,13 @@ Please visit &lt;a href="http://dcdbs.ssec.wisc.edu/mcidasv/forums/viewtopic.php
             <condition>!context.getBooleanVariable("sys.confirmedUpdateInstallation")</condition>
             <validation>String disallowed = (System.getProperty("user.home") + File.separator + context.getCompilerVariable("sys.shortName"));
 File disallowed_file = new File(disallowed);
+
 String mcv_jar =disallowed + File.separator + "mcidasv.jar";
 File mcv_jar_file = new File(mcv_jar);
+
+String mcv_main =disallowed + File.separator + "main.xml";
+File mcv_main_file = new File(mcv_main);
+
 Boolean allowed = true;
 
 if (context.getInstallationDirectory().getPath().equals(disallowed)) {
@@ -349,11 +354,19 @@ if (context.getInstallationDirectory().getPath().equals(disallowed)) {
     Util.showErrorMessage(notice);
     allowed = false;
 }
-else if (disallowed_file.exists() &amp;&amp; mcv_jar_file.exists()) {
-    String notice = disallowed + " appears to contain a previous McIDAS-V installation.\n\n";
-    notice += "Starting with 1.0beta6 user data is stored here.\nPlease uninstall McIDAS-V from this location before continuing.";
-    Util.showErrorMessage(notice);
-    allowed = false;
+else if (disallowed_file.exists() {
+    if (mcv_jar_file.exists()) {
+        String notice = disallowed + " appears to contain a previous McIDAS-V installation.\n\n";
+        notice += "Starting with 1.0beta6 user data is stored here.\nPlease uninstall McIDAS-V from this location before continuing.";
+        Util.showErrorMessage(notice);
+        allowed = false;
+    }
+    else if (!mcv_main_file.exists()) {
+        String notice = disallowed + " does not appear to be a McIDAS-V document directory.\n\n";
+        notice += "Starting with 1.0beta6 user data is stored here.\nPlease remove this directory before continuing.";
+        Util.showErrorMessage(notice);
+        allowed = false;
+    }
 }
 
 return allowed;</validation>
