@@ -1395,7 +1395,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
     }
 
     public void setLineMag(int val) {
-        if (val > 1) val = defaultLineMag;
+        //if (val > 1) val = defaultLineMag;
+        if (val > 1) val = 1;
         if (val == -1) val = 1;
         this.lineMag = val;
     }
@@ -1430,7 +1431,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
     }
 
     public void setElementMag(int val) {
-        if (val > 1) val = defaultElementMag;
+        //if (val > 1) val = defaultElementMag;
+        if (val > 1) val = 1;
         if (val == -1) val = 1;
         this.elementMag = val;
     }
