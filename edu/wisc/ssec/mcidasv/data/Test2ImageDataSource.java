@@ -116,7 +116,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     private int elementMag = 1;
 
     private GeoSelection lastGeoSelection;
-    private static DataChoice lastChoice;
+    private DataChoice lastChoice = null;
     private Boolean showPreview = new Boolean(false);
     private FlatField previewImage;
     private MapProjection previewProjection;
@@ -319,9 +319,9 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         boolean hasImagePreview = true;
         if (this.showPreview == null) this.showPreview = true;
         boolean basically = false;
-        if (lastChoice != null)
-            basically = dataChoice.basicallyEquals(lastChoice);
-        if (this.haveDataSelectionComponents && dataChoice.equals(lastChoice)) {
+        if (this.lastChoice != null)
+            basically = dataChoice.basicallyEquals(this.lastChoice);
+        if (this.haveDataSelectionComponents && dataChoice.equals(this.lastChoice)) {
             try {
                 if (dataChoice.getDataSelection() == null) {
                     if (!basically) {
@@ -354,7 +354,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 System.out.println("makePreviewImage e=" + e);
                 return;
             }
-            lastChoice = dataChoice;
+            this.lastChoice = dataChoice;
             if (hasImagePreview) {
                 try {
                     String magStr = getKey(baseSource, MAG_KEY);
