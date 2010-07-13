@@ -239,11 +239,22 @@ public class NetCDFFile implements MultiDimensionReader {
    }
 
    public HDFArray getArrayAttribute(String array_name, String attr_name) throws Exception {
+     Object array = null;
+     DataType dataType = null;
+
      Variable var = varMap.get(array_name);
-     Attribute attr = var.findAttribute(attr_name);
-     Array attrVals = attr.getValues();
-     DataType dataType = attr.getDataType();
-     Object array = attrVals.copyTo1DJavaArray();
+     if (var != null) {
+        Attribute attr = var.findAttribute(attr_name);
+        if (attr != null) {
+           Array attrVals = attr.getValues();
+           dataType = attr.getDataType();
+           array = attrVals.copyTo1DJavaArray();
+        }
+     }
+
+     if (array == null) {
+        return null;
+     }
      
      HDFArray harray = null;
 
