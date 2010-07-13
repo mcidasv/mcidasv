@@ -58,7 +58,7 @@ public abstract class MultiDimensionAdapter {
 
    RealType rangeType;
 
-   RangeProcessor rangeProcessor;
+   RangeProcessor rangeProcessor = null;
 
    public MultiDimensionAdapter() {
    }
@@ -68,8 +68,6 @@ public abstract class MultiDimensionAdapter {
      this.metadata = metadata;
      this.init();
    }
-
-   //public abstract Data getData(Object subset) throws Exception;
 
    public abstract HashMap getDefaultSubset();
 
@@ -170,19 +168,19 @@ public abstract class MultiDimensionAdapter {
 
      Object range = readArray(subset);
 
-     if (arrayType == Float.TYPE) {
+     if (range instanceof float[]) {
        float[] new_range = processRange((float[]) range, subset);
        f_field = makeFlatField(domainSet, new float[][] {(float[])new_range});
      }
-     else if (arrayType == Double.TYPE) {
+     else if (range instanceof double[]) {
        double[] new_range = processRange((double[]) range, subset);
        f_field = makeFlatField(domainSet, new double[][] {(double[])range});
      }
-     else if (arrayType == Short.TYPE) {
+     else if (range instanceof short[]) {
        float[] float_range = processRange((short[])range, subset);
        f_field = makeFlatField(domainSet, new float[][] {float_range});
      }
-     else if (arrayType == Byte.TYPE) {
+     else if (range instanceof byte[]) {
        float[] float_range = processRange((byte[])range, subset);
        f_field = makeFlatField(domainSet, new float[][] {float_range});
      }
@@ -192,6 +190,10 @@ public abstract class MultiDimensionAdapter {
 
    public RangeProcessor getRangeProcessor() {
      return rangeProcessor;
+   }
+
+   public void setRangeProcessor(RangeProcessor rangeProcessor) {
+     this.rangeProcessor = rangeProcessor;
    }
 
    public float[] processRange(short[] range, Object subset) {
@@ -241,23 +243,7 @@ public abstract class MultiDimensionAdapter {
      int[] count = select.getCount();
      int[] stride = select.getStride();
 
-     if (arrayType == Float.TYPE) {
-       float[] range = reader.getFloatArray(arrayName, start, count, stride);
-       return range;
-     }
-     else if (arrayType == Double.TYPE) {
-       double[] range = reader.getDoubleArray(arrayName, start, count, stride);
-       return range;
-     }
-     else if (arrayType == Short.TYPE) {
-       short[] range = reader.getShortArray(arrayName, start, count, stride);
-       return range;
-     }
-     else if (arrayType == Byte.TYPE) {
-       byte[] range = reader.getByteArray(arrayName, start, count, stride);
-       return range;
-     }
-     return null;
+     return reader.getArray(arrayName, start, count, stride);
    }
 
    public MultiDimensionReader getReader() {
