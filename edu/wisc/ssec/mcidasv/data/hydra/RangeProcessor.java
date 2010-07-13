@@ -32,10 +32,15 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.ArrayList;
 
 public class RangeProcessor {
 
 	static RangeProcessor createRangeProcessor(MultiDimensionReader reader, HashMap metadata) throws Exception {
+                if (reader instanceof GranuleAggregation) {
+                    return new AggregationRangeProcessor((GranuleAggregation)reader, metadata);
+                }
+
 		if (metadata.get("scale_name") == null) {
 			String product_name = (String) metadata.get(SwathAdapter.product_name);
 			if (product_name == "IASI_L1C_xxx") {
@@ -108,10 +113,20 @@ public class RangeProcessor {
 
 		offset = getAttributeAsFloatArray(array_name, (String) metadata.get("offset_name"));
 
-		if (scale.length != offset.length) {
-			throw new Exception("RangeProcessor: scale and offset array lengths must be equal");
-		}
-		scaleOffsetLen = scale.length;
+                if (scale != null) {
+                   scaleOffsetLen = scale.length;
+
+                   if (offset != null) {
+	        	if (scale.length != offset.length) {
+		        	throw new Exception("RangeProcessor: scale and offset array lengths must be equal");
+		        }
+                   }
+                   else {
+                      offset = new float[scaleOffsetLen];
+                      for (int i=0; i<offset.length; i++) offset[i] = 0f;
+                   }
+
+                }
 
 		missing = getAttributeAsFloatArray(array_name, (String) metadata.get("fill_value_name"));
 
@@ -502,4 +517,45 @@ class CloudSat_2B_GEOPROF_RangeProcessor extends RangeProcessor {
 		return new_values;
 	}
 
+}
+
+class AggregationRangeProcessor extends RangeProcessor {
+
+    ArrayList<RangeProcessor> rangeProcessors = new ArrayList<RangeProcessor>();
+
+    int rngIdx = 0;
+
+    public AggregationRangeProcessor(GranuleAggregation aggrReader, HashMap metadata) throws Exception {
+       super();
+
+       ArrayList readers = aggrReader.getReaders();
+
+       for (int rdrIdx = 0; rdrIdx < readers.size(); rdrIdx++) {
+           rangeProcessors.add(
+                  RangeProcessor.createRangeProcessor(
+                                      (MultiDimensionReader)readers.get(rdrIdx), metadata));
+       }
+
+       aggrReader.addRangeProcessor((String)metadata.get(SwathAdapter.array_name), this);
+    }
+
+    public synchronized void setIndex(int index) {
+      rngIdx = index;
+    }
+
+    public synchronized float[] processRange(byte[] values, HashMap subset) {
+      return rangeProcessors.get(rngIdx).processRange(values, subset);
+    }
+
+    public synchronized float[] processRange(short[] values, HashMap subset) {
+      return rangeProcessors.get(rngIdx).processRange(values, subset);
+    }
+
+    public synchronized float[] processRange(float[] values, HashMap subset) {
+      return rangeProcessors.get(rngIdx).processRange(values, subset);
+    }
+
+    public synchronized double[] processRange(double[] values, HashMap subset) {
+      return rangeProcessors.get(rngIdx).processRange(values, subset);
+    }
 }
