@@ -528,7 +528,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                       }
                   };
 
-                  latLonWidget     = new LatLonWidget(latLonChange);
+                  if (latLonWidget == null)
+                      latLonWidget     = new LatLonWidget(latLonChange);
 
                   FocusListener latLonFocusChange = new FocusListener() {
                       public void focusGained(FocusEvent fe) {
