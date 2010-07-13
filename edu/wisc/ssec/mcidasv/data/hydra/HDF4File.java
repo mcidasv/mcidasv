@@ -123,6 +123,10 @@ public class HDF4File implements MultiDimensionReader {
      return (byte[]) array.getArray();
    }
 
+   public Object getArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
+     throw new Exception("getArray not implemented");
+   }
+
    public HDFArray getGlobalAttribute(String attr_name) throws Exception {
      int attr_idx = hdf.findattr(attr_name);
      return hdf.readattr(attr_idx);

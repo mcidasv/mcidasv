@@ -203,6 +203,10 @@ public class NetCDFFile implements MultiDimensionReader {
      return (byte[]) readArray(array_name, start, count, stride);
    }
 
+   public Object getArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
+     return readArray(array_name, start, count, stride);
+   }
+
    private synchronized Object readArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
      Variable var = varMap.get(array_name);
      if (var instanceof Structure) {

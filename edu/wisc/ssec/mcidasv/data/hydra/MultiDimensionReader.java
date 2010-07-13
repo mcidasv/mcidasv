@@ -40,6 +40,8 @@ public interface MultiDimensionReader {
   public short[] getShortArray(String name, int[] start, int[] count, int[] stride) throws Exception;
   public byte[] getByteArray(String name, int[] start, int[] count, int[] stride) throws Exception;
 
+  public Object getArray(String name, int[] start, int[] count, int[] stride) throws Exception;
+
   public Class getArrayType(String name);
 
   public String[] getDimensionNames(String arrayName);
