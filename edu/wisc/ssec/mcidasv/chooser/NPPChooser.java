@@ -98,7 +98,8 @@ public class NPPChooser extends FileChooser {
     	 	
     	String nppRegex1 = "\\w\\w\\w\\w\\w_npp_d\\d\\d\\d\\d\\d\\d\\d\\d_t\\d\\d\\d\\d\\d\\d_e\\d\\d\\d\\d\\d\\d_b\\d\\d\\d\\d\\d_c\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d_\\w\\w\\w_OPS_SEG.h5";
     	String nppRegex2 = "\\w\\w\\w\\w\\w_npp_d\\d\\d\\d\\d\\d\\d\\d\\d_t\\d\\d\\d\\d\\d\\d\\d_e\\d\\d\\d\\d\\d\\d\\d_b\\d\\d\\d\\d\\d_c\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d_noaa_ada.h5";
-
+    	String nppRegex3 = "\\w\\w\\w\\w\\w_aqu.*.h5";
+    	
     	boolean isNPP = false;
     	
     	String fileNameRelative = f.getName();
@@ -111,7 +112,9 @@ public class NPPChooser extends FileChooser {
     	// XXX at some point we should check all valid product ids
     	
     	if (	(fileNameRelative.matches(nppRegex1)) ||
-    			(fileNameRelative.matches(nppRegex2)) )
+    			(fileNameRelative.matches(nppRegex2)) ||
+    			(fileNameRelative.matches(nppRegex3))
+    			)
     	{
     		isNPP = true;
     	// don't go any further if file does not match NPP data product regex
@@ -150,7 +153,13 @@ public class NPPChooser extends FileChooser {
 				noGeo = true;
 			} else {
     			logger.info("Value of GEO global attribute: " + a.getStringValue());
-    			geoProductID = JPSSUtilities.mapGeoRefToProductID(a.getStringValue());
+    			// in the newest data from GRAVITE server, attribute is entire file name
+    			// if this is detected, no translation/mapping needed
+    			if (a.getStringValue().endsWith("h5")) {
+    				geoProductID = a.getStringValue();
+    			} else {
+    				geoProductID = JPSSUtilities.mapGeoRefToProductID(a.getStringValue());
+    			}
     			logger.info("Value of corresponding Product ID: " + geoProductID);
 			}
 		} catch (Exception e) {
@@ -171,8 +180,13 @@ public class NPPChooser extends FileChooser {
 		
 			// ok, we know what the geo file is supposed to be, but is it present in this directory?
 			String geoFilename = fileNameAbsolute.substring(0, fileNameAbsolute.lastIndexOf(File.separatorChar) + 1);
-			geoFilename += geoProductID;
-			geoFilename += fileNameAbsolute.substring(fileNameAbsolute.lastIndexOf(File.separatorChar) + 6);
+			// check if we have the whole file name or just the prefix
+			if (geoProductID.endsWith("h5")) {
+				geoFilename += geoProductID;
+			} else {
+				geoFilename += geoProductID;
+				geoFilename += fileNameAbsolute.substring(fileNameAbsolute.lastIndexOf(File.separatorChar) + 6);
+			}
 			File geoFile = new File(geoFilename);
 			
 			if (geoFile.exists()) {
