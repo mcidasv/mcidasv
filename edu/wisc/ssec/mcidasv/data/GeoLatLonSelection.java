@@ -405,6 +405,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
               System.out.println("GeoLatLonSelection unable to get resolution: e=" + e);
               return;
           }
+          if (baseLRes == 0.0)
+              baseLRes = previewDir.getCenterLatitudeResolution();
+          if (baseERes == 0.0)
+              baseERes = previewDir.getCenterLongitudeResolution();
 
           this.place = getPlace();
           if (properties.containsKey(PROP_PLACE)) {
