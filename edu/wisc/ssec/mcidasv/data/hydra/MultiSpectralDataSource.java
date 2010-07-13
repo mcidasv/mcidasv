@@ -83,6 +83,7 @@ import visad.java3d.TwoDDisplayRendererJ3D;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.MapViewManager;
+import ucar.unidata.idv.DisplayConventions;
 import ucar.unidata.idv.control.DisplayControlBase;
 import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
 import ucar.unidata.view.geoloc.MapProjectionDisplay;
