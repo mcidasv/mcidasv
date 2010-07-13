@@ -65,12 +65,18 @@ public class GranuleAggregation implements MultiDimensionReader {
 	
 	// this structure holds the NcML readers that get passed in 
    ArrayList<NetcdfFile> nclist = new ArrayList<NetcdfFile>();
+
+   // this holds the MultiDimensionReaders, here NetCDFFile
+   ArrayList<NetCDFFile> ncdfal = null;
    
    // need an ArrayList for each variable hashmap structure
    ArrayList<HashMap<String, Variable>> varMapList = new ArrayList<HashMap<String, Variable>>();
    ArrayList<HashMap<String, String[]>> varDimNamesList = new ArrayList<HashMap<String, String[]>>();
    ArrayList<HashMap<String, int[]>> varDimLengthsList = new ArrayList<HashMap<String, int[]>>();
    ArrayList<HashMap<String, Class>> varDataTypeList = new ArrayList<HashMap<String, Class>>();
+
+   // variable can have bulk array processor set by the application
+   HashMap<String, RangeProcessor> varToRangeProcessor = new HashMap<String, RangeProcessor>();
    
    private int granuleCount = -1;
    private int granuleLength = -1;
@@ -81,6 +87,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   logger.trace("granule length: " + granuleLength);
 	   this.granuleLength = granuleLength;
 	   this.inTrackIndex = inTrackIndex;
+           this.ncdfal = ncdfal;
 	   init(ncdfal);
    }
   
@@ -119,6 +126,10 @@ public class GranuleAggregation implements MultiDimensionReader {
 
    public byte[] getByteArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
      return (byte[]) readArray(array_name, start, count, stride);
+   }
+
+   public Object getArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
+     return readArray(array_name, start, count, stride);
    }
 
    public HDFArray getGlobalAttribute(String attr_name) throws Exception {
@@ -318,7 +329,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   ArrayList<Array> arrayList = new ArrayList<Array>();
 	   for (int granuleIdx = 0; granuleIdx < granuleCount; granuleIdx++) {
 		   if ((granuleIdx >= loGranuleId) && (granuleIdx <= hiGranuleId)) {
-			   Variable var = varMapList.get(loGranuleId + granuleIdx).get(array_name);
+			   Variable var = varMapList.get(loGranuleId + (granuleIdx-loGranuleId)).get(array_name);
 
 			   if (var instanceof Structure) {
 				   // what to do here?
@@ -347,13 +358,28 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   }
 	   
 	   // last, concatenate the individual NetCDF arrays pulled out 
-	   Object o = java.lang.reflect.Array.newInstance(getArrayType(array_name), totalLength);
+
+	   //Object o = java.lang.reflect.Array.newInstance(getArrayType(array_name), totalLength);
+           Class outType;
+           RangeProcessor rngProcessor = varToRangeProcessor.get(array_name);
+           if (rngProcessor == null) {
+              outType = getArrayType(array_name);
+           }
+           else {
+              outType = java.lang.Float.TYPE;
+           }
+	   Object o = java.lang.reflect.Array.newInstance(outType, totalLength);
+           
 	   int destPos = 0;
+           int granIdx = 0;
 	   for (Array a : arrayList) {
-		   if (a == null) continue;
-		   Object primArray = a.copyTo1DJavaArray();
-		   System.arraycopy(primArray, 0, o, destPos, (int) a.getSize());
-		   destPos += a.getSize();
+                   if (a != null) {
+		      Object primArray = a.copyTo1DJavaArray();
+                      primArray = processArray(array_name, granIdx, primArray, rngProcessor);
+		      System.arraycopy(primArray, 0, o, destPos, (int) a.getSize());
+		      destPos += a.getSize();
+                   }
+                   granIdx++;
 	   }
 
 	   return o;
@@ -362,5 +388,24 @@ public class GranuleAggregation implements MultiDimensionReader {
    public HashMap getVarMap() {
      return varMapList.get(0);
    }
-   
+
+   public ArrayList<NetCDFFile> getReaders() {
+     return this.ncdfal;
+   }
+
+   /* pass individual granule pieces just read from dataset through the RangeProcessor */
+   private Object processArray(String array_name, int granIdx, Object values, RangeProcessor rngProcessor) {
+     if (rngProcessor == null) {
+       return values;
+     }
+     else {
+       ((AggregationRangeProcessor)rngProcessor).setIndex(granIdx);
+       return rngProcessor.processRange((short[])values, null);
+     }
+   }
+
+   /* Application can supply a RangeProcessor for an variable 'arrayName' */
+   public void addRangeProcessor(String arrayName, RangeProcessor rangeProcessor) {
+     varToRangeProcessor.put(arrayName, rangeProcessor);
+   }
 }
