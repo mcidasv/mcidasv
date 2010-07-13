@@ -246,7 +246,7 @@ public class RangeProcessor {
 				i = unsignedByteToInt(values[k]);
 				val = (float) i;
 			}    	 
-			if ((val == missing[0]) || (val < low[0]) || (val > high[0])) {
+			if ((missing != null) && ((val == missing[0]) || (val < low[0]) || (val > high[0]))) {
 				new_values[k] = Float.NaN;
 			}
 			else {
@@ -297,7 +297,7 @@ public class RangeProcessor {
 				i = unsignedShortToInt(values[k]);
 				val = (float) i;
 			}
-			if ((val == missing[0]) || (val < low[0]) || (val > high[0])) {
+			if ((missing != null) && ((val == missing[0]) || (val < low[0]) || (val > high[0]))) {
 				new_values[k] = Float.NaN;
 			}
 			else {
