@@ -46,8 +46,11 @@ import java.util.HashMap;
 public abstract class JPSSUtilities {
    
     private static HashMap<String, String> geoHM = new HashMap<String, String>();
+    private static HashMap<String, String> prodHM = new HashMap<String, String>();
     
     static {
+    	
+    	// populate geolocation hashmap
     	geoHM.put("ATMS-SDR-GEO", "GATMO");
     	geoHM.put("CrIMSS-AUX-EDR", "GCRIO");
     	geoHM.put("CrIS-SDR-GEO", "GCRSO");
@@ -62,6 +65,18 @@ public abstract class JPSSUtilities {
     	geoHM.put("VIIRS-IMG-GEO", "GIMGO");
     	geoHM.put("VIIRS-IMG-GEO-TC", "GITCO");
     	geoHM.put("VIIRS-CLD-AGG-GEO", "GCLDO");
+    	
+    	// populate product hashmap
+    	prodHM.put("BulkSeaSurfaceTemperature", "bulkSST");
+    	prodHM.put("CloudBaseHeightLayer", "cbhLyr");
+    	prodHM.put("CloudBaseHeightTotal", "cbhTot");
+    	prodHM.put("Land_Temp", "lst");
+    	prodHM.put("Radiance", "radiance");
+    	prodHM.put("Reflectance", "reflect");
+    	prodHM.put("SkinSeaSurfaceTemperature", "skinSST");
+    	prodHM.put("TopOfAtmosphereNormalizedDifferenceVegetationIndex", "TOA_NDVI");
+    	prodHM.put("TopOfCanopyEnhancedVegetationIndex", "TOC_EVI");
+    	
     }
     
     /**
@@ -76,6 +91,22 @@ public abstract class JPSSUtilities {
     	String s = null;
     	if (geoHM != null) {
     		s = (String) geoHM.get(geoRef);
+    	}
+    	return s;
+    }
+    
+    /**
+     * Map the NPP product name to those used in the XML Product Profiles,
+     * which seem to be short-hand versions of the long names.
+     * 
+     * @param prodName
+     * @return product id for the corresponding geolocation data 
+     */
+    
+    public static String mapProdNameToProfileName(String prodName) {
+    	String s = null;
+    	if (prodHM != null) {
+    		s = (String) prodHM.get(prodName);
     	}
     	return s;
     }
