@@ -60,6 +60,8 @@ import javax.swing.JToggleButton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.imagery.AddeImageDescriptor;
@@ -102,6 +104,8 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
  */
 public class AddeImageChooser extends AddeChooser implements
 		ucar.unidata.ui.imagery.ImageSelector {
+
+    private static final Logger logger = LoggerFactory.getLogger(AddeImageChooser.class);
 
 	// TODO: get rid of this button right?
 	public static JToggleButton mineBtn = GuiUtils
@@ -1365,49 +1369,59 @@ public class AddeImageChooser extends AddeChooser implements
 		}
 	}
 
-	/**
-	 * Returns a list of the images to load or null if none have been selected.
-	 * 
-	 * @return list get the list of image descriptors
-	 */
-	public List getImageList() {
-		if (!timesOk()) {
-			return null;
-		}
-		List images = new ArrayList();
-		String defaultBand = getDefault(PROP_BAND, ALL);
-		try {
-			if (getDoRelativeTimes()) {
-				AddeImageDescriptor firstDescriptor = (AddeImageDescriptor) imageDescriptors.get(0);
-        		AreaDirectory ad = firstDescriptor.getDirectory();
-        		int[] bands    = (int[]) bandTable.get(ad);
-        		bandInfos = makeBandInfos(ad, bands);
-				int[] relativeTimesIndices = getRelativeTimeIndices();
-				for (int i = 0; i < relativeTimesIndices.length; i++) {
-					AddeImageDescriptor aid = new AddeImageDescriptor(relativeTimesIndices[i], firstDescriptor);
-					AddeImageInfo aii = makeImageInfo(aid.getDirectory(), true, relativeTimesIndices[i]);
-        			if (defaultBand != null) aii.setBand(defaultBand);
-					aid.setImageInfo(aii);
-					aid.setSource(aii.getURLString());
-					images.add(aid);
-				}
-			} else {
-				List selectedTimes = getSelectedAbsoluteTimes();
-				for (int i = 0; i < selectedTimes.size(); i++) {
-					AddeImageDescriptor aid = new AddeImageDescriptor((AddeImageDescriptor) selectedTimes.get(i));
-					AddeImageInfo aii = makeImageInfo(aid.getDirectory(), false, i);
-        			if (defaultBand != null) aii.setBand(defaultBand);
-					aid.setImageInfo(aii);
-					aid.setSource(aii.getURLString());
-					images.add(aid);
-				}
-			}
-		} catch (Exception exc) {
-			logException("Error occured", exc);
-			return null;
-		}
-		return images;
-	}
+    /**
+     * Returns a list of the images to load or null if none have been selected.
+     * 
+     * @return list get the list of image descriptors
+     */
+    public List getImageList() {
+        if (!timesOk()) {
+            return null;
+        }
+        List images = new ArrayList();
+        String defaultBand = getDefault(PROP_BAND, ALL);
+        try {
+            if (getDoRelativeTimes()) {
+                AddeImageDescriptor firstDescriptor = (AddeImageDescriptor) imageDescriptors.get(0);
+                AreaDirectory ad = firstDescriptor.getDirectory();
+                int[] bands    = (int[]) bandTable.get(ad);
+                bandInfos = makeBandInfos(ad, bands);
+                int[] relativeTimesIndices = getRelativeTimeIndices();
+                for (int i = 0; i < relativeTimesIndices.length; i++) {
+                    AddeImageDescriptor aid = new AddeImageDescriptor(relativeTimesIndices[i], firstDescriptor);
+                    AddeImageInfo aii = makeImageInfo(aid.getDirectory(), true, relativeTimesIndices[i]);
+                    if (aii.getBand() == null) {
+                        aii.setBand(defaultBand);
+                        logger.trace("set band=ALL for aii={}", aii);
+                    } else {
+                        logger.trace("found band; rock on! band={}, aii={}", aii.getBand(), aii);
+                    }
+                    aid.setImageInfo(aii);
+                    aid.setSource(aii.getURLString());
+                    images.add(aid);
+                }
+            } else {
+                List selectedTimes = getSelectedAbsoluteTimes();
+                for (int i = 0; i < selectedTimes.size(); i++) {
+                    AddeImageDescriptor aid = new AddeImageDescriptor((AddeImageDescriptor) selectedTimes.get(i));
+                    AddeImageInfo aii = makeImageInfo(aid.getDirectory(), false, i);
+                    if (aii.getBand() == null) {
+                        aii.setBand(defaultBand);
+                        logger.trace("set band=ALL for aii={}", aii);
+                    } else {
+                        logger.trace("found band; rock on! band={}, aii={}", aii.getBand(), aii);
+                    }
+                    aid.setImageInfo(aii);
+                    aid.setSource(aii.getURLString());
+                    images.add(aid);
+                }
+            }
+        } catch (Exception exc) {
+            logException("Error occured", exc);
+            return null;
+        }
+        return images;
+    }
 
 	/**
 	 * Process the image defaults resources
