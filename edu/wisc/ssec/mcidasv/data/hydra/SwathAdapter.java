@@ -202,7 +202,10 @@ public class SwathAdapter extends MultiDimensionAdapter {
         rangeType = RealType.getRealType(rangeName, rangeUnit_s[0]);
 
         try {
-          rangeProcessor = RangeProcessor.createRangeProcessor(reader, metadata);
+          RangeProcessor rangeProcessor = RangeProcessor.createRangeProcessor(reader, metadata);
+          if ( !(reader instanceof GranuleAggregation) ) {
+            setRangeProcessor(rangeProcessor);
+          }
         } 
         catch (Exception e) {
           System.out.println("RangeProcessor failed to create");
@@ -296,10 +299,12 @@ public class SwathAdapter extends MultiDimensionAdapter {
       public Linear2DSet getSwathDomain() {
         return swathDomain;
       }
-
+      
+      /**
       public RangeProcessor getRangeProcessor() {
         return rangeProcessor;
       }
+      */
 
       public boolean spatialEquals(Object last_subset, Object subset) {
         double[] last_coords = (double[]) ((HashMap)last_subset).get(track_name);
