@@ -71,6 +71,7 @@ import org.jdom.output.XMLOutputter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ucar.ma2.ArrayFloat;
 import ucar.ma2.DataType;
 import ucar.nc2.Dimension;
 import ucar.nc2.Group;
@@ -145,8 +146,8 @@ public class NPPDataSource extends HydraDataSource {
     private boolean hasTrackPreview = false;
     private boolean hasChannelSelect = false;
     
-    private static int[] YSCAN_POSSIBILITIES = { 96, 768 };
-    private static int[] XSCAN_POSSIBILITIES = { 508, 3200 };    
+    private static int[] YSCAN_POSSIBILITIES = { 96, 768, 1536 };
+    private static int[] XSCAN_POSSIBILITIES = { 508, 3200, 6400 };    
     private int inTrackDimensionLength = -1;
     
     // date formatter for converting NPP day/time to something we can use
@@ -217,6 +218,7 @@ public class NPPDataSource extends HydraDataSource {
     	ArrayList<Long> productTimes = new ArrayList<Long>();
     	// aggregations will use sets of NetCDFFile readers
     	ArrayList<NetCDFFile> ncdfal = new ArrayList<NetCDFFile>();
+    	NPPProductProfile nppPP = null;
     	    	
     	sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
     	   	
@@ -233,7 +235,11 @@ public class NPPDataSource extends HydraDataSource {
 		    		ncfile = NetcdfFile.open(fileAbsPath);
 		    		ucar.nc2.Attribute a = ncfile.findGlobalAttribute("N_GEO_Ref");
 		    		logger.debug("Value of GEO global attribute: " + a.getStringValue());
-		    		geoProductID = JPSSUtilities.mapGeoRefToProductID(a.getStringValue());
+	    			if (a.getStringValue().endsWith("h5")) {
+	    				geoProductID = a.getStringValue();
+	    			} else {
+	    				geoProductID = JPSSUtilities.mapGeoRefToProductID(a.getStringValue());
+	    			}
 		    		logger.debug("Value of corresponding Product ID: " + geoProductID);
 	    	    	Group rg = ncfile.getRootGroup();
 
@@ -249,6 +255,25 @@ public class NPPDataSource extends HydraDataSource {
 	    	    				boolean foundDateTime = false;
 	    	    				List<Group> dpg = g.getGroups();
 	    	    				for (Group subG : dpg) {
+	    	    					
+	    	    					// This is also where we find the attribute which tells us which
+	    	    					// XML Product Profile to use!
+	    	    					if (nppPP == null) {
+	    	    						ucar.nc2.Attribute axpp = subG.findAttribute("N_Collection_Short_Name");
+	    	    						if (axpp != null) {
+	    	    							System.err.println("XML Product Profile: " + axpp.getStringValue());
+	    	    							String baseName = axpp.getStringValue();
+	    	    							baseName = baseName.replace('-', '_');
+	    	    							String pathStr = fileAbsPath.substring(0, fileAbsPath.lastIndexOf(File.separatorChar) + 1);
+	    	    							String productProfileFileName = pathStr + baseName + ".xml";
+	    	    							try {
+	    	    								nppPP = new NPPProductProfile(productProfileFileName);
+	    	    							} catch (Exception nppppe) {
+	    	    								nppppe.printStackTrace();
+	    	    							}
+	    	    						}
+	    	    					}
+	    	    					
 	    	    					List<Variable> vl = subG.getVariables();
 	    	    					for (Variable v : vl) {
 	    	    						ucar.nc2.Attribute aDate = v.findAttribute("AggregateBeginningDate");
@@ -302,8 +327,13 @@ public class NPPDataSource extends HydraDataSource {
     			org.jdom.Element fGeo  = new org.jdom.Element("netcdf", ns);
 
     			String geoFilename = s.substring(0, s.lastIndexOf(File.separatorChar) + 1);
-    			geoFilename += geoProductID;
-    			geoFilename += s.substring(s.lastIndexOf(File.separatorChar) + 6);
+    			// check if we have the whole file name or just the prefix
+    			if (geoProductID.endsWith("h5")) {
+    				geoFilename += geoProductID;
+    			} else {
+    				geoFilename += geoProductID;
+    				geoFilename += s.substring(s.lastIndexOf(File.separatorChar) + 6);
+    			}
     			logger.debug("Cobbled together GEO file name: " + geoFilename);
     			fGeo.setAttribute("location", geoFilename);
     			agg.addContent(fData);
@@ -420,7 +450,27 @@ public class NPPDataSource extends HydraDataSource {
     	    								ucar.nc2.Attribute a1 = new ucar.nc2.Attribute("scale_factor", scaleVal);
     	    								v.addAttribute(a1);
     	    								ucar.nc2.Attribute a2 = new ucar.nc2.Attribute("add_offset", offsetVal);
-    	    								v.addAttribute(a2);   		
+    	    								v.addAttribute(a2);  
+    	    								
+    	    								// add valid range attribute here
+    	    					        	// try to fill in valid range
+    	    					        	if (nppPP != null) {
+    	    					        		String translatedName = JPSSUtilities.mapProdNameToProfileName(vName.substring(vName.lastIndexOf(File.separatorChar) + 1));
+    	    					        		logger.debug("mapped name: " + translatedName);
+    	    					        		if (translatedName != null) {
+    	    					        			String rangeMin = nppPP.getRangeMin(translatedName);
+    	    					        			String rangeMax = nppPP.getRangeMax(translatedName);
+    	    					        			logger.debug("range min: " + rangeMin);
+    	    					        			logger.debug("range max: " + rangeMax);
+    	    					        			int [] shapeArr = new int [] { 2 };
+    	    					        			ArrayFloat af = new ArrayFloat(shapeArr);
+    	    					        			af.setFloat(0, Float.parseFloat(rangeMin));
+    	    					        			af.setFloat(1, Float.parseFloat(rangeMax));
+    	    	    								ucar.nc2.Attribute rangeAtt = new ucar.nc2.Attribute("valid_range", af);
+    	    	    								v.addAttribute(rangeAtt);
+    	    					        		}
+    	    					        	}
+
     	    								ucar.nc2.Attribute aFill = v.findAttribute("_FillValue");
     	    								if (aFill != null) {
     	    									logger.debug("_FillValue attribute value: " + aFill.getNumericValue());
@@ -492,14 +542,25 @@ public class NPPDataSource extends HydraDataSource {
         	table.put("scale_name", "scale_factor");
         	table.put("offset_name", "add_offset");
         	table.put("fill_value_name", "_FillValue");
+        	
+        	// set the valid range hash if data is available
+        	if (nppPP != null) {
+        		String translatedName = JPSSUtilities.mapProdNameToProfileName(pStr.substring(pStr.lastIndexOf(File.separatorChar) + 1));
+        		if (translatedName != null) {
+        			table.put("valid_range", "valid_range");
+        		}
+        	}
+        	
         	String unsignedAttributeStr = unsignedFlags.get(pIdx);
         	if (unsignedAttributeStr.equals("true")) {
         		table.put("unsigned", unsignedAttributeStr);
         	}
+        	
         	String unpackFlagStr = unpackFlags.get(pIdx);
         	if (unpackFlagStr.equals("true")) {
         		table.put("unpack", "true");
         	}
+        	
         	// pass in a GranuleAggregation reader...
         	adapters[pIdx] = new SwathAdapter(nppAggReader, table);
     		pIdx++;
