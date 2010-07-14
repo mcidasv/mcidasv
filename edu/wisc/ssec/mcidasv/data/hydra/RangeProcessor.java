@@ -31,7 +31,6 @@
 package edu.wisc.ssec.mcidasv.data.hydra;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.ArrayList;
 
 public class RangeProcessor {
@@ -239,14 +238,27 @@ public class RangeProcessor {
 		
 		float val = 0f;
 		int i = 0;
+		boolean isMissing = false;
 		
 		for (int k = 0; k < values.length; k++) {
 			val = (float) values[k];
 			if (unsigned) {
 				i = unsignedByteToInt(values[k]);
 				val = (float) i;
-			}    	 
-			if ((missing != null) && ((val == missing[0]) || (val < low[0]) || (val > high[0]))) {
+			}   
+			
+			// first, check the (possibly multiple) missing values
+			isMissing = false;
+			if (missing != null) {
+				for (int mvIdx = 0; mvIdx < missing.length; mvIdx++) {
+					if (val == missing[mvIdx]) {
+						isMissing = true;
+						break;
+					}
+				}
+			}
+			
+			if ((isMissing) || (val < low[0]) || (val > high[0])) {
 				new_values[k] = Float.NaN;
 			}
 			else {
@@ -290,6 +302,7 @@ public class RangeProcessor {
 
 		float val = 0f;
 		int i = 0;
+		boolean isMissing = false;
 		
 		for (int k = 0; k < values.length; k++) {
 			val = (float) values[k];
@@ -297,7 +310,19 @@ public class RangeProcessor {
 				i = unsignedShortToInt(values[k]);
 				val = (float) i;
 			}
-			if ((missing != null) && ((val == missing[0]) || (val < low[0]) || (val > high[0]))) {
+			
+			// first, check the (possibly multiple) missing values
+			isMissing = false;
+			if (missing != null) {
+				for (int mvIdx = 0; mvIdx < missing.length; mvIdx++) {
+					if (val == missing[mvIdx]) {
+						isMissing = true;
+						break;
+					}
+				}
+			}
+			
+			if ((isMissing) || (val < low[0]) || (val > high[0])) {
 				new_values[k] = Float.NaN;
 			}
 			else {
@@ -334,9 +359,17 @@ public class RangeProcessor {
 		for (int k = 0; k < values.length; k++) {
 			val = values[k];
 			new_values[k] = val;
-			if ((missing != null) && (val == missing[0])) {
-				new_values[k] = Float.NaN;
+			
+			// first, check the (possibly multiple) missing values
+			if (missing != null) {
+				for (int mvIdx = 0; mvIdx < missing.length; mvIdx++) {
+					if (val == missing[mvIdx]) {
+						new_values[k] = Float.NaN;
+						break;
+					}
+				}
 			}
+			
 			if ((valid_range != null) && ((val < low[0]) || (val > high[0]))) {
 				new_values[k] = Float.NaN;
 			}
@@ -367,9 +400,17 @@ public class RangeProcessor {
 		for (int k = 0; k < values.length; k++) {
 			val = values[k];
 			new_values[k] = val;
-			if ((missing != null) && (val == missing[0])) {
-				new_values[k] = Double.NaN;
+			
+			// first, check the (possibly multiple) missing values
+			if (missing != null) {
+				for (int mvIdx = 0; mvIdx < missing.length; mvIdx++) {
+					if (val == missing[mvIdx]) {
+						new_values[k] = Float.NaN;
+						break;
+					}
+				}
 			}
+			
 			if ((valid_range != null) && ((val < low[0]) || (val > high[0]))) {
 				new_values[k] = Double.NaN;
 			}
@@ -387,33 +428,46 @@ public class RangeProcessor {
 	public float[] processAlongBandDim(byte[] values) {
 		float[] new_values = new float[values.length];
 
-                // if we are working with unsigned data, need to convert missing vals to unsigned too
-                if (unsigned) {
-                        if (missing != null) {
-                                for (int i = 0; i < missing.length; i++) {
-                                        missing[i] = (float) unsignedByteToInt((byte) missing[i]);
-                                }
+        // if we are working with unsigned data, need to convert missing vals to unsigned too
+        if (unsigned) {
+                if (missing != null) {
+                        for (int i = 0; i < missing.length; i++) {
+                                missing[i] = (float) unsignedByteToInt((byte) missing[i]);
                         }
                 }
+        }
 
-                float val = 0f;
-                int i = 0;
+        float val = 0f;
+        int i = 0;
+        boolean isMissing = false;
 
 		for (int k = 0; k < values.length; k++) {
 			val = (float) values[k];
-                        if (unsigned) {
-                                i = unsignedByteToInt(values[k]);
-                                val = (float) i;
-                        }
-			if ((val == missing[0]) || (val < low[0]) || (val > high[0])) {
+            if (unsigned) {
+                i = unsignedByteToInt(values[k]);
+                val = (float) i;
+            }
+            
+			// first, check the (possibly multiple) missing values
+			isMissing = false;
+			if (missing != null) {
+				for (int mvIdx = 0; mvIdx < missing.length; mvIdx++) {
+					if (val == missing[mvIdx]) {
+						isMissing = true;
+						break;
+					}
+				}
+			}
+			
+			if ((isMissing) || (val < low[0]) || (val > high[0])) {
 				new_values[k] = Float.NaN;
 			}
 			else {
 				if (unpack) {
-					new_values[k] = scale[k]*val + offset[k];
+					new_values[k] = scale[k] * val + offset[k];
 				}
 				else {
-					new_values[k] = scale[k]*(val - offset[k]);
+					new_values[k] = scale[k] * (val - offset[k]);
 				}
 			}
 		}
@@ -429,33 +483,46 @@ public class RangeProcessor {
 	public float[] processAlongBandDim(short[] values) {
 		float[] new_values = new float[values.length];
 
-                // if we are working with unsigned data, need to convert missing vals to unsigned too
-                if (unsigned) {
-                        if (missing != null) {
-                                for (int i = 0; i < missing.length; i++) {
-                                        missing[i] = (float) unsignedShortToInt((short) missing[i]);
-                                }
+        // if we are working with unsigned data, need to convert missing vals to unsigned too
+        if (unsigned) {
+                if (missing != null) {
+                        for (int i = 0; i < missing.length; i++) {
+                                missing[i] = (float) unsignedShortToInt((short) missing[i]);
                         }
                 }
+        }
 
-                float val = 0f;
-                int i = 0;
+        float val = 0f;
+        int i = 0;
+        boolean isMissing = false;
 
 		for (int k = 0; k < values.length; k++) {
 			val = (float) values[k];
-                        if (unsigned) {
-                                i = unsignedShortToInt(values[k]);
-                                val = (float) i;
-                        }
-			if ((val == missing[0]) || (val < low[0]) || (val > high[0])) {
+            if (unsigned) {
+                i = unsignedShortToInt(values[k]);
+                val = (float) i;
+            }
+            
+			// first, check the (possibly multiple) missing values
+			isMissing = false;
+			if (missing != null) {
+				for (int mvIdx = 0; mvIdx < missing.length; mvIdx++) {
+					if (val == missing[mvIdx]) {
+						isMissing = true;
+						break;
+					}
+				}
+			}
+            			
+            if ((isMissing) || (val < low[0]) || (val > high[0])) {
 				new_values[k] = Float.NaN;
 			}
 			else {
 				if (unpack) {
-					new_values[k] = scale[k]*val + offset[k];
+					new_values[k] = scale[k] * val + offset[k];
 				}
 				else {
-					new_values[k] = scale[k]*(val - offset[k]);
+					new_values[k] = scale[k] * (val - offset[k]);
 				}
 			}
 		}
