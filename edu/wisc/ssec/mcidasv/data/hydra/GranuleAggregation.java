@@ -364,6 +364,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 
 	   //Object o = java.lang.reflect.Array.newInstance(getArrayType(array_name), totalLength);
            Class outType;
+           Class arrayType = getArrayType(array_name);
            RangeProcessor rngProcessor = varToRangeProcessor.get(array_name);
            if (rngProcessor == null) {
               outType = getArrayType(array_name);
@@ -378,7 +379,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   for (Array a : arrayList) {
                    if (a != null) {
 		      Object primArray = a.copyTo1DJavaArray();
-                      primArray = processArray(array_name, granIdx, primArray, rngProcessor);
+                      primArray = processArray(array_name, arrayType, granIdx, primArray, rngProcessor);
 		      System.arraycopy(primArray, 0, o, destPos, (int) a.getSize());
 		      destPos += a.getSize();
                    }
@@ -397,13 +398,24 @@ public class GranuleAggregation implements MultiDimensionReader {
    }
 
    /* pass individual granule pieces just read from dataset through the RangeProcessor */
-   private Object processArray(String array_name, int granIdx, Object values, RangeProcessor rngProcessor) {
+   private Object processArray(String array_name, Class arrayType, int granIdx, Object values, RangeProcessor rngProcessor) {
      if (rngProcessor == null) {
        return values;
      }
      else {
-       ((AggregationRangeProcessor)rngProcessor).setIndex(granIdx);
-       return rngProcessor.processRange((short[])values, null);
+        ((AggregationRangeProcessor)rngProcessor).setIndex(granIdx);
+
+        Object outArray = null;
+        if (arrayType == Short.TYPE) {
+           outArray = rngProcessor.processRange((short[])values, null);
+        } else if (arrayType == Byte.TYPE) {
+           outArray = rngProcessor.processRange((byte[])values, null);
+        } else if (arrayType == Float.TYPE) {
+           outArray = rngProcessor.processRange((float[])values, null);
+        } else if (arrayType == Double.TYPE) {
+           outArray = rngProcessor.processRange((double[])values, null);
+        }
+        return outArray;
      }
    }
 
