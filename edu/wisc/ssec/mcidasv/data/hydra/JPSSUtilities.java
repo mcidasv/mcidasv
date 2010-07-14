@@ -51,6 +51,13 @@ public abstract class JPSSUtilities {
     static {
     	
     	// populate geolocation hashmap
+    	// Collection Short Name -> Geolocation Product ID
+    	// This mapping is based on Table A-8, "Geolocation Identifiers", from
+    	// NPP CDFCB Volume 1
+    	// http://jointmission.gsfc.nasa.gov/projects/science-documents.html
+    	// NOTE: I have found some mappings to be missing!  I.E., the table
+    	// in the spec is apparently not complete!
+    	
     	geoHM.put("ATMS-SDR-GEO", "GATMO");
     	geoHM.put("CrIMSS-AUX-EDR", "GCRIO");
     	geoHM.put("CrIS-SDR-GEO", "GCRSO");
@@ -65,15 +72,24 @@ public abstract class JPSSUtilities {
     	geoHM.put("VIIRS-IMG-GEO", "GIMGO");
     	geoHM.put("VIIRS-IMG-GEO-TC", "GITCO");
     	geoHM.put("VIIRS-CLD-AGG-GEO", "GCLDO");
+    	geoHM.put("VIIRS-SIC-GEO", "GSICO");
     	
     	// populate product hashmap
+    	// This table is needed because the product names in the actual granules
+    	// do not match those in the XML Product Profiles, which appear to be 
+    	// a short-hand version of the longer names.  Swell.
+    	// Mapping:  Product name in granule -> Product name in XML Product Profile
+    	
     	prodHM.put("BulkSeaSurfaceTemperature", "bulkSST");
     	prodHM.put("CloudBaseHeightLayer", "cbhLyr");
     	prodHM.put("CloudBaseHeightTotal", "cbhTot");
+    	prodHM.put("IceAge", "iceAge");
+    	prodHM.put("IceAgeWeight", "iceAgeWeight");
     	prodHM.put("Land_Temp", "lst");
     	prodHM.put("Radiance", "radiance");
     	prodHM.put("Reflectance", "reflect");
     	prodHM.put("SkinSeaSurfaceTemperature", "skinSST");
+    	prodHM.put("SnowCoverBinaryMap", "scdBinaryMap");
     	prodHM.put("TopOfAtmosphereNormalizedDifferenceVegetationIndex", "TOA_NDVI");
     	prodHM.put("TopOfCanopyEnhancedVegetationIndex", "TOC_EVI");
     	
