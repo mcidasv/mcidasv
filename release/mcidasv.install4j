@@ -338,6 +338,10 @@ Please visit &lt;a href="http://dcdbs.ssec.wisc.edu/mcidasv/forums/viewtopic.php
             </serializedBean>
             <condition>!context.getBooleanVariable("sys.confirmedUpdateInstallation")</condition>
             <validation>String disallowed = (System.getProperty("user.home") + File.separator + context.getCompilerVariable("sys.shortName"));
+if (Util.isMacOS()) {
+    disallowed = (System.getProperty("user.home") + File.separator + "Documents" + File.separator + context.getCompilerVariable("sys.shortName"));
+}
+
 File disallowed_file = new File(disallowed);
 
 String mcv_jar =disallowed + File.separator + "mcidasv.jar";
@@ -363,7 +367,7 @@ else if (disallowed_file.exists()) {
     }
     else if (!mcv_main_file.exists()) {
         String notice = disallowed + " does not appear to be a McIDAS-V document directory.\n\n";
-        notice += "Starting with 1.0beta6 user data is stored here.\nPlease remove this directory before continuing.";
+        notice += "Starting with 1.0beta6 user data is stored here.\nPlease rename or remove this directory before continuing.";
         Util.showErrorMessage(notice);
         allowed = false;
     }
