@@ -300,12 +300,6 @@ public class SwathAdapter extends MultiDimensionAdapter {
         return swathDomain;
       }
       
-      /**
-      public RangeProcessor getRangeProcessor() {
-        return rangeProcessor;
-      }
-      */
-
       public boolean spatialEquals(Object last_subset, Object subset) {
         double[] last_coords = (double[]) ((HashMap)last_subset).get(track_name);
         double[] coords = (double[]) ((HashMap)subset).get(track_name);
