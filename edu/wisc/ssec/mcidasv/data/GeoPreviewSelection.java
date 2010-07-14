@@ -302,8 +302,6 @@ public class GeoPreviewSelection extends DataSelectionComponent {
                   (ele < 0) || (dEle > previewXDim)) {
                   line = -1;
                   ele = -1;
-                  height = 0;
-                  width = 0;
               }
 
               int lineMag = 1;

@@ -547,7 +547,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         this.previewLineRes = lMag;
         this.previewEleRes = eMag;
         String src = aid.getSource();
-        src = replaceKey(src, LINELE_KEY, (Object)("1 1"));
+        src = replaceKey(src, LINELE_KEY, (Object)("0 0 F"));
         src = replaceKey(src, PLACE_KEY, (Object)("ULEFT"));
         src = replaceKey(src, SIZE_KEY, (Object)(lSize + " " + eSize));
         src = replaceKey(src, MAG_KEY, (Object)(lMag + " " + eMag));
