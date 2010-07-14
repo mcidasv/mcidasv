@@ -60,8 +60,6 @@ import javax.swing.JToggleButton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.imagery.AddeImageDescriptor;
@@ -1392,9 +1390,6 @@ public class AddeImageChooser extends AddeChooser implements
                     AddeImageInfo aii = makeImageInfo(aid.getDirectory(), true, relativeTimesIndices[i]);
                     if (aii.getBand() == null) {
                         aii.setBand(defaultBand);
-                        logger.trace("set band=ALL for aii={}", aii);
-                    } else {
-                        logger.trace("found band; rock on! band={}, aii={}", aii.getBand(), aii);
                     }
                     aid.setImageInfo(aii);
                     aid.setSource(aii.getURLString());
@@ -1407,9 +1402,6 @@ public class AddeImageChooser extends AddeChooser implements
                     AddeImageInfo aii = makeImageInfo(aid.getDirectory(), false, i);
                     if (aii.getBand() == null) {
                         aii.setBand(defaultBand);
-                        logger.trace("set band=ALL for aii={}", aii);
-                    } else {
-                        logger.trace("found band; rock on! band={}, aii={}", aii.getBand(), aii);
                     }
                     aid.setImageInfo(aii);
                     aid.setSource(aii.getURLString());
