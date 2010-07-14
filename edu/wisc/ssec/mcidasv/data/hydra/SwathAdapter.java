@@ -112,6 +112,8 @@ public class SwathAdapter extends MultiDimensionAdapter {
 
       private Object last_subset;
 
+      int default_stride = 1;
+
       public static HashMap getEmptySubset() {
         HashMap<String, double[]> subset = new HashMap<String, double[]>();
         subset.put(track_name, new double[3]);
@@ -222,6 +224,7 @@ public class SwathAdapter extends MultiDimensionAdapter {
           e.printStackTrace();
         }
 
+        default_stride = (int) XTrackLen/256;
       }
 
       protected void setLengths() {
@@ -328,13 +331,15 @@ public class SwathAdapter extends MultiDimensionAdapter {
         double[] coords = (double[])subset.get("Track");
         coords[0] = 0.0;
         coords[1] = TrackLen - 1;
-        coords[2] = 1.0;
+        //coords[2] = 1.0;
+        coords[2] = (double)default_stride;
         subset.put("Track", coords);
 
         coords = (double[])subset.get("XTrack");
         coords[0] = 0.0;
         coords[1] = XTrackLen - 1 ;
-        coords[2] = 1.0;
+        //coords[2] = 1.0;
+        coords[2] = (double)default_stride;
         subset.put("XTrack", coords);
         return subset;
       }
