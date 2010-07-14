@@ -138,8 +138,11 @@ public class GranuleAggregation implements MultiDimensionReader {
 
    public HDFArray getArrayAttribute(String array_name, String attr_name) throws Exception {
 	   Variable var = varMapList.get(0).get(array_name);
+	   if (var == null) return null;
+	   
 	   Attribute attr = var.findAttribute(attr_name);
-	   logger.trace("GranuleAggregation.getArrayAttribute: " + var.getName());
+	   if (attr == null) return null;
+	   
 	   Array attrVals = attr.getValues();
 	   DataType dataType = attr.getDataType();
 	   Object array = attrVals.copyTo1DJavaArray();
