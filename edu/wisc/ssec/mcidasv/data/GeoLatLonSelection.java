@@ -42,6 +42,7 @@ import java.awt.Insets;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -221,11 +222,11 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       static double dNaN = Double.NaN;
 
 /** the place string */
-      private static String defaultType = TYPE_LATLON;
+      private String defaultType = TYPE_LATLON;
       private static String place;
       private String defaultPlace = PLACE_CENTER;
-      private static int defaultNumLines = 1000;
-      private static int defaultNumEles = 1000;
+      private int defaultNumLines = 1000;
+      private int defaultNumEles = 1000;
       private int numLines = defaultNumLines;
       private int numEles = defaultNumEles;
       private static double latitude;
@@ -327,7 +328,24 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
              AreaDirectory dir, AREAnav nav) 
               throws VisADException, RemoteException {
           super("Advanced");
-
+/*
+          System.out.println("GeoLatLonSelection:");
+          System.out.println("    dataSource=" + dataSource);
+          System.out.println("    dataChoice=" + dataChoice);
+          System.out.println("    sample=" + sample);
+          System.out.println("    nav=" + nav);
+          try {
+              for (int i=0; i<20; i++)
+                  System.out.println(i+1 + ": " + dir.getValue(i));
+          } catch (Exception e) {
+          }
+          Enumeration propEnum = initProps.keys();
+          for (int i=0; propEnum.hasMoreElements(); i++) {
+              String key = propEnum.nextElement().toString();
+              Object val = initProps.get(key);
+              System.out.println("    key=" + key + " val=" + val);
+          }
+*/
           if (dataSource != lastDataSource) this.resetLatLon = true;
           lastDataSource = dataSource;
 
@@ -424,8 +442,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
           if (this.resetLatLon) {
               if (previewDir != null) {
-                  setLatitude(new Double(previewDir.getCenterLatitude()));
-                  setLongitude(new Double(previewDir.getCenterLongitude()));
+                  setLatitude(previewDir.getCenterLatitude());
+                  setLongitude(previewDir.getCenterLongitude());
               }
           } else {
               setLatitude(this.latitude);
@@ -547,8 +565,14 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   };
 
                   if (!this.isLineEle) {
-                      latLonWidget.setLatLon((Double.toString(this.latitude)),
-                                             (Double.toString(this.longitude)));
+                      JTextField latFld = latLonWidget.getLatField();
+                      String val = "" + this.latitude;
+                      val = val.substring(0, 6);
+                      latFld.setText(val);
+                      JTextField lonFld = latLonWidget.getLonField();
+                      val = "" + this.longitude;
+                      val = val.substring(0, 6);
+                      lonFld.setText(val);
                   }
                   String lineStr = "";
                   String eleStr = "";
@@ -944,8 +968,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       public void setToFullResolution() {
           amSettingProperties = true;
           setPlace(PLACE_CENTER);
-          setLatitude(new Double(previewDir.getCenterLatitude()));
-          setLongitude(new Double(previewDir.getCenterLongitude()));
+          setLatitude(previewDir.getCenterLatitude());
+          setLongitude(previewDir.getCenterLongitude());
           convertToLinEle();
           setNumLines(maxLines);
           setNumEles(maxEles);
@@ -1458,7 +1482,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
     public void setLatitude(double val) {
         if (val < -90.0 || val > 90.0)
             val = defaultLat;
-        latLonWidget.setLat(val);
+        JTextField latFld = latLonWidget.getLatField();
+        String str = "" + val;
+        str = str.substring(0, 6);
+        latFld.setText(str);
         this.latitude = val;
         this.resetLatLon = false;
     }
@@ -1479,7 +1506,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
     public void setLongitude(double val) {
         if (val < -180.0 || val > 180.0)
             val = defaultLon;
-        latLonWidget.setLon(val);
+        JTextField lonFld = latLonWidget.getLonField();
+        String str = "" + val;
+        str = str.substring(0, 6);
+        lonFld.setText(str);
         this.longitude = val;
         this.resetLatLon = false;
     }
