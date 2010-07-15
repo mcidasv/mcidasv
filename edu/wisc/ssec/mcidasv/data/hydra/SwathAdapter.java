@@ -224,7 +224,13 @@ public class SwathAdapter extends MultiDimensionAdapter {
           e.printStackTrace();
         }
 
-        default_stride = (int) XTrackLen/256;
+        if (XTrackLen <= 256) {
+          default_stride = 1;
+        }
+        else {
+          default_stride = (int) XTrackLen/256;
+        }
+
       }
 
       protected void setLengths() {
