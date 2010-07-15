@@ -294,7 +294,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   // for all indeces other than the inTrackIndex, the numbers match what was passed in
 			   if (j != inTrackIndex) {
 				   startSet[i][j] = start[j];
-				   countSet[i][j] = count[j];
+				   countSet[i][j] = count[j] * stride[j];
 				   strideSet[i][j] = stride[j];  
 			   } else {
 				   // for the inTrackIndex, it's not so easy...
@@ -306,16 +306,16 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   }
 				   // counts may be different for start, end, and middle granules
 				   if (i == 0) {
-					   if ((granuleLength - start[j]) < (count[j] / stride[j])) {					   
-						   countSet[i][j] = (granuleLength - start[j]) / stride[j];
+					   if ((granuleLength - start[j]) < (count[j] * stride[j])) {					   
+						   countSet[i][j] = (granuleLength - start[j]) * stride[j];
 					   } else {
-						   countSet[i][j] = count[j];
+						   countSet[i][j] = count[j] * stride[j];
 					   }
 					   countSubtotal += countSet[i][j];
 				   } else {
 					   // middle grandules
 					   if (i < (granuleSpan - 1)) {
-						   countSet[i][j] = granuleLength / stride[j];
+						   countSet[i][j] = granuleLength * stride[j];
 						   countSubtotal += countSet[i][j];
 					   } else {
 						   // the end granule
