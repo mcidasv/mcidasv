@@ -103,8 +103,6 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 public class AddeImageChooser extends AddeChooser implements
 		ucar.unidata.ui.imagery.ImageSelector {
 
-    private static final Logger logger = LoggerFactory.getLogger(AddeImageChooser.class);
-
 	// TODO: get rid of this button right?
 	public static JToggleButton mineBtn = GuiUtils
 			.getToggleImageButton(
