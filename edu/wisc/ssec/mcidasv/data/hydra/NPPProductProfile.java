@@ -32,6 +32,7 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -56,6 +57,7 @@ public class NPPProductProfile {
 	Document d = null;
 	HashMap<String, String> rangeMin = new HashMap<String, String>();
 	HashMap<String, String> rangeMax = new HashMap<String, String>();
+	HashMap<String, ArrayList<Float>> fillValues = new HashMap<String, ArrayList<Float>>();
 
 	public NPPProductProfile(String fileName) throws ParserConfigurationException, SAXException, IOException {
 
@@ -76,6 +78,7 @@ public class NPPProductProfile {
 		d = db.parse(fileName);
 		NodeList nl = d.getElementsByTagName("Datum");
 		for (int i = 0; i < nl.getLength(); i++) {
+			ArrayList<Float> fval = new ArrayList<Float>();
 			Node n = nl.item(i);
 			NodeList children = n.getChildNodes();
 			String name = null;
@@ -89,8 +92,21 @@ public class NPPProductProfile {
 				if (child.getNodeName().equals("RangeMax")) {
 					rMax = child.getTextContent();
 				}
+				// XXX TJJ - really should cycle through once to make sure the name
+				// is found/set, THEN cycle through again and get the relevant values
 				if (child.getNodeName().equals("Name")) {
 					name = child.getTextContent();
+				}
+				if (child.getNodeName().equals("FillValue")) {
+					// go one level further to child element Value
+					NodeList grandChildren = child.getChildNodes();
+					for (int k = 0; k < grandChildren.getLength(); k++) {
+						Node grandChild = grandChildren.item(k);
+						if (grandChild.getNodeName().equals("Value")) {
+							String fillValueStr = grandChild.getTextContent();
+							fval.add(new Float(Float.parseFloat(fillValueStr)));
+						}
+					}
 				}
 			}
 			if ((name != null) && (rMin != null)) {
@@ -98,6 +114,9 @@ public class NPPProductProfile {
 			}
 			if ((name != null) && (rMax != null)) {
 				rangeMax.put(name, rMax);
+			}
+			if ((name != null) && (! fval.isEmpty())) {
+				fillValues.put(name, fval);
 			}
 		}
 	}
@@ -108,6 +127,10 @@ public class NPPProductProfile {
 	
 	public String getRangeMax(String name) {
 		return rangeMax.get(name);
+	}
+	
+	public ArrayList<Float> getFillValues(String name) {
+		return fillValues.get(name);
 	}
 
 }

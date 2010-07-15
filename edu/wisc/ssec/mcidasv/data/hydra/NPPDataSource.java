@@ -146,8 +146,8 @@ public class NPPDataSource extends HydraDataSource {
     private boolean hasTrackPreview = false;
     private boolean hasChannelSelect = false;
     
-    private static int[] YSCAN_POSSIBILITIES = { 96, 768, 1536 };
-    private static int[] XSCAN_POSSIBILITIES = { 508, 3200, 6400 };    
+    private static int[] YSCAN_POSSIBILITIES = { 96, 512, 768, 1536 };
+    private static int[] XSCAN_POSSIBILITIES = { 508, 2133, 3200, 6400 };    
     private int inTrackDimensionLength = -1;
     
     // date formatter for converting NPP day/time to something we can use
@@ -452,7 +452,7 @@ public class NPPDataSource extends HydraDataSource {
     	    								ucar.nc2.Attribute a2 = new ucar.nc2.Attribute("add_offset", offsetVal);
     	    								v.addAttribute(a2);  
     	    								
-    	    								// add valid range attribute here
+    	    								// add valid range and fill value attributes here
     	    					        	// try to fill in valid range
     	    					        	if (nppPP != null) {
     	    					        		String translatedName = JPSSUtilities.mapProdNameToProfileName(vName.substring(vName.lastIndexOf(File.separatorChar) + 1));
@@ -468,13 +468,63 @@ public class NPPDataSource extends HydraDataSource {
     	    					        			af.setFloat(1, Float.parseFloat(rangeMax));
     	    	    								ucar.nc2.Attribute rangeAtt = new ucar.nc2.Attribute("valid_range", af);
     	    	    								v.addAttribute(rangeAtt);
+    	    	    								
+    	    	    								// check for and load fill values too...
+    	    	    								
+    	    	    								// we need to check two places, first, the XML product profile
+    	    	    								ArrayList<Float> fval = nppPP.getFillValues(translatedName);
+    	    	    								
+    	    	    								// 2nd, does the variable already have one defined?
+	    	    									// if there was already a fill value associated with this variable, make
+	    	    									// sure we bring that along for the ride too...
+	        	    								ucar.nc2.Attribute aFill = v.findAttribute("_FillValue");
+	        	    								
+	        	    								// determine size of our fill value array
+	        	    								int fvArraySize = 0;
+	        	    								if (aFill != null) fvArraySize++;
+	        	    								if (! fval.isEmpty()) fvArraySize += fval.size();
+	        	    								int [] fillShape = new int [] { fvArraySize };
+	        	    								
+	        	    								// allocate the array
+	        	    								ArrayFloat afFill = new ArrayFloat(fillShape);
+	        	    								
+    	    	    								// and FINALLY, fill it!
+	        	    								if (! fval.isEmpty()) {
+    	    	    									for (int fillIdx = 0; fillIdx < fval.size(); fillIdx++) {
+    	    	    										afFill.setFloat(fillIdx, fval.get(fillIdx));
+    	    	    										logger.info("Adding fill value (from XML): " + fval.get(fillIdx));
+    	    	    									}
+    	    	    								}
+	        	    								
+	        	    								if (aFill != null) {
+	        	    									Number n = aFill.getNumericValue();
+	        	    									// is the data unsigned?
+	        	    									ucar.nc2.Attribute aUnsigned = v.findAttribute("_Unsigned");
+	        	    									float fillValAsFloat = Float.NaN;
+	        	    									if (aUnsigned != null) {
+	        	    										if (aUnsigned.getStringValue().equals("true")) {
+	        	    											DataType fvdt = aFill.getDataType();
+	        	    											logger.info("Data String: " + aFill.toString());
+	        	    											logger.info("DataType primitive type: " + fvdt.getPrimitiveClassType());
+	        	    											// signed byte that needs conversion?
+	        	    											if (fvdt.getPrimitiveClassType() == byte.class) {
+	        	    												fillValAsFloat = (float) RangeProcessor.unsignedByteToInt(n.byteValue());
+	        	    											}
+	        	    											else if (fvdt.getPrimitiveClassType() == short.class) {
+	        	    												fillValAsFloat = (float) RangeProcessor.unsignedShortToInt(n.shortValue());
+	        	    											} else {
+	        	    												fillValAsFloat = n.floatValue();
+	        	    											}
+	        	    										}
+	        	    									}
+	        	    									afFill.setFloat(fvArraySize - 1, fillValAsFloat);
+	        	    									logger.info("Adding fill value (from variable): " + fillValAsFloat);
+	        	    								}
+	    	    									ucar.nc2.Attribute fillAtt = new ucar.nc2.Attribute("_FillValue", afFill);
+	    	    									v.addAttribute(fillAtt);
     	    					        		}
     	    					        	}
 
-    	    								ucar.nc2.Attribute aFill = v.findAttribute("_FillValue");
-    	    								if (aFill != null) {
-    	    									logger.debug("_FillValue attribute value: " + aFill.getNumericValue());
-    	    								}
     	    								ucar.nc2.Attribute aUnsigned = v.findAttribute("_Unsigned");
     	    								if (aUnsigned != null) {
     	    									logger.debug("_Unsigned attribute value: " + aUnsigned.getStringValue());
