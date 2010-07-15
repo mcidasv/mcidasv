@@ -566,13 +566,17 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
                   if (!this.isLineEle) {
                       JTextField latFld = latLonWidget.getLatField();
-                      String val = "" + this.latitude;
-                      val = val.substring(0, 6);
-                      latFld.setText(val);
+                      String str = "" + this.latitude;
+                      int indx = str.length() - 1;
+                      if (indx > 6) indx = 6;
+                      str = str.substring(0, indx);
+                      latFld.setText(str);
                       JTextField lonFld = latLonWidget.getLonField();
-                      val = "" + this.longitude;
-                      val = val.substring(0, 6);
-                      lonFld.setText(val);
+                      str = "" + this.longitude;
+                      indx = str.length() - 1;
+                      if (indx > 6) indx = 6;
+                      str = str.substring(0, indx);
+                      lonFld.setText(str);
                   }
                   String lineStr = "";
                   String eleStr = "";
@@ -1484,7 +1488,9 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             val = defaultLat;
         JTextField latFld = latLonWidget.getLatField();
         String str = "" + val;
-        str = str.substring(0, 6);
+        int indx = str.length() - 1;
+        if (indx > 6) indx = 6;
+        str = str.substring(0, indx);
         latFld.setText(str);
         this.latitude = val;
         this.resetLatLon = false;
@@ -1508,7 +1514,9 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             val = defaultLon;
         JTextField lonFld = latLonWidget.getLonField();
         String str = "" + val;
-        str = str.substring(0, 6);
+        int indx = str.length() - 1;
+        if (indx > 6) indx = 6;
+        str = str.substring(0, indx);
         lonFld.setText(str);
         this.longitude = val;
         this.resetLatLon = false;
