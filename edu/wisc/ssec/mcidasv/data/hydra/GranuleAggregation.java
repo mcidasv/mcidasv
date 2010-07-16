@@ -289,7 +289,9 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   int countSubtotal = 0;
 	   
 	   // this part is a little tricky - set the values for each granule we need to access for this read
+	   int granuleNumber = loGranuleId;
 	   for (int i = 0; i < granuleSpan; i++) {
+		   granuleNumber++;
 		   for (int j = 0; j < dimensionCount; j++) {
 			   // for all indeces other than the inTrackIndex, the numbers match what was passed in
 			   if (j != inTrackIndex) {
@@ -302,16 +304,22 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   if (i == 0) {
 					   startSet[i][j] = start[j] % granuleLength;
 				   } else {
-					   startSet[i][j] = (granuleLength - start[j]) % stride[j];
+					   startSet[i][j] = ((granuleLength * granuleNumber) - start[j]) % stride[j];
 				   }
 				   // counts may be different for start, end, and middle granules
 				   if (i == 0) {
-					   if ((granuleLength - start[j]) < (count[j] * stride[j])) {					   
-						   countSet[i][j] = (granuleLength - start[j]) * stride[j];
+					   // is this the first and only granule?
+					   if (granuleSpan == 1) {
+						   countSet[i][j] = count[j];
+					   // or is this the first of multiple granules...
 					   } else {
-						   countSet[i][j] = count[j] * stride[j];
+						   if (((granuleLength * granuleNumber) - start[j]) < (count[j] * stride[j])) {					   
+							   countSet[i][j] = ((granuleLength * granuleNumber) - start[j]) * stride[j];
+						   } else {
+							   countSet[i][j] = count[j] * stride[j];
+						   }
+						   countSubtotal += countSet[i][j];
 					   }
-					   countSubtotal += countSet[i][j];
 				   } else {
 					   // middle grandules
 					   if (i < (granuleSpan - 1)) {
@@ -329,6 +337,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   }
 	   
 	   int totalLength = 0;
+	   int rangeListCount = 0;
 	   ArrayList<Array> arrayList = new ArrayList<Array>();
 	   for (int granuleIdx = 0; granuleIdx < granuleCount; granuleIdx++) {
 		   if ((granuleIdx >= loGranuleId) && (granuleIdx <= hiGranuleId)) {
@@ -339,15 +348,16 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   } else {
 				   ArrayList<Range> rangeList = new ArrayList<Range>();
 				   for (int dimensionIdx = 0; dimensionIdx < dimensionCount; dimensionIdx++) {
-					   logger.trace("Creating new Range: " + startSet[granuleIdx][dimensionIdx] +
-							   ", " + (startSet[granuleIdx][dimensionIdx] + countSet[granuleIdx][dimensionIdx] - 1) + ", " + strideSet[granuleIdx][dimensionIdx]);
+					   logger.trace("Creating new Range: " + startSet[rangeListCount][dimensionIdx] +
+							   ", " + (startSet[rangeListCount][dimensionIdx] + countSet[rangeListCount][dimensionIdx] - 1) + ", " + strideSet[rangeListCount][dimensionIdx]);
 					   Range range = new Range(
-							   startSet[granuleIdx][dimensionIdx], 
-							   startSet[granuleIdx][dimensionIdx] + countSet[granuleIdx][dimensionIdx] - 1,
-							   strideSet[granuleIdx][dimensionIdx]
+							   startSet[rangeListCount][dimensionIdx], 
+							   startSet[rangeListCount][dimensionIdx] + countSet[rangeListCount][dimensionIdx] - 1,
+							   strideSet[rangeListCount][dimensionIdx]
 					   );
 					   rangeList.add(dimensionIdx, range);
 				   }
+				   rangeListCount++;
 				   Array subarray = var.read(rangeList);
 				   //dataType = subarray.getElementType();
 				   totalLength += subarray.getSize();
