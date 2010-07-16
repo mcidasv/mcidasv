@@ -695,6 +695,12 @@ public class NPPDataSource extends HydraDataSource {
                                         ginfo.getMinLon(), ginfo.getMaxLon());
     }
 
+    public synchronized Data getData(DataChoice dataChoice, DataCategory category,
+                                DataSelection dataSelection, Hashtable requestProperties)
+                                throws VisADException, RemoteException {
+       return this.getDataInner(dataChoice, category, dataSelection, requestProperties);
+    }
+
 
     protected Data getDataInner(DataChoice dataChoice, DataCategory category,
                                 DataSelection dataSelection, Hashtable requestProperties)
