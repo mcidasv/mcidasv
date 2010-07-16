@@ -310,7 +310,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   if (i == 0) {
 					   // is this the first and only granule?
 					   if (granuleSpan == 1) {
-						   countSet[i][j] = count[j];
+						   countSet[i][j] = count[j] * stride[j];
 					   // or is this the first of multiple granules...
 					   } else {
 						   if (((granuleLength * granuleNumber) - start[j]) < (count[j] * stride[j])) {					   
