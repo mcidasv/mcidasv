@@ -1,4 +1,4 @@
-def cloudFilter(sdataset1,sdataset2,user_replace='Default',user_constant=0):
+def cloudFilter(sdataset1,sdataset2,user_replace='Default',user_constant=0,user_stretchval='Contrast'):
   """ 
       from visad.python.JPythonMethods import getMinMax
       cloud filter from McIDAS-X - requires 2 source datasets
@@ -11,7 +11,8 @@ def cloudFilter(sdataset1,sdataset2,user_replace='Default',user_constant=0):
   replace=user_replace
   constant=int(user_constant)
   if (replace != 'Default'):
-     replace=int(replace) 
+     replace=int(replace)
+  stretch=user_stretchval 
 
   for t in range(data1.getDomainSet().getLength()):
      range1 = data1.getSample(t)
@@ -35,13 +36,18 @@ def cloudFilter(sdataset1,sdataset2,user_replace='Default',user_constant=0):
                 
      post_hi = int(max(vals1[0]))
      post_low = int(min(vals1[0])) 
-     lookup=contrast(post_low,post_hi,post_low,post_hi)
+     if (stretch == 'Contrast'):
+       lookup=contrast(post_low,post_hi,post_low,post_hi)
+     elif (stretch == 'Histogram'):
+       h = hist(field(vals1),[0],[post_hi-post_low])
+       lookup=histoStretch(post_low,post_hi,h)
+     
      vals1=modify(vals1,element_size,line_size,post_low,lookup) 
      range1.setSamples(vals1)
 
   return data1
 
-def replaceFilter(sdataset,user_replaceVal=0,user_bline='Default',user_eline='Default',user_belem='Default',user_eelem='Default',user_sourceval='Default'):
+def replaceFilter(sdataset,user_replaceVal=0,user_bline='Default',user_eline='Default',user_belem='Default',user_eelem='Default',user_sourceval='Default',user_stretchval='Contrast'):
   """ 
       replace filter from McIDAS-X 
       user_replace : replacement value  (default=0)
@@ -71,6 +77,7 @@ def replaceFilter(sdataset,user_replaceVal=0,user_bline='Default',user_eline='De
     belem=0
   if (eelem != 'Default'):
      eelem=int(eelem)
+  stretch=user_stretchval
   
   """
      sourceVal can either be specified in list format: val1 val2 val3
@@ -87,8 +94,7 @@ def replaceFilter(sdataset,user_replaceVal=0,user_bline='Default',user_eline='De
      tempVal = range(0, 256)
   
   sourceVal = [ float(m) for m in tempVal ]
-  print sourceVal       
-         
+           
   for t in range(newData.getDomainSet().getLength()):
      rangeObject = newData.getSample(t)
      vals = rangeObject.getFloats(0)
@@ -108,25 +114,34 @@ def replaceFilter(sdataset,user_replaceVal=0,user_bline='Default',user_eline='De
               line=replaceVal
            vals[0][i*element_size+j] = line
      
-     rangeObject.setSamples(vals)
+     post_hi = int(max(vals[0]))
+     post_low = int(min(vals[0])) 
+     if (stretch == 'Contrast'):
+       lookup=contrast(post_low,post_hi,post_low,post_hi)
+     elif (stretch == 'Histogram'):
+       h = hist(field(vals),[0],[post_hi-post_low])
+       lookup=histoStretch(post_low,post_hi,h)
+       
+     vals1=modify(vals,element_size,line_size,post_low,lookup) 
+     rangeObject.setSamples(vals1)
 
   return newData
 
-def cleanFilter(sdataset,user_replace='Average',user_bline=0,user_eline=999999,user_pdiff=15,user_ldiff=15):
+def cleanFilter(sdataset,user_replace='Average',user_bline='Default',user_eline='Default',user_pdiff=15,user_ldiff=15,user_stretchval='Contrast'):
    """ clean filter from McIDAS-X
        user_replace - 'Average': average of surrounding values (default)
                     - 'Min'    : source dataset minimum value
                     - 'Max'    : source dataset maximum value
        user_bline   - beginning line in the source image to clean (default=first line)
        user_eline   - ending line in the source image to clean (default = last line)
-       pdiff        - absolute difference between an element's value and value of the element on either side 
-       ldiff        - percentage difference between a line's average value and the average value of
+       user_pdiff   - absolute difference between an element's value and value of the element on either side 
+       user_ldiff   - percentage difference between a line's average value and the average value of
                       the line above and below
    """   
-   newData=sdataset.clone()
+   newData=shotFilter(sdataset,user_bline,user_eline,user_pdiff)
    return newData
 
-def shotFilter(sdataset,user_bline='Default',user_eline='Default',user_pdiff=15):
+def shotFilter(sdataset,user_bline='Default',user_eline='Default',user_pdiff=15,user_stretchval='Contrast'):
    """ shot noise filter from McIDAS-X
        bline - beginning line in the source image to clean (default=first line)
        eline - ending line in the source image to clean (default = last line)
@@ -144,6 +159,7 @@ def shotFilter(sdataset,user_bline='Default',user_eline='Default',user_pdiff=15)
      eline=int(eline)
      
    filter_diff=int(user_pdiff)
+   stretch=user_stretchval
       
    for t in range(newData.getDomainSet().getLength()):
      rangeObject = newData.getSample(t)
@@ -180,16 +196,25 @@ def shotFilter(sdataset,user_bline='Default',user_eline='Default',user_pdiff=15)
          
          vals[0][i*element_size + j] = (left + right)/2
      
-     rangeObject.setSamples(vals)
+     post_hi = int(max(vals[0]))
+     post_low = int(min(vals[0])) 
+     if (stretch == 'Contrast'):
+       lookup=contrast(post_low,post_hi,post_low,post_hi)
+     elif (stretch == 'Histogram'):
+       h = hist(field(vals),[0],[post_hi-post_low])
+       lookup=histoStretch(post_low,post_hi,h)
+       
+     vals1=modify(vals,element_size,line_size,post_low,lookup) 
+     rangeObject.setSamples(vals1)
    
    return newData
 
-def spotFilter(sdataset,omcon=0,oacon=0,imcon=0,iacon=0,cmin=0,cmax=0):
+def spotFilter(sdataset,omcon=0,oacon=0,imcon=0,iacon=0,cmin=0,cmax=0,user_stretchval='Contrast'):
    """ spot filter from McIDAS-X """
    newData = sdataset.clone()
    return newData
 
-def coreFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Default',user_replace1='Default',user_replace2='Default'):
+def coreFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Default',user_replace1='Default',user_replace2='Default',user_stretchval='Contrast'):
    """ core filter from McIDAS-X - requires 2 source datasets; resulting image has only 2 values
        user_brkpoint1 - sdataset1 breakpoint value (default=minimum value in either source dataset)
        user_brkpoint2 - sdataset2 breakpoint value (default=maximum value in either source dataset)
@@ -211,6 +236,7 @@ def coreFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Defa
      replace1=int(replace1)
    if (replace2 != 'Default'):
      replace2 = int(replace2)
+   stretch=user_stretchval
 
    for t in range(data1.getDomainSet().getLength()):
       range1=data1.getSample(t)
@@ -238,11 +264,21 @@ def coreFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Defa
                vals1[0][i*element_size + j]=replace1
             else:
                vals1[0][i*element_size + j]=replace2
-      range1.setSamples(vals1)
+     
+      post_hi = int(max(vals1[0]))
+      post_low = int(min(vals1[0])) 
+      if (stretch == 'Contrast'):
+       lookup=contrast(post_low,post_hi,post_low,post_hi)
+      elif (stretch == 'Histogram'):
+       h = hist(field(vals1),[0],[post_hi-post_low])
+       lookup=histoStretch(post_low,post_hi,h)
+       
+      vals=modify(vals1,element_size,line_size,post_low,lookup)          
+      range1.setSamples(vals)
 
    return data1
 
-def discriminateFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Default',user_brkpoint3='Default',user_brkpoint4='Default',user_replace='Default'):
+def discriminateFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Default',user_brkpoint3='Default',user_brkpoint4='Default',user_replace='Default',user_stretchval='Contrast'):
    """ discriminate filter from McIDAS-X - requires 2 source datasets; used to mask off a portion of the first source image
        user_brkpoint1 - low end breakpoint value for sdataset1 (default=minimum value in either source dataset)
        user_brkpoint2 - high end breakpoint value for sdataset1 (default=maximum value in either source dataset)
@@ -257,6 +293,7 @@ def discriminateFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoin
    brkpoint3=user_brkpoint3
    brkpoint4=user_brkpoint4
    replace=user_replace
+   stretch=user_stretchval
    
    if (brkpoint1 != 'Default'):
      brkpoint1=int(brkpoint1)
@@ -298,13 +335,18 @@ def discriminateFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoin
       
       post_hi = int(max(vals1[0]))
       post_low = int(min(vals1[0])) 
-      lookup=contrast(post_low,post_hi,post_low,post_hi)
+      if (stretch == 'Contrast'):
+       lookup=contrast(post_low,post_hi,post_low,post_hi)
+      elif (stretch == 'Histogram'):
+       h = hist(field(vals1),[0],[post_hi-post_low])
+       lookup=histoStretch(post_low,post_hi,h)
+       
       vals1=modify(vals1,element_size,line_size,post_low,lookup) 
       range1.setSamples(vals1)      
       
    return data1   
 
-def mergeFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Default',user_constant=0):
+def mergeFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Default',user_constant=0,user_stretchval='Contrast'):
    """ merge filter from McIDAS-X - requires 2 source datasets; merges them if the sdataset1 value is between the specified breakpoints,
          otherwise it selects the sdataset2 value minus the specified constant
        user_brkpoint1 - sdataset1 breakpoint value (default=minimum value in either source dataset)
@@ -320,6 +362,7 @@ def mergeFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Def
      brkpoint1=int(brkpoint1)
    if (brkpoint2 != 'Default'):
      brkpoint2=int(brkpoint2)
+   stretch=user_stretchval
    
    for t in range(data1.getDomainSet().getLength()):
       range1=data1.getSample(t)
@@ -344,15 +387,23 @@ def mergeFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Def
                
       post_hi = int(max(vals1[0]))
       post_low = int(min(vals1[0])) 
-      lookup=contrast(post_low,post_hi,post_low,post_hi)
+      
+      if (stretch == 'Contrast'):
+       lookup=contrast(post_low,post_hi,post_low,post_hi)
+      elif (stretch == 'Histogram'):
+       h = hist(field(vals1),[0],[post_hi-post_low])
+       lookup=histoStretch(post_low,post_hi,h)
+      
       vals1=modify(vals1,element_size,line_size,post_low,lookup)       
       range1.setSamples(vals1)
    
    return data1
    
-def gradientFilter(sdataset):
+def gradientFilter(sdataset,user_stretchval='Contrast'):
    """ gradient filter from McIDAS-X """
    newData=sdataset.clone()
+   stretch=user_stretchval
+   
    for t in range(newData.getDomainSet().getLength()):
      rangeObject = newData.getSample(t)
      vals = rangeObject.getFloats(0)
@@ -371,14 +422,18 @@ def gradientFilter(sdataset):
      
      post_hi = int(max(vals[0]))
      post_low = int(min(vals[0])) 
-      
-     lookup=contrast(post_low,post_hi,post_low,post_hi)
+     if (stretch == 'Contrast'):
+       lookup=contrast(post_low,post_hi,post_low,post_hi)
+     elif (stretch == 'Histogram'):
+       h = hist(field(vals),[0],[post_hi-post_low])
+       lookup=histoStretch(post_low,post_hi,h)
+        
      vals=modify(vals,element_size,line_size,post_low,lookup) 
      rangeObject.setSamples(vals)
 
    return newData 
 
-def passFilter(sdataset,user_passname,user_radius=50,user_leak=100):
+def passFilter(sdataset,user_passname,user_radius=50,user_leak=100,user_stretchval='Contrast'):
    """ Used by one-dimensional low-pass and high-pass filters from McIDAS-X 
        user_passname - either 'High' or 'Low'
        user_radius   - sample length surrounding the source element; used for sample average
@@ -387,6 +442,7 @@ def passFilter(sdataset,user_passname,user_radius=50,user_leak=100):
    newData = sdataset.clone()
    radius = int(user_radius)
    leak = int (user_leak)
+   stretch=user_stretchval
 
    ntot = 2*radius + 1
    nmod = radius + 1
@@ -434,14 +490,18 @@ def passFilter(sdataset,user_passname,user_radius=50,user_leak=100):
             
      post_hi = int(max(vals[0]))
      post_low = int(min(vals[0])) 
+     if (stretch == 'Contrast'):
+       lookup=contrast(post_low,post_hi,post_low,post_hi)
+     elif (stretch == 'Histogram'):
+       h = hist(field(vals),[0],[post_hi-post_low])
+       lookup=histoStretch(post_low,post_hi,h)
      
-     lookup=contrast(post_low,post_hi,post_low,post_hi)
      vals=modify(vals,element_size,line_size,post_low,lookup) 
      rangeObject.setSamples(vals)
 
    return newData
 
-def lowPass2DFilter(sdataset,user_linecoef=0.5,user_elecoef=0.5):
+def lowPass2DFilter(sdataset,user_linecoef=0.5,user_elecoef=0.5,user_stretchval='Contrast'):
    """ 2 dimensional low pass filter from McIDAS-X 
        user_linecoef - line coefficient: 0.0 < linecoef < 1.0
        user_elecoef  - element coefficient: 0.0 < elecoef < 1.0
@@ -449,6 +509,7 @@ def lowPass2DFilter(sdataset,user_linecoef=0.5,user_elecoef=0.5):
    newData = sdataset.clone()
    lcoef = float(user_linecoef)
    ecoef = float(user_elecoef)
+   stretch=user_stretchval
    l1 = 1.0 - lcoef
    e1 = 1.0 - ecoef 
 
@@ -495,17 +556,23 @@ def lowPass2DFilter(sdataset,user_linecoef=0.5,user_elecoef=0.5):
 
      post_hi = int(max(vals[0]))
      post_low = int(min(vals[0])) 
-     lookup=contrast(post_low,post_hi,post_low,post_hi)
+     if (stretch == 'Contrast'):
+       lookup=contrast(post_low,post_hi,post_low,post_hi)
+     elif (stretch == 'Histogram'):
+       h = hist(field(vals),[0],[post_hi-post_low])
+       lookup=histoStretch(post_low,post_hi,h)
+     
      vals=modify(vals,element_size,line_size,post_low,lookup) 
      rangeObject.setSamples(vals)
 
    return newData
 
-def highPass2DFilter(sdataset):
+def highPass2DFilter(sdataset,user_stretchval='Contrast'):
    """ 2 dimensional high pass filter from McIDAS-X 
        equation for each sdataset element = (sdataset - (sample average) + (sample midpoint))
    """
    newData = sdataset.clone()
+   stretch=user_stretchval
    
    for t in xrange(newData.getDomainSet().getLength()):
      rangeObject = newData.getSample(t)
@@ -530,14 +597,19 @@ def highPass2DFilter(sdataset):
      
      vals[0] = firstLine + vals[0][0:(line_size-1)*element_size]
      post_hi = int(max(vals[0]))
-     post_low = int(min(vals[0])) 
-     lookup=contrast(post_low,post_hi,post_low,post_hi)
+     post_low = int(min(vals[0]))
+     if (stretch == 'Contrast'):
+       lookup=contrast(post_low,post_hi,post_low,post_hi)
+     elif (stretch == 'Histogram'):
+       h = hist(field(vals),[0],[post_hi-post_low])
+       lookup=histoStretch(post_low,post_hi,h) 
+     
      vals=modify(vals,element_size,line_size,post_low,lookup)
      rangeObject.setSamples(vals)
 
    return newData
 
-def holeFilter(sdataset,user_brkpoint1=0,user_brkpoint2=1):
+def holeFilter(sdataset,user_brkpoint1=0,user_brkpoint2=1,user_stretchval='Contrast'):
   """ hole filter from McIDAS-X - searches for missing data and fills the holes 
         using the surrounding element values
       brkpoint1 - low end breakpoint value (default = minimum sdataset value)
@@ -546,6 +618,7 @@ def holeFilter(sdataset,user_brkpoint1=0,user_brkpoint2=1):
   data = sdataset.clone()
   brkpoint1=int(user_brkpoint1)
   brkpoint2=int(user_brkpoint2)
+  stretch=user_stretchval
   
   for t in xrange(data.getDomainSet().getLength()):
      rangeObject=data.getSample(t)
@@ -574,7 +647,12 @@ def holeFilter(sdataset,user_brkpoint1=0,user_brkpoint2=1):
                
      post_hi = int(max(vals[0]))
      post_low = int(min(vals[0])) 
-     lookup=contrast(post_low,post_hi,post_low,post_hi)
+     if (stretch == 'Contrast'):
+       lookup=contrast(post_low,post_hi,post_low,post_hi)
+     elif (stretch == 'Histogram'):
+       h = hist(field(vals),[0],[post_hi-post_low])
+       lookup=histoStretch(post_low,post_hi,h)
+     
      vals=modify(vals,element_size,line_size,post_low,lookup) 
      rangeObject.setSamples(vals)
     
@@ -602,6 +680,47 @@ def contrast(in_low,in_hi,minimum,maximum,out_low=0,out_hi=255,inc=1):
    
    return lookup
 
+def histoStretch(in_low,in_hi,histogram,out_low=0,out_hi=255,num_bins=16):
+    """ create a histogram stretch lookup table """
+    step=round((out_hi - out_low)/float(num_bins))
+    half_step=round(step/2)
+        
+    breakpoints = [ out_low + ((m+1)*step-half_step) for m in xrange(num_bins)]
+        
+    start = 1
+    end = in_hi - in_low + 1
+    lookup=[]
+    
+    for i in xrange(num_bins):
+        npop=0
+        ntot=0
+        for j in range(start,end):
+            if (histogram[j-1] != 0):
+               npop=npop+1
+            ntot=ntot + histogram[j-1]
+            
+        nleft = num_bins - i
+        nvals_bin = round(ntot/nleft)
+            
+        if (npop >= nleft):
+            mtot=0
+            for k in range(start,end):
+                mtot=mtot+histogram[k-1]
+                if (mtot > nvals_bin):
+                    break
+                lookup.insert(k,breakpoints[i])
+            
+            start = k + 1
+            lookup.insert(k,breakpoints[i])
+        else:
+            l=i
+            for m in range(start,end):
+                lookup.insert(m,breakpoints[l])
+                if (histogram[m] != 0):
+                    l=l+1
+    
+    return lookup    
+    
 def modify(vals,element_size,line_size,minimum,lookup):
   """ modifies an image with the lookup table generated by a stretch function """
   for i in xrange(line_size):
