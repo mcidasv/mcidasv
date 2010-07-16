@@ -146,8 +146,8 @@ public class NPPDataSource extends HydraDataSource {
     private boolean hasTrackPreview = false;
     private boolean hasChannelSelect = false;
     
-    private static int[] YSCAN_POSSIBILITIES = { 96, 512, 768, 1536 };
-    private static int[] XSCAN_POSSIBILITIES = { 508, 2133, 3200, 6400 };    
+    private static int[] YSCAN_POSSIBILITIES = { 96,  512,  768,  1536, 2304, 2313 };
+    private static int[] XSCAN_POSSIBILITIES = { 508, 2133, 3200, 6400, 4064, 4121 };    
     private int inTrackDimensionLength = -1;
     
     // date formatter for converting NPP day/time to something we can use
@@ -192,16 +192,18 @@ public class NPPDataSource extends HydraDataSource {
 
         this.filename = (String) sources.get(0);
         
+        this.setName("NPP");
+        this.setDescription("NPP");
+        
         for (Object o : sources) {
         	logger.debug("NPP source file: " + (String) o);
         }
 
         try {
-          setup();
-        }
-        catch (Exception e) {
-          e.printStackTrace();
-          throw new VisADException();
+        	setup();
+        } catch (Exception e) {
+        	e.printStackTrace();
+        	throw new VisADException();
         }
     }
 
@@ -210,15 +212,21 @@ public class NPPDataSource extends HydraDataSource {
     	// looking to populate 3 things - path to lat, path to lon, path to relevant products
     	String pathToLat = null;
     	String pathToLon = null;
-    	String geoProductID = null;
     	TreeSet<String> pathToProducts = new TreeSet<String>();
+    	
+    	// various metatdata we'll need to gather on a per-product basis
     	ArrayList<String> unsignedFlags = new ArrayList<String>();
     	ArrayList<String> unpackFlags = new ArrayList<String>();
+    	
     	// time for each product in milliseconds since epoch
     	ArrayList<Long> productTimes = new ArrayList<Long>();
+    	
     	// aggregations will use sets of NetCDFFile readers
     	ArrayList<NetCDFFile> ncdfal = new ArrayList<NetCDFFile>();
+    	
+    	// we should be able to find an XML Product Profile for each data/product type
     	NPPProductProfile nppPP = null;
+    	String geoProductID = null;
     	    	
     	sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
     	   	
@@ -380,7 +388,9 @@ public class NPPDataSource extends HydraDataSource {
     	    							boolean useThis = false;
     	    							String vName = v.getName();
     	    							logger.debug("Variable: " + vName);
-    	    							String firstChar = vName.substring(0, 1);
+    	    							String varPrefix = vName.substring(vName.lastIndexOf(File.separatorChar) + 1);
+    	    							varPrefix = varPrefix.substring(0, 3);
+    	    							logger.debug("Variable prefix for finding Factors: " + varPrefix);
     	    							DataType dt = v.getDataType();
     	    							if ((dt.getSize() != 4) && (dt.getSize() != 2) && (dt.getSize() != 1)) {
     	    								logger.debug("Skipping data of size: " + dt.getSize());
@@ -423,15 +433,21 @@ public class NPPDataSource extends HydraDataSource {
     	    								float offsetVal = 0f;
     	    								boolean unpackFlag = false;
     	    								
+    	    								// XXX TJJ - this is NOT DETERMINISTIC!  The spec in
+    	    								// CDFCB-X, Vol 5, page 8, is too vague, and there is
+    	    								// no SURE way to map variable name to scale/offset parameter
+    	    								// We have found the pseudocode below works for all sample data
+    	    								// seen so far.
+    	    								//
     	    								// for variable list
-    	    								//   if name startswith first char of this variable, and ends with Factors
+    	    								//   if name contains 3-char prefix for this variable, and ends with Factors
     	    								//     get the data, data1 = scale, data2 = offset
     	    								//     create and poke attributes with this data
     	    								//   endif
     	    								// endfor
     	    								
     	    								for (Variable fV : vl) {
-    	    									if ((fV.getName().startsWith(firstChar)) && (fV.getName().endsWith("Factors"))) {
+    	    									if ((fV.getName().contains(varPrefix)) && (fV.getName().endsWith("Factors"))) {
     	    										logger.debug("Pulling scale and offset values from variable: " + fV.getName());
     	    										ucar.ma2.Array a = fV.read();
     	    										ucar.ma2.Index i = a.getIndex();
@@ -570,8 +586,6 @@ public class NPPDataSource extends HydraDataSource {
     	logger.debug("Number of adapters needed: " + pathToProducts.size());
     	adapters = new MultiDimensionAdapter[pathToProducts.size()];
     	Hashtable<String, String[]> properties = new Hashtable<String, String[]>(); 
-
-    	String name = (new File(filename)).getName();
     	
     	Iterator iterator = pathToProducts.iterator();
     	int pIdx = 0;
@@ -592,6 +606,8 @@ public class NPPDataSource extends HydraDataSource {
         	table.put("scale_name", "scale_factor");
         	table.put("offset_name", "add_offset");
         	table.put("fill_value_name", "_FillValue");
+        	logger.info("Setting range_name to: " + pStr.substring(pStr.lastIndexOf(File.separatorChar) + 1));
+        	table.put("range_name", pStr.substring(pStr.lastIndexOf(File.separatorChar) + 1));
         	
         	// set the valid range hash if data is available
         	if (nppPP != null) {
