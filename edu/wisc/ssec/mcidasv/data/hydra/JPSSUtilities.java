@@ -81,17 +81,22 @@ public abstract class JPSSUtilities {
     	// Mapping:  Product name in granule -> Product name in XML Product Profile
     	
     	prodHM.put("BulkSeaSurfaceTemperature", "bulkSST");
+    	prodHM.put("Chlorophyll_a", "chlo_data");
     	prodHM.put("CloudBaseHeightLayer", "cbhLyr");
     	prodHM.put("CloudBaseHeightTotal", "cbhTot");
     	prodHM.put("IceAge", "iceAge");
     	prodHM.put("IceAgeWeight", "iceAgeWeight");
+    	prodHM.put("IST_Array", "IST Pixel");
     	prodHM.put("Land_Temp", "lst");
+    	prodHM.put("NumberOfAggregatedImageryPixels", "scdNumAggPix");
     	prodHM.put("Radiance", "radiance");
     	prodHM.put("Reflectance", "reflect");
     	prodHM.put("SkinSeaSurfaceTemperature", "skinSST");
     	prodHM.put("SnowCoverBinaryMap", "scdBinaryMap");
+    	prodHM.put("SnowFraction", "scdFractionFromBinaryMap");
     	prodHM.put("TopOfAtmosphereNormalizedDifferenceVegetationIndex", "TOA_NDVI");
     	prodHM.put("TopOfCanopyEnhancedVegetationIndex", "TOC_EVI");
+    	prodHM.put("VegetationFraction", "vegFraction");
     	
     }
     
