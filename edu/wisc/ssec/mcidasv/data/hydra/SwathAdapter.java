@@ -201,7 +201,14 @@ public class SwathAdapter extends MultiDimensionAdapter {
         else {
           rangeName = (String)metadata.get(array_name);
         }
+      
         rangeType = RealType.getRealType(rangeName, rangeUnit_s[0]);
+
+        /** TODO could be a mis-match between supplied unit, and default
+            unit of an existing RealType with same name. */
+        if (rangeType == null) {
+          rangeType = RealType.getRealType(rangeName);
+        }
 
         try {
           RangeProcessor rangeProcessor = RangeProcessor.createRangeProcessor(reader, metadata);
