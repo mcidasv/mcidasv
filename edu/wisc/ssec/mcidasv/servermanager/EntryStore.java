@@ -358,7 +358,7 @@ public class EntryStore {
         return groups;
     }
 
-    protected List<AddeEntry> searchWithPrefix(final String prefix) {
+    public List<AddeEntry> searchWithPrefix(final String prefix) {
         notNull(prefix);
         return arrList(trie.getPrefixedBy(prefix).values());
     }

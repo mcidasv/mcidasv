@@ -29,6 +29,9 @@
  */
 package edu.wisc.ssec.mcidasv;
 
+import static ucar.unidata.xml.XmlUtil.getAttribute;
+
+import java.awt.EventQueue;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -61,6 +64,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.DataManager;
+import ucar.unidata.data.imagery.AddeImageInfo;
 import ucar.unidata.idv.ArgsManager;
 import ucar.unidata.idv.ControlDescriptor;
 import ucar.unidata.idv.IdvObjectStore;
@@ -291,7 +295,7 @@ public class McIDASV extends IntegratedDataViewer {
 
         // TODO(jon): ultra fashion makeover!!
         encoder.addDelegateForClass(RemoteAddeEntry.class, new XmlDelegateImpl() {
-            public Element createElement(XmlEncoder e, Object o) {
+            @Override public Element createElement(XmlEncoder e, Object o) {
                 RemoteAddeEntry entry = (RemoteAddeEntry)o;
                 Element element = e.createObjectElement(o.getClass());
                 element.setAttribute("address", entry.getAddress());
@@ -305,15 +309,15 @@ public class McIDASV extends IntegratedDataViewer {
                 return element;
             }
 
-            public Object createObject(XmlEncoder e, Element element) {
-                String address = XmlUtil.getAttribute(element, "address");
-                String group = XmlUtil.getAttribute(element, "group");
-                String username = XmlUtil.getAttribute(element, "username");
-                String project = XmlUtil.getAttribute(element, "project");
-                String source = XmlUtil.getAttribute(element, "source");
-                String type = XmlUtil.getAttribute(element, "type");
-                String validity = XmlUtil.getAttribute(element, "validity");
-                String status = XmlUtil.getAttribute(element, "status");
+            @Override public Object createObject(XmlEncoder e, Element element) {
+                String address = getAttribute(element, "address");
+                String group = getAttribute(element, "group");
+                String username = getAttribute(element, "username");
+                String project = getAttribute(element, "project");
+                String source = getAttribute(element, "source");
+                String type = getAttribute(element, "type");
+                String validity = getAttribute(element, "validity");
+                String status = getAttribute(element, "status");
 
                 EntrySource entrySource = EntryTransforms.strToEntrySource(source);
                 EntryType entryType = EntryTransforms.strToEntryType(type);
@@ -333,7 +337,7 @@ public class McIDASV extends IntegratedDataViewer {
         });
 
         encoder.addDelegateForClass(LocalAddeEntry.class, new XmlDelegateImpl() {
-            public Element createElement(XmlEncoder e, Object o) {
+            @Override public Element createElement(XmlEncoder e, Object o) {
                 LocalAddeEntry entry = (LocalAddeEntry)o;
                 Element element = e.createObjectElement(o.getClass());
                 element.setAttribute("group", entry.getGroup());
@@ -347,21 +351,56 @@ public class McIDASV extends IntegratedDataViewer {
                 element.setAttribute("status", entry.getEntryStatus().name());
                 return element;
             }
-            public Object createObject(XmlEncoder e, Element element) {
-                String group = XmlUtil.getAttribute(element, "group");
-                String descriptor = XmlUtil.getAttribute(element, "descriptor");
-                String realtime = XmlUtil.getAttribute(element, "realtime", "");
+            @Override public Object createObject(XmlEncoder e, Element element) {
+                String group = getAttribute(element, "group");
+                String descriptor = getAttribute(element, "descriptor");
+                String realtime = getAttribute(element, "realtime", "");
                 AddeFormat format = EntryTransforms.strToAddeFormat(XmlUtil.getAttribute(element, "format"));
-                String start = XmlUtil.getAttribute(element, "start", "1");
-                String end = XmlUtil.getAttribute(element, "end", "999999");
-                String fileMask = XmlUtil.getAttribute(element, "fileMask");
-                String name = XmlUtil.getAttribute(element, "name");
-                String status = XmlUtil.getAttribute(element, "status", "ENABLED");
+                String start = getAttribute(element, "start", "1");
+                String end = getAttribute(element, "end", "999999");
+                String fileMask = getAttribute(element, "fileMask");
+                String name = getAttribute(element, "name");
+                String status = getAttribute(element, "status", "ENABLED");
                 LocalAddeEntry.Builder builder = new LocalAddeEntry.Builder(name, group, fileMask, format).range(start, end).descriptor(descriptor).realtime(realtime).status(status);
                 return builder.build();
             }
         });
         
+        encoder.addHighPriorityDelegateForClass(AddeImageInfo.class, new XmlDelegateImpl() {
+            @Override public Element createElement(XmlEncoder e, Object o) {
+                AddeImageInfo info = (AddeImageInfo)o;
+                String user = info.getUser();
+                int proj = info.getProject();
+                logger.trace("user={} proj={}", new Object[] { user, proj });
+                return e.createElementDontCheckDelegate(o);
+            }
+            @Override public Object createObject(XmlEncoder e, Element element) {
+                String host = getAttribute(element, "Host");
+                String group = getAttribute(element, "Group");
+                String descriptor = getAttribute(element, "Descriptor");
+                String type = getAttribute(element, "RequestType");
+                
+                EntryStore store = getServerManager();
+                boolean mcservRunning = store.checkLocalServer();
+                boolean isKnown = store.searchWithPrefix(host+'!'+group).isEmpty();
+                
+                logger.trace("isKnown={} host='{}' group='{}' type='{}' desc='{}'", new Object[] { isKnown, host, group, descriptor, type });
+                return e.createObjectDontCheckDelegate(element);
+            }
+        });
+        
+//        encoder.addHighPriorityDelegateForClass(AddeImageDescriptor.class, new XmlDelegateImpl() {
+//            @Override public Element createElement(XmlEncoder e, Object o) {
+//                AddeImageDescriptor desc = (AddeImageDescriptor)o;
+//                String source = desc.getSource();
+//                desc.setSource(source.replace("USER", "user"));
+//                return desc.createElement(e, o);
+//            }
+//            @Override public Object createObject(XmlEncoder e, Element element) {
+//                
+//                return e.createObjectDontCheckDelegate(element);
+//            }
+//        });
     }
 
     /**

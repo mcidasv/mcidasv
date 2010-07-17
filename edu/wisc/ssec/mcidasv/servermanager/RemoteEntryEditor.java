@@ -991,7 +991,6 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         } else {
             setStatus("Finished verifying.");
         }
-        
         return verified;
     }
 

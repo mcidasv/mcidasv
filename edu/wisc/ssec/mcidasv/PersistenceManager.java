@@ -138,8 +138,11 @@ import edu.wisc.ssec.mcidasv.util.XmlUtil;
  */
 public class PersistenceManager extends IdvPersistenceManager {
 
+    /** Key used to access a bundle's McIDAS-V in-depth versioning info section. */
+    public static final String ID_MCV_VERSION = "mcvversion";
+
     private static final Logger logger = LoggerFactory.getLogger(PersistenceManager.class);
-    
+
     /**
      * Macro used as a place holder for wherever the IDV decides to place 
      * extracted contents of a bundle. 
@@ -286,7 +289,7 @@ public class PersistenceManager extends IdvPersistenceManager {
         // add in some extra versioning information
         StateManager stateManager = (StateManager)getIdv().getStateManager();
         if (data != null) {
-            data.put("mcvversion", stateManager.getVersionInfo());
+            data.put(ID_MCV_VERSION, stateManager.getVersionInfo());
         }
 
         // remove ReadoutProbes from the list
@@ -528,11 +531,9 @@ public class PersistenceManager extends IdvPersistenceManager {
                         if (IOUtil.writeTo(zin, new FileOutputStream(IOUtil.joinDir(tmpDir, entryName))) < 0) {
                             return false;
                         }
-//                        doXslTransform(xmlPath, "/tmp/bundle-transformed.xml");
                     }
                 }
             } else {
-//                doXslTransform(xmlFile, "/tmp/bundle-transformed.xml");
                 Trace.call1("Decode.readContents");
                 bundleContents = IOUtil.readContents(xmlFile);
                 Trace.call2("Decode.readContents");
@@ -564,19 +565,6 @@ public class PersistenceManager extends IdvPersistenceManager {
             }
             return false;
         }
-    }
-
-    public static final String xslpath = "/edu/wisc/ssec/mcidasv/resources/idv2mcidasv.xsl";
-    public static final String xmlinput = "~/data/xslt-bundles/default-idv.xidv";
-    public static final String xmloutput = "~/data/xslt-bundles/output.xidv";
-
-    public static void doXslTransform(final String xslfile, final String xmlPath, final String xmlOutput) throws TransformerException, IOException {
-        URL xslPath = PersistenceManager.class.getResource(xslfile);
-        TransformerFactory cybertron = TransformerFactory.newInstance();
-        Transformer soundwave = cybertron.newTransformer(new StreamSource(xslPath.openStream()));
-        soundwave.transform(
-            new StreamSource(xmlPath),
-            new StreamResult(new FileOutputStream(xmlOutput)));
     }
 
     // replace "old" references in a bundle's XML to the "new" classes.

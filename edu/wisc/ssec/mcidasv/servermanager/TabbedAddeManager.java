@@ -328,7 +328,9 @@ public class TabbedAddeManager extends JFrame {
             tableModel.fireTableRowsDeleted(first, last);
             refreshDisplay();
             localTable.revalidate();
-            localTable.setRowSelectionInterval(first, first);
+            if (first < remoteTable.getRowCount()) {
+                remoteTable.setRowSelectionInterval(first, first);
+            }
         } else {
             logger.debug("could not remove entries={}", entries);
         }
