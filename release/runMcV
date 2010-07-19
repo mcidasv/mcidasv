@@ -22,8 +22,8 @@ done
 # Check for old style default userpath
 if [ -d "${HOME}/.mcidasv" ]; then
 	if [ ! -d "${MCV_USERPATH}" ]; then
-		echo "Copying files to new user path: ${MCV_USERPATH}..."
-		cp -R "${HOME}/.mcidasv" "${MCV_USERPATH}"
+		echo "Moving files to new user path: ${MCV_USERPATH}..."
+		mv "${HOME}/.mcidasv" "${MCV_USERPATH}"
 	fi
 fi
 
