@@ -313,8 +313,8 @@ public class GranuleAggregation implements MultiDimensionReader {
 						   countSet[i][j] = count[j] * stride[j];
 					   // or is this the first of multiple granules...
 					   } else {
-						   if (((granuleLength * granuleNumber) - start[j]) < (count[j] * stride[j])) {					   
-							   countSet[i][j] = ((granuleLength * granuleNumber) - start[j]) * stride[j];
+						   if (((granuleLength * granuleNumber) - start[j]) < (count[j] * stride[j])) {	
+							   countSet[i][j] = ((granuleLength * granuleNumber) - start[j]);
 						   } else {
 							   countSet[i][j] = count[j] * stride[j];
 						   }
@@ -323,11 +323,11 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   } else {
 					   // middle grandules
 					   if (i < (granuleSpan - 1)) {
-						   countSet[i][j] = granuleLength * stride[j];
+						   countSet[i][j] = granuleLength;
 						   countSubtotal += countSet[i][j];
 					   } else {
 						   // the end granule
-						   countSet[i][j] = count[j] - countSubtotal;
+						   countSet[i][j] = (count[j] * stride[j]) - countSubtotal;
 					   }
 				   }
 				   // luckily, stride never changes
