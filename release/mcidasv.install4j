@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="5.0.1" transformSequenceNumber="3">
+<install4j version="5.0.2" transformSequenceNumber="3">
   <directoryPresets config="${compiler:MCVDIR}/lib/eventbus-1.3.jar" />
   <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="/home/mcidasv/install4j/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.0beta6" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" installerName="" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
@@ -322,6 +322,90 @@ Please visit &lt;a href="http://dcdbs.ssec.wisc.edu/mcidasv/forums/viewtopic.php
             <actions />
             <formComponents />
           </screen>
+          <screen name=".mcidasv information (Windows)" id="8024" customizedId="" beanClass="com.install4j.runtime.beans.screens.DefaultInfoScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.DefaultInfoScreen">
+                  <void property="displayedText">
+                    <string>&lt;html&gt;
+Starting with version 1.0beta6 user files will be stored in a directory named &amp;quot;McIDAS-V&amp;quot; instead of &amp;quot;.mcidasv&amp;quot; (i.e. ${installer:sys.userHome}\McIDAS-V).
+&lt;br&gt;&lt;br&gt;
+&lt;font color="#FF0000"&gt;User files will be moved to the new directory when McIDAS-V is first run.&lt;/font&gt;
+&lt;br&gt;&lt;br&gt;
+To help avoid duplicate directory names, the default system installation directory has changed to &amp;quot;McIDAS-V-System&amp;quot;.
+&lt;br&gt;&lt;br&gt;
+&lt;b&gt;System Administrators:&lt;/b&gt; Please let your users know about these changes.
+&lt;/html&gt;</string>
+                  </void>
+                  <void property="textSource">
+                    <object class="com.install4j.runtime.beans.screens.components.TextSource" field="DIRECT" />
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <condition>return Util.isWindows();</condition>
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+          <screen name=".mcidasv information (OS X)" id="8028" customizedId="" beanClass="com.install4j.runtime.beans.screens.DefaultInfoScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.DefaultInfoScreen">
+                  <void property="displayedText">
+                    <string>&lt;html&gt;
+Starting with version 1.0beta6 user files will be stored in a directory named &amp;quot;McIDAS-V&amp;quot; instead of &amp;quot;.mcidasv&amp;quot; (i.e. ${installer:sys.userHome}/Documents/McIDAS-V).
+&lt;br&gt;&lt;br&gt;
+&lt;font color="#FF0000"&gt;User files will be moved to the new directory when McIDAS-V is first run.&lt;/font&gt;
+&lt;br&gt;&lt;br&gt;
+To help avoid duplicate directory names, the default system installation directory has changed to &amp;quot;McIDAS-V-System&amp;quot;.
+&lt;br&gt;&lt;br&gt;
+&lt;b&gt;System Administrators:&lt;/b&gt; Please let your users know about these changes.
+&lt;/html&gt;</string>
+                  </void>
+                  <void property="textSource">
+                    <object class="com.install4j.runtime.beans.screens.components.TextSource" field="DIRECT" />
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <condition>return Util.isMacOS();</condition>
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+          <screen name=".mcidasv information (Unix)" id="8029" customizedId="" beanClass="com.install4j.runtime.beans.screens.DefaultInfoScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.DefaultInfoScreen">
+                  <void property="displayedText">
+                    <string>&lt;html&gt;
+Starting with version 1.0beta6 user files will be stored in a directory named &amp;quot;McIDAS-V&amp;quot; instead of &amp;quot;.mcidasv&amp;quot; (i.e. ${installer:sys.userHome}/McIDAS-V).
+&lt;br&gt;&lt;br&gt;
+&lt;font color="#FF0000"&gt;User files will be moved to the new directory when McIDAS-V is first run.&lt;/font&gt;
+&lt;br&gt;&lt;br&gt;
+To help avoid duplicate directory names, the default system installation directory has changed to &amp;quot;McIDAS-V-System&amp;quot;.
+&lt;br&gt;&lt;br&gt;
+&lt;b&gt;System Administrators:&lt;/b&gt; Please let your users know about these changes.
+&lt;/html&gt;</string>
+                  </void>
+                  <void property="textSource">
+                    <object class="com.install4j.runtime.beans.screens.components.TextSource" field="DIRECT" />
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <condition>return !Util.isWindows() &amp;&amp; !Util.isMacOS();</condition>
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
           <screen name="" id="76" customizedId="" beanClass="com.install4j.runtime.beans.screens.InstallationDirectoryScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
@@ -360,13 +444,13 @@ if (context.getInstallationDirectory().getPath().equals(disallowed)) {
 }
 else if (disallowed_file.exists()) {
     if (mcv_jar_file.exists()) {
-        String notice = disallowed + " appears to contain a previous McIDAS-V installation.\n\n";
+        String notice = disallowed + " contains a previous McIDAS-V installation.\n\n";
         notice += "Starting with 1.0beta6 user data is stored here.\nPlease uninstall McIDAS-V from this location before continuing.";
         Util.showErrorMessage(notice);
         allowed = false;
     }
     else if (!mcv_main_file.exists()) {
-        String notice = disallowed + " does not appear to be a McIDAS-V document directory.\n\n";
+        String notice = disallowed + " already exists.\n\n";
         notice += "Starting with 1.0beta6 user data is stored here.\nPlease rename or remove this directory before continuing.";
         Util.showErrorMessage(notice);
         allowed = false;
