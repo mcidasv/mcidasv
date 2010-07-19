@@ -358,6 +358,16 @@ public class EntryStore {
         return groups;
     }
 
+    /**
+     * Search the server manager for entries that match {@code prefix}.
+     * 
+     * @param prefix {@code String} to match.
+     * 
+     * @return {@link List} containing matching entries. If there were no 
+     * matches the {@code List} will be empty.
+     * 
+     * @see AddeEntry#asStringId()
+     */
     public List<AddeEntry> searchWithPrefix(final String prefix) {
         notNull(prefix);
         return arrList(trie.getPrefixedBy(prefix).values());
@@ -378,6 +388,15 @@ public class EntryStore {
         return addresses;
     }
 
+    /**
+     * Returns a {@link Set} containing <b>ADDRESS/GROUPNAME</b> {@code String}s
+     * for each {@link RemoteAddeEntry}.
+     * 
+     * @return The {@literal "entry text"} representations of each 
+     * {@code RemoteAddeEntry}.
+     * 
+     * @see RemoteAddeEntry#getEntryText()
+     */
     protected Set<String> getRemoteEntryTexts() {
         Set<String> strs = newLinkedHashSet();
         for (AddeEntry entry : trie.values()) {
@@ -387,7 +406,7 @@ public class EntryStore {
         }
         return strs;
     }
-    
+
     /**
      * Returns the {@link Set} of {@literal "groups"} associated with the 
      * given {@code address}.
