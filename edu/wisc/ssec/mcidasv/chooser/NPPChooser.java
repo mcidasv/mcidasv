@@ -99,6 +99,7 @@ public class NPPChooser extends FileChooser {
     	String nppRegex1 = "\\w\\w\\w\\w\\w_npp_d\\d\\d\\d\\d\\d\\d\\d\\d_t\\d\\d\\d\\d\\d\\d_e\\d\\d\\d\\d\\d\\d_b\\d\\d\\d\\d\\d_c\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d_\\w\\w\\w_OPS_SEG.h5";
     	String nppRegex2 = "\\w\\w\\w\\w\\w_npp_d\\d\\d\\d\\d\\d\\d\\d\\d_t\\d\\d\\d\\d\\d\\d\\d_e\\d\\d\\d\\d\\d\\d\\d_b\\d\\d\\d\\d\\d_c\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d_noaa_ada.h5";
     	String nppRegex3 = "\\w\\w\\w\\w\\w_aqu.*.h5";
+    	String nppRegex4 = "\\w\\w\\w\\w\\w_ter.*.h5";
     	
     	boolean isNPP = false;
     	
@@ -113,7 +114,8 @@ public class NPPChooser extends FileChooser {
     	
     	if (	(fileNameRelative.matches(nppRegex1)) ||
     			(fileNameRelative.matches(nppRegex2)) ||
-    			(fileNameRelative.matches(nppRegex3))
+    			(fileNameRelative.matches(nppRegex3)) ||
+    			(fileNameRelative.matches(nppRegex4))
     			)
     	{
     		isNPP = true;
@@ -159,6 +161,8 @@ public class NPPChooser extends FileChooser {
     				geoProductID = a.getStringValue();
     			} else {
     				geoProductID = JPSSUtilities.mapGeoRefToProductID(a.getStringValue());
+    				// we may not have a mapping for every product
+    				if (geoProductID == null) noGeo = true;
     			}
     			logger.info("Value of corresponding Product ID: " + geoProductID);
 			}
