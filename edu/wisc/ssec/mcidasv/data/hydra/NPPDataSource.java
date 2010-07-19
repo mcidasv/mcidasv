@@ -221,12 +221,15 @@ public class NPPDataSource extends HydraDataSource {
     	// time for each product in milliseconds since epoch
     	ArrayList<Long> productTimes = new ArrayList<Long>();
     	
+    	// geo product IDs for each granule
+    	ArrayList<String> geoProductIDs = new ArrayList<String>();
+    	
     	// aggregations will use sets of NetCDFFile readers
     	ArrayList<NetCDFFile> ncdfal = new ArrayList<NetCDFFile>();
     	
     	// we should be able to find an XML Product Profile for each data/product type
     	NPPProductProfile nppPP = null;
-    	String geoProductID = null;
+
     	    	
     	sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
     	   	
@@ -243,12 +246,14 @@ public class NPPDataSource extends HydraDataSource {
 		    		ncfile = NetcdfFile.open(fileAbsPath);
 		    		ucar.nc2.Attribute a = ncfile.findGlobalAttribute("N_GEO_Ref");
 		    		logger.debug("Value of GEO global attribute: " + a.getStringValue());
+		    		String tmpGeoProductID = null;
 	    			if (a.getStringValue().endsWith("h5")) {
-	    				geoProductID = a.getStringValue();
+	    				tmpGeoProductID = a.getStringValue();
 	    			} else {
-	    				geoProductID = JPSSUtilities.mapGeoRefToProductID(a.getStringValue());
+	    				tmpGeoProductID = JPSSUtilities.mapGeoRefToProductID(a.getStringValue());
 	    			}
-		    		logger.debug("Value of corresponding Product ID: " + geoProductID);
+		    		logger.debug("Value of corresponding Product ID: " + tmpGeoProductID);
+		    		geoProductIDs.add(tmpGeoProductID);
 	    	    	Group rg = ncfile.getRootGroup();
 
 	    	    	logger.debug("Root group name: " + rg.getName());
@@ -336,6 +341,7 @@ public class NPPDataSource extends HydraDataSource {
 
     			String geoFilename = s.substring(0, s.lastIndexOf(File.separatorChar) + 1);
     			// check if we have the whole file name or just the prefix
+    			String geoProductID = geoProductIDs.get(elementNum);
     			if (geoProductID.endsWith("h5")) {
     				geoFilename += geoProductID;
     			} else {
