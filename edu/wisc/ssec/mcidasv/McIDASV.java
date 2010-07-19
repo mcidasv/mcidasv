@@ -366,28 +366,28 @@ public class McIDASV extends IntegratedDataViewer {
             }
         });
         
-        encoder.addHighPriorityDelegateForClass(AddeImageInfo.class, new XmlDelegateImpl() {
-            @Override public Element createElement(XmlEncoder e, Object o) {
-                AddeImageInfo info = (AddeImageInfo)o;
-                String user = info.getUser();
-                int proj = info.getProject();
-                logger.trace("user={} proj={}", new Object[] { user, proj });
-                return e.createElementDontCheckDelegate(o);
-            }
-            @Override public Object createObject(XmlEncoder e, Element element) {
-                String host = getAttribute(element, "Host");
-                String group = getAttribute(element, "Group");
-                String descriptor = getAttribute(element, "Descriptor");
-                String type = getAttribute(element, "RequestType");
-                
-                EntryStore store = getServerManager();
-                boolean mcservRunning = store.checkLocalServer();
-                boolean isKnown = store.searchWithPrefix(host+'!'+group).isEmpty();
-                
-                logger.trace("isKnown={} host='{}' group='{}' type='{}' desc='{}'", new Object[] { isKnown, host, group, descriptor, type });
-                return e.createObjectDontCheckDelegate(element);
-            }
-        });
+//        encoder.addHighPriorityDelegateForClass(AddeImageInfo.class, new XmlDelegateImpl() {
+//            @Override public Element createElement(XmlEncoder e, Object o) {
+//                AddeImageInfo info = (AddeImageInfo)o;
+//                String user = info.getUser();
+//                int proj = info.getProject();
+//                logger.trace("user={} proj={}", new Object[] { user, proj });
+//                return e.createElementDontCheckDelegate(o);
+//            }
+//            @Override public Object createObject(XmlEncoder e, Element element) {
+//                String host = getAttribute(element, "Host");
+//                String group = getAttribute(element, "Group");
+//                String descriptor = getAttribute(element, "Descriptor");
+//                String type = getAttribute(element, "RequestType");
+//                
+//                EntryStore store = getServerManager();
+//                boolean mcservRunning = store.checkLocalServer();
+//                boolean isKnown = store.searchWithPrefix(host+'!'+group).isEmpty();
+//                
+//                logger.trace("isKnown={} host='{}' group='{}' type='{}' desc='{}'", new Object[] { isKnown, host, group, descriptor, type });
+//                return e.createObjectDontCheckDelegate(element);
+//            }
+//        });
         
 //        encoder.addHighPriorityDelegateForClass(AddeImageDescriptor.class, new XmlDelegateImpl() {
 //            @Override public Element createElement(XmlEncoder e, Object o) {
