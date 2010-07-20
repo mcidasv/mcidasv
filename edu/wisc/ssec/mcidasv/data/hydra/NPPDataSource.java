@@ -394,18 +394,17 @@ public class NPPDataSource extends HydraDataSource {
     	    							boolean useThis = false;
     	    							String vName = v.getName();
     	    							logger.debug("Variable: " + vName);
-    	    							String varPrefix = vName.substring(vName.lastIndexOf(File.separatorChar) + 1);
+    	    							String varShortName = vName.substring(vName.lastIndexOf(File.separatorChar) + 1);
     	    							
     	    							// skip Quality Flags for now.
     	    							// XXX TJJ - should we show these?  if so, note they sometimes
     	    							// have different dimensions than the main variables.  For ex,
     	    							// on high res bands QFs are 768 x 3200 while vars are 1536 x 6400
-    	    							if (varPrefix.startsWith("QF")) {
+    	    							if (varShortName.startsWith("QF")) {
     	    								continue;
     	    							}
     	    							
-    	    							varPrefix = varPrefix.substring(0, 3);
-    	    							logger.debug("Variable prefix for finding Factors: " + varPrefix);
+    	    							logger.debug("Variable prefix for finding Factors: " + varShortName);
     	    							DataType dt = v.getDataType();
     	    							if ((dt.getSize() != 4) && (dt.getSize() != 2) && (dt.getSize() != 1)) {
     	    								logger.debug("Skipping data of size: " + dt.getSize());
@@ -451,29 +450,29 @@ public class NPPDataSource extends HydraDataSource {
     	    								// XXX TJJ - this is NOT DETERMINISTIC!  The spec in
     	    								// CDFCB-X, Vol 5, page 8, is too vague, and there is
     	    								// no SURE way to map variable name to scale/offset parameter
-    	    								// We have found the pseudocode below works for all sample data
-    	    								// seen so far.
     	    								//
-    	    								// for variable list
-    	    								//   if name contains 3-char prefix for this variable, and ends with Factors
+    	    								//   if static map has an entry for this variable name
     	    								//     get the data, data1 = scale, data2 = offset
     	    								//     create and poke attributes with this data
     	    								//   endif
-    	    								// endfor
     	    								
-    	    								for (Variable fV : vl) {
-    	    									if ((fV.getName().contains(varPrefix)) && (fV.getName().endsWith("Factors"))) {
-    	    										logger.debug("Pulling scale and offset values from variable: " + fV.getName());
-    	    										ucar.ma2.Array a = fV.read();
-    	    										ucar.ma2.Index i = a.getIndex();
-    	    										scaleVal = a.getFloat(i);
-    	    										logger.debug("Scale value: " + scaleVal);
-    	    										i.incr();
-    	    										offsetVal = a.getFloat(i);
-    	    										logger.debug("Offset value: " + offsetVal);
-    	    										unpackFlag = true;
-    	    										break;
-    	    									}
+    	    								String factorsVarName = JPSSUtilities.mapDataVarNameToFactorsName(varShortName);
+    	    								logger.info("Mapping: " + varShortName + " to: " + factorsVarName);
+    	    								if (factorsVarName != null) {
+	    	    								for (Variable fV : vl) {
+	    	    									if (fV.getName().endsWith(factorsVarName)) {
+	    	    										logger.debug("Pulling scale and offset values from variable: " + fV.getName());
+	    	    										ucar.ma2.Array a = fV.read();
+	    	    										ucar.ma2.Index i = a.getIndex();
+	    	    										scaleVal = a.getFloat(i);
+	    	    										logger.debug("Scale value: " + scaleVal);
+	    	    										i.incr();
+	    	    										offsetVal = a.getFloat(i);
+	    	    										logger.debug("Offset value: " + offsetVal);
+	    	    										unpackFlag = true;
+	    	    										break;
+	    	    									}
+	    	    								}
     	    								}
 
     	    								// poke in scale/offset attributes for now
