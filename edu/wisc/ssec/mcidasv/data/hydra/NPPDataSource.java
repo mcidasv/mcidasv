@@ -395,6 +395,15 @@ public class NPPDataSource extends HydraDataSource {
     	    							String vName = v.getName();
     	    							logger.debug("Variable: " + vName);
     	    							String varPrefix = vName.substring(vName.lastIndexOf(File.separatorChar) + 1);
+    	    							
+    	    							// skip Quality Flags for now.
+    	    							// XXX TJJ - should we show these?  if so, note they sometimes
+    	    							// have different dimensions than the main variables.  For ex,
+    	    							// on high res bands QFs are 768 x 3200 while vars are 1536 x 6400
+    	    							if (varPrefix.startsWith("QF")) {
+    	    								continue;
+    	    							}
+    	    							
     	    							varPrefix = varPrefix.substring(0, 3);
     	    							logger.debug("Variable prefix for finding Factors: " + varPrefix);
     	    							DataType dt = v.getDataType();
