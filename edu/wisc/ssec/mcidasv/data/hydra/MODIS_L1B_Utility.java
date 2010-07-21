@@ -33,6 +33,30 @@ import visad.Set;
 
 
 public class MODIS_L1B_Utility {
+ /**
+ Emissive bands
+ taken from pfm-in-band-rsr.pdf (Aqua)
+
+ band center width (m*10E6)
+ begin end
+------------------------------------
+ 20 3.799 3.660 3.840
+ 21 3.992 3.929 3.989
+ 22 3.968 3.929 3.989
+ 23 4.070 4.020 4.080
+ 24 4.476 4.433 4.498
+ 25 4.549 4.482 4.549
+ 27 6.784 6.535 6.895
+ 28 7.345 7.175 7.475
+ 29 8.503 8.400 8.700
+ 30 9.700 9.580 9.880
+ 31 11.000 10.780 11.280
+ 32 12.005 11.770 12.270
+ 33 13.351 13.185 13.485
+ 34 13.717 13.485 13.785
+ 35 13.908 13.785 14.085
+ 36 14.205 14.085 14.385
+**/
 
  //... Effective central wavenumbers (inverse centimeters)
    static double[] cwn_terra = {
@@ -155,6 +179,39 @@ public class MODIS_L1B_Utility {
   public static int emissive_indexToBandNumber(int channelIndex) {
     int[] bandNumbers = new int[] {20,21,22,23,24,25,27,28,29,30,31,32,33,34,35,36};
     return bandNumbers[channelIndex];
+  }
+
+  public static float[] brightnessTemp_to_radiance(float[] values, float wavelength) {
+
+   // Constants are from "The Fundamental Physical Constants",
+   // Cohen, E. R. and B. N. Taylor, Physics Today, August 1993.
+
+   double w = (double) wavelength;
+
+   // Planck constant (Joule second)
+   double h = 6.6260755e-34;
+
+   // Speed of light in vacuum (meters per second)
+   double c = 2.9979246e8;
+
+   // Boltzmann constant (Joules per Kelvin)
+   double k = 1.380658e-23;
+
+   // Derived constants
+   double c1 = 2.0 * h * c * c;
+   double c2 = (h * c) / k;
+
+   // Convert wavelength to meters
+   double ws = 1.0e-6 * w;
+
+   // Compute brightness temperature
+   float[] new_values = new float[values.length];
+   for (int i=0; i<values.length; i++) {
+     double t = (double) values[i];
+     new_values[i] = (float) ((1.0e-6*(c1/(ws*ws*ws*ws*ws)))/(Math.exp(c2/(ws * t)) - 1.0));
+   }
+
+   return new_values;
   }
 
 }
