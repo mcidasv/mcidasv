@@ -304,6 +304,8 @@ public class GeoPreviewSelection extends DataSelectionComponent {
                   ele = -1;
               }
 
+              boolean lock = laloSel.getLockOn();
+              laloSel.setLockOn(true);
               int lineMag = 1;
               int eleMag = 1;
               laloSel.setNumLines(height);
@@ -316,6 +318,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
               laloSel.elementMagSlider.setValue(eleMag);
               laloSel.setERes(-1.0);
               laloSel.elementMagSliderChanged(false);
+              laloSel.setLockOn(lock);
 
               laloSel.getGeoLocationInfo(line, ele);
               String type = laloSel.getCoordinateType();
