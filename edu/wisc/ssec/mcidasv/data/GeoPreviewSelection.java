@@ -318,6 +318,8 @@ public class GeoPreviewSelection extends DataSelectionComponent {
               laloSel.elementMagSlider.setValue(eleMag);
               laloSel.setERes(-1.0);
               laloSel.elementMagSliderChanged(false);
+              laloSel.setBaseNumLines(height);
+              laloSel.setBaseNumElements(width);
               laloSel.setLockOn(lock);
 
               laloSel.getGeoLocationInfo(line, ele);

@@ -265,10 +265,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       /** size label */ JLabel sizeLbl;
 
       /** base number of lines */
-//      private double baseNumLines = 0.0;
+      private double baseNumLines;
 
       /** base number of elements */
-//      private double baseNumElements = 0.0;
+      private double baseNumElements;
 
       private DataSourceImpl dataSource;
       private static DataSourceImpl lastDataSource;
@@ -335,9 +335,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
           this.dataSource = dataSource;
           this.dataChoice = dataChoice;
           this.sampleProjection = sample;
-//          this.baseNumLines = dir.getLines();
-//          this.baseNumElements = dir.getElements();
           this.previewDir = dir;
+
+          setBaseNumLines(dir.getLines());
+          setBaseNumElements(dir.getElements());
           this.previewNav = nav;
           previewDirBlk = this.previewDir.getDirectoryBlock();
           int areaLinRes = previewDirBlk[11];
@@ -348,8 +349,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
           int numberOfLines;
           int numberOfElements;
-//          this.baseNumLines = previewDir.getLines();
-//          this.baseNumElements = previewDir.getElements();
           if (properties.containsKey(PROP_SIZE)) {
               String str = (String)properties.get(PROP_SIZE);
               String[] strs = StringUtil.split(str, " ", 2);
@@ -619,6 +618,12 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
               } else if (prop.equals(PROP_SIZE)) {
                   ActionListener sizeChange =new ActionListener() {
                       public void actionPerformed(ActionEvent ae) {
+                          int lines = getNumLines() * Math.abs(getLineMag());
+                          if (lines > maxLines) lines = maxLines;
+                          setBaseNumLines(lines);
+                          int eles = getNumEles() * Math.abs(getElementMag());
+                          if (eles > maxEles) eles = maxEles;
+                          setBaseNumElements(eles);
                           getGeoLocationInfo();
                       }
                   };
@@ -626,6 +631,12 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                       public void focusGained(FocusEvent fe) {
                       }
                       public void focusLost(FocusEvent fe) {
+                          int lines = getNumLines() * Math.abs(getLineMag());
+                          if (lines > maxLines) lines = maxLines;
+                          setBaseNumLines(lines);
+                          int eles = getNumEles() * Math.abs(getElementMag());
+                          if (eles > maxEles) eles = maxEles;
+                          setBaseNumElements(eles);
                           getGeoLocationInfo();
                       }
                   };
@@ -946,8 +957,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
           setLatitude(previewDir.getCenterLatitude());
           setLongitude(previewDir.getCenterLongitude());
           convertToLinEle();
-          setNumLines(maxLines);
-          setNumEles(maxEles);
           setLineMag(1);
           setDLineMag(1.0);
           setElementMag(1);
@@ -958,6 +967,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
           elementMagSlider.setValue(1);
           setERes(this.baseERes);
           elementMagSliderChanged(false);
+          setNumLines(maxLines);
+          setNumEles(maxEles);
+          setBaseNumLines(maxLines);
+          setBaseNumElements(maxEles);
           getGeoLocationInfo();
 
           amSettingProperties = false;
@@ -1686,8 +1699,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
           setElementMag(value);
           setDElementMag((double)value);
         }
-        double eVal = this.eRes;
-        if (value < 0) eVal *= Math.abs(value);
         if ((Math.abs(value) < SLIDER_MAX)) {
             int lineMag = getLineMagValue();
             if (lineMag > value) {
@@ -1705,16 +1716,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         elementResLbl.setText(StringUtil.padLeft(str, 4) + kmLbl);
 
         if (!lockBtn.isSelected()) {
-            double baseNumElements = (double)getNumEles();
             if (value > 0) {
-                //numElementsFld.setText(""
-                //                       + (int) (baseNumElements * value));
-                setNumberOfElements((int)(baseNumElements * value));
+                setNumberOfElements((int)(this.baseNumElements * value));
             } else {
-                //numElementsFld.setText(""
-                //                       + (int) (baseNumElements
-                //                                / (double) -value));
-                setNumberOfElements((int)(baseNumElements
+                setNumberOfElements((int)(this.baseNumElements
                                                 / (double) -value));
             }
         }
@@ -1728,8 +1733,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                 setLineMag(value);
                 setDLineMag((double)value);
             }
-//            double lVal = this.lRes;
-//            if (value < 0) lVal *= Math.abs(value);
             lineMagLbl.setText("Line Mag=");
             lineMagFld.setText(new Integer(value).toString());
             String str = " Res=" +
@@ -1737,14 +1740,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             lineResLbl.setText(StringUtil.padLeft(str, 4) + kmLbl);
 
             if (autoSetSize) {
-                double baseNumLines = (double)getNumLines();
                 if (value > 0) {
-                    //numLinesFld.setText("" + (int) (baseNumLines * value));
-                    setNumberOfLines((int)(baseNumLines * value));
+                    setNumberOfLines((int)(this.baseNumLines * value));
                 } else {
-                    //numLinesFld.setText("" + (int) (baseNumLines
-                    //                                / (double) -value));
-                    setNumberOfLines((int)(baseNumLines
+                    setNumberOfLines((int)(this.baseNumLines
                                                     / (double) -value));
                 }
             }
@@ -1770,14 +1769,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             elementResLbl.setText(StringUtil.padLeft(str, 4) + kmLbl);
 
             if (autoSetSize) {
-                double baseNumElements = (double)getNumEles();
                 if (value > 0) {
-                    //numElementsFld.setText("" + (int) (baseNumElements * value));
-                    setNumberOfElements((int)(baseNumElements * value));
+                    setNumberOfElements((int)(this.baseNumElements * value));
                 } else {
-                    //numElementsFld.setText("" + (int) (baseNumElements
-                    //                                / (double) -value));
-                    setNumberOfElements((int)(baseNumElements
+                    setNumberOfElements((int)(this.baseNumElements
                                                     / (double) -value));
                 }
             }
@@ -1799,8 +1794,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                 setLineMag(value);
                 setDLineMag((double)value);
             }
-//            double lVal = this.lRes;
-//            if (value < 0) lVal *= Math.abs(value);
             lineMagLbl.setText("Line Mag=");
             lineMagFld.setText(new Integer(value).toString());
             String str = " Res=" +
@@ -1808,14 +1801,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             lineResLbl.setText(StringUtil.padLeft(str, 4) + kmLbl);
 
             if (autoSetSize) {
-                double baseNumLines = (double)getNumLines();
                 if (value > 0) {
-                    //numLinesFld.setText("" + (int) (baseNumLines * value));
-                    setNumberOfLines((int)(baseNumLines * value));
+                    setNumberOfLines((int)(this.baseNumLines * value));
                 } else {
-                    //numLinesFld.setText("" + (int) (baseNumLines
-                    //                                / (double) -value));
-                    setNumberOfLines((int)(baseNumLines
+                    setNumberOfLines((int)(this.baseNumLines
                                                     / (double) -value));
                 }
             }
@@ -1984,6 +1973,14 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
     protected double getBaseERes() {
         return this.baseERes;
+    }
+
+    protected void setBaseNumLines(int val) {
+        this.baseNumLines = (double)val;
+    }
+
+    protected void setBaseNumElements(int val) {
+        this.baseNumElements = (double)val;
     }
 
     protected void update(AreaDirectory dir, MapProjection sample, AREAnav nav, 
