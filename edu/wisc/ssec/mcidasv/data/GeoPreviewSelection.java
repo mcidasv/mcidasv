@@ -101,10 +101,10 @@ public class GeoPreviewSelection extends DataSelectionComponent {
         this.laloSel = laLoSel;
         this.sampleProjection = sample;
 
-        if (lMag > 0)
-            this.lineMag = lMag;
-        if (eMag > 0)
-            this.elementMag = eMag;
+        if (lMag == 0) lMag = 1;
+        if (eMag == 0) eMag = 1;
+        this.lineMag = lMag;
+        this.elementMag = eMag;
         sample = getDataProjection();
 
         if (this.sampleProjection == null) {
@@ -282,15 +282,18 @@ public class GeoPreviewSelection extends DataSelectionComponent {
 
               height *= linRes;
               width *= eleRes;
+              laloSel.setBaseNumLines(height);
+              laloSel.setBaseNumElements(width);
+
               if (lineMag > 0) {
-                  height /= lineMag;
+                  height *= lineMag;
               } else if (lineMag < 0) {
-                  height *= -lineMag;
+                  height /= -lineMag;
               }
               if (elementMag > 0) {
-                  width /= elementMag;
+                  width *= elementMag;
               } else if (elementMag < 0) {
-                  width *= -elementMag;
+                  width /= -elementMag;
               }
 
               Rectangle2D mapArea = sampleProjection.getDefaultMapArea();
@@ -304,23 +307,23 @@ public class GeoPreviewSelection extends DataSelectionComponent {
                   ele = -1;
               }
 
-              boolean lock = laloSel.getLockOn();
-              laloSel.setLockOn(true);
-              int lineMag = 1;
-              int eleMag = 1;
+              //boolean lock = laloSel.getLockOn();
+              //laloSel.setLockOn(true);
+              //int lineMag = 1;
+              //int eleMag = 1;
               laloSel.setNumLines(height);
               laloSel.setNumEles(width);
-              laloSel.setLineMag(lineMag);
-              laloSel.setElementMag(eleMag);
-              laloSel.lineMagSlider.setValue(lineMag);
-              laloSel.setLRes(-1.0);
-              laloSel.lineMagSliderChanged(false);
-              laloSel.elementMagSlider.setValue(eleMag);
-              laloSel.setERes(-1.0);
-              laloSel.elementMagSliderChanged(false);
-              laloSel.setBaseNumLines(height);
-              laloSel.setBaseNumElements(width);
-              laloSel.setLockOn(lock);
+              //laloSel.setLineMag(lineMag);
+              //laloSel.setElementMag(eleMag);
+              //laloSel.lineMagSlider.setValue(lineMag);
+              //laloSel.setLRes(-1.0);
+              //laloSel.lineMagSliderChanged(false);
+              //laloSel.elementMagSlider.setValue(eleMag);
+              //laloSel.setERes(-1.0);
+              //laloSel.elementMagSliderChanged(false);
+              //laloSel.setBaseNumLines(height);
+              //laloSel.setBaseNumElements(width);
+              //laloSel.setLockOn(lock);
 
               laloSel.getGeoLocationInfo(line, ele);
               String type = laloSel.getCoordinateType();

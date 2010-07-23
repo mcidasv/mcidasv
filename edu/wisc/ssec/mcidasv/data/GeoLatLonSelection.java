@@ -1987,6 +1987,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
     protected void update(AreaDirectory dir, MapProjection sample, AREAnav nav, 
                           String coordType, double[] coords) {
+        boolean saveLock = getLockOn();
+        setLockOn(true);
         maxLines = dir.getLines();
         maxEles = dir.getElements();
         sampleProjection = sample;
@@ -2102,5 +2104,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         } catch (Exception e) {
             System.out.println("updating raw size: e=" + e);
         }
+        setLockOn(saveLock);
     }
 }
