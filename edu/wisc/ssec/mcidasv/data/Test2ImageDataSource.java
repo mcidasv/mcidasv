@@ -368,8 +368,13 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     if (eMag == -1) eMag = 1;
                     magStr = lMag + " " + eMag;
                     replaceKey(MAG_KEY, magStr);
+                    String saveStr = baseSource;
+                    if (!showPreview) {
+                        replaceKey(SIZE_KEY, "2 2");
+                    }
                     AreaAdapter aa = new AreaAdapter(baseSource, false);
                     this.previewImage = (FlatField)aa.getImage();
+                    baseSource = saveStr;
                     AreaFile af = new AreaFile(baseSource);
                     previewNav = af.getNavigation();
                     AreaDirectory ad = af.getAreaDirectory();
