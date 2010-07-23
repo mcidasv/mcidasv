@@ -24,7 +24,7 @@ IF EXIST "%MCV_USERPATH%" GOTO hasuserpath
 :inituserpath
 IF EXIST "%USERPROFILE%\.mcidasv" (
 	echo Moving files to new user path: %MCV_USERPATH%
-	REN "%USERPROFILE%\.mcidasv" "%MCV_USERPATH%"
+	move "%USERPROFILE%\.mcidasv" "%MCV_USERPATH%"
 )
 
 :hasuserpath
