@@ -675,8 +675,9 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   JPanel sizePanel =
                       GuiUtils.left(GuiUtils.doLayout(new Component[] {
                           numLinesFld,
-                          new JLabel(" X "), numElementsFld, sizeLbl, fullResBtn, lockBtn,
-                          rawSizeLbl }, 7, GuiUtils.WT_N, GuiUtils.WT_N));
+                          new JLabel(" X "), numElementsFld, sizeLbl, new JLabel(" "),
+                          fullResBtn, new JLabel("  "), lockBtn,
+                          rawSizeLbl }, 9, GuiUtils.WT_N, GuiUtils.WT_N));
                   addPropComp(PROP_SIZE, propComp = sizePanel);
               } else if (prop.equals(PROP_MAG)) {
                   propComp = GuiUtils.hbox(new Component[] { new JLabel("") }, 1);
