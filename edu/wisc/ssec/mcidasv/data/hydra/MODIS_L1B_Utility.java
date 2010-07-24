@@ -58,6 +58,11 @@ public class MODIS_L1B_Utility {
  36 14.205 14.085 14.385
 **/
 
+ //... Effective central wavelengths (micrometers)
+   static double[] cwl_aqua = {
+	   3.799, 3.992, 3.968, 4.070, 4.476, 4.549, 6.784,
+	   7.345, 8.503, 9.700, 11.000, 12.005, 13.351, 13.717, 13.908, 14.205};
+
  //... Effective central wavenumbers (inverse centimeters)
    static double[] cwn_terra = {
        2.641767E+03, 2.505274E+03, 2.518031E+03, 2.465422E+03,
@@ -122,6 +127,7 @@ public class MODIS_L1B_Utility {
     return (Set.doubleToFloat(
        new double[][] {modis_radiance_to_brightnessTemp(platformName,band_number,(Set.floatToDouble(new float[][] {values}))[0])}))[0];
   }
+
   public static double[] modis_radiance_to_brightnessTemp(String platformName, int band_number,  double[] values)
          throws Exception
   {
@@ -181,6 +187,12 @@ public class MODIS_L1B_Utility {
     return bandNumbers[channelIndex];
   }
 
+  public static float[][] brightnessTemp_to_radiance(float[][] values, int band_number) 
+	  throws Exception {
+    int index = getIndexFromBandNumber(band_number);
+    return new float[][] {brightnessTemp_to_radiance(values[0], (float) cwl_aqua[index])};
+  }
+
   public static float[] brightnessTemp_to_radiance(float[] values, float wavelength) {
 
    // Constants are from "The Fundamental Physical Constants",
@@ -212,6 +224,25 @@ public class MODIS_L1B_Utility {
    }
 
    return new_values;
+  }
+
+  public static int getIndexFromBandNumber(int band_number) throws Exception {
+
+    if ((band_number < 20) || (band_number > 36) || (band_number == 26)) {
+      throw new Exception("bad band number: "+band_number+" band 20-36 but not 26");
+    }
+
+    int index;
+
+    if (band_number <= 25) {
+      index = band_number - 19;
+    }
+    else {
+      index = band_number - 20;
+    }
+    index -= 1;
+
+    return index;
   }
 
 }
