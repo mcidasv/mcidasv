@@ -285,6 +285,8 @@ public class GeoPreviewSelection extends DataSelectionComponent {
               laloSel.setBaseNumLines(height);
               laloSel.setBaseNumElements(width);
 
+              this.lineMag = laloSel.getLineMag();
+              this.elementMag = laloSel.getElementMag();
               if (lineMag > 0) {
                   height *= lineMag;
               } else if (lineMag < 0) {
@@ -339,7 +341,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
                   if (type.equals(laloSel.TYPE_AREA))
                       pts = laloSel.getAreaPoints();
                   laloSel.setElement((int)Math.floor(pts[0][pos] + 0.5));
-                  laloSel.setLine((int)Math.floor(pts[0][pos] + 0.5));
+                  laloSel.setLine((int)Math.floor(pts[1][pos] + 0.5));
                   laloSel.setLineElement();
                   laloSel.convertToLatLon();
               }
