@@ -2008,8 +2008,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             setERes(eResNew);
             newVal = eMagNew;
             if (newVal > -2) newVal = 1;
-            setElementMag(newVal);
-            changeEleMagSlider(!lockBtn.isSelected());
         } catch (Exception e) {
             System.out.println("elementMagSlider: e=" + e);
         }
@@ -2067,6 +2065,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
         amUpdating = true;
         lineMagSliderChanged(false);
+        setElementMag(newVal);
         elementMagSliderChanged(false);
         amUpdating = false;
         setLockOn(saveLock);
