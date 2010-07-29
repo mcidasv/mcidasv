@@ -50,7 +50,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('isl/DataAndDispla
 <pre>
 &lt;<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>="some_bundle_file.xidv"/&gt;
 </pre></blockquote>
-By default it will remove all currently loaded data and displays. If you want to not clear out the data and displays then add a clear="false" attribute:
+By default it will remove all currently loaded data and displays. If you don't want to  clear out the data and displays then add a clear="false" attribute:
 <blockquote>
 <pre>
 &lt;<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>="some_bundle_file.xidv" <span class="xmlattr">clear</span>="false"/&gt;
@@ -117,7 +117,7 @@ If you have a data source with multiple files (e.g., radar) you can use an embed
     <strong>url</strong>="url or file name to load"
 <br>
     type="data source type" &gt;
-<p>The <em>datasource</em> tag lets you create a new data source and takes the form. The <em>url</em> attribute is required and specifies the file or url to load. The <em>type</em> attribute is optional and defines the data source type from the datasources.xml file in the source release. For a text listing see <a href="Datasources.html">Datasources.html</a>. For now you can only specify a data source that takes a single url (or filename). This will change in the future.</p>
+<p>The <em>datasource</em> tag lets you create a new data source. The <em>url</em> attribute is required and specifies the file or url to load. The <em>type</em> attribute is optional and defines the data source type from the datasources.xml file in the source release. For a text listing see <a href="Datasources.html">Datasources.html</a>. For now you can only specify a data source that takes a single url (or filename). This will change in the future.</p>
 <blockquote>
 <pre>
 &lt;<a href="BasicTags.html#isl">isl</a>&gt;
@@ -137,7 +137,7 @@ If you have a data source with multiple files (e.g., radar) you can use an embed
     <strong>type</strong>="display type"
 <br>
     param="parameter name" &gt;
-<p>The <em>display</em> tag lets you create a display and can exist on its own:</p>
+<p>The <em>display</em> tag lets you create a display and can exist either on its own:</p>
 <blockquote>
 <pre>
 &lt;<a href="DataAndDisplays.html#display">display</a> <span class="xmlattr">type</span>="somedisplaytype" <span class="xmlattr">param</span>="some_parameter"/&gt;
@@ -147,7 +147,7 @@ or as a child tag of the <a href="DataAndDisplays.html#datasource">datasource</a
 <pre>
 &lt;<a href="BasicTags.html#isl">isl</a>&gt;
 
-<span class="xmlcomment">&lt;!-- Create   a datasource. Note: you can also have a template attribute
+<span class="xmlcomment">&lt;!-- Create a datasource. Note: you can also have a template attribute
      that points to a bundle xidv file that was saved from a data source:
      <span class="xmlattr">bundle</span>="${islpath}/<a href="DataAndDisplays.html#datasource">datasource</a>.xidv"
 --&gt;</span>
@@ -215,13 +215,13 @@ or as a child tag of the <a href="DataAndDisplays.html#datasource">datasource</a
 </pre>
 </blockquote>
 The <em>type</em> attribute is one of the display control types defined in the controls.xml file from the source release and is required. For a text listing see <a href="controls.txt">controls.txt</a>.
-<p>The <em>param</em> attribute is not required. If specified it is the name of a parameter in either the containing <em>datasource</em> tag or in one of the currently loaded data sources. The <em>display</em> tag will evolve in time to provide a richer set of facilities for setting values on the display.</p>
+<p>The <em>param</em> attribute is not required. If specified, it is the name of a parameter in either the containing <em>datasource</em> tag or in one of the currently loaded data sources. The <em>display</em> tag will evolve in time to provide a richer set of facilities for setting values on the display.</p>
 <hr>
 <div class="pagesubsubtitle">&lt;<a name="removedisplays" id="removedisplays"></a><em>removedisplays</em>&gt; Remove all displays</div>
 &lt;removedisplays
 <br>
     display="display id to remove" &gt;
-<p>This removes all current displays. If there is the <em>display</em> attribute set then it removes that display. (<a href="#displayattr">See below</a>).</p>
+<p>This removes all current displays. If the <em>display</em> attribute is set, then it removes that display. (<a href="#displayattr">See below</a>).</p>
 <blockquote>
 <pre>
 &lt;<a href="DataAndDisplays.html#removedisplays">removedisplays</a>/&gt;
@@ -289,7 +289,7 @@ The <em>reload</em> tag tells all of the loaded data sources to reload, resultin
 &lt;/<a href="BasicTags.html#isl">isl</a>&gt;
 <a href="center.isl"><img src="Folder.gif" border="0">center.isl</a>
 </pre></blockquote>
-<a name="displayattr" id="displayattr"></a> Using the <em>display</em> attribute specifies a display control to use. This can take two forms. First, you can specify a simple text pattern that we try to match on the displays id. The id can be set from the display controls property dialog.
+<a name="displayattr" id="displayattr"></a> Using the <em>display</em> attribute specifies a display control to use. This can take two forms. First, you can specify a simple text pattern that we try to match to the display's id. The id can be set from the display controls property dialog.
 <pre>
 display="some name"
 </pre>

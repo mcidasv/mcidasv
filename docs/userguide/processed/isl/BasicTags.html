@@ -41,7 +41,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('isl/BasicTags.htm
 &nbsp;&nbsp;&nbsp;&nbsp;loop="integer loop count"
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;sleep="seconds to sleep" &gt;
-<p>The <em>isl</em> tag is the top level tag. It acts just like the <a href="BasicTags.html#group">group</a> tag but it can also hold a <em>debug</em> attribute which results in status messages being printed out. The <em>offscreen</em> attribute allows you to turn off off screen rendering (the default is to do offscreen rendering).</p>
+<p>The <em>isl</em> tag is the top level tag. It acts just like the <a href="BasicTags.html#group">group</a> tag but it can also hold a <em>debug</em> attribute which results in status messages being printed out. The <em>offscreen</em> attribute allows you to turn off offscreen rendering (the default is to do offscreen rendering).</p>
 <hr>
 <div class="pagesubsubtitle">&lt;<a name="group" id="group"></a><em>group</em>&gt; Group a set of tags. Possibly loop.</div>
 &lt;group
@@ -49,7 +49,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('isl/BasicTags.htm
 &nbsp;&nbsp;&nbsp;&nbsp;loop="integer loop count"
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;sleep="seconds to sleep after each loop iteration" &gt;
-<p>The <em>group</em> tag holds a arbitrary number of children tags.</p>
+<p>The <em>group</em> tag holds an arbitrary number of children tags.</p>
 <hr>
 <div class="pagesubsubtitle">&lt;<a name="property" id="property"></a><em>property</em>&gt; Define a property</div>
 &lt;property
@@ -73,8 +73,8 @@ ${propertyname}
    &lt;<a href="BasicTags.html#property">property</a> <span class="xmlattr">name</span>="imagetype" <span class="xmlattr">value</span>="png"/&gt;
    &lt;<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>="${basedir}/theimage.${imagetype}"/&gt;
 </pre></blockquote>
-<p>The state within an ISL is stack based - i.e., if you are in a group tag or calling a procedure (see below) the properties that are defined there are local to that group or procedure call. When you leave that group or procedure call any properties that are defined are removed. However, you can specify global="true" in the property tag and this will cause the property to be defined globally.</p>
-<p>There are a set of predefined properties that can be used. As described above, if you are in a loop the property <em>${loopindex}</em> will be set to the loop index. e.g.:</p>
+<p>The state within an ISL is stack based - i.e., if you are in a group tag or calling a procedure (see below) the properties defined there are local to that group or procedure call. When you leave that group or procedure call, any properties that are defined are removed. However, you can specify global="true" in the property tag; this will cause the property to be defined globally.</p>
+<p>There is a set of predefined properties that can be used. As described above, if you are in a loop the property <em>${loopindex}</em> will be set to the loop index. e.g.:</p>
 <blockquote>
 <pre>
 &lt;<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">loop</span>="1000" <span class="xmlattr">sleep</span>="3600"&gt;
@@ -82,7 +82,7 @@ ${propertyname}
 &lt;/<a href="BasicTags.html#isl">isl</a>&gt;
 </pre></blockquote>
 <a name="simpledateformat" id="simpledateformat"></a>
-<p>The set of date and time values for the current time are also available. The property names are those defined for the Java <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/text/SimpleDateFormat.html">SimpleDateFormat</a> class.</p>
+<p>The set of date and time values for the current time is also available. The property names are those defined for the Java <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/text/SimpleDateFormat.html">SimpleDateFormat</a> class.</p>
 <p>If you preface any of these properties with "anim:" then the current animation time (if defined) is used. e.g.:</p>
 <pre>
 ${anim:yyyy}
@@ -184,7 +184,7 @@ ${anim:yyyy}
 </tr>
 </table>
 </blockquote>
-<p>You can also define a property with &quot;now:&lt;some date format&gt;&quot in it. This takes the current time
+<p>You can also define a property with &quot;now:&lt;some date format&gt;&quot; in it. This takes the current time
 and formats it with the full date format. e.g.,:</p>
 <pre>
   ${now:yyyy-MM-DD}
@@ -344,7 +344,7 @@ This Jython is evaluated by an interpreter that has all of the normal McIDAS-V J
 </pre></blockquote>
 <hr>
 <div class="pagesubsubtitle">&lt;<a name="stop" id="stop"></a><em>stop</em>&gt; Stop all processing</div>
-The <em>stop</em> tag allows you to processing the ISL file and exit:
+The <em>stop</em> tag allows you to stop processing the ISL file and exit:
 <blockquote>
 <pre>
 &lt;<a href="BasicTags.html#stop">stop</a>/&gt;
@@ -493,7 +493,7 @@ For example, here we are generating three different image types:
     &lt;/else&gt;
 &lt;/<a href="BasicTags.html#if">if</a>&gt;
 </pre></blockquote>
-For example, say you only wanted to generate a particular image when the hour of the day is after 12 noon. One could just go:
+For example, say you only wanted to generate a particular image when the hour of the day is after 12 noon. You could do:
 <blockquote>
 <pre>
 &lt;<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">loop</span>="1000" <span class="xmlattr">sleep</span>="3600"&gt;
