@@ -307,6 +307,9 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       private int maxLines = 0;
       private int maxEles = 0;
 
+      private double bLRes = 0.0;
+      private double bERes = 0.0;
+
       private List readoutLLWidget = new ArrayList();
       private List readoutLatFld = new ArrayList();
       private List readoutLonFld = new ArrayList();
@@ -389,19 +392,21 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
           try {
               if (properties.containsKey(PROP_LRES)) {
-                  double bRes = new Double((String)properties.get(PROP_LRES)).doubleValue();
-                  this.baseLRes = bRes * this.previewDir.getCenterLatitudeResolution();
+                  bLRes = new Double((String)properties.get(PROP_LRES)).doubleValue();
+                  this.baseLRes = bLRes * this.previewDir.getCenterLatitudeResolution();
                   setLRes(this.baseLRes * Math.abs(defaultLineMag));
               }
               if (properties.containsKey(PROP_ERES)) {
-                  double bRes = new Double((String)properties.get(PROP_ERES)).doubleValue();
-                  this.baseERes = bRes * this.previewDir.getCenterLongitudeResolution();
+                  bERes = new Double((String)properties.get(PROP_ERES)).doubleValue();
+                  this.baseERes = bERes * this.previewDir.getCenterLongitudeResolution();
                   setERes(this.baseERes * Math.abs(defaultElementMag));
               }
           } catch (Exception e) {
               System.out.println("GeoLatLonSelection unable to get resolution: e=" + e);
               return;
           }
+          setBLRes(bLRes);
+          setBERes(bERes);
           if (this.baseLRes == 0.0)
               this.baseLRes = previewDir.getCenterLatitudeResolution();
           if (this.baseERes == 0.0)
@@ -1885,6 +1890,22 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         this.lRes = val;
     }
 
+    public void setBLRes(double val) {
+        this.bLRes = val;
+    }
+
+    public void setBERes(double val) {
+        this.bERes = val;
+    }
+
+    public double getBLRes() {
+        return this.bLRes;
+    }
+
+    public double getBERes() {
+        return this.bERes;
+    }
+
     public double getERes() {
         return this.eRes;
     }
@@ -1964,8 +1985,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         int lSizeOld = getNumLines();
         int eSizeOld = getNumEles();
 
-        double baseLResNew = dir.getCenterLatitudeResolution();
-        double baseEResNew = dir.getCenterLongitudeResolution();
+        double baseLResNew = getBLRes() * dir.getCenterLatitudeResolution();
+        double baseEResNew = getBERes() * dir.getCenterLongitudeResolution();
 
         double lDMagNew = lDMagOld * baseLResOld / baseLResNew;
         int lMagNew = (int)Math.ceil(lDMagNew - 0.5);
