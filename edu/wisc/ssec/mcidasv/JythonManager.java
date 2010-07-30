@@ -29,17 +29,26 @@
  */
 package edu.wisc.ssec.mcidasv;
 
+import static ucar.unidata.util.GuiUtils.makeMenu;
+import static ucar.unidata.util.GuiUtils.makeMenuItem;
+import static ucar.unidata.util.MenuUtil.MENU_SEPARATOR;
+
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
-import javax.swing.JSeparator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ucar.unidata.data.DataSource;
 import ucar.unidata.data.DescriptorDataSource;
 import ucar.unidata.idv.IntegratedDataViewer;
-import ucar.unidata.util.GuiUtils;
+import ucar.unidata.idv.ui.ImageGenerator;
 
 public class JythonManager extends ucar.unidata.idv.JythonManager {
+
+    /** Trusty logging object. */
+    private static final Logger logger = LoggerFactory.getLogger(JythonManager.class);
 
     /**
      * Create the manager and call initPython.
@@ -51,37 +60,50 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
     }
 
     /**
-     *  Return the list of menu items to use when the user has clicked on a formula DataSource.
-     *
-     * @param dataSource The data source clicked on
-     * @return List of menu items
+     * Overridden so that McIDAS-V can add an {@code islInterpreter} object
+     * to the interpreter's locals (before executing the contents of {@code}.
+     * 
+     * @param code Jython code to evaluate. {@code null} is probably a bad idea.
+     * @param properties {@code String->Object} pairs to insert into the 
+     * locals. Parameter may be {@code null}.
      */
+    @SuppressWarnings("unchecked") // dealing with idv code that predates generics.
+    @Override public void evaluateTrusted(String code, Hashtable properties) {
+        if (properties == null) {
+            properties = new Hashtable();
+        }
+        if (!properties.contains("islInterpreter")) {
+            properties.put("islInterpreter", new ImageGenerator(getIdv()));
+        }
+        super.evaluateTrusted(code, properties);
+    }
+
+    /**
+     * Return the list of menu items to use when the user has clicked on a 
+     * formula {@link DataSource}.
+     * 
+     * @param dataSource The data source clicked on.
+     * 
+     * @return {@link List} of menu items.
+     */
+    @SuppressWarnings("unchecked") // dealing with idv code that predates generics.
     public List doMakeFormulaDataSourceMenuItems(DataSource dataSource) {
         List menuItems = new ArrayList();
-        menuItems.add(GuiUtils.makeMenuItem("Create Formula", this,
-                                            "showFormulaDialog"));
+        menuItems.add(makeMenuItem("Create Formula", this, "showFormulaDialog"));
+        List editItems;
         if (dataSource instanceof DescriptorDataSource) {
-            menuItems.add(
-                GuiUtils.makeMenu(
-                    "Edit Formulas",
-                    doMakeEditMenuItems((DescriptorDataSource) dataSource)));
+            editItems = doMakeEditMenuItems((DescriptorDataSource)dataSource);
         }
         else {
-            menuItems.add(
-                    GuiUtils.makeMenu(
-                        "Edit Formulas",
-                        doMakeEditMenuItems()));
+            editItems = doMakeEditMenuItems();
         }
-        menuItems.add(GuiUtils.MENU_SEPARATOR);
-        menuItems.add(GuiUtils.makeMenuItem("Jython Library", this,
-                                            "showJythonEditor"));
-        menuItems.add(GuiUtils.makeMenuItem("Jython Shell", this,
-        									"createShell"));
-        menuItems.add(GuiUtils.MENU_SEPARATOR);
-        menuItems.add(GuiUtils.makeMenuItem("Import", this,
-                                            "importFormulas"));
-        menuItems.add(GuiUtils.makeMenuItem("Export", this,
-                                            "exportFormulas"));
+        menuItems.add(makeMenu("Edit Formulas", editItems));
+        menuItems.add(MENU_SEPARATOR);
+        menuItems.add(makeMenuItem("Jython Library", this, "showJythonEditor"));
+        menuItems.add(makeMenuItem("Jython Shell", this, "createShell"));
+        menuItems.add(MENU_SEPARATOR);
+        menuItems.add(makeMenuItem("Import", this, "importFormulas"));
+        menuItems.add(makeMenuItem("Export", this, "exportFormulas"));
         return menuItems;
     }
 
