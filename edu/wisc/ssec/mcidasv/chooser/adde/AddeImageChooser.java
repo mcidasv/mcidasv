@@ -91,6 +91,7 @@ import edu.wisc.ssec.mcidas.AreaFileException;
 import edu.wisc.ssec.mcidas.McIDASException;
 import edu.wisc.ssec.mcidas.adde.AddeSatBands;
 import edu.wisc.ssec.mcidas.adde.AddeURL;
+import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 /**
@@ -1697,7 +1698,8 @@ public class AddeImageChooser extends AddeChooser implements
 			return DEFAULT_PORT;
 		}
 		if (prop.equals(PROP_DEBUG)) {
-			return DEFAULT_DEBUG;
+//			return DEFAULT_DEBUG;
+		    Boolean.toString(EntryStore.isAddeDebugEnabled(false));
 		}
 		if (prop.equals(PROP_SIZE)) {
 			if (ad != null) {
@@ -1774,7 +1776,8 @@ public class AddeImageChooser extends AddeChooser implements
 			} else if (prop.equals(PROP_PORT)) {
 				aii.setPort(Integer.parseInt(value));
 			} else if (prop.equals(PROP_DEBUG)) {
-				aii.setDebug(Boolean.getBoolean(value));
+//				aii.setDebug(Boolean.getBoolean(value));
+			    aii.setDebug(EntryStore.isAddeDebugEnabled(false));
 			} else if (prop.equals(PROP_SPAC)) {
 				aii.setSpacing(Integer.parseInt(value));
 			} else if (prop.equals(PROP_UNIT)) {

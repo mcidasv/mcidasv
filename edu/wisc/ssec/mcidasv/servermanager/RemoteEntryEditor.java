@@ -102,7 +102,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      * {@link String#format(String, Object...)}-friendly string for building a
      * request to read a server's PUBLIC.SRV.
      */
-    private static final String publicSrvFormat = "adde://%s/text?compress=gzip&port=112&debug=false&version=1&user=%s&proj=%s&file=PUBLIC.SRV";
+    private static final String publicSrvFormat = "adde://%s/text?compress=gzip&port=112&debug=%s&version=1&user=%s&proj=%s&file=PUBLIC.SRV";
 
     /** Whether or not to input in the dataset, username, and project fields should be uppercased. */
     private static final String PREF_FORCE_CAPS = "mcv.servers.forcecaps";
@@ -1084,7 +1084,8 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
             proj = RemoteAddeEntry.DEFAULT_ACCOUNT.getProject();
         }
 
-        String url = String.format(publicSrvFormat, entry.getAddress(), user, proj);
+        boolean debugUrl = EntryStore.isAddeDebugEnabled(false);
+        String url = String.format(publicSrvFormat, entry.getAddress(), debugUrl, user, proj);
 
         Set<String> groups = newLinkedHashSet();
 

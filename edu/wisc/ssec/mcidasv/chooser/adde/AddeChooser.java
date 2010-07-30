@@ -1452,7 +1452,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     protected void appendMiscKeyValues(StringBuffer buff) {
         appendKeyValue(buff, PROP_COMPRESS, DEFAULT_COMPRESS);
         appendKeyValue(buff, PROP_PORT, DEFAULT_PORT);
-        appendKeyValue(buff, PROP_DEBUG, DEFAULT_DEBUG);
+        // appendKeyValue(buff, PROP_DEBUG, DEFAULT_DEBUG);
+        appendKeyValue(buff, PROP_DEBUG, Boolean.toString(EntryStore.isAddeDebugEnabled(false)));
         appendKeyValue(buff, PROP_VERSION, DEFAULT_VERSION);
         appendKeyValue(buff, PROP_USER, getLastAddedUser());
         appendKeyValue(buff, PROP_PROJ, getLastAddedProj());

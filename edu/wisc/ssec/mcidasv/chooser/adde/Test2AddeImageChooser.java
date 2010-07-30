@@ -38,6 +38,7 @@ import edu.wisc.ssec.mcidasv.McIDASV;
 
 
 
+import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
@@ -954,6 +955,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
                                             firstDescriptor);
                 AddeImageInfo aii = makeImageInfo(aid.getDirectory(), true,
                                         relativeTimesIndices[i]);
+                aii.setDebug(EntryStore.isAddeDebugEnabled(false));
                 aii.setBand(ALL);
                 aid.setImageInfo(aii);
                 aid.setSource(aii.getURLString());
@@ -967,6 +969,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
                         (AddeImageDescriptor) selectedTimes.get(i));
                 AddeImageInfo aii = makeImageInfo(aid.getDirectory(), false,
                                         i);
+                aii.setDebug(EntryStore.isAddeDebugEnabled(false));
                 aii.setBand(ALL);
                 aid.setImageInfo(aii);
                 aid.setSource(aii.getURLString());
@@ -1162,7 +1165,8 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     protected void appendMiscKeyValues(StringBuffer buff) {
         appendKeyValue(buff, PROP_COMPRESS, DEFAULT_COMPRESS);
         appendKeyValue(buff, PROP_PORT, DEFAULT_PORT);
-        appendKeyValue(buff, PROP_DEBUG, DEFAULT_DEBUG);
+        // appendKeyValue(buff, PROP_DEBUG, DEFAULT_DEBUG);
+        appendKeyValue(buff, PROP_DEBUG, Boolean.toString(EntryStore.isAddeDebugEnabled(false)));
         appendKeyValue(buff, PROP_VERSION, DEFAULT_VERSION);
         if (DEFAULT_USER.equals("") || DEFAULT_USER.equals("idv")) DEFAULT_USER = getLastAddedUser();
         appendKeyValue(buff, PROP_USER, DEFAULT_USER);
@@ -1218,7 +1222,8 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
             return DEFAULT_PORT;
         }
         if (prop.equals(PROP_DEBUG)) {
-            return DEFAULT_DEBUG;
+            // return DEFAULT_DEBUG;
+            return Boolean.toString(EntryStore.isAddeDebugEnabled(false));
         }
         if (prop.equals(PROP_NAV)) {
             return "X";
@@ -1259,7 +1264,8 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
             } else if (prop.equals(PROP_PORT)) {
                 aii.setPort(Integer.parseInt(value));
             } else if (prop.equals(PROP_DEBUG)) {
-                aii.setDebug(Boolean.getBoolean(value));
+                // aii.setDebug(Boolean.getBoolean(value));
+                aii.setDebug(EntryStore.isAddeDebugEnabled(false));
             } else if (prop.equals(PROP_UNIT)) {
                 value = unitDefault;
                 if (value.equals(ALLUNITS.getId())) {

@@ -71,7 +71,21 @@ import edu.wisc.ssec.mcidasv.util.trie.PatriciaTrie;
 
 public class EntryStore {
 
+    /** 
+     * Property that allows users to supply arbitrary paths to McIDAS-X 
+     * binaries used by mcservl.
+     * 
+     * @see #getAddeRootDirectory()
+     */
     private static final String PROP_DEBUG_LOCALROOT = "debug.localadde.rootdir";
+
+    /**
+     * Property that allows users to control debug output from ADDE requests.
+     * 
+     * @see #isAddeDebugEnabled(boolean)
+     * @see #setAddeDebugEnabled(boolean)
+     */
+    private static final String PROP_DEBUG_ADDEURL = "debug.adde.reqs";
 
     public enum Event { REPLACEMENT, REMOVAL, ADDITION, UPDATE, FAILURE, STARTED, UNKNOWN };
 
@@ -130,18 +144,15 @@ public class EntryStore {
         this.lastAdded = arrList();
         AnnotationProcessor.process(this);
 
-//        USER_DIRECTORY = store.getUserDirectory().toString();
         McIDASV mcv = McIDASV.getStaticMcv();
         USER_DIRECTORY = mcv.getUserDirectory();
         ADDE_RESOLV = mcv.getUserFile("RESOLV.SRV");
         MCTRACE = "0";
-        
+
         if (McIDASV.isWindows()) {
             ADDE_MCSERVL = ADDE_BIN + "\\mcservl.exe";
-//            ADDE_RESOLV = USER_DIRECTORY + "\\RESOLV.SRV";
         } else {
             ADDE_MCSERVL = ADDE_BIN + "/mcservl";
-//            ADDE_RESOLV = USER_DIRECTORY + "/RESOLV.SRV";
         }
 
         try {
@@ -171,21 +182,6 @@ public class EntryStore {
     }
 
     protected String[] getWindowsAddeEnv() {
-/*
-        String driveLetter = McIDASV.getJavaDriveLetter();
-        return new String[] {
-            "PATH=" + ADDE_BIN,
-            "MCPATH=" + USER_DIRECTORY+':'+ADDE_DATA,
-            "MCNOPREPEND=1",
-            "MCTRACE=" + MCTRACE,
-            "MCJAVAPATH=" + System.getProperty("java.home"),
-            "MCBUFRJARPATH=" + ADDE_BIN,
-            "SYSTEMDRIVE=" + driveLetter,
-            "SYSTEMROOT=" + driveLetter + "\\Windows",
-            "HOMEDRIVE=" + driveLetter,
-            "HOMEPATH=\\Windows"
-        };
-*/
         // Drive letters should come from environment
         // Java drive is not necessarily system drive
         return new String[] {
@@ -476,7 +472,7 @@ public class EntryStore {
         String address = idvServer.getName();
         List<AddeServer.Group> groups = idvServer.getGroups();
         if (groups != null && !groups.isEmpty()) {
-            EntryType type =EntryTransforms.strToEntryType(typeAsStr);
+            EntryType type = EntryTransforms.strToEntryType(typeAsStr);
             return getAccountingFor(address, groups.get(0).getName(), type);
         } else {
             return RemoteAddeEntry.DEFAULT_ACCOUNT;
@@ -690,12 +686,70 @@ public class EntryStore {
         return entries;
     }
 
-    // allow for the user to specify a "debug.localadde.rootdir" System property;
+    /**
+     * Returns the path to where the root directory of the user's McIDAS-X 
+     * binaries <b>should</b> be. <b>The path may be invalid.</b>
+     * 
+     * <p>The default path is determined like so:
+     * <pre>
+     * System.getProperty("user.dir") + File.separatorChar + "adde"
+     * </pre>
+     * 
+     * <p>Users can provide an arbitrary path at runtime by setting the 
+     * {@code debug.localadde.rootdir} system property.
+     * 
+     * @return {@code String} containing the path to the McIDAS-X root directory. 
+     * 
+     * @see #PROP_DEBUG_LOCALROOT
+     */
     public static String getAddeRootDirectory() {
         if (System.getProperties().containsKey(PROP_DEBUG_LOCALROOT)) {
             return System.getProperty(PROP_DEBUG_LOCALROOT);
         }
         return System.getProperty("user.dir") + File.separatorChar + "adde";
+    }
+
+    /**
+     * Checks the value of the {@code debug.adde.reqs} system property to
+     * determine whether or not the user has requested ADDE URL debugging 
+     * output. Output is sent to {@link System#out}.
+     * 
+     * <p>Please keep in mind that the {@code debug.adde.reqs} can not 
+     * force debugging for <i>all</i> ADDE requests. To do so will require
+     * updates to the VisAD ADDE library.
+     * 
+     * @param defaultValue Value to return if {@code debug.adde.reqs} has
+     * not been set.
+     * 
+     * @return If it exists, the value of {@code debug.adde.reqs}. 
+     * Otherwise {@code debug.adde.reqs}.
+     * 
+     * @see edu.wisc.ssec.mcidas.adde.AddeURL
+     * @see #PROP_DEBUG_ADDEURL
+     */
+    // TODO(jon): this sort of thing should *really* be happening within the 
+    // ADDE library.
+    public static boolean isAddeDebugEnabled(final boolean defaultValue) {
+        return Boolean.parseBoolean(System.getProperty(PROP_DEBUG_ADDEURL, Boolean.toString(defaultValue)));
+    }
+
+    /**
+     * Sets the value of the {@code debug.adde.reqs} system property so
+     * that debugging output can be controlled without restarting McIDAS-V.
+     * 
+     * <p>Please keep in mind that the {@code debug.adde.reqs} can not 
+     * force debugging for <i>all</i> ADDE requests. To do so will require
+     * updates to the VisAD ADDE library.
+     * 
+     * @param value New value of {@code debug.adde.reqs}.
+     * 
+     * @return Previous value of {@code debug.adde.reqs}.
+     * 
+     * @see edu.wisc.ssec.mcidas.adde.AddeURL
+     * @see #PROP_DEBUG_ADDEURL
+     */
+    public static boolean setAddeDebugEnabled(final boolean value) {
+        return Boolean.parseBoolean(System.setProperty(PROP_DEBUG_ADDEURL, Boolean.toString(value)));
     }
 
     /**
