@@ -30,19 +30,15 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import visad.Data;
 import visad.FlatField;
 import visad.VisADException;
-import visad.CoordinateSystem;
 import visad.RealType;
-import visad.RealTupleType;
 import visad.SetType;
 import visad.FunctionType;
 import visad.Set;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Iterator;
-
 
 public abstract class MultiDimensionAdapter {
 
@@ -170,11 +166,11 @@ public abstract class MultiDimensionAdapter {
 
      if (range instanceof float[]) {
        float[] new_range = processRange((float[]) range, subset);
-       f_field = makeFlatField(domainSet, new float[][] {(float[])new_range});
+       f_field = makeFlatField(domainSet, new float[][] {new_range});
      }
      else if (range instanceof double[]) {
        double[] new_range = processRange((double[]) range, subset);
-       f_field = makeFlatField(domainSet, new double[][] {(double[])range});
+       f_field = makeFlatField(domainSet, new double[][] {new_range});
      }
      else if (range instanceof short[]) {
        float[] float_range = processRange((short[])range, subset);
