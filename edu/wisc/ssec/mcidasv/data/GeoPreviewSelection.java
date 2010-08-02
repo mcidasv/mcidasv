@@ -285,19 +285,6 @@ public class GeoPreviewSelection extends DataSelectionComponent {
               laloSel.setBaseNumLines(height);
               laloSel.setBaseNumElements(width);
 
-              this.lineMag = laloSel.getLineMag();
-              this.elementMag = laloSel.getElementMag();
-              if (lineMag > 0) {
-                  height *= lineMag;
-              } else if (lineMag < 0) {
-                  height /= -lineMag;
-              }
-              if (elementMag > 0) {
-                  width *= elementMag;
-              } else if (elementMag < 0) {
-                  width /= -elementMag;
-              }
-
               Rectangle2D mapArea = sampleProjection.getDefaultMapArea();
               double previewXDim = mapArea.getWidth();
               double previewYDim = mapArea.getHeight();
@@ -308,24 +295,6 @@ public class GeoPreviewSelection extends DataSelectionComponent {
                   line = -1;
                   ele = -1;
               }
-
-              //boolean lock = laloSel.getLockOn();
-              //laloSel.setLockOn(true);
-              //int lineMag = 1;
-              //int eleMag = 1;
-              laloSel.setNumLines(height);
-              laloSel.setNumEles(width);
-              //laloSel.setLineMag(lineMag);
-              //laloSel.setElementMag(eleMag);
-              //laloSel.lineMagSlider.setValue(lineMag);
-              //laloSel.setLRes(-1.0);
-              //laloSel.lineMagSliderChanged(false);
-              //laloSel.elementMagSlider.setValue(eleMag);
-              //laloSel.setERes(-1.0);
-              //laloSel.elementMagSliderChanged(false);
-              //laloSel.setBaseNumLines(height);
-              //laloSel.setBaseNumElements(width);
-              //laloSel.setLockOn(lock);
 
               laloSel.getGeoLocationInfo(line, ele);
               String type = laloSel.getCoordinateType();
@@ -345,6 +314,28 @@ public class GeoPreviewSelection extends DataSelectionComponent {
                   laloSel.setLineElement();
                   laloSel.convertToLatLon();
               }
+
+              boolean lock = laloSel.getLockOn();
+              laloSel.setLockOn(true);
+              int lineMag = 1;
+              int eleMag = 1;
+              laloSel.setNumLines(height);
+              laloSel.setNumEles(width);
+              laloSel.setBaseNumLines(height);
+              laloSel.setBaseNumElements(width);
+              laloSel.setLineMag(lineMag);
+              laloSel.setElementMag(eleMag);
+              laloSel.lineMagSlider.setValue(lineMag);
+              laloSel.setLRes(-1.0);
+              laloSel.elementMagSlider.setValue(eleMag);
+              laloSel.setERes(-1.0);
+              laloSel.amUpdating = true;
+              laloSel.lineMagSliderChanged(false);
+              laloSel.elementMagSliderChanged(false);
+              laloSel.amUpdating = false;
+              laloSel.setLockOn(lock);
+
+              laloSel.getGeoLocationInfo();
           }
       }
            
@@ -357,6 +348,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
 
           double[][] elelin = laloSel.getDisplayELPoints();
           if (elelin == null) return;
+
           for (int i=0; i<2; i++) {
               for (int j=0; j<5; j++) {
                   Double val = new Double(elelin[i][j]);

@@ -256,7 +256,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       private int uLEle;
       private int centerLine;
       private int centerEle;
-      private boolean amUpdating = false;
+      protected boolean amUpdating = false;
 
 
       /** Maps the PROP_ property name to the gui component */
