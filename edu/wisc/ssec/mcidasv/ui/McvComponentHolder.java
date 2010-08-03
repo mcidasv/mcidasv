@@ -30,7 +30,6 @@
 
 package edu.wisc.ssec.mcidasv.ui;
 
-import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -68,8 +67,9 @@ public class McvComponentHolder extends IdvComponentHolder {
     /** Used to distinguish a dynamic skin from other things. */
     public static final String TYPE_DYNAMIC_SKIN = "dynamicskin";
 
-    private HashMap<String, ViewManager> dynamicViewManagers = 
-        new HashMap<String, ViewManager>();
+//    private static Logger logger = LoggerFactory.getLogger(McvComponentHolder.class);
+
+//    private Map<String, ViewManager> dynamicViewManagers = new HashMap<String, ViewManager>();
 
     /** Kept around to avoid annoying casting. */
     private UIManager uiManager;
@@ -90,7 +90,7 @@ public class McvComponentHolder extends IdvComponentHolder {
      */
     public McvComponentHolder(IntegratedDataViewer idv, Object obj) {
         super(idv, obj);
-        uiManager = (UIManager) idv.getIdvUIManager();
+        uiManager = (UIManager)idv.getIdvUIManager();
     }
 
     /**
@@ -102,8 +102,9 @@ public class McvComponentHolder extends IdvComponentHolder {
      * @return XML representation of what is being held.
      */
     @Override public Element createXmlNode(Document doc) {
-        if (!getType().equals(TYPE_DYNAMIC_SKIN))
+        if (!getType().equals(TYPE_DYNAMIC_SKIN)) {
             return super.createXmlNode(doc);
+        }
 
         // keep in mind that the IDV expects that we're holding a path
         // to a skin... I don't think that this will work how you want it...
@@ -126,10 +127,25 @@ public class McvComponentHolder extends IdvComponentHolder {
      * @return Contents of this holder as a UI component.
      */
     @Override public JComponent doMakeContents() {
-        if (!getType().equals(TYPE_DYNAMIC_SKIN))
-            return super.doMakeContents();
-
-        return makeDynamicSkin();
+        JComponent contents;
+        if (!getType().equals(TYPE_DYNAMIC_SKIN)) {
+            contents = super.doMakeContents();
+        } else {
+            contents = makeDynamicSkin();
+        }
+//        contents.addComponentListener(new ComponentListener() {
+//            @Override public void componentHidden(ComponentEvent e) {
+//                logger.trace("component hidden");
+//                GuiUtils.toggleHeavyWeightComponents(contents, false);
+//            }
+//            @Override public void componentShown(ComponentEvent e) {
+//                logger.trace("component shown");
+//                GuiUtils.toggleHeavyWeightComponents(contents, false);
+//            }
+//            @Override public void componentMoved(ComponentEvent e) {}
+//            @Override public void componentResized(ComponentEvent e) {}
+//        });
+        return contents;
     }
 
     /**
@@ -148,9 +164,9 @@ public class McvComponentHolder extends IdvComponentHolder {
      * @return Category name for the type of thing we're holding.
      */
     @Override public String getCategory() {
-        if (!getType().equals(TYPE_DYNAMIC_SKIN))
+        if (!getType().equals(TYPE_DYNAMIC_SKIN)) {
             return super.getCategory();
-
+        }
         return CATEGORY_DESCRIPTION;
     }
 
@@ -161,9 +177,9 @@ public class McvComponentHolder extends IdvComponentHolder {
      * @return The description of what is being held.
      */
     @Override public String getTypeName() {
-        if (!getType().equals(TYPE_DYNAMIC_SKIN))
+        if (!getType().equals(TYPE_DYNAMIC_SKIN)) {
             return super.getTypeName();
-
+        }
         return CATEGORY_DESCRIPTION;
     }
 
@@ -194,7 +210,6 @@ public class McvComponentHolder extends IdvComponentHolder {
                 uiManager.getViewPanel().viewManagerChanged(vms.get(i));
             }
         }
-
         return comp;
     }
 
@@ -231,8 +246,9 @@ public class McvComponentHolder extends IdvComponentHolder {
         @SuppressWarnings("unchecked")
         List<ViewManager> vms = getViewManagers();
         if (vms != null) {
-            for (int i = 0; i < vms.size(); i++)
+            for (int i = 0; i < vms.size(); i++) {
                 uiManager.getViewPanel().viewManagerChanged(vms.get(i));
+            }
         }
     }
 
@@ -254,10 +270,11 @@ public class McvComponentHolder extends IdvComponentHolder {
             // look for any "embedded" ViewManagers.
             Element startNode = XmlUtil.findElement(root, null, "embeddednode",
                     "true");
-            if (startNode != null)
+            if (startNode != null) {
                 ui.setStartNode(startNode);
+            }
 
-            JComponent contents = (JComponent) ui.getContents();
+            JComponent contents = (JComponent)ui.getContents();
             setViewManagers(ui.getViewManagers());
 
             cached = contents;
@@ -275,8 +292,9 @@ public class McvComponentHolder extends IdvComponentHolder {
      * </p>
      */
     public void setAsActiveTab() {
-        McvComponentGroup parent = (McvComponentGroup) getParent();
-        if (parent != null)
+        McvComponentGroup parent = (McvComponentGroup)getParent();
+        if (parent != null) {
             parent.setActiveComponentHolder(this);
+        }
     }
 }
