@@ -32,7 +32,6 @@ package edu.wisc.ssec.mcidasv.ui;
 
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
@@ -67,8 +66,6 @@ import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.Msg;
 import ucar.unidata.util.ObjectListener;
 import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlResourceCollection;
@@ -76,13 +73,18 @@ import ucar.unidata.xml.XmlUtil;
 
 
 /**
- * Class HelpTipDialog
- *
- *
- * @author Unidata development team
- * @version %I%, %G%
+ * Represents a dialog that holds {@literal "help tips"}. This class is based
+ * upon {@link ucar.unidata.ui.HelpTipDialog}, but adds new functionality:
+ * <ul>
+ * <li>tip counter</li>
+ * <li>formatting</li>
+ * <li>random tips</li>
+ * </ul>
  */
-public class McvHelpTipDialog extends JDialog implements Constants, HyperlinkListener {
+@SuppressWarnings("serial")
+public class McvHelpTipDialog extends JDialog implements Constants, 
+    HyperlinkListener 
+{
 
 	/** help tip preference */
 	public static final String PREF_HELPTIPSHOW = "help.helptip.Show";
