@@ -1582,7 +1582,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
 
     private float[] getLineEleResolution(AreaDirectory ad) {
-        float[] res = new float[2];
+        float[] res = {(float)1.0, (float)1.0};
         int sensor = ad.getSensorID();
         List lines = null;
         try {
