@@ -232,17 +232,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         return true;
     }
 
-    /**
-     * _more_
-     */
-    public void reloadData() {
-        super.reloadData();
-        if (choiceName != null) {
-            setProperty(PROP_DATACHOICENAME, choiceName);
-            applyProperties();
-        }
-    }
-
     private void setMag() {
         Object magKey = (Object)"mag";
         if (sourceProps.containsKey(magKey)) {
@@ -803,6 +792,9 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             this.elementMag = new Integer(strs[1]).intValue();
         }
         this.choiceName = dataChoice.getName();
+        if (this.choiceName != null) {
+            setProperty(PROP_DATACHOICENAME, this.choiceName);
+        }
         try {
             img = super.getDataInner(dataChoice, category, dataSelection, requestProperties);
         } catch (Exception e) {
