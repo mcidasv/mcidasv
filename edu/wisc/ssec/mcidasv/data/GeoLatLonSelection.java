@@ -2055,6 +2055,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             int areaEleRes = dir.getValue(12);
             int startLine = dir.getValue(5);
             int startEle = dir.getValue(6);
+            previewDir = dir;
             areaNav = previewNav;
             areaNav.setRes(areaLinRes, areaEleRes);
             areaNav.setImageStart(startLine, startEle);
@@ -2064,7 +2065,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                 setLatitude(coords[0]);
                 setLongitude(coords[1]);
                 convertToLineEle();
-            } else {
+            } else if (coordType.equals(TYPE_AREA)) {
                 double dCoord = coords[0] * baseLResOld/baseLResNew;
                 setLine((int)Math.floor(dCoord+0.5));
                 dCoord = coords[1] * baseEResOld/baseEResNew;
