@@ -1252,7 +1252,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 src = replaceKey(src, MAG_KEY, saveLineMag + " " + saveEleMag);
             }
 
-            System.out.println("\n" + src + "\n");
+//            System.out.println("\n" + src + "\n");
             AreaAdapter aa = new AreaAdapter(src, false);
             areaDir = previewDir;
             result = aa.getImage();
