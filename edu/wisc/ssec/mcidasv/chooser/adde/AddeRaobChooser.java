@@ -93,7 +93,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/11/23 17:16:06 $
+ * @version $Revision$Date: 2010/02/08 18:49:37 $
  */
 
 
@@ -564,10 +564,13 @@ public class AddeRaobChooser extends AddePointDataChooser {
      * See if we are pointing to observed or satellite soundings
      */
     private void checkSetObsSat() {
+    	System.out.println("checkSetObsSat: init");
     	if (getServer() == null || getGroup() == null || getDescriptor() == null) return;
+    	System.out.println("checkSetObsSat: start");
     	satelliteSounding = false;
     	showWaitCursor();
         Map<String, String> acctInfo = getAccountingInfo();
+        System.out.println("got acct info");
         String user = acctInfo.get("user");
         String proj = acctInfo.get("proj");
     	String[] paramString = new String[] {
@@ -576,6 +579,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
     	String request = Misc.makeUrl("adde", getServer(), "/point", paramString);
     	if (!(user.equals("") || proj.equals("")))
     		request += "&user=" + user + "&proj=" + proj;
+    	System.out.println("Making request: " + request);
         try {
 	        AddePointDataReader dataReader = new AddePointDataReader(request);
         }
@@ -585,6 +589,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
         }
         
     	showNormalCursor();
+    	System.out.println("checkSetObsSat: done: " + satelliteSounding);
     }
     
     /**
@@ -676,9 +681,13 @@ public class AddeRaobChooser extends AddePointDataChooser {
                 } else if (pe.getPropertyName().equals(
                         StationLocationMap.UNSELECTED_PROPERTY)) {
                     stationUnselected((Station) pe.getNewValue());
+                } else if (pe.getPropertyName().equals(
+                    StationLocationMap.ALL_UNSELECTED_PROPERTY)) {
+                	unselectAll();
                 }
             }
         });
+
     }
 
     /**
@@ -725,6 +734,19 @@ public class AddeRaobChooser extends AddePointDataChooser {
                 selectedObs.remove(newObs);
             }
         }
+        obsList.setListData(selectedObs);
+        updateStatus();
+    }
+    
+    /**
+     * Unselect all station
+     */
+    private void unselectAll() {
+        List selectedTimes = getSelectedTimes();
+        if ((selectedTimes == null) || (selectedTimes.size() < 1)) {
+            return;
+        }
+        selectedObs.removeAllElements();
         obsList.setListData(selectedObs);
         updateStatus();
     }

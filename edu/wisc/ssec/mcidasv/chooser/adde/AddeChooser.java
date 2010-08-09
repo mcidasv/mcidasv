@@ -1256,9 +1256,10 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         AddeServer server = getAddeServer();
         Map<String, String> map = new LinkedHashMap<String, String>();
         if (server != null) {
-            AddeAccount accounting = serverManager.getAccountingFor(server, getDataType());
-            map.put("user", accounting.getUsername());
-            map.put("proj", accounting.getProject());
+            List<AddeServer.Group> groups = server.getGroups();
+            Map<String, String>acctInfo = getAccounting(server, groups.get(0).toString());
+            map.put("user", acctInfo.get("user"));
+            map.put("proj", acctInfo.get("proj"));
             map.put("server", server.getName());
             map.put("group", getGroup());
         } else {
