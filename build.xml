@@ -438,8 +438,32 @@
 		</signjar>
 	</target>
 	
+	<!-- Build and run McIDAS-V application (small memory) -->
+	<target name="jar.run" depends="jar" description="Build and run McIDAS-V application (small memory)">
+		<java classname="${app.mainclass}" fork="true" maxmemory="${run.smallheap}">
+			<classpath>
+				<path refid="app.classpath" />
+				<pathelement location="${dist.dir}/${app.jarname}" />
+			</classpath>
+			<assertions refid="mcv.assertions"/>
+			<sysproperty key="logback.configurationFile" value="${logback.default.config}" />
+		</java>
+	</target>
+
+	<!-- Build and run McIDAS-V application (small memory) -->
+	<target name="jar.runlarge" depends="jar" description="Build and run McIDAS-V application (large memory)">
+		<java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
+			<classpath>
+				<path refid="app.classpath" />
+				<pathelement location="${dist.dir}/${app.jarname}" />
+			</classpath>
+			<assertions refid="mcv.assertions"/>
+			<sysproperty key="logback.configurationFile" value="${logback.default.config}" />
+		</java>
+	</target>
+
 	<!-- Run McIDAS-V application (small memory) -->
-	<target name="run" depends="jar" description="Run McIDAS-V application (small memory)">
+	<target name="run" description="Run McIDAS-V application (small memory)">
 		<java classname="${app.mainclass}" fork="true" maxmemory="${run.smallheap}">
 			<classpath>
 				<path refid="app.classpath" />
@@ -466,7 +490,7 @@
 	</target>
 	
 	<!-- Run McIDAS-V application (large memory) -->
-	<target name="runlarge" depends="jar" description="Run McIDAS-V application (large memory)">
+	<target name="runlarge" description="Run McIDAS-V application (large memory)">
 		<java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
 			<classpath>
 				<path refid="app.classpath" />
