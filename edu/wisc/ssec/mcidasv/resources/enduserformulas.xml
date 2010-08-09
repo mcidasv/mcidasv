@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <derived_parameters>
   <derived
+     id="cleanFilter"
+     description="Clean Image Filter"
+     formula="cleanFilter(image,fill[isuser=true,type=choice,choices=Average; Min; Max],bline[isuser=true,default=Default],eline[isuser=true,default=Default],pdiff[isuser=true,default=15],ldiff[isuser=true,default=15],stretch[isuser=true,type=choice,choices=Contrast; Histogram])"
+     isenduser="true"
+     isdefault="false">
+    <categories>
+      <category
+         display="true"
+         value="Image Filters"/>
+      <category value="IMAGE-*-*"/>
+    </categories>
+    <operands/>
+  </derived>
+  <derived
      id="cloudFilter"
      description="Cloud Image Filter"
      formula="cloudFilter(image1,image2,replace[isuser=true,default=Default], constant[isuser=true,default=0],stretch[isuser=true,type=choice,choices=Contrast; Histogram])"
