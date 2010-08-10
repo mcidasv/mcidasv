@@ -20,6 +20,7 @@
 
 package ucar.unidata.idv.ui;
 
+import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.findDisplayNumberForEvent;
 
 import ucar.unidata.idv.*;
 import ucar.unidata.ui.ComponentGroup;
@@ -30,9 +31,7 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 
-
 import ucar.unidata.util.Removable;
-
 
 import java.awt.*;
 import java.awt.event.*;
@@ -254,7 +253,7 @@ public class IdvWindow extends MultiFrame {
      *
      * @param contents window contents
      */
-    public void setContents(JComponent contents) {
+    public void setContents(final JComponent contents) {
         this.contents = contents;
         if (contents == null) {
             return;
@@ -263,14 +262,14 @@ public class IdvWindow extends MultiFrame {
         if (contentPane != null) {
             contentPane.removeAll();
             contentPane.add(contents);
-            contentPane.addHierarchyBoundsListener(new HierarchyBoundsListener() {
-                public void ancestorMoved(final HierarchyEvent e) {
-                    logger.trace("event={}", e);
-                }
-                public void ancestorResized(final HierarchyEvent e) {
-                    logger.trace("event={}", e);
-                }
-            });
+//            contentPane.addHierarchyBoundsListener(new HierarchyBoundsListener() {
+//                public void ancestorMoved(final HierarchyEvent e) {
+//                    logger.trace("idx={} event={}", findDisplayNumberForEvent(e), e);
+//                }
+//                public void ancestorResized(final HierarchyEvent e) {
+//                    logger.trace("idx={} event={}", findDisplayNumberForEvent(e), e);
+//                }
+//            });
             pack();
         }
     }
