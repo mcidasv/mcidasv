@@ -42,6 +42,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EventObject;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -58,6 +59,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ui.IdvComponentGroup;
@@ -65,6 +67,7 @@ import ucar.unidata.idv.ui.IdvComponentHolder;
 import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.idv.ui.WindowInfo;
 import ucar.unidata.ui.ComponentHolder;
+import ucar.unidata.ui.MultiFrame;
 import ucar.unidata.util.GuiUtils;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.ui.McvComponentGroup;
@@ -1220,23 +1223,96 @@ public class McVGuiUtils implements Constants {
 
     /**
      * Tries to determine the physical display that contains the given
-     * coordinates.
+     * {@link java.awt.Rectangle}. <b>This method (currently) fails for 
+     * {@code Rectangle}s that span multiple displays!</b>
      * 
-     * @param coords Coordinates to test.
+     * @param rect {@code Rectangle} to test. Should not be {@code null}.
      * 
      * @return Either the (zero-based) index of the physical display, or 
      * {@code -1} if there was no match.
      */
-    public static int findDisplayNumberForCoords(final Rectangle coords) {
+    public static int findDisplayNumberForRectangle(final Rectangle rect) {
         Map<Integer, Rectangle> bounds = SystemState.getDisplayBounds();
         int index = -1;
         for (Entry<Integer, Rectangle> entry : bounds.entrySet()) {
-            Rectangle rect = entry.getValue();
-            if (rect.contains(entry.getValue())) {
+            if (entry.getValue().contains(rect)) {
                 index = entry.getKey();
                 break;
             }
         }
         return index;
+    }
+
+    /**
+     * Tries to determine the physical display that contains the given
+     * {@link java.awt.Component}. <b>This method (currently) fails for 
+     * {@code Component}s that span multiple displays!</b>
+     * 
+     * @param comp {@code Component} to test. Should not be {@code null}.
+     * 
+     * @return Either the (zero-based) index of the physical display, or 
+     * {@code -1} if there was no match.
+     */
+    public static int findDisplayNumberForComponent(final Component comp) {
+        return findDisplayNumberForRectangle(comp.getBounds());
+    }
+
+    /**
+     * Tries to determine the physical display that contains the given
+     * {@link ucar.unidata.ui.MultiFrame}. <b>This method (currently) fails 
+     * for {@code MultiFrame}s that span multiple displays!</b>
+     * 
+     * @param mf {@code MultiFrame} to test. Should not be {@code null}.
+     * 
+     * @return Either the (zero-based) index of the physical display, or 
+     * {@code -1} if there was no match.
+     */
+    public static int findDisplayNumberForMultiFrame(final MultiFrame mf) {
+        return findDisplayNumberForRectangle(mf.getBounds());
+    }
+
+    /**
+     * Tries to determine the physical display that contains the rectangle 
+     * defined by the specified coordinates. <b>This method (currently) fails 
+     * for coordinates that span multiple displays!</b>
+     * 
+     * @param x X coordinate of the upper-left corner.
+     * @param y Y coordinate of the upper-left corner.
+     * @param width Width of the rectangle.
+     * @param height Height of the rectangle.
+     * 
+     * @return Either the (zero-based) index of the physical display, or 
+     * {@code -1} if there was no match.
+     * 
+     * @see java.awt.Rectangle#Rectangle(int, int, int, int)
+     */
+    public static int findDisplayNumberForCoords(final int x, final int y, 
+        final int width, final int height) 
+    {
+        return findDisplayNumberForRectangle(new Rectangle(x, y, width, height));
+    }
+
+    /**
+     * Tries to determine which physical display contains the 
+     * {@link java.awt.Component} or {@link ucar.unidata.ui.MultiFrame} that 
+     * fired the given event. <b>This method (currently) fails for coordinates 
+     * that span multiple displays!</b>
+     * 
+     * @param event {@code EventObject} to test. Should not be {@code null}.
+     * 
+     * @return Either the (zero-based) index of the physical display, or 
+     * {@code -1} if there was no match.
+     */
+    public static int findDisplayNumberForEvent(final EventObject event) {
+        int idx = -1;
+        Object src = event.getSource();
+        if (src != null) {
+            if (src instanceof Component) {
+                idx = findDisplayNumberForRectangle(((Component)src).getBounds());
+            } else if (src instanceof MultiFrame) {
+                idx = findDisplayNumberForRectangle(((MultiFrame)src).getBounds());
+            }
+        }
+        return idx;
     }
 }
