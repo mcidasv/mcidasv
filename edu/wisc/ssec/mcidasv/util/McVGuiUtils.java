@@ -38,7 +38,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.HierarchyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -1254,7 +1256,8 @@ public class McVGuiUtils implements Constants {
      * {@code -1} if there was no match.
      */
     public static int findDisplayNumberForComponent(final Component comp) {
-        return findDisplayNumberForRectangle(comp.getBounds());
+        return findDisplayNumberForRectangle(
+            new Rectangle(comp.getLocation(), comp.getSize()));
     }
 
     /**
@@ -1268,7 +1271,8 @@ public class McVGuiUtils implements Constants {
      * {@code -1} if there was no match.
      */
     public static int findDisplayNumberForMultiFrame(final MultiFrame mf) {
-        return findDisplayNumberForRectangle(mf.getBounds());
+        return findDisplayNumberForRectangle(
+            new Rectangle(mf.getLocation(), mf.getSize()));
     }
 
     /**
@@ -1289,7 +1293,8 @@ public class McVGuiUtils implements Constants {
     public static int findDisplayNumberForCoords(final int x, final int y, 
         final int width, final int height) 
     {
-        return findDisplayNumberForRectangle(new Rectangle(x, y, width, height));
+        return findDisplayNumberForRectangle(
+            new Rectangle(x, y, width, height));
     }
 
     /**
@@ -1306,11 +1311,14 @@ public class McVGuiUtils implements Constants {
     public static int findDisplayNumberForEvent(final EventObject event) {
         int idx = -1;
         Object src = event.getSource();
+        if (event instanceof HierarchyEvent) {
+            src = ((HierarchyEvent)event).getChanged();
+        }
         if (src != null) {
             if (src instanceof Component) {
-                idx = findDisplayNumberForRectangle(((Component)src).getBounds());
+                idx = findDisplayNumberForComponent((Component)src);
             } else if (src instanceof MultiFrame) {
-                idx = findDisplayNumberForRectangle(((MultiFrame)src).getBounds());
+                idx = findDisplayNumberForMultiFrame((MultiFrame)src);
             }
         }
         return idx;
