@@ -258,6 +258,14 @@ public class IdvWindow extends MultiFrame {
         if (contentPane != null) {
             contentPane.removeAll();
             contentPane.add(contents);
+            contentPane.addHierarchyBoundsListener(new HierarchyBoundsListener() {
+                public void ancestorMoved(final HierarchyEvent e) {
+                    System.out.println(e);
+                }
+                public void ancestorResized(final HierarchyEvent e) {
+                    System.out.println(e);
+                }
+            });
             pack();
         }
     }

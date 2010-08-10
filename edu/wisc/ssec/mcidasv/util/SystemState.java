@@ -29,22 +29,22 @@
  */
 package edu.wisc.ssec.mcidasv.util;
 
-import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.list;
-import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
-
-import java.awt.DisplayMode;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.Method;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
+
+import java.awt.DisplayMode;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.VirtualUniverse;
@@ -57,6 +57,9 @@ import ucar.visad.display.DisplayUtil;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.StateManager;
 
+/**
+ * Utility methods for querying the state of the user's machine.
+ */
 public class SystemState {
 
     /**
@@ -132,7 +135,7 @@ public class SystemState {
      * Polls Java for information about the user's machine. We're specifically
      * after memory statistics, number of processors, and display information.
      * 
-     * @return Map of properties that describes the user's machine.
+     * @return {@link Map} of properties that describes the user's machine.
      */
     public static Map<String, String> queryMachine() {
         Map<String, String> props = new LinkedHashMap<String, String>();
@@ -149,16 +152,43 @@ public class SystemState {
         int displayCount = ge.getScreenDevices().length;
 
         for (int i = 0; i < displayCount; i++) {
-            String baseId = "opsys.display."+i+".";
+            String baseId = "opsys.display."+i+'.';
             GraphicsDevice dev = ge.getScreenDevices()[i];
             DisplayMode mode = dev.getDisplayMode();
             props.put(baseId+"name", dev.getIDstring());
             props.put(baseId+"depth", Integer.toString(mode.getBitDepth()));
             props.put(baseId+"width", Integer.toString(mode.getWidth()));
             props.put(baseId+"height", Integer.toString(mode.getHeight()));
+            props.put(baseId+"refresh", Integer.toString(mode.getRefreshRate()));
         }
-
         return props;
+    }
+
+    /**
+     * Returns a mapping of display number to a {@link java.awt.Rectangle} 
+     * that represents the {@literal "bounds"} of the display.
+     */
+    public static Map<Integer, Rectangle> getDisplayBounds() {
+        Map<Integer, Rectangle> map = new LinkedHashMap<Integer, Rectangle>();
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        int idx = 0;
+        for (GraphicsDevice dev : ge.getScreenDevices()) {
+            for (GraphicsConfiguration config : dev.getConfigurations()) {
+                map.put(idx++, config.getBounds());
+            }
+        }
+        return map;
+    }
+
+    
+    
+    // TODO(jon): this should really be a polygon
+    public static Rectangle getVirtualDisplayBounds() {
+        Rectangle virtualBounds = new Rectangle();
+        for (Rectangle bounds : getDisplayBounds().values()) {
+            virtualBounds = virtualBounds.union(bounds);
+        }
+        return virtualBounds;
     }
 
     /**
@@ -308,4 +338,6 @@ public class SystemState {
         }
         return buf.toString();
     }
+    
+
 }

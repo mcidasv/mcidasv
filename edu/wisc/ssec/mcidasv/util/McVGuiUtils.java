@@ -38,10 +38,13 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
@@ -1113,52 +1116,53 @@ public class McVGuiUtils implements Constants {
     {
         List<IdvComponentHolder> holders = getAllComponentHolders();
         int currentIndex = holders.indexOf(current);
-
         int newidx = (currentIndex - 1) % holders.size();
-        if (newidx == -1)
+        if (newidx == -1) {
             newidx = holders.size() - 1;
-
+        }
         return holders.get(newidx);
     }
 
     /**
      * @param w {@link IdvWindow} whose component groups you want (as 
      * {@link McvComponentGroup}s).
+     * 
      * @return A {@link List} of {@code McvComponentGroup}s or an empty list. 
      * If there were no {@code McvComponentGroup}s in {@code w}, 
      * <b>or</b> if {@code w} is {@code null}, an empty {@code List} is returned.
      */
     public static List<McvComponentGroup> idvGroupsToMcv(final IdvWindow w) {
-        if (w == null)
+        if (w == null) {
             return Collections.emptyList();
+        }
         final List<McvComponentGroup> groups = arrList();
-        for (IdvComponentGroup group : w.getComponentGroups())
+        for (IdvComponentGroup group : w.getComponentGroups()) {
             groups.add((McvComponentGroup)group);
+        }
         return groups;
     }
-    
+
     public static void compGroup(final IdvComponentGroup g) {
         compGroup(g, 0);
     }
-    
+
     public static void compGroup(final IdvComponentGroup g, final int level) {
         p("Comp Group", level);
         p("  name=" + g.getName(), level);
         p("  id=" + g.getUniqueId(), level);
         p("  layout=" + g.getLayout(), level);
         p("  comp count=" + g.getDisplayComponents().size() + ": ", level);
-//        List<IdvComponentGroup> gs = new ArrayList<IdvComponentGroup>();
-//        List<IdvComponentHolder> hs = new ArrayList<IdvComponentHolder>();
         for (Object comp : g.getDisplayComponents()) {
-            if (comp instanceof IdvComponentHolder)
+            if (comp instanceof IdvComponentHolder) {
                 compHolder((IdvComponentHolder)comp, level+1);
-            else if (comp instanceof IdvComponentGroup)
+            } else if (comp instanceof IdvComponentGroup) {
                 compGroup((IdvComponentGroup)comp, level+1);
-            else
+            } else {
                 p("    umm=" + comp.getClass().getName(), level);
+            }
         }
     }
-    
+
     public static void compHolder(final IdvComponentHolder h, final int level) {
         p("Comp Holder", level);
         p("  cat=" + h.getCategory(), level);
@@ -1176,42 +1180,63 @@ public class McVGuiUtils implements Constants {
 
     public static List<ViewManager> findvms(final List<WindowInfo> windows) {
         List<ViewManager> vms = new ArrayList<ViewManager>();
-        
         for (WindowInfo window : windows) {
             for (IdvComponentHolder h : getComponentHolders(window)) {
-//              for (ViewManager vm : (List<ViewManager>)h.getViewManagers()) {
-//                  
-//              }
-                if (h.getViewManagers() != null)
+                if (h.getViewManagers() != null) {
                     vms.addAll((List<ViewManager>)h.getViewManagers());
-                else
+                } else {
                     System.err.println(h.getUniqueId() + " has no vms!");
+                }
             }
         }
-        
-        for (ViewManager vm : vms) 
+        for (ViewManager vm : vms) {
             System.err.println("vm=" + vm.getViewDescriptor().getName());
-        
+        }
         return vms;
     }
-    
+
     private static String vmType(final ViewManager vm) {
-        if (vm instanceof MapViewManager)
-            if (((MapViewManager)vm).getUseGlobeDisplay())
+        if (vm instanceof MapViewManager) {
+            if (((MapViewManager)vm).getUseGlobeDisplay()) {
                 return "Globe";
-            else
+            } else {
                 return "Map";
+            }
+        }
         return "Other";
     }
-    
+
     private static String pad(final String str, final int pad) {
         char[] padding = new char[pad*2];
-        for (int i = 0; i < pad*2; i++)
+        for (int i = 0; i < pad*2; i++) {
             padding[i] = ' ';
+        }
         return new String(padding).concat(str);
     }
-    
+
     private static void p(final String str, final int padding) {
         System.err.println(pad(str, padding));
+    }
+
+    /**
+     * Tries to determine the physical display that contains the given
+     * coordinates.
+     * 
+     * @param coords Coordinates to test.
+     * 
+     * @return Either the (zero-based) index of the physical display, or 
+     * {@code -1} if there was no match.
+     */
+    public static int findDisplayNumberForCoords(final Rectangle coords) {
+        Map<Integer, Rectangle> bounds = SystemState.getDisplayBounds();
+        int index = -1;
+        for (Entry<Integer, Rectangle> entry : bounds.entrySet()) {
+            Rectangle rect = entry.getValue();
+            if (rect.contains(entry.getValue())) {
+                index = entry.getKey();
+                break;
+            }
+        }
+        return index;
     }
 }

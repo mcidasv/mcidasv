@@ -37,7 +37,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -56,12 +56,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1315,7 +1309,7 @@ public class PersistenceManager extends IdvPersistenceManager {
      */
     protected void flattenWindows(final List<WindowInfo> windows) {
         for (WindowInfo window : windows) {
-            Hashtable<String, Object> persist = window.getPersistentComponents();
+            Map<String, Object> persist = window.getPersistentComponents();
             Set<Map.Entry<String, Object>> blah = persist.entrySet();
             for (Map.Entry<String, Object> entry : blah) {
                 if (!(entry.getValue() instanceof IdvComponentGroup)) {
