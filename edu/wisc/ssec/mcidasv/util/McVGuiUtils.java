@@ -40,6 +40,8 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.HierarchyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -1221,6 +1223,18 @@ public class McVGuiUtils implements Constants {
 
     private static void p(final String str, final int padding) {
         System.err.println(pad(str, padding));
+    }
+
+    /**
+     * Find the {@literal "bounds"} for the physical display at {@code index}.
+     * 
+     * @param index Zero-based index of the desired physical display.
+     * 
+     * @return Either a {@link java.awt.Rectangle} representing the display's
+     * bounds, or {@code null} if {@code index} is invalid.
+     */
+    public static Rectangle getDisplayBoundsFor(final int index) {
+        return SystemState.getDisplayBounds().get(index);
     }
 
     /**
