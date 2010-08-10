@@ -46,7 +46,8 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.*;
 
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The window class used for the IDV. Really need to break this out into
@@ -56,6 +57,10 @@ import javax.swing.event.*;
  * @author IDV development team
  */
 public class IdvWindow extends MultiFrame {
+
+    /** Logging object. */
+    private static final Logger logger = 
+        LoggerFactory.getLogger(IdvWindow.class);
 
     /** The chooser components in this window */
     public static final String GROUP_CHOOSERS = "choosers";
@@ -260,10 +265,10 @@ public class IdvWindow extends MultiFrame {
             contentPane.add(contents);
             contentPane.addHierarchyBoundsListener(new HierarchyBoundsListener() {
                 public void ancestorMoved(final HierarchyEvent e) {
-                    System.out.println(e);
+                    logger.trace("event={}", e);
                 }
                 public void ancestorResized(final HierarchyEvent e) {
-                    System.out.println(e);
+                    logger.trace("event={}", e);
                 }
             });
             pack();
