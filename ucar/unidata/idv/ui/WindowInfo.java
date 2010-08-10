@@ -20,20 +20,34 @@
 
 package ucar.unidata.idv.ui;
 
-import java.awt.Rectangle;
+
+import ucar.unidata.util.ColorTable;
+import ucar.unidata.util.ContourInfo;
+import ucar.unidata.util.Misc;
+import ucar.unidata.util.Range;
+
+import visad.Unit;
+
+import java.awt.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Hashtable;
+
 import java.util.List;
-import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 
 /**
  * Holds information about an IdvWindow so we can persist it.
  */
 public class WindowInfo {
 
+    private static final Logger logger = LoggerFactory.getLogger(WindowInfo.class);
+
     /** The view managers in the window */
-    @SuppressWarnings("rawtypes")
     private List viewManagers;
 
     /** The xml skin path */
@@ -43,14 +57,13 @@ public class WindowInfo {
     private Rectangle bounds;
 
     /** Is this window one of the main windows */
-    private boolean isAMainWindow;
+    private boolean isAMainWindow = false;
 
     /** Window title to save */
     private String title;
 
-    /** _more_ */
-    @SuppressWarnings("rawtypes")
-    private Map persistentComponents;
+    /** _more_          */
+    private Hashtable persistentComponents = new Hashtable();
 
     /**
      * Ctor
@@ -62,17 +75,18 @@ public class WindowInfo {
      *
      * @param window The window to get state from
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public WindowInfo(final IdvWindow window) {
+    public WindowInfo(IdvWindow window) {
         if (window.getViewManagers() != null) {
             this.viewManagers = new ArrayList(window.getViewManagers());
         }
-        this.persistentComponents = new HashMap(window.getPersistentComponents());
+        this.persistentComponents = window.getPersistentComponents();
         skinPath                  = window.getSkinPath();
         bounds                    = window.getBounds();
         isAMainWindow             = window.getIsAMainWindow();
         this.title                = window.getTitle();
     }
+
+
 
     /**
      * to string
@@ -80,8 +94,7 @@ public class WindowInfo {
      * @return to string
      */
     public String toString() {
-        return String.format("[Window%x: title='%s', skinPath='%s', isAMainWindow=%s, bounds=%s, viewManagers=%s, persistentComponents=%s]", 
-            hashCode(), title, skinPath, isAMainWindow, bounds, viewManagers, persistentComponents);
+        return "WindowInfo:" + skinPath;
     }
 
     /**
@@ -89,7 +102,6 @@ public class WindowInfo {
      *
      * @return The viewmanagers
      */
-    @SuppressWarnings("rawtypes")
     public List getViewManagers() {
         return viewManagers;
     }
@@ -97,19 +109,22 @@ public class WindowInfo {
     /**
      * Set the list of view managers in the window
      *
-     * @param vms The view managers
+     * @param vms  The view managers
      */
-    @SuppressWarnings("rawtypes")
-    public void setViewManagers(final List vms) {
+    public void setViewManagers(List vms) {
         viewManagers = vms;
     }
+
+
+
 
     /**
      * Get the window bounds
      *
      * @return Window bounds
      */
-    public Rectangle getBounds() {
+    public synchronized Rectangle getBounds() {
+        logger.trace("return bounds={}", bounds);
         return bounds;
     }
 
@@ -118,7 +133,8 @@ public class WindowInfo {
      *
      * @param b The window bounds
      */
-    public void setBounds(Rectangle b) {
+    public synchronized void setBounds(Rectangle b) {
+        logger.trace("setting bounds={} old={}", b, bounds);
         bounds = b;
     }
 
@@ -136,7 +152,7 @@ public class WindowInfo {
      *
      * @param b Xml skin path
      */
-    public void setSkinPath(final String b) {
+    public void setSkinPath(String b) {
         skinPath = b;
     }
 
@@ -145,7 +161,7 @@ public class WindowInfo {
      *
      * @param value The new value for IsAMainWindow
      */
-    public void setIsAMainWindow(final boolean value) {
+    public void setIsAMainWindow(boolean value) {
         isAMainWindow = value;
     }
 
@@ -163,7 +179,7 @@ public class WindowInfo {
      *
      * @param value The new value for Title
      */
-    public void setTitle(final String value) {
+    public void setTitle(String value) {
         title = value;
     }
 
@@ -176,13 +192,13 @@ public class WindowInfo {
         return title;
     }
 
+
     /**
      * Set the PersistentComponents property.
      *
      * @param value The new value for PersistentComponents
      */
-    @SuppressWarnings("rawtypes")
-    public void setPersistentComponents(final Map value) {
+    public void setPersistentComponents(Hashtable value) {
         persistentComponents = value;
     }
 
@@ -191,9 +207,10 @@ public class WindowInfo {
      *
      * @return The PersistentComponents
      */
-    @SuppressWarnings("rawtypes")
-    public Map getPersistentComponents() {
+    public Hashtable getPersistentComponents() {
         return persistentComponents;
     }
-}
 
+
+
+}
