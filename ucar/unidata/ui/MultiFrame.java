@@ -41,13 +41,6 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
-
-
-
 
 
 /**
@@ -58,8 +51,6 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
  */
 public class MultiFrame {
 
-    private static final Logger logger = LoggerFactory.getLogger(MultiFrame.class);
-    
     /** Global to add the internal frames to as a default behavior */
     private static JDesktopPane desktopPane;
 
@@ -456,10 +447,8 @@ public class MultiFrame {
      *
      * @return _more_
      */
-    public synchronized Rectangle getBounds() {
-        Rectangle r = getComponent().getBounds();
-        logger.trace("bounds={}, getComp={}", r, getComponent());
-        return r;
+    public Rectangle getBounds() {
+        return getComponent().getBounds();
     }
 
     /**
@@ -467,20 +456,13 @@ public class MultiFrame {
      *
      * @param bounds _more_
      */
-    public synchronized void setBounds(final Rectangle bounds) {
-        final JFrame theFrame = frame;
+    public void setBounds(Rectangle bounds) {
+        JFrame theFrame = frame;
         if (theFrame != null) {
             if (bounds != null) {
-                logger.trace("positionAndFit: bounds={}, frame={}", bounds, theFrame);
-                SwingUtilities.invokeLater(new Runnable() { 
-                    public void run() {
-                        getComponent().setLocation(bounds.x, bounds.y);
-                        getComponent().setSize(bounds.width, bounds.height);
-                    }
-                });
+                GuiUtils.positionAndFitToScreen(theFrame, bounds);
             }
         } else if (internalFrame != null) {
-            logger.trace("internalFrame: bounds={}", bounds);
             internalFrame.setBounds(bounds);
         }
     }
@@ -517,7 +499,7 @@ public class MultiFrame {
      *
      * @return The component
      */
-    public synchronized Component getComponent() {
+    public Component getComponent() {
         if (frame != null) {
             return frame;
         } else if (internalFrame != null) {

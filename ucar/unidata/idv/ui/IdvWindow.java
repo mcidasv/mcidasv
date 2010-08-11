@@ -20,7 +20,6 @@
 
 package ucar.unidata.idv.ui;
 
-import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.findDisplayNumberForEvent;
 
 import ucar.unidata.idv.*;
 import ucar.unidata.ui.ComponentGroup;
@@ -31,7 +30,9 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 
+
 import ucar.unidata.util.Removable;
+
 
 import java.awt.*;
 import java.awt.event.*;
@@ -45,8 +46,7 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 /**
  * The window class used for the IDV. Really need to break this out into
@@ -56,10 +56,6 @@ import org.slf4j.LoggerFactory;
  * @author IDV development team
  */
 public class IdvWindow extends MultiFrame {
-
-    /** Logging object. */
-    private static final Logger logger = 
-        LoggerFactory.getLogger(IdvWindow.class);
 
     /** The chooser components in this window */
     public static final String GROUP_CHOOSERS = "choosers";
@@ -253,7 +249,7 @@ public class IdvWindow extends MultiFrame {
      *
      * @param contents window contents
      */
-    public void setContents(final JComponent contents) {
+    public void setContents(JComponent contents) {
         this.contents = contents;
         if (contents == null) {
             return;
@@ -262,14 +258,6 @@ public class IdvWindow extends MultiFrame {
         if (contentPane != null) {
             contentPane.removeAll();
             contentPane.add(contents);
-//            contentPane.addHierarchyBoundsListener(new HierarchyBoundsListener() {
-//                public void ancestorMoved(final HierarchyEvent e) {
-//                    logger.trace("idx={} event={}", findDisplayNumberForEvent(e), e);
-//                }
-//                public void ancestorResized(final HierarchyEvent e) {
-//                    logger.trace("idx={} event={}", findDisplayNumberForEvent(e), e);
-//                }
-//            });
             pack();
         }
     }
