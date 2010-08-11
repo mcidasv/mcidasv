@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="5.0.2" transformSequenceNumber="3">
-  <directoryPresets config="${compiler:MCVDIR}/lib/eventbus-1.3.jar" />
+<install4j version="5.0.3" transformSequenceNumber="3">
+  <directoryPresets config="${compiler:MCVDIR}/dist/local-idv.jar" />
   <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="/home/mcidasv/install4j/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.0beta6" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" installerName="" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -61,6 +61,7 @@
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/lib/swing-layout-1.0.3.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/lib/eventbus-1.3.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcidasv.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/local-idv.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/startupmanager.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcv_userguide.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcv_javadoc.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
@@ -1303,10 +1304,6 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <launcher id="844" />
         <launcher id="1335" />
       </excludedLaunchers>
-      <excludedComponents>
-        <component id="3653" />
-        <component id="7274" />
-      </excludedComponents>
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
@@ -1323,6 +1320,11 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <commentFiles />
         <customAttributes />
       </autoUpdate>
+      <excludedComponents>
+        <component id="3653" />
+        <component id="7274" />
+      </excludedComponents>
+      <includedDownloadableComponents />
       <installerScript mode="1" file="">
         <content />
       </installerScript>
@@ -1332,10 +1334,6 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <launcher id="844" />
         <launcher id="1335" />
       </excludedLaunchers>
-      <excludedComponents>
-        <component id="3653" />
-        <component id="7274" />
-      </excludedComponents>
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
@@ -1352,6 +1350,11 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <commentFiles />
         <customAttributes />
       </autoUpdate>
+      <excludedComponents>
+        <component id="3653" />
+        <component id="7274" />
+      </excludedComponents>
+      <includedDownloadableComponents />
       <installerScript mode="1" file="">
         <content />
       </installerScript>
@@ -1361,10 +1364,6 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <launcher id="844" />
         <launcher id="1335" />
       </excludedLaunchers>
-      <excludedComponents>
-        <component id="7274" />
-        <component id="3653" />
-      </excludedComponents>
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
@@ -1381,6 +1380,11 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <commentFiles />
         <customAttributes />
       </autoUpdate>
+      <excludedComponents>
+        <component id="7274" />
+        <component id="3653" />
+      </excludedComponents>
+      <includedDownloadableComponents />
       <installerScript mode="1" file="">
         <content />
       </installerScript>
@@ -1390,10 +1394,6 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <launcher id="844" />
         <launcher id="1335" />
       </excludedLaunchers>
-      <excludedComponents>
-        <component id="7274" />
-        <component id="3653" />
-      </excludedComponents>
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
@@ -1410,6 +1410,11 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <commentFiles />
         <customAttributes />
       </autoUpdate>
+      <excludedComponents>
+        <component id="7274" />
+        <component id="3653" />
+      </excludedComponents>
+      <includedDownloadableComponents />
       <installerScript mode="1" file="">
         <content />
       </installerScript>
@@ -1419,11 +1424,6 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <launcher id="844" />
         <launcher id="1335" />
       </excludedLaunchers>
-      <excludedComponents>
-        <component id="3653" />
-        <component id="7274" />
-        <component id="7433" />
-      </excludedComponents>
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
@@ -1441,6 +1441,12 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <commentFiles />
         <customAttributes />
       </autoUpdate>
+      <excludedComponents>
+        <component id="3653" />
+        <component id="7274" />
+        <component id="7433" />
+      </excludedComponents>
+      <includedDownloadableComponents />
       <installerScript mode="1" file="">
         <content />
       </installerScript>
@@ -1450,9 +1456,6 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <launcher id="844" />
         <launcher id="1335" />
       </excludedLaunchers>
-      <excludedComponents>
-        <component id="7274" />
-      </excludedComponents>
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
@@ -1468,16 +1471,16 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <commentFiles />
         <customAttributes />
       </autoUpdate>
+      <excludedComponents>
+        <component id="7274" />
+      </excludedComponents>
+      <includedDownloadableComponents />
     </macosFolder>
     <windows name="Windows 32bit" id="8" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="/home/mcidasv/install4j/jres/windows-x86-1.6.0_17_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
       <excludedLaunchers>
         <launcher id="841" />
         <launcher id="1330" />
       </excludedLaunchers>
-      <excludedComponents>
-        <component id="66" />
-        <component id="3653" />
-      </excludedComponents>
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
@@ -1494,16 +1497,17 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <commentFiles />
         <customAttributes />
       </autoUpdate>
+      <excludedComponents>
+        <component id="66" />
+        <component id="3653" />
+      </excludedComponents>
+      <includedDownloadableComponents />
     </windows>
     <windows name="Windows 64bit" id="7720" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="64" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="/home/mcidasv/install4j/jres/windows-amd64-1.6.0_17_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
       <excludedLaunchers>
         <launcher id="841" />
         <launcher id="1330" />
       </excludedLaunchers>
-      <excludedComponents>
-        <component id="66" />
-        <component id="3653" />
-      </excludedComponents>
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
@@ -1520,6 +1524,11 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <commentFiles />
         <customAttributes />
       </autoUpdate>
+      <excludedComponents>
+        <component id="66" />
+        <component id="3653" />
+      </excludedComponents>
+      <includedDownloadableComponents />
     </windows>
   </mediaSets>
   <buildIds buildAll="true">
