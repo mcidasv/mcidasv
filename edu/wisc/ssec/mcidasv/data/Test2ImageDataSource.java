@@ -314,18 +314,18 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             try {
                 if (dataChoice.getDataSelection() == null) {
                     if (!basically) {
-                        laLoSel = new GeoLatLonSelection(this, 
+                        this.laLoSel = new GeoLatLonSelection(this, 
                                          dataChoice, this.initProps, this.previewProjection,
                                          previewDir, previewNav);
                     }
-                    this.lineMag = laLoSel.getLineMag();
-                    this.elementMag = laLoSel.getElementMag();
-                    previewSel = new GeoPreviewSelection(this, dataChoice, this.previewImage, 
+                    this.lineMag = this.laLoSel.getLineMag();
+                    this.elementMag = this.laLoSel.getElementMag();
+                    this.previewSel = new GeoPreviewSelection(this, dataChoice, this.previewImage, 
                                      this.laLoSel, this.previewProjection,
                                      this.lineMag, this.elementMag, this.showPreview);
                 }
-                components.add(previewSel);
-                components.add(laLoSel);
+                components.add(this.previewSel);
+                components.add(this.laLoSel);
             } catch (Exception e) {
                 System.out.println("error while repeating addition of selection components \n	e= "+e);
                 getDataContext().getIdv().showNormalCursor();
@@ -361,7 +361,20 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     if (!showPreview) {
                         replaceKey(SIZE_KEY, "2 2");
                     }
-                    AreaAdapter aa = new AreaAdapter(baseSource, false);
+                    AreaAdapter aa = null;
+                    try {
+                        aa = new AreaAdapter(baseSource, false);
+                    } catch (Exception e) {
+                        String excp = e.toString();
+                        int indx = excp.lastIndexOf(":");
+                        String errorText = excp.substring(indx+1);
+                        JLabel label = new JLabel(errorText);
+                        JPanel contents = GuiUtils.top(GuiUtils.inset(label, label.getText().length() + 12));
+                        GuiUtils.showOkDialog(null, "Can't Make Geographical Selection Tabs", contents, null);
+                        getDataContext().getIdv().showNormalCursor();
+                        System.out.println("makePreviewImage e=" + e);
+                        return;
+                    }
                     this.previewImage = (FlatField)aa.getImage();
                     baseSource = saveStr;
                     AreaFile af = new AreaFile(baseSource);
@@ -389,7 +402,8 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     iVal = new Integer(vals[0]);
                     lMag = iVal.intValue();
                     iVal = new Integer(vals[1]);
-                     eMag = iVal.intValue();
+                    eMag = iVal.intValue();
+
                     this.initProps.put("LRES", String.valueOf((this.lRes)));
                     this.initProps.put("ERES", String.valueOf((this.eRes)));
                     this.initProps.put("PLRES", String.valueOf((this.previewLineRes)));
@@ -398,29 +412,32 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
                     String coordType = "";
                     double coords[] = { 0.0, 0.0 };
+                    System.out.println("basically=" + basically);
                     if (!basically) {
-                        if (laLoSel != null) {
-                            coordType = laLoSel.getCoordinateType();
-                            if (coordType.equals(laLoSel.TYPE_LATLON)) {
-                                coords[0] = laLoSel.getLatitude();
-                                coords[1] = laLoSel.getLongitude();
+                        if (this.laLoSel != null) {
+                            coordType = this.laLoSel.getCoordinateType();
+                            if (coordType.equals(this.laLoSel.TYPE_LATLON)) {
+                                coords[0] = this.laLoSel.getLatitude();
+                                coords[1] = this.laLoSel.getLongitude();
                             } else {
-                                coords[0] = (double)laLoSel.getLine();
-                                coords[1] = (double)laLoSel.getElement();
+                                coords[0] = (double)this.laLoSel.getLine();
+                                coords[1] = (double)this.laLoSel.getElement();
                             }
-                            laLoSel.setPreviewLineRes(this.previewLineRes);
-                            laLoSel.setPreviewEleRes(this.previewEleRes);
-                            laLoSel.update(previewDir, this.previewProjection, previewNav,
+                            this.laLoSel.setPreviewLineRes(this.previewLineRes);
+                            this.laLoSel.setPreviewEleRes(this.previewEleRes);
+                            this.laLoSel.update(previewDir, this.previewProjection, previewNav,
                                            coordType, coords);
                         } else {
-                            laLoSel = new GeoLatLonSelection(this, 
+                            System.out.println("2 making GeoLatLonSelection");
+                            this.laLoSel = new GeoLatLonSelection(this, 
                                           dataChoice, this.initProps, this.previewProjection,
                                           previewDir, previewNav);
-                            this.lineMag = laLoSel.getLineMag();
-                            this.elementMag = laLoSel.getElementMag();
+                            this.lineMag = this.laLoSel.getLineMag();
+                            this.elementMag = this.laLoSel.getElementMag();
                         }
                     }
-                    previewSel = new GeoPreviewSelection(this, dataChoice, this.previewImage, 
+                    System.out.println("2 making GeoPreviewSelection");
+                    this.previewSel = new GeoPreviewSelection(this, dataChoice, this.previewImage, 
                                      this.laLoSel, this.previewProjection,
                                      this.lineMag, this.elementMag, this.showPreview);
                 } catch (Exception e) {
@@ -430,11 +447,11 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 }
                 this.haveDataSelectionComponents = true;
                 replaceKey(MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
-                components.add(previewSel);
-                components.add(laLoSel);
+                components.add(this.previewSel);
+                components.add(this.laLoSel);
             }
         }
-        if (previewSel != null) previewSel.drawBox();
+        if (this.previewSel != null) this.previewSel.drawBox();
         getDataContext().getIdv().showNormalCursor();
     }
 
@@ -540,8 +557,15 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         }
         this.previewLineRes = lMag;
         this.previewEleRes = eMag;
+        String uLStr = "0 0 F";
+        try {
+            int startLine = previewDir.getValue(5);
+            int startEle = previewDir.getValue(6);
+            uLStr = startLine + " " + startEle + " I";
+        } catch (Exception e) {
+        }
         String src = aid.getSource();
-        src = replaceKey(src, LINELE_KEY, (Object)("0 0 F"));
+        src = replaceKey(src, LINELE_KEY, (Object)uLStr);
         src = replaceKey(src, PLACE_KEY, (Object)("ULEFT"));
         src = replaceKey(src, SIZE_KEY, (Object)(lSize + " " + eSize));
         src = replaceKey(src, MAG_KEY, (Object)(lMag + " " + eMag));
@@ -1212,29 +1236,29 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             } else {
                 src = aid.getSource();
                 try {
-                    savePlace = laLoSel.getPlace();
-                    saveLat = laLoSel.getLatitude();
-                    saveLon = laLoSel.getLongitude();
-                    saveNumLine = laLoSel.getNumLines();
-                    saveNumEle = laLoSel.getNumEles();
-                    saveLineMag = laLoSel.getLineMag();
-                    saveEleMag = laLoSel.getElementMag();
+                    savePlace = this.laLoSel.getPlace();
+                    saveLat = this.laLoSel.getLatitude();
+                    saveLon = this.laLoSel.getLongitude();
+                    saveNumLine = this.laLoSel.getNumLines();
+                    saveNumEle = this.laLoSel.getNumEles();
+                    saveLineMag = this.laLoSel.getLineMag();
+                    saveEleMag = this.laLoSel.getElementMag();
                 } catch (Exception e) {
                     System.out.println("makeImage error reading from laLoSel e=" + e);
                     savePlace = getSavePlace();
-                    laLoSel.setPlace(savePlace);
+                    this.laLoSel.setPlace(savePlace);
                     saveLat = getSaveLat();
-                    laLoSel.setLatitude(saveLat);
+                    this.laLoSel.setLatitude(saveLat);
                     saveLon = getSaveLon();
-                    laLoSel.setLongitude(saveLon);
+                    this.laLoSel.setLongitude(saveLon);
                     saveNumLine = getSaveNumLine();
-                    laLoSel.setNumLines(saveNumLine);
+                    this.laLoSel.setNumLines(saveNumLine);
                     saveNumEle = getSaveNumEle();
-                    laLoSel.setNumEles(saveNumEle);
+                    this.laLoSel.setNumEles(saveNumEle);
                     saveLineMag = getSaveLineMag();
-                    laLoSel.setLineMag(saveLineMag);
+                    this.laLoSel.setLineMag(saveLineMag);
                     saveEleMag = getSaveEleMag();
-                    laLoSel.setElementMag(saveEleMag);
+                    this.laLoSel.setElementMag(saveEleMag);
                 }
 
                 src = replaceKey(src, PLACE_KEY, savePlace);
@@ -1252,7 +1276,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 src = replaceKey(src, MAG_KEY, saveLineMag + " " + saveEleMag);
             }
 
-//            System.out.println("\n" + src + "\n");
+            //System.out.println("\n" + src + "\n");
             AreaAdapter aa = new AreaAdapter(src, false);
             areaDir = previewDir;
             result = aa.getImage();
@@ -1780,19 +1804,19 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     }
 
     private void getSaveComponents() {
-        saveCoordType = laLoSel.getCoordinateType();
-        savePlace = laLoSel.getPlace();
-        if (saveCoordType.equals(laLoSel.TYPE_LATLON)) {
-            saveLat = laLoSel.getLatitude();
-            saveLon = laLoSel.getLongitude();
+        saveCoordType = this.laLoSel.getCoordinateType();
+        savePlace = this.laLoSel.getPlace();
+        if (saveCoordType.equals(this.laLoSel.TYPE_LATLON)) {
+            saveLat = this.laLoSel.getLatitude();
+            saveLon = this.laLoSel.getLongitude();
         } else {
-            saveLine = laLoSel.getLine();
-            saveElement = laLoSel.getElement();
+            saveLine = this.laLoSel.getLine();
+            saveElement = this.laLoSel.getElement();
         }
-        saveLockOn = laLoSel.getLockOn();
-        saveNumLine = laLoSel.getNumLines();
-        saveNumEle = laLoSel.getNumEles();
-        saveLineMag = laLoSel.getLineMag();
-        saveEleMag = laLoSel.getElementMag();
+        saveLockOn = this.laLoSel.getLockOn();
+        saveNumLine = this.laLoSel.getNumLines();
+        saveNumEle = this.laLoSel.getNumEles();
+        saveLineMag = this.laLoSel.getLineMag();
+        saveEleMag = this.laLoSel.getElementMag();
     }
 }
