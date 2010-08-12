@@ -285,13 +285,13 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             float resol = res[0];
             if (this.lineMag < 0)
                 resol *= Math.abs(this.lineMag);
-            this.lRes = resol;
+            this.lineResolution = ad.getValue(11);
+            this.lRes = resol * this.lineResolution;
             resol = res[1];
             if (this.elementMag < 0)
                 resol *= Math.abs(this.elementMag);
-            this.eRes = resol;
-            this.lineResolution = ad.getValue(11);
             this.elementResolution = ad.getValue(12);
+            this.eRes = resol * this.elementResolution;
         } catch (Exception e) {
             setInError(true);
             System.out.println("====> Getting area directory: " + e.getMessage());
@@ -412,7 +412,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
                     String coordType = "";
                     double coords[] = { 0.0, 0.0 };
-                    System.out.println("basically=" + basically);
                     if (!basically) {
                         if (this.laLoSel != null) {
                             coordType = this.laLoSel.getCoordinateType();
@@ -428,7 +427,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                             this.laLoSel.update(previewDir, this.previewProjection, previewNav,
                                            coordType, coords);
                         } else {
-                            System.out.println("2 making GeoLatLonSelection");
                             this.laLoSel = new GeoLatLonSelection(this, 
                                           dataChoice, this.initProps, this.previewProjection,
                                           previewDir, previewNav);
@@ -436,7 +434,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                             this.elementMag = this.laLoSel.getElementMag();
                         }
                     }
-                    System.out.println("2 making GeoPreviewSelection");
                     this.previewSel = new GeoPreviewSelection(this, dataChoice, this.previewImage, 
                                      this.laLoSel, this.previewProjection,
                                      this.lineMag, this.elementMag, this.showPreview);
