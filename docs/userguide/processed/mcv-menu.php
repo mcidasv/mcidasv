@@ -372,5 +372,5 @@
 
 <!-- PDF -->
 <div class="small menu" id="div_pdf" style="display:none;">
-<img src="acrobat.gif" style="border:0px;"> Download PDF
+<img src="acrobat.gif" style="border:0px;"> <a href="mcv_guide.pdf">Download PDF</a>
 </div>
