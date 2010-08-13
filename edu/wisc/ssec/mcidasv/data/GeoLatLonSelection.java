@@ -42,6 +42,7 @@ import java.awt.Insets;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -393,12 +394,20 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
           try {
               if (properties.containsKey(PROP_LRES)) {
                   this.bLRes = new Double((String)properties.get(PROP_LRES)).doubleValue();
-                  this.baseLRes = this.bLRes * this.previewDir.getCenterLatitudeResolution();
+                  //System.out.println("from dir lRes=" + dir.getValue(11));
+                  if (dir.getValue(11) == 1) this.bLRes = this.previewDir.getCenterLatitudeResolution();
+                  //System.out.println("CenterLatitudeResolution=" + this.previewDir.getCenterLatitudeResolution());
+                  this.baseLRes = this.bLRes * (double)(dir.getValue(11));
+                  //System.out.println("baseLRes=" + this.baseLRes);
                   setLRes(this.baseLRes * Math.abs(this.defaultLineMag));
               }
               if (properties.containsKey(PROP_ERES)) {
                   this.bERes = new Double((String)properties.get(PROP_ERES)).doubleValue();
-                  this.baseERes = this.bERes * this.previewDir.getCenterLongitudeResolution();
+                  //System.out.println("from dir eRes=" + dir.getValue(12));
+                  if (dir.getValue(12) == 1) this.bERes = this.previewDir.getCenterLongitudeResolution();
+                  //System.out.println("CenterLongitudeResolution=" + this.previewDir.getCenterLongitudeResolution());
+                  this.baseERes = this.bERes * (double)(dir.getValue(12));
+                  //System.out.println("baseERes=" + this.baseERes);
                   setERes(this.baseERes * Math.abs(this.defaultElementMag));
               }
           } catch (Exception e) {
@@ -742,7 +751,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   lineMagFld.addActionListener(lineMagChange);
                   lineMagLbl =
                       GuiUtils.getFixedWidthLabel(StringUtil.padLeft(str, 4));
-                  str = truncateNumericString(Double.toString(this.baseLRes*Math.abs(getLineMag())), 1);
+                  str = truncateNumericString(Double.toString(this.baseLRes*Math.abs(getLineMag())), 2);
                   str = " Res=" + str + kmLbl;
                   lineResLbl =
                       GuiUtils.getFixedWidthLabel(StringUtil.padLeft(str, 4));
@@ -815,7 +824,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   String str = "Ele  Mag=";
                   elementMagLbl =
                       GuiUtils.getFixedWidthLabel(StringUtil.padLeft(str, 4));
-                  str = truncateNumericString(Double.toString(this.baseERes*Math.abs(getElementMag())), 1);
+                  str = truncateNumericString(Double.toString(this.baseERes*Math.abs(getElementMag())), 2);
                   str = " Res=" + str + kmLbl;
                   elementResLbl =
                       GuiUtils.getFixedWidthLabel(StringUtil.padLeft(str, 4));
@@ -1730,7 +1739,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         elementMagLbl.setText("Ele  Mag=");
         eleMagFld.setText(new Integer(value).toString());
         String str = " Res=" +
-            truncateNumericString(Double.toString(this.baseERes*Math.abs(value)), 1);
+            truncateNumericString(Double.toString(this.baseERes*Math.abs(value)), 2);
         elementResLbl.setText(StringUtil.padLeft(str, 4) + kmLbl);
 
         if (!lockBtn.isSelected()) {
@@ -1768,7 +1777,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             lineMagLbl.setText("Line Mag=");
             lineMagFld.setText(new Integer(value).toString());
             String str = " Res=" +
-                truncateNumericString(Double.toString(this.baseLRes*Math.abs(value)), 1);
+                truncateNumericString(Double.toString(this.baseLRes*Math.abs(value)), 2);
             lineResLbl.setText(StringUtil.padLeft(str, 4) + kmLbl);
 
             if (autoSetSize) {
@@ -1933,6 +1942,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
     private String truncateNumericString(String str, int numDec) {
         int indx = str.indexOf(".") + numDec + 1;
+        if (indx >= str.length()) indx = str.length();
         return str.substring(0,indx);
     }
 
@@ -1985,8 +1995,13 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         int lSizeOld = getNumLines();
         int eSizeOld = getNumEles();
 
-        double baseLResNew = getBLRes() * dir.getCenterLatitudeResolution();
-        double baseEResNew = getBERes() * dir.getCenterLongitudeResolution();
+        double baseLResNew = getBLRes();
+        double baseEResNew = getBERes();
+        try {
+            baseLResNew *= (double)(dir.getValue(11));
+            baseEResNew *= (double)(dir.getValue(12));
+        } catch (Exception e) {
+        }
 
         double lDMagNew = lDMagOld * baseLResOld / baseLResNew;
         int lMagNew = (int)Math.ceil(lDMagNew - 0.5);

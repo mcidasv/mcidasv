@@ -197,6 +197,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     public Test2ImageDataSource(DataSourceDescriptor descriptor, ImageDataset ids,
                            Hashtable properties) throws VisADException {
         super(descriptor, ids, properties);
+
         this.sourceProps = properties;
         if (properties.containsKey((Object)PREVIEW_KEY)) {
             this.showPreview = (Boolean)(properties.get((Object)PREVIEW_KEY));
@@ -286,12 +287,12 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             if (this.lineMag < 0)
                 resol *= Math.abs(this.lineMag);
             this.lineResolution = ad.getValue(11);
-            this.lRes = resol * this.lineResolution;
+            this.lRes = resol;
             resol = res[1];
             if (this.elementMag < 0)
                 resol *= Math.abs(this.elementMag);
             this.elementResolution = ad.getValue(12);
-            this.eRes = resol * this.elementResolution;
+            this.eRes = resol;
         } catch (Exception e) {
             setInError(true);
             System.out.println("====> Getting area directory: " + e.getMessage());
@@ -362,8 +363,18 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                         replaceKey(SIZE_KEY, "2 2");
                     }
                     AreaAdapter aa = null;
+                    AREACoordinateSystem acs = null;
                     try {
                         aa = new AreaAdapter(baseSource, false);
+                        this.previewImage = (FlatField)aa.getImage();
+                        baseSource = saveStr;
+                        AreaFile af = new AreaFile(baseSource);
+                        previewNav = af.getNavigation();
+                        AreaDirectory ad = af.getAreaDirectory();
+                        this.lineResolution = ad.getValue(11);
+                        this.elementResolution = ad.getValue(12);
+                        McIDASAreaProjection map = new McIDASAreaProjection(af);
+                        acs = new AREACoordinateSystem(af);
                     } catch (Exception e) {
                         String excp = e.toString();
                         int indx = excp.lastIndexOf(":");
@@ -375,15 +386,6 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                         System.out.println("makePreviewImage e=" + e);
                         return;
                     }
-                    this.previewImage = (FlatField)aa.getImage();
-                    baseSource = saveStr;
-                    AreaFile af = new AreaFile(baseSource);
-                    previewNav = af.getNavigation();
-                    AreaDirectory ad = af.getAreaDirectory();
-                    this.lineResolution = ad.getValue(11);
-                    this.elementResolution = ad.getValue(12);
-                    McIDASAreaProjection map = new McIDASAreaProjection(af);
-                    AREACoordinateSystem acs = new AREACoordinateSystem(af);
                     this.initProps = new Hashtable();
                     Enumeration propEnum = sourceProps.keys();
                     for (int i=0; propEnum.hasMoreElements(); i++) {
@@ -1595,8 +1597,10 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
 
     private float[] getLineEleResolution(AreaDirectory ad) {
+        //System.out.println("getLineEleResolution: ad=" + ad);
         float[] res = {(float)1.0, (float)1.0};
         int sensor = ad.getSensorID();
+        //System.out.println("    sensor=" + sensor);
         List lines = null;
         try {
             String buff = getUrl();
@@ -1611,6 +1615,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
             for (int i=0; i<cards.length; i++) {
                 if ( ! cards[i].startsWith("Sat ")) continue;
+                //System.out.println(cards[i]);
                 StringTokenizer st = new StringTokenizer(cards[i]," ");
                 String temp = st.nextToken();  // throw away the key
                 int m = st.countTokens();
@@ -1631,6 +1636,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             for (int i=gotit; i<cards.length; i++) {
                 if (cards[i].startsWith("EndSat")) return res;
                 if (!cards[i].startsWith("B") ) continue;
+                //System.out.println(cards[i]);
                 StringTokenizer tok = new StringTokenizer(cards[i]);
                 String str = tok.nextToken();
                 str = tok.nextToken();
