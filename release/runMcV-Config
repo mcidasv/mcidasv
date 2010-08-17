@@ -80,4 +80,4 @@ fi
 ################################################################################
 
 # Run it
-${JAVA_BIN} ${JAVA_FLAGS} -jar startupmanager.jar -Didv.sysmem=${SYS_MEM} $*
+${JAVA_BIN} ${JAVA_FLAGS} -jar startupmanager.jar -Didv.sysmem=${SYS_MEM} -userpath "${MCV_USERPATH}" $*

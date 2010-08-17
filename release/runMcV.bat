@@ -85,6 +85,20 @@ SET GEOMETRY_BY_REF=false
 SET GEOMETRY_BY_REF=true
 )
 
+REM toggles the visad.java3d.imageByRef property
+IF "%USE_IMAGEBYREF%"=="0" (
+SET IMAGE_BY_REF=false
+) ELSE (
+SET IMAGE_BY_REF=true
+)
+
+REM toggles the visad.java3d.textNpot property
+IF "%USE_NPOT%"=="0" (
+SET ALLOW_NPOT=false
+) ELSE (
+SET ALLOW_NPOT=true
+)
+
 REM Get the amount of system memorys
 echo Reading system configuration...
 SET SYS_VER=Unknown
@@ -92,7 +106,7 @@ FOR /F "tokens=*" %%i IN ('jre\bin\java.exe -cp mcidasv.jar edu.wisc.ssec.mcidas
 SET /a SYS_MEM=0
 FOR /F %%i IN ('jre\bin\java.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
 
-SET MCV_FLAGS=-Didv.3d=%ENABLE_3D% -Didv.sysmem=%SYS_MEM% -Dvisad.java3d.geometryByRef=%GEOMETRY_BY_REF% -userpath "%MCV_USERPATH%"
+SET MCV_FLAGS=-Didv.3d=%ENABLE_3D% -Didv.sysmem=%SYS_MEM% -Dvisad.java3d.textureNpot=%ALLOW_NPOT% -Dvisad.java3d.imageByRef=%IMAGE_BY_REF% -Dvisad.java3d.geometryByRef=%GEOMETRY_BY_REF% -userpath "%MCV_USERPATH%"
 
 REM Append the specified startup bundle to the args getting passed to Mcv
 IF DEFINED STARTUP_BUNDLE SET MCV_FLAGS=%MCV_FLAGS% -bundle %STARTUP_BUNDLE%

@@ -430,6 +430,8 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         BooleanOption useDirect3d = (BooleanOption)optMaster.getOption("D3DREND");
         BooleanOption useBadLineFix = (BooleanOption)optMaster.getOption("USE_GEOBYREF");
         BooleanOption useCmsCollector = (BooleanOption)optMaster.getOption("USE_CMSGC");
+        BooleanOption useNpot = (BooleanOption)optMaster.getOption("USE_NPOT");
+        BooleanOption useImageByRef = (BooleanOption)optMaster.getOption("USE_IMAGEBYREF");
         DirectoryOption startupBundle = (DirectoryOption)optMaster.getOption("STARTUP_BUNDLE");
         TextOption jvmArgs = (TextOption)optMaster.getOption("JVM_ARGS");
 
@@ -462,9 +464,15 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
 
         JCheckBox useBadLineFixCheckBox = (JCheckBox)useBadLineFix.getComponent();
         JCheckBox useCmsCollectorCheckBox = (JCheckBox)useCmsCollector.getComponent();
+        JCheckBox useNpotCheckBox = (JCheckBox)useNpot.getComponent();
+        JCheckBox useImageByRefCheckBox = (JCheckBox)useImageByRef.getComponent();
         useBadLineFixCheckBox.setText(useBadLineFix.getLabel());
         useCmsCollectorCheckBox.setText(useCmsCollector.getLabel());
+        useNpotCheckBox.setText(useNpot.getLabel());
+        useImageByRefCheckBox.setText(useImageByRef.getLabel());
         JPanel miscPanel = McVGuiUtils.makeLabeledComponent("Misc:", McVGuiUtils.topBottom(useBadLineFixCheckBox, useCmsCollectorCheckBox, McVGuiUtils.Prefer.TOP));
+
+        JPanel testingPanel = McVGuiUtils.makeLabeledComponent("Misc:", McVGuiUtils.topBottom(useNpotCheckBox, useImageByRefCheckBox, McVGuiUtils.Prefer.TOP));
 
         javax.swing.GroupLayout panelLayout = new javax.swing.GroupLayout(startupPanel);
         startupPanel.setLayout(panelLayout);
@@ -474,6 +482,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
                 .addComponent(j3dPanel)
                 .addComponent(bundlePanel)
                 .addComponent(miscPanel)
+                .addComponent(testingPanel)
         );
         panelLayout.setVerticalGroup(
             panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -485,6 +494,8 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
                 .addComponent(bundlePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(miscPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(testingPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             )
         );
 
@@ -712,6 +723,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
 
     public static Properties getDefaultProperties() {
         Properties props = new Properties();
+        
         props.setProperty("userpath", String.format("%s%s%s", System.getProperty("user.home"), File.separator, Constants.USER_DIRECTORY_NAME));
         props.setProperty(Constants.PROP_SYSMEM, "0");
         return props;
@@ -734,8 +746,8 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             }
 
             // handle userpath changes
-            else if (args[i].equals(ARG_USERPATH) && (i+1) < args.length) {
-                props.setProperty("userpath", args[i+1]);
+            else if (ARG_USERPATH.equals(args[i]) && (i+1) < args.length) {
+                props.setProperty("userpath", args[++i]);
             }
 
             // handle help requests
