@@ -394,20 +394,16 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
           try {
               if (properties.containsKey(PROP_LRES)) {
                   this.bLRes = new Double((String)properties.get(PROP_LRES)).doubleValue();
-                  //System.out.println("from dir lRes=" + dir.getValue(11));
-                  if (dir.getValue(11) == 1) this.bLRes = this.previewDir.getCenterLatitudeResolution();
+                  //if (dir.getValue(11) == 1) this.bLRes = this.previewDir.getCenterLatitudeResolution();
                   //System.out.println("CenterLatitudeResolution=" + this.previewDir.getCenterLatitudeResolution());
                   this.baseLRes = this.bLRes * (double)(dir.getValue(11));
-                  //System.out.println("baseLRes=" + this.baseLRes);
                   setLRes(this.baseLRes * Math.abs(this.defaultLineMag));
               }
               if (properties.containsKey(PROP_ERES)) {
                   this.bERes = new Double((String)properties.get(PROP_ERES)).doubleValue();
-                  //System.out.println("from dir eRes=" + dir.getValue(12));
-                  if (dir.getValue(12) == 1) this.bERes = this.previewDir.getCenterLongitudeResolution();
+                  //if (dir.getValue(12) == 1) this.bERes = this.previewDir.getCenterLongitudeResolution();
                   //System.out.println("CenterLongitudeResolution=" + this.previewDir.getCenterLongitudeResolution());
                   this.baseERes = this.bERes * (double)(dir.getValue(12));
-                  //System.out.println("baseERes=" + this.baseERes);
                   setERes(this.baseERes * Math.abs(this.defaultElementMag));
               }
           } catch (Exception e) {
@@ -751,7 +747,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   lineMagFld.addActionListener(lineMagChange);
                   lineMagLbl =
                       GuiUtils.getFixedWidthLabel(StringUtil.padLeft(str, 4));
-                  str = truncateNumericString(Double.toString(this.baseLRes*Math.abs(getLineMag())), 2);
+                  str = truncateNumericString(Double.toString(this.baseLRes*Math.abs(getLineMag())), 1);
                   str = " Res=" + str + kmLbl;
                   lineResLbl =
                       GuiUtils.getFixedWidthLabel(StringUtil.padLeft(str, 4));
@@ -824,7 +820,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   String str = "Ele  Mag=";
                   elementMagLbl =
                       GuiUtils.getFixedWidthLabel(StringUtil.padLeft(str, 4));
-                  str = truncateNumericString(Double.toString(this.baseERes*Math.abs(getElementMag())), 2);
+                  str = truncateNumericString(Double.toString(this.baseERes*Math.abs(getElementMag())), 1);
                   str = " Res=" + str + kmLbl;
                   elementResLbl =
                       GuiUtils.getFixedWidthLabel(StringUtil.padLeft(str, 4));
@@ -1739,7 +1735,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         elementMagLbl.setText("Ele  Mag=");
         eleMagFld.setText(new Integer(value).toString());
         String str = " Res=" +
-            truncateNumericString(Double.toString(this.baseERes*Math.abs(value)), 2);
+            truncateNumericString(Double.toString(this.baseERes*Math.abs(value)), 1);
         elementResLbl.setText(StringUtil.padLeft(str, 4) + kmLbl);
 
         if (!lockBtn.isSelected()) {
@@ -1777,7 +1773,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             lineMagLbl.setText("Line Mag=");
             lineMagFld.setText(new Integer(value).toString());
             String str = " Res=" +
-                truncateNumericString(Double.toString(this.baseLRes*Math.abs(value)), 2);
+                truncateNumericString(Double.toString(this.baseLRes*Math.abs(value)), 1);
             lineResLbl.setText(StringUtil.padLeft(str, 4) + kmLbl);
 
             if (autoSetSize) {
