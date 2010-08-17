@@ -173,13 +173,15 @@ public class IdvWindow extends MultiFrame {
         }
         this.idv           = theIdv;
         this.isAMainWindow = isAMainWindow;
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
         final WindowAdapter[] wa = { null };
         addWindowListener(wa[0] = new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
               int closeType = getDefaultCloseOperation();
-              if(closeType == WindowConstants.DISPOSE_ON_CLOSE || closeType == WindowConstants.EXIT_ON_CLOSE)
+              if(closeType == WindowConstants.DISPOSE_ON_CLOSE 
+                || closeType == WindowConstants.EXIT_ON_CLOSE
+                || closeType == WindowConstants.DO_NOTHING_ON_CLOSE)
               {
                 if (doClose()) {
                   removeWindowListener(wa[0]);
