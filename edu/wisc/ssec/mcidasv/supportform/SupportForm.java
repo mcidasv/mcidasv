@@ -71,10 +71,8 @@ public class SupportForm extends javax.swing.JFrame {
     private final CancelListener listener = new CancelListener();
 
     public SupportForm(IdvObjectStore store, StateCollector collector) {
-        Contract.notNull(store);
-        Contract.notNull(collector);
-        this.store = store;
-        this.collector = collector;
+        this.store = Contract.notNull(store);
+        this.collector = Contract.notNull(collector);
         unpersistInput();
         initComponents();
         otherDoFocusThingNow();

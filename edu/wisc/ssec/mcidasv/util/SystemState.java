@@ -38,7 +38,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Map.Entry;
+import java.util.TreeSet;
 
 import java.awt.DisplayMode;
 import java.awt.GraphicsConfiguration;
@@ -310,30 +310,31 @@ public class SystemState {
             .append("\nVersion:  ").append(j3dProps.get("j3d.version"));
 
         if (firehose) {
-            buf.append("\n\n\nFirehose:\n");
-            // get software versions
-            for (Entry<String, String> entry : versions.entrySet()) {
-                buf.append(entry.getKey()).append('=').append(entry.getValue()).append('\n');
+//            buf.append("\n\n\nFirehose:\n");
+            buf.append("\n\n\nFirehose:\n\n# SOFTWARE VERSIONS\n");
+            for (String key : (new TreeSet<String>(versions.keySet()))) {
+                buf.append(key).append('=').append(versions.get(key)).append('\n');
             }
 
-            // get machine properties
-            for (Entry<String, String> entry : machineProps.entrySet()) {
-                buf.append(entry.getKey()).append('=').append(entry.getValue()).append('\n');
+            buf.append("\n# MACHINE PROPERTIES\n");
+            for (String key : (new TreeSet<String>(machineProps.keySet()))) {
+                buf.append(key).append('=').append(machineProps.get(key)).append('\n');
             }
 
-            // get java system properties
-            for (Entry<Object, Object> entry : sysProps.entrySet()) {
-                buf.append(entry.getKey()).append('=').append(entry.getValue()).append('\n');
+            buf.append("\n# JAVA SYSTEM PROPERTIES\n");
+            for (Object key : (new TreeSet<Object>(sysProps.keySet()))) {
+                buf.append(key).append('=').append(sysProps.get(key)).append('\n');
             }
 
-            // get java3d/jogl properties
-            for (Entry<String, Object> entry : j3dProps.entrySet()) {
-                buf.append(entry.getKey()).append('=').append(entry.getValue()).append('\n');
+            buf.append("\n# JAVA3D/JOGL PROPERTIES\n");
+            for (String key : (new TreeSet<String>(j3dProps.keySet()))) {
+                buf.append(key).append('=').append(j3dProps.get(key)).append('\n');
             }
 
             // get idv/mcv properties
-            for (Entry<String, Object> entry : mcvProps.entrySet()) {
-                buf.append(entry.getKey()).append('=').append(entry.getValue()).append('\n');
+            buf.append("\n# IDV AND MCIDAS-V PROPERTIES\n");
+            for (String key : (new TreeSet<String>(mcvProps.keySet()))) {
+                buf.append(key).append('=').append(mcvProps.get(key)).append('\n');
             }
         }
         return buf.toString();
