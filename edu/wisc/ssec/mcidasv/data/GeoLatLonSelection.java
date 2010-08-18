@@ -395,14 +395,12 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
               if (properties.containsKey(PROP_LRES)) {
                   this.bLRes = new Double((String)properties.get(PROP_LRES)).doubleValue();
                   //if (dir.getValue(11) == 1) this.bLRes = this.previewDir.getCenterLatitudeResolution();
-                  //System.out.println("CenterLatitudeResolution=" + this.previewDir.getCenterLatitudeResolution());
                   this.baseLRes = this.bLRes * (double)(dir.getValue(11));
                   setLRes(this.baseLRes * Math.abs(this.defaultLineMag));
               }
               if (properties.containsKey(PROP_ERES)) {
                   this.bERes = new Double((String)properties.get(PROP_ERES)).doubleValue();
                   //if (dir.getValue(12) == 1) this.bERes = this.previewDir.getCenterLongitudeResolution();
-                  //System.out.println("CenterLongitudeResolution=" + this.previewDir.getCenterLongitudeResolution());
                   this.baseERes = this.bERes * (double)(dir.getValue(12));
                   setERes(this.baseERes * Math.abs(this.defaultElementMag));
               }
