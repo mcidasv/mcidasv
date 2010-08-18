@@ -31,6 +31,7 @@
 package edu.wisc.ssec.mcidasv.data;
 
 import edu.wisc.ssec.mcidas.*;
+import edu.wisc.ssec.mcidas.adde.AddeImageURL;
 import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 
 import java.rmi.RemoteException;
@@ -1276,6 +1277,99 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             }
 
             //System.out.println("\n" + src + "\n");
+/*
+            try {
+                String sizeStr = getKey(src, SIZE_KEY);
+                String[] vals = StringUtil.split(sizeStr, " ", 2);
+                Integer iVal = new Integer(vals[0]);
+                int numLines = iVal.intValue();
+                iVal = new Integer(vals[1]);
+                int numEles = iVal.intValue();
+                int[] dim = { 0, 0 };
+                dim[0] = numLines;
+                System.out.println("dim[0]=" + dim[0]);
+                dim[1] = numEles;
+                System.out.println("dim[1]=" + dim[1]);
+                int bytesPerPixel = areaDir.getValue(10);
+                System.out.println("bytesPerPixel=" + bytesPerPixel);
+                int    numPixels = dim[0] * dim[1];
+                System.out.println("numPixels=" + numPixels);
+                double megs = (int) (bytesPerPixel * numPixels) / (double) 1000000;
+                System.out.println("Loading " + megs + " MB of imagery");
+            } catch (Exception e) {
+                System.out.println("e=" + e);
+            }
+
+            if (megs > SIZE_THRESHOLD) {
+                final JCheckBox maintainSize =
+                    new JCheckBox("Maintain spatial extent", false);
+                final JLabel sizeLbl = new JLabel(StringUtil.padRight("  "
+                                           + (int) (((double) ((int) megs * 100))
+                                               / 100.0) + " MB", 14));
+                GuiUtils.setFixedWidthFont(sizeLbl);
+                final List[]  listHolder = { imageList };
+                final JSlider slider     = new JSlider(2, (int) megs, (int) megs);
+                slider.setMajorTickSpacing((int) (megs - 2) / 10);
+                slider.setMinorTickSpacing((int) (megs - 2) / 10);
+                //            slider.setPaintTicks(true);
+                slider.setSnapToTicks(true);
+                final long timeNow = System.currentTimeMillis();
+                ChangeListener sizeListener =
+                    new javax.swing.event.ChangeListener() {
+                    public void stateChanged(ChangeEvent evt) {
+                        //A hack so we don't respond to the first event that we get from the slider when
+                        //the dialog is first shown
+                        if (System.currentTimeMillis() - timeNow < 500) {
+                            return;
+                        }
+                        JSlider slider = (JSlider) evt.getSource();
+                        int pixelsPerImage = 1000000 * slider.getValue()
+                                             / listHolder[0].size() / 4;
+                        double aspect = dim[1] / (double) dim[0];
+                        int    nx     = (int) Math.sqrt(pixelsPerImage / aspect);
+                        int    ny     = (int) (aspect * nx);
+                        if (maintainSize.isSelected()) {
+                            //doesn't work
+                            lineMagSlider.setValue(getLineMagValue() - 1);
+                            lineMagSliderChanged(true);
+                        } else {
+                            numElementsFld.setText("" + nx);
+                            numLinesFld.setText("" + ny);
+                        }
+                        listHolder[0] = getImageList();
+                        AddeImageDescriptor aid =
+                            (AddeImageDescriptor) listHolder[0].get(0);
+                        dim[0] = aid.getImageInfo().getElements();
+                        dim[1] = aid.getImageInfo().getLines();
+                        int bytesPerPixel = aid.getImageInfo().getSpacing();
+                        int numPixels     = dim[0] * dim[1]
+                                            * listHolder[0].size();
+                        int nmegs = (int) ((bytesPerPixel * numPixels)
+                                           / (double) 1000000);
+                        sizeLbl.setText(StringUtil.padRight("  " + nmegs + " MB",
+                                14));
+                    }
+                };
+                slider.addChangeListener(sizeListener);
+
+            System.out.println("Loading " + megs + " MB of imagery");
+
+            JComponent msgContents =
+                GuiUtils
+                    .vbox(new JLabel(
+                        "<html>You are about to load " + ((int) megs)
+                        + " MB of imagery.<br>Are you sure you want to do this?<p><hr><p></html>"), GuiUtils
+                            .inset(GuiUtils
+                                .leftCenterRight(
+                                    new JLabel("Change Size: "),
+                                    GuiUtils.inset(slider, 5), sizeLbl), 5));
+
+            if ( !GuiUtils.askOkCancel("Image Size", msgContents)) {
+                return;
+            }
+            imageList = listHolder[0];
+        }
+*/
             AreaAdapter aa = new AreaAdapter(src, false);
             areaDir = previewDir;
             result = aa.getImage();
