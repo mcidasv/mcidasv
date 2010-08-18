@@ -8,12 +8,13 @@
     </layout>
   </appender>
 
-  <!-- logging is disabled within mcv (by default) -->
-  <!-- valid levels are: TRACE, DEBUG, INFO, WARN, ERROR, OFF -->
-  <logger name="edu.wisc.ssec.mcidasv" level="OFF"/>
+  <!-- you can override the root level for specific packages -->
+  <!-- <logger name="edu.wisc.ssec.mcidasv" level="TRACE"/> -->
 
-  <root level="INFO">
+  <!-- logging is disabled within mcv (by default)
+       valid levels are: TRACE, DEBUG, INFO, WARN, ERROR, OFF
+       be sure to skim over http://logback.qos.ch/manual/architecture.html#basic_selection -->
+  <root level="OFF">
     <appender-ref ref="STDOUT" />
   </root>
-  
 </configuration>
