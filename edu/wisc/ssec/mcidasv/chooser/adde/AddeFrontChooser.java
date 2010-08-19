@@ -74,7 +74,7 @@ import visad.DateTime;
  *
  *
  * @author IDV development team
- * @version $Revision$Date: 2010/02/04 22:42:00 $
+ * @version $Revision$Date: 2010/02/08 18:49:37 $
  */
 public class AddeFrontChooser extends AddeChooser {
     /** for gui */
@@ -212,7 +212,7 @@ public class AddeFrontChooser extends AddeChooser {
         String server = getAddeServer().getName();
         String type   = (forecastBtn.isSelected()
                          ? "SRP"
-                         : "SUS");
+                         : "SUS&wmo=ASUS01");
         for (int i = 0; i <= index; i++) {
             String url = "adde://" + server
                          + "/wxtext?group=RTWXTEXT&apro=COD&astn=" + type
