@@ -30,79 +30,46 @@
 
 package edu.wisc.ssec.mcidasv.control;
 
+import java.awt.Color;
+import java.rmi.RemoteException;
+import java.util.Hashtable;
+import java.util.List;
+
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JTextField;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.event.AxisChangeEvent;
+import org.jfree.chart.event.AxisChangeListener;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.StackedXYBarRenderer;
+import org.jfree.chart.renderer.xy.XYBarRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.data.Range;
+import org.jfree.data.statistics.HistogramType;
+
+import visad.FlatField;
+import visad.Unit;
+import visad.VisADException;
+
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.control.chart.DataChoiceWrapper;
 import ucar.unidata.idv.control.chart.HistogramWrapper;
 import ucar.unidata.idv.control.chart.MyHistogramDataset;
-
-import org.jfree.chart.*;
-import org.jfree.chart.axis.*;
-import org.jfree.chart.event.*;
-import org.jfree.chart.labels.*;
-import org.jfree.chart.plot.*;
-import org.jfree.chart.renderer.*;
-import org.jfree.chart.renderer.xy.*;
-import org.jfree.chart.urls.*;
-import org.jfree.data.*;
-import org.jfree.data.statistics.HistogramDataset;
-import org.jfree.data.statistics.HistogramType;
-import org.jfree.data.time.*;
-import org.jfree.data.xy.*;
-import org.jfree.ui.*;
-
-import ucar.unidata.data.DataChoice;
-
-import ucar.unidata.data.grid.GridUtil;
-import ucar.unidata.data.sounding.TrackDataSource;
-
-import ucar.unidata.idv.control.DisplayControlImpl;
-import ucar.unidata.util.GuiUtils;
-
 import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.ObjectListener;
-
-import ucar.visad.GeoUtils;
-import ucar.visad.Util;
-import ucar.visad.display.*;
-
-import visad.*;
-
-import visad.georef.*;
-
-import visad.util.BaseRGBMap;
-
-import visad.util.ColorPreview;
-
-import java.awt.*;
-import java.awt.event.*;
-
-import java.rmi.RemoteException;
-
-import java.text.SimpleDateFormat;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Vector;
-
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
-
 
 /**
- * Provides a time series chart
- *
- *
- * @author IDV Development Team
- * @version $Revision$
+ * Wraps a JFreeChart histograms to ease working with VisAD data.
  */
 public class McIDASVHistogramWrapper extends HistogramWrapper {
 
     /** The plot */
     private XYPlot plot;
-
 
     /** How many bins in the histgram */
     private int bins = 100;
@@ -120,6 +87,7 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
     private DisplayControlImpl myControl;
 
     private double low;
+
     private double high;
 
     /**
@@ -127,13 +95,12 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
      */
     public McIDASVHistogramWrapper() {}
 
-
-
     /**
      * Ctor
      *
-     * @param name The name
-     * @param dataChoices List of data choices
+     * @param name The name.
+     * @param dataChoices List of data choices.
+     * @param control {@literal "Parent"} control.
      */
     public McIDASVHistogramWrapper(String name, List dataChoices, DisplayControlImpl control) {
         super(name, dataChoices);
@@ -147,7 +114,7 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
         if (chartPanel != null) {
             return;
         }
-    
+
         MyHistogramDataset dataset = new MyHistogramDataset();
         chart = ChartFactory.createHistogram("Histogram", null, null,
                                              dataset,
@@ -173,29 +140,21 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
         createChart();
         List dataChoiceWrappers = getDataChoiceWrappers();
         try {
-            for (int dataSetIdx = 0; dataSetIdx < plot.getDatasetCount();
-                    dataSetIdx++) {
-                MyHistogramDataset dataset =
-                    (MyHistogramDataset) plot.getDataset(dataSetIdx);
+            for (int dataSetIdx = 0; dataSetIdx < plot.getDatasetCount(); dataSetIdx++) {
+                MyHistogramDataset dataset = (MyHistogramDataset)plot.getDataset(dataSetIdx);
                 dataset.removeAllSeries();
             }
 
             Hashtable props = new Hashtable();
-
-            for (int paramIdx = 0; paramIdx < dataChoiceWrappers.size();
-                    paramIdx++) {
-                DataChoiceWrapper wrapper =
-                    (DataChoiceWrapper) dataChoiceWrappers.get(paramIdx);
+            for (int paramIdx = 0; paramIdx < dataChoiceWrappers.size(); paramIdx++) {
+                DataChoiceWrapper wrapper = (DataChoiceWrapper)dataChoiceWrappers.get(paramIdx);
 
                 DataChoice dataChoice = wrapper.getDataChoice();
                 props = dataChoice.getProperties();
-                Unit unit =
-                    ucar.visad.Util.getDefaultRangeUnits((FlatField) data)[0];
+                Unit unit = ucar.visad.Util.getDefaultRangeUnits((FlatField) data)[0];
                 double[][] samples = data.getValues(false);
-                double[] actualValues = filterData(samples[0],
-                                            getTimeValues(samples, data))[0];
-                final NumberAxis domainAxis =
-                    new NumberAxis(wrapper.getLabel(unit));
+                double[] actualValues = filterData(samples[0], getTimeValues(samples, data))[0];
+                final NumberAxis domainAxis = new NumberAxis(wrapper.getLabel(unit));
 
                 domainAxis.setAutoRangeIncludesZero(false);
 
@@ -244,7 +203,6 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
             return;
         }
     }
-
 
     protected boolean modifyRange(int lowVal, int hiVal) {
         try {
