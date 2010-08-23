@@ -169,10 +169,14 @@ def badLineFilter(vals,bline,eline,element_size,line_size,filter_fill,line_diff,
            good_line = cur_line
            continue
        
-       diff = abs(sum(cur_line) - sum(good_line))
+       diff=0
+       
+       for ii in range(element_size):
+         diff = diff + abs(cur_line[ii]-good_line[ii])
+         
        isbad = 0
        if ( (max_line - min_line) == 0 ):
-          """print 'Bad Line - same values'"""
+          print 'Bad Line - same values'
           isbad = 1
           num_badlines = num_badlines + 1
           """ store the last good line """
@@ -180,8 +184,9 @@ def badLineFilter(vals,bline,eline,element_size,line_size,filter_fill,line_diff,
               last_good_line = good_line
        else:
            ave_diff = diff/element_size
+                         
            if ( ave_diff > line_diff ):
-             """print 'Bad Line - line_diff exceeded'"""
+             print 'Bad Line - line_diff exceeded'
              isbad = 1
              num_badlines = num_badlines + 1
              if (num_badlines == 1):
@@ -199,6 +204,7 @@ def badLineFilter(vals,bline,eline,element_size,line_size,filter_fill,line_diff,
                      elif ( filter_fill == 'Average' ):
                         ave_diff = (last_good_line[k] - good_line[k]) * fdiv
                         vals[0][(i -(j+1))*element_size + k] = good_line[k] + ave_diff
+                        """print fdiv,ave_diff,good_line[k],good_line[k]+ave_diff"""
                      elif (filter_fill == 'Max' ):
                         vals[0][(i - (j+1))*element_size + k] = max_line
                num_badlines = 0         
@@ -217,6 +223,7 @@ def cleanFilter(sdataset,user_fill='Average',user_bline='Default',user_eline='De
                       the line above and below
    """   
    newData=sdataset.clone()
+   
    filter_fill = user_fill
    bline=user_bline
    eline=user_eline   
@@ -236,9 +243,9 @@ def cleanFilter(sdataset,user_fill='Average',user_bline='Default',user_eline='De
      vals = rangeObject.getFloats(0)
      high = max(vals[0])
      low = min(vals[0])
-     """ print high, low, max(vals[0]), min(vals[0]) """
      point_diff = (high - low + 1)*(filter_diff/100.0)
-     line_diff = (high - low + 1)*(l_diff/100.0)    
+     line_diff = (high - low + 1)*(l_diff/100.0) 
+     """ print high, low, max(vals[0]), min(vals[0]), point_diff, line_diff """    
      domain=GridUtil.getSpatialDomain(rangeObject)  
      [element_size,line_size]=domain.getLengths()
      if (eline == 'Default'):
@@ -253,6 +260,8 @@ def cleanFilter(sdataset,user_fill='Average',user_bline='Default',user_eline='De
      elif (stretch == 'Histogram'):
        h = hist(field(vals),[0],[post_hi-post_low])
        lookup=histoStretch(post_low,post_hi,h)
+       
+     vals=modify(vals,element_size,line_size,post_low,lookup)   
      rangeObject.setSamples(vals)
         
    return newData
