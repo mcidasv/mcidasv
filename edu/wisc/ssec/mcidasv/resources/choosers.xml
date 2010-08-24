@@ -154,10 +154,11 @@
 	</panel>
 
 	<!-- IDV RAOB CHOOSERS -->
+	<!--
 	<panel title="Local" category="Point Observations&gt;Soundings"
 		layout="border" tabtooltip="For accessing RAOB data">
 		<chooser
-			id="chooser.raob.file"
+			id="chooser.raob.file_old"
 			title="Soundings: Local"
 			menutitle="Sounding Data-Local"
 			helppath="idv.data.choosers.raobchooser"
@@ -167,12 +168,25 @@
 	<panel title="Remote" category="Point Observations&gt;Soundings"
 		layout="border" tabtooltip="For accessing RAOB data">
 		<chooser
-			id="chooser.raob.remote"
+			id="chooser.raob.remote_old"
 			title="Soundings: Remote"
 			menutitle="Sounding Data-Remote"
 			helppath="idv.data.choosers.raobchooser"
 			class="ucar.unidata.idv.chooser.RaobChooser"
 			showserver="true"/>
+	</panel>
+	-->
+	
+	<!-- MCIDASV RAOB CHOOSERS -->
+	<panel title="Local" category="Point Observations&gt;Soundings"
+		layout="border" tabtooltip="For accessing local RAOB soundings">
+		<chooser id="chooser.raob.file" title="Local" menutitle="Sounding Data-Local"
+			helppath="idv.data.choosers.raobchooser" class="edu.wisc.ssec.mcidasv.chooser.RaobChooser" />
+	</panel>
+	<panel title="Remote" category="Point Observations&gt;Soundings"
+		layout="border" tabtooltip="For accessing ADDE RAOB soundings">
+		<chooser id="chooser.raob.remote" title="Remote" menutitle="Sounding Data-Remote"
+			helppath="idv.data.choosers.raobchooser" class="edu.wisc.ssec.mcidasv.chooser.adde.AddeRaobChooser" />
 	</panel>
 
 	<panel title="Wind Profiler" category="Point Observations"
@@ -259,6 +273,8 @@
 			eg. model data, road and hydrography data from Tiger shapefiles, NWS warnings from shapefiles, maps from available web map servers
 			&lt;li&gt;
 			Select &lt;b&gt;URLs&lt;/b&gt; to access data via a URL
+			&lt;li&gt;
+			&lt;b&gt;Flat files&lt;/b&gt; will load McIDAS AXFORM output, many ENVI formats and plain images (.png, .jpg, .gif)
 			&lt;/ul&gt;
 		" />
 	</panel>
@@ -283,6 +299,12 @@
 			showinmenu="true" helppath="idv.data.choosers.urlchooser" class="edu.wisc.ssec.mcidasv.chooser.UrlChooser" />
 	</panel>
 
+	<panel title="Flat files" category="General" layout="border"
+		tabtooltip="For accessing data in flat binary or ASCII files">
+		<chooser id="chooser.flatfile" title="Flat files" menutitle="Flat files"
+			showinmenu="true" helppath="idv.data.choosers.flatfilechooser"
+			class="edu.wisc.ssec.mcidasv.chooser.FlatFileChooser" />
+	</panel>
 
 
 
@@ -313,17 +335,7 @@
 			&lt;b&gt;These choosers are for included for testing purposes&lt;/b&gt;
 			&lt;br&gt;
 			&lt;br&gt;
-			Please see the &lt;a href=&quot;http://www.ssec.wisc.edu/mcidas/forums&quot;&gt;McIDAS-V Forums&lt;/a&gt; for more information
-			&lt;ul&gt;
-			&lt;li&gt;
-			&lt;b&gt;Imagery - Satellite&lt;/b&gt; is similar to the Satellite Imagery chooser but has geographical coverage selection in the Field Selector and allows saving/loading of parameter sets (only works with default servers)
-			&lt;li&gt;
-			&lt;b&gt;Imagery - Eumetcast HRIT&lt;/b&gt; accesses Eumetcast HRIT data via a file browser
-			&lt;li&gt;
-			&lt;b&gt;Flat files&lt;/b&gt; will load McIDAS AXFORM output, many ENVI formats and plain images (.png, .jpg, .gif)
-			&lt;/ul&gt;
-			
-			
+			Please see the &lt;a href=&quot;http://www.ssec.wisc.edu/mcidas/forums&quot;&gt;McIDAS-V Forums&lt;/a&gt; for more information			
 		" />
 	</panel>
 
@@ -343,6 +355,8 @@
 			class="edu.wisc.ssec.mcidasv.chooser.adde.Test2AddeImageChooser" />
 	</panel>
 	
+	<!-- Move to plugin -->
+	<!--
 	<panel title="Imagery - Eumetcast HRIT" category="Under Development" layout="border"
 		tabtooltip="For accessing Eumetcast HRIT data">
 		<chooser id="chooser.hrit" title="HRIT" menutitle="Local Eumetcast HRIT data"
@@ -350,14 +364,8 @@
 			showpolling="false" filepattern=".*" selectdatasourceid="true"
 			datasourceid="HRIT"	class="edu.wisc.ssec.mcidasv.chooser.HRITChooser" />
 	</panel>
-		
-	<panel title="Flat files" category="Under Development" layout="border"
-		tabtooltip="For accessing data in flat binary or ASCII files">
-		<chooser id="chooser.flatfile" title="Flat files" menutitle="Flat files"
-			showinmenu="true" helppath="idv.data.choosers.flatfilechooser"
-			class="edu.wisc.ssec.mcidasv.chooser.FlatFileChooser" />
-	</panel>
-		
+	-->
+				
 	<!--
 	<panel title="Files" category="Under Development" layout="border"
 		tabToolTip="For accessing local files" mnemonic="F">
@@ -374,23 +382,6 @@
 			class="ucar.unidata.idv.chooser.PollingFileChooser" filecount="1" />
 	</panel>
 	-->
-
-	<!-- MCIDASV RAOB CHOOSERS -->
-	<panel layout="border" category="Under Development&gt;Soundings"
-		categorycomponent="true">
-		<html text="Updating GUI layout" />
-	</panel>
-	<panel title="Local" category="Under Development&gt;Soundings"
-		layout="border" tabtooltip="For accessing local RAOB soundings">
-		<chooser id="chooser.raob.file_new" title="Local" menutitle="Sounding Data-Local"
-			helppath="idv.data.choosers.raobchooser" class="edu.wisc.ssec.mcidasv.chooser.RaobChooser" />
-	</panel>
-	<panel title="Remote" category="Under Development&gt;Soundings"
-		layout="border" tabtooltip="For accessing ADDE RAOB soundings">
-		<chooser id="chooser.raob.remote_new" title="Remote" menutitle="Sounding Data-Remote"
-			helppath="idv.data.choosers.raobchooser" class="edu.wisc.ssec.mcidasv.chooser.adde.AddeRaobChooser" />
-	</panel>
-
 
 
 
