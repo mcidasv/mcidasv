@@ -30,71 +30,67 @@
 
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
-import edu.wisc.ssec.mcidas.*;
-import edu.wisc.ssec.mcidas.adde.*;
-
-import edu.wisc.ssec.mcidasv.Constants;
-import edu.wisc.ssec.mcidasv.McIDASV;
-
-
-
-import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
-import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import ucar.unidata.data.imagery.AddeImageDescriptor;
-import ucar.unidata.data.imagery.AddeImageInfo;
-import ucar.unidata.data.imagery.BandInfo;
-import ucar.unidata.data.imagery.ImageDataSource;
-import ucar.unidata.data.imagery.ImageDataset;
-
-import ucar.unidata.idv.IdvResourceManager;
-import ucar.unidata.idv.chooser.IdvChooserManager;
-
-import ucar.unidata.idv.chooser.adde.*;
-import ucar.unidata.idv.chooser.adde.AddeServer.Group;
-
-import ucar.unidata.ui.ChooserList;
-import ucar.unidata.ui.DateTimePicker;
-
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Misc;
-
-import ucar.unidata.util.PreferenceList;
-import ucar.unidata.util.StringUtil;
-import ucar.unidata.util.TwoFacedObject;
-import ucar.unidata.xml.XmlObjectStore;
-import ucar.unidata.xml.XmlNodeList;
-
-import ucar.unidata.xml.XmlResourceCollection;
-import ucar.unidata.xml.XmlUtil;
-
-import ucar.visad.UtcDate;
-
-import visad.*;
-
-import java.awt.*;
-import java.awt.event.*;
-
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.text.SimpleDateFormat;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.JToggleButton;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.w3c.dom.Element;
+
+import visad.DateTime;
+import visad.Gridded1DSet;
+import visad.VisADException;
+
+import ucar.unidata.data.imagery.AddeImageDescriptor;
+import ucar.unidata.data.imagery.AddeImageInfo;
+import ucar.unidata.data.imagery.BandInfo;
+import ucar.unidata.data.imagery.ImageDataset;
+import ucar.unidata.idv.IdvResourceManager;
+import ucar.unidata.idv.chooser.IdvChooserManager;
+import ucar.unidata.idv.chooser.adde.AddeServer;
+import ucar.unidata.idv.chooser.adde.AddeServer.Group;
+import ucar.unidata.ui.ChooserList;
+import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.Misc;
+import ucar.unidata.util.StringUtil;
+import ucar.unidata.util.TwoFacedObject;
+import ucar.unidata.xml.XmlNodeList;
+import ucar.unidata.xml.XmlResourceCollection;
+import ucar.unidata.xml.XmlUtil;
+import ucar.visad.UtcDate;
+
+import edu.wisc.ssec.mcidas.AreaDirectory;
+import edu.wisc.ssec.mcidas.AreaDirectoryList;
+import edu.wisc.ssec.mcidas.McIDASException;
+import edu.wisc.ssec.mcidas.adde.AddeSatBands;
+import edu.wisc.ssec.mcidas.adde.AddeURL;
+import edu.wisc.ssec.mcidas.adde.DataSetInfo;
+import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.McIDASV;
+import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
+import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 
 /**
@@ -106,6 +102,7 @@ import javax.swing.event.*;
  */
 public class Test2AddeImageChooser extends AddeImageChooser implements Constants {
 
+    private static final Logger logger = LoggerFactory.getLogger(Test2AddeImageChooser.class);
 
     /**
      * Public keys for server, group, dataset, user, project.
@@ -438,6 +435,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
 
 
     protected void setUserAndProj(String user, String proj) {
+        logger.trace("incoming: u={} p={}; default: u={} p={}; existing: u={} p={}", new Object[] { user, proj, DEFAULT_USER, DEFAULT_PROJ, this.user, this.proj });
         DEFAULT_USER = user;
         DEFAULT_PROJ = proj;
         this.user = user;
@@ -824,18 +822,16 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
             }
             setState(STATE_CONNECTED);
         } catch (McIDASException e) {
-            System.out.println("Exception from loadImages........ e=" + e);
+            logger.warn("Exception from loadImages", e);
             stopTask(task);
             readTimesTask = null;
             handleConnectionError(e);
         }
     }
 
-
     protected void setDtList(List restList) {
         dtList = restList;
     }
-
 
     /**
      * Set the selected times in the times list based on the input times
@@ -1165,12 +1161,15 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     protected void appendMiscKeyValues(StringBuffer buff) {
         appendKeyValue(buff, PROP_COMPRESS, DEFAULT_COMPRESS);
         appendKeyValue(buff, PROP_PORT, DEFAULT_PORT);
-        // appendKeyValue(buff, PROP_DEBUG, DEFAULT_DEBUG);
         appendKeyValue(buff, PROP_DEBUG, Boolean.toString(EntryStore.isAddeDebugEnabled(false)));
         appendKeyValue(buff, PROP_VERSION, DEFAULT_VERSION);
-        if (DEFAULT_USER.equals("") || DEFAULT_USER.equals("idv")) DEFAULT_USER = getLastAddedUser();
+        if (DEFAULT_USER.length() != 0 || !"idv".equals(DEFAULT_USER)) {
+            DEFAULT_USER = getLastAddedUser();
+        }
         appendKeyValue(buff, PROP_USER, DEFAULT_USER);
-        if (DEFAULT_PROJ.equals("") || DEFAULT_PROJ.equals("0")) DEFAULT_PROJ = getLastAddedProj();
+        if (DEFAULT_PROJ.length() != 0 || !"0".equals(DEFAULT_PROJ)) {
+            DEFAULT_PROJ = getLastAddedProj();
+        }
         appendKeyValue(buff, PROP_PROJ, DEFAULT_PROJ);
     }
 
@@ -1185,7 +1184,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      * @return The value of the property to use in the request string
      */
     protected String getPropValue(String prop, AreaDirectory ad) {
-        if (prop.equals(PROP_NAV)) {
+        if (PROP_NAV.equals(prop)) {
 	    return TwoFacedObject.getIdString(navComboBox.getSelectedItem());
         }
         return getDefault(prop, getDefaultPropValue(prop, ad, false));
@@ -1203,29 +1202,28 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      */
     protected String getDefaultPropValue(String prop, AreaDirectory ad,
                                          boolean forDisplay) {
-        if (prop.equals(PROP_USER)) {
+        if (PROP_USER.equals(prop)) {
             return DEFAULT_USER;
         }
-        if (prop.equals(PROP_PROJ)) {
+        if (PROP_PROJ.equals(prop)) {
             return DEFAULT_PROJ;
         }
-        if (prop.equals(PROP_DESCR)) {
+        if (PROP_DESCR.equals(prop)) {
             return getDescriptor();
         }
-        if (prop.equals(PROP_VERSION)) {
+        if (PROP_VERSION.equals(prop)) {
             return DEFAULT_VERSION;
         }
-        if (prop.equals(PROP_COMPRESS)) {
+        if (PROP_COMPRESS.equals(prop)) {
             return "gzip";
         }
-        if (prop.equals(PROP_PORT)) {
+        if (PROP_PORT.equals(prop)) {
             return DEFAULT_PORT;
         }
-        if (prop.equals(PROP_DEBUG)) {
-            // return DEFAULT_DEBUG;
+        if (PROP_DEBUG.equals(prop)) {
             return Boolean.toString(EntryStore.isAddeDebugEnabled(false));
         }
-        if (prop.equals(PROP_NAV)) {
+        if (PROP_NAV.equals(prop)) {
             return "X";
         }
         return "";
@@ -1244,36 +1242,35 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         for (int i = 0; i < props.length; i++) {
             String prop  = props[i];
             String value = getPropValue(prop, ad);
-            if (prop.equals(PROP_USER)) {
+            if (PROP_USER.equals(prop)) {
                 aii.setUser(value);
-            } else if (prop.equals(PROP_PROJ)) {
+            } else if (PROP_PROJ.equals(prop)) {
                 aii.setProject(Integer.parseInt(value));
-            } else if (prop.equals(PROP_DESCR)) {
+            } else if (PROP_DESCR.equals(prop)) {
                 aii.setDescriptor(value);
-            } else if (prop.equals(PROP_VERSION)) {
+            } else if (PROP_VERSION.equals(prop)) {
                 aii.setVersion(value);
-            } else if (prop.equals(PROP_COMPRESS)) {
+            } else if (PROP_COMPRESS.equals(prop)) {
                 int compVal = AddeURL.GZIP;
-                if (value.equals("none") || value.equals("1")) {
+                if ("none".equals(value) || "1".equals(value)) {
                     compVal = AddeURL.NO_COMPRESS;
-                } else if (value.equals("compress") || value.equals("2")
-                           || value.equals("true")) {
+                } else if ("compress".equals(value) || "2".equals(value)
+                           || "true".equals(value)) {
                     compVal = AddeURL.COMPRESS;
                 }
                 aii.setCompression(compVal);
-            } else if (prop.equals(PROP_PORT)) {
+            } else if (PROP_PORT.equals(prop)) {
                 aii.setPort(Integer.parseInt(value));
-            } else if (prop.equals(PROP_DEBUG)) {
-                // aii.setDebug(Boolean.getBoolean(value));
+            } else if (PROP_DEBUG.equals(prop)) {
                 aii.setDebug(EntryStore.isAddeDebugEnabled(false));
-            } else if (prop.equals(PROP_UNIT)) {
+            } else if (PROP_UNIT.equals(prop)) {
                 value = unitDefault;
                 if (value.equals(ALLUNITS.getId())) {
                     value = getDefault(PROP_UNIT,
                                        getDefaultPropValue(prop, ad, false));
                 }
                 aii.setUnit(value);
-            } else if (prop.equals(PROP_BAND)) {
+            } else if (PROP_BAND.equals(prop)) {
                 value = bandDefault;
                 if (value.equals(ALLBANDS.toString())
                         || value.equals(ALLBANDS.toString())) {
@@ -1281,9 +1278,9 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
                                        getDefaultPropValue(prop, ad, false));
                 }
                 aii.setBand(value);
-            } else if (prop.equals(PROP_NAV)) {
+            } else if (PROP_NAV.equals(prop)) {
                 aii.setNavType(value);
-            } else if (prop.equals(PROP_ID)) {
+            } else if (PROP_ID.equals(prop)) {
                 aii.setId(value);
             }
         }
@@ -1649,7 +1646,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     }
 
     protected void restoreNav(String nav) {
-        if (nav.equals("LALO")) {
+        if ("LALO".equals(nav)) {
             TwoFacedObject tfo = new TwoFacedObject("Lat/Lon", "LALO");
             navComboBox.setSelectedItem((Object)tfo);
         }
