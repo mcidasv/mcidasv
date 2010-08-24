@@ -75,7 +75,7 @@ import edu.wisc.ssec.mcidasv.util.Contract;
 public class AddePreferences {
 
     public enum Selection { ALL_ENTRIES, SPECIFIED_ENTRIES };
-    
+
     private static final Logger logger = LoggerFactory.getLogger(AddePreferences.class);
 
     /** 
@@ -315,7 +315,6 @@ public class AddePreferences {
                 @SuppressWarnings("unchecked")
                 Map<AddeEntry, JCheckBox> toggles = 
                     (Map<AddeEntry, JCheckBox>)data;
-
                 boolean updated = false;
                 for (Entry<AddeEntry, JCheckBox> entry : toggles.entrySet()) {
                     AddeEntry e = entry.getKey();
@@ -324,6 +323,7 @@ public class AddePreferences {
                     EntryStatus currentStatus = e.getEntryStatus();
                     EntryStatus nextStatus = (c.isSelected()) ? EntryStatus.ENABLED : EntryStatus.DISABLED;
 
+                    logger.trace("applying to entry={} next={}", e, nextStatus);
                     if (currentStatus != nextStatus) {
                         updated = true;
                     }

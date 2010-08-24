@@ -29,6 +29,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -110,7 +111,7 @@ public class CheckboxCategoryPanel extends JPanel implements ChangeListener {
     /**
      * Add the given item into the list of children
      *
-     * @param box The item
+     * @param box The item. Cannot be {@code null}.
      */
     public void addItem(final JCheckBox box) {
         items.add(box);
@@ -119,9 +120,31 @@ public class CheckboxCategoryPanel extends JPanel implements ChangeListener {
     }
 
     /**
+     * Returns list of {@link javax.swing.JCheckBox JCheckBoxes} that belong to
+     * the current category.
+     * 
+     * @return List containing {@link #items}.
+     */
+    public List<JCheckBox> getItems() {
+        return new ArrayList<JCheckBox>(items);
+    }
+
+    /**
+     * Replaces existing {@link javax.swing.JCheckBox JCheckBoxes} with the 
+     * elements of {@code newItems}.
+     * 
+     * @param newItems New items for this category. Cannot be {@code null}.
+     */
+    public void setItems(final Collection<JCheckBox> newItems) {
+        items.clear();
+        items.addAll(newItems);
+        checkVisCbx();
+    }
+
+    /**
      * handle change event
      *
-     * @param e event_
+     * @param e event
      */
     public void stateChanged(final ChangeEvent e) {
         checkVisCbx();
@@ -144,9 +167,10 @@ public class CheckboxCategoryPanel extends JPanel implements ChangeListener {
      */
     public void toggleAll(final boolean toWhat) {
         visCbx.setSelected(toWhat);
-        for (int i = 0; i < items.size(); i++) {
-            ((JCheckBox)items.get(i)).setSelected(toWhat);
+        for (JCheckBox item : items) {
+            item.setSelected(toWhat);
         }
+        checkVisCbx();
     }
 
     /**
