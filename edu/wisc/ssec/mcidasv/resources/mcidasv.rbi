@@ -11,8 +11,9 @@
 
 <!-- Where the xml is that defines the data choosers  -->
   <resources name="idv.resource.choosers">
-    <resource location="%SITEPATH%/choosers.xml"/>
     <resource location="%APPPATH%/choosers.xml"/>
+    <resource location="%SITEPATH%/choosers.xml"/>
+    <resource location="%USERPATH%/choosers.xml"/>
   </resources>
 
   <!-- Servers -->
