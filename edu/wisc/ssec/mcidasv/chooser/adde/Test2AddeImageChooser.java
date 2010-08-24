@@ -444,6 +444,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
 
 
     protected void setServerOnly(String serverName) {
+        logger.trace("serverName='{}'", serverName);
         serverName = serverName.toLowerCase();
         AddeServer newServer = new AddeServer(serverName);
         if (newServer != null) {
@@ -455,6 +456,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
 
 
     protected void setGroupOnly(String groupName) {
+        logger.trace("groupName='{}'", groupName);
         if (groupSelector != null) {
             groupSelector.setSelectedItem(groupName);
         }
@@ -497,9 +499,7 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         StringBuffer buf = new StringBuffer();
         buf.append(getSelectedDescriptor());
         if (!bandDefault.equals(ALL)) {
-            buf.append(" (Band: ");
-            buf.append(new Integer(bandDefault).toString());
-            buf.append(")");
+            buf.append(" (Band: ").append(new Integer(bandDefault).toString()).append(')');
         }
         return buf.toString();
     }
@@ -514,7 +514,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         super.handleUpdate();
         setRestElement(null);
     }
-
 
     public void updateServers() {
         super.updateServers();
@@ -683,37 +682,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         return 0;
     }
 
-
-    /**
-     * Get the selected descriptor.
-     *
-     * @return  the currently selected descriptor.
-     */
-/*
-    protected String getDescriptor() {
-        return getDescriptorFromSelection(getSelectedDescriptor());
-    }
-*/
-
-    /**
-     * Get the descriptor relating to the selection.
-     *
-     * @param selection   String name from the widget
-     *
-     * @return  the descriptor
-     */
-/*
-    protected String getDescriptorFromSelection(String selection) {
-        if (descriptorTable == null) {
-            return null;
-        }
-        if (selection == null) {
-            return null;
-        }
-        return (String) descriptorTable.get(selection);
-    }
-*/
-
     /**
      * Set the list of dates/times based on the image selection
      *
@@ -724,7 +692,6 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         String       pos = (getDoAbsoluteTimes() || (archiveDay != null))
                            ? "all"
                            : "0";
-
 
         StringBuffer addeCmdBuff = getGroupUrl(REQ_IMAGEDIR, getGroup());
         String       id          = getSelectedStation();
@@ -1080,12 +1047,13 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
 
 
     protected void setTime(int pos) {
-        if (pos < 0) return;
+        if (pos < 0) {
+            return;
+        }
         List timeList = getAbsoluteTimes();
         ChooserList newTimesList = getRelativeTimesList();
         newTimesList.setSelectedIndex(pos);
     }
-
 
     /**
      *  Get the default value for a key
@@ -1100,11 +1068,11 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         }
         property = property.toLowerCase();
 
-        String   userDefault = null;
-        String   server      = getServer();
-        String   group       = getGroup();
-        String   descriptor  = getDescriptor();
-        String[] keys        = {
+        String userDefault = null;
+        String server = getServer();
+        String group = getGroup();
+        String descriptor = getDescriptor();
+        String[] keys = {
             userDefault, server + ":" + group + "/" + descriptor,
             group + "/" + descriptor, server + ":" + group + "/*",
             group + "/*", server + ":*/" + descriptor, "*/" + descriptor,
@@ -1112,32 +1080,27 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
         };
 
         if (server != null) {
-            if (property.equals(PROP_USER) || property.equals(PROP_PROJ)) {
-                String[] pair = (String[]) passwords.get(server);
-                if (pair != null) {
-                    if (property.equals(PROP_USER)) {
-                        return pair[0];
-                    }
-                    return pair[1];
-                }
+            if (PROP_USER.equals(property)) {
+                return getLastAddedUser();
+            }
+            if (PROP_PROJ.equals(property)) {
+                return getLastAddedProj();
             }
         }
 
-        for (int resourceIdx = 0; resourceIdx < resourceMaps.size();
-                resourceIdx++) {
-            Hashtable resourceMap = (Hashtable) resourceMaps.get(resourceIdx);
+        for (int resourceIdx = 0; resourceIdx < resourceMaps.size(); resourceIdx++) {
+            Hashtable resourceMap = (Hashtable)resourceMaps.get(resourceIdx);
             for (int keyIdx = 0; keyIdx < keys.length; keyIdx++) {
                 String key = keys[keyIdx];
                 if (key == null) {
                     continue;
                 }
                 key = key.toLowerCase();
-                Element defaultNode = (Element) resourceMap.get(key);
+                Element defaultNode = (Element)resourceMap.get(key);
                 if (defaultNode == null) {
                     continue;
                 }
-                String value = XmlUtil.getAttribute(defaultNode, property,
-                                   (String) null);
+                String value = XmlUtil.getAttribute(defaultNode, property, (String)null);
                 if (value == null) {
                     continue;
                 }
@@ -1152,26 +1115,26 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     }
 
 
-    /**
-     * Get any extra key=value pairs that are appended to all requests.
-     *
-     *
-     * @param buff The buffer to append to
-     */
-    protected void appendMiscKeyValues(StringBuffer buff) {
-        appendKeyValue(buff, PROP_COMPRESS, DEFAULT_COMPRESS);
-        appendKeyValue(buff, PROP_PORT, DEFAULT_PORT);
-        appendKeyValue(buff, PROP_DEBUG, Boolean.toString(EntryStore.isAddeDebugEnabled(false)));
-        appendKeyValue(buff, PROP_VERSION, DEFAULT_VERSION);
-        if (DEFAULT_USER.length() != 0 || !"idv".equals(DEFAULT_USER)) {
-            DEFAULT_USER = getLastAddedUser();
-        }
-        appendKeyValue(buff, PROP_USER, DEFAULT_USER);
-        if (DEFAULT_PROJ.length() != 0 || !"0".equals(DEFAULT_PROJ)) {
-            DEFAULT_PROJ = getLastAddedProj();
-        }
-        appendKeyValue(buff, PROP_PROJ, DEFAULT_PROJ);
-    }
+//    /**
+//     * Get any extra key=value pairs that are appended to all requests.
+//     *
+//     *
+//     * @param buff The buffer to append to
+//     */
+//    protected void appendMiscKeyValues(StringBuffer buff) {
+//        appendKeyValue(buff, PROP_COMPRESS, DEFAULT_COMPRESS);
+//        appendKeyValue(buff, PROP_PORT, DEFAULT_PORT);
+//        appendKeyValue(buff, PROP_DEBUG, Boolean.toString(EntryStore.isAddeDebugEnabled(false)));
+//        appendKeyValue(buff, PROP_VERSION, DEFAULT_VERSION);
+//        if (DEFAULT_USER.length() != 0 || !"idv".equals(DEFAULT_USER)) {
+//            DEFAULT_USER = getLastAddedUser();
+//        }
+//        appendKeyValue(buff, PROP_USER, getLastAddedUser());
+//        if (DEFAULT_PROJ.length() != 0 || !"0".equals(DEFAULT_PROJ)) {
+//            DEFAULT_PROJ = getLastAddedProj();
+//        }
+//        appendKeyValue(buff, PROP_PROJ, getLastAddedProj());
+//    }
 
 
     /**
@@ -1185,9 +1148,9 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
      */
     protected String getPropValue(String prop, AreaDirectory ad) {
         if (PROP_NAV.equals(prop)) {
-	    return TwoFacedObject.getIdString(navComboBox.getSelectedItem());
+            return TwoFacedObject.getIdString(navComboBox.getSelectedItem());
         }
-        return getDefault(prop, getDefaultPropValue(prop, ad, false));
+        return super.getPropValue(prop, ad);
     }
 
 
@@ -1668,36 +1631,36 @@ public class Test2AddeImageChooser extends AddeImageChooser implements Constants
     }
 
 
-    /**
-     * return the String id of the chosen server name
-     *
-     * @return  the server name
-     */
-    public String getServer() {
-        Object selected = serverSelector.getSelectedItem();
-        if (selected == null) {
-            return null;
-        }
-        AddeServer server;
-        if (selected instanceof AddeServer) {
-            server = (AddeServer) selected;
-            return server.getName();
-        }
-        return " ";
-    }
-
-
-    /**
-     * Get the image group from the gui.
-     *
-     * @return The iamge group.
-     */
-    protected String getGroup() {
-        Object selected = groupSelector.getSelectedItem();
-        if (selected instanceof AddeServer.Group) {
-            AddeServer.Group group = (AddeServer.Group) selected;
-            return group.getName();
-        }
-        return (String)selected;
-    }
+//    /**
+//     * return the String id of the chosen server name
+//     *
+//     * @return  the server name
+//     */
+//    public String getServer() {
+//        Object selected = serverSelector.getSelectedItem();
+//        if (selected == null) {
+//            return null;
+//        }
+//        AddeServer server;
+//        if (selected instanceof AddeServer) {
+//            server = (AddeServer) selected;
+//            return server.getName();
+//        }
+//        return " ";
+//    }
+//
+//
+//    /**
+//     * Get the image group from the gui.
+//     *
+//     * @return The iamge group.
+//     */
+//    protected String getGroup() {
+//        Object selected = groupSelector.getSelectedItem();
+//        if (selected instanceof AddeServer.Group) {
+//            AddeServer.Group group = (AddeServer.Group) selected;
+//            return group.getName();
+//        }
+//        return (String)selected;
+//    }
 }

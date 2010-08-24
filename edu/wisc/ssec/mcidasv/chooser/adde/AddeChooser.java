@@ -522,18 +522,21 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     protected boolean isLocalServer() {
         return isLocalServer(getAddeServer());
     }
-            
+
     protected static boolean isLocalServer(AddeServer checkServer) {
-        if (checkServer != null)
+        if (checkServer != null) {
             return checkServer.getIsLocal();
+        }
         return false;
     }
-    
+
     private void setBadServer(String name, String group) {
-        if (name == null)
+        if (name == null) {
             name = "";
-        if (group == null)
+        }
+        if (group == null) {
             group = "";
+        }
 
         lastBadServer = name;
         lastBadGroup = group;
@@ -546,10 +549,13 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
 
     private void setLastServer(String name, String group, AddeServer server) {
-        if (name == null)
+        logger.trace("name='{}' group='{}' server='{}' old: name='{}' group='{}' server='{}'", new Object[] { name, group, server, lastServerName, lastServerGroup, lastServer });
+        if (name == null) {
             name = "";
-        if (group == null)
+        }
+        if (group == null) {
             group = "";
+        }
         if (server == null) {
             server = new AddeServer(name);
             Group addeGroup = new Group(getDataType(), group, group);
@@ -646,6 +652,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             AddeServer server = (AddeServer)selected;
             String group = getGroup(true);
             Map<String, String> accounting = getAccounting(server, group);
+            logger.trace("accounting: new: u='{}' p='{}' old: u='{}' p='{}'", new Object[] { accounting.get("user"), accounting.get("proj"), lastServerUser, lastServerProj });
             lastServerUser = accounting.get("user");
             lastServerProj = accounting.get("proj");
             setLastServer(server.getName(), group, server);
@@ -657,12 +664,12 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             String group = getGroup(true);
 
             if (isBadServer(server, group)) {
-                logger.debug("getAddeServer: returning null; known bad server; server={} group={}", server, group);
+                logger.trace("getAddeServer: returning null; known bad server; server={} group={}", server, group);
                 return null;
             }
 
             if (isLastServer(server, group)) {
-                logger.debug("getAddeServer: returning last server name; server={} group={}", server, group);
+                logger.trace("getAddeServer: returning last server name; server={} group={}", server, group);
                 return lastServer;
             }
 
@@ -692,11 +699,11 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 
                 serverSelector.setSelectedIndex(servIndex);
                 groupSelector.setSelectedIndex(groupIndex);
-                logger.debug("getAddeServer: serverIdx={} groupIdx={}", servIndex, groupIndex);
+                logger.trace("getAddeServer: serverIdx={} groupIdx={}", servIndex, groupIndex);
 
                 return first;
             } else {
-                logger.debug("getAddeServer: returning null due to cancel request");
+                logger.trace("getAddeServer: returning null due to cancel request");
                 setBadServer(server, group);
                 return null;
             }
@@ -704,7 +711,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             
             
         } else if (selected == null) {
-            logger.debug("getAddeServer: null object in selector; returning null");
+            logger.trace("getAddeServer: null object in selector; returning null");
         } else {
             logger.debug("getAddeServer: unknown obj type={}; toString={}", selected.getClass().getName(), selected.toString());
         }
