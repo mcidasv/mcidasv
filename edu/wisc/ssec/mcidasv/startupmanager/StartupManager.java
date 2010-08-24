@@ -161,7 +161,13 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             if (pathSeparator.length() == 0 || defaultPrefs.length() == 0)
                 throw new IllegalArgumentException("");
 
-            this.userDirectory = System.getProperty("user.home") + pathSeparator + Constants.USER_DIRECTORY_NAME;
+            String osName = System.getProperty("os.name");
+            if (osName.startsWith("Mac OS X")) {
+                this.userDirectory = System.getProperty("user.home") + pathSeparator + "Documents" + pathSeparator + Constants.USER_DIRECTORY_NAME;         	
+            }
+            else {
+                this.userDirectory = System.getProperty("user.home") + pathSeparator + Constants.USER_DIRECTORY_NAME;            	
+            }
             this.userPrefs = userDirectory + pathSeparator + defaultPrefs;
             this.defaultPrefs = defaultPrefs;
             this.newLine = newLine;
@@ -723,8 +729,13 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
 
     public static Properties getDefaultProperties() {
         Properties props = new Properties();
-        
-        props.setProperty("userpath", String.format("%s%s%s", System.getProperty("user.home"), File.separator, Constants.USER_DIRECTORY_NAME));
+        String osName = System.getProperty("os.name");
+        if (osName.startsWith("Mac OS X")) {
+            props.setProperty("userpath", String.format("%s%s%s%s%s", System.getProperty("user.home"), File.separator, "Documents", File.separator, Constants.USER_DIRECTORY_NAME));
+        }
+        else {
+            props.setProperty("userpath", String.format("%s%s%s", System.getProperty("user.home"), File.separator, Constants.USER_DIRECTORY_NAME));
+        }
         props.setProperty(Constants.PROP_SYSMEM, "0");
         return props;
     }
