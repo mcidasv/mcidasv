@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
+
 import ucar.unidata.idv.ArgsManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.util.IOUtil;
@@ -50,6 +52,11 @@ public class ArgumentManager extends ArgsManager {
     /** usage message */
     public static final String USAGE_MESSAGE =
         "Usage: runMcV <args> <bundle/script files, e.g., .mcv, .mcvz, .isl>";
+
+    /**
+     *  Given by the "-user" argument. Alternative user path for bundles,  resources, etc.
+     */
+    String defaultUserDirectory = StartupManager.INSTANCE.getPlatform().getUserDirectory();
 
     /**
      * Just bubblin' on up the inheritance hierarchy.

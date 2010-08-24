@@ -45,12 +45,12 @@ import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
-
+import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
+import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 
 public class StateManager extends ucar.unidata.idv.StateManager implements Constants, HyperlinkListener {
 	
@@ -61,6 +61,18 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 		super(idv);
 	}
 	
+	/**
+	 * Override to set the right user directory
+	 */
+    protected IdvObjectStore doMakeObjectStore() {
+        IdvObjectStore store = new IdvObjectStore(getIdv(),
+                                   getStoreSystemName(), getStoreName(),
+                                   getIdv().getEncoderForRead(),
+                               	   StartupManager.INSTANCE.getPlatform().getUserDirectory());
+        initObjectStore(store);
+        return store;
+    }
+
 	/**
 	 * Handle a change to a link
 	 *
@@ -174,6 +186,13 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 	public String getIdvVersion() {
 		return getVersion();
 	}
+	
+	/**
+	 * Overridden to set default of McIDAS-V
+	 */
+    public String getStoreSystemName() {
+    	return StartupManager.INSTANCE.getPlatform().getUserDirectory();
+    }
 	
 	/**
 	 * Overridden to get dir of the unnecessary second level directory.
@@ -365,7 +384,6 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
         return StartupManager.INSTANCE.getPlatform().getUserFile("notice.txt");
 	}
 
-	//TODO: change the hardcoded .mcidasv directories
 	private String getNoticeCached() {
 	    String notice = "";
 		try{
