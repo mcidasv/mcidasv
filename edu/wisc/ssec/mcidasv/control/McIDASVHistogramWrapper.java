@@ -51,6 +51,8 @@ import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.Range;
 import org.jfree.data.statistics.HistogramType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import visad.FlatField;
 import visad.Unit;
@@ -67,6 +69,8 @@ import ucar.unidata.util.LogUtil;
  * Wraps a JFreeChart histograms to ease working with VisAD data.
  */
 public class McIDASVHistogramWrapper extends HistogramWrapper {
+
+    private static final Logger logger = LoggerFactory.getLogger(McIDASVHistogramWrapper.class);
 
     /** The plot */
     private XYPlot plot;
@@ -182,8 +186,15 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
                         Range range = domainAxis.getRange();
                         double newLow = Math.floor(range.getLowerBound()+0.5);
                         double newHigh = Math.floor(range.getUpperBound()+0.5);
+                        double prevLow = getLow();
+                        double prevHigh = getHigh();
                         try {
-                            ucar.unidata.util.Range newRange = new ucar.unidata.util.Range(newLow, newHigh);
+                            ucar.unidata.util.Range newRange;
+                            if (prevLow > prevHigh) {
+                                newRange = new ucar.unidata.util.Range(newHigh, newLow);
+                            } else {
+                                newRange = new ucar.unidata.util.Range(newLow, newHigh);
+                            }
                             myControl.setRange(newRange);
                         } catch (Exception e) {
                             System.out.println("Can't set new range e=" + e);
@@ -229,24 +240,28 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
     /**
      * reset the axis'
      */
-    private void resetPlot() {
+    public void resetPlot() {
         if (chart == null) {
             return;
         }
-        if ( !(chart.getPlot() instanceof XYPlot)) {
+        if (!(chart.getPlot() instanceof XYPlot)) {
             return;
         }
-        XYPlot plot = (XYPlot) chart.getPlot();
+        XYPlot plot = (XYPlot)chart.getPlot();
         int    rcnt = plot.getRangeAxisCount();
         for (int i = 0; i < rcnt; i++) {
-            ValueAxis axis = (ValueAxis) plot.getRangeAxis(i);
+            ValueAxis axis = (ValueAxis)plot.getRangeAxis(i);
             axis.setAutoRange(true);
         }
         int dcnt = plot.getDomainAxisCount();
         for (int i = 0; i < dcnt; i++) {
-            ValueAxis axis = (ValueAxis) plot.getDomainAxis(i);
-            axis.setRange(low, high);
-            axis.setAutoRange(false);
+            ValueAxis axis = (ValueAxis)plot.getDomainAxis(i);
+            try {
+                axis.setRange(low, high);
+            } catch (Exception e) {
+                logger.warn("jfreechart does not like ranges to be high -> low", e);
+            }
+            axis.setAutoRange(true);
         }
     }
 

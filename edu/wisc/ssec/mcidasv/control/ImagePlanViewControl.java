@@ -38,6 +38,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -55,6 +56,8 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -63,6 +66,7 @@ import visad.Data;
 import visad.DateTime;
 import visad.FieldImpl;
 import visad.FlatField;
+import visad.VisADException;
 import visad.meteorology.ImageSequenceImpl;
 
 import ucar.unidata.data.DataChoice;
@@ -92,6 +96,8 @@ import edu.wisc.ssec.mcidasv.data.Test2AddeImageDataSource;
  * parameter defaults.
  */
 public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanViewControl {
+
+    private static final Logger logger = LoggerFactory.getLogger(ImagePlanViewControl.class);
 
     private static final String TAG_FOLDER = "folder";
     private static final String TAG_DEFAULT = "default";
@@ -204,7 +210,7 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
             //will set the tab back to 0
             tab.setSelectedIndex(1);
             GuiUtils.handleHeavyWeightComponentsInTabs(tab);
-            ColorTableWidget ctw = getColorTableWidget(getRange());
+//            ColorTableWidget ctw = getColorTableWidget(getRange());
             Range range = getRange();
             int lo = (int)range.getMin();
             int hi = (int)range.getMax();
@@ -299,9 +305,16 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
         }
     }
 
+    @Override public void setRange(final Range newRange) throws RemoteException, VisADException {
+        logger.trace("newRange: {} curRange: {} low: {} high: {}", new Object[] { newRange, getRange(), histoWrapper.getLow(), histoWrapper.getHigh() });
+        super.setRange(newRange);
+    }
+        
     public void resetColorTable() {
         try {
-            histoWrapper.doReset();
+            revertToDefaultColorTable();
+            revertToDefaultRange();
+            histoWrapper.resetPlot();
         } catch (Exception e) {
             System.out.println("resetColorTable e=" + e);
         }
