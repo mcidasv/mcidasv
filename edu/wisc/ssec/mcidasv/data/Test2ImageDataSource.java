@@ -1226,7 +1226,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
             if (areaDir != null) {
                 int hash = ((aii != null)
-                            ? aii.makeAddeUrl().hashCode()
+                            ? aii.getURLString().hashCode()
                             : areaDir.hashCode());
                 if(rangeType==null) {
                     result =    AreaImageFlatField.createImmediate(aid, readLabel);
@@ -1246,7 +1246,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     saveLineMag = this.laLoSel.getLineMag();
                     saveEleMag = this.laLoSel.getElementMag();
                 } catch (Exception e) {
-                    System.out.println("makeImage error reading from laLoSel e=" + e);
+                    logger.error("error reading from laLoSel", e);
                     savePlace = getSavePlace();
                     this.laLoSel.setPlace(savePlace);
                     saveLat = getSaveLat();
@@ -1265,7 +1265,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
                 src = replaceKey(src, PLACE_KEY, savePlace);
                 src = removeKey(src, LINELE_KEY);
-                if (!getKey(src, LATLON_KEY).equals("")) {
+                if (getKey(src, LATLON_KEY).length() != 0) {
                     String latStr = Double.toString(saveLat);
                     if (latStr.length()>8)
                         latStr = latStr.substring(0,7);
