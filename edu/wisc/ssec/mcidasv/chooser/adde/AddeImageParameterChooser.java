@@ -272,7 +272,6 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
 		boolean fromSuper = super.usePropFromUser(propId);
 		if (propId.equals(PROP_UNIT)) fromSuper = false;
 		else if (propId.equals(PROP_BAND)) fromSuper = false;
-		System.out.println("DAVEP: usePropFromUser: " + propId +":" + fromSuper);
 		return fromSuper;
 	}
 	
