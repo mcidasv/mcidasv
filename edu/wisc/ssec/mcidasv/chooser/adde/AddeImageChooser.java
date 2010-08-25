@@ -60,6 +60,8 @@ import javax.swing.JToggleButton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.imagery.AddeImageDescriptor;
@@ -103,6 +105,8 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
  */
 public class AddeImageChooser extends AddeChooser implements
 		ucar.unidata.ui.imagery.ImageSelector {
+
+    private static final Logger logger = LoggerFactory.getLogger(AddeImageChooser.class);
 
 	// TODO: get rid of this button right?
 	public static JToggleButton mineBtn = GuiUtils
@@ -148,7 +152,7 @@ public class AddeImageChooser extends AddeChooser implements
 	protected static final String PROP_LATLON = "LATLON";
 
 	/** Property for image default value line/ele */
-	protected static final String PROP_LINEELE = "LINELE";
+	protected static final String PROP_LINELE = "LINELE";
 
 	/** Property for image default value loc */
 	protected static final String PROP_LOC = "LOC";
@@ -362,10 +366,10 @@ public class AddeImageChooser extends AddeChooser implements
 		addDescComp(loadButton);
 
 		archiveDayBtn = GuiUtils.makeImageButton(
-				"/auxdata/ui/icons/Archive.gif", this, "getArchiveDay", null,
+				"/auxdata/ui/icons/calendar_edit.png", this, "getArchiveDay", null,
 				true);
 		archiveDayBtn.setToolTipText("Select a day for archive datasets");
-		archiveDayLabel = new JLabel("Archive day:");
+		archiveDayLabel = new JLabel("Select day:");
 
 		this.addeDefaults = getImageDefaults();
 	}
@@ -512,7 +516,7 @@ public class AddeImageChooser extends AddeChooser implements
 	protected void readFromServer() {
 		archiveDay = null;
 		if (archiveDayLabel != null) {
-			archiveDayLabel.setText("");
+			archiveDayLabel.setText("Select day:");
 		}
 		readSatBands();
 		super.readFromServer();
@@ -551,7 +555,7 @@ public class AddeImageChooser extends AddeChooser implements
 				String cmd = ae.getActionCommand();
 				if (cmd.equals(GuiUtils.CMD_REMOVE)) {
 					archiveDay = null;
-					archiveDayLabel.setText("Archive day:");
+					archiveDayLabel.setText("Select day:");
 					setDoAbsoluteTimes(true);
 					descriptorChanged();
 				} else if (cmd.equals(GuiUtils.CMD_OK)) {
@@ -1263,8 +1267,7 @@ public class AddeImageChooser extends AddeChooser implements
 					System.arraycopy(allCals, 0, cals, 0, bandIndex);
 					lastAD.setCalInfo(cals);
 					bandTable.put(lastAD, bands);
-					AddeImageDescriptor aid = new AddeImageDescriptor(lastAD,
-							null);
+					AddeImageDescriptor aid = new AddeImageDescriptor(lastAD, null);
 					imageDescriptors.add(aid);
 				}
 
@@ -1276,6 +1279,7 @@ public class AddeImageChooser extends AddeChooser implements
 			}
 			setState(STATE_CONNECTED);
 		} catch (McIDASException e) {
+            logger.warn("Exception from loadImages", e);
 			stopTask(task);
 			readTimesTask = null;
 			handleConnectionError(e);
@@ -1387,9 +1391,8 @@ public class AddeImageChooser extends AddeChooser implements
                 for (int i = 0; i < relativeTimesIndices.length; i++) {
                     AddeImageDescriptor aid = new AddeImageDescriptor(relativeTimesIndices[i], firstDescriptor);
                     AddeImageInfo aii = makeImageInfo(aid.getDirectory(), true, relativeTimesIndices[i]);
-                    if (aii.getBand() == null) {
-                        aii.setBand(defaultBand);
-                    }
+                    aii.setDebug(EntryStore.isAddeDebugEnabled(false));
+                    if (aii.getBand() == null) aii.setBand(defaultBand);
                     aid.setImageInfo(aii);
                     aid.setSource(aii.getURLString());
                     images.add(aid);
@@ -1399,9 +1402,8 @@ public class AddeImageChooser extends AddeChooser implements
                 for (int i = 0; i < selectedTimes.size(); i++) {
                     AddeImageDescriptor aid = new AddeImageDescriptor((AddeImageDescriptor) selectedTimes.get(i));
                     AddeImageInfo aii = makeImageInfo(aid.getDirectory(), false, i);
-                    if (aii.getBand() == null) {
-                        aii.setBand(defaultBand);
-                    }
+                    aii.setDebug(EntryStore.isAddeDebugEnabled(false));
+                    if (aii.getBand() == null) aii.setBand(defaultBand);
                     aid.setImageInfo(aii);
                     aid.setSource(aii.getURLString());
                     images.add(aid);
@@ -1471,9 +1473,9 @@ public class AddeImageChooser extends AddeChooser implements
 				descriptor, server + ":*/*", server, "*" };
 
 		if (server != null) {
-			if (property.equals(PROP_USER))
+			if (PROP_USER.equals(property))
 				return getLastAddedUser();
-			if (property.equals(PROP_PROJ))
+			if (PROP_PROJ.equals(property))
 				return getLastAddedProj();
 		}
 
@@ -1485,12 +1487,11 @@ public class AddeImageChooser extends AddeChooser implements
 					continue;
 				}
 				key = key.toLowerCase();
-				Element defaultNode = (Element) resourceMap.get(key);
+				Element defaultNode = (Element)resourceMap.get(key);
 				if (defaultNode == null) {
 					continue;
 				}
-				String value = XmlUtil.getAttribute(defaultNode, property,
-						(String) null);
+				String value = XmlUtil.getAttribute(defaultNode, property, (String)null);
 				if (value == null) {
 					continue;
 				}
@@ -1595,7 +1596,7 @@ public class AddeImageChooser extends AddeChooser implements
 
 		// Handle size specially because we really want to get the minimum of
 		// the default and the ad size
-		if (prop.equals(PROP_SIZE)) {
+		if (PROP_SIZE.equals(prop)) {
 			int[] size = getSize(ad);
 			return size[0] + " " + size[1];
 		}
@@ -1615,28 +1616,28 @@ public class AddeImageChooser extends AddeChooser implements
 	 *         request string
 	 */
 	protected String getUserPropValue(String prop, AreaDirectory ad) {
-		if (prop.equals(PROP_LATLON) && (latLonWidget != null)) {
+		if (PROP_LATLON.equals(prop) && (latLonWidget != null)) {
 			// apparently the ADDE server can't handle long numbers
 			return Format.dfrac(latLonWidget.getLat(), 5) + " "
 					+ Format.dfrac(latLonWidget.getLon(), 5);
 		}
-		if (prop.equals(PROP_PLACE) && (placeLbl != null)) {
+		if (PROP_PLACE.equals(prop) && (placeLbl != null)) {
 			return place;
 		}
 
-		if (prop.equals(PROP_LINEELE) && (centerLineFld != null)) {
+		if (PROP_LINELE.equals(prop) && (centerLineFld != null)) {
 			return centerLineFld.getText().trim() + " "
 					+ centerElementFld.getText().trim();
 		}
 
-		if (prop.equals(PROP_SIZE) && (numLinesFld != null)) {
+		if (PROP_SIZE.equals(prop) && (numLinesFld != null)) {
 			return numLinesFld.getText().trim() + " "
 					+ numElementsFld.getText().trim();
 		}
-		if (prop.equals(PROP_MAG) && (lineMagSlider != null)) {
+		if (PROP_MAG.equals(prop) && (lineMagSlider != null)) {
 			return getLineMagValue() + " " + getElementMagValue();
 		}
-		if (prop.equals(PROP_BAND) && (bandComboBox != null)) {
+		if (PROP_BAND.equals(prop) && (bandComboBox != null)) {
 
 			Object selected = bandComboBox.getSelectedItem();
 			if (selected != null) {
@@ -1647,16 +1648,16 @@ public class AddeImageChooser extends AddeChooser implements
 				}
 			}
 		}
-		if (prop.equals(PROP_UNIT)) {
+		if (PROP_UNIT.equals(prop)) {
 			return getSelectedUnit();
 		}
-		if (prop.equals(PROP_NAV)) {
+		if (PROP_NAV.equals(prop)) {
 			return TwoFacedObject.getIdString(navComboBox.getSelectedItem());
 		}
 
-		if (prop.equals(PROP_USER))
+		if (PROP_USER.equals(prop))
 			return getLastAddedUser();
-		if (prop.equals(PROP_PROJ))
+		if (PROP_PROJ.equals(prop))
 			return getLastAddedProj();
 
 		return null;
@@ -1676,68 +1677,68 @@ public class AddeImageChooser extends AddeChooser implements
 	 */
 	protected String getDefaultPropValue(String prop, AreaDirectory ad,
 			boolean forDisplay) {
-		if (prop.equals(PROP_USER)) {
+		if (PROP_USER.equals(prop)) {
 			return DEFAULT_USER;
 		}
-		if (prop.equals(PROP_PLACE)) {
+		if (PROP_USER.equals(prop)) {
 			return PLACE_CENTER;
 		}
-		if (prop.equals(PROP_PROJ)) {
+		if (PROP_PROJ.equals(prop)) {
 			return DEFAULT_PROJ;
 		}
-		if (prop.equals(PROP_DESCR)) {
+		if (PROP_DESCR.equals(prop)) {
 			return getDescriptor();
 		}
-		if (prop.equals(PROP_VERSION)) {
+		if (PROP_VERSION.equals(prop)) {
 			return DEFAULT_VERSION;
 		}
-		if (prop.equals(PROP_COMPRESS)) {
+		if (PROP_COMPRESS.equals(prop)) {
 			return "gzip";
 		}
-		if (prop.equals(PROP_PORT)) {
+		if (PROP_PORT.equals(prop)) {
 			return DEFAULT_PORT;
 		}
-		if (prop.equals(PROP_DEBUG)) {
+		if (PROP_DEBUG.equals(prop)) {
 //			return DEFAULT_DEBUG;
 		    Boolean.toString(EntryStore.isAddeDebugEnabled(false));
 		}
-		if (prop.equals(PROP_SIZE)) {
+		if (PROP_SIZE.equals(prop)) {
 			if (ad != null) {
 				return ad.getLines() + " " + ad.getElements();
 			}
 			return MAX_SIZE + " " + MAX_SIZE;
 		}
-		if (prop.equals(PROP_MAG)) {
+		if (PROP_MAG.equals(prop)) {
 			return "1 1";
 		}
-		// if (prop.equals(PROP_LOC) || prop.equals(PROP_LINEELE)) {
-		if (prop.equals(PROP_LINEELE)) {
+		// if (prop.equals(PROP_LOC) || prop.equals(PROP_LINELE)) {
+		if (PROP_MAG.equals(prop)) {
 			if (ad == null) {
 				return "0 0";
 			}
 			return ad.getLines() / 2 + " " + ad.getElements() / 2;
 		}
 		// if (prop.equals(PROP_LATLON)) {
-		if (prop.equals(PROP_LOC) || prop.equals(PROP_LATLON)) {
+		if (PROP_LOC.equals(prop) || PROP_LATLON.equals(prop)) {
 			if (ad == null) {
 				return "0 0";
 			}
 			return ad.getCenterLatitude() + " " + ad.getCenterLongitude();
 		}
-		if (prop.equals(PROP_BAND)) {
+		if (PROP_BAND.equals(prop)) {
 			if (bandTable==null) return "";
 			if (forDisplay) {
 				return getBandName(ad, ((int[]) bandTable.get(ad))[0]);
 			}
 			return "" + ((int[]) bandTable.get(ad))[0];
 		}
-		if (prop.equals(PROP_SPAC)) {
+		if (PROP_SPAC.equals(prop)) {
 			return getSelectedUnit().equalsIgnoreCase("BRIT") ? "1" : "4";
 		}
-		if (prop.equals(PROP_UNIT)) {
+		if (PROP_UNIT.equals(prop)) {
 			return "X";
 		}
-		if (prop.equals(PROP_NAV)) {
+		if (PROP_NAV.equals(prop)) {
 			return "X";
 		}
 		return "";
@@ -1966,7 +1967,7 @@ public class AddeImageChooser extends AddeChooser implements
 			if (prop.equals(PROP_LOC)) {
 				String key = getDefault(PROP_KEY, PROP_LATLON);
 
-				boolean usingLineElement = key.equals(PROP_LINEELE);
+				boolean usingLineElement = key.equals(PROP_LINELE);
 				if (usingLineElement) {
 					locationPanel.show(1);
 				} else {
@@ -1974,7 +1975,7 @@ public class AddeImageChooser extends AddeChooser implements
 				}
 				if (usingLineElement) {
 					value = getDefault(PROP_LOC, getDefaultPropValue(
-							PROP_LINEELE, ad, false));
+							PROP_LINELE, ad, false));
 				} else {
 					value = getDefault(PROP_LOC, getDefaultPropValue(
 							PROP_LATLON, ad, false));
@@ -2339,15 +2340,15 @@ public class AddeImageChooser extends AddeChooser implements
 		setImageInfoProps(info, getMiscKeyProps(), dir);
 		setImageInfoProps(info, getBaseUrlProps(), dir);
 
-		String locKey = getDefault(PROP_KEY, PROP_LINEELE);
+		String locKey = getDefault(PROP_KEY, PROP_LINELE);
 		String locValue = null;
 		if (usePropFromUser(PROP_LOC)) {
 			if (useLatLon()) {
 				locKey = PROP_LATLON;
 				locValue = getUserPropValue(PROP_LATLON, dir);
 			} else {
-				locKey = PROP_LINEELE;
-				locValue = getUserPropValue(PROP_LINEELE, dir);
+				locKey = PROP_LINELE;
+				locValue = getUserPropValue(PROP_LINELE, dir);
 			}
 		} else {
 			locValue = getPropValue(PROP_LOC, dir);
@@ -2496,7 +2497,14 @@ public class AddeImageChooser extends AddeChooser implements
 		}
 		return l;
 	}
-
+	
+	/**
+	 * Get the pregenerated bandInfos
+	 */
+	protected List<BandInfo> getBandInfos() {
+		return bandInfos;
+	}
+	
 	/**
 	 * Get the list of BandInfos for the current selected images
 	 * 
@@ -2655,9 +2663,6 @@ public class AddeImageChooser extends AddeChooser implements
 		if (bandName != null && !(bandName.equals(ALLBANDS.toString()))) {
 			ht.put(DATA_NAME_KEY, bandName);
 		}
-		
-		// DAVEP
-        System.out.println("Make the data source with hashtable: " + ht);
 		
 		makeDataSource(ids, getDataSourceId(), ht);
 		saveServerState();
