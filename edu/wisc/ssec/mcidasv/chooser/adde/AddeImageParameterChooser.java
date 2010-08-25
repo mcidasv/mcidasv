@@ -74,6 +74,7 @@ import edu.wisc.ssec.mcidas.adde.AddeSatBands;
 import edu.wisc.ssec.mcidas.adde.AddeURL;
 import edu.wisc.ssec.mcidas.adde.DataSetInfo;
 import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 
@@ -173,12 +174,108 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
             }
             navComboBox.setSelectedItem((Object)tfo);
         }
-        
-        System.out.println("Returning from AddeImageParameterChooser.restoreParameterSet()");
-
     	return true;
     }
+    
+    /**
+     * Get the list of BandInfos for the current selected images
+     * @return list of BandInfos
+     */
+    public List<BandInfo> getSelectedBandInfos() {
+        return super.getBandInfos();
+    }
 
+    /**
+     * Get the value for the given property. This can either be the value
+     * supplied by the end user through the advanced GUI or is the default
+     *
+     * @param prop The property
+     * @param ad The AreaDirectory
+     *
+     * @return The value of the property to use in the request string
+     */
+    @Override
+    protected String getPropValue(String prop, AreaDirectory ad) {
+    	String propValue = super.getPropValue(prop, ad);
+        if (prop.equals(PROP_NAV)) {
+        	propValue = TwoFacedObject.getIdString(navComboBox.getSelectedItem());
+		}
+        return propValue;
+    }
+    
+    /**
+     * Optionally override any defaults per parameter chooser
+     * @param property
+     * @return
+     */
+    @Override
+	protected String getDefault(String property, String dflt) {
+    	String paramDefault = super.getDefault(property, dflt);
+    	if (property.equals(PROP_NAV)) {
+    		if (restoreElement != null) {
+    			paramDefault = restoreElement.getAttribute(ATTR_NAV);
+    		}
+    	} else if (property.equals(PROP_UNIT)) {
+    		paramDefault = "";
+		} else if (property.equals(PROP_BAND)) {
+    		paramDefault = ALL;
+		} else if (property.equals(PROP_PLACE)) {
+			paramDefault = "";
+		}
+    	return paramDefault;
+    }
+    
+	/**
+	 * Get the DataSource properties
+	 * 
+	 * @param ht
+	 *            Hashtable of properties
+	 */
+    @Override
+	protected void getDataSourceProperties(Hashtable ht) {
+		super.getDataSourceProperties(ht);
+        if (restoreElement != null) {
+            if (restoreElement.hasAttribute(ATTR_BAND)) {
+                ht.put(BAND_KEY, (Object)(restoreElement.getAttribute(ATTR_BAND)));
+            }
+            if (restoreElement.hasAttribute(ATTR_LATLON)) {
+                ht.put(LATLON_KEY, (Object)(restoreElement.getAttribute(ATTR_LATLON)));
+            }
+            if (restoreElement.hasAttribute(ATTR_LINELE)) {
+                ht.put(LINELE_KEY, (Object)(restoreElement.getAttribute(ATTR_LINELE)));
+            }
+            if (restoreElement.hasAttribute(ATTR_MAG)) {
+                ht.put(MAG_KEY, (Object)(restoreElement.getAttribute(ATTR_MAG)));
+            }
+            if (restoreElement.hasAttribute(ATTR_PLACE)) {
+                ht.put(PLACE_KEY, (Object)(restoreElement.getAttribute(ATTR_PLACE)));
+            }
+            if (restoreElement.hasAttribute(ATTR_SIZE)) {
+                ht.put(SIZE_KEY, (Object)(restoreElement.getAttribute(ATTR_SIZE)));
+            }
+            if (restoreElement.hasAttribute(ATTR_UNIT)) {
+                ht.put(UNIT_KEY, (Object)(restoreElement.getAttribute(ATTR_UNIT)));
+            }
+        }
+        ht.put(PREVIEW_KEY, (Object)previewBox.isSelected());
+	}
+    
+	/**
+	 * Should we use the user supplied property
+	 * 
+	 * @param propId
+	 *            The property
+	 * 
+	 * @return Should use the value from the advanced widget
+	 */
+	protected boolean usePropFromUser(String propId) {
+		boolean fromSuper = super.usePropFromUser(propId);
+		if (propId.equals(PROP_UNIT)) fromSuper = false;
+		else if (propId.equals(PROP_BAND)) fromSuper = false;
+		System.out.println("DAVEP: usePropFromUser: " + propId +":" + fromSuper);
+		return fromSuper;
+	}
+	
     /**
      * Make the UI for this selector.
      *
@@ -254,94 +351,5 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
         setInnerPanel(myPanel);
         return super.doMakeContents(true);
     }
-
-    /**
-     * Get the value for the given property. This can either be the value
-     * supplied by the end user through the advanced GUI or is the default
-     *
-     * @param prop The property
-     * @param ad The AreaDirectory
-     *
-     * @return The value of the property to use in the request string
-     */
-    @Override
-    protected String getPropValue(String prop, AreaDirectory ad) {
-    	String propValue = super.getPropValue(prop, ad);
-        if (prop.equals(PROP_NAV)) {
-        	propValue = TwoFacedObject.getIdString(navComboBox.getSelectedItem());
-        } else if (prop.equals(PROP_UNIT)) {
-        	String newValue = getDefault(prop, ALL);
-        	if (newValue != null) propValue = newValue;
-		} else if (prop.equals(PROP_BAND)) {
-			String newValue = getDefault(prop, ALL);
-			if (newValue != null) propValue = newValue;
-		}
-        return propValue;
-    }
-    
-    /**
-     * Optionally override any defaults per parameter chooser
-     * @param property
-     * @return
-     */
-    @Override
-	protected String getDefault(String property, String dflt) {
-    	String paramDefault = super.getDefault(property, dflt);
-    	if (property.equals(PROP_NAV)) {
-    		if (restoreElement != null) {
-    			paramDefault = restoreElement.getAttribute(ATTR_NAV);
-    		}
-    	} else if (property.equals(PROP_UNIT)) {
-//    		if (restoreElement != null) {
-//    			paramDefault = restoreElement.getAttribute(ATTR_UNIT);
-//    		}
-//    		else {
-    			paramDefault = ALL;
-//    		}
-		} else if (property.equals(PROP_BAND)) {
-//    		if (restoreElement != null) {
-//    			paramDefault = restoreElement.getAttribute(ATTR_BAND);
-//    		}
-//    		else {
-    			paramDefault = ALL;
-//    		}
-		}
-    	return paramDefault;
-    }
-    
-	/**
-	 * Get the DataSource properties
-	 * 
-	 * @param ht
-	 *            Hashtable of properties
-	 */
-    @Override
-	protected void getDataSourceProperties(Hashtable ht) {
-		super.getDataSourceProperties(ht);
-        if (restoreElement != null) {
-            if (restoreElement.hasAttribute(ATTR_BAND)) {
-                ht.put(BAND_KEY, (Object)(restoreElement.getAttribute(ATTR_BAND)));
-            }
-            if (restoreElement.hasAttribute(ATTR_LATLON)) {
-                ht.put(LATLON_KEY, (Object)(restoreElement.getAttribute(ATTR_LATLON)));
-            }
-            if (restoreElement.hasAttribute(ATTR_LINELE)) {
-                ht.put(LINELE_KEY, (Object)(restoreElement.getAttribute(ATTR_LINELE)));
-            }
-            if (restoreElement.hasAttribute(ATTR_MAG)) {
-                ht.put(MAG_KEY, (Object)(restoreElement.getAttribute(ATTR_MAG)));
-            }
-            if (restoreElement.hasAttribute(ATTR_PLACE)) {
-                ht.put(PLACE_KEY, (Object)(restoreElement.getAttribute(ATTR_PLACE)));
-            }
-            if (restoreElement.hasAttribute(ATTR_SIZE)) {
-                ht.put(SIZE_KEY, (Object)(restoreElement.getAttribute(ATTR_SIZE)));
-            }
-            if (restoreElement.hasAttribute(ATTR_UNIT)) {
-                ht.put(UNIT_KEY, (Object)(restoreElement.getAttribute(ATTR_UNIT)));
-            }
-        }
-        ht.put(PREVIEW_KEY, (Object)previewBox.isSelected());
-	}
 
 }
