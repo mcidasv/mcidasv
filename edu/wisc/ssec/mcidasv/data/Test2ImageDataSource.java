@@ -47,6 +47,9 @@ import java.util.TreeMap;
 
 import javax.swing.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ucar.nc2.iosp.mcidas.McIDASAreaProjection;
 import ucar.unidata.data.*;
 import ucar.unidata.data.imagery.*;
@@ -68,6 +71,8 @@ import visad.util.ThreadManager;
  * Abstract DataSource class for images files.
  */
 public class Test2ImageDataSource extends AddeImageDataSource {
+
+    private static final Logger logger = LoggerFactory.getLogger(Test2ImageDataSource.class);
 
     /**
      * Public keys for server, group, dataset, user, project.
@@ -154,51 +159,50 @@ public class Test2ImageDataSource extends AddeImageDataSource {
     private int previewLineRes = 1;
     private int previewEleRes = 1;
 
-    public Test2ImageDataSource() {} 
-
+    public Test2ImageDataSource() {
+        logger.trace("unpersisting?");
+    } 
 
     /**
      * Create a new Test2ImageDataSource with a list of (String) images. These
      * can either be AREA files or ADDE URLs.
      *
-     * @param descriptor       The descriptor for this data source.
-     * @param images           Array of  file anmes or urls.
-     * @param properties       The properties for this data source.
+     * @param descriptor Descriptor for this data source.
+     * @param images Array of file names or urls.
+     * @param properties Properties for this data source.
      */
     public Test2ImageDataSource(DataSourceDescriptor descriptor, String[] images,
                            Hashtable properties) throws VisADException {
         super(descriptor, images, properties);
+        logger.trace("descriptor: {} images: {} properties: {}", new Object[] { descriptor, images, properties });
     }
-
 
     /**
      * Create a new Test2ImageDataSource with a list of (String) images. These
      * can either be AREA files or ADDE URLs.
      *
-     * @param descriptor       The descriptor for this data source.
-     * @param images           Array of  file anmes or urls.
-     * @param properties       The properties for this data source.
+     * @param descriptor Descriptor for this data source.
+     * @param images Array of file names or urls.
+     * @param properties Properties for this data source.
      */
     public Test2ImageDataSource(DataSourceDescriptor descriptor, List images,
                            Hashtable properties) throws VisADException {
         super(descriptor, images, properties);
+        logger.trace("descriptor: {} images: {} properties: {}", new Object[] { descriptor, images, properties });
     }
-
-
-
 
     /**
      * Create a new Test2ImageDataSource with the given {@link ImageDataset}.
      * The dataset may hold eight AREA file filepaths or ADDE URLs.
      *
-     * @param descriptor    The descriptor for this data source.
-     * @param ids           The dataset.
-     * @param properties    The properties for this data source.
+     * @param descriptor Descriptor for this data source.
+     * @param ids Dataset.
+     * @param properties Properties for this data source.
      */
     public Test2ImageDataSource(DataSourceDescriptor descriptor, ImageDataset ids,
                            Hashtable properties) throws VisADException {
         super(descriptor, ids, properties);
-
+        logger.trace("descriptor: {} ids: {} properties: {}", new Object[] { descriptor, ids, properties });
         this.sourceProps = properties;
         if (properties.containsKey((Object)PREVIEW_KEY)) {
             this.showPreview = (Boolean)(properties.get((Object)PREVIEW_KEY));
@@ -210,7 +214,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         }
         List descs = ids.getImageDescriptors();
         AddeImageDescriptor aid = (AddeImageDescriptor)descs.get(0);
-        AddeImageInfo aii     = aid.getImageInfo();
+        AddeImageInfo aii = aid.getImageInfo();
         this.source = aid.getSource();
         if (this.source.contains("localhost")) {
             AreaDirectory areaDirectory = aid.getDirectory();
@@ -248,7 +252,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         String addeCmdBuff = source;
         if (addeCmdBuff.contains("BAND=")) {
             String bandStr = getKey(addeCmdBuff, "BAND");
-            if (bandStr.equals("")) {
+            if (bandStr.length() == 0) {
                 addeCmdBuff = replaceKey(addeCmdBuff, "BAND", "1");
             }
         }
@@ -275,8 +279,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 dirList = new AreaDirectoryList(addeCmdBuff);
             } catch (Exception eOpen) {
                 setInError(true);
-                System.out.println("====> Opening area file: " + eOpen.getMessage());
-                //throw new BadDataException("Opening area file: " + eOpen.getMessage());
+                logger.error("problem opening AREA file", eOpen);
             }
         }
 
@@ -329,7 +332,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 components.add(this.previewSel);
                 components.add(this.laLoSel);
             } catch (Exception e) {
-                System.out.println("error while repeating addition of selection components \n	e= "+e);
+                logger.error("error while repeating addition of selection components", e);
                 getDataContext().getIdv().showNormalCursor();
             }
         } else {
@@ -342,7 +345,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 JPanel contents = GuiUtils.top(GuiUtils.inset(label, label.getText().length() + 12));
                 GuiUtils.showOkDialog(null, "No Preview Image", contents, null);
                 getDataContext().getIdv().showNormalCursor();
-                System.out.println("makePreviewImage e=" + e);
+                logger.error("problem creating preview image", e);
                 return;
             }
             this.lastChoice = dataChoice;
@@ -384,7 +387,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                         JPanel contents = GuiUtils.top(GuiUtils.inset(label, label.getText().length() + 12));
                         GuiUtils.showOkDialog(null, "Can't Make Geographical Selection Tabs", contents, null);
                         getDataContext().getIdv().showNormalCursor();
-                        System.out.println("makePreviewImage e=" + e);
+                        logger.error("problem creating preview image", e);
                         return;
                     }
                     this.initProps = new Hashtable();
@@ -441,8 +444,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                                      this.laLoSel, this.previewProjection,
                                      this.lineMag, this.elementMag, this.showPreview);
                 } catch (Exception e) {
-                    System.err.println("Can't make selection components e="+e);
-                    System.err.println("\n" + baseSource);
+                    logger.error("problem making selection components", e);
                     getDataContext().getIdv().showNormalCursor();
                 }
                 this.haveDataSelectionComponents = true;
@@ -695,7 +697,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
             (List<BandInfo>) getProperty(PROP_BANDINFO, (Object) null);
         String name = "";
         if (this.choiceName != null) name = this.choiceName;
-        if (!name.equals("")) return;
+        if (name.length() != 0) return;
         if (!sourceProps.containsKey(UNIT_KEY)) return;
         BandInfo bi = null;
         if (sourceProps.containsKey(BAND_KEY)) {
@@ -1027,16 +1029,16 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
                 String label = "";
                 if (parent != null) {
-                    label = label + parent.toString() + " ";
+                    label = label + parent.toString() + ' ';
                 } else {
                     DataCategory displayCategory =
                         dataChoice.getDisplayCategory();
                     if (displayCategory != null) {
-                        label = label + displayCategory + " ";
+                        label = label + displayCategory + ' ';
                     }
                 }
                 label = label + dataChoice.toString();
-                final String readLabel = "Time: " + (cnt++) + "/"
+                final String readLabel = "Time: " + (cnt++) + '/'
                     + descriptorsToUse.size() + "  "
                     + label;
 
@@ -1049,7 +1051,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     String name = dataChoice.getName();
                     int idx = name.lastIndexOf("_");
                     String unit = name.substring(idx+1);
-                    if (getKey(src, UNIT_KEY).equals(""))
+                    if (getKey(src, UNIT_KEY).length() == 0)
                         src = replaceKey(src, UNIT_KEY, (Object)(unit));
 
                     AreaFile af = new AreaFile(src);
@@ -1529,7 +1531,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                             newLinRes = newAd.getValue(11);
                             newEleRes = newAd.getValue(12);
                         } catch (Exception e) {
-                            System.out.println("can't reset resolution.  e=" + e);
+                            logger.error("resetting resolution", e);
                         }
 
                         double[][] projCoords = new double[2][2];
@@ -1546,7 +1548,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                             projCoords[0][1] = lin;
                             projCoords[1][1] = ele;
                         } catch (Exception e) {
-                            System.out.println("exception e=" + e);
+                            logger.error("problem with adjusting projCoords?", e);
                             return descriptors;
                         }
                         int lins = Math.abs((int)(projCoords[1][1] - projCoords[1][0]));
@@ -1616,8 +1618,8 @@ public class Test2ImageDataSource extends AddeImageDataSource {
         if (times == 1) return directory;
         String src = aid.getSource();
 
-	src = removeKey(src, "LINELE");
-	src = removeKey(src, "PLACE");
+        src = removeKey(src, "LINELE");
+        src = removeKey(src, "PLACE");
         src = removeKey(src, "SIZE");
         src = removeKey(src, "UNIT");
         src = removeKey(src, "MAG");
@@ -1654,7 +1656,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     directory = areaDir;
                 }
             } catch (Exception e) {
-                System.out.println("e=" + e);
+                logger.error("problem when dealing with AREA directory", e);
             }
         }
 
@@ -1675,26 +1677,26 @@ public class Test2ImageDataSource extends AddeImageDataSource {
              for (int i=0; propEnum.hasMoreElements(); i++) {
                  String key = propEnum.nextElement().toString();
                  Object val = props.get(key);
-                 if (!getKey(src, key).equals("")) {
+                 if (getKey(src, key).length() != 0) {
                      src = replaceKey(src, key, val);
                  }
              }
          }
          this.displaySource = src;
          String unit = getKey(src, UNIT_KEY);
-         if (!unit.equals("")) sourceProps.put(UNIT_KEY.toUpperCase(), unit);
+         if (unit.length() != 0) {
+             sourceProps.put(UNIT_KEY.toUpperCase(), unit);
+         }
     }
 
     public String getDisplaySource() {
         return this.displaySource;
     }
 
-
     private float[] getLineEleResolution(AreaDirectory ad) {
-        //System.out.println("getLineEleResolution: ad=" + ad);
+        logger.trace("ad: {} sensor: {}", ad, ad.getSensorID());
         float[] res = {(float)1.0, (float)1.0};
         int sensor = ad.getSensorID();
-        //System.out.println("    sensor=" + sensor);
         List lines = null;
         try {
             String buff = getUrl();
@@ -1706,11 +1708,10 @@ public class Test2ImageDataSource extends AddeImageDataSource {
 
             int gotit = -1;
             String[] cards = StringUtil.listToStringArray(lines);
-
-            for (int i=0; i<cards.length; i++) {
-                if ( ! cards[i].startsWith("Sat ")) continue;
-                //System.out.println(cards[i]);
-                StringTokenizer st = new StringTokenizer(cards[i]," ");
+            logger.trace("cards: {}", cards);
+            for (int i = 0; i < cards.length; i++) {
+                if (!cards[i].startsWith("Sat ")) continue;
+                StringTokenizer st = new StringTokenizer(cards[i], " ");
                 String temp = st.nextToken();  // throw away the key
                 int m = st.countTokens();
                 for (int k=0; k<m; k++) {
@@ -1721,16 +1722,23 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                     }
                 }
 
-                if (gotit != -1) break;
+                if (gotit != -1) {
+                    break;
+                }
             }
 
-            if (gotit == -1) return res;
+            if (gotit == -1) {
+                return res;
+            }
 
             int gotSrc = -1;
             for (int i=gotit; i<cards.length; i++) {
-                if (cards[i].startsWith("EndSat")) return res;
-                if (!cards[i].startsWith("B") ) continue;
-                //System.out.println(cards[i]);
+                if (cards[i].startsWith("EndSat")) {
+                    return res;
+                }
+                if (!cards[i].startsWith("B")) {
+                    continue;
+                }
                 StringTokenizer tok = new StringTokenizer(cards[i]);
                 String str = tok.nextToken();
                 str = tok.nextToken();
@@ -1742,7 +1750,7 @@ public class Test2ImageDataSource extends AddeImageDataSource {
                 return res;
             }
         } catch (Exception e) {
-            System.out.println("getLineEleResolution: e=" + e);
+            logger.error("problem getting the line+element rez", e);
         }
         return res;
     }
@@ -1754,22 +1762,22 @@ public class Test2ImageDataSource extends AddeImageDataSource {
      *
      * @param url adde url to a text file
      *
-     * @return List of lines or null if in error
+     * @return List of lines or {@code null} if in error.
      */
     protected List readTextLines(String url) {
         AddeTextReader reader = new AddeTextReader(url);
-        if ( !reader.getStatus().equals("OK")) {
-            return null;
+        List lines = null;
+        if ("OK".equals(reader.getStatus())) {
+            lines = reader.getLinesOfText();
         }
-        return reader.getLinesOfText();
+        return lines;
     }
-
 
     /**
      * Create the first part of the ADDE request URL
      *
-     * @param requestType     type of request
-     * @return  ADDE URL prefix
+     * @param requestType type of request
+     * @return ADDE URL prefix
      */
     protected String getUrl() {
         String str = source;
