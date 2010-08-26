@@ -196,17 +196,19 @@ def badLineFilter(vals,bline,eline,element_size,line_size,filter_fill,line_diff,
            good_line = cur_line
            if (num_badlines > 0):
                for j in range(num_badlines):
-                   fdiv = (1.0/float(num_badlines+2)) * float(j+1)  
+                   fdiv = (1.0/float(num_badlines+1)) * float(j+1)  
+                   new_line=(i - num_badlines) + j
+                   
                    for k in range(element_size):
-                     """print i,j,k,element_size,(i-(j+1))*element_size,(i-(j+1))*element_size +k"""
                      if ( filter_fill == 'Min' ):
-                        vals[0][(i - (j+1))*element_size + k] = min_line
+                        vals[0][new_line*element_size + k] = min_line
                      elif ( filter_fill == 'Average' ):
-                        ave_diff = (last_good_line[k] - good_line[k]) * fdiv
-                        vals[0][(i -(j+1))*element_size + k] = good_line[k] + ave_diff
-                        """print fdiv,ave_diff,good_line[k],good_line[k]+ave_diff"""
+                        ave_diff = int((last_good_line[k] - good_line[k]) * fdiv)
+                        vals[0][new_line*element_size + k] = good_line[k] + ave_diff
                      elif (filter_fill == 'Max' ):
-                        vals[0][(i - (j+1))*element_size + k] = max_line
+                        vals[0][new_line*element_size + k] = max_line
+                   good_line=vals[0][new_line*element_size:(new_line+1)*element_size] 
+                   
                num_badlines = 0         
                                        
     return vals
@@ -245,7 +247,6 @@ def cleanFilter(sdataset,user_fill='Average',user_bline='Default',user_eline='De
      low = min(vals[0])
      point_diff = (high - low + 1)*(filter_diff/100.0)
      line_diff = (high - low + 1)*(l_diff/100.0) 
-     """ print high, low, max(vals[0]), min(vals[0]), point_diff, line_diff """    
      domain=GridUtil.getSpatialDomain(rangeObject)  
      [element_size,line_size]=domain.getLengths()
      if (eline == 'Default'):
