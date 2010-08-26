@@ -401,6 +401,18 @@ public class McIDASV extends IntegratedDataViewer {
 //                return e.createObjectDontCheckDelegate(element);
 //            }
 //        });
+        
+        /**
+         * Move legacy classes to a new location
+         */
+        encoder.registerNewClassName("edu.wisc.ssec.mcidasv.data.Test2ImageDataSource",
+			"edu.wisc.ssec.mcidasv.data.adde.AddeImageParameterDataSource");
+        encoder.registerNewClassName("edu.wisc.ssec.mcidasv.data.Test2AddeImageDataSource",
+        	"edu.wisc.ssec.mcidasv.data.adde.AddeImageParameterDataSource");
+        encoder.registerNewClassName("edu.wisc.ssec.mcidasv.data.AddePointDataSource",
+			"edu.wisc.ssec.mcidasv.data.adde.AddePointDataSource");
+        encoder.registerNewClassName("edu.wisc.ssec.mcidasv.data.AddeSoundingAdapter",
+			"edu.wisc.ssec.mcidasv.data.adde.AddeSoundingAdapter");
     }
 
     /**
