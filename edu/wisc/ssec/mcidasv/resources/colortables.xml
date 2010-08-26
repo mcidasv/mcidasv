@@ -2117,6 +2117,9 @@
             <property name="Name">
                 <string><![CDATA[Enhanced Echo Tops]]></string>
             </property>
+            <property name="Id">
+                <string><![CDATA[Enhanced Echo Tops]]></string>
+            </property>
             <property name="Category">
                 <string><![CDATA[Radar]]></string>
             </property>
@@ -3936,54 +3939,6 @@
     <method name="add">
         <object class="ucar.unidata.util.ColorTable">
             <property name="Name">
-                <string><![CDATA[Default]]></string>
-            </property>
-            <property name="Id">
-                <string><![CDATA[Default]]></string>
-            </property>
-            <property name="Category">
-                <string><![CDATA[System]]></string>
-            </property>
-            <property name="Table">
-                <array class="[F" length="4">
-                    <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAACHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9tu/UPjbv1D6JM98+tu/UPuSryT8JM98/IBHZPzbv1D9Nzc4/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAA</parray>
-                    <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAACHAAAAADw0evQ8tHr0PQdcNj00evQ9YZmxPYdcNj2d65Y9tHr0PcsKUj3hmbE9+CkPPgdcNj4So+Y+HeuWPikzRT40evQ+P8KjPksKUj5WUgE+YZmxPmzhYD54KQ8+gbhfPodcNj6NAA4+kqPmPphHvj6d65Y+o49tPqkzRT6u1xw+tHr0ProezD6/wqM+xWZ6PssKUj7Qrik+1lIBPtv12j7hmbE+5z2JPuzhYD7yhTc++CkPPv3M5z8BuF8/BIpLPwdcNj8KLiI/DQAOPw/R+j8So+Y/FXXSPxhHvj8bGak/HeuWPyC9gj8jj20/JmFZPykzRT8sBTA/LtccPzGpCD80evQ/N0zgPzoezD888Lc/P8KjP0KUjz9FZno/SDhmP0sKUj9N3D4/UK4pP1OAFT9WUgE/WSPtP1v12j9ex8Y/YZmxP2RrnT9nPYk/ag90P2zhYD9vs0w/coU3P3VXIz94KQ8/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP3h4eD9w8PE/aWlpP2Hh4j9aWlo/UtLTP0tLSz9Dw8Q/PDw8PzS0tT8tLS0/JaWmPx4eHj8Wlpc/Dw8PPweHiD8AAAA+8PDxPuHh4j7S0tM+w8PEPrS0tT6lpaY+lpaXPoeHiD5w8PE+UtLTPjS0tT4Wlpc98PDx</parray>
-                    <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAACHP3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/evr7P3r6+z96+vs/gAAAP0yMjT8ZGRk+y0tLPkjIyQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</parray>
-                    <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAACHP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAA</parray>
-                </array>
-            </property>
-            <property name="Range">
-                <object class="ucar.unidata.util.Range">
-                    <property name="Max">
-                        <double>100.0</double>
-                    </property>
-                    <field name="min">
-                        <java.lang.Double>0.0</java.lang.Double>
-                    </field>
-                </object>
-            </property>
-            <property name="Breakpoints">
-                <object class="java.util.ArrayList">
-                    <method name="add">
-                        <object class="ucar.unidata.util.ColorTable$Breakpoint"/>
-                    </method>
-                    <method name="add">
-                        <object class="ucar.unidata.util.ColorTable$Breakpoint">
-                            <property name="Value">
-                                <double>1.0</double>
-                            </property>
-                        </object>
-                    </method>
-                </object>
-            </property>
-            <property name="ScaleFactor">
-                <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAACHP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAA</parray>
-            </property>
-        </object>
-    </method>
-    <method name="add">
-        <object class="ucar.unidata.util.ColorTable">
-            <property name="Name">
                 <string><![CDATA[McIDAS-X Bridge]]></string>
             </property>
             <property name="Id">
@@ -4926,7 +4881,7 @@
                 <string><![CDATA[default]]></string>
             </property>
             <property name="Category">
-                <string><![CDATA[System>Legacy]]></string>
+                <string><![CDATA[System]]></string>
             </property>
             <property name="Table">
                 <array class="[F" length="4">
@@ -5450,17 +5405,14 @@
             <property name="Name">
                 <string><![CDATA[Gray Scale]]></string>
             </property>
-            <property name="Id">
-                <string><![CDATA[Gray Scale]]></string>
-            </property>
             <property name="Category">
                 <string><![CDATA[System]]></string>
             </property>
             <property name="Table">
                 <array class="[F" length="4">
-                    <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAAEAP4AAAD+AAAA/fv7/P339/j98/P0/e/v8P3r6+z95+fo/ePj5P3f3+D929vc/dfX2P3T09T9z8/Q/cvLzP3Hx8j9w8PE/b+/wP27u7z9t7e4/bOztP2vr7D9q6us/aenqP2jo6T9n5+g/ZubnP2Xl5j9k5OU/Y+PkP2Li4z9h4eI/YODhP1/f4D9e3t8/Xd3eP1zc3T9b29w/WtrbP1nZ2j9Y2Nk/V9fYP1bW1z9V1dY/VNTVP1PT1D9S0tM/UdHSP1DQ0T9Pz9A/Ts7PP03Nzj9MzM0/S8vMP0rKyz9Jyco/SMjJP0fHyD9Gxsc/RcXGP0TExT9Dw8Q/QsLDP0HBwj9AwME/P7/APz6+vz89vb4/PLy9Pzu7vD86urs/Obm6Pzi4uT83t7g/Nra3PzW1tj80tLU/M7O0PzKysz8xsbI/MLCxPy+vsD8urq8/La2uPyysrT8rq6w/KqqrPympqj8oqKk/J6eoPyampz8lpaY/JKSlPyOjpD8ioqM/IaGiPyCgoT8fn6A/Hp6fPx2dnj8cnJ0/G5ucPxqamz8ZmZo/GJiZPxeXmD8Wlpc/FZWWPxSUlT8Tk5Q/EpKTPxGRkj8QkJE/D4+QPw6Ojz8NjY4/DIyNPwuLjD8Kios/CYmKPwiIiT8Hh4g/BoaHPwWFhj8EhIU/A4OEPwKCgz8BgYI/AICBPv7+/z78/P0++vr7Pvj4+T729vc+9PT1PvLy8z7w8PE+7u7vPuzs7T7q6us+6OjpPubm5z7k5OU+4uLjPuDg4T7e3t8+3NzdPtra2z7Y2Nk+1tbXPtTU1T7S0tM+0NDRPs7Ozz7MzM0+ysrLPsjIyT7Gxsc+xMTFPsLCwz7AwME+vr6/Pry8vT66urs+uLi5Pra2tz60tLU+srKzPrCwsT6urq8+rKytPqqqqz6oqKk+pqanPqSkpT6ioqM+oKChPp6enz6cnJ0+mpqbPpiYmT6Wlpc+lJSVPpKSkz6QkJE+jo6PPoyMjT6Kios+iIiJPoaGhz6EhIU+goKDPoCAgT58/P0+ePj5PnT09T5w8PE+bOztPmjo6T5k5OU+YODhPlzc3T5Y2Nk+VNTVPlDQ0T5MzM0+SMjJPkTExT5AwME+PLy9Pji4uT40tLU+MLCxPiysrT4oqKk+JKSlPiCgoT4cnJ0+GJiZPhSUlT4QkJE+DIyNPgiIiT4EhIU+AICBPfj4+T3w8PE96OjpPeDg4T3Y2Nk90NDRPcjIyT3AwME9uLi5PbCwsT2oqKk9oKChPZiYmT2QkJE9iIiJPYCAgT1w8PE9YODhPVDQ0T1AwME9MLCxPSCgoT0QkJE9AICBPODg4TzAwME8oKChPICAgTxAwME8AICBO4CAgQ==</parray>
-                    <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAAEAP4AAAD+AAAA/fv7/P339/j98/P0/e/v8P3r6+z95+fo/ePj5P3f3+D929vc/dfX2P3T09T9z8/Q/cvLzP3Hx8j9w8PE/b+/wP27u7z9t7e4/bOztP2vr7D9q6us/aenqP2jo6T9n5+g/ZubnP2Xl5j9k5OU/Y+PkP2Li4z9h4eI/YODhP1/f4D9e3t8/Xd3eP1zc3T9b29w/WtrbP1nZ2j9Y2Nk/V9fYP1bW1z9V1dY/VNTVP1PT1D9S0tM/UdHSP1DQ0T9Pz9A/Ts7PP03Nzj9MzM0/S8vMP0rKyz9Jyco/SMjJP0fHyD9Gxsc/RcXGP0TExT9Dw8Q/QsLDP0HBwj9AwME/P7/APz6+vz89vb4/PLy9Pzu7vD86urs/Obm6Pzi4uT83t7g/Nra3PzW1tj80tLU/M7O0PzKysz8xsbI/MLCxPy+vsD8urq8/La2uPyysrT8rq6w/KqqrPympqj8oqKk/J6eoPyampz8lpaY/JKSlPyOjpD8ioqM/IaGiPyCgoT8fn6A/Hp6fPx2dnj8cnJ0/G5ucPxqamz8ZmZo/GJiZPxeXmD8Wlpc/FZWWPxSUlT8Tk5Q/EpKTPxGRkj8QkJE/D4+QPw6Ojz8NjY4/DIyNPwuLjD8Kios/CYmKPwiIiT8Hh4g/BoaHPwWFhj8EhIU/A4OEPwKCgz8BgYI/AICBPv7+/z78/P0++vr7Pvj4+T729vc+9PT1PvLy8z7w8PE+7u7vPuzs7T7q6us+6OjpPubm5z7k5OU+4uLjPuDg4T7e3t8+3NzdPtra2z7Y2Nk+1tbXPtTU1T7S0tM+0NDRPs7Ozz7MzM0+ysrLPsjIyT7Gxsc+xMTFPsLCwz7AwME+vr6/Pry8vT66urs+uLi5Pra2tz60tLU+srKzPrCwsT6urq8+rKytPqqqqz6oqKk+pqanPqSkpT6ioqM+oKChPp6enz6cnJ0+mpqbPpiYmT6Wlpc+lJSVPpKSkz6QkJE+jo6PPoyMjT6Kios+iIiJPoaGhz6EhIU+goKDPoCAgT58/P0+ePj5PnT09T5w8PE+bOztPmjo6T5k5OU+YODhPlzc3T5Y2Nk+VNTVPlDQ0T5MzM0+SMjJPkTExT5AwME+PLy9Pji4uT40tLU+MLCxPiysrT4oqKk+JKSlPiCgoT4cnJ0+GJiZPhSUlT4QkJE+DIyNPgiIiT4EhIU+AICBPfj4+T3w8PE96OjpPeDg4T3Y2Nk90NDRPcjIyT3AwME9uLi5PbCwsT2oqKk9oKChPZiYmT2QkJE9iIiJPYCAgT1w8PE9YODhPVDQ0T1AwME9MLCxPSCgoT0QkJE9AICBPODg4TzAwME8oKChPICAgTxAwME8AICBO4CAgQ==</parray>
-                    <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAAEAP4AAAD+AAAA/fv7/P339/j98/P0/e/v8P3r6+z95+fo/ePj5P3f3+D929vc/dfX2P3T09T9z8/Q/cvLzP3Hx8j9w8PE/b+/wP27u7z9t7e4/bOztP2vr7D9q6us/aenqP2jo6T9n5+g/ZubnP2Xl5j9k5OU/Y+PkP2Li4z9h4eI/YODhP1/f4D9e3t8/Xd3eP1zc3T9b29w/WtrbP1nZ2j9Y2Nk/V9fYP1bW1z9V1dY/VNTVP1PT1D9S0tM/UdHSP1DQ0T9Pz9A/Ts7PP03Nzj9MzM0/S8vMP0rKyz9Jyco/SMjJP0fHyD9Gxsc/RcXGP0TExT9Dw8Q/QsLDP0HBwj9AwME/P7/APz6+vz89vb4/PLy9Pzu7vD86urs/Obm6Pzi4uT83t7g/Nra3PzW1tj80tLU/M7O0PzKysz8xsbI/MLCxPy+vsD8urq8/La2uPyysrT8rq6w/KqqrPympqj8oqKk/J6eoPyampz8lpaY/JKSlPyOjpD8ioqM/IaGiPyCgoT8fn6A/Hp6fPx2dnj8cnJ0/G5ucPxqamz8ZmZo/GJiZPxeXmD8Wlpc/FZWWPxSUlT8Tk5Q/EpKTPxGRkj8QkJE/D4+QPw6Ojz8NjY4/DIyNPwuLjD8Kios/CYmKPwiIiT8Hh4g/BoaHPwWFhj8EhIU/A4OEPwKCgz8BgYI/AICBPv7+/z78/P0++vr7Pvj4+T729vc+9PT1PvLy8z7w8PE+7u7vPuzs7T7q6us+6OjpPubm5z7k5OU+4uLjPuDg4T7e3t8+3NzdPtra2z7Y2Nk+1tbXPtTU1T7S0tM+0NDRPs7Ozz7MzM0+ysrLPsjIyT7Gxsc+xMTFPsLCwz7AwME+vr6/Pry8vT66urs+uLi5Pra2tz60tLU+srKzPrCwsT6urq8+rKytPqqqqz6oqKk+pqanPqSkpT6ioqM+oKChPp6enz6cnJ0+mpqbPpiYmT6Wlpc+lJSVPpKSkz6QkJE+jo6PPoyMjT6Kios+iIiJPoaGhz6EhIU+goKDPoCAgT58/P0+ePj5PnT09T5w8PE+bOztPmjo6T5k5OU+YODhPlzc3T5Y2Nk+VNTVPlDQ0T5MzM0+SMjJPkTExT5AwME+PLy9Pji4uT40tLU+MLCxPiysrT4oqKk+JKSlPiCgoT4cnJ0+GJiZPhSUlT4QkJE+DIyNPgiIiT4EhIU+AICBPfj4+T3w8PE96OjpPeDg4T3Y2Nk90NDRPcjIyT3AwME9uLi5PbCwsT2oqKk9oKChPZiYmT2QkJE9iIiJPYCAgT1w8PE9YODhPVDQ0T1AwME9MLCxPSCgoT0QkJE9AICBPODg4TzAwME8oKChPICAgTxAwME8AICBO4CAgQ==</parray>
+                    <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAAEAAAAAAAAAAAA7gICBPACAgTxAwME8gICBPKCgoTzAwME84ODhPQCAgT0QkJE9IKChPTCwsT1AwME9UNDRPWDg4T1w8PE9gICBPYiIiT2QkJE9mJiZPaCgoT2oqKk9sLCxPbi4uT3AwME9yMjJPdDQ0T3Y2Nk94ODhPejo6T3w8PE9+Pj5PgCAgT4EhIU+CIiJPgyMjT4QkJE+FJSVPhiYmT4cnJ0+IKChPiSkpT4oqKk+LKytPjCwsT40tLU+OLi5Pjy8vT5AwME+RMTFPkjIyT5MzM0+UNDRPlTU1T5Y2Nk+XNzdPmDg4T5k5OU+aOjpPmzs7T5w8PE+dPT1Pnj4+T58/P0+gICBPoKCgz6EhIU+hoaHPoiIiT6Kios+jIyNPo6Ojz6QkJE+kpKTPpSUlT6Wlpc+mJiZPpqamz6cnJ0+np6fPqCgoT6ioqM+pKSlPqampz6oqKk+qqqrPqysrT6urq8+sLCxPrKysz60tLU+tra3Pri4uT66urs+vLy9Pr6+vz7AwME+wsLDPsTExT7Gxsc+yMjJPsrKyz7MzM0+zs7PPtDQ0T7S0tM+1NTVPtbW1z7Y2Nk+2trbPtzc3T7e3t8+4ODhPuLi4z7k5OU+5ubnPujo6T7q6us+7OztPu7u7z7w8PE+8vLzPvT09T729vc++Pj5Pvr6+z78/P0+/v7/PwCAgT8BgYI/AoKDPwODhD8EhIU/BYWGPwaGhz8Hh4g/CIiJPwmJij8Kios/C4uMPwyMjT8NjY4/Do6PPw+PkD8QkJE/EZGSPxKSkz8Tk5Q/FJSVPxWVlj8Wlpc/F5eYPxiYmT8ZmZo/GpqbPxubnD8cnJ0/HZ2ePx6enz8fn6A/IKChPyGhoj8ioqM/I6OkPySkpT8lpaY/JqanPyenqD8oqKk/KamqPyqqqz8rq6w/LKytPy2trj8urq8/L6+wPzCwsT8xsbI/MrKzPzOztD80tLU/NbW2Pza2tz83t7g/OLi5Pzm5uj86urs/O7u8Pzy8vT89vb4/Pr6/Pz+/wD9AwME/QcHCP0LCwz9Dw8Q/RMTFP0XFxj9Gxsc/R8fIP0jIyT9Jyco/SsrLP0vLzD9MzM0/Tc3OP07Ozz9Pz9A/UNDRP1HR0j9S0tM/U9PUP1TU1T9V1dY/VtbXP1fX2D9Y2Nk/WdnaP1ra2z9b29w/XNzdP13d3j9e3t8/X9/gP2Dg4T9h4eI/YuLjP2Pj5D9k5OU/ZeXmP2bm5z9n5+g/aOjpP2np6j9q6us/a+vsP2zs7T9t7e4/bu7vP2/v8D9w8PE/cfHyP3Ly8z9z8/Q/dPT1P3X19j929vc/d/f4P3j4+T95+fo/evr7P3v7/D98/P0/ff3+P37+/w==</parray>
+                    <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAAEAAAAAAAAAAAA7gICBPACAgTxAwME8gICBPKCgoTzAwME84ODhPQCAgT0QkJE9IKChPTCwsT1AwME9UNDRPWDg4T1w8PE9gICBPYiIiT2QkJE9mJiZPaCgoT2oqKk9sLCxPbi4uT3AwME9yMjJPdDQ0T3Y2Nk94ODhPejo6T3w8PE9+Pj5PgCAgT4EhIU+CIiJPgyMjT4QkJE+FJSVPhiYmT4cnJ0+IKChPiSkpT4oqKk+LKytPjCwsT40tLU+OLi5Pjy8vT5AwME+RMTFPkjIyT5MzM0+UNDRPlTU1T5Y2Nk+XNzdPmDg4T5k5OU+aOjpPmzs7T5w8PE+dPT1Pnj4+T58/P0+gICBPoKCgz6EhIU+hoaHPoiIiT6Kios+jIyNPo6Ojz6QkJE+kpKTPpSUlT6Wlpc+mJiZPpqamz6cnJ0+np6fPqCgoT6ioqM+pKSlPqampz6oqKk+qqqrPqysrT6urq8+sLCxPrKysz60tLU+tra3Pri4uT66urs+vLy9Pr6+vz7AwME+wsLDPsTExT7Gxsc+yMjJPsrKyz7MzM0+zs7PPtDQ0T7S0tM+1NTVPtbW1z7Y2Nk+2trbPtzc3T7e3t8+4ODhPuLi4z7k5OU+5ubnPujo6T7q6us+7OztPu7u7z7w8PE+8vLzPvT09T729vc++Pj5Pvr6+z78/P0+/v7/PwCAgT8BgYI/AoKDPwODhD8EhIU/BYWGPwaGhz8Hh4g/CIiJPwmJij8Kios/C4uMPwyMjT8NjY4/Do6PPw+PkD8QkJE/EZGSPxKSkz8Tk5Q/FJSVPxWVlj8Wlpc/F5eYPxiYmT8ZmZo/GpqbPxubnD8cnJ0/HZ2ePx6enz8fn6A/IKChPyGhoj8ioqM/I6OkPySkpT8lpaY/JqanPyenqD8oqKk/KamqPyqqqz8rq6w/LKytPy2trj8urq8/L6+wPzCwsT8xsbI/MrKzPzOztD80tLU/NbW2Pza2tz83t7g/OLi5Pzm5uj86urs/O7u8Pzy8vT89vb4/Pr6/Pz+/wD9AwME/QcHCP0LCwz9Dw8Q/RMTFP0XFxj9Gxsc/R8fIP0jIyT9Jyco/SsrLP0vLzD9MzM0/Tc3OP07Ozz9Pz9A/UNDRP1HR0j9S0tM/U9PUP1TU1T9V1dY/VtbXP1fX2D9Y2Nk/WdnaP1ra2z9b29w/XNzdP13d3j9e3t8/X9/gP2Dg4T9h4eI/YuLjP2Pj5D9k5OU/ZeXmP2bm5z9n5+g/aOjpP2np6j9q6us/a+vsP2zs7T9t7e4/bu7vP2/v8D9w8PE/cfHyP3Ly8z9z8/Q/dPT1P3X19j929vc/d/f4P3j4+T95+fo/evr7P3v7/D98/P0/ff3+P37+/w==</parray>
+                    <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAAEAAAAAAAAAAAA7gICBPACAgTxAwME8gICBPKCgoTzAwME84ODhPQCAgT0QkJE9IKChPTCwsT1AwME9UNDRPWDg4T1w8PE9gICBPYiIiT2QkJE9mJiZPaCgoT2oqKk9sLCxPbi4uT3AwME9yMjJPdDQ0T3Y2Nk94ODhPejo6T3w8PE9+Pj5PgCAgT4EhIU+CIiJPgyMjT4QkJE+FJSVPhiYmT4cnJ0+IKChPiSkpT4oqKk+LKytPjCwsT40tLU+OLi5Pjy8vT5AwME+RMTFPkjIyT5MzM0+UNDRPlTU1T5Y2Nk+XNzdPmDg4T5k5OU+aOjpPmzs7T5w8PE+dPT1Pnj4+T58/P0+gICBPoKCgz6EhIU+hoaHPoiIiT6Kios+jIyNPo6Ojz6QkJE+kpKTPpSUlT6Wlpc+mJiZPpqamz6cnJ0+np6fPqCgoT6ioqM+pKSlPqampz6oqKk+qqqrPqysrT6urq8+sLCxPrKysz60tLU+tra3Pri4uT66urs+vLy9Pr6+vz7AwME+wsLDPsTExT7Gxsc+yMjJPsrKyz7MzM0+zs7PPtDQ0T7S0tM+1NTVPtbW1z7Y2Nk+2trbPtzc3T7e3t8+4ODhPuLi4z7k5OU+5ubnPujo6T7q6us+7OztPu7u7z7w8PE+8vLzPvT09T729vc++Pj5Pvr6+z78/P0+/v7/PwCAgT8BgYI/AoKDPwODhD8EhIU/BYWGPwaGhz8Hh4g/CIiJPwmJij8Kios/C4uMPwyMjT8NjY4/Do6PPw+PkD8QkJE/EZGSPxKSkz8Tk5Q/FJSVPxWVlj8Wlpc/F5eYPxiYmT8ZmZo/GpqbPxubnD8cnJ0/HZ2ePx6enz8fn6A/IKChPyGhoj8ioqM/I6OkPySkpT8lpaY/JqanPyenqD8oqKk/KamqPyqqqz8rq6w/LKytPy2trj8urq8/L6+wPzCwsT8xsbI/MrKzPzOztD80tLU/NbW2Pza2tz83t7g/OLi5Pzm5uj86urs/O7u8Pzy8vT89vb4/Pr6/Pz+/wD9AwME/QcHCP0LCwz9Dw8Q/RMTFP0XFxj9Gxsc/R8fIP0jIyT9Jyco/SsrLP0vLzD9MzM0/Tc3OP07Ozz9Pz9A/UNDRP1HR0j9S0tM/U9PUP1TU1T9V1dY/VtbXP1fX2D9Y2Nk/WdnaP1ra2z9b29w/XNzdP13d3j9e3t8/X9/gP2Dg4T9h4eI/YuLjP2Pj5D9k5OU/ZeXmP2bm5z9n5+g/aOjpP2np6j9q6us/a+vsP2zs7T9t7e4/bu7vP2/v8D9w8PE/cfHyP3Ly8z9z8/Q/dPT1P3X19j929vc/d/f4P3j4+T95+fo/evr7P3v7/D98/P0/ff3+P37+/w==</parray>
                     <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAAEAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAA==</parray>
                 </array>
             </property>
@@ -6057,6 +6009,9 @@
             <property name="Name">
                 <string><![CDATA[Cloud Mask]]></string>
             </property>
+            <property name="Id">
+                <string><![CDATA[Cloud Mask]]></string>
+            </property>
             <property name="Category">
                 <string><![CDATA[Satellite>GOES]]></string>
             </property>
@@ -6148,6 +6103,9 @@
     <method name="add">
         <object class="ucar.unidata.util.ColorTable">
             <property name="Name">
+                <string><![CDATA[Cloud Type]]></string>
+            </property>
+            <property name="Id">
                 <string><![CDATA[Cloud Type]]></string>
             </property>
             <property name="Category">
@@ -6833,6 +6791,9 @@
     <method name="add">
         <object class="ucar.unidata.util.ColorTable">
             <property name="Name">
+                <string><![CDATA[NDVI]]></string>
+            </property>
+            <property name="Id">
                 <string><![CDATA[NDVI]]></string>
             </property>
             <property name="Category">
@@ -8635,6 +8596,9 @@
             <property name="Name">
                 <string><![CDATA[Multi-spectral]]></string>
             </property>
+            <property name="Id">
+                <string><![CDATA[Multi-spectral]]></string>
+            </property>
             <property name="Category">
                 <string><![CDATA[Satellite>GOES]]></string>
             </property>
@@ -8678,6 +8642,9 @@
     <method name="add">
         <object class="ucar.unidata.util.ColorTable">
             <property name="Name">
+                <string><![CDATA[Convective Available Potential Energy - CAPE]]></string>
+            </property>
+            <property name="Id">
                 <string><![CDATA[Convective Available Potential Energy - CAPE]]></string>
             </property>
             <property name="Category">
@@ -8725,6 +8692,9 @@
             <property name="Name">
                 <string><![CDATA[Cloud Top Pressure]]></string>
             </property>
+            <property name="Id">
+                <string><![CDATA[Cloud Top Pressure]]></string>
+            </property>
             <property name="Category">
                 <string><![CDATA[Satellite>GOES]]></string>
             </property>
@@ -8770,6 +8740,9 @@
             <property name="Name">
                 <string><![CDATA[Lifted Index]]></string>
             </property>
+            <property name="Id">
+                <string><![CDATA[Lifted Index]]></string>
+            </property>
             <property name="Category">
                 <string><![CDATA[Satellite>GOES]]></string>
             </property>
@@ -8813,6 +8786,9 @@
     <method name="add">
         <object class="ucar.unidata.util.ColorTable">
             <property name="Name">
+                <string><![CDATA[Ozone (Sounding)]]></string>
+            </property>
+            <property name="Id">
                 <string><![CDATA[Ozone (Sounding)]]></string>
             </property>
             <property name="Category">
@@ -8972,6 +8948,9 @@
             <property name="Name">
                 <string><![CDATA[Total Preciptable Water (Sounding)]]></string>
             </property>
+            <property name="Id">
+                <string><![CDATA[Total Preciptable Water (Sounding)]]></string>
+            </property>
             <property name="Category">
                 <string><![CDATA[Satellite>GOES]]></string>
             </property>
@@ -9087,6 +9066,9 @@
             <property name="Name">
                 <string><![CDATA[Ozone]]></string>
             </property>
+            <property name="Id">
+                <string><![CDATA[Ozone]]></string>
+            </property>
             <property name="Category">
                 <string><![CDATA[Satellite>GOES]]></string>
             </property>
@@ -9130,6 +9112,9 @@
     <method name="add">
         <object class="ucar.unidata.util.ColorTable">
             <property name="Name">
+                <string><![CDATA[Ozone - Alternative Colors]]></string>
+            </property>
+            <property name="Id">
                 <string><![CDATA[Ozone - Alternative Colors]]></string>
             </property>
             <property name="Category">
@@ -9177,6 +9162,9 @@
             <property name="Name">
                 <string><![CDATA[Longwave Infrared Deep Convection]]></string>
             </property>
+            <property name="Id">
+                <string><![CDATA[Longwave Infrared Deep Convection]]></string>
+            </property>
             <property name="Category">
                 <string><![CDATA[Satellite]]></string>
             </property>
@@ -9220,6 +9208,9 @@
     <method name="add">
         <object class="ucar.unidata.util.ColorTable">
             <property name="Name">
+                <string><![CDATA[Precipitable Water]]></string>
+            </property>
+            <property name="Id">
                 <string><![CDATA[Precipitable Water]]></string>
             </property>
             <property name="Category">
@@ -9457,6 +9448,9 @@
     <method name="add">
         <object class="ucar.unidata.util.ColorTable">
             <property name="Name">
+                <string><![CDATA[Base Reflectivity]]></string>
+            </property>
+            <property name="Id">
                 <string><![CDATA[Base Reflectivity]]></string>
             </property>
             <property name="Category">
@@ -10232,6 +10226,9 @@
             <property name="Name">
                 <string><![CDATA[Base Reflectivity - Old]]></string>
             </property>
+            <property name="Id">
+                <string><![CDATA[Base Reflectivity - Old]]></string>
+            </property>
             <property name="Category">
                 <string><![CDATA[Radar>Legacy]]></string>
             </property>
@@ -10275,6 +10272,9 @@
     <method name="add">
         <object class="ucar.unidata.util.ColorTable">
             <property name="Name">
+                <string><![CDATA[Base Reflectivity 16 Levels]]></string>
+            </property>
+            <property name="Id">
                 <string><![CDATA[Base Reflectivity 16 Levels]]></string>
             </property>
             <property name="Category">
@@ -10322,6 +10322,9 @@
             <property name="Name">
                 <string><![CDATA[Composite Reflectivity 16 Levels]]></string>
             </property>
+            <property name="Id">
+                <string><![CDATA[Composite Reflectivity 16 Levels]]></string>
+            </property>
             <property name="Category">
                 <string><![CDATA[Radar]]></string>
             </property>
@@ -10365,6 +10368,9 @@
     <method name="add">
         <object class="ucar.unidata.util.ColorTable">
             <property name="Name">
+                <string><![CDATA[Composite Reflectivity 16 Levels Alternative Colors]]></string>
+            </property>
+            <property name="Id">
                 <string><![CDATA[Composite Reflectivity 16 Levels Alternative Colors]]></string>
             </property>
             <property name="Category">
@@ -10412,6 +10418,9 @@
             <property name="Name">
                 <string><![CDATA[One Hour Precipitation 16 Levels]]></string>
             </property>
+            <property name="Id">
+                <string><![CDATA[One Hour Precipitation 16 Levels]]></string>
+            </property>
             <property name="Category">
                 <string><![CDATA[Radar]]></string>
             </property>
@@ -10455,6 +10464,9 @@
     <method name="add">
         <object class="ucar.unidata.util.ColorTable">
             <property name="Name">
+                <string><![CDATA[Echo Tops 16 Levels]]></string>
+            </property>
+            <property name="Id">
                 <string><![CDATA[Echo Tops 16 Levels]]></string>
             </property>
             <property name="Category">
@@ -10502,6 +10514,9 @@
             <property name="Name">
                 <string><![CDATA[Vertical Integrated Liquid (VIL) 16 Levels]]></string>
             </property>
+            <property name="Id">
+                <string><![CDATA[Vertical Integrated Liquid (VIL) 16 Levels]]></string>
+            </property>
             <property name="Category">
                 <string><![CDATA[Radar]]></string>
             </property>
@@ -10545,6 +10560,9 @@
     <method name="add">
         <object class="ucar.unidata.util.ColorTable">
             <property name="Name">
+                <string><![CDATA[VIL]]></string>
+            </property>
+            <property name="Id">
                 <string><![CDATA[VIL]]></string>
             </property>
             <property name="Category">
@@ -10592,6 +10610,9 @@
             <property name="Name">
                 <string><![CDATA[Base Radial Velocity]]></string>
             </property>
+            <property name="Id">
+                <string><![CDATA[Base Radial Velocity]]></string>
+            </property>
             <property name="Category">
                 <string><![CDATA[Radar]]></string>
             </property>
@@ -10635,6 +10656,9 @@
     <method name="add">
         <object class="ucar.unidata.util.ColorTable">
             <property name="Name">
+                <string><![CDATA[Base Radial Velocity 16 Levels Alternative Colors]]></string>
+            </property>
+            <property name="Id">
                 <string><![CDATA[Base Radial Velocity 16 Levels Alternative Colors]]></string>
             </property>
             <property name="Category">
@@ -10682,6 +10706,9 @@
             <property name="Name">
                 <string><![CDATA[Base Radial Velocity 16 Levels]]></string>
             </property>
+            <property name="Id">
+                <string><![CDATA[Base Radial Velocity 16 Levels]]></string>
+            </property>
             <property name="Category">
                 <string><![CDATA[Radar]]></string>
             </property>
@@ -10725,6 +10752,9 @@
     <method name="add">
         <object class="ucar.unidata.util.ColorTable">
             <property name="Name">
+                <string><![CDATA[Enhanced Echo Tops - AWIPS]]></string>
+            </property>
+            <property name="Id">
                 <string><![CDATA[Enhanced Echo Tops - AWIPS]]></string>
             </property>
             <property name="Category">
@@ -10772,6 +10802,9 @@
             <property name="Name">
                 <string><![CDATA[Storm Relative Velocity 16 Levels]]></string>
             </property>
+            <property name="Id">
+                <string><![CDATA[Storm Relative Velocity 16 Levels]]></string>
+            </property>
             <property name="Category">
                 <string><![CDATA[Radar]]></string>
             </property>
@@ -10815,6 +10848,9 @@
     <method name="add">
         <object class="ucar.unidata.util.ColorTable">
             <property name="Name">
+                <string><![CDATA[Storm Relative Velocity 16 Levels Alternative Colors]]></string>
+            </property>
+            <property name="Id">
                 <string><![CDATA[Storm Relative Velocity 16 Levels Alternative Colors]]></string>
             </property>
             <property name="Category">
@@ -10862,6 +10898,9 @@
             <property name="Name">
                 <string><![CDATA[Storm Total Precipitation]]></string>
             </property>
+            <property name="Id">
+                <string><![CDATA[Storm Total Precipitation]]></string>
+            </property>
             <property name="Category">
                 <string><![CDATA[Radar]]></string>
             </property>
@@ -10905,6 +10944,9 @@
     <method name="add">
         <object class="ucar.unidata.util.ColorTable">
             <property name="Name">
+                <string><![CDATA[Digital Hybrid Scan Reflectivity]]></string>
+            </property>
+            <property name="Id">
                 <string><![CDATA[Digital Hybrid Scan Reflectivity]]></string>
             </property>
             <property name="Category">
@@ -10970,6 +11012,9 @@
     <method name="add">
         <object class="ucar.unidata.util.ColorTable">
             <property name="Name">
+                <string><![CDATA[Digital Vertically Integrated Liquid]]></string>
+            </property>
+            <property name="Id">
                 <string><![CDATA[Digital Vertically Integrated Liquid]]></string>
             </property>
             <property name="Category">
