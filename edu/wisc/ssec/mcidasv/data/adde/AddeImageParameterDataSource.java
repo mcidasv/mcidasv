@@ -519,6 +519,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     }
 
     private boolean makePreviewImage(DataChoice dataChoice) {
+    	
+        getDataContext().getIdv().showWaitCursor();
+
         boolean msgFlag = false;
         showPreview = saveShowPreview;
         List<BandInfo> bandInfos =
@@ -645,6 +648,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         }
         if (msgFlag && (!saveBand.equals("ALL"))) src = replaceKey(src, BAND_KEY, (Object)saveBand);
         baseSource = src;
+        
+        getDataContext().getIdv().showNormalCursor();
+
         return true;
     }
 
@@ -654,6 +660,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      * @param excp The exception
      */
     protected void handlePreviewImageError(int flag, Exception excp) {
+        getDataContext().getIdv().showNormalCursor();
         String message = excp.getMessage();
         LogUtil.userErrorMessage("Error in makePreviewImage  e=" + flag + " "
                                      + excp);
@@ -816,7 +823,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
     }
 
-
     /** _more_ */
     private DataRange[] sampleRanges = null;
 
@@ -845,7 +851,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     	
         Data img = null;
         iml = new ArrayList();
-
+        
         if (dataSelection == null) return null;
         setDataSelection(dataSelection);
         GeoSelection geoSelection = dataSelection.getGeoSelection(true);
@@ -1352,8 +1358,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             throw new VisADException("Creating AreaAdapter - " + ioe);
         }
     }
-
-
+    
     /**
      * Make a parmeter name for the BandInfo
      *
@@ -1741,7 +1746,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         }
         return lines;
     }
-
 
     /**
      * Create the first part of the ADDE request URL
