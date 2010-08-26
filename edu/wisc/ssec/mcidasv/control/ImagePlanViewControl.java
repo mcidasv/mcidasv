@@ -323,11 +323,13 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
     protected void getSaveMenuItems(List items, boolean forMenuBar) {
         super.getSaveMenuItems(items, forMenuBar);
 
-        items.add(GuiUtils.makeMenuItem("Save Image Parameter Set (TEST)", this,
-        "popupPersistImageParameters"));
-
-        items.add(GuiUtils.makeMenuItem("Save Image Parameter Set", this,
-        "popupSaveImageParameters"));
+        // DAVEP: Remove the parameter set save options for now...
+//        items.add(GuiUtils.makeMenuItem("Save Image Parameter Set (TEST)", this,
+//        "popupPersistImageParameters"));
+//
+//        items.add(GuiUtils.makeMenuItem("Save Image Parameter Set", this,
+//        "popupSaveImageParameters"));
+        
         items.add(GuiUtils.makeMenuItem("Save As Local Data Source", this,
         "saveDataToLocalDisk"));
     }

@@ -132,7 +132,8 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
      */
     public AddeImageParameterChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
-        showParameterButton();
+        //DAVEP: Hiding parameter set picker for now... revisit after 1.0
+//        showParameterButton();
     }
     
     /**
