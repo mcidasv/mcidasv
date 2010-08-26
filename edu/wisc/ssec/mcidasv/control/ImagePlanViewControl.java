@@ -88,7 +88,7 @@ import ucar.unidata.xml.XmlUtil;
 import edu.wisc.ssec.mcidasv.PersistenceManager;
 import edu.wisc.ssec.mcidasv.chooser.ImageParameters;
 import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
-import edu.wisc.ssec.mcidasv.data.Test2AddeImageDataSource;
+import edu.wisc.ssec.mcidasv.data.adde.AddeImageParameterDataSource;
 
 /**
  * {@link ucar.unidata.idv.control.ImagePlanViewControl} with some McIDAS-V
@@ -344,11 +344,11 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
 
         dataChoice = getDataChoice();
         dataSource = getDataSource();
-        if (!(dataSource.getClass().isInstance(new Test2AddeImageDataSource()))) {
-            System.err.println("dataSource not a Test2AddeImageDataSource");
+        if (!(dataSource.getClass().isInstance(new AddeImageParameterDataSource()))) {
+            System.err.println("dataSource not a AddeImageParameterDataSource");
             return parameterValues;
         }
-        Test2AddeImageDataSource testDataSource = (Test2AddeImageDataSource)dataSource;
+        AddeImageParameterDataSource testDataSource = (AddeImageParameterDataSource)dataSource;
         List imageList = testDataSource.getDescriptors(dataChoice, this.dataSelection);
         int numImages = imageList.size();
         List dateTimes = new ArrayList();
@@ -823,10 +823,10 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
 
         dataChoice = getDataChoice();
         dataSource = getDataSource();
-        if (!(dataSource.getClass().isInstance(new Test2AddeImageDataSource()))) {
+        if (!(dataSource.getClass().isInstance(new AddeImageParameterDataSource()))) {
             return newChild;
         }
-        Test2AddeImageDataSource testDataSource = (Test2AddeImageDataSource)dataSource;
+        AddeImageParameterDataSource testDataSource = (AddeImageParameterDataSource)dataSource;
         List imageList = testDataSource.getDescriptors(dataChoice, this.dataSelection);
         int numImages = imageList.size();
         List dateTimes = new ArrayList();
