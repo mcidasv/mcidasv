@@ -3,13 +3,13 @@
 
   <datasource
      id="ADDE.IMAGE.V"
-     factory="edu.wisc.ssec.mcidasv.data.Test2AddeImageDataSource"
+     factory="edu.wisc.ssec.mcidasv.data.adde.AddeImageParameterDataSource"
      patterns="adde://.*/imagedata(/|\?).*$"
      doesmultiples="true"
      label="Images from an ADDE server (test2)"/>
   <datasource
      id="ADDE.POINT.V"
-     factory="edu.wisc.ssec.mcidasv.data.AddePointDataSource"
+     factory="edu.wisc.ssec.mcidasv.data.adde.AddePointDataSource"
      patterns="adde://.*/pointdata/.*$,.*\.apt"
      fileselection="true"
      label="Point data from an ADDE server"/>
