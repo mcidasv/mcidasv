@@ -82,7 +82,7 @@ import visad.DateTime;
 import edu.wisc.ssec.mcidas.McIDASUtil;
 import edu.wisc.ssec.mcidas.adde.AddePointDataReader;
 import edu.wisc.ssec.mcidas.adde.DataSetInfo;
-import edu.wisc.ssec.mcidasv.data.AddeSoundingAdapter;
+import edu.wisc.ssec.mcidasv.data.adde.AddeSoundingAdapter;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
@@ -93,7 +93,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2010/02/08 18:49:37 $
+ * @version $Revision$Date: 2010/08/09 21:23:59 $
  */
 
 
