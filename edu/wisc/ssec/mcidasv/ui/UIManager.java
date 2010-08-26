@@ -106,6 +106,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataSelection;
+import ucar.unidata.data.DataSource;
 import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.idv.ControlDescriptor;
 import ucar.unidata.idv.IdvPersistenceManager;
@@ -117,6 +120,9 @@ import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ViewState;
 import ucar.unidata.idv.IdvResourceManager.XmlIdvResource;
 import ucar.unidata.idv.control.DisplayControlImpl;
+import ucar.unidata.idv.ui.DataControlDialog;
+import ucar.unidata.idv.ui.DataSelectionWidget;
+import ucar.unidata.idv.ui.DataSelector;
 import ucar.unidata.idv.ui.IdvComponentGroup;
 import ucar.unidata.idv.ui.IdvComponentHolder;
 import ucar.unidata.idv.ui.IdvUIManager;
@@ -3192,6 +3198,100 @@ public class UIManager extends IdvUIManager implements ActionListener {
             if (e.isPopupTrigger() == true)
                 popup.show(e.getComponent(), e.getX(), e.getY());
         }
+    }
+
+    /**
+     * Handle (polymorphically) the {@link ucar.unidata.idv.ui.DataControlDialog}.
+     * This dialog is used to either select a display control to create
+     * or is used to set the timers used for a {@link ucar.unidata.data.DataSource}.
+     *
+     * @param dcd The dialog
+     */
+    public void processDialog(DataControlDialog dcd) {
+    	int estimatedMB = getEstimatedMegabytes(dcd);
+    	if (estimatedMB > 0) {
+            double totalMem = Runtime.getRuntime().maxMemory();
+            double highMem = Runtime.getRuntime().totalMemory();
+            double freeMem = Runtime.getRuntime().freeMemory();
+            double usedMem = (highMem - freeMem);
+            int availableMB = Math.round(((float)totalMem - (float)usedMem) / 1024 / 1024);
+            int percentOfAvailable = Math.round(estimatedMB / availableMB * 100f);
+
+            if (percentOfAvailable > 95) {
+            	String message = "<html>You are attempting to load " + estimatedMB + "MB of data,<br>";
+            	message += "which exceeds 95% of the " + availableMB + "MB that is available.<br>";
+            	message += "Data load cancelled.</html>";
+            	JComponent msgLabel = new JLabel(message);
+    			GuiUtils.showDialog("Data Size", msgLabel);
+    			return;
+            }
+            else if (percentOfAvailable > 75) {
+            	String message = "<html>You are attempting to load " + estimatedMB + "MB of data,<br>";
+            	message += percentOfAvailable + "% of the " + availableMB + "MB that is available.<br>";
+            	message += "Continue loading data?</html>";
+            	JComponent msgLabel = new JLabel(message);
+    			if (!GuiUtils.askOkCancel("Data Size", msgLabel)) {
+    				return;
+    			}
+            }
+    	}
+    	super.processDialog(dcd);
+    }
+
+    /**
+     * Estimate the number of megabytes that will be used by this data selection
+     */
+    protected int getEstimatedMegabytes(DataControlDialog dcd) {
+    	int estimatedMB = 0;
+        DataChoice dataChoice = dcd.getDataChoice();
+        if (dataChoice != null) {
+            Object[] selectedControls = dcd.getSelectedControls();
+            for (int i = 0; i < selectedControls.length; i++) {
+                ControlDescriptor cd = (ControlDescriptor) selectedControls[i];
+
+                //Check if the data selection is ok
+                if(!dcd.getDataSelectionWidget().okToCreateTheDisplay(cd.doesLevels())) {
+                    continue;
+                }
+
+                DataSelection dataSelection = dcd.getDataSelectionWidget().createDataSelection(cd.doesLevels());
+                                
+                // Get the size in pixels of the requested image
+                Object gotSize = dataSelection.getProperty("SIZE");
+                if (gotSize == null) {
+                	continue;
+                }
+                List<String> dims = StringUtil.split((String)gotSize, " ", false, false);
+                int myLines = -1;
+                int myElements = -1;
+                if (dims.size() == 2) {
+                	try {
+                		myLines = Integer.parseInt(dims.get(0));
+                		myElements = Integer.parseInt(dims.get(1));
+                	}
+                	catch (Exception e) { }
+                }
+
+                // Get the count of times requested
+                int timeCount = 1;
+                DataSelectionWidget dsw = dcd.getDataSelectionWidget();
+                List times = dsw.getSelectedDateTimes();
+            	List timesAll = dsw.getAllDateTimes();
+                if (times != null && times.size() > 0) {
+                	timeCount = times.size();
+                }
+                else if (timesAll != null && timesAll.size() > 0) {
+                	timeCount = timesAll.size();
+                }
+                
+                // Total number of pixels
+                int totalPixels = myLines * myElements * timeCount;
+                int totalBytes = totalPixels * 4;
+                estimatedMB += Math.round(totalBytes / 1024 / 1024);
+            }
+        }
+        
+        return estimatedMB;
     }
 
     /**
