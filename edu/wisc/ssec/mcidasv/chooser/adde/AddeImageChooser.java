@@ -116,7 +116,7 @@ public class AddeImageChooser extends AddeChooser implements
 					0, 0, true);
 
 	/** _more_ */
-	private static final int SIZE_THRESHOLD = 30;
+	private static final int SIZE_THRESHOLD = 50;
 
 	/** default magnification */
 	private static final int DEFAULT_MAG = 0;
@@ -2589,8 +2589,10 @@ public class AddeImageChooser extends AddeChooser implements
 		// + imageList.size());
 		int numPixels = dim[0] * dim[1] * imageList.size();
 		double megs = (4 * numPixels) / (double) 1000000;
-
-		if (megs > SIZE_THRESHOLD) {
+		
+		//DAVEP: take this out--it should be warning in the data source, not the chooser
+		boolean doSizeCheck = false;
+		if (megs > SIZE_THRESHOLD && doSizeCheck) {
 			final JCheckBox maintainSize = new JCheckBox(
 					"Maintain spatial extent", false);
 			final JLabel sizeLbl = new JLabel(StringUtil.padRight("  "
