@@ -24,9 +24,10 @@
 
 	<panel title="Imagery" category="Satellite" layout="border"
 		tabtooltip="For accessing satellite imagery">
-		<chooser id="chooser.image" title="Imagery" menutitle="Satellite Imagery"
-			helppath="idv.data.choosers.imagechooser" showdetails="true"
-			includeNavComp="true" class="edu.wisc.ssec.mcidasv.chooser.adde.AddeImageChooser" />
+		<chooser id="chooser.imageparameter" title="Imagery"
+			menutitle="Satellite Imagery" helppath="idv.data.choosers.imagechooser"
+			showdetails="true" includeNavComp="true"
+			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeImageParameterChooser" />
 	</panel>
 
 	<panel title="HYDRA" category="Satellite" layout="border"
@@ -324,10 +325,37 @@
 
 
 
+	<!--                  -->
+	<!--     Legacy       -->
+	<!--                  -->
+	
+	<panel layout="border" category="Legacy Choosers" categorycomponent="true">
+		<html
+			text="
+			&lt;b&gt;These choosers are for included for backwards compatibility testing purposes&lt;/b&gt;
+			&lt;br&gt;
+			&lt;br&gt;
+			Please see the &lt;a href=&quot;http://www.ssec.wisc.edu/mcidas/forums&quot;&gt;McIDAS-V Forums&lt;/a&gt; for more information			
+		" />
+	</panel>
+
+	<panel title="Imagery" category="Legacy Choosers" layout="border"
+		tabtooltip="For accessing satellite imagery">
+		<chooser id="chooser.image" title="Imagery" menutitle="Satellite Imagery"
+			helppath="idv.data.choosers.imagechooser" showdetails="true"
+			includeNavComp="true" class="edu.wisc.ssec.mcidasv.chooser.adde.AddeImageChooser" />
+	</panel>
+
+
+
+
 
 	<!--                  -->
 	<!--    Testing       -->
 	<!--                  -->
+	
+	<!-- REMOVED FOR 1.0 -->
+	<!--
 	
 	<panel layout="border" category="Under Development" categorycomponent="true">
 		<html
@@ -355,35 +383,7 @@
 			class="edu.wisc.ssec.mcidasv.chooser.adde.Test2AddeImageChooser" />
 	</panel>
 	
-	<!-- Move to plugin -->
-	<!--
-	<panel title="Imagery - Eumetcast HRIT" category="Under Development" layout="border"
-		tabtooltip="For accessing Eumetcast HRIT data">
-		<chooser id="chooser.hrit" title="HRIT" menutitle="Local Eumetcast HRIT data"
-			showinmenu="true" helppath="idv.data.choosers.hritchooser"
-			showpolling="false" filepattern=".*" selectdatasourceid="true"
-			datasourceid="HRIT"	class="edu.wisc.ssec.mcidasv.chooser.HRITChooser" />
-	</panel>
 	-->
-				
-	<!--
-	<panel title="Files" category="Under Development" layout="border"
-		tabToolTip="For accessing local files" mnemonic="F">
-		<chooser id="chooser.file" title="Files" menutitle="From the File System"
-			showinmenu="true" helppath="idv.data.choosers.filechooser" class="ucar.unidata.idv.chooser.FileChooser"
-			showpolling="false" filepattern=".*\.nc"
-			filters=".*\.xidv$,.*\.zidv$:IDV Bundles (*.xidv,*.zidv);.*\.mcv$,.*\.mcvz$:McIDAS-V Bundles (*.mcv,*.mcvz);" />
-	</panel>
-
-	<panel title="Directories" category="Under Development" layout="border"
-		tabToolTip="For accessing local directories" mnemonic="D">
-		<chooser id="chooser.polling.dir" title="Directory" category="General"
-			showinmenu="true" helppath="idv.data.choosers.directorychooser"
-			class="ucar.unidata.idv.chooser.PollingFileChooser" filecount="1" />
-	</panel>
-	-->
-
-
 
 
 
