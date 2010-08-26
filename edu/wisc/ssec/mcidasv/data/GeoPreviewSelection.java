@@ -207,7 +207,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
         }
       }
 
-       public MapProjection getDataProjection() {
+      public MapProjection getDataProjection() {
          MapProjection mp = null;
          Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(image);
          try {
@@ -218,6 +218,9 @@ public class GeoPreviewSelection extends DataSelectionComponent {
          return mp;
       }
 
+      public void initBox() {
+    	  this.drawBox();
+      }
 
       protected JComponent doMakeContents() {
         try {
@@ -353,7 +356,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
       public void applyToDataSelection(DataSelection dataSelection) {
       }
 
-      protected void drawBox() {
+      private void drawBox() {
           if (box == null) makeBox();
           removeRBB();
 

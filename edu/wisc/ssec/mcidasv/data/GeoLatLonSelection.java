@@ -1676,7 +1676,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         }
     }
 
-    protected String getCoordinateType() {
+    public String getCoordinateType() {
         String ret = defaultType;
         try {
             ret = (String)coordinateTypeComboBox.getSelectedItem();
@@ -1698,7 +1698,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         lockBtn.setSelected(val);
     }
 
-    protected boolean getLockOn() {
+    public boolean getLockOn() {
         return lockBtn.isSelected();
     }
         
@@ -1939,6 +1939,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         if (indx >= str.length()) indx = str.length();
         return str.substring(0,indx);
     }
+    
+    public String getLatLonType() {
+    	return TYPE_LATLON;
+    }
 
     protected double[][] getLatLonPoints() {
         return latLon;
@@ -1972,7 +1976,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         this.baseNumElements = (double)val;
     }
 
-    protected void update(AreaDirectory dir, MapProjection sample, AREAnav nav, 
+    public void update(AreaDirectory dir, MapProjection sample, AREAnav nav, 
                           String coordType, double[] coords) {
         boolean saveLock = getLockOn();
         setLockOn(true);
