@@ -28,8 +28,6 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 
-
-
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
@@ -41,7 +39,10 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 /**
  * A class that holds either a JFrame or a JInteralFrame. It allows for client
@@ -51,14 +52,13 @@ import javax.swing.event.*;
  */
 public class MultiFrame {
 
+    private static final Logger logger = LoggerFactory.getLogger(MultiFrame.class);
+    
     /** Global to add the internal frames to as a default behavior */
     private static JDesktopPane desktopPane;
 
     /** Used for event processing */
     private static Window dummyWindow;
-
-
-
 
     /** The frame */
     private JFrame frame;
@@ -447,8 +447,10 @@ public class MultiFrame {
      *
      * @return _more_
      */
-    public Rectangle getBounds() {
-        return getComponent().getBounds();
+    public synchronized Rectangle getBounds() {
+        Rectangle r = getComponent().getBounds();
+        logger.trace("bounds={}, getComp={}", r, getComponent());
+        return r;
     }
 
     /**
@@ -456,13 +458,20 @@ public class MultiFrame {
      *
      * @param bounds _more_
      */
-    public void setBounds(Rectangle bounds) {
-        JFrame theFrame = frame;
+    public synchronized void setBounds(final Rectangle bounds) {
+        final JFrame theFrame = frame;
         if (theFrame != null) {
             if (bounds != null) {
-                GuiUtils.positionAndFitToScreen(theFrame, bounds);
+                logger.trace("positionAndFit: bounds={}, frame={}", bounds, theFrame);
+                SwingUtilities.invokeLater(new Runnable() { 
+                    public void run() {
+                        getComponent().setLocation(bounds.x, bounds.y);
+                        getComponent().setSize(bounds.width, bounds.height);
+                    }
+                });
             }
         } else if (internalFrame != null) {
+            logger.trace("internalFrame: bounds={}", bounds);
             internalFrame.setBounds(bounds);
         }
     }
@@ -499,7 +508,7 @@ public class MultiFrame {
      *
      * @return The component
      */
-    public Component getComponent() {
+    public synchronized Component getComponent() {
         if (frame != null) {
             return frame;
         } else if (internalFrame != null) {
