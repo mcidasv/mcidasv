@@ -3220,15 +3220,15 @@ public class UIManager extends IdvUIManager implements ActionListener {
             
             if (percentOfAvailable > 95) {
             	String message = "<html>You are attempting to load " + estimatedMB + "MB of data,<br>";
-            	message += "which exceeds 95% of the " + availableMB + "MB that is available.<br>";
+            	message += "which exceeds the total amount available.<br>";
             	message += "Data load cancelled.</html>";
             	JComponent msgLabel = new JLabel(message);
     			GuiUtils.showDialog("Data Size", msgLabel);
     			return;
             }
-            else if (percentOfAvailable > 75) {
+            else if (percentOfAvailable >= 75) {
             	String message = "<html>You are attempting to load " + estimatedMB + "MB of data,<br>";
-            	message += percentOfAvailable + "% of the " + availableMB + "MB that is available.<br>";
+            	message += percentOfAvailable + "% of the total amount available.<br>";
             	message += "Continue loading data?</html>";
             	JComponent msgLabel = new JLabel(message);
     			if (!GuiUtils.askOkCancel("Data Size", msgLabel)) {
