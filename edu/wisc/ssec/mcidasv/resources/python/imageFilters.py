@@ -24,21 +24,26 @@ def cloudFilter(sdataset1,sdataset2,user_replace='Default',user_constant=0,user_
         replace=min([min1, min2])
      domain=GridUtil.getSpatialDomain(range1)
      [element_size,line_size]=domain.getLengths()
-     
-     for i in xrange(line_size):
-        for j in xrange(element_size):
+       
+     for i in range(line_size):
+        for j in range(element_size):
            line1 = vals1[0][i*element_size+j]
            line2 = vals2[0][i*element_size+j] 
-
-           if (line1 <= line2 + constant):
+           
+           if (line1 <= (line2 + constant)):
              vals1[0][i*element_size+j] = replace
-                
-     post_hi = int(max(vals1[0]))
-     post_low = int(min(vals1[0])) 
+     
+     post_hi = int(max([max(vals1[0]),max(vals2[0])]))
+     post_low = int(min([min(vals1[0]),min(vals2[0])]))
+     
      if (stretch == 'Contrast'):
        lookup=contrast(post_low,post_hi,post_low,post_hi)
      elif (stretch == 'Histogram'):
-       h = hist(field(vals1),[0],[post_hi-post_low])
+       """ Need to get the histogram for both datasets and sum """
+       v=[]
+       v.append(vals1[0])
+       v.append(vals2[0])
+       h=hist(field(v),[0],[post_hi-post_low])
        lookup=histoStretch(post_low,post_hi,h)
      
      vals1=modify(vals1,element_size,line_size,post_low,lookup) 
