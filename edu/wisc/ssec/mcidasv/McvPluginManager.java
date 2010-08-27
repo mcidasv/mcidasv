@@ -34,6 +34,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JLabel;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +43,7 @@ import edu.wisc.ssec.mcidasv.servermanager.LocalEntryEditor;
 
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.PluginManager;
+import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.ResourceCollection;
@@ -94,6 +97,14 @@ public class McvPluginManager extends PluginManager {
      */
     @Override public void removePlugin(File file) { 
         super.removePlugin(file);
-        LogUtil.userMessage("Please restart McIDAS-V to complete the removal of this plugin.");
+        LogUtil.userMessage("You must restart McIDAS-V to complete the removal of this plugin.");
+    }
+    
+    /**
+     * Do not give the option to restart.  Simply note that a restart is necessary at some point in the future.
+     */
+    protected void notifyUser() {
+    	LogUtil.userMessage("You must restart McIDAS-V to complete the installation of this plugin.");
+        return;
     }
 }
