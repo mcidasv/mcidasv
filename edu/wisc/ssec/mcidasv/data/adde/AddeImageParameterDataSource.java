@@ -114,6 +114,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     public final static String UNIT_KEY = "unit";
     public final static String PREVIEW_KEY = "preview";
     public final static String SPAC_KEY = "spac";
+    public final static String NAV_KEY = "nav";
+    public final static String AUX_KEY = "aux";
+    public final static String DOC_KEY = "doc";
     public final static String SPACING_BRIT = "1";
     public final static String SPACING_NON_BRIT = "4";
 
@@ -631,13 +634,15 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         } catch (Exception e) {
         }
         String src = aid.getSource();
+        
+        src = removeKey(src, LATLON_KEY);
         src = replaceKey(src, LINELE_KEY, (Object)uLStr);
         src = replaceKey(src, PLACE_KEY, (Object)("ULEFT"));
         src = replaceKey(src, SIZE_KEY, (Object)(lSize + " " + eSize));
         src = replaceKey(src, MAG_KEY, (Object)(lMag + " " + eMag));
         src = replaceKey(src, BAND_KEY, (Object)(bi.getBandNumber()));
         src = replaceKey(src, UNIT_KEY, (Object)(unit));
-
+        
         try {
             aid = new AddeImageDescriptor(src);
         } catch (Exception excp) {
@@ -648,7 +653,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         }
         if (msgFlag && (!saveBand.equals("ALL"))) src = replaceKey(src, BAND_KEY, (Object)saveBand);
         baseSource = src;
-        
+
         getDataContext().getIdv().showNormalCursor();
 
         return true;
@@ -668,9 +673,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
     private String removeKey(String src, String key) {
         String returnString = src;
-        String keyStr = key + "=";
-        if (returnString.contains(keyStr)) {
-            String[] segs = returnString.split(keyStr);
+        key = key.toUpperCase() + "=";
+        if (returnString.contains(key)) {
+            String[] segs = returnString.split(key);
             String seg0 = segs[0];
             String seg1 = segs[1];
             int indx = seg1.indexOf("&");
@@ -1590,15 +1595,16 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         if (times == 1) return directory;
         String src = aid.getSource();
 
-        src = removeKey(src, "LINELE");
-        src = removeKey(src, "PLACE");
-        src = removeKey(src, "SIZE");
-        src = removeKey(src, "UNIT");
-        src = removeKey(src, "MAG");
-        src = removeKey(src, "SPAC");
-        src = removeKey(src, "NAV");
-        src = removeKey(src, "AUX");
-        src = removeKey(src, "DOC");
+        src = removeKey(src, LATLON_KEY);
+        src = removeKey(src, LINELE_KEY);
+        src = removeKey(src, PLACE_KEY);
+        src = removeKey(src, SIZE_KEY);
+        src = removeKey(src, UNIT_KEY);
+        src = removeKey(src, MAG_KEY);
+        src = removeKey(src, SPAC_KEY);
+        src = removeKey(src, NAV_KEY);
+        src = removeKey(src, AUX_KEY);
+        src = removeKey(src, DOC_KEY);
 
         int maxLine = 0;
         int maxEle = 0;
