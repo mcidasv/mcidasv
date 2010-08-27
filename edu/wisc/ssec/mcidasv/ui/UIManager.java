@@ -3215,7 +3215,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             double highMem = Runtime.getRuntime().totalMemory();
             double freeMem = Runtime.getRuntime().freeMemory();
             double usedMem = (highMem - freeMem);
-            int availableMB = Math.round(((float)totalMem - (float)usedMem) / 1024 / 1024);
+            int availableMB = Math.round( ((float)totalMem - (float)usedMem) / 1024f / 1024f);
             int percentOfAvailable = Math.round((float)estimatedMB / (float)availableMB * 100f);
             
             if (percentOfAvailable > 95) {
@@ -3287,9 +3287,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 }
                 
                 // Total number of pixels
-                int totalPixels = myLines * myElements * timeCount;
-                int totalBytes = totalPixels * 4;
-                estimatedMB += Math.round(totalBytes / 1024 / 1024);
+                float totalPixels = (float)myLines * (float)myElements * (float)timeCount;
+                float totalBytes = totalPixels * 4;
+                estimatedMB += Math.round(totalBytes / 1024f / 1024f);
             }
         }
         
