@@ -3209,14 +3209,15 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     public void processDialog(DataControlDialog dcd) {
     	int estimatedMB = getEstimatedMegabytes(dcd);
+    	
     	if (estimatedMB > 0) {
             double totalMem = Runtime.getRuntime().maxMemory();
             double highMem = Runtime.getRuntime().totalMemory();
             double freeMem = Runtime.getRuntime().freeMemory();
             double usedMem = (highMem - freeMem);
             int availableMB = Math.round(((float)totalMem - (float)usedMem) / 1024 / 1024);
-            int percentOfAvailable = Math.round(estimatedMB / availableMB * 100f);
-
+            int percentOfAvailable = Math.round((float)estimatedMB / (float)availableMB * 100f);
+            
             if (percentOfAvailable > 95) {
             	String message = "<html>You are attempting to load " + estimatedMB + "MB of data,<br>";
             	message += "which exceeds 95% of the " + availableMB + "MB that is available.<br>";
@@ -3235,6 +3236,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     			}
             }
     	}
+    	
     	super.processDialog(dcd);
     }
 
