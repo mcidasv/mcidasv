@@ -6,7 +6,7 @@
      factory="edu.wisc.ssec.mcidasv.data.adde.AddeImageParameterDataSource"
      patterns="adde://.*/imagedata(/|\?).*$"
      doesmultiples="true"
-     label="Images from an ADDE server (test2)"/>
+     label="Images from an ADDE server (Parameter)"/>
   <datasource
      id="ADDE.POINT.V"
      factory="edu.wisc.ssec.mcidasv.data.adde.AddePointDataSource"
