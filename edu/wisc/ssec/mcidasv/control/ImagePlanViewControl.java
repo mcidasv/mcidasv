@@ -305,12 +305,14 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
         }
     }
 
+    @Override public boolean setData(DataChoice dataChoice) throws VisADException, RemoteException {
+        boolean result = super.setData(dataChoice);
+        logger.trace("result: {}, choice: {}", dataChoice, result);
+        return result;
+    }
+
     @Override public void setRange(final Range newRange) throws RemoteException, VisADException {
-        if (histoWrapper != null) {
-            logger.trace("newRange: {} curRange: {} low: {} high: {}", new Object[] { newRange, getRange(), histoWrapper.getLow(), histoWrapper.getHigh() });
-        } else {
-            logger.trace("newRange: {} [avoiding NPE!]", newRange);
-        }
+        logger.trace("newRange: {} [avoiding NPE!]", newRange);
         super.setRange(newRange);
     }
         
