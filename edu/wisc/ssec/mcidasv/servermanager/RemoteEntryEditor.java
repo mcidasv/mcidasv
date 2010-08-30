@@ -87,6 +87,7 @@ import edu.wisc.ssec.mcidasv.util.McVTextField;
 @SuppressWarnings("serial")
 public class RemoteEntryEditor extends javax.swing.JDialog {
 
+    /** Logger object. */
     private static final Logger logger = LoggerFactory.getLogger(RemoteEntryEditor.class);
 
     /** Default port for remote ADDE servers. */
@@ -99,24 +100,24 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     private static final int POOL = 5;
 
     /** 
-     * {@link String#format(String, Object...)}-friendly string for building a
-     * request to read a server's PUBLIC.SRV.
+     * {@link java.lang.String#format(String, Object...)}-friendly string for 
+     * building a request to read a server's PUBLIC.SRV.
      */
     private static final String publicSrvFormat = "adde://%s/text?compress=gzip&port=112&debug=%s&version=1&user=%s&proj=%s&file=PUBLIC.SRV";
 
     /** Whether or not to input in the dataset, username, and project fields should be uppercased. */
     private static final String PREF_FORCE_CAPS = "mcv.servers.forcecaps";
 
-    /** Background {@link Color} of an {@literal "invalid"} {@link javax.swing.JTextField}. */
+    /** Background {@link java.awt.Color Color} of an {@literal "invalid"} {@link javax.swing.JTextField JTextField}. */
     private static final Color ERROR_FIELD_COLOR = Color.PINK;
 
-    /** Text {@link Color} of an {@literal "invalid"} {@link javax.swing.JTextField}. */
+    /** Text {@link java.awt.Color Color} of an {@literal "invalid"} {@link javax.swing.JTextField JTextField}. */
     private static final Color ERROR_TEXT_COLOR = Color.WHITE;
 
-    /** Background {@link Color} of a {@literal "valid"} {@link javax.swing.JTextField}. */
+    /** Background {@link java.awt.Color Color} of a {@literal "valid"} {@link javax.swing.JTextField JTextField}. */
     private static final Color NORMAL_FIELD_COLOR = Color.WHITE;
 
-    /** Text {@link Color} of a {@literal "valid"} {@link java.swing.JTextField}. */
+    /** Text {@link java.awt.Color Color} of a {@literal "valid"} {@link javax.swing.JTextField JTextField}. */
     private static final Color NORMAL_TEXT_COLOR = Color.BLACK;
 
     /**

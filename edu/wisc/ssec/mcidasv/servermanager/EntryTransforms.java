@@ -78,12 +78,16 @@ import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry.ServerName;
 import edu.wisc.ssec.mcidasv.util.Contract;
 import edu.wisc.ssec.mcidasv.util.functional.Function;
 
-// useful methods for doing things like converting a "AddeServer" to a "RemoteAddeEntry"
-// and so on.
+/**
+ * Useful methods for doing things like converting a 
+ * {@link ucar.unidata.idv.chooser.AddeServer AddeServer} to a 
+ * {@link edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry RemoteAddeEntry}.
+ */
 public class EntryTransforms {
 
+    /** Logger object. */
     private static final Logger logger = LoggerFactory.getLogger(EntryTransforms.class);
-    
+
     /** Matches dataset routing information in a MCTABLE file. */
     private static final Pattern routePattern = 
         Pattern.compile("^ADDE_ROUTE_(.*)=(.*)$");
@@ -139,12 +143,13 @@ public class EntryTransforms {
         Set<String> addrs = newLinkedHashSet();
         for (AddeEntry e : entries) {
             EntryStatus status = e.getEntryStatus();
-            if (status == EntryStatus.DISABLED || status == EntryStatus.INVALID)
+            if (status == EntryStatus.DISABLED || status == EntryStatus.INVALID) {
                 continue;
-
+            }
             String addr = e.getAddress();
-            if (addrs.contains(addr))
+            if (addrs.contains(addr)) {
                 continue;
+            }
 
             String newGroup = e.getGroup();
             String type = entryTypeToStr(e.getEntryType());
@@ -204,9 +209,9 @@ public class EntryTransforms {
                         .source(entrySource)
                         .validity(EntryValidity.VERIFIED);
 
-//                System.err.println("AWWWOOOOOGAAA: remove that .validity(EntryValidity.VERIFIED) junk!");
-                if (((user != null) && (proj != null)) && ((user.length() > 0) && (proj.length() > 0)))
+                if (((user != null) && (proj != null)) && ((user.length() > 0) && (proj.length() > 0))) {
                     incomplete = incomplete.account(user, proj);
+                }
 
                 entries.add(incomplete.build());
             }
@@ -267,9 +272,9 @@ public class EntryTransforms {
                 // names.
                 List<String> names = StringUtil.split(getAttribute(group, "names", ""), ",", true, true);
                 for (String name : names) {
-                    if (name.length() == 0)
+                    if (name.length() == 0) {
                         continue;
-
+                    }
                     RemoteAddeEntry e =  new RemoteAddeEntry
                                             .Builder(address, name)
                                             .source(source)
@@ -472,12 +477,11 @@ public class EntryTransforms {
                     String ip = hostMatcher.group(2);
 
                     Set<String> nameSet = hosts.get(ip);
-                    if (nameSet == null)
+                    if (nameSet == null) {
                         nameSet = newLinkedHashSet();
-
+                    }
                     nameSet.add(name);
                     hosts.put(ip, nameSet);
-
                     hostToIp.put(name, ip);
                     hostToIp.put(ip, ip); // HACK :(
                     validFile = true;
@@ -555,9 +559,9 @@ public class EntryTransforms {
                 if (name.length() >= displayName.length())
                     displayName = name;
 
-            if (displayName.equals(""))
+            if (displayName.length() == 0) {
                 displayName = entry.getKey();
-
+            }
             ipToName.put(entry.getKey(), displayName);
         }
         return ipToName;
@@ -571,8 +575,9 @@ public class EntryTransforms {
         for (Entry<String, String> entry : datasets.entrySet()) {
             String dataset = entry.getKey();
             String alias = entry.getValue();
-            if (hostMap.containsKey(alias))
+            if (hostMap.containsKey(alias)) {
                 datasetToIp.put(dataset, hostMap.get(alias));
+            }
         }
         return datasetToIp;
     }
@@ -618,19 +623,21 @@ public class EntryTransforms {
      */
     public static LocalAddeEntry readResolvLine(String line) {
         boolean disabled = line.startsWith("#");
-        if (disabled)
+        if (disabled) {
             line = line.substring(1);
-        
+        }
         String[] pairs = line.trim().split(",");
         String[] pair;
         Map<String, String> keyVals = new HashMap<String, String>();
         for (int i = 0; i < pairs.length; i++) {
-            if (pairs[i] == null || pairs[i].length() == 0)
+            if (pairs[i] == null || pairs[i].length() == 0) {
                 continue;
+            }
 
             pair = pairs[i].split("=");
-            if (pair.length != 2 || pair[0].length() == 0 || pair[1].length() == 0)
+            if (pair.length != 2 || pair[0].length() == 0 || pair[1].length() == 0) {
                 continue;
+            }
 
             // group
 //            if ("N1".equals(pair[0])) {
@@ -761,9 +768,9 @@ public class EntryTransforms {
     public static String demungeFileMask(final String path) {
         Contract.notNull(path, "how dare you! null paths cannot be munged!");
         int index = path.indexOf("/*");
-        if (index < 0)
+        if (index < 0) {
             return path;
-
+        }
         String tmpFileMask = path.substring(0, index);
         /** Look for "cygwinPrefix" at start of string and munge accordingly */
         if (tmpFileMask.length() > cygwinPrefixLength+1 &&
@@ -787,12 +794,12 @@ public class EntryTransforms {
     public static String mungeFileMask(final String mask) {
         Contract.notNull(mask, "Cannot further munge this mask; it was null upon arriving");
         StringBuilder s = new StringBuilder(100);
-        if (mask.length() > 3 && mask.substring(1, 2).equals(":")) {
+        if (mask.length() > 3 && ":".equals(mask.substring(1, 2))) {
             String newFileMask = mask;
             String driveLetter = newFileMask.substring(0,1).toLowerCase();
             newFileMask = newFileMask.substring(3);
             newFileMask = newFileMask.replace('\\', '/');
-            s.append("/cygdrive/").append(driveLetter).append("/").append(newFileMask);
+            s.append("/cygdrive/").append(driveLetter).append('/').append(newFileMask);
         } else {
             s.append("").append(mask);
         }
@@ -811,8 +818,9 @@ public class EntryTransforms {
      */
     public static List<String> asResolvEntries(final Collection<LocalAddeEntry> entries) {
         List<String> resolvEntries = arrList(entries.size());
-        for (LocalAddeEntry entry : entries)
+        for (LocalAddeEntry entry : entries) {
             resolvEntries.add(asResolvEntry(entry));
+        }
         return resolvEntries;
     }
 
@@ -830,8 +838,9 @@ public class EntryTransforms {
         ServerName servName = format.getServerName();
 
         StringBuilder s = new StringBuilder(100);
-        if (entry.getEntryStatus() != EntryStatus.ENABLED)
-            s.append("#");
+        if (entry.getEntryStatus() != EntryStatus.ENABLED) {
+            s.append('#');
+        }
         s.append("N1=").append(entry.getGroup().toUpperCase())
             .append(",N2=").append(entry.getDescriptor().toUpperCase())
             .append(",TYPE=").append(format.getType())
@@ -846,17 +855,17 @@ public class EntryTransforms {
             s.append(",Q=LALO");
 
         String tmpFileMask = entry.getFileMask();
-        if (tmpFileMask.length() > 3 && tmpFileMask.substring(1, 2).equals(":")) {
+        if (tmpFileMask.length() > 3 && ":".equals(tmpFileMask.substring(1, 2))) {
             String newFileMask = tmpFileMask;
             String driveLetter = newFileMask.substring(0,1).toLowerCase();
             newFileMask = newFileMask.substring(3);
             newFileMask = newFileMask.replace('\\', '/');
-            s.append(",MASK=/cygdrive/").append(driveLetter).append("/").append(newFileMask);
+            s.append(",MASK=/cygdrive/").append(driveLetter).append('/').append(newFileMask);
         } else {
             s.append(",MASK=").append(tmpFileMask);
         }
         // local servers seem to really like trailing commas!
-        s.append("/").append(format.getFileFilter()).append(","); 
+        s.append('/').append(format.getFileFilter()).append(','); 
 
         return s.toString();
     }

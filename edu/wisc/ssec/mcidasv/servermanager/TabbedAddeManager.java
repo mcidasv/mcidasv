@@ -951,20 +951,30 @@ public class TabbedAddeManager extends JFrame {
             File f = fc.getSelectedFile();
             String path = f.getPath();
 
+            boolean defaultUser = false;
             String forceUser = importUser.getText();
             if (forceUser.length() == 0) {
                 forceUser = AddeEntry.DEFAULT_ACCOUNT.getUsername();
+                defaultUser = true;
             }
 
+            boolean defaultProj = false;
             String forceProj = importProject.getText();
             if (forceProj.length() == 0) {
                 forceProj = AddeEntry.DEFAULT_ACCOUNT.getProject();
+                defaultProj = true;
             }
 
-            importMctable(path, forceUser, forceProj);
-            // don't worry about file validity; i'll just assume the user clicked
-            // on the wrong entry by accident.
-            setLastImportPath(f.getParent());
+            
+            if ((importAccountBox.isSelected()) && (defaultUser || defaultProj)) {
+                logger.warn("bad acct dialog: forceUser={} forceProj={}", forceUser, forceProj);
+            } else {
+                logger.warn("acct appears valid: forceUser={} forceProj={}", forceUser, forceProj);
+                importMctable(path, forceUser, forceProj);
+                // don't worry about file validity; i'll just assume the user clicked
+                // on the wrong entry by accident.
+                setLastImportPath(f.getParent());
+            }
         }
     }
 

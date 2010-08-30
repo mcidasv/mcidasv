@@ -34,6 +34,7 @@ package edu.wisc.ssec.mcidasv.servermanager;
  * immutable class.
  */
 public class AddeAccount {
+
     /** Username to hand off to the server. */
     private final String username;
 
@@ -146,7 +147,10 @@ public class AddeAccount {
     }
 
     /**
+     * Returns a {@literal "human-friendly"} representation of this accounting
+     * object. Currently looks like {@code USER / PROJ}.
      * 
+     * @return Friendly accounting detail {@code String}.
      */
     protected String friendlyString() {
         return username+" / "+project;
