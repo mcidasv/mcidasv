@@ -126,23 +126,5 @@ public class AddePointDataSource extends ucar.unidata.data.point.AddePointDataSo
     	return levels;
     }
     
-    
-    
-    
-    
-    
-    
-    
-    protected FieldImpl makeObs(DataChoice dataChoice, DataSelection subset,
-            LatLonRect bbox, boolean sampleIt) throws Exception {
-    	
-    	String source = getSource(dataChoice);
-        AddePointURL temp = AddePointURL.decodeURL(source);
-        
-        System.out.println("source: " + source + ", temp: " + temp.toString());
-
-    	return super.makeObs(dataChoice, subset, bbox, sampleIt);
-    }
-    
 }
 
