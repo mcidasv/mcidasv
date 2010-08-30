@@ -30,6 +30,14 @@
 
 package edu.wisc.ssec.mcidasv;
 
+import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+import static javax.swing.GroupLayout.Alignment.TRAILING;
+import static javax.swing.GroupLayout.DEFAULT_SIZE;
+import static javax.swing.GroupLayout.PREFERRED_SIZE;
+import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
+
+
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -80,6 +88,8 @@ import javax.swing.event.ListSelectionListener;
 
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -129,6 +139,9 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Prefer;
  */
 public class McIdasPreferenceManager extends IdvPreferenceManager implements ListSelectionListener, Constants {
 
+    /** Logger object. */
+    private static final Logger logger = LoggerFactory.getLogger(McIdasPreferenceManager.class);
+
     /** 
      * <p>Controls how the preference panel list is displayed. Want to modify 
      * the preferences UI in some way? PREF_PANELS is your friend. Think of 
@@ -176,8 +189,9 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
      */
     public static RenderingHints getRenderingHints() {
         RenderingHints hints = new RenderingHints(null);
-        for (int i = 0; i < RENDER_HINTS.length; i++)
+        for (int i = 0; i < RENDER_HINTS.length; i++) {
             hints.put(RENDER_HINTS[i][0], RENDER_HINTS[i][1]);
+        }
         return hints;
     }
 
@@ -314,7 +328,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
      */
     @Override public void actionPerformed(ActionEvent event) {
         String cmd = event.getActionCommand();
-        if (!cmd.equals(GuiUtils.CMD_HELP) || labelList == null) {
+        if (!GuiUtils.CMD_HELP.equals(cmd) || labelList == null) {
             super.actionPerformed(event);
             return;
         }
@@ -333,14 +347,12 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     public void replaceServerPreferences(EntryStore.Event evt) {
         EntryStore remoteAddeStore = ((McIDASV)getIdv()).getServerManager();
         AddePreferences prefs = new AddePreferences(remoteAddeStore);
-//        prefs.addPanel(this);
         AddePrefConglomeration eww = prefs.buildPanel((McIDASV)getIdv());
         String name = "SERVER MANAGER";
         mainPane.add(name, eww.getEntryPanel());
         ((CardLayout)mainPane.getLayout()).show(mainPane, name);
     }
 
-    
     /**
      * Add a PreferenceManager to the list of things that should be shown in
      * the preference dialog.
@@ -355,16 +367,18 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         PreferenceManager listener, Container panel, Object data) {
 
         // if there is an alternate name for tabLabel, find and use it.
-        if (replaceMap.containsKey(tabLabel) == true)
+        if (replaceMap.containsKey(tabLabel) == true) {
             tabLabel = replaceMap.get(tabLabel);
+        }
 
-        if (prefMap.containsKey(tabLabel) == true)
+        if (prefMap.containsKey(tabLabel) == true) {
             return;
+        }
 
         // figure out the last panel that was selected.
         int selected = getIdv().getObjectStore().get(LAST_PREF_PANEL, 0);
         if (selected < 0 || selected >= PREF_PANELS.length) {
-            System.err.println("*** Warning: attempted to select an invalid preference panel: "+selected);
+            logger.warn("attempted to select an invalid preference panel: {}", selected);
             selected = 0;
         }
         String selectedPanel = PREF_PANELS[selected][0];
@@ -374,11 +388,11 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         Msg.translateTree(panel);
 
         managerMap.put(tabLabel, listener);
-        if (data == null)
+        if (data == null) {
             dataMap.put(tabLabel, new Hashtable());
-        else
+        } else {
             dataMap.put(tabLabel, data);
-
+        }
         prefMap.put(tabLabel, panel);
 
         if (labelSet.add(tabLabel)) {
@@ -389,8 +403,9 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
 
             labelList.setSelectedIndex(selected);
             mainPane.add(tabLabel, panel);
-            if (selectedPanel.equals(tabLabel))
+            if (selectedPanel.equals(tabLabel)) {
                 ((CardLayout)mainPane.getLayout()).show(mainPane, tabLabel);
+            }
         }
 
         mainPane.repaint();
@@ -490,13 +505,13 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     }
 
     private Container getSelectedPanel(final String name) {
-        if (name.equals(Constants.PREF_LIST_NAV_CONTROLS)) {
+        if (Constants.PREF_LIST_NAV_CONTROLS.equals(name)) {
             return makeEventPanel();
-        }
-        else if (prefMap.containsKey(name))
+        } else if (prefMap.containsKey(name)) {
             return prefMap.get(name);
-        else
+        } else {
             return null;
+        }
     }
 
     /**
@@ -527,7 +542,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             public void valueChanged(ListSelectionEvent e) {
                 if (e.getValueIsAdjusting() == false) {
                     String name = getSelectedName();
-                    if (name.equals(Constants.PREF_LIST_NAV_CONTROLS)) {
+                    if (Constants.PREF_LIST_NAV_CONTROLS.equals(name)) {
                         mainPane.add(name, makeEventPanel());
                         mainPane.validate();
                     }
@@ -545,17 +560,19 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             public void propertyChange(PropertyChangeEvent e) {
 //                System.err.println("prop change: prop="+e.getPropertyName()+" old="+e.getOldValue()+" new="+e.getNewValue());
                 String p = e.getPropertyName();
-                if (!p.equals("Frame.active") && !p.equals("ancestor"))
+                if (!"Frame.active".equals(p) && !"ancestor".equals(p)) {
                     return;
+                }
 
                 Object v = e.getNewValue();
                 boolean okay = false;
-                if (v instanceof Boolean)
+                if (v instanceof Boolean) {
                     okay = ((Boolean)v).booleanValue();
-                else if (v instanceof JPanel)
+                } else if (v instanceof JPanel) {
                     okay = true;
-                else
+                } else {
                     okay = false;
+                }
 
                 if (okay) {
                     if (getSelectedName().equals(Constants.PREF_LIST_NAV_CONTROLS)) {
@@ -574,21 +591,21 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(contents);
         contents.setLayout(layout);
         layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                        .addComponent(listScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(mainPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addComponent(buttonPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(listScrollPane, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
+                .addPreferredGap(RELATED)
+                .addComponent(mainPane, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(buttonPane, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(mainPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(listScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(buttonPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(TRAILING)
+                    .addComponent(mainPane, LEADING, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(listScrollPane, LEADING, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addPreferredGap(RELATED)
+                    .addComponent(buttonPane, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE))
         );
     }
 
@@ -693,9 +710,9 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             final boolean value = ((objects[i].length > 2) ? ((Boolean) objects[i][2]).booleanValue() : true);
 
             if (id == null) {
-                if (i > 0)
+                if (i > 0) {
                     comps.add(new JLabel(" "));
-
+                }
                 comps.add(new JLabel(name));
                 continue;
             }
@@ -712,9 +729,9 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                     });
                 }
             });
-            if (objects[i].length > 3)
+            if (objects[i].length > 3) {
                 cb.setToolTipText(objects[i][3].toString());
-
+            }
             widgets.put(id, cb);
             comps.add(cb);
         }
@@ -724,20 +741,22 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     public void addAdvancedPreferences() {
         Hashtable<String, Component> widgets = new Hashtable<String, Component>();
 
+        McIDASV mcv = (McIDASV)getIdv();
+        
         // Build the threads panel
         Vector threadRenderList = new Vector();
-        for(int i=1;i<=Runtime.getRuntime().availableProcessors();i++) {
+        for(int i = 1;i <= Runtime.getRuntime().availableProcessors();i++) {
             threadRenderList.add(new Integer(i));
         }
-        Integer threadRenderMax = new Integer(getIdv().getMaxRenderThreadCount());
+        Integer threadRenderMax = new Integer(mcv.getMaxRenderThreadCount());
         final JComboBox threadRenderComboBox = McVGuiUtils.makeComboBox(threadRenderList, threadRenderMax);        
         widgets.put(PREF_THREADS_RENDER, threadRenderComboBox);
 
         Vector threadReadList = new Vector();
-        for(int i=1;i<=12;i++) {
+        for(int i = 1; i <= 12; i++) {
             threadReadList.add(new Integer(i));
         }
-        Integer threadReadMax = new Integer(getIdv().getMaxDataThreadCount());
+        Integer threadReadMax = new Integer(mcv.getMaxDataThreadCount());
         final JComboBox threadReadComboBox = McVGuiUtils.makeComboBox(threadReadList, threadReadMax);        
         widgets.put(PREF_THREADS_DATA, threadReadComboBox);
 
@@ -749,9 +768,9 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
 
         // Build the startup options panel
         StartupManager.INSTANCE.getPlatform().setUserDirectory(
-                getIdv().getObjectStore().getUserDirectory().toString());
+                mcv.getObjectStore().getUserDirectory().toString());
         StartupManager.INSTANCE.getPlatform().setAvailableMemory(
-                getIdv().getStateManager().getProperty(Constants.PROP_SYSMEM, "0"));
+               mcv.getStateManager().getProperty(Constants.PROP_SYSMEM, "0"));
         JPanel smPanel = StartupManager.INSTANCE.getAdvancedPanel(true);
         List<JPanel> stuff = Collections.singletonList(smPanel);
 
@@ -768,22 +787,22 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(outerPanel);
         outerPanel.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup(LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(smPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(threadsPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addComponent(smPanel, TRAILING, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(threadsPanel, TRAILING, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup(LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(smPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(smPanel, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
                 .addGap(GAP_UNRELATED)
-                .addComponent(threadsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(threadsPanel, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
+                .addContainerGap(DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         this.add(Constants.PREF_LIST_ADVANCED, "complicated stuff dude", 
@@ -794,6 +813,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
      * Add in the user preference tab for the controls to show
      */
     protected void addDisplayPreferences() {
+        McIDASV mcv = (McIDASV)getIdv();
         cbxToCdMap = new Hashtable<JCheckBox, ControlDescriptor>();
         List<JPanel> compList = new ArrayList<JPanel>();
         List<ControlDescriptor> controlDescriptors = 
@@ -828,27 +848,29 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             catPanel.add(GuiUtils.inset(cbx, new Insets(0, 20, 0, 0)));
         }
 
-        for (CheckboxCategoryPanel cbcp : catPanels)
+        for (CheckboxCategoryPanel cbcp : catPanels) {
             cbcp.checkVisCbx();
+        }
 
         final JButton allOn = new JButton("All on");
         allOn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                for (CheckboxCategoryPanel cbcp : catPanels)
+                for (CheckboxCategoryPanel cbcp : catPanels) {
                     cbcp.toggleAll(true);
+                }
             }
         });
         final JButton allOff = new JButton("All off");
         allOff.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                for (CheckboxCategoryPanel cbcp : catPanels) 
+                for (CheckboxCategoryPanel cbcp : catPanels) {
                     cbcp.toggleAll(false);
+                }
             }
         });
 
         Boolean controlsAll =
-            (Boolean) getIdv().getPreference(PROP_CONTROLDESCRIPTORS_ALL,
-                                             Boolean.TRUE);
+            (Boolean)mcv.getPreference(PROP_CONTROLDESCRIPTORS_ALL, Boolean.TRUE);
         final JRadioButton useAllBtn = new JRadioButton("Use all displays",
                                            controlsAll.booleanValue());
         final JRadioButton useTheseBtn =
@@ -920,7 +942,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                 showAllControls = useAllBtn.isSelected();
 
                 theStore.put(PROP_CONTROLDESCRIPTORS, controlDescriptorsToShow);
-                theStore.put(PROP_CONTROLDESCRIPTORS_ALL,Boolean.valueOf(showAllControls));
+                theStore.put(PROP_CONTROLDESCRIPTORS_ALL, Boolean.valueOf(showAllControls));
             }
         };
 
@@ -1037,37 +1059,37 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(outerPanel);
         outerPanel.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup(LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(navigationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panelPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addComponent(navigationPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panelPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(GAP_RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(colorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(legendPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(fontPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(projPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addComponent(colorPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(legendPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(fontPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(projPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup(LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(navigationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(legendPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(LEADING, false)
+                    .addComponent(navigationPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(legendPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(RELATED)
+                .addGroup(layout.createParallelGroup(LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(colorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(fontPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(projPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(panelPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(colorPanel, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
+                        .addPreferredGap(RELATED)
+                        .addComponent(fontPanel, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
+                        .addPreferredGap(RELATED)
+                        .addComponent(projPanel, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE))
+                    .addComponent(panelPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         PreferenceManager miscManager = new PreferenceManager() {
@@ -1116,14 +1138,15 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             { "Confirm removal of all layers", PREF_CONFIRM_REMOVE_LAYERS, Boolean.TRUE },
             { "Confirm removal of all layers and data sources", PREF_CONFIRM_REMOVE_BOTH, Boolean.TRUE },
         };
-        JPanel generalPanel = makePrefPanel(generalObjects, widgets, getStore());
+        final IdvObjectStore store = getStore();
+        JPanel generalPanel = makePrefPanel(generalObjects, widgets, store);
         generalPanel.setBorder(BorderFactory.createTitledBorder("General"));
 
         // Turn what used to be a set of checkboxes into a corresponding menu selection
         // The options have to be checkboxes in the widget collection
         // That way "applyWidgets" will work as expected
-        boolean shouldRemove = getStore().get(PREF_OPEN_REMOVE, false);
-        boolean shouldMerge  = getStore().get(PREF_OPEN_MERGE, false);
+        boolean shouldRemove = store.get(PREF_OPEN_REMOVE, false);
+        boolean shouldMerge  = store.get(PREF_OPEN_MERGE, false);
         final JCheckBox shouldRemoveCbx = new JCheckBox("You shouldn't see this", shouldRemove);
         final JCheckBox shouldMergeCbx  = new JCheckBox("You shouldn't see this", shouldMerge);
         widgets.put(PREF_OPEN_REMOVE, shouldRemoveCbx);
@@ -1140,6 +1163,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                 case 1:
                     shouldRemoveCbx.setSelected(true);
                     shouldMergeCbx.setSelected(false);
+                    break;
                 case 2:
                     shouldRemoveCbx.setSelected(false);
                     shouldMergeCbx.setSelected(true);
@@ -1156,33 +1180,43 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         loadComboBox.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(final PropertyChangeEvent e) {
                 String prop = e.getPropertyName();
-                if (!prop.equals("ancestor") && !prop.equals("Frame.active"))
+                if (!"ancestor".equals(prop) && !"Frame.active".equals(prop)) {
                     return;
+                }
 
-                boolean remove = getStore().get(PREF_OPEN_REMOVE, false);
-                boolean merge  = getStore().get(PREF_OPEN_MERGE, false);
-
-//                shouldRemoveCbx.setSelected(remove);
-//                shouldMergeCbx.setSelected(merge);
+                boolean remove = store.get(PREF_OPEN_REMOVE, false);
+                boolean merge  = store.get(PREF_OPEN_MERGE, false);
 
                 if (!remove) {
-                    if (!merge) loadComboBox.setSelectedIndex(0);
-                    else loadComboBox.setSelectedIndex(2);
+                    if (!merge) { 
+                        loadComboBox.setSelectedIndex(0);
+                    } else {
+                        loadComboBox.setSelectedIndex(2);
+                    }
                 }
                 else {
-                    if (!merge) loadComboBox.setSelectedIndex(1);
-                    else loadComboBox.setSelectedIndex(3);
+                    if (!merge) {
+                        loadComboBox.setSelectedIndex(1);
+                    } else {
+                        loadComboBox.setSelectedIndex(3);
+                    }
                 }
             }
         });
 
         if (!shouldRemove) {
-            if (!shouldMerge) loadComboBox.setSelectedIndex(0);
-            else loadComboBox.setSelectedIndex(2);
+            if (!shouldMerge) {
+                loadComboBox.setSelectedIndex(0);
+            } else {
+                loadComboBox.setSelectedIndex(2);
+            }
         }
         else {
-            if (!shouldMerge) loadComboBox.setSelectedIndex(1);
-            else loadComboBox.setSelectedIndex(3);
+            if (!shouldMerge) {
+                loadComboBox.setSelectedIndex(1);
+            } else { 
+                loadComboBox.setSelectedIndex(3);
+            }
         }
 
         Object[][] bundleObjects = {
@@ -1214,30 +1248,30 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(outerPanel);
         outerPanel.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup(LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(generalPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(layerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(TRAILING)
+                    .addComponent(generalPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(layerPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(GAP_RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(bundlePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(layerclosedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addComponent(bundlePanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(layerclosedPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup(LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(bundlePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(generalPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(layerclosedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(layerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(LEADING, false)
+                    .addComponent(bundlePanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(generalPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(RELATED)
+                .addGroup(layout.createParallelGroup(LEADING, false)
+                    .addComponent(layerclosedPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(layerPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         this.add(Constants.PREF_LIST_GENERAL, "General Preferences", basicManager, outerPanel, widgets);
@@ -1261,9 +1295,10 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
      * @see IdvPreferenceManager#getDoRemoveBeforeOpening(String)
      */
     @Override public boolean[] getDoRemoveBeforeOpening(String name) {
-        boolean shouldAsk    = getStore().get(PREF_OPEN_ASK, true);
-        boolean shouldRemove = getStore().get(PREF_OPEN_REMOVE, false);
-        boolean shouldMerge  = getStore().get(PREF_OPEN_MERGE, false);
+        IdvObjectStore store = getStore();
+        boolean shouldAsk    = store.get(PREF_OPEN_ASK, true);
+        boolean shouldRemove = store.get(PREF_OPEN_REMOVE, false);
+        boolean shouldMerge  = store.get(PREF_OPEN_MERGE, false);
 
         if (shouldAsk) {
             JComboBox loadComboBox = new JComboBox(loadComboOptions);
@@ -1271,35 +1306,41 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             JCheckBox askCbx = new JCheckBox("Don't show this window again", false);
 
             if (!shouldRemove) {
-                if (!shouldMerge) loadComboBox.setSelectedIndex(0);
-                else loadComboBox.setSelectedIndex(2);
+                if (!shouldMerge) {
+                    loadComboBox.setSelectedIndex(0);
+                } else { 
+                    loadComboBox.setSelectedIndex(2);
+                }
             }
             else {
-                if (!shouldMerge) loadComboBox.setSelectedIndex(1);
-                else loadComboBox.setSelectedIndex(3);
+                if (!shouldMerge) {
+                    loadComboBox.setSelectedIndex(1);
+                } else {
+                    loadComboBox.setSelectedIndex(3);
+                }
             }
 
             JPanel inner = new JPanel();
             javax.swing.GroupLayout layout = new javax.swing.GroupLayout(inner);
             inner.setLayout(layout);
             layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                layout.createParallelGroup(LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(loadComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(LEADING)
+                        .addComponent(loadComboBox, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(preferenceCbx)
                         .addComponent(askCbx))
                     .addContainerGap())
             );
             layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                layout.createParallelGroup(LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(loadComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(loadComboBox, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
+                    .addPreferredGap(RELATED)
                     .addComponent(preferenceCbx)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addPreferredGap(RELATED)
                     .addComponent(askCbx)
                     .addContainerGap())
             );
@@ -1309,7 +1350,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             }
 
             switch (loadComboBox.getSelectedIndex()) {
-                case 0: // replace session
+                case 0: // new windows
                     shouldRemove = false;
                     shouldMerge = false;
                     break;
@@ -1317,11 +1358,11 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                     shouldRemove = true;
                     shouldMerge = false;
                     break;
-                case 2: // create new windows
+                case 2: // add new tab(s) to current
                     shouldRemove = false;
                     shouldMerge = true;
                     break;
-                case 3: // add new tabs to current window
+                case 3: // replace session
                     shouldRemove = true;
                     shouldMerge = true;
                     break;
@@ -1329,10 +1370,10 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
 
             // Save these as default preference if the user wants to
             if (preferenceCbx.isSelected()) {
-                getStore().put(PREF_OPEN_REMOVE, shouldRemove);
-                getStore().put(PREF_OPEN_MERGE, shouldMerge);
+                store.put(PREF_OPEN_REMOVE, shouldRemove);
+                store.put(PREF_OPEN_MERGE, shouldMerge);
             }
-            getStore().put(PREF_OPEN_ASK, !askCbx.isSelected());
+            store.put(PREF_OPEN_ASK, !askCbx.isSelected());
         }
         return new boolean[] { true, shouldRemove, shouldMerge };
     }
@@ -1463,10 +1504,10 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         javax.swing.GroupLayout formatLayout = new javax.swing.GroupLayout(formatPanel);
         formatPanel.setLayout(formatLayout);
         formatLayout.setHorizontalGroup(
-            formatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            formatLayout.createParallelGroup(LEADING)
             .addGroup(formatLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(formatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(formatLayout.createParallelGroup(LEADING)
                     .addGroup(formatLayout.createSequentialGroup()
                         .addComponent(dateLabel)
                         .addGap(GAP_RELATED)
@@ -1497,36 +1538,36 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                         .addComponent(distanceLabel)
                         .addGap(GAP_RELATED)
                         .addComponent(distanceComboBox)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(DEFAULT_SIZE, Short.MAX_VALUE))
         );
         formatLayout.setVerticalGroup(
-            formatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            formatLayout.createParallelGroup(LEADING)
             .addGroup(formatLayout.createSequentialGroup()
-                .addGroup(formatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(formatLayout.createParallelGroup(BASELINE)
                     .addComponent(dateComboBox)
                     .addComponent(dateLabel)
                     .addComponent(dateHelpButton)
                     .addComponent(dateExLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(formatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addPreferredGap(RELATED)
+                .addGroup(formatLayout.createParallelGroup(BASELINE)
                     .addComponent(timeComboBox)
                     .addComponent(timeLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(formatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addPreferredGap(RELATED)
+                .addGroup(formatLayout.createParallelGroup(BASELINE)
                     .addComponent(latlonComboBox)
                     .addComponent(latlonLabel)
                     .addComponent(latlonHelpButton)
                     .addComponent(latlonExLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(formatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addPreferredGap(RELATED)
+                .addGroup(formatLayout.createParallelGroup(BASELINE)
                     .addComponent(probeComboBox)
                     .addComponent(probeLabel)
                     .addComponent(probeHelpButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(formatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addPreferredGap(RELATED)
+                .addGroup(formatLayout.createParallelGroup(BASELINE)
                     .addComponent(distanceComboBox)
                     .addComponent(distanceLabel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         JPanel dataPanel = new JPanel();
@@ -1590,10 +1631,10 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         javax.swing.GroupLayout dataLayout = new javax.swing.GroupLayout(dataPanel);
         dataPanel.setLayout(dataLayout);
         dataLayout.setHorizontalGroup(
-            dataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            dataLayout.createParallelGroup(LEADING)
             .addGroup(dataLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(dataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(dataLayout.createParallelGroup(LEADING)
                     .addGroup(dataLayout.createSequentialGroup()
                         .addComponent(sampleLabel)
                         .addGap(GAP_RELATED)
@@ -1622,37 +1663,37 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                         .addComponent(gridLabel)
                         .addGap(GAP_RELATED)
                         .addComponent(gridFieldComponent)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(DEFAULT_SIZE, Short.MAX_VALUE))
         );
         dataLayout.setVerticalGroup(
-            dataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            dataLayout.createParallelGroup(LEADING)
             .addGroup(dataLayout.createSequentialGroup()
-                .addGroup(dataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(dataLayout.createParallelGroup(BASELINE)
                     .addComponent(sampleLabel)
                     .addComponent(sampleWA)
                     .addComponent(sampleNN))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(dataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addPreferredGap(RELATED)
+                .addGroup(dataLayout.createParallelGroup(BASELINE)
                     .addComponent(verticalLabel)
                     .addComponent(verticalSA)
                     .addComponent(verticalV5D))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(dataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addPreferredGap(RELATED)
+                .addGroup(dataLayout.createParallelGroup(BASELINE)
                     .addComponent(cacheLabel)
                     .addComponent(cacheCheckBox))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(dataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addPreferredGap(RELATED)
+                .addGroup(dataLayout.createParallelGroup(BASELINE)
                     .addComponent(cacheEmptyLabel)
                     .addComponent(cacheTextFieldComponent))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(dataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addPreferredGap(RELATED)
+                .addGroup(dataLayout.createParallelGroup(BASELINE)
                     .addComponent(imageLabel)
                     .addComponent(imageFieldComponent))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(dataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addPreferredGap(RELATED)
+                .addGroup(dataLayout.createParallelGroup(BASELINE)
                     .addComponent(gridLabel)
                     .addComponent(gridFieldComponent))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(DEFAULT_SIZE, Short.MAX_VALUE))
         ); 
 
         JPanel outerPanel = new JPanel();
@@ -1661,22 +1702,22 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(outerPanel);
         outerPanel.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup(LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(formatPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(dataPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addComponent(formatPanel, TRAILING, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(dataPanel, TRAILING, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup(LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(formatPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(formatPanel, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
                 .addGap(GAP_UNRELATED)
-                .addComponent(dataPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(dataPanel, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
+                .addContainerGap(DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         PreferenceManager formatsManager = new PreferenceManager() {

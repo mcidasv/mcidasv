@@ -391,29 +391,28 @@ public class PersistenceManager extends IdvPersistenceManager {
                 return false;
             }
 
-            if (!ok[1] && !ok[2]) {
+            if (!ok[1] && !ok[2]) { // create new [opt=0]
                 removeAll = false;
                 shouldMerge = false;
                 mergeLayers = false;
             }
-            if (!ok[1] && ok[2]) {
+            if (!ok[1] && ok[2]) { // add new tabs [opt=2]
                 removeAll = false;
                 shouldMerge = true;
                 mergeLayers = false;
             }
-            if (ok[1] && !ok[2]) {
+            if (ok[1] && !ok[2]) { // merge with active [opt=1]
                 removeAll = false;
                 shouldMerge = false;
                 mergeLayers = true;
             }
-            if (ok[1] && ok[2]) {
+            if (ok[1] && ok[2]) { // replace session [opt=3]
                 removeAll = true;
                 shouldMerge = true;
                 mergeLayers = false;
             }
 
-//          System.err.println("ok[1]= "+ok[1]+" ok[2]="+ok[2]);
-          System.err.println("removeAll="+removeAll+" shouldMerge="+shouldMerge+" mergeLayers="+mergeLayers);
+            logger.trace("removeAll={} shouldMerge={} mergeLayers={}", new Object[] { removeAll, shouldMerge, mergeLayers });
 
             setMergeBundledLayers(mergeLayers);
 
