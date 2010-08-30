@@ -4881,7 +4881,7 @@
                 <string><![CDATA[default]]></string>
             </property>
             <property name="Category">
-                <string><![CDATA[System]]></string>
+                <string><![CDATA[System>Legacy]]></string>
             </property>
             <property name="Table">
                 <array class="[F" length="4">
