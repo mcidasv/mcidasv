@@ -32,6 +32,8 @@ package edu.wisc.ssec.mcidasv.chooser.adde;
 
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 
+import static edu.wisc.ssec.mcidasv.servermanager.AddeEntry.DEFAULT_ACCOUNT;
+
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -50,14 +52,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -81,11 +81,15 @@ import org.slf4j.LoggerFactory;
 
 import org.w3c.dom.Element;
 
+import visad.DateTime;
+
+import edu.wisc.ssec.mcidas.adde.AddeURLException;
+import edu.wisc.ssec.mcidas.adde.DataSetInfo;
+
 import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.idv.chooser.adde.AddeServer.Group;
-import ucar.unidata.idv.ui.BundleTree;
 import ucar.unidata.util.DatedThing;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
@@ -93,17 +97,11 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.PreferenceList;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.xml.XmlObjectStore;
-import ucar.unidata.xml.XmlResourceCollection;
-import ucar.unidata.xml.XmlUtil;
-import visad.DateTime;
-import edu.wisc.ssec.mcidas.adde.AddeURLException;
-import edu.wisc.ssec.mcidas.adde.DataSetInfo;
+
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
-import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
 import edu.wisc.ssec.mcidasv.ParameterSet;
 import edu.wisc.ssec.mcidasv.PersistenceManager;
-import edu.wisc.ssec.mcidasv.ResourceManager;
 import edu.wisc.ssec.mcidasv.servermanager.AddeAccount;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry;
 import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
@@ -336,20 +334,44 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
 
     /**
-     * Returns a {@link Map} with {@code user} and {@code proj} keys. The values
-     * are either the accounting information associated with {@code server} or
-     * the {@link AddeEntry#DEFAULT_ACCOUNT} values.
+     * Returns a {@link java.util.Map Map} containing {@code user} and {@code proj}
+     * keys for the given {@code server/group} combination.
+     * 
+     * <p>The values are either the specific ADDE account details for 
+     * {@code server/group} or {@link edu.wisc.ssec.mcidasv.servermanager.AddeEntry#DEFAULT_ACCOUNT DEFAULT_ACCOUNT}
+     * values.
+     * 
+     * @param server Server name. Should not be {@code null}.
+     * @param group Group name on {@code name}. Should not be {@code null}.
+     * 
+     * @return {@code Map} containing the accounting details for {@code server/group}.
      */
-    private Map<String, String> getAccounting(final AddeServer server, final String group) {
+    protected Map<String, String> getAccounting(final String server, final String group) {
         Map<String, String> acctInfo = new HashMap<String, String>();
         EntryStore entryStore = ((McIDASV)getIdv()).getServerManager();
-        String name = server.getName();
         String strType = this.getDataType();
         EntryType type = EntryTransforms.strToEntryType(strType);
-        AddeAccount acct = entryStore.getAccountingFor(name, group, type);
+        AddeAccount acct = entryStore.getAccountingFor(server, group, type);
         acctInfo.put("user", acct.getUsername());
         acctInfo.put("proj", acct.getProject());
         return acctInfo;
+    }
+
+    /**
+     * Returns a {@link java.util.Map Map} containing {@code user} and {@code proj}
+     * keys for the given {@code server/group} combination.
+     * 
+     * <p>The values are either the specific ADDE account details for 
+     * {@code server/group} or {@link edu.wisc.ssec.mcidasv.servermanager.AddeEntry#DEFAULT_ACCOUNT DEFAULT_ACCOUNT}
+     * values.
+     * 
+     * @param server Server name. Should not be {@code null}.
+     * @param group Group name on {@code name}. Should not be {@code null}.
+     * 
+     * @return {@code Map} containing the accounting details for {@code server/group}.
+     */
+    protected Map<String, String> getAccounting(final AddeServer server, final String group) {
+        return getAccounting(server.getName(), group);
     }
 
     private List<AddeServer> getManagedServers(final String type) {
@@ -394,29 +416,50 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             }
             
             int index = getSelectorIndex(selected, serverSelector);
-//            serverSelector.setSelectedItem(selected);
             serverSelector.setSelectedIndex(index);
         }
     }
 
+    /**
+     * Searches the given {@link java.util.List List} of {@link ucar.unidata.idv.chooser.AddeServer AddeServers}
+     * for {@code server}.
+     * 
+     * @param servers Servers to search. {@code null} is permitted.
+     * @param server Server to search for within {@code servers}. {@code null} is permitted.
+     * 
+     * @return {@code true} if {@code servers} contains {@code server} or {@code false} otherwise.
+     */
     protected static boolean containsServerName(final List<AddeServer> servers, final Object server) {
-        if (servers == null || server == null)
+        if (servers == null || server == null) {
             return false;
+        }
         String serverName = (server instanceof AddeServer) ? ((AddeServer)server).getName() : server.toString();
         for (AddeServer tmp : servers) {
-            if (tmp.getName().equals(serverName))
+            if (tmp.getName().equals(serverName)) {
                 return true;
+            }
         }
         return false;
     }
 
+    /**
+     * Searches the given {@link java.util.List List} of {@link ucar.unidata.idv.chooser.AddeServer.Group Groups}
+     * for {@code group}.
+     * 
+     * @param groups Groups to search. {@code null} is permitted.
+     * @param group Group to search for within {@code group}. {@code null} is permitted.
+     * 
+     * @return {@code true} if {@code groups} contains {@code group} or {@code false} otherwise.
+     */
     protected static boolean containsGroupName(final List<Group> groups, final Object group) {
-        if (groups == null || group == null)
+        if (groups == null || group == null) {
             return false;
+        }
         String groupName = (group instanceof Group) ? ((Group)group).getName() : group.toString();
         for (Group tmp : groups) {
-            if (tmp.getName().equals(groupName))
+            if (tmp.getName().equals(groupName)) {
                 return true;
+            }
         }
         return false;
     }
@@ -761,29 +804,50 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         handleUpdate();
     }
     
-    protected void handleConnectionError(Exception e) {
-    	if (e != null && e.getMessage() != null) {
-    		String msg = e.getMessage();
-    		int msgPos = msg.indexOf("AddeURLException:");
-    		if (msgPos >= 0 && msg.length() > 18) {
-    			msg = msg.substring(msgPos + 18);
+    @Override protected void handleConnectionError(Exception e) {
+        if (e != null && e.getMessage() != null) {
+            String msg = e.getMessage();
+            int msgPos = msg.indexOf("AddeURLException:");
+            if (msgPos >= 0 && msg.length() > 18) {
+                msg = msg.substring(msgPos + 18);
                 setState(STATE_UNCONNECTED);
-        		setHaveData(false);
-        		resetDescriptorBox();
-        		GuiUtils.showDialog("ADDE Error", new JLabel(msg));
-        		return;
-    		}
-    		if (msg.indexOf("Connecting to server:localhost:") >= 0) {
+                setHaveData(false);
+                resetDescriptorBox();
+                GuiUtils.showDialog("ADDE Error", new JLabel(msg));
+                return;
+            }
+            if (msg.indexOf("Connecting to server:localhost:") >= 0) {
                 setState(STATE_UNCONNECTED);
-        		setHaveData(false);
-        		resetDescriptorBox();
-    			GuiUtils.showDialog("ADDE Error", new JLabel("Local server is not responding"));
-    			return;
-    		}
-    	}
-    	super.handleConnectionError(e);
+                setHaveData(false);
+                resetDescriptorBox();
+                GuiUtils.showDialog("ADDE Error", new JLabel("Local server is not responding"));
+                return;
+            }
+        }
+        super.handleConnectionError(e);
     }
 
+    /**
+     * Handle unknown data set error
+     */
+    @Override protected void handleUnknownDataSetError() {
+        String server = getServer();
+        String group = getGroup();
+        Map<String, String> acct = getAccounting(server, group);
+        String user = acct.get("user");
+        String proj = acct.get("proj");
+
+        StringBuilder msg = new StringBuilder("Could not connect to dataset \"");
+        msg.append(getGroup()).append("\" on server \"").append(getServer()).append("\".");
+        if (DEFAULT_ACCOUNT.getUsername().equals(user) && DEFAULT_ACCOUNT.getProject().equals(proj)) {
+            msg.append("\n\nDataset may require ADDE accounting information.");
+        } else {
+            msg.append("\n\nAccounting information:\nusername: \"")
+            .append(user).append("\"\nproject: \"").append(proj).append('"');
+        }
+        LogUtil.userErrorMessage(msg.toString());
+        setState(STATE_UNCONNECTED);
+    }
 
     /**
      * Handle the event
