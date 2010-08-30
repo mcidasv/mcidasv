@@ -307,7 +307,7 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
 
     @Override public boolean setData(DataChoice dataChoice) throws VisADException, RemoteException {
         boolean result = super.setData(dataChoice);
-        logger.trace("result: {}, choice: {}", dataChoice, result);
+        logger.trace("result: {}, dataChoice: {}", result, dataChoice);
         return result;
     }
 
