@@ -39,6 +39,8 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.bushe.swing.event.EventBus;
+
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Resource;
@@ -59,6 +61,12 @@ public class CheckboxCategoryPanel extends JPanel implements ChangeListener {
 
     /** Are we currently in checkVisCbx */
     private boolean checking = false;
+
+    /** Visibility of the panel. */
+    private boolean panelOpen;
+
+    /** Panel's name. */
+    private String catName;
 
     /** The list of checkboxes */
     private List<JCheckBox> items = new ArrayList<JCheckBox>();
@@ -82,8 +90,10 @@ public class CheckboxCategoryPanel extends JPanel implements ChangeListener {
      * @param visible Is it initially visible
      */
     public CheckboxCategoryPanel(final String catName, final boolean visible) {
+        this.catName = catName;
         setLayout(new GridLayout(0, 1, 0, 0));
         setVisible(visible);
+        panelOpen = visible;
         final CheckboxCategoryPanel theCatPanel = this;
         toggleBtn = GuiUtils.getImageButton(categoryClosedIcon);
         toggleBtn.addMouseListener(new MouseAdapter() {
@@ -91,10 +101,13 @@ public class CheckboxCategoryPanel extends JPanel implements ChangeListener {
                 if (theCatPanel.isVisible()) {
                     theCatPanel.setVisible(false);
                     toggleBtn.setIcon(categoryClosedIcon);
+                    panelOpen = false;
                 } else {
                     theCatPanel.setVisible(true);
                     toggleBtn.setIcon(categoryOpenIcon);
+                    panelOpen = true;
                 }
+                EventBus.publish("CheckboxCategoryPanel.PanelToggled", theCatPanel);
             }
         });
 
@@ -106,6 +119,20 @@ public class CheckboxCategoryPanel extends JPanel implements ChangeListener {
         });
         normalFont  = visCbx.getFont();
         specialFont = normalFont.deriveFont(Font.ITALIC | Font.BOLD);
+    }
+
+    /**
+     * Name of the current category.
+     */
+    public String getCategoryName() {
+        return catName;
+    }
+
+    /**
+     * Is the category panel currently visible?
+     */
+    public boolean isOpen() {
+        return panelOpen;
     }
 
     /**
