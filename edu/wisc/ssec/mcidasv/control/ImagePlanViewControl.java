@@ -306,7 +306,11 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
     }
 
     @Override public void setRange(final Range newRange) throws RemoteException, VisADException {
-        logger.trace("newRange: {} curRange: {} low: {} high: {}", new Object[] { newRange, getRange(), histoWrapper.getLow(), histoWrapper.getHigh() });
+        if (histoWrapper != null) {
+            logger.trace("newRange: {} curRange: {} low: {} high: {}", new Object[] { newRange, getRange(), histoWrapper.getLow(), histoWrapper.getHigh() });
+        } else {
+            logger.trace("newRange: {} [avoiding NPE!]", newRange);
+        }
         super.setRange(newRange);
     }
         
