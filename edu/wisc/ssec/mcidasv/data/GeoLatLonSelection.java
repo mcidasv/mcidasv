@@ -644,6 +644,15 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                           getGeoLocationInfo();
                       }
                   };
+                  
+                  this.maxLines = this.previewDir.getLines();
+                  this.maxEles = this.previewDir.getElements();
+                  
+                  int lmag = getLineMag();
+                  int emag = getElementMag();
+                  if (lmag < 0) this.numLines = this.maxLines / Math.abs(lmag);
+                  if (emag < 0) this.numEles = this.maxEles / Math.abs(emag);
+
                   setNumLines(this.numLines);
                   numLinesFld    = new JTextField(Integer.toString(this.numLines), 4);
                   numLinesFld.addActionListener(sizeChange);
@@ -656,7 +665,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   numElementsFld.setToolTipText("Number of elements");
                   GuiUtils.tmpInsets = dfltGridSpacing;
                   sizeLbl            = GuiUtils.lLabel("");
-
 
                   fullResBtn = GuiUtils.makeImageButton(
                       "/auxdata/ui/icons/arrow_out.png", this,
@@ -672,8 +680,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   lockBtn.setToolTipText(
                                   "Unlock to automatically change size when changing magnification");
 
-                  this.maxLines = this.previewDir.getLines();
-                  this.maxEles = this.previewDir.getElements();
                   rawSizeLbl = new JLabel(" Raw size: " + this.maxLines + " X " + 
                                                           this.maxEles);
                   JPanel sizePanel =
@@ -1992,7 +1998,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         int eMagOld = getElementMag();
         int lSizeOld = getNumLines();
         int eSizeOld = getNumEles();
-
+        
         double baseLResNew = getBLRes();
         double baseEResNew = getBERes();
         try {
@@ -2016,10 +2022,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         int lSizeNew = (int)Math.floor(((double)lSizeOld * lResOld / lResNew) + 0.5);
         if (lSizeNew > this.maxLines) lSizeNew = this.maxLines;
         int eSizeNew = (int)Math.floor(((double)eSizeOld * eResOld / eResNew) + 0.5);
-        if (eSizeNew > this.maxEles) eSizeNew = this.maxEles;
+        if (eSizeNew > this.maxEles) eSizeNew = this.maxEles;        
         setNumLines(lSizeNew);
         setNumEles(eSizeNew);
-
+        
         this.baseLRes = baseLResNew;
         this.baseERes = baseEResNew;
 
