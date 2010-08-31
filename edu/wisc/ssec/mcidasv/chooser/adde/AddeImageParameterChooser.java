@@ -258,7 +258,9 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
                 ht.put(UNIT_KEY, (Object)(restoreElement.getAttribute(ATTR_UNIT)));
             }
         }
-        ht.put(PREVIEW_KEY, (Object)previewBox.isSelected());
+//        ht.put(PREVIEW_KEY, (Object)previewBox.isSelected());
+        // Preview always on for now
+        ht.put(PREVIEW_KEY, (Object)true);
 	}
     
 	/**
@@ -301,10 +303,11 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
         McVGuiUtils.setComponentWidth(navComboBox, McVGuiUtils.Width.DOUBLE);
 
 		// Preview checkbox
-		JLabel previewLabel = McVGuiUtils.makeLabelRight("Preview:");
-		addDescComp(previewLabel);
-        previewBox = new JCheckBox("Create preview image", true);
-        addDescComp(previewBox);
+        // Don't show this for now...
+//		JLabel previewLabel = McVGuiUtils.makeLabelRight("Preview:");
+//		addDescComp(previewLabel);
+//        previewBox = new JCheckBox("Create preview image", true);
+//        addDescComp(previewBox);
 
 		org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
 		myPanel.setLayout(layout);
@@ -323,11 +326,7 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
 												.add(layout.createSequentialGroup()
 														.add(navigationLabel)
 														.add(GAP_RELATED)
-														.add(navComboBox))
-														.add(layout.createSequentialGroup()
-																.add(previewLabel)
-																.add(GAP_RELATED)
-																.add(previewBox))))
+														.add(navComboBox))))
 		);
 		layout.setVerticalGroup(
 				layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -342,10 +341,7 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
 										.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
 										.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
 												.add(navigationLabel)
-												.add(navComboBox))
-												.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-														.add(previewLabel)
-														.add(previewBox)))
+												.add(navComboBox)))
 		);
 
         setInnerPanel(myPanel);
