@@ -31,19 +31,25 @@
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
 
+import java.awt.IllegalComponentStateException;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
@@ -54,6 +60,7 @@ import ucar.unidata.data.AddeUtil;
 import ucar.unidata.data.point.AddePointDataSource;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.chooser.adde.AddeServer;
+import ucar.unidata.ui.DateTimePicker;
 import ucar.unidata.ui.symbol.StationModel;
 import ucar.unidata.ui.symbol.StationModelManager;
 import ucar.unidata.util.GuiUtils;
@@ -61,6 +68,7 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.visad.UtcDate;
 import visad.DateTime;
+import visad.VisADException;
 import edu.wisc.ssec.mcidas.McIDASUtil;
 import edu.wisc.ssec.mcidas.adde.AddePointDataReader;
 import edu.wisc.ssec.mcidas.adde.DataSetInfo;
@@ -95,6 +103,16 @@ public class AddePointDataChooser extends AddeChooser {
     /** the relative time increment */
     private float relativeTimeIncrement = 1;
     
+	/** archive date */
+	protected String archiveDay = null;
+
+	/** archive day button and label */
+	protected JLabel archiveDayLabel;
+	protected JButton archiveDayBtn;
+
+	/** archive date formatter */
+	private SimpleDateFormat archiveDayFormatter;
+
     /** station model manager */
     private StationModelManager stationModelManager;
     
@@ -133,9 +151,26 @@ public class AddePointDataChooser extends AddeChooser {
         McVGuiUtils.setComponentWidth(relTimeIncBox, Width.ONEHALF);
     	
         descriptorsAllowPrefix = "";
-                
+        
+		archiveDayBtn = GuiUtils.makeImageButton(
+				"/auxdata/ui/icons/calendar_edit.png", this, "getArchiveDay", null,
+				true);
+		archiveDayBtn.setToolTipText("Select a day for archive datasets");
+		archiveDayLabel = new JLabel("Select day:");
+		archiveDayFormatter = new SimpleDateFormat(UtcDate.YMD_FORMAT);
     }
     
+	/**
+	 * Do server connection stuff... override this with type-specific methods
+	 */
+	protected void readFromServer() {
+		archiveDay = null;
+		if (archiveDayLabel != null) {
+			archiveDayLabel.setText("Select day:");
+		}
+		super.readFromServer();
+	}
+
     /**
      *  Generate a list of image descriptors for the descriptor list.
      */
@@ -204,6 +239,70 @@ public class AddePointDataChooser extends AddeChooser {
         showNormalCursor();
     }
         
+	/**
+	 * Show the archive dialog. This method is not meant to be called but is
+	 * public by reason of implementation (or insanity).
+	 */
+	public void getArchiveDay() {
+		final JDialog dialog = GuiUtils.createDialog("Set Archive Day", true);
+		final DateTimePicker dtp = new DateTimePicker((Date) null, false);
+		if (archiveDay != null) {
+			if (archiveDayFormatter == null) {
+				archiveDayFormatter = new SimpleDateFormat(UtcDate.YMD_FORMAT);
+			}
+			Date d = null;
+			try {
+				d = archiveDayFormatter.parse(archiveDay);
+				dtp.setDate(d);
+			} catch (Exception e) {
+				logException("parsing archive day " + archiveDay, e);
+			}
+		}
+
+		ActionListener listener = new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				String cmd = ae.getActionCommand();
+				if (cmd.equals(GuiUtils.CMD_REMOVE)) {
+					archiveDay = null;
+					archiveDayLabel.setText("Select day:");
+					setDoAbsoluteTimes(true);
+					descriptorChanged();
+				} else if (cmd.equals(GuiUtils.CMD_OK)) {
+					try {
+						DateTime dt = new DateTime(dtp.getDate());
+						String myDay = UtcDate.getYMD(dt);
+						// archiveDayLabel.setText(UtcDate.formatUtcDate(dt,
+						// "MMM dd, yyyy"));
+						archiveDayLabel.setText(myDay);
+					} catch (Exception e) {
+					}
+					// System.out.println("archiveDay = " + archiveDay);
+					setDoAbsoluteTimes(true);
+					descriptorChanged();
+				}
+				dialog.dispose();
+			}
+		};
+
+		JPanel buttons = GuiUtils.makeButtons(listener, new String[] {
+				GuiUtils.CMD_OK, GuiUtils.CMD_REMOVE, GuiUtils.CMD_CANCEL });
+
+		JComponent contents = GuiUtils.topCenterBottom(GuiUtils.inset(GuiUtils
+				.lLabel("Please select a day for this dataset:"), 10), GuiUtils
+				.inset(dtp, 10), buttons);
+		Point p = new Point(200, 200);
+		if (archiveDayBtn != null) {
+			try {
+				p = archiveDayBtn.getLocationOnScreen();
+			} catch (IllegalComponentStateException ice) {
+			}
+		}
+		dialog.setLocation(p);
+		dialog.getContentPane().add(contents);
+		dialog.pack();
+		dialog.setVisible(true);
+	}
+
     /**
      * Get the selected station model.
      *
@@ -225,9 +324,10 @@ public class AddePointDataChooser extends AddeChooser {
      * @return superclass component with extra stuff
      */
     protected JPanel makeTimesPanel() {
-    	JComponent extra = getExtraTimeComponent();
-    	GuiUtils.enableTree(extra, false);
-    	JPanel timesPanel = super.makeTimesPanel(extra, null);
+    	JComponent extra1 = getExtraTimeComponentRelative();
+    	GuiUtils.enableTree(extra1, false);
+    	JComponent extra2 = getExtraTimeComponentAbsolute();
+    	JPanel timesPanel = super.makeTimesPanel(extra1, extra2);
     	return timesPanel;
     }
     
@@ -235,7 +335,7 @@ public class AddePointDataChooser extends AddeChooser {
      * Get the extra time widget, but built in a different way.
      * Designed to be put into a GroupLayout
      */
-    protected JComponent getExtraTimeComponent() {
+    protected JComponent getExtraTimeComponentRelative() {
     	TwoFacedObject[] intervals = { 
     			new TwoFacedObject("30 minute", .5f),
     			new TwoFacedObject("Hourly", 1f),
@@ -250,6 +350,16 @@ public class AddePointDataChooser extends AddeChooser {
         
         return McVGuiUtils.makeLabeledComponent(relTimeIncLabel, relTimeIncBox, McVGuiUtils.Position.LEFT);
     }
+    
+	/**
+	 * Get the time popup widget
+	 * 
+	 * @return a widget for selecing the day
+	 */
+	protected JComponent getExtraTimeComponentAbsolute() {
+		return null;
+//		return McVGuiUtils.makeLabeledComponent(archiveDayLabel, archiveDayBtn);
+	}
         
     /**
      * Get the value from the relative increment box
@@ -426,7 +536,15 @@ public class AddePointDataChooser extends AddeChooser {
         appendKeyValue(buf, PROP_USER, getLastAddedUser());
         appendKeyValue(buf, PROP_PROJ, getLastAddedProj());
         appendKeyValue(buf, PROP_DESCR, getDescriptor());
-        appendTimesRequest(buf);
+        if (!isUpperAir() && !tryWithoutSampling) {
+//            appendKeyValue(buf, PROP_POS, "0");
+        	appendKeyValue(buf, PROP_POS, "ALL");
+        	appendKeyValue(buf, PROP_SELECT, "'DAY "+getJulianDay()+";LAT 38 42;LON 70 75'");
+        }
+        else {
+        	appendKeyValue(buf, PROP_SELECT, "'DAY "+getJulianDay()+"'");
+        	appendKeyValue(buf, PROP_POS, "ALL");
+        }
         if (getDoAbsoluteTimes()) {
             appendKeyValue(buf, PROP_NUM, "ALL");
         }
@@ -435,17 +553,19 @@ public class AddePointDataChooser extends AddeChooser {
     }
     
     /**
-     * Override this to determine how to select sample
+     * Get the current  Julian day as a String
+     *
+     * @return the current day as a string (yyyyDDD)
      */
-    protected void appendTimesRequest(StringBuffer buf) {
-        if (!isUpperAir() && !tryWithoutSampling) {
-//            appendKeyValue(buf, PROP_POS, "0");
-            appendKeyValue(buf, PROP_POS, "ALL");
-        	appendKeyValue(buf, PROP_SELECT, "'LAT 39.5 40.5;LON 104.5 105.5'");
-        }
-        else {
-            appendKeyValue(buf, PROP_POS, "ALL");
-        }
+    // TODO: This should really be more accessible
+    private String getJulianDay() {
+        String retString = "";
+        try {
+            DateTime dt = new DateTime();
+            retString = UtcDate.formatUtcDate(dt, "yyyyDDD");
+        } catch (VisADException ve) {}
+        return retString;
+
     }
     
     /**
@@ -456,6 +576,18 @@ public class AddePointDataChooser extends AddeChooser {
     public String getDataName() {
         return "Point Data";
     }
+    
+    /**
+     * _more_
+     */
+    public void doCancel() {
+        readTimesTask = null;
+        setState(STATE_UNCONNECTED);
+        super.doCancel();
+    }
+
+    /** locking mutex */
+    private Object MUTEX = new Object();
     
     /**
      *  Read the set of image times available for the current server/group/type
@@ -489,18 +621,6 @@ public class AddePointDataChooser extends AddeChooser {
         });
     }
 
-    /**
-     * _more_
-     */
-    public void doCancel() {
-        readTimesTask = null;
-        setState(STATE_UNCONNECTED);
-        super.doCancel();
-    }
-
-    /** locking mutex */
-    private Object MUTEX = new Object();
-    
     /**
      * Set the list of dates/times based on the image selection
      *
@@ -610,6 +730,19 @@ public class AddePointDataChooser extends AddeChooser {
                 return "";
             }
 
+            if (archiveDay!=null) {
+            	System.out.println("archiveDay: " + archiveDay);
+				try {
+					Date d = archiveDayFormatter.parse(archiveDay);
+					DateTime dt = new DateTime(d);
+					System.out.println("parsed to: " + dt.toString());
+					buf.append("day " + UtcDate.getIYD(dt) + ";");
+				} catch (Exception e) {
+					System.out.println("archiveDay parse error");
+				}
+            }
+            else { System.out.println("archiveDay is null!"); }
+            
             buf.append("time ");
             for (int i = 0; i < times.size(); i++) {
                 DateTime dt = (DateTime) times.get(i);
@@ -623,7 +756,7 @@ public class AddePointDataChooser extends AddeChooser {
         }
         return buf.toString();
     }
-
+        
 //    /**
 //     * Get the name of the dataset.
 //     *
