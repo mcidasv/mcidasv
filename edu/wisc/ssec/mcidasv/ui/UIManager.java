@@ -3287,8 +3287,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 }
                 
                 // Total number of pixels
+                // Assumed lines x elements x times x 4bytes
+                // Empirically seems to be taking *twice* that (64bit fields??)
                 float totalPixels = (float)myLines * (float)myElements * (float)timeCount;
-                float totalBytes = totalPixels * 4;
+                float totalBytes = totalPixels * 4 * 2;
                 estimatedMB += Math.round(totalBytes / 1024f / 1024f);
             }
         }
