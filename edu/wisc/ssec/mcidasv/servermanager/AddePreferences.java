@@ -33,6 +33,7 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
@@ -121,6 +122,8 @@ public class AddePreferences {
     /** Panel that contains the various {@link AddeEntry}s. */
     private JPanel cbPanel = null;
 
+    private JScrollPane cbScroller = null;
+
     /**
      * Allows the user to enable all {@link AddeEntry}s, <b><i>without</i></b> 
      * disabling the preference panel.
@@ -197,7 +200,7 @@ public class AddePreferences {
         List<JPanel> compList = arrList();
 
         final IdvObjectStore store = mcv.getStore();
-        
+
         // create checkboxes for each AddeEntry and add 'em to the appropriate 
         // CheckboxCategoryPanel 
         for (final EntryType type : EntryType.values()) {
@@ -209,11 +212,6 @@ public class AddePreferences {
             boolean typePanelVis = store.get("addepref.category."+type.toString(), false);
             final CheckboxCategoryPanel typePanel = 
                 new CheckboxCategoryPanel(type.toString(), typePanelVis);
-//            typePanel.addToggleListener(new ActionListener() {
-//                public void actionPerformed(final ActionEvent e) {
-//                    store.put("addepref.category."+type.toString(), typePanel.isOpen());
-//                }
-//            });
 
             for (final AddeEntry entry : subset) {
                 final String entryText = entry.getEntryText();
@@ -228,6 +226,8 @@ public class AddePreferences {
                         EntryStatus status = (cbx.isSelected()) ? EntryStatus.ENABLED : EntryStatus.DISABLED;
                         logger.trace("entry={} val={} status={} evt={}", new Object[] { entryText, cbx.isSelected(), status, e});
                         entry.setEntryStatus(status);
+                        entryToggles.put(entry, cbx);
+                        store.put("addeprefs.scroller.pos", cbScroller.getViewport().getViewPosition());
                         EventBus.publish(EntryStore.Event.UPDATE);
                     }
                 });
@@ -246,9 +246,15 @@ public class AddePreferences {
         // create the basic pref panel
         // TODO(jon): determine dimensions more intelligently!
         cbPanel = GuiUtils.top(GuiUtils.vbox(compList));
-        JScrollPane cbScroller = new JScrollPane(cbPanel);
+        cbScroller = new JScrollPane(cbPanel);
         cbScroller.getVerticalScrollBar().setUnitIncrement(10);
         cbScroller.setPreferredSize(new Dimension(300, 300));
+        Point oldPos = (Point)store.get("addeprefs.scroller.pos");
+        if (oldPos == null) {
+            oldPos = new Point(0,0);
+        }
+        cbScroller.getViewport().setViewPosition(oldPos);
+
 
         // handle the user opting to enable all servers
         allOn = new JButton("All on");
@@ -345,51 +351,28 @@ public class AddePreferences {
 //                // this won't break because the data parameter is whatever
 //                // has been passed in to "prefManager.add(...)". in this case,
 //                // it's the "entryToggles" variable.
-//                @SuppressWarnings("unchecked")
-//                Map<AddeEntry, JCheckBox> toggles = 
-//                    (Map<AddeEntry, JCheckBox>)data;
-////                boolean updated = false;
-////                for (Entry<AddeEntry, JCheckBox> entry : toggles.entrySet()) {
-////                    AddeEntry e = entry.getKey();
-////                    JCheckBox c = entry.getValue();
-////
-////                    EntryStatus currentStatus = e.getEntryStatus();
-////                    EntryStatus nextStatus = (c.isSelected()) ? EntryStatus.ENABLED : EntryStatus.DISABLED;
-////
-////                    logger.trace("entry={} type={} old={} new={}", new Object[] { e.getEntryText(), e.getEntryType(), currentStatus, nextStatus });
-////                    if (currentStatus != nextStatus) {
-//////                        logger.trace("entry={} type={} old={} new={}", new Object[] { e.getEntryText(), e.getEntryType(), currentStatus, nextStatus });
-////                        e.setEntryStatus(nextStatus);
-////                        toggles.put(e, c);
-////                        updated = true;
-////                    }
-//////                    e.setEntryStatus(nextStatus);
-////                }
-////
-////                if (updated) {
-////                    EventBus.publish(EntryStore.Event.UPDATE);
-////                } 
-//                for (Entry<AddeEntry, Boolean> entry : model.entrySet()) {
-//                    AddeEntry key = entry.getKey();
-//                    Boolean val = entry.getValue();
-//                    if (val) {
-//                        key.setEntryStatus(EntryStatus.ENABLED);
-//                    } else {
-//                        key.setEntryStatus(EntryStatus.DISABLED);
+                store.put("addeprefs.scroller.pos", cbScroller.getViewport().getViewPosition());
+                
+                @SuppressWarnings("unchecked")
+                Map<AddeEntry, JCheckBox> toggles = (Map<AddeEntry, JCheckBox>)data;
+                boolean updated = false;
+                for (Entry<AddeEntry, JCheckBox> entry : toggles.entrySet()) {
+                    AddeEntry e = entry.getKey();
+                    JCheckBox c = entry.getValue();
+                    EntryStatus currentStatus = e.getEntryStatus();
+                    EntryStatus nextStatus = (c.isSelected()) ? EntryStatus.ENABLED : EntryStatus.DISABLED;
+                    logger.trace("entry={} type={} old={} new={}", new Object[] { e, e.getEntryType(), currentStatus, nextStatus });
+//                    if (currentStatus != nextStatus) {
+                        e.setEntryStatus(nextStatus);
+                        toggles.put(e, c);
+                        updated = true;
 //                    }
-//
-//                    if (toggles.containsKey(key)) {
-//                        JCheckBox jocasta = toggles.get(key);
-//                        jocasta.setSelected(val);
-//                        toggles.put(key, jocasta);
-//                    }
-//                }
-//                if (!model.isEmpty()) {
-//                    EventBus.publish(EntryStore.Event.UPDATE);
-////                    woo
-//                    model.clear();
-//                }
-                EventBus.publish(EntryStore.Event.UPDATE);
+                }
+                if (updated) {
+                    EventBus.publish(EntryStore.Event.UPDATE);
+                }
+
+
             }
         };
         return new AddePrefConglomeration(Constants.PREF_LIST_ADDE_SERVERS, entryListener, entryPanel, entryToggles);
