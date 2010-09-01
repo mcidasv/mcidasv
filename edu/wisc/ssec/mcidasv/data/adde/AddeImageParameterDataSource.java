@@ -30,6 +30,7 @@
 
 package edu.wisc.ssec.mcidasv.data.adde;
 
+import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -189,9 +190,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     private int previewLineRes = 1;
     private int previewEleRes = 1;
 
-    public AddeImageParameterDataSource() {
-        logger.trace("unpersisting?");
-    } 
+    public AddeImageParameterDataSource() {} 
 
     /**
      * Creates a {@code AddeImageParameterDataSource} with a single ADDE URL.
@@ -207,7 +206,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                                Hashtable properties)
             throws VisADException {
         super(descriptor, new String[] { image }, properties);
-        logger.trace("descriptor: {} image: {} properties: {}", new Object[] { descriptor, image, properties });
     }
 
     /**
@@ -223,7 +221,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     public AddeImageParameterDataSource(DataSourceDescriptor descriptor, String[] images,
                            Hashtable properties) throws VisADException {
         super(descriptor, images, properties);
-        logger.trace("descriptor: {} images: {} properties: {}", new Object[] { descriptor, images, properties });
     }
 
     /**
@@ -240,7 +237,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     public AddeImageParameterDataSource(DataSourceDescriptor descriptor, List images,
                            Hashtable properties) throws VisADException {
         super(descriptor, images, properties);
-        logger.trace("descriptor: {} images: {} properties: {}", new Object[] { descriptor, images, properties });
     }
 
     /**
@@ -255,9 +251,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     public AddeImageParameterDataSource(DataSourceDescriptor descriptor, ImageDataset ids,
                            Hashtable properties) throws VisADException {
         super(descriptor, ids, properties);
-        
-        logger.trace("descriptor: {} ids: {} properties: {}", new Object[] { descriptor, ids, properties });
-
         this.sourceProps = properties;
         if (properties.containsKey((Object)PREVIEW_KEY)) {
             this.showPreview = (Boolean)(properties.get((Object)PREVIEW_KEY));
@@ -831,6 +824,10 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     /** _more_ */
     private DataRange[] sampleRanges = null;
 
+    public static boolean isFromFile(final AddeImageDescriptor descriptor) {
+        return new File(descriptor.getSource()).exists();
+    }
+
     /**
      * Create the actual data represented by the given
      * {@link ucar.unidata.data.DataChoice}.
@@ -853,21 +850,31 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                                 DataSelection dataSelection,
                                 Hashtable requestProperties)
             throws VisADException, RemoteException {
-    	
         Data img = null;
         iml = new ArrayList();
-        
-        if (dataSelection == null) return null;
-        setDataSelection(dataSelection);
-        GeoSelection geoSelection = dataSelection.getGeoSelection(true);
-        if (geoSelection == null) return null;
-        boolean validState = geoSelection.getHasValidState();
-        if (!validState) return null;
 
-        if (this.lastGeoSelection == null) this.lastGeoSelection = geoSelection;
+        if (dataSelection == null) {
+            return null;
+        }
+        setDataSelection(dataSelection);
+
+        GeoSelection geoSelection = dataSelection.getGeoSelection(true);
+        if (geoSelection == null) {
+            return null;
+        }
+
+        boolean validState = geoSelection.getHasValidState();
+        if (!validState) {
+            return null;
+        }
+
+        if (this.lastGeoSelection == null) {
+            this.lastGeoSelection = geoSelection;
+        }
+
         this.selectionProps = dataSelection.getProperties();
         Enumeration propEnum = this.selectionProps.keys();
-        for (int i=0; propEnum.hasMoreElements(); i++) {
+        for (int i = 0; propEnum.hasMoreElements(); i++) {
             String key = propEnum.nextElement().toString();
             if (key.compareToIgnoreCase(LATLON_KEY) == 0) {
                 String val = (String)this.selectionProps.get(key);
@@ -1223,24 +1230,31 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                                         boolean fromSequence, 
                                         String readLabel, DataSelection subset)
             throws VisADException, RemoteException {
-
+        
         if (aid == null) {
             return null;
         }
+
         String src = aid.getSource();
 
         Hashtable props = subset.getProperties();
-        if (props.containsKey("PLACE")) 
-            src = replaceKey(src, "PLACE", props.get("PLACE"));
-        if (props.containsKey("LATLON")) {
-            src = replaceKey(src, "LINELE", "LATLON", props.get("LATLON"));
+        // it only makes sense to set the following properties for things
+        // coming from an ADDE server
+        if (!isFromFile(aid)) {
+            if (props.containsKey("PLACE")) {
+                src = replaceKey(src, "PLACE", props.get("PLACE"));
+            }
+            if (props.containsKey("LATLON")) { 
+                src = replaceKey(src, "LINELE", "LATLON", props.get("LATLON"));
+            }
+            if (props.containsKey("LINELE")) {
+                src = removeKey(src, "LATLON");
+                src = replaceKey(src, "LINELE", props.get("LINELE"));
+            }
+            if (props.containsKey("MAG")) {
+                src = replaceKey(src, "MAG", props.get("MAG"));
+            }
         }
-        if (props.containsKey("LINELE")) {
-            src = removeKey(src, "LATLON");
-            src = replaceKey(src, "LINELE", props.get("LINELE"));
-        }
-        if (props.containsKey("MAG"))
-            src = replaceKey(src, "MAG", props.get("MAG"));
         aid.setSource(src);
 
         SingleBandedImage result = (SingleBandedImage) getCache(src);
@@ -1251,27 +1265,24 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
         //For now handle non adde urls here
         try {
-            AddeImageInfo aii     = aid.getImageInfo();
+            AddeImageInfo aii = aid.getImageInfo();
             AreaDirectory areaDir = null;
             try {
                 if (aii != null) {
                     if (currentDirs != null) {
-                        int    pos        =
-                            Math.abs(aii.getDatasetPosition());
-                        int    band       = 0;
+                        int pos = Math.abs(aii.getDatasetPosition());
+                        int band = 0;
                         String bandString = aii.getBand();
-                        if ((bandString != null)
-                                && !bandString.equals(aii.ALL)) {
+                        if ((bandString != null) && !aii.ALL.equals(bandString)) {
                             band = new Integer(bandString).intValue();
                         }
-                        //TODO: even though the band is non-zero we might only get back one band
+                        // TODO: even though the band is non-zero we might only 
+                        // get back one band
                         band = 0;
-                        areaDir =
-                            currentDirs[currentDirs.length - pos - 1][band];
+                        areaDir = currentDirs[currentDirs.length - pos - 1][band];
                     } else {
-                        //If its absolute time then just use the AD from the descriptor
-                        if ((aii.getStartDate() != null)
-                                || (aii.getEndDate() != null)) {
+                        // If its absolute time then just use the AD from the descriptor
+                        if ((aii.getStartDate() != null) || (aii.getEndDate() != null)) {
                             areaDir = aid.getDirectory();
                         } else {
                         }
@@ -1279,7 +1290,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 }
             } catch (Exception exc) {
                 LogUtil.printMessage("error looking up area dir");
-                exc.printStackTrace();
+                logger.error("error looking up area dir", exc);
                 return null;
             }
 
@@ -1287,12 +1298,11 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 areaDir = aid.getDirectory();
             }
 
-            if ( !getCacheDataToDisk()) {
+            if (!getCacheDataToDisk()) {
                 areaDir = null;
             }
 
-            if ( !fromSequence
-                    || (aid.getIsRelative() && (currentDirs == null))) {
+            if (!fromSequence || (aid.getIsRelative() && (currentDirs == null))) {
                 areaDir = null;
             }
 
@@ -1300,12 +1310,11 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 int hash = ((aii != null)
                             ? aii.getURLString().hashCode()
                             : areaDir.hashCode());
-                if(rangeType==null) {
-                    result =    AreaImageFlatField.createImmediate(aid, readLabel);
+                if (rangeType == null) {
+                    result = AreaImageFlatField.createImmediate(aid, readLabel);
                 } else {
                     //Else, pass in the already created range type
-                    result  = AreaImageFlatField.create(aid,
-                                                        areaDir, rangeType, readLabel);
+                    result  = AreaImageFlatField.create(aid, areaDir, rangeType, readLabel);
                 }
             } else {
                 src = aid.getSource();
@@ -1339,15 +1348,17 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 src = removeKey(src, LINELE_KEY);
                 if (getKey(src, LATLON_KEY).length() != 0) {
                     String latStr = Double.toString(saveLat);
-                    if (latStr.length()>8)
+                    if (latStr.length() > 8) {
                         latStr = latStr.substring(0,7);
+                    }
                     String lonStr = Double.toString(saveLon);
-                    if (lonStr.length()>9)
+                    if (lonStr.length() > 9) {
                         lonStr = lonStr.substring(0,8);
-                    src = replaceKey(src, LATLON_KEY, latStr + " " + lonStr);
+                    }
+                    src = replaceKey(src, LATLON_KEY, latStr + ' ' + lonStr);
                 }
-                src = replaceKey(src, SIZE_KEY, saveNumLine + " " + saveNumEle);
-                src = replaceKey(src, MAG_KEY, saveLineMag + " " + saveEleMag);
+                src = replaceKey(src, SIZE_KEY, saveNumLine + ' ' + saveNumEle);
+                src = replaceKey(src, MAG_KEY, saveLineMag + ' ' + saveEleMag);
             }
 
             AreaAdapter aa = new AreaAdapter(src, false);
