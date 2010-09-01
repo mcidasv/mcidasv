@@ -3292,6 +3292,15 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 float totalPixels = (float)myLines * (float)myElements * (float)timeCount;
                 float totalBytes = totalPixels * 4 * 2;
                 estimatedMB += Math.round(totalBytes / 1024f / 1024f);
+                                
+                // Add amount taken by textures... guess at 2048x2048 base size (possibly not always correct)
+                // Approx 16mb per large texture
+                int textureDimensions = 2048;
+                int mbPerTexture = Math.round((float)textureDimensions * (float)textureDimensions * 4 / 1024f / 1024f);
+                int textureCount = (int)Math.ceil((float)myLines / 2048f) * (int)Math.ceil((float)myElements / 2048f);
+                int additionalMB = textureCount * mbPerTexture * timeCount;
+                
+                estimatedMB += additionalMB;
             }
         }
         
