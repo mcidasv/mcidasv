@@ -534,6 +534,7 @@ public class ScatterDisplay extends DisplayControlImpl {
        scatter.setSamples(scatterFieldRange);
        scatterDsp.setPointSize(2f);
        scatterDsp.setRangeForColor(0,n_selectors);
+
        float[] xRange = minmax(valsX);
        float[] yRange = minmax(valsY);
        
@@ -654,10 +655,12 @@ public class ScatterDisplay extends DisplayControlImpl {
       mapProjDsp.enableRubberBanding(false);
       dspMaster = mapProjDsp;
       mapProjDsp.setMapProjection(mapProj);
+
       RealType imageRangeType =
         (((FunctionType)image.getType()).getFlatRange().getRealComponents())[0];
 
-      HydraRGBDisplayable imageDsp = new HydraRGBDisplayable("image", imageRangeType, null, false, null);
+      boolean alphaflag = false;
+      HydraRGBDisplayable imageDsp = new HydraRGBDisplayable("image", imageRangeType, null, alphaflag, null);
 
       imageDsp.setData(image);
       dspMaster.addDisplayable(imageDsp);
@@ -676,7 +679,17 @@ public class ScatterDisplay extends DisplayControlImpl {
       ScalarMap colorMap = imageDsp.getColorMap();
       colorMap.setRange(imageRange.getMin(), imageRange.getMax());
       BaseColorControl clrCntrl = (BaseColorControl) colorMap.getControl();
-      clrCntrl.setTable(colorTable.getColorTable());
+      float[][] ct = colorTable.getColorTable();
+
+      if ( !(alphaflag) && (ct.length == 4) ) {
+         float[][] new_ct = new float[3][];
+         new_ct[0] = ct[0];
+         new_ct[1] = ct[1];
+         new_ct[2] = ct[2];
+         ct = new_ct;
+      }
+
+      clrCntrl.setTable(ct);
 
       return dspMaster;
     }
