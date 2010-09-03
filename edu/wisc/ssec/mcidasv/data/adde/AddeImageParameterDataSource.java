@@ -190,6 +190,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     private int previewLineRes = 1;
     private int previewEleRes = 1;
 
+    private boolean fromBundle = false;
+
     public AddeImageParameterDataSource() {} 
 
     /**
@@ -282,6 +284,11 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         getAreaDirectory(properties);
     }
 
+    public void initAfterUnpersistence() {
+        super.initAfterUnpersistence();
+        this.fromBundle = true;
+    }
+
     public boolean canSaveDataToLocalDisk(){
         return true;
     }
@@ -356,8 +363,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             this.eRes = resol;
         } catch (Exception e) {
             setInError(true);
-            System.out.println("====> Getting area directory: " + e.getMessage());
-            //throw new BadDataException("Getting area directory: " + e.getMessage());
+            logger.error("getting area directory", e);
         }
         baseSource = addeCmdBuff;
     }
@@ -365,13 +371,20 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     protected void initDataSelectionComponents(
                    List<DataSelectionComponent> components, final DataChoice dataChoice) {
 
+        if (fromBundle) {
+            return;
+        }
+
         getDataContext().getIdv().showWaitCursor();
         
         boolean hasImagePreview = true;
-        if (this.showPreview == null) this.showPreview = true;
+        if (this.showPreview == null) {
+            this.showPreview = true;
+        }
         boolean basically = false;
-        if (this.lastChoice != null)
+        if (this.lastChoice != null) {
             basically = dataChoice.basicallyEquals(this.lastChoice);
+        }
         if (this.haveDataSelectionComponents && dataChoice.equals(this.lastChoice)) {
             try {
                 if (dataChoice.getDataSelection() == null) {
@@ -395,8 +408,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         } else {
             try {
                 hasImagePreview = makePreviewImage(dataChoice);
-                if (basically)
+                if (basically) {
                     getSaveComponents();
+                }
             } catch (Exception e) {
                 JLabel label = new JLabel("Can't make preview image");
                 JPanel contents = GuiUtils.top(GuiUtils.inset(label, label.getText().length() + 12));
@@ -413,10 +427,14 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     String[] vals = StringUtil.split(magStr, " ", 2);
                     Integer iVal = new Integer(vals[0]);
                     int lMag = iVal.intValue() * -1;
-                    if (lMag == -1) lMag = 1;
+                    if (lMag == -1) {
+                        lMag = 1;
+                    }
                     iVal = new Integer(vals[1]);
                     int eMag = iVal.intValue() * -1;
-                    if (eMag == -1) eMag = 1;
+                    if (eMag == -1) {
+                        eMag = 1;
+                    }
                     magStr = lMag + " " + eMag;
                     replaceKey(MAG_KEY, magStr);
                     String saveStr = baseSource;
@@ -449,7 +467,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     }
                     this.initProps = new Hashtable();
                     Enumeration propEnum = sourceProps.keys();
-                    for (int i=0; propEnum.hasMoreElements(); i++) {
+                    for (int i = 0; propEnum.hasMoreElements(); i++) {
                         String key = propEnum.nextElement().toString();
                         Object val = sourceProps.get(key);
                         key = key.toUpperCase();
@@ -510,12 +528,14 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 components.add(this.laLoSel);
             }
         }
-        if (this.previewSel != null) this.previewSel.initBox();
+        if (this.previewSel != null) {
+            this.previewSel.initBox();
+        }
         getDataContext().getIdv().showNormalCursor();
     }
 
     private boolean makePreviewImage(DataChoice dataChoice) {
-    	
+
         getDataContext().getIdv().showWaitCursor();
 
         boolean msgFlag = false;
@@ -549,22 +569,23 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         String name = dataChoice.getName();
         int idx = name.lastIndexOf("_");
         String unit = name.substring(idx + 1);
-        
+
         // if this is not a valid cal unit (e.g. could be set to a plugin formula name)
         // set it to something valid
         boolean validCal = false;
         for (TwoFacedObject tfo : calList) {
-        	if (unit.equals((String) tfo.getId())) {
-        		validCal = true;
-        		break;
-        	}
+            if (unit.equals((String) tfo.getId())) {
+                validCal = true;
+                break;
+            }
         }
-        if (! validCal) {
-        	unit = bi.getPreferredUnit();
+        if (!validCal) {
+            unit = bi.getPreferredUnit();
         }
-        
-        if (getKey(source, UNIT_KEY).equals(""))
+
+        if (getKey(source, UNIT_KEY).length() == 0) {
             source = replaceKey(source, UNIT_KEY, (Object)(unit));
+        }
 
         AddeImageDescriptor aid = null;
         while (aid == null) {
@@ -572,7 +593,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 aid = new AddeImageDescriptor(this.source);
             } catch (Exception excp) {
                 msgFlag = true;
-                if (bandIdx > bandInfos.size()) return false;
+                if (bandIdx > bandInfos.size()) {
+                    return false;
+                }
                 bi = bandInfos.get(bandIdx);
                 source = replaceKey(source, BAND_KEY, (Object)(bi.getBandNumber()));
                 ++bandIdx;
@@ -644,7 +667,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             aid = new AddeImageDescriptor(src);
             src = replaceKey(src, BAND_KEY, (Object)(bi.getBandNumber()));
         }
-        if (msgFlag && (!saveBand.equals("ALL"))) src = replaceKey(src, BAND_KEY, (Object)saveBand);
+        if (msgFlag && (!"ALL".equals(saveBand))) {
+            src = replaceKey(src, BAND_KEY, (Object)saveBand);
+        }
         baseSource = src;
 
         getDataContext().getIdv().showNormalCursor();
@@ -666,7 +691,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
     private String removeKey(String src, String key) {
         String returnString = src;
-        key = key.toUpperCase() + "=";
+        key = key.toUpperCase() + '=';
         if (returnString.contains(key)) {
             String[] segs = returnString.split(key);
             String seg0 = segs[0];
@@ -684,9 +709,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         String returnString = src;
         // make sure we got valid key/val pair
         if ((key == null) || (val == null)) {
-        	return returnString;
+            return returnString;
         }
-        key = key.toUpperCase() + "=";
+        key = key.toUpperCase() + '=';
         if (returnString.contains(key)) {
             String[] segs = returnString.split(key);
             String seg0 = segs[0];
@@ -698,24 +723,23 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 seg1 = seg1.substring(indx);
             }
             returnString = seg0 + key + val + seg1;
+        } else {
+            returnString = returnString + '&' + key + val;
         }
-        else {
-            returnString = returnString + "&" + key + val;
-        } 
         // if key is for cal units, and it was changed to BRIT,
         // must change the spacing key too 
-        if ((key.equals(UNIT_KEY + "=")) && (val.equals("BRIT"))) {
-        	returnString = replaceKey(returnString, SPAC_KEY, SPAC_KEY, SPACING_BRIT);
+        if ((key.equals(UNIT_KEY + "=")) && ("BRIT".equals(val))) {
+            returnString = replaceKey(returnString, SPAC_KEY, SPAC_KEY, SPACING_BRIT);
         } else {
-        	returnString = replaceKey(returnString, SPAC_KEY, SPAC_KEY, SPACING_NON_BRIT); 
+            returnString = replaceKey(returnString, SPAC_KEY, SPAC_KEY, SPACING_NON_BRIT); 
         }
         return returnString;
     }
 
     private String replaceKey(String src, String oldKey, String newKey, Object val) {
         String returnString = src;
-        oldKey = oldKey.toUpperCase() + "=";
-        newKey = newKey.toUpperCase() + "=";
+        oldKey = oldKey.toUpperCase() + '=';
+        newKey = newKey.toUpperCase() + '=';
         if (returnString.contains(oldKey)) {
             String[] segs = returnString.split(oldKey);
             String seg0 = segs[0];
@@ -729,7 +753,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             returnString = seg0 + newKey + val + seg1;
         }
         else {
-            returnString = returnString + "&" + newKey + val;
+            returnString = returnString + '&' + newKey + val;
         }
         return returnString;
     }
@@ -740,7 +764,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
     private String getKey(String src, String key) {
         String returnString = "";
-        key = key.toUpperCase() + "=";
+        key = key.toUpperCase() + '=';
         if (src.contains(key)) {
             String[] segs = src.split(key);
             segs = segs[1].split("&");
@@ -759,12 +783,17 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      */
     public void doMakeDataChoices() {
         super.doMakeDataChoices();
-        List<BandInfo> bandInfos =
-            (List<BandInfo>) getProperty(PROP_BANDINFO, (Object) null);
+        List<BandInfo> bandInfos = (List<BandInfo>)getProperty(PROP_BANDINFO, (Object)null);
         String name = "";
-        if (this.choiceName != null) name = this.choiceName;
-        if (name.length() != 0) return;
-        if (!sourceProps.containsKey(UNIT_KEY)) return;
+        if (this.choiceName != null) {
+            name = this.choiceName;
+        }
+        if (name.length() != 0) {
+            return;
+        }
+        if (!sourceProps.containsKey(UNIT_KEY)) {
+            return;
+        }
         BandInfo bi = null;
         if (sourceProps.containsKey(BAND_KEY)) {
             int bandProp = new Integer((String)(sourceProps.get(BAND_KEY))).intValue();
@@ -772,7 +801,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             bi = (BandInfo)bandInfos.get(bandIndex);
             if (sourceProps.containsKey(UNIT_KEY)) {
                 bi.setPreferredUnit((String)(sourceProps.get(UNIT_KEY)));
-            } else  {
+            } else {
                 bi.setPreferredUnit("");
             }
             name = makeBandParam(bi);
@@ -784,7 +813,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         }
         if (stashedChoices != null) {
             int numChoices = stashedChoices.size();
-            for (int i=0; i<numChoices; i++) {
+            for (int i = 0; i < numChoices; i++) {
                DataChoice choice = (DataChoice)stashedChoices.get(i);
                if (name.equals(choice.getName())) {
                    setProperty(PROP_DATACHOICENAME, choice.getName());
@@ -1172,8 +1201,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 for (SingleBandedImage sbi : sortedImages) {
                     AreaImageFlatField aiff = (AreaImageFlatField) sbi;
                     sampleRanges = aiff.getRanges(true);
-                    if(domainSet == null)
+                    if (domainSet == null) {
                         domainSet = aiff.getDomainSet();
+                    }
                     if ((sampleRanges != null) && (sampleRanges.length > 0)) {
                         for (int rangeIdx = 0; rangeIdx < sampleRanges.length;
                                 rangeIdx++) {
@@ -1214,16 +1244,18 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     }
 
     /**
-     * Create the single image defined by the given dataChoice.
+     * Create the single image defined by the given {@link ucar.unidata.data.imagery.AddeImageDescriptor AddeImageDescriptor}.
      *
-     * @param aid AddeImageDescriptor
+     * @param aid Holds image directory and location of the desired image.
+     * @param rangeType {@literal "rangeType"} to use (if non-{@code null}).
      * @param fromSequence _more_
+     * @param readLabel 
      * @param subset geographical subsetting info
      *
      * @return The data.
      *
-     * @throws RemoteException    Java RMI problem
-     * @throws VisADException     VisAD problem
+     * @throws RemoteException Java RMI problem
+     * @throws VisADException VisAD problem
      */
     private SingleBandedImage makeImage(AddeImageDescriptor aid,
                                         MathType rangeType,
@@ -1257,7 +1289,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         }
         aid.setSource(src);
 
-        SingleBandedImage result = (SingleBandedImage) getCache(src);
+        SingleBandedImage result = (SingleBandedImage)getCache(src);
         if (result != null) {
             setDisplaySource(src, props);
             return result;
