@@ -122,6 +122,7 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
     private static final String ALL = "ALL";
 
     private static JCheckBox previewBox = null;
+    private boolean showPreviewDefault = false;
 
     /**
      * Construct an Adde image selection widget
@@ -258,9 +259,8 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
                 ht.put(UNIT_KEY, (Object)(restoreElement.getAttribute(ATTR_UNIT)));
             }
         }
-//        ht.put(PREVIEW_KEY, (Object)previewBox.isSelected());
-        // Preview always on for now
-        ht.put(PREVIEW_KEY, (Object)true);
+        
+        ht.put(PREVIEW_KEY, (Object)previewBox.isSelected());
 	}
     
 	/**
@@ -303,11 +303,10 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
         McVGuiUtils.setComponentWidth(navComboBox, McVGuiUtils.Width.DOUBLE);
 
 		// Preview checkbox
-        // Don't show this for now...
-//		JLabel previewLabel = McVGuiUtils.makeLabelRight("Preview:");
-//		addDescComp(previewLabel);
-//        previewBox = new JCheckBox("Create preview image", true);
-//        addDescComp(previewBox);
+		JLabel previewLabel = McVGuiUtils.makeLabelRight("Preview:");
+		addDescComp(previewLabel);
+        previewBox = new JCheckBox("Create preview image", showPreviewDefault);
+        addDescComp(previewBox);
 
 		org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
 		myPanel.setLayout(layout);
@@ -326,7 +325,11 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
 												.add(layout.createSequentialGroup()
 														.add(navigationLabel)
 														.add(GAP_RELATED)
-														.add(navComboBox))))
+														.add(navComboBox))
+														.add(layout.createSequentialGroup()
+																.add(previewLabel)
+																.add(GAP_RELATED)
+																.add(previewBox))))
 		);
 		layout.setVerticalGroup(
 				layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -341,9 +344,12 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
 										.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
 										.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
 												.add(navigationLabel)
-												.add(navComboBox)))
+												.add(navComboBox))
+												.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+														.add(previewLabel)
+														.add(previewBox)))
 		);
-
+		
         setInnerPanel(myPanel);
         return super.doMakeContents(true);
     }

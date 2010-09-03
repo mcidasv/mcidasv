@@ -37,6 +37,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -73,6 +74,7 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
+import ucar.visad.Util;
 import ucar.visad.data.AreaImageFlatField;
 import visad.Data;
 import visad.DateTime;
@@ -159,7 +161,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     private GeoSelection lastGeoSelection;
     private DataChoice lastChoice = null;
     private Boolean showPreview = new Boolean(false);
-    private FlatField previewImage;
+    private FlatField previewImage = null;
     private MapProjection previewProjection;
     private Hashtable initProps;
 
@@ -267,6 +269,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 showPreview = saveShowPreview;
             }
         }
+        
         List descs = ids.getImageDescriptors();
         AddeImageDescriptor aid = (AddeImageDescriptor)descs.get(0);
         AddeImageInfo aii = aid.getImageInfo();
@@ -402,9 +405,14 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     }
                     this.lineMag = this.laLoSel.getLineMag();
                     this.elementMag = this.laLoSel.getElementMag();
+                    
+                    /* DAVEP: Force preview on. "No preview" means blank image */
+//                    this.previewSel = new GeoPreviewSelection(this, dataChoice, this.previewImage, 
+//                                     this.laLoSel, this.previewProjection,
+//                                     this.lineMag, this.elementMag, this.showPreview);
                     this.previewSel = new GeoPreviewSelection(this, dataChoice, this.previewImage, 
-                                     this.laLoSel, this.previewProjection,
-                                     this.lineMag, this.elementMag, this.showPreview);
+                            this.laLoSel, this.previewProjection,
+                            this.lineMag, this.elementMag, true);
                 }
                 components.add(this.previewSel);
                 components.add(this.laLoSel);
@@ -444,16 +452,29 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     }
                     magStr = lMag + " " + eMag;
                     replaceKey(MAG_KEY, magStr);
-                    String saveStr = baseSource;
-                    if (!showPreview) {
-                        replaceKey(SIZE_KEY, "2 2");
-                    }
+//                    String saveStr = baseSource;
+//                    if (!showPreview) {
+//                        replaceKey(SIZE_KEY, "2 2");
+//                    }
                     AreaAdapter aa = null;
                     AREACoordinateSystem acs = null;
                     try {
-                        aa = new AreaAdapter(baseSource, false);
-                        this.previewImage = (FlatField)aa.getImage();
-                        baseSource = saveStr;
+                    	
+                    	long start1 = (new Date()).getTime();
+                    	System.out.println("DAVEP: Starting getImage");
+                    	if (showPreview) {
+                    		aa = new AreaAdapter(baseSource, false);
+                    		this.previewImage = (FlatField)aa.getImage();
+                    	}
+                    	else {
+                    		this.previewImage = Util.makeField(0, 1, 1, 0, 1, 1, 0, "TEMP");
+                    	}
+                    	long end1 = (new Date()).getTime();
+                    	System.out.println("DAVEP: Done with getImage, seconds: " + ((end1 - start1) / 1000));
+                    	
+//                        baseSource = saveStr;
+                    	long start2 = (new Date()).getTime();
+                    	System.out.println("DAVEP: Starting AreaFile("+baseSource+")");
                         AreaFile af = new AreaFile(baseSource);
                         previewNav = af.getNavigation();
                         AreaDirectory ad = af.getAreaDirectory();
@@ -461,6 +482,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         this.elementResolution = ad.getValue(12);
                         McIDASAreaProjection map = new McIDASAreaProjection(af);
                         acs = new AREACoordinateSystem(af);
+                    	long end2 = (new Date()).getTime();
+                    	System.out.println("DAVEP: Done with AreaFile, seconds: " + ((end2 - start2) / 1000));
                     } catch (Exception e) {
                         String excp = e.toString();
                         int indx = excp.lastIndexOf(":");
@@ -522,9 +545,15 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                             this.elementMag = this.laLoSel.getElementMag();
                         }
                     }
+                    
+                    /* DAVEP: Force preview on. "No preview" means blank image */
+//                    this.previewSel = new GeoPreviewSelection(this, dataChoice, this.previewImage, 
+//                                     this.laLoSel, this.previewProjection,
+//                                     this.lineMag, this.elementMag, this.showPreview);
                     this.previewSel = new GeoPreviewSelection(this, dataChoice, this.previewImage, 
-                                     this.laLoSel, this.previewProjection,
-                                     this.lineMag, this.elementMag, this.showPreview);
+                            this.laLoSel, this.previewProjection,
+                            this.lineMag, this.elementMag, true);
+                    
                 } catch (Exception e) {
                     logger.error("problem making selection components", e);
                     getDataContext().getIdv().showNormalCursor();
@@ -547,8 +576,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
         boolean msgFlag = false;
         showPreview = saveShowPreview;
-        List<BandInfo> bandInfos =
-            (List<BandInfo>) getProperty(PROP_BANDINFO, (Object) null);
+        List<BandInfo> bandInfos = (List<BandInfo>) getProperty(PROP_BANDINFO, (Object) null);
         BandInfo bi = null;
         String saveBand = getKey(source, BAND_KEY);
         int bandIdx = 0;
