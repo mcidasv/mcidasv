@@ -31,6 +31,7 @@
 package edu.wisc.ssec.mcidasv.data.adde;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -376,8 +377,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                    List<DataSelectionComponent> components, final DataChoice dataChoice) {
 
         if (fromBundle) {
-            components.add(new BundlePreviewSelection("Region", "Big Blah"));
-            components.add(new BundlePreviewSelection("Advanced", "Ultimate Blah"));
+            components.add(new BundlePreviewSelection("Region (Disabled)"));
+            components.add(new BundlePreviewSelection("Advanced (Disabled)"));
             return;
         }
 
@@ -1955,21 +1956,22 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     }
     
     public static class BundlePreviewSelection extends DataSelectionComponent {
-        final String msg;
         final String label;
-        public BundlePreviewSelection(final String label, final String msg) {
+        public BundlePreviewSelection(final String label) {
             super(label);
             this.label = label;
-            this.msg = msg;
         }
 
         @Override protected JComponent doMakeContents() {
             // TODO Auto-generated method stub
             JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-            JLabel label = new JLabel(msg);
-            label.setAlignmentX(Component.CENTER_ALIGNMENT);
-            panel.add(label);
+            JLabel label1 = new JLabel("Area coverage has been defined by the data bundle;");
+            JLabel label2 = new JLabel("further subsetting is not currently supported.");
+            label1.setAlignmentX(Component.CENTER_ALIGNMENT);
+            label2.setAlignmentX(Container.CENTER_ALIGNMENT);
+            panel.add(label1);
+            panel.add(label2);
             return panel;
         }
 
