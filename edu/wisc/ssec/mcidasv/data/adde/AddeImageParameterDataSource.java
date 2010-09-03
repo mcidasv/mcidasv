@@ -30,6 +30,7 @@
 
 package edu.wisc.ssec.mcidasv.data.adde;
 
+import java.awt.Component;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -42,6 +43,8 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
+import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -190,6 +193,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     private int previewLineRes = 1;
     private int previewEleRes = 1;
 
+    /** Whether or not this DataSource was loaded from a bundle. */
     private boolean fromBundle = false;
 
     public AddeImageParameterDataSource() {} 
@@ -284,7 +288,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         getAreaDirectory(properties);
     }
 
-    public void initAfterUnpersistence() {
+    @Override public void initAfterUnpersistence() {
         super.initAfterUnpersistence();
         this.fromBundle = true;
     }
@@ -372,6 +376,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                    List<DataSelectionComponent> components, final DataChoice dataChoice) {
 
         if (fromBundle) {
+            components.add(new BundlePreviewSelection("Region", "Big Blah"));
+            components.add(new BundlePreviewSelection("Advanced", "Ultimate Blah"));
             return;
         }
 
@@ -1946,5 +1952,28 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         saveNumEle = this.laLoSel.getNumEles();
         saveLineMag = this.laLoSel.getLineMag();
         saveEleMag = this.laLoSel.getElementMag();
+    }
+    
+    public static class BundlePreviewSelection extends DataSelectionComponent {
+        final String msg;
+        final String label;
+        public BundlePreviewSelection(final String label, final String msg) {
+            super(label);
+            this.label = label;
+            this.msg = msg;
+        }
+
+        @Override protected JComponent doMakeContents() {
+            // TODO Auto-generated method stub
+            JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+            JLabel label = new JLabel(msg);
+            label.setAlignmentX(Component.CENTER_ALIGNMENT);
+            panel.add(label);
+            return panel;
+        }
+
+        @Override public void applyToDataSelection(DataSelection dataSelection) {
+        }
     }
 }
