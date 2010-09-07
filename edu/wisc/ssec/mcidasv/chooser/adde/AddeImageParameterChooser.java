@@ -30,6 +30,8 @@
 
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,6 +63,7 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlNodeList;
+import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
 import ucar.visad.UtcDate;
@@ -122,7 +125,6 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
     private static final String ALL = "ALL";
 
     private static JCheckBox previewBox = null;
-    private boolean showPreviewDefault = false;
 
     /**
      * Construct an Adde image selection widget
@@ -305,7 +307,16 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
 		// Preview checkbox
 		JLabel previewLabel = McVGuiUtils.makeLabelRight("Preview:");
 		addDescComp(previewLabel);
-        previewBox = new JCheckBox("Create preview image", showPreviewDefault);
+        XmlObjectStore store = getIdv().getStore();
+        previewBox = new JCheckBox("Create preview image", store.get(Constants.PREF_IMAGE_PREVIEW, true));
+    	previewBox.setToolTipText("Creating preview images takes extra time and network bandwidth");
+    	previewBox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                XmlObjectStore store = getIdv().getStore();
+                store.put(Constants.PREF_IMAGE_PREVIEW, e.getStateChange());
+                store.save();
+            }
+        });
         addDescComp(previewBox);
 
 		org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
