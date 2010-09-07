@@ -30,19 +30,53 @@
 
 package edu.wisc.ssec.mcidasv.servermanager;
 
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
+import static edu.wisc.ssec.mcidasv.util.Contract.checkArg;
+import static edu.wisc.ssec.mcidasv.util.Contract.notNull;
+
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.wisc.ssec.mcidas.adde.AddeServerInfo;
+import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
+import edu.wisc.ssec.mcidasv.servermanager.RemoteEntryEditor.AddeStatus;
 
 public class RemoteAddeEntry implements AddeEntry {
 
-    public static final RemoteAddeEntry INVALID_ENTRY = new Builder("localhost", "BIGBAD").invalidate().build();
+    /** Typical logger object. */
+    private static final Logger logger = LoggerFactory.getLogger(RemoteAddeEntry.class);
 
-    public static final List<RemoteAddeEntry> INVALID_ENTRIES = Collections.singletonList(INVALID_ENTRY);
+    /** Represents an invalid remote ADDE entry. */
+    public static final RemoteAddeEntry INVALID_ENTRY = 
+        new Builder("localhost", "BIGBAD").invalidate().build();
+
+    /** Represents a collection of invalid remote ADDE entries. */
+    public static final List<RemoteAddeEntry> INVALID_ENTRIES = 
+        Collections.singletonList(INVALID_ENTRY);
+
+    /** Default port for remote ADDE servers. */
+    public static final int ADDE_PORT = 112;
+
+    /** 
+     * {@link java.lang.String#format(String, Object...)}-friendly string for 
+     * building a request to read a server's PUBLIC.SRV.
+     */
+    private static final String publicSrvFormat = "adde://%s/text?compress=gzip&port=112&debug=%s&version=1&user=%s&proj=%s&file=PUBLIC.SRV";
 
     /** Holds the accounting information for this entry. */
     private final AddeAccount account;
@@ -430,5 +464,184 @@ public class RemoteAddeEntry implements AddeEntry {
         public RemoteAddeEntry build() {
             return new RemoteAddeEntry(this);
         }
+    }
+
+    /**
+     * Tries to connect to a given {@link RemoteAddeEntry} and read the list
+     * of ADDE {@literal "groups"} available to the public.
+     * 
+     * @param entry The {@code RemoteAddeEntry} to query. Cannot be {@code null}.
+     * 
+     * @return The {@link Set} of public groups on {@code entry}.
+     * 
+     * @throws NullPointerException if {@code entry} is {@code null}.
+     * @throws IllegalArgumentException if the server address is an empty 
+     * {@link String}.
+     */
+    public static Set<String> readPublicGroups(final RemoteAddeEntry entry) {
+        notNull(entry, "entry cannot be null");
+        notNull(entry.getAddress());
+        checkArg((entry.getAddress().length() != 0));
+
+        String user = entry.getAccount().getUsername();
+        if (user == null || user.length() == 0) {
+            user = RemoteAddeEntry.DEFAULT_ACCOUNT.getUsername();
+        }
+
+        String proj = entry.getAccount().getProject();
+        if (proj == null || proj.length() == 0) {
+            proj = RemoteAddeEntry.DEFAULT_ACCOUNT.getProject();
+        }
+
+        boolean debugUrl = EntryStore.isAddeDebugEnabled(false);
+        String url = String.format(publicSrvFormat, entry.getAddress(), debugUrl, user, proj);
+
+        Set<String> groups = newLinkedHashSet();
+
+        AddeTextReader reader = new AddeTextReader(url);
+        if ("OK".equals(reader.getStatus())) {
+            for (String line : (List<String>)reader.getLinesOfText()) {
+                String[] pairs = line.trim().split(",");
+                for (String pair : pairs) {
+                    if (pair == null || pair.length() == 0 || !pair.startsWith("N1")) {
+                        continue;
+                    }
+                    String[] keyval = pair.split("=");
+                    if (keyval.length != 2 || keyval[0].length() == 0 || keyval[1].length() == 0 || !keyval[0].equals("N1")) {
+                        continue;
+                    }
+                    groups.add(keyval[1]);
+                }
+            }
+        }
+        return groups;
+    }
+
+    /**
+     * Determines whether or not the server specified in {@code entry} is
+     * listening on port 112.
+     * 
+     * @param entry Descriptor containing the server to check.
+     * 
+     * @return {@code true} if a connection was opened, {@code false} otherwise.
+     * 
+     * @throws NullPointerException if {@code entry} is null.
+     */
+    public static boolean checkHost(final RemoteAddeEntry entry) {
+        notNull(entry, "entry cannot be null");
+        String host = entry.getAddress();
+        Socket socket = null;
+        boolean connected = false;
+        try { 
+            socket = new Socket(host, ADDE_PORT);
+            connected = true;
+        } catch (UnknownHostException e) {
+            logger.debug("can't resolve IP for '{}'", entry.getAddress());
+            connected = false;
+        } catch (IOException e) {
+            logger.debug("IO problem while connecting to '{}': {}", entry.getAddress(), e.getMessage());
+            connected = false;
+        }
+        try {
+            socket.close();
+        } catch (Exception e) {}
+        logger.debug("host={} result={}", entry.getAddress(), connected);
+        return connected;
+    }
+
+    /**
+     * Attempts to verify whether or not the information in a given 
+     * {@link RemoteAddeEntry} represents a valid remote ADDE server. If not,
+     * the method tries to determine which parts of the entry are invalid.
+     * 
+     * <p>Note that this method uses {@code checkHost(RemoteAddeEntry)} to 
+     * verify that the server is listening. To forego the check, simply call
+     * {@code checkEntry(false, entry)}.
+     * 
+     * @param entry {@code RemoteAddeEntry} to check. Cannot be 
+     * {@code null}.
+     * 
+     * @return The {@link AddeStatus} that represents the verification status
+     * of {@code entry}.
+     * 
+     * @see #checkHost(RemoteAddeEntry)
+     * @see #checkEntry(boolean, RemoteAddeEntry)
+     */
+    public static AddeStatus checkEntry(final RemoteAddeEntry entry) {
+        return checkEntry(true, entry);
+    }
+
+    /**
+     * Attempts to verify whether or not the information in a given 
+     * {@link RemoteAddeEntry} represents a valid remote ADDE server. If not,
+     * the method tries to determine which parts of the entry are invalid.
+     * 
+     * @param checkHost {@code true} tries to connect to the remote ADDE server
+     * before doing anything else.
+     * @param entry {@code RemoteAddeEntry} to check. Cannot be 
+     * {@code null}.
+     * 
+     * @return The {@link AddeStatus} that represents the verification status
+     * of {@code entry}.
+     * 
+     * @throws NullPointerException if {@code entry} is {@code null}.
+     * 
+     * @see AddeStatus
+     */
+    public static AddeStatus checkEntry(final boolean checkHost, final RemoteAddeEntry entry) {
+        notNull(entry, "Cannot check a null entry");
+
+        if (checkHost && !checkHost(entry)) {
+            return AddeStatus.BAD_SERVER;
+        }
+
+        String server = entry.getAddress();
+        String type = entry.getEntryType().toString();
+        String username = entry.getAccount().getUsername();
+        String project = entry.getAccount().getProject();
+        String[] servers = { server };
+        AddeServerInfo serverInfo = new AddeServerInfo(servers);
+
+        // I just want to go on the record here: 
+        // AddeServerInfo#setUserIDAndProjString(String) was not a good API 
+        // decision.
+        serverInfo.setUserIDandProjString("user="+username+"&proj="+project);
+        int status = serverInfo.setSelectedServer(server, type);
+        if (status == -2) {
+            return AddeStatus.NO_METADATA;
+        }
+        if (status == -1) {
+            return AddeStatus.BAD_ACCOUNTING;
+        }
+
+        serverInfo.setSelectedGroup(entry.getGroup());
+        String[] datasets = serverInfo.getDatasetList();
+        if (datasets != null && datasets.length > 0) {
+            return AddeStatus.OK;
+        } else {
+            return AddeStatus.BAD_GROUP;
+        }
+    }
+
+    public static Map<EntryType, AddeStatus> checkEntryTypes(final String host, final String group) {
+        return checkEntryTypes(host, group, AddeEntry.DEFAULT_ACCOUNT.getUsername(), AddeEntry.DEFAULT_ACCOUNT.getProject());
+    }
+
+    public static Map<EntryType, AddeStatus> checkEntryTypes(final String host, final String group, final String user, final String proj) {
+        Map<EntryType, AddeStatus> valid = new LinkedHashMap<EntryType, AddeStatus>();
+        RemoteAddeEntry entry = new Builder(host, group).account(user, proj).build();
+        for (RemoteAddeEntry tmp : EntryTransforms.createEntriesFrom(entry)) {
+            valid.put(tmp.getEntryType(), checkEntry(true, tmp));
+        }
+        return valid;
+    }
+
+    public static Set<String> readPublicGroups(final String host) {
+        return readGroups(host, AddeEntry.DEFAULT_ACCOUNT.getUsername(), AddeEntry.DEFAULT_ACCOUNT.getProject());
+    }
+
+    public static Set<String> readGroups(final String host, final String user, final String proj) {
+        RemoteAddeEntry entry = new Builder(host, "").account(user, proj).build();
+        return readPublicGroups(entry);
     }
 }

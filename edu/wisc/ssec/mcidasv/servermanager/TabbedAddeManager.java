@@ -1068,9 +1068,9 @@ public class TabbedAddeManager extends JFrame {
         }
         public List<RemoteAddeEntry> call() {
             List<RemoteAddeEntry> valid = arrList();
-            if (RemoteEntryEditor.checkHost(entry)) {
+            if (RemoteAddeEntry.checkHost(entry)) {
                 for (RemoteAddeEntry tmp : EntryTransforms.createEntriesFrom(entry)) {
-                    if (RemoteEntryEditor.checkEntry(false, tmp) == AddeStatus.OK) {
+                    if (RemoteAddeEntry.checkEntry(false, tmp) == AddeStatus.OK) {
                         tmp.setEntryValidity(EntryValidity.VERIFIED);
                         valid.add(tmp);
                     }
@@ -1094,7 +1094,7 @@ public class TabbedAddeManager extends JFrame {
             this.entry.setEntryValidity(EntryValidity.VALIDATING);
         }
         public RemoteAddeEntry call() {
-            AddeStatus status = RemoteEntryEditor.checkEntry(entry);
+            AddeStatus status = RemoteAddeEntry.checkEntry(entry);
             switch (status) {
                 case OK: entry.setEntryValidity(EntryValidity.VERIFIED); break;
                 default: entry.setEntryValidity(EntryValidity.INVALID); break;

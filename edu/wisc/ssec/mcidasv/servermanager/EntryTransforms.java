@@ -755,8 +755,9 @@ public class EntryTransforms {
                 bw.write(asResolvEntry(entry)+'\n');
             }
         } finally {
-            if (bw != null)
+            if (bw != null) {
                 bw.close();
+            }
         }
     }
 
@@ -851,8 +852,9 @@ public class EntryTransforms {
             .append(",MCV=").append(format.name())
             .append(",C=").append(entry.getName());
 
-        if (servName == ServerName.LV1B) 
+        if (servName == ServerName.LV1B) {
             s.append(",Q=LALO");
+        }
 
         String tmpFileMask = entry.getFileMask();
         if (tmpFileMask.length() > 3 && ":".equals(tmpFileMask.substring(1, 2))) {
@@ -865,8 +867,6 @@ public class EntryTransforms {
             s.append(",MASK=").append(tmpFileMask);
         }
         // local servers seem to really like trailing commas!
-        s.append('/').append(format.getFileFilter()).append(','); 
-
-        return s.toString();
+        return s.append('/').append(format.getFileFilter()).append(',').toString(); 
     }
 }

@@ -37,7 +37,6 @@ import static javax.swing.GroupLayout.Alignment.TRAILING;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
-import static edu.wisc.ssec.mcidasv.util.Contract.checkArg;
 import static edu.wisc.ssec.mcidasv.util.Contract.notNull;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newMap;
@@ -45,9 +44,6 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.set;
 import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.runOnEDT;
 
 import java.awt.Color;
-import java.io.IOException;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -71,8 +67,6 @@ import org.slf4j.LoggerFactory;
 
 import ucar.unidata.util.LogUtil;
 
-import edu.wisc.ssec.mcidas.adde.AddeServerInfo;
-import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EditorAction;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
@@ -90,20 +84,11 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     /** Logger object. */
     private static final Logger logger = LoggerFactory.getLogger(RemoteEntryEditor.class);
 
-    /** Default port for remote ADDE servers. */
-    public static final int ADDE_PORT = 112;
-
     /** Possible entry verification states. */
     public enum AddeStatus { PREFLIGHT, BAD_SERVER, BAD_ACCOUNTING, NO_METADATA, OK, BAD_GROUP };
 
     /** Number of threads in the thread pool. */
     private static final int POOL = 5;
-
-    /** 
-     * {@link java.lang.String#format(String, Object...)}-friendly string for 
-     * building a request to read a server's PUBLIC.SRV.
-     */
-    private static final String publicSrvFormat = "adde://%s/text?compress=gzip&port=112&debug=%s&version=1&user=%s&proj=%s&file=PUBLIC.SRV";
 
     /** Whether or not to input in the dataset, username, and project fields should be uppercased. */
     private static final String PREF_FORCE_CAPS = "mcv.servers.forcecaps";
@@ -320,7 +305,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         // although there may be several RemoteAddeEntry objs, they'll all have
         // the same address and the follow *isn't* as dumb as it looks!
         if (!unverifiedEntries.isEmpty()) {
-            if (!checkHost(unverifiedEntries.toArray(new RemoteAddeEntry[0])[0])) {
+            if (!RemoteAddeEntry.checkHost(unverifiedEntries.toArray(new RemoteAddeEntry[0])[0])) {
                 setStatus("Could not connect to the given server.");
                 setBadField(serverField, true);
                 return;
@@ -924,7 +909,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
                 goodEntries.add(entry);
             } else {
                 checkedHosts.add(host);
-                if (checkHost(entry)) {
+                if (RemoteAddeEntry.checkHost(entry)) {
                     goodEntries.add(entry);
                     hostStatus.put(host, Boolean.TRUE);
                 } else {
@@ -995,61 +980,6 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         return verified;
     }
 
-    public static AddeStatus checkEntry(final RemoteAddeEntry entry) {
-        return checkEntry(true, entry);
-    }
-
-    /**
-     * Attempts to verify whether or not the information in a given 
-     * {@link RemoteAddeEntry} represents a valid remote ADDE server. If not,
-     * the method tries to determine which parts of the entry are invalid.
-     * 
-     * @param entry The {@code RemoteAddeEntry} to check. Cannot be 
-     * {@code null}.
-     * 
-     * @return The {@link AddeStatus} that represents the verification status
-     * of {@code entry}.
-     * 
-     * @throws NullPointerException if {@code entry} is {@code null}.
-     * 
-     * @see AddeStatus
-     */
-    public static AddeStatus checkEntry(final boolean checkHost, final RemoteAddeEntry entry) {
-        notNull(entry, "Cannot check a null entry");
-
-        if (checkHost && !checkHost(entry)) {
-            return AddeStatus.BAD_SERVER;
-        }
-
-        String server = entry.getAddress();
-        String type = entry.getEntryType().toString();
-        String username = entry.getAccount().getUsername();
-        String project = entry.getAccount().getProject();
-        String[] servers = { server };
-        AddeServerInfo serverInfo = new AddeServerInfo(servers);
-
-        // I just want to go on the record here: 
-        // AddeServerInfo#setUserIDAndProjString(String) was not a good API 
-        // decision.
-        serverInfo.setUserIDandProjString("user="+username+"&proj="+project);
-        int status = serverInfo.setSelectedServer(server, type);
-        if (status == -2) {
-            return AddeStatus.NO_METADATA;
-        }
-        if (status == -1) {
-            return AddeStatus.BAD_ACCOUNTING;
-        }
-
-        serverInfo.setSelectedGroup(entry.getGroup());
-        String[] datasets = serverInfo.getDatasetList();
-        if (datasets != null && datasets.length > 0) {
-            return AddeStatus.OK;
-        } else {
-            return AddeStatus.BAD_GROUP;
-        }
-        
-    }
-
     private static Map<RemoteAddeEntry, AddeStatus> bulkPut(final Collection<RemoteAddeEntry> entries, final AddeStatus status) {
         Map<RemoteAddeEntry, AddeStatus> map = new LinkedHashMap<RemoteAddeEntry, AddeStatus>(entries.size());
         for (RemoteAddeEntry entry : entries) {
@@ -1057,116 +987,6 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         }
         return map;
     }
-
-    /**
-     * Tries to connect to a given {@link RemoteAddeEntry} and read the list
-     * of ADDE {@literal "groups"} available to the public.
-     * 
-     * @param entry The {@code RemoteAddeEntry} to query. Cannot be {@code null}.
-     * 
-     * @return The {@link Set} of public groups on {@code entry}.
-     * 
-     * @throws NullPointerException if {@code entry} is {@code null}.
-     * @throws IllegalArgumentException if the server address is an empty 
-     * {@link String}.
-     */
-    public static Set<String> readPublicGroups(final RemoteAddeEntry entry) {
-        notNull(entry, "entry cannot be null");
-        notNull(entry.getAddress());
-        checkArg((entry.getAddress().length() == 0));
-
-        String user = entry.getAccount().getUsername();
-        if (user == null || user.length() == 0) {
-            user = RemoteAddeEntry.DEFAULT_ACCOUNT.getUsername();
-        }
-
-        String proj = entry.getAccount().getProject();
-        if (proj == null || proj.length() == 0) {
-            proj = RemoteAddeEntry.DEFAULT_ACCOUNT.getProject();
-        }
-
-        boolean debugUrl = EntryStore.isAddeDebugEnabled(false);
-        String url = String.format(publicSrvFormat, entry.getAddress(), debugUrl, user, proj);
-
-        Set<String> groups = newLinkedHashSet();
-
-        AddeTextReader reader = new AddeTextReader(url);
-        if (reader.getStatus().equals("OK")) {
-            for (String line : (List<String>)reader.getLinesOfText()) {
-                String[] pairs = line.trim().split(",");
-                for (String pair : pairs) {
-                    if (pair == null || pair.length() == 0 || !pair.startsWith("N1")) {
-                        continue;
-                    }
-                    String[] keyval = pair.split("=");
-                    if (keyval.length != 2 || keyval[0].length() == 0 || keyval[1].length() == 0 || !keyval[0].equals("N1")) {
-                        continue;
-                    }
-                    groups.add(keyval[1]);
-                }
-            }
-        }
-        return groups;
-    }
-
-    /**
-     * Determines whether or not the server specified in {@code entry} is
-     * listening on port 112.
-     * 
-     * @param entry Descriptor containing the server to check.
-     * 
-     * @return {@code true} if a connection was opened, {@code false} otherwise.
-     * 
-     * @throws NullPointerException if {@code entry} is null.
-     */
-    public static boolean checkHost(final RemoteAddeEntry entry) {
-        notNull(entry, "entry cannot be null");
-        String host = entry.getAddress();
-        Socket socket = null;
-        boolean connected = false;
-        try { 
-            socket = new Socket(host, ADDE_PORT);
-            connected = true;
-        } catch (UnknownHostException e) {
-            logger.debug("can't resolve IP for '{}'", entry.getAddress());
-            connected = false;
-        } catch (IOException e) {
-            logger.debug("IO problem while connecting to '{}': {}", entry.getAddress(), e.getMessage());
-            connected = false;
-        }
-        try {
-            socket.close();
-        } catch (Exception e) {}
-        logger.debug("host={} result={}", entry.getAddress(), connected);
-        return connected;
-    }
-
-    // Variables declaration - do not modify
-    private javax.swing.JCheckBox acctBox;
-    private javax.swing.JButton addServer;
-    private javax.swing.JButton cancelButton;
-    private javax.swing.JCheckBox capBox;
-    private McVTextField datasetField;
-    private javax.swing.JLabel datasetLabel;
-    private javax.swing.JPanel entryPanel;
-    private javax.swing.JCheckBox gridBox;
-    private javax.swing.JCheckBox imageBox;
-    private javax.swing.JCheckBox navBox;
-    private javax.swing.JCheckBox pointBox;
-    private javax.swing.JTextField projField;
-    private javax.swing.JLabel projLabel;
-    private javax.swing.JCheckBox radarBox;
-    private javax.swing.JTextField serverField;
-    private javax.swing.JLabel serverLabel;
-    private javax.swing.JLabel statusLabel;
-    private javax.swing.JPanel statusPanel;
-    private javax.swing.JCheckBox textBox;
-    private javax.swing.JPanel typePanel;
-    private McVTextField userField;
-    private javax.swing.JLabel userLabel;
-    private javax.swing.JButton verifyAddButton;
-    private javax.swing.JButton verifyServer;
-    // End of variables declaration
 
     /**
      * Associates a {@link RemoteAddeEntry} with one of the states from 
@@ -1232,8 +1052,35 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         }
 
         public StatusWrapper call() throws Exception {
-            entryStatus.setStatus(checkEntry(entryStatus.getEntry()));
+            entryStatus.setStatus(RemoteAddeEntry.checkEntry(entryStatus.getEntry()));
             return entryStatus;
         }
     }
+
+    // Variables declaration - do not modify
+    private javax.swing.JCheckBox acctBox;
+    private javax.swing.JButton addServer;
+    private javax.swing.JButton cancelButton;
+    private javax.swing.JCheckBox capBox;
+    private McVTextField datasetField;
+    private javax.swing.JLabel datasetLabel;
+    private javax.swing.JPanel entryPanel;
+    private javax.swing.JCheckBox gridBox;
+    private javax.swing.JCheckBox imageBox;
+    private javax.swing.JCheckBox navBox;
+    private javax.swing.JCheckBox pointBox;
+    private javax.swing.JTextField projField;
+    private javax.swing.JLabel projLabel;
+    private javax.swing.JCheckBox radarBox;
+    private javax.swing.JTextField serverField;
+    private javax.swing.JLabel serverLabel;
+    private javax.swing.JLabel statusLabel;
+    private javax.swing.JPanel statusPanel;
+    private javax.swing.JCheckBox textBox;
+    private javax.swing.JPanel typePanel;
+    private McVTextField userField;
+    private javax.swing.JLabel userLabel;
+    private javax.swing.JButton verifyAddButton;
+    private javax.swing.JButton verifyServer;
+    // End of variables declaration
 }
