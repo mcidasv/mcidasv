@@ -143,42 +143,42 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
 
 
     /** List of OjbectPairs that define a name->list of files mapping */
-    private List fileMapping;
+    protected List fileMapping;
 
     /**
      * Use this so the persisted display control can acces the template name
      * when it is saved
      */
-    private String currentTemplateName;
+    protected String currentTemplateName;
 
 
     /** Holds the list of SavedBundle objects created from the bundles.xml */
-    private List<SavedBundle> bundlesFromXml;
+    protected List<SavedBundle> bundlesFromXml;
 
     /** JCheckBox for saving the view state */
-    private JCheckBox saveViewStateCbx;
+    protected JCheckBox saveViewStateCbx;
 
     /** JCheckBox for saving the display */
-    private JCheckBox saveDisplaysCbx;
+    protected JCheckBox saveDisplaysCbx;
 
     /** JCheckBox for saving the data sources */
-    private JCheckBox saveDataSourcesCbx;
+    protected JCheckBox saveDataSourcesCbx;
 
     /** JCheckBox for saving the visad data */
-    private JCheckBox saveDataCbx;
+    protected JCheckBox saveDataCbx;
 
     /** Used in file dialog to ask the user to make data editable */
-    private JCheckBox makeDataEditableCbx;
+    protected JCheckBox makeDataEditableCbx;
 
     /** Used in file dialog to ask the user to make data editable */
-    private boolean makeDataEditable = false;
+    protected boolean makeDataEditable = false;
 
 
     /** Used in file dialog to ask the user to make data relative */
-    private JCheckBox makeDataRelativeCbx;
+    protected JCheckBox makeDataRelativeCbx;
 
     /** Used in file dialog to ask the user to make data relative */
-    private boolean makeDataRelative = false;
+    protected boolean makeDataRelative = false;
 
 
     /** Holds the jython save widgets */
@@ -187,10 +187,10 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
     /** JCheckBox for saving the jython library */
     //    private JRadioButton saveNoJythonBtn;
 
-    private JComboBox saveJythonBox;
+    protected JComboBox saveJythonBox;
 
     /** lists the publishers */
-    private JComboBox publishCbx;
+    protected JComboBox publishCbx;
 
     /** JCheckBox for saving all of the jython library */
     //    private JRadioButton saveAllJythonBtn;
@@ -200,26 +200,26 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
     //    private JRadioButton saveSelectedJythonBtn;
 
     /** Flag for saving the views */
-    private boolean saveViewState = true;
+    protected boolean saveViewState = true;
 
     /** Flag for saving the displays */
-    private boolean saveDisplays = true;
+    protected boolean saveDisplays = true;
 
     /** Flag for saving the data sources */
-    private boolean saveDataSources = true;
+    protected boolean saveDataSources = true;
 
     /** Flag for saving the jython library */
-    private boolean saveJython = false;
+    protected boolean saveJython = false;
 
 
     /** Flag for saving the data */
-    private boolean saveData = false;
+    protected boolean saveData = false;
 
     /** A cached list of the display templates in the users directory */
-    private List<SavedBundle> displayTemplates;
+    protected List<SavedBundle> displayTemplates;
 
     /** List of bundles for saved data sources */
-    private List<SavedBundle> dataSourceBundles;
+    protected List<SavedBundle> dataSourceBundles;
 
 
     /**
@@ -234,16 +234,16 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
 
 
     /** for saving jnlps */
-    private JCheckBox includeBundleCbx;
+    protected JCheckBox includeBundleCbx;
 
     /** for saving jnlps */
-    private JTextField bundlePrefixFld;
+    protected JTextField bundlePrefixFld;
 
     /** for saving jnlps */
-    private JComponent bundleUrlComp;
+    protected JComponent bundleUrlComp;
 
     /** for saving favorites */
-    private boolean catSelected;
+    protected boolean catSelected;
 
 
 
@@ -362,7 +362,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
     /**
      * do cleanup
      */
-    private void cleanupOldSavedBundles() {
+    protected void cleanupOldSavedBundles() {
         boolean didAny          = false;
         File    savedBundlesDir = getStore().getSavedBundlesDir();
         IOUtil.makeDir(savedBundlesDir);
@@ -503,7 +503,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
      * @param categories Categories for the SavedBundle objects
      * @param file Where to look
      */
-    private void loadBundlesInDirectory(List<SavedBundle> allBundles,
+    protected void loadBundlesInDirectory(List<SavedBundle> allBundles,
                                         List categories, File file) {
         String[] localBundles =
             file.list(getArgsManager().getXidvZidvFileFilter());
@@ -697,7 +697,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
      * @param defaultCategories List of categories to add by default
      * @param topDir The directory to look at
      */
-    private void addBundleCategories(JComboBox catBox,
+    protected void addBundleCategories(JComboBox catBox,
                                      List defaultCategories, String topDir) {
         catBox.removeAllItems();
         List subdirs = IOUtil.getDirectories(new File(topDir), true);
@@ -912,7 +912,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
      *
      * @return Full path to the selected file.
      */
-    private String getCategorizedFile(String title, String filename,
+    protected String getCategorizedFile(String title, String filename,
                                       List<SavedBundle> bundles,
                                       final String topDir,
                                       List defaultCategories, String suffix,
@@ -1097,7 +1097,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
      *
      * @return all categories including those in initial list
      */
-    private List getCategories(int bundleType, List cats) {
+    protected List getCategories(int bundleType, List cats) {
         List favs = getBundles(bundleType);
         for (int i = 0; i < favs.size(); i++) {
             SavedBundle bundle    = (SavedBundle) favs.get(i);
@@ -1459,7 +1459,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
     /**
      * Clear all temp state from the data sources
      */
-    private void clearDataSourcesState() {
+    protected void clearDataSourcesState() {
         clearDataSourcesState(getDataSourcesToPersist());
     }
 
@@ -1468,7 +1468,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
      *
      * @param dataSources data sources to clear
      */
-    private void clearDataSourcesState(List dataSources) {
+    protected void clearDataSourcesState(List dataSources) {
         for (int dataSourceIdx = 0; dataSourceIdx < dataSources.size();
                 dataSourceIdx++) {
             DataSource dataSource =
@@ -1735,7 +1735,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
      *
      * @return the encoded string
      */
-    private String encodeSpecial(Object object) {
+    protected String encodeSpecial(Object object) {
         try {
             XmlEncoder encoder = getIdv().getEncoderForWrite();
             //Temporarily turn off the view and data flags here
@@ -1909,7 +1909,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
      *
      * @param type bundle type
      */
-    private void flushState(int type) {
+    protected void flushState(int type) {
         if ((type == BUNDLES_DISPLAY) || (type == BUNDLES_ALL)) {
             displayTemplates = null;
             getIdvUIManager().displayTemplatesChanged();
@@ -2028,7 +2028,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
      *
      * @return ok
      */
-    private boolean showDataRelativeGui(List dataSources) {
+    protected boolean showDataRelativeGui(List dataSources) {
         List checkBoxes = new ArrayList();
         List fields     = new ArrayList();
         List workingSet = new ArrayList();
@@ -2116,7 +2116,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
      * @author IDV Development Team
      * @version $Revision$
      */
-    private static class DataSourceComponent {
+    public static class DataSourceComponent {
 
         /** data source */
         DataSource dataSource;
@@ -2147,7 +2147,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
      *
      * @throws IOException On badness
      */
-    private List showDataEmbedGui(List dataSources) throws IOException {
+    protected List showDataEmbedGui(List dataSources) throws IOException {
 
         List      fileDataSources = new ArrayList();
         List      copyDataSources = new ArrayList();
@@ -2314,7 +2314,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
      *
      * @return ok
      */
-    private boolean showDataEditableGui(List dataSources) {
+    protected boolean showDataEditableGui(List dataSources) {
         List checkBoxes = new ArrayList();
         List workingSet = new ArrayList();
         for (int i = 0; i < dataSources.size(); i++) {
@@ -3128,7 +3128,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
      *
      * @return ok
      */
-    private boolean updateDataPaths(List dataSources,
+    protected boolean updateDataPaths(List dataSources,
                                     boolean letUserChangeData) {
 
         //        System.err.println ("calling update data paths " +letUserChangeData);
@@ -3840,7 +3840,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
      *
      * @return filename that (may) holds prototype
      */
-    private File getPrototypeFile(Class c) {
+    protected File getPrototypeFile(Class c) {
         String filename = c.getName() + ".xml";
         ResourceCollection rc = getResourceManager().getResources(
                                     IdvResourceManager.RSC_PROTOTYPES);
