@@ -9,7 +9,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters"/>
+         value="Image Filters (Beta)"/>
       <category value="IMAGE-*-*"/>
     </categories>
     <operands/>
@@ -23,7 +23,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters"/>
+         value="Image Filters (Beta)"/>
       <category value="IMAGE-*-*"/>
     </categories>
     <operands/>
@@ -37,7 +37,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters"/>
+         value="Image Filters (Beta)"/>
       <category value="IMAGE-*-*"/>
     </categories>
     <operands/>
@@ -51,7 +51,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters"/>
+         value="Image Filters (Beta)"/>
       <category value="IMAGE-*-*"/>
     </categories>
     <operands/>
@@ -65,7 +65,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters"/>
+         value="Image Filters (Beta)"/>
       <category value="IMAGE-*-*"/>
     </categories>
     <operands/>
@@ -79,7 +79,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters"/>
+         value="Image Filters (Beta)"/>
       <category value="IMAGE-*-*"/>
     </categories>
     <operands/>
@@ -93,7 +93,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters"/>
+         value="Image Filters (Beta)"/>
       <category value="IMAGE-*-*"/>
     </categories>
     <operands/>
@@ -107,7 +107,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters"/>
+         value="Image Filters (Beta)"/>
       <category value="IMAGE-*-*"/>
       <category value="GRID-2D-*"/>
     </categories>
@@ -122,7 +122,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters"/>
+         value="Image Filters (Beta)"/>
       <category value="IMAGE-*-*"/>
       <category value="GRID-2D-*"/>
     </categories>
@@ -137,7 +137,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters"/>
+         value="Image Filters (Beta)"/>
       <category value="IMAGE-*-*"/>
     </categories>
     <operands/>
@@ -151,7 +151,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters"/>
+         value="Image Filters (Beta)"/>
       <category value="IMAGE-*-*"/>
     </categories>
     <operands/>
@@ -159,13 +159,13 @@
   <derived
      id="replaceFilter"
      description="Replace Image Filter"
-     formula="replaceFilter(image,replaceVal[isuser=true,default=0], bline[isuser=true,default=Default],eline[isuser=true,default=Default],belem[isuser=true,default=Default],eelem[isuser=true,default=Default],sourceval[isuser=true,default=Default],stretch[isuser=true,type=choice,choices=Contrast; Histogram])"
+     formula="replaceFilter(image,New_Value[isuser=true,default=0],Old_Value[isuser=true,default=Default],stretch[isuser=true,type=choice,choices=Contrast; Histogram])"
      isenduser="true"
      isdefault="false">
     <categories>
       <category
          display="true"
-         value="Image Filters"/>
+         value="Image Filters (Beta)"/>
       <category value="IMAGE-*-*"/>
     </categories>
     <operands/>
@@ -179,7 +179,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters"/>
+         value="Image Filters (Beta)"/>
       <category value="IMAGE-*-*"/>
     </categories>
     <operands/>
