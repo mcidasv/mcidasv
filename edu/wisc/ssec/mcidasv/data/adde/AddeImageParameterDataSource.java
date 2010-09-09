@@ -461,7 +461,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     try {
                     	
                     	long start1 = (new Date()).getTime();
-                    	System.out.println("DAVEP: Starting getImage");
                     	if (showPreview) {
                     		aa = new AreaAdapter(baseSource, false);
                     		this.previewImage = (FlatField)aa.getImage();
@@ -470,11 +469,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     		this.previewImage = Util.makeField(0, 1, 1, 0, 1, 1, 0, "TEMP");
                     	}
                     	long end1 = (new Date()).getTime();
-                    	System.out.println("DAVEP: Done with getImage, seconds: " + ((end1 - start1) / 1000));
                     	
 //                        baseSource = saveStr;
                     	long start2 = (new Date()).getTime();
-                    	System.out.println("DAVEP: Starting AreaFile("+baseSource+")");
                         AreaFile af = new AreaFile(baseSource);
                         previewNav = af.getNavigation();
                         AreaDirectory ad = af.getAreaDirectory();
@@ -483,7 +480,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         McIDASAreaProjection map = new McIDASAreaProjection(af);
                         acs = new AREACoordinateSystem(af);
                     	long end2 = (new Date()).getTime();
-                    	System.out.println("DAVEP: Done with AreaFile, seconds: " + ((end2 - start2) / 1000));
                     } catch (Exception e) {
                         String excp = e.toString();
                         int indx = excp.lastIndexOf(":");
