@@ -322,9 +322,8 @@ public class PersistenceManager extends IdvPersistenceManager {
         return allBundles;
     }
 
-    private void loadBundlesInDirectory(final List<SavedBundle> allBundles, 
-        final List<String> categories, final File file) 
-    {
+    protected void loadBundlesInDirectory(List<SavedBundle> allBundles,
+            List categories, File file) {
         String[] localBundles = file.list();
 
         for (int i = 0; i < localBundles.length; i++) {
