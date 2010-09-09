@@ -41,11 +41,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -93,6 +96,7 @@ import edu.wisc.ssec.mcidas.AreaFileException;
 import edu.wisc.ssec.mcidas.McIDASException;
 import edu.wisc.ssec.mcidas.adde.AddeSatBands;
 import edu.wisc.ssec.mcidas.adde.AddeURL;
+import edu.wisc.ssec.mcidas.adde.DataSetInfo;
 import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
@@ -467,7 +471,25 @@ public class AddeImageChooser extends AddeChooser implements
 	public String getDescriptorLabel() {
 		return "Image Type";
 	}
-	
+		
+    /**
+     * Respond to a change in the descriptor list.
+     */
+    protected void checkSetNav() {
+    	String descriptor = getDescriptor();
+    	if (descriptor!=null) {
+    		String[] suffixes = { "AMSU", "HIRS", "HRPT", "GAC", "LAC" };
+    		for (int i=0; i<suffixes.length; i++) {
+                Pattern p = Pattern.compile("N\\d\\d" + suffixes[i]);
+                Matcher m = p.matcher(descriptor);    			
+                if (m.find()) {
+                	navComboBox.setSelectedIndex(1);
+                	break;
+                }
+    		}
+    	}
+    }
+
 	/**
 	 * Get the name of the dataset.
 	 * 
@@ -483,7 +505,7 @@ public class AddeImageChooser extends AddeChooser implements
 		}
 		return buf.toString();
 	}
-
+	
 	/**
 	 * Check if we are ready to read times
 	 * 
@@ -1187,6 +1209,7 @@ public class AddeImageChooser extends AddeChooser implements
 				showWaitCursor();
 				try {
 					readTimesInner();
+					checkSetNav();
 				} catch (Exception e) {
 					handleConnectionError(e);
 				}
