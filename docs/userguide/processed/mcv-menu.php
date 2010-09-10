@@ -66,6 +66,7 @@
         <span class="link" onClick="setPage('data/choosers/FileChooser.html');">Choosing Data on Disk</span><br>
         <span class="link" onClick="setPage('data/choosers/UrlChooser.html');">Choosing a URL</span><br>
         <span class="link" onClick="setPage('data/choosers/CatalogChooser.html');">Choosing Cataloged Data</span><br>
+        <span class="link" onClick="setPage('data/choosers/FlatFileChooser.html');">Choosing Flat File Data</span><br>
         <span class="link" onClick="setPage('data/choosers/ImageChooser.html');">Choosing Satellite Imagery</span><br>
         <span class="link" onClick="setPage('data/choosers/RadarChooser.html');">Choosing NEXRAD Level III Radar Data</span><br>
         <span class="link" onClick="setPage('data/choosers/Level2Chooser.html');">Choosing NEXRAD Level II Radar Data</span><br>

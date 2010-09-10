@@ -112,6 +112,7 @@
         <tocitem text="Choosing Data on Disk" target="idv.data.choosers.filechooser"/>
         <tocitem text="Choosing a URL" target="idv.data.choosers.urlchooser"/>
         <tocitem text="Choosing Cataloged Data" target="idv.data.choosers.catalogchooser"/>
+        <tocitem text="Choosing Flat File Data" target="idv.data.choosers.flatfilechooser"/>
         <tocitem text="Choosing Satellite Imagery" target="idv.data.choosers.imagechooser"/>
         <tocitem text="Choosing NEXRAD Level III Radar Data" target="idv.data.choosers.radarchooser"/>
         <tocitem text="Choosing NEXRAD Level II Radar Data" target="idv.data.choosers.level2chooser"/>
