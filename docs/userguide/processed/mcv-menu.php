@@ -236,6 +236,7 @@
         <span class="link" onClick="setPage('tools/preferences/AdvancedPreferences.html');">Advanced Preferences </span><br>
       </div>
 
+      <span class="link" onClick="setPage('tools/RemoteDataManager.html');">Remote Data Manager</span><br>
       <span class="link" onClick="setPage('tools/LocalDataManager.html');">Local Data Manager</span><br>
       <span class="link" onClick="setPage('tools/ProjectionManager.html');">Projection Manager</span><br>
       <span class="link" onClick="setPage('tools/ColorTableEditor.html');">Color Table Editor</span><br>

@@ -34,39 +34,36 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 The items below reflect changes since the 1.0beta5 release.
 <div class="faq">
 <div class="faq-top">
-  <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat1_beta6">Documentation
-      Changes</a></div>
+  <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat1_beta6">Documentation Changes</a></div>
   <div class="faq-category">
       <ul class="noindent">
         <li><strong><a class="faq-question-link" href="#docbeta6">Updated Content</a></strong></li>
       </ul>
     </div>
-    <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat2_beta6">Display
-      Changes</a></div>
+
+    <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat2_beta6">Display Changes</a></div>
     <div class="faq-category">
       <ul class="noindent">
-        <li><strong><a class="faq-question-link" href="#docbeta6">Smoothing of
-              grids </a></strong></li>
+        <li><strong><a class="faq-question-link" href="#renderbeta6">New Image Rendering Option</a></strong></li>
+        <li><strong><a class="faq-question-link" href="#smoothbeta6">Grid Smoothing</a></strong></li>
       </ul>
     </div>
-	<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_beta6">Data
-      Changes</a></div>
+
+	<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_beta6">Data Changes</a></div>
   <div class="faq-category">
       <ul class="noindent">
-        <li><strong><a class="faq-question-link" href="#docbeta6">New grid diagnostics </a></strong></li>
+        <li><strong><a class="faq-question-link" href="#diagnosticsbeta6">New
+              Grid Diagnostics </a></strong></li>
       </ul>
     </div>
-  <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_beta6">Other
-      Changes - Need to update this section </a></div>
+
+  <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_beta6">Other Changes</a></div>
   <div class="faq-category">
-    
       <ul class="noindent">
-	    <li><a href="#clockbeta6" class="faq-question-link"><strong>Clock Added to Main Display Window</strong></a></li>
-        <li><a href="#scatterbeta6" class="faq-question-link"><strong>Scatter
-              Analysis with Gridded Data </strong></a></li>
-		<li><a href="#startupbeta6" class="faq-question-link"><strong>Fixes to Startup
-		      Manager </strong></a></li>
-		<li><a href="#colortablebeta6" class="faq-question-link"><strong>GOES-R Color Tables Added</strong></a></li>
+        <li><a href="#dirstructurebeta6" class="faq-question-link"><strong>New Directory Structure</strong></a></li>
+        <li><a href="#imagechooserbeta6" class="faq-question-link"><strong>New
+              Satellite Image Chooser</strong></a></li>		
+	    <li><a href="#addemanagerbeta6" class="faq-question-link"><strong>New ADDE Data Manager </strong></a></li>		
       </ul>
     </div>
   
@@ -75,21 +72,21 @@ The items below reflect changes since the 1.0beta5 release.
 <br>
 <hr>
 <div class="faq-bottom">
-<div class="faq-category-title"><a name="faq1_cat1_beta6" id="faq1_cat1_beta6"></a>Documentation
-  Changes</div>
+<div class="faq-category-title"><a name="faq1_cat1_beta6" id="faq1_cat1_beta6"></a>Documentation Changes</div>
 <div class="faq-category"><a name="docbeta6" id="docbeta6"></a>
-    <h4>Updated content </h4>
-      <div class="faq-answer">Selected grid displays (contours, flow vectors,
-        wind barbs) now have an option to perform smoothing functions on the
-        grid. The GEMPAK 5-point (SM5S), 9-point (SM9S) and Gaussian Weighted
-      Function (GWFS) smoothing functions have been implemented in McIDAS-V.</div>
-    
+    <h4>Updated Content </h4>
+      <div class="faq-answer">The McIDAS-V User's Guide has been updated with more detailed content.</div>
 </div>
 </div>
-<div class="faq-category-title"><a name="faq1_cat1_beta6" id="faq1_cat1_beta6"></a>Display
-  Changes</div>
-<div class="faq-category"><a name="docbeta6" id="docbeta6"></a>
-    <h4>Smoothing of grids </h4>
+
+<div class="faq-category-title"><a name="faq1_cat2_beta6" id="faq1_cat2_beta6"></a>Display Changes</div>
+<div class="faq-category"><a name="renderbeta6" id="renderbeta6"></a>  
+    <h4><strong>New Image Rendering Option</strong></h4>
+    <div class="faq-answer">Added new "Enable access to image data by reference" option in Advanced tab of
+	  User Preferences to reduce likelihood of jagged edges at limb and gaps at dateline.</div>
+</div>
+<div class="faq-category"><a name="smoothbeta6" id="smoothbeta6"></a>
+    <h4>Grid Smoothing</h4>
       <div class="faq-answer">New grid diagnostics are available in this release.
       The following have been added:
 	  <ul>
@@ -101,48 +98,34 @@ The items below reflect changes since the 1.0beta5 release.
 	  </ul>
 	  <p>You can use the Grid-&gt;Define a grid diagnostic formula to use these functions. </p>
       </div>
-    
 </div>
 </div>
-<div class="faq-category-title"><a name="faq1_cat1_beta6" id="faq1_cat1_beta6"></a>Data
-  Changes</div>
-<div class="faq-category"><a name="docbeta6" id="docbeta6"></a>
-    <h4>New grid diagnostics </h4>
-      <div class="faq-answer">The McIDAS-V User's Guide has been updated with  more
-      detailed content.</div>
-    
+
+<div class="faq-category-title"><a name="faq1_cat3_beta6" id="faq1_cat3_beta6"></a>Data Changes</div>
+<div class="faq-category"><a name="diagnosticsbeta6" id="diagnosticsbeta6"></a>
+    <h4>New Grid Diagnostics </h4>
+      <div class="faq-answer">Selected grid displays (contours, flow vectors,
+        wind barbs) now have an option to perform smoothing functions on the
+        grid. The GEMPAK 5-point (SM5S), 9-point (SM9S) and Gaussian Weighted
+      Function (GWFS) smoothing functions have been implemented in McIDAS-V.</div>
 </div>
 </div>
-<div class="faq-category-title"><a name="faq1_cat2_beta6" id="faq1_cat2_beta6"></a>Other
-  Changes</div>
-  <div class="faq-category"><a name="clockbeta6" id="clockbeta6"></a>
-  
-    <h4><strong>Clock Added to Main Display Window </strong></h4>
-    <div class="faq-answer">A clock has been added to the Main Display window.
-      To switch between the memory monitor and the clock, left click on the clock/monitor
-      to switch back and forth. </div>
-  
+
+<div class="faq-category-title"><a name="faq1_cat4_beta6" id="faq1_cat4_beta6"></a>Other Changes</div>
+<div class="faq-category"><a name="dirstructurebeta6" id="dirstructurebeta6"></a>  
+    <h4><strong>New Directory Structure</strong></h4>
+    <div class="faq-answer">Renamed the <strong>.mcidasv</strong> directory to <strong>McIDAS-V</strong> to
+      make user files more easily accessible.</div>
 </div>
-<div class="faq-category"><a name="scatterbeta6" id="scatterbeta6"></a>
-  
-    <h4><strong>Scatter Analysis with Gridded Data </strong></h4>
-    <div class="faq-answer">The ability to create scatter diagrams was inadvertently
-      omitted from the 1.0beta4 version of McIDAS-V. This function has been restored
-      in 1.0beta5.</div>
-  
+<div class="faq-category"><a name="imagechooserbeta6" id="imagechooserbeta6"></a>  
+    <h4><strong>New Satellite Image Chooser</strong></h4>
+    <div class="faq-answer">Redesigned the Satellite Imagery Chooser to include
+      new options, such as an optional preview image in the Region tab of the
+      Field Selector.</div>
 </div>
-<div class="faq-category"><a name="startupbeta6" id="startupbeta6"></a>
-  
-    <h4>Fixes to Startup Manager </h4>
-    <div class="faq-answer">A fix has been made to address a problem with the
-      startup manager if used the first time McIDAS-V is installed.</div>
-</div>
-<div class="faq-category"><a name="colortablebeta6" id="colortablebeta6"></a>
-  
-    <h4>GOES-R Color Tables Added </h4>
-    <div class="faq-answer">Color tables to be used with GOES-R data have been
-    added to McIDAS-V. For more information, see the <a href="tools/ColorTableEditor.html">Color
-    Tables</a> section.</div>
+<div class="faq-category"><a name="addemanagerbeta6" id="addemanagerbeta6"></a>
+    <h4><strong>New ADDE Data Manager </strong></h4>
+    <div class="faq-answer">Redesigned the ADDE Data Manager to be more intuitive and include separate local and remote managers.</div> 
 </div>
 <br>
 <hr>
