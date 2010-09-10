@@ -191,7 +191,7 @@ public class PersistenceManager extends IdvPersistenceManager {
     public PersistenceManager(IntegratedDataViewer idv) {
         super(idv);
         saveAppState = true;
-        saveAppStateCbx = new JCheckBox("Save application state", true);
+        saveAppStateCbx = new JCheckBox("Save McIDAS-V session", true);
         saveAppStateCbx.setToolTipText("Whether or not the bundle should attempt to completely restore your current McIDAS-V session.");
         saveAppStateCbx.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
