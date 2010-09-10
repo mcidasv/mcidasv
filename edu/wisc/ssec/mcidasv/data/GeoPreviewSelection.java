@@ -356,7 +356,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
       public void applyToDataSelection(DataSelection dataSelection) {
       }
 
-      private void drawBox() {
+      public void drawBox() {
           if (box == null) makeBox();
           removeRBB();
 

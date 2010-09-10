@@ -297,8 +297,10 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         this.fromBundle = true;
     }
 
-    public boolean canSaveDataToLocalDisk(){
+    @Override public boolean canSaveDataToLocalDisk() {
+//        logger.trace("idvland would return {}", super.canSaveDataToLocalDisk());
         return true;
+//        return super.canSaveDataToLocalDisk();
     }
 
     /**

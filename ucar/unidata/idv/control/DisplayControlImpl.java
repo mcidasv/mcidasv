@@ -3833,7 +3833,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      *
      * @return list of data sources
      */
-    protected List getDataSources() {
+    public List getDataSources() {
         List dataSources = new ArrayList();
         if (myDataChoices != null) {
             for (int i = 0; i < myDataChoices.size(); i++) {

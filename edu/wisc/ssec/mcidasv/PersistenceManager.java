@@ -42,7 +42,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -57,6 +59,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+import org.apache.batik.util.DoublyIndexedTable.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +67,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSource;
 import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DataSourceImpl;
@@ -93,6 +97,7 @@ import ucar.unidata.util.Trace;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlResourceCollection;
 
+import edu.wisc.ssec.mcidasv.control.ImagePlanViewControl;
 import edu.wisc.ssec.mcidasv.probes.ReadoutProbe;
 import edu.wisc.ssec.mcidasv.ui.McvComponentGroup;
 import edu.wisc.ssec.mcidasv.ui.McvComponentHolder;
@@ -152,6 +157,10 @@ public class PersistenceManager extends IdvPersistenceManager {
     /** Stores the last active ViewManager from <i>before</i> a bundle load. */
     private ViewManager lastBeforeBundle = null;
 
+    private boolean saveAppState;
+    
+    private JCheckBox saveAppStateCbx;
+
     /** 
      * Whether or not the user wants to attempt merging bundled layers into
      * current displays.
@@ -173,7 +182,7 @@ public class PersistenceManager extends IdvPersistenceManager {
      * Java requires this constructor. 
      */
     public PersistenceManager() {
-        super(null);
+        this(null);
     }
 
     /**
@@ -181,6 +190,20 @@ public class PersistenceManager extends IdvPersistenceManager {
      */
     public PersistenceManager(IntegratedDataViewer idv) {
         super(idv);
+        saveAppState = true;
+        saveAppStateCbx = new JCheckBox("Save application state", true);
+        saveAppStateCbx.setToolTipText("Whether or not the bundle should attempt to completely restore your current McIDAS-V session.");
+        saveAppStateCbx.addActionListener(new ActionListener() {
+            public void actionPerformed(final ActionEvent e) {
+                boolean newVal = saveAppStateCbx.isSelected();
+                logger.trace("old val: {} new val: {} (also setting saveViewState and saveDisplays!)", saveAppState, newVal);
+                saveAppState = newVal;
+                saveDisplaysCbx.setSelected(newVal);
+                saveDisplays = newVal;
+                saveViewStateCbx.setSelected(newVal);
+                saveViewState = newVal;
+            }
+        });
     }
 
     /**
@@ -276,23 +299,79 @@ public class PersistenceManager extends IdvPersistenceManager {
         }
     }
 
+    @Override public JPanel getFileAccessory() {
+        
+        List accessories = Misc.newList(saveAppStateCbx, saveDataSourcesCbx);
+        accessories.add(GuiUtils.left(GuiUtils.inset(saveJythonBox, new Insets(0, 3, 0, 0))));
+        accessories.add(GuiUtils.filler(1, 10));
+        accessories.add(makeDataRelativeCbx);
+
+        if (publishCbx == null) {
+            publishCbx = getIdv().getPublishManager().makeSelector();
+        }
+        if (publishCbx != null) {
+            accessories.add(GuiUtils.filler(1, 10));
+            accessories.add(publishCbx);
+        }
+        return GuiUtils.top(
+            GuiUtils.vbox(
+                Misc.newList(
+                    new JLabel("What should be saved?"),
+                    GuiUtils.vbox(accessories))));
+    
+    }
+
+    /**
+     * Overridden so that McIDAS-V can: 
+     * <ul>
+     * <li>add better versioning information to bundles</li>
+     * <li>remove {@link edu.wisc.ssec.mcidasv.probes.ReadoutProbe ReadoutProbes} from the {@code displayControls} that are getting persisted.</li>
+     * <li>disallow saving multi-banded ADDE data sources until we have fix!</li>
+     * </ul>
+     */
     @Override protected boolean addToBundle(Hashtable data, List dataSources,
             List displayControls, List viewManagers,
             String jython) 
     {
+        logger.trace("hacking bundle output!");
         // add in some extra versioning information
         StateManager stateManager = (StateManager)getIdv().getStateManager();
         if (data != null) {
             data.put(ID_MCV_VERSION, stateManager.getVersionInfo());
         }
-
+        logger.trace("hacking displayControls={}", displayControls);
+        logger.trace("hacking dataSources={}", dataSources);
         // remove ReadoutProbes from the list
         if (displayControls != null) {
+//            Set<DataSourceImpl> observed = new HashSet<DataSourceImpl>();
+            Map<DataSourceImpl, List<DataChoice>> observed = new LinkedHashMap<DataSourceImpl, List<DataChoice>>();
             List<DisplayControl> newControls = new ArrayList<DisplayControl>();
             for (DisplayControl dc : (List<DisplayControl>)displayControls) {
-                if (!(dc instanceof ReadoutProbe)) {
+                if (dc instanceof ReadoutProbe) {
+                    logger.trace("skipping readoutprobe!");
+                    continue;
+                } else if (dc instanceof ImagePlanViewControl) {
+                    ImagePlanViewControl imageControl = (ImagePlanViewControl)dc;
+                    List<DataSourceImpl> tmp = (List<DataSourceImpl>)imageControl.getDataSources();
+                    for (DataSourceImpl src : tmp) {
+                        if (observed.containsKey(src)) {
+                            observed.get(src).addAll(src.getDataChoices());
+                            logger.trace("already seen src={} new selection={}", src);
+                        } else {
+                            logger.trace("haven't seen src={}", src);
+                            List<DataChoice> selected = new ArrayList<DataChoice>(imageControl.getDataChoices());
+                            observed.put(src, selected);
+                        }
+                    }
+                    logger.trace("found an image control: {} datasrcs={} datachoices={}", new Object[] { imageControl, imageControl.getDataSources(), imageControl.getDataChoices() });
+                    newControls.add(dc);
+                } else {
+                    logger.trace("found some kinda thing: {}", dc.getClass().getName());
                     newControls.add(dc);
                 }
+            }
+            for (Map.Entry<DataSourceImpl, List<DataChoice>> entry : observed.entrySet()) {
+                logger.trace("multibanded src={} choices={}", entry.getKey(), entry.getValue());
             }
             displayControls = newControls;
         }
