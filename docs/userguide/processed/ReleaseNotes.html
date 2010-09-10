@@ -31,8 +31,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="pagesubtitle">McIDAS-V <br>
   Version 1.0beta6</div>
   <hr>
-The items below reflect changes since the 1.0beta5 release.
-<div class="faq">
+  <h1><em>Version 1.0beta6 is a release candidate for Version 1.0.<br>
+  Feedback via the McIDAS-V Support Forums is appreciated! </em></h1>
+  <p>The items below reflect changes since the 1.0beta5 release.
+  </p>
+  <div class="faq">
 <div class="faq-top">
   <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat1_beta6">Documentation Changes</a></div>
   <div class="faq-category">
@@ -119,9 +122,23 @@ The items below reflect changes since the 1.0beta5 release.
 </div>
 <div class="faq-category"><a name="imagechooserbeta6" id="imagechooserbeta6"></a>  
     <h4><strong>New Satellite Image Chooser</strong></h4>
-    <div class="faq-answer">Redesigned the Satellite Imagery Chooser to include
+    <div class="faq-answer">
+      <p>Redesigned the Satellite Imagery Chooser to include
       new options, such as an optional preview image in the Region tab of the
-      Field Selector.</div>
+      Field Selector.</p>
+      <p> One known problem that will be addressed in the next version
+        occurs with zipped data bundles containing image data. When the bundle
+        is saved it only saves one band per data source,
+        but the problem occurs when the bundle is reloaded. All of the
+        original bands are listed in the Field Selector, but they all reference
+        the one band that was saved.</p>
+      <p>Users are encouraged to use this new chooser. Please notify
+        us (via the <a href="http://dcdbs.ssec.wisc.edu/mcidasv/forums/" target="_blank">McIDAS-V
+        Support Forums</a> or <a href="http://www.ssec.wisc.edu/mcidas/support/user_services.html" target="_blank">McIDAS
+        Help Desk</a>) if you feel there is something in the previous chooser
+        that should be implemented in the new chooser. The previous chooser
+        is available through the Legacy Choosers tree.</p>
+    </div>
 </div>
 <div class="faq-category"><a name="addemanagerbeta6" id="addemanagerbeta6"></a>
     <h4><strong>New ADDE Data Manager </strong></h4>
