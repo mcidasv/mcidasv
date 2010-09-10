@@ -465,6 +465,7 @@
         <mapID target="idv.tools.jython"                             url="tools/Jython.html" />
         <mapID target="idv.tools.jythonlib"							 url="tools/JythonLib.html" />
         <mapID target="idv.tools.jythonshell"						 url="tools/JythonShell.html" />
+        <mapID target="idv.tools.remotedata"						 url="tools/RemoteDataManager.html" />
         <mapID target="idv.tools.localdata"							 url="tools/LocalDataManager.html" />
         <mapID target="idv.tools.parameterdefaultseditor"            url="tools/ParameterDefaultsEditor.html" />
         <mapID target="idv.tools.parameterdefaultseditor.image1"     url="tools/ParameterDefaultsEditor.html#image1" />
