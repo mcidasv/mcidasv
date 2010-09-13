@@ -24,7 +24,7 @@ def cloudFilter(sdataset1,sdataset2,user_replace='Default',user_constant=0,user_
         replace=min([min1, min2])
      domain=GridUtil.getSpatialDomain(range1)
      [element_size,line_size]=domain.getLengths()
-       
+     
      for i in range(line_size):
         for j in range(element_size):
            line1 = vals1[0][i*element_size+j]
@@ -43,7 +43,7 @@ def cloudFilter(sdataset1,sdataset2,user_replace='Default',user_constant=0,user_
        v=[]
        v.append(vals1[0])
        v.append(vals2[0])
-       h=hist(field(v),[0],[post_hi-post_low])
+       h = makeHistogram(v,element_size,line_size,post_hi-post_low)
        lookup=histoStretch(post_low,post_hi,h)
      
      vals1=modify(vals1,element_size,line_size,post_low,lookup) 
@@ -51,36 +51,16 @@ def cloudFilter(sdataset1,sdataset2,user_replace='Default',user_constant=0,user_
 
   return data1
 
-def replaceFilter(sdataset,user_replaceVal=0,user_bline='Default',user_eline='Default',user_belem='Default',user_eelem='Default',user_sourceval='Default',user_stretchval='Contrast'):
+def replaceFilter(sdataset,user_replaceVal=0,user_sourceval='Default',user_stretchval='Contrast'):
   """ 
       replace filter from McIDAS-X 
       user_replace : replacement value  (default=0)
-      user_bline   : beginning line in the source image region (default=first line)
-      user_eline   : ending line in the source image region    (default=last line)
-      user_belem   : beginning element in the source image region (default=first element)
-      user_eelem   : ending element in the source image region    (default=last element)
       user_sourceval: source image values in the region to replace user_replace; specify values
                       in the list format, e.g. val1 val2 val3 etc., 
                       or a range format, e.g. bval-eval (default=0-255)
   """  
   newData = sdataset.clone()
   replaceVal=int(user_replaceVal)
-  bline=user_bline
-  eline=user_eline   
-  if (bline != 'Default'):
-    bline=int(bline)
-  else:
-    bline=0
-  if (eline != 'Default'):
-     eline=int(eline)
-  belem=user_belem
-  eelem=user_eelem   
-  if (belem != 'Default'):
-    belem=int(belem)
-  else:
-    belem=0
-  if (eelem != 'Default'):
-     eelem=int(eelem)
   stretch=user_stretchval
   
   """
@@ -105,15 +85,10 @@ def replaceFilter(sdataset,user_replaceVal=0,user_bline='Default',user_eline='De
      domain=GridUtil.getSpatialDomain(rangeObject)
                       
      [element_size,line_size]=domain.getLengths()
-     if (eline == 'Default'):
-         eline=line_size
-     if (eelem == 'Default'):
-         eelem=element_size
-             
-     for i in range(line_size)[bline:eline]:
-        for j in range(element_size)[belem:eelem]:
+               
+     for i in range(line_size):
+        for j in range(element_size):
            line = vals[0][i*element_size+j]
-           """ if ((j >= belem and j <= eelem) and (i >= bline and i <= eline) or (line in sourceVal)): """
            if (line in sourceVal):
               line=replaceVal
            vals[0][i*element_size+j] = line
@@ -123,7 +98,8 @@ def replaceFilter(sdataset,user_replaceVal=0,user_bline='Default',user_eline='De
      if (stretch == 'Contrast'):
        lookup=contrast(post_low,post_hi,post_low,post_hi)
      elif (stretch == 'Histogram'):
-       h = hist(field(vals),[0],[post_hi-post_low])
+       """h = hist(field(vals),[0],[post_hi-post_low])"""
+       h = makeHistogram(vals,element_size,line_size,post_hi-post_low)
        lookup=histoStretch(post_low,post_hi,h)
        
      vals1=modify(vals,element_size,line_size,post_low,lookup) 
@@ -132,8 +108,8 @@ def replaceFilter(sdataset,user_replaceVal=0,user_bline='Default',user_eline='De
   return newData
 
 def shotMain(vals,bline,eline,element_size,line_size,filter_diff):
-   """ the actual shot filter code - needs to be separate as clean filter calls it as well """
-   for i in range(line_size)[bline:eline]:
+  """ the actual shot filter code - needs to be separate as clean filter calls it as well """
+  for i in range(line_size)[bline:eline]:
      for j in range(element_size)[1:-2]:
        left = vals[0][i*element_size + j - 1]
        value = vals[0][i*element_size + j]
@@ -154,8 +130,8 @@ def shotMain(vals,bline,eline,element_size,line_size,filter_diff):
          continue
          
        vals[0][i*element_size + j] = (left + right)/2
-   
-   return vals
+    
+  return vals
 
 def badLineFilter(vals,bline,eline,element_size,line_size,filter_fill,line_diff,min_data,max_data):
     """ 
@@ -264,7 +240,8 @@ def cleanFilter(sdataset,user_fill='Average',user_bline='Default',user_eline='De
      if (stretch == 'Contrast'):
        lookup=contrast(post_low,post_hi,post_low,post_hi)
      elif (stretch == 'Histogram'):
-       h = hist(field(vals),[0],[post_hi-post_low])
+       """h = hist(field(vals),[0],[post_hi-post_low])"""
+       h = makeHistogram(vals,element_size,line_size,post_hi-post_low)
        lookup=histoStretch(post_low,post_hi,h)
        
      vals=modify(vals,element_size,line_size,post_low,lookup)   
@@ -297,7 +274,6 @@ def shotFilter(sdataset,user_bline='Default',user_eline='Default',user_pdiff=15,
      vals = rangeObject.getFloats(0)
      high = max(vals[0])
      low = min(vals[0])
-     """ print high, low, max(vals[0]), min(vals[0]) """
      point_diff = (high - low + 1)*(filter_diff/100.0)    
      domain=GridUtil.getSpatialDomain(rangeObject)  
      [element_size,line_size]=domain.getLengths()
@@ -307,14 +283,16 @@ def shotFilter(sdataset,user_bline='Default',user_eline='Default',user_pdiff=15,
      vals = shotMain(vals,bline,eline,element_size,line_size,point_diff)
      post_hi = int(max(vals[0]))
      post_low = int(min(vals[0])) 
+     
      if (stretch == 'Contrast'):
        lookup=contrast(post_low,post_hi,post_low,post_hi)
      elif (stretch == 'Histogram'):
-       h = hist(field(vals),[0],[post_hi-post_low])
+       """h = hist(field(vals),[0],[post_hi-post_low])"""
+       h = makeHistogram(vals,element_size,line_size,post_hi-post_low)
        lookup=histoStretch(post_low,post_hi,h)
        
-     vals1=modify(vals,element_size,line_size,post_low,lookup) 
-     rangeObject.setSamples(vals1)
+     vals=modify(vals,element_size,line_size,post_low,lookup) 
+     rangeObject.setSamples(vals)
    
    return newData
 
@@ -379,7 +357,8 @@ def coreFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Defa
       if (stretch == 'Contrast'):
        lookup=contrast(post_low,post_hi,post_low,post_hi)
       elif (stretch == 'Histogram'):
-       h = hist(field(vals1),[0],[post_hi-post_low])
+       """h = hist(field(vals1),[0],[post_hi-post_low])"""
+       h = makeHistogram(vals1,element_size,line_size,post_hi-post_low)
        lookup=histoStretch(post_low,post_hi,h)
        
       vals=modify(vals1,element_size,line_size,post_low,lookup)          
@@ -447,7 +426,8 @@ def discriminateFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoin
       if (stretch == 'Contrast'):
        lookup=contrast(post_low,post_hi,post_low,post_hi)
       elif (stretch == 'Histogram'):
-       h = hist(field(vals1),[0],[post_hi-post_low])
+       """h = hist(field(vals1),[0],[post_hi-post_low])"""
+       h = makeHistogram(vals1,element_size,line_size,post_hi-post_low)
        lookup=histoStretch(post_low,post_hi,h)
        
       vals1=modify(vals1,element_size,line_size,post_low,lookup) 
@@ -500,7 +480,8 @@ def mergeFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Def
       if (stretch == 'Contrast'):
        lookup=contrast(post_low,post_hi,post_low,post_hi)
       elif (stretch == 'Histogram'):
-       h = hist(field(vals1),[0],[post_hi-post_low])
+       """h = hist(field(vals1),[0],[post_hi-post_low])"""
+       h = makeHistogram(vals1,element_size,line_size,post_hi-post_low)
        lookup=histoStretch(post_low,post_hi,h)
       
       vals1=modify(vals1,element_size,line_size,post_low,lookup)       
@@ -516,13 +497,11 @@ def gradientFilter(sdataset,user_stretchval='Contrast'):
    for t in range(newData.getDomainSet().getLength()):
      rangeObject = newData.getSample(t)
      vals = rangeObject.getFloats(0)
-     in_hi = max(vals[0])
-     in_low = min(vals[0]) 
      domain=GridUtil.getSpatialDomain(rangeObject)
                    
      [element_size,line_size]=domain.getLengths()
-
-     for i in xrange(line_size):
+     
+     for i in range(line_size):
        for j in range(element_size)[:-1]:
           vals[0][i*element_size + j] = int(abs(vals[0][i*element_size + j] - vals[0][i*element_size + j + 1]))
           
@@ -534,7 +513,8 @@ def gradientFilter(sdataset,user_stretchval='Contrast'):
      if (stretch == 'Contrast'):
        lookup=contrast(post_low,post_hi,post_low,post_hi)
      elif (stretch == 'Histogram'):
-       h = hist(field(vals),[0],[post_hi-post_low])
+       """h = hist(field(vals),[0],[post_hi-post_low])"""
+       h = makeHistogram(vals,element_size,line_size,post_hi-post_low)
        lookup=histoStretch(post_low,post_hi,h)
         
      vals=modify(vals,element_size,line_size,post_low,lookup) 
@@ -602,7 +582,8 @@ def passFilter(sdataset,user_passname,user_radius=50,user_leak=100,user_stretchv
      if (stretch == 'Contrast'):
        lookup=contrast(post_low,post_hi,post_low,post_hi)
      elif (stretch == 'Histogram'):
-       h = hist(field(vals),[0],[post_hi-post_low])
+       """h = hist(field(vals),[0],[post_hi-post_low])"""
+       h = makeHistogram(vals,element_size,line_size,post_hi-post_low)
        lookup=histoStretch(post_low,post_hi,h)
      
      vals=modify(vals,element_size,line_size,post_low,lookup) 
@@ -668,7 +649,8 @@ def lowPass2DFilter(sdataset,user_linecoef=0.5,user_elecoef=0.5,user_stretchval=
      if (stretch == 'Contrast'):
        lookup=contrast(post_low,post_hi,post_low,post_hi)
      elif (stretch == 'Histogram'):
-       h = hist(field(vals),[0],[post_hi-post_low])
+       """h = hist(field(vals),[0],[post_hi-post_low])"""
+       h = makeHistogram(vals,element_size,line_size,post_hi-post_low)
        lookup=histoStretch(post_low,post_hi,h)
      
      vals=modify(vals,element_size,line_size,post_low,lookup) 
@@ -710,7 +692,8 @@ def highPass2DFilter(sdataset,user_stretchval='Contrast'):
      if (stretch == 'Contrast'):
        lookup=contrast(post_low,post_hi,post_low,post_hi)
      elif (stretch == 'Histogram'):
-       h = hist(field(vals),[0],[post_hi-post_low])
+       """h = hist(field(vals),[0],[post_hi-post_low])"""
+       h = makeHistogram(vals,element_size,line_size,post_hi-post_low)
        lookup=histoStretch(post_low,post_hi,h) 
      
      vals=modify(vals,element_size,line_size,post_low,lookup)
@@ -759,7 +742,8 @@ def holeFilter(sdataset,user_brkpoint1=0,user_brkpoint2=1,user_stretchval='Contr
      if (stretch == 'Contrast'):
        lookup=contrast(post_low,post_hi,post_low,post_hi)
      elif (stretch == 'Histogram'):
-       h = hist(field(vals),[0],[post_hi-post_low])
+       """h = hist(field(vals),[0],[post_hi-post_low])"""
+       h = makeHistogram(vals,element_size,line_size,post_hi-post_low)
        lookup=histoStretch(post_low,post_hi,h)
      
      vals=modify(vals,element_size,line_size,post_low,lookup) 
@@ -793,28 +777,27 @@ def histoStretch(in_low,in_hi,histogram,out_low=0,out_hi=255,num_bins=16):
     """ create a histogram stretch lookup table """
     step=round((out_hi - out_low)/float(num_bins))
     half_step=round(step/2)
-        
     breakpoints = [ out_low + ((m+1)*step-half_step) for m in xrange(num_bins)]
-        
-    start = 1
+            
+    start = 0
     end = in_hi - in_low + 1
     lookup=[]
-    
+             
     for i in xrange(num_bins):
         npop=0
         ntot=0
         for j in range(start,end):
-            if (histogram[j-1] != 0):
+            if (histogram[j] != 0):
                npop=npop+1
-            ntot=ntot + histogram[j-1]
+            ntot=ntot + histogram[j]
             
         nleft = num_bins - i
         nvals_bin = round(ntot/nleft)
-            
+                
         if (npop >= nleft):
             mtot=0
             for k in range(start,end):
-                mtot=mtot+histogram[k-1]
+                mtot=mtot+histogram[k]
                 if (mtot > nvals_bin):
                     break
                 lookup.insert(k,breakpoints[i])
@@ -827,16 +810,31 @@ def histoStretch(in_low,in_hi,histogram,out_low=0,out_hi=255,num_bins=16):
                 lookup.insert(m,breakpoints[l])
                 if (histogram[m] != 0):
                     l=l+1
-    
+            return lookup
+                    
     return lookup    
     
 def modify(vals,element_size,line_size,minimum,lookup):
   """ modifies an image with the lookup table generated by a stretch function """
-  for i in xrange(line_size):
-     for j in xrange(element_size):
+  for i in range(line_size):
+     for j in range(element_size):
         vals[0][i*element_size + j] = lookup[int(vals[0][i*element_size+j] - minimum)]
+        """print i,j,line_size,element_size,minimum,vals[0][i*element_size+j], lookup[j]"""
 
   return vals
+
+def makeHistogram(vals,element_size,line_size,nbins):
+  """  Initialize a histogram for the image when using histogram stretch option """
+  hist=[]
+  for k in range(nbins+1):
+     hist.append(0)
+
+  for i in range(line_size):
+      for j in range(element_size):
+          index=int(vals[0][i*element_size + j])
+          hist[index]=hist[index] + 1
+  
+  return hist        
 
 def printValueDiff(sdataset1,sdataset2):
   data1=sdataset1.clone()
@@ -853,3 +851,16 @@ def printValueDiff(sdataset1,sdataset2):
     for i in xrange(line_size):
       for j in xrange(element_size):
          print i, j, vals1[0][i*element_size + j] - vals2[0][i*element_size+j]
+         
+def printVals(sdataset):
+    data=sdataset.clone()
+    
+    for t in xrange(data.getDomainSet().getLength()):
+      rangeObj=data.getSample(t)
+      vals=rangeObj.getFloats(0)
+      domain=GridUtil.getSpatialDomain(rangeObj)
+      [element_size,line_size]=domain.getLengths()
+
+      for i in range(line_size):
+        for j in range(element_size):
+          print i, j, vals[0][i*element_size + j]
