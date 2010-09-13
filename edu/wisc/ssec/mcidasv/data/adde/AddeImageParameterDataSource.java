@@ -420,7 +420,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             JPanel innerPanel = GuiUtils.doLayout(comps, 3, GuiUtils.WT_NYN, GuiUtils.WT_N);
             JScrollPane sp = new JScrollPane(GuiUtils.top(innerPanel));
             sp.setPreferredSize(new Dimension(500, 400));
-            JPanel top = GuiUtils.right(GuiUtils.rLabel("CHANGE ME PLZ  "));
+            JPanel top = GuiUtils.right(GuiUtils.rLabel("  "));
             JComponent inner = GuiUtils.inset(GuiUtils.topCenter(top, sp), 5);
             tab.addTab(categories.get(i).toString(), inner);
         }
@@ -475,7 +475,15 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             savedBands.add(bandInfo);
 
             DataSelection selection = dataChoice.getDataSelection();
+            
             Hashtable selectionProperties = selection.getProperties();
+//            Hashtable selectionProperties;
+//            if (selection != null) {
+//                selectionProperties = selection.getProperties();
+//            } else {
+//                DataSelection sel = this.getDataSelection();
+//                selectionProperties = new Hashtable();
+//            }
             logger.trace("bandinfo.getUnit={} selection props={}", bandInfo.getPreferredUnit(), selectionProperties);
             for (AddeImageDescriptor descriptor : descriptors) {
 //                AddeImageInfo aii = (AddeImageInfo)descriptor.getImageInfo().clone();
