@@ -809,7 +809,7 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
         }
     }
 
-    private DataSourceImpl getDataSource() {
+    public DataSourceImpl getDataSource() {
         DataSourceImpl ds = null;
         List dataSources = getDataSources();
         if (!dataSources.isEmpty()) {

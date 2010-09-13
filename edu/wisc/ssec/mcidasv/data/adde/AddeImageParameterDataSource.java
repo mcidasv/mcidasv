@@ -32,8 +32,13 @@ package edu.wisc.ssec.mcidasv.data.adde;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.RandomAccessFile;
 import java.rmi.RemoteException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -43,16 +48,21 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.TimeZone;
 import java.util.TreeMap;
 
 import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ucar.nc2.dt.grid.NetcdfCFWriter;
 import ucar.nc2.iosp.mcidas.McIDASAreaProjection;
 import ucar.unidata.data.BadDataException;
 import ucar.unidata.data.CompositeDataChoice;
@@ -61,6 +71,7 @@ import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSelectionComponent;
 import ucar.unidata.data.DataSourceDescriptor;
+import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.data.GeoSelection;
 import ucar.unidata.data.imagery.AddeImageDataSource;
@@ -68,11 +79,18 @@ import ucar.unidata.data.imagery.AddeImageDescriptor;
 import ucar.unidata.data.imagery.AddeImageInfo;
 import ucar.unidata.data.imagery.BandInfo;
 import ucar.unidata.data.imagery.ImageDataset;
+import ucar.unidata.data.imagery.ImageDataSource.ImageDataInfo;
 import ucar.unidata.geoloc.LatLonPoint;
+import ucar.unidata.geoloc.LatLonRect;
 import ucar.unidata.geoloc.ProjectionImpl;
+import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.IOUtil;
+import ucar.unidata.util.JobManager;
 import ucar.unidata.util.LogUtil;
+import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
+import ucar.unidata.util.ThreeDSize;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.visad.Util;
 import ucar.visad.data.AreaImageFlatField;
@@ -97,6 +115,7 @@ import edu.wisc.ssec.mcidas.AREAnav;
 import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidas.AreaDirectoryList;
 import edu.wisc.ssec.mcidas.AreaFile;
+import edu.wisc.ssec.mcidas.adde.AddeImageURL;
 import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 import edu.wisc.ssec.mcidasv.data.GeoLatLonSelection;
 import edu.wisc.ssec.mcidasv.data.GeoPreviewSelection;
@@ -298,9 +317,315 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     }
 
     @Override public boolean canSaveDataToLocalDisk() {
-//        logger.trace("idvland would return {}", super.canSaveDataToLocalDisk());
         return true;
-//        return super.canSaveDataToLocalDisk();
+    }
+
+    /**
+     * Save files to local disk
+     *
+     * @param prefix destination dir and file prefix
+     * @param loadId For JobManager
+     * @param changeLinks Change internal file references
+     *
+     * @return Files copied
+     *
+     * @throws Exception On badness
+     */
+    @Override protected List saveDataToLocalDisk(String prefix, Object loadId, boolean changeLinks) throws Exception {
+      logger.trace("prefix={} loadId={} changeLinks={}", new Object[] { prefix, loadId, changeLinks });
+        final List<JCheckBox> checkboxes = new ArrayList<JCheckBox>();
+        List categories = new ArrayList();
+        Hashtable catMap = new Hashtable();
+        Hashtable currentDataChoices = new Hashtable();
+
+        List displays = getIdv().getDisplayControls();
+        for (int i = 0; i < displays.size(); i++) {
+            List dataChoices = ((DisplayControl)displays.get(i)).getDataChoices();
+            if (dataChoices == null) {
+                continue;
+            }
+            List finalOnes = new ArrayList();
+            for (int j = 0; j < dataChoices.size(); j++) {
+                ((DataChoice)dataChoices.get(j)).getFinalDataChoices(finalOnes);
+            }
+            for (int dcIdx = 0; dcIdx < finalOnes.size(); dcIdx++) {
+                DataChoice dc = (DataChoice)finalOnes.get(dcIdx);
+                if (!(dc instanceof DirectDataChoice)) {
+                    continue;
+                }
+                DirectDataChoice ddc = (DirectDataChoice) dc;
+                if (ddc.getDataSource() != this) {
+                    continue;
+                }
+                currentDataChoices.put(ddc.getName(), "");
+            }
+        }
+
+        for (int i = 0; i < dataChoices.size(); i++) {
+            DataChoice dataChoice = (DataChoice) dataChoices.get(i);
+            if (!(dataChoice instanceof DirectDataChoice)) {
+                continue;
+            }
+
+            // skip over datachoices that the user has not already loaded.
+            // (but fill the "slot" with null (it's a hack to signify that 
+            // the "download" loop should skip over the data choice associated 
+            // with this slot)
+            if (!currentDataChoices.containsKey(dataChoice.getName())) {
+                checkboxes.add(null); // 
+                continue;
+            }
+
+            String label = dataChoice.getDescription();
+            if (label.length() > 30) {
+                label = label.substring(0, 29) + "...";
+            }
+            JCheckBox cbx =
+                new JCheckBox(label, 
+                              currentDataChoices.get(dataChoice.getName())
+                              != null);
+            ThreeDSize size = (ThreeDSize)dataChoice.getProperty(SIZE_KEY);
+            cbx.setToolTipText(dataChoice.getName());
+            checkboxes.add(cbx);
+            DataCategory dc = dataChoice.getDisplayCategory();
+            List comps = (List)catMap.get(dc);
+            if (comps == null) {
+                comps = new ArrayList();
+                catMap.put(dc, comps);
+                categories.add(dc);
+            }
+            comps.add(cbx);
+            comps.add(GuiUtils.filler());
+            if (size != null) {
+                JLabel sizeLabel = GuiUtils.rLabel(size.getSize() + "  ");
+                sizeLabel.setToolTipText(size.getLabel());
+                comps.add(sizeLabel);
+            } else {
+                comps.add(new JLabel(""));
+            }
+        }
+        final JCheckBox allCbx = new JCheckBox("Select All");
+        allCbx.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                for (JCheckBox cbx : checkboxes) {
+                    cbx.setSelected(allCbx.isSelected());
+                }
+            }
+        });
+        List catComps = new ArrayList();
+        JTabbedPane tab = new JTabbedPane(JTabbedPane.LEFT);
+
+        for (int i = 0; i < categories.size(); i++) {
+            List comps = (List)catMap.get(categories.get(i));
+            JPanel innerPanel = GuiUtils.doLayout(comps, 3, GuiUtils.WT_NYN, GuiUtils.WT_N);
+            JScrollPane sp = new JScrollPane(GuiUtils.top(innerPanel));
+            sp.setPreferredSize(new Dimension(500, 400));
+            JPanel top = GuiUtils.right(GuiUtils.rLabel("CHANGE ME PLZ  "));
+            JComponent inner = GuiUtils.inset(GuiUtils.topCenter(top, sp), 5);
+            tab.addTab(categories.get(i).toString(), inner);
+        }
+
+        JComponent contents = tab;
+        contents = GuiUtils.topCenter(
+            GuiUtils.inset(
+                GuiUtils.leftRight(
+                    new JLabel("Select the fields to download"),
+                    allCbx), 5), contents);
+        JLabel label = new JLabel(getNameForDataSource(this, 50, true));
+        contents = GuiUtils.topCenter(label, contents);
+        contents = GuiUtils.inset(contents, 5);
+        if (!GuiUtils.showOkCancelDialog(null, "", contents, null)) {
+            return null;
+        }
+
+        // iterate through user's selection to build list of things to download
+        List<String> realUrls = new ArrayList<String>();
+        List<AddeImageDescriptor> descriptorsToSave = new ArrayList<AddeImageDescriptor>();
+        List<BandInfo> bandInfos = (List<BandInfo>)getProperty(PROP_BANDINFO, (Object)null);
+        List<BandInfo> savedBands = new ArrayList<BandInfo>();
+        for (int i = 0; i < dataChoices.size(); i++) {
+            DataChoice dataChoice = (DataChoice)dataChoices.get(i);
+            if (!(dataChoice instanceof DirectDataChoice)) {
+                continue;
+            }
+            JCheckBox cbx = (JCheckBox)checkboxes.get(i);
+            if (cbx == null || !cbx.isSelected()) {
+                continue;
+            }
+
+            logger.trace("selected choice={} id={}", dataChoice.getName(), dataChoice.getId());
+            List<AddeImageDescriptor> descriptors = getDescriptors(dataChoice, dataChoice.getDataSelection());
+            logger.trace("descriptors={}", descriptors);
+            
+            BandInfo bandInfo;
+            Object dataChoiceId = dataChoice.getId();
+            if (dataChoiceId instanceof BandInfo) {
+                bandInfo = (BandInfo)dataChoiceId;
+            } else {
+                bandInfo = bandInfos.get(0);
+            }
+            String preferredUnit = bandInfo.getPreferredUnit();
+            List<TwoFacedObject> filteredCalUnits = new ArrayList<TwoFacedObject>();
+            for (TwoFacedObject tfo : (List<TwoFacedObject>)bandInfo.getCalibrationUnits()) {
+                if (preferredUnit.equals(tfo.getId())) {
+                    filteredCalUnits.add(tfo);
+                }
+            }
+            bandInfo.setCalibrationUnits(filteredCalUnits);
+            savedBands.add(bandInfo);
+
+            DataSelection selection = dataChoice.getDataSelection();
+            Hashtable selectionProperties = selection.getProperties();
+            logger.trace("bandinfo.getUnit={} selection props={}", bandInfo.getPreferredUnit(), selectionProperties);
+            for (AddeImageDescriptor descriptor : descriptors) {
+//                AddeImageInfo aii = (AddeImageInfo)descriptor.getImageInfo().clone();
+                String src = descriptor.getSource();
+                logger.trace("src before={}", src);
+                src = replaceKey(src, AddeImageURL.KEY_UNIT, bandInfo.getPreferredUnit());
+                if (selectionProperties.containsKey(AddeImageURL.KEY_PLACE)) {
+                    src = replaceKey(src, AddeImageURL.KEY_PLACE, selectionProperties.get(AddeImageURL.KEY_PLACE));
+                }
+                if (selectionProperties.containsKey(AddeImageURL.KEY_LATLON)) {
+                    src = replaceKey(src, AddeImageURL.KEY_LINEELE, AddeImageURL.KEY_LATLON, selectionProperties.get(AddeImageURL.KEY_LATLON));
+                }
+                if (selectionProperties.containsKey(AddeImageURL.KEY_LINEELE)) {
+                    src = removeKey(src, AddeImageURL.KEY_LATLON);
+                    src = replaceKey(src, AddeImageURL.KEY_LINEELE, selectionProperties.get(AddeImageURL.KEY_LINEELE));
+                }
+                if (selectionProperties.containsKey(AddeImageURL.KEY_MAG)) {
+                    src = replaceKey(src, AddeImageURL.KEY_MAG, selectionProperties.get(AddeImageURL.KEY_MAG));
+                }
+                if (selectionProperties.containsKey(AddeImageURL.KEY_SIZE)) {
+                    src = replaceKey(src, AddeImageURL.KEY_SIZE, selectionProperties.get(AddeImageURL.KEY_SIZE));
+                }
+                logger.trace("src after={}", src);
+                descriptor.setSource(src);
+                descriptorsToSave.add(descriptor);
+            }
+//          descriptorsToSave.addAll(descriptors);
+        }
+        if (!savedBands.isEmpty()) {
+            setProperty(PROP_BANDINFO, savedBands);
+        }
+        if (descriptorsToSave.isEmpty()) {
+            return null;
+        }
+
+        //Start the load, showing the dialog
+        List<String> suffixes = new ArrayList<String>();
+        SimpleDateFormat sdf = new SimpleDateFormat("_" + DATAPATH_DATE_FORMAT);
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+        for (int i = 0; i < descriptorsToSave.size(); i++) {
+            AddeImageDescriptor descriptor = descriptorsToSave.get(i);
+            AddeImageInfo aii = descriptor.getImageInfo();
+            DateTime dttm = (DateTime)timeMap.get(descriptor.getSource());
+            if (dttm != null) {
+                suffixes.add(sdf.format(ucar.visad.Util.makeDate(dttm)) + ".area");
+            } else if (aii != null) {
+                String suffix = "_Band"+aii.getBand()+"_Unit"+aii.getUnit()+"_Pos"+aii.getDatasetPosition()+".area";
+                suffixes.add(suffix);
+                logger.trace("test suffix={}", suffix);
+            } else {
+                suffixes.add(i + ".area");
+            }
+            realUrls.add(descriptor.getSource());
+        }
+        logger.trace("urls={}", realUrls);
+        logger.trace("prefix={}", prefix);
+        logger.trace("suffixes={}", suffixes);
+        logger.trace("loadId={}", loadId);
+        List newFiles = IOUtil.writeTo(realUrls, prefix, suffixes, loadId);
+        logger.trace("files={}", newFiles);
+        if (newFiles == null) {
+            logger.trace("failed while in writeTo?");
+            return null;
+        } else {
+            logger.trace("finished writeTo!");
+        }
+        if (changeLinks) {
+            imageList = newFiles;
+        }
+
+        // write 0 as the first word
+        for (int i = 0; i < newFiles.size(); i++) {
+            try {
+                RandomAccessFile to = new RandomAccessFile((String)newFiles.get(i), "rw");
+                to.seek(0);
+                to.writeInt(0);
+                to.close();
+            } catch (Exception e) {
+                logger.error("unable to set first word to zero", e);
+            }
+        }
+
+
+//        if (geoSubset != null) {
+//            geoSubset.clearStride();
+//            geoSubset.setBoundingBox(null);
+//            if (geoSelectionPanel != null) {
+//                geoSelectionPanel.initWith(doMakeGeoSelectionPanel());
+//            }
+//        }
+
+//        List newFiles = Misc.newList(path);
+//        if (changeLinks) {
+//            //Get rid of the resolver URL
+//            getProperties().remove(PROP_RESOLVERURL);
+//            setNewFiles(newFiles);
+//        }
+//        
+        logger.trace("returning={}", newFiles);
+        return newFiles;
+    }
+
+    @Override protected String getDataPrefix() {
+        String tmp = StringUtil.replace(getName(), ' ', "");
+        tmp = StringUtil.replace(tmp, '/', "");
+        tmp = StringUtil.replace(tmp, "(AllBands)", "");
+        tmp = IOUtil.cleanFileName(tmp);
+        logger.trace("data prefix={}", tmp);
+        return tmp;
+    }
+    
+    /**
+     * A utility method that helps us deal with legacy bundles that used to
+     * have String file names as the id of a data choice.
+     *
+     * @param object     May be an AddeImageDescriptor (for new bundles) or a
+     *                   String that is converted to an image descriptor.
+     * @return The image descriptor.
+     */
+    @Override public AddeImageDescriptor getDescriptor(Object object) {
+        if (object == null) {
+//            logger.trace("null obj");
+            return null;
+        }
+        if (object instanceof DataChoice) {
+            object = ((DataChoice)object).getId();
+//            logger.trace("datachoice getId={}", object);
+        }
+        if (object instanceof ImageDataInfo) {
+            int index = ((ImageDataInfo) object).getIndex();
+            if (index < myDataChoices.size()) {
+                DataChoice dc = (DataChoice)myDataChoices.get(index);
+                Object tmpObject = dc.getId();
+                if (tmpObject instanceof ImageDataInfo) {
+//                    logger.trace("returning imagedatainfo");
+                    return ((ImageDataInfo)tmpObject).getAid();
+                }
+            }
+//            logger.trace("invalid idx for imagedatainfo? (idx={} vs size={})", index, myDataChoices.size());
+            return null;
+            //            return ((ImageDataInfo) object).getAid();
+        }
+
+        if (object instanceof AddeImageDescriptor) {
+//            logger.trace("already addeimagedesc! desc={}", object);
+            return (AddeImageDescriptor)object;
+        }
+        AddeImageDescriptor tmp = new AddeImageDescriptor(object.toString());
+//        logger.trace("return descriptor={}", tmp);
+        return tmp;
     }
 
     /**
@@ -345,8 +670,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             dirList = new AreaDirectoryList(addeCmdBuff);
         } catch (Exception e) {
             try {
-                List<BandInfo> bandInfos =
-                    (List<BandInfo>) getProperty(PROP_BANDINFO, (Object) null);
+                List<BandInfo> bandInfos = (List<BandInfo>)getProperty(PROP_BANDINFO, (Object)null);
                 BandInfo bi = bandInfos.get(0);
                 String bandStr = new Integer(bi.getBandNumber()).toString();
                 addeCmdBuff = replaceKey(addeCmdBuff, "BAND", bandStr);

@@ -341,7 +341,8 @@ public class PersistenceManager extends IdvPersistenceManager {
         }
         logger.trace("hacking displayControls={}", displayControls);
         logger.trace("hacking dataSources={}", dataSources);
-        // remove ReadoutProbes from the list
+        // remove ReadoutProbes from the list and possibly save off multibanded
+        // ADDE data sources
         if (displayControls != null) {
 //            Set<DataSourceImpl> observed = new HashSet<DataSourceImpl>();
             Map<DataSourceImpl, List<DataChoice>> observed = new LinkedHashMap<DataSourceImpl, List<DataChoice>>();

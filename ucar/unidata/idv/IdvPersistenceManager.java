@@ -26,9 +26,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import edu.wisc.ssec.mcidasv.data.adde.AddeImageParameterDataSource;
-
-import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataManager;
 import ucar.unidata.data.DataSource;
 import ucar.unidata.data.DataSourceResults;
@@ -2110,9 +2107,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
         return true;
     }
 
-//    public static class DataChoiceComponent {
-//        
-//    }
+
 
     /**
      * Class DataSourceComponent For showing save guis
@@ -2142,14 +2137,6 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
         }
     }
 
-    public static List<BandInfo> extractBandInfos(final DataSource src) {
-        List<BandInfo> infos = new ArrayList<BandInfo>();
-        List<BandInfo> tmp = (List<BandInfo>)src.getProperty(ImageDataSource.PROP_BANDINFO);
-        if (tmp != null) {
-            infos.addAll(tmp);
-        }
-        return infos;
-    }
 
     /**
      * Show xidv gui
@@ -2176,27 +2163,9 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
             String dataSourceName =
                 DataSelector.getNameForDataSource(dataSource);
             if (dataSource.canSaveDataToLocalDisk()) {
-                if (dataSource instanceof AddeImageParameterDataSource) {
-                    AddeImageParameterDataSource addeSrc = (AddeImageParameterDataSource)dataSource;
-                    copyDataSources.add(dsc);
-                    dsc.cbx.setText(dataSourceName);
-                    copyComps.add(dsc.cbx);
-                    for (BandInfo info : extractBandInfos(addeSrc)) {
-                        String desc = info.getBandDescription();
-                        for (TwoFacedObject tfo : (List<TwoFacedObject>)info.getCalibrationUnits()) {
-                            copyComps.add(new JLabel(desc+'>'+tfo.getLabel()));
-                        }
-                    }
-//                    addeSrc.getBandInfos();
-//                    for (DataChoice choice : (List<DataChoice>)addeSrc.getDataChoices()) {
-//                        copyComps.add(new JLabel(choice));
-//                    }
-                    
-                } else {
-                    copyDataSources.add(dsc);
-                    dsc.cbx.setText(dataSourceName);
-                    copyComps.add(dsc.cbx);
-                }
+                copyDataSources.add(dsc);
+                dsc.cbx.setText(dataSourceName);
+                copyComps.add(dsc.cbx);
             } else {
                 if ((files == null) || (files.size() == 0)) {
                     notSavedLabels.add(new JLabel(dataSourceName));
