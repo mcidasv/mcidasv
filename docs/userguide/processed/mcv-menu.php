@@ -80,7 +80,6 @@
 		Front Positions </span><br>
         <span class="link" onClick="setPage('data/choosers/HydraChooser.html');">Choosing Multispectral Data</span><br>
         <span class="link" onClick="setPage('data/choosers/BridgeChooser.html');">Creating a McIDAS-X Bridge Session </span><br>
-		<span class="link" onClick="setPage('data/choosers/EumetcastHritChooser.html');">Choosing Eumetcast HRIT Data</span><br>
       </div>
 
       <span class="toggle" onClick="toggleChildren(this,'thefieldselector');">+</span>
