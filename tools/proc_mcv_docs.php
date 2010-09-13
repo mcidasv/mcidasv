@@ -66,7 +66,9 @@ if ($version!=$versioncheck || $version=="")
 
 # Compare to doc
 $files=array("/home/mcidasv/mc-v/docs/userguide/processed/License.html",
-             "/home/mcidasv/mc-v/release/README.html");
+             "/home/mcidasv/mc-v/release/README.html",
+             "/home/mcidasv/mc-v/docs/userguide/processed/TOC.xml",
+             "/home/mcidasv/mc-v/docs/userguide/processed/toc.html");
 foreach ($files as $file) {
   $versioncheck="";
   $lines=file($file);
