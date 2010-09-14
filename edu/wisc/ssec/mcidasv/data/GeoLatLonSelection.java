@@ -988,7 +988,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
           getGeoLocationInfo();
       }
 
-      public void applyToDataSelection(DataSelection dataSelection) {
+      @Override public void applyToDataSelection(DataSelection dataSelection) {
 
 
          if (dataSelection == null) {
@@ -1047,6 +1047,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
          dataChoice.setDataSelection(dataSelection);
          this.dataSource.setDataSelection(dataSelection);
     }
+
+      @Override public boolean getShowInControlProperties() {
+          return false;
+      }
 
     public GeoLocationInfo getGeoLocationInfo() {
         geoLocInfo = null;

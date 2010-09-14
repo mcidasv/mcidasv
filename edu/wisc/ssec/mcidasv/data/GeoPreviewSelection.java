@@ -353,7 +353,11 @@ public class GeoPreviewSelection extends DataSelectionComponent {
           }
       }
            
-      public void applyToDataSelection(DataSelection dataSelection) {
+      @Override public void applyToDataSelection(DataSelection dataSelection) {
+      }
+
+      @Override public boolean getShowInControlProperties() {
+          return false;
       }
 
       public void drawBox() {

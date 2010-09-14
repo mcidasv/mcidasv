@@ -312,6 +312,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     }
 
     @Override public void initAfterUnpersistence() {
+        logger.trace("unbundled!");
         super.initAfterUnpersistence();
         this.fromBundle = true;
     }
@@ -408,7 +409,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         allCbx.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 for (JCheckBox cbx : checkboxes) {
-                    cbx.setSelected(allCbx.isSelected());
+                    if (cbx != null) {
+                        cbx.setSelected(allCbx.isSelected());
+                    }
                 }
             }
         });
@@ -900,6 +903,21 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         getDataContext().getIdv().showNormalCursor();
     }
 
+    /**
+     * A hook to allow this data source to add data selection components
+     * to the IDV field selector
+     *
+     * @param dataChoice the data choice
+     *
+     * @return list of components
+     */
+//    @Override public List<DataSelectionComponent> getDataSelectionComponents(DataChoice dataChoice) {
+////        List<DataSelectionComponent> dataSelectionComponents = new ArrayList<DataSelectionComponent>();
+////        initDataSelectionComponents(dataSelectionComponents, dataChoice);
+////        return dataSelectionComponents;
+//        return new ArrayList<DataSelectionComponent>();
+//    }
+    
     private boolean makePreviewImage(DataChoice dataChoice) {
 
         getDataContext().getIdv().showWaitCursor();
@@ -2334,6 +2352,14 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         }
 
         @Override public void applyToDataSelection(DataSelection dataSelection) {
+        }
+
+        /**
+         * Overridden to disable these dummy tabs from showing up in properties
+         * dialog.
+         */
+        @Override public boolean getShowInControlProperties() {
+            return false;
         }
     }
 }
