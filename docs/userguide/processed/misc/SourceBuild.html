@@ -40,37 +40,34 @@ of Java 1.6 or above. You can use either the Java 3D SDK or JRE, version 1.3.x.<
   Ant uses a <code class="filename">build.xml</code> file. Be sure to follow
   the instructions for installing Ant, especially those for setting up environment
   variables.</p>
-<p>&nbsp;</p>
-Download the following files:
-<ul class="step">
-<li>The McIDAS-V source files (McIDAS-V_[version]_source.jar) from the
-  <a href="http://www.ssec.wisc.edu/mcidas/software/v/" target="_blank">McIDAS
-  Website</a>.</li>
-<li>The IDV jar files (IDV_jars_[version].zip) from the <a href="http://www.unidata.ucar.edu/downloads/idv/current/index.jsp" target="_blank">Unidata
-  website</a>.</li>
-</ul>
-<p>Set up the directory tree in the following structure:</p>
+<p>
+Build steps:
+<ol class="step">
+<li>Download the compressed source files from the 
+  <a href="http://www.ssec.wisc.edu/mcidas/software/v/download.html" target="_blank">McIDAS-V Download
+  Page</a>.</li>
+<li>Uncompress the .zip file.  This will create a new directory containing the McIDAS-V source and 
+  <a href="http://www.unidata.ucar.edu/software/idv" target="_blank">Unidata IDV</a> .jar
+  files.<br>
+<p>The resulting directory structure will be:</p>
 <pre>
-		base_dir/
-		base_dir/mcidasv/		-- Extract McIDAS-V source here
-		base_dir/idv/
-		base_dir/idv/lib/		-- Extract IDV jars here
+		mc-v/
+		mc-v/build.xml
+		mc-v/...		<-- McIDAS-V source directories
+
+		idv/
+		idv/lib			<-- Unidata IDV .jar files
 </pre>
-<p>The Ant build script &quot;build.xml&quot; will be extracted into &quot;base_dir/mcidasv/&quot;</p>
- <br>
-<p>Run &quot;ant jar&quot; to create &quot;base_dir/mcidasv/dist/mcidasv.jar&quot;</p>
-<p>Run &quot;ant run&quot; to create mcidasv.jar and run McIDAS-V with a small java heap size for testing.</p>
-<!--<li>To run McIDAS-V using your build:
-<ul class="substep">
-<li>Change to the <code class="filename">lib</code> directory
-<div style="margin-left: 2em"><code class="command">cd&nbsp;&nbsp;../lib</code></div>
+<p>The Ant build script &quot;mc-v/build.xml&quot; is be used to build and run McIDAS-V.</p>
 </li>
-<li>then run:
-<div style="margin-left: 2em"><code class="command">java&nbsp;&nbsp;-Xmx512m&nbsp;&nbsp;-jar idv.jar</code></div>
-</li>
+<li>Change to the <strong>mc-v</strong> directory and run:
+<ul class="step">
+<li>&quot;ant jar&quot; to create the McIDAS-V .jar files in <strong>mc-v/dist</strong>.</li>
+<li>&quot;ant run&quot; to run McIDAS-V with a small java heap size for testing.</li>
 </ul>
 </li>
-</ol>-->
+</ol>
+</p>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">

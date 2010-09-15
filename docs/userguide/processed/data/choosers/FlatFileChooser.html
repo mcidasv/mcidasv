@@ -31,7 +31,6 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Fla
 
 <p>The <strong>General-&gt;Flat files</strong> chooser allows generic flat (2-dimensional) data to be loaded.  The user must supply information about the format of the data by either specifying it directly or by loading a properly formatted header file.  Flat files can be binary, ASCII values, or standard images (JPEG, GIF, etc.), and may contain multiple bands.  Navigation may be loaded via separate navigation files or by specifying a bounding box for the data.
 </p>
-<br>
 <a name="image1" id="image1"></a>
 <div class="images"><img src="images/FlatFiles.gif" alt="Flat File Chooser"><br>
 <span class="caption">Image 1: Flat File Chooser</span></div>
@@ -81,6 +80,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Fla
     <li style="list-style: none">When loading ASCII files the <strong>Delimiter</strong> character must be given.</li>
     <li><strong>Image:</strong></li>
     <li style="list-style: none">When loading a raw Image this option must be selected.</li>
+    <li><strong>Missing value:</strong><br>
+      If there is a value for missing data, enter it here.
+    </li>
   </ul>
 
   <li><img src="images/Help.gif" width="25" height="24"> <strong>Help</strong></li>
