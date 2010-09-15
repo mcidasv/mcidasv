@@ -576,7 +576,13 @@ def passFilter(sdataset,user_passname,user_radius=50,user_leak=100,user_stretchv
             mright = element_size-1
           radiusArray.append(int(vals[0][i*element_size + mright]))
           nsum = sum(radiusArray)
-            
+          
+          """ this is what McIDAS-X IMGFILT does when values outside of 0-255, so will leave it for now """
+          if (vals[0][i*element_size+j] > 255):
+             vals[0][i*element_size+j]=int(vals[0][i*element_size+j]-255)
+          elif (vals[0][i*element_size+j] < 0):
+             vals[0][i*element_size+j]=int(vals[0][i*element_size+j]+255)
+                      
      post_hi = int(max(vals[0]))
      post_low = int(min(vals[0])) 
      if (stretch == 'Contrast'):
@@ -685,6 +691,12 @@ def highPass2DFilter(sdataset,user_stretchval='Contrast'):
             vals[0][i * element_size + j] = midValue - val
          else:
             vals[0][i * element_size + j] = 0
+            
+         """ this is what McIDAS-X IMGFILT does when values outside of 0-255, so will leave it for now """
+         if (vals[0][i*element_size+j] > 255):
+            vals[0][i*element_size+j]=int(vals[0][i*element_size+j]-255)
+         elif (vals[0][i*element_size+j] < 0):
+            vals[0][i*element_size+j]=int(vals[0][i*element_size+j]+255)   
      
      vals[0] = firstLine + vals[0][0:(line_size-1)*element_size]
      post_hi = int(max(vals[0]))
