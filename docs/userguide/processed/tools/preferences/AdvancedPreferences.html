@@ -36,8 +36,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 <br>
 <span class="caption">Image 1: Advanced Preferences</span></div>
 <a name="heapsize" id="heapsize"></a>
-<p><strong>Memory</strong> Change the amount of memory used by McIDAS-V to use
-  either a percentage or a set value. The new amount of memory will be saved
+<p><strong>Memory.</strong> Change the amount of memory used by McIDAS-V to
+  use either a percentage or a set value. The new amount of memory will be saved
   and used in subsequent sessions. For 32 bit operating systems, it is recommended
   to set this to no more than 1250 MB. The maximum value for 32 bit operating
   systems is 1536 MB.</p>
@@ -46,17 +46,26 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
   3D behavior. Uncheck to override the default 3D behavior of McIDAS-V and use
   a 2D View for Map Views.
 <p><strong>Enable JOGL</strong>. Choose to use or not use Java OpenGL (JOGL).</p>
-<p><strong>Enable Direct3D</strong>. Choose to use or not use Direct3D.</p>
+<p><strong>Enable Direct3D</strong>. Windows-only: choose to use or not use Direct3D.</p>
 <p><strong>Specify Default Bundle. </strong> When checked, select a bundle from
   your list of favorites (found in the <strong>Bundles</strong> menu) to load
   upon startup. </p>
 <p><strong>Load Default Layout</strong>. When checked, McIDAS-V will load the
   default layout upon startup. Uncheck to use the default layout of McIDAS-V
   (one window with one panel). </p>
-<p><strong>Enable Geometry by Reference</strong>.</p>
-<p><strong>Enable Concurrent Mark-Sweep Garbage Collector</strong>.</p>
-<p><strong>Enable Non-Power of Two (NPOT) Textures</strong>.</p>
-<p><strong>Enable Access to Image Data by Reference</strong>.</p>
+<p><strong>Enable Geometry by Reference</strong>. Choose to use or not use Java
+  Geometry by Reference. Try this option unchecked if random/extraneous map lines
+  are drawn - a problem that may occur more frequently on systems with ATI graphics
+  cards.</p>
+<p><strong>Enable Concurrent Mark-Sweep Garbage Collector</strong>. Choose to
+use or not use Java Concurrent Mark-Sweep Garbage Collector.</p>
+<p><strong>Enable Non-Power of Two (NPOT) Textures</strong>. Choose to
+use or not use Java Non-Power of Two (NPOT) Textures.</p>
+<p><strong>Enable Access to Image Data by Reference</strong>. Choose to
+use or not use Java Access to Image Data by Reference. We recommend that this
+  option be checked, as it often removes the jagged edges at
+  the limb and/or gaps at the dateline that sometimes appear in displays of image
+  data. </p>
 <p><strong>Java Rendering</strong>. Use the pull down menu to select the number
   of Java threads to use for rendering.</p>
 <p><strong>Java Reading.</strong> Use the pull down menu to select the number

@@ -31,8 +31,6 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Ima
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">
   <p>Choosing Satellite Imagery</p>
-  <p>(updated documentation for version
-    1.0 coming soon) </p>
 </div>
 <p>The <strong>Satellite Imagery</strong> chooser allows you to access satellite imagery on remote ADDE servers. For more information on how to use this chooser, see <a href="../../quickstart/Satellite.html">Getting Started</a>.</p>
 <a name="image1" id="image1"></a>
@@ -44,7 +42,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Ima
 <ul>
 <li><strong>Server:</strong></li>
 <li style="list-style: none">Enter in a server name or choose one from the pulldown
-  menu. Right click in the entry box to delete the server from the list.</li>
+  menu. Right click in the entry box to manage your ADDE servers and to delete
+  the server from the list.</li>
 <li><img src="images/Manage.gif"> <strong>Manage</strong></li>
 <li style="list-style: none">Manages the list of servers.</li>
 <li><strong>Dataset:</strong></li>
@@ -52,7 +51,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Ima
   menu. Right click in the entry box to delete the dataset from the list.</li>
 <li><img src="images/PublicServers.gif"> <strong>Public Datasets</strong></li>
 <li style="list-style: none">Lists the public datasets available on the server.</li>
-<li><img src="../../quickstart/images/Connect.gif" width="191" height="33"></li>
+<li><img src="../../quickstart/images/Connect.gif" width="191" height="33" align="absbottom"><strong>Connect</strong></li>
 <li style="list-style: none">Connects and queries the server for available image
   types.</li>
 <li><strong>Image Type:</strong></li>
@@ -61,59 +60,29 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Ima
 <li><strong>Times: Relative</strong></li>
 <li style="list-style: none">Allows you to select a group of up to the last 50 times.</li>
 <li><strong>Times: Absolute</strong></li>
-<li style="list-style: none">Allows you to choose one or more absolute times. When choosing absolute times for the first time McIDAS-V needs to query the ADDE server for the times. This may take some time. To select more than one time use Control-Click or Shift-Click. See the <a href="../../tools/Timeline.html">Timeline section</a> for details on its use. Click on the <img src="images/SelectDay.gif" width="16" height="16"> <strong>Select Archive Day</strong> to narrow down a large dataset to one day.</li>
+<li style="list-style: none">Allows you to choose one or more absolute times. When choosing absolute times for the first time McIDAS-V needs to query the ADDE server for the times. This may take some time. To select more than one time use Control-Click or Shift-Click. See the <a href="../../tools/Timeline.html">Timeline section</a> for details on its use. Click on the <img src="images/SelectDay1.gif" width="16" height="16"> <strong>Select Archive Day</strong> to narrow down a large dataset to one day.</li>
+<li><strong>Navigation:</strong><br>
+  Use the pulldown menu to select one of the available navigation types. Use
+    Default for most images, and Lat/Lon if LALO navigation should
+    be used. Level 1b servers and POES servers often require Lat/Lon
+    navigation to be selected. </li>
+<li><strong>Preview:</strong><br>
+  Check &quot;Create Preview Image&quot; if you would like to view a preview of the image
+    in the Field Selector. If this box is unchecked, then only a map of the image
+    coverage will be shown in the Region tab of the Field Selector. </li>
 <li><img src="images/Help.gif"> <strong>Help</strong></li>
 <li style="list-style: none">Brings up this help page.</li>
 <li><img src="images/Refresh.gif"> <strong>Refresh</strong></li>
 <li style="list-style: none">Updates the Imagery chooser with the most
   recent data.</li>
 <li><img src="images/Cancel.gif" width="24" height="24"> <strong>Cancel</strong></li>
-<li style="list-style: none">Cancels the query of data and stations. The chooser
+<li style="list-style: none">Cancels the query of data. The chooser
   will reset back to default.</li>
 <li><img src="../../quickstart/images/AddSource.gif"></li>
-<li style="list-style: none">Loads the selected imagery data.</li>
+<li style="list-style: none">Loads the selected imagery data into the <strong><a href="../FieldSelector.html">Field
+  Selector</a></strong>.</li>
 </ul>
-<div class="pagesubtitle">Image Properties</div>
-<p>The image properties section allows you to override the default properties
-  McIDAS-V uses to specify other aspects of the image data. The widgets show
-  the defaults McIDAS-V will use. By changing any of the widgets you can override
-  the default value. Currently, there is a chooser under development with
-  the image properties moved to the <strong>Field Selector</strong>, along with
-  a new geolocation selector box with an image preview. This chooser can be viewed
-    by selecting <strong>Under
-    Development -&gt; Satellite Imagery</strong> from the list of choosers in
-  the <strong>Data Explorer</strong>.</p>
-<ul>
-<li><strong>Data Type:</strong></li>
-<li style="list-style: none">Change the data type to be displayed.</li>
-<li><strong>Channel:</strong></li>
-<li style="list-style: none">Change the channel to be displayed.</li>
-<li><strong>Location:</strong></li>
-<li style="list-style: none">Use the <img src="images/Toggle.gif" width="16" height="18"> toggle button to specify the placement point of the image at either the center or the upper left.</li>
-<li><strong>Lat:/Lon:</strong></li>
-<li style="list-style: none">Enter in a latitude and longitude to center the image on. Click on the <img src="images/Toggle.gif" width="16" height="18"> <strong>toggle</strong> button to switch to Line/Element.</li>
-<li><strong>Line:/Element:</strong></li>
-<li style="list-style: none">Enter in a line and element to center the image on. Click on the <img src="images/Toggle.gif" width="16" height="18"> <strong>toggle</strong> button to switch to Latitude/Longitude.</li>
-<li><img src="images/CenterDisplay.gif" width="18" height="18"> <strong>Center Display</strong></li>
-<li style="list-style: none">Click to center the image over the center, upper left, upper right, lower left, or lower right latitude and longitude coordinates of the of the current main display.</li>
-<li><strong>Image Size:</strong></li>
-<li style="list-style: none">Change the size of the image.</li>
-<li><img src="images/FullRes.gif"> <strong>Full Resolution</strong></li>
-<li style="list-style: none">Click to set the image size to the full resolution size of the image.</li>
-
-<li><strong>Magnification:</strong></li>
-<li style="list-style: none">Use the <img src="images/Slider.gif" width="18" height="12"> sliders to change the magnification of the image.</li>
-<li><img src="images/Linked.gif"> <strong>Link - Linked</strong></li>
-<li style="list-style: none">When the <strong>Magnification</strong> and <strong>Image
-  Size</strong> are linked, changing the magnification will change the image
-  size accordingly.</li>
-<li><img src="images/Unlinked.gif"> <strong>Link - Unlinked</strong></li>
-<li style="list-style: none">When the <strong>Magnification</strong> and <strong>Image
-  Size</strong> are unlinked,
-  changing the magnification will no effect on the image size.</li>
-<li><strong>Navigation Type:</strong></li>
-<li style="list-style: none">Use the pull down menu to select the default navigation, or to choose to use Lat/Lon navigation.</li>
-</ul>
+<div class="pagesubtitle"></div>
 <div class="childlist"></div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">

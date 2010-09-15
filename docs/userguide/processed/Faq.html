@@ -92,6 +92,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('Faq.html',true); 
 <div class="faq-category">
 <div class="faq-question">
 <ul class="noindent">
+<li><a class="faq-question-link" href="#filelocations">Where are the McIDAS-V files stored on my computer?</a></li>
+</ul>
+</div>
+<div class="faq-question">
+<ul class="noindent">
 <li><a class="faq-question-link" href="#busy">How can I tell if McIDAS-V is busy doing something?</a></li>
 </ul>
 </div>
@@ -504,11 +509,32 @@ application/x-java-jnlp-file JNLP
       <p> </p>
     </div>-->
 <div class="faq-category-title"><a name="faq1_cat3_" id="faq1_cat3_"></a>Using McIDAS-V</div>
-<div class="faq-category"><a name="busy" id="busy"></a>
+<div class="faq-category">
+<a name="filelocations" id="filelocations"></a>
+<div class="faq-question">
+<h4>Q. Where are the McIDAS-V files stored on my computer?</h4>
+</div>
+<div class="faq-answer"><strong>A.</strong> McIDAS-V files are divided into two categories:
+&quot;system files&quot; (supplied files that should not be edited) and &quot;user files&quot;
+(new user-created files and supplied ones that contain user settings and preferences). By default,
+the system files are stored in a directory named <strong>McIDAS-V-System</strong> and the user
+files are stored in a directory named <strong>McIDAS-V</strong>. The system file directory can be
+changed during installation and its location defaults to the OS application directory
+(e.g., <strong>C:\Program Files</strong> on Windows, <strong>/Applications</strong> on OS X).
+The user file directory is created in the user's document directory
+(e.g., <strong>C:\Documents and Settings\<em>user</em></strong>\ on Windows,
+<strong>/Users/<em>user</em>/Documents</strong> on OS X, <strong>/home/<em>user</em></strong>
+on Linux).</div>
+
+<a name="busy" id="busy"></a>
 <div class="faq-question">
 <h4>Q. How can I tell if McIDAS-V is busy doing something?</h4>
 </div>
-<div class="faq-answer"><strong>A.</strong> The lower right corner of the main McIDAS-V window shows a box with progress bars if McIDAS-V is busy making a display or doing anything. In the status bar at the bottom, messages will appear when McIDAS-V is reading data from a server or disk. Also, while the displays are being created, there is usually a &quot;please wait&quot; notice in the lower left corner of the main display.</div>
+<div class="faq-answer"><strong>A.</strong> The lower right corner of the main McIDAS-V window shows
+a box with progress bars if McIDAS-V is busy making a display or doing anything. In the status bar at
+the bottom, messages will appear when McIDAS-V is reading data from a server or disk. Also, while the
+displays are being created, there is usually a &quot;please wait&quot; notice in the lower left corner
+of the main display.</div>
 
 <a name="savedisplay" id="savedisplay"></a>
 <div class="faq-question">
