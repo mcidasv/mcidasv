@@ -64,11 +64,13 @@ import visad.data.mcidas.BaseMapAdapter;
 import ucar.visad.display.Displayable;
 import ucar.visad.display.LineDrawing;
 import visad.georef.MapProjection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class GeoPreviewSelection extends DataSelectionComponent {
 
-
+      private static final Logger logger = LoggerFactory.getLogger(GeoPreviewSelection.class);
       DataChoice dataChoice;
       FlatField image;
       boolean isLL;
@@ -248,6 +250,14 @@ public class GeoPreviewSelection extends DataSelectionComponent {
         return null;
       }
 
+      public void setDataChoice(DataChoice choice) {
+          logger.trace("oldChoice={} newChoice={}", this.dataChoice, choice);
+          this.dataChoice = choice;
+      }
+      public DataChoice getDataChoice() {
+          return this.dataChoice;
+      }
+      
       private void forceCoords() {
           float[] extrms = rbb.getRanges();
           x_coords[0] = (double)extrms[0];

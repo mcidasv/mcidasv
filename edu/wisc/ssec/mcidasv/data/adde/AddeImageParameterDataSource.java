@@ -44,9 +44,11 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.TreeMap;
@@ -71,6 +73,7 @@ import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSelectionComponent;
 import ucar.unidata.data.DataSourceDescriptor;
+import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.data.GeoSelection;
@@ -234,6 +237,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                                Hashtable properties)
             throws VisADException {
         super(descriptor, new String[] { image }, properties);
+        logger.trace("desc={}, image={}, properties={}", new Object[] { descriptor, image, properties });
     }
 
     /**
@@ -249,6 +253,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     public AddeImageParameterDataSource(DataSourceDescriptor descriptor, String[] images,
                            Hashtable properties) throws VisADException {
         super(descriptor, images, properties);
+        logger.trace("desc={}, images={}, properties={}", new Object[] { descriptor, images, properties });
     }
 
     /**
@@ -265,6 +270,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     public AddeImageParameterDataSource(DataSourceDescriptor descriptor, List images,
                            Hashtable properties) throws VisADException {
         super(descriptor, images, properties);
+        logger.trace("desc={}, images={}, properties={}", new Object[] { descriptor, images, properties });
     }
 
     /**
@@ -279,6 +285,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     public AddeImageParameterDataSource(DataSourceDescriptor descriptor, ImageDataset ids,
                            Hashtable properties) throws VisADException {
         super(descriptor, ids, properties);
+        logger.trace("desc={}, ids={}, properties={}", new Object[] { descriptor, ids, properties });
         this.sourceProps = properties;
         if (properties.containsKey((Object)PREVIEW_KEY)) {
             this.showPreview = (Boolean)(properties.get((Object)PREVIEW_KEY));
@@ -320,7 +327,23 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     @Override public boolean canSaveDataToLocalDisk() {
         return true;
     }
-
+//    public void setChoiceToSel(Hashtable<DataChoice, DataSelection> newMap) {
+//        this.choiceToSel = newMap;
+//    }
+//    public Hashtable<DataChoice, DataSelection> getChoiceToSel() {
+//        return this.choiceToSel;
+//    }
+    private Hashtable<DataChoice, DataSelection> choiceToSel = new Hashtable<DataChoice, DataSelection>();
+    
+    public DataSelection getSelForChoice(final DataChoice choice) {
+        return choiceToSel.get(choice);
+    }
+    public boolean hasSelForChoice(final DataChoice choice) {
+        return choiceToSel.containsKey(choice);
+    }
+    public void putSelForChoice(final DataChoice choice, final DataSelection sel) {
+        choiceToSel.put(choice, sel);
+    }
     /**
      * Save files to local disk
      *
@@ -456,6 +479,15 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 continue;
             }
 
+            if (dataChoice.getDataSelection() == null) {
+                DataSelection tmp = this.getSelForChoice(dataChoice);
+                if (tmp != null) {
+                logger.trace("INSERT sel props={} geosel={}", tmp.getProperties(), tmp.getGeoSelection());
+                } else {
+                    logger.trace("INSERT failed :(");
+                }
+                dataChoice.setDataSelection(tmp);
+            }
             logger.trace("selected choice={} id={}", dataChoice.getName(), dataChoice.getId());
             List<AddeImageDescriptor> descriptors = getDescriptors(dataChoice, dataChoice.getDataSelection());
             logger.trace("descriptors={}", descriptors);
@@ -478,7 +510,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             savedBands.add(bandInfo);
 
             DataSelection selection = dataChoice.getDataSelection();
-            
+            if (selection == null) {
+                selection = this.getSelForChoice(dataChoice);
+            }
             Hashtable selectionProperties = selection.getProperties();
 //            Hashtable selectionProperties;
 //            if (selection != null) {
@@ -533,7 +567,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             if (dttm != null) {
                 suffixes.add(sdf.format(ucar.visad.Util.makeDate(dttm)) + ".area");
             } else if (aii != null) {
-                String suffix = "_Band"+aii.getBand()+"_Unit"+aii.getUnit()+"_Pos"+aii.getDatasetPosition()+".area";
+                String suffix = "_Band"+aii.getBand()+"_Unit"+aii.getUnit()+"_Pos"+i+".area";
                 suffixes.add(suffix);
                 logger.trace("test suffix={}", suffix);
             } else {
@@ -732,8 +766,11 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         if (this.lastChoice != null) {
             basically = dataChoice.basicallyEquals(this.lastChoice);
         }
+        logger.trace("dataChoice={}", dataChoice);
+        // check for comps and whether or not dataChoice is hooping right back into line
         if (this.haveDataSelectionComponents && dataChoice.equals(this.lastChoice)) {
             try {
+                // did the datachoice ever actually get data?
                 if (dataChoice.getDataSelection() == null) {
                     if (!basically) {
                         this.laLoSel = new GeoLatLonSelection(this, 
@@ -856,6 +893,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
                     String coordType = "";
                     double coords[] = { 0.0, 0.0 };
+                    
+                    logger.trace("basically={} laLoSel==null?={}", basically, (this.laLoSel==null));
                     if (!basically) {
                         if (this.laLoSel != null) {
                             coordType = this.laLoSel.getCoordinateType();
@@ -866,10 +905,21 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                                 coords[0] = (double)this.laLoSel.getLine();
                                 coords[1] = (double)this.laLoSel.getElement();
                             }
+
+                            // turns out that laLoSel is reused for datachoices
+                            // from the same source. if you don't update laLoSel's
+                            // dataChoice, it'll apply whatever data selection
+                            // you set up... to the first data choice that you
+                            // loaded! (and causing an NPE when attempting to
+                            // bundle the dataselection for the newly-selected
+                            // datachoice.
+                            this.previewSel.setDataChoice(dataChoice);
+                            this.laLoSel.setDataChoice(dataChoice);
                             this.laLoSel.setPreviewLineRes(this.previewLineRes);
                             this.laLoSel.setPreviewEleRes(this.previewEleRes);
                             this.laLoSel.update(previewDir, this.previewProjection, previewNav,
                                            coordType, coords);
+                            
                         } else {
                             this.laLoSel = new GeoLatLonSelection(this, 
                                           dataChoice, this.initProps, this.previewProjection,
@@ -877,8 +927,12 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                             this.lineMag = this.laLoSel.getLineMag();
                             this.elementMag = this.laLoSel.getElementMag();
                         }
+                    } else {
+                        if (this.laLoSel != null) {
+                            this.previewSel.setDataChoice(dataChoice);
+                            this.laLoSel.setDataChoice(dataChoice);
+                        }
                     }
-                    
                     /* DAVEP: Force preview on. "No preview" means blank image */
 //                    this.previewSel = new GeoPreviewSelection(this, dataChoice, this.previewImage, 
 //                                     this.laLoSel, this.previewProjection,
@@ -1205,12 +1259,65 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         }
     }
 
+    @Override public DataSelection getDataSelection() {
+        DataSelection ugh;
+        if (this.laLoSel == null || this.choiceToSel == null || !this.choiceToSel.containsKey(this.laLoSel.getDataChoice())) {
+            logger.trace("* idvland getDataSelection");
+            ugh = super.getDataSelection();
+        } else {
+            logger.trace("* mcv getSelForChoice");
+            ugh = this.getSelForChoice(this.laLoSel.getDataChoice());
+        }
+        logger.trace("return selection props={} geo={}", ugh.getProperties(), ugh.getGeoSelection());
+        return ugh;
+//        DataSelection ugh = super.getDataSelection();
+//
+//        if (this.laLoSel != null) {
+//        DataSelection hmm = this.getSelForChoice(this.laLoSel.getDataChoice());
+//        if (hmm != null) {
+//            logger.trace("  test: props={} geo={}", hmm.getProperties(), hmm.getGeoSelection());
+//        } else {
+//            logger.trace("  test: failed");
+//        }
+//        }
+//        return ugh;
+    }
+
+    @Override public void setDataSelection(DataSelection s) {
+        super.setDataSelection(s);
+        if (this.laLoSel != null) {
+            this.putSelForChoice(this.laLoSel.getDataChoice(), s);
+        }
+        logger.trace("setting selection props={} geo={}", s.getProperties(), s.getGeoSelection());
+    }
+    
+    @Override public int canShowParameter(String name) {
+        int result = super.canShowParameter(name);
+        switch (result) {
+            case 0: //show=yes
+                logger.trace("can show param={}", name);
+                break;
+            case 1: // show=hide
+                logger.trace("hide param={}", name);
+                break;
+            case 2: // show=no
+                logger.trace("no show param={}", name);
+                break;
+            default:
+                logger.trace("trouble for param={}", name);
+                break;
+        }
+        return result;
+
+    }
+    
     /**
      * Insert the new DataChoice into the dataChoice list.
      *
      * @param choice   new choice to add
      */
     protected void addDataChoice(DataChoice choice) {
+        logger.trace("choice={}", choice);
         super.addDataChoice(choice);
         if (stashedChoices == null) {
             stashedChoices = new ArrayList();
@@ -1354,6 +1461,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             DataSelection subset)
             throws VisADException, RemoteException {
 
+//        if (dataChoice.getDataSelection() == null) {
+//            dataChoice.setDataSelection(subset);
+//        }
         Hashtable subsetProperties = subset.getProperties();
         Enumeration propEnum = subsetProperties.keys();
         int numLines = 0;
@@ -1743,19 +1853,33 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     saveEleMag = this.laLoSel.getElementMag();
                 } catch (Exception e) {
                     logger.error("error reading from laLoSel", e);
-                    savePlace = getSavePlace();
+//                    savePlace = getSavePlace();
+//                    this.laLoSel.setPlace(savePlace);
+//                    saveLat = getSaveLat();
+//                    this.laLoSel.setLatitude(saveLat);
+//                    saveLon = getSaveLon();
+//                    this.laLoSel.setLongitude(saveLon);
+//                    saveNumLine = getSaveNumLine();
+//                    this.laLoSel.setNumLines(saveNumLine);
+//                    saveNumEle = getSaveNumEle();
+//                    this.laLoSel.setNumEles(saveNumEle);
+//                    saveLineMag = getSaveLineMag();
+//                    this.laLoSel.setLineMag(saveLineMag);
+//                    saveEleMag = getSaveEleMag();
+//                    this.laLoSel.setElementMag(saveEleMag);
+                    savePlace = this.savePlace;
                     this.laLoSel.setPlace(savePlace);
-                    saveLat = getSaveLat();
+                    saveLat = this.saveLat;
                     this.laLoSel.setLatitude(saveLat);
-                    saveLon = getSaveLon();
+                    saveLon = this.saveLon;
                     this.laLoSel.setLongitude(saveLon);
-                    saveNumLine = getSaveNumLine();
+                    saveNumLine = this.saveNumLine;
                     this.laLoSel.setNumLines(saveNumLine);
-                    saveNumEle = getSaveNumEle();
+                    saveNumEle = this.saveNumEle;
                     this.laLoSel.setNumEles(saveNumEle);
-                    saveLineMag = getSaveLineMag();
+                    saveLineMag = this.saveLineMag;
                     this.laLoSel.setLineMag(saveLineMag);
-                    saveEleMag = getSaveEleMag();
+                    saveEleMag = this.saveEleMag;
                     this.laLoSel.setElementMag(saveEleMag);
                 }
 
@@ -1862,11 +1986,16 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      * @return  list of descriptors matching the selection
      */
     public List getDescriptors(DataChoice dataChoice, DataSelection subset) {
+//        logger.trace("choice={} subset props={} geo={}", new Object[] { dataChoice, subset.getProperties(), subset.getGeoSelection() });
         int linRes = this.lineResolution;
         int eleRes = this.elementResolution;
         int newLinRes = linRes;
         int newEleRes = eleRes;
         List times = getTimesFromDataSelection(subset, dataChoice);
+//        if (dataChoice.getDataSelection() == null) {
+//            logger.trace("setting datasel!");
+//            dataChoice.setDataSelection(subset);
+//        }
         if ((times == null) || times.isEmpty()) {
             times = imageTimes;
         }
@@ -2202,117 +2331,117 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         this.sourceProps = sourceProps;
     }
 
-    public MapProjection getSampleMapProjection() {
-        return this.sampleMapProjection;
-    }
+//    public MapProjection getSampleMapProjection() {
+//        return this.sampleMapProjection;
+//    }
+//
+//    public void setSampleMapProjection(MapProjection sampleMapProjection) {
+//        this.sampleMapProjection = sampleMapProjection;
+//    }
 
-    public void setSampleMapProjection(MapProjection sampleMapProjection) {
-        this.sampleMapProjection = sampleMapProjection;
-    }
+//    public String getChoiceName() {
+//        return this.choiceName;
+//    }
+//
+//    public void setChoiceName(String choiceName) {
+//        this.choiceName = choiceName;
+//    }
 
-    public String getChoiceName() {
-        return this.choiceName;
-    }
+//    public MapProjection getPreviewProjection() {
+//        return this.previewProjection;
+//    }
+//
+//    public void setPreviewProjection(MapProjection previewProjection) {
+//        this.previewProjection = previewProjection;
+//    }
+//
+//    public AreaDirectory getPreviewDir() {
+//        return this.previewDir;
+//    }
+//
+//    public void setPreviewDir(AreaDirectory previewDir) {
+//        this.previewDir = previewDir;
+//    }
 
-    public void setChoiceName(String choiceName) {
-        this.choiceName = choiceName;
-    }
+//    public String getSavePlace() {
+//        return this.savePlace;
+//    }
+//
+//    public void setSavePlace(String savePlace) {
+//        this.savePlace = savePlace;
+//    }
 
-    public MapProjection getPreviewProjection() {
-        return this.previewProjection;
-    }
+//    public double getSaveLat() {
+//        return this.saveLat;
+//    }
+//
+//    public void setSaveLat(double saveLat) {
+//        this.saveLat = saveLat;
+//    }
+//
+//    public double getSaveLon() {
+//        return this.saveLon;
+//    }
+//
+//    public void setSaveLon(double saveLon) {
+//        this.saveLon = saveLon;
+//    }
+//
+//    public int getSaveNumLine() {
+//        return this.saveNumLine;
+//    }
+//
+//    public void setSaveNumLine(int saveNumLine) {
+//        this.saveNumLine = saveNumLine;
+//    }
+//
+//    public int getSaveNumEle() {
+//        return this.saveNumEle;
+//    }
+//
+//    public void setSaveNumEle(int saveNumEle) {
+//        this.saveNumEle = saveNumEle;
+//    }
+//
+//    public int getSaveLineMag() {
+//        return this.saveLineMag;
+//    }
 
-    public void setPreviewProjection(MapProjection previewProjection) {
-        this.previewProjection = previewProjection;
-    }
-
-    public AreaDirectory getPreviewDir() {
-        return this.previewDir;
-    }
-
-    public void setPreviewDir(AreaDirectory previewDir) {
-        this.previewDir = previewDir;
-    }
-
-    public String getSavePlace() {
-        return this.savePlace;
-    }
-
-    public void setSavePlace(String savePlace) {
-        this.savePlace = savePlace;
-    }
-
-    public double getSaveLat() {
-        return this.saveLat;
-    }
-
-    public void setSaveLat(double saveLat) {
-        this.saveLat = saveLat;
-    }
-
-    public double getSaveLon() {
-        return this.saveLon;
-    }
-
-    public void setSaveLon(double saveLon) {
-        this.saveLon = saveLon;
-    }
-
-    public int getSaveNumLine() {
-        return this.saveNumLine;
-    }
-
-    public void setSaveNumLine(int saveNumLine) {
-        this.saveNumLine = saveNumLine;
-    }
-
-    public int getSaveNumEle() {
-        return this.saveNumEle;
-    }
-
-    public void setSaveNumEle(int saveNumEle) {
-        this.saveNumEle = saveNumEle;
-    }
-
-    public int getSaveLineMag() {
-        return this.saveLineMag;
-    }
-
-    public void setSaveLineMag(int saveLineMag) {
-        this.saveLineMag = saveLineMag;
-    }
-
-    public int getSaveEleMag() {
-        return this.saveEleMag;
-    }
-
-    public void setSaveEleMag(int saveEleMag) {
-        this.saveEleMag = saveEleMag;
-    }
-
-    public String getSource() {
-        return this.source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    public boolean getShowPreview() {
-        return this.showPreview;
-    }
-
-    public void setShowPreview(boolean showPreview) {
-        this.showPreview = showPreview;
-    }
-
-    public boolean getSaveShowPreview() {
-        return this.saveShowPreview;
-    }
-
-    public void setSaveShowPreview(boolean saveShowPreview) {
-        this.saveShowPreview = saveShowPreview;
-    }
+//    public void setSaveLineMag(int saveLineMag) {
+//        this.saveLineMag = saveLineMag;
+//    }
+//
+//    public int getSaveEleMag() {
+//        return this.saveEleMag;
+//    }
+//
+//    public void setSaveEleMag(int saveEleMag) {
+//        this.saveEleMag = saveEleMag;
+//    }
+//
+//    public String getSource() {
+//        return this.source;
+//    }
+//
+//    public void setSource(String source) {
+//        this.source = source;
+//    }
+//
+//    public boolean getShowPreview() {
+//        return this.showPreview;
+//    }
+//
+//    public void setShowPreview(boolean showPreview) {
+//        this.showPreview = showPreview;
+//    }
+//
+//    public boolean getSaveShowPreview() {
+//        return this.saveShowPreview;
+//    }
+//
+//    public void setSaveShowPreview(boolean saveShowPreview) {
+//        this.saveShowPreview = saveShowPreview;
+//    }
 
     private void getSaveComponents() {
         saveCoordType = this.laLoSel.getCoordinateType();

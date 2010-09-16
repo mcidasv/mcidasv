@@ -244,7 +244,12 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
         } else {
             Hashtable props = dataSource.getProperties();
             try {
-                this.dataSelection = dataChoice.getDataSelection();
+//                this.dataSelection = dataChoice.getDataSelection();
+                DataSelection testSelection = dataChoice.getDataSelection();
+                DataSelection realSelection = getDataSelection();
+                if (testSelection == null) {
+                    dataChoice.setDataSelection(realSelection);
+                }
                 ImageSequenceImpl seq = null;
                 if (dataSelection == null)
                     dataSelection = dataSource.getDataSelection();
@@ -254,6 +259,9 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
                         image = (FlatField) dataChoice.getData(null);
                     }
                 } else {
+//                    if (dataChoice.getDataSelection() == null) {
+//                        dataChoice.setDataSelection(dataSelection)
+//                    }
                     Data data = dataSource.getData(dataChoice, null, dataSelection, props);
                     if (data instanceof ImageSequenceImpl) {
                         seq = (ImageSequenceImpl) data;
