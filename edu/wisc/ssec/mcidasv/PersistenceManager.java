@@ -51,6 +51,7 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -87,6 +88,7 @@ import ucar.unidata.idv.ui.IdvComponentHolder;
 import ucar.unidata.idv.ui.LoadBundleDialog;
 import ucar.unidata.idv.ui.WindowInfo;
 import ucar.unidata.util.ColorTable;
+import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
@@ -157,10 +159,6 @@ public class PersistenceManager extends IdvPersistenceManager {
     /** Stores the last active ViewManager from <i>before</i> a bundle load. */
     private ViewManager lastBeforeBundle = null;
 
-    private boolean saveAppState;
-    
-    private JCheckBox saveAppStateCbx;
-
     /** 
      * Whether or not the user wants to attempt merging bundled layers into
      * current displays.
@@ -178,6 +176,11 @@ public class PersistenceManager extends IdvPersistenceManager {
     private static final String TAG_DEFAULT = "default";
     private static final String ATTR_NAME = "name";
 
+    /** Use radio buttons to control state saving */
+    private JRadioButton layoutOnlyRadio;
+    private JRadioButton layoutSourcesRadio;
+    private JRadioButton layoutSourcesDataRadio;
+    
     /**
      * Java requires this constructor. 
      */
@@ -190,20 +193,58 @@ public class PersistenceManager extends IdvPersistenceManager {
      */
     public PersistenceManager(IntegratedDataViewer idv) {
         super(idv);
-        saveAppState = true;
-        saveAppStateCbx = new JCheckBox("Save McIDAS-V session", true);
-        saveAppStateCbx.setToolTipText("Whether or not the bundle should attempt to completely restore your current McIDAS-V session.");
-        saveAppStateCbx.addActionListener(new ActionListener() {
+           
+    	//TODO: Saved for future development
+/**
+        layoutOnlyRadio = new JRadioButton("Layout only");
+        layoutOnlyRadio.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
-                boolean newVal = saveAppStateCbx.isSelected();
-                logger.trace("old val: {} new val: {} (also setting saveViewState and saveDisplays!)", saveAppState, newVal);
-                saveAppState = newVal;
-                saveDisplaysCbx.setSelected(newVal);
-                saveDisplays = newVal;
-                saveViewStateCbx.setSelected(newVal);
-                saveViewState = newVal;
+                saveJythonBox.setSelectedIndex(0);
+                saveJython = false;
+            	makeDataRelativeCbx.setSelected(false);
+            	makeDataRelative = false;
+            	saveDataSourcesCbx.setSelected(false);
+            	saveDataSources = false;
+            	saveDataCbx.setSelected(false);
+            	saveData = false;
             }
         });
+
+        layoutSourcesRadio = new JRadioButton("Layout & Data Sources");
+        layoutSourcesRadio.addActionListener(new ActionListener() {
+            public void actionPerformed(final ActionEvent e) {
+                saveJythonBox.setSelectedIndex(1);
+                saveJython = true;
+            	makeDataRelativeCbx.setSelected(false);
+            	makeDataRelative = false;
+            	saveDataSourcesCbx.setSelected(true);
+            	saveDataSources = true;
+            	saveDataCbx.setSelected(false);
+            	saveData = false;
+            }
+        });
+        
+        layoutSourcesDataRadio = new JRadioButton("Layout, Data Sources & Data");
+        layoutSourcesRadio.addActionListener(new ActionListener() {
+            public void actionPerformed(final ActionEvent e) {
+                saveJythonBox.setSelectedIndex(1);
+                saveJython = true;
+            	makeDataRelativeCbx.setSelected(false);
+            	makeDataRelative = false;
+            	saveDataSourcesCbx.setSelected(true);
+            	saveDataSources = true;
+            	saveDataCbx.setSelected(true);
+            	saveData = true;
+            }
+        });
+        //Group the radio buttons.
+        layoutSourcesRadio.setSelected(true);
+        ButtonGroup group = new ButtonGroup();
+        group.add(layoutOnlyRadio);
+        group.add(layoutSourcesRadio);
+        group.add(layoutSourcesDataRadio);
+*/
+        
     }
 
     /**
@@ -300,25 +341,50 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     @Override public JPanel getFileAccessory() {
-        
-        List accessories = Misc.newList(saveAppStateCbx, saveDataSourcesCbx);
-        accessories.add(GuiUtils.left(GuiUtils.inset(saveJythonBox, new Insets(0, 3, 0, 0))));
-        accessories.add(GuiUtils.filler(1, 10));
-        accessories.add(makeDataRelativeCbx);
+        // Always save displays and data sources
+        saveDisplaysCbx.setSelected(true);
+        saveDisplays = true;
+        saveViewStateCbx.setSelected(true);
+        saveViewState = true;
+    	saveDataSourcesCbx.setSelected(true);
+    	saveDataSources = true;
 
-        if (publishCbx == null) {
-            publishCbx = getIdv().getPublishManager().makeSelector();
-        }
-        if (publishCbx != null) {
-            accessories.add(GuiUtils.filler(1, 10));
-            accessories.add(publishCbx);
-        }
         return GuiUtils.top(
             GuiUtils.vbox(
                 Misc.newList(
-                    new JLabel("What should be saved?"),
-                    GuiUtils.vbox(accessories))));
+                		GuiUtils.inset(new JLabel("Bundle save options:"),
+                                new Insets(0, 5, 5, 0)),
+                		saveJythonBox,
+                		makeDataRelativeCbx)));
+    }
     
+    /**
+     * Have the user select an xidv filename and
+     * write the current application state to it.
+     * This also sets the current file name and
+     * adds the file to the history list.
+     */
+    public void doSaveAs() {
+        String filename =
+            FileManager.getWriteFile(getArgsManager().getBundleFileFilters(),
+                                     "mcvz", getFileAccessory());
+        if (filename == null) {
+            return;
+        }
+        setCurrentFileName(filename);
+
+        boolean prevMakeDataEditable = makeDataEditable;
+        makeDataEditable = makeDataEditableCbx.isSelected();
+
+        boolean prevMakeDataRelative = makeDataRelative;
+        makeDataRelative = makeDataRelativeCbx.isSelected();
+        if (doSave(filename)) {
+            getPublishManager().publishContent(filename, null, publishCbx);
+            getIdv().addToHistoryList(filename);
+        }
+        makeDataEditable = prevMakeDataEditable;
+        makeDataRelative = prevMakeDataRelative;
+
     }
 
     /**

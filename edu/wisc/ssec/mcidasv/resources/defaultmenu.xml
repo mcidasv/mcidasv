@@ -20,13 +20,13 @@
                   mnemonic="O" 
                   tooltip="Open a file on disk" />
         <separator />
-        <menuitem label="Save Bundle..." 
-                  mnemonic="S"
+        <menuitem label="Save Favorite..." 
+                  mnemonic="F"
                   action="action:bundle.favorite.save"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/save-as-fave-bundle16.png"
                   tooltip="Save as a bundle" />
-        <menuitem label="Save As..." 
-                  mnemonic="A"
+        <menuitem label="Save Bundle..." 
+                  mnemonic="B"
                   action="action:bundle.save"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/document-save16.png"
                   tooltip="Save to a file on disk" />

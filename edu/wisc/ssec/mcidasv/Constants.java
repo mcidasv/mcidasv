@@ -301,7 +301,7 @@ public interface Constants extends IdvConstants {
     
     /** File filter used for bundle files */
     public static final PatternFileFilter FILTER_MCVZ =
-        new PatternFileFilter("(.+\\.mcvz$)", "Zipped McIDAS-V Bundles (*.mcvz)", SUFFIX_MCVZ);
+        new PatternFileFilter("(.+\\.mcvz$)", "McIDAS-V Zipped Data Bundles (*.mcvz)", SUFFIX_MCVZ);
 
     /** File filter used for bundle files */
     public static final PatternFileFilter FILTER_MCVMCVZ =

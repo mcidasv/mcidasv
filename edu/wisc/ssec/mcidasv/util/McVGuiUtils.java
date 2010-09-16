@@ -163,6 +163,10 @@ public class McVGuiUtils implements Constants {
     	return makeLabeledComponent(label, thing, Position.RIGHT);
     }
 
+    public static JPanel makeLabeledComponent(String label, JComponent thing, Position position) {
+    	return makeLabeledComponent(new JLabel(label), thing, position);
+    }
+    
     public static JPanel makeLabeledComponent(JLabel label, JComponent thing, Position position) {
     	JPanel newPanel = new JPanel();
 
@@ -387,14 +391,14 @@ public class McVGuiUtils implements Constants {
     /**
      * Custom makeImageButton to ensure proper sizing and mouseborder are set
      */
-    public static JButton makeImageButton(String label, 
+    public static JButton makeImageButton(String iconName, 
     		final Object object,
     		final String methodName,
     		final Object arg,
     		final String tooltip
     ) {
 
-    	final JButton btn = makeImageButton(label, tooltip);
+    	final JButton btn = makeImageButton(iconName, tooltip);
     	return (JButton) GuiUtils.addActionListener(btn, object, methodName, arg);
     }
 
@@ -412,6 +416,7 @@ public class McVGuiUtils implements Constants {
 
     	final JButton btn = GuiUtils.getImageButton(imageIcon);
     	btn.setBackground(null);
+    	btn.setContentAreaFilled(false);
     	btn.setSize(new Dimension(24, 24));
     	btn.setPreferredSize(new Dimension(24, 24));
     	btn.setMinimumSize(new Dimension(24, 24));
@@ -652,6 +657,38 @@ public class McVGuiUtils implements Constants {
     	                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
     	                		.add(left, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
     	                		.add(right, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+    	);
+
+    	return newPanel;
+    }
+    
+    /**
+     * Use GroupLayout for wrapping a list of components horizontally
+     */
+    public static JPanel horizontal(Component[] components) {
+    	JPanel newPanel = new JPanel();
+    	
+    	org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
+    	newPanel.setLayout(layout);
+    	
+    	org.jdesktop.layout.GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
+    	for (int i=0; i<components.length; i++) {
+    		if (i>0) hGroup.add(GAP_RELATED);
+    		hGroup.add(components[i], org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
+    	}
+
+    	org.jdesktop.layout.GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
+    	org.jdesktop.layout.GroupLayout.ParallelGroup vInner = layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING);
+    	for (int i=0; i<components.length; i++) {
+    		vInner.add(components[i], org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE);
+    	}
+    	vGroup.add(vInner);
+
+    	layout.setHorizontalGroup(
+    			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(hGroup)
+    	);
+    	layout.setVerticalGroup(
+    			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(vGroup)
     	);
 
     	return newPanel;
