@@ -133,7 +133,7 @@ public class ArgumentManager extends ArgsManager {
      */
     @Override public List<PatternFileFilter> getBundleFileFilters() {
         List<PatternFileFilter> filters = new ArrayList<PatternFileFilter>(); 
-        Collections.addAll(filters, getXidvFileFilter(), FILTER_JNLP, FILTER_ISL, getZidvFileFilter(), super.getXidvFileFilter(), super.getZidvFileFilter());
+        Collections.addAll(filters, getXidvFileFilter(), getZidvFileFilter(), FILTER_JNLP, FILTER_ISL, super.getXidvFileFilter(), super.getZidvFileFilter());
         return filters;
     }
 
