@@ -164,7 +164,16 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
 
     public ImagePlanViewControl() {
         super();
+        logger.trace("created new imageplanviewcontrol={}", Integer.toHexString(hashCode()));
         this.imageDefaults = getImageDefaults();
+    }
+
+    @Override     public boolean init(DataChoice dataChoice)
+    throws VisADException, RemoteException {
+        this.dataChoice = (DataChoice) this.getDataChoices().get(0);
+        boolean result = super.init(this.dataChoice);
+
+        return result;
     }
 
     /**
