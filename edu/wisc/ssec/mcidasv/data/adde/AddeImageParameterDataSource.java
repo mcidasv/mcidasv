@@ -641,13 +641,14 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      * @return The image descriptor.
      */
     @Override public AddeImageDescriptor getDescriptor(Object object) {
+//        logger.trace("--------------------");
         if (object == null) {
 //            logger.trace("null obj");
             return null;
         }
         if (object instanceof DataChoice) {
             object = ((DataChoice)object).getId();
-//            logger.trace("datachoice getId={}", object);
+            logger.trace("datachoice getId={}", object);
         }
         if (object instanceof ImageDataInfo) {
             int index = ((ImageDataInfo) object).getIndex();
@@ -670,6 +671,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         }
         AddeImageDescriptor tmp = new AddeImageDescriptor(object.toString());
 //        logger.trace("return descriptor={}", tmp);
+//        logger.trace("--------------------");
         return tmp;
     }
 
@@ -1226,9 +1228,11 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             name = this.choiceName;
         }
         if (name.length() != 0) {
+            logger.trace("already have a name={}", name);
             return;
         }
         if (!sourceProps.containsKey(UNIT_KEY)) {
+            logger.trace("sourceProps has no unit key={}", sourceProps);
             return;
         }
         BandInfo bi = null;
@@ -1760,6 +1764,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             return null;
         }
 
+        logger.trace("incoming src={} readLabel={}", aid.getSource(), readLabel);
         String src = aid.getSource();
 
         Hashtable props = subset.getProperties();
@@ -1782,11 +1787,12 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         }
         aid.setSource(src);
 
-        SingleBandedImage result = (SingleBandedImage)getCache(src);
-        if (result != null) {
-            setDisplaySource(src, props);
-            return result;
-        }
+        SingleBandedImage result;
+//        SingleBandedImage result = (SingleBandedImage)getCache(src);
+//        if (result != null) {
+//            setDisplaySource(src, props);
+//            return result;
+//        }
 
         //For now handle non adde urls here
         try {
@@ -1794,6 +1800,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             AreaDirectory areaDir = null;
             try {
                 if (aii != null) {
+                    logger.trace("imageinfo={}", aii.toString());
                     if (currentDirs != null) {
                         int pos = Math.abs(aii.getDatasetPosition());
                         int band = 0;
@@ -1812,6 +1819,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         } else {
                         }
                     }
+                } else {
+                    logger.trace("uh oh");
                 }
             } catch (Exception exc) {
                 LogUtil.printMessage("error looking up area dir");
@@ -1900,6 +1909,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 src = replaceKey(src, MAG_KEY, saveLineMag + ' ' + saveEleMag);
             }
 
+            logger.trace("wtf: {}", src);
             AreaAdapter aa = new AreaAdapter(src, false);
             areaDir = previewDir;
             result = aa.getImage();
@@ -1921,14 +1931,26 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      *
      * @return  a name for the parameter
      */
-    private String makeBandParam(BandInfo bi) {
-        StringBuffer buf = new StringBuffer();
-        buf.append(bi.getSensor());
-        buf.append("_Band");
-        buf.append(bi.getBandNumber());
-        buf.append("_");
-        buf.append(bi.getPreferredUnit());
-        return buf.toString();
+    private static String makeBandParam(BandInfo bi) {
+        return new StringBuilder()
+            .append(bi.getSensor())
+            .append("_Band")
+            .append(bi.getBandNumber())
+            .append('_')
+            .append(bi.getPreferredUnit()).toString();
+    }
+    
+    private static String makeBandParam(AddeImageDescriptor descriptor) {
+        AreaDirectory areaDir = descriptor.getDirectory();
+        if (areaDir == null) {
+            throw new NullPointerException("No AREA directory!");
+        }
+        return new StringBuilder()
+            .append(areaDir.getSensorID())
+            .append("_Band")
+            .append(areaDir.getBands()[0])
+            .append('_')
+            .append(areaDir.getCalibrationType()).toString();
     }
 
     /**
@@ -2000,27 +2022,41 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             times = imageTimes;
         }
         List descriptors = new ArrayList();
+        Object choiceId = dataChoice.getId();
+//        if (choiceId instanceof BandInfo) {
+//            
+//        }
+        int choiceBandNum = ((BandInfo)dataChoice.getId()).getBandNumber();
+        int choiceSensorId = ((BandInfo)dataChoice.getId()).getSensor();
+        String choicePrefUnit = ((BandInfo)dataChoice.getId()).getPreferredUnit();
         for (Iterator iter = times.iterator(); iter.hasNext(); ) {
-            Object              time  = iter.next();
+            Object time  = iter.next();
             AddeImageDescriptor found = null;
-            if (saveImageList.isEmpty()) saveImageList = getImageList();
+            if (saveImageList.isEmpty()) {
+                saveImageList = getImageList();
+            }
             for (Iterator iter2 = saveImageList.iterator(); iter2.hasNext(); ) {
                 AddeImageDescriptor aid = getDescriptor(iter2.next());
                 if (aid != null) {
                     if (aid.getIsRelative()) {
-                        
-                        Object id = (time instanceof TwoFacedObject)
-                                    ? ((TwoFacedObject) time).getId()
-                                    : time;
-                        if ((id instanceof Integer)
-                                && ((Integer) id).intValue()
-                                   == aid.getRelativeIndex()) {
+                        Object id;
+                        if (time instanceof TwoFacedObject) {
+                            id = ((TwoFacedObject)time).getId();
+                        } else {
+                            id = time;
+                        }
+                        if ((id instanceof Integer) && ((Integer)id).intValue() == aid.getRelativeIndex()) {
                             found = aid;
                             break;
                         }
-
                     } else {
-                        if (aid.getImageTime().equals(time)) {
+                        int aidBand = aid.getDirectory().getBands()[0];
+                        int aidSensorId = aid.getDirectory().getSensorID();
+                        String calType = aid.getDirectory().getCalibrationType();
+                        if (aid.getImageTime().equals(time) && choiceBandNum == aidBand && choiceSensorId == aidSensorId && choicePrefUnit.equals(calType)) {
+                            // the problem is here!
+                            logger.trace("found aid={} src={}", makeBandParam(aid), aid.getSource());
+                            logger.trace("target info: param={}", dataChoice.getName());
                             found = aid;
                             break;
                         }
@@ -2044,11 +2080,11 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         //then the possibility exists that the bandinfo contained by the incoming
                         //data choice might not be valid. If it isn't then default to the first 
                         //one in the list
-                        if(bandInfos!=null) {
+                        if(bandInfos != null) {
                             hasBand = bandInfos.contains(bi);
                             if(!hasBand) {
                             }
-                            if(!hasBand && bandInfos.size()>0) {
+                            if(!hasBand && bandInfos.size() > 0) {
                                 bi = bandInfos.get(0);
                             } else {
                                 //Not sure what to do here.
