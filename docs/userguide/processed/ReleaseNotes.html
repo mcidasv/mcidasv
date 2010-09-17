@@ -35,7 +35,8 @@ Inquiry System</a>.
 
 
 <hr>
-<div class="pagesubtitle">McIDAS-V <br> Version 1.0</div>
+<div class="pagesubtitle">McIDAS-V <br> 
+Version 1.0beta7</div>
  <hr>
 The items below reflect changes since the 1.0beta6 release.
 <div class="faq">
@@ -52,10 +53,7 @@ The items below reflect changes since the 1.0beta6 release.
   <div class="faq-category">
     
       <ul class="noindent">
-	    <li><a href="#zipbundles1.0" class="faq-question-link"><strong>??? JonB's changes
-	          fo zipped bundles with image data???</strong></a></li>
-        <li><a href="#bugfixes1.0" class="faq-question-link"><strong>??? Other
-              software updates??? </strong></a></li>
+	    <li><a href="#zipbundles1.0" class="faq-question-link"><strong>Improved functionality when saving bundles</strong></a> </li>
       </ul>
     </div>
   
@@ -77,19 +75,18 @@ The items below reflect changes since the 1.0beta6 release.
   Changes</div>
   <div class="faq-category"><a name="zipbundles1.0" id="zipbundles1.0"></a>
   
-    <h4><strong><a href="#zipbundles1.0" class="faq-question-link"><strong>??? JonB's changes
-	          fo zipped bundles with image data???</strong></a></strong></h4>
-    <div class="faq-answer">Describe the effects of Jon's changes here. </div>
+    <h4><strong><a href="#zipbundles1.0" class="faq-question-link"><strong>Improved functionality when saving bundles</strong></a></strong></h4>
+    <div class="faq-answer">One known problem that will be addressed in the next
+      version occurs with zipped data bundles containing image data. When the
+      bundle is saved it only saves one band per data source, but the problem
+      occurs when the bundle is reloaded. All of the original bands are listed
+    in the Field Selector, but they all reference the one band that was saved.
+      Also, if the different bands were loaded or displayed with different geographical
+      coverages, all of the bands will be loaded and displayed with the same
+      geographical region as the first selection. </div>
   
 </div>
-<div class="faq-category"><a name="bugfixes1.0" id="bugfixes1.0"></a>
-  
-    <h4><strong><a href="#bugfixes1.0" class="faq-question-link"><strong>??? Other
-              software updates???</strong></a></strong></h4>
-    <div class="faq-answer">Describe the other software updates included in 1.0
-      here.</div>
-  
-</div>
+<div class="faq-category"></div>
 
 <br>
 <hr>

@@ -30,28 +30,66 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">
-  <p>Local ADDE Data Manager</p>
-  <p>(updated documentation for version 1.0 coming soon) </p>
+  <div class="pagetitle">Local ADDE Data Manager</div>
 </div>
-<p>The  ADDE Data manager is opened through the Tools menu with <strong>Tools-&gt;Local
-    ADDE Data</strong> menu and allows you to add and manage remote and local
-    ADDE data sets.</p>
+
+<p>The Local and Remote ADDE Data Managers are available through the <strong>Tools-&gt;Manage
+    ADDE Datasets</strong> menu. Click the &quot;Local Data&quot; tab to manage
+    access to image data on your workstation, or the &quot;Remote Data&quot; tab
+    to manage access to data on other workstations. Continue below for
+    more information about the Local ADDE Data Manager, or go <a href="RemoteDataManager.html">here</a> for
+    more information about the Remote ADDE Data Manager.</p>
+	
 <a name="image1" id="image1"></a>
-<div class="images"><img src="images/LocalData.gif"></div>
+<div class="images"><img src="images/addemanager/Local.gif" alt="ADDE Data Manager" width="629" height="440"><br>
+<span class="caption">Image 1: Local ADDE Data Manager </span></div>
 <p></p>
-<p>To add remote dataset entries, select <strong>File-&gt;Add</strong></p>
+
+<p>The Local ADDE Data Manager lets you add, delete or edit access to local image
+  datasets that are available through the <a href="../data/choosers/ImageChooser.html">Satellite
+  Imagery chooser</a> (where you select &lt;LOCAL-DATA&gt; in the <strong>Server:</strong> field).Other
+  types of data (e.g., grid or point) in local files can be accessed directly
+  through other choosers (e.g., the <a href="../data/choosers/FileChooser.html">General
+  Files chooser</a>). </p>
+
+<p>&nbsp;</p>  
+<a name="restart_me" id="restart_me"></a>  
+<p>The contents of the four columns in the table (i.e., Dataset, Image Type,
+  Format and Directory) are described in the <a href="#add_new_entry" class="XRef">section below</a>. The status line in
+  the lower left corner gives information about the operating status of the local
+  image server. If the server has stopped or is not running as expected the status
+  line will say &quot;Local
+  server is not running&quot;.
+  In this case you can click the <img src="images/addemanager/RestartMeButton.gif" width="88" height="25"> button
+  to restart the server. </p>
+
+<p>&nbsp;</p>  
+<a name="add_new_entry" id="add_new_entry"></a>
+<p>To add  a new local dataset entry, select <strong>File-&gt;New Local Dataset</strong> from
+  the main menu and the window below appears. </p>
+  
 <a name="image2" id="image2"></a>
-<div class="images"><img src="images/LocalData.gif"></div>
-<p>To add local data entries, select <strong>File-&gt;New Entry</strong> from the menu. The following parameters are required for setting up a local server entry:</p>
-<a name="image3" id="image3"></a>
-<div class="images"><img src="images/LocalDataDialog.gif" alt="Local Dat Manager Dialog Box"></div>
-<div class="preferencegroup">
-<p><strong>Dataset (Group)</strong> Enter in a dataset name for the local server entry. The dataset name is limited to eight characters or less and cannot be entirely numeric.</p>
-<p><strong>Image Type (Descriptor)</strong> Enter in an image type name for the new local server entry. This will appear under the <strong>Image Type</strong> pull down menu in the Satellite Imagery chooser. The image type name is limited to twelve characters or less.</p>
-<p><strong>Format</strong> Select an image format.</p>
-<div class="preferencegroup">
-<p>The available local image servers in McIDAS-V:</p>
-<ul><!--<li>AIRS Level 1b</li>-->
+<div class="images"><img src="images/addemanager/AddLocal.gif" alt="Define New Local Dataset" width="636" height="183"><br>
+<span class="caption">Image 2: Add Local Dataset window </span></div>
+<p></p>
+<p>The <strong>Add Local Dataset</strong> window lets you add access to local
+  image datasets so they are available through the <a href="../data/choosers/ImageChooser.html">Satellite
+  Imagery chooser</a>. </p>
+
+<p>The fields and buttons are defined below.</p>
+<ul>
+  <li><strong>Dataset:</strong></li>
+  <li style="list-style: none">Enter  a dataset name for the local server entry.
+      The dataset name is limited to eight characters or less and cannot be entirely
+    numeric.</li>
+  <li><strong>Image Type:</strong></li>
+  <li style="list-style: none">Enter  an image type name for the new local server
+    entry. This will appear under the
+   <strong>Image Type</strong> pull down menu in the Satellite Imagery chooser. The image type name is limited to twelve characters or less.</li>
+  <li><strong>Format:</strong></li>
+  <li style="list-style: none">Select the format of the image files. The following
+    formats are supported in McIDAS-V:
+    <ul><!--<li>AIRS Level 1b</li>-->
 <li>AMSR-E Level 1b</li>
 <li>AMSR-E Rain Product</li>
 <li>GINI</li>
@@ -64,13 +102,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
 <li>MODIS L2 MOD04 (MODIS Level 2 Aerosol)</li>
 <li>MODIS L2 MOD06 (MODIS Level 2 Cloud Top Properties)</li>
 <li>MODIS L2 MOD07 (MODIS Level 2 Atmospheric Profile)</li>
-<li>MODIS L2 MOD28 (MODIS Level 2 Sea Surface Temperature)</li>
-<ul>
-  <li><strong>Note</strong>:  When loading this data, you must use line/element
-    for the Location,
-    and use the raw size of the image, or a magnification with the lock icon
-    unlocked.</li>
-</ul>
+<li>MODIS L2 MOD28 (MODIS Level 2 Sea Surface Temperature; note: when loading
+    this data, you must use line/element for the Location, and use the raw size
+	of the image, or a magnification with the lock icon unlocked)</li>
 <li>MODIS L2 MOD35 (MODIS Level 2 Cloud Mask)</li>
 <li>MODIS L3 MODR (MODIS Level 2 Corrected Reflectance)</li>
 <li>MSG HRIT</li>
@@ -79,16 +113,30 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
 <li>NOAA AVHRR Level 1b</li>
 <li>SSMI (TeraScan netCDF)</li>
 <li>TRMM (TeraScan netCDF)</li>
+</ul>	</li>
+  <li><strong>Directory:</strong><strong></strong></li>
+  <li style="list-style: none">Select the location of the local files using the pop
+    up navigation box. <strong>At this time, only a directory can be selected.
+	An option to add files by file mask will be added in the future.</strong></li>
+  <li><img src="images/addemanager/AddDatasetButton.gif" width="112" height="25"></li>
+  <li style="list-style: none">Adds a new entry to the Local ADDE Data Manager
+  containing the information specified in this window.</li>
+  <li><img src="images/addemanager/Cancel.gif" width="80" height="30"></li>
+  <li style="list-style: none">Closes the window and discards any information that was entered.</li>
 </ul>
-</div>
-<p><strong>Directory</strong> Select the location of the local files using the pop up navigation box. <strong>At this time, only a directory can be selected. An option to add files by file mask will be added in the future.</strong></p>
-</div>
-<p>To edit an entry, double click or right click on the table row and select
-  &quot;Edit Entry.&quot; To delete an entry, right click on the table row and select &quot;Delete
-  Entry.&quot; The port that the local server is listening on is listed at the bottom
-  of the local data manager window.</p>
-<p>If the local server is not running or needs to be restarted, click the <img src="images/Refresh.gif"> <strong>Restart</strong> icon.</p>
-<br>
+
+<p>&nbsp;</p> 
+<a name="edit_entry" id="edit_entry"></a>
+<p> To edit an existing entry, bring up the <a href="#image1" class="XRef">main
+    window</a> and click on the entry to highlight
+  it  then either select <strong>Edit-&gt;Edit Entry...</strong> from the main
+  menu or double click on the entry so that the <strong>Edit Local Dataset</strong> window
+    appears. Then
+    make the needed changes and click the &quot;Save Changes&quot; button (or
+    click the &quot;Cancel&quot; button to discard any changes and close the window). To
+    delete an entry, click on the entry to highlight it then select <strong>Edit-&gt;Remove
+    Selection</strong> from
+    the main menu.</p>
 <br>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
