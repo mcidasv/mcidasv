@@ -182,7 +182,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
     private GeoSelection lastGeoSelection;
     private DataChoice lastChoice = null;
-    private Boolean showPreview = new Boolean(false);
+    private Boolean showPreview = Boolean.FALSE;
     private FlatField previewImage = null;
     private MapProjection previewProjection;
     private Hashtable initProps;
@@ -220,6 +220,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
     /** Whether or not this DataSource was loaded from a bundle. */
     private boolean fromBundle = false;
+    
+    /** Are any of the data choices based upon remote files? */
+    private boolean hasRemoteChoices = false;
 
     public AddeImageParameterDataSource() {} 
 
@@ -321,7 +324,25 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     @Override public void initAfterUnpersistence() {
         logger.trace("unbundled!");
         super.initAfterUnpersistence();
+        
+        if (this.sourceProps.containsKey(PREVIEW_KEY)) {
+            this.showPreview = (Boolean)this.sourceProps.get(PREVIEW_KEY);
+            if (this.showPreview == null) {
+                this.showPreview = Boolean.FALSE;
+            }
+            this.saveShowPreview = this.showPreview;
+        }
+        
         this.fromBundle = true;
+        List<AddeImageDescriptor> descriptors = (List<AddeImageDescriptor>)getImageList();
+        this.source = descriptors.get(0).getSource(); // TODO: why not use the source from
+                                                      // each AddeImageDescriptor?
+        for (AddeImageDescriptor descriptor : descriptors) {
+            if (!isFromFile(descriptor)) {
+                this.hasRemoteChoices = true;
+                break;
+            }
+        }
     }
 
     @Override public boolean canSaveDataToLocalDisk() {
@@ -2375,13 +2396,13 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 //        this.sampleMapProjection = sampleMapProjection;
 //    }
 
-//    public String getChoiceName() {
-//        return this.choiceName;
-//    }
-//
-//    public void setChoiceName(String choiceName) {
-//        this.choiceName = choiceName;
-//    }
+    public String getChoiceName() {
+        return this.choiceName;
+    }
+
+    public void setChoiceName(String choiceName) {
+        this.choiceName = choiceName;
+    }
 
 //    public MapProjection getPreviewProjection() {
 //        return this.previewProjection;
@@ -2399,85 +2420,85 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 //        this.previewDir = previewDir;
 //    }
 
-//    public String getSavePlace() {
-//        return this.savePlace;
-//    }
-//
-//    public void setSavePlace(String savePlace) {
-//        this.savePlace = savePlace;
-//    }
+    public String getSavePlace() {
+        return this.savePlace;
+    }
 
-//    public double getSaveLat() {
-//        return this.saveLat;
-//    }
-//
-//    public void setSaveLat(double saveLat) {
-//        this.saveLat = saveLat;
-//    }
-//
-//    public double getSaveLon() {
-//        return this.saveLon;
-//    }
-//
-//    public void setSaveLon(double saveLon) {
-//        this.saveLon = saveLon;
-//    }
-//
-//    public int getSaveNumLine() {
-//        return this.saveNumLine;
-//    }
-//
-//    public void setSaveNumLine(int saveNumLine) {
-//        this.saveNumLine = saveNumLine;
-//    }
-//
-//    public int getSaveNumEle() {
-//        return this.saveNumEle;
-//    }
-//
-//    public void setSaveNumEle(int saveNumEle) {
-//        this.saveNumEle = saveNumEle;
-//    }
-//
-//    public int getSaveLineMag() {
-//        return this.saveLineMag;
-//    }
+    public void setSavePlace(String savePlace) {
+        this.savePlace = savePlace;
+    }
 
-//    public void setSaveLineMag(int saveLineMag) {
-//        this.saveLineMag = saveLineMag;
-//    }
-//
-//    public int getSaveEleMag() {
-//        return this.saveEleMag;
-//    }
-//
-//    public void setSaveEleMag(int saveEleMag) {
-//        this.saveEleMag = saveEleMag;
-//    }
-//
-//    public String getSource() {
-//        return this.source;
-//    }
-//
-//    public void setSource(String source) {
-//        this.source = source;
-//    }
-//
-//    public boolean getShowPreview() {
-//        return this.showPreview;
-//    }
-//
-//    public void setShowPreview(boolean showPreview) {
-//        this.showPreview = showPreview;
-//    }
-//
-//    public boolean getSaveShowPreview() {
-//        return this.saveShowPreview;
-//    }
-//
-//    public void setSaveShowPreview(boolean saveShowPreview) {
-//        this.saveShowPreview = saveShowPreview;
-//    }
+    public double getSaveLat() {
+        return this.saveLat;
+    }
+
+    public void setSaveLat(double saveLat) {
+        this.saveLat = saveLat;
+    }
+
+    public double getSaveLon() {
+        return this.saveLon;
+    }
+
+    public void setSaveLon(double saveLon) {
+        this.saveLon = saveLon;
+    }
+
+    public int getSaveNumLine() {
+        return this.saveNumLine;
+    }
+
+    public void setSaveNumLine(int saveNumLine) {
+        this.saveNumLine = saveNumLine;
+    }
+
+    public int getSaveNumEle() {
+        return this.saveNumEle;
+    }
+
+    public void setSaveNumEle(int saveNumEle) {
+        this.saveNumEle = saveNumEle;
+    }
+
+    public int getSaveLineMag() {
+        return this.saveLineMag;
+    }
+
+    public void setSaveLineMag(int saveLineMag) {
+        this.saveLineMag = saveLineMag;
+    }
+
+    public int getSaveEleMag() {
+        return this.saveEleMag;
+    }
+
+    public void setSaveEleMag(int saveEleMag) {
+        this.saveEleMag = saveEleMag;
+    }
+
+    public String getSource() {
+        return this.source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public boolean getShowPreview() {
+        return this.showPreview;
+    }
+
+    public void setShowPreview(boolean showPreview) {
+        this.showPreview = showPreview;
+    }
+
+    public boolean getSaveShowPreview() {
+        return this.saveShowPreview;
+    }
+
+    public void setSaveShowPreview(boolean saveShowPreview) {
+        this.saveShowPreview = saveShowPreview;
+    }
 
     private void getSaveComponents() {
         saveCoordType = this.laLoSel.getCoordinateType();
