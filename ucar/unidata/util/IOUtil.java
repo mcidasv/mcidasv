@@ -1412,7 +1412,7 @@ public class IOUtil {
                     f    = new File(joinDir(f.getParent(), name));
                     //                    System.err.println ("new file:" + f);
                 }
-                return f.toURL();
+                return f.toURI().toURL();
             } catch (Exception e) {}
         }
 

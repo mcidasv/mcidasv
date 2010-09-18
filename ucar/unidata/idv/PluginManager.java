@@ -1743,6 +1743,8 @@ public class PluginManager extends IdvManager {
                     PluginManager.this.addError(msg, exc);
                 }
 
+                @Override
+                @SuppressWarnings("deprecation")
                 protected void checkClass(Class c) throws Exception {
                     //                    System.out.println ("loaded class:" + c.getName() + " from:" + toString());
                     IdvBase.addPluginClass(c);
