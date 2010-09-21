@@ -1864,7 +1864,8 @@ public class AddeImageChooser extends AddeChooser implements
 		}
 
 		if (navComboBox != null) {
-			navComboBox.setSelectedIndex(0);
+			checkSetNav();
+//			navComboBox.setSelectedIndex(0);
 		}
 		baseNumLines = 0.0;
 		baseNumElements = 0.0;
@@ -2042,6 +2043,7 @@ public class AddeImageChooser extends AddeChooser implements
 					navComboBox.setSelectedIndex((value
 							.equalsIgnoreCase("LALO") ? 1 : 0));
 				}
+				checkSetNav();
 			}
 		}
 		amSettingProperties = false;
