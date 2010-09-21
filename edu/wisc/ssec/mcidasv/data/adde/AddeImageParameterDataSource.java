@@ -532,8 +532,13 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
             DataSelection selection = dataChoice.getDataSelection();
             if (selection == null) {
-                selection = this.getSelForChoice(dataChoice);
+                if (getSelForChoice(dataChoice) != null) {
+                    selection = getSelForChoice(dataChoice);
+                } else {
+                    selection = getDataSelection();
+                }
             }
+
             Hashtable selectionProperties = selection.getProperties();
 //            Hashtable selectionProperties;
 //            if (selection != null) {
@@ -1316,25 +1321,25 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         logger.trace("setting selection props={} geo={}", s.getProperties(), s.getGeoSelection());
     }
     
-    @Override public int canShowParameter(String name) {
-        int result = super.canShowParameter(name);
-        switch (result) {
-            case 0: //show=yes
-                logger.trace("can show param={}", name);
-                break;
-            case 1: // show=hide
-                logger.trace("hide param={}", name);
-                break;
-            case 2: // show=no
-                logger.trace("no show param={}", name);
-                break;
-            default:
-                logger.trace("trouble for param={}", name);
-                break;
-        }
-        return result;
-
-    }
+//    @Override public int canShowParameter(String name) {
+//        int result = super.canShowParameter(name);
+//        switch (result) {
+//            case 0: //show=yes
+//                logger.trace("can show param={}", name);
+//                break;
+//            case 1: // show=hide
+//                logger.trace("hide param={}", name);
+//                break;
+//            case 2: // show=no
+//                logger.trace("no show param={}", name);
+//                break;
+//            default:
+//                logger.trace("trouble for param={}", name);
+//                break;
+//        }
+//        return result;
+//
+//    }
     
     /**
      * Insert the new DataChoice into the dataChoice list.
@@ -1513,6 +1518,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             try {
                 af = new AreaFile(addeCmdBuff);
             } catch (Exception eOpen) {
+                logger.error("could not open area file: {}", eOpen);
                 setInError(true);
                 throw new BadDataException("Opening area file: " + eOpen.getMessage());
             }
@@ -1522,6 +1528,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 sampleMapProjection = (MapProjection)acs;
                 sampleProjection = map;
             } catch (Exception e) {
+                logger.error("making area projection: {}", e);
                 setInError(true);
                 throw new BadDataException("Making area projection: " + e.getMessage());
             }
@@ -2053,6 +2060,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         for (Iterator iter = times.iterator(); iter.hasNext(); ) {
             Object time  = iter.next();
             AddeImageDescriptor found = null;
+            AddeImageDescriptor foundTimeMatch = null;
             if (saveImageList.isEmpty()) {
                 saveImageList = getImageList();
             }
@@ -2074,6 +2082,10 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         int aidBand = aid.getDirectory().getBands()[0];
                         int aidSensorId = aid.getDirectory().getSensorID();
                         String calType = aid.getDirectory().getCalibrationType();
+                        if (foundTimeMatch == null && aid.getImageTime().equals(time)) {
+                            logger.trace("found time match {}", time);
+                            foundTimeMatch = aid;
+                        }
                         if (aid.getImageTime().equals(time) && choiceBandNum == aidBand && choiceSensorId == aidSensorId && choicePrefUnit.equals(calType)) {
                             // the problem is here!
                             logger.trace("found aid={} src={}", makeBandParam(aid), aid.getSource());
@@ -2082,10 +2094,14 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                             break;
                         }
                     }
-
                 }
             }
 
+            if (found == null && foundTimeMatch != null) {
+                logger.trace("good enough!?");
+                found = foundTimeMatch;
+            }
+            
             if (found != null) {
                 try {
                     AddeImageDescriptor desc = new AddeImageDescriptor(found);
