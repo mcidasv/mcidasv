@@ -501,13 +501,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             }
 
             if (dataChoice.getDataSelection() == null) {
-                DataSelection tmp = this.getSelForChoice(dataChoice);
-                if (tmp != null) {
-                logger.trace("INSERT sel props={} geosel={}", tmp.getProperties(), tmp.getGeoSelection());
-                } else {
-                    logger.trace("INSERT failed :(");
-                }
-                dataChoice.setDataSelection(tmp);
+                dataChoice.setDataSelection(getSelForChoice(dataChoice));
             }
             logger.trace("selected choice={} id={}", dataChoice.getName(), dataChoice.getId());
             List<AddeImageDescriptor> descriptors = getDescriptors(dataChoice, dataChoice.getDataSelection());
@@ -1289,30 +1283,27 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         }
     }
 
+    /**
+     * Overridden so that McIDAS-V can <i>attempt</i> to return the correct
+     * {@code DataSelection} for the current {@code DataChoice}.
+     */
     @Override public DataSelection getDataSelection() {
-        DataSelection ugh;
+        DataSelection tmp;
         if (this.laLoSel == null || this.choiceToSel == null || !this.choiceToSel.containsKey(this.laLoSel.getDataChoice())) {
             logger.trace("* idvland getDataSelection");
-            ugh = super.getDataSelection();
+            tmp = super.getDataSelection();
         } else {
             logger.trace("* mcv getSelForChoice");
-            ugh = this.getSelForChoice(this.laLoSel.getDataChoice());
+            tmp = this.getSelForChoice(this.laLoSel.getDataChoice());
         }
-        logger.trace("return selection props={} geo={}", ugh.getProperties(), ugh.getGeoSelection());
-        return ugh;
-//        DataSelection ugh = super.getDataSelection();
-//
-//        if (this.laLoSel != null) {
-//        DataSelection hmm = this.getSelForChoice(this.laLoSel.getDataChoice());
-//        if (hmm != null) {
-//            logger.trace("  test: props={} geo={}", hmm.getProperties(), hmm.getGeoSelection());
-//        } else {
-//            logger.trace("  test: failed");
-//        }
-//        }
-//        return ugh;
+        logger.trace("return selection props={} geo={}", tmp.getProperties(), tmp.getGeoSelection());
+        return tmp;
     }
 
+    /**
+     * Overridden so that McIDAS-V can associate this data source's current 
+     * {@code DataChoice} with the given {@code DataSelection}.
+     */
     @Override public void setDataSelection(DataSelection s) {
         super.setDataSelection(s);
         if (this.laLoSel != null) {
@@ -1373,6 +1364,17 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     /** _more_ */
     private DataRange[] sampleRanges = null;
 
+    /**
+     * Checks to see if a given {@code AddeImageDescriptor} is based upon a 
+     * local (or remote) file.
+     * 
+     * <p>The check is pretty simple: is {@code descriptor.getSource()} a valid
+     * path?
+     * 
+     * @param descriptor {@code AddeImageDescriptor} of questionable origins. Shouldn't be {@code null}.
+     * 
+     * @return {@code true} if {@code descriptor}'s source is a valid path.
+     */
     public static boolean isFromFile(final AddeImageDescriptor descriptor) {
         return new File(descriptor.getSource()).exists();
     }
