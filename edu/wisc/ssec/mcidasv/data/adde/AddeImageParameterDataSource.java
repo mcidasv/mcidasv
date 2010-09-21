@@ -92,6 +92,7 @@ import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.JobManager;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
+import ucar.unidata.util.PollingInfo;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.ThreeDSize;
 import ucar.unidata.util.TwoFacedObject;
@@ -321,6 +322,29 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         getAreaDirectory(properties);
     }
 
+    @Override protected boolean isPolling() {
+        boolean result = super.isPolling();
+        logger.trace("isPolling={}", result);
+        return result;
+    }
+    
+    @Override public void setPollingInfo(PollingInfo value) {
+        logger.trace("value={}", value);
+        super.setPollingInfo(value);
+    }
+    
+    @Override protected boolean hasPollingInfo() {
+        boolean result = super.hasPollingInfo();
+        logger.trace("hasPollingInfo={}", result);
+        return result;
+    }
+    
+    @Override public PollingInfo getPollingInfo() {
+        PollingInfo result = super.getPollingInfo();
+        logger.trace("getPollingInfo={}", result);
+        return result;
+    }
+    
     @Override public void initAfterUnpersistence() {
         logger.trace("unbundled!");
         super.initAfterUnpersistence();
@@ -772,7 +796,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     protected void initDataSelectionComponents(
                    List<DataSelectionComponent> components, final DataChoice dataChoice) {
 
-        if (fromBundle) {
+        if (fromBundle && !hasRemoteChoices) {
             components.add(new BundlePreviewSelection("Region (Disabled)"));
             components.add(new BundlePreviewSelection("Advanced (Disabled)"));
             return;
