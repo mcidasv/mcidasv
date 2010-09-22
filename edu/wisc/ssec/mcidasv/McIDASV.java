@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.PrintStream;
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -1118,7 +1119,7 @@ public class McIDASV extends IntegratedDataViewer {
      *
      * @return  the button
      */
-    public JComponent makeHelpButton(String helpId, String toolTip) {
+    @Override public JComponent makeHelpButton(String helpId, String toolTip) {
         JButton btn = McVGuiUtils.makeImageButton(Constants.ICON_HELP,
             getIdvUIManager(), "showHelp", helpId, "Show help");
 
@@ -1127,19 +1128,40 @@ public class McIDASV extends IntegratedDataViewer {
         }
         return btn;
     }
-    
+
     /**
      * Return the current {@literal "userpath"}
      */
     public String getUserDirectory() {
-    	return StartupManager.INSTANCE.getPlatform().getUserDirectory();
+        return StartupManager.INSTANCE.getPlatform().getUserDirectory();
     }
-    
+
     /**
      * Return the path to a file within {@literal "userpath"}
      */
     public String getUserFile(String filename) {
-    	return StartupManager.INSTANCE.getPlatform().getUserFile(filename);
+        return StartupManager.INSTANCE.getPlatform().getUserFile(filename);
+    }
+
+    /**
+     * Invokes the main method for a given class. 
+     * 
+     * <p>Note: this is rather limited so far as it doesn't pass in any arguments.
+     * 
+     * @param className Class whose main method is to be invoked. Cannot be {@code null}.
+     */
+    public void runPluginMainMethod(final String className) {
+        final String[] dummyArgs = { "" };
+        try {
+            Class<?> clazz = Misc.findClass(className);
+            Method mainMethod = Misc.findMethod(clazz, "main", new Class[] { dummyArgs.getClass() });
+            if (mainMethod != null) {
+                mainMethod.invoke(null, new Object[] { dummyArgs });
+            }
+        } catch (Exception e) {
+            logger.error("problem with plugin class", e);
+            LogUtil.logException("problem running main method for class: "+className, e);
+        }
     }
 
     /**

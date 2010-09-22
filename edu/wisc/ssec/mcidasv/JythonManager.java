@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.python.util.PythonInterpreter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +62,17 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
     }
 
     /**
+     * Overridden so that McIDAS-V can inject a variable named {@code _idv}
+     * into {@code interpreter's} globals.
+     * 
+     * @param interpreter Jython interpreter being initialized by the IDV. Cannot be {@code null}.
+     */
+    @Override protected void initBasicInterpreter(PythonInterpreter interpreter) {
+        interpreter.set("_idv", getIdv());
+        super.initBasicInterpreter(interpreter);
+    }
+
+    /**
      * Overridden so that McIDAS-V can add an {@code islInterpreter} object
      * to the interpreter's locals (before executing the contents of {@code}.
      * 
@@ -75,6 +88,9 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
         if (!properties.contains("islInterpreter")) {
             properties.put("islInterpreter", new ImageGenerator(getIdv()));
         }
+        if (!properties.contains("_idv")) {
+            properties.put("_idv", getIdv());
+        }
         super.evaluateTrusted(code, properties);
     }
 
@@ -87,7 +103,7 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
      * @return {@link List} of menu items.
      */
     @SuppressWarnings("unchecked") // dealing with idv code that predates generics.
-    public List doMakeFormulaDataSourceMenuItems(DataSource dataSource) {
+    @Override public List doMakeFormulaDataSourceMenuItems(DataSource dataSource) {
         List menuItems = new ArrayList();
         menuItems.add(makeMenuItem("Create Formula", this, "showFormulaDialog"));
         List editItems;
