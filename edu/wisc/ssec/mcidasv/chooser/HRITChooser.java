@@ -40,20 +40,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Vector;
 
-import javax.swing.Icon;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileView;
 
 import org.w3c.dom.Element;
 
-import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.StringUtil;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 public class HRITChooser extends FileChooser {
@@ -61,8 +57,6 @@ public class HRITChooser extends FileChooser {
 	private static final long serialVersionUID = 1L;
     
     private HRITFilter hf = null;
-
-    private IntegratedDataViewer idv = getIdv();
 
     private JLabel channelLabel = McVGuiUtils.makeLabelRight("Data Channel:");
 
@@ -73,35 +67,10 @@ public class HRITChooser extends FileChooser {
      * @param root The xml
      *
      */
+    
     public HRITChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
     }
-
-//    /**
-//     * Make the GUI
-//     *
-//     * @return The GUI for HRIT Chooser
-//     */
-//    protected JComponent doMakeContents() {
-//    	// Run super.doMakeContents()
-//    	// It does some initialization on private components that we can't get at
-//    	JComponent parentContents = super.doMakeContents();
-//       	Element chooserNode = getXmlNode();
-//
-//        fileChooser.setAcceptAllFileFilterUsed(false);
-//        fileChooser.setFileView(new HRITFileView());
-//        
-//        // now we need to see what HRIT data is available in this directory
-//        Vector availableTypes = getAvailableHRITTypes(path);
-//        String extraFilter = "";
-//        if ((availableTypes != null) && (availableTypes.size() > 0)) {
-//        	extraFilter = (String) availableTypes.get(0);
-//        }
-//        hf = new HRITFilter(extraFilter);
-//        fileChooser.setFileFilter(hf);
-//
-//        return parentContents;
-//    }
     
     /**
      * Make the file chooser
@@ -110,15 +79,16 @@ public class HRITChooser extends FileChooser {
      *
      * @return  the file chooser
      */
+    
     protected JFileChooser doMakeFileChooser(String path) {
         return new HRITFileChooser(path);
     }
     
-    protected Vector getAvailableHRITTypes(String path) {
+    protected Vector<String> getAvailableHRITTypes(String path) {
         if (path == null) path = ".";
         
-    	ArrayList al = new ArrayList();
-    	Vector v = new Vector();
+    	ArrayList<String> al = new ArrayList<String>();
+    	Vector<String> v = new Vector<String>();
     	File f = new File(path);
     	File [] files = null;
     	if (f.isDirectory()) {
@@ -153,11 +123,12 @@ public class HRITChooser extends FileChooser {
     
     public class ImageTypeChooser extends JComboBox implements ActionListener, PropertyChangeListener {
     	
-        JFileChooser jfc = null;
+		private static final long serialVersionUID = 1L;
+		JFileChooser jfc = null;
         
     	public ImageTypeChooser(JFileChooser fc, String path) {
     		jfc = fc;
-            Vector availableTypes = getAvailableHRITTypes(path);
+            Vector<String> availableTypes = getAvailableHRITTypes(path);
             if (availableTypes.size() == 1 && availableTypes.get(0) == ".") {
             	availableTypes.removeAllElements();
             }
@@ -169,12 +140,12 @@ public class HRITChooser extends FileChooser {
         public void actionPerformed(ActionEvent e) {
             JComboBox cb = (JComboBox) e.getSource();
             String newFilter = (String) cb.getSelectedItem();
-            HRITFilter hf = (HRITFilter) jfc.getFileFilter();
-            hf.setExtraFilter(newFilter);
+            HRITFilter hFilter = (HRITFilter) jfc.getFileFilter();
+            hFilter.setExtraFilter(newFilter);
             jfc.rescanCurrentDirectory();
         }
         
-        public void reloadComboBox(Vector v) {
+        public void reloadComboBox(Vector<String> v) {
         	removeAllItems();
         	if (v != null) {
         		for (int i = 0; i < v.size(); i++) {
@@ -196,7 +167,7 @@ public class HRITChooser extends FileChooser {
 
             //If the directory changed, reload the combo box with new image type choices.
             if (JFileChooser.DIRECTORY_CHANGED_PROPERTY.equals(prop)) {
-            	Vector availableTypes = getAvailableHRITTypes(jfc.getCurrentDirectory().getPath());
+            	Vector<String> availableTypes = getAvailableHRITTypes(jfc.getCurrentDirectory().getPath());
             	reloadComboBox(availableTypes);
             }
 
@@ -204,46 +175,10 @@ public class HRITChooser extends FileChooser {
         
     }
     
-    /* HRITFileView aggregates user's view of segments */
-    public class HRITFileView extends FileView {
-
-        ArrayList foundFiles =  new ArrayList();
-        
-    	// show only the image time as file name for selection purposes
-        public String getName(File f) {
-        	if ((f.getName().contains("MSG2")) && (f.getName().length() >= 58)) {        	
-        		return f.getName().substring(46, 58);
-        	} else {
-        		return null;
-        	}
-        }
-
-        public String getDescription(File f) {
-            return null; //let the L&F FileView figure this out
-        }
-
-        public Boolean isTraversable(File f) {
-            return null; //let the L&F FileView figure this out
-        }
-
-        public String getTypeDescription(File f) {
-            return "HRIT Image";
-        }
-
-        public Icon getIcon(File f) {
-            Icon icon = null;
-            return icon;
-        }
-    }
-    
     /* HRITFilter */
     public class HRITFilter extends FileFilter {
-
-        // maintain an array of "seen" patterns, so we only identify data
-    	// once for a particular type and time (instead of for each segment).
-    	ArrayList seenPatterns = new ArrayList();
     	
-    	String extraFilter = "";
+    	String extraFilter = null;
     	
     	public HRITFilter(String extraFilter) {
     		super();
@@ -254,6 +189,7 @@ public class HRITChooser extends FileChooser {
     	
     	// Accept all directories and all HRIT files.
         public boolean accept(File f) {
+        	
             if (f.isDirectory()) {
                 return true;
             }
@@ -262,17 +198,18 @@ public class HRITChooser extends FileChooser {
             // through the filter which have already bee Wavelet decompressed
             // (i.e., they end with __ and not C_ )
             String fileName = f.getName();
-            if ((fileName.endsWith("__")) && (fileName.contains("MSG2")) && (fileName.contains(extraFilter))) {
-            	String patternCheck = fileName.substring(46, 58);
-            	if (seenPatterns.contains(patternCheck)) {
-            		return false;
-            	} else {
-            		seenPatterns.add(patternCheck);
-            		return true;
+            if ((fileName.endsWith("__")) && (fileName.contains("MSG2")) && (fileName.length() >= 58)) {
+            	if (extraFilter != null) {
+            		if (fileName.contains(extraFilter)) {
+            			return true;
+            		} else {
+            			return false;
+            		}
             	}
             } else {
             	return false;
             }
+            return false;
 
         }
 
@@ -285,17 +222,18 @@ public class HRITChooser extends FileChooser {
         public void setExtraFilter(String newFilter) {
         	if (newFilter != null) {
         		extraFilter = newFilter;
-        		seenPatterns.clear();
+        		//seenPatterns.clear();
         	}
         }
         
     }
         
     /**
-     * An extension of JFileChooser
+     * HRITFileChooser, an extension of JFileChooser
      *
      * @author Tommy Jasmin
      */
+    
     public class HRITFileChooser extends JFileChooser {
 
         /**
@@ -308,10 +246,11 @@ public class HRITChooser extends FileChooser {
          *
          * @param path   the initial path
          */
+		
         public HRITFileChooser(String path) {
             super(path);
             setControlButtonsAreShown(false);
-            setMultiSelectionEnabled(getAllowMultiple());
+            setMultiSelectionEnabled(false);
             setAcceptAllFileFilterUsed(false);
             processChildren(this);
         }
@@ -350,6 +289,7 @@ public class HRITChooser extends FileChooser {
         /**
          * Approve the selection
          */
+        
         public void approveSelection() {
             HRITChooser.this.doLoad();
         }
@@ -357,6 +297,7 @@ public class HRITChooser extends FileChooser {
         /**
          * Cancel the selection
          */
+        
         public void cancelSelection() {
             closeChooser();
         }
@@ -366,6 +307,7 @@ public class HRITChooser extends FileChooser {
          *
          * @param selectedFiles  the selected files
          */
+        
         public void setSelectedFiles(File[] selectedFiles) {
         	String channelStr = null;
         	String timeStr = null;
@@ -383,7 +325,7 @@ public class HRITChooser extends FileChooser {
         	File [] fileList = curDir.listFiles();
         	String tmpChannel = null;
         	String tmpTime = null;
-        	ArrayList matches = new ArrayList();
+        	ArrayList<File> matches = new ArrayList<File>();
         	for (int i = 0; i < fileList.length; i++) {
         		if ((fileList[i].getName().endsWith("__")) && 
         			(fileList[i].getName().contains("MSG2")) && 
@@ -409,7 +351,6 @@ public class HRITChooser extends FileChooser {
         }
     }
 
-
     /**
      * Handle the selection of the set of files
      *
@@ -418,6 +359,7 @@ public class HRITChooser extends FileChooser {
      * @return True if the file was successful
      * @throws Exception
      */
+    
     protected boolean selectFilesInner(File[] files, File directory)
             throws Exception {
         if ((files == null) || (files.length == 0)) {
@@ -475,56 +417,19 @@ public class HRITChooser extends FileChooser {
 
         return super.selectFilesInner(files, directory);
     }
-
-
-    /**
-     * Convert the given array of File objects
-     * to an array of String file names. Only
-     * include the files that actually exist.
-     *
-     * @param files Selected files
-     * @return Selected files as Strings
-     */
-    protected String[] getFileNames(File[] files) {
-        if (files == null) {
-            return (String[]) null;
-        }
-        Vector v = new Vector();
-        String fileNotExistsError = "";
-
-        // NOTE:  If multiple files are selected, then missing files
-        // are not in the files array.  If one file is selected and
-        // it is not there, then it is in the array and file.exists()
-        // is false
-        for (int i = 0; i < files.length; i++) {
-            if ((files[i] != null) && !files[i].isDirectory()) {
-                if ( !files[i].exists()) {
-                    fileNotExistsError += "File does not exist: " + files[i] + "\n";
-                } else {
-                    v.add(files[i].toString());
-                }
-            }
-        }
-
-        if (fileNotExistsError.length() > 0) {
-            userMessage(fileNotExistsError);
-            return null;
-        }
-
-        return v.isEmpty()
-               ? null
-               : StringUtil.listToStringArray(v);
-    }
     
     /**
      * Get the bottom panel for the chooser
      * @return the bottom panel
      */
+    
     protected JPanel getBottomPanel() {
     	// If we don't have a fileChooser yet, this won't do any good
     	// This happens when Unidata's FileChooser is instantiated
     	// We instantiate ours right after that
-    	if (fileChooser==null) return null;
+    	if (fileChooser == null) {
+    		return null;
+    	}
     	
         ImageTypeChooser itc = new ImageTypeChooser(fileChooser, path);
         fileChooser.addPropertyChangeListener(itc);
@@ -538,18 +443,19 @@ public class HRITChooser extends FileChooser {
      * Get the center panel for the chooser
      * @return the center panel
      */
+    
     protected JPanel getCenterPanel() {
     	JPanel centerPanel = super.getCenterPanel();
     	
         fileChooser.setAcceptAllFileFilterUsed(false);
-        fileChooser.setFileView(new HRITFileView());
-        
-        // now we need to see what HRIT data is available in this directory
-        Vector availableTypes = getAvailableHRITTypes(path);
-        String extraFilter = "";
+      
+        // see what HRIT data is available in this directory,
+        Vector<String> availableTypes = getAvailableHRITTypes(path);
+        String extraFilter = null;
         if ((availableTypes != null) && (availableTypes.size() > 0)) {
         	extraFilter = (String) availableTypes.get(0);
         }
+        
         hf = new HRITFilter(extraFilter);
         fileChooser.setFileFilter(hf);
 
