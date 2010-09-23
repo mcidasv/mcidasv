@@ -48,7 +48,6 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import ucar.unidata.data.CompositeDataChoice;
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
@@ -61,7 +60,6 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.WrapperException;
 
 import visad.Data;
-import visad.FlatField;
 import visad.data.hrit.HRITAdapter;
 import visad.VisADException;
 
@@ -83,9 +81,6 @@ public class HRITDataSource extends DataSourceImpl  {
     private static final String DATA_DESCRIPTION = "HRIT Data";
     
     private static int counter = 1;
-    
-    /** My composite */
-    private CompositeDataChoice myCompositeDataChoice;
 
     /** children choices */
     private List myDataChoices = new ArrayList();
@@ -98,7 +93,7 @@ public class HRITDataSource extends DataSourceImpl  {
     /**
      * Construct a new HRIT data source.
      * @param  descriptor  descriptor for this <code>DataSource</code>
-     * @param  fileName  name of the hdf file to read
+     * @param  fileName  name of the HRIT segment file to read
      * @param  properties  hashtable of properties
      *
      * @throws VisADException problem creating data
@@ -303,21 +298,18 @@ public class HRITDataSource extends DataSourceImpl  {
         
     	String newRes = (String) dataparams.getProperty("magnification");
         int magFactor = 1;
-        try {
-        	magFactor = Integer.parseInt(newRes);
-        } catch (NumberFormatException nfe) {
-        	nfe.printStackTrace();
+        if (newRes != null) {
+	        try {
+	        	magFactor = Integer.parseInt(newRes);
+	        } catch (NumberFormatException nfe) {
+	        	nfe.printStackTrace();
+	        }
         }
 
         // pull out source index 
         String idxStr = dataChoice.getName().substring(dataChoice.getName().length() - 2, dataChoice.getName().length());
         
         Data data = null;
-/*    	String[] files = new String[sources.size()];
-    	for (int i = 0; i < sources.size(); i++) {
-    		files[i] = (String) sources.get(i);
-    		System.err.println("Processing file: " + files[i]);
-    	}*/
         
         String [] files = new String[1];
         // initialize central wave number string
