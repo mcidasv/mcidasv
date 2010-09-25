@@ -27,74 +27,17 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
   <hr align="center">
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
-<div class="pagetitle">User Preferences - ADDE Server Manager</div>
-<p>The ADDE Server Manager is currently managed through the <strong>Edit-&gt;Preferences</strong> menu
-  under the "ADDE Servers" tab and allows you to add and manage your list of
-  servers.</p>
-<a name="image1" id="image1"></a>
+<div class="pagetitle">
+  <p>User Preferences - ADDE Server Preferences</p>
+</div>
 <div class="images"><img src="../images/NewPictures/ADDEServerPrefs.jpg" alt="ADDE Server Preferences"> <br>
-  <span class="caption">Image 1: ADDE Server Manager</span></div>
-<p>The ADDE Server Manager allows you to add and manage a list of ADDE servers separated
-by data type and removes the need to manually enter in each server and group
-information, as well as the need to enter in logon information (if required).
+  <span class="caption">Image 1: ADDE Server Preferences</span></div>
+<p>The <strong>ADDE Servers</strong> tab allows you to add and manage a list of active ADDE servers separated
+by data type.
 To turn all servers on/off in the data choosers, click the <strong>All on/All
 of</strong> button.</p>
-<p>To add a server to the manager, click the <strong>Add</strong> button to bring
-  up a dialog box with the following properties:</p>
-<div class="preferencegroup">
-  <p><strong>Server:</strong> Enter in a server name or IP address.</p>
-  <p><strong>Dataset(s):</strong> Enter in a group or set of group names. To
-    add multiple groups, separate each with a comma.</p>
-  <p><strong>Need accounting information</strong> Check if the server being added
-    requires a logon and project number.</p>
-  <div class="preferencegroup">
-    <p><strong>User ID:</strong> If the <strong>Need accounting information</strong> box
-      is checked, enter in the user ID to logon to the server.</p>
-    <p><strong>Project #</strong> If the <strong>Need accounting information</strong> box
-      is checked, enter in the project number used to logon to the server.</p>
-  </div>
-  <p><strong>Automatically capitalize groups and user ID</strong> When checked,
-    the Dataset name(s) and user ID will be automatically converted to uppercase.</p>
-  <p><strong>Data Types</strong> Use the check boxes to select all data types
-    associated with the group(s).</p>
-  <p><strong>Verify and Add</strong> Click to verify the data types available
-    on the server, and add all existing data types with the group to the server
-    manager.</p>
-  <p><strong>Verify</strong> Click to verify the data types available on the
-    server manager. Data types available will be checked.</p>
-  <p><strong>Add</strong> Click to add all checked data types to the server manager.
-    No verification of the data types will be performed.</p>
-</div>
-<p>To delete a server from the list, left click on one or more server/dataset
-  entry and click <strong>Delete</strong>.</p>
-<a name="mcximport" id="mcximport"></a>
-<p>The <strong>Import from McIDAS-X</strong> button allows you to import MCTABLE.TXT
-  from a McIDAS-X session. McIDAS-V requires server verification in order for
-  the servers to be listed in the proper choosers under the proper data source
-  type. When <strong>Verify imported servers</strong> is checked, the automatic
-  server verification checks the availability of each data type on each server
-  in your text file and imports the available servers into your server list.
-  Disabling the automatic server verification will still import the servers,
-  but will list them as Unverified in the ADDE Server Manager. In order to manually
-  verify the servers and have them listed in the data choosers, you will need
-  to use the ADDE Server Manager to individually edit the servers to define their
-  appropriate data type.</p>
-<p>The <strong>Import from URL</strong> button allows you to import a XML file
-  containing a list of ADDE servers into McIDAS-V.</p>
-<br>
-<p>The server manager can filter the list of servers depending upon the source.
-  Use the following checkboxes to turn on and off specific sets of servers.</p>
-<div class="preferencegroup">
-  <p><strong>Include McIDAS-X Servers</strong> When checked, all servers imported
-    through the <strong>Import From McIDAS-X</strong> button will be displayed
-    in the list of servers.</p>
-  <p><strong>Include Default Servers</strong> When checked, all default servers
-    included in McIDAS-V will be displayed in the list of servers.</p>
-  <p><strong>Include Your Servers</strong> When checked, all servers manually
-    added through the <strong>Add</strong> button will be displayed in the list
-    of servers.</p>
-</div>
-<br>
+<p>To add a server to the manager, click <img src="../images/AddServersButton.jpg"> or <img src="../images/ImportServersButton.jpg">. Both buttons will open the ADDE Data Manager where you can add a <a href="../RemoteDataManager.html">remote server</a> or a <a href="../LocalDataManager.html">local server</a>. <br>
+</p>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
