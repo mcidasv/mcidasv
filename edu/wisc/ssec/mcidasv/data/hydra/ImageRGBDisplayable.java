@@ -152,6 +152,7 @@ public class ImageRGBDisplayable extends DisplayableData implements GridDisplaya
             new ConstantMap(1.0, Display.MissingTransparent) });
 
 
+        /**
         if (field != null) {
           TupleType     tt       = GridUtil.getParamType(field);
           RealTupleType ffldType = new RealTupleType(tt.getRealComponents());
@@ -161,6 +162,7 @@ public class ImageRGBDisplayable extends DisplayableData implements GridDisplaya
               setColorTupleType(ffldType);
           }
         }
+        **/
     }
       
 
@@ -399,6 +401,20 @@ public class ImageRGBDisplayable extends DisplayableData implements GridDisplaya
             table[colorMapIndex] = colorPalette[colorMapIndex];
             bcc.setTable(table);
         }
+    }
+
+    protected DataRenderer getDataRenderer() throws VisADException {
+     
+      try {
+      //System.out.println(ImageRendererJ3D.isImageType(getData().getType()));
+      } catch (RemoteException e) {
+       e.printStackTrace();
+      }
+
+      ImageRendererJ3D myRenderer = new ImageRendererJ3D();
+      myRenderer.setReUseFrames(false);
+      return myRenderer;
+
     }
 
 
