@@ -406,16 +406,7 @@ public class ImageRGBDisplayable extends DisplayableData implements GridDisplaya
 
     protected DataRenderer getDataRenderer() throws VisADException {
      
-      try {
-        if (ImageRendererJ3D.isImageType(getData().getType())) {
-          return new DefaultRendererJ3D();
-        }
-      } catch (RemoteException e) {
-       e.printStackTrace();
-      }
-
       ImageRendererJ3D myRenderer = new ImageRendererJ3D();
-      myRenderer.setReUseFrames(false);
       return myRenderer;
 
     }
