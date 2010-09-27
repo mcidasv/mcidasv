@@ -39,14 +39,13 @@ import java.io.File;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
-import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileView;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +57,27 @@ import ucar.unidata.util.StringUtil;
 
 public class NPPChooser extends FileChooser {
 
+	// the list of valid geolocation product ids
+	private static String[] geoProductIDs = {
+    	"GATMO",
+    	"GCRIO",
+    	"GCRSO",
+    	"GMGTO",
+    	"GMODO",
+    	"GMTCO",
+    	"IVMIM",
+    	"VMUGE",
+    	"GNCCO",
+    	"GDNBO",
+    	"GIGTO",
+    	"GIMGO",
+    	"GITCO",
+    	"GCLDO"		
+	};
+	
+	private static final String PRODUCT_SEPARATOR = "-";
+	private static final String FIELD_SEPARATOR = "_";
+	
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LoggerFactory.getLogger(NPPChooser.class);
     
@@ -96,52 +116,79 @@ public class NPPChooser extends FileChooser {
     
     private boolean isNPPFile(File f) {
     	 	
-    	String nppRegex1 = "\\w\\w\\w\\w\\w_npp_d\\d\\d\\d\\d\\d\\d\\d\\d_t\\d\\d\\d\\d\\d\\d_e\\d\\d\\d\\d\\d\\d_b\\d\\d\\d\\d\\d_c\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d_\\w\\w\\w_OPS_SEG.h5";
-    	String nppRegex2 = "\\w\\w\\w\\w\\w_npp_d\\d\\d\\d\\d\\d\\d\\d\\d_t\\d\\d\\d\\d\\d\\d\\d_e\\d\\d\\d\\d\\d\\d\\d_b\\d\\d\\d\\d\\d_c\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d\\d_noaa_ada.h5";
-    	String nppRegex3 = "\\w\\w\\w\\w\\w_aqu.*.h5";
-    	String nppRegex4 = "\\w\\w\\w\\w\\w_ter.*.h5";
+    	// This regular expression matches an NPP Data Product as defined by the 
+    	// spec in CDFCB-X Volume 1, Page 21
+    	String nppRegex =
+        		// Product Id, Multiple (ex: VSSTO-GATMO-VSLTO)
+        		"(\\w\\w\\w\\w\\w-)*" + 
+        		// Product Id, Single (ex: VSSTO)
+        		"\\w\\w\\w\\w\\w" + FIELD_SEPARATOR +
+        		// Spacecraft Id (ex: npp)
+        		"\\w\\w\\w" + FIELD_SEPARATOR +
+        		// Data Start Date (ex: dYYYYMMDD)
+        		"d20[0-3]\\d[0-1]\\d[0-3]\\d" + FIELD_SEPARATOR +
+        		// Data Start Time (ex: tHHMMSSS)
+        		"t[0-2]\\d[0-5]\\d[0-6]\\d\\d" + FIELD_SEPARATOR +
+        		// Data Stop Time (ex: eHHMMSSS)
+        		"e[0-2]\\d[0-5]\\d[0-6]\\d\\d" + FIELD_SEPARATOR +
+        		// Orbit Number (ex: b00015)
+        		"b\\d\\d\\d\\d\\d" + FIELD_SEPARATOR +
+        		// Creation Date (ex: cYYYYMMDDHHMMSSSSSSSS)
+        		"c20[0-3]\\d[0-1]\\d[0-3]\\d[0-2]\\d[0-5]\\d[0-6]\\d\\d\\d\\d\\d\\d\\d" + FIELD_SEPARATOR +
+        		// Origin (ex: navo)
+        		"\\w\\w\\w\\w" + FIELD_SEPARATOR +
+        		// Domain (ex: ops)
+        		"\\w\\w\\w" + 
+        		// HDF5 suffix
+        		".h5";
     	
     	boolean isNPP = false;
     	
     	String fileNameRelative = f.getName();
     	String fileNameAbsolute = f.getParent() + File.separatorChar + f.getName();
+    	logger.trace("examining filename: " + fileNameRelative);
     	
     	// null or empty filename
     	if ((fileNameRelative == null) || (fileNameRelative.equals(""))) return isNPP;
     	
-    	// just see if it matches the regular expression for now
-    	// XXX at some point we should check all valid product ids
-    	
-    	if (	(fileNameRelative.matches(nppRegex1)) ||
-    			(fileNameRelative.matches(nppRegex2)) ||
-    			(fileNameRelative.matches(nppRegex3)) ||
-    			(fileNameRelative.matches(nppRegex4))
-    			)
-    	{
+    	// see if relative filename matches the NPP regular expression	
+    	if (fileNameRelative.matches(nppRegex)) {
     		isNPP = true;
+    		logger.trace(fileNameRelative + " matches NPP regex");
     	// don't go any further if file does not match NPP data product regex
     	} else {
     		return isNPP;
     	}
     	
-    	// before we leave, disqualify geolocation files
-    	if (fileNameRelative.startsWith("GATMO")) isNPP = false;
-    	if (fileNameRelative.startsWith("GCRIO")) isNPP = false;
-    	if (fileNameRelative.startsWith("GCRSO")) isNPP = false;
-    	if (fileNameRelative.startsWith("GMGTO")) isNPP = false;
-    	if (fileNameRelative.startsWith("GMODO")) isNPP = false;
-    	if (fileNameRelative.startsWith("GMTCO")) isNPP = false;
-    	if (fileNameRelative.startsWith("IVMIM")) isNPP = false;
-    	if (fileNameRelative.startsWith("VMUGE")) isNPP = false;
-    	if (fileNameRelative.startsWith("GNCCO")) isNPP = false;
-    	if (fileNameRelative.startsWith("GDNBO")) isNPP = false;
-    	if (fileNameRelative.startsWith("GIGTO")) isNPP = false;
-    	if (fileNameRelative.startsWith("GIMGO")) isNPP = false;
-    	if (fileNameRelative.startsWith("GITCO")) isNPP = false;
-    	if (fileNameRelative.startsWith("GCLDO")) isNPP = false;
+    	// make sure a geolocation file is present if it does look like a valid NPP data file!
     	
-    	// but make sure a geolocation file is present if it IS a valid NPP data file!
-		// first, create the corresponding GEO loc file name
+    	// if a geo dataset is embedded in a multi-product file, we can call it good without
+    	// having to open any files.  Just look for a geo product id in the filename.
+    	// HOWEVER - if it's a single-product GEO-only file, disqualify that
+    	String prodStr = fileNameRelative.substring(0, fileNameRelative.indexOf(FIELD_SEPARATOR));
+        StringTokenizer st = new StringTokenizer(prodStr, PRODUCT_SEPARATOR);
+        int numTokens = st.countTokens();
+        logger.trace("check for embedded GEO, tokenizing: " + prodStr);
+        while (st.hasMoreTokens()) {
+        	String singleProd = st.nextToken();
+        	logger.trace("Next token: " + singleProd);
+        	for (int i = 0; i < geoProductIDs.length; i++) {
+        		if (singleProd.equals(geoProductIDs[i])) {
+        			logger.trace("Found embedded GEO: " + singleProd);
+        			// if it's a single-product file, disqualify this as a GEO-only file!
+        			if (numTokens == 1) {
+        				return false;
+        			} else {
+        				if (numTokens > 1) {
+        					return true;
+        				}
+        			}
+        		}
+        	}
+        }
+    	
+		// looks like a standalone product - will have to look for separate geo file
+        // first, create the corresponding GEO loc file name
 		String geoProductID = null;
 		
 		boolean noGeo = false;
@@ -207,36 +254,6 @@ public class NPPChooser extends FileChooser {
     }
     
    
-    /* NPPFileView aggregates user's view of NPP data products */
-    public class NPPFileView extends FileView {
-  
-        public String getName(File f) {
-        	if (isNPPFile(f)) {  
-        		return f.getName();
-        	} else {
-        		return null;
-        	}
-        }
-
-        public String getDescription(File f) {
-            return null; //let the L&F FileView figure this out
-        }
-
-        public Boolean isTraversable(File f) {
-            return null; //let the L&F FileView figure this out
-        }
-
-        public String getTypeDescription(File f) {
-            return "NPP Data Product";
-        }
-
-        public Icon getIcon(File f) {
-            Icon icon = null;
-            return icon;
-        }
-        
-    }
-    
     /* NPPFilter */
     public class NPPFilter extends FileFilter {
 
