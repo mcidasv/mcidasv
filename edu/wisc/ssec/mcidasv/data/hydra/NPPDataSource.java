@@ -30,21 +30,11 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.data.HydraDataSource;
 import edu.wisc.ssec.mcidasv.data.PreviewSelection;
-import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-
-import java.net.URL;
 
 import java.rmi.RemoteException;
 
@@ -59,11 +49,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.TreeSet;
-
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import org.jdom.Namespace;
 import org.jdom.output.XMLOutputter;
@@ -87,33 +72,12 @@ import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.data.GeoSelection;
 
-import ucar.unidata.geoloc.projection.LatLonProjection;
 import ucar.unidata.util.Misc;
 
-import ucar.unidata.view.geoloc.MapProjectionDisplay;
-import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
-
-import ucar.visad.ProjectionCoordinateSystem;
-
-import ucar.visad.display.DisplayMaster;
-import ucar.visad.display.LineDrawing;
-import ucar.visad.display.MapLines;
-import ucar.visad.display.RubberBandBox;
-
-import visad.CellImpl;
 import visad.Data;
 import visad.FlatField;
-import visad.Gridded2DSet;
 import visad.GriddedSet;
-import visad.RealTupleType;
-import visad.RealType;
-import visad.SampledSet;
-import visad.UnionSet;
 import visad.VisADException;
-
-import visad.data.mcidas.BaseMapAdapter;
-
-import visad.georef.MapProjection;
 
 /**
  * A data source for NPOESS Preparatory Project (NPP) data
@@ -143,8 +107,6 @@ public class NPPDataSource extends HydraDataSource {
 
     private List categories;
     private boolean hasImagePreview = true;
-    private boolean hasTrackPreview = false;
-    private boolean hasChannelSelect = false;
     
     private static int[] YSCAN_POSSIBILITIES = { 96,  512,  768,  1536, 2304, 2313 };
     private static int[] XSCAN_POSSIBILITIES = { 508, 2133, 3200, 6400, 4064, 4121 };    
@@ -185,7 +147,7 @@ public class NPPDataSource extends HydraDataSource {
      */
     
     public NPPDataSource(DataSourceDescriptor descriptor,
-                                 List newSources, Hashtable properties)
+                                 List<String> newSources, Hashtable properties)
             throws VisADException {
         super(descriptor, newSources, DATA_DESCRIPTION, properties);
         logger.debug("NPPDataSource constructor called, file count: " + sources.size());
@@ -601,7 +563,7 @@ public class NPPDataSource extends HydraDataSource {
     	adapters = new MultiDimensionAdapter[pathToProducts.size()];
     	Hashtable<String, String[]> properties = new Hashtable<String, String[]>(); 
     	
-    	Iterator iterator = pathToProducts.iterator();
+    	Iterator<String> iterator = pathToProducts.iterator();
     	int pIdx = 0;
     	while (iterator.hasNext()) {
     		String pStr = (String) iterator.next();
@@ -886,237 +848,6 @@ public class NPPDataSource extends HydraDataSource {
           e.printStackTrace();
         }
       }
-      if (hasTrackPreview) {
-        try {
-          FlatField track = track_adapter.getData(track_adapter.getDefaultSubset());
-          components.add(new NPPTrackSelection(dataChoice, track));
-        } catch (Exception e) {
-          logger.error("Can't make PreviewSelection: "+e);
-          e.printStackTrace();
-        }
-      }
-      if (hasChannelSelect) {
-        try {
-          components.add(new NPPChannelSelection(dataChoice));
-        } 
-        catch (Exception e) {
-          e.printStackTrace();
-        }
-      }
+      
     }
-}
-
-class NPPChannelSelection extends DataSelectionComponent {
-
-	private static final Logger logger = LoggerFactory.getLogger(NPPChannelSelection.class);
-	DataChoice dataChoice;
-	MultiSpectralDisplay display;
-
-	NPPChannelSelection(DataChoice dataChoice) throws Exception {
-		super("Channels");
-		this.dataChoice = dataChoice;
-		display = new MultiSpectralDisplay((DirectDataChoice)dataChoice);
-		display.showChannelSelector();
-	}
-
-	protected JComponent doMakeContents() {
-		try {
-			JPanel panel = new JPanel(new BorderLayout());
-			panel.add("Center", display.getDisplayComponent());
-			return panel;
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-
-	public void applyToDataSelection(DataSelection dataSelection) {
-		try {
-			dataSelection.putProperty(Constants.PROP_CHAN, display.getWaveNumber());
-			dataSelection.putProperty(SpectrumAdapter.channelIndex_name, display.getChannelIndex());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-}
-
-
-class NPPTrackSelection extends DataSelectionComponent {
-	
-	private static final Logger logger = LoggerFactory.getLogger(NPPTrackSelection.class);
-      DataChoice dataChoice;
-      FlatField track;
-
-      double[] x_coords = new double[2];
-      double[] y_coords = new double[2];
-      boolean hasSubset = true;
-      MapProjectionDisplayJ3D mapProjDsp;
-      DisplayMaster dspMaster;
-
-      int trackStride;
-      int verticalStride;
-
-      JTextField trkStr;
-      JTextField vrtStr;
-
-
-   NPPTrackSelection(DataChoice dataChoice, FlatField track) throws VisADException, RemoteException {
-        super("track");
-        this.dataChoice = dataChoice;
-        this.track = track;
-        mapProjDsp = new MapProjectionDisplayJ3D(MapProjectionDisplay.MODE_2Din3D);
-        mapProjDsp.enableRubberBanding(false);
-        dspMaster = mapProjDsp;
-        mapProjDsp.setMapProjection(getDataProjection());
-        LineDrawing trackDsp = new LineDrawing("track");
-        trackDsp.setLineWidth(2f);
-        trackDsp.setData(track);
-        mapProjDsp.addDisplayable(trackDsp);
-
-
-        MapLines mapLines  = new MapLines("maplines");
-        URL      mapSource =
-        mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPU");
-        try {
-            BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
-            mapLines.setMapLines(mapAdapter.getData());
-            mapLines.setColor(java.awt.Color.cyan);
-            mapProjDsp.addDisplayable(mapLines);
-        } catch (Exception e) {
-            logger.error("Can't open map file " + mapSource);
-            e.printStackTrace();
-        }
-                                                                                                                                                     
-        mapLines  = new MapLines("maplines");
-        mapSource =
-        mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPW");
-        try {
-            BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
-            mapLines.setMapLines(mapAdapter.getData());
-            mapLines.setColor(java.awt.Color.cyan);
-            mapProjDsp.addDisplayable(mapLines);
-        } catch (Exception e) {
-            logger.error("Can't open map file " + mapSource);
-            e.printStackTrace();
-        }
-                                                                                                                                                     
-        mapLines  = new MapLines("maplines");
-        mapSource =
-        mapProjDsp.getClass().getResource("/auxdata/maps/OUTLHPOL");
-        try {
-            BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
-            mapLines.setMapLines(mapAdapter.getData());
-            mapLines.setColor(java.awt.Color.cyan);
-            mapProjDsp.addDisplayable(mapLines);
-        } catch (Exception e) {
-            logger.error("Can't open map file " + mapSource);
-            e.printStackTrace();
-        }
-
-        final LineDrawing selectBox = new LineDrawing("select");
-        selectBox.setColor(Color.green);
-
-        final RubberBandBox rbb =
-            new RubberBandBox(RealType.Longitude, RealType.Latitude, 1);
-        rbb.setColor(Color.green);
-        rbb.addAction(new CellImpl() {
-          public void doAction()
-             throws VisADException, RemoteException
-           {
-              Gridded2DSet set = rbb.getBounds();
-              float[] low = set.getLow();
-              float[] hi = set.getHi();
-              x_coords[0] = low[0];
-              x_coords[1] = hi[0];
-              y_coords[0] = low[1];
-              y_coords[1] = hi[1];
-              
-              SampledSet[] sets = new SampledSet[4];
-              sets[0] = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple, new float[][] {{low[0], hi[0]}, {low[1], low[1]}}, 2);
-              sets[1] = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple, new float[][] {{hi[0], hi[0]}, {low[1], hi[1]}}, 2);
-              sets[2] = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple, new float[][] {{hi[0], low[0]}, {hi[1], hi[1]}}, 2);
-              sets[3] = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple, new float[][] {{low[0], low[0]}, {hi[1], low[1]}}, 2);
-              UnionSet uset = new UnionSet(sets);
-              selectBox.setData(uset);
-           }
-        });
-        dspMaster.addDisplayable(rbb);
-        dspMaster.addDisplayable(selectBox);
-
-        dspMaster.draw();
-   }
-
-       public MapProjection getDataProjection() {
-         MapProjection mp = null;
-         try {
-           mp = new ProjectionCoordinateSystem(new LatLonProjection());
-         } catch (Exception e) {
-             logger.error(" getDataProjection"+e);
-         }
-         return mp;
-       }
-
-      protected JComponent doMakeContents() {
-        try {
-          JPanel panel = new JPanel(new BorderLayout());
-          panel.add("Center", dspMaster.getDisplayComponent());
-
-          JPanel stridePanel = new JPanel(new FlowLayout());
-          trkStr = new JTextField(Integer.toString(5), 3);
-          vrtStr = new JTextField(Integer.toString(2), 3);
-          trkStr.addActionListener(new ActionListener() {
-              public void actionPerformed(ActionEvent ae) {
-                setTrackStride(Integer.valueOf(trkStr.getText().trim()));
-              }
-          });
-          vrtStr.addActionListener(new ActionListener() {
-              public void actionPerformed(ActionEvent ae) {
-                setVerticalStride(Integer.valueOf(vrtStr.getText().trim()));
-              }
-          });
-
-          stridePanel.add(new JLabel("track stride: "));
-          stridePanel.add(trkStr);
-          stridePanel.add(new JLabel("vertical stride: "));
-          stridePanel.add(vrtStr);
-          panel.add("South", stridePanel);
-
-          return panel;
-        }
-        catch (Exception e) {
-          e.printStackTrace();
-        }
-        return null;
-      }
-                                                                                                                                                     
-      public void setTrackStride(int stride) {
-        trackStride = stride;
-      }
-
-      public void setVerticalStride(int stride) {
-        verticalStride = stride;
-      }
-
-      public void setTrackStride() {
-        trackStride = Integer.valueOf(trkStr.getText().trim());
-      }
-
-      public void setVerticalStride() {
-        verticalStride = Integer.valueOf(vrtStr.getText().trim());
-      }
-
-      public void applyToDataSelection(DataSelection dataSelection) {
-         setTrackStride();
-         setVerticalStride();
-         if (hasSubset) {
-           GeoSelection geoSelect = new GeoSelection(
-                new GeoLocationInfo(y_coords[1], x_coords[0], y_coords[0], x_coords[1]));
-           geoSelect.setXStride(trackStride);
-           geoSelect.setYStride(verticalStride);
-           dataSelection.setGeoSelection(geoSelect);
-         }
-      }
 }
