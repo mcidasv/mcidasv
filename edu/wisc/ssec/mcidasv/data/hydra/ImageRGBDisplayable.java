@@ -32,6 +32,7 @@ import ucar.unidata.util.Misc;
 import visad.*;
 
 import visad.bom.ImageRendererJ3D;
+import visad.java3d.DefaultRendererJ3D;
 
 import visad.java2d.*;
 import visad.java2d.DefaultRendererJ2D;
@@ -406,7 +407,9 @@ public class ImageRGBDisplayable extends DisplayableData implements GridDisplaya
     protected DataRenderer getDataRenderer() throws VisADException {
      
       try {
-      //System.out.println(ImageRendererJ3D.isImageType(getData().getType()));
+        if (ImageRendererJ3D.isImageType(getData().getType())) {
+          return new DefaultRendererJ3D();
+        }
       } catch (RemoteException e) {
        e.printStackTrace();
       }
