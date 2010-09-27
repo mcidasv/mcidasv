@@ -5,11 +5,13 @@ import ucar.unidata.data.DataDataChoice;
 import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataCategory;
+import ucar.unidata.data.grid.GridUtil;
 
 import ucar.unidata.idv.DisplayConventions;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.DisplayControl;
+
 
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.DisplayableData;
@@ -17,6 +19,13 @@ import ucar.visad.display.Displayable;
 
 //import ucar.visad.display.ImageRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.ImageRGBDisplayable;
+import visad.georef.EarthLocation;
+import visad.georef.EarthLocationTuple;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import ucar.unidata.util.StringUtil;
+
+
 
 import visad.*;
 import visad.BaseColorControl;
@@ -60,11 +69,13 @@ import java.util.List;
 
 import java.awt.Color;
 import java.awt.Font;
+import ucar.unidata.data.grid.GridDataInstance;
+import ucar.unidata.data.DataInstance;
 
 
 import java.rmi.RemoteException;
 
-import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
+//import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 
 
 public class RGBCompositeControl extends DisplayControlImpl {
@@ -110,26 +121,33 @@ public class RGBCompositeControl extends DisplayControlImpl {
    private final JTextField bluHighTxtFld =
         new JTextField(Float.toString(1f), 12);
 
-
+	private GridDataInstance gridDataInstance;
    public RGBCompositeControl() {
      super();
    }
 
    public boolean init(DataChoice dataChoice) throws VisADException, RemoteException {
      displayMaster = getViewManager().getMaster();
-
      DataSelection dataSelection = getDataSelection();
      imageField = (FieldImpl) dataChoice.getData(dataSelection);
 
      imageDisplay = new ImageRGBDisplayable("rgb composite", null, false, imageField);
+     imageDisplay.loadData(imageField);
 
      Iterator iter = imageDisplay.getScalarMapSet().iterator();
      while (iter.hasNext()) {
        ScalarMap map = (ScalarMap) iter.next();
        double[] datRng = map.getRange();
-       if (map.getScalarName().startsWith("redimage")) redMap = map;
-       if (map.getScalarName().startsWith("greenimage")) grnMap = map;
-       if (map.getScalarName().startsWith("blueimage")) bluMap = map;
+	System.err.println(map);
+       if (map.getScalarName().startsWith("redimage")) {
+		redMap = map;
+	}
+       if (map.getScalarName().startsWith("greenimage")) {
+		grnMap = map;
+	}
+       if (map.getScalarName().startsWith("blueimage")) {
+		bluMap = map;
+	}
      }
 
      redMap.resetAutoScale();
@@ -141,7 +159,7 @@ public class RGBCompositeControl extends DisplayControlImpl {
      bluMap.addScalarMapListener(new ColorMapListener(bluMap, initBluRange, bluRange, bluLowTxtFld, bluHighTxtFld));
 
      addDisplayable(imageDisplay, FLAG_COLORTABLE);
-     imageDisplay.loadData(imageField);
+     //imageDisplay.loadData(imageField);
 
      return true;
    }
@@ -153,7 +171,7 @@ public class RGBCompositeControl extends DisplayControlImpl {
    }
 
 
-   public void updateRedRange(double lo, double hi) {
+   private void updateRedRange(double lo, double hi) {
      redRange[0] = lo;
      redRange[1] = hi;
      try {
@@ -165,7 +183,7 @@ public class RGBCompositeControl extends DisplayControlImpl {
      }
    }
 
-   public void updateGrnRange(double lo, double hi) {
+   private void updateGrnRange(double lo, double hi) {
      grnRange[0] = lo;
      grnRange[1] = hi;
      try {
@@ -177,7 +195,7 @@ public class RGBCompositeControl extends DisplayControlImpl {
      }
    }
 
-   public void updateBluRange(double lo, double hi) {
+   private void updateBluRange(double lo, double hi) {
      bluRange[0] = lo;
      bluRange[1] = hi;
      try {
@@ -206,9 +224,9 @@ public class RGBCompositeControl extends DisplayControlImpl {
      return gamma;
    }
 
-   public void updateGamma(double gamma) {
+   private void updateGamma(double gamma) {
      setGamma(gamma);
-
+	
      float[][] newRedTbl = getZeroOutArray(redTable);
      float[][] newGrnTbl = getZeroOutArray(grnTable);
      float[][] newBluTbl = getZeroOutArray(bluTable);
@@ -379,18 +397,30 @@ public class RGBCompositeControl extends DisplayControlImpl {
       this.initRange = initRange;
     }
 
+
     public void controlChanged(ScalarMapControlEvent event) throws RemoteException, VisADException {
     }
 
-    public void mapChanged(ScalarMapEvent event) throws RemoteException, VisADException {
+    public void mapChanged(ScalarMapEvent event) throws RemoteException, VisADException {	
       if (event.getId() == event.AUTO_SCALE) {
             double[] rng = clrMap.getRange();
+	    boolean shouldRemove = false;
+	    //Ghansham: decide whether it is first time. The cleaner way
+	    if (!Double.isNaN(rng[0]) && !Double.isNaN(rng[1]) && Double.isNaN(initRange[0]) && Double.isNaN(initRange[1])) {
+		shouldRemove = true;
+	    }
             range[0] = rng[0];
             range[1] = rng[1];
             initRange[0] = rng[0];
             initRange[1] = rng[1];
             lowTxtFld.setText(Float.toString((float)rng[0]));
             highTxtFld.setText(Float.toString((float)rng[1]));
+	    //Ghansham:If its first time remove the scalarmaplistener and setRange manually to disable autscaling of the scalarmap
+	    if(shouldRemove) {
+		clrMap.removeScalarMapListener(this);
+            //Lock out auto-scaling, hopefully this is a no-ip, ie initRange should equal range of ScalarMap
+		clrMap.setRange(initRange[0], initRange[1]);
+	    }
       }
       else if (event.getId() == event.MANUAL) {
             double[] rng = clrMap.getRange();
