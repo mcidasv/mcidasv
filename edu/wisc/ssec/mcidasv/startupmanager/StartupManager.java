@@ -456,9 +456,6 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         direct3dBox.setText(useDirect3d.getLabel());
 
         JPanel internalPanel = McVGuiUtils.topCenterBottom(use3dCheckBox, joglCheckBox, direct3dBox);
-        if (platform != Platform.WINDOWS)
-            internalPanel = McVGuiUtils.topBottom(use3dCheckBox, joglCheckBox, null);
-
         JPanel j3dPanel = McVGuiUtils.makeLabeledComponent("3D:", internalPanel);
 
         // Build the bundle panel
@@ -478,7 +475,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         useImageByRefCheckBox.setText(useImageByRef.getLabel());
         JPanel miscPanel = McVGuiUtils.makeLabeledComponent("Misc:", McVGuiUtils.topBottom(useBadLineFixCheckBox, useCmsCollectorCheckBox, McVGuiUtils.Prefer.TOP));
 
-        JPanel testingPanel = McVGuiUtils.makeLabeledComponent("Misc:", McVGuiUtils.topBottom(useNpotCheckBox, useImageByRefCheckBox, McVGuiUtils.Prefer.TOP));
+        JPanel testingPanel = McVGuiUtils.makeLabeledComponent("VisAD:", McVGuiUtils.topBottom(useNpotCheckBox, useImageByRefCheckBox, McVGuiUtils.Prefer.TOP));
 
         javax.swing.GroupLayout panelLayout = new javax.swing.GroupLayout(startupPanel);
         startupPanel.setLayout(panelLayout);
