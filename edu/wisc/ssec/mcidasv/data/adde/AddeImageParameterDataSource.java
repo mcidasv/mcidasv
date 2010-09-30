@@ -201,13 +201,10 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     private String savePlace;
     private double saveLat;
     private double saveLon;
-    private int saveLine;
-    private int saveElement;
     private int saveNumLine;
     private int saveNumEle;
     private int saveLineMag;
     private int saveEleMag;
-    private boolean saveLockOn;
     private Boolean saveShowPreview;
 
     private String displaySource;
@@ -302,7 +299,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         
         List descs = ids.getImageDescriptors();
         AddeImageDescriptor aid = (AddeImageDescriptor)descs.get(0);
-        AddeImageInfo aii = aid.getImageInfo();
         this.source = aid.getSource();
         if (this.source.contains("localhost")) {
             AreaDirectory areaDirectory = aid.getDirectory();
@@ -880,7 +876,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     AREACoordinateSystem acs = null;
                     try {
                     	
-                    	long start1 = (new Date()).getTime();
                     	if (showPreview) {
                     		aa = new AreaAdapter(baseSource, false);
                     		this.previewImage = (FlatField)aa.getImage();
@@ -888,18 +883,13 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     	else {
                     		this.previewImage = Util.makeField(0, 1, 1, 0, 1, 1, 0, "TEMP");
                     	}
-                    	long end1 = (new Date()).getTime();
                     	
-//                        baseSource = saveStr;
-                    	long start2 = (new Date()).getTime();
                         AreaFile af = new AreaFile(baseSource);
                         previewNav = af.getNavigation();
                         AreaDirectory ad = af.getAreaDirectory();
                         this.lineResolution = ad.getValue(11);
                         this.elementResolution = ad.getValue(12);
-                        McIDASAreaProjection map = new McIDASAreaProjection(af);
                         acs = new AREACoordinateSystem(af);
-                    	long end2 = (new Date()).getTime();
                     } catch (Exception e) {
                         String excp = e.toString();
                         int indx = excp.lastIndexOf(":");
@@ -1167,9 +1157,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      */
     protected void handlePreviewImageError(int flag, Exception excp) {
         getDataContext().getIdv().showNormalCursor();
-        String message = excp.getMessage();
-        LogUtil.userErrorMessage("Error in makePreviewImage  e=" + flag + " "
-                                     + excp);
+        LogUtil.userErrorMessage("Error in makePreviewImage  e=" + flag + " " + excp);
     }
 
     private String removeKey(String src, String key) {
@@ -1385,9 +1373,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
     }
 
-    /** _more_ */
-    private DataRange[] sampleRanges = null;
-
     /**
      * Checks to see if a given {@code AddeImageDescriptor} is based upon a 
      * local (or remote) file.
@@ -1536,8 +1521,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 break;
             }
         }
-        int saveLines = numLines;
-        int saveEles = numEles;
+
         if (sampleMapProjection == null) {
             String addeCmdBuff = baseSource;
             AreaFile af = null;
@@ -1578,16 +1562,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             latlon[0][1] = llp.getLatitude();
             latlon[1][1] = llp.getLongitude();
             elelin = macs.fromReference(latlon);
-            int line = (int)(elelin[1][0]+0.5)*dirBlk[11];
-            int ele = (int)(elelin[0][0]+0.5)*dirBlk[12];
             numLines = (int)(Math.abs(elelin[1][0] - elelin[1][1]))*dirBlk[11];
             numEles = (int)(Math.abs(elelin[0][1] - elelin[0][0]))*dirBlk[12];
-        }
-
-        String ulString = dirBlk[5] + " " + dirBlk[6] + " I";
-        Hashtable props = subset.getProperties();
-        if (props.containsKey("LINELE")) {
-            ulString = (String)props.get("LINELE");
         }
 
         try {
@@ -1625,8 +1601,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             AddeImageInfo biggestPosition = null;
             int           pos             = 0;
             boolean       anyRelative     = false;
-            //Find the descriptor with the largets position
-            String biggestSource = null;
+            // Find the descriptor with the largets position
             for (Iterator iter =
                     descriptorsToUse.iterator(); iter.hasNext(); ) {
                 AddeImageDescriptor aid = (AddeImageDescriptor) iter.next();
@@ -1650,7 +1625,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     || (Math.abs(aii.getDatasetPosition()) > pos)) {
                     pos             = Math.abs(aii.getDatasetPosition());
                     biggestPosition = aii;
-                    biggestSource   = aid.getSource();
                 }
             }
 
@@ -1713,10 +1687,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     if (getKey(src, UNIT_KEY).length() == 0)
                         src = replaceKey(src, UNIT_KEY, (Object)(unit));
 
-                    AreaFile af = new AreaFile(src);
-                    AreaDirectory ad = af.getAreaDirectory();
-                    int lMag = this.lineMag;
-                    int eMag = this.elementMag;
                     int lSize = numLines;
                     int eSize = numEles;
                     sizeString = lSize + " " + eSize;
@@ -1724,7 +1694,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     src = replaceKey(src, MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
                     aid.setSource(src);
                 } catch (Exception exc) {
-                    ImageSequence is = super.makeImageSequence(dataChoice, subset);
+                    super.makeImageSequence(dataChoice, subset);
                 }
 
                 SingleBandedImage image = makeImage(aid, rangeType, true,
@@ -1930,19 +1900,12 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 //                    this.laLoSel.setLineMag(saveLineMag);
 //                    saveEleMag = getSaveEleMag();
 //                    this.laLoSel.setElementMag(saveEleMag);
-                    savePlace = this.savePlace;
                     this.laLoSel.setPlace(savePlace);
-                    saveLat = this.saveLat;
                     this.laLoSel.setLatitude(saveLat);
-                    saveLon = this.saveLon;
                     this.laLoSel.setLongitude(saveLon);
-                    saveNumLine = this.saveNumLine;
                     this.laLoSel.setNumLines(saveNumLine);
-                    saveNumEle = this.saveNumEle;
                     this.laLoSel.setNumEles(saveNumEle);
-                    saveLineMag = this.saveLineMag;
                     this.laLoSel.setLineMag(saveLineMag);
-                    saveEleMag = this.saveEleMag;
                     this.laLoSel.setElementMag(saveEleMag);
                 }
 
@@ -2548,11 +2511,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         if (saveCoordType.equals(this.laLoSel.getLatLonType())) {
             saveLat = this.laLoSel.getLatitude();
             saveLon = this.laLoSel.getLongitude();
-        } else {
-            saveLine = this.laLoSel.getLine();
-            saveElement = this.laLoSel.getElement();
         }
-        saveLockOn = this.laLoSel.getLockOn();
         saveNumLine = this.laLoSel.getNumLines();
         saveNumEle = this.laLoSel.getNumEles();
         saveLineMag = this.laLoSel.getLineMag();
