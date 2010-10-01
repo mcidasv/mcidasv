@@ -373,6 +373,12 @@
     <resource label="Geolocation Utilities" location="%APPPATH%/python/utilities/geolocate.py">
       <property name="category" value="System"/>
     </resource>
+    <resource label="Background Processing Functions" location="%APPPATH%/python/utilities/background.py">
+      <property name="category" value="System" />
+    </resource>
+    <resource label="Interactive Shell Niceties" location="%APPPATH%/python/utilities/interactive.py">
+      <property name="category"> value="System" />
+    </resource>
     <resource label="Site Library" location="%SITEPATH%/default.py"/>
     <resource label="Application Library" location="%APPPATH%/default.py"/>
     <resource label="Constants" location="%IDVPATH%/python/constants.py">
