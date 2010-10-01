@@ -111,8 +111,9 @@ public final class CollectionHelpers {
      */
     public static <E> Set<E> set(E... elements) {
         Set<E> newSet = new LinkedHashSet<E>(elements.length);
-        for (E t : elements)
+        for (E t : elements) {
             newSet.add(t);
+        }
         return newSet;
     }
 
@@ -168,9 +169,9 @@ public final class CollectionHelpers {
      * whatever type of object {@code o} might be.
      */
     public static int len(final Object o) {
-        if (o == null)
+        if (o == null) {
             throw new NullPointerException("Null arguments do not have a length");
-
+        }
         if (o instanceof Collection<?>) {
             return ((Collection<?>)o).size();
         }
@@ -223,9 +224,9 @@ public final class CollectionHelpers {
      */
     // TODO(jon:89): item should probably become an array/collection too...
     public static boolean contains(final Object collection, final Object item) {
-        if (collection == null)
+        if (collection == null) {
             throw new NullPointerException("Cannot search a null object");
-
+        }
         if (collection instanceof Collection<?>) {
             return ((Collection<?>)collection).contains(item);
         }
@@ -238,13 +239,17 @@ public final class CollectionHelpers {
         else if (collection instanceof Iterator<?>) {
             Iterator<?> it = (Iterator<?>)collection;
             if (item == null) {
-                while (it.hasNext())
-                    if (it.next() == null)
+                while (it.hasNext()) {
+                    if (it.next() == null) {
                         return true;
+                    }
+                }
             } else {
-                while (it.hasNext())
-                    if (item.equals(it.next()))
+                while (it.hasNext()) {
+                    if (item.equals(it.next())) {
                         return true;
+                    }
+                }
             }
             return false;
         }
@@ -254,8 +259,9 @@ public final class CollectionHelpers {
         else if (collection.getClass().isArray()) {
             for (int i = 0; i < Array.getLength(collection); i++) {
                 Object value = Array.get(collection, i);
-                if (value.equals(item))
+                if (value.equals(item)) {
                     return true;
+                }
             }
         }
         throw new IllegalArgumentException("Don't know how to search a "+collection.getClass().getName());
@@ -541,8 +547,9 @@ public final class CollectionHelpers {
      */
     public static <K, V> Map<K, V> zipMap(K[] keys, V[] values) {
         Map<K, V> zipped = new LinkedHashMap<K, V>(keys.length);
-        for (int i = 0; (i < keys.length && i < values.length); i++)
+        for (int i = 0; (i < keys.length && i < values.length); i++) {
             zipped.put(keys[i], values[i]);
+        }
         return zipped;
     }
 
@@ -562,8 +569,9 @@ public final class CollectionHelpers {
         Map<K, V> zipped = new LinkedHashMap<K, V>(keys.size());
         Iterator<? extends K> keyIterator = keys.iterator();
         Iterator<? extends V> valueIterator = values.iterator();
-        while (keyIterator.hasNext() && valueIterator.hasNext())
+        while (keyIterator.hasNext() && valueIterator.hasNext()) {
             zipped.put(keyIterator.next(), valueIterator.next());
+        }
         return zipped;
     }
 
@@ -578,8 +586,9 @@ public final class CollectionHelpers {
      */
     public static <A, B> List<B> map(final Function<A, B> f, List<A> as) {
         List<B> bs = arrList();
-        for (A a : as)
+        for (A a : as) {
             bs.add(f.apply(a));
+        }
         return bs;
     }
 
@@ -594,12 +603,9 @@ public final class CollectionHelpers {
      */
     public static <A, B> Set<B> map(final Function<A, B> f, Set<A> as) {
         Set<B> bs = newLinkedHashSet();
-        for (A a : as)
+        for (A a : as) {
             bs.add(f.apply(a));
+        }
         return bs;
     }
-
-    // simple tests go here. though we really must implement some form of automated testing.
-    // public static void main(String[] args) {
-    // }
 }
