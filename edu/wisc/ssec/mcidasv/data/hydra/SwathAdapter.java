@@ -30,25 +30,17 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import visad.Data;
-import visad.FlatField;
-import visad.Set;
-import visad.CoordinateSystem;
-import visad.RealType;
-import visad.RealTupleType;
-import visad.SetType;
-import visad.Linear2DSet;
-import visad.Unit;
-import visad.FunctionType;
-import visad.VisADException;
-import java.rmi.RemoteException;
-import java.util.Hashtable;
 import java.util.HashMap;
 
+import visad.CoordinateSystem;
+import visad.FunctionType;
+import visad.Linear2DSet;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.Set;
+import visad.Unit;
 
 public class SwathAdapter extends MultiDimensionAdapter {
-
-      private FunctionType mathtype;
 
       String nav_type = "Interp";
       boolean lon_lat_trusted = true;
@@ -104,7 +96,6 @@ public class SwathAdapter extends MultiDimensionAdapter {
       int track_tup_idx;
       int xtrack_tup_idx;
 
-      //-private RangeProcessor rangeProcessor;
       private SwathNavigation navigation;
 
       private Linear2DSet swathDomain;
@@ -121,32 +112,28 @@ public class SwathAdapter extends MultiDimensionAdapter {
         return subset;
       }
 
-      public static HashMap getEmptyMetadataTable() {
-        HashMap<String, String> metadata = new HashMap<String, String>();
-        metadata.put(array_name, null);
-        metadata.put(array_dimension_names, null);
-        metadata.put(track_name, null);
-        metadata.put(xtrack_name, null);
-        metadata.put(geo_track_name, null);
-        metadata.put(geo_xtrack_name, null);
-        metadata.put(lon_array_name, null);
-        metadata.put(lat_array_name, null);
-        metadata.put(lon_array_dimension_names, null);
-        metadata.put(lat_array_dimension_names, null);
-        metadata.put(scale_name, null);
-        metadata.put(offset_name, null);
-        metadata.put(fill_value_name, null);
-        metadata.put(range_name, null);
-        metadata.put(product_name, null);
-        metadata.put(geo_track_offset_name, null);
-        metadata.put(geo_xtrack_offset_name, null);
-        metadata.put(geo_track_skip_name, null);
-        metadata.put(geo_xtrack_skip_name, null);
-        /*
-        metadata.put(range_unit, null);
-        metadata.put(valid_range, null);
-        */
-        return metadata;
+      public static HashMap<String, Object> getEmptyMetadataTable() {
+    	  HashMap<String, Object> metadata = new HashMap<String, Object>();
+    	  metadata.put(array_name, null);
+    	  metadata.put(array_dimension_names, null);
+    	  metadata.put(track_name, null);
+    	  metadata.put(xtrack_name, null);
+    	  metadata.put(geo_track_name, null);
+    	  metadata.put(geo_xtrack_name, null);
+    	  metadata.put(lon_array_name, null);
+    	  metadata.put(lat_array_name, null);
+    	  metadata.put(lon_array_dimension_names, null);
+    	  metadata.put(lat_array_dimension_names, null);
+    	  metadata.put(scale_name, null);
+    	  metadata.put(offset_name, null);
+    	  metadata.put(fill_value_name, null);
+    	  metadata.put(range_name, null);
+    	  metadata.put(product_name, null);
+    	  metadata.put(geo_track_offset_name, null);
+    	  metadata.put(geo_xtrack_offset_name, null);
+    	  metadata.put(geo_track_skip_name, null);
+    	  metadata.put(geo_xtrack_skip_name, null);
+    	  return metadata;
       }
 
       public SwathAdapter() {
