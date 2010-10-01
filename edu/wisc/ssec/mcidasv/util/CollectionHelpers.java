@@ -136,7 +136,7 @@ public final class CollectionHelpers {
      * @see #list(Object...)
      * @see #set(Object...)
      */
-    @SuppressWarnings("unchecked") // the only things being added to the collection are objects of type "E"
+    @SuppressWarnings({ "unchecked", "rawtypes" }) // the only things being added to the collection are objects of type "E"
     public static <E> Collection<E> collect(Class<? extends Collection> cl, E... elements) {
         try {
             Collection<E> c = cl.getConstructor().newInstance();
@@ -499,7 +499,7 @@ public final class CollectionHelpers {
      * @see #collect(Class, Object...)
      */
     // not sure about the utility of this one...
-    @SuppressWarnings("unchecked") // again, only adding items of type "E"
+    @SuppressWarnings({ "unchecked", "rawtypes" }) // again, only adding items of type "E"
     public static <E> Collection<E> recollect(Class<? extends Collection> cl, Collection<E> old) {
         try {
             Collection<E> c = cl.getConstructor().newInstance();
