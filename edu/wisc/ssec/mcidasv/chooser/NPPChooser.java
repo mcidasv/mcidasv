@@ -56,24 +56,6 @@ import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.util.StringUtil;
 
 public class NPPChooser extends FileChooser {
-
-	// the list of valid geolocation product ids
-	private static String[] geoProductIDs = {
-    	"GATMO",
-    	"GCRIO",
-    	"GCRSO",
-    	"GMGTO",
-    	"GMODO",
-    	"GMTCO",
-    	"IVMIM",
-    	"VMUGE",
-    	"GNCCO",
-    	"GDNBO",
-    	"GIGTO",
-    	"GIMGO",
-    	"GITCO",
-    	"GCLDO"		
-	};
 	
 	private static final String PRODUCT_SEPARATOR = "-";
 	private static final String FIELD_SEPARATOR = "_";
@@ -172,8 +154,8 @@ public class NPPChooser extends FileChooser {
         while (st.hasMoreTokens()) {
         	String singleProd = st.nextToken();
         	logger.trace("Next token: " + singleProd);
-        	for (int i = 0; i < geoProductIDs.length; i++) {
-        		if (singleProd.equals(geoProductIDs[i])) {
+        	for (int i = 0; i < JPSSUtilities.geoProductIDs.length; i++) {
+        		if (singleProd.equals(JPSSUtilities.geoProductIDs[i])) {
         			logger.trace("Found embedded GEO: " + singleProd);
         			// if it's a single-product file, disqualify this as a GEO-only file!
         			if (numTokens == 1) {

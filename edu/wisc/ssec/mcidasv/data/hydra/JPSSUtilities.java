@@ -45,7 +45,25 @@ import java.util.HashMap;
 
 public abstract class JPSSUtilities {
    
-    private static HashMap<String, String> geoHM = new HashMap<String, String>();
+	// the list of valid geolocation product ids
+	public static String[] geoProductIDs = {
+    	"GATMO",
+    	"GCRIO",
+    	"GCRSO",
+    	"GMGTO",
+    	"GMODO",
+    	"GMTCO",
+    	"IVMIM",
+    	"VMUGE",
+    	"GNCCO",
+    	"GDNBO",
+    	"GIGTO",
+    	"GIMGO",
+    	"GITCO",
+    	"GCLDO"		
+	};
+	
+	private static HashMap<String, String> geoHM = new HashMap<String, String>();
     private static HashMap<String, String> prodHM = new HashMap<String, String>();
     private static HashMap<String, String> factHM = new HashMap<String, String>();
     

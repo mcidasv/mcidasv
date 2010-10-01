@@ -47,6 +47,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.TreeSet;
 
@@ -107,6 +108,7 @@ public class NPPDataSource extends HydraDataSource {
 
     private List categories;
     private boolean hasImagePreview = true;
+    private boolean isCombinedProduct = false;
     
     private static int[] YSCAN_POSSIBILITIES = { 96,  512,  768,  1536, 2304, 2313 };
     private static int[] XSCAN_POSSIBILITIES = { 508, 2133, 3200, 6400, 4064, 4121 };    
@@ -161,20 +163,32 @@ public class NPPDataSource extends HydraDataSource {
         	logger.debug("NPP source file: " + (String) o);
         }
 
-        try {
-        	setup();
-        } catch (Exception e) {
-        	e.printStackTrace();
-        	throw new VisADException();
-        }
+        setup();
     }
 
-    public void setup() throws Exception {
+    public void setup() throws VisADException {
 
     	// looking to populate 3 things - path to lat, path to lon, path to relevant products
     	String pathToLat = null;
     	String pathToLon = null;
     	TreeSet<String> pathToProducts = new TreeSet<String>();
+    	
+    	// check source filenames to see if this is a combined product
+    	// XXX TJJ - looking for "underscore" is NOT GUARANTEED TO WORK!
+    	String prodStr = filename.substring(filename.lastIndexOf(File.separatorChar) + 1, filename.indexOf("_"));
+        StringTokenizer st = new StringTokenizer(prodStr, "-");
+        logger.trace("check for embedded GEO, tokenizing: " + prodStr);
+        while (st.hasMoreTokens()) {
+        	String singleProd = st.nextToken();
+        	logger.trace("Next token: " + singleProd);
+        	for (int i = 0; i < JPSSUtilities.geoProductIDs.length; i++) {
+        		if (singleProd.equals(JPSSUtilities.geoProductIDs[i])) {
+        			logger.trace("Setting isCombinedProduct true, Found embedded GEO: " + singleProd);
+        			isCombinedProduct = true;
+        			break;
+        		}
+        	}
+        }
     	
     	// various metatdata we'll need to gather on a per-product basis
     	ArrayList<String> unsignedFlags = new ArrayList<String>();
@@ -197,6 +211,8 @@ public class NPPDataSource extends HydraDataSource {
     	   	
     	try {
     		
+    		nppPP = new NPPProductProfile();
+    		
     		// for each source file provided get the nominal time
     		for (int fileCount = 0; fileCount < sources.size(); fileCount++) {
 	    		// need to open the main NetCDF file to determine the geolocation product
@@ -206,17 +222,23 @@ public class NPPDataSource extends HydraDataSource {
 	    			fileAbsPath = (String) sources.get(fileCount);
 		    		logger.debug("Trying to open file: " + fileAbsPath);
 		    		ncfile = NetcdfFile.open(fileAbsPath);
-		    		ucar.nc2.Attribute a = ncfile.findGlobalAttribute("N_GEO_Ref");
-		    		logger.debug("Value of GEO global attribute: " + a.getStringValue());
-		    		String tmpGeoProductID = null;
-	    			if (a.getStringValue().endsWith("h5")) {
-	    				tmpGeoProductID = a.getStringValue();
-	    			} else {
-	    				tmpGeoProductID = JPSSUtilities.mapGeoRefToProductID(a.getStringValue());
-	    			}
-		    		logger.debug("Value of corresponding Product ID: " + tmpGeoProductID);
-		    		geoProductIDs.add(tmpGeoProductID);
-	    	    	Group rg = ncfile.getRootGroup();
+		    		if (! isCombinedProduct) {
+						ucar.nc2.Attribute a = ncfile
+								.findGlobalAttribute("N_GEO_Ref");
+						logger.debug("Value of GEO global attribute: "
+								+ a.getStringValue());
+						String tmpGeoProductID = null;
+						if (a.getStringValue().endsWith("h5")) {
+							tmpGeoProductID = a.getStringValue();
+						} else {
+							tmpGeoProductID = JPSSUtilities
+									.mapGeoRefToProductID(a.getStringValue());
+						}
+						logger.debug("Value of corresponding Product ID: "
+								+ tmpGeoProductID);
+						geoProductIDs.add(tmpGeoProductID);
+					}
+					Group rg = ncfile.getRootGroup();
 
 	    	    	logger.debug("Root group name: " + rg.getName());
 	    	    	List<Group> gl = rg.getGroups();
@@ -229,26 +251,29 @@ public class NPPDataSource extends HydraDataSource {
 	    	    			if (g.getName().contains("Data_Products") && (fileCount != sources.size())) {
 	    	    				boolean foundDateTime = false;
 	    	    				List<Group> dpg = g.getGroups();
+	    	    				
+	    	    				// cycle through once looking for XML Product Profiles
 	    	    				for (Group subG : dpg) {
-	    	    					
 	    	    					// This is also where we find the attribute which tells us which
 	    	    					// XML Product Profile to use!
-	    	    					if (nppPP == null) {
-	    	    						ucar.nc2.Attribute axpp = subG.findAttribute("N_Collection_Short_Name");
-	    	    						if (axpp != null) {
-	    	    							System.err.println("XML Product Profile: " + axpp.getStringValue());
-	    	    							String baseName = axpp.getStringValue();
-	    	    							baseName = baseName.replace('-', '_');
-	    	    							String pathStr = fileAbsPath.substring(0, fileAbsPath.lastIndexOf(File.separatorChar) + 1);
-	    	    							String productProfileFileName = pathStr + baseName + ".xml";
-	    	    							try {
-	    	    								nppPP = new NPPProductProfile(productProfileFileName);
-	    	    							} catch (Exception nppppe) {
-	    	    								nppppe.printStackTrace();
-	    	    							}
-	    	    						}
-	    	    					}
-	    	    					
+    	    						ucar.nc2.Attribute axpp = subG.findAttribute("N_Collection_Short_Name");
+    	    						if (axpp != null) {
+    	    							System.err.println("XML Product Profile: " + axpp.getStringValue());
+    	    							String baseName = axpp.getStringValue();
+    	    							baseName = baseName.replace('-', '_');
+    	    							String pathStr = fileAbsPath.substring(0, fileAbsPath.lastIndexOf(File.separatorChar) + 1);
+    	    							String productProfileFileName = pathStr + baseName + ".xml";
+    	    							try {
+    	    								nppPP.addMetaDataFromFile(productProfileFileName);
+    	    							} catch (Exception nppppe) {
+    	    								logger.error("Error parsing XML Product Profile: " + productProfileFileName);
+    	    								throw new Exception("XML Product Profile Error");
+    	    							}
+    	    						}
+	    	    				}
+	    	    				
+	    	    				// 2nd pass through sub-group to extract date/time for aggregation
+	    	    				for (Group subG : dpg) {
 	    	    					List<Variable> vl = subG.getVariables();
 	    	    					for (Variable v : vl) {
 	    	    						ucar.nc2.Attribute aDate = v.findAttribute("AggregateBeginningDate");
@@ -274,8 +299,8 @@ public class NPPDataSource extends HydraDataSource {
 	    	    		}
 	    	    	}
 	    		} catch (Exception e) {
-	    			logger.debug("Exception during open file: " + fileAbsPath);
-	    			e.printStackTrace();
+	    			logger.debug("Exception during processing of file: " + fileAbsPath);
+	    			throw (e);
 	    		} finally {
 	    			ncfile.close();
 	    		}
@@ -299,21 +324,25 @@ public class NPPDataSource extends HydraDataSource {
         		
     			org.jdom.Element fData = new org.jdom.Element("netcdf", ns);
     			fData.setAttribute("location", s);
-    			org.jdom.Element fGeo  = new org.jdom.Element("netcdf", ns);
-
-    			String geoFilename = s.substring(0, s.lastIndexOf(File.separatorChar) + 1);
-    			// check if we have the whole file name or just the prefix
-    			String geoProductID = geoProductIDs.get(elementNum);
-    			if (geoProductID.endsWith("h5")) {
-    				geoFilename += geoProductID;
-    			} else {
-    				geoFilename += geoProductID;
-    				geoFilename += s.substring(s.lastIndexOf(File.separatorChar) + 6);
-    			}
-    			logger.debug("Cobbled together GEO file name: " + geoFilename);
-    			fGeo.setAttribute("location", geoFilename);
     			agg.addContent(fData);
-    			agg.addContent(fGeo);
+    			
+    			if (! isCombinedProduct) {
+	    			org.jdom.Element fGeo  = new org.jdom.Element("netcdf", ns);
+	
+	    			String geoFilename = s.substring(0, s.lastIndexOf(File.separatorChar) + 1);
+	    			// check if we have the whole file name or just the prefix
+	    			String geoProductID = geoProductIDs.get(elementNum);
+	    			if (geoProductID.endsWith("h5")) {
+	    				geoFilename += geoProductID;
+	    			} else {
+	    				geoFilename += geoProductID;
+	    				geoFilename += s.substring(s.lastIndexOf(File.separatorChar) + 6);
+	    			}
+	    			logger.debug("Cobbled together GEO file name: " + geoFilename);
+	    			fGeo.setAttribute("location", geoFilename);
+	    			agg.addContent(fGeo);
+    			}
+
     			root.addContent(agg);    
     		    XMLOutputter xmlOut = new XMLOutputter();
     		    String ncmlStr = xmlOut.outputString(document);
@@ -547,12 +576,18 @@ public class NPPDataSource extends HydraDataSource {
     		}
     		
     	} catch (Exception e) {
-    		e.printStackTrace();
     		logger.error("cannot create NetCDF reader for files selected");
+    		if (e.getMessage() != null && e.getMessage().equals("XML Product Profile Error")) {
+    			throw new VisADException("Unable to extract metadata from required XML Product Profile");
+    		}
     	}
     	
     	// initialize the aggregation reader object
-    	nppAggReader = new GranuleAggregation(ncdfal, inTrackDimensionLength, 0);
+    	try {
+    		nppAggReader = new GranuleAggregation(ncdfal, inTrackDimensionLength, 0);
+    	} catch (Exception e) {
+    		throw new VisADException("Unable to initialize aggregation reader");
+    	}
 
     	// make sure we found valid data
     	if (pathToProducts.size() == 0) {
@@ -568,7 +603,7 @@ public class NPPDataSource extends HydraDataSource {
     	while (iterator.hasNext()) {
     		String pStr = (String) iterator.next();
     		logger.debug("Working on adapter number " + (pIdx + 1));
-        	HashMap table = SwathAdapter.getEmptyMetadataTable();
+        	HashMap<String, Object> table = SwathAdapter.getEmptyMetadataTable();
         	table.put("array_name", pStr);
         	table.put("array_dimension_names", new String[] {"Track", "XTrack"});
         	table.put("lon_array_name", pathToLon);
@@ -582,8 +617,8 @@ public class NPPDataSource extends HydraDataSource {
         	table.put("scale_name", "scale_factor");
         	table.put("offset_name", "add_offset");
         	table.put("fill_value_name", "_FillValue");
-        	logger.info("Setting range_name to: " + pStr.substring(pStr.lastIndexOf(File.separatorChar) + 1));
-        	table.put("range_name", pStr.substring(pStr.lastIndexOf(File.separatorChar) + 1));
+        	logger.info("Setting range_name to: " + pStr.substring(pStr.indexOf(File.separatorChar) + 1));
+        	table.put("range_name", pStr.substring(pStr.indexOf(File.separatorChar) + 1));
         	
         	// set the valid range hash if data is available
         	if (nppPP != null) {
@@ -608,7 +643,7 @@ public class NPPDataSource extends HydraDataSource {
     		pIdx++;
     	}
 
-    	categories = DataCategory.parseCategories("2D grid;GRID-2D;");
+    	categories = DataCategory.parseCategories("IMAGE");
     	defaultSubset = adapters[0].getDefaultSubset();
 
     	setProperties(properties);
