@@ -377,7 +377,7 @@
       <property name="category" value="System" />
     </resource>
     <resource label="Interactive Shell Niceties" location="%APPPATH%/python/utilities/interactive.py">
-      <property name="category"> value="System" />
+      <property name="category" value="System" />
     </resource>
     <resource label="Site Library" location="%SITEPATH%/default.py"/>
     <resource label="Application Library" location="%APPPATH%/default.py"/>
