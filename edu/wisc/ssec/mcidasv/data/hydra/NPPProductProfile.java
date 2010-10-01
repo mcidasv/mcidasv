@@ -54,17 +54,16 @@ public class NPPProductProfile {
 	
 	private static final Logger logger = LoggerFactory.getLogger(NPPProductProfile.class);
 	
-	Document d = null;
+	DocumentBuilder db = null;
 	HashMap<String, String> rangeMin = new HashMap<String, String>();
 	HashMap<String, String> rangeMax = new HashMap<String, String>();
 	HashMap<String, ArrayList<Float>> fillValues = new HashMap<String, ArrayList<Float>>();
 
-	public NPPProductProfile(String fileName) throws ParserConfigurationException, SAXException, IOException {
+	public NPPProductProfile() throws ParserConfigurationException, SAXException, IOException {
 
-        logger.trace("NPPProductProfile, file name: " + fileName);
+        logger.trace("NPPProductProfile init...");
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(false);
-        DocumentBuilder db = null;
         db = factory.newDocumentBuilder();
         db.setEntityResolver(new EntityResolver()
         {
@@ -75,52 +74,77 @@ public class NPPProductProfile {
             }
         });
 
+	}
+	
+	public void addMetaDataFromFile(String fileName) throws SAXException, IOException {
+		logger.trace("Attempting to parse XML Product Profile: " + fileName);
+		Document d = null;
 		d = db.parse(fileName);
 		NodeList nl = d.getElementsByTagName("Datum");
 		for (int i = 0; i < nl.getLength(); i++) {
-			ArrayList<Float> fval = new ArrayList<Float>();
+			ArrayList<Float> fValAL = new ArrayList<Float>();
 			Node n = nl.item(i);
 			NodeList children = n.getChildNodes();
 			String name = null;
-			String rMin = null;
-			String rMax = null;
+			
+			// cycle through once, finding name and making sure it's a valid NPP Product name
+			boolean isValidProduct = false;
 			for (int j = 0; j < children.getLength(); j++) {
 				Node child = children.item(j);
-				if (child.getNodeName().equals("RangeMin")) {
-					rMin = child.getTextContent();
-				}
-				if (child.getNodeName().equals("RangeMax")) {
-					rMax = child.getTextContent();
-				}
-				// XXX TJJ - really should cycle through once to make sure the name
-				// is found/set, THEN cycle through again and get the relevant values
 				if (child.getNodeName().equals("Name")) {
 					name = child.getTextContent();
-				}
-				if (child.getNodeName().equals("FillValue")) {
-					// go one level further to child element Value
-					NodeList grandChildren = child.getChildNodes();
-					for (int k = 0; k < grandChildren.getLength(); k++) {
-						Node grandChild = grandChildren.item(k);
-						if (grandChild.getNodeName().equals("Value")) {
-							String fillValueStr = grandChild.getTextContent();
-							fval.add(new Float(Float.parseFloat(fillValueStr)));
+					isValidProduct = JPSSUtilities.isValidNPPProduct(name);
+				}				
+			}
+			
+			String rMin = null;
+			String rMax = null;		
+			
+			if (isValidProduct) {
+				for (int j = 0; j < children.getLength(); j++) {
+					Node child = children.item(j);
+					if (child.getNodeName().equals("RangeMin")) {
+						rMin = child.getTextContent();
+					}
+					if (child.getNodeName().equals("RangeMax")) {
+						rMax = child.getTextContent();
+					}
+					if (child.getNodeName().equals("FillValue")) {
+						// go one level further to child element Value
+						NodeList grandChildren = child.getChildNodes();
+						for (int k = 0; k < grandChildren.getLength(); k++) {
+							Node grandChild = grandChildren.item(k);
+							if (grandChild.getNodeName().equals("Value")) {
+								String fillValueStr = grandChild
+										.getTextContent();
+								fValAL.add(new Float(Float
+										.parseFloat(fillValueStr)));
+							}
 						}
 					}
 				}
+			} else {
+				name = null;
 			}
+			
 			if ((name != null) && (rMin != null)) {
+				logger.trace("Adding range min: " + rMin + " for product: " + name);
 				rangeMin.put(name, rMin);
 			}
+			
 			if ((name != null) && (rMax != null)) {
+				logger.trace("Adding range max: " + rMax + " for product: " + name);
 				rangeMax.put(name, rMax);
 			}
-			if ((name != null) && (! fval.isEmpty())) {
-				fillValues.put(name, fval);
+			
+			if ((name != null) && (! fValAL.isEmpty())) {
+				logger.trace("Adding fill value array for product: " + name);
+				fillValues.put(name, fValAL);
 			}
+			
 		}
 	}
-	
+
 	public String getRangeMin(String name) {
 		return rangeMin.get(name);
 	}
