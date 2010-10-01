@@ -1,3 +1,5 @@
+from java.lang import System
+
 def load_enhancement(name=''):
     pass
 
@@ -14,7 +16,7 @@ def write_image(path=''):
     pass
 
 def collect_garbage():
-    pass
+    System.gc()
 
 def recenter(*args, **kwargs):
     pass
