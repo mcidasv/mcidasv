@@ -30,24 +30,15 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import visad.Data;
-import visad.FlatField;
-import visad.VisADException;
-import visad.CoordinateSystem;
-import visad.RealType;
-import visad.RealTupleType;
-import visad.SetType;
-import visad.Gridded1DSet;
-import visad.Gridded1DDoubleSet;
-import visad.MathType;
-import visad.Gridded3DSet;
-import visad.Gridded2DSet;
-import visad.FunctionType;
-import visad.Set;
 import java.rmi.RemoteException;
 import java.util.HashMap;
-import java.util.Iterator;
 
+import visad.FlatField;
+import visad.FunctionType;
+import visad.Gridded3DSet;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.VisADException;
 
 public class TrackAdapter {
    RealTupleType domainType;
