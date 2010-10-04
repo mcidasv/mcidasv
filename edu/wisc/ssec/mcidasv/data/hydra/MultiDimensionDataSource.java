@@ -30,84 +30,69 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import edu.wisc.ssec.mcidasv.Constants;
-import edu.wisc.ssec.mcidasv.data.PreviewSelection;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import edu.wisc.ssec.mcidasv.data.HydraDataSource;
-import edu.wisc.ssec.mcidasv.data.hydra.ProfileAlongTrack;
-import edu.wisc.ssec.mcidasv.data.hydra.ProfileAlongTrack3D;
-import edu.wisc.ssec.mcidasv.data.hydra.Calipso2D;
-import edu.wisc.ssec.mcidasv.control.LambertAEA;
+import java.io.File;
+
+import java.net.URL;
 
 import java.rmi.RemoteException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
-import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DataSelectionComponent;
+import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.data.GeoSelection;
-import ucar.unidata.data.GeoSelectionPanel;
-
+import ucar.unidata.geoloc.projection.LatLonProjection;
 import ucar.unidata.util.Misc;
-import ucar.unidata.idv.ViewContext;
-
-import visad.Data;
-import visad.FlatField;
-import visad.GriddedSet;
-import visad.Gridded2DSet;
-import visad.SampledSet;
-import visad.VisADException;
-import visad.georef.MapProjection;
-import visad.data.mcidas.BaseMapAdapter;
-
-import java.io.File;
-import java.net.URL;
-
-import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.geom.Rectangle2D;
-
-import visad.*;
-import visad.bom.RubberBandBoxRendererJ3D;
-import visad.java3d.DisplayImplJ3D;
-import visad.java3d.TwoDDisplayRendererJ3D;
-import ucar.unidata.idv.ViewManager;
-import ucar.unidata.idv.ViewDescriptor;
-import ucar.unidata.idv.MapViewManager;
-import ucar.unidata.idv.control.DisplayControlBase;
-import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
 import ucar.unidata.view.geoloc.MapProjectionDisplay;
-import java.awt.Component;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import ucar.visad.display.XYDisplay;
-import ucar.visad.display.MapLines;
-import ucar.visad.display.DisplayMaster;
-import ucar.visad.display.LineDrawing;
-import ucar.visad.display.RubberBandBox;
+import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
 
 import ucar.visad.ProjectionCoordinateSystem;
-import ucar.unidata.geoloc.projection.LatLonProjection;
+import ucar.visad.display.DisplayMaster;
+import ucar.visad.display.LineDrawing;
+import ucar.visad.display.MapLines;
+import ucar.visad.display.RubberBandBox;
 
+import visad.CellImpl;
+import visad.Data;
+import visad.FlatField;
+import visad.Gridded2DSet;
+import visad.GriddedSet;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.SampledSet;
+import visad.UnionSet;
+import visad.VisADException;
+import visad.data.mcidas.BaseMapAdapter;
+import visad.georef.MapProjection;
+
+import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.data.HydraDataSource;
+import edu.wisc.ssec.mcidasv.data.PreviewSelection;
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
-
-
 
 /**
  * A data source for Multi Dimension Data 
  */
+
 public class MultiDimensionDataSource extends HydraDataSource {
 
     /** Sources file */
@@ -119,12 +104,9 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
     protected SpectrumAdapter spectrumAdapter;
 
-
     private static final String DATA_DESCRIPTION = "Multi Dimension Data";
 
-
     private HashMap defaultSubset;
-    private SwathAdapter swathAdapter;
     public TrackAdapter track_adapter;
     private MultiSpectralData multiSpectData;
 
@@ -132,7 +114,6 @@ public class MultiDimensionDataSource extends HydraDataSource {
     private boolean hasImagePreview = false;
     private boolean hasTrackPreview = false;
     private boolean hasChannelSelect = false;
-
 
     /**
      * Zero-argument constructor for construction via unpersistence.
@@ -337,26 +318,6 @@ public class MultiDimensionDataSource extends HydraDataSource {
          properties.put("medianFilter", new String[] {Double.toString(6), Double.toString(14)});
          properties.put("setBelowSfcMissing", new String[] {"true"});
          hasTrackPreview = true;
-       }
-       else {
-          HashMap table = SwathAdapter.getEmptyMetadataTable();
-          table.put("array_name", "All_Data/VIIRS-SST-EDR_All/BulkSeaSurfaceTemperature");
-          table.put("array_dimension_names", new String[] {"Track", "XTrack"});
-          table.put("lon_array_name", "All_Data/VIIRS-MOD-GEO-TC_All/Longitude");
-          table.put("lat_array_name", "All_Data/VIIRS-MOD-GEO-TC_All/Latitude");
-          table.put("lon_array_dimension_names", new String[] {"Track", "XTrack"});
-          table.put("lat_array_dimension_names", new String[] {"Track", "XTrack"});
-          table.put("XTrack", "XTrack");
-          table.put("Track", "Track");
-          table.put("geo_Track", "Track");
-          table.put("geo_XTrack", "XTrack");
-          table.put("scale_name", "scale_factor");
-          table.put("offset_name", "add_offset");
-          table.put("fill_value_name", "_FillValue");
-          System.out.println(reader);
-          adapters[0] = new SwathAdapter(reader, table);
-          categories = DataCategory.parseCategories("2D grid;GRID-2D;");
-          defaultSubset = adapters[0].getDefaultSubset();
        }
        setProperties(properties);
     }
