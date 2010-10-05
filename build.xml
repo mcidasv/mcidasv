@@ -396,7 +396,7 @@
 	
 	<!-- Create distribution product -->
 	<target name="dist"
-		depends="jar, startupmanager, javadoc.jar, userguide.jar, packsource"
+		depends="jar, startupmanager, javadoc.jar, userguide.jar"
 		description="Create distribution product" >
 		<copy file="${base.dir}/edu/wisc/ssec/mcidasv/util/GetMem.class" tofile="${dist.dir}/GetMem.class" failonerror="false" />
 		<copy file="${base.dir}/edu/wisc/ssec/mcidasv/util/GetVer.class" tofile="${dist.dir}/GetVer.class" failonerror="false" />
