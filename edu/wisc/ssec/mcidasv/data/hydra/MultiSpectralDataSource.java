@@ -1085,40 +1085,40 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
       if (System.getProperty("os.name").equals("Mac OS X") && hasImagePreview && hasChannelSelect) {
         try {
-          components.add(new ImageChannelSelection(new PreviewSelection(dataChoice, previewImage, null), new ChannelSelection2(dataChoice)));
+          components.add(new ImageChannelSelection(new PreviewSelection(dataChoice, previewImage, null), new ChannelSelection(dataChoice)));
         } catch (Exception e) {
           e.printStackTrace();
         }
       }
       else {
-      if (hasImagePreview) {
-        try {
-          previewSelection = new PreviewSelection(dataChoice, previewImage, null);
-          components.add(previewSelection);
-        } catch (Exception e) {
-          System.out.println("Can't make PreviewSelection: "+e);
-          e.printStackTrace();
+        if (hasImagePreview) {
+          try {
+            previewSelection = new PreviewSelection(dataChoice, previewImage, null);
+            components.add(previewSelection);
+          } catch (Exception e) {
+            System.out.println("Can't make PreviewSelection: "+e);
+            e.printStackTrace();
+          }
         }
-      }
-      if (hasChannelSelect) {
-        try {
-          components.add(new ChannelSelection2(dataChoice));
-        } 
-        catch (Exception e) {
-          e.printStackTrace();
+        if (hasChannelSelect) {
+          try {
+            components.add(new ChannelSelection(dataChoice));
+          } 
+          catch (Exception e) {
+            e.printStackTrace();
+          }
         }
-      }
       }
     }
 }
 
 
-class ChannelSelection2 extends DataSelectionComponent {
+class ChannelSelection extends DataSelectionComponent {
 
   DataChoice dataChoice;
   MultiSpectralDisplay display;
 
-  ChannelSelection2(DataChoice dataChoice) throws Exception {
+  ChannelSelection(DataChoice dataChoice) throws Exception {
      super("Channels");
      this.dataChoice = dataChoice;
      display = new MultiSpectralDisplay((DirectDataChoice)dataChoice);
@@ -1155,9 +1155,9 @@ class ChannelSelection2 extends DataSelectionComponent {
 
 class ImageChannelSelection extends DataSelectionComponent {
    PreviewSelection previewSelection;
-   ChannelSelection2 channelSelection;
+   ChannelSelection channelSelection;
 
-   ImageChannelSelection(PreviewSelection previewSelection, ChannelSelection2 channelSelection) {
+   ImageChannelSelection(PreviewSelection previewSelection, ChannelSelection channelSelection) {
      super("MultiSpectral");
      this.previewSelection = previewSelection;
      this.channelSelection = channelSelection;
