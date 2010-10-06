@@ -90,11 +90,10 @@
 	<property name="javadoc.level" value="private" />
 	
 	<!-- The CLASSPATH specified within McV's manifest -->
-	<property name="jar.base.classpath" value="logback-core-0.9.12.jar logback-classic-0.9.12.jar logback-examples-0.9.12.jar local-idv.jar idv.jar mcv_userguide.jar swing-layout-1.0.3.jar eventbus-1.3.jar" />
+	<property name="jar.base.classpath" value="logback-core-0.9.12.jar logback-classic-0.9.12.jar logback-examples-0.9.12.jar local-idv.jar idv.jar mcv_userguide.jar eventbus-1.3.jar" />
 	
 	<!-- List of McIDAS-V jars -->
 	<fileset id="mcv.libs" dir="${lib.dir}">
-		<include name="swing-layout-1.0.3.jar" />
 		<include name="eventbus-1.3.jar" />
 		<include name="logback-core-0.9.12.jar" />
 		<include name="logback-classic-0.9.12.jar" />
@@ -282,7 +281,7 @@
 				<attribute name="Build-By" value="${user.name}" />
 				<attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
 				<attribute name="Class-Path"
-				value="idv.jar mcidasv.jar mcv_userguide.jar swing-layout-1.0.3.jar" />
+				value="idv.jar mcidasv.jar mcv_userguide.jar" />
 				<attribute name="Main-Class" value="${app.smclass}" />
 			</manifest>
 		</jar>
