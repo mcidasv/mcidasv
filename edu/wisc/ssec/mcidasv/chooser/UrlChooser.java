@@ -30,9 +30,13 @@
 
 package edu.wisc.ssec.mcidasv.chooser;
 
+import static javax.swing.GroupLayout.DEFAULT_SIZE;
+import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+import static javax.swing.GroupLayout.Alignment.TRAILING;
+import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
+import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -40,6 +44,7 @@ import java.awt.event.KeyListener;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -61,18 +66,15 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 import ucar.unidata.data.DataManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.chooser.IdvChooserManager;
-import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.PreferenceList;
 import ucar.unidata.util.StringUtil;
-import ucar.unidata.xml.XmlUtil;
-
 
 /**
  * Allows the user to select a url as a data source
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/05/21 21:55:36 $
+ * @version $Revision$Date: 2010/02/08 18:49:37 $
  */
 
 
@@ -146,20 +148,20 @@ public class UrlChooser extends ucar.unidata.idv.chooser.UrlChooser implements C
     protected void updateStatus() {
         if (boxEditor==null || textArea==null) return;
         if (showBox) {
-        	if (!boxEditor.getText().trim().equals(""))
-        		setHaveData(true);
-        	else
-        		setHaveData(false);
+            if (!boxEditor.getText().trim().equals(""))
+                setHaveData(true);
+            else
+                setHaveData(false);
         } else {
-        	if (!textArea.getText().trim().equals(""))
-        		setHaveData(true);
-        	else
-        		setHaveData(false);
+            if (!textArea.getText().trim().equals(""))
+                setHaveData(true);
+            else
+                setHaveData(false);
         }
         super.updateStatus();
         if (!getHaveData()) {
-        	if (showBox) setStatus("Enter a URL");
-        	else setStatus("Enter one or more URLs");
+            if (showBox) setStatus("Enter a URL");
+            else setStatus("Enter one or more URLs");
         }
     }
 
@@ -227,16 +229,16 @@ public class UrlChooser extends ucar.unidata.idv.chooser.UrlChooser implements C
         JRadioButton singleBtn = new JRadioButton("Single", true);
         JRadioButton multipleBtn = new JRadioButton("Multiple", false);
         singleBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				showBox = true;
-				switchFields();
-			}
+            public void actionPerformed(ActionEvent e) {
+                showBox = true;
+                switchFields();
+            }
         });
         multipleBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				showBox = false;
-				switchFields();
-			}
+            public void actionPerformed(ActionEvent e) {
+                showBox = false;
+                switchFields();
+            }
         });
         GuiUtils.buttonGroup(singleBtn, multipleBtn);
         JPanel radioPanel = GuiUtils.hbox(singleBtn, multipleBtn);
@@ -245,21 +247,21 @@ public class UrlChooser extends ucar.unidata.idv.chooser.UrlChooser implements C
         box = prefList.createComboBox(CMD_LOAD, this);
         boxEditor = (JTextField)box.getEditor().getEditorComponent();
         boxEditor.addKeyListener(new KeyListener() {
-        	public void keyPressed(KeyEvent e) {}
-        	public void keyReleased(KeyEvent e) {
-        		updateStatus();
-        	}
-        	public void keyTyped(KeyEvent e) {}
+            public void keyPressed(KeyEvent e) {}
+            public void keyReleased(KeyEvent e) {
+                updateStatus();
+            }
+            public void keyTyped(KeyEvent e) {}
         });
         
         textArea = new JTextArea(5, 30);
         textScroller = new JScrollPane(textArea);
         textArea.addKeyListener(new KeyListener() {
-        	public void keyPressed(KeyEvent e) {}
-        	public void keyReleased(KeyEvent e) {
-        		updateStatus();
-        	}
-        	public void keyTyped(KeyEvent e) {}
+            public void keyPressed(KeyEvent e) {}
+            public void keyReleased(KeyEvent e) {
+                updateStatus();
+            }
+            public void keyTyped(KeyEvent e) {}
         });
         
         urlPanel = GuiUtils.top(box);
@@ -280,9 +282,9 @@ public class UrlChooser extends ucar.unidata.idv.chooser.UrlChooser implements C
 
     @Override
     public void setStatus(String statusString, String foo) {
-    	if (statusString == null)
-    		statusString = "";
-    	statusLabel.setText(statusString);
+        if (statusString == null)
+            statusString = "";
+        statusLabel.setText(statusString);
     }
         
     /**
@@ -295,10 +297,10 @@ public class UrlChooser extends ucar.unidata.idv.chooser.UrlChooser implements C
         JPanel innerPanel = doMakeInnerPanel();
         
         // Start building the whole thing here
-    	JPanel outerPanel = new JPanel();
+        JPanel outerPanel = new JPanel();
 
         JLabel typeLabel = McVGuiUtils.makeLabelRight("Data Type:");
-            	
+                
         JLabel statusLabelLabel = McVGuiUtils.makeLabelRight("");
         
         statusLabel.setText("Status");
@@ -315,51 +317,51 @@ public class UrlChooser extends ucar.unidata.idv.chooser.UrlChooser implements C
         
         McVGuiUtils.setComponentWidth(loadButton, Width.DOUBLE);
 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(outerPanel);
+        GroupLayout layout = new GroupLayout(outerPanel);
         outerPanel.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(layout.createSequentialGroup()
+            layout.createParallelGroup(LEADING)
+            .addGroup(TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(TRAILING)
+                    .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .add(helpButton)
-                        .add(GAP_RELATED)
-                        .add(refreshButton)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(loadButton))
-                        .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
+                        .addComponent(helpButton)
+                        .addGap(GAP_RELATED)
+                        .addComponent(refreshButton)
+                        .addPreferredGap(RELATED)
+                        .addComponent(loadButton))
+                        .addGroup(LEADING, layout.createSequentialGroup()
                         .addContainerGap()
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(innerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(layout.createSequentialGroup()
-                                .add(typeLabel)
-                                .add(GAP_RELATED)
-                                .add(typeComponent))
-                            .add(layout.createSequentialGroup()
-                                .add(statusLabelLabel)
-                                .add(GAP_RELATED)
-                                .add(statusLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                        .addGroup(layout.createParallelGroup(LEADING)
+                            .addComponent(innerPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(typeLabel)
+                                .addGap(GAP_RELATED)
+                                .addComponent(typeComponent))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(statusLabelLabel)
+                                .addGap(GAP_RELATED)
+                                .addComponent(statusLabel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-            	.addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(typeLabel)
-                    .add(typeComponent))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(innerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(statusLabelLabel)
-                    .add(statusLabel))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(loadButton)
-                    .add(refreshButton)
-                    .add(helpButton))
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(typeLabel)
+                    .addComponent(typeComponent))
+                .addPreferredGap(UNRELATED)
+                .addComponent(innerPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(UNRELATED)
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(statusLabelLabel)
+                    .addComponent(statusLabel))
+                .addPreferredGap(UNRELATED)
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(loadButton)
+                    .addComponent(refreshButton)
+                    .addComponent(helpButton))
                 .addContainerGap())
         );
     

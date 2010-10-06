@@ -31,8 +31,13 @@
 package edu.wisc.ssec.mcidasv.chooser;
 
 
-import java.awt.Color;
-import java.awt.Dimension;
+import static javax.swing.GroupLayout.DEFAULT_SIZE;
+import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+import static javax.swing.GroupLayout.Alignment.TRAILING;
+import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
+import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -41,12 +46,12 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 
 import org.w3c.dom.Element;
 
@@ -54,6 +59,7 @@ import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
+
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.data.McIdasFrame;
 import edu.wisc.ssec.mcidasv.data.McIdasXInfo;
@@ -64,7 +70,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
 
 public class McIdasBridgeChooser extends IdvChooser implements Constants {
-	
+    
     /** A widget for the command line text */
     private JTextField hostLine = new JTextField("");
     private JTextField portLine = new JTextField("");
@@ -90,7 +96,7 @@ public class McIdasBridgeChooser extends IdvChooser implements Constants {
     }
 
     public String getHost() {
-    	return this.mcidasxInfo.getHostString();
+        return this.mcidasxInfo.getHostString();
     }
     
     private void setHost() {
@@ -98,19 +104,19 @@ public class McIdasBridgeChooser extends IdvChooser implements Constants {
     }
 
     public String getPort() {
-    	return this.mcidasxInfo.getPortString();
+        return this.mcidasxInfo.getPortString();
     }
     
     private void setPort() {
-    	this.mcidasxInfo.setPortString((portLine.getText()).trim());
+        this.mcidasxInfo.setPortString((portLine.getText()).trim());
     }
 
     public String getKey() {
-    	return this.mcidasxInfo.getPortString();
+        return this.mcidasxInfo.getPortString();
     }
     
     private void setKey() {
-    	this.mcidasxInfo.setKeyString((keyLine.getText()).trim());
+        this.mcidasxInfo.setKeyString((keyLine.getText()).trim());
     }
 
     /**
@@ -138,11 +144,11 @@ public class McIdasBridgeChooser extends IdvChooser implements Constants {
      * @return  list  get the list of frame numbers
      */
     public List getFrameNumbers() {
-    	return this.mcidasxInfo.getFrameNumbers();
+        return this.mcidasxInfo.getFrameNumbers();
     }
     
     public int getFrameCount() {
-    	return getFrameNumbers().size();
+        return getFrameNumbers().size();
     }
     
     /**
@@ -154,9 +160,9 @@ public class McIdasBridgeChooser extends IdvChooser implements Constants {
         showWaitCursor();
         List frames = getFrameList();
         if (frames.size() < 1) {
-        	LogUtil.userMessage("Connection to McIDAS-X Bridge Listener at " + getHost() + ":" + getPort() + " failed");
+            LogUtil.userMessage("Connection to McIDAS-X Bridge Listener at " + getHost() + ":" + getPort() + " failed");
             showNormalCursor();
-        	return;
+            return;
         }
 
         Hashtable ht = new Hashtable();
@@ -184,15 +190,15 @@ public class McIdasBridgeChooser extends IdvChooser implements Constants {
 
     @Override
     public void setStatus(String statusString, String foo) {
-    	if (statusString == null)
-    		statusString = "";
-    	statusLabel.setText(statusString);
+        if (statusString == null)
+            statusString = "";
+        statusLabel.setText(statusString);
     }
     
     protected JComponent doMakeContents() {
-    	JPanel myPanel = new JPanel();
-    	
-    	
+        JPanel myPanel = new JPanel();
+        
+        
         JLabel hostLabel = McVGuiUtils.makeLabelRight("Host:");
         
         hostLine.setText(mcidasxInfo.getHostString());
@@ -222,57 +228,57 @@ public class McIdasBridgeChooser extends IdvChooser implements Constants {
         statusLabel.setText("Press \"" + getLoadCommandName() + "\" to connect to the McIDAS-X Bridge Listener");
         McVGuiUtils.setLabelPosition(statusLabel, Position.RIGHT);
         McVGuiUtils.setComponentColor(statusLabel, TextColor.STATUS);
-            	
+                
         JButton helpButton = McVGuiUtils.makeImageButton(ICON_HELP, "Show help");
         helpButton.setActionCommand(GuiUtils.CMD_HELP);
         helpButton.addActionListener(this);
         
         McVGuiUtils.setComponentWidth(loadButton, Width.DOUBLE);
         
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
+        GroupLayout layout = new GroupLayout(myPanel);
         myPanel.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(layout.createSequentialGroup()
-                        .add(hostLabel)
-                        .add(GAP_RELATED)
-                        .add(hostLine))
-                    .add(layout.createSequentialGroup()
-                        .add(portLabel)
-                        .add(GAP_RELATED)
-                        .add(portLine))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .add(helpButton)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(loadButton))
-                    .add(layout.createSequentialGroup()
-                        .add(statusLabelLabel)
-                        .add(GAP_RELATED)
-                        .add(statusLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())         
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(hostLabel)
+                        .addGap(GAP_RELATED)
+                        .addComponent(hostLine))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(portLabel)
+                        .addGap(GAP_RELATED)
+                        .addComponent(portLine))
+                    .addGroup(TRAILING, layout.createSequentialGroup()
+                        .addComponent(helpButton)
+                        .addPreferredGap(RELATED)
+                        .addComponent(loadButton))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(statusLabelLabel)
+                        .addGap(GAP_RELATED)
+                        .addComponent(statusLabel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+            layout.createParallelGroup(LEADING)
+            .addGroup(TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(hostLine)
-                    .add(hostLabel))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(portLine)
-                    .add(portLabel))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(statusLabelLabel)
-                    .add(statusLabel))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                	.add(loadButton)
-                    .add(helpButton))
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(hostLine)
+                    .addComponent(hostLabel))
+                .addPreferredGap(RELATED)
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(portLine)
+                    .addComponent(portLabel))
+                .addPreferredGap(RELATED, DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(statusLabelLabel)
+                    .addComponent(statusLabel))
+                .addPreferredGap(UNRELATED)
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(loadButton)
+                    .addComponent(helpButton))
                 .addContainerGap())
         );
         

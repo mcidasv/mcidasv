@@ -29,12 +29,15 @@
  */
 package edu.wisc.ssec.mcidasv.monitors.time;
 
+import static javax.swing.GroupLayout.Alignment.LEADING;
+
+import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import edu.wisc.ssec.mcidasv.monitors.MonitorEvent;
-import edu.wisc.ssec.mcidasv.monitors.Monitoring;
 import edu.wisc.ssec.mcidasv.monitors.MonitorManager.MonitorType;
+import edu.wisc.ssec.mcidasv.monitors.Monitoring;
 
 @SuppressWarnings("serial")
 public class TimePanel extends JPanel implements Monitoring {
@@ -55,18 +58,18 @@ public class TimePanel extends JPanel implements Monitoring {
     }
 
     private void initComponents() {
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
+        GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(timeLabel)
+                .addComponent(timeLabel)
                 .addContainerGap()));
 
         layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(timeLabel)));
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(timeLabel)));
     }
 }

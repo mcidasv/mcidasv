@@ -29,40 +29,25 @@
  */
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
-import org.jdesktop.layout.GroupLayout;
-import static org.jdesktop.layout.GroupLayout.BASELINE;
-import static org.jdesktop.layout.GroupLayout.CENTER;
-import static org.jdesktop.layout.GroupLayout.DEFAULT_SIZE;
-import static org.jdesktop.layout.GroupLayout.HORIZONTAL;
-import static org.jdesktop.layout.GroupLayout.LEADING;
-import static org.jdesktop.layout.GroupLayout.PREFERRED_SIZE;
-import static org.jdesktop.layout.GroupLayout.TRAILING;
-import static org.jdesktop.layout.GroupLayout.VERTICAL;
-import static org.jdesktop.layout.LayoutStyle.RELATED;
-import static org.jdesktop.layout.LayoutStyle.UNRELATED;
+import static javax.swing.GroupLayout.DEFAULT_SIZE;
+import static javax.swing.GroupLayout.PREFERRED_SIZE;
+import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
-import javax.swing.JComboBox;
+import javax.swing.GroupLayout;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.w3c.dom.Element;
 
-import ucar.unidata.data.imagery.AddeImageDescriptor;
-import ucar.unidata.data.imagery.AddeImageInfo;
-import ucar.unidata.data.imagery.BandInfo;
 import ucar.unidata.data.imagery.ImageDataset;
 import ucar.unidata.idv.chooser.IdvChooserManager;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.StringUtil;
-import ucar.unidata.util.TwoFacedObject;
-import ucar.unidata.xml.XmlUtil;
+
 import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
@@ -76,124 +61,124 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
  */
 public class AddeBasicImageChooser extends AddeImageChooser {
 
-	/**
-	 * Construct an Adde image selection widget
-	 *
-	 *
-	 * @param mgr The chooser manager
-	 * @param root The chooser.xml node
-	 */
-	public AddeBasicImageChooser(IdvChooserManager mgr, Element root) {
-		super(mgr, root);
-	}
-		
-	/**
-	 *  Get the default value for a key
-	 *
-	 *  @param property      property (key type)
-	 *  @param dflt        default value
-	 *  @return value for key or dflt if not found
-	 */
-	protected String getDefault(String property, String dflt) {
-		if (property.equals(PROP_UNIT)) return "";
-		if (property.equals(PROP_BAND)) return "ALL";
-		return super.getDefault(property, dflt);
-	}
-	
-	/**
-	 * Set the available units in the  unit selector
-	 *
-	 * @param ad   AreaDirectory for the image
-	 * @param band band to use for units
-	 */
-	protected void setAvailableUnits(AreaDirectory ad, int band) {
-		super.setAvailableUnits(ad, band);
-		unitComboBox.setSelectedItem(ALLUNITS);
-	}
-	
-	/**
-	 * User said go, we go. Simply get the list of images
-	 * from the imageChooser and create the ADDE.IMAGE.V
-	 * DataSource
-	 *
-	 */
-	public void doLoadInThread() {
-		if ( !getGoodToGo()) {
-			updateStatus();
-			return;
-		}
+    /**
+     * Construct an Adde image selection widget
+     *
+     *
+     * @param mgr The chooser manager
+     * @param root The chooser.xml node
+     */
+    public AddeBasicImageChooser(IdvChooserManager mgr, Element root) {
+        super(mgr, root);
+    }
+        
+    /**
+     *  Get the default value for a key
+     *
+     *  @param property      property (key type)
+     *  @param dflt        default value
+     *  @return value for key or dflt if not found
+     */
+    protected String getDefault(String property, String dflt) {
+        if (property.equals(PROP_UNIT)) return "";
+        if (property.equals(PROP_BAND)) return "ALL";
+        return super.getDefault(property, dflt);
+    }
+    
+    /**
+     * Set the available units in the  unit selector
+     *
+     * @param ad   AreaDirectory for the image
+     * @param band band to use for units
+     */
+    protected void setAvailableUnits(AreaDirectory ad, int band) {
+        super.setAvailableUnits(ad, band);
+        unitComboBox.setSelectedItem(ALLUNITS);
+    }
+    
+    /**
+     * User said go, we go. Simply get the list of images
+     * from the imageChooser and create the ADDE.IMAGE.V
+     * DataSource
+     *
+     */
+    public void doLoadInThread() {
+        if ( !getGoodToGo()) {
+            updateStatus();
+            return;
+        }
 
-		List imageList = getImageList();
-		if(imageList==null || imageList.size()==0) return;
-		ImageDataset ids = new ImageDataset(getDatasetName(), imageList);
+        List imageList = getImageList();
+        if(imageList==null || imageList.size()==0) return;
+        ImageDataset ids = new ImageDataset(getDatasetName(), imageList);
 
-		Hashtable ht = new Hashtable();
-		getDataSourceProperties(ht);
-		ht.put("preview", true);
-		makeDataSource(ids, "ADDE.IMAGE.V", ht);
-		saveServerState();
-	}
+        Hashtable ht = new Hashtable();
+        getDataSourceProperties(ht);
+        ht.put("preview", true);
+        makeDataSource(ids, "ADDE.IMAGE.V", ht);
+        saveServerState();
+    }
 
-	/**
-	 * Make the UI for this selector.
-	 * 
-	 * @return The gui
-	 */   
-	public JComponent doMakeContents() {	    	
-		JPanel myPanel = new JPanel();
+    /**
+     * Make the UI for this selector.
+     * 
+     * @return The gui
+     */   
+    public JComponent doMakeContents() {
+        JPanel myPanel = new JPanel();
 
-		JLabel timesLabel = McVGuiUtils.makeLabelRight("Times:");
-		addDescComp(timesLabel);
+        JLabel timesLabel = McVGuiUtils.makeLabelRight("Times:");
+        addDescComp(timesLabel);
 
-		JPanel timesPanel = makeTimesPanel();
-		timesPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-		addDescComp(timesPanel);
+        JPanel timesPanel = makeTimesPanel();
+        timesPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        addDescComp(timesPanel);
 
-		JLabel navigationLabel = McVGuiUtils.makeLabelRight("Navigation:");
-		addDescComp(navigationLabel);
-		
-		// Use processPropertyComponents to build combo boxes that we rely on
-		processPropertyComponents();
-		addDescComp(navComboBox);
-		McVGuiUtils.setComponentWidth(navComboBox, McVGuiUtils.Width.DOUBLE);
-						
-		org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
-		myPanel.setLayout(layout);
-		layout.setHorizontalGroup(
-				layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-				.add(layout.createSequentialGroup()
-						.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-								.add(layout.createSequentialGroup()
-										.add(descriptorLabel)
-										.add(GAP_RELATED)
-										.add(descriptorComboBox))
-										.add(layout.createSequentialGroup()
-												.add(timesLabel)
-												.add(GAP_RELATED)
-												.add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-												.add(layout.createSequentialGroup()
-														.add(navigationLabel)
-														.add(GAP_RELATED)
-														.add(navComboBox))))
-		);
-		layout.setVerticalGroup(
-				layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-				.add(layout.createSequentialGroup()
-						.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-								.add(descriptorLabel)
-								.add(descriptorComboBox))
-								.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-								.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-										.add(timesLabel)
-										.add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-										.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-										.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-												.add(navigationLabel)
-												.add(navComboBox)))
-		);
-		
-		setInnerPanel(myPanel);
-		return super.doMakeContents(true);
-	}
+        JLabel navigationLabel = McVGuiUtils.makeLabelRight("Navigation:");
+        addDescComp(navigationLabel);
+        
+        // Use processPropertyComponents to build combo boxes that we rely on
+        processPropertyComponents();
+        addDescComp(navComboBox);
+        McVGuiUtils.setComponentWidth(navComboBox, McVGuiUtils.Width.DOUBLE);
+                        
+        GroupLayout layout = new GroupLayout(myPanel);
+        myPanel.setLayout(layout);
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(LEADING)
+                .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                        .addComponent(descriptorLabel)
+                                        .addGap(GAP_RELATED)
+                                        .addComponent(descriptorComboBox))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(timesLabel)
+                                                .addGap(GAP_RELATED)
+                                                .addComponent(timesPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                                                .addGroup(layout.createSequentialGroup()
+                                                        .addComponent(navigationLabel)
+                                                        .addGap(GAP_RELATED)
+                                                        .addComponent(navComboBox))))
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(LEADING)
+                .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(BASELINE)
+                                .addComponent(descriptorLabel)
+                                .addComponent(descriptorComboBox))
+                                .addPreferredGap(RELATED)
+                                .addGroup(layout.createParallelGroup(LEADING)
+                                        .addComponent(timesLabel)
+                                        .addComponent(timesPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addPreferredGap(RELATED)
+                                        .addGroup(layout.createParallelGroup(LEADING)
+                                                .addComponent(navigationLabel)
+                                                .addComponent(navComboBox)))
+        );
+        
+        setInnerPanel(myPanel);
+        return super.doMakeContents(true);
+    }
 
 }

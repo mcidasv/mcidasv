@@ -31,106 +31,81 @@
 
 package edu.wisc.ssec.mcidasv.control;
 
-import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
-import edu.wisc.ssec.mcidasv.data.hydra.HistogramField;
-import edu.wisc.ssec.mcidasv.data.hydra.SubsetRubberBandBox;
-import edu.wisc.ssec.mcidasv.data.hydra.MyRubberBandBoxRendererJ3D;
-import edu.wisc.ssec.mcidasv.data.hydra.CurveDrawer;
-import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
-import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
-import edu.wisc.ssec.mcidasv.control.LambertAEA;
-
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import ucar.unidata.util.Range;
-import ucar.unidata.util.ColorTable;
-import java.net.URL;
-
-import java.awt.Container;
-import java.awt.Component;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.Color;
-import java.awt.geom.Rectangle2D;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.geom.Rectangle2D;
+import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.swing.JTabbedPane;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.LineBorder;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JToggleButton;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
-
-import ucar.unidata.idv.control.DisplayControlImpl;
-import ucar.unidata.idv.control.ColorTableWidget;
-import ucar.unidata.ui.colortable.ColorTableManager;
-
-import ucar.unidata.data.DataChoice;
-import ucar.unidata.util.ColorTable;
-import visad.VisADException;
 import visad.AxisScale;
-import visad.FlatField;
-import visad.FieldImpl;
+import visad.BaseColorControl;
+import visad.CellImpl;
 import visad.CoordinateSystem;
 import visad.Data;
-import visad.RealType;
-import visad.CellImpl;
-import visad.Integer1DSet;
-import visad.RealTupleType;
+import visad.DelaunayCustom;
+import visad.DisplayEvent;
+import visad.DisplayListener;
+import visad.FieldImpl;
+import visad.FlatField;
 import visad.FunctionType;
-import visad.ScalarMap;
-import visad.Gridded3DSet;
 import visad.Gridded2DSet;
+import visad.Gridded3DSet;
+import visad.Integer1DSet;
 import visad.Linear2DSet;
+import visad.RealTupleType;
+import visad.RealType;
 import visad.SampledSet;
+import visad.ScalarMap;
 import visad.Set;
 import visad.SetType;
 import visad.UnionSet;
-import visad.BaseColorControl;
-import visad.DisplayListener;
-import visad.DisplayEvent;
-import visad.DelaunayCustom;
-import visad.georef.MapProjection;
+import visad.VisADException;
 import visad.data.mcidas.BaseMapAdapter;
+import visad.georef.MapProjection;
 
-import javax.swing.JButton;
-import javax.swing.JToggleButton;
-import javax.swing.JRadioButton;
-import javax.swing.ButtonGroup;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-                                                                                                                                          
 import ucar.unidata.data.DataAlias;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
-import ucar.unidata.idv.ViewDescriptor;
-import ucar.unidata.idv.ViewManager;
-import ucar.unidata.util.ColorTable;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.Range;
 import ucar.unidata.data.grid.GridUtil;
-import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
-import ucar.unidata.view.geoloc.MapProjectionDisplay;
-import ucar.visad.display.DisplayMaster;
-import ucar.visad.display.DisplayableData;
-import ucar.visad.display.XYDisplay;
-import ucar.visad.display.RGBDisplayable;
-import ucar.visad.display.LineDrawing;
-import ucar.visad.display.RubberBandBox;
-import ucar.visad.display.MapLines;
-
 import ucar.unidata.idv.DisplayConventions;
+import ucar.unidata.idv.control.ColorTableWidget;
+import ucar.unidata.idv.control.DisplayControlImpl;
+import ucar.unidata.ui.colortable.ColorTableManager;
+import ucar.unidata.util.ColorTable;
+import ucar.unidata.util.LogUtil;
+import ucar.unidata.util.Range;
+import ucar.unidata.view.geoloc.MapProjectionDisplay;
+import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
+import ucar.visad.display.DisplayMaster;
+import ucar.visad.display.LineDrawing;
+import ucar.visad.display.MapLines;
+import ucar.visad.display.RGBDisplayable;
+import ucar.visad.display.RubberBandBox;
+import ucar.visad.display.XYDisplay;
+
+import edu.wisc.ssec.mcidasv.data.hydra.CurveDrawer;
+import edu.wisc.ssec.mcidasv.data.hydra.HistogramField;
+import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
+import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
+import edu.wisc.ssec.mcidasv.data.hydra.SubsetRubberBandBox;
 
 
 public class ScatterDisplay extends DisplayControlImpl {

@@ -30,9 +30,15 @@
 
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
+import static edu.wisc.ssec.mcidasv.servermanager.AddeEntry.DEFAULT_ACCOUNT;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 
-import static edu.wisc.ssec.mcidasv.servermanager.AddeEntry.DEFAULT_ACCOUNT;
+import static javax.swing.GroupLayout.DEFAULT_SIZE;
+import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+import static javax.swing.GroupLayout.Alignment.TRAILING;
+import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
+import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -60,6 +66,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -75,16 +82,14 @@ import javax.swing.SwingUtilities;
 
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.w3c.dom.Element;
-
-import visad.DateTime;
 
 import edu.wisc.ssec.mcidas.adde.AddeURLException;
 import edu.wisc.ssec.mcidas.adde.DataSetInfo;
+
+import visad.DateTime;
 
 import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.idv.chooser.IdvChooserManager;
@@ -104,14 +109,14 @@ import edu.wisc.ssec.mcidasv.ParameterSet;
 import edu.wisc.ssec.mcidasv.PersistenceManager;
 import edu.wisc.ssec.mcidasv.servermanager.AddeAccount;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EditorAction;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
 import edu.wisc.ssec.mcidasv.servermanager.EntryTransforms;
 import edu.wisc.ssec.mcidasv.servermanager.LocalEntryEditor;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteEntryEditor;
 import edu.wisc.ssec.mcidasv.servermanager.TabbedAddeManager;
-import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EditorAction;
-import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.ui.ParameterTree;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
@@ -777,7 +782,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * Set LABEL_SELECT from elsewhere
      */
     protected void setSelectString(String string) {
-    	LABEL_SELECT = string;
+        LABEL_SELECT = string;
     }
     
     /**
@@ -868,11 +873,11 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * Go directly to the Server Manager
      */
     public void doManager() {
-//    	if (isLocalServer()) {
-//    		((McIDASV)getIdv()).showAddeManager();
-//    		return;
-//    	}
-    	getIdv().getPreferenceManager().showTab(Constants.PREF_LIST_ADDE_SERVERS);
+//      if (isLocalServer()) {
+//          ((McIDASV)getIdv()).showAddeManager();
+//          return;
+//      }
+        getIdv().getPreferenceManager().showTab(Constants.PREF_LIST_ADDE_SERVERS);
     }
     
     /**
@@ -882,18 +887,18 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         JPopupMenu popup = new JPopupMenu();
         JMenuItem mi = new JMenuItem("Manage...");
         mi.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent ae) {
-        		System.out.println(ae);
-        		showParameterSetDialog(getParameterSetType());
-        	}
+            public void actionPerformed(ActionEvent ae) {
+                System.out.println(ae);
+                showParameterSetDialog(getParameterSetType());
+            }
         });
         popup.add(mi);
         
         // Add the checkbox to automatically create a data source
         cb.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent ae) {
-        		shouldAddSource = cb.isSelected();
-        	}
+            public void actionPerformed(ActionEvent ae) {
+                shouldAddSource = cb.isSelected();
+            }
         });
         popup.addSeparator();
         popup.add(cb);
@@ -902,66 +907,66 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         List<ParameterSet> parameterSets = pm.getAllParameterSets(getParameterSetType());
 
         for (int i=0; i<parameterSets.size(); i++) {
-        	if (i==0) popup.addSeparator();
-        	final ParameterSet ps = parameterSets.get(i);
-        	
-        	// Parameter set at root
-        	if (ps.getCategories().size() == 0) {
-				mi = new JMenuItem(ps.getName());
-				mi.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent ae) {
-        				restoreParameterSet(ps.getElement());
-					}
-				});
-				popup.add(mi);
-        	}
-        	
-        	// Recurse into folders
-        	else {
-        		// Find or make the menu for the given parameter set
-        		JMenu m = getPopupSubMenuForParameterSet(popup, ps);
-            	// Create parameter set entry
-        		mi = new JMenuItem(ps.getName());
-        		mi.addActionListener(new ActionListener() {
-        			public void actionPerformed(ActionEvent ae) {
-        				restoreParameterSet(ps.getElement());
-        			}
-        		});
-        		m.add(mi);
-        	}
-        	
+            if (i==0) popup.addSeparator();
+            final ParameterSet ps = parameterSets.get(i);
+            
+            // Parameter set at root
+            if (ps.getCategories().size() == 0) {
+                mi = new JMenuItem(ps.getName());
+                mi.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent ae) {
+                        restoreParameterSet(ps.getElement());
+                    }
+                });
+                popup.add(mi);
+            }
+            
+            // Recurse into folders
+            else {
+                // Find or make the menu for the given parameter set
+                JMenu m = getPopupSubMenuForParameterSet(popup, ps);
+                // Create parameter set entry
+                mi = new JMenuItem(ps.getName());
+                mi.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent ae) {
+                        restoreParameterSet(ps.getElement());
+                    }
+                });
+                m.add(mi);
+            }
+            
         }
 
         popup.show(parameterButton, 0, (int) parameterButton.getBounds().getHeight());
     }
     
     private JMenu getPopupSubMenuForParameterSet(JPopupMenu popup, final ParameterSet ps) {
-    	List<String> menuNames = ps.getCategories();
-    	if (menuNames.size() < 1) return null;
+        List<String> menuNames = ps.getCategories();
+        if (menuNames.size() < 1) return null;
 
-    	// Build the complete menu
-    	String menuName = menuNames.get(0);
-    	menuNames.remove(0);
-    	JMenu theMenu = new JMenu();
-    	
-    	// Look for the menu in popup
-    	boolean found = false;
-    	for (int i=0; i<popup.getComponentCount(); i++) {
-    		Component thisComponent = popup.getComponent(i);
-    		if (thisComponent instanceof JMenu && ((JMenu)thisComponent).getText().equals(menuName)) {
-    			theMenu = mergeMenuNames((JMenu)thisComponent, menuNames);
-    			found = true;
-    		}
-    	}
-    	
-    	// Make a new menu, add the root, return the leaf
-    	if (!found) {
-        	JMenu theRoot = new JMenu(menuName);
-        	theMenu = makeMenuRecursive(theRoot, menuNames);
-        	popup.add(theRoot);
-    	}
-    	
-    	return theMenu;
+        // Build the complete menu
+        String menuName = menuNames.get(0);
+        menuNames.remove(0);
+        JMenu theMenu = new JMenu();
+        
+        // Look for the menu in popup
+        boolean found = false;
+        for (int i=0; i<popup.getComponentCount(); i++) {
+            Component thisComponent = popup.getComponent(i);
+            if (thisComponent instanceof JMenu && ((JMenu)thisComponent).getText().equals(menuName)) {
+                theMenu = mergeMenuNames((JMenu)thisComponent, menuNames);
+                found = true;
+            }
+        }
+        
+        // Make a new menu, add the root, return the leaf
+        if (!found) {
+            JMenu theRoot = new JMenu(menuName);
+            theMenu = makeMenuRecursive(theRoot, menuNames);
+            popup.add(theRoot);
+        }
+        
+        return theMenu;
     }
     
     /**
@@ -972,11 +977,11 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * @return A new JMenu representing the leaf
      */
     private JMenu makeMenuRecursive(JMenu rootMenu, List<String> menuNames) {
-    	if (menuNames.size() < 1) return rootMenu;
-    	JMenu newMenu = new JMenu(menuNames.get(0));
-    	rootMenu.add(newMenu);
-    	menuNames.remove(0);
-    	return makeMenuRecursive(newMenu, menuNames);
+        if (menuNames.size() < 1) return rootMenu;
+        JMenu newMenu = new JMenu(menuNames.get(0));
+        rootMenu.add(newMenu);
+        menuNames.remove(0);
+        return makeMenuRecursive(newMenu, menuNames);
     }
     
     /**
@@ -988,43 +993,43 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * @return A new JMenu representing the leaf matched by menuNames
      */
     private JMenu mergeMenuNames(JMenu thisMenu, List<String> menuNames) {
-    	if (menuNames.size() < 1) return thisMenu;
-    	boolean found = false;
-    	String menuName = menuNames.get(0);
-    	for (int i=0; i<thisMenu.getItemCount(); i++) {
-    		JMenuItem mi = thisMenu.getItem(i);
-    		if (!(mi instanceof JMenu)) continue;
-    		if (mi.getText().equals(menuName)) {
-    	    	menuNames.remove(0);
-    			thisMenu = mergeMenuNames((JMenu)mi, menuNames);
-    			found = true;
-    		}
-    	}
-    	if (!found) {
-    		thisMenu = makeMenuRecursive(thisMenu, menuNames);
-    	}
-    	return thisMenu;
+        if (menuNames.size() < 1) return thisMenu;
+        boolean found = false;
+        String menuName = menuNames.get(0);
+        for (int i=0; i<thisMenu.getItemCount(); i++) {
+            JMenuItem mi = thisMenu.getItem(i);
+            if (!(mi instanceof JMenu)) continue;
+            if (mi.getText().equals(menuName)) {
+                menuNames.remove(0);
+                thisMenu = mergeMenuNames((JMenu)mi, menuNames);
+                found = true;
+            }
+        }
+        if (!found) {
+            thisMenu = makeMenuRecursive(thisMenu, menuNames);
+        }
+        return thisMenu;
     }
     
     /**
      * Return the parameter type associated with this chooser.  Override!
      */
     protected String getParameterSetType() {
-    	return "adde";
+        return "adde";
     }
     
     /**
      * Show the parameter set manager
      */
     private void showParameterSetDialog(final String parameterSetType) {
-    	ParameterTree tree = (ParameterTree) parameterTrees.get(parameterSetType);
+        ParameterTree tree = (ParameterTree) parameterTrees.get(parameterSetType);
         if (tree == null) {
-        	tree = new ParameterTree((UIManager)getIdv().getIdvUIManager() , parameterSetType);
+            tree = new ParameterTree((UIManager)getIdv().getIdvUIManager() , parameterSetType);
             parameterTrees.put(parameterSetType, tree);
         }
         else {
-        	//DAVEP
-        	System.out.println("Should refresh the parameter tree here");
+            //DAVEP
+            System.out.println("Should refresh the parameter tree here");
         }
         tree.setVisible(true);
     }
@@ -1189,7 +1194,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
 
     protected String getStateString() {
-    	int state = getState();
+        int state = getState();
         switch (state) {
             case STATE_CONNECTED: return "Connected to server";
             case STATE_UNCONNECTED: return "Not connected to server";
@@ -1356,7 +1361,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * Connect to the server.
      */
     protected void connectToServer() {
-    	clearParameterSet();
+        clearParameterSet();
         setDescriptors(null);
         setDoAbsoluteTimes(false);
         if (!canAccessServer()) {
@@ -1747,7 +1752,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 //                    System.err.println("clearOnChange");
                 }
 //                else {
-//                	System.out.println("Ignoring state change in clearOnChange for: " + box.toString());
+//                  System.out.println("Ignoring state change in clearOnChange for: " + box.toString());
 //                }
             }
         });
@@ -1848,7 +1853,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     protected JComponent doMakeContents() {
         JPanel outerPanel = new JPanel();
 
-        JLabel serverLabelInner = new JLabel("Server:");  	
+        JLabel serverLabelInner = new JLabel("Server:");    
         McVGuiUtils.setLabelPosition(serverLabelInner, Position.RIGHT);
         JPanel serverLabel = GuiUtils.leftRight(parameterButton, serverLabelInner);
         McVGuiUtils.setComponentWidth(serverLabel);
@@ -1895,69 +1900,69 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 
         McVGuiUtils.setComponentWidth(loadButton, Width.DOUBLE);
 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(outerPanel);
+        GroupLayout layout = new GroupLayout(outerPanel);
         outerPanel.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(layout.createSequentialGroup()
+            layout.createParallelGroup(LEADING)
+            .addGroup(TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(TRAILING)
+                    .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .add(helpButton)
-                        .add(GAP_RELATED)
-                        .add(refreshButton)
-                        .add(GAP_RELATED)
-                        .add(cancelButton)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(loadButton))
-                        .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
+                        .addComponent(helpButton)
+                        .addGap(GAP_RELATED)
+                        .addComponent(refreshButton)
+                        .addGap(GAP_RELATED)
+                        .addComponent(cancelButton)
+                        .addPreferredGap(RELATED)
+                        .addComponent(loadButton))
+                        .addGroup(LEADING, layout.createSequentialGroup()
                         .addContainerGap()
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(innerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(layout.createSequentialGroup()
-                                .add(serverLabel)
-                                .add(GAP_RELATED)
-                                .add(serverSelector)
-                                .add(GAP_RELATED)
-                                .add(manageButton)
-                                .add(GAP_RELATED)
-                                .add(groupLabel)
-                                .add(GAP_RELATED)
-                                .add(groupSelector)
-                                .add(GAP_RELATED)
-                                .add(publicButton)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .add(connectButton))
-                            .add(layout.createSequentialGroup()
-                                .add(statusLabelLabel)
-                                .add(GAP_RELATED)
-                                .add(statusLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                        .addGroup(layout.createParallelGroup(LEADING)
+                            .addComponent(innerPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(serverLabel)
+                                .addGap(GAP_RELATED)
+                                .addComponent(serverSelector)
+                                .addGap(GAP_RELATED)
+                                .addComponent(manageButton)
+                                .addGap(GAP_RELATED)
+                                .addComponent(groupLabel)
+                                .addGap(GAP_RELATED)
+                                .addComponent(groupSelector)
+                                .addGap(GAP_RELATED)
+                                .addComponent(publicButton)
+                                .addPreferredGap(RELATED, DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(connectButton))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(statusLabelLabel)
+                                .addGap(GAP_RELATED)
+                                .addComponent(statusLabel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-            	.addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(serverLabel)
-                    .add(serverSelector)
-                    .add(manageButton)
-                    .add(groupLabel)
-                    .add(groupSelector)
-                    .add(publicButton)
-                    .add(connectButton))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(innerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(statusLabelLabel)
-                    .add(statusLabel))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(loadButton)
-                    .add(cancelButton)
-                    .add(refreshButton)
-                    .add(helpButton))
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(serverLabel)
+                    .addComponent(serverSelector)
+                    .addComponent(manageButton)
+                    .addComponent(groupLabel)
+                    .addComponent(groupSelector)
+                    .addComponent(publicButton)
+                    .addComponent(connectButton))
+                .addPreferredGap(UNRELATED)
+                .addComponent(innerPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(UNRELATED)
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(statusLabelLabel)
+                    .addComponent(statusLabel))
+                .addPreferredGap(UNRELATED)
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(loadButton)
+                    .addComponent(cancelButton)
+                    .addComponent(refreshButton)
+                    .addComponent(helpButton))
                 .addContainerGap())
         );
     

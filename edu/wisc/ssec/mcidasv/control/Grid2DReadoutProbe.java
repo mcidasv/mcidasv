@@ -31,51 +31,52 @@
 package edu.wisc.ssec.mcidasv.control;
 
 
-import ucar.unidata.idv.control.*;
-import ucar.unidata.collab.Sharable;
-
-import ucar.unidata.data.grid.GridUtil;
-
-import ucar.unidata.view.geoloc.NavigatedDisplay;
-
-import ucar.unidata.util.LogUtil;
-import ucar.visad.display.TextDisplayable;
-import ucar.unidata.idv.ViewDescriptor;
-import ucar.unidata.idv.ViewManager;
-import ucar.visad.display.DisplayMaster;
-
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.TwoFacedObject;
-
-import ucar.visad.ShapeUtility;
-import ucar.visad.display.LineProbe;
-import ucar.visad.display.PointProbe;
-import ucar.visad.display.SelectorDisplayable;
-import ucar.visad.display.SelectorPoint;
-
-import visad.*;
-
-import visad.georef.EarthLocation;
-import visad.georef.EarthLocationTuple;
-import visad.georef.LatLonPoint;
-import visad.georef.LatLonTuple;
-
-import java.awt.*;
-import java.awt.event.*;
-
-import java.text.DecimalFormat;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
-
-import java.beans.PropertyChangeListener;
-
 import java.rmi.RemoteException;
-
-
+import java.text.DecimalFormat;
 import java.util.List;
 
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+
+import visad.CoordinateSystem;
+import visad.Data;
+import visad.DataReference;
+import visad.DataReferenceImpl;
+import visad.DisplayEvent;
+import visad.DisplayListener;
+import visad.FlatField;
+import visad.FunctionType;
+import visad.MathType;
+import visad.Real;
+import visad.RealTuple;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.Text;
+import visad.TextType;
+import visad.Tuple;
+import visad.TupleType;
+import visad.VisADException;
+import visad.georef.EarthLocationTuple;
+import visad.georef.LatLonPoint;
+
+import ucar.unidata.collab.Sharable;
+import ucar.unidata.data.grid.GridUtil;
+import ucar.unidata.idv.ViewDescriptor;
+import ucar.unidata.idv.control.GridDisplayControl;
+import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.LogUtil;
+import ucar.unidata.util.Misc;
+import ucar.unidata.util.TwoFacedObject;
+import ucar.unidata.view.geoloc.NavigatedDisplay;
+import ucar.visad.ShapeUtility;
+import ucar.visad.display.DisplayMaster;
+import ucar.visad.display.PointProbe;
+import ucar.visad.display.SelectorDisplayable;
+import ucar.visad.display.TextDisplayable;
 
 
 
@@ -86,7 +87,7 @@ import javax.swing.event.*;
  * void probePositionChanged (double x, double y);
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/05/27 20:32:16 $
+ * @version $Revision$Date: 2010/02/08 18:49:37 $
  */
 public class Grid2DReadoutProbe extends GridDisplayControl {
 

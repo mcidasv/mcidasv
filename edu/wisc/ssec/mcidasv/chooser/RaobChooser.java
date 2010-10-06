@@ -30,11 +30,19 @@
 
 package edu.wisc.ssec.mcidasv.chooser;
 
+import static javax.swing.GroupLayout.DEFAULT_SIZE;
+import static javax.swing.GroupLayout.PREFERRED_SIZE;
+import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+import static javax.swing.GroupLayout.Alignment.TRAILING;
+import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
+import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -54,8 +62,6 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.TextColor;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
 
-
-
 /**
  * A chooser class for selecting Raob data.
  * Mostly just a wrapper around a
@@ -63,12 +69,12 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2009/08/04 19:44:05 $
+ * @version $Revision$Date: 2010/02/08 18:49:37 $
  */
 
 
 public class RaobChooser extends ucar.unidata.idv.chooser.RaobChooser implements Constants {
-	
+    
     /**
      * Construct a <code>RaobChooser</code> using the manager
      * and the root XML that defines this object.
@@ -87,38 +93,38 @@ public class RaobChooser extends ucar.unidata.idv.chooser.RaobChooser implements
      */
     protected JPanel doMakeInnerPanel(JPanel fromPanel) {
 
-    	// Get the station panel
-    	Component[] fromComps = fromPanel.getComponents();
-    	
-    	if (fromComps.length != 2 ||
-    			!(fromComps[0] instanceof JPanel) ||
-    			!(fromComps[1] instanceof JPanel)
-    	) return fromPanel;
-    	JComponent stationPanel = (JPanel)fromComps[1];
-    	// TODO: Yup, these are magic dimension numbers
+        // Get the station panel
+        Component[] fromComps = fromPanel.getComponents();
+        
+        if (fromComps.length != 2 ||
+                !(fromComps[0] instanceof JPanel) ||
+                !(fromComps[1] instanceof JPanel)
+        ) return fromPanel;
+        JComponent stationPanel = (JPanel)fromComps[1];
+        // TODO: Yup, these are magic dimension numbers
         stationPanel.setPreferredSize(new Dimension(300, 252));
         Color bgcolor = stationPanel.getBackground();
 
-    	// Get the times panel
-    	Component[] panels = ((JPanel)fromComps[0]).getComponents();
-    	if (panels.length < 1 ||
-    			!(panels[0] instanceof JPanel)
-    	) return fromPanel;
-    	panels = ((JPanel)panels[0]).getComponents();
-    	if (panels.length != 4 ||
-    			!(panels[0] instanceof JLabel) ||
-    			!(panels[1] instanceof JScrollPane) ||
-    			!(panels[2] instanceof JLabel) ||
-    			!(panels[3] instanceof JScrollPane)
-    	) return fromPanel;
-    	
-    	JScrollPane availablePanel = (JScrollPane)panels[1];
-    	// TODO: Yup, these are magic dimension numbers
+        // Get the times panel
+        Component[] panels = ((JPanel)fromComps[0]).getComponents();
+        if (panels.length < 1 ||
+                !(panels[0] instanceof JPanel)
+        ) return fromPanel;
+        panels = ((JPanel)panels[0]).getComponents();
+        if (panels.length != 4 ||
+                !(panels[0] instanceof JLabel) ||
+                !(panels[1] instanceof JScrollPane) ||
+                !(panels[2] instanceof JLabel) ||
+                !(panels[3] instanceof JScrollPane)
+        ) return fromPanel;
+        
+        JScrollPane availablePanel = (JScrollPane)panels[1];
+        // TODO: Yup, these are magic dimension numbers
         availablePanel.setPreferredSize(new Dimension(180, 50));
         availablePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Available"));
         availablePanel.setBackground(bgcolor);
-    	JScrollPane selectedPanel = (JScrollPane)panels[3];
-    	// TODO: Yup, these are magic dimension numbers
+        JScrollPane selectedPanel = (JScrollPane)panels[3];
+        // TODO: Yup, these are magic dimension numbers
         selectedPanel.setPreferredSize(new Dimension(170, 50));
         selectedPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected"));
         selectedPanel.setBackground(bgcolor);
@@ -126,75 +132,75 @@ public class RaobChooser extends ucar.unidata.idv.chooser.RaobChooser implements
         // Make the container panel
         JPanel timesPanel = new JPanel();
         
-        org.jdesktop.layout.GroupLayout timesLayout = new org.jdesktop.layout.GroupLayout(timesPanel);
+        GroupLayout timesLayout = new GroupLayout(timesPanel);
         timesPanel.setLayout(timesLayout);
         timesLayout.setHorizontalGroup(
-        		timesLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(timesLayout.createSequentialGroup()
-                .add(availablePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(GAP_RELATED)
-                .add(selectedPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                timesLayout.createParallelGroup(LEADING)
+            .addGroup(timesLayout.createSequentialGroup()
+                .addComponent(availablePanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(GAP_RELATED)
+                .addComponent(selectedPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
                 )
         );
         timesLayout.setVerticalGroup(
-        		timesLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(timesLayout.createSequentialGroup()
-                .add(timesLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, selectedPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, availablePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                timesLayout.createParallelGroup(LEADING)
+            .addGroup(timesLayout.createSequentialGroup()
+                .addGroup(timesLayout.createParallelGroup(TRAILING)
+                    .addComponent(selectedPanel, LEADING, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(availablePanel, LEADING, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
                     )
         );
         
-    	// TODO: Yup, these are magic dimension numbers
+        // TODO: Yup, these are magic dimension numbers
         JComponent temp = new JPanel();
         temp.setPreferredSize(new Dimension(150, 150));
         temp.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         McVGuiUtils.setComponentHeight(timesPanel, temp);
 
-    	JPanel myPanel = new JPanel();
-    	
-    	JLabel descriptorLabelStatic = McVGuiUtils.makeLabelRight("Soundings:");
-    	JLabel descriptorString = new JLabel("Upper air mandatory and significant levels");
-    	McVGuiUtils.setLabelBold(descriptorString, true);
-    	
+        JPanel myPanel = new JPanel();
+        
+        JLabel descriptorLabelStatic = McVGuiUtils.makeLabelRight("Soundings:");
+        JLabel descriptorString = new JLabel("Upper air mandatory and significant levels");
+        McVGuiUtils.setLabelBold(descriptorString, true);
+        
         JLabel stationLabel = McVGuiUtils.makeLabelRight("Stations:");
         
         JLabel timesLabel = McVGuiUtils.makeLabelRight("");
                 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
+        GroupLayout layout = new GroupLayout(myPanel);
         myPanel.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(layout.createSequentialGroup()
-                        .add(descriptorLabelStatic)
-                        .add(GAP_RELATED)
-                        .add(descriptorString))
-                    .add(layout.createSequentialGroup()
-                        .add(stationLabel)
-                        .add(GAP_RELATED)
-                        .add(stationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .add(layout.createSequentialGroup()
-                        .add(timesLabel)
-                        .add(GAP_RELATED)
-                        .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(descriptorLabelStatic)
+                        .addGap(GAP_RELATED)
+                        .addComponent(descriptorString))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(stationLabel)
+                        .addGap(GAP_RELATED)
+                        .addComponent(stationPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(timesLabel)
+                        .addGap(GAP_RELATED)
+                        .addComponent(timesPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(descriptorLabelStatic)
-                    .add(descriptorString))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(stationLabel)
-                    .add(stationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(timesLabel)
-                    .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED))
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(descriptorLabelStatic)
+                    .addComponent(descriptorString))
+                .addPreferredGap(RELATED)
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addComponent(stationLabel)
+                    .addComponent(stationPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(RELATED)
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addComponent(timesLabel)
+                    .addComponent(timesPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(RELATED))
         );
         
         return myPanel;
@@ -204,9 +210,9 @@ public class RaobChooser extends ucar.unidata.idv.chooser.RaobChooser implements
 
     @Override
     public void setStatus(String statusString, String foo) {
-    	if (statusString == null)
-    		statusString = "";
-    	statusLabel.setText(statusString);
+        if (statusString == null)
+            statusString = "";
+        statusLabel.setText(statusString);
     }
 
     /**
@@ -215,155 +221,155 @@ public class RaobChooser extends ucar.unidata.idv.chooser.RaobChooser implements
      * @return The GUI
      */
     protected JComponent doMakeContents() {
-       	Element chooserNode = getXmlNode();
-    	XmlUtil.setAttributes(chooserNode, new String[] { ATTR_SHOWSERVER, "false" });
-    	JComponent parentContents = super.doMakeContents();
+        Element chooserNode = getXmlNode();
+        XmlUtil.setAttributes(chooserNode, new String[] { ATTR_SHOWSERVER, "false" });
+        JComponent parentContents = super.doMakeContents();
 
-    	// Pull apart the panels
-    	// Expected:
-    	// Top: file chooser
-    	// Center: sounding selector
-    	// Bottom: chooser buttons
-    	// This takes a bit of digging--some of the components are really buried!
-    	Component[] parentComps = parentContents.getComponents();
-    	
-    	// Dig down through all the GuiUtils parents
-    	parentComps = ((JComponent)parentComps[0]).getComponents();
-    	parentComps = ((JComponent)parentComps[0]).getComponents();
-    	parentComps = ((JComponent)parentComps[0]).getComponents();
-    	
-    	if (parentComps.length != 3 ||
-    			!(parentComps[0] instanceof JPanel) ||
-    			!(parentComps[1] instanceof JPanel) ||
-    			!(parentComps[2] instanceof JPanel)
-    	) return parentContents;
-    	
-    	// Assign sounding selector file picker to typeComponent
-    	JPanel topPanel = (JPanel)parentComps[0];
-    	Component[] panels = topPanel.getComponents();
-    	if (panels.length < 1 ||
-    			!(panels[0] instanceof JPanel)
-    	) return parentContents;
-    	panels = ((JPanel)panels[0]).getComponents();
-    	if (panels.length != 2 ||
-    			!(panels[0] instanceof JPanel) ||
-    			!(panels[1] instanceof JPanel)
-    	) return parentContents;
-    	panels = ((JPanel)panels[0]).getComponents();
-    	if (panels.length != 2 ||
-    			!(panels[0] instanceof JLabel) ||
-    			!(panels[1] instanceof JPanel)
-    	) return parentContents;
-    	panels = ((JPanel)panels[1]).getComponents();
-    	if (panels.length != 2 ||
-    			!(panels[0] instanceof JTextField) ||
-    			!(panels[1] instanceof JButton)
-    	) return parentContents;
-    	JTextField fileComponent = (JTextField)panels[0];
-    	JButton fileButton = (JButton)panels[1];
-		McVGuiUtils.setButtonImage(fileButton, ICON_OPEN_SMALL);
+        // Pull apart the panels
+        // Expected:
+        // Top: file chooser
+        // Center: sounding selector
+        // Bottom: chooser buttons
+        // This takes a bit of digging--some of the components are really buried!
+        Component[] parentComps = parentContents.getComponents();
+        
+        // Dig down through all the GuiUtils parents
+        parentComps = ((JComponent)parentComps[0]).getComponents();
+        parentComps = ((JComponent)parentComps[0]).getComponents();
+        parentComps = ((JComponent)parentComps[0]).getComponents();
+        
+        if (parentComps.length != 3 ||
+                !(parentComps[0] instanceof JPanel) ||
+                !(parentComps[1] instanceof JPanel) ||
+                !(parentComps[2] instanceof JPanel)
+        ) return parentContents;
+        
+        // Assign sounding selector file picker to typeComponent
+        JPanel topPanel = (JPanel)parentComps[0];
+        Component[] panels = topPanel.getComponents();
+        if (panels.length < 1 ||
+                !(panels[0] instanceof JPanel)
+        ) return parentContents;
+        panels = ((JPanel)panels[0]).getComponents();
+        if (panels.length != 2 ||
+                !(panels[0] instanceof JPanel) ||
+                !(panels[1] instanceof JPanel)
+        ) return parentContents;
+        panels = ((JPanel)panels[0]).getComponents();
+        if (panels.length != 2 ||
+                !(panels[0] instanceof JLabel) ||
+                !(panels[1] instanceof JPanel)
+        ) return parentContents;
+        panels = ((JPanel)panels[1]).getComponents();
+        if (panels.length != 2 ||
+                !(panels[0] instanceof JTextField) ||
+                !(panels[1] instanceof JButton)
+        ) return parentContents;
+        JTextField fileComponent = (JTextField)panels[0];
+        JButton fileButton = (JButton)panels[1];
+        McVGuiUtils.setButtonImage(fileButton, ICON_OPEN_SMALL);
         McVGuiUtils.setComponentWidth(fileButton, Width.DOUBLE);
         McVGuiUtils.setComponentHeight(fileComponent, fileButton);
 
-    	// Rearrange the sounding selector and assign it to innerPanel
-    	JPanel innerPanel = doMakeInnerPanel((JPanel)parentComps[1]);
+        // Rearrange the sounding selector and assign it to innerPanel
+        JPanel innerPanel = doMakeInnerPanel((JPanel)parentComps[1]);
 
-    	// Assign sounding selector loadButton to the chooser
-    	JPanel bottomPanel = (JPanel)parentComps[2];
-    	Component[] buttons = bottomPanel.getComponents();
-    	    	
-    	// Dig down through all the GuiUtils parents
-    	buttons = ((JPanel)buttons[1]).getComponents();
-    	buttons = ((JPanel)buttons[1]).getComponents();
-    	buttons = ((JPanel)buttons[0]).getComponents();
-    	buttons = ((JPanel)buttons[0]).getComponents();
+        // Assign sounding selector loadButton to the chooser
+        JPanel bottomPanel = (JPanel)parentComps[2];
+        Component[] buttons = bottomPanel.getComponents();
+                
+        // Dig down through all the GuiUtils parents
+        buttons = ((JPanel)buttons[1]).getComponents();
+        buttons = ((JPanel)buttons[1]).getComponents();
+        buttons = ((JPanel)buttons[0]).getComponents();
+        buttons = ((JPanel)buttons[0]).getComponents();
 
-    	for (Component button : buttons) {
-    		if (button instanceof JButton &&
-    				((JButton)button).getText() == getLoadCommandName()) {
-    			loadButton = (JButton)button;
-    			break;
-    		}
-    	}
-    	if (loadButton==null) return parentContents;
-    	
-    	statusLabel.setEnabled(false);
-    	setStatus("Status unavailable");
+        for (Component button : buttons) {
+            if (button instanceof JButton &&
+                    ((JButton)button).getText() == getLoadCommandName()) {
+                loadButton = (JButton)button;
+                break;
+            }
+        }
+        if (loadButton==null) return parentContents;
+        
+        statusLabel.setEnabled(false);
+        setStatus("Status unavailable");
 
-    	// Start building the whole thing here
-    	JPanel outerPanel = new JPanel();
+        // Start building the whole thing here
+        JPanel outerPanel = new JPanel();
 
-    	JLabel fileLabel = McVGuiUtils.makeLabelRight("File:");
+        JLabel fileLabel = McVGuiUtils.makeLabelRight("File:");
 
-    	JLabel statusLabelLabel = McVGuiUtils.makeLabelRight("");
+        JLabel statusLabelLabel = McVGuiUtils.makeLabelRight("");
 
-    	McVGuiUtils.setLabelPosition(statusLabel, Position.RIGHT);
-    	McVGuiUtils.setComponentColor(statusLabel, TextColor.STATUS);
+        McVGuiUtils.setLabelPosition(statusLabel, Position.RIGHT);
+        McVGuiUtils.setComponentColor(statusLabel, TextColor.STATUS);
 
-    	JButton helpButton = McVGuiUtils.makeImageButton(ICON_HELP, "Show help");
-    	helpButton.setActionCommand(GuiUtils.CMD_HELP);
-    	helpButton.addActionListener(this);
+        JButton helpButton = McVGuiUtils.makeImageButton(ICON_HELP, "Show help");
+        helpButton.setActionCommand(GuiUtils.CMD_HELP);
+        helpButton.addActionListener(this);
 
-    	JButton refreshButton = McVGuiUtils.makeImageButton(ICON_REFRESH, "Refresh");
-    	refreshButton.setActionCommand(GuiUtils.CMD_UPDATE);
-    	refreshButton.addActionListener(this);
+        JButton refreshButton = McVGuiUtils.makeImageButton(ICON_REFRESH, "Refresh");
+        refreshButton.setActionCommand(GuiUtils.CMD_UPDATE);
+        refreshButton.addActionListener(this);
 
-    	McVGuiUtils.setButtonImage(loadButton, ICON_ACCEPT_SMALL);
-    	McVGuiUtils.setComponentWidth(loadButton, Width.DOUBLE);
+        McVGuiUtils.setButtonImage(loadButton, ICON_ACCEPT_SMALL);
+        McVGuiUtils.setComponentWidth(loadButton, Width.DOUBLE);
 
-    	org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(outerPanel);
-    	outerPanel.setLayout(layout);
-    	layout.setHorizontalGroup(
-    			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-    			.add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-    					.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-    							.add(layout.createSequentialGroup()
-    									.addContainerGap()
-    									.add(helpButton)
-    									.add(GAP_RELATED)
-    									.add(refreshButton)
-    									.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-    									.add(loadButton))
-    									.add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
-    											.addContainerGap()
-    											.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-    													.add(innerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-    													.add(layout.createSequentialGroup()
-    															.add(fileLabel)
-    															.add(GAP_RELATED)
-    															.add(fileComponent)
-    															.add(GAP_UNRELATED)
-    															.add(fileButton))
-    															.add(layout.createSequentialGroup()
-    																	.add(statusLabelLabel)
-    																	.add(GAP_RELATED)
-    																	.add(statusLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
-    																	.addContainerGap())
-    	);
-    	layout.setVerticalGroup(
-    			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-    			.add(layout.createSequentialGroup()
-    					.addContainerGap()
-    					.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-    							.add(fileLabel)
-    							.add(fileComponent)
-    							.add(fileButton))
-    							.addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-    							.add(innerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-    							.addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-    							.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-    									.add(statusLabelLabel)
-    									.add(statusLabel))
-    									.addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-    									.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-    											.add(loadButton)
-    											.add(refreshButton)
-    											.add(helpButton))
-    											.addContainerGap())
-    	);
+        GroupLayout layout = new GroupLayout(outerPanel);
+        outerPanel.setLayout(layout);
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(LEADING)
+                .addGroup(TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(TRAILING)
+                                .addGroup(layout.createSequentialGroup()
+                                        .addContainerGap()
+                                        .addComponent(helpButton)
+                                        .addGap(GAP_RELATED)
+                                        .addComponent(refreshButton)
+                                        .addPreferredGap(RELATED)
+                                        .addComponent(loadButton))
+                                        .addGroup(LEADING, layout.createSequentialGroup()
+                                                .addContainerGap()
+                                                .addGroup(layout.createParallelGroup(LEADING)
+                                                        .addComponent(innerPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addComponent(fileLabel)
+                                                                .addGap(GAP_RELATED)
+                                                                .addComponent(fileComponent)
+                                                                .addGap(GAP_UNRELATED)
+                                                                .addComponent(fileButton))
+                                                                .addGroup(layout.createSequentialGroup()
+                                                                        .addComponent(statusLabelLabel)
+                                                                        .addGap(GAP_RELATED)
+                                                                        .addComponent(statusLabel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)))))
+                                                                        .addContainerGap())
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(LEADING)
+                .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(BASELINE)
+                                .addComponent(fileLabel)
+                                .addComponent(fileComponent)
+                                .addComponent(fileButton))
+                                .addPreferredGap(UNRELATED)
+                                .addComponent(innerPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(UNRELATED)
+                                .addGroup(layout.createParallelGroup(BASELINE)
+                                        .addComponent(statusLabelLabel)
+                                        .addComponent(statusLabel))
+                                        .addPreferredGap(UNRELATED)
+                                        .addGroup(layout.createParallelGroup(BASELINE)
+                                                .addComponent(loadButton)
+                                                .addComponent(refreshButton)
+                                                .addComponent(helpButton))
+                                                .addContainerGap())
+        );
 
-    	return outerPanel;
-    	
+        return outerPanel;
+        
     }
 
 }

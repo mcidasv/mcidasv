@@ -30,54 +30,33 @@
 
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
+import static javax.swing.GroupLayout.DEFAULT_SIZE;
+import static javax.swing.GroupLayout.PREFERRED_SIZE;
+import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
+
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
+import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 
 import org.w3c.dom.Element;
 
-import ucar.unidata.data.imagery.AddeImageDescriptor;
-import ucar.unidata.data.imagery.AddeImageInfo;
-import ucar.unidata.data.imagery.BandInfo;
-import ucar.unidata.data.imagery.ImageDataSource;
-import ucar.unidata.data.imagery.ImageDataset;
-import ucar.unidata.idv.IdvResourceManager;
-import ucar.unidata.idv.chooser.IdvChooserManager;
-import ucar.unidata.ui.ChooserList;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.StringUtil;
-import ucar.unidata.util.TwoFacedObject;
-import ucar.unidata.xml.XmlNodeList;
-import ucar.unidata.xml.XmlObjectStore;
-import ucar.unidata.xml.XmlResourceCollection;
-import ucar.unidata.xml.XmlUtil;
-import ucar.visad.UtcDate;
-import visad.DateTime;
-import visad.Gridded1DSet;
-import visad.VisADException;
 import edu.wisc.ssec.mcidas.AreaDirectory;
-import edu.wisc.ssec.mcidas.AreaDirectoryList;
-import edu.wisc.ssec.mcidas.McIDASException;
-import edu.wisc.ssec.mcidas.adde.AddeSatBands;
-import edu.wisc.ssec.mcidas.adde.AddeURL;
-import edu.wisc.ssec.mcidas.adde.DataSetInfo;
+
+import ucar.unidata.data.imagery.BandInfo;
+import ucar.unidata.idv.chooser.IdvChooserManager;
+import ucar.unidata.util.TwoFacedObject;
+import ucar.unidata.xml.XmlObjectStore;
+
 import edu.wisc.ssec.mcidasv.Constants;
-import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 
@@ -144,16 +123,16 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
      */
     @Override
     protected String getParameterSetType() {
-    	return "addeimagery";
+        return "addeimagery";
     }
     
-	/**
-	 * Return the data source ID.  Used by extending classes.
-	 */
+    /**
+     * Return the data source ID.  Used by extending classes.
+     */
     @Override
-	protected String getDataSourceId() {
-		return "ADDE.IMAGE.V";
-	}
+    protected String getDataSourceId() {
+        return "ADDE.IMAGE.V";
+    }
     
     /**
      * Restore the selected parameter set using element attributes
@@ -163,14 +142,14 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
      */
     @Override
     protected boolean restoreParameterSet(Element restoreElement) {
-    	boolean okay = super.restoreParameterSet(restoreElement);
-    	if (!okay) return okay;
-    	
+        boolean okay = super.restoreParameterSet(restoreElement);
+        if (!okay) return okay;
+        
         // Imagery specific restore
-    	
-    	// Restore nav
+        
+        // Restore nav
         if (restoreElement.hasAttribute(ATTR_NAV)) {
-        	String nav = restoreElement.getAttribute(ATTR_NAV);
+            String nav = restoreElement.getAttribute(ATTR_NAV);
             TwoFacedObject tfo = new TwoFacedObject("Default", "X");
             navComboBox.setSelectedItem((Object)tfo);
             if (nav.toUpperCase().equals("LALO")) {
@@ -178,7 +157,7 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
             }
             navComboBox.setSelectedItem((Object)tfo);
         }
-    	return true;
+        return true;
     }
     
     /**
@@ -200,10 +179,10 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
      */
     @Override
     protected String getPropValue(String prop, AreaDirectory ad) {
-    	String propValue = super.getPropValue(prop, ad);
+        String propValue = super.getPropValue(prop, ad);
         if (prop.equals(PROP_NAV)) {
-        	propValue = TwoFacedObject.getIdString(navComboBox.getSelectedItem());
-		}
+            propValue = TwoFacedObject.getIdString(navComboBox.getSelectedItem());
+        }
         return propValue;
     }
     
@@ -213,31 +192,31 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
      * @return
      */
     @Override
-	protected String getDefault(String property, String dflt) {
-    	String paramDefault = super.getDefault(property, dflt);
-    	if (property.equals(PROP_NAV)) {
-    		if (restoreElement != null) {
-    			paramDefault = restoreElement.getAttribute(ATTR_NAV);
-    		}
-    	} else if (property.equals(PROP_UNIT)) {
-    		paramDefault = "";
-		} else if (property.equals(PROP_BAND)) {
-    		paramDefault = ALL;
-		} else if (property.equals(PROP_PLACE)) {
-			paramDefault = "";
-		}
-    	return paramDefault;
+    protected String getDefault(String property, String dflt) {
+        String paramDefault = super.getDefault(property, dflt);
+        if (property.equals(PROP_NAV)) {
+            if (restoreElement != null) {
+                paramDefault = restoreElement.getAttribute(ATTR_NAV);
+            }
+        } else if (property.equals(PROP_UNIT)) {
+            paramDefault = "";
+        } else if (property.equals(PROP_BAND)) {
+            paramDefault = ALL;
+        } else if (property.equals(PROP_PLACE)) {
+            paramDefault = "";
+        }
+        return paramDefault;
     }
     
-	/**
-	 * Get the DataSource properties
-	 * 
-	 * @param ht
-	 *            Hashtable of properties
-	 */
+    /**
+     * Get the DataSource properties
+     * 
+     * @param ht
+     *            Hashtable of properties
+     */
     @Override
-	protected void getDataSourceProperties(Hashtable ht) {
-		super.getDataSourceProperties(ht);
+    protected void getDataSourceProperties(Hashtable ht) {
+        super.getDataSourceProperties(ht);
         if (restoreElement != null) {
             if (restoreElement.hasAttribute(ATTR_BAND)) {
                 ht.put(BAND_KEY, (Object)(restoreElement.getAttribute(ATTR_BAND)));
@@ -263,23 +242,23 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
         }
         
         ht.put(PREVIEW_KEY, (Object)previewBox.isSelected());
-	}
+    }
     
-	/**
-	 * Should we use the user supplied property
-	 * 
-	 * @param propId
-	 *            The property
-	 * 
-	 * @return Should use the value from the advanced widget
-	 */
-	protected boolean usePropFromUser(String propId) {
-		boolean fromSuper = super.usePropFromUser(propId);
-		if (propId.equals(PROP_UNIT)) fromSuper = false;
-		else if (propId.equals(PROP_BAND)) fromSuper = false;
-		return fromSuper;
-	}
-	
+    /**
+     * Should we use the user supplied property
+     * 
+     * @param propId
+     *            The property
+     * 
+     * @return Should use the value from the advanced widget
+     */
+    protected boolean usePropFromUser(String propId) {
+        boolean fromSuper = super.usePropFromUser(propId);
+        if (propId.equals(PROP_UNIT)) fromSuper = false;
+        else if (propId.equals(PROP_BAND)) fromSuper = false;
+        return fromSuper;
+    }
+    
     /**
      * Make the UI for this selector.
      *
@@ -304,13 +283,13 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
         addDescComp(navComboBox);
         McVGuiUtils.setComponentWidth(navComboBox, McVGuiUtils.Width.DOUBLE);
 
-		// Preview checkbox
-		JLabel previewLabel = McVGuiUtils.makeLabelRight("Preview:");
-		addDescComp(previewLabel);
+        // Preview checkbox
+        JLabel previewLabel = McVGuiUtils.makeLabelRight("Preview:");
+        addDescComp(previewLabel);
         XmlObjectStore store = getIdv().getStore();
         previewBox = new JCheckBox("Create preview image", store.get(Constants.PREF_IMAGE_PREVIEW, true));
-    	previewBox.setToolTipText("Creating preview images takes extra time and network bandwidth");
-    	previewBox.addItemListener(new ItemListener() {
+        previewBox.setToolTipText("Creating preview images takes extra time and network bandwidth");
+        previewBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 XmlObjectStore store = getIdv().getStore();
                 store.put(Constants.PREF_IMAGE_PREVIEW, e.getStateChange());
@@ -319,48 +298,48 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
         });
         addDescComp(previewBox);
 
-		org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
-		myPanel.setLayout(layout);
-		layout.setHorizontalGroup(
-				layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-				.add(layout.createSequentialGroup()
-						.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-								.add(layout.createSequentialGroup()
-										.add(descriptorLabel)
-										.add(GAP_RELATED)
-										.add(descriptorComboBox))
-										.add(layout.createSequentialGroup()
-												.add(timesLabel)
-												.add(GAP_RELATED)
-												.add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-												.add(layout.createSequentialGroup()
-														.add(navigationLabel)
-														.add(GAP_RELATED)
-														.add(navComboBox))
-														.add(layout.createSequentialGroup()
-																.add(previewLabel)
-																.add(GAP_RELATED)
-																.add(previewBox))))
-		);
-		layout.setVerticalGroup(
-				layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-				.add(layout.createSequentialGroup()
-						.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-								.add(descriptorLabel)
-								.add(descriptorComboBox))
-								.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-								.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-										.add(timesLabel)
-										.add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-										.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-										.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-												.add(navigationLabel)
-												.add(navComboBox))
-												.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-														.add(previewLabel)
-														.add(previewBox)))
-		);
-		
+        GroupLayout layout = new GroupLayout(myPanel);
+        myPanel.setLayout(layout);
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(LEADING)
+                .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                        .addComponent(descriptorLabel)
+                                        .addGap(GAP_RELATED)
+                                        .addComponent(descriptorComboBox))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(timesLabel)
+                                                .addGap(GAP_RELATED)
+                                                .addComponent(timesPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                                                .addGroup(layout.createSequentialGroup()
+                                                        .addComponent(navigationLabel)
+                                                        .addGap(GAP_RELATED)
+                                                        .addComponent(navComboBox))
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addComponent(previewLabel)
+                                                                .addGap(GAP_RELATED)
+                                                                .addComponent(previewBox))))
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(LEADING)
+                .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(BASELINE)
+                                .addComponent(descriptorLabel)
+                                .addComponent(descriptorComboBox))
+                                .addPreferredGap(RELATED)
+                                .addGroup(layout.createParallelGroup(LEADING)
+                                        .addComponent(timesLabel)
+                                        .addComponent(timesPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addPreferredGap(RELATED)
+                                        .addGroup(layout.createParallelGroup(LEADING)
+                                                .addComponent(navigationLabel)
+                                                .addComponent(navComboBox))
+                                                .addGroup(layout.createParallelGroup(LEADING)
+                                                        .addComponent(previewLabel)
+                                                        .addComponent(previewBox)))
+        );
+        
         setInnerPanel(myPanel);
         return super.doMakeContents(true);
     }

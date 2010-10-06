@@ -30,35 +30,37 @@
 
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
-import java.awt.Dimension;
+import static javax.swing.GroupLayout.DEFAULT_SIZE;
+import static javax.swing.GroupLayout.PREFERRED_SIZE;
+import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
+
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 
 import org.w3c.dom.Element;
-
-import ucar.unidata.data.imagery.BandInfo;
-import ucar.unidata.data.imagery.ImageDataSource;
-import ucar.unidata.idv.chooser.IdvChooserManager;
-import ucar.unidata.idv.chooser.adde.AddeServer;
-import ucar.unidata.metdata.NamedStationTable;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.TwoFacedObject;
 
 import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidas.AreaDirectoryList;
 import edu.wisc.ssec.mcidas.AreaFileException;
 import edu.wisc.ssec.mcidas.McIDASUtil;
+
+import ucar.unidata.data.imagery.ImageDataSource;
+import ucar.unidata.idv.chooser.IdvChooserManager;
+import ucar.unidata.idv.chooser.adde.AddeServer;
+import ucar.unidata.metdata.NamedStationTable;
+import ucar.unidata.util.LogUtil;
+
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
 /**
  * Widget to select NEXRAD radar images from a remote ADDE server
@@ -372,7 +374,7 @@ public class AddeRadarChooser extends AddeImageChooser {
      * @param ht properties
      */
     protected void getDataSourceProperties(Hashtable ht) {
-    	unitComboBox.setSelectedItem(ALLUNITS);
+        unitComboBox.setSelectedItem(ALLUNITS);
         super.getDataSourceProperties(ht);
         ht.put(ImageDataSource.PROP_IMAGETYPE, ImageDataSource.TYPE_RADAR);
     }
@@ -385,7 +387,7 @@ public class AddeRadarChooser extends AddeImageChooser {
     protected JComponent getExtraTimeComponent() {
         JPanel filler = new JPanel();
         McVGuiUtils.setComponentHeight(filler, new JComboBox());
-    	return filler;
+        return filler;
     }
     
     /**
@@ -394,8 +396,8 @@ public class AddeRadarChooser extends AddeImageChooser {
      * @return The gui
      */
     public JComponent doMakeContents() {      
-    	JPanel myPanel = new JPanel();
-    	        
+        JPanel myPanel = new JPanel();
+                
         JLabel stationLabel = McVGuiUtils.makeLabelRight("Station:");
         addServerComp(stationLabel);
 
@@ -409,45 +411,45 @@ public class AddeRadarChooser extends AddeImageChooser {
         JPanel timesPanel = makeTimesPanel();
         timesPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         addDescComp(timesPanel);
-    	
+        
         // We need to create this but never show it... AddeImageChooser requires it to be instantiated
         unitComboBox = new JComboBox();
         
         enableWidgets();
 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
+        GroupLayout layout = new GroupLayout(myPanel);
         myPanel.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(layout.createSequentialGroup()
-                        .add(descriptorLabel)
-                        .add(GAP_RELATED)
-                        .add(descriptorComboBox))
-                    .add(layout.createSequentialGroup()
-                        .add(stationLabel)
-                        .add(GAP_RELATED)
-                        .add(stationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .add(layout.createSequentialGroup()
-                        .add(timesLabel)
-                        .add(GAP_RELATED)
-                        .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(descriptorLabel)
+                        .addGap(GAP_RELATED)
+                        .addComponent(descriptorComboBox))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(stationLabel)
+                        .addGap(GAP_RELATED)
+                        .addComponent(stationPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(timesLabel)
+                        .addGap(GAP_RELATED)
+                        .addComponent(timesPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(descriptorLabel)
-                    .add(descriptorComboBox))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(stationLabel)
-                    .add(stationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(timesLabel)
-                    .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(descriptorLabel)
+                    .addComponent(descriptorComboBox))
+                .addPreferredGap(RELATED)
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addComponent(stationLabel)
+                    .addComponent(stationPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(RELATED)
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addComponent(timesLabel)
+                    .addComponent(timesPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         
         setInnerPanel(myPanel);

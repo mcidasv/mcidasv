@@ -56,17 +56,52 @@ MA 02111-1307, USA
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import visad.*;
-import visad.java3d.*;
-
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import java.util.Vector;
+import java.awt.event.InputEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.rmi.RemoteException;
 import java.util.Enumeration;
-import java.rmi.*;
+import java.util.Vector;
 
-import javax.media.j3d.*;
+import javax.media.j3d.Appearance;
+import javax.media.j3d.BranchGroup;
+import javax.media.j3d.GeometryArray;
+import javax.media.j3d.Group;
+import javax.media.j3d.Shape3D;
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import visad.BadDirectManipulationException;
+import visad.CellImpl;
+import visad.CoordinateSystem;
+import visad.DataDisplayLink;
+import visad.DataReference;
+import visad.DataReferenceImpl;
+import visad.Display;
+import visad.DisplayImpl;
+import visad.DisplayRealType;
+import visad.DisplayTupleType;
+import visad.FlatField;
+import visad.FunctionType;
+import visad.GraphicsModeControl;
+import visad.Gridded2DSet;
+import visad.Gridded3DSet;
+import visad.Integer2DSet;
+import visad.Real;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.ScalarMap;
+import visad.ScalarType;
+import visad.Set;
+import visad.ShadowType;
+import visad.Unit;
+import visad.VisADException;
+import visad.VisADLineStripArray;
+import visad.VisADRay;
+import visad.java3d.DirectManipulationRendererJ3D;
+import visad.java3d.DisplayImplJ3D;
+import visad.java3d.ShadowTypeJ3D;
 
 /**
    RubberBandBoxRendererJ3D is the VisAD class for direct

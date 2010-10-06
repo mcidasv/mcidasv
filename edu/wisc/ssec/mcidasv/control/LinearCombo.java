@@ -37,14 +37,14 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -54,27 +54,27 @@ import org.python.core.PyDictionary;
 import org.python.core.PyFloat;
 import org.python.core.PyInteger;
 
-import ucar.unidata.data.DataChoice;
-import ucar.unidata.data.DataSource;
-import ucar.unidata.data.DirectDataChoice;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.LogUtil;
-import ucar.unidata.idv.MapViewManager;
-import ucar.unidata.view.geoloc.MapProjectionDisplay;
-import ucar.visad.display.DisplayMaster;
-
 import visad.ConstantMap;
 import visad.Data;
 import visad.Real;
 import visad.VisADException;
 import visad.georef.MapProjection;
 
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataSource;
+import ucar.unidata.data.DirectDataChoice;
+import ucar.unidata.idv.MapViewManager;
+import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.LogUtil;
+import ucar.unidata.view.geoloc.MapProjectionDisplay;
+import ucar.visad.display.DisplayMaster;
+
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
+import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
-import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay.DragLine;
 import edu.wisc.ssec.mcidasv.jython.Console;

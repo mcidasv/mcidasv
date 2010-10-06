@@ -30,43 +30,31 @@
 
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
-import org.jdesktop.layout.GroupLayout;
-import static org.jdesktop.layout.GroupLayout.DEFAULT_SIZE;
-import static org.jdesktop.layout.GroupLayout.LEADING;
-import static org.jdesktop.layout.GroupLayout.BASELINE;
-import static org.jdesktop.layout.GroupLayout.PREFERRED_SIZE;
-import static org.jdesktop.layout.GroupLayout.TRAILING;
-import static org.jdesktop.layout.LayoutStyle.RELATED;
-import static org.jdesktop.layout.LayoutStyle.UNRELATED;
+import static javax.swing.GroupLayout.DEFAULT_SIZE;
+import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.Vector;
 
-import javax.swing.ButtonGroup;
+import javax.swing.GroupLayout;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
 
 import org.w3c.dom.Element;
-
-import edu.wisc.ssec.mcidas.McIDASUtil;
-import edu.wisc.ssec.mcidas.adde.AddePointDataReader;
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 import ucar.unidata.data.DataSource;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.ui.ChooserList;
 import ucar.unidata.util.GuiUtils;
-import visad.DateTime;
+
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 /**
  * A chooser for adde front products
@@ -74,7 +62,7 @@ import visad.DateTime;
  *
  *
  * @author IDV development team
- * @version $Revision$Date: 2010/02/08 18:49:37 $
+ * @version $Revision$Date: 2010/08/19 16:13:26 $
  */
 public class AddeFrontChooser extends AddeChooser {
     /** for gui */
@@ -177,22 +165,22 @@ public class AddeFrontChooser extends AddeChooser {
         myPanel.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(LEADING)
-            .add(layout.createSequentialGroup()
-                .add(frontLabel)
-                .add(GAP_RELATED)
-                .add(observedBtn)
-                .add(GAP_RELATED)
-                .add(forecastBtn)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(frontLabel)
+                .addGap(GAP_RELATED)
+                .addComponent(observedBtn)
+                .addGap(GAP_RELATED)
+                .addComponent(forecastBtn)
                 .addContainerGap(DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(LEADING)
-            .add(layout.createSequentialGroup()
-                .add(layout.createParallelGroup(BASELINE)
-                    .add(frontLabel)
-                    .add(observedBtn)
-                    .add(forecastBtn))
-                .add(GAP_UNRELATED))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(frontLabel)
+                    .addComponent(observedBtn)
+                    .addComponent(forecastBtn))
+                .addGap(GAP_UNRELATED))
         );
         
         setInnerPanel(myPanel);

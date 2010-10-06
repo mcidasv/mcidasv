@@ -30,6 +30,34 @@
 
 package edu.wisc.ssec.mcidasv.chooser;
 
+import static javax.swing.GroupLayout.DEFAULT_SIZE;
+import static javax.swing.GroupLayout.PREFERRED_SIZE;
+import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+import static javax.swing.GroupLayout.Alignment.TRAILING;
+import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
+import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
+
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Vector;
+
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 import org.jdom.Document;
 import org.jdom.JDOMException;
@@ -37,35 +65,33 @@ import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
 import org.w3c.dom.Element;
 
+import thredds.catalog.XMLEntityResolver;
+import ucar.nc2.thredds.TDSRadarDatasetCollection;
+import ucar.nc2.units.DateUnit;
+import ucar.unidata.data.radar.RadarQuery;
+import ucar.unidata.geoloc.StationImpl;
+import ucar.unidata.idv.chooser.IdvChooserManager;
+import ucar.unidata.idv.chooser.TimesChooser;
+import ucar.unidata.metdata.NamedStation;
+import ucar.unidata.metdata.NamedStationImpl;
+import ucar.unidata.util.DateSelection;
+import ucar.unidata.util.DateUtil;
+import ucar.unidata.util.DatedThing;
+import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.LogUtil;
+import ucar.unidata.util.Misc;
+import ucar.unidata.util.PreferenceList;
+import ucar.unidata.util.Product;
+import ucar.unidata.util.TwoFacedObject;
+
+import visad.CommonUnit;
+import visad.DateTime;
+
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Position;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.TextColor;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
-import thredds.catalog.XMLEntityResolver;
-import ucar.unidata.geoloc.StationImpl;
-import ucar.nc2.thredds.TDSRadarDatasetCollection;
-import ucar.nc2.units.DateUnit;
-import ucar.unidata.data.radar.RadarQuery;
-import ucar.unidata.idv.chooser.IdvChooserManager;
-import ucar.unidata.idv.chooser.TimesChooser;
-import ucar.unidata.metdata.NamedStation;
-import ucar.unidata.metdata.NamedStationImpl;
-import ucar.unidata.util.*;
-import visad.CommonUnit;
-import visad.DateTime;
-
-import javax.swing.*;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.io.IOException;
-import java.net.URI;
-import java.util.*;
-import java.util.List;
 
 
 /**
@@ -177,30 +203,30 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
     protected void updateStatus() {
         super.updateStatus();
         if (serverUrl == null) {
-        	setHaveData(false);
-        	setStatus("Please connect to the server");
+            setHaveData(false);
+            setStatus("Please connect to the server");
         }
         else if (selectedStation == null) {
-        	setHaveData(false);
-        	setStatus("Please select a station", "stations");
+            setHaveData(false);
+            setStatus("Please select a station", "stations");
         }
         else if (isLevel3 && (selectedProduct == null)) {
-        	setHaveData(false);
-        	setStatus("Please select a level 3 product", "products");
+            setHaveData(false);
+            setStatus("Please select a level 3 product", "products");
         }
         else {
-        	boolean haveTimesSelected;
-        	if (getDoAbsoluteTimes()) {
-        		haveTimesSelected = getSelectedAbsoluteTimes().size() > 0;
-        	} else {
-        		haveTimesSelected = true;
-        	}
-        	setHaveData(haveTimesSelected);
-        	if (haveTimesSelected) {
-        		setStatus("Press \"" + CMD_LOAD + "\" to load the selected radar data", "buttons");
-        	} else {
-        		setStatus("Please select times", "timepanel");
-        	}
+            boolean haveTimesSelected;
+            if (getDoAbsoluteTimes()) {
+                haveTimesSelected = getSelectedAbsoluteTimes().size() > 0;
+            } else {
+                haveTimesSelected = true;
+            }
+            setHaveData(haveTimesSelected);
+            if (haveTimesSelected) {
+                setStatus("Press \"" + CMD_LOAD + "\" to load the selected radar data", "buttons");
+            } else {
+                setStatus("Please select times", "timepanel");
+            }
         }
         GuiUtils.enableTree(loadButton, getHaveData());
     }
@@ -675,7 +701,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
      * Check the times lists
      */
     protected void checkTimesLists() {
-    	super.checkTimesLists();
+        super.checkTimesLists();
         if (timesCardPanelExtra == null) {
             return;
         }
@@ -694,31 +720,31 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
      * @return superclass component with extra stuff
      */
     protected JPanel makeTimesPanel() {
-    	JComponent extra = getExtraTimeComponent();
-    	GuiUtils.enableTree(extra, false);
-    	JPanel timesPanel = makeTimesPanel(extra, null);
-    	return timesPanel;
+        JComponent extra = getExtraTimeComponent();
+        GuiUtils.enableTree(extra, false);
+        JPanel timesPanel = makeTimesPanel(extra, null);
+        return timesPanel;
     }
     
     /**
      * Set the relative and absolute extra components
      */
     protected JPanel makeTimesPanel(JComponent relativeCard, JComponent absoluteCard) {
-    	JPanel timesPanel = super.makeTimesPanel(false,true);
-    	    	
-    	// Make a new timesPanel that has extra components tacked on the bottom, inside the tabs
-    	Component[] comps = timesPanel.getComponents();
-    	if (comps.length==2 && comps[0] instanceof JTabbedPane && comps[1] instanceof JLabel) {    		
+        JPanel timesPanel = super.makeTimesPanel(false,true);
+                
+        // Make a new timesPanel that has extra components tacked on the bottom, inside the tabs
+        Component[] comps = timesPanel.getComponents();
+        if (comps.length==2 && comps[0] instanceof JTabbedPane && comps[1] instanceof JLabel) {         
             timesCardPanelExtra = new GuiUtils.CardLayoutPanel();
-    		if (relativeCard == null) relativeCard = new JPanel();
-    		if (absoluteCard == null) absoluteCard = new JPanel();
-    		absoluteCard = GuiUtils.hbox(comps[1], GuiUtils.right(absoluteCard));
-    		timesCardPanelExtra.add(relativeCard, "relative");
-    		timesCardPanelExtra.add(absoluteCard, "absolute");
+            if (relativeCard == null) relativeCard = new JPanel();
+            if (absoluteCard == null) absoluteCard = new JPanel();
+            absoluteCard = GuiUtils.hbox(comps[1], GuiUtils.right(absoluteCard));
+            timesCardPanelExtra.add(relativeCard, "relative");
+            timesCardPanelExtra.add(absoluteCard, "absolute");
             timesPanel = GuiUtils.centerBottom(comps[0], timesCardPanelExtra);
-    	}
-    	
-    	return timesPanel;
+        }
+        
+        return timesPanel;
     }
     
     /**
@@ -729,7 +755,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
     protected JComponent getExtraTimeComponent() {
         JPanel filler = new JPanel();
         McVGuiUtils.setComponentHeight(filler, new JComboBox());
-    	return filler;
+        return filler;
     }
  
     /**
@@ -738,14 +764,14 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
      * @return  the contents
      */
     protected JPanel doMakeInnerPanel() {
-    	JPanel myPanel = new JPanel();
+        JPanel myPanel = new JPanel();
 
-    	JLabel collectionLabel = McVGuiUtils.makeLabelRight("Collection:");
+        JLabel collectionLabel = McVGuiUtils.makeLabelRight("Collection:");
 
         collectionSelector = new JComboBox();
         collectionSelector.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-            	newSelectedStations(new ArrayList());
+                newSelectedStations(new ArrayList());
                 if (collectionSelector.getSelectedItem() == null) {
                     return;
                 }
@@ -799,42 +825,42 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         GuiUtils.enableComponents(level3CompsThatNeedServer, false);
         productPanel.setVisible(false);
 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
+        GroupLayout layout = new GroupLayout(myPanel);
         myPanel.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(layout.createSequentialGroup()
-                        .add(collectionLabel)
-                        .add(GAP_RELATED)
-                        .add(collectionSelector, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(productPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .add(layout.createSequentialGroup()
-                        .add(stationLabel)
-                        .add(GAP_RELATED)
-                        .add(stationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .add(layout.createSequentialGroup()
-                        .add(timesLabel)
-                        .add(GAP_RELATED)
-                        .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(collectionLabel)
+                        .addGap(GAP_RELATED)
+                        .addComponent(collectionSelector, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(productPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(stationLabel)
+                        .addGap(GAP_RELATED)
+                        .addComponent(stationPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(timesLabel)
+                        .addGap(GAP_RELATED)
+                        .addComponent(timesPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(collectionLabel)
-                    .add(collectionSelector)
-                    .add(productPanel))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(stationLabel)
-                    .add(stationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(timesLabel)
-                    .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED))
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(collectionLabel)
+                    .addComponent(collectionSelector)
+                    .addComponent(productPanel))
+                .addPreferredGap(RELATED)
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addComponent(stationLabel)
+                    .addComponent(stationPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(RELATED)
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addComponent(timesLabel)
+                    .addComponent(timesPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(RELATED))
         );
         
         return myPanel;
@@ -853,19 +879,19 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
 
     @Override
     public void setStatus(String statusString, String foo) {
-    	if (statusString == null)
-    		statusString = "";
-    	statusLabel.setText(statusString);
+        if (statusString == null)
+            statusString = "";
+        statusLabel.setText(statusString);
     }
         
     protected void setInnerPanel(JPanel newInnerPanel) {
-    	innerPanel = newInnerPanel;
+        innerPanel = newInnerPanel;
     }
 
     public JComponent doMakeContents() {
-    	JPanel outerPanel = new JPanel();
+        JPanel outerPanel = new JPanel();
 
-        JLabel serverLabel = McVGuiUtils.makeLabelRight("Catalog:");    	    	
+        JLabel serverLabel = McVGuiUtils.makeLabelRight("Catalog:");                
 
         //Get the list of catalogs but remove the old catalog.xml entry
         urlListHandler = getPreferenceList(PREF_TDSRADARSERVER);
@@ -884,13 +910,13 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         
         // productComboBox gets created a little too tall--set to same height as urlBox
         if (productComboBox!=null)
-        	McVGuiUtils.setComponentHeight(productComboBox, urlBox);
+            McVGuiUtils.setComponentHeight(productComboBox, urlBox);
                 
         JButton connectButton = McVGuiUtils.makeImageTextButton(ICON_CONNECT_SMALL, "Connect");
         McVGuiUtils.setComponentWidth(connectButton, Width.DOUBLE);
         connectButton.setActionCommand(GuiUtils.CMD_UPDATE);
         connectButton.addActionListener(this);
-            	
+                
         JLabel statusLabelLabel = McVGuiUtils.makeLabelRight("");
         
         statusLabel.setText("Status");
@@ -907,57 +933,57 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         
         McVGuiUtils.setComponentWidth(loadButton, Width.DOUBLE);
 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(outerPanel);
+        GroupLayout layout = new GroupLayout(outerPanel);
         outerPanel.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(layout.createSequentialGroup()
+            layout.createParallelGroup(LEADING)
+            .addGroup(TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(TRAILING)
+                    .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .add(helpButton)
-                        .add(GAP_RELATED)
-                        .add(refreshButton)
-                        .add(GAP_RELATED)
-                        .add(cancelButton)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(loadButton))
-                        .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
+                        .addComponent(helpButton)
+                        .addGap(GAP_RELATED)
+                        .addComponent(refreshButton)
+                        .addGap(GAP_RELATED)
+                        .addComponent(cancelButton)
+                        .addPreferredGap(RELATED)
+                        .addComponent(loadButton))
+                        .addGroup(LEADING, layout.createSequentialGroup()
                         .addContainerGap()
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(innerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(layout.createSequentialGroup()
-                                .add(serverLabel)
-                                .add(GAP_RELATED)
-                                .add(urlBox, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .add(GAP_UNRELATED)
-                                .add(connectButton))
-                            .add(layout.createSequentialGroup()
-                                .add(statusLabelLabel)
-                                .add(GAP_RELATED)
-                                .add(statusLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                        .addGroup(layout.createParallelGroup(LEADING)
+                            .addComponent(innerPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(serverLabel)
+                                .addGap(GAP_RELATED)
+                                .addComponent(urlBox, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(GAP_UNRELATED)
+                                .addComponent(connectButton))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(statusLabelLabel)
+                                .addGap(GAP_RELATED)
+                                .addComponent(statusLabel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-            	.addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(serverLabel)
-                    .add(urlBox)
-                    .add(connectButton))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(innerPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(statusLabelLabel)
-                    .add(statusLabel))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(loadButton)
-                    .add(cancelButton)
-                    .add(refreshButton)
-                    .add(helpButton))
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(serverLabel)
+                    .addComponent(urlBox)
+                    .addComponent(connectButton))
+                .addPreferredGap(UNRELATED)
+                .addComponent(innerPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(UNRELATED)
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(statusLabelLabel)
+                    .addComponent(statusLabel))
+                .addPreferredGap(UNRELATED)
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(loadButton)
+                    .addComponent(cancelButton)
+                    .addComponent(refreshButton)
+                    .addComponent(helpButton))
                 .addContainerGap())
         );
     

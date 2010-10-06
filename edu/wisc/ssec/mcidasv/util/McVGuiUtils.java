@@ -31,6 +31,11 @@
 package edu.wisc.ssec.mcidasv.util;
 
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
+import static javax.swing.GroupLayout.DEFAULT_SIZE;
+import static javax.swing.GroupLayout.PREFERRED_SIZE;
+import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -38,10 +43,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.Window;
 import java.awt.event.HierarchyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,6 +54,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.ParallelGroup;
+import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -63,7 +68,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ui.IdvComponentGroup;
@@ -73,6 +77,7 @@ import ucar.unidata.idv.ui.WindowInfo;
 import ucar.unidata.ui.ComponentHolder;
 import ucar.unidata.ui.MultiFrame;
 import ucar.unidata.util.GuiUtils;
+
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.ui.McvComponentGroup;
 import edu.wisc.ssec.mcidasv.ui.McvComponentHolder;
@@ -175,20 +180,20 @@ public class McVGuiUtils implements Constants {
 	    	setLabelPosition(label, Position.RIGHT);
     	}
     	
-    	org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
+    	GroupLayout layout = new GroupLayout(newPanel);
     	newPanel.setLayout(layout);
     	layout.setHorizontalGroup(
-    			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-    			.add(layout.createSequentialGroup()
-    					.add(label)
-    					.add(GAP_RELATED)
-    					.add(thing))
+    			layout.createParallelGroup(LEADING)
+    			.addGroup(layout.createSequentialGroup()
+    					.addComponent(label)
+    					.addGap(GAP_RELATED)
+    					.addComponent(thing))
     	);
     	layout.setVerticalGroup(
-    			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-    			.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-    					.add(label)
-    					.add(thing))
+    			layout.createParallelGroup(LEADING)
+    			.addGroup(layout.createParallelGroup(BASELINE)
+    					.addComponent(label)
+    					.addComponent(thing))
     	);
 
     	return newPanel;
@@ -220,20 +225,20 @@ public class McVGuiUtils implements Constants {
 	    	setLabelPosition(label, Position.RIGHT);
     	}
     	
-    	org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
+    	GroupLayout layout = new GroupLayout(newPanel);
     	newPanel.setLayout(layout);
     	layout.setHorizontalGroup(
-    			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-    			.add(layout.createSequentialGroup()
-    					.add(thing)
-    					.add(GAP_RELATED)
-    					.add(label))
+    			layout.createParallelGroup(LEADING)
+    			.addGroup(layout.createSequentialGroup()
+    					.addComponent(thing)
+    					.addGap(GAP_RELATED)
+    					.addComponent(label))
     	);
     	layout.setVerticalGroup(
-    			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-    			.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-    					.add(thing)
-    					.add(label))
+    			layout.createParallelGroup(LEADING)
+    			.addGroup(layout.createParallelGroup(BASELINE)
+    					.addComponent(thing)
+    					.addComponent(label))
     	);
 
     	return newPanel;
@@ -568,22 +573,22 @@ public class McVGuiUtils implements Constants {
     public static JPanel topCenterBottom(JComponent top, JComponent center, JComponent bottom) {
     	JPanel newPanel = new JPanel();
     	    	
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
+        GroupLayout layout = new GroupLayout(newPanel);
         newPanel.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(top, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .add(center, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .add(bottom, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            layout.createParallelGroup(LEADING)
+            .addComponent(top, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(center, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(bottom, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(top, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(center, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(bottom, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(top, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
+                .addPreferredGap(RELATED)
+                .addComponent(center, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(RELATED)
+                .addComponent(bottom, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE))
         );
 
     	return newPanel;
@@ -599,25 +604,25 @@ public class McVGuiUtils implements Constants {
     public static JPanel topBottom(JComponent top, JComponent bottom, Prefer which) {
     	JPanel newPanel = new JPanel();
 
-    	int topSize=org.jdesktop.layout.GroupLayout.PREFERRED_SIZE;
-    	int bottomSize=org.jdesktop.layout.GroupLayout.PREFERRED_SIZE;
+    	int topSize=PREFERRED_SIZE;
+    	int bottomSize=PREFERRED_SIZE;
     	
     	if (which == Prefer.TOP) topSize = Short.MAX_VALUE;
     	else if (which == Prefer.BOTTOM) topSize = Short.MAX_VALUE;
     		
-    	org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
+    	GroupLayout layout = new GroupLayout(newPanel);
     	newPanel.setLayout(layout);
     	layout.setHorizontalGroup(
-    			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-    			.add(top, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-    			.add(bottom, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+    			layout.createParallelGroup(LEADING)
+    			.addComponent(top, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+    			.addComponent(bottom, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
     	);
     	layout.setVerticalGroup(
-    			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-    			.add(layout.createSequentialGroup()
-    					.add(top, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, topSize)
-    					.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-    					.add(bottom, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, bottomSize))
+    			layout.createParallelGroup(LEADING)
+    			.addGroup(layout.createSequentialGroup()
+    					.addComponent(top, PREFERRED_SIZE, DEFAULT_SIZE, topSize)
+    					.addPreferredGap(RELATED)
+    					.addComponent(bottom, PREFERRED_SIZE, DEFAULT_SIZE, bottomSize))
     	);
 
     	return newPanel;
@@ -642,21 +647,21 @@ public class McVGuiUtils implements Constants {
     public static JPanel sideBySide(JComponent left, JComponent right, int gap) {
     	JPanel newPanel = new JPanel();
 
-    	org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
+    	GroupLayout layout = new GroupLayout(newPanel);
     	newPanel.setLayout(layout);
     	layout.setHorizontalGroup(
-    			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-    			.add(layout.createSequentialGroup()
-    					.add(left, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-    					.add(gap)
-    					.add(right, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+    			layout.createParallelGroup(LEADING)
+    			.addGroup(layout.createSequentialGroup()
+    					.addComponent(left, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+    					.addGap(gap)
+    					.addComponent(right, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
     	);
     	layout.setVerticalGroup(
-    			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-    			.add(layout.createSequentialGroup()
-    	                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-    	                		.add(left, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-    	                		.add(right, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+    			layout.createParallelGroup(LEADING)
+    			.addGroup(layout.createSequentialGroup()
+    	                .addGroup(layout.createParallelGroup(LEADING)
+    	                		.addComponent(left, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
+    	                		.addComponent(right, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)))
     	);
 
     	return newPanel;
@@ -668,27 +673,27 @@ public class McVGuiUtils implements Constants {
     public static JPanel horizontal(Component[] components) {
     	JPanel newPanel = new JPanel();
     	
-    	org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
+    	GroupLayout layout = new GroupLayout(newPanel);
     	newPanel.setLayout(layout);
     	
-    	org.jdesktop.layout.GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
+    	SequentialGroup hGroup = layout.createSequentialGroup();
     	for (int i=0; i<components.length; i++) {
-    		if (i>0) hGroup.add(GAP_RELATED);
-    		hGroup.add(components[i], org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE);
+    		if (i>0) hGroup.addGap(GAP_RELATED);
+    		hGroup.addComponent(components[i], DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE);
     	}
 
-    	org.jdesktop.layout.GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
-    	org.jdesktop.layout.GroupLayout.ParallelGroup vInner = layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING);
+    	SequentialGroup vGroup = layout.createSequentialGroup();
+    	ParallelGroup vInner = layout.createParallelGroup(LEADING);
     	for (int i=0; i<components.length; i++) {
-    		vInner.add(components[i], org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE);
+    		vInner.addComponent(components[i], PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE);
     	}
-    	vGroup.add(vInner);
+    	vGroup.addGroup(vInner);
 
     	layout.setHorizontalGroup(
-    			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(hGroup)
+    			layout.createParallelGroup(LEADING).addGroup(hGroup)
     	);
     	layout.setVerticalGroup(
-    			layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING).add(vGroup)
+    			layout.createParallelGroup(LEADING).addGroup(vGroup)
     	);
 
     	return newPanel;

@@ -30,60 +30,45 @@
 
 package edu.wisc.ssec.mcidasv.control;
 
+import java.awt.Container;
+import java.rmi.RemoteException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+
+import visad.Data;
+import visad.FlatField;
+import visad.FunctionType;
+import visad.Gridded3DSet;
+import visad.MathType;
+import visad.RealTuple;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.SampledSet;
+import visad.Text;
+import visad.TextType;
+import visad.Tuple;
+import visad.TupleType;
+import visad.UnionSet;
+import visad.VisADException;
+
 import ucar.unidata.data.DataChoice;
-import ucar.unidata.data.DataDataChoice;
 import ucar.unidata.data.DirectDataChoice;
-import ucar.unidata.data.DataSelection;
-import ucar.unidata.data.DataCategory;
-import ucar.unidata.data.GeoSelectionPanel;
 import ucar.unidata.data.GeoSelection;
-
-import ucar.unidata.idv.DisplayConventions;
+import ucar.unidata.data.GeoSelectionPanel;
 import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.control.DisplayControlImpl;
-import ucar.unidata.idv.DisplayControl;
-
+import ucar.unidata.util.ColorTable;
+import ucar.unidata.util.Range;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.DisplayableData;
-import ucar.visad.display.Displayable;
 import ucar.visad.display.LineDrawing;
 import ucar.visad.display.TextDisplayable;
-
-import visad.*;
-import visad.VisADException;
-import visad.RemoteVisADException;
-import visad.ReferenceException;
-import visad.QuickSort;
 
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
-
-import ucar.unidata.idv.ViewManager;
-import ucar.unidata.idv.ViewDescriptor;
-
-import ucar.unidata.util.ColorTable;
-import ucar.unidata.util.Range;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.GuiUtils;
-
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.event.*;
-                                                                                                                                             
-import javax.swing.*;
-import javax.swing.event.*;
-
-
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Enumeration;
-
-import java.awt.Color;
-import java.awt.Font;
-
-
-import java.rmi.RemoteException;
 
 
 

@@ -35,13 +35,9 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.io.File;
-
 import java.net.URL;
-
 import java.rmi.RemoteException;
-
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -51,25 +47,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
-import ucar.unidata.data.DataCategory;
-import ucar.unidata.data.DataChoice;
-import ucar.unidata.data.DataSelection;
-import ucar.unidata.data.DataSelectionComponent;
-import ucar.unidata.data.DataSourceDescriptor;
-import ucar.unidata.data.DirectDataChoice;
-import ucar.unidata.data.GeoLocationInfo;
-import ucar.unidata.data.GeoSelection;
-import ucar.unidata.geoloc.projection.LatLonProjection;
-import ucar.unidata.util.Misc;
-import ucar.unidata.view.geoloc.MapProjectionDisplay;
-import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
-
-import ucar.visad.ProjectionCoordinateSystem;
-import ucar.visad.display.DisplayMaster;
-import ucar.visad.display.LineDrawing;
-import ucar.visad.display.MapLines;
-import ucar.visad.display.RubberBandBox;
 
 import visad.CellImpl;
 import visad.Data;
@@ -83,6 +60,24 @@ import visad.UnionSet;
 import visad.VisADException;
 import visad.data.mcidas.BaseMapAdapter;
 import visad.georef.MapProjection;
+
+import ucar.unidata.data.DataCategory;
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataSelection;
+import ucar.unidata.data.DataSelectionComponent;
+import ucar.unidata.data.DataSourceDescriptor;
+import ucar.unidata.data.DirectDataChoice;
+import ucar.unidata.data.GeoLocationInfo;
+import ucar.unidata.data.GeoSelection;
+import ucar.unidata.geoloc.projection.LatLonProjection;
+import ucar.unidata.util.Misc;
+import ucar.unidata.view.geoloc.MapProjectionDisplay;
+import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
+import ucar.visad.ProjectionCoordinateSystem;
+import ucar.visad.display.DisplayMaster;
+import ucar.visad.display.LineDrawing;
+import ucar.visad.display.MapLines;
+import ucar.visad.display.RubberBandBox;
 
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.data.HydraDataSource;

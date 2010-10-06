@@ -30,6 +30,9 @@
 
 package edu.wisc.ssec.mcidasv.util;
 
+import static javax.swing.GroupLayout.DEFAULT_SIZE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -40,6 +43,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.swing.GroupLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -49,7 +53,6 @@ import javax.swing.SwingUtilities;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.util.CacheManager;
 import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.Misc;
 import ucar.unidata.util.Msg;
 
 // initial version taken verbatim from Unidata :(
@@ -118,15 +121,15 @@ public class MemoryMonitor extends JPanel implements Runnable {
         this.percentThreshold = percentThreshold;
         this.percentCancel = percentCancel;
 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
+        GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(label, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            layout.createParallelGroup(LEADING)
+            .addComponent(label, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(label, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            layout.createParallelGroup(LEADING)
+            .addComponent(label, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
 //        MouseListener ml = new MouseAdapter() {

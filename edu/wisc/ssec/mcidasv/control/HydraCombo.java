@@ -35,10 +35,8 @@ import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -53,35 +51,32 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
-//import org.python.core.PyJavaInstance;
 import org.python.core.PyObject;
 
-import ucar.unidata.data.DataChoice;
-import ucar.unidata.data.DataSource;
-import ucar.unidata.data.DirectDataChoice;
-import ucar.unidata.util.ColorTable;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Range;
-import ucar.unidata.idv.MapViewManager;
-import ucar.unidata.view.geoloc.MapProjectionDisplay;
-import ucar.visad.display.DisplayMaster;
 import visad.ConstantMap;
 import visad.Data;
 import visad.VisADException;
 import visad.georef.MapProjection;
+
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataSource;
+import ucar.unidata.data.DirectDataChoice;
+import ucar.unidata.idv.MapViewManager;
+import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.LogUtil;
+import ucar.unidata.view.geoloc.MapProjectionDisplay;
+import ucar.visad.display.DisplayMaster;
+
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.control.LinearCombo.Combination;
 import edu.wisc.ssec.mcidasv.control.LinearCombo.Selector;
-import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
+import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
-import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 import edu.wisc.ssec.mcidasv.jython.Console;
 import edu.wisc.ssec.mcidasv.jython.ConsoleCallback;
-import edu.wisc.ssec.mcidasv.jython.Runner;
 
 public class HydraCombo extends HydraControl {
 

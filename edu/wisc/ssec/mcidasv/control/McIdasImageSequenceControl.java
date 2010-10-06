@@ -74,6 +74,9 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import visad.VisADException;
+import visad.georef.MapProjection;
+
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataContext;
 import ucar.unidata.data.DataSource;
@@ -88,8 +91,7 @@ import ucar.unidata.ui.colortable.ColorTableManager;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
-import visad.VisADException;
-import visad.georef.MapProjection;
+
 import edu.wisc.ssec.mcidasv.data.FrameDirtyInfo;
 import edu.wisc.ssec.mcidasv.data.McIdasFrame;
 import edu.wisc.ssec.mcidasv.data.McIdasXDataSource;

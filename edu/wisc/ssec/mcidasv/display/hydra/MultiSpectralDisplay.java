@@ -36,28 +36,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.JComboBox;
-
-import edu.wisc.ssec.mcidasv.control.HydraCombo;
-import edu.wisc.ssec.mcidasv.control.HydraControl;
-import edu.wisc.ssec.mcidasv.control.LinearCombo;
-import edu.wisc.ssec.mcidasv.data.hydra.GrabLineRendererJ3D;
-import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
-import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
-import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
-import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
-
-import ucar.unidata.data.DirectDataChoice;
-import ucar.unidata.idv.ViewManager;
-import ucar.unidata.util.LogUtil;
-import ucar.visad.display.DisplayableData;
-import ucar.visad.display.XYDisplay;
 
 import visad.CellImpl;
 import visad.ConstantMap;
@@ -78,6 +63,21 @@ import visad.RealType;
 import visad.ScalarMap;
 import visad.VisADException;
 import visad.bom.RubberBandBoxRendererJ3D;
+
+import ucar.unidata.data.DirectDataChoice;
+import ucar.unidata.idv.ViewManager;
+import ucar.unidata.util.LogUtil;
+import ucar.visad.display.DisplayableData;
+import ucar.visad.display.XYDisplay;
+
+import edu.wisc.ssec.mcidasv.control.HydraCombo;
+import edu.wisc.ssec.mcidasv.control.HydraControl;
+import edu.wisc.ssec.mcidasv.control.LinearCombo;
+import edu.wisc.ssec.mcidasv.data.hydra.GrabLineRendererJ3D;
+import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
+import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
+import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
+import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
 
 public class MultiSpectralDisplay implements DisplayListener {
 

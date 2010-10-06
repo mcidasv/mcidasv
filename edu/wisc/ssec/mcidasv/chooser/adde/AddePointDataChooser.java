@@ -31,6 +31,12 @@
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
 
+import static javax.swing.GroupLayout.DEFAULT_SIZE;
+import static javax.swing.GroupLayout.PREFERRED_SIZE;
+import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
+
 import java.awt.IllegalComponentStateException;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -46,6 +52,7 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -55,6 +62,13 @@ import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 
 import org.w3c.dom.Element;
+
+import edu.wisc.ssec.mcidas.McIDASUtil;
+import edu.wisc.ssec.mcidas.adde.AddePointDataReader;
+import edu.wisc.ssec.mcidas.adde.DataSetInfo;
+
+import visad.DateTime;
+import visad.VisADException;
 
 import ucar.unidata.data.AddeUtil;
 import ucar.unidata.data.point.AddePointDataSource;
@@ -67,11 +81,7 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.visad.UtcDate;
-import visad.DateTime;
-import visad.VisADException;
-import edu.wisc.ssec.mcidas.McIDASUtil;
-import edu.wisc.ssec.mcidas.adde.AddePointDataReader;
-import edu.wisc.ssec.mcidas.adde.DataSetInfo;
+
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
@@ -83,7 +93,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * @version $Revision$ $Date$
  */
 public class AddePointDataChooser extends AddeChooser {
-	
+    
     /**
      * Property for the dataset name key.
      * @see #getDatasetName()
@@ -103,15 +113,15 @@ public class AddePointDataChooser extends AddeChooser {
     /** the relative time increment */
     private float relativeTimeIncrement = 1;
     
-	/** archive date */
-	protected String archiveDay = null;
+    /** archive date */
+    protected String archiveDay = null;
 
-	/** archive day button and label */
-	protected JLabel archiveDayLabel;
-	protected JButton archiveDayBtn;
+    /** archive day button and label */
+    protected JLabel archiveDayLabel;
+    protected JButton archiveDayBtn;
 
-	/** archive date formatter */
-	private SimpleDateFormat archiveDayFormatter;
+    /** archive date formatter */
+    private SimpleDateFormat archiveDayFormatter;
 
     /** station model manager */
     private StationModelManager stationModelManager;
@@ -135,7 +145,7 @@ public class AddePointDataChooser extends AddeChooser {
     public AddePointDataChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
                                 
-    	this.stationModelManager = getIdv().getStationModelManager();
+        this.stationModelManager = getIdv().getStationModelManager();
 
         relTimeIncLabel = new JLabel(" Interval:");
         relTimeIncBox = new JComboBox();
@@ -149,27 +159,27 @@ public class AddePointDataChooser extends AddeChooser {
             }
         });
         McVGuiUtils.setComponentWidth(relTimeIncBox, Width.ONEHALF);
-    	
+        
         descriptorsAllowPrefix = "";
         
-		archiveDayBtn = GuiUtils.makeImageButton(
-				"/auxdata/ui/icons/calendar_edit.png", this, "getArchiveDay", null,
-				true);
-		archiveDayBtn.setToolTipText("Select a day for archive datasets");
-		archiveDayLabel = new JLabel("Select day:");
-		archiveDayFormatter = new SimpleDateFormat(UtcDate.YMD_FORMAT);
+        archiveDayBtn = GuiUtils.makeImageButton(
+                "/auxdata/ui/icons/calendar_edit.png", this, "getArchiveDay", null,
+                true);
+        archiveDayBtn.setToolTipText("Select a day for archive datasets");
+        archiveDayLabel = new JLabel("Select day:");
+        archiveDayFormatter = new SimpleDateFormat(UtcDate.YMD_FORMAT);
     }
     
-	/**
-	 * Do server connection stuff... override this with type-specific methods
-	 */
-	protected void readFromServer() {
-		archiveDay = null;
-		if (archiveDayLabel != null) {
-			archiveDayLabel.setText("Select day:");
-		}
-		super.readFromServer();
-	}
+    /**
+     * Do server connection stuff... override this with type-specific methods
+     */
+    protected void readFromServer() {
+        archiveDay = null;
+        if (archiveDayLabel != null) {
+            archiveDayLabel.setText("Select day:");
+        }
+        super.readFromServer();
+    }
 
     /**
      *  Generate a list of image descriptors for the descriptor list.
@@ -183,16 +193,16 @@ public class AddePointDataChooser extends AddeChooser {
             
             // Only show descriptorsAllowPrefix if set
             for (Enumeration e = descriptorTable.keys(); e.hasMoreElements();) {
-            	Object key = e.nextElement();
+                Object key = e.nextElement();
                 String str = (String) descriptorTable.get(key);
                 if (!descriptorsAllowPrefix.equals("") && str.indexOf(descriptorsAllowPrefix) != 0)
-                	descriptorTable.remove(key);
+                    descriptorTable.remove(key);
             }
             
             String[]    names       = new String[descriptorTable.size()];
             Enumeration enumeration = descriptorTable.keys();
             for (int i = 0; enumeration.hasMoreElements(); i++) {
-            	Object thisElement = enumeration.nextElement();
+                Object thisElement = enumeration.nextElement();
                 names[i] = descriptorTable.get(thisElement).toString() + " - " + thisElement.toString();
             }
             Arrays.sort(names);
@@ -239,69 +249,69 @@ public class AddePointDataChooser extends AddeChooser {
         showNormalCursor();
     }
         
-	/**
-	 * Show the archive dialog. This method is not meant to be called but is
-	 * public by reason of implementation (or insanity).
-	 */
-	public void getArchiveDay() {
-		final JDialog dialog = GuiUtils.createDialog("Set Archive Day", true);
-		final DateTimePicker dtp = new DateTimePicker((Date) null, false);
-		if (archiveDay != null) {
-			if (archiveDayFormatter == null) {
-				archiveDayFormatter = new SimpleDateFormat(UtcDate.YMD_FORMAT);
-			}
-			Date d = null;
-			try {
-				d = archiveDayFormatter.parse(archiveDay);
-				dtp.setDate(d);
-			} catch (Exception e) {
-				logException("parsing archive day " + archiveDay, e);
-			}
-		}
+    /**
+     * Show the archive dialog. This method is not meant to be called but is
+     * public by reason of implementation (or insanity).
+     */
+    public void getArchiveDay() {
+        final JDialog dialog = GuiUtils.createDialog("Set Archive Day", true);
+        final DateTimePicker dtp = new DateTimePicker((Date) null, false);
+        if (archiveDay != null) {
+            if (archiveDayFormatter == null) {
+                archiveDayFormatter = new SimpleDateFormat(UtcDate.YMD_FORMAT);
+            }
+            Date d = null;
+            try {
+                d = archiveDayFormatter.parse(archiveDay);
+                dtp.setDate(d);
+            } catch (Exception e) {
+                logException("parsing archive day " + archiveDay, e);
+            }
+        }
 
-		ActionListener listener = new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-				String cmd = ae.getActionCommand();
-				if (cmd.equals(GuiUtils.CMD_REMOVE)) {
-					archiveDay = null;
-					archiveDayLabel.setText("Select day:");
-					setDoAbsoluteTimes(true);
-					descriptorChanged();
-				} else if (cmd.equals(GuiUtils.CMD_OK)) {
-					try {
-						DateTime dt = new DateTime(dtp.getDate());
-						String myDay = UtcDate.getYMD(dt);
-						// archiveDayLabel.setText(UtcDate.formatUtcDate(dt,
-						// "MMM dd, yyyy"));
-						archiveDayLabel.setText(myDay);
-					} catch (Exception e) {
-					}
-					// System.out.println("archiveDay = " + archiveDay);
-					setDoAbsoluteTimes(true);
-					descriptorChanged();
-				}
-				dialog.dispose();
-			}
-		};
+        ActionListener listener = new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                String cmd = ae.getActionCommand();
+                if (cmd.equals(GuiUtils.CMD_REMOVE)) {
+                    archiveDay = null;
+                    archiveDayLabel.setText("Select day:");
+                    setDoAbsoluteTimes(true);
+                    descriptorChanged();
+                } else if (cmd.equals(GuiUtils.CMD_OK)) {
+                    try {
+                        DateTime dt = new DateTime(dtp.getDate());
+                        String myDay = UtcDate.getYMD(dt);
+                        // archiveDayLabel.setText(UtcDate.formatUtcDate(dt,
+                        // "MMM dd, yyyy"));
+                        archiveDayLabel.setText(myDay);
+                    } catch (Exception e) {
+                    }
+                    // System.out.println("archiveDay = " + archiveDay);
+                    setDoAbsoluteTimes(true);
+                    descriptorChanged();
+                }
+                dialog.dispose();
+            }
+        };
 
-		JPanel buttons = GuiUtils.makeButtons(listener, new String[] {
-				GuiUtils.CMD_OK, GuiUtils.CMD_REMOVE, GuiUtils.CMD_CANCEL });
+        JPanel buttons = GuiUtils.makeButtons(listener, new String[] {
+                GuiUtils.CMD_OK, GuiUtils.CMD_REMOVE, GuiUtils.CMD_CANCEL });
 
-		JComponent contents = GuiUtils.topCenterBottom(GuiUtils.inset(GuiUtils
-				.lLabel("Please select a day for this dataset:"), 10), GuiUtils
-				.inset(dtp, 10), buttons);
-		Point p = new Point(200, 200);
-		if (archiveDayBtn != null) {
-			try {
-				p = archiveDayBtn.getLocationOnScreen();
-			} catch (IllegalComponentStateException ice) {
-			}
-		}
-		dialog.setLocation(p);
-		dialog.getContentPane().add(contents);
-		dialog.pack();
-		dialog.setVisible(true);
-	}
+        JComponent contents = GuiUtils.topCenterBottom(GuiUtils.inset(GuiUtils
+                .lLabel("Please select a day for this dataset:"), 10), GuiUtils
+                .inset(dtp, 10), buttons);
+        Point p = new Point(200, 200);
+        if (archiveDayBtn != null) {
+            try {
+                p = archiveDayBtn.getLocationOnScreen();
+            } catch (IllegalComponentStateException ice) {
+            }
+        }
+        dialog.setLocation(p);
+        dialog.getContentPane().add(contents);
+        dialog.pack();
+        dialog.setVisible(true);
+    }
 
     /**
      * Get the selected station model.
@@ -309,14 +319,14 @@ public class AddePointDataChooser extends AddeChooser {
      * @return StationModel to use: defined by defaultModels list in ctor
      */
     public StationModel getSelectedStationModel() {
-    	StationModel returnModel = null;
-    	if (isUpperAir())
-    		returnModel = this.stationModelManager.getStationModel("Observations>Upper Air");
-    	else if (isSynoptic())
-    		returnModel = this.stationModelManager.getStationModel("Observations>SYNOP");
-    	else
-    		returnModel = this.stationModelManager.getStationModel("Observations>METAR");
-    	return returnModel;
+        StationModel returnModel = null;
+        if (isUpperAir())
+            returnModel = this.stationModelManager.getStationModel("Observations>Upper Air");
+        else if (isSynoptic())
+            returnModel = this.stationModelManager.getStationModel("Observations>SYNOP");
+        else
+            returnModel = this.stationModelManager.getStationModel("Observations>METAR");
+        return returnModel;
     }
     
     /**
@@ -324,11 +334,11 @@ public class AddePointDataChooser extends AddeChooser {
      * @return superclass component with extra stuff
      */
     protected JPanel makeTimesPanel() {
-    	JComponent extra1 = getExtraTimeComponentRelative();
-    	GuiUtils.enableTree(extra1, false);
-    	JComponent extra2 = getExtraTimeComponentAbsolute();
-    	JPanel timesPanel = super.makeTimesPanel(extra1, extra2);
-    	return timesPanel;
+        JComponent extra1 = getExtraTimeComponentRelative();
+        GuiUtils.enableTree(extra1, false);
+        JComponent extra2 = getExtraTimeComponentAbsolute();
+        JPanel timesPanel = super.makeTimesPanel(extra1, extra2);
+        return timesPanel;
     }
     
     /**
@@ -336,14 +346,14 @@ public class AddePointDataChooser extends AddeChooser {
      * Designed to be put into a GroupLayout
      */
     protected JComponent getExtraTimeComponentRelative() {
-    	TwoFacedObject[] intervals = { 
-    			new TwoFacedObject("30 minute", .5f),
-    			new TwoFacedObject("Hourly", 1f),
-    			new TwoFacedObject("Three hourly", 3f),
-    			new TwoFacedObject("Six hourly", 6f),
-    			new TwoFacedObject("12 hourly", 12f),
-    			new TwoFacedObject("24 hourly", 24f)
-    	};
+        TwoFacedObject[] intervals = { 
+                new TwoFacedObject("30 minute", .5f),
+                new TwoFacedObject("Hourly", 1f),
+                new TwoFacedObject("Three hourly", 3f),
+                new TwoFacedObject("Six hourly", 6f),
+                new TwoFacedObject("12 hourly", 12f),
+                new TwoFacedObject("24 hourly", 24f)
+        };
 
         GuiUtils.setListData(relTimeIncBox, intervals);
         if (relTimeIncBox.getItemCount()>=2) relTimeIncBox.setSelectedIndex(1);
@@ -351,15 +361,15 @@ public class AddePointDataChooser extends AddeChooser {
         return McVGuiUtils.makeLabeledComponent(relTimeIncLabel, relTimeIncBox, McVGuiUtils.Position.LEFT);
     }
     
-	/**
-	 * Get the time popup widget
-	 * 
-	 * @return a widget for selecing the day
-	 */
-	protected JComponent getExtraTimeComponentAbsolute() {
-		return null;
-//		return McVGuiUtils.makeLabeledComponent(archiveDayLabel, archiveDayBtn);
-	}
+    /**
+     * Get the time popup widget
+     * 
+     * @return a widget for selecing the day
+     */
+    protected JComponent getExtraTimeComponentAbsolute() {
+        return null;
+//      return McVGuiUtils.makeLabeledComponent(archiveDayLabel, archiveDayBtn);
+    }
         
     /**
      * Get the value from the relative increment box
@@ -384,13 +394,13 @@ public class AddePointDataChooser extends AddeChooser {
      * @return the selected string or a default
      */
     public String getRelBoxString() {
-    	String value = "";
-    	if (relTimeIncBox != null) {
+        String value = "";
+        if (relTimeIncBox != null) {
             Object o = relTimeIncBox.getSelectedItem();
             if (o != null) {
                 value = TwoFacedObject.getIdString(o);
             }
-    	}
+        }
         return value;
     }
 
@@ -417,21 +427,21 @@ public class AddePointDataChooser extends AddeChooser {
      * @param buf The buffer to append to
      */
     protected void appendRequestSelectClause(StringBuffer buf) {
-    	StringBuffer selectValue = new StringBuffer();
-    	selectValue.append("'");
-    	selectValue.append(getDayTimeSelectString());
-    	//TODO: why is SFCHOURLY explicit here?  better way to do it?
-    	if (getDescriptor().equalsIgnoreCase("SFCHOURLY")) {
-    		selectValue.append(";type 0");
-    	}
-    	selectValue.append(";");
-    	if (isUpperAir()){
-    		selectValue.append(AddeUtil.LEVEL);
-    		selectValue.append(";");
-    	}
-    	selectValue.append(AddeUtil.LATLON_BOX);
-    	selectValue.append("'");
-    	appendKeyValue(buf, PROP_SELECT, selectValue.toString());
+        StringBuffer selectValue = new StringBuffer();
+        selectValue.append("'");
+        selectValue.append(getDayTimeSelectString());
+        //TODO: why is SFCHOURLY explicit here?  better way to do it?
+        if (getDescriptor().equalsIgnoreCase("SFCHOURLY")) {
+            selectValue.append(";type 0");
+        }
+        selectValue.append(";");
+        if (isUpperAir()){
+            selectValue.append(AddeUtil.LEVEL);
+            selectValue.append(";");
+        }
+        selectValue.append(AddeUtil.LATLON_BOX);
+        selectValue.append("'");
+        appendKeyValue(buf, PROP_SELECT, selectValue.toString());
     }
     
     /**
@@ -490,24 +500,24 @@ public class AddePointDataChooser extends AddeChooser {
      * Return true if selected descriptor is for SYNOPTIC data
      */
     protected boolean isSynoptic() {
-    	if (getDescriptor().indexOf("SYNOP") == 0) return true;
-    	return false;
+        if (getDescriptor().indexOf("SYNOP") == 0) return true;
+        return false;
     }
     
     /**
      * Return true if selected descriptor is for upper air
      */
     protected boolean isUpperAir() {
-    	if (getDescriptor().indexOf("UPPER") == 0) return true;
-    	return false;
+        if (getDescriptor().indexOf("UPPER") == 0) return true;
+        return false;
     }
     
     /**
      * Return true if selected descriptor is for profiler
      */
     protected boolean isProfiler() {
-    	if (getDescriptor().indexOf("PROF") == 0) return true;
-    	return false;
+        if (getDescriptor().indexOf("PROF") == 0) return true;
+        return false;
     }
         
     /**
@@ -538,12 +548,12 @@ public class AddePointDataChooser extends AddeChooser {
         appendKeyValue(buf, PROP_DESCR, getDescriptor());
         if (!isUpperAir() && !tryWithoutSampling) {
 //            appendKeyValue(buf, PROP_POS, "0");
-        	appendKeyValue(buf, PROP_POS, "ALL");
-        	appendKeyValue(buf, PROP_SELECT, "'DAY "+getJulianDay()+";LAT 38 42;LON 70 75'");
+            appendKeyValue(buf, PROP_POS, "ALL");
+            appendKeyValue(buf, PROP_SELECT, "'DAY "+getJulianDay()+";LAT 38 42;LON 70 75'");
         }
         else {
-        	appendKeyValue(buf, PROP_SELECT, "'DAY "+getJulianDay()+"'");
-        	appendKeyValue(buf, PROP_POS, "ALL");
+            appendKeyValue(buf, PROP_SELECT, "'DAY "+getJulianDay()+"'");
+            appendKeyValue(buf, PROP_POS, "ALL");
         }
         if (getDoAbsoluteTimes()) {
             appendKeyValue(buf, PROP_NUM, "ALL");
@@ -604,13 +614,13 @@ public class AddePointDataChooser extends AddeChooser {
                 updateStatus();
                 showWaitCursor();
                 try {
-                	gotObs = false;
-                	tryWithoutSampling = false;
+                    gotObs = false;
+                    tryWithoutSampling = false;
                     readTimesInner();
                     // Try again, this time not sampling by LAT/LON
                     if (!gotObs) {
-                    	tryWithoutSampling = true;
-                    	readTimesInner();
+                        tryWithoutSampling = true;
+                        readTimesInner();
                     }
                 } catch (Exception e) {
                     handleConnectionError(e);
@@ -661,17 +671,17 @@ public class AddePointDataChooser extends AddeChooser {
                 //      "found " + uniqueTimes.size() + " unique times");
                 if (getDoAbsoluteTimes()) {
                     if ( !uniqueTimes.isEmpty()) {
-                    	setAbsoluteTimes(new ArrayList(uniqueTimes));
-                    	getTimesList().setSelectionMode(
-                    			ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+                        setAbsoluteTimes(new ArrayList(uniqueTimes));
+                        getTimesList().setSelectionMode(
+                                ListSelectionModel.SINGLE_INTERVAL_SELECTION);
                     }
 
                     //   Select the last n hours 
                     int selectedIndex = getAbsoluteTimes().size() - 1;
                     int firstIndex = Math.max(0, selectedIndex
-                    		- getDefaultRelativeTimeIndex());
+                            - getDefaultRelativeTimeIndex());
                     if (selectedIndex >= 0)
-                    	setSelectedAbsoluteTime(selectedIndex, firstIndex);
+                        setSelectedAbsoluteTime(selectedIndex, firstIndex);
                 }
                 if (numObs>0) gotObs=true;
             }
@@ -695,7 +705,7 @@ public class AddePointDataChooser extends AddeChooser {
      * @param excp The exception
      */
     protected void handleConnectionError(Exception e) {
-    	retry = false;
+        retry = false;
         super.handleConnectionError(e);
     }
 
@@ -731,15 +741,15 @@ public class AddePointDataChooser extends AddeChooser {
             }
 
             if (archiveDay!=null) {
-            	System.out.println("archiveDay: " + archiveDay);
-				try {
-					Date d = archiveDayFormatter.parse(archiveDay);
-					DateTime dt = new DateTime(d);
-					System.out.println("parsed to: " + dt.toString());
-					buf.append("day " + UtcDate.getIYD(dt) + ";");
-				} catch (Exception e) {
-					System.out.println("archiveDay parse error");
-				}
+                System.out.println("archiveDay: " + archiveDay);
+                try {
+                    Date d = archiveDayFormatter.parse(archiveDay);
+                    DateTime dt = new DateTime(d);
+                    System.out.println("parsed to: " + dt.toString());
+                    buf.append("day " + UtcDate.getIYD(dt) + ";");
+                } catch (Exception e) {
+                    System.out.println("archiveDay parse error");
+                }
             }
             else { System.out.println("archiveDay is null!"); }
             
@@ -837,13 +847,13 @@ public class AddePointDataChooser extends AddeChooser {
      * @return The gui
      */   
     public JComponent doMakeContents() {
-    	JPanel myPanel = new JPanel();
-    	
-    	McVGuiUtils.setComponentWidth(descriptorComboBox, Width.DOUBLEDOUBLE);
-    	        
+        JPanel myPanel = new JPanel();
+        
+        McVGuiUtils.setComponentWidth(descriptorComboBox, Width.DOUBLEDOUBLE);
+                
         JLabel stationLabel = McVGuiUtils.makeLabelRight("Station:");
         addServerComp(stationLabel);
-    	
+        
         JLabel timesLabel = McVGuiUtils.makeLabelRight("Times:");
         addDescComp(timesLabel);
         
@@ -851,31 +861,31 @@ public class AddePointDataChooser extends AddeChooser {
         timesPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         addDescComp(timesPanel);
                 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
+        GroupLayout layout = new GroupLayout(myPanel);
         myPanel.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(layout.createSequentialGroup()
-                        .add(descriptorLabel)
-                        .add(GAP_RELATED)
-                        .add(descriptorComboBox))
-                    .add(layout.createSequentialGroup()
-                        .add(timesLabel)
-                        .add(GAP_RELATED)
-                        .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(descriptorLabel)
+                        .addGap(GAP_RELATED)
+                        .addComponent(descriptorComboBox))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(timesLabel)
+                        .addGap(GAP_RELATED)
+                        .addComponent(timesPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(descriptorLabel)
-                    .add(descriptorComboBox))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(timesLabel)
-                    .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(descriptorLabel)
+                    .addComponent(descriptorComboBox))
+                .addPreferredGap(RELATED)
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addComponent(timesLabel)
+                    .addComponent(timesPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         
         setInnerPanel(myPanel);
@@ -883,10 +893,10 @@ public class AddePointDataChooser extends AddeChooser {
     }
 
     public JComponent doMakeContents(boolean doesOverride) {
-    	if (doesOverride)
-    		return super.doMakeContents();
-    	else
-    		return doMakeContents();
+        if (doesOverride)
+            return super.doMakeContents();
+        else
+            return doMakeContents();
     }
     
 }

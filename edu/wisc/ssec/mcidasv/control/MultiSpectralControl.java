@@ -75,6 +75,13 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import visad.DataReference;
+import visad.DataReferenceImpl;
+import visad.FlatField;
+import visad.RealTuple;
+import visad.VisADException;
+import visad.georef.MapProjection;
+
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.idv.DisplayControl;
@@ -87,12 +94,7 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Range;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.DisplayableData;
-import visad.DataReference;
-import visad.DataReferenceImpl;
-import visad.FlatField;
-import visad.RealTuple;
-import visad.VisADException;
-import visad.georef.MapProjection;
+
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;

@@ -1,79 +1,36 @@
 package edu.wisc.ssec.mcidasv.control;
 
-import ucar.unidata.data.DataChoice;
-import ucar.unidata.data.DataDataChoice;
-import ucar.unidata.data.DirectDataChoice;
-import ucar.unidata.data.DataSelection;
-import ucar.unidata.data.DataCategory;
-import ucar.unidata.data.grid.GridUtil;
-
-import ucar.unidata.idv.DisplayConventions;
-import ucar.unidata.idv.IntegratedDataViewer;
-import ucar.unidata.idv.control.DisplayControlImpl;
-import ucar.unidata.idv.DisplayControl;
-
-
-import ucar.visad.display.DisplayMaster;
-import ucar.visad.display.DisplayableData;
-import ucar.visad.display.Displayable;
-
-//import ucar.visad.display.ImageRGBDisplayable;
-import edu.wisc.ssec.mcidasv.data.hydra.ImageRGBDisplayable;
-import visad.georef.EarthLocation;
-import visad.georef.EarthLocationTuple;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import ucar.unidata.util.StringUtil;
-
-
-
-import visad.*;
-import visad.BaseColorControl;
-import visad.VisADException;
-import visad.RemoteVisADException;
-import visad.ScalarMapListener;
-import visad.ScalarMapControlEvent;
-import visad.ScalarMapEvent;
-import visad.ReferenceException;
-import visad.georef.MapProjection;
-
-
-import ucar.unidata.idv.ViewManager;
-import ucar.unidata.idv.ViewDescriptor;
-
-import ucar.unidata.util.ColorTable;
-import ucar.unidata.util.Range;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.GuiUtils;
-
-import ucar.unidata.util.LogUtil;
-
-import java.awt.Component;
+import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
-import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.awt.event.*;
-import java.awt.geom.Rectangle2D;
-
-
-import javax.swing.*;
-import javax.swing.event.*;
-
-
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-
-import java.awt.Color;
-import java.awt.Font;
-import ucar.unidata.data.grid.GridDataInstance;
-import ucar.unidata.data.DataInstance;
-
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
+import java.util.Iterator;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import visad.BaseColorControl;
+import visad.FieldImpl;
+import visad.ScalarMap;
+import visad.ScalarMapControlEvent;
+import visad.ScalarMapEvent;
+import visad.ScalarMapListener;
+import visad.VisADException;
+
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataSelection;
+import ucar.unidata.data.grid.GridDataInstance;
+import ucar.unidata.idv.control.DisplayControlImpl;
+import ucar.unidata.util.ColorTable;
+import ucar.unidata.util.LogUtil;
+import ucar.visad.display.DisplayMaster;
+
+import edu.wisc.ssec.mcidasv.data.hydra.ImageRGBDisplayable;
 
 //import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 

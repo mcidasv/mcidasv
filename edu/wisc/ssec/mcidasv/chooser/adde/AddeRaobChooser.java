@@ -29,6 +29,12 @@
  */
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
+import static javax.swing.GroupLayout.DEFAULT_SIZE;
+import static javax.swing.GroupLayout.PREFERRED_SIZE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+import static javax.swing.GroupLayout.Alignment.TRAILING;
+import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
+
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -48,6 +54,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -67,6 +74,12 @@ import javax.swing.event.ListSelectionListener;
 
 import org.w3c.dom.Element;
 
+import edu.wisc.ssec.mcidas.McIDASUtil;
+import edu.wisc.ssec.mcidas.adde.AddePointDataReader;
+import edu.wisc.ssec.mcidas.adde.DataSetInfo;
+
+import visad.DateTime;
+
 import ucar.unidata.data.sounding.RaobDataSet;
 import ucar.unidata.data.sounding.SoundingOb;
 import ucar.unidata.data.sounding.SoundingStation;
@@ -78,10 +91,7 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.view.CompositeRenderer;
 import ucar.unidata.view.station.StationLocationMap;
-import visad.DateTime;
-import edu.wisc.ssec.mcidas.McIDASUtil;
-import edu.wisc.ssec.mcidas.adde.AddePointDataReader;
-import edu.wisc.ssec.mcidas.adde.DataSetInfo;
+
 import edu.wisc.ssec.mcidasv.data.adde.AddeSoundingAdapter;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
@@ -93,15 +103,15 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * that does most of the work
  *
  * @author IDV development team
- * @version $Revision$Date: 2010/08/09 21:23:59 $
+ * @version $Revision$Date: 2010/08/26 17:24:18 $
  */
 
 
 public class AddeRaobChooser extends AddePointDataChooser {
-	
+    
     /** Property for the data type. */
     public static String DATA_TYPE = "RAOB";
-	
+    
     /** Significant level objects corresponding to mandatory level objects */
     private Hashtable descriptorTable2 = new Hashtable();
     private JComboBox descriptorComboBox2 = new JComboBox();
@@ -171,9 +181,9 @@ public class AddeRaobChooser extends AddePointDataChooser {
         
         showAll.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-            	if (getState() == STATE_CONNECTED) {
-            		doConnect();
-            	}
+                if (getState() == STATE_CONNECTED) {
+                    doConnect();
+                }
             }
         });
         
@@ -181,32 +191,32 @@ public class AddeRaobChooser extends AddePointDataChooser {
         satelliteTimeComboBox.setEditable(true);
         satelliteTimeComboBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-            	if (e.getStateChange()==e.DESELECTED) return;
-            	satelliteTime = satelliteTimeComboBox.getSelectedItem().toString();
-    	        Misc.run(new Runnable() {
-    	            public void run() {
-    	            	setAvailableStations(true);
-    	            }
-    	        });
+                if (e.getStateChange()==e.DESELECTED) return;
+                satelliteTime = satelliteTimeComboBox.getSelectedItem().toString();
+                Misc.run(new Runnable() {
+                    public void run() {
+                        setAvailableStations(true);
+                    }
+                });
             }
         });
 
         satelliteTimeButton = McVGuiUtils.makeImageButton(ICON_UPDATE, "Request list of available times from server");
         satelliteTimeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	sampleTimes();
+                sampleTimes();
             }
         });
 
         satellitePixelTextField = new JTextField(satellitePixel);
         satellitePixelTextField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	satellitePixel = satellitePixelTextField.getText().replace('-', ' ');
-    	        Misc.run(new Runnable() {
-    	            public void run() {
-    	            	setAvailableStations(true);
-    	            }
-    	        });
+                satellitePixel = satellitePixelTextField.getText().replace('-', ' ');
+                Misc.run(new Runnable() {
+                    public void run() {
+                        setAvailableStations(true);
+                    }
+                });
             }
         });
     }
@@ -244,7 +254,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
      * @return mandatory dataset name
      */
     private String getMandatoryDataset() {
-    	if (getDescriptor() == null) return null;
+        if (getDescriptor() == null) return null;
         return getGroup() + "/" + getDescriptor();
     }
 
@@ -254,7 +264,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
      * @return sig level dataset name
      */
     private String getSigLevelDataset() {
-    	if (getDescriptor2() == null) return getMandatoryDataset();
+        if (getDescriptor2() == null) return getMandatoryDataset();
         return getGroup() + "/" + getDescriptor2();
     }
     
@@ -282,10 +292,10 @@ public class AddeRaobChooser extends AddePointDataChooser {
     protected void resetDescriptorBox() {
         ignoreDescriptorChange = true;
         descriptorComboBox.setSelectedItem(LABEL_SELECT);
-    	if (descriptorComboBox2 != null) {
-    		descriptorComboBox2.setSelectedItem(LABEL_SELECT2);
-    		descriptorComboBox2.setEnabled(false);
-    	}
+        if (descriptorComboBox2 != null) {
+            descriptorComboBox2.setSelectedItem(LABEL_SELECT2);
+            descriptorComboBox2.setEnabled(false);
+        }
         ignoreDescriptorChange = false;
     }
     
@@ -331,9 +341,9 @@ public class AddeRaobChooser extends AddePointDataChooser {
             return (String)descriptorTable2.get(selection);
         }
         else {
-	        String[] toks = selection.split(nameSeparator);
-	        String key = toks[1].trim();
-	        return (String)descriptorTable2.get(key);
+            String[] toks = selection.split(nameSeparator);
+            String key = toks[1].trim();
+            return (String)descriptorTable2.get(key);
         }
     }
 
@@ -352,7 +362,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
      * @return Do we have times
      */
     public boolean timesOk() {
-    	return haveTimeSelected();
+        return haveTimeSelected();
     }
 
     /**
@@ -361,10 +371,10 @@ public class AddeRaobChooser extends AddePointDataChooser {
      * @return Any times selected.
      */
     protected boolean haveTimeSelected() {
-    	if (selectedObs!=null) {
-	    	if (selectedObs.size() > 0) return true;
-    	}
-    	return false;
+        if (selectedObs!=null) {
+            if (selectedObs.size() > 0) return true;
+        }
+        return false;
     }
     
     /**
@@ -378,100 +388,100 @@ public class AddeRaobChooser extends AddePointDataChooser {
      * Starts in a new thread and handles UI updating
      */
     private void sampleTimes() {
-    	readSatelliteTask = startTask();
-    	enableWidgets();
-    	Misc.run(new Runnable() {
-    		public void run() {
-    			sampleTimesInner();
-    			if(stopTaskAndIsOk(readSatelliteTask)) {
-    				readSatelliteTask = null;
-        	        GuiUtils.setListData(satelliteTimeComboBox, satelliteTimes);
-    				revalidate();
-    			} else {
-    				//User pressed cancel
-    				setState(STATE_UNCONNECTED);
-    			}
-    		}
-    	});
-    	updateStatus();
+        readSatelliteTask = startTask();
+        enableWidgets();
+        Misc.run(new Runnable() {
+            public void run() {
+                sampleTimesInner();
+                if(stopTaskAndIsOk(readSatelliteTask)) {
+                    readSatelliteTask = null;
+                    GuiUtils.setListData(satelliteTimeComboBox, satelliteTimes);
+                    revalidate();
+                } else {
+                    //User pressed cancel
+                    setState(STATE_UNCONNECTED);
+                }
+            }
+        });
+        updateStatus();
     }
     
     /**
      * Different way of reading times... for satellite soundings, do the following:
      * PTLIST GROUP/DESCRIPTOR.Z SEL='ROW X; COL Y' PAR=TIME
-     * 	 where Z starts at 0 (expect an error), then goes to 1 and increases monotonically in outer loop until error
+     *   where Z starts at 0 (expect an error), then goes to 1 and increases monotonically in outer loop until error
      *     and X starts at 1 and increases monotonically in middle loop until error
      *       and Y starts at 1 and increases by 25000 or so in inner loop until error
      * This samples times across the dataset
      */
     private void sampleTimesInner() {
-    	if (getDescriptor()==null) return;
-    	showWaitCursor();
-    	int posMax = 9999;
-    	int rowMax = 9999;
-    	int colMax = 999999;
-    	int colSkip = 24000;
-    	int consecutiveFailures = 0;
+        if (getDescriptor()==null) return;
+        showWaitCursor();
+        int posMax = 9999;
+        int rowMax = 9999;
+        int colMax = 999999;
+        int colSkip = 24000;
+        int consecutiveFailures = 0;
         Map<String, String> acctInfo = getAccountingInfo();
         String user = acctInfo.get("user");
         String proj = acctInfo.get("proj");
         String appendUserProj = "";
-    	if (!(user.equals("") || proj.equals("")))
-    		appendUserProj += "&user=" + user + "&proj=" + proj;
-    	satelliteTimes = new ArrayList();
+        if (!(user.equals("") || proj.equals("")))
+            appendUserProj += "&user=" + user + "&proj=" + proj;
+        satelliteTimes = new ArrayList();
         for (int pos = 0; pos < posMax; pos++) {
-        	for (int row=1; row<rowMax; row++) {
-        		for (int col=1; col<colMax; col+=colSkip) {
-        			
-        	    	String[] paramString = new String[] {
-        	        		"group", getGroup(), "descr", getDescriptor(), "param", "DAY TIME", "num", "1",
-        	        		"pos", Integer.toString(pos),
-        	        		"select", "'ROW " + row + "; COL " + col + "'"
-        	        	};
-        	            String request = Misc.makeUrl("adde", getServer(), "/point", paramString);
-        	            request += appendUserProj;
-        	            try {
-        	    	        AddePointDataReader dataReader = new AddePointDataReader(request);
-        	    	        int[][] data = dataReader.getData();
-        	    	        if (data[0].length == 0) throw new Exception();
-        	    	        for (int i = 0; i < data[0].length; i++) {
-        	    	        	int day = data[0][i];
-        	    	        	int time = data[1][i];
-        	                    DateTime dt = new DateTime(McIDASUtil.mcDayTimeToSecs(day, time));
-        	    	        	String timeString = dt.timeString().substring(0,5);
-        	    	        	if (satelliteTimes.indexOf(timeString) < 0) {
-        	    	        		satelliteTimes.add(timeString);
-        	    	        	}        	    	        	
-        	    	        }
-            	            // Reset consecutive failure count when you get good data
-            	            consecutiveFailures=0;
-        	            }
-        	            catch (Exception e) {
-        	            	        	            	        	
-        	            	// We are at the beginning of a position
-        	            	// Log a failure and increment the position
-        	            	if (col==1 && row==1) {
-    	            			row=rowMax;
-            	            	consecutiveFailures++;
-        	            		// If we have failed a few times in a row, bail completely
-        	            		if (consecutiveFailures > 2) {
-        	            			pos=posMax;
-        	            		}
-        	            	}
-        	            	
-        	            	// If we failed at the first column, increment the position
-        	            	if (col==1) row=rowMax;
+            for (int row=1; row<rowMax; row++) {
+                for (int col=1; col<colMax; col+=colSkip) {
+                    
+                    String[] paramString = new String[] {
+                            "group", getGroup(), "descr", getDescriptor(), "param", "DAY TIME", "num", "1",
+                            "pos", Integer.toString(pos),
+                            "select", "'ROW " + row + "; COL " + col + "'"
+                        };
+                        String request = Misc.makeUrl("adde", getServer(), "/point", paramString);
+                        request += appendUserProj;
+                        try {
+                            AddePointDataReader dataReader = new AddePointDataReader(request);
+                            int[][] data = dataReader.getData();
+                            if (data[0].length == 0) throw new Exception();
+                            for (int i = 0; i < data[0].length; i++) {
+                                int day = data[0][i];
+                                int time = data[1][i];
+                                DateTime dt = new DateTime(McIDASUtil.mcDayTimeToSecs(day, time));
+                                String timeString = dt.timeString().substring(0,5);
+                                if (satelliteTimes.indexOf(timeString) < 0) {
+                                    satelliteTimes.add(timeString);
+                                }                               
+                            }
+                            // Reset consecutive failure count when you get good data
+                            consecutiveFailures=0;
+                        }
+                        catch (Exception e) {
+                                                                    
+                            // We are at the beginning of a position
+                            // Log a failure and increment the position
+                            if (col==1 && row==1) {
+                                row=rowMax;
+                                consecutiveFailures++;
+                                // If we have failed a few times in a row, bail completely
+                                if (consecutiveFailures > 2) {
+                                    pos=posMax;
+                                }
+                            }
+                            
+                            // If we failed at the first column, increment the position
+                            if (col==1) row=rowMax;
 
-        	            	// We have an exception, increment the row
-        	            	col = colMax;
-        	            	
-        	            }
-        		}
-        	}
+                            // We have an exception, increment the row
+                            col = colMax;
+                            
+                        }
+                }
+            }
         }
         
         Collections.sort(satelliteTimes);
-    	showNormalCursor();
+        showNormalCursor();
     }
         
     /**
@@ -486,58 +496,58 @@ public class AddeRaobChooser extends AddePointDataChooser {
             descriptorTable2 = new Hashtable();
             
             if (!showAll.isSelected()) {
-	            // Filter out anything not Upper Air Mandatory or Significant
-	            for (Enumeration enumeration = descriptorTable.keys(); enumeration.hasMoreElements();) {
-	            	Object key = enumeration.nextElement();
-	            	String keyString = key.toString();
-	            	String descriptorString = descriptorTable.get(key).toString();
-	            	if (keyString.toUpperCase().indexOf("MAND") >= 0 || descriptorString.indexOf("MAND") >= 0) {
-	            		continue;
-	            	}
-	            	if (keyString.toUpperCase().indexOf("SIG") >= 0 || descriptorString.indexOf("SIG") >= 0) {
-	            		descriptorTable2.put(key, descriptorTable.get(key));
-	                    descriptorTable.remove(key);
-	            		continue;
-	            	}
-	            	if (keyString.toUpperCase().indexOf("UPPER AIR") >= 0 ||
-	            			descriptorString.indexOf("UPPER") >= 0 ||
-	            			descriptorString.indexOf("UPPR") >= 0) {
-	            		descriptorTable2.put(key, descriptorTable.get(key));
-	            		continue;
-	            	}
-	            	if (keyString.toUpperCase().indexOf("SOUNDER") >= 0 ||
-	            			descriptorString.indexOf("SND") >= 0 ||
-	            			descriptorString.indexOf("SNDR") >= 0) {
-	            		descriptorTable2.put(key, descriptorTable.get(key));
-	            		continue;
-	            	}
-	            	if (keyString.toUpperCase().indexOf("GRET") >= 0 || descriptorString.indexOf("GRET") >= 0) {
-	            		descriptorTable2.put(key, descriptorTable.get(key));
-	            		continue;
-	            	}
-	            	if (keyString.toUpperCase().indexOf("SRET") >= 0 || descriptorString.indexOf("SRET") >= 0) {
-	            		descriptorTable2.put(key, descriptorTable.get(key));
-	            		continue;
-	            	}
-	            	descriptorTable.remove(key);
-	            }
+                // Filter out anything not Upper Air Mandatory or Significant
+                for (Enumeration enumeration = descriptorTable.keys(); enumeration.hasMoreElements();) {
+                    Object key = enumeration.nextElement();
+                    String keyString = key.toString();
+                    String descriptorString = descriptorTable.get(key).toString();
+                    if (keyString.toUpperCase().indexOf("MAND") >= 0 || descriptorString.indexOf("MAND") >= 0) {
+                        continue;
+                    }
+                    if (keyString.toUpperCase().indexOf("SIG") >= 0 || descriptorString.indexOf("SIG") >= 0) {
+                        descriptorTable2.put(key, descriptorTable.get(key));
+                        descriptorTable.remove(key);
+                        continue;
+                    }
+                    if (keyString.toUpperCase().indexOf("UPPER AIR") >= 0 ||
+                            descriptorString.indexOf("UPPER") >= 0 ||
+                            descriptorString.indexOf("UPPR") >= 0) {
+                        descriptorTable2.put(key, descriptorTable.get(key));
+                        continue;
+                    }
+                    if (keyString.toUpperCase().indexOf("SOUNDER") >= 0 ||
+                            descriptorString.indexOf("SND") >= 0 ||
+                            descriptorString.indexOf("SNDR") >= 0) {
+                        descriptorTable2.put(key, descriptorTable.get(key));
+                        continue;
+                    }
+                    if (keyString.toUpperCase().indexOf("GRET") >= 0 || descriptorString.indexOf("GRET") >= 0) {
+                        descriptorTable2.put(key, descriptorTable.get(key));
+                        continue;
+                    }
+                    if (keyString.toUpperCase().indexOf("SRET") >= 0 || descriptorString.indexOf("SRET") >= 0) {
+                        descriptorTable2.put(key, descriptorTable.get(key));
+                        continue;
+                    }
+                    descriptorTable.remove(key);
+                }
             }
             else {
-            	// We have been told to Show All... put all descriptors into both categories
-	            for (Enumeration enumeration = descriptorTable.keys(); enumeration.hasMoreElements();) {
-	            	Object key = enumeration.nextElement();
-            		descriptorTable2.put(key, descriptorTable.get(key));
-	            }
+                // We have been told to Show All... put all descriptors into both categories
+                for (Enumeration enumeration = descriptorTable.keys(); enumeration.hasMoreElements();) {
+                    Object key = enumeration.nextElement();
+                    descriptorTable2.put(key, descriptorTable.get(key));
+                }
             }
             
             String[]    names       = new String[descriptorTable.size()];            
             Enumeration enumeration = descriptorTable.keys();
             for (int i = 0; enumeration.hasMoreElements(); i++) {
-            	Object thisElement = enumeration.nextElement();
-            	if (!isLocalServer())
-            		names[i] = descriptorTable.get(thisElement).toString() + nameSeparator + thisElement.toString();
-            	else
-            		names[i] = thisElement.toString();
+                Object thisElement = enumeration.nextElement();
+                if (!isLocalServer())
+                    names[i] = descriptorTable.get(thisElement).toString() + nameSeparator + thisElement.toString();
+                else
+                    names[i] = thisElement.toString();
             }
             Arrays.sort(names);
             setDescriptors(names);
@@ -545,11 +555,11 @@ public class AddeRaobChooser extends AddePointDataChooser {
             String[]    names2       = new String[descriptorTable2.size()];
             Enumeration enumeration2 = descriptorTable2.keys();
             for (int i = 0; enumeration2.hasMoreElements(); i++) {
-            	Object thisElement2 = enumeration2.nextElement();
-            	if (!isLocalServer())
-            		names2[i] = descriptorTable2.get(thisElement2).toString() + nameSeparator + thisElement2.toString();
-            	else
-            		names2[i] = nameSeparator + thisElement2.toString();
+                Object thisElement2 = enumeration2.nextElement();
+                if (!isLocalServer())
+                    names2[i] = descriptorTable2.get(thisElement2).toString() + nameSeparator + thisElement2.toString();
+                else
+                    names2[i] = nameSeparator + thisElement2.toString();
             }
             Arrays.sort(names2);
             setDescriptors2(names2);
@@ -564,48 +574,48 @@ public class AddeRaobChooser extends AddePointDataChooser {
      * See if we are pointing to observed or satellite soundings
      */
     private void checkSetObsSat() {
-    	System.out.println("checkSetObsSat: init");
-    	if (getServer() == null || getGroup() == null || getDescriptor() == null) return;
-    	System.out.println("checkSetObsSat: start");
-    	satelliteSounding = false;
-    	showWaitCursor();
+        System.out.println("checkSetObsSat: init");
+        if (getServer() == null || getGroup() == null || getDescriptor() == null) return;
+        System.out.println("checkSetObsSat: start");
+        satelliteSounding = false;
+        showWaitCursor();
         Map<String, String> acctInfo = getAccountingInfo();
         System.out.println("got acct info");
         String user = acctInfo.get("user");
         String proj = acctInfo.get("proj");
-    	String[] paramString = new String[] {
-    		"group", getGroup(), "descr", getDescriptor(), "param", "ZS", "num", "1", "pos", "all"
+        String[] paramString = new String[] {
+            "group", getGroup(), "descr", getDescriptor(), "param", "ZS", "num", "1", "pos", "all"
         };
-    	String request = Misc.makeUrl("adde", getServer(), "/point", paramString);
-    	if (!(user.equals("") || proj.equals("")))
-    		request += "&user=" + user + "&proj=" + proj;
-    	System.out.println("Making request: " + request);
+        String request = Misc.makeUrl("adde", getServer(), "/point", paramString);
+        if (!(user.equals("") || proj.equals("")))
+            request += "&user=" + user + "&proj=" + proj;
+        System.out.println("Making request: " + request);
         try {
-	        AddePointDataReader dataReader = new AddePointDataReader(request);
+            AddePointDataReader dataReader = new AddePointDataReader(request);
         }
         catch (Exception e) {
-        	if (e.getMessage().indexOf("Accounting data") >= 0) handleConnectionError(e);
-        	else satelliteSounding = true;
+            if (e.getMessage().indexOf("Accounting data") >= 0) handleConnectionError(e);
+            else satelliteSounding = true;
         }
         
-    	showNormalCursor();
-    	System.out.println("checkSetObsSat: done: " + satelliteSounding);
+        showNormalCursor();
+        System.out.println("checkSetObsSat: done: " + satelliteSounding);
     }
     
     /**
      * Override clearStations to clear times as well
      */
     protected void clearStations() {
-    	super.clearStations();
-    	clearTimes();
+        super.clearStations();
+        clearTimes();
     }
     
     /**
      * Remove all times from the user lists
      */
     protected void clearTimes() {
-    	if (obsList!=null) obsList.setListData(new Vector());
-    	if (timesList!=null) timesList.setListData(new Vector());
+        if (obsList!=null) obsList.setListData(new Vector());
+        if (timesList!=null) timesList.setListData(new Vector());
     }
     
     /**
@@ -614,24 +624,24 @@ public class AddeRaobChooser extends AddePointDataChooser {
     protected void updateStatus() {
         super.updateStatus();
         if (getState() != STATE_CONNECTED) {
-        	resetDescriptorBox();
+            resetDescriptorBox();
             clearStations();
         }
         else {
             if (getDescriptor() == null) {
-            	if (descriptorComboBox2 != null) {
-            		descriptorComboBox2.setSelectedItem(LABEL_SELECT2);
-            	}
-            	clearStations();
-            	setStatus("Select mandatory levels dataset");
-            	return;
+                if (descriptorComboBox2 != null) {
+                    descriptorComboBox2.setSelectedItem(LABEL_SELECT2);
+                }
+                clearStations();
+                setStatus("Select mandatory levels dataset");
+                return;
             }
         }
         if (readSatelliteTask!=null) {
             if(taskOk(readSatelliteTask)) {
                 setStatus("Reading sounding info from server");
             } else {
-            	readSatelliteTask  = null;
+                readSatelliteTask  = null;
                 setState(STATE_UNCONNECTED);
             }
         }
@@ -683,7 +693,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
                     stationUnselected((Station) pe.getNewValue());
                 } else if (pe.getPropertyName().equals(
                     StationLocationMap.ALL_UNSELECTED_PROPERTY)) {
-                	unselectAll();
+                    unselectAll();
                 }
             }
         });
@@ -777,7 +787,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
      */
     private void setStations() {
         stationMap.setStations(soundingAdapter.getStations(),
-        		getCurrentSelectedStations(), stationMap.getDeclutter());
+                getCurrentSelectedStations(), stationMap.getDeclutter());
         stationMap.redraw();
     }
 
@@ -801,7 +811,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
      * @param selected  a list of times that should be selected
      */
     private void setTimesListData(List selected) {
-    	if (soundingAdapter==null) return;
+        if (soundingAdapter==null) return;
         DateTime[] times = soundingAdapter.getSoundingTimes();
         if (times != null) {
             timesList.setListData(times);
@@ -875,7 +885,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
      * @param times new times to use
      */
     private void newTimes(List times) {
-    	if (stationMap == null) return;
+        if (stationMap == null) return;
         List current = stationMap.getSelectedStations();
         if ((current == null) || (current.size() < 1)) {
             return;
@@ -978,47 +988,47 @@ public class AddeRaobChooser extends AddePointDataChooser {
      * selected.
      */
     protected void enableWidgets() {
-    	super.enableWidgets();
-    	boolean readingTask = (readSatelliteTask!=null || readStationTask!=null);
-    	if (mainHoursCbx != null) mainHoursCbx.setVisible(!satelliteSounding);
-    	if (descriptorComboBox2 != null) {
-    		if (satelliteSounding) setDescriptors2(null);
-    		descriptorComboBox2.setVisible(!satelliteSounding);
-    		descriptorComboBox2.setEnabled(!readingTask &&
-    				descriptorComboBox.getSelectedIndex() > 0);
-    	}
-    	if (satelliteTimePanel!=null) {
-    		satelliteTimePanel.setVisible(satelliteSounding);
-    		GuiUtils.enableTree(satelliteTimePanel, !readingTask);
-    		if (satelliteSounding)
-    			satelliteTimeLabel.setText("Time:");
-    		else
-    			satelliteTimeLabel.setText("");
-    	}
-    	if (showAll!=null) showAll.setEnabled(!readingTask);
+        super.enableWidgets();
+        boolean readingTask = (readSatelliteTask!=null || readStationTask!=null);
+        if (mainHoursCbx != null) mainHoursCbx.setVisible(!satelliteSounding);
+        if (descriptorComboBox2 != null) {
+            if (satelliteSounding) setDescriptors2(null);
+            descriptorComboBox2.setVisible(!satelliteSounding);
+            descriptorComboBox2.setEnabled(!readingTask &&
+                    descriptorComboBox.getSelectedIndex() > 0);
+        }
+        if (satelliteTimePanel!=null) {
+            satelliteTimePanel.setVisible(satelliteSounding);
+            GuiUtils.enableTree(satelliteTimePanel, !readingTask);
+            if (satelliteSounding)
+                satelliteTimeLabel.setText("Time:");
+            else
+                satelliteTimeLabel.setText("");
+        }
+        if (showAll!=null) showAll.setEnabled(!readingTask);
     }
     
     /**
      * Respond to a change in the descriptor list.
      */
     protected void descriptorChanged() {
-    	descriptorChanged(true);
+        descriptorChanged(true);
     }
     
     /**
      * Respond to a change in the descriptor list.
      */
     protected void descriptorChanged(final boolean checkObsSat) {
-    	satelliteSounding = false;
+        satelliteSounding = false;
         readSatelliteTask = startTask();
         enableWidgets();
         Misc.run(new Runnable() {
             public void run() {
-            	if (checkObsSat) checkSetObsSat();
-            	setAvailableStations(true);
+                if (checkObsSat) checkSetObsSat();
+                setAvailableStations(true);
                 updateStatus();
                 if(stopTaskAndIsOk(readSatelliteTask)) {
-                	readSatelliteTask = null;
+                    readSatelliteTask = null;
                     updateStatus();
                     revalidate();
                 } else {
@@ -1034,11 +1044,11 @@ public class AddeRaobChooser extends AddePointDataChooser {
      *  Update the station map with available stations.
      */
     private void setAvailableStations(final boolean forceNewAdapter) {
-    	if (getMandatoryDataset() == null) {
-    		updateStatus();
-    		return;
-    	}
-    	showWaitCursor();
+        if (getMandatoryDataset() == null) {
+            updateStatus();
+            return;
+        }
+        showWaitCursor();
         readStationTask = startTask();
         clearSelectedStations();
         updateStatus();
@@ -1051,7 +1061,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
             //User pressed cancel
             setState(STATE_UNCONNECTED);
         }
-    	showNormalCursor();
+        showNormalCursor();
     }
 
     
@@ -1062,35 +1072,35 @@ public class AddeRaobChooser extends AddePointDataChooser {
      *                        Else, tell the existing one to update.
      */
     private void doUpdateInner(final boolean forceNewAdapter) {
-    	try {
-    		if (forceNewAdapter || soundingAdapter == null) {
-    			AddeSoundingAdapter newAdapter;
-    			if (!satelliteSounding) {
-	    			newAdapter = new AddeSoundingAdapter(getServer(),
-	    				getMandatoryDataset(),
-	    				getSigLevelDataset(),
-	    				showMainHoursOnly,
-	    				this);
-    			}
-    			else {
-	    			newAdapter = new AddeSoundingAdapter(getServer(),
-	    				getMandatoryDataset(),
-	    				getSigLevelDataset(),
-	    				satelliteTime,
-	    				satellitePixel,
-	    				this);
-    			}
-    			soundingAdapter = null;
-    			setSoundingAdapter(newAdapter);
-    		} else {
-    			List times = getSelectedTimes();
-    			soundingAdapter.update();
-    			setStations();
-    			setTimesListData(times);
-    		}
-    	} catch (Exception exc) {
-    		LogUtil.logException("Updating sounding data", exc);
-    	}
+        try {
+            if (forceNewAdapter || soundingAdapter == null) {
+                AddeSoundingAdapter newAdapter;
+                if (!satelliteSounding) {
+                    newAdapter = new AddeSoundingAdapter(getServer(),
+                        getMandatoryDataset(),
+                        getSigLevelDataset(),
+                        showMainHoursOnly,
+                        this);
+                }
+                else {
+                    newAdapter = new AddeSoundingAdapter(getServer(),
+                        getMandatoryDataset(),
+                        getSigLevelDataset(),
+                        satelliteTime,
+                        satellitePixel,
+                        this);
+                }
+                soundingAdapter = null;
+                setSoundingAdapter(newAdapter);
+            } else {
+                List times = getSelectedTimes();
+                soundingAdapter.update();
+                setStations();
+                setTimesListData(times);
+            }
+        } catch (Exception exc) {
+            LogUtil.logException("Updating sounding data", exc);
+        }
     }
     
     /**
@@ -1114,27 +1124,27 @@ public class AddeRaobChooser extends AddePointDataChooser {
      * @return superclass component with extra stuff
      */
     protected JPanel makeTimesPanel() {
-    	
-    	// Make the 0 & 12 checkbox
-    	mainHoursCbx = new JCheckBox("00 & 12Z only", showMainHoursOnly);
-    	mainHoursCbx.addActionListener(new ActionListener() {
-    		public void actionPerformed(ActionEvent ev) {
-    			showMainHoursOnly = ((JCheckBox) ev.getSource()).isSelected();
-    	        Misc.run(new Runnable() {
-    	            public void run() {
-    	            	setAvailableStations(true);
-    	            }
-    	        });
-    		}
-    	});
+        
+        // Make the 0 & 12 checkbox
+        mainHoursCbx = new JCheckBox("00 & 12Z only", showMainHoursOnly);
+        mainHoursCbx.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ev) {
+                showMainHoursOnly = ((JCheckBox) ev.getSource()).isSelected();
+                Misc.run(new Runnable() {
+                    public void run() {
+                        setAvailableStations(true);
+                    }
+                });
+            }
+        });
 
-    	// Make the select panel
+        // Make the select panel
         JScrollPane availablePanel = new JScrollPane(createTimesList());
         availablePanel.setPreferredSize(new Dimension(175, 50));
         JPanel selectPanel = GuiUtils.centerBottom(availablePanel, mainHoursCbx);
         selectPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Available"));
         
-    	// Make the selected panel
+        // Make the selected panel
         obsList = new JList();
         obsList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -1150,25 +1160,25 @@ public class AddeRaobChooser extends AddePointDataChooser {
         selectPanel.setBackground(timesPanel.getBackground());
         selectedPanel.setBackground(timesPanel.getBackground());
         
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(timesPanel);
+        GroupLayout layout = new GroupLayout(timesPanel);
         timesPanel.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
 //                .addContainerGap()
-                .add(selectPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(GAP_RELATED)
-                .add(selectedPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(selectPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(GAP_RELATED)
+                .addComponent(selectedPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
                 )
 //                .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
 //                .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, selectedPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, selectPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(TRAILING)
+                    .addComponent(selectedPanel, LEADING, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(selectPanel, LEADING, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
                     )
 //                .addContainerGap())
         );
@@ -1186,26 +1196,26 @@ public class AddeRaobChooser extends AddePointDataChooser {
      * @return The gui
      */   
     public JComponent doMakeContents() {
-    	JPanel myPanel = new JPanel();
-    	
-    	McVGuiUtils.setComponentWidth(descriptorComboBox, Width.DOUBLEDOUBLE);
-    	McVGuiUtils.setComponentWidth(descriptorComboBox2, descriptorComboBox);
-    	McVGuiUtils.setComponentWidth(satelliteTimeComboBox, Width.DOUBLE);
-    	McVGuiUtils.setComponentWidth(satellitePixelTextField, Width.DOUBLE);
-    	
+        JPanel myPanel = new JPanel();
+        
+        McVGuiUtils.setComponentWidth(descriptorComboBox, Width.DOUBLEDOUBLE);
+        McVGuiUtils.setComponentWidth(descriptorComboBox2, descriptorComboBox);
+        McVGuiUtils.setComponentWidth(satelliteTimeComboBox, Width.DOUBLE);
+        McVGuiUtils.setComponentWidth(satellitePixelTextField, Width.DOUBLE);
+        
         satelliteTimePanel = McVGuiUtils.sideBySide(
-        		McVGuiUtils.sideBySide(satelliteTimeComboBox, satelliteTimeButton),
-        		McVGuiUtils.makeLabeledComponent("IDN:", satellitePixelTextField)
-        		);
+                McVGuiUtils.sideBySide(satelliteTimeComboBox, satelliteTimeButton),
+                McVGuiUtils.makeLabeledComponent("IDN:", satellitePixelTextField)
+                );
         satelliteTimePanel.setVisible(false);
 
-    	JPanel extraPanel = McVGuiUtils.sideBySide(
-    			GuiUtils.left(McVGuiUtils.sideBySide(descriptorComboBox2, satelliteTimePanel, 0)),
-    			GuiUtils.right(showAll));
-    	
-//    	McVGuiUtils.setComponentWidth(extraPanel, descriptorComboBox);
-    	
-    	JLabel stationLabel = McVGuiUtils.makeLabelRight("Stations:");
+        JPanel extraPanel = McVGuiUtils.sideBySide(
+                GuiUtils.left(McVGuiUtils.sideBySide(descriptorComboBox2, satelliteTimePanel, 0)),
+                GuiUtils.right(showAll));
+        
+//      McVGuiUtils.setComponentWidth(extraPanel, descriptorComboBox);
+        
+        JLabel stationLabel = McVGuiUtils.makeLabelRight("Stations:");
         addServerComp(stationLabel);
 
         JComponent stationPanel = getStationMap();
@@ -1225,48 +1235,48 @@ public class AddeRaobChooser extends AddePointDataChooser {
         enableWidgets();
         updateStatus();
 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
+        GroupLayout layout = new GroupLayout(myPanel);
         myPanel.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(layout.createSequentialGroup()
-                        .add(descriptorLabel)
-                        .add(GAP_RELATED)
-                        .add(descriptorComboBox))
-                    .add(layout.createSequentialGroup()
-                        .add(satelliteTimeLabel)
-                        .add(GAP_RELATED)
-                        .add(extraPanel))
-                    .add(layout.createSequentialGroup()
-                        .add(stationLabel)
-                        .add(GAP_RELATED)
-                        .add(stationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .add(layout.createSequentialGroup()
-                        .add(timesLabel)
-                        .add(GAP_RELATED)
-                        .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(descriptorLabel)
+                        .addGap(GAP_RELATED)
+                        .addComponent(descriptorComboBox))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(satelliteTimeLabel)
+                        .addGap(GAP_RELATED)
+                        .addComponent(extraPanel))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(stationLabel)
+                        .addGap(GAP_RELATED)
+                        .addComponent(stationPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(timesLabel)
+                        .addGap(GAP_RELATED)
+                        .addComponent(timesPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(descriptorLabel)
-                    .add(descriptorComboBox))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(satelliteTimeLabel)
-                    .add(extraPanel))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(stationLabel)
-                    .add(stationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(timesLabel)
-                    .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED))
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addComponent(descriptorLabel)
+                    .addComponent(descriptorComboBox))
+                .addPreferredGap(RELATED)
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addComponent(satelliteTimeLabel)
+                    .addComponent(extraPanel))
+                .addPreferredGap(RELATED)
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addComponent(stationLabel)
+                    .addComponent(stationPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(RELATED)
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addComponent(timesLabel)
+                    .addComponent(timesPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(RELATED))
         );
 
         

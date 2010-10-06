@@ -30,48 +30,34 @@
 
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
-import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import static javax.swing.GroupLayout.DEFAULT_SIZE;
+import static javax.swing.GroupLayout.PREFERRED_SIZE;
+import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
+import javax.swing.GroupLayout;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
 
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.AddeUtil;
 import ucar.unidata.data.profiler.AddeProfilerDataSource;
-//import ucar.unidata.geoloc.ProjectionRect;
 import ucar.unidata.idv.chooser.IdvChooserManager;
-import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.metdata.NamedStationTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.view.station.StationLocationMap;
 import ucar.unidata.xml.XmlResourceCollection;
-import ucar.visad.UtcDate;
 
-import visad.DateTime;
-
-import edu.wisc.ssec.mcidas.McIDASUtil;
-import edu.wisc.ssec.mcidas.adde.AddePointDataReader;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
 /**
  * Selection widget for specifing data sources of
@@ -87,7 +73,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * @version $Revision$
  */
 public class AddeProfilerDataChooser extends AddePointDataChooser {
-	
+    
     /** collection of station tables */
     private XmlResourceCollection stationResources;
 
@@ -186,7 +172,7 @@ public class AddeProfilerDataChooser extends AddePointDataChooser {
      * Override this to determine how to select sample
      */
     protected void appendTimesRequest(StringBuffer buf) {
-    	appendKeyValue(buf, PROP_SELECT, "'IDA BLMM'");
+        appendKeyValue(buf, PROP_SELECT, "'IDA BLMM'");
     }
     
     /**
@@ -200,9 +186,9 @@ public class AddeProfilerDataChooser extends AddePointDataChooser {
     public boolean timesOk() {
         if (usingStations() && (stationMap.getStations().size() > 0)
                 && (getSelectedStations().size() == 0)) {
-        	return false;
+            return false;
         }
-    	return super.timesOk();
+        return super.timesOk();
     }
     
     /**
@@ -224,19 +210,19 @@ public class AddeProfilerDataChooser extends AddePointDataChooser {
             Hashtable profilersourceHT = new Hashtable();
 
             profilersourceHT.put(AddeProfilerDataSource.PROFILER_INT,
-            		getRelBoxString());
+                    getRelBoxString());
             profilersourceHT.put(AddeProfilerDataSource.PROFILER_DATAINT,
-            		getDescriptor());
+                    getDescriptor());
             profilersourceHT.put(AddeProfilerDataSource.PROFILER_SERVER,
-            		getServer());
+                    getServer());
             profilersourceHT.put(AddeProfilerDataSource.PROFILER_TIMES,
-            		getDayTimeSelectString());
+                    getDayTimeSelectString());
             profilersourceHT.put(AddeUtil.NUM_RELATIVE_TIMES,
-            		getRelativeTimeIndices());
+                    getRelativeTimeIndices());
             profilersourceHT.put(AddeUtil.RELATIVE_TIME_INCREMENT,
-            		new Float(getRelativeTimeIncrement()));
+                    new Float(getRelativeTimeIncrement()));
             profilersourceHT.put(AddeUtil.MISC_KEYWORDS,
-            		getMiscKeywords());
+                    getMiscKeywords());
 
 
             //System.out.println("   pc time list "+getSelectedTimes());
@@ -262,12 +248,12 @@ public class AddeProfilerDataChooser extends AddePointDataChooser {
      * Designed to be put into a GroupLayout
      */
     protected JComponent getExtraTimeComponent() {
-    	TwoFacedObject[] intervals = { 
-    			new TwoFacedObject(AddeProfilerDataSource.PROFILER_6MIN, .2f),
-    			new TwoFacedObject(AddeProfilerDataSource.PROFILER_12MIN, .1f),
-    			new TwoFacedObject(AddeProfilerDataSource.PROFILER_30MIN, .5f),
-    			new TwoFacedObject(AddeProfilerDataSource.PROFILER_1HR, 1f)
-    	};
+        TwoFacedObject[] intervals = { 
+                new TwoFacedObject(AddeProfilerDataSource.PROFILER_6MIN, .2f),
+                new TwoFacedObject(AddeProfilerDataSource.PROFILER_12MIN, .1f),
+                new TwoFacedObject(AddeProfilerDataSource.PROFILER_30MIN, .5f),
+                new TwoFacedObject(AddeProfilerDataSource.PROFILER_1HR, 1f)
+        };
 
         GuiUtils.setListData(relTimeIncBox, intervals);
         if (relTimeIncBox.getItemCount()>=4) relTimeIncBox.setSelectedIndex(3);
@@ -281,8 +267,8 @@ public class AddeProfilerDataChooser extends AddePointDataChooser {
      * @return The gui
      */
     public JComponent doMakeContents() {      
-    	JPanel myPanel = new JPanel();
-    	    	    	
+        JPanel myPanel = new JPanel();
+                        
         JLabel stationLabel = McVGuiUtils.makeLabelRight("Stations:");
         addServerComp(stationLabel);
 
@@ -300,40 +286,40 @@ public class AddeProfilerDataChooser extends AddePointDataChooser {
         enableWidgets();
         updateStatus();
 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
+        GroupLayout layout = new GroupLayout(myPanel);
         myPanel.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(layout.createSequentialGroup()
-                        .add(descriptorLabel)
-                        .add(GAP_RELATED)
-                        .add(descriptorComboBox))
-                    .add(layout.createSequentialGroup()
-                        .add(stationLabel)
-                        .add(GAP_RELATED)
-                        .add(stationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .add(layout.createSequentialGroup()
-                        .add(timesLabel)
-                        .add(GAP_RELATED)
-                        .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(descriptorLabel)
+                        .addGap(GAP_RELATED)
+                        .addComponent(descriptorComboBox))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(stationLabel)
+                        .addGap(GAP_RELATED)
+                        .addComponent(stationPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(timesLabel)
+                        .addGap(GAP_RELATED)
+                        .addComponent(timesPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(descriptorLabel)
-                    .add(descriptorComboBox))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(stationLabel)
-                    .add(stationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(timesLabel)
-                    .add(timesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED))
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(descriptorLabel)
+                    .addComponent(descriptorComboBox))
+                .addPreferredGap(RELATED)
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addComponent(stationLabel)
+                    .addComponent(stationPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(RELATED)
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addComponent(timesLabel)
+                    .addComponent(timesPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(RELATED))
         );
         
         setInnerPanel(myPanel);

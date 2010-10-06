@@ -31,59 +31,31 @@
 package edu.wisc.ssec.mcidasv.data.adde;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
+import java.util.StringTokenizer;
+
 import edu.wisc.ssec.mcidas.McIDASUtil;
 import edu.wisc.ssec.mcidas.adde.AddeException;
-
-
-
 import edu.wisc.ssec.mcidas.adde.AddePointDataReader;
-import edu.wisc.ssec.mcidasv.chooser.adde.AddeChooser;
-
-import ucar.unidata.beans.InvisiblePropertiedBean;
-import ucar.unidata.beans.NonVetoableProperty;
-
-import ucar.unidata.data.sounding.*;
-import ucar.unidata.idv.chooser.adde.AddeServer;
-/*
-import ucar.unidata.data.sounding.RAOB;
-import ucar.unidata.data.sounding.SoundingOb;
-import ucar.unidata.data.sounding.SoundingStation;
-*/
-import ucar.unidata.util.Defaults;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.StringUtil;
-
-import ucar.visad.UtcDate;
-
-
-import ucar.visad.Util;
-
-import ucar.visad.quantities.GeopotentialAltitude;
 
 import visad.DateTime;
 import visad.Unit;
 
-import visad.VisADException;
-import visad.VisADException;
+import ucar.unidata.beans.NonVetoableProperty;
+import ucar.unidata.data.sounding.SoundingAdapter;
+import ucar.unidata.data.sounding.SoundingAdapterImpl;
+import ucar.unidata.data.sounding.SoundingOb;
+import ucar.unidata.data.sounding.SoundingStation;
+import ucar.unidata.util.LogUtil;
+import ucar.unidata.util.Misc;
+import ucar.unidata.util.StringUtil;
+import ucar.visad.UtcDate;
+import ucar.visad.Util;
+import ucar.visad.quantities.GeopotentialAltitude;
 
-import visad.data.units.Parser;
-
-import visad.jmet.MetUnits;
-
-import java.awt.Component;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import java.util.StringTokenizer;
-
-import javax.swing.*;
+import edu.wisc.ssec.mcidasv.chooser.adde.AddeChooser;
 
 /**
  * Class for retrieving upper air data from an ADDE remote server. Creates

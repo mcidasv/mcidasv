@@ -39,8 +39,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JToolBar;
 
-import ucar.unidata.util.GuiUtils;
 import visad.VisADException;
+
+import ucar.unidata.util.GuiUtils;
 
 public class MultiDisplayHolder extends ucar.unidata.idv.control.multi.MultiDisplayHolder {
 

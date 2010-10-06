@@ -30,23 +30,24 @@
 
 package edu.wisc.ssec.mcidasv.data.hrit;
 
-import edu.wisc.ssec.mcidas.Calibrator;
-
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-
 import java.io.File;
 import java.io.IOException;
-
 import java.rmi.RemoteException;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+
+import edu.wisc.ssec.mcidas.Calibrator;
+
+import visad.Data;
+import visad.VisADException;
+import visad.data.hrit.HRITAdapter;
 
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
@@ -55,13 +56,8 @@ import ucar.unidata.data.DataSelectionComponent;
 import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.DirectDataChoice;
-
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.WrapperException;
-
-import visad.Data;
-import visad.data.hrit.HRITAdapter;
-import visad.VisADException;
 
 public class HRITDataSource extends DataSourceImpl  {
 
