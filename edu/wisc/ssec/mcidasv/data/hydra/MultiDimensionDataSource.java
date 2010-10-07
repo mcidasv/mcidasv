@@ -108,7 +108,6 @@ public class MultiDimensionDataSource extends HydraDataSource {
     private List categories;
     private boolean hasImagePreview = false;
     private boolean hasTrackPreview = false;
-    private boolean hasChannelSelect = false;
 
     /**
      * Zero-argument constructor for construction via unpersistence.
@@ -548,71 +547,8 @@ public class MultiDimensionDataSource extends HydraDataSource {
           e.printStackTrace();
         }
       }
-      if (hasChannelSelect) {
-        try {
-          components.add(new ChannelSelection(dataChoice));
-        } 
-        catch (Exception e) {
-          e.printStackTrace();
-        }
-      }
     }
 }
-
-class ChannelSelection extends DataSelectionComponent {
-
-   DataChoice dataChoice;
-   MultiSpectralDisplay display;
-
-   ChannelSelection(DataChoice dataChoice) throws Exception {
-     super("Channels");
-     this.dataChoice = dataChoice;
-     display = new MultiSpectralDisplay((DirectDataChoice)dataChoice);
-     display.showChannelSelector();
-   }
-
-  protected JComponent doMakeContents() {
-    try {
-      JPanel panel = new JPanel(new BorderLayout());
-      panel.add("Center", display.getDisplayComponent());
-      return panel;
-    }
-    catch (Exception e) {
-      System.out.println(e);
-    }
-    return null;
-  }
-                                                                                                                                                   
-                                                                                                                                                   
-  public void applyToDataSelection(DataSelection dataSelection) {
-      try {
-        dataSelection.putProperty(Constants.PROP_CHAN, display.getWaveNumber());
-        dataSelection.putProperty(SpectrumAdapter.channelIndex_name, display.getChannelIndex());
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-      /*
-         if (hasSubset) {
-              MultiDimensionSubset select = null;
-              Hashtable table = dataChoice.getProperties();
-              Enumeration keys = table.keys();
-              while (keys.hasMoreElements()) {
-                Object key = keys.nextElement();
-                if (key instanceof MultiDimensionSubset) {
-                  select = (MultiDimensionSubset) table.get(key);
-                }
-              }
-              HashMap subset = select.getSubset();
-              int idx = display.getChannelIndex();
-              subset.put(SpectrumAdapter.channelIndex_name, new double[] {idx, idx, 1});
-              Hashtable prop = new Hashtable(new MultiDimensionSubset(), new MultiDimensionSubset(subset));
-              dataSelection.setProperties(prop);
-         }
-      */
-  }
-
-}
-
 
 class TrackSelection extends DataSelectionComponent {
       DataChoice dataChoice;
