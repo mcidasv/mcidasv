@@ -268,6 +268,7 @@ public class SwathAdapter extends MultiDimensionAdapter {
         domainSubset.put(track_name, new double[] {0,0,0});
         domainSubset.put(xtrack_name, new double[] {0,0,0});
 
+        // compute coordinates for the Linear2D domainSet
         for (int kk=0; kk<2; kk++) {
           RealType rtype = domainRealTypes[kk];
           String name = rtype.getName();
@@ -284,7 +285,8 @@ public class SwathAdapter extends MultiDimensionAdapter {
         }
 
         Linear2DSet domainSet = new Linear2DSet(first[0], last[0], length[0], first[1], last[1], length[1]);
-        CoordinateSystem cs = navigation.getVisADCoordinateSystem(domainSet, domainSubset);
+        //CoordinateSystem cs = navigation.getVisADCoordinateSystem(domainSet, domainSubset);
+        CoordinateSystem cs = navigation.getVisADCoordinateSystem(domainSet, subset);
 
         RealTupleType domainTupType = new RealTupleType(domainRealTypes[0], domainRealTypes[1], cs, null);
         domainSet_save = new Linear2DSet(domainTupType, first[0], last[0], length[0], first[1], last[1], length[1]);
