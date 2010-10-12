@@ -54,6 +54,7 @@ public class NetCDFFile implements MultiDimensionReader {
    HashMap<String, String[]> varDimNames = new HashMap<String, String[]>();
    HashMap<String, int[]> varDimLengths = new HashMap<String, int[]>();
    HashMap<String, Class> varDataType = new HashMap<String, Class>();
+   HashMap<String, String> varUnits = new HashMap<String, String>();
 
 
    NetcdfFile ncfile = null;
@@ -139,6 +140,12 @@ public class NetCDFFile implements MultiDimensionReader {
        varDimNames.put(varName, dimNames);
        varDimLengths.put(varName, dimLengths);
        varDataType.put(varName, var.getDataType().getPrimitiveClassType());
+       
+       Attribute attr = var.findAttribute("units");
+       if (attr != null) {
+         String unitStr = attr.getStringValue();
+         varUnits.put(varName, unitStr);
+       }
      }
    }
 
@@ -181,6 +188,15 @@ public class NetCDFFile implements MultiDimensionReader {
 
    public int[] getDimensionLengths(String array_name) {
      return varDimLengths.get(array_name);
+   }
+
+   public String getArrayUnitString(String array_name) {
+     return varUnits.get(array_name);
+   }
+
+   public int getDimensionLength(String dimName) {
+     Dimension dim = ncfile.findDimension(dimName);
+     return dim.getLength();
    }
 
    public float[] getFloatArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
