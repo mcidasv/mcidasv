@@ -77,7 +77,8 @@ public class SwathNavigation implements Navigation  {
   int[] geo_stride = new int[2];
   int[] geo_count = new int[2];
   int[] geo_start = new int[2];
-  int[] geo_end = new int[2];
+
+  int numDims = 2;
 
   Class type;
 
@@ -110,10 +111,16 @@ public class SwathNavigation implements Navigation  {
     int[] lon_dim_lengths = reader.getDimensionLengths(lon_array_name);
     int[] lat_dim_lengths = reader.getDimensionLengths(lat_array_name);
 
+    numDims = lon_dim_lengths.length;
+    geo_stride = new int[numDims];
+    geo_count = new int[numDims];
+    geo_start = new int[numDims];
+
+
     String geo_track_name = (String) metadata.get(SwathAdapter.geo_track_name);
     String geo_xtrack_name = (String) metadata.get(SwathAdapter.geo_xtrack_name);
 
-    for (int k=0; k<2;k++) {
+    for (int k=0; k<numDims;k++) {
       if ( geo_track_name.equals(lon_dim_names[k]) ) {
          geo_track_idx = k;
       }
@@ -163,21 +170,35 @@ public class SwathNavigation implements Navigation  {
       double[] track_coords = (double[]) ((HashMap)domainSubset).get(SwathAdapter.track_name);
       double[] xtrack_coords = (double[]) ((HashMap)domainSubset).get(SwathAdapter.xtrack_name);
       
-      int[] start = new int[2];
-      int[] count = new int[2];
-      int[] stride = new int[2];
-
+      int[] stride = new int[numDims];
       stride[geo_track_idx] = (int) track_coords[2];
       stride[geo_xtrack_idx] = (int) xtrack_coords[2]; 
 
 
+      if (numDims > 2) { // initialize geo arrays, then recompute xtrack/track dimensions below
+        System.out.println("lon/lat array rank > 2");
+        if (numDims != select.getRank()) {
+           throw new Exception(
+              "SwathNavigation.getVisADCoordinateSystem: if lon/lat array rank > 2, rank must be equal to data array rank");
+        }
+        int[] start = select.getStart();
+        int[] count = select.getCount();
+        stride = select.getStride();
+        for (int i=0; i<numDims; i++) {
+          geo_start[i] = start[i];
+          geo_count[i] = count[i];
+          geo_stride[i] = stride[i];
+        }
+      }
+
+
       if (ratio/(float)stride[0] <= 1) {
-        geo_stride[geo_track_idx] = Math.round((1f/(track_ratio/((float)stride[0]))));
-        geo_stride[geo_xtrack_idx] = Math.round((1f/(xtrack_ratio/((float)stride[1]))));
+        geo_stride[geo_track_idx] = Math.round((1f/(track_ratio/((float)stride[geo_track_idx]))));
+        geo_stride[geo_xtrack_idx] = Math.round((1f/(xtrack_ratio/((float)stride[geo_xtrack_idx]))));
       }
       else {
-        geo_stride[0] = 1;
-        geo_stride[1] = 1;
+        geo_stride[geo_track_idx] = 1;
+        geo_stride[geo_xtrack_idx] = 1;
       }
 
       int geo_track_start  = (int) Math.ceil((track_coords[0] - track_offset)/track_ratio);
@@ -202,16 +223,27 @@ public class SwathNavigation implements Navigation  {
       int new_xtrack_end = (int) (geo_xtrack_end*xtrack_ratio + (float)xtrack_offset);
 
 
+      //- these must be only 2D (Swath dimensions)
       double[] first = new double[2];
       double[] last  = new double[2];
       int[] length   = new int[2];
 
-      first[1-geo_track_idx]  = new_track_start;
-      first[1-geo_xtrack_idx] = new_xtrack_start;
-      last[1-geo_track_idx]   = new_track_end;
-      last[1-geo_xtrack_idx]  = new_xtrack_end;
-      length[1-geo_track_idx]  = (int) ((last[1-geo_track_idx] - first[1-geo_track_idx])/stride[geo_track_idx] + 1);
-      length[1-geo_xtrack_idx] = (int) ((last[1-geo_xtrack_idx] - first[1-geo_xtrack_idx])/stride[geo_xtrack_idx] + 1);
+      int track_idx;
+      int xtrack_idx;
+      if (geo_track_idx < geo_xtrack_idx) {
+        track_idx = 1;
+        xtrack_idx = 0;
+      } else {
+        track_idx = 0;
+        xtrack_idx = 1;
+      }
+
+      first[track_idx]  = new_track_start;
+      first[xtrack_idx] = new_xtrack_start;
+      last[track_idx]   = new_track_end;
+      last[xtrack_idx]  = new_xtrack_end;
+      length[track_idx]  = (int) ((last[track_idx] - first[track_idx])/stride[geo_track_idx] + 1);
+      length[xtrack_idx] = (int) ((last[xtrack_idx] - first[xtrack_idx])/stride[geo_xtrack_idx] + 1);
 
       domainSet = new Linear2DSet(first[0], last[0], length[0], first[1], last[1], length[1]);
    
