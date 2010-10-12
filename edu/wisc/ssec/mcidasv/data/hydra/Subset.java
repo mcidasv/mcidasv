@@ -35,8 +35,10 @@ public class Subset {
   private int[] start = null;
   private int[] count = null;
   private int[] stride = null;
+  private int rank;
 
   public Subset(int rank) {
+    this.rank = rank;
     start = new int[rank];
     count = new int[rank];
     stride = new int[rank];
@@ -58,6 +60,10 @@ public class Subset {
 
   public int[] getStride() {
     return stride;
+  }
+
+  public int getRank() {
+    return rank;
   }
 
 }
