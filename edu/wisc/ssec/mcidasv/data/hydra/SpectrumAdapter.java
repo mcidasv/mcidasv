@@ -109,9 +109,6 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
   HashMap<String, Float> bandNameMap = null;
   boolean hasBandNames = false;
 
-
-  private RangeProcessor rangeProcessor = null;
-
   public SpectrumAdapter(MultiDimensionReader reader, HashMap metadata) {
     super(reader, metadata);
     this.init();
@@ -257,10 +254,6 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
 
   public float[] processRange(byte[] range, Object subset) {
      return rangeProcessor.processAlongBandDim(range);
-  }
-
-  public void setRangeProcessor(RangeProcessor rangeProcessor) {
-    this.rangeProcessor = rangeProcessor;
   }
 
   public HashMap getDefaultSubset() {
