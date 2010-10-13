@@ -115,6 +115,8 @@ public class MultiSpectralAggr extends MultiSpectralData {
     SpectrumAdapter specAdapt = adapters[0].spectrumAdapter;
     aggrDomain = new Gridded1DSet(specAdapt.getDomainSet().getType(), 
                         new float[][] {aggrSamples}, aggrSamples.length); 
+
+    init_wavenumber = getWavenumberFromChannelIndex(0);
   }
 
   public FlatField getSpectrum(int[] coords) throws Exception {
@@ -198,6 +200,10 @@ public class MultiSpectralAggr extends MultiSpectralData {
   public int getChannelIndexFromWavenumber(float channel) throws VisADException, RemoteException {
     int idx = (aggrDomain.valueToIndex(new float[][] {{channel}}))[0];
     return idx;
+  }
+
+  public float getWavenumberFromChannelIndex(int index) throws Exception {
+    return (aggrDomain.indexToValue(new int[] {index}))[0][0];
   }
 
 }
