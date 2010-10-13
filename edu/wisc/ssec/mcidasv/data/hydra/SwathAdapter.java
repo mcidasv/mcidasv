@@ -332,6 +332,10 @@ public class SwathAdapter extends MultiDimensionAdapter {
         return true;
       }
 
+      public void setDefaultStride(int stride) {
+        default_stride = stride;
+      }
+
       public HashMap getDefaultSubset() {
         HashMap subset = SwathAdapter.getEmptySubset();
 
