@@ -71,7 +71,6 @@ public class MultiSpectralData {
 
   public float init_wavenumber = 919.50f;
   public String init_bandName = null;
-  //public static float init_wavenumber = 0.800f;
 
   float[] dataRange = new float[] {180f, 320f};
 
@@ -80,7 +79,6 @@ public class MultiSpectralData {
   HashMap<String, Float> bandNameMap = null;
 
   
-
   public MultiSpectralData(SwathAdapter swathAdapter, SpectrumAdapter spectrumAdapter,
                            String inputParamName, String paramName, String sensorName, String platformName) {
     this.swathAdapter = swathAdapter;
@@ -96,10 +94,22 @@ public class MultiSpectralData {
         bandNameList = spectrumAdapter.getBandNames();
         bandNameMap = spectrumAdapter.getBandNameMap();
       }
+      try {
+        setInitialWavenumber(getWavenumberFromChannelIndex(0));
+      } 
+      catch (Exception e) {
+        e.printStackTrace();
+        System.out.println("could not initialize initial wavenumber");
+      }
     }
+
     if (swathAdapter != null) {
       this.swathSelect = swathAdapter.getDefaultSubset();
+      if (spectrumAdapter != null) {
+        spectrumAdapter.setRangeProcessor(swathAdapter.getRangeProcessor());
+      }
     }
+
     this.sensorName = sensorName;
     this.platformName = platformName;
   }
@@ -265,6 +275,13 @@ public class MultiSpectralData {
     return bandName;
   }
 
+  public void setInitialWavenumber(float val) {
+    init_wavenumber = val;
+    if (hasBandNames) {
+      init_bandName = getBandNameFromWaveNumber(init_wavenumber);
+    }
+  }
+
   public int[] getSwathCoordinates(RealTuple location, CoordinateSystem cs) 
       throws VisADException, RemoteException {
     if (location == null) return null;
@@ -295,6 +312,10 @@ public class MultiSpectralData {
 
   public int getChannelIndexFromWavenumber(float channel) throws Exception {
     return spectrumAdapter.getChannelIndexFromWavenumber(channel);
+  }
+
+  public float getWavenumberFromChannelIndex(int index) throws Exception {
+    return spectrumAdapter.getWavenumberFromChannelIndex(index);
   }
 
   public Rectangle2D getLonLatBoundingBox(CoordinateSystem cs) {
@@ -477,6 +498,14 @@ public class MultiSpectralData {
 
     return new_values;
   }
+
+  public HashMap getDefaultSubset() throws Exception {
+    HashMap subset = swathAdapter.getDefaultSubset();
+    double chanIdx = spectrumAdapter.getChannelIndexFromWavenumber(init_wavenumber);
+    subset.put(SpectrumAdapter.channelIndex_name, new double[] {chanIdx, chanIdx, 1});
+    return subset;
+  }
+ 
 
   public SpectrumAdapter getSpectrumAdapter() {
     return spectrumAdapter;
