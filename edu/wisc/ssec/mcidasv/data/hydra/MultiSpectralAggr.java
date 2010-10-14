@@ -206,4 +206,11 @@ public class MultiSpectralAggr extends MultiSpectralData {
     return (aggrDomain.indexToValue(new int[] {index}))[0][0];
   }
 
+  public HashMap getDefaultSubset() throws Exception {
+    HashMap subset = adapters[0].getDefaultSubset();
+    double chanIdx = getChannelIndexFromWavenumber(init_wavenumber);
+    subset.put(SpectrumAdapter.channelIndex_name, new double[] {chanIdx, chanIdx, 1});
+    return subset;
+  }
+
 }
