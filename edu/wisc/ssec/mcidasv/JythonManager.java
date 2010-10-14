@@ -36,11 +36,14 @@ import static ucar.unidata.util.MenuUtil.MENU_SEPARATOR;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.python.util.PythonInterpreter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 
 import ucar.unidata.data.DataSource;
 import ucar.unidata.data.DescriptorDataSource;
@@ -81,14 +84,14 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
      * locals. Parameter may be {@code null}.
      */
     @SuppressWarnings("unchecked") // dealing with idv code that predates generics.
-    @Override public void evaluateTrusted(String code, Hashtable properties) {
+    @Override public void evaluateTrusted(String code, Map<String, Object> properties) {
         if (properties == null) {
-            properties = new Hashtable();
+            properties = CollectionHelpers.newMap();
         }
-        if (!properties.contains("islInterpreter")) {
+        if (!properties.containsKey("islInterpreter")) {
             properties.put("islInterpreter", new ImageGenerator(getIdv()));
         }
-        if (!properties.contains("_idv")) {
+        if (!properties.containsKey("_idv")) {
             properties.put("_idv", getIdv());
         }
         super.evaluateTrusted(code, properties);
