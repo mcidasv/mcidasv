@@ -31,7 +31,6 @@ package edu.wisc.ssec.mcidasv;
 
 import static ucar.unidata.xml.XmlUtil.getAttribute;
 
-import java.awt.EventQueue;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,8 +45,10 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.Icon;
@@ -64,8 +65,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import visad.VisADException;
+
 import ucar.unidata.data.DataManager;
-import ucar.unidata.data.imagery.AddeImageInfo;
 import ucar.unidata.idv.ArgsManager;
 import ucar.unidata.idv.ControlDescriptor;
 import ucar.unidata.idv.IdvObjectStore;
@@ -89,23 +91,20 @@ import ucar.unidata.xml.XmlDelegateImpl;
 import ucar.unidata.xml.XmlEncoder;
 import ucar.unidata.xml.XmlUtil;
 
-import visad.VisADException;
-
-import edu.wisc.ssec.mcidasv.JythonManager;
 import edu.wisc.ssec.mcidasv.chooser.McIdasChooserManager;
 import edu.wisc.ssec.mcidasv.control.LambertAEA;
 import edu.wisc.ssec.mcidasv.data.McvDataManager;
 import edu.wisc.ssec.mcidasv.monitors.MonitorManager;
-import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
-import edu.wisc.ssec.mcidasv.servermanager.EntryTransforms;
-import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry;
-import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry;
-import edu.wisc.ssec.mcidasv.servermanager.TabbedAddeManager;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
+import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
+import edu.wisc.ssec.mcidasv.servermanager.EntryTransforms;
+import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry;
 import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry.AddeFormat;
+import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry;
+import edu.wisc.ssec.mcidasv.servermanager.TabbedAddeManager;
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
@@ -261,7 +260,7 @@ public class McIDASV extends IntegratedDataViewer {
         final String monitorPort = getProperty(PROP_MONITORPORT, "");
         if (monitorPort!=null && monitorPort.trim().length()>0 && !monitorPort.trim().equals("none")) {
             Misc.run(new Runnable() {
-                public void run() {
+                @Override public void run() {
                     try {
                         mcvMonitor = new McIDASVMonitor(McIDASV.this, new Integer(monitorPort).intValue());
                         mcvMonitor.init();
@@ -285,7 +284,7 @@ public class McIDASV extends IntegratedDataViewer {
     @Override protected void initEncoder(XmlEncoder encoder, boolean forRead) {
 
         encoder.addDelegateForClass(LambertAEA.class, new XmlDelegateImpl() {
-            public Element createElement(XmlEncoder e, Object o) {
+            @Override public Element createElement(XmlEncoder e, Object o) {
                 LambertAEA projection = (LambertAEA)o;
                 Rectangle2D rect = projection.getDefaultMapArea();
                 List args = Misc.newList(rect);
@@ -457,6 +456,49 @@ public class McIDASV extends IntegratedDataViewer {
         }
 
         return super.handleAction(action, properties, checkForAlias);
+    }
+
+    /**
+     *  This method checks if the given action is one of the following.
+     * <p>
+     *  <li> Jython code -- starts with jython:<br>
+     *  <li> Help link -- starts with help:<br>
+     *  <li> Resource bundle file -- ends with .rbi<br>
+     *  <li> bundle file -- ends with .xidv<br>
+     *  <li> jnlp file -- ends with .jnlp<br>
+     *  It returns true if the action is one of these.
+     *  False otherwise.
+     *
+     * @param action The string action
+     * @param properties any properties
+     * @return Was this action handled
+     */
+    @Override protected boolean handleFileOrUrlAction(String action, Hashtable properties) {
+        boolean result = false;
+        boolean idvAction = action.startsWith("idv:");
+        boolean jythonAction = action.startsWith("jython:");
+
+        if (!idvAction && !jythonAction) {
+            return super.handleFileOrUrlAction(action, properties);
+        }
+
+        Map<String, Object> hashProps = new HashMap<String, Object>();
+        if (properties != null) {
+            hashProps.putAll(properties);
+        }
+
+        if (idvAction) {
+            action = action.replace("&", "&amp;").substring(4);
+            getJythonManager().evaluateUntrusted(action, hashProps);
+            result = true;
+        } else if (jythonAction) {
+            action = action.substring(7);
+            getJythonManager().evaluateTrusted(action, hashProps);
+            result = true;
+        } else {
+            result = super.handleFileOrUrlAction(action, properties);
+        }
+        return result;
     }
 
     /**
@@ -771,7 +813,7 @@ public class McIDASV extends IntegratedDataViewer {
      */
     public void doSaveAsDefaultLayout() {
         Misc.run(new Runnable() {
-            public void run() {
+            @Override public void run() {
                 ((PersistenceManager)getPersistenceManager()).doSaveAsDefaultLayout();
             }
         });
@@ -815,7 +857,7 @@ public class McIDASV extends IntegratedDataViewer {
     {
         JButton supportBtn = new JButton("Support Form");
         supportBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
+            @Override public void actionPerformed(ActionEvent ae) {
                 getIdvUIManager().showSupportForm(msg,
                     LogUtil.getStackTrace(exc), null);
             }
@@ -1406,7 +1448,7 @@ public class McIDASV extends IntegratedDataViewer {
      * 
      * @see IntegratedDataViewer#quit()
      */
-    protected void exit(int exitCode) {
+    @Override protected void exit(int exitCode) {
         LogUtil.setShowErrorsInGui(false);
 
         if (addeEntries != null) {

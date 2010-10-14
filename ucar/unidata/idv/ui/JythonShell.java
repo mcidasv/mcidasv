@@ -48,12 +48,11 @@ import javax.swing.text.JTextComponent;
 import org.python.core.PyException;
 import org.python.core.PyFunction;
 import org.python.core.PyJavaPackage;
-import org.python.core.PyList;
 import org.python.core.PyObject;
 import org.python.core.PyReflectedFunction;
+import org.python.core.PyString;
 import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
-import org.python.core.PyTuple;
 import org.python.util.PythonInterpreter;
 
 import visad.Data;
@@ -64,6 +63,7 @@ import ucar.unidata.data.DataOperand;
 import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DerivedDataChoice;
 import ucar.unidata.idv.ControlDescriptor;
+import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.JythonManager;
 import ucar.unidata.ui.InteractiveShell;
@@ -73,7 +73,7 @@ import ucar.unidata.util.GuiUtils;
  * This class provides  an interactive shell for running JYthon
  *
  * @author IDV development team
- * @version $Revision$Date: 2007/08/21 12:15:45 $
+ * @version $Revision$Date: 2010/10/14 16:05:27 $
  */
 public class JythonShell extends InteractiveShell {
 
@@ -106,7 +106,8 @@ public class JythonShell extends InteractiveShell {
         this.idv = theIdv;
         List<String> oldHistory = (List<String>)idv.getStore().get(PROP_JYTHON_SHELL_HISTORY);
         if (oldHistory != null) {
-            history = new ArrayList<String>(oldHistory);
+            history.clear();
+            history.addAll(oldHistory);
         }
         createInterpreter();
         //Create the gui
@@ -126,8 +127,9 @@ public class JythonShell extends InteractiveShell {
      * write the hostory
      */
     public void saveHistory() {
-        idv.getStore().put(PROP_JYTHON_SHELL_HISTORY, history);
-        idv.getStore().save();
+        IdvObjectStore store = idv.getStore();
+        store.put(PROP_JYTHON_SHELL_HISTORY, history);
+        store.save();
     }
 
     /**
@@ -217,13 +219,11 @@ public class JythonShell extends InteractiveShell {
      * List the variables in the interpreter
      */
     public void listVars() {
-        PyStringMap seq   = (PyStringMap) getInterpreter().getLocals();
-        PyList items = seq.items();
+        PyStringMap locals = (PyStringMap)getInterpreter().getLocals();
         StringBuilder sb = new StringBuilder("Variables:<br>");
-        for (int itemIdx = 0; itemIdx < items.__len__(); itemIdx++) {
-            PyTuple pair = (PyTuple) items.__finditem__(itemIdx);
-            Object obj = pair.__finditem__(1);
-            String name = pair.__finditem__(0).toString();
+        for (Object key : locals.keys()) {
+            String name = key.toString();
+            PyObject obj = locals.get(new PyString(name));
             if ((obj instanceof PyFunction)
                     || (obj instanceof PyReflectedFunction)
                 //                    || (obj instanceof PyJavaClass)
@@ -315,11 +315,10 @@ public class JythonShell extends InteractiveShell {
         outputStream = new OutputStream() {
             @Override public void write(int b) {}
             @Override public void write(byte[] b, int off, int len) {
-                String s = new String(new String(b, off, len));
-                s = replace(s, "\n", "<br>");
-                s = replace(s, " ", "&nbsp;");
-                s = replace(s, "\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
-                output(s);
+                output(new String(b, off, len)
+                    .replace("\n", "<br>")
+                    .replace(" ", "&nbsp;")
+                    .replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;"));
             }
         };
         interp.setOut(outputStream);
@@ -353,7 +352,6 @@ public class JythonShell extends InteractiveShell {
         menuBar.add(makeMenu("File", items));
 
         items.clear();
-//        items = new ArrayList<JMenuItem>();
         items.add(makeMenuItem("Clear All", this, "clear"));
         items.add(makeMenuItem("Clear Output", this, "clearOutput"));
         items.add(makeCheckboxMenuItem("Auto-select Operands", this, "autoSelect", null));
@@ -361,7 +359,6 @@ public class JythonShell extends InteractiveShell {
         menuBar.add(makeMenu("Edit", items));
 
         items.clear();
-//        items = new ArrayList<JMenuItem>();
         items.add(makeMenuItem("Help", this, "showHelp"));
         menuBar.add(makeMenu("Help", items));
         return menuBar;
@@ -403,7 +400,7 @@ public class JythonShell extends InteractiveShell {
             if ((label == null) || (label.trim().length() == 0)) {
                 label = ids.get(0);
             }
-            items.add(makeMenuItem(label, this, "insert","'" + ids.get(0) + "'"));
+            items.add(makeMenuItem(label, this, "insert", '\'' + ids.get(0) + '\''));
         }
         return items;
     }

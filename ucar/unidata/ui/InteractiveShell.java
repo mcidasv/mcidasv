@@ -24,6 +24,7 @@ package ucar.unidata.ui;
 import static ucar.unidata.util.GuiUtils.getImageIcon;
 import static ucar.unidata.util.GuiUtils.makeButton;
 import static ucar.unidata.util.GuiUtils.makeImageButton;
+import static ucar.unidata.util.LogUtil.registerWindow;
 import static ucar.unidata.xml.XmlUtil.decodeBase64;
 import static ucar.unidata.xml.XmlUtil.encodeBase64;
 
@@ -53,15 +54,14 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.text.JTextComponent;
 
 import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
-import ucar.unidata.xml.XmlUtil;
+
 
 /**
  * This class provides  an abstract interactive shell
  *
  * @author IDV development team
- * @version $Revision$Date: 2007/08/21 12:15:45 $
+ * @version $Revision$Date: 2010/10/14 16:05:27 $
  */
 public class InteractiveShell implements HyperlinkListener {
 
@@ -91,7 +91,7 @@ public class InteractiveShell implements HyperlinkListener {
     private boolean bufferOutput = false;
 
     /** _more_ */
-    protected List<String> history = new ArrayList<String>();
+    protected final List<String> history = new ArrayList<String>();
 
     /** _more_ */
     protected int historyIdx = -1;
@@ -120,7 +120,7 @@ public class InteractiveShell implements HyperlinkListener {
         frame.pack();
         frame.setLocation(100, 100);
         frame.setVisible(true);
-        LogUtil.registerWindow(frame);
+        registerWindow(frame);
     }
 
     public void close() {
@@ -233,8 +233,6 @@ public class InteractiveShell implements HyperlinkListener {
             }
         });
         cardLayoutPanel = new GuiUtils.CardLayoutPanel();
-
-        //        cardLayoutPanel.addCard(GuiUtils.top(GuiUtils.inset(commandFld,2)));
         cardLayoutPanel.addCard(GuiUtils.top(commandFld));
         cardLayoutPanel.addCard(GuiUtils.makeScrollPane(commandArea, 200, 100));
         flipBtn = makeImageButton("/auxdata/ui/icons/DownDown.gif", this, "flipField");
@@ -360,7 +358,7 @@ public class InteractiveShell implements HyperlinkListener {
      */
     public void clear() {
         historyIdx = -1;
-        history = new ArrayList<String>();
+        history.clear();
         clearOutput();
     }
 
