@@ -1,7 +1,7 @@
 import sys
 import types
-
-from java.lang import Class, Object
+from java.lang import Class
+from java.lang import Object
 from java.lang.reflect import Modifier
 from org.python.core import PyReflectedFunction
 from sets import Set
