@@ -2,7 +2,7 @@
 <?php
 
 $DEBUG=0;
-$EMAIL="jessicas@ssec.wisc.edu,beckys@ssec.wisc.edu,barryr@ssec.wisc.edu,davep@ssec.wisc.edu";
+$EMAIL="beckys@ssec.wisc.edu,barryr@ssec.wisc.edu,davep@ssec.wisc.edu";
 
 $DOC_DIR="/home/mcidasv/mc-v/docs/userguide/processed";
 
@@ -74,8 +74,12 @@ foreach ($files as $file) {
   $lines=file($file);
   foreach ($lines as $line) {
     $line=trim($line);
-    if (preg_match("/^Version /",$line)) {
-      $versioncheck=preg_replace("/^Version (.*)<br>$/","\\1",$line);
+    if (preg_match("/^Version /", $line)) {
+      $versioncheck=preg_replace("/^Version ([^ \"]+)[< \"].+$/", "\\1", $line);
+      break;
+    }
+    else if (preg_match("/McIDAS-V.* Version /", $line)) {
+      $versioncheck=preg_replace("/.* Version ([^ \"]+)[< \"].+$/", "\\1", $line);
       break;
     }
   }
@@ -85,7 +89,12 @@ foreach ($files as $file) {
 
 # Send mail if any inconsistencies were found
 if ($notify!="") {
-  mail("$EMAIL","AUTO: Problems with McV versions", "$notify");
+  if (!$DEBUG) {
+    mail("$EMAIL","AUTO: Problems with McV versions", "$notify");
+  }
+  else {
+    print "AUTO: Problems with McV versions\n\n".$notify."\n";
+  }
 }
 
 # Get list of files
