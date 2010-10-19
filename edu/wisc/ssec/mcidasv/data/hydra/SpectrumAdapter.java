@@ -55,6 +55,7 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
   public static String channelUnit = "cm";
   public static String channelType = "wavenumber";
   public static String array_name  = "array_name";
+  public static String array_dimension_names = "array_dimension_names";
   public static String range_name = "range_name";
   public static String x_dim_name  = "x_dim"; //- 2 spatial dimensions, x fastest varying
   public static String y_dim_name  = "y_dim"; //-----------------------------------------
