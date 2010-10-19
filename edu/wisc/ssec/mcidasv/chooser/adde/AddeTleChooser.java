@@ -30,6 +30,13 @@
 
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
+import static javax.swing.GroupLayout.DEFAULT_SIZE;
+import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+import static javax.swing.GroupLayout.Alignment.TRAILING;
+import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
+import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
+
 import java.awt.Graphics;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -42,6 +49,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -179,17 +187,17 @@ public class AddeTleChooser extends AddeChooser implements Constants {
 */
         XmlObjectStore store = getIdv().getStore();
 
-	org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(myPanel);
-	myPanel.setLayout(layout);
+        GroupLayout layout = new GroupLayout(myPanel);
+        myPanel.setLayout(layout);
 
-	layout.setHorizontalGroup(
-		layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-		.add(layout.createSequentialGroup()
-			.add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                .add(layout.createSequentialGroup()
-                                        .add(descriptorLabel)
-                                        .add(GAP_RELATED)
-                                        .add(descriptorComboBox))
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(descriptorLabel)
+                        .addGap(GAP_RELATED)
+                        .addComponent(descriptorComboBox))
 /*
                                 .add(layout.createSequentialGroup()
                                     .add(serverLabel)
@@ -200,17 +208,17 @@ public class AddeTleChooser extends AddeChooser implements Constants {
                                     .add(imageGroupSelector)
                                 )
 */
-                        )
                 )
+            )
         );
 
-	layout.setVerticalGroup(
-		layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-		.add(layout.createSequentialGroup()
-			.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                                .add(descriptorLabel)
-                                .add(descriptorComboBox))
+        layout.setVerticalGroup(
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addPreferredGap(RELATED)
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(descriptorLabel)
+                    .addComponent(descriptorComboBox))
 /*
 			.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -221,7 +229,7 @@ public class AddeTleChooser extends AddeChooser implements Constants {
                             .add(imageGroupSelector)
                         )
 */
-                )
+            )
         );
 
         setInnerPanel(myPanel);
