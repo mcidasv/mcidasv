@@ -82,7 +82,9 @@ public class AddeTleDataSource extends DataSourceImpl {
         ucar.unidata.util.LogUtil.getLogInstance(
             AddeTleDataSource.class.getName());
 
+    private List tleCards = new ArrayList();
     private List choices = new ArrayList();
+
     /**
      * Default bean constructor for persistence; does nothing.
      */
@@ -99,17 +101,18 @@ public class AddeTleDataSource extends DataSourceImpl {
     public AddeTleDataSource(DataSourceDescriptor descriptor,
                               String filename, Hashtable properties) {
         super(descriptor, filename, "Text data source", properties);
+/*
         System.out.println("\nAddeTleDataSource:");
         System.out.println("    descriptor=" + descriptor);
         System.out.println("    filename=" + filename);
-
-        System.out.println("properties:");
+*/
+        //System.out.println("properties:");
         String key = AddeTleChooser.TLE_SERVER_NAME_KEY;
         Object server = properties.get(key);
-        System.out.println("    " + key + "=" + server);
+        //System.out.println("    " + key + "=" + server);
         key = AddeTleChooser.TLE_GROUP_NAME_KEY;
         Object group = properties.get(key);
-        System.out.println("    " + key + "=" + group);
+        //System.out.println("    " + key + "=" + group);
 /*
         key = AddeTleChooser.SATELLITE_SERVER_NAME_KEY;
         Object val = properties.get(key);
@@ -129,12 +132,16 @@ public class AddeTleDataSource extends DataSourceImpl {
             System.out.println("\nproblem reading TLE file");
         } else {
             String[] cards = StringUtil.listToStringArray(lines);
+            //System.out.println("\n");
             for (int i=0; i<cards.length; i++) {
+                tleCards.add(cards[i]);
+                //System.out.println(cards[i]);
                 int indx = cards[i].indexOf(" ");
                 if (indx < 0) {
                     choices.add(cards[i]);
                 }
             }
+            //System.out.println("\n");
         }
     }
 
@@ -177,11 +184,126 @@ public class AddeTleDataSource extends DataSourceImpl {
                                 DataSelection dataSelection,
                                 Hashtable requestProperties)
             throws VisADException, RemoteException {
-        System.out.println("\n Helloooooooooooo");
-        String          filename = dataChoice.getStringId();
-        AddeTextAdapter ata      = new AddeTextAdapter(filename);
-        return ata.getData();
+/*
+        System.out.println("\ngetDataInner:");
+        System.out.println("    dataChoice=" + dataChoice);
+        System.out.println("    category=" + category);
+        System.out.println("    dataSelection=" + dataSelection + "\n");
+*/
+        boolean gotit = false;
+        int index = -1;
+        String choiceName = dataChoice.getName();
+        List tleComps = new ArrayList();
+        while(!gotit) {
+            index++;
+            String name = ((String)tleCards.get(index)).trim();
+            if (name.equals(choiceName)) {
+                index++;
+                String card = (String)tleCards.get(index);
+                int ncomps = decodeCard1(card);
+                System.out.println("ncomps=" + ncomps);
+                gotit= true;
+            }
+            if (index+3 > tleCards.size()) gotit = true;
+        }
+        return null;
     }
 
-}
+    private int decodeCard1(String card) {
+/*
+        System.out.println("\ndecodeCard1:");
+        System.out.println("    card=" + card);
+        System.out.println("    length=" + card.length());
+*/
+        int satID = 0;
+        int launchYear = 0;
+        int intCode = 0;
+        int yyddd = 0;
+        double dayFraction = 1.0;
+        double firstDev = 1.0;
+        double secondDev = 1.0;
+        double bStar = 1.0;
+        int ephemerisType = 0;
+        int elementNumber = 0;
 
+        int ret = 0;
+
+        if (card.length() < 67) {
+            return ret;
+        } else {
+            System.out.println("\n" + card);
+            int indx = card.indexOf("U");
+            String val = card.substring(2, indx);
+            satID = (new Integer(val)).intValue();
+            System.out.println("    satID=" + satID);
+            ++ret;
+
+            ++indx;
+            card = advCard(indx, card);
+            int tempInt = getInt(5, card);
+            launchYear = tempInt/1000;
+            intCode = tempInt - launchYear*1000;
+            System.out.println("    launchYear=" + launchYear + " intCode=" + intCode);
+            ++ret;
+
+            card = advCard(6, card);
+            yyddd = getInt(5, card);
+            System.out.println("    yyddd=" + yyddd);
+            ++ret;
+
+            card = advCard(5, card);
+            dayFraction = getDouble(9, card);
+            System.out.println("    dayFraction=" + dayFraction);
+            ++ret;
+
+            card = advCard(9, card);
+            firstDev = getDouble(9, card);
+            System.out.println("    firstDev=" + firstDev);
+            ++ret;
+
+            card = advCard(9, card);
+            secondDev = getDoubleExp(5, 7, card);
+            System.out.println("    secondDev=" + secondDev);
+            ++ret;
+
+            card = advCard(7, card);
+            bStar = getDoubleExp(5, 7, card);
+            System.out.println("    bStar=" + bStar);
+            ++ret;
+
+            card = advCard(7, card);
+            ephemerisType = getInt(1, card);
+            System.out.println("    ephemerisType=" + ephemerisType);
+            ++ret;
+
+            card = advCard(1, card);
+            indx = card.length();
+            if (indx > 4) indx = 4;
+            elementNumber = getInt(indx, card);
+            System.out.println("    elementNumber=" + elementNumber);
+            ++ret;
+        }
+        return ret;
+    }
+
+    private String advCard(int index, String card) {
+         return (card.substring(index)).trim();
+    }
+
+    private int getInt(int index, String card) {
+        String val = card.substring(0, index);
+        return (new Integer(val)).intValue();
+    }
+
+    private double getDoubleExp(int index1, int index2, String card) {
+        double val = getDouble(index1, card);
+        String str = card.substring(index1, index2);
+        int exp = new Integer(str).intValue();
+        return val *= Math.pow(10, exp);
+    }
+
+    private double getDouble(int index, String card) {
+        String val = card.substring(0, index);
+        return (new Double(val)).doubleValue();
+    }
+}
