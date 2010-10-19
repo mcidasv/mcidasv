@@ -2384,7 +2384,7 @@ public class AddeImageChooser extends AddeChooser implements
                 locValue = getUserPropValue(PROP_LINELE, dir);
             }
         } 
-        // Level II Radar doesn't use this, so this should only affect Level III Radar.
+        // Level II Radar doesn't use this, so this should only affect Level III Radar. 
         // It fixes the problem where Level III requests were using LINELE with lat/lon values.
         else if (getDataType() == "RADAR") {
         	locKey = PROP_LATLON;
