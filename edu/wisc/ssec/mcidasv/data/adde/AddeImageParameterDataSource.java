@@ -42,13 +42,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.TreeMap;
@@ -64,40 +61,13 @@ import javax.swing.JTabbedPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ucar.nc2.dt.grid.NetcdfCFWriter;
-import ucar.nc2.iosp.mcidas.McIDASAreaProjection;
-import ucar.unidata.data.BadDataException;
-import ucar.unidata.data.CompositeDataChoice;
-import ucar.unidata.data.DataCategory;
-import ucar.unidata.data.DataChoice;
-import ucar.unidata.data.DataSelection;
-import ucar.unidata.data.DataSelectionComponent;
-import ucar.unidata.data.DataSourceDescriptor;
-import ucar.unidata.data.DataSourceImpl;
-import ucar.unidata.data.DirectDataChoice;
-import ucar.unidata.data.GeoLocationInfo;
-import ucar.unidata.data.GeoSelection;
-import ucar.unidata.data.imagery.AddeImageDataSource;
-import ucar.unidata.data.imagery.AddeImageDescriptor;
-import ucar.unidata.data.imagery.AddeImageInfo;
-import ucar.unidata.data.imagery.BandInfo;
-import ucar.unidata.data.imagery.ImageDataset;
-import ucar.unidata.data.imagery.ImageDataSource.ImageDataInfo;
-import ucar.unidata.geoloc.LatLonPoint;
-import ucar.unidata.geoloc.LatLonRect;
-import ucar.unidata.geoloc.ProjectionImpl;
-import ucar.unidata.idv.DisplayControl;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.IOUtil;
-import ucar.unidata.util.JobManager;
-import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.PollingInfo;
-import ucar.unidata.util.StringUtil;
-import ucar.unidata.util.ThreeDSize;
-import ucar.unidata.util.TwoFacedObject;
-import ucar.visad.Util;
-import ucar.visad.data.AreaImageFlatField;
+import edu.wisc.ssec.mcidas.AREAnav;
+import edu.wisc.ssec.mcidas.AreaDirectory;
+import edu.wisc.ssec.mcidas.AreaDirectoryList;
+import edu.wisc.ssec.mcidas.AreaFile;
+import edu.wisc.ssec.mcidas.adde.AddeImageURL;
+import edu.wisc.ssec.mcidas.adde.AddeTextReader;
+
 import visad.Data;
 import visad.DateTime;
 import visad.FlatField;
@@ -115,12 +85,36 @@ import visad.meteorology.ImageSequenceImpl;
 import visad.meteorology.ImageSequenceManager;
 import visad.meteorology.SingleBandedImage;
 import visad.util.ThreadManager;
-import edu.wisc.ssec.mcidas.AREAnav;
-import edu.wisc.ssec.mcidas.AreaDirectory;
-import edu.wisc.ssec.mcidas.AreaDirectoryList;
-import edu.wisc.ssec.mcidas.AreaFile;
-import edu.wisc.ssec.mcidas.adde.AddeImageURL;
-import edu.wisc.ssec.mcidas.adde.AddeTextReader;
+
+import ucar.nc2.iosp.mcidas.McIDASAreaProjection;
+import ucar.unidata.data.BadDataException;
+import ucar.unidata.data.CompositeDataChoice;
+import ucar.unidata.data.DataCategory;
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataSelection;
+import ucar.unidata.data.DataSelectionComponent;
+import ucar.unidata.data.DataSourceDescriptor;
+import ucar.unidata.data.DirectDataChoice;
+import ucar.unidata.data.GeoLocationInfo;
+import ucar.unidata.data.GeoSelection;
+import ucar.unidata.data.imagery.AddeImageDataSource;
+import ucar.unidata.data.imagery.AddeImageDescriptor;
+import ucar.unidata.data.imagery.AddeImageInfo;
+import ucar.unidata.data.imagery.BandInfo;
+import ucar.unidata.data.imagery.ImageDataset;
+import ucar.unidata.geoloc.LatLonPoint;
+import ucar.unidata.geoloc.ProjectionImpl;
+import ucar.unidata.idv.DisplayControl;
+import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.IOUtil;
+import ucar.unidata.util.LogUtil;
+import ucar.unidata.util.PollingInfo;
+import ucar.unidata.util.StringUtil;
+import ucar.unidata.util.ThreeDSize;
+import ucar.unidata.util.TwoFacedObject;
+import ucar.visad.Util;
+import ucar.visad.data.AreaImageFlatField;
+
 import edu.wisc.ssec.mcidasv.data.GeoLatLonSelection;
 import edu.wisc.ssec.mcidasv.data.GeoPreviewSelection;
 
@@ -318,33 +312,44 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         getAreaDirectory(properties);
     }
 
+    @Override protected void propertiesChanged() {
+        logger.trace("fired");
+        super.propertiesChanged();
+    }
+
+    @Override protected boolean initDataFromPollingInfo() {
+        boolean result = super.initDataFromPollingInfo();
+        logger.trace("result={}", result);
+        return result;
+    }
+
     @Override protected boolean isPolling() {
         boolean result = super.isPolling();
         logger.trace("isPolling={}", result);
         return result;
     }
-    
+
     @Override public void setPollingInfo(PollingInfo value) {
         logger.trace("value={}", value);
         super.setPollingInfo(value);
     }
-    
+
     @Override protected boolean hasPollingInfo() {
         boolean result = super.hasPollingInfo();
         logger.trace("hasPollingInfo={}", result);
         return result;
     }
-    
+
     @Override public PollingInfo getPollingInfo() {
         PollingInfo result = super.getPollingInfo();
         logger.trace("getPollingInfo={}", result);
         return result;
     }
-    
+
     @Override public void initAfterUnpersistence() {
         logger.trace("unbundled!");
         super.initAfterUnpersistence();
-        
+
         if (this.sourceProps.containsKey(PREVIEW_KEY)) {
             this.showPreview = (Boolean)this.sourceProps.get(PREVIEW_KEY);
             if (this.showPreview == null) {
@@ -368,14 +373,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     @Override public boolean canSaveDataToLocalDisk() {
         return true;
     }
-//    public void setChoiceToSel(Hashtable<DataChoice, DataSelection> newMap) {
-//        this.choiceToSel = newMap;
-//    }
-//    public Hashtable<DataChoice, DataSelection> getChoiceToSel() {
-//        return this.choiceToSel;
-//    }
+
     private Hashtable<DataChoice, DataSelection> choiceToSel = new Hashtable<DataChoice, DataSelection>();
-    
+
     public DataSelection getSelForChoice(final DataChoice choice) {
         return choiceToSel.get(choice);
     }
@@ -385,6 +385,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     public void putSelForChoice(final DataChoice choice, final DataSelection sel) {
         choiceToSel.put(choice, sel);
     }
+
     /**
      * Save files to local disk
      *
@@ -397,7 +398,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      * @throws Exception On badness
      */
     @Override protected List saveDataToLocalDisk(String prefix, Object loadId, boolean changeLinks) throws Exception {
-      logger.trace("prefix={} loadId={} changeLinks={}", new Object[] { prefix, loadId, changeLinks });
+        logger.trace("prefix={} loadId={} changeLinks={}", new Object[] { prefix, loadId, changeLinks });
         final List<JCheckBox> checkboxes = new ArrayList<JCheckBox>();
         List categories = new ArrayList();
         Hashtable catMap = new Hashtable();
@@ -1675,26 +1676,27 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     + descriptorsToUse.size() + ' '
                     + label;
 
-                String src = "";
-                try {
-                    src = aid.getSource();
-                    src = replaceKey(src, LINELE_KEY, (Object)("1 1"));
-                    String sizeString = "10 10";
-                    src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
-                    String name = dataChoice.getName();
-                    int idx = name.lastIndexOf("_");
-                    String unit = name.substring(idx+1);
-                    if (getKey(src, UNIT_KEY).length() == 0)
-                        src = replaceKey(src, UNIT_KEY, (Object)(unit));
-
-                    int lSize = numLines;
-                    int eSize = numEles;
-                    sizeString = lSize + " " + eSize;
-                    src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
-                    src = replaceKey(src, MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
-                    aid.setSource(src);
-                } catch (Exception exc) {
-                    super.makeImageSequence(dataChoice, subset);
+                String src = aid.getSource();
+                if (!isFromFile(aid)) {
+                    try {
+                        src = replaceKey(src, LINELE_KEY, (Object)("1 1"));
+                        String sizeString = "10 10";
+                        src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
+                        String name = dataChoice.getName();
+                        int idx = name.lastIndexOf('_');
+                        String unit = name.substring(idx+1);
+                        if (getKey(src, UNIT_KEY).length() == 0) {
+                            src = replaceKey(src, UNIT_KEY, (Object)(unit));
+                        }
+                        int lSize = numLines;
+                        int eSize = numEles;
+                        sizeString = lSize + " " + eSize;
+                        src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
+                        src = replaceKey(src, MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
+                        aid.setSource(src);
+                    } catch (Exception exc) {
+                        super.makeImageSequence(dataChoice, subset);
+                    }
                 }
 
                 SingleBandedImage image = makeImage(aid, rangeType, true,
