@@ -18,7 +18,6 @@
  * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-//package ucar.visad.display;
 package edu.wisc.ssec.mcidasv.data.hydra;
 
 import ucar.visad.display.GridDisplayable;
@@ -153,7 +152,6 @@ public class ImageRGBDisplayable extends DisplayableData implements GridDisplaya
             new ConstantMap(1.0, Display.MissingTransparent) });
 
 
-        /**
         if (field != null) {
           TupleType     tt       = GridUtil.getParamType(field);
           RealTupleType ffldType = new RealTupleType(tt.getRealComponents());
@@ -163,7 +161,6 @@ public class ImageRGBDisplayable extends DisplayableData implements GridDisplaya
               setColorTupleType(ffldType);
           }
         }
-        **/
     }
       
 
@@ -178,18 +175,6 @@ public class ImageRGBDisplayable extends DisplayableData implements GridDisplaya
      */
     public void loadData(FieldImpl field)
             throws VisADException, RemoteException {
-
-        // get the RealType of the range from the FlatField
-        if (field == null) {
-            return;
-        }
-        TupleType     tt       = GridUtil.getParamType(field);
-        RealTupleType ffldType = new RealTupleType(tt.getRealComponents());
-
-        if ((getColorTupleType() == null)
-                || !ffldType.equals(getColorTupleType())) {
-            setColorTupleType(ffldType);
-        }
         setData(field);
     }
 
@@ -288,7 +273,7 @@ public class ImageRGBDisplayable extends DisplayableData implements GridDisplaya
                               mapType);
             /* TODO: maybe allow user to set range.  If so, just copy
                logic from RGBDisplayable */
-            colorMaps[i].setRange(0, 255);
+            //-TDR colorMaps[i].setRange(0, 255);
             set.add(colorMaps[i]);
             final int colorMapIndex = i;
             colorMaps[i].addScalarMapListener(new ScalarMapListener() {
