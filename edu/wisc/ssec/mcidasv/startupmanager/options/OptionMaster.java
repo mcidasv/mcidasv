@@ -69,7 +69,7 @@ public enum OptionMaster {
         // mcidasv enables this (the actual property is "visad.java3d.geometryByRef")
         // by default in mcidasv.properties.
         { "USE_GEOBYREF", "Enable access to geometry by reference", "1", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
-        { "USE_IMAGEBYREF", "Enable access to image data by reference", "0", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
+        { "USE_IMAGEBYREF", "Enable access to image data by reference", "1", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
         { "USE_NPOT", "Enable Non-Power of Two (NPOT) textures", "0", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
         // temp bandaid for people suffering from permgen problems.
         { "USE_CMSGC", "Enable concurrent mark-sweep garbage collector", "0", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
