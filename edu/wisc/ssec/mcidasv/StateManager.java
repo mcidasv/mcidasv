@@ -234,7 +234,7 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 	 * >0: that version is greater
 	 */
 	private int compareVersions(String thisVersion, String thatVersion) {
-		int thisInt = versionToInteger(thisVersion);
+		int thisInt = versionToInteger(thisVersion);		
 		int thatInt = versionToInteger(thatVersion);
 		return (thatInt - thisInt);
 	}
@@ -261,17 +261,21 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 			}
 			
 			// Minor version
+			int minor = 0;
 			int i=0;
 			for (i=0; i<2 && i<version.length(); i++) {
 				one = version.charAt(i);
 				if (Character.isDigit(one)) {
-					if (i==0) value += Character.digit(one, 10) * 100000;
-					else value += Character.digit(one, 10) * 10000;
+					if (i>0) minor *= 10;
+					minor += Character.digit(one, 10) * 10000;
+//					if (i==0) value += Character.digit(one, 10) * 100000;
+//					else value += Character.digit(one, 10) * 10000;
 				}
 				else {
 					break;
 				}
 			}
+			value += minor;
 			if (one!=null) version = version.substring(i);
 	
 			// Alpha/beta status
@@ -289,7 +293,7 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 				value += Integer.parseInt(version);
 			
 		} catch (Exception e) {}
-
+		
 		return value;
 	}
 	
