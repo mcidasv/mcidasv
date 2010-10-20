@@ -698,7 +698,42 @@ public class McVGuiUtils implements Constants {
 
     	return newPanel;
     }
-        
+
+    /**
+     * Use GroupLayout for wrapping a list of components vertically
+     */
+    public static JPanel vertical(Component[] components) {
+    	JPanel newPanel = new JPanel();
+    	
+    	GroupLayout layout = new GroupLayout(newPanel);
+    	newPanel.setLayout(layout);
+    	
+    	ParallelGroup hGroup = layout.createParallelGroup(LEADING);
+    	for (int i=0; i<components.length; i++) {
+    		hGroup.addComponent(components[i], DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE);
+    	}
+
+    	int vSize=PREFERRED_SIZE;
+
+    	ParallelGroup vGroup = layout.createParallelGroup(LEADING);
+    	SequentialGroup vInner = layout.createSequentialGroup();
+    	for (int i=0; i<components.length; i++) {
+    		if (i>0) vInner.addGap(GAP_RELATED);
+    		if (i == components.length-1) vSize = Short.MAX_VALUE;
+    		vInner.addComponent(components[i], PREFERRED_SIZE, DEFAULT_SIZE, vSize);
+    	}
+    	vGroup.addGroup(vInner);
+
+    	layout.setHorizontalGroup(
+    			layout.createParallelGroup(LEADING).addGroup(hGroup)
+    	);
+    	layout.setVerticalGroup(
+    			layout.createParallelGroup(LEADING).addGroup(vGroup)
+    	);    	
+    	
+    	return newPanel;
+    }
+
     /**
      * Hack apart an IDV button panel and do a few things:
      * - Reorder the buttons based on OS preference

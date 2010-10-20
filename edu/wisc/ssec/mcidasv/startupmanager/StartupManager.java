@@ -434,9 +434,9 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         BooleanOption use3d = (BooleanOption)optMaster.getOption("USE_3DSTUFF");
         BooleanOption defaultBundle = (BooleanOption)optMaster.getOption("DEFAULT_LAYOUT");
         BooleanOption useDirect3d = (BooleanOption)optMaster.getOption("D3DREND");
-        BooleanOption useBadLineFix = (BooleanOption)optMaster.getOption("USE_GEOBYREF");
         BooleanOption useCmsCollector = (BooleanOption)optMaster.getOption("USE_CMSGC");
         BooleanOption useNpot = (BooleanOption)optMaster.getOption("USE_NPOT");
+        BooleanOption useGeometryByRef = (BooleanOption)optMaster.getOption("USE_GEOBYREF");
         BooleanOption useImageByRef = (BooleanOption)optMaster.getOption("USE_IMAGEBYREF");
         DirectoryOption startupBundle = (DirectoryOption)optMaster.getOption("STARTUP_BUNDLE");
         TextOption jvmArgs = (TextOption)optMaster.getOption("JVM_ARGS");
@@ -464,18 +464,28 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         defaultBundleCheckBox.setText(defaultBundle.getLabel());
         JPanel bundlePanel = McVGuiUtils.makeLabeledComponent(startupBundle.getLabel()+":",
             McVGuiUtils.topBottom(startupBundlePanel, defaultBundleCheckBox, McVGuiUtils.Prefer.TOP));
-
-        JCheckBox useBadLineFixCheckBox = (JCheckBox)useBadLineFix.getComponent();
+        
         JCheckBox useCmsCollectorCheckBox = (JCheckBox)useCmsCollector.getComponent();
-        JCheckBox useNpotCheckBox = (JCheckBox)useNpot.getComponent();
-        JCheckBox useImageByRefCheckBox = (JCheckBox)useImageByRef.getComponent();
-        useBadLineFixCheckBox.setText(useBadLineFix.getLabel());
         useCmsCollectorCheckBox.setText(useCmsCollector.getLabel());
-        useNpotCheckBox.setText(useNpot.getLabel());
-        useImageByRefCheckBox.setText(useImageByRef.getLabel());
-        JPanel miscPanel = McVGuiUtils.makeLabeledComponent("Misc:", McVGuiUtils.topBottom(useBadLineFixCheckBox, useCmsCollectorCheckBox, McVGuiUtils.Prefer.TOP));
 
-        JPanel testingPanel = McVGuiUtils.makeLabeledComponent("VisAD:", McVGuiUtils.topBottom(useNpotCheckBox, useImageByRefCheckBox, McVGuiUtils.Prefer.TOP));
+        JCheckBox useGeometryByRefCheckBox = (JCheckBox)useGeometryByRef.getComponent();
+        useGeometryByRefCheckBox.setText(useGeometryByRef.getLabel());
+
+        JCheckBox useImageByRefCheckBox = (JCheckBox)useImageByRef.getComponent();
+        useImageByRefCheckBox.setText(useImageByRef.getLabel());
+
+        JCheckBox useNpotCheckBox = (JCheckBox)useNpot.getComponent();
+        useNpotCheckBox.setText(useNpot.getLabel());
+        
+        JPanel miscPanel = McVGuiUtils.makeLabeledComponent("Misc:", useCmsCollectorCheckBox);
+
+        Component[] visadComponents = new Component[] {
+        		useGeometryByRefCheckBox,
+        		useImageByRefCheckBox,
+        		useNpotCheckBox
+        };
+
+        JPanel visadPanel = McVGuiUtils.makeLabeledComponent("VisAD:", McVGuiUtils.vertical(visadComponents));
 
         javax.swing.GroupLayout panelLayout = new javax.swing.GroupLayout(startupPanel);
         startupPanel.setLayout(panelLayout);
@@ -485,20 +495,20 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
                 .addComponent(j3dPanel)
                 .addComponent(bundlePanel)
                 .addComponent(miscPanel)
-                .addComponent(testingPanel)
+                .addComponent(visadPanel)
         );
         panelLayout.setVerticalGroup(
             panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelLayout.createSequentialGroup()
                 .addComponent(heapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(j3dPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bundlePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(miscPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(j3dPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(testingPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(visadPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(miscPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             )
         );
 
