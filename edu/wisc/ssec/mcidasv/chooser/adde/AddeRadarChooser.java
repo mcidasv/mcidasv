@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
@@ -54,11 +55,14 @@ import edu.wisc.ssec.mcidas.AreaDirectoryList;
 import edu.wisc.ssec.mcidas.AreaFileException;
 import edu.wisc.ssec.mcidas.McIDASUtil;
 
+import ucar.unidata.data.imagery.AddeImageInfo;
 import ucar.unidata.data.imagery.ImageDataSource;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.metdata.NamedStationTable;
 import ucar.unidata.util.LogUtil;
+import ucar.unidata.util.Misc;
+
 
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
@@ -456,4 +460,67 @@ public class AddeRadarChooser extends AddeImageChooser {
         return super.doMakeContents(true);
     }
     
+    
+    /**
+     * Make an AddeImageInfo from a URL and an AreaDirectory
+     * 
+     * @param dir
+     *            AreaDirectory
+     * @param isRelative
+     *            true if is relative
+     * @param num
+     *            number (for relative images)
+     * 
+     * @return corresponding AddeImageInfo
+     */
+    protected AddeImageInfo makeImageInfo(AreaDirectory dir,
+            boolean isRelative, int num) {
+        AddeImageInfo info = new AddeImageInfo(getAddeServer().getName(),
+                AddeImageInfo.REQ_IMAGEDATA, getGroup(), getDescriptor());
+        if (isRelative) {
+            info.setDatasetPosition((num == 0) ? 0 : -num);
+        } else {
+            info.setStartDate(dir.getNominalTime());
+        }
+        setImageInfoProps(info, getMiscKeyProps(), dir);
+        setImageInfoProps(info, getBaseUrlProps(), dir);
+
+        info.setLocateKey(PROP_LINELE);
+        info.setLocateValue("0 0 F");
+        info.setPlaceValue("ULEFT");
+        
+        String magKey = getPropValue(PROP_MAG, dir);
+        int lmag = 1;
+        int emag = 1;
+        StringTokenizer tok = new StringTokenizer(magKey);
+        lmag = (int) Misc.parseNumber((String) tok.nextElement());
+        if (tok.hasMoreTokens()) {
+            emag = (int) Misc.parseNumber((String) tok.nextElement());
+        } else {
+            emag = lmag;
+        }
+        info.setLineMag(lmag);
+        info.setElementMag(emag);
+
+        int lines = dir.getLines();
+        int elems = dir.getElements();
+        String sizeKey = getPropValue(PROP_SIZE, dir);
+        tok = new StringTokenizer(sizeKey);
+        String size = (String) tok.nextElement();
+        if (!size.equalsIgnoreCase("all")) {
+            lines = (int) Misc.parseNumber(size);
+            if (tok.hasMoreTokens()) {
+                elems = (int) Misc.parseNumber((String) tok.nextElement());
+            } else {
+                elems = lines;
+            }
+        }
+        info.setLines(lines);
+        info.setElements(elems);
+        /*
+         * System.out.println("url = " + info.getURLString().toLowerCase() +
+         * "\n");
+         */
+        return info;
+    }
 }
