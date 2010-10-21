@@ -397,7 +397,7 @@ public class RGBCompositeControl extends DisplayControlImpl {
 
      try {
        displayMaster.setDisplayInactive();
-       ((BaseColorControl)grnMap.getControl()).setTable(newBluTbl);
+       ((BaseColorControl)bluMap.getControl()).setTable(newBluTbl);
        displayMaster.setDisplayActive();
      } catch(Exception ex) {
        LogUtil.logException("setDisplayInactive", ex);
