@@ -130,18 +130,19 @@ public class RangeProcessor {
 		missing = getAttributeAsFloatArray(array_name, (String) metadata.get("fill_value_name"));
 
 		String metaStr = (String)metadata.get("valid_range");
-		if (metaStr != null) {
+                if (metaStr == null) { // attr name not supplied, so try the convention default
+                         metaStr = "valid_range";
+                }
 
-			valid_range = getAttributeAsFloatArray(array_name, metaStr);
-			if (valid_range != null) {
+	        valid_range = getAttributeAsFloatArray(array_name, metaStr);
+		if (valid_range != null) {
 
-				valid_low = valid_range[0];
-				valid_high = valid_range[1];
+			valid_low = valid_range[0];
+			valid_high = valid_range[1];
 
-				if (valid_range[0] > valid_range[1]) {
-					valid_low = valid_range[1];
-					valid_high = valid_range[0];
-				}
+			if (valid_range[0] > valid_range[1]) {
+				valid_low = valid_range[1];
+				valid_high = valid_range[0];
 			}
 		}
 
@@ -258,7 +259,7 @@ public class RangeProcessor {
 				}
 			}
 			
-			if ((isMissing) || (val < low[0]) || (val > high[0])) {
+			if ((isMissing) || (val < valid_low) || (val > valid_high)) {
 				new_values[k] = Float.NaN;
 			}
 			else {
@@ -322,7 +323,7 @@ public class RangeProcessor {
 				}
 			}
 			
-			if ((isMissing) || (val < low[0]) || (val > high[0])) {
+			if ((isMissing) || (val < valid_low) || (val > valid_high)) {
 				new_values[k] = Float.NaN;
 			}
 			else {
@@ -370,7 +371,7 @@ public class RangeProcessor {
 				}
 			}
 			
-			if ((valid_range != null) && ((val < low[0]) || (val > high[0]))) {
+			if ((valid_range != null) && ((val < valid_low) || (val > valid_high))) {
 				new_values[k] = Float.NaN;
 			}
 		}
@@ -411,7 +412,7 @@ public class RangeProcessor {
 				}
 			}
 			
-			if ((valid_range != null) && ((val < low[0]) || (val > high[0]))) {
+			if ((valid_range != null) && ((val < valid_low) || (val > valid_high))) {
 				new_values[k] = Double.NaN;
 			}
 		}
@@ -459,7 +460,7 @@ public class RangeProcessor {
 				}
 			}
 			
-			if ((isMissing) || (val < low[0]) || (val > high[0])) {
+			if ((isMissing) || (val < valid_low) || (val > valid_high)) {
 				new_values[k] = Float.NaN;
 			}
 			else {
@@ -514,7 +515,7 @@ public class RangeProcessor {
 				}
 			}
             			
-            if ((isMissing) || (val < low[0]) || (val > high[0])) {
+            if ((isMissing) || (val < valid_low) || (val > valid_high)) {
 				new_values[k] = Float.NaN;
 			}
 			else {
