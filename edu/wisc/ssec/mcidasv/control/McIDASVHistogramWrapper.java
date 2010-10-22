@@ -183,6 +183,10 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
 
                 domainAxis.addChangeListener(new AxisChangeListener() {
                     public void axisChanged(AxisChangeEvent ae) {
+                        if (!myControl.isInitDone()) {
+                            return;
+                        }
+
                         Range range = domainAxis.getRange();
                         double newLow = Math.floor(range.getLowerBound()+0.5);
                         double newHigh = Math.floor(range.getUpperBound()+0.5);
@@ -215,13 +219,13 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
         }
     }
 
-    protected boolean modifyRange(int lowVal, int hiVal) {
+    protected boolean modifyRange(double lowVal, double hiVal) {
         try {
             if (plot == null) {
                 return false;
             }
             ValueAxis domainAxis = plot.getDomainAxis();
-            domainAxis.setRange((double)lowVal, (double)hiVal); 
+            domainAxis.setRange(lowVal, hiVal); 
             return true;
         } catch (Exception e) {
             return true;

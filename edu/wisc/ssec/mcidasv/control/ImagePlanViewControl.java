@@ -154,13 +154,9 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
 
     private DataSourceImpl dataSource;
 
-    private DataChoice dataChoice;
-
     private FlatField image;
 
     private McIDASVHistogramWrapper histoWrapper;
-
-    private DataSelection dataSelection;
 
     public ImagePlanViewControl() {
         super();
@@ -168,11 +164,11 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
         this.imageDefaults = getImageDefaults();
     }
 
-    @Override     public boolean init(DataChoice dataChoice)
-    throws VisADException, RemoteException {
-        this.dataChoice = (DataChoice) this.getDataChoices().get(0);
-        boolean result = super.init(this.dataChoice);
-
+    @Override public boolean init(DataChoice dataChoice) 
+        throws VisADException, RemoteException 
+    {
+//        this.dataChoice = (DataChoice)this.getDataChoices().get(0);
+        boolean result = super.init((DataChoice)this.getDataChoices().get(0));
         return result;
     }
 
@@ -221,8 +217,10 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
             GuiUtils.handleHeavyWeightComponentsInTabs(tab);
 //            ColorTableWidget ctw = getColorTableWidget(getRange());
             Range range = getRange();
-            int lo = (int)range.getMin();
-            int hi = (int)range.getMax();
+//            int lo = (int)range.getMin();
+//            int hi = (int)range.getMax();
+            double lo = range.getMin();
+            double hi = range.getMax();
             boolean flag = histoWrapper.modifyRange(lo, hi);
             ((MyTabbedPane)tab).setPopupFlag(!flag);
             histoWrapper.setHigh(hi);
@@ -236,16 +234,16 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
 
     protected JComponent getHistogramTabComponent() {
         List choices = new ArrayList();
-        if (dataChoice == null) {
-            dataChoice = getDataChoice();
+        if (datachoice == null) {
+            datachoice = getDataChoice();
         }
-        choices.add(dataChoice);
+        choices.add(datachoice);
         histoWrapper = new McIDASVHistogramWrapper("histo", choices, (DisplayControlImpl)this);
         dataSource = getDataSource();
 
         if (dataSource == null) {
             try {
-                image = (FlatField)((ComboDataChoice)dataChoice).getData();
+                image = (FlatField)((ComboDataChoice)datachoice).getData();
                 histoWrapper.loadData(image);
             } catch (Exception e) {
                 
@@ -254,24 +252,24 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
             Hashtable props = dataSource.getProperties();
             try {
 //                this.dataSelection = dataChoice.getDataSelection();
-                DataSelection testSelection = dataChoice.getDataSelection();
+                DataSelection testSelection = datachoice.getDataSelection();
                 DataSelection realSelection = getDataSelection();
                 if (testSelection == null) {
-                    dataChoice.setDataSelection(realSelection);
+                    datachoice.setDataSelection(realSelection);
                 }
                 ImageSequenceImpl seq = null;
                 if (dataSelection == null)
                     dataSelection = dataSource.getDataSelection();
                 if (dataSelection == null) {
-                    image = (FlatField)dataSource.getData(dataChoice, null, props);
+                    image = (FlatField)dataSource.getData(datachoice, null, props);
                     if (image == null) {
-                        image = (FlatField) dataChoice.getData(null);
+                        image = (FlatField)datachoice.getData(null);
                     }
                 } else {
 //                    if (dataChoice.getDataSelection() == null) {
 //                        dataChoice.setDataSelection(dataSelection)
 //                    }
-                    Data data = dataSource.getData(dataChoice, null, dataSelection, props);
+                    Data data = dataSource.getData(datachoice, null, dataSelection, props);
                     if (data instanceof ImageSequenceImpl) {
                         seq = (ImageSequenceImpl) data;
                     } else if (data instanceof FlatField) {
@@ -367,14 +365,16 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
         //    	Document doc = XmlUtil.makeDocument();
         //    	Element newChild = doc.createElement(TAG_DEFAULT);
 
-        dataChoice = getDataChoice();
+        if (datachoice == null) {
+            datachoice = getDataChoice();
+        }
         dataSource = getDataSource();
         if (!(dataSource.getClass().isInstance(new AddeImageParameterDataSource()))) {
             System.err.println("dataSource not a AddeImageParameterDataSource");
             return parameterValues;
         }
         AddeImageParameterDataSource testDataSource = (AddeImageParameterDataSource)dataSource;
-        List imageList = testDataSource.getDescriptors(dataChoice, this.dataSelection);
+        List imageList = testDataSource.getDescriptors(datachoice, this.dataSelection);
         int numImages = imageList.size();
         List dateTimes = new ArrayList();
         DateTime thisDT = null;
@@ -384,7 +384,9 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
                 aid = (AddeImageDescriptor)(imageList.get(imageNo));
                 thisDT = aid.getImageTime();
                 if (!(dateTimes.contains(thisDT))) {
-                    if (thisDT != null) dateTimes.add(thisDT);
+                    if (thisDT != null) {
+                        dateTimes.add(thisDT);
+                    }
                 }
             }
 
@@ -410,11 +412,11 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
 
             // Set the unit for later reference
             String unitS = "";
-            if (!(dataChoice.getId() instanceof BandInfo)) {
+            if (!(datachoice.getId() instanceof BandInfo)) {
                 System.err.println("dataChoice ID not a BandInfo");
                 return parameterValues;
             }
-            BandInfo bi = (BandInfo)dataChoice.getId();
+            BandInfo bi = (BandInfo)datachoice.getId();
             unitS = bi.getPreferredUnit();
 
             if (aid != null) {
@@ -846,13 +848,15 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
         Element newChild = imageDefaultsDocument.createElement(TAG_DEFAULT);
         newChild.setAttribute(ATTR_NAME, newCompName);
 
-        dataChoice = getDataChoice();
+        if (datachoice == null) {
+            datachoice = getDataChoice();
+        }
         dataSource = getDataSource();
         if (!(dataSource.getClass().isInstance(new AddeImageParameterDataSource()))) {
             return newChild;
         }
         AddeImageParameterDataSource testDataSource = (AddeImageParameterDataSource)dataSource;
-        List imageList = testDataSource.getDescriptors(dataChoice, this.dataSelection);
+        List imageList = testDataSource.getDescriptors(datachoice, this.dataSelection);
         int numImages = imageList.size();
         List dateTimes = new ArrayList();
         DateTime thisDT = null;
