@@ -4,7 +4,7 @@ from java.lang import System
 from ucar.unidata.ui.colortable import ColorTableDefaults
 
 class _JavaProxy(object):
-    """One sentence description goes here.
+    """One sentence description goes here
     
     This is where a more complete description of the class would go.
     
@@ -20,6 +20,10 @@ class _JavaProxy(object):
     def getJavaInstance(self):
         """Returns the actual VisAD/IDV/McIDAS-V object being proxied."""
         return self.__javaObject
+    
+    def __str__(self):
+        """Returns the results of running the proxied object's toString() method."""
+        return self.__javaObject.toString()
     
     def __getattr__(self, attr):
         """Forwards object attribute lookups to the internal VisAD/IDV/McIDAS-V object."""
@@ -55,7 +59,7 @@ class _Display(_JavaProxy):
     def center(self, latitude, longitude, scale=1.0):
         """ """
         earthLocation = Util.makeEarthLocation(latitude, longitude)
-        mapDisplay = self.__javaObj.getMapDisplay()
+        mapDisplay = self._JavaProxy__javaObject.getMapDisplay()
         
         # no idea what the problem is here...
         mapDisplay.centerAndZoom(earthLocation, False, scale)
@@ -64,14 +68,14 @@ class _Display(_JavaProxy):
     
     def getLayer(self, index):
         """Returns the layer at the given index (zero-based!) for this Display"""
-        return _Layer(self.__javaObj.getControls()[index])
+        return _Layer(self._JavaProxy__javaObject.getControls()[index])
     
     def getLayers(self):
         """Returns a list of all layers used by this Display."""
-        return [_Layer(displayControl) for displayControl in self.__javaObj.getControls()]
+        return [_Layer(displayControl) for displayControl in self._JavaProxy__javaObject.getControls()]
 
 class _Layer(_JavaProxy):
-    def __init__(self, javaObj):
+    def __init__(self, javaObject):
         """Creates a proxy for ucar.unidata.idv.DisplayControl objects."""
         _JavaProxy.__init__(self, javaObject)
 
