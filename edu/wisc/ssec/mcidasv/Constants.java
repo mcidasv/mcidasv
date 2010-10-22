@@ -201,6 +201,9 @@ public interface Constants extends IdvConstants {
 	/** The name of the version check user preference. */
 	public static final String PREF_VERSION_CHECK = "mcidasv.doversioncheck";
 
+	/** The name of the prerelease check user preference. */
+	public static final String PREF_PRERELEASE_CHECK = "mcidasv.doprereleasecheck";
+
 	/** Name of the {@literal "remove all data warning"} preference. */
 	public static final String PREF_CONFIRM_REMOVE_DATA = 
 	    "mcv.warn.remove.data.all";
@@ -280,6 +283,9 @@ public interface Constants extends IdvConstants {
 
 	/** Location of latest version file under base url */
 	public static final String VERSION_URL = "stable/version.txt";
+
+	/** Location of latest prerelease directory under base url */
+	public static final String PRERELEASE_URL = "prerelease/";
 
 	/** Location of latest notice file under base url */
 	public static final String NOTICE_URL = "stable/notice.txt";

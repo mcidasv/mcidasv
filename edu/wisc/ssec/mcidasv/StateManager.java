@@ -204,12 +204,40 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 	}
 	
 	/**
-	 * Connect to McIDAS website and look for latest version
+	 * Connect to McIDAS website and look for latest stable version
 	 */
-	public String getMcIdasVersionLatest() {
+	public String getMcIdasVersionStable() {
 		String version = "";
 		try {
 			version = IOUtil.readContents(Constants.HOMEPAGE_URL+'/'+Constants.VERSION_URL+"?requesting="+getMcIdasVersion()+"&os="+getOSName(), "");
+		} catch (Exception e) {}
+		return version.trim();
+	}
+
+	/**
+	 * Connect to McIDAS website and look for latest prerelease version
+	 */
+	public String getMcIdasVersionPrerelease() {
+		String version = "";
+		try {
+			String htmlList = IOUtil.readContents(Constants.HOMEPAGE_URL+'/'+Constants.PRERELEASE_URL, "");
+			String lines[] = htmlList.split("\n");
+			for (int i=0; i<lines.length; i++) {
+				String line = lines[i].trim();
+				if (line.matches(".*McIDAS-V_\\d+\\.\\d+.*")) {
+					line = line.substring(line.indexOf("McIDAS-V_")+9);
+					String aVersion = line.substring(0, line.indexOf("_"));
+					if (version == "") {
+						version = aVersion;
+					}
+					else {
+						int comp = compareVersions(version, aVersion);
+						if (comp > 0) {
+							version = aVersion;
+						}
+					}
+				}
+			}
 		} catch (Exception e) {}
 		return version.trim();
 	}
@@ -297,14 +325,30 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 		return value;
 	}
 	
+	public boolean getIsPrerelease() {
+		boolean isPrerelease = false;
+		String version = getMcIdasVersion();
+		if (version.indexOf("a") >= 0 || version.indexOf("b") >= 0) {
+			isPrerelease = true;
+		}
+		return isPrerelease;
+	}
+	
 	public void checkForNewerVersion(boolean notifyDialog) {
+		checkForNewerVersionStable(notifyDialog);
+    	if (getStore().get(Constants.PREF_PRERELEASE_CHECK, getIsPrerelease())) {
+    		checkForNewerVersionPrerelease(notifyDialog);
+    	}
+	}
+	
+	public void checkForNewerVersionStable(boolean notifyDialog) {
 		
 		/** Shortcut this whole process if we are processing offscreen */
 		if (super.getIdv().getArgsManager().getIsOffScreen())
 			return;
 
 		String thisVersion = getMcIdasVersion();
-		String thatVersion = getMcIdasVersionLatest();
+		String thatVersion = getMcIdasVersionStable();
 		String titleText = "Version Check";
 		
 		if (thisVersion.equals("") || thatVersion.equals("")) {
@@ -317,6 +361,48 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 			String labelText = "<html>Version <b>" + thatVersion + "</b> is available<br><br>";
 			labelText += "Visit <a href=\"" + Constants.HOMEPAGE_URL + "\">";
 			labelText += Constants.HOMEPAGE_URL + "</a> to download</html>";
+			
+			JPanel backgroundColorGetterPanel = new JPanel();
+			JEditorPane messageText = new JEditorPane("text/html", labelText);
+			messageText.setBackground(backgroundColorGetterPanel.getBackground());
+			messageText.setEditable(false);
+			messageText.addHyperlinkListener(this);
+
+//			JLabel message = new JLabel(labelText, JLabel.CENTER);
+			JOptionPane.showMessageDialog(null, messageText, titleText, 
+					JOptionPane.INFORMATION_MESSAGE);
+		}
+		else {
+			if (notifyDialog) {
+				String labelText = "<html>This version (<b>" + thisVersion + "</b>) is up to date</html>";
+				JLabel message = new JLabel(labelText, JLabel.CENTER);
+				JOptionPane.showMessageDialog(null, message, titleText, 
+						JOptionPane.INFORMATION_MESSAGE);
+			}
+		}
+		
+	}
+	
+	public void checkForNewerVersionPrerelease(boolean notifyDialog) {
+		
+		/** Shortcut this whole process if we are processing offscreen */
+		if (super.getIdv().getArgsManager().getIsOffScreen())
+			return;
+
+		String thisVersion = getMcIdasVersion();
+		String thatVersion = getMcIdasVersionPrerelease();
+		String titleText = "Prerelease Check";
+		
+		if (thisVersion.equals("") || thatVersion.equals("")) {
+			if (notifyDialog) {
+				JOptionPane.showMessageDialog(null, "No prerelease version available", titleText, 
+						JOptionPane.WARNING_MESSAGE);
+			}
+		}
+		else if (compareVersions(thisVersion, thatVersion) > 0) {
+			String labelText = "<html>Prerelease <b>" + thatVersion + "</b> is available<br><br>";
+			labelText += "Visit <a href=\"" + Constants.HOMEPAGE_URL+'/'+Constants.PRERELEASE_URL + "\">";
+			labelText += Constants.HOMEPAGE_URL+'/'+Constants.PRERELEASE_URL + "</a> to download</html>";
 			
 			JPanel backgroundColorGetterPanel = new JPanel();
 			JEditorPane messageText = new JEditorPane("text/html", labelText);

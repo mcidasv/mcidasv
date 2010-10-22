@@ -1116,6 +1116,8 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     protected void addMcVPreferences() {
 
         Hashtable<String, Component> widgets = new Hashtable<String, Component>();
+        McIDASV mcv = (McIDASV)getIdv();
+        StateManager sm = (edu.wisc.ssec.mcidasv.StateManager)mcv.getStateManager();
 
         PreferenceManager basicManager = new PreferenceManager() {
             @SuppressWarnings("unchecked") // IDV-style call to applyWidgets.
@@ -1127,10 +1129,12 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             }
         };
 
+        boolean isPrerelease = sm.getIsPrerelease();
         Object[][] generalObjects = {
             { "Show Help Tips on start", HelpTipDialog.PREF_HELPTIPSHOW },
             { "Show Data Explorer on start", PREF_SHOWDASHBOARD, Boolean.TRUE },
             { "Check for new version and notice on start", Constants.PREF_VERSION_CHECK, Boolean.TRUE },
+            { "Include prereleases in version check", Constants.PREF_PRERELEASE_CHECK, isPrerelease },
             { "Confirm before exiting", PREF_SHOWQUITCONFIRM },
             { "Automatically save default layout at exit", Constants.PREF_AUTO_SAVE_DEFAULT_LAYOUT, Boolean.FALSE },
             { "Save visibility of Data Explorer", Constants.PREF_SAVE_DASHBOARD_VIZ, Boolean.FALSE },
