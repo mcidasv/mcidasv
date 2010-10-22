@@ -225,9 +225,11 @@ public class AddeTleDataSource extends DataSourceImpl {
                 index++;
                 String card = (String)tleCards.get(index);
                 int ncomps = decodeCard1(card);
+                if (ncomps < 0) return null;
                 index++;
                 card = (String)tleCards.get(index);
                 ncomps += decodeCard2(card);
+                if (ncomps < 0) return null;
                 System.out.println("\nncomps=" + ncomps);
                 gotit= true;
             }
@@ -244,9 +246,8 @@ public class AddeTleDataSource extends DataSourceImpl {
 */
         int ret = 0;
         System.out.println(card);
-        System.out.println(card.substring(0,1));
-        String str = card.substring(0,1);
-        str = str.trim();
+        int ck1 = checksum(card.substring(0, 68));
+        String str = card.substring(0, 1);
         if (str.equals("1")) {
             satId = getInt(2, 7, card);
             System.out.println("    satId = " + satId);
@@ -293,6 +294,12 @@ public class AddeTleDataSource extends DataSourceImpl {
             elementNumber = getInt(64, 68, card);
             System.out.println("    elementNumber = " + elementNumber);
             ++ret;
+
+            int check = card.codePointAt(68) - 48;
+            if (check != ck1) {
+                System.out.println("***** Failed checksum *****");
+                ret = -1;
+            }
         }
         return ret;
     }
@@ -305,9 +312,8 @@ public class AddeTleDataSource extends DataSourceImpl {
 */
         int ret = 0;
         System.out.println("\n" + card);
-        String str = card.substring(0,1);
-        str = str.trim();
-        System.out.println(str);
+        int ck1 = checksum(card.substring(0, 68));
+        String str = card.substring(0, 1);
         if (str.equals("2")) {
             int nsat = getInt(2, 7, card);
             System.out.println("    nsat = " + nsat);
@@ -339,6 +345,12 @@ public class AddeTleDataSource extends DataSourceImpl {
                 revolutionNumber = getInt(63, 68, card);
                 System.out.println("    revolutionNumber = " + revolutionNumber);
                 ++ret;
+
+                int check = card.codePointAt(68) - 48;
+                if (check != ck1) {
+                    System.out.println("***** Failed checksum *****");
+                    ret = -1;
+                }
             }
         }
         return ret;
@@ -354,5 +366,19 @@ public class AddeTleDataSource extends DataSourceImpl {
         String str = card.substring(beg, end);
         str = str.trim();
         return (new Double(str)).doubleValue();
+    }
+
+    private int checksum(String str) {
+        int sum = 0;
+        byte[] bites = str.getBytes();
+        for (int i=0; i<bites.length; i++) {
+            int val = (int)bites[i];
+            if ((val > 47) && (val < 58)) {
+                sum += val - 48;
+            } else if (val == 45) {
+                ++sum;
+            }
+        }
+        return sum % 10;
     }
 }
