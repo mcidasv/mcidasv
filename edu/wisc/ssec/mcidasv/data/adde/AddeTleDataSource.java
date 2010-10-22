@@ -85,6 +85,25 @@ public class AddeTleDataSource extends DataSourceImpl {
     private List tleCards = new ArrayList();
     private List choices = new ArrayList();
 
+    private int satId = 0;
+    private int launchYear = 0;
+    private int intCode = 0;
+    private int yyddd = 0;
+    private double dayFraction = 1.0;
+    private double firstDev = 1.0;
+    private double secondDev = 1.0;
+    private double bStar = 1.0;
+    private int ephemerisType = 0;
+    private int elementNumber = 0;
+
+    private double inclination = 1.0;
+    private double rightAscension = 1.0;
+    private double eccentricity = 1.0;
+    private double argOfPerigee = 1.0;
+    private double meanAnomaly = 1.0;
+    private double meanMotion = 1.0;
+    private int revolutionNumber = 0;
+
     /**
      * Default bean constructor for persistence; does nothing.
      */
@@ -154,7 +173,6 @@ public class AddeTleDataSource extends DataSourceImpl {
         String category = "unknown";
         for (int i=0; i<choices.size(); i++) {
             String name  = ((String)choices.get(i)).trim();
-            //name = name.toLowerCase().trim();
             addDataChoice(
                 new DirectDataChoice(
                     this, name, name, name,
@@ -190,6 +208,7 @@ public class AddeTleDataSource extends DataSourceImpl {
         System.out.println("    category=" + category);
         System.out.println("    dataSelection=" + dataSelection + "\n");
 */
+
         boolean gotit = false;
         int index = -1;
         String choiceName = dataChoice.getName();
@@ -198,10 +217,18 @@ public class AddeTleDataSource extends DataSourceImpl {
             index++;
             String name = ((String)tleCards.get(index)).trim();
             if (name.equals(choiceName)) {
+ 
+                System.out.println("\n" + tleCards.get(index));
+                System.out.println(tleCards.get(index+1));
+                System.out.println(tleCards.get(index+2) + "\n");
+
                 index++;
                 String card = (String)tleCards.get(index);
                 int ncomps = decodeCard1(card);
-                System.out.println("ncomps=" + ncomps);
+                index++;
+                card = (String)tleCards.get(index);
+                ncomps += decodeCard2(card);
+                System.out.println("\nncomps=" + ncomps);
                 gotit= true;
             }
             if (index+3 > tleCards.size()) gotit = true;
@@ -215,95 +242,117 @@ public class AddeTleDataSource extends DataSourceImpl {
         System.out.println("    card=" + card);
         System.out.println("    length=" + card.length());
 */
-        int satID = 0;
-        int launchYear = 0;
-        int intCode = 0;
-        int yyddd = 0;
-        double dayFraction = 1.0;
-        double firstDev = 1.0;
-        double secondDev = 1.0;
-        double bStar = 1.0;
-        int ephemerisType = 0;
-        int elementNumber = 0;
-
         int ret = 0;
-
-        if (card.length() < 67) {
-            return ret;
-        } else {
-            System.out.println("\n" + card);
-            int indx = card.indexOf("U");
-            String val = card.substring(2, indx);
-            satID = (new Integer(val)).intValue();
-            System.out.println("    satID=" + satID);
+        System.out.println(card);
+        System.out.println(card.substring(0,1));
+        String str = card.substring(0,1);
+        str = str.trim();
+        if (str.equals("1")) {
+            satId = getInt(2, 7, card);
+            System.out.println("    satId = " + satId);
             ++ret;
 
-            ++indx;
-            card = advCard(indx, card);
-            int tempInt = getInt(5, card);
-            launchYear = tempInt/1000;
-            intCode = tempInt - launchYear*1000;
-            System.out.println("    launchYear=" + launchYear + " intCode=" + intCode);
+            launchYear = getInt(9, 11, card);
+            System.out.println("    launchYear = " + launchYear);
             ++ret;
 
-            card = advCard(6, card);
-            yyddd = getInt(5, card);
-            System.out.println("    yyddd=" + yyddd);
+            intCode = getInt(11, 14, card);
+            System.out.println("    intCode = " + intCode);
             ++ret;
 
-            card = advCard(5, card);
-            dayFraction = getDouble(9, card);
-            System.out.println("    dayFraction=" + dayFraction);
+            yyddd = getInt(18, 23, card);
+            System.out.println("    yyddd = " + yyddd);
             ++ret;
 
-            card = advCard(9, card);
-            firstDev = getDouble(9, card);
-            System.out.println("    firstDev=" + firstDev);
+            dayFraction = getDouble(23, 32, card);
+            System.out.println("    dayFraction = " + dayFraction);
             ++ret;
 
-            card = advCard(9, card);
-            secondDev = getDoubleExp(5, 7, card);
-            System.out.println("    secondDev=" + secondDev);
+            firstDev = getDouble(33, 43, card);
+            System.out.println("    firstDev = " + firstDev);
             ++ret;
 
-            card = advCard(7, card);
-            bStar = getDoubleExp(5, 7, card);
-            System.out.println("    bStar=" + bStar);
+            str = card.substring(44,50);
+            str += "E";
+            str += card.substring(50,52);
+            secondDev = getDouble(0, str.length(), str);
+            System.out.println("    secondDev = " + secondDev);
             ++ret;
 
-            card = advCard(7, card);
-            ephemerisType = getInt(1, card);
-            System.out.println("    ephemerisType=" + ephemerisType);
+            str = card.substring(53,59);
+            str += "E";
+            str += card.substring(59,61);
+            bStar = getDouble(0, str.length(), str);
+            System.out.println("    bStar = " + bStar);
             ++ret;
 
-            card = advCard(1, card);
-            indx = card.length();
-            if (indx > 4) indx = 4;
-            elementNumber = getInt(indx, card);
-            System.out.println("    elementNumber=" + elementNumber);
+            ephemerisType = getInt(62, 63, card);
+            System.out.println("    ephemerisType = " + ephemerisType);
+            ++ret;
+
+            elementNumber = getInt(64, 68, card);
+            System.out.println("    elementNumber = " + elementNumber);
             ++ret;
         }
         return ret;
     }
 
-    private String advCard(int index, String card) {
-         return (card.substring(index)).trim();
+    private int decodeCard2(String card) {
+/*
+        System.out.println("\ndecodeCard2:");
+        System.out.println("    card=" + card);
+        System.out.println("    length=" + card.length());
+*/
+        int ret = 0;
+        System.out.println("\n" + card);
+        String str = card.substring(0,1);
+        str = str.trim();
+        System.out.println(str);
+        if (str.equals("2")) {
+            int nsat = getInt(2, 7, card);
+            System.out.println("    nsat = " + nsat);
+            if (nsat == satId) {
+                inclination = getDouble(8, 16, card);
+                System.out.println("    inclination = " + inclination);
+                ++ret;
+
+                rightAscension = getDouble(17, 25, card);
+                System.out.println("    rightAscension = " + rightAscension);
+                ++ret;
+
+                eccentricity = getDouble(26, 33, card);
+                System.out.println("    eccentricity = " + eccentricity);
+                ++ret;
+
+                argOfPerigee = getDouble(34, 42, card);
+                System.out.println("    argOfPerigee = " + argOfPerigee);
+                ++ret;
+
+                meanAnomaly = getDouble(43, 51, card);
+                System.out.println("    meanAnomaly = " + meanAnomaly);
+                ++ret;
+
+                meanMotion = getDouble(52, 63, card);
+                System.out.println("    meanMotion = " + meanMotion);
+                ++ret;
+
+                revolutionNumber = getInt(63, 68, card);
+                System.out.println("    revolutionNumber = " + revolutionNumber);
+                ++ret;
+            }
+        }
+        return ret;
     }
 
-    private int getInt(int index, String card) {
-        String val = card.substring(0, index);
-        return (new Integer(val)).intValue();
+    private int getInt(int beg, int end,  String card) {
+        String str = card.substring(beg, end);
+        str = str.trim();
+        return (new Integer(str)).intValue();
     }
 
-    private double getDoubleExp(int index1, int index2, String card) {
-        double val = getDouble(index1, card);
-        String str = card.substring(index1, index2);
-        int exp = new Integer(str).intValue();
-        return val *= Math.pow(10, exp);
-    }
-
-    private double getDouble(int index, String card) {
-        String val = card.substring(0, index);
-        return (new Double(val)).doubleValue();
+    private double getDouble(int beg, int end, String card) {
+        String str = card.substring(beg, end);
+        str = str.trim();
+        return (new Double(str)).doubleValue();
     }
 }
