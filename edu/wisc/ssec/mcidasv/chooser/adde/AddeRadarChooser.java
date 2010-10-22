@@ -460,6 +460,17 @@ public class AddeRadarChooser extends AddeImageChooser {
         return super.doMakeContents(true);
     }
     
+    /**
+     * Get the default value for a key
+     * 
+     * @return null for SIZE, else super
+     */
+    protected String getDefault(String property, String dflt) {
+    	if (PROP_SIZE.equals(property)) {
+    		return dflt;
+    	}
+    	return super.getDefault(property, dflt);
+    }
     
     /**
      * Make an AddeImageInfo from a URL and an AreaDirectory
