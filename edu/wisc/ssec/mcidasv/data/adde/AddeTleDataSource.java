@@ -44,7 +44,6 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
 
-
 import visad.Data;
 import visad.DataReference;
 import visad.Text;
@@ -57,13 +56,10 @@ import java.io.FileInputStream;
 
 import java.rmi.RemoteException;
 
-
-
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-
 
 
 
@@ -141,7 +137,12 @@ public class AddeTleDataSource extends DataSourceImpl {
         System.out.println("    " + key + "=" + val);
 */
         //String url = "adde://noaaport.ssec.wisc.edu/textdata?&PORT=112&COMPRESS=gzip&USER=GAD&PROJ=6999&GROUP=POESNAV&DESCR=TLE";
-        String url = "adde://" + server + "/textdata?&PORT=112&COMPRESS=gzip&USER=GAD&PROJ=6999&GROUP=" + group + "&DESCR=" + filename;
+        key = AddeTleChooser.TLE_USER_ID_KEY;
+        Object user = properties.get(key);
+        key = AddeTleChooser.TLE_PROJECT_NUMBER_KEY;
+        Object proj = properties.get(key);
+        String url = "adde://" + server + "/textdata?&PORT=112&COMPRESS=gzip&USER=" + user + "&PROJ=" + proj + "&GROUP=" + group + "&DESCR=" + filename;
+        System.out.println("\n" + url + "\n");
         AddeTextReader reader = new AddeTextReader(url);
         List lines = null;
         if ("OK".equals(reader.getStatus())) {
