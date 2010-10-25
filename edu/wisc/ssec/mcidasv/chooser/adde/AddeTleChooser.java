@@ -47,6 +47,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.GroupLayout;
@@ -128,7 +129,16 @@ public class AddeTleChooser extends AddeChooser implements Constants {
     public static String TLE_GROUP_NAME_KEY = "tle_group";
 
     /**
-     * Property for the tle server name key.
+     * Property for the tle user id
+     */
+    public static String TLE_USER_ID_KEY = "tle_user";
+
+    /**
+     * Property for the tle project number
+     */
+    public static String TLE_PROJECT_NUMBER_KEY = "tle_proj";
+
+    /** * Property for the tle server name key.
      * @see #getServer()
      */
 //    public static String SATELLITE_SERVER_NAME_KEY = "satellite_server";
@@ -390,8 +400,15 @@ public class AddeTleChooser extends AddeChooser implements Constants {
     protected void getDataSourceProperties(Hashtable ht) {
         super.getDataSourceProperties(ht);
         ht.put(DATASET_NAME_KEY, getDatasetName());
-        ht.put(TLE_SERVER_NAME_KEY, getServer());
-        ht.put(TLE_GROUP_NAME_KEY, getGroup());
+        String server = getServer();
+        ht.put(TLE_SERVER_NAME_KEY, server);
+        String group = getGroup();
+        ht.put(TLE_GROUP_NAME_KEY, group);
+        Map<String, String> acct = getAccounting(server, group);
+        String user = acct.get("user");
+        String proj = acct.get("proj");
+        ht.put(TLE_USER_ID_KEY, user);
+        ht.put(TLE_PROJECT_NUMBER_KEY, proj);
 //        ht.put(SATELLITE_SERVER_NAME_KEY, getImageServer(imageServerSelector));
 //        ht.put(SATELLITE_GROUP_NAME_KEY, getImageGroup(imageGroupSelector));
     }
