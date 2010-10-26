@@ -107,9 +107,8 @@ import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.data.hydra.SubsetRubberBandBox;
 
-
 public class ScatterDisplay extends DisplayControlImpl {
-    
+
     private Container container;
     private FlatField X_field;
     private FlatField Y_field;
@@ -131,26 +130,39 @@ public class ScatterDisplay extends DisplayControlImpl {
     private ScatterDisplayable scatterMarkDsp;
 
     private RGBDisplayable maskX;
+
     private RGBDisplayable maskY;
 
     private BoxCurveSwitch boxCurveSwitch;
 
     public DataChoice dataChoiceX = null;
+
     public DataChoice dataChoiceY = null;
+
     public DataSelection dataSelectionX = null;
+
     public DataSelection dataSelectionY = null;
 
     JComponent ctwCompX;
+
     JComponent ctwCompY;
+
     ColorTableWidget ctw;
 
     int n_selectors = 3;
-    ArrayList scatterBoxSelectors = new ArrayList();
-    ArrayList scatterCurveSelectors = new ArrayList();
-    ArrayList imageXBoxSelectors = new ArrayList();
-    ArrayList imageYBoxSelectors = new ArrayList();
-    ArrayList imageXCurveSelectors = new ArrayList();
-    ArrayList imageYCurveSelectors = new ArrayList();
+
+    List<ScatterBoxSelector> scatterBoxSelectors = new ArrayList<ScatterBoxSelector>();
+
+    List<ScatterCurveSelector> scatterCurveSelectors = new ArrayList<ScatterCurveSelector>();
+
+    List<ImageBoxSelector> imageXBoxSelectors = new ArrayList<ImageBoxSelector>();
+
+    List<ImageBoxSelector> imageYBoxSelectors = new ArrayList<ImageBoxSelector>();
+
+    List<ImageCurveSelector> imageXCurveSelectors = new ArrayList<ImageCurveSelector>();
+
+    List<ImageCurveSelector> imageYCurveSelectors = new ArrayList<ImageCurveSelector>();
+
     JToggleButton[] selectorToggleButtons = new JToggleButton[n_selectors];
     Color[] selectorColors = new Color[] {Color.magenta, Color.green, Color.blue};
     float[][] maskColorPalette = new float[][] {{0.8f,0f,0f},{0f,0.8f,0f},{0.8f,0f,0.8f}};
@@ -203,7 +215,7 @@ public class ScatterDisplay extends DisplayControlImpl {
                          rangeY, clrTableY);
 
         dspMasterX.addDisplayListener(new DisplayListener() {
-            public void displayChanged(final DisplayEvent e) {
+            @Override public void displayChanged(final DisplayEvent e) {
                 double[] xProjection = dspMasterX.getProjectionMatrix();
                 double[] yProjection = dspMasterY.getProjectionMatrix();
                 if (xProjection.equals(yProjection))
@@ -218,7 +230,7 @@ public class ScatterDisplay extends DisplayControlImpl {
         });
 
         dspMasterY.addDisplayListener(new DisplayListener() {
-            public void displayChanged(final DisplayEvent e) {
+            @Override public void displayChanged(final DisplayEvent e) {
                 double[] xProjection = dspMasterX.getProjectionMatrix();
                 double[] yProjection = dspMasterY.getProjectionMatrix();
                 if (yProjection.equals(xProjection))
@@ -299,7 +311,7 @@ public class ScatterDisplay extends DisplayControlImpl {
         }
     }
 
-    protected void popupDataDialog(final String dialogMessage,
+    @Override protected void popupDataDialog(final String dialogMessage,
                                    Component from, boolean multiples,
                                    List categories) {
 
@@ -309,7 +321,7 @@ public class ScatterDisplay extends DisplayControlImpl {
             return;
         }
         final List clonedList =
-            DataChoice.cloneDataChoices((List) choices.get(0));
+            DataChoice.cloneDataChoices((List)choices.get(0));
         dataSelection = ((DataChoice) clonedList.get(0)).getDataSelection();
         //- don't do this in a separate thread like the IDV does.
         //- We want the dataChoice list updated before return.
@@ -321,7 +333,7 @@ public class ScatterDisplay extends DisplayControlImpl {
     }
 
 
-    public void initDone() {
+    @Override public void initDone() {
        try {
          DisplayMaster master = makeScatterDisplay();
          for (int k=0; k<n_selectors; k++) {
@@ -380,7 +392,7 @@ public class ScatterDisplay extends DisplayControlImpl {
            JToggleButton jtog = selectorToggleButtons[k];
           
            jtog.addActionListener(new ActionListener() {
-               public void actionPerformed(ActionEvent e) {
+               @Override public void actionPerformed(ActionEvent e) {
                   int idx = Integer.valueOf(e.getActionCommand());
                   try {
                     for (int i=0; i<n_selectors; i++) {
@@ -790,15 +802,17 @@ public class ScatterDisplay extends DisplayControlImpl {
         this.dc = dc;
       }
 
-      public void setRange(Range r) throws VisADException, RemoteException {
-        rgbDisp.setRangeForColor(r.getMin(), r.getMax());
+      @Override public void setRange(Range r) throws VisADException, RemoteException {
+          if (r != null) {
+              rgbDisp.setRangeForColor(r.getMin(), r.getMax());
+          }
       }
 
-      public DisplayConventions getDisplayConventions() {
+      @Override public DisplayConventions getDisplayConventions() {
         return dc;
       }
 
-      public void setColorTable(ColorTable ct) {
+      @Override public void setColorTable(ColorTable ct) {
         try {
           ctw.setColorTable(ct);
           ScalarMap colorMap = rgbDisp.getColorMap();
@@ -880,7 +894,7 @@ public class ScatterDisplay extends DisplayControlImpl {
 	master.addDisplayable(lastCurve);
       }
 
-      public void displayChanged(DisplayEvent de)
+      @Override public void displayChanged(DisplayEvent de)
              throws VisADException, RemoteException {
          if ((de.getId() == DisplayEvent.MOUSE_RELEASED) && (active)) {
            UnionSet uSet = curveDraw.getCurves();
@@ -1062,7 +1076,7 @@ public class ScatterDisplay extends DisplayControlImpl {
         this.other = other;
       }
 
-      public void doAction()
+      @Override public void doAction()
            throws VisADException, RemoteException {
         if (!init) {
           init = true;
@@ -1115,7 +1129,7 @@ public class ScatterDisplay extends DisplayControlImpl {
           }
         }
 
-        public void doAction()
+        @Override public void doAction()
              throws VisADException, RemoteException
         {
            if (!init) {
@@ -1300,7 +1314,7 @@ public class ScatterDisplay extends DisplayControlImpl {
        }
 
 
-       public void doAction() throws VisADException, RemoteException {
+       @Override public void doAction() throws VisADException, RemoteException {
          if (!init) {
            init = true;
            return;
@@ -1383,7 +1397,7 @@ public class ScatterDisplay extends DisplayControlImpl {
        master.addDisplayListener(this);
      }
 
-     public void displayChanged(DisplayEvent de)
+     @Override public void displayChanged(DisplayEvent de)
             throws VisADException, RemoteException {
        if ((de.getId() == DisplayEvent.MOUSE_RELEASED) && (active)) {
          UnionSet uSet = curveDraw.getCurves();
@@ -1406,7 +1420,7 @@ public class ScatterDisplay extends DisplayControlImpl {
        }
      }
 
-     public  void doAction() throws VisADException, RemoteException {
+     @Override public  void doAction() throws VisADException, RemoteException {
        if (!init) {
          init = true;
          return;
@@ -1439,7 +1453,7 @@ public class ScatterDisplay extends DisplayControlImpl {
      public BoxCurveSwitch() {
      }
     
-     public void actionPerformed(ActionEvent ae) {
+     @Override public void actionPerformed(ActionEvent ae) {
        String cmd = ae.getActionCommand();
        try {
        if (cmd.equals("Box")) {
