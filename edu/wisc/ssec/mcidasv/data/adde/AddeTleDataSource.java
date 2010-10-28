@@ -32,6 +32,7 @@ package edu.wisc.ssec.mcidasv.data.adde;
 
 import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 import edu.wisc.ssec.mcidasv.chooser.adde.AddeTleChooser;
+import edu.wisc.ssec.mcidasv.data.adde.sgp4.*;
 
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
@@ -81,11 +82,15 @@ public class AddeTleDataSource extends DataSourceImpl {
     private List tleCards = new ArrayList();
     private List choices = new ArrayList();
 
+    private SGP4SatData data = new SGP4SatData();
+
+    public static double pi = SGP4unit.pi;
+/*
     private int satId = 0;
     private int launchYear = 0;
     private int intCode = 0;
-    private int yyddd = 0;
-    private double dayFraction = 1.0;
+    private int yyyy = 0;
+    private double ddd = 1.0;
     private double firstDev = 1.0;
     private double secondDev = 1.0;
     private double bStar = 1.0;
@@ -99,7 +104,7 @@ public class AddeTleDataSource extends DataSourceImpl {
     private double meanAnomaly = 1.0;
     private double meanMotion = 1.0;
     private int revolutionNumber = 0;
-
+*/
     /**
      * Default bean constructor for persistence; does nothing.
      */
@@ -142,7 +147,7 @@ public class AddeTleDataSource extends DataSourceImpl {
         key = AddeTleChooser.TLE_PROJECT_NUMBER_KEY;
         Object proj = properties.get(key);
         String url = "adde://" + server + "/textdata?&PORT=112&COMPRESS=gzip&USER=" + user + "&PROJ=" + proj + "&GROUP=" + group + "&DESCR=" + filename;
-        System.out.println("\n" + url + "\n");
+        //System.out.println("\n" + url + "\n");
         AddeTextReader reader = new AddeTextReader(url);
         List lines = null;
         if ("OK".equals(reader.getStatus())) {
@@ -209,6 +214,12 @@ public class AddeTleDataSource extends DataSourceImpl {
         System.out.println("    category=" + category);
         System.out.println("    dataSelection=" + dataSelection + "\n");
 */
+        final double deg2rad = pi / 180.0;         //   0.0174532925199433
+        final double xpdotp = 1440.0 / (2.0 * pi);  // 229.1831180523293
+
+        double sec, tumin;
+        int year = 0;
+        int mon, day, hr, minute;//, nexp, ibexp;
 
         boolean gotit = false;
         int index = -1;
@@ -218,7 +229,7 @@ public class AddeTleDataSource extends DataSourceImpl {
             index++;
             String name = ((String)tleCards.get(index)).trim();
             if (name.equals(choiceName)) {
- 
+                data.name = name; 
                 System.out.println("\n" + tleCards.get(index));
                 System.out.println(tleCards.get(index+1));
                 System.out.println(tleCards.get(index+2) + "\n");
@@ -230,12 +241,77 @@ public class AddeTleDataSource extends DataSourceImpl {
                 index++;
                 card = (String)tleCards.get(index);
                 ncomps += decodeCard2(card);
-                if (ncomps < 0) return null;
-                System.out.println("\nncomps=" + ncomps);
+                //System.out.println("\nncomps=" + ncomps);
                 gotit= true;
             }
             if (index+3 > tleCards.size()) gotit = true;
         }
+        if (gotit == false) return null;
+
+
+        SGP4unit.Gravconsttype gravconsttype = SGP4unit.Gravconsttype.wgs72;
+        double[] temp = SGP4unit.getgravconst(gravconsttype);
+        tumin = temp[0];
+
+        // ---- find no, ndot, nddot ----
+        data.no = data.no / xpdotp; //* rad/min
+        data.nddot = data.nddot * Math.pow(10.0, data.nexp);
+        data.bstar = data.bstar * Math.pow(10.0, data.ibexp);
+
+        // ---- convert to sgp4 units ----
+        data.a = Math.pow(data.no * tumin, (-2.0 / 3.0));
+        data.ndot = data.ndot / (xpdotp * 1440.0);  //* ? * minperday
+        data.nddot = data.nddot / (xpdotp * 1440.0 * 1440);
+
+        // ---- find standard orbital elements ----
+        data.inclo = data.inclo * deg2rad;
+        data.nodeo = data.nodeo * deg2rad;
+        data.argpo = data.argpo * deg2rad;
+        data.mo = data.mo * deg2rad;
+
+        data.alta = data.a * (1.0 + data.ecco) - 1.0;
+        data.altp = data.a * (1.0 - data.ecco) - 1.0;
+
+        // ----------------------------------------------------------------
+        // find sgp4epoch time of element set
+        // remember that sgp4 uses units of days from 0 jan 1950 (sgp4epoch)
+        // and minutes from the epoch (time)
+        // ----------------------------------------------------------------
+
+        // ---------------- temp fix for years from 1957-2056 -------------------
+        // --------- correct fix will occur when year is 4-digit in tle ---------
+        if(data.epochyr < 57)
+        {
+            year = data.epochyr + 2000;
+        }
+        else
+        {
+            year = data.epochyr + 1900;
+        }
+
+        // computes the m/d/hr/min/sec from year and epoch days
+        SGP4utils.MDHMS mdhms = SGP4utils.days2mdhms(year, data.epochdays);
+        mon = mdhms.mon;
+        day = mdhms.day;
+        hr = mdhms.hr;
+        minute = mdhms.minute;
+        sec = mdhms.sec;
+        System.out.println("\nyear=" + year + " day=" + data.epochdays);
+        System.out.println("    mon=" + mon + " day=" + day);
+        System.out.println("    hr=" + hr + " minute=" + minute + " sec=" + sec);
+        // computes the jd from  m/d/...
+        data.jdsatepoch = SGP4utils.jday(year, mon, day, hr, minute, sec);
+        System.out.println("epochdays=" + data.epochdays);
+        System.out.println("jdsatepoch=" + data.jdsatepoch);
+
+        // ---------------- initialize the orbit at sgp4epoch -------------------
+        char opsmode = SGP4utils.OPSMODE_IMPROVED; // OPSMODE_IMPROVED
+        boolean result = SGP4unit.sgp4init(gravconsttype, opsmode, data.satnum,
+                data.jdsatepoch - 2433281.5, data.bstar,
+                data.ecco, data.argpo, data.inclo, data.mo, data.no,
+                data.nodeo, data);
+        System.out.println("\nsgp4init result=" + result + "\n");
+
         return null;
     }
 
@@ -245,6 +321,17 @@ public class AddeTleDataSource extends DataSourceImpl {
         System.out.println("    card=" + card);
         System.out.println("    length=" + card.length());
 */
+        int satId = 0;
+        int launchYear = 0;
+        int intCode = 0;
+        int yyyy = 0;
+        double ddd = 1.0;
+        double firstDev = 1.0;
+        double secondDev = 1.0;
+        double bStar = 1.0;
+        int ephemerisType = 0;
+        int elementNumber = 0;
+
         int ret = 0;
         System.out.println(card);
         int ck1 = checksum(card.substring(0, 68));
@@ -252,8 +339,12 @@ public class AddeTleDataSource extends DataSourceImpl {
         if (str.equals("1")) {
             satId = getInt(2, 7, card);
             System.out.println("    satId = " + satId);
+            data.satnum = satId;
             ++ret;
 
+            data.classification = card.substring(7, 8);
+            data.intldesg = card.substring(9, 17);
+/*
             launchYear = getInt(9, 11, card);
             System.out.println("    launchYear = " + launchYear);
             ++ret;
@@ -261,40 +352,77 @@ public class AddeTleDataSource extends DataSourceImpl {
             intCode = getInt(11, 14, card);
             System.out.println("    intCode = " + intCode);
             ++ret;
-
-            yyddd = getInt(18, 23, card);
-            System.out.println("    yyddd = " + yyddd);
+*/
+            int yy = getInt(18, 20, card);
+/*
+            if (yy < 57) {
+                yyyy = yy + 2000;
+            } else {
+                yyyy = yy + 1900;
+            }
+*/
+            data.epochyr = yy;
+//            System.out.println("    yyyy = " + yyyy);
             ++ret;
 
-            dayFraction = getDouble(23, 32, card);
-            System.out.println("    dayFraction = " + dayFraction);
+            ddd = getDouble(20, 32, card);
+            System.out.println("    ddd = " + ddd);
+            data.epochdays = ddd;
             ++ret;
+
+//            days2mdhms(yyyy, ddd);
 
             firstDev = getDouble(33, 43, card);
             System.out.println("    firstDev = " + firstDev);
+            data.ndot = firstDev;
             ++ret;
-
+/*
             str = card.substring(44,50);
             str += "E";
             str += card.substring(50,52);
             secondDev = getDouble(0, str.length(), str);
             System.out.println("    secondDev = " + secondDev);
             ++ret;
-
+*/
+            if((card.substring(44, 52)).equals("        "))
+            {
+                data.nddot = 0;
+                data.nexp = 0;
+            }
+            else
+            {
+                data.nddot = getDouble(44, 50, card) / 1.0E5;
+                //nexp
+                data.nexp = getInt(50, 52, card);
+            }
+            System.out.println("    nddot=" + data.nddot);
+            System.out.println("    nexp=" + data.nexp);
+/*
             str = card.substring(53,59);
             str += "E";
             str += card.substring(59,61);
             bStar = getDouble(0, str.length(), str);
             System.out.println("    bStar = " + bStar);
             ++ret;
+*/
+            data.bstar = getDouble(53, 59, card) / 1.0E5;
+            data.ibexp = getInt(59, 61, card);
+            System.out.println("    bstar=" + data.bstar);
+            System.out.println("    ibexp=" + data.ibexp);
 
-            ephemerisType = getInt(62, 63, card);
-            System.out.println("    ephemerisType = " + ephemerisType);
-            ++ret;
+            try {
+                ephemerisType = getInt(62, 63, card);
+                System.out.println("    ephemerisType = " + ephemerisType);
+                data.numb = ephemerisType;
+                ++ret;
 
-            elementNumber = getInt(64, 68, card);
-            System.out.println("    elementNumber = " + elementNumber);
-            ++ret;
+                elementNumber = getInt(64, 68, card);
+                System.out.println("    elementNumber = " + elementNumber);
+                data.elnum = elementNumber;
+                ++ret;
+            } catch (Exception e) {
+                System.out.println("Warning: Error Reading numb or elnum from TLE line 1 sat#:" + data.satnum);
+            }
 
             int check = card.codePointAt(68) - 48;
             if (check != ck1) {
@@ -311,41 +439,63 @@ public class AddeTleDataSource extends DataSourceImpl {
         System.out.println("    card=" + card);
         System.out.println("    length=" + card.length());
 */
+        double inclination = 1.0;
+        double rightAscension = 1.0;
+        double eccentricity = 1.0;
+        double argOfPerigee = 1.0;
+        double meanAnomaly = 1.0;
+        double meanMotion = 1.0;
+        int revolutionNumber = 0;
+
         int ret = 0;
         System.out.println("\n" + card);
         int ck1 = checksum(card.substring(0, 68));
         String str = card.substring(0, 1);
         if (str.equals("2")) {
             int nsat = getInt(2, 7, card);
-            System.out.println("    nsat = " + nsat);
-            if (nsat == satId) {
+            System.out.println("    nsat = " + nsat + " data.satnum=" + data.satnum);
+            if (nsat != data.satnum) {
+                System.out.println("Warning TLE line 2 Sat Num doesn't match line1 for sat: " + data.name);
+            } else {
                 inclination = getDouble(8, 16, card);
-                System.out.println("    inclination = " + inclination);
+                data.inclo = inclination;
+                System.out.println("    inclo = " + data.inclo);
                 ++ret;
 
                 rightAscension = getDouble(17, 25, card);
-                System.out.println("    rightAscension = " + rightAscension);
+                data.nodeo = rightAscension;
+                System.out.println("    nodeo = " + data.nodeo);
                 ++ret;
 
-                eccentricity = getDouble(26, 33, card);
-                System.out.println("    eccentricity = " + eccentricity);
+                eccentricity = getDouble(26, 33, card) / 1.0E7;
+                data.ecco = eccentricity;
+                System.out.println("    ecco = " + data.ecco);
                 ++ret;
 
                 argOfPerigee = getDouble(34, 42, card);
-                System.out.println("    argOfPerigee = " + argOfPerigee);
+                data.argpo = argOfPerigee;
+                System.out.println("    argpo = " + data.argpo);
                 ++ret;
 
                 meanAnomaly = getDouble(43, 51, card);
-                System.out.println("    meanAnomaly = " + meanAnomaly);
+                data.mo = meanAnomaly;
+                System.out.println("    mo = " + data.mo);
                 ++ret;
 
                 meanMotion = getDouble(52, 63, card);
-                System.out.println("    meanMotion = " + meanMotion);
+                data.no = meanMotion;
+                System.out.println("    no = " + data.no);
                 ++ret;
 
-                revolutionNumber = getInt(63, 68, card);
-                System.out.println("    revolutionNumber = " + revolutionNumber);
-                ++ret;
+                try {
+                    revolutionNumber = getInt(63, 68, card);
+                    data.revnum = revolutionNumber;
+                    System.out.println("    revnum = " + data.revnum);
+                    ++ret;
+                } catch (Exception e) {
+                    System.out.println("Warning: Error Reading revnum from TLE line 2 sat#:" + data.satnum + "\n" + e.toString());
+                    data.revnum = -1;
+                }
 
                 int check = card.codePointAt(68) - 48;
                 if (check != ck1) {
@@ -382,4 +532,65 @@ public class AddeTleDataSource extends DataSourceImpl {
         }
         return sum % 10;
     }
+
+/*
+    private void days2mdhms(int year, double days) {
+        //System.out.println("days2mdhms: year=" + year + " days=" + days);
+        MDHMS mdhms = new MDHMS();
+
+        int i, inttemp, dayofyr;
+        double temp;
+        int lmonth[] =
+        {
+            31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+        };
+
+        dayofyr = (int)Math.floor(days);
+        // ----------------- find month and day of month ---------------- //
+        if((year % 4) == 0) // doesn't work for dates starting 2100 and beyond //
+        {
+            lmonth[1] = 29;
+        }
+
+        i = 1;
+        inttemp = 0;
+        while((dayofyr > inttemp + lmonth[i - 1]) && (i < 12))
+        {
+            inttemp = inttemp + lmonth[i - 1];
+            i++;
+        }
+        mdhms.mon = i;
+        mdhms.day = dayofyr - inttemp;
+
+        // ----------------- find hours minutes and seconds ------------- //
+        temp = (days - dayofyr) * 24.0;
+        mdhms.hr = (int)Math.floor(temp);
+        temp = (temp - mdhms.hr) * 60.0;
+        mdhms.minute = (int)Math.floor(temp);
+        mdhms.sec = (temp - mdhms.minute) * 60.0;
+        System.out.println("        month=" + mdhms.mon);
+        System.out.println("        day=" + mdhms.day);
+        System.out.println("        hours=" + mdhms.hr);
+        System.out.println("        minutes=" + mdhms.minute);
+        System.out.println("        seconds=" + mdhms.sec);
+
+        return;
+        //return mdhms;
+    }
+
+
+    // Month Day Hours Min Sec
+    private static class MDHMS
+    {
+        int mon = 0;
+        ;
+        int day = 0;
+        ;
+        int hr = 0;
+        ;
+        int minute = 0;
+        ;
+        double sec = 0;
+    }
+*/
 }
