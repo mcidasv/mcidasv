@@ -29,20 +29,26 @@
  */
 package edu.wisc.ssec.mcidasv.servermanager;
 
-import static javax.swing.GroupLayout.DEFAULT_SIZE;
-import static javax.swing.GroupLayout.PREFERRED_SIZE;
-import static javax.swing.GroupLayout.Alignment.LEADING;
-import static javax.swing.GroupLayout.Alignment.TRAILING;
-import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
-
 import java.awt.Component;
+import java.awt.Container;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
+
+import net.miginfocom.swing.MigLayout;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,8 +57,6 @@ import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry.AddeFormat;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EditorAction;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
-import edu.wisc.ssec.mcidasv.util.McVTextField;
 
 /**
  * A dialog that allows the user to define or modify {@link LocalAddeEntry}s.
@@ -119,156 +123,111 @@ public class LocalEntryEditor extends javax.swing.JDialog {
 
     @SuppressWarnings("unchecked")
     private void initComponents(final LocalAddeEntry initEntry) {
-        java.awt.GridBagConstraints gridBagConstraints;
+        formatComboBox = new JComboBox();
+        formatComboBox.setModel(new DefaultComboBoxModel(new Object[] { }));
 
-        mainPanel = new javax.swing.JPanel();
-        datasetLabel = new javax.swing.JLabel();
-        datasetField = McVGuiUtils.makeTextFieldDeny("", 8, true, McVTextField.mcidasDeny);
-        typeLabel = new javax.swing.JLabel();
-        typeField = new javax.swing.JTextField();
-        formatLabel = new javax.swing.JLabel();
-        formatComboBox = new javax.swing.JComboBox();
-        directoryLabel = new javax.swing.JLabel();
-        directoryButton = new javax.swing.JButton();
-        buttonPanel = new javax.swing.JPanel();
-        addButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
+        JLabel datasetLabel = new JLabel("Dataset (e.g. MYDATA):");
+        datasetField = new JTextField();
+        datasetLabel.setLabelFor(datasetField);
+        datasetField.setColumns(20);
 
-        if (initEntry == LocalAddeEntry.INVALID_ENTRY) {
-            setTitle("Add Local Dataset");
-        } else {
-            setTitle("Edit Local Dataset");
-        }
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        mainPanel.setLayout(new java.awt.GridBagLayout());
+        JLabel typeLabel = new JLabel("Image Type (e.g. JAN 07 GOES):");
+        typeField = new JTextField();
+        typeLabel.setLabelFor(typeField);
+        typeField.setColumns(20);
 
-        if (datasetText != null)
-            datasetField.setText(datasetText);
+        JLabel formatLabel = new JLabel("Format:");
+        JComboBox formatComboBox = new JComboBox();
+        formatLabel.setLabelFor(formatComboBox);
 
-        datasetLabel.setText("Dataset (e.g. MYDATA):");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        mainPanel.add(datasetLabel, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        mainPanel.add(datasetField, gridBagConstraints);
+        JLabel directoryLabel = new JLabel("Directory:");
+        directoryField = new JTextField();
+        directoryLabel.setLabelFor(directoryField);
+        directoryField.setColumns(20);
 
-        typeLabel.setText("Image Type (e.g. JAN 07 GOES):");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        mainPanel.add(typeLabel, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        mainPanel.add(typeField, gridBagConstraints);
-
-        formatLabel.setText("Format:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        mainPanel.add(formatLabel, gridBagConstraints);
-
-        formatComboBox.setModel(new javax.swing.DefaultComboBoxModel(new Object[] { AddeFormat.MCIDAS_AREA, AddeFormat.AMSRE_L1B, AddeFormat.AMSRE_RAIN_PRODUCT, AddeFormat.GINI, AddeFormat.LRIT_GOES9, AddeFormat.LRIT_GOES10, AddeFormat.LRIT_GOES11, AddeFormat.LRIT_GOES12, AddeFormat.LRIT_MET5, AddeFormat.LRIT_MET7, AddeFormat.LRIT_MTSAT1R, AddeFormat.METEOSAT_OPENMTP, AddeFormat.METOP_AVHRR_L1B, AddeFormat.MODIS_L1B_MOD02, AddeFormat.MODIS_L2_MOD06, AddeFormat.MODIS_L2_MOD07, AddeFormat.MODIS_L2_MOD35, AddeFormat.MODIS_L2_MOD04, AddeFormat.MODIS_L2_MOD28, AddeFormat.MODIS_L2_MODR, AddeFormat.MSG_HRIT_FD, AddeFormat.MSG_HRIT_HRV, AddeFormat.MTSAT_HRIT, AddeFormat.NOAA_AVHRR_L1B, AddeFormat.SSMI, AddeFormat.TRMM }));
-        formatComboBox.setRenderer(new TooltipComboBoxRenderer());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        mainPanel.add(formatComboBox, gridBagConstraints);
-
-        directoryLabel.setText("Directory:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        mainPanel.add(directoryLabel, gridBagConstraints);
-
-        directoryButton.setText("Browse...");
-        directoryButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        JButton browseButton = new JButton("Browse...");
+        browseButton.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(final ActionEvent evt) {
                 browseButtonActionPerformed(evt);
             }
         });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        mainPanel.add(directoryButton, gridBagConstraints);
 
-        buttonPanel.setLayout(new java.awt.GridBagLayout());
-
-        if (initEntry == LocalAddeEntry.INVALID_ENTRY) {
-            addButton.setText("Add Dataset");
-        } else {
-            addButton.setText("Save Changes");
-            datasetField.setText(initEntry.getGroup());
-            typeField.setText(initEntry.getName());
-            directoryButton.setText(getShortString(EntryTransforms.demungeFileMask(initEntry.getFileMask())));
-            formatComboBox.setSelectedItem(initEntry.getFormat());
-        }
-        addButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                if (initEntry == LocalAddeEntry.INVALID_ENTRY)
-                    addButtonActionPerformed(evt);
-                else
-                    editButtonActionPerformed(evt);
+        JButton saveButton = new JButton("Add Dataset");
+        saveButton.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(final ActionEvent evt) {
+                saveButtonActionPerformed(evt);
             }
         });
-        buttonPanel.add(addButton, new java.awt.GridBagConstraints());
 
-        cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(final ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
             }
         });
-        buttonPanel.add(cancelButton, new java.awt.GridBagConstraints());
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(LEADING)
-                    .addComponent(mainPanel, TRAILING)
-                    .addComponent(buttonPanel, DEFAULT_SIZE, 384, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(mainPanel, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
-                .addPreferredGap(UNRELATED)
-                .addComponent(buttonPanel, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
-                .addContainerGap(DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        setResizable(false);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        Container c = getContentPane();
+        c.setLayout(new MigLayout(
+            "debug 4000",          // general layout constraints; currently
+                                   // redraws debugging lines every 4000ms.
+            "[align right][fill]", // column constraints; defined two columns
+                                   // leftmost aligns the components right;
+                                   // rightmost simply fills the remaining space
+            "[][][][][][]"));      // row constraints; possibly not needed in
+                                   // this particular example?
+
+        // done via WindowBuilder + Eclipse
+//        c.add(datasetLabel,   "cell 0 0"); // row: 0; col: 0
+//        c.add(datasetField,   "cell 1 0"); // row: 0; col: 1
+//        c.add(typeLabel,      "cell 0 1"); // row: 1; col: 0
+//        c.add(typeField,      "cell 1 1"); // row: 1; col: 1
+//        c.add(formatLabel,    "cell 0 2"); // row: 2; col: 0
+//        c.add(formatComboBox, "cell 1 2"); // row: 2; col: 1
+//        c.add(directoryLabel, "cell 0 3"); // row: 3; col: 0 ... etc!
+//        c.add(directoryField, "flowx,cell 1 3");
+//        c.add(browseButton,   "cell 1 3,alignx right");
+//        c.add(saveButton,     "flowx,cell 1 5,alignx right,aligny top");
+//        c.add(cancelButton,   "cell 1 5,alignx right,aligny top");
+
+        // another way to accomplish the above layout.
+        c.add(datasetLabel);
+        c.add(datasetField,   "wrap"); // think "newline" or "new row"
+        c.add(typeLabel);
+        c.add(typeField,      "wrap"); // think "newline" or "new row"
+        c.add(formatLabel);
+        c.add(formatComboBox, "wrap"); // think "newline" or "new row"
+        c.add(directoryLabel);
+        c.add(directoryField, "flowx, split 2"); // split this current cell 
+                                                 // into two "subcells"; this
+                                                 // will cause browseButton to
+                                                 // be grouped into the current
+                                                 // cell.
+        c.add(browseButton,   "alignx right, wrap");
+
+        // skips "cell 0 5" causing this row to start in "cell 1 5"; splits 
+        // the cell so that saveButton and cancelButton both occupy cell 1 5.
+        c.add(saveButton,     "flowx, split 2, skip 1, alignx right, aligny top");
+        c.add(cancelButton,   "alignx right, aligny top");
         pack();
     }// </editor-fold>
 
     /**
      * Triggered when the {@literal "add"} button is clicked.
      */
-    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void saveButtonActionPerformed(final ActionEvent evt) {
         addEntry();
     }
 
-    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void editButtonActionPerformed(final ActionEvent evt) {
         editEntry();
     }
 
     /**
      * Triggered when the {@literal "file picker"} button is clicked.
      */
-    private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void browseButtonActionPerformed(final ActionEvent evt) {
         selectedPath = getDataDirectory(getLastPath());
         if (selectedPath.length() != 0) {
             if (selectedPath.length() > 19) {
@@ -427,17 +386,12 @@ public class LocalEntryEditor extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify
-    private javax.swing.JButton addButton;
-    private javax.swing.JPanel buttonPanel;
-    private javax.swing.JButton cancelButton;
-    private javax.swing.JTextField datasetField;
-    private javax.swing.JLabel datasetLabel;
-    private javax.swing.JButton directoryButton;
-    private javax.swing.JLabel directoryLabel;
-    private javax.swing.JComboBox formatComboBox;
-    private javax.swing.JLabel formatLabel;
-    private javax.swing.JPanel mainPanel;
-    private javax.swing.JTextField typeField;
-    private javax.swing.JLabel typeLabel;
+    private JButton saveButton;
+    private JButton cancelButton;
+    private JTextField datasetField;
+    private JTextField directoryField;
+    private JButton directoryButton;
+    private JComboBox formatComboBox;
+    private JTextField typeField;
     // End of variables declaration
 }
