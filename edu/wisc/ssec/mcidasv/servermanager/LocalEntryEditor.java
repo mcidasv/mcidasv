@@ -53,6 +53,8 @@ import net.miginfocom.swing.MigLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ucar.unidata.xml.XmlObjectStore;
+
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry.AddeFormat;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EditorAction;
@@ -68,6 +70,9 @@ public class LocalEntryEditor extends javax.swing.JDialog {
 
     /** Property ID for the last directory selected. */
     private static final String PROP_LAST_PATH = "mcv.localdata.lastpath";
+
+    /** The valid local ADDE formats. */
+    private static final DefaultComboBoxModel formats = new DefaultComboBoxModel(new Object[] { AddeFormat.MCIDAS_AREA, AddeFormat.AMSRE_L1B, AddeFormat.AMSRE_RAIN_PRODUCT, AddeFormat.GINI, AddeFormat.LRIT_GOES9, AddeFormat.LRIT_GOES10, AddeFormat.LRIT_GOES11, AddeFormat.LRIT_GOES12, AddeFormat.LRIT_MET5, AddeFormat.LRIT_MET7, AddeFormat.LRIT_MTSAT1R, AddeFormat.METEOSAT_OPENMTP, AddeFormat.METOP_AVHRR_L1B, AddeFormat.MODIS_L1B_MOD02, AddeFormat.MODIS_L2_MOD06, AddeFormat.MODIS_L2_MOD07, AddeFormat.MODIS_L2_MOD35, AddeFormat.MODIS_L2_MOD04, AddeFormat.MODIS_L2_MOD28, AddeFormat.MODIS_L2_MODR, AddeFormat.MSG_HRIT_FD, AddeFormat.MSG_HRIT_HRV, AddeFormat.MTSAT_HRIT, AddeFormat.NOAA_AVHRR_L1B, AddeFormat.SSMI, AddeFormat.TRMM });
 
     /** The server manager GUI. Be aware that this can be {@code null}. */
     private final TabbedAddeManager managerController;
@@ -98,7 +103,11 @@ public class LocalEntryEditor extends javax.swing.JDialog {
         this.entryStore = entryStore;
         this.datasetText = group;
         this.currentEntry = null;
-        initComponents(LocalAddeEntry.INVALID_ENTRY);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override public void run() {
+                initComponents(LocalAddeEntry.INVALID_ENTRY);
+            }
+        });
     }
 
     // TODO(jon): hold back on javadocs, this is likely to change
@@ -108,7 +117,11 @@ public class LocalEntryEditor extends javax.swing.JDialog {
         this.entryStore = store;
         this.datasetText = null;
         this.currentEntry = null;
-        initComponents(LocalAddeEntry.INVALID_ENTRY);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override public void run() {
+                initComponents(LocalAddeEntry.INVALID_ENTRY);
+            }
+        });
     }
 
     // TODO(jon): hold back on javadocs, this is likely to change
@@ -118,18 +131,28 @@ public class LocalEntryEditor extends javax.swing.JDialog {
         this.entryStore = store;
         this.datasetText = null;
         this.currentEntry = entry;
-        initComponents(entry);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override public void run() {
+                initComponents(entry);
+            }
+        });
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * Creates the editor dialog and initializes the various GUI components.
+     * 
+     * @param initEntry Use {@link LocalAddeEntry#INVALID_ENTRY} to specify 
+     * that the user is creating a new entry; otherwise provide the actual
+     * entry that the user is editing.
+     */
     private void initComponents(final LocalAddeEntry initEntry) {
-        formatComboBox = new JComboBox();
-        formatComboBox.setModel(new DefaultComboBoxModel(new Object[] { }));
-
         JLabel datasetLabel = new JLabel("Dataset (e.g. MYDATA):");
         datasetField = new JTextField();
         datasetLabel.setLabelFor(datasetField);
         datasetField.setColumns(20);
+        if (datasetText != null) {
+            datasetField.setText(datasetText);
+        }
 
         JLabel typeLabel = new JLabel("Image Type (e.g. JAN 07 GOES):");
         typeField = new JTextField();
@@ -137,7 +160,10 @@ public class LocalEntryEditor extends javax.swing.JDialog {
         typeField.setColumns(20);
 
         JLabel formatLabel = new JLabel("Format:");
-        JComboBox formatComboBox = new JComboBox();
+        formatComboBox = new JComboBox();
+        formatComboBox.setRenderer(new TooltipComboBoxRenderer());
+        formatComboBox.setModel(formats);
+        formatComboBox.setSelectedIndex(0);
         formatLabel.setLabelFor(formatComboBox);
 
         JLabel directoryLabel = new JLabel("Directory:");
@@ -155,7 +181,11 @@ public class LocalEntryEditor extends javax.swing.JDialog {
         JButton saveButton = new JButton("Add Dataset");
         saveButton.addActionListener(new ActionListener() {
             @Override public void actionPerformed(final ActionEvent evt) {
-                saveButtonActionPerformed(evt);
+                if (initEntry == LocalAddeEntry.INVALID_ENTRY) {
+                    saveButtonActionPerformed(evt);
+                } else {
+                    editButtonActionPerformed(evt);
+                }
             }
         });
 
@@ -166,12 +196,23 @@ public class LocalEntryEditor extends javax.swing.JDialog {
             }
         });
 
+        if (initEntry == LocalAddeEntry.INVALID_ENTRY) {
+            setTitle("Add Local Dataset");
+        } else {
+            setTitle("Edit Local Dataset");
+            saveButton.setText("Save Changes");
+            datasetField.setText(initEntry.getGroup());
+            typeField.setText(initEntry.getName());
+            directoryField.setText(EntryTransforms.demungeFileMask(initEntry.getFileMask()));
+            formatComboBox.setSelectedItem(initEntry.getFormat());
+        }
+
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         Container c = getContentPane();
         c.setLayout(new MigLayout(
-            "debug 4000",          // general layout constraints; currently
-                                   // redraws debugging lines every 4000ms.
+            "",                    // general layout constraints; currently
+                                   // none are specified.
             "[align right][fill]", // column constraints; defined two columns
                                    // leftmost aligns the components right;
                                    // rightmost simply fills the remaining space
@@ -228,18 +269,22 @@ public class LocalEntryEditor extends javax.swing.JDialog {
      * Triggered when the {@literal "file picker"} button is clicked.
      */
     private void browseButtonActionPerformed(final ActionEvent evt) {
-        selectedPath = getDataDirectory(getLastPath());
-        if (selectedPath.length() != 0) {
-            if (selectedPath.length() > 19) {
-                directoryButton.setText(selectedPath.substring(0, 16) + "...");
-                directoryButton.setToolTipText(selectedPath);
-            } else {
-                directoryButton.setText(selectedPath);
-            }
+        String lastPath = getLastPath();
+        selectedPath = getDataDirectory(lastPath);
+        // yes, the "!=" is intentional! getDataDirectory(String) will return
+        // the exact String it is given if the user cancelled the file picker
+        if (selectedPath != lastPath) {
+            directoryField.setText(selectedPath);
+            setLastPath(selectedPath);
         }
-        setLastPath(selectedPath);
     }
 
+    /**
+     * Returns the value of the {@link #PROP_LAST_PATH} McIDAS-V property.
+     * 
+     * @return Either the {@code String} representation of the last path 
+     * selected by the user, or an empty {@code String}.
+     */
     private String getLastPath() {
         McIDASV mcv = McIDASV.getStaticMcv();
         String path = "";
@@ -249,20 +294,27 @@ public class LocalEntryEditor extends javax.swing.JDialog {
         return path;
     }
 
+    /**
+     * Sets the value of the {@link #PROP_LAST_PATH} McIDAS-V property to be
+     * the contents of {@code path}.
+     * 
+     * @param path New value for {@link #PROP_LAST_PATH}. {@code null} will be
+     * converted to an empty {@code String}.
+     */
     public void setLastPath(final String path) {
         String okayPath = (path != null) ? path : "";
-        logger.debug("parent={}", new File(path).getParent());
         McIDASV mcv = McIDASV.getStaticMcv();
         if (mcv != null) {
-            mcv.getObjectStore().put(PROP_LAST_PATH, okayPath);
-            mcv.getObjectStore().saveIfNeeded();
+            XmlObjectStore store = mcv.getObjectStore();
+            store.put(PROP_LAST_PATH, okayPath);
+            store.saveIfNeeded();
         }
     }
 
     /**
      * Calls {@link #dispose} if the dialog is visible.
      */
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void cancelButtonActionPerformed(ActionEvent evt) {
         if (isDisplayable()) {
             dispose();
         }
@@ -305,33 +357,20 @@ public class LocalEntryEditor extends javax.swing.JDialog {
         Set<LocalAddeEntry> newEntries = pollWidgets();
         Set<LocalAddeEntry> currentEntries = Collections.singleton(currentEntry);
         entryStore.replaceEntries(currentEntries, newEntries);
-        if (isDisplayable())
+        if (isDisplayable()) {
             dispose();
-        if (managerController != null)
+        }
+        if (managerController != null) {
             managerController.refreshDisplay();
-    }
-
-    /**
-     * Get a short directory name representation, suitable for a button label.
-     * 
-     * @param longString Initial {@link String}. {@code null is bad}!
-     * 
-     * @return If {@code longString} is longer than 19 characters, the 
-     * first 16 characters of {@code longString} (and {@literal "..."}) are 
-     * returned. Otherwise an unmodified {@code longString} is returned.
-     */
-    private String getShortString(final String longString) {
-        String shortString = longString;
-        if (longString.length() > 19)
-            shortString = longString.subSequence(0, 16) + "...";
-        return shortString;
+        }
     }
 
     /**
      * Ask the user for a data directory from which to create a MASK=
      * 
-     * @param startDir If this is a valid path, then the file picker will (presumably)
-     * use that as its initial location. Should not be {@code null}?
+     * @param startDir If this is a valid path, then the file picker will 
+     * (presumably) use that as its initial location. Should not be 
+     * {@code null}?
      * 
      * @return Either a path to a data directory or {@code startDir}.
      */
@@ -386,11 +425,8 @@ public class LocalEntryEditor extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify
-    private JButton saveButton;
-    private JButton cancelButton;
     private JTextField datasetField;
     private JTextField directoryField;
-    private JButton directoryButton;
     private JComboBox formatComboBox;
     private JTextField typeField;
     // End of variables declaration
