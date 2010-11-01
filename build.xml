@@ -90,10 +90,11 @@
 	<property name="javadoc.level" value="private" />
 	
 	<!-- The CLASSPATH specified within McV's manifest -->
-	<property name="jar.base.classpath" value="logback-core-0.9.12.jar logback-classic-0.9.12.jar logback-examples-0.9.12.jar local-idv.jar idv.jar mcv_userguide.jar eventbus-1.3.jar" />
+	<property name="jar.base.classpath" value="miglayout-3.7.3.jar logback-core-0.9.12.jar logback-classic-0.9.12.jar logback-examples-0.9.12.jar local-idv.jar idv.jar mcv_userguide.jar eventbus-1.3.jar" />
 	
 	<!-- List of McIDAS-V jars -->
 	<fileset id="mcv.libs" dir="${lib.dir}">
+		<include name="miglayout-3.7.3.jar" />
 		<include name="eventbus-1.3.jar" />
 		<include name="logback-core-0.9.12.jar" />
 		<include name="logback-classic-0.9.12.jar" />
