@@ -115,11 +115,13 @@ public class MultiDimensionSubset extends DataSelection {
   }
 
   public String toString() {
-    String str = new String();
-    for (int i=0; i<keys.length; i++) {
-      str = str.concat(new String(keys[i]+": "+coords[i][0]+", "+coords[i][1]+", "+coords[i][2]+"\n"));
-    }
-    return str;
+	  StringBuffer sb = new StringBuffer();
+	  if (keys != null) {
+		  for (int i = 0; i < keys.length; i++) {
+			  sb.append(new String(keys[i] + ": " + coords[i][0] + ", " + coords[i][1] + ", " + coords[i][2] + "\n"));
+		  }
+	  }
+	  return sb.toString();
   }
 
   /***
