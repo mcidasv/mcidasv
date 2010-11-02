@@ -100,6 +100,7 @@ public abstract class JPSSUtilities {
     	// Mapping:  Product name in granule -> Product name in XML Product Profile
     	
     	prodHM.put("Albedo", "albedo");
+    	prodHM.put("AntennaTemperature", "antennaTemperature");
     	prodHM.put("BrightnessTemperature", "Btemp");
     	prodHM.put("BulkSeaSurfaceTemperature", "bulkSST");
     	prodHM.put("Chlorophyll_a", "chlo_data");
@@ -112,6 +113,7 @@ public abstract class JPSSUtilities {
     	prodHM.put("NumberOfAggregatedImageryPixels", "scdNumAggPix");
     	prodHM.put("Radiance", "radiance");
     	prodHM.put("Reflectance", "reflect");
+    	prodHM.put("SceneCounts", "sceneCounts");
     	prodHM.put("SkinSeaSurfaceTemperature", "skinSST");
     	prodHM.put("SnowCoverBinaryMap", "scdBinaryMap");
     	prodHM.put("SnowFraction", "scdFractionFromBinaryMap");
@@ -127,6 +129,7 @@ public abstract class JPSSUtilities {
     	// to the name of the parameter that is scaled."  
     	
     	factHM.put("Albedo", "Factors");
+    	factHM.put("AntennaTemperature", "AntennaTemperatureFactors");
     	factHM.put("BrightnessTemperature", "BrightnessTemperatureFactors");
     	factHM.put("BulkSeaSurfaceTemperatures", "BulkFactors");
     	factHM.put("CloudBaseHeightTotal", "CloudBaseHeightFactors");
