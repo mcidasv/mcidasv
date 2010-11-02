@@ -54,19 +54,9 @@ foreach ($lines as $line) {
 if ($version!=$versioncheck || $version=="")
   $notify.="Inconsistent versions between version.properties and mcidasv.install4j\n";
 
-# Compare to welcome.html
-$lines=file("/home/mcidasv/mc-v/edu/wisc/ssec/mcidasv/resources/welcome.html");
-$versioncheck="";
-foreach ($lines as $line) {
-  if (preg_match("/mcv_guide\/[^\/]+\/Systems.html/", $line))
-    $versioncheck.=trim(preg_replace("/.*mcv_guide\/([^\/]+)\/Systems.html.*/","\\1",$line));
-}
-if ($version!=$versioncheck || $version=="")
-  $notify.="Inconsistent versions between version.properties and welcome.html\n";
-
 # Compare to doc
-$files=array("/home/mcidasv/mc-v/docs/userguide/processed/License.html",
-             "/home/mcidasv/mc-v/release/README.html",
+$files=array("/home/mcidasv/mc-v/release/README.html",
+             "/home/mcidasv/mc-v/docs/userguide/processed/License.html",
              "/home/mcidasv/mc-v/docs/userguide/processed/TOC.xml",
              "/home/mcidasv/mc-v/docs/userguide/processed/toc.html");
 foreach ($files as $file) {
