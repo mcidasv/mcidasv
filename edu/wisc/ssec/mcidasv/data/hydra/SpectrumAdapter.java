@@ -30,23 +30,17 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import visad.Data;
-import visad.Set;
-import visad.FlatField;
-import visad.FunctionType;
-import visad.RealType;
-import visad.RealTupleType;
-import visad.Gridded1DSet;
-import visad.SampledSet;
-import visad.SingletonSet;
-import visad.QuickSort;
-import visad.Unit;
-import visad.ScaledUnit;
-import visad.CommonUnit;
-import visad.DerivedUnit;
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import visad.FunctionType;
+import visad.Gridded1DSet;
+import visad.QuickSort;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.SampledSet;
+import visad.Set;
+import visad.SingletonSet;
 
 public class SpectrumAdapter extends MultiDimensionAdapter {
 
@@ -136,7 +130,6 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
         bandNameArray[k] = names[k];
       }
     }
-
 
     try {
       domainSet = makeDomainSet();
