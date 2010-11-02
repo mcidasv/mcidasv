@@ -6,6 +6,70 @@ from java.lang.reflect import Modifier
 from org.python.core import PyReflectedFunction
 from sets import Set
 
+def ncdump(path, output_format='cdl', show_values='c', vars=None):
+    """Print contents of a given netCDF file. 
+    
+    Please be aware that this output CANNOT (currently) be used as input for
+    ncgen due to netCDF-Java limitations.
+    
+    Args:
+        path: Path to an existing netCDF file.
+        
+        output_format: Optional. Understands 'cdl' and 'ncml'. Defaults to 'cdl'
+        
+        show_values: Optional. Understands 'c' and 'vall'. Defaults to 'c'.
+        
+        vars: Optional. Allows you to dump specified variable(s) or variable section(s).
+        
+    Returns:
+        Nothing. However, you may want to try the 'ncdumpToString' function.
+    """
+    results = ncdumpToString(path, output_format, show_values, vars)
+    if results:
+        print results
+
+def ncdumpToString(path, output_format='cdl', show_values='c', vars=None):
+    """Returns contents of a given netCDF file as a string. 
+    
+    Please be aware that the resulting string CANNOT (currently) be used as 
+    input for ncgen due to netCDF-Java limitations.
+    
+    Args:
+        path: Path to an existing netCDF file.
+        
+        output_format: Optional. Understands 'cdl' and 'ncml'. Defaults to 'cdl'
+        
+        show_values: Optional. Understands 'c' and 'vall'. Defaults to 'c'.
+        
+        vars: Optional. Allows you to dump specified variable(s) or variable section(s).
+        
+    Returns:
+        String representation of "ncdump" output (or an empty string if there
+        was a problem within netCDF).
+    """
+    
+    from jarray import array
+    from java.io import IOException
+    from java.io import StringWriter
+    from ucar.nc2 import NCdumpW
+
+    # build up commandline args to send off to netCDF-land (it wants 'em as a 
+    # string for some reason)
+    args = '%s -%s -%s ' % (path, output_format, show_values)
+    if vars:
+        for var in vars:
+            args = '%s -v %s' % (args, var)
+
+    writer = StringWriter()
+    
+    try:
+        NCdumpW.print(args, writer, None)
+    except IOException, ioe:
+        print 'Error attempting to list contents of', path
+        print ioe
+    
+    return writer.toString()
+
 def dump_active_display():
     """ Returns the currently-active display object."""
     pass
