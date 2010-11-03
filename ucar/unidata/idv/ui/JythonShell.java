@@ -73,7 +73,7 @@ import ucar.unidata.util.GuiUtils;
  * This class provides  an interactive shell for running JYthon
  *
  * @author IDV development team
- * @version $Revision$Date: 2010/10/14 16:05:27 $
+ * @version $Revision$Date: 2010/10/14 17:15:59 $
  */
 public class JythonShell extends InteractiveShell {
 
@@ -313,13 +313,15 @@ public class JythonShell extends InteractiveShell {
         interp.set("islInterpreter", islInterpreter);
         interp.set("shell", this);
         outputStream = new OutputStream() {
-            @Override public void write(int b) {}
             @Override public void write(byte[] b, int off, int len) {
                 output(new String(b, off, len)
+                    .replace("<", "&lt;")
+                    .replace(">", "&gt;")
                     .replace("\n", "<br>")
                     .replace(" ", "&nbsp;")
                     .replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;"));
             }
+            @Override public void write(int b) {}
         };
         interp.setOut(outputStream);
         interp.setErr(outputStream);
