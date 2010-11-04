@@ -300,6 +300,14 @@ public class NetCDFFile implements MultiDimensionReader {
      return varMap;
    }
 
+   public boolean hasArray(String name) {
+	   if (varMap.get(name) == null) {
+		   return false;
+	   } else {
+		   return true;
+	   }
+   }
+
    public NetcdfFile getNetCDFFile() {
 	   return ncfile;
    }
