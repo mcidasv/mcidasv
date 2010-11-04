@@ -74,20 +74,23 @@ public class GranuleAggregation implements MultiDimensionReader {
    ArrayList<HashMap<String, String[]>> varDimNamesList = new ArrayList<HashMap<String, String[]>>();
    ArrayList<HashMap<String, int[]>> varDimLengthsList = new ArrayList<HashMap<String, int[]>>();
    ArrayList<HashMap<String, Class>> varDataTypeList = new ArrayList<HashMap<String, Class>>();
+   ArrayList<HashMap<String, Integer>> varGranuleRatiosList = new ArrayList<HashMap<String, Integer>>();
 
    // variable can have bulk array processor set by the application
    HashMap<String, RangeProcessor> varToRangeProcessor = new HashMap<String, RangeProcessor>();
    
    private int granuleCount = -1;
    private int granuleLength = -1;
-   private int inTrackIndex = -1;
+   private String inTrackDimensionName = null;
+   private String crossTrackDimensionName = null;
 
-   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, int granuleLength, int inTrackIndex) throws Exception {
+   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, int granuleLength, String inTrackDimensionName, String crossTrackDimensionName) throws Exception {
 	   if (ncdfal == null) throw new Exception("No data: empty NPP aggregation object");
-	   logger.trace("granule length: " + granuleLength);
+	   logger.trace("granule length: " + granuleLength + " inTrack: " + inTrackDimensionName);
 	   this.granuleLength = granuleLength;
-	   this.inTrackIndex = inTrackIndex;
-           this.ncdfal = ncdfal;
+	   this.inTrackDimensionName = inTrackDimensionName;
+	   this.crossTrackDimensionName = crossTrackDimensionName;
+       this.ncdfal = ncdfal;
 	   init(ncdfal);
    }
   
@@ -96,6 +99,7 @@ public class GranuleAggregation implements MultiDimensionReader {
    }
 
    public String[] getDimensionNames(String array_name) {
+	   logger.trace("GranuleAggregation.getDimensionNames, requested: " + array_name);
      return varDimNamesList.get(0).get(array_name);
    }
 
@@ -176,13 +180,16 @@ public class GranuleAggregation implements MultiDimensionReader {
 
    private void init(ArrayList<NetCDFFile> ncdfal) throws Exception {
 	   
+	   logger.debug("init in...");
 	   // make a NetCDFFile object from the NcML for each granule
 	   for (NetCDFFile n : ncdfal) {
+		   logger.debug("loading another NetCDF file from NcML...");
 		   NetcdfFile ncfile = n.getNetCDFFile();
 		   nclist.add(ncfile);
 	   }
 	   
 	   granuleCount = nclist.size();
+	   logger.debug("Granule count: " + granuleCount);
 	   
 	   for (int ncIdx = 0; ncIdx < nclist.size(); ncIdx++) {
 		   
@@ -192,35 +199,72 @@ public class GranuleAggregation implements MultiDimensionReader {
 		   HashMap<String, String[]> varDimNames = new HashMap<String, String[]>();
 		   HashMap<String, int[]> varDimLengths = new HashMap<String, int[]>();
 		   HashMap<String, Class> varDataType = new HashMap<String, Class>();
+		   HashMap<String, Integer> varGranuleRatios = new HashMap<String, Integer>();
 		   
 		   Iterator varIter = ncfile.getVariables().iterator();
+		   int varInTrackIndex = -1;
 		   while (varIter.hasNext()) {
 			   Variable var = (Variable) varIter.next();
-
+			   
+			   logger.debug("Working on variable: " + var.getName());
+			   
 			   if (var instanceof Structure) {
 				   analyzeStructure((Structure) var, varMap, varDimNames, varDimLengths, varDataType);
 				   continue;
 			   }
 
 			   int rank = var.getRank();
+			   
+			   // bypass any less-than-2D variables for now...
+			   if (rank < 2) {
+				   logger.debug("Skipping 1D variable: " + var.getName());
+				   continue;
+			   }
+			   
 			   String varName = var.getName();
 			   varMap.put(var.getName(), var);
 			   Iterator dimIter = var.getDimensions().iterator();
 			   String[] dimNames = new String[rank];
 			   int[] dimLengths = new int[rank];
 			   int cnt = 0;
+			   boolean notDisplayable = false;
 			   while (dimIter.hasNext()) {
 				   Dimension dim = (Dimension) dimIter.next();
+				   String s = dim.getName();
+				   logger.trace("DIMENSION name: " + s);
+				   if ((s != null) && (!s.isEmpty())) {
+					   if ((! s.equals(inTrackDimensionName)) && 
+							   ((! s.startsWith("Band")) && (cnt == 0)) &&
+							   (! var.getName().endsWith("Latitude")) &&
+							   (! var.getName().endsWith("Longitude")) &&
+							   (! s.equals(crossTrackDimensionName))) {
+						   notDisplayable = true;
+						   break;
+					   }
+				   }
 				   String dimName = dim.getName();
-				   logger.trace("GranuleAggregation init, variable: " + varName + ", dimension name: " + dimName);
-				   if (dimName == null) dimName = "dim"+cnt;
+				   logger.trace("GranuleAggregation init, variable: " + varName + ", dimension name: " + dimName + ", length: " + dim.getLength());
+				   if (dimName == null) dimName = "dim" + cnt;
 				   dimNames[cnt] = dimName;
 				   dimLengths[cnt] = dim.getLength();
 				   cnt++;
 			   }
 			   
-			   // XXX TJJ - temp hack.  How to know for certain the InTrack dimension?
-			   dimLengths[inTrackIndex] = dimLengths[inTrackIndex] * granuleCount;
+			   // skip to next variable if it's not displayable data
+			   if (notDisplayable) continue;
+			   
+			   varInTrackIndex = getInTrackIndex(var);
+			   logger.debug("Found in-track index of: " + varInTrackIndex);
+			   
+			   if (varInTrackIndex < 0) {
+				   logger.debug("Skipping variable with unknown dimension: " + var.getName());
+				   continue;
+			   }
+			   
+			   // store the ratio of this variable's in-track length to the granule length
+			   varGranuleRatios.put(varName, new Integer(granuleLength / dimLengths[varInTrackIndex]));
+			   
+			   dimLengths[varInTrackIndex] = dimLengths[varInTrackIndex] * granuleCount;
 			   
 			   varDimNames.put(varName, dimNames);
 			   varDimLengths.put(varName, dimLengths);
@@ -232,9 +276,81 @@ public class GranuleAggregation implements MultiDimensionReader {
 		   varDimNamesList.add(varDimNames);
 		   varDimLengthsList.add(varDimLengths);
 		   varDataTypeList.add(varDataType);
+		   varGranuleRatiosList.add(varGranuleRatios);
 	   }
    }
    
+   /**
+    * Based on the names of the variable dimensions, determine the in-track index
+    * @param dimNames names of dimensions - should match static strings in relevant classes
+    * @return correct index (0 or greater), or -1 if error
+    */
+   
+   private int getInTrackIndex(Variable v) {
+	   
+	   int index = -1;
+	   boolean is2D = false;
+	   boolean is3D = false;
+	   
+	   String inTrackName = null;
+	    
+	   // typical sanity check
+	   if (v == null) return index;
+	   logger.debug("getInTrackIndex called for variable: " + v.getName());
+	   
+	   // lat/lon vars have different dimension names
+	   if ((v.getName().endsWith("Latitude")) || (v.getName().endsWith("Longitude"))) {
+		   if (v.getName().startsWith("All_Data")) {
+			   inTrackName = inTrackDimensionName;
+		   } else {
+			   inTrackName = "2*nscans";
+		   }
+	   } else {
+		   inTrackName = inTrackDimensionName;
+	   }
+	   // pull out the dimensions
+	   List<Dimension> dList = v.getDimensions();
+	   
+	   // right now, we only handle 2D and 3D variables.
+	   // TJJ XXX it does get trickier, and we will have to expand this
+	   // to deal with for example CrIS data...
+	   int numDimensions = dList.size();
+	   logger.debug("Number of dimensions: " + numDimensions);
+	   if ((numDimensions == 2) || (numDimensions == 3)) {
+		   if (numDimensions == 2) is2D = true;
+		   if (numDimensions == 3) is3D = true;
+	   } else {
+		   return index;
+	   }
+	   
+	   // if the data is 2D, we use the SwathAdapter class,
+	   // if 3D, we use the SpectrumAdapter class
+	   for (int i = 0; i < numDimensions; i++) {
+		   if (is2D) {
+			   // XXX TJJ - if empty name, in-track index is 0
+			   if (dList.get(i).getName().isEmpty()) {
+				   logger.debug("WARNING: Empty dimension name!, assuming in-track dim is 0");
+				   return 0;
+			   }
+			   logger.debug("Comparing: " + dList.get(i).getName() + " with: " + inTrackName);
+			   if (dList.get(i).getName().equals(inTrackName)) {
+				   index = i;
+				   break;
+			   }
+		   }
+		   if (is3D) {
+			   logger.debug("Comparing: " + dList.get(i).getName() + " with: " + inTrackName);
+			   if (dList.get(i).getName().equals(inTrackName)) {
+				   index = i;
+				   break;
+			   }
+		   }
+	   }
+	   
+	   // hopefully we found the right one
+	   return index;
+   }
+
    void analyzeStructure(Structure var, HashMap<String, Variable> varMap, 
 		   HashMap<String, String[]> varDimNames,
 		   HashMap<String, int[]> varDimLengths,
@@ -245,7 +361,6 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   String varName = var.getName();
 	   String[] dimNames = new String[2];
 	   int[] dimLengths = new int[2];
-	   List vlist = var.getVariables();
 	   int cnt = 0;
 	   dimLengths[0] = (var.getShape())[0];
 	   dimNames[0] = "dim"+cnt;
@@ -270,9 +385,19 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   // how many dimensions are we dealing with
 	   int dimensionCount = start.length;
 	   
+	   // pull out a representative variable so we can determine which index is in-track
+	   Variable vTmp = varMapList.get(0).get(array_name);
+	   int vInTrackIndex = getInTrackIndex(vTmp);
+	   
+	   int vGranuleRatio = varGranuleRatiosList.get(0).get(array_name);
+	   int vGranuleLength = granuleLength / vGranuleRatio;
+	   
+	   logger.trace("READING: " + array_name + ", INTRACKINDEX: " + vInTrackIndex +
+			   ", RATIO: " + vGranuleRatio);
+	   
 	   // which granules will we be dealing with?
-	   int loGranuleId = start[inTrackIndex] / granuleLength;
-	   int hiGranuleId = (start[inTrackIndex] + ((count[inTrackIndex] - 1) * stride[inTrackIndex])) / granuleLength;
+	   int loGranuleId = start[vInTrackIndex] / vGranuleLength;
+	   int hiGranuleId = (start[vInTrackIndex] + ((count[vInTrackIndex] - 1) * stride[vInTrackIndex])) / vGranuleLength;
 	   
 	   // next, we break out the offsets, counts, and strides for each granule
 	   int granuleSpan = hiGranuleId - loGranuleId + 1;
@@ -293,18 +418,18 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   for (int i = 0; i < granuleSpan; i++) {
 		   granuleNumber++;
 		   for (int j = 0; j < dimensionCount; j++) {
-			   // for all indeces other than the inTrackIndex, the numbers match what was passed in
-			   if (j != inTrackIndex) {
+			   // for all indeces other than the in-track index, the numbers match what was passed in
+			   if (j != vInTrackIndex) {
 				   startSet[i][j] = start[j];
 				   countSet[i][j] = count[j] * stride[j];
 				   strideSet[i][j] = stride[j];  
 			   } else {
-				   // for the inTrackIndex, it's not so easy...
+				   // for the in-track index, it's not so easy...
 				   // for first granule, start is what's passed in
 				   if (i == 0) {
-					   startSet[i][j] = start[j] % granuleLength;
+					   startSet[i][j] = start[j] % vGranuleLength;
 				   } else {
-					   startSet[i][j] = ((granuleLength * granuleNumber) - start[j]) % stride[j];
+					   startSet[i][j] = ((vGranuleLength * granuleNumber) - start[j]) % stride[j];
 				   }
 				   // counts may be different for start, end, and middle granules
 				   if (i == 0) {
@@ -313,17 +438,17 @@ public class GranuleAggregation implements MultiDimensionReader {
 						   countSet[i][j] = count[j] * stride[j];
 					   // or is this the first of multiple granules...
 					   } else {
-						   if (((granuleLength * granuleNumber) - start[j]) < (count[j] * stride[j])) {	
-							   countSet[i][j] = ((granuleLength * granuleNumber) - start[j]);
+						   if (((vGranuleLength * granuleNumber) - start[j]) < (count[j] * stride[j])) {	
+							   countSet[i][j] = ((vGranuleLength * granuleNumber) - start[j]);
 						   } else {
 							   countSet[i][j] = count[j] * stride[j];
 						   }
 						   countSubtotal += countSet[i][j];
 					   }
 				   } else {
-					   // middle grandules
+					   // middle granules
 					   if (i < (granuleSpan - 1)) {
-						   countSet[i][j] = granuleLength;
+						   countSet[i][j] = vGranuleLength;
 						   countSubtotal += countSet[i][j];
 					   } else {
 						   // the end granule
@@ -358,6 +483,11 @@ public class GranuleAggregation implements MultiDimensionReader {
 					   rangeList.add(dimensionIdx, range);
 				   }
 				   rangeListCount++;
+				   logger.trace("reading range list from variable: " + var.getName());
+				   List<Dimension> dl = var.getDimensions();
+				   for (Dimension d : dl) {
+					   logger.trace("Dimension name: " + d.getName() + ", length: " + d.getLength());
+				   }
 				   Array subarray = var.read(rangeList);
 				   //dataType = subarray.getElementType();
 				   totalLength += subarray.getSize();
@@ -372,29 +502,30 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   
 	   // last, concatenate the individual NetCDF arrays pulled out 
 
-	   //Object o = java.lang.reflect.Array.newInstance(getArrayType(array_name), totalLength);
-           Class outType;
-           Class arrayType = getArrayType(array_name);
-           RangeProcessor rngProcessor = varToRangeProcessor.get(array_name);
-           if (rngProcessor == null) {
-              outType = getArrayType(array_name);
-           }
-           else {
-              outType = java.lang.Float.TYPE;
-           }
+	   Class outType;
+	   Class arrayType = getArrayType(array_name);
+	   RangeProcessor rngProcessor = varToRangeProcessor.get(array_name);
+	   if (rngProcessor == null) {
+		   outType = getArrayType(array_name);
+	   }
+	   else {
+		   outType = java.lang.Float.TYPE;
+	   }
 	   Object o = java.lang.reflect.Array.newInstance(outType, totalLength);
            
 	   int destPos = 0;
            int granIdx = 0;
-	   for (Array a : arrayList) {
-                   if (a != null) {
-		      Object primArray = a.copyTo1DJavaArray();
-                      primArray = processArray(array_name, arrayType, granIdx, primArray, rngProcessor);
-		      System.arraycopy(primArray, 0, o, destPos, (int) a.getSize());
-		      destPos += a.getSize();
-                   }
-                   granIdx++;
-	   }
+
+    	   for (Array a : arrayList) {
+    		   if (a != null) {
+    			   Object primArray = a.copyTo1DJavaArray();
+    			   primArray = processArray(array_name, arrayType, granIdx, primArray, rngProcessor);
+    			   System.arraycopy(primArray, 0, o, destPos, (int) a.getSize());
+    			   destPos += a.getSize();
+    		   }
+    		   granIdx++;
+    	   }
+
 
 	   return o;
    }

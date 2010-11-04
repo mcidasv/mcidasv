@@ -30,86 +30,60 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import edu.wisc.ssec.mcidasv.Constants;
-import edu.wisc.ssec.mcidasv.data.PreviewSelection;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.geom.Rectangle2D;
 
-import edu.wisc.ssec.mcidasv.data.HydraDataSource;
-import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
-import edu.wisc.ssec.mcidasv.control.LambertAEA;
+import java.io.File;
 
 import java.rmi.RemoteException;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
-import ucar.unidata.data.DataDataChoice;
 import ucar.unidata.data.DataSelection;
-import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DataSelectionComponent;
+import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.data.GeoSelection;
-import ucar.unidata.data.GeoSelectionPanel;
-
 import ucar.unidata.util.Misc;
-import ucar.unidata.idv.ViewContext;
 
 import visad.Data;
 import visad.FlatField;
-import visad.GriddedSet;
-import visad.Gridded2DSet;
-import visad.SampledSet;
 import visad.VisADException;
 import visad.georef.MapProjection;
-import visad.data.mcidas.BaseMapAdapter;
 
-import java.io.File;
-import java.net.URL;
-
-import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.geom.Rectangle2D;
-
-import visad.*;
-import visad.bom.RubberBandBoxRendererJ3D;
-import visad.java3d.DisplayImplJ3D;
-import visad.java3d.TwoDDisplayRendererJ3D;
-import ucar.unidata.idv.ViewManager;
-import ucar.unidata.idv.ViewDescriptor;
-import ucar.unidata.idv.MapViewManager;
-import ucar.unidata.idv.DisplayConventions;
-import ucar.unidata.idv.control.DisplayControlBase;
-import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
-import ucar.unidata.view.geoloc.MapProjectionDisplay;
-import java.awt.Component;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Color;
-import ucar.visad.display.XYDisplay;
-import ucar.visad.display.MapLines;
-import ucar.visad.display.DisplayMaster;
-import ucar.visad.display.LineDrawing;
-import ucar.visad.display.RubberBandBox;
-
-import ucar.visad.ProjectionCoordinateSystem;
-import ucar.unidata.geoloc.projection.LatLonProjection;
-
+import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.control.LambertAEA;
+import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
+import edu.wisc.ssec.mcidasv.data.HydraDataSource;
+import edu.wisc.ssec.mcidasv.data.PreviewSelection;
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
-
-
 
 /**
  * A data source for Multi Dimension Data 
  */
+
 public class MultiSpectralDataSource extends HydraDataSource {
 
-    /** Sources file */
+	private static final Logger logger = LoggerFactory.getLogger(MultiSpectralDataSource.class);
+	
+	/** Sources file */
     protected String filename;
 
     protected MultiDimensionReader reader;
@@ -130,7 +104,8 @@ public class MultiSpectralDataSource extends HydraDataSource {
     private List categories;
     private boolean hasImagePreview = false;
     private boolean hasChannelSelect = false;
-    private boolean hasBandNames = false;
+
+    private boolean doAggregation = false;
 
     private ComboDataChoice comboChoice;
 
@@ -184,13 +159,23 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
     public void setup() throws Exception {
         String name = (new File(filename)).getName();
+    	// aggregations will use sets of NetCDFFile readers
+    	ArrayList<NetCDFFile> ncdfal = new ArrayList<NetCDFFile>();
 
         try {
           if (name.startsWith("NSS.HRPT.NP") && name.endsWith("obs.hdf")) { // get file union
             reader = NetCDFFile.makeUnion(filename);
           }
           else {
-            reader = new NetCDFFile(filename);
+        	  if (sources.size() >= 1) {
+        		  for (int i = 0; i < sources.size(); i++) {
+        			  String s = (String) sources.get(i);
+        			  ncdfal.add(new NetCDFFile(s));
+        		  }
+        		  doAggregation = true;
+        	  } else {
+        		  reader = new NetCDFFile(filename);
+        	  }
           }
         }
         catch (Exception e) {
@@ -314,8 +299,19 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put(SwathAdapter.geo_xtrack_offset_name, Double.toString(2.0));
          table.put(SwathAdapter.geo_track_skip_name, Double.toString(5.0));
          table.put(SwathAdapter.geo_xtrack_skip_name, Double.toString(5.0));
+         
+         // initialize the aggregation reader object
+         logger.debug("Trying to create MODIS 1K GranuleAggregation reader...");
+         if (doAggregation) {
+        	 try {
+        		 reader = new GranuleAggregation(ncdfal, 2030, "10*nscans", "Max_EV_frames");
+        	 } catch (Exception e) {
+        		 throw new VisADException("Unable to initialize aggregation reader");
+        	 }
+         }
 
-         swathAdapter = new SwathAdapter(reader, table);
+         logger.debug("Trying to create MODIS 1K SwathAdapter..."); 
+     	 swathAdapter = new SwathAdapter(reader, table);
          HashMap subset = swathAdapter.getDefaultSubset();
          subset.put(SpectrumAdapter.channelIndex_name, new double[] {10,10,1});
          defaultSubset = subset;
@@ -398,7 +394,6 @@ public class MultiSpectralDataSource extends HydraDataSource {
          categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
          hasImagePreview = true;
          hasChannelSelect = true;
-         hasBandNames = true;
 
          table = SwathAdapter.getEmptyMetadataTable();
 
@@ -532,7 +527,6 @@ public class MultiSpectralDataSource extends HydraDataSource {
          categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
          hasImagePreview = true;
          hasChannelSelect = true;
-         hasBandNames = true;
        }
        else if (name.startsWith("MOD02HKM") || name.startsWith("MYD02HKM") ||
                (name.startsWith("a1") && (name.indexOf("500m") > 0)) ||
@@ -640,7 +634,6 @@ public class MultiSpectralDataSource extends HydraDataSource {
          categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
          hasImagePreview = true;
          hasChannelSelect = true;
-         hasBandNames = true;
        }
        else if (name.startsWith("NSS")) {
          HashMap swthTable = SwathAdapter.getEmptyMetadataTable();
@@ -837,7 +830,6 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
          hasImagePreview = true;
          hasChannelSelect = true;
-         hasBandNames = true;
        }
        else {
           HashMap table = SwathAdapter.getEmptyMetadataTable();

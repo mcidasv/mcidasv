@@ -107,12 +107,20 @@ public class NPPDataSource extends HydraDataSource {
     private MultiSpectralData multiSpectData;
 
     private List categories;
+    private boolean hasChannelSelect = false;
     private boolean hasImagePreview = true;
     private boolean isCombinedProduct = false;
+
+    private PreviewSelection previewSelection = null;
+    private FlatField previewImage = null;
     
-    private static int[] YSCAN_POSSIBILITIES = { 96,  512,  768,  1536, 2304, 2313 };
-    private static int[] XSCAN_POSSIBILITIES = { 508, 2133, 3200, 6400, 4064, 4121 };    
+    private static int[] YSCAN_POSSIBILITIES = { 96,  512,  768,  1536, 2304, 2313, 12 };
+    private static int[] XSCAN_POSSIBILITIES = { 508, 2133, 3200, 6400, 4064, 4121, 96 }; 
+    private static int[] ZSCAN_POSSIBILITIES = { -1,  -1,   -1,   -1,   -1,   -1,   22 };    
     private int inTrackDimensionLength = -1;
+    
+    // need our own separator char since it's always Unix-style in the NPP files
+    private static final String SEPARATOR_CHAR = "/";
     
     // date formatter for converting NPP day/time to something we can use
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss.SSS");
@@ -173,9 +181,14 @@ public class NPPDataSource extends HydraDataSource {
     	String pathToLon = null;
     	TreeSet<String> pathToProducts = new TreeSet<String>();
     	
+    	// flag to indicate data is 3-dimensions (X, Y, channel or band)
+    	boolean is3D = false;
+    	
     	// check source filenames to see if this is a combined product
-    	// XXX TJJ - looking for "underscore" is NOT GUARANTEED TO WORK!
-    	String prodStr = filename.substring(filename.lastIndexOf(File.separatorChar) + 1, filename.indexOf("_"));
+    	// XXX TJJ - looking for "underscore" is NOT GUARANTEED TO WORK! FIXME 
+    	String prodStr = filename.substring(
+    			filename.lastIndexOf(File.separatorChar) + 1, 
+    			filename.lastIndexOf(File.separatorChar) + 1 + filename.indexOf("_"));
         StringTokenizer st = new StringTokenizer(prodStr, "-");
         logger.trace("check for embedded GEO, tokenizing: " + prodStr);
         while (st.hasMoreTokens()) {
@@ -205,7 +218,6 @@ public class NPPDataSource extends HydraDataSource {
     	
     	// we should be able to find an XML Product Profile for each data/product type
     	NPPProductProfile nppPP = null;
-
     	    	
     	sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
     	   	
@@ -385,7 +397,7 @@ public class NPPDataSource extends HydraDataSource {
     	    							boolean useThis = false;
     	    							String vName = v.getName();
     	    							logger.debug("Variable: " + vName);
-    	    							String varShortName = vName.substring(vName.lastIndexOf(File.separatorChar) + 1);
+    	    							String varShortName = vName.substring(vName.lastIndexOf(SEPARATOR_CHAR) + 1);
     	    							
     	    							// skip Quality Flags for now.
     	    							// XXX TJJ - should we show these?  if so, note they sometimes
@@ -404,12 +416,13 @@ public class NPPDataSource extends HydraDataSource {
     	    							List al = v.getAttributes();
 
     	    							List<Dimension> dl = v.getDimensions();
-    	    							if (dl.size() > 2) {
+    	    							if (dl.size() > 3) {
     	    								logger.debug("Skipping data of dimension: " + dl.size());
     	    								continue;
     	    							}
     	    							boolean xScanOk = false;
     	    							boolean yScanOk = false;
+    	    							boolean zScanOk = false;
     	    							for (Dimension d : dl) {
     	    								// in order to consider this a displayable product, make sure
     	    								// both scan direction dimensions are present and look like a granule
@@ -425,11 +438,23 @@ public class NPPDataSource extends HydraDataSource {
     	    										inTrackDimensionLength = YSCAN_POSSIBILITIES[yIdx];
     	    										break;
     	    									}
-    	    								}   								
+    	    								}   
+    	    								for (int zIdx = 0; zIdx < ZSCAN_POSSIBILITIES.length; zIdx++) {
+    	    									if (d.getLength() == ZSCAN_POSSIBILITIES[zIdx]) {
+    	    										zScanOk = true;
+    	    										break;
+    	    									}
+    	    								}
     	    							}
     	    							
     	    							if (xScanOk && yScanOk) {
     	    								useThis = true;
+    	    							}
+    	    							
+    	    							if (zScanOk) {
+    	    								is3D = true;
+    	    								hasChannelSelect = true;
+    	    								logger.info("Handling 3D data source!");
     	    							}
     	    							
     	    							if (useThis) { 
@@ -476,7 +501,7 @@ public class NPPDataSource extends HydraDataSource {
     	    								// add valid range and fill value attributes here
     	    					        	// try to fill in valid range
     	    					        	if (nppPP != null) {
-    	    					        		String translatedName = JPSSUtilities.mapProdNameToProfileName(vName.substring(vName.lastIndexOf(File.separatorChar) + 1));
+    	    					        		String translatedName = JPSSUtilities.mapProdNameToProfileName(vName.substring(vName.lastIndexOf(SEPARATOR_CHAR) + 1));
     	    					        		logger.debug("mapped name: " + translatedName);
     	    					        		if (translatedName != null) {
     	    					        			String rangeMin = nppPP.getRangeMin(translatedName);
@@ -486,7 +511,11 @@ public class NPPDataSource extends HydraDataSource {
     	    					        			int [] shapeArr = new int [] { 2 };
     	    					        			ArrayFloat af = new ArrayFloat(shapeArr);
     	    					        			af.setFloat(0, Float.parseFloat(rangeMin));
-    	    					        			af.setFloat(1, Float.parseFloat(rangeMax));
+    	    					        			try {
+    	    					        				af.setFloat(1, Float.parseFloat(rangeMax));
+    	    					        			} catch (NumberFormatException nfe) {
+    	    					        				af.setFloat(1, new Float(Integer.MAX_VALUE));
+    	    					        			}
     	    	    								ucar.nc2.Attribute rangeAtt = new ucar.nc2.Attribute("valid_range", af);
     	    	    								v.addAttribute(rangeAtt);
     	    	    								
@@ -584,7 +613,7 @@ public class NPPDataSource extends HydraDataSource {
     	
     	// initialize the aggregation reader object
     	try {
-    		nppAggReader = new GranuleAggregation(ncdfal, inTrackDimensionLength, 0);
+    		nppAggReader = new GranuleAggregation(ncdfal, inTrackDimensionLength, "Track", "XTrack");
     	} catch (Exception e) {
     		throw new VisADException("Unable to initialize aggregation reader");
     	}
@@ -605,24 +634,43 @@ public class NPPDataSource extends HydraDataSource {
     		logger.debug("Working on adapter number " + (pIdx + 1));
         	HashMap<String, Object> table = SwathAdapter.getEmptyMetadataTable();
         	table.put("array_name", pStr);
-        	table.put("array_dimension_names", new String[] {"Track", "XTrack"});
         	table.put("lon_array_name", pathToLon);
         	table.put("lat_array_name", pathToLat);
-        	table.put("lon_array_dimension_names", new String[] {"Track", "XTrack"});
-        	table.put("lat_array_dimension_names", new String[] {"Track", "XTrack"});
         	table.put("XTrack", "XTrack");
         	table.put("Track", "Track");
         	table.put("geo_Track", "Track");
         	table.put("geo_XTrack", "XTrack");
+        	
+        	if (is3D) {
+        		table.put(SpectrumAdapter.channelIndex_name, "Channels");
+        		//table.put(SpectrumAdapter.channelIndex_name, "Channel");
+        		table.put("array_dimension_names", new String[] {"Track", "XTrack", "Channels"});
+        		table.put("lon_array_dimension_names", new String[] {"Track", "XTrack", "Channels"});
+        		table.put("lat_array_dimension_names", new String[] {"Track", "XTrack", "Channels"});
+        		float[] bandArray = new float[22];
+        		String[] bandNames = new String[22];
+        		for (int bIdx = 0; bIdx < 22; bIdx++) {
+        			bandArray[bIdx] = bIdx;
+        			bandNames[bIdx] = "B" + bIdx;
+        		}
+        		table.put(SpectrumAdapter.channelValues, bandArray);
+        		table.put(SpectrumAdapter.bandNames, bandNames);
+        		table.put(SpectrumAdapter.channelType, "wavelength");
+        	} else {
+        		table.put("array_dimension_names", new String[] {"Track", "XTrack"});
+        		table.put("lon_array_dimension_names", new String[] {"Track", "XTrack"});
+        		table.put("lat_array_dimension_names", new String[] {"Track", "XTrack"});
+        	}
+        	
         	table.put("scale_name", "scale_factor");
         	table.put("offset_name", "add_offset");
         	table.put("fill_value_name", "_FillValue");
-        	logger.info("Setting range_name to: " + pStr.substring(pStr.indexOf(File.separatorChar) + 1));
-        	table.put("range_name", pStr.substring(pStr.indexOf(File.separatorChar) + 1));
+        	logger.info("Setting range_name to: " + pStr.substring(pStr.indexOf(SEPARATOR_CHAR) + 1));
+        	table.put("range_name", pStr.substring(pStr.indexOf(SEPARATOR_CHAR) + 1));
         	
         	// set the valid range hash if data is available
         	if (nppPP != null) {
-        		String translatedName = JPSSUtilities.mapProdNameToProfileName(pStr.substring(pStr.lastIndexOf(File.separatorChar) + 1));
+        		String translatedName = JPSSUtilities.mapProdNameToProfileName(pStr.substring(pStr.lastIndexOf(SEPARATOR_CHAR) + 1));
         		if (translatedName != null) {
         			table.put("valid_range", "valid_range");
         		}
@@ -639,12 +687,17 @@ public class NPPDataSource extends HydraDataSource {
         	}
         	
         	// pass in a GranuleAggregation reader...
-        	adapters[pIdx] = new SwathAdapter(nppAggReader, table);
+        	if (is3D) {
+        		adapters[pIdx] = new SwathAdapter(nppAggReader, table);
+        	} else {
+        		adapters[pIdx] = new SwathAdapter(nppAggReader, table);
+        	}
     		pIdx++;
     	}
 
     	categories = DataCategory.parseCategories("IMAGE");
     	defaultSubset = adapters[0].getDefaultSubset();
+    	defaultSubset.put(SpectrumAdapter.channelIndex_name, new double[] {1,1,1});
 
     	setProperties(properties);
     }
@@ -652,8 +705,7 @@ public class NPPDataSource extends HydraDataSource {
     public void initAfterUnpersistence() {
     	try {
     		setup();
-    	} 
-    	catch (Exception e) {
+    	} catch (Exception e) {
     	}
     }
 
@@ -776,6 +828,7 @@ public class NPPDataSource extends HydraDataSource {
         try {
             HashMap subset = null;
             if (ginfo != null) {
+            	logger.debug("getting subset from lat-lon rect...");
               subset = adapter.getSubsetFromLonLatRect(ginfo.getMinLat(), ginfo.getMaxLat(),
                                                        ginfo.getMinLon(), ginfo.getMaxLon(),
                                                        geoSelection.getXStride(),
@@ -789,16 +842,19 @@ public class NPPDataSource extends HydraDataSource {
               Enumeration keys = table.keys();
               while (keys.hasMoreElements()) {
                 Object key = keys.nextElement();
+                logger.debug("Key: " + key.toString());
                 if (key instanceof MultiDimensionSubset) {
                   select = (MultiDimensionSubset) table.get(key);
                 }
               }  
               subset = select.getSubset();
+              logger.debug("Subset size: " + subset.size());
 
               if (dataSelection != null) {
                 Hashtable props = dataSelection.getProperties();
                 if (props != null) {
                   if (props.containsKey(SpectrumAdapter.channelIndex_name)) {
+                	  logger.debug("Props contains channel index key...");
                     double[] coords = (double[]) subset.get(SpectrumAdapter.channelIndex_name);
                     int idx = ((Integer) props.get(SpectrumAdapter.channelIndex_name)).intValue();
                     coords[0] = (double)idx;
@@ -885,4 +941,5 @@ public class NPPDataSource extends HydraDataSource {
       }
       
     }
+    
 }
