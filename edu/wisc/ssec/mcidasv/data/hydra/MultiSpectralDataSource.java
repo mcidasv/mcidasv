@@ -167,7 +167,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
             reader = NetCDFFile.makeUnion(filename);
           }
           else {
-        	  if (sources.size() >= 1) {
+        	  if (sources.size() > 1) {
         		  for (int i = 0; i < sources.size(); i++) {
         			  String s = (String) sources.get(i);
         			  ncdfal.add(new NetCDFFile(s));
@@ -1102,6 +1102,90 @@ public class MultiSpectralDataSource extends HydraDataSource {
         }
       }
     }
+
+
+
+    /***  Save, but move to better place
+  public static MapProjection getDataProjection(FlatField fltField) throws Exception {
+    Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(fltField);
+    MapProjection mp = new LambertAEA(rect);
+    return mp;
+  }
+
+
+
+  public static Linear2DSet makeGrid(MapProjection mp, float res) throws Exception {
+    Rectangle2D rect = mp.getDefaultMapArea();
+
+    int xLen = (int) (rect.getWidth()/res);
+    int yLen = (int) (rect.getHeight()/res);
+
+    RealType xmap = RealType.getRealType("xmap", CommonUnit.meter);
+    RealType ymap = RealType.getRealType("ymap", CommonUnit.meter);
+
+    RealTupleType rtt = new visad.RealTupleType(xmap, ymap, mp, null);
+
+    Linear2DSet grid = new Linear2DSet(rtt, rect.getX(), (xLen-1)*res, xLen,
+		                            rect.getY(), (yLen-1)*res, yLen);
+    return grid;
+  }
+
+ public static FlatField swathToGrid(Linear2DSet grid, FlatField swath) throws Exception {
+    FunctionType ftype = (FunctionType) swath.getType();
+    Linear2DSet swathDomain = (Linear2DSet) swath.getDomainSet();
+    int[] lens = swathDomain.getLengths();
+    float[][] swathRange = swath.getFloats(false);
+    int trackLen = lens[1];
+    int xtrackLen = lens[0];
+    lens = grid.getLengths();
+    int gridXLen = lens[0];
+    int gridYLen = lens[1];
+
+    CoordinateSystem swathCoordSys = swathDomain.getCoordinateSystem();
+    CoordinateSystem gridCoordSys = grid.getCoordinateSystem();
+
+    RealTupleType rtt = ((SetType)grid.getType()).getDomain();
+    FlatField grdFF = new FlatField(new FunctionType(rtt, ftype.getRange()), grid);
+    float[][] gridRange = grdFF.getFloats(false);
+
+    for (int j=0; j < trackLen; j++) {
+       for (int i=0; i < xtrackLen; i++) {
+         int idx = j*xtrackLen + i;
+
+	 float[][] swathCoord = swathDomain.indexToValue(new int[] {idx});
+	 float[][] swathEarthCoord = swathCoordSys.toReference(swathCoord);
+
+
+	 float[][] gridCoord = gridCoordSys.fromReference(swathEarthCoord);
+	 int grdIdx = (grid.valueToIndex(gridCoord))[0];
+
+	 float val = swathRange[0][idx];
+	 for (int n=0; n<2; n++) {
+           for ( int m=0; m<2; m++) {
+	      int k = grdIdx + (m + n*gridXLen);
+
+	      if (!(Float.isNaN(val)) && 
+		  (k >= 0 && (k < gridXLen*gridYLen))) {
+		float grdVal = gridRange[0][k];
+	        if (Float.isNaN(grdVal)) {
+		  gridRange[0][k] = val;
+		}
+
+	      }
+	   }
+	 }
+	 //if (!(Float.isNaN(val)) && (grdIdx != -1)) {
+	 //  gridRange[0][grdIdx] = val;
+         //}
+       }
+    }
+    
+   grdFF.setSamples(gridRange);
+   return grdFF;
+ }
+ ***/
+
+
 }
 
 
