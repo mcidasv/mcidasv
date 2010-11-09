@@ -31,7 +31,8 @@
 package edu.wisc.ssec.mcidasv.data;
 
 import edu.wisc.ssec.mcidasv.Constants;
-import edu.wisc.ssec.mcidasv.data.dateChooser.JDateChooser;
+import edu.wisc.ssec.mcidasv.data.adde.sgp4.Time;
+import edu.wisc.ssec.mcidasv.data.dateChooser.*;
 
 import java.awt.Component;
 import java.awt.Insets;
@@ -82,7 +83,10 @@ public class TimeSelection extends DataSelectionComponent implements Constants {
       private JDateChooser begDay = null;
       private JDateChooser endDay = null;
 
-      public static final String DATE_FORMAT_NOW = "yyyyMMdd";
+      /** earth coordinates */
+      protected static final String PROP_BEGTIME = "BeginTime";
+      protected static final String PROP_ENDTIME = "EndTime";
+
 
       public TimeSelection(DataSourceImpl dataSource) 
               throws VisADException, RemoteException {
@@ -141,15 +145,54 @@ public class TimeSelection extends DataSelectionComponent implements Constants {
       }
 
       @Override public void applyToDataSelection(DataSelection dataSelection) {
-         System.out.println("\napplyToDataSelection: dataSelection=" + dataSelection);
          if (dataSelection == null) {
              dataSelection = new DataSelection(true);
          }
          Date beg = begDay.getDate();
-         System.out.println("    beg=" + beg);
-         System.out.println("    beg: month" + beg.getMonth() + " day=" + beg.getDay() + " year=" + beg.getYear());
+         JCalendar cal = begDay.getJCalendar();
+         JDayChooser dayChooser = cal.getDayChooser();
+         int day = dayChooser.getDay();
+         JMonthChooser monthChooser = cal.getMonthChooser();
+         int month = monthChooser.getMonth() + 1;
+         JYearChooser yearChooser = cal.getYearChooser();
+         int year = yearChooser.getYear();
+         //System.out.println("    beg=" + beg);
+         //System.out.println("    beg: month=" + month + " day=" + day + " year=" + year);
+
+         String begTime = beginTimeFld.getText();
+         String[] timeStrings = begTime.split(":");
+         int hours = (new Integer(timeStrings[0])).intValue();
+         int mins = (new Integer(timeStrings[1])).intValue();
+         double secs = (new Double(timeStrings[2] + ".0")).doubleValue();
+         //System.out.println("begTime=" + begTime);
+         //System.out.println("    hours=" + hours + " minutes=" + mins + " seconds=" + secs);
+
+         Time bTime = new Time(year, month, day, hours, mins, secs);
+         //System.out.println("bTime=" + bTime.getDateTimeStr());
+         dataSelection.putProperty(PROP_BEGTIME, bTime.getDateTimeStr());
+
          Date end = endDay.getDate();
-         System.out.println("    end=" + end);
-         System.out.println("    end: month" + end.getMonth() + " day=" + end.getDay() + " year=" + end.getYear());
+         //System.out.println("    end=" + end);
+         cal = endDay.getJCalendar();
+         dayChooser = cal.getDayChooser();
+         day = dayChooser.getDay();
+         monthChooser = cal.getMonthChooser();
+         month = monthChooser.getMonth() + 1;
+         yearChooser = cal.getYearChooser();
+         year = yearChooser.getYear();
+         //System.out.println("    end: month=" + month + " day=" + day + " year=" + year);
+
+         String endTime = endTimeFld.getText();
+         timeStrings = endTime.split(":");
+         hours = (new Integer(timeStrings[0])).intValue();
+         mins = (new Integer(timeStrings[1])).intValue();
+         secs = (new Double(timeStrings[2] + ".0")).doubleValue();
+         //System.out.println("endTime=" + endTime);
+         //System.out.println("    hours=" + hours + " minutes=" + mins + " seconds=" + secs);
+
+         Time eTime = new Time(year, month, day, hours, mins, secs);
+         //System.out.println("eTime=" + eTime.getDateTimeStr());
+
+         dataSelection.putProperty(PROP_ENDTIME, eTime.getDateTimeStr());
       }
 }
