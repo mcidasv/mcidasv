@@ -32,15 +32,17 @@ package edu.wisc.ssec.mcidasv.data.adde;
 
 import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 import edu.wisc.ssec.mcidasv.chooser.adde.AddeTleChooser;
+import edu.wisc.ssec.mcidasv.data.TimeSelection;
 import edu.wisc.ssec.mcidasv.data.adde.sgp4.*;
 
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
+import ucar.unidata.data.DataSelectionComponent;
 import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.DirectDataChoice;
-
+import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
@@ -85,26 +87,9 @@ public class AddeTleDataSource extends DataSourceImpl {
     private SGP4SatData data = new SGP4SatData();
 
     public static double pi = SGP4unit.pi;
-/*
-    private int satId = 0;
-    private int launchYear = 0;
-    private int intCode = 0;
-    private int yyyy = 0;
-    private double ddd = 1.0;
-    private double firstDev = 1.0;
-    private double secondDev = 1.0;
-    private double bStar = 1.0;
-    private int ephemerisType = 0;
-    private int elementNumber = 0;
 
-    private double inclination = 1.0;
-    private double rightAscension = 1.0;
-    private double eccentricity = 1.0;
-    private double argOfPerigee = 1.0;
-    private double meanAnomaly = 1.0;
-    private double meanMotion = 1.0;
-    private int revolutionNumber = 0;
-*/
+    private Hashtable selectionProps;
+
     /**
      * Default bean constructor for persistence; does nothing.
      */
@@ -126,28 +111,16 @@ public class AddeTleDataSource extends DataSourceImpl {
         System.out.println("    descriptor=" + descriptor);
         System.out.println("    filename=" + filename);
 */
-        //System.out.println("properties:");
         String key = AddeTleChooser.TLE_SERVER_NAME_KEY;
         Object server = properties.get(key);
-        //System.out.println("    " + key + "=" + server);
         key = AddeTleChooser.TLE_GROUP_NAME_KEY;
         Object group = properties.get(key);
-        //System.out.println("    " + key + "=" + group);
-/*
-        key = AddeTleChooser.SATELLITE_SERVER_NAME_KEY;
-        Object val = properties.get(key);
-        System.out.println("    " + key + "=" + val);
-        key = AddeTleChooser.SATELLITE_GROUP_NAME_KEY;
-        val = properties.get(key);
-        System.out.println("    " + key + "=" + val);
-*/
-        //String url = "adde://noaaport.ssec.wisc.edu/textdata?&PORT=112&COMPRESS=gzip&USER=GAD&PROJ=6999&GROUP=POESNAV&DESCR=TLE";
         key = AddeTleChooser.TLE_USER_ID_KEY;
         Object user = properties.get(key);
         key = AddeTleChooser.TLE_PROJECT_NUMBER_KEY;
         Object proj = properties.get(key);
         String url = "adde://" + server + "/textdata?&PORT=112&COMPRESS=gzip&USER=" + user + "&PROJ=" + proj + "&GROUP=" + group + "&DESCR=" + filename;
-        //System.out.println("\n" + url + "\n");
+        System.out.println("\n" + url + "\n");
         AddeTextReader reader = new AddeTextReader(url);
         List lines = null;
         if ("OK".equals(reader.getStatus())) {
@@ -157,16 +130,13 @@ public class AddeTleDataSource extends DataSourceImpl {
             System.out.println("\nproblem reading TLE file");
         } else {
             String[] cards = StringUtil.listToStringArray(lines);
-            //System.out.println("\n");
             for (int i=0; i<cards.length; i++) {
                 tleCards.add(cards[i]);
-                //System.out.println(cards[i]);
                 int indx = cards[i].indexOf(" ");
                 if (indx < 0) {
                     choices.add(cards[i]);
                 }
             }
-            //System.out.println("\n");
         }
     }
 
@@ -204,16 +174,17 @@ public class AddeTleDataSource extends DataSourceImpl {
      * @throws RemoteException    Java RMI problem
      * @throws VisADException     VisAD problem
      */
+
     protected Data getDataInner(DataChoice dataChoice, DataCategory category,
                                 DataSelection dataSelection,
                                 Hashtable requestProperties)
             throws VisADException, RemoteException {
-/*
+
         System.out.println("\ngetDataInner:");
         System.out.println("    dataChoice=" + dataChoice);
         System.out.println("    category=" + category);
         System.out.println("    dataSelection=" + dataSelection + "\n");
-*/
+
         final double deg2rad = pi / 180.0;         //   0.0174532925199433
         final double xpdotp = 1440.0 / (2.0 * pi);  // 229.1831180523293
 
@@ -241,7 +212,6 @@ public class AddeTleDataSource extends DataSourceImpl {
                 index++;
                 card = (String)tleCards.get(index);
                 ncomps += decodeCard2(card);
-                //System.out.println("\nncomps=" + ncomps);
                 gotit= true;
             }
             if (index+3 > tleCards.size()) gotit = true;
@@ -312,6 +282,14 @@ public class AddeTleDataSource extends DataSourceImpl {
                 data.nodeo, data);
         System.out.println("\nsgp4init result=" + result + "\n");
 
+        this.selectionProps = dataSelection.getProperties();
+        Enumeration propEnum = this.selectionProps.keys();
+        for (int i = 0; propEnum.hasMoreElements(); i++) {
+            String key = propEnum.nextElement().toString();
+            String val = (String)this.selectionProps.get(key);
+            System.out.println("key=" + key + " val=" + val);
+        }
+
         return null;
     }
 
@@ -344,25 +322,8 @@ public class AddeTleDataSource extends DataSourceImpl {
 
             data.classification = card.substring(7, 8);
             data.intldesg = card.substring(9, 17);
-/*
-            launchYear = getInt(9, 11, card);
-            System.out.println("    launchYear = " + launchYear);
-            ++ret;
-
-            intCode = getInt(11, 14, card);
-            System.out.println("    intCode = " + intCode);
-            ++ret;
-*/
             int yy = getInt(18, 20, card);
-/*
-            if (yy < 57) {
-                yyyy = yy + 2000;
-            } else {
-                yyyy = yy + 1900;
-            }
-*/
             data.epochyr = yy;
-//            System.out.println("    yyyy = " + yyyy);
             ++ret;
 
             ddd = getDouble(20, 32, card);
@@ -370,20 +331,11 @@ public class AddeTleDataSource extends DataSourceImpl {
             data.epochdays = ddd;
             ++ret;
 
-//            days2mdhms(yyyy, ddd);
-
             firstDev = getDouble(33, 43, card);
             System.out.println("    firstDev = " + firstDev);
             data.ndot = firstDev;
             ++ret;
-/*
-            str = card.substring(44,50);
-            str += "E";
-            str += card.substring(50,52);
-            secondDev = getDouble(0, str.length(), str);
-            System.out.println("    secondDev = " + secondDev);
-            ++ret;
-*/
+
             if((card.substring(44, 52)).equals("        "))
             {
                 data.nddot = 0;
@@ -392,19 +344,11 @@ public class AddeTleDataSource extends DataSourceImpl {
             else
             {
                 data.nddot = getDouble(44, 50, card) / 1.0E5;
-                //nexp
                 data.nexp = getInt(50, 52, card);
             }
             System.out.println("    nddot=" + data.nddot);
             System.out.println("    nexp=" + data.nexp);
-/*
-            str = card.substring(53,59);
-            str += "E";
-            str += card.substring(59,61);
-            bStar = getDouble(0, str.length(), str);
-            System.out.println("    bStar = " + bStar);
-            ++ret;
-*/
+
             data.bstar = getDouble(53, 59, card) / 1.0E5;
             data.ibexp = getInt(59, 61, card);
             System.out.println("    bstar=" + data.bstar);
@@ -533,64 +477,17 @@ public class AddeTleDataSource extends DataSourceImpl {
         return sum % 10;
     }
 
-/*
-    private void days2mdhms(int year, double days) {
-        //System.out.println("days2mdhms: year=" + year + " days=" + days);
-        MDHMS mdhms = new MDHMS();
+    protected void initDataSelectionComponents(
+                   List<DataSelectionComponent> components, final DataChoice dataChoice) {
 
-        int i, inttemp, dayofyr;
-        double temp;
-        int lmonth[] =
-        {
-            31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
-        };
-
-        dayofyr = (int)Math.floor(days);
-        // ----------------- find month and day of month ---------------- //
-        if((year % 4) == 0) // doesn't work for dates starting 2100 and beyond //
-        {
-            lmonth[1] = 29;
+        IntegratedDataViewer idv = getDataContext().getIdv();
+        idv.showWaitCursor();
+        try {
+            TimeSelection timeSelection = new TimeSelection(this);
+            components.add(timeSelection);
+        } catch (Exception e) {
+            System.out.println("problem creating TimeSelection e=" + e);
         }
-
-        i = 1;
-        inttemp = 0;
-        while((dayofyr > inttemp + lmonth[i - 1]) && (i < 12))
-        {
-            inttemp = inttemp + lmonth[i - 1];
-            i++;
-        }
-        mdhms.mon = i;
-        mdhms.day = dayofyr - inttemp;
-
-        // ----------------- find hours minutes and seconds ------------- //
-        temp = (days - dayofyr) * 24.0;
-        mdhms.hr = (int)Math.floor(temp);
-        temp = (temp - mdhms.hr) * 60.0;
-        mdhms.minute = (int)Math.floor(temp);
-        mdhms.sec = (temp - mdhms.minute) * 60.0;
-        System.out.println("        month=" + mdhms.mon);
-        System.out.println("        day=" + mdhms.day);
-        System.out.println("        hours=" + mdhms.hr);
-        System.out.println("        minutes=" + mdhms.minute);
-        System.out.println("        seconds=" + mdhms.sec);
-
-        return;
-        //return mdhms;
+        idv.showNormalCursor();
     }
-
-
-    // Month Day Hours Min Sec
-    private static class MDHMS
-    {
-        int mon = 0;
-        ;
-        int day = 0;
-        ;
-        int hr = 0;
-        ;
-        int minute = 0;
-        ;
-        double sec = 0;
-    }
-*/
 }
