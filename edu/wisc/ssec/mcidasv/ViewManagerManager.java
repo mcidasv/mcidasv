@@ -190,7 +190,7 @@ public class ViewManagerManager extends VMManager {
 
 			// if there are no more VMs, make sure the IDV code knows about it
 			// by setting the last active VM to null.
-			if (previousVMs.size() == 0) {
+			if (previousVMs.isEmpty()) {
 				super.setLastActiveViewManager(null);
 				return;
 			}
@@ -207,8 +207,9 @@ public class ViewManagerManager extends VMManager {
 		// start active tab testing
 		ComponentHolder holder = 
 			uiManager.getViewManagerHolder(previousVMs.peek());
-		if ((holder != null) && (holder instanceof McvComponentHolder))
+		if ((holder != null) && (holder instanceof McvComponentHolder)) {
 			((McvComponentHolder)holder).setAsActiveTab();
+		}
 		// stop active tab testing
 	}
 
@@ -236,8 +237,9 @@ public class ViewManagerManager extends VMManager {
 		List<DisplayControlImpl> controls = vm.getControlsForLegend();
 		if (controls != null && !controls.isEmpty()) {
 			DisplayControlImpl control = controls.get(0);
-			if (doShow)
+			if (doShow) {
 				GuiUtils.showComponentInTabs(control.getOuterContents(), false);
+			}
 		}
 	}
 
@@ -246,12 +248,24 @@ public class ViewManagerManager extends VMManager {
 	 * debug message!
 	 */
 	private void inspectStack(String msg) {
-		if (!DEBUG)
+		if (!DEBUG) {
 			return;
+		}
+		StringBuilder sb = new StringBuilder(this.hashCode()).append(": ").append(msg).append(": [");
+		for (ViewManager vm : previousVMs) {
+			sb.append(vm.hashCode()).append(',');
+		}
+		System.out.println(sb.append("] Size=").append(previousVMs.size()).toString());
+	}
 
-		System.out.print(this.hashCode() + ": " + msg + ": [");
-		for (ViewManager vm : previousVMs)
-			System.out.print(vm.hashCode() + ",");
-		System.out.println("] Size=" + previousVMs.size());
+	/**
+	 * Turns off layer visibility animation for all {@code ViewManager}s. This
+	 * is typically only useful for when the user has removed all layers 
+	 * <i>without</i> turning off the layer animation setting.
+	 */
+	protected void disableAllLayerVizAnimations() {
+	    for (ViewManager vm : getViewManagers()) {
+	        vm.setAnimatedVisibility(false);
+	    }
 	}
 }

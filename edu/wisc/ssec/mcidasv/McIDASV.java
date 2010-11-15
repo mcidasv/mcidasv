@@ -599,6 +599,7 @@ public class McIDASV extends IntegratedDataViewer {
 
         if (getArgsManager().getIsOffScreen()) {
             super.removeAllDisplays();
+            ((ViewManagerManager)getVMManager()).disableAllLayerVizAnimations();
             return continueWarning;
         }
 
@@ -620,6 +621,7 @@ public class McIDASV extends IntegratedDataViewer {
 
         if (reallyRemove) {
             super.removeAllDisplays();
+            ((ViewManagerManager)getVMManager()).disableAllLayerVizAnimations();
         }
 
         return continueWarning;
