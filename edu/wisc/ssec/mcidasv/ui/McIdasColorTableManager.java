@@ -32,31 +32,26 @@ package edu.wisc.ssec.mcidasv.ui;
 
 import java.io.IOException;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
 import ucar.unidata.ui.colortable.ColorTableManager;
-import ucar.unidata.ui.colortable.ColorTableCanvas;
 import ucar.unidata.ui.colortable.ColorTableDefaults;
 
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.FileManager;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.NamedObject;
+import ucar.unidata.util.ObjectListener;
 import ucar.unidata.util.PatternFileFilter;
 import ucar.unidata.util.ResourceManager;
 
 import ucar.unidata.xml.XmlEncoder;
-import ucar.unidata.xml.XmlUtil;
 
 /**
  * A class to manage Hydra color tables
  */
 public class McIdasColorTableManager extends ColorTableManager {
-
-
-    /** The singleton */
-    private static McIdasColorTableManager manager;
 
     /** The color table category */
     public static final String CATEGORY_HYDRA = "HYDRA";
@@ -78,11 +73,21 @@ public class McIdasColorTableManager extends ColorTableManager {
     }
 
     /**
+     * Filles the given list with menu items that represent that available 
+     * color tables.
+     * 
+     * Overridden in McIDAS-V to force the presence of the "<local>" tag.
+     */
+    @Override public void makeColorTableMenu(final ObjectListener listener, List l) {
+        makeColorTableMenu(listener, l, true);
+    }
+
+    /**
      * Return the file filters used for writing a file on an import
      *
      * @return Read file  filters
      */
-    public List getReadFileFilters() {
+    @Override public List getReadFileFilters() {
         ColorTableManager ctm = new ColorTableManager();
         List filters = ctm.getWriteFileFilters();
         filters.add(FILTER_HYDRA);
@@ -96,7 +101,7 @@ public class McIdasColorTableManager extends ColorTableManager {
      * @param makeUnique If true then we change the name of the color table so it is unique
      * @return The imported color table
      */
-    public NamedObject doImport(boolean makeUnique) {
+    @Override public NamedObject doImport(boolean makeUnique) {
         String file = FileManager.getReadFile(getTitle() + " import",
                           getReadFileFilters());
         if (file == null) {
@@ -110,7 +115,6 @@ public class McIdasColorTableManager extends ColorTableManager {
             }
         } catch (IOException ioe) {
             LU.printException(log_, "Error reading file: " + file, ioe);
-
             return null;
         }
         try {
@@ -149,7 +153,7 @@ public class McIdasColorTableManager extends ColorTableManager {
         }
 
         String suffix = file.toLowerCase();
-        List   cts    = new ArrayList();
+        List<ColorTable> cts = new ArrayList<ColorTable>();
         if (suffix.endsWith(".et")) {
             if (category == null) {
                 cat = ColorTable.CATEGORY_SATELLITE;
@@ -170,18 +174,13 @@ public class McIdasColorTableManager extends ColorTableManager {
                     ColorTableDefaults.makeTableFromAct(file)));
         } else if (suffix.endsWith(".ncmap")) {
             //Treat these like gempak
-            cts.addAll(ColorTableDefaults.makeGempakColorTables(name, cat,
-                    file));
+            cts.addAll(ColorTableDefaults.makeGempakColorTables(name, cat, file));
         } else if (suffix.endsWith(".gp")) {
-            cts.addAll(ColorTableDefaults.makeNclRgbColorTables(name, cat,
-                    file, null));
+            cts.addAll(ColorTableDefaults.makeNclRgbColorTables(name, cat, file, null));
         } else if (isGempakFile(file)) {
-            cts.addAll(ColorTableDefaults.makeGempakColorTables(name, cat,
-                    file));
+            cts.addAll(ColorTableDefaults.makeGempakColorTables(name, cat, file));
         } else if (suffix.endsWith(".rgb")) {
-            cts.addAll(ColorTableDefaults.makeRgbColorTables(name, cat,
-                    file));
-         
+            cts.addAll(ColorTableDefaults.makeRgbColorTables(name, cat, file));
         } else if (suffix.endsWith(".ascii")) {
             if (category == null) {
                 cat = CATEGORY_HYDRA;
@@ -191,7 +190,7 @@ public class McIdasColorTableManager extends ColorTableManager {
         } else {
             return null;
         }
-        if (cts.size() == 0) {
+        if (cts.isEmpty()) {
             return null;
         }
         return cts;
