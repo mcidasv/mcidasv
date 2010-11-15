@@ -36,6 +36,10 @@ import edu.wisc.ssec.mcidasv.data.dateChooser.*;
 
 import java.awt.Component;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,6 +56,7 @@ import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSelectionComponent;
 import ucar.unidata.data.DataSourceImpl;
+import ucar.unidata.ui.LatLonWidget;
 import ucar.unidata.util.GuiUtils;
 
 import visad.VisADException;
@@ -70,6 +75,8 @@ public class TimeSelection extends DataSelectionComponent implements Constants {
                                                       GRID_SPACING,
                                                       GRID_SPACING,
                                                       GRID_SPACING);
+      private double latitude;
+      private double longitude;
       private JPanel beginTime;
       private JPanel beginDate;
       private JPanel endTime;
@@ -87,62 +94,96 @@ public class TimeSelection extends DataSelectionComponent implements Constants {
       protected static final String PROP_BEGTIME = "BeginTime";
       protected static final String PROP_ENDTIME = "EndTime";
 
+      private JComboBox locationComboBox;
+      private static final String[] stations = {"Madison", "Gilmore Creek", "Wallops Island"};
+      private static final double[] lats = {43.13, 64.97, 37.50};
+      private static final double[] lons = {89.35, 147.40, 75.40};
+
+      /** Input for lat/lon center point */
+      protected LatLonWidget latLonWidget = new LatLonWidget();
+
+      private JTextField latFld;
+      private JTextField lonFld;
 
       public TimeSelection(DataSourceImpl dataSource) 
               throws VisADException, RemoteException {
           super("Time");
+          this.dataSource = dataSource;
       }
 
 /* code for JDateChooser from
    /home/gad/src/com/toedter/calendar/JDateChooser.java
 */
-      protected JComponent doMakeContents() {
-          Insets  dfltGridSpacing = new Insets(4, 0, 4, 0);
-          String  dfltLblSpacing  = " ";
-          Calendar cal = Calendar.getInstance();
-          SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy");
-          defaultDay = cal.getTime();
-          List allComps = new ArrayList();
-          allComps.add(new JLabel(" "));
-          allComps.add(new JLabel(" "));
-          allComps.add(GuiUtils.lLabel("Begin:"));
-          beginTimeFld = new JTextField(defaultBegTime, 10);
-          beginTime = GuiUtils.doLayout(new Component[] {
-                             new JLabel("            Time: "),
-                             beginTimeFld }, 2,
-                             GuiUtils.WT_N, GuiUtils.WT_N);
-          allComps.add(beginTime);
-          begDay = new JDateChooser(defaultDay);
-          beginDate = GuiUtils.doLayout(new Component[] {
-                             new JLabel("            Date: "),
-                             begDay }, 2,
-                             GuiUtils.WT_N, GuiUtils.WT_N);
-          allComps.add(beginDate);
+    protected JComponent doMakeContents() {
 
-          allComps.add(new JLabel(" "));
-          allComps.add(new JLabel(" "));
-          allComps.add(GuiUtils.lLabel("End:"));
-          endTimeFld = new JTextField(defaultEndTime, 10);
-          endTime = GuiUtils.doLayout(new Component[] {
-                             new JLabel("     "),
-                             new JLabel("            Time: "),
-                             endTimeFld }, 3,
-                             GuiUtils.WT_N, GuiUtils.WT_N);
-          allComps.add(endTime);
-          endDay = new JDateChooser(defaultDay);
-          endDate = GuiUtils.doLayout(new Component[] {
-                             new JLabel("     "),
-                             new JLabel("            Date: "),
-                             endDay }, 3,
-                             GuiUtils.WT_N, GuiUtils.WT_N);
-          allComps.add(endDate);
+         locationComboBox = new JComboBox(stations);
+         locationComboBox.addActionListener(new ActionListener() {
+             public void actionPerformed(ActionEvent ae) {
+                 int indx = locationComboBox.getSelectedIndex();
+                 latLonWidget.setLat(lats[indx]);
+                 latLonWidget.setLon(lons[indx]);
+             }
+         });
 
+         latLonWidget.setLat(lats[0]);
+         latLonWidget.setLon(lons[0]);
+         FocusListener latLonFocusChange = new FocusListener() {
+             public void focusGained(FocusEvent fe) {
+                 latFld = latLonWidget.getLatField();
+                 latFld.setCaretPosition(latFld.getText().length());
+                 lonFld = latLonWidget.getLonField();
+                 lonFld.setCaretPosition(lonFld.getText().length());
+             }
+             public void focusLost(FocusEvent fe) {
+                 setLatitude();
+                 setLongitude();
+             }
+         };
 
-          GuiUtils.tmpInsets = GRID_INSETS;
-          JPanel dateTimePanel = GuiUtils.doLayout(allComps, 1, GuiUtils.WT_NY,
-                                  GuiUtils.WT_N);
-          return GuiUtils.top(dateTimePanel);
-      }
+         Insets  dfltGridSpacing = new Insets(4, 0, 4, 0);
+         String  dfltLblSpacing  = " ";
+         Calendar cal = Calendar.getInstance();
+         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy");
+         defaultDay = cal.getTime();
+         List allComps = new ArrayList();
+         allComps.add(new JLabel(" "));
+         allComps.add(locationComboBox);
+         allComps.add(latLonWidget);
+         allComps.add(new JLabel(" "));
+         allComps.add(GuiUtils.lLabel("Begin:"));
+         beginTimeFld = new JTextField(defaultBegTime, 10);
+         beginTime = GuiUtils.doLayout(new Component[] {
+                            new JLabel("            Time: "),
+                            beginTimeFld }, 2,
+                            GuiUtils.WT_N, GuiUtils.WT_N);
+         allComps.add(beginTime);
+         begDay = new JDateChooser(defaultDay);
+         beginDate = GuiUtils.doLayout(new Component[] {
+                            new JLabel("            Date: "),
+                            begDay }, 2,
+                            GuiUtils.WT_N, GuiUtils.WT_N);
+         allComps.add(beginDate);
+         allComps.add(GuiUtils.lLabel("End:"));
+         endTimeFld = new JTextField(defaultEndTime, 10);
+         endTime = GuiUtils.doLayout(new Component[] {
+                            new JLabel("     "),
+                            new JLabel("          Time: "),
+                            endTimeFld }, 3,
+                            GuiUtils.WT_N, GuiUtils.WT_N);
+         allComps.add(endTime);
+         endDay = new JDateChooser(defaultDay);
+         endDate = GuiUtils.doLayout(new Component[] {
+                            new JLabel("     "),
+                            new JLabel("          Date: "),
+                            endDay }, 3,
+                            GuiUtils.WT_N, GuiUtils.WT_N);
+         allComps.add(endDate);
+
+         GuiUtils.tmpInsets = GRID_INSETS;
+         JPanel dateTimePanel = GuiUtils.doLayout(allComps, 1, GuiUtils.WT_NY,
+                                GuiUtils.WT_N);
+         return GuiUtils.top(dateTimePanel);
+    }
 
       @Override public void applyToDataSelection(DataSelection dataSelection) {
          if (dataSelection == null) {
@@ -195,4 +236,22 @@ public class TimeSelection extends DataSelectionComponent implements Constants {
 
          dataSelection.putProperty(PROP_ENDTIME, eTime.getDateTimeStr());
       }
+
+    private void setLatitude() {
+        this.latitude = latLonWidget.getLat();
+    }
+
+    public void setLatitude(double val) {
+        latLonWidget.setLat(val);
+        this.latitude = val;
+    }
+
+    private void setLongitude() {
+        this.longitude = latLonWidget.getLon();
+    }
+
+    public void setLongitude(double val) {
+        latLonWidget.setLon(val);
+        this.longitude = val;
+    }
 }
