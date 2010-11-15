@@ -31,15 +31,22 @@
 package edu.wisc.ssec.mcidasv.control;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JTextField;
 
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.event.AxisChangeEvent;
@@ -51,6 +58,7 @@ import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.Range;
 import org.jfree.data.statistics.HistogramType;
+import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,12 +66,19 @@ import visad.FlatField;
 import visad.Unit;
 import visad.VisADException;
 
+import ucar.unidata.data.DataCancelException;
 import ucar.unidata.data.DataChoice;
+import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.control.DisplayControlImpl;
+import ucar.unidata.idv.control.chart.ChartWrapper;
 import ucar.unidata.idv.control.chart.DataChoiceWrapper;
 import ucar.unidata.idv.control.chart.HistogramWrapper;
 import ucar.unidata.idv.control.chart.MyHistogramDataset;
+import ucar.unidata.idv.control.multi.DisplayGroup;
+import ucar.unidata.idv.ui.ImageSequenceGrabber;
+import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
+import ucar.unidata.util.Misc;
 
 /**
  * Wraps a JFreeChart histograms to ease working with VisAD data.
@@ -72,23 +87,10 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
 
     private static final Logger logger = LoggerFactory.getLogger(McIDASVHistogramWrapper.class);
 
+    private DisplayControl imageControl;
+
     /** The plot */
     private XYPlot plot;
-
-    /** How many bins in the histgram */
-    private int bins = 100;
-
-    /** Is the histogram stacked bars. Does not work right now */
-    private boolean stacked = false;
-
-
-    /** for properties dialog */
-    private JTextField binFld;
-
-    /** for properties dialog */
-    private JCheckBox stackedCbx;
-
-    private DisplayControlImpl myControl;
 
     private double low;
 
@@ -108,7 +110,7 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
      */
     public McIDASVHistogramWrapper(String name, List dataChoices, DisplayControlImpl control) {
         super(name, dataChoices);
-        this.myControl = control;
+        imageControl = control;
     }
 
     /**
@@ -163,7 +165,7 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
                 domainAxis.setAutoRangeIncludesZero(false);
 
                 XYItemRenderer renderer;
-                if (stacked) {
+                if (getStacked()) {
                     renderer = new StackedXYBarRenderer();
                 } else {
                     renderer = new XYBarRenderer();
@@ -176,14 +178,14 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
                 MyHistogramDataset dataset = new MyHistogramDataset();
                 dataset.setType(HistogramType.FREQUENCY);
                 dataset.addSeries(dataChoice.getName() + " [" + unit + "]",
-                                  actualValues, bins);
+                                  actualValues, getBins());
                 plot.setDomainAxis(paramIdx, domainAxis, false);
                 plot.mapDatasetToDomainAxis(paramIdx, paramIdx);
                 plot.setDataset(paramIdx, dataset);
 
                 domainAxis.addChangeListener(new AxisChangeListener() {
                     public void axisChanged(AxisChangeEvent ae) {
-                        if (!myControl.isInitDone()) {
+                        if (!imageControl.isInitDone()) {
                             return;
                         }
 
@@ -199,7 +201,7 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
                             } else {
                                 newRange = new ucar.unidata.util.Range(newLow, newHigh);
                             }
-                            myControl.setRange(newRange);
+                            ((DisplayControlImpl)imageControl).setRange(newRange);
                         } catch (Exception e) {
                             System.out.println("Can't set new range e=" + e);
                         }
@@ -283,6 +285,137 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
 
     public void setHigh(double val) {
         high = val;
+    }
+
+    /**
+     * SHow the popup menu
+     *
+     * @param where component to show near to
+     * @param x x
+     * @param y y
+     */
+    @Override public void showPopup(JComponent where, int x, int y) {
+        List items = new ArrayList();
+        items = getPopupMenuItems(items);
+        if (items.isEmpty()) {
+            return;
+        }
+        GuiUtils.makePopupMenu(items).show(where, x, y);
+    }
+
+    /**
+     * Add the default menu items
+     * 
+     * @param items List of menu items
+     * 
+     * @return The items list
+     */
+    @Override protected List getPopupMenuItems(List items) {
+        items = super.getPopupMenuItems(items);
+        for (Object o : items) {
+            if (o instanceof JMenuItem) {
+                JMenuItem menuItem = (JMenuItem)o;
+                if ("Properties...".equals(menuItem.getText())) {
+                    menuItem.setActionCommand(ChartPanel.PROPERTIES_COMMAND);
+                    menuItem.addActionListener(buildHistoPropsListener());
+                }
+            }
+        }
+        return items;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    private ActionListener buildHistoPropsListener() {
+        return new ActionListener() {
+            @Override public void actionPerformed(ActionEvent event) {
+                String command = event.getActionCommand();
+                if (ChartPanel.PROPERTIES_COMMAND.equals(command)) {
+                    McIDASVHistogramWrapper.this.showProperties();
+                    return;
+                }
+            }
+        };
+    }
+
+    /**
+     * Show the properties dialog
+     *
+     * @return Was it ok
+     */
+    @Override public boolean showProperties() {
+        boolean result;
+        if (!hasDisplayControl()) {
+            result = showProperties(null, 0, 0);
+        } else {
+            result = super.showProperties();
+        }
+        return result;
+    }
+
+    public boolean hasDisplayControl() {
+        return getDisplayControl() != null;
+    }
+
+    /**
+     * Remove me
+     *
+     * @return was removed
+     */
+    public boolean removeDisplayComponent() {
+        if (GuiUtils.askYesNo("Remove Display",
+                              "Are you sure you want to remove: "
+                              + toString())) {
+            DisplayGroup displayGroup = getDisplayGroup();
+            if (displayGroup != null) {
+                displayGroup.removeDisplayComponent(this);
+            }
+
+            if (hasDisplayControl()) {
+                getDisplayControl().removeDisplayComponent(this);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Apply the properties
+     *
+     * @return Success
+     */
+    @Override protected boolean doApplyProperties() {
+        applyProperties();
+        
+//        try {
+//            // need to deal with the data being an imageseq 
+//            loadData((FlatField)imageControl.getDataChoice().getData(null));
+//        } catch (RemoteException e) {
+//            logger.error("trying to reload data", e);
+//        } catch (DataCancelException e) {
+//            logger.error("trying to reload data", e);
+//        } catch (VisADException e) {
+//            logger.error("trying to reload data", e);
+//        }
+
+        return true;
+    }
+
+
+
+    /**
+     * Been removed, do any cleanup
+     */
+    public void doRemove() {
+        isRemoved = true;
+        List displayables = getDisplayables();
+        if (hasDisplayControl() && !displayables.isEmpty()) {
+            getDisplayControl().removeDisplayables(displayables);
+        }
+        firePropertyChange(PROP_REMOVED, null, this);
     }
 }
 
