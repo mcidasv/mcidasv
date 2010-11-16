@@ -77,6 +77,9 @@ public class TimeSelection extends DataSelectionComponent implements Constants {
                                                       GRID_SPACING);
       private double latitude;
       private double longitude;
+      private double altitude;
+      private JPanel locationPanel;
+      private JPanel latLonAltPanel;
       private JPanel beginTime;
       private JPanel beginDate;
       private JPanel endTime;
@@ -90,56 +93,100 @@ public class TimeSelection extends DataSelectionComponent implements Constants {
       private JDateChooser begDay = null;
       private JDateChooser endDay = null;
 
+      private List stations;
+      private List lats;
+      private List lons;
+      private List alts;
+
       /** earth coordinates */
+      protected static final String PROP_LOC = "Location";
+      protected static final String PROP_LAT = "Latitude";
+      protected static final String PROP_LON = "Longitude";
+      protected static final String PROP_ALT = "Altitude";
       protected static final String PROP_BEGTIME = "BeginTime";
       protected static final String PROP_ENDTIME = "EndTime";
 
       private JComboBox locationComboBox;
+/*
       private static final String[] stations = {"Madison", "Gilmore Creek", "Wallops Island"};
       private static final double[] lats = {43.13, 64.97, 37.50};
       private static final double[] lons = {89.35, 147.40, 75.40};
+*/
 
       /** Input for lat/lon center point */
       protected LatLonWidget latLonWidget = new LatLonWidget();
 
       private JTextField latFld;
       private JTextField lonFld;
+      private JTextField altitudeFld = new JTextField(" ", 5);
 
       public TimeSelection(DataSourceImpl dataSource) 
               throws VisADException, RemoteException {
-          super("Time");
+          super("TLE");
           this.dataSource = dataSource;
       }
 
-/* code for JDateChooser from
-   /home/gad/src/com/toedter/calendar/JDateChooser.java
-*/
     protected JComponent doMakeContents() {
+         GroundStations gs = new GroundStations();
+         int gsCount = gs.getGroundStationCount();
+         String[] stats = new String[gsCount];
+         stations = gs.getStations();
+         for (int i=0; i<gsCount; i++) {
+             stats[i] = (String)stations.get(i);
+         }
+         lats = gs.getLatitudes();
+         lons = gs.getLongitudes();
+         alts = gs.getAltitudes();
 
-         locationComboBox = new JComboBox(stations);
+         locationComboBox = new JComboBox(stats);
          locationComboBox.addActionListener(new ActionListener() {
              public void actionPerformed(ActionEvent ae) {
                  int indx = locationComboBox.getSelectedIndex();
-                 latLonWidget.setLat(lats[indx]);
-                 latLonWidget.setLon(lons[indx]);
+                 String str = (String)(lats.get(indx));
+                 Double d = new Double(str);
+                 double dVal = d.doubleValue();
+                 latLonWidget.setLat(dVal);
+                 str = (String)(lons.get(indx));
+                 d = new Double(str);
+                 dVal = d.doubleValue() * -1;
+                 latLonWidget.setLon(dVal);
+                 str = (String)(alts.get(indx));
+                 altitudeFld.setText(str);
              }
          });
 
-         latLonWidget.setLat(lats[0]);
-         latLonWidget.setLon(lons[0]);
+         String str = (String)(lats.get(0));
+         Double d = new Double(str);
+         double dVal = d.doubleValue();
+         latLonWidget.setLat(dVal);
+         str = (String)(lons.get(0));
+         d = new Double(str);
+         dVal = d.doubleValue() * -1;
+         latLonWidget.setLon(dVal);
+         str = (String)(alts.get(0));
+         altitudeFld = new JTextField(str, 5);
+         latFld = latLonWidget.getLatField();
+         lonFld = latLonWidget.getLonField();
          FocusListener latLonFocusChange = new FocusListener() {
              public void focusGained(FocusEvent fe) {
-                 latFld = latLonWidget.getLatField();
                  latFld.setCaretPosition(latFld.getText().length());
-                 lonFld = latLonWidget.getLonField();
                  lonFld.setCaretPosition(lonFld.getText().length());
              }
              public void focusLost(FocusEvent fe) {
                  setLatitude();
                  setLongitude();
+                 setAltitude();
              }
          };
-
+         locationPanel = GuiUtils.doLayout(new Component[] {
+                            new JLabel("Ground Station: "),
+                            locationComboBox }, 2, 
+                            GuiUtils.WT_N, GuiUtils.WT_N);
+         latLonAltPanel = GuiUtils.doLayout(new Component[] {
+                            latLonWidget,
+                            new JLabel(" Altitude: "),
+                            altitudeFld }, 3,
+                            GuiUtils.WT_N, GuiUtils.WT_N);
          Insets  dfltGridSpacing = new Insets(4, 0, 4, 0);
          String  dfltLblSpacing  = " ";
          Calendar cal = Calendar.getInstance();
@@ -147,8 +194,8 @@ public class TimeSelection extends DataSelectionComponent implements Constants {
          defaultDay = cal.getTime();
          List allComps = new ArrayList();
          allComps.add(new JLabel(" "));
-         allComps.add(locationComboBox);
-         allComps.add(latLonWidget);
+         allComps.add(locationPanel);
+         allComps.add(latLonAltPanel);
          allComps.add(new JLabel(" "));
          allComps.add(GuiUtils.lLabel("Begin:"));
          beginTimeFld = new JTextField(defaultBegTime, 10);
@@ -189,6 +236,19 @@ public class TimeSelection extends DataSelectionComponent implements Constants {
          if (dataSelection == null) {
              dataSelection = new DataSelection(true);
          }
+
+         String loc = (String)(locationComboBox.getSelectedItem());
+         dataSelection.putProperty(PROP_LOC, loc);
+
+         String lat = latFld.getText();
+         dataSelection.putProperty(PROP_LAT, lat);
+
+         String lon = lonFld.getText();
+         dataSelection.putProperty(PROP_LON, lon);
+
+         String alt = altitudeFld.getText();
+         dataSelection.putProperty(PROP_ALT, alt);
+
          Date beg = begDay.getDate();
          JCalendar cal = begDay.getJCalendar();
          JDayChooser dayChooser = cal.getDayChooser();
@@ -248,6 +308,12 @@ public class TimeSelection extends DataSelectionComponent implements Constants {
 
     private void setLongitude() {
         this.longitude = latLonWidget.getLon();
+    }
+
+    private void setAltitude() {
+        String str = altitudeFld.getText();
+        Double d = new Double(str);
+        this.altitude = d.doubleValue();
     }
 
     public void setLongitude(double val) {
