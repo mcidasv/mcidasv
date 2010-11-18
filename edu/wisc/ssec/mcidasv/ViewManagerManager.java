@@ -265,7 +265,7 @@ public class ViewManagerManager extends VMManager {
 	 */
 	protected void disableAllLayerVizAnimations() {
 	    for (ViewManager vm : getViewManagers()) {
-	        vm.setAnimatedVisibility(false);
+	        vm.setAnimatedVisibilityCheckBox(false);
 	    }
 	}
 }
