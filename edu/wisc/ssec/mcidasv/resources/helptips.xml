@@ -71,7 +71,7 @@
 	<helptip title="Saving State as a Bundle" category="Miscellaneous">
 	<![CDATA[
 	You can save off the current state of the application (i.e., data, displays and settings) with the
-	<a href="jython:idv.doSaveAs ();">File-&gt;Save As...</a> menu command. Read more about bundles in the
+	<a href="jython:idv.doSaveAs();">File-&gt;Save Bundle...</a> menu command. Read more about bundles in the
 	<a href="help:idv.bundles">User's Guide</a>.
 	]]>
 	</helptip>
@@ -136,12 +136,14 @@
 	]]>
 	</helptip>
 
+<!--
 	<helptip title="Text Notes" category="Displays">
 	<![CDATA[
 	You can attach descriptive text to any McIDAS-V display, and save it so others can see it, with 
 	<a href="jython:idv.doMakeControl('notecontrol');">Text Notes</a>. 
 	]]>
 	</helptip>
+-->
 
 	<helptip title="Radar Range Rings" category="Displays">
 	<![CDATA[
