@@ -3,7 +3,7 @@
   <derived
      id="cleanFilter"
      description="Clean Image Filter"
-     formula="cleanFilter(image,fill[isuser=true,type=choice,choices=Average; Min; Max],bline[isuser=true,default=Default],eline[isuser=true,default=Default],pdiff[isuser=true,default=15],ldiff[isuser=true,default=15],stretch[isuser=true,type=choice,choices=Contrast; Histogram])"
+     formula="cleanFilter(image,fill[isuser=true,type=choice,choices=Average; Min; Max],bline[isuser=true,default=Default],eline[isuser=true,default=Default],pdiff[isuser=true,default=15],ldiff[isuser=true,default=15],stretch[isuser=true,type=choice,choices=Contrast; Histogram],BT_Min[isuser=true,default=0],BT_Max[isuser=true,default=255])"
      isenduser="true"
      isdefault="false">
     <categories>
@@ -17,7 +17,7 @@
   <derived
      id="cloudFilter"
      description="Cloud Image Filter"
-     formula="cloudFilter(image1,image2,replace[isuser=true,default=Default], constant[isuser=true,default=0],stretch[isuser=true,type=choice,choices=Contrast; Histogram])"
+     formula="cloudFilter(image1,image2,replace[isuser=true,default=Default], constant[isuser=true,default=0],stretch[isuser=true,type=choice,choices=Contrast; Histogram],BT_Min[isuser=true,default=0],BT_Max[isuser=true,default=255])"
      isenduser="true"
      isdefault="false">
     <categories>
@@ -31,7 +31,7 @@
   <derived
      id="coreFilter"
      description="Core Image Filter"
-     formula="coreFilter(image1,image2,brkpoint1[isuser=true,default=Default], brkpoint2[isuser=true,default=Default],replace1[isuser=true,default=Default],replace2[isuser=true,default=Default],stretch[isuser=true,type=choice,choices=Contrast; Histogram])"
+     formula="coreFilter(image1,image2,brkpoint1[isuser=true,default=Default], brkpoint2[isuser=true,default=Default],replace1[isuser=true,default=Default],replace2[isuser=true,default=Default],stretch[isuser=true,type=choice,choices=Contrast; Histogram],BT_Min[isuser=true,default=0],BT_Max[isuser=true,default=255])"
      isenduser="true"
      isdefault="false">
     <categories>
@@ -45,7 +45,7 @@
   <derived
      id="discriminateFilter"
      description="Discriminate Image Filter"
-     formula="discriminateFilter(image1,image2,brkpoint1[isuser=true,default=Default], brkpoint2[isuser=true,default=Default],brkpoint3[isuser=true,default=Default], brkpoint4[isuser=true,default=Default],replace[isuser=true,default=Default],stretch[isuser=true,type=choice,choices=Contrast; Histogram])"
+     formula="discriminateFilter(image1,image2,brkpoint1[isuser=true,default=Default], brkpoint2[isuser=true,default=Default],brkpoint3[isuser=true,default=Default], brkpoint4[isuser=true,default=Default],replace[isuser=true,default=Default],stretch[isuser=true,type=choice,choices=Contrast; Histogram],BT_Min[isuser=true,default=0],BT_Max[isuser=true,default=255])"
      isenduser="true"
      isdefault="false">
     <categories>
@@ -59,7 +59,7 @@
   <derived
      id="gradFilter"
      description="Gradient Image Filter"
-     formula="gradientFilter(image,stretch[isuser=true,type=choice,choices=Contrast; Histogram])"
+     formula="gradientFilter(image,stretch[isuser=true,type=choice,choices=Contrast; Histogram],BT_Min[isuser=true,default=0],BT_Max[isuser=true,default=255])"
      isenduser="true"
      isdefault="false">
     <categories>
@@ -73,7 +73,7 @@
   <derived
      id="lowPassFilter"
      description="Low Pass Image Filter"
-     formula="passFilter(image,'Low',radius[isuser=true,default=50], leak[isuser=true,default=100],stretch[isuser=true,type=choice,choices=Contrast; Histogram])"
+     formula="passFilter(image,'Low',radius[isuser=true,default=50], leak[isuser=true,default=100],stretch[isuser=true,type=choice,choices=Contrast; Histogram],BT_Min[isuser=true,default=0],BT_Max[isuser=true,default=255])"
      isenduser="true"
      isdefault="false">
     <categories>
@@ -87,7 +87,7 @@
   <derived
      id="highPassFilter"
      description="High Pass Image Filter"
-     formula="passFilter(image,'High',radius[isuser=true,default=50], leak[isuser=true,default=100],stretch[isuser=true,type=choice,choices=Contrast; Histogram])"
+     formula="passFilter(image,'High',radius[isuser=true,default=50], leak[isuser=true,default=100],stretch[isuser=true,type=choice,choices=Contrast; Histogram],BT_Min[isuser=true,default=0],BT_Max[isuser=true,default=255])"
      isenduser="true"
      isdefault="false">
     <categories>
@@ -101,7 +101,7 @@
   <derived
      id="lowPass2DFilter"
      description="Low Pass 2D Image Filter"
-     formula="lowPass2DFilter(image,linecoef[isuser=true,default=0.5], elecoef[isuser=true,default=0.5],stretch[isuser=true,type=choice,choices=Contrast; Histogram])"
+     formula="lowPass2DFilter(image,linecoef[isuser=true,default=0.5], elecoef[isuser=true,default=0.5],stretch[isuser=true,type=choice,choices=Contrast; Histogram],BT_Min[isuser=true,default=0],BT_Max[isuser=true,default=255])"
      isenduser="true"
      isdefault="false">
     <categories>
@@ -116,7 +116,7 @@
   <derived
      id="highPass2DFilter"
      description="High Pass 2D Image Filter"
-     formula="highPass2DFilter(image,stretch[isuser=true,type=choice,choices=Contrast; Histogram])"
+     formula="highPass2DFilter(image,stretch[isuser=true,type=choice,choices=Contrast; Histogram],BT_Min[isuser=true,default=0],BT_Max[isuser=true,default=255])"
      isenduser="true"
      isdefault="false">
     <categories>
@@ -131,7 +131,7 @@
   <derived
      id="holeFilter"
      description="Hole Image Filter"
-     formula="holeFilter(image,brkpoint1[isuser=true,default=0], brkpoint2[isuser=true,default=1],stretch[isuser=true,type=choice,choices=Contrast; Histogram])"
+     formula="holeFilter(image,brkpoint1[isuser=true,default=0], brkpoint2[isuser=true,default=1],stretch[isuser=true,type=choice,choices=Contrast; Histogram],BT_Min[isuser=true,default=0],BT_Max[isuser=true,default=255])"
      isenduser="true"
      isdefault="false">
     <categories>
@@ -145,7 +145,7 @@
   <derived
      id="mergeFilter"
      description="Merge Image Filter"
-     formula="mergeFilter(image1,image2,brkpoint1[isuser=true,default=Default], brkpoint2[isuser=true,default=Default],constant[isuser=true,default=0],stretch[isuser=true,type=choice,choices=Contrast; Histogram])"
+     formula="mergeFilter(image1,image2,brkpoint1[isuser=true,default=Default], brkpoint2[isuser=true,default=Default],constant[isuser=true,default=0],stretch[isuser=true,type=choice,choices=Contrast; Histogram],BT_Min[isuser=true,default=0],BT_Max[isuser=true,default=255])"
      isenduser="true"
      isdefault="false">
     <categories>
@@ -159,7 +159,7 @@
   <derived
      id="replaceFilter"
      description="Replace Image Filter"
-     formula="replaceFilter(image,New_Value[isuser=true,default=0],Old_Value[isuser=true,default=Default],stretch[isuser=true,type=choice,choices=Contrast; Histogram])"
+     formula="replaceFilter(image,New_Value[isuser=true,default=0],Old_Value[isuser=true,default=Default],stretch[isuser=true,type=choice,choices=Contrast; Histogram],BT_Min[isuser=true,default=0],BT_Max[isuser=true,default=255])"
      isenduser="true"
      isdefault="false">
     <categories>
@@ -173,7 +173,7 @@
     <derived
      id="shotFilter"
      description="Shot Image Filter"
-     formula="shotFilter(image,bline[isuser=true,default=Default],eline[isuser=true,default=Default],pdiff[isuser=true,default=15],stretch[isuser=true,type=choice,choices=Contrast; Histogram])"
+     formula="shotFilter(image,bline[isuser=true,default=Default],eline[isuser=true,default=Default],pdiff[isuser=true,default=15],stretch[isuser=true,type=choice,choices=Contrast; Histogram],BT_Min[isuser=true,default=0],BT_Max[isuser=true,default=255])"
      isenduser="true"
      isdefault="false">
     <categories>
