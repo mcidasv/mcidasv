@@ -142,6 +142,7 @@ public class AddeTleChooser extends AddeChooser implements Constants {
      * @see #getServer()
      */
     public static String TLE_SERVER_NAME_KEY = "tle_server";
+    public static String URL_NAME_KEY = "url_name";
 
     /**
      * Property for the tle group name key.
@@ -226,6 +227,7 @@ public class AddeTleChooser extends AddeChooser implements Constants {
                     JComponent comp = (JComponent)(urlList.get(i));
                     comp.setEnabled(true);
                 }
+                loadButton.setEnabled(true);
                 for (int i=0; i<7; i++) {
                     JComponent comp = (JComponent)(addeList.get(i));
                     comp.setEnabled(false);
@@ -550,6 +552,7 @@ public class AddeTleChooser extends AddeChooser implements Constants {
      */
     public void doLoadInThread() {
         String obj = "TLE";
+        prefList.saveState(box);
         Hashtable ht = new Hashtable();
         getDataSourceProperties(ht);
         makeDataSource(obj, getDataSourceId(), ht);
@@ -563,19 +566,23 @@ public class AddeTleChooser extends AddeChooser implements Constants {
      *            Hashtable of properties
      */
     protected void getDataSourceProperties(Hashtable ht) {
-        super.getDataSourceProperties(ht);
-        ht.put(DATASET_NAME_KEY, getDatasetName());
-        String server = getServer();
-        ht.put(TLE_SERVER_NAME_KEY, server);
-        String group = getGroup();
-        ht.put(TLE_GROUP_NAME_KEY, group);
-        Map<String, String> acct = getAccounting(server, group);
-        String user = acct.get("user");
-        String proj = acct.get("proj");
-        ht.put(TLE_USER_ID_KEY, user);
-        ht.put(TLE_PROJECT_NUMBER_KEY, proj);
-//        ht.put(SATELLITE_SERVER_NAME_KEY, getImageServer(imageServerSelector));
-//        ht.put(SATELLITE_GROUP_NAME_KEY, getImageGroup(imageGroupSelector));
+        if (addeBtn.isSelected()) {
+            super.getDataSourceProperties(ht);
+            ht.put(DATASET_NAME_KEY, getDatasetName());
+            String server = getServer();
+            ht.put(TLE_SERVER_NAME_KEY, server);
+            String group = getGroup();
+            ht.put(TLE_GROUP_NAME_KEY, group);
+            Map<String, String> acct = getAccounting(server, group);
+            String user = acct.get("user");
+            String proj = acct.get("proj");
+            ht.put(TLE_USER_ID_KEY, user);
+            ht.put(TLE_PROJECT_NUMBER_KEY, proj);
+//            ht.put(SATELLITE_SERVER_NAME_KEY, getImageServer(imageServerSelector));
+//            ht.put(SATELLITE_GROUP_NAME_KEY, getImageGroup(imageGroupSelector));
+        } else {
+            ht.put(URL_NAME_KEY, box.getSelectedItem());
+        }
     }
 
     private String getDatasetName() {
