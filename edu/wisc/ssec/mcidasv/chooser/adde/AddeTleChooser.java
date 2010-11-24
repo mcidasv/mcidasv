@@ -38,8 +38,12 @@ import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,12 +55,15 @@ import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.GroupLayout;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 
 import org.w3c.dom.Element;
 
@@ -72,6 +79,7 @@ import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.ui.ChooserList;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
+import ucar.unidata.util.PreferenceList;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlNodeList;
@@ -96,6 +104,7 @@ import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Position;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.TextColor;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 
@@ -109,12 +118,24 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
  */
 public class AddeTleChooser extends AddeChooser implements Constants {
 
-    /** My servers */
-//    private List tleServers;
+    private JComboBox serverSelector;
+    private JRadioButton addeBtn;
+    private JRadioButton urlBtn;
+    List addeList = new ArrayList();
+    List urlList = new ArrayList();
+
+    /** Manages the pull down list of urls */
+    private PreferenceList prefList;
+
+    /** The list of urls */
+    private JComboBox box;
+    private JTextField boxEditor;
 
     /** text type */
-//    private static final String IMAGE_TYPE = "image";
     private static final String TLE_TYPE = "text";
+
+    /** Property name to get the list or urls */
+    public static final String PREF_URLLIST = "idv.urllist";
 
     /**
      * Property for the tle server name key.
@@ -161,7 +182,8 @@ public class AddeTleChooser extends AddeChooser implements Constants {
      */
     public AddeTleChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
-        showServers();        
+        serverSelector = getServerSelector();
+        showServers();
     }
     
 	/**
@@ -179,72 +201,215 @@ public class AddeTleChooser extends AddeChooser implements Constants {
      */
     @Override
     public JComponent doMakeContents() {
-        JPanel myPanel = new JPanel();
-/*
-        imageServerSelector = getImageServerSelector(AddeServer.TYPE_IMAGE);
-        JLabel serverLabelInner = new JLabel("Image Server:");
+        JPanel outerPanel = new JPanel();
+        JPanel addePanel = new JPanel();
+        JPanel urlPanel = new JPanel();
+
+        addeBtn = new JRadioButton("ADDE", true);
+        urlBtn = new JRadioButton("URL", false);
+        GuiUtils.buttonGroup(addeBtn, urlBtn);
+        addeBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                for (int i=0; i<7; i++) {
+                    JComponent comp = (JComponent)(addeList.get(i));
+                    comp.setEnabled(true);
+                }
+                for (int i=0; i<2; i++) {
+                    JComponent comp = (JComponent)(urlList.get(i));
+                    comp.setEnabled(false);
+                }
+            }
+        });
+        urlBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                for (int i=0; i<2; i++) {
+                    JComponent comp = (JComponent)(urlList.get(i));
+                    comp.setEnabled(true);
+                }
+                for (int i=0; i<7; i++) {
+                    JComponent comp = (JComponent)(addeList.get(i));
+                    comp.setEnabled(false);
+                }
+            }
+        });
+
+        addePanel =  (JPanel)makeAddePanel();
+        urlPanel =  (JPanel)makeUrlPanel();
+
+        JLabel statusLabelLabel = McVGuiUtils.makeLabelRight("");
+
+        JLabel statusLabel = new JLabel("Status");
+        McVGuiUtils.setLabelPosition(statusLabel, Position.RIGHT);
+        McVGuiUtils.setComponentColor(statusLabel, TextColor.STATUS);
+
+        JButton helpButton = McVGuiUtils.makeImageButton(ICON_HELP, "Show help");
+        helpButton.setActionCommand(GuiUtils.CMD_HELP);
+        helpButton.addActionListener(this);
+
+        JButton refreshButton = McVGuiUtils.makeImageButton(ICON_REFRESH, "Refresh");
+        refreshButton.setActionCommand(GuiUtils.CMD_UPDATE);
+        refreshButton.addActionListener(this);
+
+        McVGuiUtils.setComponentWidth(loadButton, Width.DOUBLE);
+
+        GroupLayout layout = new GroupLayout(outerPanel);
+        outerPanel.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(LEADING)
+            .addGroup(TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(helpButton)
+                        .addGap(GAP_RELATED)
+                        .addComponent(refreshButton)
+                        .addGap(GAP_RELATED)
+                        .addComponent(cancelButton)
+                        .addPreferredGap(RELATED)
+                        .addComponent(loadButton))
+                        .addGroup(LEADING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(LEADING)
+                            .addComponent(addeBtn)
+                            .addComponent(addePanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGap(GAP_RELATED)
+                            .addComponent(urlBtn)
+                            .addComponent(urlPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(statusLabelLabel)
+                            .addGap(GAP_RELATED)
+                            .addComponent(statusLabel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(addeBtn)
+                .addComponent(addePanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(UNRELATED)
+                .addComponent(urlBtn)
+                .addComponent(urlPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(UNRELATED)
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(statusLabelLabel)
+                    .addComponent(statusLabel))
+                .addPreferredGap(UNRELATED)
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(loadButton)
+                    .addComponent(cancelButton)
+                    .addComponent(refreshButton)
+                    .addComponent(helpButton))
+                .addContainerGap())
+        );
+
+        return outerPanel;
+    }
+
+    private JComponent makeAddePanel() {
+        JPanel outerPanel = new JPanel();
+
+        JLabel serverLabelInner = new JLabel("Server:");
         McVGuiUtils.setLabelPosition(serverLabelInner, Position.RIGHT);
         JPanel serverLabel = GuiUtils.leftRight(parameterButton, serverLabelInner);
         McVGuiUtils.setComponentWidth(serverLabel);
+
+        clearOnChange(serverSelector);
+        McVGuiUtils.setComponentWidth(serverSelector, Width.DOUBLE);
+
         JLabel groupLabel = McVGuiUtils.makeLabelRight("Dataset:");
 
-        McVGuiUtils.setComponentWidth(imageServerSelector, Width.DOUBLE);
-        McVGuiUtils.setComponentWidth(imageGroupSelector, Width.DOUBLE);
-        addDescComp(serverLabel);
-        addDescComp(imageServerSelector);
-        addDescComp(groupLabel);
-        addDescComp(imageGroupSelector);
-*/
-        XmlObjectStore store = getIdv().getStore();
+        groupSelector.setEditable(isGroupEditable());
+        clearOnChange(groupSelector);
+        McVGuiUtils.setComponentWidth(groupSelector, Width.DOUBLE);
 
-        GroupLayout layout = new GroupLayout(myPanel);
-        myPanel.setLayout(layout);
+        McVGuiUtils.setComponentWidth(connectButton, Width.DOUBLE);
+        connectButton.setActionCommand(CMD_CONNECT);
+        connectButton.addActionListener(this);
 
+        GroupLayout layout = new GroupLayout(outerPanel);
+        outerPanel.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(descriptorLabel)
-                        .addGap(GAP_RELATED)
-                        .addComponent(descriptorComboBox))
-/*
-                                .add(layout.createSequentialGroup()
-                                    .add(serverLabel)
-                                    .add(GAP_RELATED)
-                                    .add(imageServerSelector)
-                                    .add(GAP_RELATED)
-                                    .add(groupLabel)
-                                    .add(imageGroupSelector)
-                                )
-*/
-                )
-            )
+            .addGroup(TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(TRAILING)
+                        .addGroup(LEADING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(serverLabel)
+                            .addGap(GAP_RELATED)
+                            .addComponent(serverSelector)
+                            .addGap(GAP_RELATED)
+                            .addComponent(manageButton)
+                            .addGap(GAP_RELATED)
+                            .addComponent(groupLabel)
+                            .addGap(GAP_RELATED)
+                            .addComponent(groupSelector)
+                            .addGap(GAP_RELATED)
+                            .addComponent(publicButton)
+                            .addPreferredGap(RELATED, DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(connectButton))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(descriptorLabel)
+                            .addGap(GAP_RELATED)
+                            .addComponent(descriptorComboBox)))))
+                    .addContainerGap())
         );
 
         layout.setVerticalGroup(
             layout.createParallelGroup(LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addPreferredGap(RELATED)
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(serverLabel)
+                    .addComponent(serverSelector)
+                    .addComponent(manageButton)
+                    .addComponent(groupLabel)
+                    .addComponent(groupSelector)
+                    .addComponent(publicButton)
+                    .addComponent(connectButton))
+                .addPreferredGap(UNRELATED)
                 .addGroup(layout.createParallelGroup(BASELINE)
                     .addComponent(descriptorLabel)
                     .addComponent(descriptorComboBox))
-/*
-			.addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(serverLabel)
-    			    .add(imageServerSelector)
-                            .add(GAP_RELATED)
-                            .add(groupLabel)
-                            .add(imageGroupSelector)
-                        )
-*/
-            )
+                .addContainerGap())
         );
 
-        setInnerPanel(myPanel);
-        return super.doMakeContents();
+        addeList.add(serverLabelInner);
+        addeList.add(serverSelector);
+        addeList.add(groupLabel);
+        addeList.add(groupSelector);
+        addeList.add(connectButton);
+        addeList.add(descriptorLabel);
+        addeList.add(descriptorComboBox);
+
+        return outerPanel;
     }
+
+    private JComponent makeUrlPanel() {
+        JPanel urlPanel = new JPanel();
+        JLabel urlLabel = new JLabel("URL:");
+        McVGuiUtils.setLabelPosition(urlLabel, Position.RIGHT);
+
+        prefList = getPreferenceList(PREF_URLLIST);
+        box = prefList.createComboBox(CMD_LOAD, this);
+        boxEditor = (JTextField)box.getEditor().getEditorComponent();
+        boxEditor.addKeyListener(new KeyListener() {
+            public void keyPressed(KeyEvent e) {}
+            public void keyReleased(KeyEvent e) {
+//                updateStatus();
+            }
+            public void keyTyped(KeyEvent e) {}
+        });
+        urlLabel.setEnabled(false);
+        box.setEnabled(false);
+        urlList.add(urlLabel);
+        urlList.add(box);
+        urlPanel = GuiUtils.top(box);
+        return McVGuiUtils.makeLabeledComponent(urlLabel, urlPanel);
+    }
+
 
     /**
      * Update labels, enable widgets, etc.
