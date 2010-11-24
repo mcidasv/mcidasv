@@ -55,7 +55,12 @@ import visad.VisADException;
 
 import visad.data.mcidas.AddeTextAdapter;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.InputStreamReader;
+
+import java.net.URL;
+import java.net.URLConnection;
 
 import java.rmi.RemoteException;
 
@@ -112,30 +117,50 @@ public class AddeTleDataSource extends DataSourceImpl {
         System.out.println("    filename=" + filename);
 */
         String key = AddeTleChooser.TLE_SERVER_NAME_KEY;
-        Object server = properties.get(key);
-        key = AddeTleChooser.TLE_GROUP_NAME_KEY;
-        Object group = properties.get(key);
-        key = AddeTleChooser.TLE_USER_ID_KEY;
-        Object user = properties.get(key);
-        key = AddeTleChooser.TLE_PROJECT_NUMBER_KEY;
-        Object proj = properties.get(key);
-        String url = "adde://" + server + "/textdata?&PORT=112&COMPRESS=gzip&USER=" + user + "&PROJ=" + proj + "&GROUP=" + group + "&DESCR=" + filename;
-        System.out.println("\n" + url + "\n");
-        AddeTextReader reader = new AddeTextReader(url);
-        List lines = null;
-        if ("OK".equals(reader.getStatus())) {
-            lines = reader.getLinesOfText();
-        }
-        if (lines == null) {
-            System.out.println("\nproblem reading TLE file");
-        } else {
-            String[] cards = StringUtil.listToStringArray(lines);
-            for (int i=0; i<cards.length; i++) {
-                tleCards.add(cards[i]);
-                int indx = cards[i].indexOf(" ");
-                if (indx < 0) {
-                    choices.add(cards[i]);
+        if (properties.containsKey(key)) {
+            Object server = properties.get(key);
+            key = AddeTleChooser.TLE_GROUP_NAME_KEY;
+            Object group = properties.get(key);
+            key = AddeTleChooser.TLE_USER_ID_KEY;
+            Object user = properties.get(key);
+            key = AddeTleChooser.TLE_PROJECT_NUMBER_KEY;
+            Object proj = properties.get(key);
+            String url = "adde://" + server + "/textdata?&PORT=112&COMPRESS=gzip&USER=" + user + "&PROJ=" + proj + "&GROUP=" + group + "&DESCR=" + filename;
+            System.out.println("\n" + url + "\n");
+            AddeTextReader reader = new AddeTextReader(url);
+            List lines = null;
+            if ("OK".equals(reader.getStatus())) {
+                lines = reader.getLinesOfText();
+            }
+            if (lines == null) {
+                System.out.println("\nproblem reading TLE file");
+            } else {
+                String[] cards = StringUtil.listToStringArray(lines);
+                for (int i=0; i<cards.length; i++) {
+                    tleCards.add(cards[i]);
+                    int indx = cards[i].indexOf(" ");
+                    if (indx < 0) {
+                        choices.add(cards[i]);
+                    }
                 }
+            }
+        } else {
+            try {
+                key = AddeTleChooser.URL_NAME_KEY;
+                String urlStr = (String)(properties.get(key));
+                URL url = new URL(urlStr);
+                URLConnection urlCon = url.openConnection();
+                InputStreamReader isr = new InputStreamReader(urlCon.getInputStream());
+                BufferedReader tleReader = new BufferedReader(isr);
+                String nextLine = null;
+                int tleCount = 0;
+                while ((nextLine = tleReader.readLine()) != null) {
+                    if (nextLine.length() < 50) {
+                        choices.add(nextLine);
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("\ne=" + e + "\n");
             }
         }
     }
@@ -174,6 +199,10 @@ public class AddeTleDataSource extends DataSourceImpl {
      * @throws RemoteException    Java RMI problem
      * @throws VisADException     VisAD problem
      */
+
+/* code example in 
+   /home/gad/src/JSatTrak/JSatTrak-4.1-src/JSatTrak/src/name/gano/astro/propogators/sgp4_cssi/SGP4utils.java
+*/
 
     protected Data getDataInner(DataChoice dataChoice, DataCategory category,
                                 DataSelection dataSelection,
@@ -258,6 +287,8 @@ public class AddeTleDataSource extends DataSourceImpl {
         {
             year = data.epochyr + 1900;
         }
+
+        SGP4SatData satData = new SGP4SatData();
 
         // computes the m/d/hr/min/sec from year and epoch days
         SGP4utils.MDHMS mdhms = SGP4utils.days2mdhms(year, data.epochdays);
