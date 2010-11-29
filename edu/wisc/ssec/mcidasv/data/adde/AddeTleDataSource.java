@@ -126,7 +126,7 @@ public class AddeTleDataSource extends DataSourceImpl {
             key = AddeTleChooser.TLE_PROJECT_NUMBER_KEY;
             Object proj = properties.get(key);
             String url = "adde://" + server + "/textdata?&PORT=112&COMPRESS=gzip&USER=" + user + "&PROJ=" + proj + "&GROUP=" + group + "&DESCR=" + filename;
-            System.out.println("\n" + url + "\n");
+            //System.out.println("\n" + url + "\n");
             AddeTextReader reader = new AddeTextReader(url);
             List lines = null;
             if ("OK".equals(reader.getStatus())) {
@@ -155,6 +155,7 @@ public class AddeTleDataSource extends DataSourceImpl {
                 String nextLine = null;
                 int tleCount = 0;
                 while ((nextLine = tleReader.readLine()) != null) {
+                    tleCards.add(nextLine);
                     if (nextLine.length() < 50) {
                         choices.add(nextLine);
                     }
@@ -208,12 +209,12 @@ public class AddeTleDataSource extends DataSourceImpl {
                                 DataSelection dataSelection,
                                 Hashtable requestProperties)
             throws VisADException, RemoteException {
-
+/*
         System.out.println("\ngetDataInner:");
         System.out.println("    dataChoice=" + dataChoice);
         System.out.println("    category=" + category);
         System.out.println("    dataSelection=" + dataSelection + "\n");
-
+*/
         final double deg2rad = pi / 180.0;         //   0.0174532925199433
         final double xpdotp = 1440.0 / (2.0 * pi);  // 229.1831180523293
 
@@ -230,10 +231,11 @@ public class AddeTleDataSource extends DataSourceImpl {
             String name = ((String)tleCards.get(index)).trim();
             if (name.equals(choiceName)) {
                 data.name = name; 
+/*
                 System.out.println("\n" + tleCards.get(index));
                 System.out.println(tleCards.get(index+1));
                 System.out.println(tleCards.get(index+2) + "\n");
-
+*/
                 index++;
                 String card = (String)tleCards.get(index);
                 int ncomps = decodeCard1(card);
@@ -297,13 +299,13 @@ public class AddeTleDataSource extends DataSourceImpl {
         hr = mdhms.hr;
         minute = mdhms.minute;
         sec = mdhms.sec;
-        System.out.println("\nyear=" + year + " day=" + data.epochdays);
-        System.out.println("    mon=" + mon + " day=" + day);
-        System.out.println("    hr=" + hr + " minute=" + minute + " sec=" + sec);
+        //System.out.println("\nyear=" + year + " day=" + data.epochdays);
+        //System.out.println("    mon=" + mon + " day=" + day);
+        //System.out.println("    hr=" + hr + " minute=" + minute + " sec=" + sec);
         // computes the jd from  m/d/...
         data.jdsatepoch = SGP4utils.jday(year, mon, day, hr, minute, sec);
-        System.out.println("epochdays=" + data.epochdays);
-        System.out.println("jdsatepoch=" + data.jdsatepoch);
+        //System.out.println("epochdays=" + data.epochdays);
+        //System.out.println("jdsatepoch=" + data.jdsatepoch);
 
         // ---------------- initialize the orbit at sgp4epoch -------------------
         char opsmode = SGP4utils.OPSMODE_IMPROVED; // OPSMODE_IMPROVED
@@ -311,25 +313,25 @@ public class AddeTleDataSource extends DataSourceImpl {
                 data.jdsatepoch - 2433281.5, data.bstar,
                 data.ecco, data.argpo, data.inclo, data.mo, data.no,
                 data.nodeo, data);
-        System.out.println("\nsgp4init result=" + result + "\n");
+        //System.out.println("\nsgp4init result=" + result + "\n");
 
         this.selectionProps = dataSelection.getProperties();
         Enumeration propEnum = this.selectionProps.keys();
         for (int i = 0; propEnum.hasMoreElements(); i++) {
             String key = propEnum.nextElement().toString();
             String val = (String)this.selectionProps.get(key);
-            System.out.println("key=" + key + " val=" + val);
+            //System.out.println("key=" + key + " val=" + val);
         }
 
         return null;
     }
 
     private int decodeCard1(String card) {
-/*
+
         System.out.println("\ndecodeCard1:");
         System.out.println("    card=" + card);
         System.out.println("    length=" + card.length());
-*/
+
         int satId = 0;
         int launchYear = 0;
         int intCode = 0;
@@ -409,11 +411,11 @@ public class AddeTleDataSource extends DataSourceImpl {
     }
 
     private int decodeCard2(String card) {
-/*
+
         System.out.println("\ndecodeCard2:");
         System.out.println("    card=" + card);
         System.out.println("    length=" + card.length());
-*/
+
         double inclination = 1.0;
         double rightAscension = 1.0;
         double eccentricity = 1.0;
