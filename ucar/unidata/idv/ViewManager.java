@@ -1194,7 +1194,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (newOne) {
             GuiUtils.showDialogNearSrc(viewMenu, propertiesDialog);
         } else {
-            propertiesDialog.show();
+//            propertiesDialog.show();
+            propertiesDialog.setVisible(true);
         }
         propertiesDialogShown = true;
         //        propertiesDialog.show();
@@ -3279,9 +3280,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
     /**
      * Set the {@link ucar.visad.display.DisplayMaster} active
-     * if there are no more outstanind mast active calls.
-     *
-     * @param force  if true, force it active
+     * if there are no more outstanding mast active calls.
+     * 
+     * <p><b>JONNOTE:</b> this may act up... I've made the {@literal "force"} param
+     * irrelevant because {@link ucar.visad.display.DisplayMaster#setActive(boolean) DisplayMaster#setActive(boolean)}
+     * is deprecated.</p>
+     * 
+     * @param force if true, force it active
      */
     public void setMasterActive(boolean force) {
         //Make sure we have an initialized DisplayMaster
@@ -3289,11 +3294,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
             return;
         }
         try {
-            if (force) {
-                master.setActive(true);
-            } else {
-                master.setDisplayActive();
-            }
+//            if (force) {
+//                master.setActive(true);
+//            } else {
+//                master.setDisplayActive();
+//            }
+            // 
+            master.setDisplayActive();
         } catch (Exception exp) {
             logException("setMasterActive", exp);
         }
