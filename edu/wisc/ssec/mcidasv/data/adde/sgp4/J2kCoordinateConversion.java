@@ -50,54 +50,6 @@ public class J2kCoordinateConversion
         from
     }
 
-    // test
-    public static void main(String[] args)
-    {
-        double jd = 2454994.0;//2455197.5;
-        double mjd = jd-AstroConst.JDminusMJD;
-        double tt =  mjd ;//+ Time.deltaT(mjd); // TT  // less error without delta time
-
-        double ttt = (tt-AstroConst.MJD_J2000) /36525.0;
-
-        for(int i = 0 ; i <= 106 ; i++)
-        {
-
-        double[][] A = J2kCoordinateConversion.teme_j2k(Direction.to,ttt, i, 2, 'a');
-
-//        for(int i = 0; i<3 ;i++)
-//         {
-//             for(int j = 0; j<3;j++)
-//             {
-//                 System.out.print(A [i][j] + "   ");
-//             }
-//             System.out.print("\n");
-//         }
-
-        // teme position
-        double[] rteme = new double[] {-2881017.428533447,-3207508.188455666,-5176685.907342243};
-
-        // stk j2k
-        double[] realJ2K = new double[] {-2892674.195893263,  -3201522.682746896,  -5173889.803046620};
-
-        // mult
-         double[] rj2k = matvecmult( A, rteme);
-
-         double norm = MathUtils.norm( MathUtils.sub(rj2k, realJ2K)  );
-         //System.out.println("Norm Error: " + norm);
-         System.out.println(i + " "+ norm);
-        }
-
-         // results
-         // 106, 2, 'a' =  Norm Error: 0.011588430774105657
-         // 10,2,'a' = Norm Error: 0.2067628728865609
-         // 106, 0, 'a' = Norm Error: 0.058636532590545534
-         // 106, 2, 'b' = Norm Error: 271.3532680546779
-         //106, 2, 'c' = Norm Error: 0.053942642751820424
-         // - okay -- stick with 2, 'a'
-         // 50 - Norm Error: 0.016677433327084924
-         // large dip at 24 -- must be near what stk uses! 24 terms! (or 25 it is small too?)
-    }
-
 /* -----------------------------------------------------------------------------
 *
 *                           function teme_j2k
@@ -189,163 +141,6 @@ public static double[][] teme_j2k
 
         return tempmat;
       }  // procedure teme_j2k
-
-/* -----------------------------------------------------------------------------
-*
-*                           function tod_gcrf
-*
-*  this function transforms a vector between the true equator true equinox frame
-*    of date (tod), and the mean equator mean equinox (j2000) frame.
-*
-*  author        : david vallado                  719-573-2600   25 jun 2002
-*
-*  revisions
-*    vallado     - consolidate with iau 2000                     14 feb 2005
-*    vallado     - conversion to c++                             21 feb 2005
-*
-*  inputs          description                    range / units
-*    rtod        - position vector of date
-*                    true equator, true equinox   km
-*    vtod        - velocity vector of date
-*                    true equator, true equinox   km/s
-*    atod        - acceleration vector of date
-*                    true equator, true equinox   km/s2
-*    direct      - direction of transfer          eFrom, 'TOO '
-*    iau80rec    - record containing the iau80 constants rad
-*    ttt         - julian centuries of tt         centuries
-*
-*  outputs       :
-*    rgcrf        - position vector gcrf            km
-*    vgcrf        - velocity vector gcrf            km/s
-*    agcrf        - acceleration vector gcrf        km/s2
-*
-*  locals        :
-*    deltapsi    - nutation angle                 rad
-*    trueeps     - true obliquity of the ecliptic rad
-*    meaneps     - mean obliquity of the ecliptic rad
-*    omega       -                                rad
-*    nut         - matrix for mod - tod
-*
-*  coupling      :
-*   precess      - rotation for precession        mod - gcrf
-*   nutation     - rotation for nutation          tod - mod
-*
-*  references    :
-*    vallado       2007, 228
-* ----------------------------------------------------------------------------*/
-// NOTE:  returns rotation matrix needed to perform the transformation
-// nut terns used, popupular choices: 4, 40, 106 (106 is max!)
-public static double[][] tod_j2000
-     (
-       //double rtod[3], double vtod[3], double atod[3],
-       Direction direct,
-       //double rgcrf[3],  double vgcrf[3],  double agcrf[3],
-       //iau80data& iau80rec,
-       double ttt, double ddpsi, double ddeps, int nutTerms // delta psi/eps correction to gcrf   rad
-     )
-     {
-       double[][] prec, nut, tempmat, nutp, precp;
-       double psia, wa, epsa, chia;
-//       Double deltapsi= new Double(0), deltaeps= new Double(0),
-//               trueeps= new Double(0), meaneps= new Double(0), omega = new Double(0);
-       //double[] omgxv[3], tempvec1[3], tempvec[3];
-
-       prec = precess( ttt, Opt.e80); //,  psia,wa,epsa,chia,  prec );
-       
-       nut = nutation( ttt,ddpsi,ddeps,'c',nutTerms);//,  deltapsi,deltaeps, trueeps,meaneps,omega); // iau80rec,
-
-       if (direct == Direction.to)
-         {
-            tempmat = matmult( prec, nut, 3, 3, 3 );
-            //matvecmult( tempmat, rtod, rgcrf);
-            //matvecmult( tempmat, vtod, vgcrf);
-            //matvecmult( tempmat, atod, agcrf);
-          }
-          else
-          {
-            nutp = mattrans(nut, 3, 3 );
-            precp = mattrans(prec, 3, 3 );
-            tempmat = matmult( nutp, precp, 3, 3, 3 );
-
-            //matvecmult(tempmat, rgcrf, rtod);
-            //matvecmult(tempmat, vgcrf, vtod);
-            //matvecmult(tempmat, agcrf, atod);
-          }
-
-       return tempmat;
-
-      }  // procedure tod_gcrf
-
-/* -----------------------------------------------------------------------------
-*
-*                           function mod_gcrf
-*
-*  this function transforms a vector between the mean equator mean equinox of
-*    date (mod) and the mean equator mean equinox (j2000) frame.
-*
-*  author        : david vallado                  719-573-2600   25 jun 2002
-*
-*  revisions
-*    vallado     - consolidate with iau 2000                     14 feb 2005
-*    vallado     - conversion to c++                             21 feb 2005
-*
-*  inputs          description                    range / units
-*    rmod        - position vector of date
-*                    mean equator, mean equinox   km
-*    vmod        - velocity vector of date
-*                    mean equator, mean equinox   km/s
-*    amod        - acceleration vector of date
-*                    mean equator, mean equinox   km/s2
-*    direct      - direction of transfer          eFrom, 'TOO '
-*    ttt         - julian centuries of tt         centuries
-*
-*  outputs       :
-*    rgcrf        - position vector gcrf            km
-*    vgcrf        - velocity vector gcrf            km/s
-*    agcrf        - acceleration vector gcrf        km/s2
-*
-*  locals        :
-*    none.
-*
-*  coupling      :
-*   precess      - rotation for precession        mod - gcrf
-*
-*  references    :
-*    vallado       2007, 228
-* --------------------------------------------------------------------------- */
-//returns the transformation matrix
-public static double[][] mod_j2000
-     (
-       //double rmod[3], double vmod[3], double amod[3],
-       Direction direct,
-       //double rgcrf[3],  double vgcrf[3],  double agcrf[3],
-       double ttt
-     )
-     {
-       double[][] prec, precp;
-       double psia, wa, epsa, chia;
-
-       prec = precess ( ttt, Opt.e80); //,  psia,wa,epsa,chia,  prec );
-
-        if (direct == Direction.to)
-          {
-            //matvecmult( prec, rmod, rgcrf);
-            //matvecmult( prec, vmod, vgcrf);
-            //matvecmult( prec, amod, agcrf);
-          }
-          else
-          {
-            prec = mattrans(prec,  3, 3 ); // transpose, save back to prec (not using precp)
-
-            //matvecmult(precp, rgcrf, rmod);
-            //matvecmult(precp, vgcrf, vmod);
-            //matvecmult(precp, agcrf, amod);
-          }
-
-          return prec;
-
-      }  // procedure mod_gcrf
-
 
 /* -----------------------------------------------------------------------------
 *
@@ -503,336 +298,6 @@ public static double[][] precess
 
 /* -----------------------------------------------------------------------------
 *
-*                           function nutation
-*
-*  this function calulates the transformation matrix that accounts for the
-*    effects of nutation.
-*
-*  author        : david vallado                  719-573-2600   27 jun 2002
-*
-*  revisions
-*    vallado     - consolidate with iau 2000                     14 feb 2005
-*    vallado     - conversion to c++                             21 feb 2005
-*
-*  inputs          description                    range / units
-*    ttt         - julian centuries of tt
-*    ddpsi       - delta psi correction to gcrf   rad
-*    ddeps       - delta eps correction to gcrf   rad
-*    nutopt      - nutation option                calc 'c', read 'r'
-*    iau80rec    - record containing the iau80 constants rad
-*
-*  outputs       :
-*    deltapsi    - nutation in longiotude angle   rad
-*    trueeps     - true obliquity of the ecliptic rad
-*    meaneps     - mean obliquity of the ecliptic rad
-*    omega       -                                rad
-*    nut         - transform matrix for tod -     mod
-*
-*  locals        :
-*    iar80       - integers for fk5 1980
-*    rar80       - reals for fk5 1980
-*    l           -                                rad
-*    ll          -                                rad
-*    f           -                                rad
-*    d           -                                rad
-*    deltaeps    - change in obliquity            rad
-*
-*  coupling      :
-*    fundarg     - find fundamental arguments
-*    fmod      - modulus division
-*
-*  references    :
-*    vallado       2007, 217, 228
-* --------------------------------------------------------------------------- */
-// returns the nut matrix
-public static double[][] nutation
-     (
-       double ttt, double ddpsi, double ddeps,
-       //iau80data& iau80rec,
-       char nutopt, int nutTerms//,
-       // CAN NOT PASS THESE BACK BY REFERENCE!!  Must make an array or something!
-       //Double deltapsi, Double deltaeps, Double trueeps, Double meaneps, Double omega//,
-       //std::vector< std::vector<double> > &nut
-     )
-     {
-       double[][] nut = new double[3][3]; //.resize(3);  // rows
-       //for (std::vector< std::vector<double> >::iterator it=nut.begin(); it != nut.end();++it)
-       //     it->resize(3);
-
-       // return values that need to be returned in an array or something similar
-       double deltapsi=0, deltaeps=0, trueeps=0, meaneps=0, omega=0;
-
-       double deg2rad, cospsi, sinpsi, coseps, sineps, costrueeps, sintrueeps;
-       // used as return values from fundarg
-       Double l=new Double(0), l1=new Double(0), f=new Double(0), d=new Double(0),
-               lonmer=new Double(0), lonven=new Double(0), lonear=new Double(0),
-               lonmar=new Double(0), lonjup=new Double(0), lonsat=new Double(0),
-               lonurn=new Double(0), lonnep=new Double(0), precrate=new Double(0);
-
-
-       int  i;
-       double tempval;
-
-       //char iauhelp;
-       //sethelp(iauhelp, ' ');
-
-       deg2rad = Math.PI/180.0;
-
-       // ---- determine coefficients for iau 1980 nutation theory ----
-       meaneps = ((0.001813  * ttt - 0.00059 ) * ttt -46.8150 ) * ttt + 84381.448;
-       meaneps = ( meaneps/3600.0)  % 360.0 ; // fmod( meaneps/3600.0 ,360.0  );
-       meaneps = meaneps  *  deg2rad;
-
-       if ( nutopt =='c' )
-         {
-           double[] tmp = fundarg( ttt, Opt.e80 );
-           l = tmp[0];
-           l1 = tmp[1];
-           f = tmp[2];
-           d = tmp[3];
-           omega = tmp[4];
-           lonmer = tmp[5];
-           lonven = tmp[6];
-           lonear = tmp[7];
-           lonmar = tmp[8];
-           lonjup = tmp[9];
-           lonsat = tmp[10];
-           lonurn = tmp[11];
-           lonnep = tmp[12];
-           precrate = tmp[13];
-
-           deltapsi = 0.0;
-           deltaeps= 0.0;
-           // large computation here! - may want to pass in option to limit this?
-           if(nutTerms > 106)
-           {
-               nutTerms = 106; // protect from too high value
-           }
-           for (i= nutTerms; i >= 1; i --) // max 106
-             {
-               tempval= iar80(i,1) * l + iar80(i,2) * l1 + iar80(i,3) * f +
-                        iar80(i,4) * d + iar80(i,5) * omega;
-               deltapsi= deltapsi + (rar80(i,1)+rar80(i,2) * ttt)  *  Math.sin( tempval );
-               deltaeps= deltaeps + (rar80(i,3)+rar80(i,4) * ttt) * Math.cos( tempval );
-              }
-
-           // --------------- find nutation parameters --------------------
-           deltapsi = ( (deltapsi + ddpsi/deg2rad) % 360.0  ) * deg2rad;
-           deltaeps = ( (deltaeps + ddeps/deg2rad) % 360.0  ) * deg2rad;
-         }
-
-       trueeps  = meaneps + deltaeps;
-
-       cospsi  = Math.cos(deltapsi);
-       sinpsi  = Math.sin(deltapsi);
-       coseps  = Math.cos(meaneps);
-       sineps  = Math.sin(meaneps);
-       costrueeps = Math.cos(trueeps);
-       sintrueeps = Math.sin(trueeps);
-
-       nut[0][0] =  cospsi;
-       nut[0][1] =  costrueeps * sinpsi;
-       nut[0][2] =  sintrueeps * sinpsi;
-       nut[1][0] = -coseps * sinpsi;
-       nut[1][1] =  costrueeps * coseps * cospsi + sintrueeps * sineps;
-       nut[1][2] =  sintrueeps * coseps * cospsi - sineps * costrueeps;
-       nut[2][0] = -sineps * sinpsi;
-       nut[2][1] =  costrueeps * sineps * cospsi - sintrueeps * coseps;
-       nut[2][2] =  sintrueeps * sineps * cospsi + costrueeps * coseps;
-
-       // n1 = rot1mat( trueeps );
-       // n2 = rot3mat( deltapsi );
-       // n3 = rot1mat( -meaneps );
-       // nut = n3 * n2 * n1;
-
-       return nut;
-
-       //if (iauhelp == 'y')
-       //    printf("meaneps %11.7f dp  %11.7f de  %11.7f te  %11.7f  \n",meaneps * 180/pi,deltapsi * 180/pi,
-       //                          deltaeps * 180/pi,trueeps * 180/pi );
-     }  // procedure nutation
-
-/* -----------------------------------------------------------------------------
-*
-*                           function fundarg
-*
-*  this function calulates the delauany variables and planetary values for
-*  several theories.
-*
-*  author        : david vallado                  719-573-2600   16 jul 2004
-*
-*  revisions
-*    vallado     - conversion to c++                             23 nov 2005
-*
-*  inputs          description                    range / units
-*    ttt         - julian centuries of tt
-*    opt         - method option                  e00a, e00b, e96, e80
-*
-*  outputs       :
-*    l           - delaunay element               rad
-*    ll          - delaunay element               rad
-*    f           - delaunay element               rad
-*    d           - delaunay element               rad
-*    omega       - delaunay element               rad
-*    planetary longitudes                         rad
-*
-*  locals        :
-*
-*
-*  coupling      :
-*    none        -
-*
-*  references    :
-*    vallado       2007, 217
-* --------------------------------------------------------------------------- */
-// returns all values in an array
-public static double[] fundarg
-     (
-       double ttt, Opt opt//,
-//       Double l, Double l1, Double f, Double d, Double omega,
-//       Double lonmer, Double lonven, Double lonear, Double lonmar,
-//       Double lonjup, Double lonsat, Double lonurn, Double lonnep,
-//       Double precrate
-     )
-     {
-       double deg2rad;
-       //char iauhelp;
-
-       // return variables
-       double l=0,  l1=0,  f=0,  d=0,  omega=0,
-        lonmer=0,  lonven=0,  lonear=0,  lonmar=0,
-        lonjup=0,  lonsat=0,  lonurn=0,  lonnep=0,
-        precrate=0;
-
-       //sethelp(iauhelp, ' ');
-       deg2rad = Math.PI / 180.0;
-
-       // ---- determine coefficients for icrs nutation theories ----
-       // ---- iau-2000a theory
-       if (opt == Opt.e00a)
-         {
-           // ------ form the delaunay fundamental arguments in deg
-           l    = (((( - 0.00024470 * ttt + 0.051635 ) * ttt + 31.8792 ) * ttt +  1717915923.2178 ) * ttt +  485868.249036 ) / 3600.0;
-           l1   = (((( - 0.00001149 * ttt + 0.000136 ) * ttt -  0.5532 ) * ttt +   129596581.0481 ) * ttt + 1287104.793048 ) / 3600.0;
-           f    = (((( + 0.00000417 * ttt - 0.001037 ) * ttt - 12.7512 ) * ttt +  1739527262.8478 ) * ttt +  335779.526232 ) / 3600.0;
-           d    = (((( - 0.00003169 * ttt + 0.006593 ) * ttt -  6.3706 ) * ttt +  1602961601.2090 ) * ttt + 1072260.703692 ) / 3600.0;
-           omega= (((( - 0.00005939 * ttt + 0.007702 ) * ttt +  7.4722 ) * ttt -     6962890.5431 ) * ttt +  450160.398036 ) / 3600.0;
-
-           // ------ form the planetary arguments in deg
-           lonmer  = (  908103.259872 + 538101628.688982  * ttt ) / 3600.0;
-           lonven  = (  655127.283060 + 210664136.433548  * ttt ) / 3600.0;
-           lonear  = (  361679.244588 + 129597742.283429  * ttt ) / 3600.0;
-           lonmar  = ( 1279558.798488 +  68905077.493988  * ttt ) / 3600.0;
-           lonjup  = (  123665.467464 +  10925660.377991  * ttt ) / 3600.0;
-           lonsat  = (  180278.799480 +   4399609.855732  * ttt ) / 3600.0;
-           lonurn  = ( 1130598.018396 +   1542481.193933  * ttt ) / 3600.0;
-           lonnep  = ( 1095655.195728 +    786550.320744  * ttt ) / 3600.0;
-           precrate= (  ( 1.112022 * ttt + 5028.8200 ) * ttt ) / 3600.0;
-         }
-
-       // ---- iau-2000b theory
-       if (opt == Opt.e00b)
-         {
-           // ------ form the delaunay fundamental arguments in deg
-           l    =  ( 1717915923.2178  * ttt +  485868.249036 ) / 3600.0;
-           l1   =  (  129596581.0481  * ttt + 1287104.79305  ) / 3600.0;
-           f    =  ( 1739527262.8478  * ttt +  335779.526232 ) / 3600.0;
-           d    =  ( 1602961601.2090  * ttt + 1072260.70369  ) / 3600.0;
-           omega=  (   -6962890.5431  * ttt +  450160.398036 ) / 3600.0;
-
-           // ------ form the planetary arguments in deg
-           lonmer  = 0.0;
-           lonven  = 0.0;
-           lonear  = 0.0;
-           lonmar  = 0.0;
-           lonjup  = 0.0;
-           lonsat  = 0.0;
-           lonurn  = 0.0;
-           lonnep  = 0.0;
-           precrate= 0.0;
-         }
-
-       // ---- iau-1996 theory
-       if (opt == Opt.e96)
-         {
-           // ------ form the delaunay fundamental arguments in deg
-           l    = (((( - 0.00024470 * ttt + 0.051635 ) * ttt + 31.8792 ) * ttt + 1717915923.2178 ) * ttt ) / 3600.0 + 134.96340251;
-           l1   = (((( - 0.00001149 * ttt - 0.000136 ) * ttt -  0.5532 ) * ttt +  129596581.0481 ) * ttt ) / 3600.0 + 357.52910918;
-           f    = (((( + 0.00000417 * ttt + 0.001037 ) * ttt - 12.7512 ) * ttt + 1739527262.8478 ) * ttt ) / 3600.0 +  93.27209062;
-           d    = (((( - 0.00003169 * ttt + 0.006593 ) * ttt -  6.3706 ) * ttt + 1602961601.2090 ) * ttt ) / 3600.0 + 297.85019547;
-           omega= (((( - 0.00005939 * ttt + 0.007702 ) * ttt +  7.4722 ) * ttt -    6962890.2665 ) * ttt ) / 3600.0 + 125.04455501;
-           // ------ form the planetary arguments in deg
-           lonmer  = 0.0;
-           lonven  = 181.979800853  +  58517.8156748   * ttt;
-           lonear  = 100.466448494  +  35999.3728521   * ttt;
-           lonmar  = 355.433274605  +  19140.299314    * ttt;
-           lonjup  =  34.351483900  +   3034.90567464  * ttt;
-           lonsat  =  50.0774713998 +   1222.11379404  * ttt;
-           lonurn  =   0.0;
-           lonnep  =   0.0;
-           precrate= ( 0.0003086 * ttt + 1.39697137214 ) * ttt;
-         }
-
-       // ---- iau-1980 theory
-       if (opt == Opt.e80)
-         {
-           // ------ form the delaunay fundamental arguments in deg
-           l    = ((((  0.064 ) * ttt + 31.310 ) * ttt + 1717915922.6330 ) * ttt ) / 3600.0 + 134.96298139;
-           l1   = ((((- 0.012 ) * ttt -  0.577 ) * ttt +  129596581.2240 ) * ttt ) / 3600.0 + 357.52772333;
-           f    = ((((  0.011 ) * ttt - 13.257 ) * ttt + 1739527263.1370 ) * ttt ) / 3600.0 +  93.27191028;
-           d    = ((((  0.019 ) * ttt -  6.891 ) * ttt + 1602961601.3280 ) * ttt ) / 3600.0 + 297.85036306;
-           omega= ((((  0.008 ) * ttt +  7.455 ) * ttt -    6962890.5390 ) * ttt ) / 3600.0 + 125.04452222;
-           // ------ form the planetary arguments in deg
-// iers tn13 shows no planetary
-// seidelmann shows these equations
-// circ 163 shows no planetary
-// ???????
-           lonmer  =  252.3 + 149472.0  * ttt;
-           lonven  =  179.9 +  58517.8  * ttt;
-           lonear  =   98.4 +  35999.4  * ttt;
-           lonmar  =  353.3 +  19140.3  * ttt;
-           lonjup  =   32.3 +   3034.9  * ttt;
-           lonsat  =   48.0 +   1222.1  * ttt;
-           lonurn  =    0.0;
-           lonnep  =    0.0;
-           precrate=    0.0;
-         }
-
-       // ---- convert units from deg to rad
-       l    = ( l%360.0  )      *  deg2rad;
-       l1   = ( l1%360.0  )     *  deg2rad;
-       f    = ( f%360.0  )      *  deg2rad;
-       d    = ( d%360.0  )      *  deg2rad;
-       omega= ( omega%360.0  )  *  deg2rad;
-
-       lonmer= ( lonmer%360.0 ) * deg2rad;
-       lonven= ( lonven%360.0 ) * deg2rad;
-       lonear= ( lonear%360.0 ) * deg2rad;
-       lonmar= ( lonmar%360.0 ) * deg2rad;
-       lonjup= ( lonjup%360.0 ) * deg2rad;
-       lonsat= ( lonsat%360.0 ) * deg2rad;
-       lonurn= ( lonurn%360.0 ) * deg2rad;
-       lonnep= ( lonnep%360.0 ) * deg2rad;
-       precrate= ( precrate%360.0 ) * deg2rad;
-
-//       if (iauhelp == 'y')
-//         {
-//           printf("fa %11.7f  %11.7f  %11.7f  %11.7f  %11.7f deg \n",l * 180/pi,l1 * 180/pi,f * 180/pi,d * 180/pi,omega * 180/pi );
-//           printf("fa %11.7f  %11.7f  %11.7f  %11.7f deg \n",lonmer * 180/pi,lonven * 180/pi,lonear * 180/pi,lonmar * 180/pi );
-//           printf("fa %11.7f  %11.7f  %11.7f  %11.7f deg \n",lonjup * 180/pi,lonsat * 180/pi,lonurn * 180/pi,lonnep * 180/pi );
-//           printf("fa %11.7f  \n",precrate * 180/pi );
-//         }
-
-       return new double[] {l,  l1,  f,  d,  omega,
-        lonmer,  lonven,  lonear,  lonmar,
-        lonjup,  lonsat,  lonurn,  lonnep,
-        precrate};
-
-     }  // procedure fundarg
-
-
-/* -----------------------------------------------------------------------------
-*
 *                           procedure mattrans
 *
 *  this procedure finds the transpose of a matrix.
@@ -878,52 +343,6 @@ public static double[][]    mattrans
        }
 
      return mat2;
-   }
-
-
-/* -----------------------------------------------------------------------------
-*
-*                           procedure matvecmult
-*
-*  this procedure multiplies a 3x3 matrix and a 3x1 vector together.
-*
-*  author        : david vallado                  719-573-2600    1 mar 2001
-*
-*  inputs          description                    range / units
-*    mat         - 3 x 3 matrix
-*    vec         - vector
-*
-*  outputs       :
-*    vecout      - vector result of mat * vec
-*
-*  locals        :
-*    row         - row index
-*    col         - column index
-*    ktr         - index
-*
-*  coupling      :
-*
-* --------------------------------------------------------------------------- */
-
-public static double[] matvecmult
-        (
-          double[][] mat,
-//          double mat[3][3],
-          double[] vec//,
-          //double[] vecout
-        )
-   {
-     int row,col,ktr;
-     double[] vecout = new double[3];
-
-     for (row = 0; row <= 2; row++)
-       {
-         vecout[row]= 0.0;
-         for (ktr = 0; ktr <= 2; ktr++)
-             vecout[row]= vecout[row] + mat[row][ktr] * vec[ktr];
-       }
-
-     return vecout;
    }
 
 
@@ -986,6 +405,50 @@ public static double[][] matmult
      return mat3;
    } //matmult
 
+/* -----------------------------------------------------------------------------
+*
+*                           procedure matvecmult
+*
+*  this procedure multiplies a 3x3 matrix and a 3x1 vector together.
+*
+*  author        : david vallado                  719-573-2600    1 mar 2001
+*
+*  inputs          description                    range / units
+*    mat         - 3 x 3 matrix
+*    vec         - vector
+*
+*  outputs       :
+*    vecout      - vector result of mat * vec
+*
+*  locals        :
+*    row         - row index
+*    col         - column index
+*    ktr         - index
+*
+*  coupling      :
+*
+* --------------------------------------------------------------------------- */
+
+public static double[] matvecmult
+        (
+          double[][] mat,
+//          double mat[3][3],
+          double[] vec//,
+          //double[] vecout
+        )
+   {
+     int row,col,ktr;
+     double[] vecout = new double[3];
+
+     for (row = 0; row <= 2; row++)
+       {
+         vecout[row]= 0.0;
+         for (ktr = 0; ktr <= 2; ktr++)
+             vecout[row]= vecout[row] + mat[row][ktr] * vec[ktr];
+       }
+
+     return vecout;
+   }
 
 /* -----------------------------------------------------------------------------
 *
@@ -1037,35 +500,6 @@ public static double[][] rot1mat
 
      outmat[2][0]= 0.0;
      outmat[2][1]= -s;
-     outmat[2][2]= c;
-
-     return outmat;
-   }
-
-public static double[][]    rot2mat
-        (
-          double xval//,
-          //std::vector< std::vector<double> > &outmat
-//          double outmat[3][3]
-        )
-   {
-     double[][] outmat = new double[3][3];//outmat.resize(3);  // rows
-     //for (std::vector< std::vector<double> >::iterator it=outmat.begin(); it != outmat.end();++it)
-     //     it->resize(3);
-     double c, s;
-     c= Math.cos( xval );
-     s= Math.sin( xval );
-
-     outmat[0][0]= c;
-     outmat[0][1]= 0.0;
-     outmat[0][2]= -s;
-
-     outmat[1][0]= 0.0;
-     outmat[1][1]= 1.0;
-     outmat[1][2]= 0.0;
-
-     outmat[2][0]= s;
-     outmat[2][1]= 0.0;
      outmat[2][2]= c;
 
      return outmat;

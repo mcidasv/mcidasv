@@ -39,13 +39,14 @@ public abstract class AbstractSatellite implements Serializable
      * @param julDate - julian date
      * @return j2k position of satellite in meters
      */
-    public abstract double[] calculateJ2KPositionFromUT(double julDate);
+//    public abstract double[] calculateJ2KPositionFromUT(double julDate);
 
     /**
      * Calculate TEME of date position of this sat at a given JulDateTime (doesn't save the time) - can be useful for event searches or optimization
      * @param julDate - julian date
      * @return j2k position of satellite in meters
      */
+/*
     public abstract double[] calculateTemePositionFromUT(double julDate);
 
     public abstract double getAltitude();
@@ -183,6 +184,6 @@ public abstract class AbstractSatellite implements Serializable
     public abstract double getThreeDModelSizeFactor();
     
     public abstract void setThreeDModelSizeFactor(double modelSizeFactor);
-    
+*/    
 
 }

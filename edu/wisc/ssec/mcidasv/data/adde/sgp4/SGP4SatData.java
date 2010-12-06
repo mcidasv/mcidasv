@@ -50,6 +50,7 @@ public class SGP4SatData implements Serializable
                 nodecf;
 
   /* Deep Space */
+
   public int    irez;
   public double d2201  , d2211  , d3210  , d3222    , d4410  , d4422   , d5220 , d5232 ,
                 d5421  , d5433  , dedt   , del1     , del2   , del3    , didt  , dmdt  ,
