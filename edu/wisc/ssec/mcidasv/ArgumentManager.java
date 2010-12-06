@@ -51,7 +51,7 @@ public class ArgumentManager extends ArgsManager {
 
     /** usage message */
     public static final String USAGE_MESSAGE =
-        "Usage: runMcV <args> <bundle/script files, e.g., .mcv, .mcvz, .isl>";
+        "Usage: runMcV [OPTIONS] <bundle/script files, e.g., .mcv, .mcvz, .py>";
 
     /**
      *  Given by the "-user" argument. Alternative user path for bundles,  resources, etc.
@@ -86,7 +86,7 @@ public class ArgumentManager extends ArgsManager {
     protected int parseArg(String arg, String[] args, int idx) 
         throws Exception {
 
-        if (arg.equals("-forceaqua")) {
+        if ("-forceaqua".equals(arg)) {
             // unfortunately we can't simply set the look and feel here. If I
             // were to do so, the loadLookAndFeel in the IdvUIManager would 
             // eventually get loaded and then set the look and feel to whatever
@@ -95,11 +95,16 @@ public class ArgumentManager extends ArgsManager {
             // UIManager.loadLookAndFeel that it should simply ignore the user's
             // preference is and load the Aqua L&F from there.
             McIDASV.useAquaLookAndFeel = true;
-        } else if (arg.equals(ARG_HELP)) {
+        } else if (ARG_HELP.equals(arg)) {
             System.err.println(USAGE_MESSAGE);
             System.err.println(getUsageMessage());
             ((McIDASV)getIdv()).exit(1);
+        } else if (checkArg(arg, "-pyfile", args, idx, 1)) {
+            jythonCode = IOUtil.readContents(args[idx++]);
         } else {
+            if (ARG_ISLINTERACTIVE.equals(arg) || ARG_B64ISL.equals(arg) || ARG_ISLFILE.equals(arg) || isIslFile(arg)) {
+                System.err.println("*** WARNING: ISL is being deprecated!");
+            }
             return super.parseArg(arg, args, idx);
         }
         return idx;
@@ -112,8 +117,8 @@ public class ArgumentManager extends ArgsManager {
      */
     @Override public void usage(String err) {
         String msg = USAGE_MESSAGE;
-        msg = msg + "\n" + getUsageMessage();
-        LogUtil.userErrorMessage(err + "\n" + msg);
+        msg = msg + '\n' + getUsageMessage();
+        LogUtil.userErrorMessage(err + '\n' + msg);
         ((McIDASV)getIdv()).exit(1);
     }
 
@@ -124,8 +129,49 @@ public class ArgumentManager extends ArgsManager {
      * @return Usage message.
      */
     protected String getUsageMessage() {
-        return msg("-forceaqua", "Forces the Aqua look and feel on OS X")
-               + super.getUsageMessage();
+        return msg(ARG_HELP, "(this message)")
+            + msg("-forceaqua", "Forces the Aqua look and feel on OS X")
+            + msg(ARG_PROPERTIES, "<property file>")
+            + msg("-Dpropertyname=value", "(Define the property value)")
+            + msg(ARG_INSTALLPLUGIN, "<plugin jar file or url to install>")
+            + msg(ARG_PLUGIN, "<plugin jar file, directory, url for this run>")
+            + msg(ARG_NOPLUGINS, "Don't load plugins")
+            + msg(ARG_CLEARDEFAULT, "(Clear the default bundle)")
+            + msg(ARG_NODEFAULT, "(Don't read in the default bundle file)")
+            + msg(ARG_DEFAULT, "<.mcv/.mcvz file>")
+            + msg(ARG_BUNDLE, "<bundle file or url>")
+            + msg(ARG_B64BUNDLE, "<base 64 encoded inline bundle>")
+            + msg(ARG_SETFILES, "<datasource pattern> <semi-colon delimited list of files> (Use the list of files for the bundled datasource)")
+            + msg(ARG_ONEINSTANCEPORT, "<port number> (Check if another version of McIDAS-V is running. If so pass command line arguments to it and shutdown)")
+            + msg(ARG_NOONEINSTANCE, "(Don't do the one instance port)")
+            + msg(ARG_NOPREF, "(Don't read in the user preferences)")
+            + msg(ARG_USERPATH, "<user directory to use>")
+            + msg(ARG_SITEPATH, "<url path to find site resources>")
+            + msg(ARG_NOGUI, "(Don't show the main window gui)")
+            + msg(ARG_DATA, "<data source> (Load the data source)")
+            + msg(ARG_DISPLAY, "<parameter> <display>")
+//            + msg("<scriptfile.isl>", "(Run the IDV script in batch mode)")
+            + msg("-pyfile", "<jython script file to evaluate>")
+//            + msg(ARG_B64ISL, "<base64 encoded inline isl> This will run the isl in interactive mode")
+//            + msg(ARG_ISLINTERACTIVE, "run any isl files in interactive mode")
+            + msg(ARG_IMAGE, "<image file name> (create a jpeg image and then exit)")
+            + msg(ARG_MOVIE, "<movie file name> (create a quicktime movie and then exit)")
+            + msg(ARG_IMAGESERVER, "<port number or .properties file> (run McIDAS-V in image generation server mode. Support http requests on the given port)")
+            + msg(ARG_CATALOG, "<url to a chooser catalog>")
+            + msg(ARG_CONNECT, "<collaboration hostname to connect to>")
+            + msg(ARG_SERVER, "(Should McIDAS-V run in collaboration server mode)")
+            + msg(ARG_PORT, "<Port number collaboration server should listen on>")
+            + msg(ARG_CHOOSER, "(show the data chooser on start up) ")
+            + msg(ARG_PRINTJNLP, "(Print out any embedded bundles from jnlp files)")
+            + msg(ARG_CURRENTTIME, "<dttm> (Override current time for background processing)")
+//            + msg(ARG_CURRENTTIME, "<dttm> (Override current time for ISL processing)")
+            + msg(ARG_LISTRESOURCES, "<list out the resource types")
+            + msg(ARG_DEBUG, "(Turn on debug print)")
+            + msg(ARG_MSG_DEBUG, "(Turn on language pack debug)")
+            + msg(ARG_MSG_RECORD, "<Language pack file to write missing entries to>")
+            + msg(ARG_TRACE, "(Print out trace messages)")
+            + msg(ARG_NOERRORSINGUI, "(Don't show errors in gui)")
+            + msg(ARG_TRACEONLY, "<trace pattern> (Print out trace messages that match the pattern)");
     }
 
     /**
