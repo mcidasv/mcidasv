@@ -105,6 +105,8 @@ public class TimeSelection extends DataSelectionComponent implements Constants {
       protected static final String PROP_ALT = "Altitude";
       protected static final String PROP_BEGTIME = "BeginTime";
       protected static final String PROP_ENDTIME = "EndTime";
+      protected static final String PROP_BTIME = "BTime";
+      protected static final String PROP_ETIME = "ETime";
 
       private JComboBox locationComboBox;
 /*
@@ -269,6 +271,9 @@ public class TimeSelection extends DataSelectionComponent implements Constants {
          //System.out.println("    hours=" + hours + " minutes=" + mins + " seconds=" + secs);
 
          Time bTime = new Time(year, month, day, hours, mins, secs);
+         double dVal = bTime.getJulianDate();
+         Double bigD = new Double(dVal);
+         String begTimeStr = bigD.toString();
          //System.out.println("bTime=" + bTime.getDateTimeStr());
          dataSelection.putProperty(PROP_BEGTIME, bTime.getDateTimeStr());
 
@@ -289,12 +294,19 @@ public class TimeSelection extends DataSelectionComponent implements Constants {
          mins = (new Integer(timeStrings[1])).intValue();
          secs = (new Double(timeStrings[2] + ".0")).doubleValue();
          //System.out.println("endTime=" + endTime);
+         //System.out.println("    year=" + year + " month=" + month + " day=" + day);
          //System.out.println("    hours=" + hours + " minutes=" + mins + " seconds=" + secs);
 
          Time eTime = new Time(year, month, day, hours, mins, secs);
+         dVal = eTime.getJulianDate();
+         bigD = new Double(dVal);
+         String endTimeStr = bigD.toString();
+         //System.out.println("begTimeStr=" + begTimeStr + " endTimeStr=" + endTimeStr);
          //System.out.println("eTime=" + eTime.getDateTimeStr());
 
          dataSelection.putProperty(PROP_ENDTIME, eTime.getDateTimeStr());
+         dataSelection.putProperty(PROP_BTIME, begTimeStr);
+         dataSelection.putProperty(PROP_ETIME, endTimeStr);
       }
 
     private void setLatitude() {
