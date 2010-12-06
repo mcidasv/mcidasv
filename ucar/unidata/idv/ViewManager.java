@@ -5535,7 +5535,23 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public void setView(String view) {
         if (getMaster() instanceof NavigatedDisplay) {
             NavigatedDisplay navDisplay = (NavigatedDisplay) getMaster();
-            navDisplay.setView(view);
+//            navDisplay.setView(view);
+            
+            // TODO(jon): this really needs to go once the kinks for Tom's demo
+            // have been worked out.
+            if("bottom".equalsIgnoreCase(view)) {
+                navDisplay.setView(NavigatedDisplay.BOTTOM_VIEW);
+            } else if("north".equalsIgnoreCase(view)) {
+                navDisplay.setView(NavigatedDisplay.NORTH_VIEW);
+            } else if("east".equalsIgnoreCase(view)) {
+                navDisplay.setView(NavigatedDisplay.EAST_VIEW);
+            } else if("top".equalsIgnoreCase(view)) {
+                navDisplay.setView(NavigatedDisplay.TOP_VIEW);
+            } else if("south".equalsIgnoreCase(view)) {
+                navDisplay.setView(NavigatedDisplay.SOUTH_VIEW);
+            } else if("west".equalsIgnoreCase(view)) {
+                navDisplay.setView(NavigatedDisplay.WEST_VIEW);
+            }
         }
     }
 
