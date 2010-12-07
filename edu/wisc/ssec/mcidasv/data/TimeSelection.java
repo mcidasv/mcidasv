@@ -107,6 +107,12 @@ public class TimeSelection extends DataSelectionComponent implements Constants {
       protected static final String PROP_ENDTIME = "EndTime";
       protected static final String PROP_BTIME = "BTime";
       protected static final String PROP_ETIME = "ETime";
+      protected static final String PROP_YEAR = "Year";
+      protected static final String PROP_MONTH = "Month";
+      protected static final String PROP_DAY = "Day";
+      protected static final String PROP_HOURS = "Hours";
+      protected static final String PROP_MINS = "Mins";
+      protected static final String PROP_SECS = "Secs";
 
       private JComboBox locationComboBox;
 /*
@@ -276,6 +282,19 @@ public class TimeSelection extends DataSelectionComponent implements Constants {
          String begTimeStr = bigD.toString();
          //System.out.println("bTime=" + bTime.getDateTimeStr());
          dataSelection.putProperty(PROP_BEGTIME, bTime.getDateTimeStr());
+
+         Integer intVal = new Integer(year);
+         dataSelection.putProperty(PROP_YEAR, intVal.toString());
+         intVal = new Integer(month);
+         dataSelection.putProperty(PROP_MONTH, intVal.toString());
+         intVal = new Integer(day);
+         dataSelection.putProperty(PROP_DAY, intVal.toString());
+         intVal = new Integer(hours);
+         dataSelection.putProperty(PROP_HOURS, intVal.toString());
+         intVal = new Integer(mins);
+         dataSelection.putProperty(PROP_MINS, intVal.toString());
+         Double doubleVal = new Double(secs);
+         dataSelection.putProperty(PROP_SECS, doubleVal.toString());
 
          Date end = endDay.getDate();
          //System.out.println("    end=" + end);
