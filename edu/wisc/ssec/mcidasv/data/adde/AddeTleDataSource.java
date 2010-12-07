@@ -291,10 +291,15 @@ public class AddeTleDataSource extends DataSourceImpl {
 */
         tle = new TLE(choiceName, tleLine1, tleLine2);
 
+        String begStr = (String)this.selectionProps.get("BTime");
+        Double dBeg = new Double(begStr);
+        double begJulianDate = dBeg.doubleValue();
+        System.out.println("\nbegJulianDate=" + begJulianDate);
+
         String endStr = (String)this.selectionProps.get("ETime");
         Double dEnd = new Double(endStr);
-        double julianDate = dEnd.doubleValue();
-        System.out.println("julianDate=" + julianDate);
+        double endJulianDate = dEnd.doubleValue();
+        System.out.println("endJulianDate=" + endJulianDate + "\n");
 
         // Create SGP4 satelite propogator
         SatelliteTleSGP4 prop = null;
@@ -310,16 +315,29 @@ public class AddeTleDataSource extends DataSourceImpl {
             System.exit(1);
         }
 
-        // prop to the desired time
-        prop.propogate2JulDate(julianDate);
+        Time time = new Time(
+                        (new Integer((String)this.selectionProps.get("Year"))).intValue(),
+                        (new Integer((String)this.selectionProps.get("Month"))).intValue(),
+                        (new Integer((String)this.selectionProps.get("Day"))).intValue(),
+                        (new Integer((String)this.selectionProps.get("Hours"))).intValue(),
+                        (new Integer((String)this.selectionProps.get("Mins"))).intValue(),
+                        (new Double((String)this.selectionProps.get("Secs"))).doubleValue());
+        double julianDate = time.getJulianDate();
+        System.out.println("time=" + julianDate);
 
-        // get the lat/long/altitude [radians, radians, meters]
-        double[] lla = prop.getLLA();
+        while (julianDate <= endJulianDate) {
+            // prop to the desired time
+            prop.propogate2JulDate(julianDate);
 
-        System.out.println("Lat [deg]:" + lla[0]*180.0/Math.PI);
-        System.out.println("Lon [deg]:" + lla[1]*180.0/Math.PI);
-        System.out.println("Alt [m]  :" + lla[2]);
+            // get the lat/long/altitude [radians, radians, meters]
+            double[] lla = prop.getLLA();
 
+            System.out.println(time.getDateTimeStr() + " Lat: " + lla[0]*180.0/Math.PI
+                                                     + " Lon: " + lla[1]*180.0/Math.PI);
+            //time.add(Time.SECOND, 5);
+            time.add(Time.MINUTE, 5);
+            julianDate = time.getJulianDate();
+        }
         return null;
     }
 
