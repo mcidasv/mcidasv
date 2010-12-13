@@ -815,7 +815,7 @@ def holeFilter(sdataset,user_brkpoint1=0,user_brkpoint2=1,user_stretchval='Contr
     
   return data
 
-def contrast(in_low,in_hi,minimum,maximum,out_low=0,out_hi=255,inc=1):
+def contrast(out_low,out_hi,minimum,maximum,in_low=0,in_hi=255,inc=1):
    """ create a contrast stretch lookup table """
    if (in_hi == in_low):
       slope=0
