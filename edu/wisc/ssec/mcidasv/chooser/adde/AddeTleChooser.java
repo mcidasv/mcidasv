@@ -37,6 +37,7 @@ import static javax.swing.GroupLayout.Alignment.TRAILING;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -160,20 +161,6 @@ public class AddeTleChooser extends AddeChooser implements Constants {
      */
     public static String TLE_PROJECT_NUMBER_KEY = "tle_proj";
 
-    /** * Property for the tle server name key.
-     * @see #getServer()
-     */
-//    public static String SATELLITE_SERVER_NAME_KEY = "satellite_server";
-
-    /**
-     * Property for the tle group name key.
-     * @see #getGroup()
-     */
-//    public static String SATELLITE_GROUP_NAME_KEY = "satellite_group";
-
-//    private JComboBox imageServerSelector;
-//    protected JComboBox imageGroupSelector;
-
     /**
      * Construct an Adde image selection widget
      *
@@ -238,12 +225,6 @@ public class AddeTleChooser extends AddeChooser implements Constants {
         addePanel =  (JPanel)makeAddePanel();
         urlPanel =  (JPanel)makeUrlPanel();
 
-        JLabel statusLabelLabel = McVGuiUtils.makeLabelRight("");
-
-        JLabel statusLabel = new JLabel("Status");
-        McVGuiUtils.setLabelPosition(statusLabel, Position.RIGHT);
-        McVGuiUtils.setComponentColor(statusLabel, TextColor.STATUS);
-
         JButton helpButton = McVGuiUtils.makeImageButton(ICON_HELP, "Show help");
         helpButton.setActionCommand(GuiUtils.CMD_HELP);
         helpButton.addActionListener(this);
@@ -274,13 +255,9 @@ public class AddeTleChooser extends AddeChooser implements Constants {
                         .addGroup(layout.createParallelGroup(LEADING)
                             .addComponent(addeBtn)
                             .addComponent(addePanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGap(GAP_RELATED)
                             .addComponent(urlBtn)
                             .addComponent(urlPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(statusLabelLabel)
-                            .addGap(GAP_RELATED)
-                            .addComponent(statusLabel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGroup(layout.createSequentialGroup()))) 
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -293,9 +270,6 @@ public class AddeTleChooser extends AddeChooser implements Constants {
                 .addComponent(urlBtn)
                 .addComponent(urlPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(UNRELATED)
-                .addGroup(layout.createParallelGroup(BASELINE)
-                    .addComponent(statusLabelLabel)
-                    .addComponent(statusLabel))
                 .addPreferredGap(UNRELATED)
                 .addGroup(layout.createParallelGroup(BASELINE)
                     .addComponent(loadButton)
@@ -400,7 +374,6 @@ public class AddeTleChooser extends AddeChooser implements Constants {
         boxEditor.addKeyListener(new KeyListener() {
             public void keyPressed(KeyEvent e) {}
             public void keyReleased(KeyEvent e) {
-//                updateStatus();
             }
             public void keyTyped(KeyEvent e) {}
         });
@@ -409,7 +382,9 @@ public class AddeTleChooser extends AddeChooser implements Constants {
         urlList.add(urlLabel);
         urlList.add(box);
         urlPanel = GuiUtils.top(box);
-        return McVGuiUtils.makeLabeledComponent(urlLabel, urlPanel);
+        JPanel retPanel = McVGuiUtils.makeLabeledComponent(urlLabel, urlPanel);
+
+        return retPanel;
     }
 
 
@@ -422,115 +397,12 @@ public class AddeTleChooser extends AddeChooser implements Constants {
     }
 
     /**
-     * Get the state
-     *
-     * @return The state
-     */
-/*
-    protected int getState() {
-        int ret = STATE_UNCONNECTED;
-        if (haveDescriptorSelected()) {
-            ret = STATE_CONNECTED;
-        }
-        return ret;
-    }
-*/
-
-    /* Get the server selector
-     * @return The server selector
-     */
-/*
-    private JComboBox getImageServerSelector(String type) {
-        this.tleServers = getManagedServers(type);
-        final JComboBox newServerSelector = new JComboBox(new Vector(tleServers));
-        imageGroupSelector = getImageGroupSelector(newServerSelector, type);
-        final String groupType = type;
-        newServerSelector.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                if ( !ignoreStateChangedEvents) {
-                    setImageGroups(newServerSelector, imageGroupSelector, groupType);
-                }
-            }
-        });
-        return newServerSelector;
-    }
-
-    private List<AddeServer> getManagedServers(final String type) {
-        EntryStore entryStore = ((McIDASV)getIdv()).getServerManager();
-        return arrList(entryStore.getIdvStyleEntries(type));
-    }
-*/
-
-    /**
-     * Get the group selector
-     * @return The group selector
-     */
-/*
-    private JComboBox getImageGroupSelector(JComboBox serverSel, String type) {
-        JComboBox newGroupSelector = new JComboBox();
-        setImageGroups(serverSel, newGroupSelector, type);
-        return newGroupSelector;
-    }
-*/
-
-    /**
-     * Get the selected AddeServer
-     *
-     * @return the server or null
-     */
-/*
-    private AddeServer getImageServer(JComboBox serverSel) {
-        Object selected = serverSel.getSelectedItem();
-        if ((selected != null) && (selected instanceof AddeServer)) {
-            return (AddeServer) selected;
-        }
-        return null;
-    }
-*/
-
-    /**
-     * Get the selected group
-     *
-     * @return the group name
-     */
-/*
-    private AddeServer.Group getImageGroup(JComboBox groupSel) {
-        Object selected = groupSel.getSelectedItem();
-        if ((selected != null) && (selected instanceof AddeServer.Group)) {
-            return (AddeServer.Group) selected;
-        }
-        return null;
-    }
-*/
-
-    /**
-     * Set the group list
-     */
-/*
-    protected void setImageGroups(JComboBox serverSel, JComboBox groupSel, String type) {
-        EntryStore servManager = ((McIDASV)getIdv()).getServerManager();
-        AddeServer server = getImageServer(serverSel);
-        if (server != null) {
-            List<Group> groups = CollectionHelpers.arrList();
-            EntryType selType = EntryTransforms.strToEntryType("image");
-            groups.addAll(servManager.getIdvStyleRemoteGroups(server.getName(), selType));
-            //List groups   = server.getGroupsWithType(type);
-            GuiUtils.setListData(groupSel, groups);
-            groupSel.setSelectedItem(0);
-        } else {
-            GuiUtils.setListData(groupSel, new Vector());
-        }
-    }
-*/
-
-    /**
      * Get the data type ID
      *
      * @return  the data type
      */
 
     public String getDataType() {
-        //return "IMAGE";
         return "TEXT";
     }
 
@@ -541,7 +413,6 @@ public class AddeTleChooser extends AddeChooser implements Constants {
       */
     @Override
     protected String getGroupType() {
-            //return AddeServer.TYPE_IMAGE;
             return TLE_TYPE;
     }
 
@@ -578,8 +449,6 @@ public class AddeTleChooser extends AddeChooser implements Constants {
             String proj = acct.get("proj");
             ht.put(TLE_USER_ID_KEY, user);
             ht.put(TLE_PROJECT_NUMBER_KEY, proj);
-//            ht.put(SATELLITE_SERVER_NAME_KEY, getImageServer(imageServerSelector));
-//            ht.put(SATELLITE_GROUP_NAME_KEY, getImageGroup(imageGroupSelector));
         } else {
             ht.put(URL_NAME_KEY, box.getSelectedItem());
         }
