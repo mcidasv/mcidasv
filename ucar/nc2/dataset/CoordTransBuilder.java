@@ -35,11 +35,12 @@ package ucar.nc2.dataset;
 
 import ucar.nc2.Variable;
 import ucar.nc2.Attribute;
+import ucar.nc2.constants.CF;
 import ucar.nc2.constants._Coordinate;
 import ucar.nc2.dataset.transform.*;
-import ucar.unidata.util.Parameter;
 import ucar.ma2.DataType;
 import ucar.ma2.Array;
+import ucar.unidata.util.Parameter;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -59,29 +60,30 @@ public class CoordTransBuilder {
   // search in the order added
   static {
     registerTransform("albers_conical_equal_area", AlbersEqualArea.class);
+    registerTransform("flat_earth", FlatEarth.class);
     registerTransform("lambert_azimuthal_equal_area", LambertAzimuthal.class);
     registerTransform("lambert_conformal_conic", LambertConformalConic.class);
     registerTransformMaybe("mcidas_area", "ucar.nc2.iosp.mcidas.McIDASAreaTransformBuilder"); // optional - needs visad.jar
     registerTransform("mercator", Mercator.class);
+    registerTransform("MSGnavigation", MSGnavigation.class);
+    registerTransform("FGFProjection", FGFProjection.class);
     registerTransform("orthographic", Orthographic.class);
     registerTransform("polar_stereographic", PolarStereographic.class);
     registerTransform("rotated_latitude_longitude", RotatedPole.class);
-    registerTransform("rotated_lat_lon", RotatedLatLon.class);
+    registerTransform("rotated_latlon_grib", RotatedLatLon.class);
     registerTransform("stereographic", Stereographic.class);
     registerTransform("transverse_mercator", TransverseMercator.class);
     registerTransform("vertical_perspective", VerticalPerspective.class);
     registerTransform("UTM", UTM.class);
-    registerTransform("MSGnavigation", MSGnavigation.class);
-    registerTransform("FGFProjection", FGFProjection.class);
 
-    registerTransform("atmosphere_sigma_coordinate", VAtmSigma.class);
-    registerTransform("atmosphere_hybrid_sigma_pressure_coordinate", VAtmHybridSigmaPressure.class);
+    // registerTransform("atmosphere_ln_pressure_coordinate", VAtmLnPressure.class); // DO NOT USE: see CF1Convention.makeAtmLnCoordinate()
     registerTransform("atmosphere_hybrid_height_coordinate", VAtmHybridHeight.class);
+    registerTransform("atmosphere_hybrid_sigma_pressure_coordinate", VAtmHybridSigmaPressure.class);
+    registerTransform("atmosphere_sigma_coordinate", VAtmSigma.class);
     registerTransform("ocean_s_coordinate", VOceanS.class);
     registerTransform("ocean_sigma_coordinate", VOceanSigma.class);
     registerTransform("explicit_field", VExplicitField.class);
     registerTransform("existing3DField", VExplicitField.class); // deprecate
-    registerTransform("flat_earth", FlatEarth.class);
 
     //-sachin 03/25/09
     registerTransform("ocean_s_coordinate_g1", VOceanSG1.class);
@@ -153,7 +155,7 @@ public class CoordTransBuilder {
   }
 
   /**
-   * Make a CoordinateTransform object from the paramaters in a Coordinate Transform Variable, using an intrinsic or
+   * Make a CoordinateTransform object from the parameters in a Coordinate Transform Variable, using an intrinsic or
    * registered CoordTransBuilder.
    * @param ds enclosing dataset
    * @param ctv the Coordinate Transform Variable - container for the transform parameters
@@ -169,9 +171,9 @@ public class CoordTransBuilder {
 
     // these names are from CF - dont want to have to duplicate
     if (null == transform_name)
-      transform_name = ds.findAttValueIgnoreCase(ctv, "grid_mapping_name", null);
+      transform_name = ds.findAttValueIgnoreCase(ctv, CF.GRID_MAPPING_NAME, null);
     if (null == transform_name)
-      transform_name = ds.findAttValueIgnoreCase(ctv, "standard_name", null);
+      transform_name = ds.findAttValueIgnoreCase(ctv, CF.STANDARD_NAME, null);
 
     if (null == transform_name) {
       parseInfo.format("**Failed to find Coordinate Transform name from Variable= %s\n", ctv);

@@ -35,6 +35,7 @@ package ucar.nc2.dt.grid;
 import ucar.nc2.*;
 import ucar.nc2.constants.AxisType;
 import ucar.nc2.dataset.*;
+import ucar.nc2.util.NamedAnything;
 import ucar.nc2.util.NamedObject;
 import ucar.nc2.units.*;
 
@@ -318,6 +319,8 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
 
   private boolean isDate = false;
   private boolean isLatLon = false;
+
+  // deferred creation
   private List<NamedObject> levels = null;
   private List<NamedObject> times = null;
   private Date[] timeDates = null;
@@ -362,7 +365,7 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
       proj.setDefaultMapArea(getBoundingBox());  // LOOK too expensive for 2D
     }
 
-    // LOOK: require 1D vertical - need to generalize to nD vertical.
+   // LOOK: require 1D vertical - need to generalize to nD vertical.
     CoordinateAxis z_oneD = hAxis = cs.getHeightAxis();
     if ((z_oneD == null) || !(z_oneD instanceof CoordinateAxis1D)) z_oneD = pAxis = cs.getPressureAxis();
     if ((z_oneD == null) || !(z_oneD instanceof CoordinateAxis1D)) z_oneD = zAxis = cs.getZaxis();
@@ -464,8 +467,6 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
       }
     }
 
-    makeLevels();
-    makeTimes();
   }
 
   /**
@@ -535,7 +536,7 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
     ProjectionImpl projOrig = from.getProjection();
     if (projOrig != null) {
       proj = projOrig.constructCopy();
-      proj.setDefaultMapArea(getBoundingBox());
+      proj.setDefaultMapArea(getBoundingBox()); // LOOK expensive for 2D
     }
 
     CoordinateAxis1D zaxis = from.getVerticalAxis();
@@ -599,8 +600,8 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
       }
     }
 
-    makeLevels();
-    makeTimes();
+    //makeLevels();  do this lazy
+    //makeTimes();
   }
 
   private CoordinateAxis convertUnits(CoordinateAxis axis) {
@@ -740,6 +741,13 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
     return proj;
   }
 
+  public void setProjectionBoundingBox() {
+    // set canonical area
+    if (proj != null) {
+      proj.setDefaultMapArea(getBoundingBox());  // LOOK too expensive for 2D
+    }
+  }
+
   /**
    * Get the list of level names, to be used for user selection.
    * The ith one refers to the ith level coordinate.
@@ -747,6 +755,7 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
    * @return List of ucar.nc2.util.NamedObject, or empty list.
    */
   public List<NamedObject> getLevels() {
+    if (levels == null) makeLevels();
     return levels;
   }
 
@@ -757,6 +766,7 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
    * @return List of ucar.nc2.util.NamedObject, or empty list.
    */
   public List<NamedObject> getTimes() {
+    if (times == null) makeTimes();
     return times;
   }
 
@@ -766,6 +776,7 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
    * @return array of java.util.Date, or null.
    */
   public java.util.Date[] getTimeDates() {
+    if (timeDates == null) makeTimes();
     return timeDates;
   }
 
@@ -776,14 +787,15 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
     return isLatLon;
   }
 
-  /**
+  /*
    * is there a time coordinate, and can it be expressed as a Date?
    *
    * @return true if theres a time coordinate that can be expressed as a Date
    */
-  public boolean isDate() {
-    return isDate;
-  }
+ public boolean isDate() {
+   if (timeDates == null) makeTimes();
+   return isDate;
+ }
 
   /**
    * true if increasing z coordinate values means "up" in altitude
@@ -926,9 +938,9 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
     return findXYindexFromCoord(x_coord, y_coord, result);
   }
 
-  /**
+  /*
    * Given a Date, find the corresponding time index on the time coordinate axis.
-   * Can only call this is hasDate() is true.
+   * Can only call this if isDate() is true.
    * This will return
    * <ul>
    * <li> i, if time(i) <= d < time(i+1).
@@ -941,8 +953,9 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
    * @throws UnsupportedOperationException is no time axis or isDate() false
    */
   public int findTimeIndexFromDate(java.util.Date d) {
-    if (timeTaxis == null || !isDate())
-      throw new UnsupportedOperationException("GridCoordSys: ti");
+    if (timeDates == null) makeTimes();
+    if (!isDate)
+      throw new UnsupportedOperationException("GridCoordSys: no time index");
 
     int n = (int) timeTaxis.getSize();
     long m = d.getTime();
@@ -964,6 +977,7 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
   public String getLevelName(int index) {
     if ((vertZaxis == null) || (index < 0) || (index >= vertZaxis.getSize()))
       throw new IllegalArgumentException("getLevelName = " + index);
+    if (levels == null) makeLevels();
 
     NamedAnything name = (NamedAnything) levels.get(index);
     return name.getName();
@@ -977,6 +991,7 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
    */
   public int getLevelIndex(String name) {
     if ((vertZaxis == null) || (name == null)) return -1;
+    if (levels == null) makeLevels();
 
     for (int i = 0; i < levels.size(); i++) {
       NamedAnything level = (NamedAnything) levels.get(i);
@@ -994,6 +1009,7 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
   public String getTimeName(int index) {
     if ((timeTaxis == null) || (index < 0) || (index >= timeTaxis.getSize()))
       throw new IllegalArgumentException("getTimeName = " + index);
+    if (times == null) makeTimes();
 
     NamedAnything name = (NamedAnything) times.get(index);
     return name.getName();
@@ -1007,6 +1023,7 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
    */
   public int getTimeIndex(String name) {
     if ((timeTaxis == null) || (name == null)) return -1;
+    if (times == null) makeTimes();
 
     for (int i = 0; i < times.size(); i++) {
       NamedAnything time = (NamedAnything) times.get(i);
@@ -1016,7 +1033,8 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
   }
 
   public DateRange getDateRange() {
-    if (isDate()) {
+    if (timeDates == null) makeTimes();
+    if (isDate) {
       Date[] dates = getTimeDates();
       return new DateRange(dates[0], dates[dates.length - 1]);
     }
@@ -1265,9 +1283,6 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
     return getRangesFromLatLonRect(rect);
   }
 
-  public void setProjectionBoundingBox() {
-  }
-
   /**
    * Get Index Ranges for the given lat, lon bounding box.
    * For projection, only an approximation based on latlon corners.
@@ -1288,6 +1303,9 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
         throw new InvalidRangeException("Request Bounding box does not intersect Grid");
     }
 
+    CoordinateAxis xaxis = getXHorizAxis();
+    CoordinateAxis yaxis = getYHorizAxis();
+
     if (isLatLon()) {
 
       LatLonPointImpl llpt = rect.getLowerLeftPoint();
@@ -1299,6 +1317,11 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
       miny = Math.min(llpt.getLatitude(), lrpt.getLatitude());
       maxx = getMinOrMaxLon(urpt.getLongitude(), lrpt.getLongitude(), false);
       maxy = Math.min(ulpt.getLatitude(), urpt.getLatitude());
+
+      // normalize to [minLon,minLon+360]
+      double minLon = xaxis.getMinValue();
+      minx = LatLonPointImpl.lonNormalFrom( minx, minLon);
+      maxx = LatLonPointImpl.lonNormalFrom( maxx, minLon);
 
     } else {
       ProjectionRect prect = getProjection().latLonToProjBB(rect); // allow VerticalPerspectiveView to override
@@ -1321,8 +1344,6 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
       maxy = Math.max(ul.getY(), ur.getY()); */
     }
 
-    CoordinateAxis xaxis = getXHorizAxis();
-    CoordinateAxis yaxis = getYHorizAxis();
 
     if ((xaxis instanceof CoordinateAxis1D) && (yaxis instanceof CoordinateAxis1D)) {
       CoordinateAxis1D xaxis1 = (CoordinateAxis1D) xaxis;
@@ -1451,21 +1472,30 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
   /////////////////////////////////////////////////////////////////
 
   private void makeLevels() {
-    levels = new ArrayList<NamedObject>();
-    if (vertZaxis == null)
+
+    if (vertZaxis == null) {
+      levels = new ArrayList<NamedObject>(0);
       return;
+    }
 
     int n = (int) vertZaxis.getSize();
+    levels = new ArrayList<NamedObject>(n);
+
     for (int i = 0; i < n; i++)
-      levels.add(new NamedAnything(vertZaxis.getCoordName(i), vertZaxis.getUnitsString()));
+      levels.add(new ucar.nc2.util.NamedAnything(vertZaxis.getCoordName(i), vertZaxis.getUnitsString()));
   }
 
   private void makeTimes() {
-    times = new ArrayList<NamedObject>();
-    if ((timeTaxis == null) || (timeTaxis.getSize() == 0))
+    if ((timeTaxis == null) || (timeTaxis.getSize() == 0)) {
+      times = new ArrayList<NamedObject>( 0);
+      timeDates = new Date[0];
+      isDate = false;
       return;
+    }
+
     int n = (int) timeTaxis.getSize();
     timeDates = new Date[n];
+    times = new ArrayList<NamedObject>( n);
 
     // see if it has a valid udunits unit
     try {
@@ -1479,7 +1509,7 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
         String name = formatter.toDateTimeString(d);
         if (name == null)  // LOOK bug in udunits ??
           name = Double.toString(timeTaxis.getCoordValue(i));
-        times.add(new NamedAnything(name, "date/time"));
+        times.add(new ucar.nc2.util.NamedAnything(name, "date/time"));
         timeDates[i] = d;
       }
       isDate = true;
@@ -1497,9 +1527,9 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
         Date d = formatter.getISODate(coordValue);
         if (d == null) {
           isDate = false;
-          times.add(new NamedAnything(coordValue, timeTaxis.getUnitsString()));
+          times.add(new ucar.nc2.util.NamedAnything(coordValue, timeTaxis.getUnitsString()));
         } else {
-          times.add(new NamedAnything(formatter.toDateTimeString(d), "date/time"));
+          times.add(new ucar.nc2.util.NamedAnything(formatter.toDateTimeString(d), "date/time"));
           timeDates[i] = d;
         }
       }
@@ -1508,30 +1538,9 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
 
     // otherwise
     for (int i = 0; i < n; i++) {
-      times.add(new NamedAnything(timeTaxis.getCoordName(i), timeTaxis.getUnitsString()));
+      times.add(new ucar.nc2.util.NamedAnything(timeTaxis.getCoordName(i), timeTaxis.getUnitsString()));
     }
 
-  }
-
-  private static class NamedAnything implements NamedObject {
-    private String name, desc;
-
-    NamedAnything(String name, String desc) {
-      this.name = name;
-      this.desc = desc;
-    }
-
-    public String getName() {
-      return name;
-    }
-
-    public String getDescription() {
-      return desc;
-    }
-
-    public String toString() {
-      return name;
-    }
   }
 
 }
