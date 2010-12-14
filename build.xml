@@ -231,6 +231,11 @@
 	<target name="getidvjars" description="Get the latest IDV jar files from Unidata">
 		<exec executable="${basedir}/tools/get_idv_latest.sh" dir="${basedir}/tools" />
 	</target>
+
+	<!-- Get the latest VisAD jar file from SSEC -->
+	<target name="getvisadjar" description="Get the latest VisAD jar file from SSEC">
+		<exec executable="${basedir}/tools/get_visad_latest.sh" dir="${basedir}/tools" />
+	</target>
 	
 	<!-- Set build properties -->
 	<target name="copy.build.props" description="Set build properties">
