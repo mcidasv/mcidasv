@@ -256,7 +256,6 @@ public class PreviewSelection extends DataSelectionComponent {
         });
         dspMaster.addDisplayable(rbb);
 
-        dspMaster.draw();
         ScalarMap colorMap = imageDsp.getColorMap();
         Range[] range = GridUtil.fieldMinMax(this.image);
         Range imageRange = range[0];
@@ -279,6 +278,8 @@ public class PreviewSelection extends DataSelectionComponent {
            min = dMax * 0.74;
         }
         colorMap.setRange(min, max);
+
+        dspMaster.draw();
         BaseColorControl clrCntrl = (BaseColorControl) colorMap.getControl();
         clrCntrl.setTable(BaseColorControl.initTableGreyWedge(new float[4][256], true));
       }
