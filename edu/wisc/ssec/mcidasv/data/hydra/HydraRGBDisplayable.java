@@ -130,11 +130,11 @@ public class HydraRGBDisplayable extends DisplayableData {
 
     /** low range for colors */
     //private double lowRange = 315;           // low range for scalarmap
-    private double lowRange = 0;           // low range for scalarmap
+    private double lowRange = Double.NaN;           // low range for scalarmap
 
     /** high range for colors */
     //private double highRange = 230;          // high range for scalarmap
-    private double highRange = 1;          // high range for scalarmap
+    private double highRange = Double.NaN;          // high range for scalarmap
 
     /** default polygonMode */
     private int polygonMode = POLYGON_FILL;
