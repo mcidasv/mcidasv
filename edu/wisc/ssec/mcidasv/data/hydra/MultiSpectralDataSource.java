@@ -1002,8 +1002,13 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
               if (dataSelection != null) {
                   Hashtable props = dataSelection.getProperties();
-                  subset = (HashMap)((MultiDimensionSubset)props.get(MultiDimensionSubset.key)).getSubset();
                   if (props != null) {
+                    if (props.containsKey(MultiDimensionSubset.key)) {
+                      subset = (HashMap)((MultiDimensionSubset)props.get(MultiDimensionSubset.key)).getSubset();
+                    }
+                    else {
+                      subset = defaultSubset;
+                    }
                     if (props.containsKey(SpectrumAdapter.channelIndex_name)) {
                       int idx = ((Integer) props.get(SpectrumAdapter.channelIndex_name)).intValue();
                       double[] coords = (double[]) subset.get(SpectrumAdapter.channelIndex_name);
@@ -1016,30 +1021,17 @@ public class MultiSpectralDataSource extends HydraDataSource {
                         coords[1] = (double)idx;
                         coords[2] = (double)1;
                       }
-                    }
-                  }
-                  else if ((props != null) && (subset != null)) {
-                    if (props.containsKey(SpectrumAdapter.channelIndex_name)) {
-                      int idx = ((Integer) props.get(SpectrumAdapter.channelIndex_name)).intValue();
-                      double[] coords = (double[]) subset.get(SpectrumAdapter.channelIndex_name);
-                      if (coords == null) {
-                        coords = new double[] {(double)idx, (double)idx, (double)1};
-                        subset.put(SpectrumAdapter.channelIndex_name, coords);
-                      }
-                      else {
-                        coords[0] = (double)idx;
-                        coords[1] = (double)idx;
-                        coords[2] = (double)1;
-                      }
-                    }
-                  }
-                }
+                   }
+                 }
+               }
             }
 
             if (subset != null) {
               MultiSpectralData multiSpectData = getMultiSpectralData(dataChoice);
-              data = multiSpectData.getImage(subset);
-              data = applyProperties(data, requestProperties, subset);
+              if (multiSpectData != null) {
+                data = multiSpectData.getImage(subset);
+                data = applyProperties(data, requestProperties, subset);
+              }
             }
         } catch (Exception e) {
             e.printStackTrace();
