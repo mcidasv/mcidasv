@@ -313,7 +313,7 @@ public class MultiSpectralDisplay implements DisplayListener {
                 displayControl.handleChannelChange(val);
         }
         else if (e.getId() == DisplayEvent.MOUSE_PRESSED_LEFT) {
-            if (e.getInputEvent().isShiftDown()) {
+            if (e.getInputEvent().isControlDown()) {
                 xmap.setRange(initialRangeX[0], initialRangeX[1]);
                 ymap.setRange(initialRangeY[0], initialRangeY[1]);
             }
@@ -656,7 +656,7 @@ public class MultiSpectralDisplay implements DisplayListener {
                 rangeType), new double[] { Double.NaN, Double.NaN }));
 
             display.addReferences(new RubberBandBoxRendererJ3D(domainType,
-                rangeType, 2, 2), new DataReference[] { rubberBand }, null);
+                rangeType, 1, 1), new DataReference[] { rubberBand }, null);
 
             xmap = x;
             ymap = y;
