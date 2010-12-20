@@ -171,10 +171,6 @@ public class MultiDimensionDataSource extends HydraDataSource {
           table.put("array_name", "mod04/Data Fields/Optical_Depth_Land_And_Ocean");
           table.put("lon_array_name", "mod04/Geolocation Fields/Longitude");
           table.put("lat_array_name", "mod04/Geolocation Fields/Latitude");
-          //-table.put("XTrack", "Cell_Across_Swath:mod04");
-          //-table.put("Track", "Cell_Along_Swath:mod04");
-          //-table.put("geo_Track", "Cell_Along_Swath:mod04");
-          //-table.put("geo_XTrack", "Cell_Across_Swath:mod04");
           table.put("XTrack", "Cell_Across_Swath");
           table.put("Track", "Cell_Along_Swath");
           table.put("geo_Track", "Cell_Along_Swath");
@@ -188,17 +184,11 @@ public class MultiDimensionDataSource extends HydraDataSource {
           defaultSubset = adapters[0].getDefaultSubset();
         }
         else if ( name.startsWith("MOD06") || name.startsWith("MYD06") ) {
+          hasImagePreview = true;
           HashMap table = SwathAdapter.getEmptyMetadataTable();
-          //-table.put("array_name", "Cloud_Optical_Thickness");
-          //-table.put("lon_array_name", "Longitude");
-          //-table.put("lat_array_name", "Latitude");
           table.put("array_name", "mod06/Data Fields/Cloud_Optical_Thickness");
           table.put("lon_array_name", "mod06/Geolocation Fields/Longitude");
           table.put("lat_array_name", "mod06/Geolocation Fields/Latitude");
-          //-table.put("XTrack", "Cell_Across_Swath_1km:mod06");
-          //-table.put("Track", "Cell_Along_Swath_1km:mod06");
-          //-table.put("geo_Track", "Cell_Along_Swath_5km:mod06");
-          //-table.put("geo_XTrack", "Cell_Across_Swath_5km:mod06");
           table.put("XTrack", "Cell_Across_Swath_1km");
           table.put("Track", "Cell_Along_Swath_1km");
           table.put("geo_Track", "Cell_Along_Swath_5km");
@@ -422,12 +412,6 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
         MultiDimensionAdapter adapter = null;
 
-        if (category == null) {
-          adapter = adapters[0];
-        }
-        else {
-          adapter = adapters[1];
-        }
         adapter = adapters[0];
 
         try {
@@ -440,7 +424,6 @@ public class MultiDimensionDataSource extends HydraDataSource {
                                                        geoSelection.getZStride());
             }
             else {
-
               MultiDimensionSubset select = null;
               Hashtable table = dataChoice.getProperties();
               Enumeration keys = table.keys();
@@ -450,16 +433,12 @@ public class MultiDimensionDataSource extends HydraDataSource {
                   select = (MultiDimensionSubset) table.get(key);
                 }
               }  
-              subset = select.getSubset();
 
-              Hashtable props = dataSelection.getProperties();
-              if (props != null) {
-                if (props.containsKey(SpectrumAdapter.channelIndex_name)) {
-                  double[] coords = (double[]) subset.get(SpectrumAdapter.channelIndex_name);
-                  int idx = ((Integer) props.get(SpectrumAdapter.channelIndex_name)).intValue();
-                  coords[0] = (double)idx;
-                  coords[1] = (double)idx;
-                  coords[2] = (double)1;
+              subset = select.getSubset();
+              
+              if (dataSelection != null) {
+                Hashtable props = dataSelection.getProperties();
+                if (props != null) {
                 }
               }
             }
@@ -531,7 +510,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
       if (hasImagePreview) {
         try {
-          FlatField image = multiSpectData.getImage(multiSpectData.init_wavenumber, defaultSubset);
+          FlatField image = (FlatField) getDataInner(dataChoice, null, null, null);
           components.add(new PreviewSelection(dataChoice, image, null));
         } catch (Exception e) {
           System.out.println("Can't make PreviewSelection: "+e);
