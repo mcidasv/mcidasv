@@ -96,6 +96,8 @@ public class MultiDimensionDataSource extends HydraDataSource {
     protected MultiDimensionReader reader;
 
     protected MultiDimensionAdapter[] adapters = null;
+    private HashMap<String, MultiDimensionAdapter> adapterMap = new HashMap<String, MultiDimensionAdapter>();
+
 
     protected SpectrumAdapter spectrumAdapter;
 
@@ -162,7 +164,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
           System.out.println("cannot create NetCDF reader for file: "+filename);
         }
 
-        adapters = new MultiDimensionAdapter[2];
+        adapters = new MultiDimensionAdapter[1];
         Hashtable<String, String[]> properties = new Hashtable<String, String[]>(); 
 
         String name = (new File(filename)).getName();
@@ -185,31 +187,35 @@ public class MultiDimensionDataSource extends HydraDataSource {
         }
         else if ( name.startsWith("MOD06") || name.startsWith("MYD06") ) {
           hasImagePreview = true;
-          HashMap table = SwathAdapter.getEmptyMetadataTable();
-          table.put("array_name", "mod06/Data Fields/Cloud_Optical_Thickness");
-          table.put("lon_array_name", "mod06/Geolocation Fields/Longitude");
-          table.put("lat_array_name", "mod06/Geolocation Fields/Latitude");
-          table.put("XTrack", "Cell_Across_Swath_1km");
-          table.put("Track", "Cell_Along_Swath_1km");
-          table.put("geo_Track", "Cell_Along_Swath_5km");
-          table.put("geo_XTrack", "Cell_Across_Swath_5km");
-          table.put("scale_name", "scale_factor");
-          table.put("offset_name", "add_offset");
-          table.put("fill_value_name", "_FillValue");
-          table.put("range_name", "Cloud_Optical_Thickness");
+          String path = "mod06/Data Fields/";
+          String[] arrayNames = new String[] {"Cloud_Optical_Thickness", "Cloud_Effective_Radius", "Cloud_Water_Path"};
+          adapters = new MultiDimensionAdapter[dataFields.length];
+          for (int k=0; k<adapters.length; k++) {
+            HashMap table = SwathAdapter.getEmptyMetadataTable();
+            table.put("array_name", path.concat(arrayNames[k]));
+            table.put("lon_array_name", "mod06/Geolocation Fields/Longitude");
+            table.put("lat_array_name", "mod06/Geolocation Fields/Latitude");
+            table.put("XTrack", "Cell_Across_Swath_1km");
+            table.put("Track", "Cell_Along_Swath_1km");
+            table.put("geo_Track", "Cell_Along_Swath_5km");
+            table.put("geo_XTrack", "Cell_Across_Swath_5km");
+            table.put("scale_name", "scale_factor");
+            table.put("offset_name", "add_offset");
+            table.put("fill_value_name", "_FillValue");
+            table.put("range_name", arrayNames[k]);
 
-          table.put(SwathAdapter.geo_track_offset_name, Double.toString(2.0));
-          table.put(SwathAdapter.geo_xtrack_offset_name, Double.toString(2.0));
-          table.put(SwathAdapter.geo_track_skip_name, Double.toString(5.0));
-          table.put(SwathAdapter.geo_xtrack_skip_name, Double.toString(5.0148148148));
+            table.put(SwathAdapter.geo_track_offset_name, Double.toString(2.0));
+            table.put(SwathAdapter.geo_xtrack_offset_name, Double.toString(2.0));
+            table.put(SwathAdapter.geo_track_skip_name, Double.toString(5.0));
+            table.put(SwathAdapter.geo_xtrack_skip_name, Double.toString(5.0148148148));
 
-          adapters[0] = new SwathAdapter(reader, table);
+            SwathAdapter swathAdapter = new SwathAdapter(reader, table);
+            swathAdapter.setDefaultStride(10);
+            defaultSubset = swathAdapter.getDefaultSubset();
+            adapters[k] = swathAdapter;
+          }
+
           categories = DataCategory.parseCategories("2D grid;GRID-2D;");
-          defaultSubset = adapters[0].getDefaultSubset();
-          double[] coords = (double[]) defaultSubset.get("Track");
-          coords[2] = 1;
-          coords = (double[]) defaultSubset.get("XTrack");
-          coords[2] = 1;
        }
        else if (name.startsWith("CAL_LID_L1")) {
          HashMap table = ProfileAlongTrack.getEmptyMetadataTable();
@@ -303,6 +309,22 @@ public class MultiDimensionDataSource extends HydraDataSource {
          properties.put("setBelowSfcMissing", new String[] {"true"});
          hasTrackPreview = true;
        }
+       else if ( name.startsWith("MHSx_xxx_1B") && name.endsWith("h5")) {
+          HashMap table = SwathAdapter.getEmptyMetadataTable();
+          table.put("array_name", "U-MARF/EPS/MHSx_xxx_1B/DATA/Channel1");
+          table.put("lon_array_name", "U-MARF/EPS/IASI_xxx_1C/DATA/IMAGE_LON_ARRAY");
+          table.put("lat_array_name", "U-MARF/EPS/IASI_xxx_1C/DATA/IMAGE_LAT_ARRAY");
+          table.put("XTrack", "dim1");
+          table.put("Track", "dim0");
+          table.put("geo_XTrack", "dim1");
+          table.put("geo_Track", "dim0");
+          table.put("product_name", "MHSx_xxx_1B");
+          SwathAdapter swathAdapter = new SwathAdapter(reader, table);
+          adapters[0] = swathAdapter;
+          HashMap subset = swathAdapter.getDefaultSubset();
+          defaultSubset = subset;
+          categories = DataCategory.parseCategories("2D grid;GRID-2D;");
+       }
        setProperties(properties);
     }
 
@@ -320,21 +342,21 @@ public class MultiDimensionDataSource extends HydraDataSource {
      */
     public void doMakeDataChoices() {
         DataChoice choice = null;
-        //for (int idx=0; idx<adapters.length; idx++) {
         if (adapters != null) {
-        for (int idx=0; idx<1; idx++) {
-            try {
-              choice = doMakeDataChoice(idx, adapters[idx].getArrayName());
-            } 
-            catch (Exception e) {
-              e.printStackTrace();
-              System.out.println("doMakeDataChoice failed");
-            }
+          for (int idx=0; idx<adapters.length; idx++) {
+             try {
+               choice = doMakeDataChoice(idx, adapters[idx].getArrayName());
+               adapterMap.put(choice.getName(), adapters[idx]);
+             } 
+             catch (Exception e) {
+               e.printStackTrace();
+               System.out.println("doMakeDataChoice failed");
+             }
 
-            if (choice != null) {
-              addDataChoice(choice);
-            }
-        }
+             if (choice != null) {
+               addDataChoice(choice);
+             }
+          }
         }
     }
 
@@ -343,7 +365,6 @@ public class MultiDimensionDataSource extends HydraDataSource {
         DataSelection dataSel = new MultiDimensionSubset(defaultSubset);
         Hashtable subset = new Hashtable();
         subset.put(new MultiDimensionSubset(), dataSel);
-        //-DirectDataChoice ddc = new DirectDataChoice(this, idx, name, name, categories, dataSel);
         DirectDataChoice ddc = new DirectDataChoice(this, idx, name, name, categories, subset);
 
         return ddc;
@@ -412,7 +433,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
         MultiDimensionAdapter adapter = null;
 
-        adapter = adapters[0];
+        adapter = adapterMap.get(dataChoice.getName());
 
         try {
             HashMap subset = null;
