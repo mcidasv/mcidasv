@@ -294,7 +294,6 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put("fill_value_name", "_FillValue");
          table.put("range_name", "Emissive_Bands");
          table.put(SpectrumAdapter.channelIndex_name, "Band_1KM_Emissive");
-
          table.put(SwathAdapter.geo_track_offset_name, Double.toString(2.0));
          table.put(SwathAdapter.geo_xtrack_offset_name, Double.toString(2.0));
          table.put(SwathAdapter.geo_track_skip_name, Double.toString(5.0));
@@ -310,16 +309,11 @@ public class MultiSpectralDataSource extends HydraDataSource {
         	 }
          }
 
+         swathAdapter = new SwathAdapter(reader, table);
+         swathAdapter.setDefaultStride(10);
          logger.debug("Trying to create MODIS 1K SwathAdapter..."); 
-     	 swathAdapter = new SwathAdapter(reader, table);
-         HashMap subset = swathAdapter.getDefaultSubset();
-         subset.put(SpectrumAdapter.channelIndex_name, new double[] {10,10,1});
-         defaultSubset = subset;
-         double[] coords = (double[]) defaultSubset.get("Track");
-         coords[2] = 10;
-         coords = (double[]) defaultSubset.get("XTrack");
-         coords[2] = 10;
 
+         HashMap subset = swathAdapter.getDefaultSubset();
 
          table = SpectrumAdapter.getEmptyMetadataTable();
          table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data Fields/EV_1KM_Emissive");
@@ -334,12 +328,12 @@ public class MultiSpectralDataSource extends HydraDataSource {
             "30","31","32","33","34","35","36"});
          table.put(SpectrumAdapter.channelType, "wavelength");
          SpectrumAdapter spectrumAdapter = new SpectrumAdapter(reader, table);
-         spectrumAdapter.setRangeProcessor(swathAdapter.getRangeProcessor());
 
          multiSpectData = new MultiSpectralData(swathAdapter, spectrumAdapter, "MODIS", "Aqua");
-         multiSpectData.init_wavenumber = 11.0f;
-         multiSpectData.init_bandName = multiSpectData.getBandNameFromWaveNumber(multiSpectData.init_wavenumber);
-         previewImage = multiSpectData.getImage(multiSpectData.init_wavenumber, defaultSubset);
+         multiSpectData.setInitialWavenumber(11.0f);
+         defaultSubset = multiSpectData.getDefaultSubset();
+
+         previewImage = multiSpectData.getImage(defaultSubset);
          multiSpectData_s.add(multiSpectData);
 
          //--- aggregate reflective bands
@@ -364,15 +358,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put(SwathAdapter.geo_xtrack_skip_name, Double.toString(5.0));
 
          SwathAdapter sadapt0 = new SwathAdapter(reader, table);
-         swathAdapter = sadapt0;
-         subset = sadapt0.getDefaultSubset();
-         subset.put(SpectrumAdapter.channelIndex_name, new double[] {1,1,1});
-         defaultSubset = subset;
-         coords = (double[]) defaultSubset.get("Track");
-         coords[2] = 10;
-         coords = (double[]) defaultSubset.get("XTrack");
-         coords[2] = 10;
-
+         sadapt0.setDefaultStride(10);
 
          table = SpectrumAdapter.getEmptyMetadataTable();
          table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data Fields/EV_1KM_RefSB");
@@ -387,7 +373,6 @@ public class MultiSpectralDataSource extends HydraDataSource {
              "16","17","18","19","26"});
          table.put(SpectrumAdapter.channelType, "wavelength");
          SpectrumAdapter specadap0 = new SpectrumAdapter(reader, table);
-         specadap0.setRangeProcessor(sadapt0.getRangeProcessor());
          MultiSpectralData multispec0 = new MultiSpectralData(sadapt0, specadap0, "Reflectance", "Reflectance", "MODIS", "Aqua");
 
          DataCategory.createCategory("MultiSpectral");
@@ -428,7 +413,6 @@ public class MultiSpectralDataSource extends HydraDataSource {
             {"1","2"});
          table.put(SpectrumAdapter.channelType, "wavelength");
          SpectrumAdapter specadap1 = new SpectrumAdapter(reader, table);
-         specadap1.setRangeProcessor(sadapt1.getRangeProcessor());
          MultiSpectralData multispec1 = new MultiSpectralData(sadapt1, specadap1, "Reflectance", "Reflectance", "MODIS", "Aqua");
 
          table = SwathAdapter.getEmptyMetadataTable();
@@ -445,7 +429,6 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put("fill_value_name", "_FillValue");
          table.put("range_name", "EV_500_Aggr1km_RefSB");
          table.put(SpectrumAdapter.channelIndex_name, "Band_500M");
-
          table.put(SwathAdapter.geo_track_offset_name, Double.toString(2.0));
          table.put(SwathAdapter.geo_xtrack_offset_name, Double.toString(2.0));
          table.put(SwathAdapter.geo_track_skip_name, Double.toString(5.0));
@@ -464,12 +447,10 @@ public class MultiSpectralDataSource extends HydraDataSource {
             {"3","4","5","6","7"});
          table.put(SpectrumAdapter.channelType, "wavelength");
          SpectrumAdapter specadap2 = new SpectrumAdapter(reader, table);
-         specadap2.setRangeProcessor(sadapt2.getRangeProcessor());
          MultiSpectralData multispec2 = new MultiSpectralData(sadapt2, specadap2, "Reflectance", "Reflectance", "MODIS", "Aqua");
 
          MultiSpectralAggr aggr = new MultiSpectralAggr(new MultiSpectralData[] {multispec1, multispec2, multispec0});
-         aggr.init_wavenumber = 0.650f;
-         aggr.init_bandName = aggr.getBandNameFromWaveNumber(aggr.init_wavenumber); 
+         aggr.setInitialWavenumber(0.650f);
          aggr.setDataRange(new float[] {0f, 0.8f});
          multiSpectData_s.add(aggr);
        }
@@ -489,20 +470,13 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put("fill_value_name", "_FillValue");
          table.put("range_name", "Reflective_Bands");
          table.put(SpectrumAdapter.channelIndex_name, "Band_250M");
-
          table.put(SwathAdapter.geo_track_offset_name, Double.toString(0.0));
          table.put(SwathAdapter.geo_xtrack_offset_name, Double.toString(0.0));
          table.put(SwathAdapter.geo_track_skip_name, Double.toString(4.0));
          table.put(SwathAdapter.geo_xtrack_skip_name, Double.toString(4.0));
 
          swathAdapter = new SwathAdapter(reader, table);
-         HashMap subset = swathAdapter.getDefaultSubset();
-         subset.put(SpectrumAdapter.channelIndex_name, new double[] {1,1,1});
-         defaultSubset = subset;
-         double[] coords = (double[]) defaultSubset.get("Track");
-         coords[2] = 40;
-         coords = (double[]) defaultSubset.get("XTrack");
-         coords[2] = 40;
+         swathAdapter.setDefaultStride(40);
 
          table = SpectrumAdapter.getEmptyMetadataTable();
          table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data Fields/EV_250_RefSB");
@@ -515,12 +489,12 @@ public class MultiSpectralDataSource extends HydraDataSource {
             {"1","2"});
          table.put(SpectrumAdapter.channelType, "wavelength");
          SpectrumAdapter spectrumAdapter = new SpectrumAdapter(reader, table);
-         spectrumAdapter.setRangeProcessor(swathAdapter.getRangeProcessor());
 
          multiSpectData = new MultiSpectralData(swathAdapter, spectrumAdapter, "Reflectance", "Reflectance", "MODIS", "Aqua");
-         multiSpectData.init_wavenumber = 0.650f;
-         multiSpectData.init_bandName = multiSpectData.getBandNameFromWaveNumber(multiSpectData.init_wavenumber);
-         previewImage = multiSpectData.getImage(multiSpectData.init_wavenumber, defaultSubset);
+         multiSpectData.setInitialWavenumber(0.650f);
+         multiSpectData.setDataRange(new float[] {0f, 0.8f});
+         defaultSubset = multiSpectData.getDefaultSubset();
+         previewImage = multiSpectData.getImage(defaultSubset);
          multiSpectData_s.add(multiSpectData);
 
          DataCategory.createCategory("MultiSpectral");
@@ -544,20 +518,13 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put("fill_value_name", "_FillValue");
          table.put("range_name", "Reflective_Bands");
          table.put(SpectrumAdapter.channelIndex_name, "Band_250M");
-
          table.put(SwathAdapter.geo_track_offset_name, Double.toString(0.0));
          table.put(SwathAdapter.geo_xtrack_offset_name, Double.toString(0.0));
          table.put(SwathAdapter.geo_track_skip_name, Double.toString(2.0));
          table.put(SwathAdapter.geo_xtrack_skip_name, Double.toString(2.0));
 
          SwathAdapter swathAdapter0 = new SwathAdapter(reader, table);
-         HashMap subset = swathAdapter0.getDefaultSubset();
-         subset.put(SpectrumAdapter.channelIndex_name, new double[] {1,1,1});
-         defaultSubset = subset;
-         double[] coords = (double[]) defaultSubset.get("Track");
-         coords[2] = 20;
-         coords = (double[]) defaultSubset.get("XTrack");
-         coords[2] = 20;
+         swathAdapter0.setDefaultStride(20);
 
          table = SpectrumAdapter.getEmptyMetadataTable();
          table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data Fields/EV_250_Aggr500_RefSB");
@@ -570,12 +537,8 @@ public class MultiSpectralDataSource extends HydraDataSource {
             {"1","2"});
          table.put(SpectrumAdapter.channelType, "wavelength");
          SpectrumAdapter spectrumAdapter0 = new SpectrumAdapter(reader, table);
-         spectrumAdapter0.setRangeProcessor(swathAdapter0.getRangeProcessor());
 
          MultiSpectralData multiSpectData0 = new MultiSpectralData(swathAdapter0, spectrumAdapter0, "Reflectance", "Reflectance", "MODIS", "Aqua");
-         multiSpectData0.init_wavenumber = 0.650f;
-         multiSpectData0.init_bandName = multiSpectData0.getBandNameFromWaveNumber(multiSpectData0.init_wavenumber);
-         previewImage = multiSpectData0.getImage(multiSpectData0.init_wavenumber, defaultSubset);
 
          table = SwathAdapter.getEmptyMetadataTable();
          table.put("array_name", "MODIS_SWATH_Type_L1B/Data Fields/EV_500_RefSB");
@@ -590,20 +553,13 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put("fill_value_name", "_FillValue");
          table.put("range_name", "Reflective_Bands");
          table.put(SpectrumAdapter.channelIndex_name, "Band_500M");
-
          table.put(SwathAdapter.geo_track_offset_name, Double.toString(0.0));
          table.put(SwathAdapter.geo_xtrack_offset_name, Double.toString(0.0));
          table.put(SwathAdapter.geo_track_skip_name, Double.toString(2.0));
          table.put(SwathAdapter.geo_xtrack_skip_name, Double.toString(2.0));
 
          SwathAdapter swathAdapter1 = new SwathAdapter(reader, table);
-         subset = swathAdapter1.getDefaultSubset();
-         subset.put(SpectrumAdapter.channelIndex_name, new double[] {1,1,1});
-         defaultSubset = subset;
-         coords = (double[]) defaultSubset.get("Track");
-         coords[2] = 20;
-         coords = (double[]) defaultSubset.get("XTrack");
-         coords[2] = 20;
+         swathAdapter1.setDefaultStride(20);
 
          table = SpectrumAdapter.getEmptyMetadataTable();
          table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data Fields/EV_500_RefSB");
@@ -616,19 +572,17 @@ public class MultiSpectralDataSource extends HydraDataSource {
             {"3","4","5","6","7"});
          table.put(SpectrumAdapter.channelType, "wavelength");
          SpectrumAdapter spectrumAdapter1 = new SpectrumAdapter(reader, table);
-         spectrumAdapter1.setRangeProcessor(swathAdapter1.getRangeProcessor());
 
          MultiSpectralData multiSpectData1 = new MultiSpectralData(swathAdapter1, spectrumAdapter1, "Reflectance", "Reflectance", "MODIS", "Aqua");
-         multiSpectData1.init_wavenumber = 0.470f;
-         multiSpectData1.init_bandName = multiSpectData1.getBandNameFromWaveNumber(multiSpectData1.init_wavenumber);
 
          MultiSpectralAggr aggr = 
             new MultiSpectralAggr(new MultiSpectralData[] {multiSpectData0, multiSpectData1});
-         aggr.init_wavenumber = 0.650f;
-         aggr.init_bandName = aggr.getBandNameFromWaveNumber(aggr.init_wavenumber);
+         aggr.setInitialWavenumber(0.650f);
          aggr.setDataRange(new float[] {0f, 0.8f});
          multiSpectData_s.add(aggr);
          multiSpectData = aggr;
+         defaultSubset = aggr.getDefaultSubset();
+         previewImage = aggr.getImage(defaultSubset);
 
          DataCategory.createCategory("MultiSpectral");
          categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
@@ -651,12 +605,9 @@ public class MultiSpectralDataSource extends HydraDataSource {
          swthTable.put("unpack", "unpack");
 
          SwathAdapter swathAdapter0 = new SwathAdapter(reader, swthTable);
+         swathAdapter0.setDefaultStride(10);
          HashMap subset = swathAdapter0.getDefaultSubset();
          defaultSubset = subset;
-         double[] coords = (double[]) defaultSubset.get("Track");
-         coords[2] = 10;
-         coords = (double[]) defaultSubset.get("XTrack");
-         coords[2] = 10;
 
          HashMap specTable = SpectrumAdapter.getEmptyMetadataTable();
          specTable.put(SpectrumAdapter.array_name, "ch3b_temperature");
@@ -666,12 +617,8 @@ public class MultiSpectralDataSource extends HydraDataSource {
          specTable.put(SpectrumAdapter.bandNames, new String[] {"ch3b"});
          specTable.put(SpectrumAdapter.channelType, "wavelength");
          SpectrumAdapter spectrumAdapter0 = new SpectrumAdapter(reader, specTable);
-         spectrumAdapter0.setRangeProcessor(swathAdapter0.getRangeProcessor());
 
          MultiSpectralData multiSpectData0 = new MultiSpectralData(swathAdapter0, spectrumAdapter0, "BrightnessTemp", "BrightnessTemp", null, null);
-         multiSpectData0.init_wavenumber = 3.740f;
-         multiSpectData0.init_bandName = multiSpectData0.getBandNameFromWaveNumber(multiSpectData0.init_wavenumber);
-         previewImage = multiSpectData0.getImage(multiSpectData0.init_wavenumber, defaultSubset);
 
          HashMap table = SwathAdapter.getEmptyMetadataTable();
          table.put("array_name", "ch4_temperature");
@@ -689,12 +636,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
 
          SwathAdapter swathAdapter1 = new SwathAdapter(reader, table);
-         subset = swathAdapter0.getDefaultSubset();
-         defaultSubset = subset;
-         coords = (double[]) defaultSubset.get("Track");
-         coords[2] = 10;
-         coords = (double[]) defaultSubset.get("XTrack");
-         coords[2] = 10;
+         swathAdapter1.setDefaultStride(10);
 
          table = SpectrumAdapter.getEmptyMetadataTable();
          table.put(SpectrumAdapter.array_name, "ch4_temperature");
@@ -704,11 +646,8 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put(SpectrumAdapter.bandNames, new String[] {"ch4"});
          table.put(SpectrumAdapter.channelType, "wavelength");
          SpectrumAdapter spectrumAdapter1 = new SpectrumAdapter(reader, table);
-         spectrumAdapter1.setRangeProcessor(swathAdapter1.getRangeProcessor());
 
          MultiSpectralData multiSpectData1 = new MultiSpectralData(swathAdapter1, spectrumAdapter1, "BrightnessTemp", "BrightnessTemp", null, null);
-         multiSpectData1.init_wavenumber = 10.80f;
-         multiSpectData1.init_bandName = multiSpectData1.getBandNameFromWaveNumber(multiSpectData1.init_wavenumber);
 
          table = SwathAdapter.getEmptyMetadataTable();
          table.put("array_name", "ch5_temperature");
@@ -726,12 +665,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
 
          SwathAdapter swathAdapter2 = new SwathAdapter(reader, table);
-         subset = swathAdapter2.getDefaultSubset();
-         defaultSubset = subset;
-         coords = (double[]) defaultSubset.get("Track");
-         coords[2] = 10;
-         coords = (double[]) defaultSubset.get("XTrack");
-         coords[2] = 10;
+         swathAdapter2.setDefaultStride(10);
 
          table = SpectrumAdapter.getEmptyMetadataTable();
          table.put(SpectrumAdapter.array_name, "ch5_temperature");
@@ -741,90 +675,64 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put(SpectrumAdapter.bandNames, new String[] {"ch5"});
          table.put(SpectrumAdapter.channelType, "wavelength");
          SpectrumAdapter spectrumAdapter2 = new SpectrumAdapter(reader, table);
-         spectrumAdapter2.setRangeProcessor(swathAdapter2.getRangeProcessor());
 
          MultiSpectralData multiSpectData2 = new MultiSpectralData(swathAdapter2, spectrumAdapter2, "BrightnessTemp", "BrightnessTemp", null, null);
-         multiSpectData2.init_wavenumber = 12.00f;
-         multiSpectData2.init_bandName = multiSpectData2.getBandNameFromWaveNumber(multiSpectData2.init_wavenumber);
 
 
          MultiSpectralAggr aggr = new MultiSpectralAggr(new MultiSpectralData[] {multiSpectData0, multiSpectData1, multiSpectData2});
-         aggr.init_wavenumber = 3.740f;
-         aggr.init_bandName = aggr.getBandNameFromWaveNumber(aggr.init_wavenumber);
+         aggr.setInitialWavenumber(3.740f);
          aggr.setDataRange(new float[] {180f, 340f});
          multiSpectData = aggr;
          multiSpectData_s.add(aggr);
+         defaultSubset = aggr.getDefaultSubset();
+         previewImage = aggr.getImage(defaultSubset);
 
          //- now do the reflective bands
          swthTable.put("array_name", "ch1_reflectance");
          swthTable.put("range_name", "Reflective_Bands");
 
          swathAdapter0 = new SwathAdapter(reader, swthTable);
-         subset = swathAdapter0.getDefaultSubset();
-         defaultSubset = subset;
-         coords = (double[]) defaultSubset.get("Track");
-         coords[2] = 10;
-         coords = (double[]) defaultSubset.get("XTrack");
-         coords[2] = 10;
+         swathAdapter0.setDefaultStride(10);
 
          specTable.put(SpectrumAdapter.array_name, "ch1_reflectance");
          specTable.put(SpectrumAdapter.channelValues, new float[] {0.630f});
          specTable.put(SpectrumAdapter.bandNames, new String[] {"ch1"});
          spectrumAdapter0 = new SpectrumAdapter(reader, specTable);
-         spectrumAdapter0.setRangeProcessor(swathAdapter0.getRangeProcessor());
 
          multiSpectData0 = new MultiSpectralData(swathAdapter0, spectrumAdapter0, "Reflectance", "Reflectance", null, null);
-         multiSpectData0.init_wavenumber = 0.630f;
-         multiSpectData0.init_bandName = multiSpectData0.getBandNameFromWaveNumber(multiSpectData0.init_wavenumber);
 
          swthTable.put("array_name", "ch2_reflectance");
          swthTable.put("range_name", "Reflective_Bands");
          
          swathAdapter1 = new SwathAdapter(reader, swthTable);
-         subset = swathAdapter1.getDefaultSubset();
-         defaultSubset = subset;
-         coords = (double[]) defaultSubset.get("Track");
-         coords[2] = 10;
-         coords = (double[]) defaultSubset.get("XTrack");
-         coords[2] = 10;
+         swathAdapter1.setDefaultStride(10);
          
          specTable.put(SpectrumAdapter.array_name, "ch2_reflectance");
          specTable.put(SpectrumAdapter.channelValues, new float[] {0.862f});
          specTable.put(SpectrumAdapter.bandNames, new String[] {"ch2"});
          spectrumAdapter1 = new SpectrumAdapter(reader, specTable);
-         spectrumAdapter1.setRangeProcessor(swathAdapter1.getRangeProcessor());
 
          multiSpectData1 = new MultiSpectralData(swathAdapter1, spectrumAdapter1, "Reflectance", "Reflectance", null, null);
-         multiSpectData1.init_wavenumber = 0.862f;
-         multiSpectData1.init_bandName = multiSpectData1.getBandNameFromWaveNumber(multiSpectData1.init_wavenumber);
 
          swthTable.put("array_name", "ch3ab_reflectance");
          swthTable.put("range_name", "Reflective_Bands");
          
          swathAdapter2 = new SwathAdapter(reader, swthTable);
+         swathAdapter2.setDefaultStride(10);
          subset = swathAdapter2.getDefaultSubset();
          defaultSubset = subset;
-         coords = (double[]) defaultSubset.get("Track");
-         coords[2] = 10;
-         coords = (double[]) defaultSubset.get("XTrack");
-         coords[2] = 10;
          
          specTable.put(SpectrumAdapter.array_name, "ch3ab_reflectance");
          specTable.put(SpectrumAdapter.channelValues, new float[] {1.610f});
          specTable.put(SpectrumAdapter.bandNames, new String[] {"ch3ab"});
          spectrumAdapter2 = new SpectrumAdapter(reader, specTable);
-         spectrumAdapter2.setRangeProcessor(swathAdapter2.getRangeProcessor());
 
          multiSpectData2 = new MultiSpectralData(swathAdapter2, spectrumAdapter2, "Reflectance", "Reflectance", null, null);
-         multiSpectData2.init_wavenumber = 1.610f;
-         multiSpectData2.init_bandName = multiSpectData2.getBandNameFromWaveNumber(multiSpectData2.init_wavenumber);
 
          aggr = new MultiSpectralAggr(new MultiSpectralData[] {multiSpectData0, multiSpectData1, multiSpectData2});
-         aggr.init_wavenumber = 0.630f;
-         aggr.init_bandName = aggr.getBandNameFromWaveNumber(aggr.init_wavenumber);
+         aggr.setInitialWavenumber(0.630f);
          aggr.setDataRange(new float[] {0f, 100f});
          multiSpectData_s.add(aggr);
-
 
          categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
 

@@ -54,7 +54,7 @@ import visad.georef.MapProjection;
 import visad.CachingCoordinateSystem;
 import ucar.visad.ProjectionCoordinateSystem;
 
-public class MultiSpectralData {
+public class MultiSpectralData extends MultiDimensionAdapter {
 
   SwathAdapter swathAdapter = null;
   SpectrumAdapter spectrumAdapter = null;
@@ -172,7 +172,15 @@ public class MultiSpectralData {
     return convertImage(image, channel, paramName);
   }
 
-  
+  public FlatField getData(Object subset) throws Exception {
+    return getImage((HashMap)subset);
+  }
+
+  public Set makeDomain(Object subset) throws Exception {
+    throw new Exception("makeDomain unimplented");
+  } 
+
+
   FlatField convertImage(FlatField image, float channel, String param) 
             throws Exception {
     FlatField new_image = null;
@@ -499,9 +507,17 @@ public class MultiSpectralData {
     return new_values;
   }
 
-  public HashMap getDefaultSubset() throws Exception {
+  public HashMap getDefaultSubset() {
     HashMap subset = swathAdapter.getDefaultSubset();
-    double chanIdx = spectrumAdapter.getChannelIndexFromWavenumber(init_wavenumber);
+    double chanIdx=0;
+
+    try {
+       chanIdx = spectrumAdapter.getChannelIndexFromWavenumber(init_wavenumber);
+    }
+    catch (Exception e) {
+      System.out.println("couldn't get chanIdx, using zero");
+    }
+      
     subset.put(SpectrumAdapter.channelIndex_name, new double[] {chanIdx, chanIdx, 1});
     return subset;
   }

@@ -206,9 +206,15 @@ public class MultiSpectralAggr extends MultiSpectralData {
     return (aggrDomain.indexToValue(new int[] {index}))[0][0];
   }
 
-  public HashMap getDefaultSubset() throws Exception {
+  public HashMap getDefaultSubset() {
     HashMap subset = adapters[0].getDefaultSubset();
-    double chanIdx = getChannelIndexFromWavenumber(init_wavenumber);
+    double chanIdx = 0;
+    try {
+      chanIdx = getChannelIndexFromWavenumber(init_wavenumber);
+    }
+    catch (Exception e) {
+      System.out.println("couldn't get chanIdx, using zero");
+    }
     subset.put(SpectrumAdapter.channelIndex_name, new double[] {chanIdx, chanIdx, 1});
     return subset;
   }
