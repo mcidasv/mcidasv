@@ -189,8 +189,9 @@ public class MultiDimensionDataSource extends HydraDataSource {
           hasImagePreview = true;
           String path = "mod06/Data Fields/";
           String[] arrayNames = new String[] {"Cloud_Optical_Thickness", "Cloud_Effective_Radius", "Cloud_Water_Path"};
-          adapters = new MultiDimensionAdapter[dataFields.length];
-          for (int k=0; k<adapters.length; k++) {
+          String[] arrayNames_5km = new String[] {"Cloud_Top_Pressure", "Cloud_Top_Temperature", "Cloud_Fraction"};
+          adapters = new MultiDimensionAdapter[arrayNames.length+arrayNames_5km.length];
+          for (int k=0; k<arrayNames.length; k++) {
             HashMap table = SwathAdapter.getEmptyMetadataTable();
             table.put("array_name", path.concat(arrayNames[k]));
             table.put("lon_array_name", "mod06/Geolocation Fields/Longitude");
@@ -213,6 +214,25 @@ public class MultiDimensionDataSource extends HydraDataSource {
             swathAdapter.setDefaultStride(10);
             defaultSubset = swathAdapter.getDefaultSubset();
             adapters[k] = swathAdapter;
+          }
+
+          for (int k=0; k<arrayNames_5km.length; k++) {
+            HashMap table = SwathAdapter.getEmptyMetadataTable();
+            table.put("array_name", path.concat(arrayNames_5km[k]));
+            table.put("lon_array_name", "mod06/Geolocation Fields/Longitude");
+            table.put("lat_array_name", "mod06/Geolocation Fields/Latitude");
+            table.put("XTrack", "Cell_Across_Swath_5km");
+            table.put("Track", "Cell_Along_Swath_5km");
+            table.put("geo_Track", "Cell_Along_Swath_5km");
+            table.put("geo_XTrack", "Cell_Across_Swath_5km");
+            table.put("scale_name", "scale_factor");
+            table.put("offset_name", "add_offset");
+            table.put("fill_value_name", "_FillValue");
+            table.put("range_name", arrayNames_5km[k]);
+
+            SwathAdapter swathAdapter = new SwathAdapter(reader, table);
+            defaultSubset = swathAdapter.getDefaultSubset();
+            adapters[arrayNames.length+k] = swathAdapter;
           }
 
           categories = DataCategory.parseCategories("2D grid;GRID-2D;");
