@@ -23,7 +23,7 @@
   <datasource
      id="HYDRA"
      factory="edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource"
-     patterns="^.*(CAL_LID_L1.*\.hdf)$"
+     patterns="^.*(CAL_LID_L1.*\.hdf)$,^.*(MYD06.*\.hdf)$,^.*(MOD06.*\.hdf)$,^.*(MYD04.*\.hdf)$,^.*(MOD04.*\.hdf)$"
      fileselection="true"
      doesmultiples="true"
      label="HYDRA data source"/>
