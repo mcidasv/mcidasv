@@ -33,8 +33,13 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 import java.util.HashMap;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class RangeProcessor {
 
+	private static final Logger logger = LoggerFactory.getLogger(RangeProcessor.class);
+	
 	static RangeProcessor createRangeProcessor(MultiDimensionReader reader, HashMap metadata) throws Exception {
                 if (reader instanceof GranuleAggregation) {
                     return new AggregationRangeProcessor((GranuleAggregation)reader, metadata);
@@ -72,6 +77,7 @@ public class RangeProcessor {
 
 	boolean unpack = false;
 	boolean unsigned = false;
+	boolean rangeCheckBeforeScaling = true;
 
 	int scaleOffsetLen = 1;
 
@@ -105,6 +111,12 @@ public class RangeProcessor {
 		if (metadata.get("unsigned") != null) {
 			unsigned = true;
 		}    
+		
+		if (metadata.get("range_check_after_scaling") != null) {
+			String s = (String) metadata.get("range_check_after_scaling");
+			logger.debug("range_check_after_scaling: " + s);
+			rangeCheckBeforeScaling = false;
+		}
 
 		String array_name = (String) metadata.get("array_name");
 
@@ -112,29 +124,30 @@ public class RangeProcessor {
 
 		offset = getAttributeAsFloatArray(array_name, (String) metadata.get("offset_name"));
 
-                if (scale != null) {
-                   scaleOffsetLen = scale.length;
+		if (scale != null) {
+			scaleOffsetLen = scale.length;
 
-                   if (offset != null) {
-	        	if (scale.length != offset.length) {
-		        	throw new Exception("RangeProcessor: scale and offset array lengths must be equal");
-		        }
-                   }
-                   else {
-                      offset = new float[scaleOffsetLen];
-                      for (int i=0; i<offset.length; i++) offset[i] = 0f;
-                   }
+			if (offset != null) {
+				if (scale.length != offset.length) {
+					throw new Exception("RangeProcessor: scale and offset array lengths must be equal");
+				}
+			}
+			else {
+				offset = new float[scaleOffsetLen];
+				for (int i=0; i<offset.length; i++) offset[i] = 0f;
+			}
 
-                }
+		}
 
 		missing = getAttributeAsFloatArray(array_name, (String) metadata.get("fill_value_name"));
 
 		String metaStr = (String)metadata.get("valid_range");
-                if (metaStr == null) { // attr name not supplied, so try the convention default
-                         metaStr = "valid_range";
-                }
+		// attr name not supplied, so try the convention default
+		if (metaStr == null) { 
+			metaStr = "valid_range";
+		}
 
-	        valid_range = getAttributeAsFloatArray(array_name, metaStr);
+		valid_range = getAttributeAsFloatArray(array_name, metaStr);
 		if (valid_range != null) {
 
 			valid_low = valid_range[0];
@@ -218,6 +231,7 @@ public class RangeProcessor {
 	 */
 	
 	public float[] processRange(byte[] values, HashMap subset) {
+		
 		int soIndex = 0;  // scale/offset index
 	
 		if (subset != null) {
@@ -242,6 +256,7 @@ public class RangeProcessor {
 		boolean isMissing = false;
 		
 		for (int k = 0; k < values.length; k++) {
+			
 			val = (float) values[k];
 			if (unsigned) {
 				i = unsignedByteToInt(values[k]);
@@ -259,15 +274,28 @@ public class RangeProcessor {
 				}
 			}
 			
-			if ((isMissing) || (val < valid_low) || (val > valid_high)) {
+			if (isMissing) {
 				new_values[k] = Float.NaN;
+				continue;
 			}
-			else {
-				if (unpack) {
-					new_values[k] = scale[soIndex] * (val) + offset[soIndex];
+			
+			if (rangeCheckBeforeScaling) {
+				if ((val < valid_low) || (val > valid_high)) {
+					new_values[k] = Float.NaN;
+					continue;
 				}
-				else {
-					new_values[k] = scale[soIndex] * (val - offset[soIndex]);
+			}
+			
+			if (unpack) {
+				new_values[k] = scale[soIndex] * (val) + offset[soIndex];
+			} else {
+				new_values[k] = scale[soIndex] * (val - offset[soIndex]);
+			}
+
+			// do valid range check AFTER scaling?
+			if (! rangeCheckBeforeScaling) {
+				if ((new_values[k] < valid_low) || (new_values[k] > valid_high)) {
+					new_values[k] = Float.NaN;
 				}
 			}
 		}
@@ -282,6 +310,7 @@ public class RangeProcessor {
 	 */
 	
 	public float[] processRange(short[] values, HashMap subset) {
+		
 		int soIndex = 0;  // scale/offset index
 
 		if (subset != null) {
@@ -306,6 +335,7 @@ public class RangeProcessor {
 		boolean isMissing = false;
 		
 		for (int k = 0; k < values.length; k++) {
+			
 			val = (float) values[k];
 			if (unsigned) {
 				i = unsignedShortToInt(values[k]);
@@ -323,17 +353,31 @@ public class RangeProcessor {
 				}
 			}
 			
-			if ((isMissing) || (val < valid_low) || (val > valid_high)) {
+			if (isMissing) {
 				new_values[k] = Float.NaN;
+				continue;
 			}
-			else {
-				if (unpack) {
-					new_values[k] = (scale[soIndex] * val) + offset[soIndex];
-				}
-				else {
-					new_values[k] = scale[soIndex] * (val - offset[soIndex]);
+			
+			if (rangeCheckBeforeScaling) {
+				if ((val < valid_low) || (val > valid_high)) {
+					new_values[k] = Float.NaN;
+					continue;
 				}
 			}
+
+			if (unpack) {
+				new_values[k] = (scale[soIndex] * val) + offset[soIndex];
+			} else {
+				new_values[k] = scale[soIndex] * (val - offset[soIndex]);
+			}
+
+			// do valid range check AFTER scaling?
+			if (! rangeCheckBeforeScaling) {
+				if ((new_values[k] < valid_low) || (new_values[k] > valid_high)) {
+					new_values[k] = Float.NaN;
+				}
+			}
+			
 		}
 		return new_values;
 	}
@@ -346,6 +390,7 @@ public class RangeProcessor {
 	 */
 	
 	public float[] processRange(float[] values, HashMap subset) {
+		
 		float[] new_values = null;
 
 		if ((missing != null) || (valid_range != null)) {
@@ -374,6 +419,7 @@ public class RangeProcessor {
 			if ((valid_range != null) && ((val < valid_low) || (val > valid_high))) {
 				new_values[k] = Float.NaN;
 			}
+			
 		}
 
 		return new_values;
@@ -387,6 +433,7 @@ public class RangeProcessor {
 	 */
 	
 	public double[] processRange(double[] values, HashMap subset) {
+		
 		double[] new_values = null;
 
 		if ((missing != null) || (valid_range != null)) {
@@ -427,6 +474,7 @@ public class RangeProcessor {
 	 */
 	
 	public float[] processAlongBandDim(byte[] values) {
+
 		float[] new_values = new float[values.length];
 
         // if we are working with unsigned data, need to convert missing vals to unsigned too
@@ -443,6 +491,7 @@ public class RangeProcessor {
         boolean isMissing = false;
 
 		for (int k = 0; k < values.length; k++) {
+			
 			val = (float) values[k];
             if (unsigned) {
                 i = unsignedByteToInt(values[k]);
@@ -460,15 +509,28 @@ public class RangeProcessor {
 				}
 			}
 			
-			if ((isMissing) || (val < valid_low) || (val > valid_high)) {
+			if (isMissing) {
 				new_values[k] = Float.NaN;
+				continue;
 			}
-			else {
-				if (unpack) {
-					new_values[k] = scale[k] * val + offset[k];
+			
+			if (rangeCheckBeforeScaling) {
+				if ((val < valid_low) || (val > valid_high)) {
+					new_values[k] = Float.NaN;
+					continue;
 				}
-				else {
-					new_values[k] = scale[k] * (val - offset[k]);
+			}
+			
+			if (unpack) {
+				new_values[k] = scale[k] * val + offset[k];
+			} else {
+				new_values[k] = scale[k] * (val - offset[k]);
+			}
+
+			// do valid range check AFTER scaling?
+			if (! rangeCheckBeforeScaling) {
+				if ((new_values[k] < valid_low) || (new_values[k] > valid_high)) {
+					new_values[k] = Float.NaN;
 				}
 			}
 		}
@@ -482,6 +544,7 @@ public class RangeProcessor {
 	 */
 	
 	public float[] processAlongBandDim(short[] values) {
+
 		float[] new_values = new float[values.length];
 
         // if we are working with unsigned data, need to convert missing vals to unsigned too
@@ -498,6 +561,7 @@ public class RangeProcessor {
         boolean isMissing = false;
 
 		for (int k = 0; k < values.length; k++) {
+			
 			val = (float) values[k];
             if (unsigned) {
                 i = unsignedShortToInt(values[k]);
@@ -515,15 +579,28 @@ public class RangeProcessor {
 				}
 			}
             			
-            if ((isMissing) || (val < valid_low) || (val > valid_high)) {
+			if (isMissing) {
 				new_values[k] = Float.NaN;
+				continue;
 			}
-			else {
-				if (unpack) {
-					new_values[k] = scale[k] * val + offset[k];
+			
+			if (rangeCheckBeforeScaling) {
+				if ((val < valid_low) || (val > valid_high)) {
+					new_values[k] = Float.NaN;
+					continue;
 				}
-				else {
-					new_values[k] = scale[k] * (val - offset[k]);
+			}
+
+			if (unpack) {
+				new_values[k] = scale[k] * val + offset[k];
+			} else {
+				new_values[k] = scale[k] * (val - offset[k]);
+			}
+
+			// do valid range check AFTER scaling?
+			if (! rangeCheckBeforeScaling) {
+				if ((new_values[k] < valid_low) || (new_values[k] > valid_high)) {
+					new_values[k] = Float.NaN;
 				}
 			}
 		}
