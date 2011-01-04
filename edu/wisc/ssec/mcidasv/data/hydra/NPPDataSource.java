@@ -510,7 +510,11 @@ public class NPPDataSource extends HydraDataSource {
     	    					        			logger.debug("range max: " + rangeMax);
     	    					        			int [] shapeArr = new int [] { 2 };
     	    					        			ArrayFloat af = new ArrayFloat(shapeArr);
-    	    					        			af.setFloat(0, Float.parseFloat(rangeMin));
+    	    					        			try {
+        	    					        			af.setFloat(0, Float.parseFloat(rangeMin));
+    	    					        			} catch (NumberFormatException nfe) {
+    	    					        				af.setFloat(0, new Float(Integer.MIN_VALUE));
+    	    					        			}
     	    					        			try {
     	    					        				af.setFloat(1, Float.parseFloat(rangeMax));
     	    					        			} catch (NumberFormatException nfe) {
@@ -685,6 +689,9 @@ public class NPPDataSource extends HydraDataSource {
         	if (unpackFlagStr.equals("true")) {
         		table.put("unpack", "true");
         	}
+        	
+        	// For NPP data, do valid range check AFTER applying scale/offset
+        	table.put("range_check_after_scaling", "true");
         	
         	// pass in a GranuleAggregation reader...
         	if (is3D) {
