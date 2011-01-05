@@ -62,9 +62,10 @@ import visad.DateTime;
 import visad.FieldImpl;
 import visad.FlatField;
 import visad.MathType;
-import visad.Tuple;
 import visad.ScalarMap;
 import visad.ScalarType;
+import visad.Text;
+import visad.Tuple;
 import visad.VisADException;
 import visad.georef.LatLonTuple;
 
@@ -130,7 +131,7 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
     public PolarOrbitTrackControl() {
         super();
         logger.trace("created new tlecontrol={}", Integer.toHexString(hashCode()));
-        System.out.println("PolarOrbitTrackControl:");
+        //System.out.println("PolarOrbitTrackControl:");
     }
 
     @Override public boolean init(DataChoice dataChoice) 
@@ -145,21 +146,22 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
         Data data = null;
         try {
             data = super.getData(dataInstance);
-            List<DateTime> dts = new ArrayList();
+            List<String> dts = new ArrayList();
             List lats = new ArrayList();
             List lons = new ArrayList();
             if (data instanceof Tuple) {
                 Data[] dataArr = ((Tuple)data).getComponents();
-                System.out.println("dataArr[0]=" + dataArr[0]);
                 for (int i=0; i<dataArr.length; i++) {
                     Tuple t = (Tuple)dataArr[i];
                     Data[] tupleComps = t.getComponents();
-                    System.out.println("tupleComps[0]=" + tupleComps[0]);
-                    dts.add((DateTime)tupleComps[0]);
+                    String str = ((Text)tupleComps[0]).getValue();
+                    dts.add(str);
+                    int indx = str.indexOf(" ") + 1;
+                    String subStr = str.substring(indx, indx+5); 
                     LatLonTuple llt = (LatLonTuple)tupleComps[1];
                     lats.add(llt.getLatitude().getValue());
                     lons.add(llt.getLongitude().getValue());
-                    System.out.println("    DateTime=" + dts.get(i) + " Lat=" + lats.get(i) + " Lon=" + lons.get(i));
+                    System.out.println("    Time=" + subStr + " Lat=" + lats.get(i) + " Lon=" + lons.get(i));
                 }
             }
         } catch (Exception e) {
