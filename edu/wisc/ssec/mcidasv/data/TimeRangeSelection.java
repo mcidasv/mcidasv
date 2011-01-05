@@ -160,12 +160,11 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
     }
  
     @Override public void applyToDataSelection(DataSelection dataSelection) {
-        System.out.println("applyToDataSelection: dataSelection=" + dataSelection);
+        //System.out.println("applyToDataSelection: dataSelection=" + dataSelection);
 
         if (dataSelection == null) {
             dataSelection = new DataSelection(true);
         }
-        System.out.println("    dataSelection=" + dataSelection);
 
         Date beg = begDay.getDate();
         JCalendar cal = begDay.getJCalendar();
@@ -224,6 +223,5 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
         dataSelection.putProperty(PROP_ENDTIME, eTime.getDateTimeStr());
         dataSelection.putProperty(PROP_BTIME, begTimeStr);
         dataSelection.putProperty(PROP_ETIME, endTimeStr);
-        System.out.println("TimeRangeSelection: dataSelection=" + dataSelection);
     }
 }
