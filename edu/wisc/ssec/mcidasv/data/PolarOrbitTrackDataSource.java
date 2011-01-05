@@ -263,13 +263,13 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
                                 DataSelection dataSelection,
                                 Hashtable requestProperties)
             throws VisADException, RemoteException {
-
+/*
         System.out.println("\ngetDataInner:");
         System.out.println("    dataChoice=" + dataChoice);
         System.out.println("    category=" + category);
         System.out.println("    dataSelection=" + dataSelection + "\n");
         System.out.println("categories for dataChoice: " + dataChoice.getCategories());
-
+*/
         final double deg2rad = pi / 180.0;         //   0.0174532925199433
         final double xpdotp = 1440.0 / (2.0 * pi);  // 229.1831180523293
 
@@ -362,7 +362,7 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
             double lon = lla[1]*180.0/Math.PI;
             System.out.println(time.getDateTimeStr() + " Lat: " + lat
                                                      + " Lon: " + lon);
-            Tuple data = new Tuple(new Data[] { new DateTime(julianDate, unit),
+            Tuple data = new Tuple(new Data[] { new Text(time.getDateTimeStr()),
                                                 new LatLonTuple(
                                                     lat,
                                                     lon
