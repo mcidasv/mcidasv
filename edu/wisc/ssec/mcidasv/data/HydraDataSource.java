@@ -55,12 +55,6 @@ public class HydraDataSource extends DataSourceImpl  {
     /** List of sources files */
     protected List adapters;
 
-    /** list of twoD categories */          
-    private List twoDCategories;  
-                    
-    /** list of 2D time series categories */
-    private List twoDTimeSeriesCategories;
-
     /** for unpersistence */
     protected String oldSourceFromBundles;
 
