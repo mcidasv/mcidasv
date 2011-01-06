@@ -73,11 +73,13 @@ import ucar.visad.display.XYDisplay;
 import edu.wisc.ssec.mcidasv.control.HydraCombo;
 import edu.wisc.ssec.mcidasv.control.HydraControl;
 import edu.wisc.ssec.mcidasv.control.LinearCombo;
+import edu.wisc.ssec.mcidasv.data.HydraDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.GrabLineRendererJ3D;
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
+import edu.wisc.ssec.mcidasv.data.hydra.NPPDataSource;
 
 public class MultiSpectralDisplay implements DisplayListener {
 
@@ -229,9 +231,19 @@ public class MultiSpectralDisplay implements DisplayListener {
     }
 
     private void init() throws VisADException, RemoteException {
-        MultiSpectralDataSource source = 
-              (MultiSpectralDataSource)dataChoice.getDataSource();
-        data = source.getMultiSpectralData(dataChoice);
+    	
+        HydraDataSource source = 
+              (HydraDataSource) dataChoice.getDataSource();
+
+        // TODO revisit this, may want to move method up to base class HydraDataSource
+        if (source instanceof NPPDataSource) {
+        	data = ((NPPDataSource) source).getMultiSpectralData();
+        }
+        
+        if (source instanceof MultiSpectralDataSource) {
+        	data = ((MultiSpectralDataSource) source).getMultiSpectralData();
+        }
+
         waveNumber = data.init_wavenumber;
 
         try {
