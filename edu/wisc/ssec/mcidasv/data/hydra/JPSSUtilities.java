@@ -45,6 +45,31 @@ import java.util.HashMap;
 
 public abstract class JPSSUtilities {
    
+	public static float[] ATMSChannelCenterFrequencies = {
+		23.8f,
+		31.4f,
+		50.3f,
+		51.76f,
+		52.8f,
+		53.596f,
+		54.40f,
+		54.94f,
+		55.50f,
+		57.2903f,
+		57.2903f,
+		57.2903f,
+		57.2903f,
+		57.2903f,
+		57.2903f,
+		88.20f,
+		165.5f,
+		183.31f,
+		183.31f,
+		183.31f,
+		183.31f,
+		183.31f
+	};
+	
 	// the list of valid geolocation product ids
 	public static String[] geoProductIDs = {
     	"GATMO",
@@ -101,7 +126,7 @@ public abstract class JPSSUtilities {
     	
     	prodHM.put("Albedo", "albedo");
     	prodHM.put("AntennaTemperature", "antennaTemperature");
-    	prodHM.put("BrightnessTemperature", "Btemp");
+    	prodHM.put("BrightnessTemperature", "BrightnessTemperature");
     	prodHM.put("BulkSeaSurfaceTemperature", "bulkSST");
     	prodHM.put("Chlorophyll_a", "chlo_data");
     	prodHM.put("CloudBaseHeightLayer", "cbhLyr");
@@ -111,7 +136,7 @@ public abstract class JPSSUtilities {
     	prodHM.put("IST_Array", "IST Pixel");
     	prodHM.put("Land_Temp", "lst");
     	prodHM.put("NumberOfAggregatedImageryPixels", "scdNumAggPix");
-    	prodHM.put("Radiance", "radiance");
+    	prodHM.put("Radiance", "Radiance");
     	prodHM.put("Reflectance", "reflect");
     	prodHM.put("SceneCounts", "sceneCounts");
     	prodHM.put("SkinSeaSurfaceTemperature", "skinSST");
