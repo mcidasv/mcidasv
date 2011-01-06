@@ -339,6 +339,11 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   }
 		   }
 		   if (is3D) {
+			   // XXX TJJ - if empty name, in-track index is 0
+			   if ((dList.get(i).getName() == null) || (dList.get(i).getName().isEmpty())) {
+				   logger.debug("WARNING: Empty dimension name!, assuming in-track dim is 0");
+				   return 0;
+			   }
 			   logger.debug("Comparing: " + dList.get(i).getName() + " with: " + inTrackName);
 			   if (dList.get(i).getName().equals(inTrackName)) {
 				   index = i;
