@@ -98,9 +98,9 @@ public class NPPDataSource extends HydraDataSource {
 
     protected MultiDimensionAdapter[] adapters = null;
 
-    protected SpectrumAdapter spectrumAdapter;
-
     private static final String DATA_DESCRIPTION = "NPP Data";
+    
+    ucar.nc2.Attribute instrumentName = null;
 
     private HashMap defaultSubset;
     public TrackAdapter track_adapter;
@@ -266,17 +266,24 @@ public class NPPDataSource extends HydraDataSource {
 	    	    				
 	    	    				// cycle through once looking for XML Product Profiles
 	    	    				for (Group subG : dpg) {
+	    	    					
+	    	    					// determine the instrument name (VIIRS, ATMS, CrIS)
+	    	    					instrumentName = subG.findAttribute("Instrument_Short_Name");
+	    	    					
 	    	    					// This is also where we find the attribute which tells us which
 	    	    					// XML Product Profile to use!
     	    						ucar.nc2.Attribute axpp = subG.findAttribute("N_Collection_Short_Name");
     	    						if (axpp != null) {
-    	    							System.err.println("XML Product Profile: " + axpp.getStringValue());
+    	    							System.err.println("XML Product Profile N_Collection_Short_Name: " + axpp.getStringValue());
     	    							String baseName = axpp.getStringValue();
-    	    							baseName = baseName.replace('-', '_');
     	    							String pathStr = fileAbsPath.substring(0, fileAbsPath.lastIndexOf(File.separatorChar) + 1);
-    	    							String productProfileFileName = pathStr + baseName + ".xml";
+    	    							String productProfileFileName = nppPP.getProfileFileName(pathStr, baseName);
+    	    							logger.trace("Found profile: " + productProfileFileName);
+    	    							if (productProfileFileName == null) {
+    	    								throw new Exception("XML Product Profile not found in catalog");
+    	    							}
     	    							try {
-    	    								nppPP.addMetaDataFromFile(productProfileFileName);
+    	    								nppPP.addMetaDataFromFile(pathStr + productProfileFileName);
     	    							} catch (Exception nppppe) {
     	    								logger.error("Error parsing XML Product Profile: " + productProfileFileName);
     	    								throw new Exception("XML Product Profile Error");
@@ -646,20 +653,30 @@ public class NPPDataSource extends HydraDataSource {
         	table.put("geo_XTrack", "XTrack");
         	
         	if (is3D) {
-        		table.put(SpectrumAdapter.channelIndex_name, "Channels");
-        		//table.put(SpectrumAdapter.channelIndex_name, "Channel");
-        		table.put("array_dimension_names", new String[] {"Track", "XTrack", "Channels"});
-        		table.put("lon_array_dimension_names", new String[] {"Track", "XTrack", "Channels"});
-        		table.put("lat_array_dimension_names", new String[] {"Track", "XTrack", "Channels"});
-        		float[] bandArray = new float[22];
-        		String[] bandNames = new String[22];
-        		for (int bIdx = 0; bIdx < 22; bIdx++) {
-        			bandArray[bIdx] = bIdx;
-        			bandNames[bIdx] = "B" + bIdx;
+        		table.put(SpectrumAdapter.channelIndex_name, "Channel");
+        		table.put("array_dimension_names", new String[] {"Track", "XTrack", "Channel"});
+        		table.put("lon_array_dimension_names", new String[] {"Track", "XTrack", "Channel"});
+        		table.put("lat_array_dimension_names", new String[] {"Track", "XTrack", "Channel"});
+        		
+        		// 3D data is either ATMS or CrIS
+        		if ((instrumentName.getName() != null) && (instrumentName.getStringValue().equals("ATMS"))) {
+        			int numChannels = JPSSUtilities.ATMSChannelCenterFrequencies.length;
+            		float[] bandArray = new float[numChannels];
+            		String[] bandNames = new String[numChannels];
+            		for (int bIdx = 0; bIdx < numChannels; bIdx++) {
+            			bandArray[bIdx] = JPSSUtilities.ATMSChannelCenterFrequencies[bIdx];
+            			bandNames[bIdx] = "Channel " + bIdx;
+            		}
+            		table.put(SpectrumAdapter.channelValues, bandArray);
+            		table.put(SpectrumAdapter.bandNames, bandNames);
+        		} else {
+        			// sorry, if we can't id the instrument, we can't display the data!
+        			throw new VisADException("Unable to determine instrument name");
         		}
-        		table.put(SpectrumAdapter.channelValues, bandArray);
-        		table.put(SpectrumAdapter.bandNames, bandNames);
+
         		table.put(SpectrumAdapter.channelType, "wavelength");
+                table.put(SpectrumAdapter.x_dim_name, "Track");
+                table.put(SpectrumAdapter.y_dim_name, "XTrack");
         	} else {
         		table.put("array_dimension_names", new String[] {"Track", "XTrack"});
         		table.put("lon_array_dimension_names", new String[] {"Track", "XTrack"});
@@ -696,15 +713,30 @@ public class NPPDataSource extends HydraDataSource {
         	// pass in a GranuleAggregation reader...
         	if (is3D) {
         		adapters[pIdx] = new SwathAdapter(nppAggReader, table);
+        		SpectrumAdapter sa = new SpectrumAdapter(nppAggReader, table);
+                DataCategory.createCategory("MultiSpectral");
+                categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
+                multiSpectData = new MultiSpectralData((SwathAdapter) adapters[pIdx], sa, 
+                		"BrightnessTemperature", "BrightnessTemperature", "NPP", "ATMS");
+                multiSpectData.setInitialWavenumber(JPSSUtilities.ATMSChannelCenterFrequencies[0]);
+                if (pIdx == 0) {
+                	defaultSubset = multiSpectData.getDefaultSubset();
+                    try {
+                    	previewImage = multiSpectData.getImage(defaultSubset);
+                    } catch (Exception e) {
+                    	e.printStackTrace();
+                    }
+                }
+                
         	} else {
         		adapters[pIdx] = new SwathAdapter(nppAggReader, table);
+        		if (pIdx == 0) {
+        			defaultSubset = adapters[pIdx].getDefaultSubset();
+        		}
+        		categories = DataCategory.parseCategories("IMAGE");
         	}
     		pIdx++;
     	}
-
-    	categories = DataCategory.parseCategories("IMAGE");
-    	defaultSubset = adapters[0].getDefaultSubset();
-    	defaultSubset.put(SpectrumAdapter.channelIndex_name, new double[] {1,1,1});
 
     	setProperties(properties);
     }
@@ -936,15 +968,32 @@ public class NPPDataSource extends HydraDataSource {
     protected void initDataSelectionComponents(
          List<DataSelectionComponent> components,
              final DataChoice dataChoice) {
-
-      if (hasImagePreview) {
-        try {
-          FlatField image = (FlatField) dataChoice.getData(null);
-          components.add(new PreviewSelection(dataChoice, image, null));
-        } catch (Exception e) {
-          logger.error("Can't make PreviewSelection: "+e);
-          e.printStackTrace();
+      
+      if (System.getProperty("os.name").equals("Mac OS X") && hasImagePreview && hasChannelSelect) {
+          try {
+            components.add(new ImageChannelSelection(new PreviewSelection(dataChoice, previewImage, null), new ChannelSelection(dataChoice)));
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
         }
+      else {
+    	  if (hasImagePreview) {
+    		  try {
+    			  FlatField image = (FlatField) dataChoice.getData(null);
+    			  components.add(new PreviewSelection(dataChoice, image, null));
+    		  } catch (Exception e) {
+    			  logger.error("Can't make PreviewSelection: "+e);
+    			  e.printStackTrace();
+    		  }
+    	  }
+    	  if (hasChannelSelect) {
+    		  try {
+    			  components.add(new ChannelSelection(dataChoice));
+    		  } 
+    		  catch (Exception e) {
+    			  e.printStackTrace();
+    		  }
+    	  }
       }
       
     }
