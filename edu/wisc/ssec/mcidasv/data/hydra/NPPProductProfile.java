@@ -30,6 +30,7 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -76,33 +77,64 @@ public class NPPProductProfile {
 
 	}
 	
+	/**
+	 * See if for a given N_Collection_Short_Name attribute, the profile is present
+	 * @param pathStr the directory the XML Product Profiles reside
+	 * @param attrName The attribute name our file should match
+	 * @return the full file name for the XML Product Profile
+	 */
+	
+	public String getProfileFileName(String pathStr, String attrName) {
+		// sanity check
+		if ((pathStr == null) || (attrName == null)) return null;
+		
+		File profileDir = new File(pathStr);
+		if (profileDir.isDirectory()) {
+			String fileList[] = profileDir.list();
+			for (int i = 0; i < fileList.length; i++) {
+				logger.trace("Looking for XMLPP match, file: " + fileList[i]);
+				if (fileList[i].contains(attrName)) {
+					return fileList[i];
+				}
+			}
+		}
+		return null;
+	}
+	
 	public void addMetaDataFromFile(String fileName) throws SAXException, IOException {
 		logger.trace("Attempting to parse XML Product Profile: " + fileName);
 		Document d = null;
 		d = db.parse(fileName);
-		NodeList nl = d.getElementsByTagName("Datum");
+		NodeList nl = d.getElementsByTagName("Field");
 		for (int i = 0; i < nl.getLength(); i++) {
 			ArrayList<Float> fValAL = new ArrayList<Float>();
 			Node n = nl.item(i);
 			NodeList children = n.getChildNodes();
+			NodeList datum = null;
 			String name = null;
 			
 			// cycle through once, finding name and making sure it's a valid NPP Product name
 			boolean isValidProduct = false;
 			for (int j = 0; j < children.getLength(); j++) {
 				Node child = children.item(j);
+				logger.trace("looking at node name: " + child.getNodeName());
 				if (child.getNodeName().equals("Name")) {
 					name = child.getTextContent();
+					logger.trace("Found NPP product name: " + name);
 					isValidProduct = JPSSUtilities.isValidNPPProduct(name);
-				}				
+				}
+				if (child.getNodeName().equals("Datum")) {
+					datum = child.getChildNodes();
+					logger.trace("Found Datum node");
+				}
 			}
 			
 			String rMin = null;
 			String rMax = null;		
 			
 			if (isValidProduct) {
-				for (int j = 0; j < children.getLength(); j++) {
-					Node child = children.item(j);
+				for (int j = 0; j < datum.getLength(); j++) {
+					Node child = datum.item(j);
 					if (child.getNodeName().equals("RangeMin")) {
 						rMin = child.getTextContent();
 					}
