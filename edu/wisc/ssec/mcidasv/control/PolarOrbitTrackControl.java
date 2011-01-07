@@ -157,19 +157,11 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
         dspMaster = vm.getMaster();
 
         Data data = getData(getDataInstance());
-        Gridded2DSet track = createTrackDisplay(data);
-        SampledSet[] set = new SampledSet[1];
-        set[0] = track;
-        UnionSet uset = new UnionSet(set);
-        trackDsp = new CurveDrawer(uset);
-        trackDsp.setColor(Color.GREEN);
-        trackDsp.setData(uset);
-        dspMaster.addDisplayable(trackDsp);
+        createTrackDisplay(data);
         return result;
     }
 
-    private Gridded2DSet createTrackDisplay(Data data) {
-        Gridded2DSet curveSet = null;
+    private void createTrackDisplay(Data data) {
         try {
             List<String> dts = new ArrayList();
             if (data instanceof Tuple) {
@@ -190,13 +182,20 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
                     latlon[0][i] = lat;
                     latlon[1][i] = lon;
                 }
-                curveSet = new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple,
+                Gridded2DSet track = new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple,
                            latlon, npts);
+                SampledSet[] set = new SampledSet[1];
+                set[0] = track;
+                UnionSet uset = new UnionSet(set);
+                trackDsp = new CurveDrawer(uset);
+                trackDsp.setColor(Color.GREEN);
+                trackDsp.setData(uset);
+                dspMaster.addDisplayable(trackDsp);
             }
         } catch (Exception e) {
             System.out.println("getData e=" + e);
         }
-        return curveSet;
+        return;
     }
 
     /**
