@@ -61,11 +61,15 @@ import visad.Data;
 import visad.DateTime;
 import visad.FieldImpl;
 import visad.FlatField;
+import visad.Gridded2DSet;
 import visad.MathType;
+import visad.RealTupleType;
+import visad.SampledSet;
 import visad.ScalarMap;
 import visad.ScalarType;
 import visad.Text;
 import visad.Tuple;
+import visad.UnionSet;
 import visad.VisADException;
 import visad.georef.LatLonTuple;
 
@@ -76,6 +80,7 @@ import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.imagery.BandInfo;
 import ucar.unidata.idv.ControlContext;
 import ucar.unidata.idv.IdvResourceManager;
+import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.control.ColorTableWidget;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.ui.LatLonWidget;
@@ -83,12 +88,17 @@ import ucar.unidata.ui.XmlTree;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Range;
+import ucar.unidata.view.geoloc.MapProjectionDisplay;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
+
+import ucar.visad.display.DisplayMaster;
+import ucar.visad.display.DisplayableData;
 
 import edu.wisc.ssec.mcidasv.PersistenceManager;
 import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
 import edu.wisc.ssec.mcidasv.data.GroundStations;
+import edu.wisc.ssec.mcidasv.data.hydra.CurveDrawer;
 
 /**
  * {@link ucar.unidata.idv.control.PolarOrbitTrackControl} with some McIDAS-V
@@ -96,7 +106,6 @@ import edu.wisc.ssec.mcidasv.data.GroundStations;
  * parameter defaults.
  */
 public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayControlImpl {
-//public class PolarOrbitTrackControl extends ucar.unidata.idv.control.TrackControl {
 
     private static final Logger logger = LoggerFactory.getLogger(PolarOrbitTrackControl.class);
 
@@ -128,6 +137,11 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
     private JTextField lonFld;
     private JTextField altitudeFld = new JTextField(" ", 5);
 
+    private MapProjectionDisplay mapProjDsp;
+    private DisplayMaster dspMaster;
+    private ViewManager vm;
+    private CurveDrawer trackDsp;
+
     public PolarOrbitTrackControl() {
         super();
         logger.trace("created new tlecontrol={}", Integer.toHexString(hashCode()));
@@ -139,19 +153,30 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
     {
         //System.out.println("init: dataChoice=" + dataChoice);
         boolean result = super.init((DataChoice)this.getDataChoices().get(0));
+        vm = getViewManager();
+        dspMaster = vm.getMaster();
+
+        Data data = getData(getDataInstance());
+        Gridded2DSet track = createTrackDisplay(data);
+        SampledSet[] set = new SampledSet[1];
+        set[0] = track;
+        UnionSet uset = new UnionSet(set);
+        trackDsp = new CurveDrawer(uset);
+        trackDsp.setColor(Color.GREEN);
+        trackDsp.setData(uset);
+        dspMaster.addDisplayable(trackDsp);
         return result;
     }
 
-    @Override public Data getData(DataInstance dataInstance) {
-        Data data = null;
+    private Gridded2DSet createTrackDisplay(Data data) {
+        Gridded2DSet curveSet = null;
         try {
-            data = super.getData(dataInstance);
             List<String> dts = new ArrayList();
-            List lats = new ArrayList();
-            List lons = new ArrayList();
             if (data instanceof Tuple) {
                 Data[] dataArr = ((Tuple)data).getComponents();
-                for (int i=0; i<dataArr.length; i++) {
+                int npts = dataArr.length;
+                float[][] latlon = new float[2][npts];
+                for (int i=0; i<npts; i++) {
                     Tuple t = (Tuple)dataArr[i];
                     Data[] tupleComps = t.getComponents();
                     String str = ((Text)tupleComps[0]).getValue();
@@ -159,15 +184,19 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
                     int indx = str.indexOf(" ") + 1;
                     String subStr = str.substring(indx, indx+5); 
                     LatLonTuple llt = (LatLonTuple)tupleComps[1];
-                    lats.add(llt.getLatitude().getValue());
-                    lons.add(llt.getLongitude().getValue());
-                    System.out.println("    Time=" + subStr + " Lat=" + lats.get(i) + " Lon=" + lons.get(i));
+                    float lat = (float)(llt.getLatitude().getValue());
+                    float lon = (float)(llt.getLongitude().getValue());
+                    //System.out.println("    Time=" + subStr + " Lat=" + lat + " Lon=" + lon);
+                    latlon[0][i] = lat;
+                    latlon[1][i] = lon;
                 }
+                curveSet = new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple,
+                           latlon, npts);
             }
         } catch (Exception e) {
             System.out.println("getData e=" + e);
         }
-        return data;
+        return curveSet;
     }
 
     /**
@@ -246,7 +275,6 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
         GuiUtils.tmpInsets = GRID_INSETS;
         JPanel dateTimePanel = GuiUtils.doLayout(allComps, 1, GuiUtils.WT_NY,
                                GuiUtils.WT_N);
-        Data data = getData(getDataInstance());
         return GuiUtils.top(dateTimePanel);
     }
 
