@@ -351,7 +351,7 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
         double julianDate = time.getJulianDate();
         Unit unit = CommonUnit.secondsSinceTheEpoch;
         Vector v = new Vector();
-        System.out.println("\n");
+        //System.out.println("\n");
         while (julianDate <= endJulianDate) {
             // prop to the desired time
             prop.propogate2JulDate(julianDate);
@@ -360,8 +360,8 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
             double[] lla = prop.getLLA();
             double lat = lla[0]*180.0/Math.PI;
             double lon = lla[1]*180.0/Math.PI;
-            System.out.println(time.getDateTimeStr() + " Lat: " + lat
-                                                     + " Lon: " + lon);
+            //System.out.println(time.getDateTimeStr() + " Lat: " + lat
+            //                                         + " Lon: " + lon);
             Tuple data = new Tuple(new Data[] { new Text(time.getDateTimeStr()),
                                                 new LatLonTuple(
                                                     lat,
@@ -373,7 +373,7 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
             time.add(Time.MINUTE, 5);
             julianDate = time.getJulianDate();
         }
-        System.out.println("\n");
+        //System.out.println("\n");
         return new Tuple((Data[]) v.toArray(new Data[v.size()]), false);
     }
 
