@@ -655,8 +655,8 @@ public class NPPDataSource extends HydraDataSource {
         	if (is3D) {
         		table.put(SpectrumAdapter.channelIndex_name, "Channel");
         		table.put("array_dimension_names", new String[] {"Track", "XTrack", "Channel"});
-        		table.put("lon_array_dimension_names", new String[] {"Track", "XTrack", "Channel"});
-        		table.put("lat_array_dimension_names", new String[] {"Track", "XTrack", "Channel"});
+        		table.put("lon_array_dimension_names", new String[] {"Track", "XTrack"});
+        		table.put("lat_array_dimension_names", new String[] {"Track", "XTrack"});
         		
         		// 3D data is either ATMS or CrIS
         		if ((instrumentName.getName() != null) && (instrumentName.getStringValue().equals("ATMS"))) {
@@ -675,8 +675,8 @@ public class NPPDataSource extends HydraDataSource {
         		}
 
         		table.put(SpectrumAdapter.channelType, "wavelength");
-                table.put(SpectrumAdapter.x_dim_name, "Track");
-                table.put(SpectrumAdapter.y_dim_name, "XTrack");
+                table.put(SpectrumAdapter.x_dim_name, "XTrack");
+                table.put(SpectrumAdapter.y_dim_name, "Track");
         	} else {
         		table.put("array_dimension_names", new String[] {"Track", "XTrack"});
         		table.put("lon_array_dimension_names", new String[] {"Track", "XTrack"});
