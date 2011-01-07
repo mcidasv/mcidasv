@@ -369,6 +369,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         addeList.add(groupSelector);
         addeList.add(connectButton);
         addeList.add(descriptorLabel);
+        McVGuiUtils.setComponentWidth(descriptorComboBox, Width.DOUBLEDOUBLE);
         addeList.add(descriptorComboBox);
 
         return outerPanel;
