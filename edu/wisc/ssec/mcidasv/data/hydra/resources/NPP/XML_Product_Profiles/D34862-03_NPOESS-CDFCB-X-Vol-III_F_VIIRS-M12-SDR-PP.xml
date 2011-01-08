@@ -3,7 +3,7 @@
 
 <NPOESSDataProduct xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="NPOESS_Product_Profile.xsd">
          <ProductName>VIIRS Moderate Resolution Band 12 SDR</ProductName>
-        <CollectionShortName>VIIRS-M13-SDR</CollectionShortName>
+        <CollectionShortName>VIIRS-M12-SDR</CollectionShortName>
         <DataProductID>SVM12</DataProductID>
         <ProductData>
                 <DataName>VIIRS M-Band SDR Data Product Profile</DataName>

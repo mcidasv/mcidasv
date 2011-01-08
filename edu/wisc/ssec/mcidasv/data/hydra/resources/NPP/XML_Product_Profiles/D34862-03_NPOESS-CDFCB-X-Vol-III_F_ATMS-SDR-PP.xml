@@ -1,10 +1,6 @@
 <?xml version="1.0"?>
 
-<!--
-
 <NPOESSDataProduct xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="NPOESS_Product_Profile.xsd">
-
--->
 
     <ProductName>ATMS Science SDR: Channels 1 through 22</ProductName>
     <CollectionShortName>ATMS-SDR</CollectionShortName>
