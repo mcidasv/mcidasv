@@ -137,7 +137,7 @@ public abstract class JPSSUtilities {
     	prodHM.put("Land_Temp", "lst");
     	prodHM.put("NumberOfAggregatedImageryPixels", "scdNumAggPix");
     	prodHM.put("Radiance", "Radiance");
-    	prodHM.put("Reflectance", "reflect");
+    	prodHM.put("Reflectance", "Reflectance");
     	prodHM.put("SceneCounts", "sceneCounts");
     	prodHM.put("SkinSeaSurfaceTemperature", "skinSST");
     	prodHM.put("SnowCoverBinaryMap", "scdBinaryMap");

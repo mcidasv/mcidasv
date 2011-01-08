@@ -33,6 +33,7 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -84,17 +85,21 @@ public class NPPProductProfile {
 	 * @return the full file name for the XML Product Profile
 	 */
 	
-	public String getProfileFileName(String pathStr, String attrName) {
+	public String getProfileFileName(String attrName) {
 		// sanity check
-		if ((pathStr == null) || (attrName == null)) return null;
+		if (attrName == null) return null;
 		
-		File profileDir = new File(pathStr);
-		if (profileDir.isDirectory()) {
+		Object o = new Object();
+	    URL profileURL = o.getClass().getResource("/edu/wisc/ssec/mcidasv/data/hydra/resources/NPP/XML_Product_Profiles");
+		String profileDirString = profileURL.getFile();
+		logger.trace("Profiles dir from URL: " + profileDirString);
+		File profileDir = new File(profileDirString);
+	    if (profileDir.isDirectory()) {
 			String fileList[] = profileDir.list();
 			for (int i = 0; i < fileList.length; i++) {
 				logger.trace("Looking for XMLPP match, file: " + fileList[i]);
-				if (fileList[i].contains(attrName)) {
-					return fileList[i];
+				if (fileList[i].contains(attrName + "-PP")) {
+					return profileDir + File.separator + fileList[i];
 				}
 			}
 		}

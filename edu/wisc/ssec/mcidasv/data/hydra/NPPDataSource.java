@@ -276,14 +276,13 @@ public class NPPDataSource extends HydraDataSource {
     	    						if (axpp != null) {
     	    							System.err.println("XML Product Profile N_Collection_Short_Name: " + axpp.getStringValue());
     	    							String baseName = axpp.getStringValue();
-    	    							String pathStr = fileAbsPath.substring(0, fileAbsPath.lastIndexOf(File.separatorChar) + 1);
-    	    							String productProfileFileName = nppPP.getProfileFileName(pathStr, baseName);
+    	    							String productProfileFileName = nppPP.getProfileFileName(baseName);
     	    							logger.trace("Found profile: " + productProfileFileName);
     	    							if (productProfileFileName == null) {
     	    								throw new Exception("XML Product Profile not found in catalog");
     	    							}
     	    							try {
-    	    								nppPP.addMetaDataFromFile(pathStr + productProfileFileName);
+    	    								nppPP.addMetaDataFromFile(productProfileFileName);
     	    							} catch (Exception nppppe) {
     	    								logger.error("Error parsing XML Product Profile: " + productProfileFileName);
     	    								throw new Exception("XML Product Profile Error");
@@ -665,7 +664,7 @@ public class NPPDataSource extends HydraDataSource {
             		String[] bandNames = new String[numChannels];
             		for (int bIdx = 0; bIdx < numChannels; bIdx++) {
             			bandArray[bIdx] = JPSSUtilities.ATMSChannelCenterFrequencies[bIdx];
-            			bandNames[bIdx] = "Channel " + bIdx;
+            			bandNames[bIdx] = "Channel " + (bIdx + 1);
             		}
             		table.put(SpectrumAdapter.channelValues, bandArray);
             		table.put(SpectrumAdapter.bandNames, bandNames);
