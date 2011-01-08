@@ -1,0 +1,511 @@
+<?xml version="1.0"?>
+
+
+
+<NPOESSDataProduct xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="NPOESS_Product_Profile.xsd">
+	<ProductName>VIIRS Sea Ice Characterization EDR</ProductName>
+	<CollectionShortName>VIIRS-SIC-EDR</CollectionShortName>
+	<DataProductID>VSICO</DataProductID>
+	<ProductData>
+		<DataName>VIIRS Sea Ice Characterization Product Profile</DataName>
+		<Field>
+			<Name>IceAgeWeight</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type> 
+			</DataSize>
+			<Datum> 
+				<Description>Ice Age Weighting Factors derived from Ice Age LUT and scene conditions (fire, clouds, sunglint, I-Band quality, etc.)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value> 
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>IceAge</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type> 
+			</DataSize>
+			<Datum> 
+				<Description>Various classifications of ice for I1, I2, Surface Temperature IP, and weighted cell total</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>unsigned 8-bit char</DataType>
+				<FillValue>
+					<Name>NA_UINT8_FILL</Name>
+					<Value>255</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_UINT8_FILL</Name>
+					<Value>254</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_UINT8_FILL</Name>
+					<Value>253</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_UINT8_FILL</Name>
+					<Value>252</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_UINT8_FILL</Name>
+					<Value>251</Value> 
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_UINT8_FILL</Name>
+					<Value>250</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_UINT8_FILL</Name>
+					<Value>249</Value>
+				</FillValue>
+				<LegendEntry>
+					<Name>Unclassified</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Ice Free</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>New or Young Ice</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>All Other Ice</Name>
+					<Value>4</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Land Fill </Name>
+					<Value>10</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Cloud Fill</Name>
+					<Value>12</Value>
+				</LegendEntry>
+			</Datum>
+		</Field>
+                <Field>
+			<Name>QF1_VIIRSSICEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+                                <GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+                                <GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Ice Age Overall Quality</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Green (good quality)</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Yellow (degraded quality)</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Red (bad quality)</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>No Retrieval (Fill)</Name> 
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Input Data Quality</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Bad</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>   
+			<Datum>
+				<Description>Cloud Confidence</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Confidently clear</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Probably clear</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Probably cloudy</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Confidently cloudy</Name>
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum>   
+			<Datum>
+				<Description>Thermal Contrast Degradation: 1.5K &lt; Thermal contrast &lt; 2.2K</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>       
+			<Datum>
+				<Description>Sea Ice Valid Region Exclusion: Pixel is outside of valid region. Valid region is latitude &gt; 36 degrees N  or  latitude &gt; 50 degrees S</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>      
+			<Datum>
+				<Description>Exclusion: Aerosol Optical Thickness slant path at 550nm &gt; 1.0</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>                    
+                </Field>  
+                <Field>
+			<Name>QF2_VIIRSSICEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+                                <GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+                                <GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Exclusion: Thermal Contrast &lt; 1.5K</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>No Ice detected in horizontal cell (Ice concentration is &lt;= 0.1)</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Exclusion: No Ocean present in horizontal cell</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Algorithm Branching</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Unclassified</Name> 
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>RT:Reflectance Threshold Method</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>THB:Thermal Heat Balance Method</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Heavy Aerosol present in horizontal cell</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name> 
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Spare</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+			</Datum>
+			<Datum>
+				<Description>Thin Cirrus detected in horizontal cell</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name> 
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+                </Field>
+                <Field>
+			<Name>QF3_VIIRSSICEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+                                <GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+                                <GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Shadow detected in horizontal cell</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Cloud Phase</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Clear</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Water</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Ice</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Mixed</Name>
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Fire detected in horizontal cell (from the VIIRS Cloud Mask)</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Sun Glint detected in horizontal cell</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Coast Line present within horizontal cell</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Spare</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+                        </Datum>
+                </Field>
+        </ProductData>
+</NPOESSDataProduct>

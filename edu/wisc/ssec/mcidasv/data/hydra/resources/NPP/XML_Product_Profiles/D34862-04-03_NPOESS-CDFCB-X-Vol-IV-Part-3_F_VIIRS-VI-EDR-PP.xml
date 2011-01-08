@@ -1,0 +1,508 @@
+<?xml version="1.0"?>
+
+
+
+<NPOESSDataProduct xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="NPOESS_Product_Profile.xsd">
+	<ProductName>VIIRS Vegetation Index EDR</ProductName>
+	<CollectionShortName>VIIRS-VI-EDR</CollectionShortName>
+	<DataProductID>VIVIO</DataProductID>
+	<ProductData>
+		<DataName>VIIRS Vegetation Index Product Profile</DataName>
+		<Field>
+			<Name>TOA_NDVI</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>1536</MinIndex>
+				<MaxIndex>1536</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>6400</MinIndex>
+				<MaxIndex>6400</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>2</Count>
+				<Type>byte(s)</Type> 
+			</DataSize>
+			<Datum>
+				<Description>Normalized Difference Vegetation Index - Top of Atmosphere</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>1</Scaled>
+                                <ScaleFactorName>TOA_NDVI_Factors</ScaleFactorName>
+				<MeasurementUnits>unitless</MeasurementUnits>
+                                <RangeMin>-1.00</RangeMin>
+                                <RangeMax>1.00</RangeMax>                                   
+				<DataType>unsigned 16-bit integer</DataType>
+				<FillValue>
+					<Name>NA_UINT16_FILL</Name>
+					<Value>65535</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_UINT16_FILL</Name>
+					<Value>65534</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_UINT16_FILL</Name>
+					<Value>65533</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_UINT16_FILL</Name>
+					<Value>65532</Value> 
+				</FillValue>
+				<FillValue>
+					<Name>ERR_UINT16_FILL</Name>
+					<Value>65531</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_UINT16_FILL</Name>
+					<Value>65530</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_UINT16_FILL</Name>
+					<Value>65529</Value>
+				</FillValue>
+				<FillValue>
+					<Name>SOUB_UINT16_FILL</Name>
+					<Value>65528</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>TOC_EVI</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>1536</MinIndex>
+				<MaxIndex>1536</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>6400</MinIndex>
+				<MaxIndex>6400</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>2</Count>
+				<Type>byte(s)</Type> 
+			</DataSize>
+			<Datum>
+				<Description>Enhanced Vegetation Index - Top of Canopy</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>1</Scaled>
+                                <ScaleFactorName>TOC_EVI_Factors</ScaleFactorName>
+				<MeasurementUnits>unitless</MeasurementUnits>
+                                <RangeMin>-1.00</RangeMin>
+                                <RangeMax>4.00</RangeMax>                                   
+				<DataType>unsigned 16-bit integer</DataType>
+				<FillValue>
+					<Name>NA_UINT16_FILL</Name>
+					<Value>65535</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_UINT16_FILL</Name>
+					<Value>65534</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_UINT16_FILL</Name>
+					<Value>65533</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_UINT16_FILL</Name>
+					<Value>65532</Value> 
+				</FillValue>
+				<FillValue>
+					<Name>ERR_UINT16_FILL</Name>
+					<Value>65531</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_UINT16_FILL</Name>
+					<Value>65530</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_UINT16_FILL</Name>
+					<Value>65529</Value>
+				</FillValue>
+				<FillValue>
+					<Name>SOUB_UINT16_FILL</Name>
+					<Value>65528</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+                <Field>
+			<Name>QF1_VIIRSVIEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>1536</MinIndex>
+				<MaxIndex>1536</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>6400</MinIndex>
+				<MaxIndex>6400</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Overall NDVI Quality</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Low</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>High</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>     
+			<Datum>
+				<Description>Overall EVI Quality</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Low</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>High</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>     
+			<Datum>
+				<Description>I1 TOA Reflectance is NOT available</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>      
+			<Datum>
+				<Description>I2 TOA Reflectance is NOT available</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>     
+			<Datum>
+				<Description>I1 Surface Reflectance is NOT available</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>      
+			<Datum>
+				<Description>I2 Surface Reflectance is NOT available</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>        
+			<Datum>
+				<Description>M3 Surface Reflectance is NOT available</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>        
+			<Datum>
+				<Description>EVI Range is out of range (EVI &lt; -1.0 or EVI &gt; 4.0)</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>         
+                </Field>
+                <Field>
+			<Name>QF2_VIIRSVIEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>1536</MinIndex>
+				<MaxIndex>1536</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>6400</MinIndex>
+				<MaxIndex>6400</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>       
+			<Datum>
+				<Description>Land/Water</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>3 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Land and Desert</Name> 
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Land/No Desert</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Inland Water</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Sea Water</Name>
+					<Value>3</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Coastal</Name>
+					<Value>5</Value> 
+				</LegendEntry>
+			</Datum>     
+			<Datum>
+				<Description>Cloud Confidence</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Confidently Clear</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Probably Clear</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Probably Cloudy</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Confidently Cloudy</Name>
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum>  
+			<Datum>
+				<Description>Sun Glint in pixel (as indicated in the VIIRS Cloud Mask)</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>None</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Geometry Based</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Wind-Speed Based</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Geometry and Wind</Name> 
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Thin Cirrus detected in pixel (from VIIRS Cloud Mask)</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+                </Field>
+                <Field>
+			<Name>QF3_VIIRSVIEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>1536</MinIndex>
+				<MaxIndex>1536</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>6400</MinIndex>
+				<MaxIndex>6400</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>   
+			<Datum>
+				<Description>Degradation Condition: Solar Zenith Angle within Range (65 Deg &lt;= Solar Zenith Angle &lt;= 85 Deg)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>    
+			<Datum>
+				<Description>Exclusion: AOT &gt; 1.0 (AOT in horizontal cell &gt; 1.0 on the slant path (AOT @550nm))</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>    
+			<Datum>
+				<Description>Exclusion: Solar Zenith Angle &gt; 85 Deg</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>       
+			<Datum>
+				<Description>Spare</Description>
+				<DatumOffset>3</DatumOffset> 
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>5 bit(s)</DataType>
+			</Datum>    
+                </Field>
+                <Field>
+			<Name>TOA_NDVI_Factors</Name>
+			<Dimension>
+				<Name>Granule</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>2</MinIndex>
+				<MaxIndex>2</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>       
+			<Datum>
+				<Description>Scale = First Array Element; Offset = 2nd Array Element</Description>
+				<DatumOffset>0</DatumOffset> 
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits> 
+				<DataType>32-bit floating point</DataType>
+			</Datum>     
+                </Field>
+                <Field>
+			<Name>TOC_EVI_Factors</Name>
+			<Dimension>
+				<Name>Granule</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>2</MinIndex>
+				<MaxIndex>2</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>       
+			<Datum>
+				<Description>Scale = First Array Element; Offset = 2nd Array Element</Description>
+				<DatumOffset>0</DatumOffset> 
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits> 
+				<DataType>32-bit floating point</DataType>
+			</Datum>     
+                </Field>
+        </ProductData>
+</NPOESSDataProduct>

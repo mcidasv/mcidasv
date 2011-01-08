@@ -1,0 +1,459 @@
+<?xml version="1.0"?>
+
+<NPOESSDataProduct xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="NPOESS_Product_Profile.xsd">
+	<ProductName>VIIRS Ice Surface Temperature EDR</ProductName>
+	<CollectionShortName>VIIRS-IST-EDR</CollectionShortName>
+	<DataProductID>VISTO</DataProductID>
+	<ProductData>
+		<DataName>VIIRS Ice Surface Temperature EDR Product Profile</DataName>
+		<Field>
+			<Name>IceSurfaceTemperature</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>2</Count>
+				<Type>byte(s)</Type> 
+			</DataSize>
+			<Datum>
+				<Description>Ice Surface Temperature</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>1</Scaled>
+                                <ScaleFactorName>ISTFactors</ScaleFactorName>
+				<MeasurementUnits>kelvin</MeasurementUnits>
+                                <RangeMin>183.20</RangeMin>
+                                <RangeMax>275.00</RangeMax>
+				<DataType>unsigned 16-bit integer</DataType>
+				<FillValue>
+					<Name>NA_UINT16_FILL</Name>
+					<Value>65535</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_UINT16_FILL</Name>
+					<Value>65534</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_UINT16_FILL</Name>
+					<Value>65533</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_UINT16_FILL</Name>
+					<Value>65532</Value> 
+				</FillValue>
+				<FillValue>
+					<Name>ERR_UINT16_FILL</Name>
+					<Value>65531</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_UINT16_FILL</Name>
+					<Value>65530</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_UINT16_FILL</Name>
+					<Value>65529</Value>
+				</FillValue>
+				<FillValue>
+					<Name>SOUB_UINT16_FILL</Name>
+					<Value>65528</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+                <Field>
+			<Name>QF1_VIIRSISTEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>IST Quality (Indicates the quality of the pixel level retrieval)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>High</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Medium</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Low</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry> 
+					<Name>No Retrieval</Name> 
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum>    
+			<Datum>
+				<Description>Algorithm (Indicates which algorithm branch was implemented)</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>2-Band Split Window</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Single Band (12-micrometer) Retrieval</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>       
+			<Datum>
+				<Description>Day/Night</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Night (Solar Zenith Angle &gt; 85 Degrees)</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Day (Solar Zenith Angle &lt;= 85 degrees)</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>        
+			<Datum>
+				<Description>Band M15 Brightness Temperature is out of System Spec Range (BT(M15) &lt;= 190K or BT(M15) &gt;= 343K)</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>       
+			<Datum>
+				<Description>Band M16 Brightness Temperature is out of System Spec Range (BT(M16) &lt;= 190K or BT(M16) &gt;= 340K)</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>         
+			<Datum>
+				<Description>Fire detected in pixel</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>         
+			<Datum>
+				<Description>Pixel is outside of Ice Coverage Zone (Pixel is South of 36N and North of 50S latitude)</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>               
+                </Field>
+                <Field>
+			<Name>QF2_VIIRSISTEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>        
+			<Datum>
+				<Description>Ice Fraction</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Ice Fraction = 1.00</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>0.95 &lt;= Ice Fraction &lt; 1.00</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>0.00 &lt; Ice Fraction &lt; 0.95</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Ice Fraction = 0.00</Name>
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum>         
+			<Datum>
+				<Description>Cloud Confidence Indicator</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Confidently Clear</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Probably Clear</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Probably Cloudy</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Confidently Cloudy</Name>
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum>         
+			<Datum>
+				<Description>Adjacent Pixel Cloud Confidence Indicator</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Confidently Clear</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Probably Clear</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Probably Cloudy</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Confidently Cloudy</Name>
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum>          
+			<Datum>
+				<Description>Exclusion - Thin Cirrus Detected by Solar Band</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>           
+			<Datum>
+				<Description>Spare</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+			</Datum> 
+                </Field>
+                <Field>
+			<Name>QF3_VIIRSISTEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>        
+			<Datum>
+				<Description>Exclusion - Land/Water Background (Identifies the type of Earth surface that lies along the instrument’s line of sight. All land types except Sea Water are excluded from processing)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>3 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Land and Desert</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Land/No Desert</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Inland Water</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Sea Water</Name>
+					<Value>3</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Coastal</Name>
+					<Value>5</Value>
+				</LegendEntry>
+			</Datum>         
+			<Datum>
+				<Description>Snow or Ice detected in pixel</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>         
+			<Datum>
+				<Description>Shadow detected in pixel</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>           
+			<Datum>
+				<Description>Exclusion: AOT &gt; 1.0 (AOT in horizontal cell &gt; 1.0 on the slant path (AOT @550nm))</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>        
+			<Datum>
+				<Description>Ice Surface Temperature is Out of the System Spec Validated Range. (IST &lt; 213K or IST &gt; 275K)</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>        
+			<Datum>
+				<Description>Spare</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+			</Datum>     
+                </Field>
+                <Field>
+			<Name>ISTFactors</Name>
+			<Dimension>
+				<Name>Granule</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>2</MinIndex>
+				<MaxIndex>2</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>        
+			<Datum>
+				<Description>Scale = First Array Element; Offset = 2nd Array Element</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>scale = unitless; offset = kelvin</MeasurementUnits>
+				<DataType>32-bit floating point</DataType>
+			</Datum>     
+                </Field>
+        </ProductData>
+</NPOESSDataProduct>

@@ -1,0 +1,2492 @@
+<?xml version="1.0"?>
+
+<!--
+
+<NPOESS_Product_Profile CollectionShortName="CrIMSS-EDR" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="NPOESS_Product_Profile.xsd">
+
+-->
+
+<NPOESSDataProduct>
+	<ProductName>CrIS IR Ozone IP</ProductName>
+	<CollectionShortName>CrIS-IR-OZ-Prof-IP</CollectionShortName>
+	<DataProductID>REDRO</DataProductID>
+	<ProductData>
+		<DataName>CrIS IR Ozone IP Product Profile</DataName>
+		<Field>
+			<Name>NumRetrievals</Name>
+			<Dimension>
+				<Name>Granule</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>1</MinIndex>
+				<MaxIndex>1</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Number of retrievals for this granule</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin>120</RangeMin>
+				<RangeMax>1080</RangeMax>
+				<DataType>32-bit integer</DataType>
+				<FillValue>
+					<Name>NA_INT32_FILL</Name>
+					<Value>-999</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_INT32_FILL</Name>
+					<Value>-998</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_INT32_FILL</Name>
+					<Value>-997</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_INT32_FILL</Name>
+					<Value>-996</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_INT32_FILL</Name>
+					<Value>-995</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_INT32_FILL</Name>
+					<Value>-994</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_INT32_FILL</Name>
+					<Value>-993</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>FORnum</Name>
+			<Dimension>
+				<Name>Retrieval</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>120</MinIndex>
+				<MaxIndex>1080</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Field of Regard Number (1-120) Note that FOR 1-30 = scan 1, FOR 31-60 = scan 2, FOR 61-90 = scan 3, FOR 91-120 = scan 4</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin/>
+				<RangeMax/>
+				<DataType>32-bit integer</DataType>
+				<FillValue>
+					<Name>NA_INT32_FILL</Name>
+					<Value>-999</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_INT32_FILL</Name>
+					<Value>-998</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_INT32_FILL</Name>
+					<Value>-997</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_INT32_FILL</Name>
+					<Value>-996</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_INT32_FILL</Name>
+					<Value>-995</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_INT32_FILL</Name>
+					<Value>-994</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_INT32_FILL</Name>
+					<Value>-993</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>O3</Name>
+			<Dimension>
+				<Name>Retrieval</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>120</MinIndex>
+				<MaxIndex>1080</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>Level</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>22</MinIndex>
+				<MaxIndex>22</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Retrieved Ozone Profile</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>ppmv</MeasurementUnits>
+				<RangeMin>0</RangeMin>
+				<RangeMax>30</RangeMax>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>PressureLevels_O3</Name>
+			<Dimension>
+				<Name>Level</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>31</MinIndex>
+				<MaxIndex>31</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Pressure levels for the ozone retrieval</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>hPa</MeasurementUnits>
+				<RangeMin/>
+				<RangeMax/>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>SurfacePressure</Name>
+			<Dimension>
+				<Name>Retrieval</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>120</MinIndex>
+				<MaxIndex>1080</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Surface Pressure (Secondary Output)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>hPa</MeasurementUnits>
+				<RangeMin/>
+				<RangeMax/>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>SkinTemperature</Name>
+			<Dimension>
+				<Name>Retrieval</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>120</MinIndex>
+				<MaxIndex>1080</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Temperature at the terrain surface</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>kelvin</MeasurementUnits>
+				<RangeMin/>
+				<RangeMax/>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>LandFraction</Name>
+			<Dimension>
+				<Name>Retrieval</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>120</MinIndex>
+				<MaxIndex>1080</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Land Fraction</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin/>
+				<RangeMax/>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>Iterations</Name>
+			<Dimension>
+				<Name>Retrieval</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>120</MinIndex>
+				<MaxIndex>1080</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Number of iterations before convergence</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>iteration</MeasurementUnits>
+				<RangeMin/>
+				<RangeMax/>
+				<DataType>32-bit integer</DataType>
+				<FillValue>
+					<Name>NA_INT32_FILL</Name>
+					<Value>-999</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_INT32_FILL</Name>
+					<Value>-998</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_INT32_FILL</Name>
+					<Value>-997</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_INT32_FILL</Name>
+					<Value>-996</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_INT32_FILL</Name>
+					<Value>-995</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_INT32_FILL</Name>
+					<Value>-994</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_INT32_FILL</Name>
+					<Value>-993</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>ChiSquareIR+MW</Name>
+			<Dimension>
+				<Name>Retrieval</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>120</MinIndex>
+				<MaxIndex>1080</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Chi Square value from joint IR-microwave radiance matching retrieval</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin/>
+				<RangeMax/>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>ChiSquareMW1</Name>
+			<Dimension>
+				<Name>Retrieval</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>120</MinIndex>
+				<MaxIndex>1080</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Chi Square value from microwave radiance matching - stage1</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin/>
+				<RangeMax/>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>ChiSquareMW2</Name>
+			<Dimension>
+				<Name>Retrieval</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>120</MinIndex>
+				<MaxIndex>1080</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Chi Square value from microwave radiance matching retrieval - stage2</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin/>
+				<RangeMax/>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>IR_NoiseAmplification</Name>
+			<Dimension>
+				<Name>Retrieval</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>120</MinIndex>
+				<MaxIndex>1080</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>IR Noise Amplification Factors</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin/>
+				<RangeMax/>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>ProfileDiff</Name>
+			<Dimension>
+				<Name>Retrieval</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>120</MinIndex>
+				<MaxIndex>1080</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Profile differences between MW &amp; IR</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin/>
+				<RangeMax/>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>OzoneSpectralSignature</Name>
+			<Dimension>
+				<Name>Retrieval</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>120</MinIndex>
+				<MaxIndex>1080</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>(Indicates quality of retrieved ozone profile IP) Difference between ozone absorption radiance and the background radiance. This is a quality flag that indicates the strength of the IR ozone signal in the CrIS spectrum.</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>mW/(m^2 sr cm^-1)</MeasurementUnits>
+				<RangeMin/>
+				<RangeMax/>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+	</ProductData>
+	<ProductData>
+		<DataName>CrIS IR Ozone IP Product Profile - Quality Flags</DataName>
+		<Field>
+			<Name>QF1_CrISIRO3</Name>
+			<Dimension>
+				<Name>Granule</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>1</MinIndex>
+				<MaxIndex>1</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>CrIS Detector 1 Failed - LWIR</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS Detector 2 Failed - LWIR</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS Detector 3 Failed - LWIR</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS Detector 4 Failed - LWIR</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS Detector 5 Failed - LWIR</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS Detector 6 Failed - LWIR</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS Detector 7 Failed - LWIR</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS Detector 8 Failed - LWIR</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF2_CrISIRO3</Name>
+			<Dimension>
+				<Name>Granule</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>1</MinIndex>
+				<MaxIndex>1</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>CrIS Detector 9 Failed - LWIR</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS Detector 1 Failed - MWIR</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS Detector 2 Failed - MWIR</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS Detector 3 Failed - MWIR</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS Detector 4 Failed - MWIR</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS Detector 5 Failed - MWIR</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS Detector 6 Failed - MWIR</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS Detector 7 Failed - MWIR</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF3_CrISIRO3</Name>
+			<Dimension>
+				<Name>Granule</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>1</MinIndex>
+				<MaxIndex>1</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>CrIS Detector 8 Failed - MWIR</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS Detector 9 Failed - MWIR</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS Detector 1 Failed - SWIR</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS Detector 2 Failed - SWIR</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS Detector 3 Failed - SWIR</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS Detector 4 Failed - SWIR</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS Detector 5 Failed - SWIR</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS Detector 6 Failed - SWIR</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF4_CrISIRO3</Name>
+			<Dimension>
+				<Name>Granule</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>1</MinIndex>
+				<MaxIndex>1</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>CrIS Detector 7 Failed - SWIR</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS Detector 8 Failed - SWIR</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS Detector 9 Failed - SWIR</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Apodization Flag</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>No Apodization Applied</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Hamming</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Blackmann</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Day/Night Flag</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Day</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Night</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Terminator</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Spare</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF5_CrISIRO3</Name>
+			<Dimension>
+				<Name>Retrieval</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>120</MinIndex>
+				<MaxIndex>1080</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Combined IR+MW retrieval did not converge</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Microwave only retrieval did not converge</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Overall Retrieval Quality</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>High (IR + MW)</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Low (IR Only)</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Non-Converged</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Difference between MW+IR temperature profile minus MW only temperature profile exceeds threshold</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Cloudiness</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Clear</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Partly Cloudy</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Cloudy</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Ice Mask</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>No Ice</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Ice on water</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF6_CrISIRO3</Name>
+			<Dimension>
+				<Name>Retrieval</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>120</MinIndex>
+				<MaxIndex>1080</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Non-LTE Flag</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>LTE</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Non-LTE</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Rain Flag: Precipitation detected within the FOR exceeding 2 mm/hr</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Retrieval Cell Size (Number of FOVs used for this retrieval)</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>9 FOVs used</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>4 FOVs used</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>1 FOV used</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Temperature out of range: Atmospheric temperature at one or more of the pressure levels, or the surface skin temperature, is out of the expected range.</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Spare</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>3 bit(s)</DataType>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF7_CrISIRO3</Name>
+			<Dimension>
+				<Name>Retrieval</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>120</MinIndex>
+				<MaxIndex>1080</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Sun Glint present in retrieval</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS SDR Quality – Channel not used due to poor quality - Channel - 1</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS SDR Quality – Channel not used due to poor quality - Channel - 2</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS SDR Quality – Channel not used due to poor quality - Channel - 3</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS SDR Quality – Channel not used due to poor quality - Channel - 4</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS SDR Quality – Channel not used due to poor quality - Channel - 5</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS SDR Quality – Channel not used due to poor quality - Channel - 6</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS SDR Quality – Channel not used due to poor quality - Channel - 7</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF8_CrISIRO3</Name>
+			<Dimension>
+				<Name>Retrieval</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>120</MinIndex>
+				<MaxIndex>1080</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>ATMS SDR Quality – Channel not used due to poor quality - Channel - 8</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS SDR Quality – Channel not used due to poor quality - Channel - 9</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS SDR Quality – Channel not used due to poor quality - Channel - 10</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS SDR Quality – Channel not used due to poor quality - Channel - 11</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS SDR Quality – Channel not used due to poor quality - Channel - 12</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS SDR Quality – Channel not used due to poor quality - Channel - 13</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS SDR Quality – Channel not used due to poor quality - Channel - 14</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS SDR Quality – Channel not used due to poor quality - Channel - 15</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF9_CrISIRO3</Name>
+			<Dimension>
+				<Name>Retrieval</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>120</MinIndex>
+				<MaxIndex>1080</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>ATMS SDR Quality – Channel not used due to poor quality - Channel - 16</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS SDR Quality – Channel not used due to poor quality - Channel - 17</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS SDR Quality – Channel not used due to poor quality - Channel - 18</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS SDR Quality – Channel not used due to poor quality - Channel - 19</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS SDR Quality – Channel not used due to poor quality - Channel - 20</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS SDR Quality – Channel not used due to poor quality - Channel - 21</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS SDR Quality – Channel not used due to poor quality - Channel - 22</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS data is Not available</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF10_CrISIRO3</Name>
+			<Dimension>
+				<Name>Retrieval</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>120</MinIndex>
+				<MaxIndex>1080</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Day/Night Flag</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Day</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Night</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Spare</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+			</Datum>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #1 SWIR Quality)</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #1 MWIR Quality)</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #1 LWIR Quality)</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF11_CrISIRO3</Name>
+			<Dimension>
+				<Name>Retrieval</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>120</MinIndex>
+				<MaxIndex>1080</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #2 SWIR Quality)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #2 MWIR Quality)</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #2 LWIR Quality)</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #3 SWIR Quality)</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF12_CrISIRO3</Name>
+			<Dimension>
+				<Name>Retrieval</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>120</MinIndex>
+				<MaxIndex>1080</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #3 MWIR Quality)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #3 LWIR Quality)</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #4 SWIR Quality)</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #4 MWIR Quality)</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF13_CrISIRO3</Name>
+			<Dimension>
+				<Name>Retrieval</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>120</MinIndex>
+				<MaxIndex>1080</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #4 LWIR Quality)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #5 SWIR Quality)</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #5 MWIR Quality)</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #5 LWIR Quality)</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF14_CrISIRO3</Name>
+			<Dimension>
+				<Name>Retrieval</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>120</MinIndex>
+				<MaxIndex>1080</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #6 SWIR Quality)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #6 MWIR Quality)</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #6 LWIR Quality)</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #7 SWIR Quality)</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF15_CrISIRO3</Name>
+			<Dimension>
+				<Name>Retrieval</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>120</MinIndex>
+				<MaxIndex>1080</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #7 MWIR Quality)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #7 LWIR Quality)</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #8 SWIR Quality)</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #8 MWIR Quality)</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF16_CrISIRO3</Name>
+			<Dimension>
+				<Name>Retrieval</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>120</MinIndex>
+				<MaxIndex>1080</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #8 LWIR Quality)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #9 SWIR Quality)</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #9 MWIR Quality)</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>CrIS SDR Quality (FOV #9 LWIR Quality)</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Invalid</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum>
+		</Field>
+	</ProductData>
+</NPOESSDataProduct>

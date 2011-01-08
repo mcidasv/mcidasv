@@ -1,0 +1,2779 @@
+<?xml version="1.0"?>
+
+<NPOESSDataProduct xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="NPOESS_Product_Profile.xsd">
+        <ProductName>ATMS Science TDR: Channels 1 through 22</ProductName>
+        <CollectionShortName>ATMS-TDR</CollectionShortName>
+        <DataProductID>TATMS</DataProductID>
+        <ProductData>
+                <DataName>ATMS TDR Product Profile</DataName>
+                <Field>
+                        <Name>BeamTime</Name>
+                        <Dimension>
+                                <Name>Scan</Name>
+                                <GranuleBoundary>1</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>12</MinIndex>
+                                <MaxIndex>12</MaxIndex>
+                        </Dimension>
+                        <Dimension>
+                                <Name>BeamPosition</Name>
+                                <GranuleBoundary>0</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>96</MinIndex>
+                                <MaxIndex>96</MaxIndex>
+                        </Dimension>
+                        <DataSize>
+                                <Count>8</Count>
+                                <Type>byte(s)</Type>
+                        </DataSize>
+                        <Datum>
+                                <Description>The time in IET of the end of the view period for this observation</Description>
+                                <DatumOffset>0</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>microsecond</MeasurementUnits>
+                                <DataType>64-bit integer</DataType>
+                                <FillValue>
+                                        <Name>NA_INT64_FILL</Name>
+                                        <Value>-999</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>MISS_INT64_FILL</Name>
+                                        <Value>-998</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>ERR_INT64_FILL</Name>
+                                        <Value>-995</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>VDNE_INT64_FILL</Name>
+                                        <Value>-993</Value>
+                                </FillValue>
+                        </Datum>
+                </Field>
+                <Field>
+                        <Name>AntennaTemperature</Name>
+                        <Dimension>
+                                <Name>Scan</Name>
+                                <GranuleBoundary>1</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>12</MinIndex>
+                                <MaxIndex>12</MaxIndex>
+                        </Dimension>
+                        <Dimension>
+                                <Name>BeamPosition</Name>
+                                <GranuleBoundary>0</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>96</MinIndex>
+                                <MaxIndex>96</MaxIndex>
+                        </Dimension>
+                        <Dimension>
+                                <Name>Channel</Name>
+                                <GranuleBoundary>0</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>22</MinIndex>
+                                <MaxIndex>22</MaxIndex>
+                        </Dimension>
+                        <DataSize>
+                                <Count>2</Count>
+                                <Type>byte(s)</Type>
+                        </DataSize>
+                        <Datum>
+                                <Description>Antenna temperature for each ATMS channel and beam position</Description>
+                                <DatumOffset>0</DatumOffset>
+                                <Scaled>1</Scaled>
+                                <ScaleFactorName>AntennaTemperatureFactors</ScaleFactorName>
+                                <MeasurementUnits>kelvin</MeasurementUnits>
+				<RangeMin>0.00</RangeMin>
+				<RangeMax>330.00</RangeMax>
+                                <DataType>unsigned 16-bit integer</DataType>
+                                <FillValue>
+                                        <Name>NA_UINT16_FILL</Name>
+                                        <Value>65535</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>MISS_UINT16_FILL</Name>
+                                        <Value>65534</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>ERR_UINT16_FILL</Name>
+                                        <Value>65531</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>VDNE_UINT16_FILL</Name>
+                                        <Value>65529</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>SOUB_UINT16_FILL</Name>
+                                        <Value>65528</Value>
+                                </FillValue>
+                        </Datum>
+                </Field>
+                <Field>
+            <Name>InstrumentMode</Name>
+            <Dimension>
+                <Name>Status</Name>
+                <GranuleBoundary>1</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>4</MinIndex>
+                <MaxIndex>4</MaxIndex>
+            </Dimension>
+            <DataSize>
+                <Count>2</Count>
+                <Type>byte(s)</Type> 
+            </DataSize>
+            <Datum>
+                <Description>Instrument mode word 73 in the Health &amp; Status APID 531</Description>
+                <DatumOffset>0</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>unsigned 16-bit integer</DataType> 
+            </Datum>
+        </Field>
+                <Field>
+            <Name>QF1_GRAN_HEALTHSTATUS</Name>
+            <Dimension>
+                <Name>Time</Name>
+                <GranuleBoundary>1</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>4</MinIndex>
+                <MaxIndex>4</MaxIndex>
+            </Dimension>
+            <DataSize>
+                <Count>1</Count>
+                <Type>byte(s)</Type> 
+            </DataSize>
+            <Datum>
+                <Description>Spare</Description>
+                <DatumOffset>0</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+            </Datum>                                
+            <Datum>
+                <Description>SPA_P5V_A_VMON or SPA_P5V_B_VMON health check failed</Description>
+                <DatumOffset>1</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                              
+            <Datum>
+                <Description>SPA_P15V_A_VMON or SPA_P15V_B_VMON health check failed</Description>
+                <DatumOffset>2</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>SPA_N15V_A_VMON or SPA_N15V_B_VMON health check failed</Description>
+                <DatumOffset>3</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>RCV_P6V_RF_VMON health check failed</Description>
+                <DatumOffset>4</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>RCV_P12V_RF2_VMON health check failed</Description>
+                <DatumOffset>5</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>RCV_P15V_RF_VMON health check failed</Description>
+                <DatumOffset>6</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>RCV_N15V_RF_VMON health check failed</Description>
+                <DatumOffset>7</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>  
+        </Field>
+                <Field>
+            <Name>QF2_GRAN_HEALTHSTATUS</Name>
+            <Dimension>
+                <Name>Time</Name>
+                <GranuleBoundary>1</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>4</MinIndex>
+                <MaxIndex>4</MaxIndex>
+            </Dimension>
+            <DataSize>
+                <Count>1</Count>
+                <Type>byte(s)</Type> 
+            </DataSize>                              
+            <Datum>
+                <Description>RCV_P15V_ANA_VMON health check failed</Description>
+                <DatumOffset>0</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                                
+            <Datum>
+                <Description>RCV_N15V_ANA_VMON health check failed</Description>
+                <DatumOffset>1</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                              
+            <Datum>
+                <Description>K_RFE_PRT health check failed</Description>
+                <DatumOffset>2</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>KA_RFE_PRT health check failed</Description>
+                <DatumOffset>3</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>V_RFE_PRT health check failed</Description>
+                <DatumOffset>4</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>V_PRI_PLO_PRT health check failed</Description>
+                <DatumOffset>5</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>V_RED_PLO_PRT health check failed</Description>
+                <DatumOffset>6</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>V_IF_PRT health check failed</Description>
+                <DatumOffset>7</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>  
+        </Field>
+                <Field>
+            <Name>QF3_GRAN_HEALTHSTATUS</Name>
+            <Dimension>
+                <Name>Time</Name>
+                <GranuleBoundary>1</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>4</MinIndex>
+                <MaxIndex>4</MaxIndex>
+            </Dimension>
+            <DataSize>
+                <Count>1</Count>
+                <Type>byte(s)</Type> 
+            </DataSize>                              
+            <Datum>
+                <Description>W_RFE_PRT health check failed</Description>
+                <DatumOffset>0</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                                
+            <Datum>
+                <Description>SAW_FILT_PRT health check failed</Description>
+                <DatumOffset>1</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                              
+            <Datum>
+                <Description>W_IF_PRT health check failed</Description>
+                <DatumOffset>2</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>W_PRI_GDO_PRT health check failed</Description>
+                <DatumOffset>3</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>W_RED_GDO_PRT health check failed</Description>
+                <DatumOffset>4</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>G_PRI_CSO_PRT health check failed</Description>
+                <DatumOffset>5</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>G_RED_CSO_PRT health check failed</Description>
+                <DatumOffset>6</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>G1_IF_PRT health check failed</Description>
+                <DatumOffset>7</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>  
+        </Field>
+                <Field>
+            <Name>QF4_GRAN_HEALTHSTATUS</Name>
+            <Dimension>
+                <Name>Time</Name>
+                <GranuleBoundary>1</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>4</MinIndex>
+                <MaxIndex>4</MaxIndex>
+            </Dimension>
+            <DataSize>
+                <Count>1</Count>
+                <Type>byte(s)</Type> 
+            </DataSize>                              
+            <Datum>
+                <Description>G2_IF_PRT health check failed</Description>
+                <DatumOffset>0</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                                
+            <Datum>
+                <Description>W_SHELF_PRT health check failed</Description>
+                <DatumOffset>1</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                              
+            <Datum>
+                <Description>KKA_SHELF_PRT health check failed</Description>
+                <DatumOffset>2</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>G_SHELF_PRT health check failed</Description>
+                <DatumOffset>3</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>V_SHELF_PRT health check failed</Description>
+                <DatumOffset>4</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>RCVPS_A_PRT health check failed</Description>
+                <DatumOffset>5</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>RCVPS_B_PRT health check failed</Description>
+                <DatumOffset>6</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>OCXO_PRI_PRT health check failed</Description>
+                <DatumOffset>7</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>  
+        </Field>
+                <Field>
+            <Name>QF5_GRAN_HEALTHSTATUS</Name>
+            <Dimension>
+                <Name>Time</Name>
+                <GranuleBoundary>1</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>4</MinIndex>
+                <MaxIndex>4</MaxIndex>
+            </Dimension>
+            <DataSize>
+                <Count>1</Count>
+                <Type>byte(s)</Type> 
+            </DataSize>                              
+            <Datum>
+                <Description>OCXO_RED_PRT health check failed</Description>
+                <DatumOffset>0</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                                
+            <Datum>
+                <Description>DSPA_1553_PRT health check failed</Description>
+                <DatumOffset>1</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                              
+            <Datum>
+                <Description>DSPB_1553_PRT health check failed</Description>
+                <DatumOffset>2</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>SPA_PS_A_PRT health check failed</Description>
+                <DatumOffset>3</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>SPA_PS_B_PRT health check failed</Description>
+                <DatumOffset>4</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>DSPA_PROC_PRT health check failed</Description>
+                <DatumOffset>5</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>DSPB_PROC_PRT health check failed</Description>
+                <DatumOffset>6</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>SD_MECH_TEMP health check failed</Description>
+                <DatumOffset>7</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>  
+        </Field>
+                <Field>
+            <Name>QF6_GRAN_HEALTHSTATUS</Name>
+            <Dimension>
+                <Name>Time</Name>
+                <GranuleBoundary>1</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>4</MinIndex>
+                <MaxIndex>4</MaxIndex>
+            </Dimension>
+            <DataSize>
+                <Count>1</Count>
+                <Type>byte(s)</Type> 
+            </DataSize>                              
+            <Datum>
+                <Description>SD_PS_PRT health check failed</Description>
+                <DatumOffset>0</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                                
+            <Datum>
+                <Description>V_PLO_A_LOCK_VMON health check failed</Description>
+                <DatumOffset>1</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                              
+            <Datum>
+                <Description>V_PLO_B_LOCK_VMON health check failed</Description>
+                <DatumOffset>2</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>HK_2WREST1_A or HK_2WREST1_B health check failed</Description>
+                <DatumOffset>3</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>HK_2WREST2_A or HK_2WREST2_B health check failed</Description>
+                <DatumOffset>4</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>4W_GND_A or 4W_GND_B health check failed</Description>
+                <DatumOffset>5</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>2W_GND_A or 2W_GND_B health check failed</Description>
+                <DatumOffset>6</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>VD_REF_A or VD_REF_B; Module 1 health check failed</Description>
+                <DatumOffset>7</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>  
+        </Field>
+                <Field>
+            <Name>QF7_GRAN_HEALTHSTATUS</Name>
+            <Dimension>
+                <Name>Time</Name>
+                <GranuleBoundary>1</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>4</MinIndex>
+                <MaxIndex>4</MaxIndex>
+            </Dimension>
+            <DataSize>
+                <Count>1</Count>
+                <Type>byte(s)</Type> 
+            </DataSize>                              
+            <Datum>
+                <Description>VD_REF_A or VD_REF_B; Module 2 health check failed</Description>
+                <DatumOffset>0</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                                
+            <Datum>
+                <Description>VD_REF_A or VD_REF_B; Module 3 health check failed</Description>
+                <DatumOffset>1</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                              
+            <Datum>
+                <Description>VD_REF_A or VD_REF_B; Module 4 health check failed</Description>
+                <DatumOffset>2</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>VD_GND_A or VD_GND_B; Module 1 health check failed</Description>
+                <DatumOffset>3</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>VD_GND_A or VD_GND_B; Module 2 health check failed</Description>
+                <DatumOffset>4</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>VD_GND_A or VD_GND_B; Module 3 health check failed</Description>
+                <DatumOffset>5</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>VD_GND_A or VD_GND_B; Module 4 health check failed</Description>
+                <DatumOffset>6</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>SD_P5V_VMON health check failed</Description>
+                <DatumOffset>7</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>  
+        </Field>
+                <Field>
+            <Name>QF8_GRAN_HEALTHSTATUS</Name>
+            <Dimension>
+                <Name>Time</Name>
+                <GranuleBoundary>1</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>4</MinIndex>
+                <MaxIndex>4</MaxIndex>
+            </Dimension>
+            <DataSize>
+                <Count>1</Count>
+                <Type>byte(s)</Type> 
+            </DataSize>                              
+            <Datum>
+                <Description>SD_P12V_VMON health check failed</Description>
+                <DatumOffset>0</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                                
+            <Datum>
+                <Description>SD_N12V_VMON health check failed</Description>
+                <DatumOffset>1</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                              
+            <Datum>
+                <Description>MAIN_MOTOR_CUR health check failed</Description>
+                <DatumOffset>2</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>COMP_MOTOR_CUR health check failed</Description>
+                <DatumOffset>3</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>RESOLVER_VMON health check failed</Description>
+                <DatumOffset>4</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>SD_MAIN_MOTOR_VEL health check failed</Description>
+                <DatumOffset>5</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>SD_COMP_MOTOR_VEL health check failed</Description>
+                <DatumOffset>6</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>SD_MAIN_LOOP_ERROR health check failed</Description>
+                <DatumOffset>7</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>  
+        </Field>
+                <Field>
+            <Name>QF9_GRAN_HEALTHSTATUS</Name>
+            <Dimension>
+                <Name>Time</Name>
+                <GranuleBoundary>1</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>4</MinIndex>
+                <MaxIndex>4</MaxIndex>
+            </Dimension>
+            <DataSize>
+                <Count>1</Count>
+                <Type>byte(s)</Type> 
+            </DataSize>                              
+            <Datum>
+                <Description>SD_MAIN_LOOP_INT_ERROR health check failed</Description>
+                <DatumOffset>0</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                                
+            <Datum>
+                <Description>SD_MAIN_LOOP_VEL_ERROR health check failed</Description>
+                <DatumOffset>1</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                              
+            <Datum>
+                <Description>SD_COMP_LOOP_ERROR health check failed</Description>
+                <DatumOffset>2</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>SD_MAIN_MOTOR_REQ_VOLTAGE health check failed</Description>
+                <DatumOffset>3</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>SD_COMP_MOTOR_REQ_VOLTAGE health check failed</Description>
+                <DatumOffset>4</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>SD_FEED_FORWARD_VOLTAGE health check failed</Description>
+                <DatumOffset>5</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>COMP_MOTOR_POS health check failed</Description>
+                <DatumOffset>6</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name>
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>                           
+            <Datum>
+                <Description>Spare</Description> 
+                <DatumOffset>7</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>1 bit(s)</DataType> 
+            </Datum>  
+        </Field>
+                <Field>
+            <Name>QF10_GRAN_HEALTHSTATUS</Name>
+            <Dimension>
+                <Name>Time</Name>
+                <GranuleBoundary>1</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>4</MinIndex>
+                <MaxIndex>4</MaxIndex>
+            </Dimension>
+            <DataSize>
+                <Count>1</Count>
+                <Type>byte(s)</Type> 
+            </DataSize>                              
+            <Datum>
+                <Description>Spare</Description>
+                <DatumOffset>0</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>8 bit(s)</DataType> 
+            </Datum>  
+        </Field>
+                <Field>
+            <Name>QF11_GRAN_QUADRATICCORRECTION</Name>
+            <Dimension>
+                <Name>Granule</Name>
+                <GranuleBoundary>1</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>1</MinIndex>
+                <MaxIndex>1</MaxIndex>
+            </Dimension>
+            <DataSize>
+                <Count>1</Count>
+                <Type>byte(s)</Type> 
+            </DataSize>
+            <Datum>
+                <Description>Quadratic correction applied to the radiometric transfer function for non-linearity correction.</Description>
+                <DatumOffset>0</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>     
+            <Datum>
+                <Description>Spare</Description>
+                <DatumOffset>1</DatumOffset>
+                <Scaled>0</Scaled>                                 
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>7 bit(s)</DataType> 
+            </Datum>     
+        </Field>
+                <Field>
+            <Name>QF12_SCAN_KAVPRTCONVERR</Name>
+            <Dimension>
+                <Name>Scan</Name>
+                <GranuleBoundary>1</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>12</MinIndex>
+                <MaxIndex>12</MaxIndex>
+            </Dimension>
+            <DataSize>
+                <Count>1</Count>
+                <Type>byte(s)</Type> 
+            </DataSize>
+            <Datum>
+                <Description>Divide-by-zero condition or computation loop failed to converge in the K/Ka and V (KAV) Band PRT #1 temperature computation.</Description>
+                <DatumOffset>0</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry> 
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>     
+            <Datum>
+                <Description>Divide-by-zero condition or computation loop failed to converge in the K/Ka and V (KAV) Band PRT #2 temperature computation.</Description>
+                <DatumOffset>1</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry> 
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Divide-by-zero condition or computation loop failed to converge in the K/Ka and V (KAV) Band PRT #3 temperature computation.</Description>
+                <DatumOffset>2</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry> 
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Divide-by-zero condition or computation loop failed to converge in the K/Ka and V (KAV) Band PRT #4 temperature computation.</Description>
+                <DatumOffset>3</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry> 
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Divide-by-zero condition or computation loop failed to converge in the K/Ka and V (KAV) Band PRT #5 temperature computation.</Description>
+                <DatumOffset>4</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry> 
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Divide-by-zero condition or computation loop failed to converge in the K/Ka and V (KAV) Band PRT #6 temperature computation.</Description>
+                <DatumOffset>5</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry> 
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Divide-by-zero condition or computation loop failed to converge in the K/Ka and V (KAV) Band PRT #7 temperature computation.</Description>
+                <DatumOffset>6</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry> 
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Divide-by-zero condition or computation loop failed to converge in the K/Ka and V (KAV) Band PRT #8 temperature computation.</Description>
+                <DatumOffset>7</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry> 
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+        </Field>
+                <Field>
+            <Name>QF13_SCAN_WGPRTCONVERR</Name>
+            <Dimension>
+                <Name>Scan</Name>
+                <GranuleBoundary>1</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>12</MinIndex>
+                <MaxIndex>12</MaxIndex>
+            </Dimension>
+            <DataSize>
+                <Count>1</Count>
+                <Type>byte(s)</Type> 
+            </DataSize>
+            <Datum>
+                <Description>Divide-by-zero condition or computation loop failed to converge in the WG Band PRT #1 temperature computation.</Description>
+                <DatumOffset>0</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Divide-by-zero condition or computation loop failed to converge in the WG Band PRT #2 temperature computation.</Description>
+                <DatumOffset>1</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Divide-by-zero condition or computation loop failed to converge in the WG Band PRT #3 temperature computation.</Description>
+                <DatumOffset>2</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Divide-by-zero condition or computation loop failed to converge in the WG Band PRT #4 temperature computation.</Description>
+                <DatumOffset>3</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Divide-by-zero condition or computation loop failed to converge in the WG Band PRT #5 temperature computation.</Description>
+                <DatumOffset>4</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Divide-by-zero condition or computation loop failed to converge in the WG Band PRT #6 temperature computation.</Description>
+                <DatumOffset>5</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Divide-by-zero condition or computation loop failed to converge in the WG Band PRT #7 temperature computation.</Description>
+                <DatumOffset>6</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum> 
+            <Datum>
+                <Description>Spare</Description>
+                <DatumOffset>7</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType>
+            </Datum>
+        </Field>
+                <Field>
+            <Name>QF14_SCAN_SHELFPRTCONVERR</Name>
+            <Dimension>
+                <Name>Scan</Name>
+                <GranuleBoundary>1</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>12</MinIndex>
+                <MaxIndex>12</MaxIndex>
+            </Dimension>
+            <DataSize>
+                <Count>1</Count>
+                <Type>byte(s)</Type> 
+            </DataSize>
+            <Datum>
+                <Description>Divide-by-zero condition or computation loop failed to converge in the K/Ka, V, W, G Band Receiver Shelf PRT K temperature computation.</Description>
+                <DatumOffset>0</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum> 
+            <Datum>
+                <Description>Divide-by-zero condition or computation loop failed to converge in the K/Ka, V, W, G Band Receiver Shelf PRT V temperature computation.</Description>
+                <DatumOffset>1</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Divide-by-zero condition or computation loop failed to converge in the K/Ka, V, W, G Band Receiver Shelf PRT W temperature computation.</Description>
+                <DatumOffset>2</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Divide-by-zero condition or computation loop failed to converge in the K/Ka, V, W, G Band Receiver Shelf PRT G temperature computation.</Description>
+                <DatumOffset>3</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Spare</Description>
+                <DatumOffset>4</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>4 bit(s)</DataType>
+            </Datum>
+        </Field>
+                <Field>
+            <Name>QF15_SCAN_KAVPRTTEMPLIMIT</Name>
+            <Dimension>
+                <Name>Scan</Name>
+                <GranuleBoundary>1</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>12</MinIndex>
+                <MaxIndex>12</MaxIndex>
+            </Dimension>
+            <DataSize>
+                <Count>1</Count>
+                <Type>byte(s)</Type> 
+            </DataSize>
+            <Datum>
+                <Description>Out of range condition for the K/Ka and V Band PRT #1 temperatures.</Description>
+                <DatumOffset>0</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Out of range condition for the K/Ka and V Band PRT #2 temperatures.</Description>
+                <DatumOffset>1</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Out of range condition for the K/Ka and V Band PRT #3 temperatures.</Description>
+                <DatumOffset>2</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Out of range condition for the K/Ka and V Band PRT #4 temperatures.</Description>
+                <DatumOffset>3</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Out of range condition for the K/Ka and V Band PRT #5 temperatures.</Description>
+                <DatumOffset>4</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Out of range condition for the K/Ka and V Band PRT #6 temperatures.</Description>
+                <DatumOffset>5</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Out of range condition for the K/Ka and V Band PRT #7 temperatures.</Description>
+                <DatumOffset>6</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Out of range condition for the K/Ka and V Band PRT #8 temperatures.</Description>
+                <DatumOffset>7</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum> 
+        </Field>
+                <Field>
+            <Name>QF16_SCAN_WGPRTTEMPLIMIT</Name>
+            <Dimension>
+                <Name>Scan</Name>
+                <GranuleBoundary>1</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>12</MinIndex>
+                <MaxIndex>12</MaxIndex>
+            </Dimension>
+            <DataSize>
+                <Count>1</Count>
+                <Type>byte(s)</Type> 
+            </DataSize>
+            <Datum>
+                <Description>Out of range condition for the WG Band PRT #1 temperatures.</Description>
+                <DatumOffset>0</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum> 
+            <Datum>
+                <Description>Out of range condition for the WG Band PRT #2 temperatures.</Description>
+                <DatumOffset>1</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Out of range condition for the WG Band PRT #3 temperatures.</Description>
+                <DatumOffset>2</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Out of range condition for the WG Band PRT #4 temperatures.</Description>
+                <DatumOffset>3</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Out of range condition for the WG Band PRT #5 temperatures.</Description>
+                <DatumOffset>4</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Out of range condition for the WG Band PRT #6 temperatures.</Description>
+                <DatumOffset>5</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Out of range condition for the WG Band PRT #7 temperatures.</Description>
+                <DatumOffset>6</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Spare</Description>
+                <DatumOffset>7</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType>
+            </Datum>
+        </Field>
+                <Field>
+            <Name>QF17_SCAN_KAVPRTTEMPCONSISTENCY</Name>
+            <Dimension>
+                <Name>Scan</Name>
+                <GranuleBoundary>1</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>12</MinIndex>
+                <MaxIndex>12</MaxIndex>
+            </Dimension>
+            <DataSize>
+                <Count>1</Count>
+                <Type>byte(s)</Type> 
+            </DataSize>
+            <Datum>
+                <Description>KAV PRT #1 temperature inconsistency</Description>
+                <DatumOffset>0</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>KAV PRT #2 temperature inconsistency</Description>
+                <DatumOffset>1</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>KAV PRT #3 temperature inconsistency</Description>
+                <DatumOffset>2</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>KAV PRT #4 temperature inconsistency</Description>
+                <DatumOffset>3</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>KAV PRT #5 temperature inconsistency</Description>
+                <DatumOffset>4</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>KAV PRT #6 temperature inconsistency</Description>
+                <DatumOffset>5</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>KAV PRT #7 temperature inconsistency</Description>
+                <DatumOffset>6</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>KAV PRT #8 temperature inconsistency</Description>
+                <DatumOffset>7</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum> 
+        </Field>
+                <Field>
+            <Name>QF18_SCAN_WGPRTTEMPCONSISTENCY</Name>
+            <Dimension>
+                <Name>Scan</Name>
+                <GranuleBoundary>1</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>12</MinIndex>
+                <MaxIndex>12</MaxIndex>
+            </Dimension>
+            <DataSize>
+                <Count>1</Count>
+                <Type>byte(s)</Type> 
+            </DataSize>
+            <Datum>
+                <Description>WG PRT #1 temperature inconsistency</Description>
+                <DatumOffset>0</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>WG PRT #2 temperature inconsistency</Description>
+                <DatumOffset>1</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>WG PRT #3 temperature inconsistency</Description>
+                <DatumOffset>2</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>WG PRT #4 temperature inconsistency</Description>
+                <DatumOffset>3</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>WG PRT #5 temperature inconsistency</Description>
+                <DatumOffset>4</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>WG PRT #6 temperature inconsistency</Description>
+                <DatumOffset>5</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>WG PRT #7 temperature inconsistency</Description>
+                <DatumOffset>6</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum> 
+            <Datum>
+                <Description>Spare</Description>
+                <DatumOffset>7</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+            </Datum>
+        </Field>
+                <Field>
+            <Name>QF19_SCAN_ATMSSDR</Name>
+            <Dimension>
+                <Name>Scan</Name>
+                <GranuleBoundary>1</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>12</MinIndex>
+                <MaxIndex>12</MaxIndex>
+            </Dimension>
+            <DataSize>
+                <Count>1</Count>
+                <Type>byte(s)</Type> 
+            </DataSize>
+            <Datum>
+                <Description>Time Sequence Error - The nominal scan period of ATMS is 8/3 sec. The scan start time is defined as the start of sample 1. The scan start time of the current scan is compared to the scan start time of the previous scan. If the time difference is not within 8/3 sec +/- allowable_dev (initially 18 msec), the Time Sequence Error Flag is set. allowable_dev is a tunable parameter</Description>
+                <DatumOffset>0</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum> 
+            <Datum>
+                <Description>Data Gap - Missing scan(s) preceding the current scan.</Description>
+                <DatumOffset>1</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>KAV PRT Sufficiency - Insufficient KAV PRT data are available, either because of missing data or failing to pass the quality checks.</Description>
+                <DatumOffset>2</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>WG PRT Sufficiency - Insufficient WG PRT data are available, either because of missing data or failing to pass the quality checks.</Description>
+                <DatumOffset>3</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Space View antenna position error - There are 4 space view antenna groupings. ATMS is commanded to use one of the 4 groupings. The grouping selected is indicated by the Scan Pattern ID (Bit No. 7-9) in InstrumentMode . Values are interpreted as: 001, 010, 011, 100 = RAM profiles 1, 2, 3, 4. If any of the actual space view positions (as determined from the scan angle counts in the Science Data packet) does not fall within the range of the expected counts +/- εc, the Space View Antenna Position Error flag is set. The expected counts and εc are tunable parameters. εc is set to 7 counts. </Description>
+                <DatumOffset>4</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Blackbody antenna position error - There are 4 blackbody view positions. If any of the actual blackbody view position (as determined from the scan angle counts in the Science Data packet) does not fall within the range of the expected count +/- εw, the Blackbody Antenna Position Error flag is set. The expected counts and εw are tunable parameters. εw is set to 7 counts. </Description>
+                <DatumOffset>5</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Spare</Description>
+                <DatumOffset>6</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>2 bit(s)</DataType>
+            </Datum>
+        </Field>
+                <Field>
+            <Name>QF20_ATMSSDR</Name>
+            <Dimension>
+                <Name>Scan</Name>
+                <GranuleBoundary>1</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>12</MinIndex>
+                <MaxIndex>12</MaxIndex>
+            </Dimension>
+            <Dimension>
+                <Name>Channel</Name>
+                <GranuleBoundary>0</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>22</MinIndex>
+                <MaxIndex>22</MaxIndex>
+            </Dimension>
+            <DataSize>
+                <Count>1</Count>
+                <Type>byte(s)</Type> 
+            </DataSize>
+            <Datum>
+                <Description>Moon in Space View - The Moon appears in any of the four calibration space views.</Description>
+                <DatumOffset>0</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum> 
+            <Datum>
+                <Description>Gain Error - The lowest blackbody count is smaller than or equal to the highest space view count in a scan.  </Description>
+                <DatumOffset>1</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Calibration With Fewer Than Preferred Samples -.Scan line has been calibrated with fewer than the preferred number of samples and/or scans either because of missing data or some data failing the quality checks.  </Description>
+                <DatumOffset>2</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Space View Data Sufficiency Check - Insufficient space view samples are available, either because of missing data or failing to pass the quality checks.</Description>
+                <DatumOffset>3</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Blackbody View Data Sufficiency Check -  Insufficient blackbody view samples are available, either because of missing data or failing to pass the quality checks.</Description>
+                <DatumOffset>4</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Spare</Description>
+                <DatumOffset>5</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>3 bit(s)</DataType>
+            </Datum>
+        </Field>
+                <Field>
+            <Name>QF21_ATMSSDR</Name>
+            <Dimension>
+                <Name>Scan</Name>
+                <GranuleBoundary>1</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>12</MinIndex>
+                <MaxIndex>12</MaxIndex>
+            </Dimension>
+            <Dimension>
+                <Name>Channel</Name>
+                <GranuleBoundary>0</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>22</MinIndex>
+                <MaxIndex>22</MaxIndex>
+            </Dimension>
+            <DataSize>
+                <Count>1</Count>
+                <Type>byte(s)</Type> 
+            </DataSize>
+            <Datum>
+                <Description>Space View #1 out of range condition</Description>
+                <DatumOffset>0</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum> 
+            <Datum>
+                <Description>Space View #2 out of range condition</Description>
+                <DatumOffset>1</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Space View #3 out of range condition</Description>
+                <DatumOffset>2</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Space View #4 out of range condition</Description>
+                <DatumOffset>3</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>BlackBody View #1 out of range condition</Description>
+                <DatumOffset>4</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>BlackBody View #2 out of range condition</Description>
+                <DatumOffset>5</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>BlackBody View #3 out of range condition</Description>
+                <DatumOffset>6</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>BlackBody View #4 out of range condition</Description>
+                <DatumOffset>7</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+        </Field>
+                <Field>
+            <Name>QF22_ATMSSDR</Name>
+            <Dimension>
+                <Name>Scan</Name>
+                <GranuleBoundary>1</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>12</MinIndex>
+                <MaxIndex>12</MaxIndex>
+            </Dimension>
+            <Dimension>
+                <Name>Channel</Name>
+                <GranuleBoundary>0</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>22</MinIndex>
+                <MaxIndex>22</MaxIndex>
+            </Dimension>
+            <DataSize>
+                <Count>1</Count>
+                <Type>byte(s)</Type> 
+            </DataSize>
+            <Datum>
+                <Description>Space View #1 inconsistency</Description>
+                <DatumOffset>0</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum> 
+            <Datum>
+                <Description>Space View #2 inconsistency</Description>
+                <DatumOffset>1</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Space View #3 inconsistency</Description>
+                <DatumOffset>2</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>Space View #4 inconsistency</Description>
+                <DatumOffset>3</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>BlackBody View #1 inconsistency</Description>
+                <DatumOffset>4</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>BlackBody View #2 inconsistency</Description>
+                <DatumOffset>5</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>BlackBody View #3 inconsistency</Description>
+                <DatumOffset>6</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+            <Datum>
+                <Description>BlackBody View #3 inconsistency</Description>
+                <DatumOffset>7</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits>
+                <DataType>1 bit(s)</DataType> 
+                <LegendEntry>
+                    <Name>False</Name> 
+                    <Value>0</Value>
+                </LegendEntry>
+                <LegendEntry>
+                    <Name>True</Name>
+                    <Value>1</Value>
+                </LegendEntry>
+            </Datum>
+        </Field>
+                <Field>
+            <Name>PadByte1</Name>
+            <Dimension>
+                <Name>Granule</Name>
+                <GranuleBoundary>1</GranuleBoundary>
+                <Dynamic>0</Dynamic>
+                <MinIndex>7</MinIndex>
+                <MaxIndex>7</MaxIndex>
+            </Dimension>
+            <DataSize>
+                <Count>1</Count>
+                <Type>byte(s)</Type> 
+            </DataSize>
+            <Datum>
+                <Description>Pad byte</Description>
+                <DatumOffset>0</DatumOffset>
+                <Scaled>0</Scaled>
+                <MeasurementUnits>unitless</MeasurementUnits> 
+                <DataType>unsigned 8-bit char</DataType> 
+            </Datum>
+        </Field>
+                <Field>
+                        <Name>AntennaTemperatureFactors</Name>
+                        <Dimension>
+                                <Name>Factors</Name>
+                                <GranuleBoundary>1</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>2</MinIndex>
+                                <MaxIndex>2</MaxIndex>
+                        </Dimension>
+                        <DataSize>
+                                <Count>4</Count>
+                                <Type>byte(s)</Type>
+                        </DataSize>
+                        <Datum>
+                                <Description>Scale = first array element; offset = second array element</Description>
+                                <DatumOffset>0</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>Scale = unitless; Offset = kelvin</MeasurementUnits>
+                                <DataType>32-bit floating point</DataType>
+                        </Datum>
+                </Field>
+        </ProductData>
+</NPOESSDataProduct>

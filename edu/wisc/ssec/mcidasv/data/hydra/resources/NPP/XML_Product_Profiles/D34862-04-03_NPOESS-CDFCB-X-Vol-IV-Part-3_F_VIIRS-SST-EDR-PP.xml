@@ -1,0 +1,628 @@
+<?xml version="1.0"?>
+
+
+
+<NPOESSDataProduct xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="NPOESS_Product_Profile.xsd">
+	<ProductName>VIIRS Sea Surface Temperature EDR</ProductName>
+	<CollectionShortName>VIIRS-SST-EDR</CollectionShortName>
+	<DataProductID>VSSTO</DataProductID>
+	<ProductData>
+		<DataName>VIIRS Sea Surface Temperature EDR Product Profile</DataName>
+		<Field>
+			<Name>SkinSST</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>2</Count>
+				<Type>byte(s)</Type> 
+			</DataSize>
+			<Datum>
+				<Description>Sea Surface Skin Temperature</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>1</Scaled>
+                                <ScaleFactorName>SkinSSTFactors</ScaleFactorName>
+				<MeasurementUnits>kelvin</MeasurementUnits>
+                                <RangeMin>265.00</RangeMin>
+                                <RangeMax>320.00</RangeMax>                                   
+				<DataType>unsigned 16-bit integer</DataType>
+				<FillValue>
+					<Name>NA_UINT16_FILL</Name>
+					<Value>65535</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_UINT16_FILL</Name>
+					<Value>65534</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_UINT16_FILL</Name>
+					<Value>65533</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_UINT16_FILL</Name>
+					<Value>65532</Value> 
+				</FillValue>
+				<FillValue>
+					<Name>ERR_UINT16_FILL</Name>
+					<Value>65531</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_UINT16_FILL</Name>
+					<Value>65530</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_UINT16_FILL</Name>
+					<Value>65529</Value>
+				</FillValue>
+				<FillValue>
+					<Name>SOUB_UINT16_FILL</Name>
+					<Value>65528</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>BulkSST</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>2</Count>
+				<Type>byte(s)</Type> 
+			</DataSize>
+			<Datum>
+				<Description>Sea Surface Bulk Temperature</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>1</Scaled>
+                                <ScaleFactorName>BulkSSTFactors</ScaleFactorName>
+				<MeasurementUnits>kelvin</MeasurementUnits>
+                                <RangeMin>265.00</RangeMin>
+                                <RangeMax>320.00</RangeMax>                                   
+				<DataType>unsigned 16-bit integer</DataType>
+				<FillValue>
+					<Name>NA_UINT16_FILL</Name>
+					<Value>65535</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_UINT16_FILL</Name>
+					<Value>65534</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_UINT16_FILL</Name>
+					<Value>65533</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_UINT16_FILL</Name>
+					<Value>65532</Value> 
+				</FillValue>
+				<FillValue>
+					<Name>ERR_UINT16_FILL</Name>
+					<Value>65531</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_UINT16_FILL</Name>
+					<Value>65530</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_UINT16_FILL</Name>
+					<Value>65529</Value>
+				</FillValue>
+				<FillValue>
+					<Name>SOUB_UINT16_FILL</Name>
+					<Value>65528</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+                <Field>
+			<Name>QF1_VIIRSSSTEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Skin SST Quality (Indicates the quality of the pixel level retrieval)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Not Retrieved</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Excluded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>High Quality</Name>
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum> 
+			<Datum>
+				<Description>Bulk SST Quality (Indicates the quality of the pixel level retrieval)</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Not Retrieved</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Excluded</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Degraded</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>High Quality</Name>
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum> 
+			<Datum>
+				<Description>SST State</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Dry/None</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Moist</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Average</Name>
+					<Value>2</Value>
+				</LegendEntry>
+			</Datum> 
+			<Datum>
+				<Description>Algorithm</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Non-linear Split Window</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Triple Window</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum> 
+			<Datum>
+				<Description>Day/Night</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Night</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Day</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum> 
+                </Field>
+                <Field>
+			<Name>QF2_VIIRSSSTEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>SST not retrieved due to non-availability of M15 or M16</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Both Available</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>At Least One Not Available</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Single split window algorithm used due to non-availability of M12</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Both Available</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>At Least One Not Available</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Cloud Confidence</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Confidently Clear</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Probably Clear</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Probably Cloudy</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Confidently Cloudy</Name>
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Cloud Adjacency Cloud Confidence Value</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Confidently Clear</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Probably Clear</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Probably Cloudy</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Confidently Cloudy</Name>
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Thin Cirrus detected in pixel</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Ice Concentration Threshold Exceeded (SST not retrieved due to ice concentration exceeding threshold in System Spec)</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+                </Field>
+                <Field>
+			<Name>QF3_VIIRSSSTEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Sun Glint present in pixel</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Exclusion: AOT &gt; 1.0 (AOT in horizontal cell &gt; 1.0 on the slant path (AOT @550nm))</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Degradation: AOT &gt; 0.6 (AOT in horizontal cell &gt; 0.6 on the slant path (AOT @550nm))</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Exclusion: No Ocean in pixel</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Degradation - Horizontal Cell Size &gt; 1.3km (HCS &gt; 1.3 km, swath width &gt; 1700 km, Sensor Zenith Angle &gt; 53.0 degrees)</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Sensor Zenith Angle &gt; 40 Degrees (Pixel is not within 40 degrees of Nadir and therefore is not of high quality)</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Skin SST outside of validation range</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Bulk SST outside of validation range</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+                </Field>
+                <Field>
+			<Name>QF4_VIIRSSSTEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Skin SST Degraded, T &gt; 305K</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Bulk SST Degraded, T &gt; 305K</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Spare</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>6 bit(s)</DataType>
+			</Datum>
+                </Field>
+                <Field>
+			<Name>SkinSSTFactors</Name>
+			<Dimension>
+				<Name>Granule</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>2</MinIndex>
+				<MaxIndex>2</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Scale = First Array Element; Offset = 2nd Array Element</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>scale = unitless; offset = kelvin</MeasurementUnits>
+				<DataType>32-bit floating point</DataType>
+			</Datum>
+                </Field>
+                <Field>
+			<Name>BulkSSTFactors</Name>
+			<Dimension>
+				<Name>Bulk SST Scale/Offset</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>2</MinIndex>
+				<MaxIndex>2</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Scale = First Array Element; Offset = 2nd Array Element</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>scale = unitless; offset = kelvin</MeasurementUnits>
+				<DataType>32-bit floating point</DataType>
+			</Datum>
+                </Field>
+        </ProductData>
+</NPOESSDataProduct>

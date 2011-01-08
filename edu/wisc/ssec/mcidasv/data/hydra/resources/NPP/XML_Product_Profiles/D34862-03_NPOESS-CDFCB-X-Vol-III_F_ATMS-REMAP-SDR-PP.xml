@@ -1,0 +1,530 @@
+<?xml version="1.0"?>
+
+<!--
+
+<NPOESSDataProduct xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="NPOESS_Product_Profile.xsd">
+
+-->
+
+	<ProductName>ATMS Remapped to CrIS SDR: Channels 1 through 22</ProductName>
+	<CollectionShortName>ATMS-REMAP-SDR</CollectionShortName>
+	<DataProductID>SATMR</DataProductID>
+	<ProductData>
+		<DataName>ATMS Remapped to CrIS SDR Product Profile</DataName>
+		<Field>
+			<Name>BrightnessTemperature</Name>
+			<Dimension>
+				<Name>Scan</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>4</MinIndex>
+				<MaxIndex>4</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>FOR</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>30</MinIndex>
+				<MaxIndex>30</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>Channel</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>22</MinIndex>
+				<MaxIndex>22</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>2</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Calibrated scene brightness temperature for each ATMS channel and beam position remapped to the CrIS FORs. This output is the Rayleigh equivalent temperature.</Description>
+				<DatumOffset>0</DatumOffset>
+                                <Scaled>1</Scaled>
+                                <ScaleFactorName>BrightnessTemperatureFactors</ScaleFactorName>
+				<MeasurementUnits>kelvin</MeasurementUnits>
+				<RangeMin>0.00</RangeMin>
+				<RangeMax>330.00</RangeMax>
+				<DataType>unsigned 16-bit integer</DataType>
+				<FillValue>
+					<Name>NA_UINT16_FILL</Name>
+					<Value>65535</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_UINT16_FILL</Name>
+					<Value>65534</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_UINT16_FILL</Name>
+					<Value>65531</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_UINT16_FILL</Name>
+					<Value>65529</Value>
+				</FillValue>
+				<FillValue>
+					<Name>SOUB_UINT16_FILL</Name>
+					<Value>65528</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF1_ATMSREMAPSDR</Name>
+			<Dimension>
+				<Name>Scan</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>4</MinIndex>
+				<MaxIndex>4</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>FOR</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>30</MinIndex>
+				<MaxIndex>30</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type> 
+			</DataSize>
+			<Datum>
+				<Description>ATMS channel 1 missing samples in resampling</Description>
+				<DatumOffset>0</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType> 
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS channel 2 missing samples in resampling</Description>
+				<DatumOffset>1</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType> 
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS channel 3 missing samples in resampling</Description>
+				<DatumOffset>2</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType> 
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS channel 4 missing samples in resampling</Description>
+				<DatumOffset>3</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType> 
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS channel 5 missing samples in resampling</Description>
+				<DatumOffset>4</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType> 
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS channel 6 missing samples in resampling</Description>
+				<DatumOffset>5</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType> 
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS channel 7 missing samples in resampling</Description>
+				<DatumOffset>6</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType> 
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS channel 8 missing samples in resampling</Description>
+				<DatumOffset>7</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType> 
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF2_ATMSREMAPSDR</Name>
+			<Dimension>
+				<Name>Scan</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>4</MinIndex>
+				<MaxIndex>4</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>FOR</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>30</MinIndex>
+				<MaxIndex>30</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type> 
+			</DataSize>
+			<Datum>
+				<Description>ATMS channel 9 missing samples in resampling</Description>
+				<DatumOffset>0</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType> 
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS channel 10 missing samples in resampling</Description>
+				<DatumOffset>1</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType> 
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS channel 11 missing samples in resampling</Description>
+				<DatumOffset>2</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType> 
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS channel 12 missing samples in resampling</Description>
+				<DatumOffset>3</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType> 
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS channel 13 missing samples in resampling</Description>
+				<DatumOffset>4</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType> 
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS channel 14 missing samples in resampling</Description>
+				<DatumOffset>5</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType> 
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS channel 15 missing samples in resampling</Description>
+				<DatumOffset>6</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType> 
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS channel 16 missing samples in resampling</Description>
+				<DatumOffset>7</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType> 
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF3_ATMSREMAPSDR</Name>
+			<Dimension>
+				<Name>Scan</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>4</MinIndex>
+				<MaxIndex>4</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>FOR</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>30</MinIndex>
+				<MaxIndex>30</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type> 
+			</DataSize>
+			<Datum>
+				<Description>ATMS channel 17 missing samples in resampling</Description>
+				<DatumOffset>0</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType> 
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS channel 18 missing samples in resampling</Description>
+				<DatumOffset>1</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType> 
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS channel 19 missing samples in resampling</Description>
+				<DatumOffset>2</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType> 
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS channel 20 missing samples in resampling</Description>
+				<DatumOffset>3</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType> 
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS channel 21 missing samples in resampling</Description>
+				<DatumOffset>4</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType> 
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>ATMS channel 22 missing samples in resampling</Description>
+				<DatumOffset>5</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType> 
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Spare</Description>
+				<DatumOffset>6</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType> 
+			</Datum>
+		</Field>       
+		<Field>
+			<Name>QF4_ATMSREMAPSDR</Name>
+			<Dimension>
+				<Name>Scan</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>4</MinIndex>
+				<MaxIndex>4</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type> 
+			</DataSize>
+			<Datum>
+				<Description>ATMS and CrIS time synchronization error detected</Description>
+				<DatumOffset>0</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType> 
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Spare</Description>
+				<DatumOffset>1</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>7 bit(s)</DataType> 
+			</Datum>
+                </Field>      
+		<Field>
+			<Name>BrightnessTemperatureFactors</Name>
+			<Dimension>
+				<Name>Factors</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>2</MinIndex>
+				<MaxIndex>2</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type> 
+			</DataSize>
+			<Datum>
+				<Description>Scale = first array element; offset = second array element</Description>
+				<DatumOffset>0</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>Scale = unitless; Offset = kelvin</MeasurementUnits>
+				<DataType>32-bit floating point</DataType> 
+			</Datum>
+                </Field>
+        </ProductData>
+</NPOESSDataProduct>

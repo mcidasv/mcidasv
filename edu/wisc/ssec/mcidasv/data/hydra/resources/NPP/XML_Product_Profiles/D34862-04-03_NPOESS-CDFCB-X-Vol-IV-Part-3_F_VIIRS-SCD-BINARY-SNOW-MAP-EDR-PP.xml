@@ -1,0 +1,421 @@
+<?xml version="1.0"?>
+
+
+
+<NPOESSDataProduct xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="NPOESS_Product_Profile.xsd">
+	<ProductName>VIIRS Snow Cover/Depth Binary Map EDR</ProductName>
+	<CollectionShortName>VIIRS-SCD-BINARY-SNOW-MAP-EDR</CollectionShortName>
+	<DataProductID>VSCMO</DataProductID>
+	<ProductData>
+		<DataName>VIIRS Snow Cover Binary Map Product Profile</DataName>
+		<Field>
+			<Name>SnowCoverBinaryMap</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>1536</MinIndex>
+				<MaxIndex>1536</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>6400</MinIndex>
+				<MaxIndex>6400</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type> 
+			</DataSize>
+			<Datum>
+				<Description>Snow Cover Binary Map</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>8-bit char</DataType>
+				<FillValue>
+					<Name>NA_UINT8_FILL</Name>
+					<Value>255</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_UINT8_FILL</Name>
+					<Value>254</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_UINT8_FILL</Name>
+					<Value>253</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_UINT8_FILL</Name>
+					<Value>252</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_UINT8_FILL</Name>
+					<Value>251</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_UINT8_FILL</Name>
+					<Value>250</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_UINT8_FILL</Name>
+					<Value>249</Value>
+				</FillValue>
+				<LegendEntry>
+					<Name>Not a Snow Pixel</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Snow Pixel</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF1_VIIRSSCDBINARYSNOWMAPEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>1536</MinIndex>
+				<MaxIndex>1536</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>6400</MinIndex>
+				<MaxIndex>6400</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Overall Pixel Quality</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>High (Green)</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Medium (Yellow)</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Low (Red)</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>No Retrieval</Name>
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Input SDR Quality (I1, I2, I3)</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Bad</Name>
+					<Value>1</Value>
+				</LegendEntry>
+                        </Datum>
+			<Datum>
+				<Description>Cloud Confidence</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Confidently Clear</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Probably Clear</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Probably Cloudy</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Confidently Cloudy</Name>
+					<Value>3</Value>
+				</LegendEntry>
+                        </Datum>
+			<Datum>
+				<Description>Solar Zenith Angle Exclusion</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>No (no exclusion)</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Yes (exclusion condition: solar zenith angle &gt; 60 deg)</Name>
+					<Value>1</Value>
+				</LegendEntry>
+                        </Datum>
+			<Datum>
+				<Description>Aerosol Optical Thickness Exclusion</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>No (no exclusion)</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Yes (exclusion condition: AOT &gt; 1.0)</Name>
+					<Value>1</Value>
+				</LegendEntry>
+                        </Datum>
+			<Datum>
+				<Description>Snow Fraction Exclusion</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>No (no exclusion)</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Yes (exclusion condition: snow fraction between 0.2 and 0.7)</Name>
+					<Value>1</Value>
+				</LegendEntry>
+                        </Datum>
+                </Field>
+		<Field>
+			<Name>QF2_VIIRSSCDBINARYSNOWMAPEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>1536</MinIndex>
+				<MaxIndex>1536</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>6400</MinIndex>
+				<MaxIndex>6400</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Thin Cirrus (based on VCM thin cirrus quality flag)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>No</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Yes (thin cirrus detected)</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Cloud Shadow</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name> 
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Cloud Phase</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Clear</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Water</Name> 
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Ice</Name> 
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Mixed</Name> 
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Forest (VCM indicates Boreal/Conifor forest within the horizontal cell)</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name> 
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name> 
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Land/Water</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Land</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Coastal</Name> 
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Inland Water</Name> 
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Ocean</Name> 
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Sun Glint</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name> 
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+                </Field>
+		<Field>
+			<Name>QF3_VIIRSSCDBINARYSNOWMAPEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>1536</MinIndex>
+				<MaxIndex>1536</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>6400</MinIndex>
+				<MaxIndex>6400</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Thermal Threshold Exceeded</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name> 
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>NDSI Quality</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Bad</Name> 
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>NDVI Quality</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Bad</Name> 
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Fire</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name> 
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Spare</Description> 
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>4 bit(s)</DataType>
+			</Datum>
+                </Field>
+        </ProductData>
+</NPOESSDataProduct>

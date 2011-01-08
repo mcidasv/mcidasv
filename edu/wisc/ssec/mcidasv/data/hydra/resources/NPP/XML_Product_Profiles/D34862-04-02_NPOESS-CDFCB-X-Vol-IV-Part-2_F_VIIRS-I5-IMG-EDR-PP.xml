@@ -1,0 +1,336 @@
+<?xml version="1.0"?>
+
+
+<!--
+
+<NPOESS_Product_Profile CollectionShortName="VIIRS-I5-IMG-EDR" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="NPOESS_Product_Profile.xsd">
+
+-->
+
+<NPOESSDataProduct>
+	<ProductName>VIIRS I5-Band Imagery</ProductName>
+	<CollectionShortName>VIIRS-I5-IMG-EDR</CollectionShortName>
+	<DataProductID>VI5BO</DataProductID>
+	<ProductData>
+		<DataName>VIIRS I5-Band Imagery Product Profile</DataName>
+		<Field>
+			<Name>Radiance</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>1541</MinIndex>
+				<MaxIndex>1541</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>8241</MinIndex>
+				<MaxIndex>8241</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>2</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Top of Atmosphere radiances for the I5-Band</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>1</Scaled>
+				<ScaleFactorName>RadianceFactors</ScaleFactorName>
+				<MeasurementUnits>W/(m2 sr um)</MeasurementUnits>
+				<RangeMin>-0.08</RangeMin>
+				<RangeMax>18.49</RangeMax>
+				<DataType>unsigned 16-bit integer</DataType>
+				<FillValue>
+					<Name>NA_UINT16_FILL</Name>
+					<Value>65535</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_UINT16_FILL</Name>
+					<Value>65534</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_UINT16_FILL</Name>
+					<Value>65533</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_UINT16_FILL</Name>
+					<Value>65532</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_UINT16_FILL</Name>
+					<Value>65531</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_UINT16_FILL</Name>
+					<Value>65530</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_UINT16_FILL</Name>
+					<Value>65529</Value>
+				</FillValue>
+				<FillValue>
+					<Name>SOUB_UINT16_FILL</Name>
+					<Value>65528</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>BrightnessTemperature</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>1541</MinIndex>
+				<MaxIndex>1541</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>8241</MinIndex>
+				<MaxIndex>8241</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>2</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Top of Atmosphere Equivalent Blackbody Brightness Temperatures</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>1</Scaled>
+				<ScaleFactorName>BrightnessFactors</ScaleFactorName>
+				<MeasurementUnits>kelvin</MeasurementUnits>
+				<RangeMin>150.00</RangeMin>
+				<RangeMax>380.00</RangeMax>
+				<DataType>unsigned 16-bit integer</DataType>
+				<FillValue>
+					<Name>NA_UINT16_FILL</Name>
+					<Value>65535</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_UINT16_FILL</Name>
+					<Value>65534</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_UINT16_FILL</Name>
+					<Value>65533</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_UINT16_FILL</Name>
+					<Value>65532</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_UINT16_FILL</Name>
+					<Value>65531</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_UINT16_FILL</Name>
+					<Value>65530</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_UINT16_FILL</Name>
+					<Value>65529</Value>
+				</FillValue>
+				<FillValue>
+					<Name>SOUB_UINT16_FILL</Name>
+					<Value>65528</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+	</ProductData>
+	<ProductData>
+		<DataName>VIIRS I5-Band Imagery Product Profile - Quality Flags</DataName>
+		<Field>
+			<Name>QF1_VIIRSIMGEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>1541</MinIndex>
+				<MaxIndex>1541</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>8241</MinIndex>
+				<MaxIndex>8241</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Imagery Quality (Pixel Quality as determined by the SDR Calibration Quality. Dead Pixel Replacement:  Individual bad pixels caused by a bad detector are filled as an average of the two adjacent detector pixels. Bad edge-of-scan pixels use the adjacent pixel value. If two adjacent pixels are dead, a fill value is used for each pixel.)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Poor</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>No Calibration</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Dead Pixel Replacement</Name>
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Pixel is Saturated</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Missing Data (Data required for calibration processing is not available for processing)</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>All data present</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Earth View RDR data missing</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Cal data (Space View, Earth View, Cal View, Solar Diffuser) missing</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Thermistor Data Missing</Name>
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Out of Range</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>All data within range</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Radiance out of range</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>EBBT out of range</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Both Radiance and EBBT out of range</Name>
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Spare</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>PadByte1</Name>
+			<Dimension>
+				<Name>Granule</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3</MinIndex>
+				<MaxIndex>3</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Pad byte</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<ScaleFactorName/>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin/>
+				<RangeMax/>
+				<DataType>unsigned 8-bit char</DataType>
+			</Datum>
+		</Field>
+	</ProductData>
+	<ProductData>
+		<DataName>VIIRS I5-Band Imagery Product Profile - Factors</DataName>
+		<Field>
+			<Name>RadianceFactors</Name>
+			<Dimension>
+				<Name>Radiance scale/offset values</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>2</MinIndex>
+				<MaxIndex>2</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Scale = first array element; Offset = second array element</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>Scale = unitless; Offset = W/(m2 sr um)</MeasurementUnits>
+				<RangeMin/>
+				<RangeMax/>
+				<DataType>32-bit floating point</DataType>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>BrightnessFactors</Name>
+			<Dimension>
+				<Name>Reflectance scale/offset values</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>2</MinIndex>
+				<MaxIndex>2</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Scale = first array element; Offset = second array element</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>Scale = unitless; Offset = kelvin</MeasurementUnits>
+				<RangeMin/>
+				<RangeMax/>
+				<DataType>32-bit floating point</DataType>
+			</Datum>
+		</Field>
+	</ProductData>
+</NPOESSDataProduct>

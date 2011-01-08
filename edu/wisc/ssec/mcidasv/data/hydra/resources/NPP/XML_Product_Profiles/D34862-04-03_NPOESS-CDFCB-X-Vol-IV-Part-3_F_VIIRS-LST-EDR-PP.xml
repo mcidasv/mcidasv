@@ -1,0 +1,495 @@
+<?xml version="1.0"?>
+
+
+
+<NPOESSDataProduct xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="NPOESS_Product_Profile.xsd">
+	<ProductName>VIIRS Land Surface Temperature EDR</ProductName>
+	<CollectionShortName>VIIRS-LST-EDR</CollectionShortName>
+	<DataProductID>VLSTO</DataProductID>
+	<ProductData>
+		<DataName>VIIRS Land Surface Temperature EDR Product Profile</DataName>
+		<Field>
+			<Name>LandSurfaceTemperature</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>2</Count>
+				<Type>byte(s)</Type> 
+			</DataSize>
+			<Datum>
+				<Description>Land Surface Temperature</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>1</Scaled>
+				<ScaleFactorName>LSTFactors</ScaleFactorName>
+				<MeasurementUnits>kelvin</MeasurementUnits>
+				<RangeMin>183.20</RangeMin>
+				<RangeMax>350.00</RangeMax>
+				<DataType>unsigned 16-bit integer</DataType>
+				<FillValue>
+					<Name>NA_UINT16_FILL</Name>
+					<Value>65535</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_UINT16_FILL</Name>
+					<Value>65534</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_UINT16_FILL</Name>
+					<Value>65533</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_UINT16_FILL</Name>
+					<Value>65532</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_UINT16_FILL</Name>
+					<Value>65531</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_UINT16_FILL</Name>
+					<Value>65530</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_UINT16_FILL</Name>
+					<Value>65529</Value>
+				</FillValue>
+				<FillValue>
+					<Name>SOUB_UINT16_FILL</Name>
+					<Value>65528</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF1_VIIRSLSTEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>LST Quality (Indicates the quality of the pixel level retrieval)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>High</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Medium</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Low</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>No Retrieval</Name>
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Algorithm (Indicates which algorithm branch was implemented)</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>4-Band Dual Split Window</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>2-Band Split Window</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Day/Night</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Night (Solar Zenith Angle &gt; 85 Degrees)</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Day (Solar Zenith Angle &lt;= 85 degrees)</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Bad SWIR Pixel (M12 and M13 band data not available)</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Both Available</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>At least one not available</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Bad LWIR Pixel (M15 and M16 band data not available)</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Both Available</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>At least one not available</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Exclusion - Fire detected in pixel (from the VIIRS Cloud Mask)</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Exclusion – Thin Cirrus (Retrieval performance exclusion due to thin cirrus detection by VIIRS Cloud Mask)</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF2_VIIRSLSTEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Degradation - Sensor Zenith Angle &gt; 40 degrees</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType> 
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Out of Expected Range - The LST derived from the algorithm is outside of the NPOESS System Specification Validated Range defined by 213K &lt; BT(M16) &lt; 343K</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Cloud Confidence Indicator</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Confidently Clear</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Probably Clear</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Probably Cloudy</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Confidently Cloudy</Name>
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Exclusion: AOT &gt; 1.0 (AOT in horizontal cell &gt; 1.0 on the slant path (AOT @550nm))</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Exclusion - Horizontal Cell Size &gt; 1.3km (HCS &gt; 1.3 km, swath width &gt; 1700 km, Sensor Zenith Angle &gt; 53.0 degrees)</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Sun Glint in pixel (as indicated in the VIIRS Cloud Mask)</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Inside Terminator (85 deg &lt; Solar Zenith Angle &lt;= 100 deg)</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+                </Field>
+		<Field>
+			<Name>QF3_VIIRSLSTEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Land/Water Background</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>3 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Land and Desert</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Land/No Desert</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Inland Water</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Sea Water</Name>
+					<Value>3</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Coastal</Name>
+					<Value>5</Value>
+				</LegendEntry>
+                        </Datum>
+			<Datum>
+				<Description>Surface Type (of the LST Retrieval)</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>5 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Evergreen Needleleaf Forests</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Evergreen Broadleaf Forests</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Deciduous Needleleaf Forests</Name>
+					<Value>3</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Deciduous Broadleaf Forests</Name>
+					<Value>4</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Mixed Forests</Name>
+					<Value>5</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Closed Shrublands</Name>
+					<Value>6</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Open Shrublands</Name>
+					<Value>7</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Woody Savannahs</Name>
+					<Value>8</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Savannahs</Name>
+					<Value>9</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Grasslands</Name>
+					<Value>10</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Permanent Wetlands</Name>
+					<Value>11</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Croplands</Name>
+					<Value>12</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Urban and Build-up</Name>
+					<Value>13</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Cropland/Natural Vegetation Mosaics</Name>
+					<Value>14</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Snow and Ice</Name>
+					<Value>15</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Barren</Name>
+					<Value>16</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Water</Name>
+					<Value>17</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Fill</Name>
+					<Value>31</Value>
+				</LegendEntry>
+                        </Datum>
+                </Field>
+		<Field>
+			<Name>LSTFactors</Name>
+			<Dimension>
+				<Name>Granule</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>2</MinIndex>
+				<MaxIndex>2</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Scale = First Array Element; Offset = 2nd Array Element</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>scale = unitless; offset = kelvin</MeasurementUnits>
+				<DataType>32-bit floating point</DataType>
+                        </Datum>
+                </Field>
+	</ProductData>
+</NPOESSDataProduct>

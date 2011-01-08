@@ -1,0 +1,732 @@
+<?xml version="1.0"?>
+
+<NPOESSDataProduct xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="NPOESS_Product_Profile.xsd">
+     <ProductName>VIIRS Moderate Resolution Band 14 SDR</ProductName>
+        <CollectionShortName>VIIRS-M14-SDR</CollectionShortName>
+        <DataProductID>SVM14</DataProductID>
+        <ProductData>
+                <DataName>VIIRS M-Band SDR Data Product Profile</DataName>
+                <Field>
+                        <Name>Radiance</Name>
+                        <Dimension>
+                                <Name>AlongTrack</Name>
+                                <GranuleBoundary>1</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>768</MinIndex>
+                                <MaxIndex>768</MaxIndex>
+                        </Dimension>
+                        <Dimension>
+                                <Name>CrossTrack</Name>
+                                <GranuleBoundary>0</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>3200</MinIndex>
+                                <MaxIndex>3200</MaxIndex>
+                        </Dimension>
+                        <DataSize>
+                                <Count>2</Count>
+                                <Type>byte(s)</Type>
+                        </DataSize>
+                        <Datum>
+                                <Description>Calibrated Top of Atmosphere (TOA) Radiance for each VIIRS pixel</Description>
+                                <DatumOffset>0</DatumOffset>
+                                <Scaled>1</Scaled>
+                                <ScaleFactorName>RadianceFactors</ScaleFactorName>
+                                <MeasurementUnits>W/(m^2 μm sr)</MeasurementUnits>
+				<RangeMin>-0.03</RangeMin>
+				<RangeMax>21.04</RangeMax>
+                                <DataType>unsigned 16-bit integer</DataType>
+                                <FillValue>
+                                        <Name>NA_UINT16_FILL</Name>
+                                        <Value>65535</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>MISS_UINT16_FILL</Name>
+                                        <Value>65534</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>ONBOARD_PT_UINT16_FILL</Name>
+                                        <Value>65533</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>ONGROUND_PT_UINT16_FILL</Name>
+                                        <Value>65532</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>ERR_UINT16_FILL</Name>
+                                        <Value>65531</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>VDNE_UINT16_FILL</Name>
+                                        <Value>65529</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>SOUB_UINT16_FILL</Name>
+                                        <Value>65528</Value>
+                                </FillValue>
+                        </Datum>
+                </Field>
+                <Field>
+                        <Name>BrightnessTemperature</Name>
+                        <Dimension>
+                                <Name>AlongTrack</Name>
+                                <GranuleBoundary>1</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>768</MinIndex>
+                                <MaxIndex>768</MaxIndex>
+                        </Dimension>
+                        <Dimension>
+                                <Name>CrossTrack</Name>
+                                <GranuleBoundary>0</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>3200</MinIndex>
+                                <MaxIndex>3200</MaxIndex>
+                        </Dimension>
+                        <DataSize>
+                                <Count>2</Count>
+                                <Type>byte(s)</Type>
+                        </DataSize>
+                        <Datum>
+                                <Description>Calibrated Top of Atmosphere (TOA) Brightness Temperature for each VIIRS pixel</Description>
+                                <DatumOffset>0</DatumOffset>
+                                <Scaled>1</Scaled>
+                                <ScaleFactorName>BrightnessTemperatureFactors</ScaleFactorName>
+                                <MeasurementUnits>kelvin</MeasurementUnits>
+				<RangeMin>120.00</RangeMin>
+				<RangeMax>365.00</RangeMax>
+                                <DataType>unsigned 16-bit integer</DataType>
+                                <FillValue>
+                                        <Name>NA_UINT16_FILL</Name>
+                                        <Value>65535</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>MISS_UINT16_FILL</Name>
+                                        <Value>65534</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>ONBOARD_PT_UINT16_FILL</Name>
+                                        <Value>65533</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>ONGROUND_PT_UINT16_FILL</Name>
+                                        <Value>65532</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>ERR_UINT16_FILL</Name>
+                                        <Value>65531</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>VDNE_UINT16_FILL</Name>
+                                        <Value>65529</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>SOUB_UINT16_FILL</Name>
+                                        <Value>65528</Value>
+                                </FillValue>
+                        </Datum>
+                </Field>
+                <Field>
+                        <Name>ModeScan</Name>
+                        <Dimension>
+                                <Name>Scan</Name>
+                                <GranuleBoundary>1</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>48</MinIndex>
+                                <MaxIndex>48</MaxIndex>
+                        </Dimension>
+                        <DataSize>
+                                <Count>1</Count>
+                                <Type>byte(s)</Type>
+                        </DataSize>
+                        <Datum>
+                                <Description>The VIIRS operational mode, reported at the scan level</Description>
+                                <DatumOffset>0</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>unsigned 8-bit char</DataType>
+                                <FillValue>
+                                        <Name>MISS_UINT8_FILL</Name>
+                                        <Value>254</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>ERR_UINT8_FILL</Name>
+                                        <Value>251</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>VDNE_UINT8_FILL</Name>
+                                        <Value>249</Value>
+                                </FillValue>
+                                <LegendEntry>
+                                        <Name>Night</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>Day</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+                        </Datum>
+                </Field>
+                <Field>
+                        <Name>ModeGran</Name>
+                        <Dimension>
+                                <Name>Granule</Name>
+                                <GranuleBoundary>1</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>1</MinIndex>
+                                <MaxIndex>1</MaxIndex>
+                        </Dimension>
+                        <DataSize>
+                                <Count>1</Count>
+                                <Type>byte(s)</Type>
+                        </DataSize>
+                        <Datum>
+                                <Description>The VIIRS operational mode, reported at the granule level</Description>
+                                <DatumOffset>0</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>unsigned 8-bit char</DataType>
+                                <FillValue>
+                                        <Name>MISS_UINT8_FILL</Name>
+                                        <Value>254</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>ERR_UINT8_FILL</Name>
+                                        <Value>251</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>VDNE_UINT8_FILL</Name>
+                                        <Value>249</Value>
+                                </FillValue>
+                                <LegendEntry>
+                                        <Name>Night</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>Day</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>Mixed</Name>
+                                        <Value>2</Value>
+                                </LegendEntry>
+                        </Datum>
+                </Field>
+                <Field>
+                        <Name>PadByte1</Name>
+                        <Dimension>
+                                <Name>Granule</Name>
+                                <GranuleBoundary>1</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>3</MinIndex>
+                                <MaxIndex>3</MaxIndex>
+                        </Dimension>
+                        <DataSize>
+                                <Count>1</Count>
+                                <Type>byte(s)</Type>
+                        </DataSize>
+                        <Datum>
+                                <Description>Pad byte</Description>
+                                <DatumOffset>0</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>unsigned 8-bit char</DataType>
+                        </Datum>
+                </Field>
+                <Field>
+                        <Name>NumberOfScans</Name>
+                        <Dimension>
+                                <Name>Granule</Name>
+                                <GranuleBoundary>1</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>1</MinIndex>
+                                <MaxIndex>1</MaxIndex>
+                        </Dimension>
+                        <DataSize>
+                                <Count>4</Count>
+                                <Type>byte(s)</Type>
+                        </DataSize>
+                        <Datum>
+                                <Description>Actual number of VIIRS scans that were used to create this granule</Description>
+                                <DatumOffset>0</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>32-bit integer</DataType>
+                        </Datum>
+                </Field>
+                <Field>
+                        <Name>NumberOfMissingPkts</Name>
+                        <Dimension>
+                                <Name>Scan</Name>
+                                <GranuleBoundary>1</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>48</MinIndex>
+                                <MaxIndex>48</MaxIndex>
+                        </Dimension>
+                        <DataSize>
+                                <Count>4</Count>
+                                <Type>byte(s)</Type>
+                        </DataSize>
+                        <Datum>
+                                <Description>Number of missing packets in scan</Description>
+                                <DatumOffset>0</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>32-bit integer</DataType>
+                                <FillValue>
+                                        <Name>MISS_INT32_FILL</Name>
+                                        <Value>-998</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>VDNE_INT32_FILL</Name>
+                                        <Value>-993</Value>
+                                </FillValue>
+                        </Datum>
+                </Field>
+                <Field>
+                        <Name>NumberOfBadChecksums</Name>
+                        <Dimension>
+                                <Name>Scan</Name>
+                                <GranuleBoundary>1</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>48</MinIndex>
+                                <MaxIndex>48</MaxIndex>
+                        </Dimension>
+                        <DataSize>
+                                <Count>4</Count>
+                                <Type>byte(s)</Type>
+                        </DataSize>
+                        <Datum>
+                                <Description>Number of packets with bad checksum in scan</Description>
+                                <DatumOffset>0</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>32-bit integer</DataType>
+                                <FillValue>
+                                        <Name>MISS_INT32_FILL</Name>
+                                        <Value>-998</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>VDNE_INT32_FILL</Name>
+                                        <Value>-993</Value>
+                                </FillValue>
+                        </Datum>
+                </Field>
+                <Field>
+                        <Name>NumberOfDiscardedPkts</Name>
+                        <Dimension>
+                                <Name>Scan</Name>
+                                <GranuleBoundary>1</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>48</MinIndex>
+                                <MaxIndex>48</MaxIndex>
+                        </Dimension>
+                        <DataSize>
+                                <Count>4</Count>
+                                <Type>byte(s)</Type>
+                        </DataSize>
+                        <Datum>
+                                <Description>Number of discarded packets in scan</Description>
+                                <DatumOffset>0</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>32-bit integer</DataType>
+                                <FillValue>
+                                        <Name>MISS_INT32_FILL</Name>
+                                        <Value>-998</Value>
+                                </FillValue>
+                                <FillValue>
+                                        <Name>VDNE_INT32_FILL</Name>
+                                        <Value>-993</Value>
+                                </FillValue>
+                        </Datum>
+                </Field>
+                <Field>
+                        <Name>QF1_VIIRSMBANDSDR</Name>
+                        <Dimension>
+                                <Name>AlongTrack</Name>
+                                <GranuleBoundary>1</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>768</MinIndex>
+                                <MaxIndex>768</MaxIndex>
+                        </Dimension>
+                        <Dimension>
+                                <Name>CrossTrack</Name>
+                                <GranuleBoundary>0</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>3200</MinIndex>
+                                <MaxIndex>3200</MaxIndex>
+                        </Dimension>
+                        <DataSize>
+                                <Count>1</Count>
+                                <Type>byte(s)</Type>
+                        </DataSize>
+                        <Datum>
+                                <Description>Quality - Indicates calibration quality due to bad space view offsets, OBC view offsets, etc or use of a previous calibration view</Description>
+                                <DatumOffset>0</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>2 bit(s)</DataType>
+                                <LegendEntry>
+                                        <Name>Good</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>Poor</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>No Calibration</Name>
+                                        <Value>2</Value>
+                                </LegendEntry>
+                        </Datum>
+                        <Datum>
+                                <Description>Saturated Pixel - Indicates the level of pixel saturation</Description>
+                                <DatumOffset>2</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>2 bit(s)</DataType>
+                                <LegendEntry>
+                                        <Name>None Saturated</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>Some Saturated</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>All Saturated</Name>
+                                        <Value>2</Value>
+                                </LegendEntry>
+                        </Datum>
+                        <Datum>
+                                <Description>Missing Data - Data required for calibration processing is not available for processing</Description>
+                                <DatumOffset>4</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>2 bit(s)</DataType>
+                                <LegendEntry>
+                                        <Name>All data present</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>EV RDR data missing</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>Cal data (SV, CV, SD, etc.) missing</Name>
+                                        <Value>2</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>Thermistor data missing</Name>
+                                        <Value>3</Value>
+                                </LegendEntry>
+                        </Datum>
+                        <Datum>
+                                <Description>Out of Range - Calibrated pixel value outside of LUT threshold limits</Description>
+                                <DatumOffset>6</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>2 bit(s)</DataType>
+                                <LegendEntry>
+                                        <Name>All data within range</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>Radiance out of range</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>Reflectance or EBBT out of range</Name>
+                                        <Value>2</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>Both Radiance and Reflectance or EBBT out of range</Name>
+                                        <Value>3</Value>
+                                </LegendEntry>
+                        </Datum>
+                </Field>
+                <Field>
+                        <Name>QF2_SCAN_SDR</Name>
+                        <Dimension>
+                                <Name>Scan</Name>
+                                <GranuleBoundary>1</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>48</MinIndex>
+                                <MaxIndex>48</MaxIndex>
+                        </Dimension>
+                        <DataSize>
+                                <Count>1</Count>
+                                <Type>byte(s)</Type>
+                        </DataSize>
+                        <Datum>
+                                <Description>Half Angle Mirror Side</Description>
+                                <DatumOffset>0</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>1 bit(s)</DataType>
+                                <LegendEntry>
+                                        <Name>A-Side</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>B-Side</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+                        </Datum>
+                        <Datum>
+                                <Description>The Moon has corrupted the space view</Description>
+                                <DatumOffset>1</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>1 bit(s)</DataType>
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+                        </Datum>
+                        <Datum>
+                                <Description>Spare</Description>
+                                <DatumOffset>2</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>6 bit(s)</DataType>
+                        </Datum>
+                </Field>
+                <Field>
+                        <Name>QF3_SCAN_RDR</Name>
+                        <Dimension>
+                                <Name>Scan</Name>
+                                <GranuleBoundary>1</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>48</MinIndex>
+                                <MaxIndex>48</MaxIndex>
+                        </Dimension>
+                        <DataSize>
+                                <Count>1</Count>
+                                <Type>byte(s)</Type>
+                        </DataSize>
+                        <Datum>
+                                <Description>Checksum failed for zone 1</Description>
+                                <DatumOffset>0</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>1 bit(s)</DataType>
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+                        </Datum>
+                        <Datum>
+                                <Description>Checksum failed for zone 2</Description>
+                                <DatumOffset>1</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>1 bit(s)</DataType>
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+                        </Datum>
+                        <Datum>
+                                <Description>Checksum failed for zone 3</Description>
+                                <DatumOffset>2</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>1 bit(s)</DataType>
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+                        </Datum>
+                        <Datum>
+                                <Description>Checksum failed for zone 4</Description>
+                                <DatumOffset>3</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>1 bit(s)</DataType>
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+                        </Datum>
+                        <Datum>
+                                <Description>Checksum failed for zone 5</Description>
+                                <DatumOffset>4</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>1 bit(s)</DataType>
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+                        </Datum>
+                        <Datum>
+                                <Description>Checksum failed for zone 6</Description>
+                                <DatumOffset>5</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>1 bit(s)</DataType>
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+                        </Datum>
+                        <Datum>
+                                <Description>Scan data is not Present (No valid data)</Description>
+                                <DatumOffset>6</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>1 bit(s)</DataType>
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+                        </Datum>
+                        <Datum>
+                                <Description>Spare</Description>
+                                <DatumOffset>7</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>1 bit(s)</DataType>
+                        </Datum>
+                </Field>
+                <Field>
+                        <Name>QF4_SCAN_SDR</Name>
+                        <Dimension>
+                                <Name>AlongTrack</Name>
+                                <GranuleBoundary>1</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>768</MinIndex>
+                                <MaxIndex>768</MaxIndex>
+                        </Dimension>
+                        <DataSize>
+                                <Count>1</Count>
+                                <Type>byte(s)</Type>
+                        </DataSize>
+                        <Datum>
+                                <Description>Quality for this scan-line is reduced. The value is determined by the combined number of steps required to find a replacement for thermistor or calibration source data</Description>
+                                <DatumOffset>0</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>unsigned 8-bit char</DataType>
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>&gt;1</Value>
+                                </LegendEntry>
+                        </Datum>
+                </Field>
+                <Field>
+                        <Name>QF5_GRAN_BADDETECTOR</Name>
+                        <Dimension>
+                                <Name>Detector</Name>
+                                <GranuleBoundary>1</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>16</MinIndex>
+                                <MaxIndex>16</MaxIndex>
+                        </Dimension>
+                        <DataSize>
+                                <Count>1</Count>
+                                <Type>byte(s)</Type>
+                        </DataSize>
+                        <Datum>
+                                <Description>Bad Detector - M-Band</Description>
+                                <DatumOffset>0</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>1 bit(s)</DataType>
+                                <LegendEntry>
+                                        <Name>False</Name>
+                                        <Value>0</Value>
+                                </LegendEntry>
+                                <LegendEntry>
+                                        <Name>True</Name>
+                                        <Value>1</Value>
+                                </LegendEntry>
+                        </Datum>
+                        <Datum>
+                                <Description>Spare</Description>
+                                <DatumOffset>1</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>unitless</MeasurementUnits>
+                                <DataType>7 bit(s)</DataType>
+                        </Datum>
+                </Field>
+                <Field>
+                        <Name>RadianceFactors</Name>
+                        <Dimension>
+                                <Name>Factors</Name>
+                                <GranuleBoundary>1</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>2</MinIndex>
+                                <MaxIndex>2</MaxIndex>
+                        </Dimension>
+                        <DataSize>
+                                <Count>4</Count>
+                                <Type>byte(s)</Type>
+                        </DataSize>
+                        <Datum>
+                                <Description>Scale = first array element; Offset = second array element</Description>
+                                <DatumOffset>0</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>scale = unitless; offset = W/(m^2 μm sr)</MeasurementUnits>
+                                <DataType>32-bit floating point</DataType>
+                        </Datum>
+                </Field>
+                <Field>
+                        <Name>BrightnessTemperatureFactors</Name>
+                        <Dimension>
+                                <Name>Factors</Name>
+                                <GranuleBoundary>1</GranuleBoundary>
+                                <Dynamic>0</Dynamic>
+                                <MinIndex>2</MinIndex>
+                                <MaxIndex>2</MaxIndex>
+                        </Dimension>
+                        <DataSize>
+                                <Count>4</Count>
+                                <Type>byte(s)</Type>
+                        </DataSize>
+                        <Datum>
+                                <Description>Scale = first array element; Offset = second array element</Description>
+                                <DatumOffset>0</DatumOffset>
+                                <Scaled>0</Scaled>
+                                <MeasurementUnits>scale = unitless; offset = kelvin</MeasurementUnits>
+                                <DataType>32-bit floating point</DataType>
+                        </Datum>
+                </Field>
+        </ProductData>
+</NPOESSDataProduct>
