@@ -91,12 +91,12 @@ import ucar.unidata.ui.LatLonWidget;
 import ucar.unidata.ui.XmlTree;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.GuiUtils.ColorSwatch;
 import ucar.unidata.util.Range;
 import ucar.unidata.view.geoloc.MapProjectionDisplay;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
 
-import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.DisplayableData;
 import ucar.visad.display.TextDisplayable;
 
@@ -125,6 +125,7 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
     private double latitude;
     private double longitude;
     private double altitude;
+    private JPanel colorPanel;
     private JPanel locationPanel;
     private JPanel latLonAltPanel;
 
@@ -142,12 +143,13 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
     private JTextField lonFld;
     private JTextField altitudeFld = new JTextField(" ", 5);
 
-    private MapProjectionDisplay mapProjDsp;
-    private DisplayMaster dspMaster;
     private ViewManager vm;
     private CurveDrawer trackDsp;
     private TextDisplayable timeLabel;
     private static final TupleType TUPTYPE = makeTupleType();
+
+    private ColorSwatch colorSwatch;
+    private Color color;
 
     public PolarOrbitTrackControl() {
         super();
@@ -159,9 +161,9 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
         throws VisADException, RemoteException 
     {
         //System.out.println("init: dataChoice=" + dataChoice);
+        if (color == null) color = Color.GREEN;
         boolean result = super.init((DataChoice)this.getDataChoices().get(0));
         vm = getViewManager();
-        dspMaster = vm.getMaster();
 
         Data data = getData(getDataInstance());
         createTrackDisplay(data);
@@ -185,9 +187,9 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
 
                     timeLabel = new TextDisplayable(TextType.Generic);
                     timeLabel.setLineWidth(2f);
-                    timeLabel.setColor(Color.GREEN);
+                    timeLabel.setColor(color);
                     timeLabel.setTextSize(0.20f);
-                    dspMaster.addDisplayable(timeLabel);
+                    addDisplayable(timeLabel);
 
                     LatLonTuple llt = (LatLonTuple)tupleComps[1];
                     double dlat = llt.getLatitude().getValue();
@@ -211,9 +213,9 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
                 set[0] = track;
                 UnionSet uset = new UnionSet(set);
                 trackDsp = new CurveDrawer(uset);
-                trackDsp.setColor(Color.GREEN);
+                trackDsp.setColor(color);
                 trackDsp.setData(uset);
-                dspMaster.addDisplayable(trackDsp);
+                addDisplayable(trackDsp, FLAG_COLORTABLE);
             }
         } catch (Exception e) {
             System.out.println("getData e=" + e);
@@ -239,6 +241,28 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
      * @return container of contents
      */
     public Container doMakeContents() {
+        JComponent[] colorWidget = GuiUtils.makeColorSwatchWidget(Color.GREEN, "Color:");
+        colorSwatch = (ColorSwatch)colorWidget[0];
+        JButton setButton = colorSwatch.getSetButton();
+        ActionListener[] setListeners = setButton.getActionListeners();
+        setButton.removeActionListener(setListeners[0]);
+        setButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                color = colorSwatch.getColor();
+                try {
+                    Data data = getData(getDataInstance());
+                    createTrackDisplay(data);
+                } catch (Exception e) {
+                    System.out.println("\nsetColor e=" + e);
+                    color = Color.GREEN;
+                }
+            }
+        });
+        colorPanel = GuiUtils.doLayout(new Component[] {
+                           new JLabel("Color: "),
+                           colorSwatch,
+                           setButton }, 3,
+                           GuiUtils.WT_N, GuiUtils.WT_N);
         GroundStations gs = new GroundStations();
         int gsCount = gs.getGroundStationCount();
         String[] stats = new String[gsCount];
@@ -302,6 +326,7 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
         Insets  dfltGridSpacing = new Insets(4, 0, 4, 0);
         String  dfltLblSpacing  = " ";
         List allComps = new ArrayList();
+        allComps.add(colorPanel);
         allComps.add(new JLabel(" "));
         allComps.add(locationPanel);
         allComps.add(latLonAltPanel);
