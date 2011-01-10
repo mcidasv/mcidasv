@@ -42,6 +42,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -63,12 +64,15 @@ import visad.FieldImpl;
 import visad.FlatField;
 import visad.Gridded2DSet;
 import visad.MathType;
+import visad.RealTuple;
 import visad.RealTupleType;
 import visad.SampledSet;
 import visad.ScalarMap;
 import visad.ScalarType;
 import visad.Text;
+import visad.TextType;
 import visad.Tuple;
+import visad.TupleType;
 import visad.UnionSet;
 import visad.VisADException;
 import visad.georef.LatLonTuple;
@@ -94,6 +98,7 @@ import ucar.unidata.xml.XmlUtil;
 
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.DisplayableData;
+import ucar.visad.display.TextDisplayable;
 
 import edu.wisc.ssec.mcidasv.PersistenceManager;
 import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
@@ -141,6 +146,8 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
     private DisplayMaster dspMaster;
     private ViewManager vm;
     private CurveDrawer trackDsp;
+    private TextDisplayable timeLabel;
+    private static final TupleType TUPTYPE = makeTupleType();
 
     public PolarOrbitTrackControl() {
         super();
@@ -174,10 +181,26 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
                     String str = ((Text)tupleComps[0]).getValue();
                     dts.add(str);
                     int indx = str.indexOf(" ") + 1;
-                    String subStr = str.substring(indx, indx+5); 
+                    String subStr = "      _ " + str.substring(indx, indx+5);
+
+                    timeLabel = new TextDisplayable(TextType.Generic);
+                    timeLabel.setLineWidth(2f);
+                    timeLabel.setColor(Color.GREEN);
+                    timeLabel.setTextSize(0.20f);
+                    dspMaster.addDisplayable(timeLabel);
+
                     LatLonTuple llt = (LatLonTuple)tupleComps[1];
-                    float lat = (float)(llt.getLatitude().getValue());
-                    float lon = (float)(llt.getLongitude().getValue());
+                    double dlat = llt.getLatitude().getValue();
+                    double dlon = llt.getLongitude().getValue();
+                    RealTuple lonLat =
+                        new RealTuple(RealTupleType.SpatialEarth2DTuple,
+                            new double[] { dlon, dlat });
+                    Tuple tup = new Tuple(TUPTYPE,
+                        new Data[] { lonLat, new Text(subStr)});
+
+                    timeLabel.setData(tup);
+                    float lat = (float)dlat;
+                    float lon = (float)dlon;
                     //System.out.println("    Time=" + subStr + " Lat=" + lat + " Lon=" + lon);
                     latlon[0][i] = lat;
                     latlon[1][i] = lon;
@@ -196,6 +219,17 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
             System.out.println("getData e=" + e);
         }
         return;
+    }
+
+    private static TupleType makeTupleType() {
+        TupleType t = null;
+        try {
+            t = new TupleType(new MathType[] {RealTupleType.SpatialEarth2DTuple,
+                                              TextType.Generic});
+        } catch (Exception e) {
+            System.out.println("\nPolarOrbitTrackControl.makeTupleType e=" + e);
+        }
+        return t;
     }
 
     /**
