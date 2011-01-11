@@ -234,6 +234,27 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
         return t;
     }
 
+    public JComponent makeColorBox(Color swatchColor) {
+        GuiUtils.ColorSwatch swatch = new GuiUtils.ColorSwatch(swatchColor,
+                                               "Color") {
+            public void userSelectedNewColor(Color c) {
+                //super.userSelectedNewColor(c);
+                color = c;
+                try {
+                    getIdv().showWaitCursor();
+                    Data data = getData(getDataInstance());
+                    createTrackDisplay(data);
+                    setBackground(c);
+                    getIdv().showNormalCursor();
+                } catch (Exception e) {
+                    System.out.println("\nsetColor e=" + e);
+                    color = Color.GREEN;
+                }
+            }
+        };
+        return swatch;
+    }
+
     /**
      * Called by doMakeWindow in DisplayControlImpl, which then calls its
      * doMakeMainButtonPanel(), which makes more buttons.
@@ -241,27 +262,11 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
      * @return container of contents
      */
     public Container doMakeContents() {
-        JComponent[] colorWidget = GuiUtils.makeColorSwatchWidget(Color.GREEN, "Color:");
-        colorSwatch = (ColorSwatch)colorWidget[0];
-        JButton setButton = colorSwatch.getSetButton();
-        ActionListener[] setListeners = setButton.getActionListeners();
-        setButton.removeActionListener(setListeners[0]);
-        setButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                color = colorSwatch.getColor();
-                try {
-                    Data data = getData(getDataInstance());
-                    createTrackDisplay(data);
-                } catch (Exception e) {
-                    System.out.println("\nsetColor e=" + e);
-                    color = Color.GREEN;
-                }
-            }
-        });
+        Color swatchColor = Color.GREEN;
+        colorSwatch = (GuiUtils.ColorSwatch)makeColorBox(swatchColor);
         colorPanel = GuiUtils.doLayout(new Component[] {
-                           new JLabel("Color: "),
-                           colorSwatch,
-                           setButton }, 3,
+                           new JLabel("Set Color: "),
+                           colorSwatch }, 2,
                            GuiUtils.WT_N, GuiUtils.WT_N);
         GroundStations gs = new GroundStations();
         int gsCount = gs.getGroundStationCount();
