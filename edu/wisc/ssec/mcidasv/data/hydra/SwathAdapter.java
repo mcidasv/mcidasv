@@ -243,6 +243,10 @@ public class SwathAdapter extends MultiDimensionAdapter {
         return XTrackLen;
       }
 
+      public SwathNavigation getNavigation() {
+        return navigation;
+      }
+
       protected void setTrackLength(int len) {
         TrackLen = len;
       }
