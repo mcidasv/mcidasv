@@ -53,6 +53,9 @@ public class SwathNavigation implements Navigation  {
     else if (product_name == "IASI_L1C_xxx") {
       swathNav = new IASI_L1C_LonLatNavigation(swathAdapter);
     }
+    else if (product_name == "CrIS_SDR") {
+      swathNav = new CrIS_SDR_LonLatNavigation(swathAdapter);
+    }
     
     return swathNav;
   }
@@ -176,18 +179,21 @@ public class SwathNavigation implements Navigation  {
 
 
       if (numDims > 2) { // initialize geo arrays, then recompute xtrack/track dimensions below
-        System.out.println("lon/lat array rank > 2");
-        if (numDims != select.getRank()) {
-           throw new Exception(
-              "SwathNavigation.getVisADCoordinateSystem: if lon/lat array rank > 2, rank must be equal to data array rank");
+        if (numDims == select.getRank()) {
+          int[] start = select.getStart();
+          int[] count = select.getCount();
+          stride = select.getStride();
+          for (int i=0; i<numDims; i++) {
+            geo_start[i] = start[i];
+            geo_count[i] = count[i];
+            geo_stride[i] = stride[i];
+          }
         }
-        int[] start = select.getStart();
-        int[] count = select.getCount();
-        stride = select.getStride();
-        for (int i=0; i<numDims; i++) {
-          geo_start[i] = start[i];
-          geo_count[i] = count[i];
-          geo_stride[i] = stride[i];
+        else {
+          geo_start[geo_track_idx] = (int) track_coords[0];
+          geo_start[geo_xtrack_idx] = (int) xtrack_coords[0];
+          geo_count[geo_track_idx] = (int) ((track_coords[1] - track_coords[0])/track_coords[2] + 1f);
+          geo_count[geo_xtrack_idx] = (int) ((xtrack_coords[1] - xtrack_coords[0])/xtrack_coords[2] + 1f);
         }
       }
 
