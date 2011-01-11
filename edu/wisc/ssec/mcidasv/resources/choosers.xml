@@ -19,6 +19,8 @@
 			&lt;li&gt;
 			Select &lt;b&gt;HYDRA&lt;/b&gt; to access HYDRA Multispectral data via a file browser
 			&lt;/ul&gt;
+                        Select &lt;b&gt;TLE&lt;/b&gt; to access TLE text
+>                       &lt;/ul&gt;
 		" />
 	</panel>
 
@@ -37,6 +39,14 @@
 			showpolling="false" filepattern=".*" selectdatasourceid="true"
 			datasourceid="MultiSpectral" class="edu.wisc.ssec.mcidasv.chooser.FileChooser" />
 	</panel>
+
+        <panel title="Polar Orbit Track" category="Satellite" layout="border"
+                tabtooltip="Polar orbit tracks from TLE data">
+                <chooser id="chooser.tle" title="Polar Orbit Track" menutitle="Polar Orbit Track"
+                        showinmenu="true" helppath="idv.data.choosers.tlechooser"
+                        showpolling="false" filepattern=".*" selectdatasourceid="true"
+                        datasourceid="TLE" class="edu.wisc.ssec.mcidasv.chooser.PolarOrbitTrackChooser" />
+        </panel>
 
 
 

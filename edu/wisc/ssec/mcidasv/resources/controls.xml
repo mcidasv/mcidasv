@@ -74,16 +74,14 @@
     label="4 Channel Combinations"
     displaycategory="Imagery"
     properties="windowVisible=true;displayName=HydraCombo"/>
-<!--
   <control
-     id="testimage"
-     categories="IMAGE-*-*"
-     class="edu.wisc.ssec.mcidasv.control.TestImagePlanViewControl"
-     description="Test Image Display"
-     label="Test Image Display"
-     displaycategory="Imagery"
+     id="tle"
+     categories="TLE"
+     class="edu.wisc.ssec.mcidasv.control.PolarOrbitTrackControl"
+     description="Polar Orbit Track"
+     label="Polar Orbit Track"
+     displaycategory="General"
      properties="windowVisible=true;"/>
--->
   <control
      id="imagedisplay"
      categories="IMAGE-*-*"
