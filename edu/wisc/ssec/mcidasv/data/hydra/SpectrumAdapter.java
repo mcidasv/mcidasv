@@ -46,6 +46,7 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
 
   public static String channels_name = "Channels";
   public static String channelIndex_name = "channelIndex";
+  public static String FOVindex_name = "FOVindex";
   public static String channelUnit = "cm";
   public static String channelType = "wavenumber";
   public static String array_name  = "array_name";
