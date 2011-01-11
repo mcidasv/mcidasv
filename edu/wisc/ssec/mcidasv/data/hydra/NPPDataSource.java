@@ -100,7 +100,10 @@ public class NPPDataSource extends HydraDataSource {
 
     private static final String DATA_DESCRIPTION = "NPP Data";
     
+    // instrument related variables and flags
     ucar.nc2.Attribute instrumentName = null;
+    // for now, we are only handling CrIS variables that match this filter and SCAN dimensions
+    private String crisFilter = "ES_Real";
 
     private HashMap defaultSubset;
     public TrackAdapter track_adapter;
@@ -114,9 +117,9 @@ public class NPPDataSource extends HydraDataSource {
     private PreviewSelection previewSelection = null;
     private FlatField previewImage = null;
     
-    private static int[] YSCAN_POSSIBILITIES = { 96,  512,  768,  1536, 2304, 2313, 12 };
-    private static int[] XSCAN_POSSIBILITIES = { 508, 2133, 3200, 6400, 4064, 4121, 96 }; 
-    private static int[] ZSCAN_POSSIBILITIES = { -1,  -1,   -1,   -1,   -1,   -1,   22 };    
+    private static int[] YSCAN_POSSIBILITIES = { 96,  512,  768,  1536, 2304, 2313, 12, 4,   4,   4   };
+    private static int[] XSCAN_POSSIBILITIES = { 508, 2133, 3200, 6400, 4064, 4121, 96, 30,  30,  30  }; 
+    private static int[] ZSCAN_POSSIBILITIES = { -1,  -1,   -1,   -1,   -1,   -1,   22, 163, 437, 717 };    
     private int inTrackDimensionLength = -1;
     
     // need our own separator char since it's always Unix-style in the NPP files
@@ -413,6 +416,15 @@ public class NPPDataSource extends HydraDataSource {
     	    								continue;
     	    							}
     	    							
+    	    							// for CrIS instrument, only taking real calibrated values for now
+    	    							logger.debug("INSTRUMENT NAME: " + instrumentName);
+    	    							if (instrumentName.getStringValue().equals("CrIS")) {
+    	    								if (! varShortName.startsWith(crisFilter)) {
+    	    									logger.debug("Skipping variable: " + varShortName);
+    	    									continue;
+    	    								}
+    	    							}
+    	    							
     	    							logger.debug("Variable prefix for finding Factors: " + varShortName);
     	    							DataType dt = v.getDataType();
     	    							if ((dt.getSize() != 4) && (dt.getSize() != 2) && (dt.getSize() != 1)) {
@@ -422,7 +434,7 @@ public class NPPDataSource extends HydraDataSource {
     	    							List al = v.getAttributes();
 
     	    							List<Dimension> dl = v.getDimensions();
-    	    							if (dl.size() > 3) {
+    	    							if (dl.size() > 4) {
     	    								logger.debug("Skipping data of dimension: " + dl.size());
     	    								continue;
     	    							}
@@ -652,13 +664,13 @@ public class NPPDataSource extends HydraDataSource {
         	table.put("geo_XTrack", "XTrack");
         	
         	if (is3D) {
-        		table.put(SpectrumAdapter.channelIndex_name, "Channel");
-        		table.put("array_dimension_names", new String[] {"Track", "XTrack", "Channel"});
-        		table.put("lon_array_dimension_names", new String[] {"Track", "XTrack"});
-        		table.put("lat_array_dimension_names", new String[] {"Track", "XTrack"});
-        		
+
         		// 3D data is either ATMS or CrIS
         		if ((instrumentName.getName() != null) && (instrumentName.getStringValue().equals("ATMS"))) {
+            		table.put(SpectrumAdapter.channelIndex_name, "Channel");
+            		table.put("array_dimension_names", new String[] {"Track", "XTrack", "Channel"});
+            		table.put("lon_array_dimension_names", new String[] {"Track", "XTrack"});
+            		table.put("lat_array_dimension_names", new String[] {"Track", "XTrack"});
         			int numChannels = JPSSUtilities.ATMSChannelCenterFrequencies.length;
             		float[] bandArray = new float[numChannels];
             		String[] bandNames = new String[numChannels];
@@ -669,8 +681,24 @@ public class NPPDataSource extends HydraDataSource {
             		table.put(SpectrumAdapter.channelValues, bandArray);
             		table.put(SpectrumAdapter.bandNames, bandNames);
         		} else {
-        			// sorry, if we can't id the instrument, we can't display the data!
-        			throw new VisADException("Unable to determine instrument name");
+        			if (instrumentName.getStringValue().equals("CrIS")) {
+                		table.put(SpectrumAdapter.channelIndex_name, "Channel");
+                		table.put("array_dimension_names", new String[] {"Track", "XTrack", "FOV", "Channel"});
+                		table.put("lon_array_dimension_names", new String[] {"Track", "XTrack"});
+                		table.put("lat_array_dimension_names", new String[] {"Track", "XTrack"});
+            			int numChannels = 9;
+                		float[] bandArray = new float[numChannels];
+                		String[] bandNames = new String[numChannels];
+                		for (int bIdx = 0; bIdx < numChannels; bIdx++) {
+                			bandArray[bIdx] = bIdx;
+                			bandNames[bIdx] = "Channel " + (bIdx + 1);
+                		}
+                		table.put(SpectrumAdapter.channelValues, bandArray);
+                		table.put(SpectrumAdapter.bandNames, bandNames);
+        			} else {
+        				// sorry, if we can't id the instrument, we can't display the data!
+        				throw new VisADException("Unable to determine instrument name");
+        			}
         		}
 
         		table.put(SpectrumAdapter.channelType, "wavelength");
@@ -715,9 +743,15 @@ public class NPPDataSource extends HydraDataSource {
         		SpectrumAdapter sa = new SpectrumAdapter(nppAggReader, table);
                 DataCategory.createCategory("MultiSpectral");
                 categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
-                multiSpectData = new MultiSpectralData((SwathAdapter) adapters[pIdx], sa, 
+                if (instrumentName.getStringValue().equals("ATMS")) {
+                	multiSpectData = new MultiSpectralData((SwathAdapter) adapters[pIdx], sa, 
                 		"BrightnessTemperature", "BrightnessTemperature", "NPP", "ATMS");
-                multiSpectData.setInitialWavenumber(JPSSUtilities.ATMSChannelCenterFrequencies[0]);
+                	multiSpectData.setInitialWavenumber(JPSSUtilities.ATMSChannelCenterFrequencies[0]);
+                } else {
+                	multiSpectData = new MultiSpectralData((SwathAdapter) adapters[pIdx], sa, 
+                    		"ES_RealLW", "ES_RealLW", "NPP", "CrIS");
+                    multiSpectData.setInitialWavenumber(JPSSUtilities.ATMSChannelCenterFrequencies[0]);
+                }
                 if (pIdx == 0) {
                 	defaultSubset = multiSpectData.getDefaultSubset();
                     try {

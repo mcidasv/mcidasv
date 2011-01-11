@@ -316,6 +316,10 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   // to deal with for example CrIS data...
 	   int numDimensions = dList.size();
 	   logger.debug("Number of dimensions: " + numDimensions);
+	   
+	   // the only 4D data right now is CrIS, return 0
+	   if (numDimensions == 4) return 0;
+	   
 	   if ((numDimensions == 2) || (numDimensions == 3)) {
 		   if (numDimensions == 2) is2D = true;
 		   if (numDimensions == 3) is3D = true;
