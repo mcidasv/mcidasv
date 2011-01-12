@@ -145,23 +145,21 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
 
     private ViewManager vm;
     private CurveDrawer trackDsp;
-    private TextDisplayable timeLabel;
+    private List <TextDisplayable> timeLabels = new ArrayList();
     private static final TupleType TUPTYPE = makeTupleType();
 
     private ColorSwatch colorSwatch;
     private Color color;
+    private Color defaultColor = Color.GREEN;
 
     public PolarOrbitTrackControl() {
         super();
         logger.trace("created new tlecontrol={}", Integer.toHexString(hashCode()));
-        //System.out.println("PolarOrbitTrackControl:");
     }
 
     @Override public boolean init(DataChoice dataChoice) 
         throws VisADException, RemoteException 
     {
-        //System.out.println("init: dataChoice=" + dataChoice);
-        if (color == null) color = Color.GREEN;
         boolean result = super.init((DataChoice)this.getDataChoices().get(0));
         vm = getViewManager();
 
@@ -172,6 +170,7 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
 
     private void createTrackDisplay(Data data) {
         try {
+            this.color = getColor();
             List<String> dts = new ArrayList();
             if (data instanceof Tuple) {
                 Data[] dataArr = ((Tuple)data).getComponents();
@@ -185,11 +184,12 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
                     int indx = str.indexOf(" ") + 1;
                     String subStr = "      _ " + str.substring(indx, indx+5);
 
-                    timeLabel = new TextDisplayable(TextType.Generic);
-                    timeLabel.setLineWidth(2f);
-                    timeLabel.setColor(color);
-                    timeLabel.setTextSize(0.20f);
-                    addDisplayable(timeLabel);
+                    TextDisplayable time = new TextDisplayable(TextType.Generic);
+                    time.setLineWidth(2f);
+                    time.setTextSize(0.20f);
+                    time.setColor(this.color);
+                    
+                    addDisplayable(time, FLAG_COLORTABLE);
 
                     LatLonTuple llt = (LatLonTuple)tupleComps[1];
                     double dlat = llt.getLatitude().getValue();
@@ -199,8 +199,8 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
                             new double[] { dlon, dlat });
                     Tuple tup = new Tuple(TUPTYPE,
                         new Data[] { lonLat, new Text(subStr)});
-
-                    timeLabel.setData(tup);
+                    time.setData(tup);
+                    this.timeLabels.add(time);
                     float lat = (float)dlat;
                     float lon = (float)dlon;
                     //System.out.println("    Time=" + subStr + " Lat=" + lat + " Lon=" + lon);
@@ -212,10 +212,10 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
                 SampledSet[] set = new SampledSet[1];
                 set[0] = track;
                 UnionSet uset = new UnionSet(set);
-                trackDsp = new CurveDrawer(uset);
-                trackDsp.setColor(color);
-                trackDsp.setData(uset);
-                addDisplayable(trackDsp, FLAG_COLORTABLE);
+                this.trackDsp = new CurveDrawer(uset);
+                this.trackDsp.setColor(this.color);
+                this.trackDsp.setData(uset);
+                addDisplayable(this.trackDsp, FLAG_COLORTABLE);
             }
         } catch (Exception e) {
             System.out.println("getData e=" + e);
@@ -238,17 +238,15 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
         GuiUtils.ColorSwatch swatch = new GuiUtils.ColorSwatch(swatchColor,
                                                "Color") {
             public void userSelectedNewColor(Color c) {
-                //super.userSelectedNewColor(c);
-                color = c;
+                System.out.println("userSelectedNewColor: c=" + c);
                 try {
                     getIdv().showWaitCursor();
-                    Data data = getData(getDataInstance());
-                    createTrackDisplay(data);
+                    setColor(c);
                     setBackground(c);
                     getIdv().showNormalCursor();
                 } catch (Exception e) {
                     System.out.println("\nsetColor e=" + e);
-                    color = Color.GREEN;
+                    setColor(defaultColor);
                 }
             }
         };
@@ -262,7 +260,7 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
      * @return container of contents
      */
     public Container doMakeContents() {
-        Color swatchColor = Color.GREEN;
+        Color swatchColor = getColor();
         colorSwatch = (GuiUtils.ColorSwatch)makeColorBox(swatchColor);
         colorPanel = GuiUtils.doLayout(new Component[] {
                            new JLabel("Set Color: "),
@@ -341,18 +339,34 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
         return GuiUtils.top(dateTimePanel);
     }
 
-    private void setLatitude() {
-        System.out.println("\nPolarOrbitTrackControl setLatitude:");
+    public Color getColor() {
+        if (this.color == null) this.color = defaultColor;
+        return this.color;
+    }
+
+    public void setColor(Color color) {
+        if (this.color == null) this.color = defaultColor;
+        try {
+            this.trackDsp.setColor(color);
+            int num = this.timeLabels.size();
+            for (int i=0; i<num; i++) {
+                ((TextDisplayable)(this.timeLabels.get(i))).setColor(color);
+            }
+            this.color = color;
+        } catch (Exception e) {
+            System.out.println("Exception in PolarOrbitTrackControl.setColor e=" + e);
+        }
+    }
+
+    public void setLatitude() {
         this.latitude = latLonWidget.getLat();
     }
 
-    private void setLongitude() {
-        System.out.println("\nPolarOrbitTrackControl setLongitude:");
+    public void setLongitude() {
         this.longitude = latLonWidget.getLon();
     }
 
-    private void setAltitude() {
-        System.out.println("\nPolarOrbitTrackControl setAltitude:");
+    public void setAltitude() {
         String str = altitudeFld.getText();
         Double d = new Double(str);
         this.altitude = d.doubleValue();
