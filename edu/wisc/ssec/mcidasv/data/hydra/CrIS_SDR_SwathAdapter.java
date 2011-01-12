@@ -30,21 +30,10 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import visad.Data;
-import visad.FlatField;
-import visad.Set;
-import visad.CoordinateSystem;
-import visad.RealType;
-import visad.RealTupleType;
-import visad.SetType;
-import visad.Linear2DSet;
-import visad.Unit;
-import visad.FunctionType;
-import visad.VisADException;
-import java.rmi.RemoteException;
-import java.util.Hashtable;
 import java.util.HashMap;
 
+import visad.FlatField;
+import visad.Set;
 
 public class CrIS_SDR_SwathAdapter extends SwathAdapter {
 

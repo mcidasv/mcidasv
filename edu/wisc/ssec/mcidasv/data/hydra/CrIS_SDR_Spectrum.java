@@ -31,15 +31,8 @@
 package edu.wisc.ssec.mcidasv.data.hydra;
                                                                                                                                                            
 import java.util.HashMap;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
-import visad.Set;
-import visad.FlatField;
 
+import visad.FlatField;
 
 public class CrIS_SDR_Spectrum extends SpectrumAdapter {
 
