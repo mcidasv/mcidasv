@@ -30,7 +30,9 @@
 
 package edu.wisc.ssec.mcidasv.control;
 
-import java.awt.BorderLayout;
+import edu.wisc.ssec.mcidasv.data.GroundStations;
+import edu.wisc.ssec.mcidasv.data.hydra.CurveDrawer;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -40,35 +42,36 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
-import javax.swing.*;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataInstance;
+import ucar.unidata.idv.control.DisplayControlImpl;
+import ucar.unidata.ui.LatLonWidget;
+import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.GuiUtils.ColorSwatch;
+import ucar.visad.display.TextDisplayable;
 
 import visad.Data;
-import visad.DateTime;
-import visad.FieldImpl;
-import visad.FlatField;
 import visad.Gridded2DSet;
 import visad.MathType;
 import visad.RealTuple;
 import visad.RealTupleType;
 import visad.SampledSet;
-import visad.ScalarMap;
-import visad.ScalarType;
 import visad.Text;
 import visad.TextType;
 import visad.Tuple;
@@ -76,34 +79,6 @@ import visad.TupleType;
 import visad.UnionSet;
 import visad.VisADException;
 import visad.georef.LatLonTuple;
-
-import ucar.unidata.data.DataChoice;
-import ucar.unidata.data.DataInstance;
-import ucar.unidata.data.DataSelection;
-import ucar.unidata.data.DataSourceImpl;
-import ucar.unidata.data.imagery.BandInfo;
-import ucar.unidata.idv.ControlContext;
-import ucar.unidata.idv.IdvResourceManager;
-import ucar.unidata.idv.ViewManager;
-import ucar.unidata.idv.control.ColorTableWidget;
-import ucar.unidata.idv.control.DisplayControlImpl;
-import ucar.unidata.ui.LatLonWidget;
-import ucar.unidata.ui.XmlTree;
-import ucar.unidata.util.ColorTable;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.GuiUtils.ColorSwatch;
-import ucar.unidata.util.Range;
-import ucar.unidata.view.geoloc.MapProjectionDisplay;
-import ucar.unidata.xml.XmlResourceCollection;
-import ucar.unidata.xml.XmlUtil;
-
-import ucar.visad.display.DisplayableData;
-import ucar.visad.display.TextDisplayable;
-
-import edu.wisc.ssec.mcidasv.PersistenceManager;
-import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
-import edu.wisc.ssec.mcidasv.data.GroundStations;
-import edu.wisc.ssec.mcidasv.data.hydra.CurveDrawer;
 
 /**
  * {@link ucar.unidata.idv.control.PolarOrbitTrackControl} with some McIDAS-V
@@ -125,6 +100,7 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
     private double latitude;
     private double longitude;
     private double altitude;
+    private JPanel fontSizePanel;
     private JPanel colorPanel;
     private JPanel locationPanel;
     private JPanel latLonAltPanel;
@@ -143,11 +119,25 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
     private JTextField lonFld;
     private JTextField altitudeFld = new JTextField(" ", 5);
 
-    private ViewManager vm;
+    private ChangeListener sizeListener;
+    private ActionListener fontSizeChange;
+    private FocusListener fontSizeFocusChange;
+
+    /** Font size control */
+    private static final int SLIDER_MAX = 10;
+    private static final int SLIDER_MIN = 1;
+    private static final int SLIDER_WIDTH = 150;
+    private static final int SLIDER_HEIGHT = 16;
+
+    private JSlider fontSizeSlider;
+    private JTextField fontSizeFld = new JTextField();
+
     private CurveDrawer trackDsp;
     private List <TextDisplayable> timeLabels = new ArrayList();
     private static final TupleType TUPTYPE = makeTupleType();
 
+    private int fontSize;
+    private int defaultSize = 3;
     private ColorSwatch colorSwatch;
     private Color color;
     private Color defaultColor = Color.GREEN;
@@ -161,7 +151,6 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
         throws VisADException, RemoteException 
     {
         boolean result = super.init((DataChoice)this.getDataChoices().get(0));
-        vm = getViewManager();
 
         Data data = getData(getDataInstance());
         createTrackDisplay(data);
@@ -170,6 +159,7 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
 
     private void createTrackDisplay(Data data) {
         try {
+            this.fontSize = getFontSize();
             this.color = getColor();
             List<String> dts = new ArrayList();
             if (data instanceof Tuple) {
@@ -186,7 +176,7 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
 
                     TextDisplayable time = new TextDisplayable(TextType.Generic);
                     time.setLineWidth(2f);
-                    time.setTextSize(0.20f);
+                    time.setTextSize(this.fontSize);
                     time.setColor(this.color);
                     
                     addDisplayable(time, FLAG_COLORTABLE);
@@ -238,7 +228,6 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
         GuiUtils.ColorSwatch swatch = new GuiUtils.ColorSwatch(swatchColor,
                                                "Color") {
             public void userSelectedNewColor(Color c) {
-                System.out.println("userSelectedNewColor: c=" + c);
                 try {
                     getIdv().showWaitCursor();
                     setColor(c);
@@ -260,6 +249,49 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
      * @return container of contents
      */
     public Container doMakeContents() {
+
+        this.sizeListener =
+            new javax.swing.event.ChangeListener() {
+            public void stateChanged(ChangeEvent evt) {
+                int val = getSizeValue(fontSizeSlider);
+                setFontSize(val);
+            }
+        };
+        this.fontSizeChange =new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                String str = fontSizeFld.getText();
+                int size = new Integer(str).intValue();
+                setFontSize(size);
+            }
+        };
+        this.fontSizeFocusChange = new FocusListener() {
+            public void focusGained(FocusEvent fe) {
+            }
+            public void focusLost(FocusEvent fe) {
+                String str = fontSizeFld.getText();
+                int size = new Integer(str).intValue();
+                setFontSize(size);
+            }
+        };
+
+        this.fontSizeSlider = GuiUtils.makeSlider(SLIDER_MIN, SLIDER_MAX, defaultSize,
+                                     this, "setFontSize", true);
+        this.fontSizeSlider.setPreferredSize(new Dimension(SLIDER_WIDTH,SLIDER_HEIGHT));
+        this.fontSizeSlider.setMajorTickSpacing(1);
+        this.fontSizeSlider.setSnapToTicks(true);
+        this.fontSizeSlider.setExtent(1);
+        int size = getSizeValue(this.fontSizeSlider);
+        setFontSize(size);
+        this.fontSizeFld = new JTextField(Integer.toString(size),3);
+        this.fontSizeFld.addFocusListener(this.fontSizeFocusChange);
+        this.fontSizeFld.addActionListener(this.fontSizeChange);
+        this.fontSizePanel = GuiUtils.doLayout( new Component[] {
+                 new JLabel("FontSize: "),
+                 this.fontSizeFld,
+                 new JLabel(" "),
+                 this.fontSizeSlider }, 4,
+                 GuiUtils.WT_N, GuiUtils.WT_N);
+
         Color swatchColor = getColor();
         colorSwatch = (GuiUtils.ColorSwatch)makeColorBox(swatchColor);
         colorPanel = GuiUtils.doLayout(new Component[] {
@@ -329,6 +361,7 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
         Insets  dfltGridSpacing = new Insets(4, 0, 4, 0);
         String  dfltLblSpacing  = " ";
         List allComps = new ArrayList();
+        allComps.add(fontSizePanel);
         allComps.add(colorPanel);
         allComps.add(new JLabel(" "));
         allComps.add(locationPanel);
@@ -337,6 +370,42 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
         JPanel dateTimePanel = GuiUtils.doLayout(allComps, 1, GuiUtils.WT_NY,
                                GuiUtils.WT_N);
         return GuiUtils.top(dateTimePanel);
+    }
+
+    private int getSizeValue(JSlider slider) {
+        int value = slider.getValue();
+        if (value < SLIDER_MIN) {
+            value = SLIDER_MIN;
+        } else if (value > SLIDER_MAX) {
+            value = SLIDER_MAX;
+        }
+        return value;
+    }
+
+    public int getFontSize() {
+        if (this.fontSize < 1) this.fontSize = defaultSize;
+        return this.fontSize;
+    }
+
+    public void setFontSize(int size) {
+        if (size < 1) size = defaultSize;
+        if (this.fontSize < 1) this.fontSize = size;
+        try {
+            if (this.fontSizeFld != null) {
+                this.fontSizeFld.setText(new Integer(size).toString());
+            }
+            if (this.fontSizeSlider != null) {
+                this.fontSizeSlider.setValue(size);
+            }
+            float fSize = (float)size/10.0f;
+            int num = this.timeLabels.size();
+            for (int i=0; i<num; i++) {
+                ((TextDisplayable)(this.timeLabels.get(i))).setTextSize(fSize);
+            }
+            this.fontSize = size;
+        } catch (Exception e) {
+            System.out.println("Exception in PolarOrbitTrackControl.setFontSize e=" + e);
+        }
     }
 
     public Color getColor() {
