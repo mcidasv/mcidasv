@@ -103,7 +103,7 @@ public class NPPDataSource extends HydraDataSource {
     // instrument related variables and flags
     ucar.nc2.Attribute instrumentName = null;
     // for now, we are only handling CrIS variables that match this filter and SCAN dimensions
-    private String crisFilter = "ES_Real";
+    private String crisFilter = "ES_RealLW";
 
     private HashMap defaultSubset;
     public TrackAdapter track_adapter;
@@ -654,23 +654,38 @@ public class NPPDataSource extends HydraDataSource {
     	while (iterator.hasNext()) {
     		String pStr = (String) iterator.next();
     		logger.debug("Working on adapter number " + (pIdx + 1));
-        	HashMap<String, Object> table = SwathAdapter.getEmptyMetadataTable();
-        	table.put("array_name", pStr);
-        	table.put("lon_array_name", pathToLon);
-        	table.put("lat_array_name", pathToLat);
-        	table.put("XTrack", "XTrack");
-        	table.put("Track", "Track");
-        	table.put("geo_Track", "Track");
-        	table.put("geo_XTrack", "XTrack");
+        	HashMap<String, Object> swathTable = SwathAdapter.getEmptyMetadataTable();
+        	HashMap<String, Object> spectTable = SpectrumAdapter.getEmptyMetadataTable();
+        	swathTable.put("array_name", pStr);
+        	swathTable.put("lon_array_name", pathToLon);
+        	swathTable.put("lat_array_name", pathToLat);
+        	swathTable.put("XTrack", "XTrack");
+        	swathTable.put("Track", "Track");
+        	swathTable.put("geo_Track", "Track");
+        	swathTable.put("geo_XTrack", "XTrack");
+        	
+        	// array_name common to spectrum table
+        	spectTable.put("array_name", pStr);
         	
         	if (is3D) {
 
         		// 3D data is either ATMS or CrIS
         		if ((instrumentName.getName() != null) && (instrumentName.getStringValue().equals("ATMS"))) {
-            		table.put(SpectrumAdapter.channelIndex_name, "Channel");
-            		table.put("array_dimension_names", new String[] {"Track", "XTrack", "Channel"});
-            		table.put("lon_array_dimension_names", new String[] {"Track", "XTrack"});
-            		table.put("lat_array_dimension_names", new String[] {"Track", "XTrack"});
+            		spectTable.put(SpectrumAdapter.channelIndex_name, "Channel");
+            		swathTable.put(SpectrumAdapter.channelIndex_name, "Channel");
+            		
+            		swathTable.put("array_dimension_names", new String[] {"Track", "XTrack", "Channel"});
+            		swathTable.put("lon_array_dimension_names", new String[] {"Track", "XTrack"});
+            		swathTable.put("lat_array_dimension_names", new String[] {"Track", "XTrack"});
+            		spectTable.put("array_dimension_names", new String[] {"Track", "XTrack", "Channel"});
+            		spectTable.put("lon_array_dimension_names", new String[] {"Track", "XTrack"});
+            		spectTable.put("lat_array_dimension_names", new String[] {"Track", "XTrack"});
+            		
+            		spectTable.put(SpectrumAdapter.channelType, "wavelength");
+            		spectTable.put(SpectrumAdapter.channels_name, "Channel");
+                    spectTable.put(SpectrumAdapter.x_dim_name, "XTrack");
+                    spectTable.put(SpectrumAdapter.y_dim_name, "Track");
+                    
         			int numChannels = JPSSUtilities.ATMSChannelCenterFrequencies.length;
             		float[] bandArray = new float[numChannels];
             		String[] bandNames = new String[numChannels];
@@ -678,79 +693,84 @@ public class NPPDataSource extends HydraDataSource {
             			bandArray[bIdx] = JPSSUtilities.ATMSChannelCenterFrequencies[bIdx];
             			bandNames[bIdx] = "Channel " + (bIdx + 1);
             		}
-            		table.put(SpectrumAdapter.channelValues, bandArray);
-            		table.put(SpectrumAdapter.bandNames, bandNames);
+            		spectTable.put(SpectrumAdapter.channelValues, bandArray);
+            		spectTable.put(SpectrumAdapter.bandNames, bandNames);
+
         		} else {
         			if (instrumentName.getStringValue().equals("CrIS")) {
-                		table.put(SpectrumAdapter.channelIndex_name, "Channel");
-                		table.put("array_dimension_names", new String[] {"Track", "XTrack", "FOV", "Channel"});
-                		table.put("lon_array_dimension_names", new String[] {"Track", "XTrack"});
-                		table.put("lat_array_dimension_names", new String[] {"Track", "XTrack"});
-            			int numChannels = 9;
-                		float[] bandArray = new float[numChannels];
-                		String[] bandNames = new String[numChannels];
-                		for (int bIdx = 0; bIdx < numChannels; bIdx++) {
-                			bandArray[bIdx] = bIdx;
-                			bandNames[bIdx] = "Channel " + (bIdx + 1);
-                		}
-                		table.put(SpectrumAdapter.channelValues, bandArray);
-                		table.put(SpectrumAdapter.bandNames, bandNames);
+        				
+        				swathTable.put("XTrack", "dim1");
+        				swathTable.put("Track", "dim0");
+        				swathTable.put("geo_XTrack", "dim1");
+        				swathTable.put("geo_Track", "dim0");
+        				swathTable.put("product_name", "CrIS_SDR");
+        				swathTable.put(SpectrumAdapter.channelIndex_name, "dim3");
+        				swathTable.put(SpectrumAdapter.FOVindex_name, "dim2"); 
+        				
+        				spectTable.put(SpectrumAdapter.array_name, "All_Data/CrIS-SDR_All/ES_RealLW"); 
+        				spectTable.put(SpectrumAdapter.channelIndex_name, "dim3");
+        				spectTable.put(SpectrumAdapter.FOVindex_name, "dim2");
+                		spectTable.put(SpectrumAdapter.x_dim_name, "dim1");
+                		spectTable.put(SpectrumAdapter.y_dim_name, "dim0");
+                		
         			} else {
         				// sorry, if we can't id the instrument, we can't display the data!
         				throw new VisADException("Unable to determine instrument name");
         			}
         		}
 
-        		table.put(SpectrumAdapter.channelType, "wavelength");
-                table.put(SpectrumAdapter.x_dim_name, "XTrack");
-                table.put(SpectrumAdapter.y_dim_name, "Track");
         	} else {
-        		table.put("array_dimension_names", new String[] {"Track", "XTrack"});
-        		table.put("lon_array_dimension_names", new String[] {"Track", "XTrack"});
-        		table.put("lat_array_dimension_names", new String[] {"Track", "XTrack"});
+        		swathTable.put("array_dimension_names", new String[] {"Track", "XTrack"});
+        		swathTable.put("lon_array_dimension_names", new String[] {"Track", "XTrack"});
+        		swathTable.put("lat_array_dimension_names", new String[] {"Track", "XTrack"});
         	}
         	
-        	table.put("scale_name", "scale_factor");
-        	table.put("offset_name", "add_offset");
-        	table.put("fill_value_name", "_FillValue");
+        	swathTable.put("scale_name", "scale_factor");
+        	swathTable.put("offset_name", "add_offset");
+        	swathTable.put("fill_value_name", "_FillValue");
         	logger.info("Setting range_name to: " + pStr.substring(pStr.indexOf(SEPARATOR_CHAR) + 1));
-        	table.put("range_name", pStr.substring(pStr.indexOf(SEPARATOR_CHAR) + 1));
+        	swathTable.put("range_name", pStr.substring(pStr.indexOf(SEPARATOR_CHAR) + 1));
+        	spectTable.put("range_name", pStr.substring(pStr.indexOf(SEPARATOR_CHAR) + 1));
         	
         	// set the valid range hash if data is available
         	if (nppPP != null) {
         		String translatedName = JPSSUtilities.mapProdNameToProfileName(pStr.substring(pStr.lastIndexOf(SEPARATOR_CHAR) + 1));
         		if (translatedName != null) {
-        			table.put("valid_range", "valid_range");
+        			swathTable.put("valid_range", "valid_range");
         		}
         	}
         	
         	String unsignedAttributeStr = unsignedFlags.get(pIdx);
         	if (unsignedAttributeStr.equals("true")) {
-        		table.put("unsigned", unsignedAttributeStr);
+        		swathTable.put("unsigned", unsignedAttributeStr);
         	}
         	
         	String unpackFlagStr = unpackFlags.get(pIdx);
         	if (unpackFlagStr.equals("true")) {
-        		table.put("unpack", "true");
+        		swathTable.put("unpack", "true");
         	}
         	
         	// For NPP data, do valid range check AFTER applying scale/offset
-        	table.put("range_check_after_scaling", "true");
+        	swathTable.put("range_check_after_scaling", "true");
         	
         	// pass in a GranuleAggregation reader...
         	if (is3D) {
-        		adapters[pIdx] = new SwathAdapter(nppAggReader, table);
-        		SpectrumAdapter sa = new SpectrumAdapter(nppAggReader, table);
-                DataCategory.createCategory("MultiSpectral");
-                categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
                 if (instrumentName.getStringValue().equals("ATMS")) {
+            		adapters[pIdx] = new SwathAdapter(nppAggReader, swathTable);
+            		SpectrumAdapter sa = new SpectrumAdapter(nppAggReader, spectTable);
+                    DataCategory.createCategory("MultiSpectral");
+                    categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
                 	multiSpectData = new MultiSpectralData((SwathAdapter) adapters[pIdx], sa, 
                 		"BrightnessTemperature", "BrightnessTemperature", "NPP", "ATMS");
                 	multiSpectData.setInitialWavenumber(JPSSUtilities.ATMSChannelCenterFrequencies[0]);
                 } else {
-                	multiSpectData = new MultiSpectralData((SwathAdapter) adapters[pIdx], sa, 
-                    		"ES_RealLW", "ES_RealLW", "NPP", "CrIS");
-                    multiSpectData.setInitialWavenumber(JPSSUtilities.ATMSChannelCenterFrequencies[0]);
+            		adapters[pIdx] = new CrIS_SDR_SwathAdapter(nppAggReader, swathTable);
+            		CrIS_SDR_Spectrum csa = new CrIS_SDR_Spectrum(nppAggReader, spectTable);
+                    DataCategory.createCategory("MultiSpectral");
+                    categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
+                	multiSpectData = new MultiSpectralData((CrIS_SDR_SwathAdapter) adapters[pIdx], 
+                			csa);
+                    multiSpectData.setInitialWavenumber(840.00f);
                 }
                 if (pIdx == 0) {
                 	defaultSubset = multiSpectData.getDefaultSubset();
@@ -762,7 +782,7 @@ public class NPPDataSource extends HydraDataSource {
                 }
                 
         	} else {
-        		adapters[pIdx] = new SwathAdapter(nppAggReader, table);
+        		adapters[pIdx] = new SwathAdapter(nppAggReader, swathTable);
         		if (pIdx == 0) {
         			defaultSubset = adapters[pIdx].getDefaultSubset();
         		}
