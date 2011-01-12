@@ -58,10 +58,8 @@ public class CrIS_SDR_LonLatNavigation extends SwathNavigation  {
     float[] lons = reader.getFloatArray(lon_array_name, new_geo_start, new_geo_count, new_geo_stride);
     float[] lats = reader.getFloatArray(lat_array_name, new_geo_start, new_geo_count, new_geo_stride);
 
-    /** will be different for CrIS
-      lons = IASI_L1C_Utility.psuedoScanReorder2(lons, 60, geo_count[0]);
-      lats = IASI_L1C_Utility.psuedoScanReorder2(lats, 60, geo_count[0]);
-    */
+    lons = CrIS_SDR_Utility.psuedoScanReorder(lons, 90, geo_count[0]);
+    lats = CrIS_SDR_Utility.psuedoScanReorder(lats, 90, geo_count[0]);
 
     Gridded2DSet gset = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple,
                    new float[][] {lons, lats},
