@@ -158,7 +158,7 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
     protected JComponent getTimeRangeComponent() {
         return timeRangeComp;
     }
- 
+
     @Override public void applyToDataSelection(DataSelection dataSelection) {
         //System.out.println("applyToDataSelection: dataSelection=" + dataSelection);
 
@@ -175,11 +175,21 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
         JYearChooser yearChooser = cal.getYearChooser();
         int year = yearChooser.getYear();
 
+        int hours = 0;
+        int mins = 0;
+        double secs = 0.0;
         String begTime = beginTimeFld.getText();
         String[] timeStrings = begTime.split(":");
-        int hours = (new Integer(timeStrings[0])).intValue();
-        int mins = (new Integer(timeStrings[1])).intValue();
-        double secs = (new Double(timeStrings[2] + ".0")).doubleValue();
+        int num = timeStrings.length;
+        if (num > 0)
+            hours = (new Integer(timeStrings[0])).intValue();
+        if (num > 1)
+            mins = (new Integer(timeStrings[1])).intValue();
+        if (num > 2)
+            secs = (new Double(timeStrings[2] + ".0")).doubleValue();
+        if ((hours < 0) || (hours > 23)) hours = 0;
+        if ((mins < 0) || (mins > 59)) mins = 0;
+        if ((secs < 0.0) || (secs > 59.0)) secs = 0.0;
 
         Time bTime = new Time(year, month, day, hours, mins, secs);
         double dVal = bTime.getJulianDate();
@@ -211,9 +221,16 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
 
         String endTime = endTimeFld.getText();
         timeStrings = endTime.split(":");
-        hours = (new Integer(timeStrings[0])).intValue();
-        mins = (new Integer(timeStrings[1])).intValue();
-        secs = (new Double(timeStrings[2] + ".0")).doubleValue();
+        num = timeStrings.length;
+        if (num > 0)
+            hours = (new Integer(timeStrings[0])).intValue();
+        if (num > 1)
+            mins = (new Integer(timeStrings[1])).intValue();
+        if (num > 2)
+            secs = (new Double(timeStrings[2] + ".0")).doubleValue();
+        if ((hours < 0) || (hours > 23)) hours = 0;
+        if ((mins < 0) || (mins > 59)) mins = 0;
+        if ((secs < 0.0) || (secs > 59.0)) secs = 0.0;
 
         Time eTime = new Time(year, month, day, hours, mins, secs);
         dVal = eTime.getJulianDate();
