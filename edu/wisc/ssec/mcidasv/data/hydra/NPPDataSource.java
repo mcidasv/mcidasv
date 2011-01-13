@@ -102,6 +102,8 @@ public class NPPDataSource extends HydraDataSource {
     
     // instrument related variables and flags
     ucar.nc2.Attribute instrumentName = null;
+    private String productName = null;
+    
     // for now, we are only handling CrIS variables that match this filter and SCAN dimensions
     private String crisFilter = "ES_RealLW";
 
@@ -279,6 +281,7 @@ public class NPPDataSource extends HydraDataSource {
     	    						if (axpp != null) {
     	    							System.err.println("XML Product Profile N_Collection_Short_Name: " + axpp.getStringValue());
     	    							String baseName = axpp.getStringValue();
+    	    							productName = baseName;
     	    							String productProfileFileName = nppPP.getProfileFileName(baseName);
     	    							logger.trace("Found profile: " + productProfileFileName);
     	    							if (productProfileFileName == null) {
@@ -663,9 +666,12 @@ public class NPPDataSource extends HydraDataSource {
         	swathTable.put("Track", "Track");
         	swathTable.put("geo_Track", "Track");
         	swathTable.put("geo_XTrack", "XTrack");
+        	swathTable.put("product_name", productName);
         	
         	// array_name common to spectrum table
         	spectTable.put("array_name", pStr);
+        	spectTable.put("product_name", productName);
+        	logger.trace("Product Name: " + productName);
         	
         	if (is3D) {
 
