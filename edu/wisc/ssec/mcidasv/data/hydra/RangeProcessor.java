@@ -639,6 +639,30 @@ class IASI_RangeProcessor extends RangeProcessor {
 
 }
 
+class CrIS_RangeProcessor extends RangeProcessor {
+
+        public CrIS_RangeProcessor() throws Exception {
+                super();
+        }
+
+        public float[] processRange(float[] values, HashMap subset) {
+
+                double[] track_coords = (double[]) subset.get(SwathAdapter.track_name);
+                double[] xtrack_coords = (double[]) subset.get(SwathAdapter.xtrack_name);
+
+                int numElems = ((int)(xtrack_coords[1] - xtrack_coords[0]) + 1);
+                int numLines = ((int)(track_coords[1] - track_coords[0]) + 1);
+
+                values = CrIS_SDR_Utility.psuedoScanReorder(values, 90, numLines*3);
+
+                //- subset here, if necessary
+
+                return values;
+        }
+
+}
+
+
 class CloudSat_2B_GEOPROF_RangeProcessor extends RangeProcessor {
 
 	public CloudSat_2B_GEOPROF_RangeProcessor(MultiDimensionReader reader, HashMap metadata) throws Exception {
