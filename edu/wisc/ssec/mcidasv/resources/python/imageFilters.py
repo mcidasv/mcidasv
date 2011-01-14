@@ -13,7 +13,7 @@ def cloudFilter(sdataset1,sdataset2,user_replace='Default',user_constant=0,user_
   constant=int(user_constant)
   britlo=int(user_britlo)
   brithi=int(user_brithi)
-   
+     
   if (replace != 'Default'):
      replace=int(replace)
   stretch=user_stretchval 
@@ -22,9 +22,11 @@ def cloudFilter(sdataset1,sdataset2,user_replace='Default',user_constant=0,user_
      range1 = data1.getSample(t)
      vals1 = range1.getFloats(0)
      min1= min(vals1[0])
+     max1= max(vals1[0])
      range2 = data2.getSample(t)
      vals2 = range2.getFloats(0)
-     min2= min(vals2[0]) 
+     min2= min(vals2[0])
+     max2= max(vals2[0]) 
      in_low = min([min1,min2])
      in_hi = max([max1,max2])
      if (replace == 'Default'):
@@ -40,18 +42,25 @@ def cloudFilter(sdataset1,sdataset2,user_replace='Default',user_constant=0,user_
            
            if (line1 <= (line2 + constant)):
              vals1[0][i*element_size+j] = replace
-          
+     
+     for i in range(line_size):
+        for j in range(element_size):
+            vals1[0][i*element_size+j]=scaleOutsideVal(vals1[0][i*element_size+j],britlo,brithi)
+            vals2[0][i*element_size+j]=scaleOutsideVal(vals2[0][i*element_size+j],britlo,brithi)
+            
+     filt_low=int(min(vals1[0]))
+     filt_hi =int(max(vals1[0]))
      if (stretch == 'Contrast'):
-       lookup=contrast(in_low,in_hi,britlo,brithi)
+       lookup=contrast(filt_low,filt_hi,britlo,brithi,filt_low,filt_hi)
      elif (stretch == 'Histogram'):
-       """ Need to create the histogram from both datasets """
+       """ make a histogram from both datasets """
        v=[]
        v.append(vals1[0])
-       v.append(vals2[0])
-       h = makeHistogram(v,element_size,line_size,brithi-britlo)
-       lookup=histoStretch(in_low,in_hi,h)
-     
-     vals1=modify(vals1,element_size,line_size,britlo,lookup) 
+       v.append(vals2[0])   
+       h = makeHistogram(v,element_size,line_size,filt_low,brithi-britlo)
+       lookup=histoStretch(filt_low,filt_hi,in_low,in_hi,h)
+            
+     vals1=modify(vals1,element_size,line_size,filt_low,lookup)
      range1.setSamples(vals1)
 
   return data1
@@ -104,16 +113,21 @@ def replaceFilter(sdataset,user_replaceVal=0,user_sourceval='Default',user_stret
               line=replaceVal
            vals[0][i*element_size+j] = line
      
+     for i in range(line_size):
+        for j in range(element_size):
+            vals[0][i*element_size+j]=scaleOutsideVal(vals[0][i*element_size+j],britlo,brithi)
+            
+     filt_low=int(min(vals[0]))
+     filt_hi =int(max(vals[0]))
      if (stretch == 'Contrast'):
-       lookup=contrast(in_low,in_hi,britlo,brithi)
+       lookup=contrast(filt_low,filt_hi,britlo,brithi,filt_low,filt_hi)
      elif (stretch == 'Histogram'):
-       """h = hist(field(vals),[0],[post_hi-post_low])"""
-       h = makeHistogram(vals,element_size,line_size,brithi-britlo)
-       lookup=histoStretch(in_low,in_hi,h)
-       
-     vals=modify(vals,element_size,line_size,britlo,lookup) 
-     rangeObject.setSamples(vals)
-
+       h = makeHistogram(vals,element_size,line_size,filt_low,brithi-britlo)
+       lookup=histoStretch(filt_low,filt_hi,in_low,in_hi,h)
+            
+     vals=modify(vals,element_size,line_size,filt_low,lookup)
+     rangeObject.setSamples(vals)    
+     
   return newData
 
 def shotMain(vals,bline,eline,element_size,line_size,filter_diff):
@@ -248,19 +262,28 @@ def cleanFilter(sdataset,user_fill='Average',user_bline='Default',user_eline='De
        eline=line_size 
      
      vals = shotMain(vals,bline,eline,element_size,line_size,point_diff)
-     vals = badLineFilter(vals,bline,eline,element_size,line_size,filter_fill,line_diff,low,high)
-     post_hi = int(max(vals[0]))
-     post_low = int(min(vals[0])) 
+     for i in range(line_size):
+        for j in range(element_size):
+            vals[0][i*element_size+j]=scaleOutsideVal(vals[0][i*element_size+j],britlo,brithi)
+     
+     filt_low=int(min(vals[0]))
+     filt_hi =int(max(vals[0]))
+            
+     vals = badLineFilter(vals,bline,eline,element_size,line_size,filter_fill,line_diff,filt_low,filt_hi)
+     
+     """ update the min/max of the image after the removal of the bad lines """
+     filt_low=int(min(vals[0]))
+     filt_hi =int(max(vals[0]))
+     
      if (stretch == 'Contrast'):
-       lookup=contrast(in_low,in_hi,britlo,brithi)
+       lookup=contrast(filt_low,filt_hi,britlo,brithi,filt_low,filt_hi)
      elif (stretch == 'Histogram'):
-       """h = hist(field(vals),[0],[post_hi-post_low])"""
-       h = makeHistogram(vals,element_size,line_size,brithi-britlo)
-       lookup=histoStretch(in_low,in_hi,h)
-       
-     vals=modify(vals,element_size,line_size,britlo,lookup)   
-     rangeObject.setSamples(vals)
-        
+       h = makeHistogram(vals,element_size,line_size,filt_low,brithi-britlo)
+       lookup=histoStretch(filt_low,filt_hi,in_low,in_hi,h)
+            
+     vals=modify(vals,element_size,line_size,filt_low,lookup)
+     rangeObject.setSamples(vals)     
+             
    return newData
 
 def shotFilter(sdataset,user_bline='Default',user_eline='Default',user_pdiff=15,user_stretchval='Contrast',user_britlo=0,user_brithi=255):
@@ -300,17 +323,22 @@ def shotFilter(sdataset,user_bline='Default',user_eline='Default',user_pdiff=15,
        eline=line_size 
      
      vals = shotMain(vals,bline,eline,element_size,line_size,point_diff)
-          
+     
+     for i in range(line_size):
+        for j in range(element_size):
+            vals[0][i*element_size+j]=scaleOutsideVal(vals[0][i*element_size+j],britlo,brithi)
+            
+     filt_low=int(min(vals[0]))
+     filt_hi =int(max(vals[0]))
      if (stretch == 'Contrast'):
-       lookup=contrast(in_low,in_hi,britlo,brithi)
+       lookup=contrast(filt_low,filt_hi,britlo,brithi,filt_low,filt_hi)
      elif (stretch == 'Histogram'):
-       """h = hist(field(vals),[0],[post_hi-post_low])"""
-       h = makeHistogram(vals,element_size,line_size,brithi-britlo)
-       lookup=histoStretch(in_low,in_hi,h)
-       
-     vals=modify(vals,element_size,line_size,britlo,lookup) 
-     rangeObject.setSamples(vals)
-   
+       h = makeHistogram(vals,element_size,line_size,filt_low,brithi-britlo)
+       lookup=histoStretch(filt_low,filt_hi,in_low,in_hi,h)
+            
+     vals=modify(vals,element_size,line_size,filt_low,lookup)
+     rangeObject.setSamples(vals)    
+             
    return newData
 
 def spotFilter(sdataset,omcon=0,oacon=0,imcon=0,iacon=0,cmin=0,cmax=0,user_stretchval='Contrast'):
@@ -375,21 +403,27 @@ def coreFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Defa
                vals1[0][i*element_size + j]=replace1
             else:
                vals1[0][i*element_size + j]=replace2
-     
+      
+      for i in range(line_size):
+        for j in range(element_size):
+            vals1[0][i*element_size+j]=scaleOutsideVal(vals1[0][i*element_size+j],britlo,brithi)
+            vals2[0][i*element_size+j]=scaleOutsideVal(vals2[0][i*element_size+j],britlo,brithi)
+                 
+      filt_low=int(min(vals1[0]))
+      filt_hi =int(max(vals1[0]))
       if (stretch == 'Contrast'):
-       lookup=contrast(in_low,in_hi,britlo,brithi)
+       lookup=contrast(filt_low,filt_hi,britlo,brithi,filt_low,filt_hi)
       elif (stretch == 'Histogram'):
-       """h = hist(field(vals1),[0],[post_hi-post_low])"""
        """ make a histogram from both datasets """
        v=[]
        v.append(vals1[0])
-       v.append(vals2[0])
-       h = makeHistogram(v,element_size,line_size,brithi-britlo)
-       lookup=histoStretch(in_low,in_hi,h)
-       
-      vals1=modify(vals1,element_size,line_size,britlo,lookup)          
-      range1.setSamples(vals1)
-
+       v.append(vals2[0])   
+       h = makeHistogram(v,element_size,line_size,filt_low,brithi-britlo)
+       lookup=histoStretch(filt_low,filt_hi,in_low,in_hi,h)
+            
+      vals1=modify(vals1,element_size,line_size,filt_low,lookup)
+      range1.setSamples(vals1)     
+      
    return data1
 
 def discriminateFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Default',user_brkpoint3='Default',user_brkpoint4='Default',user_replace='Default',user_stretchval='Contrast',user_britlo=0,user_brithi=255):
@@ -453,20 +487,26 @@ def discriminateFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoin
             if (vals1[0][i*element_size+j] < brkpoint1 or vals1[0][i*element_size+j] > brkpoint2 or vals2[0][i*element_size+j] < brkpoint3 or vals2[0][i*element_size+j] > brkpoint4):
                vals1[0][i*element_size + j]=replace
       
+      for i in range(line_size):
+        for j in range(element_size):
+            vals1[0][i*element_size+j]=scaleOutsideVal(vals1[0][i*element_size+j],britlo,brithi)
+            vals2[0][i*element_size+j]=scaleOutsideVal(vals2[0][i*element_size+j],britlo,brithi)
+            
+      filt_low=int(min(vals1[0]))
+      filt_hi =int(max(vals1[0]))
       if (stretch == 'Contrast'):
-       lookup=contrast(in_low,in_hi,britlo,brithi)
+       lookup=contrast(filt_low,filt_hi,britlo,brithi,filt_low,filt_hi)
       elif (stretch == 'Histogram'):
-       """h = hist(field(vals1),[0],[post_hi-post_low])"""
        """ make a histogram from both datasets """
        v=[]
        v.append(vals1[0])
-       v.append(vals2[0])
-       h = makeHistogram(v,element_size,line_size,brithi-britlo)
-       lookup=histoStretch(in_low,in_hi,h)
-       
-      vals1=modify(vals1,element_size,line_size,britlo,lookup) 
-      range1.setSamples(vals1)      
-      
+       v.append(vals2[0])   
+       h = makeHistogram(v,element_size,line_size,filt_low,brithi-britlo)
+       lookup=histoStretch(filt_low,filt_hi,in_low,in_hi,h)
+            
+      vals1=modify(vals1,element_size,line_size,filt_low,lookup)
+      range1.setSamples(vals1)     
+            
    return data1   
 
 def mergeFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Default',user_constant=0,user_stretchval='Contrast',user_britlo=0,user_brithi=255):
@@ -516,21 +556,26 @@ def mergeFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Def
          for j in range(element_size):
             if (vals1[0][i*element_size+j] < brkpoint1 or vals1[0][i*element_size+j] > brkpoint2):
                vals1[0][i*element_size + j]=vals2[0][i*element_size + j] - constant
-               
+      
+      for i in range(line_size):
+        for j in range(element_size):
+            vals1[0][i*element_size+j]=scaleOutsideVal(vals1[0][i*element_size+j],britlo,brithi)
+            
+      filt_low=int(min(vals1[0]))
+      filt_hi =int(max(vals1[0]))
       if (stretch == 'Contrast'):
-       lookup=contrast(in_low,in_hi,britlo,brithi)
+       lookup=contrast(in_low,in_hi,britlo,brithi,filt_low,filt_hi)
       elif (stretch == 'Histogram'):
-       """h = hist(field(vals1),[0],[post_hi-post_low])"""
        """ make a histogram from both datasets """
        v=[]
        v.append(vals1[0])
-       v.append(vals2[0])
-       h = makeHistogram(v,element_size,line_size,brithi-britlo)
-       lookup=histoStretch(in_low,in_hi,h)
-      
-      vals1=modify(vals1,element_size,line_size,britlo,lookup)       
-      range1.setSamples(vals1)
-   
+       v.append(vals2[0])   
+       h = makeHistogram(v,element_size,line_size,filt_low,brithi-britlo)
+       lookup=histoStretch(filt_low,filt_hi,in_low,in_hi,h)
+            
+      vals1=modify(vals1,element_size,line_size,filt_low,lookup)
+      range1.setSamples(vals1)     
+         
    return data1
    
 def gradientFilter(sdataset,user_stretchval='Contrast',user_britlo=0,user_brithi=255):
@@ -559,17 +604,22 @@ def gradientFilter(sdataset,user_stretchval='Contrast',user_britlo=0,user_brithi
           
        """ set last value to zero """
        vals[0][i*element_size + j + 1] = 0
-          
+     
+     for i in range(line_size):
+        for j in range(element_size):
+            vals[0][i*element_size+j]=scaleOutsideVal(vals[0][i*element_size+j],britlo,brithi)
+            
+     filt_low=int(min(vals[0]))
+     filt_hi =int(max(vals[0]))
      if (stretch == 'Contrast'):
-       lookup=contrast(in_low,in_hi,britlo,brithi)
+       lookup=contrast(filt_low,filt_hi,britlo,brithi,filt_low,filt_hi)
      elif (stretch == 'Histogram'):
-       """h = hist(field(vals),[0],[post_hi-post_low])"""
-       h = makeHistogram(vals,element_size,line_size,brithi-britlo)
-       lookup=histoStretch(in_low,in_hi,h)
-        
-     vals=modify(vals,element_size,line_size,britlo,lookup) 
-     rangeObject.setSamples(vals)
-
+       h = makeHistogram(vals,element_size,line_size,filt_low,brithi-britlo)
+       lookup=histoStretch(filt_low,filt_hi,in_low,in_hi,h)
+            
+     vals=modify(vals,element_size,line_size,filt_low,lookup)
+     rangeObject.setSamples(vals)     
+     
    return newData 
 
 def passFilter(sdataset,user_passname,user_radius=50,user_leak=100,user_stretchval='Contrast',user_britlo=0,user_brithi=255):
@@ -617,10 +667,10 @@ def passFilter(sdataset,user_passname,user_radius=50,user_leak=100,user_stretchv
           average = int((leak * nsum)/(100 * ntot))
           
           if (user_passname.startswith('High')):
-             vals[0][i*element_size + j] =  curVal - average + midpoint
+             vals[0][i*element_size + j] =  scaleOutsideVal(curVal - average + midpoint,britlo,brithi)
  
           if (user_passname.startswith('Low')):
-             vals[0][i*element_size + j] = average
+             vals[0][i*element_size + j] = scaleOutsideVal(average,britlo,brithi)
           
           """ move the radius array one element to the right and recalculate the sum """
           radiusArray.pop(0)
@@ -630,16 +680,18 @@ def passFilter(sdataset,user_passname,user_radius=50,user_leak=100,user_stretchv
             mright = element_size-1
           radiusArray.append(int(vals[0][i*element_size + mright]))
           nsum = sum(radiusArray)
-                        
+          
+     filt_low=int(min(vals[0]))
+     filt_hi =int(max(vals[0]))
      if (stretch == 'Contrast'):
-       lookup=contrast(in_low,in_hi,britlo,brithi)
+       lookup=contrast(filt_low,filt_hi,britlo,brithi,filt_low,filt_hi)
      elif (stretch == 'Histogram'):
-       h = makeHistogram(vals,element_size,line_size,brithi-britlo)
-       lookup=histoStretch(in_low,in_hi,h)
+       h = makeHistogram(vals,element_size,line_size,filt_low,brithi-britlo)
+       lookup=histoStretch(filt_low,filt_hi,in_low,in_hi,h)
+            
+     vals=modify(vals,element_size,line_size,filt_low,lookup)
+     rangeObject.setSamples(vals)                   
      
-     vals=modify(vals,element_size,line_size,britlo,lookup) 
-     rangeObject.setSamples(vals)
-
    return newData
 
 def lowPass2DFilter(sdataset,user_linecoef=0.5,user_elecoef=0.5,user_stretchval='Contrast',user_britlo=0,user_brithi=255):
@@ -669,7 +721,7 @@ def lowPass2DFilter(sdataset,user_linecoef=0.5,user_elecoef=0.5,user_stretchval=
      """ save the first line """
      realLine = vals[0][0:element_size].tolist()
      
-     for i in xrange(line_size):
+     for i in range(line_size):
        """ left to right filter along line """
        val = vals[0][i*element_size]
        for j in range(element_size):
@@ -679,13 +731,14 @@ def lowPass2DFilter(sdataset,user_linecoef=0.5,user_elecoef=0.5,user_stretchval=
      
        """ right to left filter along line """
        val = vals[0][i*element_size + (element_size - 1)]
-     
-       for j in xrange(element_size - 1, 0, -1):
+       
+       """ second argument of -1 ensures that the 0th line is done """
+       for j in xrange(element_size - 1, -1, -1):
          val=ecoef*val + e1 * vals[0][i*element_size + j]
          vals[0][i*element_size + j] = round(val)
       
        """ filter along the elements """
-       for j in xrange(element_size):
+       for j in range(element_size):
          val = lcoef * realLine[j] + l1 * vals[0][i*element_size + j]
          vals[0][i*element_size + j] = round(val) 
      
@@ -694,21 +747,29 @@ def lowPass2DFilter(sdataset,user_linecoef=0.5,user_elecoef=0.5,user_stretchval=
      """ filter along the lines going through the image up the elements """
      """ save the last line """
      realLine = vals[0][(line_size-1)*element_size:line_size*element_size].tolist()
-     for i in xrange(line_size - 1, 0, -1):
+     
+     """ second argument of -1 ensures that the 0th line is done """
+     for i in xrange(line_size - 1, -1, -1):
         for j in range(element_size):
           val = lcoef * realLine[j] + l1 * vals[0][i*element_size + j]
           vals[0][i*element_size + j] = round(val) 
         
         realLine=vals[0][i*element_size:i*element_size+element_size].tolist()
 
+     for i in range(line_size):
+        for j in range(element_size):
+            vals[0][i*element_size+j]=scaleOutsideVal(vals[0][i*element_size+j],britlo,brithi)
+            
+     filt_low=int(min(vals[0]))
+     filt_hi =int(max(vals[0]))
      if (stretch == 'Contrast'):
-       lookup=contrast(in_low,in_hi,britlo,brithi)
+       lookup=contrast(filt_low,filt_hi,britlo,brithi,filt_low,filt_hi)
      elif (stretch == 'Histogram'):
        """h = hist(field(vals),[0],[post_hi-post_low])"""
-       h = makeHistogram(vals,element_size,line_size,brithi-britlo)
-       lookup=histoStretch(in_low,in_hi,h)
+       h = makeHistogram(vals,element_size,line_size,filt_low,brithi-britlo)
+       lookup=histoStretch(filt_low,filt_hi,in_low,in_hi,h)
      
-     vals=modify(vals,element_size,line_size,britlo,lookup) 
+     vals=modify(vals,element_size,line_size,filt_low,lookup) 
      rangeObject.setSamples(vals)
 
    return newData
@@ -743,20 +804,24 @@ def highPass2DFilter(sdataset,user_stretchval='Contrast',user_britlo=0,user_brit
                4*midValue
          
          if (val < midValue):
-            vals[0][i * element_size + j] = midValue - val
+            vals[0][i * element_size + j] = scaleOutsideVal(midValue - val,britlo,brithi)
          else:
             vals[0][i * element_size + j] = 0
             
      vals[0] = firstLine + vals[0][0:(line_size-1)*element_size]
+     for i in range(line_size):
+        for j in range(element_size):
+            vals[0][i*element_size+j]=scaleOutsideVal(vals[0][i*element_size+j],britlo,brithi)
      
+     filt_low=int(min(vals[0]))
+     filt_hi =int(max(vals[0]))
      if (stretch == 'Contrast'):
-       lookup=contrast(in_low,in_hi,britlo,brithi)
+       lookup=contrast(filt_low,filt_hi,britlo,brithi,filt_low,filt_hi)
      elif (stretch == 'Histogram'):
-       """h = hist(field(vals),[0],[post_hi-post_low])"""
-       h = makeHistogram(vals,element_size,line_size,brithi-britlo)
-       lookup=histoStretch(in_low,in_hi,h) 
-     
-     vals=modify(vals,element_size,line_size,britlo,lookup)
+       h = makeHistogram(vals,element_size,line_size,filt_low,brithi-britlo)
+       lookup=histoStretch(filt_low,filt_hi,in_low,in_hi,h)
+            
+     vals=modify(vals,element_size,line_size,filt_low,lookup)
      rangeObject.setSamples(vals)
 
    return newData
@@ -802,26 +867,38 @@ def holeFilter(sdataset,user_brkpoint1=0,user_brkpoint2=1,user_stretchval='Contr
             if (doFill == 1):
                for fill in range(element_size)[j:k]:
                   vals[0][i*element_size + fill] = (vals[0][i*element_size + j - 1] + vals[0][i*element_size+k])/2
-               
+                  
+     for i in range(line_size):
+        for j in range(element_size):
+            vals[0][i*element_size+j]=scaleOutsideVal(vals[0][i*element_size+j],britlo,brithi)
+                
+     filt_low=int(min(vals[0]))
+     filt_hi =int(max(vals[0]))
      if (stretch == 'Contrast'):
-       lookup=contrast(in_low,in_hi,britlo,brithi)
+       lookup=contrast(filt_low,filt_hi,britlo,brithi,filt_low,filt_hi)
      elif (stretch == 'Histogram'):
-       """h = hist(field(vals),[0],[post_hi-post_low])"""
-       h = makeHistogram(vals,element_size,line_size,brithi-britlo)
-       lookup=histoStretch(in_low,in_hi,h)
-     
-     vals=modify(vals,element_size,line_size,britlo,lookup) 
+       h = makeHistogram(vals,element_size,line_size,filt_low,brithi-britlo)
+       lookup=histoStretch(filt_low,filt_hi,in_low,in_hi,h)
+            
+     vals=modify(vals,element_size,line_size,filt_low,lookup)
      rangeObject.setSamples(vals)
     
   return data
 
-def contrast(out_low,out_hi,minimum,maximum,in_low=0,in_hi=255,inc=1):
+def contrast(in_low,in_hi,out_low,out_hi,minimum,maximum,inc=1):
    """ create a contrast stretch lookup table """
+   """ in_low - input low image value 
+       in_hi  - input high image value
+       out_low - output low image value
+       out_hi  - output high image value
+       minimum - minimum data value
+       maximum - maximum data value 
+       inc     - increment          """
    if (in_hi == in_low):
       slope=0
    else:
       slope=float(out_hi - out_low)/float(in_hi - in_low)
- 
+      
    lookup = []
    for input_value in xrange(minimum, maximum + 1, inc):
       out_value = out_low + int(round((input_value - in_low)*slope))
@@ -837,9 +914,14 @@ def contrast(out_low,out_hi,minimum,maximum,in_low=0,in_hi=255,inc=1):
    
    return lookup
 
-def histoStretch(out_low,out_hi,histogram,in_low=0,in_hi=255,num_bins=16):
+def histoStretch(in_low,in_hi,out_low,out_hi,histogram,num_bins=16):
     """ create a histogram stretch lookup table """
-    step=int((out_hi - out_low)/float(num_bins))
+    """ in_low - input low image value 
+       in_hi  - input high image value
+       out_low - output low image value
+       out_hi  - output high image value
+       inc     - increment          """
+    step=int((out_hi - out_low + 1)/float(num_bins))
     half_step=int(step/2)
     breakpoints = [ out_low + ((m+1)*step-half_step) for m in xrange(num_bins)]
             
@@ -882,19 +964,13 @@ def modify(vals,element_size,line_size,minimum,lookup):
   """ modifies an image with the lookup table generated by a stretch function """
   for i in range(line_size):
      for j in range(element_size):
-        """ this is what McIDAS-X IMGFILT does when values outside of 0-255, so put in for now """
-        if (vals[0][i*element_size+j] > 255):
-            vals[0][i*element_size+j]=vals[0][i*element_size+j]-256
-        elif (vals[0][i*element_size+j] < 0):
-            vals[0][i*element_size+j]=vals[0][i*element_size+j]+256
-             
-        vals[0][i*element_size + j] = lookup[int(vals[0][i*element_size+j] - minimum)]
-        """print i,j,line_size,element_size,minimum,vals[0][i*element_size+j], lookup[j]"""
-
+         vals[0][i*element_size + j] = lookup[int(vals[0][i*element_size+j] - minimum)]
+  
   return vals
 
-def makeHistogram(vals,element_size,line_size,nbins):
+def makeHistogram(vals,element_size,line_size,minimum,nbins):
   """  Initialize a histogram for the image when using histogram stretch option """
+  """ minimum is the minimum of the dataset or datasets """
   hist=[]
   for k in range(nbins+1):
      hist.append(0)
@@ -903,9 +979,8 @@ def makeHistogram(vals,element_size,line_size,nbins):
   for i in range(len(vals)):
     for j in range(line_size):
       for k in range(element_size):
-          index=int(vals[i][j*element_size + k])
-          if (index <= nbins):
-            hist[index]=hist[index] + 1
+          index=int(vals[i][j*element_size + k]-minimum)
+          hist[index]=hist[index] + 1
   
   return hist        
 
@@ -937,3 +1012,14 @@ def printVals(sdataset):
       for i in range(line_size):
         for j in range(element_size):
           print i, j, vals[0][i*element_size + j]
+
+def scaleOutsideVal(val,brit_lo=0,brit_hi=255):
+  """ this appears to be what McIDAS-X IMGFILT does when values outside of britlo/brithi range """
+  numBritVals=brit_hi-brit_lo+1
+  div=abs(val/numBritVals)
+  if (val > brit_hi):
+     val=val-div*numBritVals
+  elif (val < brit_lo):
+     val=val+div*numBritVals
+  
+  return val
