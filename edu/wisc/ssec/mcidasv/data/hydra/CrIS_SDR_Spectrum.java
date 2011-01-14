@@ -36,7 +36,7 @@ import visad.FlatField;
 
 public class CrIS_SDR_Spectrum extends SpectrumAdapter {
 
-  public static int[] ifov_order = new int[] {8,7,6,5,4,3,2,1,0};
+  public static int[] ifov_order = new int[] {8,5,2,7,4,1,6,3,0};
 
   public HashMap new_subset = new HashMap();
 
