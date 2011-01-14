@@ -52,6 +52,7 @@ public class CrIS_SDR_SwathAdapter extends SwathAdapter {
    }
 
    public FlatField getData(Object subset) throws Exception {
+
      Set domainSet = makeDomain(subset);
 
      HashMap new_subset = (HashMap) ((HashMap)subset).clone();
@@ -68,5 +69,19 @@ public class CrIS_SDR_SwathAdapter extends SwathAdapter {
      new_subset.put(SpectrumAdapter.FOVindex_name, new_coords);
 
      return makeFlatField(domainSet, new_subset);
+   }
+
+   public float[] processRange(float[] values, Object subset) {
+                double[] track_coords = (double[]) ((HashMap)subset).get(SwathAdapter.track_name);
+                double[] xtrack_coords = (double[]) ((HashMap)subset).get(SwathAdapter.xtrack_name);
+
+                int numElems = ((int)(xtrack_coords[1] - xtrack_coords[0]) + 1);
+                int numLines = ((int)(track_coords[1] - track_coords[0]) + 1);
+
+                values = CrIS_SDR_Utility.psuedoScanReorder(values, 90, numLines*3);
+
+                //- subset here, if necessary
+
+                return values;
    }
 }
