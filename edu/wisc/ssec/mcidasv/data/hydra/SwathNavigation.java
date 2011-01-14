@@ -56,6 +56,9 @@ public class SwathNavigation implements Navigation  {
     else if (product_name == "CrIS_SDR") {
       swathNav = new CrIS_SDR_LonLatNavigation(swathAdapter);
     }
+    else {
+      swathNav = new SwathNavigation(swathAdapter);
+    }
     
     return swathNav;
   }
