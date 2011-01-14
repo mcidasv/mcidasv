@@ -241,7 +241,7 @@ public class MultiSpectralDisplay implements DisplayListener {
         }
         
         if (source instanceof MultiSpectralDataSource) {
-        	data = ((MultiSpectralDataSource) source).getMultiSpectralData();
+        	data = ((MultiSpectralDataSource) source).getMultiSpectralData(dataChoice);
         }
 
         waveNumber = data.init_wavenumber;
