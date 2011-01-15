@@ -286,6 +286,9 @@ public class PreviewSelection extends DataSelectionComponent {
 
        public MapProjection getDataProjection() {
          MapProjection mp = null;
+
+         if (image == null) return mp;
+
          Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(image);
          try {
            mp = new LambertAEA(rect);
