@@ -93,10 +93,12 @@ public class NPPDataSource extends HydraDataSource {
 	/** Sources file */
     protected String filename;
 
-    //protected MultiDimensionReader netCDFReader;
     protected MultiDimensionReader nppAggReader;
 
     protected MultiDimensionAdapter[] adapters = null;
+    
+    private ArrayList<MultiSpectralData> multiSpectralData = new ArrayList<MultiSpectralData>();
+    private HashMap<String, MultiSpectralData> msdMap = new HashMap<String, MultiSpectralData>();
 
     private static final String DATA_DESCRIPTION = "NPP Data";
     
@@ -105,11 +107,10 @@ public class NPPDataSource extends HydraDataSource {
     private String productName = null;
     
     // for now, we are only handling CrIS variables that match this filter and SCAN dimensions
-    private String crisFilter = "ES_RealLW";
+    private String crisFilter = "ES_Real";
 
     private HashMap defaultSubset;
     public TrackAdapter track_adapter;
-    private MultiSpectralData multiSpectData;
 
     private List categories;
     private boolean hasChannelSelect = false;
@@ -677,7 +678,8 @@ public class NPPDataSource extends HydraDataSource {
 
         		// 3D data is either ATMS or CrIS
         		if ((instrumentName.getName() != null) && (instrumentName.getStringValue().equals("ATMS"))) {
-            		spectTable.put(SpectrumAdapter.channelIndex_name, "Channel");
+            		//hasChannelSelect = true;
+        			spectTable.put(SpectrumAdapter.channelIndex_name, "Channel");
             		swathTable.put(SpectrumAdapter.channelIndex_name, "Channel");
             		
             		swathTable.put("array_dimension_names", new String[] {"Track", "XTrack", "Channel"});
@@ -765,25 +767,27 @@ public class NPPDataSource extends HydraDataSource {
             		SpectrumAdapter sa = new SpectrumAdapter(nppAggReader, spectTable);
                     DataCategory.createCategory("MultiSpectral");
                     categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
-                	multiSpectData = new MultiSpectralData((SwathAdapter) adapters[pIdx], sa, 
+                	MultiSpectralData msd = new MultiSpectralData((SwathAdapter) adapters[pIdx], sa, 
                 		"BrightnessTemperature", "BrightnessTemperature", "NPP", "ATMS");
-                	multiSpectData.setInitialWavenumber(JPSSUtilities.ATMSChannelCenterFrequencies[0]);
+                	msd.setInitialWavenumber(JPSSUtilities.ATMSChannelCenterFrequencies[0]);
+                	multiSpectralData.add(msd);
                 } else {
             		adapters[pIdx] = new CrIS_SDR_SwathAdapter(nppAggReader, swathTable);
             		CrIS_SDR_Spectrum csa = new CrIS_SDR_Spectrum(nppAggReader, spectTable);
                     DataCategory.createCategory("MultiSpectral");
                     categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
-                	multiSpectData = new MultiSpectralData((CrIS_SDR_SwathAdapter) adapters[pIdx], 
+                	MultiSpectralData msd = new MultiSpectralData((CrIS_SDR_SwathAdapter) adapters[pIdx], 
                 			csa);
-                    multiSpectData.setInitialWavenumber(csa.getInitialWavenumber());
+                    msd.setInitialWavenumber(csa.getInitialWavenumber());
+                    multiSpectralData.add(msd);
                 }
                 if (pIdx == 0) {
-                	defaultSubset = multiSpectData.getDefaultSubset();
-                    try {
-                    	previewImage = multiSpectData.getImage(defaultSubset);
-                    } catch (Exception e) {
-                    	e.printStackTrace();
-                    }
+                	defaultSubset = multiSpectralData.get(pIdx).getDefaultSubset();
+                	try {
+                		previewImage = multiSpectralData.get(pIdx).getImage(defaultSubset);
+                	} catch (Exception e) {
+                		e.printStackTrace();
+                	}
                 }
                 
         	} else {
@@ -812,9 +816,26 @@ public class NPPDataSource extends HydraDataSource {
      */
     
     public void doMakeDataChoices() {
-    	DataChoice choice = null;
+    	
+    	// special loop for CrIS and ATMS data
+    	if (multiSpectralData.size() > 0) {
+    		for (int k=0; k<multiSpectralData.size(); k++) {
+    			MultiSpectralData adapter = multiSpectralData.get(k);
+    			DataChoice choice = null;
+				try {
+					choice = doMakeDataChoice(k, adapter);
+	    			msdMap.put(choice.getName(), adapter);
+	    			addDataChoice(choice);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+    		}
+    		return;
+    	}
+    	// all other data (VIIRS and 2D EDRs)
     	if (adapters != null) {
     		for (int idx = 0; idx < adapters.length; idx++) {
+    			DataChoice choice = null;
     			try {
     				choice = doMakeDataChoice(idx, adapters[idx].getArrayName());
     			} 
@@ -838,6 +859,17 @@ public class NPPDataSource extends HydraDataSource {
         DirectDataChoice ddc = new DirectDataChoice(this, idx, name, name, categories, subset);
         return ddc;
     }
+    
+    private DataChoice doMakeDataChoice(int idx, MultiSpectralData adapter) throws Exception {
+        String name = adapter.getName();
+        DataSelection dataSel = new MultiDimensionSubset(defaultSubset);
+        Hashtable subset = new Hashtable();
+        subset.put(MultiDimensionSubset.key, dataSel);
+        subset.put(MultiSpectralDataSource.paramKey, adapter.getParameter());
+        DirectDataChoice ddc = new DirectDataChoice(this, new Integer(idx), name, name, categories, subset);
+        ddc.setProperties(subset);
+        return ddc;
+    }
 
     /**
      * Check to see if this <code>NPPDataSource</code> is equal to the object
@@ -854,11 +886,11 @@ public class NPPDataSource extends HydraDataSource {
     }
 
     public MultiSpectralData getMultiSpectralData() {
-      return multiSpectData;
+    	return multiSpectralData.get(0);
     }
     
     public MultiSpectralData getMultiSpectralData(DataChoice choice) {
-    	return multiSpectData;
+    	return msdMap.get(choice.getName());
     }
 
     public String getDatasetName() {
