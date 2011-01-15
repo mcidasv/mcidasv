@@ -39,25 +39,62 @@ public class CrIS_SDR_Spectrum extends SpectrumAdapter {
   public static int[] ifov_order = new int[] {8,5,2,7,4,1,6,3,0};
 
   public HashMap new_subset = new HashMap();
+  
+  //private float initialSpectralResolution = 0f;
+  //private float spectralIncrement = 0f;
 
   public CrIS_SDR_Spectrum(MultiDimensionReader reader, HashMap metadata) {
     super(reader, metadata);
   }
-
+  
+  /**
+   * A valid CrIS product/variable name will always end with two capital
+   * letters for spectral range, LW: longwave, MW: mediumwave, SW: shortwave
+   * @param productName
+   * @return
+   */
+  
   public int computeNumChannels() {
-    int numChannels = 717;
-    return numChannels;
+	  
+	  String arrayName = (String) metadata.get("array_name");
+	  
+	  if (arrayName != null) {
+		  if (arrayName.endsWith("LW")) {
+			  numChannels = CrIS_SDR_Utility.LW_CHANNELS;
+			  initialSpectralResolution = CrIS_SDR_Utility.LW_INIT_SR;
+			  System.err.println("LW, ISR: " + initialSpectralResolution);
+			  spectralIncrement = CrIS_SDR_Utility.LW_SR_INCR;
+			  System.err.println("LW, SINCR: " + spectralIncrement);
+		  }
+		  if (arrayName.endsWith("MW")) {
+			  numChannels = CrIS_SDR_Utility.MW_CHANNELS;
+			  initialSpectralResolution = CrIS_SDR_Utility.MW_INIT_SR;
+			  System.err.println("MW, ISR: " + initialSpectralResolution);
+			  spectralIncrement = CrIS_SDR_Utility.MW_SR_INCR;
+		  }
+		  if (arrayName.endsWith("SW")) {
+			  numChannels = CrIS_SDR_Utility.SW_CHANNELS;
+			  initialSpectralResolution = CrIS_SDR_Utility.SW_INIT_SR;
+			  System.err.println("SW, ISR: " + initialSpectralResolution);
+			  spectralIncrement = CrIS_SDR_Utility.SW_SR_INCR;
+		  }
+	  }
+	  
+	  return numChannels;
   }
 
   public float[] getChannels() throws Exception {
     float[] spectrum = new float[numChannels];
-    for (int k=0; k<numChannels; k++) {
-       spectrum[k] = 649.75f + k*(0.625f);
+    for (int k=0; k < numChannels; k++) {
+       spectrum[k] = initialSpectralResolution + k * (spectralIncrement);
     }
     return spectrum;
   }
+  
+  public float getInitialWavenumber() {
+	  return initialSpectralResolution;
+  }
 
-   
   public FlatField getData(Object subset) throws Exception {
      new_subset.putAll((HashMap) subset);
 
