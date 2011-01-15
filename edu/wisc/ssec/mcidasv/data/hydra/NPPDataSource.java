@@ -712,8 +712,7 @@ public class NPPDataSource extends HydraDataSource {
         				swathTable.put("product_name", "CrIS_SDR");
         				swathTable.put(SpectrumAdapter.channelIndex_name, "dim3");
         				swathTable.put(SpectrumAdapter.FOVindex_name, "dim2"); 
-        				
-        				spectTable.put(SpectrumAdapter.array_name, "All_Data/CrIS-SDR_All/ES_RealLW"); 
+        				 
         				spectTable.put(SpectrumAdapter.channelIndex_name, "dim3");
         				spectTable.put(SpectrumAdapter.FOVindex_name, "dim2");
                 		spectTable.put(SpectrumAdapter.x_dim_name, "dim1");
@@ -776,7 +775,7 @@ public class NPPDataSource extends HydraDataSource {
                     categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
                 	multiSpectData = new MultiSpectralData((CrIS_SDR_SwathAdapter) adapters[pIdx], 
                 			csa);
-                    multiSpectData.setInitialWavenumber(840.00f);
+                    multiSpectData.setInitialWavenumber(csa.getInitialWavenumber());
                 }
                 if (pIdx == 0) {
                 	defaultSubset = multiSpectData.getDefaultSubset();
@@ -856,6 +855,10 @@ public class NPPDataSource extends HydraDataSource {
 
     public MultiSpectralData getMultiSpectralData() {
       return multiSpectData;
+    }
+    
+    public MultiSpectralData getMultiSpectralData(DataChoice choice) {
+    	return multiSpectData;
     }
 
     public String getDatasetName() {
