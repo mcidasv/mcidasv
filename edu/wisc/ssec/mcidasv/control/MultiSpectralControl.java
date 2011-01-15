@@ -158,11 +158,12 @@ public class MultiSpectralControl extends HydraControl {
 
         Float fieldSelectorChannel =
             (Float)getDataSelection().getProperty(Constants.PROP_CHAN);
-        if (fieldSelectorChannel == null)
-            fieldSelectorChannel = 0f;
 
         display = new MultiSpectralDisplay(this);
-        display.setWaveNumber(fieldSelectorChannel);
+
+        if (fieldSelectorChannel != null) {
+          display.setWaveNumber(fieldSelectorChannel);
+        }
 
         displayMaster = getViewManager().getMaster();
 
