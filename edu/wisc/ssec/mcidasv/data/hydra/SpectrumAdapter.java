@@ -99,6 +99,8 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
   RealType channelRealType;
   RealType spectrumRangeType;
   FunctionType spectrumType;
+  float initialSpectralResolution = -1f;
+  float spectralIncrement = -1f;
 
   ArrayList<String> bandNameList = new ArrayList<String>();
   String[] bandNameArray = null;
