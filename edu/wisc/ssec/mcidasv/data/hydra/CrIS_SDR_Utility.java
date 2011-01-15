@@ -36,6 +36,17 @@ public class CrIS_SDR_Utility {
                                                    new int[] {2,1}, new int[] {1,1}, new int[] {0,1},
                                                    new int[] {2,0}, new int[] {1,0}, new int[] {0,0}};
 
+   public static int LW_CHANNELS = 717;
+   public static int MW_CHANNELS = 437;
+   public static int SW_CHANNELS = 163;
+   
+   public static float LW_INIT_SR = 649.75f;
+   public static float MW_INIT_SR = 1210.0f;
+   public static float SW_INIT_SR = 2155.0f;
+   
+   public static float LW_SR_INCR = 0.625f;
+   public static float MW_SR_INCR = 1.25f;
+   public static float SW_SR_INCR = 2.5f;
 
    public static float[] psuedoScanReorder(float[] values, int numElems, int numLines) {
      float[] new_values = new float[values.length];
