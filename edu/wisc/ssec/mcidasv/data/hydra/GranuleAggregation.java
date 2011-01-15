@@ -492,11 +492,6 @@ public class GranuleAggregation implements MultiDimensionReader {
 					   rangeList.add(dimensionIdx, range);
 				   }
 				   rangeListCount++;
-				   logger.trace("reading range list from variable: " + var.getName());
-				   List<Dimension> dl = var.getDimensions();
-				   for (Dimension d : dl) {
-					   logger.trace("Dimension name: " + d.getName() + ", length: " + d.getLength());
-				   }
 				   Array subarray = var.read(rangeList);
 				   //dataType = subarray.getElementType();
 				   totalLength += subarray.getSize();
