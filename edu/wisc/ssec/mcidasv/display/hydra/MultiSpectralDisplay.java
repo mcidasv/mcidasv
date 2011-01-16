@@ -237,7 +237,7 @@ public class MultiSpectralDisplay implements DisplayListener {
 
         // TODO revisit this, may want to move method up to base class HydraDataSource
         if (source instanceof NPPDataSource) {
-        	data = ((NPPDataSource) source).getMultiSpectralData();
+        	data = ((NPPDataSource) source).getMultiSpectralData(dataChoice);
         }
         
         if (source instanceof MultiSpectralDataSource) {
