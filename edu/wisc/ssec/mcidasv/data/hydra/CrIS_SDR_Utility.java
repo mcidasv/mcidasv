@@ -48,6 +48,51 @@ public class CrIS_SDR_Utility {
    public static float MW_SR_INCR = 1.25f;
    public static float SW_SR_INCR = 2.5f;
 
+   public static float getWavenumberStart(String name) {
+     if (name.endsWith("LW")) {
+       return LW_INIT_SR;
+     }
+     else if (name.endsWith("MW")) {
+       return MW_INIT_SR;
+     }
+     else if (name.endsWith("SW")) {
+       return SW_INIT_SR;
+     }
+     else {
+       return Float.NaN;
+     }
+   }
+
+   public static float getWavenumberIncrement(String name) {
+     if (name.endsWith("LW")) {
+       return LW_SR_INCR;
+     }
+     else if (name.endsWith("MW")) {
+       return MW_SR_INCR;
+     }
+     else if (name.endsWith("SW")) {
+       return SW_SR_INCR;
+     }
+     else {
+       return Float.NaN;
+     }
+   }
+
+   public static int getNumChannels(String name) {
+     if (name.endsWith("LW")) {
+       return LW_CHANNELS;
+     }
+     else if (name.endsWith("MW")) {
+       return MW_CHANNELS;
+     }
+     else if (name.endsWith("SW")) {
+       return SW_CHANNELS;
+     }
+     else {
+       return -1;
+     }
+   }
+
    public static float[] psuedoScanReorder(float[] values, int numElems, int numLines) {
      float[] new_values = new float[values.length];
       for (int j=0; j<numLines/3; j++) { //- loop over EFOVs or FORs

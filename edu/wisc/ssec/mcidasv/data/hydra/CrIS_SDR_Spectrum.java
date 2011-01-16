@@ -40,13 +40,13 @@ public class CrIS_SDR_Spectrum extends SpectrumAdapter {
 
   public HashMap new_subset = new HashMap();
   
-  //private float initialSpectralResolution = 0f;
-  //private float spectralIncrement = 0f;
+  private float initialSpectralResolution = 0f;
+  private float spectralIncrement = 0f;
 
   public CrIS_SDR_Spectrum(MultiDimensionReader reader, HashMap metadata) {
     super(reader, metadata);
   }
-  
+
   /**
    * A valid CrIS product/variable name will always end with two capital
    * letters for spectral range, LW: longwave, MW: mediumwave, SW: shortwave
@@ -56,31 +56,12 @@ public class CrIS_SDR_Spectrum extends SpectrumAdapter {
   
   public int computeNumChannels() {
 	  
-	  String arrayName = (String) metadata.get("array_name");
+     String arrayName = (String) metadata.get("array_name");
+     int numChannels = CrIS_SDR_Utility.getNumChannels(arrayName);
+     initialSpectralResolution = CrIS_SDR_Utility.getWavenumberStart(arrayName);
+     spectralIncrement = CrIS_SDR_Utility.getWavenumberIncrement(arrayName);
 	  
-	  if (arrayName != null) {
-		  if (arrayName.endsWith("LW")) {
-			  numChannels = CrIS_SDR_Utility.LW_CHANNELS;
-			  initialSpectralResolution = CrIS_SDR_Utility.LW_INIT_SR;
-			  System.err.println("LW, ISR: " + initialSpectralResolution);
-			  spectralIncrement = CrIS_SDR_Utility.LW_SR_INCR;
-			  System.err.println("LW, SINCR: " + spectralIncrement);
-		  }
-		  if (arrayName.endsWith("MW")) {
-			  numChannels = CrIS_SDR_Utility.MW_CHANNELS;
-			  initialSpectralResolution = CrIS_SDR_Utility.MW_INIT_SR;
-			  System.err.println("MW, ISR: " + initialSpectralResolution);
-			  spectralIncrement = CrIS_SDR_Utility.MW_SR_INCR;
-		  }
-		  if (arrayName.endsWith("SW")) {
-			  numChannels = CrIS_SDR_Utility.SW_CHANNELS;
-			  initialSpectralResolution = CrIS_SDR_Utility.SW_INIT_SR;
-			  System.err.println("SW, ISR: " + initialSpectralResolution);
-			  spectralIncrement = CrIS_SDR_Utility.SW_SR_INCR;
-		  }
-	  }
-	  
-	  return numChannels;
+     return numChannels;
   }
 
   public float[] getChannels() throws Exception {
@@ -92,7 +73,7 @@ public class CrIS_SDR_Spectrum extends SpectrumAdapter {
   }
   
   public float getInitialWavenumber() {
-	  return initialSpectralResolution;
+    return CrIS_SDR_Utility.getWavenumberStart(getArrayName());
   }
 
   public FlatField getData(Object subset) throws Exception {
