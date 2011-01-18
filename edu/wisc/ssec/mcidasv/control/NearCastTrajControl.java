@@ -122,7 +122,11 @@ public class NearCastTrajControl extends DisplayControlImpl {
    }
 
    protected Range getInitialRange() throws VisADException, RemoteException {
-     return getDisplayConventions().getParamRange(paramName, null);
+     Range rng = getDisplayConventions().getParamRange(paramName, null);
+     if (rng == null) {
+       rng = new Range(-50.0, 50);
+     }
+     return rng;
    }
 
    /**
@@ -131,7 +135,7 @@ public class NearCastTrajControl extends DisplayControlImpl {
    }
    */
 
-    private class RGBDisplayableImpl extends RGBDisplayable {
+   private class RGBDisplayableImpl extends RGBDisplayable {
        RGBDisplayableImpl(String name, RealType rgbRealType, float[][] colorPalette, boolean alphaflag)
            throws VisADException, RemoteException {
          super(name, rgbRealType, colorPalette, alphaflag);
