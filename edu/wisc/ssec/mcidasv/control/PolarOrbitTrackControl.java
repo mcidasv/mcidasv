@@ -73,6 +73,8 @@ import visad.RealTuple;
 import visad.RealTupleType;
 import visad.SampledSet;
 import visad.Text;
+import visad.TextControl;
+import visad.TextControl.Justification;
 import visad.TextType;
 import visad.Tuple;
 import visad.TupleType;
@@ -85,7 +87,7 @@ import visad.georef.LatLonTuple;
  * specific extensions. Namely parameter sets and support for inverted 
  * parameter defaults.
  */
-public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayControlImpl {
+public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(PolarOrbitTrackControl.class);
 
@@ -119,7 +121,7 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
     private JTextField lonFld;
     private JTextField altitudeFld = new JTextField(" ", 5);
 
-    private ChangeListener sizeListener;
+//    private ChangeListener sizeListener;
     private ActionListener fontSizeChange;
     private FocusListener fontSizeFocusChange;
 
@@ -166,17 +168,20 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
                 Data[] dataArr = ((Tuple)data).getComponents();
                 int npts = dataArr.length;
                 float[][] latlon = new float[2][npts];
+                float fSize = this.fontSize/10.f;
                 for (int i=0; i<npts; i++) {
                     Tuple t = (Tuple)dataArr[i];
                     Data[] tupleComps = t.getComponents();
                     String str = ((Text)tupleComps[0]).getValue();
                     dts.add(str);
                     int indx = str.indexOf(" ") + 1;
-                    String subStr = "      _ " + str.substring(indx, indx+5);
+                    String subStr = "- " + str.substring(indx, indx+5);
 
                     TextDisplayable time = new TextDisplayable(TextType.Generic);
+                    time.setJustification(TextControl.Justification.LEFT);
+                    time.setVerticalJustification(TextControl.Justification.CENTER);
                     time.setLineWidth(2f);
-                    time.setTextSize(this.fontSize);
+                    time.setTextSize(fSize);
                     time.setColor(this.color);
                     
                     addDisplayable(time, FLAG_COLORTABLE);
@@ -249,7 +254,7 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
      * @return container of contents
      */
     public Container doMakeContents() {
-
+/*
         this.sizeListener =
             new javax.swing.event.ChangeListener() {
             public void stateChanged(ChangeEvent evt) {
@@ -257,11 +262,13 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
                 setFontSize(val);
             }
         };
+*/
         this.fontSizeChange =new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 String str = fontSizeFld.getText();
                 int size = new Integer(str).intValue();
-                setFontSize(size);
+                moveFontSizeSlider(size);
+                setDisplayableTextSize(size);
             }
         };
         this.fontSizeFocusChange = new FocusListener() {
@@ -270,16 +277,16 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
             public void focusLost(FocusEvent fe) {
                 String str = fontSizeFld.getText();
                 int size = new Integer(str).intValue();
-                setFontSize(size);
+                moveFontSizeSlider(size);
+                setDisplayableTextSize(size);
             }
         };
 
         this.fontSizeSlider = GuiUtils.makeSlider(SLIDER_MIN, SLIDER_MAX, defaultSize,
-                                     this, "setFontSize", true);
+                                     this, "sliderChanged", true);
         this.fontSizeSlider.setPreferredSize(new Dimension(SLIDER_WIDTH,SLIDER_HEIGHT));
         this.fontSizeSlider.setMajorTickSpacing(1);
         this.fontSizeSlider.setSnapToTicks(true);
-        this.fontSizeSlider.setExtent(1);
         int size = getSizeValue(this.fontSizeSlider);
         setFontSize(size);
         this.fontSizeFld = new JTextField(Integer.toString(size),3);
@@ -361,6 +368,7 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
         Insets  dfltGridSpacing = new Insets(4, 0, 4, 0);
         String  dfltLblSpacing  = " ";
         List allComps = new ArrayList();
+
         allComps.add(fontSizePanel);
         allComps.add(colorPanel);
         allComps.add(new JLabel(" "));
@@ -387,25 +395,48 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
         return this.fontSize;
     }
 
-    public void setFontSize(int size) {
-        if (size < 1) size = defaultSize;
-        if (this.fontSize < 1) this.fontSize = size;
+    public void setFontSizeTextField(int size) {
+        size = setFontSize(size);
         try {
             if (this.fontSizeFld != null) {
                 this.fontSizeFld.setText(new Integer(size).toString());
             }
+        } catch (Exception e) {
+            System.out.println("Exception in PolarOrbitTrackControl.setFontSizeTextField e=" + e);
+        }
+    }
+
+    private void moveFontSizeSlider(int size) {
+        size = setFontSize(size);
+        try {
             if (this.fontSizeSlider != null) {
                 this.fontSizeSlider.setValue(size);
             }
+        } catch (Exception e) {
+            System.out.println("Exception in PolarOrbitTrackControl.moveFontSizeSlider e=" + e);
+        }
+    }
+
+    private void setDisplayableTextSize(int size) {
+        System.out.println("setDisplayableTextSize: size=" + size);
+        size = setFontSize(size);
+        try {
             float fSize = (float)size/10.0f;
             int num = this.timeLabels.size();
+            TextDisplayable td = null;
             for (int i=0; i<num; i++) {
-                ((TextDisplayable)(this.timeLabels.get(i))).setTextSize(fSize);
+                td = (TextDisplayable)(this.timeLabels.get(i));
+                td.setTextSize(fSize);
             }
-            this.fontSize = size;
         } catch (Exception e) {
-            System.out.println("Exception in PolarOrbitTrackControl.setFontSize e=" + e);
+            System.out.println("Exception in PolarOrbitTrackControl.setDisplayableTextSize e=" + e);
         }
+    }
+
+    public int setFontSize(int size) {
+        if (size < 1) size = defaultSize;
+        this.fontSize = size;
+        return this.fontSize;
     }
 
     public Color getColor() {
@@ -439,5 +470,10 @@ public class PolarOrbitTrackControl extends ucar.unidata.idv.control.DisplayCont
         String str = altitudeFld.getText();
         Double d = new Double(str);
         this.altitude = d.doubleValue();
+    }
+
+    public void sliderChanged(int sliderValue) {
+        setFontSizeTextField(sliderValue);
+        setDisplayableTextSize(sliderValue);
     }
 }
