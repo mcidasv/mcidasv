@@ -122,9 +122,10 @@ public class NearCastTrajControl extends DisplayControlImpl {
    }
 
    protected Range getInitialRange() throws VisADException, RemoteException {
-     Range rng = getDisplayConventions().getParamRange(paramName, null);
+     //Range rng = getDisplayConventions().getParamRange(paramName, null);
+     Range rng = null;
      if (rng == null) {
-       rng = new Range(-50.0, 50);
+       return dataSource.getParamRange();
      }
      return rng;
    }
