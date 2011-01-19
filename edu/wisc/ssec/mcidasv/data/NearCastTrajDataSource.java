@@ -75,6 +75,7 @@ public class NearCastTrajDataSource extends DataSourceImpl {
 
     Range lonRange = new Range();
     Range latRange = new Range();
+    Range paramRange = new Range();
 
     public NearCastTrajDataSource() {
     }
@@ -164,6 +165,9 @@ public class NearCastTrajDataSource extends DataSourceImpl {
 
       float[] pres = ncFile.getFloatArray(pressName, start, count, stride);
       float[] param = ncFile.getFloatArray(paramName, start, count, stride);
+      minmax = minmax(param, (float)paramRange.getMin(), (float)paramRange.getMax());
+      paramRange.setMin(minmax[0]);
+      paramRange.setMax(minmax[1]);
 
       float[] alt = (presToHeightCS.toReference(new float[][] {pres}))[0];
  
@@ -221,6 +225,8 @@ public class NearCastTrajDataSource extends DataSourceImpl {
         lonRange.setMax(-Float.MAX_VALUE);
         latRange.setMin(Float.MAX_VALUE);
         latRange.setMax(-Float.MAX_VALUE);
+        paramRange.setMin(Float.MAX_VALUE);
+        paramRange.setMax(-Float.MAX_VALUE);
 
         try {
           for (int t=0; t<numTimes; t++) {
@@ -257,6 +263,10 @@ public class NearCastTrajDataSource extends DataSourceImpl {
 
    public Range getLatRange() {
      return latRange;
+   }
+
+   public Range getParamRange() {
+     return paramRange;
    }
 
 }
