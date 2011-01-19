@@ -293,6 +293,15 @@ public class ScatterDisplay extends DisplayControlImpl {
         } else if (X_data instanceof FieldImpl) {
           Y_field = (FlatField) ((FieldImpl)Y_data).getSample(0);
         }
+
+        int[] Xlens = ((Gridded2DSet) X_field.getDomainSet()).getLengths();
+        int[] Ylens = ((Gridded2DSet) Y_field.getDomainSet()).getLengths();
+
+        if ( (X_field.getLength() != Y_field.getLength()) ||
+             (Xlens[0] != Ylens[0]) || (Xlens[1] != Ylens[1]) ) 
+        {
+          Y_field = (FlatField) Y_field.resample(X_field.getDomainSet());
+        }
     }
 
     public void setupFromUnpersistence() throws VisADException, RemoteException {
