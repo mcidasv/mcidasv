@@ -418,7 +418,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     }
 
     private void setDisplayableTextSize(int size) {
-        System.out.println("setDisplayableTextSize: size=" + size);
+        //System.out.println("setDisplayableTextSize: size=" + size);
         size = setFontSize(size);
         try {
             float fSize = (float)size/10.0f;
