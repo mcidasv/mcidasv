@@ -150,6 +150,8 @@ public class PreviewSelection extends DataSelectionComponent {
         HydraRGBDisplayable imageDsp = new HydraRGBDisplayable("image", imageRangeType, null, true, null);
         imageDsp.setData(image);
 
+        dspMaster.addDisplayable(imageDsp);
+
         MapLines mapLines  = new MapLines("maplines");
         URL      mapSource =
         mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPU");
@@ -198,7 +200,6 @@ public class PreviewSelection extends DataSelectionComponent {
             System.out.println(excp);
         }
 
-        dspMaster.addDisplayable(imageDsp);
 
 
         Hashtable table = dataChoice.getProperties();
