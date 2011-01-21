@@ -46,12 +46,11 @@ def cloudFilter(sdataset1,sdataset2,user_replace='Default',user_constant=0,user_
      for i in range(line_size):
         for j in range(element_size):
             vals1[0][i*element_size+j]=scaleOutsideVal(vals1[0][i*element_size+j],britlo,brithi)
-            vals2[0][i*element_size+j]=scaleOutsideVal(vals2[0][i*element_size+j],britlo,brithi)
-            
-     filt_low=int(min(vals1[0]))
-     filt_hi =int(max(vals1[0]))
+          
+     filt_low=int(min([min(vals1[0]),min2]))
+     filt_hi =int(max([max(vals1[0]),max2]))       
      if (stretch == 'Contrast'):
-       lookup=contrast(filt_low,filt_hi,britlo,brithi,filt_low,filt_hi)
+       lookup=contrast(filt_low,filt_hi,in_low,in_hi,filt_low,filt_hi)
      elif (stretch == 'Histogram'):
        """ make a histogram from both datasets """
        v=[]
@@ -276,7 +275,7 @@ def cleanFilter(sdataset,user_fill='Average',user_bline='Default',user_eline='De
      filt_hi =int(max(vals[0]))
      
      if (stretch == 'Contrast'):
-       lookup=contrast(filt_low,filt_hi,britlo,brithi,filt_low,filt_hi)
+       lookup=contrast(filt_low,filt_hi,in_low,in_hi,filt_low,filt_hi)
      elif (stretch == 'Histogram'):
        h = makeHistogram(vals,element_size,line_size,filt_low,brithi-britlo)
        lookup=histoStretch(filt_low,filt_hi,in_low,in_hi,h)
@@ -331,7 +330,7 @@ def shotFilter(sdataset,user_bline='Default',user_eline='Default',user_pdiff=15,
      filt_low=int(min(vals[0]))
      filt_hi =int(max(vals[0]))
      if (stretch == 'Contrast'):
-       lookup=contrast(filt_low,filt_hi,britlo,brithi,filt_low,filt_hi)
+       lookup=contrast(filt_low,filt_hi,in_low,in_hi,filt_low,filt_hi)
      elif (stretch == 'Histogram'):
        h = makeHistogram(vals,element_size,line_size,filt_low,brithi-britlo)
        lookup=histoStretch(filt_low,filt_hi,in_low,in_hi,h)
@@ -407,12 +406,11 @@ def coreFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Defa
       for i in range(line_size):
         for j in range(element_size):
             vals1[0][i*element_size+j]=scaleOutsideVal(vals1[0][i*element_size+j],britlo,brithi)
-            vals2[0][i*element_size+j]=scaleOutsideVal(vals2[0][i*element_size+j],britlo,brithi)
-                 
-      filt_low=int(min(vals1[0]))
-      filt_hi =int(max(vals1[0]))
+                             
+      filt_low=int(min([min(vals1[0]),min2]))
+      filt_hi =int(max([max(vals1[0]),max2]))
       if (stretch == 'Contrast'):
-       lookup=contrast(filt_low,filt_hi,britlo,brithi,filt_low,filt_hi)
+       lookup=contrast(filt_low,filt_hi,in_low,in_hi,filt_low,filt_hi)
       elif (stretch == 'Histogram'):
        """ make a histogram from both datasets """
        v=[]
@@ -490,12 +488,12 @@ def discriminateFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoin
       for i in range(line_size):
         for j in range(element_size):
             vals1[0][i*element_size+j]=scaleOutsideVal(vals1[0][i*element_size+j],britlo,brithi)
-            vals2[0][i*element_size+j]=scaleOutsideVal(vals2[0][i*element_size+j],britlo,brithi)
             
-      filt_low=int(min(vals1[0]))
-      filt_hi =int(max(vals1[0]))
+      filt_low=int(min([min(vals1[0]),min2]))
+      filt_hi =int(max([max(vals1[0]),max2]))      
+      
       if (stretch == 'Contrast'):
-       lookup=contrast(filt_low,filt_hi,britlo,brithi,filt_low,filt_hi)
+       lookup=contrast(filt_low,filt_hi,in_low,in_hi,filt_low,filt_hi)
       elif (stretch == 'Histogram'):
        """ make a histogram from both datasets """
        v=[]
@@ -561,10 +559,10 @@ def mergeFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoint2='Def
         for j in range(element_size):
             vals1[0][i*element_size+j]=scaleOutsideVal(vals1[0][i*element_size+j],britlo,brithi)
             
-      filt_low=int(min(vals1[0]))
-      filt_hi =int(max(vals1[0]))
+      filt_low=int(min([min(vals1[0]),min2]))
+      filt_hi =int(max([max(vals1[0]),max2]))
       if (stretch == 'Contrast'):
-       lookup=contrast(in_low,in_hi,britlo,brithi,filt_low,filt_hi)
+       lookup=contrast(filt_low,filt_hi,in_low,in_hi,filt_low,filt_hi)
       elif (stretch == 'Histogram'):
        """ make a histogram from both datasets """
        v=[]
@@ -1016,7 +1014,7 @@ def printVals(sdataset):
 def scaleOutsideVal(val,brit_lo=0,brit_hi=255):
   """ this appears to be what McIDAS-X IMGFILT does when values outside of britlo/brithi range """
   numBritVals=brit_hi-brit_lo+1
-  div=abs(val/numBritVals)
+  div=abs(int(val)/numBritVals)
   if (val > brit_hi):
      val=val-div*numBritVals
   elif (val < brit_lo):
