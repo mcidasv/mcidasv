@@ -46,6 +46,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import ucar.unidata.data.DataSource;
+import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DirectDataChoice;
@@ -58,9 +59,12 @@ import ucar.unidata.data.GeoSelection;
 import ucar.unidata.data.GeoSelectionPanel;
 import ucar.unidata.data.grid.GridUtil;
 
+import ucar.unidata.idv.DisplayConventions;
+
 import ucar.unidata.geoloc.*;
 import ucar.unidata.util.Range;
 import ucar.unidata.util.Misc;
+import ucar.unidata.util.ColorTable;
 
 import visad.Data;
 import visad.FlatField;
@@ -109,7 +113,7 @@ public class PreviewSelection extends DataSelectionComponent {
       MapProjectionDisplayJ3D mapProjDsp;
       DisplayMaster dspMaster;
 
-      DataSource dataSource;
+      DataSourceImpl dataSource;
 
       static SampledSet lines_outlsupu = null;
       static SampledSet lines_outlsupw = null;
@@ -130,10 +134,12 @@ public class PreviewSelection extends DataSelectionComponent {
         super("Region");
 
         this.dataChoice = dataChoice;
-        this.dataSource = ((DirectDataChoice)dataChoice).getDataSource();
+        this.dataSource = (DataSourceImpl) ((DirectDataChoice)dataChoice).getDataSource();
         this.image = image;
         this.sampleProjection = sample;
         sample = getDataProjection();
+
+        DisplayConventions dspConv = dataSource.getDataContext().getIdv().getDisplayConventions();
 
         if (this.sampleProjection == null) {
             this.sampleProjection = sample;
@@ -263,26 +269,38 @@ public class PreviewSelection extends DataSelectionComponent {
         double max;
         double min;
         double dMax = imageRange.getMax();
+        double dMin = imageRange.getMin();
         String name = this.dataChoice.getName();
 
+        float[][] clrTbl = BaseColorControl.initTableGreyWedge(new float[4][256], true);
+
         if (name.endsWith("BRIT")) {
-           double dMin = imageRange.getMin();
+           dMin = imageRange.getMin();
            min = dMax;
            max = dMin;
         } 
-        else if (imageRangeType.getName().equals("Reflectance")) {
+        else if (imageRangeType.getName().contains("Reflectance")) {
            min = dMax;
-           max = 0;
+           max = 0.0;
         }
-        else {
+        else if (imageRangeType.getName().equals("BrightnessTemp")) {
            max = dMax*1.06;
            min = dMax * 0.74;
         }
+        else {
+           Range rng = dspConv.getParamRange(name, null);
+           max = dMax;
+           min = dMin;
+           ColorTable ct = dspConv.getParamColorTable(name);
+           clrTbl = ct.getTable();
+        }
         colorMap.setRange(min, max);
 
+        /*-  must to draw first so colorMap has a Control */
         dspMaster.draw();
+
         BaseColorControl clrCntrl = (BaseColorControl) colorMap.getControl();
-        clrCntrl.setTable(BaseColorControl.initTableGreyWedge(new float[4][256], true));
+        clrCntrl.setTable(clrTbl);
       }
 
        public MapProjection getDataProjection() {
