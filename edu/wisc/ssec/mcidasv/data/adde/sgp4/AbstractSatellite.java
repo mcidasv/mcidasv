@@ -31,7 +31,7 @@ import java.io.Serializable;
  *
  * @author sgano
  */
-public abstract class AbstractSatellite implements Serializable 
+public abstract class AbstractSatellite implements Serializable
 {
 
     /**
@@ -76,11 +76,11 @@ public abstract class AbstractSatellite implements Serializable
     public abstract double[] getKeplarianElements();
 
     public abstract double[] getLLA();
-
+*/
     public abstract double getLatitude();
 
     public abstract double getLongitude();
-
+/*
     public abstract double[][] getTemePosLag();
 
     public abstract double[][] getTemePosLead();
@@ -98,9 +98,9 @@ public abstract class AbstractSatellite implements Serializable
     public abstract boolean getPlot2D();
 
     public abstract boolean getPlot2DFootPrint();
-
+*/
     public abstract double[] getTEMEPos();
-
+/*
     public abstract Color getSatColor();
 
     public abstract double getSatTleEpochJulDate();
@@ -184,6 +184,6 @@ public abstract class AbstractSatellite implements Serializable
     public abstract double getThreeDModelSizeFactor();
     
     public abstract void setThreeDModelSizeFactor(double modelSizeFactor);
-*/    
+*/
 
 }

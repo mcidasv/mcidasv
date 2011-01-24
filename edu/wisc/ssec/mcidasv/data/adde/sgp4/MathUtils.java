@@ -27,25 +27,25 @@ package edu.wisc.ssec.mcidasv.data.adde.sgp4;
  */
 public class MathUtils
 {
-	
-//	vector 2-norm
+
+//      vector 2-norm
     /**
      * vector 2-norm
      *
      * @param a vector of length 3
      * @return norm(a)
      */
-	public static double norm(double[] a)
-	{
-		double c = 0.0;
-		
-		for(int i=0;i<a.length;i++)
-		{
-			c += a[i]*a[i];
-		}
-		
-		return Math.sqrt(c);
-	}
+        public static double norm(double[] a)
+        {
+                double c = 0.0;
+
+                for(int i=0;i<a.length;i++)
+                {
+                        c += a[i]*a[i];
+                }
+
+                return Math.sqrt(c);
+        }
 
         // dot product for 3D vectors
     /**
@@ -94,4 +94,22 @@ public class MathUtils
                 return c;
 
         } // mult 3x3 matrices
+
+    /**
+     * vector subtraction
+     *
+     * @param a vector of length 3
+     * @param b vector of length 3
+     * @return a-b
+     */
+        public static double[] sub(double[] a, double[] b)
+        {
+                double[] c = new double[3];
+                for(int i=0;i<3;i++)
+                {
+                        c[i] = a[i] - b[i];
+                }
+
+                return c;
+        }
 }
