@@ -143,8 +143,14 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
 
     protected List adapters;
 
+    /** Used to show the times */
+    private DataSelectionWidget dsw;
+
     /** The edit pane to show details html in */
     JEditorPane detailsEditor;
+
+    /** time step between data points */
+    private int dTime = 5;
 
     /**
      * Default bean constructor for persistence; does nothing.
@@ -217,6 +223,7 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
                 System.out.println("\ne=" + e + "\n");
             }
         }
+        //System.out.println("Number of TLEs = " + choices.size());
     }
 
     public void initAfterCreation() {
@@ -265,6 +272,7 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
             throws VisADException, RemoteException {
 /*
         System.out.println("\ngetDataInner:");
+        System.out.println("    dTime=" + dTime);
         System.out.println("    dataChoice=" + dataChoice);
         System.out.println("    category=" + category);
         System.out.println("    dataSelection=" + dataSelection + "\n");
@@ -360,8 +368,12 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
             double[] lla = prop.getLLA();
             double lat = lla[0]*180.0/Math.PI;
             double lon = lla[1]*180.0/Math.PI;
-            //System.out.println(time.getDateTimeStr() + " Lat: " + lat
-            //                                         + " Lon: " + lon);
+            double alt = lla[2];
+/*
+            System.out.println(time.getDateTimeStr() + " Lat: " + lat
+                                                     + " Lon: " + lon
+                                                     + " Alt: " + alt);
+*/
             Tuple data = new Tuple(new Data[] { new Text(time.getDateTimeStr()),
                                                 new LatLonTuple(
                                                     lat,
@@ -370,7 +382,7 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
                          );
             v.add(data);
             //time.add(Time.SECOND, 5);
-            time.add(Time.MINUTE, 5);
+            time.add(Time.MINUTE, dTime);
             julianDate = time.getJulianDate();
         }
         //System.out.println("\n");
@@ -564,7 +576,7 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
     protected void initDataSelectionComponents(
                    List<DataSelectionComponent> components, final DataChoice dataChoice) {
 /*
-        System.out.println("initDataSelectionComponents:");
+        System.out.println("\ninitDataSelectionComponents:");
         System.out.println("    components=" + components);
         System.out.println("    dataChoice=" + dataChoice);
 */
@@ -578,5 +590,28 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
             System.out.println("problem creating TimeRangeSelection e=" + e);
         }
         idv.showNormalCursor();
+    }
+
+    /**
+     * Show the dialog
+     *
+     * @param initTabName What tab should we show. May be null.
+     * @param modal Is dialog modal
+     *
+     * @return success
+     */
+    public boolean showPropertiesDialog(String initTabName, boolean modal) {
+        System.out.println("\n\nshowPropertiesDialog:");
+        boolean ret = super.showPropertiesDialog(initTabName, modal);
+        return ret;
+    }
+
+    public int getDTime() {
+        return dTime;
+    }
+
+    public void setDTime(int val) {
+        System.out.println("PolarOrbitTrackDataSource setDTime: val=" + val);
+        dTime = val;
     }
 }
