@@ -39,7 +39,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -275,7 +274,7 @@ public final class CollectionHelpers {
      * 
      * @return A new, empty {@code HashSet}.
      */
-    public static <E> Set<E> hashSet() {
+    public static <E> Set<E> newHashSet() {
         return new HashSet<E>();
     }
 
@@ -286,7 +285,7 @@ public final class CollectionHelpers {
      * 
      * @return A new, empty {@code HashSet}.
      */
-    public static <E> Set<E> linkedHashSet() {
+    public static <E> Set<E> newLinkedHashSet() {
         return new LinkedHashSet<E>();
     }
 
@@ -298,7 +297,7 @@ public final class CollectionHelpers {
      * @return A new {@code LinkedHashSet} whose contents are the same as 
      * {@code original}.
      */
-    public static <E> Set<E> linkedHashSet(Collection<? extends E> original) {
+    public static <E> Set<E> newLinkedHashSet(Collection<E> original) {
         return new LinkedHashSet<E>(original);
     }
 
@@ -309,7 +308,7 @@ public final class CollectionHelpers {
      * 
      * @return A new, empty {@code HashMap}.
      */
-    public static <K, V> Map<K, V> hashMap() {
+    public static <K, V> Map<K, V> newMap() {
         return new HashMap<K, V>();
     }
 
@@ -321,7 +320,7 @@ public final class CollectionHelpers {
      * @return A new {@code HashMap} whose contents are the same as 
      * {@code original}.
      */
-    public static <K, V> Map<K, V> hashMap(Map<K, V> original) {
+    public static <K, V> Map<K, V> newMap(Map<K, V> original) {
         return new HashMap<K, V>(original);
     }
 
@@ -332,7 +331,7 @@ public final class CollectionHelpers {
      * 
      * @return A new, empty {@code LinkedHashMap}.
      */
-    public static <K, V> Map<K, V> linkedHashMap() {
+    public static <K, V> Map<K, V> newLinkedHashMap() {
         return new LinkedHashMap<K, V>();
     }
 
@@ -344,7 +343,7 @@ public final class CollectionHelpers {
      * @return A new {@code LinkedHashMap} whose contents are the same as 
      * {@code original}.
      */
-    public static <K, V> Map<K, V> linkedHashMap(Map<K, V> original) {
+    public static <K, V> Map<K, V> newLinkedHashMap(Map<K, V> original) {
         return new LinkedHashMap<K, V>(original);
     }
 
@@ -484,14 +483,6 @@ public final class CollectionHelpers {
         return new ArrayList<E>(c);
     }
 
-    public static <E> LinkedList<E> linkedList() {
-        return new LinkedList<E>();
-    }
-
-    public static <E> LinkedList<E> linkedList(Collection<? extends E> c) {
-        return new LinkedList<E>(c);
-    }
-
     /**
      * Copies an existing {@link Collection} into a new (non-abstract!) 
      * {@code Collection} class.
@@ -611,7 +602,7 @@ public final class CollectionHelpers {
      * in {@code as} through {@code f}.
      */
     public static <A, B> Set<B> map(final Function<A, B> f, Set<A> as) {
-        Set<B> bs = linkedHashSet();
+        Set<B> bs = newLinkedHashSet();
         for (A a : as) {
             bs.add(f.apply(a));
         }
