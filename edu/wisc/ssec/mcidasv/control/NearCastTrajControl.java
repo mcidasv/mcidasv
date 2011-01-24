@@ -84,10 +84,14 @@ public class NearCastTrajControl extends DisplayControlImpl {
 
    NearCastTrajDataSource dataSource;
 
+   private DisplayableData rgbDisp;
+
+   float lineWidth = 1.0f;
+
 
    public NearCastTrajControl() {
      super();
-     setAttributeFlags(FLAG_COLORTABLE);
+     setAttributeFlags(FLAG_COLORTABLE | FLAG_LINEWIDTH);
    }
 
    public boolean init(DataChoice dataChoice) throws VisADException, RemoteException {
@@ -110,7 +114,7 @@ public class NearCastTrajControl extends DisplayControlImpl {
      rgbRealType = (RealType) ((FunctionType)fltFld.getType()).getRange();
      paramName = rgbRealType.getName();
 
-     RGBDisplayableImpl rgbDisp = new RGBDisplayableImpl("traj", rgbRealType, null, true);
+     rgbDisp = new RGBDisplayableImpl("traj", rgbRealType, null, true);
      rgbDisp.setData(trajField);
 
      addDisplayable(rgbDisp, FLAG_COLORTABLE);
@@ -119,6 +123,14 @@ public class NearCastTrajControl extends DisplayControlImpl {
    }
 
    public void initDone() {
+   }
+
+   protected void applyLineWidth() throws VisADException, RemoteException {
+     float lw = getLineWidth();
+     if (lw != lineWidth) {
+       rgbDisp.setLineWidth(lw);
+       lineWidth = lw;
+     }
    }
 
    protected Range getInitialRange() throws VisADException, RemoteException {
