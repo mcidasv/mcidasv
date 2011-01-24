@@ -80,6 +80,8 @@ public abstract class AbstractSatellite implements Serializable
     public abstract double getLatitude();
 
     public abstract double getLongitude();
+
+    public abstract double getAltitude();
 /*
     public abstract double[][] getTemePosLag();
 

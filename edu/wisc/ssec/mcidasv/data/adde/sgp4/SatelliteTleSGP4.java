@@ -517,7 +517,7 @@ public class SatelliteTleSGP4 extends AbstractSatellite
     {
         return showGroundTrack;
     }
-    
+*/ 
     public double getLatitude()
     {
         return lla[0];
@@ -532,7 +532,7 @@ public class SatelliteTleSGP4 extends AbstractSatellite
     {
         return lla[2];
     }
-*/    
+   
     public double[] getLLA()
     {
         return lla;
@@ -716,12 +716,12 @@ public class SatelliteTleSGP4 extends AbstractSatellite
     {
         this.plot2DFootPrint = plot2DFootPrint;
     }
-
+*/
     public double[] getTEMEPos()
     {
         return posTEME.clone();
     }
-
+/*
     public boolean isShow3DOrbitTrace()
     {
         return show3DOrbitTrace;
