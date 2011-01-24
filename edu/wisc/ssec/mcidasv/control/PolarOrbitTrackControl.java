@@ -31,6 +31,7 @@
 package edu.wisc.ssec.mcidasv.control;
 
 import edu.wisc.ssec.mcidasv.data.GroundStations;
+import edu.wisc.ssec.mcidasv.data.PolarOrbitTrackDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.CurveDrawer;
 
 import java.awt.Color;
@@ -60,6 +61,7 @@ import org.slf4j.LoggerFactory;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataInstance;
+import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.ui.LatLonWidget;
 import ucar.unidata.util.GuiUtils;
@@ -113,6 +115,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private List alts;
 
     private JComboBox locationComboBox;
+    private String station = "";
+    private TextDisplayable groundStationDsp;
 
     /** Input for lat/lon center point */
     protected LatLonWidget latLonWidget = new LatLonWidget();
@@ -143,6 +147,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private ColorSwatch colorSwatch;
     private Color color;
     private Color defaultColor = Color.GREEN;
+    private DataSourceImpl dataSource;
 
     public PolarOrbitTrackControl() {
         super();
@@ -156,6 +161,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
         Data data = getData(getDataInstance());
         createTrackDisplay(data);
+        this.dataSource = getDataSource();
         return result;
     }
 
@@ -181,7 +187,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     time.setJustification(TextControl.Justification.LEFT);
                     time.setVerticalJustification(TextControl.Justification.CENTER);
                     time.setLineWidth(2f);
-                    time.setTextSize(fSize);
                     time.setColor(this.color);
                     
                     addDisplayable(time, FLAG_COLORTABLE);
@@ -202,6 +207,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     latlon[0][i] = lat;
                     latlon[1][i] = lon;
                 }
+                setDisplayableTextSize(this.fontSize);
                 Gridded2DSet track = new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple,
                            latlon, npts);
                 SampledSet[] set = new SampledSet[1];
@@ -305,7 +311,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                            new JLabel("Set Color: "),
                            colorSwatch }, 2,
                            GuiUtils.WT_N, GuiUtils.WT_N);
-        GroundStations gs = new GroundStations();
+        GroundStations gs = new GroundStations(null);
         int gsCount = gs.getGroundStationCount();
         String[] stats = new String[gsCount];
         stations = gs.getStations();
@@ -319,32 +325,50 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         locationComboBox = new JComboBox(stats);
         locationComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
+                setStation((String)locationComboBox.getSelectedItem());
                 int indx = locationComboBox.getSelectedIndex();
                 String str = (String)(lats.get(indx));
                 Double d = new Double(str);
                 double dVal = d.doubleValue();
                 latLonWidget.setLat(dVal);
+                setLatitude();
                 str = (String)(lons.get(indx));
                 d = new Double(str);
-                dVal = d.doubleValue() * -1;
+                dVal = d.doubleValue();
                 latLonWidget.setLon(dVal);
+                setLongitude();
                 str = (String)(alts.get(indx));
                 altitudeFld.setText(str);
+                setAltitude();
+                drawGroundStation();
+/*
+                System.out.println("\n" + station + ": latitude=" + latitude + 
+                                                    " longitude=" + longitude +
+                                                    " altitude=" + altitude);
+*/
             }
         });
 
         String str = (String)(lats.get(0));
-        Double d = new Double(str);
-        double dVal = d.doubleValue();
-        latLonWidget.setLat(dVal);
-        str = (String)(lons.get(0));
-        d = new Double(str);
-        dVal = d.doubleValue() * -1;
-        latLonWidget.setLon(dVal);
+        Double d;
+        double dVal;
+        if (!str.equals(" ")) {
+            d = new Double(str);
+            dVal = d.doubleValue();
+            latLonWidget.setLat(dVal);
+        }
+        if (!str.equals(" ")) {
+            str = (String)(lons.get(0));
+            d = new Double(str);
+            dVal = d.doubleValue();
+            latLonWidget.setLon(dVal);
+        }
         str = (String)(alts.get(0));
-        altitudeFld = new JTextField(str, 5);
-        latFld = latLonWidget.getLatField();
-        lonFld = latLonWidget.getLonField();
+        if (!str.equals(" ")) {
+            altitudeFld = new JTextField(str, 5);
+            latFld = latLonWidget.getLatField();
+            lonFld = latLonWidget.getLonField();
+        }
         FocusListener latLonFocusChange = new FocusListener() {
             public void focusGained(FocusEvent fe) {
                 latFld.setCaretPosition(latFld.getText().length());
@@ -418,7 +442,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     }
 
     private void setDisplayableTextSize(int size) {
-        //System.out.println("setDisplayableTextSize: size=" + size);
         size = setFontSize(size);
         try {
             float fSize = (float)size/10.0f;
@@ -462,8 +485,16 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         this.latitude = latLonWidget.getLat();
     }
 
+    public double getLatitude() {
+        return this.latitude;
+    }
+
     public void setLongitude() {
         this.longitude = latLonWidget.getLon();
+    }
+
+    public double getLongitude() {
+        return this.longitude;
     }
 
     public void setAltitude() {
@@ -475,5 +506,55 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     public void sliderChanged(int sliderValue) {
         setFontSizeTextField(sliderValue);
         setDisplayableTextSize(sliderValue);
+    }
+
+    public void setStation(String val) {
+        this.station = val;
+    }
+
+    public String getStation() {
+        return this.station;
+    }
+
+    private void drawGroundStation() {
+        try {
+            String str = "+" + getStation();
+            groundStationDsp = new TextDisplayable(TextType.Generic);
+            groundStationDsp.setJustification(TextControl.Justification.LEFT);
+            groundStationDsp.setVerticalJustification(TextControl.Justification.CENTER);
+            groundStationDsp.setLineWidth(2f);
+            groundStationDsp.setTextSize(0.3f);
+            groundStationDsp.setColor(Color.WHITE);
+                    
+            addDisplayable(groundStationDsp, FLAG_COLORTABLE);
+            double dlat = getLatitude();
+            double dlon = getLongitude();
+            RealTuple lonLat =
+                new RealTuple(RealTupleType.SpatialEarth2DTuple,
+                    new double[] { dlon, dlat });
+            Tuple tup = new Tuple(TUPTYPE,
+                new Data[] { lonLat, new Text(str)});
+            groundStationDsp.setData(tup);
+        } catch (Exception e) {
+            System.out.println("drawGroundStation e=" + e);
+        }
+    }
+        
+    public DataSourceImpl getDataSource() {
+        DataSourceImpl ds = null;
+        List dataSources = getDataSources();
+        boolean gotit = false;
+        if (!dataSources.isEmpty()) {
+            int nsrc = dataSources.size();
+            for (int i=0; i<nsrc; i++) {
+                ds = (DataSourceImpl)dataSources.get(nsrc-i-1);
+                if (ds instanceof PolarOrbitTrackDataSource) {
+                    gotit = true;
+                    break;
+                }
+            }
+        }
+        if (!gotit) return null;
+        return ds;
     }
 }
