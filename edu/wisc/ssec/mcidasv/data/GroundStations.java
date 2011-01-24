@@ -52,7 +52,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 public class GroundStations
 {
-    private static final String card00 = "KMSN,Madison,43.1398578,-89.3375136,270.4";
+    private static final String card00 = "KMSN,SSEC,43.1398578,-89.3375136,270.4";
     private int gsCount = 0; // count of stations loaded
     public static String groundStationDB = "data/groundstations/groundstations_db.csv";
 
@@ -61,7 +61,7 @@ public class GroundStations
     private List longitudes = new ArrayList();
     private List altitudes = new ArrayList();
 
-    public GroundStations()
+    public GroundStations(String topCard)
     {
         // read data files for Ground Stations
         try
@@ -85,8 +85,15 @@ public class GroundStations
                 InputStreamReader isr = new InputStreamReader(c.getInputStream());
                 gsReader = new BufferedReader(isr); // from the web
             }
-            
-            String nextLine = card00;
+
+            String nextLine = topCard;
+            if (topCard == null) {
+               nextLine = card00;
+               stations.add(" ");
+               latitudes.add(" ");
+               longitudes.add(" ");
+               altitudes.add(" ");
+            }
             
             while (nextLine != null)
             {
