@@ -87,6 +87,7 @@ public class EntryStore {
      */
     private static final String PROP_DEBUG_ADDEURL = "debug.adde.reqs";
 
+    /** Enumeration of the various server manager events. */
     public enum Event { REPLACEMENT, REMOVAL, ADDITION, UPDATE, FAILURE, STARTED, UNKNOWN };
 
     private static final Logger logger = LoggerFactory.getLogger(EntryStore.class);
@@ -215,6 +216,18 @@ public class EntryStore {
         return new String[] { ADDE_MCSERVL, "-p", localPort, "-v" };
     }
 
+    /**
+     * Determine the validity of a given {@link edu.wisc.ssec.mcidasv.servermanager.AddeEntry AddeEntry}.
+     * 
+     * @param entry Entry to check. Cannot be {@code null}.
+     * 
+     * @return {@code true} if {@code entry} is invalid or {@code false} otherwise.
+     * 
+     * @throws AssertionError if {@code entry} is somehow neither a {@code RemoteAddeEntry} or {@code LocalAddeEntry}.
+     * 
+     * @see edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry#INVALID_ENTRY
+     * @see edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry#INVALID_ENTRY
+     */
     public static boolean isInvalidEntry(final AddeEntry entry) {
         notNull(entry);
         boolean retVal = true;
@@ -228,6 +241,14 @@ public class EntryStore {
         return retVal;
     }
 
+    /**
+     * Returns the {@link edu.wisc.ssec.mcidasv.servermanager.AddeEntry AddeEntrys} stored 
+     * in the user's preferences.
+     * 
+     * @param store Object store that represents the user's preferences. Cannot be {@code null}.
+     * 
+     * @return Either the {@code AddeEntrys} stored in the prefs or an empty {@link java.util.Set Set}.
+     */
     private Set<AddeEntry> extractFromPreferences(final IdvObjectStore store) {
         assert store != null;
         Set<AddeEntry> entries = newLinkedHashSet();
@@ -248,6 +269,11 @@ public class EntryStore {
         return entries;
     }
 
+    /**
+     * Responds to server manager events being passed with the event bus. 
+     * 
+     * @param evt Event to which this method is responding.
+     */
     @EventSubscriber(eventClass=Event.class)
     public void onEvent(Event evt) {
         notNull(evt);
@@ -267,6 +293,15 @@ public class EntryStore {
         }
     }
 
+    /**
+     * Searches the newest entries for the entries of the given {@link edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType EntryType}.
+     * 
+     * @param type Look for entries matching this {@code EntryType}. Cannot be {@code null}.
+     * 
+     * @return Either a {@link java.util.List List} of entries or an empty {@code List}.
+     * 
+     * @throws NullPointerException if {@code type} is {@code null}.
+     */
     public List<AddeEntry> getLastAddedByType(final EntryType type) {
         notNull(type);
         List<AddeEntry> entries = arrList();
@@ -494,8 +529,9 @@ public class EntryStore {
     protected Set<RemoteAddeEntry> getRemoteEntries() {
         Set<RemoteAddeEntry> remotes = newLinkedHashSet();
         for (AddeEntry e : trie.values()) {
-            if (e instanceof RemoteAddeEntry)
+            if (e instanceof RemoteAddeEntry) {
                 remotes.add((RemoteAddeEntry)e);
+            }
         }
         return remotes;
     }
@@ -508,8 +544,9 @@ public class EntryStore {
     protected Set<LocalAddeEntry> getLocalEntries() {
         Set<LocalAddeEntry> locals = newLinkedHashSet();
         for (AddeEntry e : trie.getPrefixedBy("localhost").values()) {
-            if (e instanceof LocalAddeEntry)
+            if (e instanceof LocalAddeEntry) {
                 locals.add((LocalAddeEntry)e);
+            }
         }
         return locals;
     }

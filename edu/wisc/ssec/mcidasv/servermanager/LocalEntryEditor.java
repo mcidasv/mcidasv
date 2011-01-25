@@ -59,6 +59,8 @@ import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry.AddeFormat;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EditorAction;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import edu.wisc.ssec.mcidasv.util.McVTextField;
 
 /**
  * A dialog that allows the user to define or modify {@link LocalAddeEntry}s.
@@ -147,7 +149,7 @@ public class LocalEntryEditor extends javax.swing.JDialog {
      */
     private void initComponents(final LocalAddeEntry initEntry) {
         JLabel datasetLabel = new JLabel("Dataset (e.g. MYDATA):");
-        datasetField = new JTextField();
+        datasetField = McVGuiUtils.makeTextFieldDeny("", 8, true, McVTextField.mcidasDeny);
         datasetLabel.setLabelFor(datasetField);
         datasetField.setColumns(20);
         if (datasetText != null) {
@@ -331,6 +333,10 @@ public class LocalEntryEditor extends javax.swing.JDialog {
         String group = datasetField.getText();
         String name = typeField.getText();
         String mask = getLastPath();
+        if (mask.isEmpty() && !directoryField.getText().isEmpty()) {
+            mask = directoryField.getText();
+            setLastPath(mask);
+        }
         AddeFormat format = (AddeFormat)formatComboBox.getSelectedItem();
         LocalAddeEntry entry = new LocalAddeEntry.Builder(name, group, mask, format).status(EntryStatus.ENABLED).build();
         return Collections.singleton(entry);
