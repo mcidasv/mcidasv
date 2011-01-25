@@ -1229,8 +1229,8 @@ public class McIDASV extends IntegratedDataViewer {
      */
     public static boolean isLoopback(final String host) {
         String cleaned = Contract.notNull(host.trim().toLowerCase());
-        return "127.0.0.1".equals(cleaned) 
-            || "::1".equals(cleaned) 
+        return "127.0.0.1".startsWith(cleaned) 
+            || "::1".startsWith(cleaned) 
             || cleaned.startsWith("localhost");
     }
 
