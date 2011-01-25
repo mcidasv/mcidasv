@@ -1209,6 +1209,32 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
+     * Attempts to determine if a given string is a 
+     * {@literal "loopback address"} (aka localhost).
+     * 
+     * <p>Strings are <b>trimmed and converted to lowercase</b>, and currently
+     * checked against:
+     * <ul>
+     * <li>{@code 127.0.0.1}</li>
+     * <li>{@code ::1} (for IPv6)</li>
+     * <li>Strings starting with {@code localhost}.</li>
+     * </ul>
+     * 
+     * @param host {@code String} to check. Should not be {@code null}.
+     * 
+     * @return {@code true} if {@code host} is a recognized loopback address.
+     * {@code false} otherwise.
+     * 
+     * @throws NullPointerException if {@code host} is {@code null}.
+     */
+    public static boolean isLoopback(final String host) {
+        String cleaned = Contract.notNull(host.trim().toLowerCase());
+        return "127.0.0.1".equals(cleaned) 
+            || "::1".equals(cleaned) 
+            || cleaned.startsWith("localhost");
+    }
+
+    /**
      * Are we on a Mac?  Used to build the MRJ handlers
      * Take from TN2042
      * @return

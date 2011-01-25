@@ -32,6 +32,7 @@ package edu.wisc.ssec.mcidasv.chooser.adde;
 
 import static edu.wisc.ssec.mcidasv.servermanager.AddeEntry.DEFAULT_ACCOUNT;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
+import static edu.wisc.ssec.mcidasv.McIDASV.isLoopback;
 
 import static javax.swing.GroupLayout.DEFAULT_SIZE;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
@@ -665,7 +666,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             name = needle.toString();
         }
 
-        if (name.equalsIgnoreCase("localhost") || (name.equals("127.0.0.1"))) {
+        if (isLoopback(name)) {
             return 0;
         }
 
@@ -722,7 +723,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             }
 
             EditorAction editorAction = EditorAction.INVALID;
-            if (!server.equalsIgnoreCase("localhost") && !server.equalsIgnoreCase("127.0.0.1")) {
+            if (!isLoopback(server)) {
                 RemoteEntryEditor editor = new RemoteEntryEditor(servManager, server, "");
                 editor.setVisible(true);
                 editorAction = editor.getEditorAction();
