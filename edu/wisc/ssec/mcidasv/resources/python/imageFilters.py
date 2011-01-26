@@ -150,8 +150,12 @@ def shotMain(vals,bline,eline,element_size,line_size,filter_diff):
        right_diff = abs(right_diff)
        if (right_diff < filter_diff):
          continue
-         
-       vals[0][i*element_size + j] = (left + right)/2
+       
+       """ for some reason, have to do this to floor the value """
+       p = (left + right)/2
+       a = field((p,))
+       b = a.floor()  
+       vals[0][i*element_size + j] = float(b[0])
     
   return vals
 
@@ -275,10 +279,10 @@ def cleanFilter(sdataset,user_fill='Average',user_bline='Default',user_eline='De
      filt_hi =int(max(vals[0]))
      
      if (stretch == 'Contrast'):
-       lookup=contrast(filt_low,filt_hi,in_low,in_hi,filt_low,filt_hi)
+       lookup=contrast(filt_low,filt_hi,britlo,brithi,filt_low,filt_hi)
      elif (stretch == 'Histogram'):
        h = makeHistogram(vals,element_size,line_size,filt_low,brithi-britlo)
-       lookup=histoStretch(filt_low,filt_hi,in_low,in_hi,h)
+       lookup=histoStretch(filt_low,filt_hi,britlo,brithi,h)
             
      vals=modify(vals,element_size,line_size,filt_low,lookup)
      rangeObject.setSamples(vals)     
@@ -315,7 +319,12 @@ def shotFilter(sdataset,user_bline='Default',user_eline='Default',user_pdiff=15,
      vals = rangeObject.getFloats(0)
      in_hi = int(max(vals[0]))
      in_low = int(min(vals[0]))
-     point_diff = (in_hi - in_low + 1)*(filter_diff/100.0)    
+     """ the next four lines are to make sure the point_diff value is floored """
+     p=(in_hi - in_low + 1)*(filter_diff/100.0)    
+     a=field((p,))
+     b=a.floor()
+     point_diff = float(b[0])   
+     
      domain=GridUtil.getSpatialDomain(rangeObject)  
      [element_size,line_size]=domain.getLengths()
      if (eline == 'Default'):
@@ -330,10 +339,10 @@ def shotFilter(sdataset,user_bline='Default',user_eline='Default',user_pdiff=15,
      filt_low=int(min(vals[0]))
      filt_hi =int(max(vals[0]))
      if (stretch == 'Contrast'):
-       lookup=contrast(filt_low,filt_hi,in_low,in_hi,filt_low,filt_hi)
+       lookup=contrast(filt_low,filt_hi,britlo,brithi,filt_low,filt_hi)
      elif (stretch == 'Histogram'):
        h = makeHistogram(vals,element_size,line_size,filt_low,brithi-britlo)
-       lookup=histoStretch(filt_low,filt_hi,in_low,in_hi,h)
+       lookup=histoStretch(filt_low,filt_hi,britlo,brithi,h)
             
      vals=modify(vals,element_size,line_size,filt_low,lookup)
      rangeObject.setSamples(vals)    
