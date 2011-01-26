@@ -39,12 +39,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -566,7 +568,6 @@ public class Misc {
         return result;
     }
 
-
     /**
      *  Copy the objects with the given objectArray into a new List.
      *
@@ -574,14 +575,11 @@ public class Misc {
      *
      *  @return The List that contains the objects from the array.
      */
-    public static List toList(Object[] l) {
-        ArrayList v = new ArrayList();
-        for (int i = 0; i < l.length; i++) {
-            v.add(l[i]);
-        }
+    public static <E> List<E> toList(E... elements) {
+        List<E> v = new ArrayList<E>(elements.length);
+        Collections.addAll(v, elements);
         return v;
     }
-
 
     /**
      * Create a list from an enumeration
@@ -590,14 +588,13 @@ public class Misc {
      *
      * @return The list
      */
-    public static List toList(Enumeration enumeration) {
-        List list = new ArrayList();
+    public static <E> List<E> toList(Enumeration<E> enumeration) {
+        List<E> list = new LinkedList<E>();
         while (enumeration.hasMoreElements()) {
             list.add(enumeration.nextElement());
         }
         return list;
     }
-
 
     /**
      *  Copy the objects with the given objectArray into a new List.
@@ -606,10 +603,9 @@ public class Misc {
      *
      *  @return The List that contains the objects from the array.
      */
-    public static List newList(Object[] l) {
-        return toList(l);
+    public static <E> List<E> newList(E... elements) {
+        return toList(elements);
     }
-
 
     /**
      * Utility to do a list get only if the index is ok. Else return null.

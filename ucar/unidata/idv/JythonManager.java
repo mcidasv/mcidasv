@@ -52,6 +52,7 @@ import static ucar.unidata.xml.XmlUtil.getRoot;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -80,6 +81,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
@@ -101,6 +103,7 @@ import org.python.core.PyFunction;
 import org.python.core.PyList;
 import org.python.core.PyStringMap;
 import org.python.core.PySyntaxError;
+import org.python.core.PySystemState;
 import org.python.core.PyTableCode;
 import org.python.core.PyTuple;
 import org.python.util.PythonInterpreter;
@@ -329,7 +332,14 @@ public class JythonManager extends IdvManager implements ActionListener {
         if (cacheDir != null) {
             pythonProps.put("python.home", cacheDir);
         }
+        // TODO: is there a way to force console_init.py to load first?
         PythonInterpreter.initialize(System.getProperties(), pythonProps, getArgsManager().commandLineArgs);
+        PySystemState sys = Py.getSystemState();
+//        sys.path.append(Py.newString("/Users/jbeavers/mcidasv/eclipse/mcv/dist/mcidasv.jar"));
+//        sys.path.append(Py.newString("/edu/wisc/ssec/mcidasv/resources/python"));
+//        sys.path.append(Py.newString("/edu/wisc/ssec/mcidasv/resources/python/utilities"));
+        sys.path.append(Py.newString("/Users/jbeavers/mcidasv/eclipse/mcv/dist/mcidasv.jar/edu/wisc/ssec/mcidasv/resources/python"));
+        sys.path.append(Py.newString("/Users/jbeavers/mcidasv/eclipse/mcv/dist/mcidasv.jar/edu/wisc/ssec/mcidasv/resources/python/utilities"));
         doMakeContents();
         if (!getArgsManager().isScriptingMode()) {
             makeFormulasFromLib();
@@ -436,7 +446,7 @@ public class JythonManager extends IdvManager implements ActionListener {
                 return;
             }
         }
-        if ((text == null) || (text.trim().length() == 0)) {
+        if ((text == null) || (text.trim().isEmpty())) {
             userMessage("No text selected");
             return;
         }
@@ -483,12 +493,14 @@ public class JythonManager extends IdvManager implements ActionListener {
                     continue;
                 }
                 String path = resources.get(i).toString();
-                List files = new ArrayList();
+                List files;
                 File file = new File(path);
                 if (file.exists() && file.isDirectory()) {
                     File[] libFiles = file.listFiles((java.io.FileFilter)new PatternFileFilter(".*\\.py$"));
-                    files.addAll(toList(libFiles));
+//                    files.addAll(toList(libFiles));
+                    files = toList(libFiles);
                 } else {
+                    files = new ArrayList();
                     files.add(path);
                 }
                 for (int fileIdx = 0; fileIdx < files.size(); fileIdx++) {
@@ -1082,6 +1094,14 @@ public class JythonManager extends IdvManager implements ActionListener {
      * @param interpreter the interp to initi
      */
     protected static void doBasicImports(PythonInterpreter interpreter) {
+        // TODO(jon): revisit this asap
+        try {
+            InputStream consoleInitializer = IOUtil.getInputStream("/edu/wisc/ssec/mcidasv/resources/python/console_init.py", JythonManager.class);
+            interpreter.execfile(consoleInitializer);
+            consoleInitializer.close();
+        } catch (IOException e) {
+            logException("Failed to initialize Jython's sys.path.", e);
+        }
         interpreter.exec("import sys");
         interpreter.exec("import java");
         interpreter.exec("sys.add_package('visad')");
@@ -2301,4 +2321,84 @@ public class JythonManager extends IdvManager implements ActionListener {
             return lineNumbers;
         }
     }
+    
+//    /**
+//     * Class MyPythonEditor the editor class
+//     *
+//     *
+//     * @author IDV Development Team
+//     * @version $Revision$
+//     */
+//    @SuppressWarnings("serial")
+//    private static class MyPythonEditor extends JPythonEditor {
+//        private RSyntaxTextArea textArea;
+//        /**
+//         * ctor
+//         *
+//         * @throws VisADException on badness
+//         */
+//        public MyPythonEditor() throws VisADException {
+//            textArea = buildTextComponent();
+//        }
+//
+//        /**
+//         * get the component that shows the line numbers
+//         *
+//         * @return line number component
+//         */
+//        public JTextComponent getLineNumberComponent() {
+//            return lineNumbers;
+//        }
+//        
+//        public JTextComponent getTextComponent() {
+//            return textArea;
+//        }
+//        
+//        private static RSyntaxTextArea buildTextComponent() {
+//            final RSyntaxTextArea comp;
+//            SwingUtilities.invokeLater(new Runnable() {
+//                public void run() {
+//                    comp = new RSyntaxTextArea();
+//                }
+//            });
+//            return comp;
+//        }
+//    }
+//
+//    public static void runDemo() {
+//        SwingUtilities.invokeLater(new Runnable() {
+//            public void run() {
+//                new TextEditorDemo().setVisible(true);
+//            }
+//        });
+//    }
+//    public static class TextEditorDemo extends JFrame {
+//        public final String demoText = "def foo(str='w00t'):\n    print 'hi'\n    return str + 'w00t'\n\n\nif __name__ == '__main__':\n    print foo()\n\n";
+//        public TextEditorDemo() {
+//            JPanel cp = new JPanel(new BorderLayout());
+//            RSyntaxTextArea textArea = new RSyntaxTextArea();
+//            textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PYTHON);
+//            RTextScrollPane sp = new RTextScrollPane(textArea);
+//            cp.add(sp);
+//
+//            textArea.setText(demoText);
+//            
+//            SyntaxScheme scheme = textArea.getSyntaxScheme();
+//            scheme.styles[Token.WHITESPACE].foreground = Color.DARK_GRAY;
+//
+//            textArea.setTabsEmulated(true);
+//            textArea.setTabSize(4);
+//            textArea.setWhitespaceVisible(true);
+//            textArea.setMarkOccurrences(true);
+//            textArea.setEOLMarkersVisible(true);
+//            textArea.setAutoIndentEnabled(true);
+//            
+//            
+//            setContentPane(cp);
+//            setTitle("syntax highlighting demo");
+//            setDefaultCloseOperation(EXIT_ON_CLOSE);
+//            pack();
+//            setLocationRelativeTo(null);
+//        }
+//    }
 }
