@@ -147,7 +147,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private ColorSwatch colorSwatch;
     private Color color;
     private Color defaultColor = Color.GREEN;
-    private DataSourceImpl dataSource;
+    private PolarOrbitTrackDataSource dataSource;
 
     public PolarOrbitTrackControl() {
         super();
@@ -341,10 +341,12 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 altitudeFld.setText(str);
                 setAltitude();
                 drawGroundStation();
+                double satAlt = dataSource.getNearestAltToGroundStation(latitude, longitude);
 /*
-                System.out.println("\n" + station + ": latitude=" + latitude + 
+                System.out.println("\n" + station + ": latitude=" + latitude +
                                                     " longitude=" + longitude +
                                                     " altitude=" + altitude);
+                System.out.println("satellite altitude =" + satAlt);
 */
             }
         });
@@ -540,7 +542,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         }
     }
         
-    public DataSourceImpl getDataSource() {
+    public PolarOrbitTrackDataSource getDataSource() {
         DataSourceImpl ds = null;
         List dataSources = getDataSources();
         boolean gotit = false;
@@ -555,6 +557,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             }
         }
         if (!gotit) return null;
-        return ds;
+        return (PolarOrbitTrackDataSource)ds;
     }
 }
