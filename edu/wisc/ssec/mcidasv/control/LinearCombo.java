@@ -83,6 +83,7 @@ import edu.wisc.ssec.mcidasv.jython.ConsoleCallback;
 public class LinearCombo extends HydraControl implements ConsoleCallback {
 
     public static final String HYDRA_HELP_ID = "idv.controls.hydra.linearcombinationcontrol";
+    
     public static final String HYDRA_SRC = "/edu/wisc/ssec/mcidasv/resources/python/linearcombo/hydra.py";
     public static final String CONSOLE_IDV_OBJECT = "_idv";
     public static final String CONSOLE_CONTROL_OBJECT = "_linearCombo";
@@ -141,6 +142,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         console.injectObject(CONSOLE_OBJECT, console);
         console.injectObject(CONSOLE_DATA_OBJECT, source.getMultiSpectralData(choice));
 
+        console.runFile("__main__", "/edu/wisc/ssec/mcidasv/resources/python/console_init.py");
         console.runFile("__main__", HYDRA_SRC);
 
         display = new MultiSpectralDisplay((DirectDataChoice)choice);
