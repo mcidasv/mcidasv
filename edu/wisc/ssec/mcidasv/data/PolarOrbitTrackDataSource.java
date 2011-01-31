@@ -152,6 +152,10 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
     /** time step between data points */
     private int dTime = 5;
 
+    private SatelliteTleSGP4 prop = null;
+    private double julDate0 = 0.0;
+    private double julDate1 = 0.0;
+
     /**
      * Default bean constructor for persistence; does nothing.
      */
@@ -334,9 +338,7 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
         String endStr = (String)this.selectionProps.get("ETime");
         Double dEnd = new Double(endStr);
         double endJulianDate = dEnd.doubleValue();
-
-        // Create SGP4 satelite propogator
-        SatelliteTleSGP4 prop = null;
+        julDate1 = endJulianDate;
 
         try
         {
@@ -357,10 +359,11 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
                         (new Integer((String)this.selectionProps.get("Mins"))).intValue(),
                         (new Double((String)this.selectionProps.get("Secs"))).doubleValue());
         double julianDate = time.getJulianDate();
+        julDate0 = julianDate;
         Unit unit = CommonUnit.secondsSinceTheEpoch;
         Vector v = new Vector();
-        //System.out.println("\n");
-        while (julianDate <= endJulianDate) {
+
+        while (julianDate <= julDate1) {
             // prop to the desired time
             prop.propogate2JulDate(julianDate);
 
@@ -370,10 +373,10 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
             double lon = lla[1]*180.0/Math.PI;
             double alt = lla[2];
 /*
-            System.out.println(time.getDateTimeStr() + " Lat: " + lat
-                                                     + " Lon: " + lon
-                                                     + " Alt: " + alt);
-*/
+             System.out.println(time.getDateTimeStr() + " Lat: " + lat
+                                                      + " Lon: " + lon
+                                                      + " Alt: " + alt);
+ */
             Tuple data = new Tuple(new Data[] { new Text(time.getDateTimeStr()),
                                                 new LatLonTuple(
                                                     lat,
@@ -381,12 +384,49 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
                                                 )}
                          );
             v.add(data);
-            //time.add(Time.SECOND, 5);
             time.add(Time.MINUTE, dTime);
             julianDate = time.getJulianDate();
         }
-        //System.out.println("\n");
+
         return new Tuple((Data[]) v.toArray(new Data[v.size()]), false);
+    }
+
+    public double getNearestAltToGroundStation(double gsLat, double gsLon) {
+        double retAlt = 0.0;
+        Time time = new Time(
+                        (new Integer((String)this.selectionProps.get("Year"))).intValue(),
+                        (new Integer((String)this.selectionProps.get("Month"))).intValue(),
+                        (new Integer((String)this.selectionProps.get("Day"))).intValue(),
+                        (new Integer((String)this.selectionProps.get("Hours"))).intValue(),
+                        (new Integer((String)this.selectionProps.get("Mins"))).intValue(),
+                        (new Double((String)this.selectionProps.get("Secs"))).doubleValue());
+
+        double minDist = 999999.99;
+        double julianDate = julDate0;
+
+        while (julianDate <= julDate1) {
+            // prop to the desired time
+            prop.propogate2JulDate(julianDate);
+
+            // get the lat/long/altitude [radians, radians, meters]
+            double[] lla = prop.getLLA();
+            double lat = lla[0]*180.0/Math.PI;
+            double lon = lla[1]*180.0/Math.PI;
+            double alt = lla[2];
+            //System.out.println("    " + time.getDateTimeStr() + ": lat=" + lat + " lon=" + lon + " alt=" + alt);
+
+            double latDiff = (gsLat - lat) * (gsLat - lat);
+            double lonDiff = (gsLon - lon) * (gsLon - lon);
+            double dist = Math.sqrt(latDiff+lonDiff);
+            if (dist < minDist) {
+                minDist = dist;
+                retAlt = alt;
+            }
+            time.add(Time.MINUTE, dTime);
+            julianDate = time.getJulianDate();
+        }
+
+        return retAlt;
     }
 
     private int decodeCard1(String card) {
@@ -601,7 +641,7 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
      * @return success
      */
     public boolean showPropertiesDialog(String initTabName, boolean modal) {
-        System.out.println("\n\nshowPropertiesDialog:");
+        //System.out.println("\n\nshowPropertiesDialog:");
         boolean ret = super.showPropertiesDialog(initTabName, modal);
         return ret;
     }
@@ -611,7 +651,7 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
     }
 
     public void setDTime(int val) {
-        System.out.println("PolarOrbitTrackDataSource setDTime: val=" + val);
+        //System.out.println("PolarOrbitTrackDataSource setDTime: val=" + val);
         dTime = val;
     }
 }
