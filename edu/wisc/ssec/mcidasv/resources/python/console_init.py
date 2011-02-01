@@ -20,14 +20,19 @@ _mcv_python = _mcv_jar+'/edu/wisc/ssec/mcidasv/resources/python'
 _idv_python = _idv_jar+'/ucar/unidata/idv/resources/python'
 
 sys.path.append(_mcv_python)
+sys.path.append(_mcv_python+'/linearcombo')
+sys.path.append(_mcv_python+'/utilities')
 sys.path.append(_idv_python)
 
 from edu.wisc.ssec.mcidasv import McIDASV
 _mcv = McIDASV.getStaticMcv()
 
-import mcvland
 import imageFilters
 import shell as idvshell
+#import background
+#import interactive
+from background import setViewSize, getColorTable, colorTableNames, allColorTables, firstWindow, allWindows, firstDisplay, allDisplays, createLayer, allLayerTypes, allProjections, projectionNames, getProjection, load_enhancement, load_map, annotate, apply_colorbar, write_image, collect_garbage 
+from interactive import see, ncdump, ncdumpToString, dumpObj
 
 _user_python = os.path.join(_mcv.getStore().getUserDirectory().toString(), 'python')
 if os.path.exists(_user_python):

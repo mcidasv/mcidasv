@@ -107,6 +107,8 @@ import org.python.core.PySystemState;
 import org.python.core.PyTableCode;
 import org.python.core.PyTuple;
 import org.python.util.PythonInterpreter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.w3c.dom.Element;
 
@@ -153,6 +155,9 @@ import ucar.unidata.util.TwoFacedObject;
  * @author IDV development team
  */
 public class JythonManager extends IdvManager implements ActionListener {
+
+    /** Trusty logging object. */
+    private static final Logger logger = LoggerFactory.getLogger(JythonManager.class);
 
     /** The path to the editor executable */
     public static final String PROP_JYTHON_EDITOR = "idv.jython.editor";
@@ -335,11 +340,10 @@ public class JythonManager extends IdvManager implements ActionListener {
         // TODO: is there a way to force console_init.py to load first?
         PythonInterpreter.initialize(System.getProperties(), pythonProps, getArgsManager().commandLineArgs);
         PySystemState sys = Py.getSystemState();
-//        sys.path.append(Py.newString("/Users/jbeavers/mcidasv/eclipse/mcv/dist/mcidasv.jar"));
-//        sys.path.append(Py.newString("/edu/wisc/ssec/mcidasv/resources/python"));
-//        sys.path.append(Py.newString("/edu/wisc/ssec/mcidasv/resources/python/utilities"));
-        sys.path.append(Py.newString("/Users/jbeavers/mcidasv/eclipse/mcv/dist/mcidasv.jar/edu/wisc/ssec/mcidasv/resources/python"));
-        sys.path.append(Py.newString("/Users/jbeavers/mcidasv/eclipse/mcv/dist/mcidasv.jar/edu/wisc/ssec/mcidasv/resources/python/utilities"));
+        String jarDir = System.getProperty("user.dir");
+        sys.path.append(Py.newString(jarDir + "idv.jar/ucar/unidata/idv/resources/python"));
+        sys.path.append(Py.newString(jarDir + "mcidasv.jar/edu/wisc/ssec/mcidasv/resources/python"));
+        sys.path.append(Py.newString(jarDir + "mcidasv.jar/edu/wisc/ssec/mcidasv/resources/python/utilities"));
         doMakeContents();
         if (!getArgsManager().isScriptingMode()) {
             makeFormulasFromLib();
@@ -1088,6 +1092,8 @@ public class JythonManager extends IdvManager implements ActionListener {
         interpreter.set("installmanager", getInstallManager());
     }
 
+    public static final String CONSOLE_INIT = "/edu/wisc/ssec/mcidasv/resources/python/console_init.py";
+
     /**
      * initialize the interp
      *
@@ -1095,9 +1101,11 @@ public class JythonManager extends IdvManager implements ActionListener {
      */
     protected static void doBasicImports(PythonInterpreter interpreter) {
         // TODO(jon): revisit this asap
+        
         try {
-            InputStream consoleInitializer = IOUtil.getInputStream("/edu/wisc/ssec/mcidasv/resources/python/console_init.py", JythonManager.class);
-            interpreter.execfile(consoleInitializer);
+            InputStream consoleInitializer = IOUtil.getInputStream(CONSOLE_INIT, JythonManager.class);
+            interpreter.execfile(consoleInitializer, CONSOLE_INIT);
+//            interpreter.execfile(consoleInitializer);
             consoleInitializer.close();
         } catch (IOException e) {
             logException("Failed to initialize Jython's sys.path.", e);
