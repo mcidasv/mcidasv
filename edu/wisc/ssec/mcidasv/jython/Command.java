@@ -366,7 +366,7 @@ class LoadFileCommand extends Command {
         PyStringMap locals = (PyStringMap)interpreter.getLocals();
         PyObject currentName = locals.__getitem__(new PyString("__name__"));
         locals.__setitem__("__name__", new PyString(name));
-        interpreter.execfile(stream);
+        interpreter.execfile(stream, path);
         locals.__setitem__("__name__", currentName);
 
         Py.getSystemState().stdout.invoke("flush");
