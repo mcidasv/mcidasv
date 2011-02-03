@@ -170,6 +170,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     {
         boolean result = super.init((DataChoice)this.getDataChoices().get(0));
 
+        String dispName = getDisplayName();
+        setDisplayName(getLongParamName() + " " + dispName);
+
         Data data = getData(getDataInstance());
         createTrackDisplay(data);
         this.dataSource = getDataSource();
