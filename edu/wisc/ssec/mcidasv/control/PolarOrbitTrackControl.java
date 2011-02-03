@@ -108,6 +108,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private double altitude;
     private JPanel fontSizePanel;
     private JPanel colorPanel;
+    private JPanel antColorPanel;
     private JPanel locationPanel;
     private JPanel latLonAltPanel;
 
@@ -149,6 +150,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private ColorSwatch colorSwatch;
     private Color color;
     private Color defaultColor = Color.GREEN;
+    private ColorSwatch colorAntSwatch;
+    private Color antColor;
+    private Color defaultAntColor = Color.WHITE;
     private PolarOrbitTrackDataSource dataSource;
 
     private CurveDrawer coverageCircle;
@@ -260,6 +264,24 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         return swatch;
     }
 
+    public JComponent makeAntColorBox(Color swatchAntColor) {
+        GuiUtils.ColorSwatch swatch = new GuiUtils.ColorSwatch(swatchAntColor,
+                                               "Color") {
+            public void userSelectedNewColor(Color c) {
+                try {
+                    getIdv().showWaitCursor();
+                    setAntColor(c);
+                    setBackground(c);
+                    getIdv().showNormalCursor();
+                } catch (Exception e) {
+                    System.out.println("\nsetAntColor e=" + e);
+                    setAntColor(defaultAntColor);
+                }
+            }
+        };
+        return swatch;
+    }
+
     /**
      * Called by doMakeWindow in DisplayControlImpl, which then calls its
      * doMakeMainButtonPanel(), which makes more buttons.
@@ -351,7 +373,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 satelliteAltitude = dataSource.getNearestAltToGroundStation(latitude, longitude)/1000.0;
                 //System.out.println("satelliteAltitude=" + satelliteAltitude);
                 drawCoverageCircle(Math.toRadians(latitude), Math.toRadians(longitude),
-                                   satelliteAltitude, Color.WHITE);
+                                   satelliteAltitude, getAntColor());
             }
         });
 
@@ -395,6 +417,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                            new JLabel(" Altitude: "),
                            altitudeFld }, 3,
                            GuiUtils.WT_N, GuiUtils.WT_N);
+
+        Color swatchAntColor = getAntColor();
+        colorAntSwatch = (GuiUtils.ColorSwatch)makeAntColorBox(swatchAntColor);
+        antColorPanel = GuiUtils.doLayout(new Component[] {
+                           new JLabel("Set Color: "),
+                           colorAntSwatch }, 2,
+                           GuiUtils.WT_N, GuiUtils.WT_N);
         Insets  dfltGridSpacing = new Insets(4, 0, 4, 0);
         String  dfltLblSpacing  = " ";
         List allComps = new ArrayList();
@@ -404,6 +433,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         allComps.add(new JLabel(" "));
         allComps.add(locationPanel);
         allComps.add(latLonAltPanel);
+        allComps.add(antColorPanel);
         GuiUtils.tmpInsets = GRID_INSETS;
         JPanel dateTimePanel = GuiUtils.doLayout(allComps, 1, GuiUtils.WT_NY,
                                GuiUtils.WT_N);
@@ -457,7 +487,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             UnionSet uset = new UnionSet(set);
             this.coverageCircle = new CurveDrawer(uset);
             this.coverageCircle.setColor(color);
-            //this.coverageCircle.setColor(Color.WHITE);
             this.coverageCircle.setLineWidth(1f);
             this.coverageCircle.setLineStyle(1);
             this.coverageCircle.setData(uset);
@@ -544,6 +573,23 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         }
     }
 
+    public Color getAntColor() {
+        if (this.antColor == null) this.antColor = defaultAntColor;
+        return this.antColor;
+    }
+
+    public void setAntColor(Color color) {
+        if (this.antColor == null) this.antColor = defaultAntColor;
+        try {
+            this.antColor = color;
+            drawGroundStation();
+            drawCoverageCircle(Math.toRadians(latitude), Math.toRadians(longitude),
+                               satelliteAltitude, color);
+        } catch (Exception e) {
+            System.out.println("Exception in PolarOrbitTrackControl.setAntColor e=" + e);
+        }
+    }
+
     public void setLatitude() {
         this.latitude = latLonWidget.getLat();
     }
@@ -587,7 +633,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             groundStationDsp.setVerticalJustification(TextControl.Justification.CENTER);
             groundStationDsp.setLineWidth(2f);
             groundStationDsp.setTextSize(0.3f);
-            groundStationDsp.setColor(Color.WHITE);
+            groundStationDsp.setColor(getAntColor());
                     
             addDisplayable(groundStationDsp, FLAG_COLORTABLE);
             double dlat = getLatitude();
