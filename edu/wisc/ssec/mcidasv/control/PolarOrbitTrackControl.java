@@ -32,6 +32,7 @@ package edu.wisc.ssec.mcidasv.control;
 
 import edu.wisc.ssec.mcidasv.data.GroundStations;
 import edu.wisc.ssec.mcidasv.data.PolarOrbitTrackDataSource;
+import edu.wisc.ssec.mcidasv.data.adde.sgp4.AstroConst;
 import edu.wisc.ssec.mcidasv.data.hydra.CurveDrawer;
 
 import java.awt.Color;
@@ -43,6 +44,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.lang.Math;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -148,6 +150,11 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private Color color;
     private Color defaultColor = Color.GREEN;
     private PolarOrbitTrackDataSource dataSource;
+
+    private CurveDrawer coverageCircle;
+
+    private double satelliteAltitude = 0.0;
+    private int defaultAntAngle = 5;
 
     public PolarOrbitTrackControl() {
         super();
@@ -341,13 +348,10 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 altitudeFld.setText(str);
                 setAltitude();
                 drawGroundStation();
-                double satAlt = dataSource.getNearestAltToGroundStation(latitude, longitude);
-/*
-                System.out.println("\n" + station + ": latitude=" + latitude +
-                                                    " longitude=" + longitude +
-                                                    " altitude=" + altitude);
-                System.out.println("satellite altitude =" + satAlt);
-*/
+                satelliteAltitude = dataSource.getNearestAltToGroundStation(latitude, longitude)/1000.0;
+                //System.out.println("satelliteAltitude=" + satelliteAltitude);
+                drawCoverageCircle(Math.toRadians(latitude), Math.toRadians(longitude),
+                                   satelliteAltitude, Color.WHITE);
             }
         });
 
@@ -404,6 +408,63 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         JPanel dateTimePanel = GuiUtils.doLayout(allComps, 1, GuiUtils.WT_NY,
                                GuiUtils.WT_N);
         return GuiUtils.top(dateTimePanel);
+    }
+
+    private void drawCoverageCircle(double lat, double lon, double satAlt, Color color) {
+        //System.out.println("\ndrawCoverageCircle: lat=" + lat + " lon=" + lon + " satAlt=" + satAlt);
+        //System.out.println("    lat=" + Math.toDegrees(lat) + " lon=" + Math.toDegrees(lon));
+        double earthRadius = AstroConst.R_Earth/1000.0;
+        satAlt += earthRadius;
+        double pi = Math.PI;
+        double SAC = pi/2.0 + Math.toRadians(defaultAntAngle);
+        double sinASC = earthRadius * Math.sin(SAC) / satAlt;
+        double dist = earthRadius * (Math.PI - SAC - Math.asin(sinASC));
+        double rat = dist/earthRadius;
+
+        int npts = 360;
+        float[][] latlon = new float[2][npts];
+        double cosDist = Math.cos(rat);
+        double sinDist = Math.sin(rat);
+        double sinLat = Math.sin(lat);
+        double cosLat = Math.cos(lat);
+        double sinLon = -Math.sin(lon);
+        double cosLon = Math.cos(lon);
+        //System.out.println("\n");
+        for (int i=0; i<npts; i++) {
+            double azimuth = Math.toRadians((double)i);
+            double cosBear = Math.cos(azimuth);
+            double sinBear = Math.sin(azimuth);
+            double z = cosDist * sinLat +
+                       sinDist * cosLat * cosBear;
+            double y = cosLat * cosLon * cosDist +
+                       sinDist * (sinLon*sinBear - sinLat*cosLon*cosBear);
+            double x = cosLat * sinLon * cosDist -
+                       sinDist * (cosLon*sinBear + sinLat*sinLon*cosBear);
+            double r = Math.sqrt(x*x + y*y);
+            double latRad = Math.atan2(z, r);
+            double lonRad = 0.0;
+            if (r > 0.0) lonRad = -Math.atan2(x, y);
+            latlon[0][i] = (float)Math.toDegrees(latRad);
+            latlon[1][i] = (float)Math.toDegrees(lonRad);
+            //System.out.println("lat=" + latlon[0][i] + " lon=" + latlon[1][i]);
+        }
+        //System.out.println("\n");
+        try {
+            Gridded2DSet circle = new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple,
+                               latlon, npts);
+            SampledSet[] set = new SampledSet[1];
+            set[0] = circle;
+            UnionSet uset = new UnionSet(set);
+            this.coverageCircle = new CurveDrawer(uset);
+            this.coverageCircle.setColor(color);
+            //this.coverageCircle.setColor(Color.WHITE);
+            this.coverageCircle.setLineWidth(1f);
+            this.coverageCircle.setLineStyle(1);
+            this.coverageCircle.setData(uset);
+            addDisplayable(this.coverageCircle, FLAG_COLORTABLE);
+        } catch (Exception e) {
+            System.out.println("drawCoverageCircle e=" + e);
+        }
     }
 
     private int getSizeValue(JSlider slider) {
