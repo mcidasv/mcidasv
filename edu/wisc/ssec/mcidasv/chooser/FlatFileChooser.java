@@ -148,7 +148,7 @@ public class FlatFileChooser extends IdvChooser implements Constants {
     private JPanel panelImage = new JPanel();
     private JTextField textMissing = new JTextField();
     
-    private List<TwoFacedObject> listByteFormat = Misc.newList(new Object[] {
+    private List<TwoFacedObject> listByteFormat = Misc.newList(new TwoFacedObject[] {
             new TwoFacedObject("1-byte unsigned integer", HeaderInfo.kFormat1ByteUInt),
             new TwoFacedObject("2-byte signed integer", HeaderInfo.kFormat2ByteSInt),
             new TwoFacedObject("4-byte signed integer", HeaderInfo.kFormat4ByteSInt),
