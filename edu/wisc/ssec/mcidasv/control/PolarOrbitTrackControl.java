@@ -65,12 +65,14 @@ import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataInstance;
 import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.idv.control.DisplayControlImpl;
+import ucar.unidata.idv.control.ZSlider;
 import ucar.unidata.ui.LatLonWidget;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.GuiUtils.ColorSwatch;
 import ucar.visad.display.TextDisplayable;
 
 import visad.Data;
+import visad.DisplayRealType;
 import visad.Gridded2DSet;
 import visad.MathType;
 import visad.RealTuple;
@@ -103,6 +105,11 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                                                     GRID_SPACING,
                                                     GRID_SPACING,
                                                     GRID_SPACING);
+    /**
+     * position slider
+     */
+    private ZSlider levelSlider = null;
+    private double zPos = 0.0;
     private double latitude;
     private double longitude;
     private double altitude;
@@ -175,6 +182,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
         Data data = getData(getDataInstance());
         createTrackDisplay(data);
+        applyTrackPosition();
         this.dataSource = getDataSource();
         return result;
     }
@@ -292,6 +300,10 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
      * @return container of contents
      */
     public Container doMakeContents() {
+
+        JPanel topPanel = GuiUtils.leftCenter(
+                        new JLabel("Track Z-Position:  "),
+                        makePositionSlider());
 /*
         this.sizeListener =
             new javax.swing.event.ChangeListener() {
@@ -431,8 +443,12 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         String  dfltLblSpacing  = " ";
         List allComps = new ArrayList();
 
+        allComps.add(topPanel);
+        allComps.add(new JLabel(" "));
+        allComps.add(new JLabel(" "));
         allComps.add(fontSizePanel);
         allComps.add(colorPanel);
+        allComps.add(new JLabel(" "));
         allComps.add(new JLabel(" "));
         allComps.add(locationPanel);
         allComps.add(latLonAltPanel);
@@ -443,15 +459,47 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         return GuiUtils.top(dateTimePanel);
     }
 
+    private JComponent makePositionSlider() {
+        levelSlider = new ZSlider(this.zPos) {
+            public void valueHasBeenSet() {
+                applyTrackPosition();
+            }
+        };
+        return levelSlider.getContents();
+    }
+
+    /**
+     * Apply the map (height) position to the displays
+     */
+    private void applyTrackPosition() {
+        if (!(levelSlider == null)) {
+            this.zPos = levelSlider.getValue();
+        }
+        try {
+            DisplayRealType dispType = getNavigatedDisplay().getDisplayAltitudeType();
+            trackDsp.setConstantPosition(zPos, dispType);
+            int num = this.timeLabels.size();
+            for (int i=0; i<num; i++) {
+                ((TextDisplayable)(this.timeLabels.get(i))).setConstantPosition(zPos, dispType);
+            }
+        } catch (Exception exc) {
+            System.out.println("Setting track z-position exc=" + exc);
+        }
+    }
+
     private void drawCoverageCircle(double lat, double lon, double satAlt, Color color) {
         //System.out.println("\ndrawCoverageCircle: lat=" + lat + " lon=" + lon + " satAlt=" + satAlt);
         //System.out.println("    lat=" + Math.toDegrees(lat) + " lon=" + Math.toDegrees(lon));
         double earthRadius = AstroConst.R_Earth/1000.0;
+        //System.out.println("    earthRadius=" + earthRadius);
         satAlt += earthRadius;
+        //System.out.println("    satAlt=" + satAlt);
         double pi = Math.PI;
         double SAC = pi/2.0 + Math.toRadians(defaultAntAngle);
+        //System.out.println("    SAC=" + SAC);
         double sinASC = earthRadius * Math.sin(SAC) / satAlt;
         double dist = earthRadius * (Math.PI - SAC - Math.asin(sinASC));
+        //System.out.println("    dist=" + dist);
         double rat = dist/earthRadius;
 
         int npts = 360;
