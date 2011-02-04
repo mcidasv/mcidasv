@@ -474,8 +474,8 @@ def discriminateFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoin
       vals2=range2.getFloats(0)
       max2=max(vals2[0])
       min2=min(vals2[0])
-      in_low = min([min1,min2])
-      in_hi = max([max1,max2])
+      in_low = int(min([min1,min2]))
+      in_hi = int(max([max1,max2]))
       if (brkpoint1 == 'Default'):
          brkpoint1=in_low
       if (brkpoint2 == 'Default'):
@@ -494,24 +494,14 @@ def discriminateFilter(sdataset1,sdataset2,user_brkpoint1='Default',user_brkpoin
             if (vals1[0][i*element_size+j] < brkpoint1 or vals1[0][i*element_size+j] > brkpoint2 or vals2[0][i*element_size+j] < brkpoint3 or vals2[0][i*element_size+j] > brkpoint4):
                vals1[0][i*element_size + j]=replace
       
-      for i in range(line_size):
-        for j in range(element_size):
-            vals1[0][i*element_size+j]=scaleOutsideVal(vals1[0][i*element_size+j],britlo,brithi)
-            
-      filt_low=int(min([min(vals1[0]),min2]))
-      filt_hi =int(max([max(vals1[0]),max2]))      
-      
       if (stretch == 'Contrast'):
-       lookup=contrast(filt_low,filt_hi,in_low,in_hi,filt_low,filt_hi)
+       lookup=contrast(in_low,in_hi,britlo,brithi,in_low,in_hi)
       elif (stretch == 'Histogram'):
-       """ make a histogram from both datasets """
-       v=[]
-       v.append(vals1[0])
-       v.append(vals2[0])   
-       h = makeHistogram(v,element_size,line_size,filt_low,brithi-britlo)
-       lookup=histoStretch(filt_low,filt_hi,in_low,in_hi,h)
+       """ make a histogram from the first dataset """
+       h = makeHistogram(vals1,element_size,line_size,in_low,brithi-britlo)
+       lookup=histoStretch(in_low,in_hi,britlo,brithi,h)
             
-      vals1=modify(vals1,element_size,line_size,filt_low,lookup)
+      vals1=modify(vals1,element_size,line_size,in_low,lookup)
       range1.setSamples(vals1)     
             
    return data1   
@@ -739,7 +729,7 @@ def lowPass2DFilter(sdataset,user_linecoef=0.5,user_elecoef=0.5,user_stretchval=
        """ right to left filter along line """
        val = vals[0][i*element_size + (element_size - 1)]
        
-       """ second argument of -1 ensures that the 0th line is done """
+       """ second argument of -1 ensures that the 0th element is done """
        for j in xrange(element_size - 1, -1, -1):
          val=ecoef*val + e1 * vals[0][i*element_size + j]
          vals[0][i*element_size + j] = round(val)
@@ -800,9 +790,11 @@ def highPass2DFilter(sdataset,user_stretchval='Contrast',user_britlo=0,user_brit
      domain=GridUtil.getSpatialDomain(rangeObject)
      [element_size,line_size]=domain.getLengths()
     
+     """ first and last 2 lines of the image do not change """
      firstLine=vals[0][0:element_size] 
+     last2Lines=vals[0][(line_size-2)*element_size:line_size*element_size]
      """ do the filter using 3 lines at a time """
-     for i in range(line_size)[:-2]:
+     for i in range(line_size)[:-3]:
        for j in range(element_size)[1:-1]:
          midValue = vals[0][(i+1)*element_size + j]
          
@@ -815,7 +807,7 @@ def highPass2DFilter(sdataset,user_stretchval='Contrast',user_britlo=0,user_brit
          else:
             vals[0][i * element_size + j] = 0
             
-     vals[0] = firstLine + vals[0][0:(line_size-1)*element_size]
+     vals[0][0:line_size*element_size]=firstLine + vals[0][0:(line_size-3)*element_size] + last2Lines
      for i in range(line_size):
         for j in range(element_size):
             vals[0][i*element_size+j]=scaleOutsideVal(vals[0][i*element_size+j],britlo,brithi)
