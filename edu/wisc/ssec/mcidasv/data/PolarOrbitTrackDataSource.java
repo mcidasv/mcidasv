@@ -86,8 +86,13 @@ import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class for data sources of ADDE text data.  These may be generic
@@ -100,10 +105,7 @@ import javax.swing.JTabbedPane;
 public class PolarOrbitTrackDataSource extends TrackDataSource {
 //public class PolarOrbitTrackDataSource extends DataSourceImpl {
 
-    /** logging category */
-    static ucar.unidata.util.LogUtil.LogCategory log_ =
-        ucar.unidata.util.LogUtil.getLogInstance(
-            PolarOrbitTrackDataSource.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(PolarOrbitTrackDataSource.class);
 
     private List tleCards = new ArrayList();
     private List choices = new ArrayList();
@@ -173,12 +175,13 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
                               String filename, Hashtable properties)
            throws VisADException {
         super(descriptor, filename, properties);
-//        super(descriptor, filename, "Text data source", properties);
 /*
         System.out.println("\nPolarOrbitTrackDataSource:");
         System.out.println("    descriptor=" + descriptor);
         System.out.println("    filename=" + filename);
 */
+        tleCards = new ArrayList();
+        choices = new ArrayList();
         String key = PolarOrbitTrackChooser.TLE_SERVER_NAME_KEY;
         if (properties.containsKey(key)) {
             Object server = properties.get(key);
@@ -196,16 +199,25 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
                 lines = reader.getLinesOfText();
             }
             if (lines == null) {
-                System.out.println("\nproblem reading TLE file");
+                //System.out.println("\nproblem reading TLE file");
+                JLabel label = new JLabel("Invalid TLE data");
+                JPanel contents = GuiUtils.top(GuiUtils.inset(label, label.getText().length() + 60));
+                GuiUtils.showOkDialog(null, " Can't Make Orbit Tracks ", contents, null);
+                getDataContext().getIdv().showNormalCursor();
+                logger.error("problem reading TLE file");
+                return;
             } else {
                 String[] cards = StringUtil.listToStringArray(lines);
+                //System.out.println("\n");
                 for (int i=0; i<cards.length; i++) {
+                    //System.out.println(cards[i]);
                     tleCards.add(cards[i]);
                     int indx = cards[i].indexOf(" ");
                     if (indx < 0) {
                         choices.add(cards[i]);
                     }
                 }
+                //System.out.println("\n");
             }
         } else {
             try {
@@ -224,10 +236,10 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
                     }
                 }
             } catch (Exception e) {
-                System.out.println("\ne=" + e + "\n");
+                logger.error("can't read TLE url e=" + e);
+                return;
             }
         }
-        //System.out.println("Number of TLEs = " + choices.size());
     }
 
     public void initAfterCreation() {
@@ -347,7 +359,7 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
         }
         catch(Exception e)
         {
-            System.out.println("Error Creating SGP4 Satellite");
+            logger.error("Error Creating SGP4 Satellite e=" + e);
             System.exit(1);
         }
 
@@ -501,12 +513,12 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
                 data.elnum = elementNumber;
                 ++ret;
             } catch (Exception e) {
-                System.out.println("Warning: Error Reading numb or elnum from TLE line 1 sat#:" + data.satnum);
+                logger.error("Warning: Error Reading numb or elnum from TLE line 1 sat#:" + data.satnum);
             }
 
             int check = card.codePointAt(68) - 48;
             if (check != ck1) {
-                System.out.println("***** Failed checksum *****");
+                logger.error("***** Failed checksum *****");
                 ret = -1;
             }
         }
@@ -535,7 +547,7 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
             int nsat = getInt(2, 7, card);
             //System.out.println("    nsat = " + nsat + " data.satnum=" + data.satnum);
             if (nsat != data.satnum) {
-                System.out.println("Warning TLE line 2 Sat Num doesn't match line1 for sat: " + data.name);
+                logger.error("Warning TLE line 2 Sat Num doesn't match line1 for sat: " + data.name);
             } else {
                 inclination = getDouble(8, 16, card);
                 data.inclo = inclination;
@@ -573,13 +585,13 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
                     //System.out.println("    revnum = " + data.revnum);
                     ++ret;
                 } catch (Exception e) {
-                    System.out.println("Warning: Error Reading revnum from TLE line 2 sat#:" + data.satnum + "\n" + e.toString());
+                    logger.error("Warning: Error Reading revnum from TLE line 2 sat#:" + data.satnum + "\n" + e.toString());
                     data.revnum = -1;
                 }
 
                 int check = card.codePointAt(68) - 48;
                 if (check != ck1) {
-                    System.out.println("***** Failed checksum *****");
+                    logger.error("***** Failed checksum *****");
                     ret = -1;
                 }
             }
@@ -627,7 +639,7 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
             TimeRangeSelection timeSelection = new TimeRangeSelection(this);
             components.add(timeSelection);
         } catch (Exception e) {
-            System.out.println("problem creating TimeRangeSelection e=" + e);
+            logger.error("problem creating TimeRangeSelection e=" + e);
         }
         idv.showNormalCursor();
     }
