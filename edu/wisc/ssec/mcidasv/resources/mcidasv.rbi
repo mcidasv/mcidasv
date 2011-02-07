@@ -370,6 +370,10 @@
     <resource location="%USERPATH%/python">
       <property name="category" value="Local Library"/>
     </resource>
+    <!--
+    <resource label="Text Wrapping Utility" location="%APPPATH%/python/utilities/_textwrap.py">
+      <property name="category" value="System" />
+    </resource>
     <resource label="Geolocation Utilities" location="%APPPATH%/python/utilities/geolocate.py">
       <property name="category" value="System"/>
     </resource>
@@ -379,6 +383,7 @@
     <resource label="Interactive Shell Niceties" location="%APPPATH%/python/utilities/interactive.py">
       <property name="category" value="System" />
     </resource>
+    -->
     <resource label="Site Library" location="%SITEPATH%/default.py"/>
     <resource label="Application Library" location="%APPPATH%/default.py"/>
     <resource label="Constants" location="%IDVPATH%/python/constants.py">
