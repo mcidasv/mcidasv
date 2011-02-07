@@ -339,11 +339,6 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         // TODO: is there a way to force console_init.py to load first?
         PythonInterpreter.initialize(System.getProperties(), pythonProps, getArgsManager().commandLineArgs);
-        PySystemState sys = Py.getSystemState();
-        String jarDir = System.getProperty("user.dir");
-        sys.path.append(Py.newString(jarDir + "idv.jar/ucar/unidata/idv/resources/python"));
-        sys.path.append(Py.newString(jarDir + "mcidasv.jar/edu/wisc/ssec/mcidasv/resources/python"));
-        sys.path.append(Py.newString(jarDir + "mcidasv.jar/edu/wisc/ssec/mcidasv/resources/python/utilities"));
         doMakeContents();
         if (!getArgsManager().isScriptingMode()) {
             makeFormulasFromLib();
@@ -351,6 +346,16 @@ public class JythonManager extends IdvManager implements ActionListener {
         //      PySystemState sys = Py.getSystemState ();
         //      sys.add_package ("visad");
         //      sys.add_package ("visad.python");
+    }
+
+    // TODO(jon): dox!
+    private static boolean addToSysPath(PySystemState sys, final String path) {
+        PyString pyStrPath = Py.newString(path);
+        boolean result = sys.path.contains(pyStrPath);
+        if (!result) {
+            sys.path.append(pyStrPath);
+        }
+        return result;
     }
 
     /**
