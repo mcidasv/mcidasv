@@ -6,6 +6,7 @@ import sys, os
 _cwd = os.getcwd()
 _mcv_jar = os.path.join(_cwd, 'mcidasv.jar')
 _idv_jar = os.path.join(_cwd, 'idv.jar')
+_visad_jar = os.path.join(_cwd, 'visad.jar')
 
 # however, if we're not inside a jar just prepend the current directory.
 if not os.path.exists(_mcv_jar):
@@ -15,14 +16,21 @@ if not os.path.exists(_mcv_jar):
 if not os.path.exists(_idv_jar):
     _idv_jar = os.path.join(_cwd, '../idv')
 
+# now to find visad.jar! if it's not in the current directory, the only other
+# known location *might* be "../idv/lib"
+if not os.path.exists(_visad_jar):
+    _visad_jar = os.path.join(_cwd, '../idv/lib/visad.jar')
+
 # NOTE: the paths appended to sys.path cannot have a trailing '/'!
 _mcv_python = _mcv_jar+'/edu/wisc/ssec/mcidasv/resources/python'
 _idv_python = _idv_jar+'/ucar/unidata/idv/resources/python'
+_visad_python = _visad_jar+'/visad/python'
 
+sys.path.append(_visad_python)
+sys.path.append(_idv_python)
 sys.path.append(_mcv_python)
 sys.path.append(_mcv_python+'/linearcombo')
 sys.path.append(_mcv_python+'/utilities')
-sys.path.append(_idv_python)
 
 from edu.wisc.ssec.mcidasv import McIDASV
 _mcv = McIDASV.getStaticMcv()
