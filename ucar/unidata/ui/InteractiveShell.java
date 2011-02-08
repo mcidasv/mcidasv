@@ -61,7 +61,7 @@ import ucar.unidata.util.Misc;
  * This class provides  an abstract interactive shell
  *
  * @author IDV development team
- * @version $Revision$Date: 2010/10/14 16:05:27 $
+ * @version $Revision$Date: 2010/10/14 17:15:59 $
  */
 public class InteractiveShell implements HyperlinkListener {
 
@@ -220,6 +220,7 @@ public class InteractiveShell implements HyperlinkListener {
         commandArea = new JTextArea("", 4, 30);
         GuiUtils.setFixedWidthFont(commandArea);
         GuiUtils.addKeyBindings(commandArea);
+        commandArea.setTabSize(4);
         commandArea.addKeyListener(new KeyAdapter() {
             @Override public void keyPressed(KeyEvent e) {
                 handleKeyPress(e, commandArea);
@@ -386,26 +387,26 @@ public class InteractiveShell implements HyperlinkListener {
         JTextComponent cmdFld = getCommandFld();
         String cmd = cmdFld.getText();
         if ("!!".equals(cmd.trim())) {
-            if(history.isEmpty()) {
+            if (history.isEmpty()) {
                 Toolkit.getDefaultToolkit().beep();
                 return;
             }
             cmd = history.get(history.size()-1);
         } else if (cmd.trim().startsWith("!")) {
-            if(history.isEmpty()) {
+            if (history.isEmpty()) {
                 Toolkit.getDefaultToolkit().beep();
                 return;
             }
             String prefix = cmd.substring(1);
             cmd = null;
             for (int i = history.size() - 1; i >= 0; i--) {
-                String tmp =  history.get(i);
+                String tmp = history.get(i);
                 if (tmp.startsWith(prefix)) {
                     cmd = tmp;
                     break;
                 }
             }
-            if(cmd == null) {
+            if (cmd == null) {
                 Toolkit.getDefaultToolkit().beep();
                 return;
             }
@@ -442,8 +443,8 @@ public class InteractiveShell implements HyperlinkListener {
      * @param m _more_
      */
     public void output(String m) {
-        sb.append(m);
-         if(!bufferOutput) {
+        sb.append("<span style=\"font-family: monospace; font-size: 10px;\">").append(m).append("</span>");
+        if (!bufferOutput) {
             updateText();
         }
     }
@@ -459,6 +460,7 @@ public class InteractiveShell implements HyperlinkListener {
         String textCode = new StringBuilder("text:").append(code).toString();
         String encoded2 = encodeBase64(textCode.getBytes());
         output(new StringBuilder("<div style=\"margin:0; margin-bottom:1; background-color:#cccccc; \"><table width=\"100%\"><tr><td>")
+//            .append("<pre>").append(formatCode(code)).append("</pre>")
             .append(formatCode(code))
             .append("</td><td align=\"right\" valign=\"top\"><a href=\"")
             .append(encoded2)
