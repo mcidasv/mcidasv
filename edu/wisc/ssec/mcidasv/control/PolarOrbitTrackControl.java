@@ -34,6 +34,8 @@ import edu.wisc.ssec.mcidasv.data.GroundStations;
 import edu.wisc.ssec.mcidasv.data.PolarOrbitTrackDataSource;
 import edu.wisc.ssec.mcidasv.data.adde.sgp4.AstroConst;
 import edu.wisc.ssec.mcidasv.data.hydra.CurveDrawer;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Position;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -44,6 +46,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.lang.Math;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -69,6 +73,7 @@ import ucar.unidata.idv.control.ZSlider;
 import ucar.unidata.ui.LatLonWidget;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.GuiUtils.ColorSwatch;
+import ucar.unidata.util.PreferenceList;
 import ucar.visad.display.CompositeDisplayable;
 import ucar.visad.display.Displayable;
 import ucar.visad.display.TextDisplayable;
@@ -126,7 +131,15 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private List lons;
     private List alts;
 
+    /** Property name to get the list or urls */
+    public final String PREF_GROUNDSTATIONS = "mcv.groundstations";
+
+    /** Manages the pull down list of urls */
+    private static PreferenceList prefList;
+
     private JComboBox locationComboBox;
+    private JTextField locationEditor;
+
     private String station = "";
     private TextDisplayable groundStationDsp;
 
@@ -194,8 +207,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         Data data = getData(getDataInstance());
         createTrackDisplay(data);
         applyTrackPosition();
-        this.dataSource = getDataSource();
-        return result;
+        this.dataSource = getDataSource(); return result;
     }
 
     private void createTrackDisplay(Data data) {
@@ -358,18 +370,50 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                            new JLabel("Set Color: "),
                            colorSwatch }, 2,
                            GuiUtils.WT_N, GuiUtils.WT_N);
+        JPanel groundStationPanel = makeGroundStationPanel();
+
+        Insets  dfltGridSpacing = new Insets(4, 0, 4, 0);
+        String  dfltLblSpacing  = " ";
+        List allComps = new ArrayList();
+
+        allComps.add(topPanel);
+        allComps.add(new JLabel(" "));
+        allComps.add(new JLabel(" "));
+        allComps.add(fontSizePanel);
+        allComps.add(colorPanel);
+        allComps.add(new JLabel(" "));
+        allComps.add(new JLabel(" "));
+        allComps.add(locationPanel);
+        allComps.add(groundStationPanel);
+        GuiUtils.tmpInsets = GRID_INSETS;
+        JPanel dateTimePanel = GuiUtils.doLayout(allComps, 1, GuiUtils.WT_NY,
+                               GuiUtils.WT_N);
+        return GuiUtils.top(dateTimePanel);
+    }
+
+    private JPanel makeGroundStationPanel() {
+        locationComboBox = new JComboBox();
+        locationEditor = (JTextField)locationComboBox.getEditor().getEditorComponent();
+        locationEditor.addKeyListener(new KeyListener() {
+            public void keyPressed(KeyEvent e) {}
+            public void keyReleased(KeyEvent e) {
+            }
+            public void keyTyped(KeyEvent e) {}
+        });
+
         GroundStations gs = new GroundStations(null);
         int gsCount = gs.getGroundStationCount();
         String[] stats = new String[gsCount];
+        
         stations = gs.getStations();
         for (int i=0; i<gsCount; i++) {
             stats[i] = (String)stations.get(i);
         }
+        GuiUtils.setListData(locationComboBox, stations);
         lats = gs.getLatitudes();
         lons = gs.getLongitudes();
         alts = gs.getAltitudes();
 
-        locationComboBox = new JComboBox(stats);
         locationComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 setStation((String)locationComboBox.getSelectedItem());
@@ -463,24 +507,19 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                            new JLabel("Set Color: "),
                            colorAntSwatch }, 2,
                            GuiUtils.WT_N, GuiUtils.WT_N);
-        Insets  dfltGridSpacing = new Insets(4, 0, 4, 0);
-        String  dfltLblSpacing  = " ";
-        List allComps = new ArrayList();
 
-        allComps.add(topPanel);
-        allComps.add(new JLabel(" "));
-        allComps.add(new JLabel(" "));
-        allComps.add(fontSizePanel);
-        allComps.add(colorPanel);
-        allComps.add(new JLabel(" "));
-        allComps.add(new JLabel(" "));
+        List allComps = new ArrayList();
         allComps.add(locationPanel);
+        allComps.add(new JLabel(" "));
         allComps.add(latLonAltPanel);
+        allComps.add(new JLabel(" "));
         allComps.add(antColorPanel);
-        GuiUtils.tmpInsets = GRID_INSETS;
-        JPanel dateTimePanel = GuiUtils.doLayout(allComps, 1, GuiUtils.WT_NY,
+        JPanel retPanel = GuiUtils.doLayout(allComps, 1, GuiUtils.WT_NY,
                                GuiUtils.WT_N);
-        return GuiUtils.top(dateTimePanel);
+        return GuiUtils.top(retPanel);
+    }
+
+    private void getGroundStation() {
     }
 
     private JComponent makePositionSlider() {
