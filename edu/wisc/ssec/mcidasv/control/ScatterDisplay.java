@@ -70,7 +70,9 @@ import visad.Gridded2DSet;
 import visad.Gridded3DSet;
 import visad.Integer1DSet;
 import visad.Linear2DSet;
+import visad.LinearLatLonSet;
 import visad.RealTupleType;
+import visad.MathType;
 import visad.RealType;
 import visad.SampledSet;
 import visad.ScalarMap;
@@ -80,6 +82,7 @@ import visad.UnionSet;
 import visad.VisADException;
 import visad.data.mcidas.BaseMapAdapter;
 import visad.georef.MapProjection;
+import visad.georef.TrivialMapProjection;
 
 import ucar.unidata.data.DataAlias;
 import ucar.unidata.data.DataChoice;
@@ -727,6 +730,8 @@ public class ScatterDisplay extends DisplayControlImpl {
       FunctionType fnc_type = (FunctionType) image.getType();
       RealTupleType rtt = fnc_type.getDomain();
       CoordinateSystem cs = rtt.getCoordinateSystem();
+      Set domainSet = image.getDomainSet();
+
       if (cs instanceof MapProjection) {
         return (MapProjection) cs;
       }
@@ -736,6 +741,27 @@ public class ScatterDisplay extends DisplayControlImpl {
          if (cacheCS instanceof MapProjection) {
            return (MapProjection) cacheCS;
          }
+      }
+      else if (domainSet instanceof LinearLatLonSet) {
+         MathType type0 = ((SetType)domainSet.getType()).getDomain().getComponent(0);
+         int latI = RealType.Latitude.equals(type0) ? 0 : 1;
+         int lonI = (latI == 1) ? 0 : 1;
+
+         float[] min = ((LinearLatLonSet)domainSet).getLow();
+         float[] max = ((LinearLatLonSet)domainSet).getHi();
+         float minLon = min[lonI];
+         float minLat = min[latI];
+         float delLon = max[lonI] - min[lonI];
+         float delLat = max[latI] - min[latI];
+
+         try {
+            mp = new TrivialMapProjection(RealTupleType.SpatialEarth2DTuple,
+                    new Rectangle2D.Float(minLon, minLat, delLon, delLat));
+         } catch (Exception e) {
+             logException("MultiSpectralControl.getDataProjection", e);
+         }
+
+         return mp;
       }
       
       Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(image);
