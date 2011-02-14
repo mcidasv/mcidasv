@@ -262,6 +262,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 this.trackDsp.setColor(this.color);
                 this.trackDsp.setLineWidth(2.0f);
                 addDisplayable(this.trackDsp, FLAG_COLORTABLE);
+                trackLines.setDrawingEnabled(false);
             }
         } catch (Exception e) {
             System.out.println("getData e=" + e);
@@ -603,6 +604,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             this.coverageCircle.setLineStyle(1);
             this.coverageCircle.setData(uset);
             addDisplayable(this.coverageCircle, FLAG_COLORTABLE);
+            this.coverageCircle.setDrawingEnabled(false);
         } catch (Exception e) {
             System.out.println("drawCoverageCircle e=" + e);
         }
