@@ -893,6 +893,7 @@ def contrast(in_low,in_hi,out_low,out_hi,minimum,maximum,inc=1):
        minimum - minimum data value
        maximum - maximum data value 
        inc     - increment          """
+   smallFloat=0.00000000000001    
    if (in_hi == in_low):
       slope=0
    else:
@@ -900,7 +901,7 @@ def contrast(in_low,in_hi,out_low,out_hi,minimum,maximum,inc=1):
       
    lookup = []
    for input_value in xrange(minimum, maximum + 1, inc):
-      out_value = out_low + int(round((input_value - in_low)*slope))
+      out_value = out_low + int(round((input_value - in_low)*slope + smallFloat))
       if (slope < 0):
         out_value=max(min(out_value,out_low),out_hi)
       else:
