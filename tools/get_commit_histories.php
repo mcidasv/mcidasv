@@ -9,27 +9,28 @@ $MCV_ROOT = "/home/mcidasv/mc-v";
 $VISAD_ROOT = "/home/mcidasv/svn_nightly/visad";
 $IDV_ROOT = "/home/mcidasv/svn_nightly/idv";
 
-$DATE = date("Y-m-d");
-$END = false;
+$DATE = date("Y-m-d", strtotime("yesterday"));
+$END = date("Y-m-d", strtotime("yesterday"));
 $HTML = false;
 
-$gotopt = false;
-$options = getopt("s:e:h");
+$options = getopt("s:e:wh");
 if (isset($options["s"])) {
-  $gotopt = true;
   $DATE = date("Y-m-d", strtotime($options["s"]));
 }
 if (isset($options["e"])) {
-  $gotopt = true;
   $END = date("Y-m-d", strtotime($options["e"]));
 }
-if (isset($options["h"])) {
-  $gotopt = true;
+if (isset($options["w"])) {
   $HTML = true;
 }
-
-if (!$gotopt) {
-  print "Usage: $argv[0] [-s (start: YYYY-MM-DD)] [-e (end: YYYY-MM-DD)] [-h (html)]\n";
+if (isset($options["h"])) {
+  print "\n";
+  print "Usage: $argv[0] [options]\n";
+  print "  -s YYYY-MM-DD (start date, default: yesterday)\n";
+  print "  -e YYYY-MM-DD (end date, default: yesterday)\n";
+  print "  -w            (html output for web)\n";
+  print "  -h            (this help message)\n";
+  print "\n";
   exit(0);
 }
 
@@ -54,6 +55,9 @@ if ($HTML) {
   print ".idv { color: darkgreen; }\n";
   print "</style>\n";
   print "</head><body><pre>\n";
+}
+else {
+  print "\n";
 }
 
 # Get the diffs from McV (CVS)
