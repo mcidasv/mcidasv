@@ -69,11 +69,12 @@ import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataInstance;
 import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.idv.control.DisplayControlImpl;
-import ucar.unidata.idv.control.ZSlider;
+//import ucar.unidata.idv.control.ZSlider;
 import ucar.unidata.ui.LatLonWidget;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.GuiUtils.ColorSwatch;
 import ucar.unidata.util.PreferenceList;
+import ucar.unidata.view.geoloc.NavigatedDisplay;
 import ucar.visad.display.CompositeDisplayable;
 import ucar.visad.display.Displayable;
 import ucar.visad.display.TextDisplayable;
@@ -93,6 +94,9 @@ import visad.Tuple;
 import visad.TupleType;
 import visad.UnionSet;
 import visad.VisADException;
+import visad.georef.EarthLocation;
+import visad.georef.EarthLocationTuple;
+import visad.georef.LatLonPoint;
 import visad.georef.LatLonTuple;
 
 /**
@@ -115,8 +119,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     /**
      * position slider
      */
-    private ZSlider levelSlider = null;
-    private double zPos = 0.0;
+//    private ZSlider levelSlider = null;
     private double latitude;
     private double longitude;
     private double altitude;
@@ -183,8 +186,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private PolarOrbitTrackDataSource dataSource;
 
     private CurveDrawer coverageCircle;
-
     private double satelliteAltitude = 0.0;
+
+    private double centerAlt = 0.0;
+    private double centerLat = 0.0;
+    private double centerLon = 0.0;
+    private double satZ = 0.0;
+    private NavigatedDisplay navDsp = null;
 
 
     public PolarOrbitTrackControl() {
@@ -209,8 +217,22 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
         Data data = getData(getDataInstance());
         createTrackDisplay(data);
-        applyTrackPosition();
-        this.dataSource = getDataSource(); return result;
+        this.dataSource = getDataSource();
+        try {
+            navDsp = getNavigatedDisplay();
+            EarthLocation earthLoc = navDsp.getCenterPoint();
+            LatLonPoint llp = earthLoc.getLatLonPoint();
+            centerLat = llp.getLatitude().getValue();
+            centerLon = llp.getLongitude().getValue();
+            centerAlt = dataSource.getNearestAltToGroundStation(centerLat, centerLon)/1000.0;
+            EarthLocationTuple elt = new EarthLocationTuple(centerLat, centerLon, centerAlt);
+            double[] xyz = navDsp.getSpatialCoordinates((EarthLocation)elt).getValues();
+            satZ = xyz[2]/5.0;
+            applyTrackPosition();
+        } catch (Exception e) {
+            System.out.println("get display center e=" + e);
+        }
+        return result;
     }
 
     private void createTrackDisplay(Data data) {
@@ -327,11 +349,11 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
      * @return container of contents
      */
     public Container doMakeContents() {
-
+/*
         JPanel topPanel = GuiUtils.leftCenter(
                         new JLabel("Track Z-Position:  "),
                         makePositionSlider());
-
+*/
         this.fontSizeChange =new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 String str = fontSizeFld.getText();
@@ -380,9 +402,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         String  dfltLblSpacing  = " ";
         List allComps = new ArrayList();
 
-        allComps.add(topPanel);
-        allComps.add(new JLabel(" "));
-        allComps.add(new JLabel(" "));
+//        allComps.add(topPanel);
+//        allComps.add(new JLabel(" "));
+//        allComps.add(new JLabel(" "));
         allComps.add(fontSizePanel);
         allComps.add(colorPanel);
         allComps.add(new JLabel(" "));
@@ -488,14 +510,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             dVal = d.doubleValue();
             latLonWidget.setLon(dVal);
         }
-/*
-        str = (String)(alts.get(0));
-        if (!str.equals(" ")) {
-            altitudeFld = new JTextField(str, 5);
-            latFld = latLonWidget.getLatField();
-            lonFld = latLonWidget.getLonField();
-        }
-*/
+
         ActionListener latLonListener = new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 setLatitude();
@@ -570,28 +585,26 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     private void getGroundStation() {
     }
-
+/*
     private JComponent makePositionSlider() {
-        levelSlider = new ZSlider(this.zPos) {
+        levelSlider = new ZSlider(this.satZ) {
             public void valueHasBeenSet() {
                 applyTrackPosition();
             }
         };
         return levelSlider.getContents();
     }
-
+*/
     /**
      * Apply the map (height) position to the displays
      */
     private void applyTrackPosition() {
-        if (!(levelSlider == null)) {
-            this.zPos = levelSlider.getValue();
-        }
+        //System.out.println("\napplyTrackPosition:  satZ=" + satZ);
         try {
-            DisplayRealType dispType = getNavigatedDisplay().getDisplayAltitudeType();
-            trackDsp.setConstantPosition(zPos, dispType);
+            DisplayRealType dispType = navDsp.getDisplayAltitudeType();
+            trackDsp.setConstantPosition(this.satZ, dispType);
         } catch (Exception exc) {
-            System.out.println("Setting track z-position exc=" + exc);
+            //System.out.println("Setting track z-position exc=" + exc);
         }
     }
 
@@ -822,6 +835,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     }
 
     private void setSatelliteAltitude(double val) {
+        //System.out.println("\nsetSatelliteAltitude: val=" + val);
         this.satelliteAltitude = val;
     }
 
