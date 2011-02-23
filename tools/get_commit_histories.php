@@ -12,13 +12,17 @@ $IDV_ROOT = "/home/mcidasv/svn_nightly/idv";
 $DATE = date("Y-m-d", strtotime("yesterday"));
 $END = date("Y-m-d", strtotime("yesterday"));
 $HTML = false;
+$OUT = false;
 
-$options = getopt("s:e:wh");
+$options = getopt("s:e:o:wh");
 if (isset($options["s"])) {
   $DATE = date("Y-m-d", strtotime($options["s"]));
 }
 if (isset($options["e"])) {
   $END = date("Y-m-d", strtotime($options["e"]));
+}
+if (isset($options["o"])) {
+  $OUT = $options["o"];
 }
 if (isset($options["w"])) {
   $HTML = true;
@@ -28,36 +32,51 @@ if (isset($options["h"])) {
   print "Usage: $argv[0] [options]\n";
   print "  -s YYYY-MM-DD (start date, default: yesterday)\n";
   print "  -e YYYY-MM-DD (end date, default: yesterday)\n";
+  print "  -o DIRECTORY  (write output to this directory)\n";
   print "  -w            (html output for web)\n";
   print "  -h            (this help message)\n";
   print "\n";
   exit(0);
 }
+if ($OUT && !is_dir($OUT)) {
+  print "ERROR: ".$OUT." is not a directory\n";
+  exit(1);
+}
 
 $allCommits = array();
 
-# Print HTML header
-if ($HTML) {
-  print "<html><head><title>";
-}
-print "Commits for date ";
+$output = fopen("php://stdout", "w");
 if ($DATE == $END) {
-  print $DATE;
+  if ($OUT) {
+    fclose($output);
+    $output = fopen($OUT."/".$DATE.".html", "w");
+  }
+  if ($HTML) {
+    fwrite($output, "<html><head><title>");
+  }
+  fwrite($output, "Commits for date ".$DATE);
 }
 else {
-  print "range ".$DATE." to ".$END;
+  if ($OUT) {
+    fclose($output);
+    $output = fopen($OUT."/".$DATE."_".$END.".html", "w");
+  }
+  if ($HTML) {
+    fwrite($output, "<html><head><title>");
+  }
+  fwrite($output, "Commits for date range ".$DATE." to ".$END);
 }
 if ($HTML) {
-  print "</title>\n";
-  print "<style>\n";
-  print ".mcidas-v { color: darkblue; }\n";
-  print ".visad { color: darkred; }\n";
-  print ".idv { color: darkgreen; }\n";
-  print "</style>\n";
-  print "</head><body><pre>\n";
+  fwrite($output, "</title>\n");
+  fwrite($output, "<style>\n");
+  fwrite($output, ".mcidas-v { color: darkblue; }\n");
+  fwrite($output, ".visad { color: darkred; }\n");
+  fwrite($output, ".idv { color: darkgreen; }\n");
+  fwrite($output, "</style>\n");
+  fwrite($output, "</head><body><pre>\n");
 }
 else {
-  print "\n";
+  fwrite($output, "\n");
 }
 
 # Get the diffs from McV (CVS)
@@ -116,18 +135,18 @@ foreach ($allCommits as $date=>$commits) {
     $package = $commit["package"];
     $description = $commit["description"];
     if ($HTML) {
-      print "<div class=\"".strtolower($package)."\">";
+      fwrite($output, "<div class=\"".strtolower($package)."\">");
     }
-    print "$date\t$package\t$file\t$revision\t$author\n";
-    print $description."\n\n";
+    fwrite($output, "$date\t$package\t$file\t$revision\t$author\n");
+    fwrite($output, $description."\n\n");
     if ($HTML) {
-      print "</div>\n";
+      fwrite($output, "</div>\n");
     }
   }
 }
 
 if ($HTML) {
-  print "</pre></body></html>\n";
+  fwrite($output, "</pre></body></html>\n");
 }
 
 ################################################################################
