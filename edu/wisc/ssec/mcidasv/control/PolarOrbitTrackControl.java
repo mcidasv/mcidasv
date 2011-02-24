@@ -451,7 +451,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                             locationIndex = stations.indexOf(stat);
                             //System.out.println("\nstat at location: " + locationIndex);
                             locationComboBox.setSelectedIndex(locationIndex);
-                        } else {
+                        }
+/*
+                          else {
                             locationIndex = 0;
                             locationComboBox.insertItemAt(stat, locationIndex);
                             locationComboBox.setSelectedIndex(locationIndex);
@@ -465,6 +467,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                             altitudeFld.setText(zero);
                             setAltitude();
                         }
+*/
                     } catch (Exception e) {
                     }
                 } else {
@@ -599,7 +602,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
      * Apply the map (height) position to the displays
      */
     private void applyTrackPosition() {
-        //System.out.println("\napplyTrackPosition:  satZ=" + satZ);
         try {
             DisplayRealType dispType = navDsp.getDisplayAltitudeType();
             trackDsp.setConstantPosition(this.satZ, dispType);
@@ -610,10 +612,12 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     private void redrawCoverageCircle() {
         try {
+
             int num = circleDsp.displayableCount();
             for (int i=0; i<num; i++) {
                 circleDsp.removeDisplayable(0);
             }
+
             if (drawCoverageCircle(Math.toRadians(this.latitude), Math.toRadians(this.longitude),
                        this.satelliteAltitude, getAntColor()) != null) {
                 drawGroundStation();
