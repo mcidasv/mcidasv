@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import visad.util.Util;
+
 public class RangeProcessor {
 
 	private static final Logger logger = LoggerFactory.getLogger(RangeProcessor.class);
@@ -161,34 +163,6 @@ public class RangeProcessor {
 
 	}
 
-	/**
-	 * Converts an (unsigned) byte to an unsigned int. 
-	 * Since Java doesn't have an unsigned
-	 * byte type, this requires some foolery.
-	 * This solution based on information and code from
-	 * http://www.rgagnon.com/javadetails/java-0026.html
-	 * @param s The unsigned short to convert
-	 * @return the unsigned int equivalent
-	 */
-	
-	public static int unsignedShortToInt(short s) {
-		return (int) s & 0xFFFF;
-	}
-
-	/**
-	 * Converts an (unsigned) byte to an unsigned int. 
-	 * Since Java doesn't have an unsigned
-	 * byte type, this requires some foolery.
-	 * This solution based on information and code from
-	 * http://www.rgagnon.com/javadetails/java-0026.html
-	 * @param b The unsigned byte to convert
-	 * @return the unsigned int equivalent
-	 */
-	
-	public static int unsignedByteToInt(byte b) {
-		return (int) b & 0xFF;
-	}
-
 	public float[] getAttributeAsFloatArray(String arrayName, String attrName) 
 	throws Exception 
 	{
@@ -246,7 +220,7 @@ public class RangeProcessor {
 		if (unsigned) {
 			if (missing != null) {
 				for (int i = 0; i < missing.length; i++) {
-					missing[i] = (float) unsignedByteToInt((byte) missing[i]);
+					missing[i] = (float) Util.unsignedByteToInt((byte) missing[i]);
 				}
 			}
 		}
@@ -259,7 +233,7 @@ public class RangeProcessor {
 			
 			val = (float) values[k];
 			if (unsigned) {
-				i = unsignedByteToInt(values[k]);
+				i = Util.unsignedByteToInt(values[k]);
 				val = (float) i;
 			}   
 			
@@ -325,7 +299,7 @@ public class RangeProcessor {
 		if (unsigned) {
 			if (missing != null) {
 				for (int i = 0; i < missing.length; i++) {
-					missing[i] = (float) unsignedShortToInt((short) missing[i]);
+					missing[i] = (float) Util.unsignedShortToInt((short) missing[i]);
 				}
 			}
 		}
@@ -338,7 +312,7 @@ public class RangeProcessor {
 			
 			val = (float) values[k];
 			if (unsigned) {
-				i = unsignedShortToInt(values[k]);
+				i = Util.unsignedShortToInt(values[k]);
 				val = (float) i;
 			}
 			
@@ -481,7 +455,7 @@ public class RangeProcessor {
         if (unsigned) {
                 if (missing != null) {
                         for (int i = 0; i < missing.length; i++) {
-                                missing[i] = (float) unsignedByteToInt((byte) missing[i]);
+                                missing[i] = (float) Util.unsignedByteToInt((byte) missing[i]);
                         }
                 }
         }
@@ -494,7 +468,7 @@ public class RangeProcessor {
 			
 			val = (float) values[k];
             if (unsigned) {
-                i = unsignedByteToInt(values[k]);
+                i = Util.unsignedByteToInt(values[k]);
                 val = (float) i;
             }
             
@@ -551,7 +525,7 @@ public class RangeProcessor {
         if (unsigned) {
                 if (missing != null) {
                         for (int i = 0; i < missing.length; i++) {
-                                missing[i] = (float) unsignedShortToInt((short) missing[i]);
+                                missing[i] = (float) Util.unsignedShortToInt((short) missing[i]);
                         }
                 }
         }
@@ -564,7 +538,7 @@ public class RangeProcessor {
 			
 			val = (float) values[k];
             if (unsigned) {
-                i = unsignedShortToInt(values[k]);
+                i = Util.unsignedShortToInt(values[k]);
                 val = (float) i;
             }
             

@@ -80,6 +80,8 @@ import visad.FlatField;
 import visad.GriddedSet;
 import visad.VisADException;
 
+import visad.util.Util;
+
 /**
  * A data source for NPOESS Preparatory Project (NPP) data
  * This will probably move, but we are placing it here for now
@@ -584,10 +586,10 @@ public class NPPDataSource extends HydraDataSource {
 	        	    											logger.info("DataType primitive type: " + fvdt.getPrimitiveClassType());
 	        	    											// signed byte that needs conversion?
 	        	    											if (fvdt.getPrimitiveClassType() == byte.class) {
-	        	    												fillValAsFloat = (float) RangeProcessor.unsignedByteToInt(n.byteValue());
+	        	    												fillValAsFloat = (float) Util.unsignedByteToInt(n.byteValue());
 	        	    											}
 	        	    											else if (fvdt.getPrimitiveClassType() == short.class) {
-	        	    												fillValAsFloat = (float) RangeProcessor.unsignedShortToInt(n.shortValue());
+	        	    												fillValAsFloat = (float) Util.unsignedShortToInt(n.shortValue());
 	        	    											} else {
 	        	    												fillValAsFloat = n.floatValue();
 	        	    											}
