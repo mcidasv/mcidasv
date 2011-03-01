@@ -48,7 +48,7 @@ TD[unit="celsius"],T[unit="celsius"]
 <p>Note also that the first line's structure is quite rigid -- you must have a variable (e.g., <strong>index</strong>, <strong>recNum</strong>) that is the domain parameter; this should map to the range values. The second line defines the formatting and units of the parameters. Unit names should be standard international unit specifications (udunits compatible). A list of valid names can be found <a href="http://www.unidata.ucar.edu/software/udunits/udunits-1/udunits.txt">here</a>. (A complete description of this format is contained in the VisAD <a href="http://www.ssec.wisc.edu/~billh/README.text">README.text</a> file.)</p>
 <p>Also note that you need to set the name of the variable for time as "Time", as well as the locations as "Latitude", "Longitude" and "Altitude" (if needed).</p>
 <h3>Text fields</h3>
-If you have text fields (i.e., non-numeric data) in your observation just do this:
+If you have text fields (i.e., non-numeric data) in your observation, just do this:
 <pre>
 (index) -&gt; (Time,Latitude,Longitude,Altitude,ST(Text),T)
 Time[fmt="yyyy-MM-dd HH:mm:ss z"],Latitude[unit="deg"],Longitude[unit="degrees west"],Altitude[unit="m"],ST(Text),T[unit="celsius"]
@@ -112,12 +112,12 @@ Then, when you run McIDAS-V to read your data:
 If your text data does not have the metadata header lines the Text Point Data Source will show the following dialog which allows you to specify the meta data.
 <div class="images"><img src="images/TextPointMetadataGui.gif" alt="images/TextPointMetadataGui.gif"></div>
 <p><strong>Skipping lines</strong></p>
-<p>At the top a number of the initial lines from the text data are shown. The arrow
+<p>At the top, a number of the initial lines from the text data are shown. The arrow
 keys allow you to specify the start line. For example, if you had some other
-header information you can skip over those lines.</p>
+header information, you can skip over those lines.</p>
 <p><strong>Specifying metadata</strong>
 <br>
-For each column of text data there is a row shown in the bottom of the dialog. This shows the sampled value and allows you to enter a name, unit, date format, missing value and extra information. There are some names that McIDAS-V treats special: "Latitude", "Longitude", "Altitude", and "Time". You must have at least Latitude, Longitude and Time specied.</p>
+For each column of text data there is a row shown in the bottom of the dialog. This shows the sampled value and allows you to enter a name, unit, date format, missing value and extra information. There are some names that McIDAS-V treats special: "Latitude", "Longitude", "Altitude", and "Time". You must have at least Latitude, Longitude and Time specified.</p>
 <p>The Unit/Date Format field allows you to specify the Unit for data fields and the date format. For text fields choose <strong>Misc-&gt;Text</strong> as
 the unit.</p>
 <p>The Extra fields must be of the form:</p>
@@ -130,7 +130,7 @@ Don't forget the quotes!
 You can skip over certain columns by entering the Name: "skip"</p>
 <p><strong>Saving this as a preference</strong>
 <br>
-After all of your hard work to keep from having to do this again next time you load a new text point data of the form simply press the "Preferences" button and select <strong>Save
+After all of your hard work, to keep from having to do this again next time you load a new text point data of the form, simply press the "Preferences" button and select <strong>Save
 Current</strong>. This allows you to save these metadata settings and reapply them later
 using the "Preferences" button.</p>
 <div class="childlist">
