@@ -1,11 +1,14 @@
-<configuration>
+<!-- 
+  the "configuration" element also accepts a boolean "scan" attribute.
+  enabling scans allows SLF4J to rescan a given config file and apply any
+  changes!
+ -->
+<configuration debug="true">
 
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <!-- encoders are assigned the type
-         ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
-    <layout class="ch.qos.logback.classic.PatternLayout">
+    <encoder>
       <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %method: %msg%n</pattern>
-    </layout>
+    </encoder>
   </appender>
 
   <!-- you can override the root level for specific packages -->

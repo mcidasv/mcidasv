@@ -1,0 +1,245 @@
+#!/bin/bash
+
+DOCUMENT_DIRECTORY=${HOME}
+if [ `uname -s` = "Darwin" ]; then
+	DOCUMENT_DIRECTORY=${HOME}/Documents
+fi
+
+MCV_USERPATH="${DOCUMENT_DIRECTORY}/McIDAS-V"
+MCV_PARAMS="$@"
+
+# Check for -userpath parameter
+while [ "$1" != "" ]; do
+	if [ "$1" = "-userpath" ]; then
+		MCV_USERPATH="$2"
+		shift
+		shift
+	else
+		shift
+	fi
+done
+
+# Check for old style default userpath
+if [ -d "${HOME}/.mcidasv" ]; then
+	if [ ! -d "${MCV_USERPATH}" ]; then
+		echo "Moving files to new user path: ${MCV_USERPATH}..."
+		mv "${HOME}/.mcidasv" "${MCV_USERPATH}"
+	fi
+fi
+
+# Change to the directory that the script resides in before executing
+HAVEWHICH=`which which >/dev/null 2>&1`
+if [ $? -eq 0 ]; then
+	scriptname=`which "$0" 2>/dev/null`
+else
+	scriptname="$0"
+fi
+if [ -z "${scriptname}" ]; then
+	scriptname="$0"
+fi
+dirname=`dirname "$scriptname"`
+cd "$dirname"
+
+# Default heap size to use if none can be determined
+HEAP_DEFAULT=512M
+
+# Controls whether or not the welcome window appears (0 = no, 1 = yes)
+SHOW_WELCOME="0"
+
+# TEMP: default value for enabling concurrent mark-sweep GC
+# USE_CMSGC="0"
+
+# TEMP?: default value for the visad.java3d.geometryByRef property
+# GEOMETRY_BY_REF="true"
+
+# Put the log files in the user's MCV_USERPATH directory (which should be writeable)
+MCV_LOG="${MCV_USERPATH}/mcidasv.log"
+MCV_LOG_LINES=10000
+
+# Always run the default prefs; user can override as much as they want
+if [ ! -f ./runMcV.prefs ]; then
+	echo "This script must be run from within the McIDAS-V installation directory"
+	exit 1
+else
+	. ./runMcV.prefs
+fi
+
+# Create MCV_USERPATH directory if it doesn't already exist
+if [ ! -d "${MCV_USERPATH}" ]; then
+	mkdir -p "${MCV_USERPATH}"
+	
+	# toggle the welcome window
+	SHOW_WELCOME="1"
+fi
+
+# Copy prefs to MCV_USERPATH directory if it doesn't already exist
+if [ ! -f "${MCV_USERPATH}/runMcV.prefs" ]; then
+	cp runMcV.prefs "${MCV_USERPATH}/runMcV.prefs"
+fi
+
+# If MCV_USERPATH/runMcV.prefs exists, source it to populate the current environment
+if [ -f "${MCV_USERPATH}/runMcV.prefs" ]; then
+	. "${MCV_USERPATH}/runMcV.prefs"
+fi
+
+if [ "${USE_3DSTUFF}" = "1" ]; then
+	IDV_3D="true"
+else
+	IDV_3D="false"
+fi
+
+# Check for valid heap size
+HEAP_PERCENT=0
+HAS_PERCENT=`echo "${HEAP_SIZE}" |grep [pP%]`
+if [ -n "${HAS_PERCENT}" ]; then
+	HEAP_PERCENT=`echo "${HEAP_SIZE}" |sed -e 's/[pP%]//'`
+fi
+HAS_ALPHA=`echo "${HEAP_SIZE}" |grep [a-zA-Z%]`
+if [ -z "${HAS_ALPHA}" ]; then
+	HEAP_SIZE="${HEAP_SIZE}M"
+fi
+
+# Look for java
+JAVA_BIN="java"
+if [ -f "./jre/bin/java" ]; then
+	JAVA_BIN="./jre/bin/java"
+else
+	if [ -n "${JAVA_HOME}" ]; then
+		JAVA_BIN="${JAVA_HOME}/bin/java"
+	fi
+fi
+
+# Show the welcome window if needed
+if [ "${SHOW_WELCOME}" = "1" ]; then
+    echo "Showing the welcome window..."
+    if [ `uname -s` = "Darwin" ]; then
+        OSX_FLAGS="-Xdock:name=McIDAS-V -Xdock:icon=mcidasv.icns"
+    else
+        OSX_FLAGS=""
+    fi
+    
+    ${JAVA_BIN} ${OSX_FLAGS} -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow 2>/dev/null
+    if [ $? -eq 1 ]; then
+        exit 1
+    fi
+fi
+
+# Get the version and amount of system memory
+echo "Reading system configuration..."
+SYS_VER=`${JAVA_BIN} -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetVer 2>/dev/null`
+SYS_MEM=`${JAVA_BIN} -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2>/dev/null`
+
+# We have system memory, so try to set heap size if a percent was requested
+if [ ${HEAP_PERCENT} -gt 0 ]; then
+	if [ ${SYS_MEM} -gt 0 ]; then
+		HEAP_SIZE=$(( ${SYS_MEM} * ${HEAP_PERCENT} / 100 ))
+		HEAP_SIZE=${HEAP_SIZE}M
+	else
+		HEAP_SIZE=${HEAP_DEFAULT}
+	fi
+fi
+
+# get the default bundle represented so that Mcv can use it
+if [ -n "${STARTUP_BUNDLE}" ]; then
+    DEFAULT_BUNDLE="-bundle ${STARTUP_BUNDLE}"
+else
+    DEFAULT_BUNDLE=""
+fi
+
+# TEMP!: toggles the CMS collector
+if [ "${USE_CMSGC}" = "1" ]; then
+    JVM_ARGS="-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=128m"
+else
+    JVM_ARGS=""
+fi
+
+# TEMP?: toggles the visad.java3d.geometryByRef property
+if [ "${USE_GEOBYREF}" = "0" ]; then
+    GEOMETRY_BY_REF="false"
+else
+    GEOMETRY_BY_REF="true"
+fi
+
+# toggles the visad.java3d.imageByRef property
+if [ "${USE_IMAGEBYREF}" = "0" ]; then
+    IMAGE_BY_REF="false"
+else
+    IMAGE_BY_REF="true"
+fi
+
+# toggles non-power of two textures
+if [ "${USE_NPOT}" = "0" ]; then
+    ALLOW_NPOT="false"
+else
+    ALLOW_NPOT="true"
+fi
+
+LOGBACK_CONFIG="edu/wisc/ssec/mcidasv/resources/logback.xml"
+
+# Gather up previously set values.
+JAVA_FLAGS="-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${JVM_ARGS} -Dlogback.configurationFile=${LOGBACK_CONFIG}"
+MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Dvisad.java3d.textureNpot=${ALLOW_NPOT} -Dvisad.java3d.imageByRef=${IMAGE_BY_REF} -Dvisad.java3d.geometryByRef=${GEOMETRY_BY_REF} -Didv.3d=${IDV_3D} -Didv.sysmem=${SYS_MEM} ${DEFAULT_BUNDLE} -userpath ${MCV_USERPATH}"
+echo "mcv flags: ${MCV_FLAGS}"
+################################################################################
+# OS specific settings
+
+# Mac OS X settings
+if [ `uname -s` = "Darwin" ]; then
+
+	# Look for the Java3D/JOGL package
+	XBOOTCLASSPATH=
+	if [ -d "java3d" ]; then
+		JAVA3D_LIB=${PWD}/java3d
+		JAVA3D_CP=${JAVA3D_LIB}/j3dcore.jar:${JAVA3D_LIB}/j3dutils.jar:${JAVA3D_LIB}/vecmath.jar
+		XBOOTCLASSPATH=-Xbootclasspath/p:${JAVA3D_CP}
+		if [ -d "jogl" -a "${JOGL_TOGL}" -eq 1 ]; then
+			JOGL_LIB=${PWD}/jogl
+			JOGL_CP=${JOGL_LIB}:${JOGL_LIB}/jogl.jar:${JOGL_LIB}/gluegen-rt.jar
+			export DYLD_LIBRARY_PATH=${JOGL_LIB}
+			XBOOTCLASSPATH=-Xbootclasspath/p:${JOGL_CP}:${JAVA3D_CP}
+		fi
+	fi
+	
+	# If we are on Leopard (or later?):
+	# Use aqua look & feel to get rid of lightweight/heavyweight 3D overlay problems
+	# Get rid of any XBOOTCLASSPATH business and just use system Java3D
+	LEOPARD_OR_BETTER_TEST=`sw_vers -productVersion | cut -d '.' -f 2`
+	if [ "${LEOPARD_OR_BETTER_TEST}" -gt 4 ]; then
+	    MCV_FLAGS="${MCV_FLAGS} -forceaqua"
+	    XBOOTCLASSPATH=
+	fi
+	
+	# Build JAVA_FLAGS and set the dock/menu bar name
+	JAVA_FLAGS="${JAVA_FLAGS} ${XBOOTCLASSPATH} -Xdock:name=McIDAS-V -Xdock:icon=mcidasv.icns"
+
+fi
+# Done with Mac OS X settings
+
+# Done with OS specific settings
+################################################################################
+
+# Clean the log
+if [ -f "${MCV_LOG}" ]; then
+	LINES=`wc -l "${MCV_LOG}" 2>/dev/null | awk '{print $1}' 2>/dev/null`
+	if [ "${LINES}" = "" ]; then
+		LINES=0
+	fi
+	MCV_TEMP="${MCV_USERPATH}/mcidasv.tmp"
+	if [ ${LINES} -gt ${MCV_LOG_LINES} ]; then
+		tail -${MCV_LOG_LINES} "${MCV_LOG}" > "${MCV_TEMP}"
+		rm -f "${MCV_LOG}" && mv "${MCV_TEMP}" "${MCV_LOG}"
+	fi
+fi
+
+MCV_CLASSPATH=".:./mcidasv.jar:./eventbus-1.3.jar:./log4j-over-slf4j-1.6.1.jar:./logback-classic-0.9.28.jar:./logback-core-0.9.28.jar:./miglayout-3.7.3.jar:./slf4j-api-1.6.1.jar:./auxdata.jar:./external.jar:./idv.jar:./jython.jar:./local-visad.jar:./ncIdv.jar:./visad.jar"
+
+# Log this session
+echo "################" >>"${MCV_LOG}"
+date >>"${MCV_LOG}"
+echo "${SYS_VER}" >>"${MCV_LOG}"
+echo "${SYS_MEM} MB system memory" >>"${MCV_LOG}"
+echo "Command line: ${JAVA_BIN} ${JAVA_FLAGS} -classpath ${MCV_CLASSPATH} -da edu.wisc.ssec.mcidasv.McIDASV ${MCV_FLAGS} ${MCV_PARAMS}"
+
+# Run it
+# ${JAVA_BIN} ${JAVA_FLAGS} -classpath "${MCV_CLASSPATH}" -jar mcidasv.jar ${MCV_FLAGS} ${MCV_PARAMS} >>"${MCV_LOG}" 2>&1
+${JAVA_BIN} ${JAVA_FLAGS} -classpath "${MCV_CLASSPATH}" -da edu.wisc.ssec.mcidasv.McIDASV ${MCV_FLAGS} ${MCV_PARAMS}
