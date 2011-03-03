@@ -347,12 +347,12 @@
 	
 	<!-- Create jar files and documentation -->
 	<target name="jar"
-	depends="clean, auxdata.nodocs, build, copy.build.props, jar.base, jar.local-idv"
+	depends="clean, auxdata.nodocs, ncidv.nolog, build, copy.build.props, jar.base, jar.local-idv"
 	description="Create jar files and documentation" />
 	
 	<!-- Create nightly jar files and documentation -->
 	<target name="jar.nightly"
-	depends="clean, auxdata.nodocs, build, copy.nightly.props, jar.base, jar.local-idv"
+	depends="clean, auxdata.nodocs, ncidv.nolog, build, copy.nightly.props, jar.base, jar.local-idv"
 	description="Create nightly jar files and documentation" />
 	
 	<!-- Create signed jar files -->
@@ -366,7 +366,7 @@
 	</target>
 	
 	<!-- Include dependencies in single jar file -->
-	<target name="singlejar" depends="clean, auxdata.nodocs, build"
+	<target name="singlejar" depends="clean, auxdata.nodocs, ncidv.nolog, build"
 		description="Include dependencies in single jar file">
 		
 		<mkdir dir="${dist.dir}" />
@@ -601,7 +601,54 @@
 		<jar destfile="${idvlib.dir}/auxdata.jar" basedir="${idvlib.dir}/tmp" />
 		<delete dir="${idvlib.dir}/tmp" failonerror="false" />
 	</target>
+
+	<!-- Remove the org/slf4j/ directory from ncIdv.jar -->
+	<target name="ncidv.nolog" description="Remove the org/slf4j/ directory from ncIdv.jar">
+		<mkdir dir="${idvlib.dir}/tmp" />
+		<unzip src="${idvlib.dir}/ncIdv.jar" dest="${idvlib.dir}/tmp" />
+		
+		<delete dir="${idvlib.dir}/tmp/org/slf4j" failonerror="false" />
+		<delete file="${idvlib.dir}/ncIdv.jar" failonerror="false" />
+		
+		<jar destfile="${idvlib.dir}/ncIdv.jar" basedir="${idvlib.dir}/tmp" />
+		<delete dir="${idvlib.dir}/tmp" failonerror="false" />
+	</target>
 	
+	<!-- Create source jar file -->
+	<target name="source" description="Create source jar file">
+		<jar destfile="${dist.dir}/${source.jarname}" basedir="${base.dir}"
+			compress="true">
+			
+			<include name="build.xml" />
+			
+			<include name="edu/**" />
+			<exclude name="edu/**/*.class" />
+			<exclude name="edu/**/CVS/**" />
+			
+			<include name="ucar/**" />
+			<exclude name="ucar/**/*.class" />
+			<exclude name="ucar/**/CVS/**" />
+			
+			<include name="release/licenses/**" />
+			
+		</jar>
+	</target>
+	
+	<!-- Move the source file to install4j directory -->
+	<target name="packsource" depends="source"
+		description="Move the source file to install4j directory">
+		<copy file="${dist.dir}/${source.jarname}" tofile="${media.dir}/${source.file}"
+		failonerror="false" />
+	</target>
+	
+	<!-- Make the installers with install4j -->
+	<target name="installers" description="Make the installers with install4j">
+		<exec dir="${release.dir}" executable="${install4jc.bin}">
+			<arg line="mcidasv.install4j" />
+		</exec>
+	</target>
+	
+</project>
 	<!-- Create source jar file -->
 	<target name="source" description="Create source jar file">
 		<jar destfile="${dist.dir}/${source.jarname}" basedir="${base.dir}"
