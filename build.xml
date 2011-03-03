@@ -347,12 +347,12 @@
 	
 	<!-- Create jar files and documentation -->
 	<target name="jar"
-	depends="clean, auxdata.nodocs, ncidv.nolog, build, copy.build.props, jar.base, jar.local-idv"
+	depends="clean, build, copy.build.props, jar.base, jar.local-idv"
 	description="Create jar files and documentation" />
 	
 	<!-- Create nightly jar files and documentation -->
 	<target name="jar.nightly"
-	depends="clean, auxdata.nodocs, ncidv.nolog, build, copy.nightly.props, jar.base, jar.local-idv"
+	depends="clean, build, copy.nightly.props, jar.base, jar.local-idv"
 	description="Create nightly jar files and documentation" />
 	
 	<!-- Create signed jar files -->
@@ -401,7 +401,7 @@
 	
 	<!-- Create distribution product -->
 	<target name="dist"
-		depends="jar, startupmanager, javadoc.jar, userguide.jar"
+		depends="auxdata.nodocs, ncidv.nolog, jar, startupmanager, javadoc.jar, userguide.jar"
 		description="Create distribution product" >
 		<copy file="${base.dir}/edu/wisc/ssec/mcidasv/util/GetMem.class" tofile="${dist.dir}/GetMem.class" failonerror="false" />
 		<copy file="${base.dir}/edu/wisc/ssec/mcidasv/util/GetVer.class" tofile="${dist.dir}/GetVer.class" failonerror="false" />
@@ -409,7 +409,7 @@
 	
 	<!-- Create nightly webstart distribution product -->
 	<target name="nightly"
-	depends="cvsupdate, jar.nightly, startupmanager, javadoc.jar, userguide.jar, source, build.webstart"
+	depends="cvsupdate, auxdata.nodocs, ncidv.nolog, jar.nightly, startupmanager, javadoc.jar, userguide.jar, source, build.webstart"
 	description="Create nightly webstart distribution product" />
 	
 	<!-- Build the webstart distribution -->
@@ -614,41 +614,6 @@
 		<delete dir="${idvlib.dir}/tmp" failonerror="false" />
 	</target>
 	
-	<!-- Create source jar file -->
-	<target name="source" description="Create source jar file">
-		<jar destfile="${dist.dir}/${source.jarname}" basedir="${base.dir}"
-			compress="true">
-			
-			<include name="build.xml" />
-			
-			<include name="edu/**" />
-			<exclude name="edu/**/*.class" />
-			<exclude name="edu/**/CVS/**" />
-			
-			<include name="ucar/**" />
-			<exclude name="ucar/**/*.class" />
-			<exclude name="ucar/**/CVS/**" />
-			
-			<include name="release/licenses/**" />
-			
-		</jar>
-	</target>
-	
-	<!-- Move the source file to install4j directory -->
-	<target name="packsource" depends="source"
-		description="Move the source file to install4j directory">
-		<copy file="${dist.dir}/${source.jarname}" tofile="${media.dir}/${source.file}"
-		failonerror="false" />
-	</target>
-	
-	<!-- Make the installers with install4j -->
-	<target name="installers" description="Make the installers with install4j">
-		<exec dir="${release.dir}" executable="${install4jc.bin}">
-			<arg line="mcidasv.install4j" />
-		</exec>
-	</target>
-	
-</project>
 	<!-- Create source jar file -->
 	<target name="source" description="Create source jar file">
 		<jar destfile="${dist.dir}/${source.jarname}" basedir="${base.dir}"
