@@ -30,12 +30,19 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.net.URL;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -89,27 +96,89 @@ public class NPPProductProfile {
 		// sanity check
 		if (attrName == null) return null;
 		
-		Object o = new Object();
-	    URL profileURL = o.getClass().getResource("/edu/wisc/ssec/mcidasv/data/hydra/resources/NPP/XML_Product_Profiles");
-		String profileDirString = profileURL.getFile();
-		logger.trace("Profiles dir from URL: " + profileDirString);
-		File profileDir = new File(profileDirString);
-	    if (profileDir.isDirectory()) {
-			String fileList[] = profileDir.list();
-			for (int i = 0; i < fileList.length; i++) {
-				logger.trace("Looking for XMLPP match, file: " + fileList[i]);
-				if (fileList[i].contains(attrName + "-PP")) {
-					return profileDir + File.separator + fileList[i];
+		// print top level classloader files
+		// this is how we will tell if we need to pull the profiles out of a jar file
+		
+		boolean readFromJar = false;
+        ClassLoader loader = getClass().getClassLoader();
+        InputStream in = loader.getResourceAsStream(".");
+        BufferedReader rdr = new BufferedReader(new InputStreamReader(in));
+        String l;
+        try {
+			while ((l = rdr.readLine()) != null) {
+			    if (l.equals("mcidasv.jar")) {
+			    	readFromJar = true;
+			    }
+			}
+			rdr.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		// we need to pull the XML Product Profiles out of mcidasv.jar
+		if (readFromJar) {
+			JarFile jar;
+			try {
+				jar = new JarFile(URLDecoder.decode("mcidasv.jar", "UTF-8"));
+				Enumeration<JarEntry> entries = jar.entries(); //gives ALL entries in jar
+				boolean found = false;
+				String name = null;
+				while (entries.hasMoreElements()) {
+					name = entries.nextElement().getName();
+					if (name.contains("XML_Product_Profiles")) { // filter according to the profiles
+						logger.trace("looking at line: " + name);
+						if (name.contains(attrName + "-PP")) {
+							found = true;
+							break;
+						}
+					}
 				}
+				if (found == true) {
+					logger.trace("Found profile: " + name.substring(name.lastIndexOf(File.separator) + 1));
+					return name.substring(name.lastIndexOf(File.separator) + 1);
+				}
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+				return null;
+			} catch (IOException e) {
+				e.printStackTrace();
+				return null;
+			}
+		} else {
+			// read contents of XML Product Profile directory as stream
+			InputStream ios = getClass().getResourceAsStream("resources/NPP/XML_Product_Profiles/");
+			BufferedReader dirReader = new BufferedReader(new InputStreamReader(ios));
+			try {
+				String line = dirReader.readLine();
+				boolean found = false;
+				while (line != null) {
+					logger.trace("looking at line: " + line);
+					if (line.contains(attrName + "-PP")) {
+						found = true;
+						break;
+					}
+					line = dirReader.readLine();
+				}
+				ios.close();
+				if (found == true) {
+					logger.trace("Found profile: " + attrName);
+					return line;
+				}
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+				return null;
 			}
 		}
+
 		return null;
 	}
 	
 	public void addMetaDataFromFile(String fileName) throws SAXException, IOException {
 		logger.trace("Attempting to parse XML Product Profile: " + fileName);
 		Document d = null;
-		d = db.parse(fileName);
+		InputStream ios = getClass().getResourceAsStream("resources/NPP/XML_Product_Profiles/" + fileName);
+		d = db.parse(ios);
 		NodeList nl = d.getElementsByTagName("Field");
 		for (int i = 0; i < nl.getLength(); i++) {
 			ArrayList<Float> fValAL = new ArrayList<Float>();
@@ -179,6 +248,13 @@ public class NPPProductProfile {
 				fillValues.put(name, fValAL);
 			}
 			
+		}
+		if (ios != null) {
+			try {
+				ios.close();
+			} catch (IOException ioe) {
+				// do nothing
+			}
 		}
 	}
 
