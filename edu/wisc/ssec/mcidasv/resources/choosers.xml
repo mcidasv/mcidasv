@@ -360,12 +360,10 @@
 
 
 
-	<!--                  -->
-	<!--    Testing       -->
-	<!--                  -->
+	<!--                         -->
+	<!--    Under Development    -->
+	<!--                         -->
 	
-	<!-- REMOVED FOR 1.0 -->
-	<!--
 	
 	<panel layout="border" category="Under Development" categorycomponent="true">
 		<html
@@ -377,23 +375,14 @@
 		" />
 	</panel>
 
-	<panel title="Imagery - Parameter Sets" category="Under Development" layout="border"
-		tabtooltip="For accessing satellite imagery">
-		<chooser id="chooser.imageparameter" title="Imagery - Parameter Sets"
-			menutitle="Imagery - Parameter Sets" helppath="idv.data.choosers.imagechooser"
-			showdetails="true" includeNavComp="true"
-			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeImageParameterChooser" />
-	</panel>
 
-	<panel title="Imagery - Satellite" category="Under Development" layout="border"
-		tabtooltip="For accessing satellite imagery">
-		<chooser id="chooser.test2image" title="Imagery - Test"
-			menutitle="Satellite Imagery - Test" helppath="idv.data.choosers.imagechooser"
-			showdetails="true" includeNavComp="true"
-			class="edu.wisc.ssec.mcidasv.chooser.adde.Test2AddeImageChooser" />
+	<panel title="Imagery - NPP" category="Under Development" layout="border"
+        tabtooltip="For accessing NPP data">
+		<chooser id="chooser.npp" title="NPP" menutitle="NPP data"
+            showinmenu="true" helppath="idv.data.choosers.nppchooser"
+            showpolling="false" filepattern=".*" selectdatasourceid="true"
+            datasourceid="NPP" class="edu.wisc.ssec.mcidasv.chooser.NPPChooser" />
 	</panel>
-	
-	-->
 
 
 
