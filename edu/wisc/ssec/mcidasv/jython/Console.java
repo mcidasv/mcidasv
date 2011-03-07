@@ -62,7 +62,7 @@ import javax.swing.text.JTextComponent;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
-import org.python.core.PyJavaInstance;
+import org.python.core.PyJavaType;
 import org.python.core.PyList;
 import org.python.core.PyObject;
 import org.python.core.PyString;
@@ -582,7 +582,7 @@ public class Console implements Runnable, KeyListener {
         Map<String, PyObject> locals = getLocalNamespace();
         for (Map.Entry<String, PyObject> entry : locals.entrySet()) {
             PyObject val = entry.getValue();
-            if (val instanceof PyJavaInstance) {
+            if (val instanceof PyJavaType) {
                 javaMap.put(entry.getKey(), val.__tojava__(Object.class));
             }
         }

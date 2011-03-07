@@ -365,7 +365,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         List<PyFunction> procedures = findJythonMethods(true);
         for (int i = 0; i < procedures.size(); i++) {
             PyFunction func = (PyFunction)procedures.get(i);
-            PyObject docString = func.getDoc();
+            PyObject docString = func.getFuncDoc();
             if (docString == Py.None) {
                 continue;
             }
@@ -1984,7 +1984,7 @@ public class JythonManager extends IdvManager implements ActionListener {
                             continue;
                         }
                         JMenuItem menuItem = makeMenuItem(s, object, method, s);
-                        PyObject docString = func.getDoc();
+                        PyObject docString = func.getFuncDoc();
                         if (docString != Py.None) {
                             menuItem.setToolTipText(
                                 new StringBuilder("<html><pre>")
@@ -2122,7 +2122,7 @@ public class JythonManager extends IdvManager implements ActionListener {
                     sb.append(tc.co_varnames[argIdx]);
                 }
                 sb.append("):</code><p style=\"padding:0;margin-left:20;margin-top:0\">\n");
-                PyObject docString = func.getDoc();
+                PyObject docString = func.getFuncDoc();
                 if (docString != Py.None) {
                     String doc = docString.toString().trim();
                     doc = replace(doc,"\n","<br>");
