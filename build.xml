@@ -599,7 +599,7 @@
 		<delete dir="${idvlib.dir}/tmp/auxdata/docs" failonerror="false" />
 		<delete file="${idvlib.dir}/auxdata.jar" failonerror="false" />
 		
-		<jar destfile="${idvlib.dir}/auxdata.jar" basedir="${idvlib.dir}/tmp" />
+		<jar destfile="${idvlib.dir}/auxdata.jar" basedir="${idvlib.dir}/tmp" index="true" />
 		<delete dir="${idvlib.dir}/tmp" failonerror="false" />
 	</target>
 
@@ -611,7 +611,7 @@
 		<delete dir="${idvlib.dir}/tmp/org/slf4j" failonerror="false" />
 		<delete file="${idvlib.dir}/ncIdv.jar" failonerror="false" />
 		
-		<jar destfile="${idvlib.dir}/ncIdv.jar" basedir="${idvlib.dir}/tmp" />
+		<jar destfile="${idvlib.dir}/ncIdv.jar" basedir="${idvlib.dir}/tmp"/>
 		<delete dir="${idvlib.dir}/tmp" failonerror="false" />
 	</target>
 	
