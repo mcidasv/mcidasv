@@ -460,8 +460,23 @@
 	<target name="jar.runlarge" depends="jar" description="Build and run McIDAS-V application (large memory)">
 		<java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
 			<classpath>
-				<path refid="app.classpath" />
+				<!--<path refid="app.classpath" />
+				<pathelement location="${dist.dir}/${app.jarname}" />-->
+				<pathelement location="${lib.dir}/log4j-over-slf4j-1.6.1.jar" />
+				<pathelement location="${lib.dir}/logback-classic-0.9.28.jar" />
+				<pathelement location="${lib.dir}/logback-core-0.9.28.jar" />
+				<pathelement location="${lib.dir}/miglayout-3.7.3.jar" />
+				<pathelement location="${lib.dir}/slf4j-api-1.6.1.jar" />
+				<pathelement location="${lib.dir}/jython.jar" />
+				<pathelement location="${lib.dir}/eventbus-1.3.jar" />
 				<pathelement location="${dist.dir}/${app.jarname}" />
+				<pathelement location="${idvlib.dir}/auxdata.jar" />
+				<pathelement location="${idvlib.dir}/external.jar" />
+				<pathelement location="${dist.dir}/local-idv.jar" />
+				<pathelement location="${idvlib.dir}/idv.jar" />
+				<pathelement location="${idvlib.dir}/local-visad.jar" />
+				<pathelement location="${idvlib.dir}/ncIdv.jar" />
+				<pathelement location="${idvlib.dir}/visad.jar" />
 			</classpath>
 			<assertions refid="mcv.assertions"/>
 			<sysproperty key="logback.configurationFile" value="${logback.default.config}" />
