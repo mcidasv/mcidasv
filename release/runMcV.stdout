@@ -2,7 +2,7 @@
 
 DOCUMENT_DIRECTORY=${HOME}
 if [ `uname -s` = "Darwin" ]; then
-	DOCUMENT_DIRECTORY=${HOME}/Documents
+  DOCUMENT_DIRECTORY=${HOME}/Documents
 fi
 
 MCV_USERPATH="${DOCUMENT_DIRECTORY}/McIDAS-V"
@@ -10,32 +10,32 @@ MCV_PARAMS="$@"
 
 # Check for -userpath parameter
 while [ "$1" != "" ]; do
-	if [ "$1" = "-userpath" ]; then
-		MCV_USERPATH="$2"
-		shift
-		shift
-	else
-		shift
-	fi
+  if [ "$1" = "-userpath" ]; then
+    MCV_USERPATH="$2"
+    shift
+    shift
+  else
+    shift
+  fi
 done
 
 # Check for old style default userpath
 if [ -d "${HOME}/.mcidasv" ]; then
-	if [ ! -d "${MCV_USERPATH}" ]; then
-		echo "Moving files to new user path: ${MCV_USERPATH}..."
-		mv "${HOME}/.mcidasv" "${MCV_USERPATH}"
-	fi
+  if [ ! -d "${MCV_USERPATH}" ]; then
+    echo "Moving files to new user path: ${MCV_USERPATH}..."
+    mv "${HOME}/.mcidasv" "${MCV_USERPATH}"
+  fi
 fi
 
 # Change to the directory that the script resides in before executing
 HAVEWHICH=`which which >/dev/null 2>&1`
 if [ $? -eq 0 ]; then
-	scriptname=`which "$0" 2>/dev/null`
+  scriptname=`which "$0" 2>/dev/null`
 else
-	scriptname="$0"
+  scriptname="$0"
 fi
 if [ -z "${scriptname}" ]; then
-	scriptname="$0"
+  scriptname="$0"
 fi
 dirname=`dirname "$scriptname"`
 cd "$dirname"
@@ -58,55 +58,55 @@ MCV_LOG_LINES=10000
 
 # Always run the default prefs; user can override as much as they want
 if [ ! -f ./runMcV.prefs ]; then
-	echo "This script must be run from within the McIDAS-V installation directory"
-	exit 1
+  echo "This script must be run from within the McIDAS-V installation directory"
+  exit 1
 else
-	. ./runMcV.prefs
+  . ./runMcV.prefs
 fi
 
 # Create MCV_USERPATH directory if it doesn't already exist
 if [ ! -d "${MCV_USERPATH}" ]; then
-	mkdir -p "${MCV_USERPATH}"
-	
-	# toggle the welcome window
-	SHOW_WELCOME="1"
+  mkdir -p "${MCV_USERPATH}"
+  
+  # toggle the welcome window
+  SHOW_WELCOME="1"
 fi
 
 # Copy prefs to MCV_USERPATH directory if it doesn't already exist
 if [ ! -f "${MCV_USERPATH}/runMcV.prefs" ]; then
-	cp runMcV.prefs "${MCV_USERPATH}/runMcV.prefs"
+  cp runMcV.prefs "${MCV_USERPATH}/runMcV.prefs"
 fi
 
 # If MCV_USERPATH/runMcV.prefs exists, source it to populate the current environment
 if [ -f "${MCV_USERPATH}/runMcV.prefs" ]; then
-	. "${MCV_USERPATH}/runMcV.prefs"
+  . "${MCV_USERPATH}/runMcV.prefs"
 fi
 
 if [ "${USE_3DSTUFF}" = "1" ]; then
-	IDV_3D="true"
+  IDV_3D="true"
 else
-	IDV_3D="false"
+  IDV_3D="false"
 fi
 
 # Check for valid heap size
 HEAP_PERCENT=0
 HAS_PERCENT=`echo "${HEAP_SIZE}" |grep [pP%]`
 if [ -n "${HAS_PERCENT}" ]; then
-	HEAP_PERCENT=`echo "${HEAP_SIZE}" |sed -e 's/[pP%]//'`
+  HEAP_PERCENT=`echo "${HEAP_SIZE}" |sed -e 's/[pP%]//'`
 fi
 HAS_ALPHA=`echo "${HEAP_SIZE}" |grep [a-zA-Z%]`
 if [ -z "${HAS_ALPHA}" ]; then
-	HEAP_SIZE="${HEAP_SIZE}M"
+  HEAP_SIZE="${HEAP_SIZE}M"
 fi
 
 # Look for java
 JAVA_BIN="java"
 if [ -f "./jre/bin/java" ]; then
-	JAVA_BIN="./jre/bin/java"
+  JAVA_BIN="./jre/bin/java"
 else
-	if [ -n "${JAVA_HOME}" ]; then
-		JAVA_BIN="${JAVA_HOME}/bin/java"
-	fi
+  if [ -n "${JAVA_HOME}" ]; then
+    JAVA_BIN="${JAVA_HOME}/bin/java"
+  fi
 fi
 
 # Show the welcome window if needed
@@ -131,12 +131,12 @@ SYS_MEM=`${JAVA_BIN} -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2>/dev/nu
 
 # We have system memory, so try to set heap size if a percent was requested
 if [ ${HEAP_PERCENT} -gt 0 ]; then
-	if [ ${SYS_MEM} -gt 0 ]; then
-		HEAP_SIZE=$(( ${SYS_MEM} * ${HEAP_PERCENT} / 100 ))
-		HEAP_SIZE=${HEAP_SIZE}M
-	else
-		HEAP_SIZE=${HEAP_DEFAULT}
-	fi
+  if [ ${SYS_MEM} -gt 0 ]; then
+    HEAP_SIZE=$(( ${SYS_MEM} * ${HEAP_PERCENT} / 100 ))
+    HEAP_SIZE=${HEAP_SIZE}M
+  else
+    HEAP_SIZE=${HEAP_DEFAULT}
+  fi
 fi
 
 # get the default bundle represented so that Mcv can use it
@@ -186,31 +186,31 @@ echo "mcv flags: ${MCV_FLAGS}"
 # Mac OS X settings
 if [ `uname -s` = "Darwin" ]; then
 
-	# Look for the Java3D/JOGL package
-	XBOOTCLASSPATH=
-	if [ -d "java3d" ]; then
-		JAVA3D_LIB=${PWD}/java3d
-		JAVA3D_CP=${JAVA3D_LIB}/j3dcore.jar:${JAVA3D_LIB}/j3dutils.jar:${JAVA3D_LIB}/vecmath.jar
-		XBOOTCLASSPATH=-Xbootclasspath/p:${JAVA3D_CP}
-		if [ -d "jogl" -a "${JOGL_TOGL}" -eq 1 ]; then
-			JOGL_LIB=${PWD}/jogl
-			JOGL_CP=${JOGL_LIB}:${JOGL_LIB}/jogl.jar:${JOGL_LIB}/gluegen-rt.jar
-			export DYLD_LIBRARY_PATH=${JOGL_LIB}
-			XBOOTCLASSPATH=-Xbootclasspath/p:${JOGL_CP}:${JAVA3D_CP}
-		fi
-	fi
-	
-	# If we are on Leopard (or later?):
-	# Use aqua look & feel to get rid of lightweight/heavyweight 3D overlay problems
-	# Get rid of any XBOOTCLASSPATH business and just use system Java3D
-	LEOPARD_OR_BETTER_TEST=`sw_vers -productVersion | cut -d '.' -f 2`
-	if [ "${LEOPARD_OR_BETTER_TEST}" -gt 4 ]; then
-	    MCV_FLAGS="${MCV_FLAGS} -forceaqua"
-	    XBOOTCLASSPATH=
-	fi
-	
-	# Build JAVA_FLAGS and set the dock/menu bar name
-	JAVA_FLAGS="${JAVA_FLAGS} ${XBOOTCLASSPATH} -Xdock:name=McIDAS-V -Xdock:icon=mcidasv.icns"
+  # Look for the Java3D/JOGL package
+  XBOOTCLASSPATH=
+  if [ -d "java3d" ]; then
+    JAVA3D_LIB=${PWD}/java3d
+    JAVA3D_CP=${JAVA3D_LIB}/j3dcore.jar:${JAVA3D_LIB}/j3dutils.jar:${JAVA3D_LIB}/vecmath.jar
+    XBOOTCLASSPATH=-Xbootclasspath/p:${JAVA3D_CP}
+    if [ -d "jogl" -a "${JOGL_TOGL}" -eq 1 ]; then
+      JOGL_LIB=${PWD}/jogl
+      JOGL_CP=${JOGL_LIB}:${JOGL_LIB}/jogl.jar:${JOGL_LIB}/gluegen-rt.jar
+      export DYLD_LIBRARY_PATH=${JOGL_LIB}
+      XBOOTCLASSPATH=-Xbootclasspath/p:${JOGL_CP}:${JAVA3D_CP}
+    fi
+  fi
+  
+  # If we are on Leopard (or later?):
+  # Use aqua look & feel to get rid of lightweight/heavyweight 3D overlay problems
+  # Get rid of any XBOOTCLASSPATH business and just use system Java3D
+  LEOPARD_OR_BETTER_TEST=`sw_vers -productVersion | cut -d '.' -f 2`
+  if [ "${LEOPARD_OR_BETTER_TEST}" -gt 4 ]; then
+      MCV_FLAGS="${MCV_FLAGS} -forceaqua"
+      XBOOTCLASSPATH=
+  fi
+  
+  # Build JAVA_FLAGS and set the dock/menu bar name
+  JAVA_FLAGS="${JAVA_FLAGS} ${XBOOTCLASSPATH} -Xdock:name=McIDAS-V -Xdock:icon=mcidasv.icns"
 
 fi
 # Done with Mac OS X settings
@@ -220,18 +220,18 @@ fi
 
 # Clean the log
 if [ -f "${MCV_LOG}" ]; then
-	LINES=`wc -l "${MCV_LOG}" 2>/dev/null | awk '{print $1}' 2>/dev/null`
-	if [ "${LINES}" = "" ]; then
-		LINES=0
-	fi
-	MCV_TEMP="${MCV_USERPATH}/mcidasv.tmp"
-	if [ ${LINES} -gt ${MCV_LOG_LINES} ]; then
-		tail -${MCV_LOG_LINES} "${MCV_LOG}" > "${MCV_TEMP}"
-		rm -f "${MCV_LOG}" && mv "${MCV_TEMP}" "${MCV_LOG}"
-	fi
+  LINES=`wc -l "${MCV_LOG}" 2>/dev/null | awk '{print $1}' 2>/dev/null`
+  if [ "${LINES}" = "" ]; then
+    LINES=0
+  fi
+  MCV_TEMP="${MCV_USERPATH}/mcidasv.tmp"
+  if [ ${LINES} -gt ${MCV_LOG_LINES} ]; then
+    tail -${MCV_LOG_LINES} "${MCV_LOG}" > "${MCV_TEMP}"
+    rm -f "${MCV_LOG}" && mv "${MCV_TEMP}" "${MCV_LOG}"
+  fi
 fi
 
-MCV_CLASSPATH=".:./mcidasv.jar:./eventbus-1.3.jar:./log4j-over-slf4j-1.6.1.jar:./logback-classic-0.9.28.jar:./logback-core-0.9.28.jar:./miglayout-3.7.3.jar:./slf4j-api-1.6.1.jar:./auxdata.jar:./external.jar:./idv.jar:./jython.jar:./local-visad.jar:./ncIdv.jar:./visad.jar"
+MCV_CLASSPATH=".:./log4j-over-slf4j-1.6.1.jar:./logback-classic-0.9.28.jar:./logback-core-0.9.28.jar:./miglayout-3.7.3.jar:./slf4j-api-1.6.1.jar:./jython.jar:./eventbus-1.3.jar:./mcidasv.jar:./auxdata.jar:./external.jar:./local-idv.jar:./idv.jar:./local-visad.jar:./ncIdv.jar:./visad.jar"
 
 # Log this session
 echo "################" >>"${MCV_LOG}"
