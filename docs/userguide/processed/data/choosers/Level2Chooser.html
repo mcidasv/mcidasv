@@ -1,11 +1,11 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<html>
+<!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- InstanceBeginEditable name="doctitle" -->
 <title>Choosing NEXRAD Level II Radar Data</title>
-<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
-<!-- InstanceEndEditable -->
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
 <link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
 <!-- InstanceBeginEditable name="CurrentFile" -->
 <script language="javascript" type="text/javascript">
@@ -21,11 +21,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Lev
 </head>
 <body onLoad="setParentPage();">
 <div class="TopTitleNav">
-  <p class="style2" style="text-align:left; "> 
-  	[<!-- InstanceBeginEditable name="GoToPrevious" --><a href="RadarChooser.html">Go to Previous</a><!-- InstanceEndEditable -->]
-	<span style="padding-left: 15px; "> 
-	[<!-- InstanceBeginEditable name="GoToNext" --><a href="PointChooser.html">Go to Next</a><!-- InstanceEndEditable -->] 
-	</span> </p>
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="RadarChooser.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="PointChooser.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span> </p>
   <hr align="center">
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
@@ -35,107 +33,113 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Lev
   use this choosers, see <a href="../../quickstart/RadarLevelII.html">Getting
   Started</a>.</p>
 <a name="image1" id="image1"></a>
-<div class="images"><img src="images/Level2Chooser.gif" alt="Level II Radar Chooser">
-<br>
-<span class="caption">Image 1: Level II Radar Chooser</span></div>
+<div class="images"><img src="images/Level2Chooser.gif" alt="Level II Radar Chooser"> <br>
+  <span class="caption">Image 1: Level II Radar Chooser</span></div>
 <a name="remote" id="remote"></a>
 <p></p>
 <div class="pagesubtitle">Properties - Remote Chooser</div>
-<ul>
-<li><strong>Catalog</strong></li>
-<li style="list-style: none">Enter in, or use the default catalog to access the Level II radar data.</li>
-<li><img src="../../quickstart/images/Connect.gif" width="191" height="33"></li>
-<li style="list-style: none">Connect to and queries the server for available
-  radar types and stations.</li>
-<li><strong>Collections:</strong></li>
-<li style="list-style: none">Use the pull down menu to choose the collection to use.</li>
-<li><strong>Station:</strong></li>
-<li style="list-style: none">Select a station using the map. The <strong>Declutter</strong> checkbox allows you to show all stations (not checked), or only a limited number of stations that do not overlap each other (checked). You will need to zoom in to see all the stations without overlaps. Use the Zooming and Panning options to locate a station, or the following buttons:
-<ul>
-<li><img src="images/ZoomIn.gif" width="18" height="18"> <strong>Zoom In</strong></li>
-<li style="list-style: none">Click to zoom in over the current map area.</li>
-<li><img src="images/ZoomOut.gif" width="18" height="18"> <strong>Zoom Out</strong></li>
-<li style="list-style: none">Click to zoom out over the current map area.</li>
-<li><img src="images/PreviousMapArea.gif" width="18" height="18"> <strong>Previous Map Area</strong></li>
-<li style="list-style: none">Click to return to the previous map area.</li>
-<li><img src="images/HomeMapArea.gif" width="18" height="18"> <strong>Home Map Area</strong></li>
-<li style="list-style: none">Click to return to the default map area.</li>
-<li><img src="images/ViewUp.gif" width="18" height="18"> <strong>Move View Up</strong></li>
-<li style="list-style: none">Click to move the view up (map down).</li>
-<li><img src="images/ViewDown.gif" width="18" height="18"> <strong>Move View Down</strong></li>
-<li style="list-style: none">Click to move the view down (map up).</li>
-<li><img src="images/ViewLeft.gif" width="18" height="18"> <strong>Move View Left</strong></li>
-<li style="list-style: none">Click to move the view left (map right).</li>
-<li><img src="images/ViewRight.gif" width="18" height="18"> <strong>Move View Right</strong></li>
-<li style="list-style: none">Click to move the view right (map left).</li>
-</ul>
-</li>
-<li><strong>Times: Relative</strong></li>
-<li style="list-style: none">Allows you to select a group of up to the last 50 times.</li>
-<li><strong>Times: Absolute</strong></li>
-<li style="list-style: none">Allows you to choose one or more absolute times. To select more than one time use Control-Click or Shift-Click. See the <a href="../../tools/Timeline.html">Timeline section</a> for details on its use.</li>
-<li><img src="images/Help.gif"> <strong>Help</strong></li>
-<li style="list-style: none">Brings up this help page.</li>
-<li><img src="images/Refresh.gif"> <strong>Refresh</strong></li>
-<li style="list-style: none">Updates the Level III radar chooser with the most
-  recent data.</li>
-<li><img src="images/Cancel.gif" width="24" height="24"> <strong>Cancel</strong></li>
-<li style="list-style: none">Cancels the query of data and stations. The chooser
-  will reset back to default.</li>
-<li><img src="../../quickstart/images/AddSource.gif"></li>
-<li style="list-style: none">Loads the selected radar data.</li>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Catalog</strong> - Enter in, or use the
+    default catalog to access the Level II radar data.</li>
+  <li class="propertylistitem"><img align=absmiddle src="../../quickstart/images/Connect.gif" width="191" height="33"> -
+    Connect to and queries the server for available radar types and stations.</li>
+  <li class="propertylistitem"><strong>Collections</strong> - Use the pull down
+    menu to choose the collection to use.</li>
+  <li class="propertylistitem"><strong>Station</strong> - Select a station using
+    the map. The <strong>Declutter</strong> checkbox allows you to show all stations
+    (not checked), or only a limited number of stations that do not overlap each
+    other (checked). You will need to zoom in to see all the stations without
+    overlaps. Use the Zooming and Panning options to locate a station, or the
+    following buttons:
+    <p></p>
+    <ul class="propertylist">
+      <li class="propertylistitem"><img align=absmiddle src="images/ZoomIn.gif" width="18" height="18"> <strong>Zoom
+          In</strong> - Click to zoom in over the current map area.</li>
+      <li class="propertylistitem"><img align=absmiddle src="images/ZoomOut.gif" width="18" height="18"> <strong>Zoom
+          Out</strong> - Click to zoom out over the current map area.</li>
+      <li class="propertylistitem"><img align=absmiddle src="images/PreviousMapArea.gif" width="18" height="18"> <strong>Previous
+          Map Area</strong> - Click to return to the previous map area.</li>
+      <li class="propertylistitem"><img align=absmiddle src="images/HomeMapArea.gif" width="18" height="18"> <strong>Home
+          Map Area</strong> - Click to return to the default map area.</li>
+      <li class="propertylistitem"><img align=absmiddle src="images/ViewUp.gif" width="18" height="18"> <strong>Move
+          View Up</strong> - Click to move the view up (map down).</li>
+      <li class="propertylistitem"><img align=absmiddle src="images/ViewDown.gif" width="18" height="18"> <strong>Move
+          View Down</strong> - Click to move the view down (map up).</li>
+      <li class="propertylistitem"><img align=absmiddle src="images/ViewLeft.gif" width="18" height="18"> <strong>Move
+          View Left</strong> - Click to move the view left (map right).</li>
+      <li class="propertylistitem"><img align=absmiddle src="images/ViewRight.gif" width="18" height="18"> <strong>Move
+          View Right</strong> - Click to move the view right (map left).</li>
+    </ul>
+  </li>
+  <li class="propertylistitem"><strong>Times: Relative</strong> - Allows you
+    to select a group of up to the last 50 times.</li>
+  <li class="propertylistitem"><strong>Times: Absolute</strong> - Allows you
+    to choose one or more absolute times. To select more than one time use Control-Click
+    or Shift-Click. See the <a href="../../tools/Timeline.html">Timeline section</a> for
+    details on its use.</li>
+  <li class="propertylistitem"><img align=absmiddle src="images/Help.gif"> <strong>Help</strong> -
+    Brings up this help page.</li>
+  <li class="propertylistitem"><img align=absmiddle src="images/Refresh.gif"> <strong>Refresh</strong> -
+    Updates the Level III radar chooser with the most recent data.</li>
+  <li class="propertylistitem"><img align=absmiddle src="images/Cancel.gif" width="24" height="24"> <strong>Cancel</strong> -
+    Cancels the query of data and stations. The chooser will reset back to default.</li>
+  <li class="propertylistitem"><img align=absmiddle src="../../quickstart/images/AddSource.gif"> -
+    Loads the selected radar data.</li>
 </ul>
 <div class="pagesubtitle">Local Level II Radar Chooser</div>
 <p>The <strong>Radar-&gt;Level II-&gt;Local</strong> chooser allows you to choose
   Level II data from your file system.</p>
 <a name="image2" id="image2"></a>
-<div class="images"><img src="images/LevelIILocalChooser.gif" alt="Level II Local Radar Chooser">
-<br>
-<span class="caption">Image 2: Level II Local Radar Chooser</span></div>
+<div class="images"><img src="images/LevelIILocalChooser.gif" alt="Level II Local Radar Chooser"> <br>
+  <span class="caption">Image 2: Level II Local Radar Chooser</span></div>
 <p></p>
 <div class="pagesubtitle">Properties - Local Chooser</div>
-<ul>
-<li><strong>Station:</strong></li>
-<li style="list-style: none">Use the pull down menu to select the radar location. By default, McIDAS-V will use the folder name to determine the radar location.</li>
-<li><strong>Look In:</strong></li>
-<li style="list-style: none">This pull down menu allows you to select folders to search for data files, or you can double-click on folder names.</li>
-<li><img src="images/UpOneLevel.gif" width="24" height="24"> <strong>Up One Level</strong></li>
-<li style="list-style: none">Moves you up one folder level in your local file system.</li>
-<li><img src="images/Desktop.gif" width="24" height="24"> <strong>Desktop</strong></li>
-<li style="list-style: none">Takes you to the Desktop folder of your local file system.</li>
-<li><img src="images/CreateNewFolder.gif" width="24" height="24"> <strong>Create New Folder</strong></li>
-<li style="list-style: none">Creates a new folder.</li>
-<li><img src="images/List.gif" width="24" height="24"> <strong>List</strong></li>
-<li style="list-style: none">Switches the view to a listing of all folders and files in the current path.</li>
-<li><img src="images/Details.gif" width="23" height="24"> <strong>Details</strong></li>
-<li style="list-style: none">Switches the view to a detailed list of all folders and files in the current path.</li>
-<li><img src="images/ShowHistoryMenu.gif" width="24" height="24"> <strong>Show History Menu</strong></li>
-<li style="list-style: none">Shows a list of the last 15 folders that data was loaded from.</li>
-<li><strong>File Name:</strong></li>
-<li style="list-style: none">Select a file to populate the entry box to show the full name of the file selected.</li>
-<li><strong>Files of Type:</strong></li>
-<li style="list-style: none">Narrow down the files shown in a folder to a specific data type.</li>
-<li><strong>Times:</strong></li>
-<li style="list-style: none">Use the pull down menu to select the option to use the selected file(s) or to select the latest <strong>N</strong> files in the directory.</li>
-<li><strong>File Pattern:</strong></li>
-<li style="list-style: none">Specify the pattern for files to look for if <strong>Relative Times</strong> is set to "Use the <strong>N</strong> most recent times.</li>
-<li><img src="images/Help.gif"> <strong>Help</strong></li>
-<li style="list-style: none">Brings up this help page.</li>
-<li><img src="images/Refresh.gif"> <strong>Refresh</strong></li>
-<li style="list-style: none">Updates the Level III radar chooser with
-  the most recent data.</li>
-<li><img src="../../quickstart/images/AddSource.gif"></li>
-<li style="list-style: none">Loads the selected radar data.</li>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Station</strong> - Use the pull down menu
+    to select the radar location. By default, McIDAS-V will use the folder name
+    to determine the radar location.</li>
+  <li class="propertylistitem"><strong>Look In</strong> - This pull down menu
+    allows you to select folders to search for data files, or you can double-click
+    on folder names.</li>
+  <li class="propertylistitem"><img align=absmiddle src="images/UpOneLevel.gif" width="24" height="24"> <strong>Up
+      One Level</strong> - Moves you up one folder level in your local file system.</li>
+  <li class="propertylistitem"><img align=absmiddle src="images/Desktop.gif" width="24" height="24"> <strong>Desktop</strong> -
+    Takes you to the Desktop folder of your local file system.</li>
+  <li class="propertylistitem"><img align=absmiddle src="images/CreateNewFolder.gif" width="24" height="24"> <strong>Create
+      New Folder</strong> - Creates a new folder.</li>
+  <li class="propertylistitem"><img align=absmiddle src="images/List.gif" width="24" height="24"> <strong>List</strong> -
+    Switches the view to a listing of all folders and files in the current path.</li>
+  <li class="propertylistitem"><img align=absmiddle src="images/Details.gif" width="23" height="24"> <strong>Details</strong> -
+    Switches the view to a detailed list of all folders and files in the current
+    path.</li>
+  <li class="propertylistitem"><img align=absmiddle src="images/ShowHistoryMenu.gif" width="24" height="24"> <strong>Show
+      History Menu</strong> - Shows a list of the last 15 folders that data was
+      loaded from.</li>
+  <li class="propertylistitem"><strong>File Name</strong> - Select a file to
+    populate the entry box to show the full name of the file selected.</li>
+  <li class="propertylistitem"><strong>Files of Type</strong> - Narrow down the
+    files shown in a folder to a specific data type.</li>
+  <li class="propertylistitem"><strong>Times</strong> - Use the pull down menu
+    to select the option to use the selected file(s) or to select the latest <strong>N</strong> files
+    in the directory.</li>
+  <li class="propertylistitem"><strong>File Pattern</strong> - Specify the pattern
+    for files to look for if <strong>Relative Times</strong> is set to "Use the <strong>N</strong> most
+    recent times.</li>
+  <li class="propertylistitem"><img align=absmiddle src="images/Help.gif"> <strong>Help</strong> -
+    Brings up this help page.</li>
+  <li class="propertylistitem"><img align=absmiddle src="images/Refresh.gif"> <strong>Refresh</strong> -
+    Updates the Level III radar chooser with the most recent data.</li>
+  <li class="propertylistitem"><img align=absmiddle src="../../quickstart/images/AddSource.gif"> -
+    Loads the selected radar data.</li>
 </ul>
 <div class="childlist"></div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
-  <p class="style2" style="text-align:left; "> 
-  	[<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="RadarChooser.html">Go to Previous</a><!-- InstanceEndEditable -->] 
-	<span style="padding-left: 15px; "> 
-	[<!-- InstanceBeginEditable name="GoToNext2" --><a href="PointChooser.html">Go to Next</a><!-- InstanceEndEditable -->] 
-	</span></p>
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="RadarChooser.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="PointChooser.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span></p>
 </div>
 </body>
-<!-- InstanceEnd --></html>
+<!-- InstanceEnd -->
+</html>

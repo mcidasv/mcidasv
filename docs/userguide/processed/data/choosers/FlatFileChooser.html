@@ -37,58 +37,41 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Fla
 <p></p>
 <div class="pagesubtitle">Properties</div>
 
-<ul>
-  <li><strong>Files:</strong></li>
-  <li style="list-style: none">Enter in a file location or use the <img src="images/BrowseFiles.gif" width="24" height="24"> button to browse your local disk.</li>
-  <li><strong>Type:</strong></li>
-  <li style="list-style: none">McIDAS-V will attempt to determine the type of file you are loading.  If it is an unknown format, <strong>Binary, ASCII or Image data</strong> will be displayed.
-  <li><strong>Description:</strong></li>
-  <li style="list-style: none">If available, a description of the data will be displayed.  If no description can be found, the file name is displayed.</li>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Files</strong> - Enter in a file location or use the <img src="images/BrowseFiles.gif" width="24" height="24"> button to browse your local disk.</li>
+  <li class="propertylistitem"><strong>Type</strong> - McIDAS-V will attempt to determine the type of file you are loading.  If it is an unknown format, <strong>Binary, ASCII or Image data</strong> will be displayed.
+  <li class="propertylistitem"><strong>Description</strong> - If available, a description of the data will be displayed.  If no description can be found, the file name is displayed.</li>
 
-  <li><strong>Properties-&gt;Dimensions:</strong></li>
-  <ul>
-    <li><strong>Elements:</strong></li>
-    <li style="list-style: none">The number of elements (columns) in the data.</li>
-    <li><strong>Lines:</strong></li>
-    <li style="list-style: none">The number of lines (rows) in the data.</li>
-    <li><strong>Bands:</strong></li>
-    <li style="list-style: none">The number of bands (layers) in the data.</li>
-    <li><strong>Units:</strong></li>
-    <li style="list-style: none">The unit type of the data.</li>
-    <li><strong>Sampling:</strong></li>
-    <li style="list-style: none">The number of points to skip in each dimension
+  <li class="propertylistitem"><strong>Properties-&gt;Dimensions:</strong></li>
+  <ul class="propertylist">
+    <li class="propertylistitem"><strong>Elements</strong> - The number of elements (columns) in the data.</li>
+    <li class="propertylistitem"><strong>Lines</strong> - The number of lines (rows) in the data.</li>
+    <li class="propertylistitem"><strong>Bands</strong> - The number of bands (layers) in the data.</li>
+    <li class="propertylistitem"><strong>Units</strong> - The unit type of the data.</li>
+    <li class="propertylistitem"><strong>Sampling</strong> - The number of points to skip in each dimension
       when loading the data. Useful with very large data files.</li>
   </ul>
 
-  <li><strong>Properties-&gt;Navigation:</strong></li>
-  <ul>
-    <li><strong>Files:</strong></li>
-    <li style="list-style: none">Navigation files containing grids of Latitude/Longitude points can by specified by clicking on the <img src="images/BrowseFiles.gif" width="24" height="24"> buttons.</li>
-    <li><strong>Bounds:</strong></li>
-    <li style="list-style: none">A navigation bounding box can be specified by entering Upper Left (UL) and Lower Right (LR) Latitude/Longitude pairs.</li>
-    <li><strong>Scale:</strong></li>
-    <li style="list-style: none">The scaling factor if the Latitude/Longitude navigation dimensions are different than the data.</li>
-    <li><strong>East positive:</strong></li>
-    <li style="list-style: none">Checkbox to indicate that the data is East Positive</li>
+  <li class="propertylistitem"><strong>Properties-&gt;Navigation:</strong></li>
+  <ul class="propertylist">
+    <li class="propertylistitem"><strong>Files</strong> - Navigation files containing grids of Latitude/Longitude points can by specified by clicking on the <img src="images/BrowseFiles.gif" width="24" height="24"> buttons.</li>
+    <li class="propertylistitem"><strong>Bounds</strong> - A navigation bounding box can be specified by entering Upper Left (UL) and Lower Right (LR) Latitude/Longitude pairs.</li>
+    <li class="propertylistitem"><strong>Scale</strong> - The scaling factor if the Latitude/Longitude navigation dimensions are different than the data.</li>
+    <li class="propertylistitem"><strong>East positive</strong> - Checkbox to indicate that the data is East Positive</li>
   </ul>
 
-  <li><strong>Properties-&gt;Format:</strong></li>
-  <ul>
-    <li><strong>Binary:</strong></li>
-    <li style="list-style: none">When loading binary files the <strong>Byte format</strong>, <strong>Interleave</strong>, and <strong>Endian</strong>-ness must accurately describe the data.  A byte <strong>Offset</strong> into the data can also be given.</li>
-    <li><strong>ASCII:</strong></li>
-    <li style="list-style: none">When loading ASCII files the <strong>Delimiter</strong> character must be given.</li>
-    <li><strong>Image:</strong></li>
-    <li style="list-style: none">When loading a raw Image this option must be selected.</li>
-    <li><strong>Missing value:</strong><br>
+  <li class="propertylistitem"><strong>Properties-&gt;Format:</strong></li>
+  <ul class="propertylist">
+    <li class="propertylistitem"><strong>Binary</strong> - When loading binary files the <strong>Byte format</strong>, <strong>Interleave</strong>, and <strong>Endian</strong>-ness must accurately describe the data.  A byte <strong>Offset</strong> into the data can also be given.</li>
+    <li class="propertylistitem"><strong>ASCII</strong> - When loading ASCII files the <strong>Delimiter</strong> character must be given.</li>
+    <li class="propertylistitem"><strong>Image</strong> - When loading a raw Image this option must be selected.</li>
+    <li class="propertylistitem"><strong>Missing value:</strong><br>
       If there is a value for missing data, enter it here.
     </li>
   </ul>
 
-  <li><img src="images/Help.gif" width="25" height="24"> <strong>Help</strong></li>
-  <li style="list-style: none">Brings up this help page.</li>
-  <li><img src="../../quickstart/images/AddSource.gif" width="191" height="32"></li>
-  <li style="list-style: none">Loads the selected data.</li>
+  <li class="propertylistitem"><img align=absmiddle src="images/Help.gif" width="25" height="24"> <strong>Help</strong> - Brings up this help page.</li>
+  <li class="propertylistitem"><img align=absmiddle src="../../quickstart/images/AddSource.gif" width="191" height="32"> - Loads the selected data.</li>
 
 </ul>
 

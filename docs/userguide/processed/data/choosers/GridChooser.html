@@ -37,32 +37,24 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Gri
 <span class="caption">Image 1: Remote Grid Chooser</span></div>
 <p></p>
 <div class="pagesubtitle">Properties</div>
-<ul>
-  <li><strong>Catalog:</strong></li>
-  <li style="list-style: none">Enter in a catalog URL (and hit Enter or click <strong><img src="images/Refresh.gif" width="23" height="24"> Refresh </strong>)
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Catalog</strong> - Enter in a catalog URL (and hit Enter or click <strong><img src="images/Refresh.gif" width="23" height="24"> Refresh </strong>)
     or select a catalog URL from the pull down menu. Use the <strong>Select File</strong> button
     to select a catalog on your local disk.</li>
-  <li><strong>History:</strong></li>
-  <li style="list-style: none">Use the <img src="images/Cat-Back.gif" width="13" height="15"> and <img src="images/Cat-Fwd.gif" width="13" height="15"> buttons
+  <li class="propertylistitem"><strong>History</strong> - Use the <img src="images/Cat-Back.gif" width="13" height="15"> and <img src="images/Cat-Fwd.gif" width="13" height="15"> buttons
     to switch back and forth between selected catalogs.</li>
-  <li><strong>Data Source Type:</strong></li>
-  <li style="list-style: none">If left as &quot;I'm Feeling Lucky&quot;, McIDAS-V
+  <li class="propertylistitem"><strong>Data Source Type</strong> - If left as &quot;I'm Feeling Lucky&quot;, McIDAS-V
     will figure out what kind of data is in the file by the URL itself. This
     can be overridden by selecting the type of data the file contains from the
     pull down menu. Click <a href="../DataSources.html">here</a> for a list of
     available data source types.</li>
-  <li><strong>Tree Structure</strong></li>
-  <li style="list-style: none">Open the tree structure by clicking on the <img src="../images/TreeTagClosed.gif" width="22" height="21"> tab
+  <li class="propertylistitem"><strong>Tree Structure</strong> - Open the tree structure by clicking on the <img src="../images/TreeTagClosed.gif" width="22" height="21"> tab
     icon. Clicking on a data source will enable the <strong>Add Source</strong> button.</li>
-  <li><strong>Show Thumbnail Images</strong></li>
-  <li style="list-style: none">When checked, thumbnails are shown in the THREDDS catalog if available.</li>
-  <li><img src="images/Help.gif" width="25" height="24"> <strong>Help</strong></li>
-  <li style="list-style: none">Brings up this help page.</li>
-  <li><img src="images/Refresh.gif" width="23" height="24"> <strong>Refresh</strong></li>
-  <li style="list-style: none">Updates the catalog chooser with the most recent
+  <li class="propertylistitem"><strong>Show Thumbnail Images</strong> - When checked, thumbnails are shown in the THREDDS catalog if available.</li>
+  <li class="propertylistitem"><img align=absmiddle src="images/Help.gif" width="25" height="24"> <strong>Help</strong> - Brings up this help page.</li>
+  <li class="propertylistitem"><img align=absmiddle src="images/Refresh.gif" width="23" height="24"> <strong>Refresh</strong> - Updates the catalog chooser with the most recent
     data.</li>
-  <li><img src="../../quickstart/images/AddSource.gif" width="191" height="32"></li>
-  <li style="list-style: none">Loads the selected data.</li>
+  <li class="propertylistitem"><img align=absmiddle src="../../quickstart/images/AddSource.gif" width="191" height="32"> - Loads the selected data.</li>
 </ul>
 <p>The following image displays the <strong>Gridded Data -&gt; Local </strong>chooser:</p>
 <a name="image2" id="image2"></a>
@@ -70,49 +62,31 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Gri
   <span class="caption">Image 2: Local Grid Chooser</span></div>
 <p></p>
 <div class="pagesubtitle">Properties</div>
-<ul>
-<li><strong>Data Type:</strong></li>
-<li style="list-style: none">If left as "I'm Feeling Lucky", McIDAS-V will figure out what kind of data is in the file by the filename itself. This can be overridden by selecting the type of data the file contains from the pull down menu. Click <a href="../DataSources.html">here</a> for a list of available data source types.</li>
-<li><strong>Look In:</strong></li>
-<li style="list-style: none">This pulldown menu allows you to select folders
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Data Type</strong> - If left as "I'm Feeling Lucky", McIDAS-V will figure out what kind of data is in the file by the filename itself. This can be overridden by selecting the type of data the file contains from the pull down menu. Click <a href="../DataSources.html">here</a> for a list of available data source types.</li>
+<li class="propertylistitem"><strong>Look In</strong> - This pulldown menu allows you to select folders
   to search for data files, or you can double-click on folder names.</li>
-<li><img src="images/UpOneLevel.gif" width="24" height="24"> <strong>Up One Level</strong></li>
-<li style="list-style: none">Moves you up one folder level in your local file system.</li>
-<li><img src="images/Desktop.gif" width="24" height="24"> <strong>Desktop</strong></li>
-<li style="list-style: none">Takes you to the Desktop folder of your local file system.</li>
-<li><img src="images/CreateNewFolder.gif" width="24" height="24"> <strong>Create New Folder</strong></li>
-<li style="list-style: none">Creates a new folder.</li>
-<li><img src="images/List.gif" width="24" height="24"> <strong>List</strong></li>
-<li style="list-style: none">Switches the view to a listing of all folders and files in the current path.</li>
-<li><img src="images/Details.gif" width="23" height="24"> <strong>Details</strong></li>
-<li style="list-style: none">Switches the view to a detailed list of all folders and files in the current path.</li>
-<li><img src="images/ShowHistoryMenu.gif" width="24" height="24"> <strong>Show History Menu</strong></li>
-<li style="list-style: none">Shows a list of the last 15 folders that data was loaded from.</li>
-<li><strong>File Name</strong></li>
-<li style="list-style: none">Select a file to populate the entry box to show the full name of the file selected.</li>
-<li><strong>Files of Type:</strong></li>
-<li style="list-style: none">Narrows down the files shown in a folder to a specific
+<li class="propertylistitem"><img align=absmiddle src="images/UpOneLevel.gif" width="24" height="24"> <strong>Up One Level</strong> - Moves you up one folder level in your local file system.</li>
+<li class="propertylistitem"><img align=absmiddle src="images/Desktop.gif" width="24" height="24"> <strong>Desktop</strong> - Takes you to the Desktop folder of your local file system.</li>
+<li class="propertylistitem"><img align=absmiddle src="images/CreateNewFolder.gif" width="24" height="24"> <strong>Create New Folder</strong> - Creates a new folder.</li>
+<li class="propertylistitem"><img align=absmiddle src="images/List.gif" width="24" height="24"> <strong>List</strong> - Switches the view to a listing of all folders and files in the current path.</li>
+<li class="propertylistitem"><img align=absmiddle src="images/Details.gif" width="23" height="24"> <strong>Details</strong> - Switches the view to a detailed list of all folders and files in the current path.</li>
+<li class="propertylistitem"><img align=absmiddle src="images/ShowHistoryMenu.gif" width="24" height="24"> <strong>Show History Menu</strong> - Shows a list of the last 15 folders that data was loaded from.</li>
+<li class="propertylistitem"><strong>File Name</strong> - Select a file to populate the entry box to show the full name of the file selected.</li>
+<li class="propertylistitem"><strong>Files of Type</strong> - Narrows down the files shown in a folder to a specific
   data type.</li>
-<li><strong>Recent Files:</strong></li>
-<li style="list-style: none">Choose the number of files you want to search for by an absolute number, or by the files that have been updated in a certain number of minutes.</li>
-<li><strong>Refresh:</strong></li>
-<li style="list-style: none">When the  checkbox is selected,
+<li class="propertylistitem"><strong>Recent Files</strong> - Choose the number of files you want to search for by an absolute number, or by the files that have been updated in a certain number of minutes.</li>
+<li class="propertylistitem"><strong>Refresh</strong> - When the  checkbox is selected,
   the files and associated displays will automatically update. Change the number
   of minutes
   to control the update frequency.</li>
-  <li><strong>File Pattern:</strong></li>
-<li style="list-style: none">You can choose to enter in a patter for the files you want to poll on.</li>
-<li><strong>Verify</strong></li>
-<li style="list-style: none">Click to verify the files that will be scanned.</li>
-<li><strong>Include Hidden Files</strong></li>
-<li style="list-style: none">When clicked, hidden files will be inclucded in the polling.</li>
-<li><img src="images/Help.gif"><strong>Help</strong></li>
-<li style="list-style: none">Brings up this help page.</li>
-<li><img src="images/Refresh.gif"><strong>Refresh</strong></li>
-<li style="list-style: none">Rescans the current directory and update the file
+  <li class="propertylistitem"><strong>File Pattern</strong> - You can choose to enter in a patter for the files you want to poll on.</li>
+<li class="propertylistitem"><strong>Verify</strong> - Click to verify the files that will be scanned.</li>
+<li class="propertylistitem"><strong>Include Hidden Files</strong> - When clicked, hidden files will be inclucded in the polling.</li>
+<li class="propertylistitem"><img align=absmiddle src="images/Help.gif"><strong>Help</strong> - Brings up this help page.</li>
+<li class="propertylistitem"><img align=absmiddle src="images/Refresh.gif"><strong>Refresh</strong> - Rescans the current directory and update the file
   chooser if the files have changed.</li>
-<li><img src="../../quickstart/images/AddSource.gif"></li>
-<li style="list-style: none">Loads the file(s) selected. The data file(s) will
+<li class="propertylistitem"><img align=absmiddle src="../../quickstart/images/AddSource.gif"> - Loads the file(s) selected. The data file(s) will
   appear in the <a href="../FieldSelector.html">Field Selector</a> window.</li>
 </ul>
 <div class="childlist"></div>

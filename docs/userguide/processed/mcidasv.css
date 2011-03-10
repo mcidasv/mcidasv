@@ -148,6 +148,14 @@ code.menu {
   color: #000000;
 }
 
+.propertylist {
+  list-style-type:none;
+}
+  
+.propertylistitem {
+  padding-bottom:10px;
+}
+
 p {
   clear: left;
   margin-top: 10px;
