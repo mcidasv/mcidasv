@@ -37,31 +37,32 @@ based on a range, interval, etc.</p>
   <span class="caption">Image 1: Chooser Timeline</span></div>
   <p></p>
   <div class="pagesubtitle">Date Selection</div>
-The date selection is defined by:
-<ul>
-  <li><strong>Start/End</strong> date: These define the range to look within.</li>
-  <li><strong>Interval</strong>: If defined, this allows you to select dates
-    every N time units. For example, you can set the interval to be one hour.
-    The times that are selected are the ones closest to the one hour interval
-    ticks.</li>
-  <li><strong>Before/After Range</strong>: These are displayed by the little
-    gray triangles in the timeline. By default, the ranges that we use are one
-    half the size of the interval. However, you can set the range both before
-    and after the interval tick. So for example, if you want to just consider
-    times within 15 minutes before the interval but nothing after the interval
-    set the Before Range to be 15 minutes and the After Range to be 0 minutes.</li>
-  <li><strong>Count</strong>: You can specify a max number of times that will
-    be selected. Only the most recent N times will be selected.</li>
-  <li><strong>Skip Factor</strong>: This says to skip every N'th time that would
-    be selected. For example, the date selection first considers the interval/ranges
-    (if defined), then it applies the skip (e.g., only every 3rd time), then
-    it looks at the max count.</li>
+The date selection settings can be accessed by right-clicking in the timeline
+to show a popup menu. The menu allows you explicitly define these settings through
+a Properties dialog or set them directly with sub-menu choices.
+The date selection settings are listed below.
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Start/End</strong> date - These define
+    the range to look within.</li>
+  <li class="propertylistitem"><strong>Interval</strong> - If defined, this allows
+    you to select dates every N time units. For example, you can set the interval
+    to be one hour. The times that are selected are the ones closest to the one
+    hour interval ticks.</li>
+  <li class="propertylistitem"><strong>Before/After Range</strong> - These are
+    displayed by the little gray triangles in the timeline. By default, the ranges
+    that we use are one half the size of the interval. However, you can set the
+    range both before and after the interval tick. So for example, if you want
+    to just consider times within 15 minutes before the interval but nothing
+    after the interval set the Before Range to be 15 minutes and the After Range
+    to be 0 minutes.</li>
+  <li class="propertylistitem"><strong>Count</strong> - You can specify a max
+    number of times that will be selected. Only the most recent N times will
+    be selected.</li>
+  <li class="propertylistitem"><strong>Skip Factor</strong> - This says to skip
+    every N'th time that would be selected. For example, the date selection first
+    considers the interval/ranges (if defined), then it applies the skip (e.g.,
+    only every 3rd time), then it looks at the max count.</li>
 </ul>
-These can be accessed by right-clicking in the timeline to show a popup menu.
-The menu allows you explicitly define these settings through a Properties dialog
-or (much more easy) set them directly with sub-menu choices.
-<div class="childlist"></div>
-<br></br>
 <p>The View Managers use the timeline to show the animation time set and the
   times of the different displays. Here, the timeline is used for informational
   purposes and is not used to select times. This can be shown through the <strong>View-&gt;Animation

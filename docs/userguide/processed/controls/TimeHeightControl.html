@@ -1,11 +1,11 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<html>
+<!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- InstanceBeginEditable name="doctitle" -->
 <title>Time-Height Control</title>
-<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
-<!-- InstanceEndEditable -->
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
 <link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
 <!-- InstanceBeginEditable name="CurrentFile" -->
 <script language="javascript" type="text/javascript">
@@ -21,11 +21,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/TimeHeig
 </head>
 <body onLoad="setParentPage();">
 <div class="TopTitleNav">
-  <p class="style2" style="text-align:left; "> 
-  	[<!-- InstanceBeginEditable name="GoToPrevious" --><a href="ProbeControl.html">Go to Previous</a><!-- InstanceEndEditable -->]
-	<span style="padding-left: 15px; "> 
-	[<!-- InstanceBeginEditable name="GoToNext" --><a href="ProfileControl.html">Go to Next</a><!-- InstanceEndEditable -->] 
-	</span> </p>
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="ProbeControl.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="ProfileControl.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span> </p>
   <hr align="center">
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
@@ -33,69 +31,61 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/TimeHeig
 <xxxmeta xxxname="jhid" value="idv.controls.timeheightcontrol">
 <div class="pagesubtitle">Overview</div>
 <p>A time-height display is a display of samples of a 3D parameter along a vertical
-profile line from top to bottom of the available data, with time as the independent
-coordinate (x axis). You can choose both a contour time height display and a
-color shaded time height display.</p>
+  profile line from top to bottom of the available data, with time as the independent
+  coordinate (x axis). You can choose both a contour time height display and
+  a color shaded time height display.</p>
 <div class="images"><img  src="images/TimeHeightControlGui.gif"  alt="images/TimeHeightControlGui.gif" ></div>
 <p></p>
 <div class="pagesubtitle">Properties</div>
-<ul>
-  <li><b>Position</b></li>
-    <p>The map position of the vertical profile is indicated by the &quot;Lat:
-      Long:&quot; readout
-  below the graph. Enter a value in the latitude or longitude field and press
-  return to set the value.</p>
-  <p>The map position of the profile is shown in the main 3D view window by a
-    colored vertical line. There is a Selector Point on top of the vertical line.
-    You can move the vertical profile line over the map by dragging the Selector
-    Point with the left mouse button. You can zoom in on the display graph by
-    holding down the Shift key and dragging the mouse pointer up while pressing
-    the left mouse button; drag down to zoom out. You can pan the graph by holding
-    down the Ctrl key and dragging the mouse pointer in any direction while pressing
-  the left mouse button.</p>
-  <p></p>
-  <li><b>Contour</b></li>
-    <p> To set contour information use the <b>Contour: Change </b> button, which
-      brings up the <a href="../tools/ContourDialog.html">Contour Properties
-      Editor</a>.</p>
-    <p></p>
-  <li><b>Color Table</b></li>
-    <p> The control has a color bar showing the active color table and the associated
-      high and low data values in the units the display is made in. As the mouse
-      pointer is moved over the color bar, the value at a particular color is
-      shown. Click on the color bar to start the <a  href="../tools/ColorTableEditor.html">Color
-      Table Editor</a>. Or click on the button that displays the name of the
-      color table to show a popup menu that allows you to change the range, select
-      other color tables, etc.</p>
-    <p></p>
-  <li><b>Latest Data on Left</b></li>
-    <p> This checkbox reorders the x axis of the display to show the latests
-      data on the left when checked, and on the right when unchecked.</p><p></p>
-  <li><strong>Reset Probe Position</strong></li>
-    <p>Resets the location of the probe to the default location of the center
-      of the data boundaries. This option is found under the <strong>Edit</strong> menu.</p><p></p>
-  <li><strong>Selector Color</strong></li>
-    <p>Change the color of the selector point on top of the vertical profile
-      line by using the <strong>Edit-&gt;Selector
-    Color</strong> menu.</p>
-    <p></p>
-  <li><strong>Change Parameter</strong></li>
-    <p>Change the parameter of the vertical profile by using the <strong>Edit-&gt;Change
-        Parameter</strong> menu.</p><p></p>
-  <li><strong>Change Display Unit </strong></li>
-    <p>Change the unit of the parameter to be displayed by using the <strong>Edit-&gt;Change
-        Display Unit</strong> menu.  </p>
+<ul class="propertylist">
+  <li class="propertylistitem"><b>Position</b> - The map position of the vertical
+    profile is indicated by the &quot;Lat: Long:&quot; readout below the graph.
+    Enter a value in the latitude or longitude field and press return to set
+    the value.    </li>
+	<ul class="propertylist">
+
+  <li class="propertylistitem">The map position of the profile is shown in the
+    main 3D view window by a colored vertical line. There is a Selector Point
+    on top of the vertical line. You can move the vertical profile line over
+    the map by dragging the Selector Point with the left mouse button. You can
+    zoom in on the display graph by holding down the Shift key and dragging the
+        mouse pointer up while pressing the left mouse button; drag down to zoom
+        out. You can pan the graph by holding down the Ctrl key and dragging
+    the mouse pointer in any direction while pressing the left mouse button.</li>
+	</ul>
+  <li class="propertylistitem"><b>Contour</b> - To set contour information use
+    the <b>Contour: Change </b> button, which brings up the <a href="../tools/ContourDialog.html">Contour
+    Properties Editor</a>.</li>
+  <li class="propertylistitem"><b>Color Table</b> - The control has a color bar showing the active color
+    table and the associated high and low data values in the units the display
+    is made in. As the mouse pointer is moved over the color bar, the value at
+    a particular color is shown. Click on the color bar to start the <a  href="../tools/ColorTableEditor.html">Color
+    Table Editor</a>. Or click on the button that displays the name of the color
+    table to show a popup menu that allows you to change the range, select other
+    color tables, etc.</li>
+  <li class="propertylistitem"><b>Latest Data on Left</b> - This checkbox reorders
+    the x axis of the display to show the latests data on the left when checked,
+    and on the right when unchecked.</li>
+  <li class="propertylistitem"><strong>Reset Probe Position</strong> - Resets
+    the location of the probe to the default location of the center of the data
+    boundaries. This option is found under the <strong>Edit</strong> menu.</li>
+  <li class="propertylistitem"><strong>Selector Color</strong> - Change the color
+    of the selector point on top of the vertical profile line by using the <strong>Edit-&gt;Selector
+    Color</strong> menu.</li>
+  <li class="propertylistitem"><strong>Change Parameter</strong> - Change the
+    parameter of the vertical profile by using the <strong>Edit-&gt;Change Parameter</strong> menu.</li>
+  <li class="propertylistitem"><strong>Change Display Unit </strong> - Change
+    the unit of the parameter to be displayed by using the <strong>Edit-&gt;Change
+    Display Unit</strong> menu.
+    </p>
 </ul>
-<div  class="childlist" > </div>
-<p></p>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
-  <p class="style2" style="text-align:left; "> 
-  	[<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="ProbeControl.html">Go to Previous</a><!-- InstanceEndEditable -->] 
-	<span style="padding-left: 15px; "> 
-	[<!-- InstanceBeginEditable name="GoToNext2" --><a href="ProfileControl.html">Go to Next</a><!-- InstanceEndEditable -->] 
-	</span></p>
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="ProbeControl.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="ProfileControl.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span></p>
 </div>
 </body>
-<!-- InstanceEnd --></html>
+<!-- InstanceEnd -->
+</html>

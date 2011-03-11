@@ -40,9 +40,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/hydra/Li
 <p>The console allows a user to define multiple spectra and perform more complex
   mathmatical operations.</p>
 <div class="pagesubtitle">Command line functions</div>
-<ul>
-  <li><b>selector(</b><em>wavenumber, color </em><b>)</b></li>
-    <p>The <strong>selector</strong> Jython function creates a spectra line with
+<ul class="propertylist">
+  <li class="propertylistitem"><b>selector(</b><em>wavenumber, color </em><b>)</b> - The <strong>selector</strong> Jython function creates a spectra line with
       a optionally defined color and wavelength. If no wavenumber parameter is
       found, a data-dependent default value will be used. If no color parameter
       is found, the color of the selector bar will default to green. The spectra
@@ -79,8 +78,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/hydra/Li
 	  </tr>
 	</table>
     <p></p>
-  <li><strong>combine(combination</strong><em>, name </em><strong>)</strong></li>
-    <p> The <strong>combine</strong> Jython function computes the mathmatical
+  <li class="propertylistitem"><strong>combine(combination</strong><em>, name </em><strong>)</strong> -  The <strong>combine</strong> Jython function computes the mathmatical
       operation corresponding to the expression entered. The
       results are available in the <strong>Field
       Selector</strong> under
@@ -117,14 +115,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/hydra/Li
 	  </tr>
 	</table>
     <p></p>
-  <li><strong>print()</strong></li>
-    <p>The <strong>print</strong> function prints out information about the current
+  <li class="propertylistitem"><strong>print()</strong> - The <strong>print</strong> function prints out information about the current
       wavelength/wavenumber of a selector, or its value.</p>
 </ul>
 <div class="pagesubtitle">Linear Combination Properties </div>
-<ul>
-  <li><b>Spectra Window </b></li>
-    <p> Use the <strong>Ctrl+Left
+<ul class="propertylist">
+  <li class="propertylistitem"><b>Spectra Window </b> - Use the <strong>Ctrl+Left
         Click+Drag</strong> combination to create a box of a region to zoom in
         on. To return to the full spectra, use <strong>Shift+Left Click</strong>.
         Middle clicking on a point in the spectra will change the wavenumber

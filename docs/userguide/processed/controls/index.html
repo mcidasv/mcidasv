@@ -79,160 +79,108 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/index.ht
   and <strong>Help</strong> menu items, shown in the menu bar. Different controls
   may also have custom items in these menus as well.</p>
 <p>The <strong>File</strong> menu has these common choices:</p>
-<p><ul>
-  <li><strong>Remove Display</strong></li>
-  <li style="list-style: none">
-    <div class="menudesc">Remove the display.</div>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Remove Display</strong> - Remove the display.</div>
   </li>
-  <li><strong>Save</strong></li>
-  <li style="list-style: none">
-    <div class="menudesc">A variety of ways of saving the state of the display.</div>
-    <ul>
-      <li><strong>Save Data in Cache</strong></li>
-      <li style="list-style: none">
-        <div class="menudesc">This allows you to save the current data of the
+  <li class="propertylistitem"><strong>Save</strong> - A variety of ways of saving the state of the display.</div>
+    <ul class="propertylist">
+      <li class="propertylistitemfirst"><strong>Save Data in Cache</strong> - This allows you to save the current data of the
           display in a Cache Data Source as a new Field. You will be prompted
-          for the name of the field. You can use this in a variety of ways:
+          for the name of the field. You can use this in a variety of ways:<p></p>
           <ul>
             <li>After calculating a complex formula, selecting operands for the
               formula, etc., to create the data in a display you can save off
               the formula and the data that was calculated. Then you can create
               new displays from that formula without having to reselect the operands
               and recalculate the final data.</li>
-            <li>In a Web Map Server (WMS) display this allows you to capture
+            <li class="propertylistitem">In a Web Map Server (WMS) display this allows you to capture
               the image and then make use of it in formulas and in other displays.
               For example, you can drape the image over topography.</li>
           </ul>
-        </div>
       </li>
-      <li><strong>Save As Parameter Defaults</strong></li>
-      <li style="list-style: none">
-        <div class="menudesc">Allows you to save the current display state for
+      <li class="propertylistitem"><strong>Save As Parameter Defaults</strong> - Allows you to save the current display state for
           the parameter as the default for that parameter in the future. See
           the <a href="../tools/ParameterDefaultsEditor.html">Parameter Defaults
           Editor</a> page for more information.</div>
       </li>
-      <li><strong>Save Display as Favorite</strong></li>
-      <li style="list-style: none">
-        <div class="menudesc">Allows you to save the current display state (without
+      <li class="propertylistitem"><strong>Save Display as Favorite</strong> - Allows you to save the current display state (without
           the data) as a Favorite Display.</div>
       </li>
-      <li><strong>Save Display as Bundle</strong></li>
-      <li style="list-style: none">
-        <div class="menudesc">Allows you to save the current application state
+      <li class="propertylistitem"><strong>Save Display as Bundle</strong> - Allows you to save the current application state
           as a bundle or Web Start JNLP file.</div>
       </li>
     </ul>
   </li>
-  <li><strong>Reload Data</strong></li>
-  <li style="list-style: none">
-    <div class="menudesc">Reload the data for this display.</div>
+  <li class="propertylistitem"><strong>Reload Data</strong> - Reload the data for this display.</div>
   </li>
-  <li><strong>Close Window</strong></li>
-  <li style="list-style: none">
-    <div class="menudesc">If the Display Control is shown in its own window this
+  <li class="propertylistitem"><strong>Close Window</strong> - If the Display Control is shown in its own window this
       is used to close the control window. It normally doesn't remove the control
       (unless a preference has been set).</div>
   </li>
-</ul></p>
-<p>The <strong>Edit</strong> menu has these common choices:</p>
-<ul>
-  <li><strong>Color Table</strong></li>
-  <li style="list-style: none">
-    <div class="menudesc">For displays that have a <a href="../tools/ColorTableEditor.html">color table</a> this menu allows
+</ul>
+</p>
+The <strong>Edit</strong> menu has these common choices:
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Color Table</strong> - For displays that have a <a href="../tools/ColorTableEditor.html">color table</a> this menu allows
       you to edit the color table, change the range, choose a new color table,
       etc.</div>
   </li>
-  <li><strong>Selector Color, et. al.</strong></li>
-  <li style="list-style: none">
-    <div class="menudesc">Some displays (e.g., data probe) use a single color
+  <li class="propertylistitem"><strong>Selector Color, et. al.</strong> - Some displays (e.g., data probe) use a single color
       in the display (e.g., for showing the selector point or line). Use this
       menu to set the color.</div>
   </li>
-  <li><strong>Change Parameter</strong></li>
-  <li style="list-style: none">
-    <div class="menudesc">Some displays allow you to change the data parameter
+  <li class="propertylistitem"><strong>Change Parameter</strong> - Some displays allow you to change the data parameter
       that is being used.</div>
   </li>
-  <li><strong>Change Display Unit</strong></li>
-  <li style="list-style: none">
-    <div class="menudesc">Some displays allow you to change the unit that is
+  <li class="propertylistitem"><strong>Change Display Unit</strong> - Some displays allow you to change the unit that is
       used in the display, e.g., changing temperature plots in Kelvin to Celsius.</div>
   </li>
-  <li><strong>Change Contours</strong></li>
-  <li style="list-style: none">
-    <div class="menudesc">Displays with contours allow you to change the unit
+  <li class="propertylistitem"><strong>Change Contours</strong> - Displays with contours allow you to change the unit
       that is used in the display.</div>
   </li>
-  <li><strong>Use Times in Animation</strong></li>
-  <li style="list-style: none">
-    <div class="menudesc">For displays that have a time associated with them,
+  <li class="propertylistitem"><strong>Use Times in Animation</strong> - For displays that have a time associated with them,
       you can select whether the times are used to calculate the animation steps.</div>
   </li>
-  <li><strong>Sharing</strong></li>
-  <li style="list-style: none">
-    <div class="menudesc">This sub-menu allows you to turn on/off sharing and
+  <li class="propertylistitem"><strong>Sharing</strong> - This sub-menu allows you to turn on/off sharing and
       to set the "share group". When <a href="../collab/Sharing.html">sharing</a> is turned on certain state is shared
       among displays of the same type that are in the same share group. The share
       group can be an arbitrary name.
       <p>For example, the location of a vertical cross section, the color table,
-        location of a probe point, etc., can all be shared.</p>
-    </div>
-  </li>
-  <li><strong>Properties</strong></li>
-  <li style="list-style: none">
-    <div class="menudesc">The <a href="#properties">Properties</a> dialog allows
+        location of a probe point, etc., can all be shared.</li>
+  <li class="propertylistitem"><strong>Properties</strong> - The <a href="#properties">Properties</a> dialog allows
       you to change the display label, the display category, the id and the color
       scale properties for this display.</div>
   </li>
 </ul>
 <p>The <strong>View</strong> menu has these common choices:</p>
-<ul>
-  <li><strong>Visible</strong></li>
-  <li style="list-style: none">
-    <div class="menudesc">Checkbox allows you to toggle visibility.</div>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Visible</strong> - Checkbox allows you to toggle visibility.</div>
   </li>
-  <li><strong>Lock Visibility</strong></li>
-  <li style="list-style: none">
-    <div class="menudesc">Checkbox allows you to toggle the visibility lock (see <a href="#visibility">visibility
+  <li class="propertylistitem"><strong>Lock Visibility</strong> - Checkbox allows you to toggle the visibility lock (see <a href="#visibility">visibility
     cycling</a> below).</div>
   </li>
-  <li><strong>Bring To Front</strong></li>
-  <li style="list-style: none">
-    <div class="menudesc">If this display is showing at the same level in 3D
+  <li class="propertylistitem"><strong>Bring To Front</strong> - If this display is showing at the same level in 3D
       as another (e.g., satellite and radar images in the same display), you
       can use this menu to select which display is on top.</div>
   </li>
-  <li><strong>Show View Window</strong></li>
-  <li style="list-style: none">
-    <div class="menudesc">Show the View Window that holds this layer control.</div>
+  <li class="propertylistitem"><strong>Show View Window</strong> - Show the View Window that holds this layer control.</div>
   </li>
-  <li><strong>Use Times in Animation</strong></li>
-  <li style="list-style: none">
-    <div class="menudesc">For layers that have a time associated with them, you
+  <li class="propertylistitem"><strong>Use Times in Animation</strong> - For layers that have a time associated with them, you
       can select whether the times are used to calculate the animation steps.</div>
   </li>
-  <li><strong>Display List</strong></li>
-  <li style="list-style: none">
-    <div class="menudesc">Allows you to set the color and visibility of the label
+  <li class="propertylistitem"><strong>Display List</strong> - Allows you to set the color and visibility of the label
       for this control in the display list.</div>
   </li>
-  <li><strong>Use Data Projection</strong></li>
-  <li style="list-style: none">
-    <div class="menudesc">This will change the projection used in the view to
+  <li class="propertylistitem"><strong>Use Data Projection</strong> - This will change the projection used in the view to
       the native projection of the display.</div>
   </li>
 </ul>
-<p>The <strong>Help</strong> menu has these common choices:</p>
-<ul>
-  <li><strong>Details</strong></li>
-  <li style="list-style: none">
-    <div class="menudesc">Selecting this item brings up a window that shows detailed
+The <strong>Help</strong> menu has these common choices:
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Details</strong> - Selecting this item brings up a window that shows detailed
       information about the display and any associated data.</div>
   </li>
-  <li><strong>User's Guide</strong></li>
-  <li style="list-style: none">
-    <div class="menudesc">Bring up the user guide entry for the particular display.</div>
+  <li class="propertylistitem"><strong>User's Guide</strong> - Bring up the user guide entry for the particular display.</div>
   </li>
 </ul>
 
@@ -247,15 +195,15 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/index.ht
 <p>The <strong>Legend Label</strong> field is the label used in the legend of
   this display control. It can contain arbitrary text as well as a set of "macros".
   The macros can be added to the label with the <strong>Add Macro</strong> button:</p>
-<ul>
-  <li><strong>Short Name</strong> This is the short name of the parameter being
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Short Name</strong> This is the short name of the parameter being
     displayed.</li>
-  <li><strong>Long Name</strong> This is the long name of the parameter being
+  <li class="propertylistitem"><strong>Long Name</strong> This is the long name of the parameter being
     displayed.</li>
-  <li><strong>Data Source Name</strong> This is the name of the data source that
+  <li class="propertylistitem"><strong>Data Source Name</strong> This is the name of the data source that
     produced the parameter being displayed.</li>
-  <li><strong>Display Name</strong> The name of the display.</li>
-  <li><strong>Timestamp</strong> The time of the data that is currently being
+  <li class="propertylistitem"><strong>Display Name</strong> The name of the display.</li>
+  <li class="propertylistitem"><strong>Timestamp</strong> The time of the data that is currently being
     displayed using the default time format preference. You can also use a macro
     of the form %time:&lt;time pattern&gt;% to set a specific time format other
     than the default. &lt;time pattern&gt; follows the same rules defined in
@@ -274,18 +222,18 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/index.ht
   ID is used for accessing particular displays from the <a href="../isl/index.html">McIDAS-V
   Scripting Language</a>.</p>
 <p>There may be a variety of check boxes:</p>
-<ul>
-  <li><strong>Show In Layer List</strong> Allows you to toggle the visibility
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Show In Layer List</strong> Allows you to toggle the visibility
     of the label in the view window. Note that you must enable showing the list
     of display labels that are toggled on using the <strong>View-&gt;Properties</strong> dialog
     of the view window, or by setting the global property for all display through
     the <a href="../tools/preferences/DisplayWindowPreferences.html#showlayerlist">User Preferences</a> dialog.</li>
-  <li><strong>Lock Visibility Toggle</strong> Locks/unlocks <a href="#visibility">visibility
+  <li class="propertylistitem"><strong>Lock Visibility Toggle</strong> Locks/unlocks <a href="#visibility">visibility
       toggling</a>.</li>
-  <li><strong>Show Note Text</strong> Arbitrary text notes can be added to a
+  <li class="propertylistitem"><strong>Show Note Text</strong> Arbitrary text notes can be added to a
     display. This checkbox menu item shows or hides the text field that allows
     you to edit the notes.</li>
-  <li><strong>Use Fast Rendering</strong> When this is checked on, McIDAS-V will
+  <li class="propertylistitem"><strong>Use Fast Rendering</strong> When this is checked on, McIDAS-V will
     not try to account for projection seams. This will cause displays to be rendered
     faster at the expense of accuracy.</li>
 </ul>
@@ -302,26 +250,26 @@ labelling of the color scale.</p>
   <span class="caption">Image 3: Color Scale Properties</span></div>
   <p></p>
 <a name="visibility" id="visibility"></a><div class="pagesubtitle">Display Visibility</div>
-<p><ul>
-  <li>In the legend the <strong>Display Visibility</strong> checkbox to the left
+<ul class="propertylist">
+  <li class="propertylistitem">In the legend the <strong>Display Visibility</strong> checkbox to the left
     of the label can be used to toggle the visibility of that layer.</li>
-  <li>The function keys <strong>F1, F2, F3*</strong> can be used to cycle visibility
+  <li class="propertylistitem">The function keys <strong>F1, F2, F3*</strong> can be used to cycle visibility
     as follows:</li>
-  <li style="list-style: none"><p>
-    <ul>
-      <li>The <strong>F1</strong> key cycles visibility through all non-locked
-        layers, looping through each layer one at a time.</li>
-      <li>The <strong>F2</strong> turns on all non-locked layers.</li>
-      <li>The <strong>F3</strong> turns off all non-locked layers.</li>
-    </ul></p>
-    <p><strong>*</strong><em>On a Mac laptop, you may need to press the "Fn" key
-    along with the particular function key</em>.</li></p>
-  <li>The padlock icon <img src="images/unlock.gif"> on the right side of the <strong>legend
+  <ul class="propertylist">
+    <li class="propertylistitem">The <strong>F1</strong> key cycles visibility through all non-locked
+      layers, looping through each layer one at a time.</li>
+    <li class="propertylistitem">The <strong>F2</strong> turns on all non-locked layers.</li>
+    <li class="propertylistitem">The <strong>F3</strong> turns off all non-locked layers.</li>
+    <li class="propertylistitem"><strong>*</strong><em>On a Mac laptop, you may
+        need to press the "Fn" key along with the particular function key</em>. </li>
+  </ul>
+  <li class="propertylistitem">The padlock icon <img src="images/unlock.gif"> on the right side of the <strong>legend
       bar</strong> is used to block the effects of the visibility toggling described
       above. When locked the visibility of a layer is not affected by the toggling.</li>
-  <li>Use the <strong>View-&gt;Visible</strong> checkbox menu item in each layer
+  <li class="propertylistitem">Use the <strong>View-&gt;Visible</strong> checkbox menu item in each layer
     control's menu.</li>
-</ul></p>
+</ul>
+</p>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">

@@ -156,6 +156,11 @@ code.menu {
   padding-bottom:10px;
 }
 
+.propertylistitemfirst {
+  padding-bottom:10px;
+  padding-top:10px;
+}
+
 p {
   clear: left;
   margin-top: 10px;
