@@ -65,6 +65,7 @@ import javax.swing.text.StyleConstants;
 import org.python.core.PyJavaType;
 import org.python.core.PyList;
 import org.python.core.PyObject;
+import org.python.core.PyObjectDerived;
 import org.python.core.PyString;
 import org.python.core.PyStringMap;
 import org.python.core.PyTuple;
@@ -582,8 +583,11 @@ public class Console implements Runnable, KeyListener {
         Map<String, PyObject> locals = getLocalNamespace();
         for (Map.Entry<String, PyObject> entry : locals.entrySet()) {
             PyObject val = entry.getValue();
-            if (val instanceof PyJavaType) {
-                javaMap.put(entry.getKey(), val.__tojava__(Object.class));
+            if (val instanceof PyObjectDerived) {
+                PyObjectDerived derived = (PyObjectDerived)val;
+                if (derived.getType() instanceof PyJavaType) {
+                    javaMap.put(entry.getKey(), val.__tojava__(Object.class));
+                }
             }
         }
         return javaMap;
