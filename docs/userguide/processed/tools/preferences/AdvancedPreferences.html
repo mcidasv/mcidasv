@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>User Preferences</title>
+<title>User Preferences - Advanced</title>
 <!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
@@ -31,48 +31,44 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">User Preferences - Advanced</div>
 <a name="image1" id="image1"></a>
-<p>The <strong>Advanced</strong> tab lets you change options that require a restart in order for them to take effect. This tab is also accessed by using the startup manager to configure settings before running McIDAS-V (runMcV-Config.bat or runMcV-Config).</p>
-<div class="images"><img src="../images/preferences/Advanced.png" alt="Advanced Preferences">
+<p>The User Preferences window is accessed through the <strong>Edit-&gt;Preferences</strong> menu. The <strong>Advanced</strong> tab allows the user to change options that require a restart in order for them to take effect. This tab can also be accessed by using the startup manager to configure settings before running McIDAS-V (runMcV-Config.bat or runMcV-Config). The below image represents the default settings for the <strong>Advanced</strong> tab.</p>
+<div class="images"><img src="../images/preferences/Advanced.gif" alt="Advanced Preferences">
 <br>
 <span class="caption">Image 1: Advanced Preferences</span> (Default)</div>
-<p><strong>Note:</strong> The above image represents the default settings for the Advanced tab of the User Preferences window.</p>
+</p>
 <div class="preferencegrouptitle">Startup Options</div>
 <p><a name="heapsize" id="heapsize"></a>
 </p>
-<p><strong>Memory -</strong> Change the amount of memory used by McIDAS-V to
-  use either a percentage or a set value. The new amount of memory will be saved
+<p><strong>Memory -</strong> When the first bubble is selected McIDAS-V will use up to the given amount of the computer's available memory. When the second bubble is checked, the user can enter a specific set value of memory to use. The new amount of memory will be saved
   and used in subsequent sessions. For 32 bit operating systems, it is recommended
   to set this to no more than 1250 MB. The maximum value for 32 bit operating
-  systems is 1536 MB.</p>
+  systems is 1536 MB. However, 64 bit operating systems can use all of the memory available to the operating system.</p>
+<p><strong>Specify Default Bundle - </strong> When checked, select a bundle from
+  your list of favorites (found in the <strong>Bundles</strong> menu) to load
+upon startup. </p>
+<p><strong>Load Default Layout -</strong> When checked, McIDAS-V will load the
+  default layout upon startup. Uncheck to use the default layout of McIDAS-V
+  (one window with one panel).</p>
 <a name="jogl" id="jogl"></a>
 <p><strong>Enable 3D controls -</strong> When checked, McIDAS-V uses the default
   3D behavior. Uncheck to override the default 3D behavior of McIDAS-V and use
   a 2D View for Map Views.
-<p><strong>Enable JOGL -</strong> Choose to use or not use Java OpenGL (JOGL).</p>
-<p><strong>Enable Direct3D -</strong> Windows-only: choose to use or not use Direct3D.</p>
-<p><strong>Specify Default Bundle - </strong> When checked, select a bundle from
-  your list of favorites (found in the <strong>Bundles</strong> menu) to load
-  upon startup. </p>
-<p><strong>Load Default Layout -</strong> When checked, McIDAS-V will load the
-  default layout upon startup. Uncheck to use the default layout of McIDAS-V
-  (one window with one panel). </p>
-<p><strong>Enable Geometry by Reference -</strong> Choose to use or not use Java
-  Geometry by Reference. Try this option unchecked if random/extraneous map lines
+<p><strong>Enable JOGL -</strong>  Java OpenGL (JOGL) is a wrapper library that allows OpenGL to be used in Java, and it is permantely enabled in McIDAS-V.</p>
+<p><strong>Enable Direct3D -</strong> When checked,  Direct3D will be used. Direct 3D is used to render 3D graphics. Note: this only works in Windows.</p>
+<p><strong>Enable Geometry by Reference -</strong> When checked, Java
+  Geometry by Reference will be used. Try this option unchecked if random/extraneous map lines
   are drawn - a problem that may occur more frequently on systems with ATI graphics
   cards.</p>
-<p><strong>Enable Concurrent Mark-Sweep Garbage Collector -</strong> Choose to
-use or not use Java Concurrent Mark-Sweep Garbage Collector.</p>
-<p><strong>Enable Non-Power of Two (NPOT) Textures -</strong>. Choose to
-use or not use Java Non-Power of Two (NPOT) Textures.</p>
-<p><strong>Enable Access to Image Data by Reference -</strong> Choose to
-use or not use Java Access to Image Data by Reference. We recommend that this
+<p><strong>Enable Access to Image Data by Reference -</strong> When checked, Java Access to Image Data by Reference will be used. We recommend that this
   option be checked, as it often removes the jagged edges at
   the limb and/or gaps at the dateline that sometimes appear in displays of image
-  data.</p>
+data.</p>
+<p><strong>Enable Non-Power of Two (NPOT) Textures -</strong> When checked, Java Non-Power of Two (NPOT) Textures will be used.</p>
+<p><strong>Enable Concurrent Mark-Sweep Garbage Collector -</strong> When checked, Java Concurrent Mark-Sweep Garbage Collector will be used.</p>
 <div class="preferencegrouptitle">Java Threads</div>
-<p><strong>Java Rendering -</strong> Use the pull down menu to select the number
+<p><strong>Java Rendering -</strong> The pull down menu is used to select the number
   of Java threads to use for rendering.</p>
-<p><strong>Java Reading -</strong> Use the pull down menu to select the number
+<p><strong>Java Reading -</strong> The pull down menu is used to select the number
   of Java threads to use for reading.</p>
 <br>
 <!-- InstanceEndEditable -->

@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>User Preferences</title>
+<title>User Preferences - Navigation Controls</title>
 <!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
 <link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
 <!-- InstanceBeginEditable name="CurrentFile" -->
@@ -28,33 +28,39 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">User Preferences - Navigation Controls</div>
-The <strong>Navigation Controls</strong> tab allows you to change how McIDAS-V
-interprets mouse and keyboard events for navigating in 3D space. For each combination
-of mouse button and control/shift keys you can select an action. <a name="image1" id="image1"></a>
+<p>The User Preferences window is accessed through the <strong>Edit-&gt;Preferences</strong> menu. The <strong>Navigation Controls</strong> tab allows the user to change how McIDAS-V
+interprets mouse and keyboard events for navigating in 3D space. The below images represent the default custom values for the mouse and keyboard in the <strong>Navigation Controls</strong> tab. </p>
+<p><a name="image1" id="image1"></a>
+</p>
 <div class="images"><img src="../images/preferences/Mouse.gif" alt="Navigation Controls"> <br>
-  <span class="caption">Image 1: Navigation Controls</span> (Default)</div>
-<p><strong>Note:</strong> The above image represents the default settings for the Navigational Controls' Mouse tab in the User Preferences Window.</p>
-<p>The Cursor/Data Readout option brings up a latitude, longitude, and data value
-readout in the upper left part of the display on a mouse drag.</p>
-<div class="images"><img src="../images/preferences/DataReadout.gif" alt="Cursor/Data Readout Option"></div>
-<p>There are a number of navigation functions (e.g., rotate) that can be triggered
-  by a key press. The Keyboard preference tab allows you to define the key and
-  any modifier (i.e., control, shift):</p>
-<a name="image2" id="image2"></a>
+  <span class="caption">Image 1: Mouse Navigation Controls</span> (Default)</div>
+<p><a name="image2" id="image2"></a>
+</p>
 <div class="images"><img src="../images/preferences/Keyboard.gif" alt="Keyboard Event Preferences"> <br>
-  <span class="caption">Image 2: Keyboard Event Preferences</span> (Default)</div>
-<p><strong>Note: </strong>The above Image represents the default settings for the Navigational Controls' Keyboard tab in the User Preferences Window.</p>
-<p>When the Control box is checked next to a function, the Control key must be held down while pressing your defined key for the given function. When the Shift box is checked next to a function, the Shift key must be held down while pressing your default key for the given function.</p>
-<p>&nbsp;</p>
+  <span class="caption">Image 2: Keyboard Navigation Controls</span> (Default)</div>
+<p></p>
 <div class="preferencegrouptitle">Properties</div>
-<p><strong>None -</strong> The key combination on the mouse or keyboard with None selected will not perform any tasks.</p>
-<p><strong>Rotate -</strong> This allws the user to rotate the display. While most useful in the globe projection, it can be used at any time. If Rotate is followed by X, Y, or Z, that is the axis the display will rotate about. If there are no letters proceeding rotate, then the user can rotate the image about any axis. Negative and positive denote the direction that the image will rotate.</p>
-<p><strong>Zoom -</strong> This allows the user to zoom in to magnify a specific portion of the display, or zoom out to get a broader view.</p>
-<p><strong>Translate -</strong> This allows the user to shift the entire image in any direction with respect to the stationary background.</p>
-<p><strong>Selection -</strong> This allows the user to click and drag to make a box that the view screen will zoom in on.</p>
-<p><strong>Cursor/Data Readout -</strong> This allows the user to probe the data. Information of latitude/longitude and other variables plotted on the map will be displayed at the location your cursor is over the image.</p>
-<p><strong>Cursor Zoom -</strong> This allows the user to </p>
-<p><strong>Cursor Rotate -</strong></p>
+<p><strong>Function -</strong> This is how McIDAS-V interprets mouse and keyboard events for navigating in 3D space. The functions for each key combination can be changed in the dropdown boxes in the Mouse tab, and are listed in the Function column of the Keyboard tab. The available functions are listed below.</p>
+<blockquote>
+  <p><strong>None -</strong> will not perform any tasks when the key combination on the mouse or keyboard when None selected is pressed.</p>
+  <p><strong>Rotate -</strong> rotates the display. While most useful in the globe projection, it can be used at any time. If Rotate is followed by X, Y, or Z, that is the axis the display will rotate about. If there are no letters proceeding rotate, then the user can rotate the image about any axis. Negative and positive denote the direction that the image will rotate.</p>
+  <p><strong>Zoom -</strong> zooms in to magnify a specific portion of the display, or zooms out to get a broader view. On the scroll wheel, <strong>Down Zoom In</strong> means if you scroll down, the image will be magnified at the center of the screen, while scrolling up will zoom out. The opposite is true for <strong>Down Zoom Out</strong>.</p>
+  <p><strong>Translate -</strong> shifts the entire image in any direction with respect to the stationary background.</p>
+  <p><strong>Selection -</strong> create a box to zoom in over for a magnified view.</p>
+  <p><strong>Cursor/Data Readout -</strong> probes the data. Information of latitude/longitude and other variables plotted on the map will be displayed at the location your cursor is over the image.</p>
+</blockquote>
+<p><strong>Key Combination -</strong> Mouse and keyboard key combinations can be defined to perform the above functions in McIDAS-V. The available keys are listed below.</p>
+<blockquote>
+  <p><strong>None -</strong> when None is selected, it is not necessary to hold down a key while pressing your defined key or mouse click for a given function.</p>
+  <p><strong>Control -</strong>  the Control key must be held down while pressing your defined key or mouse click for a given function.</p>
+  <p><strong>Shift -</strong> the Shift key must be held down while pressing your defined key or mouse click for a given function.</p>
+  <p><strong>Control+Shift -</strong>  the Control+Shift keys must be held down while pressing your defined key or mouse click for a given function.</p>
+  <p><strong>Left (MB1) -</strong> the left mouse button must be held down while pressing your defined key for a given function.</p>
+  <p><strong>Middle (MB2) -</strong>  the middle mouse button must be held down while pressing your defined key for a given function.</p>
+  <p><strong>Right (MB3) -</strong>  the right mouse button must be held down while pressing your defined key for a given function.</p>
+  <p><strong>Scroll Wheel -</strong>  the scroll wheel must be scrolled down or up while pressing your defined key for a given function.</p>
+  <p><strong>Key -</strong> the keyboard key selected in the scroll-down box under Key must be held down along with any Control or Shift key that may also be necessary to perform the given function.</p>
+</blockquote>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
