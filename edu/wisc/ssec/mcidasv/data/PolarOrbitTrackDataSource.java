@@ -112,44 +112,12 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
 
     private SGP4SatData data = new SGP4SatData();
     private TLE tle;
-    private SGP4SatData sgp4SatData; // sgp4 propogator data
 
     public static double pi = SGP4unit.pi;
 
     private Hashtable selectionProps;
  
-    // current time - julian date
-    double currentJulianDate = -1;
-
-    // J2000 position and velocity vectors
-    private double[] j2kPos = new double[3]; // meters
-    private double[] j2kVel = new double[3]; // meters/sec
-
-    // lat,long,alt  [radians, radians, m ]
     private double[] lla = new double[3];
-    private double groundTrackLeadPeriodMultiplier = 2.0;  // how far forward to draw ground track - in terms of periods
-    private double groundTrackLagPeriodMultiplier = 1.0;  // how far behind to draw ground track - in terms of periods
-    boolean groundTrackIni = false; // if ground track has been initialized    
-    private int grnTrkPointsPerPeriod = 81; // equally space in time >=2 // used to be 121
-    double[][] latLongLead; // leading lat/long coordinates for ground track
-    double[][] latLongLag; // laging lat/long coordinates for ground track
-    private double[][] temePosLead; // leading TEME position coordinates for ground track
-    private double[][] temePosLag; // laging TEME position coordinates for ground track
-    private double[]   timeLead; // array for holding times associated with lead coordinates (Jul Date)
-    private double[]   timeLag; // array - times associated with lag coordinates (Jul Date)
-    // true-equator, mean equinox TEME of date
-    private double[] posTEME = new double[3];  // true-equator, mean equinox TEME of date position for LLA calcs, meters
-    private double[] velTEME = new double[3]; // meters/sec
-    // ground track options  -- grounds tracks draw to asending nodes, re-calculated at acending nodes
-    boolean showGroundTrack = true;
-
-    protected List adapters;
-
-    /** Used to show the times */
-    private DataSelectionWidget dsw;
-
-    /** The edit pane to show details html in */
-    JEditorPane detailsEditor;
 
     /** time step between data points */
     private int dTime = 5;
