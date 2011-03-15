@@ -162,7 +162,7 @@ public class RGBCompositeControl extends DisplayControlImpl {
        bluMap.addScalarMapListener(new ColorMapListener(bluMap, initBluRange, bluRange, bluLowTxtFld, bluHighTxtFld));
      }
 
-     setShowInDisplayList(false);
+     setShowInDisplayList(true);
 
      addDisplayable(imageDisplay, FLAG_COLORTABLE);
 
