@@ -177,7 +177,7 @@ fi
 LOGBACK_CONFIG="edu/wisc/ssec/mcidasv/resources/logback.xml"
 
 # Gather up previously set values.
-JAVA_FLAGS="-Xmx${HEAP_SIZE} -XX:MaxPermSize=128m ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${JVM_ARGS} -Dlogback.configurationFile=${LOGBACK_CONFIG}"
+JAVA_FLAGS="-Xmx${HEAP_SIZE} -XX:MaxPermSize=128m ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${JVM_ARGS} -Dlogback.configurationFile=${LOGBACK_CONFIG} -Dmcv.userpath=${MCV_USERPATH}"
 MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Dvisad.java3d.textureNpot=${ALLOW_NPOT} -Dvisad.java3d.imageByRef=${IMAGE_BY_REF} -Dvisad.java3d.geometryByRef=${GEOMETRY_BY_REF} -Didv.3d=${IDV_3D} -Didv.sysmem=${SYS_MEM} ${DEFAULT_BUNDLE} -userpath ${MCV_USERPATH}"
 echo "mcv flags: ${MCV_FLAGS}"
 ################################################################################
@@ -219,17 +219,17 @@ fi
 ################################################################################
 
 # Clean the log
-if [ -f "${MCV_LOG}" ]; then
-  LINES=`wc -l "${MCV_LOG}" 2>/dev/null | awk '{print $1}' 2>/dev/null`
-  if [ "${LINES}" = "" ]; then
-    LINES=0
-  fi
-  MCV_TEMP="${MCV_USERPATH}/mcidasv.tmp"
-  if [ ${LINES} -gt ${MCV_LOG_LINES} ]; then
-    tail -${MCV_LOG_LINES} "${MCV_LOG}" > "${MCV_TEMP}"
-    rm -f "${MCV_LOG}" && mv "${MCV_TEMP}" "${MCV_LOG}"
-  fi
-fi
+# if [ -f "${MCV_LOG}" ]; then
+#   LINES=`wc -l "${MCV_LOG}" 2>/dev/null | awk '{print $1}' 2>/dev/null`
+#   if [ "${LINES}" = "" ]; then
+#     LINES=0
+#   fi
+#   MCV_TEMP="${MCV_USERPATH}/mcidasv.tmp"
+#   if [ ${LINES} -gt ${MCV_LOG_LINES} ]; then
+#     tail -${MCV_LOG_LINES} "${MCV_LOG}" > "${MCV_TEMP}"
+#     rm -f "${MCV_LOG}" && mv "${MCV_TEMP}" "${MCV_LOG}"
+#   fi
+# fi
 
 MCV_CLASSPATH=".:./log4j-over-slf4j-1.6.1.jar:./logback-classic-0.9.28.jar:./logback-core-0.9.28.jar:./miglayout-3.7.3.jar:./slf4j-api-1.6.1.jar:./jython.jar:./eventbus-1.3.jar:./mcidasv.jar:./auxdata.jar:./external.jar:./local-idv.jar:./idv.jar:./local-visad.jar:./ncIdv.jar:./visad.jar"
 

@@ -5,7 +5,26 @@
  -->
 <configuration debug="true">
 
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+  <!-- sets up a rotating mcidasv.log. every time mcidasv.log reaches 1MB, this
+       will move mcidasv.log to mcidasv.1.log.zip and create a new mcidasv.log.
+       the appender is configured to keep around (at most):
+       
+       mcidasv.log (active log file)
+       mcidasv.1.log.zip 
+       mcidasv.2.log.zip
+       mcidasv.3.log.zip
+       
+       anything after mcidasv.3.log.zip is discarded. -->
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${mcv.userpath}/mcidasv.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <fileNamePattern>${mcv.userpath}/mcidasv.%i.log.zip</fileNamePattern>
+      <minIndex>1</minIndex>
+      <maxIndex>3</maxIndex>
+    </rollingPolicy>
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <maxFileSize>1MB</maxFileSize>
+    </triggeringPolicy>
     <encoder>
       <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %method: %msg%n</pattern>
     </encoder>
@@ -17,7 +36,7 @@
   <!-- logging is disabled within mcv (by default)
        valid levels are: TRACE, DEBUG, INFO, WARN, ERROR, OFF
        be sure to skim over http://logback.qos.ch/manual/architecture.html#basic_selection -->
-  <root level="OFF">
-    <appender-ref ref="STDOUT" />
+  <root level="WARN">
+    <appender-ref ref="FILE" />
   </root>
 </configuration>

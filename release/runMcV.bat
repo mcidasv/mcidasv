@@ -137,25 +137,14 @@ set /a HEAP_SIZE=%SYS_MEM% * %HEAP_PERCENT% / 100
 set HEAP_SIZE=%HEAP_SIZE%M
 
 :goodheap
-REM Clean the log file to last MCV_LOG_LINES lines
-IF NOT EXIST "%MCV_LOG%" GOTO startup
-for /f "tokens=2 delims=:" %%i in ('find /v /c "" "%MCV_LOG%"') do set /a LINES=%%i 2>NUL
-if %LINES% GTR 0 GOTO gotcount
-for /f "tokens=3 delims=:" %%i in ('find /v /c "" "%MCV_LOG%"') do set /a LINES=%%i 2>NUL
-
-:gotcount
-if %LINES% LEQ %MCV_LOG_LINES% GOTO startup
-set MCV_TEMP=%MCV_USERPATH%\mcidasv.tmp
-set /a START=%LINES% - %MCV_LOG_LINES%
-copy /y mcidasv.log "%MCV_TEMP%" && more /e +%START% "%MCV_TEMP%" > "%MCV_LOG%" && erase /f "%MCV_TEMP%"
 
 :startup
 REM Start McIDAS-V
 
 set MCV_CLASSPATH=%CD%\;%CD%\log4j-over-slf4j-1.6.1.jar;%CD%\logback-classic-0.9.28.jar;%CD%\logback-core-0.9.28.jar;%CD%\miglayout-3.7.3.jar;%CD%\slf4j-api-1.6.1.jar;%CD%\jython.jar;%CD%\eventbus-1.3.jar;%CD%\mcidasv.jar;%CD%\auxdata.jar;%CD%\external.jar;%CD%\local-idv.jar;%CD%\idv.jar;%CD%\local-visad.jar;%CD%\ncIdv.jar;%CD%\visad.jar
 
-@echo Command line: jre\bin\java.exe -Xmx%HEAP_SIZE% %JVM_ARGS% %D3D_FLAG% -Dlogback.configurationFile=%LOGBACK_CONFIG% -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
+@echo Command line: jre\bin\java.exe -Xmx%HEAP_SIZE% %JVM_ARGS% %D3D_FLAG% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath=%MCV_USERPATH% -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
 
-start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %JVM_ARGS% %D3D_FLAG% -Dlogback.configurationFile=%LOGBACK_CONFIG% -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS% >>"%MCV_LOG%" 2>&1
+start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %JVM_ARGS% %D3D_FLAG% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath=%MCV_USERPATH% -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS% >>"%MCV_LOG%" 2>&1
 
 :end
