@@ -22,7 +22,7 @@
 	
 	<!-- For example: "/Applications/McIDAS/adde" on OS X and NOT "/Applications/McIDAS/adde/bin" -->
 	<!-- <property name="addeservs.dir" location="/path/to/local/adde/root" /> --> 
-	<property name="addeservs.dir" location="/Applications/McIDAS/adde" />
+	<property name="addeservs.dir" location="/Applications/McIDAS-V/adde" />
 	
 	<!-- Attempt to load the version property file -->
 	<property file="${resource.dir}/version.properties" />
@@ -71,7 +71,8 @@
 	<property name="run.smallheap" value="512m" />
 	<property name="run.largeheap" value="1024m" />
 	
-	<property name="logback.default.config" value="edu/wisc/ssec/mcidasv/resources/logback.xml" />
+	<!-- <property name="logback.default.config" value="edu/wisc/ssec/mcidasv/resources/logback.xml" /> -->
+  <property name="logback.default.config" value="/Users/jbeavers/mcidasv/eclipse/mcv/edu/wisc/ssec/mcidasv/resources/logback.xml" />
 	
 	<!-- Nightly build properties -->
 	<property name="cvs.root" value="${user.name}@cvs.ssec.wisc.edu:/cvsroot" />
@@ -90,17 +91,20 @@
 	<property name="javadoc.level" value="private" />
 	
 	<!-- The CLASSPATH specified within McV's manifest -->
-	<property name="jar.base.classpath" value="miglayout-3.7.3.jar local-idv.jar visad.jar idv.jar mcv_userguide.jar eventbus-1.3.jar logback-core-0.9.28.jar logback-classic-0.9.28.jar log4j-over-slf4j-1.6.1.jar slf4j-api-1.6.1.jar" />
-	
-	<!-- List of McIDAS-V jars -->
+  <property name="jar.base.classpath" value="miglayout-3.7.3.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar eventbus-1.3.jar rsyntaxtextarea.jar logback-core-0.9.28.jar logback-classic-0.9.28.jar log4j-over-slf4j-1.6.1.jar slf4j-api-1.6.1.jar" />
+
+    <!-- List of McIDAS-V jars -->
 	<fileset id="mcv.libs" dir="${lib.dir}">
-		<include name="miglayout-3.7.3.jar" />
+	  <include name="miglayout-3.7.3.jar" />
 		<include name="eventbus-1.3.jar" />
+	  <include name="miglayout-3.7.3.jar" />
+	  <include name="rsyntaxtextarea.jar" />
 		<include name="logback-core-0.9.28.jar" />
 		<include name="logback-classic-0.9.28.jar" />
-		<include name="log4j-over-slf4j-1.6.1.jar" />
-		<include name="slf4j-api-1.6.1.jar" />
+	  <include name="log4j-over-slf4j-1.6.1.jar" />
+	  <include name="slf4j-api-1.6.1.jar" />
 		<include name="local-idv.jar" />
+	  <include name="repositorytds.jar" />
 	</fileset>
 	
 	<!-- List of IDV jars -->
@@ -112,11 +116,13 @@
 		<include name="external.jar" />
 		<include name="ncIdv.jar" />
 		<include name="idv.jar" />
+	  <include name="repositorytds.jar" />
 	</fileset>
 	
 	<!-- Shared classpath -->
 	<path id="app.classpath">
 		<pathelement location="${base.dir}" />
+	  <!--<pathelement location="${dist.dir}/mcidasv.jar" />-->
 		<fileset refid="mcv.libs" />
 		<fileset refid="idv.libs" />
 	</path>
@@ -260,7 +266,7 @@
 		</tstamp>
 		<copy file="${ver.props}" tofile="${build.props}" overwrite="true">
 			<filterset>
-				<filter token="DATE" value="${build.date}" />
+				<filter token="DATE" value="${build.date}" />cd 
 				<filter token="NIGHTLY" value="(nightly)" />
 			</filterset>
 		</copy>
@@ -280,7 +286,7 @@
 		description="Build only the startup manager">
 		<tstamp prefix="jar" />
 		<mkdir dir="${dist.dir}" />
-		<jar destfile="${dist.dir}/${app.smjar}">
+		<jar destfile="${dist.dir}/${app.smjar}" index="true">
 			<fileset dir="${base.dir}">
 				<patternset refid="startupmanager.includes" />
 			</fileset>
@@ -316,7 +322,7 @@
 	<target name="jar.base" description="Jar the base application jar file">
 		<mkdir dir="${dist.dir}" />
 		<tstamp prefix="jar" />
-		<jar destfile="${dist.dir}/${app.jarname}">
+		<jar destfile="${dist.dir}/${app.jarname}" index="true">
 			<fileset dir="${base.dir}">
 				<patternset refid="jar.includes" />
 			</fileset>
@@ -333,7 +339,7 @@
 	<target name="jar.local-idv" description="Jar the local-idv jar file">
 		<mkdir dir="${dist.dir}" />
 		<tstamp prefix="jar" />
-		<jar destfile="${dist.dir}/${local-idv.jarname}">
+		<jar destfile="${dist.dir}/${local-idv.jarname}" index="true">
 			<fileset dir="${base.dir}">
 				<patternset refid="local-idv.includes" />
 			</fileset>
@@ -456,32 +462,123 @@
 		</java>
 	</target>
 
-	<!-- Build and run McIDAS-V application (small memory) -->
-	<target name="jar.runlarge" depends="jar" description="Build and run McIDAS-V application (large memory)">
-		<java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
-			<classpath>
-				<!--<path refid="app.classpath" />
-				<pathelement location="${dist.dir}/${app.jarname}" />-->
-				<pathelement location="${lib.dir}/log4j-over-slf4j-1.6.1.jar" />
-				<pathelement location="${lib.dir}/logback-classic-0.9.28.jar" />
-				<pathelement location="${lib.dir}/logback-core-0.9.28.jar" />
-				<pathelement location="${lib.dir}/miglayout-3.7.3.jar" />
-				<pathelement location="${lib.dir}/slf4j-api-1.6.1.jar" />
-				<pathelement location="${idvlib.dir}/jython.jar" />
-				<pathelement location="${lib.dir}/eventbus-1.3.jar" />
-				<pathelement location="${dist.dir}/${app.jarname}" />
-				<pathelement location="${idvlib.dir}/auxdata.jar" />
-				<pathelement location="${idvlib.dir}/external.jar" />
-				<pathelement location="${dist.dir}/local-idv.jar" />
-				<pathelement location="${idvlib.dir}/idv.jar" />
-				<pathelement location="${idvlib.dir}/local-visad.jar" />
-				<pathelement location="${idvlib.dir}/ncIdv.jar" />
-				<pathelement location="${idvlib.dir}/visad.jar" />
-			</classpath>
-			<assertions refid="mcv.assertions"/>
-			<sysproperty key="logback.configurationFile" value="${logback.default.config}" />
-		</java>
-	</target>
+  <!-- Build and run McIDAS-V application (small memory) -->
+  <target name="jar.runlarge" depends="jar" description="Build and run McIDAS-V application (large memory)">
+    <java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
+      <classpath>
+        <pathelement location="${lib.dir}/log4j-over-slf4j-1.6.1.jar" />
+        <pathelement location="${lib.dir}/logback-classic-0.9.28.jar" />
+        <pathelement location="${lib.dir}/logback-core-0.9.28.jar" />
+        <pathelement location="${lib.dir}/miglayout-3.7.3.jar" />
+        <pathelement location="${lib.dir}/slf4j-api-1.6.1.jar" />
+        <pathelement location="${idvlib.dir}/jython.jar" />
+        <pathelement location="${lib.dir}/eventbus-1.3.jar" />
+        <pathelement location="${dist.dir}/${app.jarname}" />
+        <pathelement location="${idvlib.dir}/auxdata.jar" />
+        <pathelement location="${idvlib.dir}/external.jar" />
+        <pathelement location="${dist.dir}/local-idv.jar" />
+        <pathelement location="${idvlib.dir}/idv.jar" />
+        <pathelement location="${idvlib.dir}/local-visad.jar" />
+        <pathelement location="${idvlib.dir}/ncIdv.jar" />
+        <pathelement location="${idvlib.dir}/visad.jar" />
+      </classpath>
+      <assertions refid="mcv.assertions"/>
+      <jvmarg value="-XX:+UseConcMarkSweepGC" />
+      <jvmarg value="-XX:+CMSClassUnloadingEnabled" />
+      <!--<jvmarg value="-XX:+CMSPermGenSweepingEnabled" />-->
+      <jvmarg value="-XX:MaxPermSize=128m" />
+      <!--<jvmarg value="-noverify" />-->
+      <!--<jvmarg value="-XX:+DoEscapeAnalysis" />-->
+      <!-- 
+        You might want to uncomment the following two lines. They'll have the 
+        JVM dump the heap's contents on an OutOfMemory exception (very helpful!)
+        ${heap.dir} defaults to "/tmp/javaheaps/", but feel free to change it.
+      --> 
+      <!--
+      <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+      <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
+      <sysproperty key="debug.localadde.rootdir" value="${addeservs.dir}" />
+      <sysproperty key="debug.adde.reqs" value="false" />
+      -->
+      <sysproperty key="logback.configurationFile" value="edu/wisc/ssec/mcidasv/resources/logback-stdout.xml" />
+      <sysproperty key="visad.java3d.textureNpot" value="true" />
+      <sysproperty key="visad.java3d.imageByRef" value="true" />
+      <sysproperty key="visad.java3d.geometryByRef" value="true" />
+      <!-- <arg value="-forceaqua" /> -->
+    </java>
+  </target>
+
+  <target name="debug.runlarge" depends="jar" description="Build and run McIDAS-V application (large memory)">
+    <java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
+      <classpath>
+        <pathelement location="${lib.dir}/log4j-over-slf4j-1.6.1.jar" />
+        <pathelement location="${lib.dir}/logback-classic-0.9.28.jar" />
+        <pathelement location="${lib.dir}/logback-core-0.9.28.jar" />
+        <pathelement location="${lib.dir}/miglayout-3.7.3.jar" />
+        <pathelement location="${lib.dir}/slf4j-api-1.6.1.jar" />
+        <pathelement location="${idvlib.dir}/jython.jar" />
+        <pathelement location="${lib.dir}/eventbus-1.3.jar" />
+        <pathelement location="${dist.dir}/${app.jarname}" />
+        <pathelement location="${idvlib.dir}/auxdata.jar" />
+        <pathelement location="${idvlib.dir}/external.jar" />
+        <pathelement location="${dist.dir}/local-idv.jar" />
+        <pathelement location="${idvlib.dir}/idv.jar" />
+        <pathelement location="${idvlib.dir}/local-visad.jar" />
+        <pathelement location="${idvlib.dir}/ncIdv.jar" />
+        <pathelement location="${idvlib.dir}/visad.jar" />
+      </classpath>
+      <assertions refid="mcv.assertions"/>
+      <!-- Prepares the JVM for a debugging session on port 8000 -->
+      <jvmarg value="-Xdebug"/>
+      <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8000,suspend=y"/>
+      <!-- flags for attempting to workaround PermGen issues -->
+      <jvmarg value="-XX:+UseConcMarkSweepGC" />
+      <jvmarg value="-XX:+CMSClassUnloadingEnabled" />
+      <jvmarg value="-XX:+CMSPermGenSweepingEnabled" />
+      <jvmarg value="-XX:MaxPermSize=128m" />
+      <!-- Misc performance flags -->
+      <!--
+      <jvmarg value="-noverify" />
+      <jvmarg value="-XX:+DoEscapeAnalysis" />
+      -->
+      <!-- 
+        You might want to uncomment the following two lines. They'll have the 
+        JVM dump the heap's contents on an OutOfMemory exception (very helpful!)
+        ${heap.dir} defaults to "/tmp/javaheaps/", but feel free to change it.
+      --> 
+      <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+      <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
+      <sysproperty key="debug.localadde.rootdir" value="${addeservs.dir}" />
+      <sysproperty key="debug.adde.reqs" value="false" />
+      <sysproperty key="logback.configurationFile" value="${logback.default.config}" />
+      <arg value="-forceaqua" />
+      <arg value="-userpath" />
+      <arg value="/Users/jbeavers/Documents/McIDAS-V" />
+    </java>
+  </target>
+
+    <!--<target name="debug.runlarge" depends="jar" description="Build and run McIDAS-V application (large memory)">
+        <java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
+            <classpath>
+                <path refid="app.classpath" />
+                <pathelement location="${dist.dir}/${app.jarname}" />
+            </classpath>
+            <assertions refid="mcv.assertions"/>
+            <sysproperty key="logback.configurationFile" value="${logback.default.config}" />
+            <jvmarg value="-Xserver" />
+            <jvmarg value="-noverify" />
+            <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+            <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8000,suspend=y"/>
+            <sysproperty key="debug.localadde.rootdir" value="${addeservs.dir}" />
+            <sysproperty key="debug.adde.reqs" value="false" />
+            <arg value="-forceaqua" />
+            <arg value="-userpath" />
+            <arg value="/Users/jbeavers/Documents/McIDAS-V" />
+        </java>
+    </target>-->
+
 
 	<!-- Run McIDAS-V application (small memory) -->
 	<target name="run" description="Run McIDAS-V application (small memory)">
@@ -533,7 +630,13 @@
 			<!-- Forces McIDAS-V to use Apple's Aqua L&F (only on OS X) -->
 			<!-- <arg value="-forceaqua" /> -->
 			
-			<sysproperty key="logback.configurationFile" value="${logback.default.config}" />
+		  <jvmarg value="-noverify" />
+		  <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+		  <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
+		  <sysproperty key="debug.localadde.rootdir" value="${addeservs.dir}" />
+		  <sysproperty key="debug.adde.reqs" value="true" />
+		  <!--<sysproperty key="logback.configurationFile" value="${logback.default.config}" />-->
+		  <arg value="-forceaqua" />
 		</java>
 	</target>
 	
@@ -614,7 +717,7 @@
 		<delete dir="${idvlib.dir}/tmp/auxdata/docs" failonerror="false" />
 		<delete file="${idvlib.dir}/auxdata.jar" failonerror="false" />
 		
-		<jar destfile="${idvlib.dir}/auxdata.jar" basedir="${idvlib.dir}/tmp"  />
+		<jar destfile="${idvlib.dir}/auxdata.jar" basedir="${idvlib.dir}/tmp" index="true" />
 		<delete dir="${idvlib.dir}/tmp" failonerror="false" />
 	</target>
 
@@ -626,27 +729,21 @@
 		<delete dir="${idvlib.dir}/tmp/org/slf4j" failonerror="false" />
 		<delete file="${idvlib.dir}/ncIdv.jar" failonerror="false" />
 		
-		<jar destfile="${idvlib.dir}/ncIdv.jar" basedir="${idvlib.dir}/tmp" index="true"/>
+		<jar destfile="${idvlib.dir}/ncIdv.jar" basedir="${idvlib.dir}/tmp"/>
 		<delete dir="${idvlib.dir}/tmp" failonerror="false" />
 	</target>
 	
 	<!-- Create source jar file -->
 	<target name="source" description="Create source jar file">
-		<jar destfile="${dist.dir}/${source.jarname}" basedir="${base.dir}"
-			compress="true">
-			
+		<jar destfile="${dist.dir}/${source.jarname}" basedir="${base.dir}" compress="true">
 			<include name="build.xml" />
-			
 			<include name="edu/**" />
 			<exclude name="edu/**/*.class" />
 			<exclude name="edu/**/CVS/**" />
-			
 			<include name="ucar/**" />
 			<exclude name="ucar/**/*.class" />
 			<exclude name="ucar/**/CVS/**" />
-			
 			<include name="release/licenses/**" />
-			
 		</jar>
 	</target>
 	
