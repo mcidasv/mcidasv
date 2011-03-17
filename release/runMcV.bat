@@ -23,8 +23,8 @@ IF EXIST "%MCV_USERPATH%" GOTO hasuserpath
 
 :inituserpath
 IF EXIST "%USERPROFILE%\.mcidasv" (
-	echo Moving files to new user path: %MCV_USERPATH%
-	move "%USERPROFILE%\.mcidasv" "%MCV_USERPATH%"
+    echo Moving files to new user path: %MCV_USERPATH%
+    move "%USERPROFILE%\.mcidasv" "%MCV_USERPATH%"
 )
 
 :hasuserpath
@@ -98,6 +98,7 @@ SET ALLOW_NPOT=false
 ) ELSE (
 SET ALLOW_NPOT=true
 )
+SET LOGBACK_CONFIG="edu/wisc/ssec/mcidasv/resources/logback.xml"
 
 REM Get the amount of system memorys
 echo Reading system configuration...
@@ -151,13 +152,10 @@ copy /y mcidasv.log "%MCV_TEMP%" && more /e +%START% "%MCV_TEMP%" > "%MCV_LOG%" 
 :startup
 REM Start McIDAS-V
 
-@echo ################ >>"%MCV_LOG%"
-date /t >>"%MCV_LOG%"
-time /t >>"%MCV_LOG%"
-@echo %SYS_VER% >>"%MCV_LOG%"
-@echo %SYS_MEM% MB system memory >>"%MCV_LOG%"
-@echo Command line: jre\bin\javaw.exe -Xmx%HEAP_SIZE% %JVM_ARGS% %D3D_FLAG% -cp idv.jar -jar mcidasv.jar %MCV_FLAGS% %MCV_PARAMS%
+set MCV_CLASSPATH=%CD%\;%CD%\log4j-over-slf4j-1.6.1.jar;%CD%\logback-classic-0.9.28.jar;%CD%\logback-core-0.9.28.jar;%CD%\miglayout-3.7.3.jar;%CD%\slf4j-api-1.6.1.jar;%CD%\jython.jar;%CD%\eventbus-1.3.jar;%CD%\mcidasv.jar;%CD%\auxdata.jar;%CD%\external.jar;%CD%\local-idv.jar;%CD%\idv.jar;%CD%\local-visad.jar;%CD%\ncIdv.jar;%CD%\visad.jar
 
-start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %JVM_ARGS% %D3D_FLAG% -cp idv.jar -jar mcidasv.jar %MCV_FLAGS% %MCV_PARAMS% >>"%MCV_LOG%" 2>&1
+@echo Command line: jre\bin\java.exe -Xmx%HEAP_SIZE% %JVM_ARGS% %D3D_FLAG% -Dlogback.configurationFile=%LOGBACK_CONFIG% -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
+
+start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %JVM_ARGS% %D3D_FLAG% -Dlogback.configurationFile=%LOGBACK_CONFIG% -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS% >>"%MCV_LOG%" 2>&1
 
 :end
