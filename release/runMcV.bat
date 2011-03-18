@@ -145,6 +145,6 @@ set MCV_CLASSPATH=%CD%\;%CD%\log4j-over-slf4j-1.6.1.jar;%CD%\logback-classic-0.9
 
 @echo Command line: jre\bin\java.exe -Xmx%HEAP_SIZE% %JVM_ARGS% %D3D_FLAG% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
 
-start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %JVM_ARGS% %D3D_FLAG% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath=%MCV_USERPATH% -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS% >>"%MCV_LOG%" 2>&1
+start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %JVM_ARGS% %D3D_FLAG% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS% >>"%MCV_LOG%" 2>&1
 
 :end
