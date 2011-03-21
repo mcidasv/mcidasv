@@ -40,15 +40,6 @@
 			datasourceid="MultiSpectral" class="edu.wisc.ssec.mcidasv.chooser.FileChooser" />
 	</panel>
 
-        <panel title="Polar Orbit Track" category="Satellite" layout="border"
-                tabtooltip="Polar orbit tracks from TLE data">
-                <chooser id="chooser.tle" title="Polar Orbit Track" menutitle="Polar Orbit Track"
-                        showinmenu="true" helppath="idv.data.choosers.tlechooser"
-                        showpolling="false" filepattern=".*" selectdatasourceid="true"
-                        datasourceid="TLE" class="edu.wisc.ssec.mcidasv.chooser.PolarOrbitTrackChooser" />
-        </panel>
-
-
 
 	<!--                       -->
 	<!--     RADAR             -->
@@ -384,7 +375,13 @@
             datasourceid="NPP" class="edu.wisc.ssec.mcidasv.chooser.NPPChooser" />
 	</panel>
 
-
+    <panel title="Imagery - Polar Orbit Track" category="Under Development" layout="border"
+        tabtooltip="Polar orbit tracks from TLE data">
+        <chooser id="chooser.tle" title="Polar Orbit Track" menutitle="Polar Orbit Track"
+            showinmenu="true" helppath="idv.data.choosers.tlechooser"
+            showpolling="false" filepattern=".*" selectdatasourceid="true"
+            datasourceid="TLE" class="edu.wisc.ssec.mcidasv.chooser.PolarOrbitTrackChooser" />
+    </panel>
 
 
 	<!--                       -->
