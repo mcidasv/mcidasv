@@ -1,18 +1,57 @@
+# python imports 
 import fnmatch
 import inspect
 import re
+import os
+import shutil
 import sys
+import textwrap
 import types
+
+# heinous java imports! boo! hiss!
+from ch.qos.logback.core import FileAppender
+from ch.qos.logback.classic import LoggerContext
+
 from java.lang import Class
 from java.lang import Object
 from java.lang.reflect import Modifier
-from org.python.core import PyReflectedFunction
-from sets import Set
 
-try:
-    import textwrap
-except:
-    import _textwrap as textwrap
+from org.python.core import PyReflectedFunction
+
+from org.slf4j import Logger
+from org.slf4j import LoggerFactory
+
+_CONTEXT_ASSERT_MSG = "expected 'default' context; got '%s'"
+_APPENDER_ASSERT_MSG = "expected appender to be a subclass of FileAppender; got '%s'"
+
+def _expandpath(path):
+    """Expands ENV variables, fixes things like '~', and then normalizes the
+    given path."""
+    return os.path.normpath(os.path.expanduser(os.path.expandvars(path)))
+
+def getLogFile():
+    # TODO(jon): this will likely have to change as the complexity of 
+    #            logback.xml increases. :(
+    # should return the "default" logging context
+    context = LoggerFactory.getILoggerFactory()
+    assert context.getName() == 'default', _CONTEXT_ASSERT_MSG % context.getName()
+    logger = context.getLogger(Logger.ROOT_LOGGER_NAME)
+    # for now I'll assume that there's only ONE appender per logger
+    appender = [x for x in logger.iteratorForAppenders()].pop()
+    assert isinstance(appender, FileAppender), _APPENDER_ASSERT_MSG % type(appender).getCanonicalName()
+    return appender.getFile()
+
+def deleteLogFile():
+    """Removes the active log file."""
+    os.remove(getLogFile())
+
+def moveLogFile(destination):
+    """Move the active log file to a given destination."""
+    shutil.move(getLogFile(), _expandpath(destination))
+
+def copyLogFile(destination):
+    """Copies the active log files to a given destination."""
+    shutil.copy2(getLogFile(), _expandpath(destination))
 
 def ncdump(path, output_format='cdl', show_values='c', vars=None):
     """Print contents of a given netCDF file. 
@@ -296,7 +335,7 @@ def delchars(str, chars):
 
 def javaInstanceMethods(clazz):
     """Returns names of instance methods for a given Java class."""
-    names = Set()
+    names = set()
     for method in Class.getDeclaredMethods(clazz):
         modifiers = method.getModifiers()
         if not Modifier.isStatic(modifiers) and Modifier.isPublic(modifiers):
