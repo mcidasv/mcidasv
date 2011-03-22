@@ -109,6 +109,7 @@ import edu.wisc.ssec.mcidasv.data.hydra.HistogramField;
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.data.hydra.SubsetRubberBandBox;
+import edu.wisc.ssec.mcidasv.data.hydra.LongitudeLatitudeCoordinateSystem;
 
 public class ScatterDisplay extends DisplayControlImpl {
 
@@ -732,27 +733,39 @@ public class ScatterDisplay extends DisplayControlImpl {
       CoordinateSystem cs = rtt.getCoordinateSystem();
       Set domainSet = image.getDomainSet();
 
+      if (cs instanceof visad.CachingCoordinateSystem) {
+        cs = ((visad.CachingCoordinateSystem)cs).getCachedCoordinateSystem();
+      }
+
       if (cs instanceof MapProjection) {
         return (MapProjection) cs;
       }
-      else if (cs instanceof visad.CachingCoordinateSystem) {
-         CoordinateSystem cacheCS = 
-              ((visad.CachingCoordinateSystem)cs).getCachedCoordinateSystem();
-         if (cacheCS instanceof MapProjection) {
-           return (MapProjection) cacheCS;
-         }
+      else if (cs instanceof LongitudeLatitudeCoordinateSystem) {
+        Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(image);
+        try {
+          mp = new LambertAEA(rect);
+        } catch (Exception e) {
+          System.out.println(" getDataProjection"+e);
+        }
+        return mp;
       }
-      else if (domainSet instanceof LinearLatLonSet) {
+
+      float minLon = Float.NaN;
+      float minLat = Float.NaN;
+      float delLon = Float.NaN;
+      float delLat = Float.NaN;
+
+      if (domainSet instanceof LinearLatLonSet) {
          MathType type0 = ((SetType)domainSet.getType()).getDomain().getComponent(0);
          int latI = RealType.Latitude.equals(type0) ? 0 : 1;
          int lonI = (latI == 1) ? 0 : 1;
 
          float[] min = ((LinearLatLonSet)domainSet).getLow();
          float[] max = ((LinearLatLonSet)domainSet).getHi();
-         float minLon = min[lonI];
-         float minLat = min[latI];
-         float delLon = max[lonI] - min[lonI];
-         float delLat = max[latI] - min[latI];
+         minLon = min[lonI];
+         minLat = min[latI];
+         delLon = max[lonI] - min[lonI];
+         delLat = max[latI] - min[latI];
 
          try {
             mp = new TrivialMapProjection(RealTupleType.SpatialEarth2DTuple,
@@ -763,13 +776,35 @@ public class ScatterDisplay extends DisplayControlImpl {
 
          return mp;
       }
-      
-      Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(image);
-      try {
-        mp = new LambertAEA(rect);
-      } catch (Exception e) {
-        System.out.println(" getDataProjection"+e);
+      else if (domainSet instanceof Gridded2DSet) {
+        rtt = ((SetType)domainSet.getType()).getDomain();
+        rtt = RealTupleType.SpatialEarth2DTuple;
+        if (!(rtt.equals(RealTupleType.SpatialEarth2DTuple) || rtt.equals(RealTupleType.LatitudeLongitudeTuple))) {
+          minLon = -180f;
+          minLat = -90f;
+          delLon = 360f;
+          delLat = 180f;
+        }
+        else {
+          int latI = rtt.equals(RealTupleType.SpatialEarth2DTuple) ? 1 : 0;
+          int lonI = (latI == 1) ? 0 : 1;
+
+          float[] min = ((Gridded2DSet)domainSet).getLow();
+          float[] max = ((Gridded2DSet)domainSet).getHi();
+          minLon = min[lonI];
+          minLat = min[latI];
+          delLon = max[lonI] - min[lonI];
+          delLat = max[latI] - min[latI];
+        }
       }
+      
+      try {
+         mp = new TrivialMapProjection(RealTupleType.SpatialEarth2DTuple,
+                 new Rectangle2D.Float(minLon, minLat, delLon, delLat));
+      } catch (Exception e) {
+          logException("MultiSpectralControl.getDataProjection", e);
+      }
+
       return mp;
     }
 
