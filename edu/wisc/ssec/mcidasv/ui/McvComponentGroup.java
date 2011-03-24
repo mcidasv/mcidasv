@@ -28,6 +28,8 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
+package edu.wisc.ssec.mcidasv.ui;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;

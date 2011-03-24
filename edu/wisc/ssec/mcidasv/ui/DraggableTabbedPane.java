@@ -28,6 +28,8 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
+package edu.wisc.ssec.mcidasv.ui;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
