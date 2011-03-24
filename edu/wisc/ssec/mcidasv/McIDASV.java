@@ -28,6 +28,8 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
+package edu.wisc.ssec.mcidasv;
+
 import static ucar.unidata.xml.XmlUtil.getAttribute;
 
 import java.awt.Insets;

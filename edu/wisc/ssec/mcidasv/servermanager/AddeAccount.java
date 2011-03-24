@@ -28,6 +28,8 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
+package edu.wisc.ssec.mcidasv.servermanager;
+
 /**
  * Simplistic representation of ADDE accounting information. This is an
  * immutable class.
