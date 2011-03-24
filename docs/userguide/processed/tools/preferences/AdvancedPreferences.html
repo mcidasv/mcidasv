@@ -1,11 +1,11 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<html>
+<!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- InstanceBeginEditable name="doctitle" -->
 <title>User Preferences - Advanced</title>
-<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
-<!-- InstanceEndEditable -->
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
 <link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
 <!-- InstanceBeginEditable name="CurrentFile" -->
 <script language="javascript" type="text/javascript">
@@ -21,64 +21,89 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 </head>
 <body onLoad="setParentPage();">
 <div class="TopTitleNav">
-  <p class="style2" style="text-align:left; "> 
-  	[<!-- InstanceBeginEditable name="GoToPrevious" --><a href="FormatPreferences.html">Go to Previous</a><!-- InstanceEndEditable -->]
-	<span style="padding-left: 15px; "> 
-	[<!-- InstanceBeginEditable name="GoToNext" --><a href="../RemoteDataManager.html">Go to Next</a><!-- InstanceEndEditable -->] 
-	</span> </p>
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" -->
+  <a href="FormatPreferences.html">Go to Previous</a>
+  <!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" -->
+  <a href="../RemoteDataManager.html">Go to Next</a><!-- InstanceEndEditable -->] </span> </p>
   <hr align="center">
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">User Preferences - Advanced</div>
 <a name="image1" id="image1"></a>
-<p>The User Preferences window is accessed through the <strong>Edit-&gt;Preferences</strong> menu. The <strong>Advanced</strong> tab allows the user to change options that require a restart in order for them to take effect. This tab can also be accessed by using the startup manager to configure settings before running McIDAS-V (runMcV-Config.bat or runMcV-Config). The below image represents the default settings for the <strong>Advanced</strong> tab.</p>
-<div class="images"><img src="../images/preferences/Advanced.gif" alt="Advanced Preferences">
-<br>
-<span class="caption">Image 1: Advanced Preferences</span> (Default)</div>
-</p>
+<p>The User Preferences window is accessed through the <strong>Edit-&gt;Preferences</strong> menu.
+  The <strong>Advanced</strong> tab allows for changing options that require
+  a restart in order for them to take effect. To
+  configure the settings before running McIDAS-V, execute the <em>runMcV-config</em> command
+  from the directory where McIDAS-V was installed (normally McIDAS-V-System)
+  or by selecting <strong>Configure McIDAS-V</strong> in the Windows <strong>Start</strong> menu. The below image represents the default settings for the <strong>Advanced</strong> tab.</p>
+<div class="images"><img src="../images/preferences/Advanced.gif" alt="Advanced Preferences"> <br>
+  <span class="caption">Image 1: Advanced Preferences</span> (Default)</div>
+<p></p>
 <div class="preferencegrouptitle">Startup Options</div>
-<p><a name="heapsize" id="heapsize"></a>
-</p>
-<p><strong>Memory -</strong> When the first bubble is selected McIDAS-V will use up to the given amount of the computer's available memory. When the second bubble is checked, the user can enter a specific set value of memory to use. The new amount of memory will be saved
-  and used in subsequent sessions. For 32 bit operating systems, it is recommended
-  to set this to no more than 1250 MB. The maximum value for 32 bit operating
-  systems is 1536 MB. However, 64 bit operating systems can use all of the memory available to the operating system.</p>
-<p><strong>Specify Default Bundle - </strong> When checked, select a bundle from
-  your list of favorites (found in the <strong>Bundles</strong> menu) to load
-upon startup. </p>
-<p><strong>Load Default Layout -</strong> When checked, McIDAS-V will load the
-  default layout upon startup. Uncheck to use the default layout of McIDAS-V
-  (one window with one panel).</p>
-<a name="jogl" id="jogl"></a>
-<p><strong>Enable 3D controls -</strong> When checked, McIDAS-V uses the default
-  3D behavior. Uncheck to override the default 3D behavior of McIDAS-V and use
-  a 2D View for Map Views.
-<p><strong>Enable JOGL -</strong>  Java OpenGL (JOGL) is a wrapper library that allows OpenGL to be used in Java, and it is permantely enabled in McIDAS-V.</p>
-<p><strong>Enable Direct3D -</strong> When checked,  Direct3D will be used. Direct 3D is used to render 3D graphics. Note: this only works in Windows.</p>
-<p><strong>Enable Geometry by Reference -</strong> When checked, Java
-  Geometry by Reference will be used. Try this option unchecked if random/extraneous map lines
-  are drawn - a problem that may occur more frequently on systems with ATI graphics
-  cards.</p>
-<p><strong>Enable Access to Image Data by Reference -</strong> When checked, Java Access to Image Data by Reference will be used. We recommend that this
-  option be checked, as it often removes the jagged edges at
-  the limb and/or gaps at the dateline that sometimes appear in displays of image
-data.</p>
-<p><strong>Enable Non-Power of Two (NPOT) Textures -</strong> When checked, Java Non-Power of Two (NPOT) Textures will be used.</p>
-<p><strong>Enable Concurrent Mark-Sweep Garbage Collector -</strong> When checked, Java Concurrent Mark-Sweep Garbage Collector will be used.</p>
+<p><a name="heapsize" id="heapsize"></a> </p>
+<p><strong>Memory -</strong> Sets the Java heap size, which is the amount of
+  memory allocated by McIDAS-V at startup. Use the first bubble to choose a percentage
+  of available memory, or use the second bubble to enter a specific value. The
+  new amount of memory will be saved and used in subsequent sessions. For more
+  information, see the Setting Memory Usage section in <a href="../../Starting.html">Downloading
+  and Running McIDAS-V</a>.</p>
+<p><strong>Specify default bundle - </strong> Loads the selected bundle at startup
+  by setting the &quot;-bundle&quot; command line flag.
+  Select a default bundle in the tree below the checkbox, which shows the bundles
+  in the <strong>Bundles &gt; Favorite
+  Bundles</strong> menu.</p>
+<p><strong>Load default layout -</strong> Restores the previously-saved window
+  configuration upon startup. Uncheck to use the initial window layout of one
+  Main Display Window with one panel. For more information, see the <span class="faq-question-link"><a href="../../ui/Menus.html#defaultlayout">Menu
+  Bar's</a></span> Default Layout section.</p>
+<p><strong>Enable 3D controls - </strong>Controls the value of the "idv.3d" IDV
+  property and gives the ability to view and navigate in 3D space with
+  the 3D controls in the Main Display Window's <a href="../../ui/Navigation.html#viewpoint">Viewpoint
+  Toolbar</a>. Uncheck to override the default 3D behavior of McIDAS-V and to
+  switch to a 2D view with the Viewpoint Toolbar removed.
+
+<p><strong><a name="jogl" id="jogl"></a>Enable JOGL </strong>(Mac OS X only)<strong> -</strong> <strong> </strong>Sets
+  the "j3d.rend" property to "jogl", which sets Java3D to use JOGL (Java OpenGL)
+  as the graphics rendering backend. Disabling will omit the &quot;j3d.rend&quot; property,
+  causing Java3D to use its default OpenGL backend. </p>
+<p><strong>Enable Direct3D </strong>(Windows only)<strong> - </strong>Sets the "j3d.rend" property
+  to "d3d", which  sets Java3D to use  Direct 3D as the graphics rendering
+  backend. Disabling
+  will omit the &quot;j3d.rend&quot; property, causing Java3D to use its default
+  OpenGL backend. </p>
+<p><strong>Enable access to geometry by reference - </strong>Sets the "visad.java3d.geometryByRef" property
+  to true and enables the visualization
+of larger images because of the more efficient use of memory. Unchecking this
+  option can help to remove random/extraneous map lines that sometimes appear
+  in displays of image data. This is a problem that may occur more frequently
+  on systems with ATI graphics cards.</p>
+<p><strong>Enable access to image data by reference - </strong>Sets the "visad.java3d.imageByRef" property
+  to true and improves the rendering of satellite imagery in the satellite's
+  native projection, removing the jagged edges at the limb and/or
+  gaps at the dateline that sometimes appear in displays of image data. It is
+  recommended that this option be checked.</p>
+<p><strong>Enable Non-Power of Two (NPOT) textures - </strong>Sets the "visad.java3d.textureNpot" property
+to true and enables the visualization
+of larger images because of the more efficient use of memory. </p>
+<p><strong>Enable concurrent mark-sweep garbage collector - </strong>Passes "-XX:+UseConcMarkSweepGC
+  -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=128m" to the McIDAS-V JVM (Java
+  Virtual Machine) and uses shorter
+  garbage collection pauses by performing most garbage collection activity while
+  the McIDAS-V threads are running. Unchecking this option uses the JVM defaults,
+  which vary by Operating System. </p>
 <div class="preferencegrouptitle">Java Threads</div>
-<p><strong>Java Rendering -</strong> The pull down menu is used to select the number
-  of Java threads to use for rendering.</p>
-<p><strong>Java Reading -</strong> The pull down menu is used to select the number
-  of Java threads to use for reading.</p>
+<p><strong>Rendering -</strong> Sets the number of Java threads to use for rendering.</p>
+<p><strong>Reading -</strong> Sets the number of Java threads to use for reading.</p>
 <br>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
-  <p class="style2" style="text-align:left; "> 
-  	[<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="FormatPreferences.html">Go to Previous</a><!-- InstanceEndEditable -->] 
-	<span style="padding-left: 15px; "> 
-	[<!-- InstanceBeginEditable name="GoToNext2" --><a href="../RemoteDataManager.html">Go to Next</a><!-- InstanceEndEditable -->] 
-	</span></p>
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" -->
+  <a href="FormatPreferences.html">Go to Previous</a>
+  <!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" -->
+  <a href="../RemoteDataManager.html">Go to Next</a>
+  <!-- InstanceEndEditable -->] </span></p>
 </div>
 </body>
-<!-- InstanceEnd --></html>
+<!-- InstanceEnd -->
+</html>

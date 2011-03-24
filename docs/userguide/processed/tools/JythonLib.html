@@ -181,7 +181,7 @@ This is the doc for the Grid Diagnostics module. These functions are based on th
 <div class="jython">QUO (S1, S2) = S1 / S2</div>
 <p><a name="qvec" id="qvec"></a><code class="command">qvec(S, V):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Q-vector at a level ( K / m / s )</p>
-<div class="jython">QVEC ( S, V ) = [ - ( DOT ( DVDX (V), GRAD (S) ) ), - ( DOT ( DVDY (V), GRAD (S) ) ) ] where S can be any thermal paramenter, usually THTA.</div>
+<div class="jython">QVEC ( S, V ) = [ - ( DOT ( DVDX (V), GRAD (S) ) ), - ( DOT ( DVDY (V), GRAD (S) ) ) ] where S can be any thermal parameter, usually THTA.</div>
 <p><a name="sdiv" id="sdiv"></a><code class="command">sdiv(S, V):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Horizontal Flux Divergence</p>
 <div class="jython">SDIV ( S, V ) = S * DIV ( V ) + DOT ( V, GRAD ( S ) )</div>
@@ -259,7 +259,7 @@ This is the doc for the Grid Diagnostics module. These functions are based on th
 <p><a name="make3DMap" id="make3DMap"></a><code class="command">make3DMap(map, topo):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Make a 3d map. map - map line data - topo - topography dataset</p>
 <p><a name="makeFieldFromMapBounds" id="makeFieldFromMapBounds"></a><code class="command">makeFieldFromMapBounds(mapSets, length1, length2, fill, unit):</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">Make a field whos lat/lon area is the bounds of the given mapSet. It has length1 points in the x and length2 in the y. Fill it with the fill value and the given unit</p>
+<p style="padding:0;margin-left:20;margin-top:0">Make a field whose lat/lon area is the bounds of the given mapSet. It has length1 points in the x and length2 in the y. Fill it with the fill value and the given unit</p>
 <p><a name="subsetFromMap" id="subsetFromMap"></a><code class="command">subsetFromMap(field, mapSets, fillValue, inverse):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">mapSets defines a set of polygons. This procedure fills the areas in the field that are not enclosed by the polygons with the fill value. If inverse is 1 then it fills the areas that are enclosed</p>
 <p><a name="subsetRangeFromMap" id="subsetRangeFromMap"></a><code class="command">subsetRangeFromMap(range, timeStep, mapSets, fillValue, inverse):</code></p>

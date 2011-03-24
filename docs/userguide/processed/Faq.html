@@ -92,6 +92,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('Faq.html',true); 
 <div class="faq-category">
 <div class="faq-question">
 <ul class="noindent">
+<li><a class="faq-question-link" href="#basicchecks">What do I do if McIDAS-V will not work on my computer?</a></li>
+</ul>
+</div>
+<div class="faq-question">
+<ul class="noindent">
 <li><a class="faq-question-link" href="#filelocations">Where are the McIDAS-V files stored on my computer?</a></li>
 </ul>
 </div>
@@ -510,6 +515,23 @@ application/x-java-jnlp-file JNLP
     </div>-->
 <div class="faq-category-title"><a name="faq1_cat3_" id="faq1_cat3_"></a>Using McIDAS-V</div>
 <div class="faq-category">
+<a name="basicchecks" id="basicchecks"></a>
+<div class="faq-question">
+<h4>Q. What do I do if McIDAS-V will not work on my computer?</h4>
+</div>
+<div class="faq-answer">
+  <p>Listed below is a basic checklist of steps to follow if your McIDAS-V is not working properly. Once you successfully complete each step in the process, attempt to use McIDAS-V again. If the problem still exists, proceed to the next step, and so on.</p>
+  <ol>
+    <li>
+      <!--[endif]-->
+      Make sure that your <strong><em>drivers</em></strong> are up to date. Please see the        graphics cards          section of the <a href="../../../software/v/system_req.html">System Requirements page</a> for more information.</li>
+    <li>Try downloading this <a href="http://download.java.net/media/java3d/webstart/test/HelloUniverse.jnlp">Java3D example</a> to see if you can view it. Please see the Java Versions section of the <a href="../../../software/v/system_req.html">System Requirements page</a> for more information.<br />
+      Note: If your system does not support Java3D version 1.3.1+ McIDAS-V will not work for you.</li>
+    <li>Disable Java Access to Image          Data by          Reference by unchecking <strong><em>Enable access              to image data by reference</em></strong> option in the <a href="../current/tools/preferences/AdvancedPreferences.html">User  Preferences -             Advanced tab</a>.</li>
+    <li> Set a small heap size by setting the <em><strong>Memory</strong></em> option to 512 megabytes in the <a href="../current/tools/preferences/AdvancedPreferences.html">User Preferences - Advanced tab</a>.</li>
+    <li>If you are on a Windows station, use Direct3D by checking the <em><strong>Enable Direct3D</strong></em> option in the <a href="../current/tools/preferences/AdvancedPreferences.html">User Preferences - Advanced tab</a>.</li>
+    <li>Rename your 'McIDAS-V' document directory to start with a clean set of options. This will undo the changes made in steps 3-5 listed above, but it will eliminate any corrupt startup bundles or settings.</li>
+    <li>Repeat steps 3-5 with a clean slate.</li></ol></div>
 <a name="filelocations" id="filelocations"></a>
 <div class="faq-question">
 <h4>Q. Where are the McIDAS-V files stored on my computer?</h4>
@@ -862,7 +884,7 @@ command="java -Xmx512m -Didv.enableStereo=true -Dj3d.sharedstereozbuffer=true -j
 <p>A user reported --- The first time I ran the script, it told me I needed to upgrade my JDK. So I installed jdk1.6.0_03 and Java3D 1.3.1. Then McV installed without any problem.</p>
 <a name="osx-write" id="osx-write"></a>
 <h4>Error #2 - On Mac OS X only</h4>
-<em>You have no write premissions for this directory. Please choose another one.</em>
+<em>You have no write permissions for this directory. Please choose another one.</em>
 <br>
 <h4>Solution</h4>
 <p>Browse for a writable directory (e.g. /Users/mcuser/McIDAS-V). Under <span class="faq-answer">&quot;</span>Select Additional Tasks<span class="faq-answer">&quot;</span>, uncheck <span class="faq-answer">&quot;</span>Create Launcher and Configuration shortcuts in Applications folder<span class="faq-answer">&quot;</span></p>

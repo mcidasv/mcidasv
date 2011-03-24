@@ -30,12 +30,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 <div class="pagetitle">User Preferences - Formats and Data</div>
 <a name="image1" id="image1"></a>
 <p>The User Preferences window is accessed through the <strong>Edit-&gt;Preferences</strong> menu. The <strong>Formats and Data</strong> tab allows the user to define data formats
-  and defaults to be used when displaying data. The below image represents the default custom values for the <strong>Formats and Data</strong> tab.</p>
+  and defaults to be used when displaying data. The below image represents the default values for the <strong>Formats and Data</strong> tab.</p>
 <div class="images"><img src="../images/preferences/FormatsAndData.gif" alt="Formats and Data Preferences"> <br>
   <span class="caption">Image 1: Formats and Data Preferences</span> (Default)</div>
 <p>&nbsp;</p>
 <div class="preferencegrouptitle">Formats</div>
-<p><a name="dateformat" id="dateformat"></a><strong>Date Format</strong> <strong>- </strong>the format used when McIDAS-V displays dates. The date format string uses
+<p><a name="dateformat" id="dateformat"></a><strong>Date Format</strong> <strong>- </strong>Format used when McIDAS-V displays dates. The date format string uses
   the following symbols. Note, these symbols can be repeated to give different
   results. </p>
 <p>For example:</p>
@@ -49,8 +49,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 <table class="noborder" style="margin:10px;">
   <tr>
     <td width="56">Symbol</td>
-    <td width="124">Description</td>
-    <td width="251">Example</td>
+    <td width="169">Description</td>
+    <td width="234">Example</td>
   </tr>
   <tr>
     <td>G</td>
@@ -150,9 +150,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 </table></blockquote>
 
 <a name="timezone" id="timezone"></a>
-<p><strong>Time Zone -</strong> the format used when McIDAS-V displays times.</p>
+<p><strong>Time Zone -</strong> Format used when McIDAS-V displays times.</p>
 <a name="latlonformat" id="latlonformat"></a>
-<p><strong>Lat/Lon Format</strong> - the format used when McIDAS-V displays latitudes and longitudes. The following symbols are valid in the decimal formatting.</p>
+<p><strong>Lat/Lon Format</strong> - Format used when McIDAS-V displays latitudes and longitudes. The following symbols are valid in the decimal formatting.</p>
   <blockquote>
 <table width="457" class="noborder" style="margin:10px;">
   <tr>
@@ -226,7 +226,7 @@ the latitude and longitude values.
   </tr>
 </table></blockquote>
 <a name="probeformat" id="probeformat"></a>
-<p><strong>Probe Format -</strong> the  html template that is used
+<p><strong>Probe Format -</strong> Html template that is used
   to display data readouts in the data probe display. This html template can
   contain macros that are replaced with the probed values. Macros are: <ul>
   %value% Formatted value <br>
@@ -236,29 +236,29 @@ the latitude and longitude values.
 </ul>
 </p>
 <a name="distanceunit" id="distanceunit"></a>
-<p><strong>Distance Unit -</strong> the default unit that is used when displaying distances (e.g., in the Range
+<p><strong>Distance Unit -</strong> Default unit that is used when displaying distances (e.g., in the Range
   and Bearing Control).</p>
 <div class="preferencegrouptitle">Data</div>
 <p><a name="samplingmode" id="samplingmode"></a>
 </p>
-<p><strong>Sampling Mode -</strong> the sampling method used by data probes in McIDAS-V. Choose between a weighted average sampling or
+<p><strong>Sampling Mode -</strong> Sampling method used by data probes in McIDAS-V. Choose between a weighted average sampling or
   nearest neighbor.</p>
 <a name="pressuretoheight" id="pressuretoheight"></a>
-<p><strong>Pressure to Height</strong> -  the type of algorithm
+<p><strong>Pressure to Height</strong> -  Type of algorithm
   McIDAS-V uses for converting from pressure coordinates to height. See the <a href="../../Faq.html#pressure_to_height">FAQ</a> for
   more information on this option.</p>
 <a name="cachedatainmemory" id="cachedatainmemory"></a>
-<p><strong>Cache Data in Memory -</strong>attempts to cache data that McIDAS-V loads into memory for quicker data access.</p>
+<p><strong>Cache Data in Memory - </strong>Attempts to cache data that McIDAS-V loads into memory for quicker data access.</p>
 <a name="diskcachesize" id="diskcachesize"></a>
-<p><strong>Disk Cache Size -</strong> the maximum amount of disk space used when caching data. McIDAS-V will cache some datasets to disk to eliminate network latency.</p>
+<p><strong>Disk Cache Size -</strong> Maximum amount of disk space used when caching data. McIDAS-V will cache some datasets to disk to eliminate network latency.</p>
 <p><a name="maximagesize" id="maximagesize2"></a> </p>
-<p><strong>Max Image Size -</strong> the maximum image
+<p><strong>Max Image Size -</strong> Maximum image
   size (in pixels) that is to be displayed. When this preference is set the image
   display will adjust the Pixel Sampling to reduce the image to less than the
   preferred value. This allows for the initial display of large images without
   causing memory issues. </p>
 <p><a name="gridthreshold" id="gridthreshold"></a> </p>
-<p><strong>Grid Threshold -</strong> the size limit
+<p><strong>Grid Threshold -</strong> Size limit
   for holding grids in memory. Grids larger than this size will be cached to
   disk instead of held in memory during the McIDAS-V session. This allows loading
   large grids and long loops of grids without a major performance hit.<br>

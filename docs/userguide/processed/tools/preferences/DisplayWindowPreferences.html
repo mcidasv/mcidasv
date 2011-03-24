@@ -38,58 +38,61 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 <span class="caption">Image 1: Display Window Preferences</span> (Default)</div>
 <p>&nbsp;</p><div class="preferencegrouptitle">Navigation Toolbars</div>
 <div class="preferencegroup">
-  <p><strong>Show Globe Background</strong> - this, when checked, displays a solid globe background.</p>
   <p><a name="showearthnavigationpanel" id="showearthnavigationpanel"></a>
   </p>
-  <p><strong>Show Earth Navigation Panel</strong> - this, when checked, shows a graphical navigation panel.</p>
+  <p><strong>Show Earth Navigation Panel</strong> -  Shows a graphical navigation panel.</p>
 <a name="showviewpointtoolbar" id="showviewpointtoolbar"></a>
-<p><strong>Show Viewpoint Toolbar</strong> - this, when checked, enables the <a href="../../ui/Navigation.html#viewpoint">Viewpoint toolbar</a>.</p>
+<p><strong>Show Viewpoint Toolbar</strong> -  Enables the <a href="../../ui/Navigation.html#viewpoint">Viewpoint toolbar</a>.</p>
 <a name="showzoom/pantoolbar" id="showzoom/pantoolbar"></a>
-<p><strong>Show Zoom/Pan Toolbar</strong> - this, when checked, enable the <a href="../../ui/Navigation.html#navigation">Zoom/Pan toolbar</a>.</p>
+<p><strong>Show Zoom/Pan Toolbar</strong> -  Enables the <a href="../../ui/Navigation.html#navigation">Zoom/Pan toolbar</a>.</p>
 <a name="showzoom/undoredotoolbar" id="showzoom/undoredotoolbar"></a>
-<p><strong>Show Undo/Redo Toolbar</strong> - this, when checked enables the <a href="../../ui/Navigation.html#undoredo">Undo/Redo toolbar</a>.</p>
+<p><strong>Show Undo/Redo Toolbar</strong> -  Enables the <a href="../../ui/Navigation.html#undoredo">Undo/Redo toolbar</a>.</p>
 </div>
 <div class="preferencegrouptitle">Legends</div>
 <div class="preferencegroup"><a name="showsidelegend" id="showsidelegend"></a>
-<p><strong>Show Side Legend</strong> - this, when checked, shows the side display legend.</p>
+<p><strong>Show Side Legend</strong> -  Shows the side display legend.</p>
 <a name="showbottomlegend" id="showbottomlegend"></a>
-<p><strong>Show Bottom Legend</strong> - this, when checked, shows the bottom display legend.</p>
+<p><strong>Show Bottom Legend</strong> -  Shows the bottom display legend.</p>
 </div>
 <div class="preferencegrouptitle">Panel Configuration</div>
-<div class="preferencegroup"><a name="showwireframebox" id="showwireframebox"></a>
-<p><strong>Show Wireframe Box</strong> - this, when checked, toggles the visibility of a 3D wireframe box around the data. This box helps provide orientation in 3D views.</p>
+<div class="preferencegroup">
+  <p><a name="showglobebackground" id="showglobebackground"></a></p>
+  <p><strong>Show Globe Background</strong> - Displays a solid globe background.</p>
+  <p><a name="showwireframebox" id="showwireframebox"></a>
+  </p>
+  <p><strong>Show Wireframe Box</strong> -  Toggles the visibility of a 3D wireframe box around the data. This box helps provide orientation in 3D views.</p>
 <a name="showcursorreadout" id="showcursorreadout"></a>
-<p><strong>Show Cursor Readout</strong> - this, when checked, displays a label of latitude, longitude, and altitude of the cursor position over the display, shown in the lower border of the view window.</p>
+<p><strong>Show Cursor Readout</strong> - Displays a label of latitude, longitude, and altitude at the cursor position over the display, shown in the lower border of the view window.</p>
 <a name="clipviewatbox" id="clipviewatbox"></a>
-<p><strong>Clip View At Box</strong> - this, when checked, allows you to elide from view all display elements outside the wireframe box. This is helpful to remove map lines outside the area of data.</p>
+<p><strong>Clip View At Box</strong> -  Allows the user to omit from view all display elements outside the wireframe box. This is helpful to remove map lines outside the area of data.</p>
 <a name="showlayerlist" id="showlayerlist"></a>
-<p><strong>Show Layer List in Panel</strong> - this, when checked, shows a listing of the titles and times of the layer controls in the main view window.</p>
+<p><strong>Show Layer List in Panel</strong> - Shows a listing of the titles and times of the layer controls in the Main Display Window.</p>
 <a name="showtimesinpanel" id="showtimesinpanel"></a>
-<p><strong>Show Times In Panel</strong> - this, when checked, will turn on the label shown inside the main display that shows the current animation time.</p>
+<p><strong>Show Times In Panel</strong> - Turns on the label shown inside the Main Display Window that shows the current animation time.</p>
 <a name="showmapdisplayscales" id="showmapdisplayscales"></a>
-<p><strong>Show Map Display Scales</strong> - this, when checked, will show a vertical scale in the map displays.</p>
+<p><strong>Show Map Display Scales</strong> - Shows a vertical scale in the map displays.</p>
 <a name="showtransectdisplayscales" id="showtransectdisplayscales"></a>
-<p><strong>Show Transect Display Scales</strong> - this, when checked, will show a vertical scale in the transect displays.</p>
+<p><strong>Show Transect Display Scales</strong> - Shows a vertical scale in the transect displays.</p>
 <a name="show&quot;pleasewait&quot;message" id="show&quot;pleasewait&quot;message"></a>
-<p><strong>Show "Please Wait" Message</strong> - this, when checked, will display the "Please Wait" message in the display.</p>
+<p><strong>Show "Please Wait" Message</strong> - Displays the "Please Wait" message in the display.</p>
 <a name="resetprojectionwithnewdata" id="resetprojectionwithnewdata"></a>
-<p><strong>Reset Projection With New Data</strong> - this, when checked, will cause each new display made in McIDAS-V to snap the whole view window to the native projection of the data. This can be undesirable if you are overlaying several kinds of some of which have differing projections.</p>
+<p><strong>Reset Projection With New Data</strong> - Causes each new display made in McIDAS-V to snap the whole Main Display Window to the native projection of the data. This can be undesirable if you are overlaying several kinds of data, some of which have differing projections. However, it works well if you are working with data based on the same projection. Another option related to this is <a href="../../ui/DisplayMenus.html#autosetpro">Auto-Set Projection</a>.</p>
 <a name="use3dview" id="use3dview"></a></div>
 <div class="preferencegrouptitle">Color Scheme</div>
 <div class="preferencegroup">
-  <p><strong>Globe Background - </strong>this is the color of the globe's background.</p>
-  <p><strong>Background - </strong>this is the color of the background behind the image being displayed.</p>
-  <p><strong>Foreground -</strong> this is the color of the wireframe box in the foreground.</p>
-  <p><strong>Selected Panel -</strong> this is the color in the frame around the selected panel. This is the panel that changes will be made to if you have multiple tabs open.</p>
-  <p>Note: The color of the maps is controlled by the individual <a href="../../controls/MapDisplayControl.html">map control</a>. The selected panel color changes the color used to highlight the current panel.</p>
+  <p><strong>Globe Background - </strong>The color of the globe's background.</p>
+  <p><strong>Background - </strong>The color of the background behind the image being displayed.</p>
+  <p><strong>Foreground -</strong>  The color of the wireframe box in the foreground.</p>
+  <p><strong>Selected Panel -</strong> The color in the frame around the selected panel. This is the panel that changes will be made to if you have multiple tabs open.</p>
+  <p>Note: The color of the maps is controlled by the individual <a href="#autosetpro">map control</a>. The selected panel color changes the color used to highlight the current panel.</p>
 </div>
 <div class="preferencegrouptitle">Layer List Properties</div>
 <div class="preferencegroup">
-  <p><strong>Font - </strong>this is the text at the bottom of the view screen denoting what is being viewed. Using the drop-down menus, the user can define the font, style, and size of text.</p>
-  <p><strong>Color -</strong> this is the color of the text at the bottom of the view screen.</p>
+  <p><strong>Font - </strong>The text at the bottom of the Main Display Window denoting what is being viewed. Using the dropdown lists, the user can define the font, style, and size of text.</p>
+  <p><strong>Color -</strong> The color of the text at the bottom of the Main Display Window.</p>
 </div>
 <div class="preferencegrouptitle">Default Projection</div>
-<div class="preferencegroup"><strong>Default Projection -</strong> this drop-down menu allows the user to choose which map projection McIDAS-V will default to.</div>
+<div class="preferencegroup"><strong>Default Projection -</strong> Sets the default map projection.</div>
 
 <br>
 <!-- InstanceEndEditable -->
