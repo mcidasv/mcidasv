@@ -49,6 +49,9 @@ import java.awt.Rectangle;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.VirtualUniverse;
 
+import org.python.core.Py;
+import org.python.core.PySystemState;
+
 import ucar.unidata.idv.ArgsManager;
 import ucar.unidata.idv.IdvResourceManager.IdvResource;
 import ucar.unidata.util.ResourceCollection;
@@ -91,6 +94,27 @@ public class SystemState {
             // do nothing for right now
         }
         return result;
+    }
+
+    /**
+     * Returns the contents of Jython's registry (basically just Jython-specific
+     * properties) as well as some of the information from Python's 
+     * {@literal "sys"} module. 
+     * 
+     * @return Jython's configuration settings. 
+     */
+    public static Map<Object, Object> queryJythonProps() {
+        Map<Object, Object> properties = 
+            new LinkedHashMap<Object, Object>(PySystemState.registry);
+        properties.put("sys.argv", Py.getSystemState().argv.toString());
+        properties.put("sys.builtin_module_names", PySystemState.builtin_module_names.toString());
+        properties.put("sys.byteorder", PySystemState.byteorder);
+        properties.put("sys.isPackageCacheEnabled", PySystemState.isPackageCacheEnabled());
+        properties.put("sys.path", Py.getSystemState().path);
+        properties.put("sys.platform", PySystemState.platform.toString());
+        properties.put("sys.version", PySystemState.version);
+        properties.put("sys.version_info", PySystemState.version_info);
+        return properties;
     }
 
     /**
@@ -290,6 +314,7 @@ public class SystemState {
         Properties sysProps = System.getProperties();
         Map<String, Object> j3dProps = queryJava3d();
         Map<String, String> machineProps = queryMachine();
+        Map<Object, Object> jythonProps = queryJythonProps();
         Map<String, Object> mcvProps = queryMcvState(mcv);
 
         buf.append("Software Versions:")
@@ -307,10 +332,12 @@ public class SystemState {
             .append("\nRenderer: ").append(j3dProps.get("j3d.renderer"))
             .append("\nPipeline: ").append(j3dProps.get("j3d.pipeline"))
             .append("\nVendor:   ").append(j3dProps.get("j3d.vendor"))
-            .append("\nVersion:  ").append(j3dProps.get("j3d.version"));
+            .append("\nVersion:  ").append(j3dProps.get("j3d.version"))
+            .append("\n\nJython:")
+            .append("\nVersion:     ").append(jythonProps.get("sys.version_info"))
+            .append("\npython.home: ").append(jythonProps.get("python.home"));
 
         if (firehose) {
-//            buf.append("\n\n\nFirehose:\n");
             buf.append("\n\n\nFirehose:\n\n# SOFTWARE VERSIONS\n");
             for (String key : (new TreeSet<String>(versions.keySet()))) {
                 buf.append(key).append('=').append(versions.get(key)).append('\n');
@@ -329,6 +356,11 @@ public class SystemState {
             buf.append("\n# JAVA3D/JOGL PROPERTIES\n");
             for (String key : (new TreeSet<String>(j3dProps.keySet()))) {
                 buf.append(key).append('=').append(j3dProps.get(key)).append('\n');
+            }
+
+            buf.append("\n# JYTHON PROPERTIES\n");
+            for (Object key : (new TreeSet<Object>(jythonProps.keySet()))) {
+                buf.append(key).append('=').append(jythonProps.get(key)).append('\n');
             }
 
             // get idv/mcv properties
