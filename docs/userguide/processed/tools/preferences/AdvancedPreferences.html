@@ -73,7 +73,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
   OpenGL backend. </p>
 <p><strong>Enable access to geometry by reference - </strong>Sets the "visad.java3d.geometryByRef" property
   to true and enables the visualization
-of larger images because of the more efficient use of memory. Unchecking this
+of larger datasets because of the more efficient use of memory. Unchecking this
   option can help to remove random/extraneous map lines that sometimes appear
   in displays of image data. This is a problem that may occur more frequently
   on systems with ATI graphics cards.</p>
@@ -84,7 +84,9 @@ of larger images because of the more efficient use of memory. Unchecking this
   recommended that this option be checked.</p>
 <p><strong>Enable Non-Power of Two (NPOT) textures - </strong>Sets the "visad.java3d.textureNpot" property
 to true and enables the visualization
-of larger images because of the more efficient use of memory. </p>
+of larger datasets because of the more efficient use of memory. Unchecking this
+  option may be necessary on machines with graphics cards that do not support
+  NPOT.</p>
 <p><strong>Enable concurrent mark-sweep garbage collector - </strong>Passes "-XX:+UseConcMarkSweepGC
   -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=128m" to the McIDAS-V JVM (Java
   Virtual Machine) and uses shorter
