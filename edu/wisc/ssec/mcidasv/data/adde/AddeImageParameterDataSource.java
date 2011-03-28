@@ -30,6 +30,9 @@
 
 package edu.wisc.ssec.mcidasv.data.adde;
 
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashMap;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
+
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -46,6 +49,9 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.TreeMap;
@@ -74,7 +80,7 @@ import visad.FlatField;
 import visad.FunctionType;
 import visad.MathType;
 import visad.RealType;
-import visad.Set;
+
 import visad.VisADException;
 import visad.data.DataRange;
 import visad.data.mcidas.AREACoordinateSystem;
@@ -299,10 +305,10 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             if (!sourceProps.containsKey((Object)UNIT_KEY)) {
                 if (!sourceProps.containsKey((Object)BAND_KEY)) {
                     String calType = areaDirectory.getCalibrationType();
-                    if (!calType.equals("RAW")) {
+                    if (!"RAW".equals(calType)) {
                         sourceProps.put(UNIT_KEY, calType);
                         int[] bandNums = areaDirectory.getBands();
-                        String bandString = new Integer(bandNums[0]).toString();
+                        String bandString = Integer.toString(bandNums[0]);
                         sourceProps.put(BAND_KEY, bandString);
                     }
                 }
@@ -374,16 +380,25 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         return true;
     }
 
-    private Hashtable<DataChoice, DataSelection> choiceToSel = new Hashtable<DataChoice, DataSelection>();
+    private Hashtable<DataChoice, Set<DataSelection>> choiceToSel = 
+        new Hashtable<DataChoice, Set<DataSelection>>();
 
-    public DataSelection getSelForChoice(final DataChoice choice) {
+    public Set<DataSelection> getSelForChoice(final DataChoice choice) {
         return choiceToSel.get(choice);
     }
     public boolean hasSelForChoice(final DataChoice choice) {
         return choiceToSel.containsKey(choice);
     }
     public void putSelForChoice(final DataChoice choice, final DataSelection sel) {
-        choiceToSel.put(choice, sel);
+        Set<DataSelection> selections;
+        if (!choiceToSel.containsKey(choice)) {
+            selections = newLinkedHashSet();
+            choiceToSel.put(choice, selections);
+        } else {
+            selections = choiceToSel.get(choice);
+        }
+        selections.add(sel);
+        choiceToSel.put(choice, selections);
     }
 
     /**
@@ -428,7 +443,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         }
 
         for (int i = 0; i < dataChoices.size(); i++) {
-            DataChoice dataChoice = (DataChoice) dataChoices.get(i);
+            DataChoice dataChoice = (DataChoice)dataChoices.get(i);
             if (!(dataChoice instanceof DirectDataChoice)) {
                 continue;
             }
@@ -521,40 +536,99 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 continue;
             }
 
-            if (dataChoice.getDataSelection() == null) {
-                dataChoice.setDataSelection(getSelForChoice(dataChoice));
+            Map<DataSelection, List<AddeImageDescriptor>> selectionToDescriptors = newLinkedHashMap();
+            Set<DataSelection> selections = getSelForChoice(dataChoice);
+            if (selections == null) {
+                selections = newLinkedHashSet();
+                selections.add(dataChoice.getDataSelection());
             }
-            logger.trace("selected choice={} id={}", dataChoice.getName(), dataChoice.getId());
-            List<AddeImageDescriptor> descriptors = getDescriptors(dataChoice, dataChoice.getDataSelection());
-            logger.trace("descriptors={}", descriptors);
-            
-            BandInfo bandInfo;
-            Object dataChoiceId = dataChoice.getId();
-            if (dataChoiceId instanceof BandInfo) {
-                bandInfo = (BandInfo)dataChoiceId;
-            } else {
-                bandInfo = bandInfos.get(0);
-            }
-            String preferredUnit = bandInfo.getPreferredUnit();
-            List<TwoFacedObject> filteredCalUnits = new ArrayList<TwoFacedObject>();
-            for (TwoFacedObject tfo : (List<TwoFacedObject>)bandInfo.getCalibrationUnits()) {
-                if (preferredUnit.equals(tfo.getId())) {
-                    filteredCalUnits.add(tfo);
-                }
-            }
-            bandInfo.setCalibrationUnits(filteredCalUnits);
-            savedBands.add(bandInfo);
-
-            DataSelection selection = dataChoice.getDataSelection();
-            if (selection == null) {
-                if (getSelForChoice(dataChoice) != null) {
-                    selection = getSelForChoice(dataChoice);
-                } else {
-                    selection = getDataSelection();
-                }
+            for (DataSelection selection : selections) {
+                selectionToDescriptors.put(selection, getDescriptors(dataChoice, selection));
             }
 
-            Hashtable selectionProperties = selection.getProperties();
+          BandInfo bandInfo;
+          Object dataChoiceId = dataChoice.getId();
+          if (dataChoiceId instanceof BandInfo) {
+              bandInfo = (BandInfo)dataChoiceId;
+          } else {
+              bandInfo = bandInfos.get(0);
+          }
+          String preferredUnit = bandInfo.getPreferredUnit();
+          List<TwoFacedObject> filteredCalUnits = new ArrayList<TwoFacedObject>();
+          for (TwoFacedObject tfo : (List<TwoFacedObject>)bandInfo.getCalibrationUnits()) {
+              if (preferredUnit.equals(tfo.getId())) {
+                  filteredCalUnits.add(tfo);
+              }
+          }
+          bandInfo.setCalibrationUnits(filteredCalUnits);
+          savedBands.add(bandInfo);
+
+          for (Entry<DataSelection, List<AddeImageDescriptor>> entry : selectionToDescriptors.entrySet()) {
+              DataSelection selection = entry.getKey();
+              List<AddeImageDescriptor> descriptors = entry.getValue();
+              Hashtable selectionProperties = selection.getProperties();
+              for (AddeImageDescriptor descriptor : descriptors) {
+                  String src = descriptor.getSource();
+                  logger.trace("src before={}", src);
+                  src = replaceKey(src, AddeImageURL.KEY_UNIT, bandInfo.getPreferredUnit());
+                  if (selectionProperties.containsKey(AddeImageURL.KEY_PLACE)) {
+                      src = replaceKey(src, AddeImageURL.KEY_PLACE, selectionProperties.get(AddeImageURL.KEY_PLACE));
+                  }
+                  if (selectionProperties.containsKey(AddeImageURL.KEY_LATLON)) {
+                      src = replaceKey(src, AddeImageURL.KEY_LINEELE, AddeImageURL.KEY_LATLON, selectionProperties.get(AddeImageURL.KEY_LATLON));
+                  }
+                  if (selectionProperties.containsKey(AddeImageURL.KEY_LINEELE)) {
+                      src = removeKey(src, AddeImageURL.KEY_LATLON);
+                      src = replaceKey(src, AddeImageURL.KEY_LINEELE, selectionProperties.get(AddeImageURL.KEY_LINEELE));
+                  }
+                  if (selectionProperties.containsKey(AddeImageURL.KEY_MAG)) {
+                      src = replaceKey(src, AddeImageURL.KEY_MAG, selectionProperties.get(AddeImageURL.KEY_MAG));
+                  }
+                  if (selectionProperties.containsKey(AddeImageURL.KEY_SIZE)) {
+                      src = replaceKey(src, AddeImageURL.KEY_SIZE, selectionProperties.get(AddeImageURL.KEY_SIZE));
+                  }
+                  logger.trace("(1/2) descriptor src after={}", src);
+                  descriptor.setSource(src);
+                  descriptorsToSave.add(descriptor);
+                  logger.trace("(2/2) datasource src={}", getSource());
+              }
+          }
+            //            
+//            
+//            if (dataChoice.getDataSelection() == null) {
+//                dataChoice.setDataSelection(getSelForChoice(dataChoice));
+//            }
+//            logger.trace("selected choice={} id={}", dataChoice.getName(), dataChoice.getId());
+//            List<AddeImageDescriptor> descriptors = getDescriptors(dataChoice, dataChoice.getDataSelection());
+//            logger.trace("descriptors={}", descriptors);
+//            
+//            BandInfo bandInfo;
+//            Object dataChoiceId = dataChoice.getId();
+//            if (dataChoiceId instanceof BandInfo) {
+//                bandInfo = (BandInfo)dataChoiceId;
+//            } else {
+//                bandInfo = bandInfos.get(0);
+//            }
+//            String preferredUnit = bandInfo.getPreferredUnit();
+//            List<TwoFacedObject> filteredCalUnits = new ArrayList<TwoFacedObject>();
+//            for (TwoFacedObject tfo : (List<TwoFacedObject>)bandInfo.getCalibrationUnits()) {
+//                if (preferredUnit.equals(tfo.getId())) {
+//                    filteredCalUnits.add(tfo);
+//                }
+//            }
+//            bandInfo.setCalibrationUnits(filteredCalUnits);
+//            savedBands.add(bandInfo);
+//
+//            SetDataSelection selection = dataChoice.getDataSelection();
+//            if (selection == null) {
+//                if (getSelForChoice(dataChoice) != null) {
+//                    selection = getSelForChoice(dataChoice);
+//                } else {
+//                    selection = getDataSelection();
+//                }
+//            }
+//
+//            Hashtable selectionProperties = selection.getProperties();
 //            Hashtable selectionProperties;
 //            if (selection != null) {
 //                selectionProperties = selection.getProperties();
@@ -562,32 +636,32 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 //                DataSelection sel = this.getDataSelection();
 //                selectionProperties = new Hashtable();
 //            }
-            logger.trace("bandinfo.getUnit={} selection props={}", bandInfo.getPreferredUnit(), selectionProperties);
-            for (AddeImageDescriptor descriptor : descriptors) {
-//                AddeImageInfo aii = (AddeImageInfo)descriptor.getImageInfo().clone();
-                String src = descriptor.getSource();
-                logger.trace("src before={}", src);
-                src = replaceKey(src, AddeImageURL.KEY_UNIT, bandInfo.getPreferredUnit());
-                if (selectionProperties.containsKey(AddeImageURL.KEY_PLACE)) {
-                    src = replaceKey(src, AddeImageURL.KEY_PLACE, selectionProperties.get(AddeImageURL.KEY_PLACE));
-                }
-                if (selectionProperties.containsKey(AddeImageURL.KEY_LATLON)) {
-                    src = replaceKey(src, AddeImageURL.KEY_LINEELE, AddeImageURL.KEY_LATLON, selectionProperties.get(AddeImageURL.KEY_LATLON));
-                }
-                if (selectionProperties.containsKey(AddeImageURL.KEY_LINEELE)) {
-                    src = removeKey(src, AddeImageURL.KEY_LATLON);
-                    src = replaceKey(src, AddeImageURL.KEY_LINEELE, selectionProperties.get(AddeImageURL.KEY_LINEELE));
-                }
-                if (selectionProperties.containsKey(AddeImageURL.KEY_MAG)) {
-                    src = replaceKey(src, AddeImageURL.KEY_MAG, selectionProperties.get(AddeImageURL.KEY_MAG));
-                }
-                if (selectionProperties.containsKey(AddeImageURL.KEY_SIZE)) {
-                    src = replaceKey(src, AddeImageURL.KEY_SIZE, selectionProperties.get(AddeImageURL.KEY_SIZE));
-                }
-                logger.trace("src after={}", src);
-                descriptor.setSource(src);
-                descriptorsToSave.add(descriptor);
-            }
+//            logger.trace("bandinfo.getUnit={} selection props={}", bandInfo.getPreferredUnit(), selectionProperties);
+//            for (AddeImageDescriptor descriptor : descriptors) {
+////                AddeImageInfo aii = (AddeImageInfo)descriptor.getImageInfo().clone();
+//                String src = descriptor.getSource();
+//                logger.trace("src before={}", src);
+//                src = replaceKey(src, AddeImageURL.KEY_UNIT, bandInfo.getPreferredUnit());
+//                if (selectionProperties.containsKey(AddeImageURL.KEY_PLACE)) {
+//                    src = replaceKey(src, AddeImageURL.KEY_PLACE, selectionProperties.get(AddeImageURL.KEY_PLACE));
+//                }
+//                if (selectionProperties.containsKey(AddeImageURL.KEY_LATLON)) {
+//                    src = replaceKey(src, AddeImageURL.KEY_LINEELE, AddeImageURL.KEY_LATLON, selectionProperties.get(AddeImageURL.KEY_LATLON));
+//                }
+//                if (selectionProperties.containsKey(AddeImageURL.KEY_LINEELE)) {
+//                    src = removeKey(src, AddeImageURL.KEY_LATLON);
+//                    src = replaceKey(src, AddeImageURL.KEY_LINEELE, selectionProperties.get(AddeImageURL.KEY_LINEELE));
+//                }
+//                if (selectionProperties.containsKey(AddeImageURL.KEY_MAG)) {
+//                    src = replaceKey(src, AddeImageURL.KEY_MAG, selectionProperties.get(AddeImageURL.KEY_MAG));
+//                }
+//                if (selectionProperties.containsKey(AddeImageURL.KEY_SIZE)) {
+//                    src = replaceKey(src, AddeImageURL.KEY_SIZE, selectionProperties.get(AddeImageURL.KEY_SIZE));
+//                }
+//                logger.trace("src after={}", src);
+//                descriptor.setSource(src);
+//                descriptorsToSave.add(descriptor);
+//            }
 //          descriptorsToSave.addAll(descriptors);
         }
         if (!savedBands.isEmpty()) {
@@ -730,8 +804,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         if (sourceProps.containsKey(magKey)) {
             String magVal = (String)(sourceProps.get(magKey));
             String[] magVals = magVal.split(" ");
-            this.lineMag = new Integer(magVals[0]).intValue();
-            this.elementMag = new Integer(magVals[1]).intValue();
+            this.lineMag = Integer.parseInt(magVals[0]);
+            this.elementMag = Integer.parseInt(magVals[1]);
         }
     }
 
@@ -739,7 +813,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         String addeCmdBuff = source;
         if (addeCmdBuff.contains("BAND=")) {
             String bandStr = getKey(addeCmdBuff, "BAND");
-            if (bandStr.length() == 0) {
+            if (bandStr.isEmpty()) {
                 addeCmdBuff = replaceKey(addeCmdBuff, "BAND", "1");
             }
         }
@@ -747,7 +821,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             String[] segs = addeCmdBuff.split("MAG=");
             String seg0 = segs[0];
             String seg1 = segs[1];
-            int indx = seg1.indexOf("&");
+            int indx = seg1.indexOf('&');
             seg1 = seg1.substring(indx);
             String magString = lineMag + " " + elementMag;
             addeCmdBuff = seg0 + "MAG=" + magString + seg1;
@@ -760,7 +834,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             try {
                 List<BandInfo> bandInfos = (List<BandInfo>)getProperty(PROP_BANDINFO, (Object)null);
                 BandInfo bi = bandInfos.get(0);
-                String bandStr = new Integer(bi.getBandNumber()).toString();
+                String bandStr = Integer.toString(bi.getBandNumber());
                 addeCmdBuff = replaceKey(addeCmdBuff, "BAND", bandStr);
                 dirList = new AreaDirectoryList(addeCmdBuff);
             } catch (Exception eOpen) {
@@ -857,13 +931,15 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     String magStr = getKey(baseSource, MAG_KEY);
                     String saveMagStr = magStr;
                     String[] vals = StringUtil.split(magStr, " ", 2);
-                    Integer iVal = new Integer(vals[0]);
-                    int lMag = iVal.intValue() * -1;
+//                    Integer iVal = new Integer(vals[0]);
+//                    int lMag = iVal.intValue() * -1;
+                    int lMag = Integer.parseInt(vals[0]) * -1;
                     if (lMag == -1) {
                         lMag = 1;
                     }
-                    iVal = new Integer(vals[1]);
-                    int eMag = iVal.intValue() * -1;
+//                    iVal = new Integer(vals[1]);
+//                    int eMag = iVal.intValue() * -1;
+                    int eMag = Integer.parseInt(vals[1]) * -1;
                     if (eMag == -1) {
                         eMag = 1;
                     }
@@ -893,7 +969,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         acs = new AREACoordinateSystem(af);
                     } catch (Exception e) {
                         String excp = e.toString();
-                        int indx = excp.lastIndexOf(":");
+                        int indx = excp.lastIndexOf(':');
                         String errorText = excp.substring(indx+1);
                         JLabel label = new JLabel(errorText);
                         JPanel contents = GuiUtils.top(GuiUtils.inset(label, label.getText().length() + 12));
@@ -917,10 +993,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     replaceKey(MAG_KEY, saveMagStr);
                     magStr = getKey(baseSource, MAG_KEY);
                     vals = StringUtil.split(magStr, " ", 2);
-                    iVal = new Integer(vals[0]);
-                    lMag = iVal.intValue();
-                    iVal = new Integer(vals[1]);
-                    eMag = iVal.intValue();
+                    lMag = Integer.parseInt(vals[0]);
+                    eMag = Integer.parseInt(vals[1]);
 
                     this.initProps.put("LRES", String.valueOf((this.lRes)));
                     this.initProps.put("ERES", String.valueOf((this.eRes)));
@@ -951,11 +1025,14 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                             // bundle the dataselection for the newly-selected
                             // datachoice.
                             this.previewSel.setDataChoice(dataChoice);
-                            this.laLoSel.setDataChoice(dataChoice);
-                            this.laLoSel.setPreviewLineRes(this.previewLineRes);
-                            this.laLoSel.setPreviewEleRes(this.previewEleRes);
-                            this.laLoSel.update(previewDir, this.previewProjection, previewNav,
-                                           coordType, coords);
+//                            this.laLoSel.setDataChoice(dataChoice);
+//                            this.laLoSel.setPreviewLineRes(this.previewLineRes);
+//                            this.laLoSel.setPreviewEleRes(this.previewEleRes);
+//                            this.laLoSel.update(previewDir, this.previewProjection, previewNav,
+//                                           coordType, coords);
+                            this.laLoSel = new GeoLatLonSelection(this, 
+                                dataChoice, this.initProps, this.previewProjection,
+                                previewDir, previewNav);
                             
                         } else {
                             this.laLoSel = new GeoLatLonSelection(this, 
@@ -966,8 +1043,22 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         }
                     } else {
                         if (this.laLoSel != null) {
+                            coordType = this.laLoSel.getCoordinateType();
+                            if (coordType.equals(this.laLoSel.getLatLonType())) {
+                                coords[0] = this.laLoSel.getLatitude();
+                                coords[1] = this.laLoSel.getLongitude();
+                            } else {
+                                coords[0] = (double)this.laLoSel.getLine();
+                                coords[1] = (double)this.laLoSel.getElement();
+                            }
                             this.previewSel.setDataChoice(dataChoice);
-                            this.laLoSel.setDataChoice(dataChoice);
+//                            this.laLoSel.setDataChoice(dataChoice);
+//                            this.laLoSel.setPreviewLineRes(this.previewLineRes);
+//                            this.laLoSel.setPreviewEleRes(this.previewEleRes);
+//                            this.laLoSel.update(previewDir, this.previewProjection, previewNav, coordType, coords);
+                            this.laLoSel = new GeoLatLonSelection(this, 
+                                dataChoice, this.initProps, this.previewProjection,
+                                previewDir, previewNav);
                         }
                     }
                     /* DAVEP: Force preview on. "No preview" means blank image */
@@ -1023,9 +1114,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         try {
             Object dcObj = dataChoice.getId();
             if (dcObj instanceof BandInfo) {
-                bi = (BandInfo) dcObj;
-                Integer bandInt = new Integer(bandInfos.indexOf(dcObj)+1);
-                saveBand = bandInt.toString();
+                bi = (BandInfo)dcObj;
+                saveBand = Integer.toString(bandInfos.indexOf(dcObj) + 1);
             } else {
                 msgFlag = true;
                 bi = bandInfos.get(bandIdx);
@@ -1041,7 +1131,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             handlePreviewImageError(1, excp);
         }
         String name = dataChoice.getName();
-        int idx = name.lastIndexOf("_");
+        int idx = name.lastIndexOf('_');
         String unit = name.substring(idx + 1);
 
         // if this is not a valid cal unit (e.g. could be set to a plugin formula name)
@@ -1057,7 +1147,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             unit = bi.getPreferredUnit();
         }
 
-        if (getKey(source, UNIT_KEY).length() == 0) {
+        if (getKey(source, UNIT_KEY).isEmpty()) {
             source = replaceKey(source, UNIT_KEY, (Object)(unit));
         }
 
@@ -1087,8 +1177,10 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             if (sourceProps.containsKey(magKey)) {
                 String magVal = (String)(sourceProps.get(magKey));
                 String[] magVals = magVal.split(" ");
-                peMag = new Integer(magVals[0]).intValue();
-                plMag = new Integer(magVals[1]).intValue();
+                peMag = Integer.valueOf(magVals[0]);
+                plMag = Integer.valueOf(magVals[1]);
+//                peMag = new Integer(magVals[0]).intValue();
+//                plMag = new Integer(magVals[1]).intValue();
             }
             double feSize = (double)previewDir.getElements();
             double flSize = (double)previewDir.getLines();
@@ -1168,7 +1260,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             String[] segs = returnString.split(key);
             String seg0 = segs[0];
             String seg1 = segs[1];
-            int indx = seg1.indexOf("&");
+            int indx = seg1.indexOf('&');
             if (indx >= 0) {
                 seg1 = seg1.substring(indx+1);
             }
@@ -1188,7 +1280,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             String[] segs = returnString.split(key);
             String seg0 = segs[0];
             String seg1 = segs[1];
-            int indx = seg1.indexOf("&");
+            int indx = seg1.indexOf('&');
             if (indx < 0) {
                 seg1 = "";
             } else if (indx > 0) {
@@ -1200,7 +1292,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         }
         // if key is for cal units, and it was changed to BRIT,
         // must change the spacing key too 
-        if ((key.equals(UNIT_KEY + "=")) && ("BRIT".equals(val))) {
+        if ((key.equals(UNIT_KEY + '=')) && ("BRIT".equals(val))) {
             returnString = replaceKey(returnString, SPAC_KEY, SPAC_KEY, SPACING_BRIT);
         } else {
             returnString = replaceKey(returnString, SPAC_KEY, SPAC_KEY, SPACING_NON_BRIT); 
@@ -1216,7 +1308,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             String[] segs = returnString.split(oldKey);
             String seg0 = segs[0];
             String seg1 = segs[1];
-            int indx = seg1.indexOf("&");
+            int indx = seg1.indexOf('&');
             if (indx < 0) {
                 seg1 = "";
             } else if (indx > 0) {
@@ -1260,7 +1352,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         if (this.choiceName != null) {
             name = this.choiceName;
         }
-        if (name.length() != 0) {
+        if (!name.isEmpty()) {
             logger.trace("already have a name={}", name);
             return;
         }
@@ -1270,7 +1362,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         }
         BandInfo bi = null;
         if (sourceProps.containsKey(BAND_KEY)) {
-            int bandProp = new Integer((String)(sourceProps.get(BAND_KEY))).intValue();
+            int bandProp = Integer.parseInt((String)sourceProps.get(BAND_KEY));
             int bandIndex = BandInfo.findIndexByNumber(bandProp, bandInfos);
             bi = (BandInfo)bandInfos.get(bandIndex);
             if (sourceProps.containsKey(UNIT_KEY)) {
@@ -1301,13 +1393,24 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      * {@code DataSelection} for the current {@code DataChoice}.
      */
     @Override public DataSelection getDataSelection() {
-        DataSelection tmp;
+        DataSelection tmp = null;
         if (this.laLoSel == null || this.choiceToSel == null || !this.choiceToSel.containsKey(this.laLoSel.getDataChoice())) {
             logger.trace("* idvland getDataSelection");
             tmp = super.getDataSelection();
         } else {
-            logger.trace("* mcv getSelForChoice");
-            tmp = this.getSelForChoice(this.laLoSel.getDataChoice());
+            DataChoice choice = this.laLoSel.getDataChoice();
+            Set<DataSelection> selected = getSelForChoice(choice);
+            logger.trace("* mcv getSelForChoice: selected={}", selected);
+            List<?> choiceTimes = choice.getDataSelection().getTimes();
+//            if (choiceTimes == null) {
+                tmp = choice.getDataSelection();
+//            }
+            for (DataSelection tmpSelection : selected) {
+                if ((tmpSelection.getTimes() != null) && (choiceTimes.equals(tmpSelection.getTimes()))) {
+                    tmp = tmpSelection;
+                    break;
+                }
+            }
         }
         logger.trace("return selection props={} geo={}", tmp.getProperties(), tmp.getGeoSelection());
         return tmp;
@@ -1320,6 +1423,13 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     @Override public void setDataSelection(DataSelection s) {
         super.setDataSelection(s);
         if (this.laLoSel != null) {
+            Set<DataSelection> selections;
+            if (!choiceToSel.containsKey(this.laLoSel.getDataChoice())) {
+                selections = newLinkedHashSet();
+            } else {
+                selections = choiceToSel.get(this.laLoSel.getDataChoice());
+            }
+            selections.add(s);
             this.putSelForChoice(this.laLoSel.getDataChoice(), s);
         }
         logger.trace("setting selection props={} geo={}", s.getProperties(), s.getGeoSelection());
@@ -1454,8 +1564,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         if (this.selectionProps.containsKey("MAG")) {
             String str = (String)this.selectionProps.get("MAG");
             String[] strs = StringUtil.split(str, " ", 2);
-            this.lineMag = new Integer(strs[0]).intValue();
-            this.elementMag = new Integer(strs[1]).intValue();
+            this.lineMag = Integer.parseInt(strs[0]);
+            this.elementMag = Integer.parseInt(strs[1]);
         }
         this.choiceName = dataChoice.getName();
         if (this.choiceName != null) {
@@ -1515,10 +1625,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             if (key.compareToIgnoreCase(SIZE_KEY) == 0) {
                 String sizeStr = (String)(subsetProperties.get(key));
                 String[] vals = StringUtil.split(sizeStr, " ", 2);
-                Integer iVal = new Integer(vals[0]);
-                numLines = iVal.intValue();
-                iVal = new Integer(vals[1]);
-                numEles = iVal.intValue();
+                numLines = Integer.parseInt(vals[0]);
+                numEles = Integer.parseInt(vals[1]);
                 break;
             }
         }
@@ -1685,7 +1793,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         String name = dataChoice.getName();
                         int idx = name.lastIndexOf('_');
                         String unit = name.substring(idx+1);
-                        if (getKey(src, UNIT_KEY).length() == 0) {
+                        if (getKey(src, UNIT_KEY).isEmpty()) {
                             src = replaceKey(src, UNIT_KEY, (Object)(unit));
                         }
                         int lSize = numLines;
@@ -1720,7 +1828,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             if ((sortedImages.size() > 0)
                     && (sortedImages.get(0) instanceof AreaImageFlatField)) {
                 DataRange[] sampleRanges = null;
-                Set domainSet = null;
+                visad.Set domainSet = null;
                 for (SingleBandedImage sbi : sortedImages) {
                     AreaImageFlatField aiff = (AreaImageFlatField) sbi;
                     sampleRanges = aiff.getRanges(true);
@@ -1832,7 +1940,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         int band = 0;
                         String bandString = aii.getBand();
                         if ((bandString != null) && !aii.ALL.equals(bandString)) {
-                            band = new Integer(bandString).intValue();
+                            band = Integer.parseInt(bandString);
                         }
                         // TODO: even though the band is non-zero we might only 
                         // get back one band
@@ -1913,7 +2021,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
                 src = replaceKey(src, PLACE_KEY, savePlace);
                 src = removeKey(src, LINELE_KEY);
-                if (getKey(src, LATLON_KEY).length() != 0) {
+                if (!getKey(src, LATLON_KEY).isEmpty()) {
                     String latStr = Double.toString(saveLat);
                     if (latStr.length() > 8) {
                         latStr = latStr.substring(0,7);
@@ -1964,7 +2072,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         if (areaDir == null) {
             throw new NullPointerException("No AREA directory!");
         }
-        return new StringBuilder()
+        return new StringBuilder(256)
             .append(areaDir.getSensorID())
             .append("_Band")
             .append(areaDir.getBands()[0])
@@ -1982,7 +2090,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      */
     private Object getRelativeTimeObject(AddeImageDescriptor aid) {
         return new TwoFacedObject(aid.toString(),
-                                  new Integer(aid.getRelativeIndex()));
+                                  Integer.valueOf(aid.getRelativeIndex()));
     }
 
     /**
@@ -2232,13 +2340,13 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         boolean isRelative = aid.getIsRelative();
         for (int i=0; i<times; i++) {
             if (isRelative) {
-                src = replaceKey(src, "POS", new Integer(i).toString());
+                src = replaceKey(src, "POS", Integer.toString(i));
             } else {
                 DateTime dt = (DateTime)imageTimes.get(i);
                 String timeStr = dt.timeString();
                 timeStr = timeStr.replace("Z", " ");
                 src = removeKey(src, "POS");
-                src = replaceKey(src, "TIME", timeStr + timeStr + "I");
+                src = replaceKey(src, "TIME", timeStr + timeStr + 'I');
             }
             try {
                 AreaDirectoryList dirList = new AreaDirectoryList(src);
@@ -2263,7 +2371,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     private String getServer(String urlString) {
         int ix = urlString.indexOf("//") + 2;
         String temp = urlString.substring(ix);
-        ix = temp.indexOf("/");
+        ix = temp.indexOf('/');
         String retStr = temp.substring(0, ix);
         return retStr;
     }
@@ -2274,14 +2382,14 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
              for (int i=0; propEnum.hasMoreElements(); i++) {
                  String key = propEnum.nextElement().toString();
                  Object val = props.get(key);
-                 if (getKey(src, key).length() != 0) {
+                 if (!getKey(src, key).isEmpty()) {
                      src = replaceKey(src, key, val);
                  }
              }
          }
          this.displaySource = src;
          String unit = getKey(src, UNIT_KEY);
-         if (unit.length() != 0) {
+         if (!unit.isEmpty()) {
              sourceProps.put(UNIT_KEY.toUpperCase(), unit);
          }
     }
@@ -2341,11 +2449,13 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 StringTokenizer tok = new StringTokenizer(cards[i]);
                 String str = tok.nextToken();
                 str = tok.nextToken();
-                Float flt = new Float(str);
-                res[0] = flt.floatValue();
+//                Float flt = new Float(str);
+//                res[0] = flt.floatValue();
+                res[0] = Float.parseFloat(str);
                 str = tok.nextToken();
-                flt = new Float(str);
-                res[1] = flt.floatValue();
+//                flt = new Float(str);
+//                res[1] = flt.floatValue();
+                res[1] = Float.parseFloat(str);
                 return res;
             }
         } catch (Exception e) {
@@ -2392,6 +2502,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     }
 
     public void setSourceProps(Hashtable sourceProps) {
+        logger.trace("incoming sourceProps={}", sourceProps);
+        logger.trace("existing sourceProps={}", this.sourceProps);
         this.sourceProps = sourceProps;
     }
 
