@@ -363,8 +363,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
           if (properties.containsKey(PROP_SIZE)) {
               String str = (String)properties.get(PROP_SIZE);
               String[] strs = StringUtil.split(str, " ", 2);
-              numberOfLines = new Integer(strs[0]).intValue();
-              numberOfElements = new Integer(strs[1]).intValue();
+              numberOfLines = Integer.parseInt(strs[0]);
+              numberOfElements = Integer.parseInt(strs[1]);
           } else {
               try {
                   numberOfLines = this.previewDir.getLines();
@@ -385,8 +385,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
           if (properties.containsKey(PROP_MAG)) {
               String str = (String)properties.get(PROP_MAG);
               String[] strs = StringUtil.split(str, " ", 2);
-              this.defaultLineMag = new Integer(strs[0]).intValue();
-              this.defaultElementMag = new Integer(strs[1]).intValue();
+              this.defaultLineMag = Integer.parseInt(strs[0]);
+              this.defaultElementMag = Integer.parseInt(strs[1]);
               this.dLineMag = (double)this.defaultLineMag;
               this.dElementMag = (double)this.defaultElementMag;
           } else {
@@ -400,13 +400,13 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
           try {
               if (properties.containsKey(PROP_LRES)) {
-                  this.bLRes = new Double((String)properties.get(PROP_LRES)).doubleValue();
+                  this.bLRes = Double.parseDouble((String)properties.get(PROP_LRES));
                   //if (dir.getValue(11) == 1) this.bLRes = this.previewDir.getCenterLatitudeResolution();
                   this.baseLRes = this.bLRes * (double)(dir.getValue(11));
                   setLRes(this.baseLRes * Math.abs(this.defaultLineMag));
               }
               if (properties.containsKey(PROP_ERES)) {
-                  this.bERes = new Double((String)properties.get(PROP_ERES)).doubleValue();
+                  this.bERes = Double.parseDouble((String)properties.get(PROP_ERES));
                   //if (dir.getValue(12) == 1) this.bERes = this.previewDir.getCenterLongitudeResolution();
                   this.baseERes = this.bERes * (double)(dir.getValue(12));
                   setERes(this.baseERes * Math.abs(this.defaultElementMag));
@@ -428,10 +428,10 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
           }
 
           if (properties.containsKey(PROP_PLRES)) {
-              this.previewLineRes = new Integer((String)properties.get(PROP_PLRES)).intValue();
+              this.previewLineRes = Integer.parseInt((String)properties.get(PROP_PLRES));
           }
           if (properties.containsKey(PROP_PERES)) {
-              this.previewEleRes = new Integer((String)properties.get(PROP_PERES)).intValue();
+              this.previewEleRes = Integer.parseInt((String)properties.get(PROP_PERES));
           }
 
           if (this.resetLatLon) {
@@ -448,15 +448,15 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
           if (properties.containsKey(PROP_LATLON)) {
               String str = (String)properties.get(PROP_LATLON);
               String[] strs = StringUtil.split(str, " ", 2);
-              setLatitude(new Double(strs[0]).doubleValue());
-              setLongitude(new Double(strs[1]).doubleValue());
+              setLatitude(Double.parseDouble(strs[0]));
+              setLongitude(Double.parseDouble(strs[1]));
               convertToLineEle();
               this.isLineEle = false;
           } else if (properties.containsKey(PROP_LINEELE)) {
               String str = (String)properties.get(PROP_LINEELE);
               String[] strs = StringUtil.split(str, " ", 3);
-              setLine(new Integer(strs[0]).intValue());
-              setElement(new Integer(strs[1]).intValue());
+              setLine(Integer.parseInt(strs[0]));
+              setElement(Integer.parseInt(strs[1]));
               convertToLatLon();
               this.isLineEle = true;
           }
@@ -1321,11 +1321,11 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
     }
 
     private void setNumberOfLines(int val) {
-        numLinesFld.setText(new Integer(val).toString());
+        numLinesFld.setText(Integer.toString(val));
     }
 
     private void setNumberOfElements(int val) {
-        numElementsFld.setText(new Integer(val).toString());
+        numElementsFld.setText(Integer.toString(val));
     }
 
     public String getPlace() {
@@ -1349,7 +1349,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
     public int getNumLines() {
         int val = -1;
         try {
-            val = new Integer(numLinesFld.getText().trim()).intValue();
+            val = Integer.parseInt(numLinesFld.getText().trim());
         } catch (Exception e) {
             System.out.println("=====> exception in getNumLines: e=" + e);
         }
@@ -1365,7 +1365,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
     public int getNumEles() {
         int val = -1;
         try {
-            val = new Integer(numElementsFld.getText().trim()).intValue();
+            val = Integer.parseInt(numElementsFld.getText().trim());
         } catch (Exception e) {
             System.out.println("=====> exception in getNumEles: e=" + e);
         }
@@ -1383,7 +1383,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         int val = -1;
         try {
             if (!(centerLineFld.getText().equals(Misc.MISSING)))
-                val = new Integer(centerLineFld.getText().trim()).intValue();
+                val = Integer.parseInt(centerLineFld.getText().trim());
         } catch (Exception e) {
         }
         return val;
@@ -1411,13 +1411,13 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         if (val < 0)
             centerLineFld.setText(Misc.MISSING);
         else
-            centerLineFld.setText(new Integer(val).toString());
+            centerLineFld.setText(Integer.toString(val));
     }
 
     public int getElement() {
         int val =-1;
         try {
-            val = new Integer(centerElementFld.getText().trim()).intValue();
+            val = Integer.parseInt(centerElementFld.getText().trim());
         } catch (Exception e) {
         }
         return val;
@@ -1434,7 +1434,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         if (val < 0)
             centerElementFld.setText(Misc.MISSING);
         else
-            centerElementFld.setText(new Integer(val).toString());
+            centerElementFld.setText(Integer.toString(val));
     }
 
     public int getLineMag() {
@@ -1444,7 +1444,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
     private void setElementMag() {
         int val = 1;
         try {
-            val = new Integer(eleMagFld.getText().trim()).intValue();
+            val = Integer.parseInt(eleMagFld.getText().trim());
         } catch (Exception e) {
             System.out.println(" setElementMag e=" + e);
             return;
@@ -1474,7 +1474,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
     private void setLineMag() {
         int val = 1;
         try {
-            val = new Integer(lineMagFld.getText().trim()).intValue();
+            val = Integer.parseInt(lineMagFld.getText().trim());
         } catch (Exception e) {
         }
         setLineMag(val);
@@ -1513,8 +1513,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
     public double getLatitude() {
         double val = latLonWidget.getLat();
-        Double dbl = new Double(val);
-        if (dbl.isNaN()) val = defaultLat;
+//        Double dbl = new Double(val);
+        if (Double.isNaN(val)) val = defaultLat;
         if (val < -90.0 || val > 90.0) val = defaultLat;
         setLatitude(val);
         return this.latitude;
@@ -1538,8 +1538,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
     public double getLongitude() {
         double val = latLonWidget.getLon();
-        Double dbl = new Double(val);
-        if (dbl.isNaN()) val = defaultLon;
+//        Double dbl = new Double(val);
+        if (Double.isNaN(val)) val = defaultLon;
         if (val < -180.0 || val > 180.0) val = defaultLon;
         setLongitude(val);
         return this.longitude;
