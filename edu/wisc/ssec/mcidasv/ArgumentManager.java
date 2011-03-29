@@ -101,7 +101,10 @@ public class ArgumentManager extends ArgsManager {
             System.err.println(getUsageMessage());
             ((McIDASV)getIdv()).exit(1);
         } else if (checkArg(arg, "-pyfile", args, idx, 1)) {
-            jythonCode = IOUtil.readContents(args[idx++]);
+            scriptingFiles.add(args[idx++]);
+            if (!getIslInteractive()) {
+                setIsOffScreen(true);
+            }
         } else {
             if (ARG_ISLINTERACTIVE.equals(arg) || ARG_B64ISL.equals(arg) || ARG_ISLFILE.equals(arg) || isIslFile(arg)) {
                 System.err.println("*** WARNING: ISL is being deprecated!");
