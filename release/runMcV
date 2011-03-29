@@ -1,5 +1,7 @@
 #!/bin/bash
 
+MCV_PARAMS="$@"
+
 DOCUMENT_DIRECTORY=${HOME}
 if [ `uname -s` = "Darwin" ]; then
   DOCUMENT_DIRECTORY=${HOME}/Documents
@@ -17,8 +19,6 @@ while [ "$1" != "" ]; do
     shift
   fi
 done
-
-MCV_PARAMS="$@"
 
 # Check for old style default userpath
 if [ -d "${HOME}/.mcidasv" ]; then
