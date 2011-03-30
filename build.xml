@@ -266,7 +266,7 @@
 		</tstamp>
 		<copy file="${ver.props}" tofile="${build.props}" overwrite="true">
 			<filterset>
-				<filter token="DATE" value="${build.date}" />cd 
+				<filter token="DATE" value="${build.date}" />
 				<filter token="NIGHTLY" value="(nightly)" />
 			</filterset>
 		</copy>
