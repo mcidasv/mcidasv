@@ -31,17 +31,13 @@ package edu.wisc.ssec.mcidasv.servermanager;
 
 import static edu.wisc.ssec.mcidasv.util.Contract.notNull;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashMap;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -60,7 +56,6 @@ import ucar.unidata.xml.XmlResourceCollection;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.ResourceManager;
-import edu.wisc.ssec.mcidasv.servermanager.AddeAccount;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
@@ -88,7 +83,7 @@ public class EntryStore {
     private static final String PROP_DEBUG_ADDEURL = "debug.adde.reqs";
 
     /** Enumeration of the various server manager events. */
-    public enum Event { REPLACEMENT, REMOVAL, ADDITION, UPDATE, FAILURE, STARTED, UNKNOWN };
+    public enum Event { REPLACEMENT, REMOVAL, ADDITION, UPDATE, FAILURE, STARTED, UNKNOWN }
 
     private static final Logger logger = LoggerFactory.getLogger(EntryStore.class);
 
@@ -160,7 +155,7 @@ public class EntryStore {
             Set<LocalAddeEntry> locals = EntryTransforms.readResolvFile(ADDE_RESOLV);
             putEntries(trie, locals);
         } catch (IOException e) {
-            logger.error("EntryStore: RESOLV.SRV missing; expected=\""+ADDE_RESOLV+"\"");
+            logger.warn("EntryStore: RESOLV.SRV missing; expected=\"" + ADDE_RESOLV + '"');
         }
 
         XmlResourceCollection userResource = rscManager.getXmlResources(ResourceManager.RSC_NEW_USERSERVERS);
@@ -251,21 +246,23 @@ public class EntryStore {
      */
     private Set<AddeEntry> extractFromPreferences(final IdvObjectStore store) {
         assert store != null;
-        Set<AddeEntry> entries = newLinkedHashSet();
 
         // this is valid--the only thing ever written to 
         // PREF_REMOTE_ADDE_ENTRIES is an ArrayList of RemoteAddeEntry objects.
         @SuppressWarnings("unchecked")
         List<AddeEntry> asList = 
             (List<AddeEntry>)store.get(PREF_ADDE_ENTRIES);
-        if (asList != null) {
+        Set<AddeEntry> entries;
+        if (asList == null) {
+            entries = Collections.emptySet();
+        } else {
+            entries = newLinkedHashSet(asList.size());
             for (AddeEntry entry : asList) {
                 if (entry instanceof RemoteAddeEntry) {
                     entries.add(entry);
                 }
             }
         }
-
         return entries;
     }
 
@@ -339,7 +336,7 @@ public class EntryStore {
      */
     public Set<AddeEntry> getVerifiedEntries(final EntryType type) {
         notNull(type);
-        Set<AddeEntry> verified = newLinkedHashSet();
+        Set<AddeEntry> verified = newLinkedHashSet(trie.size());
         for (AddeEntry entry : trie.values()) {
             if (entry.getEntryType() != type)
                 continue;
@@ -355,9 +352,11 @@ public class EntryStore {
 
     // TODO(jon): better name
     public Map<EntryType, Set<AddeEntry>> getVerifiedEntriesByTypes() {
-        Map<EntryType, Set<AddeEntry>> entryMap = new LinkedHashMap<EntryType, Set<AddeEntry>>();
+        Map<EntryType, Set<AddeEntry>> entryMap =
+                newLinkedHashMap(EntryType.values().length);
+        int size = trie.size();
         for (EntryType type : EntryType.values()) {
-            entryMap.put(type, new LinkedHashSet<AddeEntry>());
+            entryMap.put(type, new LinkedHashSet<AddeEntry>(size));
         }
 
         for (AddeEntry entry : trie.values()) {
@@ -371,8 +370,10 @@ public class EntryStore {
      * Returns the {@link Set} of {@link AddeEntry#group}s that match
      * the given {@code address} and {@code type}.
      * 
-     * @param address
-     * @param type
+     * @param address ADDE server address whose groups are needed.
+     * Cannot be {@code null}.
+     * @param type Only include groups that match {@link EntryType}.
+     * Cannot be {@code null}.
      * 
      * @return Either a set containing the desired groups, or an empty set if
      * there were no matches.
@@ -380,7 +381,7 @@ public class EntryStore {
     public Set<String> getGroupsFor(final String address, EntryType type) {
         notNull(address);
         notNull(type);
-        Set<String> groups = newLinkedHashSet();
+        Set<String> groups = newLinkedHashSet(trie.size());
         for (AddeEntry entry : trie.getPrefixedBy(address+'!').values()) {
             if (entry.getAddress().equals(address) && entry.getEntryType() == type) {
                 groups.add(entry.getGroup());
@@ -412,7 +413,7 @@ public class EntryStore {
      * addresses are stored, an empty {@code Set} is returned.
      */
     public Set<String> getAddresses() {
-        Set<String> addresses = newLinkedHashSet();
+        Set<String> addresses = newLinkedHashSet(trie.size());
         for (AddeEntry entry : trie.values()) {
             addresses.add(entry.getAddress());
         }
@@ -429,7 +430,7 @@ public class EntryStore {
      * @see RemoteAddeEntry#getEntryText()
      */
     protected Set<String> getRemoteEntryTexts() {
-        Set<String> strs = newLinkedHashSet();
+        Set<String> strs = newLinkedHashSet(trie.size());
         for (AddeEntry entry : trie.values()) {
             if (entry instanceof RemoteAddeEntry) {
                 strs.add(entry.getEntryText());
@@ -449,7 +450,7 @@ public class EntryStore {
      */
     public Set<String> getGroups(final String address) {
         notNull(address);
-        Set<String> groups = newLinkedHashSet();
+        Set<String> groups = newLinkedHashSet(trie.size());
         for (AddeEntry entry : trie.getPrefixedBy(address+'!').values()) {
             groups.add(entry.getGroup());
         }
@@ -467,7 +468,7 @@ public class EntryStore {
      * {@code group} or an empty {@code Set} if there were no matches.
      */
     public Set<EntryType> getTypes(final String address, final String group) {
-        Set<EntryType> types = newLinkedHashSet();
+        Set<EntryType> types = newLinkedHashSet(trie.size());
         for (AddeEntry entry : trie.getPrefixedBy(address+'!'+group+'!').values()) {
             types.add(entry.getEntryType());
         }
@@ -505,7 +506,7 @@ public class EntryStore {
 
     public AddeAccount getAccountingFor(final AddeServer idvServer, String typeAsStr) {
         String address = idvServer.getName();
-        List<AddeServer.Group> groups = idvServer.getGroups();
+        List<AddeServer.Group> groups = cast(idvServer.getGroups());
         if (groups != null && !groups.isEmpty()) {
             EntryType type = EntryTransforms.strToEntryType(typeAsStr);
             return getAccountingFor(address, groups.get(0).getName(), type);
@@ -527,7 +528,7 @@ public class EntryStore {
      * @return The {@code RemoteAddeEntry}s stored within {@link #entries}.
      */
     protected Set<RemoteAddeEntry> getRemoteEntries() {
-        Set<RemoteAddeEntry> remotes = newLinkedHashSet();
+        Set<RemoteAddeEntry> remotes = newLinkedHashSet(trie.size());
         for (AddeEntry e : trie.values()) {
             if (e instanceof RemoteAddeEntry) {
                 remotes.add((RemoteAddeEntry)e);
@@ -542,7 +543,7 @@ public class EntryStore {
      * @return The {@code LocalAddeEntry}s stored within {@link #entries}.
      */
     protected Set<LocalAddeEntry> getLocalEntries() {
-        Set<LocalAddeEntry> locals = newLinkedHashSet();
+        Set<LocalAddeEntry> locals = newLinkedHashSet(trie.size());
         for (AddeEntry e : trie.getPrefixedBy("localhost").values()) {
             if (e instanceof LocalAddeEntry) {
                 locals.add((LocalAddeEntry)e);
@@ -631,8 +632,9 @@ public class EntryStore {
 
     // if true, filters out disabled local groups; if false, returns all local groups
     public Set<AddeServer.Group> getIdvStyleLocalGroups() {
-        Set<AddeServer.Group> idvGroups = newLinkedHashSet();
-        for (LocalAddeEntry entry : getLocalEntries()) {
+        Set<LocalAddeEntry> localEntries = getLocalEntries();
+        Set<AddeServer.Group> idvGroups = newLinkedHashSet(localEntries.size());
+        for (LocalAddeEntry entry : localEntries) {
             if (entry.getEntryStatus() == EntryStatus.ENABLED && entry.getEntryValidity() == EntryValidity.VERIFIED) {
                 String group = entry.getGroup();
                 AddeServer.Group idvGroup = new AddeServer.Group("IMAGE", group, group);
@@ -647,7 +649,7 @@ public class EntryStore {
     }
 
     public Set<AddeServer.Group> getIdvStyleRemoteGroups(final String server, final EntryType type) {
-        Set<AddeServer.Group> idvGroups = newLinkedHashSet();
+        Set<AddeServer.Group> idvGroups = newLinkedHashSet(trie.size());
         String typeStr = type.name();
         for (AddeEntry matched : trie.getPrefixedBy(server).values()) {
             if (matched == RemoteAddeEntry.INVALID_ENTRY) {
@@ -683,18 +685,14 @@ public class EntryStore {
      * @return
      */
     private Set<AddeEntry> extractResourceEntries(EntrySource source, final XmlResourceCollection xmlResources) {
-        Set<AddeEntry> entries = newLinkedHashSet();
-
+        Set<AddeEntry> entries = newLinkedHashSet(xmlResources.size());
         for (int i = 0; i < xmlResources.size(); i++) {
             Element root = xmlResources.getRoot(i);
             if (root == null) {
                 continue;
             }
-
-            Set<AddeEntry> woot = EntryTransforms.convertAddeServerXml(root, source);
-            entries.addAll(woot);
+            entries.addAll(EntryTransforms.convertAddeServerXml(root, source));
         }
-
         return entries;
     }
 
@@ -707,19 +705,15 @@ public class EntryStore {
      * {@code resource}.
      */
     private Set<AddeEntry> extractUserEntries(final XmlResourceCollection xmlResources) {
-        Set<AddeEntry> entries = newLinkedHashSet();
-        for (int i = 0; i < xmlResources.size(); i++) {
+        int rcSize = xmlResources.size();
+        Set<AddeEntry> entries = newLinkedHashSet(rcSize);
+        for (int i = 0; i < rcSize; i++) {
             Element root = xmlResources.getRoot(i);
             if (root == null) {
                 continue;
             }
-
             entries.addAll(EntryTransforms.convertUserXml(root));
-            //            for (RemoteAddeEntry e : entries) {
-            //                System.err.println(e);
-            //            }
         }
-
         return entries;
     }
 

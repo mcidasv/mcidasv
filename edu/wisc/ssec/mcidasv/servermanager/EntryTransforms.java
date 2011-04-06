@@ -34,6 +34,7 @@ import static ucar.unidata.xml.XmlUtil.findChildren;
 import static ucar.unidata.xml.XmlUtil.getAttribute;
 
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.map;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newMap;
@@ -80,7 +81,7 @@ import edu.wisc.ssec.mcidasv.util.functional.Function;
 
 /**
  * Useful methods for doing things like converting a 
- * {@link ucar.unidata.idv.chooser.AddeServer AddeServer} to a 
+ * {@link ucar.unidata.idv.chooser.adde.AddeServer AddeServer} to a
  * {@link edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry RemoteAddeEntry}.
  */
 public class EntryTransforms {
@@ -123,8 +124,9 @@ public class EntryTransforms {
         }
     };
 
+    @SuppressWarnings({"SetReplaceableByEnumSet"})
     public static Set<EntryType> findEntryTypes(final Collection<? extends AddeEntry> entries) {
-        Set<EntryType> types = new HashSet<EntryType>();
+        Set<EntryType> types = new HashSet<EntryType>(entries.size());
         for (AddeEntry entry : entries) {
             types.add(entry.getEntryType());
         }
@@ -139,8 +141,8 @@ public class EntryTransforms {
     }
 
     public static Set<AddeServer> convertMcvServers(final Collection<AddeEntry> entries) {
-        Set<AddeServer> addeServs = newLinkedHashSet();
-        Set<String> addrs = newLinkedHashSet();
+        Set<AddeServer> addeServs = newLinkedHashSet(entries.size());
+        Set<String> addrs = newLinkedHashSet(entries.size());
         for (AddeEntry e : entries) {
             EntryStatus status = e.getEntryStatus();
             if (status == EntryStatus.DISABLED || status == EntryStatus.INVALID) {
@@ -154,7 +156,7 @@ public class EntryTransforms {
             String newGroup = e.getGroup();
             String type = entryTypeToStr(e.getEntryType());
 
-            AddeServer addeServ = null;
+            AddeServer addeServ;
             if (e instanceof LocalAddeEntry) {
                 addeServ = new AddeServer("localhost:"+EntryStore.getLocalPort(), "<LOCAL-DATA>");
                 addeServ.setIsLocal(true);
@@ -179,9 +181,10 @@ public class EntryTransforms {
      * {@code root}.
      */
     protected static Set<RemoteAddeEntry> convertUserXml(final Element root) {
-        Set<RemoteAddeEntry> entries = newLinkedHashSet();
         // <entry name="SERVER/DATASET" user="ASDF" proj="0000" source="user" enabled="true" type="image"/>
-        List<Element> elements = findChildren(root, "entry");
+        Pattern slashSplit = Pattern.compile("/");
+        List<Element> elements = cast(findChildren(root, "entry"));
+        Set<RemoteAddeEntry> entries = newLinkedHashSet(elements.size());
         for (Element entryXml : elements) {
             String name = getAttribute(entryXml, "name");
             String user = getAttribute(entryXml, "user");
@@ -192,11 +195,11 @@ public class EntryTransforms {
             boolean enabled = Boolean.parseBoolean(getAttribute(entryXml, "enabled"));
 
             EntryType entryType = strToEntryType(type);
-            EntryStatus entryStatus = (enabled == true) ? EntryStatus.ENABLED : EntryStatus.DISABLED; 
+            EntryStatus entryStatus = (enabled) ? EntryStatus.ENABLED : EntryStatus.DISABLED;
             EntrySource entrySource = strToEntrySource(source);
 
             if (name != null) {
-                String[] arr = name.split("/");
+                String[] arr = slashSplit.split(name);
                 String description = arr[0];
                 if (arr[0].toLowerCase().contains("localhost")) {
                     description = "<LOCAL-DATA>";
@@ -209,26 +212,24 @@ public class EntryTransforms {
                         .source(entrySource)
                         .validity(EntryValidity.VERIFIED);
 
-                if (((user != null) && (proj != null)) && ((user.length() > 0) && (proj.length() > 0))) {
+                if (((user != null) && (proj != null)) && ((!user.isEmpty()) && (!proj.isEmpty()))) {
                     incomplete = incomplete.account(user, proj);
                 }
-
                 entries.add(incomplete.build());
             }
         }
-
         return entries;
     }
 
     public static Set<RemoteAddeEntry> createEntriesFrom(final RemoteAddeEntry entry) {
-        Set<RemoteAddeEntry> entries = newLinkedHashSet();
+        Set<RemoteAddeEntry> entries = newLinkedHashSet(EntryType.values().length);
         RemoteAddeEntry.Builder incomp = 
             new RemoteAddeEntry.Builder(entry.getAddress(), entry.getGroup())
             .account(entry.getAccount().getUsername(), entry.getAccount().getProject())
             .source(entry.getEntrySource()).status(entry.getEntryStatus())
             .validity(entry.getEntryValidity());
         for (EntryType type : EnumSet.of(EntryType.IMAGE, EntryType.GRID, EntryType.POINT, EntryType.TEXT, EntryType.RADAR, EntryType.NAV)) {
-            if (!type.equals(entry.getEntryType())) {
+            if (!(type == entry.getEntryType())) {
                 entries.add(incomp.type(type).build());
             }
         }
@@ -250,18 +251,17 @@ public class EntryTransforms {
      */
     @SuppressWarnings("unchecked")
     protected static Set<AddeEntry> convertAddeServerXml(Element root, EntrySource source) {
-        Set<AddeEntry> es = newLinkedHashSet();
-
         List<Element> serverNodes = findChildren(root, "server");
+        Set<AddeEntry> es = newLinkedHashSet(serverNodes.size() * 5);
         for (int i = 0; i < serverNodes.size(); i++) {
-            Element element = (Element)serverNodes.get(i);
+            Element element = serverNodes.get(i);
             String address = getAttribute(element, "name");
             String description = getAttribute(element, "description", "");
 
             // loop through each "group" entry.
             List<Element> groupNodes = findChildren(element, "group");
             for (int j = 0; j < groupNodes.size(); j++) {
-                Element group = (Element)groupNodes.get(j);
+                Element group = groupNodes.get(j);
 
                 // convert whatever came out of the "type" attribute into a 
                 // valid EntryType.
@@ -272,7 +272,7 @@ public class EntryTransforms {
                 // names.
                 List<String> names = StringUtil.split(getAttribute(group, "names", ""), ",", true, true);
                 for (String name : names) {
-                    if (name.length() == 0) {
+                    if (name.isEmpty()) {
                         continue;
                     }
                     RemoteAddeEntry e =  new RemoteAddeEntry
@@ -289,7 +289,7 @@ public class EntryTransforms {
 
                 // there's also an optional "name" attribute! woo!
                 String name = getAttribute(group, "name", (String) null);
-                if ((name != null) && (name.length() > 0)) {
+                if ((name != null) && (!name.isEmpty())) {
 
                     RemoteAddeEntry e = new RemoteAddeEntry
                                             .Builder(address, name)
@@ -445,7 +445,6 @@ public class EntryTransforms {
     // TODO(jon): re-add verify flag?
     protected static Set<RemoteAddeEntry> extractMctableEntries(final String path, final String username, final String project) {
         Set<RemoteAddeEntry> entries = newLinkedHashSet();
-
         try {
             InputStream is = IOUtil.getInputStream(path);
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -526,7 +525,7 @@ public class EntryTransforms {
         if (defAcct.getUsername().equalsIgnoreCase(username) && defAcct.getProject().equals(project)) {
             defaultAcct = true;
         }
-        List<RemoteAddeEntry> entries = arrList();
+        List<RemoteAddeEntry> entries = arrList(datasetToHost.size());
         for (Entry<String, String> entry : datasetToHost.entrySet()) {
             String dataset = entry.getKey();
             String ip = entry.getValue();
@@ -551,7 +550,7 @@ public class EntryTransforms {
     {
         assert map != null;
 
-        Map<String, String> ipToName = newMap();
+        Map<String, String> ipToName = newMap(map.size());
         for (Entry<String, Set<String>> entry : map.entrySet()) {
             Set<String> names = entry.getValue();
             String displayName = "";
@@ -559,7 +558,7 @@ public class EntryTransforms {
                 if (name.length() >= displayName.length())
                     displayName = name;
 
-            if (displayName.length() == 0) {
+            if (displayName.isEmpty()) {
                 displayName = entry.getKey();
             }
             ipToName.put(entry.getKey(), displayName);
@@ -571,7 +570,7 @@ public class EntryTransforms {
         assert datasets != null;
         assert hostMap != null;
 
-        Map<String, String> datasetToIp = newMap();
+        Map<String, String> datasetToIp = newMap(datasets.size());
         for (Entry<String, String> entry : datasets.entrySet()) {
             String dataset = entry.getKey();
             String alias = entry.getValue();
@@ -601,10 +600,10 @@ public class EntryTransforms {
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(filename));
-            String line = null;
+            String line;
             while ((line = br.readLine()) != null) {
                 line = line.trim();
-                if (line.length() == 0) {
+                if (line.isEmpty()) {
                     continue;
                 }
                 servers.add(readResolvLine(line));
@@ -626,16 +625,19 @@ public class EntryTransforms {
         if (disabled) {
             line = line.substring(1);
         }
-        String[] pairs = line.trim().split(",");
+        Pattern commaSplit = Pattern.compile(",");
+        Pattern equalSplit = Pattern.compile("=");
+
+        String[] pairs = commaSplit.split(line.trim());
         String[] pair;
-        Map<String, String> keyVals = new HashMap<String, String>();
+        Map<String, String> keyVals = new HashMap<String, String>(pairs.length);
         for (int i = 0; i < pairs.length; i++) {
-            if (pairs[i] == null || pairs[i].length() == 0) {
+            if (pairs[i] == null || pairs[i].isEmpty()) {
                 continue;
             }
 
-            pair = pairs[i].split("=");
-            if (pair.length != 2 || pair[0].length() == 0 || pair[1].length() == 0) {
+            pair = equalSplit.split(pairs[i]);
+            if (pair.length != 2 || pair[0].isEmpty() || pair[1].isEmpty()) {
                 continue;
             }
 
@@ -690,7 +692,6 @@ public class EntryTransforms {
         } else {
             return LocalAddeEntry.INVALID_ENTRY;
         }
-        
     }
 
     /**
