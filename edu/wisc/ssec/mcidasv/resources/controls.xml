@@ -92,6 +92,7 @@
      properties="windowVisible=true;"/>
   <control
      id="rgbcomposite"
+     categories="RGBC"
      class="edu.wisc.ssec.mcidasv.control.RGBCompositeControl"
      description="RGB Composite"
      label="RGB Composite"
