@@ -55,6 +55,7 @@ import edu.wisc.ssec.mcidasv.util.functional.Function;
  * 
  * <p>Make use of {@literal "static imports"} to omit even more needless code.
  */
+@SuppressWarnings({"ClassWithoutLogger", "UnusedDeclaration"})
 public final class CollectionHelpers {
 
     /** Never! */
@@ -100,7 +101,7 @@ public final class CollectionHelpers {
      * ordering).
      * 
      * <p>Used like so:
-     * <pre>for (String s :{@code set("beep", "boop", "blorp")}) { ... }</pre>
+     * {@code for (String s : set("beep", "boop", "blorp")) { ... }}
      * 
      * @param elements Items that will appear within the returned {@code Set}.
      * Cannot be {@code null}, and (for now) the items should be of the 
@@ -111,9 +112,7 @@ public final class CollectionHelpers {
      */
     public static <E> Set<E> set(E... elements) {
         Set<E> newSet = new LinkedHashSet<E>(elements.length);
-        for (E t : elements) {
-            newSet.add(t);
-        }
+        Collections.addAll(newSet, elements);
         return newSet;
     }
 
@@ -130,7 +129,9 @@ public final class CollectionHelpers {
      * 
      * @return An instance of {@code cl} containing the given objects.
      * 
-     * @throws RuntimeException if {@link Constructor#newInstance(Object)} had problems.
+     * @throws RuntimeException
+     * if {@link java.lang.reflect.Constructor#newInstance(Object...) Constructor#newInstance(Object...)}
+     * had problems.
      * 
      * @see #arr(Object...)
      * @see #list(Object...)
@@ -160,7 +161,7 @@ public final class CollectionHelpers {
      * 
      * <p>More coming!
      * 
-     * @param o Object whose length we want. Cannot be {@code null}.
+     * @param o {@code Object} whose length we want. Cannot be {@code null}.
      * 
      * @return {@literal "Length"} of {@code o}.
      * 
@@ -168,6 +169,7 @@ public final class CollectionHelpers {
      * @throws IllegalArgumentException if the method doesn't know how to test
      * whatever type of object {@code o} might be.
      */
+    @SuppressWarnings({"WeakerAccess"})
     public static int len(final Object o) {
         if (o == null) {
             throw new NullPointerException("Null arguments do not have a length");
@@ -210,10 +212,10 @@ public final class CollectionHelpers {
      * 
      * <p>More coming!
      * 
-     * @param collection Object that'll be searched for {@code item}. Cannot be 
-     * {@code null}.
-     * @param item Object to search for within {@code o}. {@code null} values
-     * are allowed. 
+     * @param collection {@code Object} that will be searched for
+     * {@code item}. Cannot be {@code null}.
+     * @param item {@code Object} to search for within {@code o}.
+     * {@code null} values are allowed.
      * 
      * @return {@code true} if {@code o} contains {@code item}, {@code false}
      * otherwise.
@@ -223,6 +225,7 @@ public final class CollectionHelpers {
      * search whatever type of object {@code o} might be.
      */
     // TODO(jon:89): item should probably become an array/collection too...
+    @SuppressWarnings({"WeakerAccess"})
     public static boolean contains(final Object collection, final Object item) {
         if (collection == null) {
             throw new NullPointerException("Cannot search a null object");
@@ -231,7 +234,7 @@ public final class CollectionHelpers {
             return ((Collection<?>)collection).contains(item);
         }
         else if ((collection instanceof String) && (item instanceof CharSequence)) {
-            return ((String)collection).contains((CharSequence)item);
+            return ((String)collection).contains((CharSequence) item);
         }
         else if (collection instanceof Map<?, ?>) {
             return ((Map<?, ?>)collection).containsKey(item);
@@ -254,7 +257,7 @@ public final class CollectionHelpers {
             return false;
         }
         else if (collection instanceof Iterable<?>) {
-            return contains(((Iterable<?>)collection).iterator(), item);
+            return contains(((Iterable<?>) collection).iterator(), item);
         }
         else if (collection.getClass().isArray()) {
             for (int i = 0; i < Array.getLength(collection); i++) {
@@ -271,22 +274,73 @@ public final class CollectionHelpers {
      * Creates an empty {@link HashSet} that uses a little cleverness with 
      * Java's generics. Useful for eliminating redundant type information and
      * declaring fields as {@code final}.
-     * 
+     *
+     * <p>Please consider using {@link #newHashSet(int)} or
+     * {@link #newHashSet(java.util.Collection)} instead of this method.
+     *
      * @return A new, empty {@code HashSet}.
+     *
+     * @see #newHashSet(int)
+     * @see #newHashSet(java.util.Collection)
      */
+    @SuppressWarnings({"CollectionWithoutInitialCapacity"})
     public static <E> Set<E> newHashSet() {
         return new HashSet<E>();
+    }
+
+    /**
+     * Creates an empty {@link HashSet} with a given initial capacity.
+     *
+     * @param initialCapacity Initial capacity of the {@code HashSet}. Cannot
+     * be negative.
+     *
+     * @return A new, empty {@code HashSet} with the given initial capacity.
+     */
+    public static <E> Set<E> newHashSet(int initialCapacity) {
+        return new HashSet<E>(initialCapacity);
+    }
+
+    /**
+     * Copies an existing {@link Collection} into a new {@link HashSet}.
+     *
+     * @param original {@code Collection} to be copied. Cannot be {@code null}.
+     *
+     * @return A new {@code HashSet} whose contents are the same as
+     * {@code original}.
+     */
+    public static <E> Set<E> newHashSet(Collection<E> original) {
+        return new HashSet<E>(original);
     }
 
     /**
      * Creates an empty {@link LinkedHashSet} that uses a little cleverness 
      * with Java's generics. Useful for eliminating redundant type 
      * information and declaring fields as {@code final}.
+     *
+     * <p>Please consider using {@link #newLinkedHashSet(int)} or
+     * {@link #newLinkedHashSet(java.util.Collection)} instead of this method.
      * 
-     * @return A new, empty {@code HashSet}.
+     * @return A new, empty {@code LinkedHashSet}.
+     *
+     * @see #newLinkedHashSet(int)
+     * @see #newLinkedHashSet(java.util.Collection)
      */
+    @SuppressWarnings({"CollectionWithoutInitialCapacity"})
     public static <E> Set<E> newLinkedHashSet() {
         return new LinkedHashSet<E>();
+    }
+
+    /**
+     * Creates an empty {@link LinkedHashSet} with a given initial capacity.
+     *
+     * @param initialCapacity Initial capacity of the {@code LinkedHashSet}.
+     * Cannot be negative.
+     *
+     * @return A new, empty {@code LinkedHashSet} with the given initial
+     * capacity.
+     */
+    public static <E> Set<E> newLinkedHashSet(int initialCapacity) {
+        return new LinkedHashSet<E>(initialCapacity);
     }
 
     /**
@@ -305,11 +359,30 @@ public final class CollectionHelpers {
      * Creates an empty {@link HashSet} that uses a little cleverness with 
      * Java's generics. Useful for eliminating redundant type information and
      * declaring fields as {@code final}, while also reducing compiler warnings.
-     * 
+     *
+     * <p>Please consider using {@link #newMap(int)} or
+     * {@link #newMap(java.util.Map)} instead of this method.
+     *
      * @return A new, empty {@code HashMap}.
+     *
+     * @see #newMap(int)
+     * @see #newMap(java.util.Map)
      */
+    @SuppressWarnings({"CollectionWithoutInitialCapacity"})
     public static <K, V> Map<K, V> newMap() {
         return new HashMap<K, V>();
+    }
+
+    /**
+     * Creates an empty {@link HashSet} with a given initial capacity.
+     *
+     * @param initialCapacity Initial capacity of the {@code HashMap}.
+     * Cannot be negative.
+     *
+     * @return A new, empty {@code HashMap} with the given initial capacity.
+     */
+    public static <K, V> Map<K, V> newMap(int initialCapacity) {
+        return new HashMap<K, V>(initialCapacity);
     }
 
     /**
@@ -328,11 +401,31 @@ public final class CollectionHelpers {
      * Creates an empty {@link LinkedHashMap} that uses a little cleverness with
      * Java's generics. Useful for eliminating redundant type information and 
      * declaring fields as {@code final}, while also reducing compiler warnings.
-     * 
+     *
+     * <p>Please consider using {@link #newLinkedHashMap(int)} or
+     * {@link #newLinkedHashSet(java.util.Collection)} instead of this method.
+     *
      * @return A new, empty {@code LinkedHashMap}.
+     *
+     * @see #newLinkedHashMap(int)
+     * @see #newLinkedHashMap(java.util.Map)
      */
+    @SuppressWarnings({"CollectionWithoutInitialCapacity"})
     public static <K, V> Map<K, V> newLinkedHashMap() {
         return new LinkedHashMap<K, V>();
+    }
+
+    /**
+     * Creates an empty {@link LinkedHashMap} with a given initial capacity.
+     *
+     * @param initialCapacity Initial capacity of the {@code LinkedHashMap}.
+     * Cannot be negative.
+     *
+     * @return A new, empty {@code LinkedHashMap} with the given initial
+     * capacity.
+     */
+    public static <K, V> Map<K, V> newLinkedHashMap(int initialCapacity) {
+        return new LinkedHashMap<K, V>(initialCapacity);
     }
 
     /**
@@ -448,10 +541,17 @@ public final class CollectionHelpers {
      * 
      * <p>Used like so:
      * {@code List<String> listy = arrList();}
+     *
+     * <p>Please consider using {@link #arrList(int)} or
+     * {@link #arrList(java.util.Collection)} instead of this method.
      * 
      * @return A new, empty {@code ArrayList}.
+     *
+     * @see #arrList(int)
+     * @see #arrList(java.util.Collection)
      */
-    public static <E> ArrayList<E> arrList() {
+    @SuppressWarnings({"CollectionWithoutInitialCapacity"})
+    public static <E> List<E> arrList() {
         return new ArrayList<E>();
     }
 
@@ -465,7 +565,7 @@ public final class CollectionHelpers {
      * 
      * @see ArrayList#ArrayList(int)
      */
-    public static <E> ArrayList<E> arrList(final int capacity) {
+    public static <E> List<E> arrList(final int capacity) {
         return new ArrayList<E>(capacity);
     }
 
@@ -479,7 +579,7 @@ public final class CollectionHelpers {
      * 
      * @see ArrayList#ArrayList(Collection)
      */
-    public static <E> ArrayList<E> arrList(final Collection<? extends E> c) {
+    public static <E> List<E> arrList(final Collection<? extends E> c) {
         return new ArrayList<E>(c);
     }
 
@@ -543,7 +643,7 @@ public final class CollectionHelpers {
      * {@code keys[N], values[N]}.
      * 
      * @see #arr(Object...)
-     * @see #zipMap(List, List)
+     * @see #zipMap(java.util.Collection, java.util.Collection)
      */
     public static <K, V> Map<K, V> zipMap(K[] keys, V[] values) {
         Map<K, V> zipped = new LinkedHashMap<K, V>(keys.length);
@@ -585,7 +685,7 @@ public final class CollectionHelpers {
      * being passed through {@code f}.
      */
     public static <A, B> List<B> map(final Function<A, B> f, List<A> as) {
-        List<B> bs = arrList();
+        List<B> bs = arrList(as.size());
         for (A a : as) {
             bs.add(f.apply(a));
         }
@@ -602,7 +702,7 @@ public final class CollectionHelpers {
      * in {@code as} through {@code f}.
      */
     public static <A, B> Set<B> map(final Function<A, B> f, Set<A> as) {
-        Set<B> bs = newLinkedHashSet();
+        Set<B> bs = newLinkedHashSet(as.size());
         for (A a : as) {
             bs.add(f.apply(a));
         }
