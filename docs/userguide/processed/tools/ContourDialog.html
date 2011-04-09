@@ -59,12 +59,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ContourDial
 <pre>
     <b>5400/5400/5400</b></pre>
 <p>would only show the 5400 line.</p>
-<p><strong>Base Contour -</strong> The value on which all contours are based. All contours will be integer multiples of the contour interval from the base value. For example, with a base value of 0 and a contour interval of 3 contours would be created at ..-6, -3, 0, 3, 6... A base of 1 with that interval would create contours at ..-5, -2, 1, 4, 7... The base value need not be the lowest contour level on a plot, or inside the range of values plotted; it is only a computational reference point. The base contour value is also used for controlling which lines are dashed.</p>
-<p><strong>Minimum Value -</strong> The limit below which no contour lines are shown. The minimum may be larger than the base value, so that the base value may never appear on a plot.</p>
-<p><strong>Maximum Value -</strong> The upper limit above which no contour lines are shown. The minimum and maximum values need not match contour line values; they are only limits.</p>
+<p><strong>Base Contour -</strong> The value on which all contours are based. All contours will be integer multiples of the contour interval from the base value. For example, with a base value of 0 and a contour interval of 3 contours would be created at ..-6, -3, 0, 3, 6... A base of 1 with that interval would create contours at ..-5, -2, 1, 4, 7... The base value does not have to be the lowest contour level on a plot, or inside the range of values plotted; it is only a computational reference point. The base contour value is also used for controlling which lines are dashed.</p>
+<p><strong>Minimum Value -</strong> The limit below which no contour lines are shown. The minimum value may be larger than the base value, so that the base value may never appear on a plot.</p>
+<p><strong>Maximum Value -</strong> The upper limit above which no contour lines are shown. The minimum and maximum values do not need to match contour line values; they are only limits.</p>
 <p><strong>Line Width</strong> - The line width (in pixels) of the contour lines and labels.</p>
 <p><strong>Dash -</strong> If checked, values less than the base value are dashed.
-  If base is set higher than maximum value, then all lines are dashed. Use the
+  If the base is set higher than maximum value, then all lines are dashed. Use the
   pulldown menu to select the dash pattern to use.</p>
 <p><strong>Labels -</strong> When this option is checked on, contour labels will be displayed on the image.</p>
 <p><strong>Labels: Font -</strong> The font style that the contour labels will be written in.</p>
