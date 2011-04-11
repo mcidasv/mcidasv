@@ -69,7 +69,6 @@ import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataInstance;
 import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.idv.control.DisplayControlImpl;
-//import ucar.unidata.idv.control.ZSlider;
 import ucar.unidata.ui.LatLonWidget;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.GuiUtils.ColorSwatch;
@@ -119,7 +118,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     /**
      * position slider
      */
-//    private ZSlider levelSlider = null;
     private double latitude;
     private double longitude;
     private double altitude;
@@ -158,7 +156,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private JTextField altitudeFld = new JTextField(" ", 5);
     private JTextField antennaAngle = new JTextField(" 5", 5);
 
-//    private ChangeListener sizeListener;
     private ActionListener fontSizeChange;
     private FocusListener fontSizeFocusChange;
 
@@ -172,6 +169,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private JTextField fontSizeFld = new JTextField();
 
     private CompositeDisplayable trackDsp;
+    private CompositeDisplayable swathDsp;
     private CompositeDisplayable circleDsp;
     private static final TupleType TUPTYPE = makeTupleType();
 
@@ -192,6 +190,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private double centerLat = 0.0;
     private double centerLon = 0.0;
     private double satZ = 0.0;
+    private int dTime;
     private NavigatedDisplay navDsp = null;
 
 
@@ -205,6 +204,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     {
         try {
             trackDsp = new CompositeDisplayable();
+            swathDsp = new CompositeDisplayable();
             circleDsp = new CompositeDisplayable();
         } catch (Exception e) {
             System.out.println("problem creating composite displayable e=" + e);
@@ -242,9 +242,11 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             List<String> dts = new ArrayList();
             if (data instanceof Tuple) {
                 Data[] dataArr = ((Tuple)data).getComponents();
+
                 int npts = dataArr.length;
                 float[][] latlon = new float[2][npts];
                 float fSize = this.fontSize/10.f;
+
                 for (int i=0; i<npts; i++) {
                     Tuple t = (Tuple)dataArr[i];
                     Data[] tupleComps = t.getComponents();
@@ -252,29 +254,29 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     dts.add(str);
                     int indx = str.indexOf(" ") + 1;
                     String subStr = "- " + str.substring(indx, indx+5);
-
                     TextDisplayable time = new TextDisplayable(TextType.Generic);
                     time.setJustification(TextControl.Justification.LEFT);
                     time.setVerticalJustification(TextControl.Justification.CENTER);
                     time.setColor(this.color);
-                    
-                    addDisplayable(time, FLAG_COLORTABLE);
+ 
                     LatLonTuple llt = (LatLonTuple)tupleComps[1];
                     double dlat = llt.getLatitude().getValue();
                     double dlon = llt.getLongitude().getValue();
                     RealTuple lonLat =
                         new RealTuple(RealTupleType.SpatialEarth2DTuple,
                             new double[] { dlon, dlat });
-                    Tuple tup = new Tuple(TUPTYPE,
-                        new Data[] { lonLat, new Text(subStr)});
-                    time.setData(tup);
-                    this.trackDsp.addDisplayable(time);
+                    if ((i % 5) == 0) {
+                        Tuple tup = new Tuple(TUPTYPE,
+                            new Data[] { lonLat, new Text(subStr)});
+                        time.setData(tup);
+                        this.trackDsp.addDisplayable(time);
+                    }
                     float lat = (float)dlat;
                     float lon = (float)dlon;
-                    //System.out.println("    Time=" + subStr + " Lat=" + lat + " Lon=" + lon);
                     latlon[0][i] = lat;
                     latlon[1][i] = lon;
                 }
+
                 setDisplayableTextSize(this.fontSize);
                 Gridded2DSet track = new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple,
                            latlon, npts);
@@ -284,15 +286,143 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 CurveDrawer trackLines = new CurveDrawer(uset);
                 trackLines.setData(uset);
                 this.trackDsp.addDisplayable(trackLines);
+                trackLines.setDrawingEnabled(false);
+
+                float[][][] crv = getSwath(latlon);
+                int npt = crv[0][0].length;
+                float[][] leftC = new float[2][npt];
+                float[][] rightC = new float[2][npt];
+                for (int i=0; i<npt; i++) {
+                    leftC[0][i] = crv[0][0][i];
+                    leftC[1][i] = crv[0][1][i];
+                    rightC[0][i] = crv[1][0][i];
+                    rightC[1][i] = crv[1][1][i];
+                }
+                Gridded2DSet left = new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple,
+                           leftC, npt);
+                SampledSet[] lSet = new SampledSet[1];
+                lSet[0] = left;
+                UnionSet lUSet = new UnionSet(lSet);
+                CurveDrawer leftLines = new CurveDrawer(lUSet);
+                leftLines.setLineStyle(1);
+                leftLines.setData(lUSet);
+                swathDsp.addDisplayable(leftLines);
+
+                Gridded2DSet right = new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple,
+                           rightC, npt);
+                SampledSet[] rSet = new SampledSet[1];
+                rSet[0] = right;
+                UnionSet rUSet = new UnionSet(rSet);
+                CurveDrawer rightLines = new CurveDrawer(rUSet);
+                rightLines.setLineStyle(1);
+                rightLines.setData(rUSet);
+                this.swathDsp.addDisplayable(rightLines);
+
                 this.trackDsp.setColor(this.color);
                 this.trackDsp.setLineWidth(2.0f);
                 addDisplayable(this.trackDsp, FLAG_COLORTABLE);
-                trackLines.setDrawingEnabled(false);
+
+                this.swathDsp.setColor(this.color);
+                this.swathDsp.setLineWidth(1.0f);
+                addDisplayable(this.swathDsp, FLAG_COLORTABLE);
             }
         } catch (Exception e) {
             System.out.println("getData e=" + e);
         }
         return;
+    }
+
+    private float[][][] getSwath(float[][] track) {
+        double earthRadius = AstroConst.R_Earth/1000.0;
+        double width = 2900.0; /* km */
+        int npt = track[0].length-1;
+        int l2 = track.length;
+        float[][][] ret = new float[2][2][npt];
+        float zero = (float)0.0;
+        try {
+            int indx = 0;
+            for (int i=1; i<npt; i++) {
+                float latA = track[0][i-1];
+                float lonA = track[1][i-1];
+                //System.out.println("A:  lat=" + latA + " lon=" + lonA);
+
+                float latB = track[0][i+1];
+                float lonB = track[1][i+1];
+                //System.out.println("B:  lat=" + latB + " lon=" + lonB);
+
+                if (lonA < zero) {
+                   if (lonB > zero) {
+                       lonB -= (float)360; 
+                       //System.out.println("B:  lat=" + latB + " lon=" + lonB);
+                   }
+                }
+
+                float latC = (latA + latB)/(float)2.0;
+                float lonC = (lonA + lonB)/(float)2.0;
+                //System.out.println("C:  lat=" + latC + " lon=" + lonC);
+
+                double distDeg = width/(2.0 * 111.0);
+                double dLat = latB - latA;
+                double dLon = lonB - lonA;
+                double cDF = Math.atan(dLon/dLat);
+
+                double latF = (double)latC + Math.sin(cDF)*distDeg;
+                //System.out.println("F:  lat=" + latF);
+                float latD = (float)latF;
+                double x1 = Math.toRadians((double)lonC);
+                double y1 = Math.toRadians((double)latC);
+                double y2 = Math.toRadians(latF);
+                double slopeAB = Math.toRadians(latB - latA)/Math.toRadians(lonB - lonA);
+		double slopeDE = -1.0/slopeAB;
+                double x2 = x1 - (y1-y2)/slopeDE;
+                float lonD = (float)Math.toDegrees(x2);
+                //System.out.println("D:  lat=" + latD + " lon=" + lonD);
+
+                float fLat = latC - latD;
+		float fLon = lonC - lonD;
+/*
+                if (dLat == zero) {
+                    if (dLon == zero) {
+                        return null;
+                    } else {
+                        dx = 0.0;
+                        if (dLon > zero) {
+                            dy *= -1.0;
+                        }
+                    }
+                } else {
+                    if (dLon == zero) {
+                        dy = 0.0;
+                    }
+                    if (dLat > zero) {
+                        dx *= -1.0;
+                        if (dLon < zero) {
+                            dy *= -1.0;
+                        }
+                    } else {
+                        if (dLon < zero) {
+                            dy *= -1.0;
+                        }
+                   }
+                }
+                System.out.println("2 dx=" + dx + " dy=" + dy);
+
+*/
+                ret[0][0][indx] = latD;
+                ret[0][1][indx] = lonD;
+
+                float latE = latC + fLat;
+                float lonE = lonC + fLon;
+                //System.out.println("E:  lat=" + latE + " lon=" + lonE);
+                ret[1][0][indx] = latE;
+                ret[1][1][indx] = lonE;
+                ++indx;
+            }
+        } catch (Exception e) {
+            System.out.println("e=" + e);
+            return null;
+        }
+        return ret;
     }
 
     private static TupleType makeTupleType() {
@@ -349,11 +479,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
      * @return container of contents
      */
     public Container doMakeContents() {
-/*
-        JPanel topPanel = GuiUtils.leftCenter(
-                        new JLabel("Track Z-Position:  "),
-                        makePositionSlider());
-*/
         this.fontSizeChange =new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 String str = fontSizeFld.getText();
@@ -402,9 +527,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         String  dfltLblSpacing  = " ";
         List allComps = new ArrayList();
 
-//        allComps.add(topPanel);
-//        allComps.add(new JLabel(" "));
-//        allComps.add(new JLabel(" "));
         allComps.add(fontSizePanel);
         allComps.add(colorPanel);
         allComps.add(new JLabel(" "));
@@ -440,34 +562,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             public void actionPerformed(ActionEvent ae) {
                 setStation((String)locationComboBox.getSelectedItem());
                 locationIndex = locationComboBox.getSelectedIndex();
-                //System.out.println("\n locationIndex=" + locationIndex);
                 if (locationIndex < 0) {
-                    //locationIndex = 0;
-                    //locationComboBox.setSelectedIndex(locationIndex);
                     try {
                         Object stat = (Object)getStation();
-                        //System.out.println("\n station=" + stat);
                         if (stations.contains(stat)) {
                             locationIndex = stations.indexOf(stat);
-                            //System.out.println("\nstat at location: " + locationIndex);
                             locationComboBox.setSelectedIndex(locationIndex);
                         }
-/*
-                          else {
-                            locationIndex = 0;
-                            locationComboBox.insertItemAt(stat, locationIndex);
-                            locationComboBox.setSelectedIndex(locationIndex);
-                            stations.add(locationIndex, stat);
-                            locationEditor.setText(getStation());
-                            String zero = "";
-                            lats.add(locationIndex, zero);
-                            lons.add(locationIndex, zero);
-                            alts.add(locationIndex, zero);
-                            latLonWidget.setLatLon(" ", " ");
-                            altitudeFld.setText(zero);
-                            setAltitude();
-                        }
-*/
                     } catch (Exception e) {
                     }
                 } else {
@@ -491,6 +592,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     }
                 }
                 setSatelliteAltitude(dataSource.getNearestAltToGroundStation(latitude, longitude)/1000.0);
+                dTime = dataSource.getDTime();
                 redrawCoverageCircle();
             }
         });
@@ -586,18 +688,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         return GuiUtils.top(retPanel);
     }
 
-    private void getGroundStation() {
-    }
-/*
-    private JComponent makePositionSlider() {
-        levelSlider = new ZSlider(this.satZ) {
-            public void valueHasBeenSet() {
-                applyTrackPosition();
-            }
-        };
-        return levelSlider.getContents();
-    }
-*/
     /**
      * Apply the map (height) position to the displays
      */
@@ -634,9 +724,11 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     private CurveDrawer drawCoverageCircle(double lat, double lon, double satAlt, Color color) {
         if (!(latLonWidget.isLatLonDefined())) return null;
-
+/* earthRadius in km */
         double earthRadius = AstroConst.R_Earth/1000.0;
+        System.out.println("earthRadius=" + earthRadius);
         satAlt += earthRadius;
+        System.out.println("satAlt=" + satAlt);
         double pi = Math.PI;
         double SAC = pi/2.0 + Math.toRadians(getAntennaAngle());
         double sinASC = earthRadius * Math.sin(SAC) / satAlt;
@@ -646,7 +738,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         int npts = 360;
         float[][] latlon = new float[2][npts];
         double cosDist = Math.cos(rat);
+        System.out.println("cosDist=" + cosDist);
         double sinDist = Math.sin(rat);
+        System.out.println("sinDist=" + sinDist);
         double sinLat = Math.sin(lat);
         double cosLat = Math.cos(lat);
         double sinLon = -Math.sin(lon);
@@ -662,11 +756,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             double x = cosLat * sinLon * cosDist -
                        sinDist * (cosLon*sinBear + sinLat*sinLon*cosBear);
             double r = Math.sqrt(x*x + y*y);
+            System.out.println("    x=" + x + " y=" + y + " r=" + r);
             double latRad = Math.atan2(z, r);
             double lonRad = 0.0;
             if (r > 0.0) lonRad = -Math.atan2(x, y);
             latlon[0][i] = (float)Math.toDegrees(latRad);
             latlon[1][i] = (float)Math.toDegrees(lonRad);
+            System.out.println("    lat=" + latlon[0][i] + " log=" + latlon[1][i]);
         }
         try {
             Gridded2DSet circle = new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple,
@@ -782,7 +878,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     public void setLatitude() {
         this.latitude = latLonWidget.getLat();
-        //System.out.println("setLatitude: " + this.latitude);
     }
 
     public double getLatitude() {
@@ -791,7 +886,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     public void setLongitude() {
         this.longitude = latLonWidget.getLon();
-        //System.out.println("setLongitude: " + this.longitude);
     }
 
     public double getLongitude() {
@@ -800,7 +894,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     public void setAltitude() {
         String str = altitudeFld.getText();
-        //System.out.println("\nsetAltitude: str=" + str);
         try {
             Double d = new Double(str);
             this.altitude = d.doubleValue();
@@ -816,7 +909,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     public void setStation(String val) {
         this.station = val.trim();
-        //System.out.println("setStation: " + this.station);
     }
 
     public String getStation() {
@@ -824,14 +916,12 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     }
 
     public void setAntennaAngle(int val) {
-        //System.out.println("\nsetAntennaAngle: val=" + val);
         String str = " " + val;
         antennaAngle.setText(str);
         this.angle = val;
     }
 
     public int getAntennaAngle() {
-        //System.out.println("\ngetAntennaAngle:");
         String str = antennaAngle.getText();
         this.angle = new Integer(str.trim()).intValue();
         if (this.angle < defaultAntAngle) this.angle = defaultAntAngle;
@@ -839,7 +929,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     }
 
     private void setSatelliteAltitude(double val) {
-        //System.out.println("\nsetSatelliteAltitude: val=" + val);
         this.satelliteAltitude = val;
     }
 
@@ -852,8 +941,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             this.groundStationDsp.setTextSize(0.3f);
             this.groundStationDsp.setColor(getAntColor());
                     
-            //addDisplayable(this.groundStationDsp, FLAG_COLORTABLE);
-            //circleDsp.addDisplayable(this.groundStationDsp);
             double dlat = getLatitude();
             double dlon = getLongitude();
             RealTuple lonLat =
