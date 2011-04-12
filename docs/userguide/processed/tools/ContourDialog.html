@@ -34,44 +34,32 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ContourDial
 <div class="images"><img src="images/ContourDialogLabels.gif" width="346" height="332"></div>
 <p>Use the items in this window to set contouring properties.</p>
 <div class="preferencegrouptitle">Properties</div>
-<p><strong>Contour Interval -</strong> The spacing (difference in value) between contours. Set it to a single
-  value to specify a regular interval between contours.  You can 
-  specify irregular contour intervals with a semi-colon separated
-  list of the values. For example:</p>
-<pre>
-       <b>5400;5460;5800</b>
-</pre>
-<p>would only show the 5400, 5460 and 5800 contour lines.</p>
-<p>You can also specify different contour intervals for different ranges
-  with the following syntax:</p>
-<pre>
-     cint1/min1/max1;cint2/min1/max2;....;cintn/minn/maxn
-</pre>
-<p>For example, for geopotential heights:</p>
-<pre>
-     <b>30/0/4200;60/4200/8600;120/8600/24000</b>
-</pre>
-<p>would draw contours at 30 gpm between 0 and 4200, 60 gpm between
-  4200 and 8600 and 120 gpm between 8600 and 24000.</p>
-<p>To show a single contour line, specify the contour interval, min
-  and max as the same value.
-  For example:</p>
-<pre>
-    <b>5400/5400/5400</b></pre>
-<p>would only show the 5400 line.</p>
+<ul class="propertylist">
+<p><span class="propertylist"><strong>Contour Interval</strong></span><strong> -</strong> The spacing (difference in value) between contours. There are four ways to specify the contour interval.</p>
+<ol>
+  <li>Specify a single value to denote a regular interval between contours.</li>
+  <li>Specify irregular contour intervals with a semi-colon separated list of values. For example:<br>
+    5400;5460;5800. This would only show contours at 5400, 5460, and 5800.</li>
+  <li>Specify different contour intervals for different ranges in the following format:<br>
+    cint1/min1/max1;cint2/min2/max2;...;cintn/minn/maxn<br>
+    For example, with geopotential heights: 30/0/4200;60/4200/8600;120/8600/24000
+    would draw contours at 30gpm between 0 and 4200, 60gpm between  4200 and 8600, and 120gpm between 8600 and 24000</li>
+  <li>Specify one individual contour by setting the interval, min, and max as the same value. For example:<br>
+    5400/5400/5400. This would only show the 5400 line.</li>
+</ol>
 <p><strong>Base Contour -</strong> The value on which all contours are based. All contours will be integer multiples of the contour interval from the base value. For example, with a base value of 0 and a contour interval of 3 contours would be created at ..-6, -3, 0, 3, 6... A base of 1 with that interval would create contours at ..-5, -2, 1, 4, 7... The base value does not have to be the lowest contour level on a plot, or inside the range of values plotted; it is only a computational reference point. The base contour value is also used for controlling which lines are dashed.</p>
 <p><strong>Minimum Value -</strong> The limit below which no contour lines are shown. The minimum value may be larger than the base value, so that the base value may never appear on a plot.</p>
 <p><strong>Maximum Value -</strong> The upper limit above which no contour lines are shown. The minimum and maximum values do not need to match contour line values; they are only limits.</p>
 <p><strong>Line Width</strong> - The line width (in pixels) of the contour lines and labels.</p>
-<p><strong>Dash -</strong> If checked, values less than the base value are dashed.
-  If the base is set higher than maximum value, then all lines are dashed. Use the
-  pulldown menu to select the dash pattern to use.</p>
-<p><strong>Labels -</strong> When this option is checked on, contour labels will be displayed on the image.</p>
-<p><strong>Labels: Font -</strong> The font style that the contour labels will be written in.</p>
-<p><strong>Labels: Size -</strong> The font size that the contour labels will be written in.</p>
-<p><strong>Labels: Align -</strong> The way contour labels will be written on the contours. <strong>Along Contours</strong> means that the labels will be written along contours, and while they will not be written upside down, there is a chance they will be written at an angle depending on the layout of the contours. <strong>Horizontal</strong> means that the contour labels will be written on the contour, but it will be written in the horizontal and not on an angle.</p>
-<p><strong>OK -</strong> Set the values you want and close this window.</p>
-<p><strong>Apply</strong> - Set the values but leave this window open.</p>
+<p><strong>Dash -</strong> Dashes contour values less than the base value.
+    If the base is set higher than maximum value, then all lines are dashed. Use the
+    pulldown menu to select the dash pattern to use.</p>
+<p><strong>Labels -</strong> Displays contour labels on the image.</p>
+<blockquote>
+  <p><strong>Labels: Font -</strong> The font style of the contour labels.</p>
+  <p><strong>Labels: Size -</strong> The font size of the contour labels.</p>
+  <p><strong>Labels: Align -</strong> The way contour labels will be written on the contours. <strong>Along Contours</strong> means that the labels will be written along contours, and while they will not be written upside down, there is a chance they will be written at an angle depending on the layout of the contours. <strong>Horizontal</strong> means that the contour labels will be written on the contour, but it will be written in the horizontal and not on an angle.</p>
+</ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">

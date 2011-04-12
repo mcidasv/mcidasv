@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>-X Equivalent in -V</title>
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<!-- InstanceBeginEditable name="CurrentFile" -->
+<script language="javascript" type="text/javascript">
+function setParentPage() { if (parent.setPage) parent.setPage('Bundles.html',true); }
+</script>
+<!-- InstanceEndEditable -->
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+<body onLoad="setParentPage();">
+<div class="TopTitleNav">
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="page_miscellaneous.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="isl/index.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span> </p>
+  <hr align="center">
+</div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">McIDAS-X Commands in McIDAS-V</div>
+<p>Listed Below are several common McIDAS-X commands, followed by a brief description of the corresponding method used in McIDAS-V.</p>
+<div class="preferencegrouptitle">DATALOC</div>
+<ul>
+  <li><strong>ADD - </strong>Enter server and dataset information in the chooser, or use the <strong>ADD ADDE Servers...</strong> button in the <strong><a href="tools/preferences/ServerPreferences.html">ADDE Servers tab</a></strong> of the<strong> User Preferences</strong> window.</li>
+  <li><strong>LIST - </strong>Select server in chooser and use Dataset pull down menu to view available datasets.</li>
+</ul>
+<div class="preferencegrouptitle">IMG*</div>
+<ul>
+  <li><strong>IMGDISP -</strong> Use the <strong><a href="data/choosers/ImageChooser.html">Satellite Imagery</a></strong><a href="data/choosers/ImageChooser.html"> chooser</a> to select dataset, add the data, and load the image(s).</li>
+  <li><strong>IMGFILT -</strong> Once the data is loaded in the <strong>Field Selector</strong>, select Formulas -&gt; <a href="tools/ImageFilterFormulas.html">Image Filters</a>.</li>
+  <li><strong>IMGLIST -</strong> Use the <a href="quickstart/Satellite.html#imagetype">Image Type</a> pull down menu and the <strong><a href="data/choosers/RadarChooser.html#absolute">Absolute Times</a></strong><a href="data/choosers/RadarChooser.html#absolute"> tab</a> to view the available list of times from the server. Channels and image size information is listed below.</li>
+  <li><strong>IMGOPER -</strong> <a href="tools/Formulas.html">Create or use formulas</a> or <a href="tools/Jython.html">Jython methods</a>.</li>
+  <li><strong>IMGPLOT -</strong> <a href="ui/TransectViewManager.html">Transect</a>/Probe displays.</li>
+  <li><strong>IMGPROBE - </strong>Click the middle mouse button or use Probe display type.</li>
+  <li><strong>IMGREMAP -</strong> Use the <a href="ui/DisplayMenus.html#projectionmenu">Projections menu</a> to create or change projections.</li>
+</ul>
+
+<p>
+<div class="preferencegrouptitle">EU</div>
+<ul>
+  <li>  <strong>LIST - </strong>Right-click on the color table in the <strong>Legend</strong> or <strong>Layer Controls</strong> to get a <a href="tools/ColorTableEditor.html#starting">list of available color tables</a>.</li>
+  <li><strong>MAKE -</strong> Use the Tools -&gt; <a href="tools/ColorTableEditor.html">Color Table editor</a>.</li>
+  <li><strong>REST -</strong> Right-click on the color table in the <strong>Legend</strong> or <strong>Layer Controls</strong> and select a new enhancement.</li>
+</ul>
+<div class="preferencegrouptitle">ALT</div>
+<ul>
+  <li><strong>A, B, L -</strong> Use the <a href="ui/Animation.html">VCR commands</a> above the 3D display to control the looping.</li>
+  <li><strong>D -</strong> Use the middle mouse button click option to probe the data in the main display window.</li>
+  <li><strong>K, W - </strong>Use the <a href="controls/index.html#visibility">layer checkboxes</a> in the <strong>Legend</strong> to control the visibility status of images, maps, and other layers in the 3D display.</li>
+  <li><strong>O -</strong> Use layer checkboxes in the <strong>Legend</strong> to control visibility, or use <a href="controls/index.html#bringtofront">Bring View to Front</a> option to reorganize layers.</li>
+  <li>Use Ctrl+N to advance to the next tab, Ctrl+P to go to the previous tab, or click on the tab you wish to view.</li>
+</ul>
+<div class="preferencegrouptitle">GRD*</div>
+<ul>
+  <li><strong>GRDDISP -</strong> Use the <a href="quickstart/Grids.html">Gridded Data Chooser</a> to load data from a THREDDS server or from a local grib file and to select the display option for gridded data.</li>
+  <li><strong>GRDIMG -</strong> <a href="quickstart/Grids.html#selecting">Display gridded data</a> as a Color-Shaded Plan View.</li>
+</ul>
+<div class="preferencegrouptitle">SFC*</div>
+<ul>
+  <li>
+    <strong>SFC* -</strong> Use the <a href="quickstart/Point.html">Point Observations</a> -&gt; Plot/Contour chooser to select surface data.</li>
+  <li><strong>SFCCON -</strong> Use <a href="quickstart/Point.html#contour">Gridded Fields to display contours</a> in a Plan View display.</li>
+  <li><strong>SFCLIST -</strong> Display Point Data as a Point Data Plot, and use the <strong>Chart</strong> tab in the <strong>Layer Controls</strong> to view the fields for a specific station.</li>
+  <li><strong>SFCPLOT - </strong>Display Point Data as a Point Data Plot, and choose Layout Model for how to plot the point data. Use the Tools -&gt; <a href="tools/StationModelEditor.html">Station Model Template editor</a> to create/edit a new station model.</li>
+  <li><strong>SFCRPT -</strong> <a href="controls/misc/TextProductControl.html">Weather Text Products Display</a> (Tools -&gt; Text Data -&gt; Weather Text Products (from server). Select Observed Data -&gt; Sounding Data Product, and the station in the Locations tab).</li>
+</ul>
+<div class="preferencegrouptitle">RAOB*</div>
+<ul>
+  <li>
+  <strong>RAOB* - </strong>Use the Point Observations -&gt; <a href="data/choosers/RaobChooser.html">Soundings chooser</a> to select upper air data.</li>
+  <li><strong>RAOBCON -</strong> Use the Gridded Fields to display contours in a Plan View Display.</li>
+  <li><strong>RAOBPLOT -</strong> Display Point Data as a Point Data Plot, and choose Layout Model for how to plot the point data. Use the Tools -&gt; <a href="tools/StationModelEditor.html">Station Model Template editor</a> to create/edit a new station model.</li>
+  <li><strong>RAOBPRT -</strong> <a href="controls/misc/TextProductControl.html">Weather Text Products Display</a> (Tools -&gt; Text Data -&gt; Weather Text Products (from server). Select Observed Data -&gt; Sounding Data Product, and the station in the Locations tab.</li>
+</ul>
+<div class="preferencegrouptitle">Other</div>
+<ul>
+  <li>
+  <strong>DSINFO -</strong> Select the chooser with the data you want to view (Image, Point, etc.), connect to the server and view &quot;Data&quot; type list to see available descriptors.</li>
+  <li><strong>COMBINE - </strong>Formulas: Imagery -&gt; RGB, or <a href="tools/Formulas.html">create your own formula</a>/<a href="tools/Jython.html">Jython method</a>.</li>
+  <li><strong>PTDISP - </strong>Use the Point Observations-&gt; Plot/Contour chooser to select data, and display Point Data as a Point Data Plot and choose your Layout Model for how to plot your point data. Use the Tools -&gt; <a href="tools/StationModelEditor.html">Station Model Template editor</a> to create/edit a new station model.</li>
+  <li><strong>Scheduler (SKED, SKE, SKL, SKU) -</strong> Set up <a href="data/DataSourceProperties.html#basicproperties">polling options</a> in data sources (right-click on the Data Source in the <strong>Field Selector</strong> and select Properties), or run background scripts through cron.</li>
+  <li><strong>WWDISP - </strong>Shape files from the <a href="data/choosers/CatalogChooser.html">General Catalogs chooser</a>, or use the <a href="quickstart/Bridge.html">McIDAS-X Bridge</a>.</li>
+  <li><strong>ZA - </strong>Text option in the <a href="controls/misc/DrawingControl.html">Drawing Controls</a> (Display -&gt; Draw Freely).</li>
+  <li><strong>ZLM, CW - </strong>Shape options in the <a href="controls/misc/DrawingControl.html">Drawing Controls</a> (Display -&gt; Draw Freely).</li>
+</ul>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav">
+  <hr align="center">
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="page_miscellaneous.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="isl/index.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span></p>
+</div>
+</body>
+<!-- InstanceEnd -->
+</html>
