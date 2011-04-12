@@ -337,7 +337,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         double width = 2900.0; /* km */
         int npt = track[0].length-1;
         int l2 = track.length;
-        float[][][] ret = new float[2][2][npt];
+        float[][][] ret = new float[2][2][npt-1];
         float zero = (float)0.0;
         try {
             int indx = 0;
