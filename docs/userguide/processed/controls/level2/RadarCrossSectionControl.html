@@ -29,14 +29,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/level2/R
   <hr align="center">
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
-<div class="pagetitle">Cross Section  Controls </div>
+<div class="pagetitle">Radar Cross Section  Controls </div>
 <xxxmeta xxxname="jhid" value="idv.controls.level2.radarcrosssectioncontrol">
 <div class="pagesubtitle">Overview</div>
 <meta name="jhid" value="idv.controls.level2.radarcrosssectioncontrol">
 <p>The radar vertical Cross Section Control is used to adjust vertical cross
-  section displays of radar volume data. In order to display the cross section,
-  the top level of the data type in the Fields section of the Field Selector
-  must be selected. Either Reflectivity, RadialVelocity, or SpectrumWidth must be chosen, not one of their individual elevation angles. The control window has two tabs. The first tab includes a duplicate
+  section displays of Level II Radar volume data. Level II data has three moments or data types: Reflectivity, Radial Velocity, and Spectrum Width, indicated by the <img src="images/CrossSectionIcon.GIF" width="20" height="19" align="absmiddle"> icon in the Field Selector. In order for Radar Cross Section to be listed as a valid Display Type in the <strong>Field Selector</strong>, either Reflectivity, RadialVelocity, or SpectrumWidth must be chosen, not one of their individual elevation angles. The control window has two tabs, <strong>Display</strong> and <strong>Settings</strong>.</p>
+<p>The <strong>Display</strong> tab includes a duplicate
   of the display in the main McIDAS-V display window:</p>
 <div class="images"><img  src="images/RadarCrossSectionControlGui1.gif"  alt="images/RadarCrossSectionControlGui1.gif" ></div>
 <p><div class="pagesubtitle">Display Properties
@@ -50,11 +49,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/level2/R
 <li class="propertylistitem"><b>Display</b> - Use the left-mouse button to drag on the colored squares on the
     positioning line  in the main display window. This repositioning of the end points allows you
     to reposition and extend or decrease the distance along transect displayed by the radar cross section.
-  </p>
 </li>
 <li class="propertylistitem"><b>Location</b> - Shows the location of the end points of the cross section.</li>
   </ul>
-<p>The second tab shows the settings for this Layer Control:</p>
+<p>The <strong>Settings</strong> tab shows the settings for this Layer Control:</p>
 <div class="images"><img  src="images/RadarCrossSectionControlGui2.gif"  alt="images/RadarCrossSectionControlGui2.gif" ></div>
 <p></p>
 <div class="pagesubtitle">Settings Properties</div>
@@ -62,20 +60,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/level2/R
 <li class="propertylistitem"><b>Color Table</b> - Shows the active color table and the associated
       high and low data values in the units the display is made in. As the mouse
       pointer is moved over the color bar, the value at a particular color is
-      shown. Right-click on the color bar and select Edit Color Table to start the <a  href="../../tools/ColorTableEditor.html">Color
-      Table Editor</a>. Or click on the button that displays the name of the
-      color table to show a popup menu that allows you to change the range, select
-      other color tables, etc.</p>
-<li class="propertylistitem"><b>Selector Position </b> - Changes the vertical position of the selector line in the main display.
-  </p>
-<li class="propertylistitem"><b>Visible Range </b> - Allows you to set the range that determines
-          what parts of the data is actually shown.</p>
-<li class="propertylistitem"><b>Vertical Scale </b> - Changes the vertical scale of the 2D cross section view.
-  </p>
-<li class="propertylistitem"><b>Shade Colors </b> - Blends the color between the radar
+  shown. Right-click on the color bar or click on the button that displays the name of the color table to edit the color table, change the range, select other color tables, etc.
+<li class="propertylistitem"><b>Selector Position </b> - Changes the vertical position of the selector line in the main display.<li class="propertylistitem"><b>Visible Range </b> - Allows you to set the range that determines
+          what parts of the data is actually shown.<li class="propertylistitem"><b>Vertical Scale </b> - Changes the vertical scale of the 2D cross section view.<li class="propertylistitem"><b>Shade Colors </b> - Blends the color between the radar
   data bins. The shaded display usually is not preferred for radar 
-  displays.</p>
-</ul>
+  displays.</ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
