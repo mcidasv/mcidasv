@@ -25,6 +25,14 @@
      fileselection="true"
      doesmultiples="true"
      label="HRIT data source"/>     
+     
+  <datasource
+     id="NPP"
+     factory="edu.wisc.ssec.mcidasv.data.hydra.NPPDataSource"
+     fileselection="true"
+     doesmultiples="true"
+     label="NPP data source"/>
+     
   <datasource
      id="HYDRA"
      factory="edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource"
