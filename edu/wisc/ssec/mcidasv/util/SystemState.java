@@ -29,12 +29,20 @@
  */
 package edu.wisc.ssec.mcidasv.util;
 
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashMap;
+
+//import static edu.wisc.ssec.mcidasv.Constants.PROP_VERSION_MAJOR;
+//import static edu.wisc.ssec.mcidasv.Constants.PROP_VERSION_MINOR;
+//import static edu.wisc.ssec.mcidasv.Constants.PROP_VERSION_RELEASE;
+//import static edu.wisc.ssec.mcidasv.Constants.PROP_BUILD_DATE;
+
+import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.Method;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -52,11 +60,15 @@ import javax.media.j3d.VirtualUniverse;
 import org.python.core.Py;
 import org.python.core.PySystemState;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ucar.unidata.idv.ArgsManager;
 import ucar.unidata.idv.IdvResourceManager.IdvResource;
 import ucar.unidata.util.ResourceCollection;
 import ucar.visad.display.DisplayUtil;
 
+import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.StateManager;
 
@@ -64,6 +76,12 @@ import edu.wisc.ssec.mcidasv.StateManager;
  * Utility methods for querying the state of the user's machine.
  */
 public class SystemState {
+
+    /** Handy logging object. */
+    private static final Logger logger = LoggerFactory.getLogger(SystemState.class);
+
+    // Don't allow outside instantiation.
+    private SystemState() { }
 
     /**
      * Attempt to invoke {@code OperatingSystemMXBean.methodName} via 
@@ -91,7 +109,7 @@ public class SystemState {
             // cast is correct.
             result = (T)m.invoke(osBean);
         } catch (Exception e) {
-            // do nothing for right now
+            logger.error("couldn't call method: " + methodName, e);
         }
         return result;
     }
@@ -104,8 +122,7 @@ public class SystemState {
      * @return Jython's configuration settings. 
      */
     public static Map<Object, Object> queryJythonProps() {
-        Map<Object, Object> properties = 
-            new LinkedHashMap<Object, Object>(PySystemState.registry);
+        Map<Object, Object> properties = newLinkedHashMap(PySystemState.registry);
         properties.put("sys.argv", Py.getSystemState().argv.toString());
         properties.put("sys.builtin_module_names", PySystemState.builtin_module_names.toString());
         properties.put("sys.byteorder", PySystemState.byteorder);
@@ -135,7 +152,7 @@ public class SystemState {
      * the hardware McIDAS-V is using.
      */
     public static Map<String, String> queryOpSysProps() {
-        Map<String, String> properties = new LinkedHashMap<String, String>();
+        Map<String, String> properties = newLinkedHashMap(10);
         long committed = hackyMethodCall("getCommittedVirtualMemorySize", Long.MIN_VALUE);
         long freeMemory = hackyMethodCall("getFreePhysicalMemorySize", Long.MIN_VALUE);
         long freeSwap = hackyMethodCall("getFreeSwapSpaceSize", Long.MIN_VALUE);
@@ -162,7 +179,7 @@ public class SystemState {
      * @return {@link Map} of properties that describes the user's machine.
      */
     public static Map<String, String> queryMachine() {
-        Map<String, String> props = new LinkedHashMap<String, String>();
+        Map<String, String> props = newLinkedHashMap();
 
         // cpu count and whatnot
         int processors = Runtime.getRuntime().availableProcessors();
@@ -193,9 +210,9 @@ public class SystemState {
      * that represents the {@literal "bounds"} of the display.
      */
     public static Map<Integer, Rectangle> getDisplayBounds() {
-        Map<Integer, Rectangle> map = new LinkedHashMap<Integer, Rectangle>();
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         int idx = 0;
+        Map<Integer, Rectangle> map = newLinkedHashMap(ge.getScreenDevices().length * 2);
         for (GraphicsDevice dev : ge.getScreenDevices()) {
             for (GraphicsConfiguration config : dev.getConfigurations()) {
                 map.put(idx++, config.getBounds());
@@ -204,8 +221,6 @@ public class SystemState {
         return map;
     }
 
-    
-    
     // TODO(jon): this should really be a polygon
     public static Rectangle getVirtualDisplayBounds() {
         Rectangle virtualBounds = new Rectangle();
@@ -224,16 +239,113 @@ public class SystemState {
      */
     @SuppressWarnings("unchecked") // casting to Object, so this should be fine.
     public static Map<String, Object> queryJava3d() {
-        Map<String, Object> props = new LinkedHashMap<String, Object>();
+
         Map<String, Object> universeProps = 
             (Map<String, Object>)VirtualUniverse.getProperties();
-        props.putAll(universeProps);
 
-        GraphicsConfiguration config = 
+        GraphicsConfiguration config =
             DisplayUtil.getPreferredConfig(null, true, false);
         Map<String, Object> c3dMap = new Canvas3D(config).queryProperties();
+
+        Map<String, Object> props =
+                newLinkedHashMap(universeProps.size() + c3dMap.size());
+        props.putAll(universeProps);
         props.putAll(c3dMap);
         return props;
+    }
+
+    /**
+     * Gets a human-friendly representation of the information embedded within
+     * IDV's {@code build.properties}.
+     *
+     * @return {@code String} that looks like {@literal "IDV version major.minor<b>revision</b> built <b>date</b>"}.
+     * For example: {@code IDV version 2.9u4 built 2011-04-13 14:01 UTC}.
+     */
+    public static String getIdvVersionString() {
+        Map<String, String> info = queryIdvBuildProperties();
+        return "IDV version " + info.get("idv.version.major") + '.' +
+               info.get("idv.version.minor") + info.get("idv.version.revision") +
+               " built " + info.get("idv.build.date");
+    }
+
+    /**
+     * Gets a human-friendly representation of the information embedded within
+     * McIDAS-V's {@code build.properties}.
+     * 
+     * @return {@code String} that looks like {@literal "McIDAS-V version major.minor<b>release</b> built <b>date</b>"}.
+     * For example: {@code McIDAS-V version 1.02beta1 built 2011-04-14 17:36}.
+     */
+    public static String getMcvVersionString() {
+        Map<String, String> info = queryMcvBuildProperties();
+        return "McIDAS-V version " + info.get(Constants.PROP_VERSION_MAJOR) + '.' +
+               info.get(Constants.PROP_VERSION_MINOR) + info.get(Constants.PROP_VERSION_RELEASE) +
+               " built " + info.get(Constants.PROP_BUILD_DATE);
+    }
+
+    private InputStream getResourceAsStream(final String name) {
+        return ClassLoader.getSystemResourceAsStream(name);
+    }
+
+    public static Map<String, String> queryIdvBuildProperties() {
+        SystemState sysState = new SystemState();
+        Map<String, String> versions = newLinkedHashMap(4);
+        InputStream input = null;
+        try {
+            input = sysState.getResourceAsStream("ucar/unidata/idv/resources/build.properties");
+            Properties props = new Properties();
+            props.load(input);
+            String major = props.getProperty("idv.version.major", "no_major");
+            String minor = props.getProperty("idv.version.minor", "no_minor");
+            String revision = props.getProperty("idv.version.revision", "no_revision");
+            String date = props.getProperty("idv.build.date", "");
+            versions.put("idv.version.major", major);
+            versions.put("idv.version.minor", minor);
+            versions.put("idv.version.revision", revision);
+            versions.put("idv.build.date", date);
+        } catch (Exception e) {
+            logger.error("could not read from idv's build.properties", e);
+        } finally {
+            sysState = null;
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (Exception ex) {
+                    logger.error("could not close idv's build.properties", ex);
+                }
+            }
+        }
+        return versions;
+    }
+
+    public static Map<String, String> queryMcvBuildProperties() {
+        SystemState sysState = new SystemState();
+        Map<String, String> versions = newLinkedHashMap(4);
+        InputStream input = null;
+        try {
+            input = sysState.getResourceAsStream("edu/wisc/ssec/mcidasv/resources/build.properties");
+            Properties props = new Properties();
+            props.load(input);
+            String major = props.getProperty(Constants.PROP_VERSION_MAJOR, "0");
+            String minor = props.getProperty(Constants.PROP_VERSION_MINOR, "0");
+            String release = props.getProperty(Constants.PROP_VERSION_RELEASE, "");
+            String date = props.getProperty(Constants.PROP_BUILD_DATE, "Unknown");
+            versions.put(Constants.PROP_VERSION_MAJOR, major);
+            versions.put(Constants.PROP_VERSION_MINOR, minor);
+            versions.put(Constants.PROP_VERSION_RELEASE, release);
+            versions.put(Constants.PROP_BUILD_DATE, date);
+        } catch (Exception e) {
+            logger.error("could not read from mcv's build.properties!", e);
+        } finally {
+            sysState = null;
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (Exception ex) {
+                    logger.error("could not close mcv's build.properties!", ex);
+                }
+            }
+        }
+        return versions;
     }
 
     /**
@@ -245,7 +357,7 @@ public class SystemState {
      */
     // need: argsmanager, resource manager
     public static Map<String, Object> queryMcvState(final McIDASV mcv) {
-        Map<String, Object> props = new LinkedHashMap<String, Object>();
+        Map<String, Object> props = newLinkedHashMap();
 
         ArgsManager args = mcv.getArgsManager();
         props.put("mcv.state.islinteractive", args.getIslInteractive());
@@ -256,8 +368,8 @@ public class SystemState {
         props.put("mcv.state.commandline", mcv.getCommandLineArgs());
 
         // loop through resources
-        @SuppressWarnings("unchecked") // older-style Unidata code; only ever uses IdvResources.
-        List<IdvResource> resources = mcv.getResourceManager().getResources();
+        List<IdvResource> resources =
+                cast(mcv.getResourceManager().getResources());
         for (IdvResource resource : resources) {
             String id = resource.getId();
             props.put(id+".description", resource.getDescription());
@@ -268,12 +380,14 @@ public class SystemState {
             }
 
             ResourceCollection rc = mcv.getResourceManager().getResources(resource);
-            List<String> specified = new ArrayList<String>();
-            List<String> valid = new ArrayList<String>();
-            for (int i = 0; i < rc.size(); i++) {
-                specified.add((String)rc.get(i));
+            int rcSize = rc.size();
+            List<String> specified = arrList(rcSize);
+            List<String> valid = arrList(rcSize);
+            for (int i = 0; i < rcSize; i++) {
+                String tmpResource = (String)rc.get(i);
+                specified.add(tmpResource);
                 if (rc.isValid(i)) {
-                    valid.add((String)rc.get(i));
+                    valid.add(tmpResource);
                 }
             }
 
@@ -291,7 +405,7 @@ public class SystemState {
      * {@code KEY=VALUE\n}. This is so we kinda-sorta conform to the standard
      * {@link Properties} file format.
      * 
-     * @see #getStateAsString(boolean)
+     * @see #getStateAsString(edu.wisc.ssec.mcidasv.McIDASV, boolean)
      */
     public static String getStateAsString(final McIDASV mcv) {
         return getStateAsString(mcv, false);
@@ -371,6 +485,4 @@ public class SystemState {
         }
         return buf.toString();
     }
-    
-
 }
