@@ -60,6 +60,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
+import edu.wisc.ssec.mcidasv.util.SystemState;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.slf4j.Logger;
@@ -488,13 +489,18 @@ public class McIDASV extends IntegratedDataViewer {
             hashProps.putAll(properties);
         }
 
+        ucar.unidata.idv.JythonManager jyManager = getJythonManager();
         if (idvAction) {
-            action = action.replace("&", "&amp;").substring(4);
-            getJythonManager().evaluateUntrusted(action, hashProps);
+            action = new String(action.replace("&", "&amp;").substring(4));
+//            getJythonManager().evaluateUntrusted(action, hashProps);
+            jyManager.evaluateUntrusted(action, hashProps);
             result = true;
         } else if (jythonAction) {
-            action = action.substring(7);
-            getJythonManager().evaluateTrusted(action, hashProps);
+            action = new String(action.substring(7));
+            jyManager.evaluateTrusted(action, hashProps);
+//            ucar.unidata.idv.JythonManager jyMan = new ucar.unidata.idv.JythonManager();
+//            jyMan
+//            getJythonManager().evaluateTrusted(action, hashProps);
             result = true;
         } else {
             result = super.handleFileOrUrlAction(action, properties);
@@ -656,9 +662,6 @@ public class McIDASV extends IntegratedDataViewer {
      * 
      * <p>If {@link ArgsManager#getIsOffScreen()} is {@code true}, this method
      * will ignore the user's preferences and remove all layers and data.
-     * 
-     * @param showWarning Whether or not to display a warning message before
-     * removing <i>all</i> layers and data sources.
      * 
      * @see #removeAllData(boolean)
      * @see #removeAllLayers(boolean)
@@ -1458,7 +1461,13 @@ public class McIDASV extends IntegratedDataViewer {
      * @throws Exception When something untoward happens
      */
     public static void main(String[] args) throws Exception {
-        logger.info("Starting McIDAS-V");
+        logger.info("=============================================================================");
+        logger.info("Starting McIDAS-V @ {}", new Date());
+        logger.info("Versions:");
+        logger.info("{}", SystemState.getMcvVersionString());
+        logger.info("{}", SystemState.getIdvVersionString());
+        long sysMem = Long.valueOf(SystemState.queryOpSysProps().get("opsys.memory.physical.total"));
+        logger.info("{} MB system memory", Math.round(sysMem/1024/1024));
         applyArgs(args);
         if (!hadCleanExit(SESSION_FILE)) {
             previousStart = extractDate(SESSION_FILE);
@@ -1471,7 +1480,7 @@ public class McIDASV extends IntegratedDataViewer {
     /**
      * Attempts a clean shutdown of McIDAS-V. Currently this entails 
      * suppressing any error dialogs, explicitly killing the 
-     * {@link #addeManager}, and removing {@link #SESSION_FILE}.
+     * {@link #addeEntries}, and removing {@link #SESSION_FILE}.
      * 
      * @param exitCode System exit code to use
      * 
@@ -1486,7 +1495,7 @@ public class McIDASV extends IntegratedDataViewer {
         }
 
         removeSessionFile(SESSION_FILE);
-        logger.info("Exiting McIDAS-V");
+        logger.info("Exiting McIDAS-V @ {}", new Date());
         System.exit(exitCode);
     }
 
