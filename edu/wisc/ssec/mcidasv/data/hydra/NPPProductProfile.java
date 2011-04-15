@@ -64,6 +64,8 @@ public class NPPProductProfile {
 	private static final Logger logger = LoggerFactory.getLogger(NPPProductProfile.class);
 	
 	DocumentBuilder db = null;
+	// if we need to pull product profiles from the McV jar file
+	boolean readFromJar = false;
 	HashMap<String, String> rangeMin = new HashMap<String, String>();
 	HashMap<String, String> rangeMax = new HashMap<String, String>();
 	HashMap<String, ArrayList<Float>> fillValues = new HashMap<String, ArrayList<Float>>();
@@ -99,7 +101,7 @@ public class NPPProductProfile {
 		// print top level classloader files
 		// this is how we will tell if we need to pull the profiles out of a jar file
 		
-		boolean readFromJar = false;
+		readFromJar = false;
         ClassLoader loader = getClass().getClassLoader();
         InputStream in = loader.getResourceAsStream(".");
         BufferedReader rdr = new BufferedReader(new InputStreamReader(in));
@@ -177,8 +179,16 @@ public class NPPProductProfile {
 	public void addMetaDataFromFile(String fileName) throws SAXException, IOException {
 		logger.trace("Attempting to parse XML Product Profile: " + fileName);
 		Document d = null;
-		InputStream ios = getClass().getResourceAsStream("resources/NPP/XML_Product_Profiles/" + fileName);
-		d = db.parse(ios);
+		InputStream ios = null;
+		if (readFromJar) {
+			JarFile jar = new JarFile(URLDecoder.decode("mcidasv.jar", "UTF-8"));
+			JarEntry je = jar.getJarEntry(fileName);
+			ios = jar.getInputStream(je);
+			d = db.parse(ios);
+		} else {
+			ios = getClass().getResourceAsStream("resources/NPP/XML_Product_Profiles/" + fileName);
+			d = db.parse(ios);
+		}
 		NodeList nl = d.getElementsByTagName("Field");
 		for (int i = 0; i < nl.getLength(); i++) {
 			ArrayList<Float> fValAL = new ArrayList<Float>();
