@@ -137,8 +137,8 @@ public class NPPProductProfile {
 					}
 				}
 				if (found == true) {
-					logger.trace("Found profile: " + name.substring(name.lastIndexOf(File.separator) + 1));
-					return name.substring(name.lastIndexOf(File.separator) + 1);
+					logger.trace("Found profile: " + name);
+					return name;
 				}
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
