@@ -333,7 +333,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     }
 
     private float[][][] getSwath(float[][] track) {
-        double earthRadius = AstroConst.R_Earth/1000.0;
+        double earthRadius = AstroConst.R_Earth_mean/1000.0;
+        System.out.println("earthRadius=" + earthRadius);
         double width = 2900.0; /* km */
         int npt = track[0].length-1;
         int l2 = track.length;
@@ -342,78 +343,49 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         try {
             int indx = 0;
             for (int i=1; i<npt; i++) {
-                float latA = track[0][i-1];
-                float lonA = track[1][i-1];
-                //System.out.println("A:  lat=" + latA + " lon=" + lonA);
+                double latA = Math.toRadians(track[0][i-1]);
+                double lonA = Math.toRadians(track[1][i-1]);
+//                System.out.println("\nA:  lat=" + latA + " lon=" + lonA);
 
-                float latB = track[0][i+1];
-                float lonB = track[1][i+1];
+                double latB = Math.toRadians(track[0][i+1]);
+                double lonB = Math.toRadians(track[1][i+1]);
                 //System.out.println("B:  lat=" + latB + " lon=" + lonB);
 
-                if (lonA < zero) {
-                   if (lonB > zero) {
-                       lonB -= (float)360; 
-                       //System.out.println("B:  lat=" + latB + " lon=" + lonB);
-                   }
-                }
+                double diffLon = lonB - lonA;
+                double bX = Math.cos(latB) * Math.cos(diffLon);
+                double bY = Math.cos(latB) * Math.sin(diffLon);
+                double xFac = Math.cos(latA)+bX;
+                double latC = Math.atan2(Math.sin(latA)+Math.sin(latB), Math.sqrt(xFac*xFac + bY*bY));
+                double lonC = lonA + Math.atan2(bY, xFac);
+//                System.out.println("Mid:  lat=" + Math.toDegrees(latC) + " lon=" + Math.toDegrees(lonC));
 
-                float latC = (latA + latB)/(float)2.0;
-                float lonC = (lonA + lonB)/(float)2.0;
-                //System.out.println("C:  lat=" + latC + " lon=" + lonC);
+                double bearing = Math.atan2(Math.sin(diffLon)*Math.cos(latB),
+                                 Math.cos(latA)*Math.sin(latB)-Math.sin(latA)*Math.cos(latB)*Math.cos(diffLon))
+                                 + Math.PI/2.0;
+                double dist = width/2.0;
+                dist /= earthRadius;
+                double lat = Math.asin(Math.sin(latC)*Math.cos(dist) +
+                                       Math.cos(latC)*Math.sin(dist)*Math.cos(bearing));
+                double lon = lonC + Math.atan2(Math.sin(bearing)*Math.sin(dist)*Math.cos(latC),
+                                               Math.cos(dist)-Math.sin(latC)*Math.sin(lat));
+                float latD = (float)Math.toDegrees(lat);
+                float lonD = (float)Math.toDegrees(lon);
+//                System.out.println("D:  lat=" + latD + " lon=" + lonD);
+//                System.out.println("    bearing=" + Math.toDegrees(bearing));
 
-                double distDeg = width/(2.0 * 111.0);
-                double dLat = latB - latA;
-                double dLon = lonB - lonA;
-                double cDF = Math.atan(dLon/dLat);
+                bearing += Math.PI;
+                lat = Math.asin(Math.sin(latC)*Math.cos(dist) +
+                                       Math.cos(latC)*Math.sin(dist)*Math.cos(bearing));
+                lon = lonC + Math.atan2(Math.sin(bearing)*Math.sin(dist)*Math.cos(latC),
+                                               Math.cos(dist)-Math.sin(latC)*Math.sin(lat));
+                float latE = (float)Math.toDegrees(lat);
+                float lonE = (float)Math.toDegrees(lon);
+//                System.out.println("E:  lat=" + latE + " lon=" + lonE);
+//                System.out.println("    bearing=" + Math.toDegrees(bearing));
 
-                double latF = (double)latC + Math.sin(cDF)*distDeg;
-                //System.out.println("F:  lat=" + latF);
-                float latD = (float)latF;
-                double x1 = Math.toRadians((double)lonC);
-                double y1 = Math.toRadians((double)latC);
-                double y2 = Math.toRadians(latF);
-                double slopeAB = Math.toRadians(latB - latA)/Math.toRadians(lonB - lonA);
-		double slopeDE = -1.0/slopeAB;
-                double x2 = x1 - (y1-y2)/slopeDE;
-                float lonD = (float)Math.toDegrees(x2);
-                //System.out.println("D:  lat=" + latD + " lon=" + lonD);
-
-                float fLat = latC - latD;
-		float fLon = lonC - lonD;
-/*
-                if (dLat == zero) {
-                    if (dLon == zero) {
-                        return null;
-                    } else {
-                        dx = 0.0;
-                        if (dLon > zero) {
-                            dy *= -1.0;
-                        }
-                    }
-                } else {
-                    if (dLon == zero) {
-                        dy = 0.0;
-                    }
-                    if (dLat > zero) {
-                        dx *= -1.0;
-                        if (dLon < zero) {
-                            dy *= -1.0;
-                        }
-                    } else {
-                        if (dLon < zero) {
-                            dy *= -1.0;
-                        }
-                   }
-                }
-                System.out.println("2 dx=" + dx + " dy=" + dy);
-
-*/
                 ret[0][0][indx] = latD;
                 ret[0][1][indx] = lonD;
 
-                float latE = latC + fLat;
-                float lonE = lonC + fLon;
-                //System.out.println("E:  lat=" + latE + " lon=" + lonE);
                 ret[1][0][indx] = latE;
                 ret[1][1][indx] = lonE;
                 ++indx;
@@ -724,8 +696,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     private CurveDrawer drawCoverageCircle(double lat, double lon, double satAlt, Color color) {
         if (!(latLonWidget.isLatLonDefined())) return null;
-/* earthRadius in km */
-        double earthRadius = AstroConst.R_Earth/1000.0;
+/* mean earthRadius in km */
+        double earthRadius = AstroConst.R_Earth_mean/1000.0;
         System.out.println("earthRadius=" + earthRadius);
         satAlt += earthRadius;
         System.out.println("satAlt=" + satAlt);
