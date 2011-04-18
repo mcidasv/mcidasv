@@ -307,6 +307,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 leftLines.setLineStyle(1);
                 leftLines.setData(lUSet);
                 swathDsp.addDisplayable(leftLines);
+                leftLines.setDrawingEnabled(false);
 
                 Gridded2DSet right = new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple,
                            rightC, npt);
@@ -317,6 +318,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 rightLines.setLineStyle(1);
                 rightLines.setData(rUSet);
                 this.swathDsp.addDisplayable(rightLines);
+                rightLines.setDrawingEnabled(false);
 
                 this.trackDsp.setColor(this.color);
                 this.trackDsp.setLineWidth(2.0f);
