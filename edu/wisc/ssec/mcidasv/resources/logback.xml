@@ -1,9 +1,13 @@
 <!-- 
-  the "configuration" element also accepts a boolean "scan" attribute.
-  enabling scans allows SLF4J to rescan a given config file and apply any
-  changes!
+  the "configuration" element accepts three optional parameters:
+
+  debug: generates some SLF4J debug; acceptable values are "true" or "false".
+         defaults to "false".
+
+  scan and scanPeriod: please see the Logback documentation:
+  http://logback.qos.ch/manual/configuration.html#autoScan
  -->
-<configuration debug="true">
+<configuration>
 
   <!-- sets up a rotating mcidasv.log. every time mcidasv.log reaches 1MB, this
        will move mcidasv.log to mcidasv.1.log.zip and create a new mcidasv.log.
@@ -33,10 +37,10 @@
   <!-- you can override the root level for specific packages -->
   <!-- <logger name="edu.wisc.ssec.mcidasv" level="TRACE"/> -->
 
-  <!-- logging is disabled within mcv (by default)
+  <!-- logging only listens for things at "INFO" level within mcv (by default)
        valid levels are: TRACE, DEBUG, INFO, WARN, ERROR, OFF
        be sure to skim over http://logback.qos.ch/manual/architecture.html#basic_selection -->
-  <root level="WARN">
+  <root level="INFO">
     <appender-ref ref="FILE" />
   </root>
 </configuration>

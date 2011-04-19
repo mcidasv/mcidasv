@@ -969,7 +969,7 @@ public class McIDASV extends IntegratedDataViewer {
     @Override protected JythonManager doMakeJythonManager() {
 //        return (JythonManager) makeManager(JythonManager.class,
 //                                           new Object[] { idv });
-        logger.info("doMakeJythonManager");
+        logger.debug("returning a new JythonManager");
         return new JythonManager(this);
     }
 
