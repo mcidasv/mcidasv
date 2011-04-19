@@ -501,7 +501,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             EntryType selType = EntryTransforms.strToEntryType(getGroupType());
             groups.addAll(servManager.getIdvStyleRemoteGroups(sel, selType));
         }
-        logger.info("updateGroups: selected={} (type={}) chooser={} contents={}", new Object[] { serverSelector.getSelectedItem(), serverSelector.getSelectedItem().getClass().getName(), this.getDataType(), groups});
+        logger.trace("updateGroups: selected={} (type={}) chooser={} contents={}", new Object[] { serverSelector.getSelectedItem(), serverSelector.getSelectedItem().getClass().getName(), this.getDataType(), groups});
         Comparator<Group> byGroup = new GroupComparator();
         Collections.sort(groups, byGroup);
         GuiUtils.setListData(groupSelector, groups);
