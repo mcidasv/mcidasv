@@ -115,7 +115,7 @@
       <div class="indented" id="layercontrols_2">
         <span class="link" onClick="setPage('controls/PlanViewControl.html');">Plan View Controls</span><br>
         <span class="link" onClick="setPage('controls/FlowPlanViewControl.html');">Flow Plan Controls</span><br>
-        <span class="link" onClick="setPage('controls/CrossSectionControl.html');">Vertical Cross-section Controls</span><br>
+        <span class="link" onClick="setPage('controls/CrossSectionControl.html');">Vertical Cross Section Controls</span><br>
         <span class="link" onClick="setPage('controls/ThreeDSurfaceControl.html');">Isosurface Controls</span><br>
         <span class="link" onClick="setPage('controls/VolumeRenderControl.html');">Volume Rendering Controls</span><br>
 		<span class="link" onClick="setPage('controls/PointVolumeControl.html');">Point Volume Controls</span><br>
@@ -129,7 +129,7 @@
         <span class="link" onClick="setPage('controls/ImagePlanViewControl.html');">Image Controls</span><br>
 		
 		<span class="toggle" onClick="toggleChildren(this,'layercontrols_2_1_1');">+</span>
-		<span class="link" onClick="setPage('controls/hydra/index.html');">HYDRA Controls</span><br>
+		<span class="link" onClick="setPage('controls/hydra/index.html');">HYDRA Layer Controls</span><br>
 		
 		<div class="indented" id="layercontrols_2_1_1">
 			<span class="link" onClick="setPage('controls/hydra/MultispectralDisplayControl.html');">MultiSpectral Display Controls</span><br>
@@ -144,10 +144,11 @@
 		
 		<div class="indented" id="layercontrols_2_2">
         	<span class="link" onClick="setPage('controls/level2/RadarSweepControl.html');">Radar Sweep Controls</span><br>
-        	<span class="link" onClick="setPage('controls/level2/RhiControl.html');">Radar RHI Display Controls </span><br>
-        	<span class="link" onClick="setPage('controls/level2/RadarVolumeControl.html');">Radar Volume Controls</span><br>
+        	<span class="link" onClick="setPage('controls/level2/RadarRhiDisplayControls.html');">Radar RHI Display Controls </span><br>
+			<span class="link" onClick="setPage('controls/level2/RadarCrossSectionControl.html');">Radar Cross Section Controls</span><br>
+			<span class="link" onClick="setPage('controls/level2/RadarCappiDisplayControls.html');">Radar CAPPI Display Controls</span><br>                         
+        	<span class="link" onClick="setPage('controls/level2/RadarVolumeControl.html');">Radar Volume Scan Controls</span><br>
         	<span class="link" onClick="setPage('controls/level2/RadarIsosurfaceControl.html');">Radar Isosurface Controls </span><br>
-			<span class="link" onClick="setPage('controls/level2/RadarCrossSectionControl.html');">Radar Cross Section Controls</span>
 		</div>
 		
         <span class="link" onClick="setPage('controls/misc/RadarGridControl.html');">Range Rings</span><br>
@@ -159,7 +160,7 @@
       <div class="indented" id="layercontrols_3">
         <span class="link" onClick="setPage('controls/profiler/ProfilerTimeHeightControl.html');">Profiler Time/Height Controls</span><br>
         <span class="link" onClick="setPage('controls/profiler/ProfilerStationPlotControl.html');">Profiler Station Plot Controls</span><br>
-        <span class="link" onClick="setPage('controls/profiler/ProfilerMultiStationControl3D.html');">Profiler 3D Multi-station Controls</span><br>
+        <span class="link" onClick="setPage('controls/profiler/ProfilerMultiStationControl3D.html');">Profiler 3D Multi-Station Controls</span><br>
       </div>
 
       <span class="toggle" onClick="toggleChildren(this,'layercontrols_4');">+</span>
@@ -231,13 +232,13 @@
         <span class="link" onClick="setPage('tools/preferences/DataPreferences.html');">Data Sources Preferences</span><br>
         <span class="link" onClick="setPage('tools/preferences/ServerPreferences.html');">ADDE Server Preferences</span><br>
         <span class="link" onClick="setPage('tools/preferences/AvailableDisplaysPreferences.html');">Available Displays Preferences</span><br>
-        <span class="link" onClick="setPage('tools/preferences/NavigationPreferences.html');">Navigation Control Preferences </span><br>
+        <span class="link" onClick="setPage('tools/preferences/NavigationPreferences.html');">Navigation Control Preferences</span><br>
         <span class="link" onClick="setPage('tools/preferences/FormatPreferences.html');">Formats and Data Preferences</span><br>
         <span class="link" onClick="setPage('tools/preferences/AdvancedPreferences.html');">Advanced Preferences </span><br>
       </div>
 
-      <span class="link" onClick="setPage('tools/RemoteDataManager.html');">Remote Data Manager</span><br>
-      <span class="link" onClick="setPage('tools/LocalDataManager.html');">Local Data Manager</span><br>
+      <span class="link" onClick="setPage('tools/RemoteDataManager.html');">Remote ADDE Data Manager</span><br>
+      <span class="link" onClick="setPage('tools/LocalDataManager.html');">Local ADDE Data Manager</span><br>
       <span class="link" onClick="setPage('tools/ProjectionManager.html');">Projection Manager</span><br>
       <span class="link" onClick="setPage('tools/ColorTableEditor.html');">Color Table Editor</span><br>
       <span class="link" onClick="setPage('tools/StationModelEditor.html');">Layout Model Editor</span><br>
@@ -345,6 +346,9 @@
           <span class="link" onClick="setPage('examples/Miscellaneous.html#multipanel');">Multi-Panel Display</span><br>
           <span class="link" onClick="setPage('examples/Miscellaneous.html#omnidisplay');">Omni Display</span><br>
         </div>
+       		</div>
+		
+        <span class="link" onClick="setPage('xequivalent.html');">McIDAS-X Commands in McIDAS-V</span><br> 
 
       </div>
 

@@ -47,7 +47,8 @@
         <mapID target="idv.controls.level2.radarisosurfacecontrol"   url="controls/level2/RadarIsosurfaceControl.html" />
         <mapID target="idv.controls.level2.radarsweepcontrol"        url="controls/level2/RadarSweepControl.html" />
         <mapID target="idv.controls.level2.radarvolumecontrol"       url="controls/level2/RadarVolumeControl.html" />
-        <mapID target="idv.controls.level2.rhicontrol"               url="controls/level2/RhiControl.html" />
+        <mapID target="idv.controls.level2.rhicontrol"               url="controls/level2/RadarRhiDisplayControls.html" />
+		<mapID target="idv.controls.level2.radarcappidisplaycontrols"url="controls/level2/RadarCappiDisplayControls.html" />
         <mapID target="idv.controls.leveliiicontrol"                 url="controls/LevelIIIControl.html" />
         <mapID target="idv.controls.locationindicatorcontrol"        url="controls/misc/LocationIndicatorControl.html" />
         <mapID target="idv.controls.mapdisplaycontrol"               url="controls/MapDisplayControl.html" />
@@ -438,6 +439,7 @@
         <mapID target="idv.systems.os"                               url="Systems.html#os" />
         <mapID target="idv.systems.video"                            url="Systems.html#video" />
         <mapID target="idv.toc"										 url="toc.html" />
+		<mapID target="idv.xequivalent"								 url="xequivalent.html" />
         <mapID target="idv.tools.aliaseditor"                        url="tools/AliasEditor.html" />
         <mapID target="idv.tools.colortableeditor"                   url="tools/ColorTableEditor.html" />
         <mapID target="idv.tools.colortableeditor.chooser"           url="tools/ColorTableEditor.html#chooser" />
