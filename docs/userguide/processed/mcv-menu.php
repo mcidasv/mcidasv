@@ -346,8 +346,7 @@
           <span class="link" onClick="setPage('examples/Miscellaneous.html#multipanel');">Multi-Panel Display</span><br>
           <span class="link" onClick="setPage('examples/Miscellaneous.html#omnidisplay');">Omni Display</span><br>
         </div>
-       		</div>
-		
+       		</div>		
         <span class="link" onClick="setPage('xequivalent.html');">McIDAS-X Commands in McIDAS-V</span><br> 
 
       </div>

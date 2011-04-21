@@ -30,9 +30,68 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageFilter
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Description of Formulas - Image Filters </div>
-<p>The follow describes each formula included in the Image Filter Formulas section
-  of McIDAS-V.</p><br>
-<p><strong>Cloud Image Filter (replace, constant)</strong></p>
+<p>The following describes each formula included in the Image Filter Formulas section
+  of McIDAS-V.</p>
+<ul>
+  <li>  <a href="#clean">Clean Image Filter</a></li>
+  <li><a href="#cloud">Cloud Image Filter</a></li>
+  <li><a href="#core">Core Image Filter</a></li>
+  <li><a href="#discriminate">Discriminate Image Filter</a></li>
+  <li><a href="#gradient">Gradient Image Filter</a></li>
+  <li><a href="#high2d">High Pass 2D Image Filter</a></li>
+  <li><a href="#high">High Pass Image Filter</a></li>
+  <li><a href="#hole">Hole Image Filter</a></li>
+  <li><a href="#low2d">Low Pass 2D Image Filter</a></li>
+  <li><a href="#low">Low Pass Image Filter</a></li>
+  <li><a href="#merge">Merge Image Filter</a></li>
+  <li><a href="#replace">Replace Image Filter</a></li>
+  <li><a href="#shot">Shot Image Filter</a></li>
+</ul>
+<p><a name="clean" id="clean"></a><strong>Clean Image Filter (fill, bline, eline, pdiff, ldiff)</strong></p>
+<p>This formula applies a clean filter to an image by.....???????????</p>
+<table>
+  <tr>
+  <td valign="top" rowspan="1" colspan="3">
+   <p>Input parameters: </p>
+   </td>
+  </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>fill</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>?????????????????</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>bline</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>beginning line in the source image region (default=first line)</p></td>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>eline</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>ending line in the source image region (default=last line)</p></td>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>pdiff</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>maximum percentage of the product range to allow before a new value for
+     the pixel is derived using the average of two adjacent pixels (default=15)</p></td>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>ldiff</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>minimum percentage of the product range to allow before a new value for
+     the pixel is derived using the average of two adjacent pixels (default=15)</p></td>
+   </tr>
+</table>
+<p><a name="cloud" id="cloud"></a><strong>Cloud Image Filter (replace, constant)</strong></p>
 <p>This formula applies a cloud
   filter to an image by comparing each element to the elements of another image.
   Use this filter to mask off a portion of the first source image. </p>
@@ -59,7 +118,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageFilter
    </td>
    </tr>
 </table>
-<p><strong>Core Image Filter (brkpoint1, brkpoint2, replace1, replace2)</strong></p>
+<p><a name="core" id="core"></a><strong>Core Image Filter (brkpoint1, brkpoint2, replace1, replace2)</strong></p>
 <p>This formula applies a core
   filter to two images by comparing elements to breakpoints. The resulting image
 has only two values.</p>
@@ -115,7 +174,7 @@ else <em>ddataset</em> = <em>replace2</em></p>
 </td>
 </tr>
 </table>
-<p><strong>Discriminate Image Filter (brkpoint1, brkpoint2, brkpoint3, brkpoint4,
+<p><a name="discriminate" id="discriminate"></a><strong>Discriminate Image Filter (brkpoint1, brkpoint2, brkpoint3, brkpoint4,
     replace)</strong></p>
 <p>This formula applies a discriminate
   filter to two images by comparing elements in each image to different high
@@ -184,7 +243,7 @@ else <em>ddataset</em> = <em>replace</em></p>
 </td>
 </tr>
 </table>
-<p><strong>Gradient Image Filter</strong></p>
+<p><a name="gradient" id="gradient"></a><strong>Gradient Image Filter</strong></p>
 <p>This formula applies a gradient filter to the source image.</p>
 <table>
   <tr>
@@ -201,7 +260,7 @@ else <em>ddataset</em> = <em>replace</em></p>
 </td>
 </tr>
 </table>
-<p><strong>High Pass 2D Image Filter</strong></p>
+<p><a name="high2d" id="high2d"></a><strong>High Pass 2D Image Filter</strong></p>
 <p>This formula applies a two-dimensional
   high-pass filter to each element in the source image. It eliminates low-frequency
   deviations by clustering them around the distribution's midpoint. A sample
@@ -224,7 +283,7 @@ else <em>ddataset</em> = <em>replace</em></p>
 </tr>
 </table>
 
-<p><strong>High Pass Image Filter (radius, leak)</strong></p>
+<p><a name="high" id="high"></a><strong>High Pass Image Filter (radius, leak)</strong></p>
 <p>This formula applies a one-dimensional
   high-pass filter to each element in the source image. It eliminates low-frequency
   deviations by clustering them around the distribution's midpoint. A sample
@@ -246,7 +305,7 @@ else <em>ddataset</em> = <em>replace</em></p>
    </tr>
    <tr>
    <td width="70" colspan="1" rowspan="1" valign="top">
-   <p><em>efficiency</em></p>
+   <p><em>leak</em></p>
    </td>
    <td width="660" colspan="2" rowspan="1" valign="top">
    <p>filter efficiency (default=100)</p>
@@ -265,7 +324,7 @@ else <em>ddataset</em> = <em>replace</em></p>
 </td>
 </tr>
 </table>
-<p><strong>Hole Image Filter (brkpoint1, brkpoint2)</strong></p>
+<p><a name="hole" id="hole"></a><strong>Hole Image Filter (brkpoint1, brkpoint2)</strong></p>
 <p>This formula searches for missing
   data and fills the holes in the image using the average of the surrounding
   element values.</p>
@@ -307,7 +366,7 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
 </td>
 </tr>
 </table>
-<p><strong>Low Pass 2D Image Filter (linecoef, elecoef)</strong></p>
+<p><a name="low2d" id="low2d"></a><strong>Low Pass 2D Image Filter (linecoef, elecoef)</strong></p>
 <p>This formula applies a two-dimensional
   low-pass filter to each element in the source image. It eliminates high-frequency
   deviations by replacing the source image data values with the average of the
@@ -348,7 +407,7 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
 </td>
 </tr>
 </table>
-<p><strong>Low Pass Image Filter (radius, leak)</strong></p>
+<p><a name="low" id="low"></a><strong>Low Pass Image Filter (radius, leak)</strong></p>
 <p>This formula applies a one-dimensional
   low-pass filter to each element of the source image. It eliminates high-frequency
   deviations by replacing the source image data values with the average of the
@@ -391,10 +450,43 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
 </td>
 </tr>
 </table>
-<p><strong>Replace Image  Filter (replaceVal, bline, eline, belem, eelem)</strong></p>
+<p><a name="merge" id="merge"></a><strong>Merge Image Filter (brkpoint1, brkpoint2, constant)</strong></p>
+
+<p>This formula applies a merge filter to two images by comparing elements of two breakpoints.
+<table>
+  <tr>
+  <td valign="top" rowspan="1" colspan="3">
+   <p>Input parameters: </p>
+   </td>
+  </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>brkpoint1</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>low end breakpoint value (default=minimum <em>sdataset</em> value)</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>brkpoint2</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>high end breakpoint value (default=maximum <em>sdataset</em> value)</p>
+   </td>
+  <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>constant</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top">
+   <p>additive constant (default=0)</p>
+   </td>
+  </tr>
+</table>
+<p><a name="replace" id="replace"></a><strong>Replace Image  Filter (replaceVal, bline, eline, belem, eelem)</strong></p>
 <p>This formula replaces selected
   elements in the defined region of the source image with the specified replacement
-  value.</p>
+</p>
     <table>
   <tr>
   <td valign="top" rowspan="1" colspan="2">
@@ -455,7 +547,7 @@ else <em>ddataset</em> = <em>replaceVal</em> </p>
 </td>
 </tr>
 </table>
-<p><strong>Shot Image Filter (bline, eline, pdiff)</strong></p>
+<p><a name="shot" id="shot"></a><strong>Shot Image Filter (bline, eline, pdiff)</strong></p>
 <p>This formula cleans an image
   by applying a shot noise filter to each element in the source image. Each element
   is compared to the elements on either side and replaced if the values are significantly
@@ -487,8 +579,7 @@ else <em>ddataset</em> = <em>replaceVal</em> </p>
    </td>
    <td width="660" colspan="2" rowspan="1" valign="top">
    <p>maximum percentage of the product range to allow before a new value for
-     the pixel is derived using the<br>
-average of two adjacent pixels (default=15)</p>
+     the pixel is derived using the average of two adjacent pixels (default=15)</p>
    </td>
    </tr>
   <tr>
