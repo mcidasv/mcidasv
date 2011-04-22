@@ -1,4 +1,7 @@
-import sys, os
+from __future__ import division
+from __future__ import with_statement
+import sys
+import os
 
 # This is an ugly hack to deal with Jython's sys.path strangeness: if you 
 # want to import a non-compiled python module contained in a JAR, sys.path 
