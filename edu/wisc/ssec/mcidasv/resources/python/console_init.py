@@ -40,9 +40,9 @@ _mcv = McIDASV.getStaticMcv()
 
 import imageFilters
 import shell as idvshell
-#import background
-#import interactive
-from background import setViewSize, getColorTable, colorTableNames, allColorTables, firstWindow, allWindows, firstDisplay, allDisplays, createLayer, allLayerTypes, allProjections, projectionNames, getProjection, load_enhancement, load_map, annotate, apply_colorbar, write_image, collect_garbage 
+
+# TODO(jon): you got some explaining to do 'bout these line lengths.'
+from background import setViewSize, getColorTable, colorTableNames, allColorTables, firstWindow, allWindows, firstDisplay, allDisplays, createLayer, allLayerTypes, allProjections, projectionNames, getProjection, load_enhancement, load_map, annotate, apply_colorbar, write_image, collect_garbage, managedDataSource, removeAllLayers, removeAllData, boomstick 
 from interactive import see, ncdump, ncdumpToString, dumpObj
 
 _user_python = os.path.join(_mcv.getStore().getUserDirectory().toString(), 'python')

@@ -1,9 +1,26 @@
 import java.awt.Color.CYAN
 import ucar.unidata.util.Range
 
+from contextlib import contextmanager
+from shell import makeDataSource
+
 from java.lang import System
 from ucar.unidata.idv import DisplayInfo
 from ucar.unidata.ui.colortable import ColorTableDefaults
+
+@contextmanager
+def managedDataSource(path, boomstick=True, dataType=None):
+    # setup step
+    dataSource = _mcv.makeDataSource(path, dataType, None)
+    try:
+        # hand control back to the code "inside" the "with" statement
+        yield dataSource
+    except:
+        # hmm...
+        raise
+    finally:
+        # the "with" block has relinquished control; time to clean up!
+        boomstick()
 
 class _JavaProxy(object):
     """One sentence description goes here
@@ -433,9 +450,20 @@ def write_image(path=''):
     """Nothing yet."""
     pass
 
-# TODO(jon): remove pending jython meeting decision?
 def collect_garbage():
     """Signals to Java that it should free any memory that isn't in use."""
     System.gc()
 
+def removeAllData():
+    """ Removes all of the current data sources WITHOUT prompting. """
+    _mcv.removeAllData(False)
 
+def removeAllLayers():
+    """ Removes all of the current layers WITHOUT prompting. """
+    _mcv.removeAllLayers(False)
+
+def boomstick():
+    """ This is [your] BOOOMSTICK! """
+    _mcv.removeAllLayers(False)
+    _mcv.removeAllData(False)
+    System.gc()
