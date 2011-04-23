@@ -32,9 +32,28 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
 <div class="pagetitle">Description of Formulas - Grids </div>
 <p>The follow describes each formula included in the Grids Formulas section
   of McIDAS-V.</p>
-<br>
-<p><strong>Define a grid diagnostic  (gddiag)</strong></p>
-<p>This formula lets you define a grid diagnostic to perform. </p>
+<div class="preferencegrouptitle">Time Steps</div>
+<p><strong>Average Time steps -</strong> Plots one map representing the average value of the specified parameter at any one point on the map during the time sequence selected.</p>
+<p><strong>Difference from initial timestep (D(T)-D(T)-D(0)) -</strong> Plots a sequence of images. Each image maps the difference in the numerical value of the parameter from the initial values of the first frame.   This formula sets the value of each time step N as:</p>
+<table>
+   <tr>
+   <td width="70" colspan="1" rowspan="1" valign="top">
+   <p><em>&nbsp;</em></p>
+   </td>
+   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>D(T) = D(T) - D(0) </p>
+   </td>
+   </tr>
+</table>
+<p><strong>Max over time steps -</strong> Plots one map representing  the highest value of the specified parameter at any point on the map during the time sequence selected.</p>
+<p><strong>Merge time sequences -</strong> ????????????</p>
+<p><strong>Min over time steps -</strong> Plots one map representing the lowest value of the specified parameter at any one point on the map during the time sequence selected.</p>
+<p><strong>Sum over time steps -</strong> Plots one map  representing the total value of the parameter at any one point on the map during the  time sequence selected.</p>
+<p><strong>Time step difference (D(T)=D(T)-D(T-1)) -</strong> Plots a sequence of images. Each frame plots the value of the specified parameter at that time, and subtracts from it the value of the same parameter at the previous time in the loop.</p>
+<p><strong>Time step sum (D(T)=D(T)+D(T-1)) -</strong> Plots a sequence of images. Each fram eplots the value of the specified parameter at that time, and adds to it the value of the same parameter at the previous time step in the loop.</p>
+<div class="preferencegrouptitle">Ensemble</div>
+<div class="preferencegrouptitle">Miscalaneous</div>
+<p><strong>Define a grid diagnostic  (gddiag) - </strong>Allows for defining a grid diagnostic to perform. </p>
 <table>
   <tr>
   <td valign="top" rowspan="1" colspan="3">
@@ -47,17 +66,16 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
    </td>
    <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
    <p>grid diagnostic. For more information see the Grid Diagnostics section
-     of the <a href="JythonLib.html">Jython
+     of the <a href="JythonLib.html#griddiag">Jython
      Library</a>. </p>
    </td>
    </tr>
 </table>
-<p><strong>Find latitude of grid points  (fieldimpl)</strong></p>
-<p>This formula obtains the latitude coordinate from the grid and returns a grid
+<p><strong>Find latitude of grid points  (fieldimpl) - </strong>Obtains the latitude coordinate from the grid and returns a grid
   of the latitudes at each point.</p>
-<br>
+<p><strong>Find longitude of grid points</strong> - Obtains the longitude coordinate from the grid and returns a grid of longitudes at each point. ???????????????????? This produces same plot as latitude.</p>
 <p><strong>Horizontal Advection (from %N1% &amp; %N2%) (scalar parameter, U Component,
-    V Component)</strong></p>
+  V Component)</strong></p>
 <p>This formula calculates horizontal advection from U and V components.</p>
   <table>
   <tr>
@@ -312,64 +330,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
    </td>
    </tr>
 </table>
-<br>
-<p>A set of Time Steps formulas are also available.</p>
-<br>
-<p><strong>Average time steps  (field)</strong></p>
-<p>This formula averages the values in each time step.</p>
-<br>
-<p><strong>Difference from initial timestep (D(T)=D(T)-D(0)) (field)</strong></p>
-<p>This formula sets the value of each time step N as:</p>
-    <table>
-   <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top">
-   <p><em>&nbsp;</em></p>
-   </td>
-   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>D(T) = D(T) - D(0) </p>
-   </td>
-   </tr>
-</table>
-<p><strong>Max over time steps (field)</strong></p>
-<p>This formula takes the max of the values in each time step.</p>
-<br>
-<p><strong>Min over time steps (field)</strong></p>
-<p>This formula takes the min of the values in each time step.</p>
-<br>
-<p><strong>Sum over time steps  (field)</strong></p>
-<p>This formula takes the sum of the values in each time step.</p>
-<br>
-<p><strong>Time step difference (D(T)=D(T)-D(T-1))  (field)</strong></p>
-<p>This formula sets the value of each time step N as: </p>
-    <table>
-   <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top">
-   <p><em>&nbsp;</em></p>
-   </td>
-   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>D(T) = D(T) - D(T-1) </p>
-   </td>
-   </tr>
-</table>
-<p><strong>Time step sum (D(T)=D(T)+D(T-1)) (field)</strong></p>
-<p>This formula sets the value of each time step N as:</p>
-    <table>
-  <tr>
-  <td valign="top" rowspan="1" colspan="2">
-   <p>Input parameters: </p>
-   </td>
-  </tr>
-   <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top">
-   <p><em>&nbsp;</em></p>
-   </td>
-   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>D(T) = D(T) + D(T-1) </p>
-   </td>
-   </tr>
-</table>
-<div class="childlist">
-<table width="100%"></table>
+
 </div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
