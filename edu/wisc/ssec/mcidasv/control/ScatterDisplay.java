@@ -304,7 +304,7 @@ public class ScatterDisplay extends DisplayControlImpl {
         if ( (X_field.getLength() != Y_field.getLength()) ||
              (Xlens[0] != Ylens[0]) || (Xlens[1] != Ylens[1]) ) 
         {
-          Y_field = (FlatField) Y_field.resample(X_field.getDomainSet());
+          Y_field = resample(X_field, Y_field);
         }
     }
 
@@ -852,6 +852,30 @@ public class ScatterDisplay extends DisplayControlImpl {
 
     public boolean getSelectByCurve() {
       return selectByCurve;
+    }
+
+    private FlatField resample(FlatField X_field, FlatField Y_field) throws VisADException, RemoteException {
+
+       float[][] Yvalues = Y_field.getFloats(false);
+       CoordinateSystem X_cs = X_field.getDomainCoordinateSystem();
+       float[][] samples = ((SampledSet)X_field.getDomainSet()).getSamples(false);
+       float[][] X_earthLocs = X_cs.toReference(samples);
+       CoordinateSystem Y_cs = Y_field.getDomainCoordinateSystem();
+       float[][] coords = Y_cs.fromReference(X_earthLocs);
+       int[] indexes = ((SampledSet)Y_field.getDomainSet()).valueToIndex(coords);
+       float[][] new_values = new float[1][indexes.length];
+       for (int k=0; k<indexes.length; k++) {
+          new_values[0][k] = Float.NaN;
+          if (indexes[k] >= 0) {
+            new_values[0][k] = Yvalues[0][indexes[k]];
+          }
+        }
+       FunctionType ftype = new FunctionType(((FunctionType)X_field.getType()).getDomain(),
+                ((FunctionType)Y_field.getType()).getRange());
+       Y_field = new FlatField(ftype, X_field.getDomainSet());
+       Y_field.setSamples(new_values);
+
+       return Y_field;
     }
 
     private class ScatterDisplayable extends RGBDisplayable {
