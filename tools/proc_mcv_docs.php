@@ -2,7 +2,7 @@
 <?php
 
 $DEBUG=0;
-$EMAIL="beckys@ssec.wisc.edu,barryr@ssec.wisc.edu,davep@ssec.wisc.edu";
+$EMAIL="beckys@ssec.wisc.edu,barryr@ssec.wisc.edu,davep@ssec.wisc.edu,robert.carp@ssec.wisc.edu";
 
 $DOC_DIR="/home/mcidasv/mc-v/docs/userguide/processed";
 
