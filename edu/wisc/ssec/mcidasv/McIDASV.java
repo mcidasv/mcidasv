@@ -553,7 +553,7 @@ public class McIDASV extends IntegratedDataViewer {
      * always return {@code false}, as the user isn't interested in seeing the
      * warning.
      */
-    private boolean removeAllData(final boolean showWarning) {
+    public boolean removeAllData(final boolean showWarning) {
         boolean reallyRemove = false;
         boolean continueWarning = true;
 
@@ -600,7 +600,7 @@ public class McIDASV extends IntegratedDataViewer {
      * always return {@code false}, as the user isn't interested in seeing the
      * warning.
      */
-    private boolean removeAllLayers(final boolean showWarning) {
+    public boolean removeAllLayers(final boolean showWarning) {
         boolean reallyRemove = false;
         boolean continueWarning = true;
 

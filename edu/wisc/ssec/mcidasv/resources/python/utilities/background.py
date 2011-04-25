@@ -2,16 +2,23 @@ import java.awt.Color.CYAN
 import ucar.unidata.util.Range
 
 from contextlib import contextmanager
+
 from shell import makeDataSource
 
 from java.lang import System
+from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 from ucar.unidata.idv import DisplayInfo
 from ucar.unidata.ui.colortable import ColorTableDefaults
 
 @contextmanager
-def managedDataSource(path, boomstick=True, dataType=None):
+def managedDataSource(path, cleanup=True, dataType=None):
     # setup step
-    dataSource = _mcv.makeDataSource(path, dataType, None)
+    # the problem here is that makeDataSource returns a boolean
+    # how do i grab the ref to the actual datasource that got 
+    # created?
+    dataSource = getStaticMcv().makeOneDataSource(path, dataType, None)
+    # TODO(jon): perhaps write another generator that takes a varname?
+    #actualData = getData(dataSource.getName(), variableName)
     try:
         # hand control back to the code "inside" the "with" statement
         yield dataSource
@@ -20,7 +27,8 @@ def managedDataSource(path, boomstick=True, dataType=None):
         raise
     finally:
         # the "with" block has relinquished control; time to clean up!
-        boomstick()
+        if cleanup:
+            boomstick()
 
 class _JavaProxy(object):
     """One sentence description goes here
@@ -456,14 +464,15 @@ def collect_garbage():
 
 def removeAllData():
     """ Removes all of the current data sources WITHOUT prompting. """
-    _mcv.removeAllData(False)
+    getStaticMcv().removeAllData(False)
 
 def removeAllLayers():
     """ Removes all of the current layers WITHOUT prompting. """
-    _mcv.removeAllLayers(False)
+    getStaticMcv().removeAllLayers(False)
 
 def boomstick():
     """ This is [your] BOOOMSTICK! """
-    _mcv.removeAllLayers(False)
-    _mcv.removeAllData(False)
+    mcv = getStaticMcv()
+    mcv.removeAllLayers(False)
+    mcv.removeAllData(False)
     System.gc()
