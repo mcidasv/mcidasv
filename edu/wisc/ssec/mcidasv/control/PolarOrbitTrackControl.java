@@ -815,6 +815,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         if (this.color == null) this.color = defaultColor;
         try {
             this.trackDsp.setColor(color);
+            this.swathDsp.setColor(color);
             this.color = color;
         } catch (Exception e) {
             System.out.println("Exception in PolarOrbitTrackControl.setColor e=" + e);
