@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <actions>
+
+    <action id="view.layerviz.animator" 
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/awooga%d.png"
+        description="Layer Visibility Animations"
+        group="Tools"
+        action="jython:idv.showLayerVisibilityAnimator();" />
+
     <action id="help.showabout"
         image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/emblem-system%d.png"
         group="Help"

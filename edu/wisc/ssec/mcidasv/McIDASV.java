@@ -59,6 +59,7 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import edu.wisc.ssec.mcidasv.util.SystemState;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -108,6 +109,7 @@ import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry.AddeFormat;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry;
 import edu.wisc.ssec.mcidasv.servermanager.TabbedAddeManager;
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
+import edu.wisc.ssec.mcidasv.ui.LayerAnimationWindow;
 import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
 import edu.wisc.ssec.mcidasv.util.Contract;
@@ -536,6 +538,21 @@ public class McIDASV extends IntegratedDataViewer {
                 }
             }
         }
+    }
+
+    // pop up an incredibly rudimentary window that controls layer viz animation.
+    public void showLayerVisibilityAnimator() {
+        logger.trace("probably should try to do something here.");
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    LayerAnimationWindow window = new LayerAnimationWindow();
+                    window.setVisible(true);
+                } catch (Exception e) {
+                    logger.error("oh no! something happened!", e);
+                }
+            }
+        });
     }
 
     /**
