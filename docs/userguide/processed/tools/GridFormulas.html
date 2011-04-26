@@ -30,9 +30,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Description of Formulas - Grids </div>
-<p>The follow describes each formula included in the Grids Formulas section
+<p>The following describes each formula included in the Grids Formulas section
   of McIDAS-V.</p>
-<div class="preferencegrouptitle">Time Steps</div>
+<ul>
+  <li><a href="#time">Time Steps</a></li>
+  <li><a href="#ensemble">Ensemble</a></li>
+  <li><a href="#miscellaneous">Miscellaneous</a></li>
+</ul>
+<div class="preferencegrouptitle"><a name="time" id="time"></a>Time Steps</div>
 <p><strong>Average Time steps -</strong> Plots one map representing the average value of the specified parameter at any one point on the map during the time sequence selected.</p>
 <p><strong>Difference from initial timestep (D(T)-D(T)-D(0)) -</strong> Plots a sequence of images. Each image maps the difference in the numerical value of the parameter from the initial values of the first frame.   This formula sets the value of each time step N as:</p>
 <table>
@@ -50,9 +55,16 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
 <p><strong>Min over time steps -</strong> Plots one map representing the lowest value of the specified parameter at any one point on the map during the time sequence selected.</p>
 <p><strong>Sum over time steps -</strong> Plots one map  representing the total value of the parameter at any one point on the map during the  time sequence selected.</p>
 <p><strong>Time step difference (D(T)=D(T)-D(T-1)) -</strong> Plots a sequence of images. Each frame plots the value of the specified parameter at that time, and subtracts from it the value of the same parameter at the previous time in the loop.</p>
-<p><strong>Time step sum (D(T)=D(T)+D(T-1)) -</strong> Plots a sequence of images. Each fram eplots the value of the specified parameter at that time, and adds to it the value of the same parameter at the previous time step in the loop.</p>
-<div class="preferencegrouptitle">Ensemble</div>
-<div class="preferencegrouptitle">Miscalaneous</div>
+<p><strong>Time step sum (D(T)=D(T)+D(T-1)) -</strong> Plots a sequence of images. Each frame plots the value of the specified parameter at that time, and adds to it the value of the same parameter at the previous time step in the loop.</p>
+<div class="preferencegrouptitle"><a name="ensemble" id="ensemble"></a>Ensemble</div>
+<p><strong>Ensemble average over all grid members -</strong></p>
+<p><strong>Ensemble grid highest values -</strong></p>
+<p><strong>Ensemble grid lowest values -</strong></p>
+<p><strong>Ensemble grid mode values -</strong></p>
+<p><strong>Ensemble grid percentile values -</strong></p>
+<p><strong>Ensemble grid range of values -</strong></p>
+<p><strong>Ensemble grid standard deviation -</strong></p>
+<div class="preferencegrouptitle"><a name="miscellaneous" id="miscellaneous"></a>Miscellaneous</div>
 <p><strong>Define a grid diagnostic  (gddiag) - </strong>Allows for defining a grid diagnostic to perform. </p>
 <table>
   <tr>
@@ -71,9 +83,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
    </td>
    </tr>
 </table>
-<p><strong>Find latitude of grid points  (fieldimpl) - </strong>Obtains the latitude coordinate from the grid and returns a grid
-  of the latitudes at each point.</p>
-<p><strong>Find longitude of grid points</strong> - Obtains the longitude coordinate from the grid and returns a grid of longitudes at each point. ???????????????????? This produces same plot as latitude.</p>
+<p><strong>Find latitude of grid points  (feldimpl) - </strong>Obtains the latitude coordinate from the grid at each location and plots the latitude at each point on the map.</p>
+<p><strong>Find longitude of grid points (fieldimpl)</strong> - Obtains the longitude coordinate from the grid at each location and plots the longitude at each point on the map.</p>
 <p><strong>Horizontal Advection (from %N1% &amp; %N2%) (scalar parameter, U Component,
   V Component)</strong></p>
 <p>This formula calculates horizontal advection from U and V components.</p>
@@ -93,8 +104,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
    </tr>
 </table>
 <p><strong>Horizontal Flux Divergence (from %N1% &amp; %N2%) (scalar parameter, U
-    Component, V Component) </strong></p>
-<p>This formula calculates horizontal flux divergence from U and V components.</p>
+    Component, V Component) - </strong>Calculates horizontal flux divergence from U and V components.</p>
 <table>
   <tr>
   <td valign="top" rowspan="1" colspan="2">
@@ -110,12 +120,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
 </td>
 </tr>
 </table>
-<p><strong>Layer Difference (Top of Layer, Bottom of Layer) </strong></p>
-<p>This formula calculates a layer difference between a field at two different
-  levels.</p>
-<br>
-  <p><strong>Layer Wind Shear  (top, bottom)</strong></p>
-<p>This formula calculates the wind shear between discreet layers.</p>
+<p><strong>Layer Difference (Top of Layer, Bottom of Layer) -</strong> Calculates a layer difference between a field at two different
+levels.</p>
+<p><strong>Layer Wind Shear  (top, bottom) - </strong>Calculates the wind shear between two user-defined layers.</p>
     <table>
   <tr>
   <td valign="top" rowspan="1" colspan="2">
@@ -139,104 +146,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
    </td>
    </tr>
 </table>
-<p><strong>Make flow vectors from grid relative u and v data  (u, v)</strong></p>
-<p>This formula calculates true wind vectors.</p>
-<br>
-  <p><strong>Make flow vectors from u and v data  (u, v)</strong></p>
-<p>This formula applies a two-dimensional
-  low-pass filter to each element in the source image. It eliminates high-frequency
-  deviations by replacing the source image data values with the average of the
-  values in the sample defined with the line and element coefficients.</p>
-    <table>
-  <tr>
-  <td valign="top" rowspan="1" colspan="2">
-   <p>Input parameters: </p>
-   </td>
-  </tr>
-   <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top">
-   <p><em>linecoef</em></p>
-   </td>
-   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>line coefficient; 0.0 &lt; <em>linecoef</em> &lt; 1.0 (default=0.5)</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top">
-   <p><em>elecoef</em></p>
-   </td>
-   <td width="660" colspan="2" rowspan="1" valign="top">
-   <p>element coefficient; 0.0 &lt; <em>elecoef</em> &lt; 1.0 (default=<em>linecoef</em>)</p>
-   </td>
-   </tr>
-  <tr>
-  <td valign="top" rowspan="1" colspan="2">
-   <p>Equation for each <em>ddataset</em> element: </p>
-   </td>
-  </tr>
-  <tr>
-<td valign="top" rowspan="1" colspan="1">
-<p class="CellBody"><a name="pgfId-1072405" id="pgfId-1072405"></a>&nbsp;</p>
-</td>
-<td valign="top" rowspan="1" colspan="2">
-<p><em>ddataset</em> = (sample average)</p>
-</td>
-</tr>
-</table>
-<p><strong>Make flow vectors from u, v, and w data  (u, v, w)</strong></p>
-<p>This formula applies a one-dimensional
-  low-pass filter to each element of the source image. It eliminates high-frequency
-  deviations by replacing the source image data values with the average of the
-  values on either side of the source element. The sample average is determined
-  using the percentage of filter efficiency.</p>
-      <table>
-  <tr>
-  <td valign="top" rowspan="1" colspan="2">
-   <p>Input parameters: </p>
-   </td>
-  </tr>
-   <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top">
-   <p><em>radius</em></p>
-   </td>
-   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>sample length in pixels surrounding the source element; used for sample
-     average (default=50)</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top">
-   <p><em>leak</em></p>
-   </td>
-   <td width="660" colspan="2" rowspan="1" valign="top">
-   <p>filter efficiency (default=100)</p>
-   </td>
-   </tr>
-  <tr>
-  <td valign="top" rowspan="1" colspan="2">
-   <p>Equation for each <em>ddataset</em> element: </p>
-   </td>
-  </tr>
-  <tr>
-<td valign="top" rowspan="1" colspan="1">
-<p class="CellBody"><a name="pgfId-1072405" id="pgfId-1072405"></a>&nbsp;</p>
-</td>
-<td valign="top" rowspan="1" colspan="2">
-<p><em>ddataset</em> = (sample average)</p>
-</td>
-</tr>
-</table>
-<p><strong>Make slice 2D (slice)</strong></p>
-<p>This formula makes a 2D slice from a 3D slice at a single level.</p>
-<br>
-<p><strong>One value colored by another (Data field, Color field)</strong></p>
-<p>This formula combines several fields together, coloring one field by another.</p>
-<br>
-<p><strong>Resample grid</strong></p>
-<p>This formula displays gridded data on a new domain.</p>
-<br>
-<p><strong>Simple time difference in one parameter (Time 1, Time 2)</strong></p>
-<p>This formula gets the Nth grid in the time series of grids.</p>
+<p><strong>Make flow vectors from grid relative u and v data  (u, v) - </strong>Calculates true wind vectors based off of relative u and v data after user inputs the field and desired levels. You can utilize 2D or 3D data.</p>
+<p><strong>Make flow vectors from u and v data  (u, v) - </strong>Creates flow vectors based off of the 2D u and v parameters entered by the user.</p>
+<p><strong>Make flow vectors from u, v, and w data  (u, v, w) - </strong>Creates flow vectors based off of the 3D u and v parameters entered by the user. These flow vectors are then scaled based off the user-entered w parameter.</p>
+<p><strong>Make slice 2D (slice) - </strong>Creates a 2D slice from a 3D display at a single level.</p>
+<p><strong>One value colored by another (Data field, Color field) - </strong>Creates an image of the data chosen in the Data field, and colors the data with the color scheme of the Color field parameter.
+</p>
+<p><strong>Resample grid - </strong>Displays gridded data on a new domain.</p>
+<p><strong>Simple time difference in one parameter (Time 1, Time 2) - </strong>Creates an image representing the numerical difference in the value of the chosen parameter between the two time steps selected by the user. Time 1 is the initial time step, and Time 2 is the second time step. The difference in the parameter is done by Time 2 - Time 1.</p>
     <table>
   <tr>
   <td valign="top" rowspan="1" colspan="2">
@@ -260,8 +177,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
    </td>
    </tr>
 </table>
-<p><strong>Slice at Altitude  (Altitude, Unit)</strong></p>
-<p>This formula extracts a 2D horizontal slice from a 3D grid at the given altitude.</p>
+<p><strong>Slice at Altitude  (Altitude, Unit) - </strong>Extracts a 2D horizontal slice from a 3D grid at the given altitude and maps an image.</p>
     <table>
   <tr>
   <td valign="top" rowspan="1" colspan="2">
@@ -285,8 +201,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
    </td>
    </tr>
 </table>
-<p><strong>Slice at Level  (Level)</strong></p>
-<p>This formula extracts a 2D horizontal slice from a 3D grid at a level.</p>
+<p><strong>Slice at Level  (Level) - </strong>Extracts a 2D horizontal slice from a 3D grid at a level.</p>
     <table>
   <tr>
   <td valign="top" rowspan="1" colspan="2">
@@ -302,11 +217,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
    </td>
    </tr>
 </table>
-<p><strong>Speed from two components</strong></p>
-<p>This formula calculates from an x and y component.</p>
-<br>
-<p><strong>Wind Shear Vectors  (top, bottom)</strong></p>
-<p>This formula calculates the u and v layer difference and returns a vector.</p>
+<p><strong>Speed from 2 components (Field x, Field y) - </strong>Calculates speed from the user-chosen x and y components and displays an image.</p>
+<p><strong>Wind Shear Vectors  (top, bottom) - </strong>Calculates the u and v layer difference and returns a map of vectors.</p>
     <table>
   <tr>
   <td valign="top" rowspan="1" colspan="2">

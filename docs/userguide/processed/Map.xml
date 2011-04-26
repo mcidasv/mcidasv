@@ -43,6 +43,7 @@
         <mapID target="idv.controls.imagesequencecontrol"            url="controls/ImagePlanViewControl.html" />
         <mapID target="idv.controls.jythoncontrol"                   url="controls/JythonControl.html" />
         <mapID target="idv.controls.legends"                         url="controls/index.html#legends" />
+		<mapID target="idv.controls.level2.radarcappidisplaycontrols"url="controls/level2/RadarCappiDisplayControls.html" />
 		<mapID target="idv.controls.level2.radarcrosssectioncontrol" url="controls/level2/RadarCrossSectionControl.html" />
         <mapID target="idv.controls.level2.radarisosurfacecontrol"   url="controls/level2/RadarIsosurfaceControl.html" />
         <mapID target="idv.controls.level2.radarsweepcontrol"        url="controls/level2/RadarSweepControl.html" />
@@ -458,17 +459,39 @@
         <mapID target="idv.tools.displaysettings.example"			 url="tools/DisplaySettings.html#example" />
         <mapID target="idv.tools.displaysettings.fieldselector"		 url="tools/DisplaySettings.html#fieldselector" />
         <mapID target="idv.tools.displaysettings.saving"			 url="tools/DisplaySettings.html#saving" />
+		<mapID target="idv.tools.exportformulas"					 url="tools/ExportFormulas.html" />
         <mapID target="idv.tools.formulas"                           url="tools/Formulas.html" />
+		<mapID target="idv.tools.gridformulas"						 url="tools/GridFormulas.html" />
+		<mapID target="idv.tools.gridformulas.time"					 url="tools/GridFormulas#time" />
+		<mapID target="idv.tools.gridformulas.ensemble"				 url="tools/GridFormulas#ensemble" />
+		<mapID target="idv.tools.gridformulas.miscellaneous"		 url="tools/GridFormulas#miscellaneous" />
         <mapID target="idv.tools.imagecaptures"                      url="tools/ImageCaptures.html" />
         <mapID target="idv.tools.imagecaptures.jpegcapture"          url="tools/ImageCaptures.html#jpegcapture" />
         <mapID target="idv.tools.imagecaptures.moviecapture"         url="tools/ImageCaptures.html#moviecapture" />
         <mapID target="idv.tools.imagecaptures.movieplayback"        url="tools/ImageCaptures.html#movieplayback" />
         <mapID target="idv.tools.imagecaptures.printcapture"         url="tools/ImageCaptures.html#printcapture" />
+		<mapID target="idv.tools.imagefilterformulas"				 url="tools/ImageFilterFormulas.html" />
+		<mapID target="idv.tools.imagefilterformulas.clean"			 url="tools/ImageFilterFormulas#clean" />
+		<mapID target="idv.tools.imagefilterformulas.cloud"			 url="tools/ImageFilterFormulas#cloud" />
+		<mapID target="idv.tools.imagefilterformulas.core"			 url="tools/ImageFilterFormulas#cloud" />
+		<mapID target="idv.tools.imagefilterformulas.discriminate"	 url="tools/ImageFilterFormulas#discriminate" />
+		<mapID target="idv.tools.imagefilterformulas.gradient"		 url="tools/ImageFilterFormulas#gradient" />
+		<mapID target="idv.tools.imagefilterformulas.high2d"		 url="tools/ImageFilterFormulas#high2d" />
+		<mapID target="idv.tools.imagefilterformulas.high"			 url="tools/ImageFilterFormulas#high" />
+		<mapID target="idv.tools.imagefilterformulas.hole"			 url="tools/ImageFilterFormulas#hole" />
+		<mapID target="idv.tools.imagefilterformulas.low2d"			 url="tools/ImageFilterFormulas#low2d" />
+		<mapID target="idv.tools.imagefilterformulas.low"			 url="tools/ImageFilterFormulas#low" />
+		<mapID target="idv.tools.imagefilterformulas.merge"			 url="tools/ImageFilterFormulas#merge" />
+		<mapID target="idv.tools.imagefilterformulas.replace"		 url="tools/ImageFilterFormulas#replace" />
+		<mapID target="idv.tools.imagefilterformulas.shot"			 url="tools/ImageFilterFormulas#shot" />
+		<mapID target="idv.tools.imageryformulas"					 url="tools/ImageryFormulas.html" />
         <mapID target="idv.tools.jython"                             url="tools/Jython.html" />
         <mapID target="idv.tools.jythonlib"							 url="tools/JythonLib.html" />
         <mapID target="idv.tools.jythonshell"						 url="tools/JythonShell.html" />
         <mapID target="idv.tools.remotedata"						 url="tools/RemoteDataManager.html" />
         <mapID target="idv.tools.localdata"							 url="tools/LocalDataManager.html" />
+		<mapID target="idv.tools.mapformulas"						 url="tools/MapFormulas.html" />
+		<mapID target="idv.tools.miscellaneousformulas"				 url="tools/MiscellaneousFormulas.html" />
         <mapID target="idv.tools.parameterdefaultseditor"            url="tools/ParameterDefaultsEditor.html" />
         <mapID target="idv.tools.parameterdefaultseditor.image1"     url="tools/ParameterDefaultsEditor.html#image1" />
         <mapID target="idv.tools.parameterdefaultseditor.image2"     url="tools/ParameterDefaultsEditor.html#image2" />

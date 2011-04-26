@@ -284,7 +284,12 @@
         <span class="toggle" onClick="toggleChildren(this,'miscellaneous_2_1');">+</span>
 		<span class="link" onClick="setPage('tools/Formulas.html');">Formulas</span><br>
 		<div class="indented" id="miscellaneous_2_1">
-			<span class="link" onClick="setPage('tools/ImageFilterFormulas.html');">Description of Formulas - Image Filters</span><br>
+			<span class="link" onClick="setPage('tools/MapFormulas.html');">Description of Formulas - Maps</span><br>
+            <span class="link" onClick="setPage('tools/MiscellaneousFormulas.html');">Description of Formulas - Miscellaneous</span><br>
+            <span class="link" onClick="setPage('tools/GridFormulas.html');">Description of Formulas - Grids</span><br>
+            <span class="link" onClick="setPage('tools/ImageFilterFormulas.html');">Description of Formulas - Image Filters (Beta)</span><br>
+            <span class="link" onClick="setPage('tools/ExportFormulas.html');">Description of Formulas - Export</span><br>
+            <span class="link" onClick="setPage('tools/ImageryFormulas.html');">Description of Formulas - Imagery</span><br>
 		</div>
         <span class="link" onClick="setPage('tools/Jython.html');">Jython Methods</span><br>
         <span class="link" onClick="setPage('tools/DerivedData.html');">Derived Data</span><br>

@@ -29,15 +29,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/Miscellaneo
   <hr align="center">
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
-<div class="pagetitle">Description of Formulas - Miscellaneous </div>
-<p>The follow describes each formula included in the Miscellaneous Formulas section
+<div class="pagetitle">Description of Formulas - Miscellaneous</div>
+<p>The following describes each formula included in the Miscellaneous Formulas section
   of McIDAS-V.</p>
-<br>
-<p><strong>Any Field </strong></p>
-<p>This formula lets you define a field to display. </p>
-<br>
-<p><strong>Change Unit   (name, unitSpec)</strong></p>
-<p>This formula sets the name and unit of a field.</p>
+<p><strong>Any Field (field) - </strong>Allows you define a field to display.</p>
+<p><strong>Change Unit   (name, unitSpec) - </strong>Sets the name and unit of a field.</p>
 <table>
   <tr>
   <td valign="top" rowspan="1" colspan="3">
@@ -57,12 +53,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/Miscellaneo
    <p><em>unitSpec</em></p>
    </td>
    <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>unit specifications.</p>
+   <p>unit the display will map in.</p>
    </td>
    </tr>
 </table>
-<p><strong>Define a formula   (formula)</strong></p>
-<p>This formula lets you create a formula.</p>
+<p><strong>Define a formula   (formula) - </strong>Allows for the creation of a formula. Once entered, a Field Selector window will open, where you can decide what parameters to utilize in the formula to represent each field.</p>
   <table>
   <tr>
   <td valign="top" rowspan="1" colspan="2">
@@ -78,41 +73,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/Miscellaneo
    </td>
    </tr>
 </table>
-<p><strong>Make a time sequence from single time grid/images</strong></p>
-<p>This formula merges a set of single time grids or images into a time sequence.</p>
-<br>
-<p><strong>Negate a Field</strong></p>
-<p>This formula calculates a layer difference between a field at two different
-  levels.</p>
-<br>
-  <p><strong>Simple difference a-b</strong></p>
-  <p>This formula calculates the wind shear between discreet layers.</p>
-    <table>
-  <tr>
-  <td valign="top" rowspan="1" colspan="2">
-   <p>Input parameters: </p>
-   </td>
-  </tr>
-   <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top">
-   <p><em>top</em></p>
-   </td>
-   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>top layer  (default=500)</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top">
-   <p><em>bottom</em></p>
-   </td>
-   <td width="660" colspan="2" rowspan="1" valign="top">
-   <p>bottom layer  (default=850)</p>
-   </td>
-   </tr>
-</table>
-<div class="childlist">
-<table width="100%"></table>
-</div>
+<p><strong>Make a time sequence from single time grid/images - </strong>Merges a set of single time grids or images into a time sequence, controlled in the Main Display Window with the <a href="../ui/Animation.html#animation">Time Animation Widget</a>.</p>
+<p><strong>Negate a Field (field) - </strong>Multiplies the numerical values of the chosen parameter by -1, changing the sign of the displayed parameter.</p>
+<p><strong>Simple difference a-b - </strong>Calculates the difference of the two user-defined fields and plots the results..</p>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
