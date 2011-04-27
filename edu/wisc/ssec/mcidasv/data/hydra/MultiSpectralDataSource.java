@@ -66,6 +66,13 @@ import ucar.unidata.util.Misc;
 import visad.Data;
 import visad.FlatField;
 import visad.VisADException;
+import visad.FunctionType;
+import visad.RealType;
+import visad.RealTupleType;
+import visad.Linear2DSet;
+import visad.CoordinateSystem;
+import visad.CommonUnit;
+import visad.SetType;
 import visad.georef.MapProjection;
 
 import edu.wisc.ssec.mcidasv.Constants;
@@ -119,6 +126,10 @@ public class MultiSpectralDataSource extends HydraDataSource {
      */
     public MultiSpectralDataSource() {}
 
+    public MultiSpectralDataSource(String fileName) throws VisADException {
+      this(null, Misc.newList(fileName), null);
+    }
+
     /**
      * Construct a new HYDRA hdf data source.
      * @param  descriptor  descriptor for this <code>DataSource</code>
@@ -164,7 +175,9 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
         try {
           if (name.startsWith("NSS.HRPT.NP") && name.endsWith("obs.hdf")) { // get file union
-            reader = NetCDFFile.makeUnion(filename);
+            String other = new String(filename);
+            other = other.replace("obs", "nav");
+            reader = NetCDFFile.makeUnion(filename, other);
           }
           else {
         	  if (sources.size() > 1) {
@@ -501,6 +514,8 @@ public class MultiSpectralDataSource extends HydraDataSource {
          categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
          hasImagePreview = true;
          hasChannelSelect = true;
+
+         multiSpectData_s.add(null);
        }
        else if (name.startsWith("MOD02HKM") || name.startsWith("MYD02HKM") ||
                (name.startsWith("a1") && (name.indexOf("500m") > 0)) ||
@@ -588,6 +603,8 @@ public class MultiSpectralDataSource extends HydraDataSource {
          categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
          hasImagePreview = true;
          hasChannelSelect = true;
+
+         multiSpectData_s.add(null);
        }
        else if (name.startsWith("NSS")) {
          HashMap swthTable = SwathAdapter.getEmptyMetadataTable();
@@ -603,6 +620,10 @@ public class MultiSpectralDataSource extends HydraDataSource {
          swthTable.put("fill_value_name", "_FILLVALUE");
          swthTable.put("range_name", "Emmissive_Bands");
          swthTable.put("unpack", "unpack");
+         swthTable.put("geo_scale_name", "SCALE_FACTOR");
+         swthTable.put("geo_offset_name", "ADD_OFFSET");
+         swthTable.put("geo_fillValue_name", "_FILLVALUE");
+
 
          SwathAdapter swathAdapter0 = new SwathAdapter(reader, swthTable);
          swathAdapter0.setDefaultStride(10);
@@ -633,6 +654,9 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put("fill_value_name", "_FILLVALUE");
          table.put("range_name", "Emmissive_Bands");
          table.put("unpack", "unpack");
+         swthTable.put("geo_scale_name", "SCALE_FACTOR");
+         swthTable.put("geo_offset_name", "ADD_OFFSET");
+         swthTable.put("geo_fillValue_name", "_FILLVALUE");
 
 
          SwathAdapter swathAdapter1 = new SwathAdapter(reader, table);
@@ -662,6 +686,9 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put("fill_value_name", "_FILLVALUE");
          table.put("range_name", "Emmissive_Bands");
          table.put("unpack", "unpack");
+         swthTable.put("geo_scale_name", "SCALE_FACTOR");
+         swthTable.put("geo_offset_name", "ADD_OFFSET");
+         swthTable.put("geo_fillValue_name", "_FILLVALUE");
 
 
          SwathAdapter swathAdapter2 = new SwathAdapter(reader, table);
@@ -791,11 +818,19 @@ public class MultiSpectralDataSource extends HydraDataSource {
     }
 
     private DataChoice doMakeDataChoice(int idx, MultiSpectralData adapter) throws Exception {
-        String name = adapter.getName();
-        DataSelection dataSel = new MultiDimensionSubset(defaultSubset);
+        String name = "_    ";
+        DataSelection dataSel = new MultiDimensionSubset();
+        if (adapter != null) {
+          name = adapter.getName();
+          dataSel = new MultiDimensionSubset(defaultSubset);
+        }
+
         Hashtable subset = new Hashtable();
         subset.put(MultiDimensionSubset.key, dataSel);
-        subset.put(MultiSpectralDataSource.paramKey, adapter.getParameter());
+        if (adapter != null) {
+          subset.put(MultiSpectralDataSource.paramKey, adapter.getParameter());
+        }
+
         DirectDataChoice ddc = new DirectDataChoice(this, new Integer(idx), name, name, categories, subset);
         ddc.setProperties(subset);
         return ddc;
@@ -822,6 +857,14 @@ public class MultiSpectralDataSource extends HydraDataSource {
       return adapterMap.get(choice.getName());
     }
 
+    public MultiSpectralData getMultiSpectralData(String name) {
+      return adapterMap.get(name);
+    }
+
+    public MultiSpectralData getMultiSpectralData(int idx) {
+      return multiSpectData_s.get(idx);
+    }
+
     public String getDatasetName() {
       return filename;
     }
@@ -844,11 +887,13 @@ public class MultiSpectralDataSource extends HydraDataSource {
         return Collections.singletonList(filename);
     }
 
+  /**
     public HashMap getSubsetFromLonLatRect(MultiDimensionSubset select, GeoSelection geoSelection) {
       GeoLocationInfo ginfo = geoSelection.getBoundingBox();
       return adapters[0].getSubsetFromLonLatRect(select.getSubset(), ginfo.getMinLat(), ginfo.getMaxLat(),
                                         ginfo.getMinLon(), ginfo.getMaxLon());
     }
+   */
 
 
     public synchronized Data getData(DataChoice dataChoice, DataCategory category,
@@ -1005,14 +1050,11 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
 
 
-    /***  Save, but move to better place
   public static MapProjection getDataProjection(FlatField fltField) throws Exception {
     Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(fltField);
     MapProjection mp = new LambertAEA(rect);
     return mp;
   }
-
-
 
   public static Linear2DSet makeGrid(MapProjection mp, float res) throws Exception {
     Rectangle2D rect = mp.getDefaultMapArea();
@@ -1030,7 +1072,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
     return grid;
   }
 
- public static FlatField swathToGrid(Linear2DSet grid, FlatField swath) throws Exception {
+  public static FlatField swathToGrid(Linear2DSet grid, FlatField swath) throws Exception {
     FunctionType ftype = (FunctionType) swath.getType();
     Linear2DSet swathDomain = (Linear2DSet) swath.getDomainSet();
     int[] lens = swathDomain.getLengths();
@@ -1048,42 +1090,64 @@ public class MultiSpectralDataSource extends HydraDataSource {
     FlatField grdFF = new FlatField(new FunctionType(rtt, ftype.getRange()), grid);
     float[][] gridRange = grdFF.getFloats(false);
 
+    float[][] swathGridCoord = new float[2][gridRange[0].length];
+
     for (int j=0; j < trackLen; j++) {
        for (int i=0; i < xtrackLen; i++) {
          int idx = j*xtrackLen + i;
+	 float val = swathRange[0][idx];
 
 	 float[][] swathCoord = swathDomain.indexToValue(new int[] {idx});
 	 float[][] swathEarthCoord = swathCoordSys.toReference(swathCoord);
 
-
 	 float[][] gridCoord = gridCoordSys.fromReference(swathEarthCoord);
 	 int grdIdx = (grid.valueToIndex(gridCoord))[0];
 
-	 float val = swathRange[0][idx];
-	 for (int n=0; n<2; n++) {
-           for ( int m=0; m<2; m++) {
-	      int k = grdIdx + (m + n*gridXLen);
+         //for (int n = -1; n < 2; n++) {
+          //  for (int m = -1; m < 2; m++) {
+               int m=0;
+               int n=0;
+               int k = grdIdx + (m + n*gridXLen);
 
-	      if (!(Float.isNaN(val)) && 
-		  (k >= 0 && (k < gridXLen*gridYLen))) {
-		float grdVal = gridRange[0][k];
-	        if (Float.isNaN(grdVal)) {
-		  gridRange[0][k] = val;
-		}
+               if ( !(Float.isNaN(val)) && ((k >=0) && (k < gridXLen*gridYLen)) ){
+                 float grdVal = gridRange[0][k];
 
-	      }
-	   }
-	 }
-	 //if (!(Float.isNaN(val)) && (grdIdx != -1)) {
-	 //  gridRange[0][grdIdx] = val;
-         //}
+                 if (Float.isNaN(grdVal)) {
+                   gridRange[0][k] = val;
+                   swathGridCoord[0][k] = gridCoord[0][0];
+                   swathGridCoord[1][k] = gridCoord[1][0];
+                 }
+                 else {
+                   // compare distance
+                   float[][] gridLoc = grid.indexToValue(new int[] {k});
+                   
+                   float del_0 = swathGridCoord[0][k] - gridLoc[0][0];
+                   float del_1 = swathGridCoord[1][k] - gridLoc[1][0];
+                   float last_dst_sqrd = del_0*del_0 + del_1*del_1;
+                   del_0 = gridCoord[0][0] - gridLoc[0][0];
+                   del_1 = gridCoord[1][0] - gridLoc[1][0];
+                   float dst_sqrd = del_0*del_0 + del_1*del_1;
+                   /**
+                   if (dst_sqrd <= last_dst_sqrd) {
+                     gridRange[0][k] = val;
+                     swathGridCoord[0][k] = gridCoord[0][0];
+                     swathGridCoord[1][k] = gridCoord[1][0];
+                   }
+                   */
+                 }
+               }
+           // }
+        // }
+
+
        }
     }
+
+    
     
    grdFF.setSamples(gridRange);
    return grdFF;
  }
- ***/
 
 
 }
