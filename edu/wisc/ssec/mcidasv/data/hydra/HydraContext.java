@@ -32,6 +32,8 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSource;
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataCategory;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -39,6 +41,8 @@ import java.util.Set;
 public class HydraContext {
 
   private static HashMap<DataSource, HydraContext> dataSourceToContextMap = new HashMap<DataSource, HydraContext>(); 
+  private static HashMap<DataChoice, HydraContext> dataChoiceToContextMap = new HashMap<DataChoice, HydraContext>(); 
+  private static HashMap<DataCategory, HydraContext> dataCategoryToContextMap = new HashMap<DataCategory, HydraContext>(); 
   private static HydraContext hydraContext = null;
   private boolean useSubset = false;
   private MultiDimensionSubset subset = null;
@@ -59,6 +63,41 @@ public class HydraContext {
       return hydraContext;
     }
   }
+
+  public static HydraContext getHydraContext(DataChoice choice) {
+    if (dataChoiceToContextMap.isEmpty()) {
+      HydraContext hydraContext = new HydraContext();
+      dataChoiceToContextMap.put(choice, hydraContext);
+      return hydraContext;
+    }
+
+    if (dataChoiceToContextMap.containsKey(choice)) {
+      return dataChoiceToContextMap.get(choice);
+    }
+    else {
+      HydraContext hydraContext = new HydraContext();
+      dataChoiceToContextMap.put(choice, hydraContext);
+      return hydraContext;
+    }
+  }
+
+  public static HydraContext getHydraContext(DataCategory choice) {
+    if (dataCategoryToContextMap.isEmpty()) {
+      HydraContext hydraContext = new HydraContext();
+      dataCategoryToContextMap.put(choice, hydraContext);
+      return hydraContext;
+    }
+
+    if (dataCategoryToContextMap.containsKey(choice)) {
+      return dataCategoryToContextMap.get(choice);
+    }
+    else {
+      HydraContext hydraContext = new HydraContext();
+      dataCategoryToContextMap.put(choice, hydraContext);
+      return hydraContext;
+    }
+  }
+
 
   public static HydraContext getHydraContext() {
     if (hydraContext == null) {
