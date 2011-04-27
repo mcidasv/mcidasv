@@ -69,6 +69,9 @@ public class SwathAdapter extends MultiDimensionAdapter {
       static String geo_xtrack_offset_name = "geoXTrack_offset";
       static String geo_track_skip_name  = "geoTrack_skip";
       static String geo_xtrack_skip_name = "geoXTrack_skip";
+      static String geo_scale_name = "geo_scale_name";
+      static String geo_offset_name = "geo_scale_name";
+      static String geo_fillValue_name = "geo_fillValue_name";
 
       String[] rangeName_s  = null;
       Class[] arrayType_s = null;
