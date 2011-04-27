@@ -38,67 +38,78 @@ import visad.FunctionType;
 import visad.Gridded3DSet;
 import visad.RealTupleType;
 import visad.RealType;
+import visad.SetType;
 import visad.VisADException;
+import visad.Set;
 
-public class TrackAdapter {
+public class TrackAdapter extends MultiDimensionAdapter {
    RealTupleType domainType;
-   ArrayAdapter lonAdapter;
-   ArrayAdapter latAdapter;
    ArrayAdapter rngAdapter;
+   TrackDomain trackDomain;
+
+   int listIndex = 0;
 
    public TrackAdapter() {
    }
 
-   public TrackAdapter(ArrayAdapter lonAdapter, ArrayAdapter latAdapter, ArrayAdapter rangeAdapter) throws VisADException {
-     this.lonAdapter = lonAdapter;
-     this.latAdapter = latAdapter;
+   public TrackAdapter(TrackDomain trackDomain, ArrayAdapter rangeAdapter) throws VisADException {
+     this.trackDomain = trackDomain;
      this.rngAdapter = rangeAdapter;
-     if (rangeAdapter != null) {
-       domainType = RealTupleType.SpatialEarth3DTuple;
-     }
-     else {
-       domainType = RealTupleType.SpatialEarth3DTuple;
-     }
    }
+
+   public Set makeDomain(Object subset) throws Exception {
+     throw new Exception("Unimplemented");
+   } 
 
    public FlatField getData(Object subset) throws VisADException, RemoteException {
      
-     float[] lonValues = null;
-     float[] latValues = null;
      float[] rngValues = null;
 
+     Set set = trackDomain.makeDomain(subset);
+
+     domainType = ((SetType)set.getType()).getDomain();
+
      try {
-       lonValues = (lonAdapter.getData(subset).getFloats())[0];
-       latValues = (latAdapter.getData(subset).getFloats())[0];
-       if (rngAdapter != null) {
-         rngValues = (rngAdapter.getData(subset).getFloats())[0];
-       }
-     } 
+       rngValues = (rngAdapter.getData(subset).getFloats())[0];
+     }
      catch (Exception e) {
        e.printStackTrace();
        return null;
      }
 
-     FlatField field = null;
-     if (rngAdapter != null) {
-       for (int k=0; k< rngValues.length; k++) {
-         rngValues[k] *= 1000.0;
-       }
-       Gridded3DSet set = new Gridded3DSet(domainType, new float[][] {lonValues, latValues, rngValues}, lonValues.length);
-       field = new FlatField(new FunctionType(domainType, rngAdapter.getMathType().getRange()), set);
-       field.setSamples(new float[][] {rngValues}, false);
-     }
-     else {
-       rngValues = new float[lonValues.length];
-       for (int k=0; k< rngValues.length; k++) rngValues[k] = 0f;
-       Gridded3DSet set = new Gridded3DSet(domainType, new float[][] {lonValues, latValues, rngValues}, lonValues.length);
-       field = new FlatField(new FunctionType(domainType, RealType.Generic), set);
-       field.setSamples(new float[][] {rngValues}, false);
-     }
+     FlatField field = new FlatField(new FunctionType(domainType, rngAdapter.getMathType().getRange()), set);
+     field.setSamples(new float[][] {rngValues}, false);
+
      return field;
    }
 
-   public HashMap getDefaultSubset() {
-     return lonAdapter.getDefaultSubset();
+   public String getArrayName() {
+     return rngAdapter.getArrayName();
    }
+
+   void setListIndex(int idx) {
+     listIndex = idx;
+   }
+
+   public HashMap getDefaultSubset() {
+     HashMap subset = rngAdapter.getDefaultSubset();
+     double[] coords = (double[]) ((HashMap)subset).get("VertDim");
+     coords[0] = listIndex;
+     coords[1] = listIndex;
+     coords[2] = 1;
+     return subset;
+   }
+
+   public HashMap getSubsetFromLonLatRect(double minLat, double maxLat,
+                                          double minLon, double maxLon) {
+      return trackDomain.getSubsetFromLonLatRect(getDefaultSubset(), minLat, maxLat, minLon, maxLon);
+   }
+
+   public HashMap getSubsetFromLonLatRect(double minLat, double maxLat,
+                                          double minLon, double maxLon,
+                                          int xStride, int yStride, int zStride) {
+      return trackDomain.getSubsetFromLonLatRect(getDefaultSubset(), minLat, maxLat, minLon, maxLon,
+                                                 xStride, yStride, zStride);
+   }
+
 }
