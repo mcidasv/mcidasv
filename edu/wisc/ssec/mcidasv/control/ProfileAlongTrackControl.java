@@ -35,10 +35,12 @@ import java.rmi.RemoteException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 
 import visad.Data;
 import visad.FlatField;
 import visad.FunctionType;
+import visad.GriddedSet;
 import visad.Gridded3DSet;
 import visad.MathType;
 import visad.RealTuple;
@@ -54,6 +56,7 @@ import visad.VisADException;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DirectDataChoice;
+import ucar.unidata.data.DerivedDataChoice;
 import ucar.unidata.data.GeoSelection;
 import ucar.unidata.data.GeoSelectionPanel;
 import ucar.unidata.idv.IntegratedDataViewer;
@@ -103,6 +106,12 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
 
   public boolean init(DataChoice dataChoice) throws VisADException, RemoteException {
     this.dataChoice = dataChoice;
+    FlatField data;
+
+    if (dataChoice instanceof DerivedDataChoice) {
+      data = (FlatField) dataChoice.getData(getDataSelection());
+    }
+    else {
     dataSource = (MultiDimensionDataSource) ((DirectDataChoice)dataChoice).getDataSource();
     ViewManager vm = getViewManager();
     mainViewMaster = vm.getMaster();
@@ -115,26 +124,35 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
            subset = (MultiDimensionSubset) table.get(key);
       }
     }
-
     subset.setGeoSelection(getDataSelection().getGeoSelection());
-    FlatField image = (FlatField) dataSource.getData(dataChoice, null, getDataSelection(), dataSource.getProperties());
-    if (image == null) {
+
+    data = (FlatField) dataSource.getData(dataChoice, null, getDataSelection(), dataSource.getProperties());
+    }
+
+    if (data == null) {
       return false;
     }
-    imageRangeType = (RealType) ((FunctionType)image.getType()).getRange();
-    track = createTrackDisplay();
-    imageDisplay = create3DDisplay(image);
+
+    imageRangeType = (RealType) ((FunctionType)data.getType()).getRange();
+    //track = createTrackDisplay(dataChoice);
+    imageDisplay = create3DDisplay(data);
     addDisplayable(imageDisplay, FLAG_COLORTABLE | FLAG_SELECTRANGE);
     if (track != null) create3DMesh(track);
     return true;
   }
 
-  private FlatField createTrackDisplay() throws VisADException, RemoteException {
+  public synchronized void dataChanged() {
+    super.dataChanged();
+    System.out.println("dataChanged");
+  }
+
+  private FlatField createTrackDisplay(DataChoice dataChoice) throws VisADException, RemoteException {
     IntegratedDataViewer idv = getIdv();
     FlatField track = null;
 
-    HashMap map = dataSource.getSubsetFromLonLatRect(subset, getDataSelection().getGeoSelection());
-    track = dataSource.track_adapter.getData(map);
+    //HashMap map = dataSource.getSubsetFromLonLatRect(subset, getDataSelection().getGeoSelection());
+    //track = dataSource.track_adapter.getData(map);
+    track = (FlatField) dataSource.getData(dataChoice, null, getDataSelection(), dataSource.getProperties());
 
     LineDrawing trackDsp = new LineDrawing("track");
     trackDsp.setLineWidth(2f);
@@ -145,33 +163,35 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
     return track;
   }
 
-  private DisplayableData create3DDisplay(FlatField image) throws VisADException, RemoteException {
-    RealType imageRangeType = (RealType) ((FunctionType)image.getType()).getRange();
+  private DisplayableData create3DDisplay(FlatField data) throws VisADException, RemoteException {
+    RealType imageRangeType = (RealType) ((FunctionType)data.getType()).getRange();
     HydraRGBDisplayable imageDsp = new HydraRGBDisplayable("image", imageRangeType, (RealType) null, true, null);
     imageDsp.setDefaultRenderer();
-    imageDsp.setData(image);
+    imageDsp.setData(data);
     return imageDsp;
   }
 
   private void create3DMesh(FlatField track) throws VisADException, RemoteException {
     float del_lat = 2f;
     int n_sets = 3;
-    Gridded3DSet set = (Gridded3DSet) track.getDomainSet();
+    GriddedSet set = (GriddedSet) track.getDomainSet();
 
     float[][] samples = set.getSamples();
+    float[][] samples3D = new float[][] {samples[0], samples[1], new float[samples[0].length]};
+
     SampledSet[] sets = new SampledSet[n_sets];
     Tuple[] labels = new Tuple[n_sets];
     float alt_start = 2000;
     float alt_inc = 5000;
     for (int k=0; k<n_sets; k++) {
-      for (int i=0; i<samples[2].length; i++) {
-        samples[2][i] = alt_start + k*alt_inc;
+      for (int i=0; i<samples3D[2].length; i++) {
+        samples3D[2][i] = alt_start + k*alt_inc;
       }
-      sets[k] = new Gridded3DSet(RealTupleType.SpatialEarth3DTuple, samples, samples[2].length);
+      sets[k] = new Gridded3DSet(RealTupleType.SpatialEarth3DTuple, samples3D, samples3D[2].length);
       Tuple tup = new Tuple(new TupleType(new MathType[] {RealTupleType.SpatialEarth3DTuple, TextType.Generic}),
             new Data[] {new RealTuple(RealTupleType.SpatialEarth3DTuple, 
-                  new double[] {samples[0][0], samples[1][0] - del_lat, samples[2][0]}), 
-                          new Text(TextType.Generic, Float.toString(samples[2][0]))});
+                  new double[] {samples3D[0][0], samples3D[1][0] - del_lat, samples3D[2][0]}), 
+                          new Text(TextType.Generic, Float.toString(samples3D[2][0]))});
       labels[k] = tup;
     }
 
@@ -202,8 +222,13 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
 
   protected Range getInitialRange() throws RemoteException, VisADException {
       Range range = getDisplayConventions().getParamRange(imageRangeType.getName(), null);
-      setSelectRange(range);
-      return range;
+      if (range != null) {
+        setSelectRange(range);
+        return range;
+      }
+      else {
+        return super.getInitialRange();
+      }
   }
 
   public void doRemove() throws RemoteException, VisADException{
