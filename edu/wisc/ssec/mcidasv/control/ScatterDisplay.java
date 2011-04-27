@@ -294,15 +294,14 @@ public class ScatterDisplay extends DisplayControlImpl {
 
         if (Y_data instanceof FlatField) {
           Y_field = (FlatField) Y_data;
-        } else if (X_data instanceof FieldImpl) {
+        } else if (Y_data instanceof FieldImpl) {
           Y_field = (FlatField) ((FieldImpl)Y_data).getSample(0);
         }
 
         int[] Xlens = ((Gridded2DSet) X_field.getDomainSet()).getLengths();
         int[] Ylens = ((Gridded2DSet) Y_field.getDomainSet()).getLengths();
 
-        if ( (X_field.getLength() != Y_field.getLength()) ||
-             (Xlens[0] != Ylens[0]) || (Xlens[1] != Ylens[1]) ) 
+        if (!( X_field.getDomainSet().equals(Y_field.getDomainSet())))
         {
           Y_field = resample(X_field, Y_field);
         }
@@ -856,20 +855,66 @@ public class ScatterDisplay extends DisplayControlImpl {
 
     private FlatField resample(FlatField X_field, FlatField Y_field) throws VisADException, RemoteException {
 
+       RealTupleType X_domainRef = null;
+       RealTupleType Y_domainRef = null;
+       float[][] coords = null;
+       int[] indexes = null;
        float[][] Yvalues = Y_field.getFloats(false);
+       float[][] Xsamples = ((SampledSet)X_field.getDomainSet()).getSamples(false);
+
        CoordinateSystem X_cs = X_field.getDomainCoordinateSystem();
-       float[][] samples = ((SampledSet)X_field.getDomainSet()).getSamples(false);
-       float[][] X_earthLocs = X_cs.toReference(samples);
+       if (X_cs == null) {
+          RealTupleType X_domain = ((FunctionType)X_field.getType()).getDomain();
+       }
+       else {
+         X_domainRef = X_cs.getReference();
+       }
+
        CoordinateSystem Y_cs = Y_field.getDomainCoordinateSystem();
-       float[][] coords = Y_cs.fromReference(X_earthLocs);
-       int[] indexes = ((SampledSet)Y_field.getDomainSet()).valueToIndex(coords);
+       if (Y_cs == null) {
+          RealTupleType Y_domain = ((FunctionType)Y_field.getType()).getDomain();
+       }
+       else {
+         Y_domainRef = Y_cs.getReference();
+       }
+
+       if ( X_domainRef != null && Y_domainRef != null) {
+         Xsamples = X_cs.toReference(Xsamples);
+         coords = Y_cs.fromReference(Xsamples);
+         indexes = ((SampledSet)Y_field.getDomainSet()).valueToIndex(coords);
+       }
+       else if ( X_domainRef == null && Y_domainRef != null ) {
+         Xsamples = Y_cs.fromReference(Xsamples);
+         indexes = ((SampledSet)Y_field.getDomainSet()).valueToIndex(Xsamples);
+       }
+       else if ( X_domainRef != null && Y_domainRef == null) {
+         Xsamples = X_cs.toReference(Xsamples);
+         Gridded2DSet domSet = (Gridded2DSet) Y_field.getDomainSet();
+
+         // TODO this is a hack for the longitude range problem
+         float[] hi = domSet.getHi();
+         if (hi[0] <= 180f) {
+           for (int t=0; t<Xsamples[0].length; t++) {
+             if (Xsamples[0][t] > 180f) Xsamples[0][t] -=360;
+           }
+         }
+         
+         indexes = ((SampledSet)Y_field.getDomainSet()).valueToIndex(Xsamples);
+       }
+       else if (X_domainRef == null && Y_domainRef == null) {
+         Gridded2DSet domSet = (Gridded2DSet) Y_field.getDomainSet();
+         System.out.println("start valueToGrid");
+         indexes = domSet.valueToIndex(Xsamples);
+       }
+       
        float[][] new_values = new float[1][indexes.length];
        for (int k=0; k<indexes.length; k++) {
           new_values[0][k] = Float.NaN;
           if (indexes[k] >= 0) {
             new_values[0][k] = Yvalues[0][indexes[k]];
           }
-        }
+       }
+
        FunctionType ftype = new FunctionType(((FunctionType)X_field.getType()).getDomain(),
                 ((FunctionType)Y_field.getType()).getRange());
        Y_field = new FlatField(ftype, X_field.getDomainSet());
