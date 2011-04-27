@@ -322,7 +322,6 @@
 		<tocitem text="Description of Formulas - Image Filters (Beta)" target="idv.tools.imagefilterformulas"/>
 		<tocitem text="Description of Formulas - Export" target="idv.tools.targetformulas"/>
 		<tocitem text="Description of Formulas - Imagery" target="idv.tools.imageryformulas"/>
-		</tocitem>
         <tocitem text="Jython Methods" target="idv.tools.jython"/>
         <tocitem text="Derived Data" target="idv.tools.deriveddata"/>
         <tocitem text="Jython Shell" target="idv.tools.jythonshell"/>

@@ -58,21 +58,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/index.ht
 <p>The <img src="images/RemoveLayer.gif" width="11" height="13"> <strong>Remove</strong> button
   quickly removes a layer. The <img src="../data/choosers/images/Unlock.gif" width="12" height="12"> <strong>Visibility
   Toggle Lock</strong> "locks" the current visibility of the layer
-  and does not change it while doing the <a href="#visibility">visibility cycling</a>.</p>
+  and does not change it while <a href="#visibility">cycling visibilities</a>.</p>
 <p>Detailed information about a layer may also be shown in the Legend. For example,
   for those layers that use a color table, the color bar will also be shown in
   the Legend. Moving the mouse over the color bar shows intermediate values.
-  Right click on the color bar and select Edit Color Table to get a <a href="../tools/ColorTableEditor.html">Color
-  Table Editor</a> for the color table for that layer.</p>
-<div class="pagesubtitle">Drag and Drop<a name="drag" id="drag"></a> </div>
-<p>A display control's drag and drop button <img src="images/dnd.gif" width="13" height="13"> is
-  shown in the <strong>Data Explorer</strong> when the display control is docked. By clicking
-  and dragging on this button you can drop it into another View to change which
-  View the display control is in. Also, within the <strong>Data Explorer</strong> you can drop
-  it onto one of the View labels to also change the View. Within the legend you
-  can also drag the button onto another Category label to change the display
-  category.</p>
-
+  Right click on the color bar and select <a href="../tools/ColorTableEditor.html">Edit Color Table</a> to modify the color table.</p>
 <div class="pagesubtitle">Menus<a name="menus" id="menus"></a></div>
 <p>All <strong>Layer Controls</strong> tabs share a common set of <strong>File, Edit, View</strong>,
   and <strong>Help</strong> menu items, shown in the menu bar. Different controls
@@ -109,9 +99,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/index.ht
         </div>
       </li>
       <li class="propertylistitem"><strong>Save Display as Bundle</strong> - Allows for  saving  the current application state
-          as a bundle or Web Start JNLP file.
-        </div>
-      </li>
+          as a <a href="../Bundles.html">bundle</a>.</li>
     </ul>
   </li>
   <li class="propertylistitem"><strong>Reload Data</strong> - Reloads the data for this display.</li>
@@ -142,8 +130,7 @@ The <strong>Edit</strong> menu has these common choices:
   <li class="propertylistitem"><strong>Visible</strong> - Allows for  toggling  visibility. When selected, the parameter will be displayed in the Main Display Window.
     </div>
   </li>
-  <li class="propertylistitem"><strong>Lock Visibility</strong> - Allows for toggling the visibility lock (see <a href="#visibility">visibility
-    cycling</a> below).</div>
+  <li class="propertylistitem"><strong>Lock Visibility</strong> - Allows for toggling the visibility lock (see <a href="#visibility">cycling visibilities</a> below).</div>
   </li>
   <a name="bringtofront" id="bringtofront"></a>
   <li class="propertylistitem"><strong>Bring To Front</strong> - Selects which display is on top if one display is showing at the same level in 3D
@@ -204,7 +191,7 @@ The <strong>Help</strong> menu has these common choices:
 <p>The <strong>Id</strong> field is used to define an ID for this display. The
   ID is used for accessing particular displays from the <a href="../isl/index.html">McIDAS-V
   Scripting Language</a>.</p>
-<p>There may be a variety of check boxes:</p>
+<p>There may be a variety of checkboxes:</p>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Show In Layer List</strong> -Allows for the toggling of the visibility
     of the label in the view window. Note that you must enable showing the list
@@ -215,9 +202,10 @@ The <strong>Help</strong> menu has these common choices:
       toggling</a>.</li>
   <li class="propertylistitem"><strong>Show Note Text -</strong> Adds arbitrary text notes to the display. This checkbox menu item shows or hides the text field that allows
     you to edit the notes.</li>
-  <li class="propertylistitem"><strong>Use Fast Rendering -</strong>  McIDAS-V will
-    not try to account for projection seams. This will cause displays to be rendered
-    faster at the expense of accuracy.</li>
+  <li class="propertylistitem"><strong>Use Fast Rendering -</strong> Uses fast
+    rendering when creating data layers (images, contours, etc.); see <a href="../misc/PerformanceTuning.html">Performance
+    Tuning</a> for more information. For map layers the fast rendering option is
+    available in the <a href="MapDisplayControl.html">Map Controls</a>. </li>
 </ul>
 <p>There may be other tabs shown depending on the display. For example, the <strong>Color
     Scale</strong> tab allows for the configuration of where the color scale bar is shown.
@@ -231,9 +219,10 @@ labeling of the color scale.</p>
 <div class="images"><img src="images/ColorScale.gif" alt="Color Scale Properties"><a name="image3" id="image3"></a> <br>
   <span class="caption">Image 3: Color Scale Properties</span></div>
   <p>
-<div class="pagesubtitle">Modify Color Bar Interactively<a name="modifycolor" id="modifycolor"></a></div>
-  <p>Within the Legend it is possible to modify the range of the color bar without having to revert back to the <strong>Layer Controls</strong> tab of the <strong>Data Explorer</strong>. Seen below is what appears  if you hold your mouse over a color bar in the Legend.</p>
-  <p><img src="images/InteractiveColorBar.gif" width="185" height="114"></p>
+<div class="pagesubtitle">Interactively Modifying the Color Bar<a name="modifycolor" id="modifycolor"></a></div>
+  <p>Click the Color Bar in the Legend to interactively modify the color bar. Holding the cursor over the color bar shows the Interactive Color Bar Editor instructions.</p>
+<div class="images"><img src="images/InteractiveColorBar.gif" width="185" height="114"><a name="image5" id="image4"></a> <br>
+  <span class="caption">Image 4: Interactive Color Bar</span></div>
   <p>These controls are activated once the color bar is clicked on in the Legend.</p>
   <ul class="propertylist">
   <p>Right clicking on the color bar will open a drop-down menu with an option to open the <a href="../tools/ColorTableEditor.html">Color Table Editor</a>, change the range of the color, change the color bar to a different saved color bar, etc.</p>

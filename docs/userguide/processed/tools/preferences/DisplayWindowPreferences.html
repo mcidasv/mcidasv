@@ -36,63 +36,73 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 <div class="images"><img src="../images/NewPictures/DisplayWindowPrefs.jpg" alt="Display Window Preferences">
   <br>
 <span class="caption">Image 1: Display Window Preferences</span> (Default)</div>
-<p>&nbsp;</p><div class="preferencegrouptitle">Navigation Toolbars</div>
-<div class="preferencegroup">
+<div class="pagesubtitle">
+  <p>Navigation Toolbars</p>
+</div>
+<ul class="propertylist">
   <p><a name="showearthnavigationpanel" id="showearthnavigationpanel"></a>
   </p>
-  <p><strong>Show Earth Navigation Panel</strong> -  Shows a graphical navigation panel.</p>
+  <li class="propertylistitem"><b>Show Earth Navigation Panel</b> -  Shows a graphical navigation panel.</li>
 <a name="showviewpointtoolbar" id="showviewpointtoolbar"></a>
-<p><strong>Show Viewpoint Toolbar</strong> -  Enables the <a href="../../ui/Navigation.html#viewpoint">Viewpoint toolbar</a>.</p>
+<li class="propertylistitem"><b>Show Viewpoint Toolbar</b> -  Enables the <a href="../../ui/Navigation.html#viewpoint">Viewpoint toolbar</a>.</li>
 <a name="showzoom/pantoolbar" id="showzoom/pantoolbar"></a>
-<p><strong>Show Zoom/Pan Toolbar</strong> -  Enables the <a href="../../ui/Navigation.html#navigation">Zoom/Pan toolbar</a>.</p>
+<li class="propertylistitem"><b>Show Zoom/Pan Toolbar</b> -  Enables the <a href="../../ui/Navigation.html#navigation">Zoom/Pan toolbar</a>.</li>
 <a name="showzoom/undoredotoolbar" id="showzoom/undoredotoolbar"></a>
-<p><strong>Show Undo/Redo Toolbar</strong> -  Enables the <a href="../../ui/Navigation.html#undoredo">Undo/Redo toolbar</a>.</p>
+<li class="propertylistitem"><b>Show Undo/Redo Toolbar</b> -  Enables the <a href="../../ui/Navigation.html#undoredo">Undo/Redo toolbar</a>.</li>
 </div>
-<div class="preferencegrouptitle">Legends</div>
-<div class="preferencegroup"><a name="showsidelegend" id="showsidelegend"></a>
-<p><strong>Show Side Legend</strong> -  Shows the side display legend.</p>
+</ul>
+<div class="pagesubtitle">Legends</div>
+<ul class="propertylist">
+<a name="showsidelegend" id="showsidelegend"></a>
+<li class="propertylistitem"><b>Show Side Legend</b> -  Shows the side display legend.</li>
 <a name="showbottomlegend" id="showbottomlegend"></a>
-<p><strong>Show Bottom Legend</strong> -  Shows the bottom display legend.</p>
+<li class="propertylistitem"><b>Show Bottom Legend</b> -  Shows the bottom display legend.</li>
 </div>
-<div class="preferencegrouptitle">Panel Configuration</div>
-<div class="preferencegroup">
+</ul>
+<div class="pagesubtitle">Panel Configuration</div>
+<ul class="propertylist">
   <p><a name="showglobebackground" id="showglobebackground"></a></p>
-  <p><strong>Show Globe Background</strong> - Displays a solid globe background.</p>
+  <li class="propertylistitem"><b>Show Globe Background</b> - Displays a solid globe background.</li>
   <p><a name="showwireframebox" id="showwireframebox"></a>
   </p>
-  <p><strong>Show Wireframe Box</strong> -  Toggles the visibility of a 3D wireframe box around the data. This box helps provide orientation in 3D views.</p>
+  <li class="propertylistitem"><b>Show Wireframe Box</b> -  Toggles the visibility of a 3D wireframe box around the data. This box helps provide orientation in 3D views.</li>
 <a name="showcursorreadout" id="showcursorreadout"></a>
-<p><strong>Show Cursor Readout</strong> - Displays a label of latitude, longitude, and altitude at the cursor position over the display, shown in the lower border of the view window.</p>
+<li class="propertylistitem"><b>Show Cursor Readout</b> - Displays a label of latitude, longitude, and altitude at the cursor position over the display, shown in the lower border of the view window.</li>
 <a name="clipviewatbox" id="clipviewatbox"></a>
-<p><strong>Clip View At Box</strong> -  Allows the user to omit from view all display elements outside the wireframe box. This is helpful to remove map lines outside the area of data.</p>
+<li class="propertylistitem"><b>Clip View At Box</b> -  Allows the user to omit from view all display elements outside the wireframe box. This is helpful to remove map lines outside the area of data.</li>
 <a name="showlayerlist" id="showlayerlist"></a>
-<p><strong>Show Layer List in Panel</strong> - Shows a listing of the titles and times of the layer controls in the Main Display Window.</p>
+<li class="propertylistitem"><b>Show Layer List in Panel</b> - Shows a listing of the titles and times of the layer controls in the Main Display Window.</li>
 <a name="showtimesinpanel" id="showtimesinpanel"></a>
-<p><strong>Show Times In Panel</strong> - Turns on the label shown inside the Main Display Window that shows the current animation time.</p>
+<li class="propertylistitem"><b>Show Times In Panel</b> - Turns on the label shown inside the Main Display Window that shows the current animation time.</li>
 <a name="showmapdisplayscales" id="showmapdisplayscales"></a>
-<p><strong>Show Map Display Scales</strong> - Shows a vertical scale in the map displays.</p>
+<li class="propertylistitem"><b>Show Map Display Scales</b> - Shows a vertical scale in the map displays.</li>
 <a name="showtransectdisplayscales" id="showtransectdisplayscales"></a>
-<p><strong>Show Transect Display Scales</strong> - Shows a vertical scale in the transect displays.</p>
+<li class="propertylistitem"><b>Show Transect Display Scales</b> - Shows a vertical scale in the transect displays.</li>
 <a name="show&quot;pleasewait&quot;message" id="show&quot;pleasewait&quot;message"></a>
-<p><strong>Show "Please Wait" Message</strong> - Displays the "Please Wait" message in the display.</p>
+<li class="propertylistitem"><b>Show "Please Wait" Message</b> - Displays the "Please Wait" message in the display.</li>
 <a name="resetprojectionwithnewdata" id="resetprojectionwithnewdata"></a>
-<p><strong>Reset Projection With New Data</strong> - Causes each new display made in McIDAS-V to snap the whole Main Display Window to the native projection of the data. This can be undesirable if you are overlaying several kinds of data, some of which have differing projections. However, it works well if you are working with data based on the same projection. Another option related to this is <a href="../../ui/DisplayMenus.html#autosetpro">Auto-Set Projection</a>.</p>
+<li class="propertylistitem"><b>Reset Projection With New Data</b> - Causes each new display made in McIDAS-V to snap the whole Main Display Window to the native projection of the data. This can be undesirable if you are overlaying several kinds of data, some of which have differing projections. However, it works well if you are working with data based on the same projection. Another option related to this is <a href="../../ui/DisplayMenus.html#autosetpro">Auto-Set Projection</a>.</li>
 <a name="use3dview" id="use3dview"></a></div>
-<div class="preferencegrouptitle">Color Scheme</div>
-<div class="preferencegroup">
-  <p><strong>Globe Background - </strong>The color of the globe's background.</p>
-  <p><strong>Background - </strong>The color of the background behind the image being displayed.</p>
-  <p><strong>Foreground -</strong>  The color of the wireframe box in the foreground.</p>
-  <p><strong>Selected Panel -</strong> The color in the frame around the selected panel. This is the panel that changes will be made to if you have multiple tabs open.</p>
-  <p>Note: The color of the maps is controlled by the individual <a href="#autosetpro">map control</a>. The selected panel color changes the color used to highlight the current panel.</p>
+</ul>
+<div class="pagesubtitle">Color Scheme</div>
+<ul class="propertylist">
+  <li class="propertylistitem"><b>Globe Background - </b>The color of the globe's background.</li>
+  <li class="propertylistitem"><b>Background - </b>The color of the background behind the image being displayed.</li>
+  <li class="propertylistitem"><b>Foreground -</b>  The color of the wireframe box in the foreground.</li>
+  <li class="propertylistitem"><b>Selected Panel -</b> The color in the frame around the selected panel. This is the panel that changes will be made to if you have multiple tabs open.</li>
+  <li class="propertylistitem">Note: The color of the maps is controlled by the individual <a href="#autosetpro">map control</a>. The selected panel color changes the color used to highlight the current panel.</li>
 </div>
-<div class="preferencegrouptitle">Layer List Properties</div>
-<div class="preferencegroup">
-  <p><strong>Font - </strong>The text at the bottom of the Main Display Window denoting what is being viewed. Using the dropdown lists, the user can define the font, style, and size of text.</p>
-  <p><strong>Color -</strong> The color of the text at the bottom of the Main Display Window.</p>
+</ul>
+<div class="pagesubtitle">Layer List Properties</div>
+<ul class="propertylist">
+  <li class="propertylistitem"><b>Font - </b>The text at the bottom of the Main Display Window denoting what is being viewed. Using the dropdown lists, the user can define the font, style, and size of text.</li>
+  <li class="propertylistitem"><b>Color -</b> The color of the text at the bottom of the Main Display Window.</li>
 </div>
-<div class="preferencegrouptitle">Default Projection</div>
-<div class="preferencegroup"><strong>Default Projection -</strong> Sets the default map projection.</div>
+</ul>
+<div class="pagesubtitle">Default Projection</div>
+<ul class="propertylist">
+<li class="propertylistitem"><b><strong>Default Projection -</b> Sets the default map projection.</div>
+</ul>
 
 <br>
 <!-- InstanceEndEditable -->

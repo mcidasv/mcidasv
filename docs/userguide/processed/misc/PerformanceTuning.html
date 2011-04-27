@@ -70,18 +70,23 @@ data in memory</strong> checkbox on the <strong>Data &amp; Formats</strong> tab 
 of the user preferences (accessible from the <strong>Edit-&gt;Preferences</strong> menu).</p>
 <p><a name="fastrender" id="fastrender"></a></p>
 <div class="pagesubtitle">Fast Rendering</div>
-<p>By default, McIDAS-V will try to adjust the data renderings to account for projection seams. This is computationally intensive in some cases and slows down the display of data. When you set your preference to "Use Fast Rendering" (under the <strong>General</strong> tab
-  of the user preferences (<strong>Edit-&gt;Preferences</strong> menu)),
+<p>By default, McIDAS-V will try to adjust the data layer (images, contours,
+  etc.) renderings to account for projection seams. This is computationally intensive
+  in some cases and slows down the display of data. If you change your <a href="../tools/preferences/GeneralPreferences.html">User
+  Preferences</a>  setting to <strong>Use
+  fast rendering</strong>,
   McIDAS-V will not try to account for the projection seams. If you are displaying
   data in its native projection, this will result in faster rendering of the
   data depiction. However, if you have several displays of data, each from a
   different data source and on a different projection, you may see anomalies
   in the displays (spurious lines, portions of images). At that point, you can
-turn off fast rendering for a particular display using the <strong>Edit-&gt;Properties</strong> menu
-of the Display Control for that display, or set your system preference back to
-not use fast rendering.</p>
-<p>To change fast rendering options for maps, click <a href="../controls/MapDisplayControl.html#fastrendering">here</a>.</p>
-<a name="multicores"></a><div class="pagesubtitle"> Parallel Rendering and Data
+turn off fast rendering for a particular data display using the <strong>Use Fast
+Rendering </strong>
+setting of the <a href="../controls/index.html">Display Control</a> for that display, or set your system preference
+back to not use fast rendering.</p>
+<p>Use the <a href="../controls/MapDisplayControl.html">Map Controls</a> to change fast rendering options for map layers.</p>
+<a name="parallelrender" id="parallelrender"></a>
+<div class="pagesubtitle"> Parallel Rendering and Data
   Reading</div> 
 
 If you are running McIDAS-V on  a multi-core machine you can configure it
