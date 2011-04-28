@@ -749,17 +749,26 @@ application/x-java-jnlp-file JNLP
       <h4>Q. What is Fast Rendering and when should I use it?</h4>
     </div>
     <div class="faq-answer"><strong>A.</strong> By default, McIDAS-V will try
-      to adjust the data renderings to account for projection seams. This is
-      computationally intensive in some cases and slows down the display of data.
-      When you set your preference to &quot;Use Fast Rendering&quot;, McIDAS-V
-      will not try to account for the projection seams. If you are displaying
-      data in its native projection, this will result in faster rendering of
-      the data depiction. However, if you have several displays of data, each
-      from a different data source and on a different projection, you may see
-      anomalies in the displays (spurious lines, portions of images). At that
-      point, you can turn off fast rendering for a particular display using the <strong>Edit-&gt;Properties</strong> menu
-      of the Display Control for that display, or set your system preference
-      back to not use fast rendering.</div>
+      to adjust the data layer (images, contours, etc.) renderings to account
+      for projection seams. This is computationally intensive in some cases and
+      slows down the display of data. If you change your <a href="tools/preferences/GeneralPreferences.html">User
+      Preferences</a> setting
+        to <strong>Use fast rendering</strong>, McIDAS-V will not try to account
+        for the projection seams. If you are displaying a layer of data in its
+        native projection, this will result in faster rendering of the data depiction.
+        However, if you have several layers of data, each from a different data
+        source and on a different projection, you may see anomalies in one or
+        more layers (spurious lines, portions of images). If that occurs, you
+        can turn off fast rendering for the layer(s) by unchecking the <strong>Use
+        Fast Rendering </strong> checkbox in its <a href="controls/index.html#properties">Properties
+        dialog</a>, or set your system preference back to not use fast rendering.
+        <p>A separate fast rendering option for
+  map layers is  available in the <a href="controls/MapDisplayControl.html">Map
+  Controls</a>. Some maps  display better
+      when fast rendering is turned on, others  display better when it's
+      turned off. If a map displays poorly (e.g., has missing line segments),
+      try switching its fast rendering settings to see if it fixes the problem.</p>
+    </div>
     <a name="truewind" id="truewind"></a>
     <div class="faq-question">
       <h4>Q. What is the difference between true wind vectors and regular wind

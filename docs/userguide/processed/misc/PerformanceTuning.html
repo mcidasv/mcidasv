@@ -76,15 +76,20 @@ of the user preferences (accessible from the <strong>Edit-&gt;Preferences</stron
   Preferences</a>  setting to <strong>Use
   fast rendering</strong>,
   McIDAS-V will not try to account for the projection seams. If you are displaying
-  data in its native projection, this will result in faster rendering of the
-  data depiction. However, if you have several displays of data, each from a
-  different data source and on a different projection, you may see anomalies
-  in the displays (spurious lines, portions of images). At that point, you can
-turn off fast rendering for a particular data display using the <strong>Use Fast
-Rendering </strong>
-setting of the <a href="../controls/index.html">Display Control</a> for that display, or set your system preference
-back to not use fast rendering.</p>
-<p>Use the <a href="../controls/MapDisplayControl.html">Map Controls</a> to change fast rendering options for map layers.</p>
+  a layer of data in its native projection, this will result in faster rendering
+  of the data depiction. However, if you have several layers of data, each
+  from a different data source and on a different projection, you may see anomalies
+  in one or more layers (spurious lines, portions of images). If that occurs,
+  you can turn off fast rendering for the layer(s) by unchecking the <strong>Use
+  Fast Rendering </strong>
+checkbox in  its <a href="../controls/index.html#properties">Properties
+dialog</a>, or set your system preference back to not use fast rendering.</p>
+<p>A separate fast rendering option for
+  map layers is  available in the <a href="../controls/MapDisplayControl.html">Map
+  Controls</a>. Some maps display better when fast rendering is turned on, others
+  display better when it's turned off. If a map displays poorly (e.g., has missing
+  line segments), try switching its fast rendering settings to see if it fixes
+the problem.</p>
 <a name="parallelrender" id="parallelrender"></a>
 <div class="pagesubtitle"> Parallel Rendering and Data
   Reading</div> 
