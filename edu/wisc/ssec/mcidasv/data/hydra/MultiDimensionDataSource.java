@@ -79,11 +79,8 @@ import ucar.visad.display.LineDrawing;
 import ucar.visad.display.MapLines;
 import ucar.visad.display.RubberBandBox;
 
-import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.data.HydraDataSource;
 import edu.wisc.ssec.mcidasv.data.PreviewSelection;
-import edu.wisc.ssec.mcidasv.data.PreviewSelectionNew;
-import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 
 /**
  * A data source for Multi Dimension Data 
