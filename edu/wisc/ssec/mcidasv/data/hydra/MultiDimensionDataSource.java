@@ -258,12 +258,12 @@ public class MultiDimensionDataSource extends HydraDataSource {
             defaultSubsets[arrayNames.length+k] = defaultSubset;
             categoriesArray[arrayNames.length+k] = DataCategory.parseCategories("5km swath;GRID-2D;");
           }
-          //categories = DataCategory.parseCategories("2D grid;GRID-2D;");
        }
        else if (name.startsWith("CAL_LID_L1")) {
          String[] arrayNames = null;
          adapters = new MultiDimensionAdapter[2];
          defaultSubsets = new HashMap[2];
+         propsArray = new Hashtable[2]; 
          
          
          HashMap table = ProfileAlongTrack.getEmptyMetadataTable();
@@ -517,7 +517,6 @@ public class MultiDimensionDataSource extends HydraDataSource {
            swthTable.put("range_name", arrayNames[k]);
            swthTable.put("unpack", "unpack");
 
-           System.out.println(arrayNames[k]);
            SwathAdapter swathAdapter0 = new SwathAdapter(reader, swthTable);
            swathAdapter0.setDefaultStride(5);
            HashMap subset = swathAdapter0.getDefaultSubset();
@@ -525,7 +524,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
            adapters[k] = swathAdapter0;
            defaultSubsets[k] = defaultSubset;
          }
-         //categories = DataCategory.parseCategories("2D grid;GRID-2D;");
+         categories = DataCategory.parseCategories("2D grid;GRID-2D;");
          hasImagePreview = true;
        }
        setProperties(properties);
@@ -718,7 +717,6 @@ public class MultiDimensionDataSource extends HydraDataSource {
       }
 
       if (requestProperties.containsKey("medianFilter")) {
-        System.out.println("medianFilter");
         String[] items = (String[]) requestProperties.get("medianFilter");
         double window_lenx = Double.parseDouble(items[0]);
         double window_leny = Double.parseDouble(items[1]);
