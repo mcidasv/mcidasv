@@ -315,7 +315,6 @@
         </tocitem>
         <tocitem text="Sharing" target="idv.collab.sharing"/>
         <tocitem text="Data Analysis" target="idv.page_dataanalysis">
-		</tocitem>
         <tocitem text="Formulas" target="idv.tools.formulas">
 		<tocitem text="Description of Formulas - Maps" target="idv.tools.mapformulas"/>
 		<tocitem text="Description of Formulas - Miscellaneous" target="idv.tools.miscellaneousformulas"/>
@@ -338,7 +337,7 @@
         <tocitem text="Including Code" target="idv.misc.pluginjarfiles.advanced"/>
         </tocitem>
         </tocitem>
-        <tocitem text="Configur ing Image Defaults" target="idv.misc.imagedefaults"/>
+        <tocitem text="Configuring Image Defaults" target="idv.misc.imagedefaults"/>
         <tocitem text="Adding in new GRIB tables" target="idv.data.gribtables">
         <tocitem text="GRIB-1 tables" target="idv.data.gribtables.grib1"/>
         <tocitem text="GRIB-2 tables" target="idv.data.gribtables.grib2"/>
