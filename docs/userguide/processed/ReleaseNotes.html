@@ -36,6 +36,73 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 </p>
 <hr size="4" noshade>
 <div class="pagesubtitle">McIDAS-V <br>
+  Version 1.02beta1</div>
+  <hr size="4" noshade> 
+  <p>The items below reflect the changes since the 1.01 release. </p>
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat1_1.02beta1">Documentation Changes</a></div>
+<div class="faq-category">
+      <ul class="noindent">
+        <li><strong><a class="faq-question-link" href="#doc1.02beta1">McIDAS-V User's Guide</a></strong></li>
+  </ul>
+</div>
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat2_1.02beta1">Display Changes</a></div>
+<div class="faq-category">
+      <ul class="noindent">
+      <li><strong><a class="faq-question-link" href="#globecontour1.02beta1">Globe Contour Labels</a></strong>        </li>
+        <li><strong><a class="faq-question-link" href="#globebackground1.02beta1">Globe Background</a></strong></li>
+      </ul>
+</div>
+      <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_1.02beta1">Data Changes</a></div><strong></strong>
+      <div class="faq-category">
+      <ul class="noindent">
+        <li><strong><a class="faq-question-link" href="#multi1.02beta1">Multispectral Geocat Data</a></strong></li>
+        <li><strong><a class="faq-question-link" href="#calipso1.02beta1">Calipso/CloudSat Data</a></strong></li>
+      </ul>
+      </div>
+      <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_1.02beta1">Other Changes</a></div>
+      <div class="faq-category">
+      <ul class="noindent">
+        <li><strong><a class="faq-question-link" href="#ensemble1.02beta1">Ensemble Grid Formulas</a></strong></li>
+        <li><strong><a class="faq-question-link" href="#image1.02beta1">Image Handling</a></strong></li>
+      </ul>
+</div>
+<hr>
+<div class="faq-bottom">
+<div class="faq-category-title"><a name="faq1_cat1_1.02beta1" id="faq1_cat1_1.02beta1"></a>Documentation Changes</div>
+<div class="faq-category"><a name="doc1.02beta1" id="doc1.02beta1"></a>
+    <h4>McIDAS-V User's Guide</h4>
+    <div class="faq-answer">Updated the McIDAS-V User's Guide to contain new features and more detailed content.</div>
+</div>
+</div>
+<div class="faq-category-title"><a name="faq1_cat2_1.02beta1" id="faq1_cat2_1.02beta1"></a>Display Changes</div>
+<div class="faq-category"><a name="globecontour1.02beta1" id="globecontour1.02beta1"></a>  
+    <h4><strong>Globe Contour Labels</strong></h4>
+    <div class="faq-answer">Improved globe contour labeling.</div>
+</div>
+<div class="faq-category"><a name="globebackground1.02beta1" id="globebackground1.02beta1"></a>  
+    <h4><strong>Globe Background</strong></h4>
+    <div class="faq-answer">Shifted the globe background down slightly to allow for contours to properly display on the globe without intermittently being cut off.</div>
+</div>
+<div class="faq-category-title"><a name="faq1_cat3_1.02beta1" id="faq1_cat3_1.02beta1"></a>Data Changes</div>
+<div class="faq-category"><a name="multi1.02beta1" id="multi1.02beta1"></a>  
+    <h4><strong>Multispectral Geocat Data</strong></h4>
+    <div class="faq-answer">Added support for multispectral geocat data.</div>
+</div>
+<div class="faq-category"><a name="calipso1.02beta1" id="calipso1.02beta1"></a>  
+    <h4><strong>Calipso/CloudSat Data</strong></h4>
+    <div class="faq-answer">Added a new class to help with Calipso/CloudSat types of data. Also working on adding support for Level 2 Calipso/CloudSat data.</div>
+</div>
+<div class="faq-category-title"><a name="faq1_cat4_1.02beta1" id="faq1_cat4_1.02beta1"></a>Other Changes</div>
+<div class="faq-category"><a name="ensemble1.02beta1" id="ensemble1.02beta1"></a>
+<h4>Ensemble Grid Formulas</h4>
+      <div class="faq-answer">Added new formulas under Grid -&gt; Ensemble in the Field Selector. These formulas are useful for comparing model runs for consistency.</div>
+</div>
+<div class="faq-category"><a name="image1.02beta1" id="image1.02beta1"></a>
+<h4>Image Handeling</h4>
+      <div class="faq-answer">Changed the way McIDAS-V handles images. In the past, all images used Red, Green, Blue, and alpha as RealTypes in the data and they would then map to RGB or RGBA. This meant that a change to the color map of one image would affect all others. Now, we are using unique RealTypes (xxx_N) for each image, where N is a unique number for each image.</div>
+</div>
+<hr size="4" noshade>
+<div class="pagesubtitle">McIDAS-V <br>
   Version 1.01</div>
   <hr size="4" noshade>
   <p>The items below reflect changes since the 1.0 release.
