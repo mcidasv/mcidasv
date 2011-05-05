@@ -8,6 +8,7 @@
 $MCV_ROOT = "/home/mcidasv/mc-v";
 $VISAD_ROOT = "/home/mcidasv/svn_nightly/visad";
 $IDV_ROOT = "/home/mcidasv/svn_nightly/idv";
+$IDV_SYNC = "/home/mcidasv/svn_nightly/idv.sync";
 
 $DATE = date("Y-m-d", strtotime("yesterday"));
 $END = date("Y-m-d", strtotime("yesterday"));
@@ -113,6 +114,7 @@ foreach ($commits as $date=>$commitArray) {
 if (!$HTML) {
   print "Getting commit logs from IDV SVN...\n";
 }
+`svnsync sync file://$IDV_SYNC 2>/dev/null`;
 $commits = getSVNCommits($IDV_ROOT, $DATE, $END);
 foreach ($commits as $date=>$commitArray) {
   if (!isset($allCommits["$date"])) {
@@ -255,6 +257,12 @@ function getSVNCommits($DIR, $DATE, $END=false) {
   }
   `svn update -r HEAD 2>/dev/null`;
   $allLogs = array();
+
+  # Always add one day--needs to be a range to work properly
+  if (!$END) {
+    $END = date("Y-m-d", strtotime($DATE) + (60*60*24));
+  }
+
   if (!$END) {
     $datespec = "\{$DATE\}";
   }
