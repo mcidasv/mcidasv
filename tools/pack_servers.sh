@@ -15,6 +15,7 @@ mcserv
 mcservl
 lwprserv
 txtgserv
+
 adirserv agetserv
 areaadir areaaget
 fsdxadir fsdxaget
@@ -38,6 +39,19 @@ awipadir awipaget
 giniadir giniaget
 mod8adir mod8aget
 mtstadir mtstaget
+
+vpserv
+atokserv
+mdfhserv
+mdhdserv
+mdksserv
+mdroserv
+ncdfadir
+ncdfaput
+ncdffh
+ncdfgdir
+ncdfgget
+ncdfks
 "
 
 # Data files
