@@ -322,6 +322,7 @@
 		<tocitem text="Description of Formulas - Image Filters (Beta)" target="idv.tools.imagefilterformulas"/>
 		<tocitem text="Description of Formulas - Export" target="idv.tools.exportformulas"/>
 		<tocitem text="Description of Formulas - Imagery" target="idv.tools.imageryformulas"/>
+		</tocitem>
         <tocitem text="Jython Methods" target="idv.tools.jython"/>
         <tocitem text="Derived Data" target="idv.tools.deriveddata"/>
         <tocitem text="Jython Shell" target="idv.tools.jythonshell"/>
@@ -367,6 +368,7 @@
         <tocitem text="Building McIDAS-V from Source" target="idv.misc.sourcebuild"/>
         </tocitem>
         <tocitem text="Appendix" target="idv.page_appendix">
+		<tocitem text="McIDAS-X Commands in McIDAS-V" target="idv.xequivalent">
         <tocitem text="Examples of Display Types" target="idv.examples">
         <tocitem text="Plan Views" target="idv.examples.planviews"/>
         <tocitem text="3D Surface" target="idv.examples.3dsurface">
@@ -387,10 +389,9 @@
         <tocitem text="Globe Display" target="idv.examples.miscellaneous.globedisplay"/>
         <tocitem text="Multi-Panel Display" target="idv.examples.miscellaneous.multipanel"/>
         <tocitem text="Omni Display" target="idv.examples.miscellaneous.omnidisplay"/>
-        </tocitem>
+		</tocitem>
+		</tocitem>
 		<tocitem text="McIDAS-X Commands in McIDAS-V" target="idv.xequivalent">
-		</tocitem>
-		</tocitem>
         </tocitem>
 		</tocitem>
       </toc>
