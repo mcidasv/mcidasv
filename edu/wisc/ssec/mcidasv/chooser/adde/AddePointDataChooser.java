@@ -30,7 +30,6 @@
 
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
-
 import static javax.swing.GroupLayout.DEFAULT_SIZE;
 import static javax.swing.GroupLayout.PREFERRED_SIZE;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
@@ -61,6 +60,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import edu.wisc.ssec.mcidas.McIDASUtil;
@@ -85,18 +86,19 @@ import ucar.visad.UtcDate;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
-
 /**
  * Selection widget for ADDE point data
- *
- * @author MetApps Development Team
+ * 
  * @version $Revision$ $Date$
  */
 public class AddePointDataChooser extends AddeChooser {
-    
+
+    /** Logging object. Use it! */
+    private static final Logger logger = LoggerFactory.getLogger(AddePointDataChooser.class);
+
     /**
      * Property for the dataset name key.
-     * @see #getDatasetName()
+     * @see edu.wisc.ssec.mcidasv.chooser.adde.AddeChooser#getDataSetName()
      */
     public static String DATASET_NAME_KEY = "name";
 
@@ -111,7 +113,7 @@ public class AddePointDataChooser extends AddeChooser {
     protected JComboBox relTimeIncBox;
 
     /** the relative time increment */
-    private float relativeTimeIncrement = 1;
+    private float relativeTimeIncrement = 1.0f;
     
     /** archive date */
     protected String archiveDay = null;
@@ -151,7 +153,7 @@ public class AddePointDataChooser extends AddeChooser {
         relTimeIncBox = new JComboBox();
         relTimeIncBox.setToolTipText("Set the increment between relative times");
         relTimeIncBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
+            @Override public void actionPerformed(ActionEvent ae) {
                 JComboBox box = (JComboBox) ae.getSource();
                 if (GuiUtils.anySelected(box)) {
                     setRelativeTimeIncrement(getRelBoxValue());
@@ -163,8 +165,8 @@ public class AddePointDataChooser extends AddeChooser {
         descriptorsAllowPrefix = "";
         
         archiveDayBtn = GuiUtils.makeImageButton(
-                "/auxdata/ui/icons/calendar_edit.png", this, "getArchiveDay", null,
-                true);
+            "/auxdata/ui/icons/calendar_edit.png", this, "getArchiveDay", null,
+            true);
         archiveDayBtn.setToolTipText("Select a day for archive datasets");
         archiveDayLabel = new JLabel("Select day:");
         archiveDayFormatter = new SimpleDateFormat(UtcDate.YMD_FORMAT);
@@ -173,7 +175,7 @@ public class AddePointDataChooser extends AddeChooser {
     /**
      * Do server connection stuff... override this with type-specific methods
      */
-    protected void readFromServer() {
+    @Override protected void readFromServer() {
         archiveDay = null;
         if (archiveDayLabel != null) {
             archiveDayLabel.setText("Select day:");
@@ -184,10 +186,10 @@ public class AddePointDataChooser extends AddeChooser {
     /**
      *  Generate a list of image descriptors for the descriptor list.
      */
-    protected void readDescriptors() {
+    @Override protected void readDescriptors() {
         try {
-            StringBuffer buff   = getGroupUrl(REQ_DATASETINFO, getGroup());
-            buff.append("&type=" + getDataType());
+            StringBuffer buff = getGroupUrl(REQ_DATASETINFO, getGroup());
+            buff.append("&type=").append(getDataType());
             DataSetInfo  dsinfo = new DataSetInfo(buff.toString());
             descriptorTable = dsinfo.getDescriptionTable();
             
@@ -195,11 +197,11 @@ public class AddePointDataChooser extends AddeChooser {
             for (Enumeration e = descriptorTable.keys(); e.hasMoreElements();) {
                 Object key = e.nextElement();
                 String str = (String) descriptorTable.get(key);
-                if (!descriptorsAllowPrefix.equals("") && str.indexOf(descriptorsAllowPrefix) != 0)
+                if (!descriptorsAllowPrefix.isEmpty() && str.indexOf(descriptorsAllowPrefix) != 0)
                     descriptorTable.remove(key);
             }
             
-            String[]    names       = new String[descriptorTable.size()];
+            String[] names = new String[descriptorTable.size()];
             Enumeration enumeration = descriptorTable.keys();
             for (int i = 0; enumeration.hasMoreElements(); i++) {
                 Object thisElement = enumeration.nextElement();
@@ -212,18 +214,18 @@ public class AddePointDataChooser extends AddeChooser {
             handleConnectionError(e);
         }
     }
-    
+
     /**
      * Load in an ADDE point data set based on the
      * <code>PropertyChangeEvent<code>.
      *
      */
-    public void doLoadInThread() {
+    @Override public void doLoadInThread() {
         showWaitCursor();
         try {
             StationModel selectedStationModel = getSelectedStationModel();
-            String       source               = getRequestUrl();
-                        
+            String source = getRequestUrl();
+
             // make properties Hashtable to hand the station name
             // to the AddeProfilerDataSource
             Hashtable ht = new Hashtable();
@@ -232,15 +234,10 @@ public class AddePointDataChooser extends AddeChooser {
                    selectedStationModel.getName());
             ht.put(DATASET_NAME_KEY, getDescriptor());
             ht.put(DATA_NAME_KEY, getDataName());
-            if (source.indexOf(AddeUtil.RELATIVE_TIME) >= 0) {
+            if (source.contains(AddeUtil.RELATIVE_TIME)) {
                 ht.put(AddeUtil.NUM_RELATIVE_TIMES, getRelativeTimeIndices());
-                ht.put(AddeUtil.RELATIVE_TIME_INCREMENT,
-                       new Float(getRelativeTimeIncrement()));
+                ht.put(AddeUtil.RELATIVE_TIME_INCREMENT, getRelativeTimeIncrement());
             }
-
-//            System.out.println("makeDataSource: source=" + source);
-//            System.out.println("    DATA_TYPE=" + DATA_TYPE);
-//            System.out.println("    ht=" + ht);
             makeDataSource(source, DATA_TYPE, ht);
             saveServerState();
         } catch (Exception excp) {
@@ -285,6 +282,7 @@ public class AddePointDataChooser extends AddeChooser {
                         // "MMM dd, yyyy"));
                         archiveDayLabel.setText(myDay);
                     } catch (Exception e) {
+                        logger.error("problem while setting archive day label", e);
                     }
                     // System.out.println("archiveDay = " + archiveDay);
                     setDoAbsoluteTimes(true);
@@ -305,6 +303,7 @@ public class AddePointDataChooser extends AddeChooser {
             try {
                 p = archiveDayBtn.getLocationOnScreen();
             } catch (IllegalComponentStateException ice) {
+                logger.error("archive day button in illegal state", ice);
             }
         }
         dialog.setLocation(p);
@@ -320,12 +319,13 @@ public class AddePointDataChooser extends AddeChooser {
      */
     public StationModel getSelectedStationModel() {
         StationModel returnModel = null;
-        if (isUpperAir())
+        if (isUpperAir()) {
             returnModel = this.stationModelManager.getStationModel("Observations>Upper Air");
-        else if (isSynoptic())
+        } else if (isSynoptic()) {
             returnModel = this.stationModelManager.getStationModel("Observations>SYNOP");
-        else
+        } else {
             returnModel = this.stationModelManager.getStationModel("Observations>METAR");
+        }
         return returnModel;
     }
     
@@ -333,7 +333,7 @@ public class AddePointDataChooser extends AddeChooser {
      * Add the interval selector to the component.
      * @return superclass component with extra stuff
      */
-    protected JPanel makeTimesPanel() {
+    @Override protected JPanel makeTimesPanel() {
         JComponent extra1 = getExtraTimeComponentRelative();
         GuiUtils.enableTree(extra1, false);
         JComponent extra2 = getExtraTimeComponentAbsolute();
@@ -344,15 +344,17 @@ public class AddePointDataChooser extends AddeChooser {
     /**
      * Get the extra time widget, but built in a different way.
      * Designed to be put into a GroupLayout
+     *
+     * @return Extra time widget
      */
     protected JComponent getExtraTimeComponentRelative() {
         TwoFacedObject[] intervals = { 
-                new TwoFacedObject("30 minute", .5f),
-                new TwoFacedObject("Hourly", 1f),
-                new TwoFacedObject("Three hourly", 3f),
-                new TwoFacedObject("Six hourly", 6f),
-                new TwoFacedObject("12 hourly", 12f),
-                new TwoFacedObject("24 hourly", 24f)
+            new TwoFacedObject("30 minute", .5f),
+            new TwoFacedObject("Hourly", 1f),
+            new TwoFacedObject("Three hourly", 3f),
+            new TwoFacedObject("Six hourly", 6f),
+            new TwoFacedObject("12 hourly", 12f),
+            new TwoFacedObject("24 hourly", 24f)
         };
 
         GuiUtils.setListData(relTimeIncBox, intervals);
@@ -407,7 +409,7 @@ public class AddePointDataChooser extends AddeChooser {
     /**
      * Get the request URL
      *
-     * @return  the request URL
+     * @return the request URL
      */
     public String getRequestUrl() {
         StringBuffer request = getGroupUrl(REQ_POINTDATA, getGroup());
@@ -427,20 +429,20 @@ public class AddePointDataChooser extends AddeChooser {
      * @param buf The buffer to append to
      */
     protected void appendRequestSelectClause(StringBuffer buf) {
-        StringBuffer selectValue = new StringBuffer();
-        selectValue.append("'");
+        StringBuilder selectValue = new StringBuilder(1024);
+        selectValue.append('\'');
         selectValue.append(getDayTimeSelectString());
         //TODO: why is SFCHOURLY explicit here?  better way to do it?
-        if (getDescriptor().equalsIgnoreCase("SFCHOURLY")) {
+        if ("SFCHOURLY".equalsIgnoreCase(getDescriptor())) {
             selectValue.append(";type 0");
         }
-        selectValue.append(";");
+        selectValue.append(';');
         if (isUpperAir()){
             selectValue.append(AddeUtil.LEVEL);
-            selectValue.append(";");
+            selectValue.append(';');
         }
         selectValue.append(AddeUtil.LATLON_BOX);
-        selectValue.append("'");
+        selectValue.append('\'');
         appendKeyValue(buf, PROP_SELECT, selectValue.toString());
     }
     
@@ -457,7 +459,7 @@ public class AddePointDataChooser extends AddeChooser {
      * Enable or disable the GUI widgets based on what has been
      * selected.
      */
-    protected void enableWidgets() {
+    @Override protected void enableWidgets() {
         boolean descriptorState = ((getState() == STATE_CONNECTED)
                                    && canReadTimes());
 
@@ -497,27 +499,33 @@ public class AddePointDataChooser extends AddeChooser {
     }
     
     /**
-     * Return true if selected descriptor is for SYNOPTIC data
+     * Return {@code true} if selected descriptor is for SYNOPTIC data.
+     *
+     * @return {@code true} iff {@link edu.wisc.ssec.mcidasv.chooser.adde.AddePointDataChooser#getDescriptor()}
+     * is {@literal "SYNOP"}.
      */
     protected boolean isSynoptic() {
-        if (getDescriptor().indexOf("SYNOP") == 0) return true;
-        return false;
+        return "SYNOP".equals(getDescriptor());
     }
     
     /**
-     * Return true if selected descriptor is for upper air
+     * Return {@code true} if selected descriptor is for upper air.
+     *
+     * @return {@code true} iff {@link edu.wisc.ssec.mcidasv.chooser.adde.AddePointDataChooser#getDescriptor()}
+     * is {@literal "UPPER"}.
      */
     protected boolean isUpperAir() {
-        if (getDescriptor().indexOf("UPPER") == 0) return true;
-        return false;
+        return "UPPER".equals(getDescriptor());
     }
     
     /**
-     * Return true if selected descriptor is for profiler
+     * Return {@code true} if selected descriptor is for profiler.
+     *
+     * @return {@code true} iff {@link edu.wisc.ssec.mcidasv.chooser.adde.AddePointDataChooser#getDescriptor()}
+     * is {@literal "PROF"}.
      */
     protected boolean isProfiler() {
-        if (getDescriptor().indexOf("PROF") == 0) return true;
-        return false;
+        return "PROF".equals(getDescriptor());
     }
         
     /**
@@ -525,7 +533,7 @@ public class AddePointDataChooser extends AddeChooser {
      *
      * @throws Exception On badness
      */
-    public void handleUpdate() throws Exception {
+    @Override public void handleUpdate() throws Exception {
         if (getState() != STATE_CONNECTED) {
             //If not connected then update the server list
             updateServerList();
@@ -573,44 +581,45 @@ public class AddePointDataChooser extends AddeChooser {
         try {
             DateTime dt = new DateTime();
             retString = UtcDate.formatUtcDate(dt, "yyyyDDD");
-        } catch (VisADException ve) {}
+        } catch (VisADException ve) {
+            logger.error("error building julian date", ve);
+        }
         return retString;
-
     }
-    
+
     /**
      * This allows derived classes to provide their own name for labeling, etc.
      *
      * @return  the dataset name
      */
-    public String getDataName() {
+    @Override public String getDataName() {
         return "Point Data";
     }
     
     /**
      * _more_
      */
-    public void doCancel() {
+    @Override public void doCancel() {
         readTimesTask = null;
         setState(STATE_UNCONNECTED);
         super.doCancel();
     }
 
     /** locking mutex */
-    private Object MUTEX = new Object();
+    private final Object MUTEX = new Object();
     
     /**
      *  Read the set of image times available for the current server/group/type
      *  This method is a wrapper, setting the wait cursor and wrapping the
      *  call to {@link #readTimesInner()}; in a try/catch block
      */
-    public void readTimes() {
+    @Override public void readTimes() {
         clearTimesList();
-        if ( !canReadTimes()) {
+        if (!canReadTimes()) {
             return;
         }
         Misc.run(new Runnable() {
-            public void run() {
+            @Override public void run() {
                 updateStatus();
                 showWaitCursor();
                 try {
@@ -633,10 +642,9 @@ public class AddePointDataChooser extends AddeChooser {
 
     /**
      * Set the list of dates/times based on the image selection
-     *
      */
     protected void readTimesInner() {
-        SortedSet uniqueTimes = Collections.synchronizedSortedSet(new TreeSet());
+        SortedSet<DateTime> uniqueTimes = Collections.synchronizedSortedSet(new TreeSet<DateTime>());
 
         readTimesTask = startTask();
         updateStatus();
@@ -645,35 +653,36 @@ public class AddePointDataChooser extends AddeChooser {
             AddePointDataReader apr = new AddePointDataReader(getTimesRequest());
             //Make sure no other loads are  occurred
             boolean ok = stopTaskAndIsOk(task);
-            if ( !Misc.equals(readTimesTask, task) || !ok) {
+            if (!Misc.equals(readTimesTask, task) || !ok) {
                 return;
             }
             readTimesTask = null;
 
             synchronized (MUTEX) {
-                int[][]  data  = apr.getData();
+                int[][] data = apr.getData();
                 String[] units = apr.getUnits();
-                if ( !units[0].equals("CYD") || !units[1].equals("HMS")) {
+                if ( !"CYD".equals(units[0]) || !"HMS".equals(units[1])) {
                     throw new Exception("can't handle date/time units");
                 }
                 int numObs = data[0].length;
                 //System.out.println("found " + numObs + " obs");
                 // loop through and find all the unique times
-                for (int i = 0; i < numObs; i++) {
-                    try {
+                try {
+                    for (int i = 0; i < numObs; i++) {
                         DateTime dt =
                             new DateTime(McIDASUtil.mcDayTimeToSecs(data[0][i],
                                 data[1][i]));
                         uniqueTimes.add(dt);
-                    } catch (Exception e) {}
+                    }
+                } catch (Exception e) {
+                    logger.error("problem building list of unique times", e);
                 }
                 //System.out.println(
                 //      "found " + uniqueTimes.size() + " unique times");
                 if (getDoAbsoluteTimes()) {
-                    if ( !uniqueTimes.isEmpty()) {
-                        setAbsoluteTimes(new ArrayList(uniqueTimes));
-                        getTimesList().setSelectionMode(
-                                ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+                    if (!uniqueTimes.isEmpty()) {
+                        setAbsoluteTimes(new ArrayList<DateTime>(uniqueTimes));
+                        getTimesList().setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
                     }
 
                     //   Select the last n hours 
@@ -683,28 +692,33 @@ public class AddePointDataChooser extends AddeChooser {
                     if (selectedIndex >= 0)
                         setSelectedAbsoluteTime(selectedIndex, firstIndex);
                 }
-                if (numObs>0) gotObs=true;
+                if (numObs>0) {
+                    gotObs = true;
+                }
             }
             setState(STATE_CONNECTED);
         } catch (Exception excp) {
             stopTask(task);
             readTimesTask = null;
             handleConnectionError(excp);
-            if (retry == false) return;
+            if (!retry) {
+                return;
+            }
             try {
                 handleUpdate();
-            } catch (Exception e) {}
-
+            } catch (Exception e) {
+                logger.error("problem handling update", e);
+            }
         }
     }
-        
+
     /**
      * Show the given error to the user. If it was an Adde exception
      * that was a bad server error then print out a nice message.
      *
-     * @param excp The exception
+     * @param e The exception
      */
-    protected void handleConnectionError(Exception e) {
+    @Override protected void handleConnectionError(Exception e) {
         retry = false;
         super.handleConnectionError(e);
     }
@@ -714,7 +728,7 @@ public class AddePointDataChooser extends AddeChooser {
      *
      * @return Any times selected.
      */
-    protected boolean haveTimeSelected() {
+    @Override protected boolean haveTimeSelected() {
         return !getDoAbsoluteTimes() || getHaveAbsoluteTimesSelected();
     }
 
@@ -725,13 +739,13 @@ public class AddePointDataChooser extends AddeChooser {
      * @return the select day and time strings
      */
     protected String getDayTimeSelectString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder(1024);
         if (getDoAbsoluteTimes()) {
             List times = getSelectedAbsoluteTimes();
 
             // no time selection is permitted as a valid choice -
             // will then use all times today by default.
-            if (times.size() == 0) {
+            if (times.isEmpty()) {
                 return "";
             }
 
@@ -741,24 +755,26 @@ public class AddePointDataChooser extends AddeChooser {
             }
 
             if (archiveDay!=null) {
-                System.out.println("archiveDay: " + archiveDay);
+                logger.trace("archiveDay: {}", archiveDay);
                 try {
                     Date d = archiveDayFormatter.parse(archiveDay);
                     DateTime dt = new DateTime(d);
-                    System.out.println("parsed to: " + dt.toString());
-                    buf.append("day " + UtcDate.getIYD(dt) + ";");
+                    logger.trace("parsed to: {}", dt.toString());
+                    buf.append("day ").append(UtcDate.getIYD(dt)).append(';');
                 } catch (Exception e) {
-                    System.out.println("archiveDay parse error");
+                    logger.error("archiveDay parse error", e);
                 }
             }
-            else { System.out.println("archiveDay is null!"); }
-            
+            else {
+                logger.trace("archiveDay is null!");
+            }
+
             buf.append("time ");
             for (int i = 0; i < times.size(); i++) {
                 DateTime dt = (DateTime) times.get(i);
                 buf.append(UtcDate.getHMS(dt));
                 if (i != times.size() - 1) {
-                    buf.append(",");
+                    buf.append(',');
                 }
             }
         } else {
@@ -766,22 +782,13 @@ public class AddePointDataChooser extends AddeChooser {
         }
         return buf.toString();
     }
-        
-//    /**
-//     * Get the name of the dataset.
-//     *
-//     * @return descriptive name of the dataset.
-//     */
-//    public String getDatasetName() {
-//        return dataTypes.getSelectedItem().toString();
-//    }
 
     /**
      * Get the data type for this chooser
      *
      * @return  the type
      */
-    public String getDataType() {
+    @Override public String getDataType() {
         return "POINT";
     }
 
@@ -790,7 +797,7 @@ public class AddePointDataChooser extends AddeChooser {
      *
      * @return time increment (hours)
      */
-    public float getRelativeTimeIncrement() {
+    @Override public float getRelativeTimeIncrement() {
         return relativeTimeIncrement;
     }
 
@@ -802,14 +809,14 @@ public class AddePointDataChooser extends AddeChooser {
     public void setRelativeTimeIncrement(float increment) {
         relativeTimeIncrement = increment;
         if (relTimeIncBox != null) {
-            relTimeIncBox.setSelectedItem(new Float(relativeTimeIncrement));
+            relTimeIncBox.setSelectedItem(relativeTimeIncrement);
         }
     }
 
     /**
      * Update labels, enable widgets, etc.
      */
-    protected void updateStatus() {
+    @Override protected void updateStatus() {
         super.updateStatus();
         if (readTimesTask != null) {
             if (taskOk(readTimesTask)) {
@@ -827,7 +834,7 @@ public class AddePointDataChooser extends AddeChooser {
      *
      * @return  label for the descriptor  widget
      */
-    public String getDescriptorLabel() { 
+    @Override public String getDescriptorLabel() {
         return "Point Type"; 
     }
     
@@ -836,8 +843,7 @@ public class AddePointDataChooser extends AddeChooser {
      *
      * @return group type
      */
-    @Override
-    protected String getGroupType() {
+    @Override protected String getGroupType() {
         return AddeServer.TYPE_POINT;
     }
     
@@ -846,7 +852,7 @@ public class AddePointDataChooser extends AddeChooser {
      * 
      * @return The gui
      */   
-    public JComponent doMakeContents() {
+    @Override public JComponent doMakeContents() {
         JPanel myPanel = new JPanel();
         
         McVGuiUtils.setComponentWidth(descriptorComboBox, Width.DOUBLEDOUBLE);
@@ -893,10 +899,10 @@ public class AddePointDataChooser extends AddeChooser {
     }
 
     public JComponent doMakeContents(boolean doesOverride) {
-        if (doesOverride)
+        if (doesOverride) {
             return super.doMakeContents();
-        else
+        } else {
             return doMakeContents();
+        }
     }
-    
 }
