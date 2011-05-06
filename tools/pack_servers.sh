@@ -46,12 +46,6 @@ mdfhserv
 mdhdserv
 mdksserv
 mdroserv
-ncdfadir
-ncdfaput
-ncdffh
-ncdfgdir
-ncdfgget
-ncdfks
 "
 
 # Data files

@@ -41,6 +41,13 @@ awipadir.exe awipaget.exe
 giniadir.exe giniaget.exe
 mod8adir.exe mod8aget.exe
 mtstadir.exe mtstaget.exe
+
+vpserv.exe
+atokserv.exe
+mdfhserv.exe
+mdhdserv.exe
+mdksserv.exe
+mdroserv.exe
 "
 
 # Data files
