@@ -11,3 +11,6 @@ FILE=`curl -ls ${URL}/ |grep idv_jars |xargs echo`
 cd $DEST_DIR
 wget ${URL}/${FILE} && unzip -o ${FILE} && rm -f ${FILE}
 cd -
+
+echo "IDV JAR files updated on Pappy; will appear in the next McIDAS-V nightly build." |\
+	mail -s "AUTO: New IDV JAR files" mug.team@ssec.wisc.edu
