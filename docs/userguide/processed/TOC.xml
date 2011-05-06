@@ -315,7 +315,8 @@
         </tocitem>
         <tocitem text="Sharing" target="idv.collab.sharing"/>
         <tocitem text="Data Analysis" target="idv.page_dataanalysis">
-        <tocitem text="Formulas" target="idv.tools.formulas">
+        <tocitem text="Formulas" target="idv.tools.formulas"/>
+		<tocitem text="Native Formulas" target="idv.tools.nativeformulas">
 		<tocitem text="Description of Formulas - Maps" target="idv.tools.mapformulas"/>
 		<tocitem text="Description of Formulas - Miscellaneous" target="idv.tools.miscellaneousformulas"/>
 		<tocitem text="Description of Formulas - Grids" target="idv.tools.gridformulas"/>
@@ -368,7 +369,6 @@
         <tocitem text="Building McIDAS-V from Source" target="idv.misc.sourcebuild"/>
         </tocitem>
         <tocitem text="Appendix" target="idv.page_appendix">
-		<tocitem text="McIDAS-X Commands in McIDAS-V" target="idv.xequivalent">
         <tocitem text="Examples of Display Types" target="idv.examples">
         <tocitem text="Plan Views" target="idv.examples.planviews"/>
         <tocitem text="3D Surface" target="idv.examples.3dsurface">

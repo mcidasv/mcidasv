@@ -281,8 +281,9 @@
       <span class="link" onClick="setPage('page_dataanalysis.html');">Data Analysis</span><br>
 	  
       <div class="indented" id="miscellaneous_2">
+            <span class="link" onClick="setPage('tools/Formulas.html');">Formulas</span><br>
         <span class="toggle" onClick="toggleChildren(this,'miscellaneous_2_1');">+</span>
-		<span class="link" onClick="setPage('tools/Formulas.html');">Formulas</span><br>
+		<span class="link" onClick="setPage('tools/NativeFormulas.html');">Native Formulas</span><br>
 		<div class="indented" id="miscellaneous_2_1">
 			<span class="link" onClick="setPage('tools/MapFormulas.html');">Description of Formulas - Maps</span><br>
             <span class="link" onClick="setPage('tools/MiscellaneousFormulas.html');">Description of Formulas - Miscellaneous</span><br>
