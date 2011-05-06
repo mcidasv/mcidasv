@@ -86,13 +86,13 @@ public class LocalAddeEntry implements AddeEntry {
 
     /** C */
     private final String name;
-    
-    
+
     private String asStringId;
 
     public enum ServerName {
         AREA, AMSR, AMRR, GINI, FSDX, OMTP, LV1B, MODS, MODX, MOD4, MOD8, 
-        MODR, MSGT, MTST, SMIN, TMIN, INVALID;
+        MODR, MSGT, MTST, SMIN, TMIN, MDFHSERV, MDHDSERV, MDKSSERV, MDROSERV,
+        INVALID;
     }
 
     /**
@@ -135,7 +135,11 @@ public class LocalAddeEntry implements AddeEntry {
         MTSAT_HRIT(ServerName.MTST, "MTSAT HRIT"),
         NOAA_AVHRR_L1B(ServerName.LV1B, "NOAA AVHRR L 1b", "NOAA AVHRR Level 1b"),
         SSMI(ServerName.SMIN, "SSMI", "Terrascan netCDF (SMIN)"),
-        TRMM(ServerName.TMIN, "TRMM", "Terrascan netCDF (TMIN)");
+        TRMM(ServerName.TMIN, "TRMM", "Terrascan netCDF (TMIN)"),
+        POINT_ONE(ServerName.MDFHSERV, "MDFHSERV", "Test Entry", EntryType.POINT),
+        POINT_TWO(ServerName.MDHDSERV, "MDHDSERV", "Test Entry", EntryType.POINT),
+        POINT_THREE(ServerName.MDKSSERV, "MDKSSERV", "Test Entry", EntryType.POINT),
+        POINT_FOUR(ServerName.MDROSERV, "MDROSERV", "Test Entry", EntryType.POINT);
 
         /** Name of the server (should be four characters). */
         private final ServerName servName;
@@ -288,7 +292,7 @@ public class LocalAddeEntry implements AddeEntry {
     }
 
     public boolean isValid() {
-        if ((group.length() == 0) || (descriptor.length() == 0) || (name.length() == 0)) {
+        if ((group.isEmpty()) || (descriptor.isEmpty()) || (name.isEmpty())) {
             return false;
         }
         return true;
@@ -520,5 +524,4 @@ public class LocalAddeEntry implements AddeEntry {
             return new LocalAddeEntry(this);
         }
     }
-
 }
