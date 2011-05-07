@@ -42,7 +42,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/Chart.ht
   <li>  <a href="#chartlayout">Chart Layout</a></li>
   <li>  <a href="#menuoptions">Menu Options</a></li>  
 </ul>
-<a name="chartlines"></a>
+<a name="chartlineproperties" id="chartlines"></a>
 <div class="pagesubtitle">Chart Line Properties</div>
 <p>At the lowest level, you can set the properties of how each parameter or field
   is shown. This is done through the Chart Line Properties dialog, which is opened by right clicking on the parameter below the chart and selecting <strong>Chart Properties</strong>.</p>
@@ -171,12 +171,18 @@ them in the grid. A chart can also span multiple rows or columns. This is done b
 row or column.</p>
 <a name="menuoptions"></a>
 <div class="pagesubtitle">Menu Options</div>
-<p>There
+<p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="index.html#menus">Menus section</a> of the Layer Control's Overview page. However, there
 are several menu options that are unique to the Data Probe/Time Series display. These menus are found at the top of the <strong>Layer Controls</strong> tab of the <strong>Data Explorer</strong>.</p>
-<p> <strong>Edit Menu</strong></p>
+<p><strong>File Menu</strong></p>
 <ul class="propertylist">
+  <li class="propertylistitem"><strong>Export Current Time as CSV...</strong> - Exports the current time step's            data or all times as a comma separated file (CSV) by selecting   the <strong>File-&gt;Save</strong> menu.</li>
+  <li class="propertylistitem"><strong>Export All Times as CSV </strong> - Exports  all times as a comma   separated file (CSV).</li>
+  </ul>
+<p><strong>Edit Menu</strong></p>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Change Display Format</strong> - Changes how the data is displayed in the table. This template is html with   macros        that get replaced with the display value, unit, raw value and raw   data        unit.</li>
   <li class="propertylistitem"><strong>Probe Color</strong> - Changes the color of the probe in the Main Display Window.</li>
-  <li class="propertylistitem"><strong>Add Parameter - </strong>Opens a Field Selector window with the option to add another parameter to the display.  </li></ul>
+  <li class="propertylistitem"><strong>Add Parameter - </strong>Opens a Field Selector window with the option to add another parameter to the display.</li></ul>
 <p><strong>View Menu</strong>
 </p>
 <ul class="propertylist">
