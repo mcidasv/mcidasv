@@ -296,7 +296,7 @@ public class EntryStore {
      * @param type Look for entries matching this {@code EntryType}. Cannot be {@code null}.
      * 
      * @return Either a {@link java.util.List List} of entries or an empty {@code List}.
-     * 
+     *
      * @throws NullPointerException if {@code type} is {@code null}.
      */
     public List<AddeEntry> getLastAddedByType(final EntryType type) {
@@ -367,8 +367,8 @@ public class EntryStore {
     }
 
     /**
-     * Returns the {@link Set} of {@link AddeEntry#group}s that match
-     * the given {@code address} and {@code type}.
+     * Returns the {@link Set} of {@link AddeEntry#getGroup()}s
+     * that match the given {@code address} and {@code type}.
      * 
      * @param address ADDE server address whose groups are needed.
      * Cannot be {@code null}.
@@ -525,7 +525,7 @@ public class EntryStore {
     /**
      * Returns the complete {@link Set} of {@link RemoteAddeEntry}s.
      * 
-     * @return The {@code RemoteAddeEntry}s stored within {@link #entries}.
+     * @return The {@code RemoteAddeEntry}s stored within the available entries.
      */
     protected Set<RemoteAddeEntry> getRemoteEntries() {
         Set<RemoteAddeEntry> remotes = newLinkedHashSet(trie.size());
@@ -540,7 +540,7 @@ public class EntryStore {
     /**
      * Returns the complete {@link Set} of {@link LocalAddeEntry}s.
      * 
-     * @return The {@code LocalAddeEntry}s stored within {@link #entries}.
+     * @return The {@code LocalAddeEntry}s stored within the available entries.
      */
     protected Set<LocalAddeEntry> getLocalEntries() {
         Set<LocalAddeEntry> locals = newLinkedHashSet(trie.size());
