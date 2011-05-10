@@ -34,23 +34,18 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/level2/R
 <div class="pagesubtitle">Overview</div>
 <meta name="jhid" value="idv.controls.level2.rhicontrol">
 <p>The RHI (range-height indicator) display appears in the main 3D window and as a 2D plot in its display
-control. In order to display the RHI, the top level of the data type in the Fields
-  selection of the Field Selector must be selected. The control window contains
-  two tabs. The first shows the RHI in 2D:</p>
+control. Level II Radar data has three moments or data types: Reflectivity,   Radial Velocity, and Spectrum Width, indicated by the <img src="images/CrossSectionIcon.GIF" width="20" height="19" align=absmiddle> icon in the <strong>Field Selector</strong>. In order for Radar Cross   Section to be listed as a valid Display Type in the <strong>Field   Selector</strong>, either Reflectivity, RadialVelocity, or SpectrumWidth   must be chosen, not one of their individual elevation angles. The control window contains
+  two tabs, <strong>Display</strong> and <strong>Settings</strong>. </p>
+<p>The <strong>Display</strong> tab shows the RHI in 2D:</p>
 <div class="images"><img src="images/RadarRHI.jpg" width="521" height="397"></div>
-<p>The second shows settings to control the display:</p>
+<p>The <strong>Settings</strong> tab shows settings to control the display:</p>
 <div class="images"><img  src="images/ColorRhiControlGui2.gif"  alt="images/ColorRhiControlGui2.gif" ></div>
 <p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
   <li class="propertylistitem"><b>Station</b> - Shows the station location id, latitude, longitude, and altitude.</li>
-  <li class="propertylistitem"><b>Color Table</b> - The control has a color bar showing the active color table and the associated
-      high and low data values in the units the display is made in. As the mouse
-      pointer is moved over the color bar, the value at a particular color is
-      shown. Click on the color bar to open the <a  href="../../tools/ColorTableEditor.html">Color
-      Table Editor</a>. Or click on the button that displays the name of the
-      color table to show a popup menu that allows you to change the range, select
-      other color tables, etc.</li>
+  <li class="propertylistitem"><b>Color Table</b> - Shows the active color table and the associated        high and low data values in the units the display is made in. As   the mouse        pointer is moved over the color bar, the value at a particular   color is        shown. Right click on the color bar or click on the button that   displays the name of the Color Table to make modifications to the color   bar. This allows you to open the <a  href="../../tools/ColorTableEditor.html">Color
+      Table Editor</a>, change the range, select other color tables, etc.</li>
   <li class="propertylistitem"><b>Selector Position</b> - Uses the slider to change the position of the selector in the main display. Alternatively, a numerical value can be entered to the right of the slider.</li>
 	<li class="propertylistitem"><b>Vertical Scale</b> - Changes the vertical axis range of the RHI line.</li>
   <li class="propertylistitem"><b>Autorotate RHI</b> - Starts and stops autorotation of the RHI in the main 3D window. The 2D
@@ -60,7 +55,7 @@ control. In order to display the RHI, the top level of the data type in the Fiel
 </ul>
 <div class="pagesubtitle">Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="../index.html#menus">Menus section</a> of the Layer Control's Overview page. However, there is one option that is unique to this display.</p>
-<p>The <strong>View</strong> menu has this unique choice:</p>
+<p>The <strong>View</strong> menu has this unique option:</p>
 <ul class="propertylist">
   <li class="propertylistitem"><b>RHI</b> - Offers options to capture an image or movie and to change many <a href="../../tools/preferences/DisplayWindowPreferences.html">Display Window preferences</a>.</li>
 </ul>

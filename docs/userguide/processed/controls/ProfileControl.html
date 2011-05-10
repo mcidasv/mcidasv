@@ -32,9 +32,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/ProfileC
 <div class="pagetitle">Vertical Profile Controls</div>
 <xxxmeta xxxname="jhid" value="idv.controls.profilecontrol">
 <div class="pagesubtitle">Overview</div>
-<p>The Vertical Profile display controls show a plot of any number of field
-  values versus altitude. You can add new fields to show with the <strong>Edit-&gt;Add
-Parameter...</strong> menu.
+<p>The Vertical Profile display control shows a plot of any number of field
+  values versus altitude.
   See the <a href="Chart.html">Charts page</a> for more information about customizing the
 chart.</p>
 <div class="images"><img  src="images/ProfileControlGui.gif"  alt="images/ProfileControlGui.gif" ></div>
@@ -45,25 +44,26 @@ chart.</p>
       Lon:&quot;
       readout below the graph. Enter in a value in the latitude and/or longitude
       field and press return to set the value to move the location of the probe. </p>
-	  <p>The map position of the profile is shown in the main 3D view window by a
+	  <p>The map position of the profile is shown in the Main Display Window by a
     colored vertical line. There is a Selector Point on top of the vertical line.
-    You can move the vertical profile line over the map by dragging the Selector
-    Point with the left mouse button.</li>
+    You can move the vertical profile line by dragging the Selector
+  Point with the left mouse button.</li>
   <li class="propertylistitem"><img src="images/AnimationControls.gif" align="absmiddle" > <b> Time Animation Control</b> - These controls start and stop looping of displays when more than one data time is loaded.
         See more in <a href="../ui/Animation.html">Time Animation Control</a>.</li>
-  <li class="propertylistitem"><b>Reset Probe Position</b> - Resets the location of the probe to the default location of the center
-  of the data boundaries. This option is found under the <strong>Edit</strong> menu.</li>
-  <li class="propertylistitem"><b>Selector Color</b> - Changes the color of the selector point on top of the vertical profile
-      line by using the <strong>Edit-&gt;Selector Color</strong> menu.  </li>
-  <li class="propertylistitem"><b>Add Parameter...</b> - Opens a Field Selector window with the option to add another paramater to display. This is accessed through the <strong>Edit->Add
-        Parameter</strong> menu.</li>
-  <li class="propertylistitem"><b>Probe Position</b> - Controls how you can reposition the probe by preventing movement in the direction of certain axes.This is accessed through
-      the <strong>View-&gt;Probe-&gt;Position</strong> menu. There is also an option to reset the probe back to its initial position.</li>
-  <li class="propertylistitem"><strong>Probe Size</strong> - Increases and decreases the size of the probe in the Main Display Window. This is accessed through the <strong>View-&gt;Probe-&gt;Size</strong> menu. </li>
-  <li class="propertylistitem"><strong>Probe Shape </strong> - Changes the shape of the probe in the Main Display Window. This is accessed through the <strong>View-&gt;Probe-&gt;Probe
-        Shape</strong> menu.  </p>
 </ul>
-
+<div class="pagesubtitle">Menus</div>
+<p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="index.html#menus">Menus section</a> of the Layer Control's Overview page. However, there are some options that are unique to this display.</p>
+<p>The <strong>Edit</strong> menu has these unique options:</p>
+<ul class="propertylist">
+  <li class="propertylistitem"><b>Selector Color </b>- Changes the color of the shape representing the location of the probe in the Main Display Window.</li>
+  <li class="propertylistitem"><strong>Add Parameter... - </strong>Opens a Field Selector window, which allows you to add an additional parameter to the vertical profile from one of the added Data Sources.</li>
+</ul>
+<p>The <strong>View</strong> menu has these unique options:</p>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Parameters - </strong>Provides access to the <a href="Chart.html#chartlineproperties">Chart Line Properties window</a> for each parameter, change the unit of the displayed parameters, and the option to add or remove parameters.</li>
+  <li class="propertylistitem"><strong>Chart - </strong>Allows you to change the <a href="Chart.html#chartlayout">chart layout</a>, zoom in/out of the chart, save the chart, and access the Vertical <a href="Chart.html#plotproperties">Profile Properties window</a>.</li>
+  <li class="propertylistitem"><strong>Probe - </strong>Allows the user to change many display preferences of the probe, see the <a href="Chart.html#viewprobe">View-&gt;Probe menu option</a> on the Charts page.</li>
+</ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
