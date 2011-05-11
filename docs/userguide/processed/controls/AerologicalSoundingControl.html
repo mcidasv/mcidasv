@@ -33,30 +33,67 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/Aerologi
 <xxxmeta xxxname="jhid" value="idv.controls.aerologicalsoundingcontrol">
 <div class="pagesubtitle">Overview</div>
 The meteorological sounding display is available for:
-<ul class="propertylist">
-  <li>RAOBs (balloon soundings)</li>
-  <li>numerical weather prediction model output with temperature and humidity.
+RAOBs, 
+numerical weather prediction model output, and from a local file that contains aircraft track data.
     The dew-point temperature is computed by internal code from temperature and
-    relative humidity grids.</li>
-  <li>from a local file that contains aircraft track data.</li>
-</ul>
+    relative humidity grids.
 <p>To load sounding data see <a href="../quickstart/Sounding.html#connecting">Choosing
      RAOB Sounding Data</a> and <a href="../quickstart/Grids.html">Displaying
      Gridded Data</a>. The sounding display consists of a table of  aerological
-     parameters and three tabs in the <strong>Layer
-     Controls</strong>.
-     The first includes an aerological (thermodynamic) diagram (e.g., skew-T,
-    Stuve, Emagram):</p>
+    parameters and three tabs: <strong>Sounding Chart</strong>, <strong>Hodograph</strong>, and <strong>Table</strong>.</p>
+<p>The <strong>Sounding Chart </strong> tab includes an aerological (thermodynamic) diagram (e.g., skew-T,
+  Stuve, Emagram):</p>
 <p></p><a name="image1"></a>
 <div class="images"><img  src="images/GridSkewTControlGui.gif"  alt="The Grid Sounding Control with a Skew-T" ><br>
 <span class="caption">Image 1: The Grid Sounding Control with a Skew-T</span></div>
-<p>A label at the top of the sounding window shows the latitude-longitude position
-  of the sounding. The RAOB station location is shown on the main McIDAS-V display
-  as a small colored square. When displaying sounding plots made from gridded
-  model output, the position of the sounding is shown in the main 3D view window
+<p></p>
+<div class="pagesubtitle">Properties</div>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Station</strong> - Selects which station's sounding is being displayed when multiple soundings are loaded.</li>
+  <li class="propertylistitem"><strong>Dry Adiabats </strong> - Displays the dry adiabats on the Skew-T diagram.</li>
+  <li class="propertylistitem"><strong>Saturation Adiabats </strong> - Displays the saturation adiabats on the Skew-T diagram.</li>
+  <li class="propertylistitem"><strong>Mixing Ratio </strong> - Displays the mixing ratio lines on the Skew -T diagram.</li>
+  <li class="propertylistitem"><strong>Parcel Path</strong> - Displays the path of a parcel of air lifted pseudo-adiabatically
+      from the initial point to the top of the Skew- T diagram.</li>
+  <li class="propertylistitem"><strong>Virtual Temperature</strong> - Displays the virtual temperatures of the environmental profile and
+      pseudo-adiabatically lifted air-parcel.</li>
+  <li class="propertylistitem"><strong>Stations</strong> - Toggles the visibility of the RAOB station location mark in the Main Display
+      Window.</li>
+  <li class="propertylistitem"><strong>Parcel mode</strong> - Specifies how  the initial conditions of the pseudo-adiabatically
+      lifted air-parcel  are determined from
+      the environmental sounding 
+      according to the mode indicated. This will affect how the LNB, LFC, LCL, CAPE, and CIN are calculated. The choices are: 
+    </p>
+	  <p></p>
+	  <ul class="propertylist">
+	    <li class="propertylistitem"><strong>Bottom of Sounding</strong> - Determines the initial conditions of the
+	      parcel are  from the temperature and dew-point at the level of highest pressure. The path will  update whenever the profiles change.</li><p></p>
+	    <li class="propertylistitem"><strong>Below Cursor</strong> - Determines the initial conditions of the parcel
+	       from the temperature and dew-point profiles by computing
+	      the pressure-weighted mean potential temperature and water-vapor mixing-ratio
+	      of the atmosphere that lies below the cursor when the middle mouse
+	      button is pressed. Thus, pressing the middle button at 950 hPa for
+	      a sounding that starts at 1000 hPa will effectively mix the lower 50
+	      hPa of the atmosphere and lift the resulting parcel starting at 975
+	      hPa. The path will  update whenever the profiles change and as the cursor is dragged.</li><p></p>
+	    <li class="propertylistitem"><strong>At Cursor Pressure</strong> - Determines the initial pressure, in-situ
+	      temperature, and moisture content of the parcel  from the
+	      temperature and dew-point profiles at the pressure of the cursor when
+	      the middle mouse button is pressed. The initial moisture content is determined from
+	      the dew-point profile at the initial pressure. The path will update whenever the profiles change and as the cursor is dragged.</li><p></p>
+	    <li class="propertylistitem"><strong>At Cursor (Press, Temp)</strong> - The computed path of a lifted
+	      parcel is automatically updated when appropriate.  The initial pressure and in-situ temperature of the parcel equal the
+	      pressure and temperature values under the cursor when the middle mouse
+	      button is pressed. The path will update
+        whenever the profiles change and as the cursor is dragged.</li>
+  </ul>
+  <li class="propertylistitem"><strong>Wind spacing</strong> - Allows the user to control which wind levels are shown in the display.</li>
+</ul>
+<p>A label above the sounding's chart shows the station number, date, and time of the sounding. When displaying sounding plots made from gridded
+  model output, the position of the sounding is shown in the Main Display Window
   by a solid-color selector point and vertical line. You can move this model-output-based
   sounding position over the map by dragging the selector point with the left
-  button.</p>
+  mouse button.</p>
 <p> When displaying a sounding diagram made from gridded numerical weather model
   output, there is a pull-down selector menu of the model output valid times
   in the upper right corner.</p>
@@ -75,98 +112,62 @@ The meteorological sounding display is available for:
   along an isobar to the desired position, then move the pointer diagonally along
   an isotherm to keep the data-point at the desired position and to pick-up the
   next data-point. Repeat until done and then release the mouse button.</p>
-<p>The second tab shows a 3D hodograph display:</p>
+<p>The <strong>Hodograph</strong> tab shows a 3D hodograph display:</p>
 <div class="images"><img  src="images/GridSkewTControlGui2.gif"  alt="The Grid Sounding Control with a Skew-T" ><br>
 <span class="caption">Image 2: The Grid Sounding Control with a 3D Hodograph</span></div>
 <p>The hodograph is enabled if the plotted data includes wind fields. It can
   be rotated into 3D using the mouse and keyboard combinations. To reset the
   hodograph use <strong>Ctrl+R</strong>.</p>
-<p>The third tab shows a table of all values in the sounding:</p>
+<p>The <strong>Table</strong> tab shows a table of all values in the sounding:</p>
 <div class="images"><img  src="images/GridSkewTControlGui4.gif"  alt="The Grid Sounding Control with a Skew-T" ><br>
 <span class="caption">Image 1: The Grid Sounding Control with a Table of all Sounding Values</span></div>
 <p></p>
+<div class="pagesubtitle">Properties</div>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Show U and V</strong> - Lists the Speed and Direction values individually in the U
+      and V directions.</li>
+</ul>
 <div class="pagesubtitle">Aerological Parameters</div>
 <p>The table to the left of the sounding diagram contains aerological parameters
 determined from the atmospheric sounding displayed in the diagram. The following
 abbreviations are used:</p>
-<dl>
-  <dt><p>LCL - Lifting Condensation Level: the level at which a pseudo-adiabatically
-    lifted air-parcel becomes saturated with water-vapor. </dd></dt>
-  <dt><p>LFC - Level of Free Convection: the level at which the virtual temperature of
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>LCL: Lifting Condensation Level -</strong> The level at which a pseudo-adiabatically
+    lifted air-parcel becomes saturated with water-vapor. </li>
+  <li class="propertylistitem"><strong>LFC: Level of Free Convection -</strong> The level at which the virtual temperature of
     a pseudo-adiabatically lifted air-parcel changes from being less than the
-    environment's virtual temperature to being greater than the environment's. </dd></dt>
-  <dt><p>LNB - Level of Neutral Buoyancy: the level above the LFC at which the virtual
+    environment's virtual temperature to being greater than the environment's. </li>
+  <li class="propertylistitem"><strong>LNB: Level of Neutral Buoyancy -</strong> The level above the LFC at which the virtual
     temperature of a pseudo-adiabatically lifted air-parcel equals the environment's
-    virtual temperature. </dd></dt>
-  <dt><p>CAPE - Convective Available Potential Energy: the area between the virtual temperature
+    virtual temperature. </li>
+  <li class="propertylistitem"><strong>CAPE: Convective Available Potential Energy -</strong> The area between the virtual temperature
     trace of the pseudo-adiabatically lifted air-parcel and the virtual temperature
     trace of the environment from the LFC to the LNB in which the parcel's virtual
     temperature is greater than the environment's (positive CAPE connotes convective
-    development).</dd></dt>
-  <dt><p>CIN - Convective Inhibition: the negative of the area between the virtual temperature
+    development).</li>
+  <li class="propertylistitem"><strong>CIN: Convective Inhibition -</strong> The negative of the area between the virtual temperature
     trace of the pseudo-adiabatically lifted air-parcel and the virtual temperature
     trace of the environment from the parcel's initial conditions to the LFC
     in which the parcel's virtual temperature is less than the environment's
-    (negative CIN connotes initial positive work to lift the parcel). </dd></dt>
-</dl>
-<div class="pagesubtitle">Properties</div>
-<ul class="propertylist">
-  <li class="propertylistitem"><strong>Soundings</strong> - When displaying multiple sounding locations, use the pull down menu to
-      select a station to display.</li>
-  <li class="propertylistitem"><strong>Dry Adiabats </strong> - Displays the dry adiabats on the diagram.</li>
-  <li class="propertylistitem"><strong>Saturation Adiabats </strong> - Displays the saturation adiabats on the diagram.</li>
-  <li class="propertylistitem"><strong>Mixing Ratio </strong> - Displays the mixing ratio lines on the diagram.</li>
-  <li class="propertylistitem"><strong>Parcel Path</strong> - Displays the path of a parcel of air lifted pseudo-adiabatically
-      from the initial point to the top of the diagram.</li>
-  <li class="propertylistitem"><strong>Virtual Temperature</strong> - Displays the virtual temperatures of the environmental profile and
-      pseudo-adiabatically lifted air-parcel.</li>
-  <li class="propertylistitem"><strong>Grid Points</strong> - Turns on the display of the grid points in the main display.</li>
-  <li class="propertylistitem"><strong>Stations</strong> - Toggles the visibility of the RAOB station location mark in the main display
-      window.</li>
-  <li class="propertylistitem"><strong>Parcel mode</strong> - Use the pull down menu to specify how the initial conditions of the pseudo-adiabatically
-      lifted air-parcel (i.e. the parcel's pressure, temperature, and moisture
-      content at the start of the pseudoadiabatic lifting) are determined from
-      the environmental sounding (i.e. the temperature and dew-point profiles
-      according to the mode indicated. The choices are: </p>
-	  <p></p>
-	  <ul class="propertylist">
-	    <li class="propertylistitem"><strong>Bottom of Sounding</strong> - The initial conditions of the
-	      parcel are determined from the temperature and dew-point at the lowest
-        (i.e. highest pressure).</li><p></p>
-	    <li class="propertylistitem"><strong>Below Cursor</strong> - The initial conditions of the parcel
-	      are determined from the temperature and dew-point profiles by computing
-	      the pressure-weighted mean potential temperature and water-vapor mixing-ratio
-	      of the atmosphere that lies below the cursor when the middle mouse
-	      button is pressed. Thus, pressing the middle button at 950 hPa for
-	      a sounding that starts at 1000 hPa will effectively mix the lower 50
-	      hPa of the atmosphere and lift the resulting parcel starting at 975
-	      hPa.</li><p></p>
-	    <li class="propertylistitem"><strong>At Cursor Pressure</strong> - The initial pressure, in-situ
-	      temperature, and moisture content of the parcel are taken from the
-	      temperature and dew-point profiles at the pressure of the cursor when
-	      the middle mouse button is pressed. In <b>At Cursor (Press, Temp)</b> mode,
-	      the initial pressure and in-situ temperature of the parcel equal the
-	      pressure and temperature values under the cursor when the middle mouse
-	      button is pressed. The initial moisture content is determined from
-	      the dew-point profile at the initial pressure.</li><p></p>
-	    <li class="propertylistitem"><strong>At Cursor (Press, Temp)</strong> - The computed path of a lifted
-	      parcel is automatically updated when appropriate. In both <b>Below Cursor</b>, <b>At
-	      Cursor Pressure</b>, and <b>At Cursor (Press, Temp)</b> modes, the path
-	      will update as the cursor is dragged. In all modes, the path will update
-        whenever the profiles change.</li>
-  </ul>
-  <li class="propertylistitem"><strong>Wind spacing</strong> - Allows the user to control which wind levels are shown in the display.</li>
-  <li class="propertylistitem"><strong>Reset Sounding</strong> - Resets the temperature and dewpoint profiles back to their original values
-      by selecting <strong>Edit-&gt;Reset Sounding</strong>. </li>
-  <li class="propertylistitem"><strong>Show U and V</strong> - When checked, Speed and Direction values in the table are changed to U
-      and V.</li>
-  <li class="propertylistitem"><strong>Export Sounding Table to File</strong> - Saves the sounding table as an Excel or CSV file by selecting <strong>File
-        -&gt; Save -&gt; Export Sounding Table to File...</strong>. </li>
-  <li class="propertylistitem"><strong>Selector Color</strong> - Changes the color of the selector in the main display by selecting <strong>Edit
-        -&gt; Selector
-      Color</strong>.
+    (negative CIN connotes initial positive work to lift the parcel). </li>
 </ul>
-
+<div class="pagesubtitle">Menus</div>
+<p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="index.html#menus">Menus section</a> of the Layer Control's Overview page. However, there are some options that are unique to this display.</p>
+<p>The <strong>File</strong> menu has this unique option:</p>
+<ul class="propertylist">
+  <li class="propertylistitem"><b>Export Sounding Table to File... - </b>Exports the data in the <strong>Table </strong>tab to an Excel file.</li>
+</ul>
+<p>The <strong>Edit</strong> menu has these unique options:</p>
+<ul class="propertylist">
+  <p><b>Reset Sounding</b><b> </b>- Reverts the sounding back to its initial configuration after any modifications have been made to it.
+  </p>
+  <p><strong>Selector Color - </strong>Changes the color of the shape representing the location of the sounding in the Main Display Window.</p>
+</ul>
+<p>The <strong>View</strong> menu has these unique options:</p>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Use Data Projection - </strong>Uses the standard data projection to display the data.</li>
+  <li class="propertylistitem"><strong>Sounding Chart -</strong> Allows you to capture an image or movie of the sounding and change many aesthetic preferences.</li>
+  <li class="propertylistitem"><strong>Hodograph -</strong> Allows you to capture an image or movie of the hodograph and change aesthetic preferences related to the Main Display Window</ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">

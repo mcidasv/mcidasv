@@ -32,25 +32,26 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/ObsListC
 <div class="pagetitle">Observation List Controls</div>
 <xxxmeta xxxname="jhid" value="idv.controls.obslistcontrol">
 <div class="pagesubtitle">Overview</div>
-<p>The Observation List Controls show a set of observation data in a textual
+<p>The Observation List Control shows a set of observation data in a textual
   list format.</p>
 <div class="images"><img  src="images/ObsListControlGui.gif"  alt="images/ObsListControlGui.gif" ></div>
 <p></p>
+<p>The  Select Fields button opens this Field Selector window:</p>
+<div class="images"><img src="images/ObListFieldSelector.gif" width="487" height="263"></div>
+<p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><b>Select Fields</b> - Use the <strong>Select Fields</strong> button to show a dialog
-      that allows you to select what fields are displayed in the table.</li>
-  <li class="propertylistitem"><b>Only Show Every</b> - This field allows you to sub-set the data that is being displayed by
-      only showing every N minutes. For normal observation data (e.g., station
-      data) this field is not needed. However, for observation data that contains
-      many times (e.g., airplane track data) you can use this field to subset
-      the times.</li>
-  <li class="propertylistitem"><b>Show Raw Data</b> - The <strong>Show Raw Data</strong> button controls whether the
-      data in the table is formatted or show as raw data.</li>
-  <li class="propertylistitem"><b>Exporting Data</b> - The <strong>File-&gt;Save-&gt;Export Table</strong> menu item allows
-      you to export the table as a comma separated value (CSV) file.</p>
+  <li class="propertylistitem"><img src="images/SelectFields.gif" width="106" height="26" align=absmiddle> - Opens a Field Selector window
+      that allows you to select what Fields are listed in the table. To add a Field to the table, click on a Field under All Fields, and select Add and Apply. To remove a Field from the table, click on a Field under Current Fields, and select Remove and Apply.</li>
+  <li class="propertylistitem"><b>Only Show Every</b> - Allows you to set a time interval where data will be listed only once every N minutes. This makes the list in the chart shorter and easier to follow if having every time step is not important.</li>
+  <li class="propertylistitem"><b>Show Raw Data</b> - Displays the data in its raw format in the chart before any rounding/formatting is done to the data by McIDAS-V.</li>
 </ul>
-
+<div class="pagesubtitle">Menus</div>
+<p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="index.html#menus">Menus section</a> of the Layer Control's Overview page. However, there is one option that is unique to this display.</p>
+<p>The <strong>File</strong> menu has this unique option:</p>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Export Table to CSV... - </strong>Allows you to save the data in the Comma-Separated Values (*.csv) format.</li>
+</ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
