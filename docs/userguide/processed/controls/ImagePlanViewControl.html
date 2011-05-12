@@ -32,25 +32,30 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/ImagePla
 <div class="pagetitle">Image Controls</div>
 <xxxmeta xxxname="jhid" value="idv.controls.imageplanviewcontrol">
 <div class="pagesubtitle">Overview</div>
-<p>The Image Controls are used to adjust displays of satellite imagery.</p>
+<p>The Image Controls are used to adjust displays of satellite imagery. The control window consists of two tabs: <strong>Settings</strong> and <strong>Histogram</strong>.</p>
+<p>The <strong>Settings</strong> tab allows you to customize many aspects of the appearance of your display:</p>
 <div class="images"><img  src="images/ImagePlanViewControlGui.gif"  alt="images/ImagePlanViewControlGui.gif" ></div>
 <p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><b>Color Table</b> - The control has a color bar showing the active color table and the associated
-      high and low data values in the units the display is made in. As the mouse
-      pointer is moved over the color bar, the value at a particular color is
-      shown. Click on the color bar to start the <a  href="../tools/ColorTableEditor.html">Color
-      Table Editor</a>. Or click on the button that displays the name of the
-      color table to show a popup menu that allows you to change the range, select
-      other color tables, etc.</li>
-  <li class="propertylistitem"><b>Vertical Position</b> - This slider allows you to set the vertical position of the Image.</li>
-  <li class="propertylistitem"><b>Resampling</b> - Adjust the <strong>Pixel Sampling</strong> slider to change
-      the resolution of the image. A larger number makes a lower resolution (coarser)
-      display.</p>
-  <li class="propertylistitem"><b>Texture Quality</b> - This slider allows you to set the quality of the displayed texture of Image Control. A higher quality will take longer to render and more memory.</p>
+  <li class="propertylistitem"><b>Color Table</b> - Shows the active color table and the associated        high and low data values in the units the display is made in. As   the mouse        pointer is moved over the color bar, the value at a particular   color is        shown. Right click on the color bar or click on the button that   displays the name of the Color Table to make modifications to the color   bar. This allows you to open the <a  href="../tools/ColorTableEditor.html">Color
+      Table Editor</a>, change the range, select other color tables, etc.</li>
+  <li class="propertylistitem"><b>Vertical Position</b> - Changes the vertical position of the satellite display with respect to other variables being displayed in the Main   Display Window.</li>
+  <li class="propertylistitem"><b>Resampling</b> - Changes
+      the resolution of the image. A larger number makes a lower resolution display.
+    </p>
+  <li class="propertylistitem"><b>Texture Quality</b> - Sets the quality of the displayed texture of Image Control. A higher quality will take longer to render and more memory.</p>
 </ul>
-
+<p>The <strong>Histogram</strong> tab allows you to visualize a histogram of your Satellite data:</p>
+<div class="images"><img src="images/ImagePlanViewControlGui2.gif" width="585" height="346"></div>
+<p></p>
+There are many ways that you can customize this histogram. If you right-click on the histogram and select Properties, you can get to a <a href="Chart.html#plotproperties">Plot Properties dialog window</a> which allows you to change many aesthetic properties of the histogram.
+<div class="pagesubtitle">Menus</div>
+<p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="index.html#menus">Menus section</a> of the Layer Control's Overview page. However, there is one option that is unique to this display.</p>
+<p>The <strong>View</strong> menu has this unique option:</p>
+<ul class="propertylist">
+  <li class="propertylistitem"><b>Use Native Image Projection</b> - Re-centers the display and resets the zoom level back to the display's initial settings without changing any other preferences you have modified.</li>
+</ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">

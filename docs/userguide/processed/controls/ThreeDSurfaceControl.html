@@ -33,29 +33,26 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/ThreeDSu
 <xxxmeta xxxname="jhid" value="idv.controls.threedsurfacecontrol">
 <div class="pagesubtitle">Overview</div>
 <p>Isosurfaces can be made in two types of displays, regular isosurfaces, and
-  isosurfaces colored by another field. An isosurface is a 3D surface mapping
+  isosurfaces colored by another parameter. An isosurface is a 3D surface mapping
   the location of a single parameter value through a 3D field. Isosurfaces are
   a 3D analog of a single contour line in a 2D plot; the intersection of an isosurface
   and any plane is a contour line of the same value in that plane.</p>
 <p></p>
 <div class="images"><img  src="images/ThreeDSurfaceControlGui.gif"  alt="images/ThreeDSurfaceControlGui.gif" ></div>
-<p>You can request an isosurface colored with a range of colors, where colors
-  indicate the values of another field, not the one used to make the shape of
-  the surface. A common use is to color isosurfaces by height (geopotential height
-  in some grid output) to show height of features above the surface by color.</p>
-<div class="pagesubtitle">Properties</div>
-<p><ul class="propertylist">
-  <li class="propertylistitem"><b>Color Table</b> - The control has a color bar showing the active color table and the associated
-      high and low data values in the units the display is made in. As the mouse
-      pointer is moved over the color bar, the value at a particular color is
-      shown. Click on the color bar to start the <a  href="../tools/ColorTableEditor.html">Color
-      Table Editor</a>. Or click on the button that displays the name of the
-      color table to show a popup menu that allows you to change the range, select
-      other color tables, etc.</li>
-  <li class="propertylistitem"><b>Isosurface Value</b> - Click on the <img src="../ui/images/Slider16.gif"> button or enter a
-      value in the field and press return to set the value of the isosurface.</p>
-</ul></p>
 <p></p>
+<div class="pagesubtitle">Properties</div>
+<ul class="propertylist">
+  <li class="propertylistitem"><b>Color Table</b> - Shows the active color table and the associated        high and low data values in the units the display is made in. As   the mouse        pointer is moved over the color bar, the value at a particular   color is        shown. Right click on the color bar or click on the button that   displays the name of the Color Table to make modifications to the color   bar. This allows you to open the <a  href="../tools/ColorTableEditor.html">Color
+      Table Editor</a>, change the range, select other color tables, etc.</li>
+  <li class="propertylistitem"><b>Isosurface Value</b> - Sets the isosurface value. You can do this by clicking the <img src="../ui/images/Slider16.gif"> button or entering a
+      value in the field and press Return.</li>
+</ul>
+<div class="pagesubtitle">Menus</div>
+<p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="../index.html#menus">Menus section</a> of the Layer Control's Overview page. However, there is one option that is unique to this display.</p>
+<p>The <strong>View</strong> menu has this unique option:</p>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Use Data Projection - </strong>Re-centers the display and resets the zoom level back to the display's initial settings without changing any other preferences you have modified.</li>
+</ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
