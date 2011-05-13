@@ -29,134 +29,80 @@ function setParentPage() { if (parent.setPage) parent.setPage('ui/DisplayMenus.h
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Display Menus</div>
 The <strong>View</strong> and <strong>Projections</strong> menus
-are associated with the 3D display.
+are associated with the 3D display and are located in the Main Display Window.
 <ul class="childlist">
   <li><a href="#viewmenu">View Menu</a></li>
   <li><a href="#projectionmenu">Projections Menu</a></li>
 </ul>
 <a name="viewmenu" id="viewmenu"></a>
 <div class="pagesubtitle">View Menu</div>
-Each display has a <strong>View</strong> and <strong>Projections</strong> menu.
 The <strong>View</strong> menu lists the displays shown in this window,
 allows you to change the point of view, capture images and movies, and make some
-other changes in the overall view.
+other changes to the overall display.
 <ul class="propertylist">
-  <li class=propertylistitem><strong>Displays</strong> - deals with the displays that are shown in
-      this particular view, which are shown at the bottom of the menu.
-    <p></p>
+  <li class=propertylistitem><strong>Displays</strong> - Controls many basic aspects of the Main Display Window.</li>
     <ul class="propertylist">
-      <li class=propertylistitem><strong>Hide/Embed Legend</strong> - hides or shows the legend in the main display window.</div>
-      </li>
-      <li class=propertylistitem><strong>Float/Embed Legend</strong> - floats or redocks the legend in the main display
-          window.</div>
-      </li>
-      <li class=propertylistitem><strong>Remove All Displays</strong> - removes the displays shown in this view.</div>
-      </li>
-      <li><strong>Visibility Animation</strong> - cycles through the visibility of each layer, showing
-          one at a time. Click the check box "on" to start animation, check off
-          to stop. You can increase or decrease the speed with the provided Faster
-          and Slower choices. Note this is <em>not</em> a time animation loop;
-          it loops through the visibility of the layers present in this view
-          window.
-      </li>
+      <li class=propertylistitem><strong>Hide/Embed Legend</strong> - Removes the Legend and docks the Legend back to the Main Display Window.</li>
+      <li class=propertylistitem><strong>Float/Embed Legend</strong> - Floats the Legend in a separate window and docks the Legend back to the Main Display Window.</li>
+      <li class=propertylistitem><strong>Remove All Displays</strong> - Removes the displays shown in this view.</li>
+<li class=propertylistitem><strong>Visibility Animation</strong> - Cycles through the visibility of each layer, showing one at a time. Click the check box "on" to start animation, check off to stop. You can increase or decrease the speed with the provided Faster and Slower choices. Note this is <em>not</em> a time animation loop; it loops through the visibility of the layers present in this view window. </li>
     </ul>
-  </li>
-  <li class=propertylistitem><strong>Capture</strong> - captures the current view as an image, send
-      it to a printer, or capture a  movie. See the <a href="../tools/ImageCaptures.html">Image and Movie Capture</a> page for
-      more information about available image and movie types.</div>
-  </li>
-  <li class=propertylistitem><strong>Show</strong> - allows you to turn on or off different flags relating
-      to the 3D display.</div>
-  </li>
-  <li class=propertylistitem><strong>Viewpoint</strong> - allows you to change the point of view.
-    <p></p>
+  <li class=propertylistitem><strong>Capture</strong> - Captures the current view as an image, sends it to a printer, or captures a  movie. See the <a href="../tools/ImageCaptures.html">Image and Movie Capture</a> page for more information about available image and movie types.</li>
+  <li class=propertylistitem><strong>Show</strong> - Allows you to turn on or off different flags relating to the 3D display.</li>
+  <ul class="propertylist">
+  <li class=propertylistitem><strong>Wireframe Box -</strong> Displays the white wireframe box around the area of interest in the display.</li>
+  <li class=propertylistitem><strong>&quot;Please Wait Message&quot; -</strong> Shows the please wait message on the bottom left of the Main Display Window when McIDAS-V is loading data.</li>
+  <li class=propertylistitem><strong>Display List -</strong> Lists the name of product you are displaying at the bottom of the Main Display Window.</li>
+  <li class=propertylistitem><strong>Clip View At Box -</strong> Shows only the background map and data in the area inside of the Wireframe Box.</li>
+  <li class=propertylistitem><strong>Cursor Readout - </strong>Displays the Latitude, Longitude, and Altitude at the location of the mouse over the Main Display Window without having to probe the data with the middle mouse button.</li>
+  <li class=propertylistitem><strong>Display Scales -</strong> Adds a scale to the edge of the Wireframe Box.</li>
+  <li class=propertylistitem><strong>Times In View -</strong> Lists the time and time step at the bottom of the Main Display Window for each image.</li>
+  <li class=propertylistitem><strong>Overview Map -</strong> Adds an overview map to the Legend, showing the area where you are viewing in the Main Display Window.</li>
+  <li class=propertylistitem><strong>Earth Navigation Panel -</strong> Adds a navigation panel to the bottom of the Main Display Window. You can use the arrows to navigate through space, or enter in an address in the Go To Address field.</li>
+  </ul>
+  <li class=propertylistitem><strong>Viewpoint</strong> - Allows you to change your point of view.</li>
     <ul class="propertylist">
-      <li class=propertylistitem><strong>Top View through West</strong> - represents the point of view to one of
-          the orthogonal directions.</div>
-      </li>
-      <li class=propertylistitem><strong>Perspective View</strong> - provides an alternate 3D view of the display. The
-          default is a parallel projection.</div>
-      </li>
-      <li class=propertylistitem><strong>Viewpoint Dialog</strong> - shows a dialog box for you to enter the azimuth
-          and tilt of a desired point of view. Azimuth is from North, clockwise
-          to 360 degrees. Tilt is degrees down from overhead, vertical. A top
-          view has tilt of 0. Oblique views from the southeast have azimuth 135,
-          and a tilt of about 45 degrees. A view from the "east" has an azimuth
-          of 90, tilt 90.</div>
-      </li>
-      <li class=propertylistitem><strong>Vertical Scale</strong> - shows a dialog box to set the vertical scaling
-          between the top and bottom of the wire frame box. The scale is linear.
-          You can specify the units for the max and min values. Units must be
-          convertible with meters (e.g., km, ft, fathoms, etc)
-        </div>
-      </li>
-      <li><strong>Auto-rotate View</strong> - turns on/off an automatic rotation of the main
-          display.</div>
-      </li>
+      <li class=propertylistitem><strong>Top View through West</strong> - Represents the point of view to one of the orthogonal directions.</li>
+      <li class=propertylistitem><strong>Perspective View</strong> - Provides an alternate 3D view of the display. The default is a parallel projection.</li>
+      <li class=propertylistitem><strong>Viewpoint Dialog</strong> - shows a dialog box for you to enter the azimuth and tilt of a desired point of view. Azimuth is from North, clockwise to 360 degrees. Tilt is degrees down from overhead, vertical.</li>
+      <li class=propertylistitem><strong>Vertical Scale</strong> - Shows a dialog box to set the vertical scaling between the top and bottom of the wire frame box. The scale is linear. You can specify the units for the max and min values. Units must be convertible with meters (e.g., km, ft, fathoms, etc).</li>
+      <li class=propertylistitem><strong>Auto-rotate View</strong> - Turns on/off an automatic rotation of the main display.</li>
     </ul>
-  </li>
-  <li class=propertylistitem><strong>Color</strong> - changes the background and foreground colors of the
-      view (not the map lines) to predefined colors or set your own. When setting
-      your own colors you can also save off the chosen color pair as a named
-      predefined color pair which will appear in the list.</div>
-  </li>
-  <li class=propertylistitem><strong>Full Screen</strong> - shows the current view in full screen mode.</li>
-  <li class=propertylistitem><strong>Animation Timeline</strong> - shows the <a href="../tools/Timeline.html">Animation
-        Timeline</a></div>
-  </li>
-  <li class=propertylistitem><strong><a name="flythrough" id="flythrough"></a>Flythrough - </strong>allows the user to plot probed data on the view screen from the perspective of an airplane dashboard. The gauges on the dashboard will represent the data on the map at the location of the airplane. This is an IDV tool, and more information about this feature can be found through the <em>IDV User's Guide</em>.</li>
-  <li class=propertylistitem><strong>Properties</strong> - shows the properties dialog for the view. Allows you
-      to set aspect ratio, vertical scale, flags, color, etc.</div>
-  </li>
+  <li class=propertylistitem><strong>Color</strong> - Changes the background and foreground colors of the view (not the map lines) to predefined colors or set your own. When setting your own colors you can also save off the chosen color pair as a named predefined color pair which will appear in the list.</li>
+  <li class=propertylistitem><strong>Full Screen</strong> - Shows the current view in full screen mode.</li>
+  <li class=propertylistitem><strong>Animation Timeline</strong> - Shows the <a href="../tools/Timeline.html">Animation Timeline</a></li>
+  <li class=propertylistitem><strong><a name="flythrough" id="flythrough"></a>Flythrough - </strong>Allows the user  view the data in the Main Display Window from the perspective of an airplane dashboard. The gauges on the dashboard will represent the probed values of the data on the map at the location of the airplane. This is an IDV tool, and more information about this feature can be found through the <em>IDV User's Guide</em>.</li>
+  <li class=propertylistitem><strong>Properties</strong> - Shows the properties dialog for the view. Allows you to set aspect ratio, vertical scale, flags, color, etc.</li>
 </ul>
 <a name="projectionmenu" id="projectionmenu"></a>
 <div class="pagesubtitle">Projections Menu</div>
 The <strong>Projections</strong> menu lets you change the map projection
 in the 3 dimensional display.
 <ul class="propertylist">
-  <li class=propertylistitem><strong>Predefined</strong> - contains the list of pre-defined projections you can
-      choose from, including both system-supplied and your own projections.</div>
-  </li>
-  <li class=propertylistitem><strong>From Displays</strong> - lists the native data projections of any displays being
-      shown.</div>
-  </li>
-  <li class=propertylistitem><strong>Viewpoints</strong> - allows you to define, select, or delete saved viewpoints.</div>
-  </li>
-  <li class=propertylistitem><strong>History</strong> - contains the projections that have been used for this
-      view. It allows you to easily go back to prior projections.</div>
-  </li>
-  <li class=propertylistitem><strong>New/Edit</strong> - shows the <a href="../tools/ProjectionManager.html">Projection
-        Manager</a> dialog to view, create and edit projections.</div>
-  </li>
-  <li class=propertylistitem><strong>Use Displayed Area</strong> - resets the projection to that of the current zoom level.</div>
-  </li>
+  <li class=propertylistitem><strong>Predefined</strong> - Contains the list of pre-defined projections you can choose from, including both system-supplied and your own projections.</li>
+  <li class=propertylistitem><strong>From Displays</strong> - Lists the native data projections of any displays being shown.</li>
+  <li class=propertylistitem><strong>Viewpoints</strong> - Allows you to define, select, or delete saved viewpoints.</li>
+  <li class=propertylistitem><strong>History</strong> - Contains the projections that have been used for this view</li>
+  <li class=propertylistitem><strong>New/Edit</strong> - Opens the <a href="../tools/ProjectionManager.html">Projection Manager</a> dialog to view, create and edit projections.</li>
+  <li class=propertylistitem><strong>Use Displayed Area</strong> - Resets the projection such that the area you are zoomed over will be at the center of the Wireframe Box at your current zoom level..</li>
   <a name="goto"></a>
-  <li class=propertylistitem><strong>Go to Address</strong> - changes the projection to a given address, zip code,
-      city, etc.
+  <li class=propertylistitem><strong>Go to Address</strong> - Changes the projection to a given address, zip code,
+      city, etc.</li>
       <div class="images"><img src="images/Address.gif" alt="images/Address.gif"></div>
      <p> The formats include:</p>
   </li>
-
 <ul class="propertylist">
 <li class="propertylistitem">
 12345 oak street, my town, my state<br>
   my town, my state<br>
   80303 (zip code)<br>
-  latitude longitude "ip" for the location of this computer
-</li>
+  latitude longitude "ip" for the location of this computer</li>
 </ul>
   <a name="autosetpro"></a>
-  <li class=propertylistitem><strong>Auto-Set Projection</strong> - toggles the behavior of automatically setting the projection
-        to the projection of the most recent display that has been added.</div>
-  </li>
-  <li class=propertylistitem><strong>Share Views</strong> - controls whether <a href="../collab/Sharing.html">Sharing</a> is
-        turned on or off for this view. If sharing is turned on then the view point
-        and projection changes are shared with any other views that also have sharing
-        turned on.</div>
-  </li>
-  <li class=propertylistitem><strong>Set Share Group</strong> - enables you to select different share groups for multiple
-        panels.</div>
-  </li>
+  <li class=propertylistitem><strong>Auto-Set Projection</strong> - Toggles the behavior of automatically setting the projection
+        to the projection of the most recent display that has been added.</li>
+  <li class=propertylistitem><strong>Share Views</strong> - Controls whether <a href="../collab/Sharing.html">Sharing</a> is turned on or off for this view. If sharing is turned on then the view point and projection changes are shared with any other views that also have sharing turned on.</li>
+  <li class=propertylistitem><strong>Set Share Group</strong> - Enables you to select different share groups for multiple panels.</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
