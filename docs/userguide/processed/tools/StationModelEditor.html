@@ -29,126 +29,96 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/StationMode
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Layout Model Editor</div>
 <p>The Layout Model Editor composes the layout and style used to plot data on
-  a map from observations at discrete points (e.g., weather observations).</p>
-<p>The Layout Model Editor is used to edit existing models or to create new models.
+  a map from observations at discrete points (e.g., weather observations). This tool is used to edit existing models or to create new models.
   The Editor is opened with the <strong>Tools-&gt;Station Model Template </strong> menu.</p>
 <a name="image1" id="image1"></a>
 <div class="images"><img src="images/StationLayoutEditor.png" alt="Layout Model Editor"> <br>
   <span class="caption">Image 1: Layout Model Editor</span></div>
-<p>To see any model, use the <strong>Layout Models</strong> menu. The
-  models that the user has edited or created will have "(local)" after the name.</p>
-<p>The display shows a horizontal line and a vertical line through the observation
-  location. These axis lines give a reference point. A station model consists
-  of a set of shapes which are added by clicking on an item in the left column
-  and then clicking where you want to place it (relative to the observation center
-  point or location point). It will appear with a surrounding outline box and
-  8 control points you can drag to resize the item. When a shape is created its
-  property dialog is shown (described below).</p>
-<p>Shapes can be moved by dragging with the mouse. Click on any item with the
-  right mouse button to see a pop-up menu of choices to control its appearance.
-  You can delete an item, set its color, or change font sizes, view its properties,
-  etc.</p>
-<p>Each item has a single red "Alignment point" that is used for to locate the
-  actual displays with respect to the center point of the observation. So, for
-  example, say you want a text label (whose actual width in the main display
-  depends on the data it is showing) to be aligned so that its upper right corner
-  is at the latitude of the observation and a little right. You would set the
-  shape's alignment point to be "NW" and then position the shape so that the
-  Y of the alignment point is on the X-axis and the X of the point is a bit right
-  of center.</p>
-<p>The <strong>Center</strong> menu in the popup-menu allows you to
-  center the alignment point vertically and horizontally.</p>
-<p>You can also align a collection of shapes. First select the shapes (shift-click).
-  Then select one of the six alignment icons under the top menu bar; the left
-  most icon means align all the selected items under a horizontal line.</p>
-<p>To save a station model you have composed, use the <strong>File-&gt;Save</strong> or <strong>File-&gt;Save
-    As...</strong> menu items. When you save a station model any point data displays
-    that are using it will be updated. To remove a model, use the <strong>File-&gt;Remove</strong> menu
-    item. You cannot remove a model supplied with McIDAS-V, but you can remove
-    local models.</p>
-<p>You use the <strong>Properties</strong> choice in the pop-up menu
-  to show the properties dialog window for that shape. The properties dialog
-  is made up of a number of tabs.</p>
-<blockquote>Note: The <strong>Apply</strong> and <strong>OK</strong> buttons
-    applies the properties to the shape in the editor. The <strong>OK</strong> and <strong>Cancel</strong> buttons
-    closes this dialog. The <strong>Save</strong> button does and apply
-    and also saves the station model as a whole (just like doing <strong>File-&gt;Save</strong>).
-    When the station model is saved then any displays that are using it are updated.
-    The <strong>Save</strong> button allows you to see what your changes
-    to the properties will look like in the main display.</blockquote>
+<p>To see any model, use the <strong>Layout Models</strong> menu. The models that the user has edited or created will have "(local)" after the name.</p>
+<p>The display shows a horizontal line and a vertical line through the observation location. These axis lines give a reference point. A station model consists of a set of shapes which are added by clicking on an item in the left column and then clicking where you want to place it (relative to the observation center point or location point). It will appear with a surrounding outline box and 8 control points you can drag to resize the item. When a shape is created its property dialog is shown (described below).</p>
+<p>Shapes can be moved by dragging with the mouse. Click on any item with the right mouse button to see a pop-up menu of choices to control its appearance. You can delete an item, set its color, or change font sizes, view its properties, etc.</p>
+<p>Each item has a single red "Alignment point" that is used for to locate the actual displays with respect to the center point of the observation. So, for example, say you want a text label (whose actual width in the main display depends on the data it is showing) to be aligned so that its upper right corner is at the latitude of the observation and a little right. You would set the shape's alignment point to be "NW" and then position the shape so that the Y of the alignment point is on the X-axis and the X of the point is a bit right of center.</p>
+<p>The <strong>Center</strong> menu in the popup-menu allows you to center the alignment point vertically and horizontally.</p>
+<p>You can also align a collection of shapes. First select the shapes (shift-click). Then select one of the six alignment icons under the top menu bar; the left most icon means align all the selected items under a horizontal line.</p>
+<p>To save a station model you have composed, use the <strong>File-&gt;Save</strong> or <strong>File-&gt;Save As...</strong> menu items. When you save a station model any point data displays that are using it will be updated. To remove a model, use the <strong>File-&gt;Remove</strong> menu item. You cannot remove a model supplied with McIDAS-V, but you can remove local models.</p>
+<p>You use the <strong>Properties</strong> choice in the pop-up menu to show the properties dialog window for that shape. The properties dialog is made up of a number of tabs.</p>
+<blockquote>Note: The <strong>Apply</strong> and <strong>OK</strong> buttons applies the properties to the shape in the editor. The <strong>OK</strong> and <strong>Cancel</strong> buttons closes this dialog. The <strong>Save</strong> button does and apply and also saves the station model as a whole (just like doing <strong>File-&gt;Save</strong>). When the station model is saved then any displays that are using it are updated. The <strong>Save</strong> button allows you to see what your changes to the properties will look like in the main display.</blockquote>
 <h4>Properties Dialog - Display Tab<a name="image2" id="image2"></a></h4>
-
-<div class="images"><img src="images/StationModelPropertiesDisplay.gif" alt="Properties Dialog - Display"><br>
-<span class="caption">Image 2: Properties Dialog - Display</span></div>
-
-<p>   This tab allows you to assign which observation variable is associated with
-    that item. Numerical values should appear in a "Value" item, text in a "Text" item,
-etc. You can also set units and the display format.</p>
-<p>Parameter identifiers within a station model can hold embedded Jython
-      code. This allows you to do operations on the values and provide more extensive
-      formatting. Any parameter that begins with "=" is treated as a Jython expression.
-  For example, you can enter:</p>
+<div class="images"><img src="images/StationModelPropertiesDisplay.gif" alt="Properties Dialog - Display"><br> <span class="caption">Image 2: Properties Dialog - Display</span></div>
+<p>This tab allows you to assign which observation variable is associated with that item. Numerical values should appear in a "Value" item, text in a "Text" item, etc. You can also set units and the display format.</p>
+<p>Parameter identifiers within a station model can hold embedded Jython code. This allows you to do operations on the values and provide more extensive formatting. Any parameter that begins with "=" is treated as a Jython expression. For example, you can enter:</p>
 <blockquote><pre>
 =T-TD
   </pre></blockquote>
-<p>to calculate the dewpoint depression. You can format the text that is shown.
-  For example you can enter:
-</p>
+<p>to calculate the dewpoint depression. You can format the text that is shown. For example you can enter:</p>
 <blockquote>
 <pre>
 ='TD:'+str(T-TD)
   </pre></blockquote>
-<p>This will result in the calculation of T-TD, a conversion of that result
-  to a string which is then concatenated to the string 'TD:'. If you want to
-  format the result of the numeric calculation using the format specifier from
-  the properties dialog simply enter:
-</p>
+<p>This will result in the calculation of T-TD, a conversion of that result to a string which is then concatenated to the string 'TD:'. If you want to format the result of the numeric calculation using the format specifier from the properties dialog simply enter:</p>
 <blockquote>
 <pre>
 ='TD:'+format(T-TD)
   </pre></blockquote>
-
 <h4>Properties Dialog - Color By Tab<a name="image3" id="image3"></a></h4>
-<div class="images"><img src="images/StationModelPropertiesColorBy.gif" alt="Properties Dialog - Color By"> <br>
-  <span class="caption">Image 3: Properties Dialog - Color By</span></div>
-<p>  This tab allows you to specify a parameter that is used to color the shape.
-    You can specify a data range (and a corresponding unit for the data range,
-    e.g., celsius). This data range is used as the end point ranges for the specified
-color table.</p>
-<p>For example, in the above image the Temperature parameter has been specified
-      with data range -90-45 celsius. For each display McIDAS-V will find the
-      Temperature value (e.g., 15 celsius), convert it, if necessary to the specified
-      unit, find its where is lays within the range and use the corresponding
-  color from the color table.</p>
+<div class="images"><img src="images/StationModelPropertiesColorBy.gif" alt="Properties Dialog - Color By"> <br> <span class="caption">Image 3: Properties Dialog - Color By</span></div>
+<p>This tab allows you to specify a parameter that is used to color the shape. You can specify a data range (and a corresponding unit for the data range, e.g., celsius). This data range is used as the end point ranges for the specified color table.</p>
+<p>For example, in the above image the Temperature parameter has been specified with data range -90-45 celsius. For each display McIDAS-V will find the Temperature value (e.g., 15 celsius), convert it, if necessary to the specified unit, find its where is lays within the range and use the corresponding color from the color table.</p>
 <br>
 <a name="image4" id="image4"></a>
-<div class="images"><img src="images/StationModelPropertiesColorFrom.gif" alt="Properties Dialog - Color From"> <br>
-  <span class="caption">Image 4: Properties Dialog - Color From</span></div>
-<p>This allows you to specify parameter, a set of (regular expression) patterns
-    and a corresponding color. If the text value of the parameter matches one
-    of the patterns then the given color is used to color the shape. For example,
-    if your point data had a "fruit" field in it (e.g., fruit=banana, apple,
-tangerine) you could define different colors for different values of fruit.</p>
+<div class="images"><img src="images/StationModelPropertiesColorFrom.gif" alt="Properties Dialog - Color From"> <br> <span class="caption">Image 4: Properties Dialog - Color From</span></div>
+<p>This allows you to specify parameter, a set of (regular expression) patterns and a corresponding color. If the text value of the parameter matches one of the patterns then the given color is used to color the shape. For example, if your point data had a "fruit" field in it (e.g., fruit=banana, apple, tangerine) you could define different colors for different values of fruit.</p>
 <p>To get more lines press the <strong>Apply</strong> button.</p>
 <h4>Properties Dialog - Scale Size Tab<a name="image5" id="image5"></a></h4>
-<div class="images"><img src="images/StationModelPropertiesScaleBy.gif" alt="Properties Dialog - Scale Size By"> <br>
-  <span class="caption">Image 5: Properties Dialog - Scale Size By</span></div>
-<p> This allows you to specify a parameter to scale the shape by. It works similarly
-    to the Color By facility described above. You specify a parameter, a data
-    range (with a unit if desired), and a scale factor range. For each point
-    display McIDAS-V will find the value of the parameter, determine where that
-    value lies within the data range and find the corresponding scaling from
+<div class="images"><img src="images/StationModelPropertiesScaleBy.gif" alt="Properties Dialog - Scale Size By"> <br> <span class="caption">Image 5: Properties Dialog - Scale Size By</span></div>
+<p> This allows you to specify a parameter to scale the shape by. It works similarly to the Color By facility described above. You specify a parameter, a data range (with a unit if desired), and a scale factor range. For each point display McIDAS-V will find the value of the parameter, determine where that value lies within the data range and find the corresponding scaling from
 the scale factor range.</p>
 <h4>Properties Dialog - Rotate Tab<a name="image6" id="image6"></a></h4>
-
-<div class="images"><img src="images/StationModelPropertiesRotateBy.gif" alt="Properties Dialog - Rotate By"> <br>
-  <span class="caption">Image 6: Properties Dialog - Rotate By</span></div>
-<p>This works like the scale and color by facilities. Specify a parameter, data
-    range and rotation range. Note, the rotation is about the Z axis in X/Y/Z
-space. It is not a rotation in Lat/Lon space.</p>
+<div class="images"><img src="images/StationModelPropertiesRotateBy.gif" alt="Properties Dialog - Rotate By"> <br> <span class="caption">Image 6: Properties Dialog - Rotate By</span></div>
+<p>This works like the scale and color by facilities. Specify a parameter, data range and rotation range. Note, the rotation is about the Z axis in X/Y/Z space. It is not a rotation in Lat/Lon space.</p>
 <!--<h4>Defining your own symbols</h4>
 <p>You can define new symbol types using an xml file plugin.  See <a href="stationsymbols.xml">here</a> for an example.</p>-->
-  <p></p><!-- InstanceEndEditable -->
+<div class="pagesubtitle">Menus</div>
+<p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="../controls/index.html#menus">Menus section</a> of the Layer Control's Overview page. However, there are several options unique to this display.</p>
+<p>The <strong>File </strong>menu has these unique options:</p>
+<ul class="propertylist">
+  <li class="propertylistitem"><b>New -</b> Opens a New Layout Model window that prompts for the name of the Layout Model you are going to create.</li>
+  <li class="propertylistitem"><strong>Save - </strong>Saves the Layout Model so that it can be used in McIDAS-V.</li>
+  <li class="propertylistitem"><strong>Save As... - </strong>Saves the Layout Model so that it can be used in McIDAS-V.</li>
+  <li class="propertylistitem"><strong>Rename... -</strong> Opens a Rename Layout Model window that prompts for the name you wish to change the Layout Model to.</li>
+  <li class="propertylistitem"><strong>Remove -</strong> Removes the Layout Model that you are viewing.</li>
+  <li class="propertylistitem"><strong>Import... - </strong>Allows you to import a Layout Model as an IDV station model file (*.ism).</li>
+  <li class="propertylistitem"><strong>Export... -</strong> Allows you to export a Layout Model as an IDV station model file (*.ism).</li>
+  <li class="propertylistitem"><strong>Close... -</strong> Closes the Layout Model Editor.</li>
+</ul>
+<p>The <strong>Edit</strong> menu has these unique options:</p>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Symbols - </strong>Lists the different symbols that you have in your Layout Model. Clicking on the symbol will bring up the Properties Dialog window for that symbol, allowing you to make several modifications to it.</li>
+  <li class="propertylistitem"><strong>Set properties on selected - </strong>Opens a Properties Dialog window for the symbol you have selected in the Layout Model Editor. This allows you to change the range, set the unit, and set a color table for the symbol.</li>
+  <li class="propertylistitem"><strong>Cut -</strong> Removes the selected symbol from the Layout Model.</li>
+  <li class="propertylistitem"><strong>Copy - </strong>Copies the selected symbol from the Layout Model.</li>
+  <li class="propertylistitem"><strong>Paste - </strong>Pastes a symbol into the Layout Model.</li>
+  <li class="propertylistitem"><strong>Select All - </strong>Selects each individual symbol in the Layout Model such that you can perform a cut/copy/paste to all of the symbols at once.</li>
+  <li class="propertylistitem"><strong>To Front - </strong>Places the selected symbol in front of the others.</li>
+  <li class="propertylistitem"><strong>To Back -</strong> Places the selected symbol behind the others.</li>
+</ul>
+<p>The <strong>View</strong> menu has these unique options:</p>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Show Alignment Points -</strong> Displays a red square representing where the symbol will be centered.</li>
+  <li class="propertylistitem"><strong>Zoom in - </strong>Zooms in on the Layout Model.</li>
+  <li class="propertylistitem"><strong>Zoom out - </strong>Zooms out on the Layout Model.</li>
+  <li class="propertylistitem"><strong>Zoom rest - </strong>Reverts back to original zoom level.</li>
+  <li class="propertylistitem"><strong>Grid - </strong>Adds horizontal/vertical grids to the Layout Model. Increase makes the grid size larger, and decrease makes the grid size smaller.</li>
+  <li class="propertylistitem"><strong>Black background - </strong>Makes the background in the Layout Model Editor Black.</li>
+  <li class="propertylistitem"><strong>White Background - </strong>Makes the background in the Layout Model Editor White.</li>
+</ul>
+<p>The <strong>Layout Models</strong> menu has these unique options:</p>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Location -</strong> Changes the Layout Model to display the name of the locations of the Layout Models in the Main Display Window.</li>
+  <li class="propertylistitem"><strong>Label - </strong>Changes the layout Model to be a label when displayed in the Main Display Window. You can make the Label be anything.</li>
+  <li class="propertylistitem"><strong>Selected - </strong>Removes any symbols in the Layout Model, leaving just the Alignment Point.</li>
+  <li class="propertylistitem"><strong>Observations/Tracks/Grids/etc. - </strong>Allows you change the Layout Model to be one of the saved symbols/parameters.  </li></ul>
+<!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
   <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="ColorTableEditor.html">Go

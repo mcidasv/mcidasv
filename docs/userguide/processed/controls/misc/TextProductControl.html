@@ -33,58 +33,36 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/misc/Tex
 <xxxmeta xxxname="jhid" value="idv.controls.rangeandbearingcontrol">
 <div class="pagesubtitle">Overview</div>
 <meta name="jhid" value="idv.controls.rangeandbearingcontrol">
-This control is used to display weather text products (forecasts,
-warnings, watches, etc) produced by the National Weather Service
-and other international meteorological agencies.
-<p>
-The user interface consists of 3 tabs.  The first allows the
-user to select and display the text products.  The <strong>Products</strong> panel
-allows the user to select the type of product to view. When a product is selected,
-the available stations are plotted in the associated view window.
-One or more stations can be selected by clicking on the
-station in the view window (or Ctrl-click for multiple
-stations).  When a station is selected, the text product
-for that station is displayed.
+<p>This control is used to display weather text products (forecasts, warnings, watches, etc) produced by the National Weather Service
+and other international meteorological agencies.</p>
+<p>The user interface consists of 3 tabs.  The first allows the user to select and display the text products. The <strong>Products</strong> panel allows the user to select the type of product to view. When a product is selected, the available stations are plotted in the associated view window. One or more stations can be selected by clicking on the station in the view window (or Ctrl-click for multiple
+stations).  When a station is selected, the text product for that station is displayed.</p>
 <div class="images"><img  src="images/TextProductControlGui1.gif"  alt="images/TextProductControlGui1.gif" ></div>
-<p>The user can select between displaying the products as raw
-text or as HTML by clicking on the tab at the bottom of
-the text display area.</p>
-
-<p>In the HTML view, you can toggle on a glossary which will 
-highlight certain meteorological terms.  When the links
-are clicked, a dialog will pop up with an explanation of
-the term.</p>
+<p>The user can select between displaying the products as raw text or as HTML by clicking on the tab at the bottom of the text display area.</p>
+<p>In the HTML view, you can toggle on a glossary which will  highlight certain meteorological terms.  When the links are clicked, a dialog will pop up with an explanation of the term.</p>
 <p></p>
 <div class="images"><img  src="images/TextProductControlGui1a.gif"  alt="images/TextProductControlGui1a.gif" ></div>
-
-<p>By default, the most recent text product is displayed.  
-Multiple products can be displayed by selecting a time
-range from the  <strong>Time Covered</strong> selector.
-You can loop through multiple products using the <a href="../../ui/Animation.html">Time Animation</a> 
-widget.  The time animation will be synched with any
-other data in the associated view window.</p>
-<p>
-
-The second tab controls the display of the station locations
-in the associated View window.  It is the same as the
-<a href="../StationLocationControl.html">Station Location 
-Control's</a> <strong>Display</strong> tab.
-
+<p>By default, the most recent text product is displayed. Multiple products can be displayed by selecting a time range from the  <strong>Time Covered</strong> selector. You can loop through multiple products using the <a href="../../ui/Animation.html">Time Animation</a>  widget.  The time animation will be synched with any other data in the associated view window.</p>
+<p>The second tab controls the display of the station locations in the associated View window.  It is the same as the <a href="../StationLocationControl.html">Station Location Control's</a> <strong>Display</strong> tab.</p>
 <div class="images"><img  src="images/TextProductControlGui2.gif"  alt="images/TextProductControlGui2.gif" ></div>
-
-<p>When you select a product,
-the available stations are shown in the View window.  This
-tab can be used to control the station density and the layout
-of the station identifiers.</p>
-<p>
-
-The third tab lists information about the selected location
-and shows lists of all the locations and the displayed  
-selections.  
-
+<p>When you select a product, the available stations are shown in the View window.  This tab can be used to control the station density and the layout of the station identifiers.</p>
+<p>The third tab lists information about the selected location and shows lists of all the locations and the displayed selections.</p>
 <div class="images"><img  src="images/TextProductControlGui3.gif"  alt="images/TextProductControlGui3.gif" ></div>
-
 <p>It is the same as the <strong>Locations</strong> tab in the <a href="../StationLocationControl.html">Station Location Control</a>.</p>
+<div class="pagesubtitle">Menus</div>
+<p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="../index.html#menus">Menus section</a> of the Layer Control's Overview page. However, there are some options that are unique to this display.</p>
+<p>The <strong>Edit</strong> menu has these unique options:</p>
+<ul class="propertylist">
+  <li class="propertylistitem"><b>Add Locations</b> - Adds the locations of a variety of features, including city labels, states, oceans, earthquakes, etc. to the display.</li>
+  <li class="propertylistitem"><strong>Color - </strong>Changes the color of the location labels in the Main Display Window.</li>
+</ul>
+<p>The <strong>View</strong> menu has these unique options:</p>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Show Flythrough - </strong>Opens the <a href="../../ui/DisplayMenus.html#flythrough">Flythrough   feature</a> which allows you to interactively explore the display.</li>
+  <li class="propertylistitem"><strong>Use Projection From Locations -</strong> Re-centers the display and resets the zoom level back   to the display's initial settings without changing any other preferences   you have modified.</li>
+  <li class="propertylistitem"><strong>Chart -</strong> Allows you to display a thumbnail of the chart in the Legend, change the <a href="../Chart.html#chartlayout">Grid   Layout</a>, zoom in and out, save the chart, and open the <a href="../Chart.html#plotproperties">Plot   Properties window</a>.</li>
+  <li class="propertylistitem"><strong>Show Raw Data -</strong> Displays the data in its raw format in the chart before any   rounding/formatting is done to the data by McIDAS-V.</li>
+</ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
