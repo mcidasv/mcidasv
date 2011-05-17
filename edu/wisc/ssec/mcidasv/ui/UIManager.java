@@ -2533,7 +2533,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @param value  the object value
      */
     private void append(StringBuffer sb, String name, Object value) {
-        sb.append("<b>" + name + "</b>: " + value + "<br>");
+        sb.append("<b>").append(name).append("</b>: ").append(value).append("<br>");
     }
 
     private JMenuItem makeControlDescriptorItem(ControlDescriptor cd) {
@@ -3743,7 +3743,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     // TODO(jon:101): use Sets instead of maps and whatnot
     // TODO(jon:103): create an invalid IdvAction
-    protected static final class IdvActions {
+    public static final class IdvActions {
 
         /** Maps {@literal "id"} values to {@link IdvAction}s. */
         private final Map<String, IdvAction> idToAction = new ConcurrentHashMap<String, IdvAction>();
@@ -3763,19 +3763,20 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * 
          * @see 
          */
-        protected IdvActions(final IntegratedDataViewer idv, final XmlIdvResource collectionId) {
+        public IdvActions(final IntegratedDataViewer idv, final XmlIdvResource collectionId) {
             Contract.notNull(idv, "Cannot provide a null IDV reference");
             Contract.notNull(collectionId, "Cannot build actions from a null collection id");
 
-            // i lub u xpath
+            // i lub u xpath (but how much slower is this?)
             String query = "//action[@id and @image and @description and @action]";
             for (Element e : elements(idv, collectionId, query)) {
                 IdvAction a = new IdvAction(e);
                 String id = a.getAttribute(ActionAttribute.ID);
                 idToAction.put(id, a);
                 String group = a.getAttribute(ActionAttribute.GROUP);
-                if (!groupToActions.containsKey(group))
+                if (!groupToActions.containsKey(group)) {
                     groupToActions.put(group, new LinkedHashSet<IdvAction>());
+                }
                 Set<IdvAction> groupedIds = groupToActions.get(group);
                 groupedIds.add(a);
             }
@@ -3794,7 +3795,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * @throws NullPointerException if {@code actionId} is {@code null}.
          */
         // TODO(jon:103) here
-        protected IdvAction getAction(final String actionId) {
+        public IdvAction getAction(final String actionId) {
             Contract.notNull(actionId, "Null action identifiers are not allowed");
             return idToAction.get(actionId);
         }
@@ -3813,12 +3814,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * {@code attr} is {@code null}.
          */
         // TODO(jon:103) here
-        protected String getAttributeForAction(final String actionId, final ActionAttribute attr) {
+        public String getAttributeForAction(final String actionId, final ActionAttribute attr) {
             Contract.notNull(actionId, "Null action identifiers are not allowed");
             Contract.notNull(attr, "Actions cannot have values associated with a null attribute");
             IdvAction action = idToAction.get(actionId);
-            if (action == null)
+            if (action == null) {
                 return null;
+            }
             return action.getAttribute(attr);
         }
 
@@ -3835,11 +3837,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * @see IdvAction#originalElement
          */
         // TODO(jon:103) here
-        protected Element getElementForAction(final String actionId) {
+        public Element getElementForAction(final String actionId) {
             Contract.notNull(actionId, "Cannot search for a null action identifier");
             IdvAction action = idToAction.get(actionId);
-            if (action == null)
+            if (action == null) {
                 return null;
+            }
             return action.getElement();
         }
 
@@ -3858,28 +3861,30 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * {@code style} is {@code null}.
          */
         // TODO(jon:103) here
-        protected Icon getStyledIconFor(final String actionId, final ToolbarStyle style) {
+        public Icon getStyledIconFor(final String actionId, final ToolbarStyle style) {
             Contract.notNull(actionId, "Cannot get an icon for a null action identifier");
             Contract.notNull(style, "Cannot get an icon for a null ToolbarStyle");
             IdvAction a = idToAction.get(actionId);
-            if (a == null)
+            if (a == null) {
                 return null;
+            }
             return a.getIconForStyle(style);
         }
 
         // TODO(jon:105): replace with something better
-        protected List<String> getAttributes(final ActionAttribute attr) {
+        public List<String> getAttributes(final ActionAttribute attr) {
             Contract.notNull(attr, "Actions cannot have null attributes");
             List<String> attributeList = arrList();
-            for (Map.Entry<String, IdvAction> entry : idToAction.entrySet())
+            for (Map.Entry<String, IdvAction> entry : idToAction.entrySet()) {
                 attributeList.add(entry.getValue().getAttribute(attr));
+            }
             return attributeList;
         }
 
         /**
          * @return List of all known {@code IdvAction}s.
          */
-        protected List<IdvAction> getAllActions() {
+        public List<IdvAction> getAllActions() {
             return arrList(idToAction.values());
         }
 
@@ -3889,7 +3894,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * @see ActionAttribute#GROUP
          * @see #getActionsForGroup(String)
          */
-        protected List<String> getAllGroups() {
+        public List<String> getAllGroups() {
             return arrList(groupToActions.keySet());
         }
 
@@ -3909,10 +3914,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * @see ActionAttribute#GROUP
          * @see #getAllGroups()
          */
-        protected Set<IdvAction> getActionsForGroup(final String group) {
+        public Set<IdvAction> getActionsForGroup(final String group) {
             Contract.notNull(group, "Actions cannot be associated with a null group");
-            if (!groupToActions.containsKey(group))
+            if (!groupToActions.containsKey(group)) {
                 return Collections.emptySet();
+            }
             return groupToActions.get(group);
         }
 
@@ -3933,7 +3939,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * unforeseen changes from Unidata?
      */
     // TODO(jon:106): Implement equals/hashCode so that you can use these in Sets. The only relevant value should be the id, right?
-    protected static final class IdvAction {
+    public static final class IdvAction {
 
         /** The XML {@link Element} that represents this IDV action. */
         private final Element originalElement;
@@ -3958,7 +3964,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * 
          * @see UIManager#isValidIdvAction(Element)
          */
-        protected IdvAction(final Element element) {
+        public IdvAction(final Element element) {
             Contract.notNull(element, "Cannot build an action from a null element");
             // TODO(jon:107): need a way to diagnose what's wrong with the action?
             Contract.checkArg(isValidIdvAction(element), "Action lacks required attributes");
@@ -3973,14 +3979,14 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * 
          * @see #getIconForStyle(ToolbarStyle)
          */
-        protected String getRawIconPath() {
+        public String getRawIconPath() {
             return attributes.get(ActionAttribute.ICON);
         }
 
         /**
          * @return Returns the {@link Icon} associated with {@link ToolbarStyle#SMALL}.
          */
-        protected Icon getMenuIcon() {
+        public Icon getMenuIcon() {
             return getIconForStyle(ToolbarStyle.SMALL);
         }
 
@@ -3996,14 +4002,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * @see ActionAttribute#ICON
          * @see #iconCache
          */
-        protected Icon getIconForStyle(final ToolbarStyle style) {
+        public Icon getIconForStyle(final ToolbarStyle style) {
             Contract.notNull(style, "Cannot build an icon for a null ToolbarStyle");
 
             if (!iconCache.containsKey(style)) {
                 String styledPath = String.format(getRawIconPath(), style.getSize());
                 URL tmp = getClass().getResource(styledPath);
                 iconCache.put(style, new ImageIcon(Toolkit.getDefaultToolkit().getImage(tmp)));
-//                iconCache.put(style, new ImageIcon(tmp));
             }
             return iconCache.get(style);
         }
@@ -4011,7 +4016,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         /**
          * @return Returns the identifier of this {@code IdvAction}.
          */
-        protected String getId() {
+        public String getId() {
             return getAttribute(ActionAttribute.ID);
         }
 
@@ -4022,7 +4027,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * 
          * @see 
          */
-        protected String getCommand() {
+        public String getCommand() {
             return "idv.handleAction('action:"+getAttribute(ActionAttribute.ID)+"')";
         }
 
@@ -4036,7 +4041,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * 
          * @throws NullPointerException if {@code attr} is {@code null}.
          */
-        protected String getAttribute(final ActionAttribute attr) {
+        public String getAttribute(final ActionAttribute attr) {
             Contract.notNull(attr, "No values can be associated with a null ActionAttribute");
             return attributes.get(attr);
         }
@@ -4045,7 +4050,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * @return The XML {@link Element} used to create this {@code IdvAction}.
          */
         // TODO(jon:104): any way to copy this element? if so, this can become an immutable class!
-        protected Element getElement() {
+        public Element getElement() {
             return originalElement;
         }
 
