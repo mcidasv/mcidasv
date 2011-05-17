@@ -433,6 +433,28 @@ def getProjection(name=''):
     else:
         raise ValueError("Couldn't find a projection named ", name, "; try calling 'projectionNames()' to get the available projection names.")
 
+def allActions():
+    """Returns the available McIDAS-V action identifiers."""
+    actions = _mcv.getIdvUIManager().getCachedActions().getAllActions()
+    return [action.getId() for action in actions]
+
+def performAction(action):
+    # not terribly different from "idv.handleAction('action:edit.paramdefaults')"
+    # key diffs:
+    # *only* handles actions
+    # does not require you to prepend everything with 'action:' (but you can if you must)
+    available = allActions()
+    if not action.startswith('action:'):
+        prefixedId = 'action:' + action
+    else:
+        prefixedId = action
+        action = action.replace('action:', '')
+    
+    if action in available:
+        _mcv.handleAction(prefixedId)
+    else:
+        raise ValueError("Couldn't find the action ID ", action, "; try calling 'allActions()' to get the available action IDs.")
+
 # TODO(jon): remove pending jython meeting decision?
 def load_enhancement(name=''):
     """Nothing yet."""

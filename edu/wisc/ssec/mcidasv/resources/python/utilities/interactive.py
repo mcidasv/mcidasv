@@ -29,6 +29,22 @@ def _expandpath(path):
     given path."""
     return os.path.normpath(os.path.expanduser(os.path.expandvars(path)))
 
+def describeActions(pattern=None):
+    # """Prints out a list of the McIDAS-V actions.
+
+    # The output is ordered alphabetically and grouped by functionality. Each
+    # identifier can be "run" like so:
+
+    # performAction(identifier)
+    # performAction('edit.paramdefaults')
+
+    # Args:
+    #     pattern: Searches for the given pattern within the action identifier
+    #              strings as well as action descriptions.
+    # """
+    actions = _mcv.getIdvUIManager().getCachedActions().getAllActions()
+    print sorted([action.getId() for action in actions])
+
 def getLogFile():
     # TODO(jon): this will likely have to change as the complexity of 
     #            logback.xml increases. :(

@@ -35,15 +35,43 @@ sys.path.append(_mcv_python)
 sys.path.append(_mcv_python+'/linearcombo')
 sys.path.append(_mcv_python+'/utilities')
 
+# this is intentionally the first thing imported
 from edu.wisc.ssec.mcidasv import McIDASV
 _mcv = McIDASV.getStaticMcv()
+idv = _mcv
 
 import imageFilters
 import shell as idvshell
-
-# TODO(jon): you got some explaining to do 'bout these line lengths.'
-from background import setViewSize, getColorTable, colorTableNames, allColorTables, firstWindow, allWindows, firstDisplay, allDisplays, createLayer, allLayerTypes, allProjections, projectionNames, getProjection, load_enhancement, load_map, annotate, apply_colorbar, write_image, collect_garbage, managedDataSource, removeAllLayers, removeAllData, boomstick 
-from interactive import see, ncdump, ncdumpToString, dumpObj
+from background import allActions
+from background import allColorTables
+from background import allDisplays
+from background import allLayerTypes
+from background import allProjections
+from background import allWindows
+from background import annotate
+from background import apply_colorbar
+from background import boomstick
+from background import collect_garbage
+from background import colorTableNames
+from background import createLayer
+from background import firstDisplay
+from background import firstWindow
+from background import getColorTable
+from background import getProjection
+from background import load_enhancement
+from background import load_map
+from background import managedDataSource
+from background import performAction
+from background import projectionNames
+from background import removeAllData
+from background import removeAllLayers
+from background import setViewSize
+from background import write_image
+from interactive import describeActions
+from interactive import dumpObj
+from interactive import ncdump
+from interactive import ncdumpToString
+from interactive import see
 
 _user_python = os.path.join(_mcv.getStore().getUserDirectory().toString(), 'python')
 if os.path.exists(_user_python):
