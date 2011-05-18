@@ -34,9 +34,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/misc/Loc
 <div class="pagesubtitle">Overview</div>
 <meta name="jhid" value="idv.controls.misc.locationindicatorcontrol">
 <p>The location indicator controls display a configurable axis in the main 3D display
-and (optionally) a bearing point. The user interface is composed of three tabs: Location, Settings, and Orient.</p>
-<p class="pagesubtitle"><strong>Location Tab</strong></p>
-<p> The first tab displays and allows you to modify the position of the origin and the
+and (optionally) a bearing point. The user interface is composed of three tabs: Location, Settings, and Orient. The Location Indicator window consists of three tabs: <strong>Location</strong>, <strong>Settings</strong>, and <strong>Orient</strong>.</p>
+<p> The <strong>Location</strong> tab displays and allows you to modify the position of the origin and the
   bearing point.</p> 
 <a name="image1"></a>
 <div class="images"><img  src="images/LocationIndicatorControlGui1.gif"  alt="Location Indicator Location Tab" ><br>
@@ -44,59 +43,63 @@ and (optionally) a bearing point. The user interface is composed of three tabs: 
 <p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Origin</strong> - Enter in a latitude, longitude, and altitude to set the location of the
-    origin point in the 3D display window.
-  <li class="propertylistitem"><strong>Point</strong> - Enter in a latitude, longitude, and altitude to set the location of the
-    bearing point in the 3D display window.
+  <li class="propertylistitem"><strong>Origin</strong> - Represents the latitude, longitude, and altitude  of the
+    origin point in the Main Display Window.
+  <li class="propertylistitem"><strong>Point</strong> - Represents the latitude, longitude, and altitude to set the location of the
+    bearing point in the Main Display Window.
   <li class="propertylistitem"><strong>Bearing</strong> - Lists the bearing point degree.</li>
-  <li class="propertylistitem"><strong>X Tick</strong> - Enter in a latitude, longitude, and altitude to set the location of the
-    X tick mark in the 3D display window.</li>
-  <li class="propertylistitem"><strong>Y Tick</strong> - Enter in a latitude, longitude, and altitude to set the location of the
-    Y tick mark in the 3D display window.</li>
-  <li class="propertylistitem"><strong>Z Tick </strong> - Enter in a latitude, longitude, and altitude to set the location of the
-    Z tick mark in the 3D display window.</li>
+  <li class="propertylistitem"><strong>X Tick</strong> - Sets the location of the
+    X tick mark in the Main Display Window.</li>
+  <li class="propertylistitem"><strong>Y Tick</strong> - Sets  the location of the
+    Y tick mark in the Main Display Window.</li>
+  <li class="propertylistitem"><strong>Z Tick </strong> - Sets the location of the
+    Z tick mark in the Main Display Window.</li>
 </ul>
-<p class="pagesubtitle"><strong>Settings Tab</strong>
-<p>The second tab allows for the configuration of display settings. <a name="image2"></a>
+<p>The <strong>Settings</strong> tab allows for the configuration of display settings. <a name="image2"></a>
 <div class="images"><img  src="images/LocationIndicatorControlGui2.gif"  alt="Location Indicator Display Tab" ><br>
 <span class="caption">Image 2: Location Indicator Settings Tab</span></div></p>
 <p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
   <p></p>
-  <li class="propertylistitem"><b>Move</b> - Use this checkbox to constrain along which axis points are moved.</li>
-  <li class="propertylistitem"><strong>Keep in Box</strong> - When checked, constrains the movement to be within the main 3D bounding box.</li>
-  <li class="propertylistitem"><strong>Enabled</strong> - When checked, the option to drag points will be enabled.</li>
-  <li class="propertylistitem"><strong>Visibility</strong> - Turn on/off the visibility of the X, Y, and Z axes in the 3D display window.</li>
-  <li class="propertylistitem"><strong>Labels</strong> - Turn on/off the visibility of the X, Y, and Z labels in the 3D display window.</li>
-  <li class="propertylistitem"><strong>Solid</strong> - When checked, a solid plane along any of the axes will be displayed.
-    You can also change the color and the transparency of the plane with
-    the pull down menus.</li>
-  <li class="propertylistitem"><strong>Bearing Lines</strong> - Show or hide the bearing lines. These are dashed lines from the respective
+  <li class="propertylistitem"><b>Move</b> - Constrains along which axis points are moved.</li>
+  <li class="propertylistitem"><strong>Keep in Box</strong> - Constrains the movement to be within the main 3D bounding box.</li>
+  <li class="propertylistitem"><strong>Enabled</strong> - Enables the option to drag points.</li>
+  <li class="propertylistitem"><strong>Clip - </strong>Clips the Location Indicator Display in the Main Display Window at the chosen locations in from the drop down menus.</li>
+  <li class="propertylistitem"><strong>Visibility</strong> - Turns on/off the visibility of the X, Y, and Z axes in the Main Display Window.</li>
+  <li class="propertylistitem"><strong>Labels</strong> - Turns on/off the visibility of the X, Y, and Z labels in the Main Display Window.</li>
+  <li class="propertylistitem"><strong>Solid</strong> - Shades in the plane of any of the axes selected. You can select a color and a transparency.</li>
+  <li class="propertylistitem"><strong>Bearing Lines</strong> - Shows or hides the bearing lines. These are dashed lines from the respective
     axis to the bearing point.</li>
-  <li class="propertylistitem"><strong>Bearing Point</strong> - Turn on/off the display of the bearing point with the <strong>Show point</strong> checkbox.</li>
-  <li class="propertylistitem"><strong>Axis size</strong> - Use the slide control to expand/contract the length of the origin axis.</li>
-  <li class="propertylistitem"><strong>Line Width</strong> - Use the pull down menu to set the line width of the origin axis.</li>
-  <li class="propertylistitem"><strong>Color</strong> - Use the pull down menu to set the color of the origin axis.</p>
+  <li class="propertylistitem"><strong>Bearing Point</strong> - Turns on/off the display of the bearing point.</li>
+  <li class="propertylistitem"><strong>Axis size</strong> - Expands/contracts the length of the origin axis.</li>
+  <li class="propertylistitem"><strong>Line Width</strong> - Sets the line width of the origin axis.</li>
+  <li class="propertylistitem"><strong>Color</strong> - Sets the color of the origin axis.
 </ul>
-<p class="pagesubtitle"><strong>Orient Tab</strong>
-<p>The third tab allows for the orienting the display based on the location. To change the origin, click and drag in the main display. To show and/or change
-  the bearing point, do a control-drag in the main display. The x/y/z locations
+<p>The <strong>Orient</strong> tab allows for the orienting the display based on the location. To change the origin, click and drag in the main display. To show and/or change
+  the bearing point, do a Control+drag in the Main Display Window. The x/y/z locations
   of the bearing point are shown on the origin axis as tick marks and, optionally,
-  as longitude/latitude/altitude readouts.<div class="images"><img  src="images/LocationIndicatorControlGui3.gif"  alt="Location Indicator Orient Tab" ><br>
+  as longitude/latitude/altitude readouts.
+<div class="images"><img  src="images/LocationIndicatorControlGui3.gif"  alt="Location Indicator Orient Tab" ><br>
 <span class="caption">Image 3: Location Indicator Orient Tab</span></div>
 <p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
 	<p></p>
-  <li class="propertylistitem"><b>Center At Origin</b> - Click to center the display at the origin point.</li>
-  <li class="propertylistitem"><strong>Center At Point</strong> - Click to center the display at the point of the location indicator.</li>
-  <li class="propertylistitem"><strong>Set origin to address</strong> - Enter in an address to center the origin on using the <strong>View-&gt;Set
-      origin to address</strong> menu. See the valid formats in the <a href="http://www.ssec.wisc.edu/mcidas/doc/mcv_guide/current/ui/DisplayMenus.html#goto">Go to Address window</a>.</li>
-  <li class="propertylistitem"><strong>Set point to address </strong> - Enter in an address to center the point of the location indicator on using
-    the <strong>View-&gt;Set point to address</strong> menu. See the valid formats in the <a href="http://www.ssec.wisc.edu/mcidas/doc/mcv_guide/current/ui/DisplayMenus.html#goto">Go to Address window</a>.</p>
+  <li class="propertylistitem"><b>Center At Origin</b> - Centers the display at the origin point.</li>
+  <li class="propertylistitem"><strong>Center At Point</strong> - Centers the display at the point of the location indicator.</li>
 </ul>
-
+<div class="pagesubtitle">Menus</div>
+<p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="../index.html#menus">Menus section</a> of the Layer Control's Overview page. However, there are some options that are unique to this display.</p>
+<p>The <strong>Edit</strong> menu has this unique option:</p>
+<ul class="propertylist">
+  <li class="propertylistitem"><b>Selector Color </b>- Changes the color of the Location Indicator display in the Main Display Window.</li>
+</ul>
+<p>The <strong>View</strong> menu has these unique options:</p>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Set origin to address - </strong>Changes the location of the origin to a given address, zip code,        city, etc.   See the <a href="../../ui/DisplayMenus.html#goto">Go   to Address</a> section of the Display Menus page for more information.</li>
+  <li class="propertylistitem"><strong>Set point to address - </strong>Changes the location of the point to a given address, zip code,        city, etc.   See the <a href="../../ui/DisplayMenus.html#goto">Go   to Address</a> section of the Display Menus page for more information.</li>
+</ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
