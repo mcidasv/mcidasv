@@ -120,7 +120,7 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
     private double[] lla = new double[3];
 
     /** time step between data points */
-    private int dTime = 5;
+    private int dTime = 1;
 
     private SatelliteTleSGP4 prop = null;
     private double julDate0 = 0.0;
