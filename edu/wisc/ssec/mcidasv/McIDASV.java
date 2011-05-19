@@ -48,6 +48,7 @@ import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -163,7 +164,7 @@ public class McIDASV extends IntegratedDataViewer {
     private final MonitorManager monitorManager = new MonitorManager();
 
     /** Actions passed into {@link #handleAction(String, Hashtable, boolean)}. */
-    private final List<String> actions = new ArrayList<String>();
+    private final List<String> actions = new LinkedList<String>();
 
     private enum WarningResult { OK, CANCEL, SHOW, HIDE };
 
