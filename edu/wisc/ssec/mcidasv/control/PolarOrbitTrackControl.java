@@ -34,8 +34,6 @@ import edu.wisc.ssec.mcidasv.data.GroundStations;
 import edu.wisc.ssec.mcidasv.data.PolarOrbitTrackDataSource;
 import edu.wisc.ssec.mcidasv.data.adde.sgp4.AstroConst;
 import edu.wisc.ssec.mcidasv.data.hydra.CurveDrawer;
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Position;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -59,8 +57,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +68,6 @@ import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.ui.LatLonWidget;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.GuiUtils.ColorSwatch;
-import ucar.unidata.util.PreferenceList;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
 import ucar.visad.display.CompositeDisplayable;
 import ucar.visad.display.Displayable;
@@ -136,9 +131,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     /** Property name to get the list or urls */
     public final String PREF_GROUNDSTATIONS = "mcv.groundstations";
-
-    /** Manages the pull down list of urls */
-    private static PreferenceList prefList;
 
     private JComboBox locationComboBox;
     private JTextField locationEditor;
@@ -217,7 +209,10 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
         String dispName = getDisplayName();
         setDisplayName(getLongParamName() + " " + dispName);
-        textType = new TextType(getLongParamName());
+        try {
+            textType = new TextType(getLongParamName());
+        } catch (Exception e) {
+        }
         TUPTYPE = makeTupleType();
 
         Data data = getData(getDataInstance());
@@ -940,4 +935,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         if (!gotit) return null;
         return (PolarOrbitTrackDataSource)ds;
     }
+/*
+    @Override public void doRemove() throws VisADException, RemoteException {
+        super.doRemove();
+    }
+*/
 }
