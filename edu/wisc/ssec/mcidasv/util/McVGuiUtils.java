@@ -31,6 +31,8 @@
 package edu.wisc.ssec.mcidasv.util;
 
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
+
 import static javax.swing.GroupLayout.DEFAULT_SIZE;
 import static javax.swing.GroupLayout.PREFERRED_SIZE;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
@@ -68,6 +70,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ui.IdvComponentGroup;
@@ -79,44 +84,56 @@ import ucar.unidata.ui.MultiFrame;
 import ucar.unidata.util.GuiUtils;
 
 import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.McIDASV;
+import edu.wisc.ssec.mcidasv.ViewManagerManager;
 import edu.wisc.ssec.mcidasv.ui.McvComponentGroup;
 import edu.wisc.ssec.mcidasv.ui.McvComponentHolder;
+import edu.wisc.ssec.mcidasv.ui.UIManager;
 
 
 public class McVGuiUtils implements Constants {
+
+    private static final Logger logger = LoggerFactory.getLogger(McVGuiUtils.class);
+
+    /** 
+     * Estimated number of {@link ucar.unidata.idv.ViewManager ViewManagers}.
+     * This value is only used as a last resort ({@link McIDASV#getStaticMcv()} failing). 
+     */
+    private static final int ESTIMATED_VM_COUNT = 32;
+
     private McVGuiUtils() {}
-    
+
     public enum Width { HALF, SINGLE, ONEHALF, DOUBLE, TRIPLE, QUADRUPLE, DOUBLEDOUBLE }
     public enum Position { LEFT, RIGHT, CENTER }
     public enum Prefer { TOP, BOTTOM, NEITHER }
     public enum TextColor { NORMAL, STATUS }
-    
+
     /**
      * Use this class to create a panel with a background image
      * @author davep
      *
      */
     public static class IconPanel extends JPanel {
-    	private Image img;
+        private Image img;
 
-    	public IconPanel(String img) {
-    		this(GuiUtils.getImageIcon(img).getImage());
-    	}
+        public IconPanel(String img) {
+            this(GuiUtils.getImageIcon(img).getImage());
+        }
 
-    	public IconPanel(Image img) {
-    		this.img = img;
-    		Dimension size = new Dimension(img.getWidth(null), img.getHeight(null));
-    		setPreferredSize(size);
-    		setMinimumSize(size);
-    		setMaximumSize(size);
-    		setSize(size);
-    		setLayout(null);
-    	}
+        public IconPanel(Image img) {
+            this.img = img;
+            Dimension size = new Dimension(img.getWidth(null), img.getHeight(null));
+            setPreferredSize(size);
+            setMinimumSize(size);
+            setMaximumSize(size);
+            setSize(size);
+            setLayout(null);
+        }
 
-    	public void paintComponent(Graphics g) {
+        public void paintComponent(Graphics g) {
             super.paintComponent(g);
-    		g.drawImage(img, 0, 0, null);
-    	}
+            g.drawImage(img, 0, 0, null);
+        }
 
     }
 
@@ -126,14 +143,14 @@ public class McVGuiUtils implements Constants {
      * @return
      */
     public static JLabel makeLabelRight(String title) {
-    	return makeLabelRight(title, null);
+        return makeLabelRight(title, null);
     }
-    
+
     public static JLabel makeLabelRight(String title, Width width) {
-    	if (width==null) width=Width.SINGLE;
+        if (width==null) width=Width.SINGLE;
         JLabel newLabel = new JLabel(title);
         setComponentWidth(newLabel, width);
-    	setLabelPosition(newLabel, Position.RIGHT);
+        setLabelPosition(newLabel, Position.RIGHT);
         return newLabel;
     }
 
@@ -143,14 +160,14 @@ public class McVGuiUtils implements Constants {
      * @return
      */
     public static JLabel makeLabelLeft(String title) {
-    	return makeLabelLeft(title, null);
+        return makeLabelLeft(title, null);
     }
-    
+
     public static JLabel makeLabelLeft(String title, Width width) {
-    	if (width==null) width=Width.SINGLE;
+        if (width==null) width=Width.SINGLE;
         JLabel newLabel = new JLabel(title);
         setComponentWidth(newLabel, width);
-    	setLabelPosition(newLabel, Position.LEFT);
+        setLabelPosition(newLabel, Position.LEFT);
         return newLabel;
     }
 
@@ -161,44 +178,44 @@ public class McVGuiUtils implements Constants {
      * @return
      */
     public static JPanel makeLabeledComponent(String label, JComponent thing) {
-    	return makeLabeledComponent(makeLabelRight(label), thing);
+        return makeLabeledComponent(makeLabelRight(label), thing);
     }
-    
+
     public static JPanel makeLabeledComponent(JLabel label, JComponent thing) {
-    	return makeLabeledComponent(label, thing, Position.RIGHT);
+        return makeLabeledComponent(label, thing, Position.RIGHT);
     }
 
     public static JPanel makeLabeledComponent(String label, JComponent thing, Position position) {
-    	return makeLabeledComponent(new JLabel(label), thing, position);
+        return makeLabeledComponent(new JLabel(label), thing, position);
     }
-    
+
     public static JPanel makeLabeledComponent(JLabel label, JComponent thing, Position position) {
-    	JPanel newPanel = new JPanel();
+        JPanel newPanel = new JPanel();
 
-    	if (position == Position.RIGHT) {
-	    	setComponentWidth(label);
-	    	setLabelPosition(label, Position.RIGHT);
-    	}
-    	
-    	GroupLayout layout = new GroupLayout(newPanel);
-    	newPanel.setLayout(layout);
-    	layout.setHorizontalGroup(
-    			layout.createParallelGroup(LEADING)
-    			.addGroup(layout.createSequentialGroup()
-    					.addComponent(label)
-    					.addGap(GAP_RELATED)
-    					.addComponent(thing))
-    	);
-    	layout.setVerticalGroup(
-    			layout.createParallelGroup(LEADING)
-    			.addGroup(layout.createParallelGroup(BASELINE)
-    					.addComponent(label)
-    					.addComponent(thing))
-    	);
+        if (position == Position.RIGHT) {
+            setComponentWidth(label);
+            setLabelPosition(label, Position.RIGHT);
+        }
 
-    	return newPanel;
+        GroupLayout layout = new GroupLayout(newPanel);
+        newPanel.setLayout(layout);
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(LEADING)
+                .addGroup(layout.createSequentialGroup()
+                        .addComponent(label)
+                        .addGap(GAP_RELATED)
+                        .addComponent(thing))
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(LEADING)
+                .addGroup(layout.createParallelGroup(BASELINE)
+                        .addComponent(label)
+                        .addComponent(thing))
+        );
+
+        return newPanel;
     }
-    
+
     /**
      * Create a sized, labeled component
      * @param label
@@ -206,120 +223,120 @@ public class McVGuiUtils implements Constants {
      * @return
      */
     public static JPanel makeComponentLabeled(JComponent thing, String label) {
-    	return makeComponentLabeled(thing, new JLabel(label));
+        return makeComponentLabeled(thing, new JLabel(label));
     }
-    
+
     public static JPanel makeComponentLabeled(JComponent thing, String label, Position position) {
-    	return makeComponentLabeled(thing, new JLabel(label), position);
+        return makeComponentLabeled(thing, new JLabel(label), position);
     }
-    
+
     public static JPanel makeComponentLabeled(JComponent thing, JLabel label) {
-    	return makeComponentLabeled(thing, label, Position.LEFT);
+        return makeComponentLabeled(thing, label, Position.LEFT);
     }
 
     public static JPanel makeComponentLabeled(JComponent thing, JLabel label, Position position) {
-    	JPanel newPanel = new JPanel();
+        JPanel newPanel = new JPanel();
 
-    	if (position == Position.RIGHT) {
-	    	setComponentWidth(label);
-	    	setLabelPosition(label, Position.RIGHT);
-    	}
-    	
-    	GroupLayout layout = new GroupLayout(newPanel);
-    	newPanel.setLayout(layout);
-    	layout.setHorizontalGroup(
-    			layout.createParallelGroup(LEADING)
-    			.addGroup(layout.createSequentialGroup()
-    					.addComponent(thing)
-    					.addGap(GAP_RELATED)
-    					.addComponent(label))
-    	);
-    	layout.setVerticalGroup(
-    			layout.createParallelGroup(LEADING)
-    			.addGroup(layout.createParallelGroup(BASELINE)
-    					.addComponent(thing)
-    					.addComponent(label))
-    	);
+        if (position == Position.RIGHT) {
+            setComponentWidth(label);
+            setLabelPosition(label, Position.RIGHT);
+        }
 
-    	return newPanel;
+        GroupLayout layout = new GroupLayout(newPanel);
+        newPanel.setLayout(layout);
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(LEADING)
+                .addGroup(layout.createSequentialGroup()
+                        .addComponent(thing)
+                        .addGap(GAP_RELATED)
+                        .addComponent(label))
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(LEADING)
+                .addGroup(layout.createParallelGroup(BASELINE)
+                        .addComponent(thing)
+                        .addComponent(label))
+        );
+
+        return newPanel;
     }
-            
+
     /**
      * Set the width of an existing component
      * @param existingComponent
      */
     public static void setComponentWidth(JComponent existingComponent) {
-    	setComponentWidth(existingComponent, Width.SINGLE);
+        setComponentWidth(existingComponent, Width.SINGLE);
     }
 
     public static void setComponentWidth(JComponent existingComponent, Width width) {
         if (width == null)
             width = Width.SINGLE;
 
-    	switch (width) {
-    	case HALF:
-    		setComponentWidth(existingComponent, ELEMENT_HALF_WIDTH);
-    		break;
+        switch (width) {
+            case HALF:
+                setComponentWidth(existingComponent, ELEMENT_HALF_WIDTH);
+                break;
 
-    	case SINGLE: 
-    		setComponentWidth(existingComponent, ELEMENT_WIDTH);
-    		break;
+            case SINGLE:
+                setComponentWidth(existingComponent, ELEMENT_WIDTH);
+                break;
 
-    	case ONEHALF:    	
-    		setComponentWidth(existingComponent, ELEMENT_ONEHALF_WIDTH);
-    		break;
-    		
-    	case DOUBLE: 
-    		setComponentWidth(existingComponent, ELEMENT_DOUBLE_WIDTH);
-    		break;
+            case ONEHALF:
+                setComponentWidth(existingComponent, ELEMENT_ONEHALF_WIDTH);
+                break;
 
-    	case TRIPLE: 
-    		setComponentWidth(existingComponent, ELEMENT_DOUBLE_WIDTH + ELEMENT_WIDTH);
-    		break;
+            case DOUBLE:
+                setComponentWidth(existingComponent, ELEMENT_DOUBLE_WIDTH);
+                break;
 
-    	case QUADRUPLE: 
-    		setComponentWidth(existingComponent, ELEMENT_DOUBLE_WIDTH + ELEMENT_DOUBLE_WIDTH);
-    		break;
+            case TRIPLE:
+                setComponentWidth(existingComponent, ELEMENT_DOUBLE_WIDTH + ELEMENT_WIDTH);
+                break;
 
-    	case DOUBLEDOUBLE: 
-    		setComponentWidth(existingComponent, ELEMENT_DOUBLEDOUBLE_WIDTH);
-    		break;
+            case QUADRUPLE:
+                setComponentWidth(existingComponent, ELEMENT_DOUBLE_WIDTH + ELEMENT_DOUBLE_WIDTH);
+                break;
 
-    	default:	 	    	
-    		setComponentWidth(existingComponent, ELEMENT_WIDTH);
-    		break;
-    	}
+            case DOUBLEDOUBLE:
+                setComponentWidth(existingComponent, ELEMENT_DOUBLEDOUBLE_WIDTH);
+                break;
+
+            default:
+                setComponentWidth(existingComponent, ELEMENT_WIDTH);
+                break;
+        }
     }
-    
+
     /**
      * Set the width of an existing component to a given int width
      * @param existingComponent
      * @param width
      */
     public static void setComponentWidth(JComponent existingComponent, int width) {
-		existingComponent.setMinimumSize(new Dimension(width, 24));
-		existingComponent.setMaximumSize(new Dimension(width, 24));
-		existingComponent.setPreferredSize(new Dimension(width, 24));
+        existingComponent.setMinimumSize(new Dimension(width, 24));
+        existingComponent.setMaximumSize(new Dimension(width, 24));
+        existingComponent.setPreferredSize(new Dimension(width, 24));
     }
-    
+
     /**
      * Set the component width to that of another component
      */
     public static void setComponentWidth(JComponent setme, JComponent getme) {
-    	setComponentWidth(setme, getme, 0);
+        setComponentWidth(setme, getme, 0);
     }
-    
+
     public static void setComponentWidth(JComponent setme, JComponent getme, int padding) {
         setme.setPreferredSize(new Dimension(getme.getPreferredSize().width + padding, getme.getPreferredSize().height));
     }
-    
+
     /**
      * Set the component height to that of another component
      */
     public static void setComponentHeight(JComponent setme, JComponent getme) {
-    	setComponentHeight(setme, getme, 0);
+        setComponentHeight(setme, getme, 0);
     }
-    
+
     public static void setComponentHeight(JComponent setme, JComponent getme, int padding) {
         setme.setPreferredSize(new Dimension(getme.getPreferredSize().width, getme.getPreferredSize().height + padding));
     }
@@ -329,128 +346,129 @@ public class McVGuiUtils implements Constants {
      * @param existingLabel
      */
     public static void setLabelPosition(JLabel existingLabel) {
-    	setLabelPosition(existingLabel, Position.LEFT);
+        setLabelPosition(existingLabel, Position.LEFT);
     }
-    
+
     public static void setLabelPosition(JLabel existingLabel, Position position) {
-    	switch (position) {
-    	case LEFT:
-    		existingLabel.setHorizontalTextPosition(SwingConstants.LEFT);
-    		existingLabel.setHorizontalAlignment(SwingConstants.LEFT);
-    		break;
+        switch (position) {
+            case LEFT:
+                existingLabel.setHorizontalTextPosition(SwingConstants.LEFT);
+                existingLabel.setHorizontalAlignment(SwingConstants.LEFT);
+                break;
 
-    	case RIGHT: 
-    		existingLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-    		existingLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-    		break;
+            case RIGHT:
+                existingLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
+                existingLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+                break;
 
-    	case CENTER:    	
-    		existingLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-    		existingLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    		break;
+            case CENTER:
+                existingLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+                existingLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                break;
 
-    	default:	 	    	
-    		existingLabel.setHorizontalTextPosition(SwingConstants.LEFT);
-    		existingLabel.setHorizontalAlignment(SwingConstants.LEFT);
-    	break;
-    	}
+            default:
+                existingLabel.setHorizontalTextPosition(SwingConstants.LEFT);
+                existingLabel.setHorizontalAlignment(SwingConstants.LEFT);
+                break;
+        }
     }
-    
+
     /**
      * Set the bold attribute of an existing label
      * @param existingLabel
      * @param bold
      */
     public static void setLabelBold(JLabel existingLabel, boolean bold) {
-    	Font f = existingLabel.getFont();
-    	if (bold)
-    		existingLabel.setFont(f.deriveFont(f.getStyle() ^ Font.BOLD));
-    	else
-    		existingLabel.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
+        Font f = existingLabel.getFont();
+        if (bold) {
+            existingLabel.setFont(f.deriveFont(f.getStyle() ^ Font.BOLD));
+        } else {
+            existingLabel.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
+        }
     }
-    
+
     /**
      * Set the foreground color of an existing component
      * @param existingComponent
      */
     public static void setComponentColor(JComponent existingComponent) {
-    	setComponentColor(existingComponent, TextColor.NORMAL);
+        setComponentColor(existingComponent, TextColor.NORMAL);
     }
-    
-    public static void setComponentColor(JComponent existingComponent, TextColor color) {
-    	switch (color) {
-    	case NORMAL:
-    		existingComponent.setForeground(new Color(0, 0, 0));
-    		break;
 
-    	case STATUS: 
-    		existingComponent.setForeground(MCV_BLUE_DARK);
-    		break;
-    		
-    	default:	 	    	
-    		existingComponent.setForeground(new Color(0, 0, 0));
-    		break;
-    	}
+    public static void setComponentColor(JComponent existingComponent, TextColor color) {
+        switch (color) {
+            case NORMAL:
+                existingComponent.setForeground(new Color(0, 0, 0));
+                break;
+
+            case STATUS:
+                existingComponent.setForeground(MCV_BLUE_DARK);
+                break;
+
+            default:
+                existingComponent.setForeground(new Color(0, 0, 0));
+                break;
+        }
     }
 
     /**
      * Custom makeImageButton to ensure proper sizing and mouseborder are set
      */
     public static JButton makeImageButton(String iconName, 
-    		final Object object,
-    		final String methodName,
-    		final Object arg,
-    		final String tooltip
+            final Object object,
+            final String methodName,
+            final Object arg,
+            final String tooltip
     ) {
 
-    	final JButton btn = makeImageButton(iconName, tooltip);
-    	return (JButton) GuiUtils.addActionListener(btn, object, methodName, arg);
+        final JButton btn = makeImageButton(iconName, tooltip);
+        return (JButton) GuiUtils.addActionListener(btn, object, methodName, arg);
     }
 
     /**
      * Custom makeImageButton to ensure proper sizing and mouseborder are set
      */
     public static JButton makeImageButton(String iconName, String tooltip) {
-    	boolean addMouseOverBorder = true;
+        boolean addMouseOverBorder = true;
 
-    	ImageIcon imageIcon = GuiUtils.getImageIcon(iconName);
-    	if (imageIcon.getIconWidth() > 22 || imageIcon.getIconHeight() > 22) {
-    		Image scaledImage  = imageIcon.getImage().getScaledInstance(22, 22, Image.SCALE_SMOOTH);
-    		imageIcon = new ImageIcon(scaledImage);
-    	}
+        ImageIcon imageIcon = GuiUtils.getImageIcon(iconName);
+        if (imageIcon.getIconWidth() > 22 || imageIcon.getIconHeight() > 22) {
+            Image scaledImage  = imageIcon.getImage().getScaledInstance(22, 22, Image.SCALE_SMOOTH);
+            imageIcon = new ImageIcon(scaledImage);
+        }
 
-    	final JButton btn = GuiUtils.getImageButton(imageIcon);
-    	btn.setBackground(null);
-    	btn.setContentAreaFilled(false);
-    	btn.setSize(new Dimension(24, 24));
-    	btn.setPreferredSize(new Dimension(24, 24));
-    	btn.setMinimumSize(new Dimension(24, 24));
-    	if (addMouseOverBorder) {
-    		GuiUtils.makeMouseOverBorder(btn);
-    	}
-    	btn.setToolTipText(tooltip);
-    	return btn;
+        final JButton btn = GuiUtils.getImageButton(imageIcon);
+        btn.setBackground(null);
+        btn.setContentAreaFilled(false);
+        btn.setSize(new Dimension(24, 24));
+        btn.setPreferredSize(new Dimension(24, 24));
+        btn.setMinimumSize(new Dimension(24, 24));
+        if (addMouseOverBorder) {
+            GuiUtils.makeMouseOverBorder(btn);
+        }
+        btn.setToolTipText(tooltip);
+        return btn;
     }
-    
+
     /**
      * Create a button with text and an icon
      */
     public static JButton makeImageTextButton(String iconName, String label) {
-    	JButton newButton = new JButton(label);
-    	setButtonImage(newButton, iconName);
-    	return newButton;
+        JButton newButton = new JButton(label);
+        setButtonImage(newButton, iconName);
+        return newButton;
     }
-    
+
     /**
      * Add an icon to a button... but only if the LookAndFeel supports it
      */
     public static void setButtonImage(JButton existingButton, String iconName) {
-    	// TODO: see if this is fixed in some future Apple Java release?
-    	// When using Aqua look and feel don't use icons in the buttons
-    	// Messes with the button vertical sizing
-    	if (existingButton.getBorder().toString().indexOf("Aqua") > 0) return;
-    	ImageIcon imageIcon = GuiUtils.getImageIcon(iconName);
-    	existingButton.setIcon(imageIcon);
+        // TODO: see if this is fixed in some future Apple Java release?
+        // When using Aqua look and feel don't use icons in the buttons
+        // Messes with the button vertical sizing
+        if (existingButton.getBorder().toString().indexOf("Aqua") > 0) return;
+        ImageIcon imageIcon = GuiUtils.getImageIcon(iconName);
+        existingButton.setIcon(imageIcon);
     }
 
     /**
@@ -519,49 +537,49 @@ public class McVGuiUtils implements Constants {
      * Create some custom text entry widgets
      */
     public static McVTextField makeTextFieldLimit(String defaultString, int limit) {
-    	return new McVTextField(defaultString, limit);
+        return new McVTextField(defaultString, limit);
     }
-    
+
     public static McVTextField makeTextFieldUpper(String defaultString, int limit) {
-    	return new McVTextField(defaultString, limit, true);
+        return new McVTextField(defaultString, limit, true);
     }
-    
+
     public static McVTextField makeTextFieldAllow(String defaultString, int limit, boolean upper, String allow) {
-    	McVTextField newField = new McVTextField(defaultString, limit, upper);
-    	newField.setAllow(allow);
-    	return newField;
+        McVTextField newField = new McVTextField(defaultString, limit, upper);
+        newField.setAllow(allow);
+        return newField;
     }
-    
+
     public static McVTextField makeTextFieldDeny(String defaultString, int limit, boolean upper, String deny) {
-    	McVTextField newField = new McVTextField(defaultString, limit, upper);
-    	newField.setDeny(deny);
-    	return newField;
+        McVTextField newField = new McVTextField(defaultString, limit, upper);
+        newField.setDeny(deny);
+        return newField;
     }
-        
+
     public static McVTextField makeTextFieldAllow(String defaultString, int limit, boolean upper, char[] allow) {
-    	McVTextField newField = new McVTextField(defaultString, limit, upper);
-    	newField.setAllow(allow);
-    	return newField;
+        McVTextField newField = new McVTextField(defaultString, limit, upper);
+        newField.setAllow(allow);
+        return newField;
     }
-    
+
     public static McVTextField makeTextFieldDeny(String defaultString, int limit, boolean upper, char[] deny) {
-    	McVTextField newField = new McVTextField(defaultString, limit, upper);
-    	newField.setDeny(deny);
-    	return newField;
+        McVTextField newField = new McVTextField(defaultString, limit, upper);
+        newField.setDeny(deny);
+        return newField;
     }
-    
+
     public static McVTextField makeTextFieldAllow(String defaultString, int limit, boolean upper, Pattern allow) {
-    	McVTextField newField = new McVTextField(defaultString, limit, upper);
-    	newField.setAllow(allow);
-    	return newField;
+        McVTextField newField = new McVTextField(defaultString, limit, upper);
+        newField.setAllow(allow);
+        return newField;
     }
-    
+
     public static McVTextField makeTextFieldDeny(String defaultString, int limit, boolean upper, Pattern deny) {
-    	McVTextField newField = new McVTextField(defaultString, limit, upper);
-    	newField.setDeny(deny);
-    	return newField;
+        McVTextField newField = new McVTextField(defaultString, limit, upper);
+        newField.setDeny(deny);
+        return newField;
     }
-    
+
     /**
      * Use GroupLayout for stacking components vertically
      * Set center to resize vertically
@@ -571,27 +589,27 @@ public class McVGuiUtils implements Constants {
      * @return
      */
     public static JPanel topCenterBottom(JComponent top, JComponent center, JComponent bottom) {
-    	JPanel newPanel = new JPanel();
-    	    	
+        JPanel newPanel = new JPanel();
+
         GroupLayout layout = new GroupLayout(newPanel);
         newPanel.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(LEADING)
-            .addComponent(top, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(center, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(bottom, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                layout.createParallelGroup(LEADING)
+                .addComponent(top, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(center, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(bottom, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(top, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
-                .addPreferredGap(RELATED)
-                .addComponent(center, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(RELATED)
-                .addComponent(bottom, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE))
+                layout.createParallelGroup(LEADING)
+                .addGroup(layout.createSequentialGroup()
+                        .addComponent(top, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
+                        .addPreferredGap(RELATED)
+                        .addComponent(center, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(RELATED)
+                        .addComponent(bottom, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE))
         );
 
-    	return newPanel;
+        return newPanel;
     }
 
     /**
@@ -602,32 +620,32 @@ public class McVGuiUtils implements Constants {
      * @return
      */
     public static JPanel topBottom(JComponent top, JComponent bottom, Prefer which) {
-    	JPanel newPanel = new JPanel();
+        JPanel newPanel = new JPanel();
 
-    	int topSize=PREFERRED_SIZE;
-    	int bottomSize=PREFERRED_SIZE;
-    	
-    	if (which == Prefer.TOP) topSize = Short.MAX_VALUE;
-    	else if (which == Prefer.BOTTOM) topSize = Short.MAX_VALUE;
-    		
-    	GroupLayout layout = new GroupLayout(newPanel);
-    	newPanel.setLayout(layout);
-    	layout.setHorizontalGroup(
-    			layout.createParallelGroup(LEADING)
-    			.addComponent(top, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
-    			.addComponent(bottom, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
-    	);
-    	layout.setVerticalGroup(
-    			layout.createParallelGroup(LEADING)
-    			.addGroup(layout.createSequentialGroup()
-    					.addComponent(top, PREFERRED_SIZE, DEFAULT_SIZE, topSize)
-    					.addPreferredGap(RELATED)
-    					.addComponent(bottom, PREFERRED_SIZE, DEFAULT_SIZE, bottomSize))
-    	);
+        int topSize=PREFERRED_SIZE;
+        int bottomSize=PREFERRED_SIZE;
 
-    	return newPanel;
+        if (which == Prefer.TOP) topSize = Short.MAX_VALUE;
+        else if (which == Prefer.BOTTOM) topSize = Short.MAX_VALUE;
+
+        GroupLayout layout = new GroupLayout(newPanel);
+        newPanel.setLayout(layout);
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(LEADING)
+                .addComponent(top, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(bottom, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(LEADING)
+                .addGroup(layout.createSequentialGroup()
+                        .addComponent(top, PREFERRED_SIZE, DEFAULT_SIZE, topSize)
+                        .addPreferredGap(RELATED)
+                        .addComponent(bottom, PREFERRED_SIZE, DEFAULT_SIZE, bottomSize))
+        );
+
+        return newPanel;
     }
-    
+
     /**
      * Use GroupLayout for wrapping components to stop vertical resizing
      * @param left
@@ -635,9 +653,9 @@ public class McVGuiUtils implements Constants {
      * @return
      */
     public static JPanel sideBySide(JComponent left, JComponent right) {
-    	return sideBySide(left, right, GAP_RELATED);
+        return sideBySide(left, right, GAP_RELATED);
     }
-    
+
     /**
      * Use GroupLayout for wrapping components to stop vertical resizing
      * @param left
@@ -645,93 +663,93 @@ public class McVGuiUtils implements Constants {
      * @return
      */
     public static JPanel sideBySide(JComponent left, JComponent right, int gap) {
-    	JPanel newPanel = new JPanel();
+        JPanel newPanel = new JPanel();
 
-    	GroupLayout layout = new GroupLayout(newPanel);
-    	newPanel.setLayout(layout);
-    	layout.setHorizontalGroup(
-    			layout.createParallelGroup(LEADING)
-    			.addGroup(layout.createSequentialGroup()
-    					.addComponent(left, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
-    					.addGap(gap)
-    					.addComponent(right, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
-    	);
-    	layout.setVerticalGroup(
-    			layout.createParallelGroup(LEADING)
-    			.addGroup(layout.createSequentialGroup()
-    	                .addGroup(layout.createParallelGroup(LEADING)
-    	                		.addComponent(left, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
-    	                		.addComponent(right, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)))
-    	);
+        GroupLayout layout = new GroupLayout(newPanel);
+        newPanel.setLayout(layout);
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(LEADING)
+                .addGroup(layout.createSequentialGroup()
+                        .addComponent(left, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(gap)
+                        .addComponent(right, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(LEADING)
+                .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(LEADING)
+                                .addComponent(left, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
+                                .addComponent(right, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)))
+        );
 
-    	return newPanel;
+        return newPanel;
     }
-    
+
     /**
      * Use GroupLayout for wrapping a list of components horizontally
      */
     public static JPanel horizontal(Component[] components) {
-    	JPanel newPanel = new JPanel();
-    	
-    	GroupLayout layout = new GroupLayout(newPanel);
-    	newPanel.setLayout(layout);
-    	
-    	SequentialGroup hGroup = layout.createSequentialGroup();
-    	for (int i=0; i<components.length; i++) {
-    		if (i>0) hGroup.addGap(GAP_RELATED);
-    		hGroup.addComponent(components[i], DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE);
-    	}
+        JPanel newPanel = new JPanel();
 
-    	SequentialGroup vGroup = layout.createSequentialGroup();
-    	ParallelGroup vInner = layout.createParallelGroup(LEADING);
-    	for (int i=0; i<components.length; i++) {
-    		vInner.addComponent(components[i], PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE);
-    	}
-    	vGroup.addGroup(vInner);
+        GroupLayout layout = new GroupLayout(newPanel);
+        newPanel.setLayout(layout);
 
-    	layout.setHorizontalGroup(
-    			layout.createParallelGroup(LEADING).addGroup(hGroup)
-    	);
-    	layout.setVerticalGroup(
-    			layout.createParallelGroup(LEADING).addGroup(vGroup)
-    	);
+        SequentialGroup hGroup = layout.createSequentialGroup();
+        for (int i=0; i<components.length; i++) {
+            if (i>0) hGroup.addGap(GAP_RELATED);
+            hGroup.addComponent(components[i], DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE);
+        }
 
-    	return newPanel;
+        SequentialGroup vGroup = layout.createSequentialGroup();
+        ParallelGroup vInner = layout.createParallelGroup(LEADING);
+        for (int i=0; i<components.length; i++) {
+            vInner.addComponent(components[i], PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE);
+        }
+        vGroup.addGroup(vInner);
+
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(LEADING).addGroup(hGroup)
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(LEADING).addGroup(vGroup)
+        );
+
+        return newPanel;
     }
 
     /**
      * Use GroupLayout for wrapping a list of components vertically
      */
     public static JPanel vertical(Component[] components) {
-    	JPanel newPanel = new JPanel();
-    	
-    	GroupLayout layout = new GroupLayout(newPanel);
-    	newPanel.setLayout(layout);
-    	
-    	ParallelGroup hGroup = layout.createParallelGroup(LEADING);
-    	for (int i=0; i<components.length; i++) {
-    		hGroup.addComponent(components[i], DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE);
-    	}
+        JPanel newPanel = new JPanel();
 
-    	int vSize=PREFERRED_SIZE;
+        GroupLayout layout = new GroupLayout(newPanel);
+        newPanel.setLayout(layout);
 
-    	ParallelGroup vGroup = layout.createParallelGroup(LEADING);
-    	SequentialGroup vInner = layout.createSequentialGroup();
-    	for (int i=0; i<components.length; i++) {
-    		if (i>0) vInner.addGap(GAP_RELATED);
-    		if (i == components.length-1) vSize = Short.MAX_VALUE;
-    		vInner.addComponent(components[i], PREFERRED_SIZE, DEFAULT_SIZE, vSize);
-    	}
-    	vGroup.addGroup(vInner);
+        ParallelGroup hGroup = layout.createParallelGroup(LEADING);
+        for (int i=0; i<components.length; i++) {
+            hGroup.addComponent(components[i], DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE);
+        }
 
-    	layout.setHorizontalGroup(
-    			layout.createParallelGroup(LEADING).addGroup(hGroup)
-    	);
-    	layout.setVerticalGroup(
-    			layout.createParallelGroup(LEADING).addGroup(vGroup)
-    	);    	
-    	
-    	return newPanel;
+        int vSize=PREFERRED_SIZE;
+
+        ParallelGroup vGroup = layout.createParallelGroup(LEADING);
+        SequentialGroup vInner = layout.createSequentialGroup();
+        for (int i=0; i<components.length; i++) {
+            if (i>0) vInner.addGap(GAP_RELATED);
+            if (i == components.length-1) vSize = Short.MAX_VALUE;
+            vInner.addComponent(components[i], PREFERRED_SIZE, DEFAULT_SIZE, vSize);
+        }
+        vGroup.addGroup(vInner);
+
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(LEADING).addGroup(hGroup)
+        );
+        layout.setVerticalGroup(
+                layout.createParallelGroup(LEADING).addGroup(vGroup)
+        );
+
+        return newPanel;
     }
 
     /**
@@ -747,92 +765,92 @@ public class McVGuiUtils implements Constants {
      * @return
      */
     public static JPanel makePrettyButtons(JPanel idvButtonPanel) {    	
-    	// These are the buttons we know about
-    	JButton buttonOK = null;
-    	JButton buttonApply = null;
-    	JButton buttonCancel = null;
-    	JButton buttonHelp = null;
-    	JButton buttonNew = null;
-    	JButton buttonReset = null;
-    	JButton buttonYes = null;
-    	JButton buttonNo = null;
-    	
-    	// These are the buttons we don't know about
-    	List<JButton> buttonList = new ArrayList<JButton>();
-    	
-    	// First pull apart the panel and see if it looks like we expect
-    	Component[] comps = idvButtonPanel.getComponents();
-    	for (int i=0; i<comps.length; i++) {
-    		if (!(comps[i] instanceof JButton)) continue;
-    		JButton button = (JButton)comps[i];
-    		if (button.getText().equals("OK")) {
-    			buttonOK = makePrettyButton(button);
-    		}
-    		else if (button.getText().equals("Apply")) {
-    			buttonApply = makePrettyButton(button);
-    		}
-    		else if (button.getText().equals("Cancel")) {
-    			buttonCancel = makePrettyButton(button);
-    		}
-    		else if (button.getText().equals("Help")) {
-    			buttonHelp = makePrettyButton(button);
-    		}
-    		else if (button.getText().equals("New")) {
-    			buttonNew = makePrettyButton(button);
-    		}
-    		else if (button.getText().equals("Reset")) {
-    			buttonReset = makePrettyButton(button);
-    		}
-    		else if (button.getText().equals("Yes")) {
-    			buttonYes = makePrettyButton(button);
-    		}
-    		else if (button.getText().equals("No")) {
-    			buttonNo = makePrettyButton(button);
-    		}
-    		else {
-    			buttonList.add(button);
-    		}
-    	}
-    	    	
-    	// If we are on a Mac, this is the order (right aligned)
-    	// Help, New, Reset, No, Yes, Cancel, Apply, OK
-    	if (System.getProperty("os.name").indexOf("Mac OS X") >= 0) {
-    		JPanel newButtonPanel = new JPanel();
-    		if (buttonHelp!=null) newButtonPanel.add(buttonHelp);
-    		if (buttonNew!=null) newButtonPanel.add(buttonNew);
-    		if (buttonReset!=null) newButtonPanel.add(buttonReset);
-    		if (buttonNo!=null) newButtonPanel.add(buttonNo);
-    		if (buttonYes!=null) newButtonPanel.add(buttonYes);
-    		if (buttonCancel!=null) newButtonPanel.add(buttonCancel);
-    		if (buttonApply!=null) newButtonPanel.add(buttonApply);
-    		if (buttonOK!=null) newButtonPanel.add(buttonOK);
-    		if (buttonList.size() > 0) 
-    			return GuiUtils.right(GuiUtils.hbox(GuiUtils.hbox(buttonList), newButtonPanel));
-    		else
-    			return(GuiUtils.right(newButtonPanel));
-    	}
-    	
-    	// If we are not on a Mac, this is the order (center aligned)
-    	// OK, Apply, Cancel, Yes, No, Reset, New, Help
-    	if (System.getProperty("os.name").indexOf("Mac OS X") < 0) {
-    		JPanel newButtonPanel = new JPanel();
-    		if (buttonOK!=null) newButtonPanel.add(buttonOK);
-    		if (buttonApply!=null) newButtonPanel.add(buttonApply);
-    		if (buttonCancel!=null) newButtonPanel.add(buttonCancel);
-    		if (buttonYes!=null) newButtonPanel.add(buttonYes);
-    		if (buttonNo!=null) newButtonPanel.add(buttonNo);
-    		if (buttonReset!=null) newButtonPanel.add(buttonReset);
-    		if (buttonNew!=null) newButtonPanel.add(buttonNew);
-    		if (buttonHelp!=null) newButtonPanel.add(buttonHelp);
-    		if (buttonList.size() > 0) 
-    			return GuiUtils.center(GuiUtils.hbox(GuiUtils.hbox(buttonList), newButtonPanel));
-    		else
-    			return(GuiUtils.center(newButtonPanel));
-    	}
-    	
-    	return idvButtonPanel;
+        // These are the buttons we know about
+        JButton buttonOK = null;
+        JButton buttonApply = null;
+        JButton buttonCancel = null;
+        JButton buttonHelp = null;
+        JButton buttonNew = null;
+        JButton buttonReset = null;
+        JButton buttonYes = null;
+        JButton buttonNo = null;
+
+        // These are the buttons we don't know about
+        List<JButton> buttonList = new ArrayList<JButton>();
+
+        // First pull apart the panel and see if it looks like we expect
+        Component[] comps = idvButtonPanel.getComponents();
+        for (int i=0; i<comps.length; i++) {
+            if (!(comps[i] instanceof JButton)) continue;
+            JButton button = (JButton)comps[i];
+            if (button.getText().equals("OK")) {
+                buttonOK = makePrettyButton(button);
+            }
+            else if (button.getText().equals("Apply")) {
+                buttonApply = makePrettyButton(button);
+            }
+            else if (button.getText().equals("Cancel")) {
+                buttonCancel = makePrettyButton(button);
+            }
+            else if (button.getText().equals("Help")) {
+                buttonHelp = makePrettyButton(button);
+            }
+            else if (button.getText().equals("New")) {
+                buttonNew = makePrettyButton(button);
+            }
+            else if (button.getText().equals("Reset")) {
+                buttonReset = makePrettyButton(button);
+            }
+            else if (button.getText().equals("Yes")) {
+                buttonYes = makePrettyButton(button);
+            }
+            else if (button.getText().equals("No")) {
+                buttonNo = makePrettyButton(button);
+            }
+            else {
+                buttonList.add(button);
+            }
+        }
+
+        // If we are on a Mac, this is the order (right aligned)
+        // Help, New, Reset, No, Yes, Cancel, Apply, OK
+        if (System.getProperty("os.name").indexOf("Mac OS X") >= 0) {
+            JPanel newButtonPanel = new JPanel();
+            if (buttonHelp!=null) newButtonPanel.add(buttonHelp);
+            if (buttonNew!=null) newButtonPanel.add(buttonNew);
+            if (buttonReset!=null) newButtonPanel.add(buttonReset);
+            if (buttonNo!=null) newButtonPanel.add(buttonNo);
+            if (buttonYes!=null) newButtonPanel.add(buttonYes);
+            if (buttonCancel!=null) newButtonPanel.add(buttonCancel);
+            if (buttonApply!=null) newButtonPanel.add(buttonApply);
+            if (buttonOK!=null) newButtonPanel.add(buttonOK);
+            if (buttonList.size() > 0) 
+                return GuiUtils.right(GuiUtils.hbox(GuiUtils.hbox(buttonList), newButtonPanel));
+            else
+                return(GuiUtils.right(newButtonPanel));
+        }
+
+        // If we are not on a Mac, this is the order (center aligned)
+        // OK, Apply, Cancel, Yes, No, Reset, New, Help
+        if (System.getProperty("os.name").indexOf("Mac OS X") < 0) {
+            JPanel newButtonPanel = new JPanel();
+            if (buttonOK!=null) newButtonPanel.add(buttonOK);
+            if (buttonApply!=null) newButtonPanel.add(buttonApply);
+            if (buttonCancel!=null) newButtonPanel.add(buttonCancel);
+            if (buttonYes!=null) newButtonPanel.add(buttonYes);
+            if (buttonNo!=null) newButtonPanel.add(buttonNo);
+            if (buttonReset!=null) newButtonPanel.add(buttonReset);
+            if (buttonNew!=null) newButtonPanel.add(buttonNew);
+            if (buttonHelp!=null) newButtonPanel.add(buttonHelp);
+            if (buttonList.size() > 0) 
+                return GuiUtils.center(GuiUtils.hbox(GuiUtils.hbox(buttonList), newButtonPanel));
+            else
+                return(GuiUtils.center(newButtonPanel));
+        }
+
+        return idvButtonPanel;
     }
-    
+
     /**
      * Take a list of buttons and make them pretty
      * 
@@ -840,100 +858,102 @@ public class McVGuiUtils implements Constants {
      * @return list
      */
     public static List makePrettyButtons(List buttonList) {
-    	List newButtons = new ArrayList();
-    	for (int i=0; i<buttonList.size(); i++) {
-    		if (buttonList.get(i) instanceof JButton)
-    			newButtons.add(makePrettyButton((JButton)(buttonList.get(i))));
-    		else
-    			newButtons.add(buttonList.get(i));
-    	}
-    	return newButtons;
+        int size = buttonList.size();
+        List newButtons = arrList(size);
+        for (int i=0; i<size; i++) {
+            if (buttonList.get(i) instanceof JButton) {
+                newButtons.add(makePrettyButton((JButton)(buttonList.get(i))));
+            } else {
+                newButtons.add(buttonList.get(i));
+            }
+        }
+        return newButtons;
     }
-    
+
     /**
      * Convenience method to make a button based solely on its name
      */
     public static JButton makePrettyButton(String name) {
-    	return makePrettyButton(new JButton(name));
+        return makePrettyButton(new JButton(name));
     }
-    
+
     /**
      * - Add icons when we understand the button name
      * 
      * @param button
      * @return button
      */
-    public static JButton makePrettyButton(JButton button) {    	    	
-    	McVGuiUtils.setComponentWidth(button, Width.ONEHALF);
-    	if (button.getText().equals("OK")) {
-    		McVGuiUtils.setButtonImage(button, ICON_ACCEPT_SMALL);
-    	}
-    	else if (button.getText().equals("Apply")) {
-    		McVGuiUtils.setButtonImage(button, ICON_APPLY_SMALL);
-    	}
-    	else if (button.getText().equals("Cancel")) {
-    		McVGuiUtils.setButtonImage(button, ICON_CANCEL_SMALL);
-    	}
-    	else if (button.getText().equals("Help")) {
-    		McVGuiUtils.setButtonImage(button, ICON_HELP_SMALL);
-    	}
-    	else if (button.getText().equals("New")) {
-    		McVGuiUtils.setButtonImage(button, ICON_ADD_SMALL);
-    	}
-    	else if (button.getText().equals("Reset")) {
-    		McVGuiUtils.setButtonImage(button, ICON_UNDO_SMALL);
-    	}
-    	else if (button.getText().equals("Yes")) {
-    		McVGuiUtils.setButtonImage(button, ICON_ACCEPT_SMALL);
-    	}
-    	else if (button.getText().equals("No")) {
-    		McVGuiUtils.setButtonImage(button, ICON_CANCEL_SMALL);
-    	}
-    	else if (button.getText().equals("Close")) {
-    		McVGuiUtils.setButtonImage(button, ICON_CANCEL_SMALL);
-    	}
-    	else if (button.getText().equals("Previous")) {
-    		McVGuiUtils.setButtonImage(button, ICON_PREVIOUS_SMALL);
-    	}
-    	else if (button.getText().equals("Next")) {
-    		McVGuiUtils.setButtonImage(button, ICON_NEXT_SMALL);
-    	}
-    	else if (button.getText().equals("Random")) {
-    		McVGuiUtils.setButtonImage(button, ICON_RANDOM_SMALL);
-    	}
-    	else if (button.getText().equals("Support Form")) {
-    		McVGuiUtils.setButtonImage(button, ICON_SUPPORT_SMALL);
-    	}
-    	return button;
+    public static JButton makePrettyButton(JButton button) {
+        McVGuiUtils.setComponentWidth(button, Width.ONEHALF);
+        if (button.getText().equals("OK")) {
+            McVGuiUtils.setButtonImage(button, ICON_ACCEPT_SMALL);
+        }
+        else if (button.getText().equals("Apply")) {
+            McVGuiUtils.setButtonImage(button, ICON_APPLY_SMALL);
+        }
+        else if (button.getText().equals("Cancel")) {
+            McVGuiUtils.setButtonImage(button, ICON_CANCEL_SMALL);
+        }
+        else if (button.getText().equals("Help")) {
+            McVGuiUtils.setButtonImage(button, ICON_HELP_SMALL);
+        }
+        else if (button.getText().equals("New")) {
+            McVGuiUtils.setButtonImage(button, ICON_ADD_SMALL);
+        }
+        else if (button.getText().equals("Reset")) {
+            McVGuiUtils.setButtonImage(button, ICON_UNDO_SMALL);
+        }
+        else if (button.getText().equals("Yes")) {
+            McVGuiUtils.setButtonImage(button, ICON_ACCEPT_SMALL);
+        }
+        else if (button.getText().equals("No")) {
+            McVGuiUtils.setButtonImage(button, ICON_CANCEL_SMALL);
+        }
+        else if (button.getText().equals("Close")) {
+            McVGuiUtils.setButtonImage(button, ICON_CANCEL_SMALL);
+        }
+        else if (button.getText().equals("Previous")) {
+            McVGuiUtils.setButtonImage(button, ICON_PREVIOUS_SMALL);
+        }
+        else if (button.getText().equals("Next")) {
+            McVGuiUtils.setButtonImage(button, ICON_NEXT_SMALL);
+        }
+        else if (button.getText().equals("Random")) {
+            McVGuiUtils.setButtonImage(button, ICON_RANDOM_SMALL);
+        }
+        else if (button.getText().equals("Support Form")) {
+            McVGuiUtils.setButtonImage(button, ICON_SUPPORT_SMALL);
+        }
+        return button;
     }
-        
+
     /**
      * Print the hierarchy of components
      */
     public static void printUIComponents(JComponent parent) {
-    	printUIComponents(parent, 0, 0);
+        printUIComponents(parent, 0, 0);
     }
     public static void printUIComponents(JComponent parent, int index, int depth) {
-    	if (parent == null) {
-    		System.err.println("McVGuiUtils.printUIComponents: null parent");
-    		return;
-    	}
-    	Component[] children = parent.getComponents();
-    	int childcount = children.length;
-    	
-		String indent = "";
-		for (int d=0; d<depth; d++) {
-			indent += "  ";
-		}
-		System.out.println(indent + index + ": " + parent);
+        if (parent == null) {
+            System.err.println("McVGuiUtils.printUIComponents: null parent");
+            return;
+        }
+        Component[] children = parent.getComponents();
+        int childcount = children.length;
 
-    	if (childcount > 0) {
-    		for (int c=0; c<childcount; c++) {
-    			if (children[c] instanceof JComponent) {
-        			printUIComponents((JComponent)children[c], c, depth+1);
-    			}
-    		}
-    	}
+        String indent = "";
+        for (int d=0; d<depth; d++) {
+            indent += "  ";
+        }
+        System.out.println(indent + index + ": " + parent);
+
+        if (childcount > 0) {
+            for (int c=0; c<childcount; c++) {
+                if (children[c] instanceof JComponent) {
+                    printUIComponents((JComponent)children[c], c, depth+1);
+                }
+            }
+        }
     }
 
     /**
@@ -953,32 +973,72 @@ public class McVGuiUtils implements Constants {
             SwingUtilities.invokeLater(r);
         }
     }
-    
+
+    //    private static <E> List<E> sizedList() {
+    //        McIDASV mcv = McIDASV.getStaticMcv();
+    //        int viewManagerCount = ESTIMATED_VM_COUNT;
+    //        if (mcv != null) {
+    //            ViewManagerManager vmm = cast(mcv.getVMManager());
+    //            viewManagerCount = vmm.getViewManagers().size();
+    //        }
+    //        return arrList(viewManagerCount);
+    //    }
+
+    private static int getVMCount() {
+        McIDASV mcv = McIDASV.getStaticMcv();
+        int viewManagerCount = ESTIMATED_VM_COUNT;
+        if (mcv != null) {
+            ViewManagerManager vmm = cast(mcv.getVMManager());
+            viewManagerCount = vmm.getViewManagerCount();
+        }
+        return viewManagerCount;
+    }
+
+    private static int getHolderCount() {
+        McIDASV mcv = McIDASV.getStaticMcv();
+        int holderCount = ESTIMATED_VM_COUNT;
+        if (mcv != null) {
+            UIManager uiManager = cast(mcv.getIdvUIManager());
+            holderCount = uiManager.getComponentHolderCount();
+        }
+        return holderCount;
+    }
+
+    private static int getGroupCount() {
+        McIDASV mcv = McIDASV.getStaticMcv();
+        int groupCount = ESTIMATED_VM_COUNT;
+        if (mcv != null) {
+            UIManager uiManager = cast(mcv.getIdvUIManager());
+            groupCount = uiManager.getComponentGroupCount();
+        }
+        return groupCount;
+    }
+
     public static List<ViewManager> getViewManagers(final WindowInfo info) {
-        List<ViewManager> vms = arrList();
+        List<ViewManager> vms = arrList(getVMCount());
         for (IdvComponentHolder holder : getComponentHolders(info)) {
             vms.addAll(holder.getViewManagers());
         }
         return vms;
     }
-    
-    public static List<ViewManager> getViewManagers(final IdvWindow window) {
-        List<ViewManager> vms = arrList();
-        vms.addAll(window.getViewManagers());
 
+    public static List<ViewManager> getViewManagers(final IdvWindow window) {
+        List<ViewManager> vms = arrList(getVMCount());
+        vms.addAll(window.getViewManagers());
         for (IdvComponentHolder holder : getComponentHolders(window)) {
             vms.addAll(holder.getViewManagers());
         }
         return vms;
     }
-    
+
     /**
      * @return Whether or not {@code h} contains some UI component like
      * the dashboard of field selector. Yes, it can happen!
      */
     public static boolean isUIHolder(final IdvComponentHolder h) {
-        if (h.getType().equals(McvComponentHolder.TYPE_DYNAMIC_SKIN))
+        if (McvComponentHolder.TYPE_DYNAMIC_SKIN.equals(h.getType())) {
             return false;
+        }
         return h.getViewManagers().isEmpty();
     }
 
@@ -986,7 +1046,7 @@ public class McVGuiUtils implements Constants {
      * @return Whether or not {@code h} is a dynamic skin.
      */
     public static boolean isDynamicSkin(final IdvComponentHolder h) {
-        return (h.getType().equals(McvComponentHolder.TYPE_DYNAMIC_SKIN));
+        return McvComponentHolder.TYPE_DYNAMIC_SKIN.equals(h.getType());
     }
 
     /**
@@ -994,10 +1054,13 @@ public class McVGuiUtils implements Constants {
      * skin.
      */
     public static boolean hasDynamicSkins(final List<WindowInfo> windows) {
-        for (WindowInfo window : windows)
-            for (IdvComponentHolder holder : getComponentHolders(window))
-                if (isDynamicSkin(holder))
+        for (WindowInfo window : windows) {
+            for (IdvComponentHolder holder : getComponentHolders(window)) {
+                if (isDynamicSkin(holder)) {
                     return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -1006,16 +1069,14 @@ public class McVGuiUtils implements Constants {
      * @see #getComponentHolders(IdvComponentGroup)
      */
     public static List<IdvComponentHolder> getComponentHolders(
-        final WindowInfo windowInfo) {
-        List<IdvComponentHolder> holders = arrList();
-
+            final WindowInfo windowInfo) {
         Collection<Object> comps =
-            windowInfo.getPersistentComponents().values();
-
+            cast(windowInfo.getPersistentComponents().values());
+        List<IdvComponentHolder> holders = arrList(getHolderCount());
         for (Object comp : comps) {
-            if (!(comp instanceof IdvComponentGroup))
+            if (!(comp instanceof IdvComponentGroup)) {
                 continue;
-
+            }
             holders.addAll(getComponentHolders((IdvComponentGroup)comp));
         }
         return holders;
@@ -1026,90 +1087,97 @@ public class McVGuiUtils implements Constants {
      * @see #getComponentHolders(IdvComponentGroup)
      */
     public static List<IdvComponentHolder> getComponentHolders(
-        final IdvWindow idvWindow) 
-    {
-        List<IdvComponentHolder> holders = arrList();
-        for (IdvComponentGroup group : (List<IdvComponentGroup>)idvWindow.getComponentGroups())
+            final IdvWindow idvWindow) 
+            {
+        List<IdvComponentHolder> holders = arrList(getHolderCount());
+        for (IdvComponentGroup group : (List<IdvComponentGroup>)idvWindow.getComponentGroups()) {
             holders.addAll(getComponentHolders(group));
+        }
         return holders;
-    }
+            }
 
     /**
      * @return <b>Recursively</b> searches {@code group} to find any 
      * component holders.
      */
     public static List<IdvComponentHolder> getComponentHolders(
-        final IdvComponentGroup group) 
-    {
-        List<IdvComponentHolder> holders = arrList();
-        List<ComponentHolder> comps = group.getDisplayComponents();
-        if (comps.isEmpty())
+            final IdvComponentGroup group) 
+            {
+        List<IdvComponentHolder> holders = arrList(getHolderCount());
+        List<ComponentHolder> comps = cast(group.getDisplayComponents());
+        if (comps.isEmpty()) {
             return holders;
-
-        for (ComponentHolder comp : comps) {
-            if (comp instanceof IdvComponentGroup)
-                holders.addAll(getComponentHolders((IdvComponentGroup)comp));
-            else if (comp instanceof IdvComponentHolder)
-                holders.add((IdvComponentHolder)comp);
         }
-
+        for (ComponentHolder comp : comps) {
+            if (comp instanceof IdvComponentGroup) {
+                holders.addAll(getComponentHolders((IdvComponentGroup)comp));
+            } else if (comp instanceof IdvComponentHolder) {
+                holders.add((IdvComponentHolder)comp);
+            }
+        }
         return holders;
-    }
+            }
 
     /**
      * @return <b>Recursively</b> searches {@code group} for any nested
      * component groups.
      */
     public static List<IdvComponentGroup> getComponentGroups(
-        final IdvComponentGroup group) 
-    {
-        List<IdvComponentGroup> groups = arrList();
+            final IdvComponentGroup group) 
+            {
+        List<IdvComponentGroup> groups = arrList(getGroupCount());
         groups.add(group);
 
-        List<ComponentHolder> comps = group.getDisplayComponents();
+        List<ComponentHolder> comps = cast(group.getDisplayComponents());
         if (comps.isEmpty())
             return groups;
 
-        for (ComponentHolder comp : comps)
-            if (comp instanceof IdvComponentGroup)
+        for (ComponentHolder comp : comps) {
+            if (comp instanceof IdvComponentGroup) {
                 groups.addAll(getComponentGroups((IdvComponentGroup)comp));
+            }
+        }
         return groups;
-    }
+            }
 
     /**
      * @return Component groups contained in {@code window}.
      * @see #getComponentGroups(IdvComponentGroup)
      */
     public static List<IdvComponentGroup> getComponentGroups(
-        final WindowInfo window) 
-    {
-        Collection<Object> comps = window.getPersistentComponents().values();
-        for (Object comp : comps)
-            if (comp instanceof IdvComponentGroup)
+            final WindowInfo window) 
+            {
+        Collection<Object> comps = cast(window.getPersistentComponents().values());
+        for (Object comp : comps) {
+            if (comp instanceof IdvComponentGroup) {
                 return getComponentGroups((IdvComponentGroup)comp);
-        return arrList();
-    }
+            }
+        }
+        return Collections.emptyList();
+            }
 
     /**
      * @return Component groups contained in {@code windows}.
      * @see #getComponentGroups(IdvComponentGroup)
      */
     public static List<IdvComponentGroup> getComponentGroups(
-        final List<WindowInfo> windows) 
-    {
-        List<IdvComponentGroup> groups = arrList();
-        for (WindowInfo window : windows)
+            final List<WindowInfo> windows) 
+            {
+        List<IdvComponentGroup> groups = arrList(getGroupCount());
+        for (WindowInfo window : windows) {
             groups.addAll(getComponentGroups(window));
+        }
         return groups;
-    }
+            }
 
     /**
      * @return The component group within {@code window}.
      */
     public static IdvComponentGroup getComponentGroup(final IdvWindow window) {
         List<IdvComponentGroup> groups = window.getComponentGroups();
-        if (!groups.isEmpty())
+        if (!groups.isEmpty()) {
             return groups.get(0);
+        }
         return null;
     }
 
@@ -1118,10 +1186,12 @@ public class McVGuiUtils implements Constants {
      *         groups.
      */
     public static boolean hasNestedGroups(final IdvComponentGroup group) {
-        List<ComponentHolder> comps = group.getDisplayComponents();
-        for (ComponentHolder comp : comps)
-            if (comp instanceof IdvComponentGroup)
+        List<ComponentHolder> comps = cast(group.getDisplayComponents());
+        for (ComponentHolder comp : comps) {
+            if (comp instanceof IdvComponentGroup) {
                 return true;
+            }
+        }
         return false;
     }
 
@@ -1130,9 +1200,10 @@ public class McVGuiUtils implements Constants {
      */
     // TODO: needs update for nested groups
     public static List<IdvComponentHolder> getAllComponentHolders() {
-        List<IdvComponentHolder> holders = arrList();
-        for (IdvComponentGroup g : getAllComponentGroups())
+        List<IdvComponentHolder> holders = arrList(getHolderCount());
+        for (IdvComponentGroup g : getAllComponentGroups()) {
             holders.addAll(g.getDisplayComponents());
+        }
         return holders;
     }
 
@@ -1141,9 +1212,10 @@ public class McVGuiUtils implements Constants {
      */
     // TODO: needs update for nested groups
     public static List<IdvComponentGroup> getAllComponentGroups() {
-        List<IdvComponentGroup> groups = arrList();
-        for (IdvWindow w : getAllDisplayWindows())
+        List<IdvComponentGroup> groups = arrList(getGroupCount());
+        for (IdvWindow w : getAllDisplayWindows()) {
             groups.addAll(w.getComponentGroups());
+        }
         return groups;
     }
 
@@ -1151,10 +1223,13 @@ public class McVGuiUtils implements Constants {
      * @return All windows that contain at least one component group.
      */
     public static List<IdvWindow> getAllDisplayWindows() {
-        List<IdvWindow> windows = arrList();
-        for (IdvWindow w : (List<IdvWindow>)IdvWindow.getWindows())
-            if (!w.getComponentGroups().isEmpty())
+        List<IdvWindow> allWindows = cast(IdvWindow.getWindows());
+        List<IdvWindow> windows = arrList(allWindows.size());
+        for (IdvWindow w : allWindows) {
+            if (!w.getComponentGroups().isEmpty()) {
                 windows.add(w);
+            }
+        }
         return windows;
     }
 
@@ -1185,7 +1260,7 @@ public class McVGuiUtils implements Constants {
      * @return The component holder positioned after {@code current}.
      */
     public static IdvComponentHolder getAfterHolder(
-        final IdvComponentHolder current) 
+            final IdvComponentHolder current) 
     {
         List<IdvComponentHolder> holders = getAllComponentHolders();
         int currentIndex = holders.indexOf(current);
@@ -1196,7 +1271,7 @@ public class McVGuiUtils implements Constants {
      * @return The component holder positioned before {@code current}.
      */
     public static IdvComponentHolder getBeforeHolder(
-        final IdvComponentHolder current) 
+            final IdvComponentHolder current) 
     {
         List<IdvComponentHolder> holders = getAllComponentHolders();
         int currentIndex = holders.indexOf(current);
@@ -1219,8 +1294,9 @@ public class McVGuiUtils implements Constants {
         if (w == null) {
             return Collections.emptyList();
         }
-        final List<McvComponentGroup> groups = arrList();
-        for (IdvComponentGroup group : w.getComponentGroups()) {
+        final List<IdvComponentGroup> idvLandGroups = w.getComponentGroups();
+        final List<McvComponentGroup> groups = arrList(idvLandGroups.size());
+        for (IdvComponentGroup group : idvLandGroups) {
             groups.add((McvComponentGroup)group);
         }
         return groups;
@@ -1348,7 +1424,7 @@ public class McVGuiUtils implements Constants {
      */
     public static int findDisplayNumberForComponent(final Component comp) {
         return findDisplayNumberForRectangle(
-            new Rectangle(comp.getLocation(), comp.getSize()));
+                new Rectangle(comp.getLocation(), comp.getSize()));
     }
 
     /**
@@ -1363,7 +1439,7 @@ public class McVGuiUtils implements Constants {
      */
     public static int findDisplayNumberForMultiFrame(final MultiFrame mf) {
         return findDisplayNumberForRectangle(
-            new Rectangle(mf.getLocation(), mf.getSize()));
+                new Rectangle(mf.getLocation(), mf.getSize()));
     }
 
     /**
@@ -1382,10 +1458,10 @@ public class McVGuiUtils implements Constants {
      * @see java.awt.Rectangle#Rectangle(int, int, int, int)
      */
     public static int findDisplayNumberForCoords(final int x, final int y, 
-        final int width, final int height) 
+            final int width, final int height) 
     {
         return findDisplayNumberForRectangle(
-            new Rectangle(x, y, width, height));
+                new Rectangle(x, y, width, height));
     }
 
     /**

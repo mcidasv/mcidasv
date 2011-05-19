@@ -39,6 +39,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -261,8 +262,7 @@ public final class CollectionHelpers {
         }
         else if (collection.getClass().isArray()) {
             for (int i = 0; i < Array.getLength(collection); i++) {
-                Object value = Array.get(collection, i);
-                if (value.equals(item)) {
+                if (Array.get(collection, i).equals(item)) {
                     return true;
                 }
             }
@@ -532,6 +532,14 @@ public final class CollectionHelpers {
         Set<E> set = new CopyOnWriteArraySet<E>();
         Collections.addAll(set, elems);
         return set;
+    }
+
+    public static <E> List<E> linkedList() {
+        return new LinkedList<E>();
+    }
+
+    public static <E> List<E> linkedList(final Collection<? extends E> c) {
+        return new LinkedList<E>(c);
     }
 
     /**
