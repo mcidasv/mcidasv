@@ -1,11 +1,14 @@
 package edu.wisc.ssec.mcidasv.ui;
 
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
+
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -18,6 +21,10 @@ import javax.swing.JLabel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ucar.unidata.idv.ViewManager;
+import ucar.unidata.idv.ui.IdvComponentGroup;
+import ucar.unidata.idv.ui.IdvWindow;
+
 public class LayerAnimationWindow extends JFrame {
 
     private static final Logger logger = LoggerFactory.getLogger(LayerAnimationWindow.class);
@@ -28,6 +35,7 @@ public class LayerAnimationWindow extends JFrame {
     private JButton btnSlower;
     private JButton btnFaster;
     private JLabel lblDwell; 
+    private JLabel statusLabel;
 
     /**
      * Create the frame.
@@ -36,7 +44,7 @@ public class LayerAnimationWindow extends JFrame {
         setTitle("Animate Visibility");
         setResizable(true);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setBounds(100, 100, 209, 141);
+        setBounds(100, 100, 208, 162);
         contentPane = new JPanel();
         setContentPane(contentPane);
         tglbtnEnableAnimation = new JToggleButton("Enable Animation");
@@ -47,6 +55,7 @@ public class LayerAnimationWindow extends JFrame {
             }
         });
         btnSlower = new JButton("Slower");
+        btnSlower.setEnabled(false);
         btnSlower.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 btnSlowerActionPerformed(event);
@@ -54,6 +63,7 @@ public class LayerAnimationWindow extends JFrame {
         });
 
         btnFaster = new JButton("Faster");
+        btnFaster.setEnabled(false);
         btnFaster.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 btnFasterActionPerformed(event);
@@ -70,14 +80,16 @@ public class LayerAnimationWindow extends JFrame {
         fieldCurrentDwell.setText("0");
         fieldCurrentDwell.setColumns(6);
 
-        contentPane.setLayout(new MigLayout("", "[grow][grow]", "[][][]"));
+        statusLabel = new JLabel("");
+        statusLabel.setEnabled(false);
+
+        contentPane.setLayout(new MigLayout("", "[grow][grow][][]", "[][][][]"));
         contentPane.add(tglbtnEnableAnimation, "flowy,cell 0 0 3 1,growx,aligny top");
         contentPane.add(btnSlower, "cell 0 1,alignx right,growy");
         contentPane.add(btnFaster, "cell 2 1,alignx left,growy");
         contentPane.add(lblDwell, "cell 0 2,alignx right,aligny baseline");
         contentPane.add(fieldCurrentDwell, "cell 2 2,alignx left,aligny baseline");
-
-        
+        contentPane.add(statusLabel, "cell 0 3 3 1");
     }
 
     // dear god! change these names!
@@ -86,14 +98,33 @@ public class LayerAnimationWindow extends JFrame {
         boolean animationEnabled = (event.getStateChange() == ItemEvent.SELECTED);
         btnSlower.setEnabled(animationEnabled);
         btnFaster.setEnabled(animationEnabled);
+        getActiveViewManager();
     }
 
     private void btnFasterActionPerformed(final ActionEvent event) {
         logger.trace("faster!");
+        getActiveViewManager();
     }
 
     private void btnSlowerActionPerformed(final ActionEvent event) {
         logger.trace("slower");
+        getActiveViewManager();
+    }
+
+    private void getActiveViewManager() {
+        // IdvWindow -> ComponentGroup(only one per window in McV) -> ComponentHolders/Tabs -> ViewManagers/Displays
+        IdvWindow currentWindow = IdvWindow.getActiveWindow();
+        List<IdvComponentGroup> compGroupList = currentWindow.getComponentGroups();
+        McvComponentGroup tabGroup = cast(compGroupList.get(0));
+        McvComponentHolder tab = cast(tabGroup.getActiveComponentHolder());
+        List<ViewManager> viewManagers = cast(tab.getViewManagers());
+        if (viewManagers.size() != 1) {
+            statusLabel.setText("no multipanel support yet :(");
+            logger.trace("woe betide the person venturing into shared groups");
+        } else {
+            ViewManager viewManager = viewManagers.get(0);
+            logger.trace("found a ViewManager: name={} isActive={}", viewManager.getName(), viewManager.getIsActive());
+        }
     }
 
     /**

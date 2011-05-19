@@ -32,6 +32,7 @@ package edu.wisc.ssec.mcidasv.ui;
 
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.list;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newHashSet;
 import static edu.wisc.ssec.mcidasv.util.XPathUtils.elements;
 
 import java.awt.BorderLayout;
@@ -132,6 +133,7 @@ import ucar.unidata.idv.ui.IdvXmlUi;
 import ucar.unidata.idv.ui.ViewPanel;
 import ucar.unidata.idv.ui.WindowInfo;
 import ucar.unidata.metdata.NamedStationTable;
+import ucar.unidata.ui.ComponentGroup;
 import ucar.unidata.ui.ComponentHolder;
 import ucar.unidata.ui.HttpFormEntry;
 import ucar.unidata.ui.RovingProgress;
@@ -245,9 +247,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
     private Map<String, Integer> skinIds = readSkinIds();
 
     /** An easy way to figure out who is holding a given ViewManager. */
-    private Hashtable<ViewManager, ComponentHolder> viewManagers = 
-        new Hashtable<ViewManager, ComponentHolder>();
+    private Map<ViewManager, ComponentHolder> viewManagers = 
+        new HashMap<ViewManager, ComponentHolder>();
 
+    private int componentHolderCount;
+    
+    private int componentGroupCount;
+    
     /** Cache for the results of {@link #getWindowTitleFromSkin(int)}. */
     private final Map<Integer, String> skinToTitle = new ConcurrentHashMap<Integer, String>();
 
@@ -2306,6 +2312,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
 //        "  </properties>\n" +
 //        "</skin>\n";
 
+    private int holderCount;
+    
     /**
      * Associates a given ViewManager with a given ComponentHolder.
      * 
@@ -2314,6 +2322,19 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     public void setViewManagerHolder(ViewManager vm, ComponentHolder holder) {
         viewManagers.put(vm, holder);
+        holderCount = getComponentHolders().size();
+    }
+
+    public Set<ComponentHolder> getComponentHolders() {
+        return newHashSet(viewManagers.values());
+    }
+
+    public int getComponentHolderCount() {
+        return holderCount;
+    }
+
+    public int getComponentGroupCount() {
+        return getComponentGroups().size();
     }
 
     /**
@@ -2333,7 +2354,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @return The associated ComponentHolder.
      */
     public ComponentHolder removeViewManagerHolder(ViewManager vm) {
-        return viewManagers.remove(vm);
+        ComponentHolder holder = viewManagers.remove(vm);
+        holderCount = getComponentHolders().size();
+        return holder;
     }
 
     /**
