@@ -30,7 +30,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Ima
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">
-  <p>Choosing Satellite Imagery</p>
+<p>Choosing Satellite Imagery</p>
 </div>
 <p>The <strong>Satellite Imagery</strong> chooser allows you to access satellite imagery on remote ADDE servers. For more information on how to use this chooser, see <a href="../../quickstart/Satellite.html">Getting Started</a>.</p>
 <a name="image1" id="image1"></a>
@@ -40,33 +40,20 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Ima
 <p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>Server</strong> - Enter in a server name or choose one from the pulldown
-  menu. Right click in the entry box to manage your ADDE servers and to delete
-  the server from the list.</li>
-<li class="propertylistitem"><img align=absmiddle src="images/Manage.gif"> <strong>Manage</strong> - Manages the list of servers.</li>
-<li class="propertylistitem"><strong>Dataset</strong> - Enter in a dataset name or choose one from the pulldown
-  menu. Right click in the entry box to delete the dataset from the list.</li>
-<li class="propertylistitem"><img align=absmiddle src="images/PublicServers.gif"> <strong>Public Datasets</strong> - Lists the public datasets available on the server.</li>
-<li class="propertylistitem"><img align=absmiddle src="../../quickstart/images/Connect.gif" width="191" height="33"> -
-  Connects and queries the server for available image types.</li>
-<li class="propertylistitem"><strong>Image Type</strong> - Use the pulldown menu to select one of the available
-  image types.</li>
-<li class="propertylistitem"><strong>Times: Relative</strong> - Allows you to select a group of up to the last 50 times.</li>
-<li class="propertylistitem"><strong>Times: Absolute</strong> - Allows you to choose one or more absolute times. When choosing absolute times for the first time McIDAS-V needs to query the ADDE server for the times. This may take some time. To select more than one time use Control-Click or Shift-Click. See the <a href="../../tools/Timeline.html">Timeline section</a> for details on its use. Click on the <img src="images/SelectDay1.gif" width="16" height="16"> <strong>Select Archive Day</strong> to narrow down a large dataset to one day.</li>
-<li class="propertylistitem"><strong>Navigation</strong> - Use the pulldown menu to select one of the available navigation types. Use
-    Default for most images, and Lat/Lon if LALO navigation should
-    be used. Level 1b servers and POES servers often require Lat/Lon
-    navigation to be selected. </li>
-<li class="propertylistitem"><strong>Preview</strong> - Check &quot;Create Preview Image&quot; if you would like to view a preview of the image
-    in the Field Selector. If this box is unchecked, then only a map of the image
-    coverage will be shown in the Region tab of the Field Selector. </li>
-<li class="propertylistitem"><img align=absmiddle src="images/Help.gif"> <strong>Help</strong> - Brings up this help page.</li>
-<li class="propertylistitem"><img align=absmiddle src="images/Refresh.gif"> <strong>Refresh</strong> - Updates the Imagery chooser with the most
-  recent data.</li>
-<li class="propertylistitem"><img align=absmiddle src="images/Cancel.gif" width="24" height="24"> <strong>Cancel</strong> - Cancels the query of data. The chooser
-  will reset back to default.</li>
-<li class="propertylistitem"><img align=absmiddle src="../../quickstart/images/AddSource.gif"> - Loads the selected imagery data into the <strong><a href="../FieldSelector.html">Field
-  Selector</a></strong>.</li>
+     <li class="propertylistitem"><strong>Server</strong> - Represents the server being used. Enter in a server name or choose one from the pulldown menu. Right click in the entry box to manage your ADDE servers and to delete the server from the list.</li>
+    <li class="propertylistitem"><img align=absmiddle src="images/Manage.gif"> <strong>Manage</strong> - Manages the list of servers by opening the <a href="../../tools/preferences/ServerPreferences.html">ADDE Servers menu</a> in the User Preferences window.</li>
+    <li class="propertylistitem"><strong>Dataset</strong> - Represents the dataset being used. Enter in a dataset name or choose one from the pulldown menu. Right click in the entry box to delete the dataset from the list.</li>
+    <li class="propertylistitem"><img align=absmiddle src="images/PublicServers.gif"> <strong>Public Datasets</strong> - Lists the public datasets available on the server.</li>
+<li class="propertylistitem"><img align=absmiddle src="../../quickstart/images/Connect.gif" width="191" height="33"> - Connects and queries the server for available image types.</li>
+    <li class="propertylistitem"><strong>Image Type</strong> - Represents the image type.</li>
+    <li class="propertylistitem"><strong>Times: Relative</strong> - Allows you to select a group of up to the last 50 times.</li>
+    <li class="propertylistitem"><strong>Times: Absolute</strong> - Allows you to choose one or more absolute times. When choosing absolute times for the first time McIDAS-V needs to query the ADDE server for the times. This may take some time. To select more than one time use Control+click or Shift+click. See the <a href="../../tools/Timeline.html">Timeline section</a> for details on its use. Click on the <img src="images/SelectDay1.gif" width="16" height="16"align=absmiddle> <strong>Select Archive Day</strong> to narrow down a large dataset to one day.</li>
+    <li class="propertylistitem"><strong>Navigation</strong> - Selects one of the available navigation types. Use Default for most images, and Lat/Lon if LALO navigation should be used. Level 1b servers and POES servers often require Lat/Lon navigation to be selected. </li>
+    <li class="propertylistitem"><strong>Preview</strong> - Displays a preview of the image in the <strong>Field Selector</strong>. If this box is unchecked, then only a map of the image coverage will be shown in the <strong>Region</strong> tab of the <strong>Field Selector</strong>. </li>
+    <li class="propertylistitem"><img align=absmiddle src="images/Help.gif"> <strong>Help</strong> - Brings up this help page.</li>
+    <li class="propertylistitem"><img align=absmiddle src="images/Refresh.gif"> <strong>Refresh</strong> - Updates the Imagery chooser with the most recent data.</li>
+    <li class="propertylistitem"><img align=absmiddle src="images/Cancel.gif" width="24" height="24"> <strong>Cancel</strong> - Cancels the query of data. The chooser will reset back to default.</li>
+    <li class="propertylistitem"><img align=absmiddle src="../../quickstart/images/AddSource.gif"> - Loads the selected data.</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">

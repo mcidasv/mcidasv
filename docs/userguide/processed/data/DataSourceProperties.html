@@ -35,44 +35,31 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSourcePr
 <p>The Properties Dialog is different for different types of data sources. Here is the dialog window for a gridded data source:</p>
 <a name="activepolling" id="activepolling"></a>
 <div class="images"><img src="images/DataSourceProperties.gif" alt="images/DataSourceProperties.gif"></div>
-<p>Any displays that are showing data from a data source can be automatically updated by selecting the <strong>Reload
-  Displays</strong> button. When this is selected all data will be reloaded and the displays
-will be updated when the user presses <strong>Apply</strong> or <strong>OK</strong>.</p>
+<p>Any displays that are showing data from a data source can be automatically updated by selecting the <strong>Reload Displays</strong> button. When this is selected all data will be reloaded and the displays will be updated when the user presses <strong>Apply</strong> or <strong>OK</strong>.</p>
 <a name="basicproperties" id="basicproperties"></a>
 <div class="pagesubtitle">Basic Properties</div>
-You can change the displayed name with the <strong>Name</strong> field.
-<p>Some data sources can automatically update themselves by selecting the <strong>Active</strong> button.
-  For example, if you had a set of most recent satellite images you can turn
-on Polling and have the data update to the latest images every N minutes.</p>
+<p>You can change the displayed name with the <strong>Name</strong> field.</p>
+<p>Some data sources can automatically update themselves by selecting the <strong>Active</strong> button. For example, if you had a set of most recent satellite images you can turn on Polling and have the data update to the latest images every N minutes.</p>
 <p>For point data you can define <em>Time Binning</em> settings (not shown) by selecting a Bin Size (e.g., 5 minutes, 1 hour) and a Round To value (e.g., On the hour, 15 minutes after the hour). This will map all the observation times into the nearest bin. The smallest time is rounded with the Round To value (e.g., if Round To was "10 after" and the smallest time was 10:23 then this time would be rounded to 10:20). This is the base time. Each actual observation time is mapped into a set of bins of Bin Size starting at the base time.</p>
 <a name="times" id="times"></a>
 <div class="pagesubtitle">Times</div>
-<p>The Times tab allows you to select the times to use. Click off the <strong>Use
-    All</strong> button
-  and select individual times. You can right mouse click in the list to show
-a popup menu that allows you to select different strides (e.g., every 3rd time).</p>
+<p>The <strong>Times</strong> tab allows you to select the times to use. Click off the <strong>Use All</strong> button and select individual times. You can right mouse click in the list to show a popup menu that allows you to select different strides (e.g., every 3rd time).</p>
 <div class="images"><img src="images/DataSourceTimes.gif" alt="images/DataSourceTimes.gif"></div>
 <p></p>
 <a name="spatialsubset" id="spatialsubset"></a>
 <div class="pagesubtitle">Spatial Subsetting</div>
-<p>For grids and other data source types the data can be subset and decimated with the <strong>Spatial
-Subset</strong> tab. The <strong>X Stride</strong>, <strong>Y Stride</strong> and <strong>Z
-Stride</strong> menus allow you to decimate a grid, selecting every Nth point. The <strong>Bounding
-Box</strong> allows you to define a spatial area to load. The default spatial domain of
-the data is shown by the blue outline box. To select an area just drag on the
-map. Once a subset is selected it can be resized (grab on the little black selection
-points) moved (grab somewhere near the box) and delete (press the Delete key).
-Specific lat/lon values can be entered in the fields on the left.</p>
+<p>For grids and other data source types the data can be subset and decimated with the <strong>Spatial Subset</strong> tab. The <strong>X Stride</strong>, <strong>Y Stride</strong> and <strong>Z Stride</strong> menus allow you to decimate a grid, selecting every Nth point. The <strong>Bounding Box</strong> allows you to define a spatial area to load. The default spatial domain of
+the data is shown by the blue outline box. To select an area just drag on the map. Once a subset is selected it can be resized (grab on the little black selection points) moved (grab somewhere near the box) and delete (press the Delete key). Specific lat/lon values can be entered in the fields on the left.</p>
 <div class="images"><img src="images/DataSourceSpatialSubset.gif" alt="images/DataSourceSpatialSubset.gif"></div>
-<p>A version of this spatial subsetting window is used in the Field Selector. Here, you explicitly enable these settings. The decimation and spatial subset are shown in different tabs:</p>
+<p>A version of this spatial subsetting window is used in the <strong>Field Selector</strong>. Here, you explicitly enable these settings. The decimation and spatial subset are shown in different tabs:</p>
 <div class="images"><img src="images/DataSourceSpatialSubsetField.gif" alt="images/DataSourceSpatialSubsetField.gif"></div>
 <p></p>
 <a name="details" id="details"></a>
 <div class="pagesubtitle">Details</div>
-<p>The Details tab shows further information about the data source, e.g.: any documentation associated with the data, what files or urls are used, etc.</p>
+<p>The <strong>Details</strong> tab shows further information about the data source, e.g.: any documentation associated with the data, what files or urls are used, etc.</p>
 <a name="metadata" id="metadata"></a>
 <div class="pagesubtitle">Metadata</div>
-<p>For grid data sources the Metadata tab shows the NetCDF metadata.</p>
+<p>For grid data sources the <strong>Metadata</strong> tab shows the NetCDF metadata.</p>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">

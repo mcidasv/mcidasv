@@ -29,52 +29,41 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Fla
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Choosing Flat File Data</div>
 
-<p>The <strong>General-&gt;Flat files</strong> chooser allows generic flat (2-dimensional) data to be loaded.  The user must supply information about the format of the data by either specifying it directly or by loading a properly formatted header file.  Flat files can be binary, ASCII values, or standard images (JPEG, GIF, etc.), and may contain multiple bands.  Navigation may be loaded via separate navigation files or by specifying a bounding box for the data.
-</p>
+<p>The <strong>General-&gt;Flat files</strong> chooser allows generic flat (2-dimensional) data to be loaded.  The user must supply information about the format of the data by either specifying it directly or by loading a properly formatted header file.  Flat files can be binary, ASCII values, or standard images (JPEG, GIF, etc.), and may contain multiple bands.  Navigation may be loaded via separate navigation files or by specifying a bounding box for the data.</p>
 <a name="image1" id="image1"></a>
 <div class="images"><img src="images/FlatFiles.gif" alt="Flat File Chooser"><br>
 <span class="caption">Image 1: Flat File Chooser</span></div>
 <p></p>
 <div class="pagesubtitle">Properties</div>
-
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Files</strong> - Enter in a file location or use the <img src="images/BrowseFiles.gif" width="24" height="24"> button to browse your local disk.</li>
-  <li class="propertylistitem"><strong>Type</strong> - McIDAS-V will attempt to determine the type of file you are loading.  If it is an unknown format, <strong>Binary, ASCII or Image data</strong> will be displayed.
-  <li class="propertylistitem"><strong>Description</strong> - If available, a description of the data will be displayed.  If no description can be found, the file name is displayed.</li>
-
-  <li class="propertylistitem"><strong>Properties-&gt;Dimensions:</strong></li>
+    <li class="propertylistitem"><strong>Files</strong> - Represents the File name. Enter in a file location or use the <img src="images/BrowseFiles.gif" width="24" height="24"align=absmiddle> button to browse your local disk.</li>
+    <li class="propertylistitem"><strong>Type</strong> - Represents the File type. McIDAS-V will attempt to determine the type of file you are loading.  If it is an unknown format, <strong>Binary, ASCII or Image data</strong> will be displayed.
+    <li class="propertylistitem"><strong>Description</strong> - Displays a description of the data if available.  If no description can be found, the file name is displayed.</li>
+    <li class="propertylistitem"><strong>Properties-&gt;Dimensions:</strong></li>
   <ul class="propertylist">
-    <li class="propertylistitem"><strong>Elements</strong> - The number of elements (columns) in the data.</li>
-    <li class="propertylistitem"><strong>Lines</strong> - The number of lines (rows) in the data.</li>
-    <li class="propertylistitem"><strong>Bands</strong> - The number of bands (layers) in the data.</li>
-    <li class="propertylistitem"><strong>Units</strong> - The unit type of the data.</li>
-    <li class="propertylistitem"><strong>Sampling</strong> - The number of points to skip in each dimension
-      when loading the data. Useful with very large data files.</li>
-  </ul>
-
-  <li class="propertylistitem"><strong>Properties-&gt;Navigation:</strong></li>
+      <li class="propertylistitem"><strong>Elements</strong> - Lists the number of elements (columns) in the data.</li>
+      <li class="propertylistitem"><strong>Lines</strong> - Lists the number of lines (rows) in the data.</li>
+      <li class="propertylistitem"><strong>Bands</strong> - Lists the number of bands (layers) in the data.</li>
+      <li class="propertylistitem"><strong>Units</strong> - Lists the unit type of the data.</li>
+      <li class="propertylistitem"><strong>Sampling</strong> - Lists the number of points to skip in each dimension when loading the data. This is useful with very large data files.</li>
+    </ul>
+    <li class="propertylistitem"><strong>Properties-&gt;Navigation:</strong></li>
   <ul class="propertylist">
-    <li class="propertylistitem"><strong>Files</strong> - Navigation files containing grids of Latitude/Longitude points can by specified by clicking on the <img src="images/BrowseFiles.gif" width="24" height="24"> buttons.</li>
-    <li class="propertylistitem"><strong>Bounds</strong> - A navigation bounding box can be specified by entering Upper Left (UL) and Lower Right (LR) Latitude/Longitude pairs.</li>
-    <li class="propertylistitem"><strong>Scale</strong> - The scaling factor if the Latitude/Longitude navigation dimensions are different than the data.</li>
-    <li class="propertylistitem"><strong>East positive</strong> - Checkbox to indicate that the data is East Positive</li>
-  </ul>
-
+      <li class="propertylistitem"><strong>Files</strong> - Specifies navigation files containing grids of Lat/Lon points  by specified by clicking on the <img src="images/BrowseFiles.gif" width="24" height="24"align=absmiddle> buttons.</li>
+      <li class="propertylistitem"><strong>Bounds</strong> - Specifies a navigation bounding box by entering Upper Left (UL) and Lower Right (LR) Lat/Lon pairs.</li>
+      <li class="propertylistitem"><strong>Scale</strong> - Specifies the scaling factor if the Lat/Lon navigation dimensions if different than the data.</li>
+    <li class="propertylistitem"><strong>East positive</strong> - Indicates that the data is East positive.</li>
+    </ul>
   <li class="propertylistitem"><strong>Properties-&gt;Format:</strong></li>
   <ul class="propertylist">
-    <li class="propertylistitem"><strong>Binary</strong> - When loading binary files the <strong>Byte format</strong>, <strong>Interleave</strong>, and <strong>Endian</strong>-ness must accurately describe the data.  A byte <strong>Offset</strong> into the data can also be given.</li>
-    <li class="propertylistitem"><strong>ASCII</strong> - When loading ASCII files the <strong>Delimiter</strong> character must be given.</li>
-    <li class="propertylistitem"><strong>Image</strong> - When loading a raw Image this option must be selected.</li>
-    <li class="propertylistitem"><strong>Missing value:</strong><br>
-      If there is a value for missing data, enter it here.
-    </li>
-  </ul>
-
-  <li class="propertylistitem"><img align=absmiddle src="images/Help.gif" width="25" height="24"> <strong>Help</strong> - Brings up this help page.</li>
-  <li class="propertylistitem"><img align=absmiddle src="../../quickstart/images/AddSource.gif" width="191" height="32"> - Loads the selected data.</li>
-
+      <li class="propertylistitem"><strong>Binary</strong> - Represents fields necessary when loading Binary data. When loading binary files the <strong>Byte format</strong>, <strong>Interleave</strong>, and <strong>Endian</strong>-ness must accurately describe the data.  A byte <strong>Offset</strong> into the data can also be given.</li>
+    <li class="propertylistitem"><strong>ASCII</strong> - Represents the <strong>Delimiter</strong> field when loading ASCII files.</li>
+    <li class="propertylistitem"><strong>Image</strong> - Represents that a raw image has been selected.</li>
+      <li class="propertylistitem"><strong>Missing value - </strong> Represents  a value from the data.</li>
+    </ul>
+    <li class="propertylistitem"><img align=absmiddle src="images/Help.gif" width="25" height="24"> <strong>Help</strong> - Brings up this help page.</li>
+    <li class="propertylistitem"><img align=absmiddle src="../../quickstart/images/AddSource.gif" width="191" height="32"> - Loads the selected data.</li>
 </ul>
-
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
