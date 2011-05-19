@@ -76,6 +76,7 @@ import ucar.unidata.util.PreferenceList;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
 import ucar.visad.display.CompositeDisplayable;
 import ucar.visad.display.Displayable;
+import ucar.visad.display.DisplayableData;
 import ucar.visad.display.TextDisplayable;
 
 import visad.Data;
@@ -168,10 +169,11 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private JSlider fontSizeSlider;
     private JTextField fontSizeFld = new JTextField();
 
+    private DisplayableData trackDisplay;
     private CompositeDisplayable trackDsp;
     private CompositeDisplayable swathDsp;
     private CompositeDisplayable circleDsp;
-    private static final TupleType TUPTYPE = makeTupleType();
+    private static TupleType TUPTYPE;
 
     private int fontSize;
     private int defaultSize = 3;
@@ -192,11 +194,12 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private double satZ = 0.0;
     private int dTime;
     private NavigatedDisplay navDsp = null;
-
+    private static TextType textType = null;
 
     public PolarOrbitTrackControl() {
         super();
         logger.trace("created new tlecontrol={}", Integer.toHexString(hashCode()));
+        setAttributeFlags(FLAG_COLORTABLE);
     }
 
     @Override public boolean init(DataChoice dataChoice) 
@@ -214,6 +217,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
         String dispName = getDisplayName();
         setDisplayName(getLongParamName() + " " + dispName);
+        textType = new TextType(getLongParamName());
+        TUPTYPE = makeTupleType();
 
         Data data = getData(getDataInstance());
         createTrackDisplay(data);
@@ -232,6 +237,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         } catch (Exception e) {
             System.out.println("get display center e=" + e);
         }
+
         return result;
     }
 
@@ -254,7 +260,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     dts.add(str);
                     int indx = str.indexOf(" ") + 1;
                     String subStr = "- " + str.substring(indx, indx+5);
-                    TextDisplayable time = new TextDisplayable(TextType.Generic);
+                    TextDisplayable time = new TextDisplayable(textType);
                     time.setJustification(TextControl.Justification.LEFT);
                     time.setVerticalJustification(TextControl.Justification.CENTER);
                     time.setColor(this.color);
@@ -267,7 +273,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                             new double[] { dlon, dlat });
                     if ((i % 5) == 0) {
                         Tuple tup = new Tuple(TUPTYPE,
-                            new Data[] { lonLat, new Text(subStr)});
+                            new Data[] { lonLat, new Text(textType, subStr)});
                         time.setData(tup);
                         this.trackDsp.addDisplayable(time);
                     }
@@ -287,6 +293,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 trackLines.setData(uset);
                 this.trackDsp.addDisplayable(trackLines);
                 trackLines.setDrawingEnabled(false);
+                this.trackDisplay = trackLines;
 
                 float[][][] crv = getSwath(latlon);
                 int npt = crv[0][0].length;
@@ -322,6 +329,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
                 this.trackDsp.setColor(this.color);
                 this.trackDsp.setLineWidth(2.0f);
+
                 addDisplayable(this.trackDsp, FLAG_COLORTABLE);
 
                 this.swathDsp.setColor(this.color);
@@ -395,7 +403,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         TupleType t = null;
         try {
             t = new TupleType(new MathType[] {RealTupleType.SpatialEarth2DTuple,
-                                              TextType.Generic});
+                                              textType});
         } catch (Exception e) {
             System.out.println("\nPolarOrbitTrackControl.makeTupleType e=" + e);
         }
@@ -662,7 +670,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             DisplayRealType dispType = navDsp.getDisplayAltitudeType();
             trackDsp.setConstantPosition(this.satZ, dispType);
         } catch (Exception exc) {
-            //System.out.println("Setting track z-position exc=" + exc);
+            System.out.println("Setting track z-position exc=" + exc);
         }
     }
 
@@ -896,7 +904,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private void drawGroundStation() {
         try {
             String str = "+" + getStation();
-            this.groundStationDsp = new TextDisplayable(TextType.Generic);
+            this.groundStationDsp = new TextDisplayable(textType);
             this.groundStationDsp.setJustification(TextControl.Justification.LEFT);
             this.groundStationDsp.setVerticalJustification(TextControl.Justification.CENTER);
             this.groundStationDsp.setTextSize(0.3f);
@@ -908,7 +916,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 new RealTuple(RealTupleType.SpatialEarth2DTuple,
                     new double[] { dlon, dlat });
             Tuple tup = new Tuple(TUPTYPE,
-                new Data[] { lonLat, new Text(str)});
+                new Data[] { lonLat, new Text(textType, str)});
             this.groundStationDsp.setData(tup);
         } catch (Exception e) {
             System.out.println("drawGroundStation e=" + e);
