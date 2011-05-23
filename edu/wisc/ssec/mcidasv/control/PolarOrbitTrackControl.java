@@ -165,7 +165,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private CompositeDisplayable trackDsp;
     private CompositeDisplayable swathDsp;
     private CompositeDisplayable circleDsp;
-    private static TupleType TUPTYPE;
+    private TupleType tupleType;
 
     private int fontSize;
     private int defaultSize = 3;
@@ -186,7 +186,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private double satZ = 0.0;
     private int dTime;
     private NavigatedDisplay navDsp = null;
-    private static TextType textType = null;
+    private TextType textType = null;
 
     public PolarOrbitTrackControl() {
         super();
@@ -210,10 +210,10 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         String dispName = getDisplayName();
         setDisplayName(getLongParamName() + " " + dispName);
         try {
-            textType = new TextType(getLongParamName());
+            this.textType = new TextType(getLongParamName());
         } catch (Exception e) {
         }
-        TUPTYPE = makeTupleType();
+        this.tupleType = makeTupleType();
 
         Data data = getData(getDataInstance());
         createTrackDisplay(data);
@@ -255,7 +255,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     dts.add(str);
                     int indx = str.indexOf(" ") + 1;
                     String subStr = "- " + str.substring(indx, indx+5);
-                    TextDisplayable time = new TextDisplayable(textType);
+                    TextDisplayable time = new TextDisplayable(getTextType());
                     time.setJustification(TextControl.Justification.LEFT);
                     time.setVerticalJustification(TextControl.Justification.CENTER);
                     time.setColor(this.color);
@@ -267,8 +267,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                         new RealTuple(RealTupleType.SpatialEarth2DTuple,
                             new double[] { dlon, dlat });
                     if ((i % 5) == 0) {
-                        Tuple tup = new Tuple(TUPTYPE,
-                            new Data[] { lonLat, new Text(textType, subStr)});
+                        Tuple tup = new Tuple(getTupleType(),
+                            new Data[] { lonLat, new Text(getTextType(), subStr)});
                         time.setData(tup);
                         this.trackDsp.addDisplayable(time);
                     }
@@ -394,11 +394,11 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         return ret;
     }
 
-    private static TupleType makeTupleType() {
+    private TupleType makeTupleType() {
         TupleType t = null;
         try {
             t = new TupleType(new MathType[] {RealTupleType.SpatialEarth2DTuple,
-                                              textType});
+                                              getTextType()});
         } catch (Exception e) {
             System.out.println("\nPolarOrbitTrackControl.makeTupleType e=" + e);
         }
@@ -478,7 +478,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         this.fontSizeFld.addFocusListener(this.fontSizeFocusChange);
         this.fontSizeFld.addActionListener(this.fontSizeChange);
         this.fontSizePanel = GuiUtils.doLayout( new Component[] {
-                 new JLabel("FontSize: "),
+                 new JLabel("Font Size: "),
                  this.fontSizeFld,
                  new JLabel(" "),
                  this.fontSizeSlider }, 4,
@@ -899,10 +899,11 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private void drawGroundStation() {
         try {
             String str = "+" + getStation();
-            this.groundStationDsp = new TextDisplayable(textType);
+            this.groundStationDsp = new TextDisplayable(getTextType());
             this.groundStationDsp.setJustification(TextControl.Justification.LEFT);
             this.groundStationDsp.setVerticalJustification(TextControl.Justification.CENTER);
-            this.groundStationDsp.setTextSize(0.3f);
+            float tSize = (float)getFontSize()/10.0f;
+            this.groundStationDsp.setTextSize(tSize);
             this.groundStationDsp.setColor(getAntColor());
                     
             double dlat = getLatitude();
@@ -910,8 +911,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             RealTuple lonLat =
                 new RealTuple(RealTupleType.SpatialEarth2DTuple,
                     new double[] { dlon, dlat });
-            Tuple tup = new Tuple(TUPTYPE,
-                new Data[] { lonLat, new Text(textType, str)});
+            Tuple tup = new Tuple(getTupleType(),
+                new Data[] { lonLat, new Text(getTextType(), str)});
             this.groundStationDsp.setData(tup);
         } catch (Exception e) {
             System.out.println("drawGroundStation e=" + e);
@@ -935,9 +936,12 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         if (!gotit) return null;
         return (PolarOrbitTrackDataSource)ds;
     }
-/*
-    @Override public void doRemove() throws VisADException, RemoteException {
-        super.doRemove();
+
+    private TextType getTextType() {
+        return this.textType;
     }
-*/
+
+    private TupleType getTupleType() {
+        return this.tupleType;
+    }
 }
