@@ -1020,44 +1020,6 @@ public class NPPDataSource extends HydraDataSource {
         return new_data;
       }
 
-      if (requestProperties.containsKey("medianFilter")) {
-        String[] items = (String[]) requestProperties.get("medianFilter");
-        double window_lenx = Double.parseDouble(items[0]);
-        double window_leny = Double.parseDouble(items[1]);
-        GriddedSet domainSet = (GriddedSet) ((FlatField)data).getDomainSet();
-        int[] lens = domainSet.getLengths();
-        float[] range_values = (((FlatField)data).getFloats())[0];
-        range_values =
-           ProfileAlongTrack.medianFilter(range_values, lens[0], lens[1],
-                               (int)window_lenx, (int)window_leny);
-        ((FlatField)new_data).setSamples(new float[][] {range_values});
-      }
-      if (requestProperties.containsKey("setBelowSfcMissing")) {
-        String[] items = (String[]) requestProperties.get("setBelowSfcMissing");
-        FlatField track = (FlatField) track_adapter.getData(subset);
-        float[] sfcElev = (track.getFloats())[0];
-        FlatField field = (FlatField) new_data;
-        GriddedSet gset = (GriddedSet) field.getDomainSet();
-        float[][] samples = gset.getSamples(false);
-        int[] lens = gset.getLengths();
-        float[] range_values = (field.getFloats())[0];
-
-        int trkIdx = ((ProfileAlongTrack3D) adapters[adapterIndex]).adapter2D.getTrackTupIdx();
-        int vrtIdx = ((ProfileAlongTrack3D) adapters[adapterIndex]).adapter2D.getVertTupIdx();
-
-        int k = 0;
-        for (int j=0; j<lens[trkIdx]; j++) {
-          float val = sfcElev[j];
-          for (int i=0; i<lens[vrtIdx]; i++) {
-            if (vrtIdx < trkIdx) k = i + j*lens[0];
-            if (trkIdx < vrtIdx) k = j + i*lens[0];
-            if (samples[2][k] <= val || samples[2][k] < 0.0) {
-              range_values[k] = Float.NaN;
-            }
-          }
-        }
-        field.setSamples(new float[][] {range_values});
-      }
       return new_data;
     }
 
