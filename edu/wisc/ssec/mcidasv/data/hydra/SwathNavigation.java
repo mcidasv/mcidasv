@@ -3,7 +3,7 @@
  *
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2011
+ * Copyright 2007-2010
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -83,6 +83,11 @@ public class SwathNavigation implements Navigation  {
   int[] geo_stride = new int[2];
   int[] geo_count = new int[2];
   int[] geo_start = new int[2];
+
+  String scale_name = "SCALE_NAME";
+  String offset_name = "OFFSET_NAME";
+  String fillValue_name = "_FILLVALUE";
+
 
   int numDims = 2;
 
@@ -164,6 +169,21 @@ public class SwathNavigation implements Navigation  {
     str = (String) metadata.get(SwathAdapter.geo_xtrack_offset_name);
     if (str != null) {
       xtrack_offset = Double.parseDouble(str);
+    }
+
+    str = (String) metadata.get(SwathAdapter.geo_scale_name);
+    if (str != null) {
+      scale_name = str;
+    }
+
+    str = (String) metadata.get(SwathAdapter.geo_offset_name);
+    if (str != null) {
+      offset_name = str;
+    }
+
+    str = (String) metadata.get(SwathAdapter.geo_fillValue_name);
+    if (str != null) {
+      fillValue_name = str;
     }
  
     type = reader.getArrayType(lon_array_name);
@@ -288,19 +308,19 @@ public class SwathNavigation implements Navigation  {
     else if (type == Short.TYPE) {
       short[] values = reader.getShortArray(lon_array_name, geo_start, geo_count, geo_stride);
       HashMap metadata = new HashMap();
-      metadata.put("array_name", lon_array_name);
-      metadata.put("scale_name", "SCALE_FACTOR");
-      metadata.put("offset_name", "ADD_OFFSET");
-      metadata.put("fill_value_name", "_FILLVALUE");
+      metadata.put(SwathAdapter.array_name, lon_array_name);
+      metadata.put(SwathAdapter.scale_name, scale_name);
+      metadata.put(SwathAdapter.offset_name, offset_name);
+      metadata.put(SwathAdapter.fill_value_name, fillValue_name);
       RangeProcessor rangeProcessor = RangeProcessor.createRangeProcessor(reader, metadata);
       float[] lonValues = rangeProcessor.processRange(values, null);
       
       values = reader.getShortArray(lat_array_name, geo_start, geo_count, geo_stride);
       metadata = new HashMap();
-      metadata.put("array_name", lat_array_name);
-      metadata.put("scale_name", "SCALE_FACTOR");
-      metadata.put("offset_name", "ADD_OFFSET");
-      metadata.put("fill_value_name", "_FILLVALUE");
+      metadata.put(SwathAdapter.array_name, lat_array_name);
+      metadata.put(SwathAdapter.scale_name, scale_name);
+      metadata.put(SwathAdapter.offset_name, offset_name);
+      metadata.put(SwathAdapter.fill_value_name, fillValue_name);
       rangeProcessor = RangeProcessor.createRangeProcessor(reader, metadata);
       float[] latValues = rangeProcessor.processRange(values, null);
 
