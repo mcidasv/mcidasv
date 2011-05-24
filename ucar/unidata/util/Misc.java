@@ -188,18 +188,10 @@ public class Misc {
             dirIndex    = latlon.indexOf("W");
         } else if (latlon.indexOf("N") > 0) {
             dirIndex = latlon.indexOf("N");
-        } else if (latlon.indexOf("E") > 0) {  // E could be the Exponent, e.g., -9E-3
-            dirIndex = latlon.indexOf("E");
-            String tmp = latlon.substring(dirIndex).trim();
-            if (tmp.length() > 0) {  // check for another E for East
-                int newIndex = latlon.lastIndexOf("E");
-                if (dirIndex != newIndex) {
-                    dirIndex = newIndex;
-                } else {
-                    dirIndex = 0;
-                }
-            }
+        } else if (latlon.endsWith("E")) {  // account for 9E-3, 9E-3E, etc
+            dirIndex = latlon.lastIndexOf("E");
         }
+
         if (dirIndex > 0) {
             latlon = latlon.substring(0, dirIndex).trim();
         }
@@ -4597,6 +4589,25 @@ public class Misc {
      * @param args _more_
      */
     public static void main(String[] args) {
+    	
+    	// NICKB Test for decodeLatLon
+    	String testvalN = "12:50:N";
+    	double valN = Misc.decodeLatLon(testvalN);
+    	System.out.println("testvalN = " + valN);
+    	
+    	String testvalS = "2:00:S";
+    	double valS = Misc.decodeLatLon(testvalS);
+    	System.out.println("testvalS = " + valS);
+
+    	String testvalW = "1:36:W";
+    	double valW = Misc.decodeLatLon(testvalW);
+    	System.out.println("testvalW = " + valW);
+
+    	String testvalE = "93:30:E";
+    	double valE = Misc.decodeLatLon(testvalE);
+    	System.out.println("testvalE = " + valE);
+
+    	/*
         long   t1 = System.currentTimeMillis();
         double d  = 0;
 
@@ -4614,7 +4625,7 @@ public class Misc {
         if (true) {
             return;
         }
-
+        */
 
 
         /*
