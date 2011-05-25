@@ -33,8 +33,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('Faq.html',true); 
     <div>
       <p>This section contains a list of questions commonly asked by users. The
         questions are organized by categories, including General, Using McIDAS-V,
-        Data, Video Cards, Potential Problems, Common Installation Error Messages,
-        Common Run-Time Error Messages, and Reporting Problems.</p>
+        Data, Video Cards, Potential Problems, Common Installation Errors,
+        Common Run-Time Errors, and Reporting Problems.</p>
       <p>&nbsp;</p>
       <span class="faq-category-title"> <a class="faq-category-link" href="#faq1_cat1_">General</a></span></div>
     <div class="faq-category">
@@ -311,7 +311,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('Faq.html',true); 
       </div>
       <div class="faq-question">
         <ul class="noindent">
-          <li><a class="faq-question-link" href="#firewall">Problems connecting
+          <li><a class="faq-question-link" href="#dataservers">Problems connecting
               to the listed data servers </a></li>
         </ul>
       </div>
@@ -323,8 +323,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('Faq.html',true); 
       </div>
       <div class="faq-question">
         <ul class="noindent">
-          <li><a class="faq-question-link" href="#nomap">No Map in the McIDAS-V
-              main display window</a></li>
+          <li><a class="faq-question-link" href="#nomap">No map in the McIDAS-V
+              Main Display Window</a></li>
+        </ul>
+      </div>
+            <div class="faq-question">
+        <ul class="noindent">
+          <li><a class="faq-question-link" href="#white">Why do my images display white when there should be valid data?</a></li>
         </ul>
       </div>
     </div>
@@ -561,15 +566,15 @@ application/x-java-jnlp-file JNLP
     <div class="faq-answer">
       <p>Listed below is a basic checklist of steps to follow if your McIDAS-V
         is not working properly. Once you successfully complete each step in
-        the process, attempt to use McIDAS-V again. If the problem still exists,
+        the process, restart McIDAS-V and try again. If the problem still exists,
         proceed to the next step, and so on.</p>
       <ol>
         <li>
           <!--[endif]-->
           Make sure that your <strong><em>drivers</em></strong> are up to date. Please see the graphics cards section of the <a href="Systems.html">System Requirements</a> for more information.</li>
-        <li>Try downloading this <a href="http://download.java.net/media/java3d/webstart/test/HelloUniverse.jnlp">Java3D example</a> to see if you can view it. Please see the Java Versions section of the <a href="Systems.html">System Requirements</a> for more information.<br />
+        <li>Try downloading this <a href="http://download.java.net/media/java3d/webstart/test/HelloUniverse.jnlp">Java3D example</a> to see if you can view it. Please see the Java Versions section of the <a href="Systems.html">System Requirements</a> for more information. If this example does not work, then your system does not support Java3D.<br />
 Note: If your system does not support Java3D version 1.3.1+ McIDAS-V will not work for you.</li>
-        <li> Set a small heap size by setting the <em><strong>Memory</strong></em> option to 512 megabytes in the <a href="tools/preferences/AdvancedPreferences.html">User Preferences - Advanced</a> tab.</li>
+        <li> Set a small heap size by setting the <em><strong>Memory</strong></em> option to 512 megabytes in the <a href="tools/preferences/AdvancedPreferences.html">User Preferences - Advanced</a> tab. If this resolves the issue, you can start increasing the   memory until the problem appears again. Stay below the memory value   that produces the problem.</li>
         <li>Disable Java Access to Image Data by Reference by unchecking <strong><em>Enable access to image data by reference</em></strong> option in the <a href="tools/preferences/AdvancedPreferences.html">User Preferences - Advanced</a> tab.</li>
         <li>If you are on a Windows station, use Direct3D by checking the <em><strong>Enable Direct3D</strong></em> option in the <a href="tools/preferences/AdvancedPreferences.html">User Preferences - Advanced</a> tab.</li>
         <li>Rename your <a href="#filelocations"><strong>McIDAS-V</strong></a> document directory to start with a clean set of options. This will undo the changes made in steps 3-5 listed above, but it will eliminate any corrupt startup bundles or settings.</li>
@@ -828,9 +833,7 @@ Note: If your system does not support Java3D version 1.3.1+ McIDAS-V will not wo
           button.</li>
         <li>Click the OK buttons to exit the Display Properties dialog.</li>
         <li>Try McIDAS-V again and see if it works better.</li>
-        <li>If not, try using the Direct-X installer instead of the OpenGL installer.</li>
-      </ul>
-    </div>
+        <li>If not, try using the Direct-X installer instead of the OpenGL installer.</li></ul></div>
     <a name="d3d" id="d3d"></a>
     <div class="faq-question">
       <h4>Q. If I'm having problems with the OpenGL version under Windows, can
@@ -905,61 +908,60 @@ command="java -Xmx512m -Didv.enableStereo=true -Dj3d.sharedstereozbuffer=true -j
     </div>
   </div>
   <div class="faq-category-title"><a name="faq1_cat7_" id="faq1_cat7_"></a>Common
-    Installation Error Messages</div>
+    Installation Errors</div>
   <div class="faq-category"><a name="jdk" id="jdk"></a>
     <div class="faq-question"> </div>
     <div class="faq-answer">
-      <h4>Error #1</h4>
-      <p>A user reported --- The first time I ran the script, it told me I needed
+      <h4><a class="faq-question-link" href="#jdk">Q. Upgrade JDK</a></h4>
+    </div>
+      <div class="faq-answer"><strong>A.</strong> A user reported --- The first time I ran the script, it told me I needed
         to upgrade my JDK. So I installed jdk1.6.0_03 and Java3D 1.3.1. Then
         McV installed without any problem.</p>
-      <a name="osx-write" id="osx-write"></a>
-      <h4>Error #2 - On Mac OS X only</h4>
-      <em>You have no write permissions for this directory. Please choose another
-      one.</em> <br>
-      <h4>Solution</h4>
-      <p>Browse for a writable directory (e.g. /Users/mcuser/McIDAS-V). Under <span class="faq-answer">&quot;</span>Select
+      <a name="osx-write" id="osx-write"></a></div>
+<div class="faq-question">
+      <h4>Q. Write Permissions Error on OSX<em></em></h4></div> <br>
+      <div class="faq-answer"><strong>A. </strong>Browse for a writable directory (e.g. /Users/mcuser/McIDAS-V). Under <span class="faq-answer">&quot;</span>Select
         Additional Tasks<span class="faq-answer">&quot;</span>, uncheck <span class="faq-answer">&quot;</span>Create
         Launcher and Configuration shortcuts in Applications folder<span class="faq-answer">&quot;</span></p>
-      <a name="osx-shortcut" id="osx-shortcut"></a>
-      <h4>Error #3 - On Mac OS X only</h4>
-      <pre>
-At Extracting files... McIDAS-V Configuration.app/Contents/Info.plist
-/Applications/McIDAS-V Configuration.app/Contents/Info.plist
-Could not create this file.&nbsp; Shall I try again?</pre>
-      <h4>Solution</h4>
-      <p>Click <span class="faq-answer">&quot;</span>Cancel<span class="faq-answer">&quot;</span> and
-        restart the installer. Follow instructions under Error #2 above.</p>
+      <a name="osx-shortcut" id="osx-shortcut"></a></div>
+      <div class="faq-question">
+      <h4>Q. Shortcut Permissions Error on OSX</h4></div>
+      <br>
+      <div class="faq-answer"><strong> A.</strong> At Extracting files: McIDAS-V Configuration.app/Contents/Info.plist/Applications/McIDAS-V Configuration.app/Contents/Info.plist I can not create this file. To solve this, click <span class="faq-answer">&quot;</span>Cancel<span class="faq-answer">&quot;</span> and
+        restart the installer. Follow instructions under Error #2 above.</div>
     </div>
-    <div class="faq-question"> <a name="faq1_cat8_" id="faq1_cat8_"></a>
-      <div class="faq-category-title">Common Run-Time Error Messages</div>
-    </div>
-    <a name="glx-graphics" id="glx-graphics"></a>
-    <h4>Error #1</h4>
-    <pre>Could not create a graphics configuration. Please contact McIDAS-V user support or see the FAQ.</pre>
-    <div>And this error message in the shell window:</div>
-    <pre>
+<div class="faq-category-title"><a name="faq1_cat8_" id="faq1_cat8_"></a>Common
+    Run-Time Errors</div>
+    <div class="faq-category"><a name="glx-graphics" id="glx-graphics"></a>
+    <div class="faq-question">
+      <h4>Q. Could not create a graphics configuration</h4></div>
+      <br>
+    <div class="faq-answer">
+        <p>I get this error message in the shell window:        </p>
+<pre>
 GLX version 1.3 or higher is required
 The reported version number may be incorrect.&nbsp; There is a known
 ATI driver bug in glXQueryVersion that incorrectly reports the GLX
 version as 1.2 when it really is 1.3, so Java 3D will attempt to
 run anyway.</pre>
-    <h4>Solution</h4>
+    <h4>A.</h4>
     <p>First, check for the most updated video card driver. If the problem still
       remains, the 32bit Linux installer comes with an option to install Java3D
-      1.3. Rerun the installer and select to install Java3D 1.3.</p>
+    1.3. Rerun the installer and select to install Java3D 1.3.</p></div>
     <a name="glx-java" id="glx-java"></a>
-    <h4>Error #2</h4>
-    <pre>JAVA 3D ERROR: GLX extension is not supported
+    <div class="faq-question">
+      <h4>Q. JAVA 3D Error: GLX extension is not supported</h4></div>
+    <div class="faq-answer">
+        <pre>JAVA 3D ERROR: GLX extension is not supported
 GLX version 1.3 or higher is required.</pre>
-    <p><em>This error messages echoes to the terminal window. I also get an error
+    <p>This error messages echoes to the terminal window. I also get an error
         popup window stating <span class="faq-answer">&quot;</span>Could not
         create a graphics configuration. Please contact McIDAS-V users support
         or see the FAQ.<span class="faq-answer">&quot;</span> At this point the
         McIDAS-V startup scroll bar just keeps doing it's thing until I press <span class="faq-answer">&quot;</span>ok<span class="faq-answer">&quot;</span> in
         the error popup window at which point the startup exits back to the terminal
-        window.</em></p>
-    <h4>Solution</h4>
+        window.</p>
+        <h4>A.</h4>
     <p>GLX is an extension that must be supported by the graphics card.&nbsp; This
       error is most likely occurring because the graphics drivers for RHEL are
       not properly configured.</p>
@@ -971,49 +973,58 @@ GLX version 1.3 or higher is required.</pre>
     <br>
     <p>and see if there are any references to <span class="faq-answer">&quot;</span>GLX<span class="faq-answer">&quot;</span> or <span class="faq-answer">&quot;</span>glx<span class="faq-answer">&quot;</span> (and
       possibly <span class="faq-answer">&quot;</span>dri<span class="faq-answer">&quot;</span>).&nbsp; If
-      there are, try uncommenting them and rebooting.</p>
-    <a name="firewall" id="firewall"></a>
-    <h4>Error #3</h4>
-    <p><em>I have the viewing and data windows and a user's guide up. But so
-        far I can't talk to any of the listed data servers. The errors are just
-        'connection refused' and 'no public datasets found' on every server I've
-        tried.</em></p>
-    <h4>Solution</h4>
+      there are, try uncommenting them and rebooting.</p></div>
+    <a name="dataservers" id="dataservers"></a>
+    <div class="faq-question">
+      <h4>Q. Problems connecting to the listed data servers</h4></div>
+    <div class="faq-answer">
+        <p>I have the viewing and data windows and a User's Guide up. But so
+            far I can't talk to any of the listed data servers. The errors are just
+            'connection refused' and 'no public datasets found' on every server I've
+        tried.</p>
+<h4>A.</h4>
     <p>If you have a firewall and are trying to get data from the remote servers
       (image, radar, point, upper air and profiler data), error messages such
       as <span class="faq-answer">&quot;</span>Error opening connection ... Operation
       timed out<span class="faq-answer">&quot;</span> or <span class="faq-answer">&quot;</span>No
       Data Available<span class="faq-answer">&quot;</span> are normal.&nbsp; For
       these servers to send data, your firewall software must allow connections
-      on ports 112 (ADDE) and 8080 (THREDDS Data Server).</p>
+    on ports 112 (ADDE) and 8080 (THREDDS Data Server).</p></div>
     <a name="multiple-monitor" id="multiple-monitors"></a>
-    <h4>Error #4</h4>
-    <p> If I move the McIDAS-V windows to Monitor2 of my two-monitor system,
+    <div class="faq-question">
+      <h4>Q. Drawing problems on Monitor2 of a two-monitor system</h4></div>
+    <div class="faq-answer"><strong> </strong>If I move the McIDAS-V windows to Monitor2 of my two-monitor system,
       some things don't work correctly. For example, if I try to add a new tab
       the data display section of the main display window goes blank (<span class="faq-answer">&quot;</span>grays
       out<span class="faq-answer">&quot;</span>), or if I try to run a bundle
       it fails with, <span class="faq-answer">&quot;</span><em>Error loading
-      bundle C:<path and bundle file name> adding a container to a container
-      on a different GraphicsDevice</em><span class="faq-answer">&quot;</span>. </p>
-    <h4>Solution</h4>
+      bundle C:
+      <path and bundle file name> adding a container to a container
+      on a different GraphicsDevice</em><span class="faq-answer">&quot;</span>. 
+      <h4>A.</h4>
     <p>Some graphics card/driver combinations don't allow these functions to
       work in Monitor2 of two-monitor systems. For now, you can simply move the
       McIDAS-V windows to Monitor1 then successfully add new tabs and run bundles.</p>
     <p>If you are running Red Hat with a NVIDIA graphics card using TwinView
       and are having problems, go to the preferences, click on the primary display,
       and make sure the &quot;Make this the primary display...&quot; checkbox
-      is checked. </p>
+      is checked. </p></div>
     <a name="nomap" id="nomap"></a>
-    <h4>Error #5</h4>
-    <p>When I start McIDAS-V the main display window is blank - there is no map.
-      There are also no errors in the console.</p>
-    <h4>Solution</h4>
-    <p>Try changing your memory to use 1 GB or lower and restart McIDAS-V. <span class="faq-answer">You
+    <div class="faq-question">
+      <h4>Q. No map in the McIDAS-V Main Display Window</h4></div>
+    <div class="faq-answer"><h4>A.</h4>
+    <p>Try changing your memory to use 1 GB or lower and restart McIDAS-V. You
         can change the amount of memory used by McIDAS-V by editing the <strong>Maximum
         Heap Size</strong> in the <strong>Advanced</strong> tab of the Preferences
         by selected <strong>Edit-&gt;Preferences...</strong> from the main menu.</span><br>
-    </p>
-  </div>
+    </p></div>
+    <a name="white" id="white"></a>
+     <div class="faq-question">
+      <h4>Q. <a class="faq-question-link" href="#white">Why do my images display white when there should be valid data?</a></h4>
+    </div>
+    <div class="faq-answer"><strong>A.</strong> The first thing to do is to make sure that your graphics drivers are up to date. If this does not solve the problem, another option is to change the amount of memory allocated to McIDAS-V. From the Main Display Window's menu bar, select <strong>Edit-&gt;Preferences</strong>. This opens a User Preferences window, where you want to select the Advanced option. At the top of the window there are two options for selecting memory. Click the radio button that allows you to specify the numerical value of memory allocated to McIDAS-V. Enter in a value of 512 megabytes. Any changes in the Advanced User Preferences requires a restart of McIDAS-V to take effect. If this resolves the issue of white images, you can start increasing the memory until the problem appears again. Stay below the memory value that produces the problem.</div>
+</div>
+
   <div class="faq-category-title"><a name="faq1_cat9_" id="faq1_cat9_"></a>Reporting
     Problems</div>
   <div class="faq-category"><a name="support" id="support"></a>

@@ -34,15 +34,15 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/misc/Tex
 <div class="pagesubtitle">Overview</div>
 <meta name="jhid" value="idv.controls.rangeandbearingcontrol">
 <p>The Weather Text Product Control is used to display weather text products (forecasts, warnings, watches, etc.) produced by the National Weather Service
-and other international meteorological agencies. The user interface consists of 3 tabs, <strong>Products</strong>, <strong>Display</strong>, and <strong>Locations</strong>.</p>
-<p>The <strong>Products</strong> tab allows the user to select and display the text products. When a product is selected, the available stations are plotted in the Main Display Window. One or more stations can be selected by clicking on the station in the Main Display Window (or Ctrl+click for multiple stations).  When a station is selected, the text product for that station is displayed in the Weather Text Product Display.</p>
+and other international meteorological agencies. The Weather Text Product Display is accessed through the <strong>Main Display Window via Tools-&gt;Text Data-&gt;Weather Text Products(from server)</strong>. The user interface consists of 3 tabs, <strong>Products</strong>, <strong>Display</strong>, and <strong>Locations</strong>.</p>
+<p>The <strong>Products</strong> tab allows the user to select and display the text products. When a product is selected, the available stations are plotted in the Main Display Window. One or more stations can be selected by clicking on the station in the Main Display Window (or Ctrl+click for multiple stations).  When a station is selected, the text product for that station is displayed in the Weather Text Product Display:</p>
 <div class="images"><img  src="images/TextProductControlGui1.gif"  alt="images/TextProductControlGui1.gif" ></div>
 <p>The user can select between displaying the products as raw text or as HTML by clicking on the tab at the bottom of the text display window.</p>
 <p>In the HTML view, you can toggle on a glossary which will  highlight certain meteorological terms.  When the links are clicked, a dialog will pop up with an explanation of the term.</p>
 <p></p>
 <div class="images"><img  src="images/TextProductControlGui1a.gif"  alt="images/TextProductControlGui1a.gif" ></div>
 <p>By default, the most recent text product is displayed. Multiple products can be displayed by selecting a time range from the  <strong>Time Covered</strong> dropdown menu. You can loop through multiple products using the <a href="../../ui/Animation.html">Time Animation</a>  widget.  The time animation will be synched with any other data in the Main Display Window.</p>
-<p>The <strong>Display</strong> tab controls the display of the station locations in the Main Display Window.</p>
+<p>The <strong>Display</strong> tab controls the display of the station locations in the Main Display Window:</p>
 <div class="images"><img  src="images/TextProductControlGui2.gif"  alt="images/TextProductControlGui2.gif" ></div>
 <p></p>
 <div class="pagesubtitle">Properties</div>
@@ -54,7 +54,7 @@ and other international meteorological agencies. The user interface consists of 
     <li class="propertylistitem"> When you select the <strong>Layout Model</strong> radio button the station model facility is used to display the location. You open the <a href="../../tools/StationModelEditor.html">Layout Model Editor</a> by clicking  the <img src="../images/DownBlueArrows.gif" width="13" height="13" align=absmiddle> <strong>Edit</strong> icon.</li>
   <li class="propertylistitem"><b>Vertical Position</b> - Displays the locations at their altitude (if there is one) or specifically defines the vertical position. This can be changed by using the slider or entering a value into the field.</li>
 </ul>
-<p>The<strong> Locations</strong> tab lists information about the selected location and shows lists of all the locations and the locations currently visible in the Main Display Window.</p>
+<p>The<strong> Locations</strong> tab lists information about the selected location and shows lists of all the locations and the locations currently visible in the Main Display Window:</p>
 <div class="images"><img  src="images/TextProductControlGui3.gif"  alt="images/TextProductControlGui3.gif" ></div>
 <p></p>
 <div class="pagesubtitle">Properties</div>

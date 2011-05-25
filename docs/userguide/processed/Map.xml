@@ -48,7 +48,7 @@
         <mapID target="idv.controls.level2.radarisosurfacecontrol"   url="controls/level2/RadarIsosurfaceControl.html" />
         <mapID target="idv.controls.level2.radarsweepcontrol"        url="controls/level2/RadarSweepControl.html" />
         <mapID target="idv.controls.level2.radarvolumecontrol"       url="controls/level2/RadarVolumeControl.html" />
-        <mapID target="idv.controls.level2.rhicontrol"               url="controls/level2/RadarRhiDisplayControls.html" />
+        <mapID target="idv.controls.level2.radarrhidisplaycontrols"  url="controls/level2/RadarRhiDisplayControls.html" />
 		<mapID target="idv.controls.level2.radarcappidisplaycontrols"url="controls/level2/RadarCappiDisplayControls.html" />
         <mapID target="idv.controls.leveliiicontrol"                 url="controls/LevelIIIControl.html" />
         <mapID target="idv.controls.locationindicatorcontrol"        url="controls/misc/LocationIndicatorControl.html" />
@@ -319,7 +319,7 @@
         <mapID target="idv.isl.summary.transparent"                  url="isl/Summary.html#transparent" />
         <mapID target="idv.isl.summary.write"                        url="isl/Summary.html#write" />
         <mapID target="idv.license"                                  url="License.html" />
-        <mapID target="idv.mcidasv"	   			     url="mcidasv.html" />
+        <mapID target="idv.mcidasv"	   			                     url="mcidasv.html" />
         <mapID target="idv.misc.actions"                             url="misc/Actions.html" />
         <mapID target="idv.misc.commandlinearguments"                url="misc/CommandLineArguments.html" />
         <mapID target="idv.misc.commandlinearguments.datatype"       url="misc/CommandLineArguments.html#datatype" />
@@ -492,6 +492,7 @@
         <mapID target="idv.tools.localdata"							 url="tools/LocalDataManager.html" />
 		<mapID target="idv.tools.mapformulas"						 url="tools/MapFormulas.html" />
 		<mapID target="idv.tools.miscellaneousformulas"				 url="tools/MiscellaneousFormulas.html" />
+		<mapID target="idv.tools.nativeformulas"					 url="tools/NativeFormulas.html" />
         <mapID target="idv.tools.parameterdefaultseditor"            url="tools/ParameterDefaultsEditor.html" />
         <mapID target="idv.tools.parameterdefaultseditor.image1"     url="tools/ParameterDefaultsEditor.html#image1" />
         <mapID target="idv.tools.parameterdefaultseditor.image2"     url="tools/ParameterDefaultsEditor.html#image2" />
