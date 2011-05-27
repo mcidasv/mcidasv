@@ -610,7 +610,7 @@ Note: If your system does not support Java3D version 1.3.1+ McIDAS-V will not wo
     <div class="faq-question">
       <h4>Q. How can I change the amount of memory available to McIDAS-V?</h4>
     </div>
-    <div class="faq-answer"><strong>A.</strong> By default, McIDAS-V allocates 512 MB of maximum memory for Java. If your system has more than 1 GB of memory, increasing the amount of memory available to McIDAS-V can improve performance for displaying large datasets. You can change the amount of memory used by McIDAS-V by editing the <strong>Memory</strong> in the <strong>Advanced</strong> tab of the User Preferences by selected <strong>Edit-&gt;Preferences...</strong> from the main menu. Please note that 32 bit Java Runtime Environments (JRE) can utilize a maximum of 1536 MB RAM, while 64 bit JREs can utilize all of the RAM available to the operating system (64 big OS required). The new amount of memory will be saved and used in subsequent sessions.
+    <div class="faq-answer"><strong>A.</strong> By default, McIDAS-V allocates 512 MB of maximum memory for Java. If your system has more than 1 GB of memory, increasing the amount of memory available to McIDAS-V can improve performance for displaying large datasets. You can change the amount of memory used by McIDAS-V by editing the <strong>Memory</strong> in the <strong><a href="tools/preferences/AdvancedPreferences.html">Advanced</a></strong><a href="tools/preferences/AdvancedPreferences.html"> tab</a> of the User Preferences by selected <strong>Edit-&gt;Preferences...</strong> from the main menu. Please note that 32 bit Java Runtime Environments (JRE) can utilize a maximum of 1536 MB RAM, while 64 bit JREs can utilize all of the RAM available to the operating system (64 big OS required). The new amount of memory will be saved and used in subsequent sessions.
       <!--The number is the number of bytes, the trailing <b>m</b> is a multiplier
         (m=mega).-->
       Do not use the maximum amount of memory on your machine as some is needed for the operating system itself. If the system has to use swap memory, performance will degrade as well. See <a href="Starting.html#run">Running McIDAS-V</a> for more information.</div>
@@ -624,14 +624,14 @@ Note: If your system does not support Java3D version 1.3.1+ McIDAS-V will not wo
     <div class="faq-question">
       <h4>Q. How can I reset the map projections?</h4>
     </div>
-    <div class="faq-answer"><strong>A.</strong> This can be controlled with the <strong>Projections-&gt;Auto-Set Projection</strong> menu check-box. When checked on, the map projection will be automatically switched to match the native projection of the newest data source added. When checked off, the current map projection will remain for any additional data source added to the display. This may be desirable when you have set up a view of a particular area and want to retain it when displaying new data.
+    <div class="faq-answer"><strong>A.</strong> This can be controlled with the <strong>Projections-&gt;<a href="ui/DisplayMenus.html#autosetpro">Auto-Set Projection</a></strong> menu check-box. When checked on, the map projection will be automatically switched to match the native projection of the newest data source added. When checked off, the current map projection will remain for any additional data source added to the display. This may be desirable when you have set up a view of a particular area and want to retain it when displaying new data.
       <p>You can switch an existing display to its native data set projection using the display control's <strong>View-&gt;Use Data Projection</strong> menu.</p>
     </div>
     <a name="defaultprojection" id="defaultprojection"></a>
     <div class="faq-question">
       <h4>Q. How can I set the default projection?</h4>
     </div>
-    <div class="faq-answer"><strong>A.</strong> The default map projection can be set with the Projection Manager which is accessed from the <strong>Projections-&gt;New/Edit</strong> menu. Select one of the items in the <strong>Default</strong> pull down list. The default projection is overridden by the projection saved in the <a href="Bundles.html">default bundle</a>, or by displaying new data, if the <strong>Projections-&gt;Auto-Set Projection</strong> menu checkbox is checked on. As a result, you may never see the default map projection unless your default bundle has the default projection, and you have the checkbox checked off. Choosing a default map projection is not necessary for good use of McIDAS-V and you can ignore it if you like. It is often simpler to use default bundles.</div>
+    <div class="faq-answer"><strong>A.</strong> The default map projection can be set with the <a href="tools/ProjectionManager.html">Projection Manager</a> which is accessed from the <strong>Projections-&gt;New/Edit</strong> menu. Select one of the items in the <strong>Default</strong> pull down list. The default projection is overridden by the projection saved in the <a href="Bundles.html">default bundle</a>, or by displaying new data, if the <strong>Projections-&gt;<a href="ui/DisplayMenus.html#autosetpro">Auto-Set Projection</a></strong> menu checkbox is checked on. As a result, you may never see the default map projection unless your default bundle has the default projection, and you have the checkbox checked off. Choosing a default map projection is not necessary for good use of McIDAS-V and you can ignore it if you like. It is often simpler to use default bundles.</div>
     <a name="colorrange" id="colorrange"></a>
     <div class="faq-question">
       <h4>Q. How can I change the color table range?</h4>
@@ -641,13 +641,13 @@ Note: If your system does not support Java3D version 1.3.1+ McIDAS-V will not wo
     <div class="faq-question">
       <h4>Q. How can I stop McIDAS-V from asking if I really want to exit?</h4>
     </div>
-    <div class="faq-answer"><strong>A.</strong> Many features of McIDAS-V can  be changed though the User Preferences dialog. Use the <strong>Edit-&gt;Preferences</strong> menu to bring up the dialog. On the <strong>General</strong> tab, uncheck the &quot;Confirm Before Exiting&quot; box to stop McIDAS-V from asking if you want to exit. Another option is to check off the &quot;Always Ask&quot; checkbox on the popup dialog box before exiting McIDAS-V.</div>
+    <div class="faq-answer"><strong>A.</strong> Many features of McIDAS-V can  be changed though the User Preferences dialog. Use the <strong>Edit-&gt;Preferences</strong> menu to bring up the dialog. On the <strong><a href="tools/preferences/GeneralPreferences.html">General</a></strong><a href="tools/preferences/GeneralPreferences.html"> tab</a>, uncheck the &quot;Confirm Before Exiting&quot; box to stop McIDAS-V from asking if you want to exit. Another option is to check off the &quot;Always Ask&quot; checkbox on the popup dialog box before exiting McIDAS-V.</div>
     <a name="transparency" id="transparency"></a>
     <div class="faq-question">
       <h4>Q. When I set a color table transparent, why doesn't it show up that
         way?</h4>
     </div>
-    <div class="faq-answer"><strong>A.</strong> Using transparency in a color display may give unexpected results. In general, only the last thing added can be fully transparent. If you have a display that is transparent, then add in a new display, you may not see it. The problem is caused by the lack of ordering in Java 3D. You can use the display control's <strong>View-&gt;Bring to Front</strong> menu to remove and re-add the display that you want to be transparent so it is last.</div>
+    <div class="faq-answer"><strong>A.</strong> Using transparency in a color display may give unexpected results. In general, only the last thing added can be fully transparent. If you have a display that is transparent, then add in a new display, you may not see it. The problem is caused by the lack of ordering in Java 3D. You can use the display control's <strong>View-&gt;<a href="controls/index.html#bringtofront">Bring to Front</a></strong> menu to remove and re-add the display that you want to be transparent so it is last.</div>
     <br>
   </div>
   <div class="faq-category-title"><a name="faq1_cat4_" id="faq1_cat4_"></a>Data</div>
@@ -660,7 +660,7 @@ Note: If your system does not support Java3D version 1.3.1+ McIDAS-V will not wo
       for projection seams. This is computationally intensive in some cases and
       slows down the display of data. If you change your <a href="tools/preferences/GeneralPreferences.html">User
       Preferences</a> setting
-        to <strong>Use fast rendering</strong>, McIDAS-V will not try to account
+        to <strong><a href="misc/PerformanceTuning.html#fastrender">Use fast rendering</a></strong>, McIDAS-V will not try to account
         for the projection seams. If you are displaying a layer of data in its
         native projection, this will result in faster rendering of the data depiction.
         However, if you have several layers of data, each from a different data
@@ -706,8 +706,8 @@ Note: If your system does not support Java3D version 1.3.1+ McIDAS-V will not wo
     <div class="faq-question">
       <h4>Q. Can I view Level III Radar data in McIDAS-V?</h4>
     </div>
-    <div class="faq-answer"><strong>A.</strong> McIDAS-V can load Level III radar
-      products through the <strong>Radar-&gt;Level III</strong> chooser which
+    <div class="faq-answer"><strong>A.</strong> McIDAS-V can load <a href="quickstart/RadarLevelIII.html">Level III radar
+      products</a> through the <strong>Radar-&gt;Level III</strong> chooser which
       connects to an ADDE server. Starting with the 2.0 release, McIDAS-V can
       read some Level III products from local disk or a THREDDS Data Server (TDS).
       At present, this is limited to radial products only.</div>
@@ -715,8 +715,8 @@ Note: If your system does not support Java3D version 1.3.1+ McIDAS-V will not wo
     <div class="faq-question">
       <h4>Q. Can I view Level II Radar data in McIDAS-V?</h4>
     </div>
-    <div class="faq-answer"><strong>A.</strong> McIDAS-V can load Level II radar
-      products through the <strong>Radar-&gt;Level II-&gt;Remote</strong> chooser
+    <div class="faq-answer"><strong>A.</strong> McIDAS-V can load <a href="quickstart/RadarLevelII.html">Level II radar
+      products</a> through the <strong>Radar-&gt;Level II-&gt;Remote</strong> chooser
       which connects to an ADDE server. The Level II data is supplied as volume-scan
       files, each file having all data from one WSR-88D radar for all sweeps
       for one &quot;time<span class="faq-answer">&quot;</span>. Archived Level
@@ -911,43 +911,40 @@ command="java -Xmx512m -Didv.enableStereo=true -Dj3d.sharedstereozbuffer=true -j
     Installation Errors</div>
   <div class="faq-category"><a name="jdk" id="jdk"></a>
     <div class="faq-question"> </div>
-    <div class="faq-answer">
-      <h4><a class="faq-question-link" href="#jdk">Q. Upgrade JDK</a></h4>
+    <div class="faq-question">
+      <h4>Q. Upgrade JDK</h4>
     </div>
       <div class="faq-answer"><strong>A.</strong> A user reported --- The first time I ran the script, it told me I needed
         to upgrade my JDK. So I installed jdk1.6.0_03 and Java3D 1.3.1. Then
-        McV installed without any problem.</p>
+        McV installed without any problem.
       <a name="osx-write" id="osx-write"></a></div>
 <div class="faq-question">
-      <h4>Q. Write Permissions Error on OSX<em></em></h4></div> <br>
+      <h4>Q. Write Permissions Error on OSX<em></em></h4></div>
       <div class="faq-answer"><strong>A. </strong>Browse for a writable directory (e.g. /Users/mcuser/McIDAS-V). Under <span class="faq-answer">&quot;</span>Select
         Additional Tasks<span class="faq-answer">&quot;</span>, uncheck <span class="faq-answer">&quot;</span>Create
         Launcher and Configuration shortcuts in Applications folder<span class="faq-answer">&quot;</span></p>
       <a name="osx-shortcut" id="osx-shortcut"></a></div>
       <div class="faq-question">
       <h4>Q. Shortcut Permissions Error on OSX</h4></div>
-      <br>
       <div class="faq-answer"><strong> A.</strong> At Extracting files: McIDAS-V Configuration.app/Contents/Info.plist/Applications/McIDAS-V Configuration.app/Contents/Info.plist I can not create this file. To solve this, click <span class="faq-answer">&quot;</span>Cancel<span class="faq-answer">&quot;</span> and
         restart the installer. Follow instructions under Error #2 above.</div>
     </div>
 <div class="faq-category-title"><a name="faq1_cat8_" id="faq1_cat8_"></a>Common
     Run-Time Errors</div>
     <div class="faq-category"><a name="glx-graphics" id="glx-graphics"></a>
-    <div class="faq-question">
-      <h4>Q. Could not create a graphics configuration</h4></div>
-      <br>
-    <div class="faq-answer">
-        <p>I get this error message in the shell window:        </p>
+    <div class="faq-question"></div>
+    <div class="faq-question"><strong>Q.</strong> Could not create a graphics configuration
+      </div>
+    <div class="faq-answer">I get this error message in the shell window:
 <pre>
 GLX version 1.3 or higher is required
 The reported version number may be incorrect.&nbsp; There is a known
 ATI driver bug in glXQueryVersion that incorrectly reports the GLX
 version as 1.2 when it really is 1.3, so Java 3D will attempt to
-run anyway.</pre>
-    <h4>A.</h4>
-    <p>First, check for the most updated video card driver. If the problem still
+run anyway.</pre></div>
+    <div class="faq-answer"><strong>A.</strong>First, check for the most updated video card driver. If the problem still
       remains, the 32bit Linux installer comes with an option to install Java3D
-    1.3. Rerun the installer and select to install Java3D 1.3.</p></div>
+    1.3. Rerun the installer and select to install Java3D 1.3.</div>
     <a name="glx-java" id="glx-java"></a>
     <div class="faq-question">
       <h4>Q. JAVA 3D Error: GLX extension is not supported</h4></div>
@@ -960,11 +957,10 @@ GLX version 1.3 or higher is required.</pre>
         or see the FAQ.<span class="faq-answer">&quot;</span> At this point the
         McIDAS-V startup scroll bar just keeps doing it's thing until I press <span class="faq-answer">&quot;</span>ok<span class="faq-answer">&quot;</span> in
         the error popup window at which point the startup exits back to the terminal
-        window.</p>
-        <h4>A.</h4>
-    <p>GLX is an extension that must be supported by the graphics card.&nbsp; This
+        window.</p></div>
+        <div class="faq-answer"><strong>A.</strong>GLX is an extension that must be supported by the graphics card.&nbsp; This
       error is most likely occurring because the graphics drivers for RHEL are
-      not properly configured.</p>
+      not properly configured.
     <p>Assuming that the latest graphics drivers are installed, they must be
       configured in the window system configuration file... since RHEL uses Xorg,
       look in the file</p>
@@ -981,15 +977,14 @@ GLX version 1.3 or higher is required.</pre>
         <p>I have the viewing and data windows and a User's Guide up. But so
             far I can't talk to any of the listed data servers. The errors are just
             'connection refused' and 'no public datasets found' on every server I've
-        tried.</p>
-<h4>A.</h4>
-    <p>If you have a firewall and are trying to get data from the remote servers
+        tried.</p></div>
+<div class="faq-answer"><strong>A.</strong>If you have a firewall and are trying to get data from the remote servers
       (image, radar, point, upper air and profiler data), error messages such
       as <span class="faq-answer">&quot;</span>Error opening connection ... Operation
       timed out<span class="faq-answer">&quot;</span> or <span class="faq-answer">&quot;</span>No
       Data Available<span class="faq-answer">&quot;</span> are normal.&nbsp; For
       these servers to send data, your firewall software must allow connections
-    on ports 112 (ADDE) and 8080 (THREDDS Data Server).</p></div>
+    on ports 112 (ADDE) and 8080 (THREDDS Data Server).</div>
     <a name="multiple-monitor" id="multiple-monitors"></a>
     <div class="faq-question">
       <h4>Q. Drawing problems on Monitor2 of a two-monitor system</h4></div>
@@ -1000,11 +995,10 @@ GLX version 1.3 or higher is required.</pre>
       it fails with, <span class="faq-answer">&quot;</span><em>Error loading
       bundle C:
       <path and bundle file name> adding a container to a container
-      on a different GraphicsDevice</em><span class="faq-answer">&quot;</span>. 
-      <h4>A.</h4>
-    <p>Some graphics card/driver combinations don't allow these functions to
+      on a different GraphicsDevice</em><span class="faq-answer">&quot;</span>. </div>
+      <div class="faq-answer"><strong>A.</strong>Some graphics card/driver combinations don't allow these functions to
       work in Monitor2 of two-monitor systems. For now, you can simply move the
-      McIDAS-V windows to Monitor1 then successfully add new tabs and run bundles.</p>
+      McIDAS-V windows to Monitor1 then successfully add new tabs and run bundles.
     <p>If you are running Red Hat with a NVIDIA graphics card using TwinView
       and are having problems, go to the preferences, click on the primary display,
       and make sure the &quot;Make this the primary display...&quot; checkbox
@@ -1012,19 +1006,20 @@ GLX version 1.3 or higher is required.</pre>
     <a name="nomap" id="nomap"></a>
     <div class="faq-question">
       <h4>Q. No map in the McIDAS-V Main Display Window</h4></div>
-    <div class="faq-answer"><h4>A.</h4>
-    <p>Try changing your memory to use 1 GB or lower and restart McIDAS-V. You
+<div class="faq-answer"><strong>A.</strong> Try changing your memory to use 1 GB or lower and restart McIDAS-V. You
         can change the amount of memory used by McIDAS-V by editing the <strong>Maximum
         Heap Size</strong> in the <strong>Advanced</strong> tab of the Preferences
-        by selected <strong>Edit-&gt;Preferences...</strong> from the main menu.</span><br>
-    </p></div>
+        by selected <strong>Edit-&gt;Preferences...</strong> from the main menu.</span>
+    </div>
     <a name="white" id="white"></a>
      <div class="faq-question">
       <h4>Q. <a class="faq-question-link" href="#white">Why do my images display white when there should be valid data?</a></h4>
     </div>
     <div class="faq-answer"><strong>A.</strong> The first thing to do is to make sure that your graphics drivers are up to date. If this does not solve the problem, another option is to change the amount of memory allocated to McIDAS-V. From the Main Display Window's menu bar, select <strong>Edit-&gt;Preferences</strong>. This opens a User Preferences window, where you want to select the Advanced option. At the top of the window there are two options for selecting memory. Click the radio button that allows you to specify the numerical value of memory allocated to McIDAS-V. Enter in a value of 512 megabytes. Any changes in the Advanced User Preferences requires a restart of McIDAS-V to take effect. If this resolves the issue of white images, you can start increasing the memory until the problem appears again. Stay below the memory value that produces the problem.</div>
 </div>
-
+</div>
+</div>
+</div>
   <div class="faq-category-title"><a name="faq1_cat9_" id="faq1_cat9_"></a>Reporting
     Problems</div>
   <div class="faq-category"><a name="support" id="support"></a>
@@ -1034,7 +1029,6 @@ GLX version 1.3 or higher is required.</pre>
     <div class="faq-answer"><strong>A.</strong> For information about obtaining
       help and support for McIDAS-V, check out the <a href="Support.html">Documentation
       and Support</a> page in the McIDAS-V User's Guide.</div>
-    <br>
     <a name="reportprobs" id="reportprobs"></a>
     <div class="faq-question">
       <h4>Q. How do I report problems?</h4>
@@ -1047,14 +1041,12 @@ GLX version 1.3 or higher is required.</pre>
         and Support </a> section of the manual for the procedures on how to do
         this.</p>
     </div>
-    <br>
     <a name="console" id="console"></a>
     <div class="faq-question">
       <h4>Q. How do I open the Error Logs Console?</h4>
     </div>
     <div class="faq-answer"><strong>A.</strong> Open a console to show error
       logs with the <strong>Help-&gt;Show Console</strong> menu. </div>
-    <br>
     <a name="lockup" id="lockup"></a>
     <div class="faq-question">
       <h4>Q. What do I do if McIDAS-V is locked up and not responding?</h4>
