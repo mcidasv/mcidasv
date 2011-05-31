@@ -528,6 +528,8 @@ def see(obj=_LOCALS, pattern=None, r=None):
             prop = getattr(obj, attr)
         except AttributeError:
             continue
+        except TypeError:
+            continue
         actions.append(name(attr, prop))
 
     if pattern is not None:
