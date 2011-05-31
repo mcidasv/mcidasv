@@ -3507,23 +3507,39 @@ public class ViewManager extends SharableImpl implements ActionListener,
         }
     }
 
-    public void setAnimatedVisibilityCheckBox(final boolean state) {
-        if (animationCB != null) {
-            animationCB.setSelected(state);
-        } else {
-            setAnimatedVisibility(state);
-        }
-    }
+//    public boolean getAnimatedVisibilityCheckBox() {
+//        boolean retVal;
+//        if (animationCB != null) {
+//            retVal = animationCB.isSelected();
+//        } else {
+//            retVal = getAnimatedVisibility();
+//        }
+//        return retVal;
+//    }
+
+//    public void setAnimatedVisibilityCheckBox(final boolean state) {
+////        if (animationCB != null) {
+////            animationCB.setSelected(state);
+////        } else {
+////            setAnimatedVisibility(state);
+////        }
+//        setVisibilityAnimationCheckBox("On");
+//        if (animationCB != null) {
+//            animationCB.setSelected(state);
+//        }
+//        setAnimatedVisibility(state);
+//    }
+
     /**
      * Turn on/off the display control visibility toggling animation
      *
      * @param state Turn on or off.
      */
     public void setAnimatedVisibility(boolean state) {
+        logger.trace("state={} runVisibilityAnimation={}", state, runVisibilityAnimation);
         if (state == runVisibilityAnimation) {
             return;
         }
-
         runVisibilityAnimation = state;
         if (runVisibilityAnimation) {
             Thread t = new Thread() {
@@ -3544,13 +3560,17 @@ public class ViewManager extends SharableImpl implements ActionListener,
                         return;
                     }
                     if (getDisplayInfos().isEmpty()) {
+                        logger.trace("forcing viz animation to false");
                         runVisibilityAnimation = false;
                     }
                 }
             };
             t.start();
-
+            this.setVisibilityAnimationCheckBox("On");
+        } else {
+            this.setVisibilityAnimationCheckBox("Off");
         }
+        
     }
 
     /**
@@ -4028,7 +4048,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 if (animationMenu == null) {
                     animationMenu = new JMenu("Visibility Animation");
                     animationCB   = new JCheckBoxMenuItem("On");
-                    item.setSelected("On".equals(getVisibilityAnimationCheckBox()));
+                    animationCB.setSelected("On".equals(getVisibilityAnimationCheckBox()));
                     animationCB.addActionListener(new ObjectListener(null) {
                         public void actionPerformed(ActionEvent event) {
                             setVisibilityAnimationCheckBox("On");
@@ -4103,8 +4123,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public String getVisibilityAnimationCheckBox() {
         return animationCheckBox;
     }
-    
+
     private String animationCheckBox = "Off";
+
+    public boolean getAnimatedVisibility() {
+        return runVisibilityAnimation;
+    }
+
     /**
      * Adds the given display listener to the
      * {@link ucar.visad.display.DisplayMaster}

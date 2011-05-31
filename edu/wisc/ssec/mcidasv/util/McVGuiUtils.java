@@ -32,6 +32,7 @@ package edu.wisc.ssec.mcidasv.util;
 
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newHashSet;
 
 import static javax.swing.GroupLayout.DEFAULT_SIZE;
 import static javax.swing.GroupLayout.PREFERRED_SIZE;
@@ -54,6 +55,7 @@ import java.util.EventObject;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.swing.GroupLayout;
@@ -984,6 +986,7 @@ public class McVGuiUtils implements Constants {
     //        return arrList(viewManagerCount);
     //    }
 
+
     private static int getVMCount() {
         McIDASV mcv = McIDASV.getStaticMcv();
         int viewManagerCount = ESTIMATED_VM_COUNT;
@@ -1012,6 +1015,49 @@ public class McVGuiUtils implements Constants {
             groupCount = uiManager.getComponentGroupCount();
         }
         return groupCount;
+    }
+
+    public static List<ViewManager> getAllViewManagers() {
+        McIDASV mcv = McIDASV.getStaticMcv();
+        List<ViewManager> vms = Collections.emptyList();
+        if (mcv != null) {
+            ViewManagerManager vmm = cast(mcv.getVMManager());
+            vms = arrList(vmm.getViewManagers());
+        }
+        return vms;
+    }
+
+    public static List<Object> getShareGroupsInWindow(final IdvWindow window) {
+        List<ViewManager> vms = arrList(getVMCount());
+        vms.addAll(window.getViewManagers());
+        for (IdvComponentHolder holder : getComponentHolders(window)) {
+            vms.addAll(holder.getViewManagers());
+        }
+        Set<Object> groupIds = newHashSet(vms.size());
+        for (ViewManager vm : vms) {
+            groupIds.add(vm.getShareGroup());
+        }
+        return arrList(groupIds);
+    }
+
+    public static List<Object> getAllShareGroups() {
+        List<ViewManager> vms = getAllViewManagers();
+        Set<Object> groupIds = newHashSet(vms.size());
+        for (ViewManager vm : vms) {
+            groupIds.add(vm.getShareGroup());
+        }
+        return arrList(groupIds);
+    }
+
+    public static List<ViewManager> getViewManagersInGroup(final Object sharedGroup) {
+        List<ViewManager> allVMs = getAllViewManagers();
+        List<ViewManager> filtered = arrList(allVMs.size());
+        for (ViewManager vm : allVMs) {
+            if (vm.getShareGroup().equals(sharedGroup)) {
+                filtered.add(vm);
+            }
+        }
+        return filtered;
     }
 
     public static List<ViewManager> getViewManagers(final WindowInfo info) {
