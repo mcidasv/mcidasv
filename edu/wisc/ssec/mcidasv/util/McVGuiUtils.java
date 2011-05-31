@@ -785,28 +785,28 @@ public class McVGuiUtils implements Constants {
         for (int i=0; i<comps.length; i++) {
             if (!(comps[i] instanceof JButton)) continue;
             JButton button = (JButton)comps[i];
-            if (button.getText().equals("OK")) {
+            if ("OK".equals(button.getText())) {
                 buttonOK = makePrettyButton(button);
             }
-            else if (button.getText().equals("Apply")) {
+            else if ("Apply".equals(button.getText())) {
                 buttonApply = makePrettyButton(button);
             }
-            else if (button.getText().equals("Cancel")) {
+            else if ("Cancel".equals(button.getText())) {
                 buttonCancel = makePrettyButton(button);
             }
-            else if (button.getText().equals("Help")) {
+            else if ("Help".equals(button.getText())) {
                 buttonHelp = makePrettyButton(button);
             }
-            else if (button.getText().equals("New")) {
+            else if ("New".equals(button.getText())) {
                 buttonNew = makePrettyButton(button);
             }
-            else if (button.getText().equals("Reset")) {
+            else if ("Reset".equals(button.getText())) {
                 buttonReset = makePrettyButton(button);
             }
-            else if (button.getText().equals("Yes")) {
+            else if ("Yes".equals(button.getText())) {
                 buttonYes = makePrettyButton(button);
             }
-            else if (button.getText().equals("No")) {
+            else if ("No".equals(button.getText())) {
                 buttonNo = makePrettyButton(button);
             }
             else {
@@ -856,7 +856,7 @@ public class McVGuiUtils implements Constants {
     /**
      * Take a list of buttons and make them pretty
      * 
-     * @param list
+     * @param buttonList
      * @return list
      */
     public static List makePrettyButtons(List buttonList) {
@@ -874,6 +874,8 @@ public class McVGuiUtils implements Constants {
 
     /**
      * Convenience method to make a button based solely on its name
+     * @param name
+     * @return
      */
     public static JButton makePrettyButton(String name) {
         return makePrettyButton(new JButton(name));
@@ -887,43 +889,43 @@ public class McVGuiUtils implements Constants {
      */
     public static JButton makePrettyButton(JButton button) {
         McVGuiUtils.setComponentWidth(button, Width.ONEHALF);
-        if (button.getText().equals("OK")) {
+        if ("OK".equals(button.getText())) {
             McVGuiUtils.setButtonImage(button, ICON_ACCEPT_SMALL);
         }
-        else if (button.getText().equals("Apply")) {
+        else if ("Apply".equals(button.getText())) {
             McVGuiUtils.setButtonImage(button, ICON_APPLY_SMALL);
         }
-        else if (button.getText().equals("Cancel")) {
+        else if ("Cancel".equals(button.getText())) {
             McVGuiUtils.setButtonImage(button, ICON_CANCEL_SMALL);
         }
-        else if (button.getText().equals("Help")) {
+        else if ("Help".equals(button.getText())) {
             McVGuiUtils.setButtonImage(button, ICON_HELP_SMALL);
         }
-        else if (button.getText().equals("New")) {
+        else if ("New".equals(button.getText())) {
             McVGuiUtils.setButtonImage(button, ICON_ADD_SMALL);
         }
-        else if (button.getText().equals("Reset")) {
+        else if ("Reset".equals(button.getText())) {
             McVGuiUtils.setButtonImage(button, ICON_UNDO_SMALL);
         }
-        else if (button.getText().equals("Yes")) {
+        else if ("Yes".equals(button.getText())) {
             McVGuiUtils.setButtonImage(button, ICON_ACCEPT_SMALL);
         }
-        else if (button.getText().equals("No")) {
+        else if ("No".equals(button.getText())) {
             McVGuiUtils.setButtonImage(button, ICON_CANCEL_SMALL);
         }
-        else if (button.getText().equals("Close")) {
+        else if ("Close".equals(button.getText())) {
             McVGuiUtils.setButtonImage(button, ICON_CANCEL_SMALL);
         }
-        else if (button.getText().equals("Previous")) {
+        else if ("Previous".equals(button.getText())) {
             McVGuiUtils.setButtonImage(button, ICON_PREVIOUS_SMALL);
         }
-        else if (button.getText().equals("Next")) {
+        else if ("Next".equals(button.getText())) {
             McVGuiUtils.setButtonImage(button, ICON_NEXT_SMALL);
         }
-        else if (button.getText().equals("Random")) {
+        else if ("Random".equals(button.getText())) {
             McVGuiUtils.setButtonImage(button, ICON_RANDOM_SMALL);
         }
-        else if (button.getText().equals("Support Form")) {
+        else if ("Support Form".equals(button.getText())) {
             McVGuiUtils.setButtonImage(button, ICON_SUPPORT_SMALL);
         }
         return button;
@@ -1015,6 +1017,17 @@ public class McVGuiUtils implements Constants {
             groupCount = uiManager.getComponentGroupCount();
         }
         return groupCount;
+    }
+
+    public static List<ViewManager> getActiveViewManagers() {
+        IdvWindow activeWindow = IdvWindow.getActiveWindow();
+        List<ViewManager> vms;
+        if (activeWindow != null) {
+            vms = getViewManagers(activeWindow);
+        } else {
+            vms = Collections.emptyList();
+        }
+        return vms;
     }
 
     public static List<ViewManager> getAllViewManagers() {

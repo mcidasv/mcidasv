@@ -14,6 +14,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JToggleButton;
+
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
@@ -98,33 +100,37 @@ public class LayerAnimationWindow extends JFrame {
         boolean animationEnabled = (event.getStateChange() == ItemEvent.SELECTED);
         btnSlower.setEnabled(animationEnabled);
         btnFaster.setEnabled(animationEnabled);
-        getActiveViewManager();
+        ViewManager viewManager = getActiveViewManager();
+        viewManager.setAnimatedVisibilityCheckBox(animationEnabled);
+        String dwell = Integer.toString(viewManager.getVisibilityAnimationSpeed());
+        fieldCurrentDwell.setText(dwell);
     }
 
     private void btnFasterActionPerformed(final ActionEvent event) {
-        logger.trace("faster!");
-        getActiveViewManager();
+        ViewManager viewManager = getActiveViewManager();
+        viewManager.fasterVisibilityAnimation();
+        String dwell = Integer.toString(viewManager.getVisibilityAnimationSpeed());
+        fieldCurrentDwell.setText(dwell);
+        logger.trace("faster: animationSpeed={}", dwell);
     }
 
     private void btnSlowerActionPerformed(final ActionEvent event) {
-        logger.trace("slower");
-        getActiveViewManager();
+        ViewManager viewManager = getActiveViewManager();
+        viewManager.slowerVisibilityAnimation();
+        String dwell = Integer.toString(viewManager.getVisibilityAnimationSpeed());
+        fieldCurrentDwell.setText(dwell);
+        logger.trace("slower: animationSpeed={}", dwell);
     }
 
-    private void getActiveViewManager() {
-        // IdvWindow -> ComponentGroup(only one per window in McV) -> ComponentHolders/Tabs -> ViewManagers/Displays
-        IdvWindow currentWindow = IdvWindow.getActiveWindow();
-        List<IdvComponentGroup> compGroupList = currentWindow.getComponentGroups();
-        McvComponentGroup tabGroup = cast(compGroupList.get(0));
-        McvComponentHolder tab = cast(tabGroup.getActiveComponentHolder());
-        List<ViewManager> viewManagers = cast(tab.getViewManagers());
+    private ViewManager getActiveViewManager() {
+        List<ViewManager> viewManagers = McVGuiUtils.getActiveViewManagers();
         if (viewManagers.size() != 1) {
             statusLabel.setText("no multipanel support yet :(");
             logger.trace("woe betide the person venturing into shared groups");
-        } else {
-            ViewManager viewManager = viewManagers.get(0);
-            logger.trace("found a ViewManager: name={} isActive={}", viewManager.getName(), viewManager.getIsActive());
         }
+        ViewManager viewManager = viewManagers.get(0);
+        logger.trace("found a ViewManager: name={} isActive={}", viewManager.getName(), viewManager.getIsActive());
+        return viewManager;
     }
 
     /**
@@ -137,7 +143,7 @@ public class LayerAnimationWindow extends JFrame {
                     LayerAnimationWindow frame = new LayerAnimationWindow();
                     frame.setVisible(true);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.error("init window", e);
                 }
             }
         });
