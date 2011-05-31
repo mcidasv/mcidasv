@@ -1627,7 +1627,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         // Grid stuff
         JLabel gridLabel = McVGuiUtils.makeLabelRight("Grid Threshold:", Width.ONEHALF);
 
-        JTextField gridField = McVGuiUtils.makeTextField(Misc.format(getStore().get(PREF_FIELD_CACHETHRESHOLD, 1000000)));
+        JTextField gridField = McVGuiUtils.makeTextField(Misc.format(getStore().get(PREF_FIELD_CACHETHRESHOLD, 1000000.)));
         JComponent gridFieldComponent = GuiUtils.hbox(gridField, new JLabel(" bytes (Cache grids larger than this to disk)"));
         widgets.put(PREF_FIELD_CACHETHRESHOLD, gridField);
 
