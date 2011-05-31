@@ -4120,6 +4120,15 @@ public class ViewManager extends SharableImpl implements ActionListener,
         }
     }
 
+    public void setAnimatedVisibilityCheckBox(boolean enabled) {
+        if (enabled) {
+            setVisibilityAnimationCheckBox("On");
+        } else {
+            setVisibilityAnimationCheckBox("Off");
+        }
+        setAnimatedVisibility(enabled);
+    }
+
     public String getVisibilityAnimationCheckBox() {
         return animationCheckBox;
     }
