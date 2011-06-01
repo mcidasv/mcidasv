@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<swathwidths>
+  <satellite name="LANDSAT 5" width="185"/>
+  <satellite name="SPOT 2" width="60"/>
+  <satellite name="ERS-2" width="100"/>
+  <satellite name="RADARSAT-1" width="510"/>
+  <satellite name="TOMS EP" width="2700"/>
+  <satellite name="MIDORI (ADEOS)" width="80"/>
+  <satellite name="ORBVIEW2 (SEASTAR)" width="2800"/>
+  <satellite name="IRS-1D" width="70"/>
+  <satellite name="TRMM" width="830"/>
+  <satellite name="SPOT 4" width="60"/>
+  <satellite name="FASAT B" width="150"/>
+  <satellite name="TECHSAT 1B (GO-32)" width="25"/>
+  <satellite name="LANDSAT 7" width="183"/>
+  <satellite name="KITSAT 3" width="50"/>
+  <satellite name="DLR-TUBSAT" width="50"/>
+  <satellite name="IRS-P4 (OCEANSAT 1)" width="1360"/>
+  <satellite name="QUIKSCAT" width="350"/>
+  <satellite name="IKONOS 2" width="11"/>
+  <satellite name="CBERS 1 (ZY 1A)" width="885"/>
+  <satellite name="TERRA" width="2330"/>
+  <satellite name="ARIRANG 1 (KOMPSAT-1)" width="800"/>
+  <satellite name="EO-1" width="7.7"/>
+  <satellite name="SAC C" width="360"/>
+  <satellite name="EROS A1" width="14"/>
+  <satellite name="QUICKBIRD 2" width="16.5"/>
+  <satellite name="TES" width=""/>
+  <satellite name="JASON 1" width="15"/>
+  <satellite name="METEOR-3M" width="3100"/>
+  <satellite name="BADR-B" width="194"/>
+  <satellite name="MAROC-TUBSAT" width="190"/>
+  <satellite name="ENVISAT" width="1150"/>
+  <satellite name="SPOT 5" width="60"/>
+  <satellite name="AQUA" width="2330"/>
+  <satellite name="HAIYANG-1A" width="1400"/>
+  <satellite name="ALSAT 1" width="600"/>
+  <satellite name="MIDORI II (ADEOS-II)" width="1600"/>
+  <satellite name="IRS-P6 (RESOURCESAT-1)" width="740"/>
+  <satellite name="CBERS 2 (ZY 1B)" width="885"/>
+  <satellite name="TANSUO 1" width="120"/>
+  <satellite name="FORMOSAT-2 (ROCSAT 2)" width="24"/>
+  <satellite name="AURA" width="3000"/>
+  <satellite name="PARASOL" width="2200"/>
+  <satellite name="IRS-P5 (CARTOSAT-1)" width="30"/>
+  <satellite name="TOPSAT" width="17"/>
+  <satellite name="SINAH 1" width="15"/>
+  <satellite name="ALOS (DAICHI)" width="70"/>
+  <satellite name="EROS B" width="7"/>
+  <satellite name="RSS-1 (YAOGAN 1)" width=""/>
+  <satellite name="RESURS-DK 1" width="28.3"/>
+  <satellite name="ARIRANG 2 (KOMPSAT-2)" width="15"/>
+  <satellite name="LAPAN-TUBSAT" width=""/>
+  <satellite name="CARTOSAT-2 (IRS-P7)" width="9.6"/>
+  <satellite name="HAIYANG-1B" width="1400"/>
+  <satellite name="COSMO-SKYMED 1" width="40"/>
+  <satellite name="TERRASAR-X" width="10"/>
+  <satellite name="WORLDVIEW-1 (WV-1)" width="60"/>
+  <satellite name="CBERS 2B" width="885"/>
+  <satellite name="YAOGAN 3" width=""/>
+  <satellite name="COSMO-SKYMED 2" width="40"/>
+  <satellite name="RADARSAT-2" width="500"/>
+  <satellite name="CARTOSAT-2A" width="9.6"/>
+  <satellite name="IMS-1" width="151"/>
+  <satellite name="JASON 2 (OSTM)" width=""/>
+  <satellite name="RAPIDEYE 2" width="77"/>
+  <satellite name="RAPIDEYE 5" width="77"/>
+  <satellite name="RAPIDEYE 1" width="77"/>
+  <satellite name="RAPIDEYE 3" width="77"/>
+  <satellite name="RAPIDEYE 4" width="77"/>
+  <satellite name="HJ-1A" width=""/>
+  <satellite name="HJ-1B" width=""/>
+  <satellite name="GEOEYE 1" width="15.2"/>
+  <satellite name="THEOS" width="90"/>
+  <satellite name="COSMO-SKYMED 3" width="40"/>
+  <satellite name="YAOGAN 4" width=""/>
+  <satellite name="YAOGAN 5" width=""/>
+  <satellite name="YAOGAN 6" width=""/>
+  <satellite name="RAZAKSAT" width=""/>
+  <satellite name="DEIMOS-1" width="650"/>
+  <satellite name="OCEANSAT 2" width="1420"/>
+  <satellite name="WORLDVIEW-2" width="60"/>
+  <satellite name="SMOS" width=""/>
+  <satellite name="YAOGAN 7" width=""/>
+  <satellite name="YAOGAN 10" width=""/>
+  <satellite name="COSMO-SKYMED 4" width="40"/>
+  <satellite name="METEOSAT-5 (MOP-2)" width=""/>
+  <satellite name="METEOSAT-6 (MOP-3)" width=""/>
+  <satellite name="HIMAWARI-5 (GMS-5)" width=""/>
+  <satellite name="GOES 10" width=""/>
+  <satellite name="METEOSAT-7" width=""/>
+  <satellite name="NOAA 15" width="3000"/>
+  <satellite name="GOES 11" width=""/>
+  <satellite name="FENGYUN 2B" width=""/>
+  <satellite name="NOAA 16" width="3000"/>
+  <satellite name="GOES 12" width=""/>
+  <satellite name="FENGYUN 1D" width="2800"/>
+  <satellite name="NOAA 17" width="3000"/>
+  <satellite name="METEOSAT-8 (MSG-1)" width=""/>
+  <satellite name="KALPANA-1 (METSAT 1)" width=""/>
+  <satellite name="INSAT-3A" width=""/>
+  <satellite name="FENGYUN 2C" width=""/>
+  <satellite name="HIMAWARI 6 (MTSAT-1R)" width=""/>
+  <satellite name="NOAA 18" width="3000"/>
+  <satellite name="METEOSAT-9 (MSG-2)" width=""/>
+  <satellite name="MTSAT-2" width=""/>
+  <satellite name="FORMOSAT 3A" width=""/>
+  <satellite name="FORMOSAT 3B" width=""/>
+  <satellite name="FORMOSAT 3C" width=""/>
+  <satellite name="FORMOSAT 3D" width=""/>
+  <satellite name="FORMOSAT 3E" width=""/>
+  <satellite name="FORMOSAT 3F" width=""/>
+  <satellite name="GOES 13" width=""/>
+  <satellite name="METOP-A" width=""/>
+  <satellite name="FENGYUN 2D" width=""/>
+  <satellite name="FENGYUN 3A" width=""/>
+  <satellite name="GOES 14" width=""/>
+  <satellite name="METEOR-M 1" width=""/>
+  <satellite name="GOES 15" width=""/>
+  <satellite name="COMS 1" width=""/>
+  <satellite name="FENGYUN 3B" width=""/>
+  <satellite name="ELEKTRO-L1" width=""/>
+  <satellite name="NOAA19" width="3000"/>
+  <satellite name="NOAA18" width="3000"/>
+  <satellite name="NOAA17" width="3000"/>
+  <satellite name="NOAA16" width="3000"/>
+  <satellite name="NOAA15" width="3000"/>
+  <satellite name="NOAA14" width="3000"/>
+  <satellite name="NOAA12" width="3000"/>
+  <satellite name="FENGYUN1C" width="2800"/>
+  <satellite name="FENGYUN1D" width="2800"/>
+  <satellite name="OCEANSAT" width="1420"/>
+  <satellite name="ADEOSII" width=""/>
+  <satellite name="GOES10" width=""/>
+</swathwidths>
