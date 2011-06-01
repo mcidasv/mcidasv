@@ -30,10 +30,13 @@
 
 package edu.wisc.ssec.mcidasv.control;
 
+import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
+
 import edu.wisc.ssec.mcidasv.data.GroundStations;
 import edu.wisc.ssec.mcidasv.data.PolarOrbitTrackDataSource;
 import edu.wisc.ssec.mcidasv.data.adde.sgp4.AstroConst;
 import edu.wisc.ssec.mcidasv.data.hydra.CurveDrawer;
+import edu.wisc.ssec.mcidasv.util.XmlUtil;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -60,6 +63,8 @@ import javax.swing.JTextField;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataInstance;
@@ -68,6 +73,7 @@ import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.ui.LatLonWidget;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.GuiUtils.ColorSwatch;
+import ucar.unidata.util.IOUtil;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
 import ucar.visad.display.CompositeDisplayable;
 import ucar.visad.display.Displayable;
@@ -187,16 +193,47 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private int dTime;
     private NavigatedDisplay navDsp = null;
     private TextType textType = null;
+    private double width = 0.0;
+
+    /** Path to the McV swathwidths.xml */
+    private static final String SWATH_WIDTHS = "/edu/wisc/ssec/mcidasv/resources/swathwidths.xml";
+    private static final String TAG_SATELLITE = "satellite";
+    private static final String ATTR_NAME = "name";
+    private static final String ATTR_WIDTH = "width";
+    private Element root = null;
 
     public PolarOrbitTrackControl() {
         super();
         logger.trace("created new tlecontrol={}", Integer.toHexString(hashCode()));
         setAttributeFlags(FLAG_COLORTABLE);
+        try {
+            final String xml =
+                IOUtil.readContents(SWATH_WIDTHS, McIdasPreferenceManager.class);
+            root = XmlUtil.getRoot(xml);
+        } catch (Exception e) {
+            System.out.println("problem reading swathwidths.xml e=" + e);
+        }
     }
 
     @Override public boolean init(DataChoice dataChoice) 
         throws VisADException, RemoteException 
     {
+        String choiceName = dataChoice.getName();
+        NodeList nodeList = root.getElementsByTagName(TAG_SATELLITE);
+        int num = nodeList.getLength();
+        if (num > 0) {
+            for (int i=0; i<num; i++) {
+                Element n =(Element)(nodeList.item(i));
+                String satName = n.getAttribute(ATTR_NAME);
+                if (satName.equals(choiceName)) {
+                    String strWidth = n.getAttribute(ATTR_WIDTH);
+                    if (strWidth.isEmpty()) strWidth = "0";
+                    Double dWidth = new Double(strWidth);
+                    width = dWidth.doubleValue();
+                    break;
+                }
+            }
+        }
         try {
             trackDsp = new CompositeDisplayable();
             swathDsp = new CompositeDisplayable();
@@ -210,7 +247,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         String dispName = getDisplayName();
         setDisplayName(getLongParamName() + " " + dispName);
         try {
-            this.textType = new TextType(getLongParamName());
+            String longName = getLongParamName().replaceAll(" ", "");
+            this.textType = new TextType(longName);
         } catch (Exception e) {
         }
         this.tupleType = makeTupleType();
@@ -339,7 +377,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     private float[][][] getSwath(float[][] track) {
         double earthRadius = AstroConst.R_Earth_mean/1000.0;
-        double width = 2900.0; /* km */
+//        double width = 2900.0; /* km */
         int npt = track[0].length-1;
         int l2 = track.length;
         float[][][] ret = new float[2][2][npt-1];
