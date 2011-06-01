@@ -91,8 +91,7 @@ public class LocalAddeEntry implements AddeEntry {
 
     public enum ServerName {
         AREA, AMSR, AMRR, GINI, FSDX, OMTP, LV1B, MODS, MODX, MOD4, MOD8, 
-        MODR, MSGT, MTST, SMIN, TMIN, MDFHSERV, MDHDSERV, MDKSSERV, MDROSERV,
-        INVALID;
+        MODR, MSGT, MTST, SMIN, TMIN, MD, INVALID;
     }
 
     /**
@@ -136,10 +135,11 @@ public class LocalAddeEntry implements AddeEntry {
         NOAA_AVHRR_L1B(ServerName.LV1B, "NOAA AVHRR L 1b", "NOAA AVHRR Level 1b"),
         SSMI(ServerName.SMIN, "SSMI", "Terrascan netCDF (SMIN)"),
         TRMM(ServerName.TMIN, "TRMM", "Terrascan netCDF (TMIN)"),
-        POINT_ONE(ServerName.MDFHSERV, "MDFHSERV", "Test Entry", EntryType.POINT),
-        POINT_TWO(ServerName.MDHDSERV, "MDHDSERV", "Test Entry", EntryType.POINT),
-        POINT_THREE(ServerName.MDKSSERV, "MDKSSERV", "Test Entry", EntryType.POINT),
-        POINT_FOUR(ServerName.MDROSERV, "MDROSERV", "Test Entry", EntryType.POINT);
+        MCIDAS_MD(ServerName.MD, "McIDAS MD", "McIDAS MD", EntryType.POINT);
+//        POINT_ONE(ServerName.MDFHSERV, "MDFHSERV", "Test Entry", EntryType.POINT),
+//        POINT_TWO(ServerName.MDHDSERV, "MDHDSERV", "Test Entry", EntryType.POINT),
+//        POINT_THREE(ServerName.MDKSSERV, "MDKSSERV", "Test Entry", EntryType.POINT),
+//        POINT_FOUR(ServerName.MDROSERV, "MDROSERV", "Test Entry", EntryType.POINT);
 
         /** Name of the server (should be four characters). */
         private final ServerName servName;
