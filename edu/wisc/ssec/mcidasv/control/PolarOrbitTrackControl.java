@@ -244,13 +244,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         }
         boolean result = super.init((DataChoice)this.getDataChoices().get(0));
 
-        String dispName = getDisplayName();
-        setDisplayName(getLongParamName() + " " + dispName);
-        try {
-            String longName = getLongParamName().replaceAll(" ", "");
-            this.textType = new TextType(longName);
-        } catch (Exception e) {
-        }
         this.tupleType = makeTupleType();
 
         Data data = getData(getDataInstance());
@@ -439,6 +432,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                                               getTextType()});
         } catch (Exception e) {
             System.out.println("\nPolarOrbitTrackControl.makeTupleType e=" + e);
+            System.out.println("    textType=" + getTextType());
         }
         return t;
     }
@@ -976,6 +970,16 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     }
 
     private TextType getTextType() {
+        if (this.textType == null) {
+            String dispName = getDisplayName();
+            setDisplayName(getLongParamName() + " " + dispName);
+            try {
+                String longName = getLongParamName().replaceAll(" ", "");
+                this.textType = new TextType(longName);
+            } catch (Exception e) {
+                this.textType = TextType.Generic;
+            }
+        }
         return this.textType;
     }
 
