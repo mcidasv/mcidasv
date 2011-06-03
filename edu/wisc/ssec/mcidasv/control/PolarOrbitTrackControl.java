@@ -715,18 +715,14 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         swathWidthFld.setHorizontalAlignment(JTextField.CENTER);
         swathWidthFld.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                String str = swathWidthFld.getText();
-                Double dVal = new Double(str.trim());
-                double val = dVal.doubleValue();
-                setSwathWidth(val);
-                try {
-                    removeDisplayable(swathDsp);
-                    Data data = getData(getDataInstance());
-                    swathDsp = new CompositeDisplayable();
-                    createTrackDisplay(data, false);
-                } catch (Exception e) {
-                    System.out.println("\nproblem redrawing swaths e=" + e);
-                }
+                changeSwathWidth();
+            }
+        });
+        swathWidthFld.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent fe) {
+            }
+            public void focusLost(FocusEvent fe) {
+                changeSwathWidth();
             }
         });
 
@@ -738,6 +734,21 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                         kmLabel }, 5,
                         GuiUtils.WT_N, GuiUtils.WT_N);
         return pan;
+    }
+
+    private void changeSwathWidth() {
+        String str = swathWidthFld.getText();
+        Double dVal = new Double(str.trim());
+        double val = dVal.doubleValue();
+        setSwathWidth(val);
+        try {
+            removeDisplayable(swathDsp);
+            Data data = getData(getDataInstance());
+            swathDsp = new CompositeDisplayable();
+            createTrackDisplay(data, false);
+        } catch (Exception e) {
+            System.out.println("\nproblem redrawing swaths e=" + e);
+        }
     }
 
     private void setSwathWidth(double val) {
