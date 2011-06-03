@@ -33,32 +33,74 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/misc/Tra
 <xxxmeta xxxname="jhid" value="idv.controls.misc.transectdrawingcontrol">
 <div class="pagesubtitle">Overview</div>
 <meta name="jhid" value="idv.controls.misc.transectdrawingcontrol">
-The transect drawing controls are a version of the <a href="DrawingControl.html">Drawing
-Controls</a> that allows you to view, create and modify the transect lines that
-are used in the <a href="../../ui/TransectViewManager.html">Transect Views</a>.
+<p>The transect drawing controls are a version of the <a href="DrawingControl.html">Drawing
+    Controls</a> that allows you to view, create and modify the transect lines that
+are used in the <a href="../../ui/TransectViewManager.html">Transect Views</a>. This option can be found under the <strong>Display-&gt;Draw Transect </strong>menu or through the <strong>Transects</strong> menu in the Transect View.</p>
+<p>This display control is a representation of the set of transects that are defined by the transect resource. Not only does it have its own state (that can be saved in a bundle for example), but it also writes out any transects you may create or change into your local McIDAS-V state directory in a transects.xml file. </p>
+<p> In this control, there is only one shape that you can draw with, the Transect Line. This control also shows a non-editable Transect Shape which displays the full transect line used by any Transect Views. These are called the &quot;Active Transects&quot;. There are also a set of transect lines that are non-editable that are from the system transects property. For an active transect, if the Transect View that it represents has a max distance set then the transect will show this max distance as a rectangular box.</p>
+<p>The Transect Drawing Control window consists of three tabs: <strong>Controls</strong>, <strong>Style</strong>, and <strong>Shapes</strong>.</p>
+<p>The <strong>Controls</strong> tab allows for the user to draw features in the Main Display Window:</p>
 <p></p>
-<div class="images"><img  src="images/TransectDrawingControlGui.gif"  alt="images/TransectDrawingControlGui.gif" ></div>
-<p> This display is either created through the <strong>Display-&gt;Draw Transect </strong>menu or through the <strong>Transects</strong> menu in the Transect View.</p>
-<p> This display control is a representation of the set of transects that are defined by the transect resource. Not only does it have its own state (that can be saved in a bundle for example) it also writes out any transects you may create or change into your local McIDAS-V state directory in a transects.xml file.</p>
-<p> In this control there is only one shape that you can draw with, the Transect Line. This control also shows a non-editable Transect Shape which displays the full transect line used by any Transect Views. We call these the &quot;Active Transects&quot;. There are also a set of transect lines that are non-editable that are from the system transects property.</p>
-<p> For an active transect, if the Transect View that it represents has a max distance set then the transect will show this max distance as a rectangular box.</p>
+<div class="images">
+    <p><img  src="images/TransectDrawingControlGui.gif"  alt="images/TransectDrawingControlGui.gif" ></p>
+</div>
+<p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><b>Mode</b> - </p>
-    <ul class="propertylist">
-	  <li><img src="images/transect.gif" width="20" height="20"> Click and drag in the main display to create a transect.</li>
-	</ul>
-	<p> There are three editing modes, select, move and reshape:</p>
+  <li class="propertylistitem"><b>Mode</b> - <img src="images/transect.gif" width="20" height="20"align=absmiddle> Click and drag in the main display to create a transect.</li>
+      <li class=propertylistitem> There are three editing modes, select, move and reshape:</li>
 	<ul class="propertylist">  
-      <li> <img src="images/pointer.gif"> Allows you to select one or more transect drawings. To select multiples press the control key. The selected transects will be shown with small magenta rectangles. Once selected you can bring up the transect's property editor by pressing Control+P. You can also delete the selected objects by pressing Control+X. You can select all of the objects by pressing Control-A.</li>
-      <li> <img src="images/Move16.gif"> Allows you to move a transect.</li>
-      <li> <img src="images/Reshape16.gif"> Allows you to move one of the points that define the end points of a transect.</li>
-    </ul></li>
-    <p></p>
+      <li class=propertylistitem> <img src="images/pointer.gif" align=absmiddle> Allows you to select one or more transect drawings. To select multiples press the control key. The selected transects will be shown with small magenta rectangles. Once selected you can bring up the transect's property editor by pressing Control+P. You can also delete the selected objects by pressing Control+X. You can select all of the objects by pressing Control+A.</li>
+      <li class=propertylistitem> <img src="images/Move16.gif"align=absmiddle> Allows you to move a transect.</li>
+      <li class=propertylistitem> <img src="images/Reshape16.gif"align=absmiddle> Allows you to move one of the points that define the end points of a transect.</li>
+    </ul>
   <li class="propertylistitem"><b>Z Position</b> - Allows you to define what is the fixed Z position.</li>
   <li class="propertylistitem"><b>Automatically update transects</b> - When this is selected any changes you do are automatically applied to any Transect Views and are also written out into the transects.xml file.</li>
   <li class="propertylistitem"><b>Show transects</b> - This toggles the visibility of the regular transects.</li>
   <li class="propertylistitem"><b>Show active transects</b> - This toggles the visibility of the active transects.</p>
+</ul>
+<p>The <strong>Style</strong> tab controls the style the drawings take in the Main Display Window:
+<div class="images"><img src="images/TransectDrawingControlGui2.gif" width="620" height="281"></div>
+<p></p>
+<div class="pagesubtitle">Properties</div>
+<p>These menu options apply to the shapes listed in the <strong>Controls</strong> tab. Once modifications have been made in this tab, they will be applied to the next transect you draw in the Main Display Window, without changing any transects already created.</p>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Color -</strong> Represents the color of the transect in the display.</li>
+<li class="propertylistitem"><strong>Line Width -</strong> Represents the thickness of the transect drawn in the display.</li>
+<li class="propertylistitem"><strong>Font -</strong> Changes the font of the text in the display.</li>
+<li class="propertylistitem"><strong>Justification -</strong> Changes the justification of the text.</li>
+</ul>
+<p>The <strong>Shapes</strong> tab lists all of the graphical elements:</p>
+<div class="images"><img src="images/TransectDrawingControlGui3.gif" width="620" height="281"></div>
+<p></p>
+<div class="pagesubtitle">Properties</div>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Name -</strong> Lists the names of the transects.</li>
+<li class="propertylistitem"><strong>Type -</strong> Represents the type of shape in the display.</li>
+<li class="propertylistitem"><strong>Coordinates -</strong> Lists the Coordinates selected in the <strong>Controls</strong> tab.</li>
+</ul>
+<p>Double clicking on an element in the <strong>Shapes</strong> tab will show its properties editor, which consists of two tabs: <strong>Properties</strong> and <strong>Points</strong>.
+<p>The <strong>Properties</strong> tab gives general information about each transect:</p>
+<div class="images"><img src="images/TransectDrawingControlGui4.gif" width="321" height="328"></div>
+<p></p>
+<div class="pagesubtitle">Properties</div>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Line Width -</strong> Represents the thickness of the transects being displayed.</li>
+<li class="propertylistitem"><strong>Name -</strong> Represents the name of the transect.</li>
+<li class="propertylistitem"><strong>Visible -</strong> Determines if the shape will be seen in the display.</li>
+<li class="propertylistitem"><strong>Color -</strong> Represents the color of the shape in the display.</li>
+<li class="propertylistitem"><strong>Distance -</strong> Represents the distance the transect covers in the Main Display Window.</li>
+<li class="propertylistitem"><strong>Start Label -</strong> Denotes the starting point of the transect line in the display.</li>
+<li class="propertylistitem"><strong>End Label -</strong> Denotes the ending point of the transect line in the display.</li>
+</ul>
+<p>The <strong>Points</strong> tab gives general information about each shape:</p>
+<div class="images"><img src="images/TransectDrawingControlGui5.gif" width="321" height="328"></div>
+<p></p>
+<div class="pagesubtitle">Properties</div>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Latitude -</strong> Lists the latitude value at each point.</li>
+<li class="propertylistitem"><strong>Longitude -</strong> Lists the longitude value at each point.</li>
+<li class="propertylistitem"><img src="images/WritePoints.gif" width="104" height="26"align=absmiddle> - Allows you to save the list of points as a Comma-Separated Values (CSV) file (*.csv).</li>
 </ul>
 <div class="pagesubtitle">Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="../index.html#menus">Menus section</a> of the Layer Controls Overview page. However, there are several options that are unique to this display.</p>
