@@ -39,7 +39,7 @@ You can capture the main 3D view as an image, a QuickTime movie or an animated G
 </ul>
 <a name="jpegcapture" id="jpegcapture"></a>
 <div class="pagesubtitle">Saving Images</div>
-You can save a display as an imageby selecting the <strong>View-&gt;Capture-&gt;Image...</strong> menu
+You can save a display as an image by selecting the <strong>View-&gt;Capture-&gt;Image...</strong> menu
 item. A file dialog will popup where you can enter a file name for the image
 file. McIDAS-V supports JPEG, PNG, GIF, PDF, PS, and SVG formats. From this File
 Dialog you can also specify the image quality (only used for JPEGs) and what
@@ -82,47 +82,34 @@ item to bring up the Movie Capture window:</p>
 <li class="propertylistitem"><strong>Background Transparent -</strong> Captures the movie with the background image transparent.</li>
 <li class="propertylistitem"><strong>Image Quality -</strong> Represents the quality of the images. Low quality images will utilize less memory, but will not look as good.</li>
 <li class="propertylistitem"><strong>Save Files To -</strong> Represents the location where you want to store the movie.</li>
-<li class="propertylistitem"><strong>FilenameTemplate -</strong> Represetns the name of the movie. There are several ways you can customize the output (see below).</li>
+<li class="propertylistitem"><strong>Filename Template -</strong> Represents the name of the movie. There are several ways you can customize the output (see below).</li>
 <li class="propertylistitem"><strong>Preview -</strong> Opens a Movie Preview window, where you can see individual slides before saving the movie.</li>
 <li class="propertylistitem"><strong>Delete All -</strong> Deletes every slide saved in the movie.</li>
 <li class="propertylistitem"><strong>Save Movie -</strong> Saves the movie to the specified location.</li>
 </ul>
-    <p>To make a movie there are three steps: capturing the frames, previewing the frames,
-        and creating the movie. McIDAS-V supports QuickTime movie, animated GIF, AVI file, Google Earth KMZ
-    and ANIS Applet HTML file formats.</p>
-    <p>To capture frames, in the <strong>Capture</strong> section of the "Image capture" window, do one of the following three choices:</p>
-    <ul class="propertylist">
-        <li class="propertylistitem">Click on the <strong>Capture one image</strong> button to make a single frame
-            of the current McIDAS-V display. Then you change the display to exactly what
-            you want in the next frame, capture that new image, and continue through the
-        movie.</li>
-        <li class="propertylistitem">Click on <strong>Capture animation</strong> to automatically capture all frames in a display time sequence which you can animate with the usual McIDAS-V <a href="../ui/Animation.html">Time Animation Controls</a>. Check <strong>Reset to start time</strong> to ensure that you capture the entire animation sequence. The QuickTime animation capture starts on the first frame visible in McIDAS-V and goes to the end. So you can use this to capture part of a sequence.</li>
-        <li class="propertylistitem">Click on <strong>Capture automatically</strong> to start taking snapshots of frames from the McIDAS-V display while you make changes, such as while you change the viewpoint by zooming, rotation, and panning, and combinations of all three. To stop the automatic snapshots, click on the button again (which now says Stop). You can set the automatic snapshot sampling rate with the <strong>Rate</strong> field.</li>
-    </ul>
-    You can combine these different methods of capture. The list of frames is additive.
-    <p>If you want to save the individual intermediate files that are used to create
-        the movie, check the <strong>Save files to</strong> box and specify
-        a directory and file name format. Otherwise, the intermediate files will be
-    saved in a temporary directory and will be removed.</p>
-    <p>You can use the following
-    templates to customize the name of the output file: </p>
-    <ul class="propertylist">
-        <li class="propertylistitem"><b>%count%</b> is the image counter</li>
-        <li class="propertylistitem"><b>%count:decimal format%</b> allows you to format the count using
-            the same rules defined in the  lat/lon format section of the
-            <a href="../tools/preferences/FormatPreferences.html">User Preferences</a>. (or
-        Google 'java decimalformat' for more information).</li>
-        <li class="propertylistitem"><b>%time%</b> is the  animation time in the default format.</li>
-        <li class="propertylistitem"><b>%time:time format%</b> a template that begins with 
-            "time:" and contains a time format string using the 
-            the same date formatting rules described in the <a href="../tools/preferences/FormatPreferences.html">User Preferences</a>.
-    </ul>
-    <p>You can <strong>Preview</strong> the movie and remove individual frames or <strong>Delete
-    All</strong> the frames.</p>
-    <p>When done capturing frames select the <strong>Save movie</strong> button
-    to specify the name and format of the file you want to save.</p>
-    <a name="movieplayback" id="movieplayback"></a>
-    <div class="pagesubtitle">Play QuickTime Movies</div>
+<div class="pagesubtitle">How to Create a Movie</div>
+<p>To make a movie, there are three steps: capturing the frames, previewing the frames, and creating the movie. McIDAS-V supports QuickTime movies, animated GIF and AVI files, Google Earth KMZ and ANIS Apple HTML file formats.
+<ul class="propertylist">
+<li class="propertylistitem">To capture frames, in the <strong>Capture</strong> section of the Image Capture window, do the following:</li>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Capture one image -</strong> Makes a single frame of the McIDAS-V display. Progressively change the display and capture one frame at a time to create a movie.</li>
+<li class="propertylistitem"><strong>Capture animation -</strong> Captures all frames in a display time sequence you can animate with the usual <a href="../ui/Animation.html">Time Animation Controls</a>. Check <strong>Reset to start time</strong> to ensure you capture the entire animation sequence. The QuickTime animation capture starts on the first frame visible in McIDAS-V and goes to the end. This tool can be used to capture part of a loop.</li>
+<li class="propertylistitem"><strong>Capture automatically -</strong> Takes snapshots of the frames in McIDAS-V display while you make changes, such as changing the view point, zooming, rotating, etc. Click the button again to stop the snapshot. You can change the sampling rate of the snapshots with the <strong>Rate</strong> field.</li>
+<li class="propertylistitem">You can combine these three different methods of capture. The list of frames is additive.</li>
+</ul>
+<li class="propertylistitem"> You can <strong>Preview</strong> the movie by pressing the <strong>Preview</strong> button. This opens a Movie Preview window, where you can see the individual slides before saving the movie.</li>
+<li class="propertylistitem">If you want to save the individual intermediate files that are used to create the movie, check the <strong>Save files to</strong> box and specify a directory and file name format. Otherwise, the intermediate files will be
+saved in a temporary directory and will be removed. You can use the following templates to customize the name of the output file:</li>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>%count% -</strong> Represents the image counter</li>
+<li class="propertylistitem"><strong>%count:decimal format% -</strong> Allows you to format the count using the same rules defined in the  lat/lon format section of the <a href="../tools/preferences/FormatPreferences.html">User Preferences</a>. (or Google 'java decimalformat' for more information).</li>
+<li class="propertylistitem"><strong>%time% - </strong>Represents the  animation time in the default format.</li>
+<li class="propertylistitem"><strong>%time:time format% -</strong> Begins with "time:" and contains a time format string using the the same date formatting rules described in the <a href="../tools/preferences/FormatPreferences.html">User Preferences</a>.</li>
+</ul>
+<li class="propertylistitem">When done capturing the frames, select the <strong>Save movie</strong> button to specify the name and format of the file you want to save.
+    <a name="movieplayback" id="movieplayback"></a>    </li>
+</ul>
+<div class="pagesubtitle">Play QuickTime Movies</div>
     <p>McIDAS-V supports displaying certain types of Quicktime movies (including
         the ones McIDAS-V generates). Load in the Quicktime movie from the File Data
     Chooser.</p>

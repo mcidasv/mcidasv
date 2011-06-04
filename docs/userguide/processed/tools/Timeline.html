@@ -42,32 +42,18 @@ to show a popup menu. The menu allows you explicitly define these settings throu
 a Properties dialog or set them directly with sub-menu choices.
 The date selection settings are listed below.
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Start/End</strong> date - These define
-    the range to look within.</li>
-  <li class="propertylistitem"><strong>Interval</strong> - If defined, this allows
-    you to select dates every N time units. For example, you can set the interval
-    to be one hour. The times that are selected are the ones closest to the one
-    hour interval ticks.</li>
-  <li class="propertylistitem"><strong>Before/After Range</strong> - These are
-    displayed by the little gray triangles in the timeline. By default, the ranges
-    that we use are one half the size of the interval. However, you can set the
-    range both before and after the interval tick. So for example, if you want
-    to just consider times within 15 minutes before the interval but nothing
-    after the interval set the Before Range to be 15 minutes and the After Range
-    to be 0 minutes.</li>
-  <li class="propertylistitem"><strong>Count</strong> - You can specify a max
-    number of times that will be selected. Only the most recent N times will
-    be selected.</li>
-  <li class="propertylistitem"><strong>Skip Factor</strong> - This says to skip
-    every N'th time that would be selected. For example, the date selection first
-    considers the interval/ranges (if defined), then it applies the skip (e.g.,
-    only every 3rd time), then it looks at the max count.</li>
+  <li class="propertylistitem"><strong>Properties -</strong> Opens a Date Selection window, where you can set a starting and ending time, as well as an interval, max number of images, and a skip factor.</li>
+  <li class="propertylistitem"><strong>Set Visible Range -</strong> Stretches out the timeline seen in the <strong>Absolute</strong> tab to cover the selected time range.</li>
+  <li class="propertylistitem"><strong>Set Date Selection -</strong> Selects all of the times in the time range selected.</li>
+  <li class="propertylistitem"><strong>Use Visible Range -</strong> Selects all of the times currently visible in the <strong>Absolute</strong> tab.</li>
+  <li class="propertylistitem"><strong>Start/End</strong> date - These define the range to look within.</li>
+  <li class="propertylistitem"><strong>Interval</strong> - Allows you to select dates every N time units.</li>
+  <li class="propertylistitem"><strong>Skip Factor</strong> - This says to skip every N'th time that would be selected.</li>
+  <li class="propertylistitem"><strong>Count</strong> - You can specify a max number of times that will be selected. Only the most recent N times will be selected.</li>
+  <li class="propertylistitem"><strong>Sunrise/Sunset - </strong>Shades the background of the times in yellow when the sun is up, and in white when the sun is down.</li>
+  <li class="propertylistitem"><strong>Before/After Range</strong> - These are displayed by the little gray triangles in the timeline. By default, the ranges that we use are one half the size of the interval. However, you can set the range both before and after the interval tick. So for example, if you want to just consider times within 15 minutes before the interval but nothing after the interval set the Before Range to be 15 minutes and the After Range to be 0 minutes.</li>
 </ul>
-<p>The View Managers use the timeline to show the animation time set and the
-  times of the different displays. Here, the timeline is used for informational
-  purposes and is not used to select times. This can be shown through the <strong>View-&gt;Animation
-  Timeline</strong> menu. The gray timeline represents non-visible displays. Double
-  clicking in a timeline sets the animation step to that time.</p>
+<p>The View Managers use the timeline to show the animation time set and the times of the different displays. Here, the timeline is used for informational purposes and is not used to select times. This can be shown through the <strong>View-&gt;Animation Timeline</strong> menu. The gray timeline represents non-visible displays. Double clicking in a timeline sets the animation step to that time.</p>
 <a name="image2" id="image2"></a>
 <div class="images"><img src="images/Timeline2.gif" alt="Animation Times"> <br>
   <span class="caption">Image 2: Animation Times</span></div>
