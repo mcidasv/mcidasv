@@ -46,12 +46,14 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
  */
 public class LocalAddeEntry implements AddeEntry {
 
+    /** Friendly neighborhood logging object. */
     static final Logger logger = LoggerFactory.getLogger(LocalAddeEntry.class);
 
     /** Represents a {@literal "bad"} local ADDE entry. */
     // seriously, don't use null unless you REALLY need it.
     public static final LocalAddeEntry INVALID_ENTRY = new Builder("INVALID", "INVALID", "/dev/null", AddeFormat.INVALID).build();
 
+    /** Represents a {@literal "bad"} collection of local ADDE entries. */
     public static final List<LocalAddeEntry> INVALID_ENTRIES = Collections.singletonList(INVALID_ENTRY);
 
     /** */
@@ -108,8 +110,8 @@ public class LocalAddeEntry implements AddeEntry {
      * <p>None of {@code AddeFormat}'s fields should contain {@code null}.
      */
     public enum AddeFormat {
-        INVALID(ServerName.INVALID, "", "", EntryType.INVALID),
         MCIDAS_AREA(ServerName.AREA, "McIDAS AREA"),
+        MCIDAS_MD(ServerName.MD, "McIDAS MD", "McIDAS MD", EntryType.POINT),
         AMSRE_L1B(ServerName.AMSR, "AMSR-E L 1b", "AMSR-E Level 1b"),
         AMSRE_RAIN_PRODUCT(ServerName.AMRR, "AMSR-E Rain Product"),
         GINI(ServerName.GINI, "GINI"),
@@ -135,13 +137,9 @@ public class LocalAddeEntry implements AddeEntry {
         NOAA_AVHRR_L1B(ServerName.LV1B, "NOAA AVHRR L 1b", "NOAA AVHRR Level 1b"),
         SSMI(ServerName.SMIN, "SSMI", "Terrascan netCDF (SMIN)"),
         TRMM(ServerName.TMIN, "TRMM", "Terrascan netCDF (TMIN)"),
-        MCIDAS_MD(ServerName.MD, "McIDAS MD", "McIDAS MD", EntryType.POINT);
-//        POINT_ONE(ServerName.MDFHSERV, "MDFHSERV", "Test Entry", EntryType.POINT),
-//        POINT_TWO(ServerName.MDHDSERV, "MDHDSERV", "Test Entry", EntryType.POINT),
-//        POINT_THREE(ServerName.MDKSSERV, "MDKSSERV", "Test Entry", EntryType.POINT),
-//        POINT_FOUR(ServerName.MDROSERV, "MDROSERV", "Test Entry", EntryType.POINT);
+        INVALID(ServerName.INVALID, "", "", EntryType.INVALID);
 
-        /** Name of the server (should be four characters). */
+        /** Name of the McIDAS-X server. */
         private final ServerName servName;
 
         /** {@literal "Human readable"} format name. This is returned by {@link #toString()}. */
@@ -167,7 +165,7 @@ public class LocalAddeEntry implements AddeEntry {
          * @param servName {@link ServerName} that McIDAS-X uses for this format. 
          * @param friendlyName {@literal "Human readable"} name of the format; returned by {@link #toString()}.
          * @param tooltip If non-empty, this is used as a tooltip in the local entry editor.
-         * @param type Only use {@link EntryType#IMAGE} for the time being?
+         * @param type {@link EntryType} used by this format.
          */
         private AddeFormat(final ServerName servName, final String friendlyName, final String tooltip, final EntryType type) {
             this.servName = servName;
@@ -178,26 +176,82 @@ public class LocalAddeEntry implements AddeEntry {
         }
 
         /**
-         * Builds an {@literal "ADDE Format"} <b>without</b> a tooltip.
+         * Builds an {@literal "imagery ADDE Format"} <b>without</b> a tooltip.
+         *
+         * @param servName {@link ServerName} that McIDAS-X uses for this format.
+         * @param friendlyName {@literal "Human readable"} name of the format; returned by {@link #toString()}.
          */
         private AddeFormat(final ServerName servName, final String friendlyName) {
             this(servName, friendlyName, "", EntryType.IMAGE);
         }
 
         /**
-         * Builds an {@literal "ADDE Format"} <b>with</b> a tooltip.
+         * Builds an {@literal "imagery ADDE Format"} <b>with</b> a tooltip.
+         *
+         * @param servName {@link ServerName} that McIDAS-X uses for this format.
+         * @param friendlyName {@literal "Human readable"} name of the format; returned by {@link #toString()}.
+         * @param tooltip If non-empty, this is used as a tooltip in the local entry editor.
          */
         private AddeFormat(final ServerName servName, final String friendlyName, final String tooltip) {
             this(servName, friendlyName, tooltip, EntryType.IMAGE);
         }
 
-        public ServerName getServerName() { return servName; }
-        public String getTooltip() { return tooltip; }
-        public EntryType getType() { return type; }
-        public String getFileFilter() { return fileFilter; }
-        @Override public String toString() { return friendlyName; }
+        /**
+         * Gets the McIDAS-X {@link ServerName} for this format.
+         *
+         * @return Either the name of this format's McIDAS-X server, or {@link ServerName#INVALID}.
+         */
+        public ServerName getServerName() {
+            return servName;
+        }
+
+        /**
+         * Gets the tooltip text to use in the server manager GUI for this
+         * format.
+         *
+         * @return Text to use as a GUI tooltip. Cannot be {@code null}, though
+         * empty {@code String} values are permitted.
+         */
+        public String getTooltip() {
+            return tooltip;
+        }
+
+        /**
+         * Gets the type of data used by this format. This value dictates the
+         * chooser(s) where this format can appear.
+         *
+         * @return One of {@link EntryType}, or {@link EntryType#INVALID}.
+         */
+        public EntryType getType() {
+            return type;
+        }
+
+        /**
+         * Gets the string used to filter out files that match this format.
+         *
+         * @return Either a specialized {@code String}, like {@literal "*PRO*"} or {@literal "*"}.
+         */
+        public String getFileFilter() {
+            return fileFilter;
+        }
+
+        /**
+         * Gets the {@code String} representation of this format.
+         *
+         * @return the value of {@link #friendlyName}.
+         */
+        @Override public String toString() {
+            return friendlyName;
+        }
     }
 
+    /**
+     *
+     *
+     * @param builder
+     *
+     * @see LocalAddeEntry.Builder
+     */
     private LocalAddeEntry(final Builder builder) {
         this.group = builder.group;
         this.descriptor = builder.descriptor;
@@ -259,50 +313,96 @@ public class LocalAddeEntry implements AddeEntry {
         return group;
     }
 
-    public String getDescriptor() {
-        return descriptor;
-    }
-
-    public AddeFormat getFormat() {
-        return format;
-    }
-
-    public String getMask() {
-        return fileMask;
-    }
-
-    public String getFileMask() {
-        return fileMask;
-    }
-
     @Override public String getName() {
         return name;
     }
 
+    /**
+     * Gets the ADDE descriptor for the current local ADDE entry.
+     * 
+     * @return ADDE descriptor (corresponds to the {@literal "N2"} section of a RESOLV.SRV
+     * entry).
+     */
+    public String getDescriptor() {
+        return descriptor;
+    }
+
+    /**
+     * Gets the ADDE dataset format for the current local ADDE entry.
+     * 
+     * @return ADDE format (corresponds to the {@literal "MCV"} section of a RESOLV.SRV
+     * entry).
+     */
+    public AddeFormat getFormat() {
+        return format;
+    }
+
+    /**
+     * Gets the ADDE file mask for the current local ADDE entry.
+     * 
+     * @return ADDE file mask (corresponds to the {@literal "MASK"} section of a RESOLV.SRV
+     * entry).
+     */
+    public String getMask() {
+        return fileMask;
+    }
+
+    /**
+     * Gets the ADDE file mask for the current local ADDE entry.
+     * 
+     * @return ADDE file mask (corresponds to the {@literal "MASK"} section of a RESOLV.SRV
+     * entry).
+     */
+    public String getFileMask() {
+        return fileMask;
+    }
+
+    /**
+     * Gets the ADDE realtime status of the current local ADDE entry.
+     * 
+     * @return Whether or not the current dataset is {@literal "realtime"}.
+     * Corresponds to the {@literal "RT"} section of a RESOLV.SRV entry.
+     */
     public boolean getRealtime() {
         return realtime;
     }
 
+    /**
+     * Gets the starting number of the current local ADDE dataset.
+     * 
+     * @return Corresponds to the {@literal "R1"} section of a RESOLV.SRV entry.
+     */
     public String getStart() {
         return start;
     }
 
+    /**
+     * Gets the ending number of the current local ADDE dataset.
+     * 
+     * @return Corresponds to the {@literal "R2"} section of a RESOLV.SRV entry.
+     */
     public String getEnd() {
         return end;
     }
 
+    /**
+     * Tests the current local ADDE dataset for validity.
+     * 
+     * @return {@code true} iff {@link #group}, {@link #descriptor}, and {@link #name}
+     * are not empty.
+     */
     public boolean isValid() {
-        if ((group.isEmpty()) || (descriptor.isEmpty()) || (name.isEmpty())) {
-            return false;
-        }
-        return true;
+        return !((group.isEmpty()) || (descriptor.isEmpty()) || (name.isEmpty()));
     }
 
+    /**
+     * Gets the local ADDE dataset's realtime status as a value suitable for
+     * RESOLV.SRV (one of {@literal "Y"} or {@literal "N"}).
+     * 
+     * @return RESOLV.SRV-friendly representation of the current realtime status.
+     */
     public String getRealtimeAsString() {
-        if (realtime) {
-            return "Y";
-        }
-        return "N";
+        return (realtime) ? "Y" : "N";
     }
 
     @Override public int hashCode() {
@@ -372,29 +472,87 @@ public class LocalAddeEntry implements AddeEntry {
         
     }
 
+    /**
+     * A builder of (mostly) immutable {@link LocalAddeEntry} instances.
+     * 
+     * <p>Usage example: <pre>    {@code
+     *     LocalAddeEntry entry = new LocalAddeEntry
+     *         .Builder(group, name, format, mask)
+     *         .descriptor()
+     *         .realtime("Y")
+     *         .range(start, end)
+     *         .type(EntryType.POINT)
+     *         .build();}</pre>
+     * 
+     * Only the values required by the Builder constructor are required.
+     */
     public static class Builder {
+        /** Random number generator for creating default {@link #descriptor} values. */
         private static final Random random = new Random();
 
         // required
+        /** Corresponds to RESOLV.SRV's {@literal "N1"} section. */
         private final String group;
+
+        /** Corresponds to RESOLV.SRV's {@literal "C"} section. */
         private final String name;
+
+        /** Corresponds to RESOLV.SRV's {@literal "MCV"} section. */
         private final AddeFormat format;
+
+        /** Corresponds to RESOLV.SRV's {@literal "MASK"} section. */
         private final String mask;
 
         // optional
+        /**
+         * Corresponds to RESOLV.SRV's {@literal "N2"} section.
+         * Defaults to {@literal "ENTRY<RANDOM NUMBER>"}.
+         */
         private String descriptor = "ENTRY"+random.nextInt(999999);
+
+        /**
+         * Corresponds to RESOLV.SRV's {@literal "RT"} section.
+         * Defaults to {@code false}.
+         */
         private boolean realtime = false;
+
+        /**
+         * Corresponds to RESOLV.SRV's {@literal "R1"} section.
+         * Defaults to {@literal "1"}.
+         */
         private String start = "1";
+
+        /**
+         * Corresponds to RESOLV.SRV's {@literal "R2"} section.
+         * Defaults to {@literal "999999"}.
+         */
         private String end = "999999";
+
+        /**
+         * Defaults to {@link edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus#INVALID}.
+         */
         private EntryStatus status = EntryStatus.INVALID;
 
+        /**
+         * Corresponds to RESOLV.SRV's {@literal "TYPE"} section.
+         * Defaults to {@link EntryType#IMAGE}.
+         */
         private EntryType type = EntryType.IMAGE;
+
+        /**
+         * Corresponds to RESOLV.SRV's {@literal "K"} section.
+         * Defaults to {@literal "NOT_SET"}.
+         */
         private String kind = "NOT_SET";
+
+        /**
+         * Defaults to {@link ServerName#INVALID}.
+         */
         private ServerName safeKind = ServerName.INVALID;
 
         public Builder(final Map<String, String> map) {
             if (!map.containsKey("C") || !map.containsKey("N1") || !map.containsKey("MASK") || !map.containsKey("MCV")) {
-                throw new IllegalArgumentException("");
+                throw new IllegalArgumentException("Cannot build a LocalAddeEntry without the following keys: C, N1, MASK, and MCV.");
             }
 
             this.name = map.get("C");
@@ -410,7 +568,14 @@ public class LocalAddeEntry implements AddeEntry {
             end(map.get("R2"));
         }
 
-        
+        /**
+         *
+         *
+         * @param name
+         * @param group
+         * @param mask
+         * @param format
+         */
         public Builder(final String name, final String group, final String mask, final AddeFormat format) {
             this.name = name;
             this.group = group;
@@ -418,6 +583,13 @@ public class LocalAddeEntry implements AddeEntry {
             this.format = format;
         }
 
+        /**
+         *
+         *
+         * @param descriptor
+         *
+         * @return {@code LocalAddeEntry.Builder} with ADDE descriptor.
+         */
         public Builder descriptor(final String descriptor) {
             if (descriptor != null) {
                 this.descriptor = descriptor;
@@ -425,6 +597,13 @@ public class LocalAddeEntry implements AddeEntry {
             return this;
         }
 
+        /**
+         *
+         *
+         * @param realtimeAsStr
+         *
+         * @return {@code LocalAddeEntry.Builder} with ADDE realtime flag.
+         */
         // looks like mcidasx understands ("Y"/"N"/"A")
         // should probably ignore case and accept "YES"/"NO"/"ARCHIVE"
         // in addition to the normal boolean conversion from String
@@ -441,11 +620,25 @@ public class LocalAddeEntry implements AddeEntry {
             return this;
         }
 
+        /**
+         *
+         *
+         * @param realtime
+         *
+         * @return {@code LocalAddeEntry.Builder} with ADDE realtime flag.
+         */
         public Builder realtime(final boolean realtime) {
             this.realtime = realtime;
             return this;
         }
 
+        /**
+         *
+         *
+         * @param type
+         *
+         * @return {@code LocalAddeEntry.Builder} with ADDE data type.
+         */
         // my assumption is that if "format" is known, you can infer "type"
         public Builder type(final EntryType type) {
             if (type != null) {
@@ -454,6 +647,13 @@ public class LocalAddeEntry implements AddeEntry {
             return this;
         }
 
+        /**
+         *
+         *
+         * @param kind
+         *
+         * @return {@code LocalAddeEntry.Builder} with ADDE kind.
+         */
         // my assumption is that if "format" is known, you can infer "kind"
         public Builder kind(final String kind) {
             if (kind == null) {
@@ -469,6 +669,13 @@ public class LocalAddeEntry implements AddeEntry {
             return this;
         }
 
+        /**
+         *
+         *
+         * @param start
+         *
+         * @return {@code LocalAddeEntry.Builder} with ADDE dataset {@literal "start"}.
+         */
         public Builder start(final String start) {
             if (start != null) {
                 this.start = start;
@@ -476,6 +683,13 @@ public class LocalAddeEntry implements AddeEntry {
             return this;
         }
 
+        /**
+         *
+         *
+         * @param end
+         *
+         * @return {@code LocalAddeEntry.Builder} with ADDE dataset {@literal "end"}.
+         */
         public Builder end(final String end) {
             if (end != null) {
                 this.end = end;
@@ -483,6 +697,14 @@ public class LocalAddeEntry implements AddeEntry {
             return this;
         }
 
+        /**
+         *
+         *
+         * @param start
+         * @param end
+         *
+         * @return {@code LocalAddeEntry.Builder} with ADDE dataset {@literal "start" and "end"} values.
+         */
         public Builder range(final String start, final String end) {
             if (start != null && end != null) {
                 this.start = start;
@@ -491,6 +713,13 @@ public class LocalAddeEntry implements AddeEntry {
             return this;
         }
 
+        /**
+         *
+         *
+         * @param status
+         *
+         * @return {@code LocalAddeEntry.Builder} with {@link AddeEntry.EntryStatus}.
+         */
         public Builder status(final String status) {
             if (status != null && status.length() > 0) {
                 this.status = EntryTransforms.strToEntryStatus(status);
@@ -498,6 +727,13 @@ public class LocalAddeEntry implements AddeEntry {
             return this;
         }
 
+        /**
+         * 
+         *
+         * @param status
+         *
+         * @return {@code LocalAddeEntry.Builder} with {@link AddeEntry.EntryStatus}.
+         */
         public Builder status(final EntryStatus status) {
             if (status != null) {
                 this.status = status;
@@ -505,6 +741,11 @@ public class LocalAddeEntry implements AddeEntry {
             return this;
         }
 
+        /**
+         *
+         *
+         * @return New {@code LocalAddeEntry} instance.
+         */
         public LocalAddeEntry build() {
 //            if (format.getType() != type || format.getServerName() != safeKind || safeKind == ServerName.INVALID)
 //                System.err.println("oddity: name="+name+" mask="+mask+" group="+group+" descriptor="+descriptor+" realtime="+realtime+" format="+format+" type="+type+" kind="+kind+" safeKind="+safeKind);

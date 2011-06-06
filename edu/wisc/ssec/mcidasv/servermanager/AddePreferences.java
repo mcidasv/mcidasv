@@ -371,8 +371,6 @@ public class AddePreferences {
                 if (updated) {
                     EventBus.publish(EntryStore.Event.UPDATE);
                 }
-
-
             }
         };
         return new AddePrefConglomeration(Constants.PREF_LIST_ADDE_SERVERS, entryListener, entryPanel, entryToggles);
@@ -405,7 +403,7 @@ public class AddePreferences {
      * Sets the value of the {@link #PREF_LIST_SPECIFY} preference to 
      * {@code value}. 
      * 
-     * @param value New value to associate with {@code PREF_LIST_SPECIFY}.
+     * @param entrySelection New value to associate with {@code PREF_LIST_SPECIFY}.
      */
     private void setSpecifyServers(final Selection entrySelection) {
         entryStore.getIdvStore().put(PREF_LIST_SPECIFY, entrySelection.toString());

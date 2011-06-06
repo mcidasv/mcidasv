@@ -893,8 +893,6 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      * to connect to. 
      * 
      * @throws NullPointerException if {@code entries} is {@code null}.
-     * 
-     * @see #checkHost(RemoteAddeEntry)
      */
     public Set<RemoteAddeEntry> checkHosts(final Set<RemoteAddeEntry> entries) {
         Contract.notNull(entries, "entries cannot be null");
@@ -927,7 +925,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         }
 
         Set<RemoteAddeEntry> verified = newLinkedHashSet();
-        EnumSet<AddeStatus> statuses = EnumSet.noneOf(AddeStatus.class);
+        Collection<AddeStatus> statuses = EnumSet.noneOf(AddeStatus.class);
         ExecutorService exec = Executors.newFixedThreadPool(POOL);
         CompletionService<StatusWrapper> ecs = new ExecutorCompletionService<StatusWrapper>(exec);
         Map<RemoteAddeEntry, AddeStatus> entry2Status = new LinkedHashMap<RemoteAddeEntry, AddeStatus>(entries.size());

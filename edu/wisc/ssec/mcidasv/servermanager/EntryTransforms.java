@@ -312,7 +312,7 @@ public class EntryTransforms {
      * 
      * @param type The type to convert. Cannot be {@code null}.
      * 
-     * @return
+     * @return {@code type} converted to a lowercase {@code String} representation.
      * 
      * @throws NullPointerException if {@code type} is {@code null}.
      */
@@ -512,10 +512,12 @@ public class EntryTransforms {
      * 
      * @param datasetToHost {@code Map} of ADDE groups to host names.
      * @param hostToIp {@code Map} of host names to IP addresses.
-     * @param username
-     * @param project
+     * @param username ADDE username.
+     * @param project ADDE project number (as a {@code String}).
      * 
-     * @return
+     * @return {@link List} of {@link RemoteAddeEntry} instances. Each hostname
+     * will have a value from {@code datasetToHost} and the accounting information
+     * is formed from {@code username} and {@code project}.
      */
     private static List<RemoteAddeEntry> mapDatasetsToName(
         final Map<String, String> datasetToHost, final Map<String, String> hostToIp, final String username, final String project) 

@@ -677,12 +677,14 @@ public class EntryStore {
     }
 
     /**
-     * Process all of the {@literal "IDV-style"} XML resources.
+     * Process all of the {@literal "IDV-style"} XML resources for a given
+     * {@literal "source"}.
      * 
-     * @param source
-     * @param xmlResources
+     * @param source Origin of the XML resources.
+     * @param xmlResources Actual XML resources.
      * 
-     * @return
+     * @return {@link Set} of the {@link AddeEntry AddeEntrys} extracted from
+     * {@code xmlResources}.
      */
     private Set<AddeEntry> extractResourceEntries(EntrySource source, final XmlResourceCollection xmlResources) {
         Set<AddeEntry> entries = newLinkedHashSet(xmlResources.size());

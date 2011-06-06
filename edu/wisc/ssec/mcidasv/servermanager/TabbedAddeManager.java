@@ -50,6 +50,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Pattern;
 
 import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
@@ -105,7 +106,7 @@ import edu.wisc.ssec.mcidasv.util.McVTextField.Prompt;
 // TODO(jon): don't forget to persist tab choice and window position. maybe also the "positions" of the scrollpanes (if possible).
 // TODO(jon): GUI could look much better.
 // TODO(jon): finish up the javadocs.
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial", "AssignmentToStaticFieldFromInstanceMethod", "FieldCanBeLocal"})
 public class TabbedAddeManager extends JFrame {
 
     /** Pretty typical logger object. */
@@ -152,7 +153,7 @@ public class TabbedAddeManager extends JFrame {
         SHOWN,
         /** The GUI was closed. */
         CLOSED
-    };
+    }
 
     /** Reference back to the McV god object. */
 //    private final McIDASV mcv;
@@ -174,6 +175,7 @@ public class TabbedAddeManager extends JFrame {
      * Creates a standalone server manager GUI.
      */
     public TabbedAddeManager() {
+        //noinspection AssignmentToNull
         this.serverManager = null;
         this.selectedLocalEntries = arrList();
         this.selectedRemoteEntries = arrList();
@@ -227,6 +229,7 @@ public class TabbedAddeManager extends JFrame {
      * Closes and disposes (if needed) the GUI.
      */
     public void closeManager() {
+        //noinspection AssignmentToNull
         staticTabbedManager = null;
         EventBus.publish(Event.CLOSED);
         if (isDisplayable()) {
@@ -262,7 +265,6 @@ public class TabbedAddeManager extends JFrame {
         }
         List<RemoteAddeEntry> removable = arrList(entries.size());
         for (RemoteAddeEntry entry : entries) {
-//            if (!EntrySource.SYSTEM.equals(entry.getEntrySource())) {
             if (entry.getEntrySource() != EntrySource.SYSTEM) {
                 removable.add(entry);
             }
@@ -273,9 +275,17 @@ public class TabbedAddeManager extends JFrame {
             int last = Integer.MIN_VALUE;
             for (RemoteAddeEntry entry : removable) {
                 int index = tableModel.getRowForEntry(entry);
-                if (index < 0) {
-                    continue;
-                } else {
+//                if (index < 0) {
+//                    continue;
+//                } else {
+//                    if (index < first) {
+//                        first = index;
+//                    }
+//                    if (index > last) {
+//                        last = index;
+//                    }
+//                }
+                if (index >= 0) {
                     if (index < first) {
                         first = index;
                     }
@@ -285,7 +295,6 @@ public class TabbedAddeManager extends JFrame {
                 }
             }
             tableModel.fireTableDataChanged();
-//            tableModel.fireTableRowsDeleted(first, last);
             refreshDisplay();
             remoteTable.revalidate();
             if (first < remoteTable.getRowCount()) {
@@ -322,9 +331,17 @@ public class TabbedAddeManager extends JFrame {
             int last = Integer.MIN_VALUE;
             for (LocalAddeEntry entry : entries) {
                 int index = tableModel.getRowForEntry(entry);
-                if (index < 0) {
-                    continue;
-                } else {
+//                if (index < 0) {
+//                    continue;
+//                } else {
+//                    if (index < first) {
+//                        first = index;
+//                    }
+//                    if (index > last) {
+//                        last = index;
+//                    }
+//                }
+                if (index >= 0) {
                     if (index < first) {
                         first = index;
                     }
@@ -334,7 +351,6 @@ public class TabbedAddeManager extends JFrame {
                 }
             }
             tableModel.fireTableDataChanged();
-            //            tableModel.fireTableRowsDeleted(first, last);
             refreshDisplay();
             localTable.revalidate();
             if (first < localTable.getRowCount()) {
@@ -347,7 +363,7 @@ public class TabbedAddeManager extends JFrame {
 
     public void importMctable(final String path, final String username, final String project) {
         final Set<RemoteAddeEntry> imported = EntryTransforms.extractMctableEntries(path, username, project);
-        if (imported == Collections.EMPTY_SET) {
+        if (imported.equals(Collections.emptySet())) {
             LogUtil.userErrorMessage("Selection does not appear to a valid MCTABLE.TXT file:\n"+path);
         } else {
             // verify entries first!
@@ -395,7 +411,7 @@ public class TabbedAddeManager extends JFrame {
         });
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "FeatureEnvy", "MagicNumber"})
     private void initComponents() {
         assert SwingUtilities.isEventDispatchThread();
         ucar.unidata.ui.Help.setTopDir(HELP_TOP_DIR);
@@ -446,7 +462,6 @@ public class TabbedAddeManager extends JFrame {
         remoteTable.setDefaultRenderer(String.class, new TextRenderer());
         remoteTable.getColumnModel().getColumn(0).setPreferredWidth(10);
         remoteTable.getColumnModel().getColumn(1).setPreferredWidth(10);
-//        remoteTable.getColumnModel().getColumn(2).setPreferredWidth(10);
         remoteTable.getColumnModel().getColumn(3).setPreferredWidth(50);
         remoteTable.getColumnModel().getColumn(4).setPreferredWidth(50);
         remoteTable.getColumnModel().getColumn(0).setCellRenderer(new EntryValidityRenderer());
@@ -515,7 +530,7 @@ public class TabbedAddeManager extends JFrame {
                 .addComponent(removeEntryButton)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(importButton)
-                .addContainerGap(77, Short.MAX_VALUE))
+                .addContainerGap(77, (int)Short.MAX_VALUE))
         );
         actionPanelLayout.setVerticalGroup(
             actionPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -533,8 +548,8 @@ public class TabbedAddeManager extends JFrame {
             .addGroup(GroupLayout.Alignment.TRAILING, remoteTabLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(remoteTabLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                    .addComponent(remoteScroller, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE)
-                    .addComponent(actionPanel, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(remoteScroller, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 533, (int) Short.MAX_VALUE)
+                        .addComponent(actionPanel, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         remoteTabLayout.setVerticalGroup(
@@ -544,7 +559,7 @@ public class TabbedAddeManager extends JFrame {
                 .addComponent(remoteScroller, GroupLayout.PREFERRED_SIZE, 291, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(actionPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, (int)Short.MAX_VALUE))
         );
 
         tabbedPane.addTab("Remote Data", remoteTab);
@@ -590,7 +605,7 @@ public class TabbedAddeManager extends JFrame {
             statusPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(GroupLayout.Alignment.TRAILING, statusPanelLayout.createSequentialGroup()
                 .addComponent(statusLabel)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 314, Short.MAX_VALUE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 314, (int) Short.MAX_VALUE)
                 .addComponent(restartButton))
         );
         statusPanelLayout.setVerticalGroup(
@@ -607,8 +622,8 @@ public class TabbedAddeManager extends JFrame {
             .addGroup(GroupLayout.Alignment.TRAILING, localTabLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(localTabLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                    .addComponent(localScroller, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE)
-                    .addComponent(statusPanel, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(localScroller, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 533, (int) Short.MAX_VALUE)
+                        .addComponent(statusPanel, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         localTabLayout.setVerticalGroup(
@@ -618,7 +633,7 @@ public class TabbedAddeManager extends JFrame {
                 .addComponent(localScroller, GroupLayout.PREFERRED_SIZE, 289, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(13, Short.MAX_VALUE))
+                .addContainerGap(13, (int)Short.MAX_VALUE))
         );
 
         tabbedPane.addTab("Local Data", localTab);
@@ -707,13 +722,13 @@ public class TabbedAddeManager extends JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 558, Short.MAX_VALUE)
+            .addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 558, (int)Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE))
+                .addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 370, (int)Short.MAX_VALUE))
         );
 
         tabbedPane.setSelectedIndex(getLastTab());
@@ -739,9 +754,9 @@ public class TabbedAddeManager extends JFrame {
     }// </editor-fold>
 
     /**
-     * I respond to events! Yyyyaaaaaaayyyyyy!!!!
+     * Respond to events.
      * 
-     * @param e
+     * @param e {@link ListSelectionEvent} that necessitated this call.
      */
     private void remoteSelectionModelChanged(final ListSelectionEvent e) {
         if (e.getValueIsAdjusting()) {
@@ -823,14 +838,18 @@ public class TabbedAddeManager extends JFrame {
     /**
      * Checks to see if {@link #selectedRemoteEntries} contains any 
      * {@link RemoteAddeEntry}s.
+     *
+     * @return Whether or not any {@code RemoteAddeEntry} values are selected.
      */
     private boolean hasRemoteSelection() {
         return !selectedRemoteEntries.isEmpty();
     }
 
     /**
-     * Checks to see if {@link {@link #selectedLocalEntries} contains any 
+     * Checks to see if {@link #selectedLocalEntries} contains any
      * {@link LocalAddeEntry}s.
+     *
+     * @return Whether or not any {@code LocalAddeEntry} values are selected.
      */
     private boolean hasLocalSelection() {
         return !selectedLocalEntries.isEmpty();
@@ -894,6 +913,7 @@ public class TabbedAddeManager extends JFrame {
         closeManager();
     }
 
+    @SuppressWarnings({"MagicNumber"})
     private JPanel makeFileChooserAccessory() {
         assert SwingUtilities.isEventDispatchThread();
         JPanel accessory = new JPanel();
@@ -941,7 +961,7 @@ public class TabbedAddeManager extends JFrame {
                 .addComponent(importUser, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(importProject, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(55, Short.MAX_VALUE))
+                .addContainerGap(55, (int)Short.MAX_VALUE))
         );
         return accessory;
     }
@@ -985,6 +1005,9 @@ public class TabbedAddeManager extends JFrame {
 
     /**
      * Returns the directory that contained the most recently imported MCTABLE.TXT.
+     *
+     * @return Either the path to the most recently imported MCTABLE.TXT file,
+     * or an empty {@code String}.
      */
     private String getLastImportPath() {
         return serverManager.getIdvStore().get(LAST_IMPORTED, "");
@@ -992,6 +1015,9 @@ public class TabbedAddeManager extends JFrame {
 
     /**
      * Saves the directory that contained the most recently imported MCTABLE.TXT.
+     *
+     * @param path Path to the most recently imported MCTABLE.TXT file.
+     * {@code null} values are replaced with an empty {@code String}.
      */
     private void setLastImportPath(final String path) {
         String okayPath = (path == null) ? "" : path;
@@ -1000,6 +1026,8 @@ public class TabbedAddeManager extends JFrame {
 
     /**
      * Returns the index of the user's last server manager tab.
+     *
+     * @return Index of the user's most recently viewed server manager tab, or {@code 0}.
      */
     private int getLastTab() {
         return serverManager.getIdvStore().get(LAST_TAB, 0);
@@ -1007,6 +1035,8 @@ public class TabbedAddeManager extends JFrame {
 
     /**
      * Saves the index of the last server manager tab the user was looking at.
+     * 
+     * @param index Index of the user's most recently viewed server manager tab.
      */
     private void setLastTab(final int index) {
         int okayIndex = ((index >= 0) && (index < 2)) ? index : 0;
@@ -1015,6 +1045,7 @@ public class TabbedAddeManager extends JFrame {
     }
 
     // stupid adde.ucar.edu entries never seem to time out! great! making the gui hang is just so awesome!
+    @SuppressWarnings({"ObjectAllocationInLoop"})
     public Set<RemoteAddeEntry> checkDatasets(final Collection<RemoteAddeEntry> entries) {
         notNull(entries, "can't check a null collection of entries");
         if (entries.isEmpty()) {
@@ -1065,12 +1096,13 @@ public class TabbedAddeManager extends JFrame {
     }
 
 
-    private class BetterCheckTask implements Callable<List<RemoteAddeEntry>> {
+    private static class BetterCheckTask implements Callable<List<RemoteAddeEntry>> {
         private final RemoteAddeEntry entry;
         public BetterCheckTask(final RemoteAddeEntry entry) {
             this.entry = entry;
             this.entry.setEntryValidity(EntryValidity.VALIDATING);
         }
+        @SuppressWarnings({"FeatureEnvy"})
         public List<RemoteAddeEntry> call() {
             List<RemoteAddeEntry> valid = arrList();
             if (RemoteAddeEntry.checkHost(entry)) {
@@ -1098,6 +1130,7 @@ public class TabbedAddeManager extends JFrame {
             this.entry = entry;
             this.entry.setEntryValidity(EntryValidity.VALIDATING);
         }
+        @SuppressWarnings({"FeatureEnvy"})
         public RemoteAddeEntry call() {
             AddeStatus status = RemoteAddeEntry.checkEntry(entry);
             switch (status) {
@@ -1116,6 +1149,7 @@ public class TabbedAddeManager extends JFrame {
         private static final int DATASET = 2;
         private static final int ACCT = 3;
         private static final int TYPES = 4;
+        private static final Pattern ENTRY_ID_SPLITTER = Pattern.compile("!");
 
         /** Labels that appear as the column headers. */
         private final String[] columnNames = {
@@ -1128,9 +1162,10 @@ public class TabbedAddeManager extends JFrame {
         private final EntryStore entryStore;
 
         /**
+         * Builds an {@link javax.swing.table.AbstractTableModel} with some extensions that
+         * facilitate working with {@link RemoteAddeEntry RemoteAddeEntrys}.
          * 
-         * 
-         * @param entryStore
+         * @param entryStore Server manager object.
          */
         public RemoteAddeTableModel(final EntryStore entryStore) {
             notNull(entryStore, "Cannot query a null EntryStore");
@@ -1158,19 +1193,32 @@ public class TabbedAddeManager extends JFrame {
 
         /**
          * Returns the index of the given {@code entry}.
-         * 
-         * @see List#indexOf(Object)
+         *
+         * @param entry {@link RemoteAddeEntry} whose row is desired.
+         *
+         * @return Index of the desired {@code entry}, or {@code -1} if the
+         * entry wasn't found.
          */
         protected int getRowForEntry(final RemoteAddeEntry entry) {
             return getRowForEntry(entry.getEntryText());
         }
 
+        /**
+         * Returns the index of the given entry text within the table.
+         *
+         * @param entryText String representation of the desired entry.
+         *
+         * @return Index of the desired entry, or {@code -1} if the entry was
+         * not found.
+         *
+         * @see edu.wisc.ssec.mcidasv.servermanager.AddeEntry#getEntryText()
+         */
         protected int getRowForEntry(final String entryText) {
             return servers.indexOf(entryText);
         }
 
         /**
-         * Clears and re-adds all {@link RemoteAddeEntry}s within {@link #entries}. 
+         * Clears and re-adds all {@link RemoteAddeEntry}s within {@link #entryStore}.
          */
         public void refreshEntries() {
             servers.clear();
@@ -1197,12 +1245,14 @@ public class TabbedAddeManager extends JFrame {
         /**
          * Finds the value at the given coordinates.
          * 
-         * @param row
-         * @param column
+         * @param row Table row.
+         * @param column Table column.
          * 
-         * @return
+         * @return Value stored at the given {@code row} and {@code column}
+         * coordinates
          * 
-         * @throws IndexOutOfBoundsException
+         * @throws IndexOutOfBoundsException if {@code row} or {@code column}
+         * refer to an invalid table cell.
          */
         @Override public Object getValueAt(int row, int column) {
             String serverText = servers.get(row);
@@ -1253,7 +1303,7 @@ public class TabbedAddeManager extends JFrame {
         }
 
         private static boolean hasType(final String serv, final EntryStore manager, final EntryType type) {
-            String[] chunks = serv.split("!");
+            String[] chunks = ENTRY_ID_SPLITTER.split(serv);
             Set<EntryType> types = Collections.emptySet();
             if (chunks.length == 2) {
                 types = manager.getTypes(chunks[0], chunks[1]);
@@ -1262,12 +1312,13 @@ public class TabbedAddeManager extends JFrame {
         }
 
         private static String formattedTypes(final String serv, final EntryStore manager) {
-            String[] chunks = serv.split("!");
+            String[] chunks = ENTRY_ID_SPLITTER.split(serv);
             Set<EntryType> types = Collections.emptySet();
             if (chunks.length == 2) {
                 types = manager.getTypes(chunks[0], chunks[1]);
             }
 
+            @SuppressWarnings({"MagicNumber"})
             StringBuilder sb = new StringBuilder(30);
             for (EntryType type : EnumSet.of(EntryType.IMAGE, EntryType.GRID, EntryType.NAV, EntryType.POINT, EntryType.RADAR, EntryType.TEXT)) {
                 if (types.contains(type)) {
@@ -1330,7 +1381,7 @@ public class TabbedAddeManager extends JFrame {
         }
 
         protected List<LocalAddeEntry> getSelectedEntries(final int[] rows) {
-            List<LocalAddeEntry> selected = arrList();
+            List<LocalAddeEntry> selected = arrList(rows.length);
             int rowCount = entries.size();
             for (int i = 0; i < rows.length; i++) {
                 int tmpIdx = rows[i];
@@ -1368,12 +1419,14 @@ public class TabbedAddeManager extends JFrame {
         /**
          * Finds the value at the given coordinates.
          * 
-         * @param row
-         * @param column
+         * @param row Table row.
+         * @param column Table column.
          * 
-         * @return
-         * 
-         * @throws IndexOutOfBoundsException
+         * @return Value stored at the given {@code row} and {@code column}
+         * coordinates
+         *
+         * @throws IndexOutOfBoundsException if {@code row} or {@code column}
+         * refer to an invalid table cell.
          */
         @Override public Object getValueAt(int row, int column) {
             LocalAddeEntry entry = entries.get(row);
@@ -1464,7 +1517,7 @@ public class TabbedAddeManager extends JFrame {
         }
     }
 
-    public class TextRenderer extends DefaultTableCellRenderer {
+    public static class TextRenderer extends DefaultTableCellRenderer {
 
         private Font bold;
         private Font boldItalic;

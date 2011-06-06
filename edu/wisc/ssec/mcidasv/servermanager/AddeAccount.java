@@ -85,11 +85,9 @@ public class AddeAccount {
      * account. Currently the username and project number <b>are</b> case
      * sensitive, though this is likely to change.
      * 
-     * @param o Object to test against.
+     * @param obj Object to test against.
      * 
-     * @return Whether or not {@code o} is equivalent to this ADDE account.
-     * 
-     * @see {@link String#equals(Object)}.
+     * @return Whether or not {@code obj} is equivalent to this ADDE account.
      */
     @Override public boolean equals(Object obj) {
         if (this == obj) {
@@ -124,8 +122,6 @@ public class AddeAccount {
      * {@link #username} and {@link #project}.
      * 
      * @return A hash code value for this object.
-     * 
-     * @see {@link String#hashCode()}.
      */
     @Override public int hashCode() {
         final int prime = 31;
