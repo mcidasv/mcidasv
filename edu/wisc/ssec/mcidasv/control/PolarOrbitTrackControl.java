@@ -54,6 +54,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -121,6 +122,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private static final JLabel kmLabel = new JLabel(" km");
     private JTextField swathWidthFld = new JTextField(" ", 5);
     private JPanel swathWidthPanel;
+    private JButton saveBtn;
 
     /**
      * position slider
@@ -726,12 +728,16 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             }
         });
 
+        saveBtn = new JButton("Save");
+
         JPanel pan = GuiUtils.doLayout(new Component[] {
                         new JLabel("Satellite:  "),
                         satelliteName, 
                         new JLabel("     Swath Width: "),
                         swathWidthFld,
-                        kmLabel }, 5,
+                        kmLabel,
+                        new JLabel("  "),
+                        saveBtn }, 7,
                         GuiUtils.WT_N, GuiUtils.WT_N);
         return pan;
     }
