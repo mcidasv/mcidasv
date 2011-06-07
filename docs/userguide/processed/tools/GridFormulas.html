@@ -37,10 +37,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
   <li><a href="#ensemble">Ensemble</a></li>
   <li><a href="#miscellaneous">Miscellaneous</a></li>
 </ul>
-<div class="preferencegrouptitle"><a name="time" id="time"></a>Time Steps</div>
-<p><strong>Average Time steps -</strong> Plots one map representing the average value of the specified parameter at any one point on the map during the time sequence selected.</p>
-<p><strong>Difference from initial timestep (D(T)-D(T)-D(0)) -</strong> Plots a sequence of images. Each image maps the difference in the numerical value of the parameter from the initial values of the first frame.   This formula sets the value of each time step N as:</p>
-<table>
+<div class="pagesubtitle">Time Steps<a name="time" id="time"></a></div>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Average Time steps -</strong> Plots one map representing the average value of the specified parameter at any one point on the map during the time sequence selected.</li>
+<li class="propertylistitem"><strong>Difference from initial timestep (D(T)-D(T)-D(0)) -</strong> Plots a sequence of images. Each image maps the difference in the numerical value of the parameter from the initial values of the first frame.   This formula sets the value of each time step N as:</li>
+<li class="propertylistitem"><table>
    <tr>
    <td width="70" colspan="1" rowspan="1" valign="top">
    <p><em>&nbsp;</em></p>
@@ -49,24 +50,28 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
    <p>D(T) = D(T) - D(0) </p>
    </td>
    </tr>
-</table>
-<p><strong>Max over time steps -</strong> Plots one map representing  the highest value of the specified parameter at any point on the map during the time sequence selected.</p>
-<p><strong>Merge time sequences -</strong></p>
-<p><strong>Min over time steps -</strong> Plots one map representing the lowest value of the specified parameter at any one point on the map during the time sequence selected.</p>
-<p><strong>Sum over time steps -</strong> Plots one map  representing the total value of the parameter at any one point on the map during the  time sequence selected.</p>
-<p><strong>Time step difference (D(T)=D(T)-D(T-1)) -</strong> Plots a sequence of images. Each frame plots the value of the specified parameter at that time, and subtracts from it the value of the same parameter at the previous time in the loop.</p>
-<p><strong>Time step sum (D(T)=D(T)+D(T-1)) -</strong> Plots a sequence of images. Each frame plots the value of the specified parameter at that time, and adds to it the value of the same parameter at the previous time step in the loop.</p>
-<div class="preferencegrouptitle"><a name="ensemble" id="ensemble"></a>Ensemble</div>
-<p><strong>Ensemble average over all grid members -</strong></p>
-<p><strong>Ensemble grid highest values -</strong></p>
-<p><strong>Ensemble grid lowest values -</strong></p>
-<p><strong>Ensemble grid mode values -</strong></p>
-<p><strong>Ensemble grid percentile values -</strong></p>
-<p><strong>Ensemble grid range of values -</strong></p>
-<p><strong>Ensemble grid standard deviation -</strong></p>
-<div class="preferencegrouptitle"><a name="miscellaneous" id="miscellaneous"></a>Miscellaneous</div>
-<p><strong>Define a grid diagnostic  (gddiag) - </strong>Allows for defining a grid diagnostic to perform. </p>
-<table>
+</table></li>
+<li class="propertylistitem"><strong>Max over time steps -</strong> Plots one map representing  the highest value of the specified parameter at any point on the map during the time sequence selected.</li>
+<li class="propertylistitem"><strong>Merge time sequences -</strong> Allows you to create a loop of images where while the images will be in order with respect to time, you do not need to load in every time step.</li>
+<li class="propertylistitem"><strong>Min over time steps -</strong> Plots one map representing the lowest value of the specified parameter at any one point on the map during the time sequence selected.</li>
+<li class="propertylistitem"><strong>Sum over time steps -</strong> Plots one map  representing the total value of the parameter at any one point on the map during the  time sequence selected.</li>
+<li class="propertylistitem"><strong>Time step difference (D(T)=D(T)-D(T-1)) -</strong> Plots a sequence of images. Each frame plots the value of the specified parameter at that time, and subtracts from it the value of the same parameter at the previous time in the loop.</li>
+<li class="propertylistitem"><strong>Time step sum (D(T)=D(T)+D(T-1)) -</strong> Plots a sequence of images. Each frame plots the value of the specified parameter at that time, and adds to it the value of the same parameter at the previous time step in the loop.</li>
+</ul>
+<div class="pagesubtitle"><a name="ensemble" id="ensemble"></a>Ensemble</div>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Ensemble average over all grid members -</strong> Averages the chosen ensemble members over each time step and plots the data.</li>
+<li class="propertylistitem"><strong>Ensemble grid highest values -</strong> Takes the highest numerical value of the chosen parameter over the chosen number of ensemble members and plots the data.</li>
+<li class="propertylistitem"><strong>Ensemble grid lowest values -</strong> Takes the lowest numerical value of the chosen parameter over the chosen number of ensemble members and plots the data.</li>
+<li class="propertylistitem"><strong>Ensemble grid mode values -</strong> Takes the mode value of the chosen parameter over the number of ensemble members and plots the data.</li>
+<li class="propertylistitem"><strong>Ensemble grid percentile values -</strong> Plots the ensemble average at the chosen percentage. The higher the percentage, the higher the values plotted in the display.</li>
+<li class="propertylistitem"><strong>Ensemble grid range of values -</strong> Takes the difference between the upper bound and lower bound of the chosen parameter over the chosen number of grid ensembles and plots the result.</li>
+<li class="propertylistitem"><strong>Ensemble grid standard deviation -</strong> Plots the standard deviation of the chosen parameter over the chosen number of ensemble members.</li>
+</ul>
+<div class="pagesubtitle"><a name="miscellaneous" id="miscellaneous"></a>Miscellaneous</div>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Define a grid diagnostic  (gddiag) - </strong>Allows for defining a grid diagnostic to perform. </li>
+<li class="propertylistitem"><table>
   <tr>
   <td valign="top" rowspan="1" colspan="3">
    <p>Input parameters: </p>
@@ -82,13 +87,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
      Library</a>. </p>
    </td>
    </tr>
-</table>
-<p><strong>Find latitude of grid points  (feldimpl) - </strong>Obtains the latitude coordinate from the grid at each location and plots the latitude at each point on the map.</p>
-<p><strong>Find longitude of grid points (fieldimpl)</strong> - Obtains the longitude coordinate from the grid at each location and plots the longitude at each point on the map.</p>
-<p><strong>Horizontal Advection (from %N1% &amp; %N2%) (scalar parameter, U Component,
-  V Component)</strong></p>
-<p>This formula calculates horizontal advection from U and V components.</p>
-  <table>
+</table></li>
+<li class="propertylistitem"><strong>Find latitude of grid points  (feldimpl) - </strong>Obtains the latitude coordinate from the grid at each location and plots the latitude at each point on the map.</li>
+<li class="propertylistitem"><strong>Find longitude of grid points (fieldimpl)</strong> - Obtains the longitude coordinate from the grid at each location and plots the longitude at each point on the map.</li>
+<li class="propertylistitem"><strong>Horizontal Advection (from %N1% &amp; %N2%) (scalar parameter, U Component,
+  V Component)</strong></li>
+<li class="propertylistitem">This formula calculates horizontal advection from U and V components.</li>
+  <li class="propertylistitem"><table>
   <tr>
   <td valign="top" rowspan="1" colspan="2">
    <p>Input parameters: </p>
@@ -102,10 +107,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
    <p>scalar parameter</p>
    </td>
    </tr>
-</table>
-<p><strong>Horizontal Flux Divergence (from %N1% &amp; %N2%) (scalar parameter, U
-    Component, V Component) - </strong>Calculates horizontal flux divergence from U and V components.</p>
-<table>
+</table></li>
+<li class="propertylistitem"><strong>Horizontal Flux Divergence (from %N1% &amp; %N2%) (scalar parameter, U
+    Component, V Component) - </strong>Calculates horizontal flux divergence from U and V components.</li>
+<li class="propertylistitem"><table>
   <tr>
   <td valign="top" rowspan="1" colspan="2">
    <p>Input parameters: </p>
@@ -119,11 +124,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
 <p>scalar parameter </p>
 </td>
 </tr>
-</table>
-<p><strong>Layer Difference (Top of Layer, Bottom of Layer) -</strong> Calculates a layer difference between a field at two different
-levels.</p>
-<p><strong>Layer Wind Shear  (top, bottom) - </strong>Calculates the wind shear between two user-defined layers.</p>
-    <table>
+</table></li>
+<li class="propertylistitem"><strong>Layer Difference (Top of Layer, Bottom of Layer) -</strong> Calculates a layer difference between a field at two different
+levels.</li>
+<li class="propertylistitem"><strong>Layer Wind Shear  (top, bottom) - </strong>Calculates the wind shear between two user-defined layers.</li>
+    <li class="propertylistitem"><table>
   <tr>
   <td valign="top" rowspan="1" colspan="2">
    <p>Input parameters: </p>
@@ -145,16 +150,16 @@ levels.</p>
    <p>bottom layer  (default=850)</p>
    </td>
    </tr>
-</table>
-<p><strong>Make flow vectors from grid relative u and v data  (u, v) - </strong>Calculates true wind vectors based off of relative u and v data after user inputs the field and desired levels. You can utilize 2D or 3D data.</p>
-<p><strong>Make flow vectors from u and v data  (u, v) - </strong>Creates flow vectors based off of the 2D u and v parameters entered by the user.</p>
-<p><strong>Make flow vectors from u, v, and w data  (u, v, w) - </strong>Creates flow vectors based off of the 3D u and v parameters entered by the user. These flow vectors are then scaled based off the user-entered w parameter.</p>
-<p><strong>Make slice 2D (slice) - </strong>Creates a 2D slice from a 3D display at a single level.</p>
-<p><strong>One value colored by another (Data field, Color field) - </strong>Creates an image of the data chosen in the Data field, and colors the data with the color scheme of the Color field parameter.
-</p>
-<p><strong>Resample grid - </strong>Displays gridded data on a new domain.</p>
-<p><strong>Simple time difference in one parameter (Time 1, Time 2) - </strong>Creates an image representing the numerical difference in the value of the chosen parameter between the two time steps selected by the user. Time 1 is the initial time step, and Time 2 is the second time step. The difference in the parameter is done by Time 2 - Time 1.</p>
-    <table>
+</table></li>
+<li class="propertylistitem"><strong>Make flow vectors from grid relative u and v data  (u, v) - </strong>Calculates true wind vectors based off of relative u and v data after user inputs the field and desired levels. You can utilize 2D or 3D data.</li>
+<li class="propertylistitem"><strong>Make flow vectors from u and v data  (u, v) - </strong>Creates flow vectors based off of the 2D u and v parameters entered by the user.</li>
+<li class="propertylistitem"><strong>Make flow vectors from u, v, and w data  (u, v, w) - </strong>Creates flow vectors based off of the 3D u and v parameters entered by the user. These flow vectors are then scaled based off the user-entered w parameter.</li>
+<li class="propertylistitem"><strong>Make slice 2D (slice) - </strong>Creates a 2D slice from a 3D display at a single level.</li>
+<li class="propertylistitem"><strong>One value colored by another (Data field, Color field) - </strong>Creates an image of the data chosen in the Data field, and colors the data with the color scheme of the Color field parameter.
+</li>
+<li class="propertylistitem"><strong>Resample grid - </strong>Displays gridded data on a new domain.</propertylistitem>
+<li class="propertylistitem"><strong>Simple time difference in one parameter (Time 1, Time 2) - </strong>Creates an image representing the numerical difference in the value of the chosen parameter between the two time steps selected by the user. Time 1 is the initial time step, and Time 2 is the second time step. The difference in the parameter is done by Time 2 - Time 1.</li>
+    <li class="propertylistitem"><table>
   <tr>
   <td valign="top" rowspan="1" colspan="2">
    <p>Input parameters: </p>
@@ -176,9 +181,9 @@ levels.</p>
    <p>second time  (default=0)</p>
    </td>
    </tr>
-</table>
-<p><strong>Slice at Altitude  (Altitude, Unit) - </strong>Extracts a 2D horizontal slice from a 3D grid at the given altitude and maps an image.</p>
-    <table>
+</table></li>
+<li class="propertylistitem"><strong>Slice at Altitude  (Altitude, Unit) - </strong>Extracts a 2D horizontal slice from a 3D grid at the given altitude and maps an image.</li>
+    <li class="propertylistitem"><table>
   <tr>
   <td valign="top" rowspan="1" colspan="2">
    <p>Input parameters: </p>
@@ -200,9 +205,9 @@ levels.</p>
    <p>specify a unit. It must be compatible with meters (ft, fathoms, etc.) </p>
    </td>
    </tr>
-</table>
-<p><strong>Slice at Level  (Level) - </strong>Extracts a 2D horizontal slice from a 3D grid at a level.</p>
-    <table>
+</table></li>
+<li class="propertylistitem"><strong>Slice at Level  (Level) - </strong>Extracts a 2D horizontal slice from a 3D grid at a level.</li>
+    <li class="propertylistitem"><table>
   <tr>
   <td valign="top" rowspan="1" colspan="2">
    <p>Input parameter: </p>
@@ -216,10 +221,10 @@ levels.</p>
    <p>level to slice, must be appropriate for the grid </p>
    </td>
    </tr>
-</table>
-<p><strong>Speed from 2 components (Field x, Field y) - </strong>Calculates speed from the user-chosen x and y components and displays an image.</p>
-<p><strong>Wind Shear Vectors  (top, bottom) - </strong>Calculates the u and v layer difference and returns a map of vectors.</p>
-    <table>
+</table></li>
+<li class="propertylistitem"><strong>Speed from 2 components (Field x, Field y) - </strong>Calculates speed from the user-chosen x and y components and displays an image.</li>
+<li class="propertylistitem"><strong>Wind Shear Vectors  (top, bottom) - </strong>Calculates the u and v layer difference and returns a map of vectors.</li>
+    <li class="propertylistitem"><table>
   <tr>
   <td valign="top" rowspan="1" colspan="2">
    <p>Input parameters: </p>
@@ -241,9 +246,8 @@ levels.</p>
    <p>bottom layer  (default=850)</p>
    </td>
    </tr>
-</table>
-
-</div>
+</table></li>
+</ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">

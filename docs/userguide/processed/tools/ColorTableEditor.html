@@ -51,7 +51,7 @@ color a display according to a range of data values.</p>
 The Color Table Editor can be used stand-alone by selecting the <strong>Tools-&gt;Color
 Tables</strong> menu item from the main menu bar. It can also be used or in conjunction
 with a particular display by clicking on the display's color bar in the <a href="../controls/index.html#legends">Legend</a>,
-or through the display's <a href="../controls/index.html#menus">edit menu</a>.
+or through the display's <a href="../controls/index.html#menus">Edit menu</a>.
 When used in conjunction with a particular display, the changes you make to the
 color table are applied to the display as you make them.
 <p>The Color Table Editor starts with a color table loaded in it. If you are
@@ -59,12 +59,11 @@ color table are applied to the display as you make them.
     the display. If you want to use or edit a different color table, use the <strong>Color
   Tables</strong> menu to select from the categorized list of color tables:</p>
 <div class="images"><img src="images/ColorTablesMenu.png" alt="images/ColorTablesMenu.png"></div>
-<p>Color tables are grouped into categories, as illustrated. Click  on a color table to bring it into the Color Table Editor. To change to the newly selected color table for a display on the Main Display Window, click <strong>OK</strong> or <strong>Apply</strong>  at the bottom of the Color Table Editor.</p>
+<p>Color tables are grouped into categories. Click  on a color table to bring it into the Color Table Editor. To change to the newly selected color table for a display on the Main Display Window, click <strong>OK</strong> or <strong>Apply</strong>  at the bottom of the Color Table Editor.</p>
 <a name="legend" id="legend"></a>
 <div class="pagesubtitle">Color Legend</div>
 <div class="images"><img src="images/colortable/Legend.gif" alt="images/colortable/Legend.gif"></div>
-<p>The number of colors are in the table is shown in a label in the upper center,
-  such as &quot;135 colors.&quot; You can reduce or increase the number of colors by clicking
+<p>The number of colors are in the table is shown in a label in the upper center. You can reduce or increase the number of colors by clicking
   on the<strong> <img src="images/colortable/MinusPlus.gif" width="38" height="14"align=absmiddle></strong> choices near the left and right ends of the legend.
   New colors are added or removed at each end of the legend with the same color
   as the end color. Pressing Shift+click on any of these buttons will add/remove
@@ -78,7 +77,7 @@ color table are applied to the display as you make them.
     with the<strong> <img src="images/colortable/Range.gif" width="73" height="26"align=absmiddle></strong> pair of dialog boxes on the right. Enter the
     minimum and maximum values of the range, and click <strong>Apply</strong> or <strong>Ok</strong>, or
     press the Enter key. If the Color Table Editor is being used in conjunction
-    with a display then when you change the range that range is applied to the
+    with a display, then when you change the range that range is applied to the
   display as well.</p>
 <a name="painting" id="painting"></a>
 <div class="pagesubtitle">Painting and Editing Colors</div>
@@ -100,15 +99,13 @@ you are dragging the breakpoint.</li>
 <a name="breakpoints" id="breakpoints"></a>
 <div class="pagesubtitle">Breakpoints</div>
 <p>The editor uses &quot;breakpoints&quot; indicated along the top of the color legend
-  bar with triangles and the number. Clicking on a breakpoint makes it
-  active. The number on an active breakpoint is in <strong>bold</strong> characters.
-  There is only one active breakpoint at a time.</p>
-<p>Breakpoints are used for a number of things: showing the data and transparency
+  bar with triangles and the numerical value. Clicking on a breakpoint makes it
+  active.There is only one active breakpoint at a time. Breakpoints are used for a number of things: showing the data and transparency
   values at a point along the color table and changing the colors (fill, interpolation
   or transparency) directly below the breakpoint by dragging the breakpoint and
   changing colors.</p>
 <p>The values on the breakpoints are determined by the position of the breakpoint
-  along the legend, proportional to the min and max of the Range. Changing the
+    along the legend, proportional to the min and max of the Range. Changing the
   minimum and maximum of the Range changes the break point values.</p>
 <p>You can move the active breakpoint several ways:</p>
 <ul>
@@ -132,22 +129,20 @@ The choices are:
   <li class="propertylistitem"><strong>Remove Breakpoint</strong> - Removes the active breakpoint.</li>
   <li class="propertylistitem"><strong>Lock/Unlock Breakpoint</strong> - Locks or unlock the active breakpoint. When locked, it cannot be moved.</li>
   <li class="propertylistitem"><strong>Change Breakpoint</strong> - Sets the breakpoint to a new value.</li>
-  <li class="propertylistitem"><strong>Add Breakpoint-&gt;Here</strong> - Adds a new breakpoint where the legend was clicked.</li>
+  <li class="propertylistitem"><strong>Add Breakpoint-&gt;Here</strong> - Adds a new breakpoint where the color table was clicked.</li>
   <li class="propertylistitem"><strong>Add Breakpoint-&gt;At Data Point</strong> - Adds a new breakpoint at a data value.</li>
-  <li class="propertylistitem"><strong>Add Breakpoint-&gt;At Beginning</strong> - Adds a new breakpoint on the low end value of the color bar.</li>
-  <li class="propertylistitem"><strong>Add Breakpoint-&gt;At End</strong> - Adds a new breakpoint at the high end value of the color bar.</li>
+  <li class="propertylistitem"><strong>Add Breakpoint-&gt;At Beginning</strong> - Adds a new breakpoint on the low end value of the color table.</li>
+  <li class="propertylistitem"><strong>Add Breakpoint-&gt;At End</strong> - Adds a new breakpoint at the high end value of the color table.</li>
   <li class="propertylistitem"><strong>Edit Colors-&gt; Interpolate (Direction)</strong> - Interpolates colors to the (direction) up to the next breakpoint beginning with the active breakpoint</li>
   <li class="propertylistitem"><strong>Edit Colors-&gt;Fill (Direction)</strong> - 
     Fills colors to the (direction) up to the next breakpoint with that single color beginning with the active breakpoint.</li>
   <li class="propertylistitem"><strong>Edit Colors-&gt;Transparency (Direction)</strong> - Sets the transparency value from the active breakpoint to the next breakpoint on the (direction).</li>
   <li class="propertylistitem"><strong>Edit Colors-&gt;Brightness (Direction)</strong> - Sets the brightness value from the active breakpoint to the next breakpoint on the (direction).</li>
-  <li class="propertylistitem"><strong>Replicate Color Table</strong> - Replicates the current color table x number of times over the current color table. The overall range will not change. (e.g. If you
-      have a color table with 100 slots and enter 3, the resulting color table
-    will look like 4 of the original color tables, each with 25 slots).</li>
+  <li class="propertylistitem"><strong>Replicate Color Table</strong> - Replicates the current color table x number of times over the current color table. The overall range will not change.</li>
   <li class="propertylistitem"><strong>Invert Color Table</strong> - Reverses the order of the color table.</li>
 </ul>
 <a name="saveCT" id="saveCT"></a>
-<div class="pagesubtitle">Saving, Importing and Exporting</div>
+<div class="pagesubtitle">Saving, Importing, and Exporting</div>
 You can modify an existing color table, or edit an existing color table and save
 it with a new name to make a new color table. Any new or modified color table
 can be saved for future use. To save a new or modified color table simply select the the <strong>File-&gt;Save</strong> menu
@@ -155,7 +150,7 @@ can be saved for future use. To save a new or modified color table simply select
   as a new color table, select <strong>File-&gt;Save As</strong> and
   enter the new name in the dialog box that appears. This new color table will
   now be permanently saved in your local collection of color tables.
-  <p>To save a color table as a file which can be shared with others in their McIDAS-V,
+  <p>To save a color table as a file which can be shared with others in McIDAS-V,
     select the <strong>File-&gt;Export</strong> menu item. A file dialog
     will appear that will allow you to save the color table as an XML-format file.
   We suggest you use a file extension of <strong>.xidvct</strong>.</p>
@@ -187,31 +182,23 @@ can be saved for future use. To save a new or modified color table simply select
 <p>There are two tabs on the chooser, <strong>HSB</strong> and <strong>RGB</strong>,
   each with its own control panels. The RGB panel shows a window that lets you
   specify any color by slider bars for R (Red), G (Green), and B (Blue) values. The only color
-  sample of an RGB value is the color of the active breakpoint in the legend,
-  which can be pretty small and hard to see clearly. Also, RGB values are not
-  intuitive -- to get yellow you mix equal amounts of red and green in RGB. We
-  recommend you use the HSB chooser panel unless you have specific RGB values
+  sample of an RGB value is the color of the active breakpoint in the legend. It is
+  recommended you use the HSB chooser panel unless you have specific RGB values
   to set.</p>
 <h4>The HSB Chooser</h4>
 <p>The HSB chooser allows you to control color by hue, saturation, and brightness,
   thereby making any color. With the HSB panel and tab shown, click on one of
-  the radio buttons marked <strong>H</strong>, <strong>S</strong> , or <strong>B</strong> for
+  the radio buttons marked <strong>H</strong>, <strong>S</strong>, or <strong>B</strong> for
   the corresponding control for hue, saturation, or brightness.</p>
 <p>Hue is the term indicating a pure color selection from the spectrum. Saturation
   is an indication of how much white is added to the hue. 100% saturation is
   pure hue with no white. Brightness is an indication of how much black is added
   to the hue. 100% brightness has no black and maximum brilliancy, but can be
-  any saturation from the hue to pure white. 0% brightness is solid black.</p>
-<p>Some &quot;colors&quot; are not found in the spectrum and are a mixture of a hue and
-  black or white or both black and white. For example, brown is red-orange and
-  some black. Grays are any hue with low saturation and some degree of brightness
-  from black to white.</p>
+  any saturation from the hue to pure white. 0% brightness is solid black. Some &quot;colors&quot; are not found in the spectrum and are a mixture of a hue and
+  black and/or white.</p>
 <p>You need only use one of the controls for H, S, or B to make any color.  Often the <strong>H</strong> control
-  is the easiest and most intuitive to use. Generally, a user will think first in terms of
-  colors (hues), and next in terms of how pale or dark a color of that hue we
-  want. The <strong>H</strong> control works that way.</p>
-<p>All this is easier to understand while using the HSB panel, with <strong>H
-    clicked on</strong>:</p>
+  is the easiest and most intuitive to use. All this is easier to understand while using the HSB panel, with <strong>H
+  clicked on</strong>:</p>
 <p><a name="image2" id="image2"></a>
 </p>
 <div class="images">
@@ -220,19 +207,16 @@ can be saved for future use. To save a new or modified color table simply select
     S and high B</span></p>
 </div>
 <p>The slider bar chooses the pure hue. Once you have chosen a hue, clicking or
-  dragging the mouse on the square color display chooses degrees of saturation
-  and brightness  for that hue.
-</p>
+  dragging the mouse on the color display chooses degrees of saturation
+  and brightness  for that hue.</p>
 <p>The <strong>Saturation Chooser (S)</strong> has a slider bar with the full
   range of saturation:</p>
 <a name="image3" id="image3"></a>
 <div class="images"><img src="images/colorchooser/Saturation.gif" alt="The HSB Saturation chooser set on the same green"> <br>
   <span class="caption">Image 3: The HSB Saturation chooser set on the same green</span></div>
 <p>Select hue and brightness by dragging the mouse over the colored square. The bottom
-  is always solid black. If you want true shades of colors -- pure hue with only
-  black and no white -- use the S control with the slider at the top. There are
-  no grays or pale colors in this case.
-</p>
+  is always solid black. If you want true shades of colors, use the <strong>S</strong> control with the slider at the top. There are
+no grays or pale colors in this case. </p>
 <p>The <strong>Brightness Chooser (B)</strong> has a slider bar with the full
   range of brightness:</p>
 <a name="image4" id="image4"></a>
@@ -240,9 +224,7 @@ can be saved for future use. To save a new or modified color table simply select
   <span class="caption">Image 4: The HSB Brightness chooser set on the same green</span></div>
 <p>Select hue and saturation by dragging the mouse over the colored square. The bottom
   is always pale gray going to white. If you want to use colors that are all at
-  full brightness, use the B control with the slider at the top. Note that colors
-  such as brown are not available in this setting, and there are no dark colors.
-</p>
+full brightness, use the B control with the slider at the top.</p>
 <p>All controls in the HSB panel show the RGB values for any color selected,
   in case you need to know the RGB values for another use.</p>
 <a name="menus" id="menus"></a>

@@ -301,7 +301,7 @@ You could use the import, for example, as a way of having common property defini
     &lt;<a href="BasicTags.html#call">call</a> <span class="xmlattr">name</span>="makeImage" <span class="xmlattr">bundlefile</span>="test1.xidv" <span class="xmlattr">imagefile</span>="test1.png"/&gt;
     &lt;<a href="BasicTags.html#call">call</a> <span class="xmlattr">name</span>="makeImage" <span class="xmlattr">bundlefile</span>="test2.xidv" <span class="xmlattr">imagefile</span>="test2.png"/&gt;
 
-<span class="xmlcomment">&lt;!-- Note: you can also call the procedure directly with: --&gt;</span>
+<span class="xmlcomment">&lt;!-- Note: You can also call the procedure directly with: --&gt;</span>
     &lt;makeImage <span class="xmlattr">bundlefile</span>="test2.xidv" <span class="xmlattr">imagefile</span>="test2.png"/&gt;
 
 &lt;/<a href="BasicTags.html#isl">isl</a>&gt;
@@ -497,7 +497,7 @@ For example, say you only wanted to generate a particular image when the hour of
 <blockquote>
 <pre>
 &lt;<a href="BasicTags.html#isl">isl</a> <span class="xmlattr">loop</span>="1000" <span class="xmlattr">sleep</span>="3600"&gt;
-    <span class="xmlcomment">&lt;!-- Note the less than sign is escaped --&gt;</span>
+    <span class="xmlcomment">&lt;!-- Note: The less than sign is escaped --&gt;</span>
     &lt;<a href="BasicTags.html#if">if</a> <span class="xmlattr">expr</span>="${k}&gt;12"&gt;
         &lt;then&gt;
             &lt;<a href="BasicTags.html#echo">echo</a> <span class="xmlattr">message</span>="Generating image at ${k}:${mm}"/&gt;

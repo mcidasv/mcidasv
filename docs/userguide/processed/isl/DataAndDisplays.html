@@ -56,7 +56,7 @@ By default it will remove all currently loaded data and displays. If you don't w
 &lt;<a href="DataAndDisplays.html#bundle">bundle</a> <span class="xmlattr">file</span>="some_bundle_file.xidv" <span class="xmlattr">clear</span>="false"/&gt;
 </pre></blockquote>
 <p>The <em>wait</em> attribute, if true (the default), will essentially do a pause, waiting until all displays have been rendered.</p>
-<p>The <em>times</em> attribute allows you to override the set of time indices that are used in the data sources in the bundle. Note: this overrides the times for all data sources in the bundle.</p>
+<p>The <em>times</em> attribute allows you to override the set of time indices that are used in the data sources in the bundle. Note: This overrides the times for all data sources in the bundle.</p>
 <p>The value is a comma separated list of time specifiers where the specifier can be a single time, a time range or a time range with a step. The time indices are 0 based, e.g., the first time index is 0. The time range is of the form "firsttime:lasttime". To specify a step do: "firsttime:lasttime:step"</p>
 <p>For example, we have:</p>
 <pre>
@@ -147,7 +147,7 @@ or as a child tag of the <a href="DataAndDisplays.html#datasource">datasource</a
 <pre>
 &lt;<a href="BasicTags.html#isl">isl</a>&gt;
 
-<span class="xmlcomment">&lt;!-- Create a datasource. Note: you can also have a template attribute
+<span class="xmlcomment">&lt;!-- Create a datasource. Note: You can also have a template attribute
      that points to a bundle xidv file that was saved from a data source:
      <span class="xmlattr">bundle</span>="${islpath}/<a href="DataAndDisplays.html#datasource">datasource</a>.xidv"
 --&gt;</span>
@@ -194,7 +194,7 @@ or as a child tag of the <a href="DataAndDisplays.html#datasource">datasource</a
          <span class="xmlattr">value</span>="%datasourcename% - %shortname%"/&gt;
 
 <span class="xmlcomment">&lt;!-- This sets the level to be 500 hectopascals --&gt;</span>
-<span class="xmlcomment">&lt;!-- Note: this can also be of the form #&lt;index&gt;, eg. #4 will select the 5th level (this is zero based) --&gt;</span>
+<span class="xmlcomment">&lt;!-- Note: This can also be of the form #&lt;index&gt;, eg. #4 will select the 5th level (this is zero based) --&gt;</span>
 
       &lt;<a href="BasicTags.html#property">property</a>
          <span class="xmlattr">name</span>="dataSelectionLevel"

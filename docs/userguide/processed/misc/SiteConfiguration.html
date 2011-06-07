@@ -49,7 +49,7 @@ You can customize McIDAS-V for yourself and your site in a variety of ways. McID
 Most of these files (with the exception of the chooser UI, help tips, data sources, displays and favorite bundle locations) are created through facilities provided by McIDAS-V (e.g., color table editor, formula editor, etc.)
 <p>By default McIDAS-V looks in three places for the resources it uses to configure itself:</p>
 <ul>
-<li><em>User path</em>. This is the ~user/.metapps/&lt;Application name&gt; directory that gets created for each user. Note: the "Application name" is usually "DefaultIdv"</li>
+<li><em>User path</em>. This is the ~user/.metapps/&lt;Application name&gt; directory that gets created for each user. Note: The "Application name" is usually "DefaultIdv"</li>
 <li><em>Site path</em>. This is the file directory or URL directory that can be defined as a command line argument, -sitepath, or through the user preferences dialog.</li>
 <li><em>System path</em>. This is a directory, /ucar/unidata/idv/resources, in the system Java jar files.</li>
 </ul>
@@ -79,7 +79,7 @@ When you first run McIDAS-V, the application, as a thoughtful convenience, write
   &lt;/resources&gt;
 </pre>
 This says to look for colortables in the user path, sitepath and McIDAS-V system path. McIDAS-V uses the first entry in this list as the file path to write out color tables that are created using the color table editor.
-<p>Note: as a further complexity, errr, convenience, if there is a property defined in the properties file which is the resource name then McIDAS-V just uses the value of the property (it treats it as a semi-colon delimited list of paths) as the resources and ignores the resources in the RBI file. So, for example, if you had a property:</p>
+<p>Note: As a further, convenience, if there is a property defined in the properties file which is the resource name then McIDAS-V just uses the value of the property (it treats it as a semi-colon delimited list of paths) as the resources and ignores the resources in the RBI file. So, for example, if you had a property:</p>
 <pre>
 idv.resource.colortables=%USERPATH%/colortables.xml;http://yourwebsite.edu/specialtables.xml
 </pre>
