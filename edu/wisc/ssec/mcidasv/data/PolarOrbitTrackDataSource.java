@@ -102,8 +102,7 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$
  */
 
-public class PolarOrbitTrackDataSource extends TrackDataSource {
-//public class PolarOrbitTrackDataSource extends DataSourceImpl {
+public class PolarOrbitTrackDataSource extends DataSourceImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(PolarOrbitTrackDataSource.class);
 
@@ -142,7 +141,7 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
     public PolarOrbitTrackDataSource(DataSourceDescriptor descriptor,
                               String filename, Hashtable properties)
            throws VisADException {
-        super(descriptor, filename, properties);
+        super(descriptor, filename, null, properties);
 /*
         System.out.println("\nPolarOrbitTrackDataSource:");
         System.out.println("    descriptor=" + descriptor);
@@ -160,32 +159,23 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
             key = PolarOrbitTrackChooser.TLE_PROJECT_NUMBER_KEY;
             Object proj = properties.get(key);
             String url = "adde://" + server + "/textdata?&PORT=112&COMPRESS=gzip&USER=" + user + "&PROJ=" + proj + "&GROUP=" + group + "&DESCR=" + filename;
-            //System.out.println("\n" + url + "\n");
             AddeTextReader reader = new AddeTextReader(url);
             List lines = null;
             if ("OK".equals(reader.getStatus())) {
                 lines = reader.getLinesOfText();
             }
             if (lines == null) {
-                //System.out.println("\nproblem reading TLE file");
-                JLabel label = new JLabel("Invalid TLE data");
-                JPanel contents = GuiUtils.top(GuiUtils.inset(label, label.getText().length() + 60));
-                GuiUtils.showOkDialog(null, " Can't Make Orbit Tracks ", contents, null);
-                getDataContext().getIdv().showNormalCursor();
-                logger.error("problem reading TLE file");
+                notTLE();
                 return;
             } else {
                 String[] cards = StringUtil.listToStringArray(lines);
-                //System.out.println("\n");
                 for (int i=0; i<cards.length; i++) {
-                    //System.out.println(cards[i]);
                     tleCards.add(cards[i]);
                     int indx = cards[i].indexOf(" ");
                     if (indx < 0) {
                         choices.add(cards[i]);
                     }
                 }
-                //System.out.println("\n");
             }
         } else {
             try {
@@ -204,10 +194,20 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
                     }
                 }
             } catch (Exception e) {
-                logger.error("can't read TLE url e=" + e);
+                notTLE();
                 return;
             }
         }
+        checkFirstEntry();
+    }
+
+    private void checkFirstEntry() {
+        if (tleCards.isEmpty()) {
+            notTLE();
+            return;
+        }
+        String card = (String)tleCards.get(1);
+        decodeCard1(card);
     }
 
     public void initAfterCreation() {
@@ -245,11 +245,6 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
      * @throws RemoteException    Java RMI problem
      * @throws VisADException     VisAD problem
      */
-
-/* code example in 
-   /home/gad/src/JSatTrak/JSatTrak-4.1-src/JSatTrak/src/name/gano/astro/propogators/sgp4_cssi/SGP4utils.java
-*/
-
     protected Data getDataInner(DataChoice dataChoice, DataCategory category,
                                 DataSelection dataSelection,
                                 Hashtable requestProperties)
@@ -428,6 +423,10 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
 
         int ret = 0;
         //System.out.println(card);
+        if (card.length() < 69) {
+            notTLE();
+            return -1;
+        }
         int ck1 = checksum(card.substring(0, 68));
         String str = card.substring(0, 1);
         if (str.equals("1")) {
@@ -486,7 +485,8 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
 
             int check = card.codePointAt(68) - 48;
             if (check != ck1) {
-                logger.error("***** Failed checksum *****");
+                notTLE();
+//                logger.error("***** Failed checksum *****");
                 ret = -1;
             }
         }
@@ -509,6 +509,10 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
 
         int ret = 0;
         //System.out.println("\n" + card);
+        if (card.length() < 69) {
+            notTLE();
+            return -1;
+        }
         int ck1 = checksum(card.substring(0, 68));
         String str = card.substring(0, 1);
         if (str.equals("2")) {
@@ -559,7 +563,8 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
 
                 int check = card.codePointAt(68) - 48;
                 if (check != ck1) {
-                    logger.error("***** Failed checksum *****");
+                    notTLE();
+//                    logger.error("***** Failed checksum *****");
                     ret = -1;
                 }
             }
@@ -633,5 +638,11 @@ public class PolarOrbitTrackDataSource extends TrackDataSource {
     public void setDTime(int val) {
         //System.out.println("PolarOrbitTrackDataSource setDTime: val=" + val);
         dTime = val;
+    }
+
+    private void notTLE() {
+        tleCards = new ArrayList();
+        choices = new ArrayList();
+        setInError(true, "\nSource does not contain TLE data");
     }
 }
