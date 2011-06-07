@@ -28,13 +28,7 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
-
-
-
-
-
 package edu.wisc.ssec.mcidasv.util;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,33 +39,29 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-
-
 /**
- * A collection of utilities for xml.
+ * A collection of utilities for XML..
  *
- * @author IDV development team
  */
-
 public abstract class XmlUtil extends ucar.unidata.xml.XmlUtil {
 
-	/**
-	 * Print all the attributes of the given node
-	 * 
-	 * @param parent
-	 */
-	public static void printNode(Node parent) {
-		if (parent==null) {
-			System.out.println("null node!");
-			return;
-		}
-		System.out.println(parent.getNodeName() + " node:");
-		NamedNodeMap attrs = parent.getAttributes();
-		for(int i = 0 ; i<attrs.getLength() ; i++) {
-			Attr attribute = (Attr)attrs.item(i);     
-			System.out.println("  " + attribute.getName()+" = "+attribute.getValue());
-		}
-	}
+    /**
+     * Print all the attributes of the given node
+     *
+     * @param parent
+     */
+    public static void printNode(Node parent) {
+        if (parent==null) {
+            System.out.println("null node!");
+            return;
+        }
+        System.out.println(parent.getNodeName() + " node:");
+        NamedNodeMap attrs = parent.getAttributes();
+        for(int i = 0 ; i<attrs.getLength() ; i++) {
+            Attr attribute = (Attr)attrs.item(i);
+            System.out.println("  " + attribute.getName()+" = "+attribute.getValue());
+        }
+    }
 
     /**
      *  Find all of the  descendant elements of the given parent Node
@@ -82,7 +72,7 @@ public abstract class XmlUtil extends ucar.unidata.xml.XmlUtil {
      *  @return The list of descendants that match the given tag.
      */
     public static List<String> findDescendantNamesWithSeparator(Node parent, String tag, String separator) {
-        ArrayList<String> found = new ArrayList<String>();
+        List<String> found = new ArrayList<String>();
         findDescendantNamesWithSeparator(parent, tag, "", separator, found);
         return found;
     }
@@ -97,14 +87,16 @@ public abstract class XmlUtil extends ucar.unidata.xml.XmlUtil {
      */
     private static void findDescendantNamesWithSeparator(Node parent, String tag, String descendants, String separator, List<String> found) {
             if (parent instanceof Element) {
-            	String elementName = ((Element)parent).getAttribute("name");
-            	if (!elementName.equals(""))
-            		descendants += ((Element)parent).getAttribute("name");
-                if (parent.getNodeName().equals(tag)) {
-                found.add(descendants);
+                String elementName = ((Element)parent).getAttribute("name");
+                if (!elementName.isEmpty()) {
+                    descendants += ((Element)parent).getAttribute("name");
                 }
-            	if (!elementName.equals(""))
-            		descendants += separator;
+                if (parent.getNodeName().equals(tag)) {
+                    found.add(descendants);
+                }
+                if (!elementName.isEmpty()) {
+                    descendants += separator;
+                }
         }
         NodeList children = parent.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
@@ -121,7 +113,7 @@ public abstract class XmlUtil extends ucar.unidata.xml.XmlUtil {
      * @return
      */
     public static Element getElementAtNamedPath(Node parent, List<String>nameList) {
-    	return getMakeElementAtNamedPath(parent, nameList, "", false);
+        return getMakeElementAtNamedPath(parent, nameList, "", false);
     }
     
     /**
@@ -132,7 +124,7 @@ public abstract class XmlUtil extends ucar.unidata.xml.XmlUtil {
      * @return
      */
     public static Element makeElementAtNamedPath(Node parent, List<String>nameList, String tagname) {
-    	return getMakeElementAtNamedPath(parent, nameList, tagname, true);
+        return getMakeElementAtNamedPath(parent, nameList, tagname, true);
     }
     
     /**
@@ -142,43 +134,39 @@ public abstract class XmlUtil extends ucar.unidata.xml.XmlUtil {
      * @param nameList
      * @return
      */
-    public static Element getMakeElementAtNamedPath(Node parent, List<String>nameList, String tagName, boolean makeNew) {
-    	Element thisElement = null;
-    	if (parent instanceof Element && nameList.size() > 0) {
-    		for (int i=0; i<nameList.size(); i++) {
-    			String thisName = nameList.get(i);
-    			NodeList children = parent.getChildNodes();
-    			boolean foundChild = false;
-    			for (int j=0; j<children.getLength(); j++) {
-    				Node child = children.item(j);
-    				if (!(child instanceof Element)) continue;
-    				if (XmlUtil.getAttribute(child, "name").equals(thisName)) {
-    					if (i == nameList.size()-1) thisElement = (Element)child;
-    					parent = child;
-    					foundChild = true;
-    					break;
-    				}
-    			}
-    			
-    			// Didn't find it where we expected to.  Create a new one.
-    			if (makeNew && !foundChild && parent instanceof Element) {
-    				try {
-    					Element newElement = XmlUtil.create(tagName, (Element)parent);
-    					newElement.setAttribute("name", thisName);
-    					parent.appendChild(newElement);
-        				parent = newElement;
-        				thisElement = newElement;
-    				}
-    				catch (Exception ex) {
-    					System.err.println("Error making new " + tagName + " node named " + thisName);
-    					break;
-    				}
-    			}
-    			
-    		}
-    	}
-    	
-    	return thisElement;
+    public static Element getMakeElementAtNamedPath(Node parent, List<String> nameList, String tagName, boolean makeNew) {
+        Element thisElement = null;
+        if (parent instanceof Element && !nameList.isEmpty()) {
+            for (int i=0; i < nameList.size(); i++) {
+                String thisName = nameList.get(i);
+                NodeList children = parent.getChildNodes();
+                boolean foundChild = false;
+                for (int j=0; j < children.getLength(); j++) {
+                    Node child = children.item(j);
+                    if (!(child instanceof Element)) continue;
+                    if (XmlUtil.getAttribute(child, "name").equals(thisName)) {
+                        if (i == nameList.size()-1) thisElement = (Element)child;
+                        parent = child;
+                        foundChild = true;
+                        break;
+                    }
+                }
+
+                // Didn't find it where we expected to.  Create a new one.
+                if (makeNew && !foundChild && parent instanceof Element) {
+                    try {
+                        Element newElement = XmlUtil.create(tagName, (Element)parent);
+                        newElement.setAttribute("name", thisName);
+                        parent.appendChild(newElement);
+                        parent = newElement;
+                        thisElement = newElement;
+                    } catch (Exception ex) {
+                        System.err.println("Error making new " + tagName + " node named " + thisName);
+                        break;
+                    }
+                }
+            }
+        }
+        return thisElement;
     }
-    
 }

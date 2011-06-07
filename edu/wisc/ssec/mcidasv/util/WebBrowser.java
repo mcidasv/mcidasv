@@ -102,17 +102,17 @@ public final class WebBrowser {
         boolean retVal = true;
         try {
             Class<?> desktop = Class.forName("java.awt.Desktop");
-            Method isDesktopSupported = desktop.getMethod("isDesktopSupported", (Class[])null);
+            Method isDesktopSupported = desktop.getMethod("isDesktopSupported", (Class<?>[])null);
             Boolean b = (Boolean)isDesktopSupported.invoke(null, (Object[])null);
             if (b.booleanValue()) {
-                final Object desktopInstance = desktop.getMethod("getDesktop", (Class[])null).invoke(null, (Object[])null);
+                final Object desktopInstance = desktop.getMethod("getDesktop", (Class<?>[])null).invoke(null, (Object[])null);
                 Class<?> desktopAction = Class.forName("java.awt.Desktop$Action");
                 Method isSupported = desktop.getMethod("isSupported", new Class[] { desktopAction });
                 Object browseConst = desktopAction.getField("BROWSE").get(null);
-                b = (Boolean)isSupported.invoke(desktopInstance, new Object[] {browseConst});
+                b = (Boolean)isSupported.invoke(desktopInstance, browseConst);
                 if (b.booleanValue()) {
                     final Method browse = desktop.getMethod("browse", new Class[]{ URI.class });
-                    browse.invoke(desktopInstance, new Object[] { new URI(url) });
+                    browse.invoke(desktopInstance, new URI(url));
                     retVal = true;
                 } else {
                     retVal = false;
@@ -148,11 +148,11 @@ public final class WebBrowser {
             } else {
                 for (String browser : unixBrowsers) {
                     if (Runtime.getRuntime().exec("which "+browser).waitFor() == 0) {
-                        Runtime.getRuntime().exec(browser+" "+url);
+                        Runtime.getRuntime().exec(browser+' '+url);
                         return;
                     }
                 }
-                throw new IOException("Could not find a web browser to launch (tried "+unixBrowsers+")");
+                throw new IOException("Could not find a web browser to launch (tried "+unixBrowsers+')');
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Problem running web browser:\n" + e.getLocalizedMessage());
@@ -175,7 +175,7 @@ public final class WebBrowser {
             String browserPath = mcv.getProperty("idv.browser.path", (String)null);
             if (browserPath != null && browserPath.trim().length() > 0) {
                 try {
-                    Runtime.getRuntime().exec(browserPath+" "+url);
+                    Runtime.getRuntime().exec(browserPath+' '+url);
                     return true;
                 } catch (Exception e) {
                     LogUtil.logException("Executing browser: "+browserPath, e);

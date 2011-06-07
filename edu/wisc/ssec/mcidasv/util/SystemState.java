@@ -33,11 +33,6 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashMap;
 
-//import static edu.wisc.ssec.mcidasv.Constants.PROP_VERSION_MAJOR;
-//import static edu.wisc.ssec.mcidasv.Constants.PROP_VERSION_MINOR;
-//import static edu.wisc.ssec.mcidasv.Constants.PROP_VERSION_RELEASE;
-//import static edu.wisc.ssec.mcidasv.Constants.PROP_BUILD_DATE;
-
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
@@ -82,6 +77,27 @@ public class SystemState {
 
     // Don't allow outside instantiation.
     private SystemState() { }
+
+    public static String escapeWhitespaceChars(final CharSequence sequence) {
+        StringBuilder sb = new StringBuilder(sequence.length() * 7);
+        for (int i = 0; i < sequence.length(); i++) {
+            switch (sequence.charAt(i)) {
+                case '\t': sb.append("\\t"); break;
+                case '\n': sb.append('\\').append('n'); break;
+                case '\013': sb.append("\\013"); break;
+                case '\f': sb.append("\\f"); break;
+                case '\r': sb.append("\\r"); break;
+                case '\u0085': sb.append("\\u0085"); break;
+                case '\u1680': sb.append("\\u1680"); break;
+                case '\u2028': sb.append("\\u2028"); break;
+                case '\u2029': sb.append("\\u2029"); break;
+                case '\u205f': sb.append("\\u205f"); break;
+                case '\u3000': sb.append("\\u3000"); break;
+            }
+        }
+        logger.trace("incoming={} outgoing={}", sequence.length(), sb.length());
+        return sb.toString();
+    }
 
     /**
      * Attempt to invoke {@code OperatingSystemMXBean.methodName} via 
@@ -208,6 +224,9 @@ public class SystemState {
     /**
      * Returns a mapping of display number to a {@link java.awt.Rectangle} 
      * that represents the {@literal "bounds"} of the display.
+     *
+     * @return Rectangles representing the {@literal "bounds"} of the current
+     * display devices.
      */
     public static Map<Integer, Rectangle> getDisplayBounds() {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -286,6 +305,22 @@ public class SystemState {
         return ClassLoader.getSystemResourceAsStream(name);
     }
 
+    /**
+     * Returns a {@link Map} of the (currently) most useful contents of
+     * {@code ucar/unidata/idv/resources/build.properties}.
+     *
+     * <p>Consider the output of {@link #getIdvVersionString()}; it's built
+     * with the the following:
+     * <ul>
+     *   <li><b>{@code idv.version.major}</b>: currently {@literal "2"}</li>
+     *   <li><b>{@code idv.version.minor}</b>: currently {@literal "9"}</li>
+     *   <li><b>{@code idv.version.revision}</b>: currently {@literal "u4"}}</li>
+     *   <li><b>{@code idv.build.date}</b>: varies pretty frequently,
+     *   as it's the build timestamp for idv.jar</li>
+     * </ul>
+     *
+     * @return A {@code Map} of at least the useful parts of build.properties.
+     */
     public static Map<String, String> queryIdvBuildProperties() {
         SystemState sysState = new SystemState();
         Map<String, String> versions = newLinkedHashMap(4);
@@ -303,20 +338,39 @@ public class SystemState {
             versions.put("idv.version.revision", revision);
             versions.put("idv.build.date", date);
         } catch (Exception e) {
-            logger.error("could not read from idv's build.properties", e);
+            logger.error("could not read from IDV build.properties", e);
         } finally {
             sysState = null;
             if (input != null) {
                 try {
                     input.close();
                 } catch (Exception ex) {
-                    logger.error("could not close idv's build.properties", ex);
+                    logger.error("could not close IDV build.properties", ex);
                 }
             }
         }
         return versions;
     }
 
+    /**
+     * Returns a {@link Map} of the (currently) most useful contents of
+     * {@code edu/wisc/ssec/mcidasv/resources/build.properties}.
+     *
+     * <p>Consider the output of {@link #getMcvVersionString()}; it's built
+     * with the the following:
+     * <ul>
+     *   <li><b>{@code mcidasv.version.major}</b>:
+     *   currently {@literal "1"}</li>
+     *   <li><b>{@code mcidasv.version.minor}</b>:
+     *   currently {@literal "02"}</li>
+     *   <li><b>{@code mcidasv.version.release}</b>: currently
+     *   {@literal "beta1"}</li>
+     *   <li><b>{@code mcidasv.build.date}</b>: varies pretty frequently, as
+     *   it's the build timestamp for mcidasv.jar.</li>
+     * </ul>
+     *
+     * @return A {@code Map} of at least the useful parts of build.properties.
+     */
     public static Map<String, String> queryMcvBuildProperties() {
         SystemState sysState = new SystemState();
         Map<String, String> versions = newLinkedHashMap(4);
@@ -334,14 +388,14 @@ public class SystemState {
             versions.put(Constants.PROP_VERSION_RELEASE, release);
             versions.put(Constants.PROP_BUILD_DATE, date);
         } catch (Exception e) {
-            logger.error("could not read from mcv's build.properties!", e);
+            logger.error("could not read from McIDAS-V build.properties!", e);
         } finally {
             sysState = null;
             if (input != null) {
                 try {
                     input.close();
                 } catch (Exception ex) {
-                    logger.error("could not close mcv's build.properties!", ex);
+                    logger.error("could not close McIDAS-V build.properties!", ex);
                 }
             }
         }
@@ -422,7 +476,8 @@ public class SystemState {
      * {@link Properties} file format.
      */
     public static String getStateAsString(final McIDASV mcv, final boolean firehose) {
-        StringBuilder buf = new StringBuilder(20000);
+        int builderSize = (firehose) ? 45000 : 1000;
+        StringBuilder buf = new StringBuilder(builderSize);
 
         Map<String, String> versions = ((StateManager)mcv.getStateManager()).getVersionInfo();
         Properties sysProps = System.getProperties();
@@ -431,28 +486,33 @@ public class SystemState {
         Map<Object, Object> jythonProps = queryJythonProps();
         Map<String, Object> mcvProps = queryMcvState(mcv);
 
-        buf.append("Software Versions:")
-            .append("\nMcIDAS-V: ").append(versions.get("mcv.version.general")).append(" (").append(versions.get("mcv.version.build")).append(')')
-            .append("\nIDV:      ").append(versions.get("idv.version.general")).append(" (").append(versions.get("idv.version.build")).append(')')
-            .append("\n\nOperating System:")
-            .append("\nName:         ").append(sysProps.getProperty("os.name"))
-            .append("\nVersion:      ").append(sysProps.getProperty("os.version"))
-            .append("\nArchitecture: ").append(sysProps.getProperty("os.arch"))
-            .append("\n\nJava:")
-            .append("\nVersion: ").append(sysProps.getProperty("java.version"))
-            .append("\nVendor:  ").append(sysProps.getProperty("java.vendor"))
-            .append("\nHome:    ").append(sysProps.getProperty("java.home"))
-            .append("\n\nJava 3D:")
-            .append("\nRenderer: ").append(j3dProps.get("j3d.renderer"))
-            .append("\nPipeline: ").append(j3dProps.get("j3d.pipeline"))
-            .append("\nVendor:   ").append(j3dProps.get("j3d.vendor"))
-            .append("\nVersion:  ").append(j3dProps.get("j3d.version"))
-            .append("\n\nJython:")
-            .append("\nVersion:     ").append(jythonProps.get("sys.version_info"))
-            .append("\npython.home: ").append(jythonProps.get("python.home"));
+        if (sysProps.contains("line.separator")) {
+            sysProps.put("line.separator", escapeWhitespaceChars((String)sysProps.get("line.separator")));
+            logger.trace("grr='{}'", sysProps.get("line.separator"));
+        }
+
+        buf.append("# Software Versions:")
+            .append("\n# McIDAS-V: ").append(versions.get("mcv.version.general")).append(" (").append(versions.get("mcv.version.build")).append(')')
+            .append("\n# IDV:      ").append(versions.get("idv.version.general")).append(" (").append(versions.get("idv.version.build")).append(')')
+            .append("\n\n# Operating System:")
+            .append("\n# Name:         ").append(sysProps.getProperty("os.name"))
+            .append("\n# Version:      ").append(sysProps.getProperty("os.version"))
+            .append("\n# Architecture: ").append(sysProps.getProperty("os.arch"))
+            .append("\n\n# Java:")
+            .append("\n# Version: ").append(sysProps.getProperty("java.version"))
+            .append("\n# Vendor:  ").append(sysProps.getProperty("java.vendor"))
+            .append("\n# Home:    ").append(sysProps.getProperty("java.home"))
+            .append("\n\n# Java 3D:")
+            .append("\n# Renderer: ").append(j3dProps.get("j3d.renderer"))
+            .append("\n# Pipeline: ").append(j3dProps.get("j3d.pipeline"))
+            .append("\n# Vendor:   ").append(j3dProps.get("j3d.vendor"))
+            .append("\n# Version:  ").append(j3dProps.get("j3d.version"))
+            .append("\n\n# Jython:")
+            .append("\n# Version:     ").append(jythonProps.get("sys.version_info"))
+            .append("\n# python.home: ").append(jythonProps.get("python.home"));
 
         if (firehose) {
-            buf.append("\n\n\nFirehose:\n\n# SOFTWARE VERSIONS\n");
+            buf.append("\n\n\n#Firehose:\n\n# SOFTWARE VERSIONS\n");
             for (String key : (new TreeSet<String>(versions.keySet()))) {
                 buf.append(key).append('=').append(versions.get(key)).append('\n');
             }
