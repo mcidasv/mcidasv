@@ -44,6 +44,9 @@ import java.util.Map;
 
 import javax.swing.JComboBox;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import visad.CellImpl;
 import visad.ConstantMap;
 import visad.DataReference;
@@ -83,6 +86,8 @@ import edu.wisc.ssec.mcidasv.data.hydra.NPPDataSource;
 
 public class MultiSpectralDisplay implements DisplayListener {
 
+    private static final Logger logger = LoggerFactory.getLogger(MultiSpectralDisplay.class);
+    
     private static final String DISP_NAME = "Spectrum";
     private static int cnt = 1;
 
@@ -160,7 +165,7 @@ public class MultiSpectralDisplay implements DisplayListener {
                 }
               }
               HashMap subset = select.getSubset();
-
+//              logger.debug("waveNumber={} subset={}", waveNumber, subset);
               image = data.getImage(waveNumber, subset);
               image = changeRangeType(image, uniqueRangeType);
             }
