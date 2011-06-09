@@ -80,7 +80,6 @@
      class="edu.wisc.ssec.mcidasv.control.PolarOrbitTrackControl"
      description="Polar Orbit Track"
      label="Polar Orbit Track"
-     displaycategory="General"
      properties="windowVisible=true;"/>
   <control
      id="imagedisplay"
