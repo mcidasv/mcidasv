@@ -136,8 +136,8 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
     private JComboBox serverSelector;
     private JRadioButton addeBtn;
     private JRadioButton urlBtn;
+    private JLabel descLabel;
     List addeList = new ArrayList();
-    List urlList = new ArrayList();
 
     /** Manages the pull down list of urls */
     private PreferenceList prefList;
@@ -205,39 +205,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
     public JComponent doMakeContents() {
         JPanel outerPanel = new JPanel();
         JPanel addePanel = new JPanel();
-        JPanel urlPanel = new JPanel();
-
-        addeBtn = new JRadioButton("ADDE", true);
-        urlBtn = new JRadioButton("URL", false);
-        GuiUtils.buttonGroup(addeBtn, urlBtn);
-        addeBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                for (int i=0; i<7; i++) {
-                    JComponent comp = (JComponent)(addeList.get(i));
-                    comp.setEnabled(true);
-                }
-                for (int i=0; i<2; i++) {
-                    JComponent comp = (JComponent)(urlList.get(i));
-                    comp.setEnabled(false);
-                }
-            }
-        });
-        urlBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                for (int i=0; i<2; i++) {
-                    JComponent comp = (JComponent)(urlList.get(i));
-                    comp.setEnabled(true);
-                }
-                loadButton.setEnabled(true);
-                for (int i=0; i<7; i++) {
-                    JComponent comp = (JComponent)(addeList.get(i));
-                    comp.setEnabled(false);
-                }
-            }
-        });
-
         addePanel =  (JPanel)makeAddePanel();
-        urlPanel =  (JPanel)makeUrlPanel();
 
         JButton helpButton = McVGuiUtils.makeImageButton(ICON_HELP, "Show help");
         helpButton.setActionCommand(GuiUtils.CMD_HELP);
@@ -256,7 +224,6 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
             .addGroup(TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
                         .addComponent(helpButton)
                         .addGap(GAP_RELATED)
                         .addComponent(refreshButton)
@@ -265,32 +232,18 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
                         .addPreferredGap(RELATED)
                         .addComponent(loadButton))
                         .addGroup(LEADING, layout.createSequentialGroup()
-                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(LEADING)
-                            .addComponent(addeBtn)
-                            .addComponent(addePanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(urlBtn)
-                            .addComponent(urlPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(layout.createSequentialGroup()))) 
-                .addContainerGap())
+                            .addComponent(addePanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(addeBtn)
                 .addComponent(addePanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(UNRELATED)
-                .addComponent(urlBtn)
-                .addComponent(urlPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(UNRELATED)
-                .addPreferredGap(UNRELATED)
                 .addGroup(layout.createParallelGroup(BASELINE)
                     .addComponent(loadButton)
                     .addComponent(cancelButton)
                     .addComponent(refreshButton)
-                    .addComponent(helpButton))
-                .addContainerGap())
+                    .addComponent(helpButton)))
         );
 
         return outerPanel;
@@ -299,7 +252,41 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
     private JComponent makeAddePanel() {
         JPanel outerPanel = new JPanel();
 
-        JLabel serverLabel = new JLabel("Server:");
+        addeBtn = new JRadioButton("ADDE", true);
+        urlBtn = new JRadioButton("URL", false);
+        GuiUtils.buttonGroup(addeBtn, urlBtn);
+        addeBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                for (int i=0; i<5; i++) {
+                    JComponent comp = (JComponent)(addeList.get(i));
+                    comp.setEnabled(true);
+                    enableDescriptors(true);
+                }
+                for (int i=5; i<7; i++) {
+                    JComponent comp = (JComponent)(addeList.get(i));
+                    comp.setEnabled(false);
+                }
+            }
+        });
+        urlBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                for (int i=5; i<7; i++) {
+                    JComponent comp = (JComponent)(addeList.get(i));
+                    comp.setEnabled(true);
+                }
+                loadButton.setEnabled(true);
+                for (int i=0; i<5; i++) {
+                    JComponent comp = (JComponent)(addeList.get(i));
+                    comp.setEnabled(false);
+                    enableDescriptors(false);
+                }
+            }
+        });
+        JLabel serverLabel = new JLabel("     Server:");
+        JLabel urlLabel = new JLabel("     URL:");
+        descLabel = new JLabel("     Descriptor:");
+        descLabel.setEnabled(false);
+        descriptorComboBox.setEnabled(false);
 
         clearOnChange(serverSelector);
         McVGuiUtils.setComponentWidth(serverSelector, Width.DOUBLE);
@@ -314,6 +301,19 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         connectButton.setActionCommand(CMD_CONNECT);
         connectButton.addActionListener(this);
 
+        prefList = getPreferenceList(PREF_URLLIST);
+        box = prefList.createComboBox(CMD_LOAD, this);
+        boxEditor = (JTextField)box.getEditor().getEditorComponent();
+        boxEditor.addKeyListener(new KeyListener() {
+            public void keyPressed(KeyEvent e) {}
+            public void keyReleased(KeyEvent e) {
+            }
+            public void keyTyped(KeyEvent e) {}
+        });
+        urlLabel.setEnabled(false);
+        box.setEnabled(false);
+        JLabel spaceLab = new JLabel("     ");
+
         GroupLayout layout = new GroupLayout(outerPanel);
         outerPanel.setLayout(layout);
         layout.setHorizontalGroup(
@@ -321,8 +321,8 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
             .addGroup(TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(TRAILING)
                         .addGroup(LEADING, layout.createSequentialGroup()
-                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(LEADING)
+                        .addComponent(addeBtn)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(serverLabel)
                             .addGap(GAP_RELATED)
@@ -338,16 +338,22 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
                             .addPreferredGap(RELATED, DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(connectButton))
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(descriptorLabel)
+                            .addComponent(spaceLab)
+                            .addComponent(descLabel)
                             .addGap(GAP_RELATED)
-                            .addComponent(descriptorComboBox)))))
-                    .addContainerGap())
+                            .addComponent(descriptorComboBox))
+                            .addGap(GAP_RELATED)
+                        .addComponent(urlBtn)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(urlLabel)
+                            .addGap(GAP_RELATED)
+                            .addComponent(box))))))
         );
 
         layout.setVerticalGroup(
             layout.createParallelGroup(LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addComponent(addeBtn)
                 .addGroup(layout.createParallelGroup(BASELINE)
                     .addComponent(serverLabel)
                     .addComponent(serverSelector)
@@ -356,11 +362,16 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
                     .addComponent(groupSelector)
                     .addComponent(publicButton)
                     .addComponent(connectButton))
-                .addPreferredGap(UNRELATED)
+                .addPreferredGap(RELATED)
                 .addGroup(layout.createParallelGroup(BASELINE)
-                    .addComponent(descriptorLabel)
+                    .addComponent(spaceLab)
+                    .addComponent(descLabel)
                     .addComponent(descriptorComboBox))
-                .addContainerGap())
+                .addPreferredGap(UNRELATED)
+                .addComponent(urlBtn)
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(urlLabel)
+                    .addComponent(box)))
         );
 
         addeList.add(serverLabel);
@@ -368,37 +379,33 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         addeList.add(groupLabel);
         addeList.add(groupSelector);
         addeList.add(connectButton);
-        addeList.add(descriptorLabel);
         McVGuiUtils.setComponentWidth(descriptorComboBox, Width.DOUBLEDOUBLE);
-        addeList.add(descriptorComboBox);
+        addeList.add(urlLabel);
+        addeList.add(box);
 
         return outerPanel;
     }
 
-    private JComponent makeUrlPanel() {
-        JPanel urlPanel = new JPanel();
-        JLabel urlLabel = new JLabel("URL:");
-        McVGuiUtils.setLabelPosition(urlLabel, Position.RIGHT);
-
-        prefList = getPreferenceList(PREF_URLLIST);
-        box = prefList.createComboBox(CMD_LOAD, this);
-        boxEditor = (JTextField)box.getEditor().getEditorComponent();
-        boxEditor.addKeyListener(new KeyListener() {
-            public void keyPressed(KeyEvent e) {}
-            public void keyReleased(KeyEvent e) {
+    private void enableDescriptors(boolean val) {
+        if (val) {
+            boolean connected;
+            if (getState() == STATE_CONNECTED) {
+                connected = true;
+            } else {
+                connected = false;
             }
-            public void keyTyped(KeyEvent e) {}
-        });
-        urlLabel.setEnabled(false);
-        box.setEnabled(false);
-        urlList.add(urlLabel);
-        urlList.add(box);
-        urlPanel = GuiUtils.top(box);
-        JPanel retPanel = McVGuiUtils.makeLabeledComponent(urlLabel, urlPanel);
-
-        return retPanel;
+            if (connected) {
+                descLabel.setEnabled(true);
+                descriptorComboBox.setEnabled(true);
+            } else {
+                descLabel.setEnabled(false);
+                descriptorComboBox.setEnabled(false);
+            }
+        } else {
+            descLabel.setEnabled(false);
+            descriptorComboBox.setEnabled(false);
+        }
     }
-
 
     /**
      * Update labels, enable widgets, etc.
@@ -468,5 +475,10 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
 
     private String getDatasetName() {
         return "TLE";
+    }
+
+    public void handleConnectFromThread() {
+        super.handleConnectFromThread();
+        enableDescriptors(true);
     }
 }
