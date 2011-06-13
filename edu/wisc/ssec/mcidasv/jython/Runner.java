@@ -152,8 +152,7 @@ public class Runner extends Thread {
                 Command command = queue.take();
                 command.execute(interpreter);
             } catch (Exception e) {
-                System.err.println("Runner.run: badness: " + e.getMessage());
-                e.printStackTrace();
+                logger.error("failed to execute", e);
             }
         }
     }
@@ -163,7 +162,6 @@ public class Runner extends Thread {
      * treated as though the current user just entered it; the command appears
      * in the input along with whatever output the command generates.
      * 
-     * @param console Console where the command originated.
      * @param source Batched command source. Anything but null is acceptable.
      * @param batch The actual commands to execute.
      */
@@ -176,7 +174,6 @@ public class Runner extends Thread {
     /**
      * Queues up a line of Jython for execution.
      * 
-     * @param console Console where the command originated.
      * @param line Text of the command.
      */
     public void queueLine(final String line) {
@@ -186,16 +183,10 @@ public class Runner extends Thread {
     /**
      * Queues the addition of an object to {@code interpreter}'s local 
      * namespace.
-     * 
-     * @param console Likely not needed!
+     *
      * @param name Object name as it will appear to {@code interpreter}.
-     * @param pyObject Object to put in {@code interpreter}'s local namespace.
+     * @param object Object to put in {@code interpreter}'s local namespace.
      */
-//    public void queueObject(final String name,
-//        final PyObject pyObject) 
-//    {
-//        queueCommand(new InjectCommand(console, name, pyObject));
-//    }
     public void queueObject(final String name, final Object object) {
         queueCommand(new InjectCommand(console, name, object));
     }
@@ -204,11 +195,10 @@ public class Runner extends Thread {
      * Queues the removal of an object from {@code interpreter}'s local 
      * namespace. 
      * 
-     * @param console Console Of Origin!
      * @param name Name of the object to be removed, <i>as it appears to
      * Jython</i>.
      * 
-     * @see #queueObject(Console, String, PyObject)
+     * @see Runner#queueObject(String, Object)
      */
     public void queueRemoval(final String name) {
         queueCommand(new EjectCommand(console, name));
@@ -216,8 +206,7 @@ public class Runner extends Thread {
 
     /**
      * Queues up a Jython file to be run by {@code interpreter}.
-     * 
-     * @param console Likely not needed!
+     *
      * @param name {@code __name__} attribute to use for loading {@code path}.
      * @param path The path to the Jython file.
      */

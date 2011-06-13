@@ -183,7 +183,7 @@ class LineCommand extends Command {
 //    }
 //}
 class InjectCommand extends Command {
-    /** Name Jython will use to refer to {@link #pyObject}. */
+    /** Name Jython will use to refer to {@link #object}. */
     private String name;
 
     /** Wrapper around the Java object that is being injected. */
@@ -193,8 +193,8 @@ class InjectCommand extends Command {
      * Creates an injection command based upon the specified name and object.
      * 
      * @param console Likely not required in this context!
-     * @param name Name Jython will use to refer to {@code pyObject}.
-     * @param pyObject Wrapper around the Java object that is being injected.
+     * @param name Name Jython will use to refer to {@code object}.
+     * @param object Wrapper around the Java object that is being injected.
      */
     public InjectCommand(final Console console, final String name, 
         final Object object) 
@@ -321,7 +321,7 @@ class RegisterCallbackCommand extends Command {
  * and you may specify whatever namespace you like (be careful!).
  */
 class LoadFileCommand extends Command {
-    /** Namespace to use when executing {@link path}. */
+    /** Namespace to use when executing {@link #path}. */
     private String name;
 
     /** Path to the Jython file awaiting execution. */
