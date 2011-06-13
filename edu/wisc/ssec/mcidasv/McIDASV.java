@@ -30,6 +30,8 @@
 
 package edu.wisc.ssec.mcidasv;
 
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
+
 import static ucar.unidata.xml.XmlUtil.getAttribute;
 
 import java.awt.Insets;
@@ -43,15 +45,7 @@ import java.io.FileReader;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -234,8 +228,7 @@ public class McIDASV extends IntegratedDataViewer {
                 OSXAdapter.setAboutHandler(this, getClass().getDeclaredMethod("MacOSXAbout", (Class[])null));
                 OSXAdapter.setPreferencesHandler(this, getClass().getDeclaredMethod("MacOSXPreferences", (Class[])null));
             } catch (Exception e) {
-                System.err.println("Error while loading the OSXAdapter:");
-                e.printStackTrace();
+                logger.error("Error while loading the OSXAdapter", e);
             }
         }
     }
@@ -263,11 +256,11 @@ public class McIDASV extends IntegratedDataViewer {
             return;
         }
         final String monitorPort = getProperty(PROP_MONITORPORT, "");
-        if (monitorPort!=null && monitorPort.trim().length()>0 && !monitorPort.trim().equals("none")) {
+        if (monitorPort!=null && monitorPort.trim().length()>0 && !"none".equals(monitorPort.trim())) {
             Misc.run(new Runnable() {
                 @Override public void run() {
                     try {
-                        mcvMonitor = new McIDASVMonitor(McIDASV.this, new Integer(monitorPort).intValue());
+                        mcvMonitor = new McIDASVMonitor(McIDASV.this, Integer.parseInt(monitorPort));
                         mcvMonitor.init();
                     } catch (Exception exc) {
                         LogUtil.consoleMessage("Unable to start McIDAS-V monitor on port:" + monitorPort);
@@ -424,24 +417,23 @@ public class McIDASV extends IntegratedDataViewer {
      * Returns <i>all</i> of the actions used in this McIDAS-V session. This is
      * possibly TMI and might be removed...
      * 
-     * @return
+     * @return Actions executed thus far.
      */
     public List<String> getActionHistory() {
         return actions;
     }
 
     /**
-     * Converts {@link ArgsManager#getOriginalArgs()} to a {@link ArrayList} and
+     * Converts {@link ArgsManager#getOriginalArgs()} to a {@link List} and
      * returns.
      * 
      * @return The command-line arguments used to start McIDAS-V, as an 
      * {@code ArrayList}.
      */
     public List<String> getCommandLineArgs() {
-        List<String> args = new ArrayList<String>();
-        for (String arg : getArgsManager().getOriginalArgs()) {
-            args.add(arg);
-        }
+        String[] originalArgs = getArgsManager().getOriginalArgs();
+        List<String> args = arrList(originalArgs.length);
+        Collections.addAll(args, originalArgs);
         return args;
     }
 
@@ -487,9 +479,12 @@ public class McIDASV extends IntegratedDataViewer {
             return super.handleFileOrUrlAction(action, properties);
         }
 
-        Map<String, Object> hashProps = new HashMap<String, Object>();
+        Map<String, Object> hashProps;
         if (properties != null) {
-            hashProps.putAll(properties);
+            hashProps = new HashMap<String, Object>(properties);
+        } else {
+            //noinspection CollectionWithoutInitialCapacity
+            hashProps = new HashMap<String, Object>();
         }
 
         ucar.unidata.idv.JythonManager jyManager = getJythonManager();
@@ -1383,15 +1378,14 @@ public class McIDASV extends IntegratedDataViewer {
     private static Date extractDate(final String path) {
         assert path != null;
         Date savedDate = null;
-
         try {
             BufferedReader reader = new BufferedReader(new FileReader(path));
             String line = reader.readLine();
             if (line != null) {
-                Long timestamp = Long.parseLong(line.trim());
-                savedDate = new Date(timestamp.longValue());
+                savedDate = new Date(Long.parseLong(line.trim()));
             }
-        } catch (Exception e) { 
+        } catch (Exception e) {
+            logger.trace("problem extracting the date!", e);
         }
         return savedDate;
     }
