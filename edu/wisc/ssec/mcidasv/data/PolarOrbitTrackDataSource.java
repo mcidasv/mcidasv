@@ -106,6 +106,9 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(PolarOrbitTrackDataSource.class);
 
+    /** list of twod categories */
+    private List twoDCategories;
+
     private List tleCards = new ArrayList();
     private List choices = new ArrayList();
 
@@ -158,7 +161,10 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
             Object user = properties.get(key);
             key = PolarOrbitTrackChooser.TLE_PROJECT_NUMBER_KEY;
             Object proj = properties.get(key);
-            String url = "adde://" + server + "/textdata?&PORT=112&COMPRESS=gzip&USER=" + user + "&PROJ=" + proj + "&GROUP=" + group + "&DESCR=" + filename;
+            key = PolarOrbitTrackChooser.DATASET_NAME_KEY;
+            Object descr = properties.get(key);
+            String url = "adde://" + server + "/textdata?&PORT=112&COMPRESS=gzip&USER=" + user + "&PROJ=" + proj + "&GROUP=" + group + "&DESCR=" + descr;
+            //System.out.println("url=" + url);
             AddeTextReader reader = new AddeTextReader(url);
             List lines = null;
             if ("OK".equals(reader.getStatus())) {
@@ -225,6 +231,14 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
                     this, name, name, name,
                     DataCategory.parseCategories(category, false)));
         }
+    }
+
+    /**
+     * Initialize the {@link ucar.unidata.data.DataCategory} objects that
+     * this data source uses. 
+     */
+    private void makeCategories() {
+        twoDCategories = DataCategory.parseCategories("TLE", false);
     }
 
     /**
@@ -604,6 +618,8 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
         System.out.println("\ninitDataSelectionComponents:");
         System.out.println("    components=" + components);
         System.out.println("    dataChoice=" + dataChoice);
+        System.out.println("        categories=" + dataChoice.getCategories());
+        System.out.println("        displayCategory=" + dataChoice.getDisplayCategory());
 */
         clearTimes();
         IntegratedDataViewer idv = getDataContext().getIdv();
@@ -646,3 +662,4 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
         setInError(true, "\nSource does not contain TLE data");
     }
 }
+
