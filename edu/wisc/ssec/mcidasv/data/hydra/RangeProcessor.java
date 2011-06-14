@@ -260,11 +260,16 @@ public class RangeProcessor {
 				}
 			}
 			
-			if (unpack) {
-				new_values[k] = scale[soIndex] * (val) + offset[soIndex];
-			} else {
-				new_values[k] = scale[soIndex] * (val - offset[soIndex]);
-			}
+                        if (scale != null) {
+	 			if (unpack) {
+					new_values[k] = scale[soIndex] * (val) + offset[soIndex];
+				} else {
+					new_values[k] = scale[soIndex] * (val - offset[soIndex]);
+				}
+                        }
+                        else {
+                                new_values[k] = val;
+                        }
 
 			// do valid range check AFTER scaling?
 			if (! rangeCheckBeforeScaling) {
@@ -339,11 +344,15 @@ public class RangeProcessor {
 				}
 			}
 
-			if (unpack) {
-				new_values[k] = (scale[soIndex] * val) + offset[soIndex];
-			} else {
-				new_values[k] = scale[soIndex] * (val - offset[soIndex]);
-			}
+                        if (scale != null) {
+				if (unpack) {
+					new_values[k] = (scale[soIndex] * val) + offset[soIndex];
+				} else {
+					new_values[k] = scale[soIndex] * (val - offset[soIndex]);
+				}
+                        } else {
+                        	new_values[k] = val;
+                        }
 
 			// do valid range check AFTER scaling?
 			if (! rangeCheckBeforeScaling) {
