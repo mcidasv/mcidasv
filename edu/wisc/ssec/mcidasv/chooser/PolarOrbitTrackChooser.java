@@ -193,7 +193,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
 	 */
     @Override
 	protected String getDataSourceId() {
-		return "ADDE.TLE.V";
+		return "TLE";
 	}
     
     /**
@@ -437,7 +437,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
 
     /**
      * User said go, we go. 
-     * Create the ADDE.TLE.V DataSource
+     * Create the TLE DataSource
      * 
      */
     public void doLoadInThread() {
@@ -474,11 +474,20 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
     }
 
     private String getDatasetName() {
-        return "TLE";
+        return (String) descriptorComboBox.getSelectedItem();
     }
 
     public void handleConnectFromThread() {
         super.handleConnectFromThread();
         enableDescriptors(true);
+    }
+
+    /**
+     * Get the default display type
+     *
+     * @return  the name of the default display
+     */
+    protected String getDefaultDisplayType() {
+        return "tledisplay";
     }
 }
