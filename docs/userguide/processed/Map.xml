@@ -173,6 +173,7 @@
         <mapID target="idv.data.locationxml.georss"                  url="data/LocationXml.html#georss" />
         <mapID target="idv.data.locationxml.xml"                     url="data/LocationXml.html#xml" />
         <mapID target="idv.data.textpointdata"                       url="data/TextPointData.html" />
+		<mapID target="idv.datafaq"									 url="DataFaq.html" />
         <mapID target="idv.examples"                                 url="examples/index.html" />
         <mapID target="idv.examples.3dsurface"                       url="examples/3DSurface.html" />
         <mapID target="idv.examples.3dsurface.2dtopo"                url="examples/3DSurface.html#2dtopo" />
@@ -220,8 +221,10 @@
         <mapID target="idv.examples.soundings.image1"                url="examples/Soundings.html#image1" />
         <mapID target="idv.examples.soundings.image2"                url="examples/Soundings.html#image2" />
         <mapID target="idv.faq"                                      url="Faq.html" />
+		<mapID target="idv.generalfaq"								 url="GeneralFaq.html" />
         <mapID target="idv.index"                                    url="toc.html" />
         <mapID target="idv.index.image1"                             url="mcidasv.html#image1" />
+		<mapID target="installationfaq"								 url="InstallationFaq.html" />
         <mapID target="idv.introduction"                             url="mcidasv.html" />
         <mapID target="idv.isl"                                      url="isl/index.html" />
         <mapID target="idv.isl.basictags"                            url="isl/BasicTags.html" />
@@ -358,6 +361,7 @@
         <mapID target="idv.page_probes"                              url="page_probes.html" />
         <mapID target="idv.page_satelliteandradardisplays"           url="page_satelliteandradardisplays.html" />
         <mapID target="idv.page_tools"                               url="page_tools.html" />
+		<mapID target="idv.potentialproblemsfaq"					 url="PotentialProblemsFaq.html" />
         <mapID target="idv.quickstart"                               url="quickstart/index.html" />
         <mapID target="idv.quickstart.bridge"						 url="quickstart/Bridge.html" />
         <mapID target="idv.quickstart.bridge.bridge"				 url="quickstart/Bridge.html#bridge" />
@@ -424,6 +428,8 @@
         <mapID target="idv.quickstart.urlfiles.creating"			 url="quickstart/UrlFiles.html#creating" />
         <mapID target="idv.quickstart.urlfiles.loading"				 url="quickstart/UrlFiles.html#loading" />
         <mapID target="idv.releasenotes"                             url="ReleaseNotes.html" />
+		<mapID target="idv.reportingproblemsfaq"					 url="ReportingProblemsFaq.html" />
+		<mapID target="idv.runtimefaq"								 url="RunTimeFaq.html" />
         <mapID target="idv.starting"                                 url="Starting.html" />
         <mapID target="idv.starting.download"                        url="Starting.html#download" />
         <mapID target="idv.starting.install"                         url="Starting.html#install" />
@@ -623,4 +629,5 @@
         <mapID target="idv.ui.navigation.viewpoint"                  url="ui/Navigation.html#viewpoint" />
         <mapID target="idv.ui.transectviewmanager"                   url="ui/TransectViewManager.html" />
         <mapID target="idv.ui.transectviewmanager.image1"            url="ui/TransectViewManager.html#image1" />
+		<mapID target="idv.videocardsfaq"							 url="VideoCardsFaq.html" />
       </map>

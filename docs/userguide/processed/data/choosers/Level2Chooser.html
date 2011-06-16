@@ -53,12 +53,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Lev
     <li class="propertylistitem"><strong>Times: Relative</strong> - Allows you to select a group of up to the last 50 times.</li>
     <li class="propertylistitem"><strong>Times: Absolute</strong> - Allows you to choose one or more absolute times. To select more than one time use Control+click or Shift+click. See the <a href="../../tools/Timeline.html">Timeline section</a> for details on its use.</li>
     <li class="propertylistitem"><img align=absmiddle src="images/Help.gif"> <strong>Help</strong> - Brings up this help page.</li>
-    <li class="propertylistitem"><img align=absmiddle src="images/Refresh.gif"> <strong>Refresh</strong> - Updates the Level III radar chooser with the most recent data.</li>
+    <li class="propertylistitem"><img align=absmiddle src="images/Refresh.gif"> <strong>Refresh</strong> - Updates the Level II radar chooser with the most recent data.</li>
     <li class="propertylistitem"><img align=absmiddle src="images/Cancel.gif" width="24" height="24"> <strong>Cancel</strong> - Cancels the query of data and stations. The chooser will reset back to default.</li>
     <li class="propertylistitem"><img align=absmiddle src="../../quickstart/images/AddSource.gif"> - Loads the selected radar data.</li>
 </ul>
 <div class="pagesubtitle">Local Level II Radar Chooser</div>
-<p>The <strong>Radar-&gt;Level II-&gt;Local</strong> chooser allows you to choose Level II data from your file system.</p>
+<p>The <strong>Radar-&gt;Level II-&gt;Local</strong> chooser allows you to choose Level II data from your file system. The Level II data is supplied as volume-scan        files, each file having all data from one WSR-88D radar for all   sweeps        for one "time". Archived Level        II radar files can be displayed through the <strong>Radar-&gt;Level   II-&gt;Local</strong> file        chooser. The files should be stored on your file system with each   station's        files in a directory (folder) whose directory name is the station   4-character        ID (e.g., KTLX for Oklahoma City). In some cases the data files do   not        have any location information in them and McIDAS-V uses the   directory name        as a first guess at the station location. Archived Level II data   is available        from the <a href="http://www.ncdc.noaa.gov/" target="_blank">National Climatic
+      Data Center (NCDC)</a>.</p>
 <a name="image2" id="image2"></a>
 <div class="images"><img src="images/LevelIILocalChooser.gif" alt="Level II Local Radar Chooser"> <br>
   <span class="caption">Image 2: Level II Local Radar Chooser</span></div>

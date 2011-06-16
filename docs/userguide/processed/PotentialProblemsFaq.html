@@ -1,0 +1,215 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Potential Problems FAQ</title>
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<!-- InstanceBeginEditable name="CurrentFile" -->
+<script language="javascript" type="text/javascript">
+function setParentPage() { if (parent.setPage) parent.setPage('Faq.html',true); }
+</script>
+<!-- InstanceEndEditable -->
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+<body onLoad="setParentPage();">
+<div class="TopTitleNav">
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="Support.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="License.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span> </p>
+  <hr align="center">
+</div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle"><a name="faq1_cat6_" id="faq1_cat6_"></a>Potential Problems FAQ</div>
+<div class="faq-bottom">
+    <hr>
+    <!--<div class="faq-category-title"><a name="faq1_cat2_"></a>Downloading and
+      Starting with Web Start</div>
+    <div class="faq-category"><a name="download"></a>
+      <div class="faq-question">
+        <h4>Q. I couldn't download McIDAS-V. Is the server down?</h4>
+      </div>
+      </a>
+      <div class="faq-answer"><b>A.</b> Usually an inability to download McIDAS-V
+        and other Unidata software is due to a failure by your system to correctly
+        identify itself to our server.
+        <p> Both our server and the system trying to download Unidata software
+          have a &quot;name&quot; (domain name or host name or server name) and an IP address.
+          For example the address 128.117.140.62 is the same as the server with
+          name unidata.ucar.edu.</p>
+        <p> As a security measure many servers only reply to requests from systems
+          whose address can be matched to a name using &quot;reverse lookup&quot; - turning
+          the numbers into a name.</p>
+        <p> &quot;Forward lookups&quot; find the IP address of any given host name. The
+          reverse action is resolving IP addresses into host names. If our server
+          cannot resolve the requesting system IP address into a name, no software
+          will be sent to the requesting IP address. If you are having problems
+          downloading McIDAS-V from our server, check with your local system
+          administrator to make sure that your machine has reverse lookup enabled.
+          If not, download McIDAS-V from a system that does.</p> 
+      </div>
+      <p></p>
+      
+      <p></p><a name="certificate"></a>
+      <div class="faq-question">
+        <h4>Q. When I first run McIDAS-V through Web Start, it asks me to accept
+          a certificate? What should I do?</h4>
+      </div>
+      </a>
+      <div class="faq-answer"><b>A.</b> When you first download McIDAS-V through
+        Web Start, you will see a message like:
+        <pre>
+This <b>application</b> is requesting unrestricted access to your local 
+machine and network.
+
+Do you want to install and run: <b>Integrated Data Viewer </b>
+Signed and distributed by: <b>University Corporation for Atmospheric Research </b>
+Publisher authenticity verified by: <b>Thawte Premium Server CA</b>
+
+Caution: <b>University Corporation for Atmospheric Research</b> asserts 
+that this content is safe. You should only install and run this application 
+if you trust <b>University Corporation for Atmospheric Research</b> to make 
+this assertion.
+</pre>
+        If you trust Unidata to make safe software, click the <code class="command">Start</code> button </div>
+      <p></p>
+      
+      <p></p><a name="updates"></a>
+      <div class="faq-question">
+        <h4>Q. How can I get updates through Web Start?</h4>
+      </div>
+      </a>
+      <div class="faq-answer"><b>A.</b> When starting McIDAS-V using Web Start,
+        the latest version of all McIDAS-V code is found at the UW-SSEC server,
+        and it is automatically downloaded and installed if it is newer than
+        the version you have on your system. </div>
+      <p></p>
+      
+      <p></p><a name="nodisk"></a>
+      <div class="faq-question">
+        <h4>Q. What is &quot;there is no disk in drive A&quot; message in Web
+          Start?</h4>
+      </div>
+      </a>
+      <div class="faq-answer"><b>A.</b> Sometimes starting a program on a Windows
+        system with Web Start will produce a dialog box that says &quot;There is no
+        disk in drive A.&quot; Normally clicking the continue button will cause the
+        program to start properly. </div>
+      <p></p>
+      
+      <p></p><a name="wsmanager"></a>
+      <div class="faq-question">
+        <h4>Q. How do I use the Web Start Applications Manager?</h4>
+      </div>
+      </a>
+      <div class="faq-answer"><b>A.</b> If you run McIDAS-V from Web Start, for
+        more control of McIDAS-V, use the Web Start Application Manager. You
+        can launch it by clicking <a href="http://www.unidata.ucar.edu/software/idv/webstart/IDV/player.jnlp"> here</a>.
+        Alternatively, go to http://java.sun.com/products/javawebstart/demos.html,
+        and find the Web Start &quot;Application Manager&quot; on that page. Start the &quot;Application
+        Manager&quot; by clicking on the &quot;Launch&quot; button.
+        <p> In the Application Manager you will see McIDAS-V, if you do this
+          after you have installed McIDAS-V with Web Start.</p>
+        <p> You can use the Application Manager to start McIDAS-V without going
+          to the Unidata web page Web Start link, and to remove an old McIDAS-V
+          to force a complete new McIDAS-V download next time you start McIDAS-V
+          with the Unidata web page http://www.unidata.ucar.edu/projects/metapps/webstart/IDV/
+          .</p>
+        <p> If your Web Start McIDAS-V installation seems broken, remove it with
+          the Application Manager and reload from the McIDAS-V Web Start Link.
+          When you run the Application Manager it will have a panel showing &quot;McIDAS-V&quot; 
+          with an icon. Click to select and it will highlight; it
+          may already be selected. Use the <code class="menu">Application-&gt;Remove
+          Application</code> menu. The McIDAS-V item will go away. Reload McIDAS-V
+          from the Unidata web site.</p>
+        <p> You can see what Java version McIDAS-V is using. Use the Application
+          Manager's <code class="menu">File-&gt;Preferences-&gt;Java</code> menu
+          and look at &quot;Product version&quot;. </p>
+      </div>
+      <p></p>
+      
+      <p></p><a name="wsconsole"></a>
+      <div class="faq-question">
+        <h4>Q. How can I show the Java console when running with Web Start?</h4>
+      </div>
+      </a>
+      <div class="faq-answer"><b>A.</b> When you start McIDAS-V using Web Start,
+        you don't have a console window opened by default. You can enable the
+        Java console through the Web Start Applications Manager. Bring up the
+        Web Start Manager (Java Application Cache Viewer) as described <a href="#wsmanager">above</a>.
+        Use the <code class="menu">Edit-&gt;Preferences</code> menu to bring
+        up the Preferences dialog. Click on the Advanced Tab and expand the Java
+        Console item in the tree. Select the &quot;Show Console&quot; option and then click
+        the OK button. The next time you start McIDAS-V with Web Start, you will
+        get a console that will log messages. Messages are also logged to the
+        McIDAS-V console. See the item <a href="#console">below</a> for information
+        on using this feature. </div>
+      <p></p>
+      
+      <p></p><a name="ownws"></a>
+      <div class="faq-question">
+        <h4>Q. Can I serve up JNLP bundles from my own web server?</h4>
+      </div>
+      </a>
+      <div class="faq-answer"><b>A.</b> You can save a bundle as a JNLP file
+        by using a .jnlp extension in the <code class="menu">File-&gt;Save As...</code> menu
+        dialog. Once you have the file, you can place it on your web server and
+        create a web page that points to it. Your web server must identify this
+        as a JNLP file, so if it doesn't already support this, you'll need to
+        configure your Web server so that all files with the .jnlp file extension
+        are set to the application/x-java-jnlp-file MIME type. Each Web server
+        has a specific way in which to add MIME types. For example, for the Apache
+        Web server you must add the following line to the .mime.types configuration
+        file:
+        <pre>
+application/x-java-jnlp-file JNLP
+</pre>
+        Check the documentation for the specifics of your Web server. </div>
+      <p></p>
+      
+      <p> </p>
+    </div>-->
+    <div class="faq-category"><a name="firewall" id="firewall"></a>
+        <div class="faq-question">
+      <h4>Q. How do I connect to remote servers through my firewall?</h4>
+    </div>
+    <div class="faq-answer"><strong>A.</strong> If you have a firewall and are
+      trying to get data from the remote servers (image, radar, point, upper
+      air and profiler data), error messages such as <span class="faq-answer">&quot;</span>Error
+      opening connection ... Operation timed out<span class="faq-answer">&quot;</span> or <span class="faq-answer">&quot;</span>No
+      Data Available<span class="faq-answer">&quot;</span> may occur. For these
+      servers to send data, your firewall software must allow connections on
+      ports 112 (ADDE) and 8080 (THREDDS Data Server).</div>
+    <a name="dri" id="dri"></a>
+    <div class="faq-question">
+      <h4>Q. Why do I get an error that starts something like <span class="faq-answer">&quot;</span>Unexpected
+        Signal : 11 occurred at PC=0x6F79CE1<span class="faq-answer">&quot;</span> when
+        starting McIDAS-V under Linux?</h4>
+    </div>
+    <div class="faq-answer"><strong>A.</strong> If the error message also includes
+      a line that is looking for a Library with <span class="faq-answer">&quot;</span>dri<span class="faq-answer">&quot;</span> in
+      it's name (e.g.: Library=/usr/X11R6/lib/modules/dri/i915_dri.so), it means
+      that you are trying to load the DRI library in your X server which is not
+      compatible with Java 3D. You need to comment out the line:
+      <div style="margin-left: 2em">Load <span class="faq-answer">&quot;</span>dri<span class="faq-answer">&quot;</span></div>
+      <p>in your X server configuration file (xorg.conf or XF86Config).</p>
+    </div>
+  </div>
+</div>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav">
+  <hr align="center">
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="Support.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="License.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span></p>
+</div>
+</body>
+<!-- InstanceEnd -->
+</html>
