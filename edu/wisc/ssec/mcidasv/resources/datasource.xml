@@ -14,11 +14,11 @@
      fileselection="true"
      label="Point data from an ADDE server"/>
   <datasource
-     id="ADDE.TLE.V"
+     id="TLE"
      factory="edu.wisc.ssec.mcidasv.data.PolarOrbitTrackDataSource"
      patterns="adde://.*/textdata/.*$,.*\.apt"
      fileselection="true"
-     label="Polor Orbit Tracks from TLE"/>     
+     label="Polar Orbit Tracks from TLE"/>     
   <datasource
      id="HRIT"
      factory="edu.wisc.ssec.mcidasv.data.hrit.HRITDataSource"
