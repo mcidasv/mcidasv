@@ -164,7 +164,6 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
             key = PolarOrbitTrackChooser.DATASET_NAME_KEY;
             Object descr = properties.get(key);
             String url = "adde://" + server + "/textdata?&PORT=112&COMPRESS=gzip&USER=" + user + "&PROJ=" + proj + "&GROUP=" + group + "&DESCR=" + descr;
-            //System.out.println("url=" + url);
             AddeTextReader reader = new AddeTextReader(url);
             List lines = null;
             if ("OK".equals(reader.getStatus())) {
@@ -176,10 +175,13 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
             } else {
                 String[] cards = StringUtil.listToStringArray(lines);
                 for (int i=0; i<cards.length; i++) {
-                    tleCards.add(cards[i]);
-                    int indx = cards[i].indexOf(" ");
-                    if (indx < 0) {
-                        choices.add(cards[i]);
+                    String str = cards[i];
+                    if (str.length() > 0) {
+                        tleCards.add(cards[i]);
+                        int indx = cards[i].indexOf(" ");
+                        if (indx < 0) {
+                            choices.add(cards[i]);
+                        }
                     }
                 }
             }
@@ -194,9 +196,11 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
                 String nextLine = null;
                 int tleCount = 0;
                 while ((nextLine = tleReader.readLine()) != null) {
-                    tleCards.add(nextLine);
-                    if (nextLine.length() < 50) {
-                        choices.add(nextLine);
+                    if (nextLine.length() > 0) {
+                        tleCards.add(nextLine);
+                        if (nextLine.length() < 50) {
+                            choices.add(nextLine);
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -436,7 +440,6 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
         int elementNumber = 0;
 
         int ret = 0;
-        //System.out.println(card);
         if (card.length() < 69) {
             notTLE();
             return -1;
