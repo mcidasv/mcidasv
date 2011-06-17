@@ -96,12 +96,6 @@ This file overrides IDV addeservers.xml
        type="text"/>
   </server>
   
-  <server name="nanuk.eosdis.nasa.gov">
-    <group
-       names="NANUK"
-       type="image"/>
-  </server>
-  
   <server name="satepsanone.nesdis.noaa.gov">
     <group
        names="PUB"
