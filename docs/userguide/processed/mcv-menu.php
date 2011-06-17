@@ -29,8 +29,6 @@
       <span class="link" onClick="setPage('Starting.html');">Downloading and Running McIDAS-V</span><br>
       <span class="link" onClick="setPage('data/DataSources.html');">Data Formats and Sources</span><br>
       <span class="link" onClick="setPage('Support.html');">Documentation and Support</span><br>
-      <span class="link" onClick="setPage('Faq.html');">FAQ- Frequently
-      Asked Questions </span> <br>
       <span class="link" onClick="setPage('License.html');">License and Copyright</span><br>
     </div>
 
@@ -329,8 +327,8 @@
 
     <span class="toggle" onClick="toggleChildren(this,'appendix');">+</span>
     <span class="link" onClick="setPage('page_appendix.html');">Appendix</span><br>
-
-    <div class="indented" id="appendix">
+<div class="indented" id="appendix">
+                     
       <span class="toggle" onClick="toggleChildren(this,'appendix_1');">+</span>
       <span class="link" onClick="setPage('examples/index.html');">Examples of Display Types</span><br>
 
@@ -352,7 +350,20 @@
           <span class="link" onClick="setPage('examples/Miscellaneous.html#multipanel');">Multi-Panel Display</span><br>
           <span class="link" onClick="setPage('examples/Miscellaneous.html#omnidisplay');">Omni Display</span><br>
         </div>
-       		</div>		
+       		</div>
+            <span class="toggle" onClick="toggleChildren(this,'faq');">+</span>
+<span class="link" onClick="setPage('Faq.html');"> FAQ - Frequently Asked Questions</span>
+<br>
+<div class="indented" id="faq">
+        <span class="link" onClick="setPage('GeneralFaq.html');">General FAQ</span><br>
+                <span class="link" onClick="setPage('UsingMcVFaq.html');">Using McIDAS-V FAQ</span><br>
+                        <span class="link" onClick="setPage('DataFaq.html');">Data FAQ</span><br>
+                                <span class="link" onClick="setPage('VideoCardsFaq.html');">Video Cards FAQ</span><br>
+                <span class="link" onClick="setPage('PotentialProblemsFaq.html');">Potential Problems FAQ</span><br>
+                        <span class="link" onClick="setPage('InstallationFaq.html');">Common Installation Errors FAQ</span><br>
+             <span class="link" onClick="setPage('RunTimeFaq.html');">Common Run-Time Errors FAQ</span><br>
+                     <span class="link" onClick="setPage('ReportingProblemsFaq.html');">Reporting Problems FAQ</span><br>	
+                     </div>	
         <span class="link" onClick="setPage('xequivalent.html');">McIDAS-X Commands in McIDAS-V</span><br> 
 
       </div>

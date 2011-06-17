@@ -32,7 +32,6 @@
         <tocitem text="McIDAS-V Documentation" target="idv.support.documentation"/>
         <tocitem text="Other Sources of Help" target="idv.support.support"/>
     </tocitem>
-    <tocitem text="FAQ - Frequently Asked Questions" target="idv.faq"/>
     <tocitem text="License and Copyright" target="idv.license"/>
 </tocitem>
 <tocitem text="Getting Started" target="idv.quickstart">
@@ -390,6 +389,16 @@
             <tocitem text="Multi-Panel Display" target="idv.examples.miscellaneous.multipanel"/>
             <tocitem text="Omni Display" target="idv.examples.miscellaneous.omnidisplay"/>
         </tocitem>
+    </tocitem>
+	<tocitem text="FAQ - Frequently Asked Questions" target="idv.faq">
+	    <tocitem text="General FAQ" target="idv.generalfaq"/>
+		<tocitem text="Using McIDAS-V FAQ" target="idv.usingmcvfaq"/>
+		<tocitem text="Data FAQ" target="idv.datafaq"/>
+		<tocitem text="Video Cards FAQ" target="idv.videocardsfaq"/>
+		<tocitem text="Potential Problems FAQ" target="idv.potentialproblemsfaq"/>
+		<tocitem text="Common Installation Errors FAQ" target="idv.installationfaq"/>
+		<tocitem text="Common Run-Time Errors FAQ" target="idv.runtimefaq"/>
+		<tocitem text="Reporting Problems FAQ" target="idv.reportingproblemsfaq"/>
     </tocitem>
     <tocitem text="McIDAS-X Commands in McIDAS-V" target="idv.xequivalent"> </tocitem>
 </tocitem>
