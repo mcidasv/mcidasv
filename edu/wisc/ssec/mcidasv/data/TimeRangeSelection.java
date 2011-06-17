@@ -30,31 +30,29 @@
 
 package edu.wisc.ssec.mcidasv.data;
 
+import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+import static javax.swing.GroupLayout.Alignment.TRAILING;
+import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
+import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
+
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.data.adde.sgp4.Time;
 import edu.wisc.ssec.mcidasv.data.dateChooser.*;
 
-import java.awt.Component;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Dimension;
 import java.rmi.RemoteException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import javax.swing.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSelectionComponent;
 import ucar.unidata.data.DataSourceImpl;
-import ucar.unidata.util.GuiUtils;
 
 import visad.VisADException;
 
@@ -64,20 +62,6 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
 
       private DataSourceImpl dataSource;
 
-      /** The spacing used in the grid layout */
-      protected static final int GRID_SPACING = 3;
-
-      /** Used by derived classes when they do a GuiUtils.doLayout */
-      protected static final Insets GRID_INSETS = new Insets(GRID_SPACING,
-                                                      GRID_SPACING,
-                                                      GRID_SPACING,
-                                                      GRID_SPACING);
-      private double latitude;
-      private double longitude;
-      private double altitude;
-      private JPanel locationPanel;
-      private JPanel latLonAltPanel;
-      private JPanel beginTime;
       private JPanel beginDate;
       private JPanel endTime;
       private JPanel endDate;
@@ -102,7 +86,6 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
       protected static final String PROP_SECS = "Secs";
 
       private JPanel timeRangeComp = new JPanel();
-      private JComboBox locationComboBox;
 
       public TimeRangeSelection(DataSourceImpl dataSource) 
               throws VisADException, RemoteException {
@@ -112,46 +95,69 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
 
     protected JComponent doMakeContents() {
 
-         Insets  dfltGridSpacing = new Insets(4, 0, 4, 0);
-         String  dfltLblSpacing  = " ";
-         Calendar cal = Calendar.getInstance();
-         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy");
-         defaultDay = cal.getTime();
-         List allComps = new ArrayList();
-         allComps.add(new JLabel(" "));
-         allComps.add(GuiUtils.lLabel("Begin:"));
-         beginTimeFld = new JTextField(defaultBegTime, 10);
-         beginTime = GuiUtils.doLayout(new Component[] {
-                            new JLabel("            Time: "),
-                            beginTimeFld }, 2,
-                            GuiUtils.WT_N, GuiUtils.WT_N);
-         allComps.add(beginTime);
-         begDay = new JDateChooser(defaultDay);
-         beginDate = GuiUtils.doLayout(new Component[] {
-                            new JLabel("            Date: "),
-                            begDay }, 2,
-                            GuiUtils.WT_N, GuiUtils.WT_N);
-         allComps.add(beginDate);
-         allComps.add(GuiUtils.lLabel("End:"));
-         endTimeFld = new JTextField(defaultEndTime, 10);
-         endTime = GuiUtils.doLayout(new Component[] {
-                            new JLabel("     "),
-                            new JLabel("          Time: "),
-                            endTimeFld }, 3,
-                            GuiUtils.WT_N, GuiUtils.WT_N);
-         allComps.add(endTime);
-         endDay = new JDateChooser(defaultDay);
-         endDate = GuiUtils.doLayout(new Component[] {
-                            new JLabel("     "),
-                            new JLabel("          Date: "),
-                            endDay }, 3,
-                            GuiUtils.WT_N, GuiUtils.WT_N);
-         allComps.add(endDate);
+        JLabel begLab = new JLabel("  Begin");
+        JLabel endLab = new JLabel("  End");
+        JLabel begTimeLab = new JLabel("      Time:");
+        JLabel endTimeLab = new JLabel("      Time:");
+        JLabel begDateLab = new JLabel("      Date:");
+        JLabel endDateLab = new JLabel("      Date:");
+        beginTimeFld = new JTextField(defaultBegTime, 8);
+        beginTimeFld.setMaximumSize(new Dimension(80, 40));
+        endTimeFld = new JTextField(defaultEndTime, 8);
+        endTimeFld.setMaximumSize(new Dimension(80, 40));
+        Calendar cal = Calendar.getInstance();
+        defaultDay = cal.getTime();
+        begDay = new JDateChooser(defaultDay);
+        begDay.setMaximumSize(new Dimension(140, 20));
+        endDay = new JDateChooser(defaultDay);
+        endDay.setMaximumSize(new Dimension(140, 20));
 
-         GuiUtils.tmpInsets = GRID_INSETS;
-         JPanel dateTimePanel = GuiUtils.doLayout(allComps, 1, GuiUtils.WT_NY,
-                                GuiUtils.WT_N);
-         timeRangeComp = GuiUtils.top(dateTimePanel);
+        GroupLayout layout = new GroupLayout(timeRangeComp);
+        timeRangeComp.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(LEADING)
+                .addComponent(begLab)
+                .addGroup(layout.createSequentialGroup()
+                    .addComponent(begTimeLab)
+                    .addGap(GAP_RELATED)
+                    .addComponent(beginTimeFld))
+                .addGroup(layout.createSequentialGroup()
+                    .addComponent(begDateLab)
+                    .addGap(GAP_RELATED)
+                    .addComponent(begDay))
+                .addComponent(endLab)
+                .addGroup(layout.createSequentialGroup()
+                    .addComponent(endTimeLab)
+                    .addGap(GAP_RELATED)
+                    .addComponent(endTimeFld))
+                .addGroup(layout.createSequentialGroup()
+                    .addComponent(endDateLab)
+                    .addGap(GAP_RELATED)
+                    .addComponent(endDay))
+         );
+
+        layout.setVerticalGroup(
+            layout.createParallelGroup(LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(begLab)
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(begTimeLab)
+                    .addComponent(beginTimeFld))
+                .addPreferredGap(RELATED)
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(begDateLab)
+                    .addComponent(begDay))
+                .addPreferredGap(UNRELATED)
+                .addComponent(endLab)
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(endTimeLab)
+                    .addComponent(endTimeFld))
+                .addPreferredGap(RELATED)
+                .addGroup(layout.createParallelGroup(BASELINE)
+                    .addComponent(endDateLab)
+                    .addComponent(endDay)))
+         );
+
          return timeRangeComp;
     }
 
