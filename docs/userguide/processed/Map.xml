@@ -31,6 +31,7 @@
         <mapID target="idv.controls.datatransectcontrol"             url="controls/DataTransectControl.html" />
         <mapID target="idv.controls.drag"							 url="controls/index.html#drag" />
         <mapID target="idv.controls.drawingcontrol"                  url="controls/misc/DrawingControl.html" />
+		<mapID target="idv.controls.ensemblegridcontrol"			 url="controls/EnsembleGridControl.html" />
         <mapID target="idv.controls.flowplanviewcontrol"             url="controls/FlowPlanViewControl.html" />
 		<mapID target="idv.controls.frontcontrol"					 url="controls/FrontControl.html" />
 		<mapID target="idv.controls.hydra.channelcombinationcontrol"  url="controls/hydra/ChannelCombinationControl.html" />
@@ -589,6 +590,7 @@
         <mapID target="idv.tools.timeline"                           url="tools/Timeline.html" />
         <mapID target="idv.tools.timeline.image1"                    url="tools/Timeline.html#image1" />
         <mapID target="idv.tools.timeline.image2"                    url="tools/Timeline.html#image2" />
+		<mapID target="idv.usingmcvfaq"								 url="UsingMcVFaq.html" />
         <mapID target="idv.ui"                                       url="ui/index.html" />
         <mapID target="idv.ui.animation"                             url="ui/Animation.html" />
         <mapID target="idv.ui.animation.animation"                   url="ui/Animation.html#animation" />

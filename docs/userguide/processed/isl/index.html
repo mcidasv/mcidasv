@@ -42,8 +42,7 @@ You can also run McIDAS-V in interactive mode using an ISL script to set up the 
 <pre>
 runMcV capture.isl -islinteractive
 </pre>
-<p>McIDAS-V can run in "offscreen" mode (see <a href="BasicTags.html#isl">more</a>)
-  with an ISL or with Jython. The user interface won't be shown. However, McIDAS-V
+<p>McIDAS-V can run in  <a href="BasicTags.html#isl">"offscreen" mode</a> with an ISL or with Jython. The user interface won't be shown. However, McIDAS-V
   still needs to be run with an active window system (e.g., X, MS Windows) for
   it to run. If running under a Linux/Unix machine and you don't have an X server
   running you need to run McIDAS-V under the X virtual frame buffer: <em>xvfb</em>.
@@ -53,10 +52,13 @@ runMcV capture.isl -islinteractive
     it as an escape sequence. </p>
 <p>The usual mode of use of the ISL is to load in an <a href="../Bundles.html">McIDAS-V bundle</a> which defines the data and displays that you want captured. In Jython, this is a call to the <em>loadBundle()</em> method. As a convenience, when you go to save a bundle (e.g., using the <strong>File-&gt;Save
 As</strong> menu), you can specify a <em>.isl</em> file suffix. When you do this McIDAS-V will write out both the bundle file and an example ISL file. It will first prompt you for some basic ISL information:</p>
-<a name="image1" id="image1"></a>
-<div class="images"><img src="images/SaveAs.gif" alt="Save As ISL Dialog">
+<div class="images"><img src="images/SaveAs1.gif" width="607" height="242">
 <br>
-<span class="caption">Image 1: Save As ISL Dialog</span></div>
+<span class="caption">Image 1: Product tab</span></div>
+<p><a name="image1" id="image1"></a></p>
+<div class="images"><img src="images/SaveAs.gif" alt="Save As ISL Dialog">
+    <br>
+<span class="caption">Image 2: Advanced tab</span></div>
 <p>You can, for example, include the text of the bundle file directly within the
 ISL file (so you only have one file to deal with). You can also specify how many
 iterations of the loop to do and whether to create an image and/or a movie. When

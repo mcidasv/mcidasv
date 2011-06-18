@@ -250,6 +250,7 @@
         <tocitem text="Plot Properties" target="idv.controls.chart.chartproperties"/>
         <tocitem text="Chart Layout" target="idv.controls.chart.chartlayout"/>
     </tocitem>
+	<tocitem text="Ensemble Grid Controls" target="idv.controls.ensemblegridcontrol" />
 </tocitem>
 <tocitem text="Tools" target="idv.page_tools">
     <tocitem text="User Preferences" target="idv.tools.preferences">

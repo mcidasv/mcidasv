@@ -28,8 +28,6 @@ function setParentPage() { if (parent.setPage) parent.setPage('RunTimeFaq.html',
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Common Run-Time Errors FAQ</div>
-<div class="faq-bottom">
-    <hr>
     <!--<div class="faq-category-title"><a name="faq1_cat2_"></a>Downloading and
       Starting with Web Start</div>
     <div class="faq-category"><a name="download"></a>
@@ -177,7 +175,8 @@ application/x-java-jnlp-file JNLP
       <p> </p>
     </div>-->
     <div class="faq-category"><a name="glx-graphics" id="glx-graphics"></a>
-        <div class="faq-question"><strong>Q.</strong> Could not create a graphics configuration
+        <div class="faq-question">
+        <h4><strong>Q.</strong> Could not create a graphics configuration</h4>
       </div>
     <div class="faq-answer">I get this error message in the shell window:
 <pre>
@@ -260,7 +259,6 @@ GLX version 1.3 or higher is required.</pre>
       <h4>Q. <a class="faq-question-link" href="#white">Why do my images display white when there should be valid data?</a></h4>
     </div>
     <div class="faq-answer"><strong>A.</strong> The first thing to do is to make sure that your graphics drivers are up to date. If this does not solve the problem, another option is to change the amount of memory allocated to McIDAS-V. From the Main Display Window's menu bar, select <strong>Edit-&gt;Preferences</strong>. This opens a User Preferences window, where you want to select the <a href="tools/preferences/AdvancedPreferences.html"><strong>Advanced</strong></a> tab. At the top of the window there are two options for selecting memory. Click the radio button that allows you to specify the numerical value of memory allocated to McIDAS-V. Enter in a value of 512 megabytes. Any changes in the Advanced User Preferences requires a restart of McIDAS-V to take effect. If this resolves the issue of white images, you can start increasing the memory until the problem appears again. Stay below the memory value that produces the problem.</div>
-</div>
 </div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">

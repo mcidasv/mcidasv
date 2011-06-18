@@ -213,6 +213,7 @@
       </div>
 
       <span class="link" onClick="setPage('controls/Chart.html');">Charts</span><br>
+      <span class="link" onClick="setPage('controls/EnsembleGridControl.html');">Ensemble Grid Controls</span><br>
 
     </div>
 
