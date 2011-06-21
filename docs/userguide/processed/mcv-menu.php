@@ -359,8 +359,7 @@
         <span class="link" onClick="setPage('GeneralFaq.html');">General FAQ</span><br>
                 <span class="link" onClick="setPage('UsingMcVFaq.html');">Using McIDAS-V FAQ</span><br>
                         <span class="link" onClick="setPage('DataFaq.html');">Data FAQ</span><br>
-                                <span class="link" onClick="setPage('VideoCardsFaq.html');">Video Cards FAQ</span><br>
-                <span class="link" onClick="setPage('PotentialProblemsFaq.html');">Potential Problems FAQ</span><br>
+                        <span class="link" onClick="setPage('VideoCardsFaq.html');">Video Cards FAQ</span><br>
                         <span class="link" onClick="setPage('InstallationFaq.html');">Common Installation Errors FAQ</span><br>
              <span class="link" onClick="setPage('RunTimeFaq.html');">Common Run-Time Errors FAQ</span><br>
                      <span class="link" onClick="setPage('ReportingProblemsFaq.html');">Reporting Problems FAQ</span><br>	

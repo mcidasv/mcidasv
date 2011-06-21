@@ -194,7 +194,7 @@ run anyway.</pre></div>
     <div class="faq-answer">
         <pre>JAVA 3D ERROR: GLX extension is not supported
 GLX version 1.3 or higher is required.</pre>
-    <p>This error messages echoes to the terminal window. I also get an error
+    <p>This error message echoes to the terminal window. I also get an error
         popup window stating <span class="faq-answer">&quot;</span>Could not
         create a graphics configuration. Please contact McIDAS-V users support
         or see the FAQ.<span class="faq-answer">&quot;</span> At this point the
@@ -205,7 +205,7 @@ GLX version 1.3 or higher is required.</pre>
       error is most likely occurring because the graphics drivers for RHEL are
       not properly configured.
     <p>Assuming that the latest graphics drivers are installed, they must be
-      configured in the window system configuration file... since RHEL uses Xorg,
+      configured in the window system configuration file. Since RHEL uses Xorg,
       look in the file</p>
     <br>
     <p>&nbsp;&nbsp;&nbsp;&nbsp;/etc/X11/xorg.conf</p>
@@ -218,9 +218,7 @@ GLX version 1.3 or higher is required.</pre>
       <h4>Q. Problems connecting to the listed data servers</h4></div>
     <div class="faq-answer">
         <p>I have the viewing and data windows and a User's Guide up. But so
-            far I can't talk to any of the listed data servers. The errors are just
-            'connection refused' and 'no public datasets found' on every server I've
-        tried.</p></div>
+        far I can't talk to any of the listed data servers. The errors are 'connection refused' and 'no public datasets found' on every server.</p></div>
 <div class="faq-answer"><strong>A.</strong>If you have a firewall and are trying to get data from the remote servers
       (image, radar, point, upper air and profiler data), error messages such
       as <span class="faq-answer">&quot;</span>Error opening connection ... Operation
@@ -252,13 +250,27 @@ GLX version 1.3 or higher is required.</pre>
 <div class="faq-answer"><strong>A.</strong> Try changing your memory to use 1 GB or lower and restart McIDAS-V. You
         can change the amount of memory used by McIDAS-V by editing the <strong>Maximum
         Heap Size</strong> in the <strong><a href="tools/preferences/AdvancedPreferences.html">Advanced</a></strong> tab of the Preferences
-        by selected <strong>Edit-&gt;Preferences...</strong> from the main menu.
+        by selected <strong>Edit-&gt;Preferences...</strong> from the Main Display Window.
     </div>
     <a name="white" id="white"></a>
      <div class="faq-question">
       <h4>Q. <a class="faq-question-link" href="#white">Why do my images display white when there should be valid data?</a></h4>
     </div>
     <div class="faq-answer"><strong>A.</strong> The first thing to do is to make sure that your graphics drivers are up to date. If this does not solve the problem, another option is to change the amount of memory allocated to McIDAS-V. From the Main Display Window's menu bar, select <strong>Edit-&gt;Preferences</strong>. This opens a User Preferences window, where you want to select the <a href="tools/preferences/AdvancedPreferences.html"><strong>Advanced</strong></a> tab. At the top of the window there are two options for selecting memory. Click the radio button that allows you to specify the numerical value of memory allocated to McIDAS-V. Enter in a value of 512 megabytes. Any changes in the Advanced User Preferences requires a restart of McIDAS-V to take effect. If this resolves the issue of white images, you can start increasing the memory until the problem appears again. Stay below the memory value that produces the problem.</div>
+<a name="dri" id="dri"></a>
+    <div class="faq-question">
+      <h4>Q. Why do I get an error that starts something like <span class="faq-answer">&quot;</span>Unexpected
+        Signal : 11 occurred at PC=0x6F79CE1<span class="faq-answer">&quot;</span> when
+        starting McIDAS-V under Linux?</h4>
+    </div>
+    <div class="faq-answer"><strong>A.</strong> If the error message also includes
+      a line that is looking for a Library with <span class="faq-answer">&quot;</span>dri<span class="faq-answer">&quot;</span> in
+      it's name (e.g.: Library=/usr/X11R6/lib/modules/dri/i915_dri.so), it means
+      that you are trying to load the DRI library in your X server which is not
+      compatible with Java 3D. You need to comment out the line:
+      <div style="margin-left: 2em">Load <span class="faq-answer">&quot;</span>dri<span class="faq-answer">&quot;</span></div>
+      <p>in your X server configuration file (xorg.conf or XF86Config).</p>
+    </div>
 </div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">

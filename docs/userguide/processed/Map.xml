@@ -362,7 +362,6 @@
         <mapID target="idv.page_probes"                              url="page_probes.html" />
         <mapID target="idv.page_satelliteandradardisplays"           url="page_satelliteandradardisplays.html" />
         <mapID target="idv.page_tools"                               url="page_tools.html" />
-		<mapID target="idv.potentialproblemsfaq"					 url="PotentialProblemsFaq.html" />
         <mapID target="idv.quickstart"                               url="quickstart/index.html" />
         <mapID target="idv.quickstart.bridge"						 url="quickstart/Bridge.html" />
         <mapID target="idv.quickstart.bridge.bridge"				 url="quickstart/Bridge.html#bridge" />

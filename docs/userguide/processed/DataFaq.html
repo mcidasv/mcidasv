@@ -186,16 +186,6 @@ application/x-java-jnlp-file JNLP
         to <strong><a href="misc/PerformanceTuning.html#fastrender">Use fast rendering</a></strong>, McIDAS-V will not try to account
         for the projection seams.You can turn on/off Fast Rendering for individual displays in their <a href="controls/index.html#properties">Properties
         dialogs</a>. </div>
-    <a name="truewind" id="truewind"></a>
-    <div class="faq-question">
-      <h4>Q. What is the difference between true wind vectors and regular wind
-        vectors?</h4>
-    </div>
-    <div class="faq-answer"><strong>A.</strong> Some gridded data is produced
-      with the wind components being relative to the model grid instead of the
-      earth. The true wind vectors are rotated from the grid projection to actual
-      (true) wind direction. For non-projected grids (i.e., lat/lon grids), grid
-      relative is the same as true.</div>
     <a name="pressure_to_height" id="pressure_to_height"></a>
     <div class="faq-question">
       <h4>Q. What is the difference between the Standard Atmosphere and Vis5D
@@ -263,7 +253,7 @@ application/x-java-jnlp-file JNLP
       For nearest neighbor, it gets the values at the vertex of that containing
       topology element closest to the target point. For weighted average, it
       computes a weighted average of all vertices of that containing topology
-      element, where the weights are bilinear in 2-D and trilinear in 3-D. (source:
+      element, where the weights are bilinear in 2D and trilinear in 3D. (source:
       Bill Hibbard, SSEC)</div>
     <a name="nogridtime" id="nogridtime"></a>
     <div class="faq-question">
