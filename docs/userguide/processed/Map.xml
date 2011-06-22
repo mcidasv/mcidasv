@@ -605,7 +605,9 @@
         <mapID target="idv.ui.displaymenus"							 url="ui/DisplayMenus.html" />
         <mapID target="idv.ui.displaymenus.projectionmenu"           url="ui/DisplayMenus.html#projectionmenu" />
         <mapID target="idv.ui.displaymenus.viewmenu"                 url="ui/DisplayMenus.html#viewmenu" />
+		<mapID target="idv.ui.displayvisibility"					 url="ui/DisplayVisibility.html" />
         <mapID target="idv.ui.draganddrop"			     url="ui/DragAndDrop.html" />
+		<mapID target="idv.ui.legend"								 url="ui/Legend.html" />
         <mapID target="idv.ui.image1"                                url="ui/index.html#image1" />
         <mapID target="idv.ui.maintoolbar.image1"                    url="ui/MainToolBar.html#image1" />
         <mapID target="idv.ui.menus"                                 url="ui/Menus.html" />
@@ -622,6 +624,7 @@
         <mapID target="idv.ui.menus.tools"                           url="ui/Menus.html#tools" />
         <mapID target="idv.ui.menus.viewmenu"                        url="ui/Menus.html#viewmenu" />
         <mapID target="idv.ui.menus.windows"                         url="ui/Menus.html#windows" />
+		<mapID target="idv.ui.modifycolorinteractively"				 url="ui/ModifyColorInteractively" />
         <mapID target="idv.ui.mouseandkeyboard"                      url="ui/Navigation.html" />
         <mapID target="idv.ui.navigation"                            url="ui/Navigation.html" />
         <mapID target="idv.ui.navigation.mac"                        url="ui/Navigation.html#mac" />

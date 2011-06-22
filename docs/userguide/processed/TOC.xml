@@ -29,7 +29,7 @@
     <tocitem text="Using the McIDAS-X Bridge" target="idv.quickstart.bridge"/>
 </tocitem>
 <tocitem text="Data Explorer" target="idv.ui.dashboard">
-    <tocitem text="Choosing Data Sources" target="idv.data.choosers">
+    <tocitem text="Data Sources" target="idv.data.choosers">
         <tocitem text="Choosing Data on Disk" target="idv.data.choosers.filechooser"/>
         <tocitem text="Choosing a URL" target="idv.data.choosers.urlchooser"/>
         <tocitem text="Choosing Cataloged Data" target="idv.data.choosers.catalogchooser"/>
@@ -45,90 +45,93 @@
         <tocitem text="Choosing Multispectral Data" target="idv.data.choosers.hydrachooser"/>
         <tocitem text="Creating a McIDAS-X Bridge Session" target="idv.data.choosers.bridgechooser"/>
     </tocitem>
-    <tocitem text="The Field Selector" target="idv.data.fieldselector">
+    <tocitem text="Field Selector" target="idv.data.fieldselector">
         <tocitem text="Data Source Properties" target="idv.data.datasourceproperties"/>
     </tocitem>
+	<tocitem text="Layer Controls" target="idv.page_displaycontrols">
+        <tocitem text="Overview" target="idv.controls"/>
+        <tocitem text="Gridded Data Displays" target="idv.page_griddeddatadisplays">
+            <tocitem text="Plan View Controls" target="idv.controls.planviewcontrol"/>
+            <tocitem text="Flow Plan Controls" target="idv.controls.flowplanviewcontrol"/>
+            <tocitem text="Vertical Cross-section Controls" target="idv.controls.crosssectioncontrol"/>
+            <tocitem text="Isosurface Controls" target="idv.controls.threedsurfacecontrol"/>
+            <tocitem text="Volume Rendering Controls" target="idv.controls.volumerendercontrol"/>
+            <tocitem text="Point Volume Controls" target="idv.controls.pointvolumecontrol"/>
+            <tocitem text="Value Plot Controls" target="idv.controls.valueplotcontrol"/>
+        </tocitem>
+        <tocitem text="Satellite and Radar Displays" target="idv.page_satelliteandradardisplays">
+            <tocitem text="Image Controls" target="idv.controls.imageplanviewcontrol"/>
+            <tocitem text="HYDRA Controls" target="idv.controls.hydra.index">
+                <tocitem text="MultiSpectral Display Controls" target="idv.controls.hydra.multispectraldisplaycontrol"/>
+                <tocitem text="Linear Combination Controls" target="idv.controls.hydra.linearcombinationcontrol"/>
+                <tocitem text="4 Channel Combination Controls" target="idv.controls.hydra.channelcombinationcontrol"/>
+            </tocitem>
+            <tocitem text="WSR-88D Level III Control" target="idv.controls.leveliiicontrol"/>
+            <tocitem text="Level 2 Radar Display Controls" target="idv.page_level2radardisplaycontrols">
+                <tocitem text="Radar Sweep Controls" target="idv.controls.level2.radarsweepcontrol"/>
+                <tocitem text="Radar RHI Display Controls" target="idv.controls.level2.radarrhidisplaycontrols"/>
+                <tocitem text="Radar Cross Section Controls" target="idv.controls.level2.radarcrosssectioncontrol"/>
+                <tocitem text="Radar CAPPI Display Controls" target="idv.controls.level2.radarcappidisplaycontrols"/>
+                <tocitem text="Radar Volume Controls" target="idv.controls.level2.radarvolumecontrol"/>
+                <tocitem text="Radar Isosurface Controls" target="idv.controls.level2.radarisosurfacecontrol"/>
+            </tocitem>
+            <tocitem text="Range Rings" target="idv.controls.misc.radargridcontrol"/>
+        </tocitem>
+        <tocitem text="Profiler Controls" target="idv.controls.profiler">
+            <tocitem text="Profiler Time/Height Controls" target="idv.controls.profiler.profilertimeheightcontrol"/>
+            <tocitem text="Profiler Station Plot Controls" target="idv.controls.profiler.profilerstationplotcontrol"/>
+            <tocitem text="Profiler 3D Multi-station Controls" target="idv.controls.profiler.profilermultistationcontrol3d"/>
+        </tocitem>
+        <tocitem text="Probes" target="idv.page_probes">
+            <tocitem text="Data Probe/Time Series" target="idv.controls.probecontrol"/>
+            <tocitem text="Time-Height Controls" target="idv.controls.timeheightcontrol"/>
+            <tocitem text="Vertical Profile Controls" target="idv.controls.profilecontrol"/>
+            <tocitem text="Data Transect Controls" target="idv.controls.datatransectcontrol"/>
+        </tocitem>
+        <tocitem text="Mapping Controls" target="idv.page_mappingcontrols">
+            <tocitem text="Map Controls" target="idv.controls.mapdisplaycontrol"/>
+            <tocitem text="Topography Controls" target="idv.controls.topographycontrol"/>
+            <tocitem text="Shapefile Controls" target="idv.controls.shapefilecontrol"/>
+        </tocitem>
+		<tocitem text="Observation and Location Controls" target="idv.page_observationandlocationcontrols">
+            <tocitem text="Point Data Plot Controls" target="idv.controls.stationmodelcontrol"/>
+            <tocitem text="Observation List Controls" target="idv.controls.obslistcontrol"/>
+            <tocitem text="Gridded Point Data" target="idv.controls.objectiveanalysis"/>
+            <tocitem text="Sounding Display Controls" target="idv.controls.aerologicalsoundingcontrol"/>
+            <tocitem text="Front Control" target="idv.controls.frontcontrol"/>
+            <tocitem text="Location Controls" target="idv.controls.stationlocationcontrol"/>
+            <tocitem text="WorldWind Controls" target="idv.controls.worldwindcontrol"/>
+            <tocitem text="Track Controls" target="idv.controls.trackcontrol"/>
+        </tocitem>
+        <tocitem text="Miscellaneous Controls" target="idv.page_miscellaneouscontrols">
+            <tocitem text="Storm Track Controls" target="idv.controls.misc.stormtrackcontrol"/>
+            <tocitem text="Scatter Analysis Controls" target="idv.controls.misc.scatteranalysiscontrol"/>
+            <tocitem text="McIDAS-X Bridge Controls" target="idv.controls.misc.bridgecontrol"/>
+            <tocitem text="Range and Bearing Controls" target="idv.controls.misc.rangeandbearingcontrol"/>
+            <tocitem text="Drawing Controls" target="idv.controls.misc.drawingcontrol"/>
+            <tocitem text="Transect Drawing Controls" target="idv.controls.misc.transectdrawingcontrol"/>
+            <tocitem text="Location Indicator Controls" target="idv.controls.misc.locationindicatorcontrol"/>
+            <tocitem text="Omni Controls" target="idv.controls.misc.omnicontrol"/>
+            <tocitem text="QuickTime Movie Controls" target="idv.controls.misc.moviedisplay"/>
+            <tocitem text="Web Map Server(WMS)/Background Image Controls" target="idv.controls.misc.wmscontrol"/>
+            <tocitem text="Jython Controls" target="idv.controls.jythoncontrol"/>
+            <tocitem text="Weather Text Product Controls" target="idv.controls.textproductcontrol"/>
+        </tocitem>
+        <tocitem text="Charts" target="idv.controls.chart"/>
+	    <tocitem text="Ensemble Grid Controls" target="idv.controls.ensemblegridcontrol"/>
+    </tocitem>
 </tocitem>
-<tocitem text="Main Window" target="idv.ui">
+<tocitem text="Main Display Window" target="idv.ui">
     <tocitem text="Menu Bar" target="idv.ui.menus"/>
     <tocitem text="Main Toolbar" target="idv.ui.maintoolbar"/>
     <tocitem text="Drag and Drop Tabs" target="idv.ui.draganddrop"/>
     <tocitem text="Display Menus" target="idv.ui.displaymenus"/>
+	<tocitem text="Legend" target="idv.ui.legend" />
     <tocitem text="Time Animation" target="idv.ui.animation"/>
+	<tocitem text="Display Visibility" target="idv.ui.displayvisibility"/>
     <tocitem text="Zooming, Panning and Rotating" target="idv.ui.navigation"/>
+	<tocitem text="Modify the Color Bar Interactively" target="idv.ui.modifycolorinteractively"/>
     <tocitem text="Transect Views" target="idv.ui.transectviewmanager"/>
-</tocitem>
-<tocitem text="Layer Controls" target="idv.page_displaycontrols">
-    <tocitem text="Overview" target="idv.controls"/>
-    <tocitem text="Gridded Data Displays" target="idv.page_griddeddatadisplays">
-        <tocitem text="Plan View Controls" target="idv.controls.planviewcontrol"/>
-        <tocitem text="Flow Plan Controls" target="idv.controls.flowplanviewcontrol"/>
-        <tocitem text="Vertical Cross-section Controls" target="idv.controls.crosssectioncontrol"/>
-        <tocitem text="Isosurface Controls" target="idv.controls.threedsurfacecontrol"/>
-        <tocitem text="Volume Rendering Controls" target="idv.controls.volumerendercontrol"/>
-        <tocitem text="Point Volume Controls" target="idv.controls.pointvolumecontrol"/>
-        <tocitem text="Value Plot Controls" target="idv.controls.valueplotcontrol"/>
-    </tocitem>
-    <tocitem text="Satellite and Radar Displays" target="idv.page_satelliteandradardisplays">
-        <tocitem text="Image Controls" target="idv.controls.imageplanviewcontrol"/>
-        <tocitem text="HYDRA Controls" target="idv.controls.hydra.index">
-            <tocitem text="MultiSpectral Display Controls" target="idv.controls.hydra.multispectraldisplaycontrol"/>
-            <tocitem text="Linear Combination Controls" target="idv.controls.hydra.linearcombinationcontrol"/>
-            <tocitem text="4 Channel Combination Controls" target="idv.controls.hydra.channelcombinationcontrol"/>
-        </tocitem>
-        <tocitem text="WSR-88D Level III Control" target="idv.controls.leveliiicontrol"/>
-        <tocitem text="Level 2 Radar Display Controls" target="idv.page_level2radardisplaycontrols">
-            <tocitem text="Radar Sweep Controls" target="idv.controls.level2.radarsweepcontrol"/>
-            <tocitem text="Radar RHI Display Controls" target="idv.controls.level2.radarrhidisplaycontrols"/>
-            <tocitem text="Radar Cross Section Controls" target="idv.controls.level2.radarcrosssectioncontrol"/>
-            <tocitem text="Radar CAPPI Display Controls" target="idv.controls.level2.radarcappidisplaycontrols"/>
-            <tocitem text="Radar Volume Controls" target="idv.controls.level2.radarvolumecontrol"/>
-            <tocitem text="Radar Isosurface Controls" target="idv.controls.level2.radarisosurfacecontrol"/>
-        </tocitem>
-        <tocitem text="Range Rings" target="idv.controls.misc.radargridcontrol"/>
-    </tocitem>
-    <tocitem text="Profiler Controls" target="idv.controls.profiler">
-        <tocitem text="Profiler Time/Height Controls" target="idv.controls.profiler.profilertimeheightcontrol"/>
-        <tocitem text="Profiler Station Plot Controls" target="idv.controls.profiler.profilerstationplotcontrol"/>
-        <tocitem text="Profiler 3D Multi-station Controls" target="idv.controls.profiler.profilermultistationcontrol3d"/>
-    </tocitem>
-    <tocitem text="Probes" target="idv.page_probes">
-        <tocitem text="Data Probe/Time Series" target="idv.controls.probecontrol"/>
-        <tocitem text="Time-Height Controls" target="idv.controls.timeheightcontrol"/>
-        <tocitem text="Vertical Profile Controls" target="idv.controls.profilecontrol"/>
-        <tocitem text="Data Transect Controls" target="idv.controls.datatransectcontrol"/>
-    </tocitem>
-    <tocitem text="Mapping Controls" target="idv.page_mappingcontrols">
-        <tocitem text="Map Controls" target="idv.controls.mapdisplaycontrol"/>
-        <tocitem text="Topography Controls" target="idv.controls.topographycontrol"/>
-        <tocitem text="Shapefile Controls" target="idv.controls.shapefilecontrol"/>
-    </tocitem>
-    <tocitem text="Observation and Location Controls" target="idv.page_observationandlocationcontrols">
-        <tocitem text="Point Data Plot Controls" target="idv.controls.stationmodelcontrol"/>
-        <tocitem text="Observation List Controls" target="idv.controls.obslistcontrol"/>
-        <tocitem text="Gridded Point Data" target="idv.controls.objectiveanalysis"/>
-        <tocitem text="Sounding Display Controls" target="idv.controls.aerologicalsoundingcontrol"/>
-        <tocitem text="Front Control" target="idv.controls.frontcontrol"/>
-        <tocitem text="Location Controls" target="idv.controls.stationlocationcontrol"/>
-        <tocitem text="WorldWind Controls" target="idv.controls.worldwindcontrol"/>
-        <tocitem text="Track Controls" target="idv.controls.trackcontrol"/>
-    </tocitem>
-    <tocitem text="Miscellaneous Controls" target="idv.page_miscellaneouscontrols">
-        <tocitem text="Storm Track Controls" target="idv.controls.misc.stormtrackcontrol"/>
-        <tocitem text="Scatter Analysis Controls" target="idv.controls.misc.scatteranalysiscontrol"/>
-        <tocitem text="McIDAS-X Bridge Controls" target="idv.controls.misc.bridgecontrol"/>
-        <tocitem text="Range and Bearing Controls" target="idv.controls.misc.rangeandbearingcontrol"/>
-        <tocitem text="Drawing Controls" target="idv.controls.misc.drawingcontrol"/>
-        <tocitem text="Transect Drawing Controls" target="idv.controls.misc.transectdrawingcontrol"/>
-        <tocitem text="Location Indicator Controls" target="idv.controls.misc.locationindicatorcontrol"/>
-        <tocitem text="Omni Controls" target="idv.controls.misc.omnicontrol"/>
-        <tocitem text="QuickTime Movie Controls" target="idv.controls.misc.moviedisplay"/>
-        <tocitem text="Web Map Server(WMS)/Background Image Controls" target="idv.controls.misc.wmscontrol"/>
-        <tocitem text="Jython Controls" target="idv.controls.jythoncontrol"/>
-        <tocitem text="Weather Text Product Controls" target="idv.controls.textproductcontrol"/>
-    </tocitem>
-    <tocitem text="Charts" target="idv.controls.chart"/>
-	<tocitem text="Ensemble Grid Controls" target="idv.controls.ensemblegridcontrol"/>
 </tocitem>
 <tocitem text="Tools" target="idv.page_tools">
     <tocitem text="User Preferences" target="idv.tools.preferences">
@@ -203,7 +206,7 @@
     <tocitem text="Performance Tuning" target="idv.misc.performancetuning"/>
     <tocitem text="Building McIDAS-V from Source" target="idv.misc.sourcebuild"/>
 </tocitem>
-<tocitem text="Appendix" target="idv.page_appendix">
+<tocitem text="Appendices" target="idv.page_appendix">
     <tocitem text="Examples of Display Types" target="idv.examples">
         <tocitem text="Plan Views" target="idv.examples.planviews"/>
         <tocitem text="3D Surface" target="idv.examples.3dsurface"/>
@@ -214,10 +217,6 @@
         <tocitem text="Flow Displays" target="idv.examples.flowdisplays"/>
         <tocitem text="Observations" target="idv.examples.observations"/>
         <tocitem text="Miscellaneous Display Types" target="idv.examples.miscellaneous">
-            <tocitem text="Globe Display" target="idv.examples.miscellaneous.globedisplay"/>
-            <tocitem text="Multi-Panel Display" target="idv.examples.miscellaneous.multipanel"/>
-            <tocitem text="Omni Display" target="idv.examples.miscellaneous.omnidisplay"/>
-        </tocitem>
     </tocitem>
 	<tocitem text="FAQ - Frequently Asked Questions" target="idv.faq">
 	    <tocitem text="General FAQ" target="idv.generalfaq"/>

@@ -30,22 +30,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/index.ht
 <div class="pagetitle">Layer Controls Overview</div>
 <p>A Layer Control is the interface through which a layer can be managed. A layer is usually shown in a view though they can be stand-alone.</p>
 <ul class="childlist">
-  <li><a href="#legends">Legend</a></li>
   <li><a href="#properties">Properties Dialog</a></li>
   <li><a href="#colorscale">Color Scale</a></li>
-  <li><a href="#modifycolor">Interactively Modifying the Color Bar</a></li>
-  <li><a href="#visibility">Display Visibility</a></li>
+  <li><a href="#options">Options</a></li>
   <li><a href="#menus">Menus</a></li>
 </ul>
-<div class="pagesubtitle">Legend<a name="legends" id="legends"></a> </div>
-<p>The legend in the Main Display Window lists the set of Layer Controls within that view. The legend can be floated from the Main Display Window. This is done with the <img src="images/Float.gif" width="16" height="18"align=absmiddle> <strong>Float Window</strong> button (the <img src="images/Embed.gif" width="16" height="18"align=absmiddle> <strong>Embed Window</strong> button will move the legend back into the Main Display Window).</p>
-<div class="images"><img src="images/SideLegend.gif" alt="Side Legend"><a name="image1" id="image1"></a> <br>
-<span class="caption">Image 1: Side Legend</span></div>
-<p>The Legend shows each layer under the "Layer Category" of that display. For example, the legend in the above image shows the categories "Maps", "Radar Displays", and "Plan Views". The Layer category may be changed. This is useful for grouping and controlling the visibility of a group of layers.</p>
-<p>The Legend Label shows the parameter or Field name, the display type, and sometimes other information such as the level of a plan view or value of an isosurface. The label may be changed  using items under the <strong>Edit-&gt;Properties</strong> menu item. Clicking on the highlighted part of the label will bring up the <strong>Layer Controls</strong> tab of the <strong>Data Explorer</strong>. Right-clicking will allow you to open the <strong>Layer Controls</strong> tab for that parameter, or access the menu options in the <strong>Layer Controls</strong> tab.</p>
-<a name="Vischeckbox" id="Vischeckbox"></a> <p>Each layer category within the Legend can be toggled to show or hide the layers under that category with the <strong>Toggle Category</strong> button. The visibility of the layers under a category (i.e., the graphical display within the Main Display Window) can be changed with the <strong>Category Visibility Checkbox</strong>. The visibility of an individual layer can be changed with the <strong>Layer Visibility Checkbox</strong>.</p>
-<p>The <img src="images/RemoveLayer.gif" width="16" height="20"align=absmiddle> <strong>Remove</strong> button quickly removes a layer. The <img src="images/unlock.gif" width="17" height="19"align=absmiddle> <strong>Visibility Toggle Lock</strong> "locks" the current visibility of the layer and does not change it while <a href="#visibility">cycling visibilities</a>.</p>
-<p>Detailed information about a layer may also be shown in the Legend. For example, for those layers that use a color table, the color bar will also be shown in the Legend. Moving the mouse over the color bar shows intermediate values. Right click on the color bar to open the <a href="../tools/ColorTableEditor.html">Color Table Editor</a>, change the range, select other color tables, etc.</p>
+<div class="pagesubtitle"></div>
 <div class="pagesubtitle"></div>
 <div class="pagesubtitle">Properties Dialog<a name="properties" id="properties"></a></div>
 <p>The Properties dialog is brought up with the <strong>Edit-&gt;Properties</strong> menu:</p>
@@ -67,47 +57,34 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/index.ht
 <p>There may be a variety of checkboxes:</p>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Show in Layer List</strong> -Allows for the toggling of the visibility of the label in the view window. Note that you must enable showing the list of display labels that are toggled on using the <strong>View-&gt;Properties</strong> dialog of the view window, or by setting the global property for all display through the <a href="../tools/preferences/DisplayWindowPreferences.html#showlayerlist">User Preferences</a> dialog.</li>
-  <li class="propertylistitem"><strong>Lock Visibility Toggle -</strong> Locks/unlocks <a href="#visibility">visibility toggling</a>.</li>
+  <li class="propertylistitem"><strong>Lock Visibility Toggle -</strong> Locks/unlocks <a href="../ui/DisplayVisibility.html">visibility toggling</a>.</li>
   <li class="propertylistitem"><strong>Show Note Text -</strong> Adds arbitrary text notes to the display. This checkbox menu item shows or hides the text field that allows you to edit the notes.</li>
   <li class="propertylistitem"><strong>Use Fast Rendering -</strong> Uses fast rendering to display data layers (images, contours, etc.); see <a href="../misc/PerformanceTuning.html">Performance Tuning</a> for more information. A separate fast rendering option for map layers is  available in the <a href="MapDisplayControl.html">Map Controls</a>. </li>
 </ul>
 <p>There may be other tabs shown, depending on the display. For example, the <strong>Color Scale</strong> tab allows for the configuration of where the color scale bar is shown. The <strong>Spatial Subset</strong> tab allows for defining further spatial subsetting of the data.</p>
 <a name="colorscale" id="colorscale"></a><div class="pagesubtitle">Color Scale</div>
 <p>For those controls that include color tables,  the color 
-scale (legend) can be displayed in the Main Display Window.  Use the options under the  <strong>Color
-Scale</strong> tab to configure the positioning and
+scale can be displayed in the Main Display Window.  Use the  the  <strong>Edit-&gt;Properties-&gt;Color
+Scale</strong> menu to configure the visibility, positioning, and
 labeling of the color scale.</p>
 <div class="images"><img src="images/ColorScale.gif" alt="Color Scale Properties"><a name="image3" id="image3"></a> <br>
   <span class="caption">Image 3: Color Scale Properties</span></div>
-  <p>
-<div class="pagesubtitle">Interactively Modifying the Color Bar<a name="modifycolor" id="modifycolor"></a></div>
-  <p>Click the Color Bar in the Legend to interactively modify the color bar. Holding the cursor over the color bar shows the Interactive Color Bar Editor instructions.</p>
-<div class="images"><img src="images/InteractiveColorBar.gif" width="185" height="114"><a name="image5" id="image4"></a> <br>
-  <span class="caption">Image 4: Interactive Color Bar Editor</span></div>
-  <p>These controls are activated once the color bar is clicked on in the Legend.</p>
-  <ul class="propertylist">
-  <li class="propertylistitem">Right-clicking on the color bar will open a drop-down menu with an option to open the <a href="../tools/ColorTableEditor.html">Color Table Editor</a>, change the range of the color, change the color bar to a different saved color bar, etc.</li>
-  <li class="propertylistitem">Control+R will revert the color bar back to its initial range after modifications have been made to it.</li>
-  <li class="propertylistitem">The Right arrow shifts the range of the color bar up, raising both the upper and lower bounds.</li>
-  <li class="propertylistitem">The Left arrow shifts the range of the color bar down, lowering both the upper and lower bounds.</li>
-  <li class="propertylistitem">The Up arrow expands the range of the color bar by lowering the lower bound and raising the upper bound.</li>
-  <li class="propertylistitem">The Down arrow shrinks the range of the color bar by raising the lower bound and lowering the upper bound.</li>
-  </ul>
-  <p><a name="visibility" id="visibility"></a></p>
-<div class="pagesubtitle">Display Visibility</div>
+<p> </p>
+<a name="options" id="options"></a>
+<div class="pagesubtitle">Options</div>
+<p>These options are found at the bottom left corner of the <strong>Layer Controls</strong> tab of the Data Explorer.</p>
+<div class="images"><img src="../ui/images/DataExplorerToolbar.gif" alt="Data Explorer Toolbar">
+    <br>
+<span class="caption">Image 4: Options</span></div>
+<p></p>
+<div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem">In the Legend, the <strong>Display Visibility</strong> checkbox to the left of the label can be used to toggle the visibility of that layer.</li>
-  <li class="propertylistitem">The function keys <strong>F1, F2, F3*</strong> can be used to cycle visibility as follows:</li>
-  <ul class="propertylist">
-    <li class="propertylistitem">The <strong>F1</strong> key cycles visibility through all non-locked layers, looping through each layer one at a time.</li>
-    <li class="propertylistitem">The <strong>F2</strong> turns on all non-locked layers.</li>
-    <li class="propertylistitem">The <strong>F3</strong> turns off all non-locked layers.</li>
-    <li class="propertylistitem"><strong>*</strong><em>On a Mac laptop, you may need to press the "Fn" key along with the particular function key</em>. </li>
-  </ul>
-  <li class="propertylistitem">The padlock icon <img src="images/unlock.gif"align=absmiddle> on the right side of the Legend bar is used to block the effects of the visibility toggling described above. When locked the visibility of a layer is not affected by the toggling.</li>
-  <li class="propertylistitem">Use the <strong>View-&gt;Visible</strong> checkbox menu item in each <strong>Layer Controls</strong> tab of the <strong>Data Explorer</strong>.</li>
+<li class="propertylistitem"><img src="../ui/images/Undock.gif" width="21" height="18"align=absmiddle> <strong>Undock Control Window -</strong> Undocks the selected controls from the Data Explorer. You can redock the Control Window by selecting <strong>View-&gt;Dock in Data Explorer</strong>.</li>
+<li class="propertylistitem"><img src="../ui/images/DisplayControlProperties.gif" width="21" height="18"align=absmiddle> <strong>Show Display Control Properties -</strong> Opens a Properties window, where you can control basic settings, add a color scale to the Main Display Window, change the times being displayed, or change the spatial subset of the data.</li>
+<li class="propertylistitem"><img src="../ui/images/RemoveDisplay.gif" width="15" height="18"align=absmiddle>  <strong>Remove Display Control - </strong>Removes the selected display from the Data Explorer and from the Main Display Window.</li>
+<li class="propertylistitem"><img src="../ui/images/DragAndDrop.gif" width="24" height="17"align=absmiddle> <strong>Drag and Drop to a Window Component - </strong>Allows you to move a component from one tab to another.</li>
 </ul>
-<div class="pagesubtitle">Menus<a name="menus" id="menus"></a></div>
+    <div class="pagesubtitle">Menus<a name="menus" id="menus"></a></div>
 <p>All parameters share a common set of <strong>File, Edit, View</strong>, and <strong>Help</strong> menu items, shown in the menu bar of the <strong>Layer Controls</strong> tab. Different controls may also have custom items in these menus as well.</p>
 <p>The <strong>File</strong> menu has these common choices:</p>
 <ul class="propertylist">
@@ -126,7 +103,7 @@ labeling of the color scale.</p>
     </ul>
   <li class="propertylistitem"><strong>Reload Data</strong> - Reloads the data for this display.</li>
 </ul>
-<p>The <strong>Edit</strong> menu has these common choices:</p>
+<p>The <strong>Edit</strong> menu has these common choices:</p><a name="edit" id="edit"></a>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Color Table</strong> - Allows for editing the color table, changing the range, choosing a new color table, etc. This works for displays that have a <a href="../tools/ColorTableEditor.html">color table</a>.</li>
   <li class="propertylistitem"><strong>Change Parameter</strong> - Allows for changing the Field that is being displayed.</li>
@@ -135,14 +112,14 @@ labeling of the color scale.</p>
   </li>
   <li class="propertylistitem"><strong>Change Contours</strong> - Allows for  changing the different aspects of the contours in the image by opening the <a href="../tools/ContourDialog.html">Contour Properties Editor</a>.</li>
   <li class="propertylistitem"><strong>Sharing</strong> - Allows for turning on/off sharing and to set the "share group". When <a href="../collab/Sharing.html">sharing</a> is turned on, control operations will be shared between two or more displays of the same type that are in the same share group. The share group can be an arbitrary name.
-      <li class="propertylistitem">For example, the location of a vertical cross section, the color table, location of a probe point, etc., can all be shared.</li>
+    <li class="propertylistitem">For example, the location of a vertical cross section, the color table, location of a probe point, etc., can all be shared.</li>
   <li class="propertylistitem"><strong>Display Settings -</strong> Opens the <a href="../tools/DisplaySettings.html">Display Settings</a> dialog, allowing for the selection of display properties to be applied to other display controls and/or to be saved as preferences to be used in the creation of new display controls.</li>
   <li class="propertylistitem"><strong>Properties</strong> - Opens the <a href="#properties">Properties</a> dialog, allowing for the changing of many settings, the color scale, and the times used in creating the display.</li>
 </ul>
 <p>The <strong>View</strong> menu has these common choices:</p>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Visible</strong> - Allows for  toggling  visibility. When selected, the parameter will be displayed in the Main Display Window. </li>
-  <li class="propertylistitem"><strong>Lock Visibility</strong> - Allows for toggling the visibility lock (see <a href="#visibility">cycling visibilities</a> below).</li>
+  <li class="propertylistitem"><strong>Lock Visibility</strong> - Allows for toggling the visibility lock (see <a href="../ui/DisplayVisibility.html">cycling visibilities</a>).</li>
   <a name="bringtofront" id="bringtofront"></a>
   <li class="propertylistitem"><strong>Bring To Front</strong> - Selects which display is on top if one display is showing at the same level in 3D as another (e.g., satellite and radar images in the same display).</li>
   <li class="propertylistitem"><strong>Show View Window</strong> - Brings the Main Display Window to the front. </li>

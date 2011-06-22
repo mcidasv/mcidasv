@@ -79,8 +79,8 @@ McIDAS-V can read a variety of data formats either from local files or remote da
     <td>- local files, TDS servers</td>
   </tr>
   <tr>
-    <td rowspan="16">Satellite Imagery</td>
-    <td rowspan="16">Geostationary and polar orbiter satellite imagery, derived
+    <td rowspan="17">Satellite Imagery</td>
+    <td rowspan="17">Geostationary and polar orbiter satellite imagery, derived
       satellite products</td>
     <td>- ADDE (<a href="#adde">4</a>)</td>
     <td>- ADDE servers</td>
@@ -88,6 +88,10 @@ McIDAS-V can read a variety of data formats either from local files or remote da
   <tr class="gridded_data_row">
     <td>- McIDAS AREA</td>
     <td>- local files, local &amp; remote ADDE servers</td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- AIRS</td>
+    <td>&nbsp;</td>
   </tr>
   <tr class="gridded_data_row">
     <td>- GINI</td>
@@ -145,9 +149,13 @@ McIDAS-V can read a variety of data formats either from local files or remote da
     <td>- TRMM (TeraScan netCDF) </td>
     <td>- local ADDE </td>
   </tr>
+ <tr class="gridded_data_row">
+  </tr> 
+  <tr class="gridded_data_row">
+  </tr>
   <tr>
-    <td rowspan="4">Radar</td>
-    <td rowspan="4">NEXRAD Level II and Level III radar data</td>
+    <td rowspan="5">Radar</td>
+    <td rowspan="5">NEXRAD Level II and Level III radar data</td>
     <td>- Level II</td>
     <td>- local files or TDS <br>
     (bzip2 compressed or uncompressed)</td>
@@ -163,6 +171,10 @@ McIDAS-V can read a variety of data formats either from local files or remote da
   <tr class="gridded_data_row">
     <td>- Dorade</td>
 	<td>&nbsp;</td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- NEXRAD </td>
+    <td> </td>
   </tr>
   <tr>
     <td rowspan="3">Point Observational</td>
@@ -241,24 +253,24 @@ servers, see the <a href="choosers/index.html">Choosing Data Sources</a> section
 <ul>
 <li><strong>chinook.ssec.wisc.edu</strong>
 <ul>
-<li><strong>NPRT:</strong> Aqua and Terra Arctic composites and granules.</li>
-<li><strong>SPRT:</strong> Aqua and Terra Antarctic composites and granules.</li>
+<li><strong>NPRT -</strong> Aqua and Terra Arctic composites and granules.</li>
+<li><strong>SPRT -</strong> Aqua and Terra Antarctic composites and granules.</li>
 </ul>
 </li>
 <li><strong>rets1.ssec.wisc.edu</strong>
 <ul>
-<li><strong>CIMSSP1:</strong> GOES East and West Cloud mask, imager CTP and ECA,
+<li><strong>CIMSSP1 -</strong> GOES East and West Cloud mask, imager CTP and ECA,
   and sounder products.</li>
 </ul>
 </li>
 <li><strong>rets2.ssec.wisc.edu</strong>
 <ul>
-<li><strong>CIMSSP2:</strong> GOES NH and SH wildfire products and GOES sounder products.</li>
+<li><strong>CIMSSP2 -</strong> GOES NH and SH wildfire products and GOES sounder products.</li>
 </ul>
 </li>
 <li><strong>rets3.ssec.wisc.edu</strong>
 <ul>
-<li><strong>CIMSSP3:</strong> GOES East and West products (CAPE, LI, TPW, Eff
+<li><strong>CIMSSP3 -</strong> GOES East and West products (CAPE, LI, TPW, Eff
   Cld, Ctop Pr).</li>
 </ul>
 </li>
@@ -267,28 +279,24 @@ servers, see the <a href="choosers/index.html">Choosing Data Sources</a> section
 <ul>
 <li><strong>adde.ucar.edu*</strong></li>
 <ul>
-<li><strong>RTIMAGES</strong>: GOES East and West images in native view, not remapped. Also some global Mollweide images, and an Antarctic composite.</li>
-<li><strong>GINIEAST</strong>: GOES East images, remapped to conic, Mercator (cylindrical equidistant), or polar projections channel 1.</li>
-<li><strong>GINIWEST</strong>:GOES West images, remapped to conic, Mercator (cylindrical equidistant), or polar projections channel 2.</li>
-<li><strong>GINICOMP</strong>: GINIEAST AND GINIWEST composites.</li>
-<li><strong>CIMSS</strong>: products derived from one or more channels, made by CIMSS, SSEC.</li>
-<li><strong>NEXRCOMP</strong>: composites of NEXRAD imagery (1km,
-  6km, 10 km radar coded message, 1-hour precip total, storm total precip).</li>
+<li><strong>CIMSS</strong> - Products derived from one or more channels, made by CIMSS, SSEC.</li>
+<li><strong>GINICOMP</strong> -  GINIEAST AND GINIWEST composites.</li>
+<li><strong>GINIEAST</strong> - GOES East images, remapped to conic, Mercator (cylindrical equidistant), or polar projections channel 1.</li>
+<li><strong>GINIWEST</strong> - GOES West images, remapped to conic, Mercator (cylindrical equidistant), or polar projections channel 2.</li>
+<li><strong>NEXRCOMP</strong> - composites of NEXRAD imagery (1km,
+    6km, 10 km radar coded message, 1-hour precip total, storm total precip).</li>
+<li><strong>RTIMAGES</strong> - GOES East and West images in native view, not remapped. Also some global Mollweide images, and an Antarctic composite.</li>
+<li><strong>TOPO -</strong> Plots land elevations with different projections using the color scales relevant to the chosen descriptor. The image will remap.</li>
 </ul>
 <li><strong>goessouth.unidata.ucar.edu</strong>
 <ul>
-<li><strong>SOUTH</strong>: GOES South (GOES-10) imager and sounder coverage
+<li><strong>SOUTH</strong> - GOES South (GOES-10) imager and sounder coverage
   of South America.</li>
-</ul>
-</li>
-<li><strong>nanuk.eosdis.nasa.gov</strong>
-<ul>
-<li><strong>NANUK:</strong> Aqua and Terra 1km, 500m, and 250m resolution images.</li>
 </ul>
 </li>
 <li><strong>satepsanone.nesdis.noaa.gov</strong></li>
 <ul>
-<li><strong>PUB:</strong> FY2C, METEOSAT-9 (6-hourly) and MTSAT imagery. GOES-East
+<li><strong>PUB   -</strong> FY2C, METEOSAT-9 (6-hourly) and MTSAT imagery. GOES-East
   and West imagery and products.</li>
 </ul>
 </ul>

@@ -58,7 +58,7 @@
 
     <div class="indented" id="dataexplorer">
       <span class="toggle" onClick="toggleChildren(this,'choosingdatasources');">+</span>
-      <span class="link" onClick="setPage('data/choosers/index.html');">Choosing Data Sources</span><br>
+      <span class="link" onClick="setPage('data/choosers/index.html');">Data Sources</span><br>
 
       <div class="indented" id="choosingdatasources">
         <span class="link" onClick="setPage('data/choosers/FileChooser.html');">Choosing Data on Disk</span><br>
@@ -81,32 +81,15 @@
       </div>
 
       <span class="toggle" onClick="toggleChildren(this,'thefieldselector');">+</span>
-      <span class="link" onClick="setPage('data/FieldSelector.html');">The Field Selector</span><br>
+      <span class="link" onClick="setPage('data/FieldSelector.html');">Field Selector</span><br>
 
       <div class="indented" id="thefieldselector">
         <span class="link" onClick="setPage('data/DataSourceProperties.html');">Data Source Properties</span><br>
       </div>
-
-    </div>
-
-    <span class="toggle" onClick="toggleChildren(this,'mainwindow');">+</span>
-    <span class="link" onClick="setPage('ui/index.html');">Main Window</span><br>
-
-    <div class="indented" id="mainwindow">
-      <span class="link" onClick="setPage('ui/Menus.html');">Menu Bar</span><br>
-      <span class="link" onClick="setPage('ui/MainToolBar.html');">Main Toolbar</span><br>
-	  <span class="link" onClick="setPage('ui/DragAndDrop.html');">Drag and Drop Tabs</span><br>
-      <span class="link" onClick="setPage('ui/DisplayMenus.html');">Display Menus </span><br>
-      <span class="link" onClick="setPage('ui/Animation.html');">Time Animation</span><br>
-      <span class="link" onClick="setPage('ui/Navigation.html');">Zooming, Panning and Rotating</span><br>
-      <span class="link" onClick="setPage('ui/TransectViewManager.html');">Transect Views</span><br>
-    </div>
-
-    <span class="toggle" onClick="toggleChildren(this,'layercontrols');">+</span>
-    <span class="link" onClick="setPage('page_layercontrols.html');">Layer Controls</span><br>
-
-    <div class="indented" id="layercontrols">
-      <span class="link" onClick="setPage('controls/index.html');">Overview</span><br>
+            <span class="toggle" onClick="toggleChildren(this,'page_layercontrols');">+</span>
+      <span class="link" onClick="setPage('page_layercontrols.html');">Layer Controls</span><br>
+            <div class="indented" id="page_layercontrols">
+                  <span class="link" onClick="setPage('controls/index.html');">Overview</span><br>
       <span class="toggle" onClick="toggleChildren(this,'layercontrols_2');">+</span>
       <span class="link" onClick="setPage('page_griddeddatadisplays.html');">Gridded Data Displays</span><br>
 
@@ -211,12 +194,25 @@
         <span class="link" onClick="setPage('controls/JythonControl.html');">Jython Controls</span><br>
         <span class="link" onClick="setPage('controls/misc/TextProductControl.html');">Weather Text Product Controls</span><br>
       </div>
-
       <span class="link" onClick="setPage('controls/Chart.html');">Charts</span><br>
       <span class="link" onClick="setPage('controls/EnsembleGridControl.html');">Ensemble Grid Controls</span><br>
-
     </div>
+    </div>
+    <span class="toggle" onClick="toggleChildren(this,'mainwindow');">+</span>
+    <span class="link" onClick="setPage('ui/index.html');">Main Display Window</span><br>
 
+    <div class="indented" id="mainwindow">
+        <span class="link" onClick="setPage('ui/Menus.html');">Menu Bar</span><br>
+            <span class="link" onClick="setPage('ui/MainToolBar.html');">Main Toolbar</span><br>
+            <span class="link" onClick="setPage('ui/DragAndDrop.html');">Drag and Drop Tabs</span><br>
+            <span class="link" onClick="setPage('ui/DisplayMenus.html');">Display Menus </span><br>
+<span class="link" onClick="setPage('ui/Legend.html');"> Legend</span><br>           
+            <span class="link" onClick="setPage('ui/Animation.html');">Time Animation</span><br>
+            <span class="link" onClick="setPage('ui/DisplayVisibility.html');">Display Visibility</span><br>
+            <span class="link" onClick="setPage('ui/Navigation.html');">Zooming, Panning and Rotating</span><br>
+            <span class="link" onClick="setPage('ui/ModifyColorInteractively.html');">Modify the Color Bar Interactively</span><br>
+            <span class="link" onClick="setPage('ui/TransectViewManager.html');">Transect Views</span><br>
+</div>
     <span class="toggle" onClick="toggleChildren(this,'tools');">+</span>
     <span class="link" onClick="setPage('page_tools.html');">Tools</span><br>
 
@@ -327,7 +323,7 @@
     </div>
 
     <span class="toggle" onClick="toggleChildren(this,'appendix');">+</span>
-    <span class="link" onClick="setPage('page_appendix.html');">Appendix</span><br>
+    <span class="link" onClick="setPage('page_appendix.html');">Appendices</span><br>
 <div class="indented" id="appendix">
                      
       <span class="toggle" onClick="toggleChildren(this,'appendix_1');">+</span>
@@ -342,14 +338,9 @@
         <span class="link" onClick="setPage('examples/Profiler.html');">Profiler Winds</span><br>
         <span class="link" onClick="setPage('examples/FlowDisplays.html');">Flow Displays</span><br>
         <span class="link" onClick="setPage('examples/Observations.html');">Observations</span><br>
-
-        <span class="toggle" onClick="toggleChildren(this,'appendix_1_1');">+</span>
         <span class="link" onClick="setPage('examples/Miscellaneous.html');">Miscellaneous Display Types</span><br>
 
-        <div class="indented" id="appendix_1_1">
-          <span class="link" onClick="setPage('examples/Miscellaneous.html#globedisplay');">Globe Display</span><br>
-          <span class="link" onClick="setPage('examples/Miscellaneous.html#multipanel');">Multi-Panel Display</span><br>
-          <span class="link" onClick="setPage('examples/Miscellaneous.html#omnidisplay');">Omni Display</span><br>
+        <div class="indented" id="appendix_1_1"><br>
         </div>
        		</div>
             <span class="toggle" onClick="toggleChildren(this,'faq');">+</span>
