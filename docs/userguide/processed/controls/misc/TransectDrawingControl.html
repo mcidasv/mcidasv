@@ -34,10 +34,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/misc/Tra
 <div class="pagesubtitle">Overview</div>
 <meta name="jhid" value="idv.controls.misc.transectdrawingcontrol">
 <p>The transect drawing controls are a version of the <a href="DrawingControl.html">Drawing
-    Controls</a> that allows you to view, create and modify the transect lines that
+    Controls</a> that allows you to view, create, and modify the transect lines that
 are used in the <a href="../../ui/TransectViewManager.html">Transect Views</a>. This option can be found under the <strong>Display-&gt;Draw Transect </strong>menu or through the <strong>Transects</strong> menu in the Transect View.</p>
 <p>This display control is a representation of the set of transects that are defined by the transect resource. Not only does it have its own state (that can be saved in a bundle for example), but it also writes out any transects you may create or change into your local McIDAS-V state directory in a transects.xml file. </p>
-<p> In this control, there is only one shape that you can draw with, the Transect Line. This control also shows a non-editable Transect Shape which displays the full transect line used by any Transect Views. These are called the &quot;Active Transects&quot;. There are also a set of transect lines that are non-editable that are from the system transects property. For an active transect, if the Transect View that it represents has a max distance set then the transect will show this max distance as a rectangular box.</p>
+<p> In this control, there is only one shape that you can draw with, the Transect Line. This control also shows a non-editable Transect Shape which displays the full transect line used by any Transect Views, called the &quot;Active Transects&quot;. There are also a set of transect lines that are non-editable that are from the system transects property. For an active transect, if the Transect View that it represents has a max distance set then the transect will show this max distance as a rectangular box.</p>
 <p>The Transect Drawing Control window consists of three tabs: <strong>Controls</strong>, <strong>Style</strong>, and <strong>Shapes</strong>.</p>
 <p>The <strong>Controls</strong> tab allows for the user to draw features in the Main Display Window:</p>
 <p></p>
@@ -47,7 +47,7 @@ are used in the <a href="../../ui/TransectViewManager.html">Transect Views</a>. 
 <p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><b>Mode</b> - <img src="images/transect.gif" width="20" height="20"align=absmiddle> Creats a transect in the Main Display Window by clicking and dragging.</li>
+  <li class="propertylistitem"><b>Mode</b> - <img src="images/transect.gif" width="20" height="20"align=absmiddle> Creates a transect in the Main Display Window by clicking and dragging.</li>
       <li class=propertylistitem> There are three editing modes, select, move and reshape:</li>
 	<ul class="propertylist">  
       <li class=propertylistitem> <img src="images/pointer.gif" align=absmiddle> Allows you to select one or more transect drawings. To select multiples press the control key. The selected transects will be shown with small magenta rectangles. Once selected you can bring up the transect's property editor by pressing Control+P. You can also delete the selected objects by pressing Control+X. You can select all of the objects by pressing Control+A.</li>
@@ -68,6 +68,7 @@ are used in the <a href="../../ui/TransectViewManager.html">Transect Views</a>. 
 <li class="propertylistitem"><strong>Color -</strong> Represents the color of the transect in the display.</li>
 <li class="propertylistitem"><strong>Line Width -</strong> Represents the thickness of the transect drawn in the display.</li>
 <li class="propertylistitem"><strong>Font -</strong> Changes the font of the text in the display.</li>
+<li class="propertylistitem"><strong>Size - </strong>Changes the size of the text in the display.</li>
 <li class="propertylistitem"><strong>Justification -</strong> Changes the justification of the text.</li>
 </ul>
 <p>The <strong>Shapes</strong> tab lists all of the graphical elements:</p>

@@ -73,6 +73,27 @@ in the table or through the <strong>View-&gt;Parameters</strong> menu.</p>
 <p><b>Probing on Point Data</b></p>
 <p>When probing on point data, the control will find the closest observation to the probe position and use that data to sample on.</p>
 <br>
+<a name="chartoptions"></a>
+<div class="pagesubtitle">Chart Options</div>
+<ul class="propertylist">
+<li class="propertylistitem"><b>Location</b> - Sets the location of the probe. Enter a latitude, longitude or altitude in the location fields on the
+      bottom right side of the <strong>Layer Controls </strong>and press Return.      </li>
+<li class="propertylistitem"><b>Levels</b> - Shows the
+      height of the sample point. Click in the level value box, and you can reset
+      the level for that parameter to other altitude values (in the native data
+      set) with a selector list of levels that pops up. The level &quot;Probe's&quot; is
+      whatever level the probe happens to be at, which may not be a native level
+      of the data. Note that once you set the level to a level not at the probe
+      point, the probe point no longer shows where the sample is from. The probe
+      does have the same latitude and longitude as the data shown, but not the
+      altitude.      </li>
+<li class="propertylistitem"><b>Sampling</b> - Shows which interpolation is used. Probe values can be interpolated from neighboring grid values, since
+      the probe position almost never coincides exactly with the location of
+      a data point. &quot;Weighed average&quot; uses interpolation
+      of nearby data points; &quot;Nearest neighbor&quot; gives the exact value
+      of the datum in the grid cell where the probe is located .Click in the
+      sampling column box, and you can set the sampling method for that parameter.</li>
+</ul>
 <a name="menuoptions"></a>
 <div class="pagesubtitle">Menu Options</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="index.html#menus">Menus section</a> of the Layer Controls Overview page. However, there
@@ -112,30 +133,6 @@ are several menu options that are unique to the Data Probe/Time Series display. 
             <li class="propertylistitem"><strong>Size -</strong> Increases or decreases the size of the probe in the Main Display Window.</li>
             <li class="propertylistitem"><strong>Probe Shape -</strong> Changes the shape of the probe displayed in the Main Display Window.</li>
   </ul>  
-</ul>
-<a name="chartoptions"></a>
-<div class="pagesubtitle">Chart Options</div>
-<ul class="propertylist">
-<li class="propertylistitem"><b>Location</b> - Enter a latitude, longitude or altitude in the location fields on the
-      bottom right side of the <strong>Layer Controls </strong>and press return
-      to set the location of the probe.      </li>
-<li class="propertylistitem"><b>Levels</b> - The <strong>Level</strong> column in the table shows the
-      height of the sample point. Click in the level value box, and you can reset
-      the level for that parameter to other altitude values (in the native data
-      set) with a selector list of levels that pops up. The level &quot;Probe's&quot; is
-      whatever level the probe happens to be at, which may not be a native level
-      of the data. Note that once you set the level to a level not at the probe
-      point, the probe point no longer shows where the sample is from. The probe
-      does have the same latitude and longitude as the data shown, but not the
-      altitude.      </li>
-<li class="propertylistitem"><b>Sampling</b> - Probe values can be interpolated from neighboring grid values, since
-      the probe position almost never coincides exactly with the location of
-      a data point. The <strong>Sampling</strong> column shows if
-      this interpolation is used. &quot;Weighed average&quot; uses interpolation
-      of nearby data points; &quot;Nearest neighbor&quot; gives the exact value
-      of the datum in the grid cell where the probe is located .Click in the
-      sampling column box, and you can set the sampling method for that parameter.</li>
-</p>
 </ul>
 
 <!-- InstanceEndEditable -->

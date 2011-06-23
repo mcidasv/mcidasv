@@ -33,46 +33,37 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/misc/Bri
 <xxxmeta xxxname="jhid" value="idv.controls.crosssectioncontrol">
 <div class="pagesubtitle">Overview</div>
 <p>The McIDAS-X Bridge Controls are used to create and import a McIDAS-X session
-  into McIDAS-V. The control window has two tabs. The first includes a pseudo
-  duplicate of the two main McIDAS-X windows:</p>
+  into McIDAS-V. The control window has two tabs, <strong>Frames</strong> and <strong>Settings</strong>.</p>
+<p>The <strong>Frames</strong> tab includes a pseudo
+    duplicate of the two main McIDAS-X windows:</p>
 <div class="images"><img  src="images/BridgeControlGui.gif"  alt="images/CrossSectionControlGui1.gif"></div>
-<p>The second shows the settings for this display control:</p>
+<p>The <strong>Settings</strong> tab shows the settings for this display control:</p>
 <div class="images"><img  src="../images/Xbridge.jpg"  alt="images/CrossSectionControlGui2.gif"></div>
 <p>Vertical cross sections can be made in three types of displays, with contour
   lines, color-filled contours, and as a color-shaded image.</p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><b>Command Line </b> - McIDAS-X commands can be entered through the &quot;Command Line&quot; text
+  <li class="propertylistitem"><b>Command Line </b> - Reads McIDAS-X commands that can be entered through the &quot;Command Line&quot; text
       entry box at the bottom of the <strong>Layer Controls</strong> tab. Interactive
       commands are not implemented. Recall commands (Shift+6 and Shift+7) do
       work in the bridge session. </li>
-  <li class="propertylistitem"><b>Smooth images </b> - When checked, anti-aliasing will
-      be used to smooth images when resizing to fit the frame display.</li>
-  <li class="propertylistitem"><b>Time Animation Controls</b> - <img src="images/BridgeAnimationControls.gif"></p>
+  <li class="propertylistitem"><b>Smooth images </b> - Uses anti-aliasing to smooth images when resizing to fit the frame display.</li>
+  <li class="propertylistitem"><b>Time Animation Controls</b> - <img src="images/BridgeAnimationControls.gif"align=absmiddle></p>
       <p>Controls looping of displays when more than one data time is loaded.
         See more in <a href="../../ui/Animation.html">Time Animation Control</a>.</li>
-  <li class="propertylistitem"><b>Color Table</b> - The control has a color bar showing the active color table and the associated
-      high and low data values in the units the display is made in. As the mouse
-      pointer is moved over the color bar, the value at a particular color is
-      shown. Click on the color bar to start the <a  href="../../tools/ColorTableEditor.html">Color
-      Table Editor</a>. Or click on the button that displays the name of the
-      color table to show a popup menu that allows you to change the range, select
-      other color tables, etc.</li>
-  <li class="propertylistitem"><b>Vertical Position </b> - This slider allows you to set the vertical position of the image.</li>
-  <li class="propertylistitem"><b>Pixel Sampling </b> - Adjust the <strong>Pixel Sampling</strong> slider to change the resolution
+  <li class="propertylistitem"><b>Color Table</b> - Shows the active color table and the associated        high and low data values in the units the display is made in. As   the mouse        pointer is moved over the color bar, the value at a particular   color is        shown. Right click on the color bar or click on the button that   displays the name of the Color Table to make modifications to the color   bar. This allows you to open thee <a  href="../../tools/ColorTableEditor.html">Color
+      Table Editor</a>, change the range, select other color tables, etc.</li>
+  <li class="propertylistitem"><b>Vertical Position </b> - Displays the locations at their altitude (if there is        one) or specifically defines the vertical position. This can be   changed by using the slider or typing a value into the field.</li>
+  <li class="propertylistitem"><b>Pixel Sampling </b> - Sets the resolution
     of the image. A larger number makes a lower resolution (coarser) display. </li>
-  <li class="propertylistitem"><b>Texture Quality</b> - Use the slider to change the texture quality of the display.</li>
-  <li class="propertylistitem"><b>Display data in the main 3D panel </b> - When checked images, graphics, and/or annotation lines from navigated
-      frames in the McIDAS-X Bridge session will be imported into the main 3D
-      panel in McIDAS-V. Non navigated frames are not imported into McIDAS-V
+  <li class="propertylistitem"><b>Texture Quality</b> - Sets the quality of the displayed texture of Image Control. A higher   quality will take longer to render and more memory.</li>
+  <li class="propertylistitem"><b>Display data in the main 3D panel </b> - Displays images, graphics, and/or annotation lines from navigated
+      frames in the McIDAS-X Bridge sessionin the Main Display Window. Non-navigated frames are not imported into McIDAS-V
       and will be skipped. </li>
-  <li class="propertylistitem"><b>Use McIDAS-X frame order to override data time with frame number </b> - When checked, navigated data will be imported into McIDAS-V based upon
+  <li class="propertylistitem"><b>Use McIDAS-X frame order to override data time with frame number </b> - Imports navigated data  into McIDAS-V based upon
       their order within the McIDAS-X frame order instead of by time.</li>
-  <li class="propertylistitem"><b>Use McIDAS-X data projection </b> - When checked, the default data projection from McIDAS-X will be used when
-      displayed navigated data in the main 3D panel in McIDAS-V. When unchecked,
-      the McIDAS-V default data projection will be used.</p>
+  <li class="propertylistitem"><b>Use McIDAS-X data projection </b> - Uses the default projection for McIDAS-X when displaying navigated data in the Main Display Window in McIDAS-V.
 </ul>
-
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
