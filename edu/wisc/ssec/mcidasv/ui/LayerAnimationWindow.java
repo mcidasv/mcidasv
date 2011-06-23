@@ -72,14 +72,14 @@ public class LayerAnimationWindow extends JFrame {
             }
         });
 
-        lblDwell = new JLabel("Dwell (ms):");
+        lblDwell = new JLabel("Dwell (s):");
         lblDwell.setFont(new Font("Lucida Grande", Font.PLAIN, 11));
         lblDwell.setEnabled(false);
 
         fieldCurrentDwell = new JTextField();
         fieldCurrentDwell.setEnabled(false);
         fieldCurrentDwell.setEditable(false);
-        fieldCurrentDwell.setText("0");
+        fieldCurrentDwell.setText("0.0");
         fieldCurrentDwell.setColumns(6);
 
         statusLabel = new JLabel("");
@@ -94,7 +94,7 @@ public class LayerAnimationWindow extends JFrame {
         contentPane.add(statusLabel, "cell 0 3 3 1");
     }
 
-    // dear god! change these names!
+    // dear god! change thes
     private void tglbtnEnableAnimationChanged(final ItemEvent event) {
         logger.trace("toggle: {}", event);
         boolean animationEnabled = (event.getStateChange() == ItemEvent.SELECTED);
@@ -102,14 +102,16 @@ public class LayerAnimationWindow extends JFrame {
         btnFaster.setEnabled(animationEnabled);
         ViewManager viewManager = getActiveViewManager();
         viewManager.setAnimatedVisibilityCheckBox(animationEnabled);
-        String dwell = Integer.toString(viewManager.getVisibilityAnimationSpeed());
+        double currentSpeed = viewManager.getVisibilityAnimationSpeed();
+        String dwell = Double.toString(currentSpeed / 1000.0);
         fieldCurrentDwell.setText(dwell);
     }
 
     private void btnFasterActionPerformed(final ActionEvent event) {
         ViewManager viewManager = getActiveViewManager();
         viewManager.fasterVisibilityAnimation();
-        String dwell = Integer.toString(viewManager.getVisibilityAnimationSpeed());
+        double currentSpeed = viewManager.getVisibilityAnimationSpeed();
+        String dwell = Double.toString(currentSpeed / 1000.0);
         fieldCurrentDwell.setText(dwell);
         logger.trace("faster: animationSpeed={}", dwell);
     }
@@ -117,7 +119,8 @@ public class LayerAnimationWindow extends JFrame {
     private void btnSlowerActionPerformed(final ActionEvent event) {
         ViewManager viewManager = getActiveViewManager();
         viewManager.slowerVisibilityAnimation();
-        String dwell = Integer.toString(viewManager.getVisibilityAnimationSpeed());
+        double currentSpeed = viewManager.getVisibilityAnimationSpeed();
+        String dwell = Double.toString(currentSpeed / 1000.0);
         fieldCurrentDwell.setText(dwell);
         logger.trace("slower: animationSpeed={}", dwell);
     }
