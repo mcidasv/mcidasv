@@ -48,8 +48,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat2_1.02beta1">Display Changes</a></div>
 <div class="faq-category">
       <ul class="noindent">
+      <li><strong><a class="faq-question-link" href="#layervisibility1.02beta1">Layer Visibility Animations</a></strong></li>
       <li><strong><a class="faq-question-link" href="#hovmoller1.02beta1">Hovmoller Display</a></strong></li>
-        <li><strong><a class="faq-question-link" href="#globebackground1.02beta1">Globe Background</a></strong></li>
       </ul>
 </div>
       <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_1.02beta1">Data Changes</a></div><strong></strong>
@@ -75,19 +75,18 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 </div>
 </div>
 <div class="faq-category-title"><a name="faq1_cat2_1.02beta1" id="faq1_cat2_1.02beta1"></a>Display Changes</div>
-<div class="faq-category"><a name="hovmoller1.02beta1" id="hovmoller1.02beta1"></a>  
+<div class="faq-category"><a name="layervisibility1.02beta1" id="layervisibility1.02beta1"></a>  
+    <h4><strong>Layer Visibility Animations</strong></h4>
+    <div class="faq-answer">Added a new tool to cycle through layers in a frame when there are no times associated with them to allow the standard Animation Control Widget to work. This option can be found under User Preferences-&gt;Toolbar Options, and is called Layer Visibility Animations. Once you add this to the Toolbar, it will appear in the Main Toolbar in McIDAS-V. This feature allows you to turn on/off animation and change the dwell rate of the images.</div>
+    <a name="hovmoller1.02beta1" id="hovmoller1.02beta1"></a>  
   <h4><strong>Hovmoller Display</strong></h4>
     <div class="faq-answer">Added the Hovmoller Display to the Displays menu in the Field Selector. Your display can be Time-Longitude or Time-Latitude, with either a color shaded or contour display. The display will be plotted in the Layer Controls tab, where you can change the color table, the time label format, and the order with respect to time of the display. This display can be used with both 2D and 3D model data, but not with derived fields.</div>
-</div>
-<div class="faq-category"><a name="globebackground1.02beta1" id="globebackground1.02beta1"></a>  
-    <h4><strong>Globe Background</strong></h4>
-    <div class="faq-answer">Shifted the globe background down slightly to allow for contours to properly display on the globe without intermittently being cut off.</div>
 </div>
 <div class="faq-category-title"><a name="faq1_cat3_1.02beta1" id="faq1_cat3_1.02beta1"></a>Data Changes</div>
 <div class="faq-category"><a name="multi1.02beta1" id="multi1.02beta1"></a>  
     <h4><strong>Multispectral Geocat Data</strong></h4>
     <div class="faq-answer">Added support for multispectral geocat data.</div>
-</div>
+    </div>
 <div class="faq-category"><a name="calipso1.02beta1" id="calipso1.02beta1"></a>  
     <h4><strong>Calipso/CloudSat Data</strong></h4>
     <div class="faq-answer">Added a new class to help with Calipso/CloudSat types of data. Also working on adding support for Level 2 Calipso/CloudSat data.</div>
