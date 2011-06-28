@@ -177,8 +177,13 @@ public class SystemState {
         long totalSwap = hackyMethodCall("getTotalSwapSpaceSize", Long.MIN_VALUE);
         double loadAvg = hackyMethodCall("getSystemLoadAverage", Double.NaN);
 
+        Runtime rt = Runtime.getRuntime();
+        long currentMem = rt.totalMemory() - rt.freeMemory();
+
         properties.put("opsys.cpu.time", Long.toString(cpuTime));
         properties.put("opsys.load", Double.toString(loadAvg));
+        properties.put("opsys.memory.jvm.current", Long.toString(currentMem));
+        properties.put("opsys.memory.jvm.max", Long.toString(rt.maxMemory()));
         properties.put("opsys.memory.virtual.committed", Long.toString(committed));
         properties.put("opsys.memory.physical.free", Long.toString(freeMemory));
         properties.put("opsys.memory.physical.total", Long.toString(totalMemory));
@@ -491,6 +496,9 @@ public class SystemState {
             logger.trace("grr='{}'", sysProps.get("line.separator"));
         }
 
+        String maxMem = Long.toString(Long.valueOf(machineProps.get("opsys.memory.jvm.max")) / 1048576L);
+        String curMem = Long.toString(Long.valueOf(machineProps.get("opsys.memory.jvm.current")) / 1048576L);
+
         buf.append("# Software Versions:")
             .append("\n# McIDAS-V: ").append(versions.get("mcv.version.general")).append(" (").append(versions.get("mcv.version.build")).append(')')
             .append("\n# IDV:      ").append(versions.get("idv.version.general")).append(" (").append(versions.get("idv.version.build")).append(')')
@@ -502,6 +510,9 @@ public class SystemState {
             .append("\n# Version: ").append(sysProps.getProperty("java.version"))
             .append("\n# Vendor:  ").append(sysProps.getProperty("java.vendor"))
             .append("\n# Home:    ").append(sysProps.getProperty("java.home"))
+            .append("\n\n# JVM Memory")
+            .append("\n# Current: ").append(curMem).append(" MB")
+            .append("\n# Maximum: ").append(maxMem).append(" MB")
             .append("\n\n# Java 3D:")
             .append("\n# Renderer: ").append(j3dProps.get("j3d.renderer"))
             .append("\n# Pipeline: ").append(j3dProps.get("j3d.pipeline"))
