@@ -41,6 +41,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -72,6 +73,8 @@ import org.python.core.PyTuple;
 import org.python.util.InteractiveConsole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ucar.unidata.util.StringUtil;
 
 // TODO(jon): Console should become an interface. there is no reason people 
 //            should have to deal with the UI stuff when they only want to use
@@ -158,7 +161,12 @@ public class Console implements Runnable, KeyListener {
         // err, shouldn't the gui stuff be done explicitly in the EDT!?
         menuWrangler = new DefaultMenuWrangler(this);
         panel = new JPanel(new BorderLayout());
-        textPane = new JTextPane();
+        textPane = new JTextPane() {
+            @Override public void paste() {
+                
+                super.paste();
+            }
+        };
         document = textPane.getDocument();
         panel.add(BorderLayout.CENTER, new JScrollPane(textPane));
         setCallbackHandler(new DummyCallbackHandler());
@@ -174,6 +182,7 @@ public class Console implements Runnable, KeyListener {
         new DeleteAction(this, Actions.DELETE);
         new HomeAction(this, Actions.HOME);
         new TabAction(this, Actions.TAB);
+        new PasteAction(this, Actions.PASTE);
 //        new UpAction(this, Actions.UP);
 //        new DownAction(this, Actions.DOWN);
 
@@ -349,7 +358,7 @@ public class Console implements Runnable, KeyListener {
             document.insertString(document.getLength(), text, style);
             textPane.setCaretPosition(document.getLength());
         } catch (BadLocationException e) {
-            e.printStackTrace();
+            logger.error("bad location", e);
         }
     }
 
@@ -629,6 +638,12 @@ public class Console implements Runnable, KeyListener {
         return localsMap;
     }
 
+    public void handlePaste() {
+        logger.trace("not terribly sure...");
+        getTextPane().paste();
+        logger.trace("after forcing paste!");
+    }
+
     /**
      * Handles the user hitting the {@code Home} key. If the caret is on a line
      * that begins with either {@link #PS1} or {@link #PS2}, the caret will be
@@ -816,6 +831,8 @@ public class Console implements Runnable, KeyListener {
         END("jython.end", KeyEvent.VK_END, 0),
         ENTER("jython.enter", KeyEvent.VK_ENTER, 0),
         HOME("jython.home", KeyEvent.VK_HOME, 0),
+        PASTE("jython.paste", KeyEvent.VK_V, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+        //        PASTE("jython.paste", KeyEvent.VK_V, KeyEvent.CTRL_MASK);
 //        UP("jython.up", KeyEvent.VK_UP, 0),
 //        DOWN("jython.down", KeyEvent.VK_DOWN, 0);
         ;

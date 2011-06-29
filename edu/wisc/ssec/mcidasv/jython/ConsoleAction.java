@@ -86,6 +86,16 @@ public abstract class ConsoleAction extends TextAction {
     public abstract void actionPerformed(final ActionEvent e);
 }
 
+class PasteAction extends ConsoleAction {
+    public PasteAction(final Console console, final Actions type) {
+        super(console, type);
+    }
+    
+    public void actionPerformed(final ActionEvent e) {
+        getSourceConsole(e).handlePaste();
+    }
+}
+
 class EnterAction extends ConsoleAction {
     private static final long serialVersionUID = 6866731355386212866L;
 
