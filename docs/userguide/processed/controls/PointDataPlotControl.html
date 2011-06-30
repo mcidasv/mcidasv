@@ -34,6 +34,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/PointDat
 <div class="pagesubtitle">Overview</div>
 <p>The Point Data Plot Controls show a set of observations using a station model.
 The control window consists of four tabs: <strong>Layout</strong>, <strong>Times</strong>, <strong>Plot</strong>, and <strong>Filters</strong>.</p>
+<ul>
+  <li>  <a href="#layout">Layout</a></li>
+  <li>  <a href="#times">Times</a></li>
+  <li>  <a href="#plot">Plot</a></li>
+  <li>  <a href="#filters">Filters</a></li> 
+    <li>  <a href="#menus">Menus</a></li>
+</ul>
+  <a name="layout" id="layout"></a>
 <p>The<strong> Layout </strong>tab allows you to control
   basics of the display:</p>
 <div class="images"><img  src="images/PointDataPlotControlGui1.gif"  alt="images/StationModelControlGui1.gif"></div>
@@ -51,10 +59,11 @@ The control window consists of four tabs: <strong>Layout</strong>, <strong>Times
   <li class="propertylistitem"><strong>Line Width - </strong>Sets the thickness of the layout model being displayed in the Main Display Window.</li>
   <li class="propertylistitem"><strong>Vertical Position - </strong>Sets the vertical position of the layout model with respect to other variables being displayed. The Altitude option will set the vertical position of the layout models based off of the stations' altitudes (if available). The Fixed Position option will uniformly set a fixed vertical position for each layout model regardless of altitude. The value for a fixed position can be set using the slider or entering a value into the field.</li>
 </ul>
+<a name="times" id="times"></a>
 <p>The <strong>Times</strong> tab allows you to change the observation times that are shown in the display. By default, data for a single time corresponding to the current animation time will be shown. 
-Using this widget allows you to show multiple times at once.</p>
+    Using this widget allows you to show multiple times at once:</p>
 <div class="images"><img  src="images/PointDataPlotControlGui2.gif"  alt="images/StationModelControlGui2.gif" ></div>
-<p>Clicking on <img src="images/rangeIcon.jpg" width="20" height="15"> opens a menu that allows you to select specific start and end times.</p>
+<p>Clicking on <img src="images/rangeIcon.jpg" width="20" height="15"> opens a menu that allows you to select specific start and end times:</p>
 <div class="images"><p><img src="images/PointDataPlotTimeSettings.jpg" width="433" height="224"></div>
 <p></p>
 <div class="pagesubtitle">Properties</div>
@@ -68,10 +77,11 @@ Using this widget allows you to show multiple times at once.</p>
       <p> Note: If you are displaying point data that has a large number of times
       you will be prompted whether you want to view all of the times.</p></li>
 </ul>
+<a name="plot" id="plot"></a>
 <p>The <strong>Plot</strong> tab provides a time series chart and a data readout table of a selected
-  station. To use this, left-click on a station in the main display. Double click or right click and select Add To Chart on a table row to add it
-  to the time series chart. See the <a href="Chart.html">Charts page</a> for more information
-  about customizing the chart.</p>
+    station. To use this, left-click on a station in the main display. Double click or right click and select Add To Chart on a table row to add it
+    to the time series chart. See the <a href="Chart.html">Charts page</a> for more information
+    about customizing the chart:</p>
 <div class="images"><img  src="images/PointDataPlotControlGui3.gif"  alt="images/StationModelControlGui2.gif" ></div>
 <p></p>
 <div class="pagesubtitle">Properties</div>
@@ -81,7 +91,8 @@ Using this widget allows you to show multiple times at once.</p>
   <li class="propertylistitem"><strong>Value - </strong>Lists the numerical value of the property at the 
   time selected.
 </ul>  
-<p><a name="filters"></a>The <strong>Filters</strong> tab allows you to specify a set of visibility filters.</p>
+<p><a name="filters" id="filters"></a></p>
+<p>The <strong>Filters</strong> tab allows you to specify a set of visibility filters:</p>
 <div class="images">
   <p><img  src="images/PointDataPlotControlFilters.gif"  alt="images/StationModelControlFilters.gif" ></p>
 </div>
@@ -99,8 +110,9 @@ Using this widget allows you to show multiple times at once.</p>
 <p>The above image shows the tab with where you define filters. This image
       shows two filter expressions, one that states the Temperature field needs
       to be greater that 35 F and the other states that the Wind Speed value needs
-      to be greater than 10. The unit of [F] is entered for the Temperature field. If you do not define a unit after the value, then McIDAS-V will utilize the native unit for the Property. Match all of the filters is selected, meaning only Layout Models where the Temperature is greater than 35 degrees F and the wind speed is greater than 10 will be displayed</p>
+      to be greater than 10. The unit of [F] is entered for the Temperature field. If you do not define a unit after the value, then McIDAS-V will utilize the native unit for the Property. Match all of the filters is selected, meaning only Layout Models where the Temperature is greater than 35 degrees F and the wind speed is greater than 10 will be displayed.</p>
   </ul>
+<a name="menus" id="menus"></a>
   <div class="pagesubtitle">Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="index.html#menus">Menus section</a> of the Layer Controls Overview page. However, there are some options that are unique to this display.</p>
 <p>The <strong>File</strong> menu has these unique options:</p>

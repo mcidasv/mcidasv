@@ -223,11 +223,11 @@
       <div class="indented" id="tools_1">
         <span class="link" onClick="setPage('tools/preferences/GeneralPreferences.html');">General Preferences</span><br>
         <span class="link" onClick="setPage('tools/preferences/DisplayWindowPreferences.html');">Display Window Preferences</span><br>
-        <span class="link" onClick="setPage('tools/preferences/ToolbarPreferences.html');">Toolbar Option Preferences</span><br>
+        <span class="link" onClick="setPage('tools/preferences/ToolbarPreferences.html');">Toolbar Options Preferences</span><br>
         <span class="link" onClick="setPage('tools/preferences/DataPreferences.html');">Data Sources Preferences</span><br>
-        <span class="link" onClick="setPage('tools/preferences/ServerPreferences.html');">ADDE Server Preferences</span><br>
+        <span class="link" onClick="setPage('tools/preferences/ServerPreferences.html');">ADDE Servers Preferences</span><br>
         <span class="link" onClick="setPage('tools/preferences/AvailableDisplaysPreferences.html');">Available Displays Preferences</span><br>
-        <span class="link" onClick="setPage('tools/preferences/NavigationPreferences.html');">Navigation Control Preferences</span><br>
+        <span class="link" onClick="setPage('tools/preferences/NavigationPreferences.html');">Navigation Controls Preferences</span><br>
         <span class="link" onClick="setPage('tools/preferences/FormatPreferences.html');">Formats and Data Preferences</span><br>
         <span class="link" onClick="setPage('tools/preferences/AdvancedPreferences.html');">Advanced Preferences </span><br>
       </div>

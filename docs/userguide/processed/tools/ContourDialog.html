@@ -30,23 +30,29 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ContourDial
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Contour Properties Editor</div>
-<p>The <strong>Contour Properties Editor</strong> is invoked from any contour display control with the <strong>Contour: Change</strong> button or through <strong>Edit-&gt;Change Contours...</strong>.</p>
+<p>The <strong>Contour Properties Editor</strong> is invoked from any contour display control with the <strong>Contour: Change</strong> button or through the <strong>Edit-&gt;Change Contours...</strong> menu.</p>
 <div class="images"><img src="images/ContourDialogLabels.gif" width="346" height="332"></div>
 <p>Use the items in this window to set contouring properties.</p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Contour Interval</strong></span><strong> -</strong> Represents the spacing (difference in value) between contours. There are four ways to specify the contour interval.</li>
-  <ol>
-    <li>Specify a single value to denote a regular interval between contours.</li>
-    <li>Specify irregular contour intervals with a semi-colon separated list of values. For example:<br>
-    5400;5460;5800. This would only show contours at 5400, 5460, and 5800.</li>
-    <li>Specify different contour intervals for different ranges in the following format:<br>
-      cint1/min1/max1;cint2/min2/max2;...;cintn/minn/maxn<br>
-      For example, with geopotential heights: 30/0/4200;60/4200/8600;120/8600/24000
+<ul class="propertylist">
+    <li class="propertylistitem">1. Specify a single value to denote a regular interval between contours.</li>
+    <li class="propertylistitem">2. Specify irregular contour intervals with a semi-colon separated list of values. For example:</li>
+    <ul class="propertylist">
+    <li class="propertylistitem">5400;5460;5800. This would only show contours at 5400, 5460, and 5800.</li>
+    </ul>
+    <li class="propertylistitem">3. Specify different contour intervals for different ranges in the following format:</li>
+    <ul class="propertylist">
+      <li class="propertylistitem">cint1/min1/max1;cint2/min2/max2;...;cintn/minn/maxn</li>
+      <li class="propertylistitem">For example, with geopotential heights: 30/0/4200;60/4200/8600;120/8600/24000
     would draw contours at 30gpm between 0 and 4200, 60gpm between  4200 and 8600, and 120gpm between 8600 and 24000</li>
-    <li>Specify one individual contour by setting the interval, min, and max as the same value. For example:<br>
-    5400/5400/5400. This would only show the 5400 line.</li>
-  </ol>
+    </ul>
+    <li class="propertylistitem">4. Specify one individual contour by setting the interval, min, and max as the same value. For example:</li>
+    <ul class="propertylist">
+    <li class="propertylistitem">5400/5400/5400. This would only show the 5400 line.</li>
+  </ul>
+  </ul>
   <li class="propertylistitem"><strong>Base Contour -</strong> Represents the value on which all contours are based. All contours will be integer multiples of the contour interval from the base value. For example, with a base value of 0 and a contour interval of 3 contours would be created at ..-6, -3, 0, 3, 6... A base of 1 with that interval would create contours at ..-5, -2, 1, 4, 7... The base value does not have to be the lowest contour level on a plot, or inside the range of values plotted; it is only a computational reference point. The base contour value is also used for controlling which lines are dashed.</li>
   <li class="propertylistitem"><strong>Minimum Value -</strong> Represents the limit below which no contour lines are shown. The minimum value may be larger than the base value, so that the base value may never appear on a plot.</li>
   <li class="propertylistitem"><strong>Maximum Value -</strong> Represents the upper limit above which no contour lines are shown. The minimum and maximum values do not need to match contour line values; they are only limits.</li>

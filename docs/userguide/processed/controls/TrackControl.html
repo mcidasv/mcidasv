@@ -35,8 +35,6 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/TrackCon
 <p>The track controls display trajectory data sets, e.g., aircraft track, ship,
 buoys, etc. The track controls consist of two tabs. The first controls the <strong>Layout</strong>: </p>
 <div class="images"><img  src="images/TrackControlGui.gif"  alt="images/TrackControlGui.gif" ></div>
-<p>The second tab controls the <strong>Times</strong>:</p>
-<div class="images"><img src="images/TrackControlGui2.gif" alt="images/TrackControlGui2.gif" ></div>
 <p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
@@ -58,9 +56,14 @@ buoys, etc. The track controls consist of two tabs. The first controls the <stro
       to edit a current layout, or to create a new one. Use the slider or enter
       in a value and hit enter in the <strong>Scale</strong> option to set the
       scale of the marker. </li>
-  <li class="propertylistitem"><b>Line Width</b> - This slider allows you to set the width of the displayed trajectory line.</li>
+  <li class="propertylistitem"><b>Line Width</b> - This slider allows you to set the width of the displayed trajectory line.</li></ul>
+<p>The second tab controls the <strong>Times</strong>:</p>
+<div class="images"><img src="images/TrackControlGui2.gif" alt="images/TrackControlGui2.gif" ></div>
+<p></p>
+<div class="pagesubtitle">Properties</div>
+<ul class="propertylist">
   <li class="propertylistitem"><b>Times to Use</b> - Choose to use either nominal times, or the track times from the data.
-       You can also choose to limit the times of data shown by checking <strong>enabled</strong>.</li>
+      You can also choose to limit the times of data shown by checking <strong>enabled</strong>.</li>
   <li class="propertylistitem"><b>Time Mode</b> - Even though a track represents a set of observation times, there is not
       time set defined for animating in the main display. The time mode allows
       for the control of how much of the track is shown and from what time. Select
@@ -70,8 +73,7 @@ buoys, etc. The track controls consist of two tabs. The first controls the <stro
     <p>This dialog allows you to define the time range to show of the track.
       The image above defines that the end time is the current animation time.
       The start time is relative to the end time less 30 minutes.</p>
-    <p> This time setting is similar to that used for the general <a href="../ui/Animation.html#animationset">time
-        animation</a>.</li>
+    <p> This time setting is similar to that used for the general <a href="../ui/Animation.html#animationset">Define Animation Times tab</a>.</li>
   <li class="propertylistitem"><b>Change Parameter</b> - Change the parameter displayed by using the <strong>Edit-&gt;Change Parameter</strong> menu. </li>
   <li class="propertylistitem"><strong>Change Display Unit </strong> - Change the unit of the parameter displayed by using the <strong>Edit-&gt;Change
         Display Unit</strong> menu.  </p>

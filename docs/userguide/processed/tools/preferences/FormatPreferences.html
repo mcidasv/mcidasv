@@ -37,7 +37,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
   <p>Formats</p>
 </div>
 <ul class="propertylist">
-<a name="dateformat" id="dateformat"></a><li class="propertylistitem"><b>Date Format</b> <b>- </b>Format used when McIDAS-V displays dates. The date format string uses
+<a name="dateformat" id="dateformat"></a>
+<li class="propertylistitem"><b>Date Format</b> <b>- </b>Represents the format used when McIDAS-V displays dates. The date format string uses
   the following symbols. Note, these symbols can be repeated to give different
   results. </li>
 <p>For example:</p>
@@ -152,9 +153,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 </table></blockquote>
 
 <a name="timezone" id="timezone"></a>
-<li class="propertylistitem"><b>Time Zone -</b> Format used when McIDAS-V displays times.</li>
+<li class="propertylistitem"><b>Time Zone -</b> Represents the format used when McIDAS-V displays times.</li>
 <a name="latlonformat" id="latlonformat"></a>
-<li class="propertylistitem"><b>Lat/Lon Format</b> - Format used when McIDAS-V displays latitudes and longitudes. The following symbols are valid in the decimal formatting.</li>
+<li class="propertylistitem"><b>Lat/Lon Format</b> - Represents the format used when McIDAS-V displays latitudes and longitudes. The following symbols are valid in the decimal formatting.</li>
   <blockquote>
 <table width="457" class="noborder" style="margin:10px;">
   <tr>
@@ -228,9 +229,10 @@ the latitude and longitude values.
   </tr>
 </table></blockquote>
 <a name="probeformat" id="probeformat"></a>
-<li class="propertylistitem"><b>Probe Format -</b> Html template that is used
+<li class="propertylistitem"><b>Probe Format -</b> Represents the html template that is used
   to display data readouts in the data probe display. This html template can
-  contain macros that are replaced with the probed values. Macros are: <ul>
+  contain macros that are replaced with the probed values. Macros are: 
+    <ul>
   %value% Formatted value <br>
   %unit% Display unit <br>
   %rawvalue% Unformatted value <br>
@@ -238,30 +240,30 @@ the latitude and longitude values.
 </ul>
 </li>
 <a name="distanceunit" id="distanceunit"></a>
-<li class="propertylistitem"><b>Distance Unit -</b> Default unit that is used when displaying distances (e.g., in the Range
+<li class="propertylistitem"><b>Distance Unit -</b> Represents the default unit that is used when displaying distances (e.g., in the Range
   and Bearing Control).</li>
 </ul>
 <div class="pagesubtitle">Data</div>
 <a name="samplingmode" id="samplingmode"></a>
 <ul class="propertylist">
-<li class="propertylistitem"><b>Sampling Mode -</b> Sampling method used by data probes in McIDAS-V. Choose between a weighted average sampling or
+<li class="propertylistitem"><b>Sampling Mode -</b> Represents the sampling method used by data probes in McIDAS-V. Choose between a weighted average sampling or
   nearest neighbor.</li>
 <a name="pressuretoheight" id="pressuretoheight"></a>
-<li class="propertylistitem"><b>Pressure to Height</b> -  Type of algorithm
+<li class="propertylistitem"><b>Pressure to Height</b> -  Represents the type of algorithm
   McIDAS-V uses for converting from pressure coordinates to height. See the <a href="../../DataFaq.html#pressure_to_height">FAQ</a> for
   more information on this option.</li>
 <a name="cachedatainmemory" id="cachedatainmemory"></a>
 <li class="propertylistitem"><b>Cache Data in Memory - </b>Attempts to cache data that McIDAS-V loads into memory for quicker data access.</li>
 <a name="diskcachesize" id="diskcachesize"></a>
-<li class="propertylistitem"><b>Disk Cache Size -</b> Maximum amount of disk space used when caching data. McIDAS-V will cache some datasets to disk to eliminate network latency.</li>
+<li class="propertylistitem"><b>Disk Cache Size -</b> Represents the maximum amount of disk space used when caching data. McIDAS-V will cache some datasets to disk to eliminate network latency.</li>
 <a name="maximagesize" id="maximagesize2"></a>
-<li class="propertylistitem"><b>Max Image Size -</b> Maximum image
+<li class="propertylistitem"><b>Max Image Size -</b> Represents the maximum image
   size (in pixels) that is to be displayed. When this preference is set the image
   display will adjust the Pixel Sampling to reduce the image to less than the
   preferred value. This allows for the initial display of large images without
   causing memory issues. </li>
 <a name="gridthreshold" id="gridthreshold"></a>
-<li class="propertylistitem"><b>Grid Threshold -</b> Size limit
+<li class="propertylistitem"><b>Grid Threshold -</b> Sets the size limit
   for holding grids in memory. Grids larger than this size will be cached to
   disk instead of held in memory during the McIDAS-V session. This allows loading
   large grids and long loops of grids without a major performance hit.

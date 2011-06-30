@@ -39,8 +39,14 @@ are used in the <a href="../../ui/TransectViewManager.html">Transect Views</a>. 
 <p>This display control is a representation of the set of transects that are defined by the transect resource. Not only does it have its own state (that can be saved in a bundle for example), but it also writes out any transects you may create or change into your local McIDAS-V state directory in a transects.xml file. </p>
 <p> In this control, there is only one shape that you can draw with, the Transect Line. This control also shows a non-editable Transect Shape which displays the full transect line used by any Transect Views, called the &quot;Active Transects&quot;. There are also a set of transect lines that are non-editable that are from the system transects property. For an active transect, if the Transect View that it represents has a max distance set then the transect will show this max distance as a rectangular box.</p>
 <p>The Transect Drawing Control window consists of three tabs: <strong>Controls</strong>, <strong>Style</strong>, and <strong>Shapes</strong>.</p>
+<ul>
+  <li>  <a href="#controls">Controls</a></li>
+  <li>  <a href="#style">Style</a></li>
+  <li>  <a href="#shapes">Shapes</a></li>
+  <li>  <a href="#menus">Menus</a></li> 
+  </ul>
+<a name="controls" id="controls"></a>
 <p>The <strong>Controls</strong> tab allows for the user to draw features in the Main Display Window:</p>
-<p></p>
 <div class="images">
     <p><img  src="images/TransectDrawingControlGui.gif"  alt="images/TransectDrawingControlGui.gif" ></p>
 </div>
@@ -59,6 +65,7 @@ are used in the <a href="../../ui/TransectViewManager.html">Transect Views</a>. 
   <li class="propertylistitem"><b>Show transects</b> - Toggles the visibility of the regular transects.</li>
   <li class="propertylistitem"><b>Show active transects</b> - Toggles the visibility of the active transects.</p>
 </ul>
+<a name="style" id="style"></a>
 <p>The <strong>Style</strong> tab controls the style the drawings take in the Main Display Window:
 <div class="images"><img src="images/TransectDrawingControlGui2.gif" width="620" height="281"></div>
 <p></p>
@@ -71,6 +78,7 @@ are used in the <a href="../../ui/TransectViewManager.html">Transect Views</a>. 
 <li class="propertylistitem"><strong>Size - </strong>Changes the size of the text in the display.</li>
 <li class="propertylistitem"><strong>Justification -</strong> Changes the justification of the text.</li>
 </ul>
+<a name="shapes" id="shapes"></a>
 <p>The <strong>Shapes</strong> tab lists all of the graphical elements:</p>
 <div class="images"><img src="images/TransectDrawingControlGui3.gif" width="620" height="281"></div>
 <p></p>
@@ -103,6 +111,7 @@ are used in the <a href="../../ui/TransectViewManager.html">Transect Views</a>. 
 <li class="propertylistitem"><strong>Longitude -</strong> Lists the longitude value at each point.</li>
 <li class="propertylistitem"><img src="images/WritePoints.gif" width="104" height="26"align=absmiddle> - Allows you to save the list of points as a Comma-Separated Values (CSV) file (*.csv).</li>
 </ul>
+<a name="menus" id="menus"></a>
 <div class="pagesubtitle">Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="../index.html#menus">Menus section</a> of the Layer Controls Overview page. However, there are several options that are unique to this display.</p>
 <p>The <strong>File</strong> menu has these unique options:</p>
