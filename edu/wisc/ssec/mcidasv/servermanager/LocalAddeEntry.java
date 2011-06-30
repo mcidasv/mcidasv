@@ -69,6 +69,7 @@ public class LocalAddeEntry implements AddeEntry {
     private final String group;
 
     /** N2 */
+    // this value is built in a non-obvious way. plz to be dox.
     private final String descriptor;
 
     /** RT */
@@ -324,7 +325,7 @@ public class LocalAddeEntry implements AddeEntry {
      * entry).
      */
     public String getDescriptor() {
-        return descriptor;
+        return Integer.toHexString(hashCode());
     }
 
     /**
@@ -388,11 +389,11 @@ public class LocalAddeEntry implements AddeEntry {
     /**
      * Tests the current local ADDE dataset for validity.
      * 
-     * @return {@code true} iff {@link #group}, {@link #descriptor}, and {@link #name}
-     * are not empty.
+     * @return {@code true} iff {@link #group} and {@link #name} are not empty.
      */
     public boolean isValid() {
-        return !((group.isEmpty()) || (descriptor.isEmpty()) || (name.isEmpty()));
+//        return !((group.isEmpty()) || (descriptor.isEmpty()) || (name.isEmpty()));
+        return !((group.isEmpty()) || (name.isEmpty()));
     }
 
     /**
@@ -410,7 +411,7 @@ public class LocalAddeEntry implements AddeEntry {
         int result = 1;
         result = prime * result
             + ((fileMask == null) ? 0 : fileMask.hashCode());
-        result = prime * result + ((format == null) ? 0 : format.hashCode());
+        result = prime * result + ((format == null) ? 0 : format.toString().hashCode());
         result = prime * result + ((group == null) ? 0 : group.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
@@ -438,7 +439,7 @@ public class LocalAddeEntry implements AddeEntry {
             if (other.format != null) {
                 return false;
             }
-        } else if (!format.equals(other.format)) {
+        } else if (!format.toString().equals(other.format.toString())) {
             return false;
         }
         if (group == null) {
@@ -472,13 +473,27 @@ public class LocalAddeEntry implements AddeEntry {
         
     }
 
+    public static int generateHashCode(final LocalAddeEntry entry) {
+        return generateHashCode(entry.getName(), entry.getGroup(), entry.getMask(), entry.getFormat());
+    }
+
+    public static int generateHashCode(String name, String group, String fileMask, AddeFormat format) {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+            + ((fileMask == null) ? 0 : fileMask.hashCode());
+        result = prime * result + ((format == null) ? 0 : format.toString().hashCode());
+        result = prime * result + ((group == null) ? 0 : group.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        return result;
+    }
+
     /**
      * A builder of (mostly) immutable {@link LocalAddeEntry} instances.
      * 
      * <p>Usage example: <pre>    {@code
      *     LocalAddeEntry entry = new LocalAddeEntry
      *         .Builder(group, name, format, mask)
-     *         .descriptor()
      *         .realtime("Y")
      *         .range(start, end)
      *         .type(EntryType.POINT)
@@ -487,9 +502,6 @@ public class LocalAddeEntry implements AddeEntry {
      * Only the values required by the Builder constructor are required.
      */
     public static class Builder {
-        /** Random number generator for creating default {@link #descriptor} values. */
-        private static final Random random = new Random();
-
         // required
         /** Corresponds to RESOLV.SRV's {@literal "N1"} section. */
         private final String group;
@@ -503,13 +515,10 @@ public class LocalAddeEntry implements AddeEntry {
         /** Corresponds to RESOLV.SRV's {@literal "MASK"} section. */
         private final String mask;
 
-        // optional
-        /**
-         * Corresponds to RESOLV.SRV's {@literal "N2"} section.
-         * Defaults to {@literal "ENTRY<RANDOM NUMBER>"}.
-         */
-        private String descriptor = "ENTRY"+random.nextInt(999999);
+        // generated
+        private String descriptor;
 
+        // optional
         /**
          * Corresponds to RESOLV.SRV's {@literal "RT"} section.
          * Defaults to {@code false}.
@@ -560,7 +569,7 @@ public class LocalAddeEntry implements AddeEntry {
             this.mask = map.get("MASK");
             this.format = EntryTransforms.strToAddeFormat(map.get("MCV"));
 
-            descriptor(map.get("N2"));
+//            descriptor(map.get("N2"));
             type(EntryTransforms.strToEntryType(map.get("TYPE")));
             kind(map.get("K").toUpperCase());
             realtime(map.get("RT"));
@@ -584,16 +593,16 @@ public class LocalAddeEntry implements AddeEntry {
         }
 
         /**
-         *
+         * This method is currently a no-op.
          *
          * @param descriptor
          *
          * @return {@code LocalAddeEntry.Builder} with ADDE descriptor.
          */
         public Builder descriptor(final String descriptor) {
-            if (descriptor != null) {
-                this.descriptor = descriptor;
-            }
+//            if (descriptor != null) {
+//                this.descriptor = descriptor;
+//            }
             return this;
         }
 
@@ -761,6 +770,9 @@ public class LocalAddeEntry implements AddeEntry {
                 case LRIT_MET5: this.descriptor = "MET5"; break;
                 case LRIT_MET7: this.descriptor = "MET7"; break;
                 case LRIT_MTSAT1R: this.descriptor = "MTSAT1R"; break;
+                default:
+                    this.descriptor = Integer.toHexString(generateHashCode(name, group, mask, format));
+                    break;
             }
             return new LocalAddeEntry(this);
         }
