@@ -15,34 +15,34 @@
 </tocitem>
 <tocitem text="Getting Started" target="idv.quickstart">
     <tocitem text="Displaying Satellite Imagery" target="idv.quickstart.satellite"/>
+	<tocitem text="Displaying Hyperspectral Satellite Imagery Using HYDRA" target="idv.quickstart.hydra"/>
+	<tocitem text="Displaying Level II Radar Imagery" target="idv.quickstart.radarlevelii"/>
     <tocitem text="Displaying Level III Radar Imagery" target="idv.quickstart.radarleveliii"/>
-    <tocitem text="Displaying Level II Radar Imagery" target="idv.quickstart.radarlevelii"/>
+	<tocitem text="Displaying Surface and Upper Air Point Data" target="idv.quickstart.surface"/>
+	<tocitem text="Displaying RAOB Sounding Data" target="idv.quickstart.upperair"/>
+	<tocitem text="Displaying Profiler Data" target="idv.quickstart.profiler"/>
     <tocitem text="Displaying Gridded Data" target="idv.quickstart.grids"/>
-    <tocitem text="Displaying Surface and Upper Air Point Data" target="idv.quickstart.surface"/>
-    <tocitem text="Displaying RAOB Sounding Data" target="idv.quickstart.upperair"/>
-    <tocitem text="Displaying Profiler Data" target="idv.quickstart.profiler"/>
     <tocitem text="Displaying Fronts" target="idv.quickstart.fronts"/>
-    <tocitem text="Using the Globe Display" target="idv.quickstart.globe"/>
     <tocitem text="Displaying Local Files" target="idv.quickstart.localfiles"/>
-    <tocitem text="Displaying Files From a URL" target="idv.quickstart.urlfiles"/>
-    <tocitem text="Displaying Hyperspectral Satellite Imagery Using HYDRA" target="idv.quickstart.hydra"/>
+    <tocitem text="Displaying Files from a URL" target="idv.quickstart.urlfiles"/>
     <tocitem text="Using the McIDAS-X Bridge" target="idv.quickstart.bridge"/>
+	<tocitem text="Using the Globe Display" target="idv.quickstart.globe"/>
 </tocitem>
 <tocitem text="Data Explorer" target="idv.ui.dashboard">
     <tocitem text="Data Sources" target="idv.data.choosers">
+	    <tocitem text="Choosing Satellite Imagery" target="idv.data.choosers.imagechooser"/>
+		<tocitem text="Choosing Multispectral Data" target="idv.data.choosers.hydrachooser"/>
+		<tocitem text="Choosing NEXRAD Level II Radar Data" target="idv.data.choosers.level2chooser"/>
+		<tocitem text="Choosing NEXRAD Level III Radar Data" target="idv.data.choosers.radarchooser"/>
+		<tocitem text="Choosing Point Data" target="idv.data.choosers.pointchooser"/>
+		<tocitem text="Choosing Upper Air Sounding Data" target="idv.data.choosers.raobchooser"/>
+		<tocitem text="Choosing NOAA National Profiler Network Data" target="idv.data.choosers.profilerchooser"/>
+		<tocitem text="Choosing Gridded Data" target="idv.data.choosers.gridchooser"/>
+		<tocitem text="Choosing Front Positions" target="idv.data.choosers.frontchooser"/>
         <tocitem text="Choosing Data on Disk" target="idv.data.choosers.filechooser"/>
+		<tocitem text="Choosing Cataloged Data" target="idv.data.choosers.catalogchooser"/>
         <tocitem text="Choosing a URL" target="idv.data.choosers.urlchooser"/>
-        <tocitem text="Choosing Cataloged Data" target="idv.data.choosers.catalogchooser"/>
         <tocitem text="Choosing Flat File Data" target="idv.data.choosers.flatfilechooser"/>
-        <tocitem text="Choosing Satellite Imagery" target="idv.data.choosers.imagechooser"/>
-        <tocitem text="Choosing NEXRAD Level III Radar Data" target="idv.data.choosers.radarchooser"/>
-        <tocitem text="Choosing NEXRAD Level II Radar Data" target="idv.data.choosers.level2chooser"/>
-        <tocitem text="Choosing Point Data" target="idv.data.choosers.pointchooser"/>
-        <tocitem text="Choosing Upper Air Sounding Data" target="idv.data.choosers.raobchooser"/>
-        <tocitem text="Choosing NOAA National Profiler Network Data" target="idv.data.choosers.profilerchooser"/>
-        <tocitem text="Choosing Gridded Data" target="idv.data.choosers.gridchooser"/>
-        <tocitem text="Choosing Front Positions" target="idv.data.choosers.frontchooser"/>
-        <tocitem text="Choosing Multispectral Data" target="idv.data.choosers.hydrachooser"/>
         <tocitem text="Creating a McIDAS-X Bridge Session" target="idv.data.choosers.bridgechooser"/>
     </tocitem>
     <tocitem text="Field Selector" target="idv.data.fieldselector">

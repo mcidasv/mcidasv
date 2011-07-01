@@ -37,20 +37,20 @@
 
     <div class="indented" id="gettingstarted">
       <span class="link" onClick="setPage('quickstart/Satellite.html');">Displaying Satellite Imagery</span><br>
+            <span class="link" onClick="setPage('quickstart/Hydra.html');">Displaying Hyperspectral Satellite Imagery Using HYDRA</span><br>
+                  <span class="link" onClick="setPage('quickstart/RadarLevelII.html');">Displaying Level II Radar Imagery</span><br>
       <span class="link" onClick="setPage('quickstart/RadarLevelIII.html');">Displaying Level III Radar Imagery</span><br>
-      <span class="link" onClick="setPage('quickstart/RadarLevelII.html');">Displaying Level II Radar Imagery</span><br>
-      <span class="link" onClick="setPage('quickstart/Grids.html');">Displaying Gridded Data</span><br>
       <span class="link" onClick="setPage('quickstart/Point.html');">Displaying
       Surface and Upper Air Point Data</span><br>
       <span class="link" onClick="setPage('quickstart/Sounding.html');">Displaying
       RAOB Sounding Data</span><br>
       <span class="link" onClick="setPage('quickstart/Profiler.html');">Displaying Profiler Data</span><br>
+            <span class="link" onClick="setPage('quickstart/Grids.html');">Displaying Gridded Data</span><br>
 	  <span class="link" onClick="setPage('quickstart/Fronts.html');">Displaying Fronts</span><br>
-      <span class="link" onClick="setPage('quickstart/Globe.html');">Using the Globe Display</span><br>
       <span class="link" onClick="setPage('quickstart/LocalFiles.html');">Displaying Local Files</span><br>
-      <span class="link" onClick="setPage('quickstart/UrlFiles.html');">Displaying Files From a URL</span><br>
-      <span class="link" onClick="setPage('quickstart/Hydra.html');">Displaying Hyperspectral Satellite Imagery Using HYDRA</span><br>
+      <span class="link" onClick="setPage('quickstart/UrlFiles.html');">Displaying Files from a URL</span><br>
       <span class="link" onClick="setPage('quickstart/Bridge.html');">Using the McIDAS-X Bridge</span><br>
+            <span class="link" onClick="setPage('quickstart/Globe.html');">Using the Globe Display</span><br>
     </div>
 
     <span class="toggle" onClick="toggleChildren(this,'dataexplorer');">+</span>
@@ -61,22 +61,21 @@
       <span class="link" onClick="setPage('data/choosers/index.html');">Data Sources</span><br>
 
       <div class="indented" id="choosingdatasources">
-        <span class="link" onClick="setPage('data/choosers/FileChooser.html');">Choosing Data on Disk</span><br>
-        <span class="link" onClick="setPage('data/choosers/UrlChooser.html');">Choosing a URL</span><br>
-        <span class="link" onClick="setPage('data/choosers/CatalogChooser.html');">Choosing Cataloged Data</span><br>
-        <span class="link" onClick="setPage('data/choosers/FlatFileChooser.html');">Choosing Flat File Data</span><br>
-        <span class="link" onClick="setPage('data/choosers/ImageChooser.html');">Choosing Satellite Imagery</span><br>
-        <span class="link" onClick="setPage('data/choosers/RadarChooser.html');">Choosing NEXRAD Level III Radar Data</span><br>
-        <span class="link" onClick="setPage('data/choosers/Level2Chooser.html');">Choosing NEXRAD Level II Radar Data</span><br>
-        <span class="link" onClick="setPage('data/choosers/PointChooser.html');">Choosing
+        
+                <span class="link" onClick="setPage('data/choosers/ImageChooser.html');">Choosing Satellite Imagery</span><br>
+                        <span class="link" onClick="setPage('data/choosers/HydraChooser.html');">Choosing Multispectral Data</span><br>
+                                <span class="link" onClick="setPage('data/choosers/Level2Chooser.html');">Choosing NEXRAD Level II Radar Data</span><br>
+                                        <span class="link" onClick="setPage('data/choosers/RadarChooser.html');">Choosing NEXRAD Level III Radar Data</span><br>
+                                                <span class="link" onClick="setPage('data/choosers/PointChooser.html');">Choosing
         Point Data</span><br>
-        <span class="link" onClick="setPage('data/choosers/RaobChooser.html');">Choosing
-        Upper Air Sounding Data</span><br>
-        <span class="link" onClick="setPage('data/choosers/ProfilerChooser.html');">Choosing NOAA National Profiler Network Data</span><br>
-		<span class="link" onClick="setPage('data/choosers/GridChooser.html');">Choosing Gridded Data</span><br>
-		<span class="link" onClick="setPage('data/choosers/FrontChooser.html');">Choosing
-		Front Positions </span><br>
-        <span class="link" onClick="setPage('data/choosers/HydraChooser.html');">Choosing Multispectral Data</span><br>
+                <span class="link" onClick="setPage('data/choosers/RaobChooser.html');">Choosing Upper Air Sounding Data</span><br>
+                        <span class="link" onClick="setPage('data/choosers/ProfilerChooser.html');">Choosing NOAA National Profiler Network Data</span><br>
+                        		<span class="link" onClick="setPage('data/choosers/GridChooser.html');">Choosing Gridded Data</span><br>
+                                		<span class="link" onClick="setPage('data/choosers/FrontChooser.html');">Choosing Front Positions </span><br>
+                <span class="link" onClick="setPage('data/choosers/FileChooser.html');">Choosing Data on Disk</span><br>
+                    <span class="link" onClick="setPage('data/choosers/CatalogChooser.html');">Choosing Cataloged Data</span><br>    
+        <span class="link" onClick="setPage('data/choosers/UrlChooser.html');">Choosing a URL</span><br>
+        <span class="link" onClick="setPage('data/choosers/FlatFileChooser.html');">Choosing Flat File Data</span><br>
         <span class="link" onClick="setPage('data/choosers/BridgeChooser.html');">Creating a McIDAS-X Bridge Session </span><br>
       </div>
 

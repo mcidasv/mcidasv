@@ -21,15 +21,15 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Cat
 </head>
 <body onLoad="setParentPage();">
 <div class="TopTitleNav">
-  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="UrlChooser.html">Go
-        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="FlatFileChooser.html">Go
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="FileChooser.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="UrlChooser.html">Go
         to Next</a><!-- InstanceEndEditable -->] </span> </p>
   <hr align="center">
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Choosing Cataloged Data</div>
 <p>The <strong>General-&gt;Catalogs</strong> chooser shows THREDDS catalogs of data holdings on remote data servers (typically TDS or OPeNDAP) and provides access to remote Web Map Server (WMS) image servers. McIDAS-V provides an initial default catalog, idvcatalog.xml. It should appear in the Catalogs menu. If not you can directly enter the URL of the catalog: http://www.unidata.ucar.edu/georesources/idvcatalog.xml  </p>
-<p>This catalog has links to a catalog of real time model data, a collection of county level shapefiles for roads and hydrography features and a collection of useful Web Map Servers. For more information on using this chooser to display grid data, see <a href="../../quickstart/Grids.html">Getting Started</a>.</p>
+<p>This catalog has links to a catalog of real time model data, a collection of county level shapefiles for roads and hydrography features and a collection of useful Web Map Servers. For more information on using this chooser to display grid data, see <a href="../../quickstart/Grids.html">Getting Started - Displaying Gridded Data</a>.</p>
 <a name="image1" id="image1"></a>
 <div class="images"><img src="images/CatalogChooser.gif" alt="Catalog Chooser"><br>
   <span class="caption">Image 1: Catalog Chooser</span></div>
@@ -38,8 +38,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Cat
 <ul class="propertylist">
     <li class="propertylistitem"><strong>Catalog</strong> - Represents the catalog for the data. Enter in a catalog URL (and hit Enter or click <strong><img src="images/Refresh.gif" width="23" height="24"align=absmiddle> Refresh </strong>) or select a catalog URL from the pull down menu. Use the <strong>Select File</strong> button to select a catalog on your local disk.</li>
     <li class="propertylistitem"><strong>History</strong> - Switches back and forth between selected catalogs with  the <img src="images/Cat-Back.gif" width="13" height="15"align=absmiddle> and <img src="images/Cat-Fwd.gif" width="13" height="15"align=absmiddle> buttons.</li>
-    <li class="propertylistitem"><strong>Data Type</strong> - Represents the type of data. If left as &quot;I'm Feeling Lucky&quot;, McIDAS-V will figure out what kind of data is in the file by the URL itself. This can be overridden by selecting the type of data the file contains from the pull down menu. Click <a href="../DataSources.html">list of available data source types</a>.</li>
-    <li class="propertylistitem"><strong>Tree Structure</strong> - Lists all of the data. Open the tree structure by clicking on the <img src="../images/TreeTagClosed.gif" width="22" height="21"align=absmiddle> tab icon. Clicking on a data source will enable the <strong>Add Source</strong> button.</li>
+    <li class="propertylistitem"><strong>Data Type</strong> - Represents the type of data. If left as &quot;I'm Feeling Lucky&quot;, McIDAS-V will figure out what kind of data is in the file by the URL itself. This can be overridden by selecting the type of data the file contains from the pull down menu. See the <a href="../DataSources.html">data formats and sources</a> available.</li>
+    <li class="propertylistitem"><strong>Tree Structure</strong> - Lists all of the data. Open the tree structure by clicking on the <img src="../images/TreeTagClosed.gif" width="22" height="21"align=absmiddle> tab icon. Clicking on a data source will enable the<strong> <img src="../../quickstart/images/AddSource.gif" width="191" height="32"align=absmiddle></strong> button.</li>
     <li class="propertylistitem"><strong>Show Thumbnail Images</strong> - Shows thumbnails in the THREDDS catalog if available.</li>
     <li class="propertylistitem"><img align=absmiddle src="images/Help.gif" width="25" height="24"> <strong>Help</strong> - Brings up this help page.</li>
     <li class="propertylistitem"><img align=absmiddle src="images/Refresh.gif" width="23" height="24"> <strong>Refresh</strong> - Updates the catalog chooser with the most recent data.</li>
@@ -64,15 +64,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Cat
       <li class="propertylistitem"><img align=absmiddle src="images/ViewLeft.gif" width="18" height="18"> <strong>Move View Left</strong> - Moves the view left (map right).</li>
       <li class="propertylistitem"><img align=absmiddle src="images/ViewRight.gif" width="18" height="18"> <strong>Move View Right</strong> - Moves the view right (map left).</li>
     </ul>
-    <li class="propertylistitem"><img align=absmiddle src="images/Help.gif" width="25" height="24"> <strong>Help</strong> - Brings up this help page.</li>
-    <li class="propertylistitem"><img align=absmiddle src="images/Refresh.gif" width="23" height="24"> <strong>Refresh</strong> - Updates the catalog chooser with the most recent data.</li>
-    <li class="propertylistitem"><img align=absmiddle src="../../quickstart/images/AddSource.gif" width="191" height="32"> - Loads the selected data.</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
-  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="UrlChooser.html">Go
-        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="FlatFileChooser.html">Go
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="FileChooser.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="UrlChooser.html">Go
         to Next</a><!-- InstanceEndEditable -->] </span></p>
 </div>
 </body>
