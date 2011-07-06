@@ -104,7 +104,7 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
       int track_tup_idx;
       int vert_tup_idx;
 
-      //-private RangeProcessor rangeProcessor;
+      boolean isVertDimAlt = true;
 
       CoordinateSystem cs = null;
 
@@ -138,11 +138,15 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
       }
 
       public ProfileAlongTrack() {
-
       }
 
       public ProfileAlongTrack(MultiDimensionReader reader, HashMap metadata) {
+        this(reader, metadata, true);
+      }
+
+      public ProfileAlongTrack(MultiDimensionReader reader, HashMap metadata, boolean isVertDimAlt) {
         super(reader, metadata);
+        this.isVertDimAlt = isVertDimAlt;
         this.init();
       }
 
@@ -197,9 +201,11 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
         }
 
         try {
-          vertLocs = getVertBinAltitude();
-          trackTimes = getTrackTimes();
+          if (isVertDimAlt) {
+            vertLocs = getVertBinAltitude();
+          }
           vertLocType = makeVertLocType();
+          trackTimes = getTrackTimes();
           trackTimeType = makeTrackTimeType();
           trackLongitude = getTrackLongitude();
           trackLatitude = getTrackLatitude();
