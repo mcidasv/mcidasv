@@ -49,6 +49,8 @@ public class TrackAdapter extends MultiDimensionAdapter {
 
    int listIndex = 0;
 
+   String adapterName = null;
+
    public TrackAdapter() {
    }
 
@@ -83,8 +85,17 @@ public class TrackAdapter extends MultiDimensionAdapter {
      return field;
    }
 
+   public void setName(String name) {
+     adapterName = name;
+   }
+
    public String getArrayName() {
-     return rngAdapter.getArrayName();
+     if (adapterName != null) {
+       return adapterName;
+     }
+     else {
+       return rngAdapter.getArrayName();
+     }
    }
 
    void setListIndex(int idx) {
