@@ -39,9 +39,12 @@ import visad.Gridded2DSet;
 import visad.Linear1DSet;
 import visad.Unit;
 import visad.Set;
+import visad.georef.MapProjection;
+import java.awt.geom.Rectangle2D;
 
 
 public class LongitudeLatitudeCoordinateSystem extends CoordinateSystem {
+//public class LongitudeLatitudeCoordinateSystem extends MapProjection {
 
    Linear2DSet domainSet;
    Linear2DSet subSet;
@@ -119,6 +122,12 @@ public class LongitudeLatitudeCoordinateSystem extends CoordinateSystem {
      float[][] coords = subSet.valueToGrid(grid_vals);
      coords = domainSet.gridToValue(coords);
      return Set.floatToDouble(coords);
+   }
+
+   public Rectangle2D getDefaultMapArea() {
+     float[] lo = domainSet.getLow();
+     float[] hi = domainSet.getHi();
+     return new Rectangle2D.Float(lo[0], lo[1], hi[0] - lo[0], hi[1] - lo[1]);
    }
 
    public boolean equals(Object cs) {
