@@ -30,9 +30,18 @@
 
 package edu.wisc.ssec.mcidasv.data;
 
-import edu.wisc.ssec.mcidas.adde.AddeTextReader;
-import edu.wisc.ssec.mcidasv.chooser.PolarOrbitTrackChooser;
-import edu.wisc.ssec.mcidasv.data.adde.sgp4.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Vector;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
@@ -41,58 +50,24 @@ import ucar.unidata.data.DataSelectionComponent;
 import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.DirectDataChoice;
-import ucar.unidata.data.sounding.TrackDataSource;
 import ucar.unidata.idv.IntegratedDataViewer;
-import ucar.unidata.idv.ViewManager;
-import ucar.unidata.idv.ui.DataSelectionWidget;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
-import ucar.unidata.view.geoloc.MapProjectionDisplay;
 
 import visad.CommonUnit;
-import visad.CoordinateSystem;
 import visad.Data;
-import visad.DataReference;
-import visad.DateTime;
 import visad.Text;
 import visad.Tuple;
 import visad.Unit;
 import visad.VisADException;
-import visad.VisADException;
 import visad.georef.LatLonTuple;
 
-import visad.data.mcidas.AddeTextAdapter;
-
-import java.awt.Insets;
-import java.awt.Dimension;
-
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-
-import java.net.URL;
-import java.net.URLConnection;
-
-import java.rmi.RemoteException;
-
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Vector;
-
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import edu.wisc.ssec.mcidas.adde.AddeTextReader;
+import edu.wisc.ssec.mcidasv.chooser.PolarOrbitTrackChooser;
+import edu.wisc.ssec.mcidasv.data.adde.sgp4.SGP4SatData;
+import edu.wisc.ssec.mcidasv.data.adde.sgp4.SGP4unit;
+import edu.wisc.ssec.mcidasv.data.adde.sgp4.SatelliteTleSGP4;
+import edu.wisc.ssec.mcidasv.data.adde.sgp4.TLE;
+import edu.wisc.ssec.mcidasv.data.adde.sgp4.Time;
 
 /**
  * Class for data sources of ADDE text data.  These may be generic
@@ -118,8 +93,6 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
     public static double pi = SGP4unit.pi;
 
     private Hashtable selectionProps;
- 
-    private double[] lla = new double[3];
 
     /** time step between data points */
     private int dTime = 1;
@@ -194,7 +167,6 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
                 InputStreamReader isr = new InputStreamReader(urlCon.getInputStream());
                 BufferedReader tleReader = new BufferedReader(isr);
                 String nextLine = null;
-                int tleCount = 0;
                 while ((nextLine = tleReader.readLine()) != null) {
                     if (nextLine.length() > 0) {
                         tleCards.add(nextLine);
@@ -263,6 +235,7 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
      * @throws RemoteException    Java RMI problem
      * @throws VisADException     VisAD problem
      */
+    
     protected Data getDataInner(DataChoice dataChoice, DataCategory category,
                                 DataSelection dataSelection,
                                 Hashtable requestProperties)
@@ -275,19 +248,13 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
         System.out.println("    dataSelection=" + dataSelection + "\n");
         System.out.println("categories for dataChoice: " + dataChoice.getCategories());
 */
-        final double deg2rad = pi / 180.0;         //   0.0174532925199433
-        final double xpdotp = 1440.0 / (2.0 * pi);  // 229.1831180523293
-
-        double sec, tumin;
-        int year = 0;
-        int mon, day, hr, minute;//, nexp, ibexp;
 
         boolean gotit = false;
         int index = -1;
         String choiceName = dataChoice.getName();
         String tleLine1 = "";
         String tleLine2 = "";
-        List tleComps = new ArrayList();
+
         while(!gotit) {
             index++;
             String name = ((String)tleCards.get(index)).trim();
@@ -324,10 +291,6 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
 */
         tle = new TLE(choiceName, tleLine1, tleLine2);
 
-        String begStr = (String)this.selectionProps.get("BTime");
-        Double dBeg = new Double(begStr);
-        double begJulianDate = dBeg.doubleValue();
-
         String endStr = (String)this.selectionProps.get("ETime");
         Double dEnd = new Double(endStr);
         double endJulianDate = dEnd.doubleValue();
@@ -353,7 +316,6 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
                         (new Double((String)this.selectionProps.get("Secs"))).doubleValue());
         double julianDate = time.getJulianDate();
         julDate0 = julianDate;
-        Unit unit = CommonUnit.secondsSinceTheEpoch;
         Vector v = new Vector();
 
         while (julianDate <= julDate1) {
@@ -364,7 +326,7 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
             double[] lla = prop.getLLA();
             double lat = lla[0]*180.0/Math.PI;
             double lon = lla[1]*180.0/Math.PI;
-            double alt = lla[2];
+
 /*
              System.out.println(time.getDateTimeStr() + " Lat: " + lat
                                                       + " Lon: " + lon
@@ -429,13 +391,8 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
         System.out.println("    length=" + card.length());
 */
         int satId = 0;
-        int launchYear = 0;
-        int intCode = 0;
-        int yyyy = 0;
         double ddd = 1.0;
         double firstDev = 1.0;
-        double secondDev = 1.0;
-        double bStar = 1.0;
         int ephemerisType = 0;
         int elementNumber = 0;
 

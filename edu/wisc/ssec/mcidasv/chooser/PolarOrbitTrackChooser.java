@@ -37,78 +37,34 @@ import static javax.swing.GroupLayout.Alignment.TRAILING;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
 import org.w3c.dom.Element;
 
-import ucar.unidata.data.imagery.AddeImageDescriptor;
-import ucar.unidata.data.imagery.AddeImageInfo;
-import ucar.unidata.data.imagery.BandInfo;
-import ucar.unidata.data.imagery.ImageDataSource;
-import ucar.unidata.data.imagery.ImageDataset;
-import ucar.unidata.idv.IdvResourceManager;
-import ucar.unidata.idv.chooser.adde.AddeServer;
-import ucar.unidata.idv.chooser.adde.AddeServer.Group;
 import ucar.unidata.idv.chooser.IdvChooserManager;
-import ucar.unidata.ui.ChooserList;
 import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.Misc;
 import ucar.unidata.util.PreferenceList;
-import ucar.unidata.util.StringUtil;
-import ucar.unidata.util.TwoFacedObject;
-import ucar.unidata.xml.XmlNodeList;
-import ucar.unidata.xml.XmlObjectStore;
-import ucar.unidata.xml.XmlResourceCollection;
-import ucar.unidata.xml.XmlUtil;
-import ucar.visad.UtcDate;
-import visad.DateTime;
-import visad.Gridded1DSet;
-import visad.VisADException;
-import edu.wisc.ssec.mcidas.AreaDirectory;
-import edu.wisc.ssec.mcidas.AreaDirectoryList;
-import edu.wisc.ssec.mcidas.McIDASException;
-import edu.wisc.ssec.mcidas.adde.AddeSatBands;
-import edu.wisc.ssec.mcidas.adde.AddeURL;
-import edu.wisc.ssec.mcidas.adde.DataSetInfo;
+
 import edu.wisc.ssec.mcidasv.Constants;
-import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.chooser.adde.AddeChooser;
-import edu.wisc.ssec.mcidasv.servermanager.EntryTransforms;
-import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
-import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
-import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Position;
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils.TextColor;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
-import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 
 
 /**
