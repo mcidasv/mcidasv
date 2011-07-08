@@ -31,7 +31,7 @@
 <tocitem text="Data Explorer" target="idv.ui.dashboard">
     <tocitem text="Data Sources" target="idv.data.choosers">
 	    <tocitem text="Choosing Satellite Imagery" target="idv.data.choosers.imagechooser"/>
-		<tocitem text="Choosing Multispectral Data" target="idv.data.choosers.hydrachooser"/>
+		<tocitem text="Choosing Hyperspectral Data" target="idv.data.choosers.hydrachooser"/>
 		<tocitem text="Choosing NEXRAD Level II Radar Data" target="idv.data.choosers.level2chooser"/>
 		<tocitem text="Choosing NEXRAD Level III Radar Data" target="idv.data.choosers.radarchooser"/>
 		<tocitem text="Choosing Point Data" target="idv.data.choosers.pointchooser"/>

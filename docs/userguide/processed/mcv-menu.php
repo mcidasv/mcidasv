@@ -63,7 +63,7 @@
       <div class="indented" id="choosingdatasources">
         
                 <span class="link" onClick="setPage('data/choosers/ImageChooser.html');">Choosing Satellite Imagery</span><br>
-                        <span class="link" onClick="setPage('data/choosers/HydraChooser.html');">Choosing Multispectral Data</span><br>
+                        <span class="link" onClick="setPage('data/choosers/HydraChooser.html');">Choosing Hyperspectral Data</span><br>
                                 <span class="link" onClick="setPage('data/choosers/Level2Chooser.html');">Choosing NEXRAD Level II Radar Data</span><br>
                                         <span class="link" onClick="setPage('data/choosers/RadarChooser.html');">Choosing NEXRAD Level III Radar Data</span><br>
                                                 <span class="link" onClick="setPage('data/choosers/PointChooser.html');">Choosing
