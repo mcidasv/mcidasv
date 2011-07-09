@@ -94,7 +94,7 @@
 
       <div class="indented" id="layercontrols_2">
         <span class="link" onClick="setPage('controls/PlanViewControl.html');">Plan View Controls</span><br>
-        <span class="link" onClick="setPage('controls/FlowPlanViewControl.html');">Flow Plan Controls</span><br>
+        <span class="link" onClick="setPage('controls/FlowPlanViewControl.html');">Flow Display Controls</span><br>
         <span class="link" onClick="setPage('controls/CrossSectionControl.html');">Vertical Cross Section Controls</span><br>
         <span class="link" onClick="setPage('controls/ThreeDSurfaceControl.html');">Isosurface Controls</span><br>
         <span class="link" onClick="setPage('controls/VolumeRenderControl.html');">Volume Rendering Controls</span><br>

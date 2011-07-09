@@ -52,7 +52,7 @@
         <tocitem text="Overview" target="idv.controls"/>
         <tocitem text="Gridded Data Displays" target="idv.page_griddeddatadisplays">
             <tocitem text="Plan View Controls" target="idv.controls.planviewcontrol"/>
-            <tocitem text="Flow Plan Controls" target="idv.controls.flowplanviewcontrol"/>
+            <tocitem text="Flow Display Controls" target="idv.controls.flowplanviewcontrol"/>
             <tocitem text="Vertical Cross-section Controls" target="idv.controls.crosssectioncontrol"/>
             <tocitem text="Isosurface Controls" target="idv.controls.threedsurfacecontrol"/>
             <tocitem text="Volume Rendering Controls" target="idv.controls.volumerendercontrol"/>
