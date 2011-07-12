@@ -33,7 +33,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/FieldSelecto
 <li class="propertylistitem"><strong>Data Sources -</strong> Lists the data sources currently loaded into McIDAS-V. The selected item is the one that will be displayed.</li>
 <li class="propertylistitem"><strong>Fields -</strong> Displays the list of data choices for the selected data source.</li>
 <li class="propertylistitem"><strong>Displays -</strong> Lists the display types applicable to the selected Field. This is how the data will be displayed in the Main Display Window.</li>
-<li class="propertylistitem"><strong>Data Subset -</strong> Displays the list of Times, Levels, Region, and Stride. These  tabs may be different depending on what data source you are loading.</li>
+<li class="propertylistitem"><strong>Data Subset -</strong> Displays the list of Times, Levels, Region, and Stride. These  tabs may be different depending on what data you are loading.</li>
 </ul>
 <div class="images"><img src="images/FieldSelectorWindow.gif" alt="Field Selector Window"> <a name="image1" id="image1"></a><br>
   <span class="caption">Image 1: Field Selector Window</span></div>
@@ -97,7 +97,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/FieldSelecto
 <p>Time and spatial subsetting defaults can be applied to the data source itself through the <a href="DataSourceProperties.html">Data Source Properties</a> dialog or the defaults can be overwritten through the <strong>Field Selector</strong> tab.</p>
 <div class="pagesubtitle">Creating Displays<a name="displays" id="displays"></a> </div>
 <p>The Display menu shows a hierarchical list of the available displays for a particular field. Click on the type of display you want from the choices listed in the Displays menu. For more information, see the <a href="../examples/index.html">Examples of Display Types</a> pages.</p>
-<p>You can select two or more displays (different display types) at one time. For an additional display, hold down the Control key and click on the second display type desired. Then go ahead and create the display as normal; all selected displays will be made. To make the display click on <strong> <img src="../controls/images/CreateDisplay.gif" width="116" height="26"align=absmiddle> </strong>or double click on the display.</p>
+<p>You can select two or more displays (different display types) at one time. For an additional display, hold down the Control key and click on the second display type desired. Then go ahead and create the display as normal; all selected displays will be made. To make the display click  <strong> <img src="../controls/images/CreateDisplay.gif" width="116" height="26"align=absmiddle> </strong>or double click on the display.</p>
 <div class="pagesubtitle">Derived Parameters<a name="derivedparms" id="derivedparms"></a> </div>
 <p>McIDAS-V provides <strong>derived parameters</strong> - parameters not provided by the original source data, but made from the source data with computations by McIDAS-V. This provides commonly used fields (such as dewpoint when dewpoint is not provided by the data source), but when it can be derived from source data (such as humidity and temperature).</p>
 <p>These automatic derived parameters are offered when the required data to compute them are available, based on parameter names.</p>

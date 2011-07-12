@@ -53,7 +53,7 @@ Unidata's catalog of near real-time model output.</p>
   GFS 80km CONUS model data (real and near time)", by clicking on one of the
   tab icons (<img src="../data/images/TreeTagClosed.gif" alt="icon"align=absmiddle>).</p>
 <p>The list of this model's run times appears. Click on one time to select it,
-  and then click on the<strong> <img src="images/AddSource.gif" width="191" height="32"align=absmiddle></strong> button. You have selected
+  and then click  the<strong> <img src="images/AddSource.gif" width="191" height="32"align=absmiddle></strong> button. You have selected
   this model run's output to be accessible by McIDAS-V.</p>
 <a name="selecting" id="selecting"></a>
 <div class="pagesubtitle">Creating a Plot of 2D Data</div>
@@ -109,7 +109,7 @@ The plot will move to 500 millibars.
 McIDAS-V automatically loads data for all data times selected in the data selection
 step, and loads them as displays for an animation loop. Creating several displays
 may take time. If you only need to see one data time, it is better to only create
-displays for that time.
+displays for that time as McIDAS-V will load in smaller loops of data faster than larger ones.
 <p>To make time selections that apply to all data in one data source, double
   click on the data source name in the left panel of the <strong>Field Selector</strong> tab
   to bring up the Data Source Properties editor. Click on the <strong>Times</strong> tab
@@ -119,11 +119,11 @@ displays for that time.
 in this window being grayed out and the box "Use All" being checked. To limit
 the selection to fewer times than all times, first check off the box "Use All." Then
 select the times you want by clicking on the times (Note: You can select multiple
-times with the Shift and Control keys).</p>
+times with the Shift and Control keys). The selected times will be highlighted in blue, and these are the only times that will appear in your loop of data in the Main Display Window.</p>
 <p>To make time selections for one field, use the <strong>Times</strong> selector
   in the lower right panel of the <strong>Fields</strong> tab, under the <strong>Displays</strong> panel,
-  after you select the field, and before you create the display. This will override
-  the default times for the data source.</p>
+  after you select the field and before you create the display. This will override
+  the default times for the data source selected in the <strong>Field Selector</strong> tab of the Data Explorer.</p>
 <a name="spatialsubset" id="spatialsubset"></a>
 <div class="pagesubtitle">Spatial Subsetting</div>
 <p>You can also spatially subset the grid using the Spatial Subset tab of the <a href="../data/DataSourceProperties.html">Data

@@ -31,28 +31,27 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/JythonShell
 The Jython Shell is an interactive command line interface to the McIDAS-V Jython
 interpreter that allows the user to type in arbitrary jython to evaluate. It
 is brought up with the <strong>Tools-&gt;Formulas-&gt;Jython Shell</strong> menu.
-<h3>The User Interface</h3>
+<div class="pagesubtitle">The User Interface</div>
 <div class="images"><img src="images/JythonShell.gif" alt="images/JythonShell.gif"></div>
 <p>The Jython shell consists of an output window on the top and an input field
-  on the bottom. The user enters Jython into the input field. When "return" or "Evaluate" is
+  on the bottom. The user enters Jython into the input field. When Enter or <img src="images/Evaluate.gif" width="85" height="26"align=absmiddle> is
   pressed the Jython is evaluated and any output is shown in the output window.</p>
 <p>The icons shown with every Jython entry in the output window allow you to
   select the particular Jython or re-evaluate it.</p>
 <p>The entry window can be expanded with the down arrow icons on the right.</p>
-<p>Pressing the "Up" arrow and "Down" arrow (also control-P, control-N) in the
+<p>Pressing the "Up" arrow and "Down" arrow (also Ctrl+P, Ctrl+N) in the
   entry field goes up and down through the history of commands.</p>
 <p>Right clicking in the entry field brings up a menu that allows you to:</p>
-<ul>
-  <li>Add an entry from the history.</li>
-  <li>Insert the identifier for a display control type when creating a display.</li>
-  <li>Insert the text of a procedure call from any of the McIDAS-V <a href="JythonLib.html">Jython Library</a> modules. Note: The <em>shell utilities</em> module has a number of useful
+<ul class="propertylist">
+  <li class="propertylistitem">Add an entry from the history.</li>
+  <li class="propertylistitem">Insert the identifier for a display control type when creating a display.</li>
+  <li class="propertylistitem">Insert the text of a procedure call from any of the McIDAS-V <a href="JythonLib.html">Jython Library</a> modules. Note: The <em>shell utilities</em> module has a number of useful
     Jython shell related commands.</li>
-  <li>Insert any of the defined McIDAS-V actions (e.g., Edit color table, Show
+  <li class="propertylistitem">Insert any of the defined McIDAS-V actions (e.g., Edit color table, Show
     window, etc.)</li>
 </ul>
-<h3>Menus</h3>
-<ul class="propertylist">
-  <li class="propertylistitem"><strong>File</strong> - </li>
+<div class="pagesubtitle">Menus </div>
+  <p><strong>File</strong> - </p>
     <ul class="propertylist">
       <li class="propertylistitem"><strong>Export Commands</strong> - Allows you to take the commands that
         have been entered and add them into the Jython Library to be used to
@@ -64,17 +63,15 @@ is brought up with the <strong>Tools-&gt;Formulas-&gt;Jython Shell</strong> menu
         output window.</li>
       <li class="propertylistitem"><strong>List Variables</strong> - Shows all global Jython variables defined.</li>
     </ul>
-  </li>
-  <li class="propertylistitem"><strong>Edit</strong> - </li>
+  <p><strong>Edit</strong> - </p>
     <ul class="propertylist">
       <li class="propertylistitem"><strong>Clear All</strong> - Clears the history and anything in the output
         window.</li>
       <li class="propertylistitem"><strong>Clear Output</strong> - Clears the output window.</li>
-      <li class="propertylistitem"><strong>Auto-select Operands</strong> - When selected, this causes the
+      <li class="propertylistitem"><strong>Auto-select Operands</strong> - Causes the
         Jython shell to analyze every command entered to see if there are references
         to variables that have not been set. It will bring up the Data Selection
         dialog to allow you to choose the fields to use.</li>
-    </ul>
 </ul>
 
 <!-- InstanceEndEditable -->

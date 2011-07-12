@@ -33,6 +33,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('quickstart/RadarL
 <p>This section describes how to make displays using NWS WSR-88D Level II data.
   The steps include:
 <ul class="childlist">
+  <li><a href="#access">Accessing WSR-88D Level II Radar Data</a></li>
   <li><a href="#chooser">Choosing Level II Radar Data</a></li>
   <li><a href="#displays1">Making Level II Radar Displays</a></li>
   <li><a href="#2displays">2D Displays of Individual Sweeps</a></li>
@@ -44,6 +45,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('quickstart/RadarL
   <li><a href="#more">Accessing Additional Tutorials</a></li>
 </ul>
 </p>
+<div class="pagesubtitle">
+  <p>Accessing WSR-88D Level II Radar Data<a name="access" id="access"></a></p>
+</div>
+<p> The Level II data is supplied as volume-scan files, each file having all data from WSR-88D radar for all sweeps for one "time". Archived Level II data is available from the <a href="http://www.ncdc.noaa.gov/oa/ncdc.html" target="_blank">National Climatic Data Center (NCDC)</a> (data from NCDC must be un-tarred).</p>
+<p> The files should be stored on your local file system with each station's files in a directory whose name is the 4-character ID (e.g., KTLX for Oklahoma City). In many cases, the data files do not have any location information in them and McIDAS-V uses the directory name as a first guess at the station location.</p>
 <div class="pagesubtitle">
   <p>Choosing Level II Radar Data<a name="chooser" id="chooser"></a></p>
 </div>
@@ -152,7 +158,7 @@ Image 1: Level-II 3D Display</div>
   chooser:</p>
 <ul class="propertylist">
   <li class="propertylistitem">1. Navigate to the desired directory. This chooser works like the <a href="../data/choosers/FileChooser.html">Files</a> chooser.</li>
-  <li class="propertylistitem">2. Select one or more Level II data files. Use Control-Click or Shift-Click
+  <li class="propertylistitem">2. Select one or more Level II data files. Use Ctrl+click or Shift+click
     to select multiple files. Each file represents a full volume scan at a particular
     time.</li>
   <li class="propertylistitem">3. Alternatively, use the <strong>Use Relative Times</strong> button
