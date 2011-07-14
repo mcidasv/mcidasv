@@ -81,7 +81,6 @@ import ucar.visad.display.RubberBandBox;
 
 import edu.wisc.ssec.mcidasv.data.HydraDataSource;
 import edu.wisc.ssec.mcidasv.data.PreviewSelection;
-import edu.wisc.ssec.mcidasv.data.PreviewSelectionNew;
 
 /**
  * A data source for Multi Dimension Data 
@@ -326,9 +325,9 @@ public class MultiDimensionDataSource extends HydraDataSource {
        }
        else if (name.startsWith("CAL_LID_L1")) {
          String[] arrayNames = null;
-         adapters = new MultiDimensionAdapter[2];
-         defaultSubsets = new HashMap[2];
-         propsArray = new Hashtable[2]; 
+         adapters = new MultiDimensionAdapter[4];
+         defaultSubsets = new HashMap[4];
+         propsArray = new Hashtable[4]; 
          
          
          HashMap table = ProfileAlongTrack.getEmptyMetadataTable();
@@ -380,18 +379,25 @@ public class MultiDimensionDataSource extends HydraDataSource {
          table.put(ProfileAlongTrack.trackDim_name, "dim0");
          table.put(ProfileAlongTrack.vertDim_name, "dim1");
          ArrayAdapter trop_height = new ArrayAdapter(reader, table);
-         //test new adapters[1] = new TrackAdapter(adapter_s[2], adapter_s[0], trop_height);
          track_domain = new TrackDomain(adapter_s[2], adapter_s[0], trop_height);
          adapters[1] = new TrackAdapter(track_domain, trop_height);
          defaultSubsets[1] = adapters[1].getDefaultSubset();
+
+         adapters[2] = new TrackAdapter(new TrackDomain(adapter_s[2], adapter_s[0], adapter_s[1]), adapter_s[1]);
+         ((TrackAdapter)adapters[2]).setName("Track3D");
+         defaultSubsets[2] = adapters[2].getDefaultSubset();
+
+         adapters[3] = new TrackAdapter(new TrackDomain(adapter_s[2], adapter_s[0]), adapter_s[1]);
+         ((TrackAdapter)adapters[3]).setName("Track2D");
+         defaultSubsets[3] = adapters[3].getDefaultSubset();
          
 
          hasTrackPreview = true;
        }
        else if (name.startsWith("CAL_LID_L2")) {
-         adapters = new MultiDimensionAdapter[3];
-         defaultSubsets = new HashMap[3];
-         propsArray = new Hashtable[3];
+         adapters = new MultiDimensionAdapter[4];
+         defaultSubsets = new HashMap[4];
+         propsArray = new Hashtable[4];
 
          ArrayAdapter[] adapter_s = new ArrayAdapter[3];
 
@@ -431,7 +437,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          adapters[0] = new TrackAdapter(track_domain, layer_top_altitude);
          defaultSubsets[0] = adapters[0].getDefaultSubset();
 
-         /**
+         /** another layer, how to show all?
          adapters[2] = new TrackAdapter(track_domain, layer_top_altitude);
          ((TrackAdapter)adapters[2]).setListIndex(1);
          defaultSubsets[2] = adapters[2].getDefaultSubset();
@@ -440,7 +446,10 @@ public class MultiDimensionDataSource extends HydraDataSource {
          adapters[2] = new TrackAdapter(new TrackDomain(adapter_s[0], adapter_s[1]), adapter_s[2]);
          ((TrackAdapter)adapters[2]).setName("Track2D");
          defaultSubsets[2] = adapters[2].getDefaultSubset();
-         
+
+         adapters[3] = new TrackAdapter(new TrackDomain(adapter_s[0], adapter_s[1], adapter_s[2]), adapter_s[2]);
+         ((TrackAdapter)adapters[3]).setName("Track3D");
+         defaultSubsets[3] = adapters[3].getDefaultSubset();
 
          DataCategory.createCategory("ProfileAlongTrack");
          categories = DataCategory.parseCategories("ProfileAlongTrack;ProfileAlongTrack;");
@@ -493,8 +502,6 @@ public class MultiDimensionDataSource extends HydraDataSource {
          table.put(ProfileAlongTrack.vertDim_name, "nbin");
          adapter_s[2] = new ArrayAdapter(reader, table);
 
-         //-track_adapter = new TrackAdapter(adapter_s[2], adapter_s[0], adapter_s[1]);
-         //test new track_adapter = new TrackAdapter(adapter_s[2], adapter_s[0], null);
          properties.put("medianFilter", new String[] {Double.toString(6), Double.toString(14)});
          properties.put("setBelowSfcMissing", new String[] {"true"});
          hasTrackPreview = true;
@@ -864,7 +871,6 @@ public class MultiDimensionDataSource extends HydraDataSource {
             
             if (subset != null) {
               data = adapter.getData(subset);
-              //data = applyProperties(data, requestProperties, subset);
               data = applyProperties(data, dataChoiceProps, subset);
             }
         } catch (Exception e) {
@@ -897,7 +903,6 @@ public class MultiDimensionDataSource extends HydraDataSource {
         ((FlatField)new_data).setSamples(new float[][] {range_values});
       }
       if (requestProperties.containsKey("setBelowSfcMissing")) {
-        String[] items = (String[]) requestProperties.get("setBelowSfcMissing");
         FlatField track = (FlatField) track_adapter.getData(subset);
         float[] sfcElev = (track.getFloats())[0];
         FlatField field = (FlatField) new_data;
@@ -911,7 +916,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
         int k = 0;
         for (int j=0; j<lens[trkIdx]; j++) {
-          float val = sfcElev[j];
+          float val = sfcElev[j]*1000f; // convert to meters
           for (int i=0; i<lens[vrtIdx]; i++) {
             if (vrtIdx < trkIdx) k = i + j*lens[0];
             if (trkIdx < vrtIdx) k = j + i*lens[0];
@@ -933,7 +938,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
         try {
           FlatField image = (FlatField) getDataInner(dataChoice, null, null, null);
           components.add(new PreviewSelection(dataChoice, image, null));
-          //components.add(new PreviewSelectionNew(dataChoice, image));
+          //components.add(new edu.wisc.ssec.mcidasv.data.PreviewSelectionNew(dataChoice, image));
         } catch (Exception e) {
           System.out.println("Can't make PreviewSelection: "+e);
           e.printStackTrace();
