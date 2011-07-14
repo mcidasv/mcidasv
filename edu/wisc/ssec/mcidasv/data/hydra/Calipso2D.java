@@ -60,16 +60,18 @@ import java.io.InputStreamReader;
 public class Calipso2D extends ProfileAlongTrack {
 
       double start_time;
-      ArrayAdapter sfcElev_adapter;
 
       public Calipso2D() {
+      }
+
+      public Calipso2D(MultiDimensionReader reader, HashMap metadata, boolean isVertTypeAlt) {
+        super(reader, metadata, isVertTypeAlt);
       }
 
       public Calipso2D(MultiDimensionReader reader, HashMap metadata) {
         super(reader, metadata);
         HashMap table = ProfileAlongTrack.getEmptyMetadataTable();
         table.put(ProfileAlongTrack.array_name, "Surface_Elevation");
-        sfcElev_adapter = new ArrayAdapter(reader, table);
       }
 
       public float[] getVertBinAltitude() throws Exception {
