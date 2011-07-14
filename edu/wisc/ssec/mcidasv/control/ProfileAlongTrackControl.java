@@ -31,29 +31,53 @@
 package edu.wisc.ssec.mcidasv.control;
 
 import java.awt.Container;
+import java.awt.Component;
+import java.awt.Insets;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import javax.swing.JLabel;
+import javax.swing.JComponent;
+import javax.swing.JTabbedPane;
 import java.rmi.RemoteException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.ArrayList;
+import java.text.DecimalFormat;
 
 import visad.Data;
+import visad.DataReference;
+import visad.DataReferenceImpl;
 import visad.FlatField;
+import visad.Real;
 import visad.FunctionType;
+import visad.Integer1DSet;
 import visad.GriddedSet;
+import visad.Gridded1DSet;
 import visad.Gridded3DSet;
 import visad.MathType;
 import visad.RealTuple;
 import visad.RealTupleType;
 import visad.RealType;
+import visad.Set;
 import visad.SampledSet;
+import visad.SimpleSet;
 import visad.Text;
 import visad.TextType;
 import visad.Tuple;
 import visad.TupleType;
 import visad.UnionSet;
+import visad.ScalarMap;
+import visad.Display;
+import visad.LocalDisplay;
+import visad.ConstantMap;
 import visad.VisADException;
+import visad.georef.LatLonTuple;
+import visad.georef.EarthLocationTuple;
+import visad.util.Util;
 
+import ucar.unidata.idv.control.ControlWidget;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.DerivedDataChoice;
@@ -63,15 +87,23 @@ import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.util.ColorTable;
+import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Range;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.DisplayableData;
 import ucar.visad.display.LineDrawing;
 import ucar.visad.display.TextDisplayable;
+import ucar.visad.display.XYDisplay;
+import ucar.visad.display.SelectorPoint;
+import ucar.visad.ShapeUtility;
 
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
+import edu.wisc.ssec.mcidasv.data.hydra.GrabLineRendererJ3D;
+import edu.wisc.ssec.mcidasv.display.hydra.DragLine;
+import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 
 
 
@@ -98,6 +130,12 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
 
   private GeoSelectionPanel geoSelectionPanel;
 
+  private XYDisplay display2D = null;
+
+  private SelectorPoint locOnTrack;
+
+  private DecimalFormat numFmt = new DecimalFormat();
+
 
   public ProfileAlongTrackControl() {
     super();
@@ -112,21 +150,21 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
       data = (FlatField) dataChoice.getData(getDataSelection());
     }
     else {
-    dataSource = (MultiDimensionDataSource) ((DirectDataChoice)dataChoice).getDataSource();
-    ViewManager vm = getViewManager();
-    mainViewMaster = vm.getMaster();
+      dataSource = (MultiDimensionDataSource) ((DirectDataChoice)dataChoice).getDataSource();
+      ViewManager vm = getViewManager();
+      mainViewMaster = vm.getMaster();
 
-    Hashtable table = dataChoice.getProperties();
-    Enumeration keys = table.keys();
-    while (keys.hasMoreElements()) {
-      Object key = keys.nextElement();
-      if (key instanceof MultiDimensionSubset) {
+      Hashtable table = dataChoice.getProperties();
+      Enumeration keys = table.keys();
+      while (keys.hasMoreElements()) {
+        Object key = keys.nextElement();
+        if (key instanceof MultiDimensionSubset) {
            subset = (MultiDimensionSubset) table.get(key);
+        }
       }
-    }
-    subset.setGeoSelection(getDataSelection().getGeoSelection());
+      subset.setGeoSelection(getDataSelection().getGeoSelection());
 
-    data = (FlatField) dataSource.getData(dataChoice, null, getDataSelection(), dataSource.getProperties());
+      data = (FlatField) dataSource.getData(dataChoice, null, getDataSelection(), dataSource.getProperties());
     }
 
     if (data == null) {
@@ -134,30 +172,39 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
     }
 
     imageRangeType = (RealType) ((FunctionType)data.getType()).getRange();
-    //track = createTrackDisplay(dataChoice);
+    track = createTrackDisplay(dataChoice);
     imageDisplay = create3DDisplay(data);
     addDisplayable(imageDisplay, FLAG_COLORTABLE | FLAG_SELECTRANGE);
     if (track != null) create3DMesh(track);
+
+    // 2D Display in Control Window, only line graph type display for now
+    if (((SimpleSet)data.getDomainSet()).getManifoldDimension() == 1) {
+      display2D = makeDisplay2D(data);
+    }
+
     return true;
   }
 
   public synchronized void dataChanged() {
     super.dataChanged();
-    System.out.println("dataChanged");
   }
 
   private FlatField createTrackDisplay(DataChoice dataChoice) throws VisADException, RemoteException {
     IntegratedDataViewer idv = getIdv();
     FlatField track = null;
 
-    //HashMap map = dataSource.getSubsetFromLonLatRect(subset, getDataSelection().getGeoSelection());
-    //track = dataSource.track_adapter.getData(map);
-    track = (FlatField) dataSource.getData(dataChoice, null, getDataSelection(), dataSource.getProperties());
+    track = (FlatField) dataSource.getData(dataSource.findDataChoice("Track3D"), null, getDataSelection(), dataSource.getProperties());
 
     LineDrawing trackDsp = new LineDrawing("track");
     trackDsp.setLineWidth(2f);
-    trackDsp.setData(track);
+    trackDsp.setData(track.getDomainSet());
     mainViewMaster.addDisplayable(trackDsp);
+
+    // ??? setConstantPosition(val, display real type) ??
+    locOnTrack = new SelectorPoint("marker", new EarthLocationTuple(10, 10, 0));  
+    locOnTrack.setMarker(ShapeUtility.makeShape(ShapeUtility.CROSS));
+    mainViewMaster.addDisplayable(locOnTrack);
+    locOnTrack.setScale(0.1f);
 
     trackDisplay = trackDsp;
     return track;
@@ -212,8 +259,77 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
     return;
   }
 
-  private DisplayableData create2DDisplay() throws VisADException, RemoteException {
-    return null;
+  private XYDisplay makeDisplay2D(final FlatField data) throws VisADException, RemoteException {
+    
+    FunctionType fncType = (FunctionType) data.getType();
+
+    RealType domainType = RealType.Generic;
+    RealType rangeType = (RealType) fncType.getRange();
+
+    final Set domainSet = data.getDomainSet();
+    int len = domainSet.getLength();
+    Integer1DSet newDomain = new Integer1DSet(len);
+    FlatField newFF = new FlatField(new FunctionType(RealType.Generic, rangeType), newDomain);
+    newFF.setSamples(data.getFloats());
+    
+
+    XYDisplay master = new XYDisplay("2D disp", domainType, rangeType);
+
+    master.showAxisScales(true);
+    master.setAspect(2.5, 0.75);
+    double[] proj = master.getProjectionMatrix();
+    proj[0] = 0.35;
+    proj[5] = 0.35;
+    proj[10] = 0.35;
+    master.setProjectionMatrix(proj);
+
+    ScalarMap xmap = new ScalarMap(domainType, Display.XAxis);
+    ScalarMap ymap = new ScalarMap(rangeType, Display.YAxis);
+    ScalarMap txtMap = new ScalarMap(TextType.Generic, Display.Text);
+
+    LocalDisplay display = master.getDisplay();
+    display.addMap(xmap);
+    display.addMap(ymap);
+    display.addMap(txtMap);
+
+    DataReference dataRef = new DataReferenceImpl("data");
+    dataRef.setData(newFF);
+    display.addReference(dataRef);
+
+    final DataReference txtRef = new DataReferenceImpl("text");
+    display.addReference(txtRef, new ConstantMap[] {new ConstantMap(0.9, Display.YAxis)});
+
+    class MyDragLine extends DragLine {
+      public MyDragLine(Gridded1DSet domain, RealType domainType, RealType rangeType,
+            final float lastSelectedValue, LocalDisplay display, final String controlId,
+            final ConstantMap[] color, float[] YRANGE) throws Exception {
+        super(domain, domainType, rangeType, lastSelectedValue, display, controlId, color, YRANGE);
+      }
+
+      public void update() {
+         int idx = (new Float(this.lastSelectedValue)).intValue();
+         try {
+           float[][] val = domainSet.indexToValue(new int[] {idx});
+           locOnTrack.setPoint(new EarthLocationTuple(val[1][0], val[0][0], 0));
+           float rangeVal = (float) ((Real)data.getSample(idx)).getValue();
+           Tuple tup = new Tuple(new Data[] {new Real(RealType.Generic, (double) idx), new Text(TextType.Generic, numFmt.format(rangeVal))});
+           txtRef.setData(tup);
+           
+         } catch (Exception e) {
+           System.out.println(e);
+         }
+      }
+    }
+
+    try {
+        MyDragLine draggable = new MyDragLine(newDomain, domainType, rangeType, 100f, display, 
+            "dragLine", MultiSpectralDisplay.makeColorMap(Color.GREEN), new float[] {0, 16});
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+
+    return master;
   }
 
   protected ColorTable getInitialColorTable() {
@@ -232,26 +348,59 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
   }
 
   public void doRemove() throws RemoteException, VisADException{
-    mainViewMaster.removeDisplayable(meshDisplay);
-    mainViewMaster.removeDisplayable(trackDisplay);
-    mainViewMaster.removeDisplayable(textDisplay);
+    
+    if (meshDisplay != null) mainViewMaster.removeDisplayable(meshDisplay);
+    if (textDisplay != null) mainViewMaster.removeDisplayable(textDisplay);
+    if (trackDisplay != null) mainViewMaster.removeDisplayable(trackDisplay);
     super.doRemove();
   }
 
   public void setDisplayVisibility(boolean on) {
     super.setDisplayVisibility(on);
     try {
-      meshDisplay.setVisible(on);
-      textDisplay.setVisible(on);
-      trackDisplay.setVisible(on);
+      if (meshDisplay != null) meshDisplay.setVisible(on);
+      if (textDisplay != null) textDisplay.setVisible(on);
+      if (trackDisplay != null) trackDisplay.setVisible(on);
     }
     catch( Exception e) {
       e.printStackTrace();
     }
   }
 
-  public Container doMakeContentes() {
-    return null;
+  public Container doMakeContents() {
+        try {
+            JTabbedPane pane = new JTabbedPane();
+            if (display2D != null) {
+              pane.add("Display", GuiUtils.inset(display2D.getDisplayComponent(), 5));
+            }
+            pane.add("Settings",
+                     GuiUtils.inset(GuiUtils.top(doMakeWidgetComponent()), 5));
+            GuiUtils.handleHeavyWeightComponentsInTabs(pane);
+            return pane;
+        } catch (Exception e) {
+            logException("MultiSpectralControl.doMakeContents", e);
+        }
+        return null;
   }
 
+  protected JComponent doMakeWidgetComponent() {
+        List<Component> widgetComponents;
+        try {
+            List<ControlWidget> controlWidgets = new ArrayList<ControlWidget>();
+            getControlWidgets(controlWidgets);
+            widgetComponents = ControlWidget.fillList(controlWidgets);
+        } catch (Exception e) {
+            LogUtil.logException("Problem building the ProfileAlongTrackControl settings", e);
+            widgetComponents = new ArrayList<Component>();
+            widgetComponents.add(new JLabel("Error building component..."));
+        }
+
+        GuiUtils.tmpInsets = new Insets(4, 8, 4, 8);
+        GuiUtils.tmpFill = GridBagConstraints.HORIZONTAL;
+        return GuiUtils.doLayout(widgetComponents, 2, GuiUtils.WT_NY, GuiUtils.WT_N);
+    }
+
+  private JComponent getDisplayTab() {
+     return null;
+  }
 }
