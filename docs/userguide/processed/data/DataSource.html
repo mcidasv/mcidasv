@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Data Sources</title>
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<!-- InstanceBeginEditable name="CurrentFile" -->
+<script language="javascript" type="text/javascript">
+function setParentPage() { if (parent.setPage) parent.setPage('data/DataSources.html',true); }
+</script>
+<!-- InstanceEndEditable -->
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+<body onLoad="setParentPage();">
+<div class="TopTitleNav">
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="choosers/BridgeChooser.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="DataSourceProperties.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span> </p>
+  <hr align="center">
+</div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Data Sources</div>
+The<strong> Data Sources </strong>menu, to the left of the <strong>Fields</strong>, lists the data sources currently loaded into McIDAS-V and provides access to both the user-made and native formulas. The data sources listed are  chosen as described in <a href="choosers/index.html">Choosing Data Sources</a>. The selected item is the data source that will be displayed after you have completed your work in this tab:
+
+<div class="images"><img src="images/SelectorStep1.gif"></div>
+<p>You can right click on a data source in the list to show a popup menu:</p>
+<div class="images"><img src="images/DataSourceMenu.gif" alt="Data Source Popup Menu"><a name="image2" id="image2"></a> <br>
+  <span class="caption">Image 2: Data Source Popup Menu</span></div>
+<p></p>
+<div class="pagesubtitle"><strong>Properties</strong></div>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Remove This Data Source -</strong> Removes  the data source from the McIDAS-V Session.</li>
+<li class="propertylistitem"><strong>Reload Data -</strong> Reloads the data. This allows your data to be updated to a more recent time without having to go back to the <strong>Data Sources</strong> tab to reload it.</li>
+<li class="propertylistitem"><strong>Change Data -</strong> Opens a 'Change data for:' window. This window looks almost exactly like the Data Explorer and works the same. You can select a new data source to load in, and this will replace the existing one.</li>
+<li class="propertylistitem"><strong>Write Local Grid -</strong> Saves the data as a grid as a netCDF file (*.nc). This opens a window where you can select what Fields in the selected data source you want to write to a grid.</li>
+<li class="propertylistitem"><strong>Write Field Mask Plugin -</strong> Saves the data source as a Jar file (*.jar). This opens a 'Data Source Field Mask File' window, where you can select what parameters to show, hide, or write to a plugin.</li>
+<li class="propertylistitem"><strong>Save As Favorite -</strong> Saves the selected data source as off as a favorite and makes it available in the <strong>Favorite Data Sources</strong> tab of the <strong>Quick Links</strong> tab of the Data Explorer.</li>
+<li class="propertylistitem"><strong>Properties -</strong> This allows you to open the data source's <a href="DataSourceProperties.html">Properties window</a>.</li>
+</ul>
+<div class="pagesubtitle">Formulas<a name="formula" id="formula"></a> </div>
+<p>You can create your own formulas using the <a href="../tools/Formulas.html">McIDAS-V Formulas</a> facility. The <strong>Formulas</strong> data source in the <strong>Field Selector</strong> is a special data source and lists all of the available end user formulas. You can right-click on the data source to create new formulas and import and export formulas. The formulas are listed in the Fields tree. Right-clicking on one of the formulas listed in the Fields tree allows you to edit, copy or evaluate the formula.</p>
+<p>You can select a formula just like any other Field and create a display from it. However, the formula, when evaluated to create the display, usually needs one or more other data fields to act on. In this case a special <strong>Field Selector</strong> tab is shown that allows the user to select the fields for the formula. (Note: The Fields you select here can also be Formula Fields resulting in further Field selection).</p>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav">
+  <hr align="center">
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="choosers/BridgeChooser.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="DataSourceProperties.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span></p>
+</div>
+</body>
+<!-- InstanceEnd -->
+</html>
