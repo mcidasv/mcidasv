@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
 <!-- InstanceBeginEditable name="CurrentFile" -->
 <script language="javascript" type="text/javascript">
-function setParentPage() { if (parent.setPage) parent.setPage('data/DataSources.html',true); }
+function setParentPage() { if (parent.setPage) parent.setPage('data/DataSource.html',true); }
 </script>
 <!-- InstanceEndEditable -->
 <style type="text/css">
@@ -21,19 +21,18 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSources.
 </head>
 <body onLoad="setParentPage();">
 <div class="TopTitleNav">
-  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="choosers/BridgeChooser.html">Go
-        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="DataSourceProperties.html">Go
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="FieldSelector.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="Fields.html">Go
         to Next</a><!-- InstanceEndEditable -->] </span> </p>
   <hr align="center">
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Data Sources</div>
-The<strong> Data Sources </strong>menu, to the left of the <strong>Fields</strong>, lists the data sources currently loaded into McIDAS-V and provides access to both the user-made and native formulas. The data sources listed are  chosen as described in <a href="choosers/index.html">Choosing Data Sources</a>. The selected item is the data source that will be displayed after you have completed your work in this tab:
+<p>The<strong> Data Sources </strong>menu, to the left of the <strong>Fields</strong>, lists the data sources currently loaded into McIDAS-V and provides access to both the user-made and native formulas. The data sources listed are  chosen as described in <a href="choosers/index.html">Choosing Data Sources</a>. The selected item is the data source that will be displayed after you have completed your work in this tab:</p>
 
 <div class="images"><img src="images/SelectorStep1.gif"></div>
-<p>You can right click on a data source in the list to show a popup menu:</p>
-<div class="images"><img src="images/DataSourceMenu.gif" alt="Data Source Popup Menu"><a name="image2" id="image2"></a> <br>
-  <span class="caption">Image 2: Data Source Popup Menu</span></div>
+<p>To set the defaults for a data source bring up the Properties dialog by right clicking (or double clicking) on the data source name in the data sources panel of the Field Selector window and select <strong>Properties</strong>:</p>
+<div class="images"><img src="images/DataSourceMenu.gif" alt="images/DataSourceMenu.gif"></div>
 <p></p>
 <div class="pagesubtitle"><strong>Properties</strong></div>
 <ul class="propertylist">
@@ -43,16 +42,46 @@ The<strong> Data Sources </strong>menu, to the left of the <strong>Fields</stron
 <li class="propertylistitem"><strong>Write Local Grid -</strong> Saves the data as a grid as a netCDF file (*.nc). This opens a window where you can select what Fields in the selected data source you want to write to a grid.</li>
 <li class="propertylistitem"><strong>Write Field Mask Plugin -</strong> Saves the data source as a Jar file (*.jar). This opens a 'Data Source Field Mask File' window, where you can select what parameters to show, hide, or write to a plugin.</li>
 <li class="propertylistitem"><strong>Save As Favorite -</strong> Saves the selected data source as off as a favorite and makes it available in the <strong>Favorite Data Sources</strong> tab of the <strong>Quick Links</strong> tab of the Data Explorer.</li>
-<li class="propertylistitem"><strong>Properties -</strong> This allows you to open the data source's <a href="DataSourceProperties.html">Properties window</a>.</li>
+<li class="propertylistitem"><strong>Properties -</strong> This allows you to open the data source's Properties Window.</li>
 </ul>
+<p>The Properties Dialog is different for different types of data sources. Here is the dialog window for a gridded data source:</p>
+<a name="activepolling" id="activepolling"></a>
+<div class="images"><img src="images/DataSourceProperties.gif" alt="images/DataSourceProperties.gif"></div>
+<p>Any displays that are showing data from a data source can be automatically updated by selecting the <strong>Automatically Reload: Active</strong> checkbox. When this is selected all data will be reloaded and the displays will be updated when the user presses<strong> <img src="../tools/images/Apply.gif" width="65" height="26"align=absmiddle></strong> or<strong> <img src="../tools/images/Ok.gif" width="51" height="26"align=absmiddle></strong>.</p>
+<a name="basicproperties" id="basicproperties"></a>
+<div class="pagesubtitle">Basic Properties</div>
+<p>You can change the displayed name with the <strong>Name</strong> field.</p>
+<p>Some data sources can automatically update themselves by selecting the <strong>Active</strong> button. For example, if you had a set of most recent satellite images you can turn on Polling and have the data update to the latest images every N minutes.</p>
+<p>For point data you can define <em>Time Binning</em> settings (not shown) by selecting a Bin Size (e.g., 5 minutes, 1 hour) and a Round To value (e.g., On the hour, 15 minutes after the hour). This will map all the observation times into the nearest bin. The smallest time is rounded with the Round To value (e.g., if Round To was "10 after" and the smallest time was 10:23 then this time would be rounded to 10:20). This is the base time. Each actual observation time is mapped into a set of bins of Bin Size starting at the base time.</p>
+<a name="times" id="times"></a>
+<div class="pagesubtitle">Times</div>
+<p>The <strong>Times</strong> tab allows you to select the times to use. Click off the <strong>Use All</strong> button and select individual times. You can right mouse click in the list to show a popup menu that allows you to select different strides (e.g., every 3rd time).</p>
+<div class="images"><img src="images/DataSourceTimes.gif" alt="images/DataSourceTimes.gif"></div>
+<p></p>
+<a name="spatialsubset" id="spatialsubset"></a>
+<div class="pagesubtitle">Spatial Subsetting</div>
+<p>For grids and other data source types the data can be subset and decimated with the <strong>Spatial Subset</strong> tab. The <strong>X Stride</strong>, <strong>Y Stride</strong> and <strong>Z Stride</strong> menus allow you to decimate a grid, selecting every Nth point. The <strong>Bounding Box</strong> allows you to define a spatial area to load. The default spatial domain of
+the data is shown by the blue outline box. To select an area just drag on the map. Once a subset is selected it can be resized (grab on the little black selection points) moved (grab somewhere near the box) and delete (press the Delete key). Specific lat/lon values can be entered in the fields on the left.</p>
+<p>Subsetting can be useful when you are displaying an image that has a high resolution or covers a large spatial area as a Contour Plan View or Color Filled Contour Plan View display. Instead of having McIDAS-V take the time to compute values between every point, you can set a stride where only every Nth point will be taken into consideration. If you need a very detailed image, it is recommended that you do not change the stride away from the default (none). However, if you are trying to get a general picture, the stride feature can be a time-saver.</p>
+<div class="images"><img src="images/DataSourceSpatialSubset.gif" alt="images/DataSourceSpatialSubset.gif"></div>
+<p>A version of this spatial subsetting window is used in the <strong>Field Selector</strong>. Here, you explicitly enable these settings. The decimation and spatial subset are shown in different tabs:</p>
+<div class="images"><img src="images/DataSourceSpatialSubsetField.gif" alt="images/DataSourceSpatialSubsetField.gif"></div>
+<p></p>
+<a name="details" id="details"></a>
+<div class="pagesubtitle">Details</div>
+<p>The <strong>Details</strong> tab shows further information about the data source, e.g.: any documentation associated with the data, what files or urls are used, etc.</p>
+<a name="metadata" id="metadata"></a>
+<div class="pagesubtitle">Metadata</div>
+<p>For grid data sources the <strong>Metadata</strong> tab shows the NetCDF metadata.</p>
+<p></p>
 <div class="pagesubtitle">Formulas<a name="formula" id="formula"></a> </div>
 <p>You can create your own formulas using the <a href="../tools/Formulas.html">McIDAS-V Formulas</a> facility. The <strong>Formulas</strong> data source in the <strong>Field Selector</strong> is a special data source and lists all of the available end user formulas. You can right-click on the data source to create new formulas and import and export formulas. The formulas are listed in the Fields tree. Right-clicking on one of the formulas listed in the Fields tree allows you to edit, copy or evaluate the formula.</p>
 <p>You can select a formula just like any other Field and create a display from it. However, the formula, when evaluated to create the display, usually needs one or more other data fields to act on. In this case a special <strong>Field Selector</strong> tab is shown that allows the user to select the fields for the formula. (Note: The Fields you select here can also be Formula Fields resulting in further Field selection).</p>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
-  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="choosers/BridgeChooser.html">Go
-        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="DataSourceProperties.html">Go
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="FieldSelector.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="Fields.html">Go
         to Next</a><!-- InstanceEndEditable -->] </span></p>
 </div>
 </body>

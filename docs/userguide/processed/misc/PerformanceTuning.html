@@ -30,8 +30,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/PerformanceT
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Performance Tuning</div>
-<div class="overview">If you are running into issues with memory consumption or slow response of McIDAS-V, there are several things you can do.</div>
-The amount of memory used by McIDAS-V will depend on the size of the datasets you use and the types of displays. Datasets rendered as 2D depictions (plan views - contours or color shaded displays) use much less memory than 3D displays (isosurfaces, cross sections). Large datasets (images, dense grids) will use much more memory.
+<p>If you are running into issues with memory consumption or slow response of McIDAS-V, there are several things you can do.</p>
+<p>The amount of memory used by McIDAS-V will depend on the size of the datasets you use and the types of displays. Datasets rendered as 2D depictions (plan views - contours or color shaded displays) use much less memory than 3D displays (isosurfaces, cross sections). Large datasets (images, dense grids) will use much more memory.</p>
 <p>There are several features in McIDAS-V that allow you to more efficiently view large datasets:</p>
 <ul class="childlist">
 <li><a href="#subset">Temporal/Spatial Subset of Data</a></li>
@@ -54,7 +54,7 @@ The amount of memory used by McIDAS-V will depend on the size of the datasets yo
   Selector</strong>)
   or you can set these for individual field using the tabs in the lower right
   corner of the <strong>Field
-Selector</strong>. For more information, see the <a href="../data/DataSourceProperties.html">Data Source Properties</a> section of McIDAS-V User's Guide.</p>
+Selector</strong>. For more information, see the <a href="../data/DataSource.html">Data Source Properties</a> section of McIDAS-V User's Guide.</p>
 <p><a name="heap" id="heap"></a></p>
 <div class="pagesubtitle">Memory allocation</div>
 By default, McIDAS-V allocates 512 megabytes of maximum memory for Java. This is usually the optimum amount for a Windows system with 1 gigabyte of physical memory (RAM). Windows takes up half of that anyway and once Windows has to start swapping, performance severely degrades. On a Linux system, you can probably get away with 700m for 1 Gb of memory as it does a much better job of swapping. All this also depends on what else you are running on the machine and how much memory those applications use.

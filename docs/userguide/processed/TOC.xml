@@ -46,7 +46,10 @@
         <tocitem text="Creating a McIDAS-X Bridge Session" target="idv.data.choosers.bridgechooser"/>
     </tocitem>
     <tocitem text="Field Selector" target="idv.data.fieldselector">
-        <tocitem text="Data Source Properties" target="idv.data.datasourceproperties"/>
+        <tocitem text="Data Sources" target="idv.data.datasource"/>
+		<tocitem text="Fields" target="idv.data.fields"/>
+		<tocitem text="Displays" target="idv.data.displays"/>
+		<tocitem text="Data Subset" target="idv.data.datasubset"/>
     </tocitem>
 	<tocitem text="Layer Controls" target="idv.page_displaycontrols">
         <tocitem text="Overview" target="idv.controls"/>

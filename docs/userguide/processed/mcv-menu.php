@@ -83,7 +83,10 @@
       <span class="link" onClick="setPage('data/FieldSelector.html');">Field Selector</span><br>
 
       <div class="indented" id="thefieldselector">
-        <span class="link" onClick="setPage('data/DataSourceProperties.html');">Data Source Properties</span><br>
+        <span class="link" onClick="setPage('data/DataSource.html');">Data Sources</span><br />
+          <span class="link" onClick="setPage('data/Fields.html');">Fields</span><br />
+                  <span class="link" onClick="setPage('data/Displays.html');">Displays</span><br />
+          <span class="link" onClick="setPage('data/DataSubset.html');">Data Subset</span><br />      
       </div>
             <span class="toggle" onClick="toggleChildren(this,'page_layercontrols');">+</span>
       <span class="link" onClick="setPage('page_layercontrols.html');">Layer Controls</span><br>
