@@ -77,7 +77,6 @@ import ucar.unidata.util.Misc;
 
 import visad.Data;
 import visad.FlatField;
-import visad.GriddedSet;
 import visad.VisADException;
 
 import visad.util.Util;
@@ -152,7 +151,7 @@ public class NPPDataSource extends HydraDataSource {
                                  String fileName, Hashtable properties)
             throws VisADException {
         this(descriptor, Misc.newList(fileName), properties);
-        logger.trace("NPPDataSource called, single file selected: " + fileName);
+        logger.debug("NPPDataSource called, single file selected: " + fileName);
     }
 
     /**
@@ -198,13 +197,13 @@ public class NPPDataSource extends HydraDataSource {
     			filename.lastIndexOf(File.separatorChar) + 1, 
     			filename.lastIndexOf(File.separatorChar) + 1 + filename.indexOf("_"));
         StringTokenizer st = new StringTokenizer(prodStr, "-");
-        logger.trace("check for embedded GEO, tokenizing: " + prodStr);
+        logger.debug("check for embedded GEO, tokenizing: " + prodStr);
         while (st.hasMoreTokens()) {
         	String singleProd = st.nextToken();
-        	logger.trace("Next token: " + singleProd);
+        	logger.debug("Next token: " + singleProd);
         	for (int i = 0; i < JPSSUtilities.geoProductIDs.length; i++) {
         		if (singleProd.equals(JPSSUtilities.geoProductIDs[i])) {
-        			logger.trace("Setting isCombinedProduct true, Found embedded GEO: " + singleProd);
+        			logger.debug("Setting isCombinedProduct true, Found embedded GEO: " + singleProd);
         			isCombinedProduct = true;
         			break;
         		}
@@ -286,7 +285,7 @@ public class NPPDataSource extends HydraDataSource {
     	    							String baseName = axpp.getStringValue();
     	    							productName = baseName;
     	    							String productProfileFileName = nppPP.getProfileFileName(baseName);
-    	    							logger.trace("Found profile: " + productProfileFileName);
+    	    							logger.debug("Found profile: " + productProfileFileName);
     	    							if (productProfileFileName == null) {
     	    								throw new Exception("XML Product Profile not found in catalog");
     	    							}
@@ -444,6 +443,15 @@ public class NPPDataSource extends HydraDataSource {
     	    								logger.debug("Skipping data of dimension: " + dl.size());
     	    								continue;
     	    							}
+    	    							
+    	    							// for now, skip any 3D VIIRS data
+    	    							if (instrumentName.getStringValue().equals("VIIRS")) {
+    	    								if (dl.size() == 3) {
+    	    									logger.debug("Skipping VIIRS 3D data for now...");
+    	    									continue;
+    	    								}
+    	    							}
+    	    							
     	    							boolean xScanOk = false;
     	    							boolean yScanOk = false;
     	    							boolean zScanOk = false;
@@ -674,7 +682,7 @@ public class NPPDataSource extends HydraDataSource {
         	// array_name common to spectrum table
         	spectTable.put("array_name", pStr);
         	spectTable.put("product_name", productName);
-        	logger.trace("Product Name: " + productName);
+        	logger.debug("Product Name: " + productName);
         	
         	if (is3D) {
 
