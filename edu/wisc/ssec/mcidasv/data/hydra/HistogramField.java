@@ -69,6 +69,9 @@ public class HistogramField
     else if (rngSet instanceof DoubleSet) {
       rangeType = Double.TYPE;
     }
+    else {
+      rangeType = Float.TYPE; 
+    }
                                                                                                                                           
     double[] minmax_0 = {Double.MAX_VALUE, -Double.MAX_VALUE};
     double[] minmax_1 = {Double.MAX_VALUE, -Double.MAX_VALUE};
