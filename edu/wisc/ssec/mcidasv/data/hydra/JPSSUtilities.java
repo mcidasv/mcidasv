@@ -155,6 +155,7 @@ public abstract class JPSSUtilities {
     	
     	factHM.put("Albedo", "Factors");
     	factHM.put("AntennaTemperature", "AntennaTemperatureFactors");
+    	factHM.put("AverageCloudTopHeight", "CTHFactors");
     	factHM.put("BrightnessTemperature", "BrightnessTemperatureFactors");
     	factHM.put("BulkSeaSurfaceTemperatures", "BulkFactors");
     	factHM.put("CloudBaseHeightTotal", "CloudBaseHeightFactors");
