@@ -151,7 +151,7 @@
         <mapID target="idv.data.datasources.servers"                 url="data/DataSources.html#servers" />
 		<mapID target="idv.data.datasubset"							 url="data/DataSubset.html" />
 		<mapID target="idv.data.displays"							 url="data/Displays.html" />
-		<mapID target="idv.data.fields"								 url="data/Fields/html" />
+		<mapID target="idv.data.fields"								 url="data/Fields.html" />
         <mapID target="idv.data.fieldselector"                       url="data/FieldSelector.html" />
         <mapID target="idv.data.fieldselector.datasources"           url="data/FieldSelector.html#datasources" />
         <mapID target="idv.data.fieldselector.derivedparms"          url="data/FieldSelector.html#derivedparms" />
@@ -622,7 +622,7 @@
         <mapID target="idv.ui.menus.tools"                           url="ui/Menus.html#tools" />
         <mapID target="idv.ui.menus.viewmenu"                        url="ui/Menus.html#viewmenu" />
         <mapID target="idv.ui.menus.windows"                         url="ui/Menus.html#windows" />
-		<mapID target="idv.ui.modifycolorinteractively"				 url="ui/ModifyColorInteractively" />
+		<mapID target="idv.ui.modifycolorinteractively"				 url="ui/ModifyColorInteractively.html" />
         <mapID target="idv.ui.mouseandkeyboard"                      url="ui/Navigation.html" />
         <mapID target="idv.ui.navigation"                            url="ui/Navigation.html" />
         <mapID target="idv.ui.navigation.mac"                        url="ui/Navigation.html#mac" />
