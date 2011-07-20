@@ -42,34 +42,33 @@ runMcV -islfile your-script.py
 <p>Below, each of the available methods in the Jython scripting interface will be described.</p>
 <ul>
 <li><strong>setOffScreen(value)</strong></li>
-<li style="list-style: none"><br>
-If you want to do your rendering in the "background", then the <em>value</em> should be set to 1 (true). If you want the window(s) to pop-up, set the <em>value</em> to 0 (false).</li><br>
+<blockquote>
+If you want to do your rendering in the "background", then the <em>value</em> should be set to 1 (true). If you want the window(s) to pop-up, set the <em>value</em> to 0 (false).</blockquote>
 <li><strong>setDebug(value)</strong></li>
-<li style="list-style: none"><br>
-To enable some debug during your development, set the <em>value</em> to 1 (true).</li>
+<blockquote>
+To enable some debug during your development, set the <em>value</em> to 1 (true).</blockquote>
 <li><strong>loadBundle(filename, data_files)</strong></li>
-<li style="list-style: none"><br>
-Loads a bundle with the given <em>filename</em>. You may also provide a dictionary of <em>datasource:file</em> items similar to the ISL <a href="DataAndDisplays.html#setfiles">setfiles</a>.</li>
+<blockquote>
+Loads a bundle with the given <em>filename</em>. You may also provide a dictionary of <em>datasource:file</em> items similar to the ISL <a href="DataAndDisplays.html#setfiles">setfiles</a>.</blockquote>
 <li><strong>pause()</strong></li>
-<li style="list-style: none"><br>
-Pause until all displays have been created. This is useful between <em>loadBundle()</em> and <em>writeImage()</em> for example.</li>
+<blockquote>
+Pause until all displays have been created. This is useful between <em>loadBundle()</em> and <em>writeImage()</em> for example.</blockquote>
 <li><strong>writeImage(filename, parameters, quality)</strong></li>
-<li style="list-style: none"><br>
-Write out an image file. The <em>filename</em> should have the file extension of the type of image file you want to write (.jpg, .gif, .png).
-<p>The <em>parameters</em> variable is a string that contains any parameter information (see the <a href="ImagesAndMovies.html#imagesmanipulation">ISL description of parameters)</a> It is in the form:</p>
-<pre>
+<blockquote>
+Write out an image file. The <em>filename</em> should have the file extension of the type of image file you want to write (.jpg, .gif, .png).</blockquote>
+<blockquote>The <em>parameters</em> variable is a string that contains any parameter information (see the <a href="ImagesAndMovies.html#imagesmanipulation">ISL description of parameters)</a> It is in the form:</blockquote>
+<blockquote><pre>
 "clip north=40; matte background=green top=20; resize height=300 width=300"
-</pre>
-<p>The <em>quality</em> value is 1.0 for the best, down to 0.0 for, well, no quality at all...</p>
+</pre></blockquote>
+<blockquote>The <em>quality</em> value is 1.0 for the best, down to 0.0 for, well, no quality at all...</blockquote>
 </li>
-<li><strong>writeMovie(filename, parameters)</strong> Write out the display as a movie. The <em>filename</em> should have the file extension of the type of image file you want to write (.mov)</li>
-<li style="list-style: none">
-<p>The <em>parameters</em> variable is a string that contains any parameter information (see the <a href="ImagesAndMovies.html#imagesmanipulation">ISL description of parameters)</a> It is in the form:</p>
-<pre>
+<li><strong>writeMovie(filename, parameters)</strong> </li>
+<blockquote>Write out the display as a movie. The <em>filename</em> should have the file extension of the type of image file you want to write (.mov)</blockquote>
+<blockquote>The <em>parameters</em> variable is a string that contains any parameter information (see the <a href="ImagesAndMovies.html#imagesmanipulation">ISL description of parameters)</a> It is in the form:</blockquote>
+<blockquote><pre>
 "clip north=40; matte background=green top=20; resize height=300 width=300"
-</pre></li>
+</pre></blockquote>
 <li>An alternative way to get an Image, manipulate it and then save it:</li>
-<li style="list-style: none">
 <ul>
 <li><strong>getImage()</strong></li>
 <li><strong>resizeImage(image, width, height)</strong></li>
@@ -77,9 +76,7 @@ Write out an image file. The <em>filename</em> should have the file extension of
 <li><strong>df = findDisplayControl(id)</strong> then "dc.getImage()"</li>
 <li><strong>writeImageToFile(image, filename)</strong></li>
 </ul>
-</li>
 </ul>
-<div class="childlist"></div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">

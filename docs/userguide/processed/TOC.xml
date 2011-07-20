@@ -221,7 +221,7 @@
         <tocitem text="Profiler Winds" target="idv.examples.profiler"/>
         <tocitem text="Flow Displays" target="idv.examples.flowdisplays"/>
         <tocitem text="Observations" target="idv.examples.observations"/>
-        <tocitem text="Miscellaneous Display Types" target="idv.examples.miscellaneous">
+        <tocitem text="Miscellaneous Display Types" target="idv.examples.miscellaneous"/>
     </tocitem>
 	<tocitem text="FAQ - Frequently Asked Questions" target="idv.faq">
 	    <tocitem text="General FAQ" target="idv.generalfaq"/>
@@ -232,6 +232,6 @@
 		<tocitem text="Common Run-Time Errors FAQ" target="idv.runtimefaq"/>
 		<tocitem text="Reporting Problems FAQ" target="idv.reportingproblemsfaq"/>
     </tocitem>
-    <tocitem text="McIDAS-X Commands in McIDAS-V" target="idv.xequivalent"> </tocitem>
+    <tocitem text="McIDAS-X Commands in McIDAS-V" target="idv.xequivalent"/>
 </tocitem>
 </toc>

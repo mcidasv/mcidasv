@@ -36,7 +36,6 @@ Before we start a couple of comments about writing the ISL. ISL files are writte
 <ul>
 <li>XML is fully nested. There is only one <em>root</em> tag and all other tags are descendants of the root.</li>
 <li>All tags have to be closed. Either do:</li>
-<li style="list-style: none">
 <blockquote>
 <pre>
 &lt;sometag/&gt;
@@ -51,7 +50,6 @@ or
 </li>
 <li>If you want to include special characters like '&lt;', '&gt;' and '"' you need to escape them with: '&amp;lt;', '&amp;gt;', '&amp;quot;'.</li>
 <li>You can comment out sections of XML with '&lt;!--' ... '--&gt;'. e.g:</li>
-<li style="list-style: none">
 <blockquote>
 <pre>
    ...
@@ -59,7 +57,6 @@ or
       &lt;sometag/&gt;
    --&gt;</span>
 </pre></blockquote>
-</li>
 </ul>
 The ISL file starts with a <a href="BasicTags.html#isl">isl</a> tag:
 <blockquote>
@@ -143,9 +140,7 @@ This will write out the images test0.png, test1.png, test2.png, etc.
         &lt;<a href="ImagesAndMovies.html#image">image</a> <span class="xmlattr">file</span>="test.png"/&gt;
     &lt;/<a href="BasicTags.html#group">group</a>&gt;
 &lt;/<a href="BasicTags.html#isl">isl</a>&gt;
-<a href="nested.isl"><img src="Folder.gif" border="0">nested.isl</a>
-</pre></blockquote>
-<div class="childlist"></div>
+<a href="nested.isl"><img src="Folder.gif" border="0">nested.isl</a></pre></blockquote>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">

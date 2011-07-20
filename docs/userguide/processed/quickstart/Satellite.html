@@ -59,46 +59,41 @@ see <a href="../data/choosers/ImageChooser.html">Choosing Satellite Imagery</a>.
 <ol>
   <li>Choose the ADDE Server: <strong>satepsanone.nesdis.noaa.gov</strong> and
     the Dataset: <strong>PUB</strong>.</li>
-  <div style="margin:10px;"><img src="images/ImageServer.gif">
+  <blockquote><div style="margin:10px;"><img src="images/ImageServer.gif">
     <p>McIDAS-V comes pre-configured with a list of ADDE servers and datasets,
       or you can enter your own. See <a href="../data/DataSources.html">Available
           data</a> for a description of these pre-defined data sets.
     </p>
-</div>
+</div></blockquote>
   <li>Press <strong>Connect</strong> to query the server for available
     image types. </li>
-    <div style="margin:10px;"><img src="images/Connect.gif"></div>
+    <blockquote><div style="margin:10px;"><img src="images/Connect.gif"></div></blockquote>
 <p><a name="imagetype" id="imagetype"></a> </p>
   <li>Select the <strong>Image Type</strong> to use (in the example
     below, <strong>GEFDSK01V</strong> for GOES-East full disk band 1 visible
-    images).
-    <div style="margin:10px;"><img src="images/ImageType.gif">
-    </div>
-  </li>
+    images).</li>
+   <blockquote> <div style="margin:10px;"><img src="images/ImageType.gif">
+    </div></blockquote>
   <li>Choose the image time(s) you want. Either choose a set of relative times
     as shown in the example below (5 most recent), or a set of absolute times
-    as shown in step 5.
-    <div style="margin:10px;"><img src="images/RelativeTimes.gif">
-    </div>
-  </li>
-  <li><a name="abstime" id="abstime"></a>A set of absolute times (e.g., 09:15:00 UTC, 17:45:00 UTC).
-    <div style="margin:10px;"><img src="images/AbsoluteImageTimes.gif">
+    as shown in step 5.</li>
+    <blockquote><div style="margin:10px;"><img src="images/RelativeTimes.gif">
+    </div></blockquote>
+  <li><a name="abstime" id="abstime"></a>A set of absolute times (e.g., 09:15:00 UTC, 17:45:00 UTC).</li>
+    <blockquote><div style="margin:10px;"><img src="images/AbsoluteImageTimes.gif">
       <p>When choosing absolute times for the first time McIDAS-V needs
             to query the ADDE server for the times. This may take some time.
             To select more than one time use Ctrl+Click or Shift+Click.
       </p>
-    </div>
-  </li>
+    </div></blockquote>
   <li>Select the Navigation type (either Default or Lat/Lon). Choose Lat/Lon
     if you are using Level 1B or POES ADDE servers. </li>
   <li>If you do not want to create a preview image in the Field Selector, uncheck
     'Create preview image' box.</li>
   <li>When done, load the selected image data with the <strong>Add
       Source</strong> button.</li>
-  <li style="list-style: none">
-    <div style="margin:10px;"><img src="images/AddSource.gif">
-    </div>
-  </li>
+    <blockquote><div style="margin:10px;"><img src="images/AddSource.gif">
+    </div></blockquote>
 </ol>
 <a name="id" id="id"></a>
 <div class="pagesubtitle">Creating the Display</div>
@@ -108,6 +103,7 @@ the times are listed in the <strong>Times</strong> tab, the preview image or map
 in the <strong>Region</strong> tab, and the geographical selection parameters are listed in the
 <strong>Advanced</strong> tab. 
 <div class="images"><img src="images/ImageSelector1.gif" alt="images/ImageSelector1.gif" width="965" height="513"></div></p>
+<p></p>
 <ol>
   <li>Select the calibration that you wish to display in the <strong>Fields</strong> panel.
     In this example, Brightness is selected. </li>
@@ -121,7 +117,7 @@ in the <strong>Region</strong> tab, and the geographical selection parameters ar
     <img src="images/RegionTab.gif" width="310" height="233"><br>
     <br>
   </li>
-  <li>Click on <strong>Create Display</strong> to display the image(s). To control
+  <li>Click on <strong> </strong> to <img src="images/CreateDisplay.gif" width="116" height="26"align="absmiddle"> display the image(s). To control
       time animation use the <a href="../ui/Animation.html#animation">Time Animation
       Widget</a>.</li>
 </ol>
@@ -145,8 +141,8 @@ data.
     Dataset: <strong>NRPT</strong> and press <strong>Connect</strong> to query
     the server for available image types.</li>
   <li>Select the <strong>Image Type</strong> to use (in the example below, AQUAC - Aqua Arctic composites..</li>
-  <div style="margin:10px;"><img src="../data/choosers/images/PolarImageStep3.gif">
-  </div>
+  <blockquote><div style="margin:10px;"><img src="../data/choosers/images/PolarImageStep3.gif">
+  </div><blockquote>
   <li>Choose to display the most recent image, and click<strong> <img src="images/AddSource.gif" width="180" height="24"align=absmiddle></strong>. </li>
   <li>In the Fields panel, select the calibration that you wish to view. </li>
   <li>When done, load
@@ -169,8 +165,8 @@ data.
   <li>Return to the <strong>Data Sources</strong> tab of the Data Explorer.</li>
   <li>Select a different <strong>Image Type</strong> to use (in the example below,
     Aqua 500 meter resolution Calibrated Radiances). </li>
-  <div style="margin:10px;"><img src="../data/choosers/images/PolarImageStep3a.gif">
-  </div>
+  <blockquote><div style="margin:10px;"><img src="../data/choosers/images/PolarImageStep3a.gif">
+  </div></blockquote>
   <li>Choose a set of either the 10 most relative times, or a set of 10 absolute
     times.</li>
   <li>When done, load the selected images into the <strong>Field
@@ -181,9 +177,8 @@ data.
     of multiple  polar orbiting images. Using the Image
     Coordinates option ensures
     the images will be displayed.<div><br>
-      <img src="../data/choosers/images/AdvancedTab.gif"><br>
+      <blockquote><img src="../data/choosers/images/AdvancedTab.gif">
     </div>
-    <br>
   </li>
   <li>When done, load the selected images with the <img src="images/CreateDisplay.gif" width="116" height="26"align=absmiddle><strong>  </strong> button.</li>
 </ol>
