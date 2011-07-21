@@ -43,10 +43,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
 <li class="propertylistitem"><strong>Difference from initial timestep (D(T)-D(T)-D(0)) -</strong> Plots a sequence of images. Each image maps the difference in the numerical value of the parameter from the initial values of the first frame.   This formula sets the value of each time step N as:</li>
 <li class="propertylistitem"><table>
    <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top">
-   <p><em>&nbsp;</em></p>
-   </td>
-   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
+   <td width="750" colspan="2" rowspan="1" valign="top" nowrap>
    <p>D(T) = D(T) - D(0) </p>
    </td>
    </tr>
@@ -71,20 +68,19 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
 <div class="pagesubtitle"><a name="miscellaneous" id="miscellaneous"></a>Miscellaneous</div>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Define a grid diagnostic  (gddiag) - </strong>Allows for defining a grid diagnostic to perform. </li>
-<li class="propertylistitem"><table>
+<li class="propertylistitem"><table id="gridformulas1" cellpadding="0" cellspacing="0" border="1">
   <tr>
-  <td valign="top" rowspan="1" colspan="3">
+  <td valign="top" rowspan="1" colspan="2">
    <p>Input parameters: </p>
    </td>
+   <td width="630">
   </tr>
    <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top">
-   <p><em>gddiag</em></p>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>gddiag </em></p>
    </td>
-   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>grid diagnostic. For more information see the Grid Diagnostics section
-     of the <a href="JythonLib.html#griddiag">Jython
-     Library</a>. </p>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>Grid diagnostic. For more information, see the Grid Diagnostics section of the <a href="JythonLib.html#griddiag">Jython Library</a>.</p>
    </td>
    </tr>
 </table></li>
@@ -93,61 +89,64 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
 <li class="propertylistitem"><strong>Horizontal Advection (from %N1% &amp; %N2%) (scalar parameter, U Component,
   V Component)</strong></li>
 <li class="propertylistitem">This formula calculates horizontal advection from U and V components.</li>
-  <li class="propertylistitem"><table>
+  <li class="propertylistitem"><table id="gridformulas2" cellpadding="0" cellspacing="0" border="1">
   <tr>
   <td valign="top" rowspan="1" colspan="2">
    <p>Input parameters: </p>
    </td>
+   <td width="630">
   </tr>
    <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top">
+   <td width="120" colspan="1" rowspan="1" valign="top">
    <p><em>scalar</em></p>
    </td>
-   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>scalar parameter</p>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>Scalar Parameter.</p>
    </td>
    </tr>
 </table></li>
 <li class="propertylistitem"><strong>Horizontal Flux Divergence (from %N1% &amp; %N2%) (scalar parameter, U
     Component, V Component) - </strong>Calculates horizontal flux divergence from U and V components.</li>
-<li class="propertylistitem"><table>
+<li class="propertylistitem"><table id="gridformulas3" cellpadding="0" cellspacing="0" border="1">
   <tr>
   <td valign="top" rowspan="1" colspan="2">
    <p>Input parameters: </p>
    </td>
+   <td width="630">
   </tr>
-  <tr>
-<td valign="top" rowspan="1" colspan="1" width="70">
-<p><em>scalar</em></p>
-</td>
-<td valign="top" rowspan="1" colspan="2" width="660">
-<p>scalar parameter </p>
-</td>
-</tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>scalar</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>Scalar Parameter</p>
+   </td>
+   </tr>
 </table></li>
 <li class="propertylistitem"><strong>Layer Difference (Top of Layer, Bottom of Layer) -</strong> Calculates a layer difference between a field at two different
 levels.</li>
 <li class="propertylistitem"><strong>Layer Wind Shear  (top, bottom) - </strong>Calculates the wind shear between two user-defined layers.</li>
-    <li class="propertylistitem"><table>
+    <li class="propertylistitem"><table id="gridformulas4" cellpadding="0" cellspacing="0" border="1">
   <tr>
   <td valign="top" rowspan="1" colspan="2">
    <p>Input parameters: </p>
    </td>
+   <td width="630">
   </tr>
    <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top">
-   <p><em>top</em></p>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>top </em></p>
    </td>
-   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>top layer  (default=500)</p>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>Top layer (default=500)</p>
    </td>
    </tr>
    <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top">
+   <td width="120" colspan="1" rowspan="1" valign="top">
    <p><em>bottom</em></p>
    </td>
-   <td width="660" colspan="2" rowspan="1" valign="top">
-   <p>bottom layer  (default=850)</p>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>Bottom layer (default=850)</p>
    </td>
    </tr>
 </table></li>
@@ -159,91 +158,95 @@ levels.</li>
 </li>
 <li class="propertylistitem"><strong>Resample grid - </strong>Displays gridded data on a new domain.</propertylistitem>
 <li class="propertylistitem"><strong>Simple time difference in one parameter (Time 1, Time 2) - </strong>Creates an image representing the numerical difference in the value of the chosen parameter between the two time steps selected by the user. Time 1 is the initial time step, and Time 2 is the second time step. The difference in the parameter is done by Time 2 - Time 1.</li>
-    <li class="propertylistitem"><table>
+    <li class="propertylistitem"><table id="gridformulas5" cellpadding="0" cellspacing="0" border="1">
   <tr>
   <td valign="top" rowspan="1" colspan="2">
    <p>Input parameters: </p>
    </td>
+   <td width="630">
   </tr>
    <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top">
+   <td width="120" colspan="1" rowspan="1" valign="top">
    <p><em>Time 1 </em></p>
    </td>
-   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>first time  (default=1)</p>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>First time (default=1)</p>
    </td>
    </tr>
    <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top">
+   <td width="120" colspan="1" rowspan="1" valign="top">
    <p><em>Time 2 </em></p>
    </td>
-   <td width="660" colspan="2" rowspan="1" valign="top">
-   <p>second time  (default=0)</p>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>Second time (default=0)</p>
    </td>
    </tr>
 </table></li>
 <li class="propertylistitem"><strong>Slice at Altitude  (Altitude, Unit) - </strong>Extracts a 2D horizontal slice from a 3D grid at the given altitude and maps an image.</li>
-    <li class="propertylistitem"><table>
+    <li class="propertylistitem"><table id="mapformulas6" cellpadding="0" cellspacing="0" border="1">
   <tr>
   <td valign="top" rowspan="1" colspan="2">
    <p>Input parameters: </p>
    </td>
+   <td width="630">
   </tr>
    <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top">
-   <p><em>altitude</em></p>
-   </td>
-   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>altitude to slice</p>
-   </td>
+       <td width="120" colspan="1" rowspan="1" valign="top">
+           <p><em>altitude </em></p>
+           </td>
+       <td width="510" colspan="2" rowspan="1" valign="top">
+           <p>Altitude to slice.</p>
+           </td>
    </tr>
    <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top">
+   <td width="120" colspan="1" rowspan="1" valign="top">
    <p><em>unit</em></p>
    </td>
-   <td width="660" colspan="2" rowspan="1" valign="top">
-   <p>specify a unit. It must be compatible with meters (ft, fathoms, etc.) </p>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>Specify a unit. It must be compatible with meters (ft, fathoms, etc.)</p>
    </td>
    </tr>
 </table></li>
 <li class="propertylistitem"><strong>Slice at Level  (Level) - </strong>Extracts a 2D horizontal slice from a 3D grid at a level.</li>
-    <li class="propertylistitem"><table>
+    <li class="propertylistitem"><table id="mapformulas7" cellpadding="0" cellspacing="0" border="1">
   <tr>
   <td valign="top" rowspan="1" colspan="2">
-   <p>Input parameter: </p>
+   <p>Input parameters: </p>
    </td>
+   <td width="630">
   </tr>
    <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top">
-   <p><em>level</em></p>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>level </em></p>
    </td>
-   <td width="660" colspan="2" rowspan="1" valign="top">
-   <p>level to slice, must be appropriate for the grid </p>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>Level to slice. Must be appropriate for the grid.</p>
    </td>
    </tr>
 </table></li>
 <li class="propertylistitem"><strong>Speed from 2 components (Field x, Field y) - </strong>Calculates speed from the user-chosen x and y components and displays an image.</li>
 <li class="propertylistitem"><strong>Wind Shear Vectors  (top, bottom) - </strong>Calculates the u and v layer difference and returns a map of vectors.</li>
-    <li class="propertylistitem"><table>
+    <li class="propertylistitem"><table id="mapformulas8" cellpadding="0" cellspacing="0" border="1">
   <tr>
   <td valign="top" rowspan="1" colspan="2">
    <p>Input parameters: </p>
    </td>
+   <td width="630">
   </tr>
    <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top">
+   <td width="120" colspan="1" rowspan="1" valign="top">
    <p><em>top</em></p>
    </td>
-   <td width="660" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>top layer (default=500)</p>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>Top layer (default=500)</p>
    </td>
    </tr>
    <tr>
-   <td width="70" colspan="1" rowspan="1" valign="top">
+   <td width="120" colspan="1" rowspan="1" valign="top">
    <p><em>bottom</em></p>
    </td>
-   <td width="660" colspan="2" rowspan="1" valign="top">
-   <p>bottom layer  (default=850)</p>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>Bottom layer (default=850)</p>
    </td>
    </tr>
 </table></li>

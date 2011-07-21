@@ -39,7 +39,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('xequivalent.html'
 <p><strong>DSSERVE DEL -</strong> Open the <strong><a href="tools/LocalDataManager.html">Local ADDE Data Manager</a></strong> and select which dataset to delete by clicking on the dataset and then selecting Edit -&gt; <strong>Remove Selection</strong>.</p>
 <p><strong>DSSERVE LIST -</strong> Open the <strong><a href="tools/LocalDataManager.html">Local ADDE Data Manager</a></strong>, which lists all of the remote datasets.</p>
 </ul>
-<div class="preferencegrouptitle">Frame Control</div>
+<div class="pagesubtitle">Frame Control</div>
+<hr>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>A, B, L -</strong> Use the <a href="ui/Animation.html">Time Animation Widget</a> above the 3D display to control the looping.</li>
   <li class="propertylistitem"><strong>D -</strong> Use the middle mouse button click option to probe the data in the main display window.</li>
@@ -48,12 +49,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('xequivalent.html'
   <li class="propertylistitem"><strong>O -</strong> Use layer checkboxes in the <strong>Legend</strong> to control visibility, or use <a href="controls/index.html#bringtofront">Bring View to Front</a> option to reorganize layers.</li>
   <li class="propertylistitem">Use Ctrl+N to advance to the next tab, Ctrl+P to go to the previous tab, or click on the tab you wish to view. You can also do this through the <strong>Window</strong> menu in the Main Display Window.</li>
 </ul>
-<div class="preferencegrouptitle">Gridded Data</div>
+<div class="pagesubtitle">Gridded Data</div>
+<hr>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>GRDDISP -</strong> Use the <a href="quickstart/Grids.html">Gridded Data Chooser</a> to select a Catalog and Data Source.</li>
   <li class="propertylistitem"><strong>GRDIMG -</strong> Once the gridded data is loaded in the <strong>Field Selector</strong>, select which field to display, and select Color-Shaded Plan View in the <a href="quickstart/Grids.html#selecting">Displays</a> panel.</li>
 </ul>
-<div class="preferencegrouptitle">Image Data</div>
+<div class="pagesubtitle">Image Data</div>
+<hr>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>IMGDISP -</strong> Use the <strong><a href="data/choosers/ImageChooser.html">Satellite Imagery</a></strong><a href="data/choosers/ImageChooser.html"> chooser</a> to select dataset, add the data, and load the image(s).</li>
   <li class="propertylistitem"><strong>IMGFILT -</strong> Once the data is loaded in the <strong>Field Selector</strong>, select Formulas -&gt; <a href="tools/ImageFilterFormulas.html">Image Filters</a>.</li>
@@ -63,7 +66,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('xequivalent.html'
   <li class="propertylistitem"><strong>IMGPROBE - </strong>Click the middle mouse button over the image or use <a href="controls/ProbeControl.html">Data Probe/Time Series</a> display.</li>
   <li class="propertylistitem"><strong>IMGREMAP -</strong> Use the <a href="ui/DisplayMenus.html#projectionmenu">Projections menu</a> to create or change projections.</li>
 </ul>
-<div class="preferencegrouptitle">Image Enhancements</div>
+<div class="pagesubtitle">Image Enhancements</div>
+<hr>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>COMBINE - </strong>Once the data source is loaded into the <strong>Field Selector</strong>, select Formulas: Imagery -&gt; RGB in the Data Sources lift in the left panel. When you click <strong>Create Display</strong>, a second Field Selector window will pop-up for selecting the red, green, and blue fields. After the fields are selected, the image will be displayed.</li>
   <li class="propertylistitem"><strong>EB - </strong>Change the range of the data being display by <a href="controls/index.html#modifycolor">interactively modifying the color bar</a>, or click the <strong>Change</strong> button next to Contour in the <strong>Layer Controls</strong> tab to open the <a href="tools/ContourDialog.html">Contour Properties Editor</a>.</li>
@@ -72,7 +76,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('xequivalent.html'
   <li class="propertylistitem"><strong>EU REST -</strong> Right-click on the color table in the <strong>Legend</strong> or <strong>Layer Controls</strong> and select a new enhancement.</li>
   <li class="propertylistitem"><strong>EU SAVE -</strong> Use the Tools -&gt; <a href="tools/ColorTableEditor.html">Color Table Editor</a>. Here, you can create/modify an existing color bar. To save, click <strong>File -&gt; Save As</strong>.</li>
 </ul>
-<div class="preferencegrouptitle">Surface Data</div>
+<div class="pagesubtitle">Surface Data</div>
+<hr>
 <ul class="propertylist"><li class="propertylistitem"><strong>PTDISP - </strong>Use the Point Observations-&gt; Plot/Contour chooser to select data, and display Point Data as a Point Data Plot and choose your Layout Model for how to plot your point data. Use the Tools -&gt; <a href="tools/StationModelEditor.html">Station Model Template editor</a> to create/edit a new station model.</li>
   <li class="propertylistitem"><strong>PTCON - </strong>Use the Point Observations-&gt; Plot/Contour chooser to select data. In the <strong><a href="controls/ObjectiveAnalysis.html">Field Selector</a></strong>, select a parameter under Gridded Fields, and select which Display and Level to use.</li>
   <li class="propertylistitem"><strong>SFCCON -</strong> Use the <a href="quickstart/Point.html">Point Observations</a> -&gt; Plot/Contour chooser to select surface data. Select a parameter under Gridded Fields, and choose <a href="quickstart/Point.html#contour">Contour Plan View</a>.</li>
@@ -80,7 +85,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('xequivalent.html'
   <li class="propertylistitem"><strong>SFCPLOT - </strong>Use the <a href="quickstart/Point.html">Point Observations</a> -&gt; Plot/Contour chooser to select surface data. Display Point Data as a Point Data Plot, and choose Layout Model for how to plot the point data. Use the Tools -&gt; <a href="tools/StationModelEditor.html">Station Model Template editor</a> to create/edit a new station model.</li>
   <li class="propertylistitem"><strong>SFCRPT -</strong> <a href="controls/misc/TextProductControl.html">Weather Text Products Display</a> (Tools -&gt; Text Data -&gt; Weather Text Products (from server). Select Observed Data -&gt; Sounding Data Product, and the station in the <strong>Locations</strong> tab).</li>
 </ul>
-<div class="preferencegrouptitle">Upper Air Data</div>
+<div class="pagesubtitle">Upper Air Data</div>
+<hr>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>HODO -</strong> Use the Point Observations -&gt; <a href="data/choosers/RaobChooser.html">Soundings chooser</a> to select upper air data. Create a Skew-T in the <strong>Field Selector</strong> tab. Once the Skew-T is created in the<strong> Layer Controls</strong> tab, select the <a href="controls/AerologicalSoundingControl.html">Hodograph</a> tab above the image.</li>
   <li class="propertylistitem"><strong>PTDISP - </strong>Use the Point Observations-&gt; Plot/Contour chooser to select data, and display Point Data as a Point Data Plot and choose your Layout Model for how to plot your point data. Use the Tools -&gt; <a href="tools/StationModelEditor.html">Station Model Template editor</a> to create/edit a new station model.</li>
@@ -92,7 +98,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('xequivalent.html'
   <li class="propertylistitem"><strong>UALIST -</strong> Use the Point Observations -&gt; Plot/Contour chooser, and select upper air data from the Server/Dataset chosen. In the <a href="quickstart/Point.html#plot"><strong>Field Selector</strong></a>, select Point Data as the Field, Point Data List as the display, and the Level for the data to be displayed.</li>
   <li class="propertylistitem"><strong>UAPLOT - </strong>Use the Point Observations -&gt; <a href="data/choosers/RaobChooser.html">Soundings chooser</a> to select upper air data. Create a Skew-T in the <strong>Field Selector</strong> tab of the <strong>Data Explorer</strong>.</li>
 </ul>
-<div class="preferencegrouptitle">Other</div>
+<div class="pagesubtitle">Other</div>
+<hr>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>EG - </strong>Click the <strong><a href="ui/Menus.html#edit">Remove all layers</a></strong> button <img src="ui/images/RemoveLayers.gif" width="33" height="33" align=center> on the Main Display Window, select <strong>Edit-&gt;Remove-&gt;All Layers</strong> in the Main Display Window, or click the trash can icon <img src="ui/images/TrashCan.gif" width="14" height="20"align=center> next to the item in the Legend.</li>
   <li class="propertylistitem"><strong>HELP - </strong>Click the Help menu in the Main Display Window and select <strong>User's Guide</strong> or <strong>Getting Started</strong>. Also, you can click on the question mark icon in the bottom right corner of the <strong>Data Explorer</strong> to open the User's Guide to the section appropriate to what is being viewed.</li>
