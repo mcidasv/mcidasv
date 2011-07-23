@@ -51,6 +51,7 @@
         <mapID target="idv.controls.level2.radarvolumecontrol"       url="controls/level2/RadarVolumeControl.html" />
         <mapID target="idv.controls.level2.radarrhidisplaycontrols"  url="controls/level2/RadarRhiDisplayControls.html" />
 		<mapID target="idv.controls.level2.radarcappidisplaycontrols"url="controls/level2/RadarCappiDisplayControls.html" />
+		<mapID target="idv.controls.level2.threedsurfacecontrol"     url="controls/level2/ThreeDSurfaceControl.html" />
         <mapID target="idv.controls.leveliiicontrol"                 url="controls/LevelIIIControl.html" />
         <mapID target="idv.controls.locationindicatorcontrol"        url="controls/misc/LocationIndicatorControl.html" />
         <mapID target="idv.controls.mapdisplaycontrol"               url="controls/MapDisplayControl.html" />
@@ -102,7 +103,6 @@
         <mapID target="idv.controls.stationmodelcontrol.filters"     url="controls/StationModelControl.html#filters" />
 		<mapID target="idv.controls.textproductcontrol"				 url="controls/misc/TextProductControl.html" />
         <mapID target="idv.controls.threedsurfacecontrol"            url="controls/ThreeDSurfaceControl.html" />
-        <mapID target="idv.controls.threedsurfacecontrol"            url="controls/level2/ThreeDSurfaceControl.html" />
         <mapID target="idv.controls.timeheightcontrol"               url="controls/TimeHeightControl.html" />
         <mapID target="idv.controls.topographycontrol"               url="controls/TopographyControl.html" />
         <mapID target="idv.controls.trackcontrol"                    url="controls/TrackControl.html" />
