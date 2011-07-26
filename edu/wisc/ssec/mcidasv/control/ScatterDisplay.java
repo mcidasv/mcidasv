@@ -976,7 +976,12 @@ public class ScatterDisplay extends DisplayControlImpl {
               }
               newTable[3] = new float[clrTable[0].length];
             }
-          }
+          } else {
+              newTable = new float[numComps][clrTable[0].length];
+              for (int k = 0; k < clrTable.length; k++) {
+                System.arraycopy(clrTable[k], 0, newTable[k], 0, newTable[0].length);
+              }
+          } 
           clrCntrl.setTable(newTable);
         } 
         catch (Exception e) {
