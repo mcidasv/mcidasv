@@ -75,7 +75,7 @@
                 <tocitem text="Radar RHI Display Controls" target="idv.controls.level2.radarrhidisplaycontrols"/>
                 <tocitem text="Radar Cross Section Controls" target="idv.controls.level2.radarcrosssectioncontrol"/>
                 <tocitem text="Radar CAPPI Display Controls" target="idv.controls.level2.radarcappidisplaycontrols"/>
-                <tocitem text="Radar Volume Controls" target="idv.controls.level2.radarvolumecontrol"/>
+                <tocitem text="Radar Volume Scan Controls" target="idv.controls.level2.radarvolumecontrol"/>
                 <tocitem text="Radar Isosurface Controls" target="idv.controls.level2.radarisosurfacecontrol"/>
             </tocitem>
             <tocitem text="Range Rings" target="idv.controls.misc.radargridcontrol"/>
