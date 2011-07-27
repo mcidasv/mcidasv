@@ -99,7 +99,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         "/edu/wisc/ssec/mcidasv/resources/python/linearcombo/hydra.py";
 
     /** Name used in Jython namespace to refer to the {@literal "IDV god object"}. */
-    public static final String CONSOLE_IDV_OBJECT = "_idv";
+    public static final String CONSOLE_IDV_OBJECT = "idv";
 
     /** 
      * Name used in Jython namespace to refer back to an instantiation of a 

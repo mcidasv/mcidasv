@@ -34,7 +34,6 @@ import static ucar.unidata.util.GuiUtils.makeMenuItem;
 import static ucar.unidata.util.MenuUtil.MENU_SEPARATOR;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -72,12 +71,13 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
      */
     @Override protected void initBasicInterpreter(PythonInterpreter interpreter) {
         interpreter.set("_idv", getIdv());
+        interpreter.set("idv", getIdv());
         super.initBasicInterpreter(interpreter);
     }
 
     /**
      * Overridden so that McIDAS-V can add an {@code islInterpreter} object
-     * to the interpreter's locals (before executing the contents of {@code}.
+     * to the interpreter's locals (before executing the c ontents of {@code}.
      * 
      * @param code Jython code to evaluate. {@code null} is probably a bad idea.
      * @param properties {@code String->Object} pairs to insert into the 
@@ -94,6 +94,9 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
         if (!properties.containsKey("_idv")) {
             properties.put("_idv", getIdv());
         }
+        if (!properties.containsKey("idv")) {
+            properties.put("idv", getIdv());
+        }
         super.evaluateTrusted(code, properties);
     }
 
@@ -107,7 +110,7 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
      */
     @SuppressWarnings("unchecked") // dealing with idv code that predates generics.
     @Override public List doMakeFormulaDataSourceMenuItems(DataSource dataSource) {
-        List menuItems = new ArrayList();
+        List menuItems = new ArrayList(100);
         menuItems.add(makeMenuItem("Create Formula", this, "showFormulaDialog"));
         List editItems;
         if (dataSource instanceof DescriptorDataSource) {

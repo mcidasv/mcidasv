@@ -1,4 +1,5 @@
-from visad import ConstantMap, Display
+from visad import ConstantMap
+from visad import Display
 
 _color_cache = {}
 

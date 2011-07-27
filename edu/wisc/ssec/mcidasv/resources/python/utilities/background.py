@@ -3,7 +3,7 @@ import ucar.unidata.util.Range
 
 from contextlib import contextmanager
 
-from shell import makeDataSource
+# from shell import makeDataSource
 
 from java.lang import System
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
@@ -170,6 +170,11 @@ class _Display(_JavaProxy):
         rect = self._JavaProxy__javaObject.getDisplayBounds()
         return rect.x, rect.y, rect.width, rect.height
     
+    def getDataAtLocation(self, latitude, longitude):
+        #earthLocation = Util.makeEarthLocation(latitude, longitude)
+        #for layer in self._JavaProxy__javaObject.getControls():
+        pass
+    
     def getDataSources(self):
         pass
     
@@ -242,6 +247,19 @@ class _Layer(_JavaProxy):
     def __init__(self, javaObject):
         """Creates a proxy for ucar.unidata.idv.DisplayControl objects."""
         _JavaProxy.__init__(self, javaObject).addDisplayInfo()
+    
+    def getFrameCount(self):
+        # looking like ucar.visad.display.AnimationWidget is the place to be
+        pass
+    
+    def getFrameDataAtLocation(self, latitude, longitude, frame):
+        # just return the value
+        pass
+
+    def getDataAtLocation(self, latitude, longitude):
+        # should return a dict of timestamp: value ??
+        pass
+
 
 # TODO(jon): this (and its accompanying subclasses) are a productivity rabbit
 # hole!
@@ -435,7 +453,7 @@ def getProjection(name=''):
 
 def allActions():
     """Returns the available McIDAS-V action identifiers."""
-    actions = _mcv.getIdvUIManager().getCachedActions().getAllActions()
+    actions = getStaticMcv().getIdvUIManager().getCachedActions().getAllActions()
     return [action.getId() for action in actions]
 
 def performAction(action):
@@ -451,7 +469,7 @@ def performAction(action):
         action = action.replace('action:', '')
     
     if action in available:
-        _mcv.handleAction(prefixedId)
+        getStaticMcv().handleAction(prefixedId)
     else:
         raise ValueError("Couldn't find the action ID ", action, "; try calling 'allActions()' to get the available action IDs.")
 
@@ -485,11 +503,11 @@ def collect_garbage():
     System.gc()
 
 def removeAllData():
-    """ Removes all of the current data sources WITHOUT prompting. """
+    """Removes all of the current data sources WITHOUT prompting."""
     getStaticMcv().removeAllData(False)
 
 def removeAllLayers():
-    """ Removes all of the current layers WITHOUT prompting. """
+    """Removes all of the current layers WITHOUT prompting."""
     getStaticMcv().removeAllLayers(False)
 
 def boomstick():

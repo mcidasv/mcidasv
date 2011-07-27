@@ -14,6 +14,7 @@ import colorutils
 import imageFilters as filters
 import shell as idvutils
 
+from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 from edu.wisc.ssec.mcidasv.control.LinearCombo import Selector
 from edu.wisc.ssec.mcidasv.data.hydra import MultiSpectralData
 
@@ -30,7 +31,7 @@ def _extract_kwarg(aliases, arg_dict):
             return arg_dict[alias]
 
 def load(path):
-    return _idv.makeOneDataSource(path, None, None)
+    return getStaticMcv().makeOneDataSource(path, None, None)
 
 # this argument stuff is getting a little tedious and will be 10000 bears to
 # document--consider multimethods or simplifying

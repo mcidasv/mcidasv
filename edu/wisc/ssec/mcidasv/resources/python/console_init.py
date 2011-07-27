@@ -38,10 +38,10 @@ sys.path.append(_mcv_python+'/utilities')
 # this is intentionally the first thing imported
 from edu.wisc.ssec.mcidasv import McIDASV
 _mcv = McIDASV.getStaticMcv()
-idv = _mcv
 
 import imageFilters
 import shell as idvshell
+
 from background import allActions
 from background import allColorTables
 from background import allDisplays
@@ -67,6 +67,7 @@ from background import removeAllData
 from background import removeAllLayers
 from background import setViewSize
 from background import write_image
+
 from interactive import describeActions
 from interactive import dumpObj
 from interactive import ncdump

@@ -12,6 +12,8 @@ import types
 from ch.qos.logback.core import FileAppender
 from ch.qos.logback.classic import LoggerContext
 
+from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
+
 from java.lang import Class
 from java.lang import Object
 from java.lang.reflect import Modifier
@@ -42,7 +44,8 @@ def describeActions(pattern=None):
     #     pattern: Searches for the given pattern within the action identifier
     #              strings as well as action descriptions.
     # """
-    actions = _mcv.getIdvUIManager().getCachedActions().getAllActions()
+    # actions = _mcv.getIdvUIManager().getCachedActions().getAllActions()
+    actions = getStaticMcv().getIdvUIManager().getCachedActions().getAllActions()
     print sorted([action.getId() for action in actions])
 
 def getLogFile():
