@@ -1485,7 +1485,7 @@ public class ScatterDisplay extends DisplayControlImpl {
          selectBox.setData(uset);
 
          try {
-           FlatField updateMask = histoField.markMaskFieldByRange(x_coords, y_coords, maskVal);
+           histoField.markMaskFieldByRange(x_coords, y_coords, maskVal);
          } catch (Exception e) {
            e.printStackTrace();
          }
@@ -1557,7 +1557,7 @@ public class ScatterDisplay extends DisplayControlImpl {
 
          try {
            histoField.clearMaskField(maskVal);
-           FlatField updateMask = histoField.markMaskFieldByCurve(crv, maskVal);
+           histoField.markMaskFieldByCurve(crv, maskVal);
          } catch (Exception e) {
            e.printStackTrace();
          }
