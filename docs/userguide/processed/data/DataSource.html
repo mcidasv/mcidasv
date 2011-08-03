@@ -30,9 +30,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSource.h
 <div class="pagetitle">Data Sources</div>
 <p>The<strong> Data Sources </strong>menu, to the left of the <strong>Fields</strong>, lists the data sources currently loaded into McIDAS-V and provides access to both the user-made and native formulas. The data sources listed are  chosen as described in <a href="choosers/index.html">Choosing Data Sources</a>. The selected item is the data source that will be displayed after you have completed your work in this tab:</p>
 
-<div class="images"><img src="images/SelectorStep1.gif"></div>
+<div class="images"><img src="images/SelectorStep1.gif" alt="Data Sources Menu"></div>
 <p>To set the defaults for a data source bring up the Properties dialog by right clicking (or double clicking) on the data source name in the data sources panel of the Field Selector window and select <strong>Properties</strong>:</p>
-<div class="images"><img src="images/DataSourceMenu.gif" alt="images/DataSourceMenu.gif"></div>
+<div class="images"><img src="images/DataSourceMenu.gif" alt="Data Sources Menu Properties"></div>
 <p></p>
 <div class="pagesubtitle"><strong>Properties</strong></div>
 <ul class="propertylist">
@@ -46,7 +46,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSource.h
 </ul>
 <p>The Properties Dialog is different for different types of data sources. Here is the dialog window for a gridded data source:</p>
 <a name="activepolling" id="activepolling"></a>
-<div class="images"><img src="images/DataSourceProperties.gif" alt="images/DataSourceProperties.gif"></div>
+<div class="images"><img src="images/DataSourceProperties.gif" alt="Properties Window"></div>
 <p>Any displays that are showing data from a data source can be automatically updated by selecting the <strong>Automatically Reload: Active</strong> checkbox. When this is selected all data will be reloaded and the displays will be updated by pressing <img src="../tools/images/Apply.gif" width="65" height="26"align=absmiddle> or <img src="../tools/images/Ok.gif" width="51" height="26"align=absmiddle>.</p>
 <a name="basicproperties" id="basicproperties"></a>
 <div class="pagesubtitle">Basic Properties</div>
@@ -56,16 +56,16 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSource.h
 <a name="times" id="times"></a>
 <div class="pagesubtitle">Times</div>
 <p>The <strong>Times</strong> tab allows you to select the times to use. Click off the <strong>Use All</strong> button and select individual times. You can right mouse click in the list to show a popup menu that allows you to select different strides (e.g., every 3rd time).</p>
-<div class="images"><img src="images/DataSourceTimes.gif" alt="images/DataSourceTimes.gif"></div>
+<div class="images"><img src="images/DataSourceTimes.gif" alt="Times tab of properties window"></div>
 <p></p>
 <a name="spatialsubset" id="spatialsubset"></a>
 <div class="pagesubtitle">Spatial Subsetting</div>
 <p>For grids and other data source types the data can be subset and decimated with the <strong>Spatial Subset</strong> tab. The <strong>X Stride</strong>, <strong>Y Stride</strong> and <strong>Z Stride</strong> menus allow you to decimate a grid, selecting every Nth point. The <strong>Bounding Box</strong> allows you to define a spatial area to load. The default spatial domain of
 the data is shown by the blue outline box. To select an area just drag on the map. Once a subset is selected it can be resized (grab on the little black selection points) moved (grab somewhere near the box) and delete (press the Delete key). Specific lat/lon values can be entered in the fields on the left.</p>
 <p>Subsetting can be useful when you are displaying an image that has a high resolution or covers a large spatial area as a Contour Plan View or Color Filled Contour Plan View display. Instead of having McIDAS-V take the time to compute values between every point, you can set a stride where only every Nth point will be taken into consideration. If you need a very detailed image, it is recommended that you do not change the stride away from the default (none). However, if you are trying to get a general picture, the stride feature can be a time-saver.</p>
-<div class="images"><img src="images/DataSourceSpatialSubset.gif" alt="images/DataSourceSpatialSubset.gif"></div>
+<div class="images"><img src="images/DataSourceSpatialSubset.gif" alt="Spatial Subset tab of properties window"></div>
 <p>A version of this spatial subsetting window is used in the <strong>Field Selector</strong>. Here, you explicitly enable these settings. The decimation and spatial subset are shown in different tabs:</p>
-<div class="images"><img src="images/DataSourceSpatialSubsetField.gif" alt="images/DataSourceSpatialSubsetField.gif"></div>
+<div class="images"><img src="images/DataSourceSpatialSubsetField.gif" alt="Subset menus in the Field Selector"></div>
 <p></p>
 <a name="details" id="details"></a>
 <div class="pagesubtitle">Details</div>
