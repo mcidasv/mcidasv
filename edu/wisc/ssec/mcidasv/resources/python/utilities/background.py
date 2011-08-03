@@ -473,32 +473,32 @@ def performAction(action):
     else:
         raise ValueError("Couldn't find the action ID ", action, "; try calling 'allActions()' to get the available action IDs.")
 
-# TODO(jon): remove pending jython meeting decision?
-def load_enhancement(name=''):
-    """Nothing yet."""
-    pass
-
-# TODO(jon): remove pending jython meeting decision?
-def load_map(name=''):
-    """Nothing yet."""
-    pass
-
-# TODO(jon): remove pending jython meeting decision?
-def annotate(text=''):
-    """Nothing yet."""
-    pass
-
-# TODO(jon): remove pending jython meeting decision?
-def apply_colorbar(name=''):
-    """Nothing yet."""
-    pass
-
-# TODO(jon): remove pending jython meeting decision?
-def write_image(path=''):
-    """Nothing yet."""
-    pass
+# def load_enhancement(name=''):
+#     """Nothing yet."""
+#     pass
+#
+# def load_map(name=''):
+#     """Nothing yet."""
+#     pass
+#
+# def annotate(text=''):
+#     """Nothing yet."""
+#     pass
+#
+# def apply_colorbar(name=''):
+#     """Nothing yet."""
+#     pass
+#
+# def write_image(path=''):
+#     """Nothing yet."""
+#     pass
 
 def collect_garbage():
+    """Signals to Java that it should free any memory that isn't in use."""
+    print '* WARNING: please use the new name for this function:\n\'collectGarbage()\''
+    collectGarbage()
+
+def collectGarbage():
     """Signals to Java that it should free any memory that isn't in use."""
     System.gc()
 
