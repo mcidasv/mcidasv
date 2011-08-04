@@ -34,20 +34,20 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/misc/WMS
 <div class="pagesubtitle">Overview</div>
 <meta name="jhid" value="idv.controls.misc.wmscontrol">
 The WMS Controls display imagery from WMS servers. A set of predefined links to WMS servers for topographic, shaded relief and aerial imagery is also provided with the Background Image control.
-<p> To use the pre-defined Background images, select the <strong>Display-&gt;Add Background Image</strong> menu item. To choose imagery from web map servers bring up the <a href="../../data/choosers/CatalogChooser.html">Data Source Chooser</a>, go to the Catalogs tab and enter the url that points to the <i>Capabilities</i> document of the desired WMS. We also provide links to a set of useful WMSs from the <i>idvcatalog</i>. If it is not in the Catalog pull down menu simply enter the url:</p>
+<p> To use the pre-defined Background images, in the Main Display Window select the <strong>Display-&gt;Add Background Image</strong> menu item. To choose imagery from web map servers bring up the <a href="../../data/choosers/CatalogChooser.html">Data Source Chooser</a>, go to the Catalogs tab and enter the url that points to the <i>Capabilities</i> document of the desired WMS. We also provide links to a set of useful WMSs from the <i>idvcatalog</i>. If it is not in the Catalog pull down menu simply enter the url:</p>
 <pre>http://www.unidata.ucar.edu/georesources/idvcatalog.xml</pre>
 <p>From this catalog open the <strong>Web Map Servers</strong> tab and select the WMS you
 would like to access.</p>
 <p> The WMS Controls makes a request to the Web Map Server for an image that covers the area currently being displayed in the main display. Due to the time it takes to access remote servers the WMS Control does not request new images when the user pans and zooms.</p>
-<div class="images"><img  src="images/WMSControlGui.gif"  alt="images/WMSControlGui.gif" ></div>
+<div class="images"><img  src="images/WMSControlGui.gif"  alt="Blue Marble window" ></div>
 <p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
   <li class="propertylistitem"><b>Layer</b> - Selects which layer to view if multiple layers have been selected (using control-click in the WMS Chooser or in the Background Image control).</li>
   <li class="propertylistitem"><b>Image Buttons</b> - </li>
     <ul class="propertylist">
-      <li class="propertylistitem"><img src="../../data/choosers/images/Toggle.gif"align=absmiddle> <strong> -</strong> Reloads the image from the server at the current screen location. </li>
-      <li class="propertylistitem"><img src="../../data/choosers/images/HomeMapArea.gif"align=absmiddle> <strong> -</strong> Sets the projection in the display to the current image bounds. </li>
+      <li class="propertylistitem"><img src="../../data/choosers/images/Toggle.gif" alt="Reload the image icon"align=absmiddle><strong>Reload the image -</strong> Reloads the image from the server at the current screen location. </li>
+      <li class="propertylistitem"><img src="../../data/choosers/images/HomeMapArea.gif" alt="Reproject to image icon"align=absmiddle><strong>Reproject to image</strong> <strong> -</strong> Sets the projection in the display to the current image bounds. </li>
       <li class="propertylistitem"><strong>Auto-Reload</strong> -  Fetches automatically a new image every time the main display is panned or zoomed. There is a slight delay so that successive zooms do not cause successive image requests.</li>
       </ul>
   <li class="propertylistitem"><b>Resolution</b> - Allows you to change the resolution of the image. A lower resolution image will have  a smaller image file size and quicker requests from the server.</li>

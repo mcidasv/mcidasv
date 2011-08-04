@@ -33,8 +33,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/misc/Sto
   tracks. Currently the McIDAS-V supports both the <a href="http://www.nrlmry.navy.mil/atcf_web/index1.html" target="_blank" >Automated
   Tropical Cyclone Forecasting System (ATCF)</a> data as well as data from the <a href="http://www.sti.org.cn/" target="_blank">Shanghai
   Typhoon Institute</a>.</p>
-<p> To load in ATCF data select the <strong>Tools-&gt;Text Data -&gt;ATCF Tropical
-    Storm Data</strong> menu. This creates a data source with a predefined path
+<p> To load in ATCF data select the <strong>Tools-&gt;Text Data-&gt;ATCF Tropical
+    Storm Data</strong> menu item in the Main Display Window. This creates a data source with a predefined path
     to the National Hurricane Center ftp site. Then, create the Storm Track display.</p>
 <p> The display control shows the set of available storms on the left panel organized
   by year and basin, e.g., Atlantic (AL), Eastern Pacific (EP) and Central Pacific
@@ -47,12 +47,12 @@ display the observed tracks for all the storms in a given year. You can load
 and/or unload any number of years worth of observed tracks. The color swatch
 changes the color of the tracks for a given year. The Time Mode menu allows one
 to change the animation mode, e.g., use the year or use the storm start time.</p>
-<div class="images"><img  src="images/StormTrackYearlyControl.gif"  alt="images/StormTrackYearlyControl.gif" ></div>
+<div class="images"><img  src="images/StormTrackYearlyControl.gif"  alt="Storm Track window" ></div>
 <p></p>
 <a name="storm"></a>
 <div class="pagesubtitle">Storm Display</div>
 <p>To show the observation and all of the model results for a single storm select
-the storm in the list and press the <strong> <img src="images/LoadTracks.gif" width="108" height="26"align=absmiddle></strong> button.
+the storm in the list and press the <strong> <img src="images/LoadTracks.gif" alt="Load Tracks button" width="108" height="26"align=absmiddle></strong> button.
 You can load any number of storms but they are shown in different panels. You
 can use the <strong>View-&gt;Storm Tracks</strong> menu to list out
 all of the loaded storms, remove them all, etc. Once a storm is loaded it can
@@ -60,19 +60,19 @@ be removed with the small &quot;scissors&quot; icon shown in the upper right.</p
 <p> Once a storm is loaded the first thing you should do is to specify which &quot;Techs&quot; (or
   models) to use by bringing up the control's Properties dialog <strong>Edit-&gt;Properties</strong> menu.
   In the <strong>Techs to use</strong> tab, select all of the Techs in the &quot;Use&quot; list
-  (click and press Ctrl+A) and press <strong> <img src="../images/Remove.gif" width="93" height="26"align=absmiddle></strong>. This
+  (click and press Ctrl+A) and press <strong> <img src="../images/Remove.gif" alt="Remove button" width="93" height="26"align=absmiddle></strong>. This
   places them in the &quot;Don't Use&quot; list. Select the desired Techs in
-  the &quot;Don't use&quot; list and press <img src="../images/Add.gif" width="93" height="26"align=absmiddle>. You can also choose what parameters
+  the &quot;Don't use&quot; list and press <img src="../images/Add.gif" alt="Add button" width="93" height="26"align=absmiddle>. You can also choose what parameters
   are to be used and displayed in the <strong>Chart Parameters</strong> tab, repeat
   the same step to select the desired parameters. If you want these selections
   to be saved as a preference, please check the &quot;Save as Preference&quot; box.</p>
-<div class="images"><img  src="images/StormTrackPropertiesControl.gif"  alt="images/StormTrackPropertiesControl.gif" ></div>
+<div class="images"><img  src="images/StormTrackPropertiesControl.gif"  alt="Techs to use tab of the Storm Track Properties window" ></div>
 <p>The Storm display panel consists of three tabs: <a href="#tracks"><strong>Tracks</strong></a>, <a href="#table"> <strong>Table</strong></a> and <a href="#chart"><strong>Storm
     Chart</strong></a>.</p>
 <a name="tracks"></a>
 <div class="pagesubtitle">Tracks</div>
 <p>The Tracks tab controls the display and animation of the tracks.</p>
-<div class="images"><img  src="images/StormTrackControl.gif"  alt="images/StormTrackControl.gif" ></div>
+<div class="images"><img  src="images/StormTrackControl.gif"  alt="Tracks tab of Storm Track window" ></div>
 <p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
@@ -98,15 +98,15 @@ Tech and model run time. Selecting one of the model runs will display the data
 in the table. The main <strong>File-&gt;Save-&gt;Export to Spreadsheet</strong> menu
 allows you to export the track data to an Excel spreadsheet. In the File Dialog
 are options to select what is to be saved.</p>
-<div class="images"><img  src="images/StormTrackTableControl.gif"  alt="images/StormTrackTableControl.gif" ></div>
+<div class="images"><img  src="images/StormTrackTableControl.gif"  alt="Table tab of the Storm Track window" ></div>
 <p></p>
 <a name="chart"></a>
 <div class="pagesubtitle">Storm Chart</div>
-The Storm Chart tab shows time series charts of selected tracks. Under the main <strong>Edit</strong> menu
+<p>The Storm Chart tab shows time series charts of selected tracks. Under the main <strong>Edit</strong> menu
 you can any number of new forecast time or forecast hour charts. The forecast
 time chart is based around the model run time of the selected forecasts. The
 forecast hour charts selects data across the different model run times, e.g.,
-you can show the 12 hour forecast from each model run.
+you can show the 12 hour forecast from each model run.</p>
 <p> To do the charting of the storm track, one or more Techs need to be selected.
   Once selected the Forecast Hour/Forecast Time list is populated. One or more
   times can be selected (Ctrl+click). Each Parameter that is selected will
@@ -114,7 +114,7 @@ you can show the 12 hour forecast from each model run.
 <p> The <strong>Use Difference</strong> checkbox, when selected, results
   in the display of the difference between the forecast value and the observed
   value.</p>
-<div class="images"><img  src="images/StormTrackChartControl.gif"  alt="images/StormTrackChartControl.gif" ></div>
+<div class="images"><img  src="images/StormTrackChartControl.gif"  alt="Storm Chart tab of the Storm Track window" ></div>
 <p></p>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">

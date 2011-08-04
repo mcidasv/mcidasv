@@ -32,7 +32,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/DisplaySett
 <div class="pagetitle">Display Settings</div>
 <p>The Display Settings facility allows you to select a set of properties from a display control (e.g., color table, contouring info, isosurface value, label template, etc.) and apply them to other display controls and/or save them as preferences to be used when creating new display controls.</p>
 <p>The Display Settings dialog, pictured below, can be brought up with the <strong>Edit-&gt;Display
-Settings...</strong> menu in the <strong>Layer Controls</strong> tab.</p>
+Settings...</strong> menu in the <strong>Layer Controls</strong> tab of the Data Explorer.</p>
 <a name="image1" id="image1"></a>
 <p><div class="images"><img src="images/displaysettings/DisplaySettingsDialog.gif" alt="Display Settings Dialog" border="0">
 <br>
@@ -42,18 +42,18 @@ Settings...</strong> menu in the <strong>Layer Controls</strong> tab.</p>
 is shown highlighted in blue on the left. On the right is also a list of  target display controls. </p>
 <p>The purpose of this is that you can select properties in the middle panel that you want
   to apply to the selected target display controls (via the checkboxes) on the
-  right. Many of the properties can be changed by clicking on the <img src="images/displaysettings/Settings16.png"align=absmiddle> buttons.</p>
+  right. Many of the properties can be changed by clicking on the <img src="images/displaysettings/Settings16.png" alt="Properties icon"align=absmiddle> buttons.</p>
 <p>The <strong>View</strong>  menu is useful for selecting different groups
   of target display controls. For example, you can select All Displays,
   displays of certain types, displays that have the same data sources, etc.</p>
 <a name="example" id="example"></a>
 <div class="pagesubtitle">Display Settings Examples</div>
 <p>If you have two different data sources loaded with several displays created from each, normally the legend will list all of the displays based on some display category (e.g., Plan Views). However, you can change their display category so that each group of displays that are from one data source have the same category (e.g., "Data source 1", "Data source 2"). You can do this by changing the "Display Category" property under "Labels" to "Data Source 1".</p>
-<p><div class="images"><img src="images/displaysettings/Example1_1.gif" alt="images/displaysettings/Example1_1.gif"></div></p>
+<div class="images"><img src="images/displaysettings/Example1_1.gif" alt="images/displaysettings/Example1_1.gif"></div>
 <p>Then, you could manually select the displays you want to change, or use the <strong>Select </strong>menu and choose "Displays with data source: ...":</p>
-<p><div class="images"><img src="images/displaysettings/Example1_2.gif" alt="images/displaysettings/Example1_2.gif"></div></p>
+<div class="images"><img src="images/displaysettings/Example1_2.gif" alt="images/displaysettings/Example1_2.gif"></div>
 <p>This selects the displays with the data source of the currently selected display.</p>
-<p>Once selected you then hit<strong> <img src="images/ApplyWithArrows.gif" width="79" height="26"align=absmiddle></strong>, the "Display
+<p>Once selected you then hit<strong> <img src="images/ApplyWithArrows.gif" alt="Apply button" width="79" height="26"align=absmiddle></strong>, the "Display
   Category" will be set property on the selected display controls.</p>
 <p>To do the next set of displays, select a new Source display control in the
   list on the left. This will select this display and reset the properties list
@@ -80,7 +80,6 @@ showing the saved settings in the <strong>Field Selector</strong>.</p>
 <p><div class="images"><img src="images/displaysettings/DisplaySettingsInFieldSelector.gif" alt="Display Settings in Field Selector">
 <br>
 <span class="caption">Image 3: Display Settings in Field Selector</span></div>
-</p>
 <p>You can select any number of these, and when a new display control is created, these settings will be applied to the new display. The <strong>Show
   All</strong> check box allows you to list all of the settings, regardless if they were
 saved for a particular type of display.</p>

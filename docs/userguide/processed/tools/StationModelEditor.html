@@ -30,7 +30,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/StationMode
 <div class="pagetitle">Layout Model Editor</div>
 <p>The Layout Model Editor composes the layout and style used to plot data on
   a map from observations at discrete points (e.g., weather observations). This tool is used to edit existing models or to create new models.
-  The Editor is opened with the <strong>Tools-&gt;Station Model Template </strong> menu.</p>
+  The Editor is opened with the <strong>Tools-&gt;Station Model Template </strong> menu in the Main Display Window.</p>
 <ul class="childlist">
   <li><a href="#popup">Pop-up Menu</a></li>
   <li><a href="#image2">Properties Dialog - Display Tab</a></li>
@@ -47,7 +47,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/StationMode
 <p>To save a station model you have composed, use the <strong>File-&gt;Save</strong> or <strong>File-&gt;Save As...</strong> menu items. When you save a station model any point data displays that are using it will be updated. To remove a model, use the <strong>File-&gt;Remove</strong> menu item. You cannot remove a model supplied with McIDAS-V, but you can remove local models.</p>
 <div class="pagesubtitle">Pop-up Menu<a name="popup" id="popup"></a></div>
 <p>There are many options that you can control for each individual component of the layout model. This menu is seen by right-clicking on an item.</p>
-<div class="images"><img src="images/StationModelMenu.gif" width="163" height="189"></div>
+<div class="images"><img src="images/StationModelMenu.gif" alt="Popup menu" width="163" height="189"></div>
 <p></p>
 <ul class=propertylist>
 <li class=propertylistitem><strong>Set Color -</strong> Sets the color of the selected item.</li>
@@ -73,7 +73,7 @@ The Properties window consists of four tabs: <strong>Display</strong>, <strong>C
 <li class=propertylistitem><strong>Size -</strong> Sets the size that the item will be written in when displayed in the Main Display Window.</li>
 <li class=propertylistitem><strong>Shown -</strong> Determines if the item will be shown as part of the layout model.</li>
 <li class=propertylistitem><strong>Foreground Color -</strong> Represents the color of the text.</li>
-<li class=propertylistitem><strong>Background Color -</strong> Sets a background color for the text if desired. A  <img src="images/Transparent.gif" width="37" height="22"align=absmiddle> through this field is representative of a transparent background.</li>
+<li class=propertylistitem><strong>Background Color -</strong> Sets a background color for the text if desired. A  <img src="images/Transparent.gif" alt="x" width="37" height="22"align=absmiddle> through this field is representative of a transparent background.</li>
 <li class=propertylistitem><strong>Scale Size By -</strong> Scales the size of the item with respect to other items in the layout model.</li>
 </ul>
 <div class="pagesubtitle">Properties Dialog - Color By Tab<a name="image3" id="image3"></a></div>
@@ -96,7 +96,7 @@ The Properties window consists of four tabs: <strong>Display</strong>, <strong>C
 <div class="pagesubtitle">Properties</div>
 <ul class=propertylist>
 <li class=propertylistitem><strong>Get Color From -</strong> Selects a parameter or set of patterns that correspond to a color.</li>
-<li class=propertylistitem><strong>Parameter Value - </strong> Represents a numerical, fixed value that will be colored by the color selected for each value. Pressing the <img src="images/Apply.gif" width="65" height="26"align=absmiddle> button will give you two more Parameter Value fields once all other fields are filled.</li>
+<li class=propertylistitem><strong>Parameter Value - </strong> Represents a numerical, fixed value that will be colored by the color selected for each value. Pressing the <img src="images/Apply.gif" alt="Apply button" width="65" height="26"align=absmiddle> button will give you two more Parameter Value fields once all other fields are filled.</li>
 </ul>
 <div class="pagesubtitle">Properties Dialog - Scale Size Tab<a name="image5" id="image5"></a></div>
 <p>This allows you to specify a parameter to scale the shape by.  For each point display, McIDAS-V will find the value of the parameter, determine where that value lies within the data range, and find the corresponding scaling from the scale factor range.</p>
