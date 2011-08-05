@@ -48,25 +48,20 @@ from background import allDisplays
 from background import allLayerTypes
 from background import allProjections
 from background import allWindows
-from background import annotate
-from background import apply_colorbar
 from background import boomstick
-from background import collect_garbage
+from background import collectGarbage
 from background import colorTableNames
 from background import createLayer
 from background import firstDisplay
 from background import firstWindow
 from background import getColorTable
 from background import getProjection
-from background import load_enhancement
-from background import load_map
 from background import managedDataSource
 from background import performAction
 from background import projectionNames
 from background import removeAllData
 from background import removeAllLayers
 from background import setViewSize
-from background import write_image
 
 from interactive import describeActions
 from interactive import dumpObj
