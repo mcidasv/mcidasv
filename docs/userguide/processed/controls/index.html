@@ -21,7 +21,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/index.ht
 </head>
 <body onLoad="setParentPage();">
 <div class="TopTitleNav">
-  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="../page_layercontrols.html">Go
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="LayerControls.html">Go
         to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="../page_griddeddatadisplays.html">Go
         to Next</a><!-- InstanceEndEditable -->] </span> </p>
   <hr align="center">
@@ -32,8 +32,6 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/index.ht
 <ul class="childlist">
   <li><a href="#properties">Properties Dialog</a></li>
   <li><a href="#colorscale">Color Scale</a></li>
-  <li><a href="#options">Options</a></li>
-  <li><a href="#menus">Menus</a></li>
 </ul>
 <div class="pagesubtitle"></div>
 <div class="pagesubtitle"></div>
@@ -69,75 +67,11 @@ Scale</strong> menu to configure the visibility, positioning, and
 labeling of the color scale.</p>
 <div class="images"><img src="images/ColorScale.gif" alt="Color Scale Properties"><a name="image3" id="image3"></a> <br>
   <span class="caption">Image 3: Color Scale Properties</span></div>
-<p> </p>
-<a name="options" id="options"></a>
-<div class="pagesubtitle">Options</div>
-<p>These options are found at the bottom left corner of the <strong>Layer Controls</strong> tab of the Data Explorer.</p>
-<div class="images"><img src="../ui/images/DataExplorerToolbar.gif" alt="Data Explorer Toolbar">
-    <br>
-<span class="caption">Image 4: Options</span></div>
 <p></p>
-<div class="pagesubtitle">Properties</div>
-<ul class="propertylist">
-<li class="propertylistitem"><img src="../ui/images/Undock.gif" alt="Undock Control Window icon" width="21" height="18"align=absmiddle> <strong>Undock Control Window -</strong> Undocks the selected controls from the Data Explorer. You can redock the Control Window by selecting <strong>View-&gt;Dock in Data Explorer</strong>.</li>
-<li class="propertylistitem"><img src="../ui/images/DisplayControlProperties.gif" alt="Show Display Control Window Properties icon" width="21" height="18"align=absmiddle> <strong>Show Display Control Properties -</strong> Opens a Properties window, where you can control basic settings, add a color scale to the Main Display Window, change the times being displayed, or change the spatial subset of the data.</li>
-<li class="propertylistitem"><img src="../ui/images/RemoveDisplay.gif" alt="Remove Display Control icon" width="15" height="18"align=absmiddle>  <strong>Remove Display Control - </strong>Removes the selected display from the Data Explorer and from the Main Display Window.</li>
-<li class="propertylistitem"><img src="../ui/images/DragAndDrop.gif" alt="Drag and Drop to a Window Component icon" width="24" height="17"align=absmiddle> <strong>Drag and Drop to a Window Component - </strong>Allows you to move a component from one tab to another.</li>
-</ul>
-    <div class="pagesubtitle">Menus<a name="menus" id="menus"></a></div>
-<p>All parameters share a common set of <strong>File, Edit, View</strong>, and <strong>Help</strong> menu items, shown in the menu bar of the <strong>Layer Controls</strong> tab. Different controls may also have custom items in these menus as well.</p>
-<p>The <strong>File</strong> menu has these common choices:</p>
-<ul class="propertylist">
-  <li class="propertylistitem"><strong>Remove Display</strong> - Removes the display.</li>
-  <li class="propertylistitem"><strong>Save</strong> - Saves the state of the display.</div>
-    <ul class="propertylist">
-      <li class="propertylistitemfirst"><strong>Save Data in Cache</strong> - Allows for  saving  the current data of the display in a Cache Data Source as a new Field. You will be prompted for the name of the field. You can use this in a variety of ways:</li>
-<ul class="propertylist">
-            <li class="propertylistitem">After calculating a complex formula, selecting operands for the formula, etc., to create the data in a display you can save off the formula and the data that was calculated. Then you can create new displays from that formula without having to reselect the operands and recalculate the final data.</li>
-            <li class="propertylistitem">The Web Map Server (WMS) display  allows for the capturing of the image and then making use of it in formulas and in other displays. For example, the image can be draped over topography.</li>
-          </ul>
-      <li class="propertylistitem"><strong>Export Displayed Data to NetCDF -</strong> Allows for the saving of the data in the (*.nc) format.</li>
-      <li class="propertylistitem"><strong>Save As Parameter Defaults</strong> - Allows for saving  the current display state for the parameter as the default for that parameter in the future. See the <a href="../tools/ParameterDefaultsEditor.html">Parameter Defaults Editor</a> page for more information.</li>
-      <li class="propertylistitem"><strong>Save Display as Favorite</strong> - Allows for  saving  the current display state (without the data) as a Favorite Display.</li>
-      <li class="propertylistitem"><strong>Save Display as Bundle</strong> - Allows for  saving  the current application state  as a <a href="../Bundles.html">bundle</a>.</li>
-    </ul>
-  <li class="propertylistitem"><strong>Reload Data</strong> - Reloads the data for this display.</li>
-</ul>
-<p>The <strong>Edit</strong> menu has these common choices:</p><a name="edit" id="edit"></a>
-<ul class="propertylist">
-  <li class="propertylistitem"><strong>Color Table</strong> - Allows for editing the color table, changing the range, choosing a new color table, etc. This works for displays that have a <a href="../tools/ColorTableEditor.html">color table</a>.</li>
-  <li class="propertylistitem"><strong>Change Parameter</strong> - Allows for changing the Field that is being displayed.</li>
-  <li class="propertylistitem"><strong>Change Display Unit</strong> - Allows for changing the unit that is used in the display, e.g., changing temperature plots in Kelvin to Celsius.
-    </div>
-  </li>
-  <li class="propertylistitem"><strong>Change Contours</strong> - Allows for  changing the different aspects of the contours in the image by opening the <a href="../tools/ContourDialog.html">Contour Properties Editor</a>.</li>
-  <li class="propertylistitem"><strong>Sharing</strong> - Allows for turning on/off sharing and to set the "share group". When <a href="../collab/Sharing.html">sharing</a> is turned on, control operations will be shared between two or more displays of the same type that are in the same share group. The share group can be an arbitrary name.
-    <li class="propertylistitem">For example, the location of a vertical cross section, the color table, location of a probe point, etc., can all be shared.</li>
-  <li class="propertylistitem"><strong>Display Settings -</strong> Opens the <a href="../tools/DisplaySettings.html">Display Settings</a> dialog, allowing for the selection of display properties to be applied to other display controls and/or to be saved as preferences to be used in the creation of new display controls.</li>
-  <li class="propertylistitem"><strong>Properties</strong> - Opens the <a href="#properties">Properties</a> dialog, allowing for the changing of many settings, the color scale, and the times used in creating the display.</li>
-</ul>
-<p>The <strong>View</strong> menu has these common choices:</p>
-<ul class="propertylist">
-  <li class="propertylistitem"><strong>Visible</strong> - Allows for  toggling  visibility. When selected, the parameter will be displayed in the Main Display Window. </li>
-  <li class="propertylistitem"><strong>Lock Visibility</strong> - Allows for toggling the visibility lock (see <a href="../ui/DisplayVisibility.html">cycling visibilities</a>).</li>
-  <a name="bringtofront" id="bringtofront"></a>
-  <li class="propertylistitem"><strong>Bring To Front</strong> - Selects which display is on top if one display is showing at the same level in 3D as another (e.g., satellite and radar images in the same display).</li>
-  <li class="propertylistitem"><strong>Show View Window</strong> - Brings the Main Display Window to the front. </li>
-  <li class="propertylistitem"><strong>Use Times in Animation</strong> - Allows for the looping of data when the layers have a time associated with them by adding the <a href="../ui/Animation.html">Time Animation Widget</a> to the Main Display Window.</li>
-  <li class="propertylistitem"><strong>Display List</strong> - Displays the parameter information at the bottom of the Main Display Window and allows for  setting the color of the text. </li>
-  <li class="propertylistitem"><strong>Center on Display</strong> - If the display has been translated from its original position, this re-centers the display in the Main Display Window without changing the zoom level. </li>
-  <li class="propertylistitem"><strong>Undock from Data Explorer -</strong> Unattaches the<strong> Layer Controls</strong> tab from the<strong> Data Explorer</strong> by making it its own window. This can be brought back to the <strong>Data Explorer</strong> by selecting View-&gt;Dock in <strong>Data Explorer</strong>.</li>
-  <li class="propertylistitem"><strong>Export to Component -</strong> Transfers the<strong> Layer Controls</strong> tab of the <strong>Data Explorer</strong> to the Main Display Window as a separate tab. This can be brought back to the <strong>Data Explorer</strong> by selecting View-&gt;Undock, and once it is undocked, View-&gt;Dock in <strong>Data Explorer</strong>.</li>
-</ul>
-The <strong>Help</strong> menu has these common choices:
-<ul class="propertylist">
-  <li class="propertylistitem"><strong>Details</strong> - Opens a window that shows detailed information about the display and any associated data. </li>
-  <li class="propertylistitem"><strong>User's Guide</strong> - Opens the User's Guide entry relevant for the particular display.</li>
-</ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
-  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="../page_layercontrols.html">Go
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="LayerControls.html">Go
         to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="../page_griddeddatadisplays.html">Go
         to Next</a><!-- InstanceEndEditable -->] </span></p>
 </div>

@@ -88,9 +88,9 @@
                   <span class="link" onClick="setPage('data/Displays.html');">Displays</span><br />
           <span class="link" onClick="setPage('data/DataSubset.html');">Data Subset</span><br />      
       </div>
-            <span class="toggle" onClick="toggleChildren(this,'page_layercontrols');">+</span>
-      <span class="link" onClick="setPage('page_layercontrols.html');">Layer Controls</span><br>
-            <div class="indented" id="page_layercontrols">
+            <span class="toggle" onClick="toggleChildren(this,'controls/layercontrols');">+</span>
+      <span class="link" onClick="setPage('controls/LayerControls.html');">Layer Controls</span><br>
+            <div class="indented" id="controls/layercontrols">
                   <span class="link" onClick="setPage('controls/index.html');">Overview</span><br>
       <span class="toggle" onClick="toggleChildren(this,'layercontrols_2');">+</span>
       <span class="link" onClick="setPage('page_griddeddatadisplays.html');">Gridded Data Displays</span><br>
@@ -133,8 +133,6 @@
         	<span class="link" onClick="setPage('controls/level2/RadarVolumeControl.html');">Radar Volume Scan Controls</span><br>
         	<span class="link" onClick="setPage('controls/level2/RadarIsosurfaceControl.html');">Radar Isosurface Controls </span><br>
 		</div>
-		
-        <span class="link" onClick="setPage('controls/misc/RadarGridControl.html');">Range Rings</span><br>
       </div>
 
       <span class="toggle" onClick="toggleChildren(this,'layercontrols_3');">+</span>
@@ -186,13 +184,7 @@
 	    <span class="link" onClick="setPage('controls/misc/StormTrackControl.html');">Storm Track Controls</span><br>
         <span class="link" onClick="setPage('controls/misc/ScatterAnalysisControl.html');">Scatter Analysis Controls</span><br>
         <span class="link" onClick="setPage('controls/misc/BridgeControl.html');">McIDAS-X Bridge Controls</span><br>
-        <span class="link" onClick="setPage('controls/misc/RangeAndBearingControl.html');">Range and Bearing Controls</span><br>
-        <span class="link" onClick="setPage('controls/misc/DrawingControl.html');">Drawing Controls</span><br>
-        <span class="link" onClick="setPage('controls/misc/TransectDrawingControl.html');">Transect Drawing Controls</span><br>
-        <span class="link" onClick="setPage('controls/misc/LocationIndicatorControl.html');">Location Indicator Controls</span><br>
         <span class="link" onClick="setPage('controls/misc/OmniControl.html');">Omni Controls</span><br>
-        <span class="link" onClick="setPage('controls/misc/MovieDisplay.html');">QuickTime Movie Controls</span><br>
-        <span class="link" onClick="setPage('controls/misc/WMSControl.html');">Web Map Server(WMS)/Background Image Controls</span><br>
         <span class="link" onClick="setPage('controls/JythonControl.html');">Jython Controls</span><br>
         <span class="link" onClick="setPage('controls/misc/TextProductControl.html');">Weather Text Product Controls</span><br>
       </div>
@@ -214,8 +206,22 @@
             <span class="link" onClick="setPage('ui/Navigation.html');">Zooming, Panning and Rotating</span><br>
             <span class="link" onClick="setPage('ui/ModifyColorInteractively.html');">Modify the Color Bar Interactively</span><br>
             <span class="link" onClick="setPage('ui/TransectViewManager.html');">Transect Views</span><br>
-</div>
+        </div>
+             <span class="toggle" onClick="toggleChildren(this,'Display Controls');">+</span>
+    <span class="link" onClick="setPage('page_displaycontrols.html');">Display Controls</span><br>
+    <div class="indented" id="Display Controls">
+                <span class="link" onClick="setPage('display_controls/RadarGridControl.html');">Range Ring Controls</span><br>
+                                <span class="link" onClick="setPage('display_controls/RangeAndBearingControl.html');">Range and Bearing Controls</span><br>
+                                                <span class="link" onClick="setPage('display_controls/TransectDrawingControl.html');">Transect Drawing Controls</span><br>
+                                                                <span class="link" onClick="setPage('display_controls/DrawingControl.html');">Drawing Controls</span><br>
+                                                                                <span class="link" onClick="setPage('display_controls/LocationIndicatorControl.html');">Location Indicator Controls</span><br>
+                                                                                                <span class="link" onClick="setPage('display_controls/WMSControl.html');">Web Map Server(WMS)/Background Image Controls</span><br>
+                                                                                                                <span class="link" onClick="setPage('display_controls/MovieDisplay.html');">QuickTime Movie Controls</span><br>
+                                                                                                  <span class="link" onClick="setPage('display_controls/ImageCaptures.html');">Image and Movie Capture Controls</span><br>
+                                                                                                  <span class="link" onClick="setPage('display_controls/Timeline.html');">Timeline Controls</span><br>
+                </div>
     <span class="toggle" onClick="toggleChildren(this,'tools');">+</span>
+    
     <span class="link" onClick="setPage('page_tools.html');">Tools</span><br>
 
     <div class="indented" id="tools">
@@ -243,13 +249,7 @@
       <span class="link" onClick="setPage('tools/AliasEditor.html');">Parameter Alias Editor</span><br>
       <span class="link" onClick="setPage('tools/ParameterDefaultsEditor.html');">Parameter Defaults Editor</span><br>
       <span class="link" onClick="setPage('tools/ParameterGroupsEditor.html');">Parameter Groups Editor</span><br>
-      <span class="link" onClick="setPage('tools/ContourDialog.html');">Contour Properties Editor</span><br>
-      <span class="link" onClick="setPage('tools/ImageCaptures.html');">Image and Movie Capture</span><br>
-      <span class="link" onClick="setPage('tools/Timeline.html');">Timeline</span><br>
-      <span class="link" onClick="setPage('tools/Console.html');">Message Console</span><br>
-      <span class="link" onClick="setPage('tools/SupportRequestForm.html');">Support Request Form</span><br>
-
-    </div>
+      <span class="link" onClick="setPage('tools/ContourDialog.html');">Contour Properties Editor</span></div>
 
     <span class="toggle" onClick="toggleChildren(this,'miscellaneous');">+</span>
     <span class="link" onClick="setPage('page_miscellaneous.html');">Miscellaneous</span><br>
@@ -321,7 +321,8 @@
       <span class="link" onClick="setPage('misc/CommandLineArguments.html');">Command Line Arguments</span><br>
       <span class="link" onClick="setPage('misc/PerformanceTuning.html');">Performance Tuning</span><br>
       <span class="link" onClick="setPage('misc/SourceBuild.html');">Building McIDAS-V from Source</span><br>
-
+      <span class="link" onClick="setPage('misc/Console.html');">Message Console</span><br>
+      <span class="link" onClick="setPage('misc/SupportRequestForm.html');">Support Request Form</span><br>
     </div>
 
     <span class="toggle" onClick="toggleChildren(this,'appendix');">+</span>

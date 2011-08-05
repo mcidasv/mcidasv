@@ -43,6 +43,7 @@
         <mapID target="idv.controls.imageplanviewcontrol"            url="controls/ImagePlanViewControl.html" />
         <mapID target="idv.controls.imagesequencecontrol"            url="controls/ImagePlanViewControl.html" />
         <mapID target="idv.controls.jythoncontrol"                   url="controls/JythonControl.html" />
+		<mapID target="idv.controls.layercontrols"					 url="controls/LayerControls.html" />
         <mapID target="idv.controls.legends"                         url="controls/index.html#legends" />
 		<mapID target="idv.controls.level2.radarcappidisplaycontrols"url="controls/level2/RadarCappiDisplayControls.html" />
 		<mapID target="idv.controls.level2.radarcrosssectioncontrol" url="controls/level2/RadarCrossSectionControl.html" />
@@ -53,24 +54,16 @@
 		<mapID target="idv.controls.level2.radarcappidisplaycontrols"url="controls/level2/RadarCappiDisplayControls.html" />
 		<mapID target="idv.controls.level2.threedsurfacecontrol"     url="controls/level2/ThreeDSurfaceControl.html" />
         <mapID target="idv.controls.leveliiicontrol"                 url="controls/LevelIIIControl.html" />
-        <mapID target="idv.controls.locationindicatorcontrol"        url="controls/misc/LocationIndicatorControl.html" />
         <mapID target="idv.controls.mapdisplaycontrol"               url="controls/MapDisplayControl.html" />
         <mapID target="idv.controls.menus"                           url="controls/index.html#menus" />
         <mapID target="idv.controls.misc.bridgecontrol"				 url="controls/misc/BridgeControl.html" />
-        <mapID target="idv.controls.misc.drawingcontrol"             url="controls/misc/DrawingControl.html" />
-        <mapID target="idv.controls.misc.drawingcontrol.image1"      url="controls/misc/DrawingControl.html#image1" />
         <mapID target="idv.controls.misc.locationindicatorcontrol"   url="controls/misc/LocationIndicatorControl.html" />
         <mapID target="idv.controls.misc.locationindicatorcontrol.image1"  url="controls/misc/LocationIndicatorControl.html#image1" />
         <mapID target="idv.controls.misc.locationindicatorcontrol.image2"  url="controls/misc/LocationIndicatorControl.html#image2" />
         <mapID target="idv.controls.misc.locationindicatorcontrol.image3"  url="controls/misc/LocationIndicatorControl.html#image3" />
-        <mapID target="idv.controls.misc.moviedisplay"               url="controls/misc/MovieDisplay.html" />
         <mapID target="idv.controls.misc.omnicontrol"                url="controls/misc/OmniControl.html" />
-        <mapID target="idv.controls.misc.radargridcontrol"           url="controls/misc/RadarGridControl.html" />
-        <mapID target="idv.controls.misc.rangeandbearingcontrol"     url="controls/misc/RangeAndBearingControl.html" />
 		<mapID target="idv.controls.misc.scatteranalysiscontrol"	 url="controls/misc/ScatterAnalysisControl.html" />
 		<mapID target="idv.controls.misc.stormtrackcontrol"		     url="controls/misc/StormTrackControl.html" />
-        <mapID target="idv.controls.misc.transectdrawingcontrol"     url="controls/misc/TransectDrawingControl.html" />
-        <mapID target="idv.controls.misc.wmscontrol"                 url="controls/misc/WMSControl.html" />
         <mapID target="idv.controls.moviedisplaycontrol"             url="controls/misc/MovieDisplay.html" />
 		<mapID target="idv.controls.objectiveanalysis"				 url="controls/ObjectiveAnalysis.html" />
         <mapID target="idv.controls.obslistcontrol"                  url="controls/ObsListControl.html" />
@@ -173,6 +166,13 @@
         <mapID target="idv.data.locationxml.xml"                     url="data/LocationXml.html#xml" />
         <mapID target="idv.data.textpointdata"                       url="data/TextPointData.html" />
 		<mapID target="idv.datafaq"									 url="DataFaq.html" />
+		<mapID target="idv.display_controls.drawingcontrol"			 url="display_controls/DrawingControl.html" />
+		<mapID target="idv.display_controls.locationindicatorcontrol"	url="display_controls/LocationIndicatorControl.html" />
+		<mapID target="idv.display_controls.moviedisplay"			 url="display_controls/MovieDisplay.html" />
+		<mapID target="idv.display_controls.radargridcontrol"		 url="display_controls/RadarGridControl.html" />
+		<mapID target="idv.display_controls.rangeandbearingcontrol"	 url="display_controls/RangeAndBearingControl.html" />
+		<mapID target="idv.display_controls.transectdrawingcontrol"	 url="display_controls/TransectDrawingControl.html" />
+		<mapID target="idv.display_controls.wmscontrol.html"		 url="display_controls/WMSControl.html" />
         <mapID target="idv.examples"                                 url="examples/index.html" />
         <mapID target="idv.examples.3dsurface"                       url="examples/3DSurface.html" />
         <mapID target="idv.examples.3dsurface.2dtopo"                url="examples/3DSurface.html#2dtopo" />
@@ -325,6 +325,7 @@
         <mapID target="idv.misc.actions"                             url="misc/Actions.html" />
         <mapID target="idv.misc.commandlinearguments"                url="misc/CommandLineArguments.html" />
         <mapID target="idv.misc.commandlinearguments.datatype"       url="misc/CommandLineArguments.html#datatype" />
+		<mapID target="idv.misc.console"                             url="misc/Console.html" />
         <mapID target="idv.misc.imagedefaults"                       url="misc/ImageDefaults.html" />
         <mapID target="idv.misc.performancetuning"                   url="misc/PerformanceTuning.html" />
         <mapID target="idv.misc.performancetuning.cache"             url="misc/PerformanceTuning.html#cache" />
@@ -345,10 +346,11 @@
         <mapID target="idv.misc.siteconfiguration"                   url="misc/SiteConfiguration.html" />
         <mapID target="idv.misc.siteconfiguration.resources"         url="misc/SiteConfiguration.html#resources" />
         <mapID target="idv.misc.sourcebuild"                         url="misc/SourceBuild.html" />
+		<mapID target="idv.misc.supportrequestform"        	         url="misc/SupportRequestForm.html" />
         <mapID target="idv.misc.xgrf"                                url="misc/Xgrf.html" />
         <mapID target="idv.page_appendix"                            url="page_appendix.html" />
         <mapID target="idv.page_dataanalysis"                        url="page_dataanalysis.html" />
-        <mapID target="idv.page_displaycontrols"                     url="page_layercontrols.html" />
+        <mapID target="idv.page_displaycontrols"                     url="page_displaycontrols.html" />
         <mapID target="idv.page_griddeddatadisplays"                 url="page_griddeddatadisplays.html" />
         <mapID target="idv.page_idvspecialdataformats"               url="page_mcvspecialdataformats.html" />
         <mapID target="idv.page_level2radardisplaycontrols"          url="page_level2radardisplaycontrols.html" />
@@ -456,7 +458,6 @@
         <mapID target="idv.tools.colortableeditor.legend"            url="tools/ColorTableEditor.html#legend" />
         <mapID target="idv.tools.colortableeditor.saveCT"            url="tools/ColorTableEditor.html#saveCT" />
         <mapID target="idv.tools.colortableeditor.starting"          url="tools/ColorTableEditor.html#starting" />
-        <mapID target="idv.tools.console"                            url="tools/Console.html" />
         <mapID target="idv.tools.contourdialog"                      url="tools/ContourDialog.html" />
         <mapID target="idv.tools.deriveddata"                        url="tools/DerivedData.html" />
         <mapID target="idv.tools.displaysettings"					 url="tools/DisplaySettings.html" />
@@ -582,8 +583,6 @@
         <mapID target="idv.tools.stationmodeleditor.image4"          url="tools/StationModelEditor.html#image4" />
         <mapID target="idv.tools.stationmodeleditor.image5"          url="tools/StationModelEditor.html#image5" />
         <mapID target="idv.tools.stationmodeleditor.image6"          url="tools/StationModelEditor.html#image6" />
-        <mapID target="idv.tools.supportrequestform"                 url="tools/SupportRequestForm.html" />
-        <mapID target="idv.tools.supportrequestform.image1"          url="tools/SupportRequestForm.html#image1" />
         <mapID target="idv.tools.timeline"                           url="tools/Timeline.html" />
         <mapID target="idv.tools.timeline.image1"                    url="tools/Timeline.html#image1" />
         <mapID target="idv.tools.timeline.image2"                    url="tools/Timeline.html#image2" />

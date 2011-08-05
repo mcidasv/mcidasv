@@ -51,7 +51,7 @@
 		<tocitem text="Displays" target="idv.data.displays"/>
 		<tocitem text="Data Subset" target="idv.data.datasubset"/>
     </tocitem>
-	<tocitem text="Layer Controls" target="idv.page_displaycontrols">
+	<tocitem text="Layer Controls" target="idv.controls.layercontrols">
         <tocitem text="Overview" target="idv.controls"/>
         <tocitem text="Gridded Data Displays" target="idv.page_griddeddatadisplays">
             <tocitem text="Plan View Controls" target="idv.controls.planviewcontrol"/>
@@ -78,7 +78,6 @@
                 <tocitem text="Radar Volume Scan Controls" target="idv.controls.level2.radarvolumecontrol"/>
                 <tocitem text="Radar Isosurface Controls" target="idv.controls.level2.radarisosurfacecontrol"/>
             </tocitem>
-            <tocitem text="Range Rings" target="idv.controls.misc.radargridcontrol"/>
         </tocitem>
         <tocitem text="Profiler Controls" target="idv.controls.profiler">
             <tocitem text="Profiler Time/Height Controls" target="idv.controls.profiler.profilertimeheightcontrol"/>
@@ -110,13 +109,7 @@
             <tocitem text="Storm Track Controls" target="idv.controls.misc.stormtrackcontrol"/>
             <tocitem text="Scatter Analysis Controls" target="idv.controls.misc.scatteranalysiscontrol"/>
             <tocitem text="McIDAS-X Bridge Controls" target="idv.controls.misc.bridgecontrol"/>
-            <tocitem text="Range and Bearing Controls" target="idv.controls.misc.rangeandbearingcontrol"/>
-            <tocitem text="Drawing Controls" target="idv.controls.misc.drawingcontrol"/>
-            <tocitem text="Transect Drawing Controls" target="idv.controls.misc.transectdrawingcontrol"/>
-            <tocitem text="Location Indicator Controls" target="idv.controls.misc.locationindicatorcontrol"/>
             <tocitem text="Omni Controls" target="idv.controls.misc.omnicontrol"/>
-            <tocitem text="QuickTime Movie Controls" target="idv.controls.misc.moviedisplay"/>
-            <tocitem text="Web Map Server(WMS)/Background Image Controls" target="idv.controls.misc.wmscontrol"/>
             <tocitem text="Jython Controls" target="idv.controls.jythoncontrol"/>
             <tocitem text="Weather Text Product Controls" target="idv.controls.textproductcontrol"/>
         </tocitem>
@@ -135,6 +128,17 @@
     <tocitem text="Zooming, Panning and Rotating" target="idv.ui.navigation"/>
 	<tocitem text="Modify the Color Bar Interactively" target="idv.ui.modifycolorinteractively"/>
     <tocitem text="Transect Views" target="idv.ui.transectviewmanager"/>
+</tocitem>
+<tocitem text="Display Controls" target="idv.page_displaycontrols">
+    <tocitem text="Range Ring Controls" target="idv.page_displaycontrols.radargridcontrol"/>
+	<tocitem text="Range and Bearing Controls" target="idv.page_displaycontrols.rangeandbearingcontrol"/>
+	<tocitem text="Transect Drawing Controls" target="idv.page_displaycontrols.transectdrawingcontrol"/>
+	<tocitem text="Drawing Controls" target="idv.page_displaycontrols.drawingcontrol"/>
+	<tocitem text="Location Indicator Controls" target="idv.page_displaycontrols.locationindicatorcontrol"/>
+	<tocitem text="Web Map Server(WMS)/Background Image Controls" target="idv.page_displaycontrols.wmscontrol"/>
+	<tocitem text="QuickTime Movie Controls" target="idv.page_displaycontrols.moviedisplay"/>
+	<tocitem text="Image and Movie Capture Controls" target="idv.page_displaycontrols.imagecaptures"/>
+	<tocitem text="Timeline Controls" target="idv.page_displaycontrols.timeline">
 </tocitem>
 <tocitem text="Tools" target="idv.page_tools">
     <tocitem text="User Preferences" target="idv.tools.preferences">
@@ -158,10 +162,6 @@
     <tocitem text="Parameter Defaults Editor" target="idv.tools.parameterdefaultseditor"/>
     <tocitem text="Parameter Groups Editor" target="idv.tools.parametergroupseditor"/>
     <tocitem text="Contour Properties Editor" target="idv.tools.contourdialog"/>
-    <tocitem text="Image and Movie Capture" target="idv.tools.imagecaptures"/>
-    <tocitem text="Timeline" target="idv.tools.timeline"/>
-    <tocitem text="Message Console" target="idv.tools.console"/>
-    <tocitem text="Support Request Form" target="idv.tools.supportrequestform"/>
 </tocitem>
 <tocitem text="Miscellaneous" target="idv.page_miscellaneous">
     <tocitem text="Bundles" target="idv.bundles"/>
@@ -210,6 +210,8 @@
     <tocitem text="Command Line Arguments" target="idv.misc.commandlinearguments"/>
     <tocitem text="Performance Tuning" target="idv.misc.performancetuning"/>
     <tocitem text="Building McIDAS-V from Source" target="idv.misc.sourcebuild"/>
+	<tocitem text="Message Console" target="idv.misc.console"/>
+    <tocitem text="Support Request Form" target="idv.misc.supportrequestform"/>
 </tocitem>
 <tocitem text="Appendices" target="idv.page_appendix">
     <tocitem text="Examples of Display Types" target="idv.examples">
