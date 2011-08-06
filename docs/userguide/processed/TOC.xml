@@ -52,7 +52,6 @@
 		<tocitem text="Data Subset" target="idv.data.datasubset"/>
     </tocitem>
 	<tocitem text="Layer Controls" target="idv.controls.layercontrols">
-        <tocitem text="Overview" target="idv.controls"/>
         <tocitem text="Gridded Data Displays" target="idv.page_griddeddatadisplays">
             <tocitem text="Plan View Controls" target="idv.controls.planviewcontrol"/>
             <tocitem text="Flow Display Controls" target="idv.controls.flowplanviewcontrol"/>
@@ -106,13 +105,13 @@
             <tocitem text="Track Controls" target="idv.controls.trackcontrol"/>
         </tocitem>
         <tocitem text="Miscellaneous Controls" target="idv.page_miscellaneouscontrols">
-            <tocitem text="Storm Track Controls" target="idv.controls.misc.stormtrackcontrol"/>
             <tocitem text="Scatter Analysis Controls" target="idv.controls.misc.scatteranalysiscontrol"/>
             <tocitem text="McIDAS-X Bridge Controls" target="idv.controls.misc.bridgecontrol"/>
             <tocitem text="Omni Controls" target="idv.controls.misc.omnicontrol"/>
             <tocitem text="Jython Controls" target="idv.controls.jythoncontrol"/>
-            <tocitem text="Weather Text Product Controls" target="idv.controls.textproductcontrol"/>
         </tocitem>
+		<tocitem text="Properties Dialog" target="idv.controls.propertiesdialog"/>
+		<tocitem text="Color Scale" target="idv.controls.colorscale"/>
         <tocitem text="Charts" target="idv.controls.chart"/>
 	    <tocitem text="Ensemble Grid Controls" target="idv.controls.ensemblegridcontrol"/>
     </tocitem>
@@ -138,7 +137,7 @@
 	<tocitem text="Web Map Server(WMS)/Background Image Controls" target="idv.page_displaycontrols.wmscontrol"/>
 	<tocitem text="QuickTime Movie Controls" target="idv.page_displaycontrols.moviedisplay"/>
 	<tocitem text="Image and Movie Capture Controls" target="idv.page_displaycontrols.imagecaptures"/>
-	<tocitem text="Timeline Controls" target="idv.page_displaycontrols.timeline">
+	<tocitem text="Timeline Controls" target="idv.page_displaycontrols.timeline"/>
 </tocitem>
 <tocitem text="Tools" target="idv.page_tools">
     <tocitem text="User Preferences" target="idv.tools.preferences">
@@ -154,14 +153,17 @@
     </tocitem>
     <tocitem text="Remote ADDE Data Manager" target="idv.tools.remotedata"/>
     <tocitem text="Local ADDE Data Manager" target="idv.tools.localdata"/>
-    <tocitem text="Projection Manager" target="idv.tools.projectionmanager"/>
-    <tocitem text="Color Table Editor" target="idv.tools.colortableeditor"/>
-    <tocitem text="Layout Model Editor" target="idv.tools.stationmodeleditor"/>
-    <tocitem text="Display Settings" target="idv.tools.displaysettings"/>
+	<tocitem text="Weather Text Product Controls" target="idv.tools.textproductcontrol"/>
+	<tocitem text="Storm Track Controls" target="idv.tools.stormtrackcontrol"/>
+	<tocitem text="Color Table Editor" target="idv.tools.colortableeditor"/>
+	<tocitem text="Layout Model Editor" target="idv.tools.stationmodeleditor"/>
     <tocitem text="Parameter Alias Editor" target="idv.tools.aliaseditor"/>
     <tocitem text="Parameter Defaults Editor" target="idv.tools.parameterdefaultseditor"/>
     <tocitem text="Parameter Groups Editor" target="idv.tools.parametergroupseditor"/>
-    <tocitem text="Contour Properties Editor" target="idv.tools.contourdialog"/>
+	<tocitem text="Projection Manager" target="idv.tools.projectionmanager"/>
+	<tocitem text="Display Settings" target="idv.tools.displaysettings"/>
+	<tocitem text="Plugin Creator" target="idv.tools.plugincreator"/>
+	<tocitem text="Plugin Manager" target="idv.tools.plugins"/>
 </tocitem>
 <tocitem text="Miscellaneous" target="idv.page_miscellaneous">
     <tocitem text="Bundles" target="idv.bundles"/>
@@ -193,8 +195,6 @@
         <tocitem text="Jython Library" target="idv.tools.jythonlib"/>
     </tocitem>
     <tocitem text="Site Configuration" target="idv.misc.siteconfiguration">
-        <tocitem text="Plugins" target="idv.misc.plugins"/>
-		<tocitem text="Plugin Creator" target="idv.misc.plugincreator"/>
 		<tocitem text="Plugin Jar Files" target="idv.misc.pluginjarfiles"/>
         <tocitem text="Configuring Image Defaults" target="idv.misc.imagedefaults"/>
         <tocitem text="Adding in new GRIB tables" target="idv.data.gribtables"/>

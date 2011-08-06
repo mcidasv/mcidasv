@@ -91,7 +91,6 @@
             <span class="toggle" onClick="toggleChildren(this,'controls/layercontrols');">+</span>
       <span class="link" onClick="setPage('controls/LayerControls.html');">Layer Controls</span><br>
             <div class="indented" id="controls/layercontrols">
-                  <span class="link" onClick="setPage('controls/index.html');">Overview</span><br>
       <span class="toggle" onClick="toggleChildren(this,'layercontrols_2');">+</span>
       <span class="link" onClick="setPage('page_griddeddatadisplays.html');">Gridded Data Displays</span><br>
 
@@ -127,7 +126,7 @@
 		
 		<div class="indented" id="layercontrols_2_2">
         	<span class="link" onClick="setPage('controls/level2/RadarSweepControl.html');">Radar Sweep Controls</span><br>
-        	<span class="link" onClick="setPage('controls/level2/RadarRhiDisplayControls.html');">Radar RHI Display Controls </span><br>
+        	<span class="link" onClick="setPage('controls/level2/RadarRHIDisplayControls.html');">Radar RHI Display Controls </span><br>
 			<span class="link" onClick="setPage('controls/level2/RadarCrossSectionControl.html');">Radar Cross Section Controls</span><br>
 			<span class="link" onClick="setPage('controls/level2/RadarCappiDisplayControls.html');">Radar CAPPI Display Controls</span><br>                         
         	<span class="link" onClick="setPage('controls/level2/RadarVolumeControl.html');">Radar Volume Scan Controls</span><br>
@@ -181,13 +180,13 @@
       <span class="link" onClick="setPage('page_miscellaneouscontrols.html');">Miscellaneous Controls</span><br>
 
       <div class="indented" id="layercontrols_7">
-	    <span class="link" onClick="setPage('controls/misc/StormTrackControl.html');">Storm Track Controls</span><br>
         <span class="link" onClick="setPage('controls/misc/ScatterAnalysisControl.html');">Scatter Analysis Controls</span><br>
         <span class="link" onClick="setPage('controls/misc/BridgeControl.html');">McIDAS-X Bridge Controls</span><br>
         <span class="link" onClick="setPage('controls/misc/OmniControl.html');">Omni Controls</span><br>
         <span class="link" onClick="setPage('controls/JythonControl.html');">Jython Controls</span><br>
-        <span class="link" onClick="setPage('controls/misc/TextProductControl.html');">Weather Text Product Controls</span><br>
       </div>
+            <span class="link" onClick="setPage('controls/PropertiesDialog.html');">Properties Dialog</span><br>
+                  <span class="link" onClick="setPage('controls/ColorScale.html');">Color Scale</span><br>
       <span class="link" onClick="setPage('controls/Chart.html');">Charts</span><br>
       <span class="link" onClick="setPage('controls/EnsembleGridControl.html');">Ensemble Grid Controls</span><br>
     </div>
@@ -242,14 +241,18 @@
 
       <span class="link" onClick="setPage('tools/RemoteDataManager.html');">Remote ADDE Data Manager</span><br>
       <span class="link" onClick="setPage('tools/LocalDataManager.html');">Local ADDE Data Manager</span><br>
-      <span class="link" onClick="setPage('tools/ProjectionManager.html');">Projection Manager</span><br>
+      <span class="link" onClick="setPage('tools/TextProductControl.html');">Weather Text Product Controls</span><br>
+      <span class="link" onClick="setPage('tools/StormTrackControl.html');">Storm Track Controls</span><br>
       <span class="link" onClick="setPage('tools/ColorTableEditor.html');">Color Table Editor</span><br>
       <span class="link" onClick="setPage('tools/StationModelEditor.html');">Layout Model Editor</span><br>
-	  <span class="link" onClick="setPage('tools/DisplaySettings.html')">Display Settings</span><br>
       <span class="link" onClick="setPage('tools/AliasEditor.html');">Parameter Alias Editor</span><br>
       <span class="link" onClick="setPage('tools/ParameterDefaultsEditor.html');">Parameter Defaults Editor</span><br>
       <span class="link" onClick="setPage('tools/ParameterGroupsEditor.html');">Parameter Groups Editor</span><br>
-      <span class="link" onClick="setPage('tools/ContourDialog.html');">Contour Properties Editor</span></div>
+      <span class="link" onClick="setPage('tools/ProjectionManager.html');">Projection Manager</span><br>
+	  <span class="link" onClick="setPage('tools/DisplaySettings.html')">Display Settings</span><br>
+      	  <span class="link" onClick="setPage('tools/PluginCreator.html')">Plugin Creator</span><br>
+          	  <span class="link" onClick="setPage('tools/Plugins.html')">Plugin Manager</span>
+</div>
 
     <span class="toggle" onClick="toggleChildren(this,'miscellaneous');">+</span>
     <span class="link" onClick="setPage('page_miscellaneous.html');">Miscellaneous</span><br>
@@ -299,8 +302,6 @@
       <span class="link" onClick="setPage('misc/SiteConfiguration.html');">Site Configuration</span><br>
 
       <div class="indented" id="miscellaneous_3">
-        <span class="link" onClick="setPage('misc/Plugins.html');">Plugins</span><br>
-        <span class="link" onClick="setPage('misc/PluginCreator.html');">Plugin Creator</span><br>
         <span class="link" onClick="setPage('misc/PluginJarFiles.html');">Plugin Jar Files</span><br>
         <span class="link" onClick="setPage('misc/ImageDefaults.html');">Configuring Image Defaults</span><br>
         <span class="link" onClick="setPage('data/GribTables.html');">Adding in new GRIB tables</span><br>
