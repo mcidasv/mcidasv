@@ -105,6 +105,7 @@
             <tocitem text="Track Controls" target="idv.controls.trackcontrol"/>
         </tocitem>
         <tocitem text="Miscellaneous Controls" target="idv.page_miscellaneouscontrols">
+			<tocitem text="Contour Properties Editor" target="idv.controls.misc.contourdialog"/>
             <tocitem text="Scatter Analysis Controls" target="idv.controls.misc.scatteranalysiscontrol"/>
             <tocitem text="McIDAS-X Bridge Controls" target="idv.controls.misc.bridgecontrol"/>
             <tocitem text="Omni Controls" target="idv.controls.misc.omnicontrol"/>
@@ -129,15 +130,15 @@
     <tocitem text="Transect Views" target="idv.ui.transectviewmanager"/>
 </tocitem>
 <tocitem text="Display Controls" target="idv.page_displaycontrols">
-    <tocitem text="Range Ring Controls" target="idv.page_displaycontrols.radargridcontrol"/>
-	<tocitem text="Range and Bearing Controls" target="idv.page_displaycontrols.rangeandbearingcontrol"/>
-	<tocitem text="Transect Drawing Controls" target="idv.page_displaycontrols.transectdrawingcontrol"/>
-	<tocitem text="Drawing Controls" target="idv.page_displaycontrols.drawingcontrol"/>
-	<tocitem text="Location Indicator Controls" target="idv.page_displaycontrols.locationindicatorcontrol"/>
-	<tocitem text="Web Map Server(WMS)/Background Image Controls" target="idv.page_displaycontrols.wmscontrol"/>
-	<tocitem text="QuickTime Movie Controls" target="idv.page_displaycontrols.moviedisplay"/>
-	<tocitem text="Image and Movie Capture Controls" target="idv.page_displaycontrols.imagecaptures"/>
-	<tocitem text="Timeline Controls" target="idv.page_displaycontrols.timeline"/>
+    <tocitem text="Range Ring Controls" target="idv.display_controls.radargridcontrol"/>
+	<tocitem text="Range and Bearing Controls" target="idv.display_controls.rangeandbearingcontrol"/>
+	<tocitem text="Transect Drawing Controls" target="idv.display_controls.transectdrawingcontrol"/>
+	<tocitem text="Drawing Controls" target="idv.display_controls.drawingcontrol"/>
+	<tocitem text="Location Indicator Controls" target="idv.display_controls.locationindicatorcontrol"/>
+	<tocitem text="Web Map Server(WMS)/Background Image Controls" target="idv.display_controls.wmscontrol"/>
+	<tocitem text="QuickTime Movie Controls" target="idv.display_controls.moviedisplay"/>
+	<tocitem text="Image and Movie Capture Controls" target="idv.display_controls.imagecaptures"/>
+	<tocitem text="Timeline Controls" target="idv.display_controls.timeline"/>
 </tocitem>
 <tocitem text="Tools" target="idv.page_tools">
     <tocitem text="User Preferences" target="idv.tools.preferences">
@@ -161,6 +162,21 @@
     <tocitem text="Parameter Defaults Editor" target="idv.tools.parameterdefaultseditor"/>
     <tocitem text="Parameter Groups Editor" target="idv.tools.parametergroupseditor"/>
 	<tocitem text="Projection Manager" target="idv.tools.projectionmanager"/>
+	<tocitem text="Data Analysis" target="idv.page_dataanalysis">
+        <tocitem text="Formulas" target="idv.tools.formulas"/>
+        <tocitem text="Native Formulas" target="idv.tools.nativeformulas">
+            <tocitem text="Description of Formulas - Maps" target="idv.tools.mapformulas"/>
+            <tocitem text="Description of Formulas - Miscellaneous" target="idv.tools.miscellaneousformulas"/>
+            <tocitem text="Description of Formulas - Grids" target="idv.tools.gridformulas"/>
+            <tocitem text="Description of Formulas - Image Filters (Beta)" target="idv.tools.imagefilterformulas"/>
+            <tocitem text="Description of Formulas - Export" target="idv.tools.exportformulas"/>
+            <tocitem text="Description of Formulas - Imagery" target="idv.tools.imageryformulas"/>
+        </tocitem>
+        <tocitem text="Jython Methods" target="idv.tools.jython"/>
+        <tocitem text="Derived Data" target="idv.tools.deriveddata"/>
+        <tocitem text="Jython Shell" target="idv.tools.jythonshell"/>
+        <tocitem text="Jython Library" target="idv.tools.jythonlib"/>
+    </tocitem>
 	<tocitem text="Display Settings" target="idv.tools.displaysettings"/>
 	<tocitem text="Plugin Creator" target="idv.tools.plugincreator"/>
 	<tocitem text="Plugin Manager" target="idv.tools.plugins"/>
@@ -179,21 +195,6 @@
         <tocitem text="Display Properties" target="idv.isl.displayproperties"/>
     </tocitem>
     <tocitem text="Sharing" target="idv.collab.sharing"/>
-    <tocitem text="Data Analysis" target="idv.page_dataanalysis">
-        <tocitem text="Formulas" target="idv.tools.formulas"/>
-        <tocitem text="Native Formulas" target="idv.tools.nativeformulas">
-            <tocitem text="Description of Formulas - Maps" target="idv.tools.mapformulas"/>
-            <tocitem text="Description of Formulas - Miscellaneous" target="idv.tools.miscellaneousformulas"/>
-            <tocitem text="Description of Formulas - Grids" target="idv.tools.gridformulas"/>
-            <tocitem text="Description of Formulas - Image Filters (Beta)" target="idv.tools.imagefilterformulas"/>
-            <tocitem text="Description of Formulas - Export" target="idv.tools.exportformulas"/>
-            <tocitem text="Description of Formulas - Imagery" target="idv.tools.imageryformulas"/>
-        </tocitem>
-        <tocitem text="Jython Methods" target="idv.tools.jython"/>
-        <tocitem text="Derived Data" target="idv.tools.deriveddata"/>
-        <tocitem text="Jython Shell" target="idv.tools.jythonshell"/>
-        <tocitem text="Jython Library" target="idv.tools.jythonlib"/>
-    </tocitem>
     <tocitem text="Site Configuration" target="idv.misc.siteconfiguration">
 		<tocitem text="Plugin Jar Files" target="idv.misc.pluginjarfiles"/>
         <tocitem text="Configuring Image Defaults" target="idv.misc.imagedefaults"/>

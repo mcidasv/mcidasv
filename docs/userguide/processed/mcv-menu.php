@@ -180,6 +180,7 @@
       <span class="link" onClick="setPage('page_miscellaneouscontrols.html');">Miscellaneous Controls</span><br>
 
       <div class="indented" id="layercontrols_7">
+              <span class="link" onClick="setPage('controls/misc/ContourDialog.html');">Contour Properties Editor</span><br>
         <span class="link" onClick="setPage('controls/misc/ScatterAnalysisControl.html');">Scatter Analysis Controls</span><br>
         <span class="link" onClick="setPage('controls/misc/BridgeControl.html');">McIDAS-X Bridge Controls</span><br>
         <span class="link" onClick="setPage('controls/misc/OmniControl.html');">Omni Controls</span><br>
@@ -249,6 +250,26 @@
       <span class="link" onClick="setPage('tools/ParameterDefaultsEditor.html');">Parameter Defaults Editor</span><br>
       <span class="link" onClick="setPage('tools/ParameterGroupsEditor.html');">Parameter Groups Editor</span><br>
       <span class="link" onClick="setPage('tools/ProjectionManager.html');">Projection Manager</span><br>
+       <span class="toggle" onClick="toggleChildren(this,'miscellaneous_2');">+</span>
+      <span class="link" onClick="setPage('page_dataanalysis.html');">Data Analysis</span><br>
+	  
+      <div class="indented" id="miscellaneous_2">
+            <span class="link" onClick="setPage('tools/Formulas.html');">Formulas</span><br>
+        <span class="toggle" onClick="toggleChildren(this,'miscellaneous_2_1');">+</span>
+		<span class="link" onClick="setPage('tools/NativeFormulas.html');">Native Formulas</span><br>
+		<div class="indented" id="miscellaneous_2_1">
+			<span class="link" onClick="setPage('tools/MapFormulas.html');">Description of Formulas - Maps</span><br>
+            <span class="link" onClick="setPage('tools/MiscellaneousFormulas.html');">Description of Formulas - Miscellaneous</span><br>
+            <span class="link" onClick="setPage('tools/GridFormulas.html');">Description of Formulas - Grids</span><br>
+            <span class="link" onClick="setPage('tools/ImageFilterFormulas.html');">Description of Formulas - Image Filters (Beta)</span><br>
+            <span class="link" onClick="setPage('tools/ExportFormulas.html');">Description of Formulas - Export</span><br>
+            <span class="link" onClick="setPage('tools/ImageryFormulas.html');">Description of Formulas - Imagery</span><br>
+		</div>
+        <span class="link" onClick="setPage('tools/Jython.html');">Jython Methods</span><br>
+        <span class="link" onClick="setPage('tools/DerivedData.html');">Derived Data</span><br>
+        <span class="link" onClick="setPage('tools/JythonShell.html');">Jython Shell</span><br>
+        <span class="link" onClick="setPage('tools/JythonLib.html');">Jython Library</span><br>
+      </div>
 	  <span class="link" onClick="setPage('tools/DisplaySettings.html')">Display Settings</span><br>
       	  <span class="link" onClick="setPage('tools/PluginCreator.html')">Plugin Creator</span><br>
           	  <span class="link" onClick="setPage('tools/Plugins.html')">Plugin Manager</span>
@@ -276,27 +297,6 @@
       </div>
 
       <span class="link" onClick="setPage('collab/Sharing.html');">Sharing</span><br>
-
-      <span class="toggle" onClick="toggleChildren(this,'miscellaneous_2');">+</span>
-      <span class="link" onClick="setPage('page_dataanalysis.html');">Data Analysis</span><br>
-	  
-      <div class="indented" id="miscellaneous_2">
-            <span class="link" onClick="setPage('tools/Formulas.html');">Formulas</span><br>
-        <span class="toggle" onClick="toggleChildren(this,'miscellaneous_2_1');">+</span>
-		<span class="link" onClick="setPage('tools/NativeFormulas.html');">Native Formulas</span><br>
-		<div class="indented" id="miscellaneous_2_1">
-			<span class="link" onClick="setPage('tools/MapFormulas.html');">Description of Formulas - Maps</span><br>
-            <span class="link" onClick="setPage('tools/MiscellaneousFormulas.html');">Description of Formulas - Miscellaneous</span><br>
-            <span class="link" onClick="setPage('tools/GridFormulas.html');">Description of Formulas - Grids</span><br>
-            <span class="link" onClick="setPage('tools/ImageFilterFormulas.html');">Description of Formulas - Image Filters (Beta)</span><br>
-            <span class="link" onClick="setPage('tools/ExportFormulas.html');">Description of Formulas - Export</span><br>
-            <span class="link" onClick="setPage('tools/ImageryFormulas.html');">Description of Formulas - Imagery</span><br>
-		</div>
-        <span class="link" onClick="setPage('tools/Jython.html');">Jython Methods</span><br>
-        <span class="link" onClick="setPage('tools/DerivedData.html');">Derived Data</span><br>
-        <span class="link" onClick="setPage('tools/JythonShell.html');">Jython Shell</span><br>
-        <span class="link" onClick="setPage('tools/JythonLib.html');">Jython Library</span><br>
-      </div>
 
       <span class="toggle" onClick="toggleChildren(this,'miscellaneous_3');">+</span>
       <span class="link" onClick="setPage('misc/SiteConfiguration.html');">Site Configuration</span><br>
