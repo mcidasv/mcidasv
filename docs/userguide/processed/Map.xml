@@ -12,7 +12,7 @@
         <mapID target="idv.bundles.image1"                           url="Bundles.html#image1" />
         <mapID target="idv.bundles.image2"                           url="Bundles.html#image2" />
         <mapID target="idv.bundles.image3"                           url="Bundles.html#image3" />
-        <mapID target="idv.bundles.jnlp"                             url="Bundles.html#jnlp" />
+        <mapID target="idv.bundles.jnlp" f                            url="Bundles.html#jnlp" />
         <mapID target="idv.bundles.open"                             url="Bundles.html#open" />
         <mapID target="idv.bundles.relative"                         url="Bundles.html#relative" />
         <mapID target="idv.bundles.zidv"                             url="Bundles.html#zidv" />
@@ -104,7 +104,6 @@
         <mapID target="idv.controls.valueplotcontrol"				 url="controls/ValuePlotControl.html" />
         <mapID target="idv.controls.visibility"                      url="controls/index.html#visibility" />
         <mapID target="idv.controls.volumerendercontrol"             url="controls/VolumeRenderControl.html" />
-        <mapID target="idv.controls.wmscontrol"                      url="controls/misc/WMSControl.html" />
         <mapID target="idv.controls.worldwindcontrol"                url="controls/WorldWindControl.html" />
         <mapID target="idv.data.choosers"                            url="data/choosers/index.html" />
         <mapID target="idv.data.choosers.bridgechooser"				 url="data/choosers/BridgeChooser.html" />
@@ -168,10 +167,12 @@
         <mapID target="idv.data.textpointdata"                       url="data/TextPointData.html" />
 		<mapID target="idv.datafaq"									 url="DataFaq.html" />
 		<mapID target="idv.display_controls.drawingcontrol"			 url="display_controls/DrawingControl.html" />
+		<mapID target="idv.display_controls/imagecaptures"			 url="display_controls/ImageCaptures.html" />
 		<mapID target="idv.display_controls.locationindicatorcontrol"	url="display_controls/LocationIndicatorControl.html" />
 		<mapID target="idv.display_controls.moviedisplay"			 url="display_controls/MovieDisplay.html" />
 		<mapID target="idv.display_controls.radargridcontrol"		 url="display_controls/RadarGridControl.html" />
 		<mapID target="idv.display_controls.rangeandbearingcontrol"	 url="display_controls/RangeAndBearingControl.html" />
+		<mapID target="idv.display_controls.timeline"				 url="display_controls/Timeline.html" />
 		<mapID target="idv.display_controls.transectdrawingcontrol"	 url="display_controls/TransectDrawingControl.html" />
 		<mapID target="idv.display_controls.wmscontrol.html"		 url="display_controls/WMSControl.html" />
         <mapID target="idv.examples"                                 url="examples/index.html" />
@@ -464,7 +465,6 @@
 		<mapID target="idv.tools.gridformulas.time"					 url="tools/GridFormulas#time" />
 		<mapID target="idv.tools.gridformulas.ensemble"				 url="tools/GridFormulas#ensemble" />
 		<mapID target="idv.tools.gridformulas.miscellaneous"		 url="tools/GridFormulas#miscellaneous" />
-        <mapID target="idv.tools.imagecaptures"                      url="tools/ImageCaptures.html" />
         <mapID target="idv.tools.imagecaptures.jpegcapture"          url="tools/ImageCaptures.html#jpegcapture" />
         <mapID target="idv.tools.imagecaptures.moviecapture"         url="tools/ImageCaptures.html#moviecapture" />
         <mapID target="idv.tools.imagecaptures.movieplayback"        url="tools/ImageCaptures.html#movieplayback" />
@@ -581,7 +581,6 @@
         <mapID target="idv.tools.stationmodeleditor.image6"          url="tools/StationModelEditor.html#image6" />
 		<mapID target="idv.tools.stormtrackcontrol"					 url="tools/StormTrackControl.html" />
 		<mapID target="idv.tools.textproductcontrol"				 url="tools/TextProductControl.html" />
-        <mapID target="idv.tools.timeline"                           url="tools/Timeline.html" />
         <mapID target="idv.tools.timeline.image1"                    url="tools/Timeline.html#image1" />
         <mapID target="idv.tools.timeline.image2"                    url="tools/Timeline.html#image2" />
 		<mapID target="idv.usingmcvfaq"								 url="UsingMcVFaq.html" />
