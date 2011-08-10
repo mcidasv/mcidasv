@@ -35,7 +35,7 @@ sys.path.append(_mcv_python)
 sys.path.append(_mcv_python+'/linearcombo')
 sys.path.append(_mcv_python+'/utilities')
 
-# this is intentionally the first thing imported
+# this is intentionally the first IDV/McV thing imported
 from edu.wisc.ssec.mcidasv import McIDASV
 _mcv = McIDASV.getStaticMcv()
 
