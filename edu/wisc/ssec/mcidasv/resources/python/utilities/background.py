@@ -12,6 +12,28 @@ from ucar.unidata.ui.colortable import ColorTableDefaults
 
 @contextmanager
 def managedDataSource(path, cleanup=True, dataType=None):
+    """Loads a data source and performs automatic resource cleanup.
+    
+    Attempts to create and load an IDV DataSource object using a given file. 
+    This function works as a part of a Python "with statement". By default
+    this function will attempt to "guess" the IDV data source type of the given 
+    file and call the "boomstick" (TODO: better name) resource cleanup function
+    if any errors are encountered.
+    
+    Args:
+        path: Required string value that must be a valid file path or URL.
+        
+        cleanup: Option boolean value that allows control over whether or not
+        automatic resource cleanup is performed. Default value is True.
+        
+        dataType: Optional string value that must be a valid IDV 
+        "data source type" ID and should correspond to the file type of the "path"
+        argument. Default value is None.
+        
+    Returns:
+        If McIDAS-V was able to load the file, a "ucar.unidata.data.DataSource" is
+        returned. Otherwise None is returned.
+    """
     # setup step
     # the problem here is that makeDataSource returns a boolean
     # how do i grab the ref to the actual datasource that got 
