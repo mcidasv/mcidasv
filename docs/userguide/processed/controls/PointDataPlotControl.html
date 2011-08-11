@@ -32,8 +32,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/PointDat
 <div class="pagetitle">Point Data Plot Controls</div>
 <xxxmeta xxxname="jhid" value="idv.controls.stationmodelcontrol">
 <div class="pagesubtitle">Overview</div>
-<p>The Point Data Plot Controls show a set of observations using a station model.
-The control window consists of four tabs: <strong>Layout</strong>, <strong>Times</strong>, <strong>Plot</strong>, and <strong>Filters</strong>.</p>
+<p>The Point Data Plot Control displays a set of observations using a station model.
+This control is accessed by selecting the Point Data field and the Point Data Plot display. The control window consists of four tabs: <strong>Layout</strong>, <strong>Times</strong>, <strong>Plot</strong>, and <strong>Filters</strong>.</p>
 <ul>
   <li>  <a href="#layout">Layout</a></li>
   <li>  <a href="#times">Times</a></li>
@@ -50,20 +50,20 @@ The control window consists of four tabs: <strong>Layout</strong>, <strong>Times
 <ul class="propertylist">
   <li class="propertylistitem"><b>Declutter</b> - Displays only stations that do not overlap. When unchecked, all of the stations will be shown.  The small &quot;lock&quot; icon allows you to
       lock the stations that are currently being displayed and not have their
-      display changed when navigating.</li>
-  <li class="propertylistitem"><b>Density</b> - Changes how dense the display of stations is
-      when decluttering.</li>
+      display changed when navigating in the Main Display Window.</li>
+  <li class="propertylistitem"><b>Density</b> - Changes how dense the display of stations is in the Main Display Window
+      when the decluttering option is selected. This option will not be available if the decluttering option is not selected, as all of the stations will then be displayed.</li>
   <li class="propertylistitem"><strong>Layout Model -</strong> Changes what layout the data will display in. Click on the downward facing blue arrows <img src="images/DownBlueArrows.gif" width="13" height="13" align=absmiddle  > to change the layout model. Selecting Edit will open the <a href="../tools/StationModelEditor.html">Layout Model
       Editor</a> which will allow you to create your own custom layout model.</li>
   <li class="propertylistitem"><strong>Scale -</strong> Sets the size of the layout model being displayed in the Main Display Window.</li>
   <li class="propertylistitem"><strong>Line Width - </strong>Sets the thickness of the layout model being displayed in the Main Display Window.</li>
-  <li class="propertylistitem"><strong>Vertical Position - </strong>Sets the vertical position of the layout model with respect to other variables being displayed. The Altitude option will set the vertical position of the layout models based off of the stations' altitudes (if available). The Fixed Position option will uniformly set a fixed vertical position for each layout model regardless of altitude. The value for a fixed position can be set using the slider or entering a value into the field.</li>
+  <li class="propertylistitem"><strong>Vertical Position - </strong>Sets the vertical positioning of the layout model with respect to other variables being displayed. The Altitude option will set the vertical position of the layout models based off of the stations' altitudes (if this information is available through the data source). The Fixed Position option will uniformly set a fixed vertical position for each layout model regardless of altitude. The value for a fixed position can be set using the slider or entering a value into the field and pressing Enter.</li>
 </ul>
 <a name="times" id="times"></a>
 <p>The <strong>Times</strong> tab allows you to change the observation times that are shown in the display. By default, data for a single time corresponding to the current animation time will be shown. 
     Using this widget allows you to show multiple times at once:</p>
 <div class="images"><img  src="images/PointDataPlotControlGui2.gif"  alt="Times tab of Point Data Plot Controls window" ></div>
-<p>Clicking  <img src="images/rangeIcon.jpg" alt="Times icon" width="20" height="15"> opens a menu that allows you to select specific start and end times:</p>
+<p>Clicking  <img src="images/Edit.gif" width="20" height="19" alt="Edit icon"align=absmiddle> opens a menu that allows you to select specific start and end times:</p>
 <div class="images"><p><img src="images/PointDataPlotTimeSettings.jpg" alt="Time Settings window" width="433" height="224"></div>
 <p></p>
 <div class="pagesubtitle">Properties</div>
@@ -86,11 +86,9 @@ The control window consists of four tabs: <strong>Layout</strong>, <strong>Times
 <p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Station -</strong> Shows the station where the data is being displayed from. This can be changed by left-clicking on a different layout model in the Main Display Window.
-  <li class="propertylistitem"><b>Field</b> - Lists the different properties you can select from to display in the plot.
+  <li class="propertylistitem"><strong>Station -</strong> Shows the station where the data is being displayed from. This can be changed by left-clicking on a different layout model in the Main Display Window.<li class="propertylistitem"><b>Field</b> - Lists the different fields available from your data source that you can select from to display in the plot.
   <li class="propertylistitem"><strong>Value - </strong>Lists the numerical value of the property at the 
-  time selected.
-</ul>  
+  time selected.</ul>  
 <p><a name="filters" id="filters"></a></p>
 <p>The <strong>Filters</strong> tab allows you to specify a set of visibility filters:</p>
 <div class="images">
@@ -105,8 +103,7 @@ The control window consists of four tabs: <strong>Layout</strong>, <strong>Times
   <li class="propertylistitem"><strong>Match any of the filters - </strong>Displays any Layout Models that correspond with one or more of the chosen filters.
   <li class="propertylistitem"><strong>Property - </strong>Represents the variable or property that you want to filter.
   <li class="propertylistitem"><strong>Middle Dropdown Menu -</strong> Represents the mathematical symbol that determines your filter. This can be Greater Than, Less Than, Equal To, Not Equal To, etc.
-  <li class="propertylistitem"><strong>Value - </strong>Represents the value that sets the filter.
-  </ul>
+  <li class="propertylistitem"><strong>Value - </strong>Represents the numerical value that the mathematical symbol in the middle dropdown menu will utilize.</ul>
 <p>The above image shows an example of defining filters. This image
       shows two filter expressions, one that states the Temperature field needs
       to be greater that 35 F and the other states that the Wind Speed value needs

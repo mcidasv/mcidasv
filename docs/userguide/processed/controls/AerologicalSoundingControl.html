@@ -35,7 +35,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/Aerologi
 The meteorological sounding display is available for:
 RAOBs, 
 numerical weather prediction model output, and from a local file that contains aircraft track data.
-    The dew-point temperature is computed by internal code from temperature and
+    The dewpoint temperature is computed by internal code from temperature and
     relative humidity grids.
 <p>To load sounding data see <a href="../quickstart/Sounding.html#connecting">Choosing
      RAOB Sounding Data</a> and <a href="../quickstart/Grids.html">Displaying
@@ -52,7 +52,7 @@ numerical weather prediction model output, and from a local file that contains a
   <li class="propertylistitem"><strong>Station</strong> - Selects which station's sounding is being displayed when multiple soundings are loaded.</li>
   <li class="propertylistitem"><strong>Dry Adiabats </strong> - Displays the dry adiabats on the Skew-T diagram.</li>
   <li class="propertylistitem"><strong>Saturation Adiabats </strong> - Displays the saturation adiabats on the Skew-T diagram.</li>
-  <li class="propertylistitem"><strong>Mixing Ratio </strong> - Displays the mixing ratio lines on the Skew -T diagram.</li>
+  <li class="propertylistitem"><strong>Mixing Ratio </strong> - Displays the mixing ratio lines on the Skew-T diagram.</li>
   <li class="propertylistitem"><strong>Parcel Path</strong> - Displays the path of a parcel of air lifted pseudo-adiabatically
       from the initial point to the top of the Skew- T diagram.</li>
   <li class="propertylistitem"><strong>Virtual Temperature</strong> - Displays the virtual temperatures of the environmental profile and
@@ -65,10 +65,10 @@ numerical weather prediction model output, and from a local file that contains a
       according to the mode indicated. This will affect how the LNB, LFC, LCL, CAPE, and CIN are calculated. The choices are: </li>
 	  <ul class="propertylist">
 	    <li class="propertylistitem"><strong>Bottom of Sounding</strong> - Determines the initial conditions of the
-	      parcel are  from the temperature and dew-point at the level of highest pressure. The path will  update whenever the profiles change.</li>
+	      parcel from the temperature and dewpoint at the level of highest pressure. The path will  update whenever the profiles change.</li>
 	    <li class="propertylistitem"><strong>Below Cursor</strong> - Determines the initial conditions of the parcel
-	       from the temperature and dew-point profiles by computing
-	      the pressure-weighted mean potential temperature and water-vapor mixing-ratio
+	       from the temperature and dewpoint profiles by computing
+	      the pressure-weighted mean potential temperature and water vapor mixing-ratio
 	      of the atmosphere that lies below the cursor when the middle mouse
 	      button is pressed. Thus, pressing the middle button at 950 hPa for
 	      a sounding that starts at 1000 hPa will effectively mix the lower 50
@@ -76,9 +76,9 @@ numerical weather prediction model output, and from a local file that contains a
 	      hPa. The path will  update whenever the profiles change and as the cursor is dragged.</li>
 	    <li class="propertylistitem"><strong>At Cursor Pressure</strong> - Determines the initial pressure, in-situ
 	      temperature, and moisture content of the parcel  from the
-	      temperature and dew-point profiles at the pressure of the cursor when
+	      temperature and dewpoint profiles at the pressure of the cursor when
 	      the middle mouse button is pressed. The initial moisture content is determined from
-	      the dew-point profile at the initial pressure. The path will update whenever the profiles change and as the cursor is dragged.</li>
+	      the dewpoint profile at the initial pressure. The path will update whenever the profiles change and as the cursor is dragged.</li>
 	    <li class="propertylistitem"><strong>At Cursor (Press, Temp)</strong> - The computed path of a lifted
 	      parcel is automatically updated when appropriate.  The initial pressure and in-situ temperature of the parcel equal the
 	      pressure and temperature values under the cursor when the middle mouse
@@ -96,16 +96,14 @@ numerical weather prediction model output, and from a local file that contains a
   output, there is a pull-down selector menu of the model output valid times
   in the upper right corner.</p>
 <p> The <a href="../ui/Animation.html">animation control</a> buttons are available
-  in either case:<br>
-
-<span class="imagesmall"><img  src="images/AnimButtons.gif"  alt="images/AnimButtons.gif" ></span>
-</p>
+  in either case:</p>
+<img src="images/AnimButtons.gif" width="243" height="32" alt="Animation Buttons">
 <p>To increase precision using the sounding diagram, enlarge the window by dragging
   on the edges. You can zoom the sounding diagram by holding down the Shift key
   and dragging the right button upwards; drag downwards to zoom out. You can
   pan the diagram by dragging the mouse pointer in any direction while pressing
-  the right mouse button.</p>
-<p><a name="interactive" id="interactive"></a> The temperature and dew-point traces can be modified via the cursor. Press
+the right mouse button.</p>
+<p><a name="interactive" id="interactive"></a> The temperature and dewpoint traces can be modified via the cursor. Press
   the left button on the first data-point to be modified and drag it horizontally
   along an isobar to the desired position, then move the pointer diagonally along
   an isotherm to keep the data-point at the desired position and to pick-up the
@@ -114,16 +112,15 @@ numerical weather prediction model output, and from a local file that contains a
 <div class="images"><img  src="images/GridSkewTControlGui2.gif"  alt="The Grid Sounding Control with a Skew-T" ><br>
 <span class="caption">Image 2: The Grid Sounding Control with a 3D Hodograph</span></div>
 <p>The hodograph is enabled if the plotted data includes wind fields. It can
-  be rotated into 3D using the mouse and keyboard combinations. To reset the
+  be rotated into 3D by clicking and dragging the right mouse button. You can zoom in/out by holding down Shift and right-clicking and dragging up/down or by using the scroll wheel on the mouse. To reset the
   hodograph use Ctrl+R.</p>
 <p>The <strong>Table</strong> tab shows a table of all values in the sounding:</p>
 <div class="images"><img  src="images/GridSkewTControlGui4.gif"  alt="The Grid Sounding Control with a Skew-T" ><br>
-<span class="caption">Image 1: The Grid Sounding Control with a Table of all Sounding Values</span></div>
+<span class="caption">Image 3: The Grid Sounding Control with a Table of all Sounding Values</span></div>
 <p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Show U and V</strong> - Lists the Speed and Direction values individually in the U
-      and V directions.</li>
+  <li class="propertylistitem"><strong>Show U and V</strong> - Breaks the Speed and Direction categories up into individual U and V components of the wind.</li>
 </ul>
 <div class="pagesubtitle">Aerological Parameters</div>
 <p>The table to the left of the sounding diagram contains aerological parameters
