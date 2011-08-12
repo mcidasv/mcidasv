@@ -91,7 +91,7 @@
 	<property name="javadoc.level" value="private" />
 	
 	<!-- The CLASSPATH specified within McV's manifest -->
-  <property name="jar.base.classpath" value="miglayout-3.7.3.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar eventbus-1.3.jar logback-core-0.9.29.jar logback-classic-0.9.29.jar log4j-over-slf4j-1.6.1.jar slf4j-api-1.6.1.jar" />
+  <property name="jar.base.classpath" value="miglayout-3.7.3.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar eventbus-1.3.jar logback-core-0.9.29.jar logback-classic-0.9.29.jar log4j-over-slf4j-1.6.1.jar slf4j-api-1.6.1.jar commons-math-2.2.jar" />
 
     <!-- List of McIDAS-V jars -->
     <fileset id="mcv.libs" dir="${lib.dir}">
@@ -104,6 +104,7 @@
         <include name="slf4j-api-1.6.1.jar" />
         <include name="local-idv.jar" />
         <include name="repositorytds.jar" />
+        <include name="commons-math-2.2.jar" />
     </fileset>
 	
 	<!-- List of IDV jars -->
@@ -311,7 +312,7 @@
 			<manifest>
 				<attribute name="Build-By" value="${user.name}" />
 				<attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
-				<attribute name="Class-Path" value="jython.jar ncIdv.jar eventbus-1.3.jar logback-core-0.9.28.jar logback-classic-0.9.28.jar log4j-over-slf4j-1.6.1.jar slf4j-api-1.6.1.jar" />
+				<attribute name="Class-Path" value="jython.jar ncIdv.jar eventbus-1.3.jar logback-core-0.9.28.jar logback-classic-0.9.28.jar log4j-over-slf4j-1.6.1.jar slf4j-api-1.6.1.jar commons-math-2.2.jar" />
 				<attribute name="Main-Class" value="${jython.class}" />
 			</manifest>
 		</jar>
@@ -470,6 +471,7 @@
         <pathelement location="${lib.dir}/logback-core-0.9.29.jar" />
         <pathelement location="${lib.dir}/miglayout-3.7.3.jar" />
         <pathelement location="${lib.dir}/slf4j-api-1.6.1.jar" />
+        <pathelement location="${lib.dir}/commons-math-2.2.jar" />
         <pathelement location="${idvlib.dir}/jython.jar" />
         <pathelement location="${lib.dir}/eventbus-1.3.jar" />
         <pathelement location="${dist.dir}/${app.jarname}" />
@@ -515,6 +517,7 @@
         <pathelement location="${lib.dir}/logback-core-0.9.29.jar" />
         <pathelement location="${lib.dir}/miglayout-3.7.3.jar" />
         <pathelement location="${lib.dir}/slf4j-api-1.6.1.jar" />
+        <pathelement location="${lib.dir}/commons-math-2.2.jar" />
         <pathelement location="${idvlib.dir}/jython.jar" />
         <pathelement location="${lib.dir}/eventbus-1.3.jar" />
         <pathelement location="${dist.dir}/${app.jarname}" />
