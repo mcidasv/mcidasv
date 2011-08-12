@@ -16,9 +16,12 @@ body {
 	float: left;
 	text-align: center;
 	padding: 10px;
-	margin: 10px;
 	clear: inherit;
 	right: 22px;
+	margin-top: 10px;
+	margin-right: 10px;
+	margin-bottom: 10px;
+	margin-left: 22px;
 }
 
 .images img {
@@ -379,4 +382,8 @@ iframe.right {
   right: 0px;
   border: 0px;
   overflow: auto;
+}
+.propertylist .propertylistitem img {
+	vertical-align: middle;
+	margin-bottom: .5em;
 }

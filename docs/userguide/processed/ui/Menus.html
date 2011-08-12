@@ -37,7 +37,7 @@ associated with it.
   <li><a href="#tools">Tools Menu</a></li>
   <li><a href="#history">History Menu</a></li>
   <li><a href="#bundles">Bundles Menu</a></li>
-  <li><a href="#windows">Windows Menu</a></li>
+  <li><a href="#windows">Window Menu</a></li>
   <li><a href="#help">Help Menu</a></li>
 </ul>
 <a name="file" id="file"></a>
@@ -51,15 +51,14 @@ associated with it.
     displays are also available.</li>
   <li class=propertylistitem><strong>Open File...</strong> - Opens a file on
     disk.</li>
-  <li class=propertylistitem><strong>Save Favorite </strong> - Saves the state
-    off as a specially located and named favorite. This allows you to easily
+  <li class=propertylistitem><strong>Save Favorite </strong> - Allows you to easily
     create a set of <a href="../Bundles.html#favorites">favorite bundles</a> and readily access them through the <strong>Bundles</strong> menu.</li>
   <li class=propertylistitem><strong>Save Bundle </strong> - Allows you to save
     the current application state as a <a href="../Bundles.html">bundle</a>.</li>
     <!-- or Web Start JNLP file-->
   <li class=propertylistitem><strong><a name="defaultlayout" id="defaultlayout"></a>
     Default Layout </strong> - Allows
-    you to manage the default layout in McIDAS-V. The default layout saves the
+    you to manage the default layout of McIDAS-V. The default layout saves the
     window placement and the number of tabs and panels.</li>
     <ul class=propertylist>
       <li class=propertylistitem><strong>Save</strong> - Saves the current panel
@@ -69,10 +68,10 @@ associated with it.
 <li class=propertylistitem>Note: Saving the Default Layout does not affect the maps displayed in
       each panel or the data loaded at the beginning of each McIDAS-V session.
       To change map defaults, use the <strong>Edit-&gt;Save as the Default Map
-      Preference</strong> menu item from the <a href="../controls/MapDisplayControl.html">Map
-      Layer Controls</a>. Change the Default Projection in the <a href="../tools/preferences/DisplayWindowPreferences.html">Display
+      Preference</strong> menu item in the <a href="../controls/MapDisplayControl.html">Map
+      Layer Controls</a>. Change the default projection in the <a href="../tools/preferences/DisplayWindowPreferences.html">Display
       Window preferences</a>, or automatically load a Favorite bundle by selecting
-      a default bundle in the <a href="../tools/preferences/AdvancedPreferences.html">Advanced
+      a default bundle in the Default section of the <a href="../tools/preferences/AdvancedPreferences.html">Advanced
       Preferences</a>.</li>
     </ul>
   <li class=propertylistitem><strong>Exit</strong> - Exits McIDAS-V.</li>
@@ -90,7 +89,7 @@ associated with it.
       <li class=propertylistitem><strong>All Data Sources</strong> - Removes all loaded
         data sources. The layers are unaffected.</li>
 </ul>
-  <li class=propertylistitem><strong>Preferences...</strong> - Shows the <a href="../tools/preferences/Preferences.html">User
+  <li class=propertylistitem><strong>Preferences...</strong> - Opens the <a href="../tools/preferences/Preferences.html">User
       Preferences window</a>, allowing you to edit settings for McIDAS-V.</li>
 </ul>
 <a name="display" id="display"></a>
@@ -98,12 +97,10 @@ associated with it.
 The display menu contains facilities to create new displays.
 <ul class="propertylist">
   <li class=propertylistitem><strong>Create Layer from Data Source...</strong> -
-    Takes you to the Data Sources tab in the Data Explorer.</li>
+    Takes you to the Data Sources tab of the Data Explorer.</li>
   <li class=propertylistitem><strong>Layer Controls...</strong> - Takes you to
-    the Layer Controls tab in the Data Explorer.</li>
-  <li class=propertylistitem><strong>Add Range Rings</strong> - Creates a <a href="../display_controls/RadarGridControl.html">Range Ring</a> display. Range rings are a set of concentric rings centered
-    on a point, and radial lines, used to show distance and bearing from the
-    center. The initial position is at the center of the view's current projection.</li>
+    the Layer Controls tab of the Data Explorer.</li>
+  <li class=propertylistitem><strong>Add Range Rings</strong> - Creates a <a href="../display_controls/RadarGridControl.html">Range Ring</a> display, with the initial position centered in the current projection.</li>
   <li class=propertylistitem><strong>Add Range and Bearing</strong> - Adds 
     a <a href="../display_controls/RangeAndBearingControl.html">Range and Bearing</a> display to show the distance, azimuth, and back azimuth of a great circle
     line connecting two positions on the Earth's surface. The initial position
@@ -111,13 +108,13 @@ The display menu contains facilities to create new displays.
     the range and bearing line may be off screen.</li>
   <li class=propertylistitem><strong>Draw Transect...</strong> - Opens the <a href="../display_controls/TransectDrawingControl.html">Transect Drawing Control</a> window that allows you to view, create and modify transects for the <a href="TransectViewManager.html">Transect
     View</a>.</li>
-  <li class=propertylistitem><strong>Drawing Freely...</strong> - Creates <a href="../display_controls/DrawingControl.html">Drawing Control</a> window that allows you to draw polygons, lines, shapes, and annotate McIDAS-V
+  <li class=propertylistitem><strong>Drawing Freely...</strong> - Opens the <a href="../display_controls/DrawingControl.html">Drawing Control</a> window which allows you to draw polygons, lines, shapes, and annotate McIDAS-V
     displays.</li>
   <li class=propertylistitem><strong>Add Location Indicator</strong> - Creates
     a location indicator cross-hair on the display. See the <a href="../display_controls/LocationIndicatorControl.html">Location
     Indicator Control</a> page for more information.</li>
   <li class=propertylistitem><strong>Plot Location Labels</strong> - Lists a variety of point location plots that can be created: NEXRAD sites,
-    state names, state locations, etc. It will create a Location Control with
+    state names, state locations, etc. This will create a <a href="../controls/StationLocationControl.html">Location Control</a> with
     the chosen location information.</li>
   <li class=propertylistitem><strong>Add Background Image</strong> - Adds a background
     image to the display that can be changed using the <a href="../display_controls/WMSControl.html">Background
@@ -140,11 +137,9 @@ This menu allows you to configure and edit different McIDAS-V resources.
         Shows the <a href="../tools/TextProductControl.html">Weather
         Text Products</a> window.</li>
       <li class=propertylistitem><strong>Weather Text Products (from NWX files)</strong> -
-        Shows the <a href="../tools/TextProductControl.html">Weather
-        Text Products</a> window.</li>
+        Opens a window where you can load in GEMPAK tables..</li>
       <li class=propertylistitem><strong>ATCF Tropical Storm Data </strong> -
-        Shows the <a href="../tools/TextProductControl.html">Weather
-        Text Products</a> window.</li>
+        Adds <a href="../tools/StormTrackControl.html">ATCF Storm Data</a> as a data source in the <strong>Field Selector</strong> tab of the Data Explorer.</li>
     </ul>
   <li class=propertylistitem><strong>Color Tables</strong> - Opens the <a href="../tools/ColorTableEditor.html">Color
       Table Editor</a>, which allows you to view, create, and modify color tables.</li>
@@ -174,7 +169,7 @@ This menu allows you to configure and edit different McIDAS-V resources.
       <li class=propertylistitem><strong>Delete Saved Views</strong> - Deletes
         a saved view.</li>
       <li class=propertylistitem><strong>Save Current View</strong> - Saves the
-        current view.</li>
+        current view. This does not include any layers that are loaded in, only the zoom level, projection, and location.</li>
     </ul>
   <li class=propertylistitem><strong>Formulas</strong> - Contains items
     related to end user formulas.</li>
@@ -203,7 +198,7 @@ This menu allows you to configure and edit different McIDAS-V resources.
 <a name="history" id="history"></a>
 <div class="pagesubtitle">History Menu</div>
 <p>This menu lists the recently accessed data sources and layers and allows you
-  to easily load them.</p>
+  to easily load them. This includes data sources from your current McIDAS-V session, and from previous sessions.</p>
 <p><a name="bundles" id="bundles"></a></p>
 <div class="pagesubtitle">Bundles Menu</div>
 This menu lets you manage and load your favorite bundles.
@@ -220,11 +215,11 @@ front.
   <li class=propertylistitem><strong>Show Data Explorer</strong> - Brings the
     Data Explorer to the front.</li>
   <li class=propertylistitem><strong>Next Display</strong> - Brings the next
-    display tab/window to the front.</li>
+    display tab/window to the front. This option is available when you have more than one tab open.</li>
   <li class=propertylistitem><strong>Previous Display</strong> - Brings the previous
-    display tab/window to the front.</li>
+    display tab/window to the front. This option is available when you have more than one tab open.</li>
   <li class=propertylistitem><strong>Select Display...</strong> - Lets you choose
-    which display tab/window to bring to the front.</li>
+    which display tab/window to bring to the front. This option is available when you have more than one tab open.</li>
 </ul>
 <a name="help" id="help"></a>
 <div class="pagesubtitle">Help Menu</div>
@@ -235,7 +230,7 @@ This menu allows you to view this User's Guide, show error messages, etc.
     of McIDAS-V.</li>
   <li class=propertylistitem><strong>Show Help Tips</strong> - Shows the help
     tips window.</li>
-  <li class=propertylistitem><strong>Show Console</strong> - Shows a <a href="../misc/Console.html">Console</a> window which has the error messages and other text output from McIDAS-V.</li>
+  <li class=propertylistitem><strong>Show Console</strong> - Opens a <a href="../misc/Console.html">Console</a> window which has the error messages and other text output from McIDAS-V.</li>
   <li class=propertylistitem><strong>Show Support Request Form</strong> - Opens a <a href="../misc/SupportRequestForm.html">Request McIDAS-V Support</a> window that allows you to post support requests to the McIDAS Help Desk.</li>
   <li class=propertylistitem><strong>Visit Online Forums</strong> - Brings up
     the <a href="http://dcdbs.ssec.wisc.edu/mcidasv/forums/" target="_blank">McIDAS-V Support Forums</a> in your default browser.</li>
@@ -246,7 +241,7 @@ This menu allows you to view this User's Guide, show error messages, etc.
   <li class=propertylistitem><strong>Release Notes</strong> - Displays the <a href="../ReleaseNotes.html">Release
     Notes</a> for this version of McIDAS-V.</li>
   <li class=propertylistitem><strong>About McIDAS-V</strong> - Gives information
-    about this version of McIDAS-V.</li>
+    about your version of McIDAS-V.</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">

@@ -35,8 +35,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('display_controls/
 <meta name="jhid" value="idv.controls.radargridcontrol">
 <p>The range rings control shows a set of concentric circles labeled by distance
 from the central point, with radial lines, useful for judging distance and angle
-from a geographic location. You display range rings from the main menu with the <strong>Display-&gt;Add
-    Range Rings</strong> menu. Range rings are often used with radar imagery. The
+from a geographic location. You display range rings from the Main Display Window with the <strong>Display-&gt;Add
+    Range Rings</strong> menu item. Range rings are often used with radar imagery. The
 control window is composed of two tabs: <strong>Location</strong> and <strong>Settings</strong>.</p>
 <p>The <strong>Location</strong> tab allows the user to specify
   the location of the range rings:</p>
@@ -52,6 +52,9 @@ control window is composed of two tabs: <strong>Location</strong> and <strong>Se
 </ul>
 <p>The <strong>Settings</strong> tab allows the user to control how the rings are displayed:</p>
 <div class="images"><img  src="images/RadarGridControlGui2.gif"  alt="Settings tab of Range Rings properties window" ></div>
+<ul class="propertylist">
+<li class="propertylistitem"></li>
+</ul>
 <p>The range rings are oriented with local north-south on the displayed map projection.
   In some cases the eastward radial line may not be horizontal. The range rings will appear centered on the map projection.
     You can move the range rings by resetting the latitude-longitude or station as described
@@ -69,11 +72,13 @@ control window is composed of two tabs: <strong>Location</strong> and <strong>Se
       fields under <strong>Spacing</strong>. You can give new values
       two ways: enter a new value in the text field  and pressing Enter, or click on the pull-down arrow
       on the right side of the text field to see a list of common values.</li>
+  <li class="propertylistitem"><b>Max. Radius</b> - Selects the maximum radius  of the range
+      rings from the center location.
+      </p>
+  </li>
+  <li class="propertylistitem"><strong>Unit -</strong> Represents the unit that is used for the numerical values in the Spacing and Max. Radius fields.</li>
   <li class="propertylistitem"><b>Color</b> - Changes the color of the range rings, radials, and labels.</li>
   <li class="propertylistitem"><b>Line Width</b> - Changes the width of the range rings, radials, and labels.</li>
-  <li class="propertylistitem"><b>Max. Radius</b> - Selects the maximum radius  of the range
-      rings from the center location. 
-    </p>
 </ul>
 <div class="pagesubtitle">Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="../controls/LayerControls.html#menus">Menus section</a> of the Layer Controls Page. However, there is one option that is unique to this display.</p>
