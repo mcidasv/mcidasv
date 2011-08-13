@@ -13,19 +13,19 @@ body {
 }
 
 .images {
-	float: left;
 	text-align: center;
-	padding: 10px;
 	clear: inherit;
+	float: left;
+	margin: 10px;
+	padding-top: 10px;
+	padding-right: 10px;
+	padding-bottom: 10px;
+	padding-left: 10px;
 	right: 22px;
-	margin-top: 10px;
-	margin-right: 10px;
-	margin-bottom: 10px;
-	margin-left: 22px;
 }
 
 .images img {
-  margin-bottom: 5px;
+	margin-bottom: 5px;
 }
 
 /*this is for beta1 version - they can be removed once beta1 is done*/
@@ -170,6 +170,7 @@ p {
   margin-top: 10px;
   margin-bottom: 0px;
 }
+
 p.code {
   font-family: Monospaced;
   margin-left: 22px;
@@ -179,6 +180,13 @@ p.code {
   margin: 10px;
   margin-left: 30px;
 }
+.images2 {
+	margin-top: 10px;
+	margin-right: 10px;
+	margin-bottom: 10px;
+	margin-left: 22px;
+}
+
 .childlist-level {
   font-weight:bold;
   font-size: 14pt;
@@ -383,7 +391,7 @@ iframe.right {
   border: 0px;
   overflow: auto;
 }
-.propertylist .propertylistitem img {
+.propertylistitem img {
 	vertical-align: middle;
-	margin-bottom: .5em;
+	margin-bottom: 0.5em;
 }

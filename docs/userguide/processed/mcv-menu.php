@@ -126,7 +126,7 @@
 		
 		<div class="indented" id="layercontrols_2_2">
         	<span class="link" onClick="setPage('controls/level2/RadarSweepControl.html');">Radar Sweep Controls</span><br>
-        	<span class="link" onClick="setPage('controls/level2/RadarRHIDisplayControls.html');">Radar RHI Display Controls </span><br>
+        	<span class="link" onClick="setPage('controls/level2/RadarRhiDisplayControls.html');">Radar RHI Display Controls </span><br>
 			<span class="link" onClick="setPage('controls/level2/RadarCrossSectionControl.html');">Radar Cross Section Controls</span><br>
 			<span class="link" onClick="setPage('controls/level2/RadarCappiDisplayControls.html');">Radar CAPPI Display Controls</span><br>                         
         	<span class="link" onClick="setPage('controls/level2/RadarVolumeControl.html');">Radar Volume Scan Controls</span><br>
