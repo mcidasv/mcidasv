@@ -45,12 +45,15 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JFrame;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JToggleButton;
+import javax.swing.JButton;
+import javax.swing.JTextArea;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -63,6 +66,7 @@ import visad.Data;
 import visad.DelaunayCustom;
 import visad.DisplayEvent;
 import visad.DisplayListener;
+import visad.Real;
 import visad.FieldImpl;
 import visad.FlatField;
 import visad.FunctionType;
@@ -110,6 +114,7 @@ import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.data.hydra.SubsetRubberBandBox;
 import edu.wisc.ssec.mcidasv.data.hydra.LongitudeLatitudeCoordinateSystem;
+import edu.wisc.ssec.mcidasv.data.hydra.Statistics;
 
 public class ScatterDisplay extends DisplayControlImpl {
 
@@ -171,6 +176,9 @@ public class ScatterDisplay extends DisplayControlImpl {
     Color[] selectorColors = new Color[] {Color.magenta, Color.green, Color.blue};
     float[][] maskColorPalette = new float[][] {{0.8f,0f,0f},{0f,0.8f,0f},{0.8f,0f,0.8f}};
     float[][] markColorPalette = new float[][] {{1f,0.8f,0f,0f},{1f,0f,0.8f,0f},{1f,0.8f,0f,0.8f}};
+
+    JButton computeStatsButton;
+    JFrame statsWindow;
    
     boolean selectByCurve = false;
 
@@ -620,6 +628,41 @@ public class ScatterDisplay extends DisplayControlImpl {
         }
 
         buttonPanel.add(toggleButtonPanel);
+
+        JButton computeStatsButton = new JButton("compute statistics");
+        computeStatsButton.addActionListener(new ActionListener() {
+            public void actionPerformed(final ActionEvent e) {
+              Statistics Xstats = null;
+              Statistics Ystats = null;
+              JTextArea text = new JTextArea();
+              try {
+                Xstats = new Statistics(X_field);
+                Ystats = new Statistics(Y_field);
+                text.append("                X                   Y      \n");
+                text.append(String.format(" max:      %.2f     %.2f \n",((Real)Xstats.max()).getValue(),((Real)Ystats.max()).getValue()));
+                text.append(String.format(" min:      %.2f     %.2f \n",((Real)Xstats.min()).getValue(),((Real)Ystats.min()).getValue()));
+                text.append(String.format(" num pts:  %d     %d \n",Xstats.numPoints(),Ystats.numPoints()));
+                text.append(String.format(" mean:     %.2f     %.2f \n",((Real)Xstats.mean()).getValue(),((Real)Ystats.mean()).getValue()));
+                text.append(String.format(" median:   %.2f     %.2f \n",((Real)Xstats.median()).getValue(),((Real)Ystats.median()).getValue()));
+                text.append(String.format(" var:      %.2f     %.2f \n",((Real)Xstats.variance()).getValue(),((Real)Ystats.variance()).getValue()));
+                text.append(String.format(" std:      %.2f     %.2f \n",((Real)Xstats.standardDeviation()).getValue(),((Real)Ystats.standardDeviation()).getValue()));
+                text.append(String.format(" corr:      %.2f \n",((Real)Xstats.correlation(Y_field)).getValue()));
+              }
+              catch (VisADException exc) {
+                System.out.println(exc.getMessage());
+              }
+              catch (RemoteException exc) {
+              }
+
+              statsWindow = new JFrame("Scaatter Statistics");
+              statsWindow.setVisible(true);
+            
+              statsWindow.getContentPane().add(text);
+              statsWindow.setSize(100, 100);
+            }
+        });
+
+        buttonPanel.add(computeStatsButton);
 
         //-container = pane;
         JPanel new_pane = new JPanel(new BorderLayout());
