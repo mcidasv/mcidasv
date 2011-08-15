@@ -14,6 +14,7 @@ public class Statistics {
    double[][] values_x;
    int rngTupLen;
    int numPoints;
+   int[] numGoodPoints;
    MathType statType;
 
    PearsonsCorrelation pCorrelation = null;
@@ -21,13 +22,19 @@ public class Statistics {
 
    public Statistics(FlatField fltFld) throws VisADException, RemoteException {
       double[][] rngVals = fltFld.getValues(false);
-      this.values_x = rngVals;
-      this.values_x[0] = removeMissing(rngVals[0]);
+      values_x = rngVals;
       rngTupLen = rngVals.length;
       numPoints = fltFld.getDomainSet().getLength();
+      numGoodPoints = new int[rngTupLen];
+
+      for (int k=0; k<rngTupLen; k++) {
+        values_x[k] = removeMissing(rngVals[k]);
+        numGoodPoints[k] = values_x[k].length;
+      }
+
       descriptiveStats = new DescriptiveStatistics[rngTupLen];
       for (int k=0; k<rngTupLen; k++) {
-        descriptiveStats[k] = new DescriptiveStatistics(rngVals[k]);
+        descriptiveStats[k] = new DescriptiveStatistics(values_x[k]);
       }
 
       MathType rangeType = ((FunctionType)fltFld.getType()).getRange();
@@ -61,10 +68,6 @@ public class Statistics {
      if (cnt == num) {
         return vals;
      }
-     else {
-        numPoints = cnt;
-     }
- 
 
      double[] newVals = new double[cnt];
      for (int k=0; k<cnt; k++) {
