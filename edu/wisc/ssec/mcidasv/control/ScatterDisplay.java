@@ -654,11 +654,11 @@ public class ScatterDisplay extends DisplayControlImpl {
               catch (RemoteException exc) {
               }
 
-              statsWindow = new JFrame("Scaatter Statistics");
+              statsWindow = new JFrame("Scatter Statistics");
               statsWindow.setVisible(true);
             
               statsWindow.getContentPane().add(text);
-              statsWindow.setSize(100, 100);
+              statsWindow.setSize(200, 200);
             }
         });
 
