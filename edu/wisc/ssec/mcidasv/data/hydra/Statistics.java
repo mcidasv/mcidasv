@@ -29,17 +29,21 @@ public class Statistics {
         descriptiveStats[k] = new DescriptiveStatistics(rngVals[k]);
       }
 
-      RealType[] rttypes = ((TupleType)((FunctionType)fltFld.getType()).getRange()).getRealComponents();
-      RealTuple meanTup = new RealTuple(new RealTupleType(rttypes), new double[] {0,0});
+      MathType rangeType = ((FunctionType)fltFld.getType()).getRange();
 
       if (rngTupLen > 1) {
+        RealType[] rttypes = ((TupleType)rangeType).getRealComponents();
         statType = new RealTupleType(rttypes); 
       }
       else {
-        statType = rttypes[0];
+        statType = (RealType) rangeType;
       }
 
       pCorrelation = new PearsonsCorrelation();
+   }
+
+   public int numPoints() {
+     return numPoints;
    }
 
    public Data mean() throws VisADException, RemoteException {
@@ -126,43 +130,6 @@ public class Statistics {
        stats[k] = pCorrelation.correlation(values_x[k], values_y[k]);
      }
      return makeStat(stats);
-   }
-
-   public static RealTuple mean(FlatField fltFld) throws VisADException, RemoteException {
-     float[][] rngVals = fltFld.getFloats(false);
-
-     RealType[] rttypes = ((TupleType)((FunctionType)fltFld.getType()).getRange()).getRealComponents();
-     RealTuple meanTup = new RealTuple(new RealTupleType(rttypes), new double[] {0,0});
-     return meanTup;
-   }
-
-   public static RealTuple median(FlatField fltFld) throws VisADException {
-     float[][] rngVals = fltFld.getFloats(false);
-     return null;
-   }
-
-   public static RealTuple max(FlatField fltFld) throws VisADException {
-     return null;
-   }
-
-   public static RealTuple min(FlatField fltFld) throws VisADException {
-     return null;
-   }
-
-   public static RealTuple variance(FlatField fltFld) throws VisADException {
-     return null;
-   }
-
-   public static RealTuple standardDeviation(FlatField fldFld) throws VisADException {
-     return null;
-   }
-
-   public static RealTuple kurtosis(FlatField fltFld) throws VisADException {
-     return null;
-   }
-
-   public static RealTuple correlation(FlatField Xfld, FlatField Yfld) throws VisADException {
-     return null;
    }
 
    private Data makeStat(double[] stats) throws VisADException, RemoteException {
