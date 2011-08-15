@@ -22,6 +22,7 @@ public class Statistics {
    public Statistics(FlatField fltFld) throws VisADException, RemoteException {
       double[][] rngVals = fltFld.getValues(false);
       this.values_x = rngVals;
+      this.values_x[0] = removeMissing(rngVals[0]);
       rngTupLen = rngVals.length;
       numPoints = fltFld.getDomainSet().getLength();
       descriptiveStats = new DescriptiveStatistics[rngTupLen];
@@ -44,6 +45,33 @@ public class Statistics {
 
    public int numPoints() {
      return numPoints;
+   }
+
+   private double[] removeMissing(double[] vals) {
+     int num = vals.length;
+     int cnt = 0;
+     int[] good = new int[num];
+     for (int k=0; k<num; k++) {
+        if ( !(Double.isNaN(vals[k])) ) {
+          good[cnt] = k;
+          cnt++;
+        }
+     }
+
+     if (cnt == num) {
+        return vals;
+     }
+     else {
+        numPoints = cnt;
+     }
+ 
+
+     double[] newVals = new double[cnt];
+     for (int k=0; k<cnt; k++) {
+       newVals[k] = vals[good[k]];
+     }
+
+     return newVals;
    }
 
    public Data mean() throws VisADException, RemoteException {
@@ -127,7 +155,8 @@ public class Statistics {
      double[] stats = new double[rngTupLen];
      
      for (int k=0; k<rngTupLen; k++) {
-       stats[k] = pCorrelation.correlation(values_x[k], values_y[k]);
+       double[][] newVals = removeMissingAND(values_x[k], values_y[k]);
+       stats[k] = pCorrelation.correlation(newVals[0], newVals[1]);
      }
      return makeStat(stats);
    }
@@ -140,6 +169,30 @@ public class Statistics {
        return new RealTuple((RealTupleType)statType, stats);
      }
      return null;
+   }
+
+   private double[][] removeMissingAND(double[] vals_x, double[] vals_y) {
+     int cnt = 0;
+     int[] good = new int[vals_x.length];
+     for (int k=0; k<vals_x.length; k++) {
+       if ( !(Double.isNaN(vals_x[k])) && !(Double.isNaN(vals_y[k]))  ) {
+         good[cnt] = k;
+         cnt++;
+       }
+     }
+
+     if (cnt == vals_x.length) {
+       return new double[][] {vals_x, vals_y};
+     }
+     else {
+       double[] newVals_x = new double[cnt];
+       double[] newVals_y = new double[cnt];
+       for (int k=0; k<cnt; k++) {
+         newVals_x[k] = vals_x[good[k]];
+         newVals_y[k] = vals_y[good[k]];
+       }
+       return new double[][] {newVals_x, newVals_y};
+     }
    }
 
 }
