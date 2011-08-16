@@ -49,7 +49,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
    </tr>
 </table></li>
 <li class="propertylistitem"><strong>Max over time steps -</strong> Plots one map representing  the highest value of the specified parameter at any point on the map during the time sequence selected.</li>
-<li class="propertylistitem"><strong>Merge time sequences -</strong> Allows you to create a loop of images where while the images will be in order with respect to time, you do not need to load in every time step.</li>
+<li class="propertylistitem"><strong>Merge time sequences -</strong> Creates a loop of images where while the images will be in order with respect to time, you do not need to load in every time step.</li>
 <li class="propertylistitem"><strong>Min over time steps -</strong> Plots one map representing the lowest value of the specified parameter at any one point on the map during the time sequence selected.</li>
 <li class="propertylistitem"><strong>Sum over time steps -</strong> Plots one map  representing the total value of the parameter at any one point on the map during the  time sequence selected.</li>
 <li class="propertylistitem"><strong>Time step difference (D(T)=D(T)-D(T-1)) -</strong> Plots a sequence of images. Each frame plots the value of the specified parameter at that time, and subtracts from it the value of the same parameter at the previous time in the loop.</li>
@@ -67,7 +67,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
 </ul>
 <div class="pagesubtitle"><a name="miscellaneous" id="miscellaneous"></a>Miscellaneous</div>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>Define a grid diagnostic  (gddiag) - </strong>Allows for defining a grid diagnostic to perform. </li>
+<li class="propertylistitem"><strong>Define a grid diagnostic  (gddiag) - </strong>Defines a grid diagnostic to perform. </li>
 <li class="propertylistitem"><table id="gridformulas1" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
@@ -85,21 +85,20 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
 <li class="propertylistitem"><strong>Find latitude of grid points  (feldimpl) - </strong>Obtains the latitude coordinate from the grid at each location and plots the latitude at each point on the map.</li>
 <li class="propertylistitem"><strong>Find longitude of grid points (fieldimpl)</strong> - Obtains the longitude coordinate from the grid at each location and plots the longitude at each point on the map.</li>
 <li class="propertylistitem"><strong>Horizontal Advection (from %N1% &amp; %N2%) (scalar parameter, U Component,
-  V Component)</strong></li>
-<li class="propertylistitem">This formula calculates horizontal advection from U and V components.</li>
+  V Component)</strong> - Calculates horizontal advection from U and V components.</li>
   <li class="propertylistitem"><table id="gridformulas2" cellpadding="0" cellspacing="0" border="1">
-  <tr>
-    <td colspan="1"><strong>Input Parameter</strong></td>
-   <td width="630"><strong>Definition
-   </strong></tr>
-   <tr>
-   <td width="120" colspan="1" rowspan="1" valign="top">
-   <p><em>scalar</em></p>
-   </td>
-   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>Scalar Parameter.</p>
-   </td>
-   </tr>
+      <tr>
+          <td colspan="1"><strong>Input Parameter</strong></td>
+          <td width="630"><strong>Definition
+            </strong></tr>
+      <tr>
+          <td width="120" colspan="1" rowspan="1" valign="top">
+              <p><em>scalar</em></p>
+              </td>
+          <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+              <p>Scalar Parameter.</p>
+              </td>
+          </tr>
 </table></li>
 <li class="propertylistitem"><strong>Horizontal Flux Divergence (from %N1% &amp; %N2%) (scalar parameter, U
     Component, V Component) - </strong>Calculates horizontal flux divergence from U and V components.</li>
@@ -148,7 +147,7 @@ levels.</li>
 <li class="propertylistitem"><strong>Make slice 2D (slice) - </strong>Creates a 2D slice from a 3D display at a single level.</li>
 <li class="propertylistitem"><strong>One value colored by another (Data field, Color field) - </strong>Creates an image of the data chosen in the Data field, and colors the data with the color scheme of the Color field parameter.
 </li>
-<li class="propertylistitem"><strong>Resample grid - </strong>Displays gridded data on a new domain.</propertylistitem>
+<li class="propertylistitem"><strong>Resample grid (grid, gridwithNewDomain) - </strong>Displays gridded data on a new domain.</propertylistitem>
 <li class="propertylistitem"><strong>Simple time difference in one parameter (Time 1, Time 2) - </strong>Creates an image representing the numerical difference in the value of the chosen parameter between the two time steps selected by the user. Time 1 is the initial time step, and Time 2 is the second time step. The difference in the parameter is done by Time 2 - Time 1.</li>
     <li class="propertylistitem"><table id="gridformulas5" cellpadding="0" cellspacing="0" border="1">
   <tr>
@@ -210,7 +209,7 @@ levels.</li>
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>Speed from 2 components (Field x, Field y) - </strong>Calculates speed from the user-chosen x and y components and displays an image.</li>
+<li class="propertylistitem"><strong>Speed from 2 components (x, y) - </strong>Calculates speed from the user-chosen x and y components and displays an image.</li>
 <li class="propertylistitem"><strong>Wind Shear Vectors  (top, bottom) - </strong>Calculates the u and v layer difference and returns a map of vectors.</li>
     <li class="propertylistitem"><table id="mapformulas8" cellpadding="0" cellspacing="0" border="1">
   <tr>

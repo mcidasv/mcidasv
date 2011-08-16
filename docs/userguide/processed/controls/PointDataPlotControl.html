@@ -53,7 +53,7 @@ This control is accessed by selecting the Point Data field and the Point Data Pl
       display changed when navigating in the Main Display Window.</li>
   <li class="propertylistitem"><b>Density</b> - Changes how dense the display of stations is in the Main Display Window
       when the decluttering option is selected. This option will not be available if the decluttering option is not selected, as all of the stations will then be displayed.</li>
-  <li class="propertylistitem"><strong>Layout Model -</strong> Changes what layout the data will display in. Click on the downward facing blue arrows <img src="images/DownBlueArrows.gif" width="13" height="13" align=absmiddle  > to change the layout model. Selecting Edit will open the <a href="../tools/StationModelEditor.html">Layout Model
+  <li class="propertylistitem"><strong>Layout Model -</strong> Changes what layout the data will display in. Click on the downward facing blue arrows <img src="images/DownBlueArrows.gif" width="13" height="13" align=absmiddle  > to change the layout model. Selecting Edit will open the <a href="../tools/StationModelEditor.html">Station Model
       Editor</a> which will allow you to create your own custom layout model.</li>
   <li class="propertylistitem"><strong>Scale -</strong> Sets the size of the layout model being displayed in the Main Display Window.</li>
   <li class="propertylistitem"><strong>Line Width - </strong>Sets the thickness of the layout model being displayed in the Main Display Window.</li>
@@ -86,7 +86,7 @@ This control is accessed by selecting the Point Data field and the Point Data Pl
 <p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Station -</strong> Shows the station where the data is being displayed from. This can be changed by left-clicking on a different layout model in the Main Display Window.<li class="propertylistitem"><b>Field</b> - Lists the different fields available from your data source that you can select from to display in the plot.
+  <li class="propertylistitem"><strong>Station -</strong> Shows the station where the data is being displayed from. This can be changed by left-clicking on a different station model in the Main Display Window.<li class="propertylistitem"><b>Field</b> - Lists the different fields available from your data source that you can select from to display in the plot.
   <li class="propertylistitem"><strong>Value - </strong>Lists the numerical value of the property at the 
   time selected.</ul>  
 <p><a name="filters" id="filters"></a></p>
@@ -99,15 +99,15 @@ This control is accessed by selecting the Point Data field and the Point Data Pl
 <ul class="propertylist">
   <li class="propertylistitem"><img src="images/ApplyFilters.gif" alt="Apply Filters button" width="103" height="26" align=absmiddle> <strong> -</strong> Applies any set filters to the data displayed in the Main Display Window.
   <li class="propertylistitem"><strong>Filters Enabled -</strong> Enables filters to be applied to the data in the Main Display Window.
-  <li class="propertylistitem"><strong>Match all of the filters - </strong>Displays only Layout Models that correspond with every chosen filter.  
-  <li class="propertylistitem"><strong>Match any of the filters - </strong>Displays any Layout Models that correspond with one or more of the chosen filters.
+  <li class="propertylistitem"><strong>Match all of the filters - </strong>Displays only station models that correspond with every chosen filter.  
+  <li class="propertylistitem"><strong>Match any of the filters - </strong>Displays any station models that correspond with one or more of the chosen filters.
   <li class="propertylistitem"><strong>Property - </strong>Represents the variable or property that you want to filter.
   <li class="propertylistitem"><strong>Middle Dropdown Menu -</strong> Represents the mathematical symbol that determines your filter. This can be Greater Than, Less Than, Equal To, Not Equal To, etc.
   <li class="propertylistitem"><strong>Value - </strong>Represents the numerical value that the mathematical symbol in the middle dropdown menu will utilize.</ul>
 <p>The above image shows an example of defining filters. This image
       shows two filter expressions, one that states the Temperature field needs
       to be greater that 35 F and the other states that the Wind Speed value needs
-  to be greater than 15. The unit of [F] is entered for the Temperature field. If you do not define a unit after the value, then McIDAS-V will utilize the native unit for the Property. Match all of the filters is selected, meaning only Layout Models where the Temperature is greater than 35 degrees F and the wind speed is greater than 15 will be displayed.</p>
+  to be greater than 15. The unit of [F] is entered for the Temperature field. If you do not define a unit after the value, then McIDAS-V will utilize the native unit for the Property. Match all of the filters is selected, meaning only station models where the Temperature is greater than 35 degrees F and the wind speed is greater than 15 will be displayed.</p>
   </ul>
 <a name="menus" id="menus"></a>
   <div class="pagesubtitle">Menus</div>
@@ -120,8 +120,9 @@ This control is accessed by selecting the Point Data field and the Point Data Pl
 </ul>
 <p>The <strong>Edit</strong> menu has this unique option:</p>
 <ul class="propertylist">
-  <b>Layout Model</b><b>... </b>- Opens the <a href="../tools/StationModelEditor.html">Layout Model
-      Editor</a> which will allow you to create your own custom layout model.</ul>
+  <b>Layout Model</b><b>... </b>- Opens the <a href="../tools/StationModelEditor.html"> Station Model
+      Editor</a> which will allow you to create your own custom station model.
+</ul>
 <p>The <strong>View</strong> menu has these unique options:</p>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Use Projection From Observations - </strong>Re-centers the display and resets the zoom level back to the display's initial settings without changing any other preferences you have modified.</li>

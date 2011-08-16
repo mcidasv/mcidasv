@@ -34,7 +34,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('display_controls/
 <div class="pagesubtitle">Overview</div>
 <meta name="jhid" value="idv.controls.drawingcontrol">
 <p>The drawing controls consists of a drawing editor that supports polygons, lines, shapes and text. This tool allows you to create and move graphics in the Main Display Window. Drawing and selecting in 3D can be difficult and sometimes
-it is best to be in the main overhead view. This feature can be foundin the Main Display Window in the <strong>Display-&gt;Draw Freely</strong> menu.</p>
+it is best to be in the main overhead view. This feature can be found in the Main Display Window in the <strong>Display-&gt;Draw Freely</strong> menu.</p>
 <ul>
   <li>  <a href="#controls">Controls</a></li>
   <li>  <a href="#style">Style</a></li>
@@ -43,25 +43,27 @@ it is best to be in the main overhead view. This feature can be foundin the Main
   <li>  <a href="#menus">Menus</a></li> 
   </ul>
 <p> The Drawing Control window consists of three tabs: <strong>Controls</strong>, <strong>Style</strong>, and <strong>Shapes</strong>.</p>
-<a name="controls" id="controls"></a><p>The <strong>Controls</strong> tab allows for the user to draw features in the Main Display Window:</p>
-<div class="images"><img src="images/DrawingControlGui1.gif" alt="Drawing Controls" width="633" height="319"></div>
+<a name="controls" id="controls"></a>
+<p>The <strong>Controls</strong> tab is used to draw features in the Main Display Window:</p>
+<div class="images"><img src="images/DrawingControlGui1.gif" alt="Drawing Controls" width="633" height="319"><br>
+<span class="caption">Image 1: Drawing Control-Controls tab</span></div>
 <p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
   <li class="propertylistitem"><b>Mode</b> - There are three editing modes, select, move and reshape:</li>
     <ul class="propertylist">
-      <li class="propertylistitem"> <img src="images/pointer.gif" alt="Select icon">&nbsp;<strong>Select -</strong> Allows you to select one or more drawing objects. To select multiples press the control key. The selected objects will be shown with small magenta rectangles. Once selected, you can bring up the object's property editor by pressing Ctrl+P. You can also delete the selected objects by pressing Ctrl+X. You can select all of the objects by pressing Ctrl+A.</li>
-      <li class="propertylistitem"> <img src="images/Move16.gif" alt="Move icon"><strong> Move -</strong> Allows you to move an object.</li>
-      <li class="propertylistitem"> <img src="images/Reshape16.gif" alt="Reshape icon"><strong> Reshape -</strong> Allows you to move one of the points that define the location of an object.</li>
-    </ul>
+      <li class="propertylistitem"> <img src="images/pointer.gif" alt="Select icon">&nbsp;<strong>Select -</strong> Selects one or more drawing objects. To select multiples press the control key. The selected objects will be shown with small magenta rectangles. Once selected, you can bring up the object's property editor by pressing Ctrl+P. You can also delete the selected objects by pressing Ctrl+X. You can select all of the objects by pressing Ctrl+A.</li>
+      <li class="propertylistitem"> <img src="images/Move16.gif" alt="Move icon"><strong> Move -</strong> Moves an object.</li>
+      <li class="propertylistitem"> <img src="images/Reshape16.gif" alt="Reshape icon"><strong> Reshape -</strong> Moves one of the points that define the location of an object.</li>
   <li class="propertylistitem"><b>Enabled</b> - Turns on/off the ability to use the modes. This makes it easy to modify other objects that may be in the Main Display Window without moving the position of your shapes.</li>
+  </ul>
   <li class="propertylistitem"><b>Shapes</b> - Represents the shapes to create in the Main Display Window:</li>
     <ul class="propertylist">
       <li class="propertylistitem"><img src="images/SmoothPoly16.gif" alt="Create a polygon icon"><strong> Create a polygon - </strong>Creates a smooth polygon.</li>
       <li class="propertylistitem"><img src="images/Rectangle16.gif" alt="Create a rectangle icon"><strong> Create a rectangle - </strong>Creates a rectangle.</li>
       <li class="propertylistitem"><img src="images/Diamond16.gif" alt="Create a diamond icon"><strong> Create a diamond -</strong> Creates a diamond.</li>
       <li class="propertylistitem"><img src="images/Arrow1.gif" alt="Create an arrow icon" width="21" height="20"><strong> Create an arrow -</strong> Creates an arrow that can face in any direction.</li>
-      <li class="propertylistitem"><img src="images/Arrow2.gif" alt="Create a horizontal arrow icon" width="22" height="20"><strong> Create a horizontal arrow -</strong> Creates an arrow in the horizontal arrow.</li>
+      <li class="propertylistitem"><img src="images/Arrow2.gif" alt="Create a horizontal arrow icon" width="22" height="20"><strong> Create a horizontal arrow -</strong> Creates an arrow in the horizontal direction.</li>
       <li class="propertylistitem"><img src="images/Arrow3.gif" alt="Create a vertical arrow icon" width="20" height="20"><strong> Create a vertical arrow -</strong> Creates an arrow in the vertical direction.</li>
       <li class="propertylistitem"> <img src="images/Text16.gif" alt="Create text icon"><strong> Create text -</strong> Opens a Text entry window, where you can type in text or HTML. Click OK when done, and the text will appear in the Main Display Window.</li>
       <li class="propertylistitem"> <img src="images/WayPoint16.gif" alt="Create a waypoint icon"><strong> Create waypoint -</strong> Opens a Text entry window, where you can type in text or HTML. Click OK when done, and the text will appear in the Main Display Window along with a marker to represent the exact location where you clicked in the Main Display Window..</li>
@@ -79,7 +81,7 @@ it is best to be in the main overhead view. This feature can be foundin the Main
 	      <li class="propertylistitem"><strong>Straight -</strong> Creates straight lines when drawing freely.</li>
 	  <li class="propertylistitem">While the icon buttons only allow you to draw 5 different front types, there are 20+ front types to choose from in the Properties dialog for the shape.</li>
     </ul>
-<li class="propertylistitem"><b>Coordinates</b> - Allows you to draw in four different coordinate systems:</li>
+<li class="propertylistitem"><b>Coordinates</b> - Draws in four different coordinate systems:</li>
     <ul class="propertylist">
       <li class="propertylistitem"> <strong>X/Y/Z -</strong> Draws in the 3D box coordinate space. Re-projections will not effect the shape. </li>
       <li class="propertylistitem"> <strong>X/Y -</strong> Draws in the 3D box coordinate space, fixing the Z position. Re-projections will not effect the shape.</li>
@@ -95,7 +97,8 @@ it is best to be in the main overhead view. This feature can be foundin the Main
     <li class="propertylistitem"> A graphic can be shown at more than one time using the Property Editor. Select the object and press Ctrl+P to bring up the property editor. Select the times to be displayed in in the <strong>Times</strong> list (Shift+click or Ctrl+click to select multiples) and press <strong>Apply</strong> or <strong>Ok</strong>.</li>
     </ul>
 <a name="style" id="style"></a><p>The <strong>Style</strong> tab controls the style that the drawings take in the Main Display Window:
-<div class="images"><img  src="images/DrawingControlGui2.gif"  alt="Style tab of Drawing Control window" ></div>
+<div class="images"><img  src="images/DrawingControlGui2.gif"  alt="Style tab of Drawing Control window" ><br>
+<span class="caption">Image 2: Drawing Control-Style tab</span></div>
 <p></p>
 <div class="pagesubtitle">Properties    </div>
 <p> These menu options apply to the shapes listed in the  <strong>Controls</strong> tab, excluding the High/Low pressures/fronts. Once modifications have been made in this tab, they will be applied to the next shape you make in the Main Display Window, without changing any shapes already created.</p>
@@ -105,9 +108,10 @@ it is best to be in the main overhead view. This feature can be foundin the Main
   <li class="propertylistitem"><strong>Font - </strong>Changes the font of the text in the display.</li>
   <li class="propertylistitem"><strong>Size - </strong>Changes the size of the text in the display.</li>
   <li class="propertylistitem"><strong>Justification -</strong> Changes the justification of the text.</li>
-  <li class="propertylistitem"><strong>Font Scale -</strong> Changes the scale of the shapes.</li>
+  <li class="propertylistitem"><strong>Front Scale -</strong> Changes the scale of the fronts.</li>
 </ul>
-<a name="shapes" id="shapes"></a><p>The <strong>Shapes</strong> tab lists all of the graphical elements:<div class="images"><img  src="images/DrawingControlGui3.gif"  alt="Shapes tab of Drawing Control window" ></div>
+<a name="shapes" id="shapes"></a><p>The <strong>Shapes</strong> tab lists all of the graphical elements:<div class="images"><img  src="images/DrawingControlGui3.gif"  alt="Shapes tab of Drawing Control window" ><br>
+<span class="caption">Image 3: Drawing Control-Shapes tab</span></div>
 <p></p>
 <div class="pagesubtitle">Properties    </div>
 <p> These this tab lists out the different shapes and information about them included in the Main Display Window, selected from the <strong>Controls</strong> tab.</p>
@@ -121,7 +125,7 @@ it is best to be in the main overhead view. This feature can be foundin the Main
 <a name="properties" id="properties"></a><p>The <strong>Properties</strong> tab gives general information about each shape: <a name="image1"></a>
 </p>
 <div class="images"><img  src="images/DrawingControlProperties.gif"  alt="Shape Properties" ><br>
-<span class="caption">Image 1: Shape Properties</span></div>
+<span class="caption">Image 4: Shape Properties</span></div>
 <p>This tab allows you to control many aspects of the individual shapes. Note: The different types of shapes will have different menu options.</p>
 <div class="pagesubtitle">Properties    </div>
 <ul class="propertylist">
@@ -131,29 +135,29 @@ it is best to be in the main overhead view. This feature can be foundin the Main
   <li class="propertylistitem"><b>Color</b> - Represents the color of the shape in the display.</li>
   <li class="propertylistitem"><strong>Distance -</strong> Represents the distance the object covers in the Main Display Window.</li>
   <li class="propertylistitem"><strong>Area - </strong>Represents the area of a shape being displayed in the Main Display Window.</li>
-  <li class="propertylistitem"><strong>Pressure -</strong> Allows you to change the pressure when your shape is a high or low pressure.</li>
-  <li class="propertylistitem"><strong>Front Type -</strong> Allows you to change the front to a different type of front, many not listed in the Drawing Control window.</li>
+  <li class="propertylistitem"><strong>Pressure -</strong> Changes the pressure when your shape is a high or low pressure.</li>
+  <li class="propertylistitem"><strong>Front Type -</strong> Changes the front to a different type of front, many not listed in the Drawing Control window.</li>
   <li class="propertylistitem"><strong>Flip the front orientation -</strong> Changes the display to represent the front traveling in the opposite direction.</li>
   <li class="propertylistitem"><strong>Scale -</strong> Changes the size of the front without changing its spatial extent.</li>
-  <li class="propertylistitem"><strong>Times -</strong> Allows you to determine what times the shape will appear when you are displaying a loop of data.  
+  <li class="propertylistitem"><strong>Times -</strong> Determines what times the shape will appear when you are displaying a loop of data.  
   <li class="propertylistitem"><img src="images/StartFlythrough.gif" alt="Start Flythough button" width="212" height="26"align=absmiddle> <strong> -</strong> Opens the <a href="../ui/DisplayMenus.html#flythrough">Flythrough feature</a> which allows you to interactively explore the feature.
 </ul>
 <p>The <strong>Points</strong> tab gives general information about each shape:</p>
 <div class="images"><img  src="images/DrawingControlProperties2.gif"  alt="Shape Properties" ><br>
-<span class="caption">Image 3: Shape Points</span></div>
+<span class="caption">Image 5: Shape Points</span></div>
 <p>This tab lists out location coordinates of your shape. The points listed can be seen in the Main Display Window, and are represented by the pink squares along the boundaries of the shape. These values can be changed by double clicking on a coordinate, and typing in a new value. Once you click on a different coordinate, and then press Apply or OK, the change will be made in the Main Display Window.</p>
 <div class="pagesubtitle">Properties    </div>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Latitude - </strong>Lists the latitude value at each point.</li>
   <li class="propertylistitem"><strong>Longitude - </strong> Lists the longitude value at each point. </li>
-  <li class="propertylistitem"> <img src="images/WritePoints.gif" alt="Write Points button" width="104" height="26"> <strong> -</strong> Allows you to save the list of points as a Comma-Separated Values (CSV) file (*.csv).</li> 
+  <li class="propertylistitem"> <img src="images/WritePoints.gif" alt="Write Points button" width="104" height="26"> <strong> -</strong> Saves the list of points as a Comma-Separated Values (CSV) file (*.csv).</li> 
 </ul>
 <a name="menus" id="menus"></a><div class="pagesubtitle">Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="../controls/LayerControls.html#menus">Menus section</a> of the Layer Controls Page. However, there are several options that are unique to this display.</p>
 <p>The <strong>File</strong> menu has these unique options:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><b>Export Drawing -</b> Allows you to export the display in the IDV Drawing files (*.xgrf) format.</li>
-  <li class="propertylistitem"><strong>Import Drawing -</strong> Allows you to import the display in the IDV Drawing files (*.xgrf) format.</li>
+  <li class="propertylistitem"><b>Export Drawing -</b> Exports the display in the IDV Drawing files (*.xgrf) format.</li>
+  <li class="propertylistitem"><strong>Import Drawing -</strong> Imports the display in the IDV Drawing files (*.xgrf) format.</li>
 </ul>
 <p>The <strong>Edit</strong> menu has these unique options:</p>
 <ul class="propertylist">
