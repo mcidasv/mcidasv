@@ -645,8 +645,14 @@ public class ScatterDisplay extends DisplayControlImpl {
                 text.append(String.format(" mean:     %.2f     %.2f \n",((Real)Xstats.mean()).getValue(),((Real)Ystats.mean()).getValue()));
                 text.append(String.format(" median:   %.2f     %.2f \n",((Real)Xstats.median()).getValue(),((Real)Ystats.median()).getValue()));
                 text.append(String.format(" var:      %.2f     %.2f \n",((Real)Xstats.variance()).getValue(),((Real)Ystats.variance()).getValue()));
+                text.append(String.format(" kur:      %.2f     %.2f \n",((Real)Xstats.kurtosis()).getValue(),((Real)Ystats.kurtosis()).getValue()));
                 text.append(String.format(" std:      %.2f     %.2f \n",((Real)Xstats.standardDeviation()).getValue(),((Real)Ystats.standardDeviation()).getValue()));
                 text.append(String.format(" corr:      %.2f \n",((Real)Xstats.correlation(Y_field)).getValue()));
+
+                Statistics diff = new Statistics((FlatField)X_field.subtract(Y_field));
+                text.append(String.format(" max diff:      %.2f \n",((Real)diff.max()).getValue()));
+                text.append(String.format(" min diff:      %.2f \n",((Real)diff.min()).getValue()));
+                text.append(String.format(" mean diff:     %.2f \n",((Real)diff.mean()).getValue()));
               }
               catch (VisADException exc) {
                 System.out.println(exc.getMessage());
