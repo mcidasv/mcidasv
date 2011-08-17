@@ -42,32 +42,15 @@ _mcv = McIDASV.getStaticMcv()
 import imageFilters
 import shell as idvshell
 
-from background import allActions
-from background import allColorTables
-from background import allDisplays
-from background import allLayerTypes
-from background import allProjections
-from background import allWindows
-from background import boomstick
-from background import collectGarbage
-from background import colorTableNames
-from background import createLayer
-from background import firstDisplay
-from background import firstWindow
-from background import getColorTable
-from background import getProjection
-from background import managedDataSource
-from background import performAction
-from background import projectionNames
-from background import removeAllData
-from background import removeAllLayers
-from background import setViewSize
+from background import (
+        allActions, allColorTables,  allDisplays, allLayerTypes, 
+        allProjections, allWindows, boomstick, collectGarbage, colorTableNames, 
+        createLayer, firstDisplay, firstWindow, getColorTable, getProjection, 
+        managedDataSource, performAction, projectionNames, removeAllData, 
+        removeAllLayers, setViewSize
+)
 
-from interactive import describeActions
-from interactive import dumpObj
-from interactive import ncdump
-from interactive import ncdumpToString
-from interactive import see
+from interactive import describeActions, dumpObj, ncdump, ncdumpToString, see
 
 _user_python = os.path.join(_mcv.getStore().getUserDirectory().toString(), 'python')
 if os.path.exists(_user_python):

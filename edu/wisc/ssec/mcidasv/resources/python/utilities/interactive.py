@@ -31,6 +31,12 @@ def _expandpath(path):
     given path."""
     return os.path.normpath(os.path.expanduser(os.path.expandvars(path)))
 
+def getMouseEarthLocation():
+    display = getStaticMcv().getVMManager().getLastActiveViewManager()
+    master = display.getMaster()
+    visadLat, visadLon = master.getCursorLatitude(), master.getCursorLongitude()
+    return visadLat.getValue(), visadLon.getValue()
+
 def describeActions(pattern=None):
     # """Prints out a list of the McIDAS-V actions.
 

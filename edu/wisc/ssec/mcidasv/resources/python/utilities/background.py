@@ -8,7 +8,9 @@ from contextlib import contextmanager
 from java.lang import System
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 from ucar.unidata.idv import DisplayInfo
+from ucar.unidata.geoloc import LatLonPointImpl
 from ucar.unidata.ui.colortable import ColorTableDefaults
+
 
 @contextmanager
 def managedDataSource(path, cleanup=True, dataType=None):
@@ -207,8 +209,15 @@ class _Display(_JavaProxy):
     # TODO(jon): still deciding on a decent way to refer to an arbitrary projection...
     #def setProjection(self, projection):
     #    pass
-    
+
+    def resetProjection(self):
+        return self._JavaProxy__javaObject.getMapDisplay().resetProjection()
+
+    def getVerticaleScaleUnit(self):
+        return self._JavaProxy__javaObject.getMapDisplay().getVerticalRangeUnit()
+
     def getVerticalScaleRange(self):
+        # TODO(jon): return unit?
         verticalRange = self._JavaProxy__javaObject.getMapDisplay().getVerticalRange()
         return verticalRange[0], verticalRange[1]
     
@@ -234,17 +243,69 @@ class _Display(_JavaProxy):
             if mapSource in mapStates:
                 currentState.setVisible(mapStates[mapSource])
     
+    def getCenter(self, includeScale=False):
+        """Returns the latitude and longitude at the display's center."""
+        position = self._JavaProxy__javaObject.getScreenCenter()
+        latitude = position.getLatitude().getValue()
+        longitude = position.getLongitude().getValue()
+        
+        # validate! (visad's EarthLocation allows for bad values!)
+        llp = LatLonPointImpl(latitude, longitude)
+        
+        if include_scale:
+            result = llp.getLatitude(), llp.getLongitude(), self.getScaleFactor()
+        else:
+            result = llp.getLatitude(), llp.getLongitude()
+        
+        return result
+    
+    def getScaleFactor(self):
+        return self._JavaProxy__javaObject.getMapDisplay().getScale()
+    
     def center(self, latitude, longitude, scale=1.0):
-        """Centers the display over a given latitude and longitude."""
-        earthLocation = Util.makeEarthLocation(latitude, longitude)
+        self.setCenter(latitude, longitude, scale)
+    
+    def setCenter(self, latitude, longitude, scale=1.0):
+        """Centers the display over a given latitude and longitude.
+        
+        Please be aware that something like: 
+        center(lat, long, 1.2)
+        center(lat, long, 1.2)
+        the second call will rescale the display to be 1.2 times the size of
+        the display *after the first call.* Or, those calls are essentially
+        the same as "center(lat, long, 2.4)".
+        
+        
+        
+        Args:
+        latitude:
+        longitude:
+        scale: Optional parameter for "zooming". Default value (1.0) results in no rescaling; less than 1.0 "zooms out", while greater than 1.0 "zooms in." 
+        """
+        # source and dest are arbitrary rectangles.
+        # float scaleX = dest.width / source.width;
+        # float scaleY = dest.height / source.height;
+        # Point sourceCenter = centerPointOfRect(source);
+        # Point destCenter = centerPointOfRect(dest);
+        # glTranslatef(destCenter.x, destCenter.y, 0.0);
+        # glScalef(scaleX, scaleY, 0.0);
+        # glTranslatef(sourceCenter.x * -1.0, sourceCenter.y * -1.0, 0.0);
+        
+        earthLocation = Util.makeEarthLocation(LatLonPointImpl(latitude, longitude))
         mapDisplay = self._JavaProxy__javaObject.getMapDisplay()
         
         # no idea what the problem is here...
         mapDisplay.centerAndZoom(earthLocation, False, scale)
-        mapDisplay.centerAndZoom(earthLocation, False, scale)
-        mapDisplay.centerAndZoom(earthLocation, False, scale)
+        # try to position correctly
+        mapDisplay.centerAndZoom(earthLocation, False, 1.0)
+        mapDisplay.centerAndZoom(earthLocation, False, 1.0)
+        
     
-    def backgroundColor(self, color=java.awt.Color.CYAN):
+    def getBackgroundColor(self):
+        """Returns the Java AWT color object of the background color (or None)."""
+        return self._JavaProxy__javaObject.getMapDisplay().getBackground()
+    
+    def setBackgroundColor(self, color=java.awt.Color.CYAN):
         """Sets the display's background color to the given AWT color. Defaults to cyan."""
         self._JavaProxy__javaObject.getMapDisplay().setBackground(color)
     
@@ -418,6 +479,11 @@ def firstDisplay():
 def allDisplays():
     """Returns a list of all McIDAS-V displays (aka ViewManagers)"""
     return [_Display(viewManager) for viewManager in idv.getVMManager().getViewManagers()]
+
+def activeDisplay():
+    """Returns the active McIDAS-V display."""
+    return _Display(idv.getVMManager().getLastActiveViewManager())
+
 
 def createLayer(layerType, data, dataParameter='Data'):
     """Creates a new Layer in the active Display.
