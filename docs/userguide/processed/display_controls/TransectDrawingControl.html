@@ -35,7 +35,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('display_controls/
 <meta name="jhid" value="idv.controls.misc.transectdrawingcontrol">
 <p>The transect drawing controls are a version of the <a href="DrawingControl.html">Drawing
     Controls</a> that allows you to view, create, and modify the transect lines that
-are used in the <a href="../ui/TransectViewManager.html">Transect Views</a>. This option can be found in the Main Display Window under the <strong>Display-&gt;Draw Transect </strong>menu or through the <strong>Transects</strong> menu in the Transect View.</p>
+are used in the <a href="../ui/TransectViewManager.html">Transect Views</a>. This option can be found in the Main Display window under the <strong>Display-&gt;Draw Transect </strong>menu or through the <strong>Transects</strong> menu in the Transect View.</p>
 <p>This display control is a representation of the set of transects that are defined by the transect resource. Not only does it have its own state (that can be saved in a bundle for example), but it also writes out any transects you may create or change into your local McIDAS-V state directory in a transects.xml file. </p>
 <p> In this control, there is only one shape that you can draw with, the Transect Line. This control also shows a non-editable Transect Shape which displays the full transect line used by any Transect Views, called the &quot;Active Transects&quot;. There are also a set of transect lines that are non-editable that are from the system transects property. For an active transect, if the Transect View that it represents has a max distance set then the transect will show this max distance as a rectangular box.</p>
 <p>The Transect Drawing Control window consists of three tabs: <strong>Controls</strong>, <strong>Style</strong>, and <strong>Shapes</strong>.</p>
@@ -46,7 +46,7 @@ are used in the <a href="../ui/TransectViewManager.html">Transect Views</a>. Thi
   <li>  <a href="#menus">Menus</a></li> 
   </ul>
 <a name="controls" id="controls"></a>
-<p>The <strong>Controls</strong> tab allows for the user to draw features in the Main Display Window:</p>
+<p>The <strong>Controls</strong> tab allows for the user to draw features in the Main Display window:</p>
 <div class="images">
     <p><img  src="images/TransectDrawingControlGui.gif"  alt="Controls tab of Transect Drawing Control window" ></p>
 </div>
@@ -54,7 +54,7 @@ are used in the <a href="../ui/TransectViewManager.html">Transect Views</a>. Thi
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
   <li class="propertylistitem"><b>Mode</b> - </li>
-	<ul class="propertylist">  <li class="propertylistitem"><img src="images/transect.gif" alt="Create a transect icon" width="20" height="20"align=absmiddle><strong> Create a transect - </strong>Creates a transect in the Main Display Window by clicking and dragging.</li>
+	<ul class="propertylist">  <li class="propertylistitem"><img src="images/transect.gif" alt="Create a transect icon" width="20" height="20"align=absmiddle><strong> Create a transect - </strong>Creates a transect in the Main Display window by clicking and dragging.</li>
 	    <li class=propertylistitem> <img src="images/pointer.gif" alt="Select icon" align=absmiddle><strong> Select</strong> <strong> -</strong> Allows you to select one or more transect drawings. To select multiples press the control key. The selected transects will be shown with small magenta rectangles. Once selected you can bring up the transect's property editor by pressing Control+P. You can also delete the selected objects by pressing Control+X. You can select all of the objects by pressing Control+A.</li>
 	    <li class=propertylistitem> <img src="images/Move16.gif" alt="Move or stretch graphic icon"align=absmiddle><strong> Move or stretch graphic</strong> <strong> -</strong> Allows you to move a transect.</li>
 	    <li class=propertylistitem> <img src="images/Reshape16.gif" alt="Stretch graphic icon"align=absmiddle><strong> Stretch Graphic </strong> <strong> -</strong> Allows you to move one of the points that define the end points of a transect.</li>
@@ -65,11 +65,11 @@ are used in the <a href="../ui/TransectViewManager.html">Transect Views</a>. Thi
   <li class="propertylistitem"><b>Show active transects</b> - Toggles the visibility of the active transects.</li>
 </ul>
 <a name="style" id="style"></a>
-<p>The <strong>Style</strong> tab controls the style the drawings take in the Main Display Window:</p>
+<p>The <strong>Style</strong> tab controls the style the drawings take in the Main Display window:</p>
 <div class="images"><img src="images/TransectDrawingControlGui2.gif" alt="Style tab of Transect Drawing Control window" width="620" height="281"></div>
 <p></p>
 <div class="pagesubtitle">Properties</div>
-<p>These menu options apply to the shapes listed in the <strong>Controls</strong> tab. Once modifications have been made in this tab, they will be applied to the next transect you draw in the Main Display Window, without changing any transects already created.</p>
+<p>These menu options apply to the shapes listed in the <strong>Controls</strong> tab. Once modifications have been made in this tab, they will be applied to the next transect you draw in the Main Display window, without changing any transects already created.</p>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Color -</strong> Represents the color of the transect in the display.</li>
 <li class="propertylistitem"><strong>Line Width -</strong> Represents the thickness of the transect drawn in the display.</li>
@@ -97,7 +97,7 @@ are used in the <a href="../ui/TransectViewManager.html">Transect Views</a>. Thi
 <li class="propertylistitem"><strong>Name -</strong> Represents the name of the transect.</li>
 <li class="propertylistitem"><strong>Visible -</strong> Determines if the shape will be seen in the display.</li>
 <li class="propertylistitem"><strong>Color -</strong> Represents the color of the shape in the display.</li>
-<li class="propertylistitem"><strong>Distance -</strong> Represents the distance the transect covers in the Main Display Window.</li>
+<li class="propertylistitem"><strong>Distance -</strong> Represents the distance the transect covers in the Main Display window.</li>
 <li class="propertylistitem"><strong>Start Label -</strong> Denotes the starting point of the transect line in the display.</li>
 <li class="propertylistitem"><strong>End Label -</strong> Denotes the ending point of the transect line in the display.</li>
 </ul>
@@ -120,9 +120,9 @@ are used in the <a href="../ui/TransectViewManager.html">Transect Views</a>. Thi
 </ul>
 <p>The <strong>Edit</strong> menu has these unique options:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Remove All -</strong> Removes any drawings from the Main Display Window without removing any other items.</li>
-  <li class="propertylistitem"><strong>Apply Color to Selected - </strong>Changes the color of the selected item drawn in the Main Display Window.</li>
-  <li class="propertylistitem"><strong>Apply Z Position to Selected -</strong> Changes the Z position of the selected item drawn in the Main Display Window.</li>
+  <li class="propertylistitem"><strong>Remove All -</strong> Removes any drawings from the Main Display window without removing any other items.</li>
+  <li class="propertylistitem"><strong>Apply Color to Selected - </strong>Changes the color of the selected item drawn in the Main Display window.</li>
+  <li class="propertylistitem"><strong>Apply Z Position to Selected -</strong> Changes the Z position of the selected item drawn in the Main Display window.</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">

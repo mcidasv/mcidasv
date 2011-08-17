@@ -35,39 +35,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
 <ul>
   <li><a href="#time">Time Steps</a></li>
   <li><a href="#ensemble">Ensemble</a></li>
-  <li><a href="#miscellaneous">Miscellaneous</a></li>
 </ul>
-<div class="pagesubtitle">Time Steps<a name="time" id="time"></a></div>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>Average Time steps -</strong> Plots one map representing the average value of the specified parameter at any one point on the map during the time sequence selected.</li>
-<li class="propertylistitem"><strong>Difference from initial timestep (D(T)-D(T)-D(0)) -</strong> Plots a sequence of images. Each image maps the difference in the numerical value of the parameter from the initial values of the first frame.   This formula sets the value of each time step N as:</li>
-<li class="propertylistitem"><table>
-   <tr>
-   <td width="750" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>D(T) = D(T) - D(0) </p>
-   </td>
-   </tr>
-</table></li>
-<li class="propertylistitem"><strong>Max over time steps -</strong> Plots one map representing  the highest value of the specified parameter at any point on the map during the time sequence selected.</li>
-<li class="propertylistitem"><strong>Merge time sequences -</strong> Creates a loop of images where while the images will be in order with respect to time, you do not need to load in every time step.</li>
-<li class="propertylistitem"><strong>Min over time steps -</strong> Plots one map representing the lowest value of the specified parameter at any one point on the map during the time sequence selected.</li>
-<li class="propertylistitem"><strong>Sum over time steps -</strong> Plots one map  representing the total value of the parameter at any one point on the map during the  time sequence selected.</li>
-<li class="propertylistitem"><strong>Time step difference (D(T)=D(T)-D(T-1)) -</strong> Plots a sequence of images. Each frame plots the value of the specified parameter at that time, and subtracts from it the value of the same parameter at the previous time in the loop.</li>
-<li class="propertylistitem"><strong>Time step sum (D(T)=D(T)+D(T-1)) -</strong> Plots a sequence of images. Each frame plots the value of the specified parameter at that time, and adds to it the value of the same parameter at the previous time step in the loop.</li>
-</ul>
-<div class="pagesubtitle"><a name="ensemble" id="ensemble"></a>Ensemble</div>
-<ul class="propertylist">
-<li class="propertylistitem"><strong>Ensemble average over all grid members -</strong> Averages the chosen ensemble members over each time step and plots the data.</li>
-<li class="propertylistitem"><strong>Ensemble grid highest values -</strong> Takes the highest numerical value of the chosen parameter over the chosen number of ensemble members and plots the data.</li>
-<li class="propertylistitem"><strong>Ensemble grid lowest values -</strong> Takes the lowest numerical value of the chosen parameter over the chosen number of ensemble members and plots the data.</li>
-<li class="propertylistitem"><strong>Ensemble grid mode values -</strong> Takes the mode value of the chosen parameter over the chosen number of ensemble members and plots the data.</li>
-<li class="propertylistitem"><strong>Ensemble grid percentile values -</strong> Plots the ensemble average at the chosen percentage. The higher the percentage, the higher the values plotted in the display will be.</li>
-<li class="propertylistitem"><strong>Ensemble grid range of values -</strong> Takes the difference between the upper bound and lower bound of the chosen parameter over the chosen number of grid ensembles and plots the result.</li>
-<li class="propertylistitem"><strong>Ensemble grid standard deviation -</strong> Plots the standard deviation of the chosen parameter over the chosen number of ensemble members.</li>
-</ul>
-<div class="pagesubtitle"><a name="miscellaneous" id="miscellaneous"></a>Miscellaneous</div>
-<ul class="propertylist">
-<li class="propertylistitem"><strong>Define a grid diagnostic  (gddiag) - </strong>Defines a grid diagnostic to perform. </li>
+<li class="propertylistitem"><strong>Define a grid diagnostic  (gddiag) - </strong>Defines a grid diagnostic to perform. </li class="propertylistitem">
 <li class="propertylistitem"><table id="gridformulas1" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
@@ -82,10 +52,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>Find latitude of grid points  (feldimpl) - </strong>Obtains the latitude coordinate from the grid at each location and plots the latitude at each point on the map.</li>
-<li class="propertylistitem"><strong>Find longitude of grid points (fieldimpl)</strong> - Obtains the longitude coordinate from the grid at each location and plots the longitude at each point on the map.</li>
+<li class="propertylistitem"><strong>Find latitude of grid points  (fieldimpl) - </strong>Obtains the latitude coordinate from the grid at each location and plots the latitude at each point on the map.</li class="propertylistitem">
+<li class="propertylistitem"><strong>Find longitude of grid points (fieldimpl)</strong> - Obtains the longitude coordinate from the grid at each location and plots the longitude at each point on the map.</li class="propertylistitem">
 <li class="propertylistitem"><strong>Horizontal Advection (from %N1% &amp; %N2%) (scalar parameter, U Component,
-  V Component)</strong> - Calculates horizontal advection from U and V components.</li>
+  V Component)</strong> - Calculates horizontal advection from U and V components.</li class="propertylistitem">
   <li class="propertylistitem"><table id="gridformulas2" cellpadding="0" cellspacing="0" border="1">
       <tr>
           <td colspan="1"><strong>Input Parameter</strong></td>
@@ -94,12 +64,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
       <tr>
           <td width="120" colspan="1" rowspan="1" valign="top">
               <p><em>scalar</em></p>
-              </td>
+          </td>
           <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
               <p>Scalar Parameter.</p>
-              </td>
-          </tr>
-</table></li>
+          </td>
+      </tr>
+</table></tli>
 <li class="propertylistitem"><strong>Horizontal Flux Divergence (from %N1% &amp; %N2%) (scalar parameter, U
     Component, V Component) - </strong>Calculates horizontal flux divergence from U and V components.</li>
 <li class="propertylistitem"><table id="gridformulas3" cellpadding="0" cellspacing="0" border="1">
@@ -140,14 +110,14 @@ levels.</li>
    <p>Bottom layer (default=850)</p>
    </td>
    </tr>
-</table></li>
+</table></td>
 <li class="propertylistitem"><strong>Make flow vectors from grid relative u and v data  (u, v) - </strong>Calculates true wind vectors based off of relative u and v data after user inputs the field and desired levels. You can utilize 2D or 3D data.</li>
 <li class="propertylistitem"><strong>Make flow vectors from u and v data  (u, v) - </strong>Creates flow vectors based off of the 2D u and v parameters entered by the user.</li>
 <li class="propertylistitem"><strong>Make flow vectors from u, v, and w data  (u, v, w) - </strong>Creates flow vectors based off of the 3D u and v parameters entered by the user. These flow vectors are then scaled based off the user-entered w parameter.</li>
-<li class="propertylistitem"><strong>Make slice 2D (slice) - </strong>Creates a 2D slice from a 3D display at a single level.</li>
+<p><strong>Make slice 2D (slice) - </strong>Creates a 2D slice from a 3D display at a single level.</p>
 <li class="propertylistitem"><strong>One value colored by another (Data field, Color field) - </strong>Creates an image of the data chosen in the Data field, and colors the data with the color scheme of the Color field parameter.
 </li>
-<li class="propertylistitem"><strong>Resample grid (grid, gridwithNewDomain) - </strong>Displays gridded data on a new domain.</propertylistitem>
+<li class="propertylistitem"><strong>Resample grid (grid, gridwithNewDomain) - </strong>Displays gridded data on a new domain.</li>
 <li class="propertylistitem"><strong>Simple time difference in one parameter (Time 1, Time 2) - </strong>Creates an image representing the numerical difference in the value of the chosen parameter between the two time steps selected by the user. Time 1 is the initial time step, and Time 2 is the second time step. The difference in the parameter is done by Time 2 - Time 1.</li>
     <li class="propertylistitem"><table id="gridformulas5" cellpadding="0" cellspacing="0" border="1">
   <tr>
@@ -170,9 +140,9 @@ levels.</li>
    <p>Second time (default=0)</p>
    </td>
    </tr>
-</table></li>
-<li class="propertylistitem"><strong>Slice at Altitude  (Altitude, Unit) - </strong>Extracts a 2D horizontal slice from a 3D grid at the given altitude and maps an image.</li>
-    <li class="propertylistitem"><table id="mapformulas6" cellpadding="0" cellspacing="0" border="1">
+</table>
+<p><strong>Slice at Altitude  (Altitude, Unit) - </strong>Extracts a 2D horizontal slice from a 3D grid at the given altitude and maps an image.</p>
+    <table id="mapformulas6" cellpadding="0" cellspacing="0" border="1">
    <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
@@ -180,10 +150,10 @@ levels.</li>
    <tr>
        <td width="120" colspan="1" rowspan="1" valign="top">
            <p><em>altitude </em></p>
-           </td>
+        </td>
        <td width="510" colspan="2" rowspan="1" valign="top">
            <p>Altitude to slice.</p>
-           </td>
+        </td>
    </tr>
    <tr>
    <td width="120" colspan="1" rowspan="1" valign="top">
@@ -195,7 +165,7 @@ levels.</li>
    </tr>
 </table></li>
 <li class="propertylistitem"><strong>Slice at Level  (Level) - </strong>Extracts a 2D horizontal slice from a 3D grid at a level.</li>
-    <li class="propertylistitem"><table id="mapformulas7" cellpadding="0" cellspacing="0" border="1">
+   <li class="propertylistitem"><table id="mapformulas7" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
@@ -233,6 +203,34 @@ levels.</li>
    </td>
    </tr>
 </table></li>
+</ul>
+<div class="pagesubtitle">Time Steps<a name="time" id="time"></a></div>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Average Time steps -</strong> Plots one map representing the average value of the specified parameter at any one point on the map during the time sequence selected.</li>
+<li class="propertylistitem"><strong>Difference from initial timestep (D(T)-D(T)-D(0)) -</strong> Plots a sequence of images. Each image maps the difference in the numerical value of the parameter from the initial values of the first frame.   This formula sets the value of each time step N as:</li>
+<li class="propertylistitem"><table>
+   <tr>
+   <td width="750" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>D(T) = D(T) - D(0) </p>
+   </td>
+   </tr>
+</table></li>
+<li class="propertylistitem"><strong>Max over time steps -</strong> Plots one map representing  the highest value of the specified parameter at any point on the map during the time sequence selected.</li>
+<li class="propertylistitem"><strong>Merge time sequences -</strong> Creates a loop of images where while the images will be in order with respect to time, you do not need to load in every time step.</li>
+<li class="propertylistitem"><strong>Min over time steps -</strong> Plots one map representing the lowest value of the specified parameter at any one point on the map during the time sequence selected.</li>
+<li class="propertylistitem"><strong>Sum over time steps -</strong> Plots one map  representing the total value of the parameter at any one point on the map during the  time sequence selected.</li>
+<li class="propertylistitem"><strong>Time step difference (D(T)=D(T)-D(T-1)) -</strong> Plots a sequence of images. Each frame plots the value of the specified parameter at that time, and subtracts from it the value of the same parameter at the previous time in the loop.</li>
+<li class="propertylistitem"><strong>Time step sum (D(T)=D(T)+D(T-1)) -</strong> Plots a sequence of images. Each frame plots the value of the specified parameter at that time, and adds to it the value of the same parameter at the previous time step in the loop.</li>
+</ul>
+<div class="pagesubtitle"><a name="ensemble" id="ensemble"></a>Ensemble</div>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Ensemble average over all grid members -</strong> Averages the chosen ensemble members over each time step and plots the data.</li>
+<li class="propertylistitem"><strong>Ensemble grid highest values -</strong> Takes the highest numerical value of the chosen parameter over the chosen number of ensemble members and plots the data.</li>
+<li class="propertylistitem"><strong>Ensemble grid lowest values -</strong> Takes the lowest numerical value of the chosen parameter over the chosen number of ensemble members and plots the data.</li>
+<li class="propertylistitem"><strong>Ensemble grid mode values -</strong> Takes the mode value of the chosen parameter over the chosen number of ensemble members and plots the data.</li>
+<li class="propertylistitem"><strong>Ensemble grid percentile values -</strong> Plots the ensemble average at the chosen percentage. The higher the percentage, the higher the values plotted in the display will be.</li>
+<li class="propertylistitem"><strong>Ensemble grid range of values -</strong> Takes the difference between the upper bound and lower bound of the chosen parameter over the chosen number of grid ensembles and plots the result.</li>
+<li class="propertylistitem"><strong>Ensemble grid standard deviation -</strong> Plots the standard deviation of the chosen parameter over the chosen number of ensemble members.</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">

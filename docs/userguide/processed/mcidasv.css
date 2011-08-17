@@ -15,7 +15,7 @@ body {
 .images {
 	margin-top: 10px;
 	margin-right: 10px;
-	margin-bottom: 10px;
+	margin-bottom: 15px;
 	margin-left: 22px;
 }
 
@@ -381,6 +381,10 @@ iframe.right {
   overflow: auto;
 }
 .propertylistitem img {
-	vertical-align: middle;
-	margin-bottom: 0.5em;
+
+}
+.images .caption {
+	font-weight: bold;
+	font-size: 12px;
+	font-style: italic;
 }

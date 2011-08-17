@@ -28,7 +28,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/PluginCreat
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Plugin Creator</div>
-<p>The Plugin Creator, accessed through the <strong>Tools-&gt;Plugins-&gt;Create...</strong> menu item in the Main Display Window, allows you to create new plugins. The Plugin Creator is broken up into three tabs: <strong>Resources</strong>, <strong>Excludes</strong>, and <strong>Properties</strong>.</p>
+<p>The Plugin Creator, accessed through the <strong>Tools-&gt;Plugins-&gt;Create...</strong> menu item in the Main Display window, allows you to create new plugins. The Plugin Creator is broken up into three tabs: <strong>Resources</strong>, <strong>Excludes</strong>, and <strong>Properties</strong>.</p>
 <p>A plugin is a Java JAR file that contains a set of resource files. These resource files can include things like the color tables you have created, projections, station models, formulas, etc. The plugin manager supports both adding in a whole file (e.g., all of the color tables you have created) as well as adding in individual resource objects (e.g., a specific color table you have created).</p>
 <ul>
 <li><a href="#adding_resources">Adding Resources</a></li>
@@ -40,7 +40,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/PluginCreat
 </ul>
 <a name="adding_resources" id="adding_resources"></a>
 <div class="pagesubtitle">Adding Resources</div>
-<p>To add in a file, use the <strong>File-&gt;Add File</strong> menu item. The file dialog will come up listing the contents of your local .metapps directory. This is where all of the various resources that are created are stored. For example, if you wanted to include all of your color tables then add the colortables.xml file. Use the <strong>File-&gt;Add Preferences</strong> menu item to add your User Preferences to a resource, such as a bundle you are creating or editing.  You can also add individual resources through the <strong>File-&gt;Add Resource</strong> menu item. You can also add resources through the various resource editors (e.g., Jython Editor, Parameter Defaults,Parameter Aliases). Typically this facility is available through the editor's <strong>File</strong> menu.</p>
+<p>To add in a file, use the <strong>File-&gt;Add File</strong> menu item. The file dialog will come up listing the contents of your local McIDAS-V directory. This is where all of the various resources that are created are stored. For example, if you wanted to include all of your color tables then add the colortables.xml file. Use the <strong>File-&gt;Add Preferences</strong> menu item to add your User Preferences to a resource, such as a bundle you are creating or editing.  You can also add individual resources through the <strong>File-&gt;Add Resource</strong> menu item. You can also add resources through the various resource editors (e.g., Jython Editor, Parameter Defaults,Parameter Aliases). Typically this facility is available through the editor's <strong>File</strong> menu.</p>
 <a name="resources_list" id="resources_list"></a>
 <div class="pagesubtitle">Resources List</div>
 <p>Each file, preference, and resource that is added into the Plugin Creator is listed under the <strong>Resources</strong> tab:</p>
@@ -70,7 +70,7 @@ used.</p> <a name="image2" id="image2"></a>
   <li class="propertylistitem">Display the splash icon.</li>
   <li class="propertylistitem">Show the Data Explorer on startup.</li>
   <li class="propertylistitem">Use the full screen view.</li>
-  <li class="propertylistitem">Change the height and width of the Main Display Window.</li>
+  <li class="propertylistitem">Change the height and width of the Main Display window.</li>
 </ul>
 <p>The <strong>Data</strong> category affects what sources of data you will have available when selecting data in the <strong>Data Sources</strong> tab of the Data Explorer. These options allow you to decide  the following:</p>
 <ul class="propertylist">
@@ -85,7 +85,7 @@ used.</p> <a name="image2" id="image2"></a>
 <p>The <strong>Miscellaneous</strong> category affects many features of McIDAS-V. While these options affect many things that go on 'under the hood' of McIDAS-V, there is a great deal that can be changed with these options.. These options allow you to decide  the following:</p>
 <ul class="propertylist">
   <li class="propertylistitem">If you are going to use 3D or not in your displays.</li>
-  <li class="propertylistitem">How globe and map projections are plotted in the Main Display Window.</li>
+  <li class="propertylistitem">How globe and map projections are plotted in the Main Display window.</li>
   <li class="propertylistitem">What distance units you want to use.</li>
   <li class="propertylistitem">Many aspects of the JNLP code.</li>
   <li class="propertylistitem">Many aspects of the User Preferences.</li>
@@ -94,7 +94,7 @@ used.</p> <a name="image2" id="image2"></a>
 </ul>
 <a name="writing_the_plugin" id="writing_the_plugin"></a>
 <div class="pagesubtitle">Writing the Plugin</div>
-<p>To write the plugin, click the <img src="images/WritePlugin.gif" alt="Write Plugin button" width="109" height="26"align=absmiddle> button. If you have not specified a plugin file name, (i.e., a .jar file) you will be prompted. If you also want to install the plugin to your local McIDAS-V plugins area, select the Install checkbox. Note: You will need to restart McIDAS-V for any installed plugins to take effect.</p>
+<p>To write the plugin, click the <img src="images/WritePlugin.gif" alt="Write Plugin button" width="109" height="26"align=absmiddle> button. If you have not specified a plugin file name, (i.e., a .jar file) you will be prompted. If you also want to install the plugin to your local McIDAS-V plugins area, select the Install checkbox. You can choose a specific location to save the plugin to by selecting the  <img src="images/Browse.gif" width="78" height="26" alt="Browse button"align=absmiddle> button, or by typing the file path into the field. Note: You will need to restart McIDAS-V for any installed plugins to take effect.</p>
 <a name="menus" id="menus"></a><div class="pagesubtitle">Menus</div>
 <p>Many of the menu items seen utilizing the Plugin Creator tool are unique to this menu item.</p>
 <p>The <strong>File </strong>menu has these unique options:</p>
