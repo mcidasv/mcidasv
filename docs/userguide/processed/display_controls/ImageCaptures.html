@@ -67,9 +67,11 @@ item in the Main Display window. A <strong>Print</strong> dialog will popup wher
 <div class="pagesubtitle">Saving QuickTime Movies</div>
 <p>You can save any sequence of displays as a movie. Select the <strong>View-&gt;Capture-&gt;Movie...</strong> menu
 item in the Main Display window to bring up the Movie Capture window:</p>
-<div class="images"><img src="images/VMImageCapturePopup.gif" alt="Movie Capture window"></div>
+<div class="images"><img src="images/VMImageCapturePopup.gif" alt="Image 1: Movie Capture window"><br>
+<span class="caption">Image 1: Movie Capture Window</span></div>
 <p></p>
 <div class="pagesubtitle">Properties</div>
+<p>Note: More information about these controls is found in the <a href="#create">Creating a Movie</a> section below.</p>
 <ul class="propertylist">
     <li class="propertylistitem"><strong>Capture</strong></li>
     <ul class="propertylist">
@@ -91,7 +93,7 @@ item in the Main Display window to bring up the Movie Capture window:</p>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Image Quality -</strong> Sets the quality of the images. Lower quality images will utilize less memory, but will not look as good.</li>
 <li class="propertylistitem"><strong>Save Files To -</strong> Sets the location where you want to store the movie.</li>
-<li class="propertylistitem"><strong>Filename Template -</strong> Represents the name of the movie. There are several ways you can customize the output.</li>
+<li class="propertylistitem"><strong>Filename Template -</strong> Represents the name of the movie. There are several ways you can customize the output, described in the section <a href="#filename">below</a>.</li>
 </ul>
 <li class="propertylistitem"><strong>Frames</strong></li>
 <ul class="propertylist">
@@ -103,9 +105,9 @@ item in the Main Display window to bring up the Movie Capture window:</p>
 </ul>
 <p><a name="create" id="create"></a></p>
 <div class="pagesubtitle">Creating a Movie</div>
-<p>To make a movie, there are three steps: capturing the frames, previewing the frames, and creating the movie. McIDAS-V supports QuickTime movies, animated GIF and AVI files, Google Earth KMZ and ANIS Apple HTML file formats.
+<p>To make a movie, there are three steps: capturing the frames, previewing the frames, and creating the movie. McIDAS-V supports QuickTime movies, animated GIF and AVI files, Google Earth KMZ and AniS or FlAniS HTML file formats.
 <ul class="propertylist">
-<li class="propertylistitem">To capture frames, in the <strong>Capture</strong> section of the Image Capture window, do the following:</li>
+<li class="propertylistitem">To capture frames, in the <strong>Capture</strong> section of the Movie Capture window, do the following:</li>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Capture one image -</strong> Makes a single frame of the McIDAS-V display. Progressively change the display and capture one frame at a time to create a movie.</li>
 <li class="propertylistitem"><strong>Capture animation -</strong> Captures all frames in a display time sequence you can animate with the usual <a href="../ui/Animation.html">Time Animation Controls</a>. Check <strong>Reset to start time</strong> to ensure you capture the entire animation sequence. The QuickTime animation capture starts on the first frame visible in McIDAS-V and goes to the end. This tool can be used to capture part of a loop.</li>
@@ -113,19 +115,19 @@ item in the Main Display window to bring up the Movie Capture window:</p>
 <li class="propertylistitem">You can combine these three different methods of capture. The list of frames is additive.</li>
 </ul>
 <li class="propertylistitem"> You can <strong>Preview</strong> the movie by pressing the <img src="images/Preview.gif" alt="Preview button" width="80" height="26"align=absmiddle> button. This opens a Movie Preview window, where you can see the individual slides before saving the movie. The Movie Preview window also allows you to remove individual frames from the movie before saving it with the <img src="images/DeleteThisFrame.gif" alt="Delete this frame button" width="131" height="26"align=absmiddle> button.</li>
-<li class="propertylistitem">If you want to save the individual intermediate files that are used to create the movie, check the <strong>Save files to</strong> box and specify a directory and file name format. Otherwise, the intermediate files will be
+<li class="propertylistitem"><a name="filename" id="filename"></a>If you want to save the individual intermediate files that are used to create the movie, check the <strong>Save Files To</strong> box and specify a directory and file name format. Otherwise, the intermediate files will be
 saved in a temporary directory and will be removed. You can use the following templates to customize the name of the output file:</li>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>%count% -</strong> Represents the image counter</li>
-<li class="propertylistitem"><strong>%count:decimal format% -</strong> Allows you to format the count using the same rules defined in the  lat/lon format section of the <a href="../tools/preferences/FormatPreferences.html">User Preferences</a>. (or Google 'java decimalformat' for more information).</li>
+<li class="propertylistitem"><strong>%count% -</strong> Represents the image counter.</li>
+<li class="propertylistitem"><strong>%count:decimal format% -</strong> Allows you to format the count using the same rules defined in the  lat/lon format section of the <a href="../tools/preferences/FormatPreferences.html">User Preferences</a>; You can also specify a <a href="http://download.oracle.com/javase/tutorial/i18n/format/decimalFormat.html" target="_blank">Java DecimalFormat</a>, e.g., %count:000% outputs three-digit counts with leading zeros (001, 002, etc.).</li>
 <li class="propertylistitem"><strong>%time% - </strong>Represents the  animation time in the default format.</li>
 <li class="propertylistitem"><strong>%time:time format% -</strong> Begins with "time:" and contains a time format string using the the same date formatting rules described in the <a href="../tools/preferences/FormatPreferences.html">User Preferences</a>.</li>
 </ul>
 <li class="propertylistitem">When done capturing the frames, select the <img src="images/SaveMovie.gif" alt="Save Movie button" width="98" height="26"align=absmiddle> button to specify the name and format of the file you want to save. <a name="movieplayback" id="movieplayback"></a>    </li>
 </ul>
 <div class="pagesubtitle">Playing QuickTime Movies</div>
-    <p>McIDAS-V supports displaying certain types of Quicktime movies (including
-        the ones McIDAS-V generates). These movies can be loaded in the Quicktime movie from the File Data
+    <p>McIDAS-V supports displaying certain types of QuickTime movies (including
+        the ones McIDAS-V generates). These movies can be loaded in the General-&gt;Files/Directories
     Chooser in the <strong>Data Sources</strong> tab of the Data Explorer.</p>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
