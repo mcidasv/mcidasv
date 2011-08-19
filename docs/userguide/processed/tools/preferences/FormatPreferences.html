@@ -43,122 +43,159 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
   the following symbols. Note, these symbols can be repeated to give different
   results. </li>
 <li class="propertylistitem">For example:
-<blockquote>
-  <pre>
+    <blockquote>
+        <pre>
 "MMMM" gives full month name
 "MMM" gives short month name
 "MM" gives  2 digit month number
 "M" gives  1 or 2 digit month number
 </pre>
-<table class="noborder" style="margin:10px;">
-  <tr>
-    <td width="56">Symbol</td>
-    <td width="169">Description</td>
-    <td width="234">Example</td>
-  </tr>
-  <tr>
-    <td>G</td>
-    <td>Era designator</td>
-    <td>AD</td>
-  </tr>
-  <tr>
-    <td>y</td>
-    <td>Year</td>
-    <td>1996; 96</td>
-  </tr>
-  <tr>
-    <td>M</td>
-    <td>Month in year</td>
-    <td>July; Jul; 07</td>
-  </tr>
-  <tr>
-    <td>w</td>
-    <td>Week in year</td>
-    <td>27</td>
-  </tr>
-  <tr>
-    <td>W</td>
-    <td>Week in month</td>
-    <td>2</td>
-  </tr>
-  <tr>
-    <td>D</td>
-    <td>Day in year</td>
-    <td>189</td>
-  </tr>
-  <tr>
-    <td>d</td>
-    <td>Day in month</td>
-    <td>10</td>
-  </tr>
-  <tr>
-    <td>F</td>
-    <td>Day of week in month</td>
-    <td>2</td>
-  </tr>
-  <tr>
-    <td>E</td>
-    <td>Day in week</td>
-    <td>Tuesday; Tue</td>
-  </tr>
-  <tr>
-    <td>a</td>
-    <td>Am/pm marker</td>
-    <td>PM</td>
-  </tr>
-  <tr>
-    <td>H</td>
-    <td>Hour in day (0-23)</td>
-    <td>0</td>
-  </tr>
-  <tr>
-    <td>k</td>
-    <td>Hour in day (1-24)</td>
-    <td>24</td>
-  </tr>
-  <tr>
-    <td>K</td>
-    <td>Hour in am/pm (0-11)</td>
-    <td>0</td>
-  </tr>
-  <tr>
-    <td>h</td>
-    <td>Hour in am/pm (1-12)</td>
-    <td>12</td>
-  </tr>
-  <tr>
-    <td>m</td>
-    <td>Minute in hour</td>
-    <td>30</td>
-  </tr>
-  <tr>
-    <td>s</td>
-    <td>Second in minute</td>
-    <td>55</td>
-  </tr>
-  <tr>
-    <td>S</td>
-    <td>Millisecond</td>
-    <td>978</td>
-  </tr>
-  <tr>
-    <td>z</td>
-    <td>Time zone</td>
-    <td>Pacific Standard Time; PST; GMT-08:00</td>
-  </tr>
-  <tr>
-    <td>Z</td>
-    <td>RFC 822 Time zone</td>
-    <td>-0800</td>
-  </tr>
-</table></blockquote></li>
-
+        <table width="575" border="1" style="margin:10px;">
+            <tr>
+                <td width="56"><strong>Symbol</strong></td>
+                <td width="240"><strong>Description</strong></td>
+                <td width="169"><strong>Presentation</strong></td>
+                <td width="234"><strong>Example</strong></td>
+                </tr>
+            <tr>
+                <td>G</td>
+                <td>Era designator</td>
+                <td>Text</td>
+                <td>AD</td>
+                </tr>
+            <tr>
+                <td>y</td>
+                <td>Year</td>
+                <td>Number</td>
+                <td>1996; 96</td>
+                </tr>
+            <tr>
+                <td>M</td>
+                <td>Month in year</td>
+                <td>Text and Number</td>
+                <td>July; Jul; 07</td>
+                </tr>
+            <tr>
+                <td>w</td>
+                <td>Week in year</td>
+                <td>Number</td>
+                <td>27</td>
+                </tr>
+            <tr>
+                <td>W</td>
+                <td>Week in month</td>
+                <td>Number</td>
+                <td>2</td>
+                </tr>
+            <tr>
+                <td>D</td>
+                <td>Day in year</td>
+                <td>Number</td>
+                <td>189</td>
+                </tr>
+            <tr>
+                <td>d</td>
+                <td>Day in month</td>
+                <td>Number</td>
+                <td>10</td>
+                </tr>
+            <tr>
+                <td>F</td>
+                <td>Day of week in month</td>
+                <td>Number</td>
+                <td>2</td>
+                </tr>
+            <tr>
+                <td>E</td>
+                <td>Day in week</td>
+                <td>Text</td>
+                <td>Tuesday; Tue</td>
+                </tr>
+            <tr>
+                <td>a</td>
+                <td>Am/pm marker</td>
+                <td>Text</td>
+                <td>PM</td>
+                </tr>
+            <tr>
+                <td>H</td>
+                <td>Hour in day (0-23)</td>
+                <td>Number</td>
+                <td>0</td>
+                </tr>
+            <tr>
+                <td>h</td>
+                <td>Hour in am/pm (1-12)</td>
+                <td>Number</td>
+                <td>12</td>
+                </tr>
+            <tr>
+                <td>K</td>
+                <td>Hour in am/pm (0-11)</td>
+                <td>Number</td>
+                <td>0</td>
+                </tr>
+            <tr>
+                <td>k</td>
+                <td>Hour in day (1-24)</td>
+                <td>Text</td>
+                <td>24</td>
+                </tr>
+            <tr>
+                <td>m</td>
+                <td>Minute in hour</td>
+                <td>Number</td>
+                <td>30</td>
+                </tr>
+            <tr>
+                <td>s</td>
+                <td>Second in minute</td>
+                <td>Number</td>
+                <td>55</td>
+                </tr>
+            <tr>
+                <td>S</td>
+                <td>Millisecond</td>
+                <td>Number</td>
+                <td>978</td>
+                </tr>
+            <tr>
+                <td>z</td>
+                <td>Time zone</td>
+                <td>Text and Number</td>
+                <td>Pacific Standard Time; PST; GMT-08:00</td>
+                </tr>
+            <tr>
+                <td>Z</td>
+                <td>RFC 822 Time zone</td>
+                <td>Number</td>
+                <td>-0800</td>
+                </tr>
+            <tr>
+                <td>'</td>
+                <td>Escape for text</td>
+                <td>Delimiter</td>
+                <td></td>
+                </tr>
+            <tr>
+                <td>''</td>
+                <td>Single quite</td>
+                <td>Literal</td>
+                <td></td>
+                </tr>
+            </table>
+        <p><strong>Note:</strong> The "yyyy" year symbol can also be written as "yy" for recent data. However, it cannot be written as "y".</p>
+        <blockquote>
+            <p>Ex: The day 215 in the year 2009 would be written as "09215" yyDDD and not "9215" yDDD.</p>
+        </blockquote>
+        </blockquote>
+</li>
 <a name="timezone" id="timezone"></a>
 <li class="propertylistitem"><b>Time Zone -</b> Represents the format used when McIDAS-V displays times.</li>
 <a name="latlonformat" id="latlonformat"></a>
 <li class="propertylistitem"><b>Lat/Lon Format</b> - Represents the format used when McIDAS-V displays latitudes and longitudes. The following symbols are valid in the decimal formatting.
   <blockquote>
-<table width="457" class="noborder" style="margin:10px;">
+<table width="457" border="1" style="margin:10px;">
   <tr>
     <td width="50">0</td>
     <td width="382">Digit</td>
@@ -193,8 +230,8 @@ the latitude and longitude values.
 <blockquote>
 <table width="148" border="1" style="margin:10px;">
   <tr>
-    <td width="79">Format</td>
-    <td width="57">Example</td>
+    <td width="79"><strong>Format</strong></td>
+    <td width="57"><strong>Example</strong></td>
   </tr>
   <tr>
     <td width="79">##0</td>
@@ -232,17 +269,28 @@ the latitude and longitude values.
 <a name="probeformat" id="probeformat"></a>
 <li class="propertylistitem"><b>Probe Format -</b> Represents the HTML template that is used
   to display data readouts in the data probe display. This HTML template can
-  contain macros that are replaced with the probed values. Macros are: 
-    <ul>
-  %value% Formatted value <br>
-  %unit% Display unit <br>
-  %rawvalue% Unformatted value <br>
-  %rawunit% Original unit
-</ul>
-</li>
+  contain macros that are replaced with the probed values. Macros are:
+   <blockquote><table width="300" border="1" style="margin:10px;">
+   <tr>
+    <td width="79">%value%</td>
+    <td width="57">Formatted value</td>
+  </tr>
+  <tr>
+    <td>%unit%</td>
+    <td>Display unit</td>
+  </tr>
+  <tr>
+  	<td>%rawvalue%</td>
+    <td>Unformatted value</td>
+  </tr>
+  <tr>
+  	<td>%rawunit%</td>
+    <td>Original unit</td>
+  </tr>
+  </table></blockquote></blockquote></li>
 <a name="distanceunit" id="distanceunit"></a>
 <li class="propertylistitem"><b>Distance Unit -</b> Represents the default unit that is used when displaying distances (e.g., in the Range
-  and Bearing Control).</li>
+and Bearing Control).</li>
 </ul>
 <div class="pagesubtitle">Data</div>
 <a name="samplingmode" id="samplingmode"></a>

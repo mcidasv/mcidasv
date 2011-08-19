@@ -33,6 +33,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/TextPointDat
 If your point (in situ) data is not available in one of the file formats that McIDAS-V can handle, but you can output it into a column-oriented ASCII text file, you may still be able to use the McIDAS-V displays. McIDAS-V supports reading in point observation data in a text comma separated value (CSV) file format.
 <p>You need to specify the metadata of this point data. This can be done in two ways. First, the file can have two extra header lines that defines for McIDAS-V the fields that are within the file and the types of the fields. The only other requirement is that there must be a latitude, longitude and time field in the data. See below.</p>
 <p>Secondly, if there are no metadata header lines defined, the Text Point Data Source will show the Metadata GUI <a href="#metadatagui">described below</a>.</p>
+<p>More information about the format of Time and Lat/Lon symbols can be found in the <a href="../tools/preferences/FormatPreferences.html#dateformat">User Preferences - Formats and Data</a> page.</p>
 <h2>Examples:</h2>
 <h3>Comma separated numeric values</h3>
 In the simplest form, each line line is an observation at one time and one location:
