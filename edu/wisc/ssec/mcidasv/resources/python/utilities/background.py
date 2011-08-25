@@ -15,30 +15,30 @@ from ucar.unidata.ui.colortable import ColorTableDefaults
 @contextmanager
 def managedDataSource(path, cleanup=True, dataType=None):
     """Loads a data source and performs automatic resource cleanup.
-    
-    Attempts to create and load an IDV DataSource object using a given file. 
+
+    Attempts to create and load an IDV DataSource object using a given file.
     This function works as a part of a Python "with statement". By default
-    this function will attempt to "guess" the IDV data source type of the given 
+    this function will attempt to "guess" the IDV data source type of the given
     file and call the "boomstick" (TODO: better name) resource cleanup function
     if any errors are encountered.
-    
+
     Args:
         path: Required string value that must be a valid file path or URL.
-        
+
         cleanup: Option boolean value that allows control over whether or not
         automatic resource cleanup is performed. Default value is True.
-        
-        dataType: Optional string value that must be a valid IDV 
+
+        dataType: Optional string value that must be a valid IDV
         "data source type" ID and should correspond to the file type of the "path"
         argument. Default value is None.
-        
+
     Returns:
         If McIDAS-V was able to load the file, a "ucar.unidata.data.DataSource" is
         returned. Otherwise None is returned.
     """
     # setup step
     # the problem here is that makeDataSource returns a boolean
-    # how do i grab the ref to the actual datasource that got 
+    # how do i grab the ref to the actual datasource that got
     # created?
     dataSource = getStaticMcv().makeOneDataSource(path, dataType, None)
     # TODO(jon): perhaps write another generator that takes a varname?
@@ -56,9 +56,9 @@ def managedDataSource(path, cleanup=True, dataType=None):
 
 class _JavaProxy(object):
     """One sentence description goes here
-    
+
     This is where a more complete description of the class would go.
-    
+
     Attributes:
         attr_one: Blurb about attr_one goes here.
         foo: Blurb about foo.
@@ -67,15 +67,15 @@ class _JavaProxy(object):
         """Stores a given java instance and flags the proxy as being initialized."""
         self.__javaObject = javaObject
         self.__initialized = True
-    
+
     def getJavaInstance(self):
         """Returns the actual VisAD/IDV/McIDAS-V object being proxied."""
         return self.__javaObject
-    
+
     def __str__(self):
         """Returns the results of running the proxied object's toString() method."""
         return self.__javaObject.toString()
-    
+
     def __getattr__(self, attr):
         """Forwards object attribute lookups to the internal VisAD/IDV/McIDAS-V object."""
         if not self.__dict__.has_key('_JavaProxy__initialized'):
@@ -85,13 +85,13 @@ class _JavaProxy(object):
                 return getattr(self.__javaObject, attr)
             else:
                 raise AttributeError(attr)
-    
+
     def __setattr__(self, attr, val):
         """Forwards object attribute changes to the internal VisAD/IDV/McIDAS-V object."""
         if not self.__dict__.has_key('_JavaProxy__initialized'):
             self.__dict__[attr] = val
             return
-        
+
         if hasattr(self.__javaObject, attr):
             setattr(self.__javaObject, attr, val)
         else:
@@ -103,7 +103,7 @@ class _Window(_JavaProxy):
            tab
         """
         JavaProxy.__init__(self, javaObject)
-    
+
     #def setCurrentTabIndex(self, index):
     #    """Sets the tab at the given index to be the active tab."""
     #    # TODO(jon): remove this method?
@@ -113,15 +113,15 @@ class _Window(_JavaProxy):
         """Returns the currently active tab."""
         # mcv windows should only have one component group
         return _Tab(self._JavaProxy__javaObject.getComponentGroups()[0].getActiveComponentHolder())
-    
+
     def getTabAtIndex(self, index):
         """Returns the tab at the given index."""
         return _Tab(self._JavaProxy__javaObject.getComponentGroups()[0].getHolderAt(index))
-    
+
     def getTabCount(self):
         """Returns the number of tabs."""
         return self._JavaProxy__javaObject.getComponentGroups()[0].getDisplayComponentCount()
-    
+
     def getTabs(self):
         """Returns a list of the available tabs."""
         return [_Tab(holder) for holder in self._JavaProxy__javaObject.getComponentGroups()[0].getDisplayComponents()]
@@ -131,49 +131,49 @@ class _Tab(_JavaProxy):
         """Blank for now. javaObject = McvComponentHolder
         """
         JavaProxy.__init__(self, javaObject)
-    
+
     def getName(self):
         """Returns the name of this tab."""
         return self._JavaProxy__javaObject.getName()
-    
+
     def setName(self, newTabName):
         """Set this tab's name to a given string value."""
         self._JavaProxy__javaObject.setName(newTabName)
-    
+
     def getDisplays(self):
         """Returns a list of the displays contained within this tab."""
         return [_Display(viewManager) for viewManager in self._JavaProxy__javaObject.getViewManagers()]
-    
+
 class _Display(_JavaProxy):
     def __init__(self, javaObject):
         """Blank for now. javaObject = ViewManager
-           displayType 
-           width 
-           height 
+           displayType
+           width
+           height
            panel ?
-           dataSource 
-           wireBox(boolean) 
-           colortable(string) 
-           colorBar(boolean) 
-           projection(string) 
+           dataSource
+           wireBox(boolean)
+           colortable(string)
+           colorBar(boolean)
+           projection(string)
            minValue ?
            maxValue ?
-           minVerticalScale 
-           maxVerticalScale 
-           map(list) 
-           x-rotate 
-           y-rotate 
+           minVerticalScale
+           maxVerticalScale
+           map(list)
+           x-rotate
+           y-rotate
            z-rotate
         """
         _JavaProxy.__init__(self, javaObject)
-    
+
     def getDisplayType(self):
         # TODO(jon): how to refer to 2d map displays?
         # MapViewManager, IdvUIManager.COMP_MAPVIEW
         # MapViewManager.getUseGlobeDisplay(), IdvUIManager.COMP_GLOBEVIEW
         # TransectViewManager, IdvUIManager.COMP_TRANSECTVIEW
         from ucar.unidata.idv.ui import IdvUIManager
-        
+
         className = self._JavaProxy__javaObject.getClass().getCanonicalName()
         if className == 'ucar.unidata.idv.MapViewManager':
             if self._JavaProxy__javaObject.getUseGlobeDisplay():
@@ -184,28 +184,28 @@ class _Display(_JavaProxy):
             return IdvUIManager.COMP_TRANSECTVIEW
         else:
             return IdvUIManager.COMP_VIEW
-    
+
     def setDimensions(self, x, y, width, height):
         from java.awt import Rectangle
         self._JavaProxy__javaObject.setDisplayBounds(Rectangle(x, y, width, height))
-        
+
     def getDimensions(self):
         from java.awt import Rectangle
         rect = self._JavaProxy__javaObject.getDisplayBounds()
         return rect.x, rect.y, rect.width, rect.height
-    
+
     def getDataAtLocation(self, latitude, longitude):
         #earthLocation = Util.makeEarthLocation(latitude, longitude)
         #for layer in self._JavaProxy__javaObject.getControls():
         pass
-    
+
     def getDataSources(self):
         pass
-    
+
     def getProjection(self):
         """Returns the map projection currently in use."""
         return _Projection(self._JavaProxy__javaObject.getMapDisplay().getMapProjection())
-    
+
     # TODO(jon): still deciding on a decent way to refer to an arbitrary projection...
     #def setProjection(self, projection):
     #    pass
@@ -217,13 +217,9 @@ class _Display(_JavaProxy):
         return self._JavaProxy__javaObject.getMapDisplay().getVerticalRangeUnit()
 
     def getVerticalScaleRange(self):
-        # TODO(jon): return unit?
         verticalRange = self._JavaProxy__javaObject.getMapDisplay().getVerticalRange()
         return verticalRange[0], verticalRange[1]
-    
-    #def getVerticalScaleUnits(self):
-    #    pass
-    
+
     def getMaps(self):
         """Returns a dictionary of maps and their status for the display."""
         # dict of mapName->boolean (describes if a map is enabled or not.)
@@ -233,54 +229,58 @@ class _Display(_JavaProxy):
         for mapState in mapLayer.getMapStates():
             mapStates[mapState.getSource()] = mapState.getVisible()
         return mapStates
-    
+
     def setMaps(self, mapStates):
-        """Allows for controlling the visibility of all available maps for 
+        """Allows for controlling the visibility of all available maps for
         the display."""
         mapLayer = self._JavaProxy__javaObject.getControls()[0]
         for currentState in mapLayer.getMapStates():
             mapSource = currentState.getSource()
             if mapSource in mapStates:
                 currentState.setVisible(mapStates[mapSource])
-    
+
     def getCenter(self, includeScale=False):
         """Returns the latitude and longitude at the display's center."""
         position = self._JavaProxy__javaObject.getScreenCenter()
         latitude = position.getLatitude().getValue()
         longitude = position.getLongitude().getValue()
-        
+
         # validate! (visad's EarthLocation allows for bad values!)
         llp = LatLonPointImpl(latitude, longitude)
-        
-        if include_scale:
+
+        if includeScale:
             result = llp.getLatitude(), llp.getLongitude(), self.getScaleFactor()
         else:
             result = llp.getLatitude(), llp.getLongitude()
-        
+
         return result
-    
+
+    def setScaleFactor(self, scale):
+        """ """
+        self._JavaProxy__javaObject.getMapDisplay().zoom(scale)
+
     def getScaleFactor(self):
         return self._JavaProxy__javaObject.getMapDisplay().getScale()
-    
+
     def center(self, latitude, longitude, scale=1.0):
         self.setCenter(latitude, longitude, scale)
-    
+
     def setCenter(self, latitude, longitude, scale=1.0):
         """Centers the display over a given latitude and longitude.
-        
-        Please be aware that something like: 
+
+        Please be aware that something like:
         center(lat, long, 1.2)
         center(lat, long, 1.2)
         the second call will rescale the display to be 1.2 times the size of
         the display *after the first call.* Or, those calls are essentially
         the same as "center(lat, long, 2.4)".
-        
-        
-        
+
+
+
         Args:
         latitude:
         longitude:
-        scale: Optional parameter for "zooming". Default value (1.0) results in no rescaling; less than 1.0 "zooms out", while greater than 1.0 "zooms in." 
+        scale: Optional parameter for "zooming". Default value (1.0) results in no rescaling; less than 1.0 "zooms out", while greater than 1.0 "zooms in."
         """
         # source and dest are arbitrary rectangles.
         # float scaleX = dest.width / source.width;
@@ -290,25 +290,25 @@ class _Display(_JavaProxy):
         # glTranslatef(destCenter.x, destCenter.y, 0.0);
         # glScalef(scaleX, scaleY, 0.0);
         # glTranslatef(sourceCenter.x * -1.0, sourceCenter.y * -1.0, 0.0);
-        
-        earthLocation = Util.makeEarthLocation(LatLonPointImpl(latitude, longitude))
+        validated = LatLonPointImpl(latitude, longitude)
+        earthLocation = Util.makeEarthLocation(validated.getLatitude(), validated.getLongitude())
         mapDisplay = self._JavaProxy__javaObject.getMapDisplay()
-        
+
         # no idea what the problem is here...
         mapDisplay.centerAndZoom(earthLocation, False, scale)
         # try to position correctly
         mapDisplay.centerAndZoom(earthLocation, False, 1.0)
         mapDisplay.centerAndZoom(earthLocation, False, 1.0)
-        
-    
+
+
     def getBackgroundColor(self):
         """Returns the Java AWT color object of the background color (or None)."""
         return self._JavaProxy__javaObject.getMapDisplay().getBackground()
-    
+
     def setBackgroundColor(self, color=java.awt.Color.CYAN):
         """Sets the display's background color to the given AWT color. Defaults to cyan."""
         self._JavaProxy__javaObject.getMapDisplay().setBackground(color)
-    
+
 #    def addLayer(self, newLayer):
 #        """Adds a new display layer (display control) to the end of this display's layer list."""
 #        self._JavaProxy__javaObject.addDisplayInfo(DisplayInfo(_))
@@ -316,11 +316,11 @@ class _Display(_JavaProxy):
 #    def getMapLayer(self):
 #        # the map layer will typically be the first layer... still buggy :(
 #        return self._JavaProxy__javaObject.getControls()[0]
-    
+
     def getLayer(self, index):
         """Returns the layer at the given index (zero-based!) for this Display"""
         return _Layer(self._JavaProxy__javaObject.getControls()[index])
-    
+
     def getLayers(self):
         """Returns a list of all layers used by this Display."""
         return [_Layer(displayControl) for displayControl in self._JavaProxy__javaObject.getControls()]
@@ -330,11 +330,11 @@ class _Layer(_JavaProxy):
     def __init__(self, javaObject):
         """Creates a proxy for ucar.unidata.idv.DisplayControl objects."""
         _JavaProxy.__init__(self, javaObject).addDisplayInfo()
-    
+
     def getFrameCount(self):
         # looking like ucar.visad.display.AnimationWidget is the place to be
         pass
-    
+
     def getFrameDataAtLocation(self, latitude, longitude, frame):
         # just return the value
         pass
@@ -349,17 +349,17 @@ class _Layer(_JavaProxy):
 class _DataSource(_JavaProxy):
     def __init__(self, javaObject):
         """Blank for now.
-           server 
-           dataset 
-           imageType 
-           coordinateType 
-           xcoordinate 
-           ycoordinate 
-           xyLocation 
-           unit 
+           server
+           dataset
+           imageType
+           coordinateType
+           xcoordinate
+           ycoordinate
+           xyLocation
+           unit
            magnification
-           lineSize 
-           elementSize 
+           lineSize
+           elementSize
         """
         _JavaProxy.__init__(self, javaObject)
 
@@ -375,12 +375,12 @@ class _ColorTable(_JavaProxy):
         """Creates a proxy for ucar.unidata.util.ColorTable objects.
            width
            height
-           xLocation 
-           yLocation 
-           minValue 
-           maxValue 
-           majorInterval 
-           minorInterval 
+           xLocation
+           yLocation
+           minValue
+           maxValue
+           majorInterval
+           minorInterval
         """
         _JavaProxy.__init__(self, javaObject)
 
@@ -389,11 +389,11 @@ class _ColorTable(_JavaProxy):
 class _Annotation(_JavaProxy):
     def __init__(self, javaObject):
         """Blank for now.
-           font 
-           fontColor 
-           fontSize 
-           value(string) 
-           xLocation 
+           font
+           fontColor
+           fontSize
+           value(string)
+           xLocation
            yLocation
         """
         _JavaProxy.__init__(self, javaObject)
@@ -419,9 +419,9 @@ class _Annotation(_JavaProxy):
 
 def setViewSize(width, height):
     """Set the view size to a given width and height.
-    
+
     Longer description goes here.
-    
+
     Args:
         width:
         height:
@@ -430,16 +430,16 @@ def setViewSize(width, height):
 
 def getColorTable(name=ColorTableDefaults.NAME_DEFAULT):
     """Return the ColorTable associated with the given name.
-    
+
     Longer description goes here.
-    
+
     Args:
         name: The name of the desired ColorTable. If no name was given, the
               name of the IDV's default ColorTable will be used.
-    
+
     Returns:
         The first ColorTable with a matching name.
-    
+
     Raises:
         LookupError: If there was no ColorTable with the given name.
     """
@@ -465,12 +465,12 @@ def allWindows():
 
 def firstDisplay():
     """Returns the first display
-    
+
     Longer description goes here.
-    
+
     Returns:
         The first Display (aka ViewManager).
-    
+
     Raises:
         IndexError: If there are no Displays.
     """
@@ -487,15 +487,15 @@ def activeDisplay():
 
 def createLayer(layerType, data, dataParameter='Data'):
     """Creates a new Layer in the active Display.
-    
+
     Args:
         layerType: ID string that represents a type of layer. The valid names
                    can be determined with the "allLayerTypes()" function.
-        
+
         data: Data object to associate with the resulting layer.
-        
+
         dataParameter: Optional...
-    
+
     Returns:
         The Layer that was created in the active display.
     """
@@ -516,23 +516,23 @@ def projectionNames():
 
 def getProjection(name=''):
     """Returns the projection associated with the given name.
-    
+
     Longer description here.
-    
+
     Args:
         name: Name of the desired projection.
-    
-    Returns: 
+
+    Returns:
         The first projection whose name matches the given name. If the given
         name is empty (or None), McIDAS-V's default projection is returned.
         (does that make sense!?)
-    
+
     Raises:
         ValueError: If there was no projection with the given name.
     """
     if not name:
         return _Projection(idv.getIdvProjectionManager().getDefaultProjection())
-    
+
     for projection in idv.getIdvProjectionManager().getProjections():
         if name == projection.getName():
             return _Projection(projection)
@@ -555,7 +555,7 @@ def performAction(action):
     else:
         prefixedId = action
         action = action.replace('action:', '')
-    
+
     if action in available:
         getStaticMcv().handleAction(prefixedId)
     else:
