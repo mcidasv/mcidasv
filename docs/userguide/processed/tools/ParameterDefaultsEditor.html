@@ -42,14 +42,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ParameterDe
     <li class="propertylistitem"><strong>Color Table -</strong> Shows the active color table and the associated high and low data values in the units of the display.</li>
     <li class="propertylistitem"><strong>Range -</strong> Represents the range that the color bar will cover, from low to high.</li>
     <li class="propertylistitem"><strong>Contours -</strong> Represents the spacing (difference in value) between contours.</li>
-    <li class="propertylistitem"><strong>Display Unit -</strong> Represents the unit that the parameter will display in.</li>
+    <li class="propertylistitem"><strong>Display Unit -</strong> Represents the unit used to display the parameter.</li>
 </ul>
 <p>This feature lets you preset conventional color and contouring choices, and lets
 you override system defaults.</p>
 <p>There are two sets of defaults: user defaults in the <strong>User defaults</strong> tab,
   and system defaults supplied with McIDAS-V in the <strong>System defaults</strong> tab.</p>
 <p>While the actual system defaults cannot be modified, anything you modify will be transferred to the <strong>User defaults</strong> tab. When you do this
-  the Parameter Defaults Properties window allows you to define what properties
+  the Parameter Defaults window allows you to select what properties
   you want to define:</p>
 <a name="image2" id="image2"></a>
 <div class="images"><img src="images/ParamDefaultsProperties.gif" alt="Image 2: Parameter Defaults Properties"> <br>
@@ -65,7 +65,7 @@ on a row to add a new row, edit the settings for the row or delete the row.</p>
     <li class="propertylistitem"><strong>Parameter -</strong> Represents the name of the parameter. The double down arrows allow you to change the parameter to one of a loaded data source, or a predefined alias.</li>
     <li class="propertylistitem"><b>Color Table</b> - Shows the active color table and the associated high and low data values in the units of the display. As the mouse pointer is moved over the color bar, the value at a particular color is shown. Right click on the color bar or click on the button that displays the name of the Color Table to make modifications to the color bar. This allows you to open the <a href="ColorTableEditor.html">Color Table Editor</a>, change the range, select other color tables, etc.</li>
     <li class="propertylistitem"><strong>Range -</strong> Represents the range that the color bar will cover, from low to high.</li>
-    <li class="propertylistitem"><strong>Unit -</strong> Represents the unit that the parameter will display in.</li>
+    <li class="propertylistitem"><strong>Unit -</strong> Represents the unit used to display the parameter.</li>
     <li class="propertylistitem"><strong>Contour Interval</strong></span><strong> -</strong> Represents the spacing (difference in value) between contours. There are four ways to specify the contour interval.</li>
 <ul class="propertylist">
     <li class="propertylistitem">1. Specify a single value to denote a regular interval between contours.</li>
@@ -93,6 +93,18 @@ on a row to add a new row, edit the settings for the row or delete the row.</p>
   <li class="propertylistitem"><strong>Labels: Font -</strong> Represents the font style of the contour labels.</li>
   <li class="propertylistitem"><strong>Labels: Size -</strong> Represents the font size of the contour labels.</li>
   <li class="propertylistitem"><strong>Labels: Align -</strong> Represents the way contour labels will be written on the contours. <strong>Along Contours</strong> means the labels will be written along contours, and while they will not be written upside down, there is a chance they will be written at an angle depending on the layout of the contours. <strong>Horizontal</strong> means the contour labels will be written on the contour, but it will be written in the horizontal and not on an angle.</li>
+</ul>
+<div class="pagesubtitle">Menus</div>
+<p>The <strong>File</strong> menu has these unique items:</p>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>New Row -</strong> Opens a <a href="#image2">Parameter Defaults</a> window, which allows you to select what properties
+  you want to define.</li>
+<li class="propertylistitem"><strong>Open -</strong> Allows you to open an eXtensible Markup Language (XML) file (*.xml).</li>
+<li class="propertylistitem"><strong>Import -</strong> Allows you to import an eXtensible Markup Language (XML) file (*.xml).</li>
+<li class="propertylistitem"><strong>Export to File - </strong>Allows you to save your Parameter as an eXtensible Markup Language (XML) file (*.xml).</li>
+<li class="propertylistitem"><strong>Export to Plugin -</strong> Opens the <a href="PluginCreator.html">Plugin Creator</a> window with all of your aliases loaded in.</li>
+<li class="propertylistitem"><strong>Export Selected to Plugin -</strong> Opens the <a href="PluginCreator.html">Plugin Creator</a> window with your selected aliases loaded in.</li>
+<li class="propertylistitem"><strong>Close -</strong> Closes the Parameter Defaults Editor window.</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
