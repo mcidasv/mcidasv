@@ -31,7 +31,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Lev
 <p>The <strong>Radar-&gt;Level II-&gt;Remote</strong> chooser allows you to choose Level II data from a remote THREDDS server. For more information on how to use this choosers, see <a href="../../quickstart/RadarLevelII.html">Getting Started - Displaying Level II Radar Imagery</a>.</p>
 <a name="image1" id="image1"></a>
 <div class="images"><img src="images/Level2Chooser.gif" alt="Image 1: Level II Radar Chooser"> <br>
-    <span class="caption">Image 1: Level II Radar Chooser</span></div>
+    <span class="caption">Image 1: Level II Radar Remote Chooser</span></div>
 <a name="remote" id="remote"></a>
 <p></p>
 <div class="pagesubtitle">Properties</div>
@@ -66,8 +66,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Lev
 <p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-    <li class="propertylistitem"><strong>Radar Location </strong>- Represents the name of the location. By default, McIDAS-V will use the folder name to determine the radar location.</li>
-    <li class="propertylistitem"><strong>Relative Times -</strong> Represents the times of the radar displays. These times can be individually set, or you can use a File Pattern to display the images in specific intervals.</li>
+    <li class="propertylistitem"><strong>Station </strong>- Represents the name of the location. By default, McIDAS-V will use the folder name to determine the radar location.</li>
     <li class="propertylistitem"><strong>Look In</strong> - Allows you to select folders to search for data files, or you can double click on folder names.</li>
     <li class="propertylistitem"><img src="images/UpOneLevel.gif" alt="Up one level button" width="24" height="24" align=absmiddle> <strong> Up One Level</strong> - Moves you up one folder level in your local file system.</li>
     <li class="propertylistitem"><img src="images/Desktop.gif" alt="Desktop button" width="24" height="24" align=absmiddle> <strong> Desktop</strong> - Takes you to the Desktop folder of your local file system.</li>
@@ -76,8 +75,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Lev
     <li class="propertylistitem"><img src="images/Details.gif" alt="Details button" width="23" height="24" align=absmiddle> <strong> Details</strong> - Switches the view to a detailed list of all folders and files in the current path.</li>
     <li class="propertylistitem"><img src="images/ShowHistoryMenu.gif" alt="Show history menu button" width="24" height="24" align=absmiddle> <strong> Show History Menu</strong> - Shows a list of the last 15 folders that data was loaded from.</li>
     <li class="propertylistitem"><strong>File Name</strong> - Represents the file name. Select a file to populate the entry box to show the full name of the file selected.</li>
-    <li class="propertylistitem"><strong>Files of Type</strong> - Represents the file type. Narrow down the files shown in a folder to a specific data type.</li>
-    <li class="propertylistitem"><strong>File Pattern</strong> - Specifies the pattern for files to look for if <strong>Relative Times</strong> is set to "Use the <strong>N</strong> most recent times.</li>
+    <li class="propertylistitem"><strong>Files of Type</strong> - Represents the file type. This narrows down the files shown in a folder to a specific data type.</li>
+    <li class="propertylistitem"><strong>Times -</strong> Represents the times of the radar displays. These times can be individually set, or you can use a File Pattern to display the images in specific intervals.</li>
+    <li class="propertylistitem"><strong>File Pattern</strong> - Specifies the pattern for files to look for if <strong>Times</strong> is set to "Use most recent N files&quot;.</li>
     <li class="propertylistitem"><img src="images/Help.gif" alt="Help button" align=absmiddle> <strong> Help</strong> - Brings up this help page.</li>
     <li class="propertylistitem"><img src="images/Refresh.gif" alt="Refresh button" align=absmiddle> <strong> Refresh</strong> - Updates the Level II radar chooser with the most recent data.</li>
     <li class="propertylistitem"><img src="../../quickstart/images/AddSource.gif" alt="Add Source button" align=absmiddle> <strong> -</strong> Loads the selected radar data.</li>

@@ -124,7 +124,7 @@
     <tocitem text="Display Menus" target="idv.ui.displaymenus"/>
 	<tocitem text="Legend" target="idv.ui.legend" />
     <tocitem text="Time Animation" target="idv.ui.animation"/>
-	<tocitem text="Display Visibility" target="idv.ui.displayvisibility"/>
+	<tocitem text="Visibility Animation" target="idv.ui.displayvisibility"/>
     <tocitem text="Zooming, Panning and Rotating" target="idv.ui.navigation"/>
 	<tocitem text="Modify the Color Bar Interactively" target="idv.ui.modifycolorinteractively"/>
     <tocitem text="Transect Views" target="idv.ui.transectviewmanager"/>

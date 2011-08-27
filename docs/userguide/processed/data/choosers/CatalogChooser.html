@@ -28,8 +28,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Cat
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Choosing Cataloged Data</div>
-<p>The <strong>General-&gt;Catalogs</strong> chooser shows THREDDS catalogs of data holdings on remote data servers (typically TDS or OPeNDAP) and provides access to remote Web Map Server (WMS) image servers. McIDAS-V provides an initial default catalog, idvcatalog.xml. It should appear in the Catalogs menu. If not you can directly enter the URL of the catalog: http://www.unidata.ucar.edu/georesources/idvcatalog.xml  </p>
-<p>This catalog has links to a catalog of real time model data, a collection of county level shapefiles for roads and hydrography features and a collection of useful Web Map Servers. For more information on using this chooser to display grid data, see <a href="../../quickstart/Grids.html">Getting Started - Displaying Gridded Data</a>.</p>
+<p>The <strong>General-&gt;Catalogs</strong> chooser shows THREDDS catalogs of data holdings on remote data servers (typically TDS or OPeNDAP) and provides access to remote Web Map Server (WMS) image servers. McIDAS-V provides an initial default catalog, idvcatalog.xml. It should appear in the Catalogs menu. If not you can directly enter the URL of the catalog: http://www.unidata.ucar.edu/georesources/idvcatalog.xml.</p>
+<p>This catalog has links to a catalog of real time model data, a collection of county level shapefiles for roads and hydrography features, and a collection of useful Web Map Servers. For more information on using this chooser to display grid data, see <a href="../../quickstart/Grids.html">Getting Started - Displaying Gridded Data</a>.</p>
 <a name="image1" id="image1"></a>
 <div class="images"><img src="images/CatalogChooser.gif" alt="Image 1: Catalog Chooser"><br>
   <span class="caption">Image 1: Catalog Chooser</span></div>
@@ -49,7 +49,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Cat
 <a name="image2" id="image2"></a>
 <div class="images"><img src="images/WmsChooser.gif" alt="Image 2: WMS Chooser"> <br>
   <span class="caption">Image 2: WMS Chooser</span></div>
-<p>The tree view on the left shows the different image layers available. You can select one image or, using a Control+click, select multiple images. The map on the right is intended to provide an overview of the bounding box area of a selected image.</p>
+<p>The tree view on the left shows the different image layers available. You can select one image or, using a Ctrl+click, select multiple images. The map on the right plots a red box around the bounding area of the particular item selected.</p>
+<p>Data files that are imported through the WMS Servers must contain gridded data. Also, the NetCDF-Java Common Data Model must be able to identify the coordinate system used.</p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
     <li class="propertylistitem"><strong>Merge Layers</strong> - Selects multiple data sources to be loaded and displayed at the same time. When unchecked, multiple data sources will be loaded, but not displayed.</li>

@@ -202,7 +202,7 @@
             <span class="link" onClick="setPage('ui/DisplayMenus.html');">Display Menus </span><br>
 <span class="link" onClick="setPage('ui/Legend.html');"> Legend</span><br>           
             <span class="link" onClick="setPage('ui/Animation.html');">Time Animation</span><br>
-            <span class="link" onClick="setPage('ui/DisplayVisibility.html');">Display Visibility</span><br>
+            <span class="link" onClick="setPage('ui/DisplayVisibility.html');">Visibility Animation</span><br>
             <span class="link" onClick="setPage('ui/Navigation.html');">Zooming, Panning and Rotating</span><br>
             <span class="link" onClick="setPage('ui/ModifyColorInteractively.html');">Modify the Color Bar Interactively</span><br>
             <span class="link" onClick="setPage('ui/TransectViewManager.html');">Transect Views</span><br>
