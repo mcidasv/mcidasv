@@ -38,10 +38,12 @@ import edu.wisc.ssec.mcidasv.data.adde.sgp4.AstroConst;
 import edu.wisc.ssec.mcidasv.data.hydra.CurveDrawer;
 import edu.wisc.ssec.mcidasv.util.XmlUtil;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -54,6 +56,8 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -494,6 +498,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
      *
      * @return container of contents
      */
+    
     public Container doMakeContents() {
         this.fontSizeChange =new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -524,40 +529,43 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         this.fontSizeFld = new JTextField(Integer.toString(size),3);
         this.fontSizeFld.addFocusListener(this.fontSizeFocusChange);
         this.fontSizeFld.addActionListener(this.fontSizeChange);
-        this.fontSizePanel = GuiUtils.doLayout( new Component[] {
-                 new JLabel("Font Size: "),
-                 this.fontSizeFld,
-                 new JLabel(" "),
-                 this.fontSizeSlider }, 4,
-                 GuiUtils.WT_N, GuiUtils.WT_N);
+        
+        fontSizePanel = new JPanel();
+        fontSizePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        fontSizePanel.add(new JLabel("Font Size: "));
+        fontSizePanel.add(fontSizeFld);
+        fontSizePanel.add(fontSizeSlider);
 
         Color swatchColor = getColor();
         colorSwatch = (GuiUtils.ColorSwatch)makeColorBox(swatchColor);
-        colorPanel = GuiUtils.doLayout(new Component[] {
-                           new JLabel("Set Color: "),
-                           colorSwatch }, 2,
-                           GuiUtils.WT_N, GuiUtils.WT_N);
+        
+        colorPanel = new JPanel();
+        colorPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        colorPanel.add(new JLabel("Set Color: "));
+        colorPanel.add(colorSwatch);
+        
         JPanel groundStationPanel = makeGroundStationPanel();
 
         Insets  dfltGridSpacing = new Insets(4, 0, 4, 0);
         String  dfltLblSpacing  = " ";
 
         swathWidthPanel = makeSwathWidthPanel();
-        List allComps = new ArrayList();
-
-        allComps.add(swathWidthPanel);
-        allComps.add(new JLabel(" "));
-        allComps.add(new JLabel(" "));
-        allComps.add(fontSizePanel);
-        allComps.add(colorPanel);
-        allComps.add(new JLabel(" "));
-        allComps.add(new JLabel(" "));
-        allComps.add(locationPanel);
-        allComps.add(groundStationPanel);
-        GuiUtils.tmpInsets = GRID_INSETS;
-        JPanel dateTimePanel = GuiUtils.doLayout(allComps, 1, GuiUtils.WT_NY,
-                               GuiUtils.WT_N);
-        return GuiUtils.top(dateTimePanel);
+        
+        JPanel outerPanel = new JPanel(new BorderLayout());
+        
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.add(swathWidthPanel);
+        mainPanel.add(fontSizePanel);
+        mainPanel.add(colorPanel);
+        mainPanel.add(locationPanel);
+        mainPanel.add(groundStationPanel);
+        mainPanel.add(latLonAltPanel);
+        mainPanel.add(antColorPanel);
+        
+        outerPanel.add(mainPanel, BorderLayout.NORTH);
+        
+        return outerPanel;
     }
 
     private JPanel makeGroundStationPanel() {
@@ -681,32 +689,29 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 redrawCoverageCircle();
             }
         });
-        locationPanel = GuiUtils.doLayout(new Component[] {
-                           new JLabel("Ground Station: "),
-                           locationComboBox }, 2,
-                           GuiUtils.WT_N, GuiUtils.WT_N);
-        latLonAltPanel = GuiUtils.doLayout(new Component[] {
-                           latLonWidget,
-                           new JLabel(" Altitude: "), altitudeFld,
-                           new JLabel(" Antenna Angle: "), antennaAngle }, 5,
-                           GuiUtils.WT_N, GuiUtils.WT_N);
+        
+        locationPanel = new JPanel();
+        locationPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        locationPanel.add(new JLabel("Ground Station:"));
+        locationPanel.add(locationComboBox);
+        
+        latLonAltPanel = new JPanel();
+        latLonAltPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        latLonAltPanel.add(latLonWidget);
+        latLonAltPanel.add(new JLabel("Altitude: "));
+        latLonAltPanel.add(altitudeFld);
+        latLonAltPanel.add(new JLabel("Antenna Angle: "));
+        latLonAltPanel.add(antennaAngle);
 
         Color swatchAntColor = getAntColor();
         antColorSwatch = (GuiUtils.ColorSwatch)makeAntColorBox(swatchAntColor);
-        antColorPanel = GuiUtils.doLayout(new Component[] {
-                           new JLabel("Set Color: "),
-                           antColorSwatch }, 2,
-                           GuiUtils.WT_N, GuiUtils.WT_N);
-
-        List allComps = new ArrayList();
-        allComps.add(locationPanel);
-        allComps.add(new JLabel(" "));
-        allComps.add(latLonAltPanel);
-        allComps.add(new JLabel(" "));
-        allComps.add(antColorPanel);
-        JPanel retPanel = GuiUtils.doLayout(allComps, 1, GuiUtils.WT_NY,
-                               GuiUtils.WT_N);
-        return GuiUtils.top(retPanel);
+        
+        antColorPanel = new JPanel();
+        antColorPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        antColorPanel.add(new JLabel("Set Color: "));
+        antColorPanel.add(antColorSwatch);
+        
+        return latLonAltPanel;
     }
 
     private JPanel makeSwathWidthPanel() {
@@ -730,16 +735,17 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
         saveBtn = new JButton("Save");
 
-        JPanel pan = GuiUtils.doLayout(new Component[] {
-                        new JLabel("Satellite:  "),
-                        satelliteName, 
-                        new JLabel("     Swath Width: "),
-                        swathWidthFld,
-                        kmLabel,
-                        new JLabel("  "),
-                        saveBtn }, 7,
-                        GuiUtils.WT_N, GuiUtils.WT_N);
-        return pan;
+        JPanel jp = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        jp.add(new JLabel("Satellite: "));
+        jp.add(satelliteName);
+        jp.add(Box.createHorizontalStrut(5));
+        jp.add(new JLabel("Swath Width: "));
+        jp.add(swathWidthFld);
+        jp.add(kmLabel);
+        jp.add(Box.createHorizontalStrut(5));
+        jp.add(saveBtn);
+        
+        return jp;
     }
 
     private void changeSwathWidth() {
@@ -764,6 +770,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     /**
      * Apply the map (height) position to the displays
      */
+    
     private void applyTrackPosition() {
         try {
             DisplayRealType dispType = navDsp.getDisplayAltitudeType();
@@ -797,7 +804,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     private CurveDrawer drawCoverageCircle(double lat, double lon, double satAlt, Color color) {
         if (!(latLonWidget.isLatLonDefined())) return null;
-/* mean earthRadius in km */
+        /* mean earthRadius in km */
         double earthRadius = AstroConst.R_Earth_mean/1000.0;
         satAlt += earthRadius;
         double pi = Math.PI;
