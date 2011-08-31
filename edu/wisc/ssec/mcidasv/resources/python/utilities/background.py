@@ -263,9 +263,10 @@ class _Display(_JavaProxy):
         return self._JavaProxy__javaObject.getMapDisplay().getScale()
 
     def center(self, latitude, longitude, scale=1.0):
-        self.setCenter(latitude, longitude, scale)
+        self.setCenter(latitude, longitude)
+        self.setScaleFactor(scale)
 
-    def setCenter(self, latitude, longitude, scale=1.0):
+    def setCenter(self, latitude, longitude):
         """Centers the display over a given latitude and longitude.
 
         Please be aware that something like:
