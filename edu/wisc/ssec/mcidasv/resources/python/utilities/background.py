@@ -269,13 +269,11 @@ class _Display(_JavaProxy):
         """Centers the display over a given latitude and longitude.
 
         Please be aware that something like:
-        center(lat, long, 1.2)
-        center(lat, long, 1.2)
+        setCenter(lat, long, 1.2)
+        setCenter(lat, long, 1.2)
         the second call will rescale the display to be 1.2 times the size of
         the display *after the first call.* Or, those calls are essentially
-        the same as "center(lat, long, 2.4)".
-
-
+        the same as "setCenter(lat, long, 2.4)".
 
         Args:
         latitude:
