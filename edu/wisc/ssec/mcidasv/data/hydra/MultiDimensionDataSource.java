@@ -457,6 +457,10 @@ public class MultiDimensionDataSource extends HydraDataSource {
          hasTrackPreview = true;
        }
        else if (name.indexOf("2B-GEOPROF") > 0) {
+         adapters = new MultiDimensionAdapter[2];
+         defaultSubsets = new HashMap[2];
+         propsArray = new Hashtable[2];
+
          HashMap table = ProfileAlongTrack.getEmptyMetadataTable();
          table.put(ProfileAlongTrack.array_name, "2B-GEOPROF/Data Fields/Radar_Reflectivity");
          table.put(ProfileAlongTrack.range_name, "2B-GEOPROF_RadarReflectivity");
@@ -485,22 +489,33 @@ public class MultiDimensionDataSource extends HydraDataSource {
          table.put(ProfileAlongTrack.array_name, "2B-GEOPROF/Geolocation Fields/Latitude");
          table.put(ProfileAlongTrack.range_name, "Latitude");
          table.put(ProfileAlongTrack.trackDim_name, "nray");
-         table.put(ProfileAlongTrack.vertDim_name, "nbin");
          adapter_s[0] = new ArrayAdapter(reader, table);
 
          table = ProfileAlongTrack.getEmptyMetadataTable();
          table.put(ProfileAlongTrack.array_name, "2B-GEOPROF/Geolocation Fields/DEM_elevation");
          table.put(ProfileAlongTrack.range_name, "DEM_elevation");
          table.put(ProfileAlongTrack.trackDim_name, "nray");
-         table.put(ProfileAlongTrack.vertDim_name, "nbin");
          adapter_s[1] = new ArrayAdapter(reader, table);
 
          table = ProfileAlongTrack.getEmptyMetadataTable();
          table.put(ProfileAlongTrack.array_name, "2B-GEOPROF/Geolocation Fields/Longitude");
          table.put(ProfileAlongTrack.range_name, "Longitude");
          table.put(ProfileAlongTrack.trackDim_name, "nray");
-         table.put(ProfileAlongTrack.vertDim_name, "nbin");
          adapter_s[2] = new ArrayAdapter(reader, table);
+
+         TrackDomain track_domain = new TrackDomain(adapter_s[2], adapter_s[0], adapter_s[1]);
+         track_adapter = new TrackAdapter(track_domain, adapter_s[1]);
+
+         /*
+         adapters[2] = new TrackAdapter(new TrackDomain(adapter_s[2], adapter_s[0], adapter_s[1]), adapter_s[1]);
+         ((TrackAdapter)adapters[2]).setName("Track3D");
+         defaultSubsets[2] = adapters[2].getDefaultSubset();
+         */
+
+         adapters[1] = new TrackAdapter(new TrackDomain(adapter_s[2], adapter_s[0]), adapter_s[1]);
+         ((TrackAdapter)adapters[1]).setName("Track2D");
+         defaultSubsets[1] = adapters[1].getDefaultSubset();
+
 
          properties.put("medianFilter", new String[] {Double.toString(6), Double.toString(14)});
          properties.put("setBelowSfcMissing", new String[] {"true"});
@@ -664,6 +679,34 @@ public class MultiDimensionDataSource extends HydraDataSource {
          categories = DataCategory.parseCategories("2D grid;GRID-2D;");
          hasImagePreview = true;
        }
+       else if (name.startsWith("geocatL2") && name.endsWith("ci.hdf")) {
+         String[] arrayNames = new String[] {"box_average_11um_ctc", "box_average_11um_ctc_scaled", "conv_init", "cloud_type"};
+
+         adapters = new MultiDimensionAdapter[arrayNames.length];
+         defaultSubsets = new HashMap[arrayNames.length];
+         propsArray = new Hashtable[arrayNames.length];
+
+         for (int k=0; k<arrayNames.length; k++) {
+           HashMap swthTable = SwathAdapter.getEmptyMetadataTable();
+           swthTable.put("array_name", arrayNames[k]);
+           swthTable.put("lon_array_name", "lon");
+           swthTable.put("lat_array_name", "lat");
+           swthTable.put("XTrack", "Elements");
+           swthTable.put("Track", "Lines");
+           swthTable.put("geo_Track", "Lines");
+           swthTable.put("geo_XTrack", "Elements");
+           swthTable.put("range_name", arrayNames[k]);
+
+           SwathAdapter swathAdapter0 = new SwathAdapter(reader, swthTable);
+           swathAdapter0.setDefaultStride(1);
+           HashMap subset = swathAdapter0.getDefaultSubset();
+           defaultSubset = subset;
+           adapters[k] = swathAdapter0;
+           defaultSubsets[k] = defaultSubset;
+         }
+         categories = DataCategory.parseCategories("2D grid;GRID-2D;");
+         hasImagePreview = true;
+       } 
        else {
          String[] arrayNames = new String[] {"baseline_cmask_seviri_cloud_mask", "baseline_ctype_seviri_cloud_type",
                                              "baseline_ctype_seviri_cloud_phase", "baseline_cld_hght_seviri_cloud_top_pressure",
