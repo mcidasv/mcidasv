@@ -193,6 +193,11 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
     IntegratedDataViewer idv = getIdv();
     FlatField track = null;
 
+    dataChoice = dataSource.findDataChoice("Track3D");
+    if (dataChoice == null) {
+       return null;
+    }
+
     track = (FlatField) dataSource.getData(dataSource.findDataChoice("Track3D"), null, getDataSelection(), dataSource.getProperties());
 
     LineDrawing trackDsp = new LineDrawing("track");
