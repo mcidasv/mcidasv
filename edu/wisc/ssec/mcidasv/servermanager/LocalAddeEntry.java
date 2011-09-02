@@ -325,7 +325,7 @@ public class LocalAddeEntry implements AddeEntry {
      * entry).
      */
     public String getDescriptor() {
-        return Integer.toHexString(hashCode());
+        return descriptor;
     }
 
     /**
@@ -751,14 +751,11 @@ public class LocalAddeEntry implements AddeEntry {
         }
 
         /**
-         *
-         *
+         * 
+         * 
          * @return New {@code LocalAddeEntry} instance.
          */
         public LocalAddeEntry build() {
-//            if (format.getType() != type || format.getServerName() != safeKind || safeKind == ServerName.INVALID)
-//                System.err.println("oddity: name="+name+" mask="+mask+" group="+group+" descriptor="+descriptor+" realtime="+realtime+" format="+format+" type="+type+" kind="+kind+" safeKind="+safeKind);
-
             // apparently need to hack up the descriptor for certain formats
             switch (format) {
                 case MSG_HRIT_FD: this.descriptor = "FD"; break;
