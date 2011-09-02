@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Description of Formulas - Satellite</title>
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<!-- InstanceBeginEditable name="CurrentFile" -->
+<script language="javascript" type="text/javascript">
+function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFormulas.html',true); }
+</script>
+<!-- InstanceEndEditable -->
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+<body onLoad="setParentPage();">
+<div class="TopTitleNav">
+  <p class="style2" style="text-align:left; "> 
+  	[<!-- InstanceBeginEditable name="GoToPrevious" --><a href="MapFormulas.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	<span style="padding-left: 15px; "> 
+	[<!-- InstanceBeginEditable name="GoToNext" --><a href="GridFormulas.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	</span> </p>
+  <hr align="center">
+</div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Description of Formulas - Satellite</div>
+<p>The following describes each formula included in the Miscellaneous Formulas section
+  of McIDAS-V. These formulas are designed to work with SEVIRI MSG satellite data, although they are also applicable for equivalent channels of other imagers.</p>
+<p><strong>SEVIRI RGB</strong></p>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>AMCP - </strong>Displays all-day (24 hour) cloud microphysics data. A Field Selector window will appear when you click Create Display. In this window you select three fields and press OK. The formula will compute the fields to display AMCP data in the Main Display window. The display will be in units of temperature in degrees K.</li>
+<li class="propertylistitem"><strong>AIRM - </strong>Displays airmass data. A Field Selector window will appear when you click Create Display. In this window you select four fields and press OK. The formula  will compute the fields to display AIRM data in the Main Display window. The display will be in units of temperature in degrees K.</li>
+
+<li class="propertylistitem"><strong>DUST - </strong>Displays dust data. A Field Selector window will appear when you click Create Display. In this window, you select three fields and press OK. The formula will compute the fields to display DUST data in the Main Display window. The display will be in units of temperature in degrees K.</li>
+<li class="propertylistitem"><strong>NCMP - </strong>Displays night cloud microphysics data. A Field Selector window will appear when you click Create Display. In this window you select three fields and press OK. The formula will compute the fields to display NCMP data in the Main Display window. The display will be in units of temperature in degrees K.</li>
+<li class="propertylistitem"><strong>NCOL gamma - </strong>Displays natural colors data. A Select Input window will appear when you click Create Display. In this window, you enter a gamma value before hitting OK. The gamma value enhances the contrast between the low and high reflectivities. After you hit OK, a Field Selector window will appear. In this window you select two fields and press OK. The formula will compute the fields along with your gamma value to display NCOL data in the Main Display window. The display will be in units of reflectivity.</li>
+<li class="propertylistitem"><strong>NCOL linear - </strong>Displays natural colors data. A Select Input window will appear when you click Create Display. In this window, you enter minimum and maximum reflectivity values before hitting OK. After you hit OK, a Field Selector window will appear. In this window you select one field and press OK. The formula will compute this field along with your minimum and maximum reflectivity values to display NOCL data in the Main Display window. The display will be in units of reflectivity.</li>
+<li class="propertylistitem"><strong>SCON - </strong>Displays severe convection data. A Field Selector window will appear when you click Create Display. In this window you select six fields and press OK. The formula will compute the fields to display SCON data in the Main Display window. The display will be in units of temperature in degrees K and in units of reflectivity.</li>
+<li class="propertylistitem"><strong>VOLC -</strong> Displays sulfur dioxide and volcanic ash data. A Field Selector window will appear when you click Create Display. In this window you select three fields and press OK. The formula will compute the fields to display VOLC data in the Main Display window. The display will be in units of temperature in degrees K.</li>
+</ul>
+<p><strong>SEVIRI RGB Manual band selection</strong></p>
+<ul class="propertylist">
+    <li class="propertylistitem"><strong>Airmass: 05-06, 08-09, 05i (AIRM) - </strong>Displays airmass data. A Field Selector window will appear when you click Create Display. This window includes four fields, labeled WV62 (Water Vapor 6.2um), WV73 (Water Vapor 7.3um), IR97 (Infrared 9.7um), and IR108 (Infrared 10.8um). Once you select these fields and click OK, the formula will compute these fields to display AIRM data in the Main Display window. The display will be in units of temperature in degrees K.</li>
+    <li class="propertylistitem"><strong>All-day cloud microphysics: 10-09, 09-07, 09 (AMCP) - </strong>Displays all-day (24 hour) cloud microphysics data. A Field Selector window will appear when you click Create Display. This window includes three fields, labeled IR87 (Infrared 8.7um), IR108 (Infrared 10.8um), IR120 (Infrared 12.0um). Once you select these fields and click OK, the formula will compute these fields to display AMCP data in the Main Display window. The display will be in units of temperature in degrees K.</li>
+<li class="propertylistitem"><strong>Dust: 10-09, 09-07, 09 (DUST) - </strong>Displays dust data. A Field Selector window will appear when you click Create Display. This window includes three fields, labeled IR87 (Infrared 8.7um), IR108 (Infrared 10.8um), IR120 (Infrared 12.0um). Once you select these fields and click OK, the formula will compute these fields to display DUST data in the Main Display window. The display will be in units of temperature in degrees K.</li>
+<li class="propertylistitem"><strong>Natural colors: 03, 02, 01, gamma - </strong>Displays natural colors data. A Select Input window will appear when you click Create Display. In this window, you enter a gamma value before hitting OK. The gamma value enhances the contrast between the low and high reflectivities. After you hit OK, a Field Selector window will appear. This window includes three fields, labeled VIS06 (Visible 0.6um), Vis08 (Vis 0.8um), NIR16 (Near-Infrared 1.6um). Once you select these fields and click OK, the formula will compute these fields to display Natural colors (gamma) data in the Main Display window. The display will be in units of reflectivity.</li>
+<li class="propertylistitem"><strong>Natural colors: 03, 02, 01, minrefl, maxrefl - </strong>Displays natural colors data. A Select Input window will appear when you click Create Display. In this window, you enter minimum and maximum reflectivity values before hitting OK. After you hit OK, a Field Selector window will appear. This window includes three fields, labeled VIS06 (Visible 0.6um), Vis08 (Vis 0.8um), NIR16 (Near-Infrared 1.6um). Once you select these fields and click OK, the formula will compute these fields to display Natural colors minrefl, maxrefl) data in the Main Display window. The display will be in units of reflectivity.</li>
+<li class="propertylistitem"><strong>Night cloud microphysics: 10-09, 09-04, 09 (NCMP) - </strong>Displays natural colors data. A Field Selector window will appear when you click Create Display. This window includes three fields, labeled IR39 (Infrared 3.9um), IR108 (Infrared 10.8um), IR120 (Infrared 12.0um). Once you select these fields and click OK, the formula will compute these fields to display NCMP data in the Main Display window. The display will be in units of temperature in degrees K.</li>
+<li class="propertylistitem"><strong>SO2 &amp; ash: 10-09, 09-07, 09 (VOLC) - </strong>Displays severe convection data. A Field Selector window will appear when you click Create Display. This window includes three fields, labeled IR87 (Infrared 8.7um), IR108 (Infrared 10.8um), IR120 (Infrared 12.0um). Once you select these fields and click OK, the formula will compute these fields to display VOLC data in the Main Display window. The display will be in units of temperature in degrees K.</li>
+<li class="propertylistitem"><strong>Severe convection: 05-06, 04-09, 03-01 (SCON) -</strong> Displays severe convection data. A Field Selector window will appear when you click Create Display. This window includes six fields, labeled ch01, ch03, ch04, ch05, ch06, and ch09. Once you select these fields and click OK, the formula will compute these fields to display SCON data in the Main Display window. The display will be in units of temperature in degrees K and in units of reflectivity.</li>
+</ul>
+<p><strong>SEVIRI Differences</strong></p>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>OTOP (IR10.8 - WV6.3) -</strong> Displays overshooting tops data. A Field Selector window will appear when you click Create Display. This window includes two fields, D4 (Infrared 10.8um) and D1 (Water Vapor 6.3um). Once you select these fields and click OK, the formula will compute these fields to display OTOP data in the Main Display window.</li>
+<li class="propertylistitem"><strong>SWDF (IR10.8 - IR12.0) -</strong> Displays Split-window difference data. A Field Selector window will appear when you click Create Display. This window includes two fields, D2 (Infrared 10.8um) and D3 (Infrared 12.0um). Once you select these fields and click OK, the formula will compute these fields to display SWDF data in the Main Display window.</li>
+</ul>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav">
+  <hr align="center">
+  <p class="style2" style="text-align:left; "> 
+  	[<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="MapFormulas.html">Go to Previous</a><!-- InstanceEndEditable -->] 
+	<span style="padding-left: 15px; "> 
+	[<!-- InstanceBeginEditable name="GoToNext2" --><a href="GridFormulas.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	</span></p>
+</div>
+</body>
+<!-- InstanceEnd --></html>
