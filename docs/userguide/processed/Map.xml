@@ -625,6 +625,7 @@
         <mapID target="idv.ui.navigation.navigation"                 url="ui/Navigation.html#navigation" />
         <mapID target="idv.ui.navigation.undoredo"                   url="ui/Navigation.html#undoredo" />
         <mapID target="idv.ui.navigation.viewpoint"                  url="ui/Navigation.html#viewpoint" />
+		<mapID target="idv.ui.tooltippanel"							 url="ui/TooltipPanel" />
         <mapID target="idv.ui.transectviewmanager"                   url="ui/TransectViewManager.html" />
         <mapID target="idv.ui.transectviewmanager.image1"            url="ui/TransectViewManager.html#image1" />
 		<mapID target="idv.videocardsfaq"							 url="VideoCardsFaq.html" />

@@ -200,25 +200,26 @@
             <span class="link" onClick="setPage('ui/MainToolBar.html');">Main Toolbar</span><br>
             <span class="link" onClick="setPage('ui/DragAndDrop.html');">Drag and Drop Tabs</span><br>
             <span class="link" onClick="setPage('ui/DisplayMenus.html');">Display Menus </span><br>
-<span class="link" onClick="setPage('ui/Legend.html');"> Legend</span><br>           
-            <span class="link" onClick="setPage('ui/Animation.html');">Time Animation</span><br>
             <span class="link" onClick="setPage('ui/DisplayVisibility.html');">Visibility Animation</span><br>
-            <span class="link" onClick="setPage('ui/Navigation.html');">Zooming, Panning and Rotating</span><br>
+            <span class="link" onClick="setPage('ui/Animation.html');">Time Animation</span><br>                        
+<span class="link" onClick="setPage('ui/Legend.html');"> Legend</span><br>
             <span class="link" onClick="setPage('ui/ModifyColorInteractively.html');">Modify the Color Bar Interactively</span><br>
+             <span class="link" onClick="setPage('ui/TooltipPanel.html');">Cursor Readout and Tooltip Panel</span><br>    
+            <span class="link" onClick="setPage('ui/Navigation.html');">Zooming, Panning and Rotating</span><br>
             <span class="link" onClick="setPage('ui/TransectViewManager.html');">Transect Views</span><br>
         </div>
              <span class="toggle" onClick="toggleChildren(this,'Display Controls');">+</span>
     <span class="link" onClick="setPage('page_displaycontrols.html');">Display Controls</span><br>
     <div class="indented" id="Display Controls">
                 <span class="link" onClick="setPage('display_controls/RadarGridControl.html');">Range Ring Controls</span><br>
-                                <span class="link" onClick="setPage('display_controls/RangeAndBearingControl.html');">Range and Bearing Controls</span><br>
-                                                <span class="link" onClick="setPage('display_controls/TransectDrawingControl.html');">Transect Drawing Controls</span><br>
-                                                                <span class="link" onClick="setPage('display_controls/DrawingControl.html');">Drawing Controls</span><br>
-                                                                                <span class="link" onClick="setPage('display_controls/LocationIndicatorControl.html');">Location Indicator Controls</span><br>
-                                                                                                <span class="link" onClick="setPage('display_controls/WMSControl.html');">Web Map Server(WMS)/Background Image Controls</span><br>
-                                                                                                                <span class="link" onClick="setPage('display_controls/MovieDisplay.html');">QuickTime Movie Controls</span><br>
-                                                                                                  <span class="link" onClick="setPage('display_controls/ImageCaptures.html');">Image and Movie Capture Controls</span><br>
-                                                                                                  <span class="link" onClick="setPage('display_controls/Timeline.html');">Timeline Controls</span><br>
+                <span class="link" onClick="setPage('display_controls/RangeAndBearingControl.html');">Range and Bearing Controls</span><br>
+                                                            <span class="link" onClick="setPage('display_controls/TransectDrawingControl.html');">Transect Drawing Controls</span><br>
+                <span class="link" onClick="setPage('display_controls/DrawingControl.html');">Drawing Controls</span><br>
+                                                            <span class="link" onClick="setPage('display_controls/LocationIndicatorControl.html');">Location Indicator Controls</span><br>
+                <span class="link" onClick="setPage('display_controls/WMSControl.html');">Web Map Server(WMS)/Background Image Controls</span><br>
+                <span class="link" onClick="setPage('display_controls/MovieDisplay.html');">QuickTime Movie Controls</span><br>
+                <span class="link" onClick="setPage('display_controls/ImageCaptures.html');">Image and Movie Capture Controls</span><br>
+                <span class="link" onClick="setPage('display_controls/Timeline.html');">Timeline Controls</span><br>
                 </div>
     <span class="toggle" onClick="toggleChildren(this,'tools');">+</span>
     

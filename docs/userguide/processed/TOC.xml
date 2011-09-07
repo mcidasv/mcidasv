@@ -122,11 +122,12 @@
     <tocitem text="Main Toolbar" target="idv.ui.maintoolbar"/>
     <tocitem text="Drag and Drop Tabs" target="idv.ui.draganddrop"/>
     <tocitem text="Display Menus" target="idv.ui.displaymenus"/>
-	<tocitem text="Legend" target="idv.ui.legend" />
-    <tocitem text="Time Animation" target="idv.ui.animation"/>
 	<tocitem text="Visibility Animation" target="idv.ui.displayvisibility"/>
-    <tocitem text="Zooming, Panning and Rotating" target="idv.ui.navigation"/>
+	<tocitem text="Time Animation" target="idv.ui.animation"/>
+	<tocitem text="Legend" target="idv.ui.legend"/>
 	<tocitem text="Modify the Color Bar Interactively" target="idv.ui.modifycolorinteractively"/>
+	<tocitem text="Cursor Readout and Tooltip Panel" target ="idv.ui.tooltippanel"/>
+    <tocitem text="Zooming, Panning and Rotating" target="idv.ui.navigation"/>
     <tocitem text="Transect Views" target="idv.ui.transectviewmanager"/>
 </tocitem>
 <tocitem text="Display Controls" target="idv.page_displaycontrols">

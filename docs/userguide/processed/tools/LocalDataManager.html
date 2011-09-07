@@ -37,6 +37,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
 <li><a href="#image1">Viewing the Existing Local Datasets</a></li>
 <li><a href="#add_new_entry">Adding a New Local Dataset </a></li>
 <li><a href="#edit_entry">Editing an Existing Local Dataset</a></li>
+<li><a href="#resolv">RESOLV.SRV</a></li>
 <li><a href="#menus">Menus</a></li>
 </ul>
 <a name="image1" id="image1"></a><div class="pagesubtitle">Viewing the Existing Local Datasets</div>
@@ -95,6 +96,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
 </ul>
 <a name="edit_entry" id="edit_entry"></a><div class="pagesubtitle">Editing an Existing Local Dataset</div>
 <p> To edit an existing entry, double click on the entry to bring up  the <strong>Edit Local Dataset</strong> window. Make the needed changes and click <strong>Save Changes</strong> (or click <strong>Cancel</strong> to discard any changes and close the window).</p>
+<a name="resolv" id="resolv"></a><div class="pagesubtitle">RESOLV.SRV</div>
+<p>Note that in your RESOLV.SRV file (found in your McIDAS-V directory), requires a PRO* at the end of your MSG HRIT FD and MSG HRIT HRV datasets. This PRO* represents the prologue file that is required to display this data. This MSG data includes varous segments that includes PRO and EPI files. If you look at example LRIT data, you will also see that PRO files are involved. However, because this LRIT data is not segmented as the MSG data is, the PRO* in your RESOLV.SRV entry is not necessary.</p>
 <a name="menus" id="menus"></a><div class="pagesubtitle">Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="../controls/LayerControls.html#menus">Menus section</a> of the Layer Controls Page. However, there
 are several menu options that are unique to this tool.</p>
