@@ -3,8 +3,8 @@ from __future__ import with_statement
 import sys
 import os
 
-# This is an ugly hack to deal with Jython's sys.path strangeness: if you 
-# want to import a non-compiled python module contained in a JAR, sys.path 
+# This is an ugly hack to deal with Jython's sys.path strangeness: if you
+# want to import a non-compiled python module contained in a JAR, sys.path
 # must contain something like "/path/to/your.jar/path/to/module"
 _cwd = os.getcwd()
 _mcv_jar = os.path.join(_cwd, 'mcidasv.jar')
@@ -43,10 +43,10 @@ import imageFilters
 import shell as idvshell
 
 from background import (
-        allActions, allColorTables,  allDisplays, allLayerTypes, 
-        allProjections, allWindows, boomstick, collectGarbage, colorTableNames, 
-        createLayer, firstDisplay, firstWindow, getColorTable, getProjection, 
-        managedDataSource, performAction, projectionNames, removeAllData, 
+        activeDisplay, allActions, allColorTables,  allDisplays, allLayerTypes,
+        allProjections, allWindows, boomstick, collectGarbage, colorTableNames,
+        createLayer, firstDisplay, firstWindow, getColorTable, getProjection,
+        managedDataSource, performAction, projectionNames, removeAllData,
         removeAllLayers, setViewSize
 )
 

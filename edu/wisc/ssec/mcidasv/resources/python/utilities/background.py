@@ -425,7 +425,7 @@ def setViewSize(width, height):
         width:
         height:
     """
-    idv.getStateManager().setViewSize(java.awt.Dimension(width, height))
+    getStaticMcv().getStateManager().setViewSize(java.awt.Dimension(width, height))
 
 def getColorTable(name=ColorTableDefaults.NAME_DEFAULT):
     """Return the ColorTable associated with the given name.
@@ -442,7 +442,7 @@ def getColorTable(name=ColorTableDefaults.NAME_DEFAULT):
     Raises:
         LookupError: If there was no ColorTable with the given name.
     """
-    colorTable = idv.getColorTableManager().getColorTable(name)
+    colorTable = getStaticMcv().getColorTableManager().getColorTable(name)
     if colorTable:
         return _ColorTable(colorTable)
     else:
@@ -450,11 +450,11 @@ def getColorTable(name=ColorTableDefaults.NAME_DEFAULT):
 
 def colorTableNames():
     """Returns a list of the valid color table names."""
-    return [colorTable.getName() for colorTable in idv.getColorTableManager().getColorTables()]
+    return [colorTable.getName() for colorTable in getStaticMcv().getColorTableManager().getColorTables()]
 
 def allColorTables():
     """Returns a list of the available color tables."""
-    return [_ColorTable(colorTable) for colorTable in idv.getColorTableManager().getColorTables()]
+    return [_ColorTable(colorTable) for colorTable in getStaticMcv().getColorTableManager().getColorTables()]
 
 def firstWindow():
     return _Window(IdvWindow.getMainWindows()[0])
@@ -473,15 +473,15 @@ def firstDisplay():
     Raises:
         IndexError: If there are no Displays.
     """
-    return _Display(idv.getVMManager().getViewManagers().get(0))
+    return _Display(getStaticMcv().getVMManager().getViewManagers().get(0))
 
 def allDisplays():
     """Returns a list of all McIDAS-V displays (aka ViewManagers)"""
-    return [_Display(viewManager) for viewManager in idv.getVMManager().getViewManagers()]
+    return [_Display(viewManager) for viewManager in getStaticMcv().getVMManager().getViewManagers()]
 
 def activeDisplay():
     """Returns the active McIDAS-V display."""
-    return _Display(idv.getVMManager().getLastActiveViewManager())
+    return _Display(getStaticMcv().getVMManager().getLastActiveViewManager())
 
 
 def createLayer(layerType, data, dataParameter='Data'):
@@ -503,15 +503,15 @@ def createLayer(layerType, data, dataParameter='Data'):
 
 def allLayerTypes():
     """Returns a list of the available layer type names"""
-    return idv.getAllControlDescriptors()
+    return getStaticMcv().getAllControlDescriptors()
 
 def allProjections():
     """Returns a list of the available projections."""
-    return [_Projection(projection) for projection in idv.getIdvProjectionManager().getProjections()]
+    return [_Projection(projection) for projection in getStaticMcv().getIdvProjectionManager().getProjections()]
 
 def projectionNames():
     """Returns a list of the available projection names"""
-    return [projection.getName() for projection in idv.getIdvProjectionManager().getProjections()]
+    return [projection.getName() for projection in getStaticMcv().getIdvProjectionManager().getProjections()]
 
 def getProjection(name=''):
     """Returns the projection associated with the given name.
@@ -529,10 +529,11 @@ def getProjection(name=''):
     Raises:
         ValueError: If there was no projection with the given name.
     """
+    mcv = getStaticMcv()
     if not name:
-        return _Projection(idv.getIdvProjectionManager().getDefaultProjection())
+        return _Projection(mcv.getIdvProjectionManager().getDefaultProjection())
 
-    for projection in idv.getIdvProjectionManager().getProjections():
+    for projection in mcv.getIdvProjectionManager().getProjections():
         if name == projection.getName():
             return _Projection(projection)
     else:
