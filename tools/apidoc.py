@@ -56,13 +56,13 @@ classpath = java.lang.System.getProperty("java.class.path")
 javahome  = java.lang.System.getProperty("java.home")
 
 def pathname2url(pth):
-    '''
+    """
     Transform file system path into URL using urllib.pathname2url().
-
+    
     Additional changes:
 
     Undo replacement of ':' by '|' on WinNT. Append '/' to URLs stemming from directories.
-    '''
+    """
     url = urllib.pathname2url(pth)
     if classpathsep == ";": # NT
         url = url.replace("|", ":", 1)
@@ -84,7 +84,7 @@ class ClassPath(object):
                 raise InstallationError("Cannot find CLASSPATH environmment variable")
             self._stdloader = ClassLoader.getSystemClassLoader()
             ClassPath._instance = self
-
+    
     def append(self, pth):
         try:
             self._stdloader.addURL(URL("file:"+pathname2url(pth)))
@@ -95,7 +95,7 @@ class ClassPath(object):
                                     "                            jython -Dpython.security.respectJavaAccessibility=false apidoc.py")
         self._path.append(pth)
         sys.path.append(pth)
-
+    
     def __repr__(self):
         return classpathsep.join(self._path)
 
@@ -109,17 +109,17 @@ def printDict(di, format="%-25s %s"):
 
 def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
     """Print a nicely formatted overview of an object.
-
+    
     The output lines will be wrapped at maxlen, with lindent of space
     for names of attributes.  A maximum of maxspew characters will be
     printed for each attribute value.
-
+    
     You can hand dumpObj any data type -- a module, class, instance,
     new class.
-
+    
     Note that in reformatting for compactness the routine trashes any
     formatting in the docstrings it prints.
-
+    
     Example:
        >>> class Foo(object):
                a = 30
@@ -143,15 +143,15 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
     """
     # Formatting parameters.
     ltab = 2    # initial tab in front of level 2 text
-
+    
     # There seem to be a couple of other types; gather templates of them
     MethodWrapperType = type(object().__hash__)
-
+    
     # Gather all the attributes of the object
     objclass = None
     objdoc = None
     objmodule = '<None defined>'
-
+    
     methods = []
     builtins = []
     classes = []
@@ -174,33 +174,33 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
             classes.append( (slot, attr) )
         else:
             attrs.append( (slot, attr) )
-
+    
     # Organize them
     methods.sort()
     builtins.sort()
     classes.sort()
     attrs.sort()
-
+    
     # Print a readable summary of those attributes
     normalwidths = [lindent, maxlen - lindent]
     tabbedwidths = [ltab, lindent-ltab, maxlen - lindent - ltab]
-
+    
     def truncstring(s, maxlen):
         if hasattr(s, '__len__') and len(s) > maxlen:
             return s[0:maxlen] + ' ...(%d more chars)...' % (len(s) - maxlen)
         else:
             return s
-
+    
     # Summary of introspection attributes
     if objclass == '':
         objclass = type(obj).__name__
     if objclass is None:
         objclass = obj.__class__.__name__
-
+    
     intro = "Instance of class '%s' as defined in module %s with id %d" % \
             (objclass, objmodule, id(obj))
     print '\n'.join(prettyPrint(intro, maxlen))
-
+    
     # Object's Docstring
     if objdoc is None:
         objdoc = str(objdoc)
@@ -210,7 +210,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
     print prettyPrintCols( ('Documentation string:',
                             truncstring(objdoc, maxspew)),
                           normalwidths, ' ')
-
+    
     # Built-in methods
     if builtins:
         bi_str   = delchars(str(builtins), "[']") or str(None)
@@ -218,7 +218,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
         print prettyPrintCols( ('Built-in Methods:',
                                 truncstring(bi_str, maxspew)),
                               normalwidths, ', ')
-
+    
     # Classes
     if classes:
         print
@@ -229,7 +229,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
                                 classname,
                                 truncstring(classdoc, maxspew)),
                               tabbedwidths, ' ')
-
+    
     # User methods
     if methods:
         print
@@ -240,7 +240,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
                                 methodname,
                                 truncstring(methoddoc, maxspew)),
                               tabbedwidths, ' ')
-
+    
     # Attributes
     if attrs:
         print
@@ -255,35 +255,35 @@ def prettyPrintCols(strings, widths, split=' '):
     """Pretty prints text in colums, with each string breaking at
     split according to prettyPrint.  margins gives the corresponding
     right breaking point."""
-
+    
     assert len(strings) == len(widths)
-
+    
     strings = map(nukenewlines, strings)
-
+    
     # pretty print each column
     cols = [''] * len(strings)
     for i in range(len(strings)):
         cols[i] = prettyPrint(strings[i], widths[i], split)
-
+    
     # prepare a format line
     format = ''.join(['%%-%ds' % width for width in widths[0:-1]]) + '%s'
-
+    
     def formatline(*cols):
         return format % tuple(map(lambda s: (s or ''), cols))
-
+    
     # generate the formatted text
     return '\n'.join(map(formatline, *cols))
 
 def prettyPrint(string, maxlen=75, split=' '):
     """Pretty prints the given string to break at an occurrence of
     split where necessary to avoid lines longer than maxlen.
-
+    
     This will overflow the line if no convenient occurrence of split
     is found"""
-
+    
     # Tack on the splitting character to guarantee a final match
     string += split
-
+    
     lines = []
     oldeol = 0
     eol = 0
@@ -291,13 +291,13 @@ def prettyPrint(string, maxlen=75, split=' '):
         eol = string.rfind(split, oldeol, oldeol+maxlen+len(split))
         lines.append(string[oldeol:eol])
         oldeol = eol + len(split)
-
+    
     return lines
 
 def nukenewlines(string):
     """Strip newlines and any trailing/following whitespace; rejoin
     with a single space where the newlines were.
-
+    
     Bug: This routine will completely butcher any whitespace-formatted
     text."""
     if not string:
@@ -405,7 +405,7 @@ def processModules(modules):
 
 def configureSysPath():
     basename = os.path.basename(os.getcwd())
-
+    
     # attempt to work when running from both mcvPath and "mcvPath/tools/"
     if basename == 'tools':
         mcvPathPrefix = '..'
@@ -417,11 +417,11 @@ def configureSysPath():
         visadPathPrefix = '..'
     else:
         raise OSError() # TODO(jon): plz to making better !!
-
+    
     mcvPath = os.path.join(mcvPathPrefix, mcvPyRoot)
     idvPath = os.path.join(idvPathPrefix, idvPyRoot)
     visadPath = os.path.join(visadPathPrefix, visadPyRoot)
-
+    
     print 'visad path prefix:', visadPathPrefix
     print 'visad root       :', visadPyRoot
     print 'visad path       :', visadPath
@@ -434,11 +434,11 @@ def configureSysPath():
     print 'mcv root         :', mcvPyRoot
     print 'mcv path         :', mcvPath
     print
-
+    
     # visad imports
     _joinSysPath(idvPathPrefix, 'idv/lib/visad.jar')
     _addSysPath(visadPath)
-
+    
     # idv imports
     _joinSysPath(idvPathPrefix, 'idv/lib/auxdata.jar')
     _joinSysPath(idvPathPrefix, 'idv/lib/commons-net-1.4.1.jar')
@@ -457,7 +457,7 @@ def configureSysPath():
     _joinSysPath(idvPathPrefix, 'idv/lib/idv.jar')
     _addSysPath(idvPath)
     _joinSysPath(idvPath, '..')
-
+    
     # mcv imports
     _joinSysPath(mcvPathPrefix, 'lib/commons-math-2.2.jar')
     _joinSysPath(mcvPathPrefix, 'lib/eventbus-1.3.jar')
@@ -470,13 +470,13 @@ def configureSysPath():
     _addSysPath(mcvPath)
     _joinSysPath(mcvPath, 'linearcombo')
     _joinSysPath(mcvPath, 'utilities')
-
+    
     for path in sys.path:
         if os.path.exists(path):
             print '(valid)\t', path
         else:
             print '(bad)\t', path
-
+    
     processModules(mcvModules)
     processModules(idvModules)
     processModules(visadModules)
