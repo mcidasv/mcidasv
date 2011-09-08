@@ -182,7 +182,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
     tabbedwidths = [ltab, lindent-ltab, maxlen - lindent - ltab]
 
     def truncstring(s, maxlen):
-        if len(s) > maxlen:
+        if hasattr(s, '__len__') and len(s) > maxlen:
             return s[0:maxlen] + ' ...(%d more chars)...' % (len(s) - maxlen)
         else:
             return s
@@ -298,6 +298,8 @@ def nukenewlines(string):
     text."""
     if not string:
         return ''
+    if not hasattr(string, 'splitlines'):
+        return ''
     lines = string.splitlines()
     return ' '.join([line.strip() for line in lines])
 
@@ -393,7 +395,7 @@ def processModules(modules):
             globals()[moduleName] = __import__(moduleName, globals(), locals(), ['*'], -1)
             print title
             print
-            print dumpObj(moduleName)
+            print dumpObj(globals()[moduleName])
         except ImportError:
             print '*** could not import', moduleName
 
