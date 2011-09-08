@@ -1,16 +1,16 @@
-import os
 import sys
+try:
+    sys.registry['python.security.respectJavaAccessibility'] = 'false'
+except:
+    print 'could not modify python.security.respectJavaAccessibility; current value:', sys.registry['python.security.respectJavaAccessibility']
+
+import os
 import types
 import urllib
 
 from java.lang import ClassLoader
 from java.net import URL
 import java.lang.System
-
-try:
-    sys.registry['python.security.respectJavaAccessibility'] = False
-except:
-    print 'could not modify python.security.respectJavaAccessibility; current value:', sys.registry['python.security.respectJavaAccessibility']
 
 mcvPyRoot = 'edu/wisc/ssec/mcidasv/resources/python'
 idvPyRoot = 'idv/ucar/unidata/idv/resources/python'
@@ -42,6 +42,8 @@ def _addSysPath(path):
     """Expands ENV variables, fixes things like '~', and then normalizes the
     given path."""
     path = os.path.abspath(os.path.normpath(os.path.expanduser(os.path.expandvars(path))))
+    if not os.path.exists(path):
+        print '*** warning: invalid path:', path
     sys.classpath.append(path)
 
 def _joinSysPath(prefix, subpath):
@@ -88,7 +90,9 @@ class ClassPath(object):
             self._stdloader.addURL(URL("file:"+pathname2url(pth)))
         except AttributeError:
             raise InstallationError("Make sure that Jython registry file is in the directory of jython.jar\n"
-                                    "                   Also set registry option 'python.security.respectJavaAccessibility' to false.")
+                                    "                            Also set registry option 'python.security.respectJavaAccessibility' to false.\n"
+                                    "                            Consider running this script like so:\n"
+                                    "                            jython -Dpython.security.respectJavaAccessibility=false apidoc.py")
         self._path.append(pth)
         sys.path.append(pth)
 
@@ -401,8 +405,8 @@ def processModules(modules):
 
 def configureSysPath():
     basename = os.path.basename(os.getcwd())
-    
-    # attempt to work when running from both mcvPath and "mcvPath/tools/" 
+
+    # attempt to work when running from both mcvPath and "mcvPath/tools/"
     if basename == 'tools':
         mcvPathPrefix = '..'
         idvPathPrefix = '../..'
@@ -413,11 +417,11 @@ def configureSysPath():
         visadPathPrefix = '..'
     else:
         raise OSError() # TODO(jon): plz to making better !!
-    
+
     mcvPath = os.path.join(mcvPathPrefix, mcvPyRoot)
     idvPath = os.path.join(idvPathPrefix, idvPyRoot)
     visadPath = os.path.join(visadPathPrefix, visadPyRoot)
-    
+
     print 'visad path prefix:', visadPathPrefix
     print 'visad root       :', visadPyRoot
     print 'visad path       :', visadPath
@@ -430,11 +434,11 @@ def configureSysPath():
     print 'mcv root         :', mcvPyRoot
     print 'mcv path         :', mcvPath
     print
-    
+
     # visad imports
     _joinSysPath(idvPathPrefix, 'idv/lib/visad.jar')
     _addSysPath(visadPath)
-    
+
     # idv imports
     _joinSysPath(idvPathPrefix, 'idv/lib/auxdata.jar')
     _joinSysPath(idvPathPrefix, 'idv/lib/commons-net-1.4.1.jar')
@@ -453,7 +457,7 @@ def configureSysPath():
     _joinSysPath(idvPathPrefix, 'idv/lib/idv.jar')
     _addSysPath(idvPath)
     _joinSysPath(idvPath, '..')
-    
+
     # mcv imports
     _joinSysPath(mcvPathPrefix, 'lib/commons-math-2.2.jar')
     _joinSysPath(mcvPathPrefix, 'lib/eventbus-1.3.jar')
@@ -466,13 +470,13 @@ def configureSysPath():
     _addSysPath(mcvPath)
     _joinSysPath(mcvPath, 'linearcombo')
     _joinSysPath(mcvPath, 'utilities')
-    
+
     for path in sys.path:
         if os.path.exists(path):
             print '(valid)\t', path
         else:
             print '(bad)\t', path
-    
+
     processModules(mcvModules)
     processModules(idvModules)
     processModules(visadModules)
