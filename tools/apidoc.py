@@ -1,9 +1,20 @@
 import os
 import sys
+import types
+import urllib
 
-mcvPyRoot = '/edu/wisc/ssec/mcidasv/resources/python'
-idvPyRoot = '/ucar/unidata/idv/resources/python'
-visadPyRoot = '/visad/core/src/visad/python'
+from java.lang import ClassLoader
+from java.net import URL
+import java.lang.System
+
+try:
+    sys.registry['python.security.respectJavaAccessibility'] = False
+except:
+    print 'could not modify python.security.respectJavaAccessibility; current value:', sys.registry['python.security.respectJavaAccessibility']
+
+mcvPyRoot = 'edu/wisc/ssec/mcidasv/resources/python'
+idvPyRoot = 'idv/ucar/unidata/idv/resources/python'
+visadPyRoot = 'visad/core/src/visad/python'
 
 # NOTE: ".py" file extension not needed!
 mcvModules = {
@@ -23,6 +34,70 @@ idvModules = {
     'Shell': 'shell',
     'Test': 'test',
 }
+visadModules = {
+    'VisAD Helpers': 'subs',
+}
+
+def _addSysPath(path):
+    """Expands ENV variables, fixes things like '~', and then normalizes the
+    given path."""
+    path = os.path.abspath(os.path.normpath(os.path.expanduser(os.path.expandvars(path))))
+    sys.classpath.append(path)
+
+def _joinSysPath(prefix, subpath):
+    _addSysPath(os.path.join(prefix, subpath))
+
+# classloader magic comes from the amazing jynx project:
+# http://www.fiber-space.de/jynx/doc/index.html
+classpathsep = java.lang.System.getProperty("path.separator")
+classpath = java.lang.System.getProperty("java.class.path")
+javahome  = java.lang.System.getProperty("java.home")
+
+def pathname2url(pth):
+    '''
+    Transform file system path into URL using urllib.pathname2url().
+
+    Additional changes:
+
+    Undo replacement of ':' by '|' on WinNT. Append '/' to URLs stemming from directories.
+    '''
+    url = urllib.pathname2url(pth)
+    if classpathsep == ";": # NT
+        url = url.replace("|", ":", 1)
+    if os.path.isdir(pth) and url[-1]!="/":
+        url+="/"
+    return url
+
+class InstallationError(Exception):pass
+
+class ClassPath(object):
+    _instance = None
+    def __init__(self):
+        if ClassPath._instance:
+            self.__dict__.update(ClassPath._instance.__dict__)
+        else:
+            if 'CLASSPATH' in os.environ:
+                self._path = classpath.split(classpathsep)
+            else:
+                raise InstallationError("Cannot find CLASSPATH environmment variable")
+            self._stdloader = ClassLoader.getSystemClassLoader()
+            ClassPath._instance = self
+
+    def append(self, pth):
+        try:
+            self._stdloader.addURL(URL("file:"+pathname2url(pth)))
+        except AttributeError:
+            raise InstallationError("Make sure that Jython registry file is in the directory of jython.jar\n"
+                                    "                   Also set registry option 'python.security.respectJavaAccessibility' to false.")
+        self._path.append(pth)
+        sys.path.append(pth)
+
+    def __repr__(self):
+        return classpathsep.join(self._path)
+
+# define new system variable
+sys.classpath = ClassPath()
+# end of jclasspath stuff
 
 def printDict(di, format="%-25s %s"):
     for (key, val) in di.items():
@@ -313,41 +388,92 @@ else:
     ispython = ispython22
 
 def processModules(modules):
-    for title, moduleName in modules.iteritems():
-        globals()[moduleName] = __import__(moduleName, globals(), locals(), ['*'], -1)
-        print title
-        print
-        print dumpObj(moduleName)
+    for title, moduleName in sorted(modules.iteritems()):
+        try:
+            globals()[moduleName] = __import__(moduleName, globals(), locals(), ['*'], -1)
+            print title
+            print
+            print dumpObj(moduleName)
+        except ImportError:
+            print '*** could not import', moduleName
 
-
-def cli():
+def configureSysPath():
     basename = os.path.basename(os.getcwd())
+    
+    # attempt to work when running from both mcvPath and "mcvPath/tools/" 
     if basename == 'tools':
-        mcvDirPrefix = '..'
-        idvDirPrefix = '../..'
-        visadDirPrefix = '../..'
+        mcvPathPrefix = '..'
+        idvPathPrefix = '../..'
+        visadPathPrefix = '../..'
     elif basename == 'mcv':
-        mcvDirPrefix = '.'
-        idvDirPrefix = '..'
-        visadDirPrefix = '..'
+        mcvPathPrefix = '.'
+        idvPathPrefix = '..'
+        visadPathPrefix = '..'
     else:
         raise OSError() # TODO(jon): plz to making better !!
-
-    mcvPath = os.path.join(mcvDirPrefix, mcvPyRoot)
-    idvPath = os.path.join(idvDirPrefix, idvPyRoot)
-    visadPath = os.path.join(visadDirPrefix, visadPyRoot)
-
-    sys.path.append(visadPath)
-    sys.path.append(idvPath)
-    # for importing isl.py
-    sys.path.append(os.path.join(idvPath, '../'))
-    sys.path.append(mcvPath)
-    sys.path.append(os.path.join(mcvPath, 'linearcombo'))
-    sys.path.append(os.path.join(mcvPath, 'utilities'))
-
-    processModules(idvModules)
+    
+    mcvPath = os.path.join(mcvPathPrefix, mcvPyRoot)
+    idvPath = os.path.join(idvPathPrefix, idvPyRoot)
+    visadPath = os.path.join(visadPathPrefix, visadPyRoot)
+    
+    print 'visad path prefix:', visadPathPrefix
+    print 'visad root       :', visadPyRoot
+    print 'visad path       :', visadPath
+    print
+    print 'idv path prefix  :', idvPathPrefix
+    print 'idv root         :', idvPyRoot
+    print 'idv path         :', idvPath
+    print
+    print 'mcv path prefix  :', mcvPathPrefix
+    print 'mcv root         :', mcvPyRoot
+    print 'mcv path         :', mcvPath
+    print
+    
+    # visad imports
+    _joinSysPath(idvPathPrefix, 'idv/lib/visad.jar')
+    _addSysPath(visadPath)
+    
+    # idv imports
+    _joinSysPath(idvPathPrefix, 'idv/lib/auxdata.jar')
+    _joinSysPath(idvPathPrefix, 'idv/lib/commons-net-1.4.1.jar')
+    _joinSysPath(idvPathPrefix, 'idv/lib/doclint.jar')
+    _joinSysPath(idvPathPrefix, 'idv/lib/dummy.jar')
+    _joinSysPath(idvPathPrefix, 'idv/lib/external.jar')
+    _joinSysPath(idvPathPrefix, 'idv/lib/extra.jar')
+    _joinSysPath(idvPathPrefix, 'idv/lib/j2h.jar')
+    _joinSysPath(idvPathPrefix, 'idv/lib/jcommon.jar')
+    _joinSysPath(idvPathPrefix, 'idv/lib/junit.jar')
+    _joinSysPath(idvPathPrefix, 'idv/lib/ncIdv.jar')
+    _joinSysPath(idvPathPrefix, 'idv/lib/repositorytds.jar')
+    _joinSysPath(idvPathPrefix, 'idv/lib/servlet-api.jar')
+    _joinSysPath(idvPathPrefix, 'idv/lib/texttonc.jar')
+    _joinSysPath(idvPathPrefix, 'idv/lib/unidatacommon.jar')
+    _joinSysPath(idvPathPrefix, 'idv/lib/idv.jar')
+    _addSysPath(idvPath)
+    _joinSysPath(idvPath, '..')
+    
+    # mcv imports
+    _joinSysPath(mcvPathPrefix, 'lib/commons-math-2.2.jar')
+    _joinSysPath(mcvPathPrefix, 'lib/eventbus-1.3.jar')
+    _joinSysPath(mcvPathPrefix, 'lib/log4j-over-slf4j-1.6.1.jar')
+    _joinSysPath(mcvPathPrefix, 'lib/logback-classic-0.9.29.jar')
+    _joinSysPath(mcvPathPrefix, 'lib/logback-core-0.9.29.jar')
+    _joinSysPath(mcvPathPrefix, 'lib/miglayout-3.7.3.jar')
+    _joinSysPath(mcvPathPrefix, 'lib/slf4j-api-1.6.1.jar')
+    _joinSysPath(mcvPathPrefix, 'dist/mcidasv.jar')
+    _addSysPath(mcvPath)
+    _joinSysPath(mcvPath, 'linearcombo')
+    _joinSysPath(mcvPath, 'utilities')
+    
+    for path in sys.path:
+        if os.path.exists(path):
+            print '(valid)\t', path
+        else:
+            print '(bad)\t', path
+    
     processModules(mcvModules)
-
+    processModules(idvModules)
+    processModules(visadModules)
 
 if __name__ == '__main__':
-    cli()
+    configureSysPath()
