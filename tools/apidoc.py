@@ -16,6 +16,9 @@ mcvPyRoot = 'edu/wisc/ssec/mcidasv/resources/python'
 idvPyRoot = 'idv/ucar/unidata/idv/resources/python'
 visadPyRoot = 'visad/core/src/visad/python'
 
+mcvJars = ['lib/commons-math-2.2.jar', 'lib/eventbus-1.3.jar', 'lib/log4j-over-slf4j-1.6.1.jar', 'lib/logback-classic-0.9.29.jar', 'lib/logback-core-0.9.29.jar', 'lib/miglayout-3.7.3.jar', 'lib/slf4j-api-1.6.1.jar', 'dist/mcidasv.jar']
+idvJars = ['idv/lib/auxdata.jar', 'idv/lib/commons-net-1.4.1.jar', 'idv/lib/doclint.jar', 'idv/lib/dummy.jar', 'idv/lib/external.jar', 'idv/lib/extra.jar', 'idv/lib/j2h.jar', 'idv/lib/jcommon.jar', 'idv/lib/junit.jar', 'idv/lib/ncIdv.jar', 'idv/lib/repositorytds.jar', 'idv/lib/servlet-api.jar', 'idv/lib/texttonc.jar', 'idv/lib/unidatacommon.jar', 'idv/lib/idv.jar']
+
 # NOTE: ".py" file extension not needed!
 mcvModules = {
     'Image Filters': 'imageFilters',
@@ -38,13 +41,27 @@ visadModules = {
     'VisAD Helpers': 'subs',
 }
 
+def _expandpath(path):
+    return os.path.abspath(os.path.normpath(os.path.expanduser(os.path.expandvars(path))))
+
+def _addJarFiles(path, jarFiles):
+    #path = os.path.abspath(os.path.normpath(os.path.expanduser(os.path.expandvars(path))))
+    path = _expandpath(path)
+    for jarFile in jarFiles:
+        jarPath = os.path.join(path, jarFile)
+        if os.path.exists(jarPath):
+            sys.classpath.append(jarPath)
+        else:
+            print '*** warning: invalid path to jar:', jarPath
+
 def _addSysPath(path):
     """Expands ENV variables, fixes things like '~', and then normalizes the
     given path."""
-    path = os.path.abspath(os.path.normpath(os.path.expanduser(os.path.expandvars(path))))
+    path = _expandpath(path)
     if not os.path.exists(path):
         print '*** warning: invalid path:', path
-    sys.classpath.append(path)
+    else:
+        sys.classpath.append(path)
 
 def _joinSysPath(prefix, subpath):
     _addSysPath(os.path.join(prefix, subpath))
@@ -440,33 +457,12 @@ def configureSysPath():
     _addSysPath(visadPath)
     
     # idv imports
-    _joinSysPath(idvPathPrefix, 'idv/lib/auxdata.jar')
-    _joinSysPath(idvPathPrefix, 'idv/lib/commons-net-1.4.1.jar')
-    _joinSysPath(idvPathPrefix, 'idv/lib/doclint.jar')
-    _joinSysPath(idvPathPrefix, 'idv/lib/dummy.jar')
-    _joinSysPath(idvPathPrefix, 'idv/lib/external.jar')
-    _joinSysPath(idvPathPrefix, 'idv/lib/extra.jar')
-    _joinSysPath(idvPathPrefix, 'idv/lib/j2h.jar')
-    _joinSysPath(idvPathPrefix, 'idv/lib/jcommon.jar')
-    _joinSysPath(idvPathPrefix, 'idv/lib/junit.jar')
-    _joinSysPath(idvPathPrefix, 'idv/lib/ncIdv.jar')
-    _joinSysPath(idvPathPrefix, 'idv/lib/repositorytds.jar')
-    _joinSysPath(idvPathPrefix, 'idv/lib/servlet-api.jar')
-    _joinSysPath(idvPathPrefix, 'idv/lib/texttonc.jar')
-    _joinSysPath(idvPathPrefix, 'idv/lib/unidatacommon.jar')
-    _joinSysPath(idvPathPrefix, 'idv/lib/idv.jar')
+    _addJarFiles(idvPathPrefix, idvJars)
     _addSysPath(idvPath)
     _joinSysPath(idvPath, '..')
     
     # mcv imports
-    _joinSysPath(mcvPathPrefix, 'lib/commons-math-2.2.jar')
-    _joinSysPath(mcvPathPrefix, 'lib/eventbus-1.3.jar')
-    _joinSysPath(mcvPathPrefix, 'lib/log4j-over-slf4j-1.6.1.jar')
-    _joinSysPath(mcvPathPrefix, 'lib/logback-classic-0.9.29.jar')
-    _joinSysPath(mcvPathPrefix, 'lib/logback-core-0.9.29.jar')
-    _joinSysPath(mcvPathPrefix, 'lib/miglayout-3.7.3.jar')
-    _joinSysPath(mcvPathPrefix, 'lib/slf4j-api-1.6.1.jar')
-    _joinSysPath(mcvPathPrefix, 'dist/mcidasv.jar')
+    _addJarFiles(mcvPathPrefix, mcvJars)
     _addSysPath(mcvPath)
     _joinSysPath(mcvPath, 'linearcombo')
     _joinSysPath(mcvPath, 'utilities')
