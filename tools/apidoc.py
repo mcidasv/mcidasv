@@ -124,6 +124,11 @@ def printDict(di, format="%-25s %s"):
     for (key, val) in di.items():
         print format % (str(key)+':', val)
 
+class _NoOp(object):
+    def __repr__(self):
+        return 'anything'
+_NOOP = _NoOp()
+
 def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
     """Print a nicely formatted overview of an object.
     
