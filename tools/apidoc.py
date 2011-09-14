@@ -8,6 +8,8 @@ import os
 import types
 import urllib
 
+import StringIO
+
 from java.lang import ClassLoader
 from java.net import URL
 import java.lang.System
@@ -21,9 +23,10 @@ idvJars = ['idv/lib/auxdata.jar', 'idv/lib/commons-net-1.4.1.jar', 'idv/lib/docl
 
 # NOTE: ".py" file extension not needed!
 mcvModules = {
-    'Image Filters': 'imageFilters',
+    # 'Image Filters': 'imageFilters',
+    # 'Background Scripting': 'background',
+    # 'Interactive Functions': 'interactive',
     'Background Scripting': 'background',
-    'Interactive Functions': 'interactive',
 }
 idvModules = {
     'Climate': 'climate',
@@ -174,6 +177,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
     objdoc = None
     objmodule = '<None defined>'
     
+    functions = []
     methods = []
     builtins = []
     classes = []
@@ -184,34 +188,22 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
             objclass = attr.__name__
         elif slot == '__doc__':
             objdoc = attr
-        elif slot == '__module__':
-            objmodule = attr
-        elif (isinstance(attr, types.BuiltinMethodType) or
-              isinstance(attr, MethodWrapperType)):
-            builtins.append( slot )
-        elif (isinstance(attr, types.MethodType) or
-              isinstance(attr, types.FunctionType)):
-            methods.append( (slot, attr) )
+        elif slot == '__module__' or isinstance(attr, types.ModuleType):
+            objmodule = attr.__name__
+        elif isinstance(attr, types.BuiltinMethodType) or isinstance(attr, MethodWrapperType):
+            builtins.append(slot)
+        elif isinstance(attr, types.MethodType):
+            methods.append((slot, attr))
+        elif isinstance(attr, types.FunctionType):
+            functions.append((slot, attr))
         elif isinstance(attr, types.TypeType):
-            classes.append( (slot, attr) )
+            classes.append((slot, attr))
         else:
-            attrs.append( (slot, attr) )
-    
-    # Organize them
-    methods.sort()
-    builtins.sort()
-    classes.sort()
-    attrs.sort()
+            attrs.append((slot, attr))
     
     # Print a readable summary of those attributes
     normalwidths = [lindent, maxlen - lindent]
     tabbedwidths = [ltab, lindent-ltab, maxlen - lindent - ltab]
-    
-    def truncstring(s, maxlen):
-        if hasattr(s, '__len__') and len(s) > maxlen:
-            return s[0:maxlen] + ' ...(%d more chars)...' % (len(s) - maxlen)
-        else:
-            return s
     
     # Summary of introspection attributes
     if objclass == '':
@@ -219,59 +211,29 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
     if objclass is None:
         objclass = obj.__class__.__name__
     
-    intro = "Instance of class '%s' as defined in module %s with id %d" % \
-            (objclass, objmodule, id(obj))
-    print '\n'.join(prettyPrint(intro, maxlen))
+    print '"namespace": "%s",' % (obj.__name__),
+
+    classOutput = StringIO.StringIO()
+    for className, classType in sorted(classes):
+        classDoc = getattr(classType, '__doc__', None) or ''
+        # dumpObj(className)
+        classOutput.write('{"title":"%s","value":"%s","method": [ ]},' % (className, classDoc.replace('\n', '&lt;br/&gt;').replace('\"', '&quot;')))
+    print '"class": [ %s ],' % (classOutput.getvalue()[:-1])
     
-    # Object's Docstring
-    if objdoc is None:
-        objdoc = str(objdoc)
-    else:
-        objdoc = ('"""' + objdoc.strip()  + '"""')
-    print
-    print prettyPrintCols( ('Documentation string:',
-                            truncstring(objdoc, maxspew)),
-                          normalwidths, ' ')
-    
-    # Built-in methods
-    if builtins:
-        bi_str   = delchars(str(builtins), "[']") or str(None)
-        print
-        print prettyPrintCols( ('Built-in Methods:',
-                                truncstring(bi_str, maxspew)),
-                              normalwidths, ', ')
-    
-    # Classes
-    if classes:
-        print
-        print 'Classes:'
-    for (classname, classtype) in classes:
-        classdoc = getattr(classtype, '__doc__', None) or '<No documentation>'
-        print prettyPrintCols( ('',
-                                classname,
-                                truncstring(classdoc, maxspew)),
-                              tabbedwidths, ' ')
-    
-    # User methods
-    if methods:
-        print
-        print 'Methods:'
-    for (methodname, method) in methods:
-        methoddoc = getattr(method, '__doc__', None) or '<No documentation>'
-        print prettyPrintCols( ('',
-                                methodname,
-                                truncstring(methoddoc, maxspew)),
-                              tabbedwidths, ' ')
+    functionOutput = StringIO.StringIO()
+    for funcName, func in sorted(functions):
+        funcDoc = getattr(func, '__doc__', None) or ''
+        functionOutput.write('{"title":"%s","value":"%s"},' % (funcName, funcDoc.replace('\n', '&lt;br/&gt;').replace('\"', '&quot;')))
+    print '"function": [ %s ],' % (functionOutput.getvalue()[:-1])
+    functionOutput.close()
     
     # Attributes
-    if attrs:
-        print
-        print 'Attributes:'
-    for (attr, val) in attrs:
-        print prettyPrintCols( ('',
-                                attr,
-                                truncstring(str(val), maxspew)),
-                              tabbedwidths, ' ')
+    attrOutput = StringIO.StringIO()
+    for attr, val in sorted(attrs):
+        attrOutput.write('{"title":"%s","value":"%s"},' % (attr, val))
+    print '"attribute": [ %s ]' % (attrOutput.getvalue()[:-1])
+    attrOutput.close()
+
 
 def prettyPrintCols(strings, widths, split=' '):
     """Pretty prints text in colums, with each string breaking at
@@ -419,9 +381,7 @@ def processModules(modules):
     for title, moduleName in sorted(modules.iteritems()):
         try:
             globals()[moduleName] = __import__(moduleName, globals(), locals(), ['*'], -1)
-            print title
-            print
-            print dumpObj(globals()[moduleName])
+            dumpObj(globals()[moduleName])
         except ImportError:
             print '*** could not import', moduleName
 
@@ -444,18 +404,18 @@ def configureSysPath():
     idvPath = os.path.join(idvPathPrefix, idvPyRoot)
     visadPath = os.path.join(visadPathPrefix, visadPyRoot)
     
-    print 'visad path prefix:', visadPathPrefix
-    print 'visad root       :', visadPyRoot
-    print 'visad path       :', visadPath
-    print
-    print 'idv path prefix  :', idvPathPrefix
-    print 'idv root         :', idvPyRoot
-    print 'idv path         :', idvPath
-    print
-    print 'mcv path prefix  :', mcvPathPrefix
-    print 'mcv root         :', mcvPyRoot
-    print 'mcv path         :', mcvPath
-    print
+    # print 'visad path prefix:', visadPathPrefix
+    # print 'visad root       :', visadPyRoot
+    # print 'visad path       :', visadPath
+    # print
+    # print 'idv path prefix  :', idvPathPrefix
+    # print 'idv root         :', idvPyRoot
+    # print 'idv path         :', idvPath
+    # print
+    # print 'mcv path prefix  :', mcvPathPrefix
+    # print 'mcv root         :', mcvPyRoot
+    # print 'mcv path         :', mcvPath
+    # print
     
     # visad imports
     _joinSysPath(idvPathPrefix, 'idv/lib/visad.jar')
@@ -472,15 +432,17 @@ def configureSysPath():
     _joinSysPath(mcvPath, 'linearcombo')
     _joinSysPath(mcvPath, 'utilities')
     
-    for path in sys.path:
-        if os.path.exists(path):
-            print '(valid)\t', path
-        else:
-            print '(bad)\t', path
+    # for path in sys.path:
+    #     if os.path.exists(path):
+    #         print '(valid)\t', path
+    #     else:
+    #         print '(bad)\t', path
     
+    print '{'
     processModules(mcvModules)
-    processModules(idvModules)
-    processModules(visadModules)
+    print '}'
+    #processModules(idvModules)
+    #processModules(visadModules)
 
 if __name__ == '__main__':
     configureSysPath()
