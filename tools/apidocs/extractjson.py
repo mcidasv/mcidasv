@@ -48,7 +48,6 @@ def _expandpath(path):
     return os.path.abspath(os.path.normpath(os.path.expanduser(os.path.expandvars(path))))
 
 def _addJarFiles(path, jarFiles):
-    #path = os.path.abspath(os.path.normpath(os.path.expanduser(os.path.expandvars(path))))
     path = _expandpath(path)
     for jarFile in jarFiles:
         jarPath = os.path.join(path, jarFile)
@@ -112,7 +111,7 @@ class ClassPath(object):
             raise InstallationError("Make sure that Jython registry file is in the directory of jython.jar\n"
                                     "                            Also set registry option 'python.security.respectJavaAccessibility' to false.\n"
                                     "                            Consider running this script like so:\n"
-                                    "                            jython -Dpython.security.respectJavaAccessibility=false apidoc.py")
+                                    "                            jython -Dpython.security.respectJavaAccessibility=false extractjson.py")
         self._path.append(pth)
         sys.path.append(pth)
     
@@ -212,13 +211,15 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
         objclass = obj.__class__.__name__
     
     print '"namespace": "%s",' % (obj.__name__),
-
+    
     classOutput = StringIO.StringIO()
     for className, classType in sorted(classes):
         classDoc = getattr(classType, '__doc__', None) or ''
         # dumpObj(className)
         classOutput.write('{"title":"%s","value":"%s","method": [ ]},' % (className, classDoc.replace('\n', '&lt;br/&gt;').replace('\"', '&quot;')))
+        
     print '"class": [ %s ],' % (classOutput.getvalue()[:-1])
+    classOutput.close()
     
     functionOutput = StringIO.StringIO()
     for funcName, func in sorted(functions):
@@ -233,7 +234,6 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
         attrOutput.write('{"title":"%s","value":"%s"},' % (attr, val))
     print '"attribute": [ %s ]' % (attrOutput.getvalue()[:-1])
     attrOutput.close()
-
 
 def prettyPrintCols(strings, widths, split=' '):
     """Pretty prints text in colums, with each string breaking at
@@ -386,17 +386,11 @@ def processModules(modules):
             print '*** could not import', moduleName
 
 def configureSysPath():
-    basename = os.path.basename(os.getcwd())
-    
-    # attempt to work when running from both mcvPath and "mcvPath/tools/"
-    if basename == 'tools':
-        mcvPathPrefix = '..'
-        idvPathPrefix = '../..'
-        visadPathPrefix = '../..'
-    elif basename == 'mcv':
-        mcvPathPrefix = '.'
-        idvPathPrefix = '..'
-        visadPathPrefix = '..'
+    argvpath, script = os.path.split(sys.argv[0])
+    if argvpath.endswith('tools/apidocs'):
+        mcvPathPrefix = '../..'
+        idvPathPrefix = '../../..'
+        visadPathPrefix = '../../..'
     else:
         raise OSError() # TODO(jon): plz to making better !!
     
@@ -438,9 +432,9 @@ def configureSysPath():
     #     else:
     #         print '(bad)\t', path
     
-    print '{'
+    print '{ "contents": [ {'
     processModules(mcvModules)
-    print '}'
+    print '} ] }'
     #processModules(idvModules)
     #processModules(visadModules)
 

@@ -1,0 +1,81 @@
+/* By element */
+ul {
+  padding-left: 1em;
+}
+
+li {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+/* By class */
+.namespace {
+  width: 100%;
+  background: white;
+}
+
+.header_namespace {
+  font-size: 100%;
+  font-weight: bold;
+  font-style: italic;
+  background: white;
+  color: black;
+}
+
+.class {
+  font-size: 100%;
+  font-weight: bold;
+  font-style: normal;
+  border: 1px solid black;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  padding: 0.5em;
+  background: #F0F0F0;
+  color: black;
+}
+
+.header_class {
+  font-size: 150%;
+  font-weight: bold;
+  color: black;
+}
+
+.header {
+  font-size: 110%;
+  font-weight: bold;
+  color: #303030;
+  padding-left: 0.25em;
+  border: 1px solid lightgray;
+  border-top: 1px solid gray;
+  border-bottom: 1px dotted gray;
+
+  border: 1px dotted lightgray;
+  border-top: 1px solid lightgray;
+}
+
+.title {
+  font-size: 100%;
+  font-weight: bold;
+  color: #303030;
+}
+
+.value {
+  font-size: 100%;
+  font-weight: normal;
+  color: black;
+}
+
+.attribute {
+  color: #503030;
+  background: #F0EAEA;
+}
+
+.method {
+  color: #305030;
+  background: #EAF0EA;
+}
+
+.function {
+  color: #303050;
+  background: #EAEAF0;
+}

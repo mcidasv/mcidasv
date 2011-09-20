@@ -1,0 +1,99 @@
+<html>
+  <head>
+    <title>CSS Test</title>
+    <link href="csstest.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    {% block namespace_block scoped %}
+    {% for namespace in docs.contents %}
+    <div class="namespace">
+      <div class="header_namespace">
+        {{ namespace.namespace }}<br/>
+      </div>
+      {% block class_block scoped %}
+      {% for class in namespace.class %}
+      <div class="class">
+        <div class="header_class">
+          <!-- Class N Name -->
+          {{ class.title }}
+        </div>
+        <div class="value">
+          <!-- Description of class N -->
+          {{ class.value }}
+        </div>
+        <!-- Attributes -->
+        <ul>
+          <li>
+            <div class="attribute header">
+              Attributes
+            </div>
+            <ul>
+              {% block attr_block scoped %}
+              <li>
+                <div class="title">
+                  Attribute N
+                </div>
+                <div class="value">
+                  Description of Attribute N
+                </div>
+              </li>
+              {% endblock attr_block %}
+            </ul>
+          </li>
+        </ul>
+        <!-- Methods -->
+        <ul>
+          <li>
+            <div class="method header">
+              Methods
+            </div>
+            <ul>
+              {% block method_block scoped %}
+              {% for method in class.method %}
+              <li>
+                <div class="title">
+                  methodN(arg)
+                </div>
+                <div class="value">
+                  Description of Method N
+                </div>
+              </li>
+              {% endfor %}
+              {% endblock method_block %}
+            </ul>
+          </li>
+        </ul>
+      </div>
+      {% endfor %}
+      {% endblock class_block %}
+    </div>
+    <div>
+      <!-- Properties -->
+      <ul>
+        <li>
+          <div class="function header">
+            Functions
+          </div>
+          <ul>
+            {% block function_block scoped %}
+            {% for function in namespace.function %}
+            <li>
+              <div class="title">
+                <!-- Property N -->
+                {{ function.title }}
+              </div>
+              <div class="value">
+                {{ function.value }}
+                <!-- Description of Property N -->
+              </div>
+            </li>
+            {% endfor %}
+            {% endblock function_block %}
+          </ul>
+        </li>
+      </ul>
+    </div>
+    {% endfor %}
+    {% endblock namespace_block %}
+  </body>
+</html>
