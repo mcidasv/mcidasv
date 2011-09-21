@@ -37,7 +37,6 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
 <li><a href="#image1">Viewing the Existing Local Datasets</a></li>
 <li><a href="#add_new_entry">Adding a New Local Dataset </a></li>
 <li><a href="#edit_entry">Editing an Existing Local Dataset</a></li>
-<li><a href="#resolv">RESOLV.SRV</a></li>
 <li><a href="#menus">Menus</a></li>
 </ul>
 <a name="image1" id="image1"></a><div class="pagesubtitle">Viewing the Existing Local Datasets</div>
@@ -70,6 +69,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
         <li>MODIS L2 MOD35 (MODIS Level 2 Cloud Mask)</li>
         <li>MODIS L3 MODR (MODIS Level 2 Corrected Reflectance)</li>
         <li>MSG HRIT</li>
+        <ul>
+        <li><a name="msg" id="msg"></a>Note:  McIDAS-V reads the uncompressed segmented MSG Level 1.5 files transmitted by EUMETSAT.  The prologue files (*PRO*) must be in the same directory as the segmented data files or the images will not display.  </li>
+        </ul>
         <li>MTSAT HRIT</li>
         <!--      <li>NEXRAD Level 3 Radar </li>-->
         <li>NOAA AVHRR Level 1b</li>
@@ -79,8 +81,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
   </li>
   <li class="propertylistitem"><strong>Directory</strong><strong></strong> - Represents the location of the local files using the pop up navigation box. <strong>At this time, only a directory can be selected. An option to add files by file mask will be added in the future.</strong></li>
 </ul>
-<p>The status line in the lower left corner gives information about the operating status of the local image server. If the server has stopped or is not running as expected, the status line will say &quot;Local server is not running&quot;. In this case, click the  <img src="images/addemanager/RestartMeButton.gif" alt="Restart Me button" width="88" height="25" align="absmiddle"> button to restart the server. </p>
-<a name="add_new_entry" id="add_new_entry"></a> <div class="pagesubtitle">Adding a New Local Dataset</div>
+<p>The status line in the lower left corner gives information about the operating status of the local image server. If the server has stopped or is not running as expected, the status line will say &quot;Local server is not running&quot;. In this case, click the  <img src="images/addemanager/RestartMeButton.gif" alt="Restart Me button" align="absmiddle"> button to restart the server.</p>
+<p><a name="add_new_entry" id="add_new_entry"></a> </p>
+<div class="pagesubtitle">Adding a New Local Dataset</div>
 <p>To add  a new local dataset entry, select <strong>File-&gt;New Local Dataset</strong> from the ADDE Data Manager menu. </p>
 <a name="image2" id="image2"></a>
 <div class="images"><img src="images/addemanager/AddLocal.gif" alt="Image 2: Add Local Dataset Window"><br> 
@@ -95,10 +98,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
   <li class="propertylistitem"><img src="images/addemanager/Cancel.gif" alt="Cancel button" width="80" height="30" align=absmiddle> <strong> -</strong> Closes the window and discards any information that was entered.</li>
 </ul>
 <a name="edit_entry" id="edit_entry"></a><div class="pagesubtitle">Editing an Existing Local Dataset</div>
-<p> To edit an existing entry, double click on the entry to bring up  the <strong>Edit Local Dataset</strong> window. Make the needed changes and click <strong>Save Changes</strong> (or click <strong>Cancel</strong> to discard any changes and close the window).</p>
-<a name="resolv" id="resolv"></a><div class="pagesubtitle">RESOLV.SRV</div>
-<p>Note that in your RESOLV.SRV file (found in your McIDAS-V directory), requires a PRO* at the end of your MSG HRIT FD and MSG HRIT HRV datasets. This PRO* represents the prologue file that is required to display this data. This MSG data includes varous segments that includes PRO and EPI files. If you look at example LRIT data, you will also see that PRO files are involved. However, because this LRIT data is not segmented as the MSG data is, the PRO* in your RESOLV.SRV entry is not necessary.</p>
-<a name="menus" id="menus"></a><div class="pagesubtitle">Menus</div>
+<p> To edit an existing entry, double click on the entry to bring up  the <strong>Edit Local Dataset</strong> window. Make the needed changes and click <strong>Save Changes</strong> (or click <strong>Cancel</strong> to discard any changes and close the window).
+<a name="menus" id="menus"></a></p>
+<div class="pagesubtitle">Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="../controls/LayerControls.html#menus">Menus section</a> of the Layer Controls Page. However, there
 are several menu options that are unique to this tool.</p>
 <p>The <strong>File </strong>menu has these unique options:</p>

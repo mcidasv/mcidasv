@@ -246,6 +246,47 @@ Note: If your system does not support Java3D version 1.3.1+ McIDAS-V will not wo
         way?</h4>
     </div>
     <div class="faq-answer"><strong>A.</strong> Using transparency in a color display may give unexpected results. In general, only the last thing added can be fully transparent. If you have a display that is transparent, then add in a new display, you may not see it.  You can use the display control's <strong>View-&gt;<a href="controls/LayerControls.html#bringtofront">Bring to Front</a></strong> menu to remove and re-add the display that you want to be transparent so it is last.</div>
+    <a name="fewercolors" id="fewercolors"></a>
+    <div class="faq-question">
+      <h4>Q. When I load an image, why is it displayed with fewer colors than I expect?</h4>
+    </div>
+    <div class="faq-answer"><strong>A.</strong> First, check that your display
+      configuration is set to the maximum number of colors (e.g., 32 bit) so
+      that McIDAS-V is able to display imagery and color tables using a full
+      range of colors. If that is set correctly it's possible that the range
+      of values defined for the color table is less than the range of values
+      in the displayed image. You can view or modify the range of values defined
+      for the color table by right clicking on the color bar in the Legend of
+      the Main Display window and selecting either <strong>Change Range...</strong> or <strong>Edit
+      Color Table</strong>. Right clicking also displays other options that let
+      you apply a different color table or edit the current one.</div>
+    <a name="blocky" id="blocky"></a>
+    <div class="faq-question">
+      <h4>Q. When I load an image, why does it appear pixelated (blocky)?</h4>
+    </div>
+    <div class="faq-answer">
+      <p><strong>A.</strong> A displayed image can appear pixelated (blocky)
+        due to one or more factors, including the resolution of the displayed
+        image, the magnification and pixel sampling factors at which it
+        was displayed, and the zoom factor.</p>
+      <p> For example, if you display an 8 km resolution image while zoomed in
+        to a small geographic region such that each display pixel represents
+        a higher resolution value (e.g., 1 km<sup>2</sup>
+	   of the earth surface) the image pixels need to be
+		duplicated to fill the display and thus the image will appear pixelated.
+		The same effect will occur with any image if you zoom in (using the
+		<a href="ui/index.html">Navigation Toolbar</a> buttons or <a href="ui/Navigation.html">other
+		zooming actions</a>) to where the display
+		resolution is higher than the image resolution.</p>
+      <p> If you believe that the displayed image is more pixelated than it should
+          be for its given resolution, check the settings of the <a href="data/DataSubset.html">Magnification
+          sliders</a> in the Field Selector's <strong>Advanced</strong> tab and the <a href="controls/ImagePlanViewControl.html">Pixel
+          Sampling slider</a> in the Layer Controls. In order to display the
+          image at the highest possible resolution (its native resolution),
+          the line and element magnifcations must be set to 1 (sliders all the
+          way to the right) and the pixel sampling set to 0 (slider all the way
+          to the left).</p>
+    </div>	  
     <br>
 </div>
 <!-- InstanceEndEditable -->

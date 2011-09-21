@@ -126,7 +126,7 @@
 	<tocitem text="Time Animation" target="idv.ui.animation"/>
 	<tocitem text="Legend" target="idv.ui.legend"/>
 	<tocitem text="Modify the Color Bar Interactively" target="idv.ui.modifycolorinteractively"/>
-	<tocitem text="Cursor Readout and Tooltip Panel" target ="idv.ui.tooltippanel"/>
+	<tocitem text="Status Bar" target ="idv.ui.statusbar"/>
     <tocitem text="Zooming, Panning and Rotating" target="idv.ui.navigation"/>
     <tocitem text="Transect Views" target="idv.ui.transectviewmanager"/>
 </tocitem>

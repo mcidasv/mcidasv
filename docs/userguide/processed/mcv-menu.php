@@ -204,7 +204,7 @@
             <span class="link" onClick="setPage('ui/Animation.html');">Time Animation</span><br>                        
 <span class="link" onClick="setPage('ui/Legend.html');"> Legend</span><br>
             <span class="link" onClick="setPage('ui/ModifyColorInteractively.html');">Modify the Color Bar Interactively</span><br>
-             <span class="link" onClick="setPage('ui/TooltipPanel.html');">Cursor Readout and Tooltip Panel</span><br>    
+             <span class="link" onClick="setPage('ui/StatusBar.html');">Status Bar</span><br>    
             <span class="link" onClick="setPage('ui/Navigation.html');">Zooming, Panning and Rotating</span><br>
             <span class="link" onClick="setPage('ui/TransectViewManager.html');">Transect Views</span><br>
         </div>

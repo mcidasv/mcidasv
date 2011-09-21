@@ -56,7 +56,7 @@ the storm in the list and press the <strong> <img src="images/LoadTracks.gif" al
 You can load any number of storms but they are shown in different panels. You
 can use the <strong>View-&gt;Storm Tracks</strong> menu to list out
 all of the loaded storms, remove them all, etc. Once a storm is loaded it can
-be removed with the small &quot;scissors&quot; icon shown in the upper right.</p>
+be removed with the <img src="images/RemoveStorm.gif" width="19" height="17" alt="Remove Storm icon"align="absmiddle"> icon shown in the upper right.</p>
 <p> Once a storm is loaded the first thing you should do is to specify which &quot;Techs&quot; (or
   models) to use by bringing up the control's Properties dialog <strong>Edit-&gt;Properties</strong> menu.
   In the <strong>Techs to use</strong> tab, select all of the Techs in the &quot;Use&quot; list
@@ -80,7 +80,7 @@ be removed with the small &quot;scissors&quot; icon shown in the upper right.</p
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Points -</strong> Specifies which station model to
   use for both the Observation as well as the Forecast tracks.</li>
-<li class="propertylistitem"><strong>Animation - </strong> Represents the station model to use for the
+<li class="propertylistitem"><strong>Animation - </strong> Specifies the station model to use for the
   Observation track that moves along with the time animation.</li>
 <li class="propertylistitem"><strong>Animation Mode -</strong> Determines whether to animate
   the tracks or show all of the tracks.</li>
@@ -119,21 +119,63 @@ you can show the 12 hour forecast from each model run.</p>
 <p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>Techs -</strong> Represents what data is plotted. This data is either observation of model data.</li>
+<li class="propertylistitem"><strong>Techs -</strong> Selects the source of the data for the charts in the Storm Track  window. This is either observation or model data.</li>
 <li class="propertylistitem"><strong>Forecast Time -</strong> Allows you to select which forecast model runs to display in the charts.</li>
-<li class="propertylistitem"><strong>Storm Category -</strong> Represents the ACTF storm category.</li>
+<li class="propertylistitem"><strong>Storm Category -</strong> Shows the ATCF storm category.</li>
 <ul class="propertylist">
-<li><strong> 0 DB -</strong> Disturbance</li>
-<li><strong> 1 TD -</strong> Tropical Depression</li>
-<li><strong> 2 TS -</strong> Tropical Storm</li>
-<li><strong> 3 TY -</strong> Typhoon</li>
-<li><strong> 4 ST -</strong> Super Typhoon</li>
-<li><strong> 5 TC -</strong> Tropical Cyclone</li>
-<li><strong> 6 HU -</strong> Hurricane</li>
+<li class="propertylistitem"><table id="gridformulas1" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1">0 DB</td>
+   <td width="125">Disturbance
+   </tr>
+   <tr>
+   <td width="40" colspan="1" rowspan="1" valign="top">
+   <p>1 TD</p>
+   </td>
+   <td width="125" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>Tropical Depression</p>
+   </td>
+   </tr>
+   <td width="40" colspan="1" rowspan="1" valign="top">
+   <p>2 TS</p>
+   </td>
+   <td width="125" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>Tropical Storm</p>
+   </td>
+   </tr>
+   <td width="40" colspan="1" rowspan="1" valign="top">
+   <p>3 TY</p>
+   </td>
+   <td width="125" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>Typhoon</p>
+   </td>
+   </tr>
+   <td width="40" colspan="1" rowspan="1" valign="top">
+   <p>4 ST</p>
+   </td>
+   <td width="125" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>Super Typhoon</p>
+   </td>
+   </tr>
+   <td width="40" colspan="1" rowspan="1" valign="top">
+   <p>5 TC</p>
+   </td>
+   <td width="125" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>Tropical Cyclone</p>
+   </td>
+   </tr>
+   <td width="40" colspan="1" rowspan="1" valign="top">
+   <p>6 HU</p>
+   </td>
+   <td width="125" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>Hurricane</p>
+   </td>
+   </tr>
+</table></li>
 </ul>
-<li class="propertylistitem"><strong>Min Pressure -</strong>  Represents the pressure level at the time of the observation/forecast.</li>
-<li class="propertylistitem"><strong>Max Windspeed -</strong> Represents the wind speed at the time of the observation/forecast.</li>
-<li class="propertylistitem"><strong>Use Difference -</strong> Displays the difference between the forecasted value and the observed
+<li class="propertylistitem"><strong>Min Pressure -</strong>  Plots the pressure level at the time of the observation/forecast.</li>
+<li class="propertylistitem"><strong>Max Windspeed -</strong> Plots the wind speed at the time of the observation/forecast.</li>
+<li class="propertylistitem"><strong>Use Difference -</strong> Plots the difference between the forecasted value and the observed
   value for the chosen parameter(s).</li>
 <li class="propertylistitem"><img src="images/RemoveChart.gif" width="134" height="26" alt="Remove Chart Button"align="absmiddle"> <strong>-</strong> Removes the <strong>Storm Chart</strong> tab from the Storm Track window.</li>
 </ul>
@@ -141,7 +183,8 @@ you can show the 12 hour forecast from each model run.</p>
 <p>Many of these menu items seen utilizing this tool are standard options that can be found in the <a href="../controls/LayerControls.html#menus">Menus section</a> of the Layer Controls Page. However, there are some options that are unique to this display.</p>
 <p>The <strong>File</strong> menu has these unique items:</p>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>Export to Google Earth -</strong> Saves the file as a Google Earth file.</li>
+<li class="propertylistitem"><strong>Save-&gt;Export to Data File -</strong> Saves the file as a Microsoft Excel (.xls) file.</li>
+<li class="propertylistitem"><strong>Save-&gt;Export to Google Earth -</strong> Saves the file as a Google Earth (.kml) file.</li>
 <li class="propertylistitem"><strong>Close Window -</strong> Closes the Storm Track window.</li>
 </ul>
 <p>The <strong>Edit</strong> menu has these unique items:</p>

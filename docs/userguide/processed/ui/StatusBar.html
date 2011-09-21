@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Status Bar</title>
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<!-- InstanceBeginEditable name="CurrentFile" -->
+<script language="javascript" type="text/javascript">
+function setParentPage() { if (parent.setPage) parent.setPage('ui/StatusBar.html',true); }
+</script>
+<!-- InstanceEndEditable -->
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+<body onLoad="setParentPage();">
+<div class="TopTitleNav">
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="ModifyColorInteractively.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="Navigation.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span> </p>
+  <hr align="center">
+</div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Status Bar</div>
+<p>At the bottom of the Main Display window is a status bar. This bar is useful for seeing how much memory has been used, the current time, what McIDAS-V is doing, as well as the value of the parameter probed in the Main Display window. You can change the panel on the left back and forth between displaying time or memory by left-clicking on the time or memory that is currently being displayed.</p>
+<div class="pagesubtitle">Time</div>
+<div class="images"><img src="images/Time.gif" alt="Image 1: Time Readout"><br>
+<span class="caption">Image 1: Time Readout</span></div>
+<p>The time displayed in the left panel of the status bar is not the time associated with the data you have loaded into McIDAS-V, but rather the current time in GMT.</p>
+<div class="pagesubtitle">Memory</div>
+<div class="images"><img src="images/Memory.gif" width="747" height="34" alt="Image 2: Memory Readout"><br>
+<span class="caption">Image 2: Memory Readout</span></div>
+<p>The memory displayed in the left panel of the status bar is in the format of (Used memory)/(Max used memory)/(Max memory) in MB. You can change the amount of memory allocated by McIDAS-V at startup in the <a href="../tools/preferences/AdvancedPreferences.html"><strong>Advanced</strong> tab</a> of the User Preferences window. When McIDAS-V has used up the majority of its available memory, the memory panel of the status bar will turn pink and then red. This will cause McIDAS-V to slow down, and may eventually prevent new data sources from being loaded. You can mitigate this problem by right clicking on the memory and selecting:<strong> <img src="images/ClearMemory.gif" width="157" height="26" alt="Clear Memory and Cache" align="absmiddle"></strong>. This will clear out some memory so you can still work efficiently in your current session.
+<div class="pagesubtitle">Messages</div>
+<div class="images"><img src="images/Messages.gif" width="747" height="36" alt="Image 3: Messages Readout"><br><span class="caption">Image 3: Messages Readout</span></div>
+<p>To the right of the Time/Memory readout panel is a Messages readout panel that tells you what McIDAS-V is doing. If no data is being loaded or no data sources are being loaded into McIDAS-V, this panel will be reserved for displaying the Latitude, Longitude, and Altitude information at the location of your cursor over the Main Display window. In the example above, a Grids data source is being loaded from an OPeNDAP server. If you are loading data into McIDAS-V      as a loop, the middle message panel will list the data source name      and also indicate how much data has loaded. To the right of this message is a loading panel. When data is loading into McIDAS-V, you will see this blue bar move from side to side.  When McIDAS-V is completing various processes, different messages may be overlaid on top of this loading bar, including &quot;Reading Data&quot; and &quot;Creating Layers&quot;.</p>
+<div class="pagesubtitle">Probe Readout</div>
+<div class="images"><img src="images/Probe.gif" alt="Image 4: Probe Value Readout"><br>
+<span class="caption">Image 4: Probe Value Readout</span></div>
+<p>As a default in the <a href="../tools/preferences/NavigationPreferences.html"><strong>Navigation Controls</strong></a> tab of the User Preferences window, holding down the middle mouse button over your display will probe the data and give a numerical readout of your displayed parameter(s). The probe value(s) will be listed at the bottom of the  Probe Readout panel. This panel also lists the location of your mouse when you probe the data with respect to Latitude and Longitude. As a default, this panel will list your data source and the display type. You can change how your data source will be labeled in this panel by right-clicking on the item in the <a href="Legend.html">Legend</a>, and going to <strong>Edit-&gt;Properties...</strong>. In the <strong>Settings</strong> tab of this <a href="../controls/PropertiesDialog.html">Properties dialog</a>, you can change the Legend Label to say anything, including adding macros to further customize the readout in this panel.</p>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav">
+  <hr align="center">
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="ModifyColorInteractively.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="Navigation.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span></p>
+</div>
+</body>
+<!-- InstanceEnd -->
+</html>
