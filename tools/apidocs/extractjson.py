@@ -235,70 +235,6 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
     print '"attribute": [ %s ]' % (attrOutput.getvalue()[:-1])
     attrOutput.close()
 
-def prettyPrintCols(strings, widths, split=' '):
-    """Pretty prints text in colums, with each string breaking at
-    split according to prettyPrint.  margins gives the corresponding
-    right breaking point."""
-    
-    assert len(strings) == len(widths)
-    
-    strings = map(nukenewlines, strings)
-    
-    # pretty print each column
-    cols = [''] * len(strings)
-    for i in range(len(strings)):
-        cols[i] = prettyPrint(strings[i], widths[i], split)
-    
-    # prepare a format line
-    format = ''.join(['%%-%ds' % width for width in widths[0:-1]]) + '%s'
-    
-    def formatline(*cols):
-        return format % tuple(map(lambda s: (s or ''), cols))
-    
-    # generate the formatted text
-    return '\n'.join(map(formatline, *cols))
-
-def prettyPrint(string, maxlen=75, split=' '):
-    """Pretty prints the given string to break at an occurrence of
-    split where necessary to avoid lines longer than maxlen.
-    
-    This will overflow the line if no convenient occurrence of split
-    is found"""
-    
-    # Tack on the splitting character to guarantee a final match
-    string += split
-    
-    lines = []
-    oldeol = 0
-    eol = 0
-    while not (eol == -1 or eol == len(string)-1):
-        eol = string.rfind(split, oldeol, oldeol+maxlen+len(split))
-        lines.append(string[oldeol:eol])
-        oldeol = eol + len(split)
-    
-    return lines
-
-def nukenewlines(string):
-    """Strip newlines and any trailing/following whitespace; rejoin
-    with a single space where the newlines were.
-    
-    Bug: This routine will completely butcher any whitespace-formatted
-    text."""
-    if not string:
-        return ''
-    if not hasattr(string, 'splitlines'):
-        return ''
-    lines = string.splitlines()
-    return ' '.join([line.strip() for line in lines])
-
-def delchars(str, chars):
-    """Returns a string for which all occurrences of characters in
-    chars have been removed."""
-    # Translate demands a mapping string of 256 characters;
-    # whip up a string that will leave all characters unmolested.
-    identity = ''.join([chr(x) for x in range(256)])
-    return str.translate(identity, chars)
-
 def javaInstanceMethods(clazz):
     """Returns names of instance methods for a given Java class."""
     names = set()
@@ -355,7 +291,6 @@ def ispython22(object):
     else:
         # assume rest is python
         python = True
-
     return python
 
 def ispython25(object):

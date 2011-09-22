@@ -19,11 +19,9 @@ def _expandpath(path):
 def deserializeDocs(filename):
     with open(filename, 'r') as fp:
         return json.load(fp)
-    
     return ''
 
 def renderTemplate(docs, templateFilename='csstest.html'):
-    # env = Environment(loader=PackageLoader('apidocs', 'templates'))
     env = Environment(loader=FileSystemLoader('./templates'))
     template = env.get_template(templateFilename)
     return template.render(docs=docs)
@@ -35,7 +33,6 @@ def main():
         jsonFile = './inception.json'
     
     jsonFile = _expandpath(jsonFile)
-    
     docs = deserializeDocs(jsonFile)
     print renderTemplate(docs)
 
