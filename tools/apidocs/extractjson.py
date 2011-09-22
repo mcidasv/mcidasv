@@ -122,10 +122,6 @@ class ClassPath(object):
 sys.classpath = ClassPath()
 # end of jclasspath stuff
 
-def printDict(di, format="%-25s %s"):
-    for (key, val) in di.items():
-        print format % (str(key)+':', val)
-
 class _NoOp(object):
     def __repr__(self):
         return 'anything'
@@ -234,83 +230,6 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
         attrOutput.write('{"title":"%s","value":"%s"},' % (attr, val))
     print '"attribute": [ %s ]' % (attrOutput.getvalue()[:-1])
     attrOutput.close()
-
-def javaInstanceMethods(clazz):
-    """Returns names of instance methods for a given Java class."""
-    names = set()
-    for method in Class.getDeclaredMethods(clazz):
-        modifiers = method.getModifiers()
-        if not Modifier.isStatic(modifiers) and Modifier.isPublic(modifiers):
-            name = method.name
-            names.add(name)
-            if name.startswith('get') and len(name) > 3 and not method.getParameterTypes():
-                property_name = name[3].lower() + name[4:]
-                names.add(property_name)
-    for base in clazz.__bases__:
-        if not ispython(base):
-            names = names | javaInstanceMethods(base)
-    return names
-
-def javaStaticMethods(clazz):
-    """Returns names of static methods for a given Java class."""
-    static_methods = {}
-    for method in Class.getDeclaredMethods(clazz):
-        modifiers = method.getModifiers()
-        if Modifier.isStatic(modifiers) and Modifier.isPublic(modifiers):
-            static_methods[method.name] = method
-    methods = static_methods.keys()
-    for base in clazz.__bases__:
-        if not ispython(base):
-            methods.extend(javaStaticMethods(base))
-    return methods
-
-def javaStaticFields(clazz):
-    """Returns names of static fields for a given Java class."""
-    static_fields = {}
-    for field in Class.getDeclaredFields(clazz):
-        modifiers = field.getModifiers()
-        if Modifier.isStatic(modifiers) and Modifier.isPublic(modifiers):
-            static_fields[field.name] = field
-    fields = static_fields.keys()
-    for base in clazz.__bases__:
-        if not ispython(base):
-            fields.extend(javaStaticFields(base))
-    return fields
-
-def ispython22(object):
-    """Determine whether or not the object is Python (2.2.*) code."""
-    object_type = type(object)
-    if object_type.__name__.startswith('java') or isinstance(object, PyReflectedFunction):
-        python = False
-    elif object_type is types.MethodType:
-        try:
-            object.__dict__
-            python = True
-        except AttributeError:
-            python = False
-    else:
-        # assume rest is python
-        python = True
-    return python
-
-def ispython25(object):
-    """Determine whether or not the object is Python (2.5.*) code."""
-    if isinstance(object, Class):
-        python = False
-    elif isinstance(object, Object):
-        python = False
-    elif isinstance(object, PyReflectedFunction):
-        python = False
-    elif type(object) == types.MethodType and not ispython(object.im_class):
-        python = False
-    else:
-        python = True
-    return python
-
-if sys.version.startswith('2.5'):
-    ispython = ispython25
-else:
-    ispython = ispython22
 
 def processModules(modules):
     for title, moduleName in sorted(modules.iteritems()):
