@@ -183,12 +183,18 @@
         <mapID target="idv.examples.3dsurface.image3"                url="examples/3DSurface.html#image3" />
         <mapID target="idv.examples.3dsurface.image4"                url="examples/3DSurface.html#image4" />
         <mapID target="idv.examples.3dsurface.image5"                url="examples/3DSurface.html#image5" />
+		<mapID target="idv.examples.3dsurface.2dtopo"				 url="examples/3DSurface.html#2dtopo" />
         <mapID target="idv.examples.3dsurface.isosurface"            url="examples/3DSurface.html#isosurface" />
         <mapID target="idv.examples.3dsurface.topography"            url="examples/3DSurface.html#topography" />
         <mapID target="idv.examples.flowdisplays"                    url="examples/FlowDisplays.html" />
         <mapID target="idv.examples.flowdisplays.image1"             url="examples/FlowDisplays.html#image1" />
         <mapID target="idv.examples.flowdisplays.image2"             url="examples/FlowDisplays.html#image2" />
         <mapID target="idv.examples.flowdisplays.image3"             url="examples/FlowDisplays.html#image3" />
+		<mapID target="idv.examples.flowdisplays.streamlineplan"	 url="examples/FlowDisplays.html#streamlineplan" />
+		<mapID target="idv.examples.flowdisplays.vectorcrosssection" url="examples/FlowDisplays.html#vectorcrosssection" />
+		<mapID target="idv.examples.flowdisplays.vectorplan"		 url="examples/FlowDisplays.html#vectorplan" />
+		<mapID target="idv.examples.flowdisplays.windbarbcrosssection"	url="examples/FlowDisplays.html#windbarbcrosssection" />
+		<mapID target="idv.examples.flowdisplays.windbarbplan"		 url="examples/FlowDisplays.html#windbarbplan" />
         <mapID target="idv.examples.imagery"                         url="examples/Imagery.html" />
         <mapID target="idv.examples.imagery.image1"                  url="examples/Imagery.html#image1" />
         <mapID target="idv.examples.imagery.image2"                  url="examples/Imagery.html#image2" />
@@ -203,14 +209,17 @@
         <mapID target="idv.examples.observations.obs"                url="examples/Observations.html#obs" />
         <mapID target="idv.examples.observations.track"              url="examples/Observations.html#track" />
         <mapID target="idv.examples.planviews"                       url="examples/PlanViews.html" />
-        <mapID target="idv.examples.planviews.image1"                url="examples/PlanViews.html#image1" />
-        <mapID target="idv.examples.planviews.image2"                url="examples/PlanViews.html#image2" />
-        <mapID target="idv.examples.planviews.image3"                url="examples/PlanViews.html#image3" />
-        <mapID target="idv.examples.planviews.image4"                url="examples/PlanViews.html#image4" />
+        <mapID target="idv.examples.planviews.contourplan"           url="examples/PlanViews.html#contourplan" />
+        <mapID target="idv.examples.planviews.colorfilledplan"       url="examples/PlanViews.html#colorfilledplan" />
+        <mapID target="idv.examples.planviews.colorshadedplan"       url="examples/PlanViews.html#colorshadedplan" />
+		<mapID target="idv.examples.planviews.valueplots"			 url="examples/PlanViews.html#valueplots" />
         <mapID target="idv.examples.profiler"                        url="examples/Profiler.html" />
         <mapID target="idv.examples.profiler.image1"                 url="examples/Profiler.html#image1" />
         <mapID target="idv.examples.profiler.image2"                 url="examples/Profiler.html#image2" />
         <mapID target="idv.examples.profiler.image3"                 url="examples/Profiler.html#image3" />
+		<mapID target="idv.examples.profiler.3dview"				 url="examples/Profiler.html#3dview" />
+		<mapID target="idv.examples.profiler.profiler"				 url="examples/Profiler.html#profiler" />
+		<mapID target="idv.examples.profiler.timeheight"			 url="examples/Profiler.html#timeheight" />
         <mapID target="idv.examples.radar"                           url="examples/Radar.html" />
         <mapID target="idv.examples.radar.image1"                    url="examples/Radar.html#image1" />
         <mapID target="idv.examples.radar.image2"                    url="examples/Radar.html#image2" />
@@ -218,9 +227,18 @@
         <mapID target="idv.examples.radar.image4"                    url="examples/Radar.html#image4" />
         <mapID target="idv.examples.radar.image5"                    url="examples/Radar.html#image5" />
         <mapID target="idv.examples.radar.image6"                    url="examples/Radar.html#image6" />
+		<mapID target="idv.examples.radar.cappi"					 url="examples/Radar.html#cappi" />
+		<mapID target="idv.examples.radar.crosssection"				 url="examples/Radar.html#crosssection" />
+		<mapID target="idv.examples.radar.sweep"					 url="examples/Radar.html#sweep" />
+		<mapID target="idv.examples.radar.volume"					 url="examples/Radar.html#volume" />
+		<mapID target="idv.examples.radar.isosurface"				 url="examples/Radar.html#isosurface" />
+		<mapID target="idv.examples.radar.rhi"						 url="examples/Radar.html#rhi" />
         <mapID target="idv.examples.soundings"                       url="examples/Soundings.html" />
         <mapID target="idv.examples.soundings.image1"                url="examples/Soundings.html#image1" />
         <mapID target="idv.examples.soundings.image2"                url="examples/Soundings.html#image2" />
+		<mapID target="idv.examples.soundings.emagram"				 url="examples/Soundings.html#emagram" />
+		<mapID target="idv.examples.soundings.skewt"				 url="examples/Soundings.html#skewt" />
+		<mapID target="idv.examples.soundings.stuve"				 url="examples/Soundings.html#stuve" />
         <mapID target="idv.faq"                                      url="Faq.html" />
 		<mapID target="idv.generalfaq"								 url="GeneralFaq.html" />
         <mapID target="idv.index"                                    url="toc.html" />

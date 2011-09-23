@@ -31,25 +31,21 @@ function setParentPage() { if (parent.setPage) parent.setPage('examples/3DSurfac
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">3D Surface</div>
 <ul class="childlist">
-<li><a href="#isosurface">Isosurfaces</a></li>
-<li><a href="#topography">Topography Display</a></li>
-<li><a href="#2dtopo">2D Data Draped Over Topography</a></li>
+<li><a href="#isosurface">Isosurface</a></li>
+<li><a href="#topography">Topography</a></li>
+<li><a href="#2dtopo">2D Color-Filled Contours Over Topography</a></li>
 </ul>
-<a name="isosurface" id="isosurface"></a>
-<div class="pagesubtitle">Isosurfaces</div>
+<div class="pagesubtitle"><a name="isosurface" id="isosurface"></a>Isosurface</div>
 <p>An isosurface is a surface of a single value in a 3D parameter field. Isosurfaces are the 3D analog of a single-valued contour line in a 2D plot. The intersection of an isosurface and a plane is a contour line of the same value. Isosurfaces may form closed surfaces enclosing regions of higher or lower value, but not always.</p>
-<a name="image1" id="image1"></a>
 <div class="images"><img src="images/IsosurfaceExample.gif" alt="Image 1: 3D Surface Isosurface Display">
 <br>
-<span class="caption">Image 1: 3D Surface Isosurface Display</span></div>
+<span class="caption"><a name="image1" id="image1"></a>Image 1: 3D Surface Isosurface Display</span></div>
 <p>McIDAS-V also supports isosurface displays that are colored from another parameter, not the parameter used to make the shape of the surface. The example here shows an isosurface of 89% relative humidity over North America colored by air temperature. A useful plot is to color isosurfaces by height (geopotential height) to show height of features by color.</p>
-<a name="image2" id="image2"></a>
 <div class="images"><img src="images/ColoredIsosurface.gif" alt="Image 2: 3D Isosurface Display Colored by Another Parameter">
 <br>
-<span class="caption">Image 2: 3D Surface Isosurface Display Colored by Another Parameter.</span></div>
+<span class="caption"><a name="image2" id="image2"></a>Image 2: 3D Surface Isosurface Display Colored by Another Parameter.</span></div>
 <p></p>
-<a name="topography" id="topography"></a>
-<div class="pagesubtitle">Topography Display</div>
+<div class="pagesubtitle"><a name="topography" id="topography"></a>Topography</div>
 <p>For data sources that include topography or terrain data, such as the &quot;terrain&quot;
   parameter in NAM and RUC model output or DEM data, McIDAS-V can display a 3D
   relief map. Select &quot;Topography&quot; for the display type.</p>
@@ -59,16 +55,22 @@ function setParentPage() { if (parent.setPage) parent.setPage('examples/3DSurfac
 
 <div class="images"><a name="image4" id="image4"></a><img src="images/TopographyDisplay.gif" alt="Image 4: 3D Topography Display of RUC Model Terrain Data"><br>
 <span class="caption">Image 4: 3D Topography Display of RUC Model Terrain Data</span></div>
-
-<div class="pagesubtitle">
-  
-  <p><a name="2dtopo" id="2dtopo"></a>2D Data Draped Over Topography</p>
+<div class="images"><img src="images/3dContoursOverTopo.gif" width="591" height="473" alt="Image 5: 3D Surface Contours Over Topography Display"><br>
+<span class="caption">Image 5: 3D Surface Contours Over Topography Display</span></div>
+<div class="images"><img src="images/3dCFContoursOverTopo.gif" alt="Image 6: 3D Surface Color-Filled Contours Over Topography Display" width="591" height="473"><br><span class="caption">Image 6: 3D Surface Color-Filled Contours Over Topography Display</span></div>
+<div class="images"><img src="images/3dCSContoursOverTopo.gif" alt="Image 7: 3D Surface Color-Shaded Contours Over Topography Display" width="593" height="473"><br><span class="caption">Image 7: 3D Surface Color-Shaded Contours Over Topography Display</span></div>
+<div class="images"><img src="images/3dCSParamAsTopo.gif" alt="Image 8: 3D Surface Color-Shaded Parameter As Topography Display" width="593" height="473"><br>
+<span class="caption">Image 8: 3D Surface Color-Shaded Parameter As Topography Display</span></div>
+<div class="images"><img src="images/3dContourParamAsTopo.gif" alt="Image 9: 3D Surface Parameter as Topography Display" width="593" height="473"><br>
+<span class="caption">Image 9: 3D Surface Contoured Parameter as Topography Display</span></div>
+<div class="images"><img src="images/3dCFContourParamAsTopo.gif" alt="Image 10: 3D Surface Color-Filled Contoured Parameter as Topography Display" width="593" height="473"><br>
+<span class="caption">Image 10: 3D Surface Color-Filled Contoured Parameter as Topography Display</span></div>
+<div class="pagesubtitle"><p><a name="2dtopo" id="2dtopo"></a>2D Data Draped Over Topography</p>
 </div>
 <p>Two dimensional grid data can be draped over a topography field to provide a terrain following representation of the data.</p>
-<a name="image5" id="image5"></a>
-<div class="images"><img src="images/PressureOverTopography.gif" alt="Image 5: Color-Filled Contours Over Topography Display Overlaid with the Contours Over Topography Display">
+<div class="images"><img src="images/PressureOverTopography.gif" alt="Image 11: Color-Filled Contours Over Topography Display Overlaid with the Contours Over Topography Display">
 <br>
-<span class="caption">Image 5: Color-Filled Contours Over Topography Display Overlaid with the Contours Over Topography Display</span></div>
+<span class="caption"><a name="image5" id="image5"></a>Image 11: Color-Filled Contours Over Topography Display Overlaid with the Contours Over Topography Display</span></div>
 <p>For more information see <a href="../quickstart/Grids.html">Getting Started:
     Displaying Gridded Data</a>.</p>
 <!-- InstanceEndEditable -->

@@ -220,7 +220,7 @@
         <tocitem text="Plan Views" target="idv.examples.planviews"/>
         <tocitem text="3D Surface" target="idv.examples.3dsurface"/>
         <tocitem text="Imagery" target="idv.examples.imagery"/>
-        <tocitem text="Radar -- Level II WSR-88D Data Displays" target="idv.examples.radar"/>
+        <tocitem text="Radar - Level II WSR-88D Data Displays" target="idv.examples.radar"/>
         <tocitem text="Soundings" target="idv.examples.soundings"/>
         <tocitem text="Profiler Winds" target="idv.examples.profiler"/>
         <tocitem text="Flow Displays" target="idv.examples.flowdisplays"/>
