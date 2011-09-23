@@ -109,6 +109,9 @@ public class NPPDataSource extends HydraDataSource {
     
     // for now, we are only handling CrIS variables that match this filter and SCAN dimensions
     private String crisFilter = "ES_Real";
+    
+    // for now, we are only handling OMPS variables that match this filter and SCAN dimensions
+    private String ompsFilter = "Radiance";
 
     private HashMap defaultSubset;
     public TrackAdapter track_adapter;
@@ -121,9 +124,15 @@ public class NPPDataSource extends HydraDataSource {
     private PreviewSelection previewSelection = null;
     private FlatField previewImage = null;
     
-    private static int[] YSCAN_POSSIBILITIES = { 96,  512,  768,  1536, 2304, 2313, 12, 4,   4,   4   };
-    private static int[] XSCAN_POSSIBILITIES = { 508, 2133, 3200, 6400, 4064, 4121, 96, 30,  30,  30  }; 
-    private static int[] ZSCAN_POSSIBILITIES = { -1,  -1,   -1,   -1,   -1,   -1,   22, 163, 437, 717 };    
+    private static int[] YSCAN_POSSIBILITIES = { 
+    	48,  96,  512,  768,  771,  771,  1536, 1541, 2304, 2313, 12, 4,   4,   4,   5,   15   
+    };
+    private static int[] XSCAN_POSSIBILITIES = { 
+    	254, 508, 2133, 3200, 4121, 4421, 6400, 8241, 4064, 4121, 96, 30,  30,  30,  5,   105  
+    }; 
+    private static int[] ZSCAN_POSSIBILITIES = { 
+    	-1,  -1,  -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   22, 163, 437, 717, 200, 260 
+    };    
     private int inTrackDimensionLength = -1;
     
     // need our own separator char since it's always Unix-style in the NPP files
@@ -274,14 +283,13 @@ public class NPPDataSource extends HydraDataSource {
 	    	    				// cycle through once looking for XML Product Profiles
 	    	    				for (Group subG : dpg) {
 	    	    					
-	    	    					// determine the instrument name (VIIRS, ATMS, CrIS)
+	    	    					// determine the instrument name (VIIRS, ATMS, CrIS, OMPS)
 	    	    					instrumentName = subG.findAttribute("Instrument_Short_Name");
 	    	    					
 	    	    					// This is also where we find the attribute which tells us which
 	    	    					// XML Product Profile to use!
     	    						ucar.nc2.Attribute axpp = subG.findAttribute("N_Collection_Short_Name");
     	    						if (axpp != null) {
-    	    							System.err.println("XML Product Profile N_Collection_Short_Name: " + axpp.getStringValue());
     	    							String baseName = axpp.getStringValue();
     	    							productName = baseName;
     	    							String productProfileFileName = nppPP.getProfileFileName(baseName);
@@ -395,11 +403,11 @@ public class NPPDataSource extends HydraDataSource {
     	    						// this is the geolocation data
     	    						List<Variable> vl = subG.getVariables();
     	    						for (Variable v : vl) {
-    	    							if (v.getName().contains("Latitude")) {
+    	    							if (v.getName().endsWith("Latitude")) {
     	    								pathToLat = v.getName();
     	        							logger.debug("Lat/Lon Variable: " + v.getName());
     	    							}
-    	    							if (v.getName().contains("Longitude")) {
+    	    							if (v.getName().endsWith("Longitude")) {
     	    								pathToLon = v.getName();
     	        							logger.debug("Lat/Lon Variable: " + v.getName());
     	    							}
@@ -425,6 +433,14 @@ public class NPPDataSource extends HydraDataSource {
     	    							logger.debug("INSTRUMENT NAME: " + instrumentName);
     	    							if (instrumentName.getStringValue().equals("CrIS")) {
     	    								if (! varShortName.startsWith(crisFilter)) {
+    	    									logger.debug("Skipping variable: " + varShortName);
+    	    									continue;
+    	    								}
+    	    							}
+    	    							
+    	    							// for OMPS, only Radiance for now...
+    	    							if (instrumentName.getStringValue().contains("OMPS")) {
+    	    								if (! varShortName.startsWith(ompsFilter)) {
     	    									logger.debug("Skipping variable: " + varShortName);
     	    									continue;
     	    								}
@@ -686,7 +702,7 @@ public class NPPDataSource extends HydraDataSource {
         	
         	if (is3D) {
 
-        		// 3D data is either ATMS or CrIS
+        		// 3D data is either ATMS, OMPS, or CrIS
         		if ((instrumentName.getName() != null) && (instrumentName.getStringValue().equals("ATMS"))) {
             		//hasChannelSelect = true;
         			spectTable.put(SpectrumAdapter.channelIndex_name, "Channel");
@@ -729,6 +745,36 @@ public class NPPDataSource extends HydraDataSource {
         				spectTable.put(SpectrumAdapter.FOVindex_name, "dim2");
                 		spectTable.put(SpectrumAdapter.x_dim_name, "dim1");
                 		spectTable.put(SpectrumAdapter.y_dim_name, "dim0");
+                		
+        			} else if (instrumentName.getStringValue().contains("OMPS")) {
+        				
+        				spectTable.put(SpectrumAdapter.channelIndex_name, "Channel");
+                		swathTable.put(SpectrumAdapter.channelIndex_name, "Channel");
+                		
+                		swathTable.put("array_dimension_names", new String[] {"Track", "XTrack", "Channel"});
+                		swathTable.put("lon_array_dimension_names", new String[] {"Track", "XTrack"});
+                		swathTable.put("lat_array_dimension_names", new String[] {"Track", "XTrack"});
+                		spectTable.put("array_dimension_names", new String[] {"Track", "XTrack", "Channel"});
+                		spectTable.put("lon_array_dimension_names", new String[] {"Track", "XTrack"});
+                		spectTable.put("lat_array_dimension_names", new String[] {"Track", "XTrack"});
+                		
+                		spectTable.put(SpectrumAdapter.channelType, "wavelength");
+                		spectTable.put(SpectrumAdapter.channels_name, "Channel");
+                        spectTable.put(SpectrumAdapter.x_dim_name, "XTrack");
+                        spectTable.put(SpectrumAdapter.y_dim_name, "Track");
+                        
+            			int numChannels = 200;
+            			if (instrumentName.getStringValue().equals("OMPS-TC")) {
+            				numChannels = 260;
+            			}
+                		float[] bandArray = new float[numChannels];
+                		String[] bandNames = new String[numChannels];
+                		for (int bIdx = 0; bIdx < numChannels; bIdx++) {
+                			bandArray[bIdx] = bIdx;
+                			bandNames[bIdx] = "Channel " + (bIdx + 1);
+                		}
+                		spectTable.put(SpectrumAdapter.channelValues, bandArray);
+                		spectTable.put(SpectrumAdapter.bandNames, bandNames);
                 		
         			} else {
         				// sorry, if we can't id the instrument, we can't display the data!
@@ -781,7 +827,8 @@ public class NPPDataSource extends HydraDataSource {
                 		"BrightnessTemperature", "BrightnessTemperature", "NPP", "ATMS");
                 	msd.setInitialWavenumber(JPSSUtilities.ATMSChannelCenterFrequencies[0]);
                 	multiSpectralData.add(msd);
-                } else {
+                } 
+                if (instrumentName.getStringValue().equals("CrIS")) {
             		adapters[pIdx] = new CrIS_SDR_SwathAdapter(nppAggReader, swathTable);
             		CrIS_SDR_Spectrum csa = new CrIS_SDR_Spectrum(nppAggReader, spectTable);
                     DataCategory.createCategory("MultiSpectral");
@@ -791,6 +838,16 @@ public class NPPDataSource extends HydraDataSource {
                     msd.setInitialWavenumber(csa.getInitialWavenumber());
                     multiSpectralData.add(msd);
                 }
+                if (instrumentName.getStringValue().contains("OMPS")) {
+            		adapters[pIdx] = new SwathAdapter(nppAggReader, swathTable);
+            		SpectrumAdapter sa = new SpectrumAdapter(nppAggReader, spectTable);
+                    DataCategory.createCategory("MultiSpectral");
+                    categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
+                	MultiSpectralData msd = new MultiSpectralData((SwathAdapter) adapters[pIdx], sa, 
+                		"RadianceEarth", "RadianceEarth", "NPP", "OMPS");
+                	msd.setInitialWavenumber(0);
+                	multiSpectralData.add(msd);
+                } 
                 if (pIdx == 0) {
                 	defaultSubset = multiSpectralData.get(pIdx).getDefaultSubset();
                 	try {
@@ -827,9 +884,9 @@ public class NPPDataSource extends HydraDataSource {
     
     public void doMakeDataChoices() {
     	
-    	// special loop for CrIS and ATMS data
+    	// special loop for CrIS, ATMS, and OMPS data
     	if (multiSpectralData.size() > 0) {
-    		for (int k=0; k<multiSpectralData.size(); k++) {
+    		for (int k = 0; k < multiSpectralData.size(); k++) {
     			MultiSpectralData adapter = multiSpectralData.get(k);
     			DataChoice choice = null;
 				try {
