@@ -121,7 +121,6 @@ public class NPPDataSource extends HydraDataSource {
     private boolean hasImagePreview = true;
     private boolean isCombinedProduct = false;
 
-    private PreviewSelection previewSelection = null;
     private FlatField previewImage = null;
     
     private static int[] YSCAN_POSSIBILITIES = { 
@@ -524,8 +523,8 @@ public class NPPDataSource extends HydraDataSource {
     	    								logger.info("Mapping: " + varShortName + " to: " + factorsVarName);
     	    								if (factorsVarName != null) {
 	    	    								for (Variable fV : vl) {
-	    	    									if (fV.getName().endsWith(factorsVarName)) {
-	    	    										logger.debug("Pulling scale and offset values from variable: " + fV.getName());
+	    	    									if (fV.getFullName().endsWith(factorsVarName)) {
+	    	    										logger.debug("Pulling scale and offset values from variable: " + fV.getShortName());
 	    	    										ucar.ma2.Array a = fV.read();
 	    	    										ucar.ma2.Index i = a.getIndex();
 	    	    										scaleVal = a.getFloat(i);
@@ -641,8 +640,8 @@ public class NPPDataSource extends HydraDataSource {
     	    									unpackFlags.add("false");
     	    								}
     	    								
-    	    								logger.debug("Adding product: " + v.getName());
-    	    								pathToProducts.add(v.getName());
+    	    								logger.debug("Adding product: " + v.getShortName());
+    	    								pathToProducts.add(v.getFullName());
     	    								
     	    							}
     	    						}    						
@@ -1029,11 +1028,11 @@ public class NPPDataSource extends HydraDataSource {
             HashMap subset = null;
             if (ginfo != null) {
             	logger.debug("getting subset from lat-lon rect...");
-              subset = adapter.getSubsetFromLonLatRect(ginfo.getMinLat(), ginfo.getMaxLat(),
-                                                       ginfo.getMinLon(), ginfo.getMaxLon(),
-                                                       geoSelection.getXStride(),
-                                                       geoSelection.getYStride(),
-                                                       geoSelection.getZStride());
+            	subset = adapter.getSubsetFromLonLatRect(ginfo.getMinLat(), ginfo.getMaxLat(),
+            			ginfo.getMinLon(), ginfo.getMaxLon(),
+            			geoSelection.getXStride(),
+            			geoSelection.getYStride(),
+            			geoSelection.getZStride());
             }
             else {
 
