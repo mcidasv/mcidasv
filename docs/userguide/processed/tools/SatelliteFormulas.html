@@ -33,6 +33,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
 <p>The following describes each formula included in the Satellite Formulas section
   of McIDAS-V. These formulas are designed to work with SEVIRI MSG satellite data, although they are also applicable for equivalent channels of other imagers.</p>
 <p><strong>SEVIRI RGB</strong></p>
+<p>The SEVIRI RGB formulas allow you to select your desired wavelengths for each parameter. The data for the wavelengths you select will be plugged into the formula for the parameter to produce the image in the Main Display window.</p>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>AMCP - </strong>Displays all-day (24 hour) cloud microphysics data.  The display will be in units of temperature in degrees K.</li>
 <li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
@@ -197,7 +198,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>NCOL linear - </strong>Displays natural colors data with a linear enhancement by the way of the minimum and maximum reflectivity limit values. The display will be in units of reflectivity.</li>
+<li class="propertylistitem"><strong>NCOL linear - </strong>Displays natural colors data with a linear enhancement by the way of the minimum and maximum reflectivity limit values. The minrefl and maxrefl values should be between 0 and 100. The display will be in units of reflectivity.</li>
 <li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Field</strong></td>
@@ -316,6 +317,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
 </table></li>
 </ul>
 <p><strong>SEVIRI RGB Manual band selection</strong></p>
+<p>The SEVIRI RGB Manual band selection formulas allow you to select your desired wavelengths for each parameter. A recommendation for the wavelength to enter for each field will be shown in the Field Selector window. The data fro the wavelengths you select will be plugged into the formula for each parameter to produce the image in the Main Display window.</p>
 <ul class="propertylist">
     <li class="propertylistitem"><strong>Airmass: 05-06, 08-09, 05i (AIRM) - </strong>Displays airmass data.  The display will be in units of temperature in degrees K.</li>
     <li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
@@ -457,7 +459,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>Natural colors: 03, 02, 01, minrefl, maxrefl - </strong>Displays natural colors data with a linear enhancement by the way of the minimum and maximum reflectivity limit values. The display will be in units of reflectivity.</li>
+<li class="propertylistitem"><strong>Natural colors: 03, 02, 01, minrefl, maxrefl - </strong>Displays natural colors data with a linear enhancement by the way of the minimum and maximum reflectivity limit values. The minrefl and maxrefl values should be between 0 and 100. The display will be in units of reflectivity.</li>
 <li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Field</strong></td>
@@ -625,7 +627,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
 </ul>
 <p><strong>SEVIRI Differences</strong></p>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>OTOP (IR10.8 - WV6.3) -</strong> Displays overshooting tops data.</li>
+<li class="propertylistitem"><strong>OTOP (IR10.8 - WV6.3) -</strong> Displays overshooting tops data. Overshooting tops can be noted in the Main Display window by pockets of high values.</li>
 <li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Field</strong></td>
@@ -648,7 +650,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>SWDF (IR10.8-IR12.0) -</strong> Displays split window difference data.</li>
+<li class="propertylistitem"><strong>SWDF (IR10.8-IR12.0) -</strong> Displays split window difference data. This formula negates the effects of the radiating temperature, and exposes emissivity differences and differential absorption by different gases and cloud particles in the atmosphere. The display will be in units of temperature in degrees K.</li>
 <li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Field</strong></td>
