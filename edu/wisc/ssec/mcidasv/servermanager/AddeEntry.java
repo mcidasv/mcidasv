@@ -89,9 +89,26 @@ public interface AddeEntry {
         /** */
         INVALID;
 
+        /**
+         * Attempts to convert a given {@code String} value into a valid 
+         * {@code EntryType}.
+         * 
+         * @param str {@code String} to convert. Should not be {@code null}.
+         * 
+         * @return {@code EntryType} of the value specified in {@code str}.
+         */
         public static EntryType fromStr(final String str) {
             return EntryType.valueOf(str);
         }
+
+        /**
+         * Attempts to convert a given {@code EntryType} into its 
+         * {@code String} representation.
+         * 
+         * @param type {@code EntryType} constant; should not be {@code null}.
+         * 
+         * @return {@code String} representation of {@code type}.
+         */
         public static String toStr(final EntryType type) {
             return type.name();
         }
@@ -195,22 +212,33 @@ public interface AddeEntry {
     public String getGroup();
 
     // TODO(jon): what part of a resolv.srv does this represent?
+    /**
+     * 
+     * 
+     * @return
+     */
     public String getName();
 
     /**
      * Accounting information associated with the current entry. If the server
      * does not require accounting information, this method returns 
      * {@link #DEFAULT_ACCOUNT}.
+     * 
+     * @return 
      */
     public AddeAccount getAccount();
 
     /**
      * Type of chooser this entry should appear under.
+     * 
+     * @return 
      */
     public EntryType getEntryType();
 
     /**
      * Does this entry represent a {@literal "valid"} ADDE server.
+     * 
+     * @return 
      */
     public EntryValidity getEntryValidity();
 

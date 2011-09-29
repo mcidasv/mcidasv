@@ -65,6 +65,7 @@ public class LocalAddeEntry implements AddeEntry {
     /** */
     private EntryStatus entryStatus = EntryStatus.INVALID;
 
+    // RESOLV.SRV FIELDS
     /** N1 */
     private final String group;
 
@@ -89,6 +90,7 @@ public class LocalAddeEntry implements AddeEntry {
 
     /** C */
     private final String name;
+    // END RESOLV.SRV FIELDS
 
     private String asStringId;
 
@@ -250,7 +252,7 @@ public class LocalAddeEntry implements AddeEntry {
      *
      *
      * @param builder
-     *
+     * 
      * @see LocalAddeEntry.Builder
      */
     private LocalAddeEntry(final Builder builder) {
@@ -406,17 +408,22 @@ public class LocalAddeEntry implements AddeEntry {
         return (realtime) ? "Y" : "N";
     }
 
+    /**
+     * @see LocalAddeEntry#generateHashCode(String, String, String, AddeFormat)
+     */
     @Override public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-            + ((fileMask == null) ? 0 : fileMask.hashCode());
-        result = prime * result + ((format == null) ? 0 : format.toString().hashCode());
-        result = prime * result + ((group == null) ? 0 : group.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        return result;
+        return generateHashCode(name, group, fileMask, format);
     }
 
+    /**
+     * Checks a given object for equality with the current {@code LocalAddeEntry}
+     * instance.
+     * 
+     * @param obj Object to check. {@code null} values allowed.
+     * 
+     * @return {@code true} if {@code obj} is {@literal "equal"} to the current
+     * {@code LocalAddeEntry} instance.
+     */
     @Override public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -578,11 +585,12 @@ public class LocalAddeEntry implements AddeEntry {
         }
 
         /**
-         *
-         *
-         * @param name
-         * @param group
-         * @param mask
+         * Creates a new {@code LocalAddeEntry} {@literal "builder"} with the 
+         * required fields for a {@code LocalAddeEntry} object.
+         * 
+         * @param name 
+         * @param group 
+         * @param mask 
          * @param format
          */
         public Builder(final String name, final String group, final String mask, final AddeFormat format) {
