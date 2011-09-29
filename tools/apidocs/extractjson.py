@@ -12,6 +12,8 @@ import StringIO
 
 from java.lang import ClassLoader
 from java.net import URL
+
+import java.lang.Class
 import java.lang.System
 
 mcvPyRoot = 'edu/wisc/ssec/mcidasv/resources/python'
@@ -129,7 +131,18 @@ class _NoOp(object):
 _NOOP = _NoOp()
 
 def dumpClass(clazz):
-    pass
+    if not isinstance(clazz, types.TypeType):
+        raise TypeError()
+    
+    print type(clazz)
+    for slot in dir(clazz):
+        attr = getattr(clazz, slot)
+        if isinstance(attr, types.MethodType):
+            print 'method:', attr
+            print 'doc:', clazz.__doc__
+        else:
+            print clazz, attr, slot
+    
 
 def dumpObj(obj):
     """Print a nicely formatted overview of an object.
@@ -194,7 +207,7 @@ def dumpObj(obj):
             methods.append((slot, attr))
         elif isinstance(attr, types.FunctionType):
             functions.append((slot, attr))
-        elif isinstance(attr, types.TypeType):
+        elif isinstance(attr, types.TypeType) and not isinstance(attr, java.lang.Class):
             classes.append((slot, attr))
         else:
             attrs.append((slot, attr))
@@ -204,12 +217,12 @@ def dumpObj(obj):
         objclass = type(obj).__name__
     if objclass is None:
         objclass = obj.__class__.__name__
-    print '"namespace": "%s",' % (obj.__name__),
+    #print '"namespace": "%s",' % (obj.__name__),
     
     classOutput = StringIO.StringIO()
     for className, classType in sorted(classes):
         classDoc = getattr(classType, '__doc__', None) or ''
-        # dumpObj(className)
+        dumpClass(classType)
         classOutput.write('{"title":"%s","value":"%s","method": [ ], "attribute": [ ] },' % (className, classDoc.replace('\n', '<br/>').replace('\"', '&quot;')))
     print '"class": [ %s ],' % (classOutput.getvalue()[:-1])
     classOutput.close()
@@ -218,14 +231,14 @@ def dumpObj(obj):
     for funcName, func in sorted(functions):
         funcDoc = getattr(func, '__doc__', None) or ''
         functionOutput.write('{"title":"%s","value":"%s"},' % (funcName, funcDoc.replace('\n', '<br/>').replace('\"', '&quot;')))
-    print '"function": [ %s ],' % (functionOutput.getvalue()[:-1])
+    #print '"function": [ %s ],' % (functionOutput.getvalue()[:-1])
     functionOutput.close()
     
     # Attributes
     attrOutput = StringIO.StringIO()
     for attr, val in sorted(attrs):
         attrOutput.write('{"title":"%s","value":"%s"},' % (attr, val))
-    print '"attribute": [ %s ]' % (attrOutput.getvalue()[:-1])
+    #print '"attribute": [ %s ]' % (attrOutput.getvalue()[:-1])
     attrOutput.close()
 
 def processModules(modules):
@@ -283,9 +296,9 @@ def configureSysPath():
     #     else:
     #         print '(bad)\t', path
     
-    print '{ "contents": [ {'
+    #print '{ "contents": [ {'
     processModules(mcvModules)
-    print '} ] }'
+    #print '} ] }'
     #processModules(idvModules)
     #processModules(visadModules)
 
