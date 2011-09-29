@@ -131,7 +131,7 @@ _NOOP = _NoOp()
 def dumpClass(clazz):
     pass
 
-def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
+def dumpObj(obj):
     """Print a nicely formatted overview of an object.
     
     The output lines will be wrapped at maxlen, with lindent of space
@@ -165,8 +165,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
          __weakref__           None
          a                     30
     """
-    # Formatting parameters.
-    ltab = 2    # initial tab in front of level 2 text
+    
     
     # There seem to be a couple of other types; gather templates of them
     MethodWrapperType = type(object().__hash__)
@@ -199,10 +198,6 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
             classes.append((slot, attr))
         else:
             attrs.append((slot, attr))
-    
-    # Print a readable summary of those attributes
-    normalwidths = [lindent, maxlen - lindent]
-    tabbedwidths = [ltab, lindent-ltab, maxlen - lindent - ltab]
     
     # Summary of introspection attributes
     if objclass == '':
