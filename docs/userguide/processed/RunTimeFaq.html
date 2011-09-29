@@ -252,11 +252,14 @@ GLX version 1.3 or higher is required.</pre>
         Heap Size</strong> in the <strong><a href="tools/preferences/AdvancedPreferences.html">Advanced</a></strong> tab of the Preferences
         by selected <strong>Edit-&gt;Preferences...</strong> from the Main Display window.
     </div>
-    <a name="white" id="white"></a>
+    <a name="blank" id="blank"></a>
      <div class="faq-question">
-      <h4>Q. Why do my images display white when there should be valid data?</h4>
+      <h4>Q. Why do my images display blank when there should be valid data?</h4>
     </div>
-    <div class="faq-answer"><strong>A.</strong> The first thing to do is to make sure that your graphics drivers are up to date. If this does not solve the problem, another option is to change the amount of memory allocated to McIDAS-V. From the Main Display window's menu bar, select <strong>Edit-&gt;Preferences</strong>. This opens a User Preferences window, where you want to select the <a href="tools/preferences/AdvancedPreferences.html"><strong>Advanced</strong></a> tab. At the top of the window there are two options for selecting memory. Click the radio button that allows you to specify the numerical value of memory allocated to McIDAS-V. Enter in a value of 512 megabytes and click OK to save the change. Then exit and restart McIDAS-V (changes in the Advanced User Preferences require a restart of McIDAS-V to take effect). If this resolves the issue of white images, you can start increasing the memory until the problem appears again. Stay below the memory value that produces the problem.</div>
+    <div class="faq-answer">
+        <p><strong>A.</strong> The first thing to do is to make sure that your graphics drivers are up to date. If this does not solve the problem, another option is to change the amount of memory allocated to McIDAS-V. From the Main Display window's menu bar, select <strong>Edit-&gt;Preferences</strong>. This opens a User Preferences window, where you want to select the <a href="tools/preferences/AdvancedPreferences.html"><strong>Advanced</strong></a> tab. At the top of the window there are two options for selecting memory. Click the radio button that allows you to specify the numerical value of memory allocated to McIDAS-V. Enter in a value of 512 megabytes and click OK to save the change. Then exit and restart McIDAS-V (changes in the Advanced User Preferences require a restart of McIDAS-V to take effect). If this resolves the issue of white images, you can start increasing the memory until the problem appears again. Stay below the memory value that produces the problem.</p>
+        <p>We have also seen an issue with Mobile Intel 4 Series Express Chipset Family graphics cards. The card's setting of &quot;Vertex Processing&quot; should be set to the value of &quot;Enable Software Processing&quot;. If another value is selected for this setting, you will be limited to using only 800 MB of data, and setting a value higher than 800 MB will result in blank images in the Main Display window. With &quot;Enable Software Processing&quot; selected for &quot;Vertex Processing&quot;, you can utilize 80% of the memory available on your machine, which is generally over 800 MB.</p>
+    </div>
 <a name="dri" id="dri"></a>
     <div class="faq-question">
       <h4>Q. Why do I get an error that starts something like <span class="faq-answer">&quot;</span>Unexpected
