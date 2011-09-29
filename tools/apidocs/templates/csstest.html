@@ -8,7 +8,7 @@
     {% for namespace in docs.contents %}
     <div class="namespace">
       <div class="header_namespace">
-        {{ namespace.namespace }}<br/>
+        Module: {{ namespace.namespace }}<br/>
       </div>
       {% block class_block scoped %}
       {% for class in namespace.class %}
@@ -52,10 +52,12 @@
               {% for method in class.method %}
               <li>
                 <div class="title">
-                  methodN(arg)
+                  <!-- methodN(arg) -->
+                  {{ method.title }}
                 </div>
                 <div class="value">
-                  Description of Method N
+                  <!-- Description of Method N -->
+                  {{ method.value }}
                 </div>
               </li>
               {% endfor %}
