@@ -89,7 +89,8 @@ def pathname2url(pth):
         url+="/"
     return url
 
-class InstallationError(Exception):pass
+class InstallationError(Exception):
+    pass
 
 class ClassPath(object):
     _instance = None
@@ -126,6 +127,9 @@ class _NoOp(object):
     def __repr__(self):
         return 'anything'
 _NOOP = _NoOp()
+
+def dumpClass(clazz):
+    pass
 
 def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
     """Print a nicely formatted overview of an object.
@@ -205,22 +209,20 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
         objclass = type(obj).__name__
     if objclass is None:
         objclass = obj.__class__.__name__
-    
     print '"namespace": "%s",' % (obj.__name__),
     
     classOutput = StringIO.StringIO()
     for className, classType in sorted(classes):
         classDoc = getattr(classType, '__doc__', None) or ''
         # dumpObj(className)
-        classOutput.write('{"title":"%s","value":"%s","method": [ ]},' % (className, classDoc.replace('\n', '&lt;br/&gt;').replace('\"', '&quot;')))
-        
+        classOutput.write('{"title":"%s","value":"%s","method": [ ], "attribute": [ ] },' % (className, classDoc.replace('\n', '<br/>').replace('\"', '&quot;')))
     print '"class": [ %s ],' % (classOutput.getvalue()[:-1])
     classOutput.close()
     
     functionOutput = StringIO.StringIO()
     for funcName, func in sorted(functions):
         funcDoc = getattr(func, '__doc__', None) or ''
-        functionOutput.write('{"title":"%s","value":"%s"},' % (funcName, funcDoc.replace('\n', '&lt;br/&gt;').replace('\"', '&quot;')))
+        functionOutput.write('{"title":"%s","value":"%s"},' % (funcName, funcDoc.replace('\n', '<br/>').replace('\"', '&quot;')))
     print '"function": [ %s ],' % (functionOutput.getvalue()[:-1])
     functionOutput.close()
     
