@@ -639,14 +639,14 @@ public class ScatterDisplay extends DisplayControlImpl {
                 Xstats = new Statistics(X_field);
                 Ystats = new Statistics(Y_field);
                 text.append("                X                   Y      \n");
-                text.append(String.format(" max:      %.2f     %.2f \n",((Real)Xstats.max()).getValue(),((Real)Ystats.max()).getValue()));
-                text.append(String.format(" min:      %.2f     %.2f \n",((Real)Xstats.min()).getValue(),((Real)Ystats.min()).getValue()));
+                text.append(String.format(" max:        %.2f     %.2f \n",((Real)Xstats.max()).getValue(),((Real)Ystats.max()).getValue()));
+                text.append(String.format(" min:        %.2f     %.2f \n",((Real)Xstats.min()).getValue(),((Real)Ystats.min()).getValue()));
                 text.append(String.format(" num pts:  %d     %d \n",Xstats.numPoints(),Ystats.numPoints()));
-                text.append(String.format(" mean:     %.2f     %.2f \n",((Real)Xstats.mean()).getValue(),((Real)Ystats.mean()).getValue()));
+                text.append(String.format(" mean:      %.2f     %.2f \n",((Real)Xstats.mean()).getValue(),((Real)Ystats.mean()).getValue()));
                 text.append(String.format(" median:   %.2f     %.2f \n",((Real)Xstats.median()).getValue(),((Real)Ystats.median()).getValue()));
-                text.append(String.format(" var:      %.2f     %.2f \n",((Real)Xstats.variance()).getValue(),((Real)Ystats.variance()).getValue()));
-                text.append(String.format(" kur:      %.2f     %.2f \n",((Real)Xstats.kurtosis()).getValue(),((Real)Ystats.kurtosis()).getValue()));
-                text.append(String.format(" std:      %.2f     %.2f \n",((Real)Xstats.standardDeviation()).getValue(),((Real)Ystats.standardDeviation()).getValue()));
+                text.append(String.format(" var:       %.2f     %.2f \n",((Real)Xstats.variance()).getValue(),((Real)Ystats.variance()).getValue()));
+                text.append(String.format(" kur:       %.2f     %.2f \n",((Real)Xstats.kurtosis()).getValue(),((Real)Ystats.kurtosis()).getValue()));
+                text.append(String.format(" std:       %.2f     %.2f \n",((Real)Xstats.standardDeviation()).getValue(),((Real)Ystats.standardDeviation()).getValue()));
                 text.append(String.format(" corr:      %.2f \n",((Real)Xstats.correlation(Y_field)).getValue()));
 
                 Statistics diff = new Statistics((FlatField)X_field.subtract(Y_field));
@@ -661,10 +661,9 @@ public class ScatterDisplay extends DisplayControlImpl {
               }
 
               statsWindow = new JFrame("Scatter Statistics");
-              statsWindow.setVisible(true);
-            
               statsWindow.getContentPane().add(text);
-              statsWindow.setSize(200, 200);
+              statsWindow.pack();
+              statsWindow.setVisible(true);
             }
         });
 
