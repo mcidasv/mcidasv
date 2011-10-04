@@ -224,9 +224,11 @@ public class McIDASV extends IntegratedDataViewer {
             try {
                 // Generate and register the OSXAdapter, passing it a hash of all the methods we wish to
                 // use as delegates for various com.apple.eawt.ApplicationListener methods
-                OSXAdapter.setQuitHandler(this, getClass().getDeclaredMethod("MacOSXQuit", (Class[])null));
-                OSXAdapter.setAboutHandler(this, getClass().getDeclaredMethod("MacOSXAbout", (Class[])null));
-                OSXAdapter.setPreferencesHandler(this, getClass().getDeclaredMethod("MacOSXPreferences", (Class[])null));
+                Class<?> thisClass = getClass();
+                Class<?>[] args = (Class[])null;
+                OSXAdapter.setQuitHandler(this, thisClass.getDeclaredMethod("MacOSXQuit", args));
+                OSXAdapter.setAboutHandler(this, thisClass.getDeclaredMethod("MacOSXAbout", args));
+                OSXAdapter.setPreferencesHandler(this, thisClass.getDeclaredMethod("MacOSXPreferences", args));
             } catch (Exception e) {
                 logger.error("Error while loading the OSXAdapter", e);
             }
