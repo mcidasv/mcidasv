@@ -39,12 +39,15 @@ public class Statistics {
 
       MathType rangeType = ((FunctionType)fltFld.getType()).getRange();
 
-      if (rngTupLen > 1) {
+      if (rangeType instanceof RealTupleType) {
         RealType[] rttypes = ((TupleType)rangeType).getRealComponents();
-        statType = new RealTupleType(rttypes); 
+        statType = new RealTupleType(rttypes);
+      }
+      else if (rangeType instanceof RealType) {
+        statType = (RealType) rangeType;
       }
       else {
-        statType = (RealType) rangeType;
+         throw new VisADException("incoming type must be RealTupleType or RealType");
       }
 
       pCorrelation = new PearsonsCorrelation();
