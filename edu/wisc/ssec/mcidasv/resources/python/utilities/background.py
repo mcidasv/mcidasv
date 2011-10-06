@@ -8,6 +8,7 @@ from contextlib import contextmanager
 from java.lang import System
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 from ucar.unidata.idv import DisplayInfo
+from ucar.unidata.idv.ui import IdvWindow
 from ucar.unidata.geoloc import LatLonPointImpl
 from ucar.unidata.ui.colortable import ColorTableDefaults
 
@@ -102,7 +103,7 @@ class _Window(_JavaProxy):
         """Blank for now. javaObject = IdvWindow
            tab
         """
-        JavaProxy.__init__(self, javaObject)
+        _JavaProxy.__init__(self, javaObject)
 
     #def setCurrentTabIndex(self, index):
     #    """Sets the tab at the given index to be the active tab."""
@@ -130,7 +131,7 @@ class _Tab(_JavaProxy):
     def __init__(self, javaObject):
         """Blank for now. javaObject = McvComponentHolder
         """
-        JavaProxy.__init__(self, javaObject)
+        _JavaProxy.__init__(self, javaObject)
 
     def getName(self):
         """Returns the name of this tab."""

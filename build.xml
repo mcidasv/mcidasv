@@ -505,6 +505,7 @@
       <sysproperty key="visad.java3d.textureNpot" value="true" />
       <sysproperty key="visad.java3d.imageByRef" value="true" />
       <sysproperty key="visad.java3d.geometryByRef" value="true" />
+      <sysproperty key="python.security.respectJavaAccessibility" value="false" />
       <!-- <arg value="-forceaqua" /> -->
     </java>
   </target>
@@ -553,6 +554,7 @@
       <sysproperty key="debug.localadde.rootdir" value="${addeservs.dir}" />
       <sysproperty key="debug.adde.reqs" value="false" />
       <sysproperty key="logback.configurationFile" value="${logback.default.config}" />
+      <sysproperty key="python.security.respectJavaAccessibility" value="false" />
       <arg value="-forceaqua" />
       <arg value="-userpath" />
       <arg value="/Users/jbeavers/Documents/McIDAS-V" />
@@ -606,6 +608,7 @@
 			<!-- <arg value="-forceaqua" /> -->
 			
 			<sysproperty key="logback.configurationFile" value="${logback.default.config}" />
+			<sysproperty key="python.security.respectJavaAccessibility" value="false" />
 		</java>
 	</target>
 	
@@ -637,6 +640,7 @@
 		  <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
 		  <sysproperty key="debug.localadde.rootdir" value="${addeservs.dir}" />
 		  <sysproperty key="debug.adde.reqs" value="true" />
+		  <sysproperty key="python.security.respectJavaAccessibility" value="false" />
 		  <!--<sysproperty key="logback.configurationFile" value="${logback.default.config}" />-->
 		  <arg value="-forceaqua" />
 		</java>
