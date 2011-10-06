@@ -45,7 +45,7 @@ public class Statistics {
           statType = new RealTupleType(rttypes);
         }
         else {
-          statType = (RealType) rangeType;
+          statType = (RealType) rttypes[0];
         }
       }
       else if (rangeType instanceof RealType) {
