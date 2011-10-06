@@ -41,7 +41,12 @@ public class Statistics {
 
       if (rangeType instanceof RealTupleType) {
         RealType[] rttypes = ((TupleType)rangeType).getRealComponents();
-        statType = new RealTupleType(rttypes);
+        if (rngTupLen > 1) {
+          statType = new RealTupleType(rttypes);
+        }
+        else {
+          statType = (RealType) rangeType;
+        }
       }
       else if (rangeType instanceof RealType) {
         statType = (RealType) rangeType;
