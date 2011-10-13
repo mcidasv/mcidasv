@@ -776,7 +776,7 @@ public class EntryTransforms {
             return path;
         }
         String tmpFileMask = path.substring(0, index);
-        /** Look for "cygwinPrefix" at start of string and munge accordingly */
+        // Look for "cygwinPrefix" at start of string and munge accordingly
         if (tmpFileMask.length() > cygwinPrefixLength+1 &&
             tmpFileMask.substring(0,cygwinPrefixLength).equals(cygwinPrefix)) {
             String driveLetter = tmpFileMask.substring(cygwinPrefixLength,cygwinPrefixLength+1).toUpperCase();

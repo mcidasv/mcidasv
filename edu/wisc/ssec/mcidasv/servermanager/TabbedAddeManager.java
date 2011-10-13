@@ -34,7 +34,9 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 import static edu.wisc.ssec.mcidasv.util.Contract.notNull;
 import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.runOnEDT;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -52,11 +54,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -66,6 +70,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -74,12 +79,15 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+
+import net.miginfocom.swing.MigLayout;
 
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -170,6 +178,10 @@ public class TabbedAddeManager extends JFrame {
 //    private LocalAddeEntry selectedLocalEntry = null;
 
     private final List<LocalAddeEntry> selectedLocalEntries;
+
+    private JTextField importUser;
+
+    private JTextField importProject;
 
     /**
      * Creates a standalone server manager GUI.
@@ -412,46 +424,141 @@ public class TabbedAddeManager extends JFrame {
     }
 
     @SuppressWarnings({"unchecked", "FeatureEnvy", "MagicNumber"})
-    private void initComponents() {
-        assert SwingUtilities.isEventDispatchThread();
+    public void initComponents() {
+        Dimension frameSize = new Dimension(730, 460);
         ucar.unidata.ui.Help.setTopDir(HELP_TOP_DIR);
-
-        tabbedPane = new JTabbedPane();
-        remoteTab = new JPanel();
-        remoteTable = new BetterJTable();
-        remoteScroller = BetterJTable.createStripedJScrollPane(remoteTable);
-
-        actionPanel = new JPanel();
-        newEntryButton = new JButton();
-        editEntryButton = new JButton();
-        removeEntryButton = new JButton();
-        importButton = new JButton();
-        localTab = new JPanel();
-        localTable = new BetterJTable();
-        localScroller = BetterJTable.createStripedJScrollPane(localTable);
-        statusPanel = new JPanel();
-        statusLabel = new JLabel();
-        restartButton = new JButton();
-        menuBar = new JMenuBar();
-        fileMenu = new JMenu();
-        newRemoteItem = new JMenuItem();
-        newLocalItem = new JMenuItem();
-        fileSeparator1 = new JPopupMenu.Separator();
-        closeItem = new JMenuItem();
-        editMenu = new JMenu();
-        editEntryItem = new JMenuItem();
-        removeEntryItem = new JMenuItem();
-        helpMenu = new JMenu();
-        remoteHelpItem = new JMenuItem();
-        localHelpItem = new JMenuItem();
-
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("ADDE Data Manager");
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        // setBounds(100, 100, 729, 456);
+        setSize(frameSize);
+        setMinimumSize(frameSize);
         addWindowListener(new WindowAdapter() {
             public void windowClosed(WindowEvent evt) {
                 formWindowClosed(evt);
             }
         });
+
+        JMenuBar menuBar = new JMenuBar();
+        setJMenuBar(menuBar);
+
+        JMenu fileMenu = new JMenu("File");
+        menuBar.add(fileMenu);
+
+        JMenuItem remoteNewMenuItem = new JMenuItem("New Remote Dataset");
+        remoteNewMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showRemoteEditor();
+            }
+        });
+        fileMenu.add(remoteNewMenuItem);
+
+        JMenuItem localNewMenuItem = new JMenuItem("New Local Dataset");
+        localNewMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showLocalEditor();
+            }
+        });
+        fileMenu.add(localNewMenuItem);
+
+        JSeparator separator_1 = new JSeparator();
+        fileMenu.add(separator_1);
+
+        JMenuItem importMenuItem = new JMenuItem("Import...");
+        fileMenu.add(importMenuItem);
+
+        JMenuItem exportMenuItem = new JMenuItem("Export...");
+        fileMenu.add(exportMenuItem);
+
+        JSeparator separator = new JSeparator();
+        fileMenu.add(separator);
+
+        JMenuItem closeMenuItem = new JMenuItem("Close");
+        closeMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logger.debug("evt={}", evt.toString());
+                closeManager();
+            }
+        });
+        fileMenu.add(closeMenuItem);
+
+        JMenu editMenu = new JMenu("Edit");
+        menuBar.add(editMenu);
+
+        editMenuItem = new JMenuItem("Edit Entry...");
+        editMenuItem.setEnabled(false);
+        editMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                if (tabbedPane.getSelectedIndex() == 0) {
+                    showRemoteEditor(getSelectedRemoteEntries());
+                } else {
+                    showLocalEditor(getSingleLocalSelection());
+                }
+            }
+        });
+        editMenu.add(editMenuItem);
+
+        removeMenuItem = new JMenuItem("Remove Selection");
+        removeMenuItem.setEnabled(false);
+        removeMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                if (tabbedPane.getSelectedIndex() == 0) {
+                    removeRemoteEntries(getSelectedRemoteEntries());
+                } else {
+                    removeLocalEntries(getSelectedLocalEntries());
+                }
+            }
+        });
+        editMenu.add(removeMenuItem);
+
+        JMenu localServersMenu = new JMenu("Local Servers");
+        menuBar.add(localServersMenu);
+
+        JCheckBoxMenuItem localServerCheckBox = new JCheckBoxMenuItem("Enable Local Servers");
+        localServersMenu.add(localServerCheckBox);
+
+        JSeparator separator_2 = new JSeparator();
+        localServersMenu.add(separator_2);
+
+        JMenuItem startLocalMenuItem = new JMenuItem("Start Local Servers");
+        localServersMenu.add(startLocalMenuItem);
+
+        JMenuItem stopLocalMenuItem = new JMenuItem("Stop Local Servers");
+        localServersMenu.add(stopLocalMenuItem);
+
+        JMenu helpMenu = new JMenu("Help");
+        menuBar.add(helpMenu);
+
+        JMenuItem remoteHelpMenuItem = new JMenuItem("Show Remote Data Help");
+        remoteHelpMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ucar.unidata.ui.Help.getDefaultHelp().gotoTarget(REMOTE_HELP_TARGET);
+            }
+        });
+        helpMenu.add(remoteHelpMenuItem);
+
+        JMenuItem localHelpMenuItem = new JMenuItem("Show Local Data Help");
+        localHelpMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ucar.unidata.ui.Help.getDefaultHelp().gotoTarget(LOCAL_HELP_TARGET);
+            }
+        });
+        helpMenu.add(localHelpMenuItem);
+
+        contentPane = new JPanel();
+        contentPane.setBorder(null);
+        setContentPane(contentPane);
+        contentPane.setLayout(new MigLayout("", "[grow]", "[grow][grow][grow][]"));
+
+        tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+        contentPane.add(tabbedPane, "cell 0 0 1 3,grow");
+
+        JPanel remoteTab = new JPanel();
+        remoteTab.setBorder(new EmptyBorder(0, 4, 4, 4));
+        tabbedPane.addTab("Remote Data", null, remoteTab, null);
+        remoteTab.setLayout(new BoxLayout(remoteTab, BoxLayout.Y_AXIS));
+
+        remoteTable = new BetterJTable();
+        JScrollPane remoteScroller = BetterJTable.createStripedJScrollPane(remoteTable);
 
         remoteTable.setModel(new RemoteAddeTableModel(serverManager));
         remoteTable.setColumnSelectionAllowed(false);
@@ -478,99 +585,38 @@ public class TabbedAddeManager extends JFrame {
                 }
             }
         });
+        remoteScroller.setViewportView(remoteTable);
+        remoteTab.add(remoteScroller);
 
-        newEntryButton.setText("Add New Dataset");
-        newEntryButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                showRemoteEditor();
-            }
-        });
+        JPanel remoteActionPanel = new JPanel();
+        remoteTab.add(remoteActionPanel);
+        remoteActionPanel.setLayout(new BoxLayout(remoteActionPanel, BoxLayout.X_AXIS));
 
-        editEntryButton.setText("Edit Dataset");
-        editEntryButton.setEnabled(false);
-        editEntryButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                if (tabbedPane.getSelectedIndex() == 0) {
-                    showRemoteEditor(getSelectedRemoteEntries());
-                } else {
-                    showLocalEditor(getSingleLocalSelection());
-                }
-            }
-        });
+        newRemoteButton = new JButton("Add New Dataset");
+        remoteActionPanel.add(newRemoteButton);
 
-        removeEntryButton.setText("Remove Selection");
-        removeEntryButton.setEnabled(false);
-        removeEntryButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                if (tabbedPane.getSelectedIndex() == 0) {
-                    removeRemoteEntries(getSelectedRemoteEntries());
-                } else {
-                    removeLocalEntries(getSelectedLocalEntries());
-                }
-            }
-        });
+        editRemoteButton = new JButton("Edit Dataset");
+        remoteActionPanel.add(editRemoteButton);
 
-        importButton.setText("Import MCTABLE...");
-        importButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                importButtonActionPerformed(evt);
-            }
-        });
+        removeRemoteButton = new JButton("Remove Selection");
+        remoteActionPanel.add(removeRemoteButton);
 
-        GroupLayout actionPanelLayout = new GroupLayout(actionPanel);
-        actionPanel.setLayout(actionPanelLayout);
-        actionPanelLayout.setHorizontalGroup(
-            actionPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(actionPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(newEntryButton)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(editEntryButton)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(removeEntryButton)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(importButton)
-                .addContainerGap(77, (int)Short.MAX_VALUE))
-        );
-        actionPanelLayout.setVerticalGroup(
-            actionPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(actionPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                .addComponent(newEntryButton)
-                .addComponent(editEntryButton)
-                .addComponent(removeEntryButton)
-                .addComponent(importButton))
-        );
+        importRemoteButton = new JButton("Import MCTABLE...");
+        remoteActionPanel.add(importRemoteButton);
 
-        GroupLayout remoteTabLayout = new GroupLayout(remoteTab);
-        remoteTab.setLayout(remoteTabLayout);
-        remoteTabLayout.setHorizontalGroup(
-            remoteTabLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(GroupLayout.Alignment.TRAILING, remoteTabLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(remoteTabLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                        .addComponent(remoteScroller, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 533, (int) Short.MAX_VALUE)
-                        .addComponent(actionPanel, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        remoteTabLayout.setVerticalGroup(
-            remoteTabLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(remoteTabLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(remoteScroller, GroupLayout.PREFERRED_SIZE, 291, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(actionPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, (int)Short.MAX_VALUE))
-        );
+        JPanel localTab = new JPanel();
+        localTab.setBorder(new EmptyBorder(0, 4, 4, 4));
+        tabbedPane.addTab("Local Data", null, localTab, null);
+        localTab.setLayout(new BoxLayout(localTab, BoxLayout.Y_AXIS));
 
-        tabbedPane.addTab("Remote Data", remoteTab);
-
+        localTable = new BetterJTable();
+        JScrollPane localScroller = BetterJTable.createStripedJScrollPane(localTable);
         localTable.setModel(new LocalAddeTableModel(serverManager));
         localTable.setColumnSelectionAllowed(false);
         localTable.setRowSelectionAllowed(true);
         localTable.getTableHeader().setReorderingAllowed(false);
         localTable.setFont(UIManager.getFont("Table.font").deriveFont(11.0f));
         localTable.setDefaultRenderer(String.class, new TextRenderer());
-        localScroller.setViewportView(localTable);
         localTable.getColumnModel().getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         localTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(final ListSelectionEvent e) {
@@ -584,174 +630,44 @@ public class TabbedAddeManager extends JFrame {
                 }
             }
         });
+        localScroller.setViewportView(localTable);
+        localTab.add(localScroller);
 
-        if (!serverManager.checkLocalServer()) {
-            statusLabel.setText("Local server is not running.");
-            restartButton.setText("Start Me!");
-        }
-        else {
-            statusLabel.setText("Local server is running.");
-            restartButton.setText("Restart Me!");
-        }
-        restartButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                restartLocalServer();
-            }
-        });
+        JPanel localActionPanel = new JPanel();
+        localTab.add(localActionPanel);
+        localActionPanel.setLayout(new BoxLayout(localActionPanel, BoxLayout.X_AXIS));
 
-        GroupLayout statusPanelLayout = new GroupLayout(statusPanel);
-        statusPanel.setLayout(statusPanelLayout);
-        statusPanelLayout.setHorizontalGroup(
-            statusPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(GroupLayout.Alignment.TRAILING, statusPanelLayout.createSequentialGroup()
-                .addComponent(statusLabel)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 314, (int) Short.MAX_VALUE)
-                .addComponent(restartButton))
-        );
-        statusPanelLayout.setVerticalGroup(
-            statusPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(statusPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                .addComponent(restartButton)
-                .addComponent(statusLabel))
-        );
+        newLocalButton = new JButton("Add New Dataset");
+        localActionPanel.add(newLocalButton);
 
-        GroupLayout localTabLayout = new GroupLayout(localTab);
-        localTab.setLayout(localTabLayout);
-        localTabLayout.setHorizontalGroup(
-            localTabLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(GroupLayout.Alignment.TRAILING, localTabLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(localTabLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                        .addComponent(localScroller, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 533, (int) Short.MAX_VALUE)
-                        .addComponent(statusPanel, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        localTabLayout.setVerticalGroup(
-            localTabLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(localTabLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(localScroller, GroupLayout.PREFERRED_SIZE, 289, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(statusPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(13, (int)Short.MAX_VALUE))
-        );
+        editLocalButton = new JButton("Edit Dataset");
+        localActionPanel.add(editLocalButton);
 
-        tabbedPane.addTab("Local Data", localTab);
+        removeLocalButton = new JButton("Remove Selection");
+        localActionPanel.add(removeLocalButton);
 
-        fileMenu.setText("File");
+        JPanel statusPanel = new JPanel();
+        statusPanel.setBorder(new EmptyBorder(0, 6, 0, 6));
+        contentPane.add(statusPanel, "cell 0 3,grow");
+        statusPanel.setLayout(new BorderLayout(0, 0));
 
-        newRemoteItem.setText("New Remote Dataset");
-        newRemoteItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                showRemoteEditor();
-            }
-        });
-        fileMenu.add(newRemoteItem);
+        Box statusMessageBox = Box.createHorizontalBox();
+        statusPanel.add(statusMessageBox, BorderLayout.WEST);
 
-        newLocalItem.setText("New Local Dataset");
-        newLocalItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                showLocalEditor();
-            }
-        });
-        fileMenu.add(newLocalItem);
-        fileMenu.add(fileSeparator1);
+        statusLabel = new JLabel("Local servers are not running...");
+        statusMessageBox.add(statusLabel);
+        statusLabel.setEnabled(false);
 
-        closeItem.setText("Close");
-        closeItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                logger.debug("evt={}", evt.toString());
-                closeManager();
-            }
-        });
-        fileMenu.add(closeItem);
+        Box frameControlBox = Box.createHorizontalBox();
+        statusPanel.add(frameControlBox, BorderLayout.EAST);
 
-        menuBar.add(fileMenu);
+        JButton cancelButton = new JButton("Cancel");
+        frameControlBox.add(cancelButton);
 
-        editMenu.setText("Edit");
-        editEntryItem.setText("Edit Entry...");
-        editEntryItem.setEnabled(false);
-        editEntryItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                if (tabbedPane.getSelectedIndex() == 0) {
-                    showRemoteEditor(getSelectedRemoteEntries());
-                } else {
-                    showLocalEditor(getSingleLocalSelection());
-                }
-            }
-        });
-
-        removeEntryItem.setText("Remove Selection");
-        removeEntryItem.setEnabled(false);
-        removeEntryItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                if (tabbedPane.getSelectedIndex() == 0) {
-                    removeRemoteEntries(getSelectedRemoteEntries());
-                } else {
-                    removeLocalEntries(getSelectedLocalEntries());
-                }
-            }
-        });
-        editMenu.add(editEntryItem);
-        editMenu.add(removeEntryItem);
-        menuBar.add(editMenu);
-
-        helpMenu.setText("Help");
-
-        remoteHelpItem.setText("Show Remote Data Help");
-        remoteHelpItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ucar.unidata.ui.Help.getDefaultHelp().gotoTarget(REMOTE_HELP_TARGET);
-            }
-        });
-        helpMenu.add(remoteHelpItem);
-
-        localHelpItem.setText("Show Local Data Help");
-        localHelpItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ucar.unidata.ui.Help.getDefaultHelp().gotoTarget(LOCAL_HELP_TARGET);
-            }
-        });
-        helpMenu.add(localHelpItem);
-
-        menuBar.add(helpMenu);
-
-        setJMenuBar(menuBar);
-
-        GroupLayout layout = new GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 558, (int)Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 370, (int)Short.MAX_VALUE))
-        );
-
-        tabbedPane.setSelectedIndex(getLastTab());
-        tabbedPane.getAccessibleContext().setAccessibleName("Remote Data");
-        tabbedPane.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent evt) {
-                boolean hasSelection = false;
-                int index = tabbedPane.getSelectedIndex();
-                if (index == 0) {
-                    hasSelection = hasRemoteSelection();
-                } else {
-                    hasSelection = hasLocalSelection();
-                }
-
-                editEntryButton.setEnabled(hasSelection);
-                editEntryItem.setEnabled(hasSelection);
-                removeEntryButton.setEnabled(hasSelection);
-                removeEntryItem.setEnabled(hasSelection);
-                setLastTab(index);
-            }
-        });
+        JButton saveButton = new JButton("Save Changes");
+        frameControlBox.add(saveButton);
         pack();
-    }// </editor-fold>
+    }
 
     /**
      * Respond to events.
@@ -794,12 +710,12 @@ public class TabbedAddeManager extends JFrame {
         // the current "edit" dialog doesn't work so well with multiple 
         // servers/datasets, so only allow the user to edit entries one at a time.
         boolean singleSelection = selectedRowCount == 1;
-        editEntryButton.setEnabled(singleSelection);
-        editEntryItem.setEnabled(singleSelection);
+        editRemoteButton.setEnabled(singleSelection);
+        editMenuItem.setEnabled(singleSelection);
 
         boolean hasSelection = (selectedRowCount >= 1) && (!onlyDefaultEntries);
-        removeEntryButton.setEnabled(hasSelection);
-        removeEntryItem.setEnabled(hasSelection);
+        removeRemoteButton.setEnabled(hasSelection);
+        removeMenuItem.setEnabled(hasSelection);
     }
 
     private void localSelectionModelChanged(final ListSelectionEvent e) {
@@ -827,12 +743,12 @@ public class TabbedAddeManager extends JFrame {
         // the current "edit" dialog doesn't work so well with multiple 
         // servers/datasets, so only allow the user to edit entries one at a time.
         boolean singleSelection = (selectedEntries.size() == 1);
-        editEntryButton.setEnabled(singleSelection);
-        editEntryItem.setEnabled(singleSelection);
+        this.editRemoteButton.setEnabled(singleSelection);
+        this.editMenuItem.setEnabled(singleSelection);
 
         boolean hasSelection = !selectedEntries.isEmpty();
-        removeEntryButton.setEnabled(hasSelection);
-        removeEntryItem.setEnabled(hasSelection);
+        removeRemoteButton.setEnabled(hasSelection);
+        removeMenuItem.setEnabled(hasSelection);
     }
 
     /**
@@ -1547,47 +1463,36 @@ public class TabbedAddeManager extends JFrame {
     }
 
     /**
-    * @param args the command line arguments
-    */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
+     * Launch the application.
+     * 
+     * @param args Command line arguments. These are currently ignored.
+     */
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                new TabbedAddeManager().setVisible(true);
+                try {
+                    TabbedAddeManager frame = new TabbedAddeManager();
+                    frame.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
 
-    // Variables declaration - do not modify
-    private JPanel actionPanel;
-    private JMenuItem closeItem;
-    private JButton editEntryButton;
-    private JMenu fileMenu;
-    private JMenu editMenu;
-    private JPopupMenu.Separator fileSeparator1;
-    private JMenu helpMenu;
-    private JButton importButton;
-    private JTable localTable;
-    private JScrollPane localScroller;
-    private JMenuItem localHelpItem;
-    private JPanel localTab;
-    private JMenuBar menuBar;
-    private JButton newEntryButton;
-    private JMenuItem newLocalItem;
-    private JMenuItem newRemoteItem;
-    private JMenuItem remoteHelpItem;
-    private JMenuItem editEntryItem;
-    private JMenuItem removeEntryItem;
-    private JScrollPane remoteScroller;
-    private JPanel remoteTab;
+    private JPanel contentPane;
     private JTable remoteTable;
-    private JButton removeEntryButton;
-    private JButton restartButton;
-    private JLabel statusLabel;
-    private JPanel statusPanel;
+    private JTable localTable;
     private JTabbedPane tabbedPane;
+    private JLabel statusLabel;
+    private JButton newRemoteButton;
+    private JButton editRemoteButton;
+    private JButton removeRemoteButton;
+    private JButton importRemoteButton;
+    private JButton newLocalButton;
+    private JButton editLocalButton;
+    private JButton removeLocalButton;
+    private JMenuItem editMenuItem;
+    private JMenuItem removeMenuItem;
     private JCheckBox importAccountBox;
-    private JTextField importUser;
-    private JTextField importProject;
-    // End of variables declaration
-    
 }
