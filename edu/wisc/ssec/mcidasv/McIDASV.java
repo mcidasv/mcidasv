@@ -1090,7 +1090,7 @@ public class McIDASV extends IntegratedDataViewer {
     public EntryStore getServerManager() {
         if (addeEntries == null) {
             addeEntries = new EntryStore(getStore(), getResourceManager());
-            addeEntries.startLocalServer(false);
+            addeEntries.startLocalServer();
         }
         return addeEntries;
     }
@@ -1505,7 +1505,7 @@ public class McIDASV extends IntegratedDataViewer {
 
         if (addeEntries != null) {
             addeEntries.saveEntries();
-            addeEntries.stopLocalServer(false);
+            addeEntries.stopLocalServer();
         }
 
         removeSessionFile(SESSION_FILE);

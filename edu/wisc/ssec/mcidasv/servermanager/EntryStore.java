@@ -811,21 +811,26 @@ public class EntryStore {
     /**
      * start addeMcservl if it exists
      */
-    public void startLocalServer(final boolean restarting) {
+    public void startLocalServer() {
         if ((new File(ADDE_MCSERVL)).exists()) {
             // Create and start the thread if there isn't already one running
             if (!checkLocalServer()) {
                 thread = new AddeThread(this);
                 thread.start();
                 EventBus.publish(McservEvent.STARTED);
+                logger.debug("started mcservl? checkLocalServer={}", checkLocalServer());
+            } else {
+                logger.debug("mcservl is already running");
             }
+        } else {
+            logger.debug("invalid path='{}'", ADDE_MCSERVL);
         }
     }
 
     /**
      * stop the thread if it is running
      */
-    public void stopLocalServer(final boolean restarting) {
+    public void stopLocalServer() {
         if (checkLocalServer()) {
             //TODO: stopProcess (actually Process.destroy()) hangs on Macs...
             //      doesn't seem to kill the children properly
@@ -835,27 +840,28 @@ public class EntryStore {
 
             thread.interrupt();
             thread = null;
-            if (!restarting) {
-                EventBus.publish(McservEvent.STOPPED);
-            }
+            EventBus.publish(McservEvent.STOPPED);
+            logger.debug("stopped mcservl? checkLocalServer={}", checkLocalServer());
+        } else {
+            logger.debug("mcservl is not running.");
         }
     }
 
-    /**
-     * restart the thread
-     */
-    synchronized public void restartLocalServer() {
-        restartingMcserv = true;
-        if (checkLocalServer()) {
-            stopLocalServer(restartingMcserv);
-        }
-        startLocalServer(restartingMcserv);
-        restartingMcserv = false;
-    }
-
-    synchronized public boolean getRestarting() {
-        return restartingMcserv;
-    }
+//    /**
+//     * restart the thread
+//     */
+//    synchronized public void restartLocalServer() {
+//        restartingMcserv = true;
+//        if (checkLocalServer()) {
+//            stopLocalServer(restartingMcserv);
+//        }
+//        startLocalServer(restartingMcserv);
+//        restartingMcserv = false;
+//    }
+//
+//    synchronized public boolean getRestarting() {
+//        return restartingMcserv;
+//    }
 
     /**
      * check to see if the thread is running

@@ -42,14 +42,29 @@ import edu.wisc.ssec.mcidasv.McIDASV;
  */
 public class AddeThread extends Thread {
 
-    public enum McservEvent { ACTIVE, DIED, STARTED, STOPPED };
+    /** Mcserv events. */
+    public enum McservEvent { 
+        /** Mcservl is actively listening. */
+        ACTIVE, 
+        /** Mcservl has died unexpectedly. */
+        DIED, 
+        /** Mcservl started listening. */
+        STARTED,
+        /** Mcservl has stopped listening. */
+        STOPPED 
+    };
 
     /** */
     Process proc;
 
-    /** */
+    /** Server manager. */
     private final EntryStore entryStore;
 
+    /**
+     * Creates a thread that controls a mcservl process.
+     * 
+     * @param entryStore Server manager.
+     */
     public AddeThread(final EntryStore entryStore) {
         this.entryStore = entryStore;
     }
@@ -80,7 +95,8 @@ public class AddeThread extends Thread {
             errThread.join();
 
             if (result != 0) {
-                entryStore.stopLocalServer(entryStore.getRestarting());
+//                entryStore.stopLocalServer(entryStore.getRestarting());
+                entryStore.stopLocalServer();
                 String errString = err.toString();
 
                 // If the server couldn't start for a known reason, try again on another port
@@ -88,14 +104,15 @@ public class AddeThread extends Thread {
                 if ((result==35584 || errString.indexOf("Error binding to port") >= 0) &&
                         Integer.parseInt(EntryStore.getLocalPort()) < Integer.parseInt(Constants.LOCAL_ADDE_PORT) + 10) {
                     EntryStore.setLocalPort(EntryStore.nextLocalPort());
-                    entryStore.startLocalServer(entryStore.getRestarting());
+//                    entryStore.startLocalServer(entryStore.getRestarting());
+                    entryStore.startLocalServer();
                 }
             }
         } catch (InterruptedException e) {
             McservEvent type = McservEvent.DIED;
-            if (entryStore.getRestarting()) {
+//            if (entryStore.getRestarting()) {
                 type = McservEvent.STARTED;
-            }
+//            }
             EventBus.publish(type);
         } catch (Exception e) {
             EventBus.publish(McservEvent.DIED);

@@ -90,6 +90,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import net.miginfocom.swing.MigLayout;
 
 import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 
 import org.slf4j.Logger;
@@ -106,6 +107,8 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeThread.McservEvent;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteEntryEditor.AddeStatus;
 import edu.wisc.ssec.mcidasv.ui.BetterJTable;
 import edu.wisc.ssec.mcidasv.util.McVTextField.Prompt;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 /**
  * This class is the GUI frontend to {@link EntryStore} (the server manager).
@@ -120,11 +123,19 @@ public class TabbedAddeManager extends JFrame {
     /** Pretty typical logger object. */
     private final static Logger logger = LoggerFactory.getLogger(TabbedAddeManager.class);
 
+    /** Icon for datasets that are part of a default McIDAS-V install. */
     private static final Icon system = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/padlock_closed.png");
+
+    /** Icon for datasets that originate from a MCTABLE.TXT. */
     private static final Icon mctable = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/bug.png");
+
+    /** Icon for datasets that the user has provided. */
     private static final Icon user = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/hand_pro.png");
+
+    /** Icon for invalid datasets. */
     private static final Icon invalid = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/emotion_sad.png");
-//    private static final Icon verified = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/emotion_smile.png");
+
+    /** Icon for datasets that have not been verified. */
     private static final Icon unverified = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/eye_inv.png");
 
     /** Path to the help resources. */
@@ -179,15 +190,21 @@ public class TabbedAddeManager extends JFrame {
 
     private final List<LocalAddeEntry> selectedLocalEntries;
 
+    /** */
     private JTextField importUser;
 
+    /** */
     private JTextField importProject;
+
+    /** Whether or not {@link #initComponents()} has been called. */
+    private boolean guiInitialized = false;
 
     /**
      * Creates a standalone server manager GUI.
      */
     public TabbedAddeManager() {
         //noinspection AssignmentToNull
+        AnnotationProcessor.process(this);
         this.serverManager = null;
         this.selectedLocalEntries = arrList();
         this.selectedRemoteEntries = arrList();
@@ -207,6 +224,7 @@ public class TabbedAddeManager extends JFrame {
      */
     public TabbedAddeManager(final EntryStore entryStore) {
         notNull(entryStore, "Cannot pass a null server manager");
+        AnnotationProcessor.process(this);
         this.serverManager = entryStore;
         this.selectedLocalEntries = arrList();
         this.selectedRemoteEntries = arrList();
@@ -217,6 +235,12 @@ public class TabbedAddeManager extends JFrame {
         });
     }
 
+    /** 
+     * Returns an instance of this class. The instance <i>should</i> correspond
+     * to the one being used by the {@literal "rest"} of McIDAS-V.
+     * 
+     * @return Either an instance of this class or {@code null}.
+     */
     protected static TabbedAddeManager getTabbedManager() {
         return staticTabbedManager;
     }
@@ -249,12 +273,23 @@ public class TabbedAddeManager extends JFrame {
         }
     }
 
-    // TODO(jon): still needs to refresh the local table.
+    /**
+     * Attempts to refresh the contents of both the local and remote dataset
+     * tables. 
+     */
     protected void refreshDisplay() {
-        ((RemoteAddeTableModel)remoteTable.getModel()).refreshEntries();
-        ((LocalAddeTableModel)localTable.getModel()).refreshEntries();
+        if (guiInitialized) {
+            ((RemoteAddeTableModel)remoteTable.getModel()).refreshEntries();
+            ((LocalAddeTableModel)localTable.getModel()).refreshEntries();
+        }
     }
 
+    /**
+     * Create and show the GUI the remote ADDE dataset GUI. Since no 
+     * {@link RemoteAddeEntry RemoteAddeEntries} have been provided, none of 
+     * the fields will be prefilled (user is creating a new dataset). 
+     */
+    // TODO(jon): differentiate between showRemoteEditor() and showRemoteEditor(entries)
     public void showRemoteEditor() {
         if (tabbedPane.getSelectedIndex() != 0) {
             tabbedPane.setSelectedIndex(0);
@@ -263,6 +298,14 @@ public class TabbedAddeManager extends JFrame {
         editor.setVisible(true);
     }
 
+    /**
+     * Create and show the GUI the remote ADDE dataset GUI. Since some 
+     * {@link RemoteAddeEntry RemoteAddeEntries} have been provided, all of the
+     * applicable fields will be filled (user is editing an existing dataset).
+     * 
+     * @param entries Selection to edit. Should not be {@code null}.
+     */
+    // TODO(jon): differentiate between showRemoteEditor() and showRemoteEditor(entries)
     public void showRemoteEditor(final List<RemoteAddeEntry> entries) {
         if (tabbedPane.getSelectedIndex() != 0) {
             tabbedPane.setSelectedIndex(0);
@@ -317,6 +360,7 @@ public class TabbedAddeManager extends JFrame {
         }
     }
 
+    // TODO(jon): differentiate between showLocalEditor() and showLocalEditor(entry)
     public void showLocalEditor() {
         if (tabbedPane.getSelectedIndex() != 1) {
             tabbedPane.setSelectedIndex(1);
@@ -325,6 +369,7 @@ public class TabbedAddeManager extends JFrame {
         editor.setVisible(true);
     }
 
+    // TODO(jon): differentiate between showLocalEditor() and showLocalEditor(entry)
     public void showLocalEditor(final LocalAddeEntry entry) {
         if (tabbedPane.getSelectedIndex() != 1) {
             tabbedPane.setSelectedIndex(1);
@@ -373,6 +418,14 @@ public class TabbedAddeManager extends JFrame {
         }
     }
 
+    /**
+     * Extracts datasets from a given MCTABLE.TXT and adds them to the server
+     * manager.
+     * 
+     * @param path Path to the MCTABLE.TXT. Cannot be {@code null}.
+     * @param username ADDE username to use for verifying extracted datasets. Cannot be {@code null}.
+     * @param project ADDE project number to use for verifying extracted datasets. Cannot be {@code null}.
+     */
     public void importMctable(final String path, final String username, final String project) {
         final Set<RemoteAddeEntry> imported = EntryTransforms.extractMctableEntries(path, username, project);
         if (imported.equals(Collections.emptySet())) {
@@ -392,12 +445,26 @@ public class TabbedAddeManager extends JFrame {
         }
     }
 
-    public void restartLocalServer() {
-        serverManager.restartLocalServer();
+//    /**
+//     * Attempts to restart the mcservl process. 
+//     */
+//    public void restartLocalServer() {
+//        serverManager.restartLocalServer();
+//    }
+    
+    public void startLocalServers() {
+        logger.trace("starting local servers...?");
+        serverManager.startLocalServer();
     }
 
-    @EventSubscriber(eventClass=McservEvent.class)
-    public void mcservUpdated(final McservEvent event) {
+    public void stopLocalServers() {
+        logger.trace("stopping local servers...?");
+        serverManager.stopLocalServer();
+    }
+
+    @EventSubscriber(eventClass=AddeThread.McservEvent.class)
+    public void mcservUpdated(final AddeThread.McservEvent event) {
+        logger.trace("eventbus evt={}", event.toString());
         final String msg;
         switch (event) {
             case ACTIVE:
@@ -429,7 +496,6 @@ public class TabbedAddeManager extends JFrame {
         ucar.unidata.ui.Help.setTopDir(HELP_TOP_DIR);
         setTitle("ADDE Data Manager");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        // setBounds(100, 100, 729, 456);
         setSize(frameSize);
         setMinimumSize(frameSize);
         addWindowListener(new WindowAdapter() {
@@ -446,7 +512,7 @@ public class TabbedAddeManager extends JFrame {
 
         JMenuItem remoteNewMenuItem = new JMenuItem("New Remote Dataset");
         remoteNewMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 showRemoteEditor();
             }
         });
@@ -454,23 +520,39 @@ public class TabbedAddeManager extends JFrame {
 
         JMenuItem localNewMenuItem = new JMenuItem("New Local Dataset");
         localNewMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 showLocalEditor();
             }
         });
         fileMenu.add(localNewMenuItem);
 
-        JSeparator separator_1 = new JSeparator();
-        fileMenu.add(separator_1);
+        fileMenu.add(new JSeparator());
 
-        JMenuItem importMenuItem = new JMenuItem("Import...");
-        fileMenu.add(importMenuItem);
+        JMenuItem importMctableMenuItem = new JMenuItem("Import MCTABLE...");
+        importMctableMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                logger.trace("importing mctable datasets...");
+            }
+        });
+        fileMenu.add(importMctableMenuItem);
+
+        JMenuItem importUrlMenuItem = new JMenuItem("Import from URL...");
+        importUrlMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                logger.trace("importing url datasets...");
+            }
+        });
+        fileMenu.add(importUrlMenuItem);
 
         JMenuItem exportMenuItem = new JMenuItem("Export...");
+        exportMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                logger.trace("exporting datasets...");
+            }
+        });
         fileMenu.add(exportMenuItem);
 
-        JSeparator separator = new JSeparator();
-        fileMenu.add(separator);
+        fileMenu.add(new JSeparator());
 
         JMenuItem closeMenuItem = new JMenuItem("Close");
         closeMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -514,15 +596,29 @@ public class TabbedAddeManager extends JFrame {
         menuBar.add(localServersMenu);
 
         JCheckBoxMenuItem localServerCheckBox = new JCheckBoxMenuItem("Enable Local Servers");
+        localServerCheckBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                logger.trace("toggle local servers");
+            }
+        });
         localServersMenu.add(localServerCheckBox);
 
-        JSeparator separator_2 = new JSeparator();
-        localServersMenu.add(separator_2);
+        localServersMenu.add(new JSeparator());
 
         JMenuItem startLocalMenuItem = new JMenuItem("Start Local Servers");
+        startLocalMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                startLocalServers();
+            }
+        });
         localServersMenu.add(startLocalMenuItem);
 
         JMenuItem stopLocalMenuItem = new JMenuItem("Stop Local Servers");
+        stopLocalMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                stopLocalServers();
+            }
+        });
         localServersMenu.add(stopLocalMenuItem);
 
         JMenu helpMenu = new JMenu("Help");
@@ -547,9 +643,14 @@ public class TabbedAddeManager extends JFrame {
         contentPane = new JPanel();
         contentPane.setBorder(null);
         setContentPane(contentPane);
-        contentPane.setLayout(new MigLayout("", "[grow]", "[grow][grow][grow][]"));
+        contentPane.setLayout(new MigLayout("", "[grow]", "[grow][grow][grow]"));
 
         tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+        tabbedPane.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent event) {
+                handleTabStateChanged(event);
+            }
+        });
         contentPane.add(tabbedPane, "cell 0 0 1 3,grow");
 
         JPanel remoteTab = new JPanel();
@@ -593,15 +694,39 @@ public class TabbedAddeManager extends JFrame {
         remoteActionPanel.setLayout(new BoxLayout(remoteActionPanel, BoxLayout.X_AXIS));
 
         newRemoteButton = new JButton("Add New Dataset");
+        newRemoteButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                logger.trace("new remote dataset");
+                showRemoteEditor();
+            }
+        });
+        newRemoteButton.setToolTipText("Create a new remote ADDE dataset.");
         remoteActionPanel.add(newRemoteButton);
 
         editRemoteButton = new JButton("Edit Dataset");
+        editRemoteButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                logger.trace("edit remote dataset");
+            }
+        });
+        editRemoteButton.setToolTipText("Edit an existing remote ADDE dataset.");
         remoteActionPanel.add(editRemoteButton);
 
         removeRemoteButton = new JButton("Remove Selection");
+        removeRemoteButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                logger.trace("remove remote dataset");
+            }
+        });
+        removeRemoteButton.setToolTipText("Remove the selected remote ADDE datasets.");
         remoteActionPanel.add(removeRemoteButton);
 
         importRemoteButton = new JButton("Import MCTABLE...");
+        importRemoteButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                logger.trace("import from mctable...");
+            }
+        });
         remoteActionPanel.add(importRemoteButton);
 
         JPanel localTab = new JPanel();
@@ -638,12 +763,31 @@ public class TabbedAddeManager extends JFrame {
         localActionPanel.setLayout(new BoxLayout(localActionPanel, BoxLayout.X_AXIS));
 
         newLocalButton = new JButton("Add New Dataset");
+        newLocalButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                logger.trace("new local dataset");
+                showLocalEditor();
+            }
+        });
+        newLocalButton.setToolTipText("Create a new local ADDE dataset.");
         localActionPanel.add(newLocalButton);
 
         editLocalButton = new JButton("Edit Dataset");
+        editLocalButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                logger.trace("edit local dataset");
+            }
+        });
+        editLocalButton.setToolTipText("Edit an existing local ADDE dataset.");
         localActionPanel.add(editLocalButton);
 
         removeLocalButton = new JButton("Remove Selection");
+        removeLocalButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                logger.trace("remove local dataset");
+            }
+        });
+        removeLocalButton.setToolTipText("Remove the selected local ADDE datasets.");
         localActionPanel.add(removeLocalButton);
 
         JPanel statusPanel = new JPanel();
@@ -662,11 +806,50 @@ public class TabbedAddeManager extends JFrame {
         statusPanel.add(frameControlBox, BorderLayout.EAST);
 
         JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                logger.trace("cancel changes");
+            }
+        });
         frameControlBox.add(cancelButton);
 
         JButton saveButton = new JButton("Save Changes");
+        saveButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                logger.trace("save changes");
+            }
+        });
         frameControlBox.add(saveButton);
+        tabbedPane.setSelectedIndex(getLastTab());
         pack();
+        guiInitialized = true;
+    }
+
+    /**
+     * Respond to changes in {@link #tabbedPane}; primarily switching tabs.
+     * 
+     * @param event Event being handled. Ignored for now.
+     */
+    private void handleTabStateChanged(final ChangeEvent event) {
+        assert SwingUtilities.isEventDispatchThread();
+        boolean hasSelection = false;
+        int index = 0;
+        if (guiInitialized) {
+            index = tabbedPane.getSelectedIndex();
+            if (index == 0) {
+                hasSelection = hasRemoteSelection();
+                editRemoteButton.setEnabled(hasSelection);
+                removeRemoteButton.setEnabled(hasSelection);
+            } else {
+                hasSelection = hasLocalSelection();
+                editLocalButton.setEnabled(hasSelection);
+                removeLocalButton.setEnabled(hasSelection);
+            }
+            editMenuItem.setEnabled(hasSelection);
+            removeMenuItem.setEnabled(hasSelection);
+            setLastTab(index);
+        }
+        logger.trace("index={} hasRemote={} hasLocal={} guiInit={}", new Object[] {index, hasRemoteSelection(), hasLocalSelection(), guiInitialized});
     }
 
     /**
@@ -718,6 +901,11 @@ public class TabbedAddeManager extends JFrame {
         removeMenuItem.setEnabled(hasSelection);
     }
 
+    /**
+     * Respond to events from the local dataset table.
+     * 
+     * @param e {@link ListSelectionEvent} that necessitated this call.
+     */
     private void localSelectionModelChanged(final ListSelectionEvent e) {
         if (e.getValueIsAdjusting()) {
             return;
@@ -771,6 +959,11 @@ public class TabbedAddeManager extends JFrame {
         return !selectedLocalEntries.isEmpty();
     }
 
+    /**
+     * Checks to see if the user has select a <b>single</b> remote dataset.
+     * 
+     * @return {@code true} if there is a single remote dataset selected. {@code false} otherwise.
+     */
     private boolean hasSingleRemoteSelection() {
         String entryText = null;
         for (RemoteAddeEntry entry : selectedRemoteEntries) {
@@ -784,10 +977,21 @@ public class TabbedAddeManager extends JFrame {
         return true;
     }
 
+    /**
+     * Checks to see if the user has select a <b>single</b> local dataset.
+     * 
+     * @return {@code true} if there is a single local dataset selected. {@code false} otherwise.
+     */
     private boolean hasSingleLocalSelection() {
         return (selectedLocalEntries.size() == 1);
     }
 
+    /**
+     * If there is a single local dataset selected, this method will return that
+     * dataset.
+     * 
+     * @return Either the single selected local dataset, or {@link LocalAddeEntry#INVALID_ENTRY}.
+     */
     private LocalAddeEntry getSingleLocalSelection() {
         LocalAddeEntry entry = LocalAddeEntry.INVALID_ENTRY;
         if (selectedLocalEntries.size() == 1) {
@@ -926,7 +1130,10 @@ public class TabbedAddeManager extends JFrame {
      * or an empty {@code String}.
      */
     private String getLastImportPath() {
-        return serverManager.getIdvStore().get(LAST_IMPORTED, "");
+        String lastPath = serverManager.getIdvStore().get(LAST_IMPORTED, "");
+        logger.trace("last path='{}'", lastPath);
+        return lastPath;
+//        return serverManager.getIdvStore().get(LAST_IMPORTED, "");
     }
 
     /**
@@ -937,6 +1144,7 @@ public class TabbedAddeManager extends JFrame {
      */
     private void setLastImportPath(final String path) {
         String okayPath = (path == null) ? "" : path;
+        logger.trace("saving path='{}'", okayPath);
         serverManager.getIdvStore().put(LAST_IMPORTED, okayPath);
     }
 
@@ -946,7 +1154,10 @@ public class TabbedAddeManager extends JFrame {
      * @return Index of the user's most recently viewed server manager tab, or {@code 0}.
      */
     private int getLastTab() {
-        return serverManager.getIdvStore().get(LAST_TAB, 0);
+        int index = serverManager.getIdvStore().get(LAST_TAB, 0);
+        logger.trace("last tab={}", index);
+        return index;
+//        return serverManager.getIdvStore().get(LAST_TAB, 0);
     }
 
     /**
@@ -957,6 +1168,7 @@ public class TabbedAddeManager extends JFrame {
     private void setLastTab(final int index) {
         int okayIndex = ((index >= 0) && (index < 2)) ? index : 0;
         IdvObjectStore store = serverManager.getIdvStore();
+        logger.trace("storing tab={}", okayIndex);
         store.put(LAST_TAB, okayIndex);
     }
 
@@ -1031,7 +1243,6 @@ public class TabbedAddeManager extends JFrame {
             }
             if (!valid.isEmpty()) {
                 entry.setEntryValidity(EntryValidity.VERIFIED);
-//                serverManager.replaceEntries(Collections.singletonList(entry), valid);
             } else {
                 entry.setEntryValidity(EntryValidity.INVALID);
             }

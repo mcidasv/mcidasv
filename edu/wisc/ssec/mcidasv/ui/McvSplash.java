@@ -186,9 +186,9 @@ public class McvSplash extends JWindow {
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 EntryStore serverManager = (EntryStore)(((McIDASV)idv).getServerManager());
-                if (serverManager != null)
-                    serverManager.stopLocalServer(false);
-
+                if (serverManager != null) {
+                    serverManager.stopLocalServer();
+                }
                 ((McIDASV)idv).exitMcIDASV(0);
             }
         });
