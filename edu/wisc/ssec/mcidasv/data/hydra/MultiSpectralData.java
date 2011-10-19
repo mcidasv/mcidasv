@@ -358,24 +358,87 @@ public class MultiSpectralData extends MultiDimensionAdapter {
       stop1 = (float) lset.getLast();
 
       float x, y, del_x, del_y;
-      del_x = (stop0 - start0)/4;
-      del_y = (stop1 - start1)/4;
+      float lonA = Float.NaN;
+      float lonB = Float.NaN;
+      float lonC = Float.NaN;
+      float lonD = Float.NaN;
+      float latA = Float.NaN;
+      float latB = Float.NaN;
+      float latC = Float.NaN;
+      float latD = Float.NaN;
+      del_x = (stop0 - start0)/20;
+      del_y = (stop1 - start1)/20;
+
       x = start0;
       y = start1;
       try {
-        for (int j=0; j<5; j++) {
+        for (int j=0; j<21; j++) {
           y = start1+j*del_y;
-          for (int i=0; i<5; i++) {
-            x = start0+i*del_x;
+          for (int i=0; i<21; i++) {
+            x = start0 + i*del_x;
             float[][] lonlat = cs.toReference(new float[][] {{x}, {y}});
             float lon = lonlat[0][0];
             float lat = lonlat[1][0];
+            if (!Float.isNaN(lon) && !Float.isNaN(lat)) {
+              lonA = lon;
+              latA = lat;
+              break;
+            }
+          }
+          for (int i=0; i<21; i++) {
+            x = stop0 - i*del_x;
+            float[][] lonlat = cs.toReference(new float[][] {{x}, {y}});
+            float lon = lonlat[0][0];
+            float lat = lonlat[1][0];
+            if (!Float.isNaN(lon) && !Float.isNaN(lat)) {
+              lonB = lon;
+              latB = lat;
+              break;
+            }
+          }
+          if (!Float.isNaN(lonA) && !Float.isNaN(lonB)) {
+            break;
+          }
+        }
+
+        for (int j=0; j<21; j++) {
+          y = stop1-j*del_y;
+          for (int i=0; i<21; i++) {
+            x = start0 + i*del_x;
+            float[][] lonlat = cs.toReference(new float[][] {{x}, {y}});
+            float lon = lonlat[0][0];
+            float lat = lonlat[1][0];
+            if (!Float.isNaN(lon) && !Float.isNaN(lat)) {
+              lonC = lon;
+              latC = lat;
+              break;
+            }
+          }
+          for (int i=0; i<21; i++) {
+            x = stop0 - i*del_x;
+            float[][] lonlat = cs.toReference(new float[][] {{x}, {y}});
+            float lon = lonlat[0][0];
+            float lat = lonlat[1][0];
+            if (!Float.isNaN(lon) && !Float.isNaN(lat)) {
+              lonD = lon;
+              latD = lat;
+              break;
+            }
+          }
+          if (!Float.isNaN(lonC) && !Float.isNaN(lonD)) {
+            break;
+          }
+         }
+
+         float[][] corners = {{lonA,lonB,lonC,lonD},{latA,latB,latC,latD}};
+         for (int k=0; k<corners[0].length; k++) {
+            float lon = corners[0][k];
+            float lat = corners[1][k];
             if (lon < minLon) minLon = lon;
             if (lat < minLat) minLat = lat;
             if (lon > maxLon) maxLon = lon;
             if (lat > maxLat) maxLat = lat;
-          }
-        }
+         }
        } catch (Exception e) {
        }
     }
@@ -387,14 +450,14 @@ public class MultiSpectralData extends MultiDimensionAdapter {
       stop1 = (float) lens[1];
 
       float x, y, del_x, del_y;
-      del_x = (stop0 - start0)/4;
-      del_y = (stop1 - start1)/4;
+      del_x = (stop0 - start0)/10;
+      del_y = (stop1 - start1)/10;
       x = start0;
       y = start1;
       try {
-        for (int j=0; j<5; j++) {
+        for (int j=0; j<11; j++) {
           y = start1+j*del_y;
-          for (int i=0; i<5; i++) {
+          for (int i=0; i<11; i++) {
             x = start0+i*del_x;
             float[][] lonlat = ((Gridded2DSet)domainSet).gridToValue(new float[][] {{x}, {y}});
             float lon = lonlat[0][0];
