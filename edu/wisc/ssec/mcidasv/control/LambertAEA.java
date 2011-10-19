@@ -74,6 +74,7 @@ public class LambertAEA extends MapProjection {
      float[][] xy = cs.fromReference(new float[][] {{minLon,maxLon,minLon,maxLon}, 
                                                     {minLat,minLat,maxLat,maxLat}});
 
+
      float min_x = Float.MAX_VALUE;
      float min_y = Float.MAX_VALUE;
      float max_x = Float.MIN_VALUE;
@@ -89,8 +90,15 @@ public class LambertAEA extends MapProjection {
      float del_x = max_x - min_x;
      float del_y = max_y - min_y;
  
-     if (del_x < del_y) del_x = del_y;
-     if (del_y < del_x) del_y = del_x;
+     if (del_x < del_y) {
+       del_x = del_y;
+     }
+     else if (del_y < del_x) {
+       del_y = del_x;
+     }
+
+     min_x = -del_x/2;
+     min_y = -del_y/2;
   
      rect = new Rectangle2D.Float(min_x, min_y, del_x, del_y);
    }
