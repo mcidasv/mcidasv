@@ -176,68 +176,44 @@ application/x-java-jnlp-file JNLP
     </div>-->
     <div class="faq-category"><a name="glx-graphics" id="glx-graphics"></a>
         <div class="faq-question">
-        <h4><strong>Q.</strong> Could not create a graphics configuration</h4>
+        <h4><strong>Q.</strong> What do I do if I get a 'Could not create a graphics configuration' error?</h4>
       </div>
-    <div class="faq-answer">I get this error message in the shell window:
-<pre>
-GLX version 1.3 or higher is required
-The reported version number may be incorrect.&nbsp; There is a known
-ATI driver bug in glXQueryVersion that incorrectly reports the GLX
-version as 1.2 when it really is 1.3, so Java 3D will attempt to
-run anyway.</pre></div>
-    <div class="faq-answer"><strong>A.</strong> First, check for the most updated video card driver. If the problem still
-      remains, the 32bit Linux installer comes with an option to install Java3D
-    1.3. Rerun the installer and select to install Java3D 1.3.</div>
+        <div class="faq-answer"><strong>A.</strong> First, check for the most updated video card driver. If the problem still
+            remains, the 32bit Linux installer comes with an option to install Java3D
+        1.3. Rerun the installer and select to install Java3D 1.3.</div>
     <a name="glx-java" id="glx-java"></a>
     <div class="faq-question">
-      <h4>Q. JAVA 3D Error: GLX extension is not supported</h4></div>
+      <h4>Q. What do I do if I get 'JAVA 3D Error: GLX extension is not supported' and 'Could not create a graphics configuration' errors?</h4></div>
     <div class="faq-answer">
-        <pre>JAVA 3D ERROR: GLX extension is not supported
-GLX version 1.3 or higher is required.</pre>
-    <p>This error message echoes to the terminal window. I also get an error
-        popup window stating <span class="faq-answer">&quot;</span>Could not
-        create a graphics configuration. Please contact McIDAS-V users support
-        or see the FAQ.<span class="faq-answer">&quot;</span> At this point the
-        McIDAS-V startup scroll bar just keeps doing it's thing until I press <span class="faq-answer">&quot;</span>ok<span class="faq-answer">&quot;</span> in
-        the error popup window at which point the startup exits back to the terminal
-        window.</p></div>
-        <div class="faq-answer"><strong>A.</strong>GLX is an extension that must be supported by the graphics card.&nbsp; This
+        <p><strong>A. </strong>GLX is an extension that must be supported by the graphics card.&nbsp; This
       error is most likely occurring because the graphics drivers for RHEL are
       not properly configured.
-    <p>Assuming that the latest graphics drivers are installed, they must be
+            <p>Assuming that the latest graphics drivers are installed, they must be
       configured in the window system configuration file. Since RHEL uses Xorg,
       look in the file</p>
-    <br>
-    <p>&nbsp;&nbsp;&nbsp;&nbsp;/etc/X11/xorg.conf</p>
-    <br>
-    <p>and see if there are any references to <span class="faq-answer">&quot;</span>GLX<span class="faq-answer">&quot;</span> or <span class="faq-answer">&quot;</span>glx<span class="faq-answer">&quot;</span> (and
+            <blockquote>
+                <p>                /etc/X11/xorg.conf
+                </p>
+            </blockquote>
+        <p>and see if there are any references to <span class="faq-answer">&quot;</span>GLX<span class="faq-answer">&quot;</span> or <span class="faq-answer">&quot;</span>glx<span class="faq-answer">&quot;</span> (and
       possibly <span class="faq-answer">&quot;</span>dri<span class="faq-answer">&quot;</span>).&nbsp; If
       there are, try uncommenting them and rebooting.</p></div>
     <a name="dataservers" id="dataservers"></a>
     <div class="faq-question">
-      <h4>Q. Problems connecting to the listed data servers</h4></div>
+      <h4>Q. What do I do if I see 'Connection refused' and 'No public datasets found' errors when connecting to the listed data servers?</h4></div>
     <div class="faq-answer">
-        <p>I have the viewing and data windows and a User's Guide up. But so
-        far I can't talk to any of the listed data servers. The errors are 'connection refused' and 'no public datasets found' on every server.</p></div>
-<div class="faq-answer"><strong>A. </strong>If you have a firewall and are trying to get data from the remote servers
+    <p><strong>A. </strong>If you have a firewall and are trying to get data from the remote servers
       (image, radar, point, upper air and profiler data), error messages such
       as <span class="faq-answer">&quot;</span>Error opening connection ... Operation
       timed out<span class="faq-answer">&quot;</span> or <span class="faq-answer">&quot;</span>No
       Data Available<span class="faq-answer">&quot;</span> are normal.&nbsp; For
       these servers to send data, your firewall software must allow connections
-    on ports 112 (ADDE) and 8080 (THREDDS Data Server).</div>
+    on ports 112 (ADDE) and 8080 (THREDDS Data Server).</p></div>
     <a name="multiple-monitor" id="multiple-monitors"></a>
     <div class="faq-question">
-      <h4>Q. Drawing problems on Monitor2 of a two-monitor system</h4></div>
-    <div class="faq-answer"><strong> </strong>If I move the McIDAS-V windows to Monitor2 of my two-monitor system,
-      some things don't work correctly. For example, if I try to add a new tab
-      the data display section of the main display window goes blank (<span class="faq-answer">&quot;</span>grays
-      out<span class="faq-answer">&quot;</span>), or if I try to run a bundle
-      it fails with, <span class="faq-answer">&quot;</span><em>Error loading
-      bundle C:
-      <path and bundle file name> adding a container to a container
-      on a different GraphicsDevice</em><span class="faq-answer">&quot;</span>. </div>
-      <div class="faq-answer"><strong>A. </strong>Some graphics card/driver combinations don't allow these functions to
+      <h4>Q. Why am I having drawing problems on Monitor2 of a two-monitor system?</h4></div>
+    <div class="faq-answer">
+        <p><strong>A. </strong>A common error seen with this problem is '...adding a container to a container on a different GraphicsDevice'. Some graphics card/driver combinations don't allow these functions to
       work in Monitor2 of two-monitor systems. For now, you can simply move the
       McIDAS-V windows to Monitor1 then successfully add new tabs and run bundles.
           <p>If you are running Red Hat with a NVIDIA graphics card using TwinView
@@ -246,7 +222,7 @@ GLX version 1.3 or higher is required.</pre>
       is checked. </p></div>
     <a name="nomap" id="nomap"></a>
     <div class="faq-question">
-      <h4>Q. No map in the McIDAS-V Main Display window</h4></div>
+      <h4>Q. Why is there no map drawn in the McIDAS-V Main Display window?</h4></div>
 <div class="faq-answer"><strong>A.</strong> Try changing your memory to use 1 GB or lower and restart McIDAS-V. You
         can change the amount of memory used by McIDAS-V by editing the <strong>Maximum
         Heap Size</strong> in the <strong><a href="tools/preferences/AdvancedPreferences.html">Advanced</a></strong> tab of the Preferences
@@ -254,11 +230,11 @@ GLX version 1.3 or higher is required.</pre>
     </div>
     <a name="blank" id="blank"></a>
      <div class="faq-question">
-      <h4>Q. Why do my images display blank when there should be valid data?</h4>
+      <h4>Q. Why do my images display blank (black or white) when there should be valid data?</h4>
     </div>
     <div class="faq-answer">
         <p><strong>A.</strong> The first thing to do is to make sure that your graphics drivers are up to date. If this does not solve the problem, another option is to change the amount of memory allocated to McIDAS-V. From the Main Display window's menu bar, select <strong>Edit-&gt;Preferences</strong>. This opens a User Preferences window, where you want to select the <a href="tools/preferences/AdvancedPreferences.html"><strong>Advanced</strong></a> tab. At the top of the window there are two options for selecting memory. Click the radio button that allows you to specify the numerical value of memory allocated to McIDAS-V. Enter in a value of 512 megabytes and click OK to save the change. Then exit and restart McIDAS-V (changes in the Advanced User Preferences require a restart of McIDAS-V to take effect). If this resolves the issue of white images, you can start increasing the memory until the problem appears again. Stay below the memory value that produces the problem.</p>
-        <p>We have also seen an issue with Mobile Intel 4 Series Express Chipset Family graphics cards. The card's setting of &quot;Vertex Processing&quot; should be set to the value of &quot;Enable Software Processing&quot;. If another value is selected for this setting, you will be limited to using only 800 MB of data, and setting a value higher than 800 MB will result in blank images in the Main Display window. With &quot;Enable Software Processing&quot; selected for &quot;Vertex Processing&quot;, you can utilize 80% of the memory available on your machine, which is generally over 800 MB.</p>
+        <p>We have also received reports of this problem (blank images in the      Main Display window) occurring on computers with the Mobile Intel 4      Series Express Family of graphics cards. If you have a computer with      that configuration and are seeing the problem, try setting the      card's "Vertex Processing" configuration setting to "Enable Software      Processing". That setting is recommended because it will likely work      with a typical amount of memory allocated to McIDAS-V (e.g., 80% of      available). If the "Vertex Processing" option is set to a different      value (e.g., "Application Settings" and "Default settings"), you may      have to select a memory value of 800 MB or less in order to avoid      the problem.</p>
     </div>
 <a name="dri" id="dri"></a>
     <div class="faq-question">
