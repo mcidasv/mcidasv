@@ -895,6 +895,17 @@ public class MultiSpectralDataSource extends HydraDataSource {
     }
    */
 
+    public synchronized Data getData(String name, HashMap subset) throws VisADException, RemoteException {
+      MultiSpectralData msd =  getMultiSpectralData(name);
+      Data data = null;
+      try {
+        data = msd.getImage(subset);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      return data;
+    }
+
 
     public synchronized Data getData(DataChoice dataChoice, DataCategory category,
                                 DataSelection dataSelection, Hashtable requestProperties)
@@ -1090,7 +1101,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
     FlatField grdFF = new FlatField(new FunctionType(rtt, ftype.getRange()), grid);
     float[][] gridRange = grdFF.getFloats(false);
 
-    float[][] swathGridCoord = new float[2][gridRange[0].length];
+    //float[][] swathGridCoord = new float[2][gridRange[0].length];
 
     for (int j=0; j < trackLen; j++) {
        for (int i=0; i < xtrackLen; i++) {
@@ -1104,7 +1115,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
 	 int grdIdx = (grid.valueToIndex(gridCoord))[0];
 
          //for (int n = -1; n < 2; n++) {
-          //  for (int m = -1; m < 2; m++) {
+            //for (int m = -1; m < 2; m++) {
                int m=0;
                int n=0;
                int k = grdIdx + (m + n*gridXLen);
@@ -1114,10 +1125,11 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
                  if (Float.isNaN(grdVal)) {
                    gridRange[0][k] = val;
-                   swathGridCoord[0][k] = gridCoord[0][0];
-                   swathGridCoord[1][k] = gridCoord[1][0];
+                   //swathGridCoord[0][k] = gridCoord[0][0];
+                   //swathGridCoord[1][k] = gridCoord[1][0];
                  }
                  else {
+                   /**
                    // compare distance
                    float[][] gridLoc = grid.indexToValue(new int[] {k});
                    
@@ -1127,7 +1139,6 @@ public class MultiSpectralDataSource extends HydraDataSource {
                    del_0 = gridCoord[0][0] - gridLoc[0][0];
                    del_1 = gridCoord[1][0] - gridLoc[1][0];
                    float dst_sqrd = del_0*del_0 + del_1*del_1;
-                   /**
                    if (dst_sqrd <= last_dst_sqrd) {
                      gridRange[0][k] = val;
                      swathGridCoord[0][k] = gridCoord[0][0];
@@ -1136,14 +1147,11 @@ public class MultiSpectralDataSource extends HydraDataSource {
                    */
                  }
                }
-           // }
+         //   }
         // }
-
 
        }
     }
-
-    
     
    grdFF.setSamples(gridRange);
    return grdFF;
