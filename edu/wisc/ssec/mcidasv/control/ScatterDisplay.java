@@ -87,6 +87,8 @@ import visad.Set;
 import visad.SetType;
 import visad.UnionSet;
 import visad.VisADException;
+import visad.DataReference;
+import visad.DataReferenceImpl;
 import visad.data.mcidas.BaseMapAdapter;
 import visad.georef.MapProjection;
 import visad.georef.TrivialMapProjection;
@@ -1103,6 +1105,7 @@ public class ScatterDisplay extends DisplayControlImpl {
       boolean active = true;
       float maskVal;
       LineDrawing lastCurve;
+      DataReference selectedFieldRef = new DataReferenceImpl(hashCode()+"_selectedField");
 
       ImageCurveSelector(CurveDrawer curveDraw, FlatField image, DisplayMaster master) 
          throws VisADException, RemoteException {
@@ -1247,6 +1250,7 @@ public class ScatterDisplay extends DisplayControlImpl {
 
            scatterFieldMark.setSamples(newMarkScatter, false);
            scatterMarkDsp.setData(scatterFieldMark);
+           selectedFieldRef.setData(scatterFieldMark);
          }
       }
 
@@ -1330,6 +1334,10 @@ public class ScatterDisplay extends DisplayControlImpl {
         curveDraw.setVisible(visible);
       }
 
+      public DataReference getSelectedFieldRef() {
+        return selectedFieldRef;
+      }
+
     }
 
     private class ImageBoxSelector extends CellImpl {
@@ -1344,6 +1352,7 @@ public class ScatterDisplay extends DisplayControlImpl {
         ImageBoxSelector other;
         float maskVal;
         boolean earthCoordDomain = false;
+        DataReference selectedFieldRef = new DataReferenceImpl(hashCode()+"_selectedField");
 
         ImageBoxSelector(SubsetRubberBandBox subsetBox, Set imageDomain, DisplayMaster master)
             throws VisADException, RemoteException {
@@ -1442,6 +1451,7 @@ public class ScatterDisplay extends DisplayControlImpl {
 
            scatterFieldMark.setSamples(newMarkScatter, false);
            scatterMarkDsp.setData(scatterFieldMark);
+           selectedFieldRef.setData(scatterFieldMark);
            updateBox();
         }
 
@@ -1527,6 +1537,11 @@ public class ScatterDisplay extends DisplayControlImpl {
         public SubsetRubberBandBox getSelector() {
           return subsetBox;
         }
+
+        public DataReference getSelectedFieldRef() {
+          return selectedFieldRef;
+        }
+
     }
 
     private class ScatterBoxSelector extends CellImpl {
