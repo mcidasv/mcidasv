@@ -46,8 +46,13 @@ public class LambertAEA extends MapProjection {
 
    CoordinateSystem cs;
    Rectangle2D rect;
+   float earthRadius = 6367470; //- meters
 
    public LambertAEA(Rectangle2D ll_rect) throws VisADException {
+     this(ll_rect, true);
+   }
+
+   public LambertAEA(Rectangle2D ll_rect, boolean forceSquareMapArea) throws VisADException {
      super(RealTupleType.SpatialEarth2DTuple, new Unit[] {SI.meter, SI.meter});
 
      float minLon = (float) ll_rect.getX();
@@ -56,9 +61,6 @@ public class LambertAEA extends MapProjection {
      float del_lat = (float) ll_rect.getHeight();
      float maxLon = minLon + del_lon;
      float maxLat = minLat + del_lat;
-
-
-     float earthRadius = 6367470; //- meters
 
      float lonDiff = maxLon - minLon;
      float lonCenter = minLon + (maxLon - minLon)/2;
@@ -90,11 +92,13 @@ public class LambertAEA extends MapProjection {
      float del_x = max_x - min_x;
      float del_y = max_y - min_y;
  
-     if (del_x < del_y) {
-       del_x = del_y;
-     }
-     else if (del_y < del_x) {
-       del_y = del_x;
+     if (forceSquareMapArea) {
+       if (del_x < del_y) {
+         del_x = del_y;
+       }
+       else if (del_y < del_x) {
+         del_y = del_x;
+       }
      }
 
      min_x = -del_x/2;
