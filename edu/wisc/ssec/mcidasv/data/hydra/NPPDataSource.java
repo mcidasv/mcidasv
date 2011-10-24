@@ -402,13 +402,13 @@ public class NPPDataSource extends HydraDataSource {
     	    						// this is the geolocation data
     	    						List<Variable> vl = subG.getVariables();
     	    						for (Variable v : vl) {
-    	    							if (v.getName().endsWith("Latitude")) {
-    	    								pathToLat = v.getName();
-    	        							logger.debug("Lat/Lon Variable: " + v.getName());
+    	    							if (v.getFullName().endsWith("Latitude")) {
+    	    								pathToLat = v.getFullName();
+    	        							logger.debug("Lat/Lon Variable: " + v.getFullName());
     	    							}
-    	    							if (v.getName().endsWith("Longitude")) {
-    	    								pathToLon = v.getName();
-    	        							logger.debug("Lat/Lon Variable: " + v.getName());
+    	    							if (v.getFullName().endsWith("Longitude")) {
+    	    								pathToLon = v.getFullName();
+    	        							logger.debug("Lat/Lon Variable: " + v.getFullName());
     	    							}
     	    						} 
     	    					} else {
@@ -416,7 +416,7 @@ public class NPPDataSource extends HydraDataSource {
     	    						List<Variable> vl = subG.getVariables();
     	    						for (Variable v : vl) {
     	    							boolean useThis = false;
-    	    							String vName = v.getName();
+    	    							String vName = v.getFullName();
     	    							logger.debug("Variable: " + vName);
     	    							String varShortName = vName.substring(vName.lastIndexOf(SEPARATOR_CHAR) + 1);
     	    							
