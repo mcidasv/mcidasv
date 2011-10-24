@@ -206,7 +206,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 		   while (varIter.hasNext()) {
 			   Variable var = (Variable) varIter.next();
 			   
-			   logger.debug("Working on variable: " + var.getName());
+			   logger.debug("Working on variable: " + var.getShortName());
 			   
 			   if (var instanceof Structure) {
 				   analyzeStructure((Structure) var, varMap, varDimNames, varDimLengths, varDataType);
@@ -217,12 +217,12 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   
 			   // bypass any less-than-2D variables for now...
 			   if (rank < 2) {
-				   logger.debug("Skipping 1D variable: " + var.getName());
+				   logger.debug("Skipping 1D variable: " + var.getShortName());
 				   continue;
 			   }
 			   
-			   String varName = var.getName();
-			   varMap.put(var.getName(), var);
+			   String varName = var.getFullName();
+			   varMap.put(varName, var);
 			   Iterator dimIter = var.getDimensions().iterator();
 			   String[] dimNames = new String[rank];
 			   int[] dimLengths = new int[rank];
@@ -235,8 +235,8 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   if ((s != null) && (!s.isEmpty())) {
 					   if ((! s.equals(inTrackDimensionName)) && 
 							   ((! s.startsWith("Band")) && (cnt == 0)) &&
-							   (! var.getName().endsWith("Latitude")) &&
-							   (! var.getName().endsWith("Longitude")) &&
+							   (! varName.endsWith("Latitude")) &&
+							   (! varName.endsWith("Longitude")) &&
 							   (! s.equals(crossTrackDimensionName))) {
 						   notDisplayable = true;
 						   break;
@@ -257,7 +257,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   logger.debug("Found in-track index of: " + varInTrackIndex);
 			   
 			   if (varInTrackIndex < 0) {
-				   logger.debug("Skipping variable with unknown dimension: " + var.getName());
+				   logger.debug("Skipping variable with unknown dimension: " + var.getShortName());
 				   continue;
 			   }
 			   
@@ -296,11 +296,11 @@ public class GranuleAggregation implements MultiDimensionReader {
 	    
 	   // typical sanity check
 	   if (v == null) return index;
-	   logger.debug("getInTrackIndex called for variable: " + v.getName());
+	   logger.debug("getInTrackIndex called for variable: " + v.getShortName());
 	   
 	   // lat/lon vars have different dimension names
-	   if ((v.getName().endsWith("Latitude")) || (v.getName().endsWith("Longitude"))) {
-		   if (v.getName().startsWith("All_Data")) {
+	   if ((v.getFullName().endsWith("Latitude")) || (v.getFullName().endsWith("Longitude"))) {
+		   if (v.getFullName().startsWith("All_Data")) {
 			   inTrackName = inTrackDimensionName;
 		   } else {
 			   inTrackName = "2*nscans";
@@ -367,7 +367,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   if ((var.getShape()).length == 0) {
 		   return;
 	   }
-	   String varName = var.getName();
+	   String varName = var.getFullName();
 	   String[] dimNames = new String[2];
 	   int[] dimLengths = new int[2];
 	   int cnt = 0;
@@ -382,7 +382,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 
 	   varDimNames.put(varName, dimNames);
 	   varDimLengths.put(varName, dimLengths);
-	   varMap.put(var.getName(), var);
+	   varMap.put(varName, var);
 
 	   StructureMembers sMembers = sData.getStructureMembers();
 	   Object obj = sData.getScalarObject(sMembers.getMember(0));

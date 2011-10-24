@@ -33,11 +33,11 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 import ucar.nc2.*;
 import ucar.nc2.ncml.NcMLReader;
 import ucar.ma2.*;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.net.URL;
 import java.net.URL;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
@@ -56,9 +56,7 @@ public class NetCDFFile implements MultiDimensionReader {
    HashMap<String, Class> varDataType = new HashMap<String, Class>();
    HashMap<String, String> varUnits = new HashMap<String, String>();
 
-
    NetcdfFile ncfile = null;
-
 
    /*
    public static NetCDFFile makeUnion(String filename) throws Exception {
@@ -126,8 +124,8 @@ public class NetCDFFile implements MultiDimensionReader {
        }
 
        int rank = var.getRank();
-       String varName = var.getName();
-       varMap.put(var.getName(), var);
+       String varName = var.getFullName();
+       varMap.put(varName, var);
        Iterator dimIter = var.getDimensions().iterator();
        String[] dimNames = new String[rank];
        int[] dimLengths = new int[rank];
@@ -153,36 +151,33 @@ public class NetCDFFile implements MultiDimensionReader {
    }
 
    void analyzeStructure(Structure var) throws Exception {
-     if ((var.getShape()).length == 0) {
-       return;
-     }
-     String varName = var.getName();
-     String[] dimNames = new String[2];
-     int[] dimLengths = new int[2];
-     List vlist = var.getVariables();
-     int cnt = 0;
-     dimLengths[0] = (var.getShape())[0];
-     dimNames[0] = "dim"+cnt;
-     
-     
-     cnt++;
-     StructureData sData = var.readStructure(0);
-     List memList = sData.getMembers();
-     dimLengths[1] = memList.size();
-     dimNames[1] = "dim"+cnt;
+	   if ((var.getShape()).length == 0) {
+		   return;
+	   }
+	   String varName = var.getFullName();
+	   String[] dimNames = new String[2];
+	   int[] dimLengths = new int[2];
+	   int cnt = 0;
+	   dimLengths[0] = (var.getShape())[0];
+	   dimNames[0] = "dim" + cnt;
 
-     varDimNames.put(varName, dimNames);
-     varDimLengths.put(varName, dimLengths);
-     varMap.put(var.getName(), var);
-     
-     StructureMembers sMembers = sData.getStructureMembers();
-     Object obj = sData.getScalarObject(sMembers.getMember(0));
-     varDataType.put(varName, obj.getClass());
+	   cnt++;
+	   StructureData sData = var.readStructure(0);
+	   List memList = sData.getMembers();
+	   dimLengths[1] = memList.size();
+	   dimNames[1] = "dim" + cnt;
+
+	   varDimNames.put(varName, dimNames);
+	   varDimLengths.put(varName, dimLengths);
+	   varMap.put(varName, var);
+
+	   StructureMembers sMembers = sData.getStructureMembers();
+	   Object obj = sData.getScalarObject(sMembers.getMember(0));
+	   varDataType.put(varName, obj.getClass());
    }
 
    public Class getArrayType(String array_name) {
-     Variable var = varMap.get(array_name);
-     return varDataType.get(array_name);
+	   return varDataType.get(array_name);
    }
 
    public String[] getDimensionNames(String array_name) {
