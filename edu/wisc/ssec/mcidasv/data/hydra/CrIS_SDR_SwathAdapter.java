@@ -48,7 +48,7 @@ public class CrIS_SDR_SwathAdapter extends SwathAdapter {
      int len = getTrackLength();
      setTrackLength(len *= 3);
      len = getXTrackLength();
-     setXTrackLength( len *= 3);
+     setXTrackLength(len *= 3);
    }
 
    public FlatField getData(Object subset) throws Exception {
@@ -72,16 +72,14 @@ public class CrIS_SDR_SwathAdapter extends SwathAdapter {
    }
 
    public float[] processRange(float[] values, Object subset) {
-                double[] track_coords = (double[]) ((HashMap)subset).get(SwathAdapter.track_name);
-                double[] xtrack_coords = (double[]) ((HashMap)subset).get(SwathAdapter.xtrack_name);
+	   double[] track_coords = (double[]) ((HashMap)subset).get(SwathAdapter.track_name);
 
-                int numElems = ((int)(xtrack_coords[1] - xtrack_coords[0]) + 1);
-                int numLines = ((int)(track_coords[1] - track_coords[0]) + 1);
+	   int numLines = ((int)(track_coords[1] - track_coords[0]) + 1);
 
-                values = CrIS_SDR_Utility.psuedoScanReorder(values, 90, numLines*3);
+	   values = CrIS_SDR_Utility.psuedoScanReorder(values, 90, numLines * 3);
 
-                //- subset here, if necessary
-
-                return values;
+	   //- subset here, if necessary
+	   return values;
    }
+   
 }
