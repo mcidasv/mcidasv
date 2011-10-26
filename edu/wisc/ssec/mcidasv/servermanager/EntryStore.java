@@ -83,8 +83,24 @@ public class EntryStore {
     private static final String PROP_DEBUG_ADDEURL = "debug.adde.reqs";
 
     /** Enumeration of the various server manager events. */
-    public enum Event { REPLACEMENT, REMOVAL, ADDITION, UPDATE, FAILURE, STARTED, UNKNOWN }
+    public enum Event { 
+        /** Entries were replaced. */
+        REPLACEMENT, 
+        /** Entries were removed. */
+        REMOVAL, 
+        /** Entries were added. */
+        ADDITION, 
+        /** Entries were updated.*/
+        UPDATE, 
+        /** Something failed! */
+        FAILURE, 
+        /** Local servers started. */
+        STARTED, 
+        /** Catch-all? */
+        UNKNOWN 
+    }
 
+    /** Logging object. */
     private static final Logger logger = LoggerFactory.getLogger(EntryStore.class);
 
     private static final String PREF_ADDE_ENTRIES = "mcv.servers.entries";
@@ -126,6 +142,12 @@ public class EntryStore {
 
     private boolean restartingMcserv;
 
+    /**
+     * Constructs a server manager.
+     * 
+     * @param store 
+     * @param rscManager 
+     */
     public EntryStore(final IdvObjectStore store, final IdvResourceManager rscManager) {
         notNull(store);
         notNull(rscManager);
@@ -165,6 +187,12 @@ public class EntryStore {
         putEntries(trie, extractResourceEntries(EntrySource.SYSTEM, sysResource));
     }
 
+    /**
+     * 
+     * 
+     * @param trie Cannot be {@code null}.
+     * @param newEntries Cannot be {@code null}.
+     */
     private static void putEntries(final PatriciaTrie<String, AddeEntry> trie, final Collection<? extends AddeEntry> newEntries) {
         notNull(trie);
         notNull(newEntries);
@@ -574,6 +602,13 @@ public class EntryStore {
         return val;
     }
 
+    /**
+     * Removes a single {@link AddeEntry} from the set of available entries.
+     * 
+     * @param entry Entry to remove. Cannot be {@code null}.
+     * 
+     * @return {@code true} if something was removed, {@code false} otherwise.
+     */
     protected boolean removeEntry(final AddeEntry entry) {
         notNull(entry);
         boolean val = (trie.remove(entry.asStringId()) != null);
@@ -664,14 +699,40 @@ public class EntryStore {
         return idvGroups;
     }
 
+    /**
+     * Returns a list of all available ADDE datasets, converted to IDV 
+     * {@link AddeServer} objects.
+     * 
+     * @return List of {@code AddeServer} objects for each ADDE entry.
+     */
     public List<AddeServer> getIdvStyleEntries() {
         return arrList(EntryTransforms.convertMcvServers(getEntrySet()));
     }
 
+    /**
+     * Returns a list that consists of the available ADDE datasets for a given 
+     * {@link EntryType}, converted to IDV {@link AddeServer} objects.
+     * 
+     * @param type Only add entries with this type to the returned list. Cannot be {@code null}. 
+     * 
+     * @return {@code AddeServer} objects for each ADDE entry of the given type.
+     */
     public Set<AddeServer> getIdvStyleEntries(final EntryType type) {
         return EntryTransforms.convertMcvServers(getVerifiedEntries(type));
     }
 
+    /**
+     * Returns a list that consists of the available ADDE datasets for a given 
+     * {@link EntryType}, converted to IDV {@link AddeServer} objects.
+     * 
+     * @param typeAsStr Only add entries with this type to the returned list. 
+     * Cannot be {@code null} and must be a value that works with 
+     * {@link EntryTransforms#strToEntryType(String)}. 
+     * 
+     * @return {@code AddeServer} objects for each ADDE entry of the given type.
+     * 
+     * @see EntryTransforms#strToEntryType(String)
+     */
     public Set<AddeServer> getIdvStyleEntries(final String typeAsStr) {
         return getIdvStyleEntries(EntryTransforms.strToEntryType(typeAsStr));
     }
@@ -846,22 +907,6 @@ public class EntryStore {
             logger.debug("mcservl is not running.");
         }
     }
-
-//    /**
-//     * restart the thread
-//     */
-//    synchronized public void restartLocalServer() {
-//        restartingMcserv = true;
-//        if (checkLocalServer()) {
-//            stopLocalServer(restartingMcserv);
-//        }
-//        startLocalServer(restartingMcserv);
-//        restartingMcserv = false;
-//    }
-//
-//    synchronized public boolean getRestarting() {
-//        return restartingMcserv;
-//    }
 
     /**
      * check to see if the thread is running

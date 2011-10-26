@@ -104,6 +104,7 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
 import edu.wisc.ssec.mcidasv.servermanager.AddeThread.McservEvent;
+import edu.wisc.ssec.mcidasv.servermanager.EntryStore.Event;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteEntryEditor.AddeStatus;
 import edu.wisc.ssec.mcidasv.ui.BetterJTable;
 import edu.wisc.ssec.mcidasv.util.McVTextField.Prompt;
@@ -156,7 +157,7 @@ public class TabbedAddeManager extends JFrame {
     /** Size of the ADDE entry verification thread pool. */
     private static final int POOL = 2;
 
-    // not the best idea, bub.
+    /** Static reference to an instance of this class. Bad idea! */
     private static TabbedAddeManager staticTabbedManager;
 
     /**
@@ -180,14 +181,22 @@ public class TabbedAddeManager extends JFrame {
     /** Reference to the actual server manager. */
     private final EntryStore serverManager;
 
-    /** The currently selected {@link RemoteAddeEntry} or {@code null} if nothing is selected. */
+    /** 
+     * Entries stored within the server manager GUI. This may differ from the
+     * contents of the server manager itself. 
+     */
+    private final Set<AddeEntry> entrySet;
+
+//    /** The currently selected {@link RemoteAddeEntry} or {@code null} if nothing is selected. */
 //    private RemoteAddeEntry selectedRemoteEntry = null;
 
+    /** */
     private final List<RemoteAddeEntry> selectedRemoteEntries;
 
-    /** The currently selected {@link LocalAddeEntry} or {@code null} if nothing is selected. */
+//    /** The currently selected {@link LocalAddeEntry} or {@code null} if nothing is selected. */
 //    private LocalAddeEntry selectedLocalEntry = null;
 
+    /** */
     private final List<LocalAddeEntry> selectedLocalEntries;
 
     /** */
@@ -206,8 +215,10 @@ public class TabbedAddeManager extends JFrame {
         //noinspection AssignmentToNull
         AnnotationProcessor.process(this);
         this.serverManager = null;
+        this.entrySet = newLinkedHashSet();
         this.selectedLocalEntries = arrList();
         this.selectedRemoteEntries = arrList();
+
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
                 initComponents();
@@ -226,8 +237,11 @@ public class TabbedAddeManager extends JFrame {
         notNull(entryStore, "Cannot pass a null server manager");
         AnnotationProcessor.process(this);
         this.serverManager = entryStore;
-        this.selectedLocalEntries = arrList();
-        this.selectedRemoteEntries = arrList();
+        // remember that EntryStore.getEntrySet() returns a *new* LinkedHashSet.
+        this.entrySet = entryStore.getEntrySet();
+        int entryCount = entrySet.size(); 
+        this.selectedLocalEntries = arrList(entryCount);
+        this.selectedRemoteEntries = arrList(entryCount);
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
                 initComponents();
@@ -314,6 +328,11 @@ public class TabbedAddeManager extends JFrame {
         editor.setVisible(true);
     }
 
+    /**
+     * Removes the given remote ADDE entries from the server manager GUI.
+     * 
+     * @param entries Entries to remove. {@code null} is permissible, but is a {@literal "no-op"}.
+     */
     public void removeRemoteEntries(final List<RemoteAddeEntry> entries) {
         if (entries == null) {
             return;
@@ -324,7 +343,7 @@ public class TabbedAddeManager extends JFrame {
                 removable.add(entry);
             }
         }
-        if (serverManager.removeEntries(removable)) {
+        if (entrySet.removeAll(removable)) {
             RemoteAddeTableModel tableModel = ((RemoteAddeTableModel)remoteTable.getModel());
             int first = Integer.MAX_VALUE;
             int last = Integer.MIN_VALUE;
@@ -360,8 +379,12 @@ public class TabbedAddeManager extends JFrame {
         }
     }
 
-    // TODO(jon): differentiate between showLocalEditor() and showLocalEditor(entry)
+    /**
+     * Shows a local ADDE entry editor <b>without</b> anything pre-populated 
+     * (creating a new local ADDE dataset).
+     */
     public void showLocalEditor() {
+        // TODO(jon): differentiate between showLocalEditor() and showLocalEditor(entry)
         if (tabbedPane.getSelectedIndex() != 1) {
             tabbedPane.setSelectedIndex(1);
         }
@@ -369,8 +392,15 @@ public class TabbedAddeManager extends JFrame {
         editor.setVisible(true);
     }
 
-    // TODO(jon): differentiate between showLocalEditor() and showLocalEditor(entry)
+    /**
+     * Shows a local ADDE entry editor <b>with</b> the appropriate fields
+     * pre-populated, using the values from {@code entry}. This is intended to 
+     * handled {@literal "editing"} a local ADDE dataset.
+     * 
+     * @param entry Entry to edit; should not be {@code null}.
+     */
     public void showLocalEditor(final LocalAddeEntry entry) {
+        // TODO(jon): differentiate between showLocalEditor() and showLocalEditor(entry)
         if (tabbedPane.getSelectedIndex() != 1) {
             tabbedPane.setSelectedIndex(1);
         }
@@ -378,11 +408,17 @@ public class TabbedAddeManager extends JFrame {
         editor.setVisible(true);
     }
 
+    /**
+     * Removes the given local ADDE entries from the server manager GUI.
+     * 
+     * @param entries Entries to remove. {@code null} is permissible, but is a {@literal "no-op"}.
+     */
     public void removeLocalEntries(final List<LocalAddeEntry> entries) {
         if (entries == null) {
             return;
         }
-        if (serverManager.removeEntries(entries)) {
+        if (entrySet.removeAll(entries)) {
+            logger.trace("successful removal of entries={}",entries);
             LocalAddeTableModel tableModel = ((LocalAddeTableModel)localTable.getModel());
             int first = Integer.MAX_VALUE;
             int last = Integer.MIN_VALUE;
@@ -432,7 +468,7 @@ public class TabbedAddeManager extends JFrame {
             LogUtil.userErrorMessage("Selection does not appear to a valid MCTABLE.TXT file:\n"+path);
         } else {
             // verify entries first!
-            serverManager.addEntries(imported);
+            entrySet.addAll(imported);
             refreshDisplay();
             repaint();
             Runnable r = new Runnable() {
@@ -445,23 +481,32 @@ public class TabbedAddeManager extends JFrame {
         }
     }
 
-//    /**
-//     * Attempts to restart the mcservl process. 
-//     */
-//    public void restartLocalServer() {
-//        serverManager.restartLocalServer();
-//    }
-    
+    /**
+     * Attempts to start the local servers. 
+     * 
+     * @see EntryStore#startLocalServer()
+     */
     public void startLocalServers() {
         logger.trace("starting local servers...?");
         serverManager.startLocalServer();
     }
 
+    /**
+     * Attempts to stop the local servers.
+     * 
+     * @see EntryStore#stopLocalServer()
+     */
     public void stopLocalServers() {
         logger.trace("stopping local servers...?");
         serverManager.stopLocalServer();
     }
 
+    /**
+     * Responds to local server events and attempts to update the GUI status
+     * message.
+     * 
+     * @param event Local server event. Should not be {@code null}.
+     */
     @EventSubscriber(eventClass=AddeThread.McservEvent.class)
     public void mcservUpdated(final AddeThread.McservEvent event) {
         logger.trace("eventbus evt={}", event.toString());
@@ -485,11 +530,16 @@ public class TabbedAddeManager extends JFrame {
         }
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                statusLabel.setText(msg);
+                if (statusLabel != null) {
+                    statusLabel.setText(msg);
+                }
             }
         });
     }
 
+    /**
+     * Builds the server manager GUI.
+     */
     @SuppressWarnings({"unchecked", "FeatureEnvy", "MagicNumber"})
     public void initComponents() {
         Dimension frameSize = new Dimension(730, 460);
@@ -594,16 +644,6 @@ public class TabbedAddeManager extends JFrame {
 
         JMenu localServersMenu = new JMenu("Local Servers");
         menuBar.add(localServersMenu);
-
-        JCheckBoxMenuItem localServerCheckBox = new JCheckBoxMenuItem("Enable Local Servers");
-        localServerCheckBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                logger.trace("toggle local servers");
-            }
-        });
-        localServersMenu.add(localServerCheckBox);
-
-        localServersMenu.add(new JSeparator());
 
         JMenuItem startLocalMenuItem = new JMenuItem("Start Local Servers");
         startLocalMenuItem.addActionListener(new ActionListener() {
@@ -808,21 +848,45 @@ public class TabbedAddeManager extends JFrame {
         JButton cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                logger.trace("cancel changes");
+                handleCancellingChanges();
             }
         });
         frameControlBox.add(cancelButton);
 
         JButton saveButton = new JButton("Save Changes");
+        saveButton.setEnabled(false);
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                logger.trace("save changes");
+                handleSavingChanges();
             }
         });
         frameControlBox.add(saveButton);
         tabbedPane.setSelectedIndex(getLastTab());
-        pack();
+//        pack();
         guiInitialized = true;
+    }
+
+    /**
+     * Determines whether or not the user has changed anything (where {@literal "changed"} means added, modified, or removed entries).
+     * 
+     * @return {@code true} if the user has changed any entries; {@code false} otherwise.
+     */
+    public boolean hasUserChanges() {
+        return !this.entrySet.equals(this.serverManager.getEntrySet());
+    }
+
+    /**
+     * Respond to the user clicking the {@literal "cancel"} button.
+     */
+    private void handleCancellingChanges() {
+        logger.trace("cancel changes. anything to do={}", hasUserChanges());
+    }
+
+    /**
+     * Respond to the user clicking the {@literal "save changes"} button.
+     */
+    private void handleSavingChanges() {
+        logger.trace("save changes. anything to do={}", hasUserChanges());
     }
 
     /**
@@ -1000,12 +1064,22 @@ public class TabbedAddeManager extends JFrame {
         return entry;
     }
 
+    /**
+     * Corresponds to the selected remote ADDE entries in the GUI.
+     * 
+     * @param entries Should not be {@code null}.
+     */
     private void setSelectedRemoteEntries(final Collection<RemoteAddeEntry> entries) {
         selectedRemoteEntries.clear();
         selectedRemoteEntries.addAll(entries);
         logger.trace("remote entries={}", entries);
     }
 
+    /**
+     * Gets the selected remote ADDE entries.
+     * 
+     * @return Either an empty list or the remote entries selected in the GUI.
+     */
     private List<RemoteAddeEntry> getSelectedRemoteEntries() {
         if (selectedRemoteEntries.isEmpty()) {
             return Collections.emptyList();
@@ -1014,12 +1088,22 @@ public class TabbedAddeManager extends JFrame {
         }
     }
 
+    /**
+     * Corresponds to the selected local ADDE entries in the GUI.
+     * 
+     * @param entries Should not be {@code null}.
+     */
     private void setSelectedLocalEntries(final Collection<LocalAddeEntry> entries) {
         selectedLocalEntries.clear();
         selectedLocalEntries.addAll(entries);
         logger.trace("local entries={}", entries);
     }
 
+    /**
+     * Gets the selected local ADDE entries.
+     * 
+     * @return Either an empty list or the local entries selected in the GUI.
+     */
     private List<LocalAddeEntry> getSelectedLocalEntries() {
         if (selectedLocalEntries.isEmpty()) {
             return Collections.emptyList();
@@ -1028,6 +1112,13 @@ public class TabbedAddeManager extends JFrame {
         }
     }
 
+    /**
+     * Handles the user closing the server manager GUI.
+     * 
+     * @param evt Event that triggered this method call.
+     * 
+     * @see #closeManager()
+     */
     private void formWindowClosed(java.awt.event.WindowEvent evt) {
         logger.debug("evt={}", evt.toString());
         closeManager();
@@ -1206,7 +1297,9 @@ public class TabbedAddeManager extends JFrame {
                     runOnEDT(new Runnable() {
                         public void run() {
                             List<RemoteAddeEntry> oldEntries = tableModel.getEntriesAtRow(row);
-                            serverManager.replaceEntries(oldEntries, checkedEntries);
+//                            serverManager.replaceEntries(oldEntries, checkedEntries);
+                            entrySet.removeAll(oldEntries);
+                            entrySet.addAll(checkedEntries);
                             tableModel.fireTableRowsUpdated(row, row);
                         }
                     });
@@ -1222,7 +1315,6 @@ public class TabbedAddeManager extends JFrame {
         }
         return valid;
     }
-
 
     private static class BetterCheckTask implements Callable<List<RemoteAddeEntry>> {
         private final RemoteAddeEntry entry;
@@ -1646,7 +1738,10 @@ public class TabbedAddeManager extends JFrame {
 
     public static class TextRenderer extends DefaultTableCellRenderer {
 
+        /** */
         private Font bold;
+
+        /** */
         private Font boldItalic;
 
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -1669,12 +1764,19 @@ public class TabbedAddeManager extends JFrame {
         }
     }
 
+    /**
+     * 
+     * 
+     * @param path
+     * 
+     * @return
+     */
     private static Icon icon(final String path) {
         return GuiUtils.getImageIcon(path, TabbedAddeManager.class, true);
     }
 
     /**
-     * Launch the application.
+     * Launch the application. Makes for a simplistic test.
      * 
      * @param args Command line arguments. These are currently ignored.
      */
