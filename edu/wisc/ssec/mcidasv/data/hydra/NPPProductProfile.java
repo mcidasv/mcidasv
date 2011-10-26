@@ -31,7 +31,6 @@
 package edu.wisc.ssec.mcidasv.data.hydra;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -68,6 +67,7 @@ public class NPPProductProfile {
 	boolean readFromJar = false;
 	HashMap<String, String> rangeMin = new HashMap<String, String>();
 	HashMap<String, String> rangeMax = new HashMap<String, String>();
+	HashMap<String, String> scaleFactorName = new HashMap<String, String>();
 	HashMap<String, ArrayList<Float>> fillValues = new HashMap<String, ArrayList<Float>>();
 
 	public NPPProductProfile() throws ParserConfigurationException, SAXException, IOException {
@@ -215,6 +215,7 @@ public class NPPProductProfile {
 			
 			String rMin = null;
 			String rMax = null;		
+			String sFactorName = null;
 			
 			if (isValidProduct) {
 				for (int j = 0; j < datum.getLength(); j++) {
@@ -224,6 +225,9 @@ public class NPPProductProfile {
 					}
 					if (child.getNodeName().equals("RangeMax")) {
 						rMax = child.getTextContent();
+					}
+					if (child.getNodeName().equals("ScaleFactorName")) {
+						sFactorName = child.getTextContent();
 					}
 					if (child.getNodeName().equals("FillValue")) {
 						// go one level further to child element Value
@@ -253,6 +257,11 @@ public class NPPProductProfile {
 				rangeMax.put(name, rMax);
 			}
 			
+			if ((name != null) && (sFactorName != null)) {
+				logger.trace("Adding scale factor name: " + sFactorName + " for product: " + name);
+				scaleFactorName.put(name, sFactorName);
+			}
+			
 			if ((name != null) && (! fValAL.isEmpty())) {
 				logger.trace("Adding fill value array for product: " + name);
 				fillValues.put(name, fValAL);
@@ -274,6 +283,10 @@ public class NPPProductProfile {
 	
 	public String getRangeMax(String name) {
 		return rangeMax.get(name);
+	}
+	
+	public String getScaleFactorName(String name) {
+		return scaleFactorName.get(name);
 	}
 	
 	public ArrayList<Float> getFillValues(String name) {

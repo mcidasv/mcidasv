@@ -445,7 +445,6 @@ public class NPPDataSource extends HydraDataSource {
     	    								}
     	    							}
     	    							
-    	    							logger.debug("Variable prefix for finding Factors: " + varShortName);
     	    							DataType dt = v.getDataType();
     	    							if ((dt.getSize() != 4) && (dt.getSize() != 2) && (dt.getSize() != 1)) {
     	    								logger.debug("Skipping data of size: " + dt.getSize());
@@ -510,20 +509,16 @@ public class NPPDataSource extends HydraDataSource {
     	    								float offsetVal = 0f;
     	    								boolean unpackFlag = false;
     	    								
-    	    								// XXX TJJ - this is NOT DETERMINISTIC!  The spec in
-    	    								// CDFCB-X, Vol 5, page 8, is too vague, and there is
-    	    								// no SURE way to map variable name to scale/offset parameter
-    	    								//
-    	    								//   if static map has an entry for this variable name
+    	    								//   if the granule has an entry for this variable name
     	    								//     get the data, data1 = scale, data2 = offset
     	    								//     create and poke attributes with this data
     	    								//   endif
     	    								
-    	    								String factorsVarName = JPSSUtilities.mapDataVarNameToFactorsName(varShortName);
+    	    								String factorsVarName = nppPP.getScaleFactorName(varShortName);
     	    								logger.info("Mapping: " + varShortName + " to: " + factorsVarName);
     	    								if (factorsVarName != null) {
 	    	    								for (Variable fV : vl) {
-	    	    									if (fV.getFullName().endsWith(factorsVarName)) {
+	    	    									if (fV.getShortName().equals(factorsVarName)) {
 	    	    										logger.debug("Pulling scale and offset values from variable: " + fV.getShortName());
 	    	    										ucar.ma2.Array a = fV.read();
 	    	    										ucar.ma2.Index i = a.getIndex();
@@ -645,7 +640,6 @@ public class NPPDataSource extends HydraDataSource {
     	    								
     	    							}
     	    						}    						
-    	   						
     	    					}
     	    				}
     	    			}
