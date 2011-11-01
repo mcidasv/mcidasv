@@ -39,6 +39,8 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowAdapter;
 import java.awt.geom.Rectangle2D;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -183,7 +185,7 @@ public class ScatterDisplay extends DisplayControlImpl {
     float[][] markColorPalette = new float[][] {{1f,0.8f,0f,0f},{1f,0f,0.8f,0f},{1f,0.8f,0f,0.8f}};
 
     JButton computeStatsButton;
-    JFrame statsWindow;
+    MyTable statsTable;
    
     boolean selectByCurve = false;
 
@@ -638,59 +640,11 @@ public class ScatterDisplay extends DisplayControlImpl {
 
         computeStatsButton.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
-              try {
 
-                Statistics Xstats = new Statistics(X_field);
-                Statistics Ystats = new Statistics(Y_field);
-                Statistics diff = new Statistics((FlatField)X_field.subtract(Y_field));
-
-                Object[][] data = {
-
-                 {"Maximum",String.format("%.2f",((Real)Xstats.max()).getValue()),
-                       String.format("%.2f",((Real)Ystats.max()).getValue()) },
-
-                 {"Minimum",String.format("%.2f",((Real)Xstats.min()).getValue()),
-                       String.format("%.2f",((Real)Ystats.min()).getValue()) },
-
-                 {"Number of points",String.format("%d",Xstats.numPoints()),
-                       String.format("%d",Ystats.numPoints()) },
-
-                 {"Mean",String.format("%.2f",((Real)Xstats.mean()).getValue()),
-                       String.format("%.2f",((Real)Ystats.mean()).getValue()) },
-                 
-                 {"Median",String.format("%.2f",((Real)Xstats.median()).getValue()),
-                       String.format("%.2f",((Real)Ystats.median()).getValue()) },
-                 {"Variance",String.format("%.2f",((Real)Xstats.variance()).getValue()),
-                       String.format("%.2f",((Real)Ystats.variance()).getValue()) },
-                 {"Kurtosis",String.format("%.2f",((Real)Xstats.kurtosis()).getValue()),
-                       String.format("%.2f",((Real)Ystats.kurtosis()).getValue()) },
-                 {"Std Dev",String.format("%.2f",((Real)Xstats.standardDeviation()).getValue()),
-                       String.format("%.2f",((Real)Ystats.standardDeviation()).getValue()) },
-
-                 {"Correlation",String.format("%.2f",((Real)Xstats.correlation(Y_field)).getValue()), " " },
-
-                 {"Maximum Difference",String.format("%.2f",((Real)diff.max()).getValue()), " " },
-                 {"Minimum Difference",String.format("%.2f",((Real)diff.min()).getValue()), " " },
-                 {"Mean Difference",String.format("%.2f",((Real)diff.mean()).getValue()), " " }};
-
-                String[] colNames = {"Parameter","X","Y"};
-
-                JTable table = new JTable(new MyTable(data, colNames));
-                table.setFillsViewportHeight(true);
-                table.setRowSelectionAllowed(true);
-                table.setColumnSelectionAllowed(false);
-                JScrollPane sp = new JScrollPane(table);
-                statsWindow = new JFrame("Scatter Statistics");
-                statsWindow.getContentPane().add(sp);
-                statsWindow.pack();
-                statsWindow.setVisible(true);
-
-              }
-              catch (VisADException exc) {
-                System.out.println(exc.getMessage());
-              }
-              catch (RemoteException exc) {
-              }
+               if (statsTable == null) {
+                 statsTable = new MyTable();
+                 statsTable.setFields(X_field, Y_field, 0);
+               }
 
             }
         });
@@ -1001,27 +955,121 @@ public class ScatterDisplay extends DisplayControlImpl {
 
     //For creating a non-editable JTable
     private class MyTable extends AbstractTableModel {
-      Object [][] data;
-      String[] colNames;
-      MyTable(Object[][] d, String[] n) {
+      String [][] data;
+      JTable table;
+      JFrame statsWindow;
+      int numCols;
+
+      final int maxCols = 9;
+      final String[] colNames = {"Parameter","Field X","Field Y",
+        "Red X","Red Y", "Green X","Green Y","Blue X","Blue Y"};
+
+      final int maxRows = 12;
+      final String[] rowNames = {"Maximum","Minimum",
+        "Number of points","Mean","Median","Variance","Kurtosis",
+        "Std Dev","Correlation","Maximum Difference",
+        "Minimum Difference","Mean Difference"};
+
+      MyTable() {
         super();
-        data = d;
-        colNames = n;
+        data = new String[maxRows][maxCols];
+        numCols = 1;
+
+        for (int i=0; i<maxRows; i++) {
+          data[i][0] = rowNames[i];
+          for (int j=1; j<maxCols; j++) {
+            data[i][j] = "  ";
+          }
+        }
+
+        table = new JTable(this);
+        table.setFillsViewportHeight(true);
+        table.setRowSelectionAllowed(true);
+        table.setColumnSelectionAllowed(false);
+
+        JScrollPane sp = new JScrollPane(table);
+        statsWindow = new JFrame("Scatter Statistics");
+        statsWindow.getContentPane().add(sp);
+        statsWindow.pack();
+        statsWindow.addWindowListener(new WindowAdapter() {
+          public void windowClosing(WindowEvent e) {
+           statsTable = null;
+          }
+        });
+
+        statsWindow.setVisible(false);
+      }
+
+      // fx, fy are Fields, col = 0,1,2,3 (all, red, green, blue)
+      public void setFields(FlatField fx, FlatField fy, int col) {
+        try {
+          Statistics sx = new Statistics(fx);
+          Statistics sy = new Statistics(fy);
+          Statistics diff = new Statistics((FlatField)fx.subtract(fy));
+
+          int c = 2*col + 1;
+          data[0][c] = String.format("%.2f",((Real)sx.max()).getValue());
+          data[0][c+1] = String.format("%.2f",((Real)sy.max()).getValue());
+
+          data[1][c] = String.format("%.2f",((Real)sx.min()).getValue());
+          data[1][c+1] = String.format("%.2f",((Real)sy.min()).getValue());
+
+          data[2][c] = String.format("%d",sx.numPoints());
+          data[2][c+1] = String.format("%d",sy.numPoints());
+
+          data[3][c] = String.format("%.2f",((Real)sx.mean()).getValue());
+          data[3][c+1] = String.format("%.2f",((Real)sy.mean()).getValue());
+
+          data[4][c] = String.format("%.2f",((Real)sx.median()).getValue());
+          data[4][c+1] = String.format("%.2f",((Real)sy.median()).getValue());
+
+          data[5][c] = String.format("%.2f",((Real)sx.variance()).getValue());
+          data[5][c+1] = String.format("%.2f",((Real)sy.variance()).getValue());
+
+          data[6][c] = String.format("%.2f",((Real)sx.kurtosis()).getValue());
+          data[6][c+1] = String.format("%.2f",((Real)sy.kurtosis()).getValue());
+
+          data[7][c] = String.format("%.2f",((Real)sx.standardDeviation()).getValue());
+          data[7][c+1] = String.format("%.2f",((Real)sy.standardDeviation()).getValue());
+
+          data[8][c] = String.format("%.2f",((Real)sx.correlation(fy)).getValue());
+          data[8][c+1] = " ";
+
+          data[9][c] = String.format("%.2f",((Real)diff.max()).getValue());
+          data[9][c+1] = " ";
+
+          data[10][c] = String.format("%.2f",((Real)diff.min()).getValue());
+          data[10][c+1] = " ";
+
+          data[11][c] = String.format("%.2f",((Real)diff.mean()).getValue());
+          data[11][c+1] = " ";
+
+          if (c+2 > numCols) numCols = c+2;
+          fireTableStructureChanged();
+
+        } catch (VisADException exc) {
+          System.out.println(exc.getMessage());
+        } catch (Exception exc) {
+          exc.printStackTrace();
+        }
+
+        statsWindow.setVisible(true);
       }
 
       public int getRowCount() {
-        return data.length;
+        return maxRows;
       }
       public int getColumnCount() {
-        return data[0].length;
+        return numCols;
       }
-      public Object getValueAt(int row, int col) {
+      public String getValueAt(int row, int col) {
         return data[row][col];
       }
       public String getColumnName(int col) {
         return colNames[col];
       }
     }
+
 
     private class ScatterDisplayable extends RGBDisplayable {
        ScatterDisplayable(String name, RealType rgbRealType, float[][] colorPalette, boolean alphaflag) 
