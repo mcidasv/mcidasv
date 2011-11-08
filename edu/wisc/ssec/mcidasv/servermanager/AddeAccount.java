@@ -149,7 +149,7 @@ public class AddeAccount {
      * 
      * @return Friendly accounting detail {@code String}.
      */
-    protected String friendlyString() {
+    public String friendlyString() {
         return username+" / "+project;
     }
 }

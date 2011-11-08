@@ -45,13 +45,34 @@ public class AddeThread extends Thread {
     /** Mcserv events. */
     public enum McservEvent { 
         /** Mcservl is actively listening. */
-        ACTIVE, 
+        ACTIVE("Local servers are running."),
         /** Mcservl has died unexpectedly. */
-        DIED, 
+        DIED("Local servers quit unexpectedly."),
         /** Mcservl started listening. */
-        STARTED,
+        STARTED("Local servers started listening on port %s."),
         /** Mcservl has stopped listening. */
-        STOPPED 
+        STOPPED("Local servers have been stopped.");
+
+        /** */
+        private final String message;
+
+        /**
+         * Creates an object that represents the status of a mcservl process.
+         * 
+         * @param message Should not be {@code null}.
+         */
+        private McservEvent(final String message) {
+            this.message = message;
+        }
+
+        /**
+         * 
+         * 
+         * @return Format string associated with an event.
+         */
+        public String getMessage() {
+            return message;
+        }
     };
 
     /** */
@@ -70,7 +91,7 @@ public class AddeThread extends Thread {
     }
 
     public void run() {
-        StringBuffer err = new StringBuffer();
+        StringBuilder err = new StringBuilder();
         String[] cmds = entryStore.getAddeCommands();
         String[] env = (McIDASV.isWindows()) ? entryStore.getWindowsAddeEnv() : entryStore.getUnixAddeEnv();
         try {
@@ -78,7 +99,7 @@ public class AddeThread extends Thread {
             proc = Runtime.getRuntime().exec(cmds, env);
 
             //create thread for reading inputStream (process' stdout)
-            StreamReaderThread outThread = new StreamReaderThread(proc.getInputStream(), new StringBuffer());
+            StreamReaderThread outThread = new StreamReaderThread(proc.getInputStream(), new StringBuilder());
 
             //create thread for reading errorStream (process' stderr)
             StreamReaderThread errThread = new StreamReaderThread(proc.getErrorStream(), err);
@@ -138,13 +159,13 @@ public class AddeThread extends Thread {
      */
     private static class StreamReaderThread extends Thread {
         /** */
-        private final StringBuffer mOut;
+        private final StringBuilder mOut;
 
         /** */
         private final InputStreamReader mIn;
 
         /** */
-        public StreamReaderThread(final InputStream in, final StringBuffer out) {
+        public StreamReaderThread(final InputStream in, final StringBuilder out) {
             mOut = out;
             mIn = new InputStreamReader(in);
         }

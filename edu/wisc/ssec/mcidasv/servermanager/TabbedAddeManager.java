@@ -124,21 +124,6 @@ public class TabbedAddeManager extends JFrame {
     /** Pretty typical logger object. */
     private final static Logger logger = LoggerFactory.getLogger(TabbedAddeManager.class);
 
-    /** Icon for datasets that are part of a default McIDAS-V install. */
-    private static final Icon system = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/padlock_closed.png");
-
-    /** Icon for datasets that originate from a MCTABLE.TXT. */
-    private static final Icon mctable = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/bug.png");
-
-    /** Icon for datasets that the user has provided. */
-    private static final Icon user = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/hand_pro.png");
-
-    /** Icon for invalid datasets. */
-    private static final Icon invalid = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/emotion_sad.png");
-
-    /** Icon for datasets that have not been verified. */
-    private static final Icon unverified = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/eye_inv.png");
-
     /** Path to the help resources. */
     private static final String HELP_TOP_DIR = "/docs/userguide";
 
@@ -175,9 +160,6 @@ public class TabbedAddeManager extends JFrame {
         CLOSED
     }
 
-    /** Reference back to the McV god object. */
-//    private final McIDASV mcv;
-
     /** Reference to the actual server manager. */
     private final EntryStore serverManager;
 
@@ -187,14 +169,8 @@ public class TabbedAddeManager extends JFrame {
      */
     private final Set<AddeEntry> entrySet;
 
-//    /** The currently selected {@link RemoteAddeEntry} or {@code null} if nothing is selected. */
-//    private RemoteAddeEntry selectedRemoteEntry = null;
-
     /** */
     private final List<RemoteAddeEntry> selectedRemoteEntries;
-
-//    /** The currently selected {@link LocalAddeEntry} or {@code null} if nothing is selected. */
-//    private LocalAddeEntry selectedLocalEntry = null;
 
     /** */
     private final List<LocalAddeEntry> selectedLocalEntries;
@@ -255,7 +231,7 @@ public class TabbedAddeManager extends JFrame {
      * 
      * @return Either an instance of this class or {@code null}.
      */
-    protected static TabbedAddeManager getTabbedManager() {
+    public static TabbedAddeManager getTabbedManager() {
         return staticTabbedManager;
     }
 
@@ -291,7 +267,7 @@ public class TabbedAddeManager extends JFrame {
      * Attempts to refresh the contents of both the local and remote dataset
      * tables. 
      */
-    protected void refreshDisplay() {
+    public void refreshDisplay() {
         if (guiInitialized) {
             ((RemoteAddeTableModel)remoteTable.getModel()).refreshEntries();
             ((LocalAddeTableModel)localTable.getModel()).refreshEntries();
@@ -333,7 +309,7 @@ public class TabbedAddeManager extends JFrame {
      * 
      * @param entries Entries to remove. {@code null} is permissible, but is a {@literal "no-op"}.
      */
-    public void removeRemoteEntries(final List<RemoteAddeEntry> entries) {
+    public void removeRemoteEntries(final Collection<RemoteAddeEntry> entries) {
         if (entries == null) {
             return;
         }
@@ -349,16 +325,6 @@ public class TabbedAddeManager extends JFrame {
             int last = Integer.MIN_VALUE;
             for (RemoteAddeEntry entry : removable) {
                 int index = tableModel.getRowForEntry(entry);
-//                if (index < 0) {
-//                    continue;
-//                } else {
-//                    if (index < first) {
-//                        first = index;
-//                    }
-//                    if (index > last) {
-//                        last = index;
-//                    }
-//                }
                 if (index >= 0) {
                     if (index < first) {
                         first = index;
@@ -413,7 +379,7 @@ public class TabbedAddeManager extends JFrame {
      * 
      * @param entries Entries to remove. {@code null} is permissible, but is a {@literal "no-op"}.
      */
-    public void removeLocalEntries(final List<LocalAddeEntry> entries) {
+    public void removeLocalEntries(final Collection<LocalAddeEntry> entries) {
         if (entries == null) {
             return;
         }
@@ -424,16 +390,6 @@ public class TabbedAddeManager extends JFrame {
             int last = Integer.MIN_VALUE;
             for (LocalAddeEntry entry : entries) {
                 int index = tableModel.getRowForEntry(entry);
-//                if (index < 0) {
-//                    continue;
-//                } else {
-//                    if (index < first) {
-//                        first = index;
-//                    }
-//                    if (index > last) {
-//                        last = index;
-//                    }
-//                }
                 if (index >= 0) {
                     if (index < first) {
                         first = index;
@@ -512,17 +468,12 @@ public class TabbedAddeManager extends JFrame {
         logger.trace("eventbus evt={}", event.toString());
         final String msg;
         switch (event) {
-            case ACTIVE:
-                msg = "Local servers are already running.";
-                break;
-            case DIED:
-                msg = "Local servers quit unexpectedly...";
+            case ACTIVE: case DIED: case STOPPED:
+                msg = event.getMessage();
                 break;
             case STARTED:
-                msg = "Local servers are listening on port "+EntryStore.getLocalPort();
-                break;
-            case STOPPED:
-                msg = "Local servers have been stopped.";
+//                msg = "Local servers are listening on port "+EntryStore.getLocalPort();
+                msg = String.format(event.getMessage(),EntryStore.getLocalPort());
                 break;
             default:
                 msg = "Unknown local servers status: "+event.toString();
@@ -544,6 +495,11 @@ public class TabbedAddeManager extends JFrame {
     public void initComponents() {
         Dimension frameSize = new Dimension(730, 460);
         ucar.unidata.ui.Help.setTopDir(HELP_TOP_DIR);
+        system = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/padlock_closed.png");
+        mctable = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/bug.png");
+        user = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/hand_pro.png");
+        invalid = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/emotion_sad.png");
+        unverified = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/eye_inv.png");
         setTitle("ADDE Data Manager");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(frameSize);
@@ -747,6 +703,7 @@ public class TabbedAddeManager extends JFrame {
         editRemoteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 logger.trace("edit remote dataset");
+                showRemoteEditor(getSelectedRemoteEntries());
             }
         });
         editRemoteButton.setToolTipText("Edit an existing remote ADDE dataset.");
@@ -756,6 +713,7 @@ public class TabbedAddeManager extends JFrame {
         removeRemoteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 logger.trace("remove remote dataset");
+                removeRemoteEntries(getSelectedRemoteEntries());
             }
         });
         removeRemoteButton.setToolTipText("Remove the selected remote ADDE datasets.");
@@ -765,6 +723,7 @@ public class TabbedAddeManager extends JFrame {
         importRemoteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 logger.trace("import from mctable...");
+                importButtonActionPerformed(e);
             }
         });
         remoteActionPanel.add(importRemoteButton);
@@ -813,18 +772,22 @@ public class TabbedAddeManager extends JFrame {
         localActionPanel.add(newLocalButton);
 
         editLocalButton = new JButton("Edit Dataset");
+        editLocalButton.setEnabled(false);
         editLocalButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 logger.trace("edit local dataset");
+                showLocalEditor(getSingleLocalSelection());
             }
         });
         editLocalButton.setToolTipText("Edit an existing local ADDE dataset.");
         localActionPanel.add(editLocalButton);
 
         removeLocalButton = new JButton("Remove Selection");
+        removeLocalButton.setEnabled(false);
         removeLocalButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 logger.trace("remove local dataset");
+                removeLocalEntries(getSelectedLocalEntries());
             }
         });
         removeLocalButton.setToolTipText("Remove the selected local ADDE datasets.");
@@ -838,7 +801,11 @@ public class TabbedAddeManager extends JFrame {
         Box statusMessageBox = Box.createHorizontalBox();
         statusPanel.add(statusMessageBox, BorderLayout.WEST);
 
-        statusLabel = new JLabel("Local servers are not running...");
+        String statusMessage = McservEvent.STOPPED.getMessage();
+        if (serverManager.checkLocalServer()) {
+            statusMessage = McservEvent.ACTIVE.getMessage();
+        }
+        statusLabel = new JLabel(statusMessage);
         statusMessageBox.add(statusLabel);
         statusLabel.setEnabled(false);
 
@@ -862,7 +829,6 @@ public class TabbedAddeManager extends JFrame {
         });
         frameControlBox.add(saveButton);
         tabbedPane.setSelectedIndex(getLastTab());
-//        pack();
         guiInitialized = true;
     }
 
@@ -872,7 +838,7 @@ public class TabbedAddeManager extends JFrame {
      * @return {@code true} if the user has changed any entries; {@code false} otherwise.
      */
     public boolean hasUserChanges() {
-        return !this.entrySet.equals(this.serverManager.getEntrySet());
+        return !entrySet.equals(serverManager.getEntrySet());
     }
 
     /**
@@ -880,6 +846,7 @@ public class TabbedAddeManager extends JFrame {
      */
     private void handleCancellingChanges() {
         logger.trace("cancel changes. anything to do={}", hasUserChanges());
+        closeManager();
     }
 
     /**
@@ -935,7 +902,7 @@ public class TabbedAddeManager extends JFrame {
             int min = selModel.getMinSelectionIndex();
             int max = selModel.getMaxSelectionIndex();
             RemoteAddeTableModel tableModel = ((RemoteAddeTableModel)remoteTable.getModel());
-            selectedEntries = newLinkedHashSet();
+            selectedEntries = newLinkedHashSet((max - min) * AddeEntry.EntryType.values().length);
             for (int i = min; i <= max; i++) {
                 if (selModel.isSelectedIndex(i)) {
                     List<RemoteAddeEntry> entries = tableModel.getEntriesAtRow(i);
@@ -982,7 +949,7 @@ public class TabbedAddeManager extends JFrame {
             int min = selModel.getMinSelectionIndex();
             int max = selModel.getMaxSelectionIndex();
             LocalAddeTableModel tableModel = ((LocalAddeTableModel)localTable.getModel());
-            selectedEntries = newLinkedHashSet();
+            selectedEntries = newLinkedHashSet(max - min);
             for (int i = min; i <= max; i++) {
                 if (selModel.isSelectedIndex(i)) {
                     selectedEntries.add(tableModel.getEntryAtRow(i));
@@ -1808,4 +1775,19 @@ public class TabbedAddeManager extends JFrame {
     private JMenuItem editMenuItem;
     private JMenuItem removeMenuItem;
     private JCheckBox importAccountBox;
+
+    /** Icon for datasets that are part of a default McIDAS-V install. */
+    private Icon system;
+
+    /** Icon for datasets that originate from a MCTABLE.TXT. */
+    private Icon mctable;
+
+    /** Icon for datasets that the user has provided. */
+    private Icon user;
+
+    /** Icon for invalid datasets. */
+    private Icon invalid;
+
+    /** Icon for datasets that have not been verified. */
+    private Icon unverified;
 }

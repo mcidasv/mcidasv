@@ -201,7 +201,7 @@ public class EntryStore {
         }
     }
 
-    protected IdvObjectStore getIdvStore() {
+    public IdvObjectStore getIdvStore() {
         return idvStore;
     }
 
@@ -457,7 +457,7 @@ public class EntryStore {
      * 
      * @see RemoteAddeEntry#getEntryText()
      */
-    protected Set<String> getRemoteEntryTexts() {
+    public Set<String> getRemoteEntryTexts() {
         Set<String> strs = newLinkedHashSet(trie.size());
         for (AddeEntry entry : trie.values()) {
             if (entry instanceof RemoteAddeEntry) {
@@ -546,7 +546,7 @@ public class EntryStore {
     /**
      * Returns the complete {@link Set} of {@link AddeEntry}s.
      */
-    protected Set<AddeEntry> getEntrySet() {
+    public Set<AddeEntry> getEntrySet() {
         return newLinkedHashSet(trie.values());
     }
 
@@ -555,7 +555,7 @@ public class EntryStore {
      * 
      * @return The {@code RemoteAddeEntry}s stored within the available entries.
      */
-    protected Set<RemoteAddeEntry> getRemoteEntries() {
+    public Set<RemoteAddeEntry> getRemoteEntries() {
         Set<RemoteAddeEntry> remotes = newLinkedHashSet(trie.size());
         for (AddeEntry e : trie.values()) {
             if (e instanceof RemoteAddeEntry) {
@@ -570,7 +570,7 @@ public class EntryStore {
      * 
      * @return The {@code LocalAddeEntry}s stored within the available entries.
      */
-    protected Set<LocalAddeEntry> getLocalEntries() {
+    public Set<LocalAddeEntry> getLocalEntries() {
         Set<LocalAddeEntry> locals = newLinkedHashSet(trie.size());
         for (AddeEntry e : trie.getPrefixedBy("localhost").values()) {
             if (e instanceof LocalAddeEntry) {
@@ -580,7 +580,7 @@ public class EntryStore {
         return locals;
     }
 
-    protected boolean removeEntries(
+    public boolean removeEntries(
         final Collection<? extends AddeEntry> removedEntries) 
     {
         notNull(removedEntries);
@@ -609,7 +609,7 @@ public class EntryStore {
      * 
      * @return {@code true} if something was removed, {@code false} otherwise.
      */
-    protected boolean removeEntry(final AddeEntry entry) {
+    public boolean removeEntry(final AddeEntry entry) {
         notNull(entry);
         boolean val = (trie.remove(entry.asStringId()) != null);
         logger.trace("attempted remove={} status={}", entry, val);
@@ -856,7 +856,9 @@ public class EntryStore {
     }
 
     /**
-     * Ask for the port we are listening on
+     * Ask for the port we are listening on.
+     * 
+     * @return String representation of the listening port.
      */
     public static String getLocalPort() {
         return localPort;
@@ -864,13 +866,15 @@ public class EntryStore {
 
     /**
      * Get the next port by incrementing current port.
+     * 
+     * @return The next port that will be tried.
      */
     protected static String nextLocalPort() {
         return Integer.toString(Integer.parseInt(localPort) + 1);
     }
 
     /**
-     * start addeMcservl if it exists
+     * Starts the local server thread (if it isn't already running).
      */
     public void startLocalServer() {
         if ((new File(ADDE_MCSERVL)).exists()) {
@@ -889,7 +893,7 @@ public class EntryStore {
     }
 
     /**
-     * stop the thread if it is running
+     * Stops the local server thread if it is running.
      */
     public void stopLocalServer() {
         if (checkLocalServer()) {
@@ -909,7 +913,9 @@ public class EntryStore {
     }
 
     /**
-     * check to see if the thread is running
+     * Check to see if the thread is running.
+     * 
+     * @return {@code true} if the local server thread is running; {@code false} otherwise.
      */
     public boolean checkLocalServer() {
         if (thread != null && thread.isAlive()) {
