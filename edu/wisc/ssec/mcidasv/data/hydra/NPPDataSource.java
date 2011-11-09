@@ -550,20 +550,23 @@ public class NPPDataSource extends HydraDataSource {
     	    					        			String rangeMax = nppPP.getRangeMax(translatedName);
     	    					        			logger.debug("range min: " + rangeMin);
     	    					        			logger.debug("range max: " + rangeMax);
-    	    					        			int [] shapeArr = new int [] { 2 };
-    	    					        			ArrayFloat af = new ArrayFloat(shapeArr);
-    	    					        			try {
-        	    					        			af.setFloat(0, Float.parseFloat(rangeMin));
-    	    					        			} catch (NumberFormatException nfe) {
-    	    					        				af.setFloat(0, new Float(Integer.MIN_VALUE));
+    	    					        			// only store range attribute if VALID range found
+    	    					        			if ((rangeMin != null) && (rangeMax != null)) {
+    	    					        				int [] shapeArr = new int [] { 2 };
+    	    					        				ArrayFloat af = new ArrayFloat(shapeArr);
+    	    					        				try {
+    	    					        					af.setFloat(0, Float.parseFloat(rangeMin));
+    	    					        				} catch (NumberFormatException nfe) {
+    	    					        					af.setFloat(0, new Float(Integer.MIN_VALUE));
+    	    					        				}
+    	    					        				try {
+    	    					        					af.setFloat(1, Float.parseFloat(rangeMax));
+    	    					        				} catch (NumberFormatException nfe) {
+    	    					        					af.setFloat(1, new Float(Integer.MAX_VALUE));
+    	    					        				}
+    	    					        				ucar.nc2.Attribute rangeAtt = new ucar.nc2.Attribute("valid_range", af);
+    	    					        				v.addAttribute(rangeAtt);
     	    					        			}
-    	    					        			try {
-    	    					        				af.setFloat(1, Float.parseFloat(rangeMax));
-    	    					        			} catch (NumberFormatException nfe) {
-    	    					        				af.setFloat(1, new Float(Integer.MAX_VALUE));
-    	    					        			}
-    	    	    								ucar.nc2.Attribute rangeAtt = new ucar.nc2.Attribute("valid_range", af);
-    	    	    								v.addAttribute(rangeAtt);
     	    	    								
     	    	    								// check for and load fill values too...
     	    	    								
