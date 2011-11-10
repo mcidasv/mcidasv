@@ -1063,11 +1063,11 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
   public static MapProjection getDataProjection(FlatField fltField) throws Exception {
     Rectangle2D rect = MultiSpectralData.getLonLatBoundingBox(fltField);
-    MapProjection mp = new LambertAEA(rect);
+    MapProjection mp = new LambertAEA(rect, false);
     return mp;
   }
 
-  public static Linear2DSet makeGrid(MapProjection mp, float res) throws Exception {
+  public static Linear2DSet makeGrid(MapProjection mp, double res) throws Exception {
     Rectangle2D rect = mp.getDefaultMapArea();
 
     int xLen = (int) (rect.getWidth()/res);
@@ -1090,6 +1090,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
     float[][] swathRange = swath.getFloats(false);
     int trackLen = lens[1];
     int xtrackLen = lens[0];
+    int gridLen = grid.getLength();
     lens = grid.getLengths();
     int gridXLen = lens[0];
     int gridYLen = lens[1];
@@ -1101,57 +1102,106 @@ public class MultiSpectralDataSource extends HydraDataSource {
     FlatField grdFF = new FlatField(new FunctionType(rtt, ftype.getRange()), grid);
     float[][] gridRange = grdFF.getFloats(false);
 
-    //float[][] swathGridCoord = new float[2][gridRange[0].length];
+    System.out.println("start: "+System.currentTimeMillis());
+
+    float[][] swathGridCoord = new float[2][gridLen];
+    java.util.Arrays.fill(swathGridCoord[0], Float.NaN);
+
+    int[] swathIndexAtGrid = null;
+    if (true) {
+      //swathIndexAtGrid = new int[gridLen];
+    }
 
     for (int j=0; j < trackLen; j++) {
        for (int i=0; i < xtrackLen; i++) {
-         int idx = j*xtrackLen + i;
-	 float val = swathRange[0][idx];
+         int swathIdx = j*xtrackLen + i;
+	 float val = swathRange[0][swathIdx];
 
-	 float[][] swathCoord = swathDomain.indexToValue(new int[] {idx});
+	 float[][] swathCoord = swathDomain.indexToValue(new int[] {swathIdx});
 	 float[][] swathEarthCoord = swathCoordSys.toReference(swathCoord);
 
 	 float[][] gridCoord = gridCoordSys.fromReference(swathEarthCoord);
 	 int grdIdx = (grid.valueToIndex(gridCoord))[0];
 
-         //for (int n = -1; n < 2; n++) {
-            //for (int m = -1; m < 2; m++) {
                int m=0;
                int n=0;
                int k = grdIdx + (m + n*gridXLen);
 
-               if ( !(Float.isNaN(val)) && ((k >=0) && (k < gridXLen*gridYLen)) ){
+               if ( !(Float.isNaN(val)) && ((k >=0) && (k < gridXLen*gridYLen)) ) {
                  float grdVal = gridRange[0][k];
 
                  if (Float.isNaN(grdVal)) {
                    gridRange[0][k] = val;
-                   //swathGridCoord[0][k] = gridCoord[0][0];
-                   //swathGridCoord[1][k] = gridCoord[1][0];
+                   swathGridCoord[0][k] = gridCoord[0][0];
+                   swathGridCoord[1][k] = gridCoord[1][0];
+                   //swathIndexAtGrid[k] = swathIdx;
                  }
                  else {
-                   /**
                    // compare distance
                    float[][] gridLoc = grid.indexToValue(new int[] {k});
                    
                    float del_0 = swathGridCoord[0][k] - gridLoc[0][0];
                    float del_1 = swathGridCoord[1][k] - gridLoc[1][0];
                    float last_dst_sqrd = del_0*del_0 + del_1*del_1;
+
                    del_0 = gridCoord[0][0] - gridLoc[0][0];
                    del_1 = gridCoord[1][0] - gridLoc[1][0];
                    float dst_sqrd = del_0*del_0 + del_1*del_1;
-                   if (dst_sqrd <= last_dst_sqrd) {
+
+                   if (dst_sqrd < last_dst_sqrd) {
                      gridRange[0][k] = val;
                      swathGridCoord[0][k] = gridCoord[0][0];
                      swathGridCoord[1][k] = gridCoord[1][0];
+                     //swathIndexAtGrid[k] = swathIdx;
                    }
-                   */
                  }
                }
-         //   }
-        // }
-
        }
     }
+
+
+    // 2nd pass weighted average
+    /**
+    float weight = 1f;
+    for (int j=2; j<gridYLen-2; j++) {
+       for (int i=2; i<gridXLen-2; i++) {
+         int grdIdx = i + j*gridXLen;
+
+         float[][] gCoord = grid.valueToGrid(new float[][] {{swathGridCoord[0][grdIdx]}, {swathGridCoord[1][grdIdx]}});
+         float del_0 = gCoord[0][0] - (float) i;
+         float del_1 = gCoord[1][0] - (float) j;
+         float dst_sqrd = del_0*del_0 + del_1*del_1;
+
+         
+         int num = 0;
+         float sumWeights = 0f;
+         float sumValue = 0f;
+         for (int n = -1; n < 2; n++) {
+            for (int m = -1; m < 2; m++) {
+               int k = grdIdx + (m + n*gridXLen);
+
+               if ( !Float.isNaN(swathGridCoord[0][k]) ) {
+
+                  gCoord = grid.valueToGrid(new float[][] {{swathGridCoord[0][k]}, {swathGridCoord[1][k]}});
+                  del_0 = gCoord[0][0] - (float) i;
+                  del_1 = gCoord[1][0] - (float) j;
+                  dst_sqrd = del_0*del_0 + del_1*del_1;
+                  weight = (float) (1.0/Math.exp((double)(dst_sqrd)*2.5f));
+
+                  sumValue += swathRange[0][swathIndexAtGrid[k]]*weight;
+                  sumWeights += weight;
+                  num++;
+               }
+            }
+          }
+
+          sumValue /= sumWeights;
+          gridRange[0][grdIdx] = sumValue;
+       }
+    }
+    */
+
+    System.out.println("finish "+System.currentTimeMillis());
     
    grdFF.setSamples(gridRange);
    return grdFF;
