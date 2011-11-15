@@ -35,6 +35,7 @@ import java.awt.Component;
 import java.awt.Container;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 
 import java.util.ArrayList;
@@ -228,6 +229,54 @@ public class NPPChooser extends FileChooser {
 				logger.info("GEO file NOT found: " + geoFilename);
 				isNPP = false;
 			}    
+			
+			// one last thing to check, if no luck so far...
+			// are we using terrain-corrected geolocation?
+			if (! isNPP) {
+				geoFilename = geoFilename.substring(geoFilename.lastIndexOf(File.separatorChar) + 1);
+				// this one looks for GMTCO instead of GMODO
+				geoFilename = geoFilename.replace("OD", "TC");
+				// this one looks for GITCO instead of GIMGO
+				geoFilename = geoFilename.replace("MG", "TC");
+				
+				// now we make a file filter, and see if a matching geo file is present
+				File fList = new File(fileNameAbsolute.substring(0, fileNameAbsolute.lastIndexOf(File.separatorChar) + 1)); // current directory
+
+				FilenameFilter geoFilter = new FilenameFilter() {
+					public boolean accept(File dir, String name) {
+						System.err.println("filter check: " + name);
+						if ((name.startsWith("G")) && (name.endsWith(".h5"))) {
+							return true;
+						} else {
+							return false;
+						}
+					}
+				};
+				
+				File[] files = fList.listFiles(geoFilter);
+				for (File file : files) {
+					if (file.isDirectory()) {
+						continue;
+					}
+					// get the file name for convenience
+					String fName = file.getName();
+					System.err.println("looking at file: " + fName);
+					System.err.println("looking at geof: " + geoFilename);
+					// is it one of the geo types we are looking for?
+					if (fName.substring(0, 5).equals(geoFilename.substring(0, 5))) {
+						int geoStartIdx = geoFilename.indexOf("_d");
+						int prdStartIdx = fileNameRelative.indexOf("_d");
+						String s1 = geoFilename.substring(geoStartIdx, geoStartIdx + 35);
+						String s2 = fileNameRelative.substring(prdStartIdx, prdStartIdx + 35);
+						System.err.println("Comparing " + s1 + " and " + s2);
+						if (s1.equals(s2)) {
+							isNPP = true;
+							break;
+						}
+					}
+				}
+
+			}
 			
 		}
     	
