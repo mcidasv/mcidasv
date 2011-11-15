@@ -244,7 +244,6 @@ public class NPPChooser extends FileChooser {
 
 				FilenameFilter geoFilter = new FilenameFilter() {
 					public boolean accept(File dir, String name) {
-						System.err.println("filter check: " + name);
 						if ((name.startsWith("G")) && (name.endsWith(".h5"))) {
 							return true;
 						} else {
@@ -260,15 +259,12 @@ public class NPPChooser extends FileChooser {
 					}
 					// get the file name for convenience
 					String fName = file.getName();
-					System.err.println("looking at file: " + fName);
-					System.err.println("looking at geof: " + geoFilename);
 					// is it one of the geo types we are looking for?
 					if (fName.substring(0, 5).equals(geoFilename.substring(0, 5))) {
 						int geoStartIdx = geoFilename.indexOf("_d");
 						int prdStartIdx = fileNameRelative.indexOf("_d");
 						String s1 = geoFilename.substring(geoStartIdx, geoStartIdx + 35);
 						String s2 = fileNameRelative.substring(prdStartIdx, prdStartIdx + 35);
-						System.err.println("Comparing " + s1 + " and " + s2);
 						if (s1.equals(s2)) {
 							isNPP = true;
 							break;
