@@ -379,9 +379,12 @@ public class NPPDataSource extends HydraDataSource {
 	    			if (! tmpGeo.exists()) {
 	    				// this one looks for GMTCO instead of GMODO
 	    				String geoFileRelative = geoFilename.substring(geoFilename.lastIndexOf(File.separatorChar) + 1);
-	    				String geoFilePossibility1 = geoFileRelative.replace("OD", "TC");
-	    				// this one looks for GITCO instead of GIMGO
-	    				String geoFilePossibility2 = geoFileRelative.replace("MG", "TC");
+	    				if (fileNameRelative.startsWith("SVM")) {
+	    					geoFileRelative = geoFileRelative.replace("OD", "TC");
+	    				}
+	    				if (fileNameRelative.startsWith("SVI")) {
+	    					geoFileRelative = geoFileRelative.replace("MG", "TC");
+	    				}
 	    				
 	    				// now we make a file filter, and see if a matching geo file is present
 	    				File fList = new File(geoFilename.substring(0, geoFilename.lastIndexOf(File.separatorChar) + 1)); // current directory
@@ -405,24 +408,13 @@ public class NPPDataSource extends HydraDataSource {
 	    					// get the file name for convenience
 	    					String fName = file.getName();
 	    					logger.debug("looking at file: " + fName);
-	    					logger.debug("looking at geof: " + geoFilePossibility1);
+	    					logger.debug("looking at geof: " + geoFileRelative);
 	    					// is it one of the geo types we are looking for?
-	    					if (fName.substring(0, 5).equals(geoFilePossibility1.substring(0, 5))) {
-	    						int geoStartIdx = geoFilePossibility1.indexOf("_d");
-	    						int prdStartIdx = fileNameRelative.indexOf("_d");
-	    						String s1 = geoFilePossibility1.substring(geoStartIdx, geoStartIdx + 35);
-	    						String s2 = fileNameRelative.substring(prdStartIdx, prdStartIdx + 35);
-	    						logger.debug("Comparing " + s1 + " and " + s2);
-	    						if (s1.equals(s2)) {
-	    							geoFilename = s.substring(0, s.lastIndexOf(File.separatorChar) + 1) + fName;
-	    							break;
-	    						}
-	    					}
-	    					if (fName.substring(0, 5).equals(geoFilePossibility2.substring(0, 5))) {
-	    						int geoStartIdx = geoFilePossibility2.indexOf("_d");
-	    						int prdStartIdx = fileNameRelative.indexOf("_d");
-	    						String s1 = geoFilePossibility2.substring(geoStartIdx, geoStartIdx + 35);
-	    						String s2 = fileNameRelative.substring(prdStartIdx, prdStartIdx + 35);
+	    					if (fName.substring(0, 5).equals(geoFileRelative.substring(0, 5))) {
+	    						int geoStartIdx = geoFileRelative.indexOf("_d");
+	    						int prdStartIdx = fName.indexOf("_d");
+	    						String s1 = geoFileRelative.substring(geoStartIdx, geoStartIdx + 35);
+	    						String s2 = fName.substring(prdStartIdx, prdStartIdx + 35);
 	    						logger.debug("Comparing " + s1 + " and " + s2);
 	    						if (s1.equals(s2)) {
 	    							geoFilename = s.substring(0, s.lastIndexOf(File.separatorChar) + 1) + fName;
