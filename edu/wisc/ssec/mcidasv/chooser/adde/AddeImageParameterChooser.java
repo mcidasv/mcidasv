@@ -275,7 +275,7 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
         timesPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         addDescComp(timesPanel);
 
-        JLabel navigationLabel = McVGuiUtils.makeLabelRight("Navegation:");
+        JLabel navigationLabel = McVGuiUtils.makeLabelRight("Navigation:");
         addDescComp(navigationLabel);
 
         // Use processPropertyComponents to build combo boxes that we rely on
