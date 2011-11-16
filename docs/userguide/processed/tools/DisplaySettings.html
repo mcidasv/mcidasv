@@ -31,13 +31,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/DisplaySett
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Display Settings</div>
 <p>The Display Settings facility allows you to select a set of properties from a display control (e.g., color table, contouring info, isosurface value, label template, etc.) and apply them to other display controls and/or save them as preferences to be used when creating new display controls.</p>
-<p>The Display Settings dialog, pictured below, can be brought up with the <strong>Edit-&gt;Display
+<p>The Display Settings dialog can be opened with the <strong>Edit-&gt;Display
 Settings...</strong> menu in the <strong>Layer Controls</strong> tab of the Data Explorer.</p>
 <a name="image1" id="image1"></a>
-<p><div class="images"><img src="images/displaysettings/DisplaySettingsDialog.gif" alt="Image 1: Display Settings Dialog" border="0">
+<div class="images"><img src="images/displaysettings/DisplaySettingsDialog.gif" alt="Image 1: Display Settings Dialog" border="0">
 <br>
-<span class="caption">Image 1: Display Settings Dialog</span></div></p>
-<p>On the left side of the window pictured above is a tab with a list of all of the source display controls in McIDAS-V, as well as a tab for saved settings. In
+<span class="caption">Image 1: Display Settings Dialog</span></div>
+<p>On the left side of the Display Settings window  is a tab with a list of all of the source display controls in McIDAS-V, as well as a tab for saved settings. In
   the middle are the properties of the currently selected display control, which
 is shown highlighted in blue on the left. On the right is also a list of  target display controls. </p>
 <p>The purpose of this is that you can select properties in the middle panel that you want
@@ -55,8 +55,8 @@ is shown highlighted in blue on the left. On the right is also a list of  target
 <div class="images"><img src="images/displaysettings/Example1_2.gif" alt="Image 3: Select Menu of the Display Settings Dialog"><br>
 <span class="caption">Image 3: Select Menu of the Display Settings Dialog</span></div>
 <p>This selects the displays with the data source of the currently selected display.</p>
-<p>Once selected you then hit<strong> <img src="images/ApplyWithArrows.gif" alt="Apply button" width="79" height="26"align=absmiddle></strong>, the "Display
-  Category" will be set property on the selected display controls.</p>
+<p>Once selected, you then hit<strong> <img src="images/ApplyWithArrows.gif" alt="Apply button" width="79" height="26"align=absmiddle></strong>, and the "Display
+  Category" will be set on the selected display controls.</p>
 <p>To do the next set of displays, select a new Source display control in the
   list on the left. This will select this display and reset the properties list
   in the middle. Then, when you click <strong>Select-&gt;Displays
@@ -67,10 +67,9 @@ will be selected.</p>
 <p>You can save the set of selected settings with the <strong>File-&gt;Save Selected Properties</strong> option. The Save Display Settings
 dialog will be shown:</p>
 <a name="image2" id="image2"></a>
-<p><div class="images"><img src="images/displaysettings/DisplaySettingsSave.gif" alt="Image 4: Save Display Settings Dialog">
+<div class="images"><img src="images/displaysettings/DisplaySettingsSave.gif" alt="Image 4: Save Display Settings Dialog">
 <br>
 <span class="caption">Image 4: Save Display Settings Dialog</span></div>
-</p>
 <p>You can enter a category and a name. The saved settings will be shown under the <strong>Saved
   Settings</strong> tab. When selected they will be applied to the list of properties
 on the left. The <strong>Applicable only to displays of type</strong> button will be used when
@@ -79,7 +78,7 @@ showing the saved settings in the <strong>Field Selector</strong>.</p>
 <div class="pagesubtitle">Using Display Settings in the Field Selector</div>
 <p>The set of saved display settings are also shown in the <strong>Field Selector</strong>:</p>
 <a name="image3" id="image3"></a>
-<p><div class="images"><img src="images/displaysettings/DisplaySettingsInFieldSelector.gif" alt="Image 5: Display Settings in the Field Selector">
+<div class="images"><img src="images/displaysettings/DisplaySettingsInFieldSelector.gif" alt="Image 5: Display Settings in the Field Selector">
 <br>
 <span class="caption">Image 5: Display Settings in the Field Selector</span></div>
 <p>You can select any number of these, and when a new display control is created, these settings will be applied to the new display. The <strong>Show
