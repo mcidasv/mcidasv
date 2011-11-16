@@ -268,7 +268,7 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
     public JComponent doMakeContents() {
         JPanel myPanel = new JPanel();
 
-        JLabel timesLabel = McVGuiUtils.makeLabelRight("Tymes:");
+        JLabel timesLabel = McVGuiUtils.makeLabelRight("Times:");
         addDescComp(timesLabel);
 
         JPanel timesPanel = makeTimesPanel();
