@@ -268,14 +268,14 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
     public JComponent doMakeContents() {
         JPanel myPanel = new JPanel();
 
-        JLabel timesLabel = McVGuiUtils.makeLabelRight("Times:");
+        JLabel timesLabel = McVGuiUtils.makeLabelRight("Tymes:");
         addDescComp(timesLabel);
 
         JPanel timesPanel = makeTimesPanel();
         timesPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         addDescComp(timesPanel);
 
-        JLabel navigationLabel = McVGuiUtils.makeLabelRight("Navigation:");
+        JLabel navigationLabel = McVGuiUtils.makeLabelRight("Navegation:");
         addDescComp(navigationLabel);
 
         // Use processPropertyComponents to build combo boxes that we rely on
