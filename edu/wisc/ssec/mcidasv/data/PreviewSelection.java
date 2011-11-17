@@ -215,7 +215,8 @@ public class PreviewSelection extends DataSelectionComponent {
            if (key instanceof MultiDimensionSubset) {
              hasSubset = true;
              MultiDimensionSubset select = (MultiDimensionSubset) table.get(key);
-             HydraContext hydraContext = HydraContext.getHydraContext((DataCategory)dataChoice.getCategories().get(0));
+             //HydraContext hydraContext = HydraContext.getHydraContext((DataCategory)dataChoice.getCategories().get(0));
+             HydraContext hydraContext = HydraContext.getHydraContext(dataSource);
              if (hydraContext.getMultiDimensionSubset() == null) {
                 hydraContext.setMultiDimensionSubset(select);
              }
@@ -244,7 +245,8 @@ public class PreviewSelection extends DataSelectionComponent {
              y_coords[1] = hi[1];
 
              if (hasSubset) {
-               HydraContext hydraContext = HydraContext.getHydraContext((DataCategory)dataChoice.getCategories().get(0));
+               //HydraContext hydraContext = HydraContext.getHydraContext((DataCategory)dataChoice.getCategories().get(0));
+               HydraContext hydraContext = HydraContext.getHydraContext(dataSource);
                MultiDimensionSubset select = hydraContext.getMultiDimensionSubset();
                HashMap map = select.getSubset();
 
@@ -331,7 +333,8 @@ public class PreviewSelection extends DataSelectionComponent {
                                                                                                                                              
       public void applyToDataSelection(DataSelection dataSelection) {
          if (hasSubset) {
-           HydraContext hydraContext = HydraContext.getHydraContext((DataCategory)dataChoice.getCategories().get(0));
+           //HydraContext hydraContext = HydraContext.getHydraContext((DataCategory)dataChoice.getCategories().get(0));
+           HydraContext hydraContext = HydraContext.getHydraContext(dataSource);
            Hashtable table = dataChoice.getProperties();
            table.put(MultiDimensionSubset.key, hydraContext.getMultiDimensionSubset());
 
