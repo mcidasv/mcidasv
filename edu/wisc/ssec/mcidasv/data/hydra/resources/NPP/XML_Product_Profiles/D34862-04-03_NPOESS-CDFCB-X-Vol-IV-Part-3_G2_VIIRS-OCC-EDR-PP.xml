@@ -1,0 +1,1966 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<NPOESSDataProduct NS2:noNamespaceSchemaLocation="NPOESS_Product_Profile.xsd"
+	xmlns:NS2="http://www.w3.org/2001/XMLSchema-instance">
+	<ProductName>VIIRS Ocean Color/Chlorophyll EDR</ProductName>
+	<CollectionShortName>VIIRS-OCC-EDR</CollectionShortName>
+	<DataProductID>VOCCO</DataProductID>
+	<ProductData>
+		<DataName>VIIRS Ocean Color Chlorophyll Product Profile</DataName>
+		<Field>
+			<Name>Chlorophyll_a</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Concentration of chlorophyll in a vertical column of
+					the surface layer in the ocean</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>mg/m^3</MeasurementUnits>
+				<RangeMin>0.05</RangeMin>
+				<RangeMax>50</RangeMax>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>IOP_a_412nm</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Inherent Optical Properties - Absorption at 412nm</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>m^-1</MeasurementUnits>
+				<RangeMin>0.01</RangeMin>
+				<RangeMax>10</RangeMax>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>IOP_a_445nm</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Inherent Optical Properties - Absorption at 445nm</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>m^-1</MeasurementUnits>
+				<RangeMin>0.01</RangeMin>
+				<RangeMax>10</RangeMax>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>IOP_a_488nm</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Inherent Optical Properties - Absorption at 488nm</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>m^-1</MeasurementUnits>
+				<RangeMin>0.01</RangeMin>
+				<RangeMax>10</RangeMax>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>IOP_a_555nm</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Inherent Optical Properties - Absorption at 555nm</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>m^-1</MeasurementUnits>
+				<RangeMin>0.01</RangeMin>
+				<RangeMax>10</RangeMax>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>IOP_a_672nm</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Inherent Optical Properties - Absorption at 672nm</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>m^-1</MeasurementUnits>
+				<RangeMin>0.01</RangeMin>
+				<RangeMax>10</RangeMax>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>IOP_s_412nm</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Inherent Optical Properties - Backscattering at 412nm</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>m^-1</MeasurementUnits>
+				<RangeMin>0.01</RangeMin>
+				<RangeMax>50</RangeMax>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>IOP_s_445nm</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Inherent Optical Properties - Backscattering at 445nm</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>m^-1</MeasurementUnits>
+				<RangeMin>0.01</RangeMin>
+				<RangeMax>50</RangeMax>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>IOP_s_488nm</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Inherent Optical Properties - Backscattering at 488nm</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>m^-1</MeasurementUnits>
+				<RangeMin>0.01</RangeMin>
+				<RangeMax>50</RangeMax>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>IOP_s_555nm</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Inherent Optical Properties - Backscattering at 555nm</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>m^-1</MeasurementUnits>
+				<RangeMin>0.01</RangeMin>
+				<RangeMax>50</RangeMax>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>IOP_s_672nm</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Inherent Optical Properties - Backscattering at 672nm</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>m^-1</MeasurementUnits>
+				<RangeMin>0.01</RangeMin>
+				<RangeMax>50</RangeMax>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>nLw_412nm</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Normalized Water Leaving Radiance at 412nm</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>W/(m^2 μm sr)</MeasurementUnits>
+				<RangeMin>0.1</RangeMin>
+				<RangeMax>40</RangeMax>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>nLw_445nm</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Normalized Water Leaving Radiance at 445nm</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>W/(m^2 μm sr)</MeasurementUnits>
+				<RangeMin>0.1</RangeMin>
+				<RangeMax>40</RangeMax>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>nLw_488nm</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Normalized Water Leaving Radiance at 488nm</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>W/(m^2 μm sr)</MeasurementUnits>
+				<RangeMin>0.1</RangeMin>
+				<RangeMax>40</RangeMax>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>nLw_555nm</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Normalized Water Leaving Radiance at 555nm</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>W/(m^2 μm sr)</MeasurementUnits>
+				<RangeMin>0.1</RangeMin>
+				<RangeMax>40</RangeMax>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>nLw_672nm</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Normalized Water Leaving Radiance at 672nm</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>W/(m^2 μm sr)</MeasurementUnits>
+				<RangeMin>0.1</RangeMin>
+				<RangeMax>40</RangeMax>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ONGROUND_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF1_VIIRSOCCEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Ocean Color Quality at 412nm (Indicates pixel level
+					Normalized Water-Leaving Radiance quality at M1) This flag is set
+					to "Poor" if (1) The M5-Band RSR values indicate Turbid Water OR
+					(2) The 412nm (M1-Band) nLw is out of the system spec range OR (3)
+					Coccolithophores are present. A Bright Pixel also sets this flag to
+					"Poor".</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Poor</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Ocean Color Quality at 445nm (Indicates pixel level
+					Normalized Water-Leaving Radiance quality at M2) This flag is set
+					to "Poor" if (1) The M5-Band RSR values indicate Turbid Water OR
+					(2) The 445nm (M2-Band) nLw is out of the system spec range OR (3)
+					Coccolithophores are present. A Bright Pixel also sets this flag to
+					"Poor".</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Poor</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Ocean Color Quality at 488nm (Indicates pixel level
+					Normalized Water-Leaving Radiance quality at M3) This flag is set
+					to "Poor" if (1) The M5-Band RSR values indicate Turbid Water OR
+					(2) The 488nm (M3-Band) nLw is out of the system spec range OR (3)
+					Coccolithophores are present. A Bright Pixel also sets this flag to
+					"Poor".</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Poor</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Ocean Color Quality at 555nm (Indicates pixel level
+					Normalized Water-Leaving Radiance quality at M4) This flag is set
+					to "Poor" if (1) The M5-Band RSR values indicate Turbid Water OR
+					(2) The 555 (M4-Band) nm nLw is out of the system spec range OR (3)
+					Coccolithophores are present. A Bright Pixel also sets this flag to
+					"Poor".</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Poor</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Ocean Color Quality at 672nm (Indicates pixel level
+					Normalized Water-Leaving Radiance quality at M5) This flag is set
+					to "Poor" if (1) The M5-Band RSR values indicate Turbid Water OR
+					(2) The 672nm (M5-Band) nLw is out of the system spec range OR (3)
+					The M5-Band RSR is out of the system spec range OR (3)
+					Coccolithophores are present. A Bright Pixel also sets this flag to
+					"Poor".</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Poor</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Chlorophyll a Concentration Quality (Indicates pixel
+					level chlorophyll a concentration quality) This flag is set to
+					"Poor" if: (1) The Chlorophyll-a is out of the system spec range OR
+					(2) Any band's IOP-a or IOP-s value is outside the system spec
+					range OR (3) Coccolithophores are present. A Bright Pixel also sets
+					this flag to "Poor".</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Poor</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>IOP_a Quality at 412nm (Indicates pixel level IOP-a
+					quality at M1) This flag is set to "Poor" if (1) The M5-Band RSR
+					values indicate Turbid Water OR (2) The 412nm nLw is out of the
+					system spec range OR (3) Coccolithophores are present. A Bright
+					Pixel also sets this flag to "Poor".</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Poor</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>IOP_s Quality at 412nm (Indicates pixel level IOP-s
+					quality at M1) This flag is set to "Poor" if (1) The M5-Band RSR
+					values indicate Turbid Water OR (2) The 412nm nLw is out of the
+					system spec range OR (3) Coccolithophores are present. A Bright
+					Pixel also sets this flag to "Poor".</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Poor</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF2_VIIRSOCCEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>IOP_a Quality at 445nm (Indicates pixel level IOP-a
+					quality at M2) This flag is set to "Poor" if (1) The M5-Band RSR
+					values indicate Turbid Water OR (2) The 445nm (M2-Band) nLw is out
+					of the system spec range OR (3) Coccolithophores are present. A
+					Bright Pixel also sets this flag to "Poor".</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Poor</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>IOP_s Quality at 445nm (Indicates pixel level IOP-s
+					quality at M2) This flag is set to "Poor" if (1) The M5-Band RSR
+					values indicate Turbid Water OR (2) The 445nm (M2-Band) nLw is out
+					of the system spec range OR (3) Coccolithophores are present. A
+					Bright Pixel also sets this flag to "Poor".</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Poor</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>IOP_a Quality at 488nm (Indicates pixel level IOP-a
+					quality at M3) This flag is set to "Poor" if (1) The M5-Band RSR
+					values indicate Turbid Water OR (2) The 488nm (M3-Band) nLw is out
+					of the system spec range OR (3) Coccolithophores are present. A
+					Bright Pixel also sets this flag to "Poor".</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Poor</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>IOP_s Quality at 488nm (Indicates pixel level IOP-s
+					quality at M3) This flag is set to "Poor" if (1) The M5-Band RSR
+					values indicate Turbid Water OR (2) The 488nm (M3-Band) nLw is out
+					of the system spec range OR (3) Coccolithophores are present. A
+					Bright Pixel also sets this flag to "Poor".</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Poor</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>IOP_a Quality at 555nm (Indicates pixel level IOP-a
+					quality at M4) This flag is set to "Poor" if (1) The M5-Band RSR
+					values indicate Turbid Water OR (2) The 555nm (M4-Band) nLw is out
+					of the system spec range OR (3) Coccolithophores are present. A
+					Bright Pixel also sets this flag to "Poor".</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Poor</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>IOP_s Quality at 555nm (Indicates pixel level IOP-s
+					quality at M4) This flag is set to "Poor" if (1) The M5-Band RSR
+					values indicate Turbid Water OR (2) The 555nm (M4-Band) nLw is out
+					of the system spec range OR (3) Coccolithophores are present. A
+					Bright Pixel also sets this flag to "Poor".</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Poor</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>IOP_a Quality at 672nm (Indicates pixel level IOP-a
+					quality at M5) This flag is set to "Poor" if (1) The M5-Band RSR
+					values indicate Turbid Water OR (2) The 412nm nLw is out of the
+					system spec range</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Poor</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>IOP_s Quality at 672nm (Indicates pixel level IOP-s
+					quality at M5) This flag is set to "Poor" if (1) The M5-Band RSR
+					values indicate Turbid Water OR (2) The 672nm (M5-Band) nLw is out
+					of the system spec range OR (3) Coccolithophores are present. A
+					Bright Pixel also sets this flag to "Poor".</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Poor</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF3_VIIRSOCCEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>SDR quality for bands M1 to M7 (Any one band out of
+					range is considered poor quality)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good for all 7 bands</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Poor (any band greater than thresholds)</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Input Total Ozone Column Quality</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Poor</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Wind speed exceeds threshold of 8 m/s (Whitecap
+					formation)</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Epsilon value is out of aerosol model range (eps &lt;
+					0.85 or eps &gt; 1.35)</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Atmospheric Correction Failure (Indicates at which
+					correction step the algorithm first fails)</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>3 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Correction successful</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Ozone failed</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Whitecap failed</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Polarization failed</Name>
+					<Value>3</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Rayleigh failed</Name>
+					<Value>4</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Aerosol failed</Name>
+					<Value>5</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Zero diffuse trans</Name>
+					<Value>6</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>No Correction Possible</Name>
+					<Value>7</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Spare</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF4_VIIRSOCCEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Land/ Water Mask (Identifies the type of Earth surface
+					that lies along the instruments line of sight - obtained from VIIRS
+					Cloud Mask)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Sea water</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Coastal water</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Inland water</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Land</Name>
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Snow or Ice in Pixel (from the VIIRS Cloud Mask)</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Solar Zenith Angle =&gt;70 deg (Day/Night Exclusion -
+					Horizontal cell contains only nighttime. Solar Zenith Angle =&gt;
+					70 deg at center of horizontal cell)</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Sun Glint detected in pixel as indicated in the VIIRS
+					Cloud Mask</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Exclusion - Horizontal Cell Size (HCS) &gt; 1.3km (HCS
+					&gt; 1.3km, swath width &gt; 1700 km or Sensor Zenith Angle &gt;
+					53.0 degrees)</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Degradation - Horizontal cell contains shallow water;
+					Depth &lt; 50 meters</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Spare</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF5_VIIRSOCCEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Cloud Confidence Indicator (Indicator of whether 'M'
+					band pixel confidently clear, probably clear, probably cloudy or
+					confidently cloudy, from VIIRS Cloud Mask)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Confidently clear</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Confidently clear</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Probably cloudy</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Confidently cloudy</Name>
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Adjacent Pixel is not confidently clear (as determined
+					by the VIIRS Cloud Mask)</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Thin Cirrus Cloud Detected in Pixel as determined by
+					the VIIRS Cloud Mask</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Exclusion: Cloud Shadow detected in Pixel (as
+					determined by the VIIRS Cloud Mask</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Non-Cloud Obstruction detected in Pixel (Heavy Aerosol)
+					- as determined by the VIIRS Cloud Mask</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Exclusion: Strongly absorbing aerosol detected in pixel
+					(Single scattering albedo at M4 wavelength (555nm) &lt;0.7)</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Exclusion: AOT &gt; 0.3 (AOT in horizontal cell &gt;
+					0.3 on the slant path (AOT @865nm, M7))</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF6_VIIRSOCCEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Exclusion: Turbid Water detected in Pixel (Remote
+					Sensing Reflectance (M5) &gt; 0.0012)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Coccolithophores detected in Pixel : (nLw(M2)&gt;=1.1
+					&amp; nLw(M4)&gt;=0.81 &amp; Laero(M6)&lt;= 1.1 &amp;
+					0.6&lt;=nLw(M2)/nLw(M4)&lt;=1.1)</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Exclusion: Dissolved organic matter absorption at 410nm
+					&gt; 2/meter</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Range of Chlorophyll Concentration</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>No Chlorophyll Retrieval</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Chlorophyll&lt;1mg/m^3</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>1.0&lt;=Chlorophyll&lt;10mg/m^3</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Chlorophyll&gt;=10mg/m^3</Name>
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Carder Bio-Optics Algorithm Branching (The various
+					branching and model mixing within the Carder bio-optics algorithm)</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>3 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Carder empirical</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Unpackaged phytoplankton</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Weighted global-unpackaged</Name>
+					<Value>3</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Weighted packaged-global</Name>
+					<Value>4</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Weighted fully packaged-packaged</Name>
+					<Value>5</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Fully packaged phytoplankton</Name>
+					<Value>6</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>No OCC Retrieval</Name>
+					<Value>7</Value>
+				</LegendEntry>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF7_VIIRSOCCEDR</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>3200</MinIndex>
+				<MaxIndex>3200</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Ocean Color values (any band) out of range 0= (1.0
+					&lt;= nLw &lt;= 40 W/m^2 micrometer sr); 1= out of range</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Chlorophyll-a values out of range (Chlorophyll-a &lt;
+					0.05 or Chlorophyll-a &gt; 50)</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>IOP-a values (any band) out of range (IOP-a &lt; 0.01
+					or IOP-a &gt; 10.0)</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>IOP-s values (any band) out of range (IOP-s &lt; 0.01
+					or IOP-s &gt; 50.0)</Description>
+				<DatumOffset>3</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Input Skin SST EDR Quality (Input Skin SST EDR Quality)</Description>
+				<DatumOffset>4</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Poor</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Exclusion - Bright Target Flag (The fraction of light
+					into or out of cell exceeds threshold)</Description>
+				<DatumOffset>5</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Not Bright (bpflag &lt;= 0.002)</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Bright</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Chlorophyll Algorithm Branching</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<DataType>2 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Carder algorithm with Carder empitical</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Carder algorithm with OC3V default</Name>
+					<Value>1</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>OC3V algorithm</Name>
+					<Value>2</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>No Retrieval</Name>
+					<Value>3</Value>
+				</LegendEntry>
+			</Datum>
+		</Field>
+	</ProductData>
+</NPOESSDataProduct>

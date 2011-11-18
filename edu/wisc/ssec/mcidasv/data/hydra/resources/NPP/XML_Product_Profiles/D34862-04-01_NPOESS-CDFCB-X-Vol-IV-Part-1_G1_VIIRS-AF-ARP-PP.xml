@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<NPOESSDataProduct>
+	<ProductName>Active Fires ARP</ProductName>
+	<CollectionShortName>VIIRS-AF-EDR</CollectionShortName>
+	<DataProductID>AVAFO</DataProductID>
+	<ProductData>
+		<DataName>VIIRS Active Fires ARP Product Profile</DataName>
+		<Field>
+			<Name>Latitude</Name>
+			<Dimension>
+				<Name>Fire Pixel Latitude</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>0</MinIndex>
+				<MaxIndex>2457600</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Latitude of Fire Pixel</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin>0</RangeMin>
+				<RangeMax>90</RangeMax>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name></Name>
+					<Value></Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>Longitude</Name>
+			<Dimension>
+				<Name>Fire Pixel Latitude</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>0</MinIndex>
+				<MaxIndex>2457600</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Longitude of Fire Pixel</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>degrees</MeasurementUnits>
+				<RangeMin>-180</RangeMin>
+				<RangeMax>180</RangeMax>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name></Name>
+					<Value></Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>RowIndex</Name>
+			<Dimension>
+				<Name>SDR Row Index</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>0</MinIndex>
+				<MaxIndex>2457600</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Index number of the SDR row this fire pixel originated
+					from</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin>0</RangeMin>
+				<RangeMax>767</RangeMax>
+				<DataType>32-bit signed integer</DataType>
+				<FillValue>
+					<Name></Name>
+					<Value></Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>ColIndex</Name>
+			<Dimension>
+				<Name>SDR Row Index</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>0</MinIndex>
+				<MaxIndex>2457600</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Index number of the SDR column this fire pixel
+					originated from</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin>0</RangeMin>
+				<RangeMax>3199</RangeMax>
+				<DataType>32-bit signed integer</DataType>
+				<FillValue>
+					<Name></Name>
+					<Value></Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF1_VIIRSAFARP</Name>
+			<Dimension>
+				<Name>Quality Flag 1</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>0</MinIndex>
+				<MaxIndex>2457600</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Adjacent Cloud Flag</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin></RangeMin>
+				<RangeMax></RangeMax>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>No Cloud in adjacent pixel</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Cloud in adjacent pixel</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Adjacent Water Flag</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin></RangeMin>
+				<RangeMax></RangeMax>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>No water in adjacent pixel</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Water in adjacent pixel</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Search Size Window (Indicates the number of pixels used
+					in the search window)</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin>1</RangeMin>
+				<RangeMax>10</RangeMax>
+				<DataType>1 bit(s)</DataType>
+			</Datum>
+			<Datum>
+				<Description>Sun Glint</Description>
+				<DatumOffset>6</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin></RangeMin>
+				<RangeMax></RangeMax>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Sun Glint Override (Likely false alarms caused by sun
+					glint contaminated background pixels)</Description>
+				<DatumOffset>7</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin></RangeMin>
+				<RangeMax></RangeMax>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF2_VIIRSAFARP</Name>
+			<Dimension>
+				<Name>Quality Flag 2</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>0</MinIndex>
+				<MaxIndex>2457600</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Fire Test 1 Valid (Indicates whether Test 1 gave a
+					valid result)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin></RangeMin>
+				<RangeMax></RangeMax>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Results not valid</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Results valid</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Fire Test 2 Valid (Indicates whether Test 2 gave a
+					valid result)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin></RangeMin>
+				<RangeMax></RangeMax>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Results not valid</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Results valid</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Fire Test 3 Valid (Indicates whether Test 3 gave a
+					valid result)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin></RangeMin>
+				<RangeMax></RangeMax>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Results not valid</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Results valid</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Fire Test 4 Valid (Indicates whether Test 4 gave a
+					valid result)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin></RangeMin>
+				<RangeMax></RangeMax>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Results not valid</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Results valid</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Fire Test 5 Valid (Indicates whether Test 5 gave a
+					valid result)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin></RangeMin>
+				<RangeMax></RangeMax>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Results not valid</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Results valid</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Fire Test 6 Valid (Indicates whether Test 6 gave a
+					valid result)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin></RangeMin>
+				<RangeMax></RangeMax>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Results not valid</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Results valid</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Input Data Quality (AF quality poor due to bad SDR data
+					in horizontal cell)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin></RangeMin>
+				<RangeMax></RangeMax>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Good SDR Data</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Bad SDR Data</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Day/Night (Night = SZA &gt; 85 degrees)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin></RangeMin>
+				<RangeMax></RangeMax>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>Night</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>Day</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF3_VIIRSAFARP</Name>
+			<Dimension>
+				<Name>Quality Flag 3</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>0</MinIndex>
+				<MaxIndex>2457600</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>False Alarm Override ( likely false alarms due to
+					excessive rejection of legitimate background pixels)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin></RangeMin>
+				<RangeMax></RangeMax>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Water Contamination Override (likely false alarms
+					caused by water contaminated background pixels - Flag will not be
+					triggered for sparse array format since only fire pixels are
+					written to output.)</Description>
+				<DatumOffset>1</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin></RangeMin>
+				<RangeMax></RangeMax>
+				<DataType>1 bit(s)</DataType>
+				<LegendEntry>
+					<Name>False</Name>
+					<Value>0</Value>
+				</LegendEntry>
+				<LegendEntry>
+					<Name>True</Name>
+					<Value>1</Value>
+				</LegendEntry>
+			</Datum>
+			<Datum>
+				<Description>Spare</Description>
+				<DatumOffset>2</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin></RangeMin>
+				<RangeMax></RangeMax>
+				<DataType>6 bit(s)</DataType>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>QF4_VIIRSAFARP</Name>
+			<Dimension>
+				<Name>Quality Flag 4</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>1</Dynamic>
+				<MinIndex>0</MinIndex>
+				<MaxIndex>2457600</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>1</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Fire Detection Confidence (Pixel level fire confidence
+					in percent for each of the fire pixels)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>unitless</MeasurementUnits>
+				<RangeMin>0</RangeMin>
+				<RangeMax>100</RangeMax>
+				<DataType>unsigned 8-bit char</DataType>
+			</Datum>
+		</Field>
+	</ProductData>
+</NPOESSDataProduct>
