@@ -60,7 +60,16 @@ and (optionally) a bearing point. This option can be found in the Main Display w
   <li class="propertylistitem"><strong>Y Tick</strong> - Sets  the location of the
     Y tick mark in the Main Display window.</li>
   <li class="propertylistitem"><strong>Z Tick </strong> - Sets the location of the
-    Z tick mark in the Main Display window.</li>
+    Z tick mark in the Main Display window.</li></ul>
+<p>The center point of the Location Indicator can be moved by left-clicking and dragging on the lines produced in the Main Display window. You can also move the center point of the Location Indicator with a series of Ctrl+Alt key combinations.</p>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Ctrl+Alt+o -</strong> Moves the center point of the Location Indicator to the origin (center in the x, y, and z-axes) of the display.</li>
+<li class="propertylistitem"><strong>Ctrl+Alt+l -</strong> Moves the center point of the Location Indicator to the left side of the display (in the x-axis), maintaining the previously existing top/bottom and up/down positions.</li>
+<li class="propertylistitem"><strong>Ctrl+Alt+r -</strong> Moves the center point of the Location Indicator to the right side of the display (in the x-axis), maintaining the previously existing top/bottom and up/down positions.</li>
+<li class="propertylistitem"><strong>Ctrl+Alt+t -</strong> Moves the center point of the Location Indicator to the top  of the display (in the y-axis), maintaining the previously existing left/right and up/down positions.</li>
+<li class="propertylistitem"><strong>Ctrl+Alt+b -</strong> Moves the center point of the Location Indicator to the bottom  of the display <span class="propertylsititem">(in the y-axis)</span>, maintaining the previously existing left/right and up/down positions.</li>
+<li class="propertylistitem"><strong>Ctrl+Alt+u -</strong> Moves the center point of the Location Indicator vertically (in the z-axis) to the top of the display, maintaining the previously existing left/right and top/bottom positions.</li>
+<li class="propertylistitem"><strong>Ctrl+Alt+d -</strong> Moves the center point of the Location Indicator vertically (in the z-axis) to the bottom of the display, maintaining the previously existing left/right and top/bottom positions.</li>
 </ul>
 <a name="settings" id="settings"></a>
 <p>The <strong>Settings</strong> tab allows for the configuration of display settings: <a name="image2"></a>
@@ -70,20 +79,19 @@ and (optionally) a bearing point. This option can be found in the Main Display w
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
   <p></p>
-  <li class="propertylistitem"><b>Move</b> - Constrains along which axis points are moved.</li>
+  <li class="propertylistitem"><b>Move</b> - Constrains along which axis the center point of the Location Indicator can be moved.</li>
   <li class="propertylistitem"><strong>Keep in Box</strong> - Constrains the movement to be within the main 3D bounding box.</li>
   <li class="propertylistitem"><strong>Enabled</strong> - Enables the option to drag points.</li>
-  <li class="propertylistitem"><strong>Clip - </strong>Clips the Location Indicator Display in the Main Display window at the chosen locations in from the drop down menus.</li>
+  <li class="propertylistitem"><strong>Clip - </strong>Clips the Location Indicator as well as the display in the Main Display window in relation to the center point of the Location Indicator.</li>
   <li class="propertylistitem"><strong>Visibility</strong> - Turns on/off the visibility of the X, Y, and Z axes in the Main Display window.</li>
   <li class="propertylistitem"><strong>Labels</strong> - Turns on/off the visibility of the X, Y, and Z labels in the Main Display window.</li>
-  <li class="propertylistitem"><strong>Solid</strong> - Shades in the plane of any of the axes selected. You can select a color and a transparency.</li>
+  <li class="propertylistitem"><strong>Solid</strong> - Shades in the plane of any of the axes selected. You can select a color and a transparency for this plane.</li>
   <li class="propertylistitem"><strong>Bearing Lines</strong> - Shows or hides the bearing lines. These are dashed lines from the respective
     axis to the bearing point.</li>
   <li class="propertylistitem"><strong>Bearing Point</strong> - Turns on/off the display of the bearing point.</li>
   <li class="propertylistitem"><strong>Axis size</strong> - Expands/contracts the length of the origin axis.</li>
-  <li class="propertylistitem"><strong>Line Width</strong> - Sets the line width of the origin axis.</li>
-  <li class="propertylistitem"><strong>Color</strong> - Sets the color of the origin axis.
-</ul>
+  <li class="propertylistitem"><strong>Line Width</strong> - Sets the line width of the Location Indicator lines.</li>
+  <li class="propertylistitem"><strong>Color</strong> - Sets the color of the Location Indicator lines.</ul>
 <a name="orient" id="orient"></a>
 <p>The <strong>Orient</strong> tab allows for the orienting the display based on the location. To change the origin, click and drag in the main display. To show and/or change
   the bearing point, do a Control+drag in the Main Display window. The x/y/z locations
@@ -95,8 +103,8 @@ and (optionally) a bearing point. This option can be found in the Main Display w
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
 	<p></p>
-  <li class="propertylistitem"><b>Center At Origin</b> - Centers the display at the origin point.</li>
-  <li class="propertylistitem"><strong>Center At Point</strong> - Centers the display at the point of the location indicator.</li>
+  <li class="propertylistitem"><b>Center At Origin</b> - Centers the display at the origin of the Location Indicator.</li>
+  <li class="propertylistitem"><strong>Center At Point</strong> - Centers the display at the center of the image, not taking into account the location of the center point of the Location Indicator..</li>
 </ul>
 <a name="menus" id="menus"></a>
 <div class="pagesubtitle">Menus</div>

@@ -41,21 +41,20 @@ You can capture the main 3D view as an image, a QuickTime movie or an animated G
 <a name="jpegcapture" id="jpegcapture"></a>
 <div class="pagesubtitle">Saving Images</div>
 <p>You can save a display as an image by selecting the <strong>View-&gt;Capture-&gt;Image...</strong> menu
-item in the Main Display window. A file dialog will popup where you can enter a file name for the image
+item in the Main Display window. A file dialog will open where you can enter a file name for the image
 file. McIDAS-V supports JPEG, PNG, GIF, PDF, PS, and SVG formats. From this File
 Dialog you can also specify the image quality (only used for JPEGs) and what
 to capture. You can also select whether or not the background is transparent.</p>
-<p>Note: When capturing an image, the screen cannot be obscured.</p>
+<p>Note: When capturing an image, the Main Display window cannot be obscured.</p>
 <p>McIDAS-V can also write out an image and the corresponding Google Earth KML
-  or KMZ file. For this to be correct the projection must be a Lat/Lon geographic
+  or KMZ file. For this to be correct, the projection must be a Lat/Lon geographic
   projection (i.e., rectilinear) and in an overhead view. Some of the default
   projections that are Lat/Lon include World, Africa, Asia, Australia, and the
   individual state projections (US-&gt;States-&gt;...). You can also create your own
   Lat/Lon projection using the <a href="../tools/ProjectionManager.html">Projection
   Manager</a>. The simplest way to get a
-  correct projection is to select the <strong>Projections-&gt;Set
-  Current View as Projection</strong> menu
-  item in the Main Display window. If you specify a .kml file McIDAS-V will generate an image with the same
+  correct projection is to select the <strong>Projections-&gt;Use Displayed Area</strong> menu
+  item in the Main Display window. If you specify a .kml file, McIDAS-V will generate an image with the same
   file prefix and the kml file that refers to the image. If you specify a .kmz
   file  (which is a zip format) it will contain the image and the kml
 file.</p>
@@ -66,21 +65,21 @@ item in the Main Display window. A <strong>Print</strong> dialog will popup wher
 <p><a name="moviecapture" id="moviecapture"></a></p>
 <div class="pagesubtitle">Saving QuickTime Movies</div>
 <p>You can save any sequence of displays as a movie. Select the <strong>View-&gt;Capture-&gt;Movie...</strong> menu
-item in the Main Display window to bring up the Movie Capture window:</p>
+item in the Main Display window to open the Movie Capture window:</p>
 <div class="images"><img src="images/VMImageCapturePopup.gif" alt="Image 1: Movie Capture window"><br>
 <span class="caption">Image 1: Movie Capture Window</span></div>
 <p></p>
 <div class="pagesubtitle">Properties</div>
 <p>Note: More information about these controls is found in the <a href="#create">Creating a Movie</a> section below.</p>
 <ul class="propertylist">
-    <li class="propertylistitem"><strong>Capture</strong></li>
+    <li class="propertylistitem"><strong>Capture</strong> -</li>
     <ul class="propertylist">
         <li class="propertylistitem"><img src="images/OneImage.gif" alt="One Image button" width="132" height="26"align=absmiddle> <strong> -</strong> Captures one image to create a movie.</li>
 <li class="propertylistitem"><img src="images/TimeAnimation.gif" alt="Time Animation button" width="132" height="26"align=absmiddle> <strong> -</strong> Captures a loop of images at the specified dwell rate through the Time Animation Controls.</li>
 <li class="propertylistitem"><strong>Reset to start time -</strong> Resets the loop to the initial timestep before recording the video.</li>
 <li class="propertylistitem"> <img src="images/Automatically.gif" alt="Automatically button" width="132" height="26"align=absmiddle> <strong> -</strong> Creates a new frame in the movie every given number of seconds.</li>
 </ul>
-<li class="propertylistitem"><strong>What to capture</strong></li>
+<li class="propertylistitem"><strong>What to capture</strong> -</li>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>View -</strong> Captures only what is in the view screen of the Main Display window.</li>
 <li class="propertylistitem"><strong>View &amp; Legend -</strong> Captures both the view and the Legend.</li>
@@ -89,18 +88,18 @@ item in the Main Display window to bring up the Movie Capture window:</p>
 <li class="propertylistitem"><strong>Beep -</strong> Produces a beeping noise at the beginning of each frame captured in the movie.</li>
 <li class="propertylistitem"><strong>Background Transparent -</strong> Captures the movie with the background image transparent.</li>
 </ul>
-<li class="propertylistitem"><strong>Image Files</strong></li>
+<li class="propertylistitem"><strong>Image Files</strong> -</li>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Image Quality -</strong> Sets the quality of the images. Lower quality images will utilize less memory, but will not look as good.</li>
 <li class="propertylistitem"><strong>Save Files To -</strong> Sets the location where you want to store the movie.</li>
 <li class="propertylistitem"><strong>Filename Template -</strong> Represents the name of the movie. There are several ways you can customize the output, described in the section <a href="#filename">below</a>.</li>
 </ul>
-<li class="propertylistitem"><strong>Frames</strong></li>
+<li class="propertylistitem"><strong>Frames</strong> -</li>
 <ul class="propertylist">
     <li class="propertylistitem"><strong># frames -</strong> Displays the number of frames in the movie.</li>
     <li class="propertylistitem"><img src="images/Preview.gif" alt="Preview button" width="80" height="26"align=absmiddle> <strong> -</strong> Opens a Movie Preview window, where you can see individual slides before saving the movie.</li>
     <li class="propertylistitem"> <img src="images/DeleteAll.gif" alt="Delete All button" width="87" height="26"align=absmiddle> <strong> -</strong> Deletes every frame saved in the movie.</li>
-    <li class="propertylistitem"> <img src="images/SaveMovie.gif" alt="Save Movie button" width="98" height="26"align=absmiddle> <strong> -</strong> Saves the movie to the specified location in the chosen format type.</li>
+    <li class="propertylistitem"> <img src="images/SaveMovie.gif" alt="Save Movie button" width="98" height="26"align=absmiddle> <strong> -</strong> Saves the movie to the specified location using the chosen format type.</li>
 </ul>
 </ul>
 <p><a name="create" id="create"></a></p>
@@ -110,7 +109,7 @@ item in the Main Display window to bring up the Movie Capture window:</p>
 <li class="propertylistitem">To capture frames, in the <strong>Capture</strong> section of the Movie Capture window, do the following:</li>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Capture one image -</strong> Makes a single frame of the McIDAS-V display. Progressively change the display and capture one frame at a time to create a movie.</li>
-<li class="propertylistitem"><strong>Capture animation -</strong> Captures all frames in a display time sequence you can animate with the usual <a href="../ui/Animation.html">Time Animation Controls</a>. Check <strong>Reset to start time</strong> to ensure you capture the entire animation sequence. The QuickTime animation capture starts on the first frame visible in McIDAS-V and goes to the end. This tool can be used to capture part of a loop.</li>
+<li class="propertylistitem"><strong>Capture animation -</strong> Captures all frames in a display time sequence that you control with the usual <a href="../ui/Animation.html">Time Animation Controls</a>. Check <strong>Reset to start time</strong> to ensure you capture the entire animation sequence. The QuickTime animation capture starts on the first frame visible in McIDAS-V and goes to the end. This tool can be used to capture part of a loop.</li>
 <li class="propertylistitem"><strong>Capture automatically -</strong> Takes snapshots of the frames in McIDAS-V display while you make changes, such as changing the view point, zooming, rotating, etc. Click the button again to stop the snapshot. You can change the sampling rate of the snapshots with the <strong>Rate</strong> field.</li>
 <li class="propertylistitem">You can combine these three different methods of capture. The list of frames is additive.</li>
 </ul>
@@ -119,11 +118,11 @@ item in the Main Display window to bring up the Movie Capture window:</p>
 saved in a temporary directory and will be removed. You can use the following templates to customize the name of the output file:</li>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>%count% -</strong> Represents the image counter.</li>
-<li class="propertylistitem"><strong>%count:decimal format% -</strong> Allows you to format the count using the same rules defined in the  lat/lon format section of the <a href="../tools/preferences/FormatPreferences.html">User Preferences</a>; You can also specify a <a href="http://download.oracle.com/javase/tutorial/i18n/format/decimalFormat.html" target="_blank">Java DecimalFormat</a>, e.g., %count:000% outputs three-digit counts with leading zeros (001, 002, etc.).</li>
+<li class="propertylistitem"><strong>%count:decimal format% -</strong> Allows you to format the count using the same rules defined in the  lat/lon format section of the <a href="../tools/preferences/FormatPreferences.html">User Preferences</a>. You can also specify a <a href="http://download.oracle.com/javase/tutorial/i18n/format/decimalFormat.html" target="_blank">Java DecimalFormat</a>, e.g., %count:000% outputs three-digit counts with leading zeros (001, 002, etc.).</li>
 <li class="propertylistitem"><strong>%time% - </strong>Represents the  animation time in the default format.</li>
 <li class="propertylistitem"><strong>%time:time format% -</strong> Begins with "time:" and contains a time format string using the the same date formatting rules described in the <a href="../tools/preferences/FormatPreferences.html">User Preferences</a>.</li>
 </ul>
-<li class="propertylistitem">When done capturing the frames, select the <img src="images/SaveMovie.gif" alt="Save Movie button" width="98" height="26"align=absmiddle> button to specify the name and format of the file you want to save. <a name="movieplayback" id="movieplayback"></a>    </li>
+<li class="propertylistitem">When done capturing the frames, select the <img src="images/SaveMovie.gif" alt="Save Movie button" width="98" height="26"align=absmiddle> button to specify the name and format of the movie you want to save. <a name="movieplayback" id="movieplayback"></a>    </li>
 </ul>
 <div class="pagesubtitle">Playing QuickTime Movies</div>
     <p>McIDAS-V supports displaying certain types of QuickTime movies (including
