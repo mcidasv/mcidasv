@@ -461,7 +461,7 @@
 		</java>
 	</target>
 
-  <!-- Build and run McIDAS-V application (small memory) -->
+  <!-- Build and run McIDAS-V application (large memory) -->
   <target name="jar.runlarge" depends="jar" description="Build and run McIDAS-V application (large memory)">
     <java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
       <classpath>
