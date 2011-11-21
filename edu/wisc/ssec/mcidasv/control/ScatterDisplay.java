@@ -972,7 +972,7 @@ public class ScatterDisplay extends DisplayControlImpl {
       JFrame statsWindow;
       int numCols;
       boolean isShowing = false;
-      Color[] coltab = {new Color(0xe0e0e0), new Color(0xffd0ff), 
+      Color[] coltab = {new Color(0xf0f0f0), new Color(0xffd0ff), 
                         new Color(0xd0ffd0), new Color(0xc0d0ff)};
 
       final int maxCols = 9;
@@ -1018,6 +1018,7 @@ public class ScatterDisplay extends DisplayControlImpl {
         JScrollPane sp = new JScrollPane(table);
         statsWindow = new JFrame("Scatter Statistics");
         statsWindow.getContentPane().add(sp);
+        statsWindow.setSize(500,200);
         statsWindow.pack();
         statsWindow.addWindowListener(new WindowAdapter() {
           public void windowClosing(WindowEvent e) {
