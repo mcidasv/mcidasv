@@ -39,9 +39,9 @@ numerical weather prediction model output, and from a local file that contains a
     relative humidity grids.
 <p>To load sounding data see <a href="../quickstart/Sounding.html#connecting">Choosing
      RAOB Sounding Data</a> and <a href="../quickstart/Grids.html">Displaying
-     Gridded Data</a>. The sounding display consists of a table of  aerological
+     Gridded Data</a>. The sounding display consists of a table of  aerological (thermodynamic)
     parameters and three tabs: <strong>Sounding Chart</strong>, <strong>Hodograph</strong>, and <strong>Table</strong>.</p>
-<p>The <strong>Sounding Chart </strong> tab includes an aerological (thermodynamic) diagram (e.g., skew-T,
+<p>The <strong>Sounding Chart </strong> tab includes an aerological  diagram (e.g., skew-T,
   Stuve, Emagram):</p>
 <a name="image1"></a>
 <div class="images"><img  src="images/GridSkewTControlGui.gif"  alt="Image 1: The Grid Sounding Control Displaying a Skew-T" ><br>
@@ -50,7 +50,7 @@ numerical weather prediction model output, and from a local file that contains a
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Station</strong> - Selects which station's sounding is being displayed when multiple soundings are loaded.</li>
-  <li class="propertylistitem"><strong><img src="images/AnimButtons.gif" width="243" height="32" alt="Time Animation Control"align="absmiddle"> Time Animation Control</strong> - Controls the looping of   displays through time.    See more in <a href="http://www.ssec.wisc.edu/mcidas/doc/mcv_guide/working/ui/Animation.html">Time   Animation Control</a>.</li>
+  <li class="propertylistitem"><strong><img src="images/AnimButtons.gif" width="243" height="32" alt="Time Animation Control"align="absmiddle"> Time Animation Control</strong> - Controls the looping of   displays through time.    See  <a href="http://www.ssec.wisc.edu/mcidas/doc/mcv_guide/working/ui/Animation.html">Time   Animation Control</a> for more information.</li>
   <li class="propertylistitem"><strong>Dry Adiabats </strong> - Displays the dry adiabats on the Skew-T diagram.</li>
   <li class="propertylistitem"><strong>Saturation Adiabats </strong> - Displays the saturation adiabats on the Skew-T diagram.</li>
   <li class="propertylistitem"><strong>Mixing Ratio </strong> - Displays the mixing ratio lines on the Skew-T diagram.</li>
@@ -100,8 +100,8 @@ numerical weather prediction model output, and from a local file that contains a
 <div class="images"><img src="images/AnimButtons.gif" width="243" height="32" alt="Time Animation widget"></div>
 <p>To increase precision using the sounding diagram, enlarge the window by dragging
   on the edges. You can zoom the sounding diagram by holding down the Shift key
-  and dragging the right button upwards; drag downwards to zoom out. You can
-  pan the diagram by dragging the mouse pointer in any direction while pressing
+  and dragging the right button upwards; drag downwards to zoom out. Zooming can also be done by using the scroll wheel on the mouse. You can
+  pan the diagram by dragging the mouse pointer in any direction while holding down
 the right mouse button.</p>
 <p><a name="interactive" id="interactive"></a> The temperature and dewpoint traces can be modified via the cursor. Press
   the left button on the first data-point to be modified and drag it horizontally
@@ -113,14 +113,14 @@ the right mouse button.</p>
 <span class="caption">Image 2: The Grid Sounding Control Displaying a 3D Hodograph</span></div>
 <p>The hodograph is enabled if the plotted data includes wind fields. It can
   be rotated into 3D by clicking and dragging the right mouse button. You can zoom in/out by holding down Shift and right-clicking and dragging up/down or by using the scroll wheel on the mouse. To reset the
-  hodograph use Ctrl+R.</p>
+  hodograph, use Ctrl+R.</p>
 <p>The <strong>Table</strong> tab shows a table of all values in the sounding:</p>
 <div class="images"><img  src="images/GridSkewTControlGui4.gif"  alt="Image 3: The Grid Sounding Control Displaying a Skew-T" ><br>
 <span class="caption">Image 3: The Grid Sounding Control Displaying a Table of all Sounding Values</span></div>
 <p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Show U and V</strong> - Breaks the Speed and Direction categories up into individual U and V components of the wind.</li>
+  <li class="propertylistitem"><strong>Show U and V</strong> - Breaks the Speed and Direction categories up into the individual U and V components of the wind.</li>
 </ul>
 <div class="pagesubtitle">Aerological Parameters</div>
 <p>The table to the left of the sounding diagram contains aerological parameters
@@ -131,7 +131,7 @@ abbreviations are used:</p>
     lifted air-parcel becomes saturated with water vapor.</li>
   <li class="propertylistitem"><strong>LFC: Level of Free Convection -</strong> The level at which the virtual temperature of
     a pseudo-adiabatically lifted air-parcel changes from being less than the
-    environment's virtual temperature to being greater than the environment's.</li>
+    environment's virtual temperature to being greater than the environment's virtual temperature.</li>
   <li class="propertylistitem"><strong>LNB: Level of Neutral Buoyancy -</strong> The level above the LFC at which the virtual
     temperature of a pseudo-adiabatically lifted air-parcel equals the environment's
     virtual temperature.</li>
