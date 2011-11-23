@@ -39,9 +39,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('quickstart/RadarL
 </p>
 <a name="choosing" id="choosing"></a>
 <div class="pagesubtitle">Choosing Radar Image Data from a Remote Server</div>
-<p>In the Data Explorer, select the <a href="../data/choosers/index.html"><strong>Data Sources</strong></a> tab.
-From here select the <strong>Radar-&gt;Level III</strong> source to view the
-Level III radar chooser. For more information about the Level III radar chooser,
+<p>In the Data Explorer window, select the <a href="../data/choosers/index.html"><strong>Data Sources</strong></a> tab.
+On the left side of this tab, select <strong>Radar-&gt;Level III</strong> from the list of available choosers. For more information about the Level III radar chooser,
 see <a href="../data/choosers/RadarChooser.html">Choosing NEXRAD Level III Radar
 Data</a>.</p>
 <div class="images"><img src="../data/choosers/images/Level3Chooser.gif" alt="Image 2: Data Sources Tab of the Data Explorer"><br>
@@ -67,13 +66,13 @@ Data</a>.</p>
           that do not overlap each other (checked). You will need to zoom in
           to see all the stations without overlaps.</p>
   </div>
-  <li>Either, choose a relative set of times steps (e.g., Last 5 times):</li>
+  <li>You can choose a relative set of times steps (e.g., Last 5 times) or absolute times (see step 6):</li>
   <div style="margin:10px;"><img src="images/RelativeTimes.gif" alt="Relative tab of the Times menu"></div>
-  <li><a name="abstime" id="abstime"></a>Or, choose a set of absolute times:</li>
+  <li><a name="abstime" id="abstime"></a>You can choose a set of absolute times:</li>
   <div style="margin:10px;"><img src="images/RadarAbsolute.gif" alt="Absolute tab of the Times menu">
     <p>When choosing absolute times for the first time McIDAS-V needs to
           query the ADDE server for the times. This may take some time. To select
-          more than one time use Control-Click or Shift-Click.</p>
+          more than one time use Control+click or Shift+click.</p>
   </div>
   <li>When done, load the selected radar data with the <strong>Add Source</strong> button.</li>
   <div style="margin:10px;"><img src="images/AddSource.gif" alt="Add Source button"></div>
@@ -81,14 +80,14 @@ Data</a>.</p>
 <a name="display" id="display"></a>
 <div class="pagesubtitle">Creating the Radar Display</div>
 The radar data source that you selected will be shown in the <a href="../data/FieldSelector.html"><strong>Field
-Selector</strong></a> tab.
+Selector</strong></a> tab of the Data Explorer.
 <p></p>
 <div class="images"><img src="images/RadarSelector.gif" alt="Image 3: Field Selector Tab of the Data Explorer"><br>
 <span class="caption">Image 3: Field Selector Tab of the Data Explorer</span></div>
 <p>Open up the &quot;Base Reflectivity&quot; tab under the <strong>Fields</strong> panel
   (<img src="../data/images/TreeTagClosed.gif" alt="Dropdown tab to reveal components of the individual field" width="22" height="21" align=absmiddle>) to select
   a data type. Select &quot;Image display&quot; in the <strong>Displays</strong> panel
-  and make the display by clicking the<strong> <img src="images/CreateDisplay.gif" width="116" height="26" alt="Create Display button"align=absmiddle></strong> button.</p>
+  under <strong>Imagery</strong>, and make the display by clicking the<strong> <img src="images/CreateDisplay.gif" width="116" height="26" alt="Create Display button"align=absmiddle></strong> button.</p>
 <p>You can add <a href="../display_controls/RadarGridControl.html">Range Rings</a> with
   the <strong>Display-&gt;Add Range Rings</strong> menu item. To control the looping of the images in the Main Display window, use the <a href="../ui/Animation.html#animation">Time Animation Widget</a>.</p>
 <!--<div class="pagesubtitle">Example</div>

@@ -48,8 +48,8 @@ satellite imagery.
 </ul>
 <p><a name="chooser" id="chooser"></a> </p>
 <div class="pagesubtitle">Choosing Satellite Imagery from a Remote Server</div>
-<p>In the Data Explorer window select the <a href="../data/choosers/index.html"><strong>Data
-Sources</strong></a> tab. On the left hand side of the tab, select "Satellite Imagery" from
+<p>In the Data Explorer window, select the <a href="../data/choosers/index.html"><strong>Data
+Sources</strong></a> tab. On the left side of this tab, select <strong>Satellite-&gt;Imagery</strong> from
 the list of available choosers. For more information about the imagery chooser,
 see <a href="../data/choosers/ImageChooser.html">Choosing Satellite Imagery</a>.
 
@@ -84,12 +84,12 @@ see <a href="../data/choosers/ImageChooser.html">Choosing Satellite Imagery</a>.
     <blockquote><div style="margin:10px;"><img src="images/AbsoluteImageTimes.gif" alt="Absolute tab of the Times selection menu">
       <p>When choosing absolute times for the first time McIDAS-V needs
             to query the ADDE server for the times. This may take some time.
-            To select more than one time use Ctrl+Click or Shift+Click.
+            To select more than one time use Ctrl+click or Shift+click.
       </p>
     </div></blockquote></li>
   <li>Select the Navigation type (either Default or Lat/Lon). Choose Lat/Lon
     if you are using Level 1B or POES ADDE servers. </li>
-  <li>If you do not want to create a preview image in the Field Selector, uncheck
+  <li>If you do not want to create a preview image in the <strong>Field Selector</strong> tab of the Data Explorer, uncheck
     'Create preview image' box.</li>
   <li>When done, load the selected image data with the <strong>Add
       Source</strong> button.
@@ -114,35 +114,35 @@ in the <strong>Region</strong> tab, and the geographical selection parameters ar
     for satellite and Level III radar images in almost all cases.
   </li>
   <li>Click the <strong>Region</strong> tab to view the Preview Image. Use the mouse to Shift+left
-    drag and select the geographical boundaries of your image.<br>
+    click and drag to select the geographical boundaries of your image.<br>
     <br>
     <img src="images/RegionTab.gif" alt="Region tab of subset menu in the Field Selector" width="310" height="233"><br>
     <br>
   </li>
-  <li>Click  <img src="images/CreateDisplay.gif" alt="Create Display button" width="116" height="26"align="absmiddle"> to display the image(s). To control
+  <li>Click  <img src="images/CreateDisplay.gif" alt="Create Display button" width="116" height="26"align="absmiddle"> to display the image(s) in the Main Display window. To control
       time animation use the <a href="../ui/Animation.html#animation">Time Animation
       Widget</a>.</li>
 </ol>
 <p>If you want to create another type of satellite display over your current
   display, click &quot;Image Contours&quot; in the <strong>Displays</strong> panel
   to contour your data.  To change your contour colors, right click on the color
-  bar in the Legend, and choose one of the color tables shown in the list.</p>
+  bar in the <a href="../ui/Legend.html">Legend</a>, and choose one of the color tables shown in the list.</p>
 <div class="images">
   <img src="images/SatelliteContour.gif" alt="Image 4: Satellite Image with Contours in the Main Display Window" width="593" height="481"><br>
 <span class="caption">Image 4: Satellite Image with Contours in the Main Display Window</span></div>
-<p>Due to the variability in brightness values in satellite images, some changes may need to be made to the contours to produce a quality image. To reduce the number of contours in the image, the contour interval can be increased by clicking the <img src="images/Change.gif" width="77" height="26" alt="Change button"align="absmiddle"> button next to <strong>Contour</strong> in the <strong>Layer Controls</strong> tab of the Data Explorer and entering a higher value for the <strong>Contour Interval</strong>. To decrease the rigidness of the contours, select a new <strong>Smoothing</strong> method in the <strong>Layer Controls</strong> tab and enter a higher smoothing factor.</p>
+<p>Due to the variability in brightness values in satellite images, some changes may need to be made to the contours to produce a quality image. To reduce the number of contours in the image, the contour interval can be increased by clicking the <img src="images/Change.gif" width="77" height="26" alt="Change button"align="absmiddle"> button next to <strong>Contour</strong> in the <strong>Layer Controls</strong> tab of the Data Explorer, and entering a higher value for the <strong>Contour Interval</strong>. To decrease the rigidness of the contours, select a new <strong>Smoothing</strong> method in the <strong>Layer Controls</strong> tab and enter a higher smoothing factor.</p>
 <a name="polar" id="polar"></a>
 <div class="pagesubtitle">Displaying a Single Polar Orbiting Satellite Image
   from a Remote Server</div>
-Return to the Satellite Imagery chooser in the Data Sources tab of the Data Explorer.
+<p>Return to the Satellite Imagery chooser in the <strong>Data Sources</strong> tab of the Data Explorer.
 Selecting polar orbiting satellite data is similar to the method to select geostationary
-data.
+data.</p>
 <ol>
   <li>Choose the ADDE Server: <strong>chinook.ssec.wisc.edu</strong> and the
     Dataset: <strong>NRPT</strong> and press <strong>Connect</strong> to query
     the server for available image types.</li>
-  <li>Select the <strong>Image Type</strong> to use (in the example below, AQUAC - Aqua Arctic composites.
-  <blockquote><div style="margin:10px;"><img src="../data/choosers/images/PolarImageStep3.gif" alt="Image Type dropdown menu">
+  <li>Select the <strong>Image Type</strong> to use (in the example below, AQUAC - Aqua Arctic composites).
+      <blockquote><div style="margin:10px;"><img src="../data/choosers/images/PolarImageStep3.gif" alt="Image Type dropdown menu">
   </div></blockquote></li>
   <li>Choose to display the most recent image, and click <img src="images/AddSource.gif" alt="Add Source button" width="180" height="24"align=absmiddle>. </li>
   <li>In the Fields panel, select the calibration that you wish to view. </li>
@@ -155,7 +155,7 @@ data.
 <div class="pagesubtitle">Creating a Loop of Polar Orbiting Satellite Images
   from a Remote Server</div>
 <p>When creating loops of polar orbiting satellite images, it is recommended
-  that the <strong>Auto-set Projection</strong> option be turned off and a global
+  that the <strong><a href="../ui/DisplayMenus.html#autosetpro">Auto-set Projection</a></strong> option be turned off, and a global
   projection be used in the map display to ensure all images can be viewed. For
   this example, turn the <strong>Auto-set Projection</strong> option off by going
   to the Main Display window and selecting <strong>Projections-&gt;Auto-set Projection</strong>.
@@ -168,11 +168,11 @@ data.
     Aqua 500 meter resolution Calibrated Radiances).
   <blockquote><div style="margin:10px;"><img src="../data/choosers/images/PolarImageStep3a.gif" alt="Image Type dropdown menu">
   </div></blockquote></li>
-  <li>Choose a set of either the 10 most relative times, or a set of 10 absolute
+  <li>Choose a set of either the 10 most recent relative times, or a set of 10 absolute
     times.</li>
   <li>When done, load the selected images into the <strong>Field
       Selector</strong> with the <img src="images/AddSource.gif" alt="Add Source button" width="180" height="24"align=absmiddle> button.</li>
-  <li>In the <strong>Fields</strong> tab, select the calibration that you wish to view.</li>
+  <li>In the Fields panel, select the calibration that you wish to view.</li>
   <li> In the <strong>Advanced</strong> tab, change the Coordinate Type to Image Coordinates.
     There is currently no method of determining the latitude and longitude boundaries
     of multiple  polar orbiting images. Using the Image

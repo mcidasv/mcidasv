@@ -30,14 +30,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('quickstart/Point.
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Displaying Surface and Upper Air Point Data </div>
-This section describes how to make station model plot and contour displays using
+This section describes how to make station model plots and contour displays using
 surface and upper air data. It also explains how to create and edit station
 models.
 <div class="images"><img src="../controls/images/StationModelControlDisplay.gif" alt="Image 1: Station Model Plot in the Main Display Window" width="592" height="476"><br>
 <span class="caption">Image 1: Station Model Plot in the Main Display Window</span></div>
-</p>
-<p>The steps include:
-</p>
+<p>The steps include:</p>
 <ul class="childlist">
 <li>  <a href="#selecting">Selecting Surface Observations from a Remote Server</a></li>
 <li>  <a href="#plot">Creating the Plot Display</a></li>
@@ -47,12 +45,9 @@ models.
 <p><a name="selecting" id="selecting"></a>
 </p>
 <div class="pagesubtitle">Selecting Surface Observations from a Remote Server</div>
-In the <a href="../data/choosers/index.html"><strong>Data Sources</strong></a> tab of the Data
-Explorer, select Plot/Contour under the Point
-Observations tree.
+<p>In the Data Explorer window, select the  <a href="../data/choosers/index.html"><strong>Data Sources</strong></a> tab. On the left side of this tab, select  <strong>Point Observations-&gt;Plot/Contour</strong> from the list of available choosers.
 For more information about the Point Observations Plot/Contour chooser, see <a href="../data/choosers/PointChooser.html">Choosing
 Point  Data</a>.
-<p></p>
 <div class="images"><img src="../data/choosers/images/PointChooser.gif" alt="Image 2: Data Sources Tab of the Data Explorer"><br>
 <span class="caption">Image 2: Data Sources Tab of the Data Explorer</span></div>
 <p>In the <strong>Server:</strong> and <strong>Dataset: </strong>entry boxes,
@@ -61,39 +56,36 @@ such as <strong>adde.ucar.edu</strong> and
 <strong>RTPTSRC</strong>. You can also type a different server name into the
 entry box. Click <img src="images/Connect.gif" alt="Connect button" width="180" height="24"align=absmiddle> to find data on the remote server.
 In the <strong>Point Type:</strong> selection
-box choose  &quot;Real-Time SFC Hourly.&quot; You can choose either the latest <strong>N</strong> times
-or select specific times. Select the times you would like to view. Note: Multiple
-times may be selected with the Shift and Ctrl keys as well
-as the interval. Click <img src="images/AddSource.gif" alt="Add Source button" width="180" height="24"align=absmiddle> when
+box choose  &quot;Real-Time SFC Hourly&quot;, or the equivalent depending on your data source. You can choose either the latest <strong>N</strong> times
+using the <strong>Relative </strong>tab or select specific times using the <strong>Absolute</strong> tab.  Click <img src="images/AddSource.gif" alt="Add Source button" width="180" height="24"align=absmiddle> when
 you have made your selection. Only data from the current date will be retrieved from
 the server. </p>
 <a name="plot" id="plot"></a>
 <div class="pagesubtitle">Creating the Plot Display</div>
-<p>The surface observation data will be shown in the <a href="../data/FieldSelector.html"><strong>Field Selector</strong></a> tab.</p>
+<p>The surface observation data will be shown in the <a href="../data/FieldSelector.html"><strong>Field Selector</strong></a> tab of the Data Explorer.</p>
 <div class="images"><img src="images/PointSelector.gif" alt="Image 3: Field Selector Tab of the Data Explorer"><br>
 <span class="caption">Image 3: Field Selector Tab of the Data Explorer</span></div>
-<p>Select &quot;Point Data&quot; in the <strong>Fields</strong> panel and &quot;Point Data Plot&quot; in the <strong>Displays</strong> panel. Make the display by clicking on the <strong>Create Display</strong> button on the bottom of the <strong>Field Selector</strong> tab.
+<p>Select &quot;Point Data&quot; in the <strong>Fields</strong> panel and &quot;Point Data Plot&quot; under <strong>Point Data </strong>in the <strong>Displays</strong> panel. Make the display by clicking on the <strong>Create Display</strong> button at the bottom of the <strong>Field Selector</strong> tab.
 </p>
-<p>To declutter the display, use the <a href="../controls/PointDataPlotControl.html">Station Model Controls</a> in the <strong>Layer Controls</strong> tab.</p>
-<p>Upper air plots can be created the same way. In the <strong>Data
-    Explorer</strong>, select a <strong>Point Type:</strong> of &quot;Real-Time
+<p>To declutter the display, use the <a href="../controls/PointDataPlotControl.html">Point Data Plot Controls</a> in the <strong>Layer Controls</strong> tab.</p>
+<p>Upper air plots can be created the same way. In the <strong>Data Sources</strong> tab of the Data
+    Explorer, select a <strong>Point Type:</strong> of &quot;Real-Time
     Upper Air (Mandatory),&quot; change the <strong>Interval</strong> to &quot;12
-    hourly&quot; and
+    hourly,&quot; and
     add the source. In the<strong> Field
     Selector</strong>, select a level of
     500mb in the <strong>Level</strong> panel and click <img src="images/CreateDisplay.gif" alt="Create Display button" width="116" height="26"align=absmiddle> to plot your data in the Main Display window. </p>
 <p><a name="contour" id="contour"></a> </p>
 <div class="pagesubtitle">Creating the Contour Display</div>
-The Gridded Fields tree allows you to use the Barnes analysis to
-create gridded fields of specific point observation parameters.
+<p>The Gridded Fields tree allows you to use the Barnes analysis to
+create gridded fields of specific point observation parameters.</p>
 <div class="images"><img src="images/PointContourSelector.gif" alt="Image 4: Field Selector Tab of the Data Esplorer"><br>
 <span class="caption">Image 4: Field Selector Tab of the Data Explorer</span></div>
-<p>Select the <strong>SFCHOURLY</strong> dataset from the left hand side of the
-  <strong>Field Selector</strong>. In
+<p>Select the <strong>SYNOPTIC </strong>(SFCHOURLY) dataset from the <strong>Data Sources</strong> panel of the <strong>Field Selector</strong>. In
 the <strong>Fields</strong> panel, open the Gridded Fields tree by clicking on
 the tab icon (<img src="../data/images/TreeTagClosed.gif" alt="Dropdown tab icon" width="22" height="21"align=absmiddle>) and
 select the temperature (T) parameter. In the <strong>Displays</strong> panel,
-select Contour Plan View and make the display by clicking  the <img src="images/CreateDisplay.gif" alt="Create Display button" width="116" height="26"align=absmiddle> button
+select Contour Plan View, and create the display by clicking  the <img src="images/CreateDisplay.gif" alt="Create Display button" width="116" height="26"align=absmiddle> button
 at the bottom of the <strong>Field
 Selector</strong> tab. You can create or edit your own station models by using the <a href="../tools/StationModelEditor.html">Station Model Editor</a>. To access the editor, click on the double down arrow (<img src="../data/choosers/images/DownDown.gif" alt="Double down arrow icon" width="9" height="10">)
     and select <strong>Edit</strong> under the <strong>Layout Model:</strong> section
