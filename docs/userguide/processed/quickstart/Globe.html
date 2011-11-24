@@ -48,30 +48,30 @@ with the usual zooming and time animation of displays on the globe.</p>
 <a name="chooser" id="chooser"></a>
 <div class="pagesubtitle">Choosing Global Satellite Imagery</div>
 <p>After creating a globe display in McIDAS-V, open the <a href="../data/choosers/index.html"><strong>Data
-Sources</strong></a> tab of the Data Explorer and click on the <strong>Satellite
-Imagery</strong> tab.</p>
+Sources</strong></a> tab of the Data Explorer and select the <strong>Satellite-&gt;Imagery </strong>chooser.</p>
 <ul>
-  <li>Connect to one of the servers listed using <strong>RTIMAGES</strong> dataset.</li>
+  <li>Connect to one of the servers listed using the <strong>RTIMAGES</strong> dataset.</li>
   <li>From the <strong>Image Data Type</strong> selector, choose
-    the <strong>Mollweide IR/TOPO Composite</strong> type.</li>
+    the <strong>GE-IR - GOES-East Hemispheric IR</strong> Image Type.</li>
+  <li>Select the three most recent images.</li>
   <li>Click the <img src="images/AddSource.gif" alt="Add Source button" width="180" height="24"align=absmiddle> button to load the data
     source.</li>
 </ul>
 <a name="display" id="display"></a>
 <div class="pagesubtitle">Displaying the Data</div>
 <p>Once the data source has been selected, you can create the display by doing the
-following in the <strong>Field Selector</strong>:</p>
+following in the <strong>Field Selector</strong> tab of the Data Explorer:</p>
 <ul>
-  <li>Select the "Mollweide IR/TOPO Composite" data source in the <strong>Data
+  <li>Select the "GE-IR - GOES-East Hemispheric IR" data source in the <strong>Data
       Sources</strong> panel.</li>
-  <li>Select the "Band 1" field in the <strong>Fields</strong> panel.</li>
+  <li>Select the "10.7 um IR Surface/Cloud-top Temp-&gt;Brightness" field in the <strong>Fields</strong> panel.</li>
   <li>Select "Image Display" in the <strong>Displays</strong> panel.</li>
   <li>Click the <img src="images/CreateDisplay.gif" alt="Create Display button" width="116" height="26"align=absmiddle> button to create
     the display.</li>
 </ul>
 <a name="navigate" id="navigate"></a>
 <div class="pagesubtitle">Using the Display</div>
-<p>When the data is displayed, the default view will be from the North Pole. You
+<p>You
 can move the display using the standard McIDAS-V <a href="../ui/Navigation.html">zooming,
 panning and rotating</a> functions. For this exercise try the following:</p>
 <ul>
@@ -79,12 +79,11 @@ panning and rotating</a> functions. For this exercise try the following:</p>
     to rotate to the West view.</li>
   <li>Start the image animation using the <a href="../ui/Animation.html#animation">Time Animation
       Widget</a>.</li>
-  <li>The Globe display has an extra <strong>View-&gt;Auto-rotate</strong> menu.
-    Check this on to spin the globe along the vertical axis.</li>
+  <li>Utilize the Main Display window's <strong>View-&gt;Viewpoint-&gt;Auto-Rotate View </strong> menu to rotate the globe.
+    Check this on to rotate the globe along the vertical axis.</li>
 </ul>
 <p>Any suitable data with navigation information (latitude, longitude, and altitude)
-that McIDAS-V can handle can be plotted on the globe display. For more information, see the section
-on <a href="Grids.html">Displaying Gridded Data</a>.</p>
+that McIDAS-V can handle can be plotted on the globe display.</p>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
