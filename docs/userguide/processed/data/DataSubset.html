@@ -28,12 +28,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSubset.h
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Data Subset</div>
-<p>The <strong>Data Subset</strong> panel displays the list of <strong>Times</strong>, <strong>Levels</strong>, <strong>Region</strong>, and <strong>Stride</strong>. These  tabs may be different depending on what data you are loading.</p>
+<p>The <strong>Data Subset</strong> panel contains tabs for subsetting <strong>Times</strong>, <strong>Levels</strong>, <strong>Region</strong>, and <strong>Stride</strong>. These  tabs may be different depending on what data you are loading.</p>
 
-<p>Optionally subset the times by clicking off the Use Default checkbox and selecting the times:</p>
+<p>Optionally subset the times by clicking off the <strong>Use Default</strong> checkbox and selecting the times. You can select individual times to display with Ctrl+click or Shift+click. Alternatively, you can subset the times by right clicking in the panel and selecting 'Select every N'th time'. This automatically subsets the times by only selecting every N'th time.:</p>
   <div class="images"><img src="images/SelectorStep4.gif" alt="Times Tab of Subset Panel in the Field Selector"><br>
 <span class="caption">Image 1: Times Tab of the Subset Panel in the Field Selector</span></div>
-  <p>For grids, optionally subset the levels. This represents the level in the atmosphere that will be used to plot the data in the Main Display window:</p>
+  <p>For 3D grids, you can optionally subset the levels. This represents the level in the atmosphere that will be used to plot the data in the Main Display window:</p>
   <div class="images"><img src="images/SelectorStep5.gif" alt="Image 2: Level Tab of the Subset Panel in the Field Selector"><br>
 <span class="caption">Image 2: Level of the Subset Panel in the Field Selector</span></div>
 <p>For images, optionally subset the spatial area to be displayed. 
@@ -61,9 +61,10 @@ Use the <strong>Region</strong> tab to left-click drag to select a geographical 
       <li class=propertylistitem><strong>Res -</strong>  Lists the approximate resolution of the image, if displayed with the current Image Properties. </li>
       <li class=propertylistitem><strong>Approx. Area -</strong>  Lists the center, upper left, upper right, lower left, and lower right coordinates of the selected image, if displayed with the current Image Properties.</li>
     </ul>
+<p>Use the <strong>Stride</strong> tab to change the number of points used to create the image. You can utilize fewer points along the X and Y-axes to display the data faster, but with less precision. It is recommended to leave the X and Y values as their default (All points) unless you are trying to get a general picture and nothing too specific.</p>  
 <div class="pagesubtitle">Subsetting<a name="subsetting" id="subsetting"></a></div>
 <p>The Subsetting component of the <strong>Field Selector</strong> allows you to subset the data in both time and space (if possible). If there are times in the data source you are viewing they will be shown in this area. Likewise, if it is possible to do spatial subsetting or decimation a <strong>Spatial Subset</strong> tab will be shown.</p>
-<p>Time and spatial subsetting defaults can be applied to the data source itself through the <a href="DataSource.html">Data Source Properties</a> dialog or the defaults can be overwritten through the <strong>Field Selector</strong> tab.</p>
+<p>Time and spatial subsetting defaults can be applied to the data source itself through the <a href="DataSource.html#times">Data Source Properties</a> dialog or the defaults can be overwritten through the <strong>Field Selector</strong> tab.</p>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
