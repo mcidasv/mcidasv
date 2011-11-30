@@ -33,7 +33,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/Chart.ht
 <div class="pagetitle">Charts</div>
 <xxxmeta xxxname="jhid" value="idv.controls.chart">
 <div class="pagesubtitle">Overview</div>
-<p>There are many different sources of data that can make use of the charting facility in McIDAS-V. It is possible to use the charting facility to display your data by selecting Data Probe/Time Series in the Displays menu in the <strong>Field Selector</strong> tab of the <strong>Data Explorer</strong>.  The chart will be plotted in the <strong>Layer Controls</strong> tab, while a square representing the location of the probe will be shown in the Main Display window. The location of the probe can be changed by left-clicking on the probe and dragging it.</p>
+<p>There are many different sources of data that can make use of the charting facility in McIDAS-V. It is possible to use the charting facility to display your data by selecting Data Probe/Time Series in the Displays menu in the <strong>Field Selector</strong> tab of the Data Explorer.  The chart will be plotted in the <strong>Layer Controls</strong> tab, while a square representing the location of the probe will be shown in the Main Display window. The location of the probe can be changed by left-clicking on the probe and dragging it.</p>
 <p>There are four levels of configuration available to the user, as well as several unique menu options for this display.</p>
 <ul>
   <li>  <a href="#chartlines">Chart Line Properties</a></li>
@@ -48,7 +48,6 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/Chart.ht
   is shown. This is done through the Chart Line Properties dialog, which is opened by right clicking on the parameter below the chart and selecting <strong>Chart Properties</strong>.</p>
 <div class="images"><img  src="images/ChartLineProperties.gif"  alt="Image 1: Chart Line Properties Dialog" ><br>
 <span class="caption">Image 1: Chart Line Properties Dialog</span></div>
-<p></p>
 <ul class="propertylist">
   <li class="propertylistitem"><b>Full Plot</b> - Toggles the visibility of the data displayed on the chart on or off.</li>
   <li class="propertylistitem"><strong>Axis</strong> - Toggles the visibility of the axis on or off.</li>
@@ -76,7 +75,6 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/Chart.ht
   through the Plot Properties dialog. This is also accessed through the <strong>View-&gt;Chart-&gt;Chart:-&gt;Properties...</strong> menu.</p>
 <div class="images"><img  src="images/PlotProperties.gif"  alt="Image 2: Data Probe Properties Dialog" ><br>
 <span class="caption">Image 2: Data Probe Properties Dialog</span></div>
-<p></p>
 <ul class="propertylist">
   <li class="propertylistitem"><b>Name</b> - Edits the name of the chart. This can be changed by typing in the field.</li>
   <li class="propertylistitem"><strong>Color</strong> - Changes the background and chart colors.</li>
@@ -109,16 +107,14 @@ on the chart:</p>
   the chart's title and its attributes. </p>
 <div class="images"><img src="images/ChartPropertiesTitle.gif" alt="Image 3: Title Tab of the Chart Properties Dialog"><br>
 <span class="caption">Image 3: Title Tab of the Chart Properties Dialog</span></div>
-<p></p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Show Title</strong> - Displays the title on the chart in the <strong>Layer Controls</strong> tab of the <strong>Data Explorer</strong>.</li>
+  <li class="propertylistitem"><strong>Show Title</strong> - Displays the title on the chart in the <strong>Layer Controls</strong> tab of the Data Explorer.</li>
   <li class="propertylistitem"><strong>Text</strong> - Lists the current title for the chart. This can be changed by typing in the field.</li>
   <li class="propertylistitem"><strong>Font</strong> - Changes the font style and size of the title.</li>
   <li class="propertylistitem"><strong>Color</strong> - Changes the color of the title.</ul>
 <p>The <strong>Domain Axis</strong> tab allows for customization of the Domain Axis.</p>
 <div class="images"><img src="images/ChartPropertiesPlot.gif" alt="Image 4: Domain Axis Tab in the Plot Tab of the Chart Properties Dialog" width="451" height="437"><br>
 <span class="caption">Image 4: Domain Axis Tab in the Plot Tab of the Chart Properties Dialog</span></div>
-<p></p>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Label</strong> - Lists the current label for the Domain Axis. This can be changed by typing in the field.</li>
   <li class="propertylistitem"><strong>Font</strong> - Changes the font style and size of the title.</li>
@@ -130,7 +126,6 @@ on the chart:</p>
 <p>The <strong>Range Axis</strong> tab allows for customization of the Range Axis.</p>
 <div class="images"><img src="images/ChartPropertiesPlotRange.gif" alt="Image 5: Range Axis  Tab in the Plot Tab of the Chart Properties Dialog" width="451" height="437"><br>
 <span class="caption">Image 5: Range Axis Tab in the Plot Tab of the Chart Properties Dialog</span></div>
-<p></p>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Label</strong> - Lists the current label for the Range Axis. This can be changed by typing in the field.</li>
   <li class="propertylistitem"><strong>Font</strong> - Changes the font style and size of the label.</li>
@@ -140,13 +135,12 @@ on the chart:</p>
   <li class="propertylistitem"><strong>Show tick marks</strong> - Displays tick marks, which extend just beyond the boundaries of the chart on the Range Axis.</li>
   <li class="propertylistitem"><strong>Auto-adjust range </strong> - Computes the minimum and maximum values of the Range Axis automatically when checked.
     When unchecked, you can enter in a minimum and maximum value to set the range.
-    This option exists  under the &quot;Range&quot; tab
-    of the &quot;Other&quot; section.
+    This option exists  under the <strong>Range</strong> tab
+    of the <strong>Other</strong> tab.
 </ul>
 <p>The <strong>Appearance</strong> tab  has several options to change the appearance of the plot.</p>
 <div class="images"><img src="images/ChartPropertiesPlotApp.gif" alt="Image 6: Appearance Tab in the Plot Tab of the Chart Properties Dialog"><br>
 <span class="caption">Image 6: Appearance Tab in the Plot Tab of the Chart Properties Dialog</span></div>
-<p></p>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Outline stroke</strong> - Changes the chart outline stroke style.</li>
   <li class="propertylistitem"><strong>Outline paint</strong> - Changes the color of the chart outline.</li>
@@ -156,7 +150,6 @@ on the chart:</p>
 <p>The <strong>Other</strong> tab deals with general chart properties. </p>
 <div class="images"><img src="images/ChartPropertiesOther.gif" alt="Image 7: Other Tab of the Chart Properties Dialog"><br>
 <span class="caption">Image 7: Other Tab of the Chart Properties Dialog</span></div>
-<p></p>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Draw anti-aliased</strong> - Draws the chart using anti-aliased techniques to reduce distortion.</li>
   <li class="propertylistitem"><strong>Background paint</strong> - Changes the chart background color.</li>

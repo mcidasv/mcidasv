@@ -62,12 +62,12 @@ By default, McIDAS-V allocates 512 megabytes of maximum memory for Java. This is
 <a name="cache" id="cache"></a>
 <div class="pagesubtitle">Data Caching</div>
 <p>By default, McIDAS-V caches the data used for a display in memory. If a field is used more than once for several displays, caching the data prevents an additional reading from of the data from disk or a remote server. If you are only displaying/using a field (i.e. not using it for multiple displays or calculations), you can keep McIDAS-V from caching it in memory. You can turn off data caching by unchecking the <strong>Cache
-data in memory</strong> checkbox on the <strong>Formats &amp; Data</strong> tab of the user preferences
+data in memory</strong> checkbox on the <strong><a href="../tools/preferences/FormatPreferences.html">Formats &amp; Data</a></strong> tab of the User Preferences window
 (accessible from the <strong>Edit-&gt;Preferences</strong> menu).</p>
 <p><a name="maxsize" id="maxsize"></a></p>
 <div class="pagesubtitle">Maximum grid/image size</div>
-<p>You can also set the maximum size of a grid or image that will be displayed. This will allow you to download a large image or grid, but it will be re-sampled before displaying if it is larger than the maximum size you have asked for. You can set the maximum image/grid size under the <strong>Formats &amp; Data</strong> tab
-of the user preferences (accessible from the <strong>Edit-&gt;Preferences</strong> menu).</p>
+<p>You can also set the maximum size of a grid or image that will be displayed. This will allow you to download a large image or grid, but it will be re-sampled before displaying if it is larger than the maximum size you have asked for. You can set the maximum image/grid size under the <strong><a href="../tools/preferences/FormatPreferences.html">Formats &amp; Data</a></strong> tab
+of the User Preferences window(accessible from the <strong>Edit-&gt;Preferences</strong> menu).</p>
 <p><a name="fastrender" id="fastrender"></a></p>
 <div class="pagesubtitle">Fast Rendering</div>
 <p>By default, McIDAS-V will try to adjust the data layer (images, contours,
@@ -121,7 +121,6 @@ A linear speed up in accessing remote data based on the
 number of cores on the remote server (ADDE or OpenDAP) has been seen.
 However,  if you load the server too much your performance 
 is degraded, probably due to file system issues.
-<br>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
