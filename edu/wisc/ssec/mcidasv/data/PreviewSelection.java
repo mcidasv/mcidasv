@@ -115,6 +115,8 @@ public class PreviewSelection extends DataSelectionComponent {
 
       DataSourceImpl dataSource;
 
+      DataCategory dataCategory;
+
       static SampledSet lines_outlsupu = null;
       static SampledSet lines_outlsupw = null;
       static SampledSet lines_outlhpol = null;
@@ -134,6 +136,7 @@ public class PreviewSelection extends DataSelectionComponent {
         super("Region");
 
         this.dataChoice = dataChoice;
+        this.dataCategory = (DataCategory) dataChoice.getCategories().get(0);
         this.dataSource = (DataSourceImpl) ((DirectDataChoice)dataChoice).getDataSource();
         this.image = image;
         this.sampleProjection = sample;
@@ -215,8 +218,8 @@ public class PreviewSelection extends DataSelectionComponent {
            if (key instanceof MultiDimensionSubset) {
              hasSubset = true;
              MultiDimensionSubset select = (MultiDimensionSubset) table.get(key);
-             //HydraContext hydraContext = HydraContext.getHydraContext((DataCategory)dataChoice.getCategories().get(0));
-             HydraContext hydraContext = HydraContext.getHydraContext(dataSource);
+             //HydraContext hydraContext = HydraContext.getHydraContext(dataSource, dataCategory);
+             HydraContext hydraContext = HydraContext.getHydraContext();
              if (hydraContext.getMultiDimensionSubset() == null) {
                 hydraContext.setMultiDimensionSubset(select);
              }
@@ -245,8 +248,8 @@ public class PreviewSelection extends DataSelectionComponent {
              y_coords[1] = hi[1];
 
              if (hasSubset) {
-               //HydraContext hydraContext = HydraContext.getHydraContext((DataCategory)dataChoice.getCategories().get(0));
-               HydraContext hydraContext = HydraContext.getHydraContext(dataSource);
+               //HydraContext hydraContext = HydraContext.getHydraContext(dataSource, dataCategory);
+               HydraContext hydraContext = HydraContext.getHydraContext();
                MultiDimensionSubset select = hydraContext.getMultiDimensionSubset();
                HashMap map = select.getSubset();
 
@@ -333,8 +336,8 @@ public class PreviewSelection extends DataSelectionComponent {
                                                                                                                                              
       public void applyToDataSelection(DataSelection dataSelection) {
          if (hasSubset) {
-           //HydraContext hydraContext = HydraContext.getHydraContext((DataCategory)dataChoice.getCategories().get(0));
-           HydraContext hydraContext = HydraContext.getHydraContext(dataSource);
+           //HydraContext hydraContext = HydraContext.getHydraContext(dataSource, dataCategory);
+           HydraContext hydraContext = HydraContext.getHydraContext();
            Hashtable table = dataChoice.getProperties();
            table.put(MultiDimensionSubset.key, hydraContext.getMultiDimensionSubset());
 
