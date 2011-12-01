@@ -76,10 +76,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     Changes</a></div>
 <div class="faq-category">
   <ul class="noindent">
-    <li><strong><a class="faq-question-link" href="statistics1.02beta1">Compute Statistics Option for HYDRA Scatter Analysis Displays</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#image1.02beta1">Image Handling</a></strong></li>
-  </ul>
-</div>
+    <li><strong><a class="faq-question-link" href="#statistics1.02beta1">Compute Statistics Option for HYDRA Scatter Analysis Displays</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#image1.02beta1">Image Handling</a></strong></li></ul></div>
 <hr>
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat1_1.02beta1" id="faq1_cat1_1.02beta1"></a>Documentation
@@ -93,10 +91,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-category-title"><a name="faq1_cat2_1.02beta1" id="faq1_cat2_1.02beta1"></a>Display
   Changes</div>
 <div class="faq-category"><a name="layervisibility1.02beta1" id="layervisibility1.02beta1"></a>
-  <h4><strong>Compute Statistics Option for HYDRA Scatter Analysis Displays</strong></h4>
-  <div class="faq-answer">Added a new feature to HYDRA Scatter Analysis displays to output statistical information pertinant to the data. After creating a Scatter Analysis display, a new button has been added to the Layer Controls tab of the Data Explorer, called 'compute statistics'. When this button is clicked, a Scatter Statistics window will open, listing statistical information corresponding to the data on the X and Y axes of the scatter plot. This information includes, but is not limited to: maximum, minimum, number of points, mean, median, variance, standard deviation, and correlation.</div>
-  <a name="hovmoller1.02beta1" id="hovmoller1.02beta1"></a>
-  <h4><strong>Hovmoller Display</strong></h4>
+  <h4><strong>Layer Visibility Animations</strong></h4>
+  <div class="faq-answer">Added a Layer Visibility Animations tool to loop through layers of data that do not have times associated with them. Without times associated with the layers, the standard Time Animation Widget will not work. The Layer Visibility Animations feature can be accessed in two ways. First, you can access this tool in the Main Display window by using the View-&gt;Displays-&gt;Visibility Animations. From here, you can turn the animation on/off, and make the animation go faster/slower. You can also add a button for Layer Visibility Animations to your main toolbar by using the Toolbar Options tab of the User Preferences window.</div>
+  <h4><a name="hovmoller1.02beta1" id="hovmoller1.02beta1"></a><strong>Hovmoller Display</strong></h4>
   <div class="faq-answer">Added the Hovmoller Display to the Displays menu in
     the Field Selector. Your display can be Time-Longitude or Time-Latitude,
     with either a color shaded or contour display. The display will be plotted
@@ -122,12 +119,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
   <div class="faq-answer"></div>
 </div>
 <div class="faq-category"><a name="statistics1.02beta1" id="statistics1.02beta1"></a>
-  <h4>Image Handling</h4>
-  <div class="faq-answer">Changed the way McIDAS-V handles images. In the past,
-    all images used Red, Green, Blue, and alpha as RealTypes in the data and
-    they would then map to RGB or RGBA. This meant that a change to the color
-    map of one image would affect all others. Now, we are using unique RealTypes
-    (xxx_N) for each image, where N is a unique number for each image.</div>
+  <h4><strong>Compute Statistics Option for HYDRA Scatter Analysis Displays</strong></h4>
+  <div class="faq-answer">Added a new feature to HYDRA Scatter Analysis displays to output statistical information pertinent to the data. After creating a Scatter Analysis display, a new button has been added to the Layer Controls tab of the Data Explorer, called 'compute statistics'. When this button is clicked, a Scatter Statistics window will open, listing statistical information corresponding to the data on the X and Y axes of the scatter plot. This information includes, but is not limited to: maximum, minimum, number of points, mean, median, variance, standard deviation, and correlation.</div></div>
 <div class="faq-category"><a name="image1.02beta1" id="image1.02beta1"></a>
   <h4>Image Handling</h4>
   <div class="faq-answer">Changed the way McIDAS-V handles images. In the past,
@@ -135,6 +128,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     they would then map to RGB or RGBA. This meant that a change to the color
     map of one image would affect all others. Now, we are using unique RealTypes
     (xxx_N) for each image, where N is a unique number for each image.</div>
+</div>
 </div>
 <hr size="4" noshade>
 <div class="pagesubtitle">McIDAS-V <br>

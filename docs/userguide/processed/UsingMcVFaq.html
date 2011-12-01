@@ -185,15 +185,15 @@ application/x-java-jnlp-file JNLP
         proceed to the next step, and so on.
       <ol>
         <li>Make sure that your <strong><em>drivers</em></strong> are up to date.
-          Please see the <strong>Graphics Cards and Drivers</strong> section of the <a href="Systems.html">System
-          Requirements</a> for more information.</li>
-        <li>Try downloading this <a href="http://download.java.net/media/java3d/webstart/test/HelloUniverse.jnlp">Java3D example</a> to see if you can view it. Please see the Java Versions section of the <a href="Systems.html">System Requirements</a> for more information. If this example does not work, then your system does not support Java3D.<br />
+          Please see the <strong>Graphics Cards and Drivers</strong> section of the <a href="Systems.html#video">System
+          Requirements</a> page for more information.</li>
+        <li>Try downloading this <a href="http://download.java.net/media/java3d/webstart/test/HelloUniverse.jnlp">Java3D example</a> to see if you can view it. Please see the <strong>Java Versions</strong> section of the <a href="Systems.html#java">System Requirements</a> page for more information. If this example does not work, then your system does not support Java3D.<br />
 Note: If your system does not support Java3D version 1.3.1+ McIDAS-V will not work for you.</li>
-        <li> Set a small heap size by setting the <em><strong>Memory</strong></em> option to 512 megabytes in the User Preferences window's <a href="tools/preferences/AdvancedPreferences.html"><strong>Advanced Preferences</strong></a> tab. If this resolves the issue, you can start increasing the   memory until the problem appears again. Stay below the memory value   that produces the problem.</li>
-        <li>Disable Java Access to Image Data by Reference by unchecking <strong><em>Enable access to image data by reference</em></strong> option in the User Preferences window's <a href="tools/preferences/AdvancedPreferences.html"><strong> Advanced Preferences</strong></a> tab.</li>
+        <li> Set a small heap size by setting the <em><strong>Memory</strong></em> option to 512 megabytes in the User Preferences window's <a href="tools/preferences/AdvancedPreferences.html"><strong>Advanced</strong></a> tab. If this resolves the issue, you can start increasing the   memory until the problem appears again. Stay below the memory value   that produces the problem.</li>
+        <li>Disable Java Access to Image Data by Reference by unchecking <strong><em>Enable access to image data by reference</em></strong> option in the User Preferences window's <a href="tools/preferences/AdvancedPreferences.html"><strong> Advanced</strong></a> tab.</li>
         <li>If you are on a Windows computer, use Direct3D by checking the <em><strong>Enable
               Direct3D</strong></em> option in the User
-              Preferences' <a href="tools/preferences/AdvancedPreferences.html"><strong>Advanced Preferences</strong></a> tab.</li>
+              Preferences window's <a href="tools/preferences/AdvancedPreferences.html"><strong>Advanced</strong></a> tab.</li>
         <li>Rename your <a href="#filelocations"><strong>McIDAS-V</strong></a> document directory to start with a clean set of options. This will undo the changes made in steps 3-5 listed above, but it will eliminate any corrupt startup bundles or settings.</li>
         <li>Repeat steps 3-5 with a clean slate.</li>
       </ol>
@@ -202,44 +202,44 @@ Note: If your system does not support Java3D version 1.3.1+ McIDAS-V will not wo
     <div class="faq-question">
       <h4>Q. Where are the McIDAS-V files stored on my computer?</h4>
     </div>
-    <div class="faq-answer"><strong>A.</strong> McIDAS-V files are divided into two categories: &quot;system files&quot; (supplied files that should not be edited) and &quot;user files&quot; (new user-created files and supplied ones that contain user settings and preferences). By default, the system files are stored in a directory named <strong>McIDAS-V-System</strong> and the user files are stored in a directory named <strong>McIDAS-V</strong>. The system file directory can be changed during installation and its location defaults to the OS application directory (e.g., <strong>C:\Program Files</strong> on Windows, <strong>/Applications</strong> on OS X). The user file directory is created in the user's document directory (e.g., <strong>C:\Documents and Settings\<em>user</em></strong>\ on Windows, <strong>/Users/<em>user</em>/Documents</strong> on  OS X, <strong>/home/<em>user</em></strong> on Linux).</div>
+    <div class="faq-answer"><strong>A.</strong> McIDAS-V files are divided into two categories: &quot;system files&quot; (supplied files that should not be edited) and &quot;user files&quot; (new user-created files and supplied ones that contain user settings and preferences). By default, the system files are stored in a directory named <strong>McIDAS-V-System</strong>, and the user files are stored in a directory named <strong>McIDAS-V</strong>. The system file directory can be changed during installation and its location defaults to the OS application directory (e.g., <strong>C:\Program Files</strong> on Windows, <strong>/Applications</strong> on OS X). The user file directory is created in the user's document directory (e.g., <strong>C:\Documents and Settings\<em>user</em></strong>\ on Windows, <strong>/Users/<em>user</em>/Documents</strong> on  OS X, <strong>/home/<em>user</em></strong> on Linux).</div>
     <a name="busy" id="busy"></a>
     <div class="faq-question">
       <h4>Q. How can I tell if McIDAS-V is busy doing something?</h4>
     </div>
-    <div class="faq-answer"><strong>A.</strong> The lower right corner of the main McIDAS-V window shows a box with progress bars if McIDAS-V is busy making a display or doing anything. In the status bar at the bottom, messages will appear when McIDAS-V is reading data from a server or disk. Also, while the displays are being created, there is usually a &quot;please wait&quot; notice in the lower left corner of the main display.</div>
+    <div class="faq-answer"><strong>A.</strong> The lower right corner of the Main Display window shows a box with progress bars if McIDAS-V is busy making a display or doing anything. In the status bar at the bottom, messages will appear when McIDAS-V is reading data from a server or disk. Also, while the displays are being created, there is usually a &quot;please wait&quot; notice in the lower left corner of the main display. When McIDAS-V is in the middle of a process in the Data Explorer window, the cursor will change to a spinning, blue ring.</div>
     <a name="savedisplay" id="savedisplay"></a>
     <div class="faq-question">
       <h4>Q. How can I save a display?</h4>
     </div>
-    <div class="faq-answer"><strong>A.</strong> McIDAS-V supports JPEG, PNG, and GIF image formats. McIDAS-V can also write out an image and the corresponding Google Earth KML or KMZ file. Animations can be captured as Quick Time movies or animated GIFs. See <a href="display_controls/ImageCaptures.html">Image Captures</a> for more information. You can save a particular McIDAS-V state with all displays, data sources, maps, etc. by saving the data as a <a href="Bundles.html">bundle</a>. You can also save a bundle as a favorite. </div>
+    <div class="faq-answer"><strong>A.</strong> McIDAS-V supports JPEG, PNG, and GIF image formats. McIDAS-V can also write out an image and the corresponding Google Earth KML or KMZ files. Animations can be captured as QuickTime movies or animated GIFs. See <a href="display_controls/ImageCaptures.html">Image Captures</a> for more information. You can save a particular McIDAS-V state with all displays, data sources, maps, etc. by saving the data as a <a href="Bundles.html">bundle</a>. You can also save a bundle as a favorite.</div>
     <a name="changestart" id="changestart"></a>
     <div class="faq-question">
       <h4>Q. How can I change the start-up settings?</h4>
     </div>
-    <div class="faq-answer"><strong>A.</strong> You can customize many of the  McIDAS-V properties through <strong><a href="tools/preferences/Preferences.html">Edit-&gt;Preferences</a></strong> menu. The preference manager allows you to configure the many features of McIDAS-V.
-      <p>You can also create a default McIDAS-V state and save it using the bundle facility. This allows you to override the preferences and also include datasets and displays to load when McIDAS-V starts. To save a default bundle, use the <strong>File-&gt;Default Layout-&gt;Save </strong>menu. See <a href="Bundles.html">Saving State with Bundles</a>.</p>
+    <div class="faq-answer"><strong>A.</strong> You can customize many of the  McIDAS-V properties through the User Preferences window, accessed through the <strong><a href="tools/preferences/Preferences.html">Edit-&gt;Preferences</a></strong> menu item in the Main Display window. This allows you to configure the many features of McIDAS-V.
+        <p>You can also create a default McIDAS-V state and save it using the bundle facility. This allows you to override the preferences and also include datasets and displays to load when McIDAS-V starts. To save a default bundle, use the <strong>File-&gt;Default Layout-&gt;Save </strong>menu. See <a href="Bundles.html">Saving State with Bundles</a>.</p>
     </div>
     <a name="memory" id="memory"></a>
     <div class="faq-question">
       <h4>Q. How can I change the amount of memory available to McIDAS-V?</h4>
     </div>
-    <div class="faq-answer"><strong>A.</strong>  You can change the amount of memory used by McIDAS-V by editing the <strong>Memory</strong> in the <strong><a href="tools/preferences/AdvancedPreferences.html">Advanced Preferences</a></strong> tab of the User Preferences window by selecting <strong>Edit-&gt;Preferences...</strong> from the Main Display window. See <a href="Starting.html#run">Running McIDAS-V</a> for more information.</div>
+    <div class="faq-answer"><strong>A.</strong>  You can change the amount of memory used by McIDAS-V by editing the <strong>Memory</strong> in the <strong><a href="tools/preferences/AdvancedPreferences.html">Advanced</a></strong> tab of the User Preferences window by selecting <strong>Edit-&gt;Preferences...</strong> from the Main Display window. See <a href="Starting.html#run">Running McIDAS-V</a> for more information.</div>
     <a name="projections" id="projections"></a>
     <div class="faq-question">
       <h4>Q. How can I reset the map projections?</h4>
     </div>
-    <div class="faq-answer"><strong>A.</strong> This can be controlled with the <strong>Projections-&gt;<a href="ui/DisplayMenus.html#autosetpro">Auto-Set Projection</a></strong> menu check-box. You can switch an existing display to its native data set projection using the display control's <strong>View-&gt;Use Data Projection</strong> menu. </div>
+    <div class="faq-answer"><strong>A.</strong> This can be controlled with the <strong>Projections-&gt;<a href="ui/DisplayMenus.html#autosetpro">Auto-set Projection</a></strong> menu check-box. You can switch an existing display to its native data set projection using the display control's <strong>View-&gt;Use Data Projection</strong> menu.</div>
     <a name="defaultprojection" id="defaultprojection"></a>
     <div class="faq-question">
       <h4>Q. How can I set the default projection?</h4>
     </div>
-    <div class="faq-answer"><strong>A.</strong> The default map projection can be set with the <a href="tools/ProjectionManager.html">Projection Manager</a> which is accessed from the <strong>Projections-&gt;New/Edit</strong> menu. Select one of the items in the <strong>Default</strong> pull down list. The default projection is overridden by the projection saved in the <a href="Bundles.html">default bundle</a>, or by displaying new data, if the <strong>Projections-&gt;<a href="ui/DisplayMenus.html#autosetpro">Auto-Set Projection</a></strong> menu checkbox is checked on. As a result, you may never see the default map projection unless your default bundle has the default projection, and you have the checkbox checked off. Choosing a default map projection is not necessary for good use of McIDAS-V and you can ignore it if you like. It is often simpler to use default bundles.</div>
+    <div class="faq-answer"><strong>A.</strong> The default map projection can be set with the <a href="tools/ProjectionManager.html">Projection Manager</a> which is accessed from the <strong>Projections-&gt;New/Edit</strong> menu item in the Main Display window. Also, you can select one of the predefined maps in the<strong> Projections</strong> menu. The default projection is overridden by the projection saved in the default bundle, or by displaying new data, if the <strong>Projections-&gt;<a href="ui/DisplayMenus.html#autosetpro">Auto-Set Projection</a></strong> menu checkbox is checked on. As a result, you may never see the default map projection unless your default bundle has the default projection, and you have the checkbox checked off. Choosing a default map projection is not necessary for good use of McIDAS-V and you can ignore it if you like. It is often simpler to use default bundles.</div>
     <a name="colorrange" id="colorrange"></a>
     <div class="faq-question">
-      <h4>Q. How can I change the color table range?</h4>
+      <h4>Q. How can I change the color table range of a displayed parameter?</h4>
     </div>
-    <div class="faq-answer"><strong>A.</strong> You can change the range for a display parameter in the <a href="tools/ColorTableEditor.html">Color Table Editor</a>. This can be accessed in the <strong>Layer Controls</strong> tab of the Data Explorer by clicking the button next to Color Table, or by right clicking on the color bar in the Legend of the Main Display window and selecting <strong>Edit Color Table</strong>. The range of the color table can be changed next to the Range button in the <a href="tools/ColorTableEditor.html#range">Color Table Editor</a>. Alternatively, you can change the range outside of the Color Table Editor by right clicking on the color bar in the Legend of the Main Display window and selecting <strong>Change Range...</strong>, which opens a Change Range window where you can enter new values.</div>
+    <div class="faq-answer"><strong>A.</strong> You can change the range for a display parameter in the <a href="tools/ColorTableEditor.html">Color Table Editor</a>. This can be accessed in the <strong>Layer Controls</strong> tab of the Data Explorer by clicking the button next to Color Table, or by right-clicking on the color bar in the Legend of the Main Display window and selecting <strong>Edit Color Table</strong>. The range of the color table can be changed next to the  <a href="tools/ColorTableEditor.html#range">Range button</a> in the Color Table Editor. Alternatively, you can change the range outside of the Color Table Editor by right clicking on the color bar in the Legend of the Main Display window and selecting <strong>Change Range...</strong>, which opens a Change Range window where you can enter new values.</div>
     <a name="transparency" id="transparency"></a>
     <div class="faq-question">
       <h4>Q. When I set a color table transparent, why doesn't it show up that
@@ -253,7 +253,7 @@ Note: If your system does not support Java3D version 1.3.1+ McIDAS-V will not wo
     <div class="faq-answer"><strong>A.</strong> First, check that your display
       configuration is set to the maximum number of colors (e.g., 32 bit) so
       that McIDAS-V is able to display imagery and color tables using a full
-      range of colors. If that is set correctly it's possible that the range
+      range of colors. If that is set correctly, it's possible that the range
       of values defined for the color table is less than the range of values
       in the displayed image. You can view or modify the range of values defined
       for the color table by right clicking on the color bar in the Legend of
@@ -275,13 +275,13 @@ Note: If your system does not support Java3D version 1.3.1+ McIDAS-V will not wo
 	   of the earth surface) the image pixels need to be
 		duplicated to fill the display and thus the image will appear pixelated.
 		The same effect will occur with any image if you zoom in (using the
-		<a href="ui/index.html">Navigation Toolbar</a> buttons or <a href="ui/Navigation.html">other
+		<a href="ui/Navigation.html#navigation">Zoom/Pan Toolbar</a> buttons or <a href="ui/Navigation.html">other
 		zooming actions</a>) to where the display
 		resolution is higher than the image resolution.</p>
       <p> If you believe that the displayed image is more pixelated than it should
-          be for its given resolution, check the settings of the <a href="data/DataSubset.html">Magnification
-          sliders</a> in the Field Selector's <strong>Advanced</strong> tab and the <a href="controls/ImagePlanViewControl.html">Pixel
-          Sampling slider</a> in the Layer Controls. In order to display the
+          be for its given resolution, check the settings of the <a href="data/DataSubset.html#mag">Magnification
+          sliders</a> in the <strong>Field Selector's</strong> <strong>Advanced</strong> tab and the <a href="controls/ImagePlanViewControl.html#psample">Pixel
+          Sampling slider</a> in the <strong>Layer Controls</strong> tab. In order to display the
           image at the highest possible resolution (its native resolution),
           the line and element magnifications must be set to 1 (sliders all the
           way to the right) and the pixel sampling set to 0 (slider all the way
