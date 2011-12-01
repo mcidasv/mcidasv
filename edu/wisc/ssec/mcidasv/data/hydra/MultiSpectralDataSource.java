@@ -1087,6 +1087,23 @@ public class MultiSpectralDataSource extends HydraDataSource {
     return swathToGrid(grid, swath, 0.0);
   }
 
+  private static int count = 0;
+
+  public static FlatField swathToGrid(Linear2DSet grid, FlatField[] swaths, double mode) throws Exception {
+    FunctionType ftype = (FunctionType) swaths[0].getType();
+    visad.Set domSet = swaths[0].getDomainSet();
+
+    FlatField swath = new FlatField(new FunctionType(ftype.getDomain(),
+        new RealTupleType(new RealType[] {RealType.getRealType("redimage_"+count), RealType.getRealType("greenimage_"+count), RealType.getRealType("blueimage_"+count)})), domSet);
+
+    swath.setSamples(new float[][] 
+        {swaths[0].getFloats(false)[0], swaths[1].getFloats(false)[0], swaths[2].getFloats(false)[0]});
+
+    count++;
+
+    return swathToGrid(grid, swath, mode);
+  }
+
   public static FlatField swathToGrid(Linear2DSet grid, FlatField swath, double mode) throws Exception {
     FunctionType ftype = (FunctionType) swath.getType();
     Linear2DSet swathDomain = (Linear2DSet) swath.getDomainSet();
@@ -1131,12 +1148,12 @@ public class MultiSpectralDataSource extends HydraDataSource {
                int n=0;
                int k = grdIdx + (m + n*gridXLen);
 
-               if ( !(Float.isNaN(val)) && ((k >=0) && (k < gridXLen*gridYLen)) ) {
+               if ( !(Float.isNaN(val)) && ((k >=0) && (k < gridXLen*gridYLen)) ) { // val or val[rngTupDim] ?
                  float grdVal = gridRange[0][k];
 
                  if (Float.isNaN(grdVal)) {
                    for (int t=0; t<rngTupDim; t++) {
-                     gridRange[t][k] = val;
+                     gridRange[t][k] = swathRange[t][swathIdx];
                    }
                    swathGridCoord[0][k] = gridCoord[0][0];
                    swathGridCoord[1][k] = gridCoord[1][0];
@@ -1176,13 +1193,16 @@ public class MultiSpectralDataSource extends HydraDataSource {
     float[][] gCoord = new float[2][1];
     if (mode > 0.0) {
     float weight = 1f;
+    float[] sumValue = new float[rngTupDim];
     for (int j=2; j<gridYLen-2; j++) {
        for (int i=2; i<gridXLen-2; i++) {
          int grdIdx = i + j*gridXLen;
      
          // dont to weighted average if a nearest neigbhor existed for the grid point
+         if (mode == 2.0) {
          if (!Float.isNaN(gridRange[0][grdIdx])) {
            continue;
+         }
          }
 
          gCoord[0][0] = swathGridCoord[0][grdIdx];
@@ -1193,7 +1213,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          
          int num = 0;
          float sumWeights = 0f;
-         float sumValue = 0f;
+         for (int t=0; t<rngTupDim; t++) sumValue[t] = 0f;
          for (int n = -1; n < 2; n++) {
             for (int m = -1; m < 2; m++) {
                int k = grdIdx + (m + n*gridXLen);
@@ -1207,17 +1227,17 @@ public class MultiSpectralDataSource extends HydraDataSource {
                   dst_sqrd = del_0*del_0 + del_1*del_1;
                   weight = (float) (1.0/Math.exp((double)(dst_sqrd)*2.75f));
 
-                  sumValue += swathRange[0][swathIndexAtGrid[k]]*weight;
+                  for (int t=0; t<rngTupDim; t++) sumValue[t] += swathRange[t][swathIndexAtGrid[k]]*weight;
                   sumWeights += weight;
                   num++;
                }
             }
           }
-
-          sumValue /= sumWeights;
-          gridRange[0][grdIdx] = sumValue;
+          for (int t=0; t<rngTupDim; t++) {
+            gridRange[t][grdIdx] = sumValue[t]/sumWeights;
+          }
        }
-    }
+      }
     }
 
    grdFF.setSamples(gridRange);
