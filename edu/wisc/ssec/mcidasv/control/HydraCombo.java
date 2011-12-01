@@ -65,7 +65,6 @@ import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.view.geoloc.MapProjectionDisplay;
-import ucar.visad.display.DisplayMaster;
 
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
@@ -80,11 +79,8 @@ import edu.wisc.ssec.mcidasv.jython.ConsoleCallback;
 
 public class HydraCombo extends HydraControl {
 
-    private String sourceFile = "";
 
     private MultiSpectralDisplay display;
-
-    private DisplayMaster displayMaster;
 
     private DataChoice dataChoice = null;
 
@@ -99,7 +95,6 @@ public class HydraCombo extends HydraControl {
     private Map<String, Selector> selectorMap = new HashMap<String, Selector>();
 
     private static final String defaultButtonLabel = "Compute New Field";
-    private static final String thinkingButtonLabel = "thinking...";
     private JButton computeButton = new JButton(defaultButtonLabel);
 
     public HydraCombo() {
@@ -114,7 +109,6 @@ public class HydraCombo extends HydraControl {
         List<DataSource> sources = new ArrayList<DataSource>();
         choice.getDataSources(sources);
         source = ((MultiSpectralDataSource)sources.get(0));
-        sourceFile = ((MultiSpectralDataSource)sources.get(0)).getDatasetName();
 
         Float fieldSelectorChannel = (Float)getDataSelection().getProperty(Constants.PROP_CHAN);
         if (fieldSelectorChannel == null)
@@ -207,12 +201,14 @@ public class HydraCombo extends HydraControl {
         computeButton.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
                 comboPanel.queueCombination();
-//                computeButton.setText(thinkingButtonLabel);
                 computeButton.setEnabled(false);
                 showWaitCursor();
             }
         });
-        JPanel tmp = GuiUtils.topCenterBottom(display.getDisplayComponent(), comboPanel.getPanel(), computeButton);
+        // wrap compute button in JPanel to retain preferred size
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.add(computeButton);
+        JPanel tmp = GuiUtils.topCenterBottom(display.getDisplayComponent(), comboPanel.getPanel(), buttonPanel);
         return tmp;
     }
 
@@ -505,12 +501,10 @@ public class HydraCombo extends HydraControl {
         private static final String INVALID_OP = " ";
         private final JComboBox combo = new JComboBox(OPERATIONS);
 
-        private CombinationPanel comboPanel;
         private OperationXY x;
         private OperationXY y;
 
         public CombineOperations(final CombinationPanel comboPanel, final OperationXY x, final OperationXY y) {
-            this.comboPanel = comboPanel;
             this.x = x;
             this.y = y;
             combo.setSelectedItem(INVALID_OP);
@@ -684,12 +678,11 @@ public class HydraCombo extends HydraControl {
     }
 
     private static class MultispectralSelectorWrapper extends SelectorWrapper {
-        private final HydraCombo control;
+
         private final JComboBox bands;
 
         public MultispectralSelectorWrapper(final String variable, final ConstantMap[] color, final HydraCombo control, final Console console) {
             super(variable, color, control, console);
-            this.control = control;
             removeMSDListeners();
             bands = bigBadBox(control);
         }
