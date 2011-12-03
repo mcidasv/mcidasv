@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Sounding Controls</title>
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<!-- InstanceBeginEditable name="CurrentFile" -->
+<script language="javascript" type="text/javascript">
+function setParentPage() { if (parent.setPage) parent.setPage('controls/SoundingControl.html',true); }
+</script>
+<!-- InstanceEndEditable -->
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+<body onLoad="setParentPage();">
+<div class="TopTitleNav">
+  <p class="style2" style="text-align:left; "> 
+  	[<!-- InstanceBeginEditable name="GoToPrevious" --><a href="PointVolumeControl.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	<span style="padding-left: 15px; "> 
+	[<!-- InstanceBeginEditable name="GoToNext" --><a href="../page_satelliteandradardisplays.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	</span> </p>
+  <hr align="center">
+</div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Sounding Controls</div>
+<xxxmeta xxxname="jhid" value="idv.controls.volumerendercontrol">
+<div class="pagesubtitle">Overview</div>
+<p>For 3D derived gridded data, one of the Fields you can select is Sounding Data (Temperature &amp; dewpoint only, and with true winds). In the <strong>Displays</strong> panel of the <strong>Layer Controls</strong> tab, there is a category for soundings. The three sounding display options are Grid Skew-T, Grid Stuve Display, and Grid Emagram Display. This display uses the model data to produce soundings, and their controls are the same as those for <a href="AerologicalSoundingControl.html">Point Data sounding displays</a>. You can set the location of the sounding in the Main Display window, by dragging the square to different positions on the map.</p>
+<p>The example below is loaded from the 'Sounding Data (with true winds)' Field. If you select 'Sounding Data (Temperature &amp; dewpoint only)', then wind data will not be available. Therefore, there will be no barbs along the side of the sounding in the <strong>Sounding Chart</strong> tab, and the <strong>Hodograph</strong> tab will not be available.</p>
+<p>The <strong>Sounding Chart</strong> tab includes an aerological diagram (e.g., skew-T, Stuve, Emagram):</p>
+<div class="images"><img src="images/SoundingGrid.gif" alt="Image 1: Sounding Display of Model Data" width="929" height="617"><br>
+<span class="caption">Image 1: Sounding Display of Model Data</span></div>
+<div class="pagesubtitle">Properties</div>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Time Animation Control</strong> - Controls the looping of     displays through time.    See <a href="../ui/Animation.html">Time     Animation Control</a> for more information. This will be available if you select more than one time to display in the <strong>Field Selector</strong>.</li>
+  <li class="propertylistitem"><strong>Dry Adiabats </strong> - Displays the dry adiabats on the Skew-T   diagram.</li>
+  <li class="propertylistitem"><strong>Saturation Adiabats </strong> - Displays the saturation adiabats   on the Skew-T diagram.</li>
+  <li class="propertylistitem"><strong>Mixing Ratio </strong> - Displays the mixing ratio lines on the   Skew-T diagram.</li>
+  <li class="propertylistitem"><strong>Parcel Path</strong> - Displays the path of a parcel of air   lifted pseudo-adiabatically        from the initial point to the top of the Skew-T diagram.</li>
+  <li class="propertylistitem"><strong>Virtual Temperature</strong> - Displays the virtual temperatures   of the environmental profile and        pseudo-adiabatically lifted air-parcel.</li>
+  <li class="propertylistitem"><strong>Grid Points</strong> - Plots grid points in the Main Display window. These grid points will be related to the model resolution that you select in the <strong>Data Sources</strong> tab of the Data Explorer.</li>
+  <li class="propertylistitem"><strong>Parcel mode -</strong> Specifies how  the initial conditions of   the pseudo-adiabatically        lifted air-parcel  are determined from        the environmental sounding         according to the mode indicated. This will affect how the LNB,   LFC, LCL, CAPE, and CIN are calculated. The choices are:</li>
+  <ul class="propertylist">
+  <li class="propertylistitem"><strong>Bottom of Sounding</strong> - Determines the initial conditions of the  	      parcel from the temperature and dewpoint at the level of highest   pressure. The path will  update whenever the profiles change.</li>
+  <li class="propertylistitem"><strong>Below Cursor</strong> - Determines the initial conditions of the   parcel  	       from the temperature and dewpoint profiles by computing  	      the pressure-weighted mean potential temperature and water vapor   mixing-ratio  	      of the atmosphere that lies below the cursor when the middle   mouse  	      button is pressed. Thus, pressing the middle button at 950 hPa   for  	      a sounding that starts at 1000 hPa will effectively mix the lower   50  	      hPa of the atmosphere and lift the resulting parcel starting at   975  	      hPa. The path will  update whenever the profiles change and as   the cursor is dragged.</li>
+  <li class="propertylistitem"><strong>At Cursor Pressure</strong> - Determines the initial pressure,   in-situ  	      temperature, and moisture content of the parcel  from the  	      temperature and dewpoint profiles at the pressure of the cursor   when  	      the middle mouse button is pressed. The initial moisture content   is determined from  	      the dewpoint profile at the initial pressure. The path will   update whenever the profiles change and as the cursor is dragged.</li>
+  <li class="propertylistitem"><strong>At Cursor (Press, Temp)</strong> - The computed path of a lifted  	      parcel is automatically updated when appropriate.  The initial   pressure and in-situ temperature of the parcel equal the  	      pressure and temperature values under the cursor when the middle   mouse  	      button is pressed. The path will update          whenever the profiles change and as the cursor is dragged.</li>   
+  </ul>
+  <li class="propertylistitem"><strong>Wind spacing -</strong> Allows the user to control which wind levels are shown in the display.</li> 
+  </ul>
+<p>A label above the sounding's chart shows the model, date, and time of the data. You can modify the individual T and Td profiles on the skew T by clicking and dragging the profile lines. You will see changes in the parameter table to the left of the Skew-T that reflect changes made to the sounding.</p>
+  <p>The <strong>Hodograph</strong> tab shows a 3D hodograph display:</p>
+  <div class="images"><img src="images/HodoGrid.gif" alt="Image 2: Hodograph Display of Model Data" width="929" height="539"><br><span class="caption">Image 2: Hodograph Display of Model Data</span></div>
+  <div class="pagesubtitle">Properties</div>
+  <ul class="propertylist">
+  
+  <li class="propertylistitem"><strong>Time Animation Control</strong> - Controls the looping of     displays through time.    See <a href="../ui/Animation.html">Time     Animation Control</a> for more information. This will be available if you select more than one time to display in the <strong>Field Selector</strong>.</li>
+  </ul>
+  <p>The hodograph is enabled if the plotted data includes wind fields. It can be rotated into 3D by clicking and dragging the right mouse button. You can zoom in/out by holding down Shift and right-clicking and dragging up/down or by using the scroll wheel on the mouse. To reset the hodograph, use Ctrl+R.</p>
+  <p>The <strong>Table</strong> tab shows a table of all available values in the sounding:</p>
+  <div class="images"><img src="images/TableGrid.gif" width="929" height="511" alt="Image 3: Table Display of Model Data"><br><span class="caption">Image 3: Table Display of Model Data</span></div>
+  <div class="pagesubtitle">Properties</div>
+  <ul class="propertylist">
+  
+  <li class="propertylistitem"><strong>Time Animation Control</strong> - Controls the looping of     displays through time.    See <a href="../ui/Animation.html">Time     Animation Control</a> for more information. This will be available if you select more than one time to display in the <strong>Field Selector</strong>.</li>
+  <li class="propertylistitem"><strong>Show U and V -</strong> Breaks the Speed and Direction categories up into the individual U (Westerly Wind) and V (Southerly Wind) components of the wind.</li>
+  </ul>
+    <div class="pagesubtitle">Aerological Parameters</div>
+    <p>The table to the left of the sounding diagram contains aerological parameters determined from the atmospheric sounding displayed in the diagram. The following abbreviations are used:</p>
+    <ul class="propertylist">
+    <li class="propertylistitem"><strong>LCL: Lifting Condensation Level -</strong> The level at which a   pseudo-adiabatically      lifted air-parcel becomes saturated with water vapor.</li>
+    <li class="propertylistitem"><strong>LFC: Level of Free Convection -</strong> The level at which the   virtual temperature of      a pseudo-adiabatically lifted air-parcel changes from being less   than the      environment's virtual temperature to being greater than the   environment's virtual temperature.</li>
+    <li class="propertylistitem"><strong>LNB: Level of Neutral Buoyancy -</strong> The level above the   LFC at which the virtual      temperature of a pseudo-adiabatically lifted air-parcel equals the   environment's      virtual temperature.</li>
+    <li class="propertylistitem"><strong>CAPE: Convective Available Potential Energy -</strong> The area   between the virtual temperature      trace of the pseudo-adiabatically lifted air-parcel and the virtual   temperature      trace of the environment from the LFC to the LNB in which the   parcel's virtual      temperature is greater than the environment's (positive CAPE   connotes convective      development).</li>
+    <li class="propertylistitem"><strong>CIN: Convective Inhibition -</strong> The negative of the area   between the virtual temperature      trace of the pseudo-adiabatically lifted air-parcel and the virtual   temperature      trace of the environment from the parcel's initial conditions to the   LFC      in which the parcel's virtual temperature is less than the   environment's      (negative CIN connotes initial positive work to lift the parcel).</li>
+    </ul>
+<div class="pagesubtitle">Menus</div>
+<p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="LayerControls.html#menus">Menus section</a> of the Layer Controls Page. However, there is one option that is unique to this display.</p>
+<p>The <strong>File</strong> menu has this unique option:</p>
+<ul class="propertylist">
+    <li class="propertylistitem"><strong>Export Sounding Table to File... - </strong>Exports the data in the <strong>Table </strong>tab. This can be saved in Comma-Separated Values (CSV) format (*.csv) or in Excel format.</li>
+</ul>
+<p>The <strong>Edit</strong> menu has these unique options:</p>
+<ul class="propertylist">
+    <li class="propertylistitem"><strong>Reseet Probe Position -</strong> Moves the probe in the Main Display window back to its initial location before it was moved.</li>
+    <li class="propertylistitem"><strong>Reset Sounding</strong><strong> </strong>- Reverts the sounding back to its initial   configuration after any modifications have been made to it. </li>
+    <li class="propertylistitem"><strong>Selector Color - </strong>Changes the color of the shape   representing the location of the sounding in the Main Display window.</li>
+</ul>
+<p>The <strong>View</strong> menu has these unique options:</p>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Sounding Chart -</strong> Allows you to capture an image or   movie of the sounding and change many aesthetic preferences.</li>
+<li class="propertylistitem"><strong>Hodograph -</strong> Allows you to capture an image or movie of   the hodograph and change aesthetic preferences related to the Main   Display window. </li>
+</ul>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav">
+  <hr align="center">
+  <p class="style2" style="text-align:left; "> 
+  	[<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="PointVolumeControl.html">Go to Previous</a><!-- InstanceEndEditable -->] 
+	<span style="padding-left: 15px; "> 
+	[<!-- InstanceBeginEditable name="GoToNext2" --><a href="../page_satelliteandradardisplays.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	</span></p>
+</div>
+</body>
+<!-- InstanceEnd --></html>

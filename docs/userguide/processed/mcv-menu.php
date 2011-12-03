@@ -99,9 +99,10 @@
         <span class="link" onClick="setPage('controls/FlowPlanViewControl.html');">Flow Display Controls</span><br>
                 <span class="link" onClick="setPage('controls/ValuePlotControl.html');">Value Plot Controls </span><br>
         <span class="link" onClick="setPage('controls/CrossSectionControl.html');">Vertical Cross Section Controls</span><br>
-        <span class="link" onClick="setPage('controls/ThreeDSurfaceControl.html');">Isosurface Controls</span><br>
+        <span class="link" onClick="setPage('controls/ThreeDSurfaceControl.html');">3D Surface Controls</span><br>
         <span class="link" onClick="setPage('controls/VolumeRenderControl.html');">Volume Rendering Controls</span><br>
 		<span class="link" onClick="setPage('controls/PointVolumeControl.html');">Point Volume Controls</span><br>
+        		<span class="link" onClick="setPage('controls/SoundingControl.html');">Sounding Controls</span><br>
       </div>
 
       <span class="toggle" onClick="toggleChildren(this,'layercontrols_2_1');">+</span>
@@ -180,12 +181,11 @@
       <span class="link" onClick="setPage('page_miscellaneouscontrols.html');">Miscellaneous Controls</span><br>
 
       <div class="indented" id="layercontrols_7">
-              <span class="link" onClick="setPage('controls/misc/ContourDialog.html');">Contour Properties Editor</span><br>
         <span class="link" onClick="setPage('controls/misc/ScatterAnalysisControl.html');">Scatter Analysis Controls</span><br>
         <span class="link" onClick="setPage('controls/misc/BridgeControl.html');">McIDAS-X Bridge Controls</span><br>
         <span class="link" onClick="setPage('controls/misc/OmniControl.html');">Omni Controls</span><br>
         <span class="link" onClick="setPage('controls/JythonControl.html');">Jython Controls</span><br>
-      </div>
+      </div>              <span class="link" onClick="setPage('controls/misc/ContourDialog.html');">Contour Properties Editor</span><br>
             <span class="link" onClick="setPage('controls/PropertiesDialog.html');">Properties Dialog</span><br>
                   <span class="link" onClick="setPage('controls/ColorScale.html');">Color Scale</span><br>
       <span class="link" onClick="setPage('controls/Chart.html');">Charts</span><br>

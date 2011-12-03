@@ -57,9 +57,10 @@
             <tocitem text="Flow Display Controls" target="idv.controls.flowplanviewcontrol"/>
 			<tocitem text="Value Plot Controls" target="idv.controls.valueplotcontrol"/>
             <tocitem text="Vertical Cross Section Controls" target="idv.controls.crosssectioncontrol"/>
-            <tocitem text="Isosurface Controls" target="idv.controls.threedsurfacecontrol"/>
+            <tocitem text="3D Surface Controls" target="idv.controls.threedsurfacecontrol"/>
             <tocitem text="Volume Rendering Controls" target="idv.controls.volumerendercontrol"/>
             <tocitem text="Point Volume Controls" target="idv.controls.pointvolumecontrol"/>
+			<tocitem text="Sounding Controls" target="idv.controls.soundingcontrol"/>
         </tocitem>
         <tocitem text="Satellite and Radar Displays" target="idv.page_satelliteandradardisplays">
             <tocitem text="Image Controls" target="idv.controls.imageplanviewcontrol"/>
@@ -105,12 +106,12 @@
             <tocitem text="Track Controls" target="idv.controls.trackcontrol"/>
         </tocitem>
         <tocitem text="Miscellaneous Controls" target="idv.page_miscellaneouscontrols">
-			<tocitem text="Contour Properties Editor" target="idv.controls.misc.contourdialog"/>
             <tocitem text="Scatter Analysis Controls" target="idv.controls.misc.scatteranalysiscontrol"/>
             <tocitem text="McIDAS-X Bridge Controls" target="idv.controls.misc.bridgecontrol"/>
             <tocitem text="Omni Controls" target="idv.controls.misc.omnicontrol"/>
             <tocitem text="Jython Controls" target="idv.controls.jythoncontrol"/>
         </tocitem>
+		<tocitem text="Contour Properties Editor" target="idv.controls.misc.contourdialog"/>
 		<tocitem text="Properties Dialog" target="idv.controls.propertiesdialog"/>
 		<tocitem text="Color Scale" target="idv.controls.colorscale"/>
         <tocitem text="Charts" target="idv.controls.chart"/>
