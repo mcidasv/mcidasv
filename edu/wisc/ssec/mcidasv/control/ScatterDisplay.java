@@ -268,6 +268,7 @@ public class ScatterDisplay extends DisplayControlImpl {
 
         X_name = ((((FunctionType)X_field.getType()).getFlatRange().getRealComponents())[0]).getName();
         Y_name = ((((FunctionType)Y_field.getType()).getFlatRange().getRealComponents())[0]).getName();
+        if (statsTable != null) statsTable.setNames(X_name, Y_name);
 
         Grid2DReadoutProbe probeX = new Grid2DReadoutProbe(X_field, dspMasterX);
         Grid2DReadoutProbe probeY = new Grid2DReadoutProbe(Y_field, dspMasterY);
@@ -976,7 +977,7 @@ public class ScatterDisplay extends DisplayControlImpl {
                         new Color(0xd0ffd0), new Color(0xc0d0ff)};
 
       final int maxCols = 9;
-      final String[] colNames = {"Stats Parameter","Whole Field X","Whole Field Y",
+      String[] colNames = {"Stats Parameter","Whole Field X","Whole Field Y",
         "Magenta X","Magenta Y", "Green X","Green Y","Blue X","Blue Y"};
 
       final int maxRows = 12;
@@ -996,6 +997,7 @@ public class ScatterDisplay extends DisplayControlImpl {
             data[i][j] = "  ";
           }
         }
+
 
         table = new JTable(this) {
           public Component prepareRenderer(
@@ -1041,6 +1043,11 @@ public class ScatterDisplay extends DisplayControlImpl {
           data[i][c+1] = " ";
         }
         fireTableStructureChanged();
+      }
+
+      public void setNames(String xn, String yn) {
+        colNames[1] = colNames[3] = colNames[5] = colNames[7] =xn;
+        colNames[2] = colNames[4] = colNames[6] = colNames[8] =yn;
       }
 
       // fx, fy are Fields, col = 0,1,2,3 (all, red, green, blue)
