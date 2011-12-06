@@ -5,6 +5,9 @@ from contextlib import contextmanager
 
 # from shell import makeDataSource
 
+from org.slf4j import Logger
+from org.slf4j import LoggerFactory
+
 from java.lang import System
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 from ucar.unidata.idv import DisplayInfo
@@ -126,6 +129,15 @@ class _Window(_JavaProxy):
     def getTabs(self):
         """Returns a list of the available tabs."""
         return [_Tab(holder) for holder in self._JavaProxy__javaObject.getComponentGroups()[0].getDisplayComponents()]
+
+    def getSize(self):
+        rect = self._JavaProxy__javaObject.getWindowInfo().getBounds()
+        return rect.getWidth(), rect.getHeight()
+
+    def getBounds(self):
+        rect = self._JavaProxy__javaObject.getWindowInfo().getBounds()
+        return rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight()
+
 
 class _Tab(_JavaProxy):
     def __init__(self, javaObject):
@@ -605,3 +617,18 @@ def boomstick():
     mcv.removeAllLayers(False)
     mcv.removeAllData(False)
     System.gc()
+
+def createDisplay(title, width, height):
+    # somehow create a WindowInfo to use the bounds-setting stuff
+    # then you want to do something like:
+    # return uiManager.createNewWindow(None, 'SkinPath', 'title', windowInfo)
+    from ucar.unidata.idv.ui import WindowInfo
+    # DEFAULT_SKIN_PATH = '/edu/wisc/ssec/mcidasv/resources/skins/window/map/onemapview.xml'
+    mcv = getStaticMcv()
+    window = mcv.getIdvUIManager().buildDefaultSkin()
+    window.setTitle(title)
+    return _Window(window)
+
+def makeLogger(name):
+    return  LoggerFactory.getLogger(name)
+    

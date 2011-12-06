@@ -104,6 +104,8 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -171,6 +173,8 @@ import edu.wisc.ssec.mcidasv.util.MemoryMonitor;
 // TODO: investigate moving similar unpersisting code to persistence manager.
 public class UIManager extends IdvUIManager implements ActionListener {
 
+    private static final Logger logger = LoggerFactory.getLogger(UIManager.class);
+    
     /** Id of the "New Display Tab" menu item for the file menu */
     public static final String MENU_NEWDISPLAY_TAB = "file.new.display.tab";
 
@@ -179,7 +183,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     /**
      * Used to keep track of ViewManagers inside a bundle.
-     * @see McIDASVXmlUi#createViewManager(Element)
      */
     public static final HashMap<String, ViewManager> savedViewManagers =
         new HashMap<String, ViewManager>();
@@ -308,10 +311,19 @@ public class UIManager extends IdvUIManager implements ActionListener {
         boolean notifyCollab, String title, String skinPath, Element skinRoot,
         boolean show, WindowInfo windowInfo) 
     {
-        if (title != null && title.equals(Constants.DATASELECTOR_NAME))
+
+        if (windowInfo != null) {
+            logger.trace("creating window: title='{}' bounds: {}", title, windowInfo.getBounds());
+        } else {
+            logger.trace("creating window: title='{}' bounds: (no windowinfo)", title);
+        }
+        
+        if (Constants.DATASELECTOR_NAME.equals(title)) {
             show = false;
-        if (skinPath.indexOf("dashboard.xml") >= 0)
+        }
+        if (skinPath.indexOf("dashboard.xml") >= 0) {
             show = false;
+        }
 
         // used to force any new "display" windows to be the same size as the current window.
         IdvWindow previousWindow = IdvWindow.getActiveWindow();
@@ -324,7 +336,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         w.setIconImage(icon.getImage());
 
         // try to catch the dashboard
-        if (w.getTitle().equals(Constants.DATASELECTOR_NAME)) {
+        if (Constants.DATASELECTOR_NAME.equals(w.getTitle())) {
             setDashboard(w);
         } else {
             // otherwise we need to hide the component group header and explicitly
@@ -332,6 +344,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             ((ComponentHolder)w.getComponentGroups().get(0)).setShowHeader(false);
             if (previousWindow != null) {
                 Rectangle r = previousWindow.getBounds();
+                
                 w.setBounds(new Rectangle(r.x, r.y, r.width, r.height));
             }
         }
@@ -341,9 +354,18 @@ public class UIManager extends IdvUIManager implements ActionListener {
         RovingProgress progress =
             (RovingProgress)w.getComponent(IdvUIManager.COMP_PROGRESSBAR);
 
-        if (progress != null)
+        if (progress != null) {
             progress.start();
+        }
         return w;
+    }
+
+    /**
+     * Create the first display window
+     *
+     */
+    public IdvWindow buildDefaultSkin() {
+        return createNewWindow(new ArrayList(), false);
     }
 
     /**
@@ -1047,8 +1069,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * Given a valid action and icon size, build a JButton for the toolbar.
      * 
      * @param action The action whose corresponding icon we want.
-     * @param size
-     * @param style
      * 
      * @return A JButton for the given action with an appropriate-sized icon.
      */
@@ -1096,11 +1116,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
 //        ((McIDASV)getIdv()).getMonitorManager().addListener(label);
 //        window.setComponent(Constants.COMP_MONITORPANEL, label);
 
-        MemoryMonitor mm = new MemoryMonitor(getIdv(), 75, 95,
-                               new Boolean(
-                                   getStateManager().getPreferenceOrProperty(
-                                       PROP_SHOWCLOCK,
-                                       "true")).booleanValue());
+        boolean isClockShowing = Boolean.getBoolean(getStateManager().getPreferenceOrProperty(PROP_SHOWCLOCK, "true"));
+        MemoryMonitor mm = new MemoryMonitor(getIdv(), 75, 95, isClockShowing);
         mm.setBorder(getStatusBorder());
 
         // MAKE PRETTY NOW!
@@ -1857,7 +1874,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     /**
      * Overridden to build a custom Window menu.
-     * @see ucar.unidata.idv.ui.IdvUIManager#makeWindowsMenu(JMenu)
+     * @see ucar.unidata.idv.ui.IdvUIManager#makeWindowsMenu(JMenu, IdvWindow)
      */
     @Override public void makeWindowsMenu(final JMenu windowMenu, final IdvWindow idvWindow) {
         JMenuItem mi;
@@ -3782,9 +3799,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * @param collectionId IDV resource collection that contains our actions. Cannot be {@code null}.
          * 
          * @throws NullPointerException if {@code idv} or {@code collectionId} 
-         * is {@code null}.
-         * 
-         * @see 
+         * is {@code null}. 
          */
         public IdvActions(final IntegratedDataViewer idv, final XmlIdvResource collectionId) {
             Contract.notNull(idv, "Cannot provide a null IDV reference");
@@ -4046,9 +4061,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         /**
          * Representation of this {@code IdvAction} as an {@literal "IDV action call"}.
          * 
-         * @return String that is suitable to hand off to the IDV for execution.
-         * 
-         * @see 
+         * @return String that is suitable to hand off to the IDV for execution. 
          */
         public String getCommand() {
             return "idv.handleAction('action:"+getAttribute(ActionAttribute.ID)+"')";
