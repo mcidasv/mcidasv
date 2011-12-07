@@ -361,8 +361,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
-     * Create the first display window
-     *
+     * Create the display window described by McIDAS-V's default display skin
+     * 
+     * @return {@link IdvWindow} that was created.
      */
     public IdvWindow buildDefaultSkin() {
         return createNewWindow(new ArrayList(), false);

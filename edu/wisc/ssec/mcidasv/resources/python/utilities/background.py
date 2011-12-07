@@ -69,19 +69,23 @@ class _JavaProxy(object):
     """
     def __init__(self, javaObject):
         """Stores a given java instance and flags the proxy as being initialized."""
+        
         self.__javaObject = javaObject
         self.__initialized = True
 
     def getJavaInstance(self):
         """Returns the actual VisAD/IDV/McIDAS-V object being proxied."""
+        
         return self.__javaObject
 
     def __str__(self):
         """Returns the results of running the proxied object's toString() method."""
+        
         return self.__javaObject.toString()
 
     def __getattr__(self, attr):
         """Forwards object attribute lookups to the internal VisAD/IDV/McIDAS-V object."""
+        
         if not self.__dict__.has_key('_JavaProxy__initialized'):
             raise AttributeError(attr)
         else:
@@ -92,6 +96,7 @@ class _JavaProxy(object):
 
     def __setattr__(self, attr, val):
         """Forwards object attribute changes to the internal VisAD/IDV/McIDAS-V object."""
+        
         if not self.__dict__.has_key('_JavaProxy__initialized'):
             self.__dict__[attr] = val
             return
@@ -106,6 +111,7 @@ class _Window(_JavaProxy):
         """Blank for now. javaObject = IdvWindow
            tab
         """
+        
         _JavaProxy.__init__(self, javaObject)
 
     #def setCurrentTabIndex(self, index):
@@ -115,27 +121,37 @@ class _Window(_JavaProxy):
     #
     def getCurrentTab(self):
         """Returns the currently active tab."""
+
         # mcv windows should only have one component group
         return _Tab(self._JavaProxy__javaObject.getComponentGroups()[0].getActiveComponentHolder())
 
     def getTabAtIndex(self, index):
         """Returns the tab at the given index."""
+        
         return _Tab(self._JavaProxy__javaObject.getComponentGroups()[0].getHolderAt(index))
 
     def getTabCount(self):
         """Returns the number of tabs."""
+
         return self._JavaProxy__javaObject.getComponentGroups()[0].getDisplayComponentCount()
 
     def getTabs(self):
         """Returns a list of the available tabs."""
+
         return [_Tab(holder) for holder in self._JavaProxy__javaObject.getComponentGroups()[0].getDisplayComponents()]
 
     def getSize(self):
-        rect = self._JavaProxy__javaObject.getWindowInfo().getBounds()
-        return rect.getWidth(), rect.getHeight()
+        """Returns the width and height of the wrapped IdvWindow."""
+
+        dims = self._JavaProxy__javaObject.getSize()
+        return dims.getWidth(), dims.getHeight()
 
     def getBounds(self):
-        rect = self._JavaProxy__javaObject.getWindowInfo().getBounds()
+        """Returns the xy-coords of the upper left corner, as well as the width
+        and height of the wrapped IdvWindow.
+        """
+
+        rect = self._JavaProxy__javaObject.getBounds()
         return rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight()
 
 
@@ -217,6 +233,7 @@ class _Display(_JavaProxy):
 
     def getProjection(self):
         """Returns the map projection currently in use."""
+        
         return _Projection(self._JavaProxy__javaObject.getMapDisplay().getMapProjection())
 
     # TODO(jon): still deciding on a decent way to refer to an arbitrary projection...
@@ -235,6 +252,7 @@ class _Display(_JavaProxy):
 
     def getMaps(self):
         """Returns a dictionary of maps and their status for the display."""
+        
         # dict of mapName->boolean (describes if a map is enabled or not.)
         # this might fail for transect displays....
         mapLayer = self._JavaProxy__javaObject.getControls()[0]
@@ -245,7 +263,9 @@ class _Display(_JavaProxy):
 
     def setMaps(self, mapStates):
         """Allows for controlling the visibility of all available maps for
-        the display."""
+        the display.
+        """
+        
         mapLayer = self._JavaProxy__javaObject.getControls()[0]
         for currentState in mapLayer.getMapStates():
             mapSource = currentState.getSource()
@@ -254,6 +274,7 @@ class _Display(_JavaProxy):
 
     def getCenter(self, includeScale=False):
         """Returns the latitude and longitude at the display's center."""
+        
         position = self._JavaProxy__javaObject.getScreenCenter()
         latitude = position.getLatitude().getValue()
         longitude = position.getLongitude().getValue()
@@ -270,6 +291,7 @@ class _Display(_JavaProxy):
 
     def setScaleFactor(self, scale):
         """ """
+        
         self._JavaProxy__javaObject.getMapDisplay().zoom(scale)
 
     def getScaleFactor(self):
@@ -294,6 +316,7 @@ class _Display(_JavaProxy):
         longitude:
         scale: Optional parameter for "zooming". Default value (1.0) results in no rescaling; less than 1.0 "zooms out", while greater than 1.0 "zooms in."
         """
+        
         # source and dest are arbitrary rectangles.
         # float scaleX = dest.width / source.width;
         # float scaleY = dest.height / source.height;
@@ -315,10 +338,12 @@ class _Display(_JavaProxy):
 
     def getBackgroundColor(self):
         """Returns the Java AWT color object of the background color (or None)."""
+        
         return self._JavaProxy__javaObject.getMapDisplay().getBackground()
 
     def setBackgroundColor(self, color=java.awt.Color.CYAN):
         """Sets the display's background color to the given AWT color. Defaults to cyan."""
+        
         self._JavaProxy__javaObject.getMapDisplay().setBackground(color)
 
 #    def addLayer(self, newLayer):
@@ -331,16 +356,19 @@ class _Display(_JavaProxy):
 
     def getLayer(self, index):
         """Returns the layer at the given index (zero-based!) for this Display"""
+        
         return _Layer(self._JavaProxy__javaObject.getControls()[index])
 
     def getLayers(self):
         """Returns a list of all layers used by this Display."""
+        
         return [_Layer(displayControl) for displayControl in self._JavaProxy__javaObject.getControls()]
 
 # TODO(jon): still not sure what to offer here.
 class _Layer(_JavaProxy):
     def __init__(self, javaObject):
         """Creates a proxy for ucar.unidata.idv.DisplayControl objects."""
+        
         _JavaProxy.__init__(self, javaObject).addDisplayInfo()
 
     def getFrameCount(self):
@@ -618,17 +646,32 @@ def boomstick():
     mcv.removeAllData(False)
     System.gc()
 
-def createDisplay(title, width, height):
-    # somehow create a WindowInfo to use the bounds-setting stuff
-    # then you want to do something like:
-    # return uiManager.createNewWindow(None, 'SkinPath', 'title', windowInfo)
-    from ucar.unidata.idv.ui import WindowInfo
+def buildDisplayWindow(title, width=0, height=0):
+    """Creates a window using the default McIDAS-V display skin.
+    
+    Default skin is currently "/edu/wisc/ssec/mcidasv/resources/skins/window/map/onemapview.xml"; 
+    
+    Args:
+        title: Name to give to the window.
+        
+        width: Sets the window to this width (in pixels). Values less than or 
+               equal to zero are considered default values.
+               
+        height: Sets the window to this height (in pixels). Values less than 
+                or equal to zero are considered default values.
+    
+    Returns:
+        A "wrapped" IdvWindow.
+    """
     # DEFAULT_SKIN_PATH = '/edu/wisc/ssec/mcidasv/resources/skins/window/map/onemapview.xml'
     mcv = getStaticMcv()
     window = mcv.getIdvUIManager().buildDefaultSkin()
     window.setTitle(title)
+    if width > 0 and height > 0:
+        window.setSize(Dimension(width, height))
     return _Window(window)
 
 def makeLogger(name):
+    """ """
     return  LoggerFactory.getLogger(name)
-    
+
