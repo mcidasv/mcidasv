@@ -33,6 +33,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('examples/Observat
 <ul class="childlist">
 <li><a href="#obs">Point Data Displays</a></li>
 <li><a href="#track">Track Displays</a></li>
+<li><a href="#frontpositions">Front Positions</a></li>
 </ul>
 <a name="obs" id="obs"></a>
 <div class="pagesubtitle">Point Data Displays</div>
@@ -48,16 +49,18 @@ function setParentPage() { if (parent.setPage) parent.setPage('examples/Observat
     colored by depth. Earthquake data can be obtained from the U.S. Geological Survey (USGS) in Google Earth (KMZ) format and can be loaded into McIDAS-V in the <a href="../data/choosers/FileChooser.html">General-&gt;Files/Directories Chooser</a> with the Data Type of &quot;Google Earth Files KML/KMZ&quot;. Using the <a href="../tools/StationModelEditor.html">Station Model Editor</a>, you can specify how your data will be displayed in the Main Display window.</p>
 <div class="images"><img src="images/Earthquake.gif" alt="Image 2: Locations Display"><br>
 <span class="caption">Image 2: Locations Display</span></div>
-<p></p>
 <a name="track" id="track"></a>
 <div class="pagesubtitle">Track Displays</div>
 <p>Aircraft and drifting buoy tracks can be plotted to show the path of the sensor. You can also plot the track data as observations along the track. The track path is brought into McIDAS-V through the <a href="../data/choosers/FileChooser.html">General-&gt;Files/Directories Chooser</a> with the Data Type of &quot;Text Point and Trajectory Data files&quot;. The <a href="../ui/DisplayMenus.html#flythrough">Flythrough feature</a> is invoked in the Main Display Window through the <strong>View-&gt;Flythrough</strong> menu item. You can set the Flythrough to follow the track path by creating and importing an XML file with location (latitude, longitude, and altitude) data via <strong>File-&gt;Import</strong> in the Flythrough window.</p>
 <a name="image1" id="image1"></a>
 <div class="images">
-  <p><img src="images/PointObTrackDisplay.gif" alt="Image 3: TTrack Colored by Parameter Display with a Flythrough">  </p>
-  <p><span class="caption">Image 3: Track Colored by Parameter Display with a Flythrough</span></p>
+  <img src="images/PointObTrackDisplay.gif" alt="Image 3: TTrack Colored by Parameter Display with a Flythrough">
+  <br><span class="caption">Image 3: Track Colored by Parameter Display with a Flythrough</span>
 </div>
-<p></p>
+<a name="frontpositions" id="frontpositions"></a>
+<div class="pagesubtitle">Front Positions</div>
+<p>Via ADDE, McIDAS-V has the ability to plot a frontal analysis or a forecast of frontal positions. You can create these displays by selecting <strong>Front Positions</strong> in the <strong>Data Sources</strong> tab of the Data Explorer. For more information about this feature, see <a href="../quickstart/Fronts.html">Getting Started: Displaying Fronts</a> and <a href="../controls/FrontControl.html">Front Controls</a>.</p>
+<div class="images"><img src="images/FrontPositions.gif" alt="Image 4: Front Positions" width="574" height="439"><br><span class="caption">Image 4: Front Positions</span></div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">

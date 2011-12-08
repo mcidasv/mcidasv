@@ -337,6 +337,7 @@
       <div class="indented" id="appendix_1">
         <span class="link" onClick="setPage('examples/PlanViews.html');">Plan Views</span><br>
         <span class="link" onClick="setPage('examples/3DSurface.html');">3D Surface</span><br>
+        <span class="link" onClick="setPage('examples/CrossSections.html');">Cross Sections</span><br />
         <span class="link" onClick="setPage('examples/Imagery.html');">Imagery</span><br>
         <span class="link" onClick="setPage('examples/Radar.html');">Radar - Level II WSR-88D Data Displays</span><br>
         <span class="link" onClick="setPage('examples/Soundings.html');">Soundings</span><br>

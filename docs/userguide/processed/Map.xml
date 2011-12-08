@@ -186,6 +186,7 @@
 		<mapID target="idv.examples.3dsurface.2dtopo"				 url="examples/3DSurface.html#2dtopo" />
         <mapID target="idv.examples.3dsurface.isosurface"            url="examples/3DSurface.html#isosurface" />
         <mapID target="idv.examples.3dsurface.topography"            url="examples/3DSurface.html#topography" />
+		<mapID target="idv.examples.crosssections"					 url="examples/crosssections.html" />
         <mapID target="idv.examples.flowdisplays"                    url="examples/FlowDisplays.html" />
         <mapID target="idv.examples.flowdisplays.image1"             url="examples/FlowDisplays.html#image1" />
         <mapID target="idv.examples.flowdisplays.image2"             url="examples/FlowDisplays.html#image2" />

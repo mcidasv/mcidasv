@@ -49,8 +49,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/RemoteDataM
   <li class="propertylistitem"><strong>Valid</strong> - An empty column (no icon) means that the entry passed a verification check (the specified dataset and data type exists on the server) when it was added. A sad-face icon (<img src="images/addemanager/SadFaceIcon.gif" alt="sad-face icon" width="21" height="18" align=absmiddle>) indicates that the entry failed the verification check and thus will not work if you attempt to access data from the dataset. </li>
   <li class="propertylistitem"><strong>Source</strong> - Indicates the source of the entry. System entries (<img src="images/addemanager/LockIcon.gif" alt="Lock icon" width="21" height="18"align=absmiddle>) are ones supplied in the McIDAS-V package and thus are not editable. User entries (<img src="images/addemanager/ThumbsUpIcon.gif" alt="thumbs up icon" width="21" height="18"align=absmiddle>) are ones that were added by the user and thus are editable. MCTABLE entries (<img src="images/addemanager/BugIcon.gif" alt="MCTABLE icon" width="21" height="18"align=absmiddle>) are ones that were added by importing MCTABLE.TXT file and are also editable. </li>
   <li class="propertylistitem"><strong>Dataset</strong> - Lists the server IP address and dataset name for the entry. When you access the dataset (by pressing the <strong>Connect</strong> button in the Data Explorer), an ADDE request is sent to the server, which then returns the requested data.</li>
-  <li class="propertylistitem"><strong>Accounting</strong> - Indicates whether the entry includes accounting information (username and project number) for the server. These are the values specified in the <strong>Username</strong> and <strong>Project #</strong> fields in the <strong>Define New Remote Dataset</strong> window that appears when the <strong>Add New Dataset </strong>button is clicked. If accounting information was not specified, then the Accounting field entry says &quot;public dataset&quot;. </li>
-  <li class="propertylistitem"><strong>Data Types</strong> - Indicates the values that were selected in the Dataset Types section in the <strong>Define New Remote Dataset</strong> window that appears when the <strong>Add New Dataset</strong> button is clicked. </li>
+  <li class="propertylistitem"><strong>Accounting</strong> - Indicates whether the entry includes accounting information (username and project number) for the server. These are the values specified in the <strong>Username</strong> and <strong>Project #</strong> fields in the Define New Remote Dataset window that appears when the <strong>Add New Dataset </strong>button is clicked. If accounting information was not specified, then the Accounting field entry says &quot;public dataset&quot;. </li>
+  <li class="propertylistitem"><strong>Data Types</strong> - Indicates the values that were selected in the Dataset Types section in the Define New Remote Dataset window that appears when the <strong>Add New Dataset</strong> button is clicked. </li>
 </ul>
 <p>The four buttons at the bottom of the window are described in the corresponding section below.</p>
 <ul class="propertylist">
@@ -60,12 +60,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/RemoteDataM
   <li class="propertylistitem"><a href="#import_mctable" class="XRef"> <img src="images/addemanager/ImportMCTABLEbutton.gif" alt="Import MCTABLE button" width="152" height="31" align=absmiddle></a></li>
 </ul>
 <a name="add_new_dataset" id="add_new_dataset"></a> <div class="pagesubtitle">Adding a New Remote Dataset</div>
-<p>The window below appears if you click the <strong>Add New Dataset</strong> button or select the <strong>File-&gt;New Remote Dataset</strong> menu in the <strong>Remote ADDE Data Manager</strong> window. </p>
+<p>The window below appears if you click the <strong>Add New Dataset</strong> button or select the <strong>File-&gt;New Remote Dataset</strong> menu in the Remote ADDE Data Manager window. </p>
 <a name="image1" id="image1"></a>
 <div class="images"><img src="images/addemanager/AddRemote.gif" alt="Image 2: Define a New Remove Dataset Window" width="549" height="401"><br> 
 <span class="caption">Image 2: Define a New Remote Dataset Window </span></div>
 <p></p>
-<p>The <strong>Define New Remote Dataset</strong> window lets you add access to remote datasets so they are available through the <a href="../ui/DataExplorer.html">Data Explorer</a>.</p>
+<p>The Define New Remote Dataset window lets you add access to remote datasets so they are available through the <a href="../ui/DataExplorer.html">Data Explorer</a>.</p>
 <p>The fields and buttons are defined below.</p>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Server</strong> - Represents the IP address of the server workstation. </li>
@@ -80,18 +80,18 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/RemoteDataM
   <li class="propertylistitem"><img src="images/addemanager/Cancel.gif" alt="Cancel button" width="80" height="30" align=absmiddle> <strong> -</strong> Closes the window and discards any information that was entered.</li>
 </ul>
 <a name="edit_dataset" id="edit_dataset"></a> <div class="pagesubtitle">Editing an Existing Remote Dataset</div>
-<p> If you highlight an editable entry in the <strong>ADDE Data Manager</strong> window and then click the <strong>Edit Dataset</strong> button, the window and fields are the same as above, except that the window title is <strong>Edit Remote Dataset</strong> and the bottom buttons say Verify and Save Changes, Verify Changes, and Save Changes (rather than Verify and Add Server, Verify Server, and Add Server).</p>
+<p> If you highlight an editable entry in the ADDE Data Manager window and then click the <strong>Edit Dataset</strong> button, the window and fields are the same as above, except that the window title is <strong>Edit Remote Dataset</strong> and the bottom buttons say Verify and Save Changes, Verify Changes, and Save Changes (rather than Verify and Add Server, Verify Server, and Add Server).</p>
 <a name="remove_selection" id="remove_selection"></a>
 <div class="pagesubtitle">Removing an Existing Remote Dataset</div>
-<p>If you highlight an editable entry in the <strong>ADDE Data Manager</strong> window and then click the <strong>Remove Selection</strong> button, it immediately removes the entry from the table. There is no recovery option, so if you accidentally remove an entry you need, you will have to remake the entry using the <strong>Add New Dataset </strong>button.</p>
+<p>If you highlight an editable entry in the ADDE Data Manager window and then click the <strong>Remove Selection</strong> button, it immediately removes the entry from the table. There is no recovery option, so if you accidentally remove an entry you need, you will have to remake the entry using the <strong>Add New Dataset </strong>button.</p>
 <a name="import_mctable" id="import_mctable"></a>
 <div class="pagesubtitle">Importing MCTABLE...</div>
-<p>The window below appears if you click the <strong>IMPORT MCTABLE...</strong> button in the <strong>Remote ADDE Data Manager</strong> window. </p>
+<p>The window below appears if you click the <strong>IMPORT MCTABLE...</strong> button in the Remote ADDE Data Manager window. </p>
 <a name="image1" id="image1"></a>
 <div class="images"><img src="images/addemanager/ImportMCTABLE.gif" alt="Image 3: Import MCTABLE Window" width="612" height="362"><br> 
     <span class="caption">Image 3: Import MCTABLE Window </span></div>
 <p></p>
-<p>The <strong>Import MCTABLE</strong> window lets you import a MCTABLE.TXT file that contains a preexisting set of entries for the <strong>Remote ADDE Data Manager</strong>. For example, McIDAS-X users may have added access to many servers via the DATALOC command. Those entries are stored in the MCTABLE.TXT file, which can be imported to McIDAS-V.</p>
+<p>The Import MCTABLE window lets you import a MCTABLE.TXT file that contains a preexisting set of entries for the Remote ADDE Data Manager. For example, McIDAS-X users may have added access to many servers via the DATALOC command. Those entries are stored in the MCTABLE.TXT file, which can be imported to McIDAS-V.</p>
 <p>The fields and buttons are defined below.</p>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Look In</strong> - Allows you to select folders to search for data files, or you can double-click on folder names.</li>
@@ -100,7 +100,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/RemoteDataM
   <li class="propertylistitem"><img src="images/CreateNewFolder.gif" alt="Create New Folder icon" width="24" height="24" align=absmiddle> <strong> Create New Folder</strong> - Creates a new folder.</li>
   <li class="propertylistitem"><img src="images/List.gif" alt="List icon" width="24" height="24" align=absmiddle> <strong> List</strong> - Switches the view to a listing of all folders and files in the current path.</li>
   <li class="propertylistitem"><img src="images/Details.gif" alt="Details icon" width="23" height="24" align=absmiddle> <strong> Details</strong> - Switches the view to a detailed list of all folders and files in the current path.</li>
-  <li class="propertylistitem"><strong>Use ADDE Accounting?</strong> - Enables the you to enter a username and project number if the servers in the MCTABLE.TXT file you are importing use ADDE accounting to require users to do so. If you use different usernames and/or project numbers on some servers, you can edit them (via the <strong>Edit Dataset</strong> button in the <strong>Remote ADDE Data Manager</strong> window) after you import the file. </li>
+  <li class="propertylistitem"><strong>Use ADDE Accounting?</strong> - Enables the you to enter a username and project number if the servers in the MCTABLE.TXT file you are importing use ADDE accounting to require users to do so. If you use different usernames and/or project numbers on some servers, you can edit them (via the <strong>Edit Dataset</strong> button in the Remote ADDE Data Manager window) after you import the file. </li>
   <li class="propertylistitem"><strong>File Name</strong> - Selects a file to populate the entry box to show the full name of the file selected.</li>
   <li class="propertylistitem"><strong>Files of Type</strong> - Narrows down the files shown in a folder to a specific data type.</li>
   <li class="propertylistitem"><img src="images/addemanager/Open.gif" alt="Open button" width="77" height="27" align=absmiddle> <strong> -</strong> Imports the selected file so that its entries are added to the<strong> Remote ADDE Data Manager</strong>.</li>
