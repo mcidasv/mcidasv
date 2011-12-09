@@ -30,7 +30,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/Formulas.ht
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Formulas</div>
-<p><a name="edit" id="edit"></a>McIDAS-V provides techniques to make computations with data sources, and display the results. The simplest technique is using McIDAS-V formulas, which are named, one-line mathematical expressions. The steps for computing and displaying a McIDAS-V formula are:</p>
+<p><a name="edit" id="edit"></a>McIDAS-V provides techniques to make computations with data sources and to display the results. The simplest technique is using McIDAS-V formulas, which are one-line mathematical expressions. The steps for computing and displaying a McIDAS-V formula are:</p>
 <ul>
   <li>Defining a McIDAS-V formula by name, description, and mathematical formula.</li>
 <li>Saving the formula.</li>
@@ -38,7 +38,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/Formulas.ht
 <li>Selecting which data to use in the formula.</li>
 </ul>
 You can make formulas more powerful by writing methods (subroutines) in the Jython computer language, which is described in <a href="Jython.html">Jython Methods</a>.
-<p>When you define a McIDAS-V formula, it is saved and will appear in future sessions of McIDAS-V.</p>
+<p>Once you define a McIDAS-V formula, it is saved and will appear in future sessions of McIDAS-V.</p>
 <p>To create a formula, select the <strong>Tools-&gt;Formulas-&gt;Create Formula</strong> menu
 item in the Main Display window. This opens the Formula Editor dialog window used to define a formula:</p>
 <div class="images"><img src="images/formula/AddFormula.gif" alt="Image 1: Formula Editor Dialog"><br>
@@ -46,10 +46,10 @@ item in the Main Display window. This opens the Formula Editor dialog window use
 <p>The minimal information you must provide is the name of the formula and the
 formula itself.</p>
 <p>If the formula name matches a name in the main <strong>Tools</strong> menu <a href="../ui/Menus.html#tools"><strong>Parameter defaults</strong></a>, then color tables and other settings may be automatically assigned, which may or may not be desirable for you. For example, if you choose a formula named T, its displays would get the color tables associated with temperature.</p>
-<p>In the formula itself you can use common mathematical operators much as +, -, * for multiply, / for divide, and ** for power. Other Jython operations such as sqrt(a), max(b), pow(a,b), and sin(c) are available. The <a href="Jython.html">Jython Methods</a> section of the <strong>User's Guide</strong> explains how to write complete, complete multi-line functions or Jython methods that you can call in one-line formulas.</p>
+<p>In the formula itself you can use common mathematical operators much as +, -, * for multiply, / for divide, and ** for power. Other Jython operations such as sqrt(a), max(b), pow(a,b), and sin(c) are available. The <a href="Jython.html">Jython Methods</a> section of the User's Guide explains how to write complete multi-line functions or Jython methods that you can call in one-line formulas.</p>
 <p>The variable names in the formula definition, such as &quot;NIR&quot; in the figure above, are operands and do <em>not</em> need to exactly match any particular parameter name in any data source; the association is made later, in the parameter selection step.</p>
-<p>Do not use spaces in formula variable names, such as &quot;wind speed.&quot; The formula is an expression in the Jython language. Start each variable name with a letter.</p>
-<p>It is best to use variable names that suggest the parameter data they represent, so that later you can easily remember what the variables should represent. Use names like Temp500m, RelHum_surf, absvort, sst_jan, density, or whatever makes sense to you. If you use a variable names like V1 and V2, then later when the formula requests which real parameter name goes with which variable name you may be puzzled which is which.</p>
+<p>Do not use spaces in formula variable names, such as &quot;wind speed.&quot; The formula is an expression in the Jython language. Each variable name must start with a letter.</p>
+<p>It is best to use variable names that suggest the parameter data they represent, so that later you can easily remember what the variables mean. Use names like Temp500m, RelHum_surf, absvort, sst_jan, density, or whatever makes sense to you. If you use a variable names like V1 and V2, then later when the formula requests which real parameter name goes with which variable name you may be puzzled which is which.</p>
 <p>Variable names can have extra &quot;syntactic sugar&quot; attached to them that McIDAS-V uses for a variety of purposes. The &quot;sugar&quot; consists of a set of name/value pairs contained in brackets (&quot;[...]&quot;) after the variable name.</p>
 <p>For example, normally variables are used to select and define data choices. You can also have variables that are simple text input from a user. For example, evaluating the following expression:</p>
 <pre>
@@ -64,7 +64,7 @@ formula itself.</p>
 <pre>
    someProcedure(someDataValue[categories=param:ALTITUDE])
 </pre>
-<p>If you want multiple data categories separate them with a &quot;;&quot;:</p>
+<p>If you want multiple data categories, separate them with a &quot;;&quot;:</p>
 <pre>
    someProcedure(someDataValue[categories=param:ALTITUDE;param:elevation])
 </pre>
@@ -80,7 +80,7 @@ formula itself.</p>
 <pre>
    someProcedure(someValue[pattern=some_pattern])
 </pre>
-<p>In the advanced section you can enter a description of the formula, its group or category and you can define what types of displays are applicable for the given formula (the default is to be able to use all displays).</p>
+<p>In the advanced section you can enter a description of the formula, its group or category, and you can define what types of displays are applicable for the given formula (the default is to be able to use all displays).</p>
 <p>The group is used to display the formula in the Field Selector window and can be any alphanumeric text including spaces, numbers, and punctuation characters. Hyphens (&quot;-&quot;) define sub-categories.</p>
 <p>To save the formula, click on <img src="images/formula/AddFormulaButton.gif" alt="Add Formula button" width="105" height="26"align=absmiddle>. A new entry appears in the selector panel. By right clicking on the formula entry in the Field Selector window you can edit the formula. To remove a formula, click on <img src="images/formula/RemoveFormulaButton.gif" alt="Remove Formula button" width="129" height="26"align=absmiddle> in the pull down menu.</p>
 <div class="pagesubtitle">Different data sources and automatic navigation</div>
