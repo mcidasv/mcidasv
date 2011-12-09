@@ -11,6 +11,14 @@
     </encoder>
   </appender>
 
+  <appender name="JYTHON" class="ch.qos.logback.core.FileAppender">
+    <file>${mcv.userpath}/jython.log</file>
+    <encoder>
+      <!-- <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %method: %msg%n</pattern> -->
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger:%n%msg%n</pattern>
+    </encoder>
+   </appender>
+
   <!-- you can override the root level for specific packages -->
   <!-- <logger name="edu.wisc.ssec.mcidasv" level="TRACE"/> -->
 
@@ -20,4 +28,11 @@
   <root level="OFF">
     <appender-ref ref="STDOUT" />
   </root>
+  
+  <logger name="jython" level="INFO">
+    <!-- remember: jython is like a subclass of the root logger; including the STDOUT -->
+    <!-- appender will only result in duplicate output. -->
+    <!-- <appender-ref ref="STDOUT" /> -->
+    <appender-ref ref="JYTHON" />
+  </logger>
 </configuration>
