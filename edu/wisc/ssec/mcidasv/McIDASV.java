@@ -88,6 +88,8 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.xml.XmlDelegateImpl;
 import ucar.unidata.xml.XmlEncoder;
 import ucar.unidata.xml.XmlUtil;
+import uk.org.lidalia.sysoutslf4j.context.LogLevel;
+import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 
 import edu.wisc.ssec.mcidasv.chooser.McIdasChooserManager;
 import edu.wisc.ssec.mcidasv.control.LambertAEA;
@@ -1475,6 +1477,8 @@ public class McIDASV extends IntegratedDataViewer {
      * @throws Exception When something untoward happens
      */
     public static void main(String[] args) throws Exception {
+//        SysOutOverSLF4J.registerLoggingSystem("ch.qos.logback");
+        SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(LogLevel.INFO, LogLevel.WARN);
         logger.info("=============================================================================");
         logger.info("Starting McIDAS-V @ {}", new Date());
         logger.info("Versions:");

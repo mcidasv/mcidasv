@@ -54,6 +54,8 @@ import org.python.core.PyString;
 import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
 import org.python.util.PythonInterpreter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import visad.Data;
 import visad.MathType;
@@ -73,13 +75,15 @@ import ucar.unidata.util.GuiUtils;
  * This class provides  an interactive shell for running JYthon
  *
  * @author IDV development team
- * @version $Revision$Date: 2011/03/24 16:06:36 $
+ * @version $Revision$Date: 2011/03/24 18:16:38 $
  */
 public class JythonShell extends InteractiveShell {
 
     /** property that holds the history */
     public static final String PROP_JYTHON_SHELL_HISTORY =
         "prop.jython.shell.history";
+
+    protected static final Logger jythonLogger = LoggerFactory.getLogger("jython");
 
     /** idv */
     private IntegratedDataViewer idv;
@@ -314,12 +318,16 @@ public class JythonShell extends InteractiveShell {
         interp.set("shell", this);
         outputStream = new OutputStream() {
             @Override public void write(byte[] b, int off, int len) {
-                output(new String(b, off, len)
-                    .replace("<", "&lt;")
-                    .replace(">", "&gt;")
-                    .replace("\n", "<br>")
-                    .replace(" ", "&nbsp;")
-                    .replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;"));
+                String output = new String(b, off, len);
+                print(output);
+                output(output.replace("<", "&lt;")
+                             .replace(">", "&gt;")
+                             .replace("\n", "<br>")
+                             .replace(" ", "&nbsp;")
+                             .replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;"));
+            }
+            private void print(final String output) {
+                jythonLogger.info("{}", output);
             }
             @Override public void write(int b) {}
         };
