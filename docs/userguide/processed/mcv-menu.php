@@ -256,6 +256,7 @@
 	  
       <div class="indented" id="miscellaneous_2">
             <span class="link" onClick="setPage('tools/Formulas.html');">Formulas</span><br>
+                    <span class="link" onClick="setPage('tools/DerivedData.html');">Derived Data</span><br>
         <span class="toggle" onClick="toggleChildren(this,'miscellaneous_2_1');">+</span>
 		<span class="link" onClick="setPage('tools/NativeFormulas.html');">Native Formulas</span><br>
 		<div class="indented" id="miscellaneous_2_1">
@@ -267,7 +268,6 @@
             <span class="link" onClick="setPage('tools/ImageryFormulas.html');">Description of Formulas - Imagery</span><br>
 		</div>
         <span class="link" onClick="setPage('tools/Jython.html');">Jython Methods</span><br>
-        <span class="link" onClick="setPage('tools/DerivedData.html');">Derived Data</span><br>
         <span class="link" onClick="setPage('tools/JythonShell.html');">Jython Shell</span><br>
         <span class="link" onClick="setPage('tools/JythonLib.html');">Jython Library</span><br>
       </div>

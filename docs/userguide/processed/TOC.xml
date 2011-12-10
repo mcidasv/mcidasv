@@ -166,6 +166,7 @@
 	<tocitem text="Projection Manager" target="idv.tools.projectionmanager"/>
 	<tocitem text="Data Analysis" target="idv.page_dataanalysis">
         <tocitem text="Formulas" target="idv.tools.formulas"/>
+		<tocitem text="Derived Data" target="idv.tools.deriveddata"/>
         <tocitem text="Native Formulas" target="idv.tools.nativeformulas">
             <tocitem text="Description of Formulas - Maps" target="idv.tools.mapformulas"/>
             <tocitem text="Description of Formulas - Miscellaneous" target="idv.tools.miscellaneousformulas"/>
@@ -175,7 +176,6 @@
             <tocitem text="Description of Formulas - Imagery" target="idv.tools.imageryformulas"/>
         </tocitem>
         <tocitem text="Jython Methods" target="idv.tools.jython"/>
-        <tocitem text="Derived Data" target="idv.tools.deriveddata"/>
         <tocitem text="Jython Shell" target="idv.tools.jythonshell"/>
         <tocitem text="Jython Library" target="idv.tools.jythonlib"/>
     </tocitem>
