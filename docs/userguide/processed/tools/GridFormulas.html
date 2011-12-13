@@ -44,11 +44,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
    <td width="630"><strong>Definition
    </strong></tr>
    <tr>
-   <td width="120" colspan="1" rowspan="1" valign="top">
+   <td width="140" colspan="1" rowspan="1" valign="top">
    <p><em>gddiag </em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>Grid diagnostic. For more information, see the Grid Diagnostics section of the <a href="JythonLib.html#griddiag">Jython Library</a>.</p>
+   <p>Grid diagnostic. For more information, see the Grid Diagnostics section of  <a href="JythonLib.html#griddiag">Jython Library</a>.</p>
    </td>
    </tr>
 </table></li>
@@ -62,13 +62,29 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
           <td width="630"><strong>Definition
             </strong></tr>
       <tr>
-          <td width="120" colspan="1" rowspan="1" valign="top">
+          <td width="140" colspan="1" rowspan="1" valign="top">
               <p><em>scalar</em></p>
           </td>
           <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-              <p>Scalar Parameter.</p>
+              <p>Scalar Parameter (the parameter that will be mapped).</p>
           </td>
       </tr>
+      <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>U Component</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The u-component of the wind.</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>V Component</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The v-component of the wind.</p>
+   </td>
+   </tr>
 </table></tli>
 <li class="propertylistitem"><strong>Horizontal Flux Divergence (from %N1% &amp; %N2%) (scalar parameter, U
     Component, V Component) - </strong>Calculates horizontal flux divergence from U and V components.</li>
@@ -78,24 +94,62 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
    <td width="630"><strong>Definition
    </strong></tr>
    <tr>
-   <td width="120" colspan="1" rowspan="1" valign="top">
+   <td width="140" colspan="1" rowspan="1" valign="top">
    <p><em>scalar</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>Scalar Parameter</p>
+   <p>Scalar Parameter (the parameter that will be mapped).</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>U Component</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The u-component of the wind</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>V Component</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The v-component of the wind.</p>
    </td>
    </tr>
 </table></li>
 <li class="propertylistitem"><strong>Layer Difference (Top of Layer, Bottom of Layer) -</strong> Calculates a layer difference between a field at two different
-levels.</li>
-<li class="propertylistitem"><strong>Layer Wind Shear  (top, bottom) - </strong>Calculates the wind shear between two user-defined layers.</li>
+levels. Note that you must select a 3D field to use this formula.</li>
     <li class="propertylistitem"><table id="gridformulas4" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
    </strong></tr>
    <tr>
-   <td width="120" colspan="1" rowspan="1" valign="top">
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>Top of Layer</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>Top layer (default=500)</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>Bottom of Layer</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>Bottom layer (default=1000)</p>
+   </td>
+   </tr>
+</table></td>
+<li class="propertylistitem"><strong>Layer Wind Shear  (top, bottom) - </strong>Calculates the wind shear between two user-defined layers. Note that you must select 3D fields to use this formula.</li>
+    <li class="propertylistitem"><table id="gridformulas4" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
    <p><em>top </em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
@@ -103,7 +157,7 @@ levels.</li>
    </td>
    </tr>
    <tr>
-   <td width="120" colspan="1" rowspan="1" valign="top">
+   <td width="140" colspan="1" rowspan="1" valign="top">
    <p><em>bottom</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
@@ -112,20 +166,152 @@ levels.</li>
    </tr>
 </table></td>
 <li class="propertylistitem"><strong>Make flow vectors from grid relative u and v data  (u, v) - </strong>Calculates true wind vectors based off of relative u and v data after user inputs the field and desired levels. You can utilize 2D or 3D data.</li>
+    <li class="propertylistitem"><table id="gridformulas4" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>u</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The u-component of the wind.</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>v</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The v-component of the wind.</p>
+   </td>
+   </tr>
+</table></td>
 <li class="propertylistitem"><strong>Make flow vectors from u and v data  (u, v) - </strong>Creates flow vectors based off of the 2D u and v parameters entered by the user.</li>
+<li class="propertylistitem"><table id="gridformulas4" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>u</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The u-component of the wind.</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>v</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The v-component of the wind.</p>
+   </td>
+   </tr>
+</table></td>
 <li class="propertylistitem"><strong>Make flow vectors from u, v, and w data  (u, v, w) - </strong>Creates flow vectors based off of the 3D u and v parameters entered by the user. These flow vectors are then scaled based off the user-entered w parameter.</li>
+<li class="propertylistitem"><table id="gridformulas4" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>u</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The u-component of the wind.</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>v</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The v-component of the wind.</p>
+   </td>
+   </tr>
+      <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>w</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The w-component of the wind (vertical velocity).</p>
+   </td>
+   </tr>
+</table></td>
 <p><strong>Make slice 2D (slice) - </strong>Creates a 2D slice from a 3D display at a single level.</p>
+<li class="propertylistitem"><table id="gridformulas1" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>slice</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The parameter utilized to create the display.</p>
+   </td>
+   </tr>
+</table></li>
 <li class="propertylistitem"><strong>One value colored by another (Data field, Color field) - </strong>Creates an image of the data chosen in the Data field, and colors the data with the color scheme of the Color field parameter.
 </li>
+<li class="propertylistitem"><table id="gridformulas4" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>Data field</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The parameter that is mapped in the display.</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>Color field</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The parameter whose color field will be used to plot the parameter selected under Data field.</p>
+   </td>
+   </tr>
+</table>
 <li class="propertylistitem"><strong>Resample grid (grid, gridwithNewDomain) - </strong>Displays gridded data on a new domain.</li>
-<li class="propertylistitem"><strong>Simple time difference in one parameter (Time 1, Time 2) - </strong>Creates an image representing the numerical difference in the value of the chosen parameter between the two time steps selected by the user. Time 1 is the initial time step, and Time 2 is the second time step. The difference in the parameter is done by Time 2 - Time 1.</li>
+<li class="propertylistitem"><table id="gridformulas4" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>grid</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The parameter that is mapped in the display.</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>gridwithNewDomain</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The parameter whose domain will be used to plot the parameter selected under grid.</p>
+   </td>
+   </tr>
+</table>
+<li class="propertylistitem"><strong>Simple time difference in one parameter (Time 1, Time 2) - </strong>Creates an image representing the numerical difference in the value of the chosen parameter between the two time steps selected by the user. Time 1 is the initial time step, and Time 2 is the second time step. For example, if you select Time 1 to be 10, and Time 2 to be 0, then the formula will utilize the most recent time, and the 10th most recent time. The difference in the parameter is done by Time 2 - Time 1.</li>
     <li class="propertylistitem"><table id="gridformulas5" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
    </strong></tr>
    <tr>
-   <td width="120" colspan="1" rowspan="1" valign="top">
+   <td width="140" colspan="1" rowspan="1" valign="top">
    <p><em>Time 1 </em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
@@ -133,22 +319,22 @@ levels.</li>
    </td>
    </tr>
    <tr>
-   <td width="120" colspan="1" rowspan="1" valign="top">
+   <td width="140" colspan="1" rowspan="1" valign="top">
    <p><em>Time 2 </em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
    <p>Second time (default=0)</p>
    </td>
    </tr>
-</table>
-<p><strong>Slice at Altitude  (Altitude, Unit) - </strong>Extracts a 2D horizontal slice from a 3D grid at the given altitude and maps an image.</p>
-    <table id="mapformulas6" cellpadding="0" cellspacing="0" border="1">
+</table></li>
+<li class="propertylistitem"><strong>Slice at Altitude  (Altitude, Unit) - </strong>Extracts a 2D horizontal slice from a 3D grid at the given altitude and maps an image.</li>
+    <li class="propertylistitem"><table id="mapformulas6" cellpadding="0" cellspacing="0" border="1">
    <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
    </strong></tr>
    <tr>
-       <td width="120" colspan="1" rowspan="1" valign="top">
+       <td width="140" colspan="1" rowspan="1" valign="top">
            <p><em>altitude </em></p>
         </td>
        <td width="510" colspan="2" rowspan="1" valign="top">
@@ -156,7 +342,7 @@ levels.</li>
         </td>
    </tr>
    <tr>
-   <td width="120" colspan="1" rowspan="1" valign="top">
+   <td width="140" colspan="1" rowspan="1" valign="top">
    <p><em>unit</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
@@ -171,7 +357,7 @@ levels.</li>
    <td width="630"><strong>Definition
    </strong></tr>
    <tr>
-   <td width="120" colspan="1" rowspan="1" valign="top">
+   <td width="140" colspan="1" rowspan="1" valign="top">
    <p><em>level </em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
@@ -187,7 +373,7 @@ levels.</li>
    <td width="630"><strong>Definition
    </strong></tr>
    <tr>
-   <td width="120" colspan="1" rowspan="1" valign="top">
+   <td width="140" colspan="1" rowspan="1" valign="top">
    <p><em>top</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
@@ -195,7 +381,7 @@ levels.</li>
    </td>
    </tr>
    <tr>
-   <td width="120" colspan="1" rowspan="1" valign="top">
+   <td width="140" colspan="1" rowspan="1" valign="top">
    <p><em>bottom</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
