@@ -69,27 +69,48 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageFilter
    <p><em>bline</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>beginning line in the source image region (default=first line)</p></td>
+   <p>The beginning line in the source image region (default=first line).</p></td>
    <tr>
    <td width="120" colspan="1" rowspan="1" valign="top">
    <p><em>eline</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>ending line in the source image region (default=last line)</p></td>
+   <p>The ending line in the source image region (default=last line).</p></td>
    <tr>
    <td width="120" colspan="1" rowspan="1" valign="top">
    <p><em>pdiff</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>maximum percentage of the product range to allow before a new value for
-     the pixel is derived using the average of two adjacent pixels (default=15)</p></td>
+   <p>The maximum percentage of the product range to allow before a new value for
+     the pixel is derived using the average of two adjacent pixels (default=15).</p></td>
    <tr>
    <td width="120" colspan="1" rowspan="1" valign="top">
    <p><em>ldiff</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>minimum percentage of the product range to allow before a new value for
-     the pixel is derived using the average of two adjacent pixels (default=15)</p></td>
+   <p>The minimum percentage of the product range to allow before a new value for
+     the pixel is derived using the average of two adjacent pixels (default=15).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>stretch</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The stretch applied to the data, either Histogram or Contrast (default=Histogram).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>BT Min</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The minimum brightness value for calibration (default=0).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>BT Max</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The maximum brightness value for calibration (default=100).</p></td>
    </tr>
 </table>
 <p><a name="cloud" id="cloud"></a><strong>Cloud Image Filter (replace, constant)</strong></p>
@@ -106,7 +127,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageFilter
    <p><em>replace</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>replacement value (default=minimum value in either <em>sdataset</em>)</p>
+   <p>The replacement value (default=minimum value in either <em>sdataset</em>)</p>
    </td>
    </tr>
    <tr>
@@ -114,8 +135,29 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageFilter
    <p><em>constant</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>additive constant (default=0)</p>
+   <p>The additive constant (default=0)</p>
    </td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>Stretch</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The stretch applied to the data, either Histogram or Contrast (default=Histogram).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>ldiff</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The minimum brightness value for calibration (default=0).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>ldiff</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The maximum brightness value for calibration (default=100).</p></td>
    </tr>
 </table>
 <p><a name="core" id="core"></a><strong>Core Image Filter (brkpoint1, brkpoint2, replace1, replace2)</strong></p>
@@ -132,7 +174,7 @@ has only two values.</p>
    <p><em>brkpoint1</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p><em>sdataset1 </em>breakpoint value (default=minimum value in either <em>sdataset</em>)</p>
+   <p><em>sdataset1 </em>breakpoint value (default=minimum value in either source dataset<em></em>)</p>
    </td>
    </tr>
    <tr>
@@ -140,22 +182,43 @@ has only two values.</p>
    <p><em>brkpoint2 </em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p><em>sdataset2 </em>breakpoint value (default=maximum value in either <em>sdataset</em>)</p>
+   <p><em>sdataset2 </em>breakpoint value (default=maximum value in either source dataset<em></em>)</p>
    </td>
    </tr>
    <tr>
    <td width="120" colspan="1" rowspan="1" valign="top"><p><em>replace1</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>success condition replacement value (default=maximum value in either <em>sdataset</em>)</p>
+   <p>success condition replacement value (default=maximum value in either source dataset<em></em>)</p>
    </td>
    </tr>
    <tr>
    <td width="120" colspan="1" rowspan="1" valign="top"><p><em>replace2 </em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>failure condition replacement value (default=minimum value in either <em>sdataset</em>)</p>
+   <p>failure condition replacement value (default=minimum value in either source dataset<em></em>)</p>
    </td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>stretch</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The stretch applied to the data, either Histogram or Contrast (default=Histogram).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>BT Min</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The minimum brightness value for calibration (default=0).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>BT Max</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The maximum brightness value for calibration (default=100).</p></td>
    </tr>
   <tr>
 <td width="120" colspan="1" rowspan="1" valign="top"><p>Equationfor each <em>ddataset</em> element:</p><a name="pgfId-1072405" id="pgfId-1072405"></a>
@@ -181,8 +244,7 @@ else <em>ddataset</em> = <em>replace2</em></p>
    <p><em>brkpoint1</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>low end breakpoint value for <em>sdataset1</em> (default=minimum value in either
-     <em>sdataset</em>)</p>
+   <p>The low end breakpoint value for <em>sdataset1</em> (default=minimum value in either source dataset<em></em>)</p>
    </td>
    </tr>
    <tr>
@@ -190,15 +252,14 @@ else <em>ddataset</em> = <em>replace2</em></p>
    <p><em>brkpoint2 </em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>high end breakpoint value for <em>sdataset1</em> (default=maximum value in either
-     <em>sdataset</em>)</p>
+   <p>The high end breakpoint value for <em>sdataset1</em> (default=maximum value in either source dataset<em></em>)</p>
    </td>
    </tr>
    <tr>
    <td width="120" colspan="1" rowspan="1" valign="top"><p><em>brkpoint3</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>low end breakpoint value for <em>sdataset2</em> (default=minimum value in either
+   <p>The low end breakpoint value for <em>sdataset2</em> (default=minimum value in either
      <em>sdataset</em>)</p>
    </td>
    </tr>
@@ -206,9 +267,30 @@ else <em>ddataset</em> = <em>replace2</em></p>
    <td width="120" colspan="1" rowspan="1" valign="top"><p><em>brkpoint4</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>high end breakpoint value for <em>sdataset2</em> (default=maximum value in either
+   <p>The high end breakpoint value for <em>sdataset2</em> (default=maximum value in either
      <em>sdataset</em>)</p>
    </td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>stretch</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The stretch applied to the data, either Histogram or Contrast (default=Histogram).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>BT Min</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The minimum brightness value for calibration (default=0).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>BT Max</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The maximum brightness value for calibration (default=100).</p></td>
    </tr>
   <tr>
   <td width="120" rowspan="1" colspan="1" valign="top">
@@ -223,10 +305,32 @@ else <em>ddataset</em> = <em>replace</em></p>
 <p><a name="gradient" id="gradient"></a><strong>Gradient Image Filter</strong></p>
 <p>This formula applies a gradient filter to the source image.</p>
 <table id="gradientfilter" cellpadding="0" cellspacing="0" border="1">
+
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
    </strong></tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>stretch</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The stretch applied to the data, either Histogram or Contrast (default=Histogram).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>BT Min</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The minimum brightness value for calibration (default=0).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>BT Max</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The maximum brightness value for calibration (default=100).</p></td>
+   </tr>
    <tr>
 <td valign="top" rowspan="1" colspan="1" width="120">
 <p>&nbsp;</p>
@@ -248,12 +352,32 @@ else <em>ddataset</em> = <em>replace</em></p>
    <td width="630"><strong>Definition
    </strong></tr>
    <tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>stretch</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The stretch applied to the data, either Histogram or Contrast (default=Histogram).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>BT Min</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The minimum brightness value for calibration (default=0).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>BT Max</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The maximum brightness value for calibration (default=100).</p></td>
+   </tr>
 <td valign="top" rowspan="1" colspan="1" width="120">
 <p>&nbsp;</p>
 </td>
 <td valign="top" rowspan="1" colspan="2" width="510">
-<p><em>ddataset</em> = (<em>sdataset</em> - (sample average ) + (sample midpoint)
-  )</p>
+<p><em>ddataset</em> = (<em>sdataset</em> - (sample average ) + (sample midpoint))</p>
 </td>
 </tr>
 </table>
@@ -274,7 +398,7 @@ else <em>ddataset</em> = <em>replace</em></p>
    <p><em>radius</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>sample length surrounding the source element; used for sample average (default=50)</p>
+   <p>The sample length surrounding the source element; used for sample average (default=50)</p>
    </td>
    </tr>
    <tr>
@@ -282,8 +406,29 @@ else <em>ddataset</em> = <em>replace</em></p>
    <p><em>leak</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>filter efficiency (default=100)</p>
+   <p>The filter efficiency (default=100)</p>
    </td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>stretch</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The stretch applied to the data, either Histogram or Contrast (default=Histogram).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>BT Min</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The minimum brightness value for calibration (default=0).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>BT Max</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The maximum brightness value for calibration (default=100).</p></td>
    </tr>
      <tr>
 <td width="120" colspan="1" rowspan="1" valign="top"><p>Equationfor each <em>ddataset</em> element:</p>
@@ -307,7 +452,7 @@ else <em>ddataset</em> = <em>replace</em></p>
    <p><em>brkpoint1</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>low end breakpoint value (default=minimum <em>sdataset</em> value)</p>
+   <p>The low end breakpoint value (default=minimum <em>sdataset</em> value)</p>
    </td>
    </tr>
    <tr>
@@ -315,8 +460,29 @@ else <em>ddataset</em> = <em>replace</em></p>
    <p><em>brkpoint2 </em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>high end breakpoint value (default=maximum <em>sdataset</em> value)</p>
+   <p>The high end breakpoint value (default=maximum <em>sdataset</em> value)</p>
    </td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>stretch</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The stretch applied to the data, either Histogram or Contrast (default=Histogram).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>BT Min</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The minimum brightness value for calibration (default=0).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>BT Max</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The maximum brightness value for calibration (default=100).</p></td>
    </tr>
   <tr>
   <td width="120" rowspan="1" colspan="1" valign="top"><p>Equation for each <em>ddataset</em> element: </p><a name="pgfId-1072405" id="pgfId-1072405"></a>
@@ -342,7 +508,7 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
    <p><em>linecoef</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>line coefficient; 0.0 &lt; <em>linecoef</em> &lt; 1.0 (default=0.5)</p>
+   <p>The lline coefficient; 0.0 &lt; <em>linecoef</em> &lt; 1.0 (default=0.5)</p>
    </td>
    </tr>
    <tr>
@@ -350,8 +516,29 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
    <p><em>elecoef</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>element coefficient; 0.0 &lt; <em>elecoef</em> &lt; 1.0 (default=<em>linecoef</em>)</p>
+   <p>The element coefficient; 0.0 &lt; <em>elecoef</em> &lt; 1.0 (default=<em>linecoef</em>)</p>
    </td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>stretch</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The stretch applied to the data, either Histogram or Contrast (default=Histogram).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>BT Min</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The minimum brightness value for calibration (default=0).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>BT Max</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The maximum brightness value for calibration (default=100).</p></td>
    </tr>
   <tr>
   <td width="120" valign="top" rowspan="1" colspan="1">
@@ -376,7 +563,7 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
    <p><em>radius</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>sample length in pixels surrounding the source element; used for sample
+   <p>The sample length in pixels surrounding the source element; used for sample
      average (default=50)</p>
    </td>
    </tr>
@@ -385,8 +572,29 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
    <p><em>leak</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>filter efficiency (default=100)</p>
+   <p>The filter efficiency (default=100)</p>
    </td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>stretch</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The stretch applied to the data, either Histogram or Contrast (default=Histogram).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>BT Min</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The minimum brightness value for calibration (default=0).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>BT Max</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The maximum brightness value for calibration (default=100).</p></td>
    </tr>
   <tr>
   <td width="120" valign="top" rowspan="1" colspan="1">
@@ -407,7 +615,7 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
    <p><em>brkpoint1</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>low end breakpoint value (default=minimum <em>sdataset</em> value)</p>
+   <p>The low end breakpoint value (default=minimum <em>sdataset</em> value)</p>
    </td>
    </tr>
    <tr>
@@ -415,16 +623,37 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
    <p><em>brkpoint2</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>high end breakpoint value (default=maximum <em>sdataset</em> value)</p>
+   <p>The high end breakpoint value (default=maximum <em>sdataset</em> value)</p>
    </td>
   <tr>
    <td width="120" colspan="1" rowspan="1" valign="top">
    <p><em>constant</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>subtractive constant (default=0)</p>
+   <p>The subtractive constant (default=0)</p>
    </td>
   </tr>
+  <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>stretch</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The stretch applied to the data, either Histogram or Contrast (default=Histogram).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>BT Min</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The minimum brightness value for calibration (default=0).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>BT Max</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The maximum brightness value for calibration (default=100).</p></td>
+   </tr>
 </table>
 <p><a name="replace" id="replace"></a><strong>Replace Image  Filter (New Value, Old Value)</strong></p>
 <p>This formula replaces selected
@@ -440,7 +669,7 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
    <p><em>New Value</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>replacement value (default=0)</p>
+   <p>The replacement value (default=0)</p>
    </td>
    </tr>
    <tr>
@@ -448,8 +677,29 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
    <p><em>Old Value</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>source image    values in the region to replace with <em>outval</em>; specify values   in the    list format, e.g., <em>val1</em> <em>val2</em> <em>val3</em> etc.,   and/or a    range format, e.g., <em>bval</em>-<em>eval</em> (default=0-255).</p>
+   <p>The source image    values in the region to replace with <em>outval</em>; specify values   in the    list format, e.g., <em>val1</em> <em>val2</em> <em>val3</em> etc.,   and/or a    range format, e.g., <em>bval</em>-<em>eval</em> (default=0-255).</p>
    </td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>stretch</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The stretch applied to the data, either Histogram or Contrast (default=Histogram).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>BT Min</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The minimum brightness value for calibration (default=0).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>BT Max</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The maximum brightness value for calibration (default=100).</p></td>
    </tr>
    <tr>
   <td width="120" valign="top" rowspan="1" colspan="1">
@@ -476,7 +726,7 @@ else <em>ddataset</em> = <em>replaceVal</em> </p>
    <p><em>bline</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>beginning line in the source image to clean (default=first line)</p>
+   <p>The beginning line in the source image to clean (default=first line)</p>
    </td>
    </tr>
    <tr>
@@ -484,16 +734,37 @@ else <em>ddataset</em> = <em>replaceVal</em> </p>
    <p><em>eline</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>ending line in the source image to clean (default=last line)</p>
+   <p>The ending line in the source image to clean (default=last line)</p>
    </td>
    </tr>
    <tr>
    <td width="120" colspan="1" rowspan="1" valign="top"><p><em>pdiff</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>maximum percentage of the product range to allow before a new value for
+   <p>The maximum percentage of the product range to allow before a new value for
      the pixel is derived using the average of two adjacent pixels (default=15)</p>
    </td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>stretch</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The stretch applied to the data, either Histogram or Contrast (default=Histogram).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>BT Min</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The minimum brightness value for calibration (default=0).</p></td>
+   </tr>
+   <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>BT Max</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The maximum brightness value for calibration (default=100).</p></td>
    </tr>
   <tr>
   <td width="120" valign="top" rowspan="1" colspan="1">

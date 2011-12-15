@@ -32,7 +32,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/Miscellaneo
 <div class="pagetitle">Description of Formulas - Miscellaneous</div>
 <p>The following describes each formula included in the Miscellaneous Formulas section
   of McIDAS-V.</p>
-<p><strong>Any Field (field) - </strong>Allows you define a field to display.</p>
+<p><strong>Any Field (field) - </strong>Allows you define a field to display from your loaded data sources.</p>
 <p><strong>Change Unit   (name, unitSpec) - </strong>Sets the name and unit of a field.</p>
 <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
@@ -52,7 +52,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/Miscellaneo
    <p><em>unitSpec </em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>The unit the display will map in.</p>
+   <p>The unit that will be listed in the Main Display window for your displayed parameter. This will not change the numerical value of the displayed parameter to be representative of your new unit, however. For example, if you are displaying a Temperature field, and the default unit is Kelvin and you enter the unitSpec value to be F or Fahrenheit, the numerical values when you probe the data will still be in Kelvin. However, you will see an [F] or [Fahrenheit] next to the value.</p>
    </td>
    </tr>
 </table>
