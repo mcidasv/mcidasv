@@ -114,6 +114,24 @@ class _Window(_JavaProxy):
         
         _JavaProxy.__init__(self, javaObject)
 
+    def createTab(self, skinId='mcv.skin.oneview.map'):
+        # change default value of skinId to 'idv.skin.oneview.map'
+        from ucar.unidata.idv import IdvResourceManager
+        from edu.wisc.ssec.mcidasv.util.McVGuiUtils import idvGroupsToMcv
+        skins = getStaticMcv().getResourceManager().getXmlResources(IdvResourceManager.RSC_SKIN)
+
+        skinToIdx = {}
+        for x in range(skins.size()):
+            skinToIdx[skins.getProperty('skinid', x)] = x
+        
+        if not skinId in skinToIdx:
+            raise LookupError()
+        else:
+            window = self._JavaProxy__javaObject
+            group = idvGroupsToMcv(window)
+            holder = group[0].makeSkinAtIndex(skinToIdx[skinId])
+            return _Tab(holder)
+
     #def setCurrentTabIndex(self, index):
     #    """Sets the tab at the given index to be the active tab."""
     #    # TODO(jon): remove this method?
@@ -664,6 +682,7 @@ def buildDisplayWindow(title, width=0, height=0):
         A "wrapped" IdvWindow.
     """
     # DEFAULT_SKIN_PATH = '/edu/wisc/ssec/mcidasv/resources/skins/window/map/onemapview.xml'
+    from java.awt import Dimension
     mcv = getStaticMcv()
     window = mcv.getIdvUIManager().buildDefaultSkin()
     window.setTitle(title)
