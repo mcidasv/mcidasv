@@ -2193,10 +2193,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
         if (newDisplayMenu != null) {
 
             String skinFilter = "idv.skin";
-            if (!inWindow)
+            if (!inWindow) {
                 skinFilter = "mcv.skin";
+            }
 
-            // TODO: isn't there some static skin collection that I can use?
             final XmlResourceCollection skins =
                 getResourceManager().getXmlResources(
                     IdvResourceManager.RSC_SKIN);
@@ -2204,14 +2204,16 @@ public class UIManager extends IdvUIManager implements ActionListener {
             Map<String, JMenu> menus = new Hashtable<String, JMenu>();
             for (int i = 0; i < skins.size(); i++) {
                 final Element root = skins.getRoot(i);
-                if (root == null)
+                if (root == null) {
                     continue;
+                }
 
                 // filter out mcv or idv skins based on whether or not we're
                 // interested in tabs or new windows.
                 final String skinid = skins.getProperty("skinid", i);
-                if (skinid != null && skinid.startsWith(skinFilter))
+                if (skinid != null && skinid.startsWith(skinFilter)) {
                     continue;
+                }
 
                 final int skinIndex = i;
                 List<String> names =
@@ -2240,13 +2242,14 @@ public class UIManager extends IdvUIManager implements ActionListener {
                     mi.addActionListener(new ActionListener() {
 
                         public void actionPerformed(ActionEvent ae) {
-                            if (!inWindow)
+                            if (!inWindow) {
                                 group.makeSkin(skinIndex);
-                            else
+                            } else {
                                 createNewWindow(null, true,
                                     getStateManager().getTitle(), skins.get(
                                         skinIndex).toString(), skins.getRoot(
                                         skinIndex, false), inWindow, null);
+                            }
                         }
                     });
                     theMenu.add(mi);

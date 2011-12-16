@@ -276,25 +276,41 @@ public class McvComponentGroup extends IdvComponentGroup {
      * @param index The index of the skin within the skin resource.
      */
     @Override public void makeSkin(final int index) {
+//        final XmlResourceCollection skins = idv.getResourceManager().getXmlResources(
+//            IdvResourceManager.RSC_SKIN);
+//
+////        String id = skins.getProperty("skinid", index);
+////        if (id == null)
+////            id = skins.get(index).toString();
+//
+////        SwingUtilities.invokeLater(new Runnable() {
+////            public void run() {
+//                String id = skins.getProperty("skinid", index);
+//                if (id == null)
+//                    id = skins.get(index).toString();
+//                IdvComponentHolder comp = new McvComponentHolder(idv, id);
+//                comp.setType(IdvComponentHolder.TYPE_SKIN);
+//                comp.setName("untitled");
+//
+//                addComponent(comp);
+////            }
+////        });
+        makeSkinAtIndex(index);
+    }
+    
+    public IdvComponentHolder makeSkinAtIndex(final int index) {
         final XmlResourceCollection skins = idv.getResourceManager().getXmlResources(
-            IdvResourceManager.RSC_SKIN);
+                        IdvResourceManager.RSC_SKIN);
+        String id = skins.getProperty("skinid", index);
+        if (id == null) {
+            id = skins.get(index).toString();
+        }
+        IdvComponentHolder comp = new McvComponentHolder(idv, id);
+        comp.setType(IdvComponentHolder.TYPE_SKIN);
+        comp.setName("untitled");
 
-//        String id = skins.getProperty("skinid", index);
-//        if (id == null)
-//            id = skins.get(index).toString();
-
-//        SwingUtilities.invokeLater(new Runnable() {
-//            public void run() {
-                String id = skins.getProperty("skinid", index);
-                if (id == null)
-                    id = skins.get(index).toString();
-                IdvComponentHolder comp = new McvComponentHolder(idv, id);
-                comp.setType(IdvComponentHolder.TYPE_SKIN);
-                comp.setName("untitled");
-
-                addComponent(comp);
-//            }
-//        });
+        addComponent(comp);
+        return comp;
     }
 
     /**
