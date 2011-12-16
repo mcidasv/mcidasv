@@ -114,8 +114,7 @@ class _Window(_JavaProxy):
         
         _JavaProxy.__init__(self, javaObject)
 
-    def createTab(self, skinId='mcv.skin.oneview.map'):
-        # change default value of skinId to 'idv.skin.oneview.map'
+    def createTab(self, skinId='idv.skin.oneview.map'):
         from ucar.unidata.idv import IdvResourceManager
         from edu.wisc.ssec.mcidasv.util.McVGuiUtils import idvGroupsToMcv
         skins = getStaticMcv().getResourceManager().getXmlResources(IdvResourceManager.RSC_SKIN)
