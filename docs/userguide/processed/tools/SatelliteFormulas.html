@@ -35,7 +35,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
 <p><strong>SEVIRI RGB</strong></p>
 <p>The SEVIRI RGB formulas allow you to select your desired wavelengths for each parameter. The data for the wavelengths you select will be plugged into the formula for the parameter to produce the image in the Main Display window.</p>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>AMCP - </strong>Displays all-day (24 hour) cloud microphysics data.  The display will be in units of temperature in degrees K.</li>
+<li class="propertylistitem"><strong>AMCP - </strong>Displays all-day (24 hour) cloud microphysics data tuned to mid-latitude low cloud and fog.  This is based on absorbing IR channels only. The display will be in units of temperature in degrees K.</li>
 <li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Field</strong></td>
@@ -66,7 +66,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>AIRM - </strong>Displays airmass data.  The display will be in units of temperature in degrees K.</li>
+<li class="propertylistitem"><strong>AIRM - </strong>Displays airmass data.  This is based on absorbing IR channels only. The display will be in units of temperature in degrees K.</li>
 <li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Field</strong></td>
@@ -105,7 +105,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>DUST - </strong>Displays dust data. The display will be in units of temperature in degrees K.</li>
+<li class="propertylistitem"><strong>DUST - </strong>Displays cloud microphysics data tuned to mineral dust. This is based on absorbing IR channels only. The display will be in units of temperature in degrees K.</li>
 <li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Field</strong></td>
@@ -136,7 +136,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>NCMP - </strong>Displays night cloud microphysics data. The display will be in units of temperature in degrees K.</li>
+<li class="propertylistitem"><strong>NCMP - </strong>Displays night cloud microphysics data. This uses IR3.9, but may be used durring the daytime and nighttime.The display will be in units of temperature in degrees K.</li>
 <li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Field</strong></td>
@@ -167,7 +167,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>NCOL gamma - </strong>Displays natural colors data. The gamma value enhances the contrast between the low and high reflectivities.  The display will be in units of reflectivity.</li>
+<li class="propertylistitem"><strong>NCOL gamma - </strong>Displays natural colors data. The gamma value enhances the contrast between the low and high reflectivities.  This is based on solar channels only.The display will be in units of reflectivity.</li>
 <li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Field</strong></td>
@@ -198,7 +198,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>NCOL linear - </strong>Displays natural colors data with a linear enhancement by the way of the minimum and maximum reflectivity limit values. The minrefl and maxrefl values should be between 0 and 100. The display will be in units of reflectivity.</li>
+<li class="propertylistitem"><strong>NCOL linear - </strong>Displays natural colors data with a linear enhancement by the way of the minimum and maximum reflectivity limit values. The minrefl and maxrefl values should be between 0 and 100. This is based on solar channels only. The display will be in units of reflectivity.</li>
 <li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Field</strong></td>
@@ -229,7 +229,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>SCON - </strong>Displays severe convection data.  The display will be in units of temperature in degrees K and in units of reflectivity percentage.</li>
+<li class="propertylistitem"><strong>SCON - </strong>Displays severe convection data.  This uses IR3.9 and is limited to use during the daytime. The display will be in units of temperature in degrees K and in units of reflectivity percentage.</li>
 <li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Field</strong></td>
@@ -284,7 +284,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>VOLC -</strong> Displays sulfur dioxide and volcanic ash data.  The display will be in units of temperature in degrees K.</li>
+<li class="propertylistitem"><strong>VOLC -</strong> Displays cloud microphysics data tuned to sulfur dioxide and volcanic ash.  This is based on absorbing IR channels only. The display will be in units of temperature in degrees K.</li>
 <li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Field</strong></td>
