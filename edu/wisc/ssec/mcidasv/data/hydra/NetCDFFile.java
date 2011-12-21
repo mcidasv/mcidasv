@@ -58,11 +58,6 @@ public class NetCDFFile implements MultiDimensionReader {
 
    NetcdfFile ncfile = null;
 
-   /*
-   public static NetCDFFile makeUnion(String filename) throws Exception {
-     String other = new String(filename);
-     other = other.replace("obs", "nav");
-   */
    public static NetCDFFile makeUnion(String filename, String other) throws Exception {
      Object obj = new Object();
      URL url = obj.getClass().getResource("/edu/wisc/ssec/mcidasv/data/hydra/resources/union.ncml");
