@@ -189,7 +189,12 @@ public class NetCDFFile implements MultiDimensionReader {
 
    public int getDimensionLength(String dimName) {
      Dimension dim = ncfile.findDimension(dimName);
-     return dim.getLength();
+     if (dim != null) {
+       return dim.getLength();
+     }
+     else {
+       return -1;
+     }
    }
 
    public float[] getFloatArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
@@ -216,7 +221,7 @@ public class NetCDFFile implements MultiDimensionReader {
      return readArray(array_name, start, count, stride);
    }
 
-   private synchronized Object readArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
+   protected synchronized Object readArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
      Variable var = varMap.get(array_name);
      if (var instanceof Structure) {
        Array array = Array.factory(getArrayType(array_name), count);
