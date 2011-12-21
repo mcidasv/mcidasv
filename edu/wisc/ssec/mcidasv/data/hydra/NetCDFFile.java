@@ -171,6 +171,15 @@ public class NetCDFFile implements MultiDimensionReader {
 	   varDataType.put(varName, obj.getClass());
    }
 
+   public boolean hasArray(String array_name) {
+     if (varMap.get(array_name) != null) {
+       return true;
+     } 
+     else {
+       return false;
+     }
+   }
+
    public Class getArrayType(String array_name) {
 	   return varDataType.get(array_name);
    }
