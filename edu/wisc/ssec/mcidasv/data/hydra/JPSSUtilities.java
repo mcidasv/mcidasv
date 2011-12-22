@@ -45,6 +45,34 @@ import java.util.HashMap;
 
 public abstract class JPSSUtilities {
    
+	public static final String JPSS_FIELD_SEPARATOR = "_";
+	
+	// This regular expression matches an NPP Data Product as defined by the 
+	// spec in CDFCB-X Volume 1, Page 21
+	public static final String NPP_REGEX =
+    		// Product Id, Multiple (ex: VSSTO-GATMO-VSLTO)
+    		"(\\w\\w\\w\\w\\w-)*" + 
+    		// Product Id, Single (ex: VSSTO)
+    		"\\w\\w\\w\\w\\w" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		// Spacecraft Id (ex: npp)
+    		"\\w\\w\\w" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		// Data Start Date (ex: dYYYYMMDD)
+    		"d20[0-3]\\d[0-1]\\d[0-3]\\d" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		// Data Start Time (ex: tHHMMSSS)
+    		"t[0-2]\\d[0-5]\\d[0-6]\\d\\d" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		// Data Stop Time (ex: eHHMMSSS)
+    		"e[0-2]\\d[0-5]\\d[0-6]\\d\\d" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		// Orbit Number (ex: b00015)
+    		"b\\d\\d\\d\\d\\d" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		// Creation Date (ex: cYYYYMMDDHHMMSSSSSSSS)
+    		"c20[0-3]\\d[0-1]\\d[0-3]\\d[0-2]\\d[0-5]\\d[0-6]\\d\\d\\d\\d\\d\\d\\d" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		// Origin (ex: navo)
+    		"\\w\\w\\w\\w" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		// Domain (ex: ops)
+    		"\\w\\w\\w" + 
+    		// HDF5 suffix
+    		".h5";
+	
 	public static float[] ATMSChannelCenterFrequencies = {
 		23.8f,
 		31.4f,
@@ -88,35 +116,9 @@ public abstract class JPSSUtilities {
     	"GCLDO"		
 	};
 	
-	private static HashMap<String, String> geoHM = new HashMap<String, String>();
     private static HashMap<String, String> prodHM = new HashMap<String, String>();
-    private static HashMap<String, String> factHM = new HashMap<String, String>();
     
     static {
-    	
-    	// populate geolocation hashmap
-    	// Collection Short Name -> Geolocation Product ID
-    	// This mapping is based on Table A-8, "Geolocation Identifiers", from
-    	// NPP CDFCB Volume 1
-    	// http://jointmission.gsfc.nasa.gov/projects/science-documents.html
-    	// NOTE: I have found some mappings to be missing!  I.E., the table
-    	// in the spec is apparently not complete!
-    	
-    	geoHM.put("ATMS-SDR-GEO", "GATMO");
-    	geoHM.put("CrIMSS-AUX-EDR", "GCRIO");
-    	geoHM.put("CrIS-SDR-GEO", "GCRSO");
-    	geoHM.put("VIIRS-MOD-EDR-GEO", "GMGTO");
-    	geoHM.put("VIIRS-MOD-GEO", "GMODO");
-    	geoHM.put("VIIRS-MOD-GEO-TC", "GMTCO");
-    	geoHM.put("VIIRS-MOD-MAP-IP", "IVMIM");
-    	geoHM.put("VIIRS-MOD-UNAGG-GEO", "VMUGE");
-    	geoHM.put("VIIRS-NCC-EDR-GEO", "GNCCO");
-    	geoHM.put("VIIRS-DNB-GEO", "GDNBO");
-    	geoHM.put("VIIRS-IMG-EDR-GEO", "GIGTO");
-    	geoHM.put("VIIRS-IMG-GEO", "GIMGO");
-    	geoHM.put("VIIRS-IMG-GEO-TC", "GITCO");
-    	geoHM.put("VIIRS-CLD-AGG-GEO", "GCLDO");
-    	geoHM.put("VIIRS-SIC-GEO", "GSICO");
     	
     	// populate product hashmap
     	// This table is needed because the product names in the actual granules
@@ -148,22 +150,6 @@ public abstract class JPSSUtilities {
     	prodHM.put("TOC_EVI", "TOC_EVI");
     	prodHM.put("VegetationFraction", "VegetationFraction");
     	
-    }
-    
-    /**
-     * Map the NPP global attribute N_GEO_Ref to the appropriate geolocation
-     * product id prefix.
-     * 
-     * @param geoRef
-     * @return product id for the corresponding geolocation data 
-     */
-    
-    public static String mapGeoRefToProductID(String geoRef) {
-    	String s = null;
-    	if (geoHM != null) {
-    		s = (String) geoHM.get(geoRef);
-    	}
-    	return s;
     }
     
     /**
