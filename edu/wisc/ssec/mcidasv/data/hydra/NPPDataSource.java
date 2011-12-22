@@ -255,15 +255,7 @@ public class NPPDataSource extends HydraDataSource {
 								.findGlobalAttribute("N_GEO_Ref");
 						logger.debug("Value of GEO global attribute: "
 								+ a.getStringValue());
-						String tmpGeoProductID = null;
-						if (a.getStringValue().endsWith("h5")) {
-							tmpGeoProductID = a.getStringValue();
-						} else {
-							tmpGeoProductID = JPSSUtilities
-									.mapGeoRefToProductID(a.getStringValue());
-						}
-						logger.debug("Value of corresponding Product ID: "
-								+ tmpGeoProductID);
+						String tmpGeoProductID = a.getStringValue();
 						geoProductIDs.add(tmpGeoProductID);
 					}
 					Group rg = ncfile.getRootGroup();
