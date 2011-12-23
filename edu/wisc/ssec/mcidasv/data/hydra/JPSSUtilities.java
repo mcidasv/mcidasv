@@ -101,19 +101,26 @@ public abstract class JPSSUtilities {
 	// the list of valid geolocation product ids
 	public static String[] geoProductIDs = {
     	"GATMO",
-    	"GCRIO",
     	"GCRSO",
-    	"GMGTO",
-    	"GMODO",
-    	"GMTCO",
-    	"IVMIM",
-    	"VMUGE",
-    	"GNCCO",
+    	"GAERO",
+    	"GCLDO",
     	"GDNBO",
+    	"GNCCO",
     	"GIGTO",
     	"GIMGO",
     	"GITCO",
-    	"GCLDO"		
+    	"GMGTO",
+    	"GMODO",
+    	"GMTCO",
+    	"GNHFO",
+    	"GOTCO",
+    	"GOSCO",
+    	"GONPO",
+    	"GONCO",
+    	"GCRIO",
+    	"GATRO",
+    	"IVMIM",
+    	"VMUGE"
 	};
 	
     private static HashMap<String, String> prodHM = new HashMap<String, String>();
