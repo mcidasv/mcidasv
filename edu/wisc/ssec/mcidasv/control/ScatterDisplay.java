@@ -55,16 +55,16 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JToggleButton;
 import javax.swing.JButton;
-import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JLabel;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import visad.AxisScale;
 import visad.BaseColorControl;
@@ -92,8 +92,6 @@ import visad.Set;
 import visad.SetType;
 import visad.UnionSet;
 import visad.VisADException;
-import visad.DataReference;
-import visad.DataReferenceImpl;
 import visad.data.mcidas.BaseMapAdapter;
 import visad.georef.MapProjection;
 import visad.georef.TrivialMapProjection;
@@ -128,7 +126,9 @@ import edu.wisc.ssec.mcidasv.data.hydra.Statistics;
 
 public class ScatterDisplay extends DisplayControlImpl {
 
-    private Container container;
+	private static final Logger logger = LoggerFactory.getLogger(ScatterDisplay.class);
+	
+	private Container container;
     private FlatField X_field;
     private FlatField Y_field;
     private DisplayMaster scatterMaster = null;
@@ -145,12 +145,10 @@ public class ScatterDisplay extends DisplayControlImpl {
     private Data Y_data;
     private String X_name;
     private String Y_name;
+    
+    private boolean cancel = false;
 
     private ScatterDisplayable scatterMarkDsp;
-
-    private RGBDisplayable maskX;
-
-    private RGBDisplayable maskY;
 
     private BoxCurveSwitch boxCurveSwitch;
 
@@ -203,7 +201,11 @@ public class ScatterDisplay extends DisplayControlImpl {
           setupFromUnpersistence();
         }
         else {
-          setup();
+			try {
+				setup();
+			} catch (VisADException vade) {
+				return false;
+			}
         }
 
         mask_field = new FlatField(
@@ -276,15 +278,13 @@ public class ScatterDisplay extends DisplayControlImpl {
         probeY.doMakeProbe(Color.red, dspMasterY);
 	
         ImageControl dCntrl = new ImageControl((HydraRGBDisplayable)dspMasterX.getDisplayables(0), getDisplayConventions());
-	ctw = new ColorTableWidget(dCntrl,
-                    ColorTableManager.getManager(), clrTableX, rangeX);
-	ctwCompX = ctw.getLegendPanel(BOTTOM_LEGEND);
+        ctw = new ColorTableWidget(dCntrl, ColorTableManager.getManager(), clrTableX, rangeX);
+        ctwCompX = ctw.getLegendPanel(BOTTOM_LEGEND);
         dCntrl.ctw = ctw;
 
         dCntrl = new ImageControl((HydraRGBDisplayable)dspMasterY.getDisplayables(0), getDisplayConventions());
-	ctw = new ColorTableWidget(dCntrl,
-                    ColorTableManager.getManager(), clrTableY, rangeY);
-	ctwCompY = ctw.getLegendPanel(BOTTOM_LEGEND);
+        ctw = new ColorTableWidget(dCntrl, ColorTableManager.getManager(), clrTableY, rangeY);
+        ctwCompY = ctw.getLegendPanel(BOTTOM_LEGEND);
         dCntrl.ctw = ctw;
 
         return true;
@@ -301,8 +301,10 @@ public class ScatterDisplay extends DisplayControlImpl {
           X_field = (FlatField) ((FieldImpl)X_data).getSample(0);
         }
 
-        this.popupDataDialog("select Y Axis field", container, false, null);
-
+        popupDataDialog("select Y Axis field", container, false, null);
+        
+        // if user canceled the popup, popupDataDialog will set the cancel flag
+        if (cancel) throw new VisADException("Scatter Display Canceled");
 
         dataSelectionY = getDataSelection();
         dataChoiceY = getDataChoice();
@@ -316,9 +318,6 @@ public class ScatterDisplay extends DisplayControlImpl {
         } else if (Y_data instanceof FieldImpl) {
           Y_field = (FlatField) ((FieldImpl)Y_data).getSample(0);
         }
-
-        int[] Xlens = ((Gridded2DSet) X_field.getDomainSet()).getLengths();
-        int[] Ylens = ((Gridded2DSet) Y_field.getDomainSet()).getLengths();
 
         if (!( X_field.getDomainSet().equals(Y_field.getDomainSet())))
         {
@@ -351,6 +350,8 @@ public class ScatterDisplay extends DisplayControlImpl {
         List<DataChoice> choices = selectDataChoices(dialogMessage, from,
                                        multiples, categories);
         if ((choices == null) || (choices.size() == 0)) {
+            logger.debug("popupDataDialog, no data choice, user canceled");
+        	cancel = true;
             return;
         }
         final List clonedList =
@@ -671,11 +672,6 @@ public class ScatterDisplay extends DisplayControlImpl {
     }
 
 
-//    @Override public void doRemove() throws VisADException, RemoteException {
-//        super.doRemove();
-//    }
-
-
     protected Component getScatterTabComponent() {
        try {
          scatterMaster = new XYDisplay("Scatter", RealType.XAxis, RealType.YAxis);
@@ -969,7 +965,6 @@ public class ScatterDisplay extends DisplayControlImpl {
     private class MyStatsTable extends AbstractTableModel {
       String [][] data;
       JTable table;
-      TableColumn tabcol;
       JFrame statsWindow;
       int numCols;
       boolean isShowing = false;
@@ -1215,7 +1210,6 @@ public class ScatterDisplay extends DisplayControlImpl {
       boolean init = false;
       CurveDrawer curveDraw;
       DisplayMaster dspMaster;
-      FlatField image;
       Gridded2DSet domainSet;
       CoordinateSystem cs;
       int domainLen_0;
@@ -1229,11 +1223,6 @@ public class ScatterDisplay extends DisplayControlImpl {
       MyStatsTable myTable = null;
       int myTableIndex = 0;
 
-      ImageCurveSelector(CurveDrawer curveDraw, FlatField image, DisplayMaster master) 
-         throws VisADException, RemoteException {
-        this(curveDraw, image, master, Color.magenta, 1f, null);
-      }
-
       ImageCurveSelector(CurveDrawer curveDraw, FlatField image, DisplayMaster master, Color color, float maskVal, MyStatsTable mst) 
            throws VisADException, RemoteException {
         this.curveDraw = curveDraw;
@@ -1245,7 +1234,6 @@ public class ScatterDisplay extends DisplayControlImpl {
         if (color == Color.blue) myTableIndex = 3;
         dspMaster = master;
         dspMaster.addDisplayListener(this);
-        this.image = image;
         domainSet = (Gridded2DSet) image.getDomainSet();
         int[] lens = domainSet.getLengths();
         domainLen_0 = lens[0];
@@ -1332,7 +1320,6 @@ public class ScatterDisplay extends DisplayControlImpl {
            for (int j=0; j<len_1; j++) {
              for (int i=0; i<len_0; i++) {
                int idx = (j+low_1)*domainLen_0 + (i+low_0);
-               int k = j*len_0 + i;
                float x = (float) (i + low_0);
                float y = (float) (j + low_1);
                if (DelaunayCustom.inside(crv, x, y)) {
@@ -1473,19 +1460,12 @@ public class ScatterDisplay extends DisplayControlImpl {
         SubsetRubberBandBox subsetBox;
         Set imageDomain;
         int domainLen_0;
-        int domainLen_1;
-        float[][] scatter;
         LineDrawing lastBox;
         ImageBoxSelector other;
         float maskVal;
         boolean earthCoordDomain = false;
         MyStatsTable myTable = null;
         int myTableIndex = 0;
-
-        ImageBoxSelector(SubsetRubberBandBox subsetBox, Set imageDomain, DisplayMaster master)
-            throws VisADException, RemoteException {
-          this(subsetBox, imageDomain, master, Color.magenta, 0f, null);
-        }
 
         ImageBoxSelector(SubsetRubberBandBox subsetBox, Set imageDomain, DisplayMaster master, Color color, float maskVal, MyStatsTable mst) 
             throws VisADException, RemoteException {
@@ -1500,7 +1480,6 @@ public class ScatterDisplay extends DisplayControlImpl {
           int[] lens = ((Gridded2DSet)imageDomain).getLengths();
           this.maskVal = maskVal;
           domainLen_0 = lens[0];
-          domainLen_1 = lens[1];
           lastBox = new LineDrawing("last_box");
           lastBox.setColor(color);
           master.addDisplayable(lastBox);
@@ -1671,10 +1650,6 @@ public class ScatterDisplay extends DisplayControlImpl {
           lastBox.setData(set2D);
         }
 
-        public SubsetRubberBandBox getSelector() {
-          return subsetBox;
-        }
-
     }
 
     private class ScatterBoxSelector extends CellImpl {
@@ -1685,10 +1660,6 @@ public class ScatterDisplay extends DisplayControlImpl {
        LineDrawing selectBox;
        boolean active = true;
        float maskVal = 0;
-
-       ScatterBoxSelector(DisplayMaster master) throws VisADException, RemoteException {
-         this(master, Color.green, 0f);
-       }
 
        ScatterBoxSelector(DisplayMaster master, Color color, float maskVal) throws VisADException, RemoteException {
          selectBox = new LineDrawing("select");
@@ -1762,10 +1733,6 @@ public class ScatterDisplay extends DisplayControlImpl {
      boolean active = true;
      float maskVal = 0;
      LineDrawing selectCurve;
-
-     ScatterCurveSelector(DisplayMaster master) throws VisADException, RemoteException {
-       this(master, Color.green, 0f);
-     }
 
      ScatterCurveSelector(DisplayMaster master, Color color, float maskVal) throws VisADException, RemoteException {
        curveDraw = new CurveDrawer(RealType.XAxis, RealType.YAxis, 1);
