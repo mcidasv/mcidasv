@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.SimpleTimeZone;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.TreeSet;
@@ -121,6 +122,7 @@ public class NPPDataSource extends HydraDataSource {
     private boolean hasChannelSelect = false;
     private boolean hasImagePreview = true;
     private boolean isCombinedProduct = false;
+    private boolean nameHasBeenSet = false;
 
     private FlatField previewImage = null;
     
@@ -140,6 +142,9 @@ public class NPPDataSource extends HydraDataSource {
     
     // date formatter for converting NPP day/time to something we can use
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss.SSS");
+    
+    // date formatter for how we want to show granule day/time on display
+    SimpleDateFormat sdfOut = new SimpleDateFormat("MMM dd yyyy, HH:mm:ss z");
 
     /**
      * Zero-argument constructor for construction via unpersistence.
@@ -178,10 +183,8 @@ public class NPPDataSource extends HydraDataSource {
         super(descriptor, newSources, DATA_DESCRIPTION, properties);
         logger.debug("NPPDataSource constructor called, file count: " + sources.size());
 
-        this.filename = (String) sources.get(0);
-        
-        this.setName("NPP");
-        this.setDescription("NPP");
+        filename = (String) sources.get(0);
+        setDescription("NPP");
         
         for (Object o : sources) {
         	logger.debug("NPP source file: " + (String) o);
@@ -313,6 +316,12 @@ public class NPPDataSource extends HydraDataSource {
 	    	    							productTimes.add(new Long(d.getTime()));
 	    	    							logger.debug("ms since epoch: " + d.getTime());
 	    	    							foundDateTime = true;
+	    	    							// set time for display to day/time of 1st granule examined
+	    	    							if (! nameHasBeenSet) {
+	    	    								sdfOut.setTimeZone(new SimpleTimeZone(0, "UTC"));
+	    	    								setName(sdfOut.format(d));
+	    	    								nameHasBeenSet = true;
+	    	    							}
 	    	    							break;
 	    	    						}
 	    	    					}
