@@ -36,11 +36,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/PerformanceT
 <ul class="childlist">
 <li><a href="#subset">Temporal/Spatial Subset of Data</a></li>
 <li style="list-style: none">Subsetting the data before display reduces the memory and display time</li>
-<li><a href="#heap">Memory allocation</a></li>
+<li><a href="#heap">Memory Allocation</a></li>
 <li style="list-style: none">Changing the amount of memory allocated to McIDAS-V</li>
 <li><a href="#cache">Data Caching</a></li>
 <li style="list-style: none">Caching of data uses more memory</li>
-<li><a href="#maxsize">Maximum grid/image size</a></li>
+<li><a href="#maxsize">Maximum Grid/Image Size</a></li>
 <li style="list-style: none">Reducing the maximum size of a display can reduce the memory used</li>
 <li><a href="#fastrender">Fast Rendering</a></li>
 <li style="list-style: none">Fast Rendering reduces memory and time at the expense of accuracy</li>
@@ -54,21 +54,21 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/PerformanceT
   Selector</strong>)
   or you can set these for individual field using the tabs in the lower right
   corner of the <strong>Field
-Selector</strong>. For more information, see the <a href="../data/DataSource.html">Data Source Properties</a> section of McIDAS-V User's Guide.</p>
-<p><a name="heap" id="heap"></a></p>
-<div class="pagesubtitle">Memory allocation</div>
+Selector</strong>. For more information, see  <a href="../data/DataSource.html">Data Sources</a>.</p>
+<a name="heap" id="heap"></a>
+<div class="pagesubtitle">Memory Allocation</div>
 By default, McIDAS-V allocates 512 megabytes of maximum memory for Java. This is usually the optimum amount for a Windows system with 1 gigabyte of physical memory (RAM). Windows takes up half of that anyway and once Windows has to start swapping, performance severely degrades. On a Linux system, you can probably get away with 700m for 1 GB of memory as it does a much better job of swapping. All this also depends on what else you are running on the machine and how much memory those applications use.
-<p>If your system has more than 1 GB of memory, increasing the amount available to McIDAS-V can improve performance for displaying large datasets. You change the amount of memory used by McIDAS-V by editing the <strong>Maximum Heap Size</strong> in the <strong>Advanced</strong> tab of the Preferences by selected <strong>Edit-&gt;Preferences...</strong> from the main menu. The new amount of memory will be saved and used in subsequent sessions. Do not use the maximum amount of memory on your machine as some is needed for the operating system itself. If the system has to use swap memory, performance will degrade as well. For 32 bit operating systems, it is recommended to set this to no more than 1250 MB (<em>i.e. -Xmx1250m</em>). The maximum value for 32 bit operating systems is 1536 MB, while 64 bit operating systems can use all of the RAM available. For more information see the <a href="../Starting.html#run">Running McIDAS-V</a> section of the McIDAS-V User's Guide.</p>
+<p>If your system has more than 1 GB of memory, increasing the amount available to McIDAS-V can improve performance for displaying large datasets. You change the amount of memory used by McIDAS-V by editing the <strong>Maximum Heap Size</strong> in the <strong><a href="../tools/preferences/AdvancedPreferences.html">Advanced</a></strong> tab of the User Preferences by selected <strong>Edit-&gt;Preferences</strong> from the Main Display window. The new amount of memory will be saved and used in subsequent sessions. Do not use the maximum amount of memory on your machine as some is needed for the operating system itself. If the system has to use swap memory, performance will degrade as well. For 32 bit operating systems, it is recommended to set this to no more than 1250 MB (<em>i.e. -Xmx1250m</em>). The maximum value for 32 bit operating systems is 1536 MB, while 64 bit operating systems can use all of the RAM available. For more information see  <a href="../Starting.html#run">Running McIDAS-V</a>.</p>
 <a name="cache" id="cache"></a>
 <div class="pagesubtitle">Data Caching</div>
 <p>By default, McIDAS-V caches the data used for a display in memory. If a field is used more than once for several displays, caching the data prevents an additional reading from of the data from disk or a remote server. If you are only displaying/using a field (i.e. not using it for multiple displays or calculations), you can keep McIDAS-V from caching it in memory. You can turn off data caching by unchecking the <strong>Cache
-data in memory</strong> checkbox on the <strong><a href="../tools/preferences/FormatPreferences.html">Formats &amp; Data</a></strong> tab of the User Preferences window
+Data in Memory</strong> checkbox on the <strong><a href="../tools/preferences/FormatPreferences.html">Formats &amp; Data</a></strong> tab of the User Preferences window
 (accessible from the <strong>Edit-&gt;Preferences</strong> menu).</p>
-<p><a name="maxsize" id="maxsize"></a></p>
-<div class="pagesubtitle">Maximum grid/image size</div>
+<a name="maxsize" id="maxsize"></a>
+<div class="pagesubtitle">Maximum Grid/Image Size</div>
 <p>You can also set the maximum size of a grid or image that will be displayed. This will allow you to download a large image or grid, but it will be re-sampled before displaying if it is larger than the maximum size you have asked for. You can set the maximum image/grid size under the <strong><a href="../tools/preferences/FormatPreferences.html">Formats &amp; Data</a></strong> tab
 of the User Preferences window (accessible from the <strong>Edit-&gt;Preferences</strong> menu).</p>
-<p><a name="fastrender" id="fastrender"></a></p>
+<a name="fastrender" id="fastrender"></a>
 <div class="pagesubtitle">Fast Rendering</div>
 <p>By default, McIDAS-V will try to adjust the data layer (images, contours,
   etc.) renderings to account for projection seams. This is computationally intensive
@@ -84,7 +84,7 @@ of the User Preferences window (accessible from the <strong>Edit-&gt;Preferences
   Fast Rendering </strong>
 checkbox in  its <a href="../controls/PropertiesDialog.html#properties">Properties
 dialog</a>, or set your system preference back to not use fast rendering.</p>
-<p><a name="mapfast" id="mapfast"></a>
+<a name="mapfast" id="mapfast"></a>
 <p>A separate fast rendering option for
   map layers is  available in the <a href="../controls/MapDisplayControl.html">Map
   Controls</a>. Some maps display better when fast rendering is turned on, others
@@ -100,19 +100,17 @@ If you are running McIDAS-V on  a multi-core machine you can configure it
  in parallel. This typically results in a 50% reduction in overall data 
 reading and rendering time.
 <p>
-There are 2  preferences in the <strong>Preferences-&gt;Advanced</strong> tab.
+There are 2  preferences in the User Preference's <strong><a href="../tools/preferences/AdvancedPreferences.html">Advanced</a></strong> tab.
 One is the number of threads used for rendering. This defaults to the number
 of processors on your machine. The second is the number of threads used for
-data reading. This defaults to 4.  
-<p>
+data reading. This defaults to 4.<p>
 For rendering McIDAS-V will render each time step in parallel.
 Note: Since the rendering processes can allocate temporary memory, it is 
 possible to exhaust the available memory if too many threads are running
 concurrently.  Linear speedup with the number of
 cores available for rendering (probably due to memory contention issues)
 is not seen, however a 40%-50% performance improvement is seen for complex rendering
-  tasks (e.g., contouring).
-<p>
+  tasks (e.g., contouring).<p>
 The second preference is used when reading individual time steps of data
 from remote ADDE and OpenDAP servers. This parallelization takes advantage 
 of the multiple cores available on the remote server and somewhat the 
@@ -120,8 +118,7 @@ available bandwidth on the network.
 A linear speed up in accessing remote data based on the 
 number of cores on the remote server (ADDE or OpenDAP) has been seen.
 However,  if you load the server too much your performance 
-is degraded, probably due to file system issues.
-<!-- InstanceEndEditable -->
+is degraded, probably due to file system issues.<!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
   <p class="style2" style="text-align:left; "> 
