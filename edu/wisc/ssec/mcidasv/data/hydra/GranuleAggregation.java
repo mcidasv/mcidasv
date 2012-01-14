@@ -462,6 +462,10 @@ public class GranuleAggregation implements MultiDimensionReader {
 					   } else {
 						   // the end granule
 						   countSet[i][j] = (count[j] * stride[j]) - countSubtotal;
+						   // XXX TJJ - limiting count to valid numbers here, why??
+						   // need to revisit, see why this condition manifests
+						   if (countSet[i][j] > (vGranuleLength - startSet[i][j])) 
+							   countSet[i][j] = vGranuleLength - startSet[i][j];
 					   }
 				   }
 				   // luckily, stride never changes
