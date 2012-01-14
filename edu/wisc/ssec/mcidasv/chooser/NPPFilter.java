@@ -179,7 +179,7 @@ public class NPPFilter extends FileFilter {
     			e.printStackTrace();
     		} finally {
     			try {
-    				ncfile.close();
+    				if (ncfile != null) ncfile.close();
     			} catch (IOException ioe) {
     				ioe.printStackTrace();
     			}
