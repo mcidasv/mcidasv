@@ -30,13 +30,9 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import java.util.HashMap;
-
 /**
  * Utility class to support Joint Polar Satellite System (JPSS) functionality.
- * Some of this is temporary hashmaps, needed because the currently available
- * NPP data does not fully, correctly implement the specs yet as defined in
- * the NPP Common Data Format Control Book.  See:
+ * Documentation referenced is from NPP Common Data Format Control Book.  See:
  * http://jointmission.gsfc.nasa.gov/project/science-documents.html
  * 
  * @author tommyj
@@ -121,75 +117,6 @@ public abstract class JPSSUtilities {
     	"GATRO",
     	"IVMIM",
     	"VMUGE"
-	};
-	
-    private static HashMap<String, String> prodHM = new HashMap<String, String>();
-    
-    static {
-    	
-    	// populate product hashmap
-    	// This table is needed because the product names in the actual granules
-    	// do not match those in the XML Product Profiles, which appear to be 
-    	// a short-hand version of the longer names.  Swell.
-    	// Mapping:  Product name in granule -> Product name in XML Product Profile
-    	
-    	// XXX TJJ - need to rework how this hashmap is used in NPP Data Source code
-    	// at present, we only want a map entry if a "Factors" variable is present
-    	// (meaning scales/offsets are used).  Why did I just notice this? (20 Sep 2011)
-    	// beats me...
-    	
-    	prodHM.put("Albedo", "Albedo");
-    	prodHM.put("AntennaTemperature", "antennaTemperature");
-    	prodHM.put("BrightnessTemperature", "BrightnessTemperature");
-    	prodHM.put("BulkSeaSurfaceTemperature", "bulkSST");
-    	prodHM.put("Chlorophyll_a", "Chlorophyll_a");
-    	prodHM.put("CloudBaseHeightLayer", "cbhLyr");
-    	prodHM.put("CloudBaseHeightTotal", "cbhTot");
-    	prodHM.put("IST_Array", "IST Pixel");
-    	prodHM.put("Land_Temp", "lst");
-    	prodHM.put("NumberOfAggregatedImageryPixels", "scdNumAggPix");
-    	prodHM.put("Radiance", "Radiance");
-    	prodHM.put("Reflectance", "Reflectance");
-    	prodHM.put("SceneCounts", "sceneCounts");
-    	prodHM.put("SkinSeaSurfaceTemperature", "skinSST");
-    	prodHM.put("SnowFraction", "scdFractionFromBinaryMap");
-    	prodHM.put("TOA_NDVI", "TOA_NDVI");
-    	prodHM.put("TOC_EVI", "TOC_EVI");
-    	prodHM.put("VegetationFraction", "VegetationFraction");
-    	
-    }
-    
-    /**
-     * Map the NPP product name to those used in the XML Product Profiles,
-     * which seem to be short-hand versions of the long names.
-     * 
-     * @param prodName
-     * @return product id for the corresponding XML Product Profile
-     */
-    
-    public static String mapProdNameToProfileName(String prodName) {
-    	String s = null;
-    	if (prodHM != null) {
-    		s = (String) prodHM.get(prodName);
-    	}
-    	return s;
-    }
-    
-    /**
-	 * Return true if the input string is a valid NPP Product
-     * 
-     * @param prodName
-     * @return true if the input string is a valid NPP Product
-     */
-    
-    public static boolean isValidNPPProduct(String prodName) {
-    	if (prodName == null) return false;
-    	if (prodHM != null) {
-    		if (prodHM.containsValue(prodName)) {
-    			return true;
-    		}
-    	}
-    	return false;
-    }
+	};    
 	
 }
