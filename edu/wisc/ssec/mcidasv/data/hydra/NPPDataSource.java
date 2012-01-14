@@ -392,7 +392,6 @@ public class NPPDataSource extends HydraDataSource {
 
 	    				FilenameFilter geoFilter = new FilenameFilter() {
 	    					public boolean accept(File dir, String name) {
-	    						logger.debug("filter check: " + name);
 	    						if ((name.startsWith("G")) && (name.endsWith(".h5"))) {
 	    							return true;
 	    						} else {
@@ -408,15 +407,12 @@ public class NPPDataSource extends HydraDataSource {
 	    					}
 	    					// get the file name for convenience
 	    					String fName = file.getName();
-	    					logger.debug("looking at file: " + fName);
-	    					logger.debug("looking at geof: " + geoFileRelative);
 	    					// is it one of the geo types we are looking for?
 	    					if (fName.substring(0, 5).equals(geoFileRelative.substring(0, 5))) {
 	    						int geoStartIdx = geoFileRelative.indexOf("_d");
 	    						int prdStartIdx = fName.indexOf("_d");
 	    						String s1 = geoFileRelative.substring(geoStartIdx, geoStartIdx + 35);
 	    						String s2 = fName.substring(prdStartIdx, prdStartIdx + 35);
-	    						logger.debug("Comparing " + s1 + " and " + s2);
 	    						if (s1.equals(s2)) {
 	    							geoFilename = s.substring(0, s.lastIndexOf(File.separatorChar) + 1) + fName;
 	    							break;
@@ -553,7 +549,7 @@ public class NPPDataSource extends HydraDataSource {
     	    							if (zScanOk) {
     	    								is3D = true;
     	    								hasChannelSelect = true;
-    	    								logger.info("Handling 3D data source!");
+    	    								logger.debug("Handling 3D data source!");
     	    							}
     	    							
     	    							if (useThis) { 
@@ -568,17 +564,20 @@ public class NPPDataSource extends HydraDataSource {
     	    								//   endif
     	    								
     	    								String factorsVarName = nppPP.getScaleFactorName(varShortName);
-    	    								logger.info("Mapping: " + varShortName + " to: " + factorsVarName);
+    	    								logger.debug("Mapping: " + varShortName + " to: " + factorsVarName);
     	    								if (factorsVarName != null) {
 	    	    								for (Variable fV : vl) {
 	    	    									if (fV.getShortName().equals(factorsVarName)) {
 	    	    										logger.debug("Pulling scale and offset values from variable: " + fV.getShortName());
 	    	    										ucar.ma2.Array a = fV.read();
-	    	    										ucar.ma2.Index i = a.getIndex();
-	    	    										scaleVal = a.getFloat(i);
+	    	    										float[] so = (float[]) a.copyTo1DJavaArray();
+	    	    										//ucar.ma2.Index i = a.getIndex();
+	    	    										//scaleVal = a.getFloat(i);
+	    	    										scaleVal = so[0];
 	    	    										logger.debug("Scale value: " + scaleVal);
-	    	    										i.incr();
-	    	    										offsetVal = a.getFloat(i);
+	    	    										//i.incr();
+	    	    										//offsetVal = a.getFloat(i);
+	    	    										offsetVal = so[1];
 	    	    										logger.debug("Offset value: " + offsetVal);
 	    	    										unpackFlag = true;
 	    	    										break;
@@ -595,87 +594,83 @@ public class NPPDataSource extends HydraDataSource {
     	    								
     	    								// add valid range and fill value attributes here
     	    					        	// try to fill in valid range
-    	    					        	if (nppPP != null) {
-    	    					        		String translatedName = JPSSUtilities.mapProdNameToProfileName(vName.substring(vName.lastIndexOf(SEPARATOR_CHAR) + 1));
-    	    					        		logger.debug("mapped name: " + translatedName);
-    	    					        		if (translatedName != null) {
-    	    					        			String rangeMin = nppPP.getRangeMin(translatedName);
-    	    					        			String rangeMax = nppPP.getRangeMax(translatedName);
-    	    					        			logger.debug("range min: " + rangeMin);
-    	    					        			logger.debug("range max: " + rangeMax);
-    	    					        			// only store range attribute if VALID range found
-    	    					        			if ((rangeMin != null) && (rangeMax != null)) {
-    	    					        				int [] shapeArr = new int [] { 2 };
-    	    					        				ArrayFloat af = new ArrayFloat(shapeArr);
-    	    					        				try {
-    	    					        					af.setFloat(0, Float.parseFloat(rangeMin));
-    	    					        				} catch (NumberFormatException nfe) {
-    	    					        					af.setFloat(0, new Float(Integer.MIN_VALUE));
-    	    					        				}
-    	    					        				try {
-    	    					        					af.setFloat(1, Float.parseFloat(rangeMax));
-    	    					        				} catch (NumberFormatException nfe) {
-    	    					        					af.setFloat(1, new Float(Integer.MAX_VALUE));
-    	    					        				}
-    	    					        				ucar.nc2.Attribute rangeAtt = new ucar.nc2.Attribute("valid_range", af);
-    	    					        				v.addAttribute(rangeAtt);
-    	    					        			}
-    	    	    								
-    	    	    								// check for and load fill values too...
-    	    	    								
-    	    	    								// we need to check two places, first, the XML product profile
-    	    	    								ArrayList<Float> fval = nppPP.getFillValues(translatedName);
-    	    	    								
-    	    	    								// 2nd, does the variable already have one defined?
-	    	    									// if there was already a fill value associated with this variable, make
-	    	    									// sure we bring that along for the ride too...
-	        	    								ucar.nc2.Attribute aFill = v.findAttribute("_FillValue");
-	        	    								
-	        	    								// determine size of our fill value array
-	        	    								int fvArraySize = 0;
-	        	    								if (aFill != null) fvArraySize++;
-	        	    								if (! fval.isEmpty()) fvArraySize += fval.size();
-	        	    								int [] fillShape = new int [] { fvArraySize };
-	        	    								
-	        	    								// allocate the array
-	        	    								ArrayFloat afFill = new ArrayFloat(fillShape);
-	        	    								
-    	    	    								// and FINALLY, fill it!
-	        	    								if (! fval.isEmpty()) {
-    	    	    									for (int fillIdx = 0; fillIdx < fval.size(); fillIdx++) {
-    	    	    										afFill.setFloat(fillIdx, fval.get(fillIdx));
-    	    	    										logger.info("Adding fill value (from XML): " + fval.get(fillIdx));
-    	    	    									}
-    	    	    								}
-	        	    								
-	        	    								if (aFill != null) {
-	        	    									Number n = aFill.getNumericValue();
-	        	    									// is the data unsigned?
-	        	    									ucar.nc2.Attribute aUnsigned = v.findAttribute("_Unsigned");
-	        	    									float fillValAsFloat = Float.NaN;
-	        	    									if (aUnsigned != null) {
-	        	    										if (aUnsigned.getStringValue().equals("true")) {
-	        	    											DataType fvdt = aFill.getDataType();
-	        	    											logger.info("Data String: " + aFill.toString());
-	        	    											logger.info("DataType primitive type: " + fvdt.getPrimitiveClassType());
-	        	    											// signed byte that needs conversion?
-	        	    											if (fvdt.getPrimitiveClassType() == byte.class) {
-	        	    												fillValAsFloat = (float) Util.unsignedByteToInt(n.byteValue());
-	        	    											}
-	        	    											else if (fvdt.getPrimitiveClassType() == short.class) {
-	        	    												fillValAsFloat = (float) Util.unsignedShortToInt(n.shortValue());
-	        	    											} else {
-	        	    												fillValAsFloat = n.floatValue();
-	        	    											}
-	        	    										}
-	        	    									}
-	        	    									afFill.setFloat(fvArraySize - 1, fillValAsFloat);
-	        	    									logger.info("Adding fill value (from variable): " + fillValAsFloat);
-	        	    								}
-	    	    									ucar.nc2.Attribute fillAtt = new ucar.nc2.Attribute("_FillValue", afFill);
-	    	    									v.addAttribute(fillAtt);
-    	    					        		}
-    	    					        	}
+    	    								if (nppPP.hasNameAndMetaData(varShortName)) {
+    	    									String rangeMin = nppPP.getRangeMin(varShortName);
+    	    									String rangeMax = nppPP.getRangeMax(varShortName);
+    	    									logger.debug("range min: " + rangeMin);
+    	    									logger.debug("range max: " + rangeMax);
+    	    									// only store range attribute if VALID range found
+    	    									if ((rangeMin != null) && (rangeMax != null)) {
+    	    										int [] shapeArr = new int [] { 2 };
+    	    										ArrayFloat af = new ArrayFloat(shapeArr);
+    	    										try {
+    	    											af.setFloat(0, Float.parseFloat(rangeMin));
+    	    										} catch (NumberFormatException nfe) {
+    	    											af.setFloat(0, new Float(Integer.MIN_VALUE));
+    	    										}
+    	    										try {
+    	    											af.setFloat(1, Float.parseFloat(rangeMax));
+    	    										} catch (NumberFormatException nfe) {
+    	    											af.setFloat(1, new Float(Integer.MAX_VALUE));
+    	    										}
+    	    										ucar.nc2.Attribute rangeAtt = new ucar.nc2.Attribute("valid_range", af);
+    	    										v.addAttribute(rangeAtt);
+    	    									}
+
+    	    									// check for and load fill values too...
+
+    	    									// we need to check two places, first, the XML product profile
+    	    									ArrayList<Float> fval = nppPP.getFillValues(varShortName);
+
+    	    									// 2nd, does the variable already have one defined?
+    	    									// if there was already a fill value associated with this variable, make
+    	    									// sure we bring that along for the ride too...
+    	    									ucar.nc2.Attribute aFill = v.findAttribute("_FillValue");
+
+    	    									// determine size of our fill value array
+    	    									int fvArraySize = 0;
+    	    									if (aFill != null) fvArraySize++;
+    	    									if (! fval.isEmpty()) fvArraySize += fval.size();
+    	    									int [] fillShape = new int [] { fvArraySize };
+
+    	    									// allocate the array
+    	    									ArrayFloat afFill = new ArrayFloat(fillShape);
+
+    	    									// and FINALLY, fill it!
+    	    									if (! fval.isEmpty()) {
+    	    										for (int fillIdx = 0; fillIdx < fval.size(); fillIdx++) {
+    	    											afFill.setFloat(fillIdx, fval.get(fillIdx));
+    	    											logger.debug("Adding fill value (from XML): " + fval.get(fillIdx));
+    	    										}
+    	    									}
+
+    	    									if (aFill != null) {
+    	    										Number n = aFill.getNumericValue();
+    	    										// is the data unsigned?
+    	    										ucar.nc2.Attribute aUnsigned = v.findAttribute("_Unsigned");
+    	    										float fillValAsFloat = Float.NaN;
+    	    										if (aUnsigned != null) {
+    	    											if (aUnsigned.getStringValue().equals("true")) {
+    	    												DataType fvdt = aFill.getDataType();
+    	    												logger.debug("Data String: " + aFill.toString());
+    	    												logger.debug("DataType primitive type: " + fvdt.getPrimitiveClassType());
+    	    												// signed byte that needs conversion?
+    	    												if (fvdt.getPrimitiveClassType() == byte.class) {
+    	    													fillValAsFloat = (float) Util.unsignedByteToInt(n.byteValue());
+    	    												}
+    	    												else if (fvdt.getPrimitiveClassType() == short.class) {
+    	    													fillValAsFloat = (float) Util.unsignedShortToInt(n.shortValue());
+    	    												} else {
+    	    													fillValAsFloat = n.floatValue();
+    	    												}
+    	    											}
+    	    										}
+    	    										afFill.setFloat(fvArraySize - 1, fillValAsFloat);
+    	    										logger.debug("Adding fill value (from variable): " + fillValAsFloat);
+    	    									}
+    	    									ucar.nc2.Attribute fillAtt = new ucar.nc2.Attribute("_FillValue", afFill);
+    	    									v.addAttribute(fillAtt);
+    	    								}
 
     	    								ucar.nc2.Attribute aUnsigned = v.findAttribute("_Unsigned");
     	    								if (aUnsigned != null) {
@@ -840,14 +835,12 @@ public class NPPDataSource extends HydraDataSource {
         	swathTable.put("scale_name", "scale_factor");
         	swathTable.put("offset_name", "add_offset");
         	swathTable.put("fill_value_name", "_FillValue");
-        	logger.info("Setting range_name to: " + pStr.substring(pStr.indexOf(SEPARATOR_CHAR) + 1));
         	swathTable.put("range_name", pStr.substring(pStr.indexOf(SEPARATOR_CHAR) + 1));
         	spectTable.put("range_name", pStr.substring(pStr.indexOf(SEPARATOR_CHAR) + 1));
         	
         	// set the valid range hash if data is available
         	if (nppPP != null) {
-        		String translatedName = JPSSUtilities.mapProdNameToProfileName(pStr.substring(pStr.lastIndexOf(SEPARATOR_CHAR) + 1));
-        		if (translatedName != null) {
+        		if (nppPP.getRangeMin(pStr.substring(pStr.lastIndexOf(SEPARATOR_CHAR) + 1)) != null) {
         			swathTable.put("valid_range", "valid_range");
         		}
         	}
