@@ -197,15 +197,13 @@ public class NPPProductProfile {
 			NodeList datum = null;
 			String name = null;
 			
-			// cycle through once, finding name and making sure it's a valid NPP Product name
-			boolean isValidProduct = false;
+			// cycle through once, finding name and datum node
 			for (int j = 0; j < children.getLength(); j++) {
 				Node child = children.item(j);
 				logger.trace("looking at node name: " + child.getNodeName());
 				if (child.getNodeName().equals("Name")) {
 					name = child.getTextContent();
 					logger.trace("Found NPP product name: " + name);
-					isValidProduct = JPSSUtilities.isValidNPPProduct(name);
 				}
 				if (child.getNodeName().equals("Datum")) {
 					datum = child.getChildNodes();
@@ -215,9 +213,9 @@ public class NPPProductProfile {
 			
 			String rMin = null;
 			String rMax = null;		
-			String sFactorName = null;
-			
-			if (isValidProduct) {
+			String sFactorName = null;	
+
+			if ((name != null) && (datum != null)) {
 				for (int j = 0; j < datum.getLength(); j++) {
 					Node child = datum.item(j);
 					if (child.getNodeName().equals("RangeMin")) {
@@ -235,16 +233,12 @@ public class NPPProductProfile {
 						for (int k = 0; k < grandChildren.getLength(); k++) {
 							Node grandChild = grandChildren.item(k);
 							if (grandChild.getNodeName().equals("Value")) {
-								String fillValueStr = grandChild
-										.getTextContent();
-								fValAL.add(new Float(Float
-										.parseFloat(fillValueStr)));
+								String fillValueStr = grandChild.getTextContent();
+								fValAL.add(new Float(Float.parseFloat(fillValueStr)));
 							}
 						}
 					}
 				}
-			} else {
-				name = null;
 			}
 			
 			if ((name != null) && (rMin != null)) {
@@ -277,6 +271,21 @@ public class NPPProductProfile {
 		}
 	}
 
+	/**
+	 * Check if this product profile has a product AND metadata
+	 * Only need to check one of the possible fields
+	 * @param product name
+	 * @return true if both conditions met
+	 */
+	
+	public boolean hasNameAndMetaData(String name) {
+		if (rangeMin.containsKey(name)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	public String getRangeMin(String name) {
 		return rangeMin.get(name);
 	}
