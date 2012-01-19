@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <plugins>
 
-<!-- Displays Section -->
+<!-- Display Section -->
 <plugin name="User Interface Skins"
         category="Displays"
         description="Adds a number of different window configurations"
@@ -21,7 +21,7 @@
         category="Displays"
         description="A set of animation displays from the VGEE project"
         url="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/vgee.jar"/>
-<!-- /Displays Section -->
+<!-- /Display Section -->
 
 <!-- Color Tables Section -->
 <plugin name="GEMPAK Color Tables"
