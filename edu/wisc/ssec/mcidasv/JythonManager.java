@@ -51,7 +51,7 @@ import ucar.unidata.idv.ui.ImageGenerator;
 
 public class JythonManager extends ucar.unidata.idv.JythonManager {
 
-    /** Trusty logging object. */
+    /**  logging object. */
     private static final Logger logger = LoggerFactory.getLogger(JythonManager.class);
 
     /**
