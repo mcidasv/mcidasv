@@ -114,8 +114,9 @@ public class GeoPreviewSelection extends DataSelectionComponent {
         }
 
         isLL = sampleProjection.isLatLonOrder();
-
-        mapProjDsp = new MapProjectionDisplayJ3D(MapProjectionDisplay.MODE_2Din3D);
+        // TODO(jon): figure this out!
+        //mapProjDsp = new MapProjectionDisplayJ3D(MapProjectionDisplay.MODE_2Din3D);
+        mapProjDsp = new MapProjectionDisplayJ3D();
         mapProjDsp.enableRubberBanding(false);
         dspMaster = mapProjDsp;
         mapProjDsp.setMapProjection(sampleProjection);
