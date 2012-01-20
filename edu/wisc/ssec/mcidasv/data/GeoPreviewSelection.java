@@ -113,68 +113,59 @@ public class GeoPreviewSelection extends DataSelectionComponent {
             this.sampleProjection = sample;
         }
 
-         isLL = sampleProjection.isLatLonOrder();
+        isLL = sampleProjection.isLatLonOrder();
 
         mapProjDsp = new MapProjectionDisplayJ3D(MapProjectionDisplay.MODE_2Din3D);
         mapProjDsp.enableRubberBanding(false);
         dspMaster = mapProjDsp;
         mapProjDsp.setMapProjection(sampleProjection);
-        RealType imageRangeType = 
-          (((FunctionType)image.getType()).getFlatRange().getRealComponents())[0];
-        HydraRGBDisplayable imageDsp = 
-          new HydraRGBDisplayable("image", imageRangeType, null, true, null);
+        RealType imageRangeType = (((FunctionType)image.getType()).getFlatRange().getRealComponents())[0];
+        HydraRGBDisplayable imageDsp = new HydraRGBDisplayable("image", imageRangeType, null, true, null);
 
         if (showPreview) imageDsp.setData(image);
 
         MapLines mapLines  = new MapLines("maplines");
-        URL      mapSource =
-        mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPU");
+        URL mapSource = mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPU");
         try {
             BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
             mapLines.setMapLines(mapAdapter.getData());
             mapLines.setColor(java.awt.Color.cyan);
             mapProjDsp.addDisplayable(mapLines);
         } catch (Exception excp) {
-            System.err.println("Can't open map file " + mapSource);
-            System.err.println(excp);
+            logger.error("can't open map file="+mapSource, excp);
         }
 
         mapLines  = new MapLines("maplines");
-        mapSource =
-        mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPW");
+        mapSource = mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPW");
         try {
             BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
             mapLines.setMapLines(mapAdapter.getData());
             mapLines.setColor(java.awt.Color.cyan);
             mapProjDsp.addDisplayable(mapLines);
         } catch (Exception excp) {
-            System.err.println("Can't open map file " + mapSource);
-            System.err.println(excp);
+            logger.error("can't open map file="+mapSource, excp);
         }
 
         mapLines  = new MapLines("maplines");
-        mapSource =
-        mapProjDsp.getClass().getResource("/auxdata/maps/OUTLHPOL");
+        mapSource = mapProjDsp.getClass().getResource("/auxdata/maps/OUTLHPOL");
         try {
             BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
             mapLines.setMapLines(mapAdapter.getData());
             mapLines.setColor(java.awt.Color.cyan);
             mapProjDsp.addDisplayable(mapLines);
         } catch (Exception excp) {
-            System.err.println("Can't open map file " + mapSource);
-            System.err.println(excp);
+            logger.error("can't open map file="+mapSource, excp);
         }
 
-        if (showPreview) dspMaster.addDisplayable(imageDsp);
-        rbb =
-            new GeoSubsetRubberBandBox(isLL, image, ((MapProjectionDisplay)mapProjDsp).getDisplayCoordinateSystem(), 1);
+        if (showPreview) {
+            dspMaster.addDisplayable(imageDsp);
+        }
+        rbb = new GeoSubsetRubberBandBox(isLL, image, ((MapProjectionDisplay)mapProjDsp).getDisplayCoordinateSystem(), 1);
         mvm = new MapViewManager(dataSource.getDataContext().getIdv());
         store = dataSource.getDataContext().getIdv().getStore();
         rbb.setColor((Color)store.get(mvm.PREF_FGCOLOR, Color.GREEN));
         rbb.addAction(new CellImpl() {
-          public void doAction()
-             throws VisADException, RemoteException
-           {
+          public void doAction() throws VisADException, RemoteException {
               eraseBox();
               forceCoords();
            }
@@ -215,7 +206,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
          try {
            mp = new LambertAEA(rect);
          } catch (Exception e) {
-             System.err.println("GeoPreviewSelection getDataProjection: e="+e);
+             logger.error("error while attempting to create new LambertAEA", e);
          }
          return mp;
       }
@@ -245,7 +236,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
           return panel;
         }
         catch (Exception e) {
-          System.err.println("GeoPreviewSelection doMakeContents: e=" + e);
+            logger.error("error building preview panel", e);
         }
         return null;
       }
@@ -406,7 +397,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
                 refVals, 5);
               box.setData(set);
           } catch (Exception e) {
-              System.err.println("GeoPreviewSelection drawBox: e=" + e);
+              logger.error("error drawing box", e);
           }
      }
 
@@ -417,7 +408,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
                  box.setColor((Color)store.get(mvm.PREF_FGCOLOR, Color.GREEN));
                  dspMaster.addDisplayable(box);
              } catch (Exception e) {
-                 System.err.println("GeoPreviewSelection makeBox: e=" + e);
+                 logger.error("error making box", e);
              }
          }
      }
@@ -433,7 +424,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
                 }, 2);
               box.setData(set);
           } catch (Exception e) {
-              System.err.println("GeoPreviewSelection eraseBox: e=" + e);
+              logger.error("error erasing box", e);
           }
           addRBB();
      }
@@ -441,7 +432,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
      private boolean rBBPresent() {
          Displayable[] dsps = dspMaster.getDisplayables();
          if (dsps.length > 0) {
-             for (int i = 0; i<dsps.length; i++) {
+             for (int i = 0; i < dsps.length; i++) {
                  Displayable disp = dsps[i];
                  if (disp == (Displayable)rbb) {
                      return true;
@@ -456,7 +447,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
              try {
                  dspMaster.removeDisplayable(rbb);
              } catch (Exception e) {
-                 System.err.println("GeoPreviewSelection removeRBB: e=" + e);
+                 logger.error("error removing rubberband box", e);
              }
          }
          addRBB();
@@ -467,7 +458,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
              try {
                  dspMaster.addDisplayable(rbb);
              } catch (Exception e) {
-                 System.err.println("GeoPreviewSelection addRBB: e=" + e);
+                 logger.error("error adding rubberband box", e);
              }
          }
      }
