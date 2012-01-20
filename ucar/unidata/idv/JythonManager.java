@@ -429,7 +429,9 @@ public class JythonManager extends IdvManager implements ActionListener {
                 holder.outerContents.getLocationOnScreen();
                 return holder;
             }
-        } catch (Exception exc) {}
+        } catch (Exception exc) {
+            logger.error("problem with finding visible component: {}", exc);
+        }
         return null;
     }
 
@@ -556,7 +558,10 @@ public class JythonManager extends IdvManager implements ActionListener {
             helpMenu.add(makeMenuItem("Show Jython Help", this, "showHelp"));
             textSearcher = new TextSearcher() {
                 @Override public TextSearcher.TextWrapper getTextWrapper() {
-                    return findVisibleComponent();
+                    LibHolder visibleComponent = findVisibleComponent();
+//                    return findVisibleComponent();
+                    logger.trace("visible comp={}", visibleComponent);
+                    return visibleComponent;
                 }
             };
             contents = topCenterBottom(menuBar, treePanel, textSearcher);

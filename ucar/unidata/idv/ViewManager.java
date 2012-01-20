@@ -21,82 +21,6 @@
 package ucar.unidata.idv;
 
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Robot;
-import java.awt.Toolkit;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
-import java.awt.print.PrinterJob;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.rmi.RemoteException;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Group;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JSlider;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.JToggleButton;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.border.Border;
-import javax.swing.border.MatteBorder;
-import javax.swing.event.ChangeEvent;
-import javax.vecmath.Point3d;
-import javax.vecmath.Vector3f;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -106,6 +30,7 @@ import org.w3c.dom.NodeList;
 import ucar.unidata.collab.SharableImpl;
 import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.data.gis.KmlDataSource;
+import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.publish.PublishManager;
 import ucar.unidata.idv.ui.BottomLegend;
 import ucar.unidata.idv.ui.IdvLegend;
@@ -140,6 +65,7 @@ import ucar.unidata.view.geoloc.NavigatedDisplay;
 import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
+
 import ucar.visad.Util;
 import ucar.visad.display.Animation;
 import ucar.visad.display.AnimationInfo;
@@ -148,6 +74,7 @@ import ucar.visad.display.CompositeDisplayable;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.Displayable;
 import ucar.visad.display.TextDisplayable;
+
 import visad.ConstantMap;
 import visad.ControlEvent;
 import visad.ControlListener;
@@ -166,7 +93,97 @@ import visad.ProjectionControl;
 import visad.Real;
 import visad.Set;
 import visad.VisADException;
+
+import visad.bom.annotations.ImageJ3D;
+import visad.bom.annotations.ScreenAnnotatorJ3D;
+
+import visad.java3d.DisplayImplJ3D;
 import visad.java3d.DisplayRendererJ3D;
+
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.awt.print.PrinterJob;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
+import java.rmi.RemoteException;
+
+import java.text.DecimalFormat;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.media.j3d.BranchGroup;
+import javax.media.j3d.Group;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSlider;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.JToggleButton;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.Border;
+import javax.swing.border.MatteBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import javax.vecmath.Point3d;
+import javax.vecmath.Vector3f;
 
 
 //import org.apache.batik.svggen.SVGGraphics2D;
@@ -182,8 +199,6 @@ import visad.java3d.DisplayRendererJ3D;
 
 public class ViewManager extends SharableImpl implements ActionListener,
         ItemListener, ControlListener, DisplayListener {
-
-    private static final Logger logger = LoggerFactory.getLogger(ViewManager.class);
 
     /** Used to log errors */
     static ucar.unidata.util.LogUtil.LogCategory log_ =
@@ -262,7 +277,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     /** Preference for  showing the wireframe box */
     public static final String PREF_WIREFRAME = "View.Wireframe";
 
-
     /** Preference for showing the time string in the display */
     public static final String PREF_ANIREADOUT = "View.AniReadout";
 
@@ -274,13 +288,31 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public static final String PREF_WAITMSG = "View.WaitVisible";
 
     /** for the contour label size */
-    public static final String PREF_CONTOUR_LABELSIZE = "idv.contour.labelsize";
+    public static final String PREF_CONTOUR_LABELSIZE =
+        "idv.contour.labelsize";
 
     /** for the contour label Font */
-    public static final String PREF_CONTOUR_LABELFONT = "idv.contour.labelfont";
+    public static final String PREF_CONTOUR_LABELFONT =
+        "idv.contour.labelfont";
 
     /** for the contour label Font */
-    public static final String PREF_CONTOUR_LABELALIGN = "idv.contour.alignlabel";
+    public static final String PREF_CONTOUR_LABELALIGN =
+        "idv.contour.alignlabel";
+
+    /** for the logo */
+    public static final String PREF_LOGO = "idv.viewmanager.logo";
+
+    /** for the logo position */
+    public static final String PREF_LOGO_POSITION_OFFSET =
+        "idv.viewmanager.logo.position";
+
+    /** for the logo visibility */
+    public static final String PREF_LOGO_VISIBILITY =
+        "idv.viewmanager.logo.visible";
+
+    /** for the logo scale */
+    public static final String PREF_LOGO_SCALE = "idv.viewmanager.logo.scale";
+
 
     /** border width */
     public static final int borderWidth = 3;
@@ -369,15 +401,37 @@ public class ViewManager extends SharableImpl implements ActionListener,
     /** For full screen properties */
     private JTextField fullScreenHeightFld;
 
+    /** For logo properties */
+    private JCheckBox logoVisCbx;
+
+    /** For logo properties */
+    private JTextField logoFileField;
+
+    /** For logo properties */
+    private String logoFile;
+
+    /** For logo properties */
+    private ScreenAnnotatorJ3D annotator;
+
+    /** For logo properties */
+    //private boolean logoVisibility = false;
+
+    /** For logo properties */
+    private String logoPosition = null;
+
+    /** For logo properties */
+    private float logoScale = -1f;
+
+    /**
+     * We keep the window bounds around for persisting/unpersisting
+     * this ViewManager.
+     */
+
     /** flag for light changes */
     private boolean ignoreLightChanges = false;
 
     /** lock lights button */
     private JToggleButton lockLightsBtn;
-
-
-
-
 
     /** The inner gui */
     protected JComponent innerContents;
@@ -419,9 +473,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
     /** gui */
     JComponent centerPanelWrapper;
-
-
-
 
     /** tracks wether the legend is shown, hidden or is floating */
     private String legendState = IdvLegend.STATE_DOCKED;
@@ -741,6 +792,27 @@ public class ViewManager extends SharableImpl implements ActionListener,
     /** removeables */
     private List<Removable> removables = new ArrayList<Removable>();
 
+    /** logo position box */
+    private JComboBox logoPositionBox;
+
+    /** logo sizer control */
+    private JSlider logoSizer;
+
+    /** the logo size label */
+    private JLabel logoSizeLabel;
+
+    /** the logo offset field */
+    private JTextField logoOffsetTextField;
+
+    /** logo positions */
+    protected static TwoFacedObject[] logoPoses = { new TwoFacedObject(
+                                                      "Lower Left", "ll"),
+            new TwoFacedObject("Upper Left", "ul"),
+            new TwoFacedObject("Upper Right", "ur"),
+            new TwoFacedObject("Lower Right", "lr"),
+            new TwoFacedObject("Center", "mm"), };
+
+
     /**
      *  A parameter-less ctor for the XmlEncoder based decoding.
      */
@@ -891,13 +963,17 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * Get the list of times from the control that is flagged as the time driver
      *
      * @return list of times from the time driver control or null
+     *
+     * @throws RemoteException  Java RMI problem
+     * @throws VisADException   VisAD problem
      */
-    public List<DateTime> getTimeDriverTimes()  throws VisADException, RemoteException {
-        for(DisplayControl control: (List<DisplayControl>)getControls()) {
-            if(control.getIsTimeDriver()) {
-                Set timeSet = control.getTimeSet();
-                DateTime[] times = Animation.getDateTimeArray(timeSet);
-                return (List<DateTime>)Misc.toList(times);
+    public List<DateTime> getTimeDriverTimes()
+            throws VisADException, RemoteException {
+        for (DisplayControl control : (List<DisplayControl>) getControls()) {
+            if (control.getIsTimeDriver()) {
+                Set        timeSet = control.getTimeSet();
+                DateTime[] times   = Animation.getDateTimeArray(timeSet);
+                return (List<DateTime>) Misc.toList(times);
             }
         }
         return null;
@@ -1273,6 +1349,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * @return the component
      */
     protected JComponent getMainPropertiesComponent() {
+
         nameFld       = new JTextField(((name != null)
                                         ? name
                                         : ""), 20);
@@ -1344,15 +1421,135 @@ public class ViewManager extends SharableImpl implements ActionListener,
         fullScreenPanel.setBorder(
             BorderFactory.createTitledBorder("Full Screen Dimensions"));
 
-        propsComp = GuiUtils.vbox(
-            propsComp, GuiUtils.inset(colorPanel, new Insets(10, 5, 5, 5)),
-            GuiUtils.inset(fontPanel, new Insets(10, 5, 5, 5)),
-            GuiUtils.inset(fullScreenPanel, new Insets(10, 5, 5, 5)));
+        //logoVisCbx = new JCheckBox("", getLogoVisibility());
+        logoFileField = new JTextField(getLogoFile());
+        logoFileField.setToolTipText("Enter a file or URL");
+        // top panel
+        JButton browseButton = new JButton("Browse..");
+        browseButton.setToolTipText("Choose a logo from disk");
+        browseButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                String filename =
+                    FileManager.getReadFile(FileManager.FILTER_IMAGE);
+                if (filename == null) {
+                    return;
+                }
+                logoFileField.setText(filename);
+            }
+        });
+
+        String[] logos = parseLogoPosition(getLogoPosition());
+        logoPositionBox = new JComboBox(logoPoses);
+        logoPositionBox.setToolTipText("Set the logo position on the screen");
+        logoPositionBox.setSelectedItem(findLoc(logos[0]));
+
+        logoOffsetTextField = new JTextField(logos[1]);
+        logoOffsetTextField.setToolTipText(
+            "Set an offset from the position (x,y)");
+
+        logoSizeLabel = new JLabel("" + getLogoScale());
+        ChangeListener listener = new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                logoSizeLabel.setText("" + logoSizer.getValue() / 10.f);
+            }
+        };
+        JComponent[] sliderComps = GuiUtils.makeSliderPopup(0, 20,
+                                       (int) (getLogoScale() * 10), listener);
+        logoSizer = (JSlider) sliderComps[1];
+        sliderComps[0].setToolTipText("Change Logo Scale Value");
+
+        JPanel logoPanel = GuiUtils.vbox(
+        //GuiUtils.leftCenter(GuiUtils.rLabel("Visible: "), GuiUtils.leftCenter(logoVisCbx, GuiUtils.filler())),
+        GuiUtils.centerRight(logoFileField, browseButton), GuiUtils.hbox(
+            GuiUtils.leftCenter(
+                GuiUtils.rLabel("Screen Position: "),
+                logoPositionBox), GuiUtils.leftCenter(
+                    GuiUtils.rLabel("Offset: "),
+                    logoOffsetTextField), GuiUtils.leftCenter(
+                        GuiUtils.rLabel("Scale: "),
+                        GuiUtils.leftRight(logoSizeLabel, sliderComps[0]))));
+        logoPanel.setBorder(BorderFactory.createTitledBorder("Logo"));
+
+        propsComp = GuiUtils.vbox(new Component[] { propsComp,
+                GuiUtils.inset(colorPanel, new Insets(10, 5, 5, 5)),
+                GuiUtils.inset(fontPanel, new Insets(10, 5, 5, 5)),
+                GuiUtils.inset(fullScreenPanel, new Insets(10, 5, 5, 5)),
+                GuiUtils.inset(logoPanel, new Insets(10, 5, 5, 5)) });
 
         return GuiUtils.vbox(GuiUtils.left(GuiUtils.label("Name:  ",
                 nameFld)), propsComp);
+
     }
 
+    /**
+     * Find the appropriate combobox item from the string
+     *
+     * @param loc  the string location
+     *
+     * @return  the corresponding TFO
+     */
+    protected TwoFacedObject findLoc(String loc) {
+        if (loc.equalsIgnoreCase("ll")) {
+            return logoPoses[0];
+        } else if (loc.equalsIgnoreCase("ul")) {
+            return logoPoses[1];
+        } else if (loc.equalsIgnoreCase("ur")) {
+            return logoPoses[2];
+        } else if (loc.equalsIgnoreCase("lr")) {
+            return logoPoses[3];
+        } else if (loc.equalsIgnoreCase("mm")) {
+            return logoPoses[4];
+        }
+        return logoPoses[0];
+    }
+
+    /**
+     * Parse the logo position
+     *
+     * @param position  the string representation
+     *
+     * @return  the position and offset
+     */
+    protected String[] parseLogoPosition(String position) {
+        String logoP, logoO;
+        if ((position == null) || position.isEmpty()) {
+            logoP = "ll";
+            logoO = "0,0";
+        } else {
+            int firstComma = position.indexOf(",");
+            if (firstComma > 0) {
+                logoP = position.substring(0, firstComma - 1);
+                logoO = position.substring(firstComma + 1);
+            } else {
+                logoP = position;
+                logoO = "0,0";
+            }
+        }
+        return new String[] { logoP, logoO };
+    }
+
+    /**
+     * Make a logo position from the position and offset
+     *
+     * @param pos  the position
+     * @param offset  the offset
+     *
+     * @return  the logo position string
+     */
+    protected String makeLogoPosition(String pos, String offset) {
+        if ((pos == null) || pos.isEmpty()) {
+            return "";
+        }
+        int firstComma = pos.indexOf(",");
+        if (firstComma > 0) {
+            return pos;
+        } else {
+            if ((offset == null) || offset.isEmpty()) {
+                offset = "0,0";
+            }
+        }
+        return pos + "," + offset;
+    }
 
 
 
@@ -1777,7 +1974,16 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 getMaster().setDisplayAspect(aspectRatio);
             }
 
-
+            //setLogoVisibility(logoVisCbx.isSelected());
+            logoFile = logoFileField.getText().trim();
+            //setLogoAnchor(((TwoFacedObject) logoAnchorBox.getSelectedItem()).getId().toString());
+            String logoPos =
+                ((TwoFacedObject) logoPositionBox.getSelectedItem()).getId()
+                    .toString();
+            String logoOff = logoOffsetTextField.getText().trim();
+            setLogoPosition(makeLogoPosition(logoPos, logoOff));
+            setLogoScale(logoSizer.getValue() / 10.f);
+            updateAnnotations();
             return true;
         } catch (Exception exp) {
             logException("Applying properties", exp);
@@ -1786,7 +1992,86 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
     }
 
+    /**
+     * Update the annotations
+     */
+    protected void updateAnnotations() {
 
+        try {
+            DisplayImpl display = (DisplayImpl) getMaster().getDisplay();
+            if (display instanceof DisplayImplJ3D) {
+                if (annotator == null) {
+                    annotator = new ScreenAnnotatorJ3D(display);
+                }
+                annotator.clear();
+                Component comp = display.getComponent();
+                if (comp == null) {
+                    return;
+                }
+                Rectangle bounds = comp.getBounds();
+                //System.out.println("window bounds: " + bounds);
+                if ((bounds.width == 0) || (bounds.height == 0)
+                        || (logoFile == null) || logoFile.isEmpty()
+                        || !getLogoVisibility()) {
+                    annotator.draw();
+                    return;
+                }
+
+                Image logo = ImageUtils.readImage(logoFile, true, true);
+                if (logo == null) {
+                    //throw new VisADException("Logo file: " + logoFile + " does not exist.");
+                    System.err.println("Logo file: " + logoFile
+                                       + " does not exist.");
+                    return;
+                }
+
+                Point ap = ImageUtils.parsePoint(getLogoPosition(), bounds);
+                //System.out.println("screen point = " + ap);
+
+                int   baseX = ap.x;
+                int   baseY = ap.y;
+                float zval  = getPerspectiveView()
+                              ? 1
+                              : display.getDisplayRenderer().getMode2D()
+                                ? 1.5f
+                                : 2;
+
+                ImageJ3D logoJ3D = new ImageJ3D(logo,
+                                       getImageAnchor(getLogoPosition()),
+                                       baseX, baseY, zval, getLogoScale());
+                annotator.add(logoJ3D);
+                annotator.draw();
+            }
+        } catch (Exception exp) {
+            logException("updating annotations", exp);
+        }
+    }
+
+    /**
+     * Get the image location from the screen location
+     *
+     * @param loc  the screen location
+     *
+     * @return  the anchor point
+     */
+    private int getImageAnchor(String loc) {
+        int index = loc.indexOf(",");
+        if (index > 0) {
+            loc = loc.substring(0, index);
+        }
+        if (loc.equalsIgnoreCase("ll")) {
+            return ImageJ3D.BOTTOM_LEFT;
+        } else if (loc.equalsIgnoreCase("ul")) {
+            return ImageJ3D.TOP_LEFT;
+        } else if (loc.equalsIgnoreCase("ur")) {
+            return ImageJ3D.TOP_RIGHT;
+        } else if (loc.equalsIgnoreCase("lr")) {
+            return ImageJ3D.BOTTOM_RIGHT;
+        } else if (loc.equalsIgnoreCase("mm")) {
+            return ImageJ3D.CENTER;
+        }
+        return ImageJ3D.BOTTOM_LEFT;
+    }
 
 
     /**
@@ -1918,6 +2203,11 @@ public class ViewManager extends SharableImpl implements ActionListener,
         setBooleanProperties(that);
         setColors(that.getForeground(), that.getBackground());
         setDisplayListFont(that.getDisplayListFont());
+        setLogoFile(that.getLogoFile());
+        setLogoScale(that.getLogoScale());
+        setLogoVisibility(that.getLogoVisibility());
+        setLogoPosition(that.getLogoPosition());
+        updateAnnotations();
 
 
         if ((sideLegend != null) && (that.sideLegend != null)) {
@@ -2023,6 +2313,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
             }
         } else if (id.equals(PREF_SHOWDISPLAYLIST)) {
             updateDisplayList();
+        } else if (id.equals(PREF_LOGO_VISIBILITY)) {
+            updateAnnotations();
         }
     }
 
@@ -2124,6 +2416,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         /** member */
         JLabel label;
 
+        /** the right component */
         JLabel rightComp;
 
         /** member */
@@ -2147,8 +2440,10 @@ public class ViewManager extends SharableImpl implements ActionListener,
             this.timeSet = timeSet;
             this.control = control;
             this.label   = control.makeLegendLabel();
-            if(DisplayControl.DOTIMEDRIVER) {
-                this.rightComp = GuiUtils.rLabel(control.getIsTimeDriver()?"Time Driver":"");
+            if (idv.getUseTimeDriver()) {
+                this.rightComp = GuiUtils.rLabel(control.getIsTimeDriver()
+                        ? "Time Driver"
+                        : "");
             } else {
                 this.rightComp = GuiUtils.rLabel("");
             }
@@ -2348,8 +2643,11 @@ public class ViewManager extends SharableImpl implements ActionListener,
                         timeline.setShortDisplay(true);
                     }
                     timelines.add(timeline);
-                    comps.add(GuiUtils.inset(GuiUtils.leftRight(timeline.label,timeline.rightComp),
-                                             lblInsets));
+                    comps.add(
+                        GuiUtils.inset(
+                            GuiUtils.leftRight(
+                                timeline.label,
+                                timeline.rightComp), lblInsets));
                     comps.add(timeline.getContents(false));
                 }
                 allTimes = DatedObject.sort(allTimes, true);
@@ -2568,6 +2866,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
                                       "Show Display List",
                                       "Show display labels in the display",
                                       true));
+        props.add(new BooleanProperty(PREF_LOGO_VISIBILITY, "Show Logo",
+                                      "Toggle logo in display", false));
 
     }
 
@@ -2970,7 +3270,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
             animationInfo.setBoxesVisible(getShowAnimationBoxes());
             animationWidget.setProperties(animationInfo);
         }
+        setLogoFile(getStore().get(PREF_LOGO, ""));
+        setLogoVisibility(getStore().get(PREF_LOGO_VISIBILITY, false));
+        setLogoScale(getStore().get(PREF_LOGO_SCALE, 1.0f));
+        setLogoPosition(getStore().get(PREF_LOGO_POSITION_OFFSET,
+                                       "ll,10,-10"));
         updateDisplayList();
+        updateAnnotations();
     }
 
     /**
@@ -3483,13 +3789,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
             turnOnOffAllDisplays(true);
         } else if (code == KeyEvent.VK_F3) {
             turnOnOffAllDisplays(false);
-        } else if(GuiUtils.isControlKey(keyEvent, KeyEvent.VK_I)) {
+        } else if (GuiUtils.isControlKey(keyEvent, KeyEvent.VK_I)) {
             doSaveImageInThread();
             return;
-        } else if(GuiUtils.isControlKey(keyEvent, KeyEvent.VK_M)) {
+        } else if (GuiUtils.isControlKey(keyEvent, KeyEvent.VK_M)) {
             startImageCapture();
             return;
-        } else if(GuiUtils.isControlKey(keyEvent,KeyEvent.VK_B)) {
+        } else if (GuiUtils.isControlKey(keyEvent, KeyEvent.VK_B)) {
             getIdv().doSaveAs();
             return;
         } else if ( !Character.isDigit(c)) {
@@ -3507,28 +3813,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         }
     }
 
-//    public boolean getAnimatedVisibilityCheckBox() {
-//        boolean retVal;
-//        if (animationCB != null) {
-//            retVal = animationCB.isSelected();
-//        } else {
-//            retVal = getAnimatedVisibility();
-//        }
-//        return retVal;
-//    }
-
-//    public void setAnimatedVisibilityCheckBox(final boolean state) {
-////        if (animationCB != null) {
-////            animationCB.setSelected(state);
-////        } else {
-////            setAnimatedVisibility(state);
-////        }
-//        setVisibilityAnimationCheckBox("On");
-//        if (animationCB != null) {
-//            animationCB.setSelected(state);
-//        }
-//        setAnimatedVisibility(state);
-//    }
 
     /**
      * Turn on/off the display control visibility toggling animation
@@ -3551,7 +3835,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
                             && !getDisplayInfos().isEmpty()) {
                         int sleepTime = stepVisibilityToggle();
                         try {
-                            Thread.sleep(sleepTime<0?animationSpeed:sleepTime*1000);
+                            Thread.sleep((sleepTime < 0)
+                                         ? animationSpeed
+                                         : sleepTime * 1000);
                         } catch (InterruptedException ie) {
                             return;
                         }
@@ -3570,7 +3856,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         } else {
             this.setVisibilityAnimationCheckBox("Off");
         }
-        
     }
 
     /**
@@ -3609,6 +3894,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
     /**
      * This turns on the visbility of the next  display control
      * (that is &quot;unlocked&quot;) and turns off the others
+     *
+     * @return index
      */
     private int stepVisibilityToggle() {
         if (currentVisibilityIdx == -1) {
@@ -3616,11 +3903,11 @@ public class ViewManager extends SharableImpl implements ActionListener,
         } else {
             currentVisibilityIdx++;
         }
-        List controls = getControls();
+        List controls                = getControls();
 
-        int visbilityAnimationPause = -1;
+        int  visbilityAnimationPause = -1;
 
-        int  cnt      = 0;
+        int  cnt                     = 0;
         //Find the next one in the list that is not locked
         while (cnt < controls.size()) {
             if (currentVisibilityIdx >= controls.size()) {
@@ -3629,7 +3916,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
             DisplayControl control =
                 (DisplayControl) controls.get(currentVisibilityIdx);
             if ( !control.getLockVisibilityToggle()) {
-                visbilityAnimationPause = control.getVisbilityAnimationPause();
+                visbilityAnimationPause =
+                    control.getVisbilityAnimationPause();
                 break;
 
             }
@@ -3836,7 +4124,24 @@ public class ViewManager extends SharableImpl implements ActionListener,
      *
      * @param displayControl  the control
      */
-    public void displayDataChanged(DisplayControl displayControl) {}
+    public void displayDataChanged(DisplayControl displayControl) {
+        if (idv.getUseTimeDriver() && displayControl.getIsTimeDriver()) {
+            for (DisplayControl control :
+                    (List<DisplayControl>) getControls()) {
+                if ( !control.equals(displayControl)
+                        && ((DisplayControlImpl) control)
+                            .getUsesTimeDriver()) {
+                    try {
+                        ((DisplayControlImpl) control)
+                            .reloadDataSourceInThread();
+                    } catch (Exception e) {
+                        logException("Error reloading data source for "
+                                     + displayControl.getLabel(), e);
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Return the  list of {@link DisplayControl}s displayed in this ViewManager
@@ -4056,6 +4361,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                                 .getSource()).isSelected());
                         }
                     });
+
                     animationMenu.add(animationCB);
                     item = new JMenuItem("Faster");
                     item.setSelected("Faster".equals(getVisibilityAnimationCheckBox()));
@@ -4088,56 +4394,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         }
     }
 
-
-    public void fasterVisibilityAnimation() {
-        setVisibilityAnimationCheckBox("Faster");
-        if (animationSpeed > 300) {
-            animationSpeed -= 200;
-        }
-        logger.trace("animationSpeed: {}", animationSpeed);
-    }
-    
-    public void slowerVisibilityAnimation() {
-        setVisibilityAnimationCheckBox("Slower");
-        animationSpeed += 200;
-        logger.trace("animationSpeed: {}", animationSpeed);
-    }
-    
-    public void setVisibilityAnimationSpeed(int animationSpeed) {
-        this.animationSpeed = animationSpeed;
-        logger.trace("animationSpeed: {}", animationSpeed);
-    }
-    
-    public int getVisibilityAnimationSpeed() {
-        return this.animationSpeed;
-    }
-
-    public void setVisibilityAnimationCheckBox(String value) {
-        if ("On".equals(value) || "Faster".equals(value) || "Slower".equals(value)) {
-            animationCheckBox = value;
-        } else {
-            animationCheckBox = "Off";
-        }
-    }
-
-    public void setAnimatedVisibilityCheckBox(boolean enabled) {
-        if (enabled) {
-            setVisibilityAnimationCheckBox("On");
-        } else {
-            setVisibilityAnimationCheckBox("Off");
-        }
-        setAnimatedVisibility(enabled);
-    }
-
-    public String getVisibilityAnimationCheckBox() {
-        return animationCheckBox;
-    }
-
-    private String animationCheckBox = "Off";
-
-    public boolean getAnimatedVisibility() {
-        return runVisibilityAnimation;
-    }
 
     /**
      * Adds the given display listener to the
@@ -4444,12 +4700,17 @@ public class ViewManager extends SharableImpl implements ActionListener,
         JMenu captureMenu = new JMenu("Capture");
         viewMenu.add(captureMenu);
         JMenuItem mi;
-        captureMenu.add(mi=(JMenuItem)GuiUtils.setIcon(GuiUtils.makeMenuItem("Image...  Ctrl+I",
-                this,
-                "doSaveImageInThread"), "/auxdata/ui/icons/camera.png"));
+        captureMenu.add(
+            mi = (JMenuItem) GuiUtils.setIcon(
+                GuiUtils.makeMenuItem(
+                    "Image...  Ctrl+I", this,
+                    "doSaveImageInThread"), "/auxdata/ui/icons/camera.png"));
         //        mi.setMnemonic(GuiUtils.charToKeyCode("C"));
-        captureMenu.add(mi=(JMenuItem)GuiUtils.setIcon(GuiUtils.makeMenuItem("Movie...  Ctrl+M",
-                this, "startImageCapture"), "/auxdata/ui/icons/film.png"));
+        captureMenu.add(
+            mi = (JMenuItem) GuiUtils.setIcon(
+                GuiUtils.makeMenuItem(
+                    "Movie...  Ctrl+M", this,
+                    "startImageCapture"), "/auxdata/ui/icons/film.png"));
         //        mi.setMnemonic(GuiUtils.charToKeyCode("M"));
 
 
@@ -5334,6 +5595,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                         return;
                     }
                     if (myComponentResizeCnt == componentResizeCnt) {
+                        updateAnnotations();
                         updateDisplayList();
                     }
                 }
@@ -5650,7 +5912,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
             toFront();
             PrinterJob printJob = PrinterJob.getPrinterJob();
             printJob.setPrintable(
-               ((DisplayImpl) getMaster().getDisplay()).getPrintable());
+                ((DisplayImpl) getMaster().getDisplay()).getPrintable());
             if ( !printJob.printDialog()) {
                 return;
             }
@@ -5660,26 +5922,15 @@ public class ViewManager extends SharableImpl implements ActionListener,
         }
     }
 
+    /**
+     * Set the view
+     *
+     * @param view  the view description
+     */
     public void setView(String view) {
         if (getMaster() instanceof NavigatedDisplay) {
             NavigatedDisplay navDisplay = (NavigatedDisplay) getMaster();
-//            navDisplay.setView(view);
-            
-            // TODO(jon): this really needs to go once the kinks for Tom's demo
-            // have been worked out.
-            if("bottom".equalsIgnoreCase(view)) {
-                navDisplay.setView(NavigatedDisplay.BOTTOM_VIEW);
-            } else if("north".equalsIgnoreCase(view)) {
-                navDisplay.setView(NavigatedDisplay.NORTH_VIEW);
-            } else if("east".equalsIgnoreCase(view)) {
-                navDisplay.setView(NavigatedDisplay.EAST_VIEW);
-            } else if("top".equalsIgnoreCase(view)) {
-                navDisplay.setView(NavigatedDisplay.TOP_VIEW);
-            } else if("south".equalsIgnoreCase(view)) {
-                navDisplay.setView(NavigatedDisplay.SOUTH_VIEW);
-            } else if("west".equalsIgnoreCase(view)) {
-                navDisplay.setView(NavigatedDisplay.WEST_VIEW);
-            }
+            navDisplay.setView(view);
         }
     }
 
@@ -6726,13 +6977,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
         } else {}
         fullScreenWindow.pack();
         int yOffset = 0;
-        if(GuiUtils.isMac()) {
+        if (GuiUtils.isMac()) {
             yOffset = 23;
         }
         if (fixedSize == null) {
-            fullScreenWindow.setLocation(0, 0+yOffset);
+            fullScreenWindow.setLocation(0, 0 + yOffset);
         } else {
-            fullScreenWindow.setLocation(20, 20+yOffset);
+            fullScreenWindow.setLocation(20, 20 + yOffset);
         }
         fullScreenWindow.setVisible(true);
         navComponent.requestFocus();
@@ -7220,5 +7471,164 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public String getInitViewStateName() {
         return initViewStateName;
     }
+
+    /**
+     * Get the logo
+     *
+     * @return  the logo file or URL
+     */
+    public String getLogoFile() {
+        if (logoFile == null) {
+            logoFile =
+                getIdv().getStateManager().getPreferenceOrProperty(PREF_LOGO,
+                    "");
+        }
+        return logoFile;
+    }
+
+    /**
+     * Set the logo file or URL
+     *
+     * @param logo the logo file or URL
+     */
+    public void setLogoFile(String logo) {
+        logoFile = logo;
+    }
+
+    /**
+     * Get the logo position on the screen
+     *
+     * @return the logo position on the screen
+     */
+    public String getLogoPosition() {
+        if (logoPosition == null) {
+            logoPosition = getIdv().getStateManager().getPreferenceOrProperty(
+                PREF_LOGO_POSITION_OFFSET, "");
+        }
+        return logoPosition;
+    }
+
+    /**
+     * Set the logo position on the screen
+     *
+     * @param logop the logo position on the screen
+     */
+    public void setLogoPosition(String logop) {
+        logoPosition = logop;
+    }
+
+    /**
+     * Get the logo scale
+     *
+     * @return the logo scale
+     */
+    public float getLogoScale() {
+        if (logoScale < 0) {
+            logoScale =
+                (float) getIdv().getStateManager().getPreferenceOrProperty(
+                    PREF_LOGO_SCALE, 1f);
+        }
+        return logoScale;
+    }
+
+    /**
+     * Set the logo scale
+     *
+     * @param scale  the new scale
+     */
+    public void setLogoScale(float scale) {
+        logoScale = scale;
+    }
+
+    /**
+     * Set the logo visibility
+     *
+     * @param on  true to show
+     */
+    public void setLogoVisibility(boolean on) {
+        setBp(PREF_LOGO_VISIBILITY, on);
+    }
+
+    /**
+     * Get the logo visibility
+     *
+     * @return the logo visibility
+     */
+    public boolean getLogoVisibility() {
+        return getBp(PREF_LOGO_VISIBILITY);
+    }
+
+
+    /**
+     * Ensure that there is only one time driver for this view
+     *
+     * THERE CAN BE ONLY ONE! - Highlander
+     *
+     * @param displayControl  the time driver control
+     */
+    public void ensureOnlyOneTimeDriver(DisplayControl displayControl) {
+        for (DisplayControl control : (List<DisplayControl>) getControls()) {
+            if ( !control.equals(displayControl)
+                    && control.getIsTimeDriver()) {
+                ((DisplayControlImpl) control).setIsTimeDriver(false);
+            }
+        }
+
+    }
+    
+    
+    /**** BEGIN MCV ADDONS ****/
+    private static final Logger logger = LoggerFactory.getLogger(ViewManager.class);
+    
+    private String animationCheckBox = "Off";
+    
+    public void fasterVisibilityAnimation() {
+        setVisibilityAnimationCheckBox("Faster");
+        if (animationSpeed > 300) {
+            animationSpeed -= 200;
+        }
+        logger.trace("animationSpeed: {}", animationSpeed);
+    }
+    
+    public void slowerVisibilityAnimation() {
+        setVisibilityAnimationCheckBox("Slower");
+        animationSpeed += 200;
+        logger.trace("animationSpeed: {}", animationSpeed);
+    }
+    
+    public void setVisibilityAnimationSpeed(int animationSpeed) {
+        this.animationSpeed = animationSpeed;
+        logger.trace("animationSpeed: {}", animationSpeed);
+    }
+    
+    public int getVisibilityAnimationSpeed() {
+        return this.animationSpeed;
+    }
+
+    public void setVisibilityAnimationCheckBox(String value) {
+        if ("On".equals(value) || "Faster".equals(value) || "Slower".equals(value)) {
+            animationCheckBox = value;
+        } else {
+            animationCheckBox = "Off";
+        }
+    }
+
+    public void setAnimatedVisibilityCheckBox(boolean enabled) {
+        if (enabled) {
+            setVisibilityAnimationCheckBox("On");
+        } else {
+            setVisibilityAnimationCheckBox("Off");
+        }
+        setAnimatedVisibility(enabled);
+    }
+
+    public String getVisibilityAnimationCheckBox() {
+        return animationCheckBox;
+    }
+
+    public boolean getAnimatedVisibility() {
+        return runVisibilityAnimation;
+    }
+    /**** END MCV ADDONS ****/
 
 }

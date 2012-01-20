@@ -30,16 +30,13 @@ import ucar.unidata.data.DataManager;
 import ucar.unidata.data.DataSource;
 import ucar.unidata.data.DataSourceResults;
 
-import ucar.unidata.data.imagery.*;
+import ucar.unidata.data.grid.GridDataSource;
 
 
 import ucar.unidata.idv.chooser.*;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.ui.DataSelector;
-import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.idv.ui.IdvWindow;
-import ucar.unidata.idv.ui.IdvXmlUi;
-import ucar.unidata.idv.ui.ImageGenerator;
 import ucar.unidata.idv.ui.IslDialog;
 import ucar.unidata.idv.ui.LoadBundleDialog;
 import ucar.unidata.idv.ui.QuicklinkPanel;
@@ -114,6 +111,8 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
     /** property id */
     public static final String PROP_TIMESLIST = "idv.timeslist";
 
+    /** property id  for ensemble list */
+    public static final String PROP_ENSLIST = "idv.enslist";
 
 
     /** Category name */
@@ -143,17 +142,17 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
 
 
     /** List of OjbectPairs that define a name->list of files mapping */
-    protected List fileMapping;
+    private List fileMapping;
 
     /**
      * Use this so the persisted display control can acces the template name
      * when it is saved
      */
-    protected String currentTemplateName;
+    private String currentTemplateName;
 
 
     /** Holds the list of SavedBundle objects created from the bundles.xml */
-    protected List<SavedBundle> bundlesFromXml;
+    private List<SavedBundle> bundlesFromXml;
 
     /** JCheckBox for saving the view state */
     protected JCheckBox saveViewStateCbx;
@@ -209,17 +208,17 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
     protected boolean saveDataSources = true;
 
     /** Flag for saving the jython library */
-    protected boolean saveJython = false;
+    private boolean saveJython = false;
 
 
     /** Flag for saving the data */
-    protected boolean saveData = false;
+    private boolean saveData = false;
 
     /** A cached list of the display templates in the users directory */
-    protected List<SavedBundle> displayTemplates;
+    private List<SavedBundle> displayTemplates;
 
     /** List of bundles for saved data sources */
-    protected List<SavedBundle> dataSourceBundles;
+    private List<SavedBundle> dataSourceBundles;
 
 
     /**
@@ -234,16 +233,16 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
 
 
     /** for saving jnlps */
-    protected JCheckBox includeBundleCbx;
+    private JCheckBox includeBundleCbx;
 
     /** for saving jnlps */
-    protected JTextField bundlePrefixFld;
+    private JTextField bundlePrefixFld;
 
     /** for saving jnlps */
-    protected JComponent bundleUrlComp;
+    private JComponent bundleUrlComp;
 
     /** for saving favorites */
-    protected boolean catSelected;
+    private boolean catSelected;
 
 
 
@@ -2486,7 +2485,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
         try {
             LogUtil.consoleMessage("Decoding a base 64 bundle\n");
             String xml = new String(XmlUtil.decodeBase64(base64Bundle));
-            if(getArgsManager().printJnlpBundles) {
+            if (getArgsManager().printJnlpBundles) {
                 System.out.println(xml);
             }
             decodeXml(xml, false, null, true);
@@ -2497,9 +2496,9 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
 
 
     /**
-     * _more_
+     * Decode the jnlp file
      *
-     * @param filename _more_
+     * @param filename  the name of the file
      */
     public void decodeJnlpFile(String filename) {
         String xml = extractBundleFromJnlp(filename);
@@ -2515,7 +2514,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
      *
      * @param filename The name of the jnlp file.
      *
-     * @return _more_
+     * @return the bundle
      */
     public String extractBundleFromJnlp(String filename) {
         try {
@@ -2534,7 +2533,8 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
                 }
                 if (nextOneBundle) {
                     String xml = new String(XmlUtil.decodeBase64(value));
-                    System.err.println("XXXXXXXXXXXXXXX" + getArgsManager().printJnlpBundles);
+                    System.err.println("XXXXXXXXXXXXXXX"
+                                       + getArgsManager().printJnlpBundles);
                     if (getArgsManager().printJnlpBundles) {
                         System.out.println(xml);
                     }
@@ -2900,7 +2900,9 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
      */
     protected String applyPropertiesToBundle(String xml) {
         //LOOK: For now don't try to be tricky with macros in bundles
-        if(true) return xml;
+        if (true) {
+            return xml;
+        }
         StringBuffer sb        = new StringBuffer(xml);
         Hashtable    map       = getResourceManager().getMacroMap();
 
@@ -3299,7 +3301,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
 
         dialog.getContentPane().add(comp);
         dialog.pack();
-        dialog.setVisible(true);
+        dialog.show();
         if (result[0] == null) {
             return false;
         }
@@ -3419,12 +3421,18 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
                 GuiUtils.showInCenter(dialog);
             }
         }
-        List overrideTimes = ((bundleProperties == null)
-                              ? null
-                              : (List) bundleProperties.get(PROP_TIMESLIST));
+        List overrideTimes      = ((bundleProperties == null)
+                                   ? null
+                                   : (List) bundleProperties.get(
+                                       PROP_TIMESLIST));
+
+        List overrideEnsMembers = ((bundleProperties == null)
+                                   ? null
+                                   : (List) bundleProperties.get(
+                                       PROP_ENSLIST));
 
 
-        List dataSources   = (List) ht.get(ID_DATASOURCES);
+        List dataSources = (List) ht.get(ID_DATASOURCES);
         if (dataSources != null) {
             if ( !updateDataPaths(dataSources, letUserChangeData)) {
                 return;
@@ -3476,10 +3484,10 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
                 //of the displays
                 //threadManager.runAllParallel();
                 threadManager.runInParallel(getIdv().getMaxDataThreadCount());
-            } catch(Exception exc)  {
+            } catch (Exception exc) {
                 //Catch any exceptions thrown but then get all of them and show them to the user
                 List<Exception> exceptions = threadManager.getExceptions();
-                if(exceptions.size()==0) {
+                if (exceptions.size() == 0) {
                     //This shouldn't happen
                     exceptions.add(exc);
                 }
@@ -3494,7 +3502,11 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
                 if (overrideTimes != null) {
                     dataSource.setDateTimeSelection(overrideTimes);
                 }
-
+                if ((overrideEnsMembers != null)
+                        && (dataSource instanceof GridDataSource)) {
+                    ((GridDataSource) dataSource).setEnsembleSelection(
+                        overrideEnsMembers);
+                }
                 if ( !loadDialog.okToRun()) {
                     return;
                 }
@@ -3675,32 +3687,42 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
                     //next do the ones that aren't
                     //Note: This will screw up z ordering because the time driver
                     //displays will always get added first
-                    int numberOfInitSteps = (DisplayControl.DOTIMEDRIVER?2:1);
-                    for(int initStep=0;initStep<numberOfInitSteps;initStep++) {
+                    int numberOfInitSteps = (getIdv().getUseTimeDriver()
+                                             ? 2
+                                             : 1);
+                    for (int initStep = 0; initStep < numberOfInitSteps;
+                            initStep++) {
                         for (int i = 0; i < newControls.size(); i++) {
                             final DisplayControl displayControl =
                                 (DisplayControl) newControls.get(i);
-                            if(DisplayControl.DOTIMEDRIVER) {
-                                if(initStep == 0 && !displayControl.getIsTimeDriver()) continue;
-                                else  if(initStep == 1 && displayControl.getIsTimeDriver()) continue;
+                            if (getIdv().getUseTimeDriver()) {
+                                if ((initStep == 0)
+                                        && !displayControl
+                                            .getIsTimeDriver()) {
+                                    continue;
+                                } else if ((initStep == 1)
+                                           && displayControl
+                                               .getIsTimeDriver()) {
+                                    continue;
+                                }
                             }
 
-                            loadDialog.setMessage1("Loading display " + (i + 1)
-                                                   + " of " + newControls.size());
+                            loadDialog.setMessage1("Loading display "
+                                    + (i + 1) + " of " + newControls.size());
                             loadDialog.setMessage2("("
-                                                   + displayControl.getLabel() + ")");
+                                    + displayControl.getLabel() + ")");
                             if (getIdv().haveCollabManager() && fromCollab
-                                && getCollabManager().haveDisplayControl(
-                                                                         displayControl)) {
+                                    && getCollabManager().haveDisplayControl(
+                                        displayControl)) {
                                 continue;
                             }
                             displaysThreadManager.addRunnable(
-                                                              new visad.util.ThreadManager.MyRunnable() {
-                                                                  public void run() throws Exception {
-                                                                      displayControl.initAfterUnPersistence(
-                                                                                                            getIdv(), properties);
-                                                                  }
-                                                              });
+                                new visad.util.ThreadManager.MyRunnable() {
+                                public void run() throws Exception {
+                                    displayControl.initAfterUnPersistence(
+                                        getIdv(), properties);
+                                }
+                            });
                             loadDialog.addDisplayControl(displayControl);
                             if ( !loadDialog.okToRun()) {
                                 return;

@@ -21,23 +21,9 @@
 package ucar.unidata.idv.control;
 
 
-import org.w3c.dom.Element;
-
 import ucar.unidata.collab.Sharable;
 import ucar.unidata.collab.SharableImpl;
-
-import ucar.unidata.data.DataCancelException;
-import ucar.unidata.data.DataChangeListener;
-import ucar.unidata.data.DataChoice;
-import ucar.unidata.data.DataInstance;
-import ucar.unidata.data.DataOperand;
-import ucar.unidata.data.DataSelection;
-import ucar.unidata.data.DataSelectionComponent;
-import ucar.unidata.data.DataSource;
-import ucar.unidata.data.DataSourceImpl;
-import ucar.unidata.data.DataTimeRange;
-import ucar.unidata.data.GeoSelection;
-import ucar.unidata.data.GeoSelectionPanel;
+import ucar.unidata.data.*;
 import ucar.unidata.data.grid.GridDataInstance;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.idv.ControlContext;
@@ -46,7 +32,6 @@ import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.DisplayConventions;
 import ucar.unidata.idv.DisplayInfo;
 import ucar.unidata.idv.IdvConstants;
-import ucar.unidata.idv.IdvPreferenceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.NavigatedViewManager;
@@ -54,24 +39,15 @@ import ucar.unidata.idv.TransectViewManager;
 import ucar.unidata.idv.ViewContext;
 import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.ViewManager;
-
 import ucar.unidata.idv.ui.DataSelectionWidget;
 import ucar.unidata.idv.ui.DataSelector;
 import ucar.unidata.idv.ui.DataTreeDialog;
 import ucar.unidata.idv.ui.IdvComponentHolder;
-import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.idv.ui.IdvWindow;
-
-import ucar.unidata.metdata.NamedStationImpl;
-
 import ucar.unidata.ui.DndImageButton;
-import ucar.unidata.ui.DragPanel;
 import ucar.unidata.ui.FontSelector;
 import ucar.unidata.ui.Help;
 import ucar.unidata.ui.ImageUtils;
-import ucar.unidata.ui.colortable.ColorTableManager;
-
-
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.ContourInfo;
 import ucar.unidata.util.FileManager;
@@ -85,41 +61,81 @@ import ucar.unidata.util.PropertyValue;
 import ucar.unidata.util.Prototypable;
 import ucar.unidata.util.Range;
 import ucar.unidata.util.Removable;
-import ucar.unidata.util.Resource;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.Trace;
 import ucar.unidata.util.TwoFacedObject;
-
 import ucar.unidata.view.geoloc.GlobeDisplay;
-
 import ucar.unidata.view.geoloc.NavigatedDisplay;
-
-import ucar.unidata.xml.XmlEncoder;
 import ucar.unidata.xml.XmlObjectStore;
-import ucar.unidata.xml.XmlPersistable;
-import ucar.unidata.xml.XmlUtil;
 
 import ucar.visad.UtcDate;
 import ucar.visad.Util;
-
-import ucar.visad.display.*;
-
+import ucar.visad.display.Animation;
+import ucar.visad.display.AnimationInfo;
+import ucar.visad.display.AnimationWidget;
+import ucar.visad.display.ColorScale;
+import ucar.visad.display.ColorScaleInfo;
 import ucar.visad.display.DisplayMaster;
+import ucar.visad.display.Displayable;
+import ucar.visad.display.DisplayableData;
+import ucar.visad.display.TextDisplayable;
 
-
-import visad.*;
+import visad.CommonUnit;
+import visad.ControlEvent;
+import visad.ControlListener;
+import visad.Data;
+import visad.DateTime;
+import visad.DisplayEvent;
+import visad.DisplayListener;
+import visad.DisplayRealType;
+import visad.FieldImpl;
+import visad.FunctionType;
+import visad.GriddedSet;
+import visad.LocalDisplay;
+import visad.ProjectionControl;
+import visad.Real;
+import visad.RealTuple;
+import visad.RealType;
+import visad.Set;
+import visad.SetType;
+import visad.Text;
+import visad.TextType;
+import visad.Unit;
+import visad.VisADException;
 
 import visad.georef.EarthLocation;
-import visad.georef.EarthLocationTuple;
 import visad.georef.LatLonPoint;
 import visad.georef.MapProjection;
 
 import visad.util.DataUtility;
 
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.font.LineMetrics;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GridBagConstraints;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
 
 import java.beans.PropertyChangeEvent;
@@ -127,25 +143,50 @@ import java.beans.PropertyChangeListener;
 
 import java.io.File;
 
-
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
 
 import java.rmi.RemoteException;
 
 import java.util.ArrayList;
-
-
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
-import java.util.Vector;
 
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
+import javax.swing.AbstractButton;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JColorChooser;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JSlider;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JViewport;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import javax.swing.text.JTextComponent;
 
 
@@ -544,7 +585,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     /**
      * A boolean to see if the display list got it's color from the display.
      */
-    private boolean displayListUsesColor = false;
+    protected boolean displayListUsesColor = false;
 
     /**
      * The color widget
@@ -883,6 +924,8 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     /** default type */
     private String smoothingType = LABEL_NONE;
 
+
+
     /**
      * Default constructor. This is called when the control is
      * unpersisted through the {@link ucar.unidata.xml.XmlEncoder}
@@ -995,6 +1038,11 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 
         //Set the myDataChoices member and add this object as a DataChangeListener
         setDataChoices(choices);
+        Object ud =
+            this.dataSelection.getProperty(DataSelection.PROP_USESTIMEDRIVER);
+        if (ud != null) {
+            this.usesTimeDriver = ((Boolean) ud).booleanValue();
+        }
 
         if (properties != null) {
             applyProperties(properties);
@@ -1025,6 +1073,9 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             }
         }
 
+        // we do this here because time driver properties 
+        // might be changed by the display settings.
+        updateDataSelection(this.dataSelection);
 
 
         //Call the derived class init method.
@@ -1039,6 +1090,24 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             return;
         }
 
+        if ((myDataChoices.size() > 0)
+                && (myDataChoices.get(0) instanceof DerivedDataChoice)) {
+            List cdcs =
+                ((DerivedDataChoice) myDataChoices.get(0)).getChoices();
+            if (cdcs.size() > 0) {
+                DataChoice    dc = (DataChoice) cdcs.get(0);
+                DataSelection ds = dc.getDataSelection();
+                if (ds != null) {
+                    List dtimes = ds.getTimeDriverTimes();
+                    Object ud1 =
+                        ds.getProperty(DataSelection.PROP_USESTIMEDRIVER);
+                    if ((dtimes != null) && (dtimes.size() > 0)
+                            && (ud1 != null)) {
+                        this.usesTimeDriver = ((Boolean) ud1).booleanValue();
+                    }
+                }
+            }
+        }
 
 
         //Check if we have been removed
@@ -1542,12 +1611,25 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 
 
     /**
+     * Set the attribute flag map to the given value. Note: this really should just set the flags
+     * but instead it OR's the attributeFlags with the given set of flags in the f parameter.
+     * Lets keep this logic because changing it now breaks lotsof things.
+     * If you want to actually set the flags call reallySetAttributeFlags
+     *
+     * @param f The value of the attribute flag map
+     */
+    protected void setAttributeFlags(int f) {
+        attributeFlags = attributeFlags | f;
+    }
+
+
+    /**
      * Set the attribute flag map to the given value.
      *
      * @param f THe value of the attribute flag map
      */
-    protected void setAttributeFlags(int f) {
-        attributeFlags = attributeFlags | f;
+    protected void reallySetAttributeFlags(int f) {
+        attributeFlags = f;
     }
 
     /**
@@ -2153,7 +2235,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      *
      * @param properties Specification of the name=value properties.
      */
-    protected void applyProperties(Hashtable properties) {
+    public void applyProperties(Hashtable properties) {
         if (properties == null) {
             return;
         }
@@ -3047,7 +3129,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             throws VisADException, RemoteException {
         //A cheat, actually call reInitialize if we have been notified of a dataChange event.
         if (inDataChangeCall && (getDataInstance() != null)) {
-            getDataInstance().reInitialize();
+            updateDataInstance(getDataInstance()).reInitialize();
             return true;
         }
         return initializeDataInstance(dataChoice);
@@ -3396,7 +3478,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      */
     protected DataInstance updateDataInstance(DataInstance dataInstance)
             throws VisADException, RemoteException {
-        if ( !DOTIMEDRIVER) {
+        if ( !getIdv().getUseTimeDriver()) {
             return dataInstance;
         }
         dataInstance.setDataSelection(
@@ -3418,11 +3500,15 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      */
     protected DataSelection updateDataSelection(DataSelection dataSelection)
             throws VisADException, RemoteException {
-        if ( !DOTIMEDRIVER) {
+        if ( !getIdv().getUseTimeDriver()) {
             return dataSelection;
         }
-        System.err.println("updateDataSelection:" + this);
-        if (isTimeDriver || !usesTimeDriver) {
+        if (getIsTimeDriver() || !getUsesTimeDriver()) {
+            if ( !getUsesTimeDriver()) {
+                dataSelection.setTheTimeDriverTimes(null);
+                dataSelection.putProperty(DataSelection.PROP_USESTIMEDRIVER,
+                                          getUsesTimeDriver());
+            }
             return dataSelection;
         }
         ViewManager vm = getViewManager();
@@ -3430,8 +3516,8 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             return dataSelection;
         }
         List<DateTime> times = vm.getTimeDriverTimes();
-        System.err.println("\t     driver times to use:" + times);
-//        dataSelection.setTimeDriverTimes(times);
+        //        System.err.println("\tdriver times to use:" + times);
+        dataSelection.putProperty(DataSelection.PROP_USESTIMEDRIVER, true);
         dataSelection.setTheTimeDriverTimes(times);
         return dataSelection;
     }
@@ -3688,7 +3774,10 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 for (int i = 0; i < s.getLength(); i++) {
                     DateTime dt = new DateTime(samples[0][i],
                                       s.getSetUnits()[0]);
-                    String label = UtcDate.applyTimeMacro(template, dt);
+                    String label =
+                        UtcDate.applyTimeMacro(template, dt,
+                            getIdv().getPreferenceManager()
+                                .getDefaultTimeZone());
                     label = applyForecastHourMacro(label, dt);
                     Text t = new Text(tt, label);
                     fi.setSample(i, t, false);
@@ -3869,10 +3958,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             String name = DataSelector.getNameForDataSource(dataSource);
             if (dataSourceName == null) {
                 dataSourceName = name;
-            } 
-            /*else {
-                dataSourceName = ";" + name;
-            }*/
+            }
         }
         patterns.add(MACRO_DISPLAYNAME);
         values.add(getDisplayName());
@@ -3925,7 +4011,8 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 checkTimestampLabel(null);
             }
             if (UtcDate.containsTimeMacro(template)) {
-                template = UtcDate.applyTimeMacro(template, currentTime);
+                template = UtcDate.applyTimeMacro(template, currentTime,
+                        getIdv().getPreferenceManager().getDefaultTimeZone());
             }
             template = applyForecastHourMacro(template, currentTime);
         }
@@ -5093,19 +5180,6 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             items.add(GuiUtils.MENU_SEPARATOR);
         }
 
-
-
-        if (DOTIMEDRIVER) {
-            items.add(
-                GuiUtils.makeCheckboxMenuItem(
-                    "Drive times with this display", this, "isTimeDriver",
-                    null));
-            items.add(GuiUtils.makeCheckboxMenuItem("Uses time driver times",
-                    this, "usesTimeDriver", null));
-            items.add(GuiUtils.MENU_SEPARATOR);
-
-        }
-
         items.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("Display Settings...",
                 this,
                 "showDisplaySettingsDialog"), "/auxdata/ui/icons/Settings16.png"));
@@ -5431,7 +5505,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         if (f != null) {
             GuiUtils.showDialogNearSrc(f, propertiesDialog);
         } else {
-            propertiesDialog.setVisible(true);
+            propertiesDialog.show();
         }
     }
 
@@ -5646,6 +5720,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * @param dsd  the display settings dialog
      */
     protected void addDisplaySettings(DisplaySettingsDialog dsd) {
+
         dsd.addPropertyValue(getDisplayCategory(), "displayCategory",
                              "Display Category", "Labels");
         dsd.addPropertyValue(getLegendLabelTemplate(), "legendLabelTemplate",
@@ -5743,6 +5818,16 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                              SETTINGS_GROUP_FLAGS);
         dsd.addPropertyValue(new Boolean(getShowNoteText()), "showNoteText",
                              "Show Note Text", SETTINGS_GROUP_FLAGS);
+        if (getIdv().getUseTimeDriver()) {
+            dsd.addPropertyValue(new Boolean(getIsTimeDriver()),
+                                 "isTimeDriver",
+                                 "Drive Times with this Display",
+                                 SETTINGS_GROUP_FLAGS);
+            dsd.addPropertyValue(new Boolean(getUsesTimeDriver()),
+                                 "usesTimeDriver", "Use Time Driver Times",
+                                 SETTINGS_GROUP_FLAGS);
+        }
+
 
 
     }
@@ -6013,6 +6098,22 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         }
     }
 
+
+    /**
+     * Called by ISL. 
+     * Write out some data defined by the what parameter to the given file. 
+     * This method throws an UnimplementedException. Derived classes need to
+     * overwrite this to write out the appropriate data
+     *
+     * @param what What is to be written out
+     * @param filename To what file
+     */
+    public void doExport(String what, String filename) throws Exception {
+        throw new IllegalArgumentException("doExport not implemented");
+    }
+
+
+
     /**
      * Save the state as parameter defaults
      */
@@ -6098,8 +6199,22 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 
 
         if (haveDataTimes()) {
-            items.add(GuiUtils.makeCheckboxMenuItem("Use Times In Animation",
-                    this, "useTimesInAnimation", null));
+            JCheckBoxMenuItem jcmi =
+                GuiUtils.makeCheckboxMenuItem("Use Times In Animation", this,
+                    "useTimesInAnimation", null);
+            if (getIdv().getUseTimeDriver()) {
+                JMenu jm = new JMenu("Times");
+                jm.add(jcmi);
+                jm.add(GuiUtils.makeCheckboxMenuItem(
+                    "Drive Times with this Display", this, "isTimeDriver",
+                    null));
+                jm.add(GuiUtils.makeCheckboxMenuItem(
+                    "Uses Time Driver Times", this, "usesTimeDriver",
+                    usesTimeDriver, null));
+                items.add(jm);
+            } else {
+                items.add(jcmi);
+            }
         }
 
         if (getDisplayInfos().size() > 0) {
@@ -7613,6 +7728,8 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             if (applyToDisplayable) {
                 applyDisplayUnit();
             }
+            updateListOrLegendWithMacro(MACRO_DISPLAYUNIT);
+
             displayUnitChanged(oldUnit, newUnit);
         } catch (Exception exc) {
             //logException ("Error setting unit from: " + oldUnit + " to: " + newUnit + "\n", exc);
@@ -7624,6 +7741,25 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         return true;
     }
 
+    /**
+     * If the display list or legend templates contain <code>macro</code>
+     * update the appropriate UI component
+     *
+     * @param macro  the macro to check for
+     */
+    private void updateListOrLegendWithMacro(String macro) {
+        boolean listUpdate = getDisplayListTemplate().indexOf(macro) >= 0;
+        boolean legendUpdate =
+            ((getLegendLabelTemplate().indexOf(macro) >= 0)
+             || (getExtraLabelTemplate().indexOf(macro) >= 0));
+        if (legendUpdate && listUpdate) {
+            updateLegendAndList();
+        } else if (listUpdate) {
+            updateDisplayList();
+        } else if (legendUpdate) {
+            updateLegendLabel();
+        }
+    }
 
     /**
      * The user has chosen a new unit for color.
@@ -9985,6 +10121,16 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      */
     public void setColorTableName(String n) {
         colorTableName = n;
+        if (haveInitialized) {
+            ColorTable ct =
+                controlContext.getColorTableManager().getColorTable(
+                    colorTableName);
+            try {
+                setColorTable(ct);
+            } catch (Exception exc) {
+                logException("Setting color table", exc);
+            }
+        }
     }
 
 
@@ -11493,15 +11639,25 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 String pref = PREF_DISPLAYLIST_TEMPLATE + (haveData
                         ? ".data"
                         : ".nodata");
-                displayListTemplate = getStore().get(pref, (haveData
-                        ? MACRO_SHORTNAME + " - " + MACRO_DISPLAYNAME + " "
-                          + MACRO_TIMESTAMP
-                        : MACRO_DISPLAYNAME));
+                displayListTemplate = getStore().get(pref,
+                        getDefaultDisplayListTemplate());
             }
         }
         return displayListTemplate;
     }
 
+
+    /**
+     * Get the default display list template for this control.  Subclasses can override
+     * @return the default template
+     */
+    protected String getDefaultDisplayListTemplate() {
+
+        return (getShortParamName() != null)  // haveData
+               ? MACRO_SHORTNAME + " - " + MACRO_DISPLAYNAME + " "
+                 + MACRO_TIMESTAMP
+               : MACRO_DISPLAYNAME;
+    }
 
 
     /**
@@ -12013,6 +12169,10 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      */
     public void setIsTimeDriver(boolean value) {
         this.isTimeDriver = value;
+        if (haveInitialized && value) {
+            ViewManager vm = getViewManager();
+            vm.ensureOnlyOneTimeDriver(this);
+        }
     }
 
     /**
@@ -12041,8 +12201,5 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     public boolean getUsesTimeDriver() {
         return this.usesTimeDriver;
     }
-
-
-
 
 }
