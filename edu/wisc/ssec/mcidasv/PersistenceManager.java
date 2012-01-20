@@ -189,7 +189,7 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     /**
-     * @see ucar.unidata.idv.IdvPersistenceManager#PersistenceManager(IntegratedDataViewer)
+     * @see ucar.unidata.idv.IdvPersistenceManager#IdvPersistenceManager(IntegratedDataViewer)
      */
     public PersistenceManager(IntegratedDataViewer idv) {
         super(idv);
@@ -346,16 +346,16 @@ public class PersistenceManager extends IdvPersistenceManager {
         saveDisplays = true;
         saveViewStateCbx.setSelected(true);
         saveViewState = true;
-    	saveDataSourcesCbx.setSelected(true);
-    	saveDataSources = true;
+        saveDataSourcesCbx.setSelected(true);
+        saveDataSources = true;
 
         return GuiUtils.top(
             GuiUtils.vbox(
                 Misc.newList(
-                		GuiUtils.inset(new JLabel("Bundle save options:"),
-                                new Insets(0, 5, 5, 0)),
-                		saveJythonBox,
-                		makeDataRelativeCbx)));
+                    GuiUtils.inset(new JLabel("Bundle save options:"),
+                                   new Insets(0, 5, 5, 0)),
+                                   saveJythonBox,
+                                   makeDataRelativeCbx)));
     }
     
     /**
@@ -1808,7 +1808,7 @@ public class PersistenceManager extends IdvPersistenceManager {
      * Delete the given parameter set
      *
      * @param parameterType The type of parameter set
-     * @param name The name of the parameter set
+     * @param set Parameter set to delete.
      */
     public void deleteParameterSet(String parameterType, ParameterSet set) {
     	Element parameterElement = set.getElement();
