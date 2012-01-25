@@ -29,10 +29,17 @@
     <appender-ref ref="STDOUT" />
   </root>
   
+  
+  
   <logger name="jython" level="INFO">
     <!-- remember: jython is like a subclass of the root logger; including the STDOUT -->
     <!-- appender will only result in duplicate output. -->
     <!-- <appender-ref ref="STDOUT" /> -->
     <appender-ref ref="JYTHON" />
   </logger>
+  
+  
+  <!-- Let's use this section of the file to group loggers that spew *way* too much output. -->
+  <!-- <logger name="httpclient.wire.content" level="OFF" /> --><!-- really only an issue when the root logger is set to TRACE. -->
+  <!-- End of verbose logger section -->
 </configuration>
