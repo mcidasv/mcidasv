@@ -35,10 +35,14 @@ import java.awt.Container;
 
 import java.io.File;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.slf4j.Logger;
@@ -51,6 +55,10 @@ public class NPPChooser extends FileChooser {
 	
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LoggerFactory.getLogger(NPPChooser.class);
+	private static final long CONSECUTIVE_GRANULE_TIME_GAP_MS = 1000;
+	
+	// date formatter for converting NPP day/time from file name for consecutive granule check
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmSSS");
 
     /**
      * Create the chooser with the given manager and xml
@@ -180,10 +188,78 @@ public class NPPChooser extends FileChooser {
             return false;
         }
 
-        return super.selectFilesInner(files, directory);
+        // At present, NPP chooser only allows selecting sets of consecutive granules
+        boolean granulesAreConsecutive = testConsecutiveGranules(files);
+        if (granulesAreConsecutive) {
+        	return super.selectFilesInner(files, directory);
+        } else {
+        	// throw up a dialog to tell user the problem
+        	JOptionPane.showMessageDialog(this, "When selecting multiple granules, they must be consecutive.");
+        }
+        return false;
     }
 
     /**
+     * Test whether a set of files are consecutive SNPP granules,
+     * any sensor.
+     * @param files
+     * @return true if consecutive tests pass for all files
+     */
+    
+    private boolean testConsecutiveGranules(File[] files) {
+    	boolean testResult = false;
+    	if (files == null) return testResult;
+		// compare start time of current granule with end time of previous
+    	// difference should be very small - under a second
+    	long prvTime = -1;
+    	testResult = true;
+        for (int i = 0; i < files.length; i++) {
+            if ((files[i] != null) && !files[i].isDirectory()) {
+                if (files[i].exists()) {
+                	String fileName = files[i].getName(); 
+                	int dateIndex = fileName.lastIndexOf("_d2") + 2;
+                	int timeIndexStart = fileName.lastIndexOf("_t") + 2;
+                	int timeIndexEnd = fileName.lastIndexOf("_e") + 2;
+                	String dateStr = fileName.substring(dateIndex, dateIndex + 8);
+                	String timeStrStart = fileName.substring(timeIndexStart, timeIndexStart + 7);
+                	String timeStrEnd = fileName.substring(timeIndexEnd, timeIndexEnd + 7);
+                	// sanity check on file name lengths
+                	int fnLen = fileName.length();
+                	if ((dateIndex > fnLen) || (timeIndexStart > fnLen) || (timeIndexEnd > fnLen)) {
+                		logger.warn("unexpected file name length for: " + fileName);
+                		testResult = false;
+                		break;
+                	}
+                    // pull start and end time out of file name
+                    Date dS = null;
+                    Date dE = null;
+                    try {
+						dS = sdf.parse(dateStr + timeStrStart);
+						dE = sdf.parse(dateStr + timeStrEnd);
+					} catch (ParseException e) {
+						logger.error("Not recognized as valid SNPP file name: " + fileName);
+						testResult = false;
+						break;
+					}
+					long curTime = dS.getTime();
+					long endTime = dE.getTime();
+					// only check current with previous
+					if (prvTime > 0) {
+						// make sure time diff does not exceed allowed threshold
+						// consecutive granules should be less than 1 second apart
+						if ((curTime - prvTime) > CONSECUTIVE_GRANULE_TIME_GAP_MS) {
+							testResult = false;
+							break;
+						}
+					}
+					prvTime = endTime;
+                }
+            }
+        }
+		return testResult;
+	}
+
+	/**
      * Convert the given array of File objects
      * to an array of String file names. Only
      * include the files that actually exist.
