@@ -103,6 +103,7 @@
         <span class="link" onClick="setPage('controls/VolumeRenderControl.html');">Volume Rendering Controls</span><br>
 		<span class="link" onClick="setPage('controls/PointVolumeControl.html');">Point Volume Controls</span><br>
         		<span class="link" onClick="setPage('controls/SoundingControl.html');">Sounding Controls</span><br>
+                <span class="link" onClick="setPage('controls/HovmollerControl.html');">Hovmoller Controls</span><br>
       </div>
 
       <span class="toggle" onClick="toggleChildren(this,'layercontrols_2_1');">+</span>
