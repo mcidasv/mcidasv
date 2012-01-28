@@ -70,10 +70,10 @@ public class NPPFilter extends FileFilter {
             
         	// avoid constant rescans on window resizing and scrolling
         	String curDirectory = f.getParent();
-        	logger.info("Comparing: " + curDirectory + ", and prv dir: " + PREV_DIRECTORY);
+        	logger.trace("Comparing: " + curDirectory + ", and prv dir: " + PREV_DIRECTORY);
         	if ((PREV_DIRECTORY != null) && (curDirectory.equals(PREV_DIRECTORY))) {
         		if (seenGranules.containsKey(f.getName())) {
-        			logger.info("Avoiding rescan!");
+        			logger.trace("Avoiding rescan!");
         			if (validGranules.containsKey(f.getName())) {
         				return true;
         			} else {
