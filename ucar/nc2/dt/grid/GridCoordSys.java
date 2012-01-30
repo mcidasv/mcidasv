@@ -410,7 +410,7 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
 
         } catch (Exception e) {
           if (sbuff != null)
-            sbuff.format("Error reading time coord= %s err= %s\n", t.getName(), e.getMessage());
+            sbuff.format("Error reading time coord= %s err= %s\n", t.getFullName(), e.getMessage());
         }
 
       } else { // 2d
@@ -437,7 +437,7 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
 
       } catch (IOException e) {
         if (sbuff != null) {
-          sbuff.format("Error reading runtime coord= %s err= %s\n", t.getName(), e.getMessage());
+          sbuff.format("Error reading runtime coord= %s err= %s\n", t.getFullName(), e.getMessage());
         }
       }
     }
@@ -1457,12 +1457,12 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
     Formatter buff = new Formatter();
     buff.format("(%s) ", getName());
 
-    if (runTimeAxis != null) buff.format("rt=%s,", runTimeAxis.getName());
-    if (ensembleAxis != null) buff.format("ens=%s,", ensembleAxis.getName());
-    if (timeTaxis != null) buff.format("t=%s,", timeTaxis.getName());
-    if (vertZaxis != null) buff.format("z=%s,", vertZaxis.getName());
-    if (horizYaxis != null) buff.format("y=%s,", horizYaxis.getName());
-    if (horizXaxis != null) buff.format("x=%s,", horizXaxis.getName());
+    if (runTimeAxis != null) buff.format("rt=%s,", runTimeAxis.getFullName());
+    if (ensembleAxis != null) buff.format("ens=%s,", ensembleAxis.getFullName());
+    if (timeTaxis != null) buff.format("t=%s,", timeTaxis.getFullName());
+    if (vertZaxis != null) buff.format("z=%s,", vertZaxis.getFullName());
+    if (horizYaxis != null) buff.format("y=%s,", horizYaxis.getFullName());
+    if (horizXaxis != null) buff.format("x=%s,", horizXaxis.getFullName());
 
     if (proj != null)
       buff.format("  Projection: %s %s", proj.getName(), proj.getClassName());
