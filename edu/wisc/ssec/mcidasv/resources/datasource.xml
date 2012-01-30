@@ -27,11 +27,11 @@
      label="HRIT data source"/>     
      
   <datasource
-     id="NPP"
-     factory="edu.wisc.ssec.mcidasv.data.hydra.NPPDataSource"
+     id="SuomiNPP"
+     factory="edu.wisc.ssec.mcidasv.data.hydra.SuomiNPPDataSource"
      fileselection="true"
      doesmultiples="true"
-     label="NPP data source"/>
+     label="Suomi NPP data source"/>
      
   <datasource
      id="HYDRA"

@@ -82,7 +82,7 @@ import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
-import edu.wisc.ssec.mcidasv.data.hydra.NPPDataSource;
+import edu.wisc.ssec.mcidasv.data.hydra.SuomiNPPDataSource;
 
 public class MultiSpectralDisplay implements DisplayListener {
 
@@ -241,8 +241,8 @@ public class MultiSpectralDisplay implements DisplayListener {
               (HydraDataSource) dataChoice.getDataSource();
 
         // TODO revisit this, may want to move method up to base class HydraDataSource
-        if (source instanceof NPPDataSource) {
-        	data = ((NPPDataSource) source).getMultiSpectralData(dataChoice);
+        if (source instanceof SuomiNPPDataSource) {
+        	data = ((SuomiNPPDataSource) source).getMultiSpectralData(dataChoice);
         }
         
         if (source instanceof MultiSpectralDataSource) {

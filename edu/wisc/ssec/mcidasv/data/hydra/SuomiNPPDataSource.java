@@ -84,14 +84,14 @@ import visad.VisADException;
 import visad.util.Util;
 
 /**
- * A data source for NPOESS Preparatory Project (NPP) data
+ * A data source for NPOESS Preparatory Project (Suomi NPP) data
  * This will probably move, but we are placing it here for now
  * since we are leveraging some existing code used for HYDRA.
  */
 
-public class NPPDataSource extends HydraDataSource {
+public class SuomiNPPDataSource extends HydraDataSource {
 
-	private static final Logger logger = LoggerFactory.getLogger(NPPDataSource.class);
+	private static final Logger logger = LoggerFactory.getLogger(SuomiNPPDataSource.class);
 	
 	/** Sources file */
     protected String filename;
@@ -103,7 +103,7 @@ public class NPPDataSource extends HydraDataSource {
     private ArrayList<MultiSpectralData> multiSpectralData = new ArrayList<MultiSpectralData>();
     private HashMap<String, MultiSpectralData> msdMap = new HashMap<String, MultiSpectralData>();
 
-    private static final String DATA_DESCRIPTION = "NPP Data";
+    private static final String DATA_DESCRIPTION = "Suomi NPP Data";
     
     // instrument related variables and flags
     ucar.nc2.Attribute instrumentName = null;
@@ -137,10 +137,10 @@ public class NPPDataSource extends HydraDataSource {
     };    
     private int inTrackDimensionLength = -1;
     
-    // need our own separator char since it's always Unix-style in the NPP files
+    // need our own separator char since it's always Unix-style in the Suomi NPP files
     private static final String SEPARATOR_CHAR = "/";
     
-    // date formatter for converting NPP day/time to something we can use
+    // date formatter for converting Suomi NPP day/time to something we can use
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss.SSS");
     
     // date formatter for how we want to show granule day/time on display
@@ -150,10 +150,10 @@ public class NPPDataSource extends HydraDataSource {
      * Zero-argument constructor for construction via unpersistence.
      */
     
-    public NPPDataSource() {}
+    public SuomiNPPDataSource() {}
 
     /**
-     * Construct a new NPP hdf data source.
+     * Construct a new Suomi NPP HDF5 data source.
      * @param  descriptor  descriptor for this <code>DataSource</code>
      * @param  fileName  name of the hdf file to read
      * @param  properties  hashtable of properties
@@ -161,15 +161,15 @@ public class NPPDataSource extends HydraDataSource {
      * @throws VisADException problem creating data
      */
     
-    public NPPDataSource(DataSourceDescriptor descriptor,
+    public SuomiNPPDataSource(DataSourceDescriptor descriptor,
                                  String fileName, Hashtable properties)
             throws VisADException {
         this(descriptor, Misc.newList(fileName), properties);
-        logger.debug("NPPDataSource called, single file selected: " + fileName);
+        logger.debug("SuomiNPPDataSource called, single file selected: " + fileName);
     }
 
     /**
-     * Construct a new NPP hdf data source.
+     * Construct a new Suomi NPP HDF5 data source.
      * @param  descriptor  descriptor for this <code>DataSource</code>
      * @param  sources   List of filenames
      * @param  properties  hashtable of properties
@@ -177,17 +177,17 @@ public class NPPDataSource extends HydraDataSource {
      * @throws VisADException problem creating data
      */
     
-    public NPPDataSource(DataSourceDescriptor descriptor,
+    public SuomiNPPDataSource(DataSourceDescriptor descriptor,
                                  List<String> newSources, Hashtable properties)
             throws VisADException {
         super(descriptor, newSources, DATA_DESCRIPTION, properties);
-        logger.debug("NPPDataSource constructor called, file count: " + sources.size());
+        logger.debug("SuomiNPPDataSource constructor called, file count: " + sources.size());
 
         filename = (String) sources.get(0);
-        setDescription("NPP");
+        setDescription("Suomi NPP");
         
         for (Object o : sources) {
-        	logger.debug("NPP source file: " + (String) o);
+        	logger.debug("Suomi NPP source file: " + (String) o);
         }
 
         setup();
@@ -236,13 +236,13 @@ public class NPPDataSource extends HydraDataSource {
     	ArrayList<NetCDFFile> ncdfal = new ArrayList<NetCDFFile>();
     	
     	// we should be able to find an XML Product Profile for each data/product type
-    	NPPProductProfile nppPP = null;
+    	SuomiNPPProductProfile nppPP = null;
     	    	
     	sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
     	   	
     	try {
     		
-    		nppPP = new NPPProductProfile();
+    		nppPP = new SuomiNPPProductProfile();
     		
     		// for each source file provided get the nominal time
     		for (int fileCount = 0; fileCount < sources.size(); fileCount++) {
@@ -319,7 +319,7 @@ public class NPPDataSource extends HydraDataSource {
 	    	    							// set time for display to day/time of 1st granule examined
 	    	    							if (! nameHasBeenSet) {
 	    	    								sdfOut.setTimeZone(new SimpleTimeZone(0, "UTC"));
-	    	    								setName(sdfOut.format(d));
+	    	    								setName(instrumentName.getStringValue() + " " + sdfOut.format(d));
 	    	    								nameHasBeenSet = true;
 	    	    							}
 	    	    							break;
@@ -328,7 +328,7 @@ public class NPPDataSource extends HydraDataSource {
 	    	    					if (foundDateTime) break;
 	    	    				}
 	    	    				if (! foundDateTime) {
-	    	    					throw new VisADException("No date time found in NPP granule");
+	    	    					throw new VisADException("No date time found in Suomi NPP granule");
 	    	    				}
 	    	    			}	    	    			
 	    	    		}
@@ -855,7 +855,7 @@ public class NPPDataSource extends HydraDataSource {
         		swathTable.put("unpack", "true");
         	}
         	
-        	// For NPP data, do valid range check AFTER applying scale/offset
+        	// For Suomi NPP data, do valid range check AFTER applying scale/offset
         	swathTable.put("range_check_after_scaling", "true");
         	
         	// pass in a GranuleAggregation reader...
@@ -866,7 +866,7 @@ public class NPPDataSource extends HydraDataSource {
                     DataCategory.createCategory("MultiSpectral");
                     categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
                 	MultiSpectralData msd = new MultiSpectralData((SwathAdapter) adapters[pIdx], sa, 
-                		"BrightnessTemperature", "BrightnessTemperature", "NPP", "ATMS");
+                		"BrightnessTemperature", "BrightnessTemperature", "Suomi NPP", "ATMS");
                 	msd.setInitialWavenumber(JPSSUtilities.ATMSChannelCenterFrequencies[0]);
                 	multiSpectralData.add(msd);
                 } 
@@ -886,7 +886,7 @@ public class NPPDataSource extends HydraDataSource {
                     DataCategory.createCategory("MultiSpectral");
                     categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
                 	MultiSpectralData msd = new MultiSpectralData((SwathAdapter) adapters[pIdx], sa, 
-                		"RadianceEarth", "RadianceEarth", "NPP", "OMPS");
+                		"RadianceEarth", "RadianceEarth", "Suomi NPP", "OMPS");
                 	msd.setInitialWavenumber(0);
                 	multiSpectralData.add(msd);
                 } 
@@ -981,17 +981,17 @@ public class NPPDataSource extends HydraDataSource {
     }
 
     /**
-     * Check to see if this <code>NPPDataSource</code> is equal to the object
+     * Check to see if this <code>SuomiNPPDataSource</code> is equal to the object
      * in question.
      * @param o  object in question
      * @return true if they are the same or equivalent objects
      */
     
     public boolean equals(Object o) {
-        if ( !(o instanceof NPPDataSource)) {
+        if ( !(o instanceof SuomiNPPDataSource)) {
             return false;
         }
-        return (this == (NPPDataSource) o);
+        return (this == (SuomiNPPDataSource) o);
     }
 
     public MultiSpectralData getMultiSpectralData() {

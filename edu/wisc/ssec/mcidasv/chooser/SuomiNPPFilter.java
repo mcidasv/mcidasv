@@ -49,19 +49,19 @@ import edu.wisc.ssec.mcidasv.data.hydra.JPSSUtilities;
  *
  */
 
-public class NPPFilter extends FileFilter {
+public class SuomiNPPFilter extends FileFilter {
 	
-	private static final Logger logger = LoggerFactory.getLogger(NPPFilter.class);
+	private static final Logger logger = LoggerFactory.getLogger(SuomiNPPFilter.class);
 	private static final String PRODUCT_SEPARATOR = "-";
 	private static String PREV_DIRECTORY = null;
 	private HashMap<String, File> seenGranules = new HashMap<String, File>();
 	private HashMap<String, File> validGranules = new HashMap<String, File>();
     	
-    	public NPPFilter() {
+    	public SuomiNPPFilter() {
     		super();
     	}
     	
-    	// Accept all directories and all NPP files.
+    	// Accept all directories and all Suomi NPP files.
         public boolean accept(File f) {
         	
             if (f.isDirectory()) {
@@ -88,7 +88,7 @@ public class NPPFilter extends FileFilter {
         		validGranules.clear();
         	}
 
-            if (isNPPFile(f)) {
+            if (isSuomiNPPFile(f)) {
             	validGranules.put(f.getName(), f);
             	return true;
             } else {
@@ -98,33 +98,33 @@ public class NPPFilter extends FileFilter {
         }
         
         /**
-         * Is this an NPP Product Data file?
+         * Is this a Suomi NPP Product Data file?
          * 
          * @param f name of file to test
          * @return
          */
         
-        private boolean isNPPFile(File f) {
+        private boolean isSuomiNPPFile(File f) {
         	
-        	boolean isNPP = false;
+        	boolean isSuomiNPP = false;
         	
         	String fileNameRelative = f.getName();
         	String fileNameAbsolute = f.getParent() + File.separatorChar + f.getName();
         	logger.trace("examining filename: " + fileNameRelative);
         	
         	// null or empty filename
-        	if ((fileNameRelative == null) || (fileNameRelative.equals(""))) return isNPP;
+        	if ((fileNameRelative == null) || (fileNameRelative.equals(""))) return isSuomiNPP;
         	
-        	// see if relative filename matches the NPP regular expression	
-        	if (fileNameRelative.matches(JPSSUtilities.NPP_REGEX)) {
-        		isNPP = true;
-        		logger.trace(fileNameRelative + " matches NPP regex");
-        	// don't go any further if file does not match NPP data product regex
+        	// see if relative filename matches the Suomi NPP regular expression	
+        	if (fileNameRelative.matches(JPSSUtilities.SUOMI_NPP_REGEX)) {
+        		isSuomiNPP = true;
+        		logger.trace(fileNameRelative + " matches Suomi NPP regex");
+        	// don't go any further if file does not match Suomi NPP data product regex
         	} else {
-        		return isNPP;
+        		return isSuomiNPP;
         	}
         	
-        	// make sure a geolocation file is present if it does look like a valid NPP data file!
+        	// make sure a geolocation file is present if it does look like a valid Suomi NPP data file!
         	
         	// if a geo dataset is embedded in a multi-product file, we can call it good without
         	// having to open any files.  Just look for a geo product id in the filename.
@@ -161,7 +161,7 @@ public class NPPFilter extends FileFilter {
     			logger.info("Trying to open file: " + fileNameAbsolute);
     			ncfile = NetcdfFile.open(fileNameAbsolute);
     			ucar.nc2.Attribute a = ncfile.findGlobalAttribute("N_GEO_Ref");
-    			// if no GEO attribute, we can't visualize this NPP data file, don't include it
+    			// if no GEO attribute, we can't visualize this Suomi NPP data file, don't include it
     			if (a == null) {
     				noGeo = true;
     			} else {
@@ -187,7 +187,7 @@ public class NPPFilter extends FileFilter {
     		
     		// if no geolocation global attribute found, skip this file
     		if (noGeo) {
-    			isNPP = false;
+    			isSuomiNPP = false;
     		} else {
     		
     			// ok, we know what the geo file is supposed to be, but is it present in this directory?
@@ -197,15 +197,15 @@ public class NPPFilter extends FileFilter {
     			
     			if (geoFile.exists()) {
     				logger.info("GEO file FOUND: " + geoFilename);
-    			    isNPP = true;
+    			    isSuomiNPP = true;
     			} else {
     				logger.info("GEO file NOT found: " + geoFilename);
-    				isNPP = false;
+    				isSuomiNPP = false;
     			}    
     			
     			// one last thing to check, if no luck so far...
     			// are we using terrain-corrected geolocation?
-    			if (! isNPP) {
+    			if (! isSuomiNPP) {
     				geoFilename = geoFilename.substring(geoFilename.lastIndexOf(File.separatorChar) + 1);
     				// this one looks for GMTCO instead of GMODO
     				geoFilename = geoFilename.replace("OD", "TC");
@@ -239,7 +239,7 @@ public class NPPFilter extends FileFilter {
     						String s1 = geoFilename.substring(geoStartIdx, geoStartIdx + 35);
     						String s2 = fileNameRelative.substring(prdStartIdx, prdStartIdx + 35);
     						if (s1.equals(s2)) {
-    							isNPP = true;
+    							isSuomiNPP = true;
     							break;
     						}
     					}
@@ -249,13 +249,13 @@ public class NPPFilter extends FileFilter {
     			
     		}
         	
-        	return isNPP;
+        	return isSuomiNPP;
         }
         
 
         // The description of this filter
         public String getDescription() {
-            return "NPP Data";
+            return "Suomi NPP Data";
         }
         
     }

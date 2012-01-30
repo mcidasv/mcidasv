@@ -32,8 +32,9 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 
 /**
  * Utility class to support Joint Polar Satellite System (JPSS) functionality.
- * Documentation referenced is from NPP Common Data Format Control Book.  See:
- * http://jointmission.gsfc.nasa.gov/project/science-documents.html
+ * Documentation referenced is from Suomi NPP Common Data Format Control Book.
+ * See:
+ * http://jointmission.gsfc.nasa.gov/science/documents.html
  * 
  * @author tommyj
  *
@@ -43,9 +44,9 @@ public abstract class JPSSUtilities {
    
 	public static final String JPSS_FIELD_SEPARATOR = "_";
 	
-	// This regular expression matches an NPP Data Product as defined by the 
+	// This regular expression matches a Suomi NPP Data Product as defined by the 
 	// spec in CDFCB-X Volume 1, Page 21
-	public static final String NPP_REGEX =
+	public static final String SUOMI_NPP_REGEX =
     		// Product Id, Multiple (ex: VSSTO-GATMO-VSLTO)
     		"(\\w\\w\\w\\w\\w-)*" + 
     		// Product Id, Single (ex: VSSTO)

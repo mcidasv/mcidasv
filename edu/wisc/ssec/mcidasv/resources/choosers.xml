@@ -366,13 +366,12 @@
 		" />
 	</panel>
 
-
-	<panel title="Imagery - NPP" category="Under Development" layout="border"
-        tabtooltip="For accessing NPP data">
-		<chooser id="chooser.npp" title="NPP" menutitle="NPP data"
-            showinmenu="true" helppath="idv.data.choosers.nppchooser"
+	<panel title="Imagery - Suomi NPP" category="Under Development" layout="border"
+        tabtooltip="For accessing Suomi NPP data">
+		<chooser id="chooser.npp" title="Suomi NPP" menutitle="Suomi NPP data"
+            showinmenu="true" helppath="idv.data.choosers.suominppchooser"
             showpolling="false" filepattern=".*" selectdatasourceid="true"
-            datasourceid="NPP" class="edu.wisc.ssec.mcidasv.chooser.NPPChooser" />
+            datasourceid="Suomi NPP" class="edu.wisc.ssec.mcidasv.chooser.SuomiNPPChooser" />
 	</panel>
 
     <panel title="Imagery - Polar Orbit Track" category="Under Development" layout="border"
@@ -383,23 +382,20 @@
             datasourceid="TLE" class="edu.wisc.ssec.mcidasv.chooser.PolarOrbitTrackChooser" />
     </panel>
 
-
 	<!--                       -->
 	<!--     STYLES            -->
 	<!--                       -->
+	
 	<styles>
 		<!-- Define the style for the labels   -->
 		<style class="toplabel" fontsize="16" fontface="Times New Roman"
 			place="Center" />
 	</styles>
 
-
-
-
-
 	<!--                       -->
 	<!--     PROPERTIES        -->
 	<!--                       -->
+	
 	<properties>
 		<!--
 			The IdvChooserManager looks for the following 2 properties to get the

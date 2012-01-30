@@ -51,13 +51,13 @@ import org.slf4j.LoggerFactory;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.util.StringUtil;
 
-public class NPPChooser extends FileChooser {
+public class SuomiNPPChooser extends FileChooser {
 	
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LoggerFactory.getLogger(NPPChooser.class);
+	private static final Logger logger = LoggerFactory.getLogger(SuomiNPPChooser.class);
 	private static final long CONSECUTIVE_GRANULE_TIME_GAP_MS = 1000;
 	
-	// date formatter for converting NPP day/time from file name for consecutive granule check
+	// date formatter for converting Suomi NPP day/time from file name for consecutive granule check
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmSSS");
 
     /**
@@ -68,7 +68,7 @@ public class NPPChooser extends FileChooser {
      *
      */
     
-    public NPPChooser(IdvChooserManager mgr, org.w3c.dom.Element root) {
+    public SuomiNPPChooser(IdvChooserManager mgr, org.w3c.dom.Element root) {
         super(mgr, root);
     }
    
@@ -82,8 +82,8 @@ public class NPPChooser extends FileChooser {
     
     protected JFileChooser doMakeFileChooser(String path) {
     	if (fileChooser == null) {
-    		logger.info("Creating NPP File Chooser...");
-    		fileChooser = new NPPFileChooser(path);
+    		logger.info("Creating Suomi NPP File Chooser...");
+    		fileChooser = new SuomiNPPFileChooser(path);
     	} else {
     		logger.warn("2nd call to doMakeFileChooser, why?");
     	}
@@ -96,7 +96,7 @@ public class NPPChooser extends FileChooser {
      * @author Tommy Jasmin
      */
     
-    public class NPPFileChooser extends JFileChooser {
+    public class SuomiNPPFileChooser extends JFileChooser {
 
         /**
 		 * default for serializable class
@@ -108,7 +108,7 @@ public class NPPChooser extends FileChooser {
          *
          * @param path   the initial path
          */
-        public NPPFileChooser(String path) {
+        public SuomiNPPFileChooser(String path) {
             super(path);
             setControlButtonsAreShown(false);
             setMultiSelectionEnabled(true);
@@ -151,7 +151,7 @@ public class NPPChooser extends FileChooser {
          * Approve the selection
          */
         public void approveSelection() {
-            NPPChooser.this.doLoad();
+            SuomiNPPChooser.this.doLoad();
         }
 
         /**
@@ -188,7 +188,7 @@ public class NPPChooser extends FileChooser {
             return false;
         }
 
-        // At present, NPP chooser only allows selecting sets of consecutive granules
+        // At present, Suomi NPP chooser only allows selecting sets of consecutive granules
         boolean granulesAreConsecutive = testConsecutiveGranules(files);
         if (granulesAreConsecutive) {
         	return super.selectFilesInner(files, directory);
@@ -200,7 +200,7 @@ public class NPPChooser extends FileChooser {
     }
 
     /**
-     * Test whether a set of files are consecutive SNPP granules,
+     * Test whether a set of files are consecutive Suomi NPP granules,
      * any sensor.
      * @param files
      * @return true if consecutive tests pass for all files
@@ -237,7 +237,7 @@ public class NPPChooser extends FileChooser {
 						dS = sdf.parse(dateStr + timeStrStart);
 						dE = sdf.parse(dateStr + timeStrEnd);
 					} catch (ParseException e) {
-						logger.error("Not recognized as valid SNPP file name: " + fileName);
+						logger.error("Not recognized as valid Suomi NPP file name: " + fileName);
 						testResult = false;
 						break;
 					}
@@ -318,7 +318,7 @@ public class NPPChooser extends FileChooser {
     	JPanel centerPanel = super.getCenterPanel();
     	
         fileChooser.setAcceptAllFileFilterUsed(false);
-        fileChooser.setFileFilter(new NPPFilter());
+        fileChooser.setFileFilter(new SuomiNPPFilter());
 
         return centerPanel;
     }

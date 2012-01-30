@@ -58,9 +58,9 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class NPPProductProfile {
+public class SuomiNPPProductProfile {
 	
-	private static final Logger logger = LoggerFactory.getLogger(NPPProductProfile.class);
+	private static final Logger logger = LoggerFactory.getLogger(SuomiNPPProductProfile.class);
 	
 	DocumentBuilder db = null;
 	// if we need to pull product profiles from the McV jar file
@@ -70,9 +70,9 @@ public class NPPProductProfile {
 	HashMap<String, String> scaleFactorName = new HashMap<String, String>();
 	HashMap<String, ArrayList<Float>> fillValues = new HashMap<String, ArrayList<Float>>();
 
-	public NPPProductProfile() throws ParserConfigurationException, SAXException, IOException {
+	public SuomiNPPProductProfile() throws ParserConfigurationException, SAXException, IOException {
 
-        logger.trace("NPPProductProfile init...");
+        logger.trace("SuomiNPPProductProfile init...");
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(false);
         db = factory.newDocumentBuilder();
@@ -203,7 +203,7 @@ public class NPPProductProfile {
 				logger.trace("looking at node name: " + child.getNodeName());
 				if (child.getNodeName().equals("Name")) {
 					name = child.getTextContent();
-					logger.trace("Found NPP product name: " + name);
+					logger.trace("Found Suomi NPP product name: " + name);
 				}
 				if (child.getNodeName().equals("Datum")) {
 					datum = child.getChildNodes();

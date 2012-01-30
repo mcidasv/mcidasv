@@ -85,7 +85,7 @@ public class GranuleAggregation implements MultiDimensionReader {
    private String crossTrackDimensionName = null;
 
    public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, int granuleLength, String inTrackDimensionName, String crossTrackDimensionName) throws Exception {
-	   if (ncdfal == null) throw new Exception("No data: empty NPP aggregation object");
+	   if (ncdfal == null) throw new Exception("No data: empty Suomi NPP aggregation object");
 	   logger.trace("granule length: " + granuleLength + " inTrack: " + inTrackDimensionName);
 	   this.granuleLength = granuleLength;
 	   this.inTrackDimensionName = inTrackDimensionName;
