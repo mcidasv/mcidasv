@@ -371,7 +371,7 @@
 		<chooser id="chooser.npp" title="Suomi NPP" menutitle="Suomi NPP data"
             showinmenu="true" helppath="idv.data.choosers.suominppchooser"
             showpolling="false" filepattern=".*" selectdatasourceid="true"
-            datasourceid="Suomi NPP" class="edu.wisc.ssec.mcidasv.chooser.SuomiNPPChooser" />
+            datasourceid="SuomiNPP" class="edu.wisc.ssec.mcidasv.chooser.SuomiNPPChooser" />
 	</panel>
 
     <panel title="Imagery - Polar Orbit Track" category="Under Development" layout="border"

@@ -866,7 +866,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
                     DataCategory.createCategory("MultiSpectral");
                     categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
                 	MultiSpectralData msd = new MultiSpectralData((SwathAdapter) adapters[pIdx], sa, 
-                		"BrightnessTemperature", "BrightnessTemperature", "Suomi NPP", "ATMS");
+                		"BrightnessTemperature", "BrightnessTemperature", "SuomiNPP", "ATMS");
                 	msd.setInitialWavenumber(JPSSUtilities.ATMSChannelCenterFrequencies[0]);
                 	multiSpectralData.add(msd);
                 } 
@@ -886,7 +886,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
                     DataCategory.createCategory("MultiSpectral");
                     categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
                 	MultiSpectralData msd = new MultiSpectralData((SwathAdapter) adapters[pIdx], sa, 
-                		"RadianceEarth", "RadianceEarth", "Suomi NPP", "OMPS");
+                		"RadianceEarth", "RadianceEarth", "SuomiNPP", "OMPS");
                 	msd.setInitialWavenumber(0);
                 	multiSpectralData.add(msd);
                 } 
