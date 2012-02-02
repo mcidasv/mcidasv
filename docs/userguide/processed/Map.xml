@@ -354,6 +354,7 @@
         <mapID target="idv.misc.performancetuning.heap"              url="misc/PerformanceTuning.html#heap" />
         <mapID target="idv.misc.performancetuning.maxsize"           url="misc/PerformanceTuning.html#maxsize" />
         <mapID target="idv.misc.performancetuning.subset"            url="misc/PerformanceTuning.html#subset" />
+		<mapID target="idv.misc.plugins"							 url="tools/Pugins.html" />
         <mapID target="idv.misc.pluginjarfiles"                      url="misc/PluginJarFiles.html" />
         <mapID target="idv.misc.pluginjarfiles.advanced"             url="misc/PluginJarFiles.html#advanced" />
         <mapID target="idv.misc.pluginjarfiles.basics"               url="misc/PluginJarFiles.html#basics" />
