@@ -519,7 +519,6 @@
         <mapID target="idv.tools.parametergroupseditor.image1"       url="tools/ParameterGroupsEditor.html#image1" />
         <mapID target="idv.tools.parametergroupseditor.image2"       url="tools/ParameterGroupsEditor.html#image2" />
 		<mapID target="idv.tools.plugincreator"						 url="tools/PluginCreator.html" />
-		<mapID target="idv.tools.plugins"							 url="tools/Plugins.html" />
         <mapID target="idv.tools.preferences"                        url="tools/preferences/Preferences.html" />
         <mapID target="idv.tools.preferences.advancedpreferences"	 url="tools/preferences/AdvancedPreferences.html" />
         <mapID target="idv.tools.preferences.auto-selectdatawhenloadingatemplate"  url="tools/preferences/GeneralPreferences.html#auto-selectdatawhenloadingatemplate" />

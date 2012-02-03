@@ -32,25 +32,25 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/Hovmolle
 <div class="pagetitle">Hovmoller Controls</div>
 <xxxmeta xxxname="jhid" value="idv.controls.volumerendercontrol">
 <div class="pagesubtitle">Overview</div>
-<p>The Hovmoller display plots grid or point data in a diagram with the Latitude/Longitude component on the X-axis, and the time component on the Y-axis. This display option is found in the Displays menu of the <strong>Field Selector</strong> tab of the Data Explorer. You can display the data as Time with respect to either Latitude or Longitude, and either as a color shaded or contour view.</p>
+<p>The Hovmoller display plots grid or point data in a diagram with the Latitude/Longitude component on the X-axis, and the time component on the Y-axis. This display option is found in the Displays menu of the <strong>Field Selector</strong> tab of the Data Explorer. You can display the data as Time with respect to either Latitude or Longitude, and either as a Color Shaded or Contour view.</p>
 <div class="images"><img src="images/Hovmoller.gif" width="504" height="593" alt="Image 1: Hovmoller Display"> <br>
 <span class="caption">Image 1: Hovmoller Display</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
+  <li class="propertylistitem"><strong>Contour -</strong> Opens the <a href="misc/ContourDialog.html">Contour Properties Editor</a>, which allows you to change the contour interval, style, and labeling of the contour lines. The current contour interval for the display is listed next to <strong>Interval</strong>. This is an option for Contour displays.</li>
   <li class="propertylistitem"><b>Color Table</b> - Shows the active color table and the associated high and low data values in the units of the display. As   the mouse        pointer is moved over the color bar, the value at a particular   color is        shown. Right click on the color bar or click on the button that   displays the name of the Color Table to make modifications to the color   bar. This allows you to open the <a  href="../tools/ColorTableEditor.html">Color
       Table Editor</a>, change the range, select other color tables, etc.</li>
-  <li class="propertylistitem"><b>Time</b> - Represents the format used to display Time along the Y-axis.</li>
-  <li class="propertylistitem"><b>Latest Time at Bottom</b> - Inverts the plot to place the latest data at the bottom of the display. The default for McIDAS-V is to display the latest data at the top..
-</ul>
+  <li class="propertylistitem"><b>Time</b> - Represents the format used to label time along the Y-axis. See the <a href="../tools/preferences/FormatPreferences.html#dateformat">Formats and Data Preferences</a> page for information on how to format the label.</li>
+  <li class="propertylistitem"><b>Latest Time at Bottom</b> - When selected, the earliest date will be listed at the top of display, and the latest date will be listed at the bottom. This is the default for the Hovmoller display. If you uncheck this box, the Y-axis will be inverted, showing the latest date at the top, and the earliest date at the bottom.</ul>
 <div class="pagesubtitle">Menus</div>
-<p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="LayerControls.html#menus">Menus section</a> of the Layer Controls Page. However, there are a couple of options unique to this display.</p>
+<p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="LayerControls.html#menus">Menus section</a> of the Layer Controls page. However, there are a couple of options unique to this display.</p>
 <p>The <strong>Edit</strong> menu has this unique option:</p>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>Contour Line Color -</strong> Allows you to change the contour line color in the display. This option is available if you select a contour display.</li>
+<li class="propertylistitem"><strong>Contour Line Color -</strong> Allows you to change the contour line color in the display. This option is available if you select a Contour display.</li>
 </ul>
 <p>The <strong>View</strong> menu has this unique option:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Hovmoller View - </strong>Allows you to capture an image or movie of the data, change sharing options, and change many aesthetic aspects of the display through the Properties dialog.</li>
+  <li class="propertylistitem"><strong>Hovmoller View - </strong>Allows you to capture an image of the data and change many aesthetic aspects of the display.</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
