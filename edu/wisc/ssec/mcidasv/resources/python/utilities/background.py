@@ -526,7 +526,7 @@ def firstDisplay():
     Longer description goes here.
 
     Returns:
-        The first Display (aka ViewManager).
+         The first Display (aka ViewManager).
 
     Raises:
         IndexError: If there are no Displays.
@@ -662,6 +662,29 @@ def boomstick():
     mcv.removeAllLayers(False)
     mcv.removeAllData(False)
     System.gc()
+
+class _NoOp(object):
+    def __init__(self, description='anything'):
+        self.description = description
+    def __repr__(self):
+        return self.description
+        
+MAP = _NoOp('MAP')
+GLOBE = _NoOp('GLOBE')
+TRANSECT = _NoOp('TRANSECT')
+
+import types
+
+def buildWindow(width=0, height=0, rows=1, cols=1, panels=None):
+    if panels is None:
+        panels = [MAP] * (rows * cols)
+    elif isinstance(panels, _NoOp):
+        panels = [panels] * (rows * cols)
+    elif type(panels) is types.ListType:
+        if len(panels) != (rows*cols):
+            raise ValueError('panels needs to contain rows*cols elements')
+    
+    print 'creating window: width=%d height=%d rows=%d cols=%d panels=%s' % (width, height, rows, cols, panels)
 
 def buildDisplayWindow(title, width=0, height=0):
     """Creates a window using the default McIDAS-V display skin.
