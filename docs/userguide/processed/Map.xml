@@ -354,7 +354,8 @@
         <mapID target="idv.misc.performancetuning.heap"              url="misc/PerformanceTuning.html#heap" />
         <mapID target="idv.misc.performancetuning.maxsize"           url="misc/PerformanceTuning.html#maxsize" />
         <mapID target="idv.misc.performancetuning.subset"            url="misc/PerformanceTuning.html#subset" />
-		<mapID target="idv.misc.plugins"							 url="tools/Pugins.html" />
+		<mapID target="idv.misc.plugincreator"						 url="tools/PluginCreator.html" />
+		<mapID target="idv.misc.plugins"							 url="tools/Plugins.html" />
         <mapID target="idv.misc.pluginjarfiles"                      url="misc/PluginJarFiles.html" />
         <mapID target="idv.misc.pluginjarfiles.advanced"             url="misc/PluginJarFiles.html#advanced" />
         <mapID target="idv.misc.pluginjarfiles.basics"               url="misc/PluginJarFiles.html#basics" />
@@ -518,7 +519,6 @@
         <mapID target="idv.tools.parametergroupseditor"              url="tools/ParameterGroupsEditor.html" />
         <mapID target="idv.tools.parametergroupseditor.image1"       url="tools/ParameterGroupsEditor.html#image1" />
         <mapID target="idv.tools.parametergroupseditor.image2"       url="tools/ParameterGroupsEditor.html#image2" />
-		<mapID target="idv.tools.plugincreator"						 url="tools/PluginCreator.html" />
         <mapID target="idv.tools.preferences"                        url="tools/preferences/Preferences.html" />
         <mapID target="idv.tools.preferences.advancedpreferences"	 url="tools/preferences/AdvancedPreferences.html" />
         <mapID target="idv.tools.preferences.auto-selectdatawhenloadingatemplate"  url="tools/preferences/GeneralPreferences.html#auto-selectdatawhenloadingatemplate" />
