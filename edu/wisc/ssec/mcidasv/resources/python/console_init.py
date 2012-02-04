@@ -1,4 +1,3 @@
-from __future__ import division
 from __future__ import with_statement
 import sys
 import os
@@ -43,11 +42,11 @@ import imageFilters
 import shell as idvshell
 
 from background import (
-        activeDisplay, allActions, allColorTables,  allDisplays, allLayerTypes,
-        allProjections, allWindows, boomstick, collectGarbage, colorTableNames,
-        createLayer, firstDisplay, firstWindow, getColorTable, getProjection,
-        managedDataSource, performAction, projectionNames, removeAllData,
-        removeAllLayers, setViewSize
+    activeDisplay, allActions, allColorTables,  allDisplays, allLayerTypes, 
+    allProjections, allWindows, boomstick, collectGarbage, colorTableNames, 
+    createLayer, firstDisplay, firstWindow, getColorTable, getProjection,
+    managedDataSource, performAction, projectionNames, removeAllData,
+    removeAllLayers, setViewSize
 )
 
 from interactive import describeActions, dumpObj, ncdump, ncdumpToString, see
