@@ -85,6 +85,8 @@ import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.ui.IdvComponentGroup;
 import ucar.unidata.idv.ui.IdvComponentHolder;
+import ucar.unidata.idv.ui.IdvUIManager;
+import ucar.unidata.idv.ui.IdvXmlUi;
 import ucar.unidata.idv.ui.LoadBundleDialog;
 import ucar.unidata.idv.ui.WindowInfo;
 import ucar.unidata.util.ColorTable;
@@ -1627,11 +1629,34 @@ public class PersistenceManager extends IdvPersistenceManager {
         return holder;
     }
     
+    public static McvComponentHolder buildDynamicSkin(int rows, int cols, List<String> panelTypes) throws Exception {
+        Document doc = XmlUtil.getDocument(SIMPLE_SKIN_TEMPLATE);
+        Element root = doc.getDocumentElement();
+        Element panel = XmlUtil.findElement(root, DYNSKIN_TAG_PANEL, DYNSKIN_ATTR_ID, DYNSKIN_ID_VALUE);
+        panel.setAttribute(DYNSKIN_ATTR_ROWS, Integer.toString(rows));
+        panel.setAttribute(DYNSKIN_ATTR_COLS, Integer.toString(cols));
+        Element view = doc.createElement(DYNSKIN_TAG_VIEW);
+        for (String panelType : panelTypes) {
+            Element node = doc.createElement(IdvUIManager.COMP_VIEW);
+            node.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.MapViewManager");
+//            StringBuilder props = new StringBuilder(DYNSKIN_PROPS_GENERAL);
+//            view.setAttribute(DYNSKIN_ATTR_PROPS, props.toString());
+            view.appendChild(node);
+        }
+        panel.appendChild(view);
+        McvComponentHolder holder = new McvComponentHolder(McIDASV.getStaticMcv(), XmlUtil.toString(root));
+        holder.setType(McvComponentHolder.TYPE_DYNAMIC_SKIN);
+        holder.setName(DYNSKIN_TMPNAME);
+        holder.doMakeContents();
+        return holder;
+    }
+
     private static final String DYNSKIN_TMPNAME = "Dynamic Skin Test";
     private static final String DYNSKIN_TAG_PANEL = "panel";
     private static final String DYNSKIN_TAG_VIEW = "idv.view";
     private static final String DYNSKIN_ATTR_ID = "id";
     private static final String DYNSKIN_ATTR_COLS = "cols";
+    private static final String DYNSKIN_ATTR_ROWS = "rows";
     private static final String DYNSKIN_ATTR_PROPS = "properties";
     private static final String DYNSKIN_ATTR_CLASS = "class";
     private static final String DYNSKIN_ATTR_VIEWID = "viewid";

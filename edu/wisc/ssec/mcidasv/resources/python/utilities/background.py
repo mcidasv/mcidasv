@@ -1,3 +1,5 @@
+import types
+
 import java.awt.Color.CYAN
 import ucar.unidata.util.Range
 
@@ -673,8 +675,6 @@ MAP = _NoOp('MAP')
 GLOBE = _NoOp('GLOBE')
 TRANSECT = _NoOp('TRANSECT')
 
-import types
-
 def buildWindow(width=0, height=0, rows=1, cols=1, panels=None):
     if panels is None:
         panels = [MAP] * (rows * cols)
@@ -685,6 +685,9 @@ def buildWindow(width=0, height=0, rows=1, cols=1, panels=None):
             raise ValueError('panels needs to contain rows*cols elements')
     
     print 'creating window: width=%d height=%d rows=%d cols=%d panels=%s' % (width, height, rows, cols, panels)
+    from edu.wisc.ssec.mcidasv import PersistenceManager
+    
+    return PersistenceManager.buildDynamicSkin(rows, cols, panels)
 
 def buildDisplayWindow(title, width=0, height=0):
     """Creates a window using the default McIDAS-V display skin.
