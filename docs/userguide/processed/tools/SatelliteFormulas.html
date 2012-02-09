@@ -33,293 +33,30 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
 <p>The following describes each formula included in the Satellite Formulas section
   of McIDAS-V. These formulas are designed to work with SEVIRI MSG satellite data, although they are also applicable for equivalent channels of other imagers.</p>
 <p><strong>SEVIRI RGB</strong></p>
-<p>The SEVIRI RGB formulas allow you to select your desired wavelengths for each parameter. The data for the wavelengths you select will be plugged into the formula for the parameter to produce the image in the Main Display window.</p>
-<ul class="propertylist">
-<li class="propertylistitem"><strong>AMCP - </strong>Displays all-day (24 hour) cloud microphysics data tuned to mid-latitude low cloud and fog.  This is based on absorbing IR channels only. The display will be in units of temperature in degrees K.</li>
-<li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
-  <tr>
-    <td colspan="1"><strong>Field</strong></td>
-   <td width="300"><strong>Definition
-   </strong></tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D1</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top" nowrap>
-   <p>Wavelength 1</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D2</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>Wavelength 2</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D3</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>Wavelength 3</p>
-   </td>
-   </tr>
-</table></li>
-<li class="propertylistitem"><strong>AIRM - </strong>Displays airmass data.  This is based on absorbing IR channels only. The display will be in units of temperature in degrees K.</li>
-<li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
-  <tr>
-    <td colspan="1"><strong>Field</strong></td>
-   <td width="300"><strong>Definition
-   </strong></tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D1</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top" nowrap>
-   <p>Wavelength 1</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D2</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>Wavelength 2</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D3</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>Wavelength 3</p>
-   </td>
-   </tr>
-      <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D4</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>Wavelength 4</p>
-   </td>
-   </tr>
-</table></li>
-<li class="propertylistitem"><strong>DUST - </strong>Displays cloud microphysics data tuned to mineral dust. This is based on absorbing IR channels only. The display will be in units of temperature in degrees K.</li>
-<li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
-  <tr>
-    <td colspan="1"><strong>Field</strong></td>
-   <td width="300"><strong>Definition
-   </strong></tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D1</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top" nowrap>
-   <p>Wavelength 1</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D2</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>Wavelength 2</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D3</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>Wavelength 3</p>
-   </td>
-   </tr>
-</table></li>
-<li class="propertylistitem"><strong>NCMP - </strong>Displays night cloud microphysics data. This uses IR3.9, but may be used durring the daytime and nighttime.The display will be in units of temperature in degrees K.</li>
-<li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
-  <tr>
-    <td colspan="1"><strong>Field</strong></td>
-   <td width="300"><strong>Definition
-   </strong></tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D1</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top" nowrap>
-   <p>Wavelength 1</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D2</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>Wavelength 2</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D3</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>Wavelength 3</p>
-   </td>
-   </tr>
-</table></li>
-<li class="propertylistitem"><strong>NCOL gamma - </strong>Displays natural colors data. The gamma value enhances the contrast between the low and high reflectivities.  This is based on solar channels only.The display will be in units of reflectivity.</li>
-<li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
-  <tr>
-    <td colspan="1"><strong>Field</strong></td>
-   <td width="300"><strong>Definition
-   </strong></tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>gamma</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top" nowrap>
-   <p>Typically between 0.5 and 2.5</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D2</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>Wavelength 2</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D3</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>Wavelength 3</p>
-   </td>
-   </tr>
-</table></li>
-<li class="propertylistitem"><strong>NCOL linear - </strong>Displays natural colors data with a linear enhancement by the way of the minimum and maximum reflectivity limit values. The minrefl and maxrefl values should be between 0 and 100. This is based on solar channels only. The display will be in units of reflectivity.</li>
-<li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
-  <tr>
-    <td colspan="1"><strong>Field</strong></td>
-   <td width="300"><strong>Definition
-   </strong></tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>minrefl</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top" nowrap>
-   <p>Minimum Reflectivity Limit (% reflectivity)</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>maxrefl</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>Maximum Reflectivity Limit (% reflectivity)</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D3</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>Wavelength 3</p>
-   </td>
-   </tr>
-</table></li>
-<li class="propertylistitem"><strong>SCON - </strong>Displays severe convection data.  This uses IR3.9 and is limited to use during the daytime. The display will be in units of temperature in degrees K and in units of reflectivity percentage.</li>
-<li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
-  <tr>
-    <td colspan="1"><strong>Field</strong></td>
-   <td width="300"><strong>Definition
-   </strong></tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D1</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top" nowrap>
-   <p>Wavelength 1</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D2</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>Wavelength 2</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D3</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>Wavelength 3</p>
-   </td>
-   </tr>
-      <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D4</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top" nowrap>
-   <p>Wavelength 4</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D5</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>Wavelength 5</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D6</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>Wavelength 6</p>
-   </td>
-   </tr>
-</table></li>
-<li class="propertylistitem"><strong>VOLC -</strong> Displays cloud microphysics data tuned to sulfur dioxide and volcanic ash.  This is based on absorbing IR channels only. The display will be in units of temperature in degrees K.</li>
-<li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
-  <tr>
-    <td colspan="1"><strong>Field</strong></td>
-   <td width="300"><strong>Definition
-   </strong></tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D1</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top" nowrap>
-   <p>Wavelength 1</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D2</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>Wavelength 2</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D3</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>Wavelength 3</p>
-   </td>
-   </tr>
-</table></li>
-</ul>
-<p><strong>SEVIRI RGB Manual band selection</strong></p>
 <p>The SEVIRI RGB Manual band selection formulas allow you to select your desired wavelengths for each parameter. A recommendation for the wavelength to enter for each field will be shown in the Field Selector window. The data from the wavelengths you select will be plugged into the formula for each parameter to produce the image in the Main Display window.</p>
 <ul class="propertylist">
-    <li class="propertylistitem"><strong>Airmass: 05-06, 08-09, 05i (AIRM) - </strong>Displays airmass data.  The display will be in units of temperature in degrees K.</li>
+    <li class="propertylistitem"><strong>ACMP (cloud microphysics tuned for low cloud &amp; fog) - </strong>Displays all-day (24 hour) cloud microphysics data. This formula is based on absorbing IR channels only. The display will be in units of temperature in degrees K.</li>
+    <li class="propertylistitem">
+        <table id="mapformulas2" cellpadding="0" cellspacing="0" border="1">
+            <tr>
+                <td colspan="1"><strong>Field</strong></td>
+                <td width="300"><strong>Definition </strong>                
+            </tr>
+            <tr>
+                <td width="81" colspan="1" rowspan="1" valign="top"><p><em>IR8.7</em></p></td>
+                <td width="300" colspan="1" rowspan="1" valign="top" nowrap><p>8.7 um IR Total Water, Cloud Phase, Dust</p></td>
+            </tr>
+            <tr>
+                <td width="81" colspan="1" rowspan="1" valign="top"><p><em>IR10.8</em></p></td>
+                <td width="300" colspan="1" rowspan="1" valign="top"><p>10.8 um IR Surface/Cloud-top Temp</p></td>
+            </tr>
+            <tr>
+                <td width="81" colspan="1" rowspan="1" valign="top"><p><em>IR12.0</em></p></td>
+                <td width="300" colspan="1" rowspan="1" valign="top"><p>12.0 um IR SFC/Cloud Temp, Low-level WV</p></td>
+            </tr>
+        </table>
+    </li>
+    <li class="propertylistitem"><strong>AIRM (air mass) - </strong>Displays airmass data.  This formula is based on absorbing IR channels only. The display will be in units of temperature in degrees K.</li>
     <li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Field</strong></td>
@@ -327,7 +64,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </strong></tr>
    <tr>
    <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>WV62 </em></p>
+   <p><em>WV6.2 </em></p>
    </td>
    <td width="300" colspan="1" rowspan="1" valign="top" nowrap>
    <p>6.2 um IR Upper-level Water Vapor</p>
@@ -335,7 +72,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </tr>
    <tr>
    <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>WV73</em></p>
+   <p><em>WV7.3</em></p>
    </td>
    <td width="300" colspan="1" rowspan="1" valign="top">
    <p>7.3 um IR Mid-level Water Vapor</p>
@@ -343,7 +80,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </tr>
    <tr>
    <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>IR97</em></p>
+   <p><em>IR9.7</em></p>
    </td>
    <td width="300" colspan="1" rowspan="1" valign="top">
    <p>9.7 um Ozone</p>
@@ -351,45 +88,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </tr>
       <tr>
    <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>IR108</em></p>
+   <p><em>IR10.8</em></p>
    </td>
    <td width="300" colspan="1" rowspan="1" valign="top">
    <p>10.8 um IR Surface/Cloud-top Temp</p>
    </td>
    </tr>
 </table></li>
-    <li class="propertylistitem"><strong>All-day cloud microphysics: 10-09, 09-07, 09 (AMCP) - </strong>Displays all-day (24 hour) cloud microphysics data. The display will be in units of temperature in degrees K.</li>
-    <li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
-  <tr>
-    <td colspan="1"><strong>Field</strong></td>
-   <td width="300"><strong>Definition
-   </strong></tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>IR87</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top" nowrap>
-   <p>8.7 um IR Total Water, Cloud Phase, Dust</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>IR108</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>10.8 um IR Surface/Cloud-top Temp</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>IR120</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>12.0 um IR SFC/Cloud Temp, Low-level WV</p>
-   </td>
-   </tr>
-</table></li>
-<li class="propertylistitem"><strong>Dust: 10-09, 09-07, 09 (DUST) - </strong>Displays dust data. The display will be in units of temperature in degrees K.</li>
+<li class="propertylistitem"><strong>DUST (cloud microphysics tuned for dust) - </strong>Displays dust data. This formula is based on absorbing IR channels only. The display will be in units of temperature in degrees K.</li>
 <li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Field</strong></td>
@@ -397,7 +103,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </strong></tr>
    <tr>
    <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>IR</em>87</p>
+   <p><em>IR</em>8.7</p>
    </td>
    <td width="300" colspan="1" rowspan="1" valign="top" nowrap>
    <p>8.7 um IR Total Water, Cloud Phase, Dust</p>
@@ -405,7 +111,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </tr>
    <tr>
    <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>IR108</em></p>
+   <p><em>IR10.8</em></p>
    </td>
    <td width="300" colspan="1" rowspan="1" valign="top">
    <p>10.8 um IR Surface/Cloud-top Temp</p>
@@ -413,53 +119,110 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </tr>
    <tr>
    <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>IR120</em></p>
+   <p><em>IR12.0</em></p>
    </td>
    <td width="300" colspan="1" rowspan="1" valign="top">
    <p>12.0 um IR SFC/Cloud Temp, Low-level WV</p>
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>Natural colors: 03, 02, 01, gamma - </strong>Displays natural colors data.  The gamma value enhances the contrast between the low and high reflectivities. After you hit OK, a Field Selector window will appear. The display will be in units of reflectivity.</li>
-<li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
-  <tr>
-    <td colspan="1"><strong>Field</strong></td>
-   <td width="300"><strong>Definition
-   </strong></tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>gamma</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top" nowrap>
-   <p>Typically between 0.5 and 2.5</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>VIS06</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>0.6 um VIS Cloud and Surface Features</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>VIS08</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>0.8 um VIS Aerosols over Water, Veg</p>
-   </td>
-   </tr>
-      <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>NIR16</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>1.6 um Near IR - Surface, cloud phase</p>
-   </td>
-   </tr>
-</table></li>
-<li class="propertylistitem"><strong>Natural colors: 03, 02, 01, minrefl, maxrefl - </strong>Displays natural colors data with a linear enhancement by the way of the minimum and maximum reflectivity limit values. The minrefl and maxrefl values should be between 0 and 100. The display will be in units of reflectivity.</li>
+<li class="propertylistitem"><strong>GCMP (generic cloud microphysics) -</strong> Generic enhancement by manual rescaling and gamma correction. This formula is based on absorbing IR channels only. The display will be in units of temperature in degrees K.</li>
+<li class="propertylistitem">
+    <table id="mapformulas4" cellpadding="0" cellspacing="0" border="1">
+        <tr>
+            <td colspan="1"><strong>Field</strong></td>
+            <td width="300"><strong>Definition </strong>            
+        </tr>
+        <tr>
+            <td width="81" colspan="1" rowspan="1" valign="top"><p><em>IR</em>8.7</p></td>
+            <td width="300" colspan="1" rowspan="1" valign="top" nowrap><p>8.7 um IR Total Water, Cloud Phase, Dust</p></td>
+        </tr>
+        <tr>
+            <td width="81" colspan="1" rowspan="1" valign="top"><p><em>IR10.8</em></p></td>
+            <td width="300" colspan="1" rowspan="1" valign="top"><p>10.8 um IR Surface/Cloud-top Temp</p></td>
+        </tr>
+        <tr>
+            <td width="81" colspan="1" rowspan="1" valign="top"><p><em>IR12.0</em></p></td>
+            <td width="300" colspan="1" rowspan="1" valign="top"><p>12.0 um IR SFC/Cloud Temp, Low-level WV</p></td>
+        </tr>
+    </table>
+</li>
+<li class="propertylistitem"><strong>GCON (generic enhancement of SCON) -</strong> Generic enhancement of SCON by manual rescaling and gamma correction. This formula is limited to use during the daytime. The display can be in units of temperature in degrees K, and also in percent reflectivity.</li>
+<li class="propertylistitem">
+    <table id="mapformulas5" cellpadding="0" cellspacing="0" border="1">
+        <tr>
+            <td colspan="1"><strong>Field</strong></td>
+            <td width="300"><strong>Definition </strong>            
+        </tr>
+        <tr>
+            <td width="81" colspan="1" rowspan="1" valign="top"><p><em>VIS0.6</em></p></td>
+            <td width="300" colspan="1" rowspan="1" valign="top" nowrap><p>0.6 um VIS Cloud and Surface Features</p></td>
+        </tr>
+        <tr>
+            <td width="81" colspan="1" rowspan="1" valign="top"><p><em>NIR1.6</em></p></td>
+            <td width="300" colspan="1" rowspan="1" valign="top"><p>1.6 um Near IR Surface, Cloud Phase</p></td>
+        </tr>
+        <tr>
+            <td width="81" colspan="1" rowspan="1" valign="top"><p><em>IR3.9</em></p></td>
+            <td width="300" colspan="1" rowspan="1" valign="top"><p>3.9 um IR Low Cloud/Fog, Fire Detection</p></td>
+        </tr>
+                <tr>
+            <td width="81" colspan="1" rowspan="1" valign="top"><p><em>IR6.2</em></p></td>
+            <td width="300" colspan="1" rowspan="1" valign="top" nowrap><p>6.2 um IR Upper-level Water Vapor</p></td>
+        </tr>
+        <tr>
+            <td width="81" colspan="1" rowspan="1" valign="top"><p><em>IR7.3</em></p></td>
+            <td width="300" colspan="1" rowspan="1" valign="top"><p>7.3 um IR Mid-level Water Vapor</p></td>
+        </tr>
+        <tr>
+            <td width="81" colspan="1" rowspan="1" valign="top"><p><em>IR10.8</em></p></td>
+            <td width="300" colspan="1" rowspan="1" valign="top"><p> 10.8 um IR SFC/Cloud-top Temp</p></td>
+        </tr>
+    </table>
+</li>
+<li class="propertylistitem"><strong>NCMP (nighttime cloud microphysics, IR8.7 to IR3.9) - </strong>Displays natural colors data. The display will be in units of temperature in degrees K.</li>
+<li class="propertylistitem">
+    <table id="mapformulas6" cellpadding="0" cellspacing="0" border="1">
+        <tr>
+            <td colspan="1"><strong>Field</strong></td>
+            <td width="300"><strong>Definition </strong>            
+        </tr>
+        <tr>
+            <td width="81" colspan="1" rowspan="1" valign="top"><p><em>IR3.9</em></p></td>
+            <td width="300" colspan="1" rowspan="1" valign="top" nowrap><p>3.9 um IR Low Cloud/Fog, Fire Detection</p></td>
+        </tr>
+        <tr>
+            <td width="81" colspan="1" rowspan="1" valign="top"><p><em>IR10.8</em></p></td>
+            <td width="300" colspan="1" rowspan="1" valign="top"><p>10.8 um IR Surface/Cloud-top Temp</p></td>
+        </tr>
+        <tr>
+            <td width="81" colspan="1" rowspan="1" valign="top"><p><em>IR12.0</em></p></td>
+            <td width="300" colspan="1" rowspan="1" valign="top"><p>12.0 um IR SFC/Cloud Temp, Low-level WV</p></td>
+        </tr>
+    </table>
+</li>
+<li class="propertylistitem"><strong>NCOG (generic NCOL) -</strong> Generic enhancement of NCOL by manual rescaling and gamma correction. This formula is based on solar channels only.</li>
+<li class="propertylistitem">
+    <table id="mapformulas7" cellpadding="0" cellspacing="0" border="1">
+        <tr>
+            <td colspan="1"><strong>Field</strong></td>
+            <td width="300"><strong>Definition </strong>            
+        </tr>
+        <tr>
+            <td width="81" colspan="1" rowspan="1" valign="top"><p><em>VIS0.6</em></p></td>
+            <td width="300" colspan="1" rowspan="1" valign="top" nowrap><p>0.6 um VIS Cloud and Surface Features</p></td>
+        </tr>
+        <tr>
+            <td width="81" colspan="1" rowspan="1" valign="top"><p><em>VIS0.8</em></p></td>
+            <td width="300" colspan="1" rowspan="1" valign="top"><p>0.8 um VIS Aerosols over Water, Veg</p></td>
+        </tr>
+        <tr>
+            <td width="81" colspan="1" rowspan="1" valign="top"><p><em>NIR1.6</em></p></td>
+            <td width="300" colspan="1" rowspan="1" valign="top"><p>1.6um Near IR Surface, Cloud Phase</p></td>
+        </tr>
+    </table>
+</li>
+<li class="propertylistitem"><strong>NCOL (natural colors) - </strong>Displays natural colors data with a linear enhancement by the way of the minimum and maximum reflectivity limit values. The minrefl and maxrefl values should be between 0 and 100. This formula is based on solar channels only. The display will be in units of reflectivity.</li>
 <li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Field</strong></td>
@@ -483,7 +246,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </tr>
    <tr>
    <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>VIS06</em></p>
+   <p><em>VIS0.6</em></p>
    </td>
    <td width="300" colspan="1" rowspan="1" valign="top">
    <p>0.6 um VIS Cloud and Surface Features</p>
@@ -491,7 +254,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </tr>
       <tr>
    <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>VIS08</em></p>
+   <p><em>VIS0.8</em></p>
    </td>
    <td width="300" colspan="1" rowspan="1" valign="top">
    <p>0.8 um VIS Aerosols over Water, Veg</p>
@@ -499,14 +262,47 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </tr>
          <tr>
    <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>NIR16</em></p>
+   <p><em>NIR1.6</em></p>
    </td>
    <td width="300" colspan="1" rowspan="1" valign="top">
    <p>1.6 um Near IR- Surface, cloud phase</p>
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>Night cloud microphysics: 10-09, 09-04, 09 (NCMP) - </strong>Displays natural colors data. The display will be in units of temperature in degrees K.</li>
+<li class="propertylistitem"><strong>SCON (severe convection, daytime only) -</strong> Displays severe convection data.  This formula is limited to use during the daytime. The display will be in units of temperature in degrees K and in units of reflectivity percentage.</li>
+<li class="propertylistitem">
+    <table id="mapformulas3" cellpadding="0" cellspacing="0" border="1">
+        <tr>
+            <td colspan="1"><strong>Field</strong></td>
+            <td width="300"><strong>Definition </strong>            
+        </tr>
+        <tr>
+            <td width="81" colspan="1" rowspan="1" valign="top"><p><em>VIS0.6</em></p></td>
+            <td width="300" colspan="1" rowspan="1" valign="top" nowrap><p>0.6 um VIS Cloud and Surface Features</p></td>
+        </tr>
+        <tr>
+            <td width="81" colspan="1" rowspan="1" valign="top"><p><em>NIR1.6</em></p></td>
+            <td width="300" colspan="1" rowspan="1" valign="top"><p>1.6 um Near IR Surface, Cloud Phase</p></td>
+        </tr>
+        <tr>
+            <td width="81" colspan="1" rowspan="1" valign="top"><p><em>IR3.9</em></p></td>
+            <td width="300" colspan="1" rowspan="1" valign="top"><p>3.9 um IR Low Cloud/Fog, Fire Detection</p></td>
+        </tr>
+        <tr>
+            <td width="81" colspan="1" rowspan="1" valign="top"><p><em>WV6.2</em></p></td>
+            <td width="300" colspan="1" rowspan="1" valign="top"><p>6.2 um IR Upper-level Water Vapor</p></td>
+        </tr>
+        <tr>
+            <td width="81" colspan="1" rowspan="1" valign="top"><p><em>WV7.3</em></p></td>
+            <td width="300" colspan="1" rowspan="1" valign="top"><p>7.3 um IR Mid-level Water Vapor</p></td>
+        </tr>
+        <tr>
+            <td width="81" colspan="1" rowspan="1" valign="top"><p><em>IR10.8</em></p></td>
+            <td width="300" colspan="1" rowspan="1" valign="top"><p>10.8 um IR Surface/Cloud-top Temp</p></td>
+        </tr>
+    </table>
+</li>
+<li class="propertylistitem"><strong>VOLC (cloud microphysics turned for volcanic ash &amp; SO2) - </strong>Displays severe convection data.  This formula is based on absorbing IR channels only. The display will be in units of temperature in degrees K.</li>
 <li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Field</strong></td>
@@ -514,38 +310,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </strong></tr>
    <tr>
    <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>IR39</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top" nowrap>
-   <p>3.9 um IR Low Cloud/Fog, Fire Detection</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>IR108</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>10.8 um IR Surface/Cloud-top Temp</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>IR120</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>12.0 um IR SFC/Cloud Temp, Low-level WV</p>
-   </td>
-   </tr>
-</table></li>
-<li class="propertylistitem"><strong>SO2 &amp; ash: 10-09, 09-07, 09 (VOLC) - </strong>Displays severe convection data.  The display will be in units of temperature in degrees K.</li>
-<li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
-  <tr>
-    <td colspan="1"><strong>Field</strong></td>
-   <td width="300"><strong>Definition
-   </strong></tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>IR87</em></p>
+   <p><em>IR8.7</em></p>
    </td>
    <td width="300" colspan="1" rowspan="1" valign="top" nowrap>
    <p>8.7 um IR Total Water, Cloud Phase, Dust</p>
@@ -553,7 +318,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </tr>
    <tr>
    <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>IR108</em></p>
+   <p><em>IR10.8</em></p>
    </td>
    <td width="300" colspan="1" rowspan="1" valign="top">
    <p>10.8 um IR Surface/Cloud-top Temp</p>
@@ -561,112 +326,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </tr>
    <tr>
    <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>IR120</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>12.0 um IR SFC/Cloud Temp, Low-level WV</p>
-   </td>
-   </tr>
-</table></li>
-<li class="propertylistitem"><strong>Severe convection: 05-06, 04-09, 03-01 (SCON) -</strong> Displays severe convection data.  The display will be in units of temperature in degrees K and in units of reflectivity percentage.</li>
-<li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
-  <tr>
-    <td colspan="1"><strong>Field</strong></td>
-   <td width="300"><strong>Definition
-   </strong></tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>ch01</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top" nowrap>
-   <p>Channel 1</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>ch03</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>Channel 3</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>ch04</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>Channel 4</p>
-   </td>
-   </tr>
-      <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>ch05</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>Channel 5</p>
-   </td>
-   </tr>
-         <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>ch06</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>Channel 6</p>
-   </td>
-   </tr>
-            <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>ch09</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>Channel 9</p>
-   </td>
-   </tr>
-</table>
-</li>
-</ul>
-<p><strong>SEVIRI Differences</strong></p>
-<ul class="propertylist">
-<li class="propertylistitem"><strong>OTOP (IR10.8 - WV6.3) -</strong> Displays overshooting tops data. Overshooting tops can be noted in the Main Display window by pockets of high values.</li>
-<li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
-  <tr>
-    <td colspan="1"><strong>Field</strong></td>
-   <td width="300"><strong>Definition
-   </strong></tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D4</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top" nowrap>
-   <p>10.8 um IR Surface/Cloud-top Temp</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D1</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top">
-   <p>6.3 um IR Upper-level Water Vapor</p>
-   </td>
-   </tr>
-</table></li>
-<li class="propertylistitem"><strong>SWDF (IR10.8-IR12.0) -</strong> Displays split window difference data. This formula negates the effects of the radiating temperature, and exposes emissivity differences and differential absorption by different gases and cloud particles in the atmosphere. The display will be in units of temperature in degrees K.</li>
-<li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
-  <tr>
-    <td colspan="1"><strong>Field</strong></td>
-   <td width="300"><strong>Definition
-   </strong></tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D2</em></p>
-   </td>
-   <td width="300" colspan="1" rowspan="1" valign="top" nowrap>
-   <p>10.8 um IR Surface/Cloud-top Temp</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="81" colspan="1" rowspan="1" valign="top">
-   <p><em>D3</em></p>
+   <p><em>IR12.0</em></p>
    </td>
    <td width="300" colspan="1" rowspan="1" valign="top">
    <p>12.0 um IR SFC/Cloud Temp, Low-level WV</p>
