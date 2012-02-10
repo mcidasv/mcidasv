@@ -58,30 +58,43 @@ box corresponding to the current time is colored blue. Click on a box to select 
 <span class="caption">Image 2: Settings Tab of the Time Animation Properties Dialog</span></div>
 <p>By pressing <img src="../tools/images/Apply.gif" alt="Apply button" width="65" height="26"align=absmiddle> or <img src="../tools/images/Ok.gif" alt="OK button" width="51" height="26"align=absmiddle>, you
   will set the properties in the Animation Widget. If you have the <strong>Save
-  As Default</strong> checkbox checked then the properties will be saved off and
+  As Default</strong> checkbox checked, then the properties will be saved and
   used every time a new Animation Widget is created. For example, you may find
   that you are always setting the dwell rate to a particular value. You can save
-  that state off as the default state for all Animation Widgets that are subsequently
+  that state as the default state for all Animation Widgets that are subsequently
   created, both in the current run of McIDAS-V and in future runs.</p>
 <p><a name="animationsettings" id="animationsettings"></a></p>
 <div class="pagesubtitle">Properties</div>
-<p>The <strong>Dwell</strong> controls how fast the animation occurs. Click on the slider icon: <img src="images/Slider16.gif"align=absmiddle> to change the values or type a value into the field and press Return. Values are seconds/frame.</p>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Dwell -</strong> Controls how fast the animation occurs. Click on the slider icon: <img src="images/Slider16.gif"align=absmiddle> to change the values or type a value into the field and press Return. Values are seconds/frame.</li>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Forward -</strong> Controls speed of looping forward.</li>
 <li class="propertylistitem"><strong>Reverse - </strong>Controls speed of looping backwards.</li>
 <li class="propertylistitem"><strong>First - </strong> Chooses how long first frame is seen.</li>
 <li class="propertylistitem"><strong>Last</strong> - Chooses how long last frame is seen.</li>
 </ul>
-<p>Select the looping style with the <strong>Direction</strong> menu.</p>
+<li class="propertylistitem"><strong>Direction -</strong> Controls which direction the loop goes when you press play.</li>
 <ul class=propertylist>
 <li class="propertylistitem"><strong>Forward</strong> - Loops forward in time</li>
 <li class="propertylistitem"><strong>Backward</strong> - Loops backward in time</li>
 <li class="propertylistitem"><strong>Rocking</strong> - Alternates looping between forward and backward directions.</li>
 </ul>
-<p>Share the time animation in a display with the animation in other displays with the <strong>Share Times</strong> button. See the <a href="../collab/Sharing.html">Sharing</a> page for more information.</p>
-<p>Check <strong>Boxes Visible</strong> to show the boxes in the Time Animation Widget. The time boxes allow you to configure which frames will be disabled in the Time Animation
-Widget. This behaves the same as the boxes in the main widget.</p>
-<p>You can also set the behavior for when the set of times available changes with the <strong>Reset-&gt;To</strong> menu. The options are the Start Time, End Time, or No Change.</p>
+<li class="propertylistitem"><strong>Share Times -</strong> Shares the time animation in a display with the animation in other displays with the <strong>Share Times</strong> button. See the <a href="../collab/Sharing.html">Sharing</a> page for more information.</li>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>None -</strong> Does not share any times with any other displays.</li>
+<li class="propertylistitem"><strong>Absolute -</strong> Shares absolute times with other displays.</li>
+<li class="propertylistitem"><strong>Relative -</strong> Shares relative times with other displays.</li>
+<li class="propertylistitem"><strong>Group -</strong> Allows you to share certain time animations, while not sharing with others. You can set up to four different share groups.</li>
+</ul>
+<li class="propertylistitem"><strong>Skip Steps -</strong> Works the same as in the Main Display window, you can right click on a square to make that time step not visible in a loop. The Boxes visible checkbox enables the time animation boxes to be visible in the Main Display window.</li>
+<li class="propertylistitem"><strong>Reset To -</strong> Determines which time step will be displayed when you stop playing a loop.</li>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Start Time -</strong> Returns to the first time step when the loop is stopped.</li>
+<li class="propertylistitem"><strong>No Change -</strong> Remains at the time step you were at when the loop was stopped.</li>
+<li class="propertylistitem"><strong>End Time -</strong> Displays the final time of the loop once the loop has been stopped.
+    </li>
+</ul>
+</ul>
 <a name="animationset" id="animationset"></a>
 <div class="pagesubtitle">Define Animation Times Tab</div>
 <p>The<strong> Define Animation Times </strong>tab allows you to define a custom animation time set:</p>
