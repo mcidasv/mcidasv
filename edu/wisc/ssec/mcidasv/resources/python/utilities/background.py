@@ -12,6 +12,7 @@ from org.slf4j import LoggerFactory
 
 from java.lang import System
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
+from edu.wisc.ssec.mcidasv import PersistenceManager # for openBundle
 from ucar.unidata.idv import DisplayInfo
 from ucar.unidata.idv.ui import IdvWindow
 from ucar.unidata.geoloc import LatLonPointImpl
@@ -719,3 +720,37 @@ def makeLogger(name):
     """ """
     return  LoggerFactory.getLogger(name)
 
+def openBundle(bundleFile, label="", clear=1):
+    """Open a bundle using the decodeXmlFile from PersistenceManager
+
+    Args:
+        bundleFile: location of bundle to be loaded
+
+        label: Label for bundle?  where is this displayed?
+
+        clear: whether to clear current layers and data (1 or 0)
+        Default is to clear.
+
+    Returns:
+        Nothing for now.. maybe return activeDisplay()  ?
+
+    Raises:
+        ValueError: if bundleFile doesn't exist
+    """
+    # Allows user to specify file with for example, ~/bundlefile.mcv
+    bundleFile = _expandpath(bundleFile)
+
+    fileExists = os.path.exists(bundleFile)
+    isDir = os.path.isdir(bundleFile)
+
+
+    if (not fileExists) or isDir:
+        raise ValueError("File does not exist or is a directory")
+
+        
+
+    pm = getStaticMcv().getPersistenceManager()
+    checkToRemove = clear
+    letUserChangeData = 0    # not sure about this
+    bundleProperties = None  # not sure what this does..just send it None for now
+    pm.decodeXmlFile(bundleFile,label,checkToRemove,letUserChangeData,bundleProperties)
