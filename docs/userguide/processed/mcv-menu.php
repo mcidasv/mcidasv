@@ -201,6 +201,7 @@
             <span class="link" onClick="setPage('ui/MainToolBar.html');">Main Toolbar</span><br>
             <span class="link" onClick="setPage('ui/DragAndDrop.html');">Drag and Drop Tabs</span><br>
             <span class="link" onClick="setPage('ui/DisplayMenus.html');">Display Menus </span><br>
+            <span class="link" onClick="setPage('ui/PropertiesDialog.html');">Properties Dialog </span><br>
             <span class="link" onClick="setPage('ui/DisplayVisibility.html');">Visibility Animation</span><br>
             <span class="link" onClick="setPage('ui/Animation.html');">Time Animation</span><br>                        
 <span class="link" onClick="setPage('ui/Legend.html');"> Legend</span><br>
