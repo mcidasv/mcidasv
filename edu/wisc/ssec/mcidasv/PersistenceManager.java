@@ -86,6 +86,7 @@ import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.ui.IdvComponentGroup;
 import ucar.unidata.idv.ui.IdvComponentHolder;
 import ucar.unidata.idv.ui.IdvUIManager;
+import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.idv.ui.IdvXmlUi;
 import ucar.unidata.idv.ui.LoadBundleDialog;
 import ucar.unidata.idv.ui.WindowInfo;
@@ -1644,9 +1645,12 @@ public class PersistenceManager extends IdvPersistenceManager {
             view.appendChild(node);
         }
         panel.appendChild(view);
+        IdvWindow activeWindow = IdvWindow.getActiveWindow();
+        IdvComponentGroup group = McVGuiUtils.getComponentGroup(activeWindow);
         McvComponentHolder holder = new McvComponentHolder(McIDASV.getStaticMcv(), XmlUtil.toString(root));
         holder.setType(McvComponentHolder.TYPE_DYNAMIC_SKIN);
         holder.setName(DYNSKIN_TMPNAME);
+        group.addComponent(holder);
         holder.doMakeContents();
         return holder;
     }
