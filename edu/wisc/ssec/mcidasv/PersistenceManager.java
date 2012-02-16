@@ -1667,7 +1667,6 @@ public class PersistenceManager extends IdvPersistenceManager {
         holder.setName(DYNSKIN_TMPNAME);
         group.addComponent(holder);
         holder.doMakeContents();
-        XmlUtil.printNode(root);
         return holder;
     }
 
