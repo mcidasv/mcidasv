@@ -61,6 +61,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import org.apache.batik.util.DoublyIndexedTable.Entry;
+import org.python.core.PyObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1630,18 +1631,32 @@ public class PersistenceManager extends IdvPersistenceManager {
         return holder;
     }
     
-    public static McvComponentHolder buildDynamicSkin(int rows, int cols, List<String> panelTypes) throws Exception {
+    public static McvComponentHolder buildDynamicSkin(int rows, int cols, List<PyObject> panelTypes) throws Exception {
+//        logger.trace("rows={} cols={} panelTypes={}", new Object[] { rows, cols, panelTypes });
         Document doc = XmlUtil.getDocument(SIMPLE_SKIN_TEMPLATE);
         Element root = doc.getDocumentElement();
         Element panel = XmlUtil.findElement(root, DYNSKIN_TAG_PANEL, DYNSKIN_ATTR_ID, DYNSKIN_ID_VALUE);
         panel.setAttribute(DYNSKIN_ATTR_ROWS, Integer.toString(rows));
         panel.setAttribute(DYNSKIN_ATTR_COLS, Integer.toString(cols));
         Element view = doc.createElement(DYNSKIN_TAG_VIEW);
-        for (String panelType : panelTypes) {
+        for (PyObject panelType : panelTypes) {
+            String panelTypeRepr = panelType.__repr__().toString();
             Element node = doc.createElement(IdvUIManager.COMP_VIEW);
-            node.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.MapViewManager");
-//            StringBuilder props = new StringBuilder(DYNSKIN_PROPS_GENERAL);
-//            view.setAttribute(DYNSKIN_ATTR_PROPS, props.toString());
+            StringBuilder props = new StringBuilder(DYNSKIN_PROPS_GENERAL);
+            if ("MAP".equals(panelTypeRepr)) {
+//                logger.trace("creating map display");
+                node.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.MapViewManager");
+            } else if ("GLOBE".equals(panelTypeRepr)) {
+//                logger.trace("creating globe display");
+                node.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.MapViewManager");
+                props.append(DYNSKIN_PROPS_GLOBE);
+            } else if ("TRANSECT".equals(panelTypeRepr)) {
+//                logger.trace("creating transect display");
+                node.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.TransectViewManager");
+            } else {
+//                lbogger.trace("not creating a display! :(");
+            }
+            view.setAttribute(DYNSKIN_ATTR_PROPS, props.toString());
             view.appendChild(node);
         }
         panel.appendChild(view);
@@ -1652,6 +1667,7 @@ public class PersistenceManager extends IdvPersistenceManager {
         holder.setName(DYNSKIN_TMPNAME);
         group.addComponent(holder);
         holder.doMakeContents();
+        XmlUtil.printNode(root);
         return holder;
     }
 
