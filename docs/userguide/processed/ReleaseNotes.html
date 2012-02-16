@@ -59,6 +59,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
           Visibility Animations</a></strong></li>
     <li><strong><a class="faq-question-link" href="#hovmoller1.02beta1">Hovmoller
           Display</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#logo1.02beta1">Add Logos</a></strong></li>
+        <li><strong><a class="faq-question-link" href="#wind1.02beta1">Wind Barbs</a></strong></li>
   </ul>
 </div>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_1.02beta1">Data
@@ -77,6 +79,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-category">
   <ul class="noindent">
     <li><strong><a class="faq-question-link" href="#statistics1.02beta1">Compute Statistics Option for HYDRA Scatter Analysis Displays</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#rotate1.02beta1">Rotation Option</a></strong></li>
     <li><strong><a class="faq-question-link" href="#image1.02beta1">Image Handling</a></strong></li></ul></div>
 <hr>
 <div class="faq-bottom">
@@ -99,19 +102,23 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     with either a color shaded or contour display. The display will be plotted
     in the Layer Controls tab, where you can change the color table, the time
     label format, and the order with respect to time of the display. This display
-    can be used with both 2D and 3D model data, but not with derived fields.</div>
+    can be used with both 2D and 3D model data, but not with 2D derived fields.</div>
+      <h4><a name="logo1.02beta1" id="logo1.02beta1"></a><strong>Add Logos</strong></h4>
+  <div class="faq-answer">Added the ability to add logos to displays. This option can be found in the View->Properties menu item of the Main Display window. In the Main tab of the Properties dialog, there is a section for Logo. Here, you can select which image to add as the logo, select its location, and its size.</div>
+       <h4><a name="wind1.02beta1" id="wind1.02beta1"></a><strong>Wind Barbs</strong></h4>
+  <div class="faq-answer">Changed the way that wind barbs are plotted when the wind is between 0 and 2.5kts. Previously, these winds were regarded as calm and denoted by an open circle. Now, they are plotted as a staff with no flags.</div>
 </div>
 <div class="faq-category-title"><a name="faq1_cat3_1.02beta1" id="faq1_cat3_1.02beta1"></a>Data
   Changes</div>
 <div class="faq-category"><a name="multi1.02beta1" id="multi1.02beta1"></a>
   <h4><strong>Multispectral GEOCAT Data</strong></h4>
   <div class="faq-answer">Added a new class to support multispectral GEOCAT data.
-    This data can now be loaded in through the Satellite -&gt; HYDRA chooser.</div>
+    This data can now be loaded in through the Satellite-&gt;HYDRA chooser.</div>
 </div>
 <div class="faq-category"><a name="calipso1.02beta1" id="calipso1.02beta1"></a>
   <h4><strong>Level 2 Calipso/CloudSat Data</strong></h4>
   <div class="faq-answer">Added support for Level 2 Calipso/CloudSat types of
-    data. This data can now be loaded in though the Satellite -&gt; HYDRA chooser.</div>
+    data. This data can now be loaded in though the Satellite-&gt;HYDRA chooser.</div>
 </div>
 <div class="faq-category-title"><a name="faq1_cat4_1.02beta1" id="faq1_cat4_1.02beta1"></a>Other
   Changes</div>
@@ -120,7 +127,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 </div>
 <div class="faq-category"><a name="statistics1.02beta1" id="statistics1.02beta1"></a>
   <h4><strong>Compute Statistics Option for HYDRA Scatter Analysis Displays</strong></h4>
-  <div class="faq-answer">Added a new feature to HYDRA Scatter Analysis displays to output statistical information pertinent to the data. After creating a Scatter Analysis display, a new button has been added to the Layer Controls tab of the Data Explorer, called 'compute statistics'. When this button is clicked, a Scatter Statistics window will open, listing statistical information corresponding to the data on the X and Y axes of the scatter plot. This information includes, but is not limited to: maximum, minimum, number of points, mean, median, variance, standard deviation, and correlation.</div></div>
+  <div class="faq-answer">Added a new feature to HYDRA Scatter Analysis displays to output statistical information pertinent to the data. After creating a Scatter Analysis display, a new button has been added to the Layer Controls tab of the Data Explorer, called 'compute statistics'. When this button is clicked, a Scatter Statistics window will open, listing statistical information corresponding to the data on the X and Y axes of the scatter plot. There is statistical information for the display as a whole, and also for different areas you subset with the box/curve options. This information includes, but is not limited to: maximum, minimum, number of points, mean, median, variance, standard deviation, and correlation.</div></div>
+  <div class="faq-category"><a name="rotate1.02beta1" id="rotate1.02beta1"></a>
+  <h4>Rotate Option</h4>
+  <div class="faq-answer">Added the ability to rotate displays clockwise and counterclockwise. You can do this by right clicking on the Auto-rotate icon in the Viewpoint Toolbar of the Main Display window. Here, you will see different rotation options.</div></div>
 <div class="faq-category"><a name="image1.02beta1" id="image1.02beta1"></a>
   <h4>Image Handling</h4>
   <div class="faq-answer">Changed the way McIDAS-V handles images. In the past,
@@ -128,7 +138,6 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     they would then map to RGB or RGBA. This meant that a change to the color
     map of one image would affect all others. Now, we are using unique RealTypes
     (xxx_N) for each image, where N is a unique number for each image.</div>
-</div>
 </div>
 <hr size="4" noshade>
 <div class="pagesubtitle">McIDAS-V <br>
