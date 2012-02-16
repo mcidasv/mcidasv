@@ -12,12 +12,10 @@ from org.slf4j import LoggerFactory
 
 from java.lang import System
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
-from edu.wisc.ssec.mcidasv import PersistenceManager # for openBundle
 from ucar.unidata.idv import DisplayInfo
 from ucar.unidata.idv.ui import IdvWindow
 from ucar.unidata.geoloc import LatLonPointImpl
 from ucar.unidata.ui.colortable import ColorTableDefaults
-
 
 @contextmanager
 def managedDataSource(path, cleanup=True, dataType=None):
@@ -720,11 +718,11 @@ def makeLogger(name):
     """ """
     return  LoggerFactory.getLogger(name)
 
-def openBundle(bundleFile, label="", clear=1):
+def openBundle(bundle, label="", clear=1):
     """Open a bundle using the decodeXmlFile from PersistenceManager
 
     Args:
-        bundleFile: location of bundle to be loaded
+        bundle: location of bundle to be loaded
 
         label: Label for bundle?  where is this displayed?
 
@@ -735,22 +733,70 @@ def openBundle(bundleFile, label="", clear=1):
         Nothing for now.. maybe return activeDisplay()  ?
 
     Raises:
-        ValueError: if bundleFile doesn't exist
+        ValueError: if bundle doesn't exist
     """
-    # Allows user to specify file with for example, ~/bundlefile.mcv
-    bundleFile = _expandpath(bundleFile)
+    from edu.wisc.ssec.mcidasv import McIdasPreferenceManager 
+    from edu.wisc.ssec.mcidasv import PersistenceManager
 
-    fileExists = os.path.exists(bundleFile)
-    isDir = os.path.isdir(bundleFile)
+    my_mcv = getStaticMcv()
+    sm = my_mcv.getStateManager()
+    mpm = McIdasPreferenceManager # for some of the PREF constants
+
+    # Allows user to specify file with for example, ~/bundlefile.mcv
+    bundle = _expandpath(bundle)
+
+    fileExists = os.path.exists(bundle)
+    isDir = os.path.isdir(bundle)
 
 
     if (not fileExists) or isDir:
         raise ValueError("File does not exist or is a directory")
 
-        
+    # get current relevant user preferences so we can override them
+    #   and then change them back
+    # careful about the second argument here...this is default if preference
+    #   hasn't already been written.  Might be important for fresh installs?
+    #   (for now, I set these to what I believe to be McV defaults on fresh install
+    pref_zidv_ask_user = sm.getPreference(my_mcv.PREF_ZIDV_ASK, True)
+    pref_open_ask_user = sm.getPreference(my_mcv.PREF_OPEN_ASK, True)
+    pref_open_remove_user = sm.getPreference(my_mcv.PREF_OPEN_REMOVE, False)
+    pref_open_merge_user = sm.getPreference(my_mcv.PREF_OPEN_MERGE, False)
+    pref_zidv_savetotmp_user = sm.getPreference(my_mcv.PREF_ZIDV_SAVETOTMP, True)
+    pref_zidv_directory_user = sm.getPreference(my_mcv.PREF_ZIDV_DIRECTORY, '')
+    pref_confirm_data = sm.getPreference(mpm.PREF_CONFIRM_REMOVE_DATA, True)
+    pref_confirm_layers = sm.getPreference(mpm.PREF_CONFIRM_REMOVE_LAYERS, True)
+    pref_confirm_both = sm.getPreference(mpm.PREF_CONFIRM_REMOVE_BOTH, True)
 
-    pm = getStaticMcv().getPersistenceManager()
+    # set relevant preferences to values that make sense for non-GUI mode
+    sm.putPreference(my_mcv.PREF_ZIDV_ASK, False)
+    sm.putPreference(my_mcv.PREF_OPEN_ASK, False)
+    # For REMOVE and MERGE, we want to do the same thing as what McIdasPreferenceManager 
+    # does for "Replace Session" (set both to true)
+    sm.putPreference(my_mcv.PREF_OPEN_REMOVE, True)
+    sm.putPreference(my_mcv.PREF_OPEN_MERGE, True)
+    sm.putPreference(my_mcv.PREF_ZIDV_SAVETOTMP, True)
+    sm.putPreference(mpm.PREF_CONFIRM_REMOVE_DATA, False)
+    sm.putPreference(mpm.PREF_CONFIRM_REMOVE_LAYERS, False)
+    sm.putPreference(mpm.PREF_CONFIRM_REMOVE_BOTH, False)
+    # ZIDV_DIRECTORY should come from keyword
+    # (also need to check for existence of this directory, etc.)
+    #my_mcv.getStore().put(my_mcv.PREF_ZIDV_DIRECTORY, something??)
+    sm.writePreferences()
+
+    pm = my_mcv.getPersistenceManager()
     checkToRemove = clear
     letUserChangeData = 0    # not sure about this
     bundleProperties = None  # not sure what this does..just send it None for now
-    pm.decodeXmlFile(bundleFile,label,checkToRemove,letUserChangeData,bundleProperties)
+    pm.decodeXmlFile(bundle,label,checkToRemove,letUserChangeData,bundleProperties)
+
+    # change relevant preferences back to original values
+    sm.putPreference(my_mcv.PREF_ZIDV_ASK, pref_zidv_ask_user)
+    sm.putPreference(my_mcv.PREF_OPEN_ASK, pref_open_ask_user)
+    sm.putPreference(my_mcv.PREF_OPEN_REMOVE, pref_open_remove_user)
+    sm.putPreference(my_mcv.PREF_OPEN_MERGE, pref_open_merge_user)
+    sm.putPreference(my_mcv.PREF_ZIDV_SAVETOTMP, pref_zidv_savetotmp_user)
+    sm.putPreference(my_mcv.PREF_ZIDV_DIRECTORY, pref_zidv_directory_user)
+    sm.putPreference(mpm.PREF_CONFIRM_REMOVE_DATA, pref_confirm_data)
+    sm.putPreference(mpm.PREF_CONFIRM_REMOVE_LAYERS, pref_confirm_layers)
+    sm.putPreference(mpm.PREF_CONFIRM_REMOVE_BOTH, pref_confirm_both)
+    sm.writePreferences()
