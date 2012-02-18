@@ -72,7 +72,7 @@
             </tocitem>
             <tocitem text="WSR-88D Level III Control" target="idv.controls.leveliiicontrol"/>
             <tocitem text="Level 2 Radar Display Controls" target="idv.page_level2radardisplaycontrols">
-                <tocitem text="Radar Sweep Controls" target="idv.controls.level2.radarsweepcontrol"/>
+                <tocitem text="Radar Sweep View Controls" target="idv.controls.level2.radarsweepcontrol"/>
                 <tocitem text="Radar RHI Display Controls" target="idv.controls.level2.radarrhidisplaycontrols"/>
                 <tocitem text="Radar Cross Section Controls" target="idv.controls.level2.radarcrosssectioncontrol"/>
                 <tocitem text="Radar CAPPI Display Controls" target="idv.controls.level2.radarcappidisplaycontrols"/>
