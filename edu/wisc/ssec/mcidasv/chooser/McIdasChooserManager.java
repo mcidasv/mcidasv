@@ -3,7 +3,7 @@
  *
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2011
+ * Copyright 2007-2012
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -60,7 +60,7 @@ import ucar.unidata.xml.XmlResourceCollection;
  * This piece has always been a bit flaky
  *
  * @author IDV development team
- * @version $Revision$Date: 2010/02/08 18:49:37 $
+ * @version $Revision$Date: 2011/03/24 16:06:31 $
  */
 
 public class McIdasChooserManager extends IdvChooserManager {

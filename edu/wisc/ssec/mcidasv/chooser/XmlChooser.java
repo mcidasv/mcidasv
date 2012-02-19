@@ -3,7 +3,7 @@
  *
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2011
+ * Copyright 2007-2012
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -78,7 +78,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * documents.
  *
  * @author IDV development team
- * @version $Revision$Date: 2010/10/06 18:45:33 $
+ * @version $Revision$Date: 2011/03/24 16:06:31 $
  */
 
 
