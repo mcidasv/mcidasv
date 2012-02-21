@@ -105,6 +105,7 @@ import ucar.unidata.xml.XmlResourceCollection;
 
 import edu.wisc.ssec.mcidasv.control.ImagePlanViewControl;
 import edu.wisc.ssec.mcidasv.probes.ReadoutProbe;
+import edu.wisc.ssec.mcidasv.ui.McIDASVXmlUi;
 import edu.wisc.ssec.mcidasv.ui.McvComponentGroup;
 import edu.wisc.ssec.mcidasv.ui.McvComponentHolder;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
@@ -1630,9 +1631,8 @@ public class PersistenceManager extends IdvPersistenceManager {
         holder.doMakeContents();
         return holder;
     }
-    
-    public static McvComponentHolder buildDynamicSkin(int rows, int cols, List<PyObject> panelTypes) throws Exception {
-//        logger.trace("rows={} cols={} panelTypes={}", new Object[] { rows, cols, panelTypes });
+
+    public static McvComponentHolder buildDynamicSkin(IdvWindow window, int rows, int cols, List<PyObject> panelTypes) throws Exception {
         Document doc = XmlUtil.getDocument(SIMPLE_SKIN_TEMPLATE);
         Element root = doc.getDocumentElement();
         Element panel = XmlUtil.findElement(root, DYNSKIN_TAG_PANEL, DYNSKIN_ATTR_ID, DYNSKIN_ID_VALUE);
@@ -1644,24 +1644,18 @@ public class PersistenceManager extends IdvPersistenceManager {
             Element node = doc.createElement(IdvUIManager.COMP_VIEW);
             StringBuilder props = new StringBuilder(DYNSKIN_PROPS_GENERAL);
             if ("MAP".equals(panelTypeRepr)) {
-//                logger.trace("creating map display");
                 node.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.MapViewManager");
             } else if ("GLOBE".equals(panelTypeRepr)) {
-//                logger.trace("creating globe display");
                 node.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.MapViewManager");
                 props.append(DYNSKIN_PROPS_GLOBE);
             } else if ("TRANSECT".equals(panelTypeRepr)) {
-//                logger.trace("creating transect display");
                 node.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.TransectViewManager");
-            } else {
-//                lbogger.trace("not creating a display! :(");
             }
             view.setAttribute(DYNSKIN_ATTR_PROPS, props.toString());
             view.appendChild(node);
         }
         panel.appendChild(view);
-        IdvWindow activeWindow = IdvWindow.getActiveWindow();
-        IdvComponentGroup group = McVGuiUtils.getComponentGroup(activeWindow);
+        IdvComponentGroup group = McVGuiUtils.getComponentGroup(window);
         McvComponentHolder holder = new McvComponentHolder(McIDASV.getStaticMcv(), XmlUtil.toString(root));
         holder.setType(McvComponentHolder.TYPE_DYNAMIC_SKIN);
         holder.setName(DYNSKIN_TMPNAME);

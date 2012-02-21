@@ -141,6 +141,7 @@ import ucar.unidata.ui.HttpFormEntry;
 import ucar.unidata.ui.RovingProgress;
 import ucar.unidata.ui.XmlUi;
 import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Msg;
@@ -369,6 +370,40 @@ public class UIManager extends IdvUIManager implements ActionListener {
         return createNewWindow(new ArrayList(), false);
     }
 
+    /**
+     * Create a new IdvWindow for the given viewManager. Put the
+     * contents of the viewManager into the window
+     * 
+     * @return The new window
+     */
+    public IdvWindow buildEmptyWindow() {
+        Element root = null;
+        String path = null;
+        String skinName = null;
+
+        path = getIdv().getProperty("mcv.ui.emptycompgroup", (String)null);
+        if (path != null) {
+            path = path.trim();
+        }
+
+        if ((path != null) && (path.length() > 0)) {
+            try {
+                root = XmlUtil.getRoot(path, getClass());
+                skinName = getStateManager().getTitle();
+                String tmp = XmlUtil.getAttribute(root, "name", (String)null);
+                if (tmp == null) {
+                    tmp = IOUtil.stripExtension(IOUtil.getFileTail(path));
+                }
+                skinName = skinName + " - " + tmp;
+            } catch (Exception exc) {
+                logger.error("error building empty window", exc);
+            }
+        }
+
+        return createNewWindow(new ArrayList(), false, skinName, path, root, true, null);
+    }
+
+    
     /**
      * Sets {@link #dashboard} to {@code window}. This method also adds some
      * listeners to {@code window} so that the state of the dashboard is 
