@@ -45,15 +45,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ColorTableE
 color a display according to a range of data values.</p>
   <div class="images"><img src="images/NewPictures/ColorTable3a.jpg" alt="Image 1: The Color Table Editor"><br>
 <span class="caption">Image 1: The Color Table Editor</span></div>
-<p></p>
-<p><a name="starting" id="starting"></a></p>
-<div class="pagesubtitle">Starting the Color Table Editor</div>
-The Color Table Editor can be used stand-alone by selecting the <strong>Tools-&gt;Color
+<div class="pagesubtitle"><a name="starting" id="starting"></a>Starting the Color Table Editor</div>
+<p>The Color Table Editor can be used stand-alone by selecting the <strong>Tools-&gt;Color
 Tables</strong> menu item in the Main Display window. It can also be used or in conjunction
-with a particular layer by clicking on the layer's color bar in the <a href="../ui/Legend.html">Legend</a>,
-or through the layer's <a href="../controls/LayerControls.html#edit">Edit menu</a>.
-When used in conjunction with a particular layer, the changes you make to the
-color table are applied to the layer as you make them.
+with a particular layer by right-clicking on the layer's color bar in the <a href="../ui/Legend.html">Legend</a> and selecting <strong>Edit Color Table</strong>,
+or through the layer's <a href="../controls/LayerControls.html#edit">Edit menu</a> (<strong>Edit-&gt;Color Table-&gt;Edit Color Table)</strong>.
+You can also click on the button that represents the name of the color bar in the <strong>Layer Controls </strong> tab and select <strong>Edit Color Table</strong>. </p>
 <p>The Color Table Editor starts with a color table loaded in it. If you are
     working with a data display, the color table in the editor is the same as in
     the display. If you want to use or edit a different color table, use the <strong>Color
@@ -61,32 +58,28 @@ color table are applied to the layer as you make them.
 <div class="images"><img src="images/ColorTablesMenu.gif" alt="Image 2: The Color Tables Menu"><br>
 <span class="caption">Image 2: The Color Tables Menu</span></div>
 <p>Color tables are grouped into categories. Click  on a color table to bring it into the Color Table Editor. To change to the newly selected color table for a display on the Main Display window, click <strong>OK</strong> or <strong>Apply</strong>  at the bottom of the Color Table Editor. <strong>Apply</strong> will save changes to the color table, while   keeping the Color Table Editor open, and <strong>OK</strong> will save   any changes to the color table and close the Color Table Editor. Also,   when editing a color table that is currently being used to display a   layer in the Main Display window, there is an <strong>Auto update</strong> checkbox on the bottom right of the Color Table Editor. When this box   is checked, any changes made to the color table will be applied directly   to the display in the Main Display window.</p>
-<a name="legend" id="legend"></a>
-<div class="pagesubtitle">Using the Color Legend</div>
+<div class="pagesubtitle"><a name="legend" id="legend"></a>Using the Color Legend</div>
 <div class="images"><img src="images/colortable/Legend.gif" alt="Image 3: The Color Legend"><br>
 <span class="caption">Image 3: The Color Legend</span></div>
 <p>The number of colors in the table is shown in a label in the upper center. You can decrease or increase the number of colors by clicking
   on the<strong> <img src="images/colortable/MinusPlus.gif" alt="Plus/Minus icon" width="38" height="14"align=absmiddle></strong> choices near the left and right ends of the legend.
   New colors are added or removed at each end of the legend with the same color
   as the end color. Pressing Shift+click on any of these buttons will add/remove
-  10 color slots at a time. </p>
+  10 color slots at a time. The minimum number of colors required in the color bar is five, and there is no upper limit.</p>
 <p>If transparency is set to be anything other than zero, then overlaying the color bar is a black and white checker board to help show
   the degree of transparency. The <strong>History</strong>  <img src="images/colortable/History.gif" alt="History icon" width="36" height="17"align=absmiddle> buttons in the upper left allow you
   to step forward and backward through the changes you have made. Pressing Shift+click
-  on these buttons will step forward/back 10 changes. </p>
+on these buttons will step forward/back 10 changes.</p>
 <p><a name="range" id="range"></a>The spectrum of colors spans a range of data values. The values are shown
     at the ends of the color legend. You can change the max and min of the range
-    with the <img src="images/colortable/Range.gif" alt="Range button" width="73" height="26"align=absmiddle> pair of dialog boxes on the right. Enter the
-    minimum and maximum values of the range, and click <img src="images/Apply.gif" alt="Apply button" width="65" height="26"align=absmiddle> or <img src="images/Ok.gif" alt="OK button" width="51" height="26" align=absmiddle> or
-    press the Enter key. If the Color Table Editor is being used in conjunction
-    with a display, then when you change the range that range is applied to the
-  display as well.</p>
-<a name="painting" id="painting"></a>
-<div class="pagesubtitle">Painting and Editing Colors</div>
-<p>You can &quot;paint&quot; in the color table by just dragging the mouse within
+    fields next to  <img src="images/colortable/Range.gif" alt="Range button" width="73" height="26"align=absmiddle>. Enter the
+    minimum and maximum values of the range, and click <img src="images/Apply.gif" alt="Apply button" width="65" height="26"align=absmiddle>, <img src="images/Ok.gif" alt="OK button" width="51" height="26" align=absmiddle>, <img src="images/colortable/Range.gif" alt="Range button" width="73" height="26"align=absmiddle>, or press the Enter key. If the<strong> Auto update</strong> checkbox is selected, the change to the range will be applied directly to the display.</p>
+<p>The <strong>Color Space</strong> pulldown menu allows you to add select a color space that will be applied to the color bar. After selecting a color space, use the <strong>Interpolate</strong> Paint Mode to use this feature.</p>
+<div class="pagesubtitle"><a name="painting" id="painting"></a>Painting and Editing Colors</div>
+<p>You can &quot;paint&quot; in the color table by left-clicking and dragging the mouse within
   it. When your mouse is over the color table the cursor will change to a paintbrush
   and a gray line is drawn to indicate the position of the cursor.</p>
-<p>The type of painting is specified by the Paint Mode buttons. </p>
+<p>The type of painting is specified by the Paint Mode buttons.</p>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Fill</strong> - Fills the color table with the currently selected
 color in the color chooser when the mouse is clicked and dragged on the color table.</li>
@@ -96,14 +89,12 @@ color in the color chooser when the mouse is clicked and dragged on the color ta
   <li class="propertylistitem"><strong>Transparency</strong> - Applies the given
     transparency value (in the pull-down list) when the mouse is clicked and dragged on the color table.</li>
 </ul>
-<a name="breakpoints" id="breakpoints"></a>
-<div class="pagesubtitle">Using Breakpoints</div>
+<div class="pagesubtitle"><a name="breakpoints" id="breakpoints"></a>Using Breakpoints</div>
 <p>The editor uses &quot;breakpoints&quot; indicated along the top of the color legend
   with triangles and the numerical value. Clicking on a breakpoint makes it
-  active. There is only one active breakpoint at a time. Breakpoints are used for a number of things: showing the data and transparency
+  active. The active breakpoint will have bold text for the label, and the colored triangle below it will have an outline of yellow. There is only one active breakpoint at a time. Breakpoints are used for a number of things: showing the data and transparency
   values at a point along the color table and changing the colors (fill, interpolation
-  or transparency) directly below the breakpoint by dragging the breakpoint and
-  changing colors.</p>
+  or transparency).</p>
 <p>The values on the breakpoints are determined by the position of the breakpoint
     along the legend, proportional to the min and max of the Range. Changing the
   minimum and maximum of the Range changes the breakpoint values.</p>
@@ -117,39 +108,41 @@ color in the color chooser when the mouse is clicked and dragged on the color ta
 </ul>
 <p>If you have the <strong>Actively set color</strong> checkbox selected, when you change the
   color in the color chooser that color will be applied to the
-  color slot under the selected breakpoint. This allows you to set the color
-  of a specific color slot. </p>
+  color slot under the selected breakpoint automatically.</p>
 <p>You can also change colors and manipulate breakpoints by right-clicking on a breakpoint:</p>
 <div class="images"><img src="images/NewPictures/ColorTable2.jpg" alt="Image 4: Add a Breakpoint"><br>
 <span class="caption">Image 4: Add a Breakpoint</span></div>
-<p></p>
-The choices are:
+<p>The choices are:</p>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Remove Breakpoint</strong> - Removes the active breakpoint.</li>
   <li class="propertylistitem"><strong>Lock/Unlock Breakpoint</strong> - Locks or unlock the active breakpoint. When locked, it cannot be moved.</li>
   <li class="propertylistitem"><strong>Change Breakpoint</strong> - Sets the breakpoint to a new value.</li>
-  <li class="propertylistitem"><strong>Add Breakpoint-&gt;Here</strong> - Adds a new breakpoint where the color table was clicked.</li>
-  <li class="propertylistitem"><strong>Add Breakpoint-&gt;At Data Point</strong> - Adds a new breakpoint at a data value.</li>
-  <li class="propertylistitem"><strong>Add Breakpoint-&gt;At Beginning</strong> - Adds a new breakpoint at the minimum value of the color table.</li>
-  <li class="propertylistitem"><strong>Add Breakpoint-&gt;At End</strong> - Adds a new breakpoint at the maximum value of the color table.</li>
-  <li class="propertylistitem"><strong>Edit Colors-&gt; Interpolate (All/Left/Right)</strong> - Interpolates colors on both sides, to the left, or to the right of the selected breakpoint up to the next breakpoint.</li>
-  <li class="propertylistitem"><strong>Edit Colors-&gt;Fill (All/Left/Right)</strong> - 
-    Fills a single, solid color on both sides, to the left, or to the right of the selected breakpoint up to the next breakpoint.</li>
-  <li class="propertylistitem"><strong>Edit Colors-&gt;Transparency (All/Left/Right)</strong> - Sets the transparency value on both sides, to the left, or to the right of the selected breakpoint up to the next breakpoint.</li>
-  <li class="propertylistitem"><strong>Edit Colors-&gt;Brightness (All/Left/Right)</strong> - Sets the brightness value on both sides, to the left, or to the right of the selected breakpoint up to the next breakpoint.</li>
+  <li class="propertylistitem"><strong>Add Breakpoint -</strong> Adds a new breakpoint to the color bar.</li>
+  <ul class="propertylist">
+  <li class="propertylistitem"><strong>Here -</strong> Adds a new breakpoint where you clicked on the color bar.</li>
+  <li class="propertylistitem"><strong>At Data Point -</strong> Adds a new breakpoint at a data value.</li>
+  <li class="propertylistitem"><strong>At Beginning -</strong> Adds a new breakpoint at the minimum value of the color table.</li>
+  <li class="propertylistitem"><strong>At End -</strong> Adds a new breakpoint at the maximum value of the color table.</li>
+  </ul>
+  <li class="propertylistitem"><strong>Edit Colors -</strong>. Allows you to change the colors between the breakpoints.</li>
+  <ul class="propertylist">
+  <li class="propertylistitem"><strong>Interpolate -</strong> Interpolates colors on both sides, to the left or right, of the selected breakpoint up to the next breakpoint.</li>
+  <li class="propertylistitem"><strong>Edit Colors -</strong> Fills a single, solid color on both sides, to the left, or to the right of the selected breakpoint up to the next breakpoint.</li>
+  <li class="propertylistitem"><strong>Edit Colors -</strong> Sets the transparency value on both sides, to the left, or to the right of the selected breakpoint up to the next breakpoint.</li>
+  <li class="propertylistitem"><strong>Edit Colors -</strong> Sets the brightness value on both sides, to the left, or to the right of the selected breakpoint up to the next breakpoint.</li>
+  </ul>
   <li class="propertylistitem"><strong>Replicate Color Table</strong> - Replicates the current color table x number of times over the current color table. The overall range will not change.</li>
   <li class="propertylistitem"><strong>Invert Color Table</strong> - Reverses the order of the color table.</li>
 </ul>
-<a name="saveCT" id="saveCT"></a>
-<div class="pagesubtitle">Saving, Importing, and Exporting</div>
-You can modify an existing color table, or edit an existing color table and save
+<div class="pagesubtitle"><a name="saveCT" id="saveCT"></a>Saving, Importing, and Exporting</div>
+<p>You can modify an existing color table, or edit an existing color table and save
 it with a new name to make a new color table. Any new or modified color table
 can be saved for future use. To save a new or modified color table simply select the the <strong>File-&gt;Save</strong> menu
   item or <strong>Save</strong> button. To save a modified color table
   as a new color table, select <strong>File-&gt;Save As</strong> and
   enter the new name in the dialog box that appears. This new color table will
-  now be permanently saved in your local collection of color tables.
-  <p>To save a color table as a file which can be shared with others in McIDAS-V,
+  now be permanently saved in your local collection of color tables.</p>
+<p>To save a color table as a file which can be shared with others in McIDAS-V,
     select the <strong>File-&gt;Export</strong> menu item. A file dialog
     will appear that will allow you to save the color table as an XML-format file.
   We suggest you use a file extension of <strong>.xidvct</strong>.</p>
@@ -172,14 +165,13 @@ can be saved for future use. To save a new or modified color table simply select
 <pre>0 0 143</pre>
 <pre>0 0 147</pre></blockquote>
 <p>In the example above, there are six lines (definitions) that would be divided  into the color table. The color table would be broken into six even segments, with the first line applying to the first segment, the second to the second segment, etc. Currently, the text file must be at least five lines long in order to produce the color table.</p>
-<div class="pagesubsubtitle">3-column RGB color table</div>
+<div class="pagesubsubtitle"><a name="chooser" id="chooser"></a>3-column RGB color table</div>
 <p>The definitions of the 3-column <strong>RGB</strong> color table are divided over a range of
   values. Each line represents one of the equal sized blocks on the color bar.
   If there are ten lines in the file, they show up on the color bar as ten equal-sized
   blocks, with the first line's color being applied to the first block, the second
   line's color applied to the second, etc. Currently, there needs to be five
   or more lines in the file in order for the color table to work.</p>
-<a name="chooser" id="chooser"></a>
 <div class="pagesubtitle">Using the Color Chooser</div>
 <a name="image1" id="image1"></a>
 <div class="images"><img src="images/colorchooser/ColorChooser.gif" alt="Image 5: The HSB Tab of the Color Chooser"> <br>
@@ -223,8 +215,7 @@ can be saved for future use. To save a new or modified color table simply select
   <span class="caption">Image 9: The RGB Tab, Set on the Same Green</span></div>
   <p>The individual <strong>R</strong>, <strong>G</strong>, and <strong>B</strong> components are numerically scaled between 0 and 255, ranging from black to the true color. Each color can be modified by using the slider, typing a value into the field and pressing Enter, or by using the up and down arrows to the right of the value.</p>
   <p>As you make modifications to the <strong>RGB</strong> components, the current color will be displayed above the <strong>HSB</strong> and <strong>RGB</strong> tabs next to the <strong>Actively set color </strong>checkbox.</p>
-  <p> <a name="menus" id="menus"></a>  </p>
-  <div class="pagesubtitle">Menus</div>
+  <div class="pagesubtitle"><a name="menus" id="menus"></a>Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="../controls/LayerControls.html#menus">Menus section</a> of the Layer Controls Page. However, there are several options  unique to this display.</p>
 <p>The<strong> File </strong>menu has these unique options:</p>
 <ul class="propertylist">
