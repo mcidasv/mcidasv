@@ -339,7 +339,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         // try to catch the dashboard
         if (Constants.DATASELECTOR_NAME.equals(w.getTitle())) {
             setDashboard(w);
-        } else {
+        } else if (!w.getComponentGroups().isEmpty()) {
             // otherwise we need to hide the component group header and explicitly
             // set the size of the window.
             ((ComponentHolder)w.getComponentGroups().get(0)).setShowHeader(false);
@@ -348,6 +348,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 
                 w.setBounds(new Rectangle(r.x, r.y, r.width, r.height));
             }
+        } else {
+            logger.trace("creating window with no component groups");
         }
 
         initDisplayShortcuts(w);
