@@ -1650,6 +1650,9 @@ public class PersistenceManager extends IdvPersistenceManager {
                 props.append(DYNSKIN_PROPS_GLOBE);
             } else if ("TRANSECT".equals(panelTypeRepr)) {
                 node.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.TransectViewManager");
+            } else if ("FLATMAP".equals(panelTypeRepr)) {
+                node.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.MapViewManager");
+                props.append("use3D=false;");
             }
             view.setAttribute(DYNSKIN_ATTR_PROPS, props.toString());
             view.appendChild(node);

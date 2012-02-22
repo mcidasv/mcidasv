@@ -671,6 +671,7 @@ class _NoOp(object):
         return self.description
         
 MAP = _NoOp('MAP')
+FLATMAP = _NoOp('FLATMAP')
 GLOBE = _NoOp('GLOBE')
 TRANSECT = _NoOp('TRANSECT')
 
