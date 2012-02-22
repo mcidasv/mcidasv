@@ -32,8 +32,9 @@ package edu.wisc.ssec.mcidasv.ui;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -64,8 +65,8 @@ import edu.wisc.ssec.mcidasv.util.TreePanel;
 /**
  * <p>
  * McIDAS-V mostly extends this class to preempt the IDV. McIDAS-V needs to
- * control some HTML processing, ensure that {@link McIDASVComponentGroup}s
- * and {@link McIDASVComponentHolder}s are created, and handle some special
+ * control some HTML processing, ensure that {@link McvComponentGroup}s
+ * and {@link McvComponentHolder}s are created, and handle some special
  * problems that occur when attempting to load bundles that do not contain
  * component groups.
  * </p>
@@ -76,7 +77,8 @@ public class McIDASVXmlUi extends IdvXmlUi {
     /**
      *  Maps an ID to an {@link Element}.
      */
-    private Hashtable<String, Element> idToElement;
+//    private Hashtable<String, Element> idToElement;
+    private Map<String, Element> idToElement;
 
     /** Avoids unneeded getIdv() calls. */
     private IntegratedDataViewer idv;
@@ -89,8 +91,9 @@ public class McIDASVXmlUi extends IdvXmlUi {
 
     public McIDASVXmlUi(IntegratedDataViewer idv, Element root) {
         super(idv, root);
-        if (idToElement == null)
-            idToElement = new Hashtable<String, Element>();
+        if (idToElement == null) {
+            idToElement = new HashMap<String, Element>();
+        }
     }
 
     public McIDASVXmlUi(IdvWindow window, List viewManagers,
@@ -99,8 +102,9 @@ public class McIDASVXmlUi extends IdvXmlUi {
         super(window, viewManagers, idv, root);
         this.idv = idv;
         this.window = window;
-        if (idToElement == null)
-            idToElement = new Hashtable<String, Element>();
+        if (idToElement == null) {
+            idToElement = new HashMap<String, Element>();
+        }
     }
 
     /**
@@ -111,9 +115,7 @@ public class McIDASVXmlUi extends IdvXmlUi {
      * @return The converted text!
      */
     private static String decodeHtml(String text) {
-        String html = text.replace("&gt;", ">");
-        html = html.replace("&lt;", "<");
-        return html;
+        return text.replace("&gt", ">").replace("&lt;", ">");
     }
 
     /**
@@ -127,9 +129,9 @@ public class McIDASVXmlUi extends IdvXmlUi {
         // constructor, this method will get called from 
         // ucar.unidata.xml.XmlUi#initialize(Element) before control has 
         // returned to the McIDASVXmlUi constructor!
-        if (idToElement == null)
-            idToElement = new Hashtable<String, Element>();
-
+        if (idToElement == null) {
+            idToElement = new HashMap<String, Element>();
+        }
         super.addComponent(id, component);
         idToElement.put(id, component);
     }
@@ -271,14 +273,14 @@ public class McIDASVXmlUi extends IdvXmlUi {
             // if we're creating a VM for a dynamic skin that was created for
             // a bundle, createViewManager() will return the bundled VM.
             ViewManager vm = createViewManager(node);
-            if (vm != null)
+            if (vm != null) {
                 comp = vm.getContents();
-            else
+            } else {
                 comp = super.createComponent(node, id);
+            }
         } else if (tagName.equals(TAG_TREEPANEL)) {
             comp = createTreePanel(node, id);
         } else {
-//            System.err.println("forward createComp for "+id+" tag="+tagName);
             comp = super.createComponent(node, id);
         }
 
@@ -308,27 +310,18 @@ public class McIDASVXmlUi extends IdvXmlUi {
      * 
      * @return Null if there was no cached ViewManager, otherwise a ViewManager
      *         that has been initialized with a bundled ViewManager.
-     * 
-     * @see UIManager#makeImpromptuSkin(ucar.unidata.idv.ui.WindowInfo,
-     *      McIDASVComponentGroup)
      */
     private ViewManager createViewManager(final Element node) {
         final String viewId = getAttr(node, "viewid", NULLSTRING);
         ViewManager vm = null;
-
         if (viewId != null) {
-//            System.err.println("xmlui: viewid=" + viewId);
             ViewManager old = UIManager.savedViewManagers.remove(viewId);
             if (old != null) {
-//                System.err.println("xmlui: found cached: " + old.hashCode());
                 vm = getViewManager(node);
                 vm.initWith(old);
                 old.destroy();
-            } else {
-//                System.err.println("xmlui: no luck :(");
             }
         }
-
         return vm;
     }
 
@@ -342,8 +335,9 @@ public class McIDASVXmlUi extends IdvXmlUi {
 
         for (Element kid : kids) {
             Component comp = xmlToUi(kid);
-            if (comp == null)
+            if (comp == null) {
                 continue;
+            }
 
             String label = getAttr(kid, ATTR_TITLE, "");
 
@@ -370,20 +364,23 @@ public class McIDASVXmlUi extends IdvXmlUi {
      */
     private Element getReffedNode(Element node) {
         String idRef = getAttr(node, ATTR_IDREF, NULLSTRING);
-        if (idRef == null)
+        if (idRef == null) {
             return node;
-
+        }
+        
         Element reffedNode = (Element)idToElement.get(idRef);
-        if (reffedNode == null)
+        if (reffedNode == null) {
             throw new IllegalStateException("Could not find idref=" + idRef);
+        }
 
         // TODO(unidata): Make a new copy of the node 
         // reffedNode = reffedNode.copy ();
         NamedNodeMap map = node.getAttributes();
         for (int i = 0; i < map.getLength(); i++) {
             Node n = map.item(i);
-            if (!n.getNodeName().equals(ATTR_IDREF))
+            if (!n.getNodeName().equals(ATTR_IDREF)) {
                 reffedNode.setAttribute(n.getNodeName(), n.getNodeValue());
+            }
         }
         return reffedNode;
     }
