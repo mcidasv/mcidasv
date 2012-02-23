@@ -35,18 +35,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('ui/TransectViewMa
 <div class="images"><img src="images/TransectViewManager1.gif" alt="Image 1: Transect View of Wind Speed"> <br>
   <span class="caption">Image 1: Transect View of Wind Speed</span></div>
 <p>The left vertical axis shows altitude in meters, the right axis shows pressure
-levels. The horizontal axis shows distance along the transect. You can zoom and
-pan in this display with the normal key and mouse combinations.</p>
-<p>The transect line that is being used in this view can be displayed or changed
-  through the <strong>Transects-&gt;Edit</strong> menu. This creates
-  a <a href="../display_controls/TransectDrawingControl.html">Transect Drawing Control</a> that
-  is shown in another Map View. The Transect Drawing Control allows you to create
-  or modify transect lines. Note, when you change a transect line the Transect
-  View is automatically changed. You can also select any of the pre-defined or
-  user created transects from the <strong>Transects</strong> menu as
-  well.</p>
+levels. The bottom horizontal axis shows distance along the transect. The top horizontal axis shows the latitude and longitude locations of the end points of the transect line drawn in the map display. You can zoom and
+pan in this display with the normal key and mouse combinations. The transect display will also be duplicated in the <strong>Layer Controls</strong> tab of the Data Explorer.</p>
+<p>To work with a transect display, you must have two tabs/windows open. One of these tabs/windows must have the transect display, and the other must have a standard map display. To control the location of the transect, in the transect display tab, select <strong>Transects-&gt;Edit</strong>. This creates a  <a href="../display_controls/TransectDrawingControl.html">Transect Drawing Control</a> in the map display. Using the <strong>Create a transect</strong> Mode, click and drag in the map display to draw the transect. The transect drawn in the transect display will be representative of the most recent transect line you have drawn.  You can also select any of the pre-defined or
+  user created transects from the <strong>Transects</strong> menu of the transect display.</p>
 <p>In the <strong>Transects</strong> tab of the <strong>Properties</strong> dialog
-  for the Transect View (from <strong>View-&gt;Properties</strong>)
+  for the Transect View (from <strong>View-&gt;Properties</strong> menu item in the transect display window/tab)
   you can define a maximum distance to show. Normally, data that lies with the
   bounding lines that are orthogonal to the transect line is shown in this display.
   The max distance gives a display radius. Data that lies past this max distance
