@@ -703,3 +703,5 @@ SYMBOLS = tuple(filter(lambda x: x[0], (
 # verifyServer vlav vldf vmul vn vor vquo vr vsub windShear windShearVector 
 # writeGridToXls writeImage writeImageToFile writeMovie write_image wshr xav 
 # xsum yav ysum
+
+# Mike's junk comment to test CVS commit notification
