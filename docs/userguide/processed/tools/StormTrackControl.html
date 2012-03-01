@@ -58,16 +58,15 @@ can use the <strong>View-&gt;Storm Tracks</strong> menu to list out
 all of the loaded storms, remove them all, etc. Once a storm is loaded it can
 be removed with the <img src="images/RemoveStorm.gif" width="19" height="17" alt="Remove Storm icon"align="absmiddle"> icon shown in the upper right.</p>
 <p> Once a storm is loaded the first thing you should do is to specify which &quot;Techs&quot; (or
-  models) to use by bringing up the control's Properties dialog <strong>Edit-&gt;Properties</strong> menu.
-  In the <strong>Techs to use</strong> tab, select all of the Techs in the &quot;Use&quot; list
-  (click and press Ctrl+A) and press <strong> <img src="../controls/images/Remove.gif" alt="Remove button" width="93" height="26"align=absmiddle></strong>. This
-  places them in the &quot;Don't Use&quot; list. Select the desired Techs in
-  the &quot;Don't use&quot; list and press <img src="../controls/images/Add.gif" alt="Add button" width="93" height="26"align=absmiddle>. You can also choose what parameters
-  are to be used and displayed in the <strong>Chart Parameters</strong> tab, repeat
-  the same step to select the desired parameters. If you want these selections
-  to be saved as a preference, please check the &quot;Save as Preference&quot; box.</p>
+  models) to use by bringing up the control's Properties dialog <strong>Edit-&gt;Properties</strong> menu. Use Ctrl+A to select all items in the tab, the left/right arrows to remove/add an item from/to the <strong>Use</strong> column, or Delete to remove an item from the <strong>Use</strong> Column.</p>
 <div class="images"><img  src="images/StormTrackPropertiesControl.gif"  alt="Image 2: Techs to Use Tab of the Storm Track Properties Window" ><br>
 <span class="caption">Image 2: Techs to Use Tab of the Storm Track Properties Window</span></div>
+<div class="pagesubtitle">Properties</div>
+<ul class="propertylist">
+<li class="propertylistitem"><strong> <img src="../controls/images/Add.gif" width="93" height="26" alt="Add button"align="absmiddle"> - </strong> Adds the selected item from the <strong>Don't Use</strong> column to the <strong>Use</strong> column, adding the Tech to the <strong>Tracks</strong> tab of the Storm Track window.</li>
+<li class="propertylistitem"><img src="../controls/images/Remove.gif" alt="Remove button" width="93" height="26"align=absmiddle><strong> -</strong> Removes the selected item from the <strong>Use</strong> column and adds the item to the <strong>Don't Use</strong> column, removing the Tech from the <strong>Tracks</strong> tab of the Storm Track window.</li>
+<li class="propertylistitem"><strong>Save as preference -</strong> Saves the setup of the <strong>Don't Use</strong> and <strong>Use</strong> columns for future displays.</li>
+</ul>
 <p>The Storm display panel consists of three tabs: <a href="#tracks"><strong>Tracks</strong></a>, <a href="#table"> <strong>Table</strong></a> and <a href="#chart"><strong>Storm
     Chart</strong></a>.</p>
 <a name="tracks"></a>
@@ -102,9 +101,11 @@ allows you to export the track data to an Excel spreadsheet. In the File Dialog
 are options to select what is to be saved.</p>
 <div class="images"><img  src="images/StormTrackTableControl.gif"  alt="Imave 4: Table Tab of the Storm Track Window" ><br>
 <span class="caption">Image 4: Table Tab of the Storm Track Window</span></div>
-<p></p>
-<a name="chart"></a>
-<div class="pagesubtitle">Storm Chart</div>
+<div class="pagesubtitle">Properties</div>
+<ul class="propertylist">
+<li class="propertylistitem"><strong><img src="images/Flythrough.gif" width="96" height="26" alt="Flythrough button"align="absmiddle"> -</strong> Opens a Flythrough window that allows you to interactively explore the display in the Main Display window.</li>
+</ul>
+<div class="pagesubtitle"><a name="chart"></a>Storm Chart</div>
 <p>The <strong>Storm Chart</strong> tab shows time series charts of selected tracks. Under the main <strong>Edit</strong> menu
 you can any number of new forecast time or forecast hour charts. The forecast
 time chart is based around the model run time of the selected forecasts. The
