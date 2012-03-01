@@ -705,3 +705,4 @@ SYMBOLS = tuple(filter(lambda x: x[0], (
 # xsum yav ysum
 
 # Mike's junk comment to test CVS commit notification
+#     more junk...
