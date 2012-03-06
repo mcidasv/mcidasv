@@ -140,24 +140,24 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageFilter
    </tr>
    <tr>
    <td width="120" colspan="1" rowspan="1" valign="top">
-   <p><em>Stretch</em></p>
+   <p><em>stretch</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
    <p>The stretch applied to the data, either Histogram or Contrast (default=Histogram).</p></td>
    </tr>
    <tr>
    <td width="120" colspan="1" rowspan="1" valign="top">
-   <p><em>ldiff</em></p>
+   <p><em>BT Min</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
    <p>The minimum brightness value for calibration (default=0).</p></td>
    </tr>
    <tr>
    <td width="120" colspan="1" rowspan="1" valign="top">
-   <p><em>ldiff</em></p>
+   <p><em>BT Max</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>The maximum brightness value for calibration (default=100).</p></td>
+   <p>The maximum brightness value for calibration (default=255).</p></td>
    </tr>
 </table>
 <p><a name="core" id="core"></a><strong>Core Image Filter (brkpoint1, brkpoint2, replace1, replace2)</strong></p>
@@ -221,7 +221,7 @@ has only two values.</p>
    <p>The maximum brightness value for calibration (default=100).</p></td>
    </tr>
   <tr>
-<td width="120" colspan="1" rowspan="1" valign="top"><p>Equationfor each <em>ddataset</em> element:</p><a name="pgfId-1072405" id="pgfId-1072405"></a>
+<td width="120" colspan="1" rowspan="1" valign="top"><p>Equation for each <em>ddataset</em> element:</p><a name="pgfId-1072405" id="pgfId-1072405"></a>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top"><p>if (<em>sdataset1</em> &gt; <em>brkpoint1</em>) and (<em>sdataset2</em> &gt; <em>brkpoint2</em>) <br>
 then <em>ddataset</em> = <em>replace1</em><br>
@@ -269,6 +269,14 @@ else <em>ddataset</em> = <em>replace2</em></p>
    <td width="510" colspan="2" rowspan="1" valign="top">
    <p>The high end breakpoint value for <em>sdataset2</em> (default=maximum value in either
      <em>sdataset</em>)</p>
+   </td>
+   </tr>
+      <tr>
+   <td width="120" colspan="1" rowspan="1" valign="top">
+   <p><em>replace</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The replacement value (default=minimum value in either <em>sdataset</em>)</p>
    </td>
    </tr>
    <tr>
@@ -431,7 +439,7 @@ else <em>ddataset</em> = <em>replace</em></p>
    <p>The maximum brightness value for calibration (default=100).</p></td>
    </tr>
      <tr>
-<td width="120" colspan="1" rowspan="1" valign="top"><p>Equationfor each <em>ddataset</em> element:</p>
+<td width="120" colspan="1" rowspan="1" valign="top"><p>Equation for each <em>ddataset</em> element:</p>
    </td>
   <td valign="top" rowspan="1" colspan="2">
 <p><em>ddataset</em> = (<em>sdataset</em> - (sample average) + (sample midpoint) )</p>
@@ -508,7 +516,7 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
    <p><em>linecoef</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>The lline coefficient; 0.0 &lt; <em>linecoef</em> &lt; 1.0 (default=0.5)</p>
+   <p>The line coefficient; 0.0 &lt; <em>linecoef</em> &lt; 1.0 (default=0.5)</p>
    </td>
    </tr>
    <tr>
@@ -605,7 +613,7 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
 </table>
 <p><a name="merge" id="merge"></a><strong>Merge Image Filter (brkpoint1, brkpoint2, constant)</strong></p>
 
-<p>This formula merges two images by selecting the <em>sdataset1</em> value for each element if its value is between the specified breakpointss. Otherwise, it selects the <em>sdataset2</em> value minus the specified constant.<table id="mergefilter" cellpadding="0" cellspacing="0" border="1">
+<p>This formula merges two images by selecting the <em>sdataset1</em> value for each element if its value is between the specified breakpoints. Otherwise, it selects the <em>sdataset2</em> value minus the specified constant.<table id="mergefilter" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
