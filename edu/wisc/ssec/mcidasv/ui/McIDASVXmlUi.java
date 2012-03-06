@@ -42,6 +42,8 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.HyperlinkEvent.EventType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -54,6 +56,7 @@ import ucar.unidata.idv.ui.IdvComponentHolder;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.idv.ui.IdvXmlUi;
+import ucar.unidata.ui.ComponentGroup;
 import ucar.unidata.ui.ComponentHolder;
 import ucar.unidata.ui.HtmlComponent;
 import ucar.unidata.util.GuiUtils;
@@ -73,7 +76,8 @@ import edu.wisc.ssec.mcidasv.util.TreePanel;
  */
 @SuppressWarnings("unchecked") 
 public class McIDASVXmlUi extends IdvXmlUi {
-
+    private static final Logger logger = LoggerFactory.getLogger(McIDASVXmlUi.class);
+    
     /**
      *  Maps an ID to an {@link Element}.
      */
@@ -156,7 +160,9 @@ public class McIDASVXmlUi extends IdvXmlUi {
      */
     @Override protected IdvComponentGroup makeComponentGroup(Element node) {
         McvComponentGroup group = new McvComponentGroup(idv, "", window);
-        group.initWith(node);
+//        IdvComponentGroup group = new IdvComponentGroup(idv, "", node);
+//        IdvComponentGroup group = new IdvComponentGroup(idv, "");
+//        group.initWith(node);
 
         NodeList elements = XmlUtil.getElements(node);
         for (int i = 0; i < elements.getLength(); i++) {
@@ -180,11 +186,14 @@ public class McIDASVXmlUi extends IdvXmlUi {
             else if (tag.equals(IdvUIManager.COMP_COMPONENT_SKIN)) {
                 IdvComponentHolder comp = new McvComponentHolder(idv, 
                     XmlUtil.getAttribute(child, "url"));
+//                IdvComponentHolder comp = new IdvComponentHolder(idv, 
+//                                XmlUtil.getAttribute(child, "url"));
 
                 comp.setType(IdvComponentHolder.TYPE_SKIN);
                 comp.setName(XmlUtil.getAttribute(child, "name", "UI"));
                 group.addComponent(comp);
-            } 
+                logger.trace("building comp skin");
+            }
             else if (tag.equals(IdvUIManager.COMP_COMPONENT_HTML)) {
                 String text = XmlUtil.getChildText(child);
                 text = new String(XmlUtil.decodeBase64(text.trim()));
@@ -198,7 +207,13 @@ public class McIDASVXmlUi extends IdvXmlUi {
                     idv.getIdvUIManager().createDataSelector(false, false)));
             } 
             else if (tag.equals(IdvUIManager.COMP_COMPONENT_GROUP)) {
+                
+                int numRows = XmlUtil.getAttribute(child, "numrows", 1);
+                int numColumns = XmlUtil.getAttribute(child, "numcolumns", 1);
+                group.setNumRows(XmlUtil.getAttribute(child, "numrows", 1));
+                group.setNumColumns(XmlUtil.getAttribute(child, "numcolumns", 1));
                 group.addComponent(makeComponentGroup(child));
+                logger.trace("building comp group: numrows={} numcolumns={}", numRows, numColumns);
             } 
             else {
                 System.err.println("Unknown component element:"
@@ -207,6 +222,8 @@ public class McIDASVXmlUi extends IdvXmlUi {
         }
         return group;
     }
+
+    int componentCnt = 0;
 
     /**
      * <p>
@@ -278,6 +295,30 @@ public class McIDASVXmlUi extends IdvXmlUi {
             } else {
                 comp = super.createComponent(node, id);
             }
+        } else if (tagName.equals(IdvUIManager.COMP_COMPONENT_GROUP)) {
+            logger.trace("extracting comp group: {}", XmlUtil.toStringNoChildren(node));
+            String key = XmlUtil.getAttribute(node, ATTR_ID, "" + componentCnt);
+            componentCnt++;
+            ComponentGroup compGroup = (ComponentGroup) ((window != null)
+                   ? window.getPersistentComponent(key)
+                   : null);
+
+            if (compGroup == null) {
+                compGroup = makeComponentGroup(node);
+                String layout = XmlUtil.getAttribute(node, "layout", "grid");
+                int rows = XmlUtil.getAttribute(node, "rows", 0);
+                int columns = XmlUtil.getAttribute(node, "cols", 1);
+                compGroup.setLayout(layout);
+                compGroup.setNumRows(rows);
+                compGroup.setNumColumns(columns);
+                logger.trace("created comp group: layout={}, rows={}, cols={} node={}", new Object[] {compGroup.getLayout(), compGroup.getNumRows(), compGroup.getNumColumns(), XmlUtil.toStringNoChildren(node)});
+                compGroup.setShowHeader(XmlUtil.getAttribute(node, "showheader", true));
+                if (window != null) {
+                    window.putPersistentComponent(key, compGroup);
+                }
+            }
+            logger.trace("done with comp group: layout={}, rows={}, cols={}", new Object[] {compGroup.getLayout(), compGroup.getNumRows(), compGroup.getNumColumns()});
+           return compGroup.getContents();
         } else if (tagName.equals(TAG_TREEPANEL)) {
             comp = createTreePanel(node, id);
         } else {

@@ -50,6 +50,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -83,6 +85,8 @@ import edu.wisc.ssec.mcidasv.PersistenceManager;
  * the hierarchical names seen in the McIDASVViewPanel.
  */
 public class McvComponentGroup extends IdvComponentGroup {
+
+    private static final Logger logger = LoggerFactory.getLogger(McIDASVXmlUi.class);
 
     /** Path to the "close tab" icon in the popup menu. */
     protected static final String ICO_CLOSE =
@@ -238,6 +242,7 @@ public class McvComponentGroup extends IdvComponentGroup {
      * @param root The XML skin that we'll use.
      */
     public void makeDynamicSkin(final Element root) {
+        logger.trace("root={}", XmlUtil.toStringNoChildren(root));
         IdvComponentHolder comp =
             new McvComponentHolder(idv, XmlUtil.toString(root));
 
@@ -279,7 +284,7 @@ public class McvComponentGroup extends IdvComponentGroup {
 //        final XmlResourceCollection skins = idv.getResourceManager().getXmlResources(
 //            IdvResourceManager.RSC_SKIN);
 //
-////        String id = skins.getProperty("skinid", index);
+////        String id = skins.getProperty("skinid",  m,n.index);
 ////        if (id == null)
 ////            id = skins.get(index).toString();
 //
@@ -477,7 +482,7 @@ public class McvComponentGroup extends IdvComponentGroup {
 
     /**
      * Used to set the tab associated with {@code holder} as the active tab 
-     * in our {@link JTabbedPane}.
+     * in our {@link javax.swing.JTabbedPane}.
      * 
      * @param holder The active component holder.
      */

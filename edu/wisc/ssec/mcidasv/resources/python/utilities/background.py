@@ -688,8 +688,9 @@ def buildWindow(width=0, height=0, rows=1, cols=1, panels=None):
     
     print 'creating window: width=%d height=%d rows=%d cols=%d panels=%s' % (width, height, rows, cols, panels)
     
-    window = getStaticMcv().getIdvUIManager().buildEmptyWindow()
-    return PersistenceManager.buildDynamicSkin(window, rows, cols, panels)
+    # window = getStaticMcv().getIdvUIManager().buildEmptyWindow()
+    # return PersistenceManager.buildDynamicSkin(window, rows, cols, panels)
+    return PersistenceManager.buildDynamicSkin2(rows, cols, panels)
 
 def buildDisplayWindow(title, width=0, height=0):
     """Creates a window using the default McIDAS-V display skin.
@@ -803,3 +804,38 @@ def openBundle(bundle, label="", clear=1):
     sm.putPreference(mpm.PREF_CONFIRM_REMOVE_LAYERS, pref_confirm_layers)
     sm.putPreference(mpm.PREF_CONFIRM_REMOVE_BOTH, pref_confirm_both)
     sm.writePreferences()
+
+# server = ADDE server
+# dataset = ADDE dataset
+# day = date of image
+# time = time of image
+# coordinateType = coordinate system to use
+#   AREA
+#   LAT/LON
+#   Image
+# x-coordinate = AREA/Image Line or Latitude
+# y-coordinate = AREA/Image Element or Longitude
+# position = location of specified coordinate
+#   Center
+#   Upper-Left
+#   Lower-Right
+# unit
+# navigationType = navigation type used
+#   Image
+#   LALO
+# channel = type and value to display
+#   waveLength wavelength
+#   waveNumber wavenumber
+#   band bandnumber
+# relativePosition = relative position number (0, -1, -2)
+# numberImages = number of images to load
+def getADDEImage(**kwargs):
+    if 'server' in kwargs:
+        server = kwargs['server']
+    else:
+        raise TypeError('must provide a server parameter value')
+    
+    if 'dataset' in kwargs:
+        dataset = kwargs['dataset']
+    else:
+        raise TypeError('must provide a dataset parameter value')

@@ -342,7 +342,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         } else if (!w.getComponentGroups().isEmpty()) {
             // otherwise we need to hide the component group header and explicitly
             // set the size of the window.
-            ((ComponentHolder)w.getComponentGroups().get(0)).setShowHeader(false);
+            // ((ComponentHolder)w.getComponentGroups().get(0)).setShowHeader(false);
             if (previousWindow != null) {
                 Rectangle r = previousWindow.getBounds();
                 
@@ -2273,7 +2273,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 final String name = names.get(names.size() - 1);
 
                 IdvWindow window = IdvWindow.getActiveWindow();
-                for (final McvComponentGroup group : McVGuiUtils.idvGroupsToMcv(window)) {
+                
+//                for (final McvComponentGroup group : McVGuiUtils.idvGroupsToMcv(window)) {
+                for (final IdvComponentGroup group : McVGuiUtils.idvGroupsToMcv(window)) {
                     JMenuItem mi = new JMenuItem(name);
 
                     mi.addActionListener(new ActionListener() {

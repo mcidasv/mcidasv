@@ -1666,6 +1666,67 @@ public class PersistenceManager extends IdvPersistenceManager {
         holder.doMakeContents();
         return holder;
     }
+    
+    public static McvComponentHolder buildDynamicSkin2(int rows, int cols, List<PyObject> panelTypes) throws Exception {
+
+        Document doc = XmlUtil.getDocument(SIMPLE_SKIN_TEMPLATE);
+        final Element root = doc.getDocumentElement();
+        Element panel = XmlUtil.findElement(root, DYNSKIN_TAG_PANEL, DYNSKIN_ATTR_ID, DYNSKIN_ID_VALUE);
+        panel.setAttribute(DYNSKIN_ATTR_ROWS, Integer.toString(rows));
+        panel.setAttribute(DYNSKIN_ATTR_COLS, Integer.toString(cols));
+        Element view = doc.createElement(DYNSKIN_TAG_VIEW);
+        for (PyObject panelType : panelTypes) {
+            String panelTypeRepr = panelType.__repr__().toString();
+            Element node = doc.createElement(IdvUIManager.COMP_VIEW);
+            StringBuilder props = new StringBuilder(DYNSKIN_PROPS_GENERAL);
+            if ("MAP".equals(panelTypeRepr)) {
+//                node.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.MapViewManager");
+                view.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.MapViewManager");
+            } else if ("GLOBE".equals(panelTypeRepr)) {
+//                node.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.MapViewManager");
+                view.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.MapViewManager");
+                props.append(DYNSKIN_PROPS_GLOBE);
+            } else if ("TRANSECT".equals(panelTypeRepr)) {
+//                node.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.TransectViewManager");
+                view.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.TransectViewManager");
+            } else if ("FLATMAP".equals(panelTypeRepr)) {
+//                node.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.MapViewManager");
+                view.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.MapViewManager");
+                props.append("use3D=false;");
+            }
+            view.setAttribute(DYNSKIN_ATTR_PROPS, props.toString());
+//            node.setAttribute(DYNSKIN_ATTR_PROPS, props.toString());
+//            view.appendChild(node);
+        }
+        panel.appendChild(view);
+        
+        
+
+
+        McvComponentHolder holder = new McvComponentHolder(McIDASV.getStaticMcv(), XmlUtil.toString(root));
+        holder.setType(McvComponentHolder.TYPE_DYNAMIC_SKIN);
+        holder.setName(DYNSKIN_TMPNAME);
+        
+        
+        McvComponentGroup group = new McvComponentGroup(McIDASV.getStaticMcv(), "Group");
+        group.setLayout(McvComponentGroup.LAYOUT_TABS);
+        group.addComponent(holder);
+        
+        WindowInfo window = new WindowInfo();
+        Hashtable<String, McvComponentGroup> persist = new Hashtable<String, McvComponentGroup>();
+        persist.put("comp1", group);
+        window.setViewManagers(new ArrayList<ViewManager>());
+        window.setIsAMainWindow(true);
+        window.setSkinPath("/edu/wisc/ssec/mcidasv/resources/skins/emptycompgroup.xml");
+        
+        holder.doMakeContents();
+        
+        IdvWindow idvWin = McIDASV.getStaticMcv().getIdvUIManager().createNewWindow(window.getViewManagers(), window.getSkinPath(), "duh", window);
+        
+        
+        return holder;
+        
+    }
 
     private static final String DYNSKIN_TMPNAME = "Dynamic Skin Test";
     private static final String DYNSKIN_TAG_PANEL = "panel";
