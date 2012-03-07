@@ -95,6 +95,7 @@ import visad.VisADException;
 import visad.data.mcidas.BaseMapAdapter;
 import visad.georef.MapProjection;
 import visad.georef.TrivialMapProjection;
+import visad.python.JPythonMethods;
 
 import ucar.unidata.data.DataAlias;
 import ucar.unidata.data.DataChoice;
@@ -131,6 +132,8 @@ public class ScatterDisplay extends DisplayControlImpl {
 	private Container container;
     private FlatField X_field;
     private FlatField Y_field;
+    private FlatField Area_field;
+    private double total_area;
     private DisplayMaster scatterMaster = null;
 
     private DisplayMaster dspMasterX;
@@ -324,7 +327,9 @@ public class ScatterDisplay extends DisplayControlImpl {
           Y_field = resample(X_field, Y_field);
         }
 
+        Area_field = JPythonMethods.createAreaField(X_field);
         statsTable = new MyStatsTable();
+        
     }
 
     public void setupFromUnpersistence() throws VisADException, RemoteException {
@@ -975,14 +980,13 @@ public class ScatterDisplay extends DisplayControlImpl {
       String[] colNames = {"Stats Parameter","Whole Field X","Whole Field Y",
         "Magenta X","Magenta Y", "Green X","Green Y","Blue X","Blue Y"};
 
-      final int maxRows = 12;
+      final int maxRows = 13;
       final String[] rowNames = {"Maximum","Minimum",
         "Number of points","Mean","Median","Variance","Kurtosis",
         "Std Dev","Correlation","Maximum Difference",
-        "Minimum Difference","Mean Difference"};
+        "Minimum Difference","Mean Difference","Area [km^2]"};
 
-      MyStatsTable() {
-        super();
+      MyStatsTable() { super();
         data = new String[maxRows][maxCols];
         numCols = 1;
 
@@ -1088,6 +1092,13 @@ public class ScatterDisplay extends DisplayControlImpl {
 
           data[11][c] = String.format("%.2f",((Real)diff.mean()).getValue());
           data[11][c+1] = " ";
+
+          if (c == 1) {
+            data[12][c] = " ";
+          } else {
+            data[12][c] = String.format("%.6e",total_area);
+          }
+          data[12][c+1] = " ";
 
           if (c+2 > numCols) numCols = c+2;
           fireTableStructureChanged();
@@ -1315,6 +1326,7 @@ public class ScatterDisplay extends DisplayControlImpl {
            int len = len_0*len_1;
 
            tmp = new float[3][len];
+           int[] tmpsel = new int[len];
 
            int num_inside = 0;
            for (int j=0; j<len_1; j++) {
@@ -1326,6 +1338,7 @@ public class ScatterDisplay extends DisplayControlImpl {
                  tmp[0][num_inside] = scatterFieldRange[0][idx];
                  tmp[1][num_inside] = scatterFieldRange[1][idx];
                  tmp[2][num_inside] = maskVal;
+                 tmpsel[num_inside] = idx;
                  num_inside++;
                }
              }
@@ -1366,6 +1379,10 @@ public class ScatterDisplay extends DisplayControlImpl {
            scatterMarkDsp.setData(scatterFieldMark);
 
            if (myTable != null) {
+             int[] selected = new int[len];
+             System.arraycopy(tmpsel, 0, selected, 0, len);
+             System.out.println("####   len sel = "+len);
+             total_area = JPythonMethods.computeSum(Area_field, selected);
              myTable.setPoints(markScatter, len, myTableIndex);  
            }
 
@@ -1525,6 +1542,7 @@ public class ScatterDisplay extends DisplayControlImpl {
            int len = len_0*len_1;
 
            float[][] markScatter = new float[3][len];
+           int[] selected = new int[len];
 
            for (int j=0; j<len_1; j++) {
              for (int i=0; i<len_0; i++) {
@@ -1533,6 +1551,7 @@ public class ScatterDisplay extends DisplayControlImpl {
                markScatter[0][k] = scatterFieldRange[0][idx];
                markScatter[1][k] = scatterFieldRange[1][idx];
                markScatter[2][k] = maskVal;
+               selected[k] = idx;
              }
            }
 
@@ -1565,6 +1584,8 @@ public class ScatterDisplay extends DisplayControlImpl {
            scatterMarkDsp.setData(scatterFieldMark);
 
            if (myTable != null) {
+             System.out.println("####   len sel = "+len);
+             total_area = JPythonMethods.computeSum(Area_field, selected);
              myTable.setPoints(markScatter, len, myTableIndex);  
            }
 
