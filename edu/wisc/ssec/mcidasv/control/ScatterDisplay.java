@@ -35,6 +35,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -57,6 +58,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JFileChooser;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.border.CompoundBorder;
@@ -1012,19 +1014,36 @@ public class ScatterDisplay extends DisplayControlImpl {
             }
 
         };
-        //table.setFillsViewportHeight(true);
+        table.setFillsViewportHeight(true);
+        table.setPreferredScrollableViewportSize(new Dimension(620,220));
         table.setRowSelectionAllowed(true);
         table.setColumnSelectionAllowed(false);
 
+// scrollpane -> panel -> jframe??
+
+        JButton saveStatsButt = new JButton("Save As CSV");
         JScrollPane sp = new JScrollPane(table);
         statsWindow = new JFrame("Scatter Statistics");
-        statsWindow.getContentPane().add(sp);
-        statsWindow.setSize(500,200);
+        statsWindow.setLayout(new BorderLayout());
+        statsWindow.getContentPane().add(sp,BorderLayout.NORTH);
+        JPanel bpan = new JPanel(new FlowLayout());
+        bpan.add(saveStatsButt);
+        statsWindow.getContentPane().add(bpan,BorderLayout.SOUTH);
+        statsWindow.setSize(650,340);
         statsWindow.pack();
         statsWindow.addWindowListener(new WindowAdapter() {
           public void windowClosing(WindowEvent e) {
             isShowing = false;
           }
+        });
+
+        saveStatsButt.addActionListener(new ActionListener() {
+            public void actionPerformed(final ActionEvent e) {
+              JFileChooser chzr = new JFileChooser();
+                int rv = chzr.showSaveDialog(statsWindow);
+                if (rv == JFileChooser.APPROVE_OPTION) {
+                }
+            }
         });
 
         isShowing = false;
