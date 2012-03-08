@@ -251,13 +251,18 @@ class _Display(_JavaProxy):
 
     def getProjection(self):
         """Returns the map projection currently in use."""
-        
         return _Projection(self._JavaProxy__javaObject.getMapDisplay().getMapProjection())
 
-    # TODO(jon): still deciding on a decent way to refer to an arbitrary projection...
-    #def setProjection(self, projection):
-    #    pass
-
+    def setProjection(self, projection):
+        """ Set the current projection
+        
+        Args:
+            projection: a string that specifies the desired projection in the format:
+                'US>States>West>Texas'
+        """
+        projObj = getProjection(projection)._JavaProxy__javaObject
+        return self._JavaProxy__javaObject.getMapDisplay().setMapProjection(projObj)
+        
     def resetProjection(self):
         return self._JavaProxy__javaObject.getMapDisplay().resetProjection()
 
@@ -317,9 +322,9 @@ class _Display(_JavaProxy):
 
     def center(self, latitude, longitude, scale=1.0):
         self.setCenter(latitude, longitude)
-        self.setScaleFactor(scale)
+        #self.setScaleFactor(scale)
 
-    def setCenter(self, latitude, longitude):
+    def setCenter(self, latitude, longitude, scale=1.0):
         """Centers the display over a given latitude and longitude.
 
         Please be aware that something like:
@@ -329,10 +334,14 @@ class _Display(_JavaProxy):
         the display *after the first call.* Or, those calls are essentially
         the same as "setCenter(lat, long, 2.4)".
 
+        Note on above issue: it might be useful if this does a "resetProjection" every time,
+        so that "scale" behaves more predicatbly   --mike
+
         Args:
         latitude:
         longitude:
-        scale: Optional parameter for "zooming". Default value (1.0) results in no rescaling; less than 1.0 "zooms out", while greater than 1.0 "zooms in."
+        scale: Optional parameter for "zooming". Default value (1.0) results in no rescaling; 
+            greater than 1.0 "zooms in", less than 1.0 "zooms out"
         """
         
         # source and dest are arbitrary rectangles.
@@ -347,11 +356,8 @@ class _Display(_JavaProxy):
         earthLocation = Util.makeEarthLocation(validated.getLatitude(), validated.getLongitude())
         mapDisplay = self._JavaProxy__javaObject.getMapDisplay()
 
-        # no idea what the problem is here...
+        #  accept scale keyword as argument.  Seems to be working now  --mike
         mapDisplay.centerAndZoom(earthLocation, False, scale)
-        # try to position correctly
-        mapDisplay.centerAndZoom(earthLocation, False, 1.0)
-        mapDisplay.centerAndZoom(earthLocation, False, 1.0)
 
 
     def getBackgroundColor(self):
@@ -385,9 +391,14 @@ class _Display(_JavaProxy):
 # TODO(jon): still not sure what to offer here.
 class _Layer(_JavaProxy):
     def __init__(self, javaObject):
-        """Creates a proxy for ucar.unidata.idv.DisplayControl objects."""
+        """Creates a proxy for ucar.unidata.idv.DisplayControl objects.
         
-        _JavaProxy.__init__(self, javaObject).addDisplayInfo()
+        (Mike says:) addDisplayInfo() doesn't seem  necessary here,
+                     so I've removed it for the time being...
+        """
+        
+        #_JavaProxy.__init__(self, javaObject).addDisplayInfo()
+        _JavaProxy.__init__(self, javaObject)
 
     def getFrameCount(self):
         # looking like ucar.visad.display.AnimationWidget is the place to be
@@ -400,6 +411,52 @@ class _Layer(_JavaProxy):
     def getDataAtLocation(self, latitude, longitude):
         # should return a dict of timestamp: value ??
         pass
+
+    def setEnhancementTable(self, ctName):
+        """Change the enhancement table.
+
+        Args: 
+            ctName:  the name of the enhancement table. Unlike setProjection,
+                     you don't need to specify "parent" table directories
+
+        Returns: nothing
+        """
+            
+        my_mcv = getStaticMcv()
+        ctm = my_mcv.getColorTableManager()
+        newct = ctm.getColorTable(ctName)
+        return self._JavaProxy__javaObject.setColorTable(newct)
+
+    def setEnhancementRange(self, min_range, max_range):
+        """ Change the range of the enhancement table
+
+        Args:
+            min_range
+            max_Range
+
+        Returns: nothing
+        """
+
+        new_range = ucar.unidata.util.Range(min_range, max_range)
+        self._JavaProxy__javaObject.setRange(new_range)
+
+    def setColorScaleVisible(self, status):
+        """Set visibility of Color Scale (the legend thing that actually shows
+           up overlaid on the map)
+
+        Args:
+            status:  boolean for whether to show color scale
+        """
+        
+        self._JavaProxy__javaObject.setColorScaleVisible(status)
+
+    def setLayerVisible(self, status):
+        """Set visibility of this layer
+
+        Args:
+            status:  boolean for visibility of layer
+        """
+        self._JavaProxy__javaObject.setDisplayVisibility(status)
 
 
 # TODO(jon): this (and its accompanying subclasses) are a productivity rabbit
@@ -734,7 +791,7 @@ def openBundle(bundle, label="", clear=1):
         Default is to clear.
 
     Returns:
-        Nothing for now.. maybe return activeDisplay()  ?
+        the result of activeDisplay()
 
     Raises:
         ValueError: if bundle doesn't exist
@@ -792,6 +849,7 @@ def openBundle(bundle, label="", clear=1):
     letUserChangeData = 0    # not sure about this
     bundleProperties = None  # not sure what this does..just send it None for now
     pm.decodeXmlFile(bundle,label,checkToRemove,letUserChangeData,bundleProperties)
+    pause()  # this might be controversial...?
 
     # change relevant preferences back to original values
     sm.putPreference(my_mcv.PREF_ZIDV_ASK, pref_zidv_ask_user)
@@ -804,6 +862,9 @@ def openBundle(bundle, label="", clear=1):
     sm.putPreference(mpm.PREF_CONFIRM_REMOVE_LAYERS, pref_confirm_layers)
     sm.putPreference(mpm.PREF_CONFIRM_REMOVE_BOTH, pref_confirm_both)
     sm.writePreferences()
+
+
+    return activeDisplay()  # TODO: return list of all displays instead
 
 # server = ADDE server
 # dataset = ADDE dataset
