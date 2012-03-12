@@ -984,5 +984,8 @@ public class IdvWindow extends MultiFrame {
     }
 
 
-
+    public void setSize(int width, int height) {
+        Rectangle currentRect = getBounds();
+        setBounds(new Rectangle(currentRect.x, currentRect.y, width, height));
+    }
 }
