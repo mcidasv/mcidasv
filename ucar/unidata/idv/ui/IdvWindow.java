@@ -983,7 +983,13 @@ public class IdvWindow extends MultiFrame {
         return persistentComponents;
     }
 
-
+    /**
+     * Resizes this window so that it has width {@code width} and height 
+     * {@code height}. The window will keep its existing x and y coordinates.
+     * 
+     * @param width New width of this window, in pixels.
+     * @param height New height of this window, in pixels.
+     */
     public void setSize(int width, int height) {
         Rectangle currentRect = getBounds();
         setBounds(new Rectangle(currentRect.x, currentRect.y, width, height));

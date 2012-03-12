@@ -743,11 +743,19 @@ def buildWindow(width=0, height=0, rows=1, cols=1, panels=None):
     
     from edu.wisc.ssec.mcidasv import PersistenceManager
     
-    print 'creating window: width=%d height=%d rows=%d cols=%d panels=%s' % (width, height, rows, cols, panels)
+    
     
     # window = getStaticMcv().getIdvUIManager().buildEmptyWindow()
     # return PersistenceManager.buildDynamicSkin(window, rows, cols, panels)
-    return PersistenceManager.buildDynamicSkin(rows, cols, panels)
+    holder = PersistenceManager.buildDynamicSkin(rows, cols, panels)
+    window = IdvWindow.getActiveWindow()
+    if width > 0 and height > 0:
+        window.setSize(width, height)
+        print 'creating window: width=%d height=%d rows=%d cols=%d panels=%s' % (width, height, rows, cols, panels)
+    else:
+        bounds = window.getBounds()
+        print 'creating window: width=%d height=%d rows=%d cols=%d panels=%s' % (bounds.width, bounds.height, rows, cols, panels)
+    return _Window(window)
 
 def buildDisplayWindow(title, width=0, height=0):
     """Creates a window using the default McIDAS-V display skin.
@@ -772,7 +780,7 @@ def buildDisplayWindow(title, width=0, height=0):
     window = mcv.getIdvUIManager().buildDefaultSkin()
     window.setTitle(title)
     if width > 0 and height > 0:
-        window.setSize(Dimension(width, height))
+        window.setSize(width, height)
     return _Window(window)
 
 def makeLogger(name):
