@@ -91,6 +91,7 @@ import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.idv.ui.IdvXmlUi;
 import ucar.unidata.idv.ui.LoadBundleDialog;
 import ucar.unidata.idv.ui.WindowInfo;
+import ucar.unidata.ui.ComponentGroup;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
@@ -1632,7 +1633,8 @@ public class PersistenceManager extends IdvPersistenceManager {
         return holder;
     }
 
-    public static McvComponentHolder buildDynamicSkin(IdvWindow window, int rows, int cols, List<PyObject> panelTypes) throws Exception {
+//    public static McvComponentHolder buildDynamicSkin(IdvWindow window, int rows, int cols, List<PyObject> panelTypes) throws Exception {
+    public static McvComponentHolder buildDynamicSkin(int rows, int cols, List<PyObject> panelTypes) throws Exception {
         Document doc = XmlUtil.getDocument(SIMPLE_SKIN_TEMPLATE);
         Element root = doc.getDocumentElement();
         Element panel = XmlUtil.findElement(root, DYNSKIN_TAG_PANEL, DYNSKIN_ATTR_ID, DYNSKIN_ID_VALUE);
@@ -1658,74 +1660,22 @@ public class PersistenceManager extends IdvPersistenceManager {
             view.appendChild(node);
         }
         panel.appendChild(view);
-        IdvComponentGroup group = McVGuiUtils.getComponentGroup(window);
+        UIManager uiManager = (UIManager)McIDASV.getStaticMcv().getIdvUIManager();
+//        IdvWindow window = IdvWindow.getActiveWindow();
+        Element skinRoot = XmlUtil.getRoot(Constants.BLANK_COMP_GROUP, PersistenceManager.class);
+        IdvWindow window = uiManager.createNewWindow(null, false, "McIDAS-V", Constants.BLANK_COMP_GROUP, skinRoot, false, null);
+        ComponentGroup group = window.getComponentGroups().get(0);
+//        IdvComponentGroup group = McVGuiUtils.getComponentGroup(window);
+        
+        
         McvComponentHolder holder = new McvComponentHolder(McIDASV.getStaticMcv(), XmlUtil.toString(root));
         holder.setType(McvComponentHolder.TYPE_DYNAMIC_SKIN);
         holder.setName(DYNSKIN_TMPNAME);
         group.addComponent(holder);
-        holder.doMakeContents();
+//        group.doMakeContents();
+//        holder.doMakeContents();
+        window.setVisible(true);
         return holder;
-    }
-    
-    public static McvComponentHolder buildDynamicSkin2(int rows, int cols, List<PyObject> panelTypes) throws Exception {
-
-        Document doc = XmlUtil.getDocument(SIMPLE_SKIN_TEMPLATE);
-        final Element root = doc.getDocumentElement();
-        Element panel = XmlUtil.findElement(root, DYNSKIN_TAG_PANEL, DYNSKIN_ATTR_ID, DYNSKIN_ID_VALUE);
-        panel.setAttribute(DYNSKIN_ATTR_ROWS, Integer.toString(rows));
-        panel.setAttribute(DYNSKIN_ATTR_COLS, Integer.toString(cols));
-        Element view = doc.createElement(DYNSKIN_TAG_VIEW);
-        for (PyObject panelType : panelTypes) {
-            String panelTypeRepr = panelType.__repr__().toString();
-            Element node = doc.createElement(IdvUIManager.COMP_VIEW);
-            StringBuilder props = new StringBuilder(DYNSKIN_PROPS_GENERAL);
-            if ("MAP".equals(panelTypeRepr)) {
-//                node.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.MapViewManager");
-                view.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.MapViewManager");
-            } else if ("GLOBE".equals(panelTypeRepr)) {
-//                node.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.MapViewManager");
-                view.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.MapViewManager");
-                props.append(DYNSKIN_PROPS_GLOBE);
-            } else if ("TRANSECT".equals(panelTypeRepr)) {
-//                node.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.TransectViewManager");
-                view.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.TransectViewManager");
-            } else if ("FLATMAP".equals(panelTypeRepr)) {
-//                node.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.MapViewManager");
-                view.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.MapViewManager");
-                props.append("use3D=false;");
-            }
-            view.setAttribute(DYNSKIN_ATTR_PROPS, props.toString());
-//            node.setAttribute(DYNSKIN_ATTR_PROPS, props.toString());
-//            view.appendChild(node);
-        }
-        panel.appendChild(view);
-        
-        
-
-
-        McvComponentHolder holder = new McvComponentHolder(McIDASV.getStaticMcv(), XmlUtil.toString(root));
-        holder.setType(McvComponentHolder.TYPE_DYNAMIC_SKIN);
-        holder.setName(DYNSKIN_TMPNAME);
-        
-        
-        McvComponentGroup group = new McvComponentGroup(McIDASV.getStaticMcv(), "Group");
-        group.setLayout(McvComponentGroup.LAYOUT_TABS);
-        group.addComponent(holder);
-        
-        WindowInfo window = new WindowInfo();
-        Hashtable<String, McvComponentGroup> persist = new Hashtable<String, McvComponentGroup>();
-        persist.put("comp1", group);
-        window.setViewManagers(new ArrayList<ViewManager>());
-        window.setIsAMainWindow(true);
-        window.setSkinPath("/edu/wisc/ssec/mcidasv/resources/skins/emptycompgroup.xml");
-        
-        holder.doMakeContents();
-        
-        IdvWindow idvWin = McIDASV.getStaticMcv().getIdvUIManager().createNewWindow(window.getViewManagers(), window.getSkinPath(), "duh", window);
-        
-        
-        return holder;
-        
     }
 
     private static final String DYNSKIN_TMPNAME = "Dynamic Skin Test";
