@@ -47,6 +47,8 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.PrintWriter;
+import java.io.File;
 
 import javax.swing.JFrame;
 import javax.swing.ButtonGroup;
@@ -59,6 +61,8 @@ import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.border.CompoundBorder;
@@ -1019,8 +1023,6 @@ public class ScatterDisplay extends DisplayControlImpl {
         table.setRowSelectionAllowed(true);
         table.setColumnSelectionAllowed(false);
 
-// scrollpane -> panel -> jframe??
-
         JButton saveStatsButt = new JButton("Save As CSV");
         JScrollPane sp = new JScrollPane(table);
         statsWindow = new JFrame("Scatter Statistics");
@@ -1040,9 +1042,38 @@ public class ScatterDisplay extends DisplayControlImpl {
         saveStatsButt.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
               JFileChooser chzr = new JFileChooser();
+                FileFilter filt = new FileNameExtensionFilter("csv","txt");
+                chzr.addChoosableFileFilter(filt);
                 int rv = chzr.showSaveDialog(statsWindow);
                 if (rv == JFileChooser.APPROVE_OPTION) {
+                  try {
+                    File fpw = chzr.getSelectedFile();
+                    statsWindow.setTitle("Scatter Statistics saved to "+fpw.toString());
+                    PrintWriter pw = new PrintWriter(fpw);
+                    String line = "";
+                    for (int k=0; k<colNames.length; k++) {
+                      if (k != 0) line = line + ",";
+                      line = line + colNames[k];
+                    }
+                    pw.println(line);
+
+                    for (int i=0; i<data.length; i++) {
+                      line = "";
+                      for (int j=0; j<data[i].length; j++) {
+                        if (j != 0) line = line+",";
+                        line = line+data[i][j];
+                      }
+                      pw.println(line);
+                    }
+                    pw.flush();
+                    pw.close();
+                  } catch (Exception epw) {
+                    System.out.println("####  "+epw);
+                    statsWindow.setTitle("Scatter Statistics: File not saved");
+                  }  
+
                 }
+
             }
         });
 
@@ -1070,52 +1101,53 @@ public class ScatterDisplay extends DisplayControlImpl {
 
       // fx, fy are Fields, col = 0,1,2,3 (all, red, green, blue)
       public void setFields(FlatField fx, FlatField fy, int col) {
+        statsWindow.setTitle("Scatter Statistics");
         try {
           Statistics sx = new Statistics(fx);
           Statistics sy = new Statistics(fy);
           Statistics diff = new Statistics((FlatField)fx.subtract(fy));
 
           int c = 2*col + 1;
-          data[0][c] = String.format("%.2f",((Real)sx.max()).getValue());
-          data[0][c+1] = String.format("%.2f",((Real)sy.max()).getValue());
+          data[0][c] = fmtMe(((Real)sx.max()).getValue());
+          data[0][c+1] = fmtMe(((Real)sy.max()).getValue());
 
-          data[1][c] = String.format("%.2f",((Real)sx.min()).getValue());
-          data[1][c+1] = String.format("%.2f",((Real)sy.min()).getValue());
+          data[1][c] = fmtMe(((Real)sx.min()).getValue());
+          data[1][c+1] = fmtMe(((Real)sy.min()).getValue());
 
           data[2][c] = String.format("%d",sx.numPoints());
           data[2][c+1] = String.format("%d",sy.numPoints());
 
-          data[3][c] = String.format("%.2f",((Real)sx.mean()).getValue());
-          data[3][c+1] = String.format("%.2f",((Real)sy.mean()).getValue());
+          data[3][c] = fmtMe(((Real)sx.mean()).getValue());
+          data[3][c+1] = fmtMe(((Real)sy.mean()).getValue());
 
-          data[4][c] = String.format("%.2f",((Real)sx.median()).getValue());
-          data[4][c+1] = String.format("%.2f",((Real)sy.median()).getValue());
+          data[4][c] = fmtMe(((Real)sx.median()).getValue());
+          data[4][c+1] = fmtMe(((Real)sy.median()).getValue());
 
-          data[5][c] = String.format("%.2f",((Real)sx.variance()).getValue());
-          data[5][c+1] = String.format("%.2f",((Real)sy.variance()).getValue());
+          data[5][c] = fmtMe(((Real)sx.variance()).getValue());
+          data[5][c+1] = fmtMe(((Real)sy.variance()).getValue());
 
-          data[6][c] = String.format("%.2f",((Real)sx.kurtosis()).getValue());
-          data[6][c+1] = String.format("%.2f",((Real)sy.kurtosis()).getValue());
+          data[6][c] = fmtMe(((Real)sx.kurtosis()).getValue());
+          data[6][c+1] = fmtMe(((Real)sy.kurtosis()).getValue());
 
-          data[7][c] = String.format("%.2f",((Real)sx.standardDeviation()).getValue());
-          data[7][c+1] = String.format("%.2f",((Real)sy.standardDeviation()).getValue());
+          data[7][c] = fmtMe(((Real)sx.standardDeviation()).getValue());
+          data[7][c+1] = fmtMe(((Real)sy.standardDeviation()).getValue());
 
-          data[8][c] = String.format("%.2f",((Real)sx.correlation(fy)).getValue());
+          data[8][c] = fmtMe(((Real)sx.correlation(fy)).getValue());
           data[8][c+1] = " ";
 
-          data[9][c] = String.format("%.2f",((Real)diff.max()).getValue());
+          data[9][c] = fmtMe(((Real)diff.max()).getValue());
           data[9][c+1] = " ";
 
-          data[10][c] = String.format("%.2f",((Real)diff.min()).getValue());
+          data[10][c] = fmtMe(((Real)diff.min()).getValue());
           data[10][c+1] = " ";
 
-          data[11][c] = String.format("%.2f",((Real)diff.mean()).getValue());
+          data[11][c] = fmtMe(((Real)diff.mean()).getValue());
           data[11][c+1] = " ";
 
           if (c == 1) {
             data[12][c] = " ";
           } else {
-            data[12][c] = String.format("%.6e",total_area);
+            data[12][c] = fmtMe(total_area);
           }
           data[12][c+1] = " ";
 
@@ -1129,6 +1161,25 @@ public class ScatterDisplay extends DisplayControlImpl {
         }
 
         if (isShowing) statsWindow.setVisible(true);
+      }
+
+      private String fmtMe(double val) {
+
+        if (Math.abs(val) == 0.0) {
+          return "0.00";
+
+        } else if (Math.abs(val) > 9999.9 || Math.abs(val) < .0010) {
+          return String.format("%.6e", val);
+
+        } else if (Math.abs(val) < 1.0) {
+          return String.format("%.5f", val);
+
+        } else if (Math.abs(val) < 10.0) {
+          return String.format("%.3f", val);
+
+        } else {
+          return String.format("%.2f", val);
+        }
       }
 
       public void setPoints(float[][] markScatter, int len, int indx) {
@@ -1400,7 +1451,6 @@ public class ScatterDisplay extends DisplayControlImpl {
            if (myTable != null) {
              int[] selected = new int[len];
              System.arraycopy(tmpsel, 0, selected, 0, len);
-             System.out.println("####   len sel = "+len);
              total_area = JPythonMethods.computeSum(Area_field, selected);
              myTable.setPoints(markScatter, len, myTableIndex);  
            }
@@ -1603,7 +1653,6 @@ public class ScatterDisplay extends DisplayControlImpl {
            scatterMarkDsp.setData(scatterFieldMark);
 
            if (myTable != null) {
-             System.out.println("####   len sel = "+len);
              total_area = JPythonMethods.computeSum(Area_field, selected);
              myTable.setPoints(markScatter, len, myTableIndex);  
            }
