@@ -747,7 +747,7 @@ def buildWindow(width=0, height=0, rows=1, cols=1, panels=None):
     
     # window = getStaticMcv().getIdvUIManager().buildEmptyWindow()
     # return PersistenceManager.buildDynamicSkin(window, rows, cols, panels)
-    return PersistenceManager.buildDynamicSkin2(rows, cols, panels)
+    return PersistenceManager.buildDynamicSkin(rows, cols, panels)
 
 def buildDisplayWindow(title, width=0, height=0):
     """Creates a window using the default McIDAS-V display skin.
