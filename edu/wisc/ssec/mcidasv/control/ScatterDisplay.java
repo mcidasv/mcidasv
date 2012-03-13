@@ -279,6 +279,7 @@ public class ScatterDisplay extends DisplayControlImpl {
 
         X_name = ((((FunctionType)X_field.getType()).getFlatRange().getRealComponents())[0]).getName();
         Y_name = ((((FunctionType)Y_field.getType()).getFlatRange().getRealComponents())[0]).getName();
+
         if (statsTable != null) statsTable.setNames(X_name, Y_name);
 
         Grid2DReadoutProbe probeX = new Grid2DReadoutProbe(X_field, dspMasterX);
@@ -989,8 +990,8 @@ public class ScatterDisplay extends DisplayControlImpl {
       final int maxRows = 13;
       final String[] rowNames = {"Maximum","Minimum",
         "Number of points","Mean","Median","Variance","Kurtosis",
-        "Std Dev","Correlation","Maximum Difference",
-        "Minimum Difference","Mean Difference","Area [km^2]"};
+        "Std Dev","Correlation","Difference Maximum",
+        "Difference Minimum","Difference Mean","Area [km^2]"};
 
       MyStatsTable() { super();
         data = new String[maxRows][maxCols];
