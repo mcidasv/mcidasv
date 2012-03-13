@@ -747,8 +747,7 @@ def buildWindow(width=0, height=0, rows=1, cols=1, panels=None):
     
     # window = getStaticMcv().getIdvUIManager().buildEmptyWindow()
     # return PersistenceManager.buildDynamicSkin(window, rows, cols, panels)
-    holder = PersistenceManager.buildDynamicSkin(rows, cols, panels)
-    window = IdvWindow.getActiveWindow()
+    window = PersistenceManager.buildDynamicSkin(rows, cols, panels)
     if width > 0 and height > 0:
         window.setSize(width, height)
         print 'creating window: width=%d height=%d rows=%d cols=%d panels=%s' % (width, height, rows, cols, panels)

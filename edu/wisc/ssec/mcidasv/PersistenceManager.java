@@ -1634,7 +1634,7 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
 //    public static McvComponentHolder buildDynamicSkin(IdvWindow window, int rows, int cols, List<PyObject> panelTypes) throws Exception {
-    public static McvComponentHolder buildDynamicSkin(int rows, int cols, List<PyObject> panelTypes) throws Exception {
+    public static IdvWindow buildDynamicSkin(int rows, int cols, List<PyObject> panelTypes) throws Exception {
         Document doc = XmlUtil.getDocument(SIMPLE_SKIN_TEMPLATE);
         Element root = doc.getDocumentElement();
         Element panel = XmlUtil.findElement(root, DYNSKIN_TAG_PANEL, DYNSKIN_ATTR_ID, DYNSKIN_ID_VALUE);
@@ -1675,7 +1675,8 @@ public class PersistenceManager extends IdvPersistenceManager {
 //        group.doMakeContents();
 //        holder.doMakeContents();
         window.setVisible(true);
-        return holder;
+//        return holder;
+        return window;
     }
 
     private static final String DYNSKIN_TMPNAME = "Dynamic Skin Test";
