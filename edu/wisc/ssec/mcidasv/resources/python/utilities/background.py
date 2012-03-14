@@ -733,6 +733,31 @@ GLOBE = _NoOp('GLOBE')
 TRANSECT = _NoOp('TRANSECT')
 
 def buildWindow(width=0, height=0, rows=1, cols=1, panels=None):
+    """Creates a window with a user-specified layout of displays.
+    
+    This function will attempt to create a grid of displays with the dimensions 
+    determined by rows * cols. Simply calling buildWindow() will result in a 
+    1x1 grid containing a single map.
+    
+    Args:
+        width: Optional parameter; default value is zero. Sets the window to 
+               this width (in pixels). Values less than or equal to zero are 
+               considered default values. 
+        
+        height: Optional parameter; default value is zero. Sets the window to 
+                this height (in pixels). Values less than or equal to zero are 
+                considered default values.
+        
+        rows: Optional parameter; default value is one.
+        
+        cols: Optional parameter; default value is one.
+        
+        panels: Optional parameter; default value is None (creates a single 
+                Map Display).
+    
+    Returns:
+        A "wrapped" IdvWindow.
+    """
     if panels is None:
         panels = [MAP] * (rows * cols)
     elif isinstance(panels, _NoOp):
@@ -743,17 +768,15 @@ def buildWindow(width=0, height=0, rows=1, cols=1, panels=None):
     
     from edu.wisc.ssec.mcidasv import PersistenceManager
     
-    
-    
-    # window = getStaticMcv().getIdvUIManager().buildEmptyWindow()
-    # return PersistenceManager.buildDynamicSkin(window, rows, cols, panels)
     window = PersistenceManager.buildDynamicSkin(rows, cols, panels)
+    
     if width > 0 and height > 0:
         window.setSize(width, height)
         print 'creating window: width=%d height=%d rows=%d cols=%d panels=%s' % (width, height, rows, cols, panels)
     else:
         bounds = window.getBounds()
         print 'creating window: width=%d height=%d rows=%d cols=%d panels=%s' % (bounds.width, bounds.height, rows, cols, panels)
+    
     return _Window(window)
 
 def buildDisplayWindow(title, width=0, height=0):

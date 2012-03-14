@@ -1633,7 +1633,6 @@ public class PersistenceManager extends IdvPersistenceManager {
         return holder;
     }
 
-//    public static McvComponentHolder buildDynamicSkin(IdvWindow window, int rows, int cols, List<PyObject> panelTypes) throws Exception {
     public static IdvWindow buildDynamicSkin(int rows, int cols, List<PyObject> panelTypes) throws Exception {
         Document doc = XmlUtil.getDocument(SIMPLE_SKIN_TEMPLATE);
         Element root = doc.getDocumentElement();
@@ -1661,21 +1660,14 @@ public class PersistenceManager extends IdvPersistenceManager {
         }
         panel.appendChild(view);
         UIManager uiManager = (UIManager)McIDASV.getStaticMcv().getIdvUIManager();
-//        IdvWindow window = IdvWindow.getActiveWindow();
         Element skinRoot = XmlUtil.getRoot(Constants.BLANK_COMP_GROUP, PersistenceManager.class);
         IdvWindow window = uiManager.createNewWindow(null, false, "McIDAS-V", Constants.BLANK_COMP_GROUP, skinRoot, false, null);
         ComponentGroup group = window.getComponentGroups().get(0);
-//        IdvComponentGroup group = McVGuiUtils.getComponentGroup(window);
-        
-        
         McvComponentHolder holder = new McvComponentHolder(McIDASV.getStaticMcv(), XmlUtil.toString(root));
         holder.setType(McvComponentHolder.TYPE_DYNAMIC_SKIN);
         holder.setName(DYNSKIN_TMPNAME);
         group.addComponent(holder);
-//        group.doMakeContents();
-//        holder.doMakeContents();
         window.setVisible(true);
-//        return holder;
         return window;
     }
 
