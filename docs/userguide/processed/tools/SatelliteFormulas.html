@@ -33,7 +33,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
 <p>The following describes each formula included in the Satellite Formulas section
   of McIDAS-V. These formulas are designed to work with SEVIRI MSG satellite data, although they are also applicable for equivalent channels of other imagers.</p>
 <p><strong>SEVIRI RGB</strong></p>
-<p>The SEVIRI RGB Manual band selection formulas allow you to select your desired wavelengths for each parameter. A recommendation for the wavelength to enter for each field will be shown in the Field Selector window. The data from the wavelengths you select will be plugged into the formula for each parameter to produce the image in the Main Display window.</p>
+<p>The SEVIRI RGB Manual band selection formulas allow you to select your desired wavelengths for each parameter. A recommendation for the wavelength to select for each field will be shown in the Field Selector window. The data from the wavelengths you select will be plugged into the formula for each parameter to produce the image in the Main Display window.</p>
 <ul class="propertylist">
     <li class="propertylistitem"><strong>ACMP (cloud microphysics tuned for low cloud &amp; fog) - </strong>Displays all-day (24 hour) cloud microphysics data tuned to mid-latitude low cloud and fog. This formula is based on absorbing IR channels only.</li>
     <li class="propertylistitem">
@@ -95,7 +95,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>DUST (cloud microphysics tuned for dust) - </strong>Displays dust data. This formula is based on absorbing IR channels only.</li>
+<li class="propertylistitem"><strong>DUST (cloud microphysics tuned for dust) - </strong>Displays cloud microphysics data tuned to mineral dust. This formula is based on absorbing IR channels only.</li>
 <li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Field</strong></td>
@@ -126,7 +126,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>GCMP (generic cloud microphysics) -</strong> Generic enhancement by manual rescaling and gamma correction. This formula is based on absorbing IR channels only.</li>
+<li class="propertylistitem"><strong>GCMP (generic cloud microphysics) -</strong> Displays generic cloud microphysics data. After creating the display, you can change the numerical RGB range values. You can also set individual gamma values. This formula is based on absorbing IR channels only.</li>
 <li class="propertylistitem">
     <table id="mapformulas4" cellpadding="0" cellspacing="0" border="1">
         <tr>
@@ -147,7 +147,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
         </tr>
     </table>
 </li>
-<li class="propertylistitem"><strong>GCON (generic enhancement of SCON) -</strong> Generic enhancement of SCON by manual rescaling and gamma correction. This formula is limited to use during the daytime.</li>
+<li class="propertylistitem"><strong>GCON (generic enhancement of SCON) -</strong> Displays a generic enhancement of SCON. After creating the display, you can change the numerical RGB range values. You can also set individual gamma values. This formula is limited to use during the daytime.</li>
 <li class="propertylistitem">
     <table id="mapformulas5" cellpadding="0" cellspacing="0" border="1">
         <tr>
@@ -180,7 +180,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
         </tr>
     </table>
 </li>
-<li class="propertylistitem"><strong>NCMP (nighttime cloud microphysics, IR8.7 to IR3.9) - </strong>Displays displays nighttime cloud microphysics data.</li>
+<li class="propertylistitem"><strong>NCMP (nighttime cloud microphysics, IR8.7 to IR3.9) - </strong>Displays nighttime cloud microphysics data.</li>
 <li class="propertylistitem">
     <table id="mapformulas6" cellpadding="0" cellspacing="0" border="1">
         <tr>
@@ -201,7 +201,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
         </tr>
     </table>
 </li>
-<li class="propertylistitem"><strong>NCOG (generic NCOL) -</strong> Generic enhancement of NCOL by manual rescaling and gamma correction. This formula is based on solar channels only.</li>
+<li class="propertylistitem"><strong>NCOG (generic NCOL) -</strong> Displays a generic enhancement of NCOL. After creating the display, you can change the numerical RGB range values. You can also set individual gamma values. This formula is based on solar channels only.</li>
 <li class="propertylistitem">
     <table id="mapformulas7" cellpadding="0" cellspacing="0" border="1">
         <tr>
@@ -222,7 +222,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
         </tr>
     </table>
 </li>
-<li class="propertylistitem"><strong>NCOL (natural colors) - </strong>Displays natural colors data with a linear enhancement by the way of the minimum and maximum reflectivity limit values. The minrefl and maxrefl values should be between 0 and 100. This formula is based on solar channels only.</li>
+<li class="propertylistitem"><strong>NCOL (natural colors) - </strong>Displays natural colors data. The minimum and maximum reflectivity values are used to rescale the color beams. The minrefl and maxrefl values should be between 0 and 100. This formula is based on solar channels only.</li>
 <li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Field</strong></td>
@@ -302,7 +302,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/SatelliteFo
         </tr>
     </table>
 </li>
-<li class="propertylistitem"><strong>VOLC (cloud microphysics turned for volcanic ash &amp; SO2) - </strong>Displays severe convection data.  This formula is based on absorbing IR channels only.</li>
+<li class="propertylistitem"><strong>VOLC (cloud microphysics turned for volcanic ash &amp; SO2) - </strong>Displays cloud microphysics data tuned to volcanic ash and SO2.  This formula is based on absorbing IR channels only.</li>
 <li class="propertylistitem"><table id="mapformulas" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Field</strong></td>
