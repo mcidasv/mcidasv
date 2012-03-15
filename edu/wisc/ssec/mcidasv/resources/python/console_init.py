@@ -49,6 +49,10 @@ from background import (
     removeAllLayers, setViewSize
 )
 
+from adde import (
+    enum, DEFAULT_ACCOUNTING, CoordinateSystems, Places, params1, getADDEImage
+)
+
 from interactive import describeActions, dumpObj, ncdump, ncdumpToString, see
 
 _user_python = os.path.join(_mcv.getStore().getUserDirectory().toString(), 'python')

@@ -920,13 +920,13 @@ def openBundle(bundle, label="", clear=1):
 #   band bandnumber
 # relativePosition = relative position number (0, -1, -2)
 # numberImages = number of images to load
-def getADDEImage(**kwargs):
-    if 'server' in kwargs:
-        server = kwargs['server']
-    else:
-        raise TypeError('must provide a server parameter value')
+# def getADDEImage(**kwargs):
+#     if 'server' in kwargs:
+#         server = kwargs['server']
+#     else:
+#         raise TypeError('must provide a server parameter value')
     
-    if 'dataset' in kwargs:
-        dataset = kwargs['dataset']
-    else:
-        raise TypeError('must provide a dataset parameter value')
+#     if 'dataset' in kwargs:
+#         dataset = kwargs['dataset']
+#     else:
+#         raise TypeError('must provide a dataset parameter value')
