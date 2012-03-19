@@ -49,8 +49,9 @@ from background import (
     removeAllLayers, setViewSize
 )
 
-from mcvadde import enum, DEFAULT_ACCOUNTING, CoordinateSystems, Places, params1, getADDEImage
-# from adde import *
+from mcvadde import (
+    enum, DEFAULT_ACCOUNTING, CoordinateSystems, Places, params1, getADDEImage
+)
 
 from interactive import describeActions, dumpObj, ncdump, ncdumpToString, see
 
