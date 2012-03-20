@@ -36,22 +36,21 @@ the Barnes Objective Analysis.  You can control the parameters
 used to create the grid from the Data Source Properties or
 using the <strong>Grid Parameters</strong> tab in the <strong>Data Subset</strong> panel
 of the <strong>Field Selector</strong>:</p>
-
 <div class="images"><img  src="images/GridParameters.gif"  alt="Image 1: Gridded Point Data in the Field Selector"><br>
 <span class="caption">Image 1: Gridded Point Data in the Field Selector</span></div>
 <p>The resulting grid can be displayed using any of the 
-<a href="../page_griddeddatadisplays.html">Gridded Data Displays</a>. </p>
-<p></p>
+<a href="../page_griddeddatadisplays.html">Gridded Data Displays</a>.</p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-<li class="propertylistitem"><b>Spacing</b> - Determines the grid spacing method.</li>
+<li class="propertylistitem"><strong>Use Default -</strong> Uses the default, native values for the parameter.</li>
+<li class="propertylistitem"><strong>Spacing -</strong> Determines the grid spacing method.</li>
 <ul class="propertylist">
 <li class=propertylistitem><strong>Automatic -</strong> Calculates grid spacing from the observation density.</li>
 <li class=propertylistitem><strong>Degrees -</strong> Uses a specific lat/lon spacing for the grid spacing.</li>
 <li class=propertylistitem><strong># Points -</strong> Sets the number of grid points in the x and y direction.</li>
 </ul>
-<li class="propertylistitem"><b>Grid Size</b> - Specifies the grid spacing if not using automatic calculation.</li>
-<li class="propertylistitem"><b>Passes</b> - Sets the number of passes for the Barnes analysis to do.
+<li class="propertylistitem"><strong>Grid Size -</strong> Specifies the grid spacing if not using automatic calculation.</li>
+<li class="propertylistitem"><strong>Passes -</strong> Sets the number of passes for the Barnes analysis to do.
 Four passes are recommended for analyzing fields where derivative
 estimates are important (Ref: Barnes 1994b), three passes
 recommended for all other fields (with gain set to
@@ -60,19 +59,19 @@ Analysis schemes now in use probably should be
 replaced by appropriately tuned 3pass or 4pass
 schemes"), and two passes are only recommended for "quick look"
 type analyses.</li>
-<li class="propertylistitem"><b>Search Radius</b> - Sets the search radius (in grid units) for the weighting of points in
-determining the value at a specific grid point. This should be in the range 
+<li class="propertylistitem"><strong>Search Radius -</strong> Sets the search radius (in grid units) for the weighting of points in
+determining the value at a specific grid point. This option is available with the Degrees and # Points spacing options. This should be in the range 
 0.2 to 1.0. Data are fitted more closely with a gain of 0.2 
 (at the expense of less overall accuracy over the entire grid), larger
 values smooth more.
-<li class="propertylistitem"><b>Gain</b> - Represents the factor by which scaleLength is reduced for the second
+<li class="propertylistitem"><strong>Gain -</strong> Represents the factor by which scaleLength is reduced for the second
 pass. This should be in the range 0.2 to 1.0. Data are
 fitted more closely with a gain of 0.2 (at the expense
 of less overall accuracy over the entire grid), larger
 values smooth more. Suggested default: 1.0.
 Set the gain for each pass after the first.</li>
-<li class="propertylistitem"><b>First Guess Field</b> - Uses a model grid as a first guess field for the analysis.  Select the "Grid Parameters (with first guess)" field and you will be prompted to select the gridded field to use for the first guess.</li>
-<li class="propertylistitem"><b>References</b> -</li>
+<li class="propertylistitem"><strong>First Guess Field -</strong> Uses a model grid as a first guess field for the analysis.  Select the "Grid Parameters (with first guess)" field and you will be prompted to select the gridded field to use for the first guess.</li>
+<li class="propertylistitem"><strong>References -</strong></li>
     <ul class="propertylist">
 <li class="propertylistitem">Barnes, S.L., 1994a: Applications of the Barnes objective analysis scheme
 Part I: Effects of undersampling, wave position, and station randomness. J.

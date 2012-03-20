@@ -35,7 +35,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/StationL
 <p>McIDAS-V provides a collection of locations. These may be NEXRAD stations,
   states, counties, geographical features, countries, etc. The Location Controls
   are used to display these locations. The list of locations is accessed through
-  the <strong>Display-&gt;Plot Location Labels...</strong> menu item in the Main Display window. The user interface consists of four tabs: <strong>Display</strong>, <strong>Locations</strong>, <strong>Data Sets</strong>, and <strong>Filters</strong>.</p>
+  the <strong>Display-&gt;Plot Location Labels...</strong> menu item in the Main Display window. You can also load in local files that use these location controls. The user interface consists of four tabs: <strong>Display</strong>, <strong>Locations</strong>, <strong>Data Sets</strong>, and <strong>Filters</strong>.</p>
 <ul>
   <li>  <a href="#display">Display</a></li>
   <li>  <a href="#locations">Locations</a></li>
@@ -44,46 +44,44 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/StationL
   <li>  <a href="#menus">Menus</a></li> 
   </ul>
 <a name="display" id="display"></a>
-<p>The <strong>Display</strong> allows the user to control
+<p>The <strong>Display</strong> tab allows the user to control
     how the display will appear in the Main Display window:</p>
 <div class="images"><img  src="images/StationLocationControlGui.gif"  alt="Image 1: Display tab of the Location Controls Dialog" ><br>
 <span class="caption">Image 1: Display Tab of the Location Controls Dialog</span></div>
-<p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><b>Declutter</b> - Displays only stations that do not overlap. When unchecked, all of the   stations will be shown.  The small "lock" icon allows you to        lock the stations that are currently being displayed and not have   their        display changed when navigating in the Main Display window.</li>
-  <li class="propertylistitem"><strong>Density - </strong>Changes how dense the display of stations is        when the <strong>Declutter</strong> checkbox is selected. When the <strong>Declutter</strong> checkbox is not selected, the Density option will not be available, and all stations will be displayed.</li>
-  <li class="propertylistitem"><b>Display</b> - Displays locations as a fixed specification
+  <li class="propertylistitem"><strong>Declutter -</strong> Displays only stations that do not overlap. When unchecked, all of the   stations will be shown.  The small "lock" icon allows you to        lock the stations that are currently being displayed and not have   their        display changed when navigating in the Main Display window.</li>
+  <li class="propertylistitem"><strong>Density -</strong> Changes how dense the display of stations is        when the <strong>Declutter</strong> checkbox is selected. When the <strong>Declutter</strong> checkbox is not selected, the Density option will not be available, and all stations will be displayed.</li>
+  <li class="propertylistitem"><strong>Display -</strong> Displays locations as a fixed specification
       of a symbol and/or  identifier, or as one of the available station
       models.
-      <p> Use the options under the <strong>Predefined</strong> radio button
+      <li class="propertylistitem"> Use the options under the <strong>Predefined</strong> radio button
       to control what station information is displayed. Use the options
       in the <strong>Symbol</strong> menu to control what marker
       symbol is displayed. Clicking an item will immediately change the display.
-      Use the checkboxes to the right of <strong>Id</strong> and <strong>Symbol</strong> to trigger their visibility in the Main Display window.</p>
-    <p><strong>Layout Model</strong> - Displays a pre-defined layout model at the locations of the parameter in the Main Display window.  Click the <img src="../data/choosers/images/DownDown.gif" alt="Double down arrow" width="9" height="10">  icon to select a station model, or select <strong>Edit</strong> to open the <a href="../tools/StationModelEditor.html">Station Model Editor</a>.</li>
-  <li class="propertylistitem"><b>Vertical Position</b> - Displays the locations at their altitude (if there is
+      Use the checkboxes to the right of <strong>Id</strong> and <strong>Symbol</strong> to trigger their visibility in the Main Display window.</li>
+    <li class="propertylistitem"><strong>Layout Model -</strong> Displays a pre-defined layout model at the locations of the parameter in the Main Display window.  Click the <img src="../data/choosers/images/DownDown.gif" alt="Double down arrow" width="9" height="10">  icon to select a station model, or select <strong>Edit</strong> to open the <a href="../tools/StationModelEditor.html">Station Model Editor</a>.</li>
+  <li class="propertylistitem"><strong>Vertical Position -</strong> Displays the locations at their altitude (if there is
       one) or specifically defines the vertical position. This can be changed by using the slider or typing a value into the field and pressing Enter.</li>
 </ul>
 <a name="locations" id="locations"></a>
-<p>The <strong>Locations </strong>tab shows two sub-tabs, <strong>All Locations</strong> and <strong>Displayed Locations</strong>. Shown at the bottom are the details of a location:</p>
+<p>The <strong>Locations</strong> tab shows two sub-tabs, <strong>All Locations</strong> and <strong>Displayed Locations</strong>. Shown at the bottom are the details of a location:</p>
 <div class="images"><img  src="images/StationLocationControlGui2.gif"  alt="Image 2: Locations Tab of  the Location Controls Dialog"><br>
 <span class="caption">Image 2: Locations Tab of the Location Controls Dialog</span></div>
-<p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>All Locations - </strong>Lists all of the locations relevant to the chosen parameter.</li>
-  <li class="propertylistitem"><strong>Displayed Locations - </strong>Lists only the locations that are currently visible in the Main Display window.</li>
-  <li class="propertylistitem"><b>Listen for clicks</b> - Updates the current location information to the station you click on in the Main Display window. </li>
-  <li class="propertylistitem"><b>Center on selected</b> - Centers the Main Display window over the  location selected in this tab.</li>
+  <li class="propertylistitem"><strong>All Locations -</strong> Lists all of the locations relevant to the chosen parameter.</li>
+  <li class="propertylistitem"><strong>Displayed Locations -</strong> Lists only the locations that are currently visible in the Main Display window.</li>
+  <li class="propertylistitem"><strong>Listen for clicks -</strong> Updates the current location information to the station you click on in the Main Display window. </li>
+  <li class="propertylistitem"><strong>Center on selected -</strong> Centers the Main Display window over the  location selected in this tab.</li>
 </ul>
 <a name="datasets" id="datasets"></a>
 <p>The <strong>Data Sets</strong> tab lists all of the location files
-    that are being displayed. You can remove a Data Set by clicking on the Data Set and pressing Delete:
+    that are being displayed. You can remove a data set by clicking on the data set and pressing Delete:
 </p>
 <div class="images"><img src="images/StationLocationControlGui3.gif" alt="Image 3: Data Sets tab of Location Controls Dialog"><br>
 <span class="caption">Image 3: Data Sets Tab of the Location Controls Dialog</span></div>
-<p><a name="filters" id="filters"></a></p>
+<a name="filters" id="filters"></a>
 <p>The <strong>Filters</strong> tab allows you to filter what locations
     are being shown based on their internal attributes:</p>
 <div class="images"><img src="images/StationLocationControlGui4.gif" alt="Image 4: Filters Tab of the  Location Controls Dialog" width="652" height="326"><br>
@@ -92,26 +90,26 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/StationL
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
   <li class="propertylistitem"><img src="images/ApplyFilters.gif" alt="Apply Filters button" width="103" height="26" align=absmiddle> <strong> -</strong> Applies any set of filters to the data displayed in the Main Display window.</li>
-  <li class="propertylistitem"><strong>Filters Enabled</strong> - Enables filters to be applied to the data in the Main Display window.</li>
-  <li class="propertylistitem"><strong>Only show these -</strong> Displays only the earthquake data relevant to the filters, but it will not show all of the locations, utilizing the cluttering level from the <strong>Display</strong> tab when creating the Display.</li>
-  <li class="propertylistitem"><strong>Always show these -</strong> Displays only the earthquake data relevant to the filters, but it will show all of the locations, regardless of the cluttering level from the <strong>Display</strong> tab when creating the Display.</li>
+  <li class="propertylistitem"><strong>Filters Enabled -</strong> Enables filters to be applied to the data in the Main Display window.</li>
+  <li class="propertylistitem"><strong>Only show these -</strong> Displays only the data relevant to the filters, but it will not show all of the locations, utilizing the cluttering level from the <strong>Display</strong> tab when creating the Display.</li>
+  <li class="propertylistitem"><strong>Always show these -</strong> Displays only the data relevant to the filters, but it will show all of the locations, regardless of the cluttering level from the <strong>Display</strong> tab when creating the Display.</li>
   <li class="propertylistitem"><strong>Match all of these filters -</strong> Displays only data that corresponds with every chosen filter.</li>
   <li class="propertylistitem"><strong>Match any of these filters - </strong>Displays data that matches up with one or more of the chosen filters.</li>
-  <li class="propertylistitem"><strong>Property</strong> - Represents the variable or property that you want to filter.</li>
-  <li class="propertylistitem"><strong>Middle Dropdown Menu - </strong>Represents the mathematical symbol that determines your filter. This can be greater than, less than, equal to, not equal to, etc.</li>
-  <li class="propertylistitem"><strong>Value</strong> - Represents the value that sets the filter.</li></ul>
-  <a name="menus" id="menus"></a>
-<div class="pagesubtitle">Menus</div>
+  <li class="propertylistitem"><strong>Property -</strong> Represents the variable or property that you want to filter.</li>
+  <li class="propertylistitem"><strong>Middle Dropdown Menu -</strong> Represents the mathematical symbol that determines your filter. This can be greater than, less than, equal to, not equal to, etc.</li>
+  <li class="propertylistitem"><strong>Value -</strong> Represents the value that sets the filter.</li>
+</ul>
+<div class="pagesubtitle"><a name="menus" id="menus"></a>Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="LayerControls.html#menus">Menus section</a> of the Layer Controls Page. However, there are some options that are unique to this display.</p>
 <p>The <strong>Edit</strong> menu has these unique options:</p>
 <ul class="propertylist">
-  <p><b>Add Locations</b><b>... </b>- Allows you to add more locations. This includes states, countries, Radar sites, earthquakes, glaciers, etc. to the Main Display window.</p>
-  <p><strong>Color - </strong>Determines the color of the data being displayed in the Main Display window.</p>
+  <li class="propertylistitem"><strong>Add Locations -</strong> Allows you to add more locations. This includes states, countries, Radar sites, earthquakes, glaciers, etc. to the Main Display window.</li>
+  <li class="propertylistitem"><strong>Color -</strong> Determines the color of the data being displayed in the Main Display window.</li>
 </ul>
 <p>The <strong>View</strong> menu has these unique options:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Show Flythrough - </strong>Opens the <a href="../ui/DisplayMenus.html#flythrough">Flythrough feature</a>  which allows you to interactively explore the display.</li>
-  <li class="propertylistitem"><strong>Use Projection From Locations - </strong>Re-centers the display and resets the zoom level back to the display's initial settings without changing any other preferences you have modified.</li>
+  <li class="propertylistitem"><strong>Show Flythrough -</strong> Opens the <a href="../ui/DisplayMenus.html#flythrough">Flythrough feature</a>  which allows you to interactively explore the display.</li>
+  <li class="propertylistitem"><strong>Use Projection From Locations -</strong> Re-centers the display and resets the zoom level back to the display's initial settings without changing any other preferences you have modified.</li>
   <li class="propertylistitem"><strong>Chart -</strong> Allows you to display a thumbnail of the chart in the Legend, change the <a href="Chart.html#chartlayout">Grid Layout</a>, zoom in and out, save the chart, and open the <a href="Chart.html#plotproperties">Plot Properties</a> window.</li>
 </ul>
 <!-- InstanceEndEditable -->
