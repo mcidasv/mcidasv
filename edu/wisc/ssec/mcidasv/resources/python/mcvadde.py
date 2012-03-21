@@ -149,7 +149,23 @@ def getADDEImage(server, group, descriptor,
     
     addeUrlFormat = "adde://%s/imagedata?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s&BAND=%s&%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X&DAY=%s&TIME=%s&POS=%s"
     url = addeUrlFormat % (server, user, proj, debug, group, descriptor, band, location, place, size, unit, mag, day, time, datasetPosition)
-    return url
+    try:
+        area = AreaAdapter(url)
+        areaDirectory = AreaAdapter.getAreaDirectory(area)
+        if debug:
+            
+            elements = areaDirectory.getElements()
+            lines = areaDirectory.getLines()
+            print 'url:', url
+            print 'lines=%s elements=%d' % (lines, elements)
+        # return areaDirectory, area
+    except:
+        if debug:
+            print 'problem with adde url:', url
+        area = -1
+        areaDirectory =  -1
+    finally:
+        return areaDirectory, area.getData()
 
 # def getADDEImage(server, group, descriptor, 
 #     accounting=DEFAULT_ACCOUNTING,
