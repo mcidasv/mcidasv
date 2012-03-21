@@ -53,7 +53,7 @@ params1 = dict(
     time=('14:15:00', '14:15:00'),
 )
 
-def listADDEImage(server, group, descriptor, 
+def listADDEImages(server, group, descriptor, 
     accounting=DEFAULT_ACCOUNTING,
     location=None,
     coordinateSystem=CoordinateSystems.LATLON,
@@ -97,7 +97,9 @@ def listADDEImage(server, group, descriptor,
     if time:
         time = '%s %s I' % (time[0], time[1])
     addeUrlFormat = "adde://%s/imagedir?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&DEBUG=%s&GROUP=%s&DESCR=%s&POS=%s"
-    print addeUrlFormat % (server, user, proj, debug, group, descriptor, datasetPosition)
+    url = addeUrlFormat % (server, user, proj, debug, group, descriptor, datasetPosition)
+    print url
+    return url
 
 def getADDEImage(server, group, descriptor, 
     accounting=DEFAULT_ACCOUNTING,
@@ -146,8 +148,8 @@ def getADDEImage(server, group, descriptor,
         time = '%s %s I' % (time[0], time[1])
     
     addeUrlFormat = "adde://%s/imagedata?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s&BAND=%s&%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X&DAY=%s&TIME=%s&POS=%s"
-    print addeUrlFormat % (server, user, proj, debug, group, descriptor, band, location, place, size, unit, mag, day, time, datasetPosition)
-    return None
+    url = addeUrlFormat % (server, user, proj, debug, group, descriptor, band, location, place, size, unit, mag, day, time, datasetPosition)
+    return url
 
 # def getADDEImage(server, group, descriptor, 
 #     accounting=DEFAULT_ACCOUNTING,
