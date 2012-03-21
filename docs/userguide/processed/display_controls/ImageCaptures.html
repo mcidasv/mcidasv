@@ -30,7 +30,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('display_controls/
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Image and Movie Capture Controls</div>
-You can capture the main 3D view as an image, a QuickTime movie or an animated GIF.
+<p>You can capture the main 3D view as an image, a QuickTime movie or an animated GIF.</p>
 <ul class="childlist">
 <li><a href="#jpegcapture">Saving Images</a></li>
 <li><a href="#printcapture">Printing Current View</a></li>
@@ -38,8 +38,7 @@ You can capture the main 3D view as an image, a QuickTime movie or an animated G
 <li><a href="#create">Creating a Movie</a></li>
 <li><a href="#movieplayback">Playing QuickTime Movies</a></li>
 </ul>
-<a name="jpegcapture" id="jpegcapture"></a>
-<div class="pagesubtitle">Saving Images</div>
+<div class="pagesubtitle"><a name="jpegcapture" id="jpegcapture"></a>Saving Images</div>
 <p>You can save a display as an image by selecting the <strong>View-&gt;Capture-&gt;Image...</strong> menu
 item in the Main Display window. A file dialog will open where you can enter a file name for the image
 file. McIDAS-V supports JPEG, PNG, GIF, PDF, PS, and SVG formats. From this File
@@ -58,17 +57,14 @@ to capture. You can also select whether or not the background is transparent.</p
   file prefix and the kml file that refers to the image. If you specify a .kmz
   file  (which is a zip format) it will contain the image and the kml
 file.</p>
-<a name="printcapture" id="printcapture"></a>
-<div class="pagesubtitle">Printing Current View</div>
+<div class="pagesubtitle"><a name="printcapture" id="printcapture"></a>Printing Current View</div>
 <p>You can send any display to a printer. Select the <strong>View-&gt;Capture-&gt;Print...</strong> menu
 item in the Main Display window. A <strong>Print</strong> dialog will popup where you can configure and print an image.</p>
-<p><a name="moviecapture" id="moviecapture"></a></p>
-<div class="pagesubtitle">Saving QuickTime Movies</div>
+<div class="pagesubtitle"><a name="moviecapture" id="moviecapture"></a>Saving QuickTime Movies</div>
 <p>You can save any sequence of displays as a movie. Select the <strong>View-&gt;Capture-&gt;Movie...</strong> menu
 item in the Main Display window to open the Movie Capture window:</p>
 <div class="images"><img src="images/VMImageCapturePopup.gif" alt="Image 1: Movie Capture window"><br>
 <span class="caption">Image 1: Movie Capture Window</span></div>
-<p></p>
 <div class="pagesubtitle">Properties</div>
 <p>Note: More information about these controls is found in the <a href="#create">Creating a Movie</a> section below.</p>
 <ul class="propertylist">
@@ -102,9 +98,8 @@ item in the Main Display window to open the Movie Capture window:</p>
     <li class="propertylistitem"> <img src="images/SaveMovie.gif" alt="Save Movie button" width="98" height="26"align=absmiddle> <strong> -</strong> Saves the movie to the specified location using the chosen format type.</li>
 </ul>
 </ul>
-<p><a name="create" id="create"></a></p>
-<div class="pagesubtitle">Creating a Movie</div>
-<p>To make a movie, there are three steps: capturing the frames, previewing the frames, and creating the movie. McIDAS-V supports QuickTime movies, animated GIF and AVI files, Google Earth KMZ and AniS or FlAniS HTML file formats.
+<div class="pagesubtitle"><a name="create" id="create"></a>Creating a Movie</div>
+<p>To make a movie, there are three steps: capturing the frames, previewing the frames, and creating the movie. McIDAS-V supports QuickTime movies, animated GIF and AVI files, Google Earth KMZ and AniS or FlAniS HTML file formats.</p>
 <ul class="propertylist">
 <li class="propertylistitem">To capture frames, in the <strong>Capture</strong> section of the Movie Capture window, do the following:</li>
 <ul class="propertylist">
@@ -122,9 +117,9 @@ saved in a temporary directory and will be removed. You can use the following te
 <li class="propertylistitem"><strong>%time% - </strong>Represents the  animation time in the default format.</li>
 <li class="propertylistitem"><strong>%time:time format% -</strong> Begins with "time:" and contains a time format string using the the same date formatting rules described in the User Preferences window's  <a href="../tools/preferences/FormatPreferences.html"><strong>Formats &amp; Data</strong></a> tab.</li>
 </ul>
-<li class="propertylistitem">When done capturing the frames, select the <img src="images/SaveMovie.gif" alt="Save Movie button" width="98" height="26"align=absmiddle> button to specify the name and format of the movie you want to save. <a name="movieplayback" id="movieplayback"></a>    </li>
+<li class="propertylistitem">When done capturing the frames, select the <img src="images/SaveMovie.gif" alt="Save Movie button" width="98" height="26"align=absmiddle> button to specify the name and format of the movie you want to save.</li>
 </ul>
-<div class="pagesubtitle">Playing QuickTime Movies</div>
+<div class="pagesubtitle"><a name="movieplayback" id="movieplayback"></a>Playing QuickTime Movies</div>
     <p>McIDAS-V supports displaying certain types of QuickTime movies (including
         the ones McIDAS-V generates). These movies can be loaded in the General-&gt;Files/Directories
     Chooser in the <strong>Data Sources</strong> tab of the Data Explorer.</p>

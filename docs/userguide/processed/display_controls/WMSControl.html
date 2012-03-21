@@ -33,7 +33,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('display_controls/
 <xxxmeta xxxname="jhid" value="idv.controls.misc.wmscontrol">
 <div class="pagesubtitle">Overview</div>
 <meta name="jhid" value="idv.controls.misc.wmscontrol">
-The WMS Controls display imagery from WMS servers. A set of predefined links to WMS servers for topographic, shaded relief and aerial imagery is also provided with the Background Image control.
+<p>The WMS Controls display imagery from WMS servers. A set of predefined links to WMS servers for topographic, shaded relief and aerial imagery is also provided with the Background Image control.</p>
 <p> To use the pre-defined Background images, in the Main Display window select the <strong>Display-&gt;Add Background Image</strong> menu item. To choose imagery from web map servers, bring up the <a href="../data/choosers/CatalogChooser.html">Catalog Chooser</a> in the Data Explorer and enter the URL that points to the <i>Capabilities</i> document of the desired WMS. We also provide links to a set of useful WMSs from the <i>idvcatalog</i>. If it is not in the Catalog pull down menu simply enter the url:</p>
 <pre>http://www.unidata.ucar.edu/georesources/idvcatalog.xml</pre>
 <p>From this catalog open the <strong>Web Map Servers</strong> tab and select the WMS you
@@ -41,31 +41,30 @@ would like to access.</p>
 <p> The WMS Controls makes a request to the Web Map Server for an image that covers the area currently being displayed in the Main Display window. Due to the time it takes to access remote servers, the WMS Control does not request new images when the user pans and zooms.</p>
 <div class="images"><img  src="images/WMSControlGui.gif"  alt="Image 1: WMS Control Dialog"><br>
 <span class="caption">Image 1: WMS Control Dialog</span></div>
-<p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><b>Layer</b> - Selects which layer to view if multiple layers have been selected (using Ctrl+click in the WMS Chooser or in the Background Image control).</li>
-  <li class="propertylistitem"><b>Image Buttons</b> - </li>
+  <li class="propertylistitem"><strong>Layer -</strong> Selects which layer to view if multiple layers have been selected (using Ctrl+click in the WMS Chooser or in the Background Image control).</li>
+  <li class="propertylistitem"><strong>Image Buttons -</strong></li>
     <ul class="propertylist">
-      <li class="propertylistitem"><img src="../data/choosers/images/Toggle.gif" alt="Reload the image icon"align=absmiddle><strong> Reload the image -</strong> Reloads the image from the server at the current screen location. </li>
-      <li class="propertylistitem"><img src="../data/choosers/images/HomeMapArea.gif" alt="Reproject to image icon"align=absmiddle><strong> Reproject to image</strong> <strong> -</strong> Sets the projection in the display to the current image bounds. </li>
-      <li class="propertylistitem"><strong>Auto-Reload</strong> -  Fetches a new image every time the Main Display window is panned or zoomed. There is a slight delay so that successive zooms do not cause successive image requests.</li>
+      <li class="propertylistitem"><img src="../data/choosers/images/Toggle.gif" alt="Reload the image icon"align=absmiddle><strong>Reload the image -</strong> Reloads the image from the server at the current screen location. </li>
+      <li class="propertylistitem"><img src="../data/choosers/images/HomeMapArea.gif" alt="Reproject to image icon"align=absmiddle><strong>Reproject to image -</strong> Sets the projection in the display to the current image bounds. </li>
+      <li class="propertylistitem"><strong>Auto-Reload -</strong> Fetches a new image every time the Main Display window is panned or zoomed. There is a slight delay so that successive zooms do not cause successive image requests.</li>
       </ul>
-  <li class="propertylistitem"><b>Resolution</b> - Allows you to change the resolution of the image. A lower resolution image will have  a smaller image file size and quicker requests from the server.</li>
-  <li class="propertylistitem"><b>Vertical Position</b> - Sets the vertical position of the image. You can adjust this value by dragging the slider or by typing a value into the field and pressing Enter.</li>
-  <li class="propertylistitem"><b>Transparency</b> - Adjusts the overall transparency of the image. Note: Some Web Map Servers provide images that contain transparent sections. Currently, McIDAS-V does not support the display of transparent sections.</li>
-  <li class="propertylistitem"><b>Dimension Scale</b> - Allows you to fetch a larger image than the default one. By default, the bounds of the image that is retrieved from the server is the size of the display.</li>
+  <li class="propertylistitem"><strong>Resolution -</strong> Allows you to change the resolution of the image. A lower resolution image will have  a smaller image file size and quicker requests from the server.</li>
+  <li class="propertylistitem"><strong>Vertical Position -</strong> Sets the vertical position of the image. You can adjust this value by dragging the slider or by typing a value into the field and pressing Enter.</li>
+  <li class="propertylistitem"><strong>Transparency -</strong> Adjusts the overall transparency of the image. Note: Some Web Map Servers provide images that contain transparent sections. Currently, McIDAS-V does not support the display of transparent sections.</li>
+  <li class="propertylistitem"><strong>Dimension Scale -</strong> Allows you to fetch a larger image than the default one. By default, the bounds of the image that is retrieved from the server is the size of the display.</li>
   </ul>
 <div class="pagesubtitle">Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="../controls/LayerControls.html#menus">Menus section</a> of the Layer Controls Page. However, there are several options that are unique to this display.</p>
 <p>The <strong>File</strong> menu has this unique option:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><b>Save As Image XML/KML File... </b>-  Saves the most recently displayed image as an Image XML file (*.ximg) or as a Google Earth File (*.kml, *.kmz). The Image XML format references the image as well as the geolocation boundaries.</li>
+  <li class="propertylistitem"><strong>Save As Image XML/KML File... -</strong> Saves the most recently displayed image as an Image XML file (*.ximg) or as a Google Earth File (*.kml, *.kmz). The Image XML format references the image as well as the geolocation boundaries.</li>
    </ul>
 <p>The <strong>View</strong> menu has these unique options:</p>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Reproject Image -</strong> Re-centers the display and resets the zoom level back to the display's   initial settings without changing any other preferences you have   modified.</li>
-  <li class="propertylistitem"><strong>Go to Address - </strong>Changes the projection to a given address, zip code,        city, etc. See the <a href="../ui/DisplayMenus.html#goto">Go to Address</a> section of the Display Menus page for more information.</li>
+  <li class="propertylistitem"><strong>Go to Address -</strong> Changes the projection to a given address, zip code,        city, etc. See the <a href="../ui/DisplayMenus.html#goto">Go to Address</a> section of the Display Menus page for more information.</li>
   <li class="propertylistitem"><strong>Use Native Projection -</strong> Re-centers the display and resets the zoom level back to the display's   initial settings without changing any other preferences you have   modified.</li>
   </ul>
 <!-- InstanceEndEditable -->

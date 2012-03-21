@@ -33,18 +33,19 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/TrackCon
 <xxxmeta xxxname="jhid" value="idv.controls.trackcontrol">
 <div class="pagesubtitle">Overview</div>
 <p>The track controls display trajectory data sets, e.g., aircraft track, ship,
-buoys, etc. This data can be loaded in the <strong>General-&gt;Files/Directories</strong> chooser of the <strong>Data Sources</strong> tab of the Data Explorer, with the Data Type of Track files. The track controls consist of two tabs. The first controls the <strong>Layout</strong>: </p>
+buoys, etc. This data can be loaded in the <strong>General-&gt;Files/Directories</strong> chooser of the <strong>Data Sources</strong> tab of the Data Explorer, with the Data Type of Track files. You can display your data in the form of a chart, table, or track drawn in the Main Display window.</p>
+<p>To draw a track in the Main Display window, select the Track Colored By Parameter display type. The track controls consist of two tabs, <strong>Layout</strong> and <strong>Times</strong>.</p>
+<p>The <strong>Layout</strong> tab controls the appearance of the display: </p>
 <div class="images"><img src="images/TrackControlGui.gif" width="509" height="231" alt="Image 1: Layout Tab of the Track Controls Dialog"><br>
 <span class="caption">Image 1: Layout Tab of the Track Controls Dialog</span></div>
-<p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><b>Color Table</b> - Shows the active color table and the associated high and low data values in the units of the display. As   the mouse        pointer is moved over the color bar, the value at a particular   color is        shown. Right click on the color bar or click on the button that   displays the name of the Color Table to make modifications to the color   bar. This allows you to open the <a  href="../tools/ColorTableEditor.html">Color
+  <li class="propertylistitem"><strong>Color Table -</strong> Shows the active color table and the associated high and low data values in the units of the display. As the mouse pointer is moved over the color bar, the value at a particular color is shown. Right click on the color bar or click on the button that displays the name of the Color Table to make modifications to the color bar. This allows you to open the <a  href="../tools/ColorTableEditor.html">Color
       Table Editor</a>, change the range, select other color tables, etc.</li>
-  <li class="propertylistitem"><b>Visible Range</b> - Allows you to set the range that determines
+  <li class="propertylistitem"><strong>Visible Range -</strong> Allows you to set the range that determines
       what parts of the data are actually shown. Check the box to enable the widget
       and click <img src="level2/images/ChangeButton.gif" alt="Change button" width="77" height="26"align=absmiddle> to set the data range. </li>
-  <li class="propertylistitem"><b>Marker and Marker Color</b> - Defines an end point symbol and text as well as its color with
+  <li class="propertylistitem"><strong>Marker -</strong> Defines an end point symbol and text as well as its color with
       these fields. By default, &quot;Location&quot; is selected as the default
       marker. Click the checkbox to the left of the &quot;Location&quot; box
       to enable the marker. Click on &quot;Location&quot; to choose another marker
@@ -52,17 +53,16 @@ buoys, etc. This data can be loaded in the <strong>General-&gt;Files/Directories
       to edit a current layout, or to create a new one. Use the slider or enter
       in a value and hit enter in the <strong>Scale</strong> option to set the
       scale of the marker. </li>
-  <li class="propertylistitem"><b>Line Width</b> - Allows you to set the width of the displayed trajectory line. You can change the line width by typing a value into the field and pressing Enter, or by clicking <img src="../ui/images/Slider16.gif" width="16" height="16"align=absmiddle> to use a slider.</li>
+  <li class="propertylistitem"><strong>Line Width -</strong> Allows you to set the width of the displayed trajectory line. You can change the line width by typing a value into the field and pressing Enter, or by clicking <img src="../ui/images/Slider16.gif" width="16" height="16"align=absmiddle> to use a slider.</li>
 </ul>
-<p>The second tab controls the <strong>Times</strong>:</p>
+<p>The second tab controls the <strong>Times</strong> used for the display:</p>
 <div class="images"><img src="images/TrackControlGui2.gif" width="509" height="231" alt="Image 2: Times Tab of the Track Controls Dialog"><br>
 <span class="caption">Image 2: Times Tab of the Track Controls Dialog</span></div>
-<p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><b>Times to Use</b> - Represents if you are using nominal times or the track times from the data.
+  <li class="propertylistitem"><strong>Times to Use -</strong> Represents if you are using nominal times or the track times from the data.
       You can also choose to limit the times of data shown by checking <strong>enabled</strong>.</li>
-  <li class="propertylistitem"><b>Time Mode</b> - Allows for the control of how much of the track is shown and from what time. Even though a track represents a set of observation times, there is not
+  <li class="propertylistitem"><strong>Time Mode -</strong> Allows for the control of how much of the track is shown and from what time. Even though a track represents a set of observation times, there is not
       time set defined for animating in the main display. Click <img src="level2/images/ChangeButton.gif" alt="Change button" width="77" height="26"align=absmiddle> to show the Time Settings dialog. The time mode allows
       for the control of how much of the track is shown and from what time. Select
       the <strong>Change</strong> button to show the <strong>Time
@@ -73,8 +73,8 @@ buoys, etc. This data can be loaded in the <strong>General-&gt;Files/Directories
       The image above defines that the end time is the current animation time.
       The start time is relative to the end time less 30 minutes.</p>
     <p> This time setting is similar to that used for the general <a href="../ui/Animation.html#animationset"><strong>Define Animation Times</strong></a> tab.</li>
-  <li class="propertylistitem"><b>Change Parameter</b> - Changes the parameter displayed by using the <strong>Edit-&gt;Change Parameter</strong> menu. </li>
-  <li class="propertylistitem"><strong>Change Display Unit </strong> - Changes the unit of the parameter displayed by using the <strong>Edit-&gt;Change
+  <li class="propertylistitem"><strong>Change Parameter -</strong> Changes the parameter displayed by using the <strong>Edit-&gt;Change Parameter</strong> menu. </li>
+  <li class="propertylistitem"><strong>Change Display Unit -</strong> Changes the unit of the parameter displayed by using the <strong>Edit-&gt;Change
         Display Unit</strong> menu.
 </ul>
 <div class="pagesubtitle">Menus</div>
