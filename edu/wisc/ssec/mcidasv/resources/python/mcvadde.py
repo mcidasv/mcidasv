@@ -1,3 +1,8 @@
+
+import datetime
+
+from visad.data.mcidas import AreaAdapter
+
 # credit for enum goes to http://stackoverflow.com/a/1695250
 def enum(*sequential, **named):
     enums = dict(zip(sequential, range(len(sequential))), **named)
@@ -7,8 +12,6 @@ DEFAULT_ACCOUNTING = ('idv', '0')
 
 CoordinateSystems = enum('AREA', 'LATLON', 'IMAGE')
 Places = enum(ULEFT='Upper Left', CENTER='Center')
-# Calibrations = enum(TEMP='Temperature', BRIT='Brightness', 
-#     RAW='Raw Counts', PROD='Product', RAD='Radiances', ALB='Albedo')
 
 # alias = ADDE  alias
 # server = ADDE server
@@ -38,7 +41,6 @@ Places = enum(ULEFT='Upper Left', CENTER='Center')
 # relativePosition = relative position number (0, -1, -2)
 # numberImages = number of images to load
 # size = default to None; signifies the tuple (1000, 1000)
-import datetime
 
 params1 = dict(
     debug=True,
@@ -64,7 +66,7 @@ def listADDEImages(server, group, descriptor,
     day=None,
     time=None,
     debug=False,
-    band=1,
+    band=None,
     size=None):
     user = accounting[0]
     proj = accounting[1]
@@ -96,10 +98,34 @@ def listADDEImages(server, group, descriptor,
     
     if time:
         time = '%s %s I' % (time[0], time[1])
-    addeUrlFormat = "adde://%s/imagedir?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&DEBUG=%s&GROUP=%s&DESCR=%s&POS=%s"
-    url = addeUrlFormat % (server, user, proj, debug, group, descriptor, datasetPosition)
+    
+    addeUrlFormat = "adde://%s/imagedir?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s&BAND=%s&%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X&DAY=%s&TIME=%s&POS=%s"
+    url = addeUrlFormat % (server, user, proj, debug, group, descriptor, band, location, place, size, unit, mag, day, time, datasetPosition)
     print url
     return url
+
+def _areaDirectoryToDictionary(areaDirectory):
+    d = dict()
+    d['bands'] = areaDirectory.getBands()
+    d['calinfo'] = areaDirectory.getCalInfo()
+    d['calibration-scale-factor'] = areaDirectory.getCalibrationScaleFactor()
+    d['calibration-type'] = areaDirectory.getCalibrationType()
+    d['calibration-unit-name'] = areaDirectory.getCalibrationUnitName()
+    d['center-latitude'] = areaDirectory.getCenterLatitude()
+    d['center-latitude-resolution'] = areaDirectory.getCenterLatitudeResolution()
+    d['center-longitude'] = areaDirectory.getCenterLongitude()
+    d['center-longitude-resolution'] = areaDirectory.getCenterLongitudeResolution()
+    d['directory-block'] = areaDirectory.getDirectoryBlock()
+    d['elements'] = areaDirectory.getElements()
+    d['lines'] = areaDirectory.getLines()
+    d['memo-field'] = areaDirectory.getMemoField()
+    d['nominal-time'] = areaDirectory.getNominalTime()
+    d['band-count'] = areaDirectory.getNumberOfBands()
+    d['sensor-id'] = areaDirectory.getSensorID()
+    d['sensor-type'] = areaDirectory.getSensorType()
+    d['source-type'] = areaDirectory.getSourceType()
+    d['start-time'] = areaDirectory.getStartTime()
+    return d
 
 def getADDEImage(server, group, descriptor, 
     accounting=DEFAULT_ACCOUNTING,
@@ -159,13 +185,14 @@ def getADDEImage(server, group, descriptor,
             print 'url:', url
             print 'lines=%s elements=%d' % (lines, elements)
         # return areaDirectory, area
-    except:
+        retvals = (_areaDirectoryToDictionary(areaDirectory), area.getData())
+    except Exception, err:
         if debug:
+            print 'exception: %s\n' % (str(err))
             print 'problem with adde url:', url
-        area = -1
-        areaDirectory =  -1
+        retvals = (-1, -1)
     finally:
-        return areaDirectory, area.getData()
+        return retvals
 
 # def getADDEImage(server, group, descriptor, 
 #     accounting=DEFAULT_ACCOUNTING,
