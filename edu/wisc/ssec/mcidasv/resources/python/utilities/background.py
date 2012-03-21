@@ -652,6 +652,9 @@ def activeDisplay():
     """Returns the active McIDAS-V display."""
     return _Display(getStaticMcv().getVMManager().getLastActiveViewManager())
 
+# def windowDisplays(window):
+#     """Returns a list of the McIDAS-V displays within the given window."""
+#     pass
 
 def createLayer(layerType, data, dataParameter='Data'):
     """Creates a new Layer in the active Display.
@@ -878,7 +881,11 @@ def buildWindow(width=0, height=0, rows=1, cols=1, panels=None):
         bounds = window.getBounds()
         print 'creating window: width=%d height=%d rows=%d cols=%d panels=%s' % (bounds.width, bounds.height, rows, cols, panels)
     
-    return _Window(window)
+    panels = []
+    for holder in window.getComponentGroups()[0].getDisplayComponents():
+        for viewManager in holder.getViewManagers():
+            panels.append(_Display(viewManager))
+    return panels
 
 def buildDisplayWindow(title, width=0, height=0):
     """Creates a window using the default McIDAS-V display skin.
@@ -1005,38 +1012,3 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1):
     #    #firstWindow().setSize(width, height)
 
     return activeDisplay()  # TODO: return list of all displays instead
-
-# server = ADDE server
-# dataset = ADDE dataset
-# day = date of image
-# time = time of image
-# coordinateType = coordinate system to use
-#   AREA
-#   LAT/LON
-#   Image
-# x-coordinate = AREA/Image Line or Latitude
-# y-coordinate = AREA/Image Element or Longitude
-# position = location of specified coordinate
-#   Center
-#   Upper-Left
-#   Lower-Right
-# unit
-# navigationType = navigation type used
-#   Image
-#   LALO
-# channel = type and value to display
-#   waveLength wavelength
-#   waveNumber wavenumber
-#   band bandnumber
-# relativePosition = relative position number (0, -1, -2)
-# numberImages = number of images to load
-# def getADDEImage(**kwargs):
-#     if 'server' in kwargs:
-#         server = kwargs['server']
-#     else:
-#         raise TypeError('must provide a server parameter value')
-    
-#     if 'dataset' in kwargs:
-#         dataset = kwargs['dataset']
-#     else:
-#         raise TypeError('must provide a dataset parameter value')
