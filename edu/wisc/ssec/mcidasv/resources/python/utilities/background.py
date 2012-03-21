@@ -477,6 +477,59 @@ class _DataSource(_JavaProxy):
            elementSize
         """
         _JavaProxy.__init__(self, javaObject)
+    
+    def allDataChoices(self):
+        """Return a list of strings describing all available data choices
+            MIKE
+        """
+        # return just the strings so that user isn't forced to use the result of allDataChoices
+        # in later method calls
+        choices = self._JavaProxy__javaObject.getDataChoices()
+        return [choice.description for choice in choices]
+
+    def getDataChoice(self, dataChoiceName):
+        """Return a _DataChoice associated with this _DataSource
+           
+        Args:
+            dataChoiceName: name of data choice
+
+        Returns:  appropriate _DataChoice
+
+        Raises:
+            ValueError:  if dataChoiceName doesn't exist int his data source
+        MIKE
+        """
+        choices = self._JavaProxy__javaObject.getDataChoices()
+        for choice in choices:
+            if choice.description == dataChoiceName:
+                return _DataChoice(choice)
+        raise ValueError("There is no data choice by that name for this data source")
+
+class _DataChoice(_JavaProxy):
+    def __init__(self, javaObject):
+        """Represents a specific field within a data source
+           I don't know if "DataChoice" is the best name here
+           but that is how it is called in Java code
+           MIKE
+        """
+        _JavaProxy.__init__(self, javaObject)
+
+    def allLevels(self):
+        """List all levels for this data choice.
+        """
+        return self._JavaProxy__javaObject.getAllLevels()
+
+    def setLevel(self, level):
+        """Set which level you want from this data choice before plotting.
+            TODO(mike): This is extremely experimental at the moment...
+
+            Works for some data sources (model grids) but not others (radar)
+
+        Args:
+            level: one of the elements in the list returned by getLevels()
+        """
+        self._JavaProxy__javaObject.setLevelSelection(level)
+        return
 
 # TODO(jon): still not sure what people want to see in here
 class _Projection(_JavaProxy):
@@ -613,9 +666,57 @@ def createLayer(layerType, data, dataParameter='Data'):
 
     Returns:
         The Layer that was created in the active display.
+
+    Raises:
+        ValueError:  if layerType isn't valid
+    MIKE
     """
+
+    # get DataChoice Java object
+    data = data.getJavaInstance()
+
+    # need to get short control description from long name
+    mcv = getStaticMcv()
+    controlID = None
+    for desc in mcv.getControlDescriptors():
+        if desc.label == layerType:
+            controlID = desc.controlId
+    if controlID == None:
+        raise ValueError("You did not provide a valid layer type")
+
     # TODO(jon): this should behave better if createDisplay fails for some reason.
-    return _Layer(createDisplay(layerType, data, dataParameter))
+    return _Layer(createDisplay(controlID, data, dataParameter))
+
+def createDataSource(path, filetype):
+    """Currently just a wrapper around makeDataSource in shell.py
+       
+    Args:
+        path:  path to local file
+        filetype:  type of data source (one of the strings given by dataSourcesNames() )
+
+    Returns:
+        the DataSource that was created
+
+    Raises:
+        ValueError:  if filetype is not a valid data source type
+    MIKE
+    """
+    mcv = getStaticMcv()
+    dm = mcv.getMcvDataManager()
+    for desc in dm.getDescriptors():
+        if desc.label == filetype:
+            return _DataSource(makeDataSource(path, type=desc.id))
+    raise ValueError("Couldn't find that data source type")
+
+def allDataSourceNames():
+    """Returns a list of all possible data source types
+       (specifically, the verbose descriptions as they appear in the GUI)
+       MIKE
+    """
+    mcv = getStaticMcv()
+    dm = mcv.getDataManager()
+    # want to return list of labels only, not DataSourceDescriptor's
+    return [desc.label for desc in dm.getDescriptors()]
 
 def allLayerTypes():
     """Returns a list of the available layer type names"""
@@ -809,7 +910,7 @@ def makeLogger(name):
     """ """
     return  LoggerFactory.getLogger(name)
 
-def openBundle(bundle, label="", clear=1):
+def openBundle(bundle, label="", clear=1, height=-1, width=-1):
     """Open a bundle using the decodeXmlFile from PersistenceManager
 
     Args:
@@ -820,11 +921,14 @@ def openBundle(bundle, label="", clear=1):
         clear: whether to clear current layers and data (1 or 0)
         Default is to clear.
 
+        height, width: specify size of window (not size of display!)
+
     Returns:
         the result of activeDisplay()
 
     Raises:
         ValueError: if bundle doesn't exist
+        ValueError: if height is specified but not width, or vice verse
     """
     from edu.wisc.ssec.mcidasv import McIdasPreferenceManager 
     from edu.wisc.ssec.mcidasv import PersistenceManager
@@ -842,6 +946,9 @@ def openBundle(bundle, label="", clear=1):
 
     if (not fileExists) or isDir:
         raise ValueError("File does not exist or is a directory")
+
+    #if ((height == -1) and (width != -1)) or ((height != -1) and (width == -1)):
+    #    raise ValueError("Please specify both a width and height")
 
     # get current relevant user preferences so we can override them
     #   and then change them back
@@ -893,6 +1000,9 @@ def openBundle(bundle, label="", clear=1):
     sm.putPreference(mpm.PREF_CONFIRM_REMOVE_BOTH, pref_confirm_both)
     sm.writePreferences()
 
+    #if (height != -1) and (width != -1):
+    #    activeDisplay().getJavaInstance().getDisplayWindow().setSize(width, height)
+    #    #firstWindow().setSize(width, height)
 
     return activeDisplay()  # TODO: return list of all displays instead
 
