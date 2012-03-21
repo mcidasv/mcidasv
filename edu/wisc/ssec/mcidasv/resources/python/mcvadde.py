@@ -53,6 +53,51 @@ params1 = dict(
     time=('14:15:00', '14:15:00'),
 )
 
+def listADDEImage(server, group, descriptor, 
+    accounting=DEFAULT_ACCOUNTING,
+    location=None,
+    coordinateSystem=CoordinateSystems.LATLON,
+    place=Places.CENTER,
+    mag=(1, 1),
+    datasetPosition='all',
+    unit='BRIT',
+    day=None,
+    time=None,
+    debug=False,
+    band=1,
+    size=None):
+    user = accounting[0]
+    proj = accounting[1]
+    debug = str(debug).lower()
+    mag = '%s %s' % (mag[0], mag[1])
+    
+    if place is Places.CENTER:
+        place = 'CENTER'
+    elif place is Places.ULEFT:
+        place = 'ULEFT'
+    else:
+        raise ValueError()
+    
+    if coordinateSystem is CoordinateSystems.LATLON:
+        coordSys = 'LATLON'
+    elif coordinateSystem is CoordinateSystems.LINELE or coordinateSystem is CoordinateSystems.IMAGE:
+        coordSys = 'LINELE'
+    else:
+        raise ValueError()
+    
+    if location:
+        location = '%s=%s %s' % (coordSys, location[0], location[1])
+    
+    if not day:
+        day = datetime.datetime.now().strftime('%Y%j')
+    
+    if size:
+        size = '%s %s' % (size[0], size[1])
+    
+    if time:
+        time = '%s %s I' % (time[0], time[1])
+    addeUrlFormat = "adde://%s/imagedir?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&DEBUG=%s&GROUP=%s&DESCR=%s&POS=%s"
+    print addeUrlFormat % (server, user, proj, debug, group, descriptor, datasetPosition)
 
 def getADDEImage(server, group, descriptor, 
     accounting=DEFAULT_ACCOUNTING,
