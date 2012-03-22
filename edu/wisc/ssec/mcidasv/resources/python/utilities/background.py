@@ -388,6 +388,45 @@ class _Display(_JavaProxy):
         
         return [_Layer(displayControl) for displayControl in self._JavaProxy__javaObject.getControls()]
 
+    def createLayer(self, layerType, data, dataParameter='Data'):
+        """Creates a new Layer in this _Display
+
+        Args:
+            layerType: ID string that represents a type of layer. The valid names
+                       can be determined with the "allLayerTypes()" function.
+
+            data: Data object to associate with the resulting layer.
+
+            dataParameter: Optional...
+
+        Returns:
+            The _Layer that was created in this _Display
+
+        Raises:
+            ValueError:  if layerType isn't valid
+        """
+
+        if isinstance(data, _DataChoice):
+            # get DataChoice Java object
+            # (Note: createDisplay can handle both flatfile and DataChoice)
+            data = data.getJavaInstance()
+
+        # need to get short control description from long name
+        mcv = getStaticMcv()
+        controlID = None
+        for desc in mcv.getControlDescriptors():
+            if desc.label == layerType:
+                controlID = desc.controlId
+        if controlID == None:
+            raise ValueError("You did not provide a valid layer type")
+
+        # Set the panel/display that a new DisplayControl will be put into
+        # TODO(mike):  set this back to what it was before?
+        getStaticMcv().getVMManager().setLastActiveViewManager(self._JavaProxy__javaObject)
+
+        # TODO(jon): this should behave better if createDisplay fails for some reason.
+        return _Layer(createDisplay(controlID, data, dataParameter))
+
 # TODO(jon): still not sure what to offer here.
 class _Layer(_JavaProxy):
     def __init__(self, javaObject):
@@ -656,40 +695,6 @@ def activeDisplay():
 #     """Returns a list of the McIDAS-V displays within the given window."""
 #     pass
 
-def createLayer(layerType, data, dataParameter='Data'):
-    """Creates a new Layer in the active Display.
-
-    Args:
-        layerType: ID string that represents a type of layer. The valid names
-                   can be determined with the "allLayerTypes()" function.
-
-        data: Data object to associate with the resulting layer.
-
-        dataParameter: Optional...
-
-    Returns:
-        The Layer that was created in the active display.
-
-    Raises:
-        ValueError:  if layerType isn't valid
-    MIKE
-    """
-
-    # get DataChoice Java object
-    data = data.getJavaInstance()
-
-    # need to get short control description from long name
-    mcv = getStaticMcv()
-    controlID = None
-    for desc in mcv.getControlDescriptors():
-        if desc.label == layerType:
-            controlID = desc.controlId
-    if controlID == None:
-        raise ValueError("You did not provide a valid layer type")
-
-    # TODO(jon): this should behave better if createDisplay fails for some reason.
-    return _Layer(createDisplay(controlID, data, dataParameter))
-
 def createDataSource(path, filetype):
     """Currently just a wrapper around makeDataSource in shell.py
        
@@ -710,6 +715,11 @@ def createDataSource(path, filetype):
         if desc.label == filetype:
             return _DataSource(makeDataSource(path, type=desc.id))
     raise ValueError("Couldn't find that data source type")
+
+def createLayer():
+    # TODO(mike): remove this method.  (Requires change to console_init.py
+    #             which I'm having trouble committing at the moment...)
+    pass
 
 def allDataSourceNames():
     """Returns a list of all possible data source types
