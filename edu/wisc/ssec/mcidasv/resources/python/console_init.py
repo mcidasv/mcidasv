@@ -38,6 +38,8 @@ sys.path.append(_mcv_python+'/utilities')
 from edu.wisc.ssec.mcidasv import McIDASV
 _mcv = McIDASV.getStaticMcv()
 
+from edu.wisc.ssec.mcidasv.data.hydra import Statistics
+
 import imageFilters
 import shell as idvshell
 

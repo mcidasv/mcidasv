@@ -8,6 +8,29 @@ def enum(*sequential, **named):
     enums = dict(zip(sequential, range(len(sequential))), **named)
     return type('Enum', (), enums)
 
+def _areaDirectoryToDictionary(areaDirectory):
+    d = dict()
+    d['bands'] = areaDirectory.getBands()
+    d['calinfo'] = areaDirectory.getCalInfo()
+    d['calibration-scale-factor'] = areaDirectory.getCalibrationScaleFactor()
+    d['calibration-type'] = areaDirectory.getCalibrationType()
+    d['calibration-unit-name'] = areaDirectory.getCalibrationUnitName()
+    d['center-latitude'] = areaDirectory.getCenterLatitude()
+    d['center-latitude-resolution'] = areaDirectory.getCenterLatitudeResolution()
+    d['center-longitude'] = areaDirectory.getCenterLongitude()
+    d['center-longitude-resolution'] = areaDirectory.getCenterLongitudeResolution()
+    d['directory-block'] = areaDirectory.getDirectoryBlock()
+    d['elements'] = areaDirectory.getElements()
+    d['lines'] = areaDirectory.getLines()
+    d['memo-field'] = areaDirectory.getMemoField()
+    d['nominal-time'] = areaDirectory.getNominalTime()
+    d['band-count'] = areaDirectory.getNumberOfBands()
+    d['sensor-id'] = areaDirectory.getSensorID()
+    d['sensor-type'] = areaDirectory.getSensorType()
+    d['source-type'] = areaDirectory.getSourceType()
+    d['start-time'] = areaDirectory.getStartTime()
+    return d
+
 DEFAULT_ACCOUNTING = ('idv', '0')
 
 CoordinateSystems = enum('AREA', 'LATLON', 'IMAGE')
@@ -53,9 +76,10 @@ params1 = dict(
     size=(158, 332),
     mag=(-3, -2),
     time=('14:15:00', '14:15:00'),
+    band=1,
 )
 
-def listADDEImages(server, group, descriptor, 
+def listADDEImages(server, dataset, descriptor, 
     accounting=DEFAULT_ACCOUNTING,
     location=None,
     coordinateSystem=CoordinateSystems.LATLON,
@@ -68,6 +92,7 @@ def listADDEImages(server, group, descriptor,
     debug=False,
     band=None,
     size=None):
+
     user = accounting[0]
     proj = accounting[1]
     debug = str(debug).lower()
@@ -99,35 +124,15 @@ def listADDEImages(server, group, descriptor,
     if time:
         time = '%s %s I' % (time[0], time[1])
     
-    addeUrlFormat = "adde://%s/imagedir?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s&BAND=%s&%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X&DAY=%s&TIME=%s&POS=%s"
+    if band is not None:
+        band = '&BAND=%s' % (str(band))
+    
+    addeUrlFormat = "adde://%s/imagedir?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s&%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X&DAY=%s&TIME=%s&POS=%s"
     url = addeUrlFormat % (server, user, proj, debug, group, descriptor, band, location, place, size, unit, mag, day, time, datasetPosition)
     print url
     return url
 
-def _areaDirectoryToDictionary(areaDirectory):
-    d = dict()
-    d['bands'] = areaDirectory.getBands()
-    d['calinfo'] = areaDirectory.getCalInfo()
-    d['calibration-scale-factor'] = areaDirectory.getCalibrationScaleFactor()
-    d['calibration-type'] = areaDirectory.getCalibrationType()
-    d['calibration-unit-name'] = areaDirectory.getCalibrationUnitName()
-    d['center-latitude'] = areaDirectory.getCenterLatitude()
-    d['center-latitude-resolution'] = areaDirectory.getCenterLatitudeResolution()
-    d['center-longitude'] = areaDirectory.getCenterLongitude()
-    d['center-longitude-resolution'] = areaDirectory.getCenterLongitudeResolution()
-    d['directory-block'] = areaDirectory.getDirectoryBlock()
-    d['elements'] = areaDirectory.getElements()
-    d['lines'] = areaDirectory.getLines()
-    d['memo-field'] = areaDirectory.getMemoField()
-    d['nominal-time'] = areaDirectory.getNominalTime()
-    d['band-count'] = areaDirectory.getNumberOfBands()
-    d['sensor-id'] = areaDirectory.getSensorID()
-    d['sensor-type'] = areaDirectory.getSensorType()
-    d['source-type'] = areaDirectory.getSourceType()
-    d['start-time'] = areaDirectory.getStartTime()
-    return d
-
-def getADDEImage(server, group, descriptor, 
+def getADDEImage(server, dataset, descriptor, 
     accounting=DEFAULT_ACCOUNTING,
     location=None,
     coordinateSystem=CoordinateSystems.LATLON,
@@ -138,7 +143,7 @@ def getADDEImage(server, group, descriptor,
     day=None,
     time=None,
     debug=False,
-    band=1,
+    band=None,
     size=None):
     # still need to handle dates+times
     # todo: don't break!
@@ -162,7 +167,7 @@ def getADDEImage(server, group, descriptor,
         raise ValueError()
     
     if location:
-        location = '%s=%s %s' % (coordSys, location[0], location[1])
+        location = '&%s=%s %s' % (coordSys, location[0], location[1])
     
     if not day:
         day = datetime.datetime.now().strftime('%Y%j')
@@ -173,38 +178,24 @@ def getADDEImage(server, group, descriptor,
     if time:
         time = '%s %s I' % (time[0], time[1])
     
-    addeUrlFormat = "adde://%s/imagedata?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s&BAND=%s&%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X&DAY=%s&TIME=%s&POS=%s"
+    if band is not None:
+        band = '&BAND=%s' % (str(band))
+    
+    addeUrlFormat = "adde://%s/imagedata?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X&DAY=%s&TIME=%s&POS=%s"
     url = addeUrlFormat % (server, user, proj, debug, group, descriptor, band, location, place, size, unit, mag, day, time, datasetPosition)
+    retvals = (-1, -1)
     try:
         area = AreaAdapter(url)
         areaDirectory = AreaAdapter.getAreaDirectory(area)
         if debug:
-            
             elements = areaDirectory.getElements()
             lines = areaDirectory.getLines()
             print 'url:', url
             print 'lines=%s elements=%d' % (lines, elements)
-        # return areaDirectory, area
         retvals = (_areaDirectoryToDictionary(areaDirectory), area.getData())
     except Exception, err:
         if debug:
             print 'exception: %s\n' % (str(err))
             print 'problem with adde url:', url
-        retvals = (-1, -1)
     finally:
         return retvals
-
-# def getADDEImage(server, group, descriptor, 
-#     accounting=DEFAULT_ACCOUNTING,
-#     location=None,
-#     coordinateSystem=CoordinateSystems.LATLON,
-#     # navigationType=NAVIGATION_TYPES.CENTER,
-#     place=Places.CENTER,
-#     mag=(1, 1),
-#     datasetPosition=0,
-#     unit='BRIT',
-#     day=None,
-#     time=None,
-#     debug=False,
-#     band=1,
-#     size=None):
