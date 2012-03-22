@@ -68,7 +68,7 @@ Places = enum(ULEFT='Upper Left', CENTER='Center')
 params1 = dict(
     debug=True,
     server='adde.ucar.edu',
-    group='RTIMAGES',
+    dataset='RTIMAGES',
     descriptor='GE-VIS',
     coordinateSystem=CoordinateSystems.LATLON,
     location=(31.7, -87.4),
@@ -128,7 +128,7 @@ def listADDEImages(server, dataset, descriptor,
         band = '&BAND=%s' % (str(band))
     
     addeUrlFormat = "adde://%s/imagedir?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s&%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X&DAY=%s&TIME=%s&POS=%s"
-    url = addeUrlFormat % (server, user, proj, debug, group, descriptor, band, location, place, size, unit, mag, day, time, datasetPosition)
+    url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, datasetPosition)
     print url
     return url
 
@@ -182,7 +182,7 @@ def getADDEImage(server, dataset, descriptor,
         band = '&BAND=%s' % (str(band))
     
     addeUrlFormat = "adde://%s/imagedata?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X&DAY=%s&TIME=%s&POS=%s"
-    url = addeUrlFormat % (server, user, proj, debug, group, descriptor, band, location, place, size, unit, mag, day, time, datasetPosition)
+    url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, datasetPosition)
     retvals = (-1, -1)
     try:
         area = AreaAdapter(url)
