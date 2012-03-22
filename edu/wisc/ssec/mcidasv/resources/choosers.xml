@@ -330,6 +330,7 @@
 	<!--     Legacy       -->
 	<!--                  -->
 	
+<!--
 	<panel layout="border" category="Legacy Choosers" categorycomponent="true">
 		<html
 			text="
@@ -346,6 +347,7 @@
 			helppath="idv.data.choosers.imagechooser" showdetails="true"
 			includeNavComp="true" class="edu.wisc.ssec.mcidasv.chooser.adde.AddeImageChooser" />
 	</panel>
+-->
 
 
 
