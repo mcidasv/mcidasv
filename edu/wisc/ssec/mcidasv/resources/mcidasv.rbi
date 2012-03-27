@@ -422,6 +422,12 @@
       <property name="category" value="System"/>
       <property name="showineditor" value="false"/>
     </resource>
+    <resource label="Jython Initialization" location="%APPPATH%/python/console_init.py">
+      <property name="category" value="System" />
+    </resource>
+    <resource label="McIDAS-V ADDE" location="%APPPATH%/python/mcvadde.py">
+      <property name="category" value="System" />
+    </resource>
   </resources>
 
 <!--We don't use this now. Python libraries     -->
