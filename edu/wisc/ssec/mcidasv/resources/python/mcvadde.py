@@ -1,6 +1,8 @@
 
 import datetime
 
+from edu.wisc.ssec.mcidas import AreaDirectory
+from edu.wisc.ssec.mcidas import AreaDirectoryList
 from visad.data.mcidas import AreaAdapter
 
 # credit for enum goes to http://stackoverflow.com/a/1695250
@@ -130,7 +132,8 @@ def listADDEImages(server, dataset, descriptor,
     addeUrlFormat = "adde://%s/imagedir?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s&%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X&DAY=%s&TIME=%s&POS=%s"
     url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, datasetPosition)
     print url
-    return url
+    adl = AreaDirectoryList(url)
+    return adl.getSortedDirs()
 
 def getADDEImage(server, dataset, descriptor, 
     accounting=DEFAULT_ACCOUNTING,
