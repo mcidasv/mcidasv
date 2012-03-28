@@ -880,19 +880,19 @@ def buildWindow(width=0, height=0, rows=1, cols=1, panelTypes=None):
         
         cols: Optional parameter; default value is one.
         
-        panels: Optional parameter; default value is None (creates a single 
+        panelTypes: Optional parameter; default value is None (creates a single 
                 Map Display).
     
     Returns:
         A "wrapped" IdvWindow.
     """
-    if panels is None:
-        panels = [MAP] * (rows * cols)
+    if panelTypes is None:
+        panelTypes = [MAP] * (rows * cols)
     elif isinstance(panels, _NoOp):
-        panels = [panels] * (rows * cols)
-    elif type(panels) is types.ListType:
-        if len(panels) != (rows*cols):
-            raise ValueError('panels needs to contain rows*cols elements')
+        panelTypes = [panelTypes] * (rows * cols)
+    elif type(panelTypes) is types.ListType:
+        if len(panelTypes) != (rows*cols):
+            raise ValueError('panelTypes needs to contain rows*cols elements')
     
     from edu.wisc.ssec.mcidasv import PersistenceManager
     
