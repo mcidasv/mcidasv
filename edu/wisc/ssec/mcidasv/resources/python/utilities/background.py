@@ -497,6 +497,20 @@ class _Layer(_JavaProxy):
         """
         self._JavaProxy__javaObject.setDisplayVisibility(status)
 
+    def setLayerLabel(self, label):
+        """ Set the layer label (the string of text at the bottom of maps)
+
+        Args:
+            label:  a string defining the layer label
+            (Note you can use macros like %displayname% here)
+
+        Returns:  nothing
+        """
+        self._JavaProxy__javaObject.setDisplayListTemplate(label)
+
+        # update the "Display List"
+        self._JavaProxy__javaObject.applyPreferences()
+
 
 # TODO(jon): this (and its accompanying subclasses) are a productivity rabbit
 # hole!
