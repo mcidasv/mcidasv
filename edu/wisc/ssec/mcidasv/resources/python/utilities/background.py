@@ -466,8 +466,8 @@ class _Layer(_JavaProxy):
         newct = ctm.getColorTable(ctName)
         return self._JavaProxy__javaObject.setColorTable(newct)
 
-    def setEnhancementRange(self, min_range, max_range):
-        """ Change the range of the enhancement table
+    def setDataRange(self, min_range, max_range):
+        """ Change the range of the displayed data (and enhancement table)
 
         Args:
             min_range
