@@ -62,6 +62,9 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.JTextComponent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
 
@@ -70,7 +73,7 @@ import ucar.unidata.util.Misc;
  * This class provides  an abstract interactive shell
  *
  * @author IDV development team
- * @version $Revision$Date: 2011/03/24 18:16:38 $
+ * @version $Revision$Date: 2012/02/19 17:35:55 $
  */
 public class InteractiveShell implements HyperlinkListener {
 
@@ -134,8 +137,19 @@ public class InteractiveShell implements HyperlinkListener {
 
     public void close() {
         frame.dispose();
+        contents = null;
+        title = null;
+        history.clear();
+        sb = null;
+        editorPane = null;
+        cardLayoutPanel = null;
+        flipBtn = null;
+        commandArea = null;
+        commandFld = null;
+        frame = null;
+        logger.trace("closed {}", this);
     }
-
+    private static final Logger logger = LoggerFactory.getLogger(InteractiveShell.class);
     public void show() {
         frame.setVisible(true);
     }

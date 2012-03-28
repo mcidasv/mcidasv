@@ -85,7 +85,7 @@ import ucar.unidata.util.GuiUtils;
  * This class provides  an interactive shell for running JYthon
  *
  * @author IDV development team
- * @version $Revision$Date: 2011/12/09 18:00:23 $
+ * @version $Revision$Date: 2012/02/19 17:35:55 $
  */
 public class JythonShell extends InteractiveShell {
 
@@ -169,7 +169,7 @@ public class JythonShell extends InteractiveShell {
      *
      * @return interp
      */
-    private PythonInterpreter getInterpreter() {
+    public PythonInterpreter getInterpreter() {
         if (interp == null) {
             createInterpreter();
         }

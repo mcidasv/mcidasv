@@ -48,12 +48,15 @@ import ucar.unidata.data.DataSource;
 import ucar.unidata.data.DescriptorDataSource;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ui.ImageGenerator;
+import ucar.unidata.idv.ui.JythonShell;
 
 public class JythonManager extends ucar.unidata.idv.JythonManager {
 
     /** Trusty logging object. */
     private static final Logger logger = LoggerFactory.getLogger(JythonManager.class);
 
+    private JythonShell jythonShell;
+    
     /**
      * Create the manager and call initPython.
      *
@@ -61,6 +64,35 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
      */
     public JythonManager(IntegratedDataViewer idv) {
         super(idv);
+    }
+
+    /**
+     * Create a Jython shell, if one doesn't already exist. This will also 
+     * bring the window {@literal "to the front"} of the rest of the McIDAS-V
+     * session.
+     *
+     * @return JythonShell object for interactive Jython usage.
+     */
+    public JythonShell createShell() {
+        if (jythonShell == null) {
+            jythonShell = new JythonShell(getIdv());
+            
+        }
+        jythonShell.toFront();
+        return jythonShell;
+    }
+
+    @Override public PythonInterpreter createInterpreter() {
+        PythonInterpreter interpreter = super.createInterpreter();
+        return interpreter;
+    }
+
+    @Override public void removeInterpreter(PythonInterpreter interpreter) {
+        super.removeInterpreter(interpreter);
+        if (jythonShell != null && jythonShell.getInterpreter().equals(interpreter)) {
+            jythonShell.close();
+            jythonShell = null;
+        }
     }
 
     /**
