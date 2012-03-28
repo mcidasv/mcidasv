@@ -489,6 +489,55 @@ class _Layer(_JavaProxy):
         
         self._JavaProxy__javaObject.setColorScaleVisible(status)
 
+    def setColorScalePlacement(self, pos):
+        """Set the placement of the color scale on the map.
+
+        Args:
+            pos: string that can be either "Left", "Top", "Bottom", or "Right"
+
+        Raises:
+            ValueError:  if pos is not one of the four valid choices
+        """
+        if (pos == 'Left') or (pos == 'Top') or (pos == 'Bottom') or (pos == 'Right'):
+            info = self._JavaProxy__javaObject.getColorScaleInfo()
+            info.setPlacement(pos)
+            # this will call the (protected) applyColorScaleInfo(),
+            # which is necessary to update the display:
+            self._JavaProxy__javaObject.setColorScaleInfo(info)
+        else:
+            raise ValueError(pos, 'is not valid. The only valid strings are:    '+
+                                   'Top  |  Bottom  |  Left  |  Right')
+
+    def setColorScaleFont(self, fontName=None, style=None, size=None):
+        """For the color scale, change the font, font style, and/or font size
+
+        Args:
+            fontName (optional): string containing font name
+            style (optional): string containing either PLAIN (default), BOLD, or ITALIC
+            size (optional):  font size (default 16.0)
+
+        Returns: nothing
+        """
+
+        info = self._JavaProxy__javaObject.getColorScaleInfo()
+        
+        # if name is None, Font constructor will just use default font choice
+        if style == "BOLD":
+            style = java.awt.Font.BOLD
+        elif style == "ITALIC":
+            style = java.awt.Font.ITALIC
+        else:
+            style = java.awt.Font.PLAIN
+        if size == None:
+            size = 16.0
+
+        #TODO(mike):  what if user has already set non-default font?
+        #TODO(mike): check whether font name is valid...
+
+        newFont = java.awt.Font(fontName, style, size)
+        info.setLabelFont(newFont)
+        self._JavaProxy__javaObject.setColorScaleInfo(info)
+
     def setLayerVisible(self, status):
         """Set visibility of this layer
 
