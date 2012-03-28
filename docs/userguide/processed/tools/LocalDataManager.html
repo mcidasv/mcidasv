@@ -41,7 +41,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
 </ul>
 <a name="image1" id="image1"></a><div class="pagesubtitle">Viewing the Existing Local Datasets</div>
 <p></p>
-<div class="images"><img src="images/addemanager/Local.gif" alt="Image 1: Local ADDE Data Manager"><br>
+<div class="images"><img src="images/addemanager/Local.gif" width="730" height="460" alt="Image 1: Local ADDE Data Manager"><br>
 <span class="caption">Image 1: Local ADDE Data Manager </span></div>
 <p></p>
 <p> The Local ADDE Data Manager lets
@@ -53,14 +53,21 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
   <li class="propertylistitem"><strong>Format</strong> - Represents the format of the image files. The following formats are supported in McIDAS-V:
       <ul>
         <!--<li>AIRS Level 1b</li>-->
-        <li>AMSR-E Level 1b</li>
+        <li>AMSR-E L 1b</li>
         <li>AMSR-E Rain Product</li>
         <li>GINI</li>
         <!--<li>AWIPS NetCDF  </li>-->
-        <li>LRIT</li>
+        <li>LRIT GOES-9</li>
+        <li>LRIT GOES-10</li>
+        <li>LRIT GOES-11</li>
+        <li>LRIT GOES-12</li>
+        <li>LRIT MET-5</li>
+        <li>LRIT MET-7</li>
+        <li>LRIT MTSAT-1R</li>
         <li>McIDAS AREA</li>
+        <li>McIDAS MD</li>
         <li>Meteosat OpenMTP</li>
-        <li>Metop AVHRR Level 1b</li>
+        <li>Metop AVHRR L 1b</li>
         <li>MODIS L1b MOD02 (MODIS Level 1b)</li>
         <li>MODIS L2 MOD04 (MODIS Level 2 Aerosol)</li>
         <li>MODIS L2 MOD06 (MODIS Level 2 Cloud Top Properties)</li>
@@ -71,51 +78,58 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
         </ul>
         <li>MODIS L2 MOD35 (MODIS Level 2 Cloud Mask)</li>
         <li>MODIS L3 MODR (MODIS Level 2 Corrected Reflectance)</li>
-        <li>MSG HRIT</li>
+        <li>MSG HRIT FD and HRV</li>
         <ul>
         <li><a name="msg" id="msg"></a>Note:  McIDAS-V reads the uncompressed segmented MSG Level 1.5 files transmitted by EUMETSAT.  The prologue files (*PRO*) must be in the same directory as the segmented data files or the images will not display.  </li>
         </ul>
         <li>MTSAT HRIT</li>
         <!--      <li>NEXRAD Level 3 Radar </li>-->
-        <li>NOAA AVHRR Level 1b</li>
+        <li>NOAA AVHRR L 1b</li>
         <li>SSMI (TeraScan netCDF)</li>
         <li>TRMM (TeraScan netCDF)</li>
       </ul>
   </li>
   <li class="propertylistitem"><strong>Directory</strong><strong></strong> - Represents the location of the local files using the pop up navigation box. <strong>At this time, only a directory can be selected. An option to add files by file mask will be added in the future.</strong></li>
 </ul>
-<p>The status line in the lower left corner gives information about the operating status of the local image server. If the server has stopped or is not running as expected, the status line will say &quot;Local server is not running&quot;. In this case, click the  <img src="images/addemanager/RestartMeButton.gif" alt="Restart Me button" align="absmiddle"> button to restart the server.</p>
+<p>The status line in the lower left corner gives information about the operating status of the local image server. If the server has stopped or is not running as expected, the status line will say &quot;Local server is not running&quot;. In this case, go to the <strong>Local Servers</strong> menu and select Start Local Servers.</p>
 <p><a name="add_new_entry" id="add_new_entry"></a> </p>
 <div class="pagesubtitle">Adding a New Local Dataset</div>
-<p>To add  a new local dataset entry, select <strong>File-&gt;New Local Dataset</strong> from the ADDE Data Manager menu. </p>
+<p>To add  a new local dataset entry, select <strong>File-&gt;New Local Dataset</strong> from the ADDE Data Manager menu.</p>
 <a name="image2" id="image2"></a>
 <div class="images"><img src="images/addemanager/AddLocal.gif" alt="Image 2: Add Local Dataset Window"><br> 
 <span class="caption">Image 2: Add Local Dataset Window </span></div>
-<p></p>
 <p>The Add Local Dataset window lets you add access to local image datasets so they are available through the <a href="../data/choosers/ImageChooser.html">Satellite Imagery chooser</a>. The fields and buttons are defined below.</p>
 <ul class="propertylist">
-    <li class="propertylistitem"><strong>Dataset</strong> - Represents the dataset name for the local server entry. The dataset name is limited to eight characters or less and cannot be entirely numeric.</li>
+    <li class="propertylistitem"><strong>Dataset</strong> - Represents the dataset name for the local server entry. The dataset name is limited to eight characters or less.</li>
   <li class="propertylistitem"><strong>Image Type</strong> - Represents the image type name for the new local server entry. This will appear under the <strong>Image Type</strong> pull down menu in the Satellite Imagery chooser. The image type name is limited to twelve characters or less.</li>
   <li class="propertylistitem"><strong>Format</strong> - Represents format of the image files. See the above list for <a href="#local_data_manager_columns">data formats that are supported as local datasets</a> in McIDAS-V.</li>
-  <li class="propertylistitem"><img src="images/addemanager/AddDatasetButton.gif" alt="Add Dataset button" width="112" height="25" align=absmiddle> <strong> -</strong> Adds the new entry to the Local ADDE Data Manager containing the information specified in this window.</li>
-  <li class="propertylistitem"><img src="images/addemanager/Cancel.gif" alt="Cancel button" width="80" height="30" align=absmiddle> <strong> -</strong> Closes the window and discards any information that was entered.</li>
-</ul>
-<a name="edit_entry" id="edit_entry"></a><div class="pagesubtitle">Editing an Existing Local Dataset</div>
-<p> To edit an existing entry, double click on the entry to bring up  the Edit Local Dataset window. Make the needed changes and click <strong>Save Changes</strong> (or click <strong>Cancel</strong> to discard any changes and close the window).
-<a name="menus" id="menus"></a></p>
-<div class="pagesubtitle">Menus</div>
+  <li class="propertylistitem"><strong>Directory -</strong> Represents the location of your files.</li>
+  <li class="propertylistitem"><img src="images/addemanager/AddDatasetButton.gif" width="195" height="26" alt="Add Dataset button"align="absmiddle"><strong> -</strong> Adds the new entry to the Local ADDE Data Manager containing the information specified in this window.</li>
+  <li class="propertylistitem"><img src="images/addemanager/Cancel.gif" width="73" height="26" alt="Cancel button"align="absmiddle"><strong> -</strong> Closes the window and discards any information that was entered.</li>
+</ul><div class="pagesubtitle"><a name="edit_entry" id="edit_entry"></a>Editing an Existing Local Dataset</div>
+<p> To edit an existing entry, double click on the entry to bring up  the Edit Local Dataset window. Make the needed changes and click <strong>Save Changes</strong> (or click <strong>Cancel</strong> to discard any changes and close the window).</p>
+<div class="images"><img src="images/addemanager/EditLocalDataset.gif" width="574" height="189" alt="Image 3: Edit Local Dataset Window"><span class="caption">Image 3:Edit Local Dataset Window</span></div>
+<div class="pagesubtitle"><a name="menus" id="menus"></a>Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="../controls/LayerControls.html#menus">Menus section</a> of the Layer Controls Page. However, there
 are several menu options that are unique to this tool.</p>
 <p>The <strong>File </strong>menu has these unique options:</p>
 <ul class="propertylist">
   <li class="propertylistitem"><b>New Remote Dataset -</b> Opens a <a href="RemoteDataManager.html#image1">Define New Remote Dataset</a> window that prompts for information about the dataset.</li>
   <li class="propertylistitem"><strong>New Local Dataset - </strong>Opens an <a href="#image2">Add Local Dataset</a> window that prompts for information about the dataset.</li>
+  <li class="propertylistitem"><strong>Import MCTABLE... -</strong></li>
+  <li class="propertylistitem"><strong>Import from URL... -</strong></li>
+  <li class="propertylistitem"><strong>Export -</strong></li>
   <li class="propertylistitem"><strong>Close - </strong>Closes the ADDE Data Manager window.</li>
 </ul>
 <p>The <strong>Edit</strong> menu has these unique options:</p>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Edit Entry...  - </strong>Opens the <a href="#image2">Edit Local Dataset</a> window, where you can edit the information about your local dataset. This window is the same as the Add Local Dataset window.</li>
   <li class="propertylistitem"><strong>Remove Selection - </strong>Removes the selected dataset from the list of local datasets.</li>
+</ul>
+<p>The <strong>Local Servers</strong> menu has these unique options:</p>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Start Local Servers</strong></li>
+<li class="propertylistitem"><strong>Stop Local Servers</strong></li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">

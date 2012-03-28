@@ -59,7 +59,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/RemoteDataM
   <li class="propertylistitem"><a href="#import_mctable" class="XRef"> <img src="images/addemanager/ImportMCTABLEbutton.gif" alt="Import MCTABLE button" width="152" height="31" align=absmiddle></a></li>
 </ul>
 <a name="add_new_dataset" id="add_new_dataset"></a> <div class="pagesubtitle">Adding a New Remote Dataset</div>
-<p>The window below appears if you click the <strong>Add New Dataset</strong> button or select the <strong>File-&gt;New Remote Dataset</strong> menu in the Remote ADDE Data Manager window. </p>
+<p>The window below appears if you click the <strong>Add New Dataset</strong> button or select the <strong>File-&gt;New Remote Dataset</strong> menu in the Define New Remote Dataset window. </p>
 <a name="image1" id="image1"></a>
 <div class="images"><img src="images/addemanager/AddRemote.gif" width="545" height="412" alt="Image 2: Define New remote Dataset Window"><br> 
 <span class="caption">Image 2: Define  New Remote Dataset Window </span></div>
@@ -72,13 +72,15 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/RemoteDataM
   <li class="propertylistitem"><strong>Username </strong>and<strong> Project #</strong> - Represents the username and project number required to be granted access to a dataset on a server that uses ADDE accounting to limit access to specific users. The valid usernames and project numbers for each server are assigned and maintained by the server administrator.</li>
   <li class="propertylistitem"><strong>Dataset Types</strong> - Represents each of the types of data in the dataset. To find which types are available, click the <strong>Verify Server</strong> button and it will check the box of each available type.</li>
   <li class="propertylistitem"><strong>Status</strong> - Indicates the status and provides instructions.</li>
-  <li class="propertylistitem"><img src="images/addemanager/VerifyAndAdd.gif" alt="Verify and Add Server button" width="172" height="31" align=absmiddle> <strong> -</strong> Completes the procedure listed in the Verify Server section below. Then, if everything is passes the verification tests. Then, if everything passes the verification tests, adds a new entry to the Remote ADDE Data Manager containing the information specified in this window.</li>
-  <li class="propertylistitem"><img src="images/addemanager/Verify.gif" alt="Verify Server button" width="118" height="30" align=absmiddle> <strong> -</strong> Completes the procedure listed in the Verify Server section below. Then, if everything is passes the verification tests, it adds a new entry to the Remote ADDE Data Manager containing the information specified in this window.</li>
-  <li class="propertylistitem"><img src="images/addemanager/AddServer.gif" alt="Add Server button" width="105" height="30" align=absmiddle> <strong> -</strong> Adds a new entry to the Remote ADDE Data Manager containing the information specified in this window. This option does not do any verification testing, so it's possible to add an incorrect dataset name, username, project number,etc.</li>
-  <li class="propertylistitem"><img src="images/addemanager/Cancel.gif" alt="Cancel button" width="80" height="30" align=absmiddle> <strong> -</strong> Closes the window and discards any information that was entered.</li>
+  <li class="propertylistitem"><img src="images/addemanager/VerifyAndAdd.gif" width="157" height="26" alt="Verify and Add Server button"align="absmiddle">
+ -</strong> Completes the procedure listed in the Verify Server section below. Then, if everything is passes the verification tests. Then, if everything passes the verification tests, adds a new entry to the Remote ADDE Data Manager containing the information specified in this window.</li>
+  <li class="propertylistitem"><img src="images/addemanager/Verify.gif" alt="Verify Server button" width="108" height="26"align="absmiddle"><strong> -</strong> Completes the procedure listed in the Verify Server section below. Then, if everything is passes the verification tests, it adds a new entry to the Remote ADDE Data Manager containing the information specified in this window.</li>
+  <li class="propertylistitem"><img src="images/addemanager/AddServer.gif" width="97" height="26" alt="Add Server button"align="absmiddle"><strong> -</strong> Adds a new entry to the Remote ADDE Data Manager containing the information specified in this window. This option does not do any verification testing, so it's possible to add an incorrect dataset name, username, project number,etc.</li>
+  <li class="propertylistitem"><img src="images/addemanager/Cancel.gif" width="73" height="26" alt="Cancel button"align="absmiddle"> -</strong> Closes the window and discards any information that was entered.</li>
 </ul>
 <a name="edit_dataset" id="edit_dataset"></a> <div class="pagesubtitle">Editing an Existing Remote Dataset</div>
 <p> If you highlight an editable entry in the ADDE Data Manager window and then click the <strong>Edit Dataset</strong> button, the window and fields are the same as above, except that the window title is <strong>Edit Remote Dataset</strong> and the bottom buttons say Verify and Save Changes, Verify Changes, and Save Changes (rather than Verify and Add Server, Verify Server, and Add Server).</p>
+<div class="images"><img src="images/addemanager/EditRemoteDataset.gif" width="545" height="412" alt="Image 3: Edit Remote Dataset window"><span class="caption">Image 3: Edit Remote Dataset Window</span></div>
 <a name="remove_selection" id="remove_selection"></a>
 <div class="pagesubtitle">Removing an Existing Remote Dataset</div>
 <p>If you highlight an editable entry in the ADDE Data Manager window and then click the <strong>Remove Selection</strong> button, it immediately removes the entry from the table. There is no recovery option, so if you accidentally remove an entry you need, you will have to remake the entry using the <strong>Add New Dataset </strong>button.</p>
@@ -86,8 +88,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/RemoteDataM
 <div class="pagesubtitle">Importing MCTABLE...</div>
 <p>The window below appears if you click the <strong>IMPORT MCTABLE...</strong> button in the Remote ADDE Data Manager window. </p>
 <a name="image1" id="image1"></a>
-<div class="images"><img src="images/addemanager/ImportMCTABLE.gif" alt="Image 3: Import MCTABLE Window" width="612" height="362"><br> 
-    <span class="caption">Image 3: Import MCTABLE Window </span></div>
+<div class="images"><img src="images/addemanager/ImportMCTABLE.gif" width="599" height="364" alt="Image 4: Import MCTABLE Window"><br> 
+    <span class="caption">Image 4: Import MCTABLE Window </span></div>
 <p>The Import MCTABLE window lets you import a MCTABLE.TXT file that contains a preexisting set of entries for the Remote ADDE Data Manager. For example, McIDAS-X users may have added access to many servers via the DATALOC command. Those entries are stored in the MCTABLE.TXT file, which can be imported to McIDAS-V.</p>
 <p>The fields and buttons are defined below.</p>
 <ul class="propertylist">
@@ -100,22 +102,30 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/RemoteDataM
   <li class="propertylistitem"><strong>Use ADDE Accounting?</strong> - Enables the you to enter a username and project number if the servers in the MCTABLE.TXT file you are importing use ADDE accounting to require users to do so. If you use different usernames and/or project numbers on some servers, you can edit them (via the <strong>Edit Dataset</strong> button in the Remote ADDE Data Manager window) after you import the file. </li>
   <li class="propertylistitem"><strong>File Name</strong> - Selects a file to populate the entry box to show the full name of the file selected.</li>
   <li class="propertylistitem"><strong>Files of Type</strong> - Narrows down the files shown in a folder to a specific data type.</li>
-  <li class="propertylistitem"><img src="images/addemanager/Open.gif" alt="Open button" width="77" height="27" align=absmiddle> <strong> -</strong> Imports the selected file so that its entries are added to the<strong> Remote ADDE Data Manager</strong>.</li>
-  <li class="propertylistitem"><img src="images/addemanager/Cancel.gif" alt="Cancel button" width="80" height="30" align=absmiddle> <strong> -</strong> Closes the window and discards any information that was entered.</li>
+  <li class="propertylistitem"><img src="images/addemanager/Open.gif" width="73" height="26" alt="Open button"align="absmiddle"><strong> -</strong> Imports the selected file so that its entries are added to the<strong> Remote ADDE Data Manager</strong>.</li>
+  <li class="propertylistitem"><img src="images/addemanager/Cancel.gif" width="73" height="26" alt="Cancel button"align="absmiddle"><strong> -</strong> Closes the window and discards any information that was entered.</li>
 </ul>
 <a name="menus" id="menus"></a><div class="pagesubtitle">Menus</div>
-<p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="../controls/LayerControls.html#menus">Menus section</a> of the Layer Controls Page. However, there
+<p>A couple of the menu items seen utilizing this display are standard options that can be found in the <a href="../controls/LayerControls.html#menus">Menus section</a> of the Layer Controls Page. However, there
 are several menu options that are unique to this tool.</p>
 <p>The <strong>File </strong>menu has these unique options:</p>
 <ul class="propertylist">
   <li class="propertylistitem"><b>New Remote Dataset -</b> Opens a <a href="#image1">Define New Remote Dataset</a> window that prompts for information about the dataset.</li>
   <li class="propertylistitem"><strong>New Local Dataset - </strong>Opens an <a href="LocalDataManager.html#add_new_entry">Add Local Dataset</a> window that prompts for information about the dataset.</li>
+  <li class="propertylistitem"><strong>Import MCTABLE... -</strong></li>
+  <li class="propertylistitem"><strong>Import from URL... -</strong></li>
+  <li class="propertylistitem"><strong>Export -</strong></li>
   <li class="propertylistitem"><strong>Close - </strong>Closes the ADDE Data Manager window.</li>
 </ul>
 <p>The <strong>Edit</strong> menu has these unique options:</p>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Edit Entry...  - </strong>Opens the <a href="#image1">Edit Remote Dataset window</a>, where you can edit the information about your local dataset. This window is the same as the Add Local Dataset window.</li>
   <li class="propertylistitem"><strong>Remove Selection - </strong>Removes the selected dataset from the list of local datasets.</li>
+</ul>
+<p>The <strong>Local Servers</strong> menu has these unique options:</p>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Start Local Servers -</strong></li>
+<li class="propertylistitem"><strong>Stop Local Servers -</strong></li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
