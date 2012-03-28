@@ -28,6 +28,9 @@ _mcv_python = _mcv_jar+'/edu/wisc/ssec/mcidasv/resources/python'
 _idv_python = _idv_jar+'/ucar/unidata/idv/resources/python'
 _visad_python = _visad_jar+'/visad/python'
 
+sys.path.append(_visad_jar)
+sys.path.append(_idv_jar)
+sys.path.append(_mcv_jar)
 sys.path.append(_visad_python)
 sys.path.append(_idv_python)
 sys.path.append(_mcv_python)
