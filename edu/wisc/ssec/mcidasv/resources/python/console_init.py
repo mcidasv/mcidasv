@@ -59,7 +59,10 @@ from mcvadde import (
     listADDEImages
 )
 
-from interactive import describeActions, dumpObj, ncdump, ncdumpToString, see
+from interactive import (
+    describeActions, dumpObj, ncdump, ncdumpToString, see, _today, _tomorrow, 
+    _yesterday
+)
 
 _user_python = os.path.join(_mcv.getStore().getUserDirectory().toString(), 'python')
 if os.path.exists(_user_python):

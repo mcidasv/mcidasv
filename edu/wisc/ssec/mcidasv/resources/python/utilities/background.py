@@ -860,7 +860,7 @@ FLATMAP = _NoOp('FLATMAP')
 GLOBE = _NoOp('GLOBE')
 TRANSECT = _NoOp('TRANSECT')
 
-def buildWindow(width=0, height=0, rows=1, cols=1, panels=None):
+def buildWindow(width=0, height=0, rows=1, cols=1, panelTypes=None):
     """Creates a window with a user-specified layout of displays.
     
     This function will attempt to create a grid of displays with the dimensions 
@@ -910,32 +910,6 @@ def buildWindow(width=0, height=0, rows=1, cols=1, panels=None):
         for viewManager in holder.getViewManagers():
             panels.append(_Display(viewManager))
     return panels
-
-def buildDisplayWindow(title, width=0, height=0):
-    """Creates a window using the default McIDAS-V display skin.
-    
-    Default skin is currently "/edu/wisc/ssec/mcidasv/resources/skins/window/map/onemapview.xml"; 
-    
-    Args:
-        title: Name to give to the window.
-        
-        width: Sets the window to this width (in pixels). Values less than or 
-               equal to zero are considered default values.
-               
-        height: Sets the window to this height (in pixels). Values less than 
-                or equal to zero are considered default values.
-    
-    Returns:
-        A "wrapped" IdvWindow.
-    """
-    # DEFAULT_SKIN_PATH = '/edu/wisc/ssec/mcidasv/resources/skins/window/map/onemapview.xml'
-    from java.awt import Dimension
-    mcv = getStaticMcv()
-    window = mcv.getIdvUIManager().buildDefaultSkin()
-    window.setTitle(title)
-    if width > 0 and height > 0:
-        window.setSize(width, height)
-    return _Window(window)
 
 def makeLogger(name):
     """ """

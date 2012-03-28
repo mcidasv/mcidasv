@@ -109,7 +109,7 @@ def listADDEImages(server, dataset, descriptor,
     
     if coordinateSystem is CoordinateSystems.LATLON:
         coordSys = 'LATLON'
-    elif coordinateSystem is CoordinateSystems.LINELE or coordinateSystem is CoordinateSystems.IMAGE:
+    elif coordinateSystem is CoordinateSystems.AREA or coordinateSystem is CoordinateSystems.IMAGE:
         coordSys = 'LINELE'
     else:
         raise ValueError()
@@ -117,8 +117,8 @@ def listADDEImages(server, dataset, descriptor,
     if location:
         location = '%s=%s %s' % (coordSys, location[0], location[1])
     
-    if not day:
-        day = datetime.datetime.now().strftime('%Y%j')
+    if day:
+        day = '&DAY=%s' % (day)
     
     if size:
         size = '%s %s' % (size[0], size[1])
@@ -129,7 +129,7 @@ def listADDEImages(server, dataset, descriptor,
     if band is not None:
         band = '&BAND=%s' % (str(band))
     
-    addeUrlFormat = "adde://%s/imagedir?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s&%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X&DAY=%s&TIME=%s&POS=%s"
+    addeUrlFormat = "adde://%s/imagedir?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s&%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s"
     url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, datasetPosition)
     print url
     adl = AreaDirectoryList(url)
@@ -164,7 +164,7 @@ def getADDEImage(server, dataset, descriptor,
     
     if coordinateSystem is CoordinateSystems.LATLON:
         coordSys = 'LATLON'
-    elif coordinateSystem is CoordinateSystems.LINELE or coordinateSystem is CoordinateSystems.IMAGE:
+    elif coordinateSystem is CoordinateSystems.AREA or coordinateSystem is CoordinateSystems.IMAGE:
         coordSys = 'LINELE'
     else:
         raise ValueError()
@@ -172,8 +172,8 @@ def getADDEImage(server, dataset, descriptor,
     if location:
         location = '&%s=%s %s' % (coordSys, location[0], location[1])
     
-    if not day:
-        day = datetime.datetime.now().strftime('%Y%j')
+    if day:
+        day = '&DAY=%s' % (day)
     
     if size:
         size = '%s %s' % (size[0], size[1])
@@ -184,7 +184,7 @@ def getADDEImage(server, dataset, descriptor,
     if band is not None:
         band = '&BAND=%s' % (str(band))
     
-    addeUrlFormat = "adde://%s/imagedata?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X&DAY=%s&TIME=%s&POS=%s"
+    addeUrlFormat = "adde://%s/imagedata?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s"
     url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, datasetPosition)
     retvals = (-1, -1)
     try:
