@@ -32,25 +32,23 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
 <div class="pagetitle">
   <div class="pagetitle">Local ADDE Data Manager</div>
 </div>
-<p>The Local and Remote ADDE Data Managers are available in the Main Display window through the <strong>Tools-&gt;Manage ADDE Datasets</strong> menu. Select the <strong>Local Data</strong> tab to manage access to image data on your workstation, or the <strong>Remote Data</strong> tab to manage access to data on other workstations. Continue below for more information about the Local ADDE Data Manager, or go to the <a href="RemoteDataManager.html">Remote ADDE Data Manager</a> page for more information. </p>
+<p>The Local and Remote ADDE Data Managers are accessible in the Main Display window through the <strong>Tools-&gt;Manage ADDE Datasets</strong> menu item. Select the <strong>Local Data</strong> tab to manage access to image data on your workstation, or the <strong>Remote Data</strong> tab to manage access to data on other workstations. Continue below for more information about the Local ADDE Data Manager, or go to the <a href="RemoteDataManager.html">Remote ADDE Data Manager</a> page for more information. </p>
 <ul>
 <li><a href="#image1">Viewing the Existing Local Datasets</a></li>
 <li><a href="#add_new_entry">Adding a New Local Dataset </a></li>
 <li><a href="#edit_entry">Editing an Existing Local Dataset</a></li>
 <li><a href="#menus">Menus</a></li>
 </ul>
-<a name="image1" id="image1"></a><div class="pagesubtitle">Viewing the Existing Local Datasets</div>
-<p></p>
+<div class="pagesubtitle"><a name="image1" id="image1"></a>Viewing the Existing Local Datasets</div>
 <div class="images"><img src="images/addemanager/Local.gif" width="730" height="460" alt="Image 1: Local ADDE Data Manager"><br>
 <span class="caption">Image 1: Local ADDE Data Manager </span></div>
-<p></p>
 <p> The Local ADDE Data Manager lets
-  you add, delete or edit access to local image datasets that are available through the <a href="../data/choosers/ImageChooser.html">Satellite Imagery chooser</a> when you select &lt;LOCAL-DATA&gt; in the <strong>Server</strong> field. Other types of data (e.g., grib or point) in local files can be accessed directly through other choosers (e.g., the <a href="../data/choosers/FileChooser.html">General Files chooser</a>).</p>
-<p><a name="local_data_manager_columns" id="local_data_manager_columns"></a>The columns in the table are defined below. </p>
+  you add, delete or edit  local image datasets that are available through the <a href="../data/choosers/ImageChooser.html">Satellite-&gt;Imagery chooser</a> when you select &lt;LOCAL-DATA&gt; in the <strong>Server</strong> field. Other types of data (e.g., grib or point) in local files can be accessed directly through other choosers (e.g., the <a href="../data/choosers/FileChooser.html">General Files chooser</a>).</p>
+<p><a name="local_data_manager_columns" id="local_data_manager_columns"></a>The columns in the table and buttons are defined below. </p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Dataset</strong> - Represents the dataset name for the local server entry. The dataset name is limited to eight characters or less and cannot be entirely numeric.</li>
-  <li class="propertylistitem"><strong>Image Type</strong> - Represents the image type name for the new local server entry. This will appear under the <strong>Image Type</strong> pull down menu in the Satellite Imagery chooser. The image type name is limited to twelve characters or less.</li>
-  <li class="propertylistitem"><strong>Format</strong> - Represents the format of the image files. The following formats are supported in McIDAS-V:
+  <li class="propertylistitem"><strong>Dataset</strong> - Sets the dataset name for the local server entry. The dataset name is limited to eight characters or less.</li>
+  <li class="propertylistitem"><strong>Image Type</strong> - Sets the image type name for the new local server entry. This will appear under the <strong>Image Type</strong> pull down menu in the Satellite Imagery chooser.</li>
+  <li class="propertylistitem"><strong>Format</strong> - Sets the format of the image files. The following formats are supported in McIDAS-V:
       <ul>
         <!--<li>AIRS Level 1b</li>-->
         <li>AMSR-E L 1b</li>
@@ -72,7 +70,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
         <li>MODIS L2 MOD04 (MODIS Level 2 Aerosol)</li>
         <li>MODIS L2 MOD06 (MODIS Level 2 Cloud Top Properties)</li>
         <li>MODIS L2 MOD07 (MODIS Level 2 Atmospheric Profile)</li>
-        <li>MODIS L2 MOD28 (MODIS Level 2 Sea Surface Temperature) 
+        <li>MODIS L2 MOD28 (MODIS Level 2 Sea Surface Temperature)</li>
         <ul>
         <li>Note: When loading this data, you must use line/element for the Location, and use the raw size of the image, or a magnification with the lock icon unlocked)</li>
         </ul>
@@ -90,15 +88,17 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
       </ul>
   </li>
   <li class="propertylistitem"><strong>Directory</strong><strong></strong> - Represents the location of the local files using the pop up navigation box. <strong>At this time, only a directory can be selected. An option to add files by file mask will be added in the future.</strong></li>
+  <li class="propertylistitem"><img src="images/addemanager/AddNewDatasetButton.gif" width="131" height="26" alt="Add New Dataset button" align="absmiddle"><strong> -</strong> Opens the <a href="#add_new_entry">Add Local Dataset window</a>, allowing you to create a new local dataset.</li>
+  <li class="propertylistitem"><img src="images/addemanager/EditDatasetButton.gif" width="102" height="26" alt="Edit Dataset button" align="absmiddle"><strong> -</strong> Opens the <a href="#edit_entry">Edit Local Dataset window</a>, allowing you to edit the dataset that is currently selected in the <strong>Local Data</strong> tab.</li>
+  <li class="propertylistitem"><img src="images/addemanager/RemoveSelectionButton.gif" width="136" height="26" align="absmiddle"><strong> -</strong> Removes the currently selected local dataset.</li>
 </ul>
 <p>The status line in the lower left corner gives information about the operating status of the local image server. If the server has stopped or is not running as expected, the status line will say &quot;Local server is not running&quot;. In this case, go to the <strong>Local Servers</strong> menu and select Start Local Servers.</p>
-<p><a name="add_new_entry" id="add_new_entry"></a> </p>
-<div class="pagesubtitle">Adding a New Local Dataset</div>
-<p>To add  a new local dataset entry, select <strong>File-&gt;New Local Dataset</strong> from the ADDE Data Manager menu.</p>
+<div class="pagesubtitle"><a name="add_new_entry" id="add_new_entry"></a>Adding a New Local Dataset</div>
+<p>To add  a new local dataset entry, select <strong>File-&gt;New Local Dataset</strong> from the ADDE Data Manager menu, or click <img src="images/addemanager/AddNewDatasetButton.gif" width="131" height="26" alt="Add New Dataset button" align="absmiddle">.</p>
 <a name="image2" id="image2"></a>
 <div class="images"><img src="images/addemanager/AddLocal.gif" alt="Image 2: Add Local Dataset Window"><br> 
 <span class="caption">Image 2: Add Local Dataset Window </span></div>
-<p>The Add Local Dataset window lets you add access to local image datasets so they are available through the <a href="../data/choosers/ImageChooser.html">Satellite Imagery chooser</a>. The fields and buttons are defined below.</p>
+<p>The Add Local Dataset window lets you add access to local image datasets so they are available through the <a href="../data/choosers/ImageChooser.html">Satellite-&gt;Imagery chooser</a>. The fields and buttons are defined below.</p>
 <ul class="propertylist">
     <li class="propertylistitem"><strong>Dataset</strong> - Represents the dataset name for the local server entry. The dataset name is limited to eight characters or less.</li>
   <li class="propertylistitem"><strong>Image Type</strong> - Represents the image type name for the new local server entry. This will appear under the <strong>Image Type</strong> pull down menu in the Satellite Imagery chooser. The image type name is limited to twelve characters or less.</li>
@@ -107,7 +107,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
   <li class="propertylistitem"><img src="images/addemanager/AddDatasetButton.gif" width="195" height="26" alt="Add Dataset button"align="absmiddle"><strong> -</strong> Adds the new entry to the Local ADDE Data Manager containing the information specified in this window.</li>
   <li class="propertylistitem"><img src="images/addemanager/Cancel.gif" width="73" height="26" alt="Cancel button"align="absmiddle"><strong> -</strong> Closes the window and discards any information that was entered.</li>
 </ul><div class="pagesubtitle"><a name="edit_entry" id="edit_entry"></a>Editing an Existing Local Dataset</div>
-<p> To edit an existing entry, double click on the entry to bring up  the Edit Local Dataset window. Make the needed changes and click <strong>Save Changes</strong> (or click <strong>Cancel</strong> to discard any changes and close the window).</p>
+<p> To edit an existing entry, double click on the entry, select <strong>Edit-&gt;Edit Entry...</strong>, or click <img src="images/addemanager/EditDatasetButton.gif" width="102" height="26" alt="Edit Dataset button" align="absmiddle"> to bring up  the Edit Local Dataset window. Make the needed changes and click <img src="images/addemanager/SaveChangesButton.gif" width="201" height="26" alt="Save Changes button" align="absmiddle"> (or click <img src="images/addemanager/Cancel.gif" width="73" height="26" alt="Cancel button" align="absmiddle"> to discard any changes and close the window).</p>
 <div class="images"><img src="images/addemanager/EditLocalDataset.gif" width="574" height="189" alt="Image 3: Edit Local Dataset Window"><span class="caption">Image 3:Edit Local Dataset Window</span></div>
 <div class="pagesubtitle"><a name="menus" id="menus"></a>Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="../controls/LayerControls.html#menus">Menus section</a> of the Layer Controls Page. However, there
@@ -116,20 +116,20 @@ are several menu options that are unique to this tool.</p>
 <ul class="propertylist">
   <li class="propertylistitem"><b>New Remote Dataset -</b> Opens a <a href="RemoteDataManager.html#image1">Define New Remote Dataset</a> window that prompts for information about the dataset.</li>
   <li class="propertylistitem"><strong>New Local Dataset - </strong>Opens an <a href="#image2">Add Local Dataset</a> window that prompts for information about the dataset.</li>
-  <li class="propertylistitem"><strong>Import MCTABLE... -</strong></li>
+  <li class="propertylistitem"><strong>Import MCTABLE... -</strong> Opens an Open window that allows you to import MCTABLE ADDE entries into the ADDE Data Manager.</li>
   <li class="propertylistitem"><strong>Import from URL... -</strong></li>
   <li class="propertylistitem"><strong>Export -</strong></li>
   <li class="propertylistitem"><strong>Close - </strong>Closes the ADDE Data Manager window.</li>
 </ul>
 <p>The <strong>Edit</strong> menu has these unique options:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Edit Entry...  - </strong>Opens the <a href="#image2">Edit Local Dataset</a> window, where you can edit the information about your local dataset. This window is the same as the Add Local Dataset window.</li>
+  <li class="propertylistitem"><strong>Edit Entry... -</strong> Opens the <a href="#image2">Edit Local Dataset</a> window, where you can edit the information about your local dataset. This window is the same as the Add Local Dataset window.</li>
   <li class="propertylistitem"><strong>Remove Selection - </strong>Removes the selected dataset from the list of local datasets.</li>
 </ul>
 <p>The <strong>Local Servers</strong> menu has these unique options:</p>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>Start Local Servers</strong></li>
-<li class="propertylistitem"><strong>Stop Local Servers</strong></li>
+<li class="propertylistitem"><strong>Start Local Servers -</strong> Starts local servers.</li>
+<li class="propertylistitem"><strong>Stop Local Servers -</strong> Stops local servers from running.</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
