@@ -1,6 +1,3 @@
-
-import datetime
-
 from edu.wisc.ssec.mcidas import AreaDirectory
 from edu.wisc.ssec.mcidas import AreaDirectoryList
 from visad.data.mcidas import AreaAdapter
@@ -81,7 +78,7 @@ params1 = dict(
     band=1,
 )
 
-def listADDEImages(server, dataset, descriptor, 
+def listADDEImages(server, dataset, descriptor,
     accounting=DEFAULT_ACCOUNTING,
     location=None,
     coordinateSystem=CoordinateSystems.LATLON,
@@ -135,7 +132,7 @@ def listADDEImages(server, dataset, descriptor,
     adl = AreaDirectoryList(url)
     return adl.getSortedDirs()
 
-def getADDEImage(server, dataset, descriptor, 
+def getADDEImage(server, dataset, descriptor,
     accounting=DEFAULT_ACCOUNTING,
     location=None,
     coordinateSystem=CoordinateSystems.LATLON,

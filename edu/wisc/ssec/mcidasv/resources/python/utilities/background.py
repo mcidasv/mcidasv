@@ -454,13 +454,13 @@ class _Layer(_JavaProxy):
     def setEnhancementTable(self, ctName):
         """Change the enhancement table.
 
-        Args: 
+        Args:
             ctName:  the name of the enhancement table. Unlike setProjection,
                      you don't need to specify "parent" table directories
-
+                     
         Returns: nothing
         """
-            
+        
         my_mcv = getStaticMcv()
         ctm = my_mcv.getColorTableManager()
         newct = ctm.getColorTable(ctName)
@@ -898,38 +898,42 @@ def boomstick():
     mcv.removeAllData(False)
     System.gc()
 
+
 class _NoOp(object):
+
     def __init__(self, description='anything'):
         self.description = description
+
     def __repr__(self):
         return self.description
-        
+
 MAP = _NoOp('MAP')
 FLATMAP = _NoOp('FLATMAP')
 GLOBE = _NoOp('GLOBE')
 TRANSECT = _NoOp('TRANSECT')
 
+
 def buildWindow(width=0, height=0, rows=1, cols=1, panelTypes=None):
     """Creates a window with a user-specified layout of displays.
     
-    This function will attempt to create a grid of displays with the dimensions 
-    determined by rows * cols. Simply calling buildWindow() will result in a 
+    This function will attempt to create a grid of displays with the dimensions
+    determined by rows * cols. Simply calling buildWindow() will result in a
     1x1 grid containing a single map.
     
     Args:
-        width: Optional parameter; default value is zero. Sets the window to 
-               this width (in pixels). Values less than or equal to zero are 
-               considered default values. 
+        width: Optional parameter; default value is zero. Sets the window to
+               this width (in pixels). Values less than or equal to zero are
+               considered default values.
         
-        height: Optional parameter; default value is zero. Sets the window to 
-                this height (in pixels). Values less than or equal to zero are 
+        height: Optional parameter; default value is zero. Sets the window to
+                this height (in pixels). Values less than or equal to zero are
                 considered default values.
         
         rows: Optional parameter; default value is one.
         
         cols: Optional parameter; default value is one.
         
-        panelTypes: Optional parameter; default value is None (creates a single 
+        panelTypes: Optional parameter; default value is None (creates a single
                 Map Display).
     
     Returns:
@@ -937,22 +941,22 @@ def buildWindow(width=0, height=0, rows=1, cols=1, panelTypes=None):
     """
     if panelTypes is None:
         panelTypes = [MAP] * (rows * cols)
-    elif isinstance(panels, _NoOp):
+    elif isinstance(panelTypes, _NoOp):
         panelTypes = [panelTypes] * (rows * cols)
     elif type(panelTypes) is types.ListType:
-        if len(panelTypes) != (rows*cols):
+        if len(panelTypes) != (rows * cols):
             raise ValueError('panelTypes needs to contain rows*cols elements')
     
     from edu.wisc.ssec.mcidasv import PersistenceManager
     
-    window = PersistenceManager.buildDynamicSkin(rows, cols, panels)
+    window = PersistenceManager.buildDynamicSkin(rows, cols, panelTypes)
     
     if width > 0 and height > 0:
         window.setSize(width, height)
-        print 'creating window: width=%d height=%d rows=%d cols=%d panels=%s' % (width, height, rows, cols, panels)
+        print 'creating window: width=%d height=%d rows=%d cols=%d panels=%s' % (width, height, rows, cols, panelTypes)
     else:
         bounds = window.getBounds()
-        print 'creating window: width=%d height=%d rows=%d cols=%d panels=%s' % (bounds.width, bounds.height, rows, cols, panels)
+        print 'creating window: width=%d height=%d rows=%d cols=%d panels=%s' % (bounds.width, bounds.height, rows, cols, panelTypes)
     
     panels = []
     for holder in window.getComponentGroups()[0].getDisplayComponents():
@@ -984,7 +988,7 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1):
         ValueError: if bundle doesn't exist
         ValueError: if height is specified but not width, or vice verse
     """
-    from edu.wisc.ssec.mcidasv import McIdasPreferenceManager 
+    from edu.wisc.ssec.mcidasv import McIdasPreferenceManager
     from edu.wisc.ssec.mcidasv import PersistenceManager
 
     my_mcv = getStaticMcv()

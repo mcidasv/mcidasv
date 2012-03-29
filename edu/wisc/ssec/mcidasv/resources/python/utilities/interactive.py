@@ -1,4 +1,4 @@
-# python imports 
+# python imports
 import datetime
 import fnmatch
 import inspect
@@ -71,7 +71,7 @@ def describeActions(pattern=None):
     print sorted([action.getId() for action in actions])
 
 def getLogFile():
-    # TODO(jon): this will likely have to change as the complexity of 
+    # TODO(jon): this will likely have to change as the complexity of
     #            logback.xml increases. :(
     # should return the "default" logging context
     context = LoggerFactory.getILoggerFactory()
@@ -95,7 +95,7 @@ def copyLogFile(destination):
     shutil.copy2(getLogFile(), _expandpath(destination))
 
 def ncdump(path, output_format='cdl', show_values='c', vars=None):
-    """Print contents of a given netCDF file. 
+    """Print contents of a given netCDF file.
     
     Please be aware that this output CANNOT (currently) be used as input for
     ncgen due to netCDF-Java limitations.
@@ -117,9 +117,9 @@ def ncdump(path, output_format='cdl', show_values='c', vars=None):
         print results
 
 def ncdumpToString(path, output_format='cdl', show_values='c', vars=None):
-    """Returns contents of a given netCDF file as a string. 
+    """Returns contents of a given netCDF file as a string.
     
-    Please be aware that the resulting string CANNOT (currently) be used as 
+    Please be aware that the resulting string CANNOT (currently) be used as
     input for ncgen due to netCDF-Java limitations.
     
     Args:
@@ -141,7 +141,7 @@ def ncdumpToString(path, output_format='cdl', show_values='c', vars=None):
     from java.io import StringWriter
     from ucar.nc2 import NCdumpW
 
-    # build up commandline args to send off to netCDF-land (it wants 'em as a 
+    # build up commandline args to send off to netCDF-land (it wants 'em as a
     # string for some reason)
     args = '%s -%s -%s ' % (path, output_format, show_values)
     if vars:
@@ -162,7 +162,7 @@ def dump_active_display():
     """ Returns the currently-active display object."""
     pass
 
-# The dumpObj code has been adapted from 
+# The dumpObj code has been adapted from
 # http://code.activestate.com/recipes/137951/
 def printDict(di, format="%-25s %s"):
     for (key, val) in di.items():
@@ -187,13 +187,13 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
                def bar(self, b):
                    "A silly method"
                    return a*b
-       ... ... ... ... 
+       ... ... ... ...
        >>> foo = Foo()
        >>> dumpObj(foo)
        Instance of class 'Foo' as defined in module __main__ with id 136863308
        Documentation string:   None
        Built-in Methods:       __delattr__, __getattribute__, __hash__, __init__
-                               __new__, __reduce__, __repr__, __setattr__,       
+                               __new__, __reduce__, __repr__, __setattr__,
                                __str__
        Methods:
          bar                   "A silly method"
@@ -225,16 +225,14 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
             objdoc = attr
         elif slot == '__module__':
             objmodule = attr
-        elif (isinstance(attr, types.BuiltinMethodType) or 
-              isinstance(attr, MethodWrapperType)):
-            builtins.append( slot )
-        elif (isinstance(attr, types.MethodType) or
-              isinstance(attr, types.FunctionType)):
-            methods.append( (slot, attr) )
+        elif (isinstance(attr, types.BuiltinMethodType) or isinstance(attr, MethodWrapperType)):
+            builtins.append(slot)
+        elif (isinstance(attr, types.MethodType) or isinstance(attr, types.FunctionType)):
+            methods.append((slot, attr))
         elif isinstance(attr, types.TypeType):
-            classes.append( (slot, attr) )
+            classes.append((slot, attr))
         else:
-            attrs.append( (slot, attr) )
+            attrs.append((slot, attr))
     
     # Organize them
     methods.sort()
@@ -266,19 +264,19 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
     if objdoc is None:
         objdoc = str(objdoc)
     else:
-        objdoc = ('"""' + objdoc.strip()  + '"""')
+        objdoc = ('"""' + objdoc.strip() + '"""')
     print
-    print prettyPrintCols( ('Documentation string:',
+    print prettyPrintCols(('Documentation string:',
                             truncstring(objdoc, maxspew)),
                           normalwidths, ' ')
     
     # Built-in methods
     if builtins:
-        bi_str   = delchars(str(builtins), "[']") or str(None)
+        bi_str = delchars(str(builtins), "[']") or str(None)
         print
-        print prettyPrintCols( ('Built-in Methods:',
-                                truncstring(bi_str, maxspew)),
-                              normalwidths, ', ')
+        print prettyPrintCols(('Built-in Methods:',
+                               truncstring(bi_str, maxspew)),
+                               normalwidths, ', ')
     
     # Classes
     if classes:
@@ -286,7 +284,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
         print 'Classes:'
     for (classname, classtype) in classes:
         classdoc = getattr(classtype, '__doc__', None) or '<No documentation>'
-        print prettyPrintCols( ('',
+        print prettyPrintCols(('',
                                 classname,
                                 truncstring(classdoc, maxspew)),
                               tabbedwidths, ' ')
@@ -297,7 +295,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
         print 'Methods:'
     for (methodname, method) in methods:
         methoddoc = getattr(method, '__doc__', None) or '<No documentation>'
-        print prettyPrintCols( ('',
+        print prettyPrintCols(('',
                                 methodname,
                                 truncstring(methoddoc, maxspew)),
                               tabbedwidths, ' ')
@@ -307,7 +305,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
         print
         print 'Attributes:'
     for (attr, val) in attrs:
-        print prettyPrintCols( ('',
+        print prettyPrintCols(('',
                                 attr,
                                 truncstring(str(val), maxspew)),
                               tabbedwidths, ' ')
@@ -452,7 +450,7 @@ if sys.version.startswith('2.5'):
 else:
     ispython = ispython22
 
-# start of code lifted (and modified) from the wonderful see.py 
+# start of code lifted (and modified) from the wonderful see.py
 # original: https://github.com/inky/see
 # modifications consist of Python 2.2 compatibilty and Java enhancements
 
@@ -663,59 +661,3 @@ SYMBOLS = tuple(filter(lambda x: x[0], (
     (PY_300 and '__unicode__', 'unicode()'),
 )))
 # end of see.py
-
-# all the junk that *currently* gets automatically placed into the namespace 
-# by the idv shell:
-# 
-# ArrayList ConstantMap Data DataChoice DataSelection DataUtil 
-# DerivedGridFactory Display EARTH_RADIUS EntryStore FFFffff FieldImpl 
-# FileOutputStream GRAVITY GeoLocationInfo GeoSelection GridMath GridUtil 
-# Integer JyVars MapMaker MultiSpectralData RemoteAddeEntry Selector 
-# StreamResult StreamSource StringUtil TWO_OMEGA Transformer 
-# TransformerFactory Util _KWARG_ALIASES __doc__ __name__ _cnames _color_cache 
-# _convertHexColor _convertNamedColor _convertRgbSeq _extract_kwarg _idv 
-# _initWavenumber _myip _namedBands _s abs abs_data acos acosDegrees add adv 
-# age annotate applyFunctionToValuesInField applyFunctionToValuesInRange 
-# applyToIndices applyToRange applyToRangeValues apply_colorbar array asin 
-# asinDegrees atan atan2 atan2Degrees atanDegrees atn2 averageFromMap 
-# averageFromMapAndClip averageOverTime avg avor bands ceil chol cleanFilter 
-# clear clearplot cloneArray cloudFilter collect_garbage colorutils combine 
-# combineFields combineRGB cond contrast convertColor coreFilter corl cos 
-# cosDegrees createDisplay cros datamanager ddx ddy default defr det 
-# differenceFromBaseTime dirn dirr disableAddeDebug discriminateFilter div 
-# domainDimension domainFactor domainType dot dumpType dumpTypes 
-# dump_active_display dvdx dvdy eig enableAddeDebug evaluate exp 
-# exportGridToNetcdf extract extractLatitudeFromNWPGrid 
-# extractPressureFromNWPGrid fft field filterMaps filters find findDataSource 
-# findDisplayControl floor frnt geo geolocate getAltitude getData 
-# getDataChoice getDomain getDomainDimension getDomainSet getDomainSizes 
-# getDomainType getImage getMapProperty getMapsWithProperty getMinMax 
-# getNetcdfData getNthTimeGrid getPointDataAdapter getRangeDimension 
-# getRangeType getRealType getScale getSliceAtAltitude getSliceAtLevel getType 
-# getValue getValues getValuesLengths grad gradientFilter gwfs gwfv 
-# highPass2DFilter hist holeFilter horizontalAdvection horizontalDivergence 
-# idv idveval idvutils ifft inad installmanager interpreter inverse 
-# islInterpreter java jcbn lap latr lav layerAverage layerDiff ldf listVars 
-# load loadBundle load_enhancement load_map log lowPass2DFilter lu mag make2D 
-# make3DMap makeDataSource makeDomain makeField makeFieldFromMapBounds 
-# makeFloatArray makeFlowField makeNavigatedImage makePairedLines makeRealType 
-# makeTimeSequence makeTopographyFromField makeTrueVector makeType makeUnit 
-# makeVector mapsAbsoluteValue mapsApplyToField mapsApplyToRange mapsAverage 
-# mapsMax mapsMin mapsSetValue mask maskGrid matrixMultiply matteImage 
-# maxOverTime max_data mergeFilter mergeTimeSequences minOverTime min_data 
-# mixr mod modify mul myCloudzz mycombineRGB newName newUnit noUnit norm1 
-# norm2 normF normInf oldaverageOverTime os passFilter pause plot 
-# printSounding printSoundings printType printValueDiff pvor qr quo qvcl qvec 
-# rangeDimension rangeType rank recenter relh replace replaceFilter 
-# replaceMissing resample resampleGrid rescale resizeImage rint round 
-# saveNetcdf saveplot savg savs sdiv selectData selectDataChoice selector 
-# setAxesScalesFont setAxesScalesLabel setDataChoices setDataSources setDebug 
-# setOffScreen setValues shell shotFilter showAxesScales showLib shr sin 
-# sinDegrees sm5s sm5v sm9s sm9v solve spotFilter sqrt strd sub subsetFromMap 
-# subsetRangeFromMap subsetRangeWithProperty subsetWithProperty substitute 
-# sumFromBaseTime sumOverTime svd sys tan tanDegrees testIndexToLatLon 
-# testIndexToLatLon2 thrm thta thte timeStepDifference timeStepSum tmpBundle 
-# tmpOut tmpXsl trace transform transpose un uniqueID ur vadd vecn vecr 
-# verifyServer vlav vldf vmul vn vor vquo vr vsub windShear windShearVector 
-# writeGridToXls writeImage writeImageToFile writeMovie write_image wshr xav 
-# xsum yav ysum

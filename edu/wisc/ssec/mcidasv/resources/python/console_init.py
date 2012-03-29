@@ -47,11 +47,10 @@ import imageFilters
 import shell as idvshell
 
 from background import (
-    activeDisplay, allActions, allColorTables,  allDisplays, allLayerTypes, 
-    allProjections, allWindows, boomstick, collectGarbage, colorTableNames, 
-    createLayer, firstDisplay, firstWindow, getColorTable, getProjection,
-    managedDataSource, performAction, projectionNames, removeAllData,
-    removeAllLayers, setViewSize
+    activeDisplay, allActions, allColorTables, allDisplays, allLayerTypes,
+    allProjections, allWindows, boomstick, collectGarbage, colorTableNames,
+    firstDisplay, firstWindow, getColorTable, getProjection, managedDataSource,
+    performAction, projectionNames, removeAllData, removeAllLayers, setViewSize
 )
 
 from mcvadde import (
@@ -74,5 +73,3 @@ if os.path.exists(_user_python):
         del modname, ext
 
 del _cwd, _mcv_jar, _idv_jar, _user_python, _mcv_python, _idv_python
-
-
