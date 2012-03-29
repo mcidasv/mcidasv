@@ -84,7 +84,7 @@ def listADDEImages(server, dataset, descriptor,
     coordinateSystem=CoordinateSystems.LATLON,
     place=Places.CENTER,
     mag=(1, 1),
-    datasetPosition='all',
+    position='all',
     unit='BRIT',
     day=None,
     time=None,
@@ -123,11 +123,11 @@ def listADDEImages(server, dataset, descriptor,
     if time:
         time = '%s %s I' % (time[0], time[1])
     
-    if band is not None:
+    if band:
         band = '&BAND=%s' % (str(band))
     
     addeUrlFormat = "adde://%s/imagedir?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s&%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s"
-    url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, datasetPosition)
+    url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position)
     print url
     adl = AreaDirectoryList(url)
     return adl.getSortedDirs()
@@ -138,7 +138,7 @@ def getADDEImage(server, dataset, descriptor,
     coordinateSystem=CoordinateSystems.LATLON,
     place=Places.CENTER,
     mag=(1, 1),
-    datasetPosition=0,
+    position=0,
     unit='BRIT',
     day=None,
     time=None,
@@ -178,11 +178,11 @@ def getADDEImage(server, dataset, descriptor,
     if time:
         time = '%s %s I' % (time[0], time[1])
     
-    if band is not None:
+    if band:
         band = '&BAND=%s' % (str(band))
     
     addeUrlFormat = "adde://%s/imagedata?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s"
-    url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, datasetPosition)
+    url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position)
     retvals = (-1, -1)
     try:
         area = AreaAdapter(url)
