@@ -144,7 +144,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss.SSS");
     
     // date formatter for how we want to show granule day/time on display
-    SimpleDateFormat sdfOut = new SimpleDateFormat("MMM dd yyyy, HH:mm:ss z");
+    SimpleDateFormat sdfOut = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
 
     /**
      * Zero-argument constructor for construction via unpersistence.
