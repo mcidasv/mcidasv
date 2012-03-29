@@ -913,7 +913,7 @@ GLOBE = _NoOp('GLOBE')
 TRANSECT = _NoOp('TRANSECT')
 
 
-def buildWindow(width=0, height=0, rows=1, cols=1, panelTypes=None):
+def buildWindow(width=1337, height=1337, rows=1, cols=1, panelTypes=None):
     """Creates a window with a user-specified layout of displays.
     
     This function will attempt to create a grid of displays with the dimensions
