@@ -81,10 +81,10 @@ public class SuomiNPPChooser extends FileChooser {
     
     protected JFileChooser doMakeFileChooser(String path) {
     	if (fileChooser == null) {
-    		logger.info("Creating Suomi NPP File Chooser...");
+    		logger.trace("Creating Suomi NPP File Chooser...");
     		fileChooser = new SuomiNPPFileChooser(path);
     	} else {
-    		logger.warn("2nd call to doMakeFileChooser, why?");
+    		logger.trace("2nd call to doMakeFileChooser, why?");
     	}
         return fileChooser;
     }
