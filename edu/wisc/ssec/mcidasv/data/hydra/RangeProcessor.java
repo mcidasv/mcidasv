@@ -84,6 +84,11 @@ public class RangeProcessor {
 	int scaleOffsetLen = 1;
 
 	String multiScaleDimName = SpectrumAdapter.channelIndex_name;
+        boolean hasMultiDimensionScale = false;
+
+        int multiScaleDimensionIndex = 0;
+
+        int soIndex = 0;
 
 	public RangeProcessor() {
 	}
@@ -161,6 +166,11 @@ public class RangeProcessor {
 			}
 		}
 
+                String str = (String)metadata.get("multiScaleDimensionIndex");
+                hasMultiDimensionScale = (str != null);
+                multiScaleDimensionIndex = (str != null) ? Integer.parseInt(str) : 0;
+
+
 	}
 
 	public float[] getAttributeAsFloatArray(String arrayName, String attrName) 
@@ -206,8 +216,6 @@ public class RangeProcessor {
 	
 	public float[] processRange(byte[] values, HashMap subset) {
 		
-		int soIndex = 0;  // scale/offset index
-	
 		if (subset != null) {
 			if (subset.get(multiScaleDimName) != null) {
 				soIndex  = (int) ((double[])subset.get(multiScaleDimName))[0];
@@ -290,7 +298,6 @@ public class RangeProcessor {
 	
 	public float[] processRange(short[] values, HashMap subset) {
 		
-		int soIndex = 0;  // scale/offset index
 
 		if (subset != null) {
 			if (subset.get(multiScaleDimName) != null) {
@@ -594,6 +601,23 @@ public class RangeProcessor {
              this.multiScaleDimName = multiScaleDimName;
         }
 
+        public int getMultiScaleDimensionIndex() {
+             return multiScaleDimensionIndex;
+        }
+
+        public boolean hasMultiDimensionScale() {
+             return hasMultiDimensionScale;
+        }
+
+        public void setHasMultiDimensionScale(boolean yesno) {
+             hasMultiDimensionScale = yesno;
+        }
+
+        public void setMultiScaleIndex(int idx) {
+             System.out.println("multiScaleIndex: "+idx);
+             this.soIndex = idx;
+        }
+
 }
 
 class IASI_RangeProcessor extends RangeProcessor {
@@ -688,12 +712,21 @@ class AggregationRangeProcessor extends RangeProcessor {
                                       (MultiDimensionReader)readers.get(rdrIdx), metadata));
        }
 
+       if (rangeProcessors.get(0).hasMultiDimensionScale()) {
+         setHasMultiDimensionScale(true);
+       }
+
        aggrReader.addRangeProcessor((String)metadata.get(SwathAdapter.array_name), this);
     }
 
     public synchronized void setIndex(int index) {
       rngIdx = index;
     }
+
+    public synchronized void setMultiScaleIndex(int idx) {
+      rangeProcessors.get(rngIdx).setMultiScaleIndex(idx);
+    }
+    
 
     public synchronized float[] processRange(byte[] values, HashMap subset) {
       return rangeProcessors.get(rngIdx).processRange(values, subset);
