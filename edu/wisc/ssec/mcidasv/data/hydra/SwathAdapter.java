@@ -72,6 +72,7 @@ public class SwathAdapter extends MultiDimensionAdapter {
       static String geo_scale_name = "geo_scale_name";
       static String geo_offset_name = "geo_scale_name";
       static String geo_fillValue_name = "geo_fillValue_name";
+      static String multiScaleDimensionIndex = "multiScaleDimensionIndex";
 
       String[] rangeName_s  = null;
       Class[] arrayType_s = null;
@@ -136,6 +137,7 @@ public class SwathAdapter extends MultiDimensionAdapter {
     	  metadata.put(geo_xtrack_offset_name, null);
     	  metadata.put(geo_track_skip_name, null);
     	  metadata.put(geo_xtrack_skip_name, null);
+          metadata.put(multiScaleDimensionIndex, null);
     	  return metadata;
       }
 
