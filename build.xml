@@ -768,4 +768,82 @@
 		</exec>
 	</target>
 	
+    <!--                           HERE BE DRAGONS                           -->
+    <!-- These things allow you to automatically use YourKit to profile an   -->
+    <!-- ant build. Everything is still rather simplistic, but you may find  -->
+    <!-- one of the "memory.profiler", "sampling.profiler", or               -->
+    <!-- "tracing.profiler" targets useful. Don't use "profiler.runlarge"!   -->
+    
+    <!-- For the time being, I'm using the testing release of YourKit 11.    -->
+    <!-- It's free and there is no registration process (last I checked):    -->
+    <!-- http://www.yourkit.com/eap/                                         -->
+    <!-- YourKit is especially generous in that they provide free licenses   -->
+    
+    <!-- This value will regrettably be user and platform depedent. Look at  -->
+    <!-- http://www.yourkit.com/docs/11/help/agent.jsp                       -->
+    <property name="yourkit.agentlib" value="/Applications/YourKit_Java_Profiler_11_EAP_build11014.app/bin/mac/libyjpagent.jnilib" />
+
+    <target name="memory.profiler" description="Starts McIDAS-V and takes a snapshot of performance and memory at shutdown.">
+        <antcall target="profiler.runlarge">
+            <param name="yourkit.options" value="onexit=memory,onexit=snapshot" />
+        </antcall>
+    </target>
+    
+    <target name="sampling.profiler" description="Starts McIDAS-V with CPU sampling (find performance problems)">
+        <antcall target="profiler.runlarge">
+            <param name="yourkit.options" value="sampling,noj2ee" />
+        </antcall>
+    </target>
+    
+    <target name="tracing.profiler" description="Starts McIDAS-V with CPU tracing (look at each method invocation)">
+        <antcall target="profiler.runlarge">
+            <param name="yourkit.options" value="tracing,noj2ee" />
+        </antcall>
+    </target>
+    
+    <target name="ugh.profiler" description="CPU sampling, performance/memory snapshot at shutdown.">
+        <antcall target="profiler.runlarge">
+            <param name="yourkit.options" value="onexit=memory,onexit=snapshot,tracing,noj2ee" />
+        </antcall>
+    </target>
+    
+    <target name="profiler.runlarge" depends="jar" description="DON'T RUN THIS DIRECTLY! Uses the other profiler tasks to start McIDAS-V with a generous max heap size.">
+        <java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
+            <classpath>
+                <pathelement location="${lib.dir}/sysout-over-slf4j-1.0.2.jar" />
+                <pathelement location="${lib.dir}/log4j-over-slf4j-1.6.1.jar" />
+                <pathelement location="${lib.dir}/logback-classic-0.9.29.jar" />
+                <pathelement location="${lib.dir}/logback-core-0.9.29.jar" />
+                <pathelement location="${lib.dir}/miglayout-4.0-swing.jar" />
+                <pathelement location="${lib.dir}/slf4j-api-1.6.1.jar" />
+                <pathelement location="${lib.dir}/commons-math-2.2.jar" />
+                <pathelement location="${lib.dir}/eventbus-1.3.jar" />
+                <pathelement location="${dist.dir}/${app.jarname}" />
+                <pathelement location="${idvlib.dir}/auxdata.jar" />
+                <pathelement location="${idvlib.dir}/external.jar" />
+                <pathelement location="${dist.dir}/local-idv.jar" />
+                <pathelement location="${idvlib.dir}/idv.jar" />
+                <pathelement location="${idvlib.dir}/local-visad.jar" />
+                <pathelement location="${idvlib.dir}/ncIdv.jar" />
+                <pathelement location="${idvlib.dir}/visad.jar" />
+                <pathelement location="${idvlib.dir}/jython.jar" />
+            </classpath>
+            <assertions refid="mcv.assertions"/>
+            <jvmarg value="-agentpath:${yourkit.agentlib}=${yourkit.options}" />
+            <jvmarg value="-XX:+UseConcMarkSweepGC" />
+            <jvmarg value="-XX:+CMSClassUnloadingEnabled" />
+            <jvmarg value="-XX:MaxPermSize=128m" />
+            <sysproperty key="debug.adde.reqs" value="true" />
+            <sysproperty key="idv.usetimedriver" value="true" />
+            <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
+            <sysproperty key="logback.configurationFile" value="edu/wisc/ssec/mcidasv/resources/logback-stdout.xml" />
+            <sysproperty key="visad.java3d.textureNpot" value="true" />
+            <sysproperty key="visad.java3d.imageByRef" value="true" />
+            <sysproperty key="visad.java3d.geometryByRef" value="true" />
+            <sysproperty key="python.security.respectJavaAccessibility" value="false" />
+            <!-- <arg value="-forceaqua" /> -->
+            <arg value="-userpath" />
+            <arg value="${userpath.dir}" />
+        </java>
+    </target>
 </project>
