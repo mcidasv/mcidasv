@@ -44,7 +44,7 @@ _mcv = McIDASV.getStaticMcv()
 from edu.wisc.ssec.mcidasv.data.hydra import Statistics
 
 import imageFilters
-import shell as idvshell
+#import shell as idvshell
 
 from background import (
     activeDisplay, allActions, allColorTables, allDisplays, allLayerTypes,
