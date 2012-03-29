@@ -527,7 +527,7 @@ public class GranuleAggregation implements MultiDimensionReader {
     	   for (Array a : arrayList) {
     		   if (a != null) {
     			   Object primArray = a.copyTo1DJavaArray();
-    			   primArray = processArray(array_name, arrayType, granIdx, primArray, rngProcessor);
+    			   primArray = processArray(array_name, arrayType, granIdx, primArray, rngProcessor, start);
     			   System.arraycopy(primArray, 0, o, destPos, (int) a.getSize());
     			   destPos += a.getSize();
     		   }
@@ -547,14 +547,19 @@ public class GranuleAggregation implements MultiDimensionReader {
    }
 
    /* pass individual granule pieces just read from dataset through the RangeProcessor */
-   private Object processArray(String array_name, Class arrayType, int granIdx, Object values, RangeProcessor rngProcessor) {
+   private Object processArray(String array_name, Class arrayType, int granIdx, Object values, RangeProcessor rngProcessor, int[] start) {
      if (rngProcessor == null) {
        return values;
      }
      else {
         ((AggregationRangeProcessor)rngProcessor).setIndex(granIdx);
 
+        if (rngProcessor.hasMultiDimensionScale()) {
+           rngProcessor.setMultiScaleIndex(start[rngProcessor.getMultiScaleDimensionIndex()]);
+        }
+
         Object outArray = null;
+
         if (arrayType == Short.TYPE) {
            outArray = rngProcessor.processRange((short[])values, null);
         } else if (arrayType == Byte.TYPE) {
