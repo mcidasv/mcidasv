@@ -446,8 +446,14 @@ class _Display(_JavaProxy):
         # TODO(mike):  set this back to what it was before?
         getStaticMcv().getVMManager().setLastActiveViewManager(self._JavaProxy__javaObject)
 
+        newLayer = createDisplay(controlID, data, dataParameter)
+
+        # createDisplay does it's init in a thread,
+        # so wait for it to finish before we hand control back to user!
+        pause()
+
         # TODO(jon): this should behave better if createDisplay fails for some reason.
-        return _Layer(createDisplay(controlID, data, dataParameter))
+        return _Layer(newLayer)
 
     def captureImage(self, filename, quality=1.0):
         """Attempt at a replacement for ISL writeImage
