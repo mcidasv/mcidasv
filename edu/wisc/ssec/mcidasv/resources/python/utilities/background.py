@@ -427,6 +427,26 @@ class _Display(_JavaProxy):
         # TODO(jon): this should behave better if createDisplay fails for some reason.
         return _Layer(createDisplay(controlID, data, dataParameter))
 
+    def captureImage(self, filename, quality=1.0):
+        """Attempt at a replacement for ISL writeImage
+
+        Args:
+            filename
+            quality:  float between 0.0 and 1.0 (relevant for JPEG's)
+                    0.0 is highest compression / smallest file size / worst quality
+                    1.0 is least compression / biggest file size / best quality
+
+        """
+
+        # things don't go very well unless we wait for displays to finish loading:
+        pause()
+
+        imageFile = java.io.File(filename)
+        # yes, I'm still calling writeImage. But it's a different writeImage!!!
+        #  (this is ViewManager.writeImage, not ImageGenerator.writeImage)
+        # (2nd arg has something to do with whether image gets written in current thread...)
+        self._JavaProxy__javaObject.writeImage(imageFile, True, quality)
+
 # TODO(jon): still not sure what to offer here.
 class _Layer(_JavaProxy):
     def __init__(self, javaObject):
@@ -533,6 +553,9 @@ class _Layer(_JavaProxy):
 
         #TODO(mike):  what if user has already set non-default font?
         #TODO(mike): check whether font name is valid...
+
+        #info.setLabelColor(java.awt.Color(255,0,0))
+        #info.setLabelColor(java.awt.Color.BLUE)
 
         newFont = java.awt.Font(fontName, style, size)
         info.setLabelFont(newFont)
