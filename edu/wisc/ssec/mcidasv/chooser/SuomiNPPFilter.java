@@ -158,14 +158,14 @@ public class SuomiNPPFilter extends FileFilter {
     		boolean noGeo = false;
     		NetcdfFile ncfile = null;
     		try {
-    			logger.info("Trying to open file: " + fileNameAbsolute);
+    			logger.trace("Trying to open file: " + fileNameAbsolute);
     			ncfile = NetcdfFile.open(fileNameAbsolute);
     			ucar.nc2.Attribute a = ncfile.findGlobalAttribute("N_GEO_Ref");
     			// if no GEO attribute, we can't visualize this Suomi NPP data file, don't include it
     			if (a == null) {
     				noGeo = true;
     			} else {
-        			logger.info("Value of GEO global attribute: " + a.getStringValue());
+        			logger.trace("Value of GEO global attribute: " + a.getStringValue());
         			// in the newest data from GRAVITE server, attribute is entire file name
         			// if this is detected, no translation/mapping needed
         			if (a.getStringValue().endsWith("h5")) {
@@ -196,10 +196,10 @@ public class SuomiNPPFilter extends FileFilter {
     			File geoFile = new File(geoFilename);
     			
     			if (geoFile.exists()) {
-    				logger.info("GEO file FOUND: " + geoFilename);
+    				logger.trace("GEO file FOUND: " + geoFilename);
     			    isSuomiNPP = true;
     			} else {
-    				logger.info("GEO file NOT found: " + geoFilename);
+    				logger.trace("GEO file NOT found: " + geoFilename);
     				isSuomiNPP = false;
     			}    
     			
