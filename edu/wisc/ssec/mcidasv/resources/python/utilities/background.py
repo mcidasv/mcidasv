@@ -257,11 +257,33 @@ class _Display(_JavaProxy):
         """ Set the current projection
         
         Args:
-            projection: a string that specifies the desired projection in the format:
+            projection: can be either: 
+                (1) a string that specifies the desired projection in the format:
                 'US>States>West>Texas'
+
+                or
+
+                (2) a _Layer object.  Projection will get set to the 'native'
+                projection for that layer
+
+        Raises:
+            ValueError:  if projection isn't a valid projection name or existing layer
         """
-        projObj = getProjection(projection)._JavaProxy__javaObject
-        return self._JavaProxy__javaObject.getMapDisplay().setMapProjection(projObj)
+        # TODO(mike): catch a NameError if projection isn't defined.
+        # Currently able to catch AttributeError but not NameError, hmm..
+
+        if isinstance(projection, _Layer):
+            projObj = projection._JavaProxy__javaObject.getDataProjection()
+            return self._JavaProxy__javaObject.getMapDisplay().setMapProjection(projObj)
+        
+        if isinstance(projection, str):
+            projObj = getProjection(projection)._JavaProxy__javaObject
+            return self._JavaProxy__javaObject.getMapDisplay().setMapProjection(projObj)
+
+        # if user does something like pass in an int
+        raise ValueError('valid arguments to setProjection are (1) a string defining a valid' +
+                          ' projection name, or (2) a _Layer object whose data' +
+                          ' projection you want to use')   
         
     def resetProjection(self):
         return self._JavaProxy__javaObject.getMapDisplay().resetProjection()
