@@ -436,9 +436,21 @@ class _Display(_JavaProxy):
                     0.0 is highest compression / smallest file size / worst quality
                     1.0 is least compression / biggest file size / best quality
 
+        Raises: 
+            ValueError:  if filename is a directory
+
         """
 
-        # things don't go very well unless we wait for displays to finish loading:
+        # do some sanity checking on filename
+        filename = _expandpath(filename)
+
+        isDir = os.path.isdir(filename)
+
+        if isDir:
+            # this isn't really good enough.  could be permissions issue, etc.
+            raise ValueError(filename, " is a directory")
+        
+        # the results aren't good if we don't pause first
         pause()
 
         imageFile = java.io.File(filename)
@@ -446,6 +458,8 @@ class _Display(_JavaProxy):
         #  (this is ViewManager.writeImage, not ImageGenerator.writeImage)
         # (2nd arg has something to do with whether image gets written in current thread...)
         self._JavaProxy__javaObject.writeImage(imageFile, True, quality)
+
+        # TODO(mike): catch exceptions resulting from writeImage (e.g., if filename has invalid extension)
 
 # TODO(jon): still not sure what to offer here.
 class _Layer(_JavaProxy):
