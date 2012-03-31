@@ -1042,9 +1042,19 @@ def buildWindowBackground(height=-1, width=-1):
       and call this method if off screen, and do it's usual thing otherwise...
       Could also be generalized for globe displays, etc.
 
-      Height and Width are included so current scripts don't break, but they don't do anything.
+      Default size:  600 x 400 (this is default in MapProjectionDisplayJ3D for offscreen)
     """
-    return [_Display(getStaticMcv().getVMManager().createViewManager(None, None))]
+    if (height > 0) and (width > 0):
+        dim = java.awt.Dimension(width, height)
+        # this utilizes the fact that doMakeDisplayMaster in MapViewManager gets it's default
+        # dimension from StateManager.getViewSize().  It's slightly hack but much easier
+        # than creating my own DisplayMaster and adding it to a new ViewManager.
+        # Also, it seems to be much easier to create a ViewManager with a given Dimension
+        # than to change it afterward...
+        getStaticMcv().getStateManager().setViewSize(dim)
+
+    newVM = getStaticMcv().getVMManager().createViewManager(None, None)
+    return [_Display(newVM)]
 
 def makeLogger(name):
     """ """
