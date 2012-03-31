@@ -27,7 +27,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
   <hr align="center">
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
-<h1>Release Notes</h1>
+<div class="pagetitle">Release Notes</div>
 <p>The items below list the changes in McIDAS-V for the most recent released
   versions.</p>
 <p>For a current list of known bugs and requested enhancements, please see the 
@@ -36,8 +36,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     Inquiry System</a>. To view the items currently under development, see the
     list of <a href="http://dcdbs.ssec.wisc.edu/inquiry-v/report.php?group=Public&name=CriticalBugs" target="_blank">Critical
     Bugs</a> and <a href="http://dcdbs.ssec.wisc.edu/inquiry-v/report.php?group=Public&name=CriticalDev" target="_blank">Critical
-    Development Items</a>. <br>
-</p>
+    Development Items</a>.</p>
 <hr size="4" noshade>
 <div class="pagesubtitle">McIDAS-V <br>
   Version 1.02beta1</div>
@@ -80,7 +79,17 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
   <ul class="noindent">
     <li><strong><a class="faq-question-link" href="#statistics1.02beta1">Compute Statistics Option for HYDRA Scatter Analysis Displays</a></strong></li>
     <li><strong><a class="faq-question-link" href="#rotate1.02beta1">Rotation Option</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#image1.02beta1">Image Handling</a></strong></li></ul></div>
+    <li><strong><a class="faq-question-link" href="#image1.02beta1">Image Handling</a></strong></li>
+    <li><a class="faq-question-link" href="#satrgb1.02beta1"><strong>SEVIRI RGB Satellite Formulas</strong></a></li>
+  </ul>
+</div>
+  <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat5_1.02beta1">Under
+    Development</a></div>
+<div class="faq-category">
+  <ul class="noindent">
+    <li><strong><a class="faq-question-link" href="#npp1.02beta1">Suomi NPP Chooser</a></strong></li>
+  </ul>
+</div>
 <hr>
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat1_1.02beta1" id="faq1_cat1_1.02beta1"></a>Documentation
@@ -137,7 +146,20 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     all images used Red, Green, Blue, and alpha as RealTypes in the data and
     they would then map to RGB or RGBA. This meant that a change to the color
     map of one image would affect all others. Now, we are using unique RealTypes
-    (xxx_N) for each image, where N is a unique number for each image.</div>
+    (xxx_N) for each image, where N is a unique number for each image.</div></div>
+    <div class="faq-category"><a name="satrgb1.02beta1" id="satrgb1.02beta1"></a>
+  <h4>SEVIRI RGB Satellite Formulas</h4>
+  <div class="faq-answer">Added new a new group of formulas to the native formulas in McIDAS-V. This group of formulas is titled SEVIRI RGB. These are RGB satellite formulas that are designed to work with satellite data from MSG's SEVIRI instrument, but they will work with any satellite data as long as the necessary bands are included with the data. After adding your satellite data, select one of these formulas and click Create Display. This will open a Field Selector window with recommended bands to select. The data from these bands will be utilized by McIDAS-V to produce the final image.</div>
+</div>
+<div class="faq-category-title"><a name="faq1_cat5_1.02beta1" id="faq1_cat5_1.02beta1"></a>Under
+  Development</div>
+<div class="faq-category"><a name="npp1.02beta1" id="npp1.02beta1"></a>
+  <h4>NPP Chooser</h4>
+  <div class="faq-answer">Changed the name of the <strong>Imagery - NPP</strong> chooser to <strong>Imagery - Suomi NPP</strong>,
+    for use with local data from Suomi NPP (National Polar-orbiting Partnership). This is currently
+    located in the Under Development list of choosers in the Data Sources tab
+    of the Data Explorer and is available for user feedback through the <a href="http://dcdbs.ssec.wisc.edu/mcidasv/forums/" target="_blank">McIDAS-V
+    Support Forums</a>. As the IDPS (Interface Data Processing Segment) begins to distribute new types of NPP data, we test it in McIDAS-V and make any necessary changes to be able to get the data to display. Since the last release, granules that include terrain-corrected geolocation now work. Simulated GRAVITE data produced before the release of McIDAS-V 1.01 will now longer work, now that real data is being received.</div>
 </div>
 <hr size="4" noshade>
 <div class="pagesubtitle">McIDAS-V <br>
@@ -357,8 +379,6 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
   <div class="faq-answer">Redesigned the ADDE Data Manager to be more intuitive
     and include separate local and remote managers.</div>
 </div>
-<br>
-<br>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
