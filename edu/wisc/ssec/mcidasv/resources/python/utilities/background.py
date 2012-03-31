@@ -1029,6 +1029,23 @@ def buildWindow(width=1337, height=1337, rows=1, cols=1, panelTypes=None):
             panels.append(_Display(viewManager))
     return panels
 
+def buildWindowBackground(height=-1, width=-1):
+    """
+     (1) create a new MapViewManager.  This is the default type of ViewManager
+         if (null, null) is passed to createViewManager
+     (2) Wrap the MapViewManager in a _Display object
+     (3) Wrap the _Display in a list, simply because current calls to buildWindow expect this
+          (could very easily do "npanels=rows*cols" and return an array with that many MapViewManagers
+
+      Note, this is currently over-simplistic on-purpose, so we can test if this approach
+      actually works better.  Eventually, buildWindow could do an ArgsManager.getIsOffScreen()
+      and call this method if off screen, and do it's usual thing otherwise...
+      Could also be generalized for globe displays, etc.
+
+      Height and Width are included so current scripts don't break, but they don't do anything.
+    """
+    return [_Display(getStaticMcv().getVMManager().createViewManager(None, None))]
+
 def makeLogger(name):
     """ """
     return  LoggerFactory.getLogger(name)
