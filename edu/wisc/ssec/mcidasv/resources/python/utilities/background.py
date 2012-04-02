@@ -630,6 +630,25 @@ class _Layer(_JavaProxy):
         info.setLabelFont(newFont)
         self._JavaProxy__javaObject.setColorScaleInfo(info)
 
+    def setColorScaleFontColor(self, color):
+        """Set color of color scale labels
+        Args:
+            color can be rgb list or tuple, or string giving name of a color
+
+        I'm leaning toward keeping this separate from setColorScaleFont since
+        it wraps around a different java method (setLabelColor)
+        """
+        import colorutils
+        rgb = colorutils.convertColor(color)
+        r = rgb[0].getConstant()
+        g = rgb[1].getConstant()
+        b = rgb[2].getConstant()
+        newColor = java.awt.Color(r, g, b)
+        
+        info = self._JavaProxy__javaObject.getColorScaleInfo()
+        info.setLabelColor(newColor)
+        self._JavaProxy__javaObject.setColorScaleInfo(info)
+
     def setLayerVisible(self, status):
         """Set visibility of this layer
 
