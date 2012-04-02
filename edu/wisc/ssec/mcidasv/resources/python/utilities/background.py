@@ -1184,8 +1184,8 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1):
     sm.putPreference(mpm.PREF_CONFIRM_REMOVE_BOTH, pref_confirm_both)
     sm.writePreferences()
 
-    #if (height != -1) and (width != -1):
-    #    activeDisplay().getJavaInstance().getDisplayWindow().setSize(width, height)
+    if (height != -1) and (width != -1):
+        activeDisplay().setSize(width, height)
     #    #firstWindow().setSize(width, height)
 
     return activeDisplay()  # TODO: return list of all displays instead

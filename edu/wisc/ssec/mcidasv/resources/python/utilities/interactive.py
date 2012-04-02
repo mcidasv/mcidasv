@@ -47,25 +47,6 @@ def _expandpath(path):
     given path."""
     return os.path.normpath(os.path.expanduser(os.path.expandvars(path)))
 
-def _compSizer(width, height):
-    from java.awt import Dimension
-    from ucar.unidata.util import GuiUtils
-    from background import activeDisplay
-    comp = activeDisplay().getJavaInstance().getComponent()
-    print 'current size:', comp.getSize()
-    print 'pref size:', comp.getPreferredSize()
-    print 'min size:', comp.getMinimumSize()
-    print 'max size:', comp.getMaximumSize()
-    newSize = Dimension(width, height)
-    comp.setMinimumSize(newSize)
-    comp.setMaximumSize(newSize)
-    comp.setPreferredSize(newSize)
-    print 'new current size:', comp.getSize()
-    print 'new pref size:', comp.getPreferredSize()
-    print 'new min size:', comp.getMinimumSize()
-    GuiUtils.getWindow(comp).pack()
-
-
 def getMouseEarthLocation():
     display = getStaticMcv().getVMManager().getLastActiveViewManager()
     master = display.getMaster()

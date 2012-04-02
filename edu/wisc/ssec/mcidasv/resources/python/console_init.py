@@ -46,6 +46,8 @@ from edu.wisc.ssec.mcidasv.data.hydra import Statistics
 import imageFilters
 #import shell as idvshell
 
+from decorators import deprecated
+
 from background import (
     activeDisplay, allActions, allColorTables, allDisplays, allLayerTypes,
     allProjections, allWindows, boomstick, collectGarbage, colorTableNames,
@@ -59,7 +61,7 @@ from mcvadde import (
 )
 
 from interactive import (
-    describeActions, dumpObj, ncdump, ncdumpToString, see, _today, _tomorrow, 
+    describeActions, dumpObj, ncdump, ncdumpToString, see, _today, _tomorrow,
     _yesterday
 )
 
