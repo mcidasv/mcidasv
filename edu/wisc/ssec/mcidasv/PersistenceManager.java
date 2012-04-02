@@ -1633,7 +1633,7 @@ public class PersistenceManager extends IdvPersistenceManager {
         return holder;
     }
 
-    public static IdvWindow buildDynamicSkin(int rows, int cols, List<PyObject> panelTypes) throws Exception {
+    public static IdvWindow buildDynamicSkin(int width, int height, int rows, int cols, List<PyObject> panelTypes) throws Exception {
         Document doc = XmlUtil.getDocument(SIMPLE_SKIN_TEMPLATE);
         Element root = doc.getDocumentElement();
         Element panel = XmlUtil.findElement(root, DYNSKIN_TAG_PANEL, DYNSKIN_ATTR_ID, DYNSKIN_ID_VALUE);
@@ -1644,6 +1644,8 @@ public class PersistenceManager extends IdvPersistenceManager {
             String panelTypeRepr = panelType.__repr__().toString();
             Element node = doc.createElement(IdvUIManager.COMP_VIEW);
             StringBuilder props = new StringBuilder(DYNSKIN_PROPS_GENERAL);
+            props.append("size=").append(width).append(':').append(height).append(';');
+//            logger.trace("window props: {}", props);
             if ("MAP".equals(panelTypeRepr)) {
                 node.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.MapViewManager");
             } else if ("GLOBE".equals(panelTypeRepr)) {
@@ -1667,11 +1669,10 @@ public class PersistenceManager extends IdvPersistenceManager {
         holder.setType(McvComponentHolder.TYPE_DYNAMIC_SKIN);
         holder.setName(DYNSKIN_TMPNAME);
         group.addComponent(holder);
-        window.setVisible(true);
         return window;
     }
 
-    private static final String DYNSKIN_TMPNAME = "Dynamic Skin Test";
+    private static final String DYNSKIN_TMPNAME = "McIDAS-V buildWindow";
     private static final String DYNSKIN_TAG_PANEL = "panel";
     private static final String DYNSKIN_TAG_VIEW = "idv.view";
     private static final String DYNSKIN_ATTR_ID = "id";
@@ -1681,7 +1682,7 @@ public class PersistenceManager extends IdvPersistenceManager {
     private static final String DYNSKIN_ATTR_CLASS = "class";
     private static final String DYNSKIN_ATTR_VIEWID = "viewid";
     private static final String DYNSKIN_PROPS_GLOBE = "useGlobeDisplay=true;initialMapResources=/edu/wisc/ssec/mcidasv/resources/maps.xml;";
-    private static final String DYNSKIN_PROPS_GENERAL = "clickToFocus=true;showToolBars=true;shareViews=true;showControlLegend=true;initialSplitPaneLocation=0.2;legendOnLeft=false;size=300:400;shareGroup=view%versionuid%;";
+    private static final String DYNSKIN_PROPS_GENERAL = "clickToFocus=true;showToolBars=true;shareViews=true;showControlLegend=true;initialSplitPaneLocation=0.2;legendOnLeft=false;showEarthNavPanel=false;showControlLegend=false;shareGroup=view%versionuid%;";
     private static final String DYNSKIN_ID_VALUE = "mcv.content";
 
     /** XML template for generating dynamic skins. */

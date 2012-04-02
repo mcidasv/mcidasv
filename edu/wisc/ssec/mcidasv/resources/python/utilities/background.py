@@ -10,12 +10,14 @@ from contextlib import contextmanager
 from org.slf4j import Logger
 from org.slf4j import LoggerFactory
 
+from java.lang import NullPointerException
 from java.lang import System
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 from ucar.unidata.idv import DisplayInfo
 from ucar.unidata.idv.ui import IdvWindow
 from ucar.unidata.geoloc import LatLonPointImpl
 from ucar.unidata.ui.colortable import ColorTableDefaults
+from ucar.visad import Util
 
 @contextmanager
 def managedDataSource(path, cleanup=True, dataType=None):
@@ -257,7 +259,7 @@ class _Display(_JavaProxy):
         """ Set the current projection
         
         Args:
-            projection: can be either: 
+            projection: can be either:
                 (1) a string that specifies the desired projection in the format:
                 'US>States>West>Texas'
 
@@ -283,7 +285,7 @@ class _Display(_JavaProxy):
         # if user does something like pass in an int
         raise ValueError('valid arguments to setProjection are (1) a string defining a valid' +
                           ' projection name, or (2) a _Layer object whose data' +
-                          ' projection you want to use')   
+                          ' projection you want to use')
         
     def resetProjection(self):
         return self._JavaProxy__javaObject.getMapDisplay().resetProjection()
@@ -362,7 +364,7 @@ class _Display(_JavaProxy):
         Args:
         latitude:
         longitude:
-        scale: Optional parameter for "zooming". Default value (1.0) results in no rescaling; 
+        scale: Optional parameter for "zooming". Default value (1.0) results in no rescaling;
             greater than 1.0 "zooms in", less than 1.0 "zooms out"
         """
         
@@ -1013,21 +1015,36 @@ def buildWindow(width=1337, height=1337, rows=1, cols=1, panelTypes=None):
             raise ValueError('panelTypes needs to contain rows*cols elements')
     
     from edu.wisc.ssec.mcidasv import PersistenceManager
+    from java.awt import Dimension
+    from ucar.unidata.util import GuiUtils
+            
     
-    window = PersistenceManager.buildDynamicSkin(rows, cols, panelTypes)
-    
-    if width > 0 and height > 0:
-        window.setSize(width, height)
-        print 'creating window: width=%d height=%d rows=%d cols=%d panels=%s' % (width, height, rows, cols, panelTypes)
-    else:
-        bounds = window.getBounds()
-        print 'creating window: width=%d height=%d rows=%d cols=%d panels=%s' % (bounds.width, bounds.height, rows, cols, panelTypes)
-    
-    panels = []
-    for holder in window.getComponentGroups()[0].getDisplayComponents():
-        for viewManager in holder.getViewManagers():
-            panels.append(_Display(viewManager))
-    return panels
+    try:
+        window = PersistenceManager.buildDynamicSkin(width, height, rows, cols, panelTypes)
+        if width > 0 and height > 0:
+            size = Dimension(width, height)
+            for holder in window.getComponentGroups()[0].getDisplayComponents():
+                for viewManager in holder.getViewManagers():
+                    navigatedComponent = viewManager.getComponent()
+                    navigatedComponent.setMinimumSize(size)
+                    navigatedComponent.setMaximumSize(size)
+                    navigatedComponent.setPreferredSize(size)
+                    print 'window=%s', window
+                    GuiUtils.getWindow(navigatedComponent).pack()
+            print 'creating window: width=%d height=%d rows=%d cols=%d panelTypes=%s' % (width, height, rows, cols, panelTypes)
+        else:
+            bounds = window.getBounds()
+            print 'creating window: width=%d height=%d rows=%d cols=%d panelTypes=%s' % (bounds.width, bounds.height, rows, cols, panelTypes)
+        
+        
+        
+        panels = []
+        for holder in window.getComponentGroups()[0].getDisplayComponents():
+            for viewManager in holder.getViewManagers():
+                panels.append(_Display(viewManager))
+        return panels
+    except NullPointerException, e:
+        raise RuntimeError("could not build window", e)
 
 def buildWindowBackground(height=-1, width=-1):
     """
