@@ -6,10 +6,13 @@ import ucar.unidata.util.Range
 from contextlib import contextmanager
 
 # from shell import makeDataSource
+from decorators import deprecated
 
 from org.slf4j import Logger
 from org.slf4j import LoggerFactory
 
+from java.awt import Dimension
+from java.awt import Rectangle
 from java.lang import NullPointerException
 from java.lang import System
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
@@ -17,6 +20,7 @@ from ucar.unidata.idv import DisplayInfo
 from ucar.unidata.idv.ui import IdvWindow
 from ucar.unidata.geoloc import LatLonPointImpl
 from ucar.unidata.ui.colortable import ColorTableDefaults
+from ucar.unidata.util import GuiUtils
 from ucar.visad import Util
 
 @contextmanager
@@ -89,18 +93,22 @@ class _JavaProxy(object):
     def __getattr__(self, attr):
         """Forwards object attribute lookups to the internal VisAD/IDV/McIDAS-V object."""
         
-        if not self.__dict__.has_key('_JavaProxy__initialized'):
+        # if not self.__dict__.has_key('_JavaProxy__initialized'):
+        if not '_JavaProxy__initialized' in self.__dict__:
             raise AttributeError(attr)
         else:
             if hasattr(self.__javaObject, attr):
                 return getattr(self.__javaObject, attr)
+            elif hasattr(self, attr):
+                # return getattr(self, attr)
+                return self.__dict__[attr]
             else:
                 raise AttributeError(attr)
 
     def __setattr__(self, attr, val):
         """Forwards object attribute changes to the internal VisAD/IDV/McIDAS-V object."""
         
-        if not self.__dict__.has_key('_JavaProxy__initialized'):
+        if not '_JavaProxy__initialized' in self.__dict__:
             self.__dict__[attr] = val
             return
 
@@ -170,7 +178,6 @@ class _Window(_JavaProxy):
         """Returns the xy-coords of the upper left corner, as well as the width
         and height of the wrapped IdvWindow.
         """
-
         rect = self._JavaProxy__javaObject.getBounds()
         return rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight()
 
@@ -234,12 +241,30 @@ class _Display(_JavaProxy):
         else:
             return IdvUIManager.COMP_VIEW
 
-    def setDimensions(self, x, y, width, height):
-        from java.awt import Rectangle
-        self._JavaProxy__javaObject.setDisplayBounds(Rectangle(x, y, width, height))
+    def getSize(self):
+        size = self._JavaProxy__javaObject.getComponent().getSize()
+        return size.getWidth(), size.getHeight()
 
+    def setSize(self, width, height):
+        size = Dimension(width, height)
+        navigatedComponent = self._JavaProxy__javaObject.getComponent()
+        navigatedComponent.setMinimumSize(size)
+        navigatedComponent.setMaximumSize(size)
+        navigatedComponent.setPreferredSize(size)
+        window = GuiUtils.getWindow(navigatedComponent)
+        try:
+            window.pack()
+            print 'new: %s\ncur: %s\nmin: %s\nmax: %s\nprf: %s' % (size, navigatedComponent.getSize(), navigatedComponent.getMinimumSize(), navigatedComponent.getMaximumSize(), navigatedComponent.getPreferredSize())
+        except NullPointerException:
+            print '*** WARNING: could not find a window associated with this display!'
+    
+    # @deprecated(self.setSize)
+    def setDimensions(self, x, y, width, height):
+        self._JavaProxy__javaObject.setDisplayBounds(Rectangle(x, y, width, height))
+        self.setSize(width, height)
+
+    # @deprecated(self.getSize)
     def getDimensions(self):
-        from java.awt import Rectangle
         rect = self._JavaProxy__javaObject.getDisplayBounds()
         return rect.x, rect.y, rect.width, rect.height
 
@@ -979,99 +1004,93 @@ FLATMAP = _NoOp('FLATMAP')
 GLOBE = _NoOp('GLOBE')
 TRANSECT = _NoOp('TRANSECT')
 
-
 def buildWindow(width=1337, height=1337, rows=1, cols=1, panelTypes=None):
-    """Creates a window with a user-specified layout of displays.
-    
-    This function will attempt to create a grid of displays with the dimensions
-    determined by rows * cols. Simply calling buildWindow() will result in a
-    1x1 grid containing a single map.
-    
-    Args:
-        width: Optional parameter; default value is zero. Sets the window to
-               this width (in pixels). Values less than or equal to zero are
-               considered default values.
+    def _buildWindowInternal(width, height, rows, cols, panelTypes):
+        """Creates a window with a user-specified layout of displays.
         
-        height: Optional parameter; default value is zero. Sets the window to
-                this height (in pixels). Values less than or equal to zero are
-                considered default values.
+        This function will attempt to create a grid of displays with the dimensions
+        determined by rows * cols. Simply calling buildWindow() will result in a
+        1x1 grid containing a single map.
         
-        rows: Optional parameter; default value is one.
-        
-        cols: Optional parameter; default value is one.
-        
-        panelTypes: Optional parameter; default value is None (creates a single
-                Map Display).
-    
-    Returns:
-        A "wrapped" IdvWindow.
-    """
-    if panelTypes is None:
-        panelTypes = [MAP] * (rows * cols)
-    elif isinstance(panelTypes, _NoOp):
-        panelTypes = [panelTypes] * (rows * cols)
-    elif type(panelTypes) is types.ListType:
-        if len(panelTypes) != (rows * cols):
-            raise ValueError('panelTypes needs to contain rows*cols elements')
-    
-    from edu.wisc.ssec.mcidasv import PersistenceManager
-    from java.awt import Dimension
-    from ucar.unidata.util import GuiUtils
+        Args:
+            width: Optional parameter; default value is zero. Sets the window to
+                   this width (in pixels). Values less than or equal to zero are
+                   considered default values.
             
-    
-    try:
-        window = PersistenceManager.buildDynamicSkin(width, height, rows, cols, panelTypes)
-        if width > 0 and height > 0:
-            size = Dimension(width, height)
+            height: Optional parameter; default value is zero. Sets the window to
+                    this height (in pixels). Values less than or equal to zero are
+                    considered default values.
+            
+            rows: Optional parameter; default value is one.
+            
+            cols: Optional parameter; default value is one.
+            
+            panelTypes: Optional parameter; default value is None (creates a single
+                Map Display).
+            
+        Returns:
+            A "wrapped" IdvWindow.
+        """
+        
+        if panelTypes is None:
+            panelTypes = [MAP] * (rows * cols)
+        elif isinstance(panelTypes, _NoOp):
+            panelTypes = [panelTypes] * (rows * cols)
+        elif type(panelTypes) is types.ListType:
+            if len(panelTypes) != (rows * cols):
+                raise ValueError('panelTypes needs to contain rows*cols elements')
+        
+        from edu.wisc.ssec.mcidasv import PersistenceManager
+        
+        try:
+            window = PersistenceManager.buildDynamicSkin(width, height, rows, cols, panelTypes)
+            if width > 0 and height > 0:
+                print 'creating window: width=%d height=%d rows=%d cols=%d panelTypes=%s' % (width, height, rows, cols, panelTypes)
+            else:
+                bounds = window.getBounds()
+                print 'creating window: width=%d height=%d rows=%d cols=%d panelTypes=%s' % (bounds.width, bounds.height, rows, cols, panelTypes)
+            
+            panels = []
             for holder in window.getComponentGroups()[0].getDisplayComponents():
                 for viewManager in holder.getViewManagers():
-                    navigatedComponent = viewManager.getComponent()
-                    navigatedComponent.setMinimumSize(size)
-                    navigatedComponent.setMaximumSize(size)
-                    navigatedComponent.setPreferredSize(size)
-                    print 'window=%s', window
-                    GuiUtils.getWindow(navigatedComponent).pack()
-            print 'creating window: width=%d height=%d rows=%d cols=%d panelTypes=%s' % (width, height, rows, cols, panelTypes)
-        else:
-            bounds = window.getBounds()
-            print 'creating window: width=%d height=%d rows=%d cols=%d panelTypes=%s' % (bounds.width, bounds.height, rows, cols, panelTypes)
+                    panels.append(_Display(viewManager))
+            return panels
+        except NullPointerException, e:
+            raise RuntimeError("could not build window", e)
+
+    def _buildWindowBackground(height=-1, width=-1):
+        """
+         (1) create a new MapViewManager.  This is the default type of ViewManager
+             if (null, null) is passed to createViewManager
+         (2) Wrap the MapViewManager in a _Display object
+         (3) Wrap the _Display in a list, simply because current calls to buildWindow expect this
+              (could very easily do "npanels=rows*cols" and return an array with that many MapViewManagers
         
+          Note, this is currently over-simplistic on-purpose, so we can test if this approach
+          actually works better.  Eventually, buildWindow could do an ArgsManager.getIsOffScreen()
+          and call this method if off screen, and do it's usual thing otherwise...
+          Could also be generalized for globe displays, etc.
+          
+          Default size:  600 x 400 (this is default in MapProjectionDisplayJ3D for offscreen)
+        """
+        if (height > 0) and (width > 0):
+            dim = java.awt.Dimension(width, height)
+            # this utilizes the fact that doMakeDisplayMaster in MapViewManager gets it's default
+            # dimension from StateManager.getViewSize().  It's slightly hack but much easier
+            # than creating my own DisplayMaster and adding it to a new ViewManager.
+            # Also, it seems to be much easier to create a ViewManager with a given Dimension
+            # than to change it afterward...
+            getStaticMcv().getStateManager().setViewSize(dim)
         
-        
-        panels = []
-        for holder in window.getComponentGroups()[0].getDisplayComponents():
-            for viewManager in holder.getViewManagers():
-                panels.append(_Display(viewManager))
-        return panels
-    except NullPointerException, e:
-        raise RuntimeError("could not build window", e)
-
-def buildWindowBackground(height=-1, width=-1):
-    """
-     (1) create a new MapViewManager.  This is the default type of ViewManager
-         if (null, null) is passed to createViewManager
-     (2) Wrap the MapViewManager in a _Display object
-     (3) Wrap the _Display in a list, simply because current calls to buildWindow expect this
-          (could very easily do "npanels=rows*cols" and return an array with that many MapViewManagers
-
-      Note, this is currently over-simplistic on-purpose, so we can test if this approach
-      actually works better.  Eventually, buildWindow could do an ArgsManager.getIsOffScreen()
-      and call this method if off screen, and do it's usual thing otherwise...
-      Could also be generalized for globe displays, etc.
-
-      Default size:  600 x 400 (this is default in MapProjectionDisplayJ3D for offscreen)
-    """
-    if (height > 0) and (width > 0):
-        dim = java.awt.Dimension(width, height)
-        # this utilizes the fact that doMakeDisplayMaster in MapViewManager gets it's default
-        # dimension from StateManager.getViewSize().  It's slightly hack but much easier
-        # than creating my own DisplayMaster and adding it to a new ViewManager.
-        # Also, it seems to be much easier to create a ViewManager with a given Dimension
-        # than to change it afterward...
-        getStaticMcv().getStateManager().setViewSize(dim)
-
-    newVM = getStaticMcv().getVMManager().createViewManager(None, None)
-    return [_Display(newVM)]
+        newVM = getStaticMcv().getVMManager().createViewManager(None, None)
+        return [_Display(newVM)]
+    
+    if getStaticMcv().getArgsManager().getIsOffScreen():
+        print 'offscreen'
+        return _buildWindowBackground(width, height)
+    else:
+        print 'foreground'
+        return _buildWindowInternal(width, height, )
 
 def makeLogger(name):
     """ """
