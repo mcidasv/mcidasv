@@ -1086,10 +1086,8 @@ def buildWindow(width=1337, height=1337, rows=1, cols=1, panelTypes=None):
         return [_Display(newVM)]
     
     if getStaticMcv().getArgsManager().getIsOffScreen():
-        print 'offscreen'
         return _buildWindowBackground(width, height)
     else:
-        print 'foreground'
         return _buildWindowInternal(width, height, )
 
 def makeLogger(name):
