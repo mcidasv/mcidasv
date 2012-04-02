@@ -168,18 +168,26 @@ def getADDEImage(server, dataset, descriptor,
     
     if location:
         location = '&%s=%s %s' % (coordSys, location[0], location[1])
+    else:
+        location = ''
     
     if day:
         day = '&DAY=%s' % (day)
+    else:
+        day = ''
     
     if size:
         size = '%s %s' % (size[0], size[1])
     
     if time:
         time = '%s %s I' % (time[0], time[1])
+    else:
+        time = ''
     
     if band:
         band = '&BAND=%s' % (str(band))
+    else:
+        band = ''
     
     addeUrlFormat = "adde://%s/imagedata?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s"
     url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position)
