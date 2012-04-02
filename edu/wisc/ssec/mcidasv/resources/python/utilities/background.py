@@ -568,6 +568,27 @@ class _Layer(_JavaProxy):
         new_range = ucar.unidata.util.Range(min_range, max_range)
         self._JavaProxy__javaObject.setRange(new_range)
 
+    def setColorScale(self, visible=True, placement=None, font=None, style=None, size=None, color=None):
+        """Wrapper function for all the color scale manipulation stuff
+        """
+        # assume user wants color scale visible unless otherwise specified
+        self.setColorScaleVisible(visible)
+
+        if (placement != None):
+            self.setColorScalePlacement(placement)
+
+        if (font != None):  # let setColorScaleFont handle default
+            self.setColorScaleFont(fontName=font)
+
+        if (style != None):
+            self.setColorScaleFont(style=style)
+
+        if (size != None):  # let setColorScaleFont handle default
+            self.setColorScaleFont(size=size)
+        
+        if (color != None):
+            self.setColorScaleFontColor(color)
+
     def setColorScaleVisible(self, status):
         """Set visibility of Color Scale (the legend thing that actually shows
            up overlaid on the map)
@@ -576,7 +597,10 @@ class _Layer(_JavaProxy):
             status:  boolean for whether to show color scale
         """
         
-        self._JavaProxy__javaObject.setColorScaleVisible(status)
+        if isinstance(status, bool):
+            self._JavaProxy__javaObject.setColorScaleVisible(status)
+        else:
+            raise ValueError('parameter for setColorScaleVisible must be boolean (either True or False')
 
     def setColorScalePlacement(self, pos):
         """Set the placement of the color scale on the map.
@@ -590,6 +614,7 @@ class _Layer(_JavaProxy):
         if (pos == 'Left') or (pos == 'Top') or (pos == 'Bottom') or (pos == 'Right'):
             info = self._JavaProxy__javaObject.getColorScaleInfo()
             info.setPlacement(pos)
+            # TODO(mike):  this shouldn't be case sensitive
             # this will call the (protected) applyColorScaleInfo(),
             # which is necessary to update the display:
             self._JavaProxy__javaObject.setColorScaleInfo(info)
@@ -601,26 +626,29 @@ class _Layer(_JavaProxy):
         """For the color scale, change the font, font style, and/or font size
 
         Args:
-            fontName (optional): string containing font name
-            style (optional): string containing either PLAIN (default), BOLD, or ITALIC
-            size (optional):  font size (default 16.0)
+            fontName (optional): string containing font name (default: leave as-is)
+            style (optional): string containing either PLAIN (default: as-is), BOLD, or ITALIC
+            size (optional):  font size (default: as-is)
 
         Returns: nothing
         """
 
         info = self._JavaProxy__javaObject.getColorScaleInfo()
         
-        # if name is None, Font constructor will just use default font choice
         if style == "BOLD":
+            # TODO(mike):  this shouldn't be case sensitive
             style = java.awt.Font.BOLD
         elif style == "ITALIC":
             style = java.awt.Font.ITALIC
         else:
-            style = java.awt.Font.PLAIN
-        if size == None:
-            size = 16.0
+            style = info.getLabelFont().getStyle()
 
-        #TODO(mike):  what if user has already set non-default font?
+        if size == None:
+            size = info.getLabelFont().getSize()
+
+        if fontName == None:
+            fontName = info.getLabelFont().getFontName()
+
         #TODO(mike): check whether font name is valid...
 
         #info.setLabelColor(java.awt.Color(255,0,0))
