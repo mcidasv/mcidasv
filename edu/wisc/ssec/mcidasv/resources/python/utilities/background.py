@@ -117,6 +117,52 @@ class _JavaProxy(object):
         else:
             self.__dict__[attr] = val
 
+def _getNewFont(currentFont, fontName, style, size):
+    """Helper class for setLayerLabelFont and setColorScaleFont
+       since they need to accomplish the same task
+       (see those functions for more details)
+
+    Args:
+        currentFont: an existing font to use for "default" font properties
+        fontName: new fontName
+        style: new style
+        size: new size
+
+    Raises:
+        ValueError: if fontName doesn't exist
+    """
+    if isinstance(style, str):
+        # we need all caps
+        style = style.upper() 
+    
+    if style == "BOLD":
+        style = java.awt.Font.BOLD
+    elif style == "ITALIC":
+        style = java.awt.Font.ITALIC
+    else:
+        style = currentFont.getStyle()
+
+    if size == None:
+        size = currentFont.getSize()
+
+    if fontName != None:
+        # check if fontName is valid
+        fontList = ucar.unidata.util.GuiUtils.getFontList()
+        foundFont = False
+        for availableFont in fontList:
+            if availableFont.toString().lower() == fontName.lower():
+                # need to get properly capitalized font string!
+                fontName = availableFont.toString()
+                foundFont = True
+        if foundFont == False:
+            # if fontName is STILL None, then user provided an invalid font name
+            raise ValueError("Could not find the following fontName:", fontName, "call allFontNames for valid options")
+    else:
+        # leave as-is if fontName is None
+        fontName = currentFont.getFontName()
+
+    return java.awt.Font(fontName, style, size)
+
 class _Window(_JavaProxy):
     def __init__(self, javaObject):
         """Blank for now. javaObject = IdvWindow
@@ -642,38 +688,9 @@ class _Layer(_JavaProxy):
 
         info = self._JavaProxy__javaObject.getColorScaleInfo()
 
-        if isinstance(style, str):
-            # we need all caps
-            style = style.upper() 
-        
-        if style == "BOLD":
-            # TODO(mike):  this shouldn't be case sensitive
-            style = java.awt.Font.BOLD
-        elif style == "ITALIC":
-            style = java.awt.Font.ITALIC
-        else:
-            style = info.getLabelFont().getStyle()
+        currentFont = info.getLabelFont()
+        newFont = _getNewFont(currentFont, fontName, style, size)
 
-        if size == None:
-            size = info.getLabelFont().getSize()
-
-        if fontName != None:
-            # check if fontName is valid
-            fontList = ucar.unidata.util.GuiUtils.getFontList()
-            foundFont = False
-            for availableFont in fontList:
-                if availableFont.toString().lower() == fontName.lower():
-                    # need to get properly capitalized font string!
-                    fontName = availableFont.toString()
-                    foundFont = True
-            if foundFont == False:
-                # if fontName is STILL None, then user provided an invalid font name
-                raise ValueError("Could not find the following fontName:", fontName, "call allFontNames for valid options")
-        else:
-            # leave as-is if fontName is None
-            fontName = info.getLabelFont().getFontName()
-
-        newFont = java.awt.Font(fontName, style, size)
         info.setLabelFont(newFont)
         self._JavaProxy__javaObject.setColorScaleInfo(info)
 
@@ -704,20 +721,84 @@ class _Layer(_JavaProxy):
         """
         self._JavaProxy__javaObject.setDisplayVisibility(status)
 
-    def setLayerLabel(self, label):
-        """ Set the layer label (the string of text at the bottom of maps)
+    def setLayerLabel(self, label=None, visible=True, font=None, style=None, size=None, color=None):
+        """ Set the layer label (the string of text at the bottom of maps) and other
+            properties of layer labels.  Confusingly and not helpful is that properties of layer labels
+            are set per panel instead of per layer.  So really, this should be a function of _Display
+            instead of _Layer...?
+
+        (In Java-land, Layer Labels are "Display Lists")
 
         Args:
-            label:  a string defining the layer label
+            label:  a string defining the layer label (default: as-is)
             (Note you can use macros like %displayname% here)
 
         Returns:  nothing
         """
-        self._JavaProxy__javaObject.setDisplayListTemplate(label)
+        if (label != None) and isinstance(label, str):
+            self._JavaProxy__javaObject.setDisplayListTemplate(label)
 
-        # update the "Display List"
-        self._JavaProxy__javaObject.applyPreferences()
+        # assume user wants color scale visible unless otherwise specified
+        self.setColorScaleVisible(visible)
 
+        if (font != None):
+            self.setLayerLabelFont(fontName=font)
+
+        if (style != None):
+            self.setLayerLabelFont(style=style)
+
+        if (size != None):  # let setColorScaleFont handle default
+            self.setLayerLabelFont(size=size)
+        
+        if (color != None):
+            self.setLayerLabelColor(color)
+
+        self._JavaProxy__javaObject.getViewManager().updateDisplayList()
+
+    def setLayerLabelVisible(self, status):
+        """Set whether the Display List is shown for this ViewManager
+
+        Args:
+            status:  True - visible or False - not visible
+
+        Raises:
+            ValueError: if status isn't a boolean
+        """
+        if isinstance(status, bool):
+            self._JavaProxy__javaObject.getViewManager().setShowDisplayList(status)
+        else:
+            raise ValueError('parameter for setLayerLabelVisible must be boolean (either True or False')
+
+    def setLayerLabelColor(self, color):
+        """Set color of Display List labels (confusingly, these are per panel
+            and not per layer).
+
+        Args:
+            color can be rgb list or tuple, or string giving name of a color
+        """
+        import colorutils
+        rgb = colorutils.convertColor(color)
+        r = rgb[0].getConstant()
+        g = rgb[1].getConstant()
+        b = rgb[2].getConstant()
+        newColor = java.awt.Color(r, g, b)
+        
+        self._JavaProxy__javaObject.getViewManager().setDisplayListColor(newColor)
+
+    def setLayerLabelFont(self, fontName=None, style=None, size=None):
+        """ set the font of Display List
+
+        Args:
+            fontName (optional): string containing font name (default: leave as-is)
+                                    (case-insensitive)
+            style (optional): string containing either PLAIN (default: as-is), BOLD, or ITALIC
+                                (case-insensitive)
+            size (optional):  font size (default: as-is)
+        """
+        vm = self._JavaProxy__javaObject.getViewManager()
+        currentFont = vm.getDisplayListFont()
+        newFont = _getNewFont(currentFont, fontName, style, size)
+        vm.setDisplayListFont(newFont)
 
 # TODO(jon): this (and its accompanying subclasses) are a productivity rabbit
 # hole!
