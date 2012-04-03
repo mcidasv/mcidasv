@@ -607,14 +607,19 @@ class _Layer(_JavaProxy):
 
         Args:
             pos: string that can be either "Left", "Top", "Bottom", or "Right"
+                 (NOT case sensitive!)
 
         Raises:
             ValueError:  if pos is not one of the four valid choices
         """
+        if isinstance(pos, str):
+            # handy string method that does exactly what we need:
+            # (first letter capitalized, the rest are small)
+            pos = pos.capitalize()
+
         if (pos == 'Left') or (pos == 'Top') or (pos == 'Bottom') or (pos == 'Right'):
             info = self._JavaProxy__javaObject.getColorScaleInfo()
             info.setPlacement(pos)
-            # TODO(mike):  this shouldn't be case sensitive
             # this will call the (protected) applyColorScaleInfo(),
             # which is necessary to update the display:
             self._JavaProxy__javaObject.setColorScaleInfo(info)
@@ -627,13 +632,19 @@ class _Layer(_JavaProxy):
 
         Args:
             fontName (optional): string containing font name (default: leave as-is)
+                                    (case-insensitive)
             style (optional): string containing either PLAIN (default: as-is), BOLD, or ITALIC
+                                (case-insensitive)
             size (optional):  font size (default: as-is)
 
         Returns: nothing
         """
 
         info = self._JavaProxy__javaObject.getColorScaleInfo()
+
+        if isinstance(style, str):
+            # we need all caps
+            style = style.upper() 
         
         if style == "BOLD":
             # TODO(mike):  this shouldn't be case sensitive
@@ -646,13 +657,21 @@ class _Layer(_JavaProxy):
         if size == None:
             size = info.getLabelFont().getSize()
 
-        if fontName == None:
+        if fontName != None:
+            # check if fontName is valid
+            fontList = ucar.unidata.util.GuiUtils.getFontList()
+            foundFont = False
+            for availableFont in fontList:
+                if availableFont.toString().lower() == fontName.lower():
+                    # need to get properly capitalized font string!
+                    fontName = availableFont.toString()
+                    foundFont = True
+            if foundFont == False:
+                # if fontName is STILL None, then user provided an invalid font name
+                raise ValueError("Could not find the following fontName:", fontName, "call allFontNames for valid options")
+        else:
+            # leave as-is if fontName is None
             fontName = info.getLabelFont().getFontName()
-
-        #TODO(mike): check whether font name is valid...
-
-        #info.setLabelColor(java.awt.Color(255,0,0))
-        #info.setLabelColor(java.awt.Color.BLUE)
 
         newFont = java.awt.Font(fontName, style, size)
         info.setLabelFont(newFont)
@@ -940,6 +959,10 @@ def allLayerTypes():
 def allProjections():
     """Returns a list of the available projections."""
     return [_Projection(projection) for projection in getStaticMcv().getIdvProjectionManager().getProjections()]
+
+def allFontNames():
+    """Return a list of strings representing all available font names"""
+    return [font.toString() for font in ucar.unidata.util.GuiUtils.getFontList()]
 
 def projectionNames():
     """Returns a list of the available projection names"""
