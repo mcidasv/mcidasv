@@ -144,6 +144,8 @@ def _getNewFont(currentFont, fontName, style, size):
 
     if size == None:
         size = currentFont.getSize()
+    else:
+        size = int(size)
 
     if fontName != None:
         # check if fontName is valid
@@ -298,12 +300,14 @@ class _Display(_JavaProxy):
         navigatedComponent.setMaximumSize(size)
         navigatedComponent.setPreferredSize(size)
         window = GuiUtils.getWindow(navigatedComponent)
-        try:
-            window.pack()
-            print 'new: %s\ncur: %s\nmin: %s\nmax: %s\nprf: %s' % (size, navigatedComponent.getSize(), navigatedComponent.getMinimumSize(), navigatedComponent.getMaximumSize(), navigatedComponent.getPreferredSize())
-        except NullPointerException:
-            print '*** WARNING: could not find a window associated with this display!'
-    
+        if not window:
+            from javax.swing import JFrame
+            window = JFrame()
+            window.getContentPane().add(navigatedComponent)
+
+        window.pack()
+        print 'new: %s\ncur: %s\nmin: %s\nmax: %s\nprf: %s' % (size, navigatedComponent.getSize(), navigatedComponent.getMinimumSize(), navigatedComponent.getMaximumSize(), navigatedComponent.getPreferredSize())
+
     # @deprecated(self.setSize)
     def setDimensions(self, x, y, width, height):
         self._JavaProxy__javaObject.setDisplayBounds(Rectangle(x, y, width, height))
@@ -586,6 +590,14 @@ class _Layer(_JavaProxy):
         # should return a dict of timestamp: value ??
         pass
 
+    def getEnhancementTable(self):
+        """Get the current enhancement table.
+        
+        Returns:
+            The actual enhancement table object.
+        """
+        return self._JavaProxy__javaObject.getColorTable()
+
     def setEnhancementTable(self, ctName):
         """Change the enhancement table.
 
@@ -721,6 +733,14 @@ class _Layer(_JavaProxy):
         """
         self._JavaProxy__javaObject.setDisplayVisibility(status)
 
+    def getLayerLabel(self):
+        """Returns the current layer label text.
+        
+        Returns:
+            string containing a layer label.
+        """
+        return self._JavaProxy__javaObject.getDisplayListTemplate()
+
     def setLayerLabel(self, label=None, visible=True, font=None, style=None, size=None, color=None):
         """ Set the layer label (the string of text at the bottom of maps) and other
             properties of layer labels.  Confusingly and not helpful is that properties of layer labels
@@ -754,6 +774,14 @@ class _Layer(_JavaProxy):
             self.setLayerLabelColor(color)
 
         self._JavaProxy__javaObject.getViewManager().updateDisplayList()
+
+    def getLayerVisible(self):
+        """Determine whether or not this layer is visible.
+        
+        Returns:
+            True if visible, False otherwise.
+        """
+        return self._JavaProxy__javaObject.getDisplayVisibility()
 
     def setLayerLabelVisible(self, status):
         """Set whether the Display List is shown for this ViewManager
@@ -1237,9 +1265,9 @@ def buildWindow(width=1337, height=1337, rows=1, cols=1, panelTypes=None):
         return [_Display(newVM)]
     
     if getStaticMcv().getArgsManager().getIsOffScreen():
-        return _buildWindowBackground(width, height)
+        return _buildWindowBackground(height, width)
     else:
-        return _buildWindowInternal(width, height, )
+        return _buildWindowInternal(width, height, rows, cols, panelTypes)
 
 def makeLogger(name):
     """ """
