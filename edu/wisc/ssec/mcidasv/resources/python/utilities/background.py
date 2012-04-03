@@ -590,6 +590,16 @@ class _Layer(_JavaProxy):
         # should return a dict of timestamp: value ??
         pass
 
+    def setEnhancement(self, name=None, range=None):
+        """Wrapper for setEnhancementTable and setDataRange
+        """
+        if (name != None):  # leave as-is if not specified
+            self.setEnhancementTable(name)
+
+        # but 'range' is a Python built-in.........
+        if (range != None):
+            self.setDataRange(range[0], range[1])
+
     def getEnhancementTable(self):
         """Get the current enhancement table.
         
@@ -613,18 +623,25 @@ class _Layer(_JavaProxy):
         newct = ctm.getColorTable(ctName)
         return self._JavaProxy__javaObject.setColorTable(newct)
 
-    def setDataRange(self, min_range, max_range):
+    def setDataRange(self, minRange, maxRange):
         """ Change the range of the displayed data (and enhancement table)
 
         Args:
-            min_range
-            max_Range
+            minRange: if min_range evaluates to false, leave as-is
+            maxRange: if max_range evaluates to false, leave as-is
 
         Returns: nothing
         """
 
-        new_range = ucar.unidata.util.Range(min_range, max_range)
-        self._JavaProxy__javaObject.setRange(new_range)
+        currentRange = self._JavaProxy__javaObject.getRange()
+
+        if (minRange != None):
+            currentRange.setMin(minRange)
+
+        if (maxRange != None):
+            currentRange.setMax(maxRange)
+
+        self._JavaProxy__javaObject.setRange(currentRange)
 
     def setColorScale(self, visible=True, placement=None, font=None, style=None, size=None, color=None):
         """Wrapper function for all the color scale manipulation stuff
