@@ -71,7 +71,32 @@ params1 = dict(
     descriptor='GE-VIS',
     coordinateSystem=CoordinateSystems.LATLON,
     location=(31.7, -87.4),
-    place=Places.CENTER,
+    size=(158, 332),
+    mag=(-3, -2),
+    time=('14:15:00', '14:15:00'),
+    band=1,
+)
+
+params_area_coords = dict(
+    debug=True,
+    server='adde.ucar.edu',
+    dataset='RTIMAGES',
+    descriptor='GE-VIS',
+    coordinateSystem=CoordinateSystems.AREA,
+    location=(557, 546),
+    size=(158, 332),
+    mag=(-3, -2),
+    time=('14:15:00', '14:15:00'),
+    band=1,
+)
+
+params_image_coords = dict(
+    debug=True,
+    server='adde.ucar.edu',
+    dataset='RTIMAGES',
+    descriptor='GE-VIS',
+    coordinateSystem=CoordinateSystems.IMAGE,
+    location=(4832, 13384),
     size=(158, 332),
     mag=(-3, -2),
     time=('14:15:00', '14:15:00'),
@@ -161,13 +186,18 @@ def getADDEImage(server, dataset, descriptor,
     
     if coordinateSystem is CoordinateSystems.LATLON:
         coordSys = 'LATLON'
-    elif coordinateSystem is CoordinateSystems.AREA or coordinateSystem is CoordinateSystems.IMAGE:
+        coordType = 'E'
+    elif coordinateSystem is CoordinateSystems.AREA:
         coordSys = 'LINELE'
+        coordType = 'A'
+    elif coordinateSystem is CoordinateSystems.IMAGE:
+        coordSys = 'LINELE'
+        coordType = 'I'
     else:
         raise ValueError()
     
     if location:
-        location = '&%s=%s %s' % (coordSys, location[0], location[1])
+        location = '&%s=%s %s %s' % (coordSys, location[0], location[1], coordType)
     else:
         location = ''
     
