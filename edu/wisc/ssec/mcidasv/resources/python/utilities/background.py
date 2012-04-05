@@ -504,6 +504,8 @@ class _Display(_JavaProxy):
         Raises:
             ValueError:  if layerType isn't valid
         """
+        import ucar.unidata.data.DataDataChoice as DataDataChoice
+        import ucar.unidata.data.DataChoice as DataChoice
 
         if isinstance(data, _DataChoice):
             # get DataChoice Java object
@@ -523,7 +525,31 @@ class _Display(_JavaProxy):
         # TODO(mike):  set this back to what it was before?
         getStaticMcv().getVMManager().setLastActiveViewManager(self._JavaProxy__javaObject)
 
-        newLayer = createDisplay(controlID, data, dataParameter)
+        #### this is basically createDisplay from shell.py with some modifications
+        if (isinstance(data, java.util.List)==0):
+            tmp = java.util.ArrayList()
+            # python lists should work also:
+            if isinstance(data, list):
+                # this is a python list
+                for thing in data:
+                    tmp.add(thing)
+            else:
+                # this will ensure we have a java ArrayList which will make things easier
+                tmp.add(data)
+            data = tmp
+
+        dataList = java.util.ArrayList()
+        for i in range(data.size()):
+            obj = data.get(i)
+            if(isinstance(obj, DataChoice)==0):
+                label = dataParameter
+                if(data.size()>1):
+                    label = label +str(i)
+                obj = DataDataChoice(label,obj)
+            dataList.add(obj)
+        print dataList.size()
+        newLayer = mcv.doMakeControl(controlID, dataList);
+        #####
 
         # createDisplay does it's init in a thread,
         # so wait for it to finish before we hand control back to user!
@@ -539,7 +565,7 @@ class _Display(_JavaProxy):
             filename
             quality:  float between 0.0 and 1.0 (relevant for JPEG's)
                     0.0 is highest compression / smallest file size / worst quality
-                    1.0 is least compression / biggest file size / best quality
+                    1.0 is least compression / biggest file size / best qualit
 
         Raises: 
             ValueError:  if filename is a directory
