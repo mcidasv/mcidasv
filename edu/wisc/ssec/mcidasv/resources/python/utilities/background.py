@@ -775,8 +775,7 @@ class _Layer(_JavaProxy):
         if (label != None) and isinstance(label, str):
             self._JavaProxy__javaObject.setDisplayListTemplate(label)
 
-        # assume user wants color scale visible unless otherwise specified
-        self.setColorScaleVisible(visible)
+        self.setLayerLabelVisible(visible)
 
         if (font != None):
             self.setLayerLabelFont(fontName=font)
