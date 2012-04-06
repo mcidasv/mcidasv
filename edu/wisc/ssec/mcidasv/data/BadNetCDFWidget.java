@@ -194,9 +194,9 @@ public class BadNetCDFWidget implements Constants {
     /////////////////////////////////////////////////////////
     public void showChoices()
     {
-        JLabel failLabel = new JLabel("<html>McIDAS-V can't seem to open this file!<br><br><i>What would you like to do about it?</i><br><br><br></html>");
+        JLabel failLabel = new JLabel("<html><b>McIDAS-V is unable to read your file.</b><br><br>To verify that your file is CF-compliant, you can use an online compliance checker (e.g. <a href=\"http://titania.badc.rl.ac.uk/cgi-bin/cf-checker.pl\">http://titania.badc.rl.ac.uk/cgi-bin/cf-checker.pl</a>). If the checker indicates that your file is not compliant you can attempt to fix it using the NcML Editor provided in this window. In a future release of McIDAS-V, this interface will present you with choices for the variables necessary for McIDAS-V to display your data.<br><br></html>");
         
-        JButton editNcMLBtn = new JButton("NcML Editor!");
+        JButton editNcMLBtn = new JButton("NcML Editor");
         ActionListener editNcMLAction = new ActionListener()
         {
             public void actionPerformed(ActionEvent ae)
@@ -210,7 +210,7 @@ public class BadNetCDFWidget implements Constants {
         JPanel editNcMLChoice = GuiUtils.leftRight(editNcMLLabel, editNcMLBtn);
         
         
-        JButton viewVarBtn = new JButton("View Variable!");
+        JButton viewVarBtn = new JButton("View Variable");
         ActionListener viewVarAction = new ActionListener()
         {
             public void actionPerformed(ActionEvent ae)
@@ -224,7 +224,7 @@ public class BadNetCDFWidget implements Constants {
         JPanel viewVarChoice = GuiUtils.leftRight(viewVarLabel, viewVarBtn);        
         
         
-        JButton setNavBtn = new JButton("Choose nav!");
+        JButton setNavBtn = new JButton("Choose Nav");
         ActionListener setNavAction = new ActionListener()
         {
             public void actionPerformed(ActionEvent ae)
@@ -244,7 +244,7 @@ public class BadNetCDFWidget implements Constants {
         choices = GuiUtils.topBottom(choices, setNavChoice);
 
         
-        JFrame choicesWindow = GuiUtils.makeWindow("How to fix your file!", GuiUtils.inset(choices, 10), 0, 0);
+        JFrame choicesWindow = GuiUtils.makeWindow("Non-compliant netCDF tool", GuiUtils.inset(choices, 10), 0, 0);
         choicesWindow.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);  // EXIT will close all of McV if left in.
 //        choicesWindow.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         choicesWindow.setVisible(true);
