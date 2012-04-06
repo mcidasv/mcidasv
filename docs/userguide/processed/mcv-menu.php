@@ -184,6 +184,7 @@
       <div class="indented" id="layercontrols_7">
         <span class="link" onClick="setPage('controls/misc/ScatterAnalysisControl.html');">Scatter Analysis Controls</span><br>
         <span class="link" onClick="setPage('controls/misc/BridgeControl.html');">McIDAS-X Bridge Controls</span><br>
+                <span class="link" onClick="setPage('controls/misc/GridTable.html');">Grid Table Controls</span><br>
         <span class="link" onClick="setPage('controls/misc/OmniControl.html');">Omni Controls</span><br>
         <span class="link" onClick="setPage('controls/JythonControl.html');">Jython Controls</span><br>
       </div>              <span class="link" onClick="setPage('controls/misc/ContourDialog.html');">Contour Properties Editor</span><br>
@@ -340,6 +341,7 @@
         <span class="link" onClick="setPage('examples/PlanViews.html');">Plan Views</span><br>
         <span class="link" onClick="setPage('examples/3DSurface.html');">3D Surface</span><br>
         <span class="link" onClick="setPage('examples/CrossSections.html');">Cross Sections</span><br />
+                <span class="link" onClick="setPage('examples/Hovmoller.html');">Hovmoller Display</span><br>
         <span class="link" onClick="setPage('examples/Imagery.html');">Imagery</span><br>
         <span class="link" onClick="setPage('examples/Radar.html');">Radar - Level II WSR-88D Data Displays</span><br>
         <span class="link" onClick="setPage('examples/Soundings.html');">Soundings</span><br>

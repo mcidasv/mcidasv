@@ -109,6 +109,7 @@
         <tocitem text="Miscellaneous Controls" target="idv.page_miscellaneouscontrols">
             <tocitem text="Scatter Analysis Controls" target="idv.controls.misc.scatteranalysiscontrol"/>
             <tocitem text="McIDAS-X Bridge Controls" target="idv.controls.misc.bridgecontrol"/>
+			<tocitem text="Grid Table Controls" target="idv.controls.misc.gridtable"/>
             <tocitem text="Omni Controls" target="idv.controls.misc.omnicontrol"/>
             <tocitem text="Jython Controls" target="idv.controls.jythoncontrol"/>
         </tocitem>
@@ -223,6 +224,7 @@
         <tocitem text="Plan Views" target="idv.examples.planviews"/>
         <tocitem text="3D Surface" target="idv.examples.3dsurface"/>
 		<tocitem text="Cross Sections" target="idv.examples.crosssections"/>
+		<tocitem text="Hovmoller Display" target="idv.examples.hovmoller"/>
         <tocitem text="Imagery" target="idv.examples.imagery"/>
         <tocitem text="Radar - Level II WSR-88D Data Displays" target="idv.examples.radar"/>
         <tocitem text="Soundings" target="idv.examples.soundings"/>

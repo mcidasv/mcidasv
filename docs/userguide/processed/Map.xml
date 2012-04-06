@@ -59,6 +59,7 @@
         <mapID target="idv.controls.menus"                           url="controls/index.html#menus" />
         <mapID target="idv.controls.misc.bridgecontrol"				 url="controls/misc/BridgeControl.html" />
 		<mapID target="idv.controls.misc.contourdialog"				 url="controls/misc/ContourDialog.html" />
+		<mapID target="idv.controls.misc.gridtable"					 url="controls/misc/GridTable.html" />
         <mapID target="idv.controls.misc.locationindicatorcontrol"   url="controls/misc/LocationIndicatorControl.html" />
         <mapID target="idv.controls.misc.locationindicatorcontrol.image1"  url="controls/misc/LocationIndicatorControl.html#image1" />
         <mapID target="idv.controls.misc.locationindicatorcontrol.image2"  url="controls/misc/LocationIndicatorControl.html#image2" />
@@ -196,6 +197,7 @@
 		<mapID target="idv.examples.flowdisplays.vectorplan"		 url="examples/FlowDisplays.html#vectorplan" />
 		<mapID target="idv.examples.flowdisplays.windbarbcrosssection"	url="examples/FlowDisplays.html#windbarbcrosssection" />
 		<mapID target="idv.examples.flowdisplays.windbarbplan"		 url="examples/FlowDisplays.html#windbarbplan" />
+		<mapID target="idv.examples.hovmoller"						 url="examples/Hovmoller.html" />
         <mapID target="idv.examples.imagery"                         url="examples/Imagery.html" />
         <mapID target="idv.examples.imagery.image1"                  url="examples/Imagery.html#image1" />
         <mapID target="idv.examples.imagery.image2"                  url="examples/Imagery.html#image2" />
