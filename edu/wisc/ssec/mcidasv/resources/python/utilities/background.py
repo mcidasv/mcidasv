@@ -1333,7 +1333,7 @@ def makeLogger(name):
     """ """
     return  LoggerFactory.getLogger(name)
 
-def openBundle(bundle, label="", clear=1, height=-1, width=-1):
+def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=None):
     """Open a bundle using the decodeXmlFile from PersistenceManager
 
     Args:
@@ -1345,6 +1345,12 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1):
         Default is to clear.
 
         height, width: specify size of window (not size of display!)
+
+        dataDictionary: allows you to override what files are used for a 
+        given datasource.  (This was known as setfiles in ISL).
+        The keys specify the name of the data source (as shown in e.g.,
+        the Field Selector tab).  The values can be either a single
+        file or a list of files to use for the given datasource.
 
     Returns:
         the result of activeDisplay()
@@ -1405,11 +1411,35 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1):
     sm.writePreferences()
 
     pm = my_mcv.getPersistenceManager()
+
+    if (dataDictionary != None):
+        # It turns out the whole dictionary thing boils down to a call to 
+        # PersistenceManager.setFileMapping which takes a list of ids and
+        # a list containing lists of files for each datasource id.  Then we
+        # call clearFileMapping to clean up.
+        # So, make datasource ids list and list of file lists:
+        ids = java.util.ArrayList()
+        fileLists = java.util.ArrayList()
+        for key in dataDictionary.keys():
+            ids.add(key)
+            fileList = java.util.ArrayList()
+            value = dataDictionary[key]
+            if isinstance(value, list):
+                for element in value:
+                    fileList.add(element)
+            else:
+                fileList.add(value)
+            fileLists.add(fileList)
+        pm.setFileMapping(ids, fileLists)
+
     checkToRemove = clear
     letUserChangeData = 0    # not sure about this
     bundleProperties = None  # not sure what this does..just send it None for now
     pm.decodeXmlFile(bundle,label,checkToRemove,letUserChangeData,bundleProperties)
     pause()  # this might be controversial...?
+
+    if (dataDictionary != None):
+        pm.clearFileMapping()  
 
     # change relevant preferences back to original values
     sm.putPreference(my_mcv.PREF_ZIDV_ASK, pref_zidv_ask_user)
