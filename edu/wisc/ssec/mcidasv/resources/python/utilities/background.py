@@ -506,6 +506,7 @@ class _Display(_JavaProxy):
         """
         import ucar.unidata.data.DataDataChoice as DataDataChoice
         import ucar.unidata.data.DataChoice as DataChoice
+        import visad.meteorology.NavigatedImage as NavigatedImage
 
         if isinstance(data, _DataChoice):
             # get DataChoice Java object
@@ -525,7 +526,6 @@ class _Display(_JavaProxy):
         # TODO(mike):  set this back to what it was before?
         getStaticMcv().getVMManager().setLastActiveViewManager(self._JavaProxy__javaObject)
 
-        #### this is basically createDisplay from shell.py with some modifications
         if (isinstance(data, java.util.List)==0):
             tmp = java.util.ArrayList()
             # python lists should work also:
@@ -538,6 +538,7 @@ class _Display(_JavaProxy):
                 tmp.add(data)
             data = tmp
 
+        # this is the guts of the old createDisplay
         dataList = java.util.ArrayList()
         for i in range(data.size()):
             obj = data.get(i)
@@ -547,9 +548,26 @@ class _Display(_JavaProxy):
                     label = label +str(i)
                 obj = DataDataChoice(label,obj)
             dataList.add(obj)
-        print dataList.size()
+
+        # *temporary* fix for doing image sequences with getADDEImage:
+        if isinstance(data[0], NavigatedImage) and (controlID == 'imagesequence'):
+            # apparently we need a CompositeDataChoice instead of a list of DataDataChoices for
+            # Image Sequence Display to work as expected
+            # To construct a CompositeDataChoice, we need a legitimate DataSource:
+            # (note most data sources keep track of files or URL's - ListDataSource's simply
+            #  keep track of DataChoice's)
+            listSource = ucar.unidata.data.ListDataSource('tempListDataSource1', 'tempListDataSource1')
+            listSource.setDataChoices(dataList)
+            # now we can create the CompositeDataChoice:
+            comp = ucar.unidata.data.CompositeDataChoice(listSource, listSource, 'compositeDataChoice', None)
+            comp.setDataChoices(dataList)
+            # need *another* ListDataSource now:
+            compSource = ucar.unidata.data.ListDataSource('tempListDataSource2', 'tempListDataSource2')
+            compSource.addDataChoice(comp)
+            # finally, set dataList appropriately:
+            dataList = compSource.getDataChoices()
+
         newLayer = mcv.doMakeControl(controlID, dataList);
-        #####
 
         # createDisplay does it's init in a thread,
         # so wait for it to finish before we hand control back to user!
