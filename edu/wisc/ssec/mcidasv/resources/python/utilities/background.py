@@ -289,6 +289,18 @@ class _Display(_JavaProxy):
         else:
             return IdvUIManager.COMP_VIEW
 
+    def toggleFullScreen(self):
+        self._JavaProxy__javaObject.toggleFullScreen()
+
+    def getFullScreenSize(self):
+        width = self._JavaProxy__javaObject.getFullScreenWidth()
+        height = self._JavaProxy__javaObject.getFullScreenHeight()
+        return width, height
+    
+    def setFullScreenSize(self, width, height):
+        self._JavaProxy__javaObject.setFullScreenWidth(width)
+        self._JavaProxy__javaObject.setFullScreenHeight(height)
+    
     def getSize(self):
         size = self._JavaProxy__javaObject.getComponent().getSize()
         return size.getWidth(), size.getHeight()
@@ -1243,7 +1255,7 @@ FLATMAP = _NoOp('FLATMAP')
 GLOBE = _NoOp('GLOBE')
 TRANSECT = _NoOp('TRANSECT')
 
-def buildWindow(width=1337, height=1337, rows=1, cols=1, panelTypes=None):
+def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
     def _buildWindowInternal(width, height, rows, cols, panelTypes):
         """Creates a window with a user-specified layout of displays.
         
