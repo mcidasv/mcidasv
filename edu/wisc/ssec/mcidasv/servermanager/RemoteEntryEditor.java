@@ -479,7 +479,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         userField.setUppercase(forceCaps);
 
         if (initEntries == RemoteAddeEntry.INVALID_ENTRIES) {
-            setTitle("Define New Remote Dataset");
+            setTitle("Add Remote Dataset");
         } else {
             setTitle("Edit Remote Dataset");
         }

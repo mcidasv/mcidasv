@@ -537,7 +537,7 @@ public class TabbedAddeManager extends JFrame {
         JMenuItem importMctableMenuItem = new JMenuItem("Import MCTABLE...");
         importMctableMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                logger.trace("importing mctable datasets...");
+                importButtonActionPerformed(e);
             }
         });
         fileMenu.add(importMctableMenuItem);
@@ -550,14 +550,14 @@ public class TabbedAddeManager extends JFrame {
         });
         fileMenu.add(importUrlMenuItem);
 
-        JMenuItem exportMenuItem = new JMenuItem("Export...");
-        exportMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                logger.trace("exporting datasets...");
-            }
-        });
-        fileMenu.add(exportMenuItem);
-
+//        JMenuItem exportMenuItem = new JMenuItem("Export...");
+//        exportMenuItem.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent e) {
+//                logger.trace("exporting datasets...");
+//            }
+//        });
+//        fileMenu.add(exportMenuItem);
+//
         fileMenu.add(new JSeparator());
 
         JMenuItem closeMenuItem = new JMenuItem("Close");
@@ -1039,6 +1039,8 @@ public class TabbedAddeManager extends JFrame {
     private void setSelectedRemoteEntries(final Collection<RemoteAddeEntry> entries) {
         selectedRemoteEntries.clear();
         selectedRemoteEntries.addAll(entries);
+        this.editRemoteButton.setEnabled(entries.size() == 1);
+        this.removeRemoteButton.setEnabled(!entries.isEmpty());
         logger.trace("remote entries={}", entries);
     }
 
@@ -1063,6 +1065,8 @@ public class TabbedAddeManager extends JFrame {
     private void setSelectedLocalEntries(final Collection<LocalAddeEntry> entries) {
         selectedLocalEntries.clear();
         selectedLocalEntries.addAll(entries);
+        this.editLocalButton.setEnabled(entries.size() == 1);
+        this.removeLocalButton.setEnabled(!entries.isEmpty());
         logger.trace("local entries={}", entries);
     }
 
