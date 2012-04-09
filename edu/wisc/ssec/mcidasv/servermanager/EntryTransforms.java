@@ -607,6 +607,8 @@ public class EntryTransforms {
                 line = line.trim();
                 if (line.isEmpty()) {
                     continue;
+                } else if (line.startsWith("SSH_")) {
+                    continue;
                 }
                 servers.add(readResolvLine(line));
             }
