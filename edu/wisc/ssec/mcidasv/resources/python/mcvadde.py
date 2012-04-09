@@ -103,19 +103,6 @@ params_image_coords = dict(
     band=1,
 )
 
-params_image_coords = dict(
-    debug=True,
-    server='adde.ucar.edu',
-    dataset='RTIMAGES',
-    descriptor='GE-VIS',
-    coordinateSystem=CoordinateSystems.IMAGE,
-    location=(4832, 13384),
-    size=(158, 332),
-    mag=(-3, -2),
-    time=('14:15:00', '14:15:00'),
-    band=1,
-)
-
 params_sizeall = dict(
     debug=True,
     server='adde.ucar.edu',
