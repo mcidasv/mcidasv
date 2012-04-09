@@ -61,6 +61,7 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -545,7 +546,17 @@ public class TabbedAddeManager extends JFrame {
         JMenuItem importUrlMenuItem = new JMenuItem("Import from URL...");
         importUrlMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                logger.trace("importing url datasets...");
+                SwingUtilities.invokeLater(new Runnable() {
+                   public void run() { 
+                       try {
+                           ImportUrl dialog = new ImportUrl();
+                           dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                           dialog.setVisible(true);
+                       } catch (Exception e) {
+                           e.printStackTrace();
+                       }
+                   }
+                });
             }
         });
         fileMenu.add(importUrlMenuItem);
