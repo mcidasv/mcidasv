@@ -49,15 +49,17 @@ import imageFilters
 from decorators import deprecated
 
 from background import (
-    activeDisplay, allActions, allColorTables, allDisplays, allLayerTypes,
-    allProjections, allWindows, boomstick, collectGarbage, colorTableNames,
-    firstDisplay, firstWindow, getColorTable, getProjection, managedDataSource,
-    performAction, projectionNames, removeAllData, removeAllLayers, setViewSize
+    activeDisplay, allActions, allColorTables, allDisplays, allFontNames,
+    allLayerTypes, allProjections, allWindows, boomstick, collectGarbage,
+    colorTableNames, firstDisplay, firstWindow, getColorTable, getProjection,
+    managedDataSource, performAction, projectionNames, removeAllData,
+    removeAllLayers, setViewSize
 )
 
 from mcvadde import (
-    enum, DEFAULT_ACCOUNTING, CoordinateSystems, Places, params1, getADDEImage,
-    listADDEImages
+    enum, DEFAULT_ACCOUNTING, CoordinateSystems, Places, getADDEImage, listADDEImages,
+    params1, params_area_coords, params_image_coords, params_image_coords,
+    params_sizeall
 )
 
 from interactive import (

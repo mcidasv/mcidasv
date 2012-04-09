@@ -103,6 +103,32 @@ params_image_coords = dict(
     band=1,
 )
 
+params_image_coords = dict(
+    debug=True,
+    server='adde.ucar.edu',
+    dataset='RTIMAGES',
+    descriptor='GE-VIS',
+    coordinateSystem=CoordinateSystems.IMAGE,
+    location=(4832, 13384),
+    size=(158, 332),
+    mag=(-3, -2),
+    time=('14:15:00', '14:15:00'),
+    band=1,
+)
+
+params_sizeall = dict(
+    debug=True,
+    server='adde.ucar.edu',
+    dataset='RTIMAGES',
+    descriptor='GE-VIS',
+    coordinateSystem=CoordinateSystems.IMAGE,
+    location=(4832, 13384),
+    size='ALL',
+    mag=(-3, -2),
+    time=('14:15:00', '14:15:00'),
+    band=1,
+)
+
 def listADDEImages(server, dataset, descriptor,
     accounting=DEFAULT_ACCOUNTING,
     location=None,
@@ -143,7 +169,10 @@ def listADDEImages(server, dataset, descriptor,
         day = '&DAY=%s' % (day)
     
     if size:
-        size = '%s %s' % (size[0], size[1])
+        if size == 'ALL':
+            size = '99999 99999'
+        else:
+            size = '%s %s' % (size[0], size[1])
     
     if time:
         time = '%s %s I' % (time[0], time[1])
@@ -207,7 +236,10 @@ def getADDEImage(server, dataset, descriptor,
         day = ''
     
     if size:
-        size = '%s %s' % (size[0], size[1])
+        if size == 'ALL':
+            size = '99999 99999'
+        else:
+            size = '%s %s' % (size[0], size[1])
     
     if time:
         time = '%s %s I' % (time[0], time[1])
