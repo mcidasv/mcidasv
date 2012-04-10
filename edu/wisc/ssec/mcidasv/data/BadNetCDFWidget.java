@@ -194,7 +194,7 @@ public class BadNetCDFWidget implements Constants {
     /////////////////////////////////////////////////////////
     public void showChoices()
     {
-        JLabel failLabel = new JLabel("<html><b>McIDAS-V is unable to read your file.</b><br><br>To verify that your file is CF-compliant, you can use an online compliance checker (e.g. <a href=\"http://titania.badc.rl.ac.uk/cgi-bin/cf-checker.pl\">http://titania.badc.rl.ac.uk/cgi-bin/cf-checker.pl</a>). If the checker indicates that your file is not compliant you can attempt to fix it using the NcML Editor provided in this window. In a future release of McIDAS-V, this interface will present you with choices for the variables necessary for McIDAS-V to display your data.<br><br></html>");
+        JLabel failLabel = new JLabel("<html><b>McIDAS-V is unable to read your file.</b><br/><br/>To verify if your file is CF-compliant, you can run your file through an online compliance checker (e.g., http://titania.badc.rl.ac.uk/cgi-bin/cf-checker.pl). If the checker indicates that your file is not compliant you can attempt to fix it using the NcML Editor provided in this window. In a future release of McIDAS-V, this interface will present you with choices for the variables necessary for McIDAS-V to display your data.<br/><br/></html>");
         
         JButton editNcMLBtn = new JButton("NcML Editor");
         ActionListener editNcMLAction = new ActionListener()
