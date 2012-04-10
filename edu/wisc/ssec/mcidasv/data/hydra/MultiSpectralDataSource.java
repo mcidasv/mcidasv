@@ -311,6 +311,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put(SwathAdapter.geo_xtrack_offset_name, Double.toString(2.0));
          table.put(SwathAdapter.geo_track_skip_name, Double.toString(5.0));
          table.put(SwathAdapter.geo_xtrack_skip_name, Double.toString(5.0));
+         table.put(SwathAdapter.multiScaleDimensionIndex, Integer.toString(0));
          
          // initialize the aggregation reader object
          logger.debug("Trying to create MODIS 1K GranuleAggregation reader...");
@@ -369,6 +370,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put(SwathAdapter.geo_xtrack_offset_name, Double.toString(2.0));
          table.put(SwathAdapter.geo_track_skip_name, Double.toString(5.0));
          table.put(SwathAdapter.geo_xtrack_skip_name, Double.toString(5.0));
+         table.put(SwathAdapter.multiScaleDimensionIndex, Integer.toString(0));
 
          SwathAdapter sadapt0 = new SwathAdapter(reader, table);
          sadapt0.setDefaultStride(10);
@@ -412,6 +414,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put(SwathAdapter.geo_xtrack_offset_name, Double.toString(2.0));
          table.put(SwathAdapter.geo_track_skip_name, Double.toString(5.0));
          table.put(SwathAdapter.geo_xtrack_skip_name, Double.toString(5.0));
+         table.put(SwathAdapter.multiScaleDimensionIndex, Integer.toString(0));
 
          SwathAdapter sadapt1 = new SwathAdapter(reader, table);
 
@@ -446,8 +449,11 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put(SwathAdapter.geo_xtrack_offset_name, Double.toString(2.0));
          table.put(SwathAdapter.geo_track_skip_name, Double.toString(5.0));
          table.put(SwathAdapter.geo_xtrack_skip_name, Double.toString(5.0));
+         table.put(SwathAdapter.multiScaleDimensionIndex, Integer.toString(0));
+
 
          SwathAdapter sadapt2 = new SwathAdapter(reader, table);
+
 
          table = SpectrumAdapter.getEmptyMetadataTable();
          table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data Fields/EV_500_Aggr1km_RefSB");
@@ -487,6 +493,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put(SwathAdapter.geo_xtrack_offset_name, Double.toString(0.0));
          table.put(SwathAdapter.geo_track_skip_name, Double.toString(4.0));
          table.put(SwathAdapter.geo_xtrack_skip_name, Double.toString(4.0));
+         table.put(SwathAdapter.multiScaleDimensionIndex, Integer.toString(0));
 
          swathAdapter = new SwathAdapter(reader, table);
          swathAdapter.setDefaultStride(40);
@@ -537,6 +544,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put(SwathAdapter.geo_xtrack_offset_name, Double.toString(0.0));
          table.put(SwathAdapter.geo_track_skip_name, Double.toString(2.0));
          table.put(SwathAdapter.geo_xtrack_skip_name, Double.toString(2.0));
+         table.put(SwathAdapter.multiScaleDimensionIndex, Integer.toString(0));
 
          SwathAdapter swathAdapter0 = new SwathAdapter(reader, table);
          swathAdapter0.setDefaultStride(20);
@@ -572,6 +580,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put(SwathAdapter.geo_xtrack_offset_name, Double.toString(0.0));
          table.put(SwathAdapter.geo_track_skip_name, Double.toString(2.0));
          table.put(SwathAdapter.geo_xtrack_skip_name, Double.toString(2.0));
+         table.put(SwathAdapter.multiScaleDimensionIndex, Integer.toString(0));
 
          SwathAdapter swathAdapter1 = new SwathAdapter(reader, table);
          swathAdapter1.setDefaultStride(20);
