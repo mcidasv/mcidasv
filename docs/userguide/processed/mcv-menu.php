@@ -150,7 +150,7 @@
 
       <div class="indented" id="layercontrols_4">
         <span class="link" onClick="setPage('controls/ProbeControl.html');">Data Probe/Time Series</span><br>
-        <span class="link" onClick="setPage('controls/TimeHeightControl.html');">Time-Height Controls</span><br>
+        <span class="link" onClick="setPage('controls/TimeHeightControl.html');">Time/Height Controls</span><br>
         <span class="link" onClick="setPage('controls/ProfileControl.html');">Vertical Profile Controls</span><br>
         <span class="link" onClick="setPage('controls/DataTransectControl.html');">Data Transect Controls</span><br>
       </div>
@@ -341,6 +341,7 @@
         <span class="link" onClick="setPage('examples/PlanViews.html');">Plan Views</span><br>
         <span class="link" onClick="setPage('examples/3DSurface.html');">3D Surface</span><br>
         <span class="link" onClick="setPage('examples/CrossSections.html');">Cross Sections</span><br />
+        <span class="link" onClick="setPage('examples/Probes.html');">Probes</span><br />
                 <span class="link" onClick="setPage('examples/Hovmoller.html');">Hovmoller Display</span><br>
         <span class="link" onClick="setPage('examples/Imagery.html');">Imagery</span><br>
         <span class="link" onClick="setPage('examples/Radar.html');">Radar - Level II WSR-88D Data Displays</span><br>

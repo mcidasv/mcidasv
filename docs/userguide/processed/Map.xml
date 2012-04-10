@@ -216,6 +216,7 @@
         <mapID target="idv.examples.planviews.colorfilledplan"       url="examples/PlanViews.html#colorfilledplan" />
         <mapID target="idv.examples.planviews.colorshadedplan"       url="examples/PlanViews.html#colorshadedplan" />
 		<mapID target="idv.examples.planviews.valueplots"			 url="examples/PlanViews.html#valueplots" />
+		<mapID target="idv.examples.probes"							 url="examples/Probes" />
         <mapID target="idv.examples.profiler"                        url="examples/Profiler.html" />
         <mapID target="idv.examples.profiler.image1"                 url="examples/Profiler.html#image1" />
         <mapID target="idv.examples.profiler.image2"                 url="examples/Profiler.html#image2" />
