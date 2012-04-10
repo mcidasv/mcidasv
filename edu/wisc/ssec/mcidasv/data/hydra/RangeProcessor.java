@@ -169,8 +169,6 @@ public class RangeProcessor {
                 String str = (String)metadata.get("multiScaleDimensionIndex");
                 hasMultiDimensionScale = (str != null);
                 multiScaleDimensionIndex = (str != null) ? Integer.parseInt(str) : 0;
-
-
 	}
 
 	public float[] getAttributeAsFloatArray(String arrayName, String attrName) 
@@ -463,7 +461,7 @@ public class RangeProcessor {
 	 * @return
 	 */
 	
-	public float[] processAlongBandDim(byte[] values) {
+	public float[] processAlongMultiScaleDim(byte[] values) {
 
 		float[] new_values = new float[values.length];
 
@@ -533,7 +531,7 @@ public class RangeProcessor {
 	 * @return
 	 */
 	
-	public float[] processAlongBandDim(short[] values) {
+	public float[] processAlongMultiScaleDim(short[] values) {
 
 		float[] new_values = new float[values.length];
 
@@ -614,7 +612,6 @@ public class RangeProcessor {
         }
 
         public void setMultiScaleIndex(int idx) {
-             System.out.println("multiScaleIndex: "+idx);
              this.soIndex = idx;
         }
 
@@ -706,20 +703,30 @@ class AggregationRangeProcessor extends RangeProcessor {
 
        ArrayList readers = aggrReader.getReaders();
 
+       int num = 0;
+
        for (int rdrIdx = 0; rdrIdx < readers.size(); rdrIdx++) {
-           rangeProcessors.add(
-                  RangeProcessor.createRangeProcessor(
-                                      (MultiDimensionReader)readers.get(rdrIdx), metadata));
+           RangeProcessor rngProcessor = 
+                  RangeProcessor.createRangeProcessor((MultiDimensionReader)readers.get(rdrIdx), metadata);
+          
+           if (rngProcessor.hasMultiDimensionScale()) {
+              num++;
+           }
+
+           rangeProcessors.add(rngProcessor);
        }
 
-       if (rangeProcessors.get(0).hasMultiDimensionScale()) {
+       if (num > 0 && num != readers.size()) {
+           throw new Exception("AggregationRangeProcessor: all or none can define a multiDimensionScale");
+       }
+       else if (num == readers.size()) {
          setHasMultiDimensionScale(true);
        }
 
        aggrReader.addRangeProcessor((String)metadata.get(SwathAdapter.array_name), this);
     }
 
-    public synchronized void setIndex(int index) {
+    public synchronized void setWhichRangeProcessor(int index) {
       rngIdx = index;
     }
 
@@ -742,5 +749,13 @@ class AggregationRangeProcessor extends RangeProcessor {
 
     public synchronized double[] processRange(double[] values, HashMap subset) {
       return rangeProcessors.get(rngIdx).processRange(values, subset);
+    }
+
+    public synchronized float[] processAlongMultiScaleDim(short[] values) {
+      return rangeProcessors.get(rngIdx).processAlongMultiScaleDim(values);
+    }
+
+    public synchronized float[] processAlongMultiScaleDim(byte[] values) {
+      return rangeProcessors.get(rngIdx).processAlongMultiScaleDim(values);
     }
 }

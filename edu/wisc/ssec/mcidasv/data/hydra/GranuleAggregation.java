@@ -527,7 +527,7 @@ public class GranuleAggregation implements MultiDimensionReader {
     	   for (Array a : arrayList) {
     		   if (a != null) {
     			   Object primArray = a.copyTo1DJavaArray();
-    			   primArray = processArray(array_name, arrayType, granIdx, primArray, rngProcessor, start);
+    			   primArray = processArray(array_name, arrayType, granIdx, primArray, rngProcessor, start, count);
     			   System.arraycopy(primArray, 0, o, destPos, (int) a.getSize());
     			   destPos += a.getSize();
     		   }
@@ -547,28 +547,51 @@ public class GranuleAggregation implements MultiDimensionReader {
    }
 
    /* pass individual granule pieces just read from dataset through the RangeProcessor */
-   private Object processArray(String array_name, Class arrayType, int granIdx, Object values, RangeProcessor rngProcessor, int[] start) {
+   private Object processArray(String array_name, Class arrayType, int granIdx, Object values, RangeProcessor rngProcessor, int[] start, int[] count) {
      if (rngProcessor == null) {
        return values;
      }
      else {
-        ((AggregationRangeProcessor)rngProcessor).setIndex(granIdx);
+        ((AggregationRangeProcessor)rngProcessor).setWhichRangeProcessor(granIdx);
 
-        if (rngProcessor.hasMultiDimensionScale()) {
+        boolean processAlongMultiScaleDim = false;
+
+        if (rngProcessor.hasMultiDimensionScale()) { // this data variable has an array > 1 of scale/offsets.  For example, one for each band.
            rngProcessor.setMultiScaleIndex(start[rngProcessor.getMultiScaleDimensionIndex()]);
+           if (count[rngProcessor.getMultiScaleDimensionIndex()] > 1) {  // if the multiScaleDim is > 1, use processAlongMultiScaleDim below
+              processAlongMultiScaleDim = true;
+           }
         }
 
         Object outArray = null;
 
-        if (arrayType == Short.TYPE) {
-           outArray = rngProcessor.processRange((short[])values, null);
-        } else if (arrayType == Byte.TYPE) {
-           outArray = rngProcessor.processRange((byte[])values, null);
-        } else if (arrayType == Float.TYPE) {
-           outArray = rngProcessor.processRange((float[])values, null);
-        } else if (arrayType == Double.TYPE) {
-           outArray = rngProcessor.processRange((double[])values, null);
+        if (processAlongMultiScaleDim) {
+
+           if (arrayType == Short.TYPE) {
+              outArray = rngProcessor.processAlongMultiScaleDim((short[])values);
+           } else if (arrayType == Byte.TYPE) {
+              outArray = rngProcessor.processAlongMultiScaleDim((byte[])values);
+           } else if (arrayType == Float.TYPE) {
+              outArray = values;
+           } else if (arrayType == Double.TYPE) {
+              outArray = values;
+           }
+
         }
+        else {
+
+           if (arrayType == Short.TYPE) {
+              outArray = rngProcessor.processRange((short[])values, null);
+           } else if (arrayType == Byte.TYPE) {
+              outArray = rngProcessor.processRange((byte[])values, null);
+           } else if (arrayType == Float.TYPE) {
+              outArray = rngProcessor.processRange((float[])values, null);
+           } else if (arrayType == Double.TYPE) {
+              outArray = rngProcessor.processRange((double[])values, null);
+           }
+
+        }
+
         return outArray;
      }
    }

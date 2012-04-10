@@ -244,11 +244,11 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
   }
 
   public float[] processRange(short[] range, Object subset) {
-     return rangeProcessor.processAlongBandDim(range);
+     return rangeProcessor.processAlongMultiScaleDim(range);
   }
 
   public float[] processRange(byte[] range, Object subset) {
-     return rangeProcessor.processAlongBandDim(range);
+     return rangeProcessor.processAlongMultiScaleDim(range);
   }
 
   public HashMap getDefaultSubset() {
