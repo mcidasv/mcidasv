@@ -952,7 +952,6 @@ public class ScatterDisplay extends DisplayControlImpl {
        }
        else if (X_domainRef == null && Y_domainRef == null) {
          Gridded2DSet domSet = (Gridded2DSet) Y_field.getDomainSet();
-         System.out.println("start valueToGrid");
          indexes = domSet.valueToIndex(Xsamples);
        }
        
@@ -1069,7 +1068,6 @@ public class ScatterDisplay extends DisplayControlImpl {
                     pw.flush();
                     pw.close();
                   } catch (Exception epw) {
-                    System.out.println("####  "+epw);
                     statsWindow.setTitle("Scatter Statistics: File not saved");
                   }  
 
