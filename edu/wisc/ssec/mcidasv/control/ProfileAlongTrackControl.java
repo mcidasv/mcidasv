@@ -276,7 +276,6 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
     Integer1DSet newDomain = new Integer1DSet(len);
     FlatField newFF = new FlatField(new FunctionType(RealType.Generic, rangeType), newDomain);
     newFF.setSamples(data.getFloats());
-    
 
     XYDisplay master = new XYDisplay("2D disp", domainType, rangeType);
 
@@ -303,6 +302,7 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
 
     final DataReference txtRef = new DataReferenceImpl("text");
     display.addReference(txtRef, new ConstantMap[] {new ConstantMap(0.9, Display.YAxis)});
+
 
     class MyDragLine extends DragLine {
       public MyDragLine(Gridded1DSet domain, RealType domainType, RealType rangeType,
@@ -332,7 +332,6 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
     } catch (Exception e) {
       e.printStackTrace();
     }
-
 
     return master;
   }
