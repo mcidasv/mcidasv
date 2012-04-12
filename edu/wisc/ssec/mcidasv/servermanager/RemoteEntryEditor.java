@@ -297,7 +297,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         Set<RemoteAddeEntry> newEntries = pollWidgets(false);
 //        entryStore.replaceEntries(currentEntries, newEntries);
         if (manager != null) {
-            manager.replaceEntries(newEntries);
+            manager.replaceEntries(currentEntries, newEntries);
         }
         logger.trace("currentEntries={}", currentEntries);
         disposeDisplayable(true);

@@ -362,13 +362,13 @@ public class LocalEntryEditor extends javax.swing.JDialog {
 
     private void editEntry() {
         Set<LocalAddeEntry> newEntries = pollWidgets();
-//        Set<LocalAddeEntry> currentEntries = Collections.singleton(currentEntry);
+        Set<LocalAddeEntry> currentEntries = Collections.singleton(currentEntry);
 //        entryStore.replaceEntries(currentEntries, newEntries);
         if (isDisplayable()) {
             dispose();
         }
         if (managerController != null) {
-            managerController.replaceEntries(newEntries);
+            managerController.replaceEntries(currentEntries, newEntries);
             managerController.refreshDisplay();
         }
     }

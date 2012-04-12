@@ -238,14 +238,33 @@ public class TabbedAddeManager extends JFrame {
 
     public void addEntries(final Collection<? extends AddeEntry> entries) {
         logger.trace("entries={}", entries);
+        entrySet.addAll(entries);
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                refreshDisplay();
+            }
+        });
     }
 
-    public void replaceEntries(final Collection<? extends AddeEntry> entries) {
-        logger.trace("entries={}", entries);
+    public void replaceEntries(final Collection<? extends AddeEntry> currentEntries, final Collection<? extends AddeEntry> newEntries) {
+        logger.trace("currentEntries={} newEntries={}", currentEntries, newEntries);
+        entrySet.removeAll(currentEntries);
+        entrySet.addAll(newEntries);
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                refreshDisplay();
+            }
+        });
     }
 
     public void removeEntries(final Collection<? extends AddeEntry> entries) {
         logger.trace("entries={}", entries);
+        entrySet.removeAll(entries);
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                refreshDisplay();
+            }
+        });
     }
 
     /**
@@ -835,7 +854,7 @@ public class TabbedAddeManager extends JFrame {
         Box frameControlBox = Box.createHorizontalBox();
         statusPanel.add(frameControlBox, BorderLayout.EAST);
 
-        JButton cancelButton = new JButton("Cancel");
+        cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 handleCancellingChanges();
@@ -843,14 +862,23 @@ public class TabbedAddeManager extends JFrame {
         });
         frameControlBox.add(cancelButton);
 
-        JButton saveButton = new JButton("Save Changes");
-        saveButton.setEnabled(false);
-        saveButton.addActionListener(new ActionListener() {
+        applyButton = new JButton("Apply");
+        applyButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                logger.trace("apply");
                 handleSavingChanges();
             }
         });
-        frameControlBox.add(saveButton);
+        frameControlBox.add(applyButton);
+
+        okButton = new JButton("Ok");
+        okButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                handleSavingChanges();
+                closeManager();
+            }
+        });
+        frameControlBox.add(okButton);
         tabbedPane.setSelectedIndex(getLastTab());
         guiInitialized = true;
     }
@@ -876,7 +904,11 @@ public class TabbedAddeManager extends JFrame {
      * Respond to the user clicking the {@literal "save changes"} button.
      */
     public void handleSavingChanges() {
-        logger.trace("save changes. anything to do={}", hasUserChanges());
+        boolean userChanges = hasUserChanges();
+        logger.trace("save changes. anything to do={}", userChanges);
+        if (userChanges) {
+            serverManager.addEntries(entrySet);
+        }
     }
 
     /**
@@ -1799,6 +1831,9 @@ public class TabbedAddeManager extends JFrame {
     private JButton newLocalButton;
     private JButton editLocalButton;
     private JButton removeLocalButton;
+    private JButton applyButton;
+    private JButton okButton;
+    private JButton cancelButton;
     private JMenuItem editMenuItem;
     private JMenuItem removeMenuItem;
     private JCheckBox importAccountBox;
