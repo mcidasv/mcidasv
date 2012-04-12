@@ -114,6 +114,8 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     /** Reference back to the server manager. */
     private final EntryStore entryStore;
 
+    private final TabbedAddeManager manager;
+
     /** Current contents of the editor. */
     private final Set<RemoteAddeEntry> currentEntries = newLinkedHashSet();
 
@@ -146,6 +148,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     public RemoteEntryEditor(EntryStore entryStore, String address, String group) {
         super((javax.swing.JDialog)null, true);
         this.entryStore = entryStore;
+        this.manager = null;
         this.serverText = address;
         this.datasetText = group;
         initComponents(RemoteAddeEntry.INVALID_ENTRIES);
@@ -164,6 +167,7 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
     public RemoteEntryEditor(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store, final List<RemoteAddeEntry> entries) {
         super(manager, modal);
         this.entryStore = store;
+        this.manager = manager;
         this.serverText = null;
         this.datasetText = null;
         if (entries != RemoteAddeEntry.INVALID_ENTRIES) {
@@ -276,7 +280,10 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      */
     private void addEntry() {
         Set<RemoteAddeEntry> addedEntries = pollWidgets(false);
-        entryStore.addEntries(addedEntries);
+//        entryStore.addEntries(addedEntries);
+        if (manager != null) {
+            manager.addEntries(addedEntries);
+        }
         disposeDisplayable(true);
     }
 
@@ -288,7 +295,10 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
      */
     private void editEntry() {
         Set<RemoteAddeEntry> newEntries = pollWidgets(false);
-        entryStore.replaceEntries(currentEntries, newEntries);
+//        entryStore.replaceEntries(currentEntries, newEntries);
+        if (manager != null) {
+            manager.replaceEntries(newEntries);
+        }
         logger.trace("currentEntries={}", currentEntries);
         disposeDisplayable(true);
     }

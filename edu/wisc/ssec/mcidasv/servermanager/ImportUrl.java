@@ -74,14 +74,13 @@ public class ImportUrl extends JDialog {
         contentPanel.add(mctableField, "cell 1 0,growx");
         mctableField.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(final DocumentEvent e) {
-                okButton.setEnabled(mctableField.getText().length() > 0);
+                int len = mctableField.getText().trim().length();
+//                okButton.setEnabled(mctableField.getText().trim().length() > 0);
+                okButton.setEnabled(len > 0);
+                logger.trace("len={}", len);
             }
-            public void insertUpdate(final DocumentEvent e) {
-                
-            }
-            public void removeUpdate(final DocumentEvent e) {
-                
-            }
+            public void insertUpdate(final DocumentEvent e) {}
+            public void removeUpdate(final DocumentEvent e) {}
         });
         
         acctBox = new JCheckBox("Use default accounting?");

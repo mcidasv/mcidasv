@@ -236,6 +236,18 @@ public class TabbedAddeManager extends JFrame {
         return staticTabbedManager;
     }
 
+    public void addEntries(final Collection<? extends AddeEntry> entries) {
+        logger.trace("entries={}", entries);
+    }
+
+    public void replaceEntries(final Collection<? extends AddeEntry> entries) {
+        logger.trace("entries={}", entries);
+    }
+
+    public void removeEntries(final Collection<? extends AddeEntry> entries) {
+        logger.trace("entries={}", entries);
+    }
+
     /**
      * If the GUI isn't shown, this method will display things. If the GUI <i>is 
      * shown</i>, bring it to the front.
@@ -855,7 +867,7 @@ public class TabbedAddeManager extends JFrame {
     /**
      * Respond to the user clicking the {@literal "cancel"} button.
      */
-    private void handleCancellingChanges() {
+    public void handleCancellingChanges() {
         logger.trace("cancel changes. anything to do={}", hasUserChanges());
         closeManager();
     }
@@ -863,7 +875,7 @@ public class TabbedAddeManager extends JFrame {
     /**
      * Respond to the user clicking the {@literal "save changes"} button.
      */
-    private void handleSavingChanges() {
+    public void handleSavingChanges() {
         logger.trace("save changes. anything to do={}", hasUserChanges());
     }
 
