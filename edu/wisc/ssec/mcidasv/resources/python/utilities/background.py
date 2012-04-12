@@ -1,4 +1,4 @@
-import types
+mport types
 
 import java.awt.Color.CYAN
 import ucar.unidata.util.Range
@@ -587,6 +587,24 @@ class _Display(_JavaProxy):
 
         # TODO(jon): this should behave better if createDisplay fails for some reason.
         return _Layer(newLayer)
+
+    def captureImageIdvStyle(self, filename, width=800, height=600, quality=1.0):
+        filename = _expandpath(filename)
+        if os.path.isdir(filename):
+            raise ValueError(filename, "is a directory")
+        from ucar.unidata.idv.ui import ImageGenerator
+        from java.awt.image import BufferedImage
+        from ucar.unidata.xml import XmlUtil
+        pause()
+        tmpImage = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+        islInterpreter = ImageGenerator(getStaticMcv())
+        paramString = ImageGenerator.makeXmlFromString('resize width=%s height=%s' % (width, height))
+        xmlString = '<image file=\"%s\" quality=\"%s\">%s</image>' % (filename, quality, paramString)
+        node = XmlUtil.getRoot(xmlString)
+        viewManager = self._JavaProxy__javaObject
+        props = java.util.Hashtable()
+        imageProps = java.util.Hashtable()
+        return islInterpreter.processImage(tmpImage, filename, node, props, viewManager, imageProps)
 
     def captureImage(self, filename, quality=1.0):
         """Attempt at a replacement for ISL writeImage
@@ -1251,7 +1269,7 @@ class _NoOp(object):
         return self.description
 
 MAP = _NoOp('MAP')
-FLATMAP = _NoOp('FLATMAP')
+MAP2D = _NoOp('MAP2D')
 GLOBE = _NoOp('GLOBE')
 TRANSECT = _NoOp('TRANSECT')
 
