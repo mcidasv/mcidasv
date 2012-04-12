@@ -114,6 +114,15 @@ public class Statistics {
      return newVals;
    }
 
+   private double[][] removeMissing(double[][] vals) {
+     int tupLen = vals.length;
+     double[][] newVals = new double[tupLen][];
+     for (int k=0; k < tupLen; k++) {
+        newVals[k] = removeMissing(vals[k]);
+     }
+     return newVals;
+   }
+
    public Data mean() throws VisADException, RemoteException {
      double[] stats = new double[rngTupLen];
      for (int k=0; k<rngTupLen; k++) {
@@ -189,9 +198,18 @@ public class Statistics {
 
    public Data correlation(FlatField fltFld) throws VisADException, RemoteException {
      double[][] values_y = fltFld.getValues(false);
-     if ((values_y.length != rngTupLen) || (values_y[0].length != numPoints)) {
-       throw new VisADException("both fields must have same numPoints and range tuple length");
+     values_y = removeMissing(values_y);
+
+     if (values_y.length != rngTupLen) {
+       throw new VisADException("both fields must have same range tuple length");
      }
+
+     for (int k = 0; k < rngTupLen; k++) {
+       if (values_y[k].length != numGoodPoints[k]) {
+         throw new VisADException("both fields must have same num of good points in each tuple component");
+       }
+     }
+
      double[] stats = new double[rngTupLen];
      
      for (int k=0; k<rngTupLen; k++) {
