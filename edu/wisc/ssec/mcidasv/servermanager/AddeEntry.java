@@ -213,9 +213,9 @@ public interface AddeEntry {
 
     // TODO(jon): what part of a resolv.srv does this represent?
     /**
+     * Name associated with this entry. 
      * 
-     * 
-     * @return
+     * @return Name associated with this entry.
      */
     public String getName();
 
@@ -224,21 +224,21 @@ public interface AddeEntry {
      * does not require accounting information, this method returns 
      * {@link #DEFAULT_ACCOUNT}.
      * 
-     * @return 
+     * @return ADDE account object.
      */
     public AddeAccount getAccount();
 
     /**
      * Type of chooser this entry should appear under.
      * 
-     * @return 
+     * @return The {@literal "type"} of data associated with this entry.
      */
     public EntryType getEntryType();
 
     /**
      * Does this entry represent a {@literal "valid"} ADDE server.
      * 
-     * @return 
+     * @return Whether or not this entry has been validated.
      */
     public EntryValidity getEntryValidity();
 
