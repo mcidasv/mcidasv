@@ -28,16 +28,19 @@ import net.miginfocom.swing.MigLayout;
  * 
  * 
  */
-public class ImportUrl extends JDialog {
+public class ImportUrl extends JDialog implements ActionListener {
     
     protected static final String CMD_DEFAULT_ACCOUNTING = "use_default_accounting";
     protected static final String CMD_IMPORT = "import";
     protected static final String CMD_CANCEL = "cancel";
     
     private TabbedAddeManager serverManagerGui;
+    private EntryStore serverManager;
     
     private static final Logger logger = LoggerFactory.getLogger(ImportUrl.class);
     
+    private JLabel userLabel;
+    private JLabel projLabel;
     private JCheckBox acctBox;
     private JTextField mctableField;
     private JTextField userField;
@@ -55,8 +58,10 @@ public class ImportUrl extends JDialog {
         initComponents();
     }
     
-    public ImportUrl(final TabbedAddeManager serverManagerGui) {
+    public ImportUrl(final EntryStore serverManager, final TabbedAddeManager serverManagerGui) {
+        this.serverManager = serverManager;
         this.serverManagerGui = serverManagerGui;
+        initComponents();
     }
 
     public void initComponents() {
@@ -86,14 +91,18 @@ public class ImportUrl extends JDialog {
         acctBox = new JCheckBox("Use default accounting?");
         acctBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                userField.setEnabled(!acctBox.isSelected());
-                projField.setEnabled(!acctBox.isSelected());
+                boolean selected = acctBox.isSelected();
+                userLabel.setEnabled(!selected);
+                userField.setEnabled(!selected);
+                projLabel.setEnabled(!selected);
+                projField.setEnabled(!selected);
             }
         });
         acctBox.setSelected(true);
         contentPanel.add(acctBox, "cell 1 1");
         
-        JLabel userLabel = new JLabel("Username:");
+        userLabel = new JLabel("Username:");
+        userLabel.setEnabled(!acctBox.isSelected());
         contentPanel.add(userLabel, "cell 0 2,alignx trailing");
         
         userField = new JTextField();
@@ -101,7 +110,8 @@ public class ImportUrl extends JDialog {
         userField.setColumns(4);
         userField.setEnabled(!acctBox.isSelected());
         
-        JLabel projLabel = new JLabel("Project #:");
+        projLabel = new JLabel("Project #:");
+        projLabel.setEnabled(!acctBox.isSelected());
         contentPanel.add(projLabel, "cell 0 3,alignx trailing");
         
         projField = new JTextField();
@@ -116,14 +126,40 @@ public class ImportUrl extends JDialog {
             {
                 okButton = new JButton("Import MCTABLE.TXT");
                 okButton.setActionCommand(CMD_IMPORT);
+                okButton.addActionListener(this);
                 buttonPane.add(okButton);
 //                getRootPane().setDefaultButton(okButton);
             }
             {
                 cancelButton = new JButton("Cancel");
                 cancelButton.setActionCommand(CMD_CANCEL);
+                cancelButton.addActionListener(this);
                 buttonPane.add(cancelButton);
             }
+        }
+        
+    }
+    
+    
+    
+    public void actionPerformed(final ActionEvent e) {
+        String cmd = e.getActionCommand();
+        if (CMD_CANCEL.equals(cmd)) {
+            dispose();
+        } else if (CMD_IMPORT.equals(cmd)) {
+            
+            String path = mctableField.getText().trim();
+            String user = AddeEntry.DEFAULT_ACCOUNT.getUsername();
+            String proj = AddeEntry.DEFAULT_ACCOUNT.getProject();
+            if (!acctBox.isSelected()) {
+                user = userField.getText().trim();
+                proj = projField.getText().trim();
+            }
+            logger.trace("importing: path={} user={} proj={}", new Object[] { path, user, proj});
+            if (serverManagerGui != null) {
+                serverManagerGui.importMctable(path, user, proj);
+            }
+            dispose();
         }
     }
     

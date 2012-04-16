@@ -168,7 +168,7 @@ public class TabbedAddeManager extends JFrame {
      * Entries stored within the server manager GUI. This may differ from the
      * contents of the server manager itself. 
      */
-    private final Set<AddeEntry> entrySet;
+//    private final Set<AddeEntry> entrySet;
 
     /** */
     private final List<RemoteAddeEntry> selectedRemoteEntries;
@@ -192,7 +192,7 @@ public class TabbedAddeManager extends JFrame {
         //noinspection AssignmentToNull
         AnnotationProcessor.process(this);
         this.serverManager = null;
-        this.entrySet = newLinkedHashSet();
+//        this.entrySet = newLinkedHashSet();
         this.selectedLocalEntries = arrList();
         this.selectedRemoteEntries = arrList();
 
@@ -213,12 +213,9 @@ public class TabbedAddeManager extends JFrame {
     public TabbedAddeManager(final EntryStore entryStore) {
         notNull(entryStore, "Cannot pass a null server manager");
         AnnotationProcessor.process(this);
-        this.serverManager = entryStore;
-        // remember that EntryStore.getEntrySet() returns a *new* LinkedHashSet.
-        this.entrySet = entryStore.getEntrySet();
-        int entryCount = entrySet.size(); 
-        this.selectedLocalEntries = arrList(entryCount);
-        this.selectedRemoteEntries = arrList(entryCount);
+        this.serverManager = entryStore; 
+        this.selectedLocalEntries = arrList();
+        this.selectedRemoteEntries = arrList();
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
                 initComponents();
@@ -236,36 +233,36 @@ public class TabbedAddeManager extends JFrame {
         return staticTabbedManager;
     }
 
-    public void addEntries(final Collection<? extends AddeEntry> entries) {
-        logger.trace("entries={}", entries);
-        entrySet.addAll(entries);
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                refreshDisplay();
-            }
-        });
-    }
-
-    public void replaceEntries(final Collection<? extends AddeEntry> currentEntries, final Collection<? extends AddeEntry> newEntries) {
-        logger.trace("currentEntries={} newEntries={}", currentEntries, newEntries);
-        entrySet.removeAll(currentEntries);
-        entrySet.addAll(newEntries);
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                refreshDisplay();
-            }
-        });
-    }
-
-    public void removeEntries(final Collection<? extends AddeEntry> entries) {
-        logger.trace("entries={}", entries);
-        entrySet.removeAll(entries);
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                refreshDisplay();
-            }
-        });
-    }
+//    public void addEntries(final Collection<? extends AddeEntry> entries) {
+//        logger.trace("entries={}", entries);
+//        entrySet.addAll(entries);
+//        SwingUtilities.invokeLater(new Runnable() {
+//            public void run() {
+//                refreshDisplay();
+//            }
+//        });
+//    }
+//
+//    public void replaceEntries(final Collection<? extends AddeEntry> currentEntries, final Collection<? extends AddeEntry> newEntries) {
+//        logger.trace("currentEntries={} newEntries={}", currentEntries, newEntries);
+//        entrySet.removeAll(currentEntries);
+//        entrySet.addAll(newEntries);
+//        SwingUtilities.invokeLater(new Runnable() {
+//            public void run() {
+//                refreshDisplay();
+//            }
+//        });
+//    }
+//
+//    public void removeEntries(final Collection<? extends AddeEntry> entries) {
+//        logger.trace("entries={}", entries);
+//        entrySet.removeAll(entries);
+//        SwingUtilities.invokeLater(new Runnable() {
+//            public void run() {
+//                refreshDisplay();
+//            }
+//        });
+//    }
 
     /**
      * If the GUI isn't shown, this method will display things. If the GUI <i>is 
@@ -351,7 +348,8 @@ public class TabbedAddeManager extends JFrame {
                 removable.add(entry);
             }
         }
-        if (entrySet.removeAll(removable)) {
+//        if (entrySet.removeAll(removable)) {
+        if (serverManager.removeEntries(removable)) {
             RemoteAddeTableModel tableModel = ((RemoteAddeTableModel)remoteTable.getModel());
             int first = Integer.MAX_VALUE;
             int last = Integer.MIN_VALUE;
@@ -415,7 +413,8 @@ public class TabbedAddeManager extends JFrame {
         if (entries == null) {
             return;
         }
-        if (entrySet.removeAll(entries)) {
+//        if (entrySet.removeAll(entries)) {
+        if (serverManager.removeEntries(entries)) {
             logger.trace("successful removal of entries={}",entries);
             LocalAddeTableModel tableModel = ((LocalAddeTableModel)localTable.getModel());
             int first = Integer.MAX_VALUE;
@@ -451,12 +450,15 @@ public class TabbedAddeManager extends JFrame {
      * @param project ADDE project number to use for verifying extracted datasets. Cannot be {@code null}.
      */
     public void importMctable(final String path, final String username, final String project) {
+        logger.trace("extracting path={} username={}, project={}", new Object[] { path, username, project });
         final Set<RemoteAddeEntry> imported = EntryTransforms.extractMctableEntries(path, username, project);
+        logger.trace("extracted entries={}", imported);
         if (imported.equals(Collections.emptySet())) {
             LogUtil.userErrorMessage("Selection does not appear to a valid MCTABLE.TXT file:\n"+path);
         } else {
+            logger.trace("adding extracted entries...");
             // verify entries first!
-            entrySet.addAll(imported);
+            serverManager.addEntries(imported);
             refreshDisplay();
             repaint();
             Runnable r = new Runnable() {
@@ -575,12 +577,13 @@ public class TabbedAddeManager extends JFrame {
         fileMenu.add(importMctableMenuItem);
 
         JMenuItem importUrlMenuItem = new JMenuItem("Import from URL...");
+        final TabbedAddeManager myRef = this;
         importUrlMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 SwingUtilities.invokeLater(new Runnable() {
                    public void run() { 
                        try {
-                           ImportUrl dialog = new ImportUrl();
+                           ImportUrl dialog = new ImportUrl(serverManager, myRef);
                            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
                            dialog.setVisible(true);
                        } catch (Exception e) {
@@ -854,27 +857,27 @@ public class TabbedAddeManager extends JFrame {
         Box frameControlBox = Box.createHorizontalBox();
         statusPanel.add(frameControlBox, BorderLayout.EAST);
 
-        cancelButton = new JButton("Cancel");
-        cancelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                handleCancellingChanges();
-            }
-        });
-        frameControlBox.add(cancelButton);
+//        cancelButton = new JButton("Cancel");
+//        cancelButton.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent e) {
+//                handleCancellingChanges();
+//            }
+//        });
+//        frameControlBox.add(cancelButton);
 
-        applyButton = new JButton("Apply");
-        applyButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                logger.trace("apply");
-                handleSavingChanges();
-            }
-        });
-        frameControlBox.add(applyButton);
+//        applyButton = new JButton("Apply");
+//        applyButton.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent e) {
+//                logger.trace("apply");
+//                handleSavingChanges();
+//            }
+//        });
+//        frameControlBox.add(applyButton);
 
         okButton = new JButton("Ok");
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                handleSavingChanges();
+//                handleSavingChanges();
                 closeManager();
             }
         });
@@ -883,33 +886,33 @@ public class TabbedAddeManager extends JFrame {
         guiInitialized = true;
     }
 
-    /**
-     * Determines whether or not the user has changed anything (where {@literal "changed"} means added, modified, or removed entries).
-     * 
-     * @return {@code true} if the user has changed any entries; {@code false} otherwise.
-     */
-    public boolean hasUserChanges() {
-        return !entrySet.equals(serverManager.getEntrySet());
-    }
+//    /**
+//     * Determines whether or not the user has changed anything (where {@literal "changed"} means added, modified, or removed entries).
+//     * 
+//     * @return {@code true} if the user has changed any entries; {@code false} otherwise.
+//     */
+//    public boolean hasUserChanges() {
+//        return !entrySet.equals(serverManager.getEntrySet());
+//    }
 
-    /**
-     * Respond to the user clicking the {@literal "cancel"} button.
-     */
-    public void handleCancellingChanges() {
-        logger.trace("cancel changes. anything to do={}", hasUserChanges());
-        closeManager();
-    }
-
-    /**
-     * Respond to the user clicking the {@literal "save changes"} button.
-     */
-    public void handleSavingChanges() {
-        boolean userChanges = hasUserChanges();
-        logger.trace("save changes. anything to do={}", userChanges);
-        if (userChanges) {
-            serverManager.addEntries(entrySet);
-        }
-    }
+//    /**
+//     * Respond to the user clicking the {@literal "cancel"} button.
+//     */
+//    public void handleCancellingChanges() {
+//        logger.trace("cancel changes. anything to do={}", hasUserChanges());
+//        closeManager();
+//    }
+//
+//    /**
+//     * Respond to the user clicking the {@literal "save changes"} button.
+//     */
+//    public void handleSavingChanges() {
+//        boolean userChanges = hasUserChanges();
+//        logger.trace("save changes. anything to do={}", userChanges);
+//        if (userChanges) {
+//            serverManager.addEntries(entrySet);
+//        }
+//    }
 
     /**
      * Respond to changes in {@link #tabbedPane}; primarily switching tabs.
@@ -1323,9 +1326,9 @@ public class TabbedAddeManager extends JFrame {
                     runOnEDT(new Runnable() {
                         public void run() {
                             List<RemoteAddeEntry> oldEntries = tableModel.getEntriesAtRow(row);
-//                            serverManager.replaceEntries(oldEntries, checkedEntries);
-                            entrySet.removeAll(oldEntries);
-                            entrySet.addAll(checkedEntries);
+                            serverManager.replaceEntries(oldEntries, checkedEntries);
+//                            entrySet.removeAll(oldEntries);
+//                            entrySet.addAll(checkedEntries);
                             tableModel.fireTableRowsUpdated(row, row);
                         }
                     });
@@ -1831,9 +1834,9 @@ public class TabbedAddeManager extends JFrame {
     private JButton newLocalButton;
     private JButton editLocalButton;
     private JButton removeLocalButton;
-    private JButton applyButton;
+//    private JButton applyButton;
     private JButton okButton;
-    private JButton cancelButton;
+//    private JButton cancelButton;
     private JMenuItem editMenuItem;
     private JMenuItem removeMenuItem;
     private JCheckBox importAccountBox;
