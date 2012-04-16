@@ -688,14 +688,16 @@ class _Layer(_JavaProxy):
 
         Returns: nothing
         """
+        from ucar.unidata.util import Range
+        
+        currentRange = Range(minRange, maxRange)
+        # currentRange = self._JavaProxy__javaObject.getRange()
 
-        currentRange = self._JavaProxy__javaObject.getRange()
+        # if (minRange != None):
+        #     currentRange.setMin(minRange)
 
-        if (minRange != None):
-            currentRange.setMin(minRange)
-
-        if (maxRange != None):
-            currentRange.setMax(maxRange)
+        # if (maxRange != None):
+        #     currentRange.setMax(maxRange)
 
         self._JavaProxy__javaObject.setRange(currentRange)
 
