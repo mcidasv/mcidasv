@@ -1315,20 +1315,14 @@ def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
         except NullPointerException, e:
             raise RuntimeError("could not build window", e)
 
-    def _buildWindowBackground(height=-1, width=-1):
+    def _buildWindowBackground(height, width, panelTypes):
         """
          (1) create a new MapViewManager.  This is the default type of ViewManager
              if (null, null) is passed to createViewManager
          (2) Wrap the MapViewManager in a _Display object
          (3) Wrap the _Display in a list, simply because current calls to buildWindow expect this
-              (could very easily do "npanels=rows*cols" and return an array with that many MapViewManagers
-        
-          Note, this is currently over-simplistic on-purpose, so we can test if this approach
-          actually works better.  Eventually, buildWindow could do an ArgsManager.getIsOffScreen()
-          and call this method if off screen, and do it's usual thing otherwise...
-          Could also be generalized for globe displays, etc.
           
-          Default size:  600 x 400 (this is default in MapProjectionDisplayJ3D for offscreen)
+          Default size:  600 x 400
         """
         if (height > 0) and (width > 0):
             dim = java.awt.Dimension(width, height)
@@ -1339,11 +1333,15 @@ def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
             # than to change it afterward...
             getStaticMcv().getStateManager().setViewSize(dim)
         
-        newVM = getStaticMcv().getVMManager().createViewManager(None, None)
+        if panelTypes == None:
+            propString = None
+        if panelTypes[0] == GLOBE:  # this works for single panel (not sending rows x cols anyway)
+            propString = 'useGlobeDisplay=true'
+        newVM = getStaticMcv().getVMManager().createViewManager(None, propString)
         return [_Display(newVM)]
     
     if getStaticMcv().getArgsManager().getIsOffScreen():
-        return _buildWindowBackground(height, width)
+        return _buildWindowBackground(height, width, panelTypes)
     else:
         return _buildWindowInternal(width, height, rows, cols, panelTypes)
 
