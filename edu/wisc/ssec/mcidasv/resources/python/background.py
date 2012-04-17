@@ -1337,6 +1337,8 @@ def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
             propString = None
         if panelTypes[0] == GLOBE:  # this works for single panel (not sending rows x cols anyway)
             propString = 'useGlobeDisplay=true'
+        if panelTypes[0] == MAP2D:
+            propString = 'use3D=false'
         newVM = getStaticMcv().getVMManager().createViewManager(None, propString)
         return [_Display(newVM)]
     
