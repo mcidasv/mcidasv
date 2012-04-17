@@ -41,6 +41,7 @@ public class Statistics {
 
    DescriptiveStatistics[] descriptiveStats = null;
    double[][] values_x;
+   double[][] rngVals;
    int rngTupLen;
    int numPoints;
    int[] numGoodPoints;
@@ -50,11 +51,12 @@ public class Statistics {
 
 
    public Statistics(FlatField fltFld) throws VisADException, RemoteException {
-      double[][] rngVals = fltFld.getValues(false);
-      values_x = rngVals;
+      rngVals = fltFld.getValues(false);
       rngTupLen = rngVals.length;
       numPoints = fltFld.getDomainSet().getLength();
       numGoodPoints = new int[rngTupLen];
+
+      values_x = new double[rngTupLen][];
 
       for (int k=0; k<rngTupLen; k++) {
         values_x[k] = removeMissing(rngVals[k]);
@@ -197,17 +199,11 @@ public class Statistics {
    }
 
    public Data correlation(FlatField fltFld) throws VisADException, RemoteException {
+     double[][] values_x = this.rngVals;
      double[][] values_y = fltFld.getValues(false);
-     values_y = removeMissing(values_y);
 
      if (values_y.length != rngTupLen) {
        throw new VisADException("both fields must have same range tuple length");
-     }
-
-     for (int k = 0; k < rngTupLen; k++) {
-       if (values_y[k].length != numGoodPoints[k]) {
-         throw new VisADException("both fields must have same num of good points in each tuple component");
-       }
      }
 
      double[] stats = new double[rngTupLen];
@@ -216,6 +212,7 @@ public class Statistics {
        double[][] newVals = removeMissingAND(values_x[k], values_y[k]);
        stats[k] = pCorrelation.correlation(newVals[0], newVals[1]);
      }
+
      return makeStat(stats);
    }
 
