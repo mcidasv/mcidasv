@@ -561,23 +561,27 @@ class _Display(_JavaProxy):
                 obj = DataDataChoice(label,obj)
             dataList.add(obj)
 
-        # *temporary* fix for doing image sequences with getADDEImage:
-        if isinstance(data[0], NavigatedImage) and (controlID == 'imagesequence'):
-            # apparently we need a CompositeDataChoice instead of a list of DataDataChoices for
-            # Image Sequence Display to work as expected
-            # To construct a CompositeDataChoice, we need a legitimate DataSource:
-            # (note most data sources keep track of files or URL's - ListDataSource's simply
-            #  keep track of DataChoice's)
-            listSource = ucar.unidata.data.ListDataSource('tempListDataSource1', 'tempListDataSource1')
-            listSource.setDataChoices(dataList)
-            # now we can create the CompositeDataChoice:
-            comp = ucar.unidata.data.CompositeDataChoice(listSource, listSource, 'compositeDataChoice', None)
-            comp.setDataChoices(dataList)
-            # need *another* ListDataSource now:
-            compSource = ucar.unidata.data.ListDataSource('tempListDataSource2', 'tempListDataSource2')
-            compSource.addDataChoice(comp)
-            # finally, set dataList appropriately:
-            dataList = compSource.getDataChoices()
+        # *temporary* fix for doing image sequences/globe displays with getADDEImage:
+        if (isinstance(data[0], NavigatedImage) and
+            isinstance(self._JavaProxy__javaObject, ucar.unidata.idv.MapViewManager)):
+            if (self._JavaProxy__javaObject.getUseGlobeDisplay()) and (controlID == 'imagedisplay'):
+                controlID = 'imagesequence' # hack that works, but I'm not sure why
+            if (controlID == 'imagesequence'):
+                # apparently we need a CompositeDataChoice instead of a list of DataDataChoices for
+                # Image Sequence Display to work as expected
+                # To construct a CompositeDataChoice, we need a legitimate DataSource:
+                # (note most data sources keep track of files or URL's - ListDataSource's simply
+                #  keep track of DataChoice's)
+                listSource = ucar.unidata.data.ListDataSource('tempListDataSource1', 'tempListDataSource1')
+                listSource.setDataChoices(dataList)
+                # now we can create the CompositeDataChoice:
+                comp = ucar.unidata.data.CompositeDataChoice(listSource, listSource, 'compositeDataChoice', None)
+                comp.setDataChoices(dataList)
+                # need *another* ListDataSource now:
+                compSource = ucar.unidata.data.ListDataSource('tempListDataSource2', 'tempListDataSource2')
+                compSource.addDataChoice(comp)
+                # finally, set dataList appropriately:
+                dataList = compSource.getDataChoices()
 
         newLayer = mcv.doMakeControl(controlID, dataList);
 
