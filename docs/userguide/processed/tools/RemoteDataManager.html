@@ -39,31 +39,33 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/RemoteDataM
 <li><a href="#import_mctable">Importing MCTABLE...</a></li>
 <li><a href="#menus">Menus</a></li>
 </ul>
-<a name="view_remote" id="view_remote"></a> <div class="pagesubtitle">Viewing the Existing Remote Datasets</div>
+<div class="pagesubtitle"><a name="view_remote" id="view_remote"></a>Viewing the Existing Remote Datasets</div>
 <a name="image1" id="image1"></a>
-<div class="images"><img src="images/addemanager/Remote.gif" alt="Image 1: Remote ADDE Data Manager" width="628" height="439"><br> <span class="caption">Image 1: Remote ADDE Data Manager </span></div>
+<div class="images"><img src="images/addemanager/Remote.gif" width="730" height="460" alt="Image 1: Remote ADDE Data Manager"><br> <span class="caption">Image 1: Remote ADDE Data Manager </span></div>
 <p>The Remote ADDE Data Manager lets you add, delete or edit access to remote datasets that are available through the <strong><a href="../data/choosers/ImageChooser.html">Satellite-&gt;Imagery</a></strong> chooser. You can also import a MCTABLE.TXT file that contains a preexisting set of entries for the Remote ADDE Data Manager.</p>
 <p>The columns in the table are defined below.</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Valid -</strong> An empty column (no icon) means that the entry passed a verification check (the specified dataset and data type exists on the server) when it was added. A sad-face icon (<img src="images/addemanager/SadFaceIcon.gif" alt="sad-face icon" width="21" height="18" align=absmiddle>) indicates that the entry failed the verification check and thus will not work if you attempt to access data from the dataset. </li>
+  <li class="propertylistitem"><strong>Valid -</strong> An empty column (no icon) means that the entry passed a verification check (the specified dataset and data type exists on the server) when it was added. A sad-face icon (<img src="images/addemanager/SadFaceIcon.gif" alt="sad-face icon" width="21" height="18" align=absmiddle>) indicates that the entry failed the verification check and thus will not work if you attempt to access data from the dataset. Once a MCTABLE is imported, this column will change to saying 'Checking...' while the datasets are being verified. If the dataset is valid, this column will be empty, or a sad-face icon will appear if there is a problem verifying the dataset.</li>
   <li class="propertylistitem"><strong>Source -</strong> Indicates the source of the entry. System entries (<img src="images/addemanager/LockIcon.gif" alt="Lock icon" width="21" height="18"align=absmiddle>) are ones supplied in the McIDAS-V package and thus are not editable. User entries (<img src="images/addemanager/ThumbsUpIcon.gif" alt="thumbs up icon" width="21" height="18"align=absmiddle>) are ones that were added by the user and thus are editable. MCTABLE entries (<img src="images/addemanager/BugIcon.gif" alt="MCTABLE icon" width="21" height="18"align=absmiddle>) are ones that were added by importing MCTABLE.TXT file and are also editable. </li>
   <li class="propertylistitem"><strong>Dataset -</strong> Lists the server IP address and dataset name for the entry. When you access the dataset (by pressing the <strong>Connect</strong> button in the Data Explorer), an ADDE request is sent to the server, which then returns the requested data.</li>
   <li class="propertylistitem"><strong>Accounting -</strong> Indicates whether the entry includes accounting information (username and project number) for the server. These are the values specified in the <strong>Username</strong> and <strong>Project #</strong> fields in the Define New Remote Dataset window that appears when the <strong>Add New Dataset </strong>button is clicked. If accounting information was not specified, then the Accounting field entry says &quot;public dataset&quot;. </li>
   <li class="propertylistitem"><strong>Data Types -</strong> Indicates the values that were selected in the Dataset Types section in the Define New Remote Dataset window that appears when the <strong>Add New Dataset</strong> button is clicked. </li>
 </ul>
+<p>At the bottom of this window, there is a status message that lets you know if local servers are running and does not affect remote servers. For more information this, please see <a href="LocalDataManager.html#status">Local ADDE Data Manager</a>.</p>
 <p>The four buttons at the bottom of the window are described in the corresponding section below.</p>
 <ul class="propertylist">
   <li class="propertylistitem"><img src="images/addemanager/AddNewDatasetButton.gif" width="131" height="26" alt="Add New Dataset button" align="absmiddle"><strong> -</strong> Opens the <a href="#add_new_dataset">Define New Remote Dataset window</a>.</li>
   <li class="propertylistitem"><img src="images/addemanager/EditDatasetButton.gif" width="102" height="26" alt="Edit Dataset button" align="absmiddle"><strong> -</strong> Opens an <a href="#edit_dataset">Edit Remote Dataset window</a>.</li>
   <li class="propertylistitem"><img src="images/addemanager/RemoveSelectionButton.gif" width="136" height="26" alt="Remove Selection button" align="absmiddle"><strong> -</strong> <a href="#remove_selection">Removes</a> the selected dataset.</li>
   <li class="propertylistitem"><img src="images/addemanager/ImportMCTABLEbutton.gif" width="138" height="26" alt="Import MCTABLE button" align="absmiddle"><strong> -</strong> Opens an Open window that allows you to <a href="#import_mctable">import a MCTABLE file</a>.</li>
+  <li class="propertylistitem"><img src="images/addemanager/Ok.gif" width="50" height="26" alt="OK button" align="absmiddle"><strong> -</strong> Closes the ADDE Data Manger window and saves any changes.</li>
 </ul>
 <div class="pagesubtitle"><a name="add_new_dataset" id="add_new_dataset"></a>Adding a New Remote Dataset</div>
 <p>The window below appears if you click the <strong>Add New Dataset</strong> button or select the <strong>File-&gt;New Remote Dataset</strong> menu in the ADDE Data Manager window. </p>
 <a name="image1" id="image1"></a>
-<div class="images"><img src="images/addemanager/AddRemote.gif" width="545" height="412" alt="Image 2: Define New remote Dataset Window"><br> 
-<span class="caption">Image 2: Define  New Remote Dataset Window </span></div>
-<p>The Define New Remote Dataset window lets you add access to remote datasets so they are available through the <a href="../ui/DataExplorer.html">Data Explorer</a>.</p>
+<div class="images"><img src="images/addemanager/AddRemote.gif" width="545" height="412" alt="Image 2: Add Remote Dataset Window"><br> 
+<span class="caption">Image 2:Add Remote Dataset Window </span></div>
+<p>The Add Remote Dataset window lets you add access to remote datasets so they are available through the <a href="../ui/DataExplorer.html">Data Explorer</a>.</p>
 <p>The fields and buttons are defined below.</p>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Server -</strong> Represents the IP address of the server workstation. </li>
@@ -109,17 +111,16 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/RemoteDataM
 are several menu options that are unique to this tool.</p>
 <p>The <strong>File </strong>menu has these unique options:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>New Remote Dataset -</strong> Opens a <a href="#add_new_dataset">Define New Remote Dataset</a> window that prompts for information about the dataset.</li>
+  <li class="propertylistitem"><strong>New Remote Dataset -</strong> Opens a <a href="#add_new_dataset">Add Remote Dataset</a> window that prompts for information about the dataset.</li>
   <li class="propertylistitem"><strong>New Local Dataset - </strong>Opens an <a href="LocalDataManager.html#add_new_entry">Add Local Dataset</a> window that prompts for information about the dataset.</li>
   <li class="propertylistitem"><strong>Import MCTABLE... -</strong> Opens an Open window that allows you to import MCTABLE ADDE entries into the ADDE Data Manager.</li>
-  <li class="propertylistitem"><strong>Import from URL... -</strong></li>
-  <li class="propertylistitem"><strong>Export -</strong></li>
+  <li class="propertylistitem"><strong>Import from URL... -</strong> Opens an Import from URL window that allows you to specify a URL for a MCTABLE along with accounting information.</li>
   <li class="propertylistitem"><strong>Close -</strong> Closes the ADDE Data Manager window.</li>
 </ul>
 <p>The <strong>Edit</strong> menu has these unique options:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Edit Entry...  -</strong> Opens the <a href="#edit_dataset">Edit Remote Dataset window</a>, where you can edit the information about your local dataset. This window is the same as the Add Local Dataset window.</li>
-  <li class="propertylistitem"><strong>Remove Selection -</strong> Removes the selected dataset from the list of local datasets.</li>
+  <li class="propertylistitem"><strong>Edit Entry...  -</strong> Opens the <a href="#edit_dataset">Edit Remote Dataset window</a>, where you can edit the information about your local dataset. This window is the same as the Add Remote Dataset window.</li>
+  <li class="propertylistitem"><strong>Remove Selection -</strong> Removes the selected dataset from the list of local datasets. Note that you cannot remove the native datasets that come with McIDAS-V.</li>
 </ul>
 <p>The <strong>Local Servers</strong> menu has these unique options:</p>
 <ul class="propertylist">
