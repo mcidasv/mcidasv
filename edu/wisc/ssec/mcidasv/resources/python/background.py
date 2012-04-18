@@ -1289,14 +1289,6 @@ def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
             A "wrapped" IdvWindow.
         """
         
-        if panelTypes is None:
-            panelTypes = [MAP] * (rows * cols)
-        elif isinstance(panelTypes, _NoOp):
-            panelTypes = [panelTypes] * (rows * cols)
-        elif type(panelTypes) is types.ListType:
-            if len(panelTypes) != (rows * cols):
-                raise ValueError('panelTypes needs to contain rows*cols elements')
-        
         from edu.wisc.ssec.mcidasv import PersistenceManager
         
         try:
@@ -1333,18 +1325,29 @@ def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
             # than to change it afterward...
             getStaticMcv().getStateManager().setViewSize(dim)
         
-        if panelTypes == None:
-            propString = None
-        elif panelTypes[0] == GLOBE:  # this works for single panel (not sending rows x cols anyway)
+        if panelTypes[0] is GLOBE:
             propString = 'useGlobeDisplay=true'
-        elif panelTypes[0] == MAP2D:
+        elif panelTypes[0] is MAP2D:
             propString = 'use3D=false'
+        else:
+            propString = ''
+        
         newVM = getStaticMcv().getVMManager().createViewManager(None, propString)
         return [_Display(newVM)]
+    
+    if panelTypes is None:
+        panelTypes = [MAP] * (rows * cols)
+    elif isinstance(panelTypes, _NoOp):
+        panelTypes = [panelTypes] * (rows * cols)
+    elif isinstance(panelTypes, types.ListType):
+        if len(panelTypes) != (rows * cols):
+            raise ValueError('panelTypes needs to contain rows*cols elements')
     
     if getStaticMcv().getArgsManager().getIsOffScreen():
         return _buildWindowBackground(height, width, panelTypes)
     else:
+        if len(panelTypes) > 1:
+            print '* WARNING: buildWindow will only build one panel when run from the background'
         return _buildWindowInternal(width, height, rows, cols, panelTypes)
 
 def makeLogger(name):
