@@ -1,3 +1,5 @@
+from collections import namedtuple
+
 from edu.wisc.ssec.mcidas import AreaDirectory
 from edu.wisc.ssec.mcidas import AreaDirectoryList
 from visad.data.mcidas import AreaAdapter
@@ -33,7 +35,13 @@ def _areaDirectoryToDictionary(areaDirectory):
 DEFAULT_ACCOUNTING = ('idv', '0')
 
 CoordinateSystems = enum('AREA', 'LATLON', 'IMAGE')
+AREA = CoordinateSystems.AREA
+LATLON = CoordinateSystems.LATLON
+IMAGE = CoordinateSystems.IMAGE
+
 Places = enum(ULEFT='Upper Left', CENTER='Center')
+ULEFT = Places.ULEFT
+CENTER = Places.CENTER
 
 # alias = ADDE  alias
 # server = ADDE server

@@ -58,7 +58,8 @@ from background import (
 
 from mcvadde import (
     enum, DEFAULT_ACCOUNTING, CoordinateSystems, Places, getADDEImage, listADDEImages,
-    params1, params_area_coords, params_image_coords, params_sizeall
+    params1, params_area_coords, params_image_coords, params_sizeall,
+    LATLON, AREA, IMAGE, ULEFT, CENTER
 )
 
 from interactive import (
