@@ -34,10 +34,15 @@ import static javax.swing.GroupLayout.Alignment.LEADING;
 import static javax.swing.GroupLayout.Alignment.TRAILING;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowListener;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -51,6 +56,7 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -58,16 +64,28 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.text.PlainDocument;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.miginfocom.swing.MigLayout;
 
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.IconPanel;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Prefer;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
+import edu.wisc.ssec.mcidasv.util.WebBrowser;
 import edu.wisc.ssec.mcidasv.Constants;
 
 import ucar.ma2.Array;
@@ -94,6 +112,8 @@ import visad.ss.FancySSCell;
 
 
 public class BadNetCDFWidget implements Constants {
+    
+    private static final Logger logger = LoggerFactory.getLogger(BadNetCDFWidget.class);
     
     private IntegratedDataViewer idv;
     
@@ -194,67 +214,20 @@ public class BadNetCDFWidget implements Constants {
     /////////////////////////////////////////////////////////
     public void showChoices()
     {
-        JLabel failLabel = new JLabel("<html><b>McIDAS-V is unable to read your file.</b><br/><br/>To verify if your file is CF-compliant, you can run your file through an online compliance checker (e.g., http://titania.badc.rl.ac.uk/cgi-bin/cf-checker.pl). If the checker indicates that your file is not compliant you can attempt to fix it using the NcML Editor provided in this window. In a future release of McIDAS-V, this interface will present you with choices for the variables necessary for McIDAS-V to display your data.<br/><br/></html>");
-        
-        JButton editNcMLBtn = new JButton("NcML Editor");
-        ActionListener editNcMLAction = new ActionListener()
-        {
-            public void actionPerformed(ActionEvent ae)
-            {
-                showNcMLEditor();
-            }
-        };
-        editNcMLBtn.addActionListener(editNcMLAction);
-        
-        JLabel editNcMLLabel = new JLabel("Open the file in the NcML editor: ");
-        JPanel editNcMLChoice = GuiUtils.leftRight(editNcMLLabel, editNcMLBtn);
-        
-        
-        JButton viewVarBtn = new JButton("View Variable");
-        ActionListener viewVarAction = new ActionListener()
-        {
-            public void actionPerformed(ActionEvent ae)
-            {
-                showVarPicker();
-            }
-        };
-        viewVarBtn.addActionListener(viewVarAction);
-        
-        JLabel viewVarLabel = new JLabel("I just want to view one of the variables: ");
-        JPanel viewVarChoice = GuiUtils.leftRight(viewVarLabel, viewVarBtn);        
-        
-        
-        JButton setNavBtn = new JButton("Choose Nav");
-        ActionListener setNavAction = new ActionListener()
-        {
-            public void actionPerformed(ActionEvent ae)
-            {
-                showNavChooser();
-            }
-        };
-        setNavBtn.addActionListener(setNavAction);
-        
-        JLabel setNavLabel = new JLabel("I have navigation variables, they just aren't CF-compliant: (FEATURE INCOMPLETE)");
-        JPanel setNavChoice = GuiUtils.leftRight(setNavLabel, setNavBtn);
-
-        
-        // Now build all our choices together!
-        JPanel choices = GuiUtils.topBottom(failLabel, editNcMLChoice);
-        choices = GuiUtils.topBottom(choices, viewVarChoice);
-        choices = GuiUtils.topBottom(choices, setNavChoice);
-
-        
-        JFrame choicesWindow = GuiUtils.makeWindow("Non-compliant netCDF tool", GuiUtils.inset(choices, 10), 0, 0);
-        choicesWindow.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);  // EXIT will close all of McV if left in.
-//        choicesWindow.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        choicesWindow.setSize(700, 270);
-        choicesWindow.setVisible(true);
-        choicesWindow.toFront();
-        
+      EventQueue.invokeLater(new Runnable() {
+          public void run() {
+              try {
+                  BadNetCDFDialog dialog = new BadNetCDFDialog();
+                  dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                  dialog.setVisible(true);
+                  dialog.toFront();
+              } catch (Exception e) {
+                  e.printStackTrace();
+              }
+          }
+      });
     }
-    
-    
-    
+
     /////////////////////////////////////////////////////////
     // Creates an editor for NcML and displays it in a window - includes buttons for saving just
     // the NcML and the full NetCDF file with the changes made.
@@ -748,5 +721,90 @@ public class BadNetCDFWidget implements Constants {
     private void navCornersAction()
     {
         
+    }
+    
+    public class BadNetCDFDialog extends JDialog {
+
+        /**
+         * Create the dialog.
+         */
+        public BadNetCDFDialog() {
+            setTitle("Non-Compliant NetCDF Tool");
+            setMinimumSize(new Dimension(705, 325));
+            setBounds(100, 100, 705, 325);
+            Container contentPane = getContentPane();
+            contentPane.setLayout(new MigLayout("", "[grow][]", "[][grow][][][][]"));
+            
+            JLabel headerLabel = new JLabel("McIDAS-V is unable to read your file.");
+            headerLabel.setFont(UIManager.getFont("OptionPane.font"));
+            headerLabel.setBorder(new EmptyBorder(0, 0, 4, 0));
+            contentPane.add(headerLabel, "cell 0 0,alignx left,aligny top");
+            
+            JTextPane messageTextPane = new JTextPane();
+            Font textPaneFont = UIManager.getFont("TextPane.font");
+            String fontCss = String.format("style=\"font-family: '%s'; font-size: %d;\"", textPaneFont.getFamily(), textPaneFont.getSize());
+            messageTextPane.setBackground(UIManager.getColor("Label.background"));
+            messageTextPane.setContentType("text/html");
+            messageTextPane.setDragEnabled(false);
+            messageTextPane.setText("<html>\n<body "+fontCss +">To verify if your file is CF-compliant, you can run your file through an online compliance checker (<a href=\"http://titania.badc.rl.ac.uk/cgi-bin/cf-checker.pl\">example CF-compliance utility</a>).<br/><br/> \n\nIf the checker indicates that your file is not compliant you can attempt to fix it using the NcML Editor provided in this window.<br/><br/>\n\nIn a future release of McIDAS-V, this interface will present you with choices for the variables necessary for McIDAS-V to display your data.<br/></font></body></html>");
+            messageTextPane.setEditable(false);
+            messageTextPane.addHyperlinkListener(new HyperlinkListener() {
+                public void hyperlinkUpdate(HyperlinkEvent e) {
+                    if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED) {
+                        return;
+                    }
+                    String url = null;
+                    if (e.getURL() == null) {
+                        url = e.getDescription();
+                    } else {
+                        url = e.getURL().toString();
+                    }
+                    WebBrowser.browse(url);
+                }
+            });
+            contentPane.add(messageTextPane, "cell 0 1 2 1,grow");
+            
+            JSeparator separator = new JSeparator();
+            contentPane.add(separator, "cell 0 2 2 1,growx,aligny top");
+            
+            JLabel editorLabel = new JLabel("Open the file in the NcML editor:");
+            contentPane.add(editorLabel, "cell 0 3,alignx left,aligny baseline");
+            
+            JButton editorButton = new JButton("NcML Editor");
+            editorButton.addActionListener(new ActionListener() {
+                @Override public void actionPerformed(ActionEvent e) {
+                    showNcMLEditor();
+                }
+            });
+            contentPane.add(editorButton, "cell 1 3,growx,aligny baseline");
+            
+            JLabel viewLabel = new JLabel("I just want to view one of the variables:");
+            contentPane.add(viewLabel, "cell 0 4,alignx left,aligny baseline");
+            
+            JButton viewButton = new JButton("View Variable");
+            viewButton.addActionListener(new ActionListener() {
+                @Override public void actionPerformed(ActionEvent e) {
+                    showVarPicker();
+                }
+            });
+            contentPane.add(viewButton, "cell 1 4,growx,aligny baseline");
+            
+            JLabel noncompliantLabel = new JLabel("I have navigation variables, they just aren't CF-compliant: (FEATURE INCOMPLETE)");
+            contentPane.add(noncompliantLabel, "cell 0 5,alignx left,aligny baseline");
+            
+            JButton noncompliantButton = new JButton("Choose Nav");
+            noncompliantButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    showNavChooser();
+                }
+            });
+            this.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    logger.trace("disposing of dialog");
+                    BadNetCDFDialog.this.dispose();
+                }
+            });
+            contentPane.add(noncompliantButton, "cell 1 5,growx,aligny baseline");
+        }
     }
 }
