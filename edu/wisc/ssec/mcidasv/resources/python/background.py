@@ -1302,7 +1302,9 @@ def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
             panels = []
             for holder in window.getComponentGroups()[0].getDisplayComponents():
                 for viewManager in holder.getViewManagers():
-                    panels.append(_Display(viewManager))
+                    wrapped = _Display(viewManager)
+                    wrapped.setSize(width, height)
+                    panels.append(wrapped)
             return panels
         except NullPointerException, e:
             raise RuntimeError("could not build window", e)
