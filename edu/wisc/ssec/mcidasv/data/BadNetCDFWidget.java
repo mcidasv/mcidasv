@@ -247,6 +247,7 @@ public class BadNetCDFWidget implements Constants {
         JFrame choicesWindow = GuiUtils.makeWindow("Non-compliant netCDF tool", GuiUtils.inset(choices, 10), 0, 0);
         choicesWindow.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);  // EXIT will close all of McV if left in.
 //        choicesWindow.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        choicesWindow.setSize(700, 270);
         choicesWindow.setVisible(true);
         choicesWindow.toFront();
         
