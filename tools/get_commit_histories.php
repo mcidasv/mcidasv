@@ -1,6 +1,8 @@
 #!/usr/bin/php
 <?php
 
+date_default_timezone_set('America/Chicago');
+
 #cvs checkout mc-v
 #svn co http://svn.ssec.wisc.edu/repos/visad
 #svn co http://svn.unidata.ucar.edu/repos/idv
