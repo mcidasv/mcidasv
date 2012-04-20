@@ -589,8 +589,12 @@ class _Display(_JavaProxy):
         # so wait for it to finish before we hand control back to user!
         pause()
 
+        # turn layer layer visibility off by default to avoid ugly default strings
+        wrappedLayer = _Layer(newLayer)
+        wrappedLayer.setLayerLabel(visible=False)
+
         # TODO(jon): this should behave better if createDisplay fails for some reason.
-        return _Layer(newLayer)
+        return wrappedLayer
 
     def captureImage(self, filename, quality=1.0):
         """Attempt at a replacement for ISL writeImage
