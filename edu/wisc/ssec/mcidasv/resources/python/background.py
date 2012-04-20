@@ -834,7 +834,8 @@ class _Layer(_JavaProxy):
 
         Returns:  nothing
         """
-        if (label != None) and isinstance(label, str):
+        if (label != None):
+            label = str(label) # convert to str if possible
             self._JavaProxy__javaObject.setDisplayListTemplate(label)
 
         self.setLayerLabelVisible(visible)
