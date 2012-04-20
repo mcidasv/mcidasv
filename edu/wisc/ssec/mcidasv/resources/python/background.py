@@ -589,9 +589,10 @@ class _Display(_JavaProxy):
         # so wait for it to finish before we hand control back to user!
         pause()
 
-        # turn layer layer visibility off by default to avoid ugly default strings
         wrappedLayer = _Layer(newLayer)
-        wrappedLayer.setLayerLabel(visible=False)
+        # turn layer layer visibility off by default to avoid ugly default strings
+        # (note visible=False will turn *all* layer labels off)
+        wrappedLayer.setLayerLabel(label='')
 
         # TODO(jon): this should behave better if createDisplay fails for some reason.
         return wrappedLayer
