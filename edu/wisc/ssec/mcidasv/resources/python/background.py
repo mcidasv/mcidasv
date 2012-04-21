@@ -249,7 +249,11 @@ class _Tab(_JavaProxy):
         return [_Display(viewManager) for viewManager in self._JavaProxy__javaObject.getViewManagers()]
 
 class _Display(_JavaProxy):
-    def __init__(self, javaObject):
+
+    # this allows a _Layer to find it's associated _Display
+    displayWrappers = []
+
+    def __init__(self, javaObject, labelDict=None):
         """Blank for now. javaObject = ViewManager
            displayType
            width
@@ -270,6 +274,14 @@ class _Display(_JavaProxy):
            z-rotate
         """
         _JavaProxy.__init__(self, javaObject)
+        if labelDict == None:
+            # DisplayList / layer label properties
+            self.labelDict = dict(
+                font = javaObject.getDisplayListFont(),
+                color = javaObject.getDisplayListColor(),
+                visible = javaObject.getShowDisplayList(),
+            )
+        _Display.displayWrappers.append(self)
 
     def getDisplayType(self):
         # TODO(jon): how to refer to 2d map displays?
@@ -354,6 +366,12 @@ class _Display(_JavaProxy):
         newWindowObj.getMapDisplay().setMapProjection(projection)
         newWindowObj.setDisplayMatrix(displayMatrix)
         newWindowObj.setWireframe(wireframe)
+
+        # DisplayList/layer label stuff
+        newWindowObj.setShowDisplayList(self.labelDict['visible'])
+        newWindowObj.setDisplayListColor(self.labelDict['color'])
+        newWindowObj.setDisplayListFont(self.labelDict['font'])
+        newWindowObj.updateDisplayList()
 
         # note, can't just do 'self = newWindow' since self is local
         self._JavaProxy__javaObject = newWindow._JavaProxy__javaObject
@@ -681,6 +699,19 @@ class _Layer(_JavaProxy):
         #_JavaProxy.__init__(self, javaObject).addDisplayInfo()
         _JavaProxy.__init__(self, javaObject)
 
+    def _getDisplayWrapper(self):
+        """Helper method for layer label setters
+
+        Returns: _Display associated with this _Layer
+
+        Raises: LookupError if no _Display is found 
+        """
+        for wrapper in _Display.displayWrappers:
+            if (wrapper._JavaProxy__javaObject.getUniqueId() ==
+                    self._JavaProxy__javaObject.getViewManager().getUniqueId()):
+                return wrapper
+        raise LookupError('Couldnt find a _Display for this _Layer')
+
     def getFrameCount(self):
         # looking like ucar.visad.display.AnimationWidget is the place to be
         pass
@@ -882,6 +913,7 @@ class _Layer(_JavaProxy):
             self._JavaProxy__javaObject.setDisplayListTemplate(label)
 
         self.setLayerLabelVisible(visible)
+        self._getDisplayWrapper().labelDict['visible'] = visible
 
         if (font != None):
             self.setLayerLabelFont(fontName=font)
@@ -916,6 +948,7 @@ class _Layer(_JavaProxy):
         """
         if isinstance(status, bool):
             self._JavaProxy__javaObject.getViewManager().setShowDisplayList(status)
+            self._getDisplayWrapper().labelDict['visible'] = status
         else:
             raise ValueError('parameter for setLayerLabelVisible must be boolean (either True or False')
 
@@ -934,6 +967,7 @@ class _Layer(_JavaProxy):
         newColor = java.awt.Color(r, g, b)
         
         self._JavaProxy__javaObject.getViewManager().setDisplayListColor(newColor)
+        self._getDisplayWrapper().labelDict['color'] = newColor
 
     def setLayerLabelFont(self, fontName=None, style=None, size=None):
         """ set the font of Display List
@@ -949,6 +983,7 @@ class _Layer(_JavaProxy):
         currentFont = vm.getDisplayListFont()
         newFont = _getNewFont(currentFont, fontName, style, size)
         vm.setDisplayListFont(newFont)
+        self._getDisplayWrapper().labelDict['font'] = newFont
 
 # TODO(jon): this (and its accompanying subclasses) are a productivity rabbit
 # hole!
