@@ -357,6 +357,8 @@ class _Display(_JavaProxy):
                 displayList = layerObj.getDisplayInfos()
                 for info in displayList:
                     info.moveTo(newWindowObj)
+                # this makes sure _Layer.getViewManager returns the right thing:
+                layerObj.setInitialViewManager(newWindowObj)
                 # Note, the following pops up a window in background!!!
                 # (ViewManager.controlMoved eventually leads to a
                 #  McIDASVViewPanel.addControlTab which does component stuff):
@@ -653,7 +655,7 @@ class _Display(_JavaProxy):
         # TODO(jon): this should behave better if createDisplay fails for some reason.
         return wrappedLayer
 
-    def captureImage(self, filename, quality=1.0):
+    def captureImage(self, filename, quality=1.0, height=-1, width=-1):
         """Attempt at a replacement for ISL writeImage
 
         Args:
@@ -676,6 +678,9 @@ class _Display(_JavaProxy):
             # this isn't really good enough.  could be permissions issue, etc.
             raise ValueError(filename, " is a directory")
         
+        if (height != -1) and (width != -1):
+            self.setSize(width, height)
+
         # the results aren't good if we don't pause first
         pause()
 
@@ -1436,7 +1441,7 @@ def makeLogger(name):
     return  LoggerFactory.getLogger(name)
 
 # def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=None):
-def openBundle(bundle, label="", clear=1, dataDictionary=None):
+def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=None):
     """Open a bundle using the decodeXmlFile from PersistenceManager
 
     Args:
@@ -1556,8 +1561,9 @@ def openBundle(bundle, label="", clear=1, dataDictionary=None):
     sm.putPreference(mpm.PREF_CONFIRM_REMOVE_BOTH, pref_confirm_both)
     sm.writePreferences()
 
-    # if (height != -1) and (width != -1):
-    #     activeDisplay().setSize(width, height)
-    # #    #firstWindow().setSize(width, height)
+    display = activeDisplay()
 
-    return activeDisplay()  # TODO: return list of all displays instead
+    if (height != -1) and (width != -1):
+        display.setSize(width, height)
+
+    return display  # TODO: return list of all displays instead
