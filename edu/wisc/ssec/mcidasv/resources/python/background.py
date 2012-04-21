@@ -306,6 +306,9 @@ class _Display(_JavaProxy):
         return size.getWidth(), size.getHeight()
 
     def setSize(self, width, height):
+        if getStaticMcv().getArgsManager().getIsOffScreen():
+            self.setSizeBackground(width, height)
+            return
         size = Dimension(width, height)
         navigatedComponent = self._JavaProxy__javaObject.getComponent()
         navigatedComponent.setMinimumSize(size)
@@ -319,6 +322,41 @@ class _Display(_JavaProxy):
 
         window.pack()
         print 'new: %s\ncur: %s\nmin: %s\nmax: %s\nprf: %s' % (size, navigatedComponent.getSize(), navigatedComponent.getMinimumSize(), navigatedComponent.getMaximumSize(), navigatedComponent.getPreferredSize())
+
+    def setSizeBackground(self, width, height):
+        curWindowObj = self._JavaProxy__javaObject
+        # get some properties of the current window
+        # get the current, um, viewpoint?
+        displayMatrix = curWindowObj.getDisplayMatrix()
+        # get the current projection
+        projection = curWindowObj.getMapDisplay().getMapProjection()
+        # other stuff.. wireframe, DisplayList properties... more?
+        wireframe = curWindowObj.getWireframe()
+
+        newWindow = buildWindow(width, height)[0]
+        newWindowObj = newWindow._JavaProxy__javaObject
+
+        # this is somewhat akin to dragging layers in the GUI
+        layers = self.getLayers()
+        for layer in layers:
+            layerObj = layer._JavaProxy__javaObject
+            if (layerObj.toString() != 'Default Background Maps'):
+                # this does just a part of what ViewManager.moveTo does
+                displayList = layerObj.getDisplayInfos()
+                for info in displayList:
+                    info.moveTo(newWindowObj)
+                # Note, the following pops up a window in background!!!
+                # (ViewManager.controlMoved eventually leads to a
+                #  McIDASVViewPanel.addControlTab which does component stuff):
+                #layerObj.moveTo(newWindow._JavaProxy__javaObject)
+
+        # set the new window's viewpoint, projection, etc.
+        newWindowObj.getMapDisplay().setMapProjection(projection)
+        newWindowObj.setDisplayMatrix(displayMatrix)
+        newWindowObj.setWireframe(wireframe)
+
+        # note, can't just do 'self = newWindow' since self is local
+        self._JavaProxy__javaObject = newWindow._JavaProxy__javaObject
 
     # @deprecated(self.setSize)
     def setDimensions(self, x, y, width, height):
