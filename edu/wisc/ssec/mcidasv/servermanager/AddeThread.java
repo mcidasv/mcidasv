@@ -123,7 +123,7 @@ public class AddeThread extends Thread {
                 // If the server couldn't start for a known reason, try again on another port
                 //  Retry up to 10 times
                 if ((result==35584 || errString.indexOf("Error binding to port") >= 0) &&
-                        Integer.parseInt(EntryStore.getLocalPort()) < Integer.parseInt(Constants.LOCAL_ADDE_PORT) + 10) {
+                        Integer.parseInt(EntryStore.getLocalPort()) < Integer.parseInt(Constants.LOCAL_ADDE_PORT) + 30) {
                     EntryStore.setLocalPort(EntryStore.nextLocalPort());
 //                    entryStore.startLocalServer(entryStore.getRestarting());
                     entryStore.startLocalServer();
