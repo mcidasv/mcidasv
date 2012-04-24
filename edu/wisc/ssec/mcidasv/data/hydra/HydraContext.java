@@ -43,9 +43,36 @@ public class HydraContext {
   private static HashMap<DataSource, HydraContext> dataSourceToContextMap = new HashMap<DataSource, HydraContext>(); 
   private static HashMap<DataChoice, HydraContext> dataChoiceToContextMap = new HashMap<DataChoice, HydraContext>(); 
   private static HashMap<DataCategory, HydraContext> dataCategoryToContextMap = new HashMap<DataCategory, HydraContext>(); 
+
+  private static HashMap<DataSource, HashMap<DataCategory, HydraContext>> contextMap = new HashMap<DataSource, HashMap<DataCategory, HydraContext>>();
+
   private static HydraContext hydraContext = null;
   private boolean useSubset = false;
   private MultiDimensionSubset subset = null;
+
+  public static HydraContext getHydraContext(DataSource source, DataCategory dataCategory) {
+    if (dataCategory == null) {
+      return getHydraContext(source);
+    }
+    if (contextMap.containsKey(source)) {
+      if ((contextMap.get(source)).containsKey(dataCategory)) {
+        return contextMap.get(source).get(dataCategory);
+      }
+      else {
+        HashMap catMap = contextMap.get(source);
+        HydraContext hydraContext = new HydraContext();
+        catMap.put(dataCategory, hydraContext);
+        return hydraContext;
+      }
+    }
+    else {
+      HydraContext hydraContext = new HydraContext();
+      HashMap catMap = new HashMap();
+      catMap.put(dataCategory, hydraContext);
+      contextMap.put(source, catMap);
+      return hydraContext;
+    }
+  }
 
   public static HydraContext getHydraContext(DataSource source) {
     if (dataSourceToContextMap.isEmpty()) {
