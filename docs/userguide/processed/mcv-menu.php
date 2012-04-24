@@ -284,22 +284,6 @@
 
     <div class="indented" id="miscellaneous">
       <span class="link" onClick="setPage('Bundles.html');">Bundles</span><br>
-
-      <span class="toggle" onClick="toggleChildren(this,'miscellaneous_1');">+</span>
-      <span class="link" onClick="setPage('isl/index.html');">McIDAS-V Scripting</span><br>
-
-      <div class="indented" id="miscellaneous_1">
-        <span class="link" onClick="setPage('isl/Isl.html');">ISL Overview</span><br>
-        <span class="link" onClick="setPage('isl/BasicTags.html');">Basic ISL Tags</span><br>
-        <span class="link" onClick="setPage('isl/FileTags.html');">File ISL Tags</span><br>
-        <span class="link" onClick="setPage('isl/DataAndDisplays.html');">ISL Data and Displays</span><br>
-        <span class="link" onClick="setPage('isl/ImagesAndMovies.html');">ISL Images and Movies</span><br>
-        <span class="link" onClick="setPage('isl/Output.html');">Writing Text Files</span><br>
-        <span class="link" onClick="setPage('isl/JythonISL.html');">Scripting with Jython</span><br>
-        <span class="link" onClick="setPage('isl/Summary.html');">Tag Index</span><br>
-		<span class="link" onClick="setPage('isl/DisplayProperties.html');">Display Properties</span><br>
-      </div>
-
       <span class="link" onClick="setPage('collab/Sharing.html');">Sharing</span><br>
 
       <span class="toggle" onClick="toggleChildren(this,'miscellaneous_3');">+</span>

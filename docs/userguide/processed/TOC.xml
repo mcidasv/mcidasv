@@ -188,17 +188,6 @@
 </tocitem>
 <tocitem text="Miscellaneous" target="idv.page_miscellaneous">
     <tocitem text="Bundles" target="idv.bundles"/>
-    <tocitem text="McIDAS-V Scripting" target="idv.isl">
-        <tocitem text="ISL Overview" target="idv.isl.isl"/>
-        <tocitem text="Basic ISL Tags" target="idv.isl.basictags"/>
-        <tocitem text="File ISL Tags" target="idv.isl.filetags"/>
-        <tocitem text="ISL Data and Displays" target="idv.isl.dataanddisplays"/>
-        <tocitem text="ISL Images and Movies" target="idv.isl.imagesandmovies"/>
-        <tocitem text="Writing Text Files" target="idv.isl.output"/>
-        <tocitem text="Scripting with Jython" target="idv.isl.jythonisl"/>
-        <tocitem text="Tag Index" target="idv.isl.summary"/>
-        <tocitem text="Display Properties" target="idv.isl.displayproperties"/>
-    </tocitem>
     <tocitem text="Sharing" target="idv.collab.sharing"/>
     <tocitem text="Site Configuration" target="idv.misc.siteconfiguration">
 		<tocitem text="Plugin Jar Files" target="idv.misc.pluginjarfiles"/>
