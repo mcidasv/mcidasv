@@ -76,6 +76,19 @@ A.faq-category-link {
   text-decoration: none;
   color: #000000;
 }
+.OneTabIndent {
+	margin-left: 40px;
+}
+.TwoTabIndent {
+	margin-left: 80px;
+}
+.ThreeTabIndent {
+	margin-left: 120px;
+}
+.FourTabIndent {
+	margin-left: 160px;
+}
+
 A.faq-category-link:hover {
   text-decoration: underline;
 }
@@ -386,4 +399,7 @@ iframe.right {
 .images .caption {
 	font-size: 12px;
 	font-style: italic;
+}
+.FiveTabIndent {
+	margin-left: 200px;
 }

@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Scripting</title>
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<!-- InstanceBeginEditable name="CurrentFile" -->
+<script language="javascript" type="text/javascript">
+function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting.html',true); }
+</script>
+<!-- InstanceEndEditable -->
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+<body onLoad="setParentPage();">
+<div class="TopTitleNav">
+  <p class="style2" style="text-align:left; "> 
+  	[<!-- InstanceBeginEditable name="GoToPrevious" --><a href="../collab/Sharing.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	<span style="padding-left: 15px; "> 
+	[<!-- InstanceBeginEditable name="GoToNext" --><a href="PluginJarFiles.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	</span> </p>
+  <hr align="center">
+</div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Scripting</div>
+<p>McIDAS-V  can be scripted to create and manipulate images and movies. The scripting is  accomplished using Jython or through an XML file: <em>IDV Scripting Language</em> (ISL). The ISL file can be opened from a running McIDAS-V or one can be passed  to McIDAS-V as a command line argument:</p>
+<pre>runMcV capture.isl</pre>
+<p>A Jython script can be invoked as a command line argument: </p>
+<pre>runMcV -islfile capture.py</pre>
+<p>You can also run McIDAS-V in interactive mode using an ISL script to set up the state of McIDAS-V (e.g., loading data, displays, etc.) with the -islinteractive argument: </p>
+<pre>runMcV capture.isl -islinteractive</pre>
+<p>McIDAS-V can run in "offscreen" mode with an ISL or with Jython. The user interface won't be shown. However, McIDAS-V still needs to be run with an active window system (e.g., X, MS Windows) for it to run. If running under a Linux/Unix machine and you don't have an X server running you need to run McIDAS-V under the X virtual frame buffer: xvfb. </p>
+<p>If running under a Windows machine, it is necessary to use "\\" instead of "\" in scripts when specifying directory paths to avoid Windows interpreting it as an escape sequence. </p>
+<p>The usual mode of use of the ISL is to load in an McIDAS-V bundle which defines the data and displays that you want captured. In Jython, this is a call to the loadBundle() method. As a convenience, when you go to save a bundle (e.g., using the File->Save As menu item in the Main Display window), you can specify a .isl file suffix. When you do this McIDAS-V will write out both the bundle file and an example ISL file. It will first prompt you for some basic ISL information:</p>
+<p>buildWindow -- Creates a window and returns an array of panels (single panel currently supported)<br>
+    panel=buildWindow(keywords)<br>
+	<span class="OneTabIndent">keywords</span><br>
+    <span class="TwoTabIndent">height= height of the window</span><br>
+    <span class="TwoTabIndent">width= width of the window</span><br>
+    <span class="TwoTabIndent">panelTypes= 	MAP (default)</span><br>
+<span class="FourTabIndent">GLOBE</span></p>
+<p>openBundle -- Creates a new window and displays contents of a bundle<br>
+    openBundle(bundle file, keywords)<br>
+    <span class="OneTabIndent">bundle file - file name of bundle (required)</span><br>
+    <span class="OneTabIndent">keywords</span><br>
+    <span class="TwoTabIndent">height= height of display; default=(400)</span><br>
+    <span class="TwoTabIndent">width= width of display; default=(600)</span><br>
+    <span class="TwoTabIndent">dataDictionary= </span></p>
+<p>getADDEImage -- Requests data from and ADDE server - returns both data and metadata objects<br>
+    myMetaData,myData= getADDEImage(keyword parameters) <br>
+    <span class="OneTabIndent">keywords</span><br>
+    <span class="TwoTabIndent">server= ADDE server</span><br>
+    <span class="TwoTabIndent">dataset= ADDE dataset group name</span><br>
+    <span class="TwoTabIndent">descriptor= ADDE dataset descriptor</span><br>
+    <span class="TwoTabIndent">day= day range ('begin date','end date')</span><br>
+    <span class="TwoTabIndent">time= ('begin time','end time')</span><br>
+    <span class="TwoTabIndent">coordinateSystem= 	AREA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AREA file coordinates - zero based</span><br>
+    <span class="FiveTabIndent">LATLON&nbsp;&nbsp;&nbsp;	latitude and longitude coordinates</span><br>
+    <span class="FiveTabIndent">IMAGE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	image coordinates - one based</span><br>
+    <span class="TwoTabIndent">location=(x,y)</span><br>
+    <span class="ThreeTabIndent">x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AREA line, latitude or IMAGE line</span><br>
+    <span class="ThreeTabIndent">y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	AREA element, longitude or IMAGE element</span><br>
+    <span class="TwoTabIndent">place =	CENTER	places specified position (x,y) coordinate at center of panel</span><br>
+    <span class="ThreeTabIndent">&nbsp; ULEFT	places specified position (x,y) coordinate at upper-left coordinate of panel</span><br>
+    <span class="TwoTabIndent">band= McIDAS band number; must be specified if requesting data from multi-banded image; default=band in image </span><br>
+    <span class="TwoTabIndent">unit= calibration unit to request; default = 'BRIT'</span><br>
+    <span class="TwoTabIndent">position= time relative (negative values) or absolute (positive values) position in the dataset; default=0 (most recent image)</span><br>
+    <span class="TwoTabIndent">size= number of lines and elements to request default=(480,640)</span><br>
+    <span class="TwoTabIndent">mag= magnification of data (line,element), negative number used for sampling data; default=(1,1)</span><br>
+    <span class="TwoTabIndent">accounting= ('user', 'project number') user and project number required by servers using McIDAS accounting; default = ('idv','0')</span></p>
+<p>createLayer -- Creates a new data layer in a panel<br>
+    myDataLayer = panel[0].createLayer(display_type, myData)<br>
+    <span class="OneTabIndent">display_type	display type for layer; valid options shown in Field Selector (e.g. 'Image Display', 'Image Sequence Display')</span><br>
+    <span class="OneTabIndent">myData		data object to display </span></p>
+<p>setProjection -- Sets the projection of the panel<br>
+    panel[0].setProjection(projection)<br>
+    <span class="OneTabIndent">projection     &nbsp;&nbsp;&nbsp; single quoted string specifying the projection; e.g., 'US&gt;Southeastern U.S.'</span><br>
+    <span class="ThreeTabIndent">-or-</span><br>
+    <span class="ThreeTabIndent"> the name of the projection of the displayed data when layer is created with createLayer</span></p>
+<p>setWireframe -- Turns wire frame box on or off<br>
+    setWireframe(visible)<br>
+    <span class="OneTabIndent">visible	True displays wire frame box</span><br>
+    <span class="TwoTabIndent">False turns off wire frame box</span></p>
+<p>setColorScale -- Displays color scale on a panel and specifies attributes<br>
+    setColorScale(keywords)<br>
+    <span class="OneTabIndent">keywords</span><br>
+    <span class="TwoTabIndent">visible= True displays color scale</span><br>
+    <span class="TwoTabIndent">placement= &nbsp;	'Top' location of color scale</span><br>
+    <span class="FourTabIndent">'Bottom'</span><br>
+    <span class="FourTabIndent">'Left'</span><br>
+    <span class="FourTabIndent">'Right'</span><br>
+    <span class="TwoTabIndent">font= style of font; default=style defined in user preferences</span><br>
+    <span class="TwoTabIndent">style= 	BOLD bolded font</span><br>
+    <span class="ThreeTabIndent">ITALAC italicized font</span><br>
+    <span class="ThreeTabIndent">NONE default=font defined in user preferences </span><br>
+    <span class="TwoTabIndent">size= size of font; default=size of font defined in user preferences</span><br>
+    <span class="TwoTabIndent">color= 'color name'; default=color defined in user preferences</span><br>
+    <span class="ThreeTabIndent">[R,G,B] fractional scaling factor for each gun (0 to 1)</span></p>
+<p>captureImage -- Writes panel display to a a bitmap file<br>
+    panel[0].captureImage(file, keywords)<br>
+    <span class="OneTabIndent">file name of file, file format determine by file extension; valid options:</span><br>
+    <span class="TwoTabIndent">jpg</span><br>
+    <span class="TwoTabIndent">gif</span><br>
+    <span class="TwoTabIndent">png</span><br>
+    <span class="TwoTabIndent">pdf</span><br>
+    <span class="TwoTabIndent">svg</span><br>
+    <span class="TwoTabIndent">kml</span><br>
+    <span class="TwoTabIndent">kmz</span><br>
+    <span class="OneTabIndent">keywords</span><br>
+    <span class="TwoTabIndent">height= height of image (default is dependent on how the panel was created - see Remarks)</span><br>
+    <span class="TwoTabIndent">width= width of image (default is dependent on how the panel was created - see Remarks)</span><br>
+    <span class="TwoTabIndent">quality= quality of jpg file (0.0 to 1.0); default=1.0; not used with other formats </span></p>
+<p> <span class="TwoTabIndent">Remarks</span><br>
+    <span class="ThreeTabIndent">If captureImage is used to save a panel that was created with openBundle, the sizes default to size of the display window when the bundle was saved. If data was loaded using createLayer, the sizes default to those defined in buildWindow. </span></p>
+<p>setEnhancement -- Applies a color table and defines data range of data in a layer<br>
+    myDataLayer.setEnhancement(color table,keywords)<br>
+    <span class="TwoTabIndent">color table= color table name e.g., 'Longwave Infrared Deep Convection'</span><br>
+    <span class="TwoTabIndent">keywords</span><br>
+    <span class="ThreeTabIndent">range=(min,max) enhancement range; default= (min,max) of data</span></p>
+<p>setLayerLabel -- Toggles a layer label on/off and defines the labels attributes<br>
+    myDataLayer.setLayerLabel(label,keywords)<br>
+    <span class="OneTabIndent">label single quoted string for layer label, can use macros</span><br>
+    <span class="OneTabIndent">keywords</span><br>
+    <span class="TwoTabIndent">visible= True displays layer label</span><br>
+    <span class="TwoTabIndent">font= style of font; default=style defined in user preferences</span><br>
+    <span class="TwoTabIndent">style= 	BOLD bolded font</span><br>
+    <span class="ThreeTabIndent">ITALAC italicized font</span><br>
+    <span class="ThreeTabIndent">NONE default=font defined in user preferences </span><br>
+    <span class="TwoTabIndent">size= size of font; default=size of font defined in user preferences</span><br>
+    <span class="TwoTabIndent">color= 'color name'; default=color defined in user preferences</span><br>
+    <span class="ThreeTabIndent">&nbsp; [R,G,B] fractional scaling factor for each gun (0 to 1)</span></p>
+<p>setLayerVisible -- Toggles a layer visibility on/off<br>
+    myDataLayer.setLayerLabel(visible)<br>
+    <span class="OneTabIndent">visible	True displays layer</span><br>
+    <span class="TwoTabIndent">False turns off layer</span></p>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav">
+  <hr align="center">
+  <p class="style2" style="text-align:left; "> 
+  	[<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="../collab/Sharing.html">Go to Previous</a><!-- InstanceEndEditable -->] 
+	<span style="padding-left: 15px; "> 
+	[<!-- InstanceBeginEditable name="GoToNext2" --><a href="PluginJarFiles.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	</span></p>
+</div>
+</body>
+<!-- InstanceEnd --></html>
