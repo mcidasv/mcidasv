@@ -107,6 +107,11 @@ import javax.swing.event.MenuListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.text.JTextComponent;
 
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
+import org.fife.ui.rsyntaxtextarea.Token;
+import org.fife.ui.rtextarea.RTextScrollPane;
 import org.python.core.Py;
 import org.python.core.PyObject;
 import org.python.core.PyString;
@@ -436,8 +441,10 @@ public class JythonManager extends IdvManager implements ActionListener {
     private LibHolder findVisibleComponent() {
         try {
             for (LibHolder holder : libHolders) {
-                holder.outerContents.getLocationOnScreen();
-                return holder;
+                if (holder.outerContents.isShowing()) {
+                    holder.outerContents.getLocationOnScreen();
+                    return holder;
+                }
             }
         } catch (Exception exc) {
             logger.error("problem with finding visible component: {}", exc);
@@ -568,10 +575,7 @@ public class JythonManager extends IdvManager implements ActionListener {
             helpMenu.add(makeMenuItem("Show Jython Help", this, "showHelp"));
             textSearcher = new TextSearcher() {
                 @Override public TextSearcher.TextWrapper getTextWrapper() {
-                    LibHolder visibleComponent = findVisibleComponent();
-//                    return findVisibleComponent();
-                    logger.trace("visible comp={}", visibleComponent);
-                    return visibleComponent;
+                    return findVisibleComponent();
                 }
             };
             contents = topCenterBottom(menuBar, treePanel, textSearcher);
@@ -1033,7 +1037,7 @@ public class JythonManager extends IdvManager implements ActionListener {
 
     /**
      * Add the interpreter into the list of interpreters. Also
-     * calls {@see #initInterpreter(PythonInterpreter)}
+     * calls {@link #initInterpreter(PythonInterpreter)}
      *
      * @param interp The interpter to add and intialize
      */
@@ -1147,6 +1151,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         interpreter.exec("import ucar.visad.Util as Util");
         interpreter.exec("import ucar.unidata.util.StringUtil as StringUtil");
         interpreter.exec("import ucar.unidata.data.grid.DerivedGridFactory as DerivedGridFactory");
+        interpreter.exec("from console_init import deprecated");
         //interpreter.exec("from visad import FlatField");
         //interpreter.exec("from visad import FieldImpl");
     }
@@ -1398,7 +1403,7 @@ public class JythonManager extends IdvManager implements ActionListener {
      *
      * @return The interpreter to be used for theUI
      */
-    private PythonInterpreter getUiInterpreter() {
+    public PythonInterpreter getUiInterpreter() {
         if (uiInterpreter == null) {
             uiInterpreter = new PythonInterpreter();
             addInterpreter(uiInterpreter);
@@ -2367,7 +2372,7 @@ public class JythonManager extends IdvManager implements ActionListener {
 //         * @throws VisADException on badness
 //         */
 //        public MyPythonEditor() throws VisADException {
-//            textArea = buildTextComponent();
+//            textArea = new RSyntaxTextArea();
 //        }
 //
 //        /**
@@ -2380,11 +2385,11 @@ public class JythonManager extends IdvManager implements ActionListener {
 //        }
 //        
 //        public JTextComponent getTextComponent() {
-//            return textArea;
+//            return (JTextComponent)textArea;
 //        }
-//        
+////        private static  RSyntaxTextArea comp;
 //        private static RSyntaxTextArea buildTextComponent() {
-//            final RSyntaxTextArea comp;
+//            
 //            SwingUtilities.invokeLater(new Runnable() {
 //                public void run() {
 //                    comp = new RSyntaxTextArea();
@@ -2394,40 +2399,40 @@ public class JythonManager extends IdvManager implements ActionListener {
 //        }
 //    }
 //
-//    public static void runDemo() {
-//        SwingUtilities.invokeLater(new Runnable() {
-//            public void run() {
-//                new TextEditorDemo().setVisible(true);
-//            }
-//        });
-//    }
-//    public static class TextEditorDemo extends JFrame {
-//        public final String demoText = "def foo(str='w00t'):\n    print 'hi'\n    return str + 'w00t'\n\n\nif __name__ == '__main__':\n    print foo()\n\n";
-//        public TextEditorDemo() {
-//            JPanel cp = new JPanel(new BorderLayout());
-//            RSyntaxTextArea textArea = new RSyntaxTextArea();
-//            textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PYTHON);
-//            RTextScrollPane sp = new RTextScrollPane(textArea);
-//            cp.add(sp);
-//
-//            textArea.setText(demoText);
-//            
-//            SyntaxScheme scheme = textArea.getSyntaxScheme();
-//            scheme.styles[Token.WHITESPACE].foreground = Color.DARK_GRAY;
-//
-//            textArea.setTabsEmulated(true);
-//            textArea.setTabSize(4);
-//            textArea.setWhitespaceVisible(true);
-//            textArea.setMarkOccurrences(true);
-//            textArea.setEOLMarkersVisible(true);
-//            textArea.setAutoIndentEnabled(true);
-//            
-//            
-//            setContentPane(cp);
-//            setTitle("syntax highlighting demo");
-//            setDefaultCloseOperation(EXIT_ON_CLOSE);
-//            pack();
-//            setLocationRelativeTo(null);
-//        }
-//    }
+    public static void runDemo() {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new TextEditorDemo().setVisible(true);
+            }
+        });
+    }
+    public static class TextEditorDemo extends JFrame {
+        public final String demoText = "def foo(str='w00t'):\n    print 'hi'\n    return str + 'w00t'\n\n\nif __name__ == '__main__':\n    print foo()\n\n";
+        public TextEditorDemo() {
+            JPanel cp = new JPanel(new BorderLayout());
+            RSyntaxTextArea textArea = new RSyntaxTextArea();
+            textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PYTHON);
+            RTextScrollPane sp = new RTextScrollPane(textArea);
+            cp.add(sp);
+
+            textArea.setText(demoText);
+            
+            SyntaxScheme scheme = textArea.getSyntaxScheme();
+            scheme.getStyle(Token.WHITESPACE).foreground = Color.DARK_GRAY;
+
+            textArea.setTabsEmulated(true);
+            textArea.setTabSize(4);
+            textArea.setWhitespaceVisible(true);
+            textArea.setMarkOccurrences(true);
+            textArea.setEOLMarkersVisible(true);
+            textArea.setAutoIndentEnabled(true);
+            
+            
+            setContentPane(cp);
+            setTitle("syntax highlighting demo");
+            setDefaultCloseOperation(EXIT_ON_CLOSE);
+            pack();
+            setLocationRelativeTo(null);
+        }
+    }
 }

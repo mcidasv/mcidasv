@@ -73,9 +73,11 @@ import ucar.unidata.util.Misc;
  * This class provides  an abstract interactive shell
  *
  * @author IDV development team
- * @version $Revision$Date: 2012/02/19 17:35:55 $
+ * @version $Revision$Date: 2012/03/28 14:59:29 $
  */
 public class InteractiveShell implements HyperlinkListener {
+
+    private static final Logger logger = LoggerFactory.getLogger(InteractiveShell.class);
 
     private static Object MUTEX =  new Object();
 
@@ -149,7 +151,7 @@ public class InteractiveShell implements HyperlinkListener {
         frame = null;
         logger.trace("closed {}", this);
     }
-    private static final Logger logger = LoggerFactory.getLogger(InteractiveShell.class);
+
     public void show() {
         frame.setVisible(true);
     }
