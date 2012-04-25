@@ -1927,18 +1927,21 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 src = replaceKey(src, SIZE_KEY, saveNumLine + ' ' + saveNumEle);
                 src = replaceKey(src, MAG_KEY, saveLineMag + ' ' + saveEleMag);
 
+                /*
                 logger.trace("Had to make new src=", src);
                 AreaAdapter aa = new AreaAdapter(src, false);
                 areaDir = previewDir;
                 result = aa.getImage();
+                */
             }
 
          /* moved these inside the 'else' clause since 'if' got 'result' already
+         */
             logger.trace("wtf: {}", src);
             AreaAdapter aa = new AreaAdapter(src, false);
             areaDir = previewDir;
             result = aa.getImage();
-         */
+
             putCache(src, result);
             aid.setSource(src);
             iml.add(aid);
