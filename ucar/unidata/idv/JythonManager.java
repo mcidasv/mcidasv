@@ -107,11 +107,11 @@ import javax.swing.event.MenuListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.text.JTextComponent;
 
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
-import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
-import org.fife.ui.rsyntaxtextarea.Token;
-import org.fife.ui.rtextarea.RTextScrollPane;
+//import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+//import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+//import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
+//import org.fife.ui.rsyntaxtextarea.Token;
+//import org.fife.ui.rtextarea.RTextScrollPane;
 import org.python.core.Py;
 import org.python.core.PyObject;
 import org.python.core.PyString;
@@ -2399,40 +2399,40 @@ public class JythonManager extends IdvManager implements ActionListener {
 //        }
 //    }
 //
-    public static void runDemo() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                new TextEditorDemo().setVisible(true);
-            }
-        });
-    }
-    public static class TextEditorDemo extends JFrame {
-        public final String demoText = "def foo(str='w00t'):\n    print 'hi'\n    return str + 'w00t'\n\n\nif __name__ == '__main__':\n    print foo()\n\n";
-        public TextEditorDemo() {
-            JPanel cp = new JPanel(new BorderLayout());
-            RSyntaxTextArea textArea = new RSyntaxTextArea();
-            textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PYTHON);
-            RTextScrollPane sp = new RTextScrollPane(textArea);
-            cp.add(sp);
-
-            textArea.setText(demoText);
-            
-            SyntaxScheme scheme = textArea.getSyntaxScheme();
-            scheme.getStyle(Token.WHITESPACE).foreground = Color.DARK_GRAY;
-
-            textArea.setTabsEmulated(true);
-            textArea.setTabSize(4);
-            textArea.setWhitespaceVisible(true);
-            textArea.setMarkOccurrences(true);
-            textArea.setEOLMarkersVisible(true);
-            textArea.setAutoIndentEnabled(true);
-            
-            
-            setContentPane(cp);
-            setTitle("syntax highlighting demo");
-            setDefaultCloseOperation(EXIT_ON_CLOSE);
-            pack();
-            setLocationRelativeTo(null);
-        }
-    }
+//    public static void runDemo() {
+//        SwingUtilities.invokeLater(new Runnable() {
+//            public void run() {
+//                new TextEditorDemo().setVisible(true);
+//            }
+//        });
+//    }
+//    public static class TextEditorDemo extends JFrame {
+//        public final String demoText = "def foo(str='w00t'):\n    print 'hi'\n    return str + 'w00t'\n\n\nif __name__ == '__main__':\n    print foo()\n\n";
+//        public TextEditorDemo() {
+//            JPanel cp = new JPanel(new BorderLayout());
+//            RSyntaxTextArea textArea = new RSyntaxTextArea();
+//            textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PYTHON);
+//            RTextScrollPane sp = new RTextScrollPane(textArea);
+//            cp.add(sp);
+//
+//            textArea.setText(demoText);
+//            
+//            SyntaxScheme scheme = textArea.getSyntaxScheme();
+//            scheme.getStyle(Token.WHITESPACE).foreground = Color.DARK_GRAY;
+//
+//            textArea.setTabsEmulated(true);
+//            textArea.setTabSize(4);
+//            textArea.setWhitespaceVisible(true);
+//            textArea.setMarkOccurrences(true);
+//            textArea.setEOLMarkersVisible(true);
+//            textArea.setAutoIndentEnabled(true);
+//            
+//            
+//            setContentPane(cp);
+//            setTitle("syntax highlighting demo");
+//            setDefaultCloseOperation(EXIT_ON_CLOSE);
+//            pack();
+//            setLocationRelativeTo(null);
+//        }
+//    }
 }
