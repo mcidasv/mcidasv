@@ -8,7 +8,7 @@
     <property name="build.dir" location="${base.dir}/build" />
     <property name="dist.dir" location="${base.dir}/dist" />
     <property name="lib.dir" location="${base.dir}/lib" />
-    <property name="idvlib.dir" location="${base.dir}/../IDV/lib" />
+    <property name="idvlib.dir" location="${base.dir}/../idv/lib" />
     <property name="resource.dir" location="${base.dir}/edu/wisc/ssec/mcidasv/resources" />
     <property name="release.dir" location="${base.dir}/release" />
     <property name="tools.dir" location="${base.dir}/tools" />
