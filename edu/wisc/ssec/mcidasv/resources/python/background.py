@@ -692,6 +692,83 @@ class _Display(_JavaProxy):
 
         # TODO(mike): catch exceptions resulting from writeImage (e.g., if filename has invalid extension)
 
+    def annotate(self, text, lat=None, lon=None, line=None, element=None, 
+            font=None, color=None, size=None, style=None):
+        """Put a text annotation on this panel
+
+        Can specify location by a lat/lon point or number of pixels
+        from upper left corner of screen (lines from top, elements from left).
+        (but not both!).
+
+        The location specifies the *bottom left* point of the text string.
+
+        Args:  (need text and one of lat/lon or line/element). rest are optional.
+           text: the text for annotation
+           lat, lon:  need to be specified together.  (required)
+                      Specifies ottom left point of text.
+           line, element: need to be specified together.
+                      Line is number of pixels from top, element is number
+                      of pixels from left, for bottom left point of text.
+           font: name of a font.   (optional)
+           size: size of font. (optional)
+           style:  'PLAIN', 'BOLD', or 'ITALIC'  (optional)
+               Font defaults come from ViewManager.getDisplayListFont()
+           color: text color. Default red, for now I guess. this is GUI default.
+                 (optional)
+
+        Raises:
+            ValueError: if didn't get proper lat/lon or line/element combo
+        """
+        import colorutils
+        import visad.georef.EarthLocationTuple as EarthLocationTuple
+        import ucar.unidata.idv.control.drawing.TextGlyph as TextGlyph
+        import ucar.unidata.idv.control.drawing.DrawingGlyph as DrawingGlyph
+
+        # TODO: only create one drawingControl for each panel
+        drawCtl = getStaticMcv().doMakeControl('drawingcontrol')
+        drawCtl.setName('jythonannotation')
+        drawCtl.setLegendLabelTemplate('Jython Annotation')
+        drawCtl.setShowInDisplayList(False)
+        pause()
+        drawCtl.close() # close the window that pops up..user doesnt need to see
+        glyph = TextGlyph(drawCtl, None, text)
+        if (lat != None) and (lon != None) and (
+                (line == None) and (element == None)):
+            # lat lon point
+            point = EarthLocationTuple(lat, lon, 0.0) # TODO: not sure about altitude
+            glyph.setCoordType(DrawingGlyph.COORD_LATLONALT)
+        elif (line != None) and (element != None) and (
+                (lat == None) and (lon == None)):
+            # screen coordinates
+            glyph.setCoordType(DrawingGlyph.COORD_XYZ)
+            mapDisplay = self._JavaProxy__javaObject.getMapDisplay()
+            # note: (element, line) note (line, element):
+            point = mapDisplay.getSpatialCoordinatesFromScreen(element, line)
+        else:
+            raise ValueError(
+            "You must specify either lat AND lon, OR line AND element")
+
+        # do the usual gymastics for font and color stuff.
+        if color == None:
+            newColor = java.awt.Color(255, 0, 0) # default red
+        else:
+            rgb = colorutils.convertColor(color)
+            r = rgb[0].getConstant()
+            g = rgb[1].getConstant()
+            b = rgb[2].getConstant()
+            newColor = java.awt.Color(r, g, b)
+
+        currentFont = self._JavaProxy__javaObject.getDisplayListFont()
+        newFont = _getNewFont(currentFont, fontName=font, size=size, style=style)
+
+        glyph.setName("GlyphFromJython") # not visible after drawCtl.close()
+        glyph.setColor(newColor)
+        glyph.setFont(newFont)
+        pointList = java.util.ArrayList()
+        pointList.add(point)
+        glyph.setPoints(pointList)
+        drawCtl.addGlyph(glyph)
+
 # TODO(jon): still not sure what to offer here.
 class _Layer(_JavaProxy):
     def __init__(self, javaObject):
