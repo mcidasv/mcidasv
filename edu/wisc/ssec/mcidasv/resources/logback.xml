@@ -47,10 +47,7 @@
   <!-- logging only listens for things at "INFO" level within mcv (by default)
        valid levels are: TRACE, DEBUG, INFO, WARN, ERROR, OFF
        be sure to skim over http://logback.qos.ch/manual/architecture.html#basic_selection -->
-  <root level="OFF"/>
-  
-  <logger name="jython" level="INFO">
-    <!-- redirect jython logging to mcidasv.log --> 
-    <appender-ref ref="FILE" />
-  </logger>
-</configuration>
+  <root level="INFO">
+    <appender-ref ref="FILE">
+  </root>
+  </configuration>
