@@ -7,7 +7,7 @@
   scan and scanPeriod: please see the Logback documentation:
   http://logback.qos.ch/manual/configuration.html#autoScan
  -->
-<configuration>
+<configuration debug="true">
 
   <!-- sets up a rotating mcidasv.log. every time mcidasv.log reaches 1MB, this
        will move mcidasv.log to mcidasv.1.log.zip and create a new mcidasv.log.
@@ -37,7 +37,6 @@
   <appender name="JYTHON" class="ch.qos.logback.core.FileAppender">
     <file>${mcv.userpath}/jython.log</file>
     <encoder>
-      <!-- <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %method: %msg%n</pattern> -->
       <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger:%n%msg%n</pattern>
     </encoder>
   </appender>
@@ -48,13 +47,10 @@
   <!-- logging only listens for things at "INFO" level within mcv (by default)
        valid levels are: TRACE, DEBUG, INFO, WARN, ERROR, OFF
        be sure to skim over http://logback.qos.ch/manual/architecture.html#basic_selection -->
-  <root level="INFO">
-    <appender-ref ref="FILE" />
-  </root>
+  <root level="OFF"/>
   
   <logger name="jython" level="INFO">
-    <!-- remember: jython is like a subclass of the root logger; if you 
-         include the STDOUT appender with this logger, you'll get duped output. -->
-    <appender-ref ref="JYTHON" />
+    <!-- redirect jython logging to mcidasv.log --> 
+    <appender-ref ref="FILE" />
   </logger>
 </configuration>

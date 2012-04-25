@@ -2,95 +2,97 @@
 
 <!-- $Id$ -->
 <project name="mcidasv" default="info">
-	
-	<!-- Directory definitions -->
-	<property name="base.dir" location="." />
-	<property name="build.dir" location="${base.dir}/build" />
-	<property name="dist.dir" location="${base.dir}/dist" />
-	<property name="lib.dir" location="${base.dir}/lib" />
-	<property name="idvlib.dir" location="${base.dir}/../idv/lib" />
-	<property name="resource.dir" location="${base.dir}/edu/wisc/ssec/mcidasv/resources" />
-	<property name="release.dir" location="${base.dir}/release" />
-	<property name="tools.dir" location="${base.dir}/tools" />
-	<property name="webstart.dir" location="${release.dir}/webstart" />
-	<property name="sm.dir" location="${base.dir}/edu/wisc/ssec/mcidasv/startupmanager" />
-	<property name="doc.dir" location="${base.dir}/docs" />
-	<property name="javadoc.dir" location="${doc.dir}/javadoc" />
-	<property name="userguide.dir" location="${doc.dir}/userguide" />
-	<property name="heap.dir" location="/tmp/javaheaps" />
-	
-	<!-- For example: "/Applications/McIDAS/adde" on OS X and NOT "/Applications/McIDAS/adde/bin" -->
-	<!-- <property name="addeservs.dir" location="/path/to/local/adde/root" /> --> 
-	<property name="addeservs.dir" location="/Applications/McIDAS-V/adde" />
-	
-	<!-- Attempt to load the version property file -->
-	<property file="${resource.dir}/version.properties" />
-	<property name="media.dir" location="${base.dir}/../install4j/media" />
-	<property name="source.file" value="McIDAS-V_${mcidasv.version.major}.${mcidasv.version.minor}${mcidasv.version.release}_source.jar" />
-	
-	<!-- Binary file definitions -->
-	<property name="java.bin" location="../java_jdk/bin/java" />
-	<property name="jhindexer.bin" location="../jh2.0/javahelp/bin/jhindexer" />
-	<property name="install4jc.bin" location="${base.dir}/../install4j/bin/install4jc" />
-	
-	<!-- Required library jar file names -->
-	<property name="visad.jar" value="visad.jar" />
-	<property name="idv.jar" value="idv.jar" />
-	
-	<!-- Property file names -->
-	<property name="ver.props" value="${resource.dir}/version.properties" />
-	<property name="build.props" value="${resource.dir}/build.properties" />
-	
-	<!-- Jar file names -->
-	<property name="app.jarname" value="mcidasv.jar" />
-	<property name="local-idv.jarname" value="local-idv.jar" />
-	<property name="javadoc.jarname" value="mcv_javadoc.jar" />
-	<property name="userguide.jarname" value="mcv_userguide.jar" />
-	<property name="source.jarname" value="mcv_source.jar" />
-	
-	<!-- Jar signing -->
-	<property name="key.store" location="${release.dir}/mcv-keystore" />
-	<property name="key.alias" value="McIDAS-V" />
-	
-	<!-- Main class for jar and run targets -->
-	<property name="app.mainclass" value="edu.wisc.ssec.mcidasv.McIDASV" />
-	
-	<!-- Main class for startup manager -->
-	<property name="app.smclass"
-	value="edu.wisc.ssec.mcidasv.startupmanager.StartupManager" />
-	<property name="app.smjar" value="startupmanager.jar" />
-	
-	<!-- Properties for the Jython console -->
-	<property name="jython.class" value="edu.wisc.ssec.mcidasv.jython.Console" />
-	<property name="jython.jarfile" value="console.jar" />
-	<property name="jython.dir" value="${base.dir}/edu/wisc/ssec/mcidasv/jython" />
-	<property name="jython.lib" value="${idvlib.dir}/jython.jar" />
-	
-	<!-- Run target options -->
-	<property name="run.smallheap" value="512m" />
-	<property name="run.largeheap" value="1024m" />
-	
-	<!-- <property name="logback.default.config" value="edu/wisc/ssec/mcidasv/resources/logback.xml" /> -->
-  <property name="logback.default.config" value="/Users/jbeavers/mcidasv/eclipse/mcv/edu/wisc/ssec/mcidasv/resources/logback.xml" />
-	
-	<!-- Nightly build properties -->
-	<property name="cvs.root" value="${user.name}@cvs.ssec.wisc.edu:/cvsroot" />
-	<property name="cvs.rsh" value="ssh" />
-	
-	<!-- Compiler options -->
-	<property name="debug.flag" value="true" />
-	<property name="deprecation.flag" value="false" />
-	<property name="source.ver" value="1.5" />
-	<property name="target.ver" value="1.5" />
-	
-	<!-- Which warnings to show, use javac -X for help -->
-	<property name="xlint" value="deprecation" />
-	
-	<!-- Javadoc options -->
-	<property name="javadoc.level" value="private" />
-	
+    
+    <!-- Directory definitions -->
+    <property name="base.dir" location="." />
+    <property name="build.dir" location="${base.dir}/build" />
+    <property name="dist.dir" location="${base.dir}/dist" />
+    <property name="lib.dir" location="${base.dir}/lib" />
+    <property name="idvlib.dir" location="${base.dir}/../IDV/lib" />
+    <property name="resource.dir" location="${base.dir}/edu/wisc/ssec/mcidasv/resources" />
+    <property name="release.dir" location="${base.dir}/release" />
+    <property name="tools.dir" location="${base.dir}/tools" />
+    <property name="webstart.dir" location="${release.dir}/webstart" />
+    <property name="sm.dir" location="${base.dir}/edu/wisc/ssec/mcidasv/startupmanager" />
+    <property name="doc.dir" location="${base.dir}/docs" />
+    <property name="javadoc.dir" location="${doc.dir}/javadoc" />
+    <property name="userguide.dir" location="${doc.dir}/userguide" />
+    <property name="heap.dir" location="/tmp/javaheaps" />
+    
+    <!-- For example: "/Applications/McIDAS/adde" on OS X and NOT "/Applications/McIDAS/adde/bin" -->
+    <!-- <property name="addeservs.dir" location="/path/to/local/adde/root" /> --> 
+    <property name="addeservers.dir" location="/Applications/mcidasv/nightly/adde" />
+    
+    <!-- Sets the McV userpath -->
+    <property name="userpath.dir" location="/Users/${user.name}/Documents/McIDAS-V" />
+    
+    <!-- Attempt to load the version property file -->
+    <property file="${resource.dir}/version.properties" />
+    <property name="media.dir" location="${base.dir}/../install4j/media" />
+    <property name="source.file" value="McIDAS-V_${mcidasv.version.major}.${mcidasv.version.minor}${mcidasv.version.release}_source.jar" />
+    
+    <!-- Binary file definitions -->
+    <property name="java.bin" location="../java_jdk/bin/java" />
+    <property name="jhindexer.bin" location="../jh2.0/javahelp/bin/jhindexer" />
+    <property name="install4jc.bin" location="${base.dir}/../install4j/bin/install4jc" />
+    
+    <!-- Required library jar file names -->
+    <property name="visad.jar" value="visad.jar" />
+    <property name="idv.jar" value="idv.jar" />
+    
+    <!-- Property file names -->
+    <property name="ver.props" value="${resource.dir}/version.properties" />
+    <property name="build.props" value="${resource.dir}/build.properties" />
+    
+    <!-- Jar file names -->
+    <property name="app.jarname" value="mcidasv.jar" />
+    <property name="local-idv.jarname" value="local-idv.jar" />
+    <property name="javadoc.jarname" value="mcv_javadoc.jar" />
+    <property name="userguide.jarname" value="mcv_userguide.jar" />
+    <property name="source.jarname" value="mcv_source.jar" />
+    
+    <!-- Jar signing -->
+    <property name="key.store" location="${release.dir}/mcv-keystore" />
+    <property name="key.alias" value="McIDAS-V" />
+    
+    <!-- Main class for jar and run targets -->
+    <property name="app.mainclass" value="edu.wisc.ssec.mcidasv.McIDASV" />
+    
+    <!-- Main class for startup manager -->
+    <property name="app.smclass"
+    value="edu.wisc.ssec.mcidasv.startupmanager.StartupManager" />
+    <property name="app.smjar" value="startupmanager.jar" />
+    
+    <!-- Properties for the Jython console -->
+    <property name="jython.class" value="edu.wisc.ssec.mcidasv.jython.Console" />
+    <property name="jython.jarfile" value="console.jar" />
+    <property name="jython.dir" value="${base.dir}/edu/wisc/ssec/mcidasv/jython" />
+    <property name="jython.lib" value="${idvlib.dir}/jython.jar" />
+    
+    <!-- Run target options -->
+    <property name="run.smallheap" value="512m" />
+    <property name="run.largeheap" value="1024m" />
+    
+    <property name="logback.default.config" value="edu/wisc/ssec/mcidasv/resources/logback.xml" />
+    
+    <!-- Nightly build properties -->
+    <property name="cvs.root" value="${user.name}@cvs.ssec.wisc.edu:/cvsroot" />
+    <property name="cvs.rsh" value="ssh" />
+    
+    <!-- Compiler options -->
+    <property name="debug.flag" value="true" />
+    <property name="deprecation.flag" value="false" />
+    <property name="source.ver" value="1.5" />
+    <property name="target.ver" value="1.5" />
+    
+    <!-- Which warnings to show, use javac -X for help -->
+    <property name="xlint" value="deprecation" />
+    
+    <!-- Javadoc options -->
+    <property name="javadoc.level" value="private" />
+    
     <!-- The CLASSPATH specified within McV's manifest -->
-    <property name="jar.base.classpath" value="sysout-over-slf4j-1.0.2.jar miglayout-4.0-swing.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar eventbus-1.3.jar logback-core-0.9.29.jar logback-classic-0.9.29.jar log4j-over-slf4j-1.6.1.jar slf4j-api-1.6.1.jar commons-math-2.2.jar" />
+    <property name="jar.base.classpath" value="sysout-over-slf4j-1.0.2.jar miglayout-4.0-swing.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar eventbus-1.3.jar logback-core-0.9.29.jar logback-classic-0.9.29.jar log4j-over-slf4j-1.6.1.jar slf4j-api-1.6.1.jar commons-math-2.2.jar rsyntaxtextarea-2.0.2.jar" />
 
     <!-- List of McIDAS-V jars -->
     <fileset id="mcv.libs" dir="${lib.dir}">
@@ -104,362 +106,363 @@
         <include name="local-idv.jar" />
         <include name="repositorytds.jar" />
         <include name="commons-math-2.2.jar" />
+        <include name="rsyntaxtextarea-2.0.2.jar" />
     </fileset>
-	
-	<!-- List of IDV jars -->
-	<fileset id="idv.libs" dir="${idvlib.dir}">
-		<include name="auxdata.jar" />
-		<include name="local-visad.jar" />
-		<include name="visad.jar" />
-		<include name="jython.jar" />
-		<include name="external.jar" />
-		<include name="ncIdv.jar" />
-		<include name="idv.jar" />
-	  <include name="repositorytds.jar" />
-	</fileset>
-	
-	<!-- Shared classpath -->
-	<path id="app.classpath">
-		<pathelement location="${base.dir}" />
-	  <!--<pathelement location="${dist.dir}/mcidasv.jar" />-->
-		<fileset refid="mcv.libs" />
-		<fileset refid="idv.libs" />
-	</path>
-	
-	<!-- Files to include in application jar -->
-	<patternset id="jar.includes">
-		<include name="edu/**/*.class" />
-		<include name="edu/**/resources/**/*" />
-		<include name="edu/**/images/**/*" />
-	</patternset>
+    
+    <!-- List of IDV jars -->
+    <fileset id="idv.libs" dir="${idvlib.dir}">
+        <include name="auxdata.jar" />
+        <include name="local-visad.jar" />
+        <include name="visad.jar" />
+        <include name="jython.jar" />
+        <include name="external.jar" />
+        <include name="ncIdv.jar" />
+        <include name="idv.jar" />
+      <include name="repositorytds.jar" />
+    </fileset>
+    
+    <!-- Shared classpath -->
+    <path id="app.classpath">
+        <pathelement location="${base.dir}" />
+      <!--<pathelement location="${dist.dir}/mcidasv.jar" />-->
+        <fileset refid="mcv.libs" />
+        <fileset refid="idv.libs" />
+    </path>
+    
+    <!-- Files to include in application jar -->
+    <patternset id="jar.includes">
+        <include name="edu/**/*.class" />
+        <include name="edu/**/resources/**/*" />
+        <include name="edu/**/images/**/*" />
+    </patternset>
 
-	<!-- Files to include in local-idv jar -->
-	<patternset id="local-idv.includes">
-		<include name="ucar/**/*.class" />
-	</patternset>
-	
-	<!-- Files to include in the startup manager jar -->
-	<patternset id="startupmanager.includes">
-		<include name="edu/**/startupmanager/*.class" />
-		<include name="edu/**/startupmanager/options/*.class" />
-		<include name="edu/wisc/ssec/mcidasv/resources/icons/prefs/*" />
-		<include name="edu/wisc/ssec/mcidasv/Constants.class" />
-		<include name="edu/**/images/mcidasv_logo.gif" />
-	</patternset>
-	
-	<!-- Files that needed by the Jython console JAR. -->
-	<patternset id="jython.includes">
-		<include name="edu/wisc/ssec/mcidasv/util/Contract.class" />
-		<include name="edu/wisc/ssec/mcidasv/jython/**/*.class" />
-	</patternset>
-	
-	<!-- Controls the status of Java's assertion feature. -->
-	<assertions id="mcv.assertions">
-		<!-- Enable all assertions: -->
-		<!-- <enable/> -->
-		
-		<!-- Disable all assertions (remember the system assert attr above! -->
-		<!-- <disable/> -->
-		<disable/>
-		
-		<!-- 
-		 Enable assertions for the Mcv choosers, but disable any assertions in 
-		 VisAD's HDF5 package:
-		 -->
-		<!-- <enable package="edu.wisc.ssec.mcidasv.chooser"/> -->
-		<!-- <disable package="visad.data.hdf5"/> -->
-	</assertions>
-	
-	<!-- Print out some of the setting for this build file -->
-	<target name="info" description="Print various significant property values">
-		<echo>
-			== ANT =======================
-			ant java version:
-			${ant.java.version}
-			ant lib dir: ${ant.library.dir}
-			ant home:
-			${ant.home}
-			ant basedir: ${base.dir}
-			
-			== JAVA ======================
-			java home: ${java.home}
-			java version: ${java.runtime.version}
-			javadoc
-			access: ${javadoc.level}
-			
-			== COMPILER OPTIONS ==========
-			source:
-			${source.ver}
-			target: ${target.ver}
-			debug(-g): ${debug.flag}
-			deprecation: ${deprecation.flag}
-			Xlint warn: ${xlint}
-			
-			== PROPERTIES
-			===============
-			libdir: ${lib.dir}
-			idvlibdir: ${idvlib.dir}
-			javadoc:
-			${javadoc.dir}
-			userguide: ${userguide.dir}
-			mainclass: ${app.mainclass}
-			
-		</echo>
-	</target>
-	
-	<!-- Delete all class files and temporary build files -->
-	<target name="clean" description="Delete all class files and temporary build files">
-		<delete dir="${dist.dir}" failonerror="false" />
-		<delete dir="${javadoc.dir}" failonerror="false" />
-		<delete dir="${build.dir}" failonerror="false" />
-		<delete failonerror="false">
-			<fileset dir="${base.dir}/edu" includes="**/*.class" />
-		</delete>
-		<delete failonerror="false">
-			<fileset dir="${base.dir}/ucar" includes="**/*.class" />
-		</delete>
-		<delete file="${build.props}" failonerror="false" />
-	</target>
-	
-	<!-- Get the latest McIDAS-V source code from CVS -->
-	<target name="cvsupdate" description="Get the latest McIDAS-V source code from CVS">
-		<cvs cvsRoot="${cvs.root}" cvsRsh="${cvs.rsh}" failonerror="true"
-			dest="${base.dir}">
-			<commandline>
-				<argument value="update" />
-				<argument value="-d" />
-				<argument value="-C" />
-			</commandline>
-		</cvs>
-	</target>
-	
-	<!-- Get the latest IDV jar files from Unidata -->
-	<target name="getidvjars" description="Get the latest IDV jar files from Unidata">
-		<exec executable="${basedir}/tools/get_idv_latest.sh" dir="${basedir}/tools" />
-	</target>
+    <!-- Files to include in local-idv jar -->
+    <patternset id="local-idv.includes">
+        <include name="ucar/**/*.class" />
+    </patternset>
+    
+    <!-- Files to include in the startup manager jar -->
+    <patternset id="startupmanager.includes">
+        <include name="edu/**/startupmanager/*.class" />
+        <include name="edu/**/startupmanager/options/*.class" />
+        <include name="edu/wisc/ssec/mcidasv/resources/icons/prefs/*" />
+        <include name="edu/wisc/ssec/mcidasv/Constants.class" />
+        <include name="edu/**/images/mcidasv_logo.gif" />
+    </patternset>
+    
+    <!-- Files that needed by the Jython console JAR. -->
+    <patternset id="jython.includes">
+        <include name="edu/wisc/ssec/mcidasv/util/Contract.class" />
+        <include name="edu/wisc/ssec/mcidasv/jython/**/*.class" />
+    </patternset>
+    
+    <!-- Controls the status of Java's assertion feature. -->
+    <assertions id="mcv.assertions">
+        <!-- Enable all assertions: -->
+        <!-- <enable/> -->
+        
+        <!-- Disable all assertions (remember the system assert attr above! -->
+        <!-- <disable/> -->
+        <disable/>
+        
+        <!-- 
+         Enable assertions for the Mcv choosers, but disable any assertions in 
+         VisAD's HDF5 package:
+         -->
+        <!-- <enable package="edu.wisc.ssec.mcidasv.chooser"/> -->
+        <!-- <disable package="visad.data.hdf5"/> -->
+    </assertions>
+    
+    <!-- Print out some of the setting for this build file -->
+    <target name="info" description="Print various significant property values">
+        <echo>
+            == ANT =======================
+            ant java version:
+            ${ant.java.version}
+            ant lib dir: ${ant.library.dir}
+            ant home:
+            ${ant.home}
+            ant basedir: ${base.dir}
+            
+            == JAVA ======================
+            java home: ${java.home}
+            java version: ${java.runtime.version}
+            javadoc
+            access: ${javadoc.level}
+            
+            == COMPILER OPTIONS ==========
+            source:
+            ${source.ver}
+            target: ${target.ver}
+            debug(-g): ${debug.flag}
+            deprecation: ${deprecation.flag}
+            Xlint warn: ${xlint}
+            
+            == PROPERTIES
+            ===============
+            libdir: ${lib.dir}
+            idvlibdir: ${idvlib.dir}
+            javadoc:
+            ${javadoc.dir}
+            userguide: ${userguide.dir}
+            mainclass: ${app.mainclass}
+            
+        </echo>
+    </target>
+    
+    <!-- Delete all class files and temporary build files -->
+    <target name="clean" description="Delete all class files and temporary build files">
+        <delete dir="${dist.dir}" failonerror="false" />
+        <delete dir="${javadoc.dir}" failonerror="false" />
+        <delete dir="${build.dir}" failonerror="false" />
+        <delete failonerror="false">
+            <fileset dir="${base.dir}/edu" includes="**/*.class" />
+        </delete>
+        <delete failonerror="false">
+            <fileset dir="${base.dir}/ucar" includes="**/*.class" />
+        </delete>
+        <delete file="${build.props}" failonerror="false" />
+    </target>
+    
+    <!-- Get the latest McIDAS-V source code from CVS -->
+    <target name="cvsupdate" description="Get the latest McIDAS-V source code from CVS">
+        <cvs cvsRoot="${cvs.root}" cvsRsh="${cvs.rsh}" failonerror="true"
+            dest="${base.dir}">
+            <commandline>
+                <argument value="update" />
+                <argument value="-d" />
+                <argument value="-C" />
+            </commandline>
+        </cvs>
+    </target>
+    
+    <!-- Get the latest IDV jar files from Unidata -->
+    <target name="getidvjars" description="Get the latest IDV jar files from Unidata">
+        <exec executable="${basedir}/tools/get_idv_latest.sh" dir="${basedir}/tools" />
+    </target>
 
-	<!-- Get the latest VisAD jar file from SSEC -->
-	<target name="getvisadjar" description="Get the latest VisAD jar file from SSEC">
-		<exec executable="${basedir}/tools/get_visad_latest.sh" dir="${basedir}/tools" />
-	</target>
-	
-	<!-- Set build properties -->
-	<target name="copy.build.props" description="Set build properties">
-		<tstamp>
-			<format property="build.date" pattern="yyyy-MM-dd HH:mm"
-			timezone="UTC" />
-		</tstamp>
-		<copy file="${ver.props}" tofile="${build.props}" overwrite="true">
-			<filterset>
-				<filter token="DATE" value="${build.date}" />
-				<filter token="NIGHTLY" value="" />
-			</filterset>
-		</copy>
-	</target>
-	
-	<!-- Set nightly build properties -->
-	<target name="copy.nightly.props" description="Set nightly build properties">
-		<tstamp>
-			<format property="build.date" pattern="yyyy-MM-dd HH:mm"
-			timezone="UTC" />
-		</tstamp>
-		<copy file="${ver.props}" tofile="${build.props}" overwrite="true">
-			<filterset>
-				<filter token="DATE" value="${build.date}" />
-				<filter token="NIGHTLY" value="(nightly)" />
-			</filterset>
-		</copy>
-	</target>
-	
-	<!-- Build the edu tree -->
-	<target name="build" description="Build the edu tree">
-		<javac srcdir="${base.dir}" source="${source.ver}" target="${target.ver}"
-			debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
-			<compilerarg value="-Xlint:${xlint}" />
-			<classpath refid="app.classpath" />
-		</javac>
-	</target>
-	
-	<!-- Build only the startup manager -->
-	<target name="startupmanager" depends="clean, build"
-		description="Build only the startup manager">
-		<tstamp prefix="jar" />
-		<mkdir dir="${dist.dir}" />
-		<jar destfile="${dist.dir}/${app.smjar}" index="true">
-			<fileset dir="${base.dir}">
-				<patternset refid="startupmanager.includes" />
-			</fileset>
-			<manifest>
-				<attribute name="Build-By" value="${user.name}" />
-				<attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
-				<attribute name="Class-Path"
-				value="idv.jar mcidasv.jar mcv_userguide.jar" />
-				<attribute name="Main-Class" value="${app.smclass}" />
-			</manifest>
-		</jar>
-	</target>
-	
-	<!-- Create the standalone Jython console jar file -->
-	<target name="jar.jython" depends="build"
-		description="Create the standalone Jython console jar file">
-		<mkdir dir="${dist.dir}" />
-		<tstamp prefix="jar" />
-		<jar destfile="${dist.dir}/${jython.jarfile}">
-			<fileset dir="${base.dir}">
-				<patternset refid="jython.includes" />
-			</fileset>
-			<manifest>
-				<attribute name="Build-By" value="${user.name}" />
-				<attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
-				<attribute name="Class-Path" value="jython.jar ncIdv.jar eventbus-1.3.jar logback-core-0.9.28.jar logback-classic-0.9.28.jar log4j-over-slf4j-1.6.1.jar slf4j-api-1.6.1.jar commons-math-2.2.jar" />
-				<attribute name="Main-Class" value="${jython.class}" />
-			</manifest>
-		</jar>
-	</target>
-	
-	<!-- Jar the base application jar file -->
-	<target name="jar.base" description="Jar the base application jar file">
-		<mkdir dir="${dist.dir}" />
-		<tstamp prefix="jar" />
-		<jar destfile="${dist.dir}/${app.jarname}" index="true">
-			<fileset dir="${base.dir}">
-				<patternset refid="jar.includes" />
-			</fileset>
-			<manifest>
-				<attribute name="Build-By" value="${user.name}" />
-				<attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
-				<attribute name="Class-Path" value="${jar.base.classpath}" />
-				<attribute name="Main-Class" value="${app.mainclass}" />
-			</manifest>
-		</jar>
-	</target>
+    <!-- Get the latest VisAD jar file from SSEC -->
+    <target name="getvisadjar" description="Get the latest VisAD jar file from SSEC">
+        <exec executable="${basedir}/tools/get_visad_latest.sh" dir="${basedir}/tools" />
+    </target>
+    
+    <!-- Set build properties -->
+    <target name="copy.build.props" description="Set build properties">
+        <tstamp>
+            <format property="build.date" pattern="yyyy-MM-dd HH:mm"
+            timezone="UTC" />
+        </tstamp>
+        <copy file="${ver.props}" tofile="${build.props}" overwrite="true">
+            <filterset>
+                <filter token="DATE" value="${build.date}" />
+                <filter token="NIGHTLY" value="" />
+            </filterset>
+        </copy>
+    </target>
+    
+    <!-- Set nightly build properties -->
+    <target name="copy.nightly.props" description="Set nightly build properties">
+        <tstamp>
+            <format property="build.date" pattern="yyyy-MM-dd HH:mm"
+            timezone="UTC" />
+        </tstamp>
+        <copy file="${ver.props}" tofile="${build.props}" overwrite="true">
+            <filterset>
+                <filter token="DATE" value="${build.date}" />
+                <filter token="NIGHTLY" value="(nightly)" />
+            </filterset>
+        </copy>
+    </target>
+    
+    <!-- Build the edu tree -->
+    <target name="build" description="Build the edu tree">
+        <javac srcdir="${base.dir}" source="${source.ver}" target="${target.ver}"
+            debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
+            <compilerarg value="-Xlint:${xlint}" />
+            <classpath refid="app.classpath" />
+        </javac>
+    </target>
+    
+    <!-- Build only the startup manager -->
+    <target name="startupmanager" depends="clean, build"
+        description="Build only the startup manager">
+        <tstamp prefix="jar" />
+        <mkdir dir="${dist.dir}" />
+        <jar destfile="${dist.dir}/${app.smjar}" index="true">
+            <fileset dir="${base.dir}">
+                <patternset refid="startupmanager.includes" />
+            </fileset>
+            <manifest>
+                <attribute name="Build-By" value="${user.name}" />
+                <attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
+                <attribute name="Class-Path"
+                value="idv.jar mcidasv.jar mcv_userguide.jar" />
+                <attribute name="Main-Class" value="${app.smclass}" />
+            </manifest>
+        </jar>
+    </target>
+    
+    <!-- Create the standalone Jython console jar file -->
+    <target name="jar.jython" depends="build"
+        description="Create the standalone Jython console jar file">
+        <mkdir dir="${dist.dir}" />
+        <tstamp prefix="jar" />
+        <jar destfile="${dist.dir}/${jython.jarfile}">
+            <fileset dir="${base.dir}">
+                <patternset refid="jython.includes" />
+            </fileset>
+            <manifest>
+                <attribute name="Build-By" value="${user.name}" />
+                <attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
+                <attribute name="Class-Path" value="jython.jar ncIdv.jar eventbus-1.3.jar logback-core-0.9.28.jar logback-classic-0.9.28.jar log4j-over-slf4j-1.6.1.jar slf4j-api-1.6.1.jar commons-math-2.2.jar" />
+                <attribute name="Main-Class" value="${jython.class}" />
+            </manifest>
+        </jar>
+    </target>
+    
+    <!-- Jar the base application jar file -->
+    <target name="jar.base" description="Jar the base application jar file">
+        <mkdir dir="${dist.dir}" />
+        <tstamp prefix="jar" />
+        <jar destfile="${dist.dir}/${app.jarname}" index="true">
+            <fileset dir="${base.dir}">
+                <patternset refid="jar.includes" />
+            </fileset>
+            <manifest>
+                <attribute name="Build-By" value="${user.name}" />
+                <attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
+                <attribute name="Class-Path" value="${jar.base.classpath}" />
+                <attribute name="Main-Class" value="${app.mainclass}" />
+            </manifest>
+        </jar>
+    </target>
 
-	<!-- Jar the local-idv jar file -->
-	<target name="jar.local-idv" description="Jar the local-idv jar file">
-		<mkdir dir="${dist.dir}" />
-		<tstamp prefix="jar" />
-		<jar destfile="${dist.dir}/${local-idv.jarname}" index="true">
-			<fileset dir="${base.dir}">
-				<patternset refid="local-idv.includes" />
-			</fileset>
-			<manifest>
-				<attribute name="Build-By" value="${user.name}" />
-				<attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
-				<attribute name="Class-Path" value="${jar.base.classpath}" />
-				<attribute name="Main-Class" value="${app.mainclass}" />
-			</manifest>
-		</jar>
-	</target>
-	
-	<!-- Create jar files and documentation -->
-	<target name="jar"
-	depends="clean, build, copy.build.props, jar.base, jar.local-idv"
-	description="Create jar files and documentation" />
-	
-	<!-- Create nightly jar files and documentation -->
-	<target name="jar.nightly"
-	depends="clean, build, copy.nightly.props, jar.base, jar.local-idv"
-	description="Create nightly jar files and documentation" />
-	
-	<!-- Create signed jar files -->
-	<target name="signjar" depends="jar" description="Create signed jar files">
-		<signjar jar="${dist.dir}/${app.jarname}" alias="${key.alias}"
-		keystore="${key.store}" storepass="${storepass}" />
-		<signjar jar="${dist.dir}/${local-idv.jarname}" alias="${key.alias}"
-		keystore="${key.store}" storepass="${storepass}" />
-		<signjar jar="${dist.dir}/mcv_userguide.jar" alias="${key.alias}"
-		keystore="${key.store}" storepass="${storepass}" />
-	</target>
-	
-	<!-- Include dependencies in single jar file -->
-	<target name="singlejar" depends="clean, auxdata.nodocs, ncidv.nolog, build"
-		description="Include dependencies in single jar file">
-		
-		<mkdir dir="${dist.dir}" />
-		<mkdir dir="${build.dir}" />
-		
-		<unzip dest="${build.dir}">
-			<fileset refid="mcv.libs" />
-			<fileset refid="idv.libs" />
-		</unzip>
-		
-		<!-- Override default VisAD classes with custom ones -->
-		<unzip src="${idvlib.dir}/local-visad.jar" dest="${build.dir}" />
+    <!-- Jar the local-idv jar file -->
+    <target name="jar.local-idv" description="Jar the local-idv jar file">
+        <mkdir dir="${dist.dir}" />
+        <tstamp prefix="jar" />
+        <jar destfile="${dist.dir}/${local-idv.jarname}" index="true">
+            <fileset dir="${base.dir}">
+                <patternset refid="local-idv.includes" />
+            </fileset>
+            <manifest>
+                <attribute name="Build-By" value="${user.name}" />
+                <attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
+                <attribute name="Class-Path" value="${jar.base.classpath}" />
+                <attribute name="Main-Class" value="${app.mainclass}" />
+            </manifest>
+        </jar>
+    </target>
+    
+    <!-- Create jar files and documentation -->
+    <target name="jar"
+    depends="clean, build, copy.build.props, jar.base, jar.local-idv"
+    description="Create jar files and documentation" />
+    
+    <!-- Create nightly jar files and documentation -->
+    <target name="jar.nightly"
+    depends="clean, build, copy.nightly.props, jar.base, jar.local-idv"
+    description="Create nightly jar files and documentation" />
+    
+    <!-- Create signed jar files -->
+    <target name="signjar" depends="jar" description="Create signed jar files">
+        <signjar jar="${dist.dir}/${app.jarname}" alias="${key.alias}"
+        keystore="${key.store}" storepass="${storepass}" />
+        <signjar jar="${dist.dir}/${local-idv.jarname}" alias="${key.alias}"
+        keystore="${key.store}" storepass="${storepass}" />
+        <signjar jar="${dist.dir}/mcv_userguide.jar" alias="${key.alias}"
+        keystore="${key.store}" storepass="${storepass}" />
+    </target>
+    
+    <!-- Include dependencies in single jar file -->
+    <target name="singlejar" depends="clean, auxdata.nodocs, ncidv.nolog, build"
+        description="Include dependencies in single jar file">
+        
+        <mkdir dir="${dist.dir}" />
+        <mkdir dir="${build.dir}" />
+        
+        <unzip dest="${build.dir}">
+            <fileset refid="mcv.libs" />
+            <fileset refid="idv.libs" />
+        </unzip>
+        
+        <!-- Override default VisAD classes with custom ones -->
+        <unzip src="${idvlib.dir}/local-visad.jar" dest="${build.dir}" />
 
-		<!-- Override default IDV classes with custom ones -->
-		<unzip src="${idvlib.dir}/local-idv.jar" dest="${build.dir}" />
-		
-		<copy todir="${build.dir}">
-			<fileset dir="${base.dir}">
-				<patternset refid="jar.includes" />
-			</fileset>
-		</copy>
-		
-		<tstamp prefix="jar" />
-		<jar destfile="${dist.dir}/${app.jarname}" basedir="${build.dir}">
-			<manifest>
-				<attribute name="Build-By" value="${user.name}" />
-				<attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
-				<attribute name="Main-Class" value="${app.mainclass}" />
-			</manifest>
-		</jar>
-	</target>
-	
-	<!-- Create distribution product -->
-	<target name="dist"
-		depends="auxdata.nodocs, ncidv.nolog, jar, startupmanager, javadoc.jar, userguide.jar"
-		description="Create distribution product" >
-		<copy file="${base.dir}/edu/wisc/ssec/mcidasv/util/GetMem.class" tofile="${dist.dir}/GetMem.class" failonerror="false" />
-		<copy file="${base.dir}/edu/wisc/ssec/mcidasv/util/GetVer.class" tofile="${dist.dir}/GetVer.class" failonerror="false" />
-	</target>
-	
-	<!-- Create nightly webstart distribution product -->
-	<target name="nightly"
-	depends="cvsupdate, auxdata.nodocs, ncidv.nolog, jar.nightly, startupmanager, javadoc.jar, userguide.jar, source, build.webstart"
-	description="Create nightly webstart distribution product" />
-	
-	<!-- Build the webstart distribution -->
-	<target name="build.webstart" description="Build the webstart distribution">
-		<fail unless="storepass" message="'storepass' property not set" />
-		<condition property="dist.exists">
-			<or>
-				<uptodate targetfile="${dist.dir}/${app.jarname}">
-					<srcfiles dir="${base.dir}/edu" includes="**/*" />
-				</uptodate>
-				<available file="${dist.dir}" />
-				<available file="${dist.dir}/${app.jarname}" />
-			</or>
-		</condition>
-		<fail unless="dist.exists" message="make jar file first" />
-		<delete>
-			<fileset dir="${webstart.dir}" includes="**/*.jar" />
-		</delete>
-		<copy todir="${webstart.dir}">
-			<fileset refid="mcv.libs" />
-			<fileset refid="idv.libs" />
-			<fileset dir="${dist.dir}">
-				<include name="*.jar" />
-			</fileset>
-		</copy>
-		<signjar keystore="${key.store}" storepass="${storepass}"
-			alias="${key.alias}">
-			<path>
-				<fileset dir="${webstart.dir}" includes="**/*.jar" />
-			</path>
-		</signjar>
-	</target>
-	
-	<!-- Build and run McIDAS-V application (small memory) -->
-	<target name="jar.run" depends="jar" description="Build and run McIDAS-V application (small memory)">
-		<java classname="${app.mainclass}" fork="true" maxmemory="${run.smallheap}">
-			<classpath>
-				<path refid="app.classpath" />
-				<pathelement location="${dist.dir}/${app.jarname}" />
-			</classpath>
-			<assertions refid="mcv.assertions"/>
-			<sysproperty key="logback.configurationFile" value="${logback.default.config}" />
-		</java>
-	</target>
+        <!-- Override default IDV classes with custom ones -->
+        <unzip src="${idvlib.dir}/local-idv.jar" dest="${build.dir}" />
+        
+        <copy todir="${build.dir}">
+            <fileset dir="${base.dir}">
+                <patternset refid="jar.includes" />
+            </fileset>
+        </copy>
+        
+        <tstamp prefix="jar" />
+        <jar destfile="${dist.dir}/${app.jarname}" basedir="${build.dir}">
+            <manifest>
+                <attribute name="Build-By" value="${user.name}" />
+                <attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
+                <attribute name="Main-Class" value="${app.mainclass}" />
+            </manifest>
+        </jar>
+    </target>
+    
+    <!-- Create distribution product -->
+    <target name="dist"
+        depends="auxdata.nodocs, ncidv.nolog, jar, startupmanager, javadoc.jar, userguide.jar"
+        description="Create distribution product" >
+        <copy file="${base.dir}/edu/wisc/ssec/mcidasv/util/GetMem.class" tofile="${dist.dir}/GetMem.class" failonerror="false" />
+        <copy file="${base.dir}/edu/wisc/ssec/mcidasv/util/GetVer.class" tofile="${dist.dir}/GetVer.class" failonerror="false" />
+    </target>
+    
+    <!-- Create nightly webstart distribution product -->
+    <target name="nightly"
+    depends="cvsupdate, auxdata.nodocs, ncidv.nolog, jar.nightly, startupmanager, javadoc.jar, userguide.jar, source, build.webstart"
+    description="Create nightly webstart distribution product" />
+    
+    <!-- Build the webstart distribution -->
+    <target name="build.webstart" description="Build the webstart distribution">
+        <fail unless="storepass" message="'storepass' property not set" />
+        <condition property="dist.exists">
+            <or>
+                <uptodate targetfile="${dist.dir}/${app.jarname}">
+                    <srcfiles dir="${base.dir}/edu" includes="**/*" />
+                </uptodate>
+                <available file="${dist.dir}" />
+                <available file="${dist.dir}/${app.jarname}" />
+            </or>
+        </condition>
+        <fail unless="dist.exists" message="make jar file first" />
+        <delete>
+            <fileset dir="${webstart.dir}" includes="**/*.jar" />
+        </delete>
+        <copy todir="${webstart.dir}">
+            <fileset refid="mcv.libs" />
+            <fileset refid="idv.libs" />
+            <fileset dir="${dist.dir}">
+                <include name="*.jar" />
+            </fileset>
+        </copy>
+        <signjar keystore="${key.store}" storepass="${storepass}"
+            alias="${key.alias}">
+            <path>
+                <fileset dir="${webstart.dir}" includes="**/*.jar" />
+            </path>
+        </signjar>
+    </target>
+    
+    <!-- Build and run McIDAS-V application (small memory) -->
+    <target name="jar.run" depends="jar" description="Build and run McIDAS-V application (small memory)">
+        <java classname="${app.mainclass}" fork="true" maxmemory="${run.smallheap}">
+            <classpath>
+                <path refid="app.classpath" />
+                <pathelement location="${dist.dir}/${app.jarname}" />
+            </classpath>
+            <assertions refid="mcv.assertions"/>
+            <sysproperty key="logback.configurationFile" value="${logback.default.config}" />
+        </java>
+    </target>
 
   <!-- Build and run McIDAS-V application (large memory) -->
   <target name="jar.runlarge" depends="jar" description="Build and run McIDAS-V application (large memory)">
@@ -472,7 +475,7 @@
         <pathelement location="${lib.dir}/miglayout-4.0-swing.jar" />
         <pathelement location="${lib.dir}/slf4j-api-1.6.1.jar" />
         <pathelement location="${lib.dir}/commons-math-2.2.jar" />
-        <pathelement location="${idvlib.dir}/jython.jar" />
+        <pathelement location="${lib.dir}/rsyntaxtextarea-2.0.2.jar" />
         <pathelement location="${lib.dir}/eventbus-1.3.jar" />
         <pathelement location="${dist.dir}/${app.jarname}" />
         <pathelement location="${idvlib.dir}/auxdata.jar" />
@@ -482,6 +485,7 @@
         <pathelement location="${idvlib.dir}/local-visad.jar" />
         <pathelement location="${idvlib.dir}/ncIdv.jar" />
         <pathelement location="${idvlib.dir}/visad.jar" />
+        <pathelement location="${idvlib.dir}/jython.jar" />
       </classpath>
       <assertions refid="mcv.assertions"/>
       <jvmarg value="-XX:+UseConcMarkSweepGC" />
@@ -501,12 +505,23 @@
       <sysproperty key="debug.localadde.rootdir" value="${addeservs.dir}" />
       <sysproperty key="debug.adde.reqs" value="false" />
       -->
+      <sysproperty key="mcv.userpath" value="/Users/${user.name}/Documents/McIDAS-V"/>
+      <sysproperty key="debug.adde.reqs" value="true" />
+      <sysproperty key="idv.usetimedriver" value="true" />
+      <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
       <sysproperty key="logback.configurationFile" value="edu/wisc/ssec/mcidasv/resources/logback-stdout.xml" />
+
       <sysproperty key="visad.java3d.textureNpot" value="true" />
       <sysproperty key="visad.java3d.imageByRef" value="true" />
       <sysproperty key="visad.java3d.geometryByRef" value="true" />
       <sysproperty key="python.security.respectJavaAccessibility" value="false" />
-      <!-- <arg value="-forceaqua" /> -->
+      <!--
+      <sysproperty key="sun.java2d.opengl" value="True" />
+      <sysproperty key="sun.java2d.trace" value="log,timestamp,count,out:./java2d.log,verbose" />
+      -->
+      <arg value="-forceaqua" />
+      <arg value="-userpath" />
+      <arg value="${userpath.dir}" />
     </java>
   </target>
 
@@ -552,13 +567,15 @@
       --> 
       <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
       <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
-      <!-- <sysproperty key="debug.localadde.rootdir" value="${addeservs.dir}" /> -->
-      <sysproperty key="debug.adde.reqs" value="false" />
+      <sysproperty key="mcv.userpath" value="/Users/${user.name}/Documents/McIDAS-V"/>
+      <sysproperty key="debug.localadde.rootdir" value="${addeservs.dir}" />
+      <sysproperty key="debug.adde.reqs" value="true" />
       <sysproperty key="logback.configurationFile" value="edu/wisc/ssec/mcidasv/resources/logback-stdout.xml" />
       <sysproperty key="python.security.respectJavaAccessibility" value="false" />
+      <!--<sysproperty key="idv.usetimedriver" value="true" />-->
       <arg value="-forceaqua" />
       <arg value="-userpath" />
-      <arg value="/Users/jbeavers/Documents/McIDAS-V" />
+      <arg value="/Users/${user.name}/Documents/McIDAS-V" />
     </java>
   </target>
 
@@ -585,189 +602,189 @@
     </target>-->
 
 
-	<!-- Run McIDAS-V application (small memory) -->
-	<target name="run" description="Run McIDAS-V application (small memory)">
-		<java classname="${app.mainclass}" fork="true" maxmemory="${run.smallheap}">
-			<classpath>
-				<path refid="app.classpath" />
-				<pathelement location="${dist.dir}/${app.jarname}" />
-			</classpath>
-			<assertions refid="mcv.assertions"/>
-			<!-- Disables bytecode verification; seems to bring the snappy  -->
-			<!-- <jvmarg value="-noverify" /> -->
-			
-			<!-- This will make the JVM output the contents of the heap upon You can 
-			 control the output directory and/or filename with HeapDumpPath... 
-			 but it requires HeapDumpOnOutOfMemoryError to be enabled. -->
-			<!-- <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" /> -->
-			<!-- <jvmarg value="-XX:HeapDumpPath=${heap.dir}" /> -->
-			
-			<!-- Allows you to point at arbitrary local ADDE servers -->
-			<!-- <sysproperty key="debug.localadde.rootdir" value="${addeservs.dir}" /> -->
-			
-			<!-- Forces McIDAS-V to use Apple's Aqua L&F (only on OS X) -->
-			<!-- <arg value="-forceaqua" /> -->
-			
-			<sysproperty key="logback.configurationFile" value="${logback.default.config}" />
-			<sysproperty key="python.security.respectJavaAccessibility" value="false" />
-		</java>
-	</target>
-	
-	<!-- Run McIDAS-V application (large memory) -->
-	<target name="runlarge" description="Run McIDAS-V application (large memory)">
-		<java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
-			<classpath>
-				<path refid="app.classpath" />
-				<pathelement location="${dist.dir}/${app.jarname}" />
-			</classpath>
-			<assertions refid="mcv.assertions"/>
-			<!-- Disables bytecode verification; seems to bring the snappy  -->
-			<!-- <jvmarg value="-noverify" /> -->
-			
-			<!-- This will make the JVM output the contents of the heap upon You can 
-			 control the output directory and/or filename with HeapDumpPath... 
-			 but it requires HeapDumpOnOutOfMemoryError to be enabled. -->
-			<!-- <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" /> -->
-			<!-- <jvmarg value="-XX:HeapDumpPath=${heap.dir}" /> -->
-			
-			<!-- Allows you to point at arbitrary local ADDE servers -->
-			<!-- <sysproperty key="debug.localadde.rootdir" value="${addeservs.dir}" /> -->
-			
-			<!-- Forces McIDAS-V to use Apple's Aqua L&F (only on OS X) -->
-			<!-- <arg value="-forceaqua" /> -->
-			
-		  <jvmarg value="-noverify" />
-		  <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
-		  <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
-		  <sysproperty key="debug.localadde.rootdir" value="${addeservs.dir}" />
-		  <sysproperty key="debug.adde.reqs" value="true" />
-		  <sysproperty key="python.security.respectJavaAccessibility" value="false" />
-		  <!--<sysproperty key="logback.configurationFile" value="${logback.default.config}" />-->
-		  <arg value="-forceaqua" />
-		</java>
-	</target>
-	
-	<!-- Generate the javadoc documentation -->
-	<target name="javadoc" description="Generate the javadoc documentation">
-		
-		<javadoc access="${javadoc.level}"
-			author="true"
-			breakiterator="yes"
-			destdir="${javadoc.dir}"
-			doctitle="McIDAS-V ${mcidasv.version.major}.${mcidasv.version.minor}${mcidasv.version.release} API"
-			maxmemory="256m"
-			linksource="true"
-			nonavbar="false"
-			nodeprecated="false"
-			nodeprecatedlist="false"
-			noindex="false"
-			notree="false"
-			packagenames="edu.wisc.ssec.mcidasv.*"
-			splitindex="true"
-			source="${source.ver}"
-			sourcepath="."
-			use="true"
-			version="true"
-			windowtitle="McIDAS-V ${mcidasv.version.major}.${mcidasv.version.minor}${mcidasv.version.release} Developer Documentation">
-			
-			<classpath refid="app.classpath" />
-			<link href="http://download.java.net/media/java3d/javadoc/1.5.2/" />
-			<link href="http://java.sun.com/javase/6/docs/api/" />
-			<link href="http://www.ssec.wisc.edu/visad-docs/javadoc/" />
-			<link href="http://www.unidata.ucar.edu/software/idv/docs/javadoc/" />
-			<link href="http://www.eventbus.org/api/" />
-		</javadoc>
-	</target>
-	
-	<!-- Create javadoc jar file -->
-	<target name="javadoc.jar" depends="javadoc" description="Create javadoc jar file">
-		<mkdir dir="${dist.dir}" />
-		<tstamp prefix="jar" />
-		<jar destfile="${dist.dir}/${javadoc.jarname}">
-			<fileset dir="${base.dir}">
-				<include name="docs/javadoc/**" />
-			</fileset>
-			<manifest>
-				<attribute name="Build-By" value="${user.name}" />
-				<attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
-			</manifest>
-		</jar>
-	</target>
-	
-	<!-- Create the userguide jar file -->
-	<target name="userguide.jar" description="Create the userguide jar file">
-		<exec failifexecutionfails="false" dir="${userguide.dir}"
-			executable="${jhindexer.bin}">
-			<arg line="${java.bin} -logfile jh.log processed" />
-		</exec>
-		<mkdir dir="${base.dir}/mcidas/doc/mcv_guide" />
-		<copy file="${base.dir}/docs/userguide/processed/mcidasv.css"
-		tofile="${base.dir}/mcidas/doc/mcv_guide/mcidasv.css" failonerror="false" />
-		<tstamp prefix="jar" />
-		<jar destfile="${dist.dir}/${userguide.jarname}">
-			<fileset dir="${base.dir}">
-				<include name="docs/userguide/**" />
-				<include name="mcidas/doc/mcv_guide/mcidasv.css" />
-			</fileset>
-			<manifest>
-				<attribute name="Build-By" value="${user.name}" />
-				<attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
-			</manifest>
-		</jar>
-	</target>
-	
-	<!-- Remove the docs/ directory from auxdata.jar -->
-	<target name="auxdata.nodocs" description="Remove the docs/ directory from auxdata.jar">
-		<mkdir dir="${idvlib.dir}/tmp" />
-		<unzip src="${idvlib.dir}/auxdata.jar" dest="${idvlib.dir}/tmp" />
-		
-		<delete dir="${idvlib.dir}/tmp/auxdata/docs" failonerror="false" />
-		<delete file="${idvlib.dir}/auxdata.jar" failonerror="false" />
-		
-		<jar destfile="${idvlib.dir}/auxdata.jar" basedir="${idvlib.dir}/tmp" index="true" />
-		<delete dir="${idvlib.dir}/tmp" failonerror="false" />
-	</target>
+    <!-- Run McIDAS-V application (small memory) -->
+    <target name="run" description="Run McIDAS-V application (small memory)">
+        <java classname="${app.mainclass}" fork="true" maxmemory="${run.smallheap}">
+            <classpath>
+                <path refid="app.classpath" />
+                <pathelement location="${dist.dir}/${app.jarname}" />
+            </classpath>
+            <assertions refid="mcv.assertions"/>
+            <!-- Disables bytecode verification; seems to bring the snappy  -->
+            <!-- <jvmarg value="-noverify" /> -->
+            
+            <!-- This will make the JVM output the contents of the heap upon You can 
+             control the output directory and/or filename with HeapDumpPath... 
+             but it requires HeapDumpOnOutOfMemoryError to be enabled. -->
+            <!-- <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" /> -->
+            <!-- <jvmarg value="-XX:HeapDumpPath=${heap.dir}" /> -->
+            
+            <!-- Allows you to point at arbitrary local ADDE servers -->
+            <!-- <sysproperty key="debug.localadde.rootdir" value="${addeservs.dir}" /> -->
+            
+            <!-- Forces McIDAS-V to use Apple's Aqua L&F (only on OS X) -->
+            <!-- <arg value="-forceaqua" /> -->
+            
+            <sysproperty key="logback.configurationFile" value="${logback.default.config}" />
+            <sysproperty key="python.security.respectJavaAccessibility" value="false" />
+        </java>
+    </target>
+    
+    <!-- Run McIDAS-V application (large memory) -->
+    <target name="runlarge" description="Run McIDAS-V application (large memory)">
+        <java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
+            <classpath>
+                <path refid="app.classpath" />
+                <pathelement location="${dist.dir}/${app.jarname}" />
+            </classpath>
+            <assertions refid="mcv.assertions"/>
+            <!-- Disables bytecode verification; seems to bring the snappy  -->
+            <!-- <jvmarg value="-noverify" /> -->
+            
+            <!-- This will make the JVM output the contents of the heap upon You can 
+             control the output directory and/or filename with HeapDumpPath... 
+             but it requires HeapDumpOnOutOfMemoryError to be enabled. -->
+            <!-- <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" /> -->
+            <!-- <jvmarg value="-XX:HeapDumpPath=${heap.dir}" /> -->
+            
+            <!-- Allows you to point at arbitrary local ADDE servers -->
+            <!-- <sysproperty key="debug.localadde.rootdir" value="${addeservs.dir}" /> -->
+            
+            <!-- Forces McIDAS-V to use Apple's Aqua L&F (only on OS X) -->
+            <!-- <arg value="-forceaqua" /> -->
+            
+          <jvmarg value="-noverify" />
+          <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+          <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
+          <sysproperty key="debug.localadde.rootdir" value="${addeservs.dir}" />
+          <sysproperty key="debug.adde.reqs" value="true" />
+          <sysproperty key="python.security.respectJavaAccessibility" value="false" />
+          <!--<sysproperty key="logback.configurationFile" value="${logback.default.config}" />-->
+          <arg value="-forceaqua" />
+        </java>
+    </target>
+    
+    <!-- Generate the javadoc documentation -->
+    <target name="javadoc" description="Generate the javadoc documentation">
+        
+        <javadoc access="${javadoc.level}"
+            author="true"
+            breakiterator="yes"
+            destdir="${javadoc.dir}"
+            doctitle="McIDAS-V ${mcidasv.version.major}.${mcidasv.version.minor}${mcidasv.version.release} API"
+            maxmemory="256m"
+            linksource="true"
+            nonavbar="false"
+            nodeprecated="false"
+            nodeprecatedlist="false"
+            noindex="false"
+            notree="false"
+            packagenames="edu.wisc.ssec.mcidasv.*"
+            splitindex="true"
+            source="${source.ver}"
+            sourcepath="."
+            use="true"
+            version="true"
+            windowtitle="McIDAS-V ${mcidasv.version.major}.${mcidasv.version.minor}${mcidasv.version.release} Developer Documentation">
+            
+            <classpath refid="app.classpath" />
+            <link href="http://download.java.net/media/java3d/javadoc/1.5.2/" />
+            <link href="http://java.sun.com/javase/6/docs/api/" />
+            <link href="http://www.ssec.wisc.edu/visad-docs/javadoc/" />
+            <link href="http://www.unidata.ucar.edu/software/idv/docs/javadoc/" />
+            <link href="http://www.eventbus.org/api/" />
+        </javadoc>
+    </target>
+    
+    <!-- Create javadoc jar file -->
+    <target name="javadoc.jar" depends="javadoc" description="Create javadoc jar file">
+        <mkdir dir="${dist.dir}" />
+        <tstamp prefix="jar" />
+        <jar destfile="${dist.dir}/${javadoc.jarname}">
+            <fileset dir="${base.dir}">
+                <include name="docs/javadoc/**" />
+            </fileset>
+            <manifest>
+                <attribute name="Build-By" value="${user.name}" />
+                <attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
+            </manifest>
+        </jar>
+    </target>
+    
+    <!-- Create the userguide jar file -->
+    <target name="userguide.jar" description="Create the userguide jar file">
+        <exec failifexecutionfails="false" dir="${userguide.dir}"
+            executable="${jhindexer.bin}">
+            <arg line="${java.bin} -logfile jh.log processed" />
+        </exec>
+        <mkdir dir="${base.dir}/mcidas/doc/mcv_guide" />
+        <copy file="${base.dir}/docs/userguide/processed/mcidasv.css"
+        tofile="${base.dir}/mcidas/doc/mcv_guide/mcidasv.css" failonerror="false" />
+        <tstamp prefix="jar" />
+        <jar destfile="${dist.dir}/${userguide.jarname}">
+            <fileset dir="${base.dir}">
+                <include name="docs/userguide/**" />
+                <include name="mcidas/doc/mcv_guide/mcidasv.css" />
+            </fileset>
+            <manifest>
+                <attribute name="Build-By" value="${user.name}" />
+                <attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
+            </manifest>
+        </jar>
+    </target>
+    
+    <!-- Remove the docs/ directory from auxdata.jar -->
+    <target name="auxdata.nodocs" description="Remove the docs/ directory from auxdata.jar">
+        <mkdir dir="${idvlib.dir}/tmp" />
+        <unzip src="${idvlib.dir}/auxdata.jar" dest="${idvlib.dir}/tmp" />
+        
+        <delete dir="${idvlib.dir}/tmp/auxdata/docs" failonerror="false" />
+        <delete file="${idvlib.dir}/auxdata.jar" failonerror="false" />
+        
+        <jar destfile="${idvlib.dir}/auxdata.jar" basedir="${idvlib.dir}/tmp" index="true" />
+        <delete dir="${idvlib.dir}/tmp" failonerror="false" />
+    </target>
 
-	<!-- Remove the org/slf4j/ directory from ncIdv.jar -->
-	<target name="ncidv.nolog" description="Remove the org/slf4j/ directory from ncIdv.jar">
-		<mkdir dir="${idvlib.dir}/tmp" />
-		<unzip src="${idvlib.dir}/ncIdv.jar" dest="${idvlib.dir}/tmp" />
-		
-		<delete dir="${idvlib.dir}/tmp/org/slf4j" failonerror="false" />
-		<delete file="${idvlib.dir}/ncIdv.jar" failonerror="false" />
-		
-		<jar destfile="${idvlib.dir}/ncIdv.jar" basedir="${idvlib.dir}/tmp" index="true"/>
-		<delete dir="${idvlib.dir}/tmp" failonerror="false" />
-	</target>
-	
-	<!-- Create source jar file -->
-	<target name="source" description="Create source jar file">
-		<jar destfile="${dist.dir}/${source.jarname}" basedir="${base.dir}" compress="true">
-			<include name="build.xml" />
-			<include name="edu/**" />
-			<exclude name="edu/**/*.class" />
-			<exclude name="edu/**/CVS/**" />
-			<include name="ucar/**" />
-			<exclude name="ucar/**/*.class" />
-			<exclude name="ucar/**/CVS/**" />
-			<include name="release/licenses/**" />
-		</jar>
-	</target>
-	
-	<!-- Move the source file to install4j directory -->
-	<target name="packsource" depends="source"
-		description="Move the source file to install4j directory">
-		<copy file="${dist.dir}/${source.jarname}" tofile="${media.dir}/${source.file}"
-		failonerror="false" />
-	</target>
-	
-	<!-- Make the installers with install4j -->
-	<target name="installers" description="Make the installers with install4j">
-		<exec dir="${release.dir}" executable="${install4jc.bin}">
-			<arg line="mcidasv.install4j" />
-		</exec>
-	</target>
-	
+    <!-- Remove the org/slf4j/ directory from ncIdv.jar -->
+    <target name="ncidv.nolog" description="Remove the org/slf4j/ directory from ncIdv.jar">
+        <mkdir dir="${idvlib.dir}/tmp" />
+        <unzip src="${idvlib.dir}/ncIdv.jar" dest="${idvlib.dir}/tmp" />
+        
+        <delete dir="${idvlib.dir}/tmp/org/slf4j" failonerror="false" />
+        <delete file="${idvlib.dir}/ncIdv.jar" failonerror="false" />
+        
+        <jar destfile="${idvlib.dir}/ncIdv.jar" basedir="${idvlib.dir}/tmp" index="true"/>
+        <delete dir="${idvlib.dir}/tmp" failonerror="false" />
+    </target>
+    
+    <!-- Create source jar file -->
+    <target name="source" description="Create source jar file">
+        <jar destfile="${dist.dir}/${source.jarname}" basedir="${base.dir}" compress="true">
+            <include name="build.xml" />
+            <include name="edu/**" />
+            <exclude name="edu/**/*.class" />
+            <exclude name="edu/**/CVS/**" />
+            <include name="ucar/**" />
+            <exclude name="ucar/**/*.class" />
+            <exclude name="ucar/**/CVS/**" />
+            <include name="release/licenses/**" />
+        </jar>
+    </target>
+    
+    <!-- Move the source file to install4j directory -->
+    <target name="packsource" depends="source"
+        description="Move the source file to install4j directory">
+        <copy file="${dist.dir}/${source.jarname}" tofile="${media.dir}/${source.file}"
+        failonerror="false" />
+    </target>
+    
+    <!-- Make the installers with install4j -->
+    <target name="installers" description="Make the installers with install4j">
+        <exec dir="${release.dir}" executable="${install4jc.bin}">
+            <arg line="mcidasv.install4j" />
+        </exec>
+    </target>
+
     <!--                           HERE BE DRAGONS                           -->
     <!-- These things allow you to automatically use YourKit to profile an   -->
     <!-- ant build. Everything is still rather simplistic, but you may find  -->
@@ -807,7 +824,8 @@
         </antcall>
     </target>
     
-    <target name="profiler.runlarge" depends="jar" description="DON'T RUN THIS DIRECTLY! Uses the other profiler tasks to start McIDAS-V with a generous max heap size.">
+    <!-- Build and run McIDAS-V application (large memory) -->
+    <target name="profiler.runlarge" depends="jar" description="Build and run McIDAS-V application (large memory)">
         <java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
             <classpath>
                 <pathelement location="${lib.dir}/sysout-over-slf4j-1.0.2.jar" />
@@ -845,5 +863,16 @@
             <arg value="-userpath" />
             <arg value="${userpath.dir}" />
         </java>
+    </target>
+    
+    <target name="package-app" depends="jar">
+        <taskdef name="appbundler"
+                 classname="com.joshondesign.appbundler.BundlerTask"
+                 classpath="/Users/jbeavers/repos/java-desktop-stuff/AppBundler/build/classes;/Users/jbeavers/repos/java-desktop-stuff/AppBundler/lib/XMLLib.jar"/>
+        <appbundler bundle="bundle.xml"
+                    target="mac"
+                    destdir="jardist"
+                    libdir="/Applications/mcidasv/nightly/adde;/Volumes/Code/Work/eclipse/mcv/dist;/Volumes/Code/Work/eclipse/mcv/lib;/Volumes/Code/Work/eclipse/github-idv/lib"/>
+                    
     </target>
 </project>
