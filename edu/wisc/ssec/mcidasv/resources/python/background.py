@@ -568,7 +568,7 @@ class _Display(_JavaProxy):
 
             data: Data object to associate with the resulting layer.
 
-            dataParameter: Optional...
+            dataParameter: Not sure.
 
         Returns:
             The _Layer that was created in this _Display
@@ -665,6 +665,7 @@ class _Display(_JavaProxy):
             quality:  float between 0.0 and 1.0 (relevant for JPEG's)
                     0.0 is highest compression / smallest file size / worst quality
                     1.0 is least compression / biggest file size / best qualit
+            height, width: size of image
 
         Raises: 
             ValueError:  if filename is a directory
@@ -818,6 +819,10 @@ class _Layer(_JavaProxy):
 
     def setEnhancement(self, name=None, range=None):
         """Wrapper for setEnhancementTable and setDataRange
+        Args:
+           Name: the name of the enhancement table.  Don't need to specify 
+                 "parent" directories like setProjection
+           Range: 2-element list specifying min and max data range
         """
         if (name != None):  # leave as-is if not specified
             self.setEnhancementTable(name)
@@ -873,6 +878,15 @@ class _Layer(_JavaProxy):
 
     def setColorScale(self, visible=True, placement=None, font=None, style=None, size=None, color=None):
         """Wrapper function for all the color scale manipulation stuff
+
+        Args:
+            visible: boolean whether to display color scale (default True)
+            placement: location of color scale. valid strings are
+                'Top', 'Bottom', 'Left', 'Right'
+            font: name of font. default defined in user preferences.
+               Valid options are 'bold', 'italic', 'none'
+            size: size of font. default defined in user preferences.
+            color: 'colorname' string or [R, G, B] list
         """
         # assume user wants color scale visible unless otherwise specified
         self.setColorScaleVisible(visible)
@@ -996,7 +1010,16 @@ class _Layer(_JavaProxy):
 
         Args:
             label:  a string defining the layer label (default: as-is)
-            (Note you can use macros like %displayname% here)
+                  Note, macros (eg %datasourcename%) will get expanded but
+                  often get expanded to empty strings (especially with
+                  data from getADDEImage)
+            visible: boolean whether to display color scale (default True)
+            placement: location of color scale. valid strings are
+                'Top', 'Bottom', 'Left', 'Right'
+            font: name of font. default defined in user preferences.
+               Valid options are 'bold', 'italic', 'none'
+            size: size of font. default defined in user preferences.
+            color: 'colorname' string or [R, G, B] list
 
         Returns:  nothing
         """
@@ -1433,6 +1456,8 @@ GLOBE = _NoOp('GLOBE')
 TRANSECT = _NoOp('TRANSECT')
 
 def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
+    """Call _buildWindowInternal (from Jython Shell) or _buildWindowBackground (from background)
+    """
     def _buildWindowInternal(width, height, rows, cols, panelTypes):
         """Creates a window with a user-specified layout of displays.
         
@@ -1508,6 +1533,7 @@ def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
         newVM = getStaticMcv().getVMManager().createViewManager(None, propString)
         return [_Display(newVM)]
     
+    # end of internal method definitions..this is buildWindow now.
     if panelTypes is None:
         panelTypes = [MAP] * (rows * cols)
     elif isinstance(panelTypes, _NoOp):
