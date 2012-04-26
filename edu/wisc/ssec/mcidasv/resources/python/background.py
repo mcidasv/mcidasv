@@ -668,8 +668,10 @@ class _Display(_JavaProxy):
 
         Raises: 
             ValueError:  if filename is a directory
+            RuntimeError: if height and width specified here after an annotate
 
         """
+        import visad.DisplayException as DisplayException
 
         # do some sanity checking on filename
         filename = _expandpath(filename)
@@ -681,7 +683,13 @@ class _Display(_JavaProxy):
             raise ValueError(filename, " is a directory")
         
         if (height != -1) and (width != -1):
-            self.setSize(width, height)
+            try:
+                self.setSize(width, height)
+            except DisplayException, target:
+                if "ScalarMap cannot belong to two Displays" in target.getMessage():
+                    # this should only happen if captureImage is called
+                    # with a height and width after an annotate() in the background
+                    raise RuntimeError("Height/width for captureImage is currently not supported after a text annotation.  You can specify height/width with buildWindow or openBundle instead, then leave height/width out of your call to captureImage.")
 
         # the results aren't good if we don't pause first
         pause()
