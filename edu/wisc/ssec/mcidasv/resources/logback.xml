@@ -48,6 +48,6 @@
        valid levels are: TRACE, DEBUG, INFO, WARN, ERROR, OFF
        be sure to skim over http://logback.qos.ch/manual/architecture.html#basic_selection -->
   <root level="INFO">
-    <appender-ref ref="FILE">
+    <appender-ref ref="FILE" />
   </root>
   </configuration>
