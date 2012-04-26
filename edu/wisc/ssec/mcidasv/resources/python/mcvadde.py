@@ -200,6 +200,34 @@ def getADDEImage(server, dataset, descriptor,
     proj = accounting[1]
     debug = str(debug).lower()
     mag = '%s %s' % (mag[0], mag[1])
+    """Requests data from an ADDE Image server - returns both data and metadata objects
+
+    Args:
+        server= ADDE server
+        dataset= ADDE dataset group name
+        descriptor= ADDE dataset descriptor
+        day= day range ('begin date','end date')
+        time= ('begin time','end time')
+        coordinateSystem= coordinate system to use for retrieving data
+                            AREA       AREA file coordinates - zero based
+                            LATLON   latitude and longitude coordinates
+                            IMAGE     image coordinates - one based
+        location=(x,y)
+                            x           AREA line, latitude, or IMAGE line
+                            y           AREA element, longitude, or IMAGE element
+        place = CENTER places specified location (x,y) at center of panel
+                            ULEFT places specified location (x,y) at upper-left coordinate of panel
+        band= McIDAS band number; must be specified if requesting data from 
+              multi-banded image; default=band in image
+        unit= calibration unit to request; default = 'BRIT'
+        position= time relative (negative values) or absolute (positive values) 
+                  position in the dataset; default=0 (most recent image)
+        size= number of lines and elements to request; default=(480,640)
+        mag= magnification of data (line,element), negative number used for 
+            sampling data; default=(1,1)
+        accounting= ('user', 'project number') user and project number required 
+                    by servers using McIDAS accounting; default = ('idv','0')
+    """
     
     if place is Places.CENTER:
         place = 'CENTER'
