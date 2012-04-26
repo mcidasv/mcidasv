@@ -1814,11 +1814,11 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         aid.setSource(src);
 
         SingleBandedImage result;
-//        SingleBandedImage result = (SingleBandedImage)getCache(src);
-//        if (result != null) {
-//            setDisplaySource(src, props);
-//            return result;
-//        }
+        result = (SingleBandedImage)getCache(src);
+        if (result != null) {
+            setDisplaySource(src, props);
+            return result;
+        }
 
         //For now handle non adde urls here
         try {
@@ -1867,15 +1867,18 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             }
 
             if (areaDir != null) {
-                int hash = ((aii != null)
-                            ? aii.getURLString().hashCode()
-                            : areaDir.hashCode());
-                if (rangeType == null) {
-                    result = AreaImageFlatField.createImmediate(aid, readLabel);
-                } else {
-                    //Else, pass in the already created range type
-                    result  = AreaImageFlatField.create(aid, areaDir, rangeType, readLabel);
+                if (isFromFile(aid)) {
+                  int hash = ((aii != null)
+                              ? aii.getURLString().hashCode()
+                              : areaDir.hashCode());
+                  if (rangeType == null) {
+                      result = AreaImageFlatField.createImmediate(aid, readLabel);
+                  } else {
+                      //Else, pass in the already created range type
+                      result  = AreaImageFlatField.create(aid, areaDir, rangeType, readLabel);
+                  }
                 }
+
             } else {
                 src = aid.getSource();
                 try {
@@ -1926,18 +1929,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 }
                 src = replaceKey(src, SIZE_KEY, saveNumLine + ' ' + saveNumEle);
                 src = replaceKey(src, MAG_KEY, saveLineMag + ' ' + saveEleMag);
-
-                /*
-                logger.trace("Had to make new src=", src);
-                AreaAdapter aa = new AreaAdapter(src, false);
-                areaDir = previewDir;
-                result = aa.getImage();
-                */
             }
 
-         /* moved these inside the 'else' clause since 'if' got 'result' already
-         */
-            logger.trace("wtf: {}", src);
+            logger.trace("Getting a new aa: ", src);
             AreaAdapter aa = new AreaAdapter(src, false);
             areaDir = previewDir;
             result = aa.getImage();
@@ -1948,6 +1942,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             setImageList(iml);
             setDisplaySource(src, props);
             return result;
+
         } catch (java.io.IOException ioe) {
             throw new VisADException("Creating AreaAdapter - " + ioe);
         }
