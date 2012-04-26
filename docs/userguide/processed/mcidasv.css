@@ -77,16 +77,16 @@ A.faq-category-link {
   color: #000000;
 }
 .OneTabIndent {
-	margin-left: 40px;
+	padding-left: 40px;
 }
 .TwoTabIndent {
-	margin-left: 80px;
+	padding-left: 80px;
 }
 .ThreeTabIndent {
-	margin-left: 120px;
+	padding-left: 120px;
 }
 .FourTabIndent {
-	margin-left: 160px;
+	padding-left: 160px;
 }
 
 A.faq-category-link:hover {
@@ -401,5 +401,8 @@ iframe.right {
 	font-style: italic;
 }
 .FiveTabIndent {
-	margin-left: 200px;
+	padding-left: 200px;
+}
+.SixTabIndent {
+	padding-left: 240px;
 }

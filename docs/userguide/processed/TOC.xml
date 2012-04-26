@@ -188,6 +188,7 @@
 </tocitem>
 <tocitem text="Miscellaneous" target="idv.page_miscellaneous">
     <tocitem text="Bundles" target="idv.bundles"/>
+	<tocitem text="Scripting" target="idv.misc.scripting"/>
     <tocitem text="Sharing" target="idv.collab.sharing"/>
     <tocitem text="Site Configuration" target="idv.misc.siteconfiguration">
 		<tocitem text="Plugin Jar Files" target="idv.misc.pluginjarfiles"/>

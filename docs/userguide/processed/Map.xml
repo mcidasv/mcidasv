@@ -267,6 +267,7 @@
         <mapID target="idv.misc.pluginjarfiles"                      url="misc/PluginJarFiles.html" />
         <mapID target="idv.misc.pluginjarfiles.advanced"             url="misc/PluginJarFiles.html#advanced" />
         <mapID target="idv.misc.pluginjarfiles.basics"               url="misc/PluginJarFiles.html#basics" />
+		<mapID target="idv.misc.scripting"							 url="misc/Scripting" />
         <mapID target="idv.misc.siteconfiguration"                   url="misc/SiteConfiguration.html" />
         <mapID target="idv.misc.siteconfiguration.resources"         url="misc/SiteConfiguration.html#resources" />
         <mapID target="idv.misc.sourcebuild"                         url="misc/SourceBuild.html" />

@@ -284,6 +284,7 @@
 
     <div class="indented" id="miscellaneous">
       <span class="link" onClick="setPage('Bundles.html');">Bundles</span><br>
+      <span class="link" onClick="setPage('misc/Scripting.html');">Scripting</span><br>
       <span class="link" onClick="setPage('collab/Sharing.html');">Sharing</span><br>
 
       <span class="toggle" onClick="toggleChildren(this,'miscellaneous_3');">+</span>
