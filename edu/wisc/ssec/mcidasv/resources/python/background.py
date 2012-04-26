@@ -139,6 +139,8 @@ def _getNewFont(currentFont, fontName, style, size):
         style = java.awt.Font.BOLD
     elif style == "ITALIC":
         style = java.awt.Font.ITALIC
+    elif style == "NONE":
+        style = java.awt.Font.PLAIN
     else:
         style = currentFont.getStyle()
 
@@ -711,7 +713,7 @@ class _Display(_JavaProxy):
                       of pixels from left, for bottom left point of text.
            font: name of a font.   (optional)
            size: size of font. (optional)
-           style:  'PLAIN', 'BOLD', or 'ITALIC'  (optional)
+           style:  'NONE', 'BOLD', or 'ITALIC'  (optional)
                Font defaults come from ViewManager.getDisplayListFont()
            color: text color. Default red, for now I guess. this is GUI default.
                  (optional)
@@ -926,7 +928,7 @@ class _Layer(_JavaProxy):
         Args:
             fontName (optional): string containing font name (default: leave as-is)
                                     (case-insensitive)
-            style (optional): string containing either PLAIN (default: as-is), BOLD, or ITALIC
+            style (optional): string containing either NONE (default: as-is), BOLD, or ITALIC
                                 (case-insensitive)
             size (optional):  font size (default: as-is)
 
@@ -1057,7 +1059,7 @@ class _Layer(_JavaProxy):
         Args:
             fontName (optional): string containing font name (default: leave as-is)
                                     (case-insensitive)
-            style (optional): string containing either PLAIN (default: as-is), BOLD, or ITALIC
+            style (optional): string containing either NONE (default: as-is), BOLD, or ITALIC
                                 (case-insensitive)
             size (optional):  font size (default: as-is)
         """
