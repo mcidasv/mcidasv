@@ -286,16 +286,10 @@
       <span class="link" onClick="setPage('Bundles.html');">Bundles</span><br>
       <span class="link" onClick="setPage('misc/Scripting.html');">Scripting</span><br>
       <span class="link" onClick="setPage('collab/Sharing.html');">Sharing</span><br>
-
-      <span class="toggle" onClick="toggleChildren(this,'miscellaneous_3');">+</span>
       <span class="link" onClick="setPage('misc/SiteConfiguration.html');">Site Configuration</span><br>
-
-      <div class="indented" id="miscellaneous_3">
-        <span class="link" onClick="setPage('misc/PluginJarFiles.html');">Plugin Jar Files</span><br>
-        <span class="link" onClick="setPage('misc/ImageDefaults.html');">Configuring Image Defaults</span><br>
-        <span class="link" onClick="setPage('data/GribTables.html');">Adding in new GRIB tables</span><br>
-      </div>
-
+      <span class="link" onClick="setPage('misc/PluginJarFiles.html');">Plugin Jar Files</span><br>
+      <span class="link" onClick="setPage('misc/ImageDefaults.html');">Configuring Image Defaults</span><br>
+      <span class="link" onClick="setPage('data/GribTables.html');">Adding in New GRIB Tables</span><br>
       <span class="toggle" onClick="toggleChildren(this,'miscellaneous_4');">+</span>
       <span class="link" onClick="setPage('page_mcvspecialdataformats.html');">McIDAS-V Special Data Formats</span><br>
 
@@ -309,6 +303,7 @@
 
       <span class="link" onClick="setPage('misc/Actions.html');">Actions</span><br>
       <span class="link" onClick="setPage('misc/CommandLineArguments.html');">Command Line Arguments</span><br>
+      <span class="link" onClick="setPage('misc/DataSourceTypes.html');">Data Source Types</span><br>
       <span class="link" onClick="setPage('misc/PerformanceTuning.html');">Performance Tuning</span><br>
       <span class="link" onClick="setPage('misc/SourceBuild.html');">Building McIDAS-V from Source</span><br>
       <span class="link" onClick="setPage('misc/Console.html');">Message Console</span><br>

@@ -8,6 +8,7 @@
 #          applies an enhancement table
 #          changes the center point
 #          adds a layer label
+#          annotates the image with an "L" for a Low pressure symbol
 #          saves an output file
 #
 #     Setting up a variable to specify the location of your final images
@@ -63,8 +64,8 @@ ir_metadata,ir_data = getADDEImage(descriptor='G7-IR-4K',
 #     Create some strings from the metadata object to make it 
 #     easier to build our window and label the image.
 #
-ir_lines = ir_metadata['lines']
-ir_eles = ir_metadata['elements']
+bw_lines = ir_metadata['lines']/2
+bw_eles = ir_metadata['elements']/2
 ir_label = '%s %s' % (
     ir_metadata['sensor-type'],
     ir_metadata['nominal-time']
@@ -74,7 +75,7 @@ ir_label = '%s %s' % (
 #     
 #     Build a window with a single panel 
 #
-panel = buildWindow(height=ir_lines,width=ir_eles)
+panel = buildWindow(height=bw_lines,width=bw_eles)
 
 
 #
@@ -90,13 +91,17 @@ ir_layer = panel[0].createLayer('Image Display', ir_data)
 #     Change the projection (panel)
 #     Turn off the wire frame box (panel)
 #     Change the center point (panel)
-#     Apply an enhancement (layer)
+#     Add an L to pinpoint the Low (panel)
 #     Add a layer label (layer)
+#     Apply an enhancement (layer)
 #     Save the output file (panel)
 #
 panel[0].setProjection('US>CONUS')
 panel[0].setWireframe(False)
 panel[0].setCenter(35.5,-75.5, scale=1.0)
-ir_layer.setLayerLabel(label=ir_label, size=16)
+panel[0].annotate('<b>L</b>', line=353,element=398, size=24, color='Black')
+panel[0].annotate('<b>L</b>', line=351,element=396, size=24, color='Red')
+ir_layer.setLayerLabel(label=ir_label, size=14)
 ir_layer.setEnhancement('Longwave Infrared Deep Convection')
-panel[0].captureImage(imageDir+'IR-Blizzard.jpg',height=ir_lines,width=ir_eles)
+panel[0].captureImage(imageDir+'IR-Blizzard.jpg')
+
