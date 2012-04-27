@@ -1,31 +1,21 @@
 /*
- * $Id$
- *
- * This file is part of McIDAS-V
- *
- * Copyright 2007-2012
- * Space Science and Engineering Center (SSEC)
- * University of Wisconsin - Madison
- * 1225 W. Dayton Street, Madison, WI 53706, USA
- * http://www.ssec.wisc.edu/mcidas
+ * Copyright 1997-2011 Unidata Program Center/University Corporation for
+ * Atmospheric Research, P.O. Box 3000, Boulder, CO 80307,
+ * support@unidata.ucar.edu.
  * 
- * All Rights Reserved
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or (at
+ * your option) any later version.
  * 
- * McIDAS-V is built on Unidata's IDV and SSEC's VisAD libraries, and
- * some McIDAS-V source code is based on IDV and VisAD source code.  
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+ * General Public License for more details.
  * 
- * McIDAS-V is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- * 
- * McIDAS-V is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser Public License
- * along with this program.  If not, see http://www.gnu.org/licenses.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation,
+ * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
 package ucar.unidata.data.imagery;
@@ -33,31 +23,36 @@ package ucar.unidata.data.imagery;
 
 import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidas.AreaDirectoryList;
-import edu.wisc.ssec.mcidas.AreaFile;
 import edu.wisc.ssec.mcidas.AreaFileException;
 
-import ucar.unidata.data.*;
+import ucar.unidata.data.CompositeDataChoice;
+import ucar.unidata.data.DataCategory;
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataSelection;
+import ucar.unidata.data.DataSourceDescriptor;
+import ucar.unidata.data.DataSourceImpl;
+import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.util.CacheManager;
-import ucar.unidata.util.FileManager;
-import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.PollingInfo;
-
-import ucar.unidata.util.Range;
 import ucar.unidata.util.StringUtil;
-
 import ucar.unidata.util.TwoFacedObject;
 
 import ucar.visad.UtcDate;
 import ucar.visad.data.AreaImageFlatField;
 
-
-import visad.*;
+import visad.CommonUnit;
+import visad.Data;
+import visad.DateTime;
+import visad.FunctionType;
+import visad.MathType;
+import visad.RealType;
+import visad.Set;
+import visad.VisADException;
 
 import visad.data.DataRange;
-
 import visad.data.mcidas.AreaAdapter;
 
 import visad.meteorology.ImageSequence;
@@ -67,44 +62,30 @@ import visad.meteorology.SingleBandedImage;
 
 import visad.util.ThreadManager;
 
-import java.awt.*;
-import java.awt.event.*;
 
 import java.io.File;
-import java.io.IOException;
 
 import java.rmi.RemoteException;
 
 import java.text.SimpleDateFormat;
 
 import java.util.ArrayList;
-import java.util.ArrayList;
-
 import java.util.Arrays;
-import java.util.Comparator;
-
-import java.util.Date;
-import java.util.Hashtable;
-
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.TreeMap;
-
-import javax.swing.*;
-import javax.swing.event.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
  * Abstract DataSource class for images files.
  *
  * @author IDV development team
- * @version $Revision$ $Date$
  */
 public abstract class ImageDataSource extends DataSourceImpl {
 
@@ -121,16 +102,16 @@ public abstract class ImageDataSource extends DataSourceImpl {
     public static final String PROP_BANDINFO = "bandinfo";
 
     /** list of twod categories */
-    protected List twoDCategories;
+    private List twoDCategories;
 
     /** list of 2D time series categories */
-    protected List twoDTimeSeriesCategories;
+    private List twoDTimeSeriesCategories;
 
     /** list of twod categories */
-    protected List bandCategories;
+    private List bandCategories;
 
     /** list of 2D time series categories */
-    protected List bandTimeSeriesCategories;
+    private List bandTimeSeriesCategories;
 
     /** list of images */
     protected List imageList;
@@ -139,14 +120,14 @@ public abstract class ImageDataSource extends DataSourceImpl {
     protected List imageTimes = new ArrayList();
 
     /** My composite */
-    protected CompositeDataChoice myCompositeDataChoice;
+    private CompositeDataChoice myCompositeDataChoice;
 
     /** children choices */
     protected List myDataChoices = new ArrayList();
 
 
     /** current directories */
-    protected AreaDirectory[][] currentDirs;
+    private AreaDirectory[][] currentDirs;
 
     /** timeMap */
     protected Hashtable timeMap = new Hashtable();
@@ -238,9 +219,6 @@ public abstract class ImageDataSource extends DataSourceImpl {
     }
 
 
-
-
-
     /**
      * Handle when this data source gets new files to use at runtime (e.g., from isl)
      *
@@ -248,7 +226,8 @@ public abstract class ImageDataSource extends DataSourceImpl {
      *
      */
     public void setNewFiles(List files) {
-        setImageList(makeImageDescriptors(StringUtil.listToStringArray(files)));
+        setImageList(
+            makeImageDescriptors(StringUtil.listToStringArray(files)));
     }
 
 
@@ -486,7 +465,6 @@ public abstract class ImageDataSource extends DataSourceImpl {
         }
         return descriptors;
     }
-
 
 
 
@@ -1153,9 +1131,8 @@ public abstract class ImageDataSource extends DataSourceImpl {
             }
 
             if (areaDir != null) {
-                String url = aii.getURLString();
                 int hash = ((aii != null)
-                            ? url.hashCode()
+                            ? aii.makeAddeUrl().hashCode()
                             : areaDir.hashCode());
 
                 //If the range type is null then we are reading the first image
@@ -1182,8 +1159,6 @@ public abstract class ImageDataSource extends DataSourceImpl {
         }
 
     }
-
-
 
     /**
      * Reload the data
@@ -1300,8 +1275,8 @@ public abstract class ImageDataSource extends DataSourceImpl {
                   System.err.println(biggestPosition.makeAddeUrl()
                   + "\nfrom aii:" + biggestPosition.makeAddeUrl());
                 */
-                String url = biggestPosition.getURLString();
-                AreaDirectoryList adl = new AreaDirectoryList(url);
+                AreaDirectoryList adl =
+                    new AreaDirectoryList(biggestPosition.makeAddeUrl());
                 biggestPosition.setRequestType(AddeImageInfo.REQ_IMAGEDATA);
                 currentDirs = adl.getSortedDirs();
             } else {
@@ -1474,8 +1449,10 @@ public abstract class ImageDataSource extends DataSourceImpl {
      * @return  list of descriptors matching the selection
      */
     private List getDescriptors(DataChoice dataChoice, DataSelection subset) {
+
         List    times = getTimesFromDataSelection(subset, dataChoice);
-        boolean usingTimeDriver = subset.getTimeDriverTimes() != null;
+        boolean usingTimeDriver = 
+            (subset != null && subset.getTimeDriverTimes() != null);
         if (usingTimeDriver) {
             times = subset.getTimeDriverTimes();
         }
@@ -1687,7 +1664,6 @@ public abstract class ImageDataSource extends DataSourceImpl {
         aii.setBand("" + bi.getBandNumber());
         aii.setUnit(bi.getPreferredUnit());
     }
-
 
     /**
      * Get the subset of the composite based on the selection
