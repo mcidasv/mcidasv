@@ -35,6 +35,7 @@
 		<mapID target="idv.controls.ensemblegridcontrol"			 url="controls/EnsembleGridControl.html" />
         <mapID target="idv.controls.flowplanviewcontrol"             url="controls/FlowPlanViewControl.html" />
 		<mapID target="idv.controls.frontcontrol"					 url="controls/FrontControl.html" />
+		<mapID target="idv.controls.hovmollercontrol"				 url="controls/HovmollerControl" />
 		<mapID target="idv.controls.hydra.channelcombinationcontrol"  url="controls/hydra/ChannelCombinationControl.html" />
 		<mapID target="idv.controls.hydra.index"					 url="controls/hydra/index.html" />
 		<mapID target="idv.controls.hydra.linearcombinationcontrol"  url="controls/hydra/LinearCombinationControl.html" />
@@ -94,6 +95,7 @@
         <mapID target="idv.controls.shapefilecontrol"                url="controls/ShapefileControl.html" />
         <mapID target="idv.controls.shapefilecontrol.image1"         url="controls/ShapefileControl.html#image1" />
         <mapID target="idv.controls.shapefilecontrol.image2"         url="controls/ShapefileControl.html#image2" />
+		<mapID target="idv.controls.soundingcontrol"				 url="controls/SoundingControl.html" />
         <mapID target="idv.controls.stationlocationcontrol"          url="controls/StationLocationControl.html" />
         <mapID target="idv.controls.stationmodelcontrol"             url="controls/PointDataPlotControl.html" />
         <mapID target="idv.controls.stationmodelcontrol.filters"     url="controls/StationModelControl.html#filters" />
@@ -168,14 +170,14 @@
         <mapID target="idv.data.textpointdata"                       url="data/TextPointData.html" />
 		<mapID target="idv.datafaq"									 url="DataFaq.html" />
 		<mapID target="idv.display_controls.drawingcontrol"			 url="display_controls/DrawingControl.html" />
-		<mapID target="idv.display_controls/imagecaptures"			 url="display_controls/ImageCaptures.html" />
+		<mapID target="idv.display_controls.imagecaptures"			 url="display_controls/ImageCaptures.html" />
 		<mapID target="idv.display_controls.locationindicatorcontrol"	url="display_controls/LocationIndicatorControl.html" />
 		<mapID target="idv.display_controls.moviedisplay"			 url="display_controls/MovieDisplay.html" />
 		<mapID target="idv.display_controls.radargridcontrol"		 url="display_controls/RadarGridControl.html" />
 		<mapID target="idv.display_controls.rangeandbearingcontrol"	 url="display_controls/RangeAndBearingControl.html" />
 		<mapID target="idv.display_controls.timeline"				 url="display_controls/Timeline.html" />
 		<mapID target="idv.display_controls.transectdrawingcontrol"	 url="display_controls/TransectDrawingControl.html" />
-		<mapID target="idv.display_controls.wmscontrol.html"		 url="display_controls/WMSControl.html" />
+		<mapID target="idv.display_controls.wmscontrol"				 url="display_controls/WMSControl.html" />
         <mapID target="idv.examples"                                 url="examples/index.html" />
         <mapID target="idv.examples.3dsurface"                       url="examples/3DSurface.html" />
         <mapID target="idv.examples.3dsurface.2dtopo"                url="examples/3DSurface.html#2dtopo" />
@@ -187,7 +189,7 @@
 		<mapID target="idv.examples.3dsurface.2dtopo"				 url="examples/3DSurface.html#2dtopo" />
         <mapID target="idv.examples.3dsurface.isosurface"            url="examples/3DSurface.html#isosurface" />
         <mapID target="idv.examples.3dsurface.topography"            url="examples/3DSurface.html#topography" />
-		<mapID target="idv.examples.crosssections"					 url="examples/crosssections.html" />
+		<mapID target="idv.examples.crosssections"					 url="examples/CrossSections.html" />
         <mapID target="idv.examples.flowdisplays"                    url="examples/FlowDisplays.html" />
         <mapID target="idv.examples.flowdisplays.image1"             url="examples/FlowDisplays.html#image1" />
         <mapID target="idv.examples.flowdisplays.image2"             url="examples/FlowDisplays.html#image2" />
@@ -216,7 +218,7 @@
         <mapID target="idv.examples.planviews.colorfilledplan"       url="examples/PlanViews.html#colorfilledplan" />
         <mapID target="idv.examples.planviews.colorshadedplan"       url="examples/PlanViews.html#colorshadedplan" />
 		<mapID target="idv.examples.planviews.valueplots"			 url="examples/PlanViews.html#valueplots" />
-		<mapID target="idv.examples.probes"							 url="examples/Probes" />
+		<mapID target="idv.examples.probes"							 url="examples/Probes.html" />
         <mapID target="idv.examples.profiler"                        url="examples/Profiler.html" />
         <mapID target="idv.examples.profiler.image1"                 url="examples/Profiler.html#image1" />
         <mapID target="idv.examples.profiler.image2"                 url="examples/Profiler.html#image2" />
@@ -247,7 +249,7 @@
 		<mapID target="idv.generalfaq"								 url="GeneralFaq.html" />
         <mapID target="idv.index"                                    url="toc.html" />
         <mapID target="idv.index.image1"                             url="mcidasv.html#image1" />
-		<mapID target="installationfaq"								 url="InstallationFaq.html" />
+		<mapID target="idv.installationfaq"							 url="InstallationFaq.html" />
         <mapID target="idv.introduction"                             url="mcidasv.html" />
         <mapID target="idv.license"                                  url="License.html" />
         <mapID target="idv.mcidasv"	   			                     url="mcidasv.html" />
@@ -429,6 +431,8 @@
         <mapID target="idv.tools.parametergroupseditor"              url="tools/ParameterGroupsEditor.html" />
         <mapID target="idv.tools.parametergroupseditor.image1"       url="tools/ParameterGroupsEditor.html#image1" />
         <mapID target="idv.tools.parametergroupseditor.image2"       url="tools/ParameterGroupsEditor.html#image2" />
+		<mapID target="idv.tools.plugincreator"						 url="tools/PluginCreator.html" />
+		<mapID target="idv.tools.plugins"							 url="tools/Plugins.html" />
         <mapID target="idv.tools.preferences"                        url="tools/preferences/Preferences.html" />
         <mapID target="idv.tools.preferences.advancedpreferences"	 url="tools/preferences/AdvancedPreferences.html" />
         <mapID target="idv.tools.preferences.auto-selectdatawhenloadingatemplate"  url="tools/preferences/GeneralPreferences.html#auto-selectdatawhenloadingatemplate" />
