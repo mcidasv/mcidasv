@@ -35,7 +35,7 @@
 		<mapID target="idv.controls.ensemblegridcontrol"			 url="controls/EnsembleGridControl.html" />
         <mapID target="idv.controls.flowplanviewcontrol"             url="controls/FlowPlanViewControl.html" />
 		<mapID target="idv.controls.frontcontrol"					 url="controls/FrontControl.html" />
-		<mapID target="idv.controls.hovmollercontrol"				 url="controls/HovmollerControl" />
+		<mapID target="idv.controls.hovmollercontrol"				 url="controls/HovmollerControl.html" />
 		<mapID target="idv.controls.hydra.channelcombinationcontrol"  url="controls/hydra/ChannelCombinationControl.html" />
 		<mapID target="idv.controls.hydra.index"					 url="controls/hydra/index.html" />
 		<mapID target="idv.controls.hydra.linearcombinationcontrol"  url="controls/hydra/LinearCombinationControl.html" />
