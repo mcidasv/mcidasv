@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="5.0.6" transformSequenceNumber="3">
+<install4j version="5.0.11" transformSequenceNumber="3">
   <directoryPresets config="${compiler:MCVDIR}/lib/miglayout-3.7.3.jar" />
-  <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="/home/mcidasv/install4j/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.02" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" installerName="" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
+  <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="/home/mcidasv/install4j/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.2" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" installerName="" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
       <additionalLanguages />
@@ -96,14 +96,14 @@
       <fileEntry mountPoint="7468" file="/home/mcidasv/adde/adde-solaris.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
     </entries>
     <components>
-      <component name="Base components" id="67" customizedId="" displayDescription="false" selected="true" changeable="false" downloadable="false" hidden="false">
+      <component name="Base components" id="67" customizedId="" displayDescription="false" hideHelpButton="false" selected="true" changeable="false" downloadable="false" hidden="false">
         <description />
         <include all="false">
           <entry location=".i4j_fileset_" fileType="regular" />
         </include>
         <dependencies />
       </component>
-      <component name="Unix components" id="66" customizedId="" displayDescription="false" selected="true" changeable="true" downloadable="false" hidden="false">
+      <component name="Unix components" id="66" customizedId="" displayDescription="false" hideHelpButton="false" selected="true" changeable="true" downloadable="false" hidden="false">
         <description />
         <include all="false">
           <entry location=".i4j_fileset_7334" fileType="regular" />
@@ -112,7 +112,7 @@
           <component id="67" />
         </dependencies>
       </component>
-      <component name="OS X components" id="3653" customizedId="" displayDescription="false" selected="true" changeable="true" downloadable="false" hidden="false">
+      <component name="OS X components" id="3653" customizedId="" displayDescription="false" hideHelpButton="false" selected="true" changeable="true" downloadable="false" hidden="false">
         <description />
         <include all="false">
           <entry location=".i4j_fileset_7332" fileType="regular" />
@@ -122,7 +122,7 @@
           <component id="66" />
         </dependencies>
       </component>
-      <component name="Windows components" id="7274" customizedId="" displayDescription="false" selected="true" changeable="true" downloadable="false" hidden="false">
+      <component name="Windows components" id="7274" customizedId="" displayDescription="false" hideHelpButton="false" selected="true" changeable="true" downloadable="false" hidden="false">
         <description />
         <include all="false">
           <entry location=".i4j_fileset_7336" fileType="regular" />
@@ -131,7 +131,7 @@
           <component id="67" />
         </dependencies>
       </component>
-      <component name="ADDE Servers" id="7433" customizedId="" displayDescription="false" selected="true" changeable="true" downloadable="false" hidden="false">
+      <component name="ADDE Servers" id="7433" customizedId="" displayDescription="false" hideHelpButton="false" selected="true" changeable="true" downloadable="false" hidden="false">
         <description />
         <include all="false">
           <entry location=".i4j_fileset_7408" fileType="regular" />
@@ -320,90 +320,6 @@ Please visit &lt;a href="http://dcdbs.ssec.wisc.edu/mcidasv/forums/viewtopic.php
               </java>
             </serializedBean>
             <condition />
-            <validation />
-            <preActivation />
-            <postActivation />
-            <actions />
-            <formComponents />
-          </screen>
-          <screen name=".mcidasv information (Windows)" id="8024" customizedId="" beanClass="com.install4j.runtime.beans.screens.DefaultInfoScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.DefaultInfoScreen">
-                  <void property="displayedText">
-                    <string>&lt;html&gt;
-Starting with version 1.0beta6 user files will be stored in a directory named &amp;quot;McIDAS-V&amp;quot; instead of &amp;quot;.mcidasv&amp;quot; (i.e. ${installer:sys.userHome}\McIDAS-V).
-&lt;br&gt;&lt;br&gt;
-&lt;font color="#FF0000"&gt;User files will be moved to the new directory when McIDAS-V is first run.&lt;/font&gt;
-&lt;br&gt;&lt;br&gt;
-To help avoid duplicate directory names, the default system installation directory has changed to &amp;quot;McIDAS-V-System&amp;quot;.
-&lt;br&gt;&lt;br&gt;
-&lt;b&gt;System Administrators:&lt;/b&gt; Please let your users know about these changes.
-&lt;/html&gt;</string>
-                  </void>
-                  <void property="textSource">
-                    <object class="com.install4j.runtime.beans.screens.components.TextSource" field="DIRECT" />
-                  </void>
-                </object>
-              </java>
-            </serializedBean>
-            <condition>return Util.isWindows();</condition>
-            <validation />
-            <preActivation />
-            <postActivation />
-            <actions />
-            <formComponents />
-          </screen>
-          <screen name=".mcidasv information (OS X)" id="8028" customizedId="" beanClass="com.install4j.runtime.beans.screens.DefaultInfoScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.DefaultInfoScreen">
-                  <void property="displayedText">
-                    <string>&lt;html&gt;
-Starting with version 1.0beta6 user files will be stored in a directory named &amp;quot;McIDAS-V&amp;quot; instead of &amp;quot;.mcidasv&amp;quot; (i.e. ${installer:sys.userHome}/Documents/McIDAS-V).
-&lt;br&gt;&lt;br&gt;
-&lt;font color="#FF0000"&gt;User files will be moved to the new directory when McIDAS-V is first run.&lt;/font&gt;
-&lt;br&gt;&lt;br&gt;
-To help avoid duplicate directory names, the default system installation directory has changed to &amp;quot;McIDAS-V-System&amp;quot;.
-&lt;br&gt;&lt;br&gt;
-&lt;b&gt;System Administrators:&lt;/b&gt; Please let your users know about these changes.
-&lt;/html&gt;</string>
-                  </void>
-                  <void property="textSource">
-                    <object class="com.install4j.runtime.beans.screens.components.TextSource" field="DIRECT" />
-                  </void>
-                </object>
-              </java>
-            </serializedBean>
-            <condition>return Util.isMacOS();</condition>
-            <validation />
-            <preActivation />
-            <postActivation />
-            <actions />
-            <formComponents />
-          </screen>
-          <screen name=".mcidasv information (Unix)" id="8029" customizedId="" beanClass="com.install4j.runtime.beans.screens.DefaultInfoScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.DefaultInfoScreen">
-                  <void property="displayedText">
-                    <string>&lt;html&gt;
-Starting with version 1.0beta6 user files will be stored in a directory named &amp;quot;McIDAS-V&amp;quot; instead of &amp;quot;.mcidasv&amp;quot; (i.e. ${installer:sys.userHome}/McIDAS-V).
-&lt;br&gt;&lt;br&gt;
-&lt;font color="#FF0000"&gt;User files will be moved to the new directory when McIDAS-V is first run.&lt;/font&gt;
-&lt;br&gt;&lt;br&gt;
-To help avoid duplicate directory names, the default system installation directory has changed to &amp;quot;McIDAS-V-System&amp;quot;.
-&lt;br&gt;&lt;br&gt;
-&lt;b&gt;System Administrators:&lt;/b&gt; Please let your users know about these changes.
-&lt;/html&gt;</string>
-                  </void>
-                  <void property="textSource">
-                    <object class="com.install4j.runtime.beans.screens.components.TextSource" field="DIRECT" />
-                  </void>
-                </object>
-              </java>
-            </serializedBean>
-            <condition>return !Util.isWindows() &amp;&amp; !Util.isMacOS();</condition>
             <validation />
             <preActivation />
             <postActivation />
@@ -786,9 +702,6 @@ return allowed;</validation>
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.actions.desktop.CreateProgramGroupAction">
-                      <void property="linkDirectory">
-                        <string>${installer:sys.symlinkDir}</string>
-                      </void>
                       <void property="uninstallerMenuName">
                         <string>${i18n:UninstallerMenuEntry(${compiler:sys.fullName})}</string>
                       </void>
