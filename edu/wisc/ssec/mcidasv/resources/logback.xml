@@ -50,4 +50,7 @@
   <root level="INFO">
     <appender-ref ref="FILE" />
   </root>
+
+  <!-- Disable some initial status messages from the stdout/stderr redirect library -->
+  <logger name="uk.org.lidalia.sysoutslf4j" level="OFF" />
   </configuration>
