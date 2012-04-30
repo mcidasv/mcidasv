@@ -296,8 +296,6 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 				if (Character.isDigit(one)) {
 					if (i>0) minor *= 10;
 					minor += Character.digit(one, 10) * 10000;
-//					if (i==0) value += Character.digit(one, 10) * 100000;
-//					else value += Character.digit(one, 10) * 10000;
 				}
 				else {
 					break;
@@ -306,10 +304,12 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 			value += minor;
 			if (one!=null) version = version.substring(i);
 	
-			// Alpha/beta status
+			// Alpha/beta/update/release status
 			if (version.length() == 0) value += 300;
 			else if (version.charAt(0) == 'b') value += 200;
 			else if (version.charAt(0) == 'a') value += 100;
+			else if (version.charAt(0) == 'u') value += 400;
+			else if (version.charAt(0) == 'r') value += 400;
 			for (i=0; i<version.length(); i++) {
 				one = version.charAt(i);
 				if (Character.isDigit(one)) break;
