@@ -100,7 +100,7 @@ public class ArgumentManager extends ArgsManager {
             System.err.println(USAGE_MESSAGE);
             System.err.println(getUsageMessage());
             ((McIDASV)getIdv()).exit(1);
-        } else if (checkArg(arg, "-pyfile", args, idx, 1)) {
+        } else if (checkArg(arg, "-script", args, idx, 1) || checkArg(arg, "-pyfile", args, idx, 1)) {
             scriptingFiles.add(args[idx++]);
             if (!getIslInteractive()) {
                 setIsOffScreen(true);
@@ -155,6 +155,7 @@ public class ArgumentManager extends ArgsManager {
             + msg(ARG_DATA, "<data source> (Load the data source)")
             + msg(ARG_DISPLAY, "<parameter> <display>")
 //            + msg("<scriptfile.isl>", "(Run the IDV script in batch mode)")
+            + msg("-script", "<jython script file to evaluate>")
             + msg("-pyfile", "<jython script file to evaluate>")
 //            + msg(ARG_B64ISL, "<base64 encoded inline isl> This will run the isl in interactive mode")
 //            + msg(ARG_ISLINTERACTIVE, "run any isl files in interactive mode")
