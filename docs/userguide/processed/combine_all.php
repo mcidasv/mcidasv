@@ -33,7 +33,7 @@ li { margin-bottom: 0px; }
 <p>
 <img src="../../../images/mcidas-logos/mcidasv_500x250.png">
 <h1>McIDAS-V User's Guide</h1>
-<h2>Version 1.0</h2>
+<h2>Version 1.2</h2>
 </td></tr>
 </table>
 
