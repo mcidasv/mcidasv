@@ -15,6 +15,6 @@ cd ${APIDOCS_DIR}
 
 mkdir -p ${OUTPUT_DIR}
 
-/home/mcidasv/jdk1.6.0_14/bin/java -classpath "${MCV_CLASSPATH}" org.python.util.jython ${HTML_FORMAT_SCRIPT} > ${HTML_OUTPUT_FILE}
+/home/mcidasv/java_jdk/bin/java -classpath "${MCV_CLASSPATH}" org.python.util.jython ${HTML_FORMAT_SCRIPT} > ${HTML_OUTPUT_FILE}
 
 cd ${CURRENT_DIR}
