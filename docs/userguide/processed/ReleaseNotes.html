@@ -41,7 +41,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="pagesubtitle">McIDAS-V <br>
   Version 1.2</div>
 <hr size="4" noshade>
-<p>The items below reflect the changes since the 1.01 release. </p>
+<p>The items below reflect the changes since the 1.01 release.</p>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat1_1.2">Documentation
     Changes</a></div>
 <div class="faq-category">
@@ -106,7 +106,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
   Changes</div>
 <div class="faq-category"><a name="layervisibility1.2" id="layervisibility1.2"></a>
   <h4><strong>Layer Visibility Animations</strong></h4>
-  <div class="faq-answer">Added a Layer Visibility Animations tool to loop through layers of data that do not have times associated with them. Without times associated with the layers, the standard Time Animation Widget will not work. The Layer Visibility Animations feature can be accessed in two ways. First, you can access this tool in the Main Display window by using the View-&gt;Displays-&gt;Visibility Animations menu items. From here, you can turn the animation on/off, and make the animation go faster/slower. You can also add a button for Layer Visibility Animations to your main toolbar by using the Toolbar Options tab of the User Preferences window.</div>
+  <div class="faq-answer">Added the ability to add a Layer Visibility            Animations button to the Main Toolbar in McIDAS-V. This can be            done through the Toolbar Options tab of the User Preferences            window. This allows you to animate through layers of data that            do not have times associated with them without having to go            through the menus.</div>
   <h4><a name="hovmoller1.2" id="hovmoller1.2"></a><strong>Hovmoller Display</strong></h4>
   <div class="faq-answer">Added the Hovmoller Display to the Displays panel of
     the Field Selector. Your display can be Time-Longitude or Time-Latitude,
@@ -138,7 +138,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 </div>
 <div class="faq-category"><a name="scripting1.2" id="scripting1.2"></a>
   <h4><strong>Scripting</strong></h4>
-  <div class="faq-answer">We have deprecated ISL in favor of Python. Please see <a href="misc/Scripting.html">Scripting</a> for the list of supported functions, an&nbsp;example script, and links to various Java docs.</div></div>
+  <div class="faq-answer">Added a first release of a suite of fully          supported Jython scripting tools. The functions and methods in          this suite can be used to load and display data, manipulate the          display, and save the images. This allows the user to          automatically process data and generate displays for web pages          and other environments. This scripting can be done from the          Jython shell within McIDAS-V, or from a Jython script that can          be invoked as a command line argument. Please see <a href="misc/Scripting.html">Scripting</a> for the list of supported functions, an&nbsp;example script, and links to various Java docs.</div></div>
 <div class="faq-category"><a name="statistics1.2" id="statistics1.2"></a>
   <h4><strong>Compute Statistics Option for HYDRA Scatter Analysis Displays</strong></h4>
 <div class="faq-answer">Added a new feature to HYDRA Scatter Analysis displays to output statistical information pertinent to the data. After creating a Scatter Analysis display, a new button has been added to the Layer Controls tab of the Data Explorer, called 'compute statistics'. When this button is clicked, a Scatter Statistics window will open, listing statistical information corresponding to the data on the X and Y axes of the scatter plot. There is statistical information for the display as a whole, and also for different areas you subset with the box/curve options. This information includes, but is not limited to: maximum, minimum, number of points, mean, median, variance, standard deviation, and correlation. This statistical data can be written out to a *.csv file by using the Save As CSV button.</div></div>
