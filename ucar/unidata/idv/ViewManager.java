@@ -1336,7 +1336,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (newOne) {
             GuiUtils.showDialogNearSrc(viewMenu, propertiesDialog);
         } else {
-            propertiesDialog.show();
+            propertiesDialog.setVisible(true);
         }
         propertiesDialogShown = true;
         //        propertiesDialog.show();
@@ -3661,11 +3661,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
             return;
         }
         try {
-            if (force) {
-                master.setActive(true);
-            } else {
-                master.setDisplayActive();
-            }
+//            if (force) {
+//                master.setActive(true);
+//            } else {
+//                master.setDisplayActive();
+//            }
+            master.setDisplayActive();
         } catch (Exception exp) {
             logException("setMasterActive", exp);
         }

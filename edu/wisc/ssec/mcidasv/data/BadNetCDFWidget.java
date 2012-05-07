@@ -168,7 +168,7 @@ public class BadNetCDFWidget implements Constants {
         while(varIt.hasNext())
         {
             Variable ourVar = varIt.next();
-            varNames.add(ourVar.getName());
+            varNames.add(ourVar.getFullName());
             //System.out.println("Name: " + ourVar.getName());
         }
     }
@@ -730,15 +730,13 @@ public class BadNetCDFWidget implements Constants {
          */
         public BadNetCDFDialog() {
             setTitle("Non-Compliant NetCDF Tool");
-            setMinimumSize(new Dimension(705, 325));
-            setBounds(100, 100, 705, 325);
+            setMinimumSize(new Dimension(705, 320));
+            setBounds(100, 100, 705, 320);
             Container contentPane = getContentPane();
-            contentPane.setLayout(new MigLayout("", "[grow][]", "[][grow][][][][]"));
             
             JLabel headerLabel = new JLabel("McIDAS-V is unable to read your file.");
             headerLabel.setFont(UIManager.getFont("OptionPane.font"));
             headerLabel.setBorder(new EmptyBorder(0, 0, 4, 0));
-            contentPane.add(headerLabel, "cell 0 0,alignx left,aligny top");
             
             JTextPane messageTextPane = new JTextPane();
             Font textPaneFont = UIManager.getFont("TextPane.font");
@@ -762,13 +760,25 @@ public class BadNetCDFWidget implements Constants {
                     WebBrowser.browse(url);
                 }
             });
-            contentPane.add(messageTextPane, "cell 0 1 2 1,grow");
             
+
             JSeparator separator = new JSeparator();
-            contentPane.add(separator, "cell 0 2 2 1,growx,aligny top");
+            // seems pretty dumb to have to do this sizing business in order to get the separator to appear, right?
+            // check out: http://docs.oracle.com/javase/tutorial/uiswing/components/separator.html
+            // "Separators have almost no API and are extremely easy to use as 
+            // long as you keep one thing in mind: In most implementations, 
+            // a vertical separator has a preferred height of 0, and a 
+            // horizontal separator has a preferred width of 0. This means a 
+            // separator is not visible unless you either set its preferred 
+            // size or put it in under the control of a layout manager such as 
+            // BorderLayout or BoxLayout that stretches it to fill its 
+            // available display area."
+            // WHO ON EARTH DECIDED THAT WAS SENSIBLE DEFAULT BEHAVIOR FOR A SEPARATOR WIDGET!?
+            separator.setMinimumSize(new Dimension(1, 12));
+            separator.setPreferredSize(new Dimension(1, 12));
+
             
             JLabel editorLabel = new JLabel("Open the file in the NcML editor:");
-            contentPane.add(editorLabel, "cell 0 3,alignx left,aligny baseline");
             
             JButton editorButton = new JButton("NcML Editor");
             editorButton.addActionListener(new ActionListener() {
@@ -776,10 +786,8 @@ public class BadNetCDFWidget implements Constants {
                     showNcMLEditor();
                 }
             });
-            contentPane.add(editorButton, "cell 1 3,growx,aligny baseline");
             
             JLabel viewLabel = new JLabel("I just want to view one of the variables:");
-            contentPane.add(viewLabel, "cell 0 4,alignx left,aligny baseline");
             
             JButton viewButton = new JButton("View Variable");
             viewButton.addActionListener(new ActionListener() {
@@ -787,10 +795,8 @@ public class BadNetCDFWidget implements Constants {
                     showVarPicker();
                 }
             });
-            contentPane.add(viewButton, "cell 1 4,growx,aligny baseline");
             
             JLabel noncompliantLabel = new JLabel("I have navigation variables, they just aren't CF-compliant: (FEATURE INCOMPLETE)");
-            contentPane.add(noncompliantLabel, "cell 0 5,alignx left,aligny baseline");
             
             JButton noncompliantButton = new JButton("Choose Nav");
             noncompliantButton.addActionListener(new ActionListener() {
@@ -804,7 +810,21 @@ public class BadNetCDFWidget implements Constants {
                     BadNetCDFDialog.this.dispose();
                 }
             });
-            contentPane.add(noncompliantButton, "cell 1 5,growx,aligny baseline");
+
+            contentPane.setLayout(new MigLayout(
+                "", 
+                "[grow][]", 
+                "[][grow][][][][][][]"));
+            contentPane.add(headerLabel,        "spanx 2, alignx left, aligny top, wrap");
+            contentPane.add(messageTextPane,    "spanx 2, grow, wrap");
+            contentPane.add(separator,          "spanx 2, growx, aligny top, wrap");
+            contentPane.add(editorLabel,        "alignx left, aligny baseline");
+            contentPane.add(editorButton,       "growx, aligny baseline, wrap");
+            contentPane.add(viewLabel,          "alignx left, aligny baseline");
+            contentPane.add(viewButton,         "growx, aligny baseline, wrap");
+            contentPane.add(noncompliantLabel,  "alignx left, aligny baseline");
+            contentPane.add(noncompliantButton, "growx, aligny baseline, wrap");
+            
         }
     }
 }

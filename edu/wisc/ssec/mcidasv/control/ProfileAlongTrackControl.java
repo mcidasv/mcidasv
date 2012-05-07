@@ -73,6 +73,7 @@ import visad.Display;
 import visad.LocalDisplay;
 import visad.ConstantMap;
 import visad.VisADException;
+import visad.VisADGeometryArray;
 import visad.georef.LatLonTuple;
 import visad.georef.EarthLocationTuple;
 import visad.util.Util;
@@ -206,8 +207,10 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
     mainViewMaster.addDisplayable(trackDsp);
 
     // ??? setConstantPosition(val, display real type) ??
-    locOnTrack = new SelectorPoint("marker", new EarthLocationTuple(10, 10, 0));  
-    locOnTrack.setMarker(ShapeUtility.makeShape(ShapeUtility.CROSS));
+    locOnTrack = new SelectorPoint("marker", new EarthLocationTuple(10, 10, 0));
+//    locOnTrack.setMarker(ShapeUtility.makeShape(ShapeUtility.CROSS));
+    VisADGeometryArray[] markerShape = ShapeUtility.createShape(ShapeUtility.CROSS);
+    locOnTrack.setMarker(markerShape[0]);
     mainViewMaster.addDisplayable(locOnTrack);
     locOnTrack.setScale(0.1f);
 

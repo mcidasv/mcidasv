@@ -1566,13 +1566,14 @@ public class StormTrackControl extends DisplayControlImpl {
 							Point loc = yds.getButton().getLocationOnScreen();
 							errorWindow.setLocation((int) loc.getX(),
 									(int) (loc.getY() + yds.getButton()
-											.bounds().height));
+											.getBounds().height));
 
 						} catch (Exception exc) {
 							// Ignore this incase the component isn't being
 							// shown
 						}
-						errorWindow.show();
+//						errorWindow.show();
+						errorWindow.setVisible(true);
 					}
 					errors = errors + "Error " + currentMessage + "<br>";
 					yds.setStatus("Error:" + currentMessage);

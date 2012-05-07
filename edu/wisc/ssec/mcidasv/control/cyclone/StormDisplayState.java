@@ -66,6 +66,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -1015,14 +1016,14 @@ public class StormDisplayState {
 	// RealType fixedtype;
 	StormParam getFixedParam() {
 		RealType rtype = RealType.getRealType("Fixed");
-		if (rtype == null) {
-			try {
-				rtype = new RealType("Fixed");
-			} catch (VisADException e) {
-
-			}
-			// fixedtype=rtype;
-		}
+//		if (rtype == null) {
+//			try {
+//				rtype = new RealType("Fixed");
+//			} catch (VisADException e) {
+//
+//			}
+//			// fixedtype=rtype;
+//		}
 		return new StormParam(rtype, false, false);
 	}
 
@@ -1389,7 +1390,8 @@ public class StormDisplayState {
 					stormTrackControl.showNormalCursor();
 					if (wasActive) {
 						try {
-							displayMaster.setActive(true);
+//							displayMaster.setActive(true);
+						    displayMaster.setDisplayActive();
 						} catch (Exception exc) {
 						}
 					}
@@ -1664,7 +1666,8 @@ public class StormDisplayState {
 		} finally {
 			if (wasActive) {
 				try {
-					displayMaster.setActive(true);
+//					displayMaster.setActive(true);
+				    displayMaster.setDisplayActive();
 				} catch (Exception exc) {
 				}
 			}
@@ -2165,16 +2168,16 @@ public class StormDisplayState {
 		for (StormTrackPoint stp : track.getTrackPoints()) {
 			if (rowCnt == 0) {
 				row = sheet.createRow((short) rowCnt++);
-				row.createCell((short) 0).setCellValue("Time");
-				row.createCell((short) 1).setCellValue("Latitude");
-				row.createCell((short) 2).setCellValue("Longitude");
+				row.createCell((short) 0).setCellValue(new HSSFRichTextString("Time"));
+				row.createCell((short) 1).setCellValue(new HSSFRichTextString("Latitude"));
+				row.createCell((short) 2).setCellValue(new HSSFRichTextString("Longitude"));
 				for (int colIdx = 0; colIdx < params.size(); colIdx++) {
-					row.createCell((short) (colIdx + 3)).setCellValue(
-							params.get(colIdx).toString());
+					row.createCell((short) (colIdx + 3)).setCellValue(new HSSFRichTextString(
+							params.get(colIdx).toString()));
 				}
 			}
 			row = sheet.createRow((short) rowCnt++);
-			row.createCell((short) 0).setCellValue(stp.getTime().toString());
+			row.createCell((short) 0).setCellValue(new HSSFRichTextString(stp.getTime().toString()));
 			row.createCell((short) 1).setCellValue(
 					stp.getLocation().getLatitude().getValue());
 			row.createCell((short) 2).setCellValue(
@@ -2519,7 +2522,8 @@ public class StormDisplayState {
 	public void colorRangeChanged() {
 		DisplayMaster displayMaster = stormTrackControl.getDisplayMaster();
 		colorRangeChanged = true;
-		boolean wasActive = displayMaster.ensureInactive();
+//		boolean wasActive = displayMaster.ensureInactive();
+		displayMaster.setDisplayInactive();
 		try {
 			stormTrackControl.stormChanged(StormDisplayState.this);
 			updateDisplays();

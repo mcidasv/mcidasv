@@ -3311,7 +3311,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
 
         dialog.getContentPane().add(comp);
         dialog.pack();
-        dialog.show();
+        dialog.setVisible(true);
         if (result[0] == null) {
             return false;
         }

@@ -1132,7 +1132,7 @@ public abstract class ImageDataSource extends DataSourceImpl {
 
             if (areaDir != null) {
                 int hash = ((aii != null)
-                            ? aii.makeAddeUrl().hashCode()
+                            ? aii.getURLString().hashCode()
                             : areaDir.hashCode());
 
                 //If the range type is null then we are reading the first image
@@ -1276,7 +1276,7 @@ public abstract class ImageDataSource extends DataSourceImpl {
                   + "\nfrom aii:" + biggestPosition.makeAddeUrl());
                 */
                 AreaDirectoryList adl =
-                    new AreaDirectoryList(biggestPosition.makeAddeUrl());
+                    new AreaDirectoryList(biggestPosition.getURLString());
                 biggestPosition.setRequestType(AddeImageInfo.REQ_IMAGEDATA);
                 currentDirs = adl.getSortedDirs();
             } else {
