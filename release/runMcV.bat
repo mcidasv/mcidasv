@@ -99,7 +99,7 @@ SET ALLOW_NPOT=false
 SET ALLOW_NPOT=true
 )
 SET LOGBACK_CONFIG="edu/wisc/ssec/mcidasv/resources/logback.xml"
-
+        
 REM Get the amount of system memorys
 echo Reading system configuration...
 SET SYS_VER=Unknown
