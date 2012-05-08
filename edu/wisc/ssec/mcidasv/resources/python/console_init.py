@@ -41,6 +41,10 @@ sys.path.append(_mcv_python+'/utilities')
 from edu.wisc.ssec.mcidasv import McIDASV
 _mcv = McIDASV.getStaticMcv()
 
+# need to get some IDV-specifc init done
+from ucar.unidata.idv.ui import ImageGenerator 
+islInterpreter = ImageGenerator(_mcv)
+
 from edu.wisc.ssec.mcidasv.data.hydra import Statistics
 
 import imageFilters
@@ -52,7 +56,7 @@ from background import (
     activeDisplay, allActions, allColorTables, allDisplays, allFontNames,
     allLayerTypes, allProjections, allWindows, boomstick, collectGarbage,
     colorTableNames, firstDisplay, firstWindow, getColorTable, getProjection,
-    managedDataSource, performAction, projectionNames, removeAllData,
+    managedDataSource, pause,performAction, projectionNames, removeAllData,
     removeAllLayers, setViewSize
 )
 
