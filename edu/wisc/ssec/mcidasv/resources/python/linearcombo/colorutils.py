@@ -1,3 +1,4 @@
+from java.awt import Color
 from visad import ConstantMap
 from visad import Display
 
@@ -200,3 +201,11 @@ def convertColor(color='green'):
         _color_cache[hash_key] = r, g, b
     
     return _color_cache[hash_key]
+
+def convertColorToJava(color='green'):
+    red, green, blue = convertColor(color)
+    return Color(red.getConstant(), green.getConstant(), blue.getConstant())
+
+def listColorNames():
+    for k in sorted(_cnames.keys()):
+        print k

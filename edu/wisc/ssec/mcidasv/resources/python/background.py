@@ -1,3 +1,4 @@
+import os
 import types
 
 import java.awt.Color.CYAN
@@ -7,6 +8,7 @@ from contextlib import contextmanager
 
 # from shell import makeDataSource
 from decorators import deprecated
+from interactive import _expandpath
 
 from org.slf4j import Logger
 from org.slf4j import LoggerFactory
@@ -22,6 +24,9 @@ from ucar.unidata.geoloc import LatLonPointImpl
 from ucar.unidata.ui.colortable import ColorTableDefaults
 from ucar.unidata.util import GuiUtils
 from ucar.visad import Util
+
+def pause():
+    getStaticMcv().waitUntilDisplaysAreDone()
 
 @contextmanager
 def managedDataSource(path, cleanup=True, dataType=None):
@@ -133,7 +138,7 @@ def _getNewFont(currentFont, fontName, style, size):
     """
     if isinstance(style, str):
         # we need all caps
-        style = style.upper() 
+        style = style.upper()
     
     if style == "BOLD":
         style = java.awt.Font.BOLD
@@ -279,9 +284,9 @@ class _Display(_JavaProxy):
         if labelDict == None:
             # DisplayList / layer label properties
             self.labelDict = dict(
-                font = javaObject.getDisplayListFont(),
-                color = javaObject.getDisplayListColor(),
-                visible = javaObject.getShowDisplayList(),
+                font=javaObject.getDisplayListFont(),
+                color=javaObject.getDisplayListColor(),
+                visible=javaObject.getShowDisplayList(),
             )
         _Display.displayWrappers.append(self)
 
@@ -530,7 +535,6 @@ class _Display(_JavaProxy):
         #  accept scale keyword as argument.  Seems to be working now  --mike
         mapDisplay.centerAndZoom(earthLocation, False, scale)
 
-
     def getBackgroundColor(self):
         """Returns the Java AWT color object of the background color (or None)."""
         
@@ -618,14 +622,14 @@ class _Display(_JavaProxy):
                 label = dataParameter
                 if(data.size()>1):
                     label = label +str(i)
-                obj = DataDataChoice(label,obj)
+                obj = DataDataChoice(label, obj)
             dataList.add(obj)
 
         # *temporary* fix for doing image sequences/globe displays with getADDEImage:
         if (isinstance(data[0], NavigatedImage) and
             isinstance(self._JavaProxy__javaObject, ucar.unidata.idv.MapViewManager)):
             if (self._JavaProxy__javaObject.getUseGlobeDisplay()) and (controlID == 'imagedisplay'):
-                controlID = 'imagesequence' # hack that works, but I'm not sure why
+                controlID = 'imagesequence'  # hack that works, but I'm not sure why
             if (controlID == 'imagesequence'):
                 # apparently we need a CompositeDataChoice instead of a list of DataDataChoices for
                 # Image Sequence Display to work as expected
@@ -643,7 +647,7 @@ class _Display(_JavaProxy):
                 # finally, set dataList appropriately:
                 dataList = compSource.getDataChoices()
 
-        newLayer = mcv.doMakeControl(controlID, dataList);
+        newLayer = mcv.doMakeControl(controlID, dataList)
 
         # createDisplay does it's init in a thread,
         # so wait for it to finish before we hand control back to user!
@@ -667,7 +671,7 @@ class _Display(_JavaProxy):
                     1.0 is least compression / biggest file size / best qualit
             height, width: size of image
 
-        Raises: 
+        Raises:
             ValueError:  if filename is a directory
             RuntimeError: if height and width specified here after an annotate
 
@@ -703,8 +707,8 @@ class _Display(_JavaProxy):
 
         # TODO(mike): catch exceptions resulting from writeImage (e.g., if filename has invalid extension)
 
-    def annotate(self, text, lat=None, lon=None, line=None, element=None, 
-            font=None, color=None, size=None, style=None):
+    def annotate(self, text, lat=None, lon=None, line=None, element=None,
+            font=None, color='red', size=None, style=None):
         """Put a text annotation on this panel
 
         Can specify location by a lat/lon point or number of pixels
@@ -741,12 +745,12 @@ class _Display(_JavaProxy):
         drawCtl.setLegendLabelTemplate('Jython Annotation')
         drawCtl.setShowInDisplayList(False)
         pause()
-        drawCtl.close() # close the window that pops up..user doesnt need to see
+        drawCtl.close()  # close the window that pops up..user doesnt need to see
         glyph = TextGlyph(drawCtl, None, text)
         if (lat != None) and (lon != None) and (
                 (line == None) and (element == None)):
             # lat lon point
-            point = EarthLocationTuple(lat, lon, 0.0) # TODO: not sure about altitude
+            point = EarthLocationTuple(lat, lon, 0.0)  # TODO: not sure about altitude
             glyph.setCoordType(DrawingGlyph.COORD_LATLONALT)
         elif (line != None) and (element != None) and (
                 (lat == None) and (lon == None)):
@@ -760,19 +764,20 @@ class _Display(_JavaProxy):
             "You must specify either lat AND lon, OR line AND element")
 
         # do the usual gymastics for font and color stuff.
-        if color == None:
-            newColor = java.awt.Color(255, 0, 0) # default red
-        else:
-            rgb = colorutils.convertColor(color)
-            r = rgb[0].getConstant()
-            g = rgb[1].getConstant()
-            b = rgb[2].getConstant()
-            newColor = java.awt.Color(r, g, b)
+        # if color == None:
+        #     newColor = java.awt.Color(255, 0, 0)  # default red
+        # else:
+        #     rgb = colorutils.convertColor(color)
+        #     r = rgb[0].getConstant()
+        #     g = rgb[1].getConstant()
+        #     b = rgb[2].getConstant()
+        #     newColor = java.awt.Color(r, g, b)
+        newColor = colorutils.convertColorToJava(color)
 
         currentFont = self._JavaProxy__javaObject.getDisplayListFont()
         newFont = _getNewFont(currentFont, fontName=font, size=size, style=style)
 
-        glyph.setName("GlyphFromJython") # not visible after drawCtl.close()
+        glyph.setName("GlyphFromJython")  # not visible after drawCtl.close()
         glyph.setColor(newColor)
         glyph.setFont(newFont)
         pointList = java.util.ArrayList()
@@ -797,7 +802,7 @@ class _Layer(_JavaProxy):
 
         Returns: _Display associated with this _Layer
 
-        Raises: LookupError if no _Display is found 
+        Raises: LookupError if no _Display is found
         """
         for wrapper in _Display.displayWrappers:
             if (wrapper._JavaProxy__javaObject.getUniqueId() ==
@@ -820,7 +825,7 @@ class _Layer(_JavaProxy):
     def setEnhancement(self, name=None, range=None):
         """Wrapper for setEnhancementTable and setDataRange
         Args:
-           Name: the name of the enhancement table.  Don't need to specify 
+           Name: the name of the enhancement table.  Don't need to specify
                  "parent" directories like setProjection
            Range: 2-element list specifying min and max data range
         """
@@ -974,11 +979,12 @@ class _Layer(_JavaProxy):
         it wraps around a different java method (setLabelColor)
         """
         import colorutils
-        rgb = colorutils.convertColor(color)
-        r = rgb[0].getConstant()
-        g = rgb[1].getConstant()
-        b = rgb[2].getConstant()
-        newColor = java.awt.Color(r, g, b)
+        # rgb = colorutils.convertColor(color)
+        # r = rgb[0].getConstant()
+        # g = rgb[1].getConstant()
+        # b = rgb[2].getConstant()
+        # newColor = java.awt.Color(r, g, b)
+        newColor = colorutils.convertColorToJava(color)
         
         info = self._JavaProxy__javaObject.getColorScaleInfo()
         info.setLabelColor(newColor)
@@ -1024,7 +1030,7 @@ class _Layer(_JavaProxy):
         Returns:  nothing
         """
         if (label != None):
-            label = str(label) # convert to str if possible
+            label = str(label)  # convert to str if possible
             self._JavaProxy__javaObject.setDisplayListTemplate(label)
 
         self.setLayerLabelVisible(visible)
@@ -1075,11 +1081,12 @@ class _Layer(_JavaProxy):
             color can be rgb list or tuple, or string giving name of a color
         """
         import colorutils
-        rgb = colorutils.convertColor(color)
-        r = rgb[0].getConstant()
-        g = rgb[1].getConstant()
-        b = rgb[2].getConstant()
-        newColor = java.awt.Color(r, g, b)
+        # rgb = colorutils.convertColor(color)
+        # r = rgb[0].getConstant()
+        # g = rgb[1].getConstant()
+        # b = rgb[2].getConstant()
+        # newColor = java.awt.Color(r, g, b)
+        newColor = colorutils.convertColorToJava(color)
         
         self._JavaProxy__javaObject.getViewManager().setDisplayListColor(newColor)
         self._getDisplayWrapper().labelDict['color'] = newColor
@@ -1567,7 +1574,7 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=No
 
         height, width: specify size of window (not size of display!)
 
-        dataDictionary: allows you to override what files are used for a 
+        dataDictionary: allows you to override what files are used for a
         given datasource.  (This was known as setfiles in ISL).
         The keys specify the name of the data source (as shown in e.g.,
         the Field Selector tab).  The values can be either a single
@@ -1593,7 +1600,6 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=No
     fileExists = os.path.exists(bundle)
     isDir = os.path.isdir(bundle)
 
-
     if (not fileExists) or isDir:
         raise ValueError("File does not exist or is a directory")
 
@@ -1618,7 +1624,7 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=No
     # set relevant preferences to values that make sense for non-GUI mode
     sm.putPreference(my_mcv.PREF_ZIDV_ASK, False)
     sm.putPreference(my_mcv.PREF_OPEN_ASK, False)
-    # For REMOVE and MERGE, we want to do the same thing as what McIdasPreferenceManager 
+    # For REMOVE and MERGE, we want to do the same thing as what McIdasPreferenceManager
     # does for "Replace Session" (set both to true)
     sm.putPreference(my_mcv.PREF_OPEN_REMOVE, True)
     sm.putPreference(my_mcv.PREF_OPEN_MERGE, True)
@@ -1634,7 +1640,7 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=No
     pm = my_mcv.getPersistenceManager()
 
     if (dataDictionary != None):
-        # It turns out the whole dictionary thing boils down to a call to 
+        # It turns out the whole dictionary thing boils down to a call to
         # PersistenceManager.setFileMapping which takes a list of ids and
         # a list containing lists of files for each datasource id.  Then we
         # call clearFileMapping to clean up.
@@ -1656,11 +1662,11 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=No
     checkToRemove = clear
     letUserChangeData = 0    # not sure about this
     bundleProperties = None  # not sure what this does..just send it None for now
-    pm.decodeXmlFile(bundle,label,checkToRemove,letUserChangeData,bundleProperties)
+    pm.decodeXmlFile(bundle, label, checkToRemove, letUserChangeData, bundleProperties)
     pause()  # this might be controversial...?
 
     if (dataDictionary != None):
-        pm.clearFileMapping()  
+        pm.clearFileMapping()
 
     # change relevant preferences back to original values
     sm.putPreference(my_mcv.PREF_ZIDV_ASK, pref_zidv_ask_user)
