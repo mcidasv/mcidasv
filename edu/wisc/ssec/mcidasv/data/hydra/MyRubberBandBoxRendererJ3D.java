@@ -567,7 +567,10 @@ public class MyRubberBandBoxRendererJ3D extends DirectManipulationRendererJ3D {
         colors[i3 + 2] = blue;
       }
       array.colors = colors;
+      /** TDR skip this: can be problems with lon/lat point CS's, and need
+          to be able to draw box over dateline and GM (TODO).
       array = (VisADLineStripArray) array.adjustSeam(this);
+      */
 
       DisplayImplJ3D display = (DisplayImplJ3D) getDisplay();
       GeometryArray geometry = display.makeGeometry(array);
