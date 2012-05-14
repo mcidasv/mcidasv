@@ -338,24 +338,28 @@ public class MultiSpectralData extends MultiDimensionAdapter {
     return getLonLatBoundingBox(domainSet);
   }
 
-  public static Rectangle2D getLonLatBoundingBox(Set domainSet) {
-    CoordinateSystem cs = 
+  public static float[][] getLonLatBoundingCorners(Set domainSet) {
+    CoordinateSystem cs =
       ((SetType)domainSet.getType()).getDomain().getCoordinateSystem();
 
     float start0, stop0, start1, stop1;
+    int len0, len1;
     float minLon = Float.MAX_VALUE;
     float minLat = Float.MAX_VALUE;
     float maxLon = -Float.MAX_VALUE;
     float maxLat = -Float.MAX_VALUE;
 
+    float[][] corners = null;
 
     if (domainSet instanceof Linear2DSet) {
       Linear1DSet lset = ((Linear2DSet)domainSet).getLinear1DComponent(0);
       start0 = (float) lset.getFirst();
       stop0 = (float) lset.getLast();
+      len0 = lset.getLengthX();
       lset = ((Linear2DSet)domainSet).getLinear1DComponent(1);
       start1 = (float) lset.getFirst();
       stop1 = (float) lset.getLast();
+      len1 = lset.getLengthX();
 
       float x, y, del_x, del_y;
       float lonA = Float.NaN;
@@ -366,15 +370,18 @@ public class MultiSpectralData extends MultiDimensionAdapter {
       float latB = Float.NaN;
       float latC = Float.NaN;
       float latD = Float.NaN;
-      del_x = (stop0 - start0)/20;
-      del_y = (stop1 - start1)/20;
 
+      int nXpts = len0/1;
+      int nYpts = len1/1;
+
+      del_x = (stop0 - start0)/nXpts;
+      del_y = (stop1 - start1)/nYpts;
       x = start0;
       y = start1;
       try {
-        for (int j=0; j<21; j++) {
+        for (int j=0; j<nYpts; j++) {
           y = start1+j*del_y;
-          for (int i=0; i<21; i++) {
+          for (int i=0; i<nXpts; i++) {
             x = start0 + i*del_x;
             float[][] lonlat = cs.toReference(new float[][] {{x}, {y}});
             float lon = lonlat[0][0];
@@ -385,7 +392,7 @@ public class MultiSpectralData extends MultiDimensionAdapter {
               break;
             }
           }
-          for (int i=0; i<21; i++) {
+          for (int i=0; i<nXpts; i++) {
             x = stop0 - i*del_x;
             float[][] lonlat = cs.toReference(new float[][] {{x}, {y}});
             float lon = lonlat[0][0];
@@ -401,9 +408,9 @@ public class MultiSpectralData extends MultiDimensionAdapter {
           }
         }
 
-        for (int j=0; j<21; j++) {
+        for (int j=0; j<nYpts; j++) {
           y = stop1-j*del_y;
-          for (int i=0; i<21; i++) {
+          for (int i=0; i<nXpts; i++) {
             x = start0 + i*del_x;
             float[][] lonlat = cs.toReference(new float[][] {{x}, {y}});
             float lon = lonlat[0][0];
@@ -414,7 +421,7 @@ public class MultiSpectralData extends MultiDimensionAdapter {
               break;
             }
           }
-          for (int i=0; i<21; i++) {
+          for (int i=0; i<nXpts; i++) {
             x = stop0 - i*del_x;
             float[][] lonlat = cs.toReference(new float[][] {{x}, {y}});
             float lon = lonlat[0][0];
@@ -429,7 +436,156 @@ public class MultiSpectralData extends MultiDimensionAdapter {
             break;
           }
          }
+         corners = new float[][] {{lonA,lonB,lonC,lonD},{latA,latB,latC,latD}};
+         for (int k=0; k<corners[0].length; k++) {
+            float lon = corners[0][k];
+            float lat = corners[1][k];
+            /**
+            if (lon < minLon) minLon = lon;
+            if (lat < minLat) minLat = lat;
+            if (lon > maxLon) maxLon = lon;
+            if (lat > maxLat) maxLat = lat;
+            */
+         }
+       } catch (Exception e) {
+       }
+    }
+    else if (domainSet instanceof Gridded2DSet) {
+      int[] lens = ((Gridded2DSet)domainSet).getLengths();
+      start0 = 0f;
+      start1 = 0f;
+      stop0 = (float) lens[0];
+      stop1 = (float) lens[1];
 
+      float x, y, del_x, del_y;
+      del_x = (stop0 - start0)/10;
+      del_y = (stop1 - start1)/10;
+      x = start0;
+      y = start1;
+      try {
+        for (int j=0; j<11; j++) {
+          y = start1+j*del_y;
+          for (int i=0; i<11; i++) {
+            x = start0+i*del_x;
+            float[][] lonlat = ((Gridded2DSet)domainSet).gridToValue(new float[][] {{x}, {y}});
+            float lon = lonlat[0][0];
+            float lat = lonlat[1][0];
+            if ((lon > 180 || lon < -180) || (lat > 90 || lat < -90)) continue;
+            if (lon < minLon) minLon = lon;
+            if (lat < minLat) minLat = lat;
+            if (lon > maxLon) maxLon = lon;
+            if (lat > maxLat) maxLat = lat;
+          }
+        }
+      } catch (Exception e) {
+      }
+    }
+
+
+    float del_lon = maxLon - minLon;
+    float del_lat = maxLat - minLat;
+
+    return corners;
+  }
+
+  public static Rectangle2D getLonLatBoundingBox(Set domainSet) {
+    CoordinateSystem cs = 
+      ((SetType)domainSet.getType()).getDomain().getCoordinateSystem();
+
+    float start0, stop0, start1, stop1;
+    int len0, len1;
+    float minLon = Float.MAX_VALUE;
+    float minLat = Float.MAX_VALUE;
+    float maxLon = -Float.MAX_VALUE;
+    float maxLat = -Float.MAX_VALUE;
+
+
+    if (domainSet instanceof Linear2DSet) {
+      Linear1DSet lset = ((Linear2DSet)domainSet).getLinear1DComponent(0);
+      start0 = (float) lset.getFirst();
+      stop0 = (float) lset.getLast();
+      len0 = lset.getLengthX();
+      lset = ((Linear2DSet)domainSet).getLinear1DComponent(1);
+      start1 = (float) lset.getFirst();
+      stop1 = (float) lset.getLast();
+      len1 = lset.getLengthX();
+
+      float x, y, del_x, del_y;
+      float lonA = Float.NaN;
+      float lonB = Float.NaN;
+      float lonC = Float.NaN;
+      float lonD = Float.NaN;
+      float latA = Float.NaN;
+      float latB = Float.NaN;
+      float latC = Float.NaN;
+      float latD = Float.NaN;
+
+      int nXpts = len0/8;
+      int nYpts = len1/8;
+
+      del_x = (stop0 - start0)/nXpts;
+      del_y = (stop1 - start1)/nYpts;
+
+      x = start0;
+      y = start1;
+      try {
+        for (int j=0; j<nYpts; j++) {
+          y = start1+j*del_y;
+          for (int i=0; i<nXpts; i++) {
+            x = start0 + i*del_x;
+            float[][] lonlat = cs.toReference(new float[][] {{x}, {y}});
+            float lon = lonlat[0][0];
+            float lat = lonlat[1][0];
+            if (!Float.isNaN(lon) && !Float.isNaN(lat)) {
+              lonA = lon;
+              latA = lat;
+              break;
+            }
+          }
+          for (int i=0; i<nXpts; i++) {
+            x = stop0 - i*del_x;
+            float[][] lonlat = cs.toReference(new float[][] {{x}, {y}});
+            float lon = lonlat[0][0];
+            float lat = lonlat[1][0];
+            if (!Float.isNaN(lon) && !Float.isNaN(lat)) {
+              lonB = lon;
+              latB = lat;
+              break;
+            }
+          }
+          if (!Float.isNaN(lonA) && !Float.isNaN(lonB)) {
+            break;
+          }
+        }
+
+        for (int j=0; j<nYpts; j++) {
+          y = stop1-j*del_y;
+          for (int i=0; i<nXpts; i++) {
+            x = start0 + i*del_x;
+            float[][] lonlat = cs.toReference(new float[][] {{x}, {y}});
+            float lon = lonlat[0][0];
+            float lat = lonlat[1][0];
+            if (!Float.isNaN(lon) && !Float.isNaN(lat)) {
+              lonC = lon;
+              latC = lat;
+              break;
+            }
+          }
+          for (int i=0; i<nXpts; i++) {
+            x = stop0 - i*del_x;
+            float[][] lonlat = cs.toReference(new float[][] {{x}, {y}});
+            float lon = lonlat[0][0];
+            float lat = lonlat[1][0];
+            if (!Float.isNaN(lon) && !Float.isNaN(lat)) {
+              lonD = lon;
+              latD = lat;
+              break;
+            }
+          }
+          if (!Float.isNaN(lonC) && !Float.isNaN(lonD)) {
+            break;
+          }
+         }
          float[][] corners = {{lonA,lonB,lonC,lonD},{latA,latB,latC,latD}};
          for (int k=0; k<corners[0].length; k++) {
             float lon = corners[0][k];
