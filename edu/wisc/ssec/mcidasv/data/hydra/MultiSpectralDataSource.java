@@ -70,6 +70,7 @@ import visad.FunctionType;
 import visad.RealType;
 import visad.RealTupleType;
 import visad.Linear2DSet;
+import visad.Gridded2DSet;
 import visad.CoordinateSystem;
 import visad.CommonUnit;
 import visad.SetType;
@@ -179,6 +180,12 @@ public class MultiSpectralDataSource extends HydraDataSource {
             other = other.replace("obs", "nav");
             reader = NetCDFFile.makeUnion(filename, other);
           }
+          /**
+          else if (name.startsWith("MYD021KM")) { //hack test code
+            //reader = new NetCDFFileUnion(new String[] {filename, "/Users/rink/Downloads/MYD03.A2011331.0405.005.2011332200700.hdf"}); 
+            reader = new NetCDFFile(filename);
+          }
+          */
           else {
         	  if (sources.size() > 1) {
         		  for (int i = 0; i < sources.size(); i++) {
@@ -298,10 +305,14 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put("array_name", "MODIS_SWATH_Type_L1B/Data Fields/EV_1KM_Emissive");
          table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Longitude");
          table.put("lat_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Latitude");
+         //table.put("lon_array_name", "MODIS_Swath_Type_GEO/Geolocation Fields/Longitude");
+         //table.put("lat_array_name", "MODIS_Swath_Type_GEO/Geolocation Fields/Latitude");
          table.put("XTrack", "Max_EV_frames");
          table.put("Track", "10*nscans");
          table.put("geo_Track", "2*nscans");
          table.put("geo_XTrack", "1KM_geo_dim");
+         //table.put("geo_Track", "nscans*10");
+         //table.put("geo_XTrack", "mframes");
          table.put("scale_name", "radiance_scales");
          table.put("offset_name", "radiance_offsets");
          table.put("fill_value_name", "_FillValue");
@@ -615,15 +626,15 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
          multiSpectData_s.add(null);
        }
-       else if (name.startsWith("NSS")) {
+       else if (name.startsWith("NSS.HRPT") && name.endsWith("level2.hdf")) {
          HashMap swthTable = SwathAdapter.getEmptyMetadataTable();
-         swthTable.put("array_name", "ch3b_temperature");
-         swthTable.put("lon_array_name", "pixel_longitude");
-         swthTable.put("lat_array_name", "pixel_latitude");
-         swthTable.put("XTrack", "pixels_across_track");
-         swthTable.put("Track", "scan_lines_along_track");
-         swthTable.put("geo_Track", "scan_lines_along_track");
-         swthTable.put("geo_XTrack", "pixels_across_track");
+         swthTable.put("array_name", "temp_3_75um_nom");
+         swthTable.put("lon_array_name", "longitude");
+         swthTable.put("lat_array_name", "latitude");
+         swthTable.put("XTrack", "pixel_elements_along_scan_direction");
+         swthTable.put("Track", "scan_lines_along_track_direction");
+         swthTable.put("geo_Track", "scan_lines_along_track_direction");
+         swthTable.put("geo_XTrack", "pixel_elements_along_scan_direction");
          swthTable.put("scale_name", "SCALE_FACTOR");
          swthTable.put("offset_name", "ADD_OFFSET");
          swthTable.put("fill_value_name", "_FILLVALUE");
@@ -640,9 +651,9 @@ public class MultiSpectralDataSource extends HydraDataSource {
          defaultSubset = subset;
 
          HashMap specTable = SpectrumAdapter.getEmptyMetadataTable();
-         specTable.put(SpectrumAdapter.array_name, "ch3b_temperature");
-         specTable.put(SpectrumAdapter.x_dim_name, "pixels_across_track");
-         specTable.put(SpectrumAdapter.y_dim_name, "scan_lines_along_track");
+         specTable.put(SpectrumAdapter.array_name, "temp_3_75um_nom");
+         specTable.put(SpectrumAdapter.x_dim_name, "pixel_elements_along_scan_direction");
+         specTable.put(SpectrumAdapter.y_dim_name, "scan_lines_along_track_direction");
          specTable.put(SpectrumAdapter.channelValues, new float[] {3.740f});
          specTable.put(SpectrumAdapter.bandNames, new String[] {"ch3b"});
          specTable.put(SpectrumAdapter.channelType, "wavelength");
@@ -651,30 +662,30 @@ public class MultiSpectralDataSource extends HydraDataSource {
          MultiSpectralData multiSpectData0 = new MultiSpectralData(swathAdapter0, spectrumAdapter0, "BrightnessTemp", "BrightnessTemp", null, null);
 
          HashMap table = SwathAdapter.getEmptyMetadataTable();
-         table.put("array_name", "ch4_temperature");
-         table.put("lon_array_name", "pixel_longitude");
-         table.put("lat_array_name", "pixel_latitude");
-         table.put("XTrack", "pixels_across_track");
-         table.put("Track", "scan_lines_along_track");
-         table.put("geo_Track", "scan_lines_along_track");
-         table.put("geo_XTrack", "pixels_across_track");
+         table.put("array_name", "temp_11_0um_nom");
+         table.put("lon_array_name", "longitude");
+         table.put("lat_array_name", "latitude");
+         table.put("XTrack", "pixel_elements_along_scan_direction");
+         table.put("Track", "scan_lines_along_track_direction");
+         table.put("geo_Track", "scan_lines_along_track_direction");
+         table.put("geo_XTrack", "pixel_elements_along_scan_direction");
          table.put("scale_name", "SCALE_FACTOR");
          table.put("offset_name", "ADD_OFFSET");
          table.put("fill_value_name", "_FILLVALUE");
          table.put("range_name", "Emmissive_Bands");
          table.put("unpack", "unpack");
-         swthTable.put("geo_scale_name", "SCALE_FACTOR");
-         swthTable.put("geo_offset_name", "ADD_OFFSET");
-         swthTable.put("geo_fillValue_name", "_FILLVALUE");
+         table.put("geo_scale_name", "SCALE_FACTOR");
+         table.put("geo_offset_name", "ADD_OFFSET");
+         table.put("geo_fillValue_name", "_FILLVALUE");
 
 
          SwathAdapter swathAdapter1 = new SwathAdapter(reader, table);
          swathAdapter1.setDefaultStride(10);
 
          table = SpectrumAdapter.getEmptyMetadataTable();
-         table.put(SpectrumAdapter.array_name, "ch4_temperature");
-         table.put(SpectrumAdapter.x_dim_name, "pixels_across_track");
-         table.put(SpectrumAdapter.y_dim_name, "scan_lines_along_track");
+         table.put(SpectrumAdapter.array_name, "temp_11_0um_nom");
+         table.put(SpectrumAdapter.x_dim_name, "pixel_elements_along_scan_direction");
+         table.put(SpectrumAdapter.y_dim_name, "scan_lines_along_track_direction");
          table.put(SpectrumAdapter.channelValues, new float[] {10.80f});
          table.put(SpectrumAdapter.bandNames, new String[] {"ch4"});
          table.put(SpectrumAdapter.channelType, "wavelength");
@@ -683,30 +694,30 @@ public class MultiSpectralDataSource extends HydraDataSource {
          MultiSpectralData multiSpectData1 = new MultiSpectralData(swathAdapter1, spectrumAdapter1, "BrightnessTemp", "BrightnessTemp", null, null);
 
          table = SwathAdapter.getEmptyMetadataTable();
-         table.put("array_name", "ch5_temperature");
-         table.put("lon_array_name", "pixel_longitude");
-         table.put("lat_array_name", "pixel_latitude");
-         table.put("XTrack", "pixels_across_track");
-         table.put("Track", "scan_lines_along_track");
-         table.put("geo_Track", "scan_lines_along_track");
-         table.put("geo_XTrack", "pixels_across_track");
+         table.put("array_name", "temp_12_0um_nom");
+         table.put("lon_array_name", "longitude");
+         table.put("lat_array_name", "latitude");
+         table.put("XTrack", "pixel_elements_along_scan_direction");
+         table.put("Track", "scan_lines_along_track_direction");
+         table.put("geo_Track", "scan_lines_along_track_direction");
+         table.put("geo_XTrack", "pixel_elements_along_scan_direction");
          table.put("scale_name", "SCALE_FACTOR");
          table.put("offset_name", "ADD_OFFSET");
          table.put("fill_value_name", "_FILLVALUE");
          table.put("range_name", "Emmissive_Bands");
          table.put("unpack", "unpack");
-         swthTable.put("geo_scale_name", "SCALE_FACTOR");
-         swthTable.put("geo_offset_name", "ADD_OFFSET");
-         swthTable.put("geo_fillValue_name", "_FILLVALUE");
+         table.put("geo_scale_name", "SCALE_FACTOR");
+         table.put("geo_offset_name", "ADD_OFFSET");
+         table.put("geo_fillValue_name", "_FILLVALUE");
 
 
          SwathAdapter swathAdapter2 = new SwathAdapter(reader, table);
          swathAdapter2.setDefaultStride(10);
 
          table = SpectrumAdapter.getEmptyMetadataTable();
-         table.put(SpectrumAdapter.array_name, "ch5_temperature");
-         table.put(SpectrumAdapter.x_dim_name, "pixels_across_track");
-         table.put(SpectrumAdapter.y_dim_name, "scan_lines_along_track");
+         table.put(SpectrumAdapter.array_name, "temp_12_0um_nom");
+         table.put(SpectrumAdapter.x_dim_name, "pixel_elements_along_scan_direction");
+         table.put(SpectrumAdapter.y_dim_name, "scan_lines_along_track_direction");
          table.put(SpectrumAdapter.channelValues, new float[] {12.00f});
          table.put(SpectrumAdapter.bandNames, new String[] {"ch5"});
          table.put(SpectrumAdapter.channelType, "wavelength");
@@ -724,33 +735,33 @@ public class MultiSpectralDataSource extends HydraDataSource {
          previewImage = aggr.getImage(defaultSubset);
 
          //- now do the reflective bands
-         swthTable.put("array_name", "ch1_reflectance");
+         swthTable.put("array_name", "refl_0_65um_nom");
          swthTable.put("range_name", "Reflective_Bands");
 
          swathAdapter0 = new SwathAdapter(reader, swthTable);
          swathAdapter0.setDefaultStride(10);
 
-         specTable.put(SpectrumAdapter.array_name, "ch1_reflectance");
+         specTable.put(SpectrumAdapter.array_name, "refl_0_65um_nom");
          specTable.put(SpectrumAdapter.channelValues, new float[] {0.630f});
          specTable.put(SpectrumAdapter.bandNames, new String[] {"ch1"});
          spectrumAdapter0 = new SpectrumAdapter(reader, specTable);
 
          multiSpectData0 = new MultiSpectralData(swathAdapter0, spectrumAdapter0, "Reflectance", "Reflectance", null, null);
 
-         swthTable.put("array_name", "ch2_reflectance");
+         swthTable.put("array_name", "refl_0_86um_nom");
          swthTable.put("range_name", "Reflective_Bands");
          
          swathAdapter1 = new SwathAdapter(reader, swthTable);
          swathAdapter1.setDefaultStride(10);
          
-         specTable.put(SpectrumAdapter.array_name, "ch2_reflectance");
+         specTable.put(SpectrumAdapter.array_name, "refl_0_86um_nom");
          specTable.put(SpectrumAdapter.channelValues, new float[] {0.862f});
          specTable.put(SpectrumAdapter.bandNames, new String[] {"ch2"});
          spectrumAdapter1 = new SpectrumAdapter(reader, specTable);
 
          multiSpectData1 = new MultiSpectralData(swathAdapter1, spectrumAdapter1, "Reflectance", "Reflectance", null, null);
 
-         swthTable.put("array_name", "ch3ab_reflectance");
+         swthTable.put("array_name", "refl_1_60um_nom");
          swthTable.put("range_name", "Reflective_Bands");
          
          swathAdapter2 = new SwathAdapter(reader, swthTable);
@@ -758,7 +769,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          subset = swathAdapter2.getDefaultSubset();
          defaultSubset = subset;
          
-         specTable.put(SpectrumAdapter.array_name, "ch3ab_reflectance");
+         specTable.put(SpectrumAdapter.array_name, "refl_1_60um_nom");
          specTable.put(SpectrumAdapter.channelValues, new float[] {1.610f});
          specTable.put(SpectrumAdapter.bandNames, new String[] {"ch3ab"});
          spectrumAdapter2 = new SpectrumAdapter(reader, specTable);
@@ -831,7 +842,8 @@ public class MultiSpectralDataSource extends HydraDataSource {
         DataSelection dataSel = new MultiDimensionSubset();
         if (adapter != null) {
           name = adapter.getName();
-          dataSel = new MultiDimensionSubset(defaultSubset);
+          //dataSel = new MultiDimensionSubset(defaultSubset);
+          dataSel = new MultiDimensionSubset(adapter.getDefaultSubset());
         }
 
         Hashtable subset = new Hashtable();
@@ -1092,6 +1104,38 @@ public class MultiSpectralDataSource extends HydraDataSource {
     return grid;
   }
 
+  public static Linear2DSet makeGrid(MapProjection mp, float[][] corners, float res) throws Exception {
+     float[][] xy = mp.fromReference(corners);
+
+     float min_x = Float.MAX_VALUE;
+     float min_y = Float.MAX_VALUE;
+     float max_x = -Float.MAX_VALUE;
+     float max_y = -Float.MAX_VALUE;
+
+     for (int k=0; k<xy[0].length;k++) {
+       if (xy[0][k] < min_x) min_x = xy[0][k];
+       if (xy[1][k] < min_y) min_y = xy[1][k];
+       if (xy[0][k] > max_x) max_x = xy[0][k];
+       if (xy[1][k] > max_y) max_y = xy[1][k];
+     }
+
+     float del_x = max_x - min_x;
+     float del_y = max_y - min_y;
+
+     int xLen = (int) (del_x/res);
+     int yLen = (int) (del_y/res);
+
+     RealType xmap = RealType.getRealType("xmap", CommonUnit.meter);
+     RealType ymap = RealType.getRealType("ymap", CommonUnit.meter);
+
+     RealTupleType rtt = new visad.RealTupleType(xmap, ymap, mp, null);
+
+     Linear2DSet grid = new Linear2DSet(rtt, min_x, min_x + (xLen-1)*res, xLen,
+                                             min_y, min_y + (yLen-1)*res, yLen);
+     return grid;
+  }
+
+
   public static FlatField swathToGrid(Linear2DSet grid, FlatField swath) throws Exception {
     return swathToGrid(grid, swath, 0.0);
   }
@@ -1207,11 +1251,11 @@ public class MultiSpectralDataSource extends HydraDataSource {
        for (int i=2; i<gridXLen-2; i++) {
          int grdIdx = i + j*gridXLen;
      
-         // dont to weighted average if a nearest neigbhor existed for the grid point
+         // dont do weighted average if a nearest neigbhor existed for the grid point
          if (mode == 2.0) {
-         if (!Float.isNaN(gridRange[0][grdIdx])) {
-           continue;
-         }
+           if (!Float.isNaN(gridRange[0][grdIdx])) {
+             continue;
+           }
          }
 
          gCoord[0][0] = swathGridCoord[0][grdIdx];
@@ -1234,7 +1278,8 @@ public class MultiSpectralDataSource extends HydraDataSource {
                   del_0 = gCoord[0][0] - (float) i;
                   del_1 = gCoord[1][0] - (float) j;
                   dst_sqrd = del_0*del_0 + del_1*del_1;
-                  weight = (float) (1.0/Math.exp((double)(dst_sqrd)*2.75f));
+                  //weight = (float) (1.0/Math.exp((double)(dst_sqrd)*2.75f));
+                  weight = (float) (1.08/Math.exp((double)(dst_sqrd)*5.40f));
 
                   for (int t=0; t<rngTupDim; t++) sumValue[t] += swathRange[t][swathIndexAtGrid[k]]*weight;
                   sumWeights += weight;
@@ -1254,6 +1299,11 @@ public class MultiSpectralDataSource extends HydraDataSource {
    return grdFF;
  }
 
+ public static boolean validLonLat(float[][] lonlat) {
+   float lon = lonlat[0][0];
+   float lat = lonlat[1][0];
+   return ((lon >= -180f && lon <= 360f) && (lat >= -90f && lat <= 90f));
+ }
 
 }
 
