@@ -48,6 +48,121 @@ public class LambertAEA extends MapProjection {
    Rectangle2D rect;
    float earthRadius = 6367470; //- meters
 
+   public LambertAEA(float[][] corners, float lonCenter, float latCenter) throws VisADException {
+      super(RealTupleType.SpatialEarth2DTuple, new Unit[] {SI.meter, SI.meter});
+
+      cs = new LambertAzimuthalEqualArea(RealTupleType.SpatialEarth2DTuple, earthRadius,
+                   lonCenter*Data.DEGREES_TO_RADIANS, latCenter*Data.DEGREES_TO_RADIANS,
+                         0,0);
+
+     float[][] xy = cs.fromReference(corners);
+
+     float min_x = Float.MAX_VALUE;
+     float min_y = Float.MAX_VALUE;
+     float max_x = -Float.MAX_VALUE;
+     float max_y = -Float.MAX_VALUE;
+
+     for (int k=0; k<xy[0].length;k++) {
+       if (xy[0][k] < min_x) min_x = xy[0][k];
+       if (xy[1][k] < min_y) min_y = xy[1][k];
+       if (xy[0][k] > max_x) max_x = xy[0][k];
+       if (xy[1][k] > max_y) max_y = xy[1][k];
+     }
+
+     float del_x = max_x - min_x;
+     float del_y = max_y - min_y;
+
+     boolean forceSquareMapArea = true;
+     if (forceSquareMapArea) {
+       if (del_x < del_y) {
+          del_x = del_y;
+       }
+       else if (del_y < del_x) {
+          del_y = del_x;
+       }
+     }
+
+     rect = new Rectangle2D.Float(-del_x/2, -del_y/2, del_x, del_y);
+   }
+
+   public LambertAEA(float[][] corners) throws VisADException {
+     super(RealTupleType.SpatialEarth2DTuple, new Unit[] {SI.meter, SI.meter});
+
+     boolean spanGM = false;
+     float lonA = corners[0][0];
+     float lonB = corners[0][1];
+     float lonC = corners[0][2];
+     float lonD = corners[0][3];
+     float latA = corners[1][0];
+     float latB = corners[1][1];
+     float latC = corners[1][2];
+     float latD = corners[1][3];
+
+     float diffAD = lonA - lonD;
+     //float diffBC = lonB - lonC;
+
+     if (Math.abs(diffAD) > 180) spanGM = true;
+     //if (Math.abs(diffBC) > 180) spanGM = true;
+
+     float lonCenter;
+
+     if (spanGM) {
+        float[] vals = MultiSpectralControl.minmax(new float[] {lonA, lonD});
+        float wLon = vals[1];
+        float eLon = vals[0];
+        float del = 360f - wLon + eLon;
+        lonCenter = wLon + del/2;
+        if (lonCenter > 360) lonCenter -= 360f;
+     }
+     else {
+        float[] vals = MultiSpectralControl.minmax(new float[] {lonA, lonD});
+        float minLon = vals[0];
+        float maxLon = vals[1];
+        lonCenter = minLon + (maxLon - minLon)/2;
+     }
+
+     float[] vals = MultiSpectralControl.minmax(corners[1]);
+     float minLat = vals[0];
+     float maxLat = vals[1];
+     float latCenter = minLat + (maxLat - minLat)/2;
+
+     cs = new LambertAzimuthalEqualArea(RealTupleType.SpatialEarth2DTuple, earthRadius,
+                   lonCenter*Data.DEGREES_TO_RADIANS, latCenter*Data.DEGREES_TO_RADIANS,
+                         0,0);
+
+     float[][] xy = cs.fromReference(corners);
+
+     float min_x = Float.MAX_VALUE;
+     float min_y = Float.MAX_VALUE;
+     float max_x = Float.MIN_VALUE;
+     float max_y = Float.MIN_VALUE;
+
+     for (int k=0; k<xy[0].length;k++) {
+       if (xy[0][k] < min_x) min_x = xy[0][k];
+       if (xy[1][k] < min_y) min_y = xy[1][k];
+       if (xy[0][k] > max_x) max_x = xy[0][k];
+       if (xy[1][k] > max_y) max_y = xy[1][k];
+     }
+
+     float del_x = max_x - min_x;
+     float del_y = max_y - min_y;
+
+     boolean forceSquareMapArea = true;
+     if (forceSquareMapArea) {
+       if (del_x < del_y) {
+          del_x = del_y;
+       }
+       else if (del_y < del_x) {
+          del_y = del_x;
+       }
+     }
+
+     min_x = -del_x/2;
+     min_y = -del_y/2;
+
+     rect = new Rectangle2D.Float(min_x, min_y, del_x, del_y);
+   }
+
    public LambertAEA(Rectangle2D ll_rect) throws VisADException {
      this(ll_rect, true);
    }
@@ -69,7 +184,7 @@ public class LambertAEA extends MapProjection {
      }
      float latCenter = minLat + (maxLat - minLat)/2;
 
-     cs = new LambertAzimuthalEqualArea(getReference(), earthRadius,
+     cs = new LambertAzimuthalEqualArea(RealTupleType.SpatialEarth2DTuple, earthRadius,
                    lonCenter*Data.DEGREES_TO_RADIANS, latCenter*Data.DEGREES_TO_RADIANS,
                          0,0);
 
