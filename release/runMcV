@@ -179,7 +179,11 @@ LOGBACK_CONFIG="edu/wisc/ssec/mcidasv/resources/logback.xml"
 
 # Gather up previously set values.
 MCV_USERPATH_ESCAPED=`echo ${MCV_USERPATH} |sed -e 's/ /\\\\ /g'`
-JAVA_FLAGS=" -XX:MaxPermSize=128m -Xmx${HEAP_SIZE} -XX:MaxPermSize=128m ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${JVM_ARGS} -Dlogback.configurationFile=${LOGBACK_CONFIG} -Dmcv.userpath=${MCV_USERPATH_ESCAPED} -Dpython.security.respectJavaAccessibility=false"
+
+# McV will now expect Java3D 1.5.2 and JOGL 1.1.1 to be living in ./javaextdir
+MCV_EXTDIR="-Djava.ext.dirs=${PWD}/javaextdir:${HOME}/Library/Java/Extensions:/Library/Java/Extensions:/System/Library/Java/Extensions:$(/usr/libexec/java_home)/lib/ext"
+
+JAVA_FLAGS=" -XX:MaxPermSize=128m -Xmx${HEAP_SIZE} -XX:MaxPermSize=128m ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${JVM_ARGS} ${MCV_EXTDIR} -Dlogback.configurationFile=${LOGBACK_CONFIG} -Dmcv.userpath=${MCV_USERPATH_ESCAPED} -Dpython.security.respectJavaAccessibility=false"
 MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Dvisad.java3d.textureNpot=${ALLOW_NPOT} -Dvisad.java3d.imageByRef=${IMAGE_BY_REF} -Dvisad.java3d.geometryByRef=${GEOMETRY_BY_REF} -Didv.3d=${IDV_3D} -Didv.sysmem=${SYS_MEM} ${DEFAULT_BUNDLE} -userpath ${MCV_USERPATH_ESCAPED}"
 echo "mcv flags: ${MCV_FLAGS}"
 ################################################################################
@@ -244,4 +248,5 @@ MCV_CLASSPATH=".:./rsyntaxtextarea-2.0.2.jar:./sysout-over-slf4j-1.0.2.jar:./com
 
 # Run it
 # ${JAVA_BIN} ${JAVA_FLAGS} -classpath "${MCV_CLASSPATH}" -da edu.wisc.ssec.mcidasv.McIDASV ${MCV_FLAGS} ${MCV_PARAMS} >>"${MCV_LOG}" 2>&1
+echo "${JAVA_BIN} ${JAVA_FLAGS} -classpath '${MCV_CLASSPATH}' -da edu.wisc.ssec.mcidasv.McIDASV ${MCV_FLAGS} ${MCV_PARAMS}"
 ${JAVA_BIN} ${JAVA_FLAGS} -classpath "${MCV_CLASSPATH}" -da edu.wisc.ssec.mcidasv.McIDASV ${MCV_FLAGS} ${MCV_PARAMS}
