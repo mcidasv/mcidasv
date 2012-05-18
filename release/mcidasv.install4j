@@ -648,7 +648,7 @@ return allowed;</validation>
                     <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
                       <void property="destinationDirectory">
                         <object class="java.io.File">
-                          <string>${installer:sys.userHome}/Library/Java/Extensions</string>
+                          <string>${installer:sys.installationDir}/javaextdir</string>
                         </object>
                       </void>
                       <void property="overwriteMode">
