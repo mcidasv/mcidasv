@@ -724,6 +724,8 @@ class _Display(_JavaProxy):
            line, element: need to be specified together.
                       Line is number of pixels from top, element is number
                       of pixels from left, for bottom left point of text.
+                      Or, can do element="CENTER" which centers the text 
+                      horizontally.
            font: name of a font.   (optional)
            size: size of font. (optional)
            style:  'NONE', 'BOLD', or 'ITALIC'  (optional)
@@ -757,6 +759,10 @@ class _Display(_JavaProxy):
             glyph.setCoordType(DrawingGlyph.COORD_LATLONALT)
         elif (line != None) and (element != None) and (
                 (lat == None) and (lon == None)):
+            if (str(element).lower() == "center"):
+                dims = self.getDimensions()
+                element = dims[2] / 2 # should be middle pixel
+                glyph.setHorizontalJustification(TextGlyph.JUST_CENTER)
             # screen coordinates
             glyph.setCoordType(DrawingGlyph.COORD_XYZ)
             mapDisplay = self._JavaProxy__javaObject.getMapDisplay()
