@@ -731,6 +731,9 @@ class _Display(_JavaProxy):
            color: text color. Default red, for now I guess. this is GUI default.
                  (optional)
 
+        Returns:
+           a _Layer wrapping a DrawingControl
+
         Raises:
             ValueError: if didn't get proper lat/lon or line/element combo
         """
@@ -784,6 +787,7 @@ class _Display(_JavaProxy):
         pointList.add(point)
         glyph.setPoints(pointList)
         drawCtl.addGlyph(glyph)
+        return _Layer(drawCtl)
 
 # TODO(jon): still not sure what to offer here.
 class _Layer(_JavaProxy):
