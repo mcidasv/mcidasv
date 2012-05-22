@@ -156,16 +156,24 @@ def _getNewFont(currentFont, fontName, style, size):
 
     if fontName != None:
         # check if fontName is valid
-        fontList = ucar.unidata.util.GuiUtils.getFontList()
+        fontList = list(ucar.unidata.util.GuiUtils.getFontList())
+        # Add Java Platform required fonts to this list. This avoids issues 
+        # where getFontList() returns e.g. Serif.plain instead of just Serif.
+        fontList.extend(
+                ['Serif', 'SansSerif', 'Monospaced', 'Dialog', 'DialogInput'])
         foundFont = False
         for availableFont in fontList:
-            if availableFont.toString().lower() == fontName.lower():
-                # need to get properly capitalized font string!
-                fontName = availableFont.toString()
+            # Note, Font constructor will just use some default font if passed
+            # a non-existent font name.  So need to check for existence of
+            # user-specified font rather than catch exception.
+            if str(availableFont).lower() == fontName.lower():
+                fontName = str(availableFont)
                 foundFont = True
         if foundFont == False:
             # if fontName is STILL None, then user provided an invalid font name
-            raise ValueError("Could not find the following fontName:", fontName, "call allFontNames for valid options")
+            raise ValueError(
+                    "Could not find the following fontName:", fontName, 
+                    "call allFontNames for valid options")
     else:
         # leave as-is if fontName is None
         fontName = currentFont.getFontName()
