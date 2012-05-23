@@ -44,6 +44,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.OutputStream;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -81,11 +84,13 @@ import ucar.unidata.idv.JythonManager;
 import ucar.unidata.ui.InteractiveShell;
 import ucar.unidata.util.GuiUtils;
 
+import edu.wisc.ssec.mcidasv.McIDASV;
+
 /**
  * This class provides  an interactive shell for running JYthon
  *
  * @author IDV development team
- * @version $Revision$Date: 2012/02/19 17:35:55 $
+ * @version $Revision$Date: 2012/03/28 14:59:28 $
  */
 public class JythonShell extends InteractiveShell {
 
@@ -109,6 +114,9 @@ public class JythonShell extends InteractiveShell {
 
     /** _more_          */
     ImageGenerator islInterpreter;
+    
+    /** history file where all Jython commands get recorded */
+    private BufferedWriter historyFile;
 
     /**
      * ctor
@@ -123,6 +131,15 @@ public class JythonShell extends InteractiveShell {
             history.clear();
             history.addAll(oldHistory);
         }
+        
+        String historyFilename = ((McIDASV)theIdv).getUserFile("jython_history");
+        try {
+        	// open in append mode
+        	this.historyFile = new BufferedWriter(new FileWriter(historyFilename, true));
+        } catch (IOException e) {
+            logException("An error occurred trying to open jython_history file", e);
+        }
+        
         createInterpreter();
         //Create the gui
         init();
@@ -510,9 +527,18 @@ public class JythonShell extends InteractiveShell {
             startBufferingOutput();
             interp.exec(sb.toString());
             endBufferingOutput();
+            
+            // Only write to history file if Jython is "valid" (didn't cause an exception).
+            // Not sure if this is the desired behavior or not...
+            // (do before interp.exec if you want to write to history no matter what.)
+            historyFile.write(sb.toString());
+        	historyFile.flush();
+        	
         } catch (PyException pse) {
             endBufferingOutput();
             output("<font color=\"red\">Error: " + pse.toString() + "</font><br>");
+        } catch (IOException exc) {
+        	logException("An error occurred trying to write to jython_history file", exc);
         } catch (Exception exc) {
             endBufferingOutput();
             output("<font color=\"red\">Error: " + exc + "</font><br>");
