@@ -3,7 +3,7 @@
   enabling scans allows SLF4J to rescan a given config file and apply any
   changes!
  -->
-<configuration debug="true">
+<configuration debug="false">
 
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
@@ -14,8 +14,7 @@
   <appender name="JYTHON" class="ch.qos.logback.core.FileAppender">
     <file>${mcv.userpath}/jython.log</file>
     <encoder>
-      <!-- <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %method: %msg%n</pattern> -->
-      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger:%n%msg%n</pattern>
+      <pattern># %d{HH:mm:ss.SSS} [%thread] %level:%n%msg%n</pattern>
     </encoder>
    </appender>
 
@@ -30,13 +29,13 @@
     <appender-ref ref="STDOUT" />
   </root>
   
-  
+  <logger name="uk.org.lidalia.sysoutslf4j" level="OFF" />
   
   <logger name="jython" level="INFO">
     <!-- remember: jython is like a subclass of the root logger; including the STDOUT -->
     <!-- appender will only result in duplicate output. -->
     <!-- <appender-ref ref="STDOUT" /> -->
-    <appender-ref ref="STDOUT" />
+    <appender-ref ref="JYTHON" />
   </logger>
   
   

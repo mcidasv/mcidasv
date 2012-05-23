@@ -37,7 +37,7 @@
   <appender name="JYTHON" class="ch.qos.logback.core.FileAppender">
     <file>${mcv.userpath}/jython.log</file>
     <encoder>
-      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger:%n%msg%n</pattern>
+      <pattern># %d{HH:mm:ss.SSS} [%thread] %level:%n%msg%n</pattern>
     </encoder>
   </appender>
 
@@ -47,10 +47,17 @@
   <!-- logging only listens for things at "INFO" level within mcv (by default)
        valid levels are: TRACE, DEBUG, INFO, WARN, ERROR, OFF
        be sure to skim over http://logback.qos.ch/manual/architecture.html#basic_selection -->
-  <root level="INFO">
+  <root level="TRACE">
     <appender-ref ref="FILE" />
   </root>
 
   <!-- Disable some initial status messages from the stdout/stderr redirect library -->
   <logger name="uk.org.lidalia.sysoutslf4j" level="OFF" />
+  
+  <logger name="jython" level="INFO">
+    <!-- remember: jython is like a subclass of the root logger; including the STDOUT -->
+    <!-- appender will only result in duplicate output. -->
+    <!-- <appender-ref ref="STDOUT" /> -->
+    <appender-ref ref="JYTHON" />
+  </logger>
   </configuration>

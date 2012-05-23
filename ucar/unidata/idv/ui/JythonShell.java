@@ -90,7 +90,7 @@ import edu.wisc.ssec.mcidasv.McIDASV;
  * This class provides  an interactive shell for running JYthon
  *
  * @author IDV development team
- * @version $Revision$Date: 2012/03/28 14:59:28 $
+ * @version $Revision$Date: 2012/05/23 19:17:03 $
  */
 public class JythonShell extends InteractiveShell {
 
@@ -533,6 +533,7 @@ public class JythonShell extends InteractiveShell {
             // (do before interp.exec if you want to write to history no matter what.)
             historyFile.write(sb.toString());
         	historyFile.flush();
+            jythonLogger.info(sb.toString());
         	
         } catch (PyException pse) {
             endBufferingOutput();
