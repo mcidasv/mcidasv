@@ -90,7 +90,7 @@ import edu.wisc.ssec.mcidasv.McIDASV;
  * This class provides  an interactive shell for running JYthon
  *
  * @author IDV development team
- * @version $Revision$Date: 2012/05/23 19:17:03 $
+ * @version $Revision$Date: 2012/05/23 21:08:03 $
  */
 public class JythonShell extends InteractiveShell {
 
@@ -143,6 +143,18 @@ public class JythonShell extends InteractiveShell {
         createInterpreter();
         //Create the gui
         init();
+    }
+    
+    /**
+     * The Jython shell window has been closed, so close historyFile
+     */
+    @Override public void close() {
+    	try {
+    		this.historyFile.close();
+    	} catch (IOException exc) {
+    		logException("An error occurred trying to close jython_history file", exc);
+    	}
+    	super.close();
     }
 
     /**
