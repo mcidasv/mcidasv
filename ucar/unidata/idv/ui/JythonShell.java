@@ -90,7 +90,7 @@ import edu.wisc.ssec.mcidasv.McIDASV;
  * This class provides  an interactive shell for running JYthon
  *
  * @author IDV development team
- * @version $Revision$Date: 2012/05/23 21:08:03 $
+ * @version $Revision$Date: 2012/05/24 15:01:43 $
  */
 public class JythonShell extends InteractiveShell {
 
@@ -115,7 +115,7 @@ public class JythonShell extends InteractiveShell {
     /** _more_          */
     ImageGenerator islInterpreter;
     
-    /** history file where all Jython commands get recorded */
+    /** history file where all Jython commands get recorded. */
     private BufferedWriter historyFile;
 
     /**
