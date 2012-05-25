@@ -127,13 +127,13 @@ public class SuomiNPPDataSource extends HydraDataSource {
     private FlatField previewImage = null;
     
     private static int[] YSCAN_POSSIBILITIES = { 
-    	48,  96,  512,  768,  771,  771,  1536, 1541, 2304, 2313, 180, 60,  60,  60,  5,   15   
+    	48,  96,  512,  768,  3072, 771,  771,  1536, 1541, 2304, 2313, 180, 60,  60,  60,  5,   15   
     };
     private static int[] XSCAN_POSSIBILITIES = { 
-    	254, 508, 2133, 3200, 4121, 4421, 6400, 8241, 4064, 4121, 96,  30,  30,  30,  5,   105  
+    	254, 508, 2133, 3200, 3200, 4121, 4421, 6400, 8241, 4064, 4121, 96,  30,  30,  30,  5,   105  
     }; 
     private static int[] ZSCAN_POSSIBILITIES = { 
-    	-1,  -1,  -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   22,  163, 437, 717, 200, 260 
+    	-1,  -1,  -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   22,  163, 437, 717, 200, 260 
     };    
     private int inTrackDimensionLength = -1;
     
