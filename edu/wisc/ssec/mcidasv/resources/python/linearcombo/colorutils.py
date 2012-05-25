@@ -1,4 +1,5 @@
 from java.awt import Color
+from java.lang import Number
 from visad import ConstantMap
 from visad import Display
 
@@ -160,31 +161,126 @@ _cnames = {
     'w'                    : '#ffffff',
 }
 
+
 def _convertHexColor(hex_str):
+    """Converts a string of hex values (think HTML/CSS colors) into a tuple of
+        VisAD ConstantMaps.
+        
+        Args:
+            hex_str: Hex string representing a RGB color. Note that this string
+                     must begin with '#'.
+        
+        Returns:
+            The RGB values extracted from hex_str as a tuple of ConstantMaps.
+    """
     t = tuple([int(n, 16) / 255.0 for n in (hex_str[1:3], hex_str[3:5], hex_str[5:7])])
     r = ConstantMap(t[0], Display.Red)
     g = ConstantMap(t[1], Display.Green)
     b = ConstantMap(t[2], Display.Blue)
     return r, g, b
 
+
 def _convertNamedColor(name):
+    """Attempts to convert a named color into a RGB ConstantMap tuple.
+    
+    Args:
+        name: Named color to convert.
+    
+    Returns:
+        A RGB ConstantMap tuple for the color.
+    
+    Raises:
+        ValueError: If color did not correspond to a known color.
+    """
     if name not in _cnames:
         raise ValueError('Bad color string:', name)
     return _convertHexColor(_cnames[name])
 
+
+def _convert_color_component(x):
+    """Converts a RGB value into a float.
+    
+    Note: A value may be between 0.0 and 255.0. However, because VisAD expects
+    ConstantMap values to be between 0.0 and 1.0, some manipulation must occur.
+    
+    A float value between 0.0 and 1.0 will not be manipulated and will be
+    returned; float values between 1.0 and 255.0 are divided by 255.0 before
+    being returned.
+    
+    Integer values between 0 and 255 are divided by 255.0 and returned.
+    
+    Args:
+        x: Value to convert. This value can be essentially any number type
+           understood by Java or Jython.
+    
+    Returns:
+        The given value converted into a float between 0.0 and 1.0.
+    """
+    if isinstance(x, Number):
+        converted = x.doubleValue()
+    else:
+        converted = x
+    
+    if isinstance(converted, int) and converted >= 0:
+        val = float(converted) / 255.0
+    elif isinstance(converted, float):
+        if 0.0 <= converted <= 1.0:
+            val = converted
+        elif 0.0 <= converted <= 255.0:
+            val = converted / 255.0
+        else:
+            raise ValueError('RGB value must be between 0.0 and 1.0, or 0 and 255', x)
+    else:
+        raise ValueError('Could not figure out how to convert value', x)
+    
+    return val
+
+
 def _convertRgbSeq(seq):
+    """Converts an iterable sequence of RGB values into a tuple of ConstantMapped
+    values.
+    
+    Note: Each value may be between 0.0 and 255.0. However, because VisAD expects
+    ConstantMap values to be between 0.0 and 1.0, some manipulation must occur.
+    
+    Float values between 0.0 and 1.0 are considered to be ConstantMap values
+    already and are not manipulated; Float values between 1.0 and 255.0 are
+    divided by 255.0 before becoming a ConstantMap.
+    
+    Integer values between 0 and 255 are divided by 255.0 before becoming a
+    ConstantMap.
+    
+    Args:
+        seq: A sequence of three values. Each value must be between 0.0 and 255.0.
+    
+    Returns:
+        A RGB ConstantMap tuple for the color sequence.
+    
+    Raises:
+        ValueError: If seq does not contain three values.
+    """
     if len(seq) is not 3:
         raise ValueError('Bad RGB sequence length:', len(seq))
-    if [x for x in seq if not 0.0 <= float(x) <= 1.0]:
-        raise ValueError('Bad value in RGB sequence; must be 0.0 <= <value> <= 1.0')
     
-    r = ConstantMap(seq[0], Display.Red)
-    g = ConstantMap(seq[1], Display.Green)
-    b = ConstantMap(seq[2], Display.Blue)
+    r = ConstantMap(_convert_color_component(seq[0]), Display.Red)
+    g = ConstantMap(_convert_color_component(seq[1]), Display.Green)
+    b = ConstantMap(_convert_color_component(seq[2]), Display.Blue)
     
     return r, g, b
 
+
 def convertColor(color='green'):
+    """Converts a variety inputs into an RGB tuple of VisAD ConstantMaps.
+    
+    Args:
+        color: Default value is "green". This function understands:
+               * color names (such as "green")
+               * hex strings (such as "#ff00ff")
+               * sequences of three colors ((255, 0.1, 1))
+    
+    Returns:
+        A RGB ConstantMap tuple for the given color.
+    """
     hash_key = str(color)
     
     if hash_key not in _color_cache:
@@ -202,10 +298,24 @@ def convertColor(color='green'):
     
     return _color_cache[hash_key]
 
+
 def convertColorToJava(color='green'):
+    """Converts a variety inputs into a java.awt.Color object.
+    
+    Args:
+        color: Default value is "green". This function understands:
+               * color names (such as "green")
+               * hex strings (such as "#ff00ff")
+               * sequences of three colors ((255, 0.1, 1))
+    
+    Returns:
+        A java.awt.Color object for the given color.
+    """
     red, green, blue = convertColor(color)
     return Color(red.getConstant(), green.getConstant(), blue.getConstant())
 
+
 def listColorNames():
+    """Lists the available color names."""
     for k in sorted(_cnames.keys()):
         print k
