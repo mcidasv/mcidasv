@@ -571,7 +571,8 @@ class _Display(_JavaProxy):
         
         return [_Layer(displayControl) for displayControl in self._JavaProxy__javaObject.getControls()]
 
-    def createLayer(self, layerType, data, dataParameter='Data'):
+    def createLayer(self, layerType, data, fillDisplay=False, 
+            dataParameter='Data'):
         """Creates a new Layer in this _Display
 
         Args:
@@ -579,6 +580,10 @@ class _Display(_JavaProxy):
                        can be determined with the "allLayerTypes()" function.
 
             data: Data object to associate with the resulting layer.
+
+            fillDisplay: if True, resize the _Display to the size of the image
+                being displayed and set the lat/lon bounds of the _Display
+                to match the corners of the image.
 
             dataParameter: Not sure.
 
@@ -665,6 +670,26 @@ class _Display(_JavaProxy):
         # turn layer layer visibility off by default to avoid ugly default strings
         # (note visible=False will turn *all* layer labels off)
         wrappedLayer.setLayerLabel(label='')
+
+        if fillDisplay:
+            if isinstance(data[0], NavigatedImage):
+                import ucar.unidata.geoloc.ProjectionRect as ProjectionRect
+                nav = data[0].getNavigation()
+                area = nav.getDefaultMapArea()
+                # get lower left and upper right lat lon points of image
+                ll = nav.getLatLon([[area.x], [area.y]])
+                ur = nav.getLatLon([[area.width], [area.height]])
+
+                self.setSize(int(area.width), int(area.height))
+                pause()  # was necessary in test scripts, maybe not here
+
+                rect = ProjectionRect(
+                        ll.getLongitude().value, ll.getLatitude().value,
+                        ur.getLongitude().value, ur.getLatitude().value)
+                self._JavaProxy__javaObject.getMapDisplay().setMapArea(rect)
+            else:
+                print('createLayer:  fillDisplay keyword currently only tested' +
+                        'for NavigatedImage layer types')
 
         # TODO(jon): this should behave better if createDisplay fails for some reason.
         return wrappedLayer
