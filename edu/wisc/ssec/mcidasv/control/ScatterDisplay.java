@@ -130,6 +130,7 @@ import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.data.hydra.SubsetRubberBandBox;
 import edu.wisc.ssec.mcidasv.data.hydra.LongitudeLatitudeCoordinateSystem;
 import edu.wisc.ssec.mcidasv.data.hydra.Statistics;
+import edu.wisc.ssec.mcidasv.data.StatsTable;
 
 public class ScatterDisplay extends DisplayControlImpl {
 
@@ -195,7 +196,7 @@ public class ScatterDisplay extends DisplayControlImpl {
     float[][] markColorPalette = new float[][] {{1f,0.8f,0f,0f},{1f,0f,0.8f,0f},{1f,0.8f,0f,0.8f}};
 
     JButton computeStatsButton;
-    MyStatsTable statsTable;
+    StatsTable statsTable;
    
     boolean selectByCurve = false;
 
@@ -335,7 +336,7 @@ public class ScatterDisplay extends DisplayControlImpl {
         }
 
         Area_field = JPythonMethods.createAreaField(X_field);
-        statsTable = new MyStatsTable();
+        statsTable = new StatsTable();
         
     }
 
@@ -665,7 +666,7 @@ public class ScatterDisplay extends DisplayControlImpl {
             public void actionPerformed(final ActionEvent e) {
 
                if (statsTable == null) {
-                 statsTable = new MyStatsTable();
+                 statsTable = new StatsTable();
                }
 
                statsTable.setIsShowing();
@@ -972,253 +973,6 @@ public class ScatterDisplay extends DisplayControlImpl {
     }
 
 
-    //For creating a non-editable JTable
-    private class MyStatsTable extends AbstractTableModel {
-      String [][] data;
-      JTable table;
-      JFrame statsWindow;
-      int numCols;
-      boolean isShowing = false;
-      Color[] coltab = {new Color(0xf0f0f0), new Color(0xffd0ff), 
-                        new Color(0xd0ffd0), new Color(0xc0d0ff)};
-
-      final int maxCols = 9;
-      String[] colNames = {"Stats Parameter","Whole Field X","Whole Field Y",
-        "Magenta X","Magenta Y", "Green X","Green Y","Blue X","Blue Y"};
-
-      final int maxRows = 13;
-      final String[] rowNames = {"Maximum","Minimum",
-        "Number of points","Mean","Median","Variance","Kurtosis",
-        "Std Dev","Correlation","Difference Maximum",
-        "Difference Minimum","Difference Mean","Area [km^2]"};
-
-      MyStatsTable() { super();
-        data = new String[maxRows][maxCols];
-        numCols = 1;
-
-        for (int i=0; i<maxRows; i++) {
-          data[i][0] = rowNames[i];
-          for (int j=1; j<maxCols; j++) {
-            data[i][j] = "  ";
-          }
-        }
-
-
-        table = new JTable(this) {
-          public Component prepareRenderer(
-            TableCellRenderer renderer, int row, int col) {
-              Component comp = super.prepareRenderer(renderer, row, col);
-              Color c = Color.white;
-              if (col == 0) c = coltab[0];
-              if (col == 3 || col == 4) c = coltab[1];
-              if (col == 5 || col == 6) c = coltab[2];
-              if (col == 7 || col == 8) c = coltab[3];
-              comp.setBackground(c);
-              return comp;
-            }
-
-        };
-        table.setFillsViewportHeight(true);
-        table.setPreferredScrollableViewportSize(new Dimension(620,220));
-        table.setRowSelectionAllowed(true);
-        table.setColumnSelectionAllowed(false);
-
-        JButton saveStatsButt = new JButton("Save As CSV");
-        JScrollPane sp = new JScrollPane(table);
-        statsWindow = new JFrame("Scatter Statistics");
-        statsWindow.setLayout(new BorderLayout());
-        statsWindow.getContentPane().add(sp,BorderLayout.NORTH);
-        JPanel bpan = new JPanel(new FlowLayout());
-        bpan.add(saveStatsButt);
-        statsWindow.getContentPane().add(bpan,BorderLayout.SOUTH);
-        statsWindow.setSize(650,340);
-        statsWindow.pack();
-        statsWindow.addWindowListener(new WindowAdapter() {
-          public void windowClosing(WindowEvent e) {
-            isShowing = false;
-          }
-        });
-
-        saveStatsButt.addActionListener(new ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
-              JFileChooser chzr = new JFileChooser();
-                FileFilter filt = new FileNameExtensionFilter("csv","txt");
-                chzr.addChoosableFileFilter(filt);
-                int rv = chzr.showSaveDialog(statsWindow);
-                if (rv == JFileChooser.APPROVE_OPTION) {
-                  try {
-                    File fpw = chzr.getSelectedFile();
-                    statsWindow.setTitle("Scatter Statistics saved to "+fpw.toString());
-                    PrintWriter pw = new PrintWriter(fpw);
-                    String line = "";
-                    for (int k=0; k<colNames.length; k++) {
-                      if (k != 0) line = line + ",";
-                      line = line + colNames[k];
-                    }
-                    pw.println(line);
-
-                    for (int i=0; i<data.length; i++) {
-                      line = "";
-                      for (int j=0; j<data[i].length; j++) {
-                        if (j != 0) line = line+",";
-                        line = line+data[i][j];
-                      }
-                      pw.println(line);
-                    }
-                    pw.flush();
-                    pw.close();
-                  } catch (Exception epw) {
-                    statsWindow.setTitle("Scatter Statistics: File not saved");
-                  }  
-
-                }
-
-            }
-        });
-
-        isShowing = false;
-        statsWindow.setVisible(false);
-      }
-
-      public void setIsShowing() {
-        isShowing = true;
-      }
-
-      public void resetValues(int col) {
-        for (int i=0; i<maxRows; i++) {
-          int c = 2*col + 3;
-          data[i][c] = " ";
-          data[i][c+1] = " ";
-        }
-        fireTableStructureChanged();
-      }
-
-      public void setNames(String xn, String yn) {
-        colNames[1] = colNames[3] = colNames[5] = colNames[7] =xn;
-        colNames[2] = colNames[4] = colNames[6] = colNames[8] =yn;
-      }
-
-      // fx, fy are Fields, col = 0,1,2,3 (all, red, green, blue)
-      public void setFields(FlatField fx, FlatField fy, int col) {
-        statsWindow.setTitle("Scatter Statistics");
-        try {
-          Statistics sx = new Statistics(fx);
-          Statistics sy = new Statistics(fy);
-          Statistics diff = new Statistics((FlatField)fx.subtract(fy));
-
-          int c = 2*col + 1;
-          data[0][c] = fmtMe(((Real)sx.max()).getValue());
-          data[0][c+1] = fmtMe(((Real)sy.max()).getValue());
-
-          data[1][c] = fmtMe(((Real)sx.min()).getValue());
-          data[1][c+1] = fmtMe(((Real)sy.min()).getValue());
-
-          data[2][c] = String.format("%d",sx.numPoints());
-          data[2][c+1] = String.format("%d",sy.numPoints());
-
-          data[3][c] = fmtMe(((Real)sx.mean()).getValue());
-          data[3][c+1] = fmtMe(((Real)sy.mean()).getValue());
-
-          data[4][c] = fmtMe(((Real)sx.median()).getValue());
-          data[4][c+1] = fmtMe(((Real)sy.median()).getValue());
-
-          data[5][c] = fmtMe(((Real)sx.variance()).getValue());
-          data[5][c+1] = fmtMe(((Real)sy.variance()).getValue());
-
-          data[6][c] = fmtMe(((Real)sx.kurtosis()).getValue());
-          data[6][c+1] = fmtMe(((Real)sy.kurtosis()).getValue());
-
-          data[7][c] = fmtMe(((Real)sx.standardDeviation()).getValue());
-          data[7][c+1] = fmtMe(((Real)sy.standardDeviation()).getValue());
-
-          data[8][c] = fmtMe(((Real)sx.correlation(fy)).getValue());
-          data[8][c+1] = " ";
-
-          data[9][c] = fmtMe(((Real)diff.max()).getValue());
-          data[9][c+1] = " ";
-
-          data[10][c] = fmtMe(((Real)diff.min()).getValue());
-          data[10][c+1] = " ";
-
-          data[11][c] = fmtMe(((Real)diff.mean()).getValue());
-          data[11][c+1] = " ";
-
-          if (c == 1) {
-            data[12][c] = " ";
-          } else {
-            data[12][c] = fmtMe(total_area);
-          }
-          data[12][c+1] = " ";
-
-          if (c+2 > numCols) numCols = c+2;
-          fireTableStructureChanged();
-
-        } catch (VisADException exc) {
-          System.out.println(exc.getMessage());
-        } catch (Exception exc) {
-          exc.printStackTrace();
-        }
-
-        if (isShowing) statsWindow.setVisible(true);
-      }
-
-      private String fmtMe(double val) {
-
-        if (Math.abs(val) == 0.0) {
-          return "0.00";
-
-        } else if (Math.abs(val) > 9999.9 || Math.abs(val) < .0010) {
-          return String.format("%.6e", val);
-
-        } else if (Math.abs(val) < 1.0) {
-          return String.format("%.5f", val);
-
-        } else if (Math.abs(val) < 10.0) {
-          return String.format("%.3f", val);
-
-        } else {
-          return String.format("%.2f", val);
-        }
-      }
-
-      public void setPoints(float[][] markScatter, int len, int indx) {
-        try {
-          Integer1DSet sdset = new Integer1DSet(len);
-          FlatField scattX = new FlatField(
-            new FunctionType(RealType.Generic, RealType.Generic), sdset);
-
-          float[][] scattValsX = new float[1][len];
-          System.arraycopy(markScatter[0],0,scattValsX[0],0,len);
-          scattX.setSamples(scattValsX, false);
-
-          FlatField scattY = new FlatField(
-            new FunctionType(RealType.Generic, RealType.Generic), sdset);
-          float[][] scattValsY = new float[1][len];
-          System.arraycopy(markScatter[1],0,scattValsY[0],0,len);
-          scattY.setSamples(scattValsY, false);
-
-          setFields(scattX, scattY, indx);
-
-        } catch (Exception esd) {
-          esd.printStackTrace();
-        }
-      }
-
-      public int getRowCount() {
-        return maxRows;
-      }
-      public int getColumnCount() {
-        return numCols;
-      }
-      public String getValueAt(int row, int col) {
-        return data[row][col];
-      }
-      public String getColumnName(int col) {
-        return colNames[col];
-      }
-    }
-
-
     private class ScatterDisplayable extends RGBDisplayable {
        ScatterDisplayable(String name, RealType rgbRealType, float[][] colorPalette, boolean alphaflag) 
            throws VisADException, RemoteException {
@@ -1300,10 +1054,10 @@ public class ScatterDisplay extends DisplayControlImpl {
       boolean active = true;
       float maskVal;
       LineDrawing lastCurve;
-      MyStatsTable myTable = null;
+      StatsTable myTable = null;
       int myTableIndex = 0;
 
-      ImageCurveSelector(CurveDrawer curveDraw, FlatField image, DisplayMaster master, Color color, float maskVal, MyStatsTable mst) 
+      ImageCurveSelector(CurveDrawer curveDraw, FlatField image, DisplayMaster master, Color color, float maskVal, StatsTable mst) 
            throws VisADException, RemoteException {
         this.curveDraw = curveDraw;
         this.maskVal = maskVal;
@@ -1451,7 +1205,7 @@ public class ScatterDisplay extends DisplayControlImpl {
              int[] selected = new int[len];
              System.arraycopy(tmpsel, 0, selected, 0, len);
              total_area = JPythonMethods.computeSum(Area_field, selected);
-             myTable.setPoints(markScatter, len, myTableIndex);  
+             myTable.setPoints(markScatter, len, myTableIndex, total_area);  
            }
 
          }
@@ -1549,10 +1303,10 @@ public class ScatterDisplay extends DisplayControlImpl {
         ImageBoxSelector other;
         float maskVal;
         boolean earthCoordDomain = false;
-        MyStatsTable myTable = null;
+        StatsTable myTable = null;
         int myTableIndex = 0;
 
-        ImageBoxSelector(SubsetRubberBandBox subsetBox, Set imageDomain, DisplayMaster master, Color color, float maskVal, MyStatsTable mst) 
+        ImageBoxSelector(SubsetRubberBandBox subsetBox, Set imageDomain, DisplayMaster master, Color color, float maskVal, StatsTable mst) 
             throws VisADException, RemoteException {
           super();
           this.myTable = mst;
@@ -1653,7 +1407,7 @@ public class ScatterDisplay extends DisplayControlImpl {
 
            if (myTable != null) {
              total_area = JPythonMethods.computeSum(Area_field, selected);
-             myTable.setPoints(markScatter, len, myTableIndex);  
+             myTable.setPoints(markScatter, len, myTableIndex, total_area);  
            }
 
            updateBox();
