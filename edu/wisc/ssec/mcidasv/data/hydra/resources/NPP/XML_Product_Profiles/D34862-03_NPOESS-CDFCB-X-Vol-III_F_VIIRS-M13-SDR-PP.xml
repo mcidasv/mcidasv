@@ -31,6 +31,9 @@
                                 <Description>Calibrated Top of Atmosphere (TOA) Radiance for each VIIRS pixel</Description>
                                 <DatumOffset>0</DatumOffset>
                                 <Scaled>0</Scaled>
+                                <ScaleFactorName>RadianceFactors</ScaleFactorName>
+                                <RangeMin>0.00</RangeMin>
+								<RangeMax>3.39</RangeMax>
                                 <MeasurementUnits>W/(m^2 μm sr)</MeasurementUnits>
                                 <DataType>32-bit floating point</DataType>
                                 <FillValue>
@@ -83,6 +86,9 @@
                                 <Description>Calibrated Top of Atmosphere (TOA) Brightness Temperature for each VIIRS pixel</Description>
                                 <DatumOffset>0</DatumOffset>
                                 <Scaled>0</Scaled>
+                                <ScaleFactorName>BrightnessTemperatureFactors</ScaleFactorName>
+                                <RangeMin>203.00</RangeMin>
+								<RangeMax>368.00</RangeMax>
                                 <MeasurementUnits>kelvin</MeasurementUnits>
                                 <DataType>32-bit floating point</DataType>
                                 <FillValue>
