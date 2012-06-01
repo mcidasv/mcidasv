@@ -6,11 +6,16 @@ date_default_timezone_set('America/Chicago');
 #cvs checkout mc-v
 #svn co http://svn.ssec.wisc.edu/repos/visad
 #svn co http://svn.unidata.ucar.edu/repos/idv
+#git clone https://github.com/Unidata/IDV.git
+
+// $MCV_ROOT = "/home/mcidasv/mc-v";
+// $VISAD_ROOT = "/home/mcidasv/svn_nightly/visad";
+// $IDV_ROOT = "/home/mcidasv/svn_nightly/idv";
+// $IDV_SYNC = "/home/mcidasv/svn_nightly/idv.sync";
 
 $MCV_ROOT = "/home/mcidasv/mc-v";
 $VISAD_ROOT = "/home/mcidasv/svn_nightly/visad";
-$IDV_ROOT = "/home/mcidasv/svn_nightly/idv";
-$IDV_SYNC = "/home/mcidasv/svn_nightly/idv.sync";
+$IDV_ROOT = "/home/mcidasv/git_nightly/IDV";
 
 $DATE = date("Y-m-d", strtotime("yesterday"));
 $END = date("Y-m-d", strtotime("yesterday"));
@@ -112,12 +117,13 @@ foreach ($commits as $date=>$commitArray) {
   }
 }
 
-# Get the diffs from IDV (SVN)
+# Get the diffs from IDV (GitHub)
 if (!$HTML) {
-  print "Getting commit logs from IDV SVN...\n";
+  print "Getting commit logs from IDV GitHub...\n";
 }
-`svnsync sync file://$IDV_SYNC 2>/dev/null`;
-$commits = getSVNCommits($IDV_ROOT, $DATE, $END);
+// `svnsync sync file://$IDV_SYNC 2>/dev/null`;
+// $commits = getSVNCommits($IDV_ROOT, $DATE, $END);
+$commits = getGitCommits($IDV_ROOT, $DATE, $END);
 foreach ($commits as $date=>$commitArray) {
   if (!isset($allCommits["$date"])) {
     $allCommits["$date"] = array();
@@ -252,6 +258,48 @@ function getCVSLog($FILE, $DATE, $END=false) {
   return $logs;
 }
 
+function getGitCommits($DIR, $DATE, $END=false) {
+  if (!@chdir($DIR)) {
+    print "ERROR: Failed to change to directory: ".$DIR."\n";
+    exit(1);
+  }
+  `git pull`;
+  $allLogs = array();
+  
+  # Always add one day--needs to be a range to work properly
+  if (!$END) {
+    $END = date("Y-m-d", strtotime($DATE) + (60*60*24));
+  }
+  
+  if (!$END) {
+    $datespec = "--since=\"$DATE\"";
+  } else {
+    # Add one day to be inclusive on the end
+    $END = date("Y-m-d", strtotime($END) + (60*60*24));
+    $datespec = "--since=\"$DATE\" --until=\"$END\"";
+  }
+  
+  # git log --since="2012-04-01" --until="2012-05-02" --all-match --name-only --pretty="format:" . 
+  
+  $filelist = `git log $datespec --all-match --name-only --pretty="format:" .`;
+  foreach (array_unique(explode("\n", $filelist)) as $file) {
+    $file = trim($file);
+    if (!$file) {
+      continue;
+    }
+    $logs = getGitLog($file, $DATE, $END);
+    foreach ($logs as $date=>$logArray) {
+      if (!isset($allLogs["$date"])) {
+        $allLogs["$date"] = array();
+      }
+      foreach ($logArray as $log) {
+        array_push($allLogs["$date"], $log);
+      }
+    }
+  }
+  return $allLogs;
+}
+
 function getSVNCommits($DIR, $DATE, $END=false) {
   if (!@chdir($DIR)) {
     print "ERROR: Failed to change to directory: ".$DIR."\n";
@@ -290,6 +338,50 @@ function getSVNCommits($DIR, $DATE, $END=false) {
     }
   }
   return $allLogs;
+}
+
+function getGitLog($FILE, $DATE, $END=false) {
+  #git log --since="2012-04-01" --until="2012-05-02" --all-match --pretty=format:"REV %H%%%%DATE %ai%%%%AUTHOR %an%%%%MSG %s"
+  if (!$END) {
+    $TODAY = date("Y-m-d");
+    $datespec = "--since=\"$DATE\"";
+  } else {
+    $datespec = "--since=\"$DATE\" --until=\"$END\"";
+  }
+  
+  $linelist = `git log $datespec --all-match --date=short --pretty=format:"%H%%%%%ad%%%%%an%%%%%s" $FILE`;
+  $revision = 0;
+  $date = 0;
+  $author = "";
+  $description = "";
+  $log = array();
+  $logs = array();
+  foreach (explode("\n", $linelist) as $line) {
+    $line = trim($line);
+    if ($line == "") {
+      continue;
+    }
+    
+    list($revision, $date, $author, $description) = explode("%%", $line);
+    $log["date"] = $date;
+    $log["revision"] = $revision;
+    $log["author"] = $author;
+    $log["file"] = $FILE;
+    $log["description"] = trim($description);
+    
+    if (!isset($logs["$date"])) {
+      $logs["$date"] = array();
+    }
+    
+    array_push($logs["$date"], $log);
+    
+    $revision = 0;
+    $date = 0;
+    $author = "";
+    $description = "";
+    $log = array();
+  }
+  return $logs;
 }
 
 function getSVNLog($FILE, $DATE, $END=false) {
