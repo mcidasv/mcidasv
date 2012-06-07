@@ -102,8 +102,6 @@ SET LOGBACK_CONFIG="edu/wisc/ssec/mcidasv/resources/logback.xml"
         
 REM Get the amount of system memorys
 echo Reading system configuration...
-SET SYS_VER=Unknown
-FOR /F "tokens=*" %%i IN ('jre\bin\java.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetVer 2^>NUL') DO SET SYS_VER=%%i
 SET /a SYS_MEM=0
 FOR /F %%i IN ('jre\bin\java.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
 
