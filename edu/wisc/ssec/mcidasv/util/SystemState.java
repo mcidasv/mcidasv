@@ -317,9 +317,9 @@ public class SystemState {
      * <p>Consider the output of {@link #getIdvVersionString()}; it's built
      * with the the following:
      * <ul>
-     *   <li><b>{@code idv.version.major}</b>: currently {@literal "2"}</li>
-     *   <li><b>{@code idv.version.minor}</b>: currently {@literal "9"}</li>
-     *   <li><b>{@code idv.version.revision}</b>: currently {@literal "u4"}}</li>
+     *   <li><b>{@code idv.version.major}</b>: currently {@literal "3"}</li>
+     *   <li><b>{@code idv.version.minor}</b>: currently {@literal "0"}</li>
+     *   <li><b>{@code idv.version.revision}</b>: currently {@literal "u2"}}</li>
      *   <li><b>{@code idv.build.date}</b>: varies pretty frequently,
      *   as it's the build timestamp for idv.jar</li>
      * </ul>
