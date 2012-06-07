@@ -50,7 +50,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
-import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.idv.StateManager;
 import ucar.unidata.util.CacheManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Msg;
@@ -88,8 +88,13 @@ public class MemoryMonitor extends JPanel implements Runnable {
     /** Keep track of the last time we ran the gc and cleared the cache */
     private static long lastTimeRanGC = -1;
     
-    /** Keep track of the IDV so we can try to cancel loads if mem usage gets high */
-    private IntegratedDataViewer idv;
+//    /** Keep track of the IDV so we can try to cancel loads if mem usage gets high */
+//    private IntegratedDataViewer idv;
+    private StateManager stateManager;
+
+    private String memoryString;
+
+    private String mbString;
 
     private boolean showClock = false;
 
@@ -99,21 +104,26 @@ public class MemoryMonitor extends JPanel implements Runnable {
 
     /**
      * Default constructor
+     * 
+     * @param stateManager 
      */
-    public MemoryMonitor(IntegratedDataViewer idv) {
-        this(idv, 75, 95, false);
+    public MemoryMonitor(StateManager stateManager) {
+        this(stateManager, 75, 95, false);
     }
 
     /**
      * Create a new MemoryMonitor
      * 
+     * @param stateManager 
      * @param percentThreshold the percentage of use memory before garbage
-     *        collection is run
+     * collection is run.
+     * @param percentCancel 
+     * @param showClock 
      * 
      */
-    public MemoryMonitor(IntegratedDataViewer idv, final int percentThreshold, final int percentCancel, boolean showClock) {
+    public MemoryMonitor(StateManager stateManager, final int percentThreshold, final int percentCancel, boolean showClock) {
         super(new BorderLayout());
-        this.idv = idv;
+        this.stateManager = stateManager;
         this.showClock = showClock;
         Font f = label.getFont();
         label.setToolTipText("Used memory/Max used memory/Max memory");
@@ -151,6 +161,8 @@ public class MemoryMonitor extends JPanel implements Runnable {
         label.addMouseListener(ml);
         label.setOpaque(true);
         label.setBackground(doColorThing(0));
+        memoryString = Msg.msg("Memory:");
+        mbString = Msg.msg("MB");
         start();
     }
 
@@ -166,11 +178,19 @@ public class MemoryMonitor extends JPanel implements Runnable {
         }
     }
 
+    /**
+     * 
+     */
     private void toggleClock() {
         this.showClock = !this.showClock;
-        idv.getStateManager().putPreference("idv.monitor.showclock", this.showClock);
+        stateManager.putPreference("idv.monitor.showclock", this.showClock);
     }
 
+    /**
+     * Returns a description of either the clock or memory monitor GUI.
+     * 
+     * @return Description of either the clock or memory monitor GUI.
+     */
     private String getToolTip() {
         if (showClock) {
             return "Current time";
@@ -313,12 +333,18 @@ public class MemoryMonitor extends JPanel implements Runnable {
             triedToCancel = false;
         }
 
-        label.setText(" "
-            + Msg.msg("Memory:") + " "
-            + fmt.format(usedMemory) + "/"
-            + fmt.format(highWaterMark) + "/"
-            + fmt.format(totalMemory) + " " + Msg.msg("MB")
-            + " ");
+//        label.setText(" "
+//            + Msg.msg("Memory:") + " "
+//            + fmt.format(usedMemory) + "/"
+//            + fmt.format(highWaterMark) + "/"
+//            + fmt.format(totalMemory) + " " + Msg.msg("MB")
+//            + " ");
+        label.setText(' '
+            + memoryString + ' '
+            + fmt.format(usedMemory) + '/'
+            + fmt.format(highWaterMark) + '/'
+            + fmt.format(totalMemory) + ' ' + mbString
+            + ' ');
 
         repaint();
     }
