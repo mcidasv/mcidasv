@@ -34,9 +34,21 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.Method;
 
-// Wrapper for OperatingSystemMXBean
+/**
+ * Wrapper for OperatingSystemMXBean
+ */
 public class GetMem {
 
+    /**
+     * Call a method belonging to {@link OperatingSystemMXBean} and return 
+     * the result. 
+     * 
+     * @param <T> Type of the expected return and {@code defaultValue}.
+     * @param methodName Name of the {@code OperatingSystemMXBean} method to call. Cannot be {@code null} or empty.
+     * @param defaultValue Value to return if the call to {@code methodName} fails.
+     * 
+     * @return Either the value returned by the {@code methodName} call, or {@code defaultValue}.
+     */
     private <T> T callMXBeanMethod(final String methodName, final T defaultValue) {
         assert methodName != null : "Cannot invoke a null method name";
         assert methodName.length() > 0: "Cannot invoke an empty method name";
@@ -50,32 +62,44 @@ public class GetMem {
             // cast is correct.
             result = (T)m.invoke(osBean);
         } catch (Exception e) {
-        	System.err.println("Error invoking OperatingSystemMXBean method: " + methodName);
+            System.err.println("Error invoking OperatingSystemMXBean method: " + methodName);
             // do nothing for right now
         }
         return result;
     }
-	
+
+    /**
+     * Get total system memory and print it out--accounts for 32bit JRE 
+     * limitation of 1.5GB.
+     * 
+     * @return {@code String} representation of the total amount of system 
+     * memory. 
+     * 
+     * @throws Exception
+     */
+    public static String getMemory() throws Exception {
+        GetMem nonStaticInstance = new GetMem();
+        Object totalMemoryObject = nonStaticInstance.callMXBeanMethod("getTotalPhysicalMemorySize", 0);
+        long totalMemory = ((Number)totalMemoryObject).longValue();
+        boolean is64 = (System.getProperty("os.arch").indexOf("64") >= 0);
+        int megabytes = (int)(Math.round(totalMemory/1024/1024));
+        if (!is64 && megabytes > 1536) {
+            megabytes = 1536;
+        }
+        return String.valueOf(megabytes);
+    }
+
     /**
      * The main. Get total system memory and print it out.
-     * Account for 32bit JRE limitation of 1.5GB.
-     * Print value in megabytes.
+     * 
+     * @param args Ignored.
      */
-    public static void main(String[] args) throws Exception {
-    	GetMem nonStaticInstance = new GetMem();
-
-    	try {
-	        Object totalMemoryObject = nonStaticInstance.callMXBeanMethod("getTotalPhysicalMemorySize", 0);
-	        long totalMemory = ((Number)totalMemoryObject).longValue();
-    		boolean is64 = (System.getProperty("os.arch").indexOf("64") >= 0);
-    		int megabytes = (int)(Math.round(totalMemory/1024/1024));
-    		if (!is64 && megabytes > 1536) megabytes=1536;
-	        String memoryString = String.valueOf(megabytes);
-	        System.out.println(memoryString);
-    	}
-    	catch (Exception e) {
-    		System.err.println("Error getting total physical memory size");
-    		System.out.println("0");
-    	}
+    public static void main(String[] args) {
+        try {
+            System.out.println(getMemory());
+        } catch (Exception e) {
+            System.err.println("Error getting total physical memory size");
+            System.out.println("0");
+        }
     }
 }
