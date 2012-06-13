@@ -104,10 +104,14 @@ public class TrackAdapter extends MultiDimensionAdapter {
 
    public HashMap getDefaultSubset() {
      HashMap subset = rngAdapter.getDefaultSubset();
-     double[] coords = (double[]) ((HashMap)subset).get("VertDim");
-     coords[0] = listIndex;
-     coords[1] = listIndex;
-     coords[2] = 1;
+     if (subset.containsKey("VertDim")) {
+       double[] coords = (double[]) ((HashMap)subset).get("VertDim");
+       if (coords != null) {
+         coords[0] = listIndex;
+         coords[1] = listIndex;
+         coords[2] = 1;
+       }
+     }
      return subset;
    }
 
