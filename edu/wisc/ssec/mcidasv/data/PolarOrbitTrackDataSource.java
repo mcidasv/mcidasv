@@ -31,7 +31,9 @@
 package edu.wisc.ssec.mcidasv.data;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.rmi.RemoteException;
@@ -53,11 +55,9 @@ import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.util.StringUtil;
 
-import visad.CommonUnit;
 import visad.Data;
 import visad.Text;
 import visad.Tuple;
-import visad.Unit;
 import visad.VisADException;
 import visad.georef.LatLonTuple;
 
@@ -70,10 +70,10 @@ import edu.wisc.ssec.mcidasv.data.adde.sgp4.TLE;
 import edu.wisc.ssec.mcidasv.data.adde.sgp4.Time;
 
 /**
- * Class for data sources of ADDE text data.  These may be generic
- * files or weather bulletins
+ * Class for Two-Line-Element data sources, to plot orbit tracks
+ * on McIDAS-V display window.
  *
- * @author IDV development team
+ * @author Tommy Jasmin
  * @version $Revision$
  */
 
@@ -125,8 +125,19 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
 */
         tleCards = new ArrayList();
         choices = new ArrayList();
+        
+        // we dealing with a local file?
+        if (properties.containsKey(PolarOrbitTrackChooser.LOCAL_FILE_KEY)) {
+            File f = (File) (properties.get(PolarOrbitTrackChooser.LOCAL_FILE_KEY));
+            logger.debug("Local file: " + f.getName());
+            URI uri = f.toURI();
+            properties.put(PolarOrbitTrackChooser.URL_NAME_KEY, uri.toString());
+        }
+        
+        // not a file, must be URL or ADDE request
         String key = PolarOrbitTrackChooser.TLE_SERVER_NAME_KEY;
         if (properties.containsKey(key)) {
+        	logger.debug("ADDE request...");
             Object server = properties.get(key);
             key = PolarOrbitTrackChooser.TLE_GROUP_NAME_KEY;
             Object group = properties.get(key);
@@ -162,6 +173,7 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
             try {
                 key = PolarOrbitTrackChooser.URL_NAME_KEY;
                 String urlStr = (String)(properties.get(key));
+                logger.debug("URL request: " + urlStr);
                 URL url = new URL(urlStr);
                 URLConnection urlCon = url.openConnection();
                 InputStreamReader isr = new InputStreamReader(urlCon.getInputStream());
@@ -196,7 +208,7 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
     }
 
     /**
-     * Make the data choices assoicated with this source.
+     * Make the data choices associated with this source.
      */
     protected void doMakeDataChoices() {
         String category = "TLE";

@@ -37,15 +37,22 @@ import static javax.swing.GroupLayout.Alignment.TRAILING;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -66,17 +73,26 @@ import edu.wisc.ssec.mcidasv.chooser.adde.AddeChooser;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
-
 /**
- * Widget to select images from a remote ADDE server
- * Displays a list of the descriptors (names) of the image datasets
- * available for a particular ADDE group on the remote server.
+ * Polar Orbit Track Chooser
+ * Allows user to load TLE files for display in McIDAS-V via three methods:
+ * Remote: ADDE or URL
+ * Local: file
  *
- * @author Don Murray
+ * @author Gail Dengel and Tommy Jasmin
  */
+
 public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
 
-    /** Connect button--we need to be able to disable this */
+	private static final long serialVersionUID = 1L;
+
+	// chooser for local files
+	TLEFileChooser tlefc = null;
+	
+	// set when loading a local file
+	File localFile = null;
+	
+	/** Connect button--we need to be able to disable this */
     JButton connectButton = McVGuiUtils.makeImageTextButton(ICON_CONNECT_SMALL, "Connect");
 
     /** Manage button */
@@ -114,6 +130,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
      */
     public static String TLE_SERVER_NAME_KEY = "tle_server";
     public static String URL_NAME_KEY = "url_name";
+    public static String LOCAL_FILE_KEY = "file_object";
 
     /**
      * Property for the tle group name key.
@@ -134,10 +151,10 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
     /**
      * Construct an Adde image selection widget
      *
-     *
      * @param mgr The chooser manager
      * @param root The chooser.xml node
      */
+    
     public PolarOrbitTrackChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
         serverSelector = getServerSelector();
@@ -157,11 +174,15 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
      *
      * @return The gui
      */
+    
     @Override
     public JComponent doMakeContents() {
         JPanel outerPanel = new JPanel();
         JPanel addePanel = new JPanel();
-        addePanel =  (JPanel)makeAddePanel();
+        addePanel = (JPanel) makeAddePanel();
+        
+        tlefc = new TLEFileChooser(".");
+        tlefc.setPotc(this);
 
         JButton helpButton = McVGuiUtils.makeImageButton(ICON_HELP, "Show help");
         helpButton.setActionCommand(GuiUtils.CMD_HELP);
@@ -172,35 +193,40 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         refreshButton.addActionListener(this);
 
         McVGuiUtils.setComponentWidth(loadButton, Width.DOUBLE);
-
-        GroupLayout layout = new GroupLayout(outerPanel);
-        outerPanel.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(LEADING)
-            .addGroup(TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(helpButton)
-                        .addGap(GAP_RELATED)
-                        .addComponent(refreshButton)
-                        .addGap(GAP_RELATED)
-                        .addComponent(cancelButton)
-                        .addPreferredGap(RELATED)
-                        .addComponent(loadButton))
-                        .addGroup(LEADING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(LEADING)
-                            .addComponent(addePanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)))))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(addePanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(BASELINE)
-                    .addComponent(loadButton)
-                    .addComponent(cancelButton)
-                    .addComponent(refreshButton)
-                    .addComponent(helpButton)))
-        );
+        
+        outerPanel.setLayout(new BorderLayout());
+        JPanel choicePanel = new JPanel(new BorderLayout());
+        JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+        
+        // load the local and remote choices in a Box in center panel
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.PAGE_AXIS));
+        JPanel localPanel = new JPanel();
+        localPanel.setBorder(BorderFactory.createTitledBorder("Local"));
+        JPanel remotePanel = new JPanel();
+        remotePanel.setBorder(BorderFactory.createTitledBorder("Remote"));
+        
+        // populate the local access panel
+        localPanel.add(tlefc);
+        
+        // populate the remote access panel
+        remotePanel.add(addePanel);
+        
+        centerPanel.add(localPanel);
+        centerPanel.add(remotePanel);
+        choicePanel.add(centerPanel, BorderLayout.CENTER);
+        
+        outerPanel.add(choicePanel, BorderLayout.CENTER);
+        
+        // populate and add the control panel
+        controlPanel.add(helpButton);
+        controlPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        controlPanel.add(refreshButton);
+        controlPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        controlPanel.add(cancelButton);
+        controlPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        controlPanel.add(loadButton);
+        outerPanel.add(controlPanel, BorderLayout.PAGE_END);
 
         return outerPanel;
     }
@@ -341,6 +367,10 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
 
         return outerPanel;
     }
+    
+    public void enableFileLoad(boolean val) {
+    	loadButton.setEnabled(val);
+    }
 
     private void enableDescriptors(boolean val) {
         if (val) {
@@ -382,7 +412,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
     }
 
     /**
-      * get the adde server grup type to use
+      * get the adde server group type to use
       *
       * @return group type
       */
@@ -412,21 +442,26 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
      *            Hashtable of properties
      */
     protected void getDataSourceProperties(Hashtable ht) {
-        if (addeBtn.isSelected()) {
-            super.getDataSourceProperties(ht);
-            ht.put(DATASET_NAME_KEY, getDatasetName());
-            String server = getServer();
-            ht.put(TLE_SERVER_NAME_KEY, server);
-            String group = getGroup();
-            ht.put(TLE_GROUP_NAME_KEY, group);
-            Map<String, String> acct = getAccounting(server, group);
-            String user = acct.get("user");
-            String proj = acct.get("proj");
-            ht.put(TLE_USER_ID_KEY, user);
-            ht.put(TLE_PROJECT_NUMBER_KEY, proj);
-        } else {
-            ht.put(URL_NAME_KEY, box.getSelectedItem());
-        }
+    	if (tlefc.getSelectedFile() == null) {
+	        if (addeBtn.isSelected()) {
+	            super.getDataSourceProperties(ht);
+	            ht.put(DATASET_NAME_KEY, getDatasetName());
+	            String server = getServer();
+	            ht.put(TLE_SERVER_NAME_KEY, server);
+	            String group = getGroup();
+	            ht.put(TLE_GROUP_NAME_KEY, group);
+	            Map<String, String> acct = getAccounting(server, group);
+	            String user = acct.get("user");
+	            String proj = acct.get("proj");
+	            ht.put(TLE_USER_ID_KEY, user);
+	            ht.put(TLE_PROJECT_NUMBER_KEY, proj);
+	        } else {
+	            ht.put(URL_NAME_KEY, box.getSelectedItem());
+	        }
+    	} else {
+            // else if file, set a new key...
+    		ht.put(LOCAL_FILE_KEY, tlefc.getSelectedFile());
+    	}
     }
 
     private String getDatasetName() {
