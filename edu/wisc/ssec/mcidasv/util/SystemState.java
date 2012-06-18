@@ -33,7 +33,9 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashMap;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.Method;
@@ -311,6 +313,52 @@ public class SystemState {
     }
 
     /**
+     * Returns a {@Link Map} containing any relevant version information. 
+     * 
+     * <p>Currently this information consists of the date visad.jar was built, 
+     * as well as the (then-current) Subversion revision number.
+     * 
+     * @return {@code Map} of the contents of VisAD's DATE file.
+     */
+    public static Map<String, String> queryVisadBuildProperties() {
+        Map<String, String> props = newLinkedHashMap(4);
+        SystemState sysState = new SystemState();
+        BufferedReader input = null;
+        
+        try {
+            input = new BufferedReader(new InputStreamReader(sysState.getResourceAsStream("DATE")));
+            String contents = input.readLine();
+            // string should look like: Thu Mar 22 13:01:31 CDT 2012  Rev:5952
+            String splitAt = "  Rev:";
+            int index = contents.indexOf(splitAt);
+            String buildDate = "ERROR";
+            String revision = "ERROR";
+            String parseFail = "true";
+            if (index > 0) {
+                buildDate = new String(contents.substring(0, index));
+                revision = new String(contents.substring(index + splitAt.length()));
+                parseFail = "false";
+            }
+            props.put(Constants.PROP_VISAD_ORIGINAL, contents);
+            props.put(Constants.PROP_VISAD_PARSE_FAIL, parseFail);
+            props.put(Constants.PROP_VISAD_DATE, buildDate);
+            props.put(Constants.PROP_VISAD_REVISION, revision);
+        } catch (Exception e) {
+            logger.error("could not read from VisAD DATE file", e);
+        } finally {
+            sysState = null;
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (Exception e) {
+                    logger.error("could not close VisAD DATE file", e);
+                }
+            }
+        }
+        return props;
+    }
+
+    /**
      * Returns a {@link Map} of the (currently) most useful contents of
      * {@code ucar/unidata/idv/resources/build.properties}.
      *
@@ -501,6 +549,7 @@ public class SystemState {
 
         buf.append("# Software Versions:")
             .append("\n# McIDAS-V: ").append(versions.get("mcv.version.general")).append(" (").append(versions.get("mcv.version.build")).append(')')
+            .append("\n# VisAD:    ").append(versions.get("visad.version.general")).append(" )").append(versions.get("visad.version.build")).append(')')
             .append("\n# IDV:      ").append(versions.get("idv.version.general")).append(" (").append(versions.get("idv.version.build")).append(')')
             .append("\n\n# Operating System:")
             .append("\n# Name:         ").append(sysProps.getProperty("os.name"))

@@ -236,6 +236,18 @@ public interface Constants extends IdvConstants {
 	/** Path to the main McIDAS-V icon. */
 	public static final String PROP_APP_ICON = "mcidasv.window.icon";
 
+	/** WHen was visad.jar built? */
+	public static String PROP_VISAD_DATE = "visad.build.date";
+
+	/** What version of VisAD lives within visad.jar? */
+	public static String PROP_VISAD_REVISION = "visad.build.revision";
+
+	/** Was there a problem determing VisAD's version? */
+	public static String PROP_VISAD_PARSE_FAIL = "visad.build.parsefail";
+
+	/** What exactly broke the version extraction? */
+	public static String PROP_VISAD_ORIGINAL = "visad.build.contents";
+
 	/** When was McIDAS-V built? */
 	public static String PROP_BUILD_DATE = "mcidasv.build.date";
 

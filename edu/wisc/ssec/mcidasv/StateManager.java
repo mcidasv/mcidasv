@@ -36,6 +36,7 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.swing.JEditorPane;
@@ -51,9 +52,16 @@ import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
+import edu.wisc.ssec.mcidasv.util.SystemState;
 
 public class StateManager extends ucar.unidata.idv.StateManager implements Constants, HyperlinkListener {
 	
+    /** Lazily-loaded VisAD build date. */
+    private String visadDate;
+
+    /** Lazily-loaded VisAD SVN revision number. */
+    private String visadVersion;
+
 	private String version;
 	private String versionAbout;
 	
@@ -180,7 +188,38 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
         table.put("mcv.version.build", mcvBuild);
         table.put("idv.version.general", getVersion());
         table.put("idv.version.build", getBuildDate());
+        table.put("visad.version.general", getVisadVersion());
+        table.put("visad.version.build", getVisadDate());
         return table;
+    }
+
+    /**
+     * Return the timestamp from visad.jar was created.
+     * 
+     * @return {@code String} representation of the creation timestamp. Likely to change formatting over time.
+     */
+    public String getVisadDate() {
+        if (visadDate == null) {
+            Map<String, String> props = SystemState.queryVisadBuildProperties();
+            visadDate = props.get(Constants.PROP_VISAD_DATE);
+            visadVersion = props.get(Constants.PROP_VISAD_REVISION);
+        }
+        return visadDate;
+    }
+
+    /**
+     * Return the {@literal "version"} of VisAD.
+     * 
+     * @return Currently returns whatever the SVN revision number was when
+     * visad.jar was built. 
+     */
+    public String getVisadVersion() {
+        if (visadVersion== null) {
+            Map<String, String> props = SystemState.queryVisadBuildProperties();
+            visadDate = props.get(Constants.PROP_VISAD_DATE);
+            visadVersion = props.get(Constants.PROP_VISAD_REVISION);
+        }
+        return visadVersion;
     }
 
 	public String getIdvVersion() {
