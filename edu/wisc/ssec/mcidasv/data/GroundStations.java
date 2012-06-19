@@ -30,48 +30,35 @@
 
 package edu.wisc.ssec.mcidasv.data;
 
-import java.awt.Frame;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.InputStreamReader;
+
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Hashtable;
-import java.util.List;
-import javax.swing.JOptionPane;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
+
+import java.util.HashMap;
+
+import visad.georef.EarthLocationTuple;
 
 public class GroundStations
 {
     private static final String card00 = "KMSN,SSEC,43.1398578,-89.3375136,270.4";
-    private int gsCount = 0; // count of stations loaded
     public static String groundStationDB = "data/groundstations/groundstations_db.csv";
-
-    private List stations = new ArrayList();
-    private List latitudes = new ArrayList();
-    private List longitudes = new ArrayList();
-    private List altitudes = new ArrayList();
+    private HashMap<String, EarthLocationTuple> namedLocs = new HashMap<String, EarthLocationTuple>();
 
     public GroundStations(String topCard)
     {
         // read data files for Ground Stations
         try
         {
-            BufferedReader gsReader = null; // initalization of reader 
+            BufferedReader gsReader = null; // initialization of reader 
             
             //see if local file exists, if not stream from web
             
             // read local file
-            if( new File(groundStationDB).exists())
+            if (new File(groundStationDB).exists())
             {
                 File gsFile = new File(groundStationDB);
                 FileReader gsFileReader = new FileReader(gsFile);
@@ -89,10 +76,6 @@ public class GroundStations
             String nextLine = topCard;
             if (topCard == null) {
                nextLine = card00;
-               stations.add(" ");
-               latitudes.add(" ");
-               longitudes.add(" ");
-               altitudes.add(" ");
             }
             
             while (nextLine != null)
@@ -102,21 +85,16 @@ public class GroundStations
                 
                 if (elements.length == 5) // if the row is formatted correctly
                 {
-                    String network = elements[0];
-                    String stationName = elements[1];
-                    stations.add(stationName);
-                    String stationLat = elements[2];
-                    latitudes.add(stationLat);
-                    String stationLon = elements[3];
-                    longitudes.add(stationLon);
-                    String stationAlt = elements[4];
-                    altitudes.add(stationAlt);
-
-//                    System.out.println("" + gsCount + " : " + stationName + ", " + stationLat+ ", " + stationLon + ", " + stationAlt);
-                    gsCount++;
+                    Double dLat = new Double(elements[2]);
+                    Double dLon = new Double(elements[3]);
+                    Double dAlt = new Double(elements[4]);
+                    
+                    EarthLocationTuple elt = new EarthLocationTuple(dLat, dLon, dAlt);
+                    namedLocs.put(elements[1], elt);
                 }
                 nextLine = gsReader.readLine();
-            }// while there are more lines to read
+            } // while there are more lines to read
+
             gsReader.close();
         }
         catch (Exception e)
@@ -126,22 +104,11 @@ public class GroundStations
     } // constructor
 
     public int getGroundStationCount() {
-        return gsCount;
+        return namedLocs.size();
+    }
+    
+    public HashMap getGroundStations() {
+    	return namedLocs;
     }
 
-    public List getStations() {
-        return stations;
-    }
-
-    public List getLatitudes() {
-        return latitudes;
-    }
-
-    public List getLongitudes() {
-        return longitudes;
-    }
-
-    public List getAltitudes() {
-        return altitudes;
-    }
 }
