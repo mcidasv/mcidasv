@@ -105,7 +105,10 @@ public class ArgumentManager extends ArgsManager {
             if (!getIslInteractive()) {
                 setIsOffScreen(true);
             }
-        } else {
+        } else if ("-console".equals(arg)) {
+            System.err.println("*** WARNING: console flag is likely to go away soon!");
+        }
+        else {
             if (ARG_ISLINTERACTIVE.equals(arg) || ARG_B64ISL.equals(arg) || ARG_ISLFILE.equals(arg) || isIslFile(arg)) {
                 System.err.println("*** WARNING: ISL is being deprecated!");
             }
@@ -176,7 +179,8 @@ public class ArgumentManager extends ArgsManager {
             + msg(ARG_MSG_RECORD, "<Language pack file to write missing entries to>")
             + msg(ARG_TRACE, "(Print out trace messages)")
             + msg(ARG_NOERRORSINGUI, "(Don't show errors in gui)")
-            + msg(ARG_TRACEONLY, "<trace pattern> (Print out trace messages that match the pattern)");
+            + msg(ARG_TRACEONLY, "<trace pattern> (Print out trace messages that match the pattern)")
+            + msg("-console", "[ fix for getting the console functionality in install4j launcher ]");
     }
 
     /**
