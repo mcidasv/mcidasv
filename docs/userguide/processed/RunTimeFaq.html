@@ -213,13 +213,10 @@ application/x-java-jnlp-file JNLP
     <div class="faq-question">
       <h4>Q. Why am I having drawing problems on Monitor2 of a two-monitor system?</h4></div>
     <div class="faq-answer">
-        <p><strong>A. </strong>A common error seen with this problem is '...adding a container to a container on a different GraphicsDevice'. Some graphics card/driver combinations don't allow these functions to
-      work in Monitor2 of two-monitor systems. For now, you can simply move the
-      McIDAS-V windows to Monitor1 then successfully add new tabs and run bundles.
-          <p>If you are running Red Hat with a NVIDIA graphics card using TwinView
-      and are having problems, go to the preferences, click on the primary display,
-      and make sure the &quot;Make this the primary display...&quot; checkbox
-      is checked. </p></div>
+        <p><strong>A. </strong> Some graphics card/driver combinations            don't allow McIDAS-V window functions to work correctly in            Monitor2 of two-monitor systems. For example, if your system            has this problem and you move the McIDAS-V windows to            Monitor2, the Image Chooser's Advanced tab in the Field            Selector may not be visible, or adding a new tab in the Main            Display may result in most of the window going blank ("graying out").&nbsp;   You may also receive the            error (or see it in the mcidasv.log file), '<em>...adding a              container to a container on a different GraphicsDevice</em>'.</p>
+        <p>For now, the only working solution for this problem is to            move the McIDAS-V windows to Monitor1. After doing this, the            windows should display correctly and you should be able to            successfully add new tabs and run bundles. </p>
+        <p>If you are running Red Hat with a NVIDIA graphics card using            TwinView and are having problems, go to the preferences, click            on the primary display, and make sure the "Make this the            primary display..." checkbox is checked. </p>
+    </div>
     <a name="nomap" id="nomap"></a>
     <div class="faq-question">
       <h4>Q. Why is there no map drawn in the McIDAS-V Main Display window?</h4></div>
