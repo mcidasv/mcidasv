@@ -27,6 +27,7 @@
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
+
 package edu.wisc.ssec.mcidasv.chooser;
 
 import java.awt.Component;
@@ -54,10 +55,10 @@ public class SuomiNPPChooser extends FileChooser {
 	
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LoggerFactory.getLogger(SuomiNPPChooser.class);
-	private static final long CONSECUTIVE_GRANULE_TIME_GAP_MS = 1000;
+	private static final long CONSECUTIVE_GRANULE_MAX_GAP_MS = 60000;
 	
 	// date formatter for converting Suomi NPP day/time from file name for consecutive granule check
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmSSS");
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmSSS");
 
     /**
      * Create the chooser with the given manager and xml
@@ -81,10 +82,10 @@ public class SuomiNPPChooser extends FileChooser {
     
     protected JFileChooser doMakeFileChooser(String path) {
     	if (fileChooser == null) {
-    		logger.trace("Creating Suomi NPP File Chooser...");
+    		logger.debug("Creating Suomi NPP File Chooser...");
     		fileChooser = new SuomiNPPFileChooser(path);
     	} else {
-    		logger.trace("2nd call to doMakeFileChooser, why?");
+    		logger.debug("2nd call to doMakeFileChooser, why?");
     	}
         return fileChooser;
     }
@@ -245,8 +246,8 @@ public class SuomiNPPChooser extends FileChooser {
 					// only check current with previous
 					if (prvTime > 0) {
 						// make sure time diff does not exceed allowed threshold
-						// consecutive granules should be less than 1 second apart
-						if ((curTime - prvTime) > CONSECUTIVE_GRANULE_TIME_GAP_MS) {
+						// consecutive granules should be less than 1 minute apart
+						if ((curTime - prvTime) > CONSECUTIVE_GRANULE_MAX_GAP_MS) {
 							testResult = false;
 							break;
 						}
