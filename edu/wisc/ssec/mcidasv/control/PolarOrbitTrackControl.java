@@ -44,8 +44,6 @@ import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.lang.Math;
@@ -113,7 +111,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private static final Logger logger = LoggerFactory.getLogger(PolarOrbitTrackControl.class);
 
     private JLabel satelliteName = new JLabel("");
-    private static final JLabel kmLabel = new JLabel(" km");
+    private static final JLabel kmLabel = new JLabel("km");
     private JTextField swathWidthFld = new JTextField(" ", 5);
     private JPanel swathWidthPanel;
     private JButton saveBtn;
@@ -138,8 +136,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private String station = "";
     private TextDisplayable groundStationDsp;
 
-    private static final int defaultAntAngle = 5;
-    private int angle = defaultAntAngle;
+    private static final int DEFAULT_ANTENNA_ANGLE = 5;
+    private int angle = DEFAULT_ANTENNA_ANGLE;
 
     private DataChoice dataChoice;
 
@@ -148,11 +146,10 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     private JTextField latFld;
     private JTextField lonFld;
-    private JTextField altitudeFld = new JTextField(" ", 5);
-    private JTextField antennaAngle = new JTextField(" 5", 5);
+    private JLabel altitudeLabel;
+    private JTextField antennaAngle = new JTextField("5", 5);
 
     private ActionListener fontSizeChange;
-    private FocusListener fontSizeFocusChange;
 
     /** Font size control */
     private static final int SLIDER_MAX = 10;
@@ -481,16 +478,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 setDisplayableTextSize(size);
             }
         };
-        fontSizeFocusChange = new FocusListener() {
-            public void focusGained(FocusEvent fe) {
-            }
-            public void focusLost(FocusEvent fe) {
-                String str = fontSizeFld.getText();
-                int size = new Integer(str).intValue();
-                moveFontSizeSlider(size);
-                setDisplayableTextSize(size);
-            }
-        };
 
         fontSizeSlider = GuiUtils.makeSlider(SLIDER_MIN, SLIDER_MAX, defaultSize,
                                      this, "sliderChanged", true);
@@ -498,10 +485,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         fontSizeSlider.setSnapToTicks(true);
         fontSizeSlider.setPaintTicks(true);
         fontSizeSlider.setPaintLabels(true);
-        int size = getSizeValue(fontSizeSlider);
+        int size = fontSizeSlider.getValue();
         setFontSize(size);
         fontSizeFld = new JTextField(Integer.toString(size), 3);
-        fontSizeFld.addFocusListener(fontSizeFocusChange);
         fontSizeFld.addActionListener(fontSizeChange);
         
         fontSizePanel = new JPanel();
@@ -566,7 +552,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 	EarthLocationTuple elt = stationMap.get(station);
                 	latLonWidget.setLat(elt.getLatitude().getValue());
                 	latLonWidget.setLon(elt.getLongitude().getValue());
-                	altitudeFld.setText(elt.getAltitude().toString());
+                	altitudeLabel.setText(elt.getAltitude().toString());
                 	setLatitude();
                 	setLongitude();
                     int val = getAntennaAngle();
@@ -583,7 +569,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         latFld = latLonWidget.getLatField();
         lonFld = latLonWidget.getLonField();
 
-        altitudeFld = new JTextField(elt.getAltitude().toString(), 5);
+        altitudeLabel = new JLabel();
+        altitudeLabel.setText(elt.getAltitude().toString());
 
         latLonWidget.setLat(elt.getLatitude().getValue());
         setLatitude();
@@ -598,34 +585,12 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 redrawCoverageCircle();
             }
         };
-        FocusListener latLonFocusChange = new FocusListener() {
-            public void focusGained(FocusEvent fe) {
-                latFld.setCaretPosition(latFld.getText().length());
-                lonFld.setCaretPosition(lonFld.getText().length());
-            }
-            public void focusLost(FocusEvent fe) {
-                setLatitude();
-                setLongitude();
-                redrawCoverageCircle();
-            }
-        };
+
         latFld.addActionListener(latLonListener);
         lonFld.addActionListener(latLonListener);
-        latFld.addFocusListener(latLonFocusChange);
-        lonFld.addFocusListener(latLonFocusChange);
+
         antennaAngle.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                String str = antennaAngle.getText();
-                Integer iVal = new Integer(str.trim());
-                int val = iVal.intValue();
-                setAntennaAngle(val);
-                redrawCoverageCircle();
-            }
-        });
-        antennaAngle.addFocusListener(new FocusListener() {
-            public void focusGained(FocusEvent fe) {
-            }
-            public void focusLost(FocusEvent fe) {
                 String str = antennaAngle.getText();
                 Integer iVal = new Integer(str.trim());
                 int val = iVal.intValue();
@@ -643,7 +608,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         latLonAltPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         latLonAltPanel.add(latLonWidget);
         latLonAltPanel.add(new JLabel("Altitude: "));
-        latLonAltPanel.add(altitudeFld);
+        latLonAltPanel.add(altitudeLabel);
+        latLonAltPanel.add(Box.createHorizontalStrut(5));
         latLonAltPanel.add(new JLabel("Antenna Angle: "));
         latLonAltPanel.add(antennaAngle);
 
@@ -663,16 +629,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             satelliteName = new JLabel(dataChoice.getName());
         Double dWidth = new Double(width);
         swathWidthFld = new JTextField(dWidth.toString(), 6);
-        swathWidthFld.setHorizontalAlignment(JTextField.CENTER);
         swathWidthFld.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                changeSwathWidth();
-            }
-        });
-        swathWidthFld.addFocusListener(new FocusListener() {
-            public void focusGained(FocusEvent fe) {
-            }
-            public void focusLost(FocusEvent fe) {
                 changeSwathWidth();
             }
         });
@@ -728,7 +686,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         try {
 
             int num = circleDsp.displayableCount();
-            for (int i=0; i<num; i++) {
+            for (int i = 0; i < num; i++) {
                 circleDsp.removeDisplayable(0);
             }
 
@@ -798,16 +756,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             return null;
         }
         return coverageCircle;
-    }
-
-    private int getSizeValue(JSlider slider) {
-        int value = slider.getValue();
-        if (value < SLIDER_MIN) {
-            value = SLIDER_MIN;
-        } else if (value > SLIDER_MAX) {
-            value = SLIDER_MAX;
-        }
-        return value;
     }
 
     public int getFontSize() {
@@ -938,7 +886,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     public int getAntennaAngle() {
         String str = antennaAngle.getText();
         angle = new Integer(str.trim()).intValue();
-        if (angle < defaultAntAngle) angle = defaultAntAngle;
+        if (angle < DEFAULT_ANTENNA_ANGLE) angle = DEFAULT_ANTENNA_ANGLE;
         return angle;
     }
 
