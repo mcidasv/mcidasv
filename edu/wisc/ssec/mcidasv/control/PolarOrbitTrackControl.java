@@ -42,7 +42,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.FlowLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -62,6 +61,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
@@ -112,15 +112,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(PolarOrbitTrackControl.class);
 
-    /** The spacing used in the grid layout */
-    protected static final int GRID_SPACING = 3;
-
-    /** Used by derived classes when they do a GuiUtils.doLayout */
-    protected static final Insets GRID_INSETS = new Insets(GRID_SPACING,
-                                                    GRID_SPACING,
-                                                    GRID_SPACING,
-                                                    GRID_SPACING);
-    private JLabel satelliteName = new JLabel("           ");
+    private JLabel satelliteName = new JLabel("");
     private static final JLabel kmLabel = new JLabel(" km");
     private JTextField swathWidthFld = new JTextField(" ", 5);
     private JPanel swathWidthPanel;
@@ -136,8 +128,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private JPanel antColorPanel;
     private JPanel locationPanel;
     private JPanel latLonAltPanel;
-
-    private int locationIndex = -1;
 
     /** Property name to get the list or urls */
     public final String PREF_GROUNDSTATIONS = "mcv.groundstations";
@@ -183,7 +173,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private Color defaultColor = Color.GREEN;
     private ColorSwatch antColorSwatch;
     private Color antColor;
-    private Color defaultAntColor = Color.WHITE;
+    private Color defaultAntColor = Color.MAGENTA;
     private PolarOrbitTrackDataSource dataSource;
 
     private CurveDrawer coverageCircle;
@@ -225,14 +215,14 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         NodeList nodeList = root.getElementsByTagName(TAG_SATELLITE);
         int num = nodeList.getLength();
         if (num > 0) {
-            for (int i=0; i<num; i++) {
-                Element n =(Element)(nodeList.item(i));
+            for (int i = 0; i < num; i++) {
+                Element n = (Element) (nodeList.item(i));
                 String satName = n.getAttribute(ATTR_NAME);
                 if (satName.equals(choiceName)) {
                     String strWidth = n.getAttribute(ATTR_WIDTH);
                     if (strWidth.isEmpty()) strWidth = "0";
                     Double dWidth = new Double(strWidth);
-                    this.width = dWidth.doubleValue();
+                    width = dWidth.doubleValue();
                     break;
                 }
             }
@@ -247,11 +237,11 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         }
         boolean result = super.init((DataChoice)this.getDataChoices().get(0));
 
-        this.tupleType = makeTupleType();
+        tupleType = makeTupleType();
 
         Data data = getData(getDataInstance());
         createTrackDisplay(data, true);
-        this.dataSource = getDataSource();
+        dataSource = getDataSource();
         try {
             navDsp = getNavigatedDisplay();
             EarthLocation earthLoc = navDsp.getCenterPoint();
@@ -272,9 +262,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     private void createTrackDisplay(Data data, boolean doTrack) {
         try {
-            this.fontSize = getFontSize();
-            this.color = getColor();
-            List<String> dts = new ArrayList();
+            fontSize = getFontSize();
+            color = getColor();
+            List<String> dts = new ArrayList<String>();
             if (data instanceof Tuple) {
                 Data[] dataArr = ((Tuple)data).getComponents();
 
@@ -297,7 +287,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                         TextDisplayable time = new TextDisplayable(getTextType());
                         time.setJustification(TextControl.Justification.LEFT);
                         time.setVerticalJustification(TextControl.Justification.CENTER);
-                        time.setColor(this.color);
+                        time.setColor(color);
  
                         RealTuple lonLat =
                             new RealTuple(RealTupleType.SpatialEarth2DTuple,
@@ -316,7 +306,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 }
 
                 if (doTrack) {
-                    setDisplayableTextSize(this.fontSize);
+                    setDisplayableTextSize(fontSize);
                     Gridded2DSet track = new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple,
                                latlon, npts);
                     SampledSet[] set = new SampledSet[1];
@@ -327,7 +317,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     trackDsp.addDisplayable(trackLines);
                     trackLines.setDrawingEnabled(false);
 
-                    trackDsp.setColor(this.color);
+                    trackDsp.setColor(color);
                     trackDsp.setLineWidth(2.0f);
 
                     addDisplayable(trackDsp, FLAG_COLORTABLE);
@@ -365,7 +355,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 swathDsp.addDisplayable(rightLines);
                 rightLines.setDrawingEnabled(false);
 
-                swathDsp.setColor(this.color);
+                swathDsp.setColor(color);
                 swathDsp.setLineWidth(1.0f);
                 addDisplayable(swathDsp, FLAG_COLORTABLE);
             }
@@ -391,29 +381,29 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 double diffLon = lonB - lonA;
                 double bX = Math.cos(latB) * Math.cos(diffLon);
                 double bY = Math.cos(latB) * Math.sin(diffLon);
-                double xFac = Math.cos(latA)+bX;
-                double latC = Math.atan2(Math.sin(latA)+Math.sin(latB), Math.sqrt(xFac*xFac + bY*bY));
+                double xFac = Math.cos(latA) + bX;
+                double latC = Math.atan2(Math.sin(latA) + Math.sin(latB), Math.sqrt(xFac * xFac + bY * bY));
                 double lonC = lonA + Math.atan2(bY, xFac);
 
-                double bearing = Math.atan2(Math.sin(diffLon)*Math.cos(latB),
-                                 Math.cos(latA)*Math.sin(latB)-Math.sin(latA)*Math.cos(latB)*Math.cos(diffLon))
-                                 + Math.PI/2.0;
-                double dist = this.width/2.0;
+                double bearing = Math.atan2(Math.sin(diffLon) * Math.cos(latB),
+                                 Math.cos(latA) * Math.sin(latB) - Math.sin(latA) * Math.cos(latB) * Math.cos(diffLon))
+                                 + Math.PI / 2.0;
+                double dist = width / 2.0;
                 dist /= earthRadius;
-                double lat = Math.asin(Math.sin(latC)*Math.cos(dist) +
-                                       Math.cos(latC)*Math.sin(dist)*Math.cos(bearing));
-                double lon = lonC + Math.atan2(Math.sin(bearing)*Math.sin(dist)*Math.cos(latC),
-                                               Math.cos(dist)-Math.sin(latC)*Math.sin(lat));
+                double lat = Math.asin(Math.sin(latC) * Math.cos(dist) +
+                                       Math.cos(latC) * Math.sin(dist) * Math.cos(bearing));
+                double lon = lonC + Math.atan2(Math.sin(bearing) * Math.sin(dist) * Math.cos(latC),
+                                               Math.cos(dist) - Math.sin(latC) * Math.sin(lat));
                 float latD = (float)Math.toDegrees(lat);
                 float lonD = (float)Math.toDegrees(lon);
 
                 bearing += Math.PI;
-                lat = Math.asin(Math.sin(latC)*Math.cos(dist) +
-                                       Math.cos(latC)*Math.sin(dist)*Math.cos(bearing));
-                lon = lonC + Math.atan2(Math.sin(bearing)*Math.sin(dist)*Math.cos(latC),
-                                               Math.cos(dist)-Math.sin(latC)*Math.sin(lat));
-                float latE = (float)Math.toDegrees(lat);
-                float lonE = (float)Math.toDegrees(lon);
+                lat = Math.asin(Math.sin(latC) * Math.cos(dist) +
+                                       Math.cos(latC) * Math.sin(dist) * Math.cos(bearing));
+                lon = lonC + Math.atan2(Math.sin(bearing) * Math.sin(dist) * Math.cos(latC),
+                                               Math.cos(dist) - Math.sin(latC) * Math.sin(lat));
+                float latE = (float) Math.toDegrees(lat);
+                float lonE = (float) Math.toDegrees(lon);
 
                 ret[0][0][indx] = latD;
                 ret[0][1][indx] = lonD;
@@ -442,8 +432,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     }
 
     public JComponent makeColorBox(Color swatchColor) {
-        GuiUtils.ColorSwatch swatch = new GuiUtils.ColorSwatch(swatchColor,
-                                               "Color") {
+        GuiUtils.ColorSwatch swatch = new GuiUtils.ColorSwatch(swatchColor, "Color") {
             public void userSelectedNewColor(Color c) {
                 try {
                     getIdv().showWaitCursor();
@@ -460,8 +449,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     }
 
     public JComponent makeAntColorBox(Color swatchAntColor) {
-        GuiUtils.ColorSwatch swatch = new GuiUtils.ColorSwatch(swatchAntColor,
-                                               "Color") {
+        GuiUtils.ColorSwatch swatch = new GuiUtils.ColorSwatch(swatchAntColor, "Color") {
             public void userSelectedNewColor(Color c) {
                 try {
                     getIdv().showWaitCursor();
@@ -485,7 +473,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
      */
     
     public Container doMakeContents() {
-        this.fontSizeChange =new ActionListener() {
+        fontSizeChange =new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 String str = fontSizeFld.getText();
                 int size = new Integer(str).intValue();
@@ -493,7 +481,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 setDisplayableTextSize(size);
             }
         };
-        this.fontSizeFocusChange = new FocusListener() {
+        fontSizeFocusChange = new FocusListener() {
             public void focusGained(FocusEvent fe) {
             }
             public void focusLost(FocusEvent fe) {
@@ -512,9 +500,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         fontSizeSlider.setPaintLabels(true);
         int size = getSizeValue(fontSizeSlider);
         setFontSize(size);
-        this.fontSizeFld = new JTextField(Integer.toString(size), 3);
-        this.fontSizeFld.addFocusListener(this.fontSizeFocusChange);
-        this.fontSizeFld.addActionListener(this.fontSizeChange);
+        fontSizeFld = new JTextField(Integer.toString(size), 3);
+        fontSizeFld.addFocusListener(fontSizeFocusChange);
+        fontSizeFld.addActionListener(fontSizeChange);
         
         fontSizePanel = new JPanel();
         fontSizePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -558,14 +546,14 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         locationEditor.addKeyListener(new KeyListener() {
             public void keyPressed(KeyEvent e) {}
             public void keyReleased(KeyEvent e) {}
-            public void keyTyped(KeyEvent e) {
-                locationIndex = -1;
-            }
+			@Override
+			public void keyTyped(KeyEvent arg0) {
+				// TODO Auto-generated method stub
+			}
         });
 
         // Ground Stations are now a natural-order map (alphabetical)
         GroundStations gs = new GroundStations(null);
-        // stations = gs.getStations();
         stationMap = gs.getGroundStations();
         TreeSet<String> keySet = new TreeSet<String>(stationMap.keySet());
 
@@ -574,22 +562,16 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         locationComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 setStation((String) locationComboBox.getSelectedItem());
-                locationIndex = locationComboBox.getSelectedIndex();
-                if (locationIndex < 0) {
-                	// TJJ will clean up further next rev, make sure never happens
-                } else {
-                    try {
-                    	EarthLocationTuple elt = stationMap.get(station);
-                    	latLonWidget.setLat(elt.getLatitude().getValue());
-                    	latLonWidget.setLon(elt.getLongitude().getValue());
-                    	altitudeFld.setText(elt.getAltitude().toString());
-                    	setLatitude();
-                    	setLongitude();
-                    	
-                        int val = getAntennaAngle();
-                        setAntennaAngle(val);
-                    } catch (Exception e) {
-                    }
+                try {
+                	EarthLocationTuple elt = stationMap.get(station);
+                	latLonWidget.setLat(elt.getLatitude().getValue());
+                	latLonWidget.setLon(elt.getLongitude().getValue());
+                	altitudeFld.setText(elt.getAltitude().toString());
+                	setLatitude();
+                	setLongitude();
+                    int val = getAntennaAngle();
+                    setAntennaAngle(val);
+                } catch (Exception e) {
                 }
                 setSatelliteAltitude(dataSource.getNearestAltToGroundStation(latitude, longitude) / 1000.0);
                 redrawCoverageCircle();
@@ -677,9 +659,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     }
 
     private JPanel makeSwathWidthPanel() {
-        if (this.dataChoice != null)
-            satelliteName = new JLabel(this.dataChoice.getName());
-        Double dWidth = new Double(this.width);
+        if (dataChoice != null)
+            satelliteName = new JLabel(dataChoice.getName());
+        Double dWidth = new Double(width);
         swathWidthFld = new JTextField(dWidth.toString(), 6);
         swathWidthFld.setHorizontalAlignment(JTextField.CENTER);
         swathWidthFld.addActionListener(new ActionListener() {
@@ -726,7 +708,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     }
 
     private void setSwathWidth(double val) {
-        this.width = val;
+        width = val;
     }
 
     /**
@@ -736,7 +718,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private void applyTrackPosition() {
         try {
             DisplayRealType dispType = navDsp.getDisplayAltitudeType();
-            trackDsp.setConstantPosition(this.satZ, dispType);
+            trackDsp.setConstantPosition(satZ, dispType);
         } catch (Exception exc) {
             System.out.println("Setting track z-position exc=" + exc);
         }
@@ -750,13 +732,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 circleDsp.removeDisplayable(0);
             }
 
-            if (drawCoverageCircle(Math.toRadians(this.latitude), Math.toRadians(this.longitude),
-                       this.satelliteAltitude, getAntColor()) != null) {
+            if (drawCoverageCircle(Math.toRadians(latitude), Math.toRadians(longitude),
+                       satelliteAltitude, getAntColor()) != null) {
                 drawGroundStation();
                 circleDsp.setColor(getAntColor());
                 circleDsp.setLineWidth(1f);
-                circleDsp.addDisplayable(this.coverageCircle);
-                circleDsp.addDisplayable(this.groundStationDsp);
+                circleDsp.addDisplayable(coverageCircle);
+                circleDsp.addDisplayable(groundStationDsp);
                 addDisplayable(circleDsp, FLAG_COLORTABLE);
             }
         } catch (Exception e) {
@@ -783,22 +765,22 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         double cosLat = Math.cos(lat);
         double sinLon = -Math.sin(lon);
         double cosLon = Math.cos(lon);
-        for (int i=0; i<npts; i++) {
+        for (int i = 0; i < npts; i++) {
             double azimuth = Math.toRadians((double)i);
             double cosBear = Math.cos(azimuth);
             double sinBear = Math.sin(azimuth);
             double z = cosDist * sinLat +
                        sinDist * cosLat * cosBear;
             double y = cosLat * cosLon * cosDist +
-                       sinDist * (sinLon*sinBear - sinLat*cosLon*cosBear);
+                       sinDist * (sinLon * sinBear - sinLat * cosLon * cosBear);
             double x = cosLat * sinLon * cosDist -
-                       sinDist * (cosLon*sinBear + sinLat*sinLon*cosBear);
+                       sinDist * (cosLon * sinBear + sinLat * sinLon * cosBear);
             double r = Math.sqrt(x*x + y*y);
             double latRad = Math.atan2(z, r);
             double lonRad = 0.0;
             if (r > 0.0) lonRad = -Math.atan2(x, y);
-            latlon[0][i] = (float)Math.toDegrees(latRad);
-            latlon[1][i] = (float)Math.toDegrees(lonRad);
+            latlon[0][i] = (float) Math.toDegrees(latRad);
+            latlon[1][i] = (float) Math.toDegrees(lonRad);
         }
         try {
             Gridded2DSet circle = new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple,
@@ -806,16 +788,16 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             SampledSet[] set = new SampledSet[1];
             set[0] = circle;
             UnionSet uset = new UnionSet(set);
-            this.coverageCircle = new CurveDrawer(uset);
-            this.coverageCircle.setLineStyle(1);
-            this.coverageCircle.setColor(getAntColor());
-            this.coverageCircle.setData(uset);
-            this.coverageCircle.setDrawingEnabled(false);
+            coverageCircle = new CurveDrawer(uset);
+            coverageCircle.setLineStyle(1);
+            coverageCircle.setColor(getAntColor());
+            coverageCircle.setData(uset);
+            coverageCircle.setDrawingEnabled(false);
         } catch (Exception e) {
             System.out.println("drawCoverageCircle e=" + e);
             return null;
         }
-        return this.coverageCircle;
+        return coverageCircle;
     }
 
     private int getSizeValue(JSlider slider) {
@@ -829,8 +811,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     }
 
     public int getFontSize() {
-        if (this.fontSize < 1) this.fontSize = defaultSize;
-        return this.fontSize;
+        if (fontSize < 1) fontSize = defaultSize;
+        return fontSize;
     }
 
     public void setFontSizeTextField(int size) {
@@ -847,8 +829,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private void moveFontSizeSlider(int size) {
         size = setFontSize(size);
         try {
-            if (this.fontSizeSlider != null) {
-                this.fontSizeSlider.setValue(size);
+            if (fontSizeSlider != null) {
+                fontSizeSlider.setValue(size);
             }
         } catch (Exception e) {
             System.out.println("Exception in PolarOrbitTrackControl.moveFontSizeSlider e=" + e);
@@ -861,7 +843,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             float fSize = (float) size / 10.0f;
             int num = trackDsp.displayableCount() - 1;
             TextDisplayable textDsp = null;
-            for (int i=num; i > -1; i--) {
+            for (int i = num; i > -1; i--) {
                 Displayable dsp = trackDsp.getDisplayable(i);
                 if (dsp instanceof TextDisplayable) {
                     textDsp = (TextDisplayable)dsp;
@@ -878,36 +860,36 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     public int setFontSize(int size) {
         if (size < 1) size = defaultSize;
-        this.fontSize = size;
-        return this.fontSize;
+        fontSize = size;
+        return fontSize;
     }
 
     public Color getColor() {
-        if (this.color == null) this.color = defaultColor;
-        return this.color;
+        if (color == null) color = defaultColor;
+        return color;
     }
 
-    public void setColor(Color color) {
-        if (this.color == null) this.color = defaultColor;
+    public void setColor(Color c) {
+        if (c == null) c = defaultColor;
         try {
-            trackDsp.setColor(color);
-            this.swathDsp.setColor(color);
-            this.color = color;
+            trackDsp.setColor(c);
+            swathDsp.setColor(c);
+            color = c;
         } catch (Exception e) {
             System.out.println("Exception in PolarOrbitTrackControl.setColor e=" + e);
         }
     }
 
     public Color getAntColor() {
-        if (this.antColor == null) this.antColor = defaultAntColor;
-        return this.antColor;
+        if (antColor == null) antColor = defaultAntColor;
+        return antColor;
     }
 
-    public void setAntColor(Color color) {
-        if (color == null) color = defaultAntColor;
+    public void setAntColor(Color c) {
+        if (c == null) c = defaultAntColor;
         try {
-            this.antColor = color;
-            circleDsp.setColor(color);
+            antColor = c;
+            circleDsp.setColor(c);
         } catch (Exception e) {
             System.out.println("Exception in PolarOrbitTrackControl.setAntColor e=" + e);
         }
@@ -943,31 +925,36 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     }
 
     public void setAntennaAngle(int val) {
-        String str = " " + val;
-        antennaAngle.setText(str);
-        this.angle = val;
+    	if ((val < 3) || (val > 90)) {
+        	// throw up a dialog to tell user the problem
+        	JOptionPane.showMessageDialog(latLonAltPanel, "Antenna angle valid range is 3 to 90 degrees");
+    	} else {
+    		String str = " " + val;
+    		antennaAngle.setText(str);
+    		angle = val;
+    	}
     }
 
     public int getAntennaAngle() {
         String str = antennaAngle.getText();
-        this.angle = new Integer(str.trim()).intValue();
-        if (this.angle < defaultAntAngle) this.angle = defaultAntAngle;
-        return this.angle;
+        angle = new Integer(str.trim()).intValue();
+        if (angle < defaultAntAngle) angle = defaultAntAngle;
+        return angle;
     }
 
     private void setSatelliteAltitude(double val) {
-        this.satelliteAltitude = val;
+        satelliteAltitude = val;
     }
 
     private void drawGroundStation() {
         try {
             String str = "+" + getStation();
-            this.groundStationDsp = new TextDisplayable(getTextType());
-            this.groundStationDsp.setJustification(TextControl.Justification.LEFT);
-            this.groundStationDsp.setVerticalJustification(TextControl.Justification.CENTER);
+            groundStationDsp = new TextDisplayable(getTextType());
+            groundStationDsp.setJustification(TextControl.Justification.LEFT);
+            groundStationDsp.setVerticalJustification(TextControl.Justification.CENTER);
             float tSize = (float) getFontSize() / 10.0f;
-            this.groundStationDsp.setTextSize(tSize);
-            this.groundStationDsp.setColor(getAntColor());
+            groundStationDsp.setTextSize(tSize);
+            groundStationDsp.setColor(getAntColor());
                     
             double dlat = getLatitude();
             double dlon = getLongitude();
@@ -976,7 +963,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     new double[] { dlon, dlat });
             Tuple tup = new Tuple(getTupleType(),
                 new Data[] { lonLat, new Text(getTextType(), str)});
-            this.groundStationDsp.setData(tup);
+            groundStationDsp.setData(tup);
         } catch (Exception e) {
             System.out.println("drawGroundStation e=" + e);
         }
@@ -997,24 +984,24 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             }
         }
         if (!gotit) return null;
-        return (PolarOrbitTrackDataSource)ds;
+        return (PolarOrbitTrackDataSource) ds;
     }
 
     private TextType getTextType() {
-        if (this.textType == null) {
+        if (textType == null) {
             String dispName = getDisplayName();
             setDisplayName(getLongParamName() + " " + dispName);
             try {
                 String longName = getLongParamName().replaceAll(" ", "");
-                this.textType = new TextType(longName);
+                textType = new TextType(longName);
             } catch (Exception e) {
-                this.textType = TextType.Generic;
+                textType = TextType.Generic;
             }
         }
-        return this.textType;
+        return textType;
     }
 
     private TupleType getTupleType() {
-        return this.tupleType;
+        return tupleType;
     }
 }
