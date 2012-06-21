@@ -72,7 +72,6 @@ import org.w3c.dom.NodeList;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.idv.control.DisplayControlImpl;
-import ucar.unidata.ui.LatLonWidget;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.GuiUtils.ColorSwatch;
 import ucar.unidata.util.IOUtil;
@@ -141,12 +140,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     private DataChoice dataChoice;
 
-    /** Input for lat/lon center point */
-    protected LatLonWidget latLonWidget = new LatLonWidget();
-
-    private JTextField latFld;
-    private JTextField lonFld;
-    private JLabel altitudeLabel;
+    private JLabel latLabel;
+    private JLabel lonLabel;
+    private JLabel altLabel;
     private JTextField antennaAngle = new JTextField("5", 5);
 
     private ActionListener fontSizeChange;
@@ -207,7 +203,11 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     @Override public boolean init(DataChoice dataChoice) 
         throws VisADException, RemoteException 
     {
-        this.dataChoice = dataChoice;
+        // instantiate labels
+    	latLabel = new JLabel();
+    	lonLabel = new JLabel();
+    	altLabel = new JLabel();
+    	this.dataChoice = dataChoice;
         String choiceName = dataChoice.getName();
         NodeList nodeList = root.getElementsByTagName(TAG_SATELLITE);
         int num = nodeList.getLength();
@@ -368,7 +368,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         float[][][] ret = new float[2][2][npt-1];
         try {
             int indx = 0;
-            for (int i=1; i<npt; i++) {
+            for (int i = 1; i < npt; i++) {
                 double latA = Math.toRadians(track[0][i-1]);
                 double lonA = Math.toRadians(track[1][i-1]);
 
@@ -550,9 +550,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 setStation((String) locationComboBox.getSelectedItem());
                 try {
                 	EarthLocationTuple elt = stationMap.get(station);
-                	latLonWidget.setLat(elt.getLatitude().getValue());
-                	latLonWidget.setLon(elt.getLongitude().getValue());
-                	altitudeLabel.setText(elt.getAltitude().toString());
+                    latLabel.setText(elt.getLatitude().toString());
+                    lonLabel.setText(elt.getLongitude().toString());
+                	altLabel.setText(elt.getAltitude().toString());
                 	setLatitude();
                 	setLongitude();
                     int val = getAntennaAngle();
@@ -566,28 +566,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
         // initialize with first Earth Location in our map
         EarthLocationTuple elt = stationMap.get(locationComboBox.getSelectedItem());
-        latFld = latLonWidget.getLatField();
-        lonFld = latLonWidget.getLonField();
 
-        altitudeLabel = new JLabel();
-        altitudeLabel.setText(elt.getAltitude().toString());
+        latLabel.setText(elt.getLatitude().toString());
+        lonLabel.setText(elt.getLongitude().toString());
+        altLabel.setText(elt.getAltitude().toString());
 
-        latLonWidget.setLat(elt.getLatitude().getValue());
         setLatitude();
-
-        latLonWidget.setLon(elt.getLongitude().getValue());
         setLongitude();
-
-        ActionListener latLonListener = new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                setLatitude();
-                setLongitude();
-                redrawCoverageCircle();
-            }
-        };
-
-        latFld.addActionListener(latLonListener);
-        lonFld.addActionListener(latLonListener);
 
         antennaAngle.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -606,9 +591,17 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         
         latLonAltPanel = new JPanel();
         latLonAltPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        latLonAltPanel.add(latLonWidget);
+        
+        latLonAltPanel.add(new JLabel("Latitude: "));
+        latLonAltPanel.add(latLabel);
+        latLonAltPanel.add(Box.createHorizontalStrut(5));
+        
+        latLonAltPanel.add(new JLabel("Longitude: "));
+        latLonAltPanel.add(lonLabel);
+        latLonAltPanel.add(Box.createHorizontalStrut(5));
+        
         latLonAltPanel.add(new JLabel("Altitude: "));
-        latLonAltPanel.add(altitudeLabel);
+        latLonAltPanel.add(altLabel);
         latLonAltPanel.add(Box.createHorizontalStrut(5));
         latLonAltPanel.add(new JLabel("Antenna Angle: "));
         latLonAltPanel.add(antennaAngle);
@@ -705,7 +698,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     }
 
     private CurveDrawer drawCoverageCircle(double lat, double lon, double satAlt, Color color) {
-        if (!(latLonWidget.isLatLonDefined())) return null;
+
         /* mean earthRadius in km */
         double earthRadius = AstroConst.R_Earth_mean / 1000.0;
         satAlt += earthRadius;
@@ -844,7 +837,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     }
 
     public void setLatitude() {
-        latitude = latLonWidget.getLat();
+    	latitude = Double.parseDouble(latLabel.getText());
     }
 
     public double getLatitude() {
@@ -852,7 +845,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     }
 
     public void setLongitude() {
-        longitude = latLonWidget.getLon();
+        longitude = Double.parseDouble(lonLabel.getText());
     }
 
     public double getLongitude() {
