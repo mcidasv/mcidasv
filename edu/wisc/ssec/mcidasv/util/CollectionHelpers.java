@@ -101,8 +101,8 @@ public final class CollectionHelpers {
      * {@link LinkedHashSet} as the {@code Set} implementation (to preserve 
      * ordering).
      * 
-     * <p>Used like so:
-     * {@code for (String s : set("beep", "boop", "blorp")) { ... }}
+     * <p>Used like so:<pre>
+     * for (String s : set("beep", "boop", "blorp")) { ... }</pre>
      * 
      * @param elements Items that will appear within the returned {@code Set}.
      * Cannot be {@code null}, and (for now) the items should be of the 
@@ -730,7 +730,7 @@ public final class CollectionHelpers {
      * <pre>
      * import ucar.unidata.xml.XmlUtil;
      * ....
-     * List<Node> nodes = XmlUtil.findChildren(panel, "blah");
+     * List&lt;Node&gt; nodes = XmlUtil.findChildren(panel, "blah");
      * </pre>
      * {@code cast} is a nice and terse way to avoid those warnings. Here's the 
      * previous example (with static imports of {@code cast} and {@code findChildren}):
@@ -738,7 +738,7 @@ public final class CollectionHelpers {
      * import static ucar.unidata.xml.XmlUtil.findChildren;
      * import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
      * ....
-     * List<Node> nodes = cast(findChildren(panel, "blah"));
+     * List&lt;Node&gt; nodes = cast(findChildren(panel, "blah"));
      * </pre>
      * 
      * @param <A> Superclass of {@code B}. This is what you are 
