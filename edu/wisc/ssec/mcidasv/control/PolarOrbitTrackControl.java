@@ -136,6 +136,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private TextDisplayable groundStationDsp;
 
     private static final int DEFAULT_ANTENNA_ANGLE = 5;
+    private static final int MAX_ANTENNA_ANGLE = 90;
     private int angle = DEFAULT_ANTENNA_ANGLE;
 
     private DataChoice dataChoice;
@@ -150,8 +151,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     /** Font size control */
     private static final int SLIDER_MAX = 10;
     private static final int SLIDER_MIN = 1;
+    
+    /** Ground station line width control */
+    private static final int GS_SLIDER_MAX = 4;
+    private static final int GS_SLIDER_MIN = 1;
 
     private JSlider fontSizeSlider;
+    private JSlider gsSizeSlider;
     private JTextField fontSizeFld = new JTextField();
 
     private CompositeDisplayable trackDsp;
@@ -247,7 +253,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             centerLon = llp.getLongitude().getValue();
             centerAlt = dataSource.getNearestAltToGroundStation(centerLat, centerLon) / 1000.0;
             EarthLocationTuple elt = new EarthLocationTuple(centerLat, centerLon, centerAlt);
-            double[] xyz = navDsp.getSpatialCoordinates((EarthLocation)elt).getValues();
+            double[] xyz = navDsp.getSpatialCoordinates((EarthLocation) elt).getValues();
             satZ = xyz[2] / 5.0;
             applyTrackPosition();
         } catch (Exception e) {
@@ -263,13 +269,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             color = getColor();
             List<String> dts = new ArrayList<String>();
             if (data instanceof Tuple) {
-                Data[] dataArr = ((Tuple)data).getComponents();
+                Data[] dataArr = ((Tuple) data).getComponents();
 
                 int npts = dataArr.length;
                 float[][] latlon = new float[2][npts];
 
-                for (int i=0; i<npts; i++) {
-                    Tuple t = (Tuple)dataArr[i];
+                for (int i = 0; i < npts; i++) {
+                    Tuple t = (Tuple) dataArr[i];
                     Data[] tupleComps = t.getComponents();
 
                     LatLonTuple llt = (LatLonTuple)tupleComps[1];
@@ -296,8 +302,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                             trackDsp.addDisplayable(time);
                         }
                     }
-                    float lat = (float)dlat;
-                    float lon = (float)dlon;
+                    float lat = (float) dlat;
+                    float lon = (float) dlon;
                     latlon[0][i] = lat;
                     latlon[1][i] = lon;
                 }
@@ -490,6 +496,16 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         fontSizeFld = new JTextField(Integer.toString(size), 3);
         fontSizeFld.addActionListener(fontSizeChange);
         
+        // init the ground station line width control slider
+        gsSizeSlider = new JSlider();
+        gsSizeSlider = GuiUtils.makeSlider(GS_SLIDER_MIN, GS_SLIDER_MAX, defaultSize,
+                this, "gsSliderChanged", true);
+        gsSizeSlider.setMajorTickSpacing(1);
+        gsSizeSlider.setSnapToTicks(true);
+        gsSizeSlider.setPaintTicks(true);
+        gsSizeSlider.setPaintLabels(true);
+        gsSizeSlider.setValue(GS_SLIDER_MIN);
+        
         fontSizePanel = new JPanel();
         fontSizePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         fontSizePanel.add(new JLabel("Font Size: "));
@@ -528,7 +544,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private JPanel makeGroundStationPanel() {
         locationComboBox = new JComboBox();
         locationComboBox.setEditable(true);
-        locationEditor = (JTextField)locationComboBox.getEditor().getEditorComponent();
+        locationEditor = (JTextField) locationComboBox.getEditor().getEditorComponent();
         locationEditor.addKeyListener(new KeyListener() {
             public void keyPressed(KeyEvent e) {}
             public void keyReleased(KeyEvent e) {}
@@ -611,8 +627,12 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         
         antColorPanel = new JPanel();
         antColorPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        antColorPanel.add(new JLabel("Set Color: "));
+        antColorPanel.add(new JLabel("Set Ground Station Color: "));
         antColorPanel.add(antColorSwatch);
+        
+        antColorPanel.add(Box.createHorizontalStrut(5));
+        antColorPanel.add(new JLabel("Set Ground Station Line Width: "));
+        antColorPanel.add(gsSizeSlider);
         
         return latLonAltPanel;
     }
@@ -687,7 +707,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                        satelliteAltitude, getAntColor()) != null) {
                 drawGroundStation();
                 circleDsp.setColor(getAntColor());
-                circleDsp.setLineWidth(1f);
                 circleDsp.addDisplayable(coverageCircle);
                 circleDsp.addDisplayable(groundStationDsp);
                 addDisplayable(circleDsp, FLAG_COLORTABLE);
@@ -856,6 +875,18 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         setFontSizeTextField(sliderValue);
         setDisplayableTextSize(sliderValue);
     }
+    
+    public void gsSliderChanged(int sliderValue) {
+        // ground station outline width
+    	try {
+			circleDsp.setLineWidth(sliderValue);
+		// doubtful these could ever happen, but required	
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (VisADException e) {
+			e.printStackTrace();
+		}
+    }
 
     public void setStation(String val) {
         station = val.trim();
@@ -866,9 +897,11 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     }
 
     public void setAntennaAngle(int val) {
-    	if ((val < 3) || (val > 90)) {
+    	if ((val < DEFAULT_ANTENNA_ANGLE) || (val > MAX_ANTENNA_ANGLE)) {
         	// throw up a dialog to tell user the problem
-        	JOptionPane.showMessageDialog(latLonAltPanel, "Antenna angle valid range is 3 to 90 degrees");
+        	JOptionPane.showMessageDialog(latLonAltPanel, 
+        			"Antenna angle valid range is " + DEFAULT_ANTENNA_ANGLE + 
+        			" to " + MAX_ANTENNA_ANGLE + " degrees");
     	} else {
     		String str = " " + val;
     		antennaAngle.setText(str);
