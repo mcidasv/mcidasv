@@ -308,6 +308,18 @@ public class SystemState {
                " built " + info.get(Constants.PROP_BUILD_DATE);
     }
 
+    /**
+     * Gets a human-friendly representation of the version information embedded 
+     * within VisAD's {@literal "DATE"} file.
+     * 
+     * @return {@code String} that looks {@literal "VisAD version <b>revision</b> built <b>date</b>"}.
+     * For example: {@code VisAD version 5952 built Thu Mar 22 13:01:31 CDT 2012}.
+     */
+    public static String getVisadVersionString() {
+        Map<String, String> props = queryVisadBuildProperties();
+        return "VisAD version " + props.get(Constants.PROP_VISAD_REVISION) + " built " + props.get(Constants.PROP_VISAD_DATE);
+    }
+
     private InputStream getResourceAsStream(final String name) {
         return ClassLoader.getSystemResourceAsStream(name);
     }
