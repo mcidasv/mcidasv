@@ -55,23 +55,23 @@ import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.util.SystemState;
 
 public class StateManager extends ucar.unidata.idv.StateManager implements Constants, HyperlinkListener {
-	
+
     /** Lazily-loaded VisAD build date. */
     private String visadDate;
 
     /** Lazily-loaded VisAD SVN revision number. */
     private String visadVersion;
 
-	private String version;
-	private String versionAbout;
-	
-	public StateManager(IntegratedDataViewer idv) {
-		super(idv);
-	}
-	
-	/**
-	 * Override to set the right user directory
-	 */
+    private String version;
+    private String versionAbout;
+
+    public StateManager(IntegratedDataViewer idv) {
+        super(idv);
+    }
+
+    /**
+     * Override to set the right user directory
+     */
     protected IdvObjectStore doMakeObjectStore() {
         IdvObjectStore store = new IdvObjectStore(getIdv(),
                                    getStoreSystemName(), getStoreName(),
@@ -81,37 +81,37 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
         return store;
     }
 
-	/**
-	 * Handle a change to a link
-	 *
-	 * @param e  the link's event
-	 */
-	public void hyperlinkUpdate(HyperlinkEvent e) {
-		if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-			if (e.getURL() == null) {
-				click(e.getDescription());
-			} else {
-				click(e.getURL().toString());
-			}
-		}
-	}
-	
-	/**
-	 * Handle a click on a link
-	 *
-	 * @param url  the link definition
-	 */
-	public void click(String url) {
-		getIdv().actionPerformed(new ActionEvent(this, 0, url));
-	}
-	
-	public String getOSName() {
-		String os = System.getProperty("os.name");
-		os = os.replaceAll(" ", "_");
-		return os;
-	}
+    /**
+     * Handle a change to a link
+     *
+     * @param e  the link's event
+     */
+    public void hyperlinkUpdate(HyperlinkEvent e) {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+            if (e.getURL() == null) {
+                click(e.getDescription());
+            } else {
+                click(e.getURL().toString());
+            }
+        }
+    }
 
-	public String getMcIdasVersionAbout() {
+    /**
+     * Handle a click on a link
+     *
+     * @param url  the link definition
+     */
+    public void click(String url) {
+        getIdv().actionPerformed(new ActionEvent(this, 0, url));
+    }
+
+    public String getOSName() {
+        String os = System.getProperty("os.name");
+        os = os.replaceAll(" ", "_");
+        return os;
+    }
+
+    public String getMcIdasVersionAbout() {
         getMcIdasVersion();
 
         versionAbout = IOUtil.readContents((String) getProperty(Constants.PROP_ABOUTTEXT), "");
@@ -128,25 +128,26 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
         versionAbout = StringUtil.replace(versionAbout, Constants.MACRO_COPYRIGHT_YEAR, value);
         value = props.getProperty(PROP_BUILD_DATE, "Unknown");
         versionAbout = StringUtil.replace(versionAbout, Constants.MACRO_BUILDDATE, value);
-
+        versionAbout = StringUtil.replace(versionAbout, Constants.MACRO_VISAD_VERSION, getVisadVersion());
+        
         return versionAbout;
-	}
+    }
 
-	public String getMcIdasVersion() {
-		if (version != null) {
-			return version;
-		}
-		
-		Properties props = new Properties();
-		props = Misc.readProperties((String) getProperty(Constants.PROP_VERSIONFILE), null, getClass());
-		String maj = props.getProperty(PROP_VERSION_MAJOR, "0");
-		String min = props.getProperty(PROP_VERSION_MINOR, "0");
-		String rel = props.getProperty(PROP_VERSION_RELEASE, "");
-		
-		version = maj.concat(".").concat(min).concat(rel);
-		
-		return version;
-	}
+    public String getMcIdasVersion() {
+        if (version != null) {
+            return version;
+        }
+
+        Properties props = new Properties();
+        props = Misc.readProperties((String) getProperty(Constants.PROP_VERSIONFILE), null, getClass());
+        String maj = props.getProperty(PROP_VERSION_MAJOR, "0");
+        String min = props.getProperty(PROP_VERSION_MINOR, "0");
+        String rel = props.getProperty(PROP_VERSION_RELEASE, "");
+
+        version = maj.concat(".").concat(min).concat(rel);
+
+        return version;
+    }
 
     /**
      * Get a property
@@ -222,25 +223,25 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
         return visadVersion;
     }
 
-	public String getIdvVersion() {
-		return getVersion();
-	}
-	
-	/**
-	 * Overridden to set default of McIDAS-V
-	 */
-    public String getStoreSystemName() {
-    	return StartupManager.INSTANCE.getPlatform().getUserDirectory();
+    public String getIdvVersion() {
+        return getVersion();
     }
-	
-	/**
-	 * Overridden to get dir of the unnecessary second level directory.
-	 * 
-	 * @see ucar.unidata.idv.StateManager#getStoreName()
-	 */
-	public String getStoreName() {
-		return "";
-	}
+
+    /**
+     * Overridden to set default of McIDAS-V
+     */
+    public String getStoreSystemName() {
+        return StartupManager.INSTANCE.getPlatform().getUserDirectory();
+    }
+
+    /**
+     * Overridden to get dir of the unnecessary second level directory.
+     * 
+     * @see ucar.unidata.idv.StateManager#getStoreName()
+     */
+    public String getStoreName() {
+        return "";
+    }
 	
 	/**
 	 * Connect to McIDAS website and look for latest stable version

@@ -64,14 +64,21 @@ public interface Constants extends IdvConstants {
 	 * The name of a thing that contains the display/layer controls
 	 */
 	public static final String DISPLAYCONTROLLER_NAME = "Display Controller";
+
 	/** Macro for the build date. */
 	public static String MACRO_BUILDDATE = "%BUILDDATE%";
+
 	/** Macro for the copyright year in the about HTML file. */
 	public static String MACRO_COPYRIGHT_YEAR = "%COPYRIGHT_YEAR%";
+
 	/** Macro for the IDV version in the about HTML file. */
 	public static String MACRO_IDV_VERSION = "%IDVVERSION%";
+
 	/** Macro for the version in the about HTML file. */
 	public static String MACRO_VERSION = "%MCVERSION%";
+
+	/** Macro for the VisAD version in the about HTML file. */
+	public static String MACRO_VISAD_VERSION = "%VISADVERSION%";
 
     /** Default size for GUI elements */
 	public static final int ELEMENT_WIDTH = 90;
@@ -257,7 +264,7 @@ public interface Constants extends IdvConstants {
 	/** Property name for the McIdas-V homepage URL. */
 	public static String PROP_HOMEPAGE = "mcidasv.homepage";
 
-	/** Specifies use of {@link edu.wisc.ssec.mcidasv.ui.TabbedUIManager}. */
+	/** Specifies use of {@code edu.wisc.ssec.mcidasv.ui.TabbedUIManager}. */
 	public static final String PROP_TABBED_UI = "mcidasv.tabbedDisplay";
 
 	/** Property name for the major version number. */

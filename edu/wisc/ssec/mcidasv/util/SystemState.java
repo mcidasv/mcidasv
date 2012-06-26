@@ -561,7 +561,7 @@ public class SystemState {
 
         buf.append("# Software Versions:")
             .append("\n# McIDAS-V: ").append(versions.get("mcv.version.general")).append(" (").append(versions.get("mcv.version.build")).append(')')
-            .append("\n# VisAD:    ").append(versions.get("visad.version.general")).append(" )").append(versions.get("visad.version.build")).append(')')
+            .append("\n# VisAD:    ").append(versions.get("visad.version.general")).append(" (").append(versions.get("visad.version.build")).append(')')
             .append("\n# IDV:      ").append(versions.get("idv.version.general")).append(" (").append(versions.get("idv.version.build")).append(')')
             .append("\n\n# Operating System:")
             .append("\n# Name:         ").append(sysProps.getProperty("os.name"))
