@@ -32,7 +32,6 @@ package edu.wisc.ssec.mcidasv.data;
 
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
-import static javax.swing.GroupLayout.Alignment.TRAILING;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
@@ -60,11 +59,6 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
 
       private static final Logger logger = LoggerFactory.getLogger(TimeRangeSelection.class);
 
-      private DataSourceImpl dataSource;
-
-      private JPanel beginDate;
-      private JPanel endTime;
-      private JPanel endDate;
       private JTextField beginTimeFld;
       private JTextField endTimeFld;
       private String defaultBegTime = "00:00:00";
@@ -90,12 +84,12 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
       public TimeRangeSelection(DataSourceImpl dataSource) 
               throws VisADException, RemoteException {
           super("Time Range");
-          this.dataSource = dataSource;
       }
 
     protected JComponent doMakeContents() {
 
-        JLabel begLab = new JLabel("  Begin");
+        logger.debug("creating the TimeRangeSelection panel...");
+    	JLabel begLab = new JLabel("  Begin");
         JLabel endLab = new JLabel("  End");
         JLabel begTimeLab = new JLabel("      Time:");
         JLabel endTimeLab = new JLabel("      Time:");
@@ -166,13 +160,11 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
     }
 
     @Override public void applyToDataSelection(DataSelection dataSelection) {
-        //System.out.println("applyToDataSelection: dataSelection=" + dataSelection);
 
         if (dataSelection == null) {
             dataSelection = new DataSelection(true);
         }
 
-        Date beg = begDay.getDate();
         JCalendar cal = begDay.getJCalendar();
         JDayChooser dayChooser = cal.getDayChooser();
         int day = dayChooser.getDay();
@@ -216,7 +208,6 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
         Double doubleVal = new Double(secs);
         dataSelection.putProperty(PROP_SECS, doubleVal.toString());
 
-        Date end = endDay.getDate();
         cal = endDay.getJCalendar();
         dayChooser = cal.getDayChooser();
         day = dayChooser.getDay();
