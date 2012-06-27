@@ -93,6 +93,12 @@ public class LocalAddeEntry implements AddeEntry {
 
     private String asStringId;
 
+    /** */
+    private final boolean isTemporary;
+
+    /** */
+    private String entryAlias;
+
     public enum ServerName {
         AREA, AMSR, AMRR, GINI, FSDX, OMTP, LV1B, MODS, MODX, MOD4, MOD8, 
         MODR, MSGT, MTST, SMIN, TMIN, MD, INVALID;
@@ -264,6 +270,8 @@ public class LocalAddeEntry implements AddeEntry {
         this.start = builder.start;
         this.end = builder.end;
         this.entryStatus = builder.status;
+        this.isTemporary = builder.temporary;
+        this.entryAlias = builder.alias;
         logger.debug("created local: {}", this);
     }
 
@@ -297,7 +305,10 @@ public class LocalAddeEntry implements AddeEntry {
 
     // TODO(jon): fix this noop
     @Override public String getEntryAlias() {
-        return "";
+        if (entryAlias == null) {
+            return "";
+        }
+        return entryAlias;
     }
 
     // TODO(jon): fix this noop
@@ -305,10 +316,15 @@ public class LocalAddeEntry implements AddeEntry {
         if (newAlias == null) {
             throw new NullPointerException("Null aliases are not allowable.");
         }
+        this.entryAlias = newAlias;
     }
 
     @Override public void setEntryStatus(EntryStatus newStatus) {
         entryStatus = newStatus;
+    }
+
+    @Override public boolean isEntryTemporary() {
+        return isTemporary;
     }
 
     @Override public String getGroup() {
@@ -408,10 +424,10 @@ public class LocalAddeEntry implements AddeEntry {
     }
 
     /**
-     * @see LocalAddeEntry#generateHashCode(String, String, String, AddeFormat)
+     * @see LocalAddeEntry#generateHashCode(String, String, String, String, boolean, AddeFormat)
      */
     @Override public int hashCode() {
-        return generateHashCode(name, group, fileMask, format);
+        return generateHashCode(name, group, fileMask, entryAlias, isTemporary, format);
     }
 
     /**
@@ -462,6 +478,16 @@ public class LocalAddeEntry implements AddeEntry {
         } else if (!name.equals(other.name)) {
             return false;
         }
+        if (entryAlias == null) {
+            if (other.entryAlias != null) {
+                return false;
+            }
+        } else if (!entryAlias.equals(other.entryAlias)) {
+            return false;
+        }
+        if (isTemporary != other.isTemporary) {
+            return false;
+        }
         return true;
     }
 
@@ -474,16 +500,16 @@ public class LocalAddeEntry implements AddeEntry {
 
     @Override public String toString() {
         return String.format(
-            "[LocalAddeEntry@%x: name=%s, group=%s, fileMask=\"%s\", descriptor=%s, serverName=%s, format=%s, description=%s, type=%s, status=%s]", 
-            hashCode(), name, group, fileMask, descriptor, format.getServerName().name(), format.name(), format.getTooltip(), format.getType(), entryStatus.name());
+            "[LocalAddeEntry@%x: name=%s, group=%s, fileMask=\"%s\", descriptor=%s, serverName=%s, format=%s, description=%s, type=%s, status=%s, temporary=%s, alias=%s]", 
+            hashCode(), name, group, fileMask, descriptor, format.getServerName().name(), format.name(), format.getTooltip(), format.getType(), entryStatus.name(), isTemporary, entryAlias);
         
     }
 
     public static int generateHashCode(final LocalAddeEntry entry) {
-        return generateHashCode(entry.getName(), entry.getGroup(), entry.getMask(), entry.getFormat());
+        return generateHashCode(entry.getName(), entry.getGroup(), entry.getMask(), entry.getEntryAlias(), entry.isEntryTemporary(), entry.getFormat());
     }
 
-    public static int generateHashCode(String name, String group, String fileMask, AddeFormat format) {
+    public static int generateHashCode(String name, String group, String fileMask, String entryAlias, boolean isTemporary, AddeFormat format) {
         final int prime = 31;
         int result = 1;
         result = prime * result
@@ -491,6 +517,8 @@ public class LocalAddeEntry implements AddeEntry {
         result = prime * result + ((format == null) ? 0 : format.toString().hashCode());
         result = prime * result + ((group == null) ? 0 : group.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((entryAlias == null) ? 0 : entryAlias.hashCode());
+        result = prime * result + (isTemporary ? 1231 : 1237);
         return result;
     }
 
@@ -564,6 +592,12 @@ public class LocalAddeEntry implements AddeEntry {
          * Defaults to {@link ServerName#INVALID}.
          */
         private ServerName safeKind = ServerName.INVALID;
+
+        /** */
+        private boolean temporary = false;
+
+        /** */
+        private String alias = "";
 
         public Builder(final Map<String, String> map) {
             if (!map.containsKey("C") || !map.containsKey("N1") || !map.containsKey("MASK") || !map.containsKey("MCV")) {
@@ -745,15 +779,39 @@ public class LocalAddeEntry implements AddeEntry {
 
         /**
          * 
-         *
+         * 
          * @param status
-         *
+         * 
          * @return {@code LocalAddeEntry.Builder} with {@link AddeEntry.EntryStatus}.
          */
         public Builder status(final EntryStatus status) {
             if (status != null) {
                 this.status = status;
             }
+            return this;
+        }
+
+        /**
+         * 
+         * 
+         * @param temporary
+         * 
+         * @return {@code LocalAddeEntry.Builder} with the specified temporary status.
+         */
+        public Builder temporary(final boolean temporary) {
+            this.temporary = temporary;
+            return this;
+        }
+
+        /**
+         * 
+         * 
+         * @param alias 
+         * 
+         * @return {@code LocalAddeEntry.Builder} with the specified alias.
+         */
+        public Builder alias(final String alias) {
+            this.alias = alias;
             return this;
         }
 
@@ -775,7 +833,7 @@ public class LocalAddeEntry implements AddeEntry {
                 case LRIT_MET7: this.descriptor = "MET7"; break;
                 case LRIT_MTSAT1R: this.descriptor = "MTSAT1R"; break;
                 default:
-                    this.descriptor = Integer.toHexString(generateHashCode(name, group, mask, format));
+                    this.descriptor = Integer.toHexString(generateHashCode(name, group, mask, alias, temporary, format));
                     break;
             }
             return new LocalAddeEntry(this);

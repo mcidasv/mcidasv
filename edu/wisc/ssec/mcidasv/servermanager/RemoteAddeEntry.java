@@ -87,6 +87,9 @@ public class RemoteAddeEntry implements AddeEntry {
     /** The {@literal "dataset"} of this entry. */
     private final String group;
 
+    /** */
+    private final boolean isTemporary;
+
 //    /** Err... */
 //    // TODO(jon): wait, what is this?
 //    private final String description;
@@ -104,7 +107,7 @@ public class RemoteAddeEntry implements AddeEntry {
     private EntryStatus entryStatus;
 
     /** Allows the user to refer to this entry with an arbitrary name. */
-    private String entryAlias = "";
+    private String entryAlias;
 
     private String asStringId;
 
@@ -129,6 +132,8 @@ public class RemoteAddeEntry implements AddeEntry {
         this.entryValidity = builder.entryValidity;
         this.entrySource = builder.entrySource;
         this.entryStatus = builder.entryStatus;
+        this.isTemporary = builder.temporary;
+        this.entryAlias = builder.alias;
     }
 
     /**
@@ -203,6 +208,10 @@ public class RemoteAddeEntry implements AddeEntry {
         entryAlias = newAlias;
     }
 
+    public boolean isEntryTemporary() {
+        return isTemporary;
+    }
+
     /**
      * Handy {@code String} representation of this ADDE entry. Currently looks
      * like {@code ADDRESS/GROUP}, but this is subject to change.
@@ -263,6 +272,16 @@ public class RemoteAddeEntry implements AddeEntry {
         } else if (!group.equals(other.group)) {
             return false;
         }
+        if (entryAlias == null) {
+            if (other.entryAlias != null) {
+                return false;
+            }
+        } else if (!entryAlias.equals(other.entryAlias)) {
+            return false;
+        }
+        if (isTemporary != other.isTemporary) {
+            return false;
+        }
         return true;
     }
 
@@ -280,6 +299,8 @@ public class RemoteAddeEntry implements AddeEntry {
         result = prime * result + ((address == null) ? 0 : address.hashCode());
         result = prime * result + ((entryType == null) ? 0 : entryType.hashCode());
         result = prime * result + ((group == null) ? 0 : group.hashCode());
+        result = prime * result + ((entryAlias == null) ? 0 : entryAlias.hashCode());
+        result = prime * result + (isTemporary ? 1231 : 1237);
         return result;
     }
 
@@ -291,7 +312,7 @@ public class RemoteAddeEntry implements AddeEntry {
     }
 
     public String toString() {
-        return String.format("[RemoteAddeEntry@%x: address=%s, group=%s, entryType=%s, entryValidity=%s, account=%s, status=%s, source=%s]", hashCode(), address, group, entryType, entryValidity, account, entryStatus.name(), entrySource);
+        return String.format("[RemoteAddeEntry@%x: address=%s, group=%s, entryType=%s, entryValidity=%s, account=%s, status=%s, source=%s, temporary=%s, alias=%s]", hashCode(), address, group, entryType, entryValidity, account, entryStatus.name(), entrySource, isTemporary, entryAlias);
     }
 
     /**
@@ -346,6 +367,12 @@ public class RemoteAddeEntry implements AddeEntry {
 
         /** Optional description of the entry. Defaults to {@literal ""}. */
         private String description = "";
+
+        /** Optional flag for whether or not the entry is temporary. Defaults to {@code false}. */
+        private boolean temporary = false;
+
+        /** Optional alias for the entry. Default to {@literal ""}. */
+        private String alias = "";
 
         /**
          * Creates a new {@literal "builder"} for an ADDE entry. Note that
@@ -449,6 +476,11 @@ public class RemoteAddeEntry implements AddeEntry {
             return this;
         }
 
+        /**
+         * Convenient way to generate a new, invalid entry.
+         * 
+         * @return Current {@literal "builder"} for an ADDE entry.
+         */
         public Builder invalidate() {
             this.entryType = EntryType.INVALID;
             this.entryValidity = EntryValidity.INVALID;
@@ -457,9 +489,35 @@ public class RemoteAddeEntry implements AddeEntry {
             return this;
         }
 
+        /**
+         * 
+         * 
+         * @param temporary
+         * 
+         * @return Current {@literal "builder"} for an ADDE entry.
+         */
+        public Builder temporary(boolean temporary) {
+            this.temporary = temporary;
+            return this;
+        }
+
+        /**
+         * 
+         * 
+         * @param alias
+         * 
+         * @return Current {@literal "builder"} for an ADDE entry.
+         */
+        public Builder alias(final String alias) {
+            this.alias = alias;
+            return this;
+        }
+
         /** 
          * Creates an entry based upon the values supplied to the other 
          * methods. 
+         * 
+         * @return A newly created {@code RemoteAddeEntry}.
          */
         public RemoteAddeEntry build() {
             return new RemoteAddeEntry(this);

@@ -309,6 +309,8 @@ public class McIDASV extends IntegratedDataViewer {
                 element.setAttribute("type", entry.getEntryType().toString());
                 element.setAttribute("validity", entry.getEntryValidity().toString());
                 element.setAttribute("status", entry.getEntryStatus().toString());
+                element.setAttribute("temporary", Boolean.toString(entry.isEntryTemporary()));
+                element.setAttribute("alias", entry.getEntryAlias());
                 return element;
             }
 
@@ -321,6 +323,8 @@ public class McIDASV extends IntegratedDataViewer {
                 String type = getAttribute(element, "type");
                 String validity = getAttribute(element, "validity");
                 String status = getAttribute(element, "status");
+                boolean temporary = getAttribute(element, "temporary", false);
+                String alias = getAttribute(element, "alias", "");
 
                 EntrySource entrySource = EntryTransforms.strToEntrySource(source);
                 EntryType entryType = EntryTransforms.strToEntryType(type);
@@ -333,6 +337,8 @@ public class McIDASV extends IntegratedDataViewer {
                         .source(entrySource)
                         .type(entryType)
                         .validity(entryValidity)
+                        .temporary(temporary)
+                        .alias(alias)
                         .status(entryStatus).build();
 
                 return entry;
@@ -352,6 +358,8 @@ public class McIDASV extends IntegratedDataViewer {
                 element.setAttribute("fileMask", entry.getMask());
                 element.setAttribute("name", entry.getName());
                 element.setAttribute("status", entry.getEntryStatus().name());
+                element.setAttribute("temporary", Boolean.toString(entry.isEntryTemporary()));
+                element.setAttribute("alias", entry.getEntryAlias());
                 return element;
             }
             @Override public Object createObject(XmlEncoder e, Element element) {
@@ -364,8 +372,19 @@ public class McIDASV extends IntegratedDataViewer {
                 String fileMask = getAttribute(element, "fileMask");
                 String name = getAttribute(element, "name");
                 String status = getAttribute(element, "status", "ENABLED");
-                LocalAddeEntry.Builder builder = new LocalAddeEntry.Builder(name, group, fileMask, format).range(start, end).descriptor(descriptor).realtime(realtime).status(status);
-                return builder.build();
+                boolean temporary = getAttribute(element, "temporary", false);
+                String alias = getAttribute(element, "alias", "");
+
+                LocalAddeEntry entry = 
+                    new LocalAddeEntry.Builder(name, group, fileMask, format)
+                        .range(start, end)
+                        .descriptor(descriptor)
+                        .realtime(realtime)
+                        .status(status)
+                        .temporary(temporary)
+                        .alias(alias).build();
+
+                return entry;
             }
         });
         

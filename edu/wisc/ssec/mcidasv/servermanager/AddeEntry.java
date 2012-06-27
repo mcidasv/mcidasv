@@ -271,6 +271,9 @@ public interface AddeEntry {
     // TODO(jon): should this be removed? this makes the entries mutable!
     public void setEntryAlias(final String newAlias);
 
+    /** */
+    public boolean isEntryTemporary();
+
     /**
      * Currently used as a identifier for convenient storage by the server 
      * manager.
