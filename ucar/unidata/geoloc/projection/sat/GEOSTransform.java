@@ -1,5 +1,3 @@
-package ucar.unidata.geoloc.projection.sat;
-
 import java.io.*;
 import java.lang.Math;
 import java.lang.String;
@@ -36,11 +34,6 @@ public class GEOSTransform {
    public final Geoid grs80 = new GeoidGRS80();
 
    public String scan_geom = GEOS;
-
-   double scale_x;
-   double scale_y;
-   double add_offset_x;
-   double add_offset_y;
 
    public GEOSTransform() {
      this(0.0);
@@ -95,8 +88,15 @@ public class GEOSTransform {
      d = h*h - r_eq*r_eq;
    }
 
-
-   //-- input (Longitude, Latitude) -> output (lamda, theta), ie. (x,y) or (E-W, N-S)
+  /**
+   * Transform geographic Earth coordinates to satellite view angle coordinate system
+   * also known as the "intermediate" coordinate system in CGMS Normalized Geostationary Projection.
+   *
+   * @param geographic_lon longitude, units: degrees
+   * @param geographic_lat latitude, units: degrees
+   *
+   * @return (lamda, theta) units: radian. This is the (x,y) or (East-West, North_South) view angle.
+   */
    public double[] earthToSat(double geographic_lon, double geographic_lat) {
 
      geographic_lat = geographic_lat*DEG_TO_RAD;
@@ -129,8 +129,14 @@ public class GEOSTransform {
      return new double[] {lamda_sat, theta_sat};
    }
 
-
-   //- x is lamda (E-W), y is theta (N-S).  Output (Longitude, Latitude)
+  /**
+   * Transform satellite view angle coordinates, known as the "intermeidate" coordinates in the
+   * CGMS Normalized Geostationary Projection, to geographic Earth coordinates.
+   *
+   * @param x is lamda (East-West) angle, units: radians
+   * @param y is theta (Norht-South) angle, units: radians
+   * @return (Longitude, Latitude), units degrees
+   */
    public double[] satToEarth(double x, double y) {
 
      if (scan_geom.equals(GOES)) { // convert from GOES to GEOS for transfrom below
@@ -170,16 +176,28 @@ public class GEOSTransform {
      return new double[] {lonDegrees, latDegrees};
    }
 
-   public double[] GOES_to_GEOS(double lambda_goes, double theta_goes) {
-     double theta_geos = Math.asin( Math.sin(theta_goes)*Math.cos(lambda_goes) );
-     double lambda_geos = Math.atan( Math.tan(lambda_goes)/Math.cos(theta_goes) );
+  /**
+   * Transform view angle coordinates in the GOES scan geometry frame to view angle coordinates
+   * in the GEOS scan geometry frame.
+   *
+   */
+   public double[] GOES_to_GEOS(double lamda_goes, double theta_goes) {
+     double theta_geos = Math.asin( Math.sin(theta_goes)*Math.cos(lamda_goes) );
+     double lamda_geos = Math.atan( Math.tan(lamda_goes)/Math.cos(theta_goes) );
 
-     return new double[] {lambda_geos, theta_geos};
+     return new double[] {lamda_geos, theta_geos};
    }
 
 
   /**
    *  Transform fractional FGF coordinates to (longitude, latitude).
+   *  @param fgf_x fractional FGF coordinate, zero-based
+   *  @param fgf_y fractional FGF coordinate, zero-based
+   *  @param scale_x scaleFactor from the x coordinate variable
+   *  @param offset_x addOffset from the x coordinate variable
+   *  @param scale_y scaleFactor from the y coordinate variable
+   *  @param offset_y addOffset from the y coordinate variable
+   *  @return (Longitude, Latitude), units: degrees
    */
    public double[] FGFtoEarth(double fgf_x, double fgf_y, double scale_x, double offset_x, double scale_y, double offset_y) {
       double[] xy = FGFtoSat(fgf_x, fgf_y, scale_x, offset_x, scale_y, offset_y);
@@ -188,6 +206,13 @@ public class GEOSTransform {
 
   /**
    *  Transform fractional FGF coordinates to (lamda, theta) radians.
+   *  @param fgf_x fractional FGF coordinate, zero-based
+   *  @param fgf_y fractional FGF coordinate, zero-based
+   *  @param scale_x scaleFactor from the x coordinate variable
+   *  @param offset_x addOffset from the x coordinate variable
+   *  @param scale_y scaleFactor from the y coordinate variable
+   *  @param offset_y addOffset from the y coordinate variable
+   *  @return (lamda, theta), units: radians
    */
    public double[] FGFtoSat(double fgf_x, double fgf_y, double scale_x, double offset_x, double scale_y, double offset_y) {
       double x = fgf_x*scale_x + offset_x;
@@ -197,26 +222,43 @@ public class GEOSTransform {
    }
 
   /**
-   *  Transform integer FGF coordinates to (longitude, latitude).
+   *  Transform integer FGF coordinates to (longitude, latitude) of pixel center
+   *  The (i,j) pixel, zero-based, refers to the pixel center.
+   *  @param scale_x scaleFactor from the x coordinate variable
+   *  @param offset_x addOffset from the x coordinate variable
+   *  @param scale_y scaleFactor from the y coordinate variable
+   *  @param offset_y addOffset from the y coordinate variable
+   *  @return (Longitude, Latitude), units: degrees, of FGF (i,j) pixel center
    */
-   public double[] ElemLineToEarth(int elem, int line, double scale_x, double offset_x, double scale_y, double offset_y) {
+   public double[] elemLineToEarth(int elem, int line, double scale_x, double offset_x, double scale_y, double offset_y) {
       return FGFtoEarth((double) elem, (double) line, scale_x, offset_x, scale_y, offset_y);
    }
   
   /**
    *  Transform Earth coordinates (lon,lat) to fractional FGF coordinates.
+   *  @param geographic_lon Longitude, units: degrees
+   *  @param geographic_lat Latitude, units: degrees
+   *  @param scale_x scaleFactor from the x coordinate variable
+   *  @param offset_x addOffset from the x coordinate variable
+   *  @param scale_y scaleFactor from the y coordinate variable
+   *  @param offset_y addOffset from the y coordinate variable
+   *  @return fractional fgf coordinates
    */
-   public double[] EarthToFGF(double geographic_lon, double geographic_lat, double scale_x, double offset_x, double scale_y, double offset_y) {
+   public double[] earthToFGF(double geographic_lon, double geographic_lat, double scale_x, double offset_x, double scale_y, double offset_y) {
      double[] xy = earthToSat(geographic_lon, geographic_lat);
      double[] fgf = SatToFGF(xy[0], xy[1], scale_x, offset_x, scale_y, offset_y);
      return fgf;
    }
 
   /**
-   *  Transform Earth coordinates (lon,lat) to integer FGF coordinates.
+   *  Transform pixel center Earth coordinates (lon,lat) to integer FGF coordinates.
+   *  @param scale_x scaleFactor from the x coordinate variable
+   *  @param offset_x addOffset from the x coordinate variable
+   *  @param scale_y scaleFactor from the y coordinate variable
+   *  @param offset_y addOffset from the y coordinate variable
    */
-   public int[] EarthToElemLine(double geographic_lon, double geographic_lat, double scale_x, double offset_x, double scale_y, double offset_y) {
-      double[] fgf = EarthToFGF(geographic_lon, geographic_lat, scale_x, offset_x, scale_y, offset_y);
+   public int[] earthToElemLine(double geographic_lon, double geographic_lat, double scale_x, double offset_x, double scale_y, double offset_y) {
+      double[] fgf = earthToFGF(geographic_lon, geographic_lat, scale_x, offset_x, scale_y, offset_y);
       int elem = (int) Math.floor(fgf[0] + 0.5);
       int line = (int) Math.floor(fgf[1] + 0.5);
       return new int[] {elem, line};
@@ -224,6 +266,10 @@ public class GEOSTransform {
 
   /**
    *  Transform (lamda, theta) in radians to fractional FGF coordinates.
+   *  @param scale_x scaleFactor from the x coordinate variable
+   *  @param offset_x addOffset from the x coordinate variable
+   *  @param scale_y scaleFactor from the y coordinate variable
+   *  @param offset_y addOffset from the y coordinate variable
    */
    public double[] SatToFGF(double lamda, double theta, double scale_x, double offset_x, double scale_y, double offset_y) {
      double fgf_x = (lamda - offset_x)/scale_x;
