@@ -2,40 +2,75 @@ from __future__ import with_statement
 import sys
 import os
 
+from java.lang import System
+
 # This is an ugly hack to deal with Jython's sys.path strangeness: if you
 # want to import a non-compiled python module contained in a JAR, sys.path
 # must contain something like "/path/to/your.jar/path/to/module"
-_cwd = os.getcwd()
-_mcv_jar = os.path.join(_cwd, 'mcidasv.jar')
-_idv_jar = os.path.join(_cwd, 'idv.jar')
-_visad_jar = os.path.join(_cwd, 'visad.jar')
+def _mcvinit_classpath_hack():
+    """Attempts to locate mcidasv.jar, idv.jar, and visad.jar.
+    
+    This function will look for the JARs within the classpath, but will also
+    try within the following (platform-dependent) paths:
+        Windows: "C:\Program Files\McIDAS-V-System"
+        OS X: "/Applications/McIDAS-V-System"
+        Linux: ""
+    
+    Returns:
+        A dictionary with "mcidasv", "idv", and "visad" keys.
+    """
+    classpath = System.getProperty('java.class.path')
+    
+    # supply platform-dependent paths to various JAR files 
+    # (in case they somehow are not present in the classpath)
+    osname = System.getProperty('os.name')
+    if osname.startswith('Windows'):
+        mcv_jar = "C:\\Program Files\\McIDAS-V-System\\mcidasv.jar"
+        idv_jar = "C:\\Program Files\\McIDAS-V-System\\idv.jar"
+        visad_jar = "C:\\Program Files\\McIDAS-V-System\\visad.jar"
+    elif 'OS X' in osname:
+        mcv_jar = '/Applications/McIDAS-V-System/mcidasv.jar'
+        idv_jar = '/Applications/McIDAS-V-System/idv.jar'
+        visad_jar = '/Applications/McIDAS-V-System/visad.jar'
+    else:
+        # TODO(jon): need to determine default install path for linux!
+        mcv_jar = './mcidasv.jar'
+        idv_jar = './idv.jar'
+        visad_jar = './visad.jar'
+    
+    # allow the actual classpath to override any default JAR paths
+    for entry in classpath.split(':'):
+        if entry.endswith('mcidasv.jar'):
+            mcv_jar = entry
+        elif entry.endswith('idv.jar'):
+            idv_jar = entry
+        elif entry.endswith('visad.jar'):
+            visad_jar = entry
+    
+    return { 'mcidasv': mcv_jar, 'idv': idv_jar, 'visad': visad_jar }
 
-# however, if we're not inside a jar just prepend the current directory.
-if not os.path.exists(_mcv_jar):
-    _mcv_jar = _cwd
+def _mcvinit_jythonpaths():
+    """
+    
+    Returns:
+        A list of paths suitable for appending to Jython's sys.path.
+    """
+    jars = _mcvinit_classpath_hack()
+    return [
+        jars['visad'],
+        jars['visad'] + '/visad/python',
+        jars['idv'],
+        jars['idv'] + '/ucar/unidata/idv/resources/python',
+        jars['mcidasv'],
+        jars['mcidasv'] + '/edu/wisc/ssec/mcidasv/resources/python',
+        jars['mcidasv'] + '/edu/wisc/ssec/mcidasv/resources/python/utilities',
+        jars['mcidasv'] + '/edu/wisc/ssec/mcidasv/resources/python/linearcombo',
+    ]
 
-# similar for idv.jar; assumption of the idv source living in "../idv"
-if not os.path.exists(_idv_jar):
-    _idv_jar = os.path.join(_cwd, '../idv')
-
-# now to find visad.jar! if it's not in the current directory, the only other
-# known location *might* be "../idv/lib"
-if not os.path.exists(_visad_jar):
-    _visad_jar = os.path.join(_cwd, '../idv/lib/visad.jar')
-
-# NOTE: the paths appended to sys.path cannot have a trailing '/'!
-_mcv_python = _mcv_jar+'/edu/wisc/ssec/mcidasv/resources/python'
-_idv_python = _idv_jar+'/ucar/unidata/idv/resources/python'
-_visad_python = _visad_jar+'/visad/python'
-
-sys.path.append(_visad_jar)
-sys.path.append(_idv_jar)
-sys.path.append(_mcv_jar)
-sys.path.append(_visad_python)
-sys.path.append(_idv_python)
-sys.path.append(_mcv_python)
-sys.path.append(_mcv_python+'/linearcombo')
-sys.path.append(_mcv_python+'/utilities')
+for jythonpath in _mcvinit_jythonpaths():
+    print jythonpath
+    if not jythonpath in sys.path:
+        sys.path.append(jythonpath)
 
 # this is intentionally the first IDV/McV thing imported
 from edu.wisc.ssec.mcidasv import McIDASV
@@ -79,5 +114,3 @@ if os.path.exists(_user_python):
         if ext == '.py':
             globals()[modname] = __import__(modname, globals(), locals(), ['*'], -1)
         del modname, ext
-
-del _cwd, _mcv_jar, _idv_jar, _user_python, _mcv_python, _idv_python
