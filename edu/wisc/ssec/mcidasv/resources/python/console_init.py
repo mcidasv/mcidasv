@@ -41,7 +41,11 @@ def _mcvinit_classpath_hack():
     return { 'mcidasv': mcv_jar, 'idv': idv_jar, 'visad': visad_jar }
 
 def _mcvinit_jythonpaths():
-    """
+    """Creates a list of paths containing required Python source code.
+    
+    This function uses _mcvinit_classpath_hack() to locate JARs and then uses
+    those paths to create paths to known Python source code within visad.jar,
+    idv.jar, and mcidasv.jar.
     
     Returns:
         A list of paths suitable for appending to Jython's sys.path.
@@ -73,8 +77,21 @@ islInterpreter = ImageGenerator(_mcv)
 
 from edu.wisc.ssec.mcidasv.data.hydra import Statistics
 
-import imageFilters
-#import shell as idvshell
+try:
+    import imageFilters
+except ImportError, e:
+    print 'Error attempting to import imageFilters:', e
+    print 'sys.path contents:'
+    for i, path in enumerate(sys.path):
+        print i, path
+
+try:
+    import shell as idvshell
+except ImportError, e:
+    print 'Error attempting to import idvshell:', e
+    print 'sys.path contents:'
+    for i, path in enumerate(sys.path):
+        print i, path
 
 from decorators import deprecated
 
