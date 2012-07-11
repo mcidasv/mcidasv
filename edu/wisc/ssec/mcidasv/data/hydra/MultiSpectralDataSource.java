@@ -44,6 +44,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.TreeSet;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -326,9 +327,13 @@ public class MultiSpectralDataSource extends HydraDataSource {
          
          // initialize the aggregation reader object
          logger.debug("Trying to create MODIS 1K GranuleAggregation reader...");
+         TreeSet<String> products = new TreeSet<String>();
+         products.add((String) table.get("array_name"));
+         products.add((String) table.get("lon_array_name"));
+         products.add((String) table.get("lat_array_name"));
          if (doAggregation) {
         	 try {
-        		 reader = new GranuleAggregation(ncdfal, 2030, "10*nscans", "Max_EV_frames");
+        		 reader = new GranuleAggregation(ncdfal, products, 2030, "10*nscans", "Max_EV_frames");
         	 } catch (Exception e) {
         		 throw new VisADException("Unable to initialize aggregation reader");
         	 }

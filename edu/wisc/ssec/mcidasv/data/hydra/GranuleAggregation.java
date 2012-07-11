@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,14 +84,16 @@ public class GranuleAggregation implements MultiDimensionReader {
    private int granuleLength = -1;
    private String inTrackDimensionName = null;
    private String crossTrackDimensionName = null;
+   private TreeSet<String> products;
 
-   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, int granuleLength, String inTrackDimensionName, String crossTrackDimensionName) throws Exception {
+   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, TreeSet<String> products, int granuleLength, String inTrackDimensionName, String crossTrackDimensionName) throws Exception {
 	   if (ncdfal == null) throw new Exception("No data: empty Suomi NPP aggregation object");
-	   logger.trace("granule length: " + granuleLength + " inTrack: " + inTrackDimensionName);
+	   logger.debug("granule length: " + granuleLength + " inTrack: " + inTrackDimensionName);
 	   this.granuleLength = granuleLength;
 	   this.inTrackDimensionName = inTrackDimensionName;
 	   this.crossTrackDimensionName = crossTrackDimensionName;
        this.ncdfal = ncdfal;
+       this.products = products;
 	   init(ncdfal);
    }
   
@@ -99,15 +102,15 @@ public class GranuleAggregation implements MultiDimensionReader {
    }
 
    public String[] getDimensionNames(String array_name) {
-	   logger.trace("GranuleAggregation.getDimensionNames, requested: " + array_name);
+	   logger.debug("GranuleAggregation.getDimensionNames, requested: " + array_name);
      return varDimNamesList.get(0).get(array_name);
    }
 
    public int[] getDimensionLengths(String array_name) {
-	   logger.trace("GranuleAggregation.getDimensionLengths, requested: " + array_name);
+	   logger.debug("GranuleAggregation.getDimensionLengths, requested: " + array_name);
 	   int[] lengths = varDimLengthsList.get(0).get(array_name);
 	   for (int i = 0; i < lengths.length; i++) {
-		   logger.trace("Length: " + lengths[i]);
+		   logger.debug("Length: " + lengths[i]);
 	   }
      return varDimLengthsList.get(0).get(array_name);
    }
@@ -208,6 +211,27 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   
 			   logger.debug("Working on variable: " + var.getShortName());
 			   
+			   boolean foundProduct = false;
+			   for (String s : products) {
+				   logger.debug("Seeing if variable is found in product list: " + s);
+				   if (s.contains(var.getShortName())) {
+					   logger.debug("Valid product: " + var.getShortName());
+					   foundProduct = true;
+				   }
+				   // we'll also pass Lat and Lon, needed for nav
+				   if (var.getShortName().equals("Latitude")) {
+					   foundProduct = true;
+				   }
+				   if (var.getShortName().equals("Longitude")) {
+					   foundProduct = true;
+				   }
+			   }
+			   
+			   if (! foundProduct) {
+				   logger.debug("Skipping variable: " + var.getShortName());
+				   continue;
+			   }
+			   
 			   if (var instanceof Structure) {
 				   analyzeStructure((Structure) var, varMap, varDimNames, varDimLengths, varDataType);
 				   continue;
@@ -231,7 +255,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   while (dimIter.hasNext()) {
 				   Dimension dim = (Dimension) dimIter.next();
 				   String s = dim.getName();
-				   logger.trace("DIMENSION name: " + s);
+				   logger.debug("DIMENSION name: " + s);
 				   if ((s != null) && (!s.isEmpty())) {
 					   if ((! s.equals(inTrackDimensionName)) && 
 							   ((! s.startsWith("Band")) && (cnt == 0)) &&
@@ -243,7 +267,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 					   }
 				   }
 				   String dimName = dim.getName();
-				   logger.trace("GranuleAggregation init, variable: " + varName + ", dimension name: " + dimName + ", length: " + dim.getLength());
+				   logger.debug("GranuleAggregation init, variable: " + varName + ", dimension name: " + dimName + ", length: " + dim.getLength());
 				   if (dimName == null) dimName = "dim" + cnt;
 				   dimNames[cnt] = dimName;
 				   dimLengths[cnt] = dim.getLength();
@@ -401,7 +425,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   int vGranuleRatio = varGranuleRatiosList.get(0).get(array_name);
 	   int vGranuleLength = granuleLength / vGranuleRatio;
 	   
-	   logger.trace("READING: " + array_name + ", INTRACKINDEX: " + vInTrackIndex +
+	   logger.debug("READING: " + array_name + ", INTRACKINDEX: " + vInTrackIndex +
 			   ", RATIO: " + vGranuleRatio);
 	   
 	   // which granules will we be dealing with?
@@ -410,12 +434,12 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   
 	   // next, we break out the offsets, counts, and strides for each granule
 	   int granuleSpan = hiGranuleId - loGranuleId + 1;
-	   logger.trace("readArray req, loGran: " + loGranuleId + ", hiGran: " + 
+	   logger.debug("readArray req, loGran: " + loGranuleId + ", hiGran: " + 
 			   hiGranuleId + ", granule span: " + granuleSpan + ", dimCount: " + dimensionCount);
 	   for (int i = 0; i < dimensionCount; i++) {
-		   logger.trace("start[" + i + "]: " + start[i]);
-		   logger.trace("count[" + i + "]: " + count[i]);
-		   logger.trace("stride[" + i + "]: " + stride[i]);
+		   logger.debug("start[" + i + "]: " + start[i]);
+		   logger.debug("count[" + i + "]: " + count[i]);
+		   logger.debug("stride[" + i + "]: " + stride[i]);
 	   }
 	   int [][] startSet = new int [granuleSpan][dimensionCount];
 	   int [][] countSet = new int [granuleSpan][dimensionCount];
@@ -486,7 +510,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   } else {
 				   ArrayList<Range> rangeList = new ArrayList<Range>();
 				   for (int dimensionIdx = 0; dimensionIdx < dimensionCount; dimensionIdx++) {
-					   logger.trace("Creating new Range: " + startSet[rangeListCount][dimensionIdx] +
+					   logger.debug("Creating new Range: " + startSet[rangeListCount][dimensionIdx] +
 							   ", " + (startSet[rangeListCount][dimensionIdx] + countSet[rangeListCount][dimensionIdx] - 1) + ", " + strideSet[rangeListCount][dimensionIdx]);
 					   Range range = new Range(
 							   startSet[rangeListCount][dimensionIdx], 

@@ -125,16 +125,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     private boolean nameHasBeenSet = false;
 
     private FlatField previewImage = null;
-    
-    private static int[] YSCAN_POSSIBILITIES = { 
-    	48,  96,  512,  768,  3072, 771,  771,  1536, 1541, 2304, 2313, 180, 60,  60,  60,  5,   15   
-    };
-    private static int[] XSCAN_POSSIBILITIES = { 
-    	254, 508, 2133, 3200, 3200, 4121, 4421, 6400, 8241, 4064, 4121, 96,  30,  30,  30,  5,   105  
-    }; 
-    private static int[] ZSCAN_POSSIBILITIES = { 
-    	-1,  -1,  -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   22,  163, 437, 717, 200, 260 
-    };    
+       
     private int inTrackDimensionLength = -1;
     
     // need our own separator char since it's always Unix-style in the Suomi NPP files
@@ -443,7 +434,10 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    			// XXX just temporary - we are looking through All_Data, finding displayable data
     	    			if (g.getName().contains("All_Data")) {
     	    				List<Group> adg = g.getGroups();
-    	    				// again, iterate through
+    	    				int xDim = -1;
+    	    				int yDim = -1;
+
+    	    				// two sub-iterations, first one to find geolocation and product dimensions
     	    				for (Group subG : adg) {
     	    					logger.debug("Sub group name: " + subG.getName());
     	    					String subName = subG.getName();
@@ -451,246 +445,264 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    						// this is the geolocation data
     	    						List<Variable> vl = subG.getVariables();
     	    						for (Variable v : vl) {
-    	    							if (v.getFullName().endsWith("Latitude")) {
+    	    							if (v.getFullName().endsWith(SEPARATOR_CHAR + "Latitude")) {
     	    								pathToLat = v.getFullName();
-    	        							logger.debug("Lat/Lon Variable: " + v.getFullName());
+    	    								logger.debug("Lat/Lon Variable: " + v.getFullName());
+    	    								// get the dimensions of the lat variable
+    	    								Dimension dAlongTrack = v.getDimension(0);
+    	    								yDim = dAlongTrack.getLength();
+    	    								logger.debug("Lat along track dim: " + dAlongTrack.getLength());
+    	    								Dimension dAcrossTrack = v.getDimension(1);
+    	    								xDim = dAcrossTrack.getLength();
+    	    								inTrackDimensionLength = yDim;
+    	    								logger.debug("Lat across track dim: " + dAcrossTrack.getLength());
     	    							}
-    	    							if (v.getFullName().endsWith("Longitude")) {
+    	    							if (v.getFullName().endsWith(SEPARATOR_CHAR + "Longitude")) {
+    	    								// we got dimensions from lat, don't need 'em twice, but need path
     	    								pathToLon = v.getFullName();
-    	        							logger.debug("Lat/Lon Variable: " + v.getFullName());
     	    							}
     	    						} 
-    	    					} else {
-    	    						// this is the product data
-    	    						List<Variable> vl = subG.getVariables();
-    	    						for (Variable v : vl) {
-    	    							boolean useThis = false;
-    	    							String vName = v.getFullName();
-    	    							logger.debug("Variable: " + vName);
-    	    							String varShortName = vName.substring(vName.lastIndexOf(SEPARATOR_CHAR) + 1);
-    	    							
-    	    							// skip Quality Flags for now.
-    	    							// XXX TJJ - should we show these?  if so, note they sometimes
-    	    							// have different dimensions than the main variables.  For ex,
-    	    							// on high res bands QFs are 768 x 3200 while vars are 1536 x 6400
-    	    							if (varShortName.startsWith("QF")) {
-    	    								continue;
-    	    							}
-    	    							
-    	    							// for CrIS instrument, only taking real calibrated values for now
-    	    							logger.debug("INSTRUMENT NAME: " + instrumentName);
-    	    							if (instrumentName.getStringValue().equals("CrIS")) {
-    	    								if (! varShortName.startsWith(crisFilter)) {
-    	    									logger.debug("Skipping variable: " + varShortName);
-    	    									continue;
-    	    								}
-    	    							}
-    	    							
-    	    							// for OMPS, only Radiance for now...
-    	    							if (instrumentName.getStringValue().contains("OMPS")) {
-    	    								if (! varShortName.startsWith(ompsFilter)) {
-    	    									logger.debug("Skipping variable: " + varShortName);
-    	    									continue;
-    	    								}
-    	    							}
-    	    							
-    	    							DataType dt = v.getDataType();
-    	    							if ((dt.getSize() != 4) && (dt.getSize() != 2) && (dt.getSize() != 1)) {
-    	    								logger.debug("Skipping data of size: " + dt.getSize());
-    	    								continue;
-    	    							}
-    	    							List al = v.getAttributes();
+    	    					}
+    	    				}
 
-    	    							List<Dimension> dl = v.getDimensions();
-    	    							if (dl.size() > 4) {
-    	    								logger.debug("Skipping data of dimension: " + dl.size());
+    	    				// second to identify displayable products
+    	    				for (Group subG : adg) {
+    	    					logger.debug("Sub group name: " + subG.getName());
+    	    					String subName = subG.getName();
+    	    					// this is the product data
+    	    					List<Variable> vl = subG.getVariables();
+    	    					for (Variable v : vl) {
+    	    						boolean useThis = false;
+    	    						String vName = v.getFullName();
+    	    						logger.debug("Variable: " + vName);
+    	    						String varShortName = vName.substring(vName.lastIndexOf(SEPARATOR_CHAR) + 1);
+
+    	    						// skip Quality Flags for now.
+    	    						// XXX TJJ - should we show these?  if so, note they sometimes
+    	    						// have different dimensions than the main variables.  For ex,
+    	    						// on high res bands QFs are 768 x 3200 while vars are 1536 x 6400
+    	    						if (varShortName.startsWith("QF")) {
+    	    							continue;
+    	    						}
+
+    	    						// for CrIS instrument, only taking real calibrated values for now
+    	    						logger.debug("INSTRUMENT NAME: " + instrumentName);
+    	    						if (instrumentName.getStringValue().equals("CrIS")) {
+    	    							if (! varShortName.startsWith(crisFilter)) {
+    	    								logger.debug("Skipping variable: " + varShortName);
     	    								continue;
     	    							}
-    	    							
-    	    							// for now, skip any 3D VIIRS data
-    	    							if (instrumentName.getStringValue().equals("VIIRS")) {
-    	    								if (dl.size() == 3) {
-    	    									logger.debug("Skipping VIIRS 3D data for now...");
-    	    									continue;
-    	    								}
+    	    						}
+
+    	    						// for OMPS, only Radiance for now...
+    	    						if (instrumentName.getStringValue().contains("OMPS")) {
+    	    							if (! varShortName.startsWith(ompsFilter)) {
+    	    								logger.debug("Skipping variable: " + varShortName);
+    	    								continue;
     	    							}
-    	    							
-    	    							boolean xScanOk = false;
-    	    							boolean yScanOk = false;
-    	    							boolean zScanOk = false;
+    	    						}
+
+    	    						DataType dt = v.getDataType();
+    	    						if ((dt.getSize() != 4) && (dt.getSize() != 2) && (dt.getSize() != 1)) {
+    	    							logger.debug("Skipping data of size: " + dt.getSize());
+    	    							continue;
+    	    						}
+    	    						List al = v.getAttributes();
+
+    	    						List<Dimension> dl = v.getDimensions();
+    	    						if (dl.size() > 4) {
+    	    							logger.debug("Skipping data of dimension: " + dl.size());
+    	    							continue;
+    	    						}
+
+    	    						// for now, skip any 3D VIIRS data
+    	    						if (instrumentName.getStringValue().equals("VIIRS")) {
+    	    							if (dl.size() == 3) {
+    	    								logger.debug("Skipping VIIRS 3D data for now...");
+    	    								continue;
+    	    							}
+    	    						}
+
+    	    						boolean xScanOk = false;
+    	    						boolean yScanOk = false;
+    	    						// boolean zScanOk = false;
+    	    						for (Dimension d : dl) {
+    	    							// in order to consider this a displayable product, make sure
+    	    							// both scan direction dimensions are present and look like a granule
+    	    							if (d.getLength() == xDim) {
+    	    								xScanOk = true;
+    	    							}
+    	    							if (d.getLength() == yDim) {
+    	    								yScanOk = true;
+    	    							}
+    	    						}
+
+    	    						if (xScanOk && yScanOk) {
+    	    							logger.debug("Will probably use this variable, a few more checks...");
+    	    							useThis = true;
+    	    						}
+
+    	    						// new way to validate ATMS variables
+    	    						if (instrumentName.getStringValue().equals("ATMS")) {
+    	    							boolean isDisplayableATMS = false;
+    	    							// check variable dimensions, if num channels not present, ditch it
     	    							for (Dimension d : dl) {
-    	    								// in order to consider this a displayable product, make sure
-    	    								// both scan direction dimensions are present and look like a granule
-    	    								for (int xIdx = 0; xIdx < XSCAN_POSSIBILITIES.length; xIdx++) {
-    	    									if (d.getLength() == XSCAN_POSSIBILITIES[xIdx]) {
-    	    										xScanOk = true;
-    	    										break;
-    	    									}
-    	    								}
-    	    								for (int yIdx = 0; yIdx < YSCAN_POSSIBILITIES.length; yIdx++) {
-    	    									if (d.getLength() == YSCAN_POSSIBILITIES[yIdx]) {
-    	    										yScanOk = true;
-    	    										inTrackDimensionLength = YSCAN_POSSIBILITIES[yIdx];
-    	    										break;
-    	    									}
-    	    								}   
-    	    								for (int zIdx = 0; zIdx < ZSCAN_POSSIBILITIES.length; zIdx++) {
-    	    									if (d.getLength() == ZSCAN_POSSIBILITIES[zIdx]) {
-    	    										zScanOk = true;
-    	    										break;
-    	    									}
+    	    								if (d.getLength() == JPSSUtilities.ATMSChannelCenterFrequencies.length) {
+    	    									isDisplayableATMS = true;
+    	    									logger.debug("This variable appears to be displayable ATMS");
+    	    									break;
     	    								}
     	    							}
-    	    							
-    	    							if (xScanOk && yScanOk) {
-    	    								useThis = true;
+    	    							if (! isDisplayableATMS) {
+    	    								useThis = false;
     	    							}
-    	    							
-    	    							if (zScanOk) {
+    	    						}
+
+    	    						// sensor data with a channel dimension
+    	    						if (useThis) {
+    	    							if ((instrumentName.getStringValue().equals("CrIS")) ||
+    	    									(instrumentName.getStringValue().equals("ATMS")) || 
+    	    									(instrumentName.getStringValue().equals("OMPS"))) {
     	    								is3D = true;
     	    								hasChannelSelect = true;
-    	    								logger.debug("Handling 3D data source!");
+    	    								logger.debug("Handling 3-D data source...");
     	    							}
-    	    							
-    	    							if (useThis) { 
-    	    								// loop through the variable list again, looking for a corresponding "Factors"
-    	    								float scaleVal = 1f;
-    	    								float offsetVal = 0f;
-    	    								boolean unpackFlag = false;
-    	    								
-    	    								//   if the granule has an entry for this variable name
-    	    								//     get the data, data1 = scale, data2 = offset
-    	    								//     create and poke attributes with this data
-    	    								//   endif
-    	    								
-    	    								String factorsVarName = nppPP.getScaleFactorName(varShortName);
-    	    								logger.debug("Mapping: " + varShortName + " to: " + factorsVarName);
-    	    								if (factorsVarName != null) {
-	    	    								for (Variable fV : vl) {
-	    	    									if (fV.getShortName().equals(factorsVarName)) {
-	    	    										logger.debug("Pulling scale and offset values from variable: " + fV.getShortName());
-	    	    										ucar.ma2.Array a = fV.read();
-	    	    										float[] so = (float[]) a.copyTo1DJavaArray();
-	    	    										//ucar.ma2.Index i = a.getIndex();
-	    	    										//scaleVal = a.getFloat(i);
-	    	    										scaleVal = so[0];
-	    	    										logger.debug("Scale value: " + scaleVal);
-	    	    										//i.incr();
-	    	    										//offsetVal = a.getFloat(i);
-	    	    										offsetVal = so[1];
-	    	    										logger.debug("Offset value: " + offsetVal);
-	    	    										unpackFlag = true;
-	    	    										break;
-	    	    									}
-	    	    								}
+    	    						}
+
+    	    						if (useThis) { 
+    	    							// loop through the variable list again, looking for a corresponding "Factors"
+    	    							float scaleVal = 1f;
+    	    							float offsetVal = 0f;
+    	    							boolean unpackFlag = false;
+
+    	    							//   if the granule has an entry for this variable name
+    	    							//     get the data, data1 = scale, data2 = offset
+    	    							//     create and poke attributes with this data
+    	    							//   endif
+
+    	    							String factorsVarName = nppPP.getScaleFactorName(varShortName);
+    	    							logger.debug("Mapping: " + varShortName + " to: " + factorsVarName);
+    	    							if (factorsVarName != null) {
+    	    								for (Variable fV : vl) {
+    	    									if (fV.getShortName().equals(factorsVarName)) {
+    	    										logger.debug("Pulling scale and offset values from variable: " + fV.getShortName());
+    	    										ucar.ma2.Array a = fV.read();
+    	    										float[] so = (float[]) a.copyTo1DJavaArray();
+    	    										scaleVal = so[0];
+    	    										logger.debug("Scale value: " + scaleVal);
+    	    										offsetVal = so[1];
+    	    										logger.debug("Offset value: " + offsetVal);
+    	    										unpackFlag = true;
+    	    										break;
+    	    									}
+    	    								}
+    	    							}
+
+    	    							// poke in scale/offset attributes for now
+
+    	    							ucar.nc2.Attribute a1 = new ucar.nc2.Attribute("scale_factor", scaleVal);
+    	    							v.addAttribute(a1);
+    	    							ucar.nc2.Attribute a2 = new ucar.nc2.Attribute("add_offset", offsetVal);
+    	    							v.addAttribute(a2);  
+
+    	    							// add valid range and fill value attributes here
+    	    							// try to fill in valid range
+    	    							if (nppPP.hasNameAndMetaData(varShortName)) {
+    	    								String rangeMin = nppPP.getRangeMin(varShortName);
+    	    								String rangeMax = nppPP.getRangeMax(varShortName);
+    	    								logger.debug("range min: " + rangeMin);
+    	    								logger.debug("range max: " + rangeMax);
+    	    								// only store range attribute if VALID range found
+    	    								if ((rangeMin != null) && (rangeMax != null)) {
+    	    									int [] shapeArr = new int [] { 2 };
+    	    									ArrayFloat af = new ArrayFloat(shapeArr);
+    	    									try {
+    	    										af.setFloat(0, Float.parseFloat(rangeMin));
+    	    									} catch (NumberFormatException nfe) {
+    	    										af.setFloat(0, new Float(Integer.MIN_VALUE));
+    	    									}
+    	    									try {
+    	    										af.setFloat(1, Float.parseFloat(rangeMax));
+    	    									} catch (NumberFormatException nfe) {
+    	    										af.setFloat(1, new Float(Integer.MAX_VALUE));
+    	    									}
+    	    									ucar.nc2.Attribute rangeAtt = new ucar.nc2.Attribute("valid_range", af);
+    	    									v.addAttribute(rangeAtt);
     	    								}
 
-    	    								// poke in scale/offset attributes for now
+    	    								// check for and load fill values too...
 
-    	    								ucar.nc2.Attribute a1 = new ucar.nc2.Attribute("scale_factor", scaleVal);
-    	    								v.addAttribute(a1);
-    	    								ucar.nc2.Attribute a2 = new ucar.nc2.Attribute("add_offset", offsetVal);
-    	    								v.addAttribute(a2);  
-    	    								
-    	    								// add valid range and fill value attributes here
-    	    					        	// try to fill in valid range
-    	    								if (nppPP.hasNameAndMetaData(varShortName)) {
-    	    									String rangeMin = nppPP.getRangeMin(varShortName);
-    	    									String rangeMax = nppPP.getRangeMax(varShortName);
-    	    									logger.debug("range min: " + rangeMin);
-    	    									logger.debug("range max: " + rangeMax);
-    	    									// only store range attribute if VALID range found
-    	    									if ((rangeMin != null) && (rangeMax != null)) {
-    	    										int [] shapeArr = new int [] { 2 };
-    	    										ArrayFloat af = new ArrayFloat(shapeArr);
-    	    										try {
-    	    											af.setFloat(0, Float.parseFloat(rangeMin));
-    	    										} catch (NumberFormatException nfe) {
-    	    											af.setFloat(0, new Float(Integer.MIN_VALUE));
-    	    										}
-    	    										try {
-    	    											af.setFloat(1, Float.parseFloat(rangeMax));
-    	    										} catch (NumberFormatException nfe) {
-    	    											af.setFloat(1, new Float(Integer.MAX_VALUE));
-    	    										}
-    	    										ucar.nc2.Attribute rangeAtt = new ucar.nc2.Attribute("valid_range", af);
-    	    										v.addAttribute(rangeAtt);
+    	    								// we need to check two places, first, the XML product profile
+    	    								ArrayList<Float> fval = nppPP.getFillValues(varShortName);
+
+    	    								// 2nd, does the variable already have one defined?
+    	    								// if there was already a fill value associated with this variable, make
+    	    								// sure we bring that along for the ride too...
+    	    								ucar.nc2.Attribute aFill = v.findAttribute("_FillValue");
+
+    	    								// determine size of our fill value array
+    	    								int fvArraySize = 0;
+    	    								if (aFill != null) fvArraySize++;
+    	    								if (! fval.isEmpty()) fvArraySize += fval.size();
+    	    								int [] fillShape = new int [] { fvArraySize };
+
+    	    								// allocate the array
+    	    								ArrayFloat afFill = new ArrayFloat(fillShape);
+
+    	    								// and FINALLY, fill it!
+    	    								if (! fval.isEmpty()) {
+    	    									for (int fillIdx = 0; fillIdx < fval.size(); fillIdx++) {
+    	    										afFill.setFloat(fillIdx, fval.get(fillIdx));
+    	    										logger.debug("Adding fill value (from XML): " + fval.get(fillIdx));
     	    									}
+    	    								}
 
-    	    									// check for and load fill values too...
-
-    	    									// we need to check two places, first, the XML product profile
-    	    									ArrayList<Float> fval = nppPP.getFillValues(varShortName);
-
-    	    									// 2nd, does the variable already have one defined?
-    	    									// if there was already a fill value associated with this variable, make
-    	    									// sure we bring that along for the ride too...
-    	    									ucar.nc2.Attribute aFill = v.findAttribute("_FillValue");
-
-    	    									// determine size of our fill value array
-    	    									int fvArraySize = 0;
-    	    									if (aFill != null) fvArraySize++;
-    	    									if (! fval.isEmpty()) fvArraySize += fval.size();
-    	    									int [] fillShape = new int [] { fvArraySize };
-
-    	    									// allocate the array
-    	    									ArrayFloat afFill = new ArrayFloat(fillShape);
-
-    	    									// and FINALLY, fill it!
-    	    									if (! fval.isEmpty()) {
-    	    										for (int fillIdx = 0; fillIdx < fval.size(); fillIdx++) {
-    	    											afFill.setFloat(fillIdx, fval.get(fillIdx));
-    	    											logger.debug("Adding fill value (from XML): " + fval.get(fillIdx));
-    	    										}
-    	    									}
-
-    	    									if (aFill != null) {
-    	    										Number n = aFill.getNumericValue();
-    	    										// is the data unsigned?
-    	    										ucar.nc2.Attribute aUnsigned = v.findAttribute("_Unsigned");
-    	    										float fillValAsFloat = Float.NaN;
-    	    										if (aUnsigned != null) {
-    	    											if (aUnsigned.getStringValue().equals("true")) {
-    	    												DataType fvdt = aFill.getDataType();
-    	    												logger.debug("Data String: " + aFill.toString());
-    	    												logger.debug("DataType primitive type: " + fvdt.getPrimitiveClassType());
-    	    												// signed byte that needs conversion?
-    	    												if (fvdt.getPrimitiveClassType() == byte.class) {
-    	    													fillValAsFloat = (float) Util.unsignedByteToInt(n.byteValue());
-    	    												}
-    	    												else if (fvdt.getPrimitiveClassType() == short.class) {
-    	    													fillValAsFloat = (float) Util.unsignedShortToInt(n.shortValue());
-    	    												} else {
-    	    													fillValAsFloat = n.floatValue();
-    	    												}
+    	    								if (aFill != null) {
+    	    									Number n = aFill.getNumericValue();
+    	    									// is the data unsigned?
+    	    									ucar.nc2.Attribute aUnsigned = v.findAttribute("_Unsigned");
+    	    									float fillValAsFloat = Float.NaN;
+    	    									if (aUnsigned != null) {
+    	    										if (aUnsigned.getStringValue().equals("true")) {
+    	    											DataType fvdt = aFill.getDataType();
+    	    											logger.debug("Data String: " + aFill.toString());
+    	    											logger.debug("DataType primitive type: " + fvdt.getPrimitiveClassType());
+    	    											// signed byte that needs conversion?
+    	    											if (fvdt.getPrimitiveClassType() == byte.class) {
+    	    												fillValAsFloat = (float) Util.unsignedByteToInt(n.byteValue());
+    	    											}
+    	    											else if (fvdt.getPrimitiveClassType() == short.class) {
+    	    												fillValAsFloat = (float) Util.unsignedShortToInt(n.shortValue());
+    	    											} else {
+    	    												fillValAsFloat = n.floatValue();
     	    											}
     	    										}
-    	    										afFill.setFloat(fvArraySize - 1, fillValAsFloat);
-    	    										logger.debug("Adding fill value (from variable): " + fillValAsFloat);
     	    									}
-    	    									ucar.nc2.Attribute fillAtt = new ucar.nc2.Attribute("_FillValue", afFill);
-    	    									v.addAttribute(fillAtt);
+    	    									afFill.setFloat(fvArraySize - 1, fillValAsFloat);
+    	    									logger.debug("Adding fill value (from variable): " + fillValAsFloat);
     	    								}
-
-    	    								ucar.nc2.Attribute aUnsigned = v.findAttribute("_Unsigned");
-    	    								if (aUnsigned != null) {
-    	    									logger.debug("_Unsigned attribute value: " + aUnsigned.getStringValue());
-    	    									unsignedFlags.add(aUnsigned.getStringValue());
-    	    								} else {
-    	    									unsignedFlags.add("false");
-    	    								}
-    	    								
-    	    								if (unpackFlag) {
-    	    									unpackFlags.add("true");
-    	    								} else {
-    	    									unpackFlags.add("false");
-    	    								}
-    	    								
-    	    								logger.debug("Adding product: " + v.getShortName());
-    	    								pathToProducts.add(v.getFullName());
-    	    								
+    	    								ucar.nc2.Attribute fillAtt = new ucar.nc2.Attribute("_FillValue", afFill);
+    	    								v.addAttribute(fillAtt);
     	    							}
-    	    						}    						
+
+    	    							ucar.nc2.Attribute aUnsigned = v.findAttribute("_Unsigned");
+    	    							if (aUnsigned != null) {
+    	    								logger.debug("_Unsigned attribute value: " + aUnsigned.getStringValue());
+    	    								unsignedFlags.add(aUnsigned.getStringValue());
+    	    							} else {
+    	    								unsignedFlags.add("false");
+    	    							}
+
+    	    							if (unpackFlag) {
+    	    								unpackFlags.add("true");
+    	    							} else {
+    	    								unpackFlags.add("false");
+    	    							}
+
+    	    							logger.debug("Adding product: " + v.getShortName());
+    	    							pathToProducts.add(v.getFullName());
+
+    	    						}
     	    					}
     	    				}
     	    			}
@@ -709,7 +721,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	
     	// initialize the aggregation reader object
     	try {
-    		nppAggReader = new GranuleAggregation(ncdfal, inTrackDimensionLength, "Track", "XTrack");
+    		nppAggReader = new GranuleAggregation(ncdfal, pathToProducts, inTrackDimensionLength, "Track", "XTrack");
     	} catch (Exception e) {
     		throw new VisADException("Unable to initialize aggregation reader");
     	}
@@ -1136,7 +1148,12 @@ public class SuomiNPPDataSource extends HydraDataSource {
       
       if (System.getProperty("os.name").equals("Mac OS X") && hasImagePreview && hasChannelSelect) {
           try {
-            components.add(new ImageChannelSelection(new PreviewSelection(dataChoice, previewImage, null), new ChannelSelection(dataChoice)));
+        	  if (hasImagePreview) {
+        		  components.add(new ImageChannelSelection(new PreviewSelection(dataChoice, previewImage, null), new ChannelSelection(dataChoice)));
+        	  } 
+              if (hasChannelSelect) {
+            	  components.add(new ChannelSelection(dataChoice));
+              }
           } catch (Exception e) {
             e.printStackTrace();
           }
