@@ -64,6 +64,7 @@ public class TLEFileChooser extends JFileChooser implements PropertyChangeListen
      *
      * @param path   the initial path
      */
+	
     public TLEFileChooser(String path) {
         super(path);
         setControlButtonsAreShown(false);
@@ -79,6 +80,7 @@ public class TLEFileChooser extends JFileChooser implements PropertyChangeListen
     /**
      * Approve the selection
      */
+    
     public void approveSelection() {
         potc.doLoad();
     }
@@ -94,7 +96,6 @@ public class TLEFileChooser extends JFileChooser implements PropertyChangeListen
 	@Override
 	public void propertyChange(PropertyChangeEvent pce) {
 		String propName = pce.getPropertyName();
-		logger.debug("propertyChange: " + propName);
 		if (propName.equals(SELECTED_FILE_CHANGED_PROPERTY)) {
 			// tell the chooser we have a file to load
 			if (potc != null) {
