@@ -24,19 +24,10 @@ def _mcvinit_classpath_hack():
     # supply platform-dependent paths to various JAR files 
     # (in case they somehow are not present in the classpath)
     osname = System.getProperty('os.name')
-    if osname.startswith('Windows'):
-        mcv_jar = "C:\\Program Files\\McIDAS-V-System\\mcidasv.jar"
-        idv_jar = "C:\\Program Files\\McIDAS-V-System\\idv.jar"
-        visad_jar = "C:\\Program Files\\McIDAS-V-System\\visad.jar"
-    elif 'OS X' in osname:
-        mcv_jar = '/Applications/McIDAS-V-System/mcidasv.jar'
-        idv_jar = '/Applications/McIDAS-V-System/idv.jar'
-        visad_jar = '/Applications/McIDAS-V-System/visad.jar'
-    else:
-        # TODO(jon): need to determine default install path for linux!
-        mcv_jar = './mcidasv.jar'
-        idv_jar = './idv.jar'
-        visad_jar = './visad.jar'
+    current_dir = os.path.normpath(os.getcwd())
+    mcv_jar = os.path.join(current_dir, 'mcidasv.jar')
+    idv_jar = os.path.join(current_dir, 'idv.jar')
+    visad_jar = os.path.join(current_dir, 'visad.jar')
     
     # allow the actual classpath to override any default JAR paths
     for entry in classpath.split(':'):
