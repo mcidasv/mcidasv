@@ -199,9 +199,24 @@ public class RGBCompositeControl extends DisplayControlImpl {
    }
 
    public void initDone() {
-     redTable = ((BaseColorControl)redMap.getControl()).getTable();
-     grnTable = ((BaseColorControl)grnMap.getControl()).getTable();
-     bluTable = ((BaseColorControl)bluMap.getControl()).getTable();
+     while (true) {
+         if (null != redMap.getControl()) {
+            redTable = ((BaseColorControl) redMap.getControl()).getTable();
+            break;
+         }
+     }
+     while (true) {
+         if (null != grnMap.getControl()) {
+             grnTable = ((BaseColorControl) grnMap.getControl()).getTable();
+             break;
+         }
+     }
+     while (true) {
+         if (null != bluMap.getControl()) {
+             bluTable = ((BaseColorControl) bluMap.getControl()).getTable();
+             break;
+         }
+     } 
 
      float[][] newRedTbl = getZeroOutArray(redTable);
      float[][] newGrnTbl = getZeroOutArray(grnTable);
