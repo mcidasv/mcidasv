@@ -571,21 +571,14 @@ class _Display(_JavaProxy):
         
         return [_Layer(displayControl) for displayControl in self._JavaProxy__javaObject.getControls()]
 
-    def createLayer(self, layerType, data, fillDisplay=False, 
-            dataParameter='Data'):
-        """Creates a new Layer in this _Display
+    def createLayer(self, layerType, data):
+        """Creates a new _Layer in this _Display
 
         Args:
             layerType: ID string that represents a type of layer. The valid names
                        can be determined with the "allLayerTypes()" function.
 
-            data: Data object to associate with the resulting layer.
-
-            fillDisplay: if True, resize the _Display to the size of the image
-                being displayed and set the lat/lon bounds of the _Display
-                to match the corners of the image.
-
-            dataParameter: Not sure.
+            data: a VisAD Data object to be displayed, or a list of them
 
         Returns:
             The _Layer that was created in this _Display
@@ -593,14 +586,8 @@ class _Display(_JavaProxy):
         Raises:
             ValueError:  if layerType isn't valid
         """
-        import ucar.unidata.data.DataDataChoice as DataDataChoice
-        import ucar.unidata.data.DataChoice as DataChoice
-        import visad.meteorology.NavigatedImage as NavigatedImage
-
-        if isinstance(data, _DataChoice):
-            # get DataChoice Java object
-            # (Note: createDisplay can handle both flatfile and DataChoice)
-            data = data.getJavaInstance()
+        from ucar.unidata.data import DataDataChoice
+        from visad.meteorology import ImageSequenceImpl
 
         # need to get short control description from long name
         mcv = getStaticMcv()
@@ -610,88 +597,44 @@ class _Display(_JavaProxy):
                 controlID = desc.controlId
         if controlID == None:
             raise ValueError("You did not provide a valid layer type")
+        if controlID == 'imagesequence':
+            # hack for backward compatibility: don't let user do an
+            # imagesequence since it requires a strange DataChoice and 
+            # imagedisplay can handle loops anyway.
+            print "DEBUG: doing an imagedisplay instead of an imagesequence"
+            controlID = 'imagedisplay'
 
         # Set the panel/display that a new DisplayControl will be put into
         # TODO(mike):  set this back to what it was before?
-        getStaticMcv().getVMManager().setLastActiveViewManager(self._JavaProxy__javaObject)
+        mcv.getVMManager().setLastActiveViewManager(self._JavaProxy__javaObject)
 
-        if (isinstance(data, java.util.List)==0):
-            tmp = java.util.ArrayList()
-            # python lists should work also:
-            if isinstance(data, list):
-                # this is a python list
-                for thing in data:
-                    tmp.add(thing)
-            else:
-                # this will ensure we have a java ArrayList which will make things easier
-                tmp.add(data)
-            data = tmp
+        # for now, don't deal with case where data arg is already a DataChoice.
+        # (can add support for this later if needed...)
 
-        # this is the guts of the old createDisplay
-        dataList = java.util.ArrayList()
-        for i in range(data.size()):
-            obj = data.get(i)
-            if(isinstance(obj, DataChoice)==0):
-                label = dataParameter
-                if(data.size()>1):
-                    label = label +str(i)
-                obj = DataDataChoice(label, obj)
-            dataList.add(obj)
+        # the imagedisplay control appears to want an ImageSequenceImpl,
+        # so try to force one.
+        # This will work if data is an array of NavigatedImage's (or
+        # SingleBandedImage's).
+        try:
+            # (maybe we only want to do this in the 'imagedisplay' case?)
+            data = ImageSequenceImpl(data)
+        except TypeError, te:
+            print "DEBUG: ImageSequenceImpl constructor failed but thats ok"
 
-        # *temporary* fix for doing image sequences/globe displays with getADDEImage:
-        if (isinstance(data[0], NavigatedImage) and
-            isinstance(self._JavaProxy__javaObject, ucar.unidata.idv.MapViewManager)):
-            if (self._JavaProxy__javaObject.getUseGlobeDisplay()) and (controlID == 'imagedisplay'):
-                controlID = 'imagesequence'  # hack that works, but I'm not sure why
-            if (controlID == 'imagesequence'):
-                # apparently we need a CompositeDataChoice instead of a list of DataDataChoices for
-                # Image Sequence Display to work as expected
-                # To construct a CompositeDataChoice, we need a legitimate DataSource:
-                # (note most data sources keep track of files or URL's - ListDataSource's simply
-                #  keep track of DataChoice's)
-                listSource = ucar.unidata.data.ListDataSource('tempListDataSource1', 'tempListDataSource1')
-                listSource.setDataChoices(dataList)
-                # now we can create the CompositeDataChoice:
-                comp = ucar.unidata.data.CompositeDataChoice(listSource, listSource, 'compositeDataChoice', None)
-                comp.setDataChoices(dataList)
-                # need *another* ListDataSource now:
-                compSource = ucar.unidata.data.ListDataSource('tempListDataSource2', 'tempListDataSource2')
-                compSource.addDataChoice(comp)
-                # finally, set dataList appropriately:
-                dataList = compSource.getDataChoices()
+        # TODO: first arg in DataDataChoice constructor is shortname macro.
+        # (can't do anything better now cause we don't have metadata).
+        newLayer = mcv.doMakeControl(controlID, 
+                [DataDataChoice("shortname macro goes here", data)])
 
-        newLayer = mcv.doMakeControl(controlID, dataList)
-
-        # createDisplay does it's init in a thread,
-        # so wait for it to finish before we hand control back to user!
+        # wait for thread to finish
         pause()
 
         wrappedLayer = _Layer(newLayer)
         # turn layer layer visibility off by default to avoid ugly default strings
         # (note visible=False will turn *all* layer labels off)
+        # TODO: get rid of this once metadata/macros are handled better
         wrappedLayer.setLayerLabel(label='')
 
-        if fillDisplay:
-            if isinstance(data[0], NavigatedImage):
-                import ucar.unidata.geoloc.ProjectionRect as ProjectionRect
-                nav = data[0].getNavigation()
-                area = nav.getDefaultMapArea()
-                # get lower left and upper right lat lon points of image
-                ll = nav.getLatLon([[area.x], [area.y]])
-                ur = nav.getLatLon([[area.width], [area.height]])
-
-                self.setSize(int(area.width), int(area.height))
-                pause()  # was necessary in test scripts, maybe not here
-
-                rect = ProjectionRect(
-                        ll.getLongitude().value, ll.getLatitude().value,
-                        ur.getLongitude().value, ur.getLatitude().value)
-                self._JavaProxy__javaObject.getMapDisplay().setMapArea(rect)
-            else:
-                print('createLayer:  fillDisplay keyword currently only tested' +
-                        'for NavigatedImage layer types')
-
-        # TODO(jon): this should behave better if createDisplay fails for some reason.
         return wrappedLayer
 
     def captureImage(self, filename, quality=1.0, height=-1, width=-1):
