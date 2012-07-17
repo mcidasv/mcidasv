@@ -269,27 +269,31 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    	    				// cycle through once looking for XML Product Profiles
 	    	    				for (Group subG : dpg) {
 	    	    					
-	    	    					// determine the instrument name (VIIRS, ATMS, CrIS, OMPS)
-	    	    					instrumentName = subG.findAttribute("Instrument_Short_Name");
-	    	    					
-	    	    					// This is also where we find the attribute which tells us which
-	    	    					// XML Product Profile to use!
-    	    						ucar.nc2.Attribute axpp = subG.findAttribute("N_Collection_Short_Name");
-    	    						if (axpp != null) {
-    	    							String baseName = axpp.getStringValue();
-    	    							productName = baseName;
-    	    							String productProfileFileName = nppPP.getProfileFileName(baseName);
-    	    							logger.debug("Found profile: " + productProfileFileName);
-    	    							if (productProfileFileName == null) {
-    	    								throw new Exception("XML Product Profile not found in catalog");
-    	    							}
-    	    							try {
-    	    								nppPP.addMetaDataFromFile(productProfileFileName);
-    	    							} catch (Exception nppppe) {
-    	    								logger.error("Error parsing XML Product Profile: " + productProfileFileName);
-    	    								throw new Exception("XML Product Profile Error");
-    	    							}
-    	    						}
+	    	    					String subName = subG.getName();
+	    	    					// use actual product, not geolocation, to id XML Product Profile
+	    	    					if (! subName.contains("-GEO")) {
+	    	    						// determine the instrument name (VIIRS, ATMS, CrIS, OMPS)
+	    	    						instrumentName = subG.findAttribute("Instrument_Short_Name");
+
+	    	    						// This is also where we find the attribute which tells us which
+	    	    						// XML Product Profile to use!
+	    	    						ucar.nc2.Attribute axpp = subG.findAttribute("N_Collection_Short_Name");
+	    	    						if (axpp != null) {
+	    	    							String baseName = axpp.getStringValue();
+	    	    							productName = baseName;
+	    	    							String productProfileFileName = nppPP.getProfileFileName(baseName);
+	    	    							logger.debug("Found profile: " + productProfileFileName);
+	    	    							if (productProfileFileName == null) {
+	    	    								throw new Exception("XML Product Profile not found in catalog");
+	    	    							}
+	    	    							try {
+	    	    								nppPP.addMetaDataFromFile(productProfileFileName);
+	    	    							} catch (Exception nppppe) {
+	    	    								logger.error("Error parsing XML Product Profile: " + productProfileFileName);
+	    	    								throw new Exception("XML Product Profile Error");
+	    	    							}
+	    	    						}
+	    	    					}
 	    	    				}
 	    	    				
 	    	    				// 2nd pass through sub-group to extract date/time for aggregation
