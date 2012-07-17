@@ -911,11 +911,11 @@
 					<Value>1</Value>
 				</LegendEntry>
 				<LegendEntry>
-					<Name>Degraded Data – either HAM, RTA, or both are corrupted within the scan.</Name>
+					<Name>Degraded Data - either HAM, RTA, or both are corrupted within the scan.</Name>
 					<Value>2</Value>
 				</LegendEntry>
 				<LegendEntry>
-					<Name>Missing  Data – Missing encoder data for the scan</Name>
+					<Name>Missing  Data - Missing encoder data for the scan</Name>
 					<Value>3</Value>
 				</LegendEntry>
 			</Datum>
