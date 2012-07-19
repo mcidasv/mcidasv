@@ -243,6 +243,12 @@ public class LambertAEA extends MapProjection {
    }
 
    public boolean equals(Object cs) {
+     if ( cs instanceof LambertAEA ) {
+        LambertAEA that = (LambertAEA) cs;
+        if ( (this.cs.equals(that.cs)) && this.getDefaultMapArea().equals(that.getDefaultMapArea())) {
+           return true;
+        }
+     }
      return false;
    }
 
