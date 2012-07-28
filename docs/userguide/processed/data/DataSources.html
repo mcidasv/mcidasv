@@ -50,7 +50,6 @@ McIDAS-V can read a variety of data formats either from local files or remote da
 </ul>
 <a name="formats" id="formats"></a>
 <div class="pagesubtitle">Supported Data Types and Formats</div>
-
 <table id="dataformats" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <th width="10%"><strong>Data Type</strong></th>
@@ -91,7 +90,7 @@ McIDAS-V can read a variety of data formats either from local files or remote da
   </tr>
   <tr class="gridded_data_row">
     <td>- AIRS</td>
-    <td>&nbsp;</td>
+    <td>- local files</td>
   </tr>
   <tr class="gridded_data_row">
     <td>- GINI</td>
@@ -171,7 +170,7 @@ McIDAS-V can read a variety of data formats either from local files or remote da
   </tr>
   <tr>
     <td rowspan="5">Radar</td>
-    <td rowspan="5">NEXRAD Level II and Level III radar data</td>
+    <td rowspan="5">Radar data of various formats and sources.</td>
     <td>- Level II</td>
     <td>- local files or TDS <br>
     (bzip2 compressed or uncompressed)</td>
@@ -181,16 +180,14 @@ McIDAS-V can read a variety of data formats either from local files or remote da
     <td>- ADDE servers, local files or TDS</td>
   </tr>
   <tr class="gridded_data_row">
-    <td>- Universal Format</td>
-	<td>&nbsp;</td>
+    <td>- Universal Format (UF)</td>
+	<td>- local files</td>
   </tr>
   <tr class="gridded_data_row">
-    <td>- Dorade</td>
-	<td>&nbsp;</td>
+    <td>- DORADE</td>
+	<td>- local files</td>
   </tr>
   <tr class="gridded_data_row">
-    <td>- NEXRAD </td>
-    <td> </td>
   </tr>
   <tr>
     <td rowspan="3">Point Observational</td>
@@ -214,7 +211,7 @@ McIDAS-V can read a variety of data formats either from local files or remote da
   </tr>
   <tr class="gridded_data_row">
     <td>- Text (ASCII, CSV) (<a href="#csv">5</a>)</td>
-    <td>&nbsp;</td>
+    <td>- local files</td>
   </tr>
   <tr>
     <td rowspan="3">RAOB</td>
@@ -253,18 +250,16 @@ McIDAS-V can read a variety of data formats either from local files or remote da
     <td> - local files, HTTP</td>
   </tr>
 </table>
-
-<a name="servers" id="servers"></a>
-<div class="pagesubtitle">Remote Data Servers</div>
-Extensive meteorological and oceanographic data is available from remote data servers for use in research and education. Some of these data have restrictions on their use, see <a href="http://www.unidata.ucar.edu/data/data_usage.html#data" target="_blank">here</a> for that information. <a name="adde" id="adde"></a>
-<div class="pagesubsubtitle">Abstract Data Distribution Environment (ADDE)</div>
-Most of the data choosers in McIDAS-V use ADDE as the access method (satellite
+<div class="pagesubtitle"><a name="servers" id="servers"></a>Remote Data Servers</div>
+<p>Extensive meteorological and oceanographic data is available from remote data servers for use in research and education. Some of these data have restrictions on their use, see <a href="http://www.unidata.ucar.edu/data/data_usage.html#data" target="_blank">here</a> for that information.</p>
+<div class="pagesubsubtitle"><a name="adde" id="adde"></a>Abstract Data Distribution Environment (ADDE)</div>
+<p>Most of the data choosers in McIDAS-V use ADDE as the access method (satellite
 imagery, Level III radar, surface, profiler and RAOB). The ADDE choosers are
 pre-configured with a list of available  servers. SSEC and the Unidata
 community each maintain a set of cooperating ADDE servers which serve up real-time
 and archived atmospheric datasets for use in McIDAS-V. You can use any of these
 to access the near-realtime data. For more information on accessing data on ADDE
-servers, see the <a href="choosers/index.html">Data Sources</a> section.
+servers, see the <a href="choosers/index.html">Data Sources</a> section.</p>
 <p>SSEC image data sets include:</p>
 <ul>
 <li><strong>chinook.ssec.wisc.edu</strong>
@@ -299,7 +294,7 @@ servers, see the <a href="choosers/index.html">Data Sources</a> section.
 <li><strong>GINICOMP</strong> -  GINIEAST AND GINIWEST composites.</li>
 <li><strong>GINIEAST</strong> - GOES East images, remapped to conic, Mercator (cylindrical equidistant), or polar projections channel 1.</li>
 <li><strong>GINIWEST</strong> - GOES West images, remapped to conic, Mercator (cylindrical equidistant), or polar projections channel 2.</li>
-<li><strong>NEXRCOMP</strong> - composites of NEXRAD imagery (1km,
+<li><strong>NEXRCOMP</strong> - Composites of NEXRAD imagery (1km,
     6km, 10 km radar coded message, 1-hour precip total, storm total precip).</li>
 <li><strong>RTIMAGES</strong> - GOES East and West images in native view, not remapped. Also some global Mollweide images, and an Antarctic composite.</li>
 <li><strong>TOPO -</strong> Plots land elevations with different projections using the color scales relevant to the chosen descriptor. The image will remap.</li>
@@ -318,18 +313,17 @@ servers, see the <a href="choosers/index.html">Data Sources</a> section.
 </ul>
 <p>You can configure defaults for particular images by creating a custom defaults file. For more information, see <a href="../misc/ImageDefaults.html">Configuring Image Defaults</a>.</p>
 <p>*Additional alternate servers include: adde.cise-nsf.gov, idd.unl.edu, stratus.al.noaa.gov, twister.millersville.edu, weather2.admin.niu.edu, and weather3.admin.niu.edu. These alternate servers have most or all of the datasets listed under adde.ucar.edu.</p>
-<a name="thredds" id="thredds"></a>
-<div class="pagesubsubtitle">THREDDS Data Server (TDS)/OPeNDAP</div>
-McIDAS-V can access gridded data (netCDF/GRIB/GEMPAK) and NEXRAD radar data stored on a THREDDS Data Server (TDS) through the OPeNDAP (formerly called DODS) protocol. See <a href="choosers/CatalogChooser.html">Choosing
-Cataloged Data</a> for more information.
+<div class="pagesubsubtitle"><a name="thredds" id="thredds"></a>THREDDS Data Server (TDS)/OPeNDAP</div>
+<p>McIDAS-V can access gridded data (netCDF/GRIB/GEMPAK) and NEXRAD radar data stored on a THREDDS Data Server (TDS) through the OPeNDAP (formerly called DODS) protocol. See <a href="choosers/CatalogChooser.html">Choosing
+Cataloged Data</a> for more information.</p>
 <div class="pagesubsubtitle">HTTP</div>
-Many of the data sources listed in the table above can read files directly from
+<p>Many of the data sources listed in the table above can read files directly from
 web servers (e.g. Apache) through the HTTP protocol. In most cases, the server
 must support the HTTP 1.1 protocol and be configured to set the &quot;Content-Length&quot; and &quot;Accept-Ranges:
 bytes&quot; headers. See the <a href="choosers/UrlChooser.html">Choosing a URL</a> for
-more information. <a name="netcdf" id="netcdf"></a>
-<div class="pagesubtitle">netCDF files</div>
-The Network Common Data Form (<a href="http://www.unidata.ucar.edu/software/netcdf" target="_blank">netCDF</a>) provides a common data access method for Unidata applications. This format can be used to store a variety of data types that encompass single-point observations, time series, regular grids, and satellite and radar images. The mere use of netCDF by itself is not sufficient to make data &quot;self-describing&quot; and meaningful to McIDAS-V.
+more information.</p>
+<div class="pagesubtitle"><a name="netcdf" id="netcdf"></a>netCDF files</div>
+<p>The Network Common Data Form (<a href="http://www.unidata.ucar.edu/software/netcdf" target="_blank">netCDF</a>) provides a common data access method for Unidata applications. This format can be used to store a variety of data types that encompass single-point observations, time series, regular grids, and satellite and radar images. The mere use of netCDF by itself is not sufficient to make data &quot;self-describing&quot; and meaningful to McIDAS-V.</p>
 <p>Generally, McIDAS-V requires that datasets in netCDF format use <a href="http://www.unidata.ucar.edu/packages/netcdf/conventions.html" target="_blank">meta
     data conventions</a> to be able to fully understand and geolocate the dataset.
     These conventions provide documented <a href="http://www.unidata.ucar.edu/packages/netcdf/BestPractices.html" target="_blank">&quot;best
@@ -337,8 +331,7 @@ The Network Common Data Form (<a href="http://www.unidata.ucar.edu/software/netc
     is complete and self-describing, and can be used by others. We
     recommend you use CF, COARDS, or NUWG conventions for netCDF data files for
     McIDAS-V, and be sure to follow the best practices noted above.</p>
-<p><a name="csv" id="csv"></a></p>
-<div class="pagesubtitle">ASCII Text Point Data</div>
+<div class="pagesubtitle"><a name="csv" id="csv"></a>ASCII Text Point Data</div>
 <p>McIDAS-V can read point data and trajectories (aircraft tracks) from comma-separated
 value (CSV) text files. See the documentation on the <a href="TextPointData.html">Text
 (ASCII) Point Data Format</a>.</p>
