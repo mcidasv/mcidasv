@@ -33,7 +33,7 @@
                                 <Scaled>0</Scaled>
                                 <ScaleFactorName>RadianceFactors</ScaleFactorName>
                                 <RangeMin>0.00</RangeMin>
-								<RangeMax>3.39</RangeMax>
+								<RangeMax>607</RangeMax>
                                 <MeasurementUnits>W/(m^2 μm sr)</MeasurementUnits>
                                 <DataType>32-bit floating point</DataType>
                                 <FillValue>
@@ -87,8 +87,8 @@
                                 <DatumOffset>0</DatumOffset>
                                 <Scaled>0</Scaled>
                                 <ScaleFactorName>BrightnessTemperatureFactors</ScaleFactorName>
-                                <RangeMin>203.00</RangeMin>
-								<RangeMax>368.00</RangeMax>
+                                <RangeMin>192.00</RangeMin>
+								<RangeMax>683.00</RangeMax>
                                 <MeasurementUnits>kelvin</MeasurementUnits>
                                 <DataType>32-bit floating point</DataType>
                                 <FillValue>
