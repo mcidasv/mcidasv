@@ -1,11 +1,10 @@
 <?xml version="1.0"?>
 
 <!--
-
-<NPOESSDataProduct xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="NPOESS_Product_Profile.xsd">
-
+<?xml-stylesheet type="text/xsl" href="NPOESS_Product_Profile_StyleSheet.xsl"?>
 -->
 
+<NPOESSDataProduct xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="NPOESS_Product_Profile.xsd">
 	<ProductName>ATMS Remapped to CrIS SDR: Channels 1 through 22</ProductName>
 	<CollectionShortName>ATMS-REMAP-SDR</CollectionShortName>
 	<DataProductID>SATMR</DataProductID>
