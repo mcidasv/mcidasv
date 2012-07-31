@@ -42,8 +42,6 @@ import org.slf4j.LoggerFactory;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.Range;
-import ucar.ma2.StructureData;
-import ucar.ma2.StructureMembers;
 
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
@@ -233,8 +231,8 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   }
 			   
 			   if (var instanceof Structure) {
-				   analyzeStructure((Structure) var, varMap, varDimNames, varDimLengths, varDataType);
-				   continue;
+				   	// simply skip these, applicable only to IASI far as I know
+				   	continue;
 			   }
 
 			   int rank = var.getRank();
@@ -382,35 +380,6 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   
 	   // hopefully we found the right one
 	   return index;
-   }
-
-   void analyzeStructure(Structure var, HashMap<String, Variable> varMap, 
-		   HashMap<String, String[]> varDimNames,
-		   HashMap<String, int[]> varDimLengths,
-		   HashMap<String, Class> varDataType) throws Exception {
-	   if ((var.getShape()).length == 0) {
-		   return;
-	   }
-	   String varName = var.getFullName();
-	   String[] dimNames = new String[2];
-	   int[] dimLengths = new int[2];
-	   int cnt = 0;
-	   dimLengths[0] = (var.getShape())[0];
-	   dimNames[0] = "dim"+cnt;
-
-	   cnt++;
-	   StructureData sData = var.readStructure(0);
-	   List memList = sData.getMembers();
-	   dimLengths[1] = memList.size();
-	   dimNames[1] = "dim"+cnt;
-
-	   varDimNames.put(varName, dimNames);
-	   varDimLengths.put(varName, dimLengths);
-	   varMap.put(varName, var);
-
-	   StructureMembers sMembers = sData.getStructureMembers();
-	   Object obj = sData.getScalarObject(sMembers.getMember(0));
-	   varDataType.put(varName, obj.getClass());
    }
    
    private synchronized Object readArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
@@ -605,13 +574,13 @@ public class GranuleAggregation implements MultiDimensionReader {
         else {
 
            if (arrayType == Short.TYPE) {
-              outArray = rngProcessor.processRange((short[])values, null);
+              outArray = rngProcessor.processRange((short[]) values, null);
            } else if (arrayType == Byte.TYPE) {
-              outArray = rngProcessor.processRange((byte[])values, null);
+              outArray = rngProcessor.processRange((byte[]) values, null);
            } else if (arrayType == Float.TYPE) {
-              outArray = rngProcessor.processRange((float[])values, null);
+              outArray = rngProcessor.processRange((float[]) values, null);
            } else if (arrayType == Double.TYPE) {
-              outArray = rngProcessor.processRange((double[])values, null);
+              outArray = rngProcessor.processRange((double[]) values, null);
            }
 
         }
