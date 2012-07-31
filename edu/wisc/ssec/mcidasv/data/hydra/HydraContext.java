@@ -49,6 +49,7 @@ public class HydraContext {
   private static HydraContext hydraContext = null;
   private boolean useSubset = false;
   private MultiDimensionSubset subset = null;
+  private Object selectBox = null;
 
   public static HydraContext getHydraContext(DataSource source, DataCategory dataCategory) {
     if (dataCategory == null) {
@@ -142,6 +143,13 @@ public class HydraContext {
     this.subset = subset;
   }
 
+  public void setSelectBox(Object box) {
+    selectBox = box;
+  }
+
+  public Object getSelectBox() {
+    return selectBox;
+  }
 
   public synchronized MultiDimensionSubset getMultiDimensionSubset() {
     return subset;
