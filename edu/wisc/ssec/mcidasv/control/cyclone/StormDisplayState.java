@@ -121,8 +121,8 @@ import visad.georef.EarthLocationLite;
 import visad.georef.LatLonPoint;
 
 /**
- * 
- * @author Unidata Development Team
+ * Part of the McV/IDV implementation of AODT
+ * @author Unidata Development Team, McIDAS-V Development Team
  * @version $Revision$
  */
 
@@ -1377,7 +1377,8 @@ public class StormDisplayState {
 			public void run() {
 				DisplayMaster displayMaster = stormTrackControl
 						.getDisplayMaster();
-				boolean wasActive = displayMaster.ensureInactive();
+				boolean wasActive = displayMaster.isActive();
+				displayMaster.setDisplayInactive();
 				try {
 					synchronized (MUTEX) {
 						stormTrackControl.showWaitCursor();
@@ -1652,9 +1653,11 @@ public class StormDisplayState {
 	 * @throws Exception
 	 *             _more_
 	 */
+	
 	protected void updateDisplays(boolean force) throws Exception {
 		DisplayMaster displayMaster = stormTrackControl.getDisplayMaster();
-		boolean wasActive = displayMaster.ensureInactive();
+		boolean wasActive = displayMaster.isActive();
+		displayMaster.setDisplayInactive();
 		try {
 			List<WayDisplayState> wayDisplayStates = getWayDisplayStates();
 			for (WayDisplayState wds : wayDisplayStates) {
@@ -2522,7 +2525,6 @@ public class StormDisplayState {
 	public void colorRangeChanged() {
 		DisplayMaster displayMaster = stormTrackControl.getDisplayMaster();
 		colorRangeChanged = true;
-//		boolean wasActive = displayMaster.ensureInactive();
 		displayMaster.setDisplayInactive();
 		try {
 			stormTrackControl.stormChanged(StormDisplayState.this);
