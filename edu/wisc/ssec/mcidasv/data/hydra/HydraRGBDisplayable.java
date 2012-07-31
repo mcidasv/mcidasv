@@ -173,7 +173,7 @@ public class HydraRGBDisplayable extends DisplayableData {
     public HydraRGBDisplayable(String name, RealType rgbRealType, RealType indexRealType, boolean alphaflag, 
                  HydraControl multiSpecCntrl)
             throws VisADException, RemoteException {
-        this(name, rgbRealType, indexRealType, null, alphaflag, multiSpecCntrl);
+        this(name, rgbRealType, indexRealType, null, alphaflag, null, multiSpecCntrl);
     }
 
     /**
@@ -187,10 +187,11 @@ public class HydraRGBDisplayable extends DisplayableData {
      *                          <code>null</code> (Vis5D palette used
      *                          as default).
      * @param alphaflag         boolean - use Display.RBGA if true
+     * @param initRange         Range to use as initial or first min,max
      * @throws VisADException   VisAD failure.
      * @throws RemoteException  Java RMI failure.
      */
-    public HydraRGBDisplayable(String name, RealType rgbRealType, RealType indexRealType, float[][] colorPalette, boolean alphaflag,
+    public HydraRGBDisplayable(String name, RealType rgbRealType, RealType indexRealType, float[][] colorPalette, boolean alphaflag, Range initRange,
                    HydraControl multiSpecCntrl)
             throws VisADException, RemoteException {
 
@@ -202,6 +203,11 @@ public class HydraRGBDisplayable extends DisplayableData {
         this.colorPalette = colorPalette;
         this.alphaflag    = alphaflag;
         this.multiSpecCntrl = multiSpecCntrl;
+
+        if (initRange != null) {
+          this.lowRange = initRange.getMin();
+          this.highRange = initRange.getMax();
+        }
 
         if (rgbRealType != null) {
             setColorMaps();
