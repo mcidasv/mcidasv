@@ -63,7 +63,6 @@ def _mcvinit_jythonpaths():
     ]
 
 for jythonpath in _mcvinit_jythonpaths():
-    print jythonpath
     if not jythonpath in sys.path:
         sys.path.append(jythonpath)
 
