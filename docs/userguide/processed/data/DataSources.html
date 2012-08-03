@@ -40,7 +40,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSources.
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Data Formats and Sources</div>
-McIDAS-V can read a variety of data formats either from local files or remote data servers (e.g., HTTP, TDS, ADDE) (<a href="#servers">1</a>). This page contains information about some data sources that work with McIDAS-V.
+<p>McIDAS-V can read a variety of data formats either from local files or remote data servers (e.g., HTTP, TDS, ADDE) (<a href="#servers">1</a>). This page contains information about some data sources that work with McIDAS-V.</p>
 <p>To connect McIDAS-V to data sources, see <a href="choosers/index.html"> Data Sources</a>.</p>
 <ul class="childlist">
 <li><a href="#formats">Supported Data Types and Formats</a></li>
@@ -48,8 +48,7 @@ McIDAS-V can read a variety of data formats either from local files or remote da
 <li><a href="#netcdf">netCDF files</a></li>
 <li><a href="#csv">ASCII Text Point Data</a></li>
 </ul>
-<a name="formats" id="formats"></a>
-<div class="pagesubtitle">Supported Data Types and Formats</div>
+<div class="pagesubtitle"><a name="formats" id="formats"></a>Supported Data Types and Formats</div>
 <table id="dataformats" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <th width="10%"><strong>Data Type</strong></th>
@@ -324,8 +323,7 @@ bytes&quot; headers. See the <a href="choosers/UrlChooser.html">Choosing a URL</
 more information.</p>
 <div class="pagesubtitle"><a name="netcdf" id="netcdf"></a>netCDF files</div>
 <p>The Network Common Data Form (<a href="http://www.unidata.ucar.edu/software/netcdf" target="_blank">netCDF</a>) provides a common data access method for Unidata applications. This format can be used to store a variety of data types that encompass single-point observations, time series, regular grids, and satellite and radar images. The mere use of netCDF by itself is not sufficient to make data &quot;self-describing&quot; and meaningful to McIDAS-V.</p>
-<p>Generally, McIDAS-V requires that datasets in netCDF format use <a href="http://www.unidata.ucar.edu/packages/netcdf/conventions.html" target="_blank">meta
-    data conventions</a> to be able to fully understand and geolocate the dataset.
+<p>Generally, McIDAS-V requires that datasets in netCDF format use <a href="http://www.unidata.ucar.edu/packages/netcdf/conventions.html" target="_blank">metadata conventions</a> to be able to fully understand and geolocate the dataset.
     These conventions provide documented <a href="http://www.unidata.ucar.edu/packages/netcdf/BestPractices.html" target="_blank">&quot;best
     practices&quot;</a>. Using conventions with netCDF ensures your data
     is complete and self-describing, and can be used by others. We
