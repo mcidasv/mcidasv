@@ -338,6 +338,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          table.put(ProfileAlongTrack.profileTime_name, "Profile_Time");
          table.put(ProfileAlongTrack.longitude_name, "Longitude");
          table.put(ProfileAlongTrack.latitude_name, "Latitude");
+         table.put("array_dimension_names", new String[] {"dim0", "dim1"}); 
          ProfileAlongTrack adapter = new Calipso2D(reader, table);
          ProfileAlongTrack3D adapter3D = new ProfileAlongTrack3D(adapter);
          HashMap subset = adapter.getDefaultSubset();
@@ -357,18 +358,21 @@ public class MultiDimensionDataSource extends HydraDataSource {
          table.put(ProfileAlongTrack.array_name, "Latitude");
          table.put(ProfileAlongTrack.trackDim_name, "dim0");
          table.put(ProfileAlongTrack.vertDim_name, "dim1");
+         table.put("array_dimension_names", new String[] {"dim0", "dim1"}); 
          adapter_s[0] = new ArrayAdapter(reader, table);
 
          table = ProfileAlongTrack.getEmptyMetadataTable();
          table.put(ProfileAlongTrack.array_name, "Surface_Elevation");
          table.put(ProfileAlongTrack.trackDim_name, "dim0");
          table.put(ProfileAlongTrack.vertDim_name, "dim1");
+         table.put("array_dimension_names", new String[] {"dim0", "dim1"}); 
          adapter_s[1] = new ArrayAdapter(reader, table);
 
          table = ProfileAlongTrack.getEmptyMetadataTable();
          table.put(ProfileAlongTrack.array_name, "Longitude");
          table.put(ProfileAlongTrack.trackDim_name, "dim0");
          table.put(ProfileAlongTrack.vertDim_name, "dim1");
+         table.put("array_dimension_names", new String[] {"dim0", "dim1"}); 
          adapter_s[2] = new ArrayAdapter(reader, table);
 
          TrackDomain track_domain = new TrackDomain(adapter_s[2], adapter_s[0], adapter_s[1]);
@@ -378,6 +382,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          table.put(ProfileAlongTrack.array_name, "Tropopause_Height");
          table.put(ProfileAlongTrack.trackDim_name, "dim0");
          table.put(ProfileAlongTrack.vertDim_name, "dim1");
+         table.put("array_dimension_names", new String[] {"dim0", "dim1"}); 
          ArrayAdapter trop_height = new ArrayAdapter(reader, table);
          track_domain = new TrackDomain(adapter_s[2], adapter_s[0], trop_height);
          adapters[1] = new TrackAdapter(track_domain, trop_height);
