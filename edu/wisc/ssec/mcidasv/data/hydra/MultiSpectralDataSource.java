@@ -329,6 +329,12 @@ public class MultiSpectralDataSource extends HydraDataSource {
          logger.debug("Trying to create MODIS 1K GranuleAggregation reader...");
          TreeSet<String> products = new TreeSet<String>();
          products.add((String) table.get("array_name"));
+         products.add("MODIS_SWATH_Type_L1B/Data Fields/EV_1KM_RefSB");
+         products.add("MODIS_SWATH_Type_L1B/Data Fields/EV_250_Aggr1km_RefSB");
+         products.add("MODIS_SWATH_Type_L1B/Data Fields/EV_500_Aggr1km_RefSB");
+         products.add("MODIS_SWATH_Type_L1B/Data Fields/EV_250_Aggr500_RefSB");
+         products.add("MODIS_SWATH_Type_L1B/Data Fields/EV_250_RefSB");
+         products.add("MODIS_SWATH_Type_L1B/Data Fields/EV_500_RefSB");
          products.add((String) table.get("lon_array_name"));
          products.add((String) table.get("lat_array_name"));
          if (doAggregation) {
