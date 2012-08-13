@@ -185,7 +185,7 @@ public class EntryStore {
 
         Set<AddeEntry> systemEntries = extractResourceEntries(EntrySource.SYSTEM, sysResource);
 
-        Set<AddeEntry> prefEntries = extractFromPreferences(store);
+        Set<AddeEntry> prefEntries = extractPreferencesEntries(store);
         prefEntries = removeDeletedSystemEntries(prefEntries, systemEntries);
 
         Set<AddeEntry> userEntries = extractUserEntries(userResource);
@@ -313,7 +313,7 @@ public class EntryStore {
      * 
      * @return Either the {@code AddeEntrys} stored in the prefs or an empty {@link java.util.Set Set}.
      */
-    private Set<AddeEntry> extractFromPreferences(final IdvObjectStore store) {
+    private Set<AddeEntry> extractPreferencesEntries(final IdvObjectStore store) {
         assert store != null;
 
         // this is valid--the only thing ever written to 
