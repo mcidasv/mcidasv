@@ -182,13 +182,54 @@ public class EntryStore {
 
         XmlResourceCollection userResource = rscManager.getXmlResources(ResourceManager.RSC_NEW_USERSERVERS);
         XmlResourceCollection sysResource = rscManager.getXmlResources(IdvResourceManager.RSC_ADDESERVER);
-        putEntries(trie, extractFromPreferences(store));
-        putEntries(trie, extractUserEntries(userResource));
-        putEntries(trie, extractResourceEntries(EntrySource.SYSTEM, sysResource));
+
+        Set<AddeEntry> systemEntries = extractResourceEntries(EntrySource.SYSTEM, sysResource);
+
+        Set<AddeEntry> prefEntries = extractFromPreferences(store);
+        prefEntries = removeDeletedSystemEntries(prefEntries, systemEntries);
+
+        Set<AddeEntry> userEntries = extractUserEntries(userResource);
+        userEntries = removeDeletedSystemEntries(userEntries, systemEntries);
+
+        putEntries(trie, prefEntries);
+        putEntries(trie, userEntries);
+        putEntries(trie, systemEntries);
     }
 
     /**
+     * Searches {@code entries} for {@link AddeEntry} objects with two characteristics:
+     * <ul>
+     * <li>the object source is {@link EntrySource#System}</li>
+     * <li>the object is <b>not</b> in {@code systemEntries}</li>
+     * </ul>
      * 
+     * <p>The intent behind this method is to safely remove {@literal "system"}
+     * entries that have been stored to a user's preferences. {@code entries}
+     * can be generated from anywhere you like, but {@code systemEntries} should
+     * almost always be created from {@literal "addeservers.xml"}.
+     * 
+     * @param entries Cannot be {@code null}.
+     * @param systemEntries Cannot be {@code null}.
+     * 
+     * @return {@code Set} of entries that are not system resources that have
+     * been removed, or an empty {@code Set}.
+     */
+    private static Set<AddeEntry> removeDeletedSystemEntries(final Collection<? extends AddeEntry> entries, final Collection<? extends AddeEntry> systemEntries) {
+        Set<AddeEntry> pruned = newLinkedHashSet(entries.size());
+        for (AddeEntry entry : entries) {
+            if (entry.getEntrySource() != EntrySource.SYSTEM) {
+                pruned.add(entry);
+            } else if (systemEntries.contains(entry)) {
+                pruned.add(entry);
+            } else {
+                continue;
+            }
+        }
+        return pruned;
+    }
+
+    /**
+     * Adds {@link AddeEntry} objects to a given {@link PatriciaTrie}.
      * 
      * @param trie Cannot be {@code null}.
      * @param newEntries Cannot be {@code null}.
