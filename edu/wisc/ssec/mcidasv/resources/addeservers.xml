@@ -16,12 +16,6 @@ they essentially get it from their container type tag.
 This file overrides IDV addeservers.xml
 -->
   
-  <server name="chinook.ssec.wisc.edu" active="true">
-    <group
-       names="NPRT,SPRT"
-       type="image"/>
-  </server>
-  
   <server name="rets1.ssec.wisc.edu">
     <group
        names="CIMSSP1"
