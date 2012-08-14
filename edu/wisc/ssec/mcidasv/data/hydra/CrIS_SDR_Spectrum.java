@@ -76,40 +76,4 @@ public class CrIS_SDR_Spectrum extends SpectrumAdapter {
     return CrIS_SDR_Utility.getWavenumberStart(getArrayName());
   }
 
-  public FlatField getData(Object subset) throws Exception {
-     new_subset.putAll((HashMap) subset);
-
-     double[] xx = (double[]) ((HashMap)subset).get(SpectrumAdapter.x_dim_name);
-     double[] yy = (double[]) ((HashMap)subset).get(SpectrumAdapter.y_dim_name);
-     double[] new_xx = new double[3];
-     double[] new_yy = new double[3];
-     double[] new_kk = new double[3];
-
-     int i = (int) xx[0]/3;
-     int j = (int) yy[0]/3;
-
-     int ii = ((int)xx[0]) - i*3;
-     int jj = ((int)yy[0]) - j*3;
-
-     int k = jj*3 + ii;
-
-     new_yy[0] = j;
-     new_yy[1] = j;
-     new_yy[2] = 1;
-
-     new_xx[0] = i;
-     new_xx[1] = i;
-     new_xx[2] = 1;
-
-     new_kk[0] = ifov_order[k]; 
-     new_kk[1] = ifov_order[k];
-     new_kk[2] = 1;
-
-     new_subset.put(SpectrumAdapter.x_dim_name, new_xx);
-     new_subset.put(SpectrumAdapter.y_dim_name, new_yy);
-     new_subset.put(SpectrumAdapter.FOVindex_name, new_kk);
-
-     return super.getData(new_subset);
-   }
-
 }

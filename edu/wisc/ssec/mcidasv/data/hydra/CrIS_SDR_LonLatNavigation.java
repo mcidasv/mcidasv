@@ -35,6 +35,8 @@ import visad.RealTupleType;
 
 public class CrIS_SDR_LonLatNavigation extends SwathNavigation  {
 
+  private Gridded2DSet gset = null;
+
   public CrIS_SDR_LonLatNavigation(SwathAdapter swathAdapter) throws Exception {
     super(swathAdapter);
   }
@@ -58,13 +60,14 @@ public class CrIS_SDR_LonLatNavigation extends SwathNavigation  {
     float[] lons = reader.getFloatArray(lon_array_name, new_geo_start, new_geo_count, new_geo_stride);
     float[] lats = reader.getFloatArray(lat_array_name, new_geo_start, new_geo_count, new_geo_stride);
 
-    lons = CrIS_SDR_Utility.psuedoScanReorder(lons, 90, geo_count[0]);
-    lats = CrIS_SDR_Utility.psuedoScanReorder(lats, 90, geo_count[0]);
-
-    Gridded2DSet gset = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple,
+    gset = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple,
                    new float[][] {lons, lats},
                         geo_count[idx_order[0]], geo_count[idx_order[1]],
                             null, null, null, false, false);
+    return gset;
+  }
+
+  public Gridded2DSet getInterpSet() {
     return gset;
   }
 }

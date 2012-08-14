@@ -68,18 +68,14 @@ public class CrIS_SDR_SwathAdapter extends SwathAdapter {
      new_coords = new double[] {0.0, (9.0 - 1.0), 1.0};
      new_subset.put(SpectrumAdapter.FOVindex_name, new_coords);
 
-     return makeFlatField(domainSet, new_subset);
+     // put FOVs onto a grid
+
+     FlatField swath = makeFlatField(domainSet, new_subset);
+
+     visad.georef.MapProjection mp = MultiSpectralDataSource.getDataProjection(swath);
+
+     visad.Linear2DSet grid = MultiSpectralDataSource.makeGrid(mp, 15000);
+
+     return MultiSpectralDataSource.swathToGrid(grid, swath, 1.0);
    }
-
-   public float[] processRange(float[] values, Object subset) {
-	   double[] track_coords = (double[]) ((HashMap)subset).get(SwathAdapter.track_name);
-
-	   int numLines = ((int)(track_coords[1] - track_coords[0]) + 1);
-
-	   values = CrIS_SDR_Utility.psuedoScanReorder(values, 90, numLines * 3);
-
-	   //- subset here, if necessary
-	   return values;
-   }
-   
 }
