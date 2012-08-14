@@ -928,13 +928,116 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
         return goodEntries;
     }
 
+    public Set<RemoteAddeEntry> checkHosts2(final Set<RemoteAddeEntry> entries) {
+      Contract.notNull(entries, "entries cannot be null");
+      if (entries.isEmpty()) {
+          return Collections.emptySet();
+      }
+      
+      Set<RemoteAddeEntry> verified = newLinkedHashSet(entries.size());
+      Set<String> hosts = newLinkedHashSet(entries.size());
+//      Set<String> validHosts = newLinkedHashSet(entries.size());
+      
+      ExecutorService exec = Executors.newFixedThreadPool(POOL);
+      CompletionService<StatusWrapper> ecs = new ExecutorCompletionService<StatusWrapper>(exec);
+      for (RemoteAddeEntry entry : entries) {
+          ecs.submit(new VerifyHostTask(new StatusWrapper(entry)));
+      }
+
+      try {
+          for (int i = 0; i < entries.size(); i++) {
+              StatusWrapper pairing = ecs.take().get();
+              RemoteAddeEntry entry = pairing.getEntry();
+              AddeStatus status = pairing.getStatus();
+//              setStatus(entry.getAddress()+": attempting to connect...");
+//              statuses.add(status);
+//              entry2Status.put(entry, status);
+              if (status == AddeStatus.OK) {
+                  verified.add(entry);
+//                  setStatus("Found host name "+entry.getAddress());
+              }
+          }
+      } catch (InterruptedException e) {
+          LogUtil.logException("interrupted while checking ADDE entries", e);
+      } catch (ExecutionException e) {
+          LogUtil.logException("ADDE validation execution error", e);
+      } finally {
+          exec.shutdown();
+      }
+      return verified;
+    }
+//    public Set<RemoteAddeEntry> checkHosts2(final Set<RemoteAddeEntry> entries) {
+//        Contract.notNull(entries, "entries cannot be null");
+//        if (entries.isEmpty()) {
+//            return Collections.emptySet();
+//        }
+//        
+//        Set<RemoteAddeEntry> verified = newLinkedHashSet(entries.size());
+//        ExecutorService exec = Executors.newFixedThreadPool(POOL);
+//        CompletionService<StatusWrapper> ecs = new ExecutorCompletionService<StatusWrapper>(exec);
+////        Map<RemoteAddeEntry, AddeStatus> entry2Status = new LinkedHashMap<RemoteAddeEntry, AddeStatus>(entries.size());
+//        
+//        for (RemoteAddeEntry entry : entries) {
+//            StatusWrapper check = new StatusWrapper(entry);
+//            ecs.submit(new VerifyHostTask(check));
+//        }
+//        
+//        try {
+//            for (int i = 0; i < entries.size(); i++) {
+//                StatusWrapper pairing = ecs.take().get();
+//                RemoteAddeEntry entry = pairing.getEntry();
+//                AddeStatus status = pairing.getStatus();
+//                setStatus(entry.getAddress()+": attempting to connect...");
+//                statuses.add(status);
+////                entry2Status.put(entry, status);
+//                if (status == AddeStatus.OK) {
+//                    verified.add(entry);
+////                    setStatus("Found host name "+entry.getAddress());
+//                }
+//            }
+//        } catch (InterruptedException e) {
+//            
+//        } catch (ExecutionException e) {
+//            
+//        } finally {
+//            exec.shutdown();
+//        }
+//
+//        if (statuses.contains(AddeStatus.BAD_SERVER)) {
+//            setStatus("Could not connect to the server.");
+//            setBadField(serverField, true);
+//        } else {
+//            setStatus("Connected to server.");
+//        }
+////        
+////        if (!statuses.contains(AddeStatus.OK)) {
+////            if (statuses.contains(AddeStatus.BAD_ACCOUNTING)) {
+////                setStatus("Incorrect accounting information.");
+////                setBadField(userField, true);
+////                setBadField(projField, true);
+////            } else if (statuses.contains(AddeStatus.BAD_GROUP)) {
+////                setStatus("Dataset does not appear to be valid.");
+////                setBadField(datasetField, true);
+////            } else if (statuses.contains(AddeStatus.BAD_SERVER)) {
+////                setStatus("Could not connect to the ADDE server.");
+////                setBadField(serverField, true);
+////            } else {
+////                logger.warn("guru meditation error: statuses={}", statuses);
+////            }
+////        } else {
+////            setStatus("Finished verifying.");
+////        }
+//
+//        return verified;
+//    }
+    
     public Set<RemoteAddeEntry> checkGroups(final Set<RemoteAddeEntry> entries) {
         Contract.notNull(entries, "entries cannot be null");
         if (entries.isEmpty()) {
             return Collections.emptySet();
         }
 
-        Set<RemoteAddeEntry> verified = newLinkedHashSet();
+        Set<RemoteAddeEntry> verified = newLinkedHashSet(entries.size());
         Collection<AddeStatus> statuses = EnumSet.noneOf(AddeStatus.class);
         ExecutorService exec = Executors.newFixedThreadPool(POOL);
         CompletionService<StatusWrapper> ecs = new ExecutorCompletionService<StatusWrapper>(exec);
@@ -1061,6 +1164,22 @@ public class RemoteEntryEditor extends javax.swing.JDialog {
 
         public StatusWrapper call() throws Exception {
             entryStatus.setStatus(RemoteAddeEntry.checkEntry(entryStatus.getEntry()));
+            return entryStatus;
+        }
+    }
+    
+    private class VerifyHostTask implements Callable<StatusWrapper> {
+        private final StatusWrapper entryStatus;
+        public VerifyHostTask(final StatusWrapper descStatus) {
+            entryStatus = notNull(descStatus, "cannot verify or set status of a null descriptor/status pair");
+        }
+        public StatusWrapper call() throws Exception {
+            boolean validHost = RemoteAddeEntry.checkHost(entryStatus.getEntry());
+            if (validHost) {
+                entryStatus.setStatus(AddeStatus.OK);
+            } else {
+                entryStatus.setStatus(AddeStatus.BAD_SERVER);
+            }
             return entryStatus;
         }
     }
