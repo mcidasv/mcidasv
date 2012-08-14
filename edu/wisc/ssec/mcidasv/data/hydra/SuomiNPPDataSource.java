@@ -100,6 +100,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
     protected MultiDimensionAdapter[] adapters = null;
     
+    private ArrayList<MultiSpectralData> msd_CrIS = new ArrayList<MultiSpectralData>();
     private ArrayList<MultiSpectralData> multiSpectralData = new ArrayList<MultiSpectralData>();
     private HashMap<String, MultiSpectralData> msdMap = new HashMap<String, MultiSpectralData>();
 
@@ -891,10 +892,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
             		CrIS_SDR_Spectrum csa = new CrIS_SDR_Spectrum(nppAggReader, spectTable);
                     DataCategory.createCategory("MultiSpectral");
                     categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
-                	MultiSpectralData msd = new MultiSpectralData((CrIS_SDR_SwathAdapter) adapters[pIdx], 
-                			csa);
+                	MultiSpectralData msd = new CrIS_SDR_MultiSpectralData((CrIS_SDR_SwathAdapter) adapters[pIdx], csa); 
                     msd.setInitialWavenumber(csa.getInitialWavenumber());
-                    multiSpectralData.add(msd);
+                    msd_CrIS.add(msd);
                 }
                 if (instrumentName.getStringValue().contains("OMPS")) {
             		adapters[pIdx] = new SwathAdapter(nppAggReader, swathTable);
@@ -907,12 +907,14 @@ public class SuomiNPPDataSource extends HydraDataSource {
                 	multiSpectralData.add(msd);
                 } 
                 if (pIdx == 0) {
+                  /**
                 	defaultSubset = multiSpectralData.get(pIdx).getDefaultSubset();
                 	try {
                 		previewImage = multiSpectralData.get(pIdx).getImage(defaultSubset);
                 	} catch (Exception e) {
                 		e.printStackTrace();
                 	}
+                   */
                 }
                 
         	} else {
@@ -924,6 +926,18 @@ public class SuomiNPPDataSource extends HydraDataSource {
         	}
     		pIdx++;
     	}
+
+        if (msd_CrIS.size() == 3) {
+          try {
+            MultiSpectralAggr aggr = new MultiSpectralAggr(msd_CrIS.toArray(new MultiSpectralData[msd_CrIS.size()]));
+            multiSpectralData.add(aggr);
+            defaultSubset = ((MultiSpectralData)msd_CrIS.get(0)).getDefaultSubset();
+            previewImage = ((MultiSpectralData)msd_CrIS.get(0)).getImage(defaultSubset);
+          }
+          catch (Exception e) {
+            System.out.println(e);
+          }
+        }
 
     	setProperties(properties);
     }
