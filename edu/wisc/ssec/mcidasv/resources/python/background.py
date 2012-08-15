@@ -601,7 +601,7 @@ class _Display(_JavaProxy):
             # hack for backward compatibility: don't let user do an
             # imagesequence since it requires a strange DataChoice and 
             # imagedisplay can handle loops anyway.
-            print "DEBUG: doing an imagedisplay instead of an imagesequence"
+            #print "DEBUG: doing an imagedisplay instead of an imagesequence"
             controlID = 'imagedisplay'
 
         # Set the panel/display that a new DisplayControl will be put into
@@ -619,7 +619,8 @@ class _Display(_JavaProxy):
             # (maybe we only want to do this in the 'imagedisplay' case?)
             data = ImageSequenceImpl(data)
         except TypeError, te:
-            print "DEBUG: ImageSequenceImpl constructor failed but thats ok"
+            #print "DEBUG: ImageSequenceImpl constructor failed but thats ok"
+            pass
 
         # TODO: first arg in DataDataChoice constructor is shortname macro.
         # (can't do anything better now cause we don't have metadata).
