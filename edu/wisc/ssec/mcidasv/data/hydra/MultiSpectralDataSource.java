@@ -1099,6 +1099,31 @@ public class MultiSpectralDataSource extends HydraDataSource {
     return mp;
   }
 
+   public static MapProjection getSwathProjection(FlatField image, float[][] corners) throws VisADException, RemoteException {
+      MapProjection mp = null;
+      FunctionType fnc_type = (FunctionType) image.getType();
+      RealTupleType rtt = fnc_type.getDomain();
+      CoordinateSystem cs = rtt.getCoordinateSystem();
+      Gridded2DSet domainSet = (Gridded2DSet) image.getDomainSet();
+
+      if (cs instanceof visad.CachingCoordinateSystem) {
+         cs = ((visad.CachingCoordinateSystem)cs).getCachedCoordinateSystem();
+      }
+
+      if (cs instanceof LongitudeLatitudeCoordinateSystem) {
+         try {
+           mp = new LambertAEA(corners);
+         } catch (Exception e) {
+           System.out.println(" getDataProjection"+e);
+         }
+         return mp;
+      }
+      else {
+         return null;
+      }
+   }
+
+
   public static Linear2DSet makeGrid(MapProjection mp, double res) throws Exception {
     Rectangle2D rect = mp.getDefaultMapArea();
 
@@ -1130,22 +1155,27 @@ public class MultiSpectralDataSource extends HydraDataSource {
        if (xy[1][k] > max_y) max_y = xy[1][k];
      }
 
+     RealType xmap = RealType.getRealType("xmap", CommonUnit.meter);
+     RealType ymap = RealType.getRealType("ymap", CommonUnit.meter);
+
+     RealTupleType rtt = new visad.RealTupleType(xmap, ymap, mp, null);
+
+     min_x = ((int) (min_x/res)) * res;
+     max_x = ((int) (max_x/res)) * res;
+     min_y = ((int) (min_y/res)) * res;
+     max_y = ((int) (max_y/res)) * res;
+
      float del_x = max_x - min_x;
      float del_y = max_y - min_y;
 
      int xLen = (int) (del_x/res);
      int yLen = (int) (del_y/res);
 
-     RealType xmap = RealType.getRealType("xmap", CommonUnit.meter);
-     RealType ymap = RealType.getRealType("ymap", CommonUnit.meter);
-
-     RealTupleType rtt = new visad.RealTupleType(xmap, ymap, mp, null);
-
      Linear2DSet grid = new Linear2DSet(rtt, min_x, min_x + (xLen-1)*res, xLen,
                                              min_y, min_y + (yLen-1)*res, yLen);
+
      return grid;
   }
-
 
   public static FlatField swathToGrid(Linear2DSet grid, FlatField swath) throws Exception {
     return swathToGrid(grid, swath, 0.0);
@@ -1205,8 +1235,11 @@ public class MultiSpectralDataSource extends HydraDataSource {
 	 float[][] swathEarthCoord = swathCoordSys.toReference(swathCoord);
 
 	 float[][] gridValue = gridCoordSys.fromReference(swathEarthCoord);
-	 int grdIdx = (grid.valueToIndex(gridValue))[0];
          float[][] gridCoord = grid.valueToGrid(gridValue);
+         float g0 = gridCoord[0][0];
+         float g1 = gridCoord[1][0];
+         int grdIdx  = (g0 != g0 || g1 != g1) ? -1 : ((int) (g0 + 0.5)) + gridXLen * ((int) (g1 + 0.5));
+
 
                int m=0;
                int n=0;
