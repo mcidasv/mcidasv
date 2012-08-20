@@ -72,13 +72,6 @@ public class LongitudeLatitudeCoordinateSystem extends CoordinateSystem {
      float[][] coords = domainSet.valueToGrid(values);
      coords = subSet.gridToValue(coords);
      coords = gset.gridToValue(coords);
-     if (!neg180pos180) { // force to longitude range (0,360)
-       for (int t=0; t<coords[0].length; t++) {
-         if (coords[0][t] < 0f) {
-           coords[0][t] += 360f;
-         }
-       }
-     }
      return coords;
    }
 
@@ -100,13 +93,6 @@ public class LongitudeLatitudeCoordinateSystem extends CoordinateSystem {
      float[][] coords = domainSet.valueToGrid(Set.doubleToFloat(values));
      coords = subSet.gridToValue(coords);
      coords = gset.gridToValue(coords);
-     if (!neg180pos180) { // force to longitude range (0,360)
-       for (int t=0; t<coords[0].length; t++) {
-         if (coords[0][t] < 0f) {
-           coords[0][t] += 360f;
-         }
-       }
-     }
      return Set.floatToDouble(coords);
    }
 
