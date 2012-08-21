@@ -2,6 +2,9 @@ from collections import namedtuple
 
 from edu.wisc.ssec.mcidas import AreaDirectory
 from edu.wisc.ssec.mcidas import AreaDirectoryList
+
+from edu.wisc.ssec.mcidasv.servermanager import EntryStore
+
 from visad.data.mcidas import AreaAdapter
 
 # credit for enum goes to http://stackoverflow.com/a/1695250
@@ -123,6 +126,19 @@ params_sizeall = dict(
     time=('14:15:00', '14:15:00'),
     band=1,
 )
+
+
+def enableAddeDebug():
+    EntryStore.setAddeDebugEnabled(True)
+
+
+def disableAddeDebug():
+    EntryStore.setAddeDebugEnabled(False)
+
+
+def isAddeDebugEnabled(defaultValue=False):
+    return EntryStore.isAddeDebugEnabled(defaultValue)
+
 
 def listADDEImages(server, dataset, descriptor,
     accounting=DEFAULT_ACCOUNTING,
