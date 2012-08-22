@@ -103,10 +103,10 @@ from background import (
 )
 
 from mcvadde import (
-    enum, DEFAULT_ACCOUNTING, CoordinateSystems, Places, getADDEImage, listADDEImages,
-    params1, params_area_coords, params_image_coords, params_sizeall, 
-    disableAddeDebug, enableAddeDebug, isAddeDebugEnabled, LATLON, AREA, 
-    IMAGE, ULEFT, CENTER
+    enum, DEFAULT_ACCOUNTING, CoordinateSystems, Places, getDescriptor,
+    getADDEImage, listADDEImages, params1, params_area_coords,
+    params_image_coords, params_sizeall, disableAddeDebug, enableAddeDebug,
+    isAddeDebugEnabled, LATLON, AREA, IMAGE, ULEFT, CENTER
 )
 
 from interactive import (
