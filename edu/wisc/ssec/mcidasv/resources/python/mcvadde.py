@@ -3,6 +3,7 @@ from collections import namedtuple
 from edu.wisc.ssec.mcidas import AreaDirectory
 from edu.wisc.ssec.mcidas import AreaDirectoryList
 
+from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 from edu.wisc.ssec.mcidasv.servermanager import EntryStore
 
 from visad.data.mcidas import AreaAdapter
@@ -138,6 +139,26 @@ def disableAddeDebug():
 
 def isAddeDebugEnabled(defaultValue=False):
     return EntryStore.isAddeDebugEnabled(defaultValue)
+
+
+def getDescriptor(dataset, imageType):
+    """Get the descriptor for a local ADDE entry
+        
+    Args:
+        dataset: Dataset field from local ADDE server
+        imageType: Image Type field from local ADDE server
+
+    Returns: valid descriptor string or -1 if no match was found
+    """
+    # get a list of local ADDE server entries
+    localEntries = getStaticMcv().getServerManager().getLocalEntries()
+    for entry in localEntries:
+        if entry.getName() == imageType and entry.getGroup() == dataset:
+            # descriptor found; convert to upper case and return it
+            desc = str(entry.getDescriptor()).upper()
+            return desc
+    # no matching descriptor was found so return an error value:
+    return -1
 
 
 def listADDEImages(server, dataset, descriptor,
