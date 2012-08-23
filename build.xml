@@ -20,7 +20,7 @@
     <property name="heap.dir" location="/tmp/javaheaps" />
     
     <!-- For example: "/Applications/McIDAS/adde" on OS X and NOT "/Applications/McIDAS/adde/bin" -->
-    <!-- <property name="addeservs.dir" location="/path/to/local/adde/root" /> --> 
+    <!-- <property name="addeservers.dir" location="/path/to/local/adde/root" /> --> 
     <property name="addeservers.dir" location="/Applications/mcidasv/nightly/adde" />
     
     <!-- Sets the McV userpath -->
@@ -502,7 +502,7 @@
       <!--
       <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
       <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
-      <sysproperty key="debug.localadde.rootdir" value="${addeservs.dir}" />
+      <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
       <sysproperty key="debug.adde.reqs" value="false" />
       -->
       <sysproperty key="mcv.userpath" value="/Users/${user.name}/Documents/McIDAS-V"/>
@@ -568,7 +568,7 @@
       <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
       <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
       <sysproperty key="mcv.userpath" value="/Users/${user.name}/Documents/McIDAS-V"/>
-      <sysproperty key="debug.localadde.rootdir" value="${addeservs.dir}" />
+      <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
       <sysproperty key="debug.adde.reqs" value="true" />
       <sysproperty key="logback.configurationFile" value="edu/wisc/ssec/mcidasv/resources/logback-stdout.xml" />
       <sysproperty key="python.security.respectJavaAccessibility" value="false" />
@@ -593,7 +593,7 @@
             <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
             <jvmarg value="-Xdebug"/>
             <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8000,suspend=y"/>
-            <sysproperty key="debug.localadde.rootdir" value="${addeservs.dir}" />
+            <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
             <sysproperty key="debug.adde.reqs" value="false" />
             <arg value="-forceaqua" />
             <arg value="-userpath" />
@@ -620,7 +620,7 @@
             <!-- <jvmarg value="-XX:HeapDumpPath=${heap.dir}" /> -->
             
             <!-- Allows you to point at arbitrary local ADDE servers -->
-            <!-- <sysproperty key="debug.localadde.rootdir" value="${addeservs.dir}" /> -->
+            <!-- <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" /> -->
             
             <!-- Forces McIDAS-V to use Apple's Aqua L&F (only on OS X) -->
             <!-- <arg value="-forceaqua" /> -->
@@ -648,7 +648,7 @@
             <!-- <jvmarg value="-XX:HeapDumpPath=${heap.dir}" /> -->
             
             <!-- Allows you to point at arbitrary local ADDE servers -->
-            <!-- <sysproperty key="debug.localadde.rootdir" value="${addeservs.dir}" /> -->
+            <!-- <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" /> -->
             
             <!-- Forces McIDAS-V to use Apple's Aqua L&F (only on OS X) -->
             <!-- <arg value="-forceaqua" /> -->
@@ -656,7 +656,7 @@
           <jvmarg value="-noverify" />
           <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
           <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
-          <sysproperty key="debug.localadde.rootdir" value="${addeservs.dir}" />
+          <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
           <sysproperty key="debug.adde.reqs" value="true" />
           <sysproperty key="python.security.respectJavaAccessibility" value="false" />
           <!--<sysproperty key="logback.configurationFile" value="${logback.default.config}" />-->
