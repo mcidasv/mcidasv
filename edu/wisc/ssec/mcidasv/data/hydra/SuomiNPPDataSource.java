@@ -53,6 +53,8 @@ import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.TreeSet;
 
+import org.jdom.Document;
+import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jdom.output.XMLOutputter;
 
@@ -61,6 +63,8 @@ import org.slf4j.LoggerFactory;
 
 import ucar.ma2.ArrayFloat;
 import ucar.ma2.DataType;
+
+import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 import ucar.nc2.Group;
 import ucar.nc2.NetcdfFile;
@@ -107,7 +111,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     private static final String DATA_DESCRIPTION = "Suomi NPP Data";
     
     // instrument related variables and flags
-    ucar.nc2.Attribute instrumentName = null;
+    Attribute instrumentName = null;
     private String productName = null;
     
     // for now, we are only handling CrIS variables that match this filter and SCAN dimensions
@@ -246,8 +250,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 		    		logger.debug("Trying to open file: " + fileAbsPath);
 		    		ncfile = NetcdfFile.open(fileAbsPath);
 		    		if (! isCombinedProduct) {
-						ucar.nc2.Attribute a = ncfile
-								.findGlobalAttribute("N_GEO_Ref");
+						Attribute a = ncfile.findGlobalAttribute("N_GEO_Ref");
 						logger.debug("Value of GEO global attribute: "
 								+ a.getStringValue());
 						String tmpGeoProductID = a.getStringValue();
@@ -278,7 +281,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
 	    	    						// This is also where we find the attribute which tells us which
 	    	    						// XML Product Profile to use!
-	    	    						ucar.nc2.Attribute axpp = subG.findAttribute("N_Collection_Short_Name");
+	    	    						Attribute axpp = subG.findAttribute("N_Collection_Short_Name");
 	    	    						if (axpp != null) {
 	    	    							String baseName = axpp.getStringValue();
 	    	    							productName = baseName;
@@ -301,8 +304,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    	    				for (Group subG : dpg) {
 	    	    					List<Variable> vl = subG.getVariables();
 	    	    					for (Variable v : vl) {
-	    	    						ucar.nc2.Attribute aDate = v.findAttribute("AggregateBeginningDate");
-	    	    						ucar.nc2.Attribute aTime = v.findAttribute("AggregateBeginningTime");
+	    	    						Attribute aDate = v.findAttribute("AggregateBeginningDate");
+	    	    						Attribute aTime = v.findAttribute("AggregateBeginningTime");
 	    	    						// did we find the attributes we are looking for?
 	    	    						if ((aDate != null) && (aTime != null)) {
 	    	    							String sDate = aDate.getStringValue();
@@ -347,18 +350,18 @@ public class SuomiNPPDataSource extends HydraDataSource {
     			
     			// build an XML (NCML actually) representation of the union aggregation of these two files
     			Namespace ns = Namespace.getNamespace("http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2");
-    			org.jdom.Element root = new org.jdom.Element("netcdf", ns);
-    			org.jdom.Document document = new org.jdom.Document(root);
+    			Element root = new Element("netcdf", ns);
+    			Document document = new Document(root);
 
-    			org.jdom.Element agg = new org.jdom.Element("aggregation", ns);
+    			Element agg = new Element("aggregation", ns);
     			agg.setAttribute("type", "union");
         		
-    			org.jdom.Element fData = new org.jdom.Element("netcdf", ns);
+    			Element fData = new Element("netcdf", ns);
     			fData.setAttribute("location", s);
     			agg.addContent(fData);
     			
     			if (! isCombinedProduct) {
-	    			org.jdom.Element fGeo  = new org.jdom.Element("netcdf", ns);
+	    			Element fGeo  = new Element("netcdf", ns);
 	
 	    			String geoFilename = s.substring(0, s.lastIndexOf(File.separatorChar) + 1);
 	    			String fileNameRelative = s.substring(s.lastIndexOf(File.separatorChar) + 1);
@@ -567,7 +570,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    						if (useThis) {
     	    							if ((instrumentName.getStringValue().equals("CrIS")) ||
     	    									(instrumentName.getStringValue().equals("ATMS")) || 
-    	    									(instrumentName.getStringValue().equals("OMPS"))) {
+    	    									(instrumentName.getStringValue().contains("OMPS"))) {
     	    								is3D = true;
     	    								hasChannelSelect = true;
     	    								logger.debug("Handling 3-D data source...");
@@ -605,9 +608,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
     	    							// poke in scale/offset attributes for now
 
-    	    							ucar.nc2.Attribute a1 = new ucar.nc2.Attribute("scale_factor", scaleVal);
+    	    							Attribute a1 = new Attribute("scale_factor", scaleVal);
     	    							v.addAttribute(a1);
-    	    							ucar.nc2.Attribute a2 = new ucar.nc2.Attribute("add_offset", offsetVal);
+    	    							Attribute a2 = new Attribute("add_offset", offsetVal);
     	    							v.addAttribute(a2);  
 
     	    							// add valid range and fill value attributes here
@@ -631,7 +634,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    									} catch (NumberFormatException nfe) {
     	    										af.setFloat(1, new Float(Integer.MAX_VALUE));
     	    									}
-    	    									ucar.nc2.Attribute rangeAtt = new ucar.nc2.Attribute("valid_range", af);
+    	    									Attribute rangeAtt = new Attribute("valid_range", af);
     	    									v.addAttribute(rangeAtt);
     	    								}
 
@@ -643,7 +646,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    								// 2nd, does the variable already have one defined?
     	    								// if there was already a fill value associated with this variable, make
     	    								// sure we bring that along for the ride too...
-    	    								ucar.nc2.Attribute aFill = v.findAttribute("_FillValue");
+    	    								Attribute aFill = v.findAttribute("_FillValue");
 
     	    								// determine size of our fill value array
     	    								int fvArraySize = 0;
@@ -665,7 +668,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    								if (aFill != null) {
     	    									Number n = aFill.getNumericValue();
     	    									// is the data unsigned?
-    	    									ucar.nc2.Attribute aUnsigned = v.findAttribute("_Unsigned");
+    	    									Attribute aUnsigned = v.findAttribute("_Unsigned");
     	    									float fillValAsFloat = Float.NaN;
     	    									if (aUnsigned != null) {
     	    										if (aUnsigned.getStringValue().equals("true")) {
@@ -686,11 +689,11 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    									afFill.setFloat(fvArraySize - 1, fillValAsFloat);
     	    									logger.debug("Adding fill value (from variable): " + fillValAsFloat);
     	    								}
-    	    								ucar.nc2.Attribute fillAtt = new ucar.nc2.Attribute("_FillValue", afFill);
+    	    								Attribute fillAtt = new Attribute("_FillValue", afFill);
     	    								v.addAttribute(fillAtt);
     	    							}
 
-    	    							ucar.nc2.Attribute aUnsigned = v.findAttribute("_Unsigned");
+    	    							Attribute aUnsigned = v.findAttribute("_Unsigned");
     	    							if (aUnsigned != null) {
     	    								logger.debug("_Unsigned attribute value: " + aUnsigned.getStringValue());
     	    								unsignedFlags.add(aUnsigned.getStringValue());
@@ -760,6 +763,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
         	spectTable.put("array_name", pStr);
         	spectTable.put("product_name", productName);
         	logger.debug("Product Name: " + productName);
+        	logger.debug("is3D? : " + is3D);
+        	logger.debug("instrumentName: " + instrumentName.getStringValue());
         	
         	if (is3D) {
 
@@ -828,6 +833,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
             			if (instrumentName.getStringValue().equals("OMPS-TC")) {
             				numChannels = 260;
             			}
+            			logger.debug("Setting up OMPS adapter, num channels: " + numChannels);
                 		float[] bandArray = new float[numChannels];
                 		String[] bandNames = new String[numChannels];
                 		for (int bIdx = 0; bIdx < numChannels; bIdx++) {
@@ -907,14 +913,15 @@ public class SuomiNPPDataSource extends HydraDataSource {
                 	multiSpectralData.add(msd);
                 } 
                 if (pIdx == 0) {
-                  /**
-                	defaultSubset = multiSpectralData.get(pIdx).getDefaultSubset();
-                	try {
-                		previewImage = multiSpectralData.get(pIdx).getImage(defaultSubset);
-                	} catch (Exception e) {
-                		e.printStackTrace();
+                	// generate preview image for ATMS and OMPS
+                	if (! instrumentName.getStringValue().equals("CrIS")) {
+                		defaultSubset = multiSpectralData.get(pIdx).getDefaultSubset();
+                		try {
+                			previewImage = multiSpectralData.get(pIdx).getImage(defaultSubset);
+                		} catch (Exception e) {
+                			e.printStackTrace();
+                		}
                 	}
-                   */
                 }
                 
         	} else {
