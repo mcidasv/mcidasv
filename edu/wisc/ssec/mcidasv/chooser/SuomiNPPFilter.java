@@ -70,10 +70,11 @@ public class SuomiNPPFilter extends FileFilter {
             
         	// avoid constant rescans on window resizing and scrolling
         	String curDirectory = f.getParent();
-        	logger.trace("Comparing: " + curDirectory + ", and prv dir: " + PREV_DIRECTORY);
+        	// logger.debug("Comparing: " + curDirectory + ", and prv dir: " + PREV_DIRECTORY);
         	if ((PREV_DIRECTORY != null) && (curDirectory.equals(PREV_DIRECTORY))) {
         		if (seenGranules.containsKey(f.getName())) {
-        			logger.trace("Avoiding rescan!");
+        			// XXX TJJ - need to take another look why accept gets called so often...
+        			// logger.debug("Avoiding rescan!");
         			if (validGranules.containsKey(f.getName())) {
         				return true;
         			} else {
@@ -110,7 +111,7 @@ public class SuomiNPPFilter extends FileFilter {
         	
         	String fileNameRelative = f.getName();
         	String fileNameAbsolute = f.getParent() + File.separatorChar + f.getName();
-        	logger.trace("examining filename: " + fileNameRelative);
+        	logger.debug("examining filename: " + fileNameRelative);
         	
         	// null or empty filename
         	if ((fileNameRelative == null) || (fileNameRelative.equals(""))) return isSuomiNPP;
@@ -118,7 +119,7 @@ public class SuomiNPPFilter extends FileFilter {
         	// see if relative filename matches the Suomi NPP regular expression	
         	if (fileNameRelative.matches(JPSSUtilities.SUOMI_NPP_REGEX)) {
         		isSuomiNPP = true;
-        		logger.trace(fileNameRelative + " matches Suomi NPP regex");
+        		logger.debug(fileNameRelative + " matches Suomi NPP regex");
         	// don't go any further if file does not match Suomi NPP data product regex
         	} else {
         		return isSuomiNPP;
@@ -132,13 +133,13 @@ public class SuomiNPPFilter extends FileFilter {
         	String prodStr = fileNameRelative.substring(0, fileNameRelative.indexOf(JPSSUtilities.JPSS_FIELD_SEPARATOR));
             StringTokenizer st = new StringTokenizer(prodStr, PRODUCT_SEPARATOR);
             int numTokens = st.countTokens();
-            logger.trace("check for embedded GEO, tokenizing: " + prodStr);
+            logger.debug("check for embedded GEO, tokenizing: " + prodStr);
             while (st.hasMoreTokens()) {
             	String singleProd = st.nextToken();
-            	logger.trace("Next token: " + singleProd);
+            	logger.debug("Next token: " + singleProd);
             	for (int i = 0; i < JPSSUtilities.geoProductIDs.length; i++) {
             		if (singleProd.equals(JPSSUtilities.geoProductIDs[i])) {
-            			logger.trace("Found embedded GEO: " + singleProd);
+            			logger.debug("Found embedded GEO: " + singleProd);
             			// if it's a single-product file, disqualify this as a GEO-only file!
             			if (numTokens == 1) {
             				return false;
@@ -158,14 +159,14 @@ public class SuomiNPPFilter extends FileFilter {
     		boolean noGeo = false;
     		NetcdfFile ncfile = null;
     		try {
-    			logger.trace("Trying to open file: " + fileNameAbsolute);
+    			logger.debug("Trying to open file: " + fileNameAbsolute);
     			ncfile = NetcdfFile.open(fileNameAbsolute);
     			ucar.nc2.Attribute a = ncfile.findGlobalAttribute("N_GEO_Ref");
     			// if no GEO attribute, we can't visualize this Suomi NPP data file, don't include it
     			if (a == null) {
     				noGeo = true;
     			} else {
-        			logger.trace("Value of GEO global attribute: " + a.getStringValue());
+        			logger.debug("Value of GEO global attribute: " + a.getStringValue());
         			// in the newest data from GRAVITE server, attribute is entire file name
         			// if this is detected, no translation/mapping needed
         			if (a.getStringValue().endsWith("h5")) {
@@ -196,10 +197,10 @@ public class SuomiNPPFilter extends FileFilter {
     			File geoFile = new File(geoFilename);
     			
     			if (geoFile.exists()) {
-    				logger.trace("GEO file FOUND: " + geoFilename);
+    				logger.debug("GEO file FOUND: " + geoFilename);
     			    isSuomiNPP = true;
     			} else {
-    				logger.trace("GEO file NOT found: " + geoFilename);
+    				logger.debug("GEO file NOT found: " + geoFilename);
     				isSuomiNPP = false;
     			}    
     			
