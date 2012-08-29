@@ -71,7 +71,7 @@ from edu.wisc.ssec.mcidasv import McIDASV
 _mcv = McIDASV.getStaticMcv()
 
 # need to get some IDV-specifc init done
-from ucar.unidata.idv.ui import ImageGenerator 
+from ucar.unidata.idv.ui import ImageGenerator
 islInterpreter = ImageGenerator(_mcv)
 
 from edu.wisc.ssec.mcidasv.data.hydra import Statistics
@@ -92,13 +92,15 @@ except ImportError, e:
     for i, path in enumerate(sys.path):
         print i, path
 
+from see import see
+
 from decorators import deprecated
 
 from background import (
     activeDisplay, allActions, allColorTables, allDisplays, allFontNames,
     allLayerTypes, allProjections, allWindows, boomstick, collectGarbage,
     colorTableNames, firstDisplay, firstWindow, getColorTable, getProjection,
-    managedDataSource, pause,performAction, projectionNames, removeAllData,
+    managedDataSource, pause, performAction, projectionNames, removeAllData,
     removeAllLayers, setViewSize
 )
 
@@ -110,7 +112,7 @@ from mcvadde import (
 )
 
 from interactive import (
-    describeActions, dumpObj, ncdump, ncdumpToString, see, _today, _tomorrow,
+    describeActions, dumpObj, ncdump, ncdumpToString, _today, _tomorrow,
     _yesterday
 )
 
