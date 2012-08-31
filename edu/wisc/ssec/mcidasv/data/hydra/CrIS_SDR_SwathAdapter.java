@@ -46,9 +46,9 @@ public class CrIS_SDR_SwathAdapter extends SwathAdapter {
 
    protected void setLengths() {
      int len = getTrackLength();
-     setTrackLength(len *= 3);
+     setTrackLength(len);
      len = getXTrackLength();
-     setXTrackLength(len *= 3);
+     setXTrackLength(len *= 9);
    }
 
    public FlatField getData(Object subset) throws Exception {
@@ -59,7 +59,7 @@ public class CrIS_SDR_SwathAdapter extends SwathAdapter {
      new_subset.putAll((HashMap)subset);
 
      double[] coords = (double[]) new_subset.get(SwathAdapter.track_name);
-     double[] new_coords = new double[] {0.0, coords[1]/3, 1.0};
+     double[] new_coords = new double[] {0.0, coords[1], 1.0};
 
      new_subset.put(SwathAdapter.track_name, new_coords);
      new_coords = new double[] {0.0, (30.0 - 1.0), 1.0};
@@ -72,10 +72,20 @@ public class CrIS_SDR_SwathAdapter extends SwathAdapter {
 
      FlatField swath = makeFlatField(domainSet, new_subset);
 
+     /**
      visad.georef.MapProjection mp = MultiSpectralDataSource.getDataProjection(swath);
 
-     visad.Linear2DSet grid = MultiSpectralDataSource.makeGrid(mp, 15000);
+     visad.Linear2DSet grid = MultiSpectralDataSource.makeGrid(mp, 11400);
 
-     return MultiSpectralDataSource.swathToGrid(grid, swath, 1.0);
+     return MultiSpectralDataSource.swathToGrid(grid, swath, 2.0);
+     */
+
+     float[][] corners = MultiSpectralData.getLonLatBoundingCorners(swath.getDomainSet());
+
+     visad.georef.MapProjection mp = MultiSpectralDataSource.getSwathProjection(swath, corners);
+
+     visad.Linear2DSet grid = MultiSpectralDataSource.makeGrid(mp, corners, 17000);
+
+     return MultiSpectralDataSource.swathToGrid(grid, swath, 2.0);
    }
 }

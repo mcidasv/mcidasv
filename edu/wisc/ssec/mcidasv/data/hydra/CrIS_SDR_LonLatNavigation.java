@@ -51,7 +51,7 @@ public class CrIS_SDR_LonLatNavigation extends SwathNavigation  {
     new_geo_count[geo_xtrack_idx] = 30;
     new_geo_stride[geo_xtrack_idx] = 1;
     new_geo_start[geo_track_idx] = 0;
-    new_geo_count[geo_track_idx] = geo_count[geo_track_idx]/3;
+    new_geo_count[geo_track_idx] = geo_count[geo_track_idx];
     new_geo_stride[geo_track_idx] = 1;
     new_geo_start[2] = 0;
     new_geo_count[2] = 9;
