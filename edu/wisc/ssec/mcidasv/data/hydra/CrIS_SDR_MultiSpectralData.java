@@ -54,10 +54,17 @@ import visad.VisADException;
 public class CrIS_SDR_MultiSpectralData extends MultiSpectralData {
 
   SwathNavigation swathNav = null;
-  static float[][] lonlat = null;
+  private float[][] lonlat = null;
    
   public CrIS_SDR_MultiSpectralData(SwathAdapter swathAdapter, SpectrumAdapter spectrumAdapter) {
-    super(swathAdapter, spectrumAdapter, null, null);
+     super(swathAdapter, spectrumAdapter, null, null);
+     try {
+        swathNav = swathAdapter.getNavigation();
+        swathNav.getVisADCoordinateSystem(null, swathAdapter.getDefaultSubset());
+        lonlat = ((CrIS_SDR_LonLatNavigation)swathNav).getInterpSet().getSamples(false);
+     }
+     catch (Exception e) {
+     }
   }
 
   public FlatField getSpectrum(int[] coords) 
@@ -82,17 +89,6 @@ public class CrIS_SDR_MultiSpectralData extends MultiSpectralData {
 
   public FlatField getSpectrum(RealTuple location) 
       throws Exception, VisADException, RemoteException {
-
-    try {
-      if (lonlat == null) {
-         swathNav = swathAdapter.getNavigation();
-         swathNav.getVisADCoordinateSystem(null, swathAdapter.getDefaultSubset());
-         lonlat = ((CrIS_SDR_LonLatNavigation)swathNav).getInterpSet().getSamples(false);
-      }
-    }
-    catch (VisADException e) {
-    }
-
 
     double[] tmp = location.getValues();
     float[][] loc = new float[][] {{(float)tmp[1]}, {(float)tmp[0]}};
