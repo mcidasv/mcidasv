@@ -408,7 +408,7 @@ public class AreaDirectory implements java.io.Serializable
    * element is a pair of String values: first, the code value and
    * second the descriptive name.
    *
-   * @param v	the list of calibration parameters
+   * @param v   the list of calibration parameters
    */
    public void setCalInfo(Vector[] v) {
      calInfo = v;
@@ -489,7 +489,7 @@ public class AreaDirectory implements java.io.Serializable
 
   /** set Latitude at center of image
   *
-  * @param lat	value of latitude at center point of image
+  * @param lat  value of latitude at center point of image
   */
   public void setCenterLatitude(double lat) {
     centerLatitude = lat;
@@ -505,7 +505,7 @@ public class AreaDirectory implements java.io.Serializable
 
   /** set Longitude at center of image
   *
-  * @param lon	value of Longitude at center point of image
+  * @param lon  value of Longitude at center point of image
   */
   public void setCenterLongitude(double lon) {
     centerLongitude = lon;
@@ -522,7 +522,7 @@ public class AreaDirectory implements java.io.Serializable
 
   /** set Latitude-wise resolution at center of image
    *
-   * @param res	value of latitude-wise resolution at center point of image
+   * @param res value of latitude-wise resolution at center point of image
    */
   public void setCenterLatitudeResolution(double res) {
     centerLatitudeResolution = res;
@@ -539,7 +539,7 @@ public class AreaDirectory implements java.io.Serializable
 
   /** set Longitude-wise resolution at center of image
    *
-   * @param res	value of Longitude-wise resolution at center point of image
+   * @param res value of Longitude-wise resolution at center point of image
    */
   public void setCenterLongitudeResolution(double res) {
     centerLongitudeResolution = res;
@@ -578,32 +578,62 @@ public class AreaDirectory implements java.io.Serializable
 
   /**
    * Prints out a formatted listing of the directory info
-   * 
-   * @return asdf
    */
   public String toString()
   {
-    StringBuffer buf = new StringBuffer();
-    SimpleDateFormat sdf = new SimpleDateFormat();
-    sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-    sdf.applyPattern("yyyy-MMM-dd HH:mm:ss");
-    buf.append("  ");
-    buf.append(sdf.format(nominalTime, 
-      new StringBuffer(), new FieldPosition(0)).toString());
-    buf.append("  ");
-    buf.append(Integer.toString(getLines()));
-    buf.append("  ");
-    buf.append(Integer.toString(getElements()));
-    buf.append("     ");
-    //buf.append(" "+bands.length);
-    for (int i = 0; i < bands.length; i++) buf.append(bands[i]);
-    return buf.toString();
-//      StringBuilder buf = new StringBuilder(1024);
-//      SimpleDateFormat sdf = new SimpleDateFormat();
-//      sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-//      sdf.applyPattern("yyyy-mm-dd HH:mm:ss");
-//      buf.append("[AreaDirectory@").append(Integer.toHexString(hashCode())).append(':')
-//      .append("status: ").append(dir[AreaFile.AD_STATUS]);
-//      return buf.toString();
+
+    SimpleDateFormat date = new SimpleDateFormat();
+    date.setTimeZone(TimeZone.getTimeZone("GMT"));
+    date.applyPattern("yyyy-MM-dd");
+
+    SimpleDateFormat time = new SimpleDateFormat();
+    time.setTimeZone(TimeZone.getTimeZone("GMT"));
+    time.applyPattern("HH:mm:ss");
+
+    String imgDate = date.format(nominalTime);
+    String imgTime = time.format(nominalTime);
+    String imageStartDate = date.format(startTime);
+    String imageStartTime = time.format(startTime);
+
+    return new StringBuilder(1024)
+      .append("[AreaDirectory@").append(Integer.toHexString(hashCode()))
+      .append(": AD_STATUS(0)=").append(Integer.toString(dir[AreaFile.AD_STATUS]))
+      .append(", AD_VERSION(1)=").append(Integer.toString(dir[AreaFile.AD_VERSION]))
+      .append(", AD_SENSORID(2)=").append(this.getSensorType())
+      .append(", AD_IMGDATE(3)=").append(imgDate)
+      .append(", AD_IMGTIME(4)=").append(imgTime)
+      .append(", AD_STLINE(5)=").append(Integer.toString(dir[AreaFile.AD_STLINE]))
+      .append(", AD_STELEM(6)=").append(Integer.toString(dir[AreaFile.AD_STELEM]))
+      .append(", AD_NUMLINES(8)=").append(Integer.toString(dir[AreaFile.AD_NUMLINES]))
+      .append(", AD_NUMELEMS(9)=").append(Integer.toString(dir[AreaFile.AD_NUMELEMS]))
+      .append(", AD_DATAWIDTH(10)=").append(Integer.toString(dir[AreaFile.AD_DATAWIDTH]))
+      .append(", AD_LINERES(11)=").append(Integer.toString(dir[AreaFile.AD_LINERES]))
+      .append(", AD_ELEMRES(12)=").append(Integer.toString(dir[AreaFile.AD_ELEMRES]))
+      .append(", AD_NUMBANDS(13)=").append(Integer.toString(dir[AreaFile.AD_NUMBANDS]))
+      .append(", AD_PFXSIZE(14)=").append(Integer.toString(dir[AreaFile.AD_PFXSIZE]))
+      .append(", AD_PROJNUM(15)=").append(Integer.toString(dir[AreaFile.AD_PROJNUM]))
+      .append(", AD_CRDATE(16)=").append(Integer.toString(dir[AreaFile.AD_CRDATE]))
+      .append(", AD_CRTIME(17)=").append(Integer.toString(dir[AreaFile.AD_CRTIME]))
+      .append(", AD_BANDMAP(18)=").append(Integer.toString(dir[AreaFile.AD_BANDMAP]))
+      .append(", AD_DATAOFFSET(33)=").append(Integer.toString(dir[AreaFile.AD_DATAOFFSET]))
+      .append(", AD_NAVOFFSET(34)=").append(Integer.toString(dir[AreaFile.AD_NAVOFFSET]))
+      .append(", AD_VALCODE(35)=").append(Integer.toString(dir[AreaFile.AD_VALCODE]))
+      .append(", AD_STARTDATE(45)=").append(imageStartDate)
+      .append(", AD_STARTTIME(46)=").append(imageStartTime)
+      .append(", AD_STARTSCAN(47)=").append(Integer.toString(dir[AreaFile.AD_STARTSCAN]))
+      .append(", AD_DOCLENGTH(48)=").append(Integer.toString(dir[AreaFile.AD_DOCLENGTH]))
+      .append(", AD_CALLENGTH(49)=").append(Integer.toString(dir[AreaFile.AD_CALLENGTH]))
+      .append(", AD_LEVLENGTH(50)=").append(Integer.toString(dir[AreaFile.AD_LEVLENGTH]))
+      .append(", AD_SRCTYPE(51)=").append(Integer.toString(dir[AreaFile.AD_SRCTYPE]))
+      .append(", AD_CALTYPE(52)=").append(this.getCalibrationType())
+      .append(", AD_AVGSMPFLAG(53)=").append(Integer.toString(dir[AreaFile.AD_AVGSMPFLAG]))
+      .append(", AD_SRCTYPEORIG(56)=").append(Integer.toString(dir[AreaFile.AD_SRCTYPEORIG]))
+      .append(", AD_CALTYPEUNIT(57)=").append(this.getCalibrationUnitName())
+      .append(", AD_CALTYPESCALE(58)=").append(Integer.toString(this.getCalibrationScaleFactor()))
+      .append(", AD_AUXOFFSET(59)=").append(Integer.toString(dir[AreaFile.AD_AUXOFFSET]))
+      .append(", AD_CALOFFSET(62)=").append(Integer.toString(dir[AreaFile.AD_CALOFFSET]))
+      .append(", AD_NUMCOMMENTS(63)=").append(Integer.toString(dir[AreaFile.AD_NUMCOMMENTS]))
+      .append(", AD_DIRSIZE(64)=").append(Integer.toString(AreaFile.AD_DIRSIZE))
+      .append(']').toString();
   }
 }
