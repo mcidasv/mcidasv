@@ -760,8 +760,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             try {
                 List<BandInfo> bandInfos = (List<BandInfo>)getProperty(PROP_BANDINFO, (Object)null);
                 BandInfo bi = bandInfos.get(0);
-                String bandStr = new Integer(bi.getBandNumber()).toString();
-                addeCmdBuff = replaceKey(addeCmdBuff, "BAND", bandStr);
+//                String bandStr = new Integer(bi.getBandNumber()).toString();
+                addeCmdBuff = replaceKey(addeCmdBuff, "BAND", bi.getBandNumber());
                 dirList = new AreaDirectoryList(addeCmdBuff);
             } catch (Exception eOpen) {
                 setInError(true);
@@ -987,7 +987,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     getDataContext().getIdv().showNormalCursor();
                 }
                 this.haveDataSelectionComponents = true;
-                replaceKey(MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
+//                replaceKey(MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
+                replaceKey(MAG_KEY, (this.lineMag + " " + this.elementMag));
                 components.add(this.previewSel);
                 components.add(this.laLoSel);
             }
@@ -1019,10 +1020,14 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
         boolean msgFlag = false;
         showPreview = saveShowPreview;
-        List<BandInfo> bandInfos = (List<BandInfo>) getProperty(PROP_BANDINFO, (Object) null);
+        List<BandInfo> bandInfos = (List<BandInfo>)getProperty(PROP_BANDINFO, (Object) null);
         BandInfo bi = null;
+
         String saveBand = getKey(source, BAND_KEY);
+
         int bandIdx = 0;
+
+        logger.trace("band index stuff: saveBand={}, bandIdx={}, source={}", new Object[] { saveBand, bandIdx, source });
         List<TwoFacedObject> calList = null;
         try {
             Object dcObj = dataChoice.getId();
@@ -1038,17 +1043,18 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             // pull out the list of cal units, we'll need for type check later...
             calList = bi.getCalibrationUnits();
             logger.trace("replacing band: new={} from={}", bi.getBandNumber(), source);
-            source = replaceKey(source, BAND_KEY, (Object) (bi.getBandNumber()));
+//            source = replaceKey(source, BAND_KEY, (Object) (bi.getBandNumber()));
+            source = replaceKey(source, BAND_KEY, bi.getBandNumber());
             // if we're replacing the band, replace cal type with preferred  
             // type for that band
             logger.trace("replacing unit: new={} from={}", bi.getPreferredUnit(), source);
-            source = replaceKey(source, UNIT_KEY, (Object) bi.getPreferredUnit());
+//            source = replaceKey(source, UNIT_KEY, (Object) bi.getPreferredUnit());
+            source = replaceKey(source, UNIT_KEY, bi.getPreferredUnit());
         } catch (Exception excp) {
             handlePreviewImageError(1, excp);
         }
-
         String name = dataChoice.getName();
-        int idx = name.lastIndexOf("_");
+        int idx = name.lastIndexOf('_');
         String unit = name.substring(idx + 1);
 
         // if this is not a valid cal unit (e.g. could be set to a plugin formula name)
@@ -1066,7 +1072,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
         if (getKey(source, UNIT_KEY).length() == 0) {
             logger.trace("non-empty unit, replacing: new={} from={}", unit, source);
-            source = replaceKey(source, UNIT_KEY, (Object)(unit));
+//            source = replaceKey(source, UNIT_KEY, (Object)(unit));
+            source = replaceKey(source, UNIT_KEY, unit);
         }
 
         AddeImageDescriptor aid = null;
@@ -1081,7 +1088,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 }
                 bi = bandInfos.get(bandIdx);
                 logger.trace("replacing band: new={} from={}", bi.getBandNumber(), source);
-                source = replaceKey(source, BAND_KEY, (Object)(bi.getBandNumber()));
+//                source = replaceKey(source, BAND_KEY, (Object)(bi.getBandNumber()));
+                source = replaceKey(source, BAND_KEY, bi.getBandNumber());
                 ++bandIdx;
             }
         }
@@ -1147,16 +1155,26 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         logger.trace("building preview request from src={}", src);
         
         src = removeKey(src, LATLON_KEY);
-        src = replaceKey(src, LINELE_KEY, (Object)uLStr);
-        src = replaceKey(src, PLACE_KEY, (Object)("ULEFT"));
-        src = replaceKey(src, SIZE_KEY, (Object)(lSize + " " + eSize));
-        src = replaceKey(src, MAG_KEY, (Object)(lMag + " " + eMag));
-        src = replaceKey(src, BAND_KEY, (Object)(bi.getBandNumber()));
-        src = replaceKey(src, UNIT_KEY, (Object)(unit));
-
+//        src = replaceKey(src, LINELE_KEY, (Object)uLStr);
+//        src = replaceKey(src, PLACE_KEY, (Object)("ULEFT"));
+//        src = replaceKey(src, SIZE_KEY, (Object)(lSize + " " + eSize));
+//        src = replaceKey(src, MAG_KEY, (Object)(lMag + " " + eMag));
+//        src = replaceKey(src, BAND_KEY, (Object)(bi.getBandNumber()));
+//        src = replaceKey(src, UNIT_KEY, (Object)(unit));
+        src = replaceKey(src, LINELE_KEY, uLStr);
+        src = replaceKey(src, PLACE_KEY, "ULEFT");
+        src = replaceKey(src, SIZE_KEY,(lSize + " " + eSize));
+        src = replaceKey(src, MAG_KEY, (lMag + " " + eMag));
+        src = replaceKey(src, BAND_KEY, bi.getBandNumber());
+        src = replaceKey(src, UNIT_KEY, unit);
+//        if (aid.getIsRelative()) {
+//            logger.trace("injecting POS={}", aid.getRelativeIndex());
+//            src = replaceKey(src, "POS", (Object)aid.getRelativeIndex());
+//        }
         if (previewDescriptor.getIsRelative()) {
             logger.trace("inject POS={}", previewDescriptor.getRelativeIndex());
-            src = replaceKey(src, "POS", (Object)previewDescriptor.getRelativeIndex());
+//            src = replaceKey(src, "POS", (Object)previewDescriptor.getRelativeIndex());
+            src = replaceKey(src, "POS", previewDescriptor.getRelativeIndex());
         }
 
         logger.trace("creating AddeImageDescriptor from src={}", src);
@@ -1164,12 +1182,15 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             aid = new AddeImageDescriptor(src);
         } catch (Exception excp) {
             handlePreviewImageError(4, excp);
-            src = replaceKey(src, BAND_KEY, (Object)saveBand);
+//            src = replaceKey(src, BAND_KEY, (Object)saveBand);
+            src = replaceKey(src, BAND_KEY, saveBand);
             aid = new AddeImageDescriptor(src);
-            src = replaceKey(src, BAND_KEY, (Object)(bi.getBandNumber()));
+//            src = replaceKey(src, BAND_KEY, (Object)(bi.getBandNumber()));
+            src = replaceKey(src, BAND_KEY, bi.getBandNumber());
         }
         if (msgFlag && (!"ALL".equals(saveBand))) {
-            src = replaceKey(src, BAND_KEY, (Object)saveBand);
+//            src = replaceKey(src, BAND_KEY, (Object)saveBand);
+            src = replaceKey(src, BAND_KEY, saveBand);
         }
         logger.trace("overwriting\nbaseSource={}\nsrc={}", baseSource, src);
         baseSource = src;
@@ -1196,39 +1217,43 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             String[] segs = returnString.split(key);
             String seg0 = segs[0];
             String seg1 = segs[1];
-            int indx = seg1.indexOf("&");
+            int indx = seg1.indexOf('&');
             if (indx >= 0) {
-                seg1 = seg1.substring(indx+1);
+                seg1 = seg1.substring(indx + 1);
             }
             returnString = seg0 + seg1;
         }
         return returnString;
     }
 
-    private String replaceKey(String src, String key, Object val) {
-        String returnString = src;
-        // make sure we got valid key/val pair
-        if ((key == null) || (val == null)) {
+    private static <T> String replaceKey(String sourceUrl, String key, T value) {
+        String returnString = sourceUrl;
+
+        // make sure we got valid key/value pair
+        if ((key == null) || (value == null)) {
             return returnString;
         }
+
         key = key.toUpperCase() + '=';
+        String strValue = value.toString();
         if (returnString.contains(key)) {
             String[] segs = returnString.split(key);
             String seg0 = segs[0];
             String seg1 = segs[1];
-            int indx = seg1.indexOf("&");
+            int indx = seg1.indexOf('&');
             if (indx < 0) {
                 seg1 = "";
             } else if (indx > 0) {
                 seg1 = seg1.substring(indx);
             }
-            returnString = seg0 + key + val + seg1;
+            returnString = seg0 + key + strValue + seg1;
         } else {
-            returnString = returnString + '&' + key + val;
+            returnString = returnString + '&' + key + strValue;
         }
+
         // if key is for cal units, and it was changed to BRIT,
         // must change the spacing key too 
-        if ((key.equals(UNIT_KEY + "=")) && ("BRIT".equals(val))) {
+        if ((key.equals(UNIT_KEY + '=')) && ("BRIT".equals(strValue))) {
             returnString = replaceKey(returnString, SPAC_KEY, SPAC_KEY, SPACING_BRIT);
         } else {
             returnString = replaceKey(returnString, SPAC_KEY, SPAC_KEY, SPACING_NON_BRIT); 
@@ -1236,7 +1261,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         return returnString;
     }
 
-    private String replaceKey(String src, String oldKey, String newKey, Object val) {
+    private static <T> String replaceKey(String src, String oldKey, String newKey, T value) {
         String returnString = src;
         oldKey = oldKey.toUpperCase() + '=';
         newKey = newKey.toUpperCase() + '=';
@@ -1244,22 +1269,22 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             String[] segs = returnString.split(oldKey);
             String seg0 = segs[0];
             String seg1 = segs[1];
-            int indx = seg1.indexOf("&");
+            int indx = seg1.indexOf('&');
             if (indx < 0) {
                 seg1 = "";
             } else if (indx > 0) {
                 seg1 = seg1.substring(indx);
             }
-            returnString = seg0 + newKey + val + seg1;
+            returnString = seg0 + newKey + value.toString() + seg1;
         }
         else {
-            returnString = returnString + '&' + newKey + val;
+            returnString = returnString + '&' + newKey + value.toString();
         }
         return returnString;
     }
 
-    private void replaceKey(String key, Object val) {
-        baseSource = replaceKey(baseSource, key, val);
+    private <T> void replaceKey(String key, T value) {
+        baseSource = replaceKey(baseSource, key, value);
     }
 
     private String getKey(String src, String key) {
@@ -2143,8 +2168,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         //one in the list
                         if(bandInfos != null) {
                             hasBand = bandInfos.contains(bi);
-//                            if(!hasBand) {
-//                            }
+                            if(!hasBand) {
+                            }
                             if(!hasBand && bandInfos.size() > 0) {
                                 bi = bandInfos.get(0);
                             } else {
@@ -2448,16 +2473,16 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             }
 
             if (gotit == -1) {
-            	return res;
+                return res;
             }
 
             int gotSrc = -1;
             for (int i=gotit; i<cards.length; i++) {
                 if (cards[i].startsWith("EndSat")) {
-                	return res;
+                    return res;
                 }
                 if (!cards[i].startsWith("B") ) {
-                	continue;
+                    continue;
                 }
                 StringTokenizer tok = new StringTokenizer(cards[i]);
                 String str = tok.nextToken();
@@ -2495,8 +2520,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
     /**
      * Create the first part of the ADDE request URL
-     *
-     * @param requestType type of request
+     * 
      * @return ADDE URL prefix
      */
     protected String getUrl() {
