@@ -774,14 +774,18 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             AreaDirectory ad = (AreaDirectory)areaDirs.get(0);
             float[] res = getLineEleResolution(ad);
             float resol = res[0];
-            if (this.lineMag < 0)
+            if (this.lineMag < 0) {
                 resol *= Math.abs(this.lineMag);
-            this.lineResolution = ad.getValue(11);
+            }
+//            this.lineResolution = ad.getValue(11);
+            this.lineResolution = ad.getValue(AreaFile.AD_LINERES);
             this.lRes = resol;
             resol = res[1];
-            if (this.elementMag < 0)
+            if (this.elementMag < 0) {
                 resol *= Math.abs(this.elementMag);
-            this.elementResolution = ad.getValue(12);
+            }
+//            this.elementResolution = ad.getValue(12);
+            this.elementResolution = ad.getValue(AreaFile.AD_ELEMRES);
             this.eRes = resol;
         } catch (Exception e) {
             setInError(true);
@@ -1042,6 +1046,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         } catch (Exception excp) {
             handlePreviewImageError(1, excp);
         }
+
         String name = dataChoice.getName();
         int idx = name.lastIndexOf("_");
         String unit = name.substring(idx + 1);
@@ -1148,15 +1153,12 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         src = replaceKey(src, MAG_KEY, (Object)(lMag + " " + eMag));
         src = replaceKey(src, BAND_KEY, (Object)(bi.getBandNumber()));
         src = replaceKey(src, UNIT_KEY, (Object)(unit));
-//        if (aid.getIsRelative()) {
-//            logger.trace("injecting POS={}", aid.getRelativeIndex());
-//            src = replaceKey(src, "POS", (Object)aid.getRelativeIndex());
-//        }
+
         if (previewDescriptor.getIsRelative()) {
             logger.trace("inject POS={}", previewDescriptor.getRelativeIndex());
             src = replaceKey(src, "POS", (Object)previewDescriptor.getRelativeIndex());
         }
-        
+
         logger.trace("creating AddeImageDescriptor from src={}", src);
         try {
             aid = new AddeImageDescriptor(src);
@@ -2141,8 +2143,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         //one in the list
                         if(bandInfos != null) {
                             hasBand = bandInfos.contains(bi);
-                            if(!hasBand) {
-                            }
+//                            if(!hasBand) {
+//                            }
                             if(!hasBand && bandInfos.size() > 0) {
                                 bi = bandInfos.get(0);
                             } else {
@@ -2155,8 +2157,10 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         try {
                             AddeImageDescriptor newAid = new AddeImageDescriptor(aii.getURLString());
                             AreaDirectory newAd = newAid.getDirectory();
-                            newLinRes = newAd.getValue(11);
-                            newEleRes = newAd.getValue(12);
+//                            newLinRes = newAd.getValue(11);
+//                            newEleRes = newAd.getValue(12);
+                            newLinRes = newAd.getValue(AreaFile.AD_LINERES);
+                            newEleRes = newAd.getValue(AreaFile.AD_ELEMRES);
                         } catch (Exception e) {
                             logger.error("resetting resolution", e);
                         }
@@ -2164,14 +2168,18 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         double[][] projCoords = new double[2][2];
                         try {
                             AreaDirectory ad = desc.getDirectory();
-                            double lin = (double)ad.getValue(5);
-                            double ele = (double)ad.getValue(6);
+//                            double lin = (double)ad.getValue(5);
+//                            double ele = (double)ad.getValue(6);
+                            double lin = (double)ad.getValue(AreaFile.AD_STLINE);
+                            double ele = (double)ad.getValue(AreaFile.AD_STELEM);
                             aii.setLocateKey("LINELE");
                             aii.setLocateValue((int)lin + " " + (int)ele);
                             projCoords[0][0] = lin;
                             projCoords[1][0] = ele;
-                            lin += (double)ad.getValue(8);
-                            ele += (double)ad.getValue(9);
+//                            lin += (double)ad.getValue(8);
+//                            ele += (double)ad.getValue(9);
+                            lin += (double)ad.getValue(AreaFile.AD_NUMLINES);
+                            ele += (double)ad.getValue(AreaFile.AD_NUMELEMS);
                             projCoords[0][1] = lin;
                             projCoords[1][1] = ele;
                         } catch (Exception e) {
@@ -2314,8 +2322,10 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 //            return directory;
             return aid;
         }
+
         String src = aid.getSource();
         logger.trace("URL for incoming AddeImageDescriptor: {}", src);
+
         src = removeKey(src, LATLON_KEY);
         src = removeKey(src, LINELE_KEY);
         src = removeKey(src, PLACE_KEY);
@@ -2332,7 +2342,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         int imageSize = 0;
         src = src.replace("imagedata", "imagedir");
         boolean isRelative = aid.getIsRelative();
-        for (int i=0; i<times; i++) {
+
+        for (int i = 0; i < times; i++) {
             if (isRelative) {
                 src = replaceKey(src, "POS", new Integer(i).toString());
             } else {
@@ -2342,6 +2353,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 src = removeKey(src, "POS");
                 src = replaceKey(src, "TIME", timeStr + timeStr + "I");
             }
+
             try {
                 logger.trace("attempting to create AreaDirectoryList using src={}", src);
                 AreaDirectoryList dirList = new AreaDirectoryList(src);
@@ -2350,7 +2362,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 logger.trace("created AreaDirectory: {}", areaDir);
                 int lines = areaDir.getLines();
                 int eles =  areaDir.getElements();
+                logger.trace("image lines={} eles={} for src={}", new Object[] { lines, eles, src });
                 if (imageSize < lines*eles) {
+                    logger.trace("found new max size! old={} new={}", imageSize, lines*eles);
                     imageSize = lines * eles;
                     maxLine = lines;
                     maxEle = eles;
@@ -2361,9 +2375,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 logger.error("problem when dealing with AREA directory", e);
             }
         }
+
         logger.trace("returning AreaDirectory: {}", directory);
-        logger.trace("could return AddeImageDescriptor:\nisRelative={}\nrelativeIndex={}\ntime={}\ndirectory={}\n", new Object[] { descriptor.getIsRelative(), descriptor.getRelativeIndex(), descriptor.getImageTime(), descriptor.getDirectory()});
-//        return directory;
+//        logger.trace("could return AddeImageDescriptor:\nisRelative={}\nrelativeIndex={}\ntime={}\ndirectory={}\n", new Object[] { descriptor.getIsRelative(), descriptor.getRelativeIndex(), descriptor.getImageTime(), descriptor.getDirectory()});
         return descriptor;
     }
 
