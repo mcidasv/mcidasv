@@ -803,8 +803,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             return;
         }
 
-        getDataContext().getIdv().showWaitCursor();
-        
+        getIdv().showWaitCursor();
+
         boolean hasImagePreview = true;
         if (this.showPreview == null) {
             this.showPreview = true;
@@ -839,7 +839,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 components.add(this.laLoSel);
             } catch (Exception e) {
                 logger.error("error while repeating addition of selection components", e);
-                getDataContext().getIdv().showNormalCursor();
+                getIdv().showNormalCursor();
             }
         } else {
             try {
@@ -851,7 +851,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 JLabel label = new JLabel("Can't make preview image");
                 JPanel contents = GuiUtils.top(GuiUtils.inset(label, label.getText().length() + 12));
                 GuiUtils.showOkDialog(null, "No Preview Image", contents, null);
-                getDataContext().getIdv().showNormalCursor();
+                getIdv().showNormalCursor();
                 logger.error("problem creating preview image", e);
                 return;
             }
@@ -902,7 +902,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         JLabel label = new JLabel(errorText);
                         JPanel contents = GuiUtils.top(GuiUtils.inset(label, label.getText().length() + 12));
                         GuiUtils.showOkDialog(null, "Can't Make Geographical Selection Tabs", contents, null);
-                        getDataContext().getIdv().showNormalCursor();
+                        getIdv().showNormalCursor();
                         logger.error("problem creating preview image", e);
                         return;
                     }
@@ -984,7 +984,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     
                 } catch (Exception e) {
                     logger.error("problem making selection components", e);
-                    getDataContext().getIdv().showNormalCursor();
+                    getIdv().showNormalCursor();
                 }
                 this.haveDataSelectionComponents = true;
 //                replaceKey(MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
@@ -996,7 +996,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         if (this.previewSel != null) {
             this.previewSel.initBox();
         }
-        getDataContext().getIdv().showNormalCursor();
+        getIdv().showNormalCursor();
     }
 
     /**
@@ -1016,7 +1016,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     
     private boolean makePreviewImage(DataChoice dataChoice) {
         logger.trace("starting with dataChoice={}", dataChoice);
-        getDataContext().getIdv().showWaitCursor();
+        getIdv().showWaitCursor();
 
         boolean msgFlag = false;
         showPreview = saveShowPreview;
@@ -1195,7 +1195,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         logger.trace("overwriting\nbaseSource={}\nsrc={}", baseSource, src);
         baseSource = src;
 
-        getDataContext().getIdv().showNormalCursor();
+        getIdv().showNormalCursor();
 
         return true;
     }
@@ -1206,7 +1206,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      * @param excp The exception
      */
     protected void handlePreviewImageError(int flag, Exception excp) {
-        getDataContext().getIdv().showNormalCursor();
+        getIdv().showNormalCursor();
         LogUtil.userErrorMessage("Error in makePreviewImage  e=" + flag + " " + excp);
     }
 
