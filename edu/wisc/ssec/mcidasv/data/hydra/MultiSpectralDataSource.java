@@ -1343,6 +1343,241 @@ public class MultiSpectralDataSource extends HydraDataSource {
    return grdFF;
  }
 
+  public static FlatField swathToGridNew(Linear2DSet grid, FlatField swath, double mode) throws Exception {
+    FunctionType ftype = (FunctionType) swath.getType();
+    Linear2DSet swathDomain = (Linear2DSet) swath.getDomainSet();
+    int[] lens = swathDomain.getLengths();
+    float[][] swathRange = swath.getFloats(false);
+    int trackLen = lens[1];
+    int xtrackLen = lens[0];
+    int gridLen = grid.getLength();
+    lens = grid.getLengths();
+    int gridXLen = lens[0];
+    int gridYLen = lens[1];
+
+    CoordinateSystem swathCoordSys = swathDomain.getCoordinateSystem();
+    CoordinateSystem gridCoordSys = grid.getCoordinateSystem();
+
+    RealTupleType rtt = ((SetType)grid.getType()).getDomain();
+    FlatField grdFF = new FlatField(new FunctionType(rtt, ftype.getRange()), grid);
+    float[][] gridRange = grdFF.getFloats(false);
+    int rngTupDim = gridRange.length;
+
+    float[][] swathGridCoord = new float[2][gridLen];
+    byte[] numSwathPoints = new byte[gridLen];
+
+    int[] swathIndexAtGrid = null;
+    if (true) {
+      swathIndexAtGrid = new int[gridLen];
+    }
+
+    float[][] grdCrd = new float[2][1];
+    float[][] firstGridRange = new float[rngTupDim][gridLen];
+    float[] sumRange = new float[rngTupDim];
+    for (int t=0; t<rngTupDim; t++) {
+       java.util.Arrays.fill(firstGridRange[t], Float.NaN);
+       java.util.Arrays.fill(gridRange[t], Float.NaN);
+    }
+
+    for (int j=0; j < trackLen; j++) {
+       for (int i=0; i < xtrackLen; i++) {
+         int swathIdx = j*xtrackLen + i;
+         float val = swathRange[0][swathIdx];
+
+         float[][] swathCoord = swathDomain.indexToValue(new int[] {swathIdx});
+         float[][] swathEarthCoord = swathCoordSys.toReference(swathCoord);
+
+         float[][] gridValue = gridCoordSys.fromReference(swathEarthCoord);
+         float[][] gridCoord = grid.valueToGrid(gridValue);
+         float g0 = gridCoord[0][0];
+         float g1 = gridCoord[1][0];
+         int grdIdx  = (g0 != g0 || g1 != g1) ? -1 : ((int) (g0 + 0.5)) + gridXLen * ((int) (g1 + 0.5));
+
+         int m=0;
+         int n=0;
+         int k = grdIdx + (m + n*gridXLen);
+
+         if ( !(Float.isNaN(val)) && ((k >=0) && (k < gridXLen*gridYLen)) ) { // val or val[rngTupDim] ?
+            float grdVal = firstGridRange[0][k];
+
+            if (Float.isNaN(grdVal)) {
+               for (int t=0; t<rngTupDim; t++) {
+                  firstGridRange[t][k] = swathRange[t][swathIdx];
+               }
+               swathGridCoord[0][k] = g0;
+               swathGridCoord[1][k] = g1;
+               swathIndexAtGrid[k] = swathIdx;
+            }
+            else {
+               // compare current to last distance
+               float[][] gridLoc = grid.indexToValue(new int[] {k});
+               gridLoc = grid.valueToGrid(gridLoc);
+
+               float del_0 = swathGridCoord[0][k] - gridLoc[0][0];
+               float del_1 = swathGridCoord[1][k] - gridLoc[1][0];
+               float last_dst_sqrd = del_0*del_0 + del_1*del_1;
+
+               del_0 = g0 - gridLoc[0][0];
+               del_1 = g1 - gridLoc[1][0];
+               float dst_sqrd = del_0*del_0 + del_1*del_1;
+
+                if (dst_sqrd < last_dst_sqrd) {
+                   for (int t=0; t<rngTupDim; t++) {
+                     gridRange[t][k] = val;
+                   }
+                   swathGridCoord[0][k] = g0;
+                   swathGridCoord[1][k] = g1;
+                   swathIndexAtGrid[k] = swathIdx;
+                }
+            }
+         }
+       }
+    }
+    float sigma = 0.40f;
+    /*
+    for (int j=2; j<gridYLen-2; j++) {
+       for (int i=2; i<gridXLen-2; i++) {
+         int grdIdx = i + j*gridXLen;
+
+         int npts = numSwathPoints[grdIdx];
+
+         float sumWeights = 0f;
+         float dist = Float.MAX_VALUE;
+         if (npts > 1) {
+            java.util.Arrays.fill(sumRange, 0f);
+            for (int k=0; k<npts; k++) {
+                grdCrd[0][0] = swathGridCoord[0][grdIdx][k];
+                grdCrd[1][0] = swathGridCoord[1][grdIdx][k];
+
+                float del_0 = grdCrd[0][0] - (float) i;
+                float del_1 = grdCrd[1][0] - (float) j;
+                float dst_sqrd = del_0*del_0 + del_1*del_1;
+                if (dst_sqrd < dist) {
+                  for (int t=0; t<rngTupDim; t++) {
+                     firstGridRange[t][grdIdx] = swathRange[t][swathIndexAtGrid[grdIdx][k]];
+                  }
+                  dist = dst_sqrd;
+                }
+                //float weight = (float) (1.0/Math.exp((double)(dst_sqrd/(2*sigma))));
+                //for (int t=0; t<rngTupDim; t++) {
+                //   sumRange[t] += swathRange[t][swathIndexAtGrid[grdIdx][k]]*weight;
+                //}
+                //sumWeights += weight;
+            }
+            //for (int t=0; t<rngTupDim; t++) {
+            //   firstGridRange[t][grdIdx] = sumRange[t]/sumWeights;
+            //}
+         }
+         else if (npts == 1) {
+           for (int t=0; t<rngTupDim; t++) {
+              firstGridRange[t][grdIdx] = swathRange[t][swathIndexAtGrid[grdIdx][0]];
+           }
+         }
+         else {
+           for (int t=0; t<rngTupDim; t++) {
+              firstGridRange[t][grdIdx] = Float.NaN;
+           }
+         }
+      }
+    }
+    */
+    // 2nd pass weighted average
+    float[][] gCoord = new float[2][1];
+    if (mode > 0.0) {
+    float weight = 1f;
+    float[] sumValue = new float[rngTupDim];
+
+    for (int j=2; j<gridYLen-2; j++) {
+       for (int i=2; i<gridXLen-2; i++) {
+         int grdIdx = i + j*gridXLen;
+
+         // don't do weighted average if a nearest neigbhor existed for the grid point
+         if (mode == 2.0) {
+           if (!Float.isNaN(firstGridRange[0][grdIdx])) {
+              for (int t=0; t<rngTupDim; t++) {
+                 gridRange[t][grdIdx] = firstGridRange[t][grdIdx];
+              }
+              continue;
+           }
+         }
+
+         int num = 0;
+         float mag = 1f;
+         float sumWeights = 0f;
+         float[] dists = new float[25];
+         float[][] values = new float[rngTupDim][25];
+         for (int t=0; t<rngTupDim; t++) {
+            sumValue[t] = 0f;
+         }
+
+         for (int n = -1; n < 2; n++) {
+            for (int m = -1; m < 2; m++) {
+               int k = grdIdx + (m + n*gridXLen);
+               if ( !Float.isNaN(firstGridRange[0][k]) ) {
+                  float del_0 = m;
+                  float del_1 = n;
+                  float dst_sqrd = del_0*del_0 + del_1*del_1;
+                  dists[num] = dst_sqrd;
+                  for (int t=0; t<rngTupDim; t++) {
+                    values[t][num] = firstGridRange[t][k];
+                  }
+                  num++;
+               }
+            }
+         }
+
+         if (num < 7) {
+
+         for (int n = -2; n < 3; n++) {
+            for (int m = -2; m < 3; m++) {
+               if ( (n == -2 || n == 2) || ((n <= 1 && n >= -1) && (m==-2 || m==2)) ) {
+               int k = grdIdx + (m + n*gridXLen);
+               if ( !Float.isNaN(firstGridRange[0][k]) ) {
+                  float del_0 = m;
+                  float del_1 = n;
+                  float dst_sqrd = del_0*del_0 + del_1*del_1;
+                  dists[num] = dst_sqrd;
+                  for (int t=0; t<rngTupDim; t++) {
+                    values[t][num] = firstGridRange[t][k];
+                  }
+                  num++;
+               }
+               }
+            }
+          }
+          if (num >= 22) sigma = 0.16f;
+          if (num >= 15 && num < 21) sigma = 0.48f;
+          if (num < 15) sigma = 1.0f;
+          }
+          else {
+            sigma = 0.16f;
+          }
+
+          for (int q=0; q<num; q++) {
+                float dst_sqrd = dists[q];
+                if (dst_sqrd == 0f) mag = 1.06f;
+                weight = (float) (mag/Math.exp((double)(dst_sqrd/(sigma))));
+                for (int t=0; t<rngTupDim; t++) {
+                   sumValue[t] += values[t][q]*weight;
+                }
+                sumWeights += weight;
+          }
+
+          for (int t=0; t<rngTupDim; t++) {
+            gridRange[t][grdIdx] = sumValue[t]/sumWeights;
+          }
+
+        }
+      }
+      grdFF.setSamples(gridRange);
+    }
+    else { // no averaging
+      grdFF.setSamples(firstGridRange);
+    }
+
+   return grdFF;
+ }
+
  public static boolean validLonLat(float[][] lonlat) {
    float lon = lonlat[0][0];
    float lat = lonlat[1][0];
