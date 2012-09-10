@@ -65,6 +65,7 @@ import edu.wisc.ssec.mcidas.AREAnav;
 import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidas.AreaDirectoryList;
 import edu.wisc.ssec.mcidas.AreaFile;
+import edu.wisc.ssec.mcidas.AreaFileException;
 import edu.wisc.ssec.mcidas.adde.AddeImageURL;
 import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 
@@ -1171,11 +1172,11 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 //            logger.trace("injecting POS={}", aid.getRelativeIndex());
 //            src = replaceKey(src, "POS", (Object)aid.getRelativeIndex());
 //        }
-        if (previewDescriptor.getIsRelative()) {
-            logger.trace("inject POS={}", previewDescriptor.getRelativeIndex());
+//        if (previewDescriptor.getIsRelative()) {
+//            logger.trace("inject POS={} into src={}", previewDescriptor.getRelativeIndex(), src);
 //            src = replaceKey(src, "POS", (Object)previewDescriptor.getRelativeIndex());
-            src = replaceKey(src, "POS", previewDescriptor.getRelativeIndex());
-        }
+//            src = replaceKey(src, "POS", previewDescriptor.getRelativeIndex());
+//        }
 
         logger.trace("creating AddeImageDescriptor from src={}", src);
         try {
@@ -2368,38 +2369,108 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         src = src.replace("imagedata", "imagedir");
         boolean isRelative = aid.getIsRelative();
 
-        for (int i = 0; i < times; i++) {
-            if (isRelative) {
-                src = replaceKey(src, "POS", new Integer(i).toString());
-            } else {
+        List<String> previewUrls = new ArrayList<String>(times);
+
+        if (isRelative) {
+            int maxIndex = Integer.MIN_VALUE;
+            for (TwoFacedObject tfo : (List<TwoFacedObject>)getAllDateTimes()) {
+                int relativeIndex = ((Integer)tfo.getId()).intValue();
+                if (relativeIndex > maxIndex) {
+                    maxIndex = relativeIndex;
+                }
+            }
+//            TwoFacedObject tfo = (TwoFacedObject)this.getAllDateTimes().get(0);
+            // negate maxIndex so we can get things like POS=0 or POS=-4
+            maxIndex = 0 - maxIndex;
+            logger.trace("using maxIndex={}", maxIndex);
+            src = replaceKey(src, "POS", Integer.toString(maxIndex));
+            previewUrls.add(src);
+        } else {
+            for (int i = 0; i < times; i++) {
                 DateTime dt = (DateTime)imageTimes.get(i);
                 String timeStr = dt.timeString();
                 timeStr = timeStr.replace("Z", " ");
                 src = removeKey(src, "POS");
-                src = replaceKey(src, "TIME", timeStr + timeStr + "I");
-            }
-
-            try {
-                logger.trace("attempting to create AreaDirectoryList using src={}", src);
-                AreaDirectoryList dirList = new AreaDirectoryList(src);
-                List ad = dirList.getDirs();
-                AreaDirectory areaDir = (AreaDirectory)ad.get(0);
-                logger.trace("created AreaDirectory: {}", areaDir);
-                int lines = areaDir.getLines();
-                int eles =  areaDir.getElements();
-                logger.trace("image lines={} eles={} for src={}", new Object[] { lines, eles, src });
-                if (imageSize < lines*eles) {
-                    logger.trace("found new max size! old={} new={}", imageSize, lines*eles);
-                    imageSize = lines * eles;
-                    maxLine = lines;
-                    maxEle = eles;
-                    directory = areaDir;
-                    descriptor = new AddeImageDescriptor(src);
-                }
-            } catch (Exception e) {
-                logger.error("problem when dealing with AREA directory", e);
+                src = replaceKey(src, "TIME", timeStr + timeStr + 'I');
+                logger.trace("using time value: ", timeStr + timeStr + 'I');
+                logger.trace("added absolute time preview url: {}", src);
+                previewUrls.add(src);
             }
         }
+
+        logger.trace("preparing to examine previewUrls={}", previewUrls);
+
+        try {
+            for (String previewUrl : previewUrls) {
+                logger.trace("attempting to create AreaDirectoryList using previewUrl={}", previewUrl);
+                AreaDirectoryList directoryList = new AreaDirectoryList(previewUrl);
+                logger.trace("created directoryList! size={}\n{}", directoryList.getDirs().size(), directoryList);
+                List<AreaDirectory> areaDirectories = (List<AreaDirectory>)directoryList.getDirs();
+//                if (isRelative) {
+//                    int requestedRelativePosition = Integer.valueOf(getKey(previewUrl, "POS"));
+//                    // remember, you're requesting the number of available AREA directories,
+//                    // not a position! 
+//                    int availablePositions = 0 - (directoryList.getDirs().size() - 1);
+//                    
+//                    logger.trace("validating relative positions: requested position={}, available={}", requestedRelativePosition, availablePositions);
+//                    if (requestedRelativePosition != availablePositions) {
+//                        previewUrl = replaceKey(previewUrl, "POS", availablePositions);
+//                    }
+//                }
+                
+                for (AreaDirectory areaDirectory : areaDirectories) {
+                    int lines = areaDirectory.getLines();
+                    int elements = areaDirectory.getElements();
+                    int currentDimensions = lines * elements;
+                    logger.trace("image lines={} elements={} currentDimensions={} areaDirectory={}", new Object[] { lines, elements, currentDimensions, areaDirectory });
+                    if (imageSize < currentDimensions) {
+                        logger.trace("found new max size! old={} new={}", imageSize, currentDimensions);
+                        imageSize = currentDimensions;
+                        maxLine = lines;
+                        maxEle = elements;
+                        directory = areaDirectory;
+//                        descriptor = new AddeImageDescriptor(areaDirectory, previewUrl.replace("imagedir", "imagedata"));
+                        descriptor = new AddeImageDescriptor(previewUrl);
+//                        descriptor.setDirectory(areaDirectory);
+                    }
+                }
+            }
+        } catch (AreaFileException areaException) {
+            logger.error("problem when dealing with AREA directory", areaException);
+        }
+//        for (int i = 0; i < times; i++) {
+//            if (isRelative) {
+//                src = replaceKey(src, "POS", new Integer(i).toString());
+//            } else {
+//                DateTime dt = (DateTime)imageTimes.get(i);
+//                String timeStr = dt.timeString();
+//                timeStr = timeStr.replace("Z", " ");
+//                src = removeKey(src, "POS");
+//                src = replaceKey(src, "TIME", timeStr + timeStr + "I");
+//            }
+//            // don't forget to NOT negate POS=0
+//            try {
+//                logger.trace("attempting to create AreaDirectoryList using src={}", src);
+//                AreaDirectoryList dirList = new AreaDirectoryList(src);
+//                List ad = dirList.getDirs();
+//                AreaDirectory areaDir = (AreaDirectory)ad.get(0);
+//                logger.trace("created AreaDirectory: {}", areaDir);
+//                int lines = areaDir.getLines();
+//                int eles =  areaDir.getElements();
+//                logger.trace("image lines={} eles={} for src={}", new Object[] { lines, eles, src });
+//                if (imageSize < lines*eles) {
+//                    logger.trace("found new max size! old={} new={}", imageSize, lines*eles);
+//                    imageSize = lines * eles;
+//                    maxLine = lines;
+//                    maxEle = eles;
+//                    directory = areaDir;
+//                    descriptor = new AddeImageDescriptor(src);
+//                }
+//            } catch (Exception e) {
+//                logger.error("problem when dealing with AREA directory", e);
+//            }
+//        }
+//        
 
         logger.trace("returning AreaDirectory: {}", directory);
 //        logger.trace("could return AddeImageDescriptor:\nisRelative={}\nrelativeIndex={}\ntime={}\ndirectory={}\n", new Object[] { descriptor.getIsRelative(), descriptor.getRelativeIndex(), descriptor.getImageTime(), descriptor.getDirectory()});
