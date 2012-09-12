@@ -40,7 +40,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSources.
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Data Formats and Sources</div>
-<p>McIDAS-V can read a variety of data formats either from local files or remote data servers (e.g., HTTP, TDS, ADDE) (<a href="#servers">1</a>). This page contains information about some data sources that work with McIDAS-V.</p>
+<p>McIDAS-V can read a variety of data formats either from local files or remote data servers (e.g., HTTP, TDS, ADDE). This page contains information about some data sources that work with McIDAS-V.</p>
 <p>To connect McIDAS-V to data sources, see <a href="choosers/index.html"> Data Sources</a>.</p>
 <ul class="childlist">
 <li><a href="#formats">Supported Data Types and Formats</a></li>
@@ -60,13 +60,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSources.
     <td rowspan="4">Gridded</td>
     <td rowspan="4">Numerical weather prediction models, climate analysis, gridded
     oceanographic datasets, NCEP/NCAR Reanalysis</td>
-    <td>- netCDF (<a href="#netcdf">2</a>)</td>
-    <td>- local files, HTTP, TDS (<a href="#thredds">3</a>)
-      servers</td>
+    <td>- <a href="#netcdf">netCDF</a></td>
+    <td>- <a href="choosers/GridChooser.html#localgrid">local files</a>, <a href="choosers/UrlChooser.html">HTTP</a>, <a href="#thredds">TDS servers</a></td>
   </tr>
   <tr class="gridded_data_row">
     <td>- GRIB (versions 1&amp;2)</td>
-    <td>- local files, TDS servers</td>
+    <td>- local files, <a href="choosers/GridChooser.html">TDS servers</a></td>
   </tr>
   <tr class="gridded_data_row">
     <td>- Vis5D</td>
@@ -80,12 +79,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSources.
     <td rowspan="22">Satellite Imagery</td>
     <td rowspan="22">Geostationary and polar orbiter satellite imagery, derived
       satellite products</td>
-    <td>- ADDE (<a href="#adde">4</a>)</td>
-    <td>- ADDE servers</td>
+    <td>- <a href="#adde">ADDE</a></td>
+    <td>- <a href="choosers/ImageChooser.html">ADDE servers</a></td>
   </tr>
   <tr class="gridded_data_row">
     <td>- McIDAS AREA</td>
-    <td>- local files, local &amp; remote ADDE servers</td>
+    <td>- <a href="choosers/FileChooser.html">local files</a>, local &amp; <a href="../tools/RemoteDataManager.html">remote ADDE</a> servers</td>
   </tr>
   <tr class="gridded_data_row">
     <td>- AIRS</td>
@@ -97,7 +96,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSources.
   </tr>
   <tr class="gridded_data_row">
     <td>- AMSR-E Level 1b </td>
-    <td>- local ADDE </td>
+    <td>- <a href="../tools/LocalDataManager.html">local ADDE </a></td>
   </tr>
   <tr class="gridded_data_row">
     <td>- AMSR-E Rain Product </td>
@@ -171,12 +170,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSources.
     <td rowspan="5">Radar</td>
     <td rowspan="5">Radar images</td>
     <td>- Level II</td>
-    <td>- local files or TDS <br>
+    <td>- <a href="choosers/Level2Chooser.html#localradar">local files</a> or <a href="choosers/Level2Chooser.html#remoteradar">TDS</a><br>
     (bzip2 compressed or uncompressed)</td>
   </tr>
   <tr class="gridded_data_row">
     <td>- Level III</td>
-    <td>- ADDE servers, local files or TDS</td>
+    <td>- <a href="choosers/RadarChooser.html">ADDE servers</a>, local files or TDS</td>
   </tr>
   <tr class="gridded_data_row">
     <td>- Universal Format (UF)</td>
@@ -192,14 +191,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSources.
     <td rowspan="8">Point Observational</td>
     <td rowspan="3">Surface observations (METAR and SYNOP), earthquake observations</td>
     <td>- ADDE</td>
-    <td>- ADDE servers</td>
+    <td>- <a href="choosers/PointChooser.html">ADDE servers</a></td>
   </tr>
   <tr class="gridded_data_row">
     <td>- netCDF (Unidata, AWIPS/MADIS formats)</td>
     <td>- local files</td>
   </tr>
   <tr class="gridded_data_row">
-    <td>- Text (ASCII, CSV), Excel spreadsheet (<a href="#csv">5</a>)</td>
+    <td>- Text (ASCII, CSV), <a href="#csv">Excel spreadsheet</a></td>
     <td>- local files</td>
   </tr>
   <tr>
@@ -208,13 +207,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSources.
     <td>- local files</td>
   </tr>
   <tr class="gridded_data_row">
-    <td>- Text (ASCII, CSV) (<a href="#csv">5</a>)</td>
+    <td>- Text (ASCII, <a href="#csv">CSV</a>)</td>
     <td>- local files</td>
   </tr>
   <tr>
     <td rowspan="3">Global balloon soundings</td>
     <td>- ADDE</td>
-    <td>- ADDE servers </td>
+    <td>- <a href="choosers/RaobChooser.html">ADDE servers </a></td>
   </tr>
   <tr class="gridded_data_row">
     <td>- netCDF (Unidata, AWIPS/MADIS formats)</td>
@@ -228,7 +227,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSources.
     <td>Profiler</td>
     <td>NOAA Profiler Network winds</td>
     <td>- ADDE</td>
-    <td>- ADDE servers</td>
+    <td>- <a href="choosers/ProfilerChooser.html">ADDE servers</a></td>
   </tr>
   <tr>
     <td rowspan="2">GIS</td>
@@ -248,7 +247,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSources.
   </tr>
 </table>
 <div class="pagesubtitle"><a name="servers" id="servers"></a>Remote Data Servers</div>
-<p>Extensive meteorological and oceanographic data is available from remote data servers for use in research and education. Some of these data have restrictions on their use, see <a href="http://www.unidata.ucar.edu/data/data_usage.html#data" target="_blank">here</a> for that information.</p>
+<p>Extensive meteorological and oceanographic data is available from remote data servers for use in research and education. Some of these data have restrictions on their use, see <a href="http://www.unidata.ucar.edu/data/data_usage.html#data" target="_blank">Using Data Acquired via Unidata</a> for that information.</p>
 <div class="pagesubsubtitle"><a name="adde" id="adde"></a>Abstract Data Distribution Environment (ADDE)</div>
 <p>Most of the data choosers in McIDAS-V use ADDE as the access method (satellite
 imagery, Level III radar, surface, profiler and RAOB). The ADDE choosers are
