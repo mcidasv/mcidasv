@@ -1198,6 +1198,22 @@ public class MultiSpectralDataSource extends HydraDataSource {
     return swathToGrid(grid, swath, mode);
   }
 
+  public static FlatField swathToGridNew(Linear2DSet grid, FlatField[] swaths, double mode) throws Exception {
+    FunctionType ftype = (FunctionType) swaths[0].getType();
+    visad.Set domSet = swaths[0].getDomainSet();
+
+    FlatField swath = new FlatField(new FunctionType(ftype.getDomain(),
+        new RealTupleType(new RealType[] {RealType.getRealType("redimage_"+count), RealType.getRealType("greenimage_"+count), RealType.getRealType("blueimage_"+count)})), domSet);
+
+    swath.setSamples(new float[][]
+        {swaths[0].getFloats(false)[0], swaths[1].getFloats(false)[0], swaths[2].getFloats(false)[0]});
+
+    count++;
+
+    return swathToGridNew(grid, swath, mode);
+  }
+
+
   public static FlatField swathToGrid(Linear2DSet grid, FlatField swath, double mode) throws Exception {
     FunctionType ftype = (FunctionType) swath.getType();
     Linear2DSet swathDomain = (Linear2DSet) swath.getDomainSet();
