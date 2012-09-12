@@ -25,6 +25,23 @@ from ucar.unidata.ui.colortable import ColorTableDefaults
 from ucar.unidata.util import GuiUtils
 from ucar.visad import Util
 
+# from collections import namedtuple
+
+from edu.wisc.ssec.mcidas import AreaFile
+from edu.wisc.ssec.mcidas import AreaFileException
+from edu.wisc.ssec.mcidas import AreaFileFactory
+from edu.wisc.ssec.mcidas import AreaDirectory
+from edu.wisc.ssec.mcidas import AreaDirectoryList
+from edu.wisc.ssec.mcidas.adde import AddeURLException
+
+from ucar.unidata.data.imagery import AddeImageDescriptor
+from ucar.visad.data import AreaImageFlatField
+
+from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
+from edu.wisc.ssec.mcidasv.servermanager import EntryStore
+from visad.meteorology import SingleBandedImageImpl
+from visad.data.mcidas import AreaAdapter
+
 def pause():
     getStaticMcv().waitUntilDisplaysAreDone()
 
@@ -69,6 +86,139 @@ def managedDataSource(path, cleanup=True, dataType=None):
         # the "with" block has relinquished control; time to clean up!
         if cleanup:
             boomstick()
+
+class _MappedAreaImageFlatField(AreaImageFlatField):
+    def __init__(self, imageUrl):
+        areaFile = AreaFileFactory.getAreaFileInstance(imageUrl)
+        self.areaDirectory = areaFile.getAreaDirectory()
+        self.addeDescriptor = AddeImageDescriptor(self.areaDirectory, imageUrl)
+        # self.__mappedObject = AreaImageFlatField.createImmediate(areaDirectory, imageUrl)
+        self.__keys = ['bands', 'calinfo', 'calibration-scale-factor', 'calibration-type', 'calibration-unit-name', 'center-latitude', 'center-latitude-resolution', 'center-longitude', 'center-longitude-resolution', 'directory-block', 'elements', 'lines', 'memo-field', 'nominal-time', 'band-count', 'sensor-id', 'sensor-type', 'source-type', 'start-time', 'url']
+        aa = AreaAdapter(imageUrl, False)
+        ff = aa.getImage()
+        samples = ff.unpackFloats()
+        ftype = ff.getType()
+        domainSet = ff.getDomainSet()
+        rangeCoordSys = ff.getRangeCoordinateSystem()[0]
+        rangeSets = ff.getRangeSets()
+        units = ff.getRangeUnits()[0]
+        AreaImageFlatField.__init__(self, self.addeDescriptor, ftype, domainSet, rangeCoordSys, rangeSets, units, samples, "READLABEL")
+    
+    def getDictionary(self):
+        return dict(self.iteritems())
+    
+    def test(self):
+        return self.aid
+    
+    def __getDirValue(self, key):
+        if key not in self.__keys:
+            raise KeyError('unknown key: %s' % key)
+        try:
+            if key == 'bands':
+                return self.areaDirectory.getBands()
+            elif key == 'calinfo':
+                return self.areaDirectory.getCalInfo()
+            elif key == 'calibration-scale-factor':
+                return self.areaDirectory.getCalibrationScaleFactor()
+            elif key == 'calibration-type':
+                return self.areaDirectory.getCalibrationType()
+            elif key == 'calibration-unit-name':
+                return self.areaDirectory.getCalibrationUnitName()
+            elif key == 'center-latitude':
+                return self.areaDirectory.getCenterLatitude()
+            elif key == 'center-latitude-resolution':
+                return self.areaDirectory.getCenterLatitudeResolution()
+            elif key == 'center-longitude':
+                return self.areaDirectory.getCenterLongitude()
+            elif key == 'center-longitude-resolution':
+                return self.areaDirectory.getCenterLongitudeResolution()
+            elif key == 'directory-block':
+                return self.areaDirectory.getDirectoryBlock()
+            elif key == 'elements':
+                return self.areaDirectory.getElements()
+            elif key == 'lines':
+                return self.areaDirectory.getLines()
+            elif key == 'memo-field':
+                return self.areaDirectory.getMemoField()
+            elif key == 'nominal-time':
+                return self.areaDirectory.getNominalTime()
+            elif key == 'band-count':
+                return self.areaDirectory.getNumberOfBands()
+            elif key == 'sensor-id':
+                return self.areaDirectory.getSensorID()
+            elif key == 'sensor-type':
+                return self.areaDirectory.getSensorType()
+            elif key == 'source-type':
+                return self.areaDirectory.getSourceType()
+            elif key == 'start-time':
+                return self.areaDirectory.getStartTime()
+            elif key == 'url':
+                return self.aid.getSource()
+        except KeyError, e:
+            raise KeyError('should not be capable of reaching here: %s' % e)
+    
+    def __repr__(self):
+        return repr(dict(self.iteritems()))
+    
+    def __len__(self):
+        return len(self.__keys)
+    
+    def __getitem__(self, key):
+        try:
+            return self.__getDirValue(key)
+        except KeyError:
+            raise KeyError()
+    
+    def __iter__(self):
+        for x in self.__keys:
+            yield x
+    
+    def __contains__(self, item):
+        for value in self.itervalues():
+            if item == value:
+                return True
+        return False
+    
+    def keys(self):
+        return list(self.__keys)
+    
+    def items(self):
+        mappedItems = []
+        for key in self.__keys:
+            mappedItems.append((key, self.__getDirValue(key)))
+        return mappedItems
+    
+    def iteritems(self):
+        for key in self.__keys:
+            yield (key, self.__getDirValue(key))
+    
+    def iterkeys(self):
+        return iter(self.__keys)
+    
+    def itervalues(self):
+        for key in self.__keys:
+            yield self.__getDirValue(key)
+    
+    def values(self):
+        return [self.__getDirValue(key) for key in self.__keys]
+    
+    def has_key(self, key):
+        return key in self.__keys
+    
+    def get(self, key, default=None):
+        try:
+            return self.__getDirValue(key)
+        except KeyError:
+            return default
+    
+    def __reversed__(self): raise NotImplementedError()
+    def __setitem__(self, key, value): raise NotImplementedError()
+    def __delitem__(self, key): raise NotImplementedError()
+    def setdefault(self, key, failobj=None): raise NotImplementedError()
+    def pop(self, key, *args): raise NotImplementedError()
+    def popitem(self): raise NotImplementedError()
+    def update(self, newDict=None, **kwargs): raise NotImplementedError()
+
 
 class _JavaProxy(object):
     """One sentence description goes here

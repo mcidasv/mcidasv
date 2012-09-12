@@ -1,7 +1,16 @@
 from collections import namedtuple
 
+from background import _MappedAreaImageFlatField
+
+from edu.wisc.ssec.mcidas import AreaFile
+from edu.wisc.ssec.mcidas import AreaFileException
+from edu.wisc.ssec.mcidas import AreaFileFactory
 from edu.wisc.ssec.mcidas import AreaDirectory
 from edu.wisc.ssec.mcidas import AreaDirectoryList
+from edu.wisc.ssec.mcidas.adde import AddeURLException
+
+from ucar.unidata.data.imagery import AddeImageDescriptor
+from ucar.visad.data import AreaImageFlatField
 
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 from edu.wisc.ssec.mcidasv.servermanager import EntryStore
@@ -313,19 +322,33 @@ def getADDEImage(server, dataset, descriptor,
     
     addeUrlFormat = "adde://%s/imagedata?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s"
     url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position)
-    retvals = (-1, -1)
+    
     try:
-        area = AreaAdapter(url)
-        areaDirectory = AreaAdapter.getAreaDirectory(area)
-        if debug:
-            elements = areaDirectory.getElements()
-            lines = areaDirectory.getLines()
-            print 'url:', url
-            print 'lines=%s elements=%d' % (lines, elements)
-        retvals = (_areaDirectoryToDictionary(areaDirectory), area.getData())
-    except Exception, err:
-        if debug:
-            print 'exception: %s\n' % (str(err))
-            print 'problem with adde url:', url
+        # areaFile = AreaFileFactory.getAreaFileInstance(url)
+        # areaDirectory = areaFile.getAreaDirectory()
+        # addeDescriptor = AddeImageDescriptor(areaDirectory, url)
+        # areaFlatField = AreaImageFlatField.createImmediate(addeDescriptor, "READLABEL")
+        mapped = _MappedAreaImageFlatField(url)
+        return mapped.getDictionary(), mapped
+    except AreaFileException, e:
+        print 'AreaFileException: url:', url, e
+    except AddeURLException, e:
+        print 'AddeURLException: url:', url, e
     finally:
-        return retvals
+        return (-1, -1)
+    
+    # try:
+    #     area = AreaAdapter(url)
+    #     areaDirectory = AreaAdapter.getAreaDirectory(area)
+    #     if debug:
+    #         elements = areaDirectory.getElements()
+    #         lines = areaDirectory.getLines()
+    #         print 'url:', url
+    #         print 'lines=%s elements=%d' % (lines, elements)
+    #     retvals = (_areaDirectoryToDictionary(areaDirectory), area.getData())
+    # except Exception, err:
+    #     if debug:
+    #         print 'exception: %s\n' % (str(err))
+    #         print 'problem with adde url:', url
+    # finally:
+    #     return retvals
