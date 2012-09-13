@@ -55,7 +55,7 @@ def cloudFilter(sdataset1, sdataset2, user_replace='Default', user_constant=0, u
         if stretch == 'Contrast':
             lookup = contrast(filt_low, filt_hi, in_low, in_hi, filt_low, filt_hi)
         elif stretch == 'Histogram':
-            # make a histogram from both datasets
+            """ make a histogram from both datasets """
             v = []
             v.append(vals1[0])
             v.append(vals2[0])
@@ -84,8 +84,9 @@ def replaceFilter(sdataset, user_replaceVal=0, user_sourceval='Default', user_st
     britlo = int(user_britlo)
     brithi = int(user_brithi)
     
-    # sourceVal can either be specified in list format: val1 val2 val3
-    # or in a range format, bval-eval (default = 0-255)
+    """ sourceVal can either be specified in list format: val1 val2 val3
+        or in a range format, bval-eval (default = 0-255) 
+    """
     if user_sourceval != 'Default':
         if '-' in user_sourceval:
             tempVal1 = [int(m) for m in user_sourceval.split('-')]
@@ -130,36 +131,35 @@ def replaceFilter(sdataset, user_replaceVal=0, user_sourceval='Default', user_st
         
     return newData
 
-def shotMain(vals, bline, eline, element_size, line_size, filter_diff):
-    """ the actual shot filter code - needs to be separate as clean filter calls it as well """
-    for i in range(line_size)[bline:eline]:
-        for j in range(element_size)[1:-2]:
-            left = vals[0][i * element_size + j - 1]
-            value = vals[0][i * element_size + j]
-            right = vals[0][i * element_size + j + 2]
-            
-            left_diff = value - left
-            right_diff = value - right
-            sign = left_diff * right_diff
-            if sign < 0:
-                continue
-            
-            left_diff = abs(left_diff)
-            if left_diff < filter_diff:
-                continue
-               
-            right_diff = abs(right_diff)
-            if right_diff < filter_diff:
-                continue
-            
-            # for some reason, have to do this to floor the value
-            p = (left + right) / 2
-            a = field((p,))
-            b = a.floor()
-            vals[0][i * element_size + j] = float(b[0])
-            
-    return vals
+def shotMain(vals,bline,eline,element_size,line_size,filter_diff):
+  """ the actual shot filter code - needs to be separate as clean filter calls it as well """
+  for i in range(line_size)[bline:eline]:
+     for j in range(element_size)[1:-2]:
+       left = vals[0][i*element_size + j - 1]
+       value = vals[0][i*element_size + j]
+       right = vals[0][i*element_size + j + 2]
+    
+       left_diff = value - left
+       right_diff = value - right
+       sign = left_diff *right_diff
+       if (sign < 0):
+         continue
+       
+       left_diff = abs(left_diff)
+       if (left_diff < filter_diff):
+          continue
 
+       right_diff = abs(right_diff)
+       if (right_diff < filter_diff):
+         continue
+       
+       """ for some reason, have to do this to floor the value """
+       p = (left + right)/2
+       a = field((p,))
+       b = a.floor().getValues(0)  
+       vals[0][i*element_size + j] = b[0]
+    
+  return vals
 
 def badLineFilter(vals, bline, eline, element_size, line_size, filter_fill, line_diff, min_data, max_data):
     """
@@ -188,7 +188,7 @@ def badLineFilter(vals, bline, eline, element_size, line_size, filter_fill, line
             print 'Bad Line - same values'
             isbad = 1
             num_badlines = num_badlines + 1
-            # store the last good line
+            """ store the last good line """
             if num_badlines == 1:
                 last_good_line = good_line
         else:
@@ -277,7 +277,7 @@ def cleanFilter(sdataset, user_fill='Average', user_bline='Default', user_eline=
         
         vals = badLineFilter(vals, bline, eline, element_size, line_size, filter_fill, line_diff, filt_low, filt_hi)
         
-        # update the min/max of the image after the removal of the bad lines
+        """ update the min/max of the image after the removal of the bad lines """
         filt_low = int(min(vals[0]))
         filt_hi = int(max(vals[0]))
         
@@ -324,11 +324,11 @@ def shotFilter(sdataset, user_bline='Default', user_eline='Default', user_pdiff=
         vals = rangeObject.getFloats(0)
         in_hi = int(max(vals[0]))
         in_low = int(min(vals[0]))
-        # the next four lines are to make sure the point_diff value is floored
+        """ the next four lines are to make sure the point_diff value is floored """
         p = (in_hi - in_low + 1) * (filter_diff / 100.0)
         a = field((p,))
-        b = a.floor()
-        point_diff = float(b[0])
+        b = a.floor().getValues(0)
+        point_diff = b[0]
         
         domain = GridUtil.getSpatialDomain(rangeObject)
         [element_size, line_size] = domain.getLengths()
@@ -436,7 +436,7 @@ def coreFilter(sdataset1, sdataset2, user_brkpoint1='Default', user_brkpoint2='D
         if stretch == 'Contrast':
             lookup = contrast(filt_low, filt_hi, in_low, in_hi, filt_low, filt_hi)
         elif stretch == 'Histogram':
-            # make a histogram from both datasets
+            """ make a histogram from both datasets """
             v = []
             v.append(vals1[0])
             v.append(vals2[0])
@@ -448,6 +448,134 @@ def coreFilter(sdataset1, sdataset2, user_brkpoint1='Default', user_brkpoint2='D
         
     return data1
 
+def cleanFilter(sdataset,user_fill='Average',user_bline='Default',user_eline='Default',user_pdiff=15,user_ldiff=15,user_stretchval='Contrast',user_britlo=0,user_brithi=255):
+   """ clean filter from McIDAS-X
+       user_fill    - 'Average': average of surrounding values (default)
+                    - 'Min'    : source dataset minimum value
+                    - 'Max'    : source dataset maximum value
+       user_bline   - beginning line in the source image to clean (default=first line)
+       user_eline   - ending line in the source image to clean (default = last line)
+       user_pdiff   - absolute difference between an element's value and value of the element on either side 
+       user_ldiff   - percentage difference between a line's average value and the average value of
+                      the line above and below
+       user_britlo    - minimum brightness value for the calibration
+       user_brithi    - maximum brightness value for the calibration
+   """   
+   newData=sdataset.clone()
+   
+   filter_fill = user_fill
+   bline=user_bline
+   eline=user_eline
+   britlo=int(user_britlo)
+   brithi=int(user_brithi)
+      
+   if (bline != 'Default'):
+     bline=int(bline)
+   else:
+     bline=0
+   if (eline != 'Default'):
+     eline=int(eline)
+     
+   filter_diff=int(user_pdiff)
+   l_diff=int(user_ldiff)
+   stretch=user_stretchval
+   
+   for t in range(newData.getDomainSet().getLength()):
+     rangeObject = newData.getSample(t)
+     vals = rangeObject.getFloats(0)
+     in_hi = int(max(vals[0]))
+     in_low = int(min(vals[0]))
+     point_diff = (in_hi - in_low + 1)*(filter_diff/100.0)
+     line_diff = (in_hi - in_low + 1)*(l_diff/100.0) 
+     domain=GridUtil.getSpatialDomain(rangeObject)  
+     [element_size,line_size]=domain.getLengths()
+     if (eline == 'Default'):
+       eline=line_size 
+     
+     vals = shotMain(vals,bline,eline,element_size,line_size,point_diff)
+     for i in range(line_size):
+        for j in range(element_size):
+            vals[0][i*element_size+j]=scaleOutsideVal(vals[0][i*element_size+j],britlo,brithi)
+     
+     filt_low=int(min(vals[0]))
+     filt_hi =int(max(vals[0]))
+            
+     vals = badLineFilter(vals,bline,eline,element_size,line_size,filter_fill,line_diff,filt_low,filt_hi)
+     
+     """ update the min/max of the image after the removal of the bad lines """
+     filt_low=int(min(vals[0]))
+     filt_hi =int(max(vals[0]))
+     
+     if (stretch == 'Contrast'):
+       lookup=contrast(filt_low,filt_hi,britlo,brithi,filt_low,filt_hi)
+     elif (stretch == 'Histogram'):
+       h = makeHistogram(vals,element_size,line_size,filt_low,brithi-britlo)
+       lookup=histoStretch(filt_low,filt_hi,britlo,brithi,h)
+            
+     vals=modify(vals,element_size,line_size,filt_low,lookup)
+     rangeObject.setSamples(vals)     
+             
+   return newData
+
+def shotFilter(sdataset,user_bline='Default',user_eline='Default',user_pdiff=15,user_stretchval='Contrast',user_britlo=0,user_brithi=255):
+   """ shot noise filter from McIDAS-X
+       bline - beginning line in the source image to clean (default=first line)
+       eline - ending line in the source image to clean (default = last line)
+       pdiff - maximum percentage of the product range to allow before a new value for the pixel is derived using the
+               average of two adjacent pixels
+       user_britlo    - minimum brightness value for the calibration
+       user_brithi    - maximum brightness value for the calibration
+   """    
+   newData = sdataset.clone()
+   bline=user_bline
+   eline=user_eline
+   britlo=int(user_britlo)
+   brithi=int(user_brithi)
+      
+   if (bline != 'Default'):
+     bline=int(bline)
+   else:
+     bline=0
+   if (eline != 'Default'):
+     eline=int(eline)
+     
+   filter_diff=int(user_pdiff)
+   stretch=user_stretchval
+   
+   for t in range(newData.getDomainSet().getLength()):
+     rangeObject = newData.getSample(t)  
+     vals = rangeObject.getFloats(0)
+     in_hi = int(max(vals[0]))
+     in_low = int(min(vals[0]))
+     """ the next four lines are to make sure the point_diff value is floored """
+     p=(in_hi - in_low + 1)*(filter_diff/100.0)    
+     a=field((p,))
+     b=a.floor().getValues(0)
+     point_diff = b[0]   
+     
+     domain=GridUtil.getSpatialDomain(rangeObject)  
+     [element_size,line_size]=domain.getLengths()
+     if (eline == 'Default'):
+       eline=line_size 
+     
+     vals = shotMain(vals,bline,eline,element_size,line_size,point_diff)
+     
+     for i in range(line_size):
+        for j in range(element_size):
+            vals[0][i*element_size+j]=scaleOutsideVal(vals[0][i*element_size+j],britlo,brithi)
+     
+     filt_low=int(min(vals[0]))
+     filt_hi =int(max(vals[0]))
+     if (stretch == 'Contrast'):
+       lookup=contrast(filt_low,filt_hi,britlo,brithi,filt_low,filt_hi)
+     elif (stretch == 'Histogram'):
+       h = makeHistogram(vals,element_size,line_size,filt_low,brithi-britlo)
+       lookup=histoStretch(filt_low,filt_hi,britlo,brithi,h)
+            
+     vals=modify(vals,element_size,line_size,filt_low,lookup)
+     rangeObject.setSamples(vals)    
+   
+   return newData       
 
 def discriminateFilter(sdataset1, sdataset2, user_brkpoint1='Default', user_brkpoint2='Default', user_brkpoint3='Default', user_brkpoint4='Default', user_replace='Default', user_stretchval='Contrast', user_britlo=0, user_brithi=255):
     """ discriminate filter from McIDAS-X - requires 2 source datasets; used to mask off a portion of the first source image
@@ -523,7 +651,7 @@ def discriminateFilter(sdataset1, sdataset2, user_brkpoint1='Default', user_brkp
         if stretch == 'Contrast':
             lookup = contrast(in_low, in_hi, britlo, brithi, in_low, in_hi)
         elif stretch == 'Histogram':
-            # make a histogram from the first dataset
+            """ make a histogram from the first dataset """
             h = makeHistogram(vals1, element_size, line_size, in_low, brithi - britlo)
             lookup = histoStretch(in_low, in_hi, britlo, brithi, h)
             
@@ -594,7 +722,7 @@ def mergeFilter(sdataset1, sdataset2, user_brkpoint1='Default', user_brkpoint2='
         if stretch == 'Contrast':
             lookup = contrast(filt_low, filt_hi, in_low, in_hi, filt_low, filt_hi)
         elif stretch == 'Histogram':
-            # make a histogram from both datasets
+            """ make a histogram from both datasets """
             v = []
             v.append(vals1[0])
             v.append(vals2[0])
@@ -632,7 +760,7 @@ def gradientFilter(sdataset, user_stretchval='Contrast', user_britlo=0, user_bri
             for j in range(element_size)[:-1]:
                 vals[0][i * element_size + j] = int(abs(vals[0][i * element_size + j] - vals[0][i * element_size + j + 1]))
                 
-            # set last value to zero
+            """ set last value to zero """
             vals[0][i * element_size + j + 1] = 0
             
         for i in range(line_size):
@@ -707,7 +835,7 @@ def passFilter(sdataset, user_passname, user_radius=50, user_leak=100, user_stre
                 if user_passname.startswith('Low'):
                     vals[0][i * element_size + j] = scaleOutsideVal(average, britlo, brithi)
                     
-                # move the radius array one element to the right and recalculate the sum
+                """ move the radius array one element to the right and recalculate the sum """
                 radiusArray.pop(0)
                 nright = nright + 1
                 mright = nright
@@ -758,37 +886,37 @@ def lowPass2DFilter(sdataset, user_linecoef=0.5, user_elecoef=0.5, user_stretchv
         domain = GridUtil.getSpatialDomain(rangeObject)
         [element_size, line_size] = domain.getLengths()
         
-        # save the first line
+        """ save the first line """
         realLine = vals[0][0:element_size].tolist()
         
         for i in range(line_size):
-            # left to right filter along line
+            """ left to right filter along line """
             val = vals[0][i * element_size]
             for j in range(element_size):
                 if vals[0][i * element_size + j] > 0:
                     val = ecoef * val + e1 * vals[0][i * element_size + j]
                 vals[0][i * element_size + j] = round(val)
                 
-            # right to left filter along line
+            """ right to left filter along line """
             val = vals[0][i * element_size + (element_size - 1)]
             
-            # second argument of -1 ensures that the 0th element is done
+            """ second argument of -1 ensures that the 0th element is done """
             for j in xrange(element_size - 1, -1, -1):
                 val = ecoef * val + e1 * vals[0][i * element_size + j]
                 vals[0][i * element_size + j] = round(val)
                 
-            # filter along the elements
+            """ filter along the elements """
             for j in range(element_size):
                 val = lcoef * realLine[j] + l1 * vals[0][i * element_size + j]
                 vals[0][i * element_size + j] = round(val)
                 
             realLine = vals[0][i * element_size:i * element_size + element_size].tolist()
             
-        # filter along the lines going through the image up the elements
-        # save the last line
+        """ filter along the lines going through the image up the elements
+           save the last line """
         realLine = vals[0][(line_size - 1) * element_size:line_size * element_size].tolist()
         
-        # second argument of -1 ensures that the 0th line is done
+        """ second argument of -1 ensures that the 0th line is done """
         for i in xrange(line_size - 1, -1, -1):
             for j in range(element_size):
                 val = lcoef * realLine[j] + l1 * vals[0][i * element_size + j]
@@ -806,7 +934,7 @@ def lowPass2DFilter(sdataset, user_linecoef=0.5, user_elecoef=0.5, user_stretchv
         if stretch == 'Contrast':
             lookup = contrast(filt_low, filt_hi, britlo, brithi, filt_low, filt_hi)
         elif stretch == 'Histogram':
-            # h = hist(field(vals), [0], [post_hi - post_low])
+            """ h = hist(field(vals), [0], [post_hi - post_low]) """
             h = makeHistogram(vals, element_size, line_size, filt_low, brithi - britlo)
             lookup = histoStretch(filt_low, filt_hi, in_low, in_hi, h)
             
@@ -836,11 +964,11 @@ def highPass2DFilter(sdataset, user_stretchval='Contrast', user_britlo=0, user_b
         domain = GridUtil.getSpatialDomain(rangeObject)
         [element_size, line_size] = domain.getLengths()
         
-        # first and last 2 lines of the image do not change
+        """ first and last 2 lines of the image do not change """
         firstLine = vals[0][0:element_size]
         last2Lines = vals[0][(line_size - 2) * element_size:line_size * element_size]
         
-        # do the filter using 3 lines at a time
+        """ do the filter using 3 lines at a time """
         for i in range(line_size)[:-3]:
             for j in range(element_size)[1:-1]:
                 midValue = vals[0][(i + 1) * element_size + j]
@@ -904,9 +1032,9 @@ def holeFilter(sdataset, user_brkpoint1=0, user_brkpoint2=1, user_stretchval='Co
         for i in range(line_size):
             for j in range(element_size)[1:-1]:
                 curVal = vals[0][i * element_size + j]
-                # search line for bad values
+                """ search line for bad values """
                 if curVal >= minVal and curVal <= maxVal:
-                    # look for the next good value
+                    """ look for the next good value """
                     doFill = 0
                     for k in range(element_size)[j:]:
                         nextVal = vals[0][i * element_size + k]
@@ -1038,7 +1166,7 @@ def makeHistogram(vals, element_size, line_size, minimum, nbins):
     for k in range(nbins + 1):
         hist.append(0)
         
-    # len(vals) allows for 2 or more datasets
+    """ len(vals) allows for 2 or more datasets """
     for i in range(len(vals)):
         for j in range(line_size):
             for k in range(element_size):
@@ -1056,7 +1184,7 @@ def printValueDiff(sdataset1, sdataset2):
         rangeObj1 = data1.getSample(t)
         rangeObj2 = data2.getSample(t)
         vals1 = rangeObj1.getFloats(0)
-        # vals2 = rangeObj1.getFloats(0) # TODO: bug?
+        """ vals2 = rangeObj1.getFloats(0)  TODO: bug? """
         vals2 = rangeObj2.getFloats(0)
         domain = GridUtil.getSpatialDomain(rangeObj1)
         [element_size, line_size] = domain.getLengths()
