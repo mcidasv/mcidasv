@@ -203,4 +203,16 @@
     </categories>
     <operands categories=""/>
   </derived>
+  <derived description="Mask Within Range" formula="maskWithinRange(a,float(minValue[isuser=true,default=0]), float(maxValue[isuser=true,default=270]),bool(float(useNan[isuser=true,default=0])))*a" id="mask" isdefault="false" isenduser="true">
+    <categories>
+      <category display="true" value="Imagery"/>
+      <category value="display:readout.probe"/>
+      <category value="display:scatter"/>
+      <category value="display:imagesequence"/>
+      <category value="display:imagedisplay"/>
+      <category value="display:imagecontour"/>
+      <category value="display:imagedisplayoverz"/>
+    </categories>
+    <operands categories=""/>
+  </derived>
 </derived_parameters>
