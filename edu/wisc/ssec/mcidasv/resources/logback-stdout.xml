@@ -42,5 +42,8 @@
   <!-- Let's use this section of the file to group loggers that spew *way* too much output. -->
   <!-- <logger name="httpclient.wire.content" level="OFF" /> --><!-- really only an issue when the root logger is set to TRACE. -->
   <logger name="httpclient.wire.content" level="OFF" /> <!-- really only an issue when the root logger is set to TRACE. -->
+  <logger name="org.apache.commons.httpclient" level="OFF" />
+  <logger name="org.bushe.swing.event" level="OFF" />
+  <logger name="ucar.grib" level="OFF" />
   <!-- End of verbose logger section -->
 </configuration>

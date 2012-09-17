@@ -60,4 +60,8 @@
     <!-- <appender-ref ref="STDOUT" /> -->
     <appender-ref ref="JYTHON" />
   </logger>
-  </configuration>
+  
+  <logger name="ucar.grib" level="OFF" />
+  <logger name="org.bushe.swing.event" level="OFF" />
+  <logger name="org.apache.commons.httpclient" level="OFF" />
+</configuration>

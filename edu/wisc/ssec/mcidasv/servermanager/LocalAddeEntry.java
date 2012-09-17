@@ -272,7 +272,7 @@ public class LocalAddeEntry implements AddeEntry {
         this.entryStatus = builder.status;
         this.isTemporary = builder.temporary;
         this.entryAlias = builder.alias;
-        logger.debug("created local: {}", this);
+//        logger.debug("created local: {}", this);
     }
 
     @Override public AddeAccount getAccount() {
