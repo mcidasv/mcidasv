@@ -382,13 +382,13 @@ def testADDEImage(server, dataset, descriptor,
         accounting= ('user', 'project number') user and project number required
                     by servers using McIDAS accounting; default = ('idv','0')
     """
+    
     # still need to handle dates+times
     # todo: don't break!
     user = accounting[0]
     proj = accounting[1]
     debug = str(debug).lower()
     mag = '%s %s' % (mag[0], mag[1])
-
     
     if place is Places.CENTER:
         place = 'CENTER'
@@ -439,10 +439,6 @@ def testADDEImage(server, dataset, descriptor,
     url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position)
     
     try:
-        # areaFile = AreaFileFactory.getAreaFileInstance(url)
-        # areaDirectory = areaFile.getAreaDirectory()
-        # addeDescriptor = AddeImageDescriptor(areaDirectory, url)
-        # areaFlatField = AreaImageFlatField.createImmediate(addeDescriptor, "READLABEL")
         mapped = _MappedAreaImageFlatField(url)
         return mapped.getDictionary(), mapped
     except AreaFileException, e:
@@ -451,19 +447,3 @@ def testADDEImage(server, dataset, descriptor,
         print 'AddeURLException: url:', url, e
     finally:
         return (-1, -1)
-    
-    # try:
-    #     area = AreaAdapter(url)
-    #     areaDirectory = AreaAdapter.getAreaDirectory(area)
-    #     if debug:
-    #         elements = areaDirectory.getElements()
-    #         lines = areaDirectory.getLines()
-    #         print 'url:', url
-    #         print 'lines=%s elements=%d' % (lines, elements)
-    #     retvals = (_areaDirectoryToDictionary(areaDirectory), area.getData())
-    # except Exception, err:
-    #     if debug:
-    #         print 'exception: %s\n' % (str(err))
-    #         print 'problem with adde url:', url
-    # finally:
-    #     return retvals
