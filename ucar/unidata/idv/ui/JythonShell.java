@@ -34,11 +34,13 @@ import static ucar.unidata.util.GuiUtils.makeCheckboxMenuItem;
 import static ucar.unidata.util.GuiUtils.makeMenu;
 import static ucar.unidata.util.GuiUtils.makeMenuItem;
 import static ucar.unidata.util.LogUtil.logException;
+import static ucar.unidata.util.LogUtil.registerWindow;
 import static ucar.unidata.util.LogUtil.userMessage;
 import static ucar.unidata.util.StringUtil.join;
 import static ucar.unidata.util.StringUtil.replace;
 import static ucar.unidata.util.StringUtil.split;
 
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -52,6 +54,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -90,13 +93,19 @@ import edu.wisc.ssec.mcidasv.McIDASV;
  * This class provides  an interactive shell for running JYthon
  *
  * @author IDV development team
- * @version $Revision$Date: 2012/05/24 15:01:43 $
+ * @version $Revision$Date: 2012/05/24 15:06:56 $
  */
 public class JythonShell extends InteractiveShell {
+
+    /** property that holds jython shell window location and size. */
+    public static final String PROP_JYTHON_WINDOW_BOUNDS = "prop.jython.shell.windowbounds";
 
     /** property that holds the history */
     public static final String PROP_JYTHON_SHELL_HISTORY =
         "prop.jython.shell.history";
+
+    /** Jython shell window title. */
+    public static final String WINDOW_TITLE = "Jython Shell";
 
     protected static final Logger jythonLogger = LoggerFactory.getLogger("jython");
 
@@ -114,7 +123,7 @@ public class JythonShell extends InteractiveShell {
 
     /** _more_          */
     ImageGenerator islInterpreter;
-    
+
     /** history file where all Jython commands get recorded. */
     private BufferedWriter historyFile;
 
@@ -124,7 +133,7 @@ public class JythonShell extends InteractiveShell {
      * @param theIdv idv
      */
     public JythonShell(IntegratedDataViewer theIdv) {
-        super("Jython Shell");
+        super(WINDOW_TITLE);
         this.idv = theIdv;
         List<String> oldHistory = (List<String>)idv.getStore().get(PROP_JYTHON_SHELL_HISTORY);
         if (oldHistory != null) {
@@ -134,8 +143,8 @@ public class JythonShell extends InteractiveShell {
         
         String historyFilename = ((McIDASV)theIdv).getUserFile("jython_history");
         try {
-        	// open in append mode
-        	this.historyFile = new BufferedWriter(new FileWriter(historyFilename, true));
+            // open in append mode
+            this.historyFile = new BufferedWriter(new FileWriter(historyFilename, true));
         } catch (IOException e) {
             logException("An error occurred trying to open jython_history file", e);
         }
@@ -144,21 +153,22 @@ public class JythonShell extends InteractiveShell {
         //Create the gui
         init();
     }
-    
+
     /**
-     * The Jython shell window has been closed, so close historyFile
+     * Run when the user has closed the Jython shell window.
      */
     @Override public void close() {
-    	try {
-    		this.historyFile.close();
-    	} catch (IOException exc) {
-    		logException("An error occurred trying to close jython_history file", exc);
-    	}
-    	super.close();
+        saveWindowBounds(idv.getStore(), frame.getBounds());
+        try {
+            this.historyFile.close();
+        } catch (IOException exc) {
+            logException("An error occurred trying to close jython_history file", exc);
+        }
+        super.close();
     }
 
     /**
-     *  print the history
+     * Print the Jython shell history.
      */
     public void listHistory() {
         for (int i = 0; i < history.size(); i++) {
@@ -167,7 +177,7 @@ public class JythonShell extends InteractiveShell {
     }
 
     /**
-     * write the hostory
+     * Write Jython shell history.
      */
     public void saveHistory() {
         IdvObjectStore store = idv.getStore();
@@ -182,7 +192,11 @@ public class JythonShell extends InteractiveShell {
      *
      */
     @Override protected void makeFrame() {
-        super.makeFrame();
+        frame = new JFrame(WINDOW_TITLE);
+        frame.getContentPane().add(contents);
+        frame.setBounds(loadWindowBounds(idv.getStore(), frame.getBounds()));
+        frame.setVisible(true);
+        registerWindow(frame);
         //When the window closes remove the interpreter
         frame.addWindowListener(new WindowAdapter() {
             @Override public void windowClosing(WindowEvent e) {
@@ -194,9 +208,11 @@ public class JythonShell extends InteractiveShell {
     }
 
     /**
-     * Get the interp
+     * Get the interpreter. Note: if {@link #interp} is {@code null}, this 
+     * method will call {@link #createInterpreter()} to create a new 
+     * {@link PythonInterpreter}. 
      *
-     * @return interp
+     * @return Active {@code PythonInterpreter}.
      */
     public PythonInterpreter getInterpreter() {
         if (interp == null) {
@@ -204,7 +220,6 @@ public class JythonShell extends InteractiveShell {
         }
         return interp;
     }
-
 
     /**
      * popup menu
@@ -257,7 +272,6 @@ public class JythonShell extends InteractiveShell {
         }
     }
 
-
     /**
      * List the variables in the interpreter
      */
@@ -298,7 +312,7 @@ public class JythonShell extends InteractiveShell {
      */
     @Override protected void handleKeyPress(KeyEvent e, JTextComponent cmdFld) {
         super.handleKeyPress(e, cmdFld);
-        if ((e.getKeyCode() == e.VK_M) && e.isControlDown()) {
+        if ((e.getKeyCode() == KeyEvent.VK_M) && e.isControlDown()) {
             showProcedurePopup(cmdFld);
         }
     }
@@ -544,14 +558,13 @@ public class JythonShell extends InteractiveShell {
             // Not sure if this is the desired behavior or not...
             // (do before interp.exec if you want to write to history no matter what.)
             historyFile.write(sb.toString());
-        	historyFile.flush();
+            historyFile.flush();
             jythonLogger.info(sb.toString());
-        	
         } catch (PyException pse) {
             endBufferingOutput();
             output("<font color=\"red\">Error: " + pse.toString() + "</font><br>");
         } catch (IOException exc) {
-        	logException("An error occurred trying to write to jython_history file", exc);
+            logException("An error occurred trying to write to jython_history file", exc);
         } catch (Exception exc) {
             endBufferingOutput();
             output("<font color=\"red\">Error: " + exc + "</font><br>");
@@ -592,5 +605,32 @@ public class JythonShell extends InteractiveShell {
      */
     public boolean getAutoSelect() {
         return autoSelect;
+    }
+
+    /**
+     * 
+     * 
+     * @param store The {@link IdvObjectStore} that contains persisted session values. Cannot be {@code null}.
+     * @param defaultBounds Window bounds to use if {@code PROP_JYTHON_WINDOW_BOUNDS} does not have an associated value. Cannot be {@code null}.
+     * 
+     * @return Either the value associated with {@code PROP_JYTHON_WINDOW_BOUNDS} or {@code defaultBounds}.
+     */
+    public static Rectangle loadWindowBounds(final IdvObjectStore store, final Rectangle defaultBounds) {
+        Rectangle windowBounds = (Rectangle)store.get(PROP_JYTHON_WINDOW_BOUNDS);
+        if (windowBounds == null) {
+            store.put(PROP_JYTHON_WINDOW_BOUNDS, defaultBounds);
+            windowBounds = defaultBounds;
+        }
+        return windowBounds;
+    }
+
+    /**
+     * 
+     * 
+     * @param store The {@link IdvObjectStore} that contains persisted session values. Cannot be {@code null}.
+     * @param windowBounds Window bounds to associate with {@code PROP_JYTHON_WINDOW_BOUNDS}. Cannot be {@code null}.
+     */
+    public static void saveWindowBounds(final IdvObjectStore store, final Rectangle windowBounds) {
+        store.put(PROP_JYTHON_WINDOW_BOUNDS, windowBounds);
     }
 }
