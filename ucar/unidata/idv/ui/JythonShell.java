@@ -93,7 +93,7 @@ import edu.wisc.ssec.mcidasv.McIDASV;
  * This class provides  an interactive shell for running JYthon
  *
  * @author IDV development team
- * @version $Revision$Date: 2012/05/24 15:06:56 $
+ * @version $Revision$Date: 2012/09/17 18:19:38 $
  */
 public class JythonShell extends InteractiveShell {
 
@@ -503,8 +503,7 @@ public class JythonShell extends InteractiveShell {
             if (jython.trim().length() == 0) {
                 return;
             }
-            super.eval(jython);
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(jython.length() * 2);
             for (String line : split(jython, "\n", false, false)) {
                 if (line.trim().startsWith("?")) {
                     while (!line.startsWith("?")) {
@@ -515,8 +514,10 @@ public class JythonShell extends InteractiveShell {
                 }
                 sb.append(line).append('\n');
             }
-
+            
             String code = sb.toString().trim();
+            super.eval(code);
+            
             if (autoSelect && !code.startsWith("import") && !code.startsWith("from")) {
                 int idx;
                 //Strip out any leading assignment
@@ -527,7 +528,7 @@ public class JythonShell extends InteractiveShell {
                     }
                     code = code.substring(idx + 1);
                 }
-
+                
                 List<DataOperand> operands = DerivedDataChoice.parseOperands(code);
                 List<DataOperand> unboundOperands = new ArrayList<DataOperand>();
                 for (DataOperand operand : operands) {
@@ -536,15 +537,15 @@ public class JythonShell extends InteractiveShell {
                         unboundOperands.add(operand);
                     }
                 }
-
+                
                 if (!unboundOperands.isEmpty()) {
-                    List result = idv.selectDataChoices(unboundOperands);
+                    List<DataChoice> result = (List<DataChoice>)idv.selectDataChoices(unboundOperands);
                     if (result == null) {
                         return;
                     }
                     for (int i = 0; i < result.size(); i++) {
                         DataOperand operand = operands.get(i);
-                        Data data = (Data)((DataChoice)result.get(i)).getData(null);
+                        Data data = result.get(i).getData(null);
                         interp.set(operand.getParamName(), data);
                     }
                 }
