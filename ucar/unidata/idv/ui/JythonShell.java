@@ -45,6 +45,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.io.OutputStream;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -93,7 +94,7 @@ import edu.wisc.ssec.mcidasv.McIDASV;
  * This class provides  an interactive shell for running JYthon
  *
  * @author IDV development team
- * @version $Revision$Date: 2012/09/17 18:19:38 $
+ * @version $Revision$Date: 2012/09/17 18:30:43 $
  */
 public class JythonShell extends InteractiveShell {
 
@@ -185,6 +186,16 @@ public class JythonShell extends InteractiveShell {
         store.save();
     }
 
+    @Override public void flipField() {
+        super.flipField();
+        getCommandFld().requestFocusInWindow();
+    }
+
+    @Override public void toFront() {
+        getCommandFld().requestFocusInWindow();
+        GuiUtils.toFront(frame);
+    }
+
     /**
      * This gets called by the base class to make the frame.
      * If you don't want this to popup then make this method a noop
@@ -197,7 +208,16 @@ public class JythonShell extends InteractiveShell {
         frame.setBounds(loadWindowBounds(idv.getStore(), frame.getBounds()));
         frame.setVisible(true);
         registerWindow(frame);
-        //When the window closes remove the interpreter
+
+        frame.addWindowFocusListener(new WindowFocusListener() {
+            @Override public void windowGainedFocus(WindowEvent event) {
+                getCommandFld().requestFocusInWindow();
+            }
+            @Override public void windowLostFocus(WindowEvent event) {
+            }
+        });
+
+        // when the window closes remove the interpreter
         frame.addWindowListener(new WindowAdapter() {
             @Override public void windowClosing(WindowEvent e) {
                 if (interp != null) {

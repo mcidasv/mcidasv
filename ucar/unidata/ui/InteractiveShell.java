@@ -73,7 +73,7 @@ import ucar.unidata.util.Misc;
  * This class provides  an abstract interactive shell
  *
  * @author IDV development team
- * @version $Revision$Date: 2012/03/28 14:59:29 $
+ * @version $Revision$Date: 2012/04/25 17:03:28 $
  */
 public class InteractiveShell implements HyperlinkListener {
 
@@ -149,7 +149,6 @@ public class InteractiveShell implements HyperlinkListener {
         commandArea = null;
         commandFld = null;
         frame = null;
-        logger.trace("closed {}", this);
     }
 
     public void show() {
@@ -312,7 +311,6 @@ public class InteractiveShell implements HyperlinkListener {
         } else {
             flipBtn.setIcon(getImageIcon("/auxdata/ui/icons/DownDown.gif"));
         }
-
     }
 
     /**
@@ -333,8 +331,8 @@ public class InteractiveShell implements HyperlinkListener {
     protected void handleKeyPress(KeyEvent e, JTextComponent cmdFld) {
         int size = history.size();
         boolean isArea  = (cmdFld instanceof JTextArea);
-        if (((!isArea&& e.getKeyCode() == e.VK_UP)
-                || ((e.getKeyCode() == e.VK_P)
+        if (((!isArea && e.getKeyCode() == KeyEvent.VK_UP)
+                || ((e.getKeyCode() == KeyEvent.VK_P)
                     && e.isControlDown())) && (size > 0)) {
             if ((historyIdx < 0) || (historyIdx >= size)) {
                 historyIdx = size - 1;
@@ -348,8 +346,8 @@ public class InteractiveShell implements HyperlinkListener {
                 cmdFld.setText(history.get(historyIdx));
             }
         }
-        if (((!isArea && e.getKeyCode() == e.VK_DOWN)
-                || ((e.getKeyCode() == e.VK_N)
+        if (((!isArea && e.getKeyCode() == KeyEvent.VK_DOWN)
+                || ((e.getKeyCode() == KeyEvent.VK_N)
                     && e.isControlDown())) && (size > 0)) {
             if ((historyIdx < 0) || (historyIdx >= size)) {
                 historyIdx = size - 1;
@@ -398,7 +396,7 @@ public class InteractiveShell implements HyperlinkListener {
      *
      * @return _more_
      */
-    private JTextComponent getCommandFld() {
+    protected JTextComponent getCommandFld() {
         if (cardLayoutPanel.getVisibleIndex() == 0) {
             return commandFld;
         }
@@ -455,9 +453,7 @@ public class InteractiveShell implements HyperlinkListener {
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
                 editorPane.setText(sb.toString());
-                try {
-                    editorPane.scrollRectToVisible(new Rectangle(0, 10000, 1, 1));
-                } catch(Exception exc) {}
+                editorPane.scrollRectToVisible(new Rectangle(0, 10000, 1, 1));
             }
         });
     }
