@@ -113,49 +113,48 @@ class _MappedAreaImageFlatField(AreaImageFlatField):
     def __getDirValue(self, key):
         if key not in self.__keys:
             raise KeyError('unknown key: %s' % key)
-        try:
-            if key == 'bands':
-                return self.areaDirectory.getBands()
-            elif key == 'calinfo':
-                return self.areaDirectory.getCalInfo()
-            elif key == 'calibration-scale-factor':
-                return self.areaDirectory.getCalibrationScaleFactor()
-            elif key == 'calibration-type':
-                return self.areaDirectory.getCalibrationType()
-            elif key == 'calibration-unit-name':
-                return self.areaDirectory.getCalibrationUnitName()
-            elif key == 'center-latitude':
-                return self.areaDirectory.getCenterLatitude()
-            elif key == 'center-latitude-resolution':
-                return self.areaDirectory.getCenterLatitudeResolution()
-            elif key == 'center-longitude':
-                return self.areaDirectory.getCenterLongitude()
-            elif key == 'center-longitude-resolution':
-                return self.areaDirectory.getCenterLongitudeResolution()
-            elif key == 'directory-block':
-                return self.areaDirectory.getDirectoryBlock()
-            elif key == 'elements':
-                return self.areaDirectory.getElements()
-            elif key == 'lines':
-                return self.areaDirectory.getLines()
-            elif key == 'memo-field':
-                return self.areaDirectory.getMemoField()
-            elif key == 'nominal-time':
-                return self.areaDirectory.getNominalTime()
-            elif key == 'band-count':
-                return self.areaDirectory.getNumberOfBands()
-            elif key == 'sensor-id':
-                return self.areaDirectory.getSensorID()
-            elif key == 'sensor-type':
-                return self.areaDirectory.getSensorType()
-            elif key == 'source-type':
-                return self.areaDirectory.getSourceType()
-            elif key == 'start-time':
-                return self.areaDirectory.getStartTime()
-            elif key == 'url':
-                return self.aid.getSource()
-        except KeyError, e:
-            raise KeyError('should not be capable of reaching here: %s' % e)
+        if key == 'bands':
+            return self.areaDirectory.getBands()
+        elif key == 'calinfo':
+            return self.areaDirectory.getCalInfo()
+        elif key == 'calibration-scale-factor':
+            return self.areaDirectory.getCalibrationScaleFactor()
+        elif key == 'calibration-type':
+            return self.areaDirectory.getCalibrationType()
+        elif key == 'calibration-unit-name':
+            return self.areaDirectory.getCalibrationUnitName()
+        elif key == 'center-latitude':
+            return self.areaDirectory.getCenterLatitude()
+        elif key == 'center-latitude-resolution':
+            return self.areaDirectory.getCenterLatitudeResolution()
+        elif key == 'center-longitude':
+            return self.areaDirectory.getCenterLongitude()
+        elif key == 'center-longitude-resolution':
+            return self.areaDirectory.getCenterLongitudeResolution()
+        elif key == 'directory-block':
+            return self.areaDirectory.getDirectoryBlock()
+        elif key == 'elements':
+            return self.areaDirectory.getElements()
+        elif key == 'lines':
+            return self.areaDirectory.getLines()
+        elif key == 'memo-field':
+            return self.areaDirectory.getMemoField()
+        elif key == 'nominal-time':
+            return self.areaDirectory.getNominalTime()
+        elif key == 'band-count':
+            return self.areaDirectory.getNumberOfBands()
+        elif key == 'sensor-id':
+            return self.areaDirectory.getSensorID()
+        elif key == 'sensor-type':
+            return self.areaDirectory.getSensorType()
+        elif key == 'source-type':
+            return self.areaDirectory.getSourceType()
+        elif key == 'start-time':
+            return self.areaDirectory.getStartTime()
+        elif key == 'url':
+            return self.aid.getSource()
+        else:
+            raise KeyError('should not be capable of reaching here: %s')
     
     def __repr__(self):
         return repr(dict(self.iteritems()))
