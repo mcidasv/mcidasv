@@ -21,7 +21,7 @@ def _mcvinit_classpath_hack():
     """
     classpath = System.getProperty('java.class.path')
     
-    # supply platform-dependent paths to various JAR files 
+    # supply platform-dependent paths to various JAR files
     # (in case they somehow are not present in the classpath)
     osname = System.getProperty('os.name')
     current_dir = os.path.normpath(os.getcwd())
@@ -38,7 +38,7 @@ def _mcvinit_classpath_hack():
         elif entry.endswith('visad.jar'):
             visad_jar = entry
     
-    return { 'mcidasv': mcv_jar, 'idv': idv_jar, 'visad': visad_jar }
+    return {'mcidasv': mcv_jar, 'idv': idv_jar, 'visad': visad_jar}
 
 def _mcvinit_jythonpaths():
     """Creates a list of paths containing required Python source code.
@@ -108,7 +108,7 @@ from mcvadde import (
     enum, DEFAULT_ACCOUNTING, CoordinateSystems, Places, getDescriptor,
     getADDEImage, listADDEImages, params1, params_area_coords,
     params_image_coords, params_sizeall, disableAddeDebug, enableAddeDebug,
-    isAddeDebugEnabled, LATLON, AREA, IMAGE, ULEFT, CENTER
+    isAddeDebugEnabled, LATLON, AREA, IMAGE, ULEFT, CENTER, testADDEImage
 )
 
 from interactive import (

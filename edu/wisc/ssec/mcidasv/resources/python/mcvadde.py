@@ -437,13 +437,14 @@ def testADDEImage(server, dataset, descriptor,
     
     addeUrlFormat = "adde://%s/imagedata?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s"
     url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position)
+    retvals = (-1, -1)
     
     try:
         mapped = _MappedAreaImageFlatField(url)
-        return mapped.getDictionary(), mapped
+        retvals = mapped.getDictionary(), mapped
     except AreaFileException, e:
         print 'AreaFileException: url:', url, e
     except AddeURLException, e:
         print 'AddeURLException: url:', url, e
-    finally:
-        return (-1, -1)
+    
+    return retvals
