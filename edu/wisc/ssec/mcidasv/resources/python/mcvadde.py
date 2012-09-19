@@ -323,6 +323,7 @@ def getADDEImage(server, dataset, descriptor,
     
     addeUrlFormat = "adde://%s/imagedata?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s"
     url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position)
+    retvals = (-1, -1)
     
     try:
         area = AreaAdapter(url)
@@ -337,8 +338,8 @@ def getADDEImage(server, dataset, descriptor,
         if debug:
             print 'exception: %s\n' % (str(err))
             print 'problem with adde url:', url
-    finally:
-        return retvals
+    
+    return retvals
 
 
 def testADDEImage(server, dataset, descriptor,
