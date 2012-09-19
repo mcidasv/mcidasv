@@ -103,6 +103,7 @@ class _MappedAreaImageFlatField(AreaImageFlatField):
         rangeSets = ff.getRangeSets()
         units = ff.getRangeUnits()[0]
         AreaImageFlatField.__init__(self, self.addeDescriptor, ftype, domainSet, rangeCoordSys, rangeSets, units, samples, "READLABEL")
+        self.startTime = ff.getStartTime()
     
     def getDictionary(self):
         return dict(self.iteritems())
