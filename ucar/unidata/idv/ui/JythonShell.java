@@ -94,7 +94,7 @@ import edu.wisc.ssec.mcidasv.McIDASV;
  * This class provides  an interactive shell for running JYthon
  *
  * @author IDV development team
- * @version $Revision$Date: 2012/09/17 18:30:43 $
+ * @version $Revision$Date: 2012/09/17 20:20:55 $
  */
 public class JythonShell extends InteractiveShell {
 
@@ -583,12 +583,12 @@ public class JythonShell extends InteractiveShell {
             jythonLogger.info(sb.toString());
         } catch (PyException pse) {
             endBufferingOutput();
-            output("<font color=\"red\">Error: " + pse.toString() + "</font><br>");
+            output("<font color=\"red\">" + formatCode(pse.toString()) + "</font><br/>");
         } catch (IOException exc) {
             logException("An error occurred trying to write to jython_history file", exc);
         } catch (Exception exc) {
             endBufferingOutput();
-            output("<font color=\"red\">Error: " + exc + "</font><br>");
+            output("<font color=\"red\">" + formatCode(exc.toString()) + "</font><br/>");
         }
     }
 
