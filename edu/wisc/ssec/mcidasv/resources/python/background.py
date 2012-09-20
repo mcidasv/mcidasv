@@ -87,13 +87,93 @@ def managedDataSource(path, cleanup=True, dataType=None):
         if cleanup:
             boomstick()
 
-class _MappedAreaImageFlatField(AreaImageFlatField):
+
+class _MappedData(object):
+    """ 'Abstract' class for combined VisAD Data / Python dictionary objects
+
+    Subclasses should override the _getDirValue method.
+    """
+    def __init__(self, keys):
+        self._keys = keys
+
+    def _getDirValue(self, key):
+        # subclasses should override!
+        raise NotImplementedError()
+
+    def getDictionary(self):
+        return dict(self.iteritems())
+
+    def __repr__(self):
+        return repr(dict(self.iteritems()))
+    
+    def __len__(self):
+        return len(self._keys)
+    
+    def __getitem__(self, key):
+        try:
+            return self._getDirValue(key)
+        except KeyError:
+            raise KeyError()
+    
+    def __iter__(self):
+        for x in self._keys:
+            yield x
+    
+    def __contains__(self, item):
+        for value in self.itervalues():
+            if item == value:
+                return True
+        return False
+    
+    def keys(self):
+        return list(self._keys)
+    
+    def items(self):
+        mappedItems = []
+        for key in self._keys:
+            mappedItems.append((key, self._getDirValue(key)))
+        return mappedItems
+    
+    def iteritems(self):
+        for key in self._keys:
+            yield (key, self._getDirValue(key))
+    
+    def iterkeys(self):
+        return iter(self._keys)
+    
+    def itervalues(self):
+        for key in self._keys:
+            yield self._getDirValue(key)
+    
+    def values(self):
+        return [self._getDirValue(key) for key in self._keys]
+    
+    def has_key(self, key):
+        return key in self._keys
+    
+    def get(self, key, default=None):
+        try:
+            return self._getDirValue(key)
+        except KeyError:
+            return default
+    
+    def __reversed__(self): raise NotImplementedError()
+    def __setitem__(self, key, value): raise NotImplementedError()
+    def __delitem__(self, key): raise NotImplementedError()
+    def setdefault(self, key, failobj=None): raise NotImplementedError()
+    def pop(self, key, *args): raise NotImplementedError()
+    def popitem(self): raise NotImplementedError()
+    def update(self, newDict=None, **kwargs): raise NotImplementedError()
+
+
+class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
     def __init__(self, imageUrl):
         areaFile = AreaFileFactory.getAreaFileInstance(imageUrl)
         self.areaDirectory = areaFile.getAreaDirectory()
         self.addeDescriptor = AddeImageDescriptor(self.areaDirectory, imageUrl)
         # self.__mappedObject = AreaImageFlatField.createImmediate(areaDirectory, imageUrl)
-        self.__keys = ['bands', 'calinfo', 'calibration-scale-factor', 'calibration-type', 'calibration-unit-name', 'center-latitude', 'center-latitude-resolution', 'center-longitude', 'center-longitude-resolution', 'directory-block', 'elements', 'lines', 'memo-field', 'nominal-time', 'band-count', 'sensor-id', 'sensor-type', 'source-type', 'start-time', 'url']
+        keys = ['bands', 'calinfo', 'calibration-scale-factor', 'calibration-type', 'calibration-unit-name', 'center-latitude', 'center-latitude-resolution', 'center-longitude', 'center-longitude-resolution', 'directory-block', 'elements', 'lines', 'memo-field', 'nominal-time', 'band-count', 'sensor-id', 'sensor-type', 'source-type', 'start-time', 'url']
+        _MappedData.__init__(self, keys)
         aa = AreaAdapter(imageUrl, False)
         ff = aa.getImage()
         samples = ff.unpackFloats()
@@ -105,14 +185,11 @@ class _MappedAreaImageFlatField(AreaImageFlatField):
         AreaImageFlatField.__init__(self, self.addeDescriptor, ftype, domainSet, rangeCoordSys, rangeSets, units, samples, "READLABEL")
         self.startTime = ff.getStartTime()
     
-    def getDictionary(self):
-        return dict(self.iteritems())
-    
     def test(self):
         return self.aid
     
-    def __getDirValue(self, key):
-        if key not in self.__keys:
+    def _getDirValue(self, key):
+        if key not in self._keys:
             raise KeyError('unknown key: %s' % key)
         if key == 'bands':
             return self.areaDirectory.getBands()
@@ -156,68 +233,6 @@ class _MappedAreaImageFlatField(AreaImageFlatField):
             return self.aid.getSource()
         else:
             raise KeyError('should not be capable of reaching here: %s')
-    
-    def __repr__(self):
-        return repr(dict(self.iteritems()))
-    
-    def __len__(self):
-        return len(self.__keys)
-    
-    def __getitem__(self, key):
-        try:
-            return self.__getDirValue(key)
-        except KeyError:
-            raise KeyError()
-    
-    def __iter__(self):
-        for x in self.__keys:
-            yield x
-    
-    def __contains__(self, item):
-        for value in self.itervalues():
-            if item == value:
-                return True
-        return False
-    
-    def keys(self):
-        return list(self.__keys)
-    
-    def items(self):
-        mappedItems = []
-        for key in self.__keys:
-            mappedItems.append((key, self.__getDirValue(key)))
-        return mappedItems
-    
-    def iteritems(self):
-        for key in self.__keys:
-            yield (key, self.__getDirValue(key))
-    
-    def iterkeys(self):
-        return iter(self.__keys)
-    
-    def itervalues(self):
-        for key in self.__keys:
-            yield self.__getDirValue(key)
-    
-    def values(self):
-        return [self.__getDirValue(key) for key in self.__keys]
-    
-    def has_key(self, key):
-        return key in self.__keys
-    
-    def get(self, key, default=None):
-        try:
-            return self.__getDirValue(key)
-        except KeyError:
-            return default
-    
-    def __reversed__(self): raise NotImplementedError()
-    def __setitem__(self, key, value): raise NotImplementedError()
-    def __delitem__(self, key): raise NotImplementedError()
-    def setdefault(self, key, failobj=None): raise NotImplementedError()
-    def pop(self, key, *args): raise NotImplementedError()
-    def popitem(self): raise NotImplementedError()
-    def update(self, newDict=None, **kwargs): raise NotImplementedError()
 
 
 class _JavaProxy(object):
