@@ -254,6 +254,7 @@ public class EntryStore {
             "MCPATH=" + USER_DIRECTORY+':'+ADDE_DATA,
             "MCNOPREPEND=1",
             "MCTRACE=" + MCTRACE,
+            "MCTRACK=NO",
             "MCJAVAPATH=" + System.getProperty("java.home"),
             "MCBUFRJARPATH=" + ADDE_BIN,
             "SYSTEMDRIVE=" + System.getenv("SystemDrive"),
@@ -271,6 +272,7 @@ public class EntryStore {
             "DYLD_LIBRARY_PATH=" + ADDE_BIN,
             "MCNOPREPEND=1",
             "MCTRACE=" + MCTRACE,
+            "MCTRACK=NO",
             "MCJAVAPATH=" + System.getProperty("java.home"),
             "MCBUFRJARPATH=" + ADDE_BIN
         };
