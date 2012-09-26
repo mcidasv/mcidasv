@@ -46,6 +46,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.awt.event.WindowListener;
 import java.io.OutputStream;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -94,12 +95,12 @@ import edu.wisc.ssec.mcidasv.McIDASV;
  * This class provides  an interactive shell for running JYthon
  *
  * @author IDV development team
- * @version $Revision$Date: 2012/09/17 20:20:55 $
+ * @version $Revision$Date: 2012/09/19 16:55:46 $
  */
 public class JythonShell extends InteractiveShell {
 
     /** property that holds jython shell window location and size. */
-    public static final String PROP_JYTHON_WINDOW_BOUNDS = "prop.jython.shell.windowbounds";
+    public static final String PROP_JYTHON_WINDOW = "prop.jython.shell.windowrect";
 
     /** property that holds the history */
     public static final String PROP_JYTHON_SHELL_HISTORY =
@@ -205,7 +206,8 @@ public class JythonShell extends InteractiveShell {
     @Override protected void makeFrame() {
         frame = new JFrame(WINDOW_TITLE);
         frame.getContentPane().add(contents);
-        frame.setBounds(loadWindowBounds(idv.getStore(), frame.getBounds()));
+        frame.pack();
+        frame.setBounds(loadWindowBounds(idv.getStore(), new Rectangle(100, 100, 600, 500)));
         frame.setVisible(true);
         registerWindow(frame);
 
@@ -223,6 +225,7 @@ public class JythonShell extends InteractiveShell {
                 if (interp != null) {
                     idv.getJythonManager().removeInterpreter(interp);
                 }
+//                saveWindowBounds(idv.getStore(), frame.getBounds());
             }
         });
     }
@@ -637,11 +640,13 @@ public class JythonShell extends InteractiveShell {
      * @return Either the value associated with {@code PROP_JYTHON_WINDOW_BOUNDS} or {@code defaultBounds}.
      */
     public static Rectangle loadWindowBounds(final IdvObjectStore store, final Rectangle defaultBounds) {
-        Rectangle windowBounds = (Rectangle)store.get(PROP_JYTHON_WINDOW_BOUNDS);
+        Rectangle windowBounds = (Rectangle)store.get(PROP_JYTHON_WINDOW);
         if (windowBounds == null) {
-            store.put(PROP_JYTHON_WINDOW_BOUNDS, defaultBounds);
+            store.put(PROP_JYTHON_WINDOW, defaultBounds);
             windowBounds = defaultBounds;
         }
+        // TODO(jon): remove these calls after a little time has passed.
+        store.remove("prop.jython.shell.windowbounds");
         return windowBounds;
     }
 
@@ -652,6 +657,8 @@ public class JythonShell extends InteractiveShell {
      * @param windowBounds Window bounds to associate with {@code PROP_JYTHON_WINDOW_BOUNDS}. Cannot be {@code null}.
      */
     public static void saveWindowBounds(final IdvObjectStore store, final Rectangle windowBounds) {
-        store.put(PROP_JYTHON_WINDOW_BOUNDS, windowBounds);
+        store.put(PROP_JYTHON_WINDOW, windowBounds);
+        // TODO(jon): remove these calls after a little time has passed.
+        store.remove("prop.jython.shell.windowbounds");
     }
 }
