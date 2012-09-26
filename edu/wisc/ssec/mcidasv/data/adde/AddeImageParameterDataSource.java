@@ -1835,8 +1835,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
         Hashtable props = subset.getProperties();
         
-        String position = getKey(src, "POS");
-        AreaDirectory hacked = positionToDescriptor.get(position);
+//        String position = getKey(src, "POS");
+//        AreaDirectory hacked = positionToDescriptor.get(position);
 
         // it only makes sense to set the following properties for things
         // coming from an ADDE server
@@ -1845,9 +1845,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 src = replaceKey(src, "PLACE", props.get("PLACE"));
             }
             if (props.containsKey("LATLON")) { 
-//                src = replaceKey(src, "LINELE", "LATLON", props.get("LATLON"));
-                String latlon = hacked.getCenterLatitude() + " " + hacked.getCenterLongitude();
-                src = replaceKey(src, "LINELE", "LATLON", latlon);
+                src = replaceKey(src, "LINELE", "LATLON", props.get("LATLON"));
+//                String latlon = hacked.getCenterLatitude() + " " + hacked.getCenterLongitude();
+//                src = replaceKey(src, "LINELE", "LATLON", latlon);
             }
             if (props.containsKey("LINELE")) {
                 src = removeKey(src, "LATLON");
@@ -1858,7 +1858,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             }
         }
         
-        logger.trace("adjusted src={} pos={} hacked lat={} lon={}", new Object[] { src, position, hacked.getCenterLatitude(), hacked.getCenterLongitude() });
+//        logger.trace("adjusted src={} pos={} hacked lat={} lon={}", new Object[] { src, position, hacked.getCenterLatitude(), hacked.getCenterLongitude() });
+        logger.trace("adjusted src={}", src);
         aid.setSource(src);
 
         SingleBandedImage result;
@@ -2229,6 +2230,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         aii.setElements(eles);
                         desc.setImageInfo(aii);
                         desc.setSource(aii.getURLString());
+                        logger.trace("url string={}", aii.getURLString());
                     }
                     descriptors.add(desc);
                 } catch (CloneNotSupportedException cnse) {}
@@ -2423,8 +2425,15 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     int lines = areaDirectory.getLines();
                     int elements = areaDirectory.getElements();
                     int currentDimensions = lines * elements;
-                    logger.trace("image pos={} lines={} elements={} lat={} lon={} currentDimensions={} areaDirectory={}", new Object[] { pos, lines, elements, areaDirectory.getCenterLatitude(), areaDirectory.getCenterLongitude(), currentDimensions, areaDirectory });
-                    positionToDescriptor.put(pos, areaDirectory);
+                    logger.trace("image pos={} lines={} elements={} lat={} lon={} startTime='{}' nomTime='{}' currentDimensions={} areaDirectory={}", new Object[] { pos, lines, elements, areaDirectory.getCenterLatitude(), areaDirectory.getCenterLongitude(), areaDirectory.getStartTime(), areaDirectory.getNominalTime(), currentDimensions, areaDirectory });
+//                    if (isRelative) {
+//                        positionToDescriptor.put(pos, areaDirectory);
+//                        
+//                    } else {
+//                        String key = areaDirectory.getStartTime().toString();
+//                        positionToDescriptor.put(key, areaDirectory);
+//                        
+//                    }
                     if (imageSize < currentDimensions) {
                         logger.trace("found new max size! old={} new={}", imageSize, currentDimensions);
                         imageSize = currentDimensions;
