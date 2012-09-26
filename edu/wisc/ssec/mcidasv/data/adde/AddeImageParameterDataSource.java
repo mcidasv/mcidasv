@@ -219,6 +219,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     /** Are any of the data choices based upon remote files? */
     private boolean hasRemoteChoices = false;
 
+    private Map<String, AreaDirectory> requestIdToDirectory = new HashMap<String, AreaDirectory>();
+    
     public AddeImageParameterDataSource() {} 
 
     /**
@@ -883,15 +885,14 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     AreaAdapter aa = null;
                     AREACoordinateSystem acs = null;
                     try {
-                    	logger.trace("creating AreaFile from src={}", baseSource);
-                    	if (showPreview) {
-                    		aa = new AreaAdapter(baseSource, false);
-                    		this.previewImage = (FlatField)aa.getImage();
-                    	}
-                    	else {
-                    		this.previewImage = Util.makeField(0, 1, 1, 0, 1, 1, 0, "TEMP");
-                    	}
-                    	
+                        logger.trace("creating AreaFile from src={}", baseSource);
+                        if (showPreview) {
+                            aa = new AreaAdapter(baseSource, false);
+                            this.previewImage = (FlatField)aa.getImage();
+                        } else {
+                            this.previewImage = Util.makeField(0, 1, 1, 0, 1, 1, 0, "TEMP");
+                        }
+                        
                         AreaFile af = new AreaFile(baseSource);
                         previewNav = af.getNavigation();
                         AreaDirectory ad = af.getAreaDirectory();
@@ -1158,12 +1159,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         logger.trace("building preview request from src={}", src);
         
         src = removeKey(src, LATLON_KEY);
-//        src = replaceKey(src, LINELE_KEY, (Object)uLStr);
-//        src = replaceKey(src, PLACE_KEY, (Object)("ULEFT"));
-//        src = replaceKey(src, SIZE_KEY, (Object)(lSize + " " + eSize));
-//        src = replaceKey(src, MAG_KEY, (Object)(lMag + " " + eMag));
-//        src = replaceKey(src, BAND_KEY, (Object)(bi.getBandNumber()));
-//        src = replaceKey(src, UNIT_KEY, (Object)(unit));
         src = replaceKey(src, LINELE_KEY, uLStr);
         src = replaceKey(src, PLACE_KEY, "ULEFT");
         src = replaceKey(src, SIZE_KEY,(lSize + " " + eSize));
@@ -1185,21 +1180,16 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             aid = new AddeImageDescriptor(src);
         } catch (Exception excp) {
             handlePreviewImageError(4, excp);
-//            src = replaceKey(src, BAND_KEY, (Object)saveBand);
             src = replaceKey(src, BAND_KEY, saveBand);
             aid = new AddeImageDescriptor(src);
-//            src = replaceKey(src, BAND_KEY, (Object)(bi.getBandNumber()));
             src = replaceKey(src, BAND_KEY, bi.getBandNumber());
         }
         if (msgFlag && (!"ALL".equals(saveBand))) {
-//            src = replaceKey(src, BAND_KEY, (Object)saveBand);
             src = replaceKey(src, BAND_KEY, saveBand);
         }
         logger.trace("overwriting\nbaseSource={}\nsrc={}", baseSource, src);
         baseSource = src;
-
         getIdv().showNormalCursor();
-
         return true;
     }
 
@@ -1806,6 +1796,12 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         }
     }
 
+//    private String extractTimestampFromUrl(final String url) {
+//        String day = getKey(url, "DAY");
+//        String time = getKey(url, "TIME");
+//        
+//    }
+    
     /**
      * Create the single image defined by the given {@link ucar.unidata.data.imagery.AddeImageDescriptor AddeImageDescriptor}.
      *
@@ -1830,13 +1826,22 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             return null;
         }
 
-        logger.trace("incoming src={} readLabel={}", aid.getSource(), readLabel);
+        logger.trace("incoming src={} DateTime={} readLabel={}", new Object[] { aid.getSource(), aid.getImageTime(), readLabel });
         String src = aid.getSource();
 
         Hashtable props = subset.getProperties();
         
-//        String position = getKey(src, "POS");
-//        AreaDirectory hacked = positionToDescriptor.get(position);
+//        String areaDirectoryKey = getKey(src, "POS");
+        String areaDirectoryKey = null;
+        if (aid.getIsRelative()) {
+            areaDirectoryKey = getKey(src, "POS");
+        } else {
+            String keyDate = getKey(src, "DAY");
+            String keyTime = getKey(src, "TIME");
+            areaDirectoryKey = aid.getImageTime().toString();
+//            areaDirectoryKey = getKey(src, "TIME");
+        }
+        AreaDirectory hacked = requestIdToDirectory.get(areaDirectoryKey);
 
         // it only makes sense to set the following properties for things
         // coming from an ADDE server
@@ -1845,9 +1850,12 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 src = replaceKey(src, "PLACE", props.get("PLACE"));
             }
             if (props.containsKey("LATLON")) { 
-                src = replaceKey(src, "LINELE", "LATLON", props.get("LATLON"));
-//                String latlon = hacked.getCenterLatitude() + " " + hacked.getCenterLongitude();
-//                src = replaceKey(src, "LINELE", "LATLON", latlon);
+                if (hacked != null) {
+                    String latlon = hacked.getCenterLatitude() + " " + hacked.getCenterLongitude();
+                    src = replaceKey(src, "LINELE", "LATLON", latlon);
+                } else {
+                    src = replaceKey(src, "LINELE", "LATLON", props.get("LATLON"));
+                }
             }
             if (props.containsKey("LINELE")) {
                 src = removeKey(src, "LATLON");
@@ -1857,9 +1865,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 src = replaceKey(src, "MAG", props.get("MAG"));
             }
         }
-        
-//        logger.trace("adjusted src={} pos={} hacked lat={} lon={}", new Object[] { src, position, hacked.getCenterLatitude(), hacked.getCenterLongitude() });
-        logger.trace("adjusted src={}", src);
+        if (hacked != null) {
+            logger.trace("adjusted src={} areaDirectoryKey='{}' hacked lat={} lon={}", new Object[] { src, areaDirectoryKey, hacked.getCenterLatitude(), hacked.getCenterLongitude() });
+        }
         aid.setSource(src);
 
         SingleBandedImage result;
@@ -2230,7 +2238,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         aii.setElements(eles);
                         desc.setImageInfo(aii);
                         desc.setSource(aii.getURLString());
-                        logger.trace("url string={}", aii.getURLString());
                     }
                     descriptors.add(desc);
                 } catch (CloneNotSupportedException cnse) {}
@@ -2336,9 +2343,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 //        logger.trace("could return AddeImageDescriptor:\nisRelative={}\nrelativeIndex={}\ntime={}\ndirectory={}\n", new Object[] { descriptor.getIsRelative(), descriptor.getRelativeIndex(), descriptor.getImageTime(), descriptor.getDirectory()});
 //        return directory;
 //    }
-    
-    private Map<String, AreaDirectory> positionToDescriptor = new HashMap<String, AreaDirectory>();
-    
+
     private AddeImageDescriptor getPreviewDirectory(AddeImageDescriptor aid) {
         AreaDirectory directory = aid.getDirectory();
         AddeImageDescriptor descriptor = null;
@@ -2425,15 +2430,20 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     int lines = areaDirectory.getLines();
                     int elements = areaDirectory.getElements();
                     int currentDimensions = lines * elements;
-                    logger.trace("image pos={} lines={} elements={} lat={} lon={} startTime='{}' nomTime='{}' currentDimensions={} areaDirectory={}", new Object[] { pos, lines, elements, areaDirectory.getCenterLatitude(), areaDirectory.getCenterLongitude(), areaDirectory.getStartTime(), areaDirectory.getNominalTime(), currentDimensions, areaDirectory });
-//                    if (isRelative) {
-//                        positionToDescriptor.put(pos, areaDirectory);
-//                        
-//                    } else {
-//                        String key = areaDirectory.getStartTime().toString();
-//                        positionToDescriptor.put(key, areaDirectory);
-//                        
-//                    }
+                    logger.trace("image pos={} lines={} elements={} lat={} lon={} startTime='{}' nominalTime='{}' currentDimensions={} areaDirectory={}", new Object[] { pos, lines, elements, areaDirectory.getCenterLatitude(), areaDirectory.getCenterLongitude(), areaDirectory.getStartTime(), areaDirectory.getNominalTime(), currentDimensions, areaDirectory });
+                    String key = null;
+                    if (isRelative) {
+                        key = pos;
+                    } else {
+                        try {
+                            DateTime reformatted = new DateTime(areaDirectory.getNominalTime());
+                            key = reformatted.toString();
+                        } catch (VisADException e) {
+                            logger.error("could not reformat time string='"+areaDirectory.getNominalTime().toString()+"'", e);
+                            key = areaDirectory.getNominalTime().toString();
+                        }
+                    }
+                    requestIdToDirectory.put(key, areaDirectory);
                     if (imageSize < currentDimensions) {
                         logger.trace("found new max size! old={} new={}", imageSize, currentDimensions);
                         imageSize = currentDimensions;
