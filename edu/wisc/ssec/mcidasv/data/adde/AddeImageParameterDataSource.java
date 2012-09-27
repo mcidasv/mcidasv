@@ -118,6 +118,7 @@ import ucar.unidata.util.TwoFacedObject;
 import ucar.visad.Util;
 import ucar.visad.data.AreaImageFlatField;
 
+import edu.wisc.ssec.mcidasv.chooser.adde.AddeImageParameterChooser;
 import edu.wisc.ssec.mcidasv.data.GeoLatLonSelection;
 import edu.wisc.ssec.mcidasv.data.GeoPreviewSelection;
 
@@ -2445,13 +2446,32 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     }
                     requestIdToDirectory.put(key, areaDirectory);
                     if (imageSize < currentDimensions) {
-                        logger.trace("found new max size! old={} new={}", imageSize, currentDimensions);
+                        
                         imageSize = currentDimensions;
                         maxLine = lines;
                         maxEle = elements;
                         directory = areaDirectory;
-                        previewUrl = previewUrl.replace("imagedir", "imagedata");
-                        descriptor = new AddeImageDescriptor(areaDirectory, previewUrl);
+                        // TODO(jon): should be grabbing coord sys from chooser setting (HOW TO DO THAT!?)
+                        String latlonString = areaDirectory.getCenterLatitude() + " " + areaDirectory.getCenterLongitude() + " E";
+                        String largestPreviewUrl = previewUrl.replace("imagedir", "imagedata");
+                        largestPreviewUrl = replaceKey(largestPreviewUrl, "PLACE", "CENTER");
+                        largestPreviewUrl = replaceKey(largestPreviewUrl, "LATLON", latlonString);
+                        Hashtable dataSourceProperties = this.getProperties();
+                        if (dataSourceProperties.containsKey("navigation")) {
+                            largestPreviewUrl = replaceKey(largestPreviewUrl, "NAV", dataSourceProperties.get("navigation"));
+                            
+                        }
+                        
+                        if (isRelative) {
+                            largestPreviewUrl = replaceKey(largestPreviewUrl, "POS", pos);
+                        } else {
+                            logger.trace("need to set DAY and TIME keywords for absolute times!");
+                        }
+//                        previewUrl = previewUrl.replace("imagedir", "imagedata");
+//                        logger.trace("found new max size! old={} new={} url={}", new Object[] { imageSize, currentDimensions, previewUrl });
+//                        descriptor = new AddeImageDescriptor(areaDirectory, previewUrl);
+                        logger.trace("found new max size! old={} new={} url={}", new Object[] { imageSize, currentDimensions, largestPreviewUrl });
+                        descriptor = new AddeImageDescriptor(areaDirectory, largestPreviewUrl);
 //                        descriptor = new AddeImageDescriptor(previewUrl);
 //                        descriptor.setDirectory(areaDirectory);
 //                        descriptor = new AddeImageDescriptor(areaDirectory, previewUrl);
