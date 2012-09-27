@@ -36,24 +36,6 @@ This file overrides IDV addeservers.xml
   
   <!-- NON-SSEC servers below -->
 
-  <server name="adde.cise-nsf.gov">
-    <group
-       names="RTIMAGES,BLIZZARD,CIMSS,GINIEAST,GINCOMP,NEXRCOMP,TOPO"
-       type="image"/>
-    <group
-       names="RTGRIDS"
-       type="grid"/>
-    <group
-       names="RTNEXRAD"
-       type="radar"/>
-     <group
-       names="RTPTSRC"
-       type="point"/>
-     <group
-       names="RTWXTEXT"
-       type="text"/>
-  </server>
-  
   <server name="adde.ucar.edu">
     <group
        names="RTIMAGES,BLIZZARD,CIMSS,GINIEAST,GINIWEST,GINICOMP,NEXRCOMP,TOPO"
