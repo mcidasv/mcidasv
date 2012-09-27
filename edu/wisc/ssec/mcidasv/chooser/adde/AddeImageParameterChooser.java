@@ -80,7 +80,8 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
     public final static String MAG_KEY = "mag";
     public final static String UNIT_KEY = "unit";
     public final static String PREVIEW_KEY = "preview";
-    
+    public final static String NAVIGATION_KEY = "navigation";
+
     /** Property for image default value unit */
     protected static final String PROP_NAV = "NAV";
 
@@ -239,8 +240,9 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
             if (restoreElement.hasAttribute(ATTR_UNIT)) {
                 ht.put(UNIT_KEY, (Object)(restoreElement.getAttribute(ATTR_UNIT)));
             }
+        } else {
+            ht.put(NAVIGATION_KEY, (Object)getPropValue(PROP_NAV, null));
         }
-        
         ht.put(PREVIEW_KEY, (Object)previewBox.isSelected());
     }
     
