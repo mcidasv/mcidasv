@@ -1436,6 +1436,12 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         return new File(descriptor.getSource()).exists();
     }
 
+    private String[] getLatitudeLongitudeFromUrl(final String url) {
+        String location = getKey(url, "LATLON");
+        List<String> pair = StringUtil.split(location, " ");
+        return new String[] { pair.get(0), pair.get(1) };
+    }
+
     /**
      * Create the actual data represented by the given
      * {@link ucar.unidata.data.DataChoice}.
@@ -1736,6 +1742,28 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     }
                 }
 
+                String areaDirectoryKey = null;
+                if (aid.getIsRelative()) {
+                    areaDirectoryKey = getKey(src, "POS");
+                } else {
+                    String keyDate = getKey(src, "DAY");
+                    String keyTime = getKey(src, "TIME");
+                    areaDirectoryKey = aid.getImageTime().toString();
+//                    areaDirectoryKey = getKey(src, "TIME");
+                }
+                AreaDirectory hacked = requestIdToDirectory.get(areaDirectoryKey);
+                
+//                String[] locationPair = getLatitudeLongitudeFromUrl(src);
+//                String lat = locationPair[0];
+//                String lon = locationPair[1];
+//                
+                boolean contained = AddeImageParameterDataSource.isAreaDirectoryInDataSelection(hacked, subset);
+                logger.trace("lat={} lon={} contained={} subset={}", new Object[] { hacked.getCenterLatitude(), hacked.getCenterLongitude(), contained, subset });
+                if (!contained) {
+                    logger.trace("does not fall within select geographic region...skipping!");
+                    continue;
+                }
+                
                 SingleBandedImage image = makeImage(aid, rangeType, true, readLabel, subset);
                 if (image != null) {
                     if(rangeType==null) {
@@ -2778,7 +2806,32 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         saveLineMag = this.laLoSel.getLineMag();
         saveEleMag = this.laLoSel.getElementMag();
     }
-    
+
+    /**
+     * Determines whether or not the given {@link AreaDirectory} is geographically located within the given {@link DataSelection}.
+     * 
+     * @param directory {@code AreaDirectory} from which latitude and longitude are extracted. Cannot be {@code null}.
+     * @param selection {@code DataSelection} that has the desired bounding box. Cannot be {@code null}.
+     * 
+     * @return {@code true} if {@code directory} is located within the bounding box of {@code selection}, {@code false} otherwise.
+     */
+    private static boolean isAreaDirectoryInDataSelection(final AreaDirectory directory, final DataSelection selection) {
+        return isLatLonInDataSelection(directory.getCenterLatitude(), directory.getCenterLongitude(), selection);
+    }
+
+    /**
+     * Determines whether or not the given {@code latitude} and {@code longitude} values are within the given {@link DataSelection}.
+     * 
+     * @param latitude Latitude to check.
+     * @param longitude Longitude to check.
+     * @param selection {@code DataSelection} that has the desired bounding box. Cannot be {@code null}. 
+     * 
+     * @return {@code true} if {@code selection} contains {@code latitude} and {@code longitude} within its bounding box, {@code false} otherwise.
+     */
+    private static boolean isLatLonInDataSelection(final double latitude, final double longitude, final DataSelection selection) {
+        return selection.getGeoSelection(true).getLatLonRect().contains(latitude, longitude);
+    }
+
     public static class BundlePreviewSelection extends DataSelectionComponent {
         final String label;
         public BundlePreviewSelection(final String label) {
