@@ -95,7 +95,7 @@ import edu.wisc.ssec.mcidasv.McIDASV;
  * This class provides  an interactive shell for running JYthon
  *
  * @author IDV development team
- * @version $Revision$Date: 2012/09/19 16:55:46 $
+ * @version $Revision$Date: 2012/09/26 21:00:25 $
  */
 public class JythonShell extends InteractiveShell {
 
@@ -368,7 +368,7 @@ public class JythonShell extends InteractiveShell {
         } else {
             s = new StringBuilder("def ").append(procedureName).append("():\n    ").append(join("\n    ", history));
         }
-        s.append("#From shell\n").append(s).append("\n\n");
+        s.append("#From shell\n").append("\n\n");
         idv.getJythonManager().appendJython(s.toString());
     }
 
@@ -431,10 +431,10 @@ public class JythonShell extends InteractiveShell {
     @Override protected JMenuBar doMakeMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         List<JMenuItem> items = new ArrayList<JMenuItem>();
-        items.add(makeMenuItem("Export Commands", this, "exportHistory"));
-        items.add(makeMenuItem("Save History", this, "saveHistory"));
-        items.add(makeMenuItem("List History", this, "listHistory"));
-        items.add(makeMenuItem("List Variables", this, "listVars"));
+        items.add(makeMenuItem("Save Commands to Jython Library", this, "exportHistory"));
+        items.add(makeMenuItem("Save Commands to History", this, "saveHistory"));
+        items.add(makeMenuItem("List Saved History", this, "listHistory"));
+        items.add(makeMenuItem("List Current Variables", this, "listVars"));
         menuBar.add(makeMenu("File", items));
 
         items.clear();
