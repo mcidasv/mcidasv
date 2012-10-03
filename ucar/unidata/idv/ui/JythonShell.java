@@ -95,7 +95,7 @@ import edu.wisc.ssec.mcidasv.McIDASV;
  * This class provides  an interactive shell for running JYthon
  *
  * @author IDV development team
- * @version $Revision$Date: 2012/10/03 17:44:58 $
+ * @version $Revision$Date: 2012/10/03 20:10:23 $
  */
 public class JythonShell extends InteractiveShell {
 
@@ -130,9 +130,6 @@ public class JythonShell extends InteractiveShell {
     /** _more_          */
     ImageGenerator islInterpreter;
 
-    /** history file where all Jython commands get recorded. */
-    private BufferedWriter historyFile;
-
     /**
      * ctor
      *
@@ -147,14 +144,6 @@ public class JythonShell extends InteractiveShell {
             history.addAll(oldHistory);
         }
         
-        String historyFilename = ((McIDASV)theIdv).getUserFile("jython_history");
-        try {
-            // open in append mode
-            this.historyFile = new BufferedWriter(new FileWriter(historyFilename, true));
-        } catch (IOException e) {
-            logException("An error occurred trying to open jython_history file", e);
-        }
-        
         createInterpreter();
         //Create the gui
         init();
@@ -165,11 +154,6 @@ public class JythonShell extends InteractiveShell {
      */
     @Override public void close() {
         saveWindowBounds(idv.getStore(), frame.getBounds());
-        try {
-            this.historyFile.close();
-        } catch (IOException exc) {
-            logException("An error occurred trying to close jython_history file", exc);
-        }
         super.close();
     }
 
@@ -589,12 +573,6 @@ public class JythonShell extends InteractiveShell {
             startBufferingOutput();
             interp.exec(sb.toString());
             endBufferingOutput();
-            
-            // Only write to history file if Jython is "valid" (didn't cause an exception).
-            // Not sure if this is the desired behavior or not...
-            // (do before interp.exec if you want to write to history no matter what.)
-            historyFile.write(sb.toString());
-            historyFile.flush();
             
             // write off history to "store" so user doesn't have to save explicitly.
             saveHistory();
