@@ -6279,7 +6279,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * for a popup menu in the legend
      */
     protected void getFileMenuItems(List items, boolean forMenuBar) {
-        items.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("Remove Display",
+        items.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("Remove Layer",
                 this, "doRemove"), "/auxdata/ui/icons/delete.png"));
     }
 
