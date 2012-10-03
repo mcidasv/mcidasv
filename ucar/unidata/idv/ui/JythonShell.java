@@ -95,7 +95,7 @@ import edu.wisc.ssec.mcidasv.McIDASV;
  * This class provides  an interactive shell for running JYthon
  *
  * @author IDV development team
- * @version $Revision$Date: 2012/09/26 21:00:25 $
+ * @version $Revision$Date: 2012/10/03 17:44:58 $
  */
 public class JythonShell extends InteractiveShell {
 
@@ -105,6 +105,10 @@ public class JythonShell extends InteractiveShell {
     /** property that holds the history */
     public static final String PROP_JYTHON_SHELL_HISTORY =
         "prop.jython.shell.history";
+    
+    /** max number of commands saved in history */
+    // TODO: make this user-selectable
+    public static final int MAX_HISTORY_LENGTH = 100;
 
     /** Jython shell window title. */
     public static final String WINDOW_TITLE = "Jython Shell";
@@ -182,9 +186,16 @@ public class JythonShell extends InteractiveShell {
      * Write Jython shell history.
      */
     public void saveHistory() {
+    	
+    	// trim the history array to desired length
+    	while (history.size() >= MAX_HISTORY_LENGTH) {
+    		// remove the "oldest" command
+    		history.remove(0);
+    	}
+    	
         IdvObjectStore store = idv.getStore();
         store.put(PROP_JYTHON_SHELL_HISTORY, history);
-        store.save();
+        store.save(); // TODO: do we REALLY want to do this every command?
     }
 
     @Override public void flipField() {
@@ -432,7 +443,8 @@ public class JythonShell extends InteractiveShell {
         JMenuBar menuBar = new JMenuBar();
         List<JMenuItem> items = new ArrayList<JMenuItem>();
         items.add(makeMenuItem("Save Commands to Jython Library", this, "exportHistory"));
-        items.add(makeMenuItem("Save Commands to History", this, "saveHistory"));
+        // not needed if we're "auto-saving" every command:
+        //items.add(makeMenuItem("Save Commands to History", this, "saveHistory"));
         items.add(makeMenuItem("List Saved History", this, "listHistory"));
         items.add(makeMenuItem("List Current Variables", this, "listVars"));
         menuBar.add(makeMenu("File", items));
@@ -583,6 +595,10 @@ public class JythonShell extends InteractiveShell {
             // (do before interp.exec if you want to write to history no matter what.)
             historyFile.write(sb.toString());
             historyFile.flush();
+            
+            // write off history to "store" so user doesn't have to save explicitly.
+            saveHistory();
+            
             jythonLogger.info(sb.toString());
         } catch (PyException pse) {
             endBufferingOutput();
