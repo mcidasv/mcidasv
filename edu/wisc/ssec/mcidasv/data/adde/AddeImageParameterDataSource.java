@@ -1,5 +1,9 @@
 /*
+<<<<<<< AddeImageParameterDataSource.java
  * $Id$
+=======
+ * $Id$
+>>>>>>> 1.42
  *
  * This file is part of McIDAS-V
  *
@@ -1736,14 +1740,20 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     }
                 }
 
-                SingleBandedImage image = makeImage(aid, rangeType, true, readLabel, subset);
-                if (image != null) {
-                    if(rangeType==null) {
-                        rangeType = ((FunctionType) image.getType()).getRange();
+                try {
+                    SingleBandedImage image = makeImage(aid, rangeType, true, readLabel, subset);
+                    if (image != null) {
+                        if(rangeType==null) {
+                            rangeType = ((FunctionType) image.getType()).getRange();
+                        }
+                        synchronized (images) {
+                            images.add(image);
+                        }
                     }
-                    synchronized (images) {
-                        images.add(image);
-                    }
+                } catch (VisADException e) {
+                    logger.error("avoiding visad exception: ",e);
+                } catch (RemoteException e) {
+                    logger.error("avoiding remote exception: ", e);
                 }
             }
 
@@ -1851,12 +1861,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 src = replaceKey(src, "PLACE", props.get("PLACE"));
             }
             if (props.containsKey("LATLON")) { 
-                if (hacked != null) {
-                    String latlon = hacked.getCenterLatitude() + " " + hacked.getCenterLongitude();
-                    src = replaceKey(src, "LINELE", "LATLON", latlon);
-                } else {
-                    src = replaceKey(src, "LINELE", "LATLON", props.get("LATLON"));
-                }
+                src = replaceKey(src, "LINELE", "LATLON", props.get("LATLON"));
             }
             if (props.containsKey("LINELE")) {
                 src = removeKey(src, "LATLON");
@@ -1988,6 +1993,24 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 src = replaceKey(src, SIZE_KEY, saveNumLine + ' ' + saveNumEle);
                 src = replaceKey(src, MAG_KEY, saveLineMag + ' ' + saveEleMag);
             }
+
+//            try {
+//                AreaAdapter aa = new AreaAdapter(src, false);
+//                logger.trace("Getting a new aa={} for src=: {}", aa, src);
+//                areaDir = previewDir;
+//                result = aa.getImage();
+//            } catch (VisADException e) {
+//                logger.error("attempting to swallow non-fatal visad exception: ", e);
+//            } catch (java.io.IOException e) {
+//                logger.error("attempting to swallow non-fatal I/O exception: ", e);
+//            } finally {
+//                putCache(src, result);
+//                aid.setSource(src);
+//                iml.add(aid);
+//                setImageList(iml);
+//                setDisplaySource(src, props);
+//                return result;
+//            }
 
             AreaAdapter aa = new AreaAdapter(src, false);
             logger.trace("Getting a new aa={} for src=: {}", aa, src);
