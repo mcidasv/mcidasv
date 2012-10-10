@@ -600,6 +600,29 @@ public class RGBCompositeControl extends DisplayControlImpl {
        }
      });
 
+     JButton applyButton = new JButton("Apply All");
+     gammaPanel.add(applyButton);
+     applyButton.addActionListener(new ActionListener() {
+       public void actionPerformed(ActionEvent e) {
+            String redLow = redLowTxtFld.getText().trim();
+            String redHigh = redHighTxtFld.getText().trim();
+            updateRedRange(Double.valueOf(redLow), Double.valueOf(redHigh));
+            String grnLow = grnLowTxtFld.getText().trim();
+            String grnHigh = grnHighTxtFld.getText().trim();
+            updateGrnRange(Double.valueOf(grnLow), Double.valueOf(grnHigh));
+            String bluLow = bluLowTxtFld.getText().trim();
+            String bluHigh = bluHighTxtFld.getText().trim();
+            updateBluRange(Double.valueOf(bluLow), Double.valueOf(bluHigh));
+
+            String tmp = redGammaTxtFld.getText().trim();
+            updateRedGamma(Double.valueOf(tmp));
+            tmp = grnGammaTxtFld.getText().trim();
+            updateGrnGamma(Double.valueOf(tmp));
+            tmp = bluGammaTxtFld.getText().trim();
+            updateBluGamma(Double.valueOf(tmp));
+       }
+     });
+
 
      subPanel.add(redPanel);
      subPanel.add(grnPanel);
