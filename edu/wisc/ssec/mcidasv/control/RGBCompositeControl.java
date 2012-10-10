@@ -516,6 +516,8 @@ public class RGBCompositeControl extends DisplayControlImpl {
          redRange[1] = initRedRange[1];
          redLowTxtFld.setText(Float.toString((float)redRange[0]));
          redHighTxtFld.setText(Float.toString((float)redRange[1]));
+         updateRedGamma(1.0);
+         redGammaTxtFld.setText("1.0");
        }
      });
 
@@ -556,6 +558,8 @@ public class RGBCompositeControl extends DisplayControlImpl {
          grnRange[1] = initGrnRange[1];
          grnLowTxtFld.setText(Float.toString((float)grnRange[0]));
          grnHighTxtFld.setText(Float.toString((float)grnRange[1]));
+         updateGrnGamma(1.0);
+         grnGammaTxtFld.setText("1.0");
        }
      });
 
@@ -597,6 +601,8 @@ public class RGBCompositeControl extends DisplayControlImpl {
          bluRange[1] = initBluRange[1];
          bluLowTxtFld.setText(Float.toString((float)bluRange[0]));
          bluHighTxtFld.setText(Float.toString((float)bluRange[1]));
+         updateBluGamma(1.0);
+         bluGammaTxtFld.setText("1.0");
        }
      });
 
