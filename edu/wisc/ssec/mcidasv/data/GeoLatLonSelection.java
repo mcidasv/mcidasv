@@ -1187,7 +1187,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
          try {
              latLon = macs.toReference(displayEL);
          } catch (Exception e) {
-             System.out.println("Error converting input lat/lon e=" + e);
+             logger.error("converting input latitude/longitude", e);
          }
 /*
          System.out.println("\nLat/Lon:");
@@ -1351,7 +1351,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         try {
             val = Integer.parseInt(numLinesFld.getText().trim());
         } catch (Exception e) {
-            System.out.println("=====> exception in getNumLines: e=" + e);
+            logger.error("problem within getNumLines", e);
         }
         setNumLines(val);
         return this.numLines;
@@ -1367,7 +1367,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         try {
             val = Integer.parseInt(numElementsFld.getText().trim());
         } catch (Exception e) {
-            System.out.println("=====> exception in getNumEles: e=" + e);
+            logger.error("problem within getNumEles", e);
         }
         setNumEles(val);
         return this.numEles;
@@ -1446,7 +1446,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         try {
             val = Integer.parseInt(eleMagFld.getText().trim());
         } catch (Exception e) {
-            System.out.println(" setElementMag e=" + e);
+            logger.error("problem setting element mag", e);
             return;
         }
         setElementMag(val);
@@ -1476,6 +1476,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         try {
             val = Integer.parseInt(lineMagFld.getText().trim());
         } catch (Exception e) {
+            logger.error("problem setting line mag", e);
         }
         setLineMag(val);
     }
@@ -1579,7 +1580,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             setLongitude(ll[1][0]);
             getGeoLocationInfo();
         } catch (Exception e) {
-            System.out.println("convertToLatLon e=" + e);
+            logger.error("problem converting to latitude/longitude", e);
         }
     }
 
@@ -1600,7 +1601,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             setCenterCoords((int)imageLE[0][0], (int)imageLE[1][0]);
             getGeoLocationInfo();
         } catch (Exception e) {
-            System.out.println("convertToLatLon e=" + e);
+            logger.error("problem converting to latitude/longitude", e);
         }
     }
 
@@ -1629,7 +1630,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                 el[1][0] = previewYDim - 1 - el[1][0] * dirLMag / previewLineMag;;
             }
         } catch (Exception e) {
-            System.out.println("convertToDisplayCoords e=" + e);
+            logger.error("problem converting to display coordinates", e);
         }
         return el;
     }
@@ -1665,7 +1666,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
             }
         } catch (Exception e) {
-            System.out.println("displayCoordToAreaCoord e=" + e);
+            logger.error("problem converting display coordinates to area coordinates", e);
         }
         return area;
     }
@@ -1687,7 +1688,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                 }
             }
         } catch (Exception e) {
-            System.out.println("displayCoordToAreaCoord e=" + e);
+            logger.error("problem converting area coordinates to display coordinates", e);
         }
         return disp;
     }
@@ -1707,7 +1708,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             setElement((int)el[0][0]);
             getGeoLocationInfo();
         } catch (Exception e) {
-            System.out.println("convertToLinEle e=" + e);
+            logger.error("problem converting to lines/elements", e);
         }
     }
 
@@ -1836,7 +1837,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             amSettingProperties = false;
             elementMagSliderChanged(false);
         } catch (Exception exc) {
-            System.out.println("Setting line magnification" + exc);
+            logger.error("could not set line magnifiction", exc);
         }
     }
 
@@ -1904,7 +1905,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                 .formatLatLonPoint(elt.getLatLonPoint()));
             GuiUtils.setFixedWidthFont(mi);
         } catch (Exception e) {
-            System.out.println("makeLocationMenuItem e=" + e);
+            logger.error("could not create location menu item", e);
         }
         return mi;
     }
@@ -2078,7 +2079,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             setLineMag(newVal);
             changeLineMagSlider(!lockBtn.isSelected());
         } catch (Exception e) {
-            System.out.println("lineMagSlider: e=" + e);
+            logger.error("error adjusting line mag slider", e);
         }
 
         try {
@@ -2087,7 +2088,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             newVal = eMagNew;
             if (newVal > -2) newVal = 1;
         } catch (Exception e) {
-            System.out.println("elementMagSlider: e=" + e);
+            logger.error("error adjusting element mag slider", e);
         }
         amUpdating = false;
         amSettingProperties = false;
@@ -2132,13 +2133,13 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
             }
 
         } catch (Exception e) {
-            System.out.println("e=" + e);
+            logger.error("error updating", e);
         }
 
         try {
             rawSizeLbl.setText(" Raw size: " + this.maxLines + " X " + this.maxEles);
         } catch (Exception e) {
-            System.out.println("updating raw size: e=" + e);
+            logger.error("could not update raw size", e);
         }
 
         amUpdating = true;
