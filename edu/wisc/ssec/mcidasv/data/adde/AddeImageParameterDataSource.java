@@ -1,9 +1,5 @@
 /*
-<<<<<<< AddeImageParameterDataSource.java
  * $Id$
-=======
- * $Id$
->>>>>>> 1.42
  *
  * This file is part of McIDAS-V
  *
