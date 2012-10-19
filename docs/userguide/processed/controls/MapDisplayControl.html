@@ -34,19 +34,19 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/MapDispl
 <div class="pagesubtitle">Overview</div>
 <p>Maps in McIDAS-V are shown using the Map Display Controls. There are two ways
 these controls are used: for the default background maps and for a user created
-  map display. The control window is composed of two tabs, <strong>Maps</strong> and <strong>Settings</strong>.</p>
+  map display. The control window is composed of two tabs, <strong>Maps</strong> and <strong>Lat/Lon</strong>.</p>
 <p>The <strong>Maps</strong> tab lists the
   set of available maps:</p>
-<div class="images"><img  src="images/MapDisplayControlGui1.gif"  alt="Image 1: Maps Tab of the Map Controls Window"><br>
+<div class="images"><img src="images/MapDisplayControlGui1.gif" alt="Image 1: Maps Tab of the Map Controls Window" width="671" height="480"><br>
 <span class="caption">Image 1: Maps Tab of the Map Controls Window</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
   <li class="propertylistitem"><img src="images/Unlink.gif" alt="Open link icon" width="15" height="17"align=absmiddle> <strong>Apply changes to all visible maps -</strong> Applies any changes to only the one map you modify. When clicked, this icon changes to <img src="images/MapLink.gif" alt="Closed link icon" width="17" height="13"align=absmiddle>, where any change made to one map will be applied to all of the currently visible maps.</li>
   <li class="propertylistitem"><strong>Maps -</strong> Lists the set of currently
       loaded maps. The maps displayed in the Main Display window are are checked.</li>
-  <li class="propertylistitem"><img src="images/Thickness.gif" width="60" height="26" alt="Line Thickness Dropdown"align="absmiddle"><strong> -</strong> Selects the thickness of the map line.</li>
-  <li class="propertylistitem"><img src="images/LineStyle.gif" width="63" height="26" alt="Line Style"align="absmiddle"><strong> -</strong> Selects the style of the map line.</li>
-  <li class="propertylistitem"><img src="images/LineColor.gif" width="40" height="27" alt="Line Color"align="absmiddle"><strong> -</strong> Selects the color of the map line.</li>
+  <li class="propertylistitem"><img src="images/Thickness.gif" width="60" height="26" alt="Line Thickness Dropdown"align="absmiddle"><strong> -</strong> Sets the thickness of the map line.</li>
+  <li class="propertylistitem"><img src="images/LineStyle.gif" width="63" height="26" alt="Line Style"align="absmiddle"><strong> -</strong> Sets the style of the map line.</li>
+  <li class="propertylistitem"><img src="images/LineColor.gif" width="40" height="27" alt="Line Color"align="absmiddle"><strong> -</strong> Sets the color of the map line.</li>
   <li class="propertylistitem"><a name="fastrendering"></a><strong>Fast Rendering -</strong> Save rendering time by not checking
       for projection seam crossings. Some maps display better
       when fast rendering is turned on, others display better when it's
@@ -55,17 +55,37 @@ these controls are used: for the default background maps and for a user created
   <li class="propertylistitem"><img src="images/MapArrows.gif" alt="Up and Down icon" width="16" height="20" align=absmiddle> <strong> Move the map up/down -</strong> Shifts the map up and down in the list.</li>
   <li class="propertylistitem"><img src="images/MAP delete.gif" alt="Replace icon" width="24" height="22" align=absmiddle> <strong> Remove the map -</strong> Removes the selected map from the list.</li>
   <li class="propertylistitem"><img src="images/MapDataExplorer.gif" alt="Place selected item in Field Selector icon" width="20" height="19" align=absmiddle><strong> Load this map as a data source -</strong> Places the selected map in the <strong>Field Selector</strong> tab of the Data Explorer, where you can display the map with the Map Display or with the Omni Control display. This feature allows for adding multiple maps to one tab in the Main Display window.</li>
+  <li class="propertylistitem"><strong>Position -</strong> Sets the vertical position of the maps and latitude/longitude lines and labels. This option is available through both the <strong>Maps</strong> and <strong>Lat/Lon</strong> tabs.</li>
 </ul>
-<p>The <strong>Settings</strong> tab allows the user to control the  latitude/longitude lines
-and control the vertical position of the maps:</p>
-<div class="images"><img  src="images/MapDisplayControlGui2.gif"  alt="Image 2: Settings Tab of Map Controls Window"><br>
-<span class="caption">Image 2: Settings Tab of the Map Controls Window</span></div>
+<p>The <strong>Lat/Lon</strong> tab allows the user to control the  latitude/longitude lines
+and labels:</p>
+<div class="images"><img src="images/MapDisplayControlGui2.gif" alt="Image 2: Lat/Lon Tab of the Map Controls Window" width="671" height="367"><br>
+<span class="caption">Image 2: Lat/Lon Tab of the Map Controls Window</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><img src="images/MapLink.gif" alt="Closed link icon" width="17" height="13" align=absmiddle> <strong>Apply changes to all lat/lon lines -</strong> When this is selected, any change made made to either the Latitude or Longitude will apply to both, making the Latitude and Longitude displays identical.</li>
-  <li class="propertylistitem"><strong>Latitude/Longitude lines -</strong> Changes the spacing, width, line style, and color of the lat/lon lines. The <strong>Visible</strong> checkbox, when checked, will display the lat/lon lines on the map. These controls allow you to display latitude and longitude lines. There
-      is also an option to choose to turn on <a href="../misc/PerformanceTuning.html#mapfast">Fast Rendering</a>.</li>
-  <li class="propertylistitem"><strong>Map position -</strong> Sets the vertical position of the maps.</li>
+<li class="propertylistitem"><strong>Lines</strong></li>
+<ul class="propertylist">
+  <li class="propertylistitem"><img src="images/MapLink.gif" alt="Closed link icon" width="17" height="13" align=absmiddle> <strong>Apply changes to all lat/lon lines -</strong> When this is selected, any change made made to either the latitude or longitude lines will apply to both, making the latitude and longitude lines identical. Click the link icon to make the  lines unlinked (<img src="images/Unlink.gif" alt="Open link icon" width="15" height="17"align=absmiddle>), so that a change made to one line will not be applied to the others.</li>
+  <li class="propertylistitem"><strong>Interval -</strong> Sets the interval, in degrees, of the lines.</li>
+  <li class="propertylistitem"><strong>Relative to -</strong> Sets a value, in degrees, that one of the lines will be drawn at. From this line, other lines will be drawn in both directions of the <strong>Relative to</strong> line at an increment specified in the <strong>Interval</strong> field.</li>
+  <li class="propertylistitem"><strong>Width -</strong> Sets the width of the lines.</li>
+  <li class="propertylistitem"><strong>Style -</strong> Sets the style of the lines.</li>
+  <li class="propertylistitem"><strong>Color -</strong> Sets the color of the lines.</li>
+  <li class="propertylistitem"><strong>Fast Render -</strong> Turns on and off <a href="../misc/PerformanceTuning.html#mapfast">Fast Rendering</a> for lines.</li>
+  </ul>
+  <li class="propertylistitem"><strong>Labels</strong></li>
+  <ul class="propertylist">
+  <li class="propertylistitem"><img src="images/MapLink.gif" alt="Closed link icon" width="17" height="13" align=absmiddle><strong> Apply changes to all lat/lon labels -</strong> When this is selected, any change made made to either the latitude or longitude labels will apply to both, making the latitude and longitude labels identical (with the exception of <strong>At Longitudes/Latitudes</strong>, which are never linked). Click the link icon to make the labels unlinked (<img src="images/Unlink.gif" alt="Open link icon" width="15" height="17"align=absmiddle>), so that a change made to one label will not be applied to the others.</li>
+  <li class="propertylistitem"><strong>Interval -</strong> Sets the interval, in degrees, of the labels.</li>
+  <li class="propertylistitem"><strong>Relative to -</strong> Sets a value, in degrees, that one of the labels will be drawn at. From this line, other labels will be drawn in both directions of the <strong>Relative to</strong> label at an increment specified in the <strong>Interval</strong> field.</li>
+  <li class="propertylistitem"><strong>At Longitudes</strong> -&nbsp;Sets the longitude line(s) to draw the latitude labels at.  You can specify more than one value by separating them with a semicolon (;).</li>
+  <li class="propertylistitem"><strong>At Latitudes -</strong> Sets the latitude line(s) to draw the longitude labels at. You can specify more than one value by separating them with a semicolon (;).</li>
+  <li class="propertylistitem"><strong>Color -</strong> Sets the color of the labels.</li>
+  <li class="propertylistitem"><strong>Alignment -</strong> Sets the alignment point of the&nbsp;location of the labels with respect to the actual location of the point. This can be useful to position the label at a location where it is not interfering with a latitude or longitude line. These <strong>Alignment</strong> options are given in geographical coordinates (ex. NE = northeast, etc).</li>
+  <li class="propertylistitem"><strong>Font -</strong> Sets the font, style, and size of the labels.</li>
+  <li class="propertylistitem"><strong>Format -</strong> Sets the format of the labels. You can select a variety of decimal, or DMS (Degrees, Minutes, Seconds) formats.</li>
+  <li class="propertylistitem"><strong>0-360 -</strong> Uses 0 to 360 degrees to label longitudes when selected, instead of the standard -180 to 180.</li>
+  </ul>
   </ul>
 <div class="pagesubtitle">Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="LayerControls.html#menus">Menus section</a> of the Layer Controls page. However, there are some options that are unique to this display.</p>
