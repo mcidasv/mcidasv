@@ -62,6 +62,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-category">
   <ul class="noindent">
     <li><strong><a class="faq-question-link" href= "#scripting1.2b1">Scripting</a></strong></li>
+    <li><strong><a class="faq-question-link" href= "#mask1.2b1">Two New Mask Formulas</a></strong></li>
   </ul>
 </div>
   <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat5_1.2b1">Under
@@ -94,13 +95,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-category"><a name="scripting1.2b1" id="scripting1.2b1"></a>
   <h4><strong>Scripting</strong></h4>
 <div class="faq-answer">Continued to add to the suite of fully          supported Jython scripting tools introduced in McIDAS-V 1.2. The functions and methods in          this suite can be used to load and display data, manipulate the          display, and save the images. This allows the user to          automatically process data and generate displays for web pages          and other environments. This scripting can be done from the          Jython shell within McIDAS-V, or from a Jython script that can          be invoked as a command line argument. Please see <a href="misc/Scripting.html">Scripting</a> for the list of supported functions, an&nbsp;example script, and links to various Java docs.</div></div>
-<div class="faq-category"><a name="statistics1.2" id="statistics1.2"></a>
-</div>
+<div class="faq-category"><a name="mask1.2b1" id="mask1.2b1"></a>
+  <h4><strong>Two New Mask Formulas</strong></h4>
+<div class="faq-answer">Added two new mask formulas&nbsp;(Mask Function&nbsp;and Mask Within Range) to the list of native formulas in McIDAS-V. These formulas are intended to operate on imagery data, and are listed under the Imagery field of the formulas. The Mask Function formula allows you to easily display data that is above, below, or equal to a certain value. The Mask Within Range formula allows you to specify a specific range of data values to display.</div></div>
 <div class="faq-category-title"><a name="faq1_cat5_1.2b1" id="faq1_cat5_1.2b1"></a>Under
 Development</div>
 <div class="faq-category"><a name="npp1.2b1" id="npp1.2b1"></a>
   <h4>Suomi NPP Chooser</h4>
-  <div class="faq-answer">Added the ability to work with Suomi NPP data from NOAA CLASS that includes the data and geolocation within the same file. You can now display non-consecutive granules. You can also now aggregate granules together regardless of granule size. This is currently
+  <div class="faq-answer">Added the ability to work with Suomi NPP data from NOAA CLASS that includes the data and geolocation within the same file. You can now display non-consecutive granules. You can also now aggregate granules together regardless of granule size. VIIRS SVI data from CLASS can now be displayed. This is currently
     located in the Under Development list of choosers in the Data Sources tab
     of the Data Explorer and is available for user feedback through the <a href="http://dcdbs.ssec.wisc.edu/mcidasv/forums/" target="_blank">McIDAS-V
 Support Forums</a>. As the IDPS (Interface Data Processing Segment) begins to distribute new types of NPP data, we test it in McIDAS-V and make any necessary changes to be able to get the data to display.</div></div>
