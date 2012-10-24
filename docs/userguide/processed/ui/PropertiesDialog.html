@@ -35,8 +35,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ui/PropertiesDial
 <li><a href="#lighting">Lighting</a></li>
 <li><a href="#verticalscale">Vertical Scale</a></li>
 </ul>
-<a name="main" id="main"></a>
-<p>The <strong>Main</strong> tab of the Properties dialog allows you to change several general things pertaining to the display. Many of the items in this tab can also be found in the <strong><a href="../tools/preferences/DisplayWindowPreferences.html">Display Window</a></strong> tab of the User Preferences window.
+<p><a name="main" id="main"></a>The <strong>Main</strong> tab of the Properties dialog allows you to change several general things pertaining to the display. Many of the items in this tab can also be found in the <strong><a href="../tools/preferences/DisplayWindowPreferences.html">Display Window</a></strong> tab of the User Preferences window.
 <div class="images"><img src="images/Main.gif" width="463" height="646" alt="Image 1: Main Tab of the Properties Dialog"><br>
   <span class="caption">Image 1: Main Tab of the Properties Dialog</span></div>
   <div class="pagesubtitle">Properties</div>
@@ -46,7 +45,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ui/PropertiesDial
   <li class="propertylistitem"><strong>Show Times In View -</strong> Turns on the label shown inside the Main Display window that shows the current animation time and step in the loop.</li>
   <li class="propertylistitem"><strong>Show Logo -</strong> Adds a logo to the Main Display window. The logo is set at the bottom of this dialog.</li>
   <li class="propertylistitem"><strong>Show Cursor Readout -</strong> Displays a label of latitude, longitude, and altitude at the cursor position over the display, shown in the lower border of the Main Display window without having to probe the data.</li>
-  <li class="propertylistitem"><strong>Show Display Scales -</strong> Shows a vertical scale in the map displays</li>
+  <li class="propertylistitem"><strong>Show Display Scales -</strong> Adds a vertical scale, as well as latitude and longitude values to the wireframe box in the Main Display window.</li>
   <li class="propertylistitem"><strong>Perspective View -</strong> Provides an alternate 3D view of the display. This sets the 'set parallel/perspective projection' option in the <a href="Navigation.html#viewpoint">Viewpoint Toolbar</a> of the Main Display window.</li>
   <li class="propertylistitem"><strong>Show Earth Navigation Panel -</strong> Shows an <a href="DisplayMenus.html#earthnav">Earth Navigation</a> panel at the bottom of the Main Display window.</li>
   <li class="propertylistitem"><strong>Share Views -</strong> Controls whether <a href="../collab/Sharing.html">sharing</a> is turned on or off for the display. If sharing is turned on, then the viewpoint and projection changes are shared with any other displays that also have have sharing turned on.</li>
@@ -70,8 +69,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ui/PropertiesDial
   <li class="propertylistitem"><strong>Scale -</strong> Scales the size of the logo in the Main Display window. Use the slider to change this value. A value of 1.0 uses the full size for the image, values below 1.0 make the image smaller, and values greater than 1.0 make the image larger.</li>
   </ul>
   </ul>
-<a name="aspectratio" id="aspectratio"></a>
-<p>The <strong>Aspect Ratio</strong> tab of the Properties dialog allows you to change the aspect ratio of the display with respect to the X, Y, and Z directions. You can change the individual X, Y, and Z values by using the slider. Any changes will be made to the display once you hit Apply or OK. The <strong>Display Matrix Settings</strong> panel will actively update as you change the X, Y, and Z values, and as you rotate or zoom in/out of the Main Display window.</p>
+<p><a name="aspectratio" id="aspectratio"></a>The <strong>Aspect Ratio</strong> tab of the Properties dialog allows you to change the aspect ratio of the display with respect to the X, Y, and Z directions. You can change the individual X, Y, and Z values by using the slider. Any changes will be made to the display once you hit Apply or OK. The <strong>Display Matrix Settings</strong> panel will actively update as you change the X, Y, and Z values, and as you rotate or zoom in/out of the Main Display window.</p>
 <div class="images"><img src="images/AspectRatio.gif" width="463" height="535" alt="Image 2: Aspect Ratio Tab of the Properties Dialog"><br>
   <span class="caption">Image 2: Aspect Ratio Tab of the Properties Dialog</span></div>
 <div class="pagesubtitle">Properties</div>
@@ -82,8 +80,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ui/PropertiesDial
   <li class="propertylistitem"><strong>Z -</strong> Stretches the display along the Z-axis. The higher the value, the more stretched in the vertical the display will be. The default value for this is 0.4.</li>
   <li class="propertylistitem"><strong>Display Matrix Settings -</strong> Displays information pertaining to the rotation, translation, and scale of the X, Y, and Z axes. This also displays numerical values pertaining to boundaries of the Main Display window and also the wireframe box. These values actively change as you apply changes to the X, Y, and Z sliders, and as you rotate or zoom in/out of the Main Display window.</li>
   </ul>
-  <a name="lighting" id="lighting"></a>
-  <p>The <strong>Lighting</strong> tab of the Properties dialog allows you to add the effect of light shining on your display from different angles along the X, Y, and Z axes. The default values are listed in the image below.</p>
+  <p><a name="lighting" id="lighting"></a>The <strong>Lighting</strong> tab of the Properties dialog allows you to add the effect of light shining on your display from different angles along the X, Y, and Z axes. The default values are listed in the image below.</p>
   <div class="images"><img src="images/Lighting.gif" width="463" height="416" alt="Image 3: Lighting Tab of the Properties Dialog"><br><span class="caption">Image 3: Lighting Tab of the Properties Dialog</span></div>
 <div class="pagesubtitle">Properties</div>
   <ul class="propertylist">
@@ -92,8 +89,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ui/PropertiesDial
   <li class="propertylistitem"><strong>Direction -</strong> Represents the direction that the light will be coming from. The first box is from the X direction, with positive values aiming the light right along the X-axis. The second box is from the Y direction, with positive values aiming up along the Y-axis. The third box is from the Z direction, with positive values aiming up along the Z-axis.</li>
   <li class="propertylistitem"><img src="images/Unlink.gif" width="19" height="16" alt="Unlink Button"align="absmiddle"><strong> -</strong> When this is button is seen, all of the components in this tab are controlled individually. This means that a change to one item (ex. Over), will not effect any of the other items in this tab. When you click this button, the image will change to <img src="images/Link.gif" width="18" height="13" alt="Link Button">. When this image is seen, the components are linked together. Therefore, any change to the visibility checkboxes or the slider for brightness will be shared between all components of this tab.</li>
   </ul>
-  <a name="verticalscale" id="verticalscale"></a>
-  <p>The <strong>Vertical Scale</strong> tab of the Properties dialog allows you to change the vertical scale used for the Z-axis of the display in the Main Display window.</p>
+  <p><a name="verticalscale" id="verticalscale"></a>The <strong>Vertical Scale</strong> tab of the Properties dialog allows you to change the vertical scale used for the Z-axis of the display in the Main Display window.</p>
   <div class="images"><img src="images/VerticalScale.gif" width="463" height="204" alt="Image 4: Vertical Scale Tab of the Properties Dialog"><br><span class="caption">Image 4: Vertical Scale Tab of the Properties Dialog</span></div>
   <div class="pagesubtitle">Properties</div>
   <ul class="propertylist">
