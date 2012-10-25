@@ -45,14 +45,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSubset.h
     <div class="pagesubtitle">Properties</div>
 <p>The image properties in the <strong>Advanced</strong> tab allow you to override the default properties McIDAS-V uses to specify aspects of the image data. The widgets show the defaults McIDAS-V will use. By changing any of the widgets you can override the default value. </p>
     <ul class="propertylist">
-      <li class="propertylistitem"><strong>Coordinate Type -</strong> Changes the coordinate type used to specify the data location.</li>
+      <li class="propertylistitem"><strong>Coordinate Type -</strong> Changes the coordinate type used to specify the data location. The options in this field are <strong>Latitude/Longitude</strong>, <strong>Image Coordinates</strong>, and <strong>Area Coordinates</strong>.</li>
       <li class="propertylistitem"><strong>Location -</strong>  Specifies the placement point of the image at either the center or the upper left.</li>
-      <li class="propertylistitem"><strong>Lat:/Lon -</strong> Specifies the location of the image with respect to latitude and longitude.</li>
-      <li class="propertylistitem"><strong>Line:/Element -</strong>  Specifies the location of the image with respect to line and element..</li>
-      <li class="propertylistitem"><img src="choosers/images/CenterDisplay.gif" alt="Center Display icon" width="18" height="18" align=absmiddle> <strong> Center Display -</strong>  Centers the image over the center, upper left, upper right, lower left, or lower right latitude and longitude coordinates of the of the current main display.</li>
+      <li class="propertylistitem"><strong>Lat/Lon -</strong> Specifies the location of the image with respect to latitude and longitude. Note that if you select <strong>Image</strong> or <strong>Area Coordinates</strong> in the <strong>Coordinate Type</strong> field, these fields will be <strong>Line/Element</strong>.</li>
+      <li class="propertylistitem"><strong>Line/Element -</strong>  Specifies the location of the image with respect to line and element.</li>
+      <li class="propertylistitem"><img src="choosers/images/CenterDisplay.gif" alt="Center Display icon" width="18" height="18" align="absmiddle"> <strong> Center Display -</strong>  Centers the image over the center, upper left, upper right, lower left, or lower right latitude and longitude coordinates of the of the current main display.</li>
       <li class="propertylistitem"><strong>Image Size -</strong>  Changes the size of the image.</li>
-      <li class="propertylistitem"><img src="choosers/images/Lock.gif" alt="Lock Image Size icon" width="9" height="12" align=absmiddle> <strong> Lock Image Size -</strong> Changes size automatically when changing magnification when unlocked. </li>
-      <li class="propertylistitem"><img src="choosers/images/FullRes.gif" alt="Full Resolution icon" width="18" height="19" align=absmiddle> <strong> Full Resolution -</strong>  Sets the image size to the full resolution size of the image.</li>
+      <li class="propertylistitem"><img src="choosers/images/Lock.gif" alt="Lock Image Size icon" width="9" height="12" align="absmiddle"> <strong> Lock Image Size -</strong> Changes size automatically when changing magnification when unlocked. </li>
+      <li class="propertylistitem"><img src="choosers/images/FullRes.gif" alt="Full Resolution icon" width="18" height="19" align="absmiddle"> <strong> Full Resolution -</strong>  Sets the image size to the full resolution size of the image.</li>
       <li class="propertylistitem"><strong>Raw Size -</strong> Lists the full size of the image on the server. </li>
       <li class="propertylistitem"><strong><a name="mag" id="mag"></a>Magnification -</strong>  Changes the magnification of the image, or manually type the <strong>Line</strong> and <strong>Ele</strong> magnification in the <strong>Mag=</strong> fields. </li>
       <li class="propertylistitem"><strong>Res -</strong>  Lists the approximate resolution of the image, if displayed with the current Image Properties. </li>
