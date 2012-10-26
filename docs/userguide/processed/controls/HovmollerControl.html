@@ -32,7 +32,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/Hovmolle
 <div class="pagetitle">Hovmoller Controls</div>
 <xxxmeta xxxname="jhid" value="idv.controls.volumerendercontrol">
 <div class="pagesubtitle">Overview</div>
-<p>The Hovmoller display plots grid and gridded point data in a diagram with the Latitude/Longitude component on the X-axis, and the time component on the Y-axis. This display option is found in the Displays menu of the <strong>Field Selector</strong> tab of the Data Explorer. You can display the data as Time with respect to either Latitude or Longitude, and either as a Color Shaded or Contour view.</p>
+<p>The Hovmoller display plots grid and gridded point data in a diagram with the Latitude/Longitude component on the X-axis, and the time component on the Y-axis. This display option is found in the Displays menu of the <strong>Field Selector</strong> tab of the Data Explorer. You can display the data as Time with respect to either Latitude or Longitude, and either as a Color Shaded or Contour display type.</p>
 <div class="images"><img src="images/Hovmoller.gif" width="504" height="593" alt="Image 1: Hovmoller Display"> <br>
 <span class="caption">Image 1: Hovmoller Display</span></div>
 <div class="pagesubtitle">Properties</div>
@@ -42,12 +42,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/Hovmolle
   <li class="propertylistitem"><strong>Time -</strong> Represents the format used to label time along the Y-axis. See the <a href="../tools/preferences/FormatPreferences.html#dateformat">Formats and Data Preferences</a> page for information on how to format the label. After you enter your desired values into this field, press Enter for it to be applied to the display.</li>
   <li class="propertylistitem"><strong>Latest Time at Bottom -</strong> When selected, the earliest date will be listed at the top of display, and the latest date will be listed at the bottom. This is the default for the Hovmoller display. If you uncheck this box, the Y-axis will be inverted, showing the latest date at the top, and the earliest date at the bottom.</li>
   </ul>
-  <p>By default, if you select a Longitude display, the entire spatial domain will be utilized, and the longitude range will go from the western extent to the eastern extent of your domain. The latitude will be averaged from the northern to southern boundaries of your domain. You can restrict the latitude and longitude domain by selecting a region in the <strong>Region</strong> tab of the Field Selector tab of the Data Explorer. The Latitude displays work the same way, by averaging the longitude across the entire domain unless you subset a region.</p>
+  <p>By default, if you select a Longitude display, the entire spatial domain will be utilized, and the longitude range will go from the western extent to the eastern extent of your domain. The latitude will be averaged from the northern to southern boundaries of your domain. You can restrict the latitude and longitude domain by selecting a region in the <strong>Region</strong> tab of the <strong>Field Selector</strong> tab of the Data Explorer. The Latitude displays work the same way, by averaging the longitude across the entire domain unless you subset a region.</p>
 <div class="pagesubtitle">Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="LayerControls.html#menus">Menus section</a> of the Layer Controls page. However, there are a couple of options unique to this display.</p>
 <p>The <strong>Edit</strong> menu has this unique option:</p>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>Contour Line Color -</strong> Allows you to change the contour line color in the display. This option is available if you select a Contour display.</li>
+<li class="propertylistitem"><strong>Contour Line Color -</strong> Allows you to change the contour line color in the display. This option is an option for the Contour display types.</li>
 </ul>
 <p>The <strong>View</strong> menu has this unique option:</p>
 <ul class="propertylist">
