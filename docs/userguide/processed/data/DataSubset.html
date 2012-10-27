@@ -45,7 +45,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSubset.h
     <div class="pagesubtitle">Properties</div>
 <p>The image properties in the <strong>Advanced</strong> tab allow you to override the default properties McIDAS-V uses to specify aspects of the image data. The widgets show the defaults McIDAS-V will use. By changing any of the widgets you can override the default value. </p>
     <ul class="propertylist">
-      <li class="propertylistitem"><strong>Coordinate Type -</strong> Changes the coordinate type used to specify the data location. The options in this field are <strong>Latitude/Longitude</strong>, <strong>Image Coordinates</strong>, and <strong>Area Coordinates</strong>.</li>
+      <li class="propertylistitem"><strong>Coordinate Type -</strong> Changes the coordinate type used to specify the data location.</li>
+      <ul class="propertylist">
+      <li class="propertylistitem"><strong>Latitude/Longitude Coordinates -</strong> Specifies Latitude and Longitude values of the image to be used by the <strong>Location</strong> field. Note that McIDAS-V cannot read latitude and longitude values for loops of polar data where the navigation changes. If you are displaying a loop of polar data, you should use <strong>Image Coordinates</strong> to ensure the images will be displayed.</li>
+      <li class="propertylistitem"><strong>Image Coordinates -</strong> Specifies the line and element values of the image itself to be used by the <strong>Location</strong> field. The upper left point is specified by (1,1) and each pixel in the image has its own, unique pair.</li>
+      <li class="propertylistitem"><strong>Area Coordinates -</strong> Specifies the area coordinate of the image to be used by the <strong>Location</strong> field. This is based off the size of the area and referenced in terms of line/element. The upper left point is specified by (0,0) and each pixel has its own, unique pair.</li>
+      </ul>
       <li class="propertylistitem"><strong>Location -</strong>  Specifies the placement point of the image at either the center or the upper left.</li>
       <li class="propertylistitem"><strong>Lat/Lon -</strong> Specifies the location of the image with respect to latitude and longitude. Note that if you select <strong>Image</strong> or <strong>Area Coordinates</strong> in the <strong>Coordinate Type</strong> field, these fields will be <strong>Line/Element</strong>.</li>
       <li class="propertylistitem"><strong>Line/Element -</strong>  Specifies the location of the image with respect to line and element.</li>

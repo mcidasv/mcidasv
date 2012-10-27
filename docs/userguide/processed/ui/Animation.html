@@ -41,10 +41,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('ui/Animation.html
 <div class="images"><img src="images/Animation1.gif" alt="Time Animation Widget" width="244" height="31"><br>
 <span class="caption">Image 1: Time Animation Widget</span></div>
 <p>The Time Animation Widget controls looping of displays through time. A series of small green boxes is displayed representing each frame of the animation. The
-box corresponding to the current time is colored blue. Click on a box to select a different time. Right click on a box to disable that frame in the animation. Disabled boxes will be colored red. You can also Ctrl+left click on a box to turn on/off all of the frames to the left of the box you clicked on, and Shift+left click to turn on/off all of the frames to the right of the box you clicked on. </p>
+box corresponding to the current time is colored blue. Click on a box to select a different time. Right-click on a box to disable that frame in the animation. Disabled boxes will be colored red. You can also Ctrl+left click on a box to turn on/off all of the frames to the left of the box you clicked on, and Shift+left click to turn on/off all of the frames to the right of the box you clicked on. </p>
 <p>The time of the data is displayed in the labeled pull-down list and in the entries of the pull down list on the left. Holding the mouse over the time will show information about how many frames are in the loop, and what the starting and ending times are. The toolbar of button icons, on the right, control time animation. The Time Animation Widget buttons do the following:</p>
 <ul class="propertylist">
-    <li class="propertylistitem"><img src="images/Beginning.gif" alt="Beginning button" width="17" height="17"align=absmiddle> <strong>  </strong><strong>Beginning </strong><strong>-</strong> Shows the first frame, and stop looping if looping is on.</li>
+    <li class="propertylistitem"><img src="images/Beginning.gif" alt="Beginning button" width="17" height="17"align=absmiddle> <strong>  </strong><strong>Beginning -</strong> Shows the first frame, and stop looping if looping is on.</li>
 <li class="propertylistitem"><img src="images/BackOne.gif" alt="Back One button" width="17" height="17"align=absmiddle> <strong> Back One -</strong> Steps back one frame.</li>
 <li class="propertylistitem"><img src="images/Play.gif" alt="Play/Stop button" width="17" height="17"align=absmiddle> <strong> Play/Stop -</strong> Toggles looping on or off.</li>
 <li class="propertylistitem"><img src="images/ForwardOne.gif" alt="Forward One button" width="17" height="17"align=absmiddle> <strong> Forward One -</strong> Steps forward one frame.</li>
@@ -70,15 +70,15 @@ box corresponding to the current time is colored blue. Click on a box to select 
 <li class="propertylistitem"><strong>Dwell -</strong> Controls how fast the animation occurs. Click on the slider icon: <img src="images/Slider16.gif"align=absmiddle> to change the values or type a value into the field and press Enter. Values are seconds/frame.</li>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Forward -</strong> Controls speed of looping forward.</li>
-<li class="propertylistitem"><strong>Reverse - </strong>Controls speed of looping backwards.</li>
-<li class="propertylistitem"><strong>First - </strong> Chooses how long first frame is seen.</li>
-<li class="propertylistitem"><strong>Last</strong> - Chooses how long last frame is seen.</li>
+<li class="propertylistitem"><strong>Reverse -</strong>Controls speed of looping backwards.</li>
+<li class="propertylistitem"><strong>First -</strong> Chooses how long first frame is seen.</li>
+<li class="propertylistitem"><strong>Last -</strong> Chooses how long last frame is seen.</li>
 </ul>
 <li class="propertylistitem"><strong>Direction -</strong> Controls which direction the loop goes when you press play.</li>
 <ul class=propertylist>
-<li class="propertylistitem"><strong>Forward</strong> - Loops forward in time</li>
-<li class="propertylistitem"><strong>Backward</strong> - Loops backward in time</li>
-<li class="propertylistitem"><strong>Rocking</strong> - Alternates looping between forward and backward directions.</li>
+<li class="propertylistitem"><strong>Forward -</strong> Loops forward in time</li>
+<li class="propertylistitem"><strong>Backward -</strong> Loops backward in time</li>
+<li class="propertylistitem"><strong>Rocking -</strong> Alternates looping between forward and backward directions.</li>
 </ul>
 <li class="propertylistitem"><strong>Share Times -</strong> Shares the time animation in a display with the animation in other displays with the <strong>Share Times</strong> button. See the <a href="../collab/Sharing.html">Sharing</a> page for more information.</li>
 <ul class="propertylist">
@@ -92,12 +92,10 @@ box corresponding to the current time is colored blue. Click on a box to select 
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Start Time -</strong> Returns to the first time step when the time set has changed.</li>
 <li class="propertylistitem"><strong>No Change -</strong> Remains at the time step you were at when the time set has changed.</li>
-<li class="propertylistitem"><strong>End Time -</strong> Displays the final time of the loop when the time set has changed..
-    </li>
+<li class="propertylistitem"><strong>End Time -</strong> Displays the final time of the loop when the time set has changed.</li>
 </ul>
 </ul>
-<a name="animationset" id="animationset"></a>
-<div class="pagesubtitle">Define Animation Times Tab</div>
+<div class="pagesubtitle"><a name="animationset" id="animationset"></a>Define Animation Times Tab</div>
 <p>The<strong> Define Animation Times </strong>tab allows you to define a custom animation time set:</p>
 <div class="images"><img src="images/AnimationProperties2.gif" alt="Image 3: Define Animation Times Tab of the Time Animation Properties Dialog"><br>
 <span class="caption">Image 3: Define Animation Times Tab of the Time Animation Properties Dialog</span></div>
@@ -106,11 +104,11 @@ the data that is being displayed. However, you can define your own time set by
 selecting the <strong>Define your own list of times</strong> button.</p>
 <p>You define how to determine the start time, end time and a time interval. The time interval is used to create the set of time steps (inclusive) between the start and end times. The start time and end time modes are determined one of four ways:</p>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>Use Minimum/Maximum Time from Data - </strong> Takes the time from the data that
+<li class="propertylistitem"><strong>Use Minimum/Maximum Time from Data -</strong> Takes the time from the data that
   is being displayed.</li>
-<li class="propertylistitem"><strong>Current Time (Now)</strong> - This automatically updates the animation time set to use the current clock time. This is useful for animation of real time data. If you select this option you can then define how often the animation set is updated with the <strong>Refresh Rate</strong> field. The <strong>Round To</strong> field allows you to specify a rounding factor.</li>
-<li class="propertylistitem"><strong>Fixed - </strong> Allows to you to specify a fixed date/time.</li>
-<li class="propertylistitem"><strong>Relative to End/Start time - </strong> Uses the other time as the base time. For example, you could set the end time to be the Current Time. And set the start time to be relative to the end time minus 1 hour (using the start time offset field). Note: You cannot have start and end times both be relative to one another.</li>
+<li class="propertylistitem"><strong>Current Time (Now) -</strong> This automatically updates the animation time set to use the current clock time. This is useful for animation of real time data. If you select this option you can then define how often the animation set is updated with the <strong>Refresh Rate</strong> field. The <strong>Round To</strong> field allows you to specify a rounding factor.</li>
+<li class="propertylistitem"><strong>Fixed -</strong> Allows to you to specify a fixed date/time.</li>
+<li class="propertylistitem"><strong>Relative to End/Start time -</strong> Uses the other time as the base time. For example, you could set the end time to be the Current Time. And set the start time to be relative to the end time minus 1 hour (using the start time offset field). Note: You cannot have start and end times both be relative to one another.</li>
 </ul>
 <p>Once you select the start and end time modes you can define an offset which is
 added (or subtracted) to the base time. To change the offset select the <img src="../images/edit.gif" alt="Offset button"align=absmiddle> button.

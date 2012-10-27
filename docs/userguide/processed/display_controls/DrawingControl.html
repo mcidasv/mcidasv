@@ -34,7 +34,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('display_controls/
 <div class="pagesubtitle">Overview</div>
 <meta name="jhid" value="idv.controls.drawingcontrol">
 <p>The drawing controls consists of a drawing editor that supports polygons, lines, shapes and text. This tool allows you to create and move graphics in the Main Display window. Drawing and selecting in 3D can be difficult and sometimes
-it is best to be in the main overhead view. This feature can be found in the Main Display window in the <strong>Display-&gt;Draw Freely</strong> menu.</p>
+it is best to be in the main overhead view. This feature can be found in the Main Display window in the <strong>Display-&gt;Draw Freely</strong> menu item.</p>
 <ul>
   <li>  <a href="#controls">Controls</a></li>
   <li>  <a href="#style">Style</a></li>
@@ -49,17 +49,17 @@ it is best to be in the main overhead view. This feature can be found in the Mai
 <span class="caption">Image 1: Controls Tab of the Drawing Control Dialog</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><b>Mode</b> - There are three editing modes, select, move and reshape:</li>
+  <li class="propertylistitem"><strong>Mode -</strong> There are three editing modes, select, move and reshape:</li>
     <ul class="propertylist">
       <li class="propertylistitem"> <img src="images/pointer.gif" alt="Select icon">&nbsp;<strong>Select -</strong> Selects one or more drawing objects. To select multiples press the control key. The selected objects will be shown with small magenta rectangles. Once selected, you can bring up the object's property editor by pressing Ctrl+P. You can also delete the selected objects by pressing Ctrl+X. You can select all of the objects by pressing Ctrl+A.</li>
       <li class="propertylistitem"> <img src="images/Move16.gif" alt="Move icon"><strong> Move -</strong> Moves an object.</li>
       <li class="propertylistitem"> <img src="images/Reshape16.gif" alt="Reshape icon"><strong> Reshape -</strong> Moves one of the points that define the location of an object.</li>
-  <li class="propertylistitem"><b>Enabled</b> - Turns on/off the ability to use the modes. This makes it easy to modify other objects that may be in the Main Display window without moving the position of your shapes.</li>
+  <li class="propertylistitem"><strong>Enabled -</strong> Turns on/off the ability to use the modes. This makes it easy to modify other objects that may be in the Main Display window without moving the position of your shapes.</li>
   </ul>
-  <li class="propertylistitem"><b>Shapes</b> - Represents the shapes to create in the Main Display window:</li>
+  <li class="propertylistitem"><strong>Shapes -</strong> Represents the shapes to create in the Main Display window:</li>
     <ul class="propertylist">
-      <li class="propertylistitem"><img src="images/SmoothPoly16.gif" alt="Create a polygon icon"><strong> Create a polygon - </strong>Creates a smooth polygon.</li>
-      <li class="propertylistitem"><img src="images/Rectangle16.gif" alt="Create a rectangle icon"><strong> Create a rectangle - </strong>Creates a rectangle.</li>
+      <li class="propertylistitem"><img src="images/SmoothPoly16.gif" alt="Create a polygon icon"><strong> Create a polygon -</strong> Creates a smooth polygon.</li>
+      <li class="propertylistitem"><img src="images/Rectangle16.gif" alt="Create a rectangle icon"><strong> Create a rectangle -</strong> Creates a rectangle.</li>
       <li class="propertylistitem"><img src="images/Diamond16.gif" alt="Create a diamond icon"><strong> Create a diamond -</strong> Creates a diamond.</li>
       <li class="propertylistitem"><img src="images/Arrow1.gif" alt="Create an arrow icon" width="21" height="20"><strong> Create an arrow -</strong> Creates an arrow that can face in any direction.</li>
       <li class="propertylistitem"><img src="images/Arrow2.gif" alt="Create a horizontal arrow icon" width="22" height="20"><strong> Create a horizontal arrow -</strong> Creates an arrow in the horizontal direction.</li>
@@ -80,17 +80,17 @@ it is best to be in the main overhead view. This feature can be found in the Mai
 	      <li class="propertylistitem"><strong>Straight -</strong> Creates straight lines when drawing freely.</li>
 	  <li class="propertylistitem">While the icon buttons only allow you to draw 5 different front types, there are 20+ front types to choose from in the Properties dialog for the shape.</li>
     </ul>
-<li class="propertylistitem"><b>Coordinates</b> - Draws in four different coordinate systems:</li>
+<li class="propertylistitem"><strong>Coordinates -</strong> Draws in four different coordinate systems:</li>
     <ul class="propertylist">
       <li class="propertylistitem"> <strong>X/Y/Z -</strong> Draws in the 3D box coordinate space. Re-projections will not effect the shape.</li>
       <li class="propertylistitem"> <strong>X/Y -</strong> Draws in the 3D box coordinate space, fixing the Z position. Re-projections will not effect the shape.</li>
       <li class="propertylistitem"><strong>Lat/Lon/Alt -</strong> Defines the points of the shapes by Latitude/Longitude/Altitude. When you reproject the display the shape will also be reprojected.</li>
       <li class="propertylistitem"> <strong>Lat/Lon -</strong> Defines the points of shapes by Latitude/Longitude, but the Z position is fixed using the Z Position slider. When you reproject the display the shape will also be reprojected.</li>
     </ul>
-  <li class="propertylistitem"><b>Z Position</b> - Changes the vertical position of the features  with respect to other   variables being displayed in the Main Display window. You can change   this with the slider, or by entering a value in the box and pressing   Enter.</li>
-  <li class="propertylistitem"><b>Time</b> - Determines the visibility of your drawing items as you progress through time steps in a loop.</li>
+  <li class="propertylistitem"><strong>Z Position -</strong> Changes the vertical position of the features  with respect to other   variables being displayed in the Main Display window. You can change   this with the slider, or by entering a value in the box and pressing   Enter.</li>
+  <li class="propertylistitem"><strong>Time -</strong> Determines the visibility of your drawing items as you progress through time steps in a loop.</li>
   <ul class="propertylist">
-  <li class="propertylistitem"><strong>Draw In Current Time - </strong> Draws the features only on the time step you are looking at. As you step through the animation, the features will not be visible in any subsequent time steps.</li>
+  <li class="propertylistitem"><strong>Draw In Current Time -</strong> Draws the features only on the time step you are looking at. As you step through the animation, the features will not be visible in any subsequent time steps.</li>
   <li class="propertylistitem"><strong>Show All -</strong> Displays all of the features drawn at any time step, regardless of if Draw In Current Time was selected.</li>
   </ul>
     <li class="propertylistitem"> A graphic can be shown at more than one time using the Property Editor. Select the object and press Ctrl+P to bring up the property editor. Select the times to be displayed in in the <strong>Times</strong> list (Shift+click or Ctrl+click to select multiples) and press <strong>Apply</strong> or <strong>Ok</strong>.</li>
@@ -101,10 +101,10 @@ it is best to be in the main overhead view. This feature can be found in the Mai
 <div class="pagesubtitle">Properties    </div>
 <p>These menu options apply to the shapes listed in the  <strong>Controls</strong> tab, excluding the High/Low pressures/fronts. Once modifications have been made in this tab, they will be applied to the next shape you make in the Main Display window, without changing any shapes already created.</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><b>Color</b> - Represents the color of the shape/text in the display.</li>
-  <li class="propertylistitem"><strong>Line Width - </strong>Represents the thickness of the shapes in the display.</li>
-  <li class="propertylistitem"><strong>Font - </strong>Changes the font of the text in the display.</li>
-  <li class="propertylistitem"><strong>Size - </strong>Changes the size of the text in the display.</li>
+  <li class="propertylistitem"><strong>Color -</strong> Represents the color of the shape/text in the display.</li>
+  <li class="propertylistitem"><strong>Line Width -</strong> Represents the thickness of the shapes in the display.</li>
+  <li class="propertylistitem"><strong>Font -</strong> Changes the font of the text in the display.</li>
+  <li class="propertylistitem"><strong>Size -</strong> Changes the size of the text in the display.</li>
   <li class="propertylistitem"><strong>Justification -</strong> Changes the justification of the text.</li>
   <li class="propertylistitem"><strong>Front Scale -</strong> Changes the scale of the fronts.</li>
 </ul>
@@ -114,12 +114,12 @@ it is best to be in the main overhead view. This feature can be found in the Mai
 <div class="pagesubtitle">Properties    </div>
 <p>This tab lists out the different shapes and information about them included in the Main Display window, selected from the <strong>Controls</strong> tab.</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><b>Name</b> - Lists the names of the shapes.</li>
-  <li class="propertylistitem"><strong>Type - </strong>Represents the type of shape in the display.</li>
-  <li class="propertylistitem"><strong>Coordinates - </strong>Lists the Coordinates selected in the <strong>Controls</strong> tab.</li>
-  <li class="propertylistitem"><strong>Specifics - </strong>Lists specifics about some of the items, including pressure and area values.</li>
+  <li class="propertylistitem"><strong>Name -</strong> Lists the names of the shapes.</li>
+  <li class="propertylistitem"><strong>Type -</strong> Represents the type of shape in the display.</li>
+  <li class="propertylistitem"><strong>Coordinates -</strong> Lists the Coordinates selected in the <strong>Controls</strong> tab.</li>
+  <li class="propertylistitem"><strong>Specifics -</strong> Lists specifics about some of the items, including pressure and area values.</li>
 </ul>
-<p>Double clicking on an element in the <strong>Shapes</strong> tab will show its properties editor, which consists of two tabs: <strong>Properties</strong> and <strong>Points</strong>. </p>
+<p>Double-clicking on an element in the <strong>Shapes</strong> tab will show its properties editor, which consists of two tabs: <strong>Properties</strong> and <strong>Points</strong>. </p>
 <a name="properties" id="properties"></a><p>The <strong>Properties</strong> tab gives general information about each shape:</p>
  <a name="image1"></a>
 </p>
@@ -128,12 +128,12 @@ it is best to be in the main overhead view. This feature can be found in the Mai
 <p>This tab allows you to control many aspects of the individual shapes. Note: The different types of shapes will have different menu options.</p>
 <div class="pagesubtitle">Properties    </div>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Line Width - </strong>Represents the thickness of the shapes being displayed.</li>
-  <li class="propertylistitem"><strong>Name - </strong> Represents the name of the shape.</li> 
+  <li class="propertylistitem"><strong>Line Width -</strong> Represents the thickness of the shapes being displayed.</li>
+  <li class="propertylistitem"><strong>Name -</strong> Represents the name of the shape.</li> 
   <li class="propertylistitem"><strong>Visible -</strong> Determines if the shape will be seen in the display.</li>
   <li class="propertylistitem"><strong>Color -</strong> Represents the color of the shape in the display.</li>
   <li class="propertylistitem"><strong>Distance -</strong> Represents the distance the object covers in the Main Display window.</li>
-  <li class="propertylistitem"><strong>Area - </strong>Represents the area of a shape being displayed in the Main Display window.</li>
+  <li class="propertylistitem"><strong>Area -</strong> Represents the area of a shape being displayed in the Main Display window.</li>
   <li class="propertylistitem"><strong>Pressure -</strong> Changes the pressure when your shape is a high or low pressure.</li>
   <li class="propertylistitem"><strong>Front Type -</strong> Changes the type of front displayed for the selected element.</li>
   <li class="propertylistitem"><strong>Flip the front orientation -</strong> Changes the display to represent the front traveling in the opposite direction.</li>
@@ -162,7 +162,7 @@ it is best to be in the main overhead view. This feature can be found in the Mai
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Remove All -</strong> Removes any drawings from the Main Display window without removing any other items.</li>
   <li class="propertylistitem"><strong>Apply Color to Selected -</strong> Changes the color of the selected item drawn in the Main Display window.</li>
-  <li class="propertylistitem"><strong>Apply Z Position to Selected -</strong> Changes the Z position of the selected item drawn in the Main Display window.</li>
+  <li class="propertylistitem"><strong>Apply Z Position to Selected -</strong> Changes the Z-position of the selected item drawn in the Main Display window.</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
