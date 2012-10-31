@@ -33,14 +33,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/Sounding
 <xxxmeta xxxname="jhid" value="idv.controls.volumerendercontrol">
 <div class="pagesubtitle">Overview</div>
 <p>For 3D derived gridded data, one of the Fields you can select is Sounding Data (Temperature &amp; dewpoint only or with true winds). In the <strong>Displays</strong> panel of the <strong>Layer Controls</strong> tab, there is a category for soundings. The three sounding display options are Grid Skew-T, Grid Stuve Display, and Grid Emagram Display. This display uses the model data to produce soundings, and their controls are similar to those for Point Data <a href="AerologicalSoundingControl.html">sounding display controls</a>. You can modify the location of the sounding in the Main Display window by dragging the selector point to a different position on the map.</p>
-<p>The example below is loaded from the 'Sounding Data (with true winds)' Field. If you select 'Sounding Data (Temperature &amp; dewpoint only)', then wind data will not be included in the display. Therefore, there will be no barbs along the side of the sounding in the <strong>Sounding Chart</strong> tab,  the <strong>Hodograph</strong> tab will not be available, and there will be no wind information listed in the <strong>Table</strong> tab.</p>
+<p>The example below is loaded from the 'Sounding Data (with true winds)' field. If you select 'Sounding Data (Temperature &amp; dewpoint only)', then wind data will not be included in the display. Therefore, there will be no barbs along the side of the sounding in the <strong>Sounding Chart</strong> tab,  the <strong>Hodograph</strong> tab will not be available, and there will be no wind information listed in the <strong>Table</strong> tab.</p>
 <p>The <strong>Sounding Chart</strong> tab includes an aerological diagram (e.g., skew-T, Stuve, Emagram):</p>
 <div class="images"><img src="images/SoundingGrid.gif" alt="Image 1: Sounding Display of Model Data" width="929" height="617"><br>
 <span class="caption">Image 1: Sounding Display of Model Data</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Time Animation Control -</strong> Controls the looping of     displays through time.    See <a href="../ui/Animation.html">Time     Animation Control</a> for more information. This will be available if you select more than one time to display in the <strong>Field Selector</strong>.</li>
-  <li class="propertylistitem"><strong>Dry Adiabats - </strong> Displays the dry adiabats on the Skew-T   diagram.</li>
+  <li class="propertylistitem"><strong>Dry Adiabats -</strong> Displays the dry adiabats on the Skew-T   diagram.</li>
   <li class="propertylistitem"><strong>Saturation Adiabats -</strong> Displays the saturation adiabats   on the Skew-T diagram.</li>
   <li class="propertylistitem"><strong>Mixing Ratio -</strong> Displays the mixing ratio lines on the   Skew-T diagram.</li>
   <li class="propertylistitem"><strong>Parcel Path -</strong> Displays the path of a parcel of air   lifted pseudo-adiabatically        from the initial point to the top of the Skew-T diagram.</li>
@@ -56,13 +56,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/Sounding
   <li class="propertylistitem"><strong>Wind spacing -</strong> Allows the user to control which wind levels are shown in the display.</li> 
   </ul>
 <p>A label above the sounding's chart shows the model, date, and time of the data. You can modify the individual T and Td profiles on the skew T by clicking and dragging the profile lines. You will see changes in the parameter table to the left of the Skew-T that reflect modifications made to the sounding.</p>
-  <p>The <strong>Hodograph</strong> tab shows a 3D hodograph display:</p>
+  <p>The <strong>Hodograph</strong> tab shows a 3D hodograph display. Note that this tab is only included with the display if you select a Field that includes wind data:</p>
   <div class="images"><img src="images/HodoGrid.gif" alt="Image 2: Hodograph Display of Model Data" width="929" height="539"><br><span class="caption">Image 2: Hodograph Display of Model Data</span></div>
   <div class="pagesubtitle">Properties</div>
   <ul class="propertylist">
   <li class="propertylistitem"><strong>Time Animation Control -</strong> Controls the looping of     displays through time.    See <a href="../ui/Animation.html">Time     Animation Control</a> for more information. This will be available if you select more than one time to display in the <strong>Field Selector</strong>.</li>
   </ul>
-  <p>The hodograph is enabled if the plotted data includes wind fields. It can be rotated into 3D by clicking and dragging the right mouse button. You can zoom in/out by holding down Shift and right-clicking and dragging up/down or by using the scroll wheel on the mouse. To reset the hodograph, use Ctrl+R.</p>
+  <p>The hodograph is enabled if the plotted data includes wind fields. It can be rotated into 3D by right-clicking and dragging. You can zoom in/out by holding down Shift and right-clicking and dragging up/down or by using the scroll wheel on your mouse. To reset the hodograph, use Ctrl+R.</p>
   <p>The <strong>Table</strong> tab shows a table of all available values in the sounding. You can invert the order of the table by double clicking on the name of a column (ex. AirPressure).:</p>
   <div class="images"><img src="images/TableGrid.gif" width="929" height="511" alt="Image 3: Table Display of Model Data"><br><span class="caption">Image 3: Table Display of Model Data</span></div>
   <div class="pagesubtitle">Properties</div>
@@ -83,13 +83,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/Sounding
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="LayerControls.html#menus">Menus section</a> of the Layer Controls page. However, there is one option that is unique to this display.</p>
 <p>The <strong>File</strong> menu has this unique option:</p>
 <ul class="propertylist">
-    <li class="propertylistitem"><strong>Export Sounding Table to File... - </strong>Exports the data in the <strong>Table </strong>tab. This can be saved in Comma-Separated Values (CSV) format (*.csv) or in Excel format.</li>
+    <li class="propertylistitem"><strong>Export Sounding Table to File... -</strong> Exports the data in the <strong>Table </strong>tab. This can be saved in Comma-Separated Values (CSV) format (*.csv) or in Excel format.</li>
 </ul>
 <p>The <strong>Edit</strong> menu has these unique options:</p>
 <ul class="propertylist">
     <li class="propertylistitem"><strong>Reset Probe Position -</strong> Moves the probe in the Main Display window back to its initial location before it was moved.</li>
     <li class="propertylistitem"><strong>Reset Sounding -</strong> Reverts the sounding back to its initial   configuration after any modifications have been made to it. </li>
-    <li class="propertylistitem"><strong>Selector Color - </strong>Changes the color of the shape   representing the location of the sounding in the Main Display window.</li>
+    <li class="propertylistitem"><strong>Selector Color -</strong> Changes the color of the shape   representing the location of the sounding in the Main Display window.</li>
 </ul>
 <p>The <strong>View</strong> menu has these unique options:</p>
 <ul class="propertylist">
