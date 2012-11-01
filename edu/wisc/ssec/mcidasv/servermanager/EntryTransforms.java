@@ -766,6 +766,28 @@ public class EntryTransforms {
         }
     }
 
+    public static Set<LocalAddeEntry> removeTemporaryEntriesFromResolvFile(final String filename, final Collection<LocalAddeEntry> entries) throws IOException {
+        Contract.notNull(filename, "Path to resolv file cannot be null");
+        Contract.notNull(entries, "Local entries cannot be null");
+        Set<LocalAddeEntry> removedEntries = newLinkedHashSet(entries.size());
+        BufferedWriter bw = null;
+        try {
+            bw = new BufferedWriter(new FileWriter(filename));
+            for (LocalAddeEntry entry : entries) {
+                if (!entry.isEntryTemporary()) {
+                    bw.write(asResolvEntry(entry)+'\n');
+                } else {
+                    removedEntries.add(entry);
+                }
+            }
+        } finally {
+            if (bw != null) {
+                bw.close();
+            }
+        }
+        return removedEntries;
+    }
+
     /**
      * De-munges file mask strings.
      * 
