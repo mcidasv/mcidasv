@@ -238,6 +238,11 @@ public class AddePointDataChooser extends AddeChooser {
                 ht.put(AddeUtil.NUM_RELATIVE_TIMES, getRelativeTimeIndices());
                 ht.put(AddeUtil.RELATIVE_TIME_INCREMENT, getRelativeTimeIncrement());
             }
+
+            if (getDoAbsoluteTimes()) {
+              ht.put(AddeUtil.ABSOLUTE_TIMES, getSelectedAbsoluteTimes());
+            }
+
             makeDataSource(source, DATA_TYPE, ht);
             saveServerState();
         } catch (Exception excp) {
@@ -437,6 +442,7 @@ public class AddePointDataChooser extends AddeChooser {
             selectValue.append(";type 0");
         }
         selectValue.append(';');
+
         if (isUpperAir()){
             selectValue.append(AddeUtil.LEVEL);
             selectValue.append(';');
@@ -512,10 +518,11 @@ public class AddePointDataChooser extends AddeChooser {
      * Return {@code true} if selected descriptor is for upper air.
      *
      * @return {@code true} iff {@link edu.wisc.ssec.mcidasv.chooser.adde.AddePointDataChooser#getDescriptor()}
-     * is {@literal "UPPER"}.
+     * is {@literal "UPPERMAND"}.
      */
     protected boolean isUpperAir() {
-        return "UPPER".equals(getDescriptor());
+        return "UPPERMAND".equals(getDescriptor());
+
     }
     
     /**
