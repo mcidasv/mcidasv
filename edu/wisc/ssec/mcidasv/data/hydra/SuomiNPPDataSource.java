@@ -937,6 +937,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
         if (msd_CrIS.size() == 3) {
           try {
             MultiSpectralAggr aggr = new MultiSpectralAggr(msd_CrIS.toArray(new MultiSpectralData[msd_CrIS.size()]));
+            aggr.setInitialWavenumber(902.25f);
             multiSpectralData.add(aggr);
             defaultSubset = ((MultiSpectralData)msd_CrIS.get(0)).getDefaultSubset();
             previewImage = ((MultiSpectralData)msd_CrIS.get(0)).getImage(defaultSubset);
