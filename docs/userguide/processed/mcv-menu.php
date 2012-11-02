@@ -169,7 +169,7 @@
 
       <div class="indented" id="layercontrols_6">
         <span class="link" onClick="setPage('controls/PointDataPlotControl.html');">Point Data Plot Controls</span><br>
-        <span class="link" onClick="setPage('controls/ObsListControl.html');">Observation List Controls</span><br>
+        <span class="link" onClick="setPage('controls/ObsListControl.html');">Point Data List Controls</span><br>
 		<span class="link" onClick="setPage('controls/ObjectiveAnalysis.html');">Gridded Point Data</span><br>
         <span class="link" onClick="setPage('controls/AerologicalSoundingControl.html');">Sounding Display Controls</span><br>
 		<span class="link" onClick="setPage('controls/FrontControl.html');">Front Controls</span><br>

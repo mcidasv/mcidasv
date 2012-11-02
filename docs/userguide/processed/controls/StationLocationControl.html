@@ -50,7 +50,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/StationL
 <span class="caption">Image 1: Display Tab of the Location Controls Dialog</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Declutter -</strong> Displays only stations that do not overlap. When unchecked, all of the   stations will be shown.  The small "lock" icon allows you to        lock the stations that are currently being displayed and not have   their        display changed when navigating in the Main Display window.</li>
+  <li class="propertylistitem"><strong>Declutter -</strong> Displays only stations that do not overlap. When unchecked, all of the   stations will be shown, and the <strong>Density</strong> slider will be grayed out. The small "lock" icon allows you to        lock the stations that are currently being displayed and not have   their        display changed when navigating in the Main Display window.</li>
   <li class="propertylistitem"><strong>Density -</strong> Changes how dense the display of stations is        when the <strong>Declutter</strong> checkbox is selected. When the <strong>Declutter</strong> checkbox is not selected, the Density option will not be available, and all stations will be displayed.</li>
   <li class="propertylistitem"><strong>Display -</strong> Displays locations as a fixed specification
       of a symbol and/or  identifier, or as one of the available station
@@ -60,7 +60,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/StationL
       in the <strong>Symbol</strong> menu to control what marker
       symbol is displayed. Clicking an item will immediately change the display.
       Use the checkboxes to the right of <strong>Id</strong> and <strong>Symbol</strong> to trigger their visibility in the Main Display window.</li>
-    <li class="propertylistitem"><strong>Layout Model -</strong> Displays a pre-defined layout model at the locations of the parameter in the Main Display window.  Click the <img src="../data/choosers/images/DownDown.gif" alt="Double down arrow" width="9" height="10">  icon to select a station model, or select <strong>Edit</strong> to open the <a href="../tools/StationModelEditor.html">Station Model Editor</a>.</li>
+    <li class="propertylistitem"><strong>Layout Model -</strong> Sets the layout model that will be used to display the data. This can be   one of the native layout models included with McIDAS-V, or a user-made   layout model. Click on the downward facing blue arrows <img src="../data/choosers/images/DownDown.gif" alt="Double down arrow" width="9" height="10"> to change the layout model. Selecting <strong>Edit</strong> will open the <a href="../tools/StationModelEditor.html">Station Model Editor</a> which will allow you to create your own custom station model.</li>
   <li class="propertylistitem"><strong>Vertical Position -</strong> Displays the locations at their altitude (if there is
       one) or specifically defines the vertical position. This can be changed by using the slider or typing a value into the field and pressing Enter.</li>
 </ul>
@@ -96,7 +96,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/StationL
   <li class="propertylistitem"><strong>Match any of these filters - </strong>Displays data that matches up with one or more of the chosen filters.</li>
   <li class="propertylistitem"><strong>Property -</strong> Represents the variable or property that you want to filter.</li>
   <li class="propertylistitem"><strong>Middle Dropdown Menu -</strong> Represents the mathematical symbol that determines your filter. This can be greater than, less than, equal to, not equal to, etc.</li>
-  <li class="propertylistitem"><strong>Value -</strong> Represents the value that sets the filter.</li>
+  <li class="propertylistitem"><strong>Value -</strong> Specifies the numerical value that the mathematical symbol in the middle dropdown menu will utilize.</li>
 </ul>
 <div class="pagesubtitle"><a name="menus" id="menus"></a>Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="LayerControls.html#menus">Menus section</a> of the Layer Controls page. However, there are some options that are unique to this display.</p>

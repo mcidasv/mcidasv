@@ -98,7 +98,7 @@
         </tocitem>
 		<tocitem text="Observation and Location Controls" target="idv.page_observationandlocationcontrols">
             <tocitem text="Point Data Plot Controls" target="idv.controls.stationmodelcontrol"/>
-            <tocitem text="Observation List Controls" target="idv.controls.obslistcontrol"/>
+            <tocitem text="Point Data List Controls" target="idv.controls.obslistcontrol"/>
             <tocitem text="Gridded Point Data" target="idv.controls.objectiveanalysis"/>
             <tocitem text="Sounding Display Controls" target="idv.controls.aerologicalsoundingcontrol"/>
             <tocitem text="Front Controls" target="idv.controls.frontcontrol"/>
