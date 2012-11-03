@@ -31,7 +31,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageryForm
 <p>The following describes each formula included in the Imagery Formulas section
   of McIDAS-V.</p>
 <p><strong>Geolocate an Image (Upper Left Lat, Upper Left Lon, Lower Right Lat,
-    Lower Right Lon - </strong>Takes an image data object and a lat/lon bounding box and adds
+    Lower Right Lon -</strong> Takes an image data object and a lat/lon bounding box and adds
   a lat/lon domain to the data. This formula is commonly used in conjunction
   with another formula. </p>
 <table id="imageryformulas" cellpadding="0" cellspacing="0" border="1">
@@ -60,7 +60,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageryForm
         longitude value (default=180).</p></td>
   </tr>
 </table>
-<p><strong>Image over topography - </strong>Obtains the latitude coordinate from the grid and returns a grid
+<p><strong>Image over topography -</strong> Obtains the latitude coordinate from the grid and returns a grid
 of the latitudes at each point.</p>
 <p><strong>Mask Function -</strong> Allows you to specify a threshold value where only data greater than, less than, greater than or equal to, less than or equal to, or equal to values will display.</p>
 <table id="imageryformulas" cellpadding="0" cellspacing="0" border="1">
@@ -101,7 +101,7 @@ of the latitudes at each point.</p>
   </tr>
 </table>
 <p><strong>Scale images to brightness ranges -</strong> Displays your selected parameter in the Main Display window. Instead of using the color bar range that would be customary for your selected parameter, the standard range for brightness values will be used (i.e. 0-255).</p>
-<p><strong>Three Color (RGB) Image - </strong>Combines three images as a RGB image when the 3 Color (RGB) Image display type is selected. When you select Create Display, a Field Selector window will open. The fields in this window are red, green, and blue. Once you click OK, an RGB image will be created in the Main Display window. Below is the <strong>Layer Controls</strong> tab for the 3 Color (RGB) Image display type.</p>
+<p><strong>Three Color (RGB) Image -</strong> Combines three images as a RGB image when the 3 Color (RGB) Image display type is selected. When you select Create Display, a Field Selector window will open. The fields in this window are red, green, and blue. Once you click OK, an RGB image will be created in the Main Display window. Below is the <strong>Layer Controls</strong> tab for the 3 Color (RGB) Image display type.</p>
 <div class="images"><img src="images/formula/RGBControls.gif" alt="Image 1: Three Color (RGB) Image" width="452" height="195"><br> 
 <span class="caption">Image 1: Three Color (RGB) Image</span></div>
 <ul class="propertylist">
@@ -109,16 +109,16 @@ of the latitudes at each point.</p>
 <li class="propertylistitem"><strong>Vertical Position -</strong> Changes the vertical position of the image with respect to other variables being displayed in the Main Display window. You can change this with the slider, or by entering a value into the field and pressing Enter.</li>
 <li class="propertylistitem"><strong>Transparency -</strong> Increases or decreases the transparency of the image.</li>
 </ul>
-<p><strong>Three Color (RGB) Image (Auto-scale) - </strong>Combines three images as a RGB image when the RGB Composite display type is selected. When you select Create Display, a Field Selector window will open. The fields in this window are red, green, and blue. Once you click OK, an RGB image will be created in the Main Display window. After the display is created, you have the ability to change the ranges for the red, green, and blue values, as well as the gamma values. Below is the <strong>Layer Controls</strong> tab for the RGB Composite display type.</p>
+<p><strong>Three Color (RGB) Image (Auto-scale) -</strong> Combines three images as a RGB image when the RGB Composite display type is selected. When you select Create Display, a Field Selector window will open. The fields in this window are red, green, and blue. Once you click OK, an RGB image will be created in the Main Display window. After the display is created, you have the ability to change the ranges for the red, green, and blue values, as well as the gamma values. Below is the <strong>Layer Controls</strong> tab for the RGB Composite display type.</p>
 <div class="images"><img src="images/formula/RGBCompositeControls.gif" alt="Image 2: RGB Composite" width="520" height="211"><br> 
 <span class="caption">Image 2: RGB Composite</span></div>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Red range -</strong> Sets the minimum and maximum values for the red range, as well as the gamma value.</li>
 <li class="propertylistitem"><strong>Green range -</strong> Sets the minimum and maximum values for the green range, as well as the gamma value.</li>
 <li class="propertylistitem"><strong>Blue range -</strong> Sets the minimum and maximum values for the blue range, as well as the gamma value.</li>
-<li class="propertylistitem"><strong>Gamma - </strong>Sets a gamma value that is applied to all three colors.</li>
-<li class="propertylistitem"><strong><img src="images/formula/reset.gif" width="64" height="26" alt="reset button"align="absmiddle"> -</strong> Resets the minimum and maximum range values for the color&nbsp;to their defaults.</li>
-<li class="propertylistitem"><strong> <img src="images/formula/ApplyAll.gif" width="82" height="26" alt="Apply All button"align="absmiddle"> -</strong> Applies any changes that have been made to any of these fields to the image in the Main Display window. Alternatively, after changing a value in each field, you may press Enter to apply your change to the image.</li>
+<li class="propertylistitem"><strong>Gamma - </strong>Sets a gamma value that is applied to all three colors. To apply one gamma value to all RGB gammas, enter a value into this field and press Enter. A gamma value less than 1 will lead to the display being weighted toward higher (brighter) output values. A gamma value greater than 1 will lead to darker output.</li>
+<li class="propertylistitem"><strong><img src="images/formula/reset.gif" width="64" height="26" alt="reset button"align="absmiddle"> -</strong> Resets the minimum and maximum range values for the color to their defaults.</li>
+<li class="propertylistitem"><strong> <img src="images/formula/ApplyAll.gif" width="82" height="26" alt="Apply All button"align="absmiddle"> -</strong> Applies any changes that have been made to any of the fields of the individual R, G, and B components to the image in the Main Display window. This button does not affect the bottom <strong>Gamma</strong> value. Alternatively, after changing a value in each field, you may press Enter to apply your change to the image.</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
