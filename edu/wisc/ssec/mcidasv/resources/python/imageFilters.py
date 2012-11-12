@@ -895,7 +895,7 @@ def lowPass2DFilter(sdataset, user_linecoef=0.5, user_elecoef=0.5, user_stretchv
             for j in range(element_size):
                 if vals[0][i * element_size + j] > 0:
                     val = ecoef * val + e1 * vals[0][i * element_size + j]
-                vals[0][i * element_size + j] = round(val)
+                vals[0][i * element_size + j] = round(round(val,5))
                 
             """ right to left filter along line """
             val = vals[0][i * element_size + (element_size - 1)]
@@ -903,12 +903,12 @@ def lowPass2DFilter(sdataset, user_linecoef=0.5, user_elecoef=0.5, user_stretchv
             """ second argument of -1 ensures that the 0th element is done """
             for j in xrange(element_size - 1, -1, -1):
                 val = ecoef * val + e1 * vals[0][i * element_size + j]
-                vals[0][i * element_size + j] = round(val)
+                vals[0][i * element_size + j] = round(round(val,5))
                 
             """ filter along the elements """
             for j in range(element_size):
                 val = lcoef * realLine[j] + l1 * vals[0][i * element_size + j]
-                vals[0][i * element_size + j] = round(val)
+                vals[0][i * element_size + j] = round(round(val,5))
                 
             realLine = vals[0][i * element_size:i * element_size + element_size].tolist()
             
@@ -920,7 +920,7 @@ def lowPass2DFilter(sdataset, user_linecoef=0.5, user_elecoef=0.5, user_stretchv
         for i in xrange(line_size - 1, -1, -1):
             for j in range(element_size):
                 val = lcoef * realLine[j] + l1 * vals[0][i * element_size + j]
-                vals[0][i * element_size + j] = round(val)
+                vals[0][i * element_size + j] = round(round(val,5))
                 
             realLine = vals[0][i * element_size:i * element_size + element_size].tolist()
             
@@ -1049,7 +1049,7 @@ def holeFilter(sdataset, user_brkpoint1=0, user_brkpoint2=1, user_stretchval='Co
         for i in range(line_size):
             for j in range(element_size):
                 vals[0][i * element_size + j] = scaleOutsideVal(vals[0][i * element_size + j], britlo, brithi)
-                
+                   
         filt_low = int(min(vals[0]))
         filt_hi = int(max(vals[0]))
         
