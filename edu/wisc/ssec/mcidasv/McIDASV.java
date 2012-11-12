@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: McIDASV.java,v 1.126 2012/11/08 21:06:52 mhiley Exp $
  *
  * This file is part of McIDAS-V
  *
@@ -1510,6 +1510,29 @@ public class McIDASV extends IntegratedDataViewer {
         assert args != null : "Cannot use a null argument array";
         StartupManager.applyArgs(true, false, args);
         SESSION_FILE = getSessionFilePath();
+    }
+
+    /**
+     * This returns the set of {@link ControlDescriptor}s
+     * that can be shown. The ordering of this list determines the
+     * "default" controls shown in the Field Selector, so we override
+     * here for control over the ordering.
+     *
+     * @param includeTemplates If true then include the display templates
+     * @return re-ordered List of shown control descriptors
+     */
+    @Override public List getControlDescriptors(boolean includeTemplates) {
+    	List l = super.getControlDescriptors(includeTemplates);
+    	for (int i = 0; i < l.size(); i++) {
+    		ControlDescriptor cd = (ControlDescriptor) l.get(i);
+    		if (cd.getControlId().equals("omni")) {
+    			// move the omni control to the end of the list
+    			// so it will never be "default" in Field Selector
+    			l.remove(i);
+    			l.add(cd);
+    		}
+    	}
+    	return l; 
     }
 
     /**
