@@ -72,6 +72,7 @@ import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.LineDrawing;
 
 import visad.ConstantMap;
+import visad.ContourControl;
 import visad.Data;
 import visad.DisplayEvent;
 import visad.DisplayRealType;
@@ -1292,6 +1293,7 @@ public class MapViewManager extends NavigatedViewManager {
         ContourInfo ci =
             new ContourInfo(
                 null, 0, 0, 10, true, false, false, 1, 0,
+                ContourControl.LABEL_FREQ_LO,
                 (int) stateManager
                     .getPreferenceOrProperty(
                         PREF_CONTOUR_LABELSIZE,
