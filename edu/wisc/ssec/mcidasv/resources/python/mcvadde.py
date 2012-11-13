@@ -56,6 +56,12 @@ Places = enum(ULEFT='Upper Left', CENTER='Center')
 ULEFT = Places.ULEFT
 CENTER = Places.CENTER
 
+class AddeJythonError(Exception): pass
+class AddeJythonInvalidProjectError(AddeJythonError): pass
+class AddeJythonInvalidPortError(AddeJythonError): pass
+class AddeJythonInvalidUserError(AddeJythonError): pass
+class AddeJythonUnknownDataError(AddeJythonError): pass
+
 # alias = ADDE  alias
 # server = ADDE server
 # dataset = ADDE dataset
