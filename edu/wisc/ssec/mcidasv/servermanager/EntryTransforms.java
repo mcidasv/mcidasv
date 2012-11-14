@@ -307,7 +307,43 @@ public class EntryTransforms {
     }
 
     /**
-     * Converts a given {@link EntryType} to its {@link String} representation}.
+     * Converts a given {@link ServerName} to its {@link String} representation.
+     * Note that the resulting {@code String} is lowercase.
+     * 
+     * @param serverName The server name to convert. Cannot be {@code null}.
+     * 
+     * @return {@code serverName} converted to a lowercase {@code String} representation.
+     * 
+     * @throws NullPointerException if {@code serverName} is {@code null}.
+     */
+    public static String serverNameToStr(final ServerName serverName) {
+        Contract.notNull(serverName);
+        return serverName.toString().toLowerCase();
+    }
+
+    /**
+     * Attempts to convert a {@link String} to a {@link ServerName}.
+     * 
+     * @param s Value whose {@code ServerName} is wanted. Cannot be {@code null}.
+     * 
+     * @return One of {@code ServerName}. If there was no {@literal "sensible"}
+     * conversion, the method returns {@link ServerName#INVALID}.
+     * 
+     * @throws NullPointerException if {@code s} is {@code null}.
+     */
+    public static ServerName strToServerName(final String s) {
+        ServerName serverName = ServerName.INVALID;
+        Contract.notNull(s);
+        try {
+            serverName = ServerName.valueOf(s.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            // TODO: anything to do in this situation?
+        }
+        return serverName;
+    }
+
+    /**
+     * Converts a given {@link EntryType} to its {@link String} representation.
      * Note that the resulting {@code String} is lowercase.
      * 
      * @param type The type to convert. Cannot be {@code null}.
