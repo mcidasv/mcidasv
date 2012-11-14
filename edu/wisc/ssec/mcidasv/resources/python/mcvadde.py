@@ -175,6 +175,9 @@ def getDescriptor(dataset, imageType):
     # no matching descriptor was found so return an error value:
     return -1
 
+def makeLocalADDEDataset(group, mask, format, name=None):
+    #isTemp = (name is None)
+    pass
 
 def listADDEImages(server, dataset, descriptor,
     accounting=DEFAULT_ACCOUNTING,
@@ -348,7 +351,8 @@ def getADDEImage(server, dataset, descriptor,
     return retvals
 
 
-def testADDEImage(server, dataset, descriptor,
+def testADDEImage(localDataset=None,
+    server=None, dataset=None, descriptor=None,
     accounting=DEFAULT_ACCOUNTING,
     location=None,
     coordinateSystem=CoordinateSystems.LATLON,
@@ -389,6 +393,12 @@ def testADDEImage(server, dataset, descriptor,
         accounting= ('user', 'project number') user and project number required
                     by servers using McIDAS accounting; default = ('idv','0')
     """
+    if localDataset:
+        server = localDataset.getAddress()
+        dataset = localDataset.getGroup()
+        descriptor = localDataset.getDescriptor()
+    elif (server is None) or (dataset is None) or (descriptor is None):
+        raise TypeError('must provide localDataset or server, dataset, and descriptor values')
     
     # still need to handle dates+times
     # todo: don't break!
