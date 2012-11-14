@@ -352,10 +352,12 @@ public class EntryStore {
      * Saves the current set of ADDE servers to the user's preferences.
      */
     public void saveEntries() {
-        idvStore.put(PREF_ADDE_ENTRIES, arrList(trie.values()));
+//        idvStore.put(PREF_ADDE_ENTRIES, arrList(trie.values()));
+        idvStore.put(PREF_ADDE_ENTRIES, arrList(getPersistedEntrySet()));
         idvStore.saveIfNeeded();
         try {
-            EntryTransforms.writeResolvFile(ADDE_RESOLV, getLocalEntries());
+            EntryTransforms.writeResolvFile(ADDE_RESOLV, getPersistedLocalEntries());
+//            EntryTransforms.writeResolvFile(ADDE_RESOLV, getLocalEntries());
         } catch (IOException e) {
             logger.error("EntryStore: RESOLV.SRV missing; expected=\""+ADDE_RESOLV+"\"");
         }
@@ -593,6 +595,16 @@ public class EntryStore {
         return newLinkedHashSet(trie.values());
     }
 
+    public Set<AddeEntry> getPersistedEntrySet() {
+        Set<AddeEntry> entries = newLinkedHashSet(trie.size());
+        for (AddeEntry entry : trie.values()) {
+            if (!entry.isEntryTemporary()) {
+                entries.add(entry);
+            }
+        }
+        return entries;
+    }
+
     /**
      * Returns the complete {@link Set} of {@link RemoteAddeEntry}s.
      * 
@@ -623,6 +635,45 @@ public class EntryStore {
         return locals;
     }
 
+    /**
+     * Returns the {@link Set} of {@link LocalAddeEntry LocalAddeEntries} that will
+     * be saved between McIDAS-V sessions. 
+     * 
+     * <p>Note: all this does is check {@link LocalAddeEntry#isTemporary} field. 
+     * 
+     * @return {@code LocalAddeEntry}s that will be saved for the next session.
+     */
+    public Set<LocalAddeEntry> getPersistedLocalEntries() {
+//        Set<LocalAddeEntry> locals = newLinkedHashSet(trie.size());
+//        for (AddeEntry e : trie.getPrefixedBy("localhost").values()) {
+//            if (e instanceof LocalAddeEntry) {
+//                LocalAddeEntry local = (LocalAddeEntry)e;
+//                if (!local.isEntryTemporary()) {
+//                    locals.add(local);
+//                }
+//            }
+//        }
+//        return locals;
+        return this.filterLocalEntriesByTemporaryStatus(false);
+    }
+
+    public Set<LocalAddeEntry> getTemporaryLocalEntries() {
+        return this.filterLocalEntriesByTemporaryStatus(true);
+    }
+    
+    private Set<LocalAddeEntry> filterLocalEntriesByTemporaryStatus(final boolean getTemporaryEntries) {
+        Set<LocalAddeEntry> locals = newLinkedHashSet(trie.size());
+        for (AddeEntry e : trie.getPrefixedBy("localhost").values()) {
+            if (e instanceof LocalAddeEntry) {
+                LocalAddeEntry local = (LocalAddeEntry)e;
+                if (local.isEntryTemporary() == getTemporaryEntries) {
+                    locals.add(local);
+                }
+            }
+        }
+        return locals;
+    }
+    
     public boolean removeEntries(
         final Collection<? extends AddeEntry> removedEntries) 
     {
@@ -660,6 +711,22 @@ public class EntryStore {
         saveEntries();
         EventBus.publish(evt);
         return val;
+    }
+
+    /**
+     * Adds a single {@link AddeEntry} to {@link #trie}.
+     * 
+     * @param entry Entry to add. Cannot be {@code null}.
+     * 
+     * @throws NullPointerException if {@code entry} is {@code null}.
+     */
+    public void addEntry(final AddeEntry entry) {
+        notNull(entry, "Cannot add a null entry");
+        trie.put(entry.asStringId(), entry);
+        saveEntries();
+        lastAdded.clear();
+        lastAdded.add(entry);
+        EventBus.publish(Event.ADDITION);
     }
 
     /**

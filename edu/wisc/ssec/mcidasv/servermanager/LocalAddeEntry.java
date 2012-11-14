@@ -272,7 +272,7 @@ public class LocalAddeEntry implements AddeEntry {
         this.entryStatus = builder.status;
         this.isTemporary = builder.temporary;
         this.entryAlias = builder.alias;
-//        logger.debug("created local: {}", this);
+        logger.debug("created local: {}", this);
     }
 
     @Override public AddeAccount getAccount() {
@@ -615,6 +615,10 @@ public class LocalAddeEntry implements AddeEntry {
             realtime(map.get("RT"));
             start(map.get("R1"));
             end(map.get("R2"));
+            
+            if (map.containsKey("TEMPORARY")) {
+                temporary(map.get("TEMPORARY"));
+            }
         }
 
         /**
@@ -800,6 +804,11 @@ public class LocalAddeEntry implements AddeEntry {
          */
         public Builder temporary(final boolean temporary) {
             this.temporary = temporary;
+            return this;
+        }
+
+        public Builder temporary(final String temporary) {
+            this.temporary = Boolean.valueOf(temporary);
             return this;
         }
 

@@ -478,6 +478,11 @@ public class EntryTransforms {
         return format;
     }
 
+    public static String addeFormatToStr(final AddeFormat format) {
+        Contract.notNull(format);
+        return format.toString().toLowerCase();
+    }
+
     // TODO(jon): re-add verify flag?
     protected static Set<RemoteAddeEntry> extractMctableEntries(final String path, final String username, final String project) {
         Set<RemoteAddeEntry> entries = newLinkedHashSet();
@@ -901,7 +906,7 @@ public class EntryTransforms {
         AddeFormat format = entry.getFormat();
         ServerName servName = format.getServerName();
 
-        StringBuilder s = new StringBuilder(100);
+        StringBuilder s = new StringBuilder(150);
         if (entry.getEntryStatus() != EntryStatus.ENABLED) {
             s.append('#');
         }
@@ -913,7 +918,8 @@ public class EntryTransforms {
             .append(",R1=").append(entry.getStart())
             .append(",R2=").append(entry.getEnd())
             .append(",MCV=").append(format.name())
-            .append(",C=").append(entry.getName());
+            .append(",C=").append(entry.getName())
+            .append(",TEMPORARY=").append(entry.isEntryTemporary());
 
         if (servName == ServerName.LV1B) {
             s.append(",Q=LALO");
