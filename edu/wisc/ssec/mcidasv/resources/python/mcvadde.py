@@ -13,7 +13,16 @@ from ucar.unidata.data.imagery import AddeImageDescriptor
 from ucar.visad.data import AreaImageFlatField
 
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
+
 from edu.wisc.ssec.mcidasv.servermanager import EntryStore
+from edu.wisc.ssec.mcidasv.servermanager import LocalAddeEntry
+from edu.wisc.ssec.mcidasv.servermanager.AddeEntry import EntryStatus
+from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import addeFormatToStr
+from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import serverNameToStr
+from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import strToAddeFormat
+from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import strToServerName
+from edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry import AddeFormat
+from edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry import ServerName
 
 from visad.data.mcidas import AreaAdapter
 
@@ -175,9 +184,18 @@ def getDescriptor(dataset, imageType):
     # no matching descriptor was found so return an error value:
     return -1
 
-def makeLocalADDEDataset(group, mask, format, name=None):
-    #isTemp = (name is None)
-    pass
+def makeLocalDataset(group, mask, format, name=None):
+    convertedFormat = strToAddeFormat(format)
+    if not name:
+        isTemp = True
+        name = 'TEMP-%s-%s' % (format, group)
+    else:
+        isTemp = False
+    
+    localDataset = LocalAddeEntry.Builder(name, group, mask, convertedFormat).status(EntryStatus.ENABLED).temporary(isTemp).build()
+    getStaticMcv().getServerManager().addEntry(localDataset)
+    return localDataset
+    
 
 def listADDEImages(server, dataset, descriptor,
     accounting=DEFAULT_ACCOUNTING,

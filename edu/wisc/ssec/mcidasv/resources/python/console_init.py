@@ -108,7 +108,8 @@ from mcvadde import (
     enum, DEFAULT_ACCOUNTING, CoordinateSystems, Places, getDescriptor,
     getADDEImage, listADDEImages, params1, params_area_coords,
     params_image_coords, params_sizeall, disableAddeDebug, enableAddeDebug,
-    isAddeDebugEnabled, LATLON, AREA, IMAGE, ULEFT, CENTER, testADDEImage
+    isAddeDebugEnabled, LATLON, AREA, IMAGE, ULEFT, CENTER, testADDEImage,
+    makeLocalDataset
 )
 
 from interactive import (
