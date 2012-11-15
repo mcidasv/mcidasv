@@ -2171,23 +2171,23 @@ public class StormDisplayState {
 		for (StormTrackPoint stp : track.getTrackPoints()) {
 			if (rowCnt == 0) {
 				row = sheet.createRow((short) rowCnt++);
-				row.createCell((short) 0).setCellValue(new HSSFRichTextString("Time"));
-				row.createCell((short) 1).setCellValue(new HSSFRichTextString("Latitude"));
-				row.createCell((short) 2).setCellValue(new HSSFRichTextString("Longitude"));
+				row.createCell(0).setCellValue(new HSSFRichTextString("Time"));
+				row.createCell(1).setCellValue(new HSSFRichTextString("Latitude"));
+				row.createCell(2).setCellValue(new HSSFRichTextString("Longitude"));
 				for (int colIdx = 0; colIdx < params.size(); colIdx++) {
-					row.createCell((short) (colIdx + 3)).setCellValue(new HSSFRichTextString(
+					row.createCell((colIdx + 3)).setCellValue(new HSSFRichTextString(
 							params.get(colIdx).toString()));
 				}
 			}
 			row = sheet.createRow((short) rowCnt++);
-			row.createCell((short) 0).setCellValue(new HSSFRichTextString(stp.getTime().toString()));
-			row.createCell((short) 1).setCellValue(
+			row.createCell(0).setCellValue(new HSSFRichTextString(stp.getTime().toString()));
+			row.createCell(1).setCellValue(
 					stp.getLocation().getLatitude().getValue());
-			row.createCell((short) 2).setCellValue(
+			row.createCell(2).setCellValue(
 					stp.getLocation().getLongitude().getValue());
 			for (int colIdx = 0; colIdx < params.size(); colIdx++) {
 				Real r = stp.getAttribute(params.get(colIdx));
-				cell = row.createCell((short) (colIdx + 3));
+				cell = row.createCell((colIdx + 3));
 				cell.setCellValue(r.getValue());
 			}
 		}
