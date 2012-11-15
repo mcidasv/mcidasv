@@ -654,9 +654,17 @@ public class MapViewManager extends NavigatedViewManager {
 
     /**
      * Handle a vertical scale change
+     * @deprecated see {@link #verticalRangeChanged()}
      */
     protected void verticalScaleChanged() {
-        super.verticalScaleChanged();
+        verticalRangeChanged();
+    }
+
+    /**
+     * Handle a vertical range change
+     */
+    protected void verticalRangeChanged() {
+        super.verticalRangeChanged();
         notifyDisplayControls(SHARE_PROJECTION);
     }
 
