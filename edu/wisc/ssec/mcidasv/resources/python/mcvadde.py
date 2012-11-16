@@ -475,7 +475,7 @@ def testADDEImage(localDataset=None,
     retvals = (-1, -1)
     
     try:
-        mapped = _MappedAreaImageFlatField(url)
+        mapped = _MappedAreaImageFlatField.fromUrl(url)
         retvals = mapped.getDictionary(), mapped
     except AreaFileException, e:
         print 'AreaFileException: url:', url, e
