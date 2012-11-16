@@ -167,13 +167,39 @@ class _MappedData(object):
 
 
 class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
-    def __init__(self, imageUrl):
-        areaFile = AreaFileFactory.getAreaFileInstance(imageUrl)
-        self.areaDirectory = areaFile.getAreaDirectory()
-        self.addeDescriptor = AddeImageDescriptor(self.areaDirectory, imageUrl)
+    def __init__(self, aiff, areaFile, areaDirectory, addeDescriptor, 
+            startTime):
+        """ 
+        Make a _MappedAreaImageFlatField from an existing AreaImageFlatField
+        """
         # self.__mappedObject = AreaImageFlatField.createImmediate(areaDirectory, imageUrl)
-        keys = ['bands', 'calinfo', 'calibration-scale-factor', 'calibration-type', 'calibration-unit-name', 'center-latitude', 'center-latitude-resolution', 'center-longitude', 'center-longitude-resolution', 'directory-block', 'elements', 'lines', 'memo-field', 'nominal-time', 'band-count', 'sensor-id', 'sensor-type', 'source-type', 'start-time', 'url']
+        keys = ['bands', 'calinfo', 'calibration-scale-factor', 
+                'calibration-type', 'calibration-unit-name', 'center-latitude', 
+                'center-latitude-resolution', 'center-longitude', 
+                'center-longitude-resolution', 'directory-block', 'elements', 
+                'lines', 'memo-field', 'nominal-time', 'band-count', 
+                'sensor-id', 'sensor-type', 'source-type', 'start-time', 'url']
         _MappedData.__init__(self, keys)
+        self.areaFile = areaFile
+        self.areaDirectory = areaDirectory
+        self.addeDescriptor = addeDescriptor
+        # call the copy constructor
+        AreaImageFlatField.__init__(self, aiff, False, aiff.getType(),
+                aiff.getDomainSet(), aiff.RangeCoordinateSystem,
+                aiff.RangeCoordinateSystems, aiff.RangeSet,
+                aiff.RangeUnits, aiff.readLabel)
+        self.startTime = startTime
+
+    # http://stackoverflow.com/questions/141545/overloading-init-in-python
+    @classmethod
+    def fromUrl(cls, imageUrl):
+        """
+        Create an AreaImageFlatField from a URL, then make a 
+        _MappedAreaImageFlatField
+        """
+        areaFile = AreaFileFactory.getAreaFileInstance(imageUrl)
+        areaDirectory = areaFile.getAreaDirectory()
+        addeDescriptor = AddeImageDescriptor(areaDirectory, imageUrl)
         aa = AreaAdapter(imageUrl, False)
         ff = aa.getImage()
         samples = ff.unpackFloats()
@@ -182,9 +208,38 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         rangeCoordSys = ff.getRangeCoordinateSystem()[0]
         rangeSets = ff.getRangeSets()
         units = ff.getRangeUnits()[0]
-        AreaImageFlatField.__init__(self, self.addeDescriptor, ftype, domainSet, rangeCoordSys, rangeSets, units, samples, "READLABEL")
-        self.startTime = ff.getStartTime()
+        aiff = AreaImageFlatField(addeDescriptor, ftype, domainSet, 
+                rangeCoordSys, rangeSets, units, samples, "READLABEL")
+        return cls(aiff, areaFile, areaDirectory, addeDescriptor, 
+                ff.getStartTime())
+
+
+    # NOTE: This is only suitable for proof-of-concept. 
+    # Python does not allow Java-esque method overloading, so I had to fake 
+    # it with this hack. 
+    def binary(self, *args, **kwargs):
+        argCount = len(args)
+        print 'caught simple binary op:', len(args)
+        print 'args:', args
+        if argCount == 4:
+            data, op, sampling_mode, error_mode = args
+            result = AreaImageFlatField.binary(self, data, op, sampling_mode, 
+                error_mode)
+            # here, we just want to return what we get from super.binary
+            # (basically, only override the 5 arg version)
+            return result
+        elif argCount == 5:
+            data, op, new_type, sampling_mode, error_mode = args
+            result = AreaImageFlatField.binary(self, data, op, new_type, 
+                sampling_mode, error_mode)
+            return _MappedAreaImageFlatField(result,
+                    self.areaFile, self.areaDirectory, self.addeDescriptor,
+                    self.startTime)
+        else:
+            raise Exception(
+               "_MappedAreaImageFlatField.binary got unexpected number of args")
     
+
     def test(self):
         return self.aid
     
