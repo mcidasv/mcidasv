@@ -9,6 +9,8 @@ import sys
 import textwrap
 import types
 
+from decorators import deprecated
+
 # heinous java imports! boo! hiss!
 from ch.qos.logback.core import FileAppender
 from ch.qos.logback.classic import LoggerContext
@@ -27,25 +29,41 @@ from org.slf4j import LoggerFactory
 _CONTEXT_ASSERT_MSG = "expected 'default' context; got '%s'"
 _APPENDER_ASSERT_MSG = "expected appender to be a subclass of FileAppender; got '%s'"
 
-def _today(dateFormat=None):
+def today(dateFormat=None):
     """Returns today's date in either the user's specified format, or YYYYDDD (default)."""
     dateFormat = dateFormat or '%Y%j'
     return datetime.date.today().strftime(dateFormat)
 
-def _tomorrow(dateFormat=None):
+def tomorrow(dateFormat=None):
     """Returns tomorrow's date in either the user's specified format, or YYYYDDD (default)."""
     dateFormat = dateFormat or '%Y%j'
     return (datetime.date.today() + datetime.timedelta(days=1)).strftime(dateFormat)
 
-def _yesterday(dateFormat=None):
+def yesterday(dateFormat=None):
     """Returns yesterday's date in either the user's specified format, or YYYYDDD (default)."""
     dateFormat = dateFormat or '%Y%j'
-    return (datetime.date.today() + datetime.timedelta(days=1)).strftime(dateFormat)
+    return (datetime.date.today() - datetime.timedelta(days=1)).strftime(dateFormat)
 
-def _expandpath(path):
+def expandpath(path):
     """Expands ENV variables, fixes things like '~', and then normalizes the
     given path."""
     return os.path.normpath(os.path.expanduser(os.path.expandvars(path)))
+
+@deprecated(today)
+def _today(dateFormat=None):
+    return today(dateFormat)
+
+@deprecated(tomorrow)
+def _tomorrow(dateFormat=None):
+    return _tomorrow(dateFormat)
+
+@deprecated(yesterday)
+def _yesterday(dateFormat=None):
+    return _yesterday(dateFormat)
+
+@deprecated(expandpath)
+def _expandpath(path):
+    return expandpath
 
 def getUserPath():
     """Returns the path to the user's McIDAS-V directory."""

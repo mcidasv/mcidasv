@@ -113,8 +113,8 @@ from mcvadde import (
 )
 
 from interactive import (
-    describeActions, dumpObj, ncdump, ncdumpToString, _today, _tomorrow,
-    _yesterday
+    describeActions, dumpObj, expandpath, ncdump, ncdumpToString, today, tomorrow,
+    yesterday, _expandpath, _today, _tomorrow, _yesterday
 )
 
 _user_python = os.path.join(_mcv.getStore().getUserDirectory().toString(), 'python')
