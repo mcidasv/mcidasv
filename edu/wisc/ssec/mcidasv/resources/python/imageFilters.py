@@ -895,7 +895,7 @@ def lowPass2DFilter(sdataset, user_linecoef=0.5, user_elecoef=0.5, user_stretchv
             for j in range(element_size):
                 if vals[0][i * element_size + j] > 0:
                     val = ecoef * val + e1 * vals[0][i * element_size + j]
-                vals[0][i * element_size + j] = round(round(val,5))
+                vals[0][i * element_size + j] = lowPass2DRound(val+0.0000001)
                 
             """ right to left filter along line """
             val = vals[0][i * element_size + (element_size - 1)]
@@ -903,12 +903,12 @@ def lowPass2DFilter(sdataset, user_linecoef=0.5, user_elecoef=0.5, user_stretchv
             """ second argument of -1 ensures that the 0th element is done """
             for j in xrange(element_size - 1, -1, -1):
                 val = ecoef * val + e1 * vals[0][i * element_size + j]
-                vals[0][i * element_size + j] = round(round(val,5))
+                vals[0][i * element_size + j] = lowPass2DRound(val) 
                 
             """ filter along the elements """
             for j in range(element_size):
                 val = lcoef * realLine[j] + l1 * vals[0][i * element_size + j]
-                vals[0][i * element_size + j] = round(round(val,5))
+                vals[0][i * element_size + j] = lowPass2DRound(val) 
                 
             realLine = vals[0][i * element_size:i * element_size + element_size].tolist()
             
@@ -920,7 +920,7 @@ def lowPass2DFilter(sdataset, user_linecoef=0.5, user_elecoef=0.5, user_stretchv
         for i in xrange(line_size - 1, -1, -1):
             for j in range(element_size):
                 val = lcoef * realLine[j] + l1 * vals[0][i * element_size + j]
-                vals[0][i * element_size + j] = round(round(val,5))
+                vals[0][i * element_size + j] = lowPass2DRound(val) 
                 
             realLine = vals[0][i * element_size:i * element_size + element_size].tolist()
             
@@ -1220,3 +1220,21 @@ def scaleOutsideVal(val, brit_lo=0, brit_hi=255):
         val = val + div * numBritVals
         
     return val
+
+def lowPass2DRound(val):
+  """ applies rounding behavior to account for rounding differences between McIDAS-X and Jython 
+      sometimes data in V comes in as .499999 when in -X, it comes in as .500000, so rounding different """
+  
+  fraction=val%1.0
+  
+  strfrac=str(fraction)
+  
+  if strfrac[2:8] == '499999':
+     roundVal=round(round(val,5))
+  elif strfrac[2:7] == '49999': 
+     roundVal=round(round(val,4)) 
+  else:
+     roundVal=round(val)
+  
+
+  return roundVal
