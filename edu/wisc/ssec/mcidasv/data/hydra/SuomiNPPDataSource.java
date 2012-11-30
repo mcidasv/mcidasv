@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: SuomiNPPDataSource.java,v 1.11 2012/11/26 14:33:42 tommyj Exp $
  *
  * This file is part of McIDAS-V
  *
@@ -50,7 +50,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.SimpleTimeZone;
 import java.util.StringTokenizer;
-import java.util.TimeZone;
 import java.util.TreeSet;
 
 import org.jdom.Document;
@@ -137,7 +136,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     private static final String SEPARATOR_CHAR = "/";
     
     // date formatter for converting Suomi NPP day/time to something we can use
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss.SSS");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss.SSS");
     
     // date formatter for how we want to show granule day/time on display
     SimpleDateFormat sdfOut = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
@@ -191,6 +190,11 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
     public void setup() throws VisADException {
 
+    	// time zone for product labels
+    	SimpleTimeZone stz = new SimpleTimeZone(0, "GMT");
+    	sdf.setTimeZone(stz);
+    	sdfOut.setTimeZone(stz);
+    	
     	// looking to populate 3 things - path to lat, path to lon, path to relevant products
     	String pathToLat = null;
     	String pathToLon = null;
@@ -233,8 +237,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	
     	// we should be able to find an XML Product Profile for each data/product type
     	SuomiNPPProductProfile nppPP = null;
-    	    	
-    	sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
     	   	
     	try {
     		
@@ -317,7 +319,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    	    							foundDateTime = true;
 	    	    							// set time for display to day/time of 1st granule examined
 	    	    							if (! nameHasBeenSet) {
-	    	    								sdfOut.setTimeZone(new SimpleTimeZone(0, "UTC"));
 	    	    								setName(instrumentName.getStringValue() + " " + sdfOut.format(d));
 	    	    								nameHasBeenSet = true;
 	    	    							}
@@ -725,6 +726,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     		if (e.getMessage() != null && e.getMessage().equals("XML Product Profile Error")) {
     			throw new VisADException("Unable to extract metadata from required XML Product Profile");
     		}
+    		e.printStackTrace();
     	}
     	
     	// initialize the aggregation reader object
