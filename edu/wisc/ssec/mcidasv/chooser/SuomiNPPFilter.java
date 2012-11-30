@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: SuomiNPPFilter.java,v 1.6 2012/11/26 16:31:23 tommyj Exp $
  *
  * This file is part of McIDAS-V
  *
@@ -70,11 +70,12 @@ public class SuomiNPPFilter extends FileFilter {
             
         	// avoid constant rescans on window resizing and scrolling
         	String curDirectory = f.getParent();
-        	// logger.debug("Comparing: " + curDirectory + ", and prv dir: " + PREV_DIRECTORY);
         	if ((PREV_DIRECTORY != null) && (curDirectory.equals(PREV_DIRECTORY))) {
         		if (seenGranules.containsKey(f.getName())) {
-        			// XXX TJJ - need to take another look why accept gets called so often...
-        			// logger.debug("Avoiding rescan!");
+        			// XXX TJJ - Still don't know why accept gets called so often...
+        			// Made a non-McV, standalone Swing app with JFileChooser and 
+        			// got same behavior - thousands of accept calls with mouse
+        			// movement, particularly two-finger scrolling on a Mac.
         			if (validGranules.containsKey(f.getName())) {
         				return true;
         			} else {
@@ -102,7 +103,7 @@ public class SuomiNPPFilter extends FileFilter {
          * Is this a Suomi NPP Product Data file?
          * 
          * @param f name of file to test
-         * @return
+         * @return	true if conditions met (mostly presence of geolocation)
          */
         
         private boolean isSuomiNPPFile(File f) {
