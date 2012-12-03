@@ -39,7 +39,6 @@ from ucar.visad.data import AreaImageFlatField
 
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 from edu.wisc.ssec.mcidasv.servermanager import EntryStore
-from visad.meteorology import SingleBandedImageImpl
 from visad.data.mcidas import AreaAdapter
 
 def pause():
