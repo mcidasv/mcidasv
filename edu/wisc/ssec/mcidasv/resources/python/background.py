@@ -1532,11 +1532,6 @@ def createDataSource(path, filetype):
             return _DataSource(makeDataSource(path, type=desc.id))
     raise ValueError("Couldn't find that data source type")
 
-def createLayer():
-    # TODO(mike): remove this method.  (Requires change to console_init.py
-    #             which I'm having trouble committing at the moment...)
-    pass
-
 def allDataSourceNames():
     """Returns a list of all possible data source types
        (specifically, the verbose descriptions as they appear in the GUI)
