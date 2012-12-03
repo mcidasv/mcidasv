@@ -106,9 +106,12 @@ public class JythonShell extends InteractiveShell {
     public static final String PROP_JYTHON_SHELL_HISTORY =
         "prop.jython.shell.history";
     
+    /** property that holds the maximum length of the Jython Shell history */
+    public static final String PROP_JYTHON_SHELL_MAX_HISTORY_LENGTH =
+    		"prop.jython.shell.maxhistorylength";
+    
     /** max number of commands saved in history */
-    // TODO: make this user-selectable
-    public static final int MAX_HISTORY_LENGTH = 100;
+    public static final int DEFAULT_MAX_HISTORY_LENGTH = 100;
 
     /** Jython shell window title. */
     public static final String WINDOW_TITLE = "Jython Shell";
@@ -172,7 +175,7 @@ public class JythonShell extends InteractiveShell {
     public void saveHistory() {
     	
     	// trim the history array to desired length
-    	while (history.size() >= MAX_HISTORY_LENGTH) {
+    	while (history.size() > loadMaxHistoryLength(idv.getStore(), DEFAULT_MAX_HISTORY_LENGTH)) {
     		// remove the "oldest" command
     		history.remove(0);
     	}
@@ -654,5 +657,32 @@ public class JythonShell extends InteractiveShell {
         store.put(PROP_JYTHON_WINDOW, windowBounds);
         // TODO(jon): remove these calls after a little time has passed.
         store.remove("prop.jython.shell.windowbounds");
+    }
+    
+    /**
+     * 
+     * 
+     * @param store The {@link IdvObjectStore} that contains persisted session values. Cannot be {@code null}.
+     * @param defaultLength history length to use if {@code PROP_JYTHON_SHELL_MAX_HISTORY_LENGTH} does not have an associated value. Cannot be {@code null}.
+     * 
+     * @return Either the value associated with {@code PROP_JYTHON_SHELL_MAX_HISTORY_LENGTH} or {@code defaultLength}.
+     */
+    public static int loadMaxHistoryLength(final IdvObjectStore store, final int defaultLength) {
+        Integer historyLength = (Integer) store.get(PROP_JYTHON_SHELL_MAX_HISTORY_LENGTH);
+        if (historyLength == null) {
+            store.put(PROP_JYTHON_SHELL_MAX_HISTORY_LENGTH, defaultLength);
+            historyLength = defaultLength;
+        }
+        return historyLength;
+    }
+
+    /**
+     * 
+     * 
+     * @param store The {@link IdvObjectStore} that contains persisted session values. Cannot be {@code null}.
+     * @param historyLength history length to associate with {@code PROP_JYTHON_SHELL_MAX_HISTORY_LENGTH}. Cannot be {@code null}.
+     */
+    public static void saveMaxHistoryLength(final IdvObjectStore store, final int historyLength) {
+        store.put(PROP_JYTHON_SHELL_MAX_HISTORY_LENGTH,  historyLength);
     }
 }

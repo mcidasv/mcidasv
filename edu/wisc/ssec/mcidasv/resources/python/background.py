@@ -1649,6 +1649,16 @@ def boomstick():
     mcv.removeAllData(False)
     System.gc()
 
+def setJythonShellMaxHistoryLength(newHistoryLength):
+    """Set the number of commands remembered in the Jython Shell History"""
+    from ucar.unidata.idv.ui import JythonShell
+    JythonShell.saveMaxHistoryLength(getStaticMcv().getStore(), newHistoryLength)
+
+def getJythonShellMaxHistoryLength():
+    """Returns the number of commands remembered in the Jython Shell History"""
+    from ucar.unidata.idv.ui import JythonShell
+    return JythonShell.loadMaxHistoryLength(
+            getStaticMcv().getStore(), JythonShell.DEFAULT_MAX_HISTORY_LENGTH)
 
 class _NoOp(object):
 
