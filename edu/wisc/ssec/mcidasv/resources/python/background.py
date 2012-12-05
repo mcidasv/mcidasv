@@ -1255,6 +1255,7 @@ class _Layer(_JavaProxy):
             self.setLayerLabelColor(color)
 
         self._JavaProxy__javaObject.getViewManager().updateDisplayList()
+        pause()
 
     def getLayerVisible(self):
         """Determine whether or not this layer is visible.
