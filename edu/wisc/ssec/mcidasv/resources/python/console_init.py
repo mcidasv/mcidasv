@@ -30,7 +30,7 @@ def _mcvinit_classpath_hack():
     visad_jar = os.path.join(current_dir, 'visad.jar')
     
     # allow the actual classpath to override any default JAR paths
-    for entry in classpath.split(':'):
+    for entry in classpath.split(System.getProperty('path.separator')):
         if entry.endswith('mcidasv.jar'):
             mcv_jar = entry
         elif entry.endswith('idv.jar'):
