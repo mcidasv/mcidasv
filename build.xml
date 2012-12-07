@@ -70,8 +70,8 @@
     <property name="jython.lib" value="${idvlib.dir}/jython.jar" />
     
     <!-- Run target options -->
-    <property name="run.smallheap" value="512m" />
-    <property name="run.largeheap" value="1024m" />
+    <property name="run.smallheap" value="1024m" />
+    <property name="run.largeheap" value="6656m" />
     
     <property name="logback.default.config" value="edu/wisc/ssec/mcidasv/resources/logback.xml" />
     
@@ -490,8 +490,8 @@
       <assertions refid="mcv.assertions"/>
       <jvmarg value="-XX:+UseConcMarkSweepGC" />
       <jvmarg value="-XX:+CMSClassUnloadingEnabled" />
-      <!--<jvmarg value="-XX:+CMSPermGenSweepingEnabled" />-->
-      <jvmarg value="-XX:MaxPermSize=128m" />
+      <jvmarg value="-XX:+CMSPermGenSweepingEnabled" />
+      <jvmarg value="-XX:MaxPermSize=512m" />
       <!--<jvmarg value="-noverify" />-->
       <!--<jvmarg value="-XX:+DoEscapeAnalysis" />-->
       <!-- 
@@ -553,8 +553,8 @@
       <!-- flags for attempting to workaround PermGen issues -->
       <jvmarg value="-XX:+UseConcMarkSweepGC" />
       <jvmarg value="-XX:+CMSClassUnloadingEnabled" />
-      <!-- <jvmarg value="-XX:+CMSPermGenSweepingEnabled" /> -->
-      <jvmarg value="-XX:MaxPermSize=128m" />
+      <jvmarg value="-XX:+CMSPermGenSweepingEnabled" />
+      <jvmarg value="-XX:MaxPermSize=512m" />
       <!-- Misc performance flags -->
       <!--
       <jvmarg value="-noverify" /> 
@@ -656,6 +656,12 @@
           <jvmarg value="-noverify" />
           <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
           <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
+          <!-- flags for attempting to workaround PermGen issues -->
+          <jvmarg value="-XX:+UseConcMarkSweepGC" />
+          <jvmarg value="-XX:+CMSClassUnloadingEnabled" />
+          <jvmarg value="-XX:+CMSPermGenSweepingEnabled" />
+          <jvmarg value="-XX:MaxPermSize=512m" />
+
           <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
           <sysproperty key="debug.adde.reqs" value="true" />
           <sysproperty key="python.security.respectJavaAccessibility" value="false" />
