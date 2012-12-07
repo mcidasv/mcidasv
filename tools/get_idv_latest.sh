@@ -4,9 +4,13 @@
 # $Id$
 #
 
-DEST_DIR=/home/mcidasv/idv/lib
-BACK_DIR=/home/mcidasv/idv/lib.old
+# DEST_DIR=/home/mcidasv/idv/lib
+# BACK_DIR=/home/mcidasv/idv/lib.old
+DEST_DIR=../../idvlib
+BACK_DIR=../../idvlib.old
+
 URL=ftp://ftp.unidata.ucar.edu/pub/idv/nightly
+
 FILE=`curl -ls ${URL}/ |grep idv_jars |xargs echo`
 
 if [ -d ${BACK_DIR} ]; then
@@ -20,9 +24,11 @@ if [ -d ${BACK_DIR} ]; then
 fi
 
 echo "Getting new IDV nightly libraries..."
-cd $DEST_DIR
+export OLDPWD=${PWD}
+mkdir -p ${DEST_DIR}
+cd ${DEST_DIR}
 wget ${URL}/${FILE} && unzip -o ${FILE} && rm -f ${FILE}
-cd -
+cd ${OLDPWD}
 
 echo "IDV JAR files updated on Pappy; will appear in the next McIDAS-V nightly build." |\
 	mail -s "AUTO: New IDV JAR files" mug.team@ssec.wisc.edu
