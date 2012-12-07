@@ -119,10 +119,6 @@ public class MultiSpectralAggr extends MultiSpectralData {
     init_wavenumber = getWavenumberFromChannelIndex(0);
   }
 
-  public void setInitialWavenumber(float val) {
-    init_wavenumber = val;
-  }
-
   public FlatField getSpectrum(int[] coords) throws Exception {
     FlatField spectrum = null;
     for (int k=0; k<numAdapters; k++) {
