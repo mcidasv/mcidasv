@@ -505,7 +505,7 @@ public class StormAODT {
 	 * @return _more_
 	 */
 	int aodtv72_scenesearch(int type) {
-		int curflag = 1, flag, eirflag;
+		int curflag = 1, flag;
 		double curtime, xtime, curtimem6, mergetimefirst, mergetimelast, firsttime = -9999.0;
 
 		/*
