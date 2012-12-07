@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="5.1.1" transformSequenceNumber="4">
-  <directoryPresets config="${compiler:MCVDIR}/lib/miglayout-3.7.3.jar" />
-  <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="/home/mcidasv/install4j/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.3beta1" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" installerName="" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
+  <directoryPresets config="${compiler:sys.install4jHome}/jres/j3d-132-linux-x86.zip" />
+  <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="${compiler:sys.install4jHome}/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.3beta1" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" installerName="" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
       <additionalLanguages />
@@ -13,8 +13,9 @@
     </searchSequence>
     <variables>
       <variable name="INSTALLDIR" value="${compiler:sys.fullName}-System" description="" category="" />
-      <variable name="SRCDIR" value="/home/mcidasv/idv" description="" category="" />
-      <variable name="MCVDIR" value="/home/mcidasv/mc-v" description="" category="" />
+      <variable name="SRCDIR" value="${compiler:sys.install4jHome}/../idvlib" description="" category="" />
+      <variable name="MCVDIR" value="${compiler:sys.install4jHome}/../mcidasv" description="" category="" />
+      <variable name="ADDEDIR" value="${compiler:sys.install4jHome}/../addeservers" description="" category="" />
     </variables>
     <mergedProjects />
     <codeSigning macEnabled="false" macPkcs12File="" windowsEnabled="false" windowsKeySource="pvkAndSpc" windowsPvkFile="" windowsSpcFile="" windowsPkcs12File="" />
@@ -52,13 +53,13 @@
       <mountPoint id="7468" root="7415" location="" mode="755" />
     </mountPoints>
     <entries>
-      <fileEntry mountPoint="1" file="${compiler:SRCDIR}/lib/idv.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="1" file="${compiler:SRCDIR}/lib/auxdata.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="1" file="${compiler:SRCDIR}/lib/external.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="1" file="${compiler:SRCDIR}/lib/local-visad.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="1" file="${compiler:SRCDIR}/lib/visad.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="1" file="${compiler:SRCDIR}/lib/jython.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="1" file="${compiler:SRCDIR}/lib/ncIdv.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="1" file="${compiler:SRCDIR}/idv.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="1" file="${compiler:SRCDIR}/auxdata.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="1" file="${compiler:SRCDIR}/external.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="1" file="${compiler:SRCDIR}/local-visad.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="1" file="${compiler:SRCDIR}/visad.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="1" file="${compiler:SRCDIR}/jython.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="1" file="${compiler:SRCDIR}/ncIdv.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <dirEntry mountPoint="1" file="${compiler:MCVDIR}/lib" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="direct" subDirectory="" excludeSuffixes="" dirMode="755" overrideDirMode="false">
         <exclude>
           <entry location="CVS" fileType="regular" />
@@ -71,30 +72,28 @@
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcv_javadoc.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/GetMem.class" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/GetVer.class" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <dirEntry mountPoint="1" file="/home/mcidasv/mc-v/release/licenses" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="direct" subDirectory="" excludeSuffixes="" dirMode="755" overrideDirMode="true">
-        <exclude>
-          <entry location="CVS" fileType="regular" />
-        </exclude>
+      <dirEntry mountPoint="1" file="${compiler:MCVDIR}/release/licenses" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="direct" subDirectory="licenses" excludeSuffixes="" dirMode="755" overrideDirMode="true">
+        <exclude />
       </dirEntry>
       <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/runMcV" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/runMcV-Config" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/runMcV.prefs" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/remove-adde-zip.sh" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7339" file="/home/mcidasv/install4j/jres/j3d-132-linux-x86.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7338" file="/home/mcidasv/install4j/jres/macos-java3d_jogl.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7338" file="/home/mcidasv/mc-v/release/icons/mcidasv.icns" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7338" file="/home/mcidasv/mc-v/release/icons/macos-apps.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7338" file="/home/mcidasv/mc-v/release/macos-apps-setdir.sh" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7338" file="/home/mcidasv/mc-v/release/macos-java-check.sh" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7339" file="${compiler:sys.install4jHome}/jres/j3d-132-linux-x86.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7338" file="${compiler:sys.install4jHome}/jres/macos-java3d_jogl.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/icons/mcidasv.icns" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/icons/macos-apps.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/macos-apps-setdir.sh" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/macos-java-check.sh" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/runMcV.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/runMcV-Prefs.bat" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/remove-adde-zip.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7416" file="/home/mcidasv/adde/adde-linux.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7417" file="/home/mcidasv/adde/adde-darwin86.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7469" file="/home/mcidasv/adde/adde-windows.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7467" file="/home/mcidasv/adde/adde-soli86.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7468" file="/home/mcidasv/adde/adde-solaris.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7416" file="${compiler:ADDEDIR}/adde-linux.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7417" file="${compiler:ADDEDIR}/adde-darwin86.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7469" file="${compiler:ADDEDIR}/adde-windows.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7467" file="${compiler:ADDEDIR}/adde-soli86.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7468" file="${compiler:ADDEDIR}/adde-solaris.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
     </entries>
     <components>
       <component name="Base components" id="67" customizedId="" displayDescription="false" hideHelpButton="false" selected="true" changeable="false" downloadable="false" hidden="false">
@@ -159,24 +158,24 @@
       <customAttributes />
     </autoUpdate>
     <applications>
-      <application name="" id="installer" customizedId="" beanClass="com.install4j.runtime.beans.applications.InstallerApplication" enabled="true" commentSet="false" comment="" actionElevationType="none" fileset="" customIcnsFile="/home/mcidasv/mc-v/release/icons/mcidasv_installer.icns" customIcoFile="/home/mcidasv/mc-v/release/icons/mcidasv_installer.ico" automaticLauncherIntegration="false" launchMode="startupFirstWindow" launchInNewProcess="false" launchSchedule="updateSchedule" allLaunchers="true">
+      <application name="" id="installer" customizedId="" beanClass="com.install4j.runtime.beans.applications.InstallerApplication" enabled="true" commentSet="false" comment="" actionElevationType="none" fileset="" customIcnsFile="${compiler:MCVDIR}/release/icons/mcidasv_installer.icns" customIcoFile="${compiler:MCVDIR}/release/icons/mcidasv_installer.ico" automaticLauncherIntegration="false" launchMode="startupFirstWindow" launchInNewProcess="false" launchSchedule="updateSchedule" allLaunchers="true">
         <serializedBean>
           <java class="java.beans.XMLDecoder">
             <object class="com.install4j.runtime.beans.applications.InstallerApplication">
               <void property="customHeaderImage">
                 <object class="com.install4j.api.beans.ExternalFile">
-                  <string>/home/mcidasv/mc-v/release/icons/mcidasv_60x60.png</string>
+                  <string>${compiler:MCVDIR}/release/icons/mcidasv_60x60.png</string>
                 </object>
               </void>
               <void property="customIconImageFiles">
                 <void method="add">
                   <object class="com.install4j.api.beans.ExternalFile">
-                    <string>/home/mcidasv/mc-v/release/icons/mcidasv_16x16.png</string>
+                    <string>${compiler:MCVDIR}/release/icons/mcidasv_16x16.png</string>
                   </object>
                 </void>
                 <void method="add">
                   <object class="com.install4j.api.beans.ExternalFile">
-                    <string>/home/mcidasv/mc-v/release/icons/mcidasv_32x32.png</string>
+                    <string>${compiler:MCVDIR}/release/icons/mcidasv_32x32.png</string>
                   </object>
                 </void>
               </void>
@@ -281,7 +280,7 @@ Please visit &lt;a href="http://dcdbs.ssec.wisc.edu/mcidasv/forums/viewtopic.php
                 <object class="com.install4j.runtime.beans.screens.WelcomeScreen">
                   <void property="bannerImageFile">
                     <object class="com.install4j.api.beans.ExternalFile">
-                      <string>/home/mcidasv/mc-v/edu/wisc/ssec/mcidasv/images/mcidasv_logo.gif</string>
+                      <string>${compiler:MCVDIR}/edu/wisc/ssec/mcidasv/images/mcidasv_logo.gif</string>
                     </object>
                   </void>
                 </object>
@@ -737,7 +736,7 @@ return allowed;</validation>
                     <object class="com.install4j.runtime.beans.actions.desktop.RegisterAddRemoveAction">
                       <void property="icon">
                         <object class="com.install4j.api.beans.ExternalFile">
-                          <string>/home/mcidasv/mc-v/release/icons/mcidasv.ico</string>
+                          <string>${compiler:MCVDIR}/release/icons/mcidasv.ico</string>
                         </object>
                       </void>
                       <void property="itemName">
@@ -765,7 +764,7 @@ return allowed;</validation>
                       </void>
                       <void property="winIconFile">
                         <object class="com.install4j.api.beans.ExternalFile">
-                          <string>/home/mcidasv/mc-v/release/icons/mcidasv.ico</string>
+                          <string>${compiler:MCVDIR}/release/icons/mcidasv.ico</string>
                         </object>
                       </void>
                     </object>
@@ -1059,7 +1058,7 @@ return allowed;</validation>
                       <void method="put">
                         <string>en</string>
                         <object class="com.install4j.api.beans.ExternalFile">
-                          <string>/nas/home/mcidasv/mc-v/edu/wisc/ssec/mcidasv/resources/welcome.html</string>
+                          <string>${compiler:MCVDIR}/edu/wisc/ssec/mcidasv/resources/welcome.html</string>
                         </object>
                       </void>
                     </void>
@@ -1123,18 +1122,18 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
             <object class="com.install4j.runtime.beans.applications.UninstallerApplication">
               <void property="customHeaderImage">
                 <object class="com.install4j.api.beans.ExternalFile">
-                  <string>/home/mcidasv/mc-v/release/icons/mcidasv_60x60.png</string>
+                  <string>${compiler:MCVDIR}/release/icons/mcidasv_60x60.png</string>
                 </object>
               </void>
               <void property="customIconImageFiles">
                 <void method="add">
                   <object class="com.install4j.api.beans.ExternalFile">
-                    <string>/home/mcidasv/mc-v/release/icons/mcidasv_16x16.png</string>
+                    <string>${compiler:MCVDIR}/release/icons/mcidasv_16x16.png</string>
                   </object>
                 </void>
                 <void method="add">
                   <object class="com.install4j.api.beans.ExternalFile">
-                    <string>/home/mcidasv/mc-v/release/icons/mcidasv_32x32.png</string>
+                    <string>${compiler:MCVDIR}/release/icons/mcidasv_32x32.png</string>
                   </object>
                 </void>
               </void>
@@ -1236,7 +1235,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
     </applications>
   </installerGui>
   <mediaSets>
-    <unixInstaller name="Linux x86 32bit" id="3" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="/home/mcidasv/install4j/jres/linux-i386-1.6.0_31_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="~" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Linux x86 32bit" id="3" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/linux-i386-1.6.0_31_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="~" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -1266,7 +1265,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <content />
       </installerScript>
     </unixInstaller>
-    <unixInstaller name="Linux x86 64bit" id="7557" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86-64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="/home/mcidasv/install4j/jres/linux-amd64-1.6.0_31_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="~" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Linux x86 64bit" id="7557" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86-64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/linux-amd64-1.6.0_31_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="~" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -1296,7 +1295,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <content />
       </installerScript>
     </unixInstaller>
-    <unixInstaller name="Solaris x86 32bit" id="7216" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_solaris_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="/home/mcidasv/install4j/jres/solaris-x86-1.6.0_31_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Solaris x86 32bit" id="7216" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_solaris_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/solaris-x86-1.6.0_31_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -1326,7 +1325,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <content />
       </installerScript>
     </unixInstaller>
-    <unixInstaller name="Solaris SPARC" id="7565" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_solaris_sparc_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="/home/mcidasv/install4j/jres/solaris-sparc-1.6.0_31_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Solaris SPARC" id="7565" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_solaris_sparc_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/solaris-sparc-1.6.0_31_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -1413,7 +1412,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
       </excludedComponents>
       <includedDownloadableComponents />
     </macosFolder>
-    <windows name="Windows 32bit" id="8" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="/home/mcidasv/install4j/jres/windows-x86-1.6.0_31_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
+    <windows name="Windows 32bit" id="8" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/windows-x86-1.6.0_31_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
       <excludedLaunchers>
         <launcher id="841" />
         <launcher id="1330" />
@@ -1440,7 +1439,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
       </excludedComponents>
       <includedDownloadableComponents />
     </windows>
-    <windows name="Windows 64bit" id="7720" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="64" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="/home/mcidasv/install4j/jres/windows-amd64-1.6.0_31_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
+    <windows name="Windows 64bit" id="7720" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="64" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/windows-amd64-1.6.0_31_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
       <excludedLaunchers>
         <launcher id="841" />
         <launcher id="1330" />
