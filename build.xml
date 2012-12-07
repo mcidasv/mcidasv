@@ -8,7 +8,7 @@
     <property name="build.dir" location="${base.dir}/build" />
     <property name="dist.dir" location="${base.dir}/dist" />
     <property name="lib.dir" location="${base.dir}/lib" />
-    <property name="idvlib.dir" location="${base.dir}/../IDV/lib" />
+    <property name="idvlib.dir" location="${base.dir}/../idvlib" />
     <property name="resource.dir" location="${base.dir}/edu/wisc/ssec/mcidasv/resources" />
     <property name="release.dir" location="${base.dir}/release" />
     <property name="tools.dir" location="${base.dir}/tools" />
@@ -156,6 +156,23 @@
         <include name="edu/wisc/ssec/mcidasv/jython/**/*.class" />
     </patternset>
     
+    <macrodef name="git">
+        <attribute name="command" />
+        <attribute name="dir" default="" />
+        <attribute name="remote" default="origin" />
+        <attribute name="branch" default="master" />
+        <element name="args" optional="true" />
+        <sequential>
+            <echo message="git @{command} @{remote} @{branch}" />
+            <exec executable="git" dir="@{dir}">
+                <arg value="@{command}" />
+                <arg value="@{remote}" />
+                <arg value="@{branch}" />
+                <args/>
+            </exec>
+        </sequential>
+    </macrodef>
+    
     <!-- Controls the status of Java's assertion feature. -->
     <assertions id="mcv.assertions">
         <!-- Enable all assertions: -->
@@ -234,6 +251,10 @@
                 <argument value="-C" />
             </commandline>
         </cvs>
+    </target>
+    
+    <target name="gitupdate" description="Get the latest McIDAS-V source from Github.">
+        <git command="pull" dir="${base.dir}" />
     </target>
     
     <!-- Get the latest IDV jar files from Unidata -->
@@ -418,40 +439,9 @@
     
     <!-- Create nightly webstart distribution product -->
     <target name="nightly"
-    depends="cvsupdate, auxdata.nodocs, ncidv.nolog, jar.nightly, startupmanager, javadoc.jar, userguide.jar, source, build.webstart"
-    description="Create nightly webstart distribution product" />
-    
-    <!-- Build the webstart distribution -->
-    <target name="build.webstart" description="Build the webstart distribution">
-        <fail unless="storepass" message="'storepass' property not set" />
-        <condition property="dist.exists">
-            <or>
-                <uptodate targetfile="${dist.dir}/${app.jarname}">
-                    <srcfiles dir="${base.dir}/edu" includes="**/*" />
-                </uptodate>
-                <available file="${dist.dir}" />
-                <available file="${dist.dir}/${app.jarname}" />
-            </or>
-        </condition>
-        <fail unless="dist.exists" message="make jar file first" />
-        <delete>
-            <fileset dir="${webstart.dir}" includes="**/*.jar" />
-        </delete>
-        <copy todir="${webstart.dir}">
-            <fileset refid="mcv.libs" />
-            <fileset refid="idv.libs" />
-            <fileset dir="${dist.dir}">
-                <include name="*.jar" />
-            </fileset>
-        </copy>
-        <signjar keystore="${key.store}" storepass="${storepass}"
-            alias="${key.alias}">
-            <path>
-                <fileset dir="${webstart.dir}" includes="**/*.jar" />
-            </path>
-        </signjar>
-    </target>
-    
+        depends="gitupdate, auxdata.nodocs, ncidv.nolog, jar.nightly, startupmanager, javadoc.jar, userguide.jar, source"
+        description="Create nightly webstart distribution product" />
+        
     <!-- Build and run McIDAS-V application (small memory) -->
     <target name="jar.run" depends="jar" description="Build and run McIDAS-V application (small memory)">
         <java classname="${app.mainclass}" fork="true" maxmemory="${run.smallheap}">
