@@ -1,7 +1,7 @@
 #!/bin/sh
 
-IDV_DIR="/home/mcidasv/svn_nightly/idv"
-MCV_DIR="/home/mcidasv/mc-v"
+IDV_DIR="/home/mcidasv/mcidasv-github/IDV"
+MCV_DIR="/home/mcidasv/mcidasv-github/mcidasv"
 OUTPUT_DIR="${MCV_DIR}/dist"
 APIDOCS_DIR="${MCV_DIR}/tools/apidocs"
 
