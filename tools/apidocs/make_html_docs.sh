@@ -1,7 +1,7 @@
 #!/bin/sh
 
-IDV_DIR="/home/mcidasv/mcidasv-github/IDV"
-MCV_DIR="/home/mcidasv/mcidasv-github/mcidasv"
+IDV_DIR="../../../IDV"
+MCV_DIR="../../../mcidasv"
 OUTPUT_DIR="${MCV_DIR}/dist"
 APIDOCS_DIR="${MCV_DIR}/tools/apidocs"
 
@@ -15,6 +15,6 @@ cd ${APIDOCS_DIR}
 
 mkdir -p ${OUTPUT_DIR}
 
-/home/mcidasv/java_jdk/bin/java -classpath "${MCV_CLASSPATH}" org.python.util.jython ${HTML_FORMAT_SCRIPT} > ${HTML_OUTPUT_FILE}
+$JAVA_HOME/bin/java -classpath "${MCV_CLASSPATH}" org.python.util.jython ${HTML_FORMAT_SCRIPT} > ${HTML_OUTPUT_FILE}
 
 cd ${CURRENT_DIR}
