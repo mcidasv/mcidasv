@@ -8,8 +8,8 @@ Directory Structure
     edu/                            
     `-- wisc/                       
         `-- ssec/                   
-            `-- mcidasv/            * General managers and main application code
-                |                     should go here, e.g., ViewManger, 
+            `-- mcidasv/            * General managers and main application 
+                |                     code should go here, e.g., ViewManger, 
                 |                     McIDASV.java
                 |-- chooser/        * Data choosers should go here
                 |-- control/        * Display controls should go here
@@ -43,3 +43,10 @@ A cron job that builds the "nightly" target runs daily at 4am:
     ant nightly
     
 There is a separate script on the webserver that pulls the completed build.
+
+Acknowledgements
+----------------
+YourKit is kindly supporting open source projects with its full-featured Java 
+Profiler. YourKit, LLC is the creator of innovative and intelligent tools for 
+profiling Java and .NET applications. Take a look at YourKit's leading 
+software products: <a href="http://www.yourkit.com/java/profiler/index.jsp">YourKit Java Profiler</a> and <a href="http://www.yourkit.com/.net/profiler/index.jsp">YourKit .NET Profiler</a>.
