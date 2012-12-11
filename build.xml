@@ -257,10 +257,6 @@
         <git command="pull" dir="${base.dir}" />
     </target>
     
-    <target name="packsource" description="">
-        <exec executable="${basedir}/tools/pack_souce.sh" dir="${basedir}/tools" />
-    </target>
-    
     <target name="processdocs" description="Keep CVS up to date with changes that were presumably synced from web server.">
         <exec executable="${basedir}/tools/proc_mcv_docs.php" dir="${basedir}/tools" />
     </target>
@@ -777,8 +773,8 @@
     </target>
     
     <!-- Move the source file to install4j directory -->
-    <target name="packsource" depends="source"
-        description="Move the source file to install4j directory">
+    <target name="packsource" depends="source" description="Move the source file to install4j directory">
+        <exec executable="${basedir}/tools/pack_source.sh" dir="${basedir}/tools" />
         <copy file="${dist.dir}/${source.jarname}" tofile="${media.dir}/${source.file}"
         failonerror="false" />
     </target>
