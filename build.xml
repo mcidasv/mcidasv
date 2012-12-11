@@ -257,17 +257,26 @@
         <git command="pull" dir="${base.dir}" />
     </target>
     
-    <!-- Get the latest IDV jar files from Unidata -->
+    <target name="packsource" description="">
+        <exec executable="${basedir}/tools/pack_souce.sh" dir="${basedir}/tools" />
+    </target>
+    
+    <target name="processdocs" description="Keep CVS up to date with changes that were presumably synced from web server.">
+        <exec executable="${basedir}/tools/proc_mcv_docs.php" dir="${basedir}/tools" />
+    </target>
+    
+    <target name="jythondocs" description="Generate HTML from McIDAS-V Jython docstrings.">
+        <exec executable="${basedir}/tools/apidocs/make_html_docs.sh" dir="${basedir}/tools/apidocs" />
+    </target>
+    
     <target name="getidvjars" description="Get the latest IDV jar files from Unidata">
         <exec executable="${basedir}/tools/get_idv_latest.sh" dir="${basedir}/tools" />
     </target>
-
-    <!-- Get the latest VisAD jar file from SSEC -->
+    
     <target name="getvisadjar" description="Get the latest VisAD jar file from SSEC">
         <exec executable="${basedir}/tools/get_visad_latest.sh" dir="${basedir}/tools" />
     </target>
     
-    <!-- Set build properties -->
     <target name="copy.build.props" description="Set build properties">
         <tstamp>
             <format property="build.date" pattern="yyyy-MM-dd HH:mm"
