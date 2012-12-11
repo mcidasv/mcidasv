@@ -2,9 +2,11 @@
 <?php
 
 $DEBUG=0;
-$EMAIL="beckys@ssec.wisc.edu,barryr@ssec.wisc.edu,davep@ssec.wisc.edu,robert.carp@ssec.wisc.edu";
+// $EMAIL="beckys@ssec.wisc.edu,barryr@ssec.wisc.edu,davep@ssec.wisc.edu,robert.carp@ssec.wisc.edu";
+$EMAIL="jbeavers@ssec.wisc.edu";
 
-$DOC_DIR="/home/mcidasv/mc-v/docs/userguide/processed";
+// $DOC_DIR="/home/mcidasv/mc-v/docs/userguide/processed";
+$DOC_DIR="../docs/userguide/processed";
 
 # $INQUIRY=0 will cause the inquiry parser to ignore the commits
 $INQUIRY=0;
@@ -45,7 +47,8 @@ foreach ($lines as $line) {
 }
 
 # Compare to mcidasv.install4j
-$lines=file("/home/mcidasv/mc-v/release/mcidasv.install4j");
+// $lines=file("/home/mcidasv/mc-v/release/mcidasv.install4j");
+$lines=file("../release/mcidasv.install4j");
 $versioncheck="";
 foreach ($lines as $line) {
   if (preg_match("/<application.*version=/", $line))
@@ -55,10 +58,14 @@ if ($version!=$versioncheck || $version=="")
   $notify.="Inconsistent versions between version.properties and mcidasv.install4j\n";
 
 # Compare to doc
-$files=array("/home/mcidasv/mc-v/release/README.html",
-             "/home/mcidasv/mc-v/docs/userguide/processed/License.html",
-             "/home/mcidasv/mc-v/docs/userguide/processed/TOC.xml",
-             "/home/mcidasv/mc-v/docs/userguide/processed/toc.html");
+// $files=array("/home/mcidasv/mc-v/release/README.html",
+//              "/home/mcidasv/mc-v/docs/userguide/processed/License.html",
+//              "/home/mcidasv/mc-v/docs/userguide/processed/TOC.xml",
+//              "/home/mcidasv/mc-v/docs/userguide/processed/toc.html");
+$files=array("../release/README.html",
+             "../docs/userguide/processed/License.html",
+             "../docs/userguide/processed/TOC.xml",
+             "../docs/userguide/processed/toc.html");
 foreach ($files as $file) {
   $versioncheck="";
   $lines=file($file);
