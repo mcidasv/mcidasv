@@ -3,30 +3,30 @@ This is the main trunk for SSEC's McIDAS-V Project.
 Directory Structure
 -------------------
 
-    build.xml                       * Main Ant build file  
-    doc/                            * Project documentation  
+    build.xml                       * Main Ant build file.
+    doc/                            * Project documentation.
     edu/                            
     `-- wisc/                       
         `-- ssec/                   
             `-- mcidasv/            * General managers and main application 
                 |                     code should go here, e.g., ViewManger, 
-                |                     McIDASV.java
-                |-- chooser/        * Data choosers should go here
-                |-- control/        * Display controls should go here
-                |-- data/           * Datasources should go here
-                |-- display/        * 
-                |-- images/         * Application images should go here
-                |-- jython/         * 
-                |-- monitors/       * 
-                |-- probes/         * 
+                |                     McIDASV.java.
+                |-- chooser/        * Data choosers should go here.
+                |-- control/        * Display controls should go here.
+                |-- data/           * Datasources should go here.
+                |-- display/        * Displays code should go here.
+                |-- images/         * Application images should go here.
+                |-- jython/         * Linear Combination Jython Interpreter.
+                |-- monitors/       * Monitor the state of a McIDAS-V session.
+                |-- probes/         * Data probes.
                 |-- resources/      * .RBI, .XML, .py, etc... resource should 
                 |                     go here.
-                |-- servermanager/  * 
-                |-- startupmanager/ * 
-                |-- supportform/    * 
-                |-- ui/             * UI related classes here, e.g., UIManager
-                `-- util/           * Utility classes can go here
-    release/                        * Files used by Install4J
+                |-- servermanager/  * Handles local and remote ADDE datasets.
+                |-- startupmanager/ * Manage McIDAS-V startup options.
+                |-- supportform/    * Submit McIDAS-V support requests.
+                |-- ui/             * UI related classes here, e.g., UIManager.
+                `-- util/           * Utility classes can go here.
+    release/                        * Files used by install4J.
 
 Building a new release
 ----------------------
