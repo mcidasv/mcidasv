@@ -73,7 +73,7 @@ public class HistogramField {
         if (rangeType == Integer.TYPE) {
           //Ghansham: Dont do any allocation here. Do based on the individual ranges of fieldX and fieldY respectively
         } else {
-            indexes = new int[n_bins * n_bins][bin_size];
+            indexes = new int[n_bins * n_bins][1];
             count = new int[n_bins * n_bins];
         }
 
