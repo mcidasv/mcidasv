@@ -311,6 +311,8 @@ public class InteractiveShell implements HyperlinkListener {
         } else {
             flipBtn.setIcon(getImageIcon("/auxdata/ui/icons/DownDown.gif"));
         }
+        // save the user a redundant mouse click:
+        getCommandFld().requestFocusInWindow();
     }
 
     /**

@@ -681,7 +681,6 @@ public class WayDisplayState {
 			}
 		}
 		// stationGrid.print();
-		long t2 = System.currentTimeMillis();
 
 		if (v.isEmpty()) {
 			retField = new FieldImpl((FunctionType) pointObs.getType(),
@@ -697,10 +696,6 @@ public class WayDisplayState {
 			retField.setSamples((PointOb[]) v.toArray(new PointOb[v.size()]),
 					false, false);
 		}
-
-		long t3 = System.currentTimeMillis();
-		// System.err.println("size:" + v.size() +" declutter:" + (t2-t1) + " "
-		// + (t3-t2));
 
 		return retField;
 	}
