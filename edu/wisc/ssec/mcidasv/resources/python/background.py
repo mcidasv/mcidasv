@@ -998,6 +998,37 @@ class _Display(_JavaProxy):
         drawCtl.addGlyph(glyph)
         return _Layer(drawCtl)
 
+    def setViewpoint(self, viewpointName):
+        """Convenience method for changing to a saved "Viewpoint"
+
+        Note, a user can define viewpoints via the "Projections -> Viewpoints"
+        menu in the main McV window.
+
+        Args:  
+               viewpointName:  the name given to the viewpoint by the user
+                               when saving.
+
+        Raises:
+               valueError:   if viewpointName isn't a saved viewpoint.
+        """
+        # Get list of saved viewpoints... These are actually "ViewState" objects
+        viewpoints = getStaticMcv().getVMManager().getVMState()
+
+        # Pick the desired viewpoint out of the list
+        desiredViewpoint = None
+        for viewpoint in viewpoints:
+            if viewpoint.getName() == viewpointName:
+                desiredViewpoint = viewpoint
+                break
+
+        if desiredViewpoint is None:
+            raise ValueError("No viewpoint with the name %s could be found" %
+                    viewpointName)
+
+        # change the display to the saved viewpoint
+        self._JavaProxy__javaObject.initWith(desiredViewpoint)
+
+
 # TODO(jon): still not sure what to offer here.
 class _Layer(_JavaProxy):
     def __init__(self, javaObject):
@@ -1320,6 +1351,7 @@ class _Layer(_JavaProxy):
         newFont = _getNewFont(currentFont, fontName, style, size)
         vm.setDisplayListFont(newFont)
         self._getDisplayWrapper().labelDict['font'] = newFont
+
 
 # TODO(jon): this (and its accompanying subclasses) are a productivity rabbit
 # hole!
