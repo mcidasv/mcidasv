@@ -243,6 +243,8 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         return self.aid
     
     def _getDirValue(self, key):
+        from visad import DateTime
+
         if key not in self._keys:
             raise KeyError('unknown key: %s' % key)
         if key == 'bands':
@@ -272,7 +274,7 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         elif key == 'memo-field':
             return self.areaDirectory.getMemoField()
         elif key == 'nominal-time':
-            return self.areaDirectory.getNominalTime()
+            return DateTime(self.areaDirectory.getNominalTime())
         elif key == 'band-count':
             return self.areaDirectory.getNumberOfBands()
         elif key == 'sensor-id':
@@ -282,7 +284,7 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         elif key == 'source-type':
             return self.areaDirectory.getSourceType()
         elif key == 'start-time':
-            return self.areaDirectory.getStartTime()
+            return DateTime(self.areaDirectory.getStartTime())
         elif key == 'url':
             return self.aid.getSource()
         else:
@@ -853,7 +855,7 @@ class _Display(_JavaProxy):
 
         defaultLabel = ''
         try:
-            defaultLabel = '%s - %s' % (data['sensor-type'], data['start-time'])
+            defaultLabel = '%s - %s' % (data['sensor-type'], data['nominal-time'])
         except (TypeError, KeyError):
             # get TypeError if data isn't a dictionary, get KeyError if
             # data is a dictionary but doesn't contain the desired key
