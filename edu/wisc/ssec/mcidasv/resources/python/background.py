@@ -850,10 +850,17 @@ class _Display(_JavaProxy):
         pause()
 
         wrappedLayer = _Layer(newLayer)
-        # turn layer layer visibility off by default to avoid ugly default strings
-        # (note visible=False will turn *all* layer labels off)
-        # TODO: get rid of this once metadata/macros are handled better
-        wrappedLayer.setLayerLabel(label='')
+
+        defaultLabel = ''
+        try:
+            defaultLabel = '%s - %s' % (data['sensor-type'], data['start-time'])
+        except (TypeError, KeyError):
+            # get TypeError if data isn't a dictionary, get KeyError if
+            # data is a dictionary but doesn't contain the desired key
+            #print 'DEBUG: unable to create default layer label'
+            pass
+
+        wrappedLayer.setLayerLabel(label=defaultLabel)
 
         return wrappedLayer
 
