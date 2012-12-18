@@ -1351,6 +1351,7 @@ public class ScatterDisplay extends DisplayControlImpl {
            Gridded2DSet set = subsetBox.getBounds();
            float[][] corners = set.getSamples(false);
            float[][] coords = corners;
+           if (corners == null) return;
 
            if ((imageDomain instanceof Linear2DSet) || !earthCoordDomain) {
              coords = ((Gridded2DSet)imageDomain).valueToGrid(corners);
