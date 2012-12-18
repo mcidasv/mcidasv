@@ -243,6 +243,8 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         return self.aid
     
     def _getDirValue(self, key):
+        from visad import DateTime
+
         if key not in self._keys:
             raise KeyError('unknown key: %s' % key)
         if key == 'bands':
@@ -272,7 +274,7 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         elif key == 'memo-field':
             return self.areaDirectory.getMemoField()
         elif key == 'nominal-time':
-            return self.areaDirectory.getNominalTime()
+            return DateTime(self.areaDirectory.getNominalTime())
         elif key == 'band-count':
             return self.areaDirectory.getNumberOfBands()
         elif key == 'sensor-id':
@@ -282,7 +284,7 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         elif key == 'source-type':
             return self.areaDirectory.getSourceType()
         elif key == 'start-time':
-            return self.areaDirectory.getStartTime()
+            return DateTime(self.areaDirectory.getStartTime())
         elif key == 'url':
             return self.aid.getSource()
         else:
@@ -850,10 +852,17 @@ class _Display(_JavaProxy):
         pause()
 
         wrappedLayer = _Layer(newLayer)
-        # turn layer layer visibility off by default to avoid ugly default strings
-        # (note visible=False will turn *all* layer labels off)
-        # TODO: get rid of this once metadata/macros are handled better
-        wrappedLayer.setLayerLabel(label='')
+
+        defaultLabel = ''
+        try:
+            defaultLabel = '%s - %s' % (data['sensor-type'], data['nominal-time'])
+        except (TypeError, KeyError):
+            # get TypeError if data isn't a dictionary, get KeyError if
+            # data is a dictionary but doesn't contain the desired key
+            #print 'DEBUG: unable to create default layer label'
+            pass
+
+        wrappedLayer.setLayerLabel(label=defaultLabel)
 
         return wrappedLayer
 
@@ -990,6 +999,37 @@ class _Display(_JavaProxy):
         glyph.setPoints(pointList)
         drawCtl.addGlyph(glyph)
         return _Layer(drawCtl)
+
+    def setViewpoint(self, viewpointName):
+        """Convenience method for changing to a saved "Viewpoint"
+
+        Note, a user can define viewpoints via the "Projections -> Viewpoints"
+        menu in the main McV window.
+
+        Args:  
+               viewpointName:  the name given to the viewpoint by the user
+                               when saving.
+
+        Raises:
+               valueError:   if viewpointName isn't a saved viewpoint.
+        """
+        # Get list of saved viewpoints... These are actually "ViewState" objects
+        viewpoints = getStaticMcv().getVMManager().getVMState()
+
+        # Pick the desired viewpoint out of the list
+        desiredViewpoint = None
+        for viewpoint in viewpoints:
+            if viewpoint.getName() == viewpointName:
+                desiredViewpoint = viewpoint
+                break
+
+        if desiredViewpoint is None:
+            raise ValueError("No viewpoint with the name %s could be found" %
+                    viewpointName)
+
+        # change the display to the saved viewpoint
+        self._JavaProxy__javaObject.initWith(desiredViewpoint)
+
 
 # TODO(jon): still not sure what to offer here.
 class _Layer(_JavaProxy):
@@ -1313,6 +1353,7 @@ class _Layer(_JavaProxy):
         newFont = _getNewFont(currentFont, fontName, style, size)
         vm.setDisplayListFont(newFont)
         self._getDisplayWrapper().labelDict['font'] = newFont
+
 
 # TODO(jon): this (and its accompanying subclasses) are a productivity rabbit
 # hole!
