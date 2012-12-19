@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: SuomiNPPProductProfile.java,v 1.2 2012/02/19 17:35:42 davep Exp $
  *
  * This file is part of McIDAS-V
  *
@@ -119,13 +119,10 @@ public class SuomiNPPProductProfile {
 		}
 
 		// we need to pull the XML Product Profiles out of mcidasv.jar
-                // TDR force to read from jar
-                readFromJar = true;
 		if (readFromJar) {
 			JarFile jar;
 			try {
-				//TDR jar = new JarFile(URLDecoder.decode("mcidasv.jar", "UTF-8"));
-                                jar = new JarFile(URLDecoder.decode("/Users/rink/test/mcidasv/dist/mcidasv.jar", "UTF-8"));
+				jar = new JarFile(URLDecoder.decode("mcidasv.jar", "UTF-8"));
 				Enumeration<JarEntry> entries = jar.entries(); //gives ALL entries in jar
 				boolean found = false;
 				String name = null;
@@ -184,8 +181,7 @@ public class SuomiNPPProductProfile {
 		Document d = null;
 		InputStream ios = null;
 		if (readFromJar) {
-			//TDR JarFile jar = new JarFile(URLDecoder.decode("mcidasv.jar", "UTF-8"));
-                        JarFile jar = new JarFile(URLDecoder.decode("/Users/rink/test/mcidasv/dist/mcidasv.jar", "UTF-8"));
+			JarFile jar = new JarFile(URLDecoder.decode("mcidasv.jar", "UTF-8"));
 			JarEntry je = jar.getJarEntry(fileName);
 			ios = jar.getInputStream(je);
 			d = db.parse(ios);
