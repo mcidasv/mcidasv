@@ -48,6 +48,8 @@ public class HistogramField {
     byte[][] mask = new byte[3][];
     byte[] order = new byte[3];
 
+    public FlatField scatterDensityField;
+
     public HistogramField(FlatField field_0, FlatField field_1,
             FlatField mask_field,
             int n_bins, int bin_size)
@@ -226,6 +228,26 @@ public class HistogramField {
         set1 = histSet.getLinear1DComponent(1);
         len0 = set0.getLength();
         len1 = set1.getLength();
+
+
+        Linear2DSet dSet = (Linear2DSet) histSet.changeMathType(new RealTupleType(RealType.XAxis, RealType.YAxis));
+        scatterDensityField = new FlatField(
+            new FunctionType(((SetType)dSet.getType()).getDomain(), RealType.getRealType("ScatterDensity")), dSet);
+        float[][] fltCount = new float[1][count.length];
+        for (int i=0; i<count.length; i++) { 
+            fltCount[0][i] = (float) count[i];
+            if (count[i] == 0) {
+               fltCount[0][i] = Float.NaN;
+            }
+            else {
+               fltCount[0][i] = (float) java.lang.Math.log((double)fltCount[0][i]);
+            }
+        }
+        scatterDensityField.setSamples(fltCount);
+    }
+
+    public FlatField getScatterDensityField() {
+        return scatterDensityField;
     }
 
     public void markMaskFieldByRange(double[] lowhi_0, double[] lowhi_1, float maskVal)
