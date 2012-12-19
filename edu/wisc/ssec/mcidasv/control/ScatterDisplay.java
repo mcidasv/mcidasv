@@ -223,6 +223,7 @@ public class ScatterDisplay extends DisplayControlImpl {
                   X_field.getDomainSet());
 
         int len = X_field.getDomainSet().getLength();
+        int[] lens = ((Gridded2DSet)X_field.getDomainSet()).getLengths();
         mask_range = new float[1][len];
         for (int t=0; t<len; t++) {
           mask_range[0][t] = Float.NaN;
@@ -231,7 +232,9 @@ public class ScatterDisplay extends DisplayControlImpl {
         mask_field.setSamples(mask_range, false);
                                                                                                                                                   
         try {
-          histoField = new HistogramField(X_field, Y_field, mask_field, 100, 10);
+          int binSize = ((lens[0]*lens[1]/(256*256))*4)/10;
+          if (binSize < 2) binSize = 2;
+          histoField = new HistogramField(X_field, Y_field, mask_field, 256, binSize);
         }
         catch (Exception e) {
           e.printStackTrace();
@@ -454,27 +457,29 @@ public class ScatterDisplay extends DisplayControlImpl {
 
                           if (statsTable != null) statsTable.resetValues(i);
 
+                          boxSel.reset();
                           boxSel.setActive(false);
                           boxSel.setVisible(false);
-                          boxSel.reset();
+
+                          imageXbox.reset();
                           imageXbox.setActive(false);
                           imageXbox.setVisible(false);
-                          imageXbox.reset();
+
+                          imageYbox.reset();
                           imageYbox.setActive(false);
                           imageYbox.setVisible(false);
-                          imageYbox.reset();
 
+                          curveSel.reset();
                           curveSel.setActive(false);
                           curveSel.setVisible(false);
-                          curveSel.reset();
+
+                          imageXcurve.reset();
                           imageXcurve.setActive(false);
                           imageXcurve.setVisible(false);
-                          imageXcurve.reset();
+                          imageYcurve.reset();
                           imageYcurve.setActive(false);
                           imageYcurve.setVisible(false);
-                          imageYcurve.reset();
-
-
+                          selectorToggleButtons[i].setSelected(true);
                         }
                         boxSel.setActive(!getSelectByCurve());
                         boxSel.setVisible(!getSelectByCurve());
@@ -1346,6 +1351,7 @@ public class ScatterDisplay extends DisplayControlImpl {
            Gridded2DSet set = subsetBox.getBounds();
            float[][] corners = set.getSamples(false);
            float[][] coords = corners;
+           if (corners == null) return;
 
            if ((imageDomain instanceof Linear2DSet) || !earthCoordDomain) {
              coords = ((Gridded2DSet)imageDomain).valueToGrid(corners);
@@ -1562,6 +1568,7 @@ public class ScatterDisplay extends DisplayControlImpl {
        }
 
        public void reset() throws Exception {
+         if (!active) return;
          selectBox.setVisible(false);
          selectBox.setData(new Gridded2DSet(RealTupleType.SpatialCartesian2DTuple, new float[][] {{0f, 0f}, {0f, 0f}}, 2));
          histoField.resetMaskField(maskVal);
@@ -1635,6 +1642,7 @@ public class ScatterDisplay extends DisplayControlImpl {
      }
 
      public void reset() throws Exception {
+       if (!active) return;
        curveDraw.setData(new UnionSet(new Gridded2DSet[]{
             new Gridded2DSet(RealTupleType.SpatialCartesian2DTuple, new float[][] {
             { scatterFieldRange[0][0] }, { scatterFieldRange[1][0]}
