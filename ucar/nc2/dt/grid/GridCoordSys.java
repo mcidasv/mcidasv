@@ -38,6 +38,8 @@ import ucar.nc2.dataset.*;
 import ucar.nc2.util.NamedAnything;
 import ucar.nc2.util.NamedObject;
 import ucar.nc2.units.*;
+import ucar.nc2.time.CalendarDateRange;
+import ucar.nc2.time.CalendarDate;
 
 import ucar.unidata.geoloc.*;
 import ucar.unidata.geoloc.projection.VerticalPerspectiveView;
@@ -1541,6 +1543,22 @@ public class GridCoordSys extends CoordinateSystem implements ucar.nc2.dt.GridCo
       times.add(new ucar.nc2.util.NamedAnything(timeTaxis.getCoordName(i), timeTaxis.getUnitsString()));
     }
 
+  }
+
+  public boolean isGlobalLon() {
+     return false;
+  }
+
+  public java.util.List<CalendarDate> getCalendarDates() {
+     return null;
+  }
+
+  public CalendarDateRange getCalendarDateRange() {
+     return null;
+  }
+
+  public String getHorizStaggerType() {
+     return "None";
   }
 
 }
