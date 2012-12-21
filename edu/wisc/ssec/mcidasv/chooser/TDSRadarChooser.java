@@ -66,7 +66,7 @@ import org.jdom.input.SAXBuilder;
 import org.w3c.dom.Element;
 
 import thredds.catalog.XMLEntityResolver;
-import ucar.nc2.thredds.TDSRadarDatasetCollection;
+import ucar.unidata.data.radar.TDSRadarDatasetCollection;
 import ucar.nc2.units.DateUnit;
 import ucar.unidata.data.radar.RadarQuery;
 import ucar.unidata.geoloc.StationImpl;
