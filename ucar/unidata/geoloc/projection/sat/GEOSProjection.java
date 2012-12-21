@@ -42,14 +42,17 @@ public class GEOSProjection extends ProjectionImpl {
   GEOSTransform navigation = null;
 
   public GEOSProjection() {
+    super("GEOSProjection", false);
     navigation = new GEOSTransform();
   }
 
   public GEOSProjection(double subLonDegrees) {
+    super("GEOSProjection", false);
     navigation = new GEOSTransform(subLonDegrees, GEOSTransform.GOES);
   }
 
   public GEOSProjection(double subLonDegrees, String sweepAngleAxis) {
+    super("GEOSProjection", false);
     String scanGeometry = GEOSTransform.GOES;
 
     if (sweepAngleAxis == "x") {

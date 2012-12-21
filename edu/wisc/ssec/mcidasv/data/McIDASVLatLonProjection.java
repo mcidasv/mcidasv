@@ -56,9 +56,8 @@ public class McIDASVLatLonProjection extends LatLonProjection {
 	}
 
 	public McIDASVLatLonProjection(String name, ProjectionRect mapArea) {
-        addParameter(ATTR_NAME, "McVLatLon");
+        addParameter("grid_mapping_name", "McVLatLon");
         this.name = name;
-        isLatLon = true;
         defaultMapArea = mapArea;
 	}
 	

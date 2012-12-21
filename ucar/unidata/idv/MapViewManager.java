@@ -1898,7 +1898,8 @@ public class MapViewManager extends NavigatedViewManager {
      * @param p The new projection.
      */
     public void setProjection(ProjectionImpl p) {
-        p = (ProjectionImpl) p.clone();
+        //p = (ProjectionImpl) p.clone();
+        p = p.constructCopy();
         try {
             setMapProjection(new ProjectionCoordinateSystem(p), true);
             if (pipPanel != null) {

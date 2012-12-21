@@ -42,10 +42,12 @@ public class FGFProjection extends ProjectionImpl {
   FGFNavigation navigation = null;
 
   public FGFProjection() {
+    super("FGFProjection", false);
     navigation = new FGFNavigation();
   }
 
   public FGFProjection(double subLonDegrees, double delLamdaRadians) {
+    super("FGFProjection", false);
     navigation = new FGFNavigation(subLonDegrees, delLamdaRadians);
   }
 
