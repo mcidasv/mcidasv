@@ -188,10 +188,39 @@ def makeLocalDataset(group, mask, format, name=None):
     """Creates a local ADDE dataset.
     
     Required Args:
-        group: 
-        mask:
-        format:
-        
+        group: Name of the group associated with the created dataset.
+        mask: Directory containing the files used by the created dataset.
+        format: The format of the files within the dataset. See next section for possible values.
+    
+    Valid Format Values:
+        'MCIDAS_AREA': McIDAS AREA
+        'MCIDAS_MD': McIDAS MD
+        'AMSRE_L1B': AMSR-E Level 1b
+        'AMSRE_RAIN_PRODUCT': AMSR-E Rain Product
+        'GINI': GINI
+        'LRIT_GOES9': EUMETCast LRIT GOES-9
+        'LRIT_GOES10': EUMETCast LRIT GOES-10
+        'LRIT_GOES11': EUMETCast LRIT GOES-11
+        'LRIT_GOES12': EUMETCast LRIT GOES-12
+        'LRIT_MET5': EUMETCast LRIT MET-5
+        'LRIT_MET7': EUMETCast LRIT MET-7
+        'LRIT_MTSAT1R': EUMETCast LRIT MTSAT-1R
+        'METEOSAT_OPENMTP': Meteosat OpenMTP
+        'METOP_AVHRR_L1B': Metop AVHRR Level 1b
+        'MODIS_L1B_MOD02': MODIS Level 1b
+        'MODIS_L2_MOD06': MODIS Level 2 (Cloud Top Properties)
+        'MODIS_L2_MOD07': MODIS Level 2 (Atmospheric Profile)
+        'MODIS_L2_MOD35': MODIS Level 2 (Cloud Mask)
+        'MODIS_L2_MOD04': MODIS Level 2 (Aerosol)
+        'MODIS_L2_MOD28': MODIS Level 2 (Sea Surface Temperature)
+        'MODIS_L2_MODR': MODIS Level 2 (Corrected Reflectance)
+        'MSG_HRIT_FD': MSG HRIT (Full Disk)
+        'MSG_HRIT_HRV': MSG HRIT (High Resolution Visible)
+        'MTSAT_HRIT': MTSAT HRIT
+        'NOAA_AVHRR_L1B': NOAA AVHRR Level 1b
+        'SSMI': Terrascan netCDF (SMIN)
+        'TRMM': Terrascan netCDF (TMIN)
+    
     Optional Args:
         name: The name of the dataset. If no value is provided, the dataset 
               created by this function will be considered temporary and will
