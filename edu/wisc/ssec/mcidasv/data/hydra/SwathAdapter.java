@@ -264,7 +264,6 @@ public class SwathAdapter extends MultiDimensionAdapter {
         if (last_subset != null) {
           if (spatialEquals(last_subset, subset)) return domainSet_save;
         }
-        last_subset = subset;
 
         double[] first = new double[2];
         double[] last = new double[2];
@@ -282,6 +281,8 @@ public class SwathAdapter extends MultiDimensionAdapter {
           RealType rtype = domainRealTypes[kk];
           String name = rtype.getName();
           double[] coords = (double[]) ((HashMap)subset).get(name);
+          coords[0] = Math.ceil(coords[0]);
+          coords[1] = Math.floor(coords[1]);
           first[kk] = coords[0];
           last[kk] = coords[1];
           length[kk] = (int) ((last[kk] - first[kk])/coords[2] + 1);
@@ -292,6 +293,7 @@ public class SwathAdapter extends MultiDimensionAdapter {
           new_coords[1] = last[kk];
           new_coords[2] = coords[2];
         }
+        last_subset = subset;
 
         Linear2DSet domainSet = new Linear2DSet(first[0], last[0], length[0], first[1], last[1], length[1]);
         //CoordinateSystem cs = navigation.getVisADCoordinateSystem(domainSet, domainSubset);
