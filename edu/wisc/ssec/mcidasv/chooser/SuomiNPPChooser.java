@@ -149,7 +149,20 @@ public class SuomiNPPChooser extends FileChooser {
                     Date dE = null;
                     try {
 						dS = sdf.parse(dateStr + timeStrStart);
-						dE = sdf.parse(dateStr + timeStrEnd);
+						// due to nature of Suomi NPP file name encoding, we need a special
+						// check here - end time CAN roll over to next day, while day part 
+						// does not change.  if this happens, we tweak the date string
+						String endDateStr = dateStr;
+						String startHour = timeStrStart.substring(0, 2);
+						String endHour = timeStrEnd.substring(0, 2);
+						if ((startHour.equals("23")) && (endHour.equals("00"))) {
+							// temporarily convert date to integer, increment, convert back
+							int tmpDate = Integer.parseInt(dateStr);
+							tmpDate++;
+							endDateStr = "" + tmpDate;
+							logger.info("Granule time spanning days case handled ok...");
+						}
+						dE = sdf.parse(endDateStr + timeStrEnd);
 					} catch (ParseException e) {
 						logger.error("Not recognized as valid Suomi NPP file name: " + fileName);
 						testResult = false;
