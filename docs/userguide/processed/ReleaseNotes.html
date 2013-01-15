@@ -55,6 +55,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-category">
   <ul class="noindent">
     <li><strong><a class="faq-question-link" href="#lalo1.3b1">Latitude/Longitude Labeling</a></strong></li>
+        <li><strong><a class="faq-question-link" href="#contourlabels1.3b">Contour Labeling Frequency</a></strong></li>
+        <li><strong><a class="faq-question-link" href="#sounding1.3b">Consecutive Profiles of Sounding Data</a></strong></li>
   </ul>
 </div>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_1.3b1">Other
@@ -63,6 +65,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
   <ul class="noindent">
     <li><strong><a class="faq-question-link" href= "#scripting1.3b1">Scripting</a></strong></li>
     <li><strong><a class="faq-question-link" href= "#mask1.3b1">Two New Mask Formulas</a></strong></li>
+    <li><strong><a class="faq-question-link" href= "#grid1.3b1">Two New Grid Formulas</a></strong></li>
   </ul>
 </div>
   <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat5_1.3b1">Under
@@ -84,8 +87,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-category-title"><a name="faq1_cat2_1.3b1" id="faq1_cat2_1.3b1"></a>Display
   Changes</div>
 <div class="faq-category"><a name="lalo1.3b1" id="lalo1.3b1"></a>
-  <h4><strong><a class="faq-question-link" href="#lalo1.2b1">Latitude/Longitude Labeling in Map Controls</a></strong></h4>
-  <div class="faq-answer">Added the ability to add&nbsp;latitude and longitude labels to the display in two ways. You can add latitude&nbsp;and longitude labels as a component of the wireframe box&nbsp;through the View-&gt;Show Display Scales menu item. These labels can be configured further through the View-&gt;Properties menu item. You can also add latitude&nbsp;and longitude labels as a component of the map controls. This can be done in the Layer Controls tab of the Data Explorer&nbsp; for the Default Background Map. Here, there is a Lat/Lon tab, which gives you the ability to display and configure latitude and longitude labeling in the Main Display.</div>
+  <h4><strong><a class="faq-question-link" href="#lalo1.2b1">Latitude/Longitude Labeling</a></strong></h4>
+  <div class="faq-answer">Added the ability to add&nbsp;latitude and longitude labels to the display in two ways. You can add latitude&nbsp;and longitude labels as a component of the wireframe box&nbsp;through the View-&gt;Show Display Scales menu item. These labels can be configured further through the View-&gt;Properties menu item. You can also add latitude&nbsp;and longitude labels as a component of the map controls. This can be done in the Layer Controls tab of the Data Explorer for the Default Background Map. Here, there is a Lat/Lon tab, which gives you the ability to display and configure latitude and longitude labeling in the Main Display.</div></div>
+  <div class="faq-category"><a name="contourlabels1.3b" id="contourlabels1.3b"></a>
+  <h4><strong><a class="faq-question-link" href="#lalo1.2b1">Contour Labeling Frequency</a></strong></h4>
+  <div class="faq-answer">Added the ability to change contour labeling frequency for contour displays. This is a new option in the Contour Properties Editor, where Frequency slider allows you to change the number of contour labels visible in the display.</div></div>
+    <div class="faq-category"><a name="sounding1.3b" id="sounding1.3b"></a>
+  <h4><strong><a class="faq-question-link" href="#lalo1.2b1">Consecutive Profiles of Sounding Data</a></strong></h4>
+  <div class="faq-answer">Added the ability to display consecutive profiles of sounding data. This works with both point observation data and model-derived sounding displays. Once you create your display, there is a new option in the Sounding Chart tab, called Consecutive Profiles. Choosing this option will display the sounding for the current time in your loop, as well as the sounding for the next time in your loop. The current sounding will display as dashed Temperature and Dewpoint Temperature profiles, and the next sounding in the time series will display as solid lines for the Temperature and Dewpoint Temperature profiles. This feature makes it easy to see how the vertical profile is expected to change in the future with model data, and will show how the sounding actually did change through time when working with point observation data.</div>
 </div>
 <div class="faq-category-title"><a name="faq1_cat4_1.3b1" id="faq1_cat4_1.3b1"></a>Other
   Changes</div>
@@ -98,6 +107,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-category"><a name="mask1.3b1" id="mask1.3b1"></a>
   <h4><strong>Two New Mask Formulas</strong></h4>
 <div class="faq-answer">Added two new mask formulas&nbsp;(Mask Function&nbsp;and Mask Within Range) to the list of native formulas in McIDAS-V. These formulas are intended to operate on imagery data, and are listed under the Imagery field of the formulas. The Mask Function formula allows you to easily display data that is above, below, or equal to a certain value. The Mask Within Range formula allows you to specify a specific range of data values to display.</div></div>
+<div class="faq-category"><a name="grid1.3b1" id="grid1.3b1"></a>
+  <h4><strong>Two New Grid Formulas</strong></h4>
+<div class="faq-answer">Added two new mask formulas&nbsp;(Create 2D Flow Trajectory, and Create 3D Flow Trajectory) to the list of native formulas in McIDAS-V. These two formulas are listed under the Grids field of the formulas. These formulas are used to create trajectories from data that includes u- and v-wind components (and a w-wind component&nbsp;for the 3D formula) as well as a scalar parameter to color the trajectories by. The trajectories will originate from your selected region, and be drawn&nbsp;out through the times of your data to where the u- v- and w-wind components take them. The trajectories can be colored by any scalar parameter included with your data.</div>
+</div>
 <div class="faq-category-title"><a name="faq1_cat5_1.3b1" id="faq1_cat5_1.3b1"></a>Under
 Development</div>
 <div class="faq-category"><a name="npp1.3b1" id="npp1.3b1"></a>

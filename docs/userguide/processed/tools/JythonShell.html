@@ -42,8 +42,8 @@ is brought up with the <strong>Tools-&gt;Formulas-&gt;Jython Shell</strong> menu
 <p>The entry window can be expanded with the <img src="images/JythonExpand.gif" width="13" height="13" alt="Jython Expand double down arrows"align=absmiddle> to the right of the command line. When the entry field is expanded, you can enter more than one line of code to be processed at once. When the entry field isn't expanded, you are limited to evaluating one line of code at a time.</p>
 <p>Pressing the "Up" arrow and "Down" arrow (also Ctrl+P, Ctrl+N) in the
   entry field goes up and down through the history of commands.</p>
-<p>After you have entered a command, the command will be listed above the Evaluate field. To the right of the command, there are two buttons. The <img src="images/DownArrow.gif" width="18" height="18" alt="Down Arrow button"align="absmiddle"> button pastes the formula back into the Evaluate field. The <img src="images/ReEval.gif" width="17" height="18" alt="Reevaluate button"align="absmiddle"> button reevaluates the previously entered command without having to reenter it.</p>
-<p>Right clicking in the entry field brings up a menu that allows you to:</p>
+<p>After you have entered a command, the command will be listed above the Evaluate field. To the right of the command, there are two buttons. The <img src="images/DownArrow.gif" width="18" height="18" alt="Down Arrow button"align="absmiddle"> button enters the formula back into the Evaluate field without evaluating it. The <img src="images/ReEval.gif" width="17" height="18" alt="Reevaluate button"align="absmiddle"> button reevaluates the previously entered command without having to manually reenter it.</p>
+<p>Right-clicking in the entry field brings up a menu that allows you to:</p>
 <ul class="propertylist">
   <li class="propertylistitem">Add an entry from the history.</li>
   <li class="propertylistitem">Insert the identifier for a display control type when creating a display.</li>
@@ -56,7 +56,7 @@ is brought up with the <strong>Tools-&gt;Formulas-&gt;Jython Shell</strong> menu
 <p>All of the menu items in this tool are unique to the Jython Shell.</p>
   <p>The <strong>File</strong> menu has these unique items:</p>
     <ul class="propertylist">
-      <li class="propertylistitem"><strong>Save Commands to Jython Library -</strong> Saves any entered commands to the User's local <a href="JythonLib.html">Jython Library</a> as a user-defined Procedure name.</li>
+      <li class="propertylistitem"><strong>Save Commands to Jython Library -</strong> Saves any entered commands (up to 100 by default) to the User's local <a href="JythonLib.html">Jython Library</a> as a Procedure or as a block of commands if no Procedure name is provided.</li>
       <li class="propertylistitem"><strong>List Saved History -</strong> Lists out previously entered commands.</li>
       <li class="propertylistitem"><strong>List Current Variables -</strong> Lists all global Jython Variables currently in use.</li>
     </ul>

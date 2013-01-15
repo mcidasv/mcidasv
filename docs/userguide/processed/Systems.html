@@ -36,13 +36,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
           AIX and IRIX support the requirements in certain configurations,
           but have not been tested.
 </p>
-        <p>It is recommended that an Intel system
-            running McIDAS-V have at least a <b>1 GHz processor and 1 GB memory
+        <p>To run McIDAS-V, a system will need to have a minimum of a <strong>500 MHz processor and 512 MB of RAM free</strong>. However, if you are purchasing a new system, it is recommended that an Intel system
+            running McIDAS-V have at least a <b>2 GHz processor and 4 GB memory
             (RAM)</b>.  Please note that Java on 32 bit operating systems can
             only utilize 1536 MB, while 64 bit operating systems can utilize
             all of the available memory. Performance will be better with
-    faster processors and more memory. If you are purchasing a new system,
-  we have seen the best results with NVIDIA hardware and drivers.</p>
+    faster processors and more memory. We have seen the best results with NVIDIA hardware and drivers.</p>
 
         <p> Detailed requirements for the following are listed below:</p>
  <ul>
@@ -54,28 +53,33 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
      Connection for Downloading McIDAS-V and Accessing Data</a></li>
  </ul>  
    <h3>Operating Systems<a name="os"></a></h3>
-  <p> McIDAS-V is known to run on the following operating systems:</p>
+  <p> The chart below lists the software versions, by vendor, that McIDAS-V is known to run on, and that McIDAS User Services fully tests:</p>
 <p>
 <table border="1" style="margin-left:20px; " width="75%">
     <tr>
         <th><div align="center">OS</div></th>
-
+        <th><div align="center">Known to Work</div></th>
         <th><div align="center">Tested at SSEC <b><sup>(1)</sup></b></div></th>
     </tr>
     <tr>
         <td><b>Linux</b></td>
-        <td>Red Hat Enterprise Linux WS 4.0 (32 bit)<br>
+        <td>Red Hat Linux 4.0+<br>            
+        <br></td>
+        <td>Red Hat Enterprise Linux WS 5.7 (32 bit)<br>
 
-          Red Hat Enterprise Linux WS 5.0 (64
-          bit) </td>
+          Red Hat Enterprise Linux WS 6.1 (64
+          bit)</td>
     </tr>
     <tr>
-        <td><b>Mac OS X<sup></sup></b></td>
-
-        <td>Mac OS X 10.6<sup>(2)</sup></td>
+        <td><b>Mac OS X</b></td>
+        <td>Mac OS X 10.6+</td>
+        <td>Mac OS X 10.6<sup>(2)</sup><br>
+        Mac OS X 10.7<br>
+        Mac OS X 10.8</td>
     </tr>
     <tr>
-      <td><b>Windows<sup></sup></b></td>
+      <td><b>Windows</b></td>
+      <td>Windows XP, Vista, 7</td>
       <td>Windows XP with Service Pack 3<br>
         Windows Vista with Service Pack 2 <br>
         Windows 7 Enterprise</td>
@@ -252,10 +256,10 @@ System Memory and Processor Speed<a name="memory"></a></h3>
 <h3>
   Internet Connection for Downloading McIDAS-V
     and Accessing Data<a name="network"></a></h3>
-  You will need about 100 MB disk space for the installer file, which will uncompress
+  You will need about 200 MB disk space for the installer file, which will uncompress
 into twice that size. You will have to download the installer file in
 order to begin installing McIDAS-V.
-<p> McIDAS-V is designed to access data on remote servers on the Internet, as
+  <p> McIDAS-V is designed to access data on remote servers on the Internet, as
   well as from local files. Downloading data from remote servers benefits from
   a fast connection to the Internet, since many data fields are large. </p>
 

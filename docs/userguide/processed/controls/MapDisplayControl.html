@@ -66,7 +66,7 @@ and labels:</p>
 <li class="propertylistitem"><strong>Lines</strong></li>
 <ul class="propertylist">
   <li class="propertylistitem"><img src="images/MapLink.gif" alt="Closed link icon" width="17" height="13" align=absmiddle> <strong>Apply changes to all lat/lon lines -</strong> When this is selected, any change made made to either the latitude or longitude lines will apply to both, making the latitude and longitude lines identical. Click the link icon to make the  lines unlinked (<img src="images/Unlink.gif" alt="Open link icon" width="15" height="17"align=absmiddle>), so that a change made to one line will not be applied to the other.</li>
-  <li class="propertylistitem"><strong>Interval -</strong> Sets the interval of the lines. This is the spacing between the lines, in degrees. For fewer lines, set this value higher, and for more lines, set this value&nbsp;lower.</li>
+  <li class="propertylistitem"><strong>Interval -</strong> Sets the spacing between the lines, in degrees. For fewer lines, set this value higher, and for more lines, set this value&nbsp;lower.</li>
   <li class="propertylistitem"><strong>Relative to -</strong> Sets a value, in degrees, that one of the lines will be drawn at. From this line, other lines will be drawn in both directions of the <strong>Relative to</strong> line at an increment specified in the <strong>Interval</strong> field.</li>
   <li class="propertylistitem"><strong>Width -</strong> Sets the width of the lines.</li>
   <li class="propertylistitem"><strong>Style -</strong> Sets the style of the lines. This can be a solid line, dashes, points, or dashes and points.</li>
@@ -76,7 +76,7 @@ and labels:</p>
   <li class="propertylistitem"><strong>Labels</strong></li>
   <ul class="propertylist">
   <li class="propertylistitem"><img src="images/MapLink.gif" alt="Closed link icon" width="17" height="13" align=absmiddle><strong> Apply changes to all lat/lon labels -</strong> When this is selected, any change made made to either the latitude or longitude labels will apply to both, making the latitude and longitude labels identical (with the exception of <strong>At Longitudes/Latitudes</strong>, which are never linked). Click the link icon to make the labels unlinked (<img src="images/Unlink.gif" alt="Open link icon" width="15" height="17"align=absmiddle>), so that a change made to one label will not be applied to the other.</li>
-  <li class="propertylistitem"><strong>Interval -</strong> Sets the interval of the labels. This is the spacing between the labels, in degrees. For fewer labels, set this value higher, and for more labels, set this value lower.</li>
+  <li class="propertylistitem"><strong>Interval -</strong> Sets the spacing between the labels, in degrees. For fewer labels, set this value higher, and for more labels, set this value lower.</li>
   <li class="propertylistitem"><strong>Relative to -</strong> Sets a value, in degrees, that one of the labels will be drawn at. From this label, other labels will be drawn in both directions of the <strong>Relative to</strong> label at an increment specified in the <strong>Interval</strong> field.</li>
   <li class="propertylistitem"><strong>At Longitudes</strong> -&nbsp;Sets the longitude line(s) to draw the latitude labels at.  You can specify more than one value by separating them with a semicolon (;).</li>
   <li class="propertylistitem"><strong>At Latitudes -</strong> Sets the latitude line(s) to draw the longitude labels at. You can specify more than one value by separating them with a semicolon (;).</li>
@@ -86,16 +86,17 @@ and labels:</p>
   <li class="propertylistitem"><strong>Format -</strong> Sets the format of the labels. You can select a variety of decimal, or DMS (Degrees, Minutes, Seconds) formats.</li>
   <li class="propertylistitem"><strong>0-360 -</strong> Uses 0 to 360 degrees to label longitudes when selected, instead of the standard -180 to 180.</li>
   </ul>
-  </ul>
+<li class="propertylistitem"><strong>Example -</strong> Set both the Latitude and Longitude Line <strong>Interval</strong> to <em>15 degrees</em> and <strong>Relative to</strong> to <em>0 degrees</em>. This will draw latitude and longitude lines at 0 degrees Latitude and Longitude, and draw another line at 15 degrees either direction (..., -30, -15, 0, 15, 30, ...). Set the both the Latitude and Longitude Labels <strong>Interval</strong> to <em>20 degrees</em> and <strong>Relative to</strong> to<em> 0 degrees</em>. This will draw labels at 0 degrees and draw another label at 15 degrees in either direction (..., -40, -20, 0, 20, 40, ...).</li>
+</ul>
 <div class="pagesubtitle">Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="LayerControls.html#menus">Menus section</a> of the Layer Controls page. However, there are some options that are unique to this display.</p>
 <p>The <strong>File</strong> menu has this unique option:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Default Maps -</strong> The <strong>Save as the Default Map Set</strong> menu item will save the maps you have selected and reopen them next time you open McIDAS-V. The <strong>Remove Local Map Defaults</strong> menu will undo any saved changes by the user, and will revert back to the initial default map display of McIDAS-V. Note: This option will take a restart of McIDAS-V for the changes to take effect.</li>
+  <li class="propertylistitem"><strong>Default Maps -</strong> The <strong>Save as the Default Map Set</strong> menu item will save the maps you have selected and reopen them next time you open McIDAS-V. This menu item creates a maps.xml file in your McIDAS-V directory that includes the name of the map, its category, and other display settings. The <strong>Remove Local Map Defaults</strong> menu item will undo any saved changes by the user, and will revert back to the initial default map display of McIDAS-V. This removes the maps.xml file in your McIDAS-V directory. Note that this option will take a restart of McIDAS-V for the changes to take effect.</li>
 </ul>
 <p>The <strong>Edit</strong> menu has these unique options:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Add Your Own Map... -</strong> Opens an Add a map window, where you can enter a URL of a map or the name of the file saved to your computer. Here, you can name the map, and select the style, color, and width of the map lines.</li>
+  <li class="propertylistitem"><strong>Add Your Own Map... -</strong> Opens an Add a map window, where you can enter a URL of a map or select a shapefile you have locally. Here, you can name the map, choose the category it will list under, and select the style, color, and width of the map lines.</li>
   <li class="propertylistitem"><strong>Add System Map... -</strong> Allows you to select a list of different system maps to add to the list of maps in the <strong>Maps </strong>tab.</li>
 </ul>
 <p>The <strong>View</strong> menu has this unique option:</p>

@@ -38,35 +38,32 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ParameterDe
   <p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-    <li class="propertylistitem"><strong>Parameter -</strong> Represents the name of the parameter. The double down arrows allow you to change the parameter to one of a loaded data source, or a predefined alias.</li>
-    <li class="propertylistitem"><strong>Color Table -</strong> Shows the active color table and the associated high and low data values in the units of the display.</li>
-    <li class="propertylistitem"><strong>Range -</strong> Represents the range that the color bar will cover, from low to high.</li>
-    <li class="propertylistitem"><strong>Contours -</strong> Represents the spacing (difference in value) between contours.</li>
-    <li class="propertylistitem"><strong>Display Unit -</strong> Represents the unit used to display the parameter.</li>
+    <li class="propertylistitem"><strong>Parameter -</strong> Represents the name of the parameter. The double down arrows allow you to change the parameter to one of a loaded data source, or a predefined alias. The parameter name is included with data that is loaded into McIDAS-V.</li>
+    <li class="propertylistitem"><strong>Color Table -</strong> Sets the color table to be used to display the parameter.</li>
+    <li class="propertylistitem"><strong>Range -</strong> Sets the range that the color bar will cover, from low to high.</li>
+    <li class="propertylistitem"><strong>Contours -</strong> Sets the spacing (difference in value) between contours.</li>
+    <li class="propertylistitem"><strong>Display Unit -</strong> Sets the unit used to display the parameter.</li>
 </ul>
 <p>This feature lets you preset conventional color and contouring choices, and lets
 you override system defaults.</p>
-<p>There are two sets of defaults: user defaults in the <strong>User defaults</strong> tab,
-  and system defaults supplied with McIDAS-V in the <strong>System defaults</strong> tab.</p>
-<p>While the actual system defaults cannot be modified, anything you modify will be transferred to the <strong>User defaults</strong> tab. When you do this
+<p>There are three sets of defaults: User defaults, Application defaults, and System defaults. While the items in the <strong>Application defaults</strong> and <strong>System defaults</strong> tabs cannot be modified within the tab, you can create a duplicate of the same parameter in the <strong>User defaults</strong> tab. If the same parameter is defined as a User default and an Application/System default, the User default will be used first. If you wish to modify an existing default, you can right-click on the item and select <strong>Copy Row to Users Defaults</strong>. When you do this
   the Parameter Defaults window allows you to select what properties
-  you want to define:</p>
+  you want to modify and define:</p>
 <a name="image2" id="image2"></a>
-<div class="images"><img src="images/ParamDefaultsProperties.gif" alt="Image 2: Parameter Defaults Properties"> <br>
+<div class="images"><img src="images/ParamDefaultsProperties.gif" width="550" height="605" alt="Image 2: Parameter Defaults Properties"><br>
   <span class="caption">Image 2: Parameter Defaults Properties</span></div>
-<p>Simply check or uncheck the <strong>Defined</strong> buttons and define
-the settings as desired. From the user defined table you can also right click
-on a row to add a new row, edit the settings for the row or delete the row.</p>
+<p>In the example above, any time a parameter named &quot;rh&quot; is used to define a field, the data will display with the <strong>Relative Humidity</strong> color bar, a range of 0-100, units of &quot;%&quot;, and contour values as specified in the window. If you wish to define an individual item, such as <strong>Range</strong>, make sure the <strong>Defined</strong> checkbox is selected. If it is not checked, then any values stored in this window will not be saved as a default. From the <strong>User defaults</strong> tab, you can also right-click
+on a row to add a new row, edit the settings for the row, delete the row, or export an individual row as a plugin. </p>
 <p>The parameter names are given in regular expression syntax to help match with
-  actual data names. Plain text is matched exactly. The string dot star, ".*",
-  means "any text here." The ^ means "begin with the following text exactly&quot;.</p>
+    actual data names. Plain text is matched exactly. The string dot star, ".*",
+means "any text here." The ^ means "begin with the following text exactly&quot;.</p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
     <li class="propertylistitem"><strong>Parameter -</strong> Represents the name of the parameter. The double down arrows allow you to change the parameter to one of a loaded data source, or a predefined alias.</li>
-    <li class="propertylistitem"><b>Color Table</b> - Shows the active color table and the associated high and low data values in the units of the display. As the mouse pointer is moved over the color bar, the value at a particular color is shown. Right click on the color bar or click on the button that displays the name of the Color Table to make modifications to the color bar. This allows you to open the <a href="ColorTableEditor.html">Color Table Editor</a>, change the range, select other color tables, etc.</li>
-    <li class="propertylistitem"><strong>Range -</strong> Represents the range that the color bar will cover, from low to high.</li>
-    <li class="propertylistitem"><strong>Unit -</strong> Represents the unit used to display the parameter.</li>
-    <li class="propertylistitem"><strong>Contour Interval</strong></span><strong> -</strong> Represents the spacing (difference in value) between contours. There are four ways to specify the contour interval.</li>
+    <li class="propertylistitem"><b>Color Table</b> - Sets the color table to use to display your parameter. You can change this by clicking the <strong>Change</strong> button, and selecting a pre-defined color bar.</li>
+    <li class="propertylistitem"><strong>Range -</strong> Sets the range that the color bar will cover, from low to high.</li>
+    <li class="propertylistitem"><strong>Unit -</strong> Sets the unit used to display the parameter.</li>
+    <li class="propertylistitem"><strong>Contour Interval</strong></span><strong> -</strong> Sets the spacing (difference in value) between contours. There are four ways to specify the contour interval.</li>
 <ul class="propertylist">
     <li class="propertylistitem">1. Specify a single value to denote a regular interval between contours.</li>
     <li class="propertylistitem">2. Specify irregular contour intervals with a semi-colon separated list of values. For example:</li>
@@ -84,15 +81,16 @@ on a row to add a new row, edit the settings for the row or delete the row.</p>
     <li class="propertylistitem">5400/5400/5400. This would only show the 5400 line.</li>
   </ul>
   </ul>
-  <li class="propertylistitem"><strong>Base Contour -</strong> Represents the value on which all contours are based. All contours will be integer multiples of the contour interval from the base value. For example, with a base value of 0 and a contour interval of 3 contours would be created at ... -6, -3, 0, 3, 6... A base of 1 with that interval would create contours at ... -5, -2, 1, 4, 7... The base value does not have to be the lowest contour level on a plot, or inside the range of values plotted; it is only a computational reference point. The base contour value is also used for controlling which lines are dashed.</li>
-  <li class="propertylistitem"><strong>Minimum Value -</strong> Represents the limit below which no contour lines are shown. The minimum value may be larger than the base value, so that the base value may never appear on a plot.</li>
-  <li class="propertylistitem"><strong>Maximum Value -</strong> Represents the upper limit above which no contour lines are shown. The minimum and maximum values do not need to match contour line values; they are only limits.</li>
-  <li class="propertylistitem"><strong>Line Width</strong> - Represents the line width (in pixels) of the contour lines and labels.</li>
+  <li class="propertylistitem"><strong>Base Contour -</strong> Sets the value on which all contours are based. All contours will be integer multiples of the contour interval from the base value. For example, with a base value of 0 and a contour interval of 3 contours would be created at ... -6, -3, 0, 3, 6... A base of 1 with that interval would create contours at ... -5, -2, 1, 4, 7... The base value does not have to be the lowest contour level on a plot, or inside the range of values plotted; it is only a computational reference point. The base contour value is also used for controlling which lines are dashed.</li>
+  <li class="propertylistitem"><strong>Minimum Value -</strong> Sets the limit below which no contour lines are shown. The minimum value may be larger than the base value, so that the base value may never appear on a plot.</li>
+  <li class="propertylistitem"><strong>Maximum Value -</strong> Sets the upper limit above which no contour lines are shown. The minimum and maximum values do not need to match contour line values; they are only limits.</li>
+  <li class="propertylistitem"><strong>Line Width</strong> - Sets the line width (in pixels) of the contour lines and labels.</li>
   <li class="propertylistitem"><strong>Dash -</strong> Dashes contour values less than the base value. If the base is set higher than maximum value, then all lines are dashed. Use the pulldown menu to select the dash pattern to use.</li>
   <li class="propertylistitem"><strong>Labels -</strong> Displays contour labels on the image.</li>
-  <li class="propertylistitem"><strong>Labels: Font -</strong> Represents the font style of the contour labels.</li>
-  <li class="propertylistitem"><strong>Labels: Size -</strong> Represents the font size of the contour labels.</li>
-  <li class="propertylistitem"><strong>Labels: Align -</strong> Represents the way contour labels will be written on the contours. <strong>Along Contours</strong> means the labels will be written along contours, and while they will not be written upside down, there is a chance they will be written at an angle depending on the layout of the contours. <strong>Horizontal</strong> means the contour labels will be written on the contour, but it will be written in the horizontal and not on an angle.</li>
+  <li class="propertylistitem"><strong>Labels: Font -</strong> Sets the font style of the contour labels.</li>
+  <li class="propertylistitem"><strong>Labels: Size -</strong> Sets the font size of the contour labels.</li>
+  <li class="propertylistitem"><strong>Labels: Align -</strong> Sets the way contour labels will be written on the contours. <strong>Along Contours</strong> means the labels will be written along contours, and while they will not be written upside down, there is a chance they will be written at an angle depending on the layout of the contours. <strong>Horizontal</strong> means the contour labels will be written on the contour, but it will be written in the horizontal and not on an angle.</li>
+  <li class="propertylistitem"><strong>Frequency -</strong> Sets the frequency of labels along the contour lines. There will be more   labels displayed as the slider is moved from left to right.</li>
 </ul>
 <div class="pagesubtitle">Menus</div>
 <p>The <strong>File</strong> menu has these unique items:</p>
