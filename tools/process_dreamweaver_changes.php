@@ -88,24 +88,28 @@ function ValidateVersions() {
 
 function StageNewFiles($filepaths) {
     foreach ($filepaths as $filepath) {
-        print "git add \"$filepath\"\n";
+        // print "git add \"$filepath\"\n";
+        `git add "$filepath"`;
     }
 }
 
 function StageDeletedFiles($filepaths) {
     foreach ($filepaths as $filepath) {
-        print "git rm \"$filepath\"\n";
+        // print "git rm \"$filepath\"\n";
+        `git rm "$filepath"`;
     }
 }
 
 function StageModifiedFiles($filepaths) {
     foreach ($filepaths as $filepath) {
-        print "git add \"$filepath\"\n";
+        // print "git add \"$filepath\"\n";
+        `git add "$filepath"`;
     }
 }
 
 function CommitStagedChanges($inquiry, $message) {
-    print "git commit -m \"[$inquiry] $message\"\n";
+    // print "git commit -m \"[$inquiry] $message\"\n";
+    `git commit -m "[$inquiry] $message"`;
 }
 
 function ParseGitStatus($ACTIVITY_DIR) {
