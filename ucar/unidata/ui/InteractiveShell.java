@@ -510,6 +510,8 @@ public class InteractiveShell implements HyperlinkListener {
      * @return a reference to this shell's JSplitPane that holds the text input and text output areas
      */
     private JSplitPane getJSplitPane() {
+    	// this implementation is highly dependent on the current structure of the
+    	// InteractiveShell layout...but I don't see a better way to do it.
     	JPanel panel1 = (JPanel) frame.getContentPane().getComponent(0);
     	// get the JPanel holding the JSplitPane, not the menu bar
     	JPanel panel2 = (JPanel) panel1.getComponent(1);

@@ -643,13 +643,9 @@ public class JythonShell extends InteractiveShell {
      */
     public static Rectangle loadWindowBounds(final IdvObjectStore store, final Rectangle defaultBounds) {
         Rectangle windowBounds = (Rectangle)store.get(PROP_JYTHON_WINDOW);
-        Integer dividerLocation = (Integer)store.get(PROP_JYTHON_DIVIDER);
         if (windowBounds == null) {
             store.put(PROP_JYTHON_WINDOW, defaultBounds);
             windowBounds = defaultBounds;
-        }
-        if (dividerLocation != null) {
-        	
         }
         // TODO(jon): remove these calls after a little time has passed.
         store.remove("prop.jython.shell.windowbounds");
@@ -674,7 +670,7 @@ public class JythonShell extends InteractiveShell {
      * @param store The {@link IdvObjectStore} that contains persisted session values. Cannot be {@code null}.
      * @param defaultDividerLocation location to use if {@code PROP_JYTHON_DIVIDER} does not have an associated value. Cannot be {@code null}.
      * 
-     * @return Either the value associated with {@code PROP_JYTHON_WINDOW_DIVIDER} or {@code defaultDividerLocation}.
+     * @return Either the value associated with {@code PROP_JYTHON_DIVIDER} or {@code defaultDividerLocation}.
      */
     public static int loadDividerLocation(final IdvObjectStore store, final int defaultDividerLocation) {
         Integer dividerLocation = (Integer)store.get(PROP_JYTHON_DIVIDER);
