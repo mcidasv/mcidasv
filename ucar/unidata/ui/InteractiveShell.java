@@ -54,7 +54,9 @@ import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -501,6 +503,40 @@ public class InteractiveShell implements HyperlinkListener {
      */
     protected String formatCode(String code) {
         return code;
+    }
+    
+    /**
+     * 
+     * @return a reference to this shell's JSplitPane that holds the text input and text output areas
+     */
+    private JSplitPane getJSplitPane() {
+    	// this implementation is highly dependent on the current structure of the
+    	// InteractiveShell layout...but I don't see a better way to do it.
+    	JPanel panel1 = (JPanel) frame.getContentPane().getComponent(0);
+    	// get the JPanel holding the JSplitPane, not the menu bar
+    	JPanel panel2 = (JPanel) panel1.getComponent(1);
+    	return (JSplitPane) panel2.getComponent(0);
+    }
+    
+    /**
+     * Get the location of the horizontal JSplitPane divider that separates the text input area
+     * from the text output.
+     * 
+     * @return the location of the horizontal divider bar as provided by the JSplitPane
+     */
+    protected int getDividerLocation() {
+    	return this.getJSplitPane().getDividerLocation();
+    }
+    
+    /**
+     * Set the location of the horizontal JSplitPane divider that separates the text input area
+     * from the text output.
+     * 
+     * @param loc the location of the horizontal JSplitPane divider. 
+     * (larger number means further from top of window.)
+     */
+    protected void setDividerLocation(int loc) {
+    	this.getJSplitPane().setDividerLocation(loc);
     }
 }
 

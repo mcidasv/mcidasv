@@ -101,6 +101,9 @@ public class JythonShell extends InteractiveShell {
 
     /** property that holds jython shell window location and size. */
     public static final String PROP_JYTHON_WINDOW = "prop.jython.shell.windowrect";
+    
+    /** property that hold location of divider bar between text input/output areas */
+    public static final String PROP_JYTHON_DIVIDER = "prop.jython.shell.divider";
 
     /** property that holds the history */
     public static final String PROP_JYTHON_SHELL_HISTORY =
@@ -157,6 +160,7 @@ public class JythonShell extends InteractiveShell {
      */
     @Override public void close() {
         saveWindowBounds(idv.getStore(), frame.getBounds());
+        saveDividerLocation(idv.getStore(), getDividerLocation());
         super.close();
     }
 
@@ -208,6 +212,7 @@ public class JythonShell extends InteractiveShell {
         frame.setBounds(loadWindowBounds(idv.getStore(), new Rectangle(100, 100, 600, 500)));
         frame.setVisible(true);
         registerWindow(frame);
+        setDividerLocation(loadDividerLocation(idv.getStore(), getDividerLocation()));
 
         frame.addWindowFocusListener(new WindowFocusListener() {
             @Override public void windowGainedFocus(WindowEvent event) {
@@ -657,6 +662,33 @@ public class JythonShell extends InteractiveShell {
         store.put(PROP_JYTHON_WINDOW, windowBounds);
         // TODO(jon): remove these calls after a little time has passed.
         store.remove("prop.jython.shell.windowbounds");
+    }
+    
+    /**
+     * 
+     * 
+     * @param store The {@link IdvObjectStore} that contains persisted session values. Cannot be {@code null}.
+     * @param defaultDividerLocation location to use if {@code PROP_JYTHON_DIVIDER} does not have an associated value. Cannot be {@code null}.
+     * 
+     * @return Either the value associated with {@code PROP_JYTHON_DIVIDER} or {@code defaultDividerLocation}.
+     */
+    public static int loadDividerLocation(final IdvObjectStore store, final int defaultDividerLocation) {
+        Integer dividerLocation = (Integer)store.get(PROP_JYTHON_DIVIDER);
+        if (dividerLocation == null) {
+        	store.put(PROP_JYTHON_DIVIDER, defaultDividerLocation);
+        	dividerLocation = defaultDividerLocation;
+        }
+        return dividerLocation;
+    }
+
+    /**
+     * 
+     * 
+     * @param store The {@link IdvObjectStore} that contains persisted session values. Cannot be {@code null}.
+     * @param dividerLocation distance from top of window of the horizontal divider bar separating text input/output.
+     */
+    public static void saveDividerLocation(final IdvObjectStore store, final int dividerLocation) {
+        store.put(PROP_JYTHON_DIVIDER, dividerLocation);
     }
     
     /**
