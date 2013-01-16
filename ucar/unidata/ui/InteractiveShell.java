@@ -232,7 +232,7 @@ public class InteractiveShell implements HyperlinkListener {
         });
         commandFld.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent ae) {
-                eval();
+                handleEvaluationAction();
             }
         });
         commandFld.addMouseListener(new MouseAdapter() {
@@ -263,7 +263,7 @@ public class InteractiveShell implements HyperlinkListener {
         cardLayoutPanel.addCard(GuiUtils.top(commandFld));
         cardLayoutPanel.addCard(GuiUtils.makeScrollPane(commandArea, 200, 100));
         flipBtn = makeImageButton("/auxdata/ui/icons/DownDown.gif", this, "flipField");
-        JButton evalBtn = makeButton("Evaluate:", this, "eval");
+        JButton evalBtn = makeButton("Evaluate:", this, "handleEvaluationAction");
         JComponent bottom = GuiUtils.leftCenterRight(
             GuiUtils.top(evalBtn),
             GuiUtils.inset(cardLayoutPanel, 2),
@@ -326,6 +326,44 @@ public class InteractiveShell implements HyperlinkListener {
         GuiUtils.insertText(getCommandFld(), t);
     }
 
+    public void handleEvaluationAction() {
+        eval();
+    }
+
+    public void handleHistoryPreviousAction() {
+        int historySize = history.size();
+        if ((historyIdx < 0) || (historyIdx >= historySize)) {
+            historyIdx = historySize - 1;
+        } else {
+            historyIdx--;
+            if (historyIdx < 0) {
+                historyIdx = 0;
+            }
+        }
+        if ((historyIdx >= 0) && (historyIdx < historySize)) {
+            getCommandFld().setText(history.get(historyIdx));
+        }
+    }
+
+    public void handleHistoryNextAction() {
+        int historySize = history.size();
+        if ((historyIdx < 0) || (historyIdx >= historySize)) {
+            historyIdx = historySize - 1;
+        } else {
+            historyIdx++;
+            if (historyIdx >= historySize) {
+                historyIdx = historySize - 1;
+            }
+        }
+        if ((historyIdx >= 0) && (historyIdx < historySize)) {
+            getCommandFld().setText(history.get(historyIdx));
+        }
+    }
+
+    public void handleFlipCommandAreaAction() {
+        flipField();
+    }
+
     /**
      * _more_
      *
@@ -333,37 +371,22 @@ public class InteractiveShell implements HyperlinkListener {
      * @param cmdFld _more_
      */
     protected void handleKeyPress(KeyEvent e, JTextComponent cmdFld) {
-        int size = history.size();
         boolean isArea  = (cmdFld instanceof JTextArea);
-        if (((!isArea && e.getKeyCode() == KeyEvent.VK_UP)
-                || ((e.getKeyCode() == KeyEvent.VK_P)
-                    && e.isControlDown())) && (size > 0)) {
-            if ((historyIdx < 0) || (historyIdx >= size)) {
-                historyIdx = size - 1;
-            } else {
-                historyIdx--;
-                if (historyIdx < 0) {
-                    historyIdx = 0;
-                }
-            }
-            if ((historyIdx >= 0) && (historyIdx < size)) {
-                cmdFld.setText(history.get(historyIdx));
-            }
-        }
-        if (((!isArea && e.getKeyCode() == KeyEvent.VK_DOWN)
-                || ((e.getKeyCode() == KeyEvent.VK_N)
-                    && e.isControlDown())) && (size > 0)) {
-            if ((historyIdx < 0) || (historyIdx >= size)) {
-                historyIdx = size - 1;
-            } else {
-                historyIdx++;
-                if (historyIdx >= size) {
-                    historyIdx = size - 1;
-                }
-            }
-            if ((historyIdx >= 0) && (historyIdx < size)) {
-                cmdFld.setText(history.get(historyIdx));
-            }
+        int keyCode = e.getKeyCode();
+        boolean isControlDown = e.isControlDown();
+        boolean isShiftDown = e.isShiftDown();
+        boolean isAltDown = e.isAltDown();
+        boolean isMetaDown = e.isMetaDown();
+        boolean hasHistory = !history.isEmpty();
+//        logger.trace("isArea={} keyCode={} isMetaDown={} isControlDown={} isShiftDown={} isAltDown={}", new Object[] { isArea, keyCode, isMetaDown, isControlDown, isShiftDown, isAltDown });
+        if (((!isArea && keyCode == KeyEvent.VK_UP) || ((keyCode == KeyEvent.VK_P) && isControlDown)) && (hasHistory)) {
+            handleHistoryPreviousAction();
+        } else if (((!isArea && keyCode == KeyEvent.VK_DOWN) || ((keyCode == KeyEvent.VK_N) && isControlDown)) && (hasHistory)) {
+            handleHistoryNextAction();
+        } else if ((!isArea && keyCode == KeyEvent.VK_ENTER) || ((keyCode == KeyEvent.VK_ENTER && isShiftDown))) {
+            handleEvaluationAction();
+        } else if (isControlDown && (keyCode == KeyEvent.VK_SLASH)) {
+            handleFlipCommandAreaAction();
         }
     }
 
@@ -504,20 +527,20 @@ public class InteractiveShell implements HyperlinkListener {
     protected String formatCode(String code) {
         return code;
     }
-    
+
     /**
      * 
      * @return a reference to this shell's JSplitPane that holds the text input and text output areas
      */
     private JSplitPane getJSplitPane() {
-    	// this implementation is highly dependent on the current structure of the
-    	// InteractiveShell layout...but I don't see a better way to do it.
-    	JPanel panel1 = (JPanel) frame.getContentPane().getComponent(0);
-    	// get the JPanel holding the JSplitPane, not the menu bar
-    	JPanel panel2 = (JPanel) panel1.getComponent(1);
-    	return (JSplitPane) panel2.getComponent(0);
+        // this implementation is highly dependent on the current structure of the
+        // InteractiveShell layout...but I don't see a better way to do it.
+        JPanel panel1 = (JPanel) frame.getContentPane().getComponent(0);
+        // get the JPanel holding the JSplitPane, not the menu bar
+        JPanel panel2 = (JPanel) panel1.getComponent(1);
+        return (JSplitPane) panel2.getComponent(0);
     }
-    
+
     /**
      * Get the location of the horizontal JSplitPane divider that separates the text input area
      * from the text output.
@@ -525,9 +548,9 @@ public class InteractiveShell implements HyperlinkListener {
      * @return the location of the horizontal divider bar as provided by the JSplitPane
      */
     protected int getDividerLocation() {
-    	return this.getJSplitPane().getDividerLocation();
+        return this.getJSplitPane().getDividerLocation();
     }
-    
+
     /**
      * Set the location of the horizontal JSplitPane divider that separates the text input area
      * from the text output.
@@ -536,7 +559,7 @@ public class InteractiveShell implements HyperlinkListener {
      * (larger number means further from top of window.)
      */
     protected void setDividerLocation(int loc) {
-    	this.getJSplitPane().setDividerLocation(loc);
+        this.getJSplitPane().setDividerLocation(loc);
     }
 }
 
