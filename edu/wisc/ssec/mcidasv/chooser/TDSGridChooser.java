@@ -46,9 +46,8 @@ public class TDSGridChooser extends XmlChooser {
     public TDSGridChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
     }
-	
+
     public PreferenceList getPreferenceList(String listProp) {
-    	return super.getPreferenceList("idv.data.grid.list");
+        return super.getPreferenceList("idv.data.grid.list");
     }
-    
 }
