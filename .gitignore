@@ -11,6 +11,7 @@ mcidas/
 # Eclipse-specific junk
 .classpath
 .project
+bin/*
 
 # OS Junk
 .DS_Store
