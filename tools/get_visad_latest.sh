@@ -5,7 +5,7 @@
 #
 
 # DEST_DIR=/home/mcidasv/idv/lib
-DEST_DIR=../../idvlib
+DEST_DIR=../../IDV/lib
 URL=ftp://ftp.ssec.wisc.edu/pub/visad/nightly
 FILE=visad.jar
 
