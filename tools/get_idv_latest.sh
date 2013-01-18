@@ -6,8 +6,8 @@
 
 # DEST_DIR=/home/mcidasv/idv/lib
 # BACK_DIR=/home/mcidasv/idv/lib.old
-DEST_DIR=../../idvlib
-BACK_DIR=../../idvlib.old
+DEST_DIR=../../IDV/lib
+BACK_DIR=../../IDV/lib.old
 
 URL=ftp://ftp.unidata.ucar.edu/pub/idv/nightly
 
