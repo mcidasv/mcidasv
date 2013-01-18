@@ -13,7 +13,7 @@
     </searchSequence>
     <variables>
       <variable name="INSTALLDIR" value="${compiler:sys.fullName}-System" description="" category="" />
-      <variable name="SRCDIR" value="${compiler:sys.install4jHome}/../idvlib" description="" category="" />
+      <variable name="SRCDIR" value="${compiler:sys.install4jHome}/../IDV/lib" description="" category="" />
       <variable name="MCVDIR" value="${compiler:sys.install4jHome}/../mcidasv" description="" category="" />
       <variable name="ADDEDIR" value="${compiler:sys.install4jHome}/../addeservers" description="" category="" />
     </variables>
