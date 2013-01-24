@@ -38,11 +38,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -62,6 +65,8 @@ import ucar.unidata.util.StringUtil;
  */
 public class ResourceManager extends IdvResourceManager {
 
+    private static final Logger logger = LoggerFactory.getLogger(ResourceManager.class);
+    
     /** Points to the adde image defaults */
     public static final XmlIdvResource RSC_PARAMETERSETS =
         new XmlIdvResource("idv.resource.parametersets",
@@ -110,10 +115,10 @@ public class ResourceManager extends IdvResourceManager {
         List<IdvResource> resources = new ArrayList<IdvResource>(getResources());
         for (IdvResource resource : resources) {
             ResourceCollection rc = getResources(resource);
-            System.err.println("Resource ID:"+resource);
+            logger.trace("Resource ID='{}'", resource);
             for (int i = 0; i < rc.size(); i++) {
                 String path = (String)rc.get(i);
-                System.err.println("  path="+path+" exists:"+isPathValid(path));
+                logger.trace("  path='{}' pathexists={}", path, isPathValid(path));
             }
         }
     }
@@ -130,14 +135,23 @@ public class ResourceManager extends IdvResourceManager {
      * otherwise.
      */
     private boolean isPathValid(final String path) {
+        InputStream s = null;
+        boolean isValid = false;
         try {
-            InputStream s = IOUtil.getInputStream(path, getClass());
-            if (s == null)
-                return false;
+            s = IOUtil.getInputStream(path, getClass());
+            isValid = (s != null);
         } catch (IOException e) {
-            return false;
+            isValid = false;
+        } finally {
+            if (s != null) {
+                try {
+                    s.close();
+                } catch (IOException e) {
+                    logger.trace("could not close InputStream associated with "+path, e);
+                }
+            }
         }
-        return true;
+        return isValid;
     }
 
     /**
@@ -178,15 +192,16 @@ public class ResourceManager extends IdvResourceManager {
         File defaultMcv;
 
         String os = System.getProperty("os.name");
-        if (os == null)
+        if (os == null) {
             throw new RuntimeException();
+        }
+        
         if (os.startsWith("Windows")) {
             defaultDir = new File(userDirectory + "\\bundles\\General");
             defaultNew = new File(defaultDir.toString() + "\\Default.mcv");
             defaultIdv = new File(userDirectory + "\\default.xidv");
             defaultMcv = new File(userDirectory + "\\default.mcv");
-        }
-        else {
+        } else {
             defaultDir = new File(userDirectory + "/bundles/General");
             defaultNew = new File(defaultDir.toString() + "/Default.mcv");
             defaultIdv = new File(userDirectory + "/default.xidv");
@@ -194,12 +209,14 @@ public class ResourceManager extends IdvResourceManager {
         }
 
         // If no Alpha default bundles exist, bail quickly
-        if (!defaultIdv.exists() && !defaultMcv.exists()) return;
+        if (!defaultIdv.exists() && !defaultMcv.exists()) {
+            return;
+        }
 
         // If the destination directory does not exist, create it.
         if (!defaultDir.exists()) {
             if (!defaultDir.mkdirs()) {
-                System.err.println("Cannot create directory " + defaultDir.toString() + " for default bundle");
+                logger.warn("Cannot create directory '{}' for default bundle", defaultDir);
                 return;
             }
         }
@@ -207,7 +224,7 @@ public class ResourceManager extends IdvResourceManager {
         // If the destination already exists, print lame error message and bail.
         // This whole check should only happen with Alphas so no biggie right?
         if (defaultNew.exists()) {
-            System.err.println("Cannot copy current default bundle... " + defaultNew.toString() + " already exists");
+            logger.warn("Cannot copy current default bundle: '{}' already exists.", defaultNew);
             return;
         }
 
@@ -216,10 +233,9 @@ public class ResourceManager extends IdvResourceManager {
         if (defaultIdv.exists()) {
             if (defaultMcv.exists()) {
                 defaultIdv.delete();
-            }
-            else {
+            } else {
                 if (!defaultIdv.renameTo(defaultNew)) {
-                    System.out.println("Cannot copy current default bundle... error renaming " + defaultIdv.toString());
+                    logger.warn("Cannot copy current default bundle: error renaming '{}'", defaultIdv);
                 }
             }
         }
@@ -227,7 +243,7 @@ public class ResourceManager extends IdvResourceManager {
         // If only default.mcv exists, try to rename it.
         if (defaultMcv.exists()) {
             if (!defaultMcv.renameTo(defaultNew)) {
-                System.out.println("Cannot copy current default bundle... error renaming " + defaultMcv.toString());
+                logger.warn("Cannot copy current default bundle: error renaming '{}'", defaultMcv);
             }
         }
     }
@@ -266,13 +282,15 @@ public class ResourceManager extends IdvResourceManager {
      */
     private ResourceCollection getCollection(final Element rsrc, final String name) {
         ResourceCollection rc = getResources(name);
-        if (rc != null)
+        if (rc != null) {
             return rc;
-
-        if (getAttribute(rsrc, ATTR_RESOURCETYPE, "text").equals("text"))
+        }
+        
+        if (getAttribute(rsrc, ATTR_RESOURCETYPE, "text").equals("text")) {
             return createResourceCollection(name);
-        else
+        } else {
             return createXmlResourceCollection(name);
+        }
     }
 
     /**
@@ -291,14 +309,15 @@ public class ResourceManager extends IdvResourceManager {
      * {@code Map}. 
      */
     private Map<String, String> getNodeProperties(final Element resourceNode) {
-        Map<String, String> nodeProperties = new LinkedHashMap<String, String>();
         NodeList propertyList = getElements(resourceNode, TAG_PROPERTY);
+        Map<String, String> nodeProperties = new LinkedHashMap<String, String>(propertyList.getLength());
         for (int propIdx = 0; propIdx < propertyList.getLength(); propIdx++) {
             Element propNode = (Element)propertyList.item(propIdx);
             String propName = getAttribute(propNode, ATTR_NAME);
             String propValue = getAttribute(propNode, ATTR_VALUE, (String)null);
-            if (propValue == null)
+            if (propValue == null) {
                 propValue = getChildText(propNode);
+            }
             nodeProperties.put(propName, propValue);
         }
         nodeProperties.putAll(getNodeAttributes(resourceNode));
@@ -319,14 +338,16 @@ public class ResourceManager extends IdvResourceManager {
      * empty {@code Map}.
      */
     private Map<String, String> getNodeAttributes(final Element resourceNode) {
-        Map<String, String> nodeProperties = new LinkedHashMap<String, String>();
+        Map<String, String> nodeProperties = Collections.emptyMap();
         NamedNodeMap nnm = resourceNode.getAttributes();
         if (nnm != null) {
+            nodeProperties = new LinkedHashMap<String, String>(nnm.getLength());
             for (int attrIdx = 0; attrIdx < nnm.getLength(); attrIdx++) {
                 Attr attr = (Attr)nnm.item(attrIdx);
                 String name = attr.getNodeName();
-                if (!name.equals(ATTR_LOCATION) && !name.equals(ATTR_ID))
+                if (!name.equals(ATTR_LOCATION) && !name.equals(ATTR_ID)) {
                     nodeProperties.put(name, attr.getNodeValue());
+                }
             }
         }
         return nodeProperties;
@@ -375,15 +396,17 @@ public class ResourceManager extends IdvResourceManager {
                 List<String> lines = StringUtil.split(index, "\n", true, true);
                 for (int lineIdx = 0; lineIdx < lines.size(); lineIdx++) {
                     String line = lines.get(lineIdx);
-                    if (line.startsWith("#"))
+                    if (line.startsWith("#")) {
                         continue;
+                    }
                     paths.add(getResourcePath(line));
                 }
             }
         } else if (origPath.startsWith("http:")) {
             String tmpPath = origPath;
-            if (!isPathValid(tmpPath) && props.containsKey("default"))
+            if (!isPathValid(tmpPath) && props.containsKey("default")) {
                 tmpPath = getResourcePath(props.get("default"));
+            }
             paths.add(tmpPath);
         } else {
             paths.add(origPath);
@@ -417,23 +440,27 @@ public class ResourceManager extends IdvResourceManager {
             Element rsrc = (Element)children.item(i);
 
             ResourceCollection rc = getCollection(rsrc, fixId(rsrc));
-            if (getAttribute(rsrc, ATTR_REMOVEPREVIOUS, false))
+            if (getAttribute(rsrc, ATTR_REMOVEPREVIOUS, false)) {
                 rc.removeAll();
+            }
 
-            if (observeLoadMore && !rc.getCanLoadMore())
+            if (observeLoadMore && !rc.getCanLoadMore()) {
                 continue;
+            }
 
             boolean loadMore = getAttribute(rsrc, ATTR_LOADMORE, true);
-            if (!loadMore)
+            if (!loadMore) {
                 rc.setCanLoadMore(false);
+            }
 
             List<Resource> locationList = new ArrayList<Resource>();
             NodeList resources = getElements(rsrc, TAG_RESOURCE);
             for (int idx = 0; idx < resources.getLength(); idx++) {
                 Element node = (Element)resources.item(idx);
                 String path = getResourcePath(getAttribute(node, ATTR_LOCATION));
-                if ((path == null) || (path.length() == 0))
+                if ((path == null) || (path.isEmpty())) {
                     continue;
+                }
 
                 String label = getAttribute(node, ATTR_LABEL, (String)null);
                 String id = getAttribute(node, ATTR_ID, (String)null);
@@ -441,8 +468,9 @@ public class ResourceManager extends IdvResourceManager {
                 Map<String, String> nodeProperties = getNodeProperties(node);
 
                 for (String p : getPaths(path, nodeProperties)) {
-                    if (id != null)
+                    if (id != null) {
                         rc.setIdForPath(id, p);
+                    }
                     locationList.add(new Resource(p, label, new Hashtable<String, String>(nodeProperties)));
                 }
             }
