@@ -195,15 +195,45 @@ public class SuomiNPPFilter extends FileFilter {
     			// ok, we know what the geo file is supposed to be, but is it present in this directory?
     			String geoFilename = fileNameAbsolute.substring(0, fileNameAbsolute.lastIndexOf(File.separatorChar) + 1);
     			geoFilename += geoProductID;
-    			File geoFile = new File(geoFilename);
     			
-    			if (geoFile.exists()) {
-    				logger.debug("GEO file FOUND: " + geoFilename);
-    			    isSuomiNPP = true;
-    			} else {
-    				logger.debug("GEO file NOT found: " + geoFilename);
-    				isSuomiNPP = false;
-    			}    
+    			// first check for the typically referenced ellipsoid geolocation
+    			if (! isSuomiNPP) {
+    				geoFilename = geoFilename.substring(geoFilename.lastIndexOf(File.separatorChar) + 1);
+    				
+    				// now we make a file filter, and see if a matching geo file is present
+    				File fList = new File(fileNameAbsolute.substring(0, fileNameAbsolute.lastIndexOf(File.separatorChar) + 1)); // current directory
+
+    				FilenameFilter geoFilter = new FilenameFilter() {
+    					public boolean accept(File dir, String name) {
+    						if ((name.startsWith("G")) && (name.endsWith(".h5"))) {
+    							return true;
+    						} else {
+    							return false;
+    						}
+    					}
+    				};
+    				
+    				File[] files = fList.listFiles(geoFilter);
+    				for (File file : files) {
+    					if (file.isDirectory()) {
+    						continue;
+    					}
+    					// get the file name for convenience
+    					String fName = file.getName();
+    					// is it one of the geo types we are looking for?
+    					if (fName.substring(0, 5).equals(geoFilename.substring(0, 5))) {
+    						int geoStartIdx = geoFilename.indexOf("_d");
+    						int prdStartIdx = fileNameRelative.indexOf("_d");
+    						String s1 = geoFilename.substring(geoStartIdx, geoStartIdx + 35);
+    						String s2 = fileNameRelative.substring(prdStartIdx, prdStartIdx + 35);
+    						if (s1.equals(s2)) {
+    							isSuomiNPP = true;
+    							break;
+    						}
+    					}
+    				}
+
+    			}   
     			
     			// one last thing to check, if no luck so far...
     			// are we using terrain-corrected geolocation?

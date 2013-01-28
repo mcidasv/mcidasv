@@ -486,14 +486,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    						logger.debug("Variable: " + vName);
     	    						String varShortName = vName.substring(vName.lastIndexOf(SEPARATOR_CHAR) + 1);
 
-    	    						// skip Quality Flags for now.
-    	    						// XXX TJJ - should we show these?  if so, note they sometimes
-    	    						// have different dimensions than the main variables.  For ex,
-    	    						// on high res bands QFs are 768 x 3200 while vars are 1536 x 6400
-    	    						if (varShortName.startsWith("QF")) {
-    	    							continue;
-    	    						}
-
     	    						// for CrIS instrument, only taking real calibrated values for now
     	    						logger.debug("INSTRUMENT NAME: " + instrumentName);
     	    						if (instrumentName.getStringValue().equals("CrIS")) {
