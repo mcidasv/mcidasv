@@ -230,11 +230,6 @@ public class InteractiveShell implements HyperlinkListener {
                 handleKeyPress(e, commandFld);
             }
         });
-        commandFld.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent ae) {
-                handleEvaluationAction();
-            }
-        });
         commandFld.addMouseListener(new MouseAdapter() {
             @Override public void mouseReleased(MouseEvent e) {
                 if (SwingUtilities.isRightMouseButton(e)) {
