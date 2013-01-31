@@ -40,7 +40,10 @@ import static ucar.unidata.util.StringUtil.join;
 import static ucar.unidata.util.StringUtil.replace;
 import static ucar.unidata.util.StringUtil.split;
 
+import java.awt.Insets;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -56,10 +59,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.text.JTextComponent;
 
@@ -99,6 +107,8 @@ import edu.wisc.ssec.mcidasv.McIDASV;
  */
 public class JythonShell extends InteractiveShell {
 
+    private static final Logger logger = LoggerFactory.getLogger(JythonShell.class);
+    
     /** property that holds jython shell window location and size. */
     public static final String PROP_JYTHON_WINDOW = "prop.jython.shell.windowrect";
     
@@ -111,7 +121,9 @@ public class JythonShell extends InteractiveShell {
     
     /** property that holds the maximum length of the Jython Shell history */
     public static final String PROP_JYTHON_SHELL_MAX_HISTORY_LENGTH =
-    		"prop.jython.shell.maxhistorylength";
+        "prop.jython.shell.maxhistorylength";
+    
+    public static final String PROP_JYTHON_SHELL_DISABLE_RESET_WARNING = "prop.jython.shell.disableresetwarning";
     
     /** max number of commands saved in history */
     public static final int DEFAULT_MAX_HISTORY_LENGTH = 100;
@@ -418,14 +430,32 @@ public class JythonShell extends InteractiveShell {
      * Clear everything, gui and make new interp
      */
     @Override public void clear() {
-        try {
-            super.clear();
-            createInterpreter();
-        } catch (Exception exc) {
-            logException("An error occurred clearing the Jython shell", exc);
+        IdvObjectStore store = idv.getStore();
+        boolean disableWarning = store.get(PROP_JYTHON_SHELL_DISABLE_RESET_WARNING, false);
+        boolean resetConfirmed = false;
+        int result = -1;
+        
+        if (!disableWarning) {
+            String[] options = { "Reset Jython Shell", "Cancel" };
+            JCheckBox box = new JCheckBox("Turn off this warning?", false);
+            JComponent comp = GuiUtils.vbox(new JLabel("<html>Variables created within the Jython Shell <b>cannot</b> be recovered after a reset. Would you like to proceed?</html>"), GuiUtils.inset(box, new Insets(4, 15, 0, 10)));
+            result = JOptionPane.showOptionDialog(frame, comp, "Confirm Jython Shell Reset", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, (Icon)null, options, null);
+            store.put(PROP_JYTHON_SHELL_DISABLE_RESET_WARNING, box.isSelected());
+            resetConfirmed = (result == 0);
+        } else {
+            resetConfirmed = true;
+        }
+        
+        if (resetConfirmed) {
+            try {
+                super.clear();
+                createInterpreter();
+            } catch (Exception exc) {
+                logException("An error occurred clearing the Jython shell", exc);
+            }
         }
     }
-
+    
     /**
      * Make menu bar
      *
@@ -442,8 +472,8 @@ public class JythonShell extends InteractiveShell {
         menuBar.add(makeMenu("File", items));
 
         items.clear();
-        items.add(makeMenuItem("Clear All", this, "clear"));
-        items.add(makeMenuItem("Clear Output", this, "clearOutput"));
+        items.add(makeMenuItem("Reset Jython Shell", this, "clear"));
+        items.add(makeMenuItem("Clear Output Buffer", this, "clearOutput"));
         items.add(makeCheckboxMenuItem("Auto-select Operands", this, "autoSelect", null));
         //        items.add(GuiUtils.makeMenu("Insert Display Type", getDisplayMenuItems()));
         menuBar.add(makeMenu("Edit", items));
