@@ -133,6 +133,9 @@ public class JythonShell extends InteractiveShell {
 
     protected static final Logger jythonLogger = LoggerFactory.getLogger("jython");
 
+    /** {@code true} while a shell reset is taking place, {@code false} otherwise. */
+    private boolean shellResetting = false;
+
     /** idv */
     private IntegratedDataViewer idv;
 
@@ -404,7 +407,7 @@ public class JythonShell extends InteractiveShell {
         if (islInterpreter == null) {
             islInterpreter = new ImageGenerator(idv);
         }
-
+        
         interp.set("islInterpreter", islInterpreter);
         interp.set("shell", this);
         outputStream = new OutputStream() {
@@ -447,13 +450,25 @@ public class JythonShell extends InteractiveShell {
         }
         
         if (resetConfirmed) {
+            shellResetting = true;
             try {
+                
                 super.clear();
                 createInterpreter();
             } catch (Exception exc) {
                 logException("An error occurred clearing the Jython shell", exc);
             }
+            shellResetting = false;
         }
+    }
+    
+    /**
+     * Check for whether or not this Jython Shell is in the midst of a reset.
+     * 
+     * @return {@code true} if the shell is resetting, {@code false} otherwise.
+     */
+    public boolean isShellResetting() {
+        return shellResetting;
     }
     
     /**

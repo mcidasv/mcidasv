@@ -89,7 +89,7 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
 
     @Override public void removeInterpreter(PythonInterpreter interpreter) {
         super.removeInterpreter(interpreter);
-        if (jythonShell != null && jythonShell.getInterpreter().equals(interpreter)) {
+        if (jythonShell != null && !jythonShell.isShellResetting() && jythonShell.getInterpreter().equals(interpreter)) {
             jythonShell.close();
             jythonShell = null;
         }
