@@ -1102,7 +1102,8 @@ class _Layer(_JavaProxy):
         """Wrapper for setEnhancementTable and setDataRange
         Args:
            Name: the name of the enhancement table.  Don't need to specify
-                 "parent" directories like setProjection
+                 "parent" directories like setProjection, but will work if you 
+                 do.  Case sensitive!
            Range: 2-element list specifying min and max data range
         """
         if (name != None):  # leave as-is if not specified
@@ -1125,18 +1126,34 @@ class _Layer(_JavaProxy):
 
         Args:
             ctName:  the name of the enhancement table. Unlike setProjection,
-                     you don't need to specify "parent" table directories
+                     you don't NEED to specify "parent" table directories,
+                     (but it will work if you do).  However, this is
+                     CASE SENSITIVE!  Can't really help this because IDV stores
+                     color table names case-sensitively.
                      
+        Raises:
+            ValueError:  couldn't find ctName
         Returns: nothing
         """
         
         my_mcv = getStaticMcv()
         ctm = my_mcv.getColorTableManager()
         newct = ctm.getColorTable(ctName)
-        # TODO(mike): This REALLY needs to also handle case where user
-        # inputs the "full" path to the color table (e.g. "System>Temperature")
-        # so it is (can be) consistent with setProjection
-        return self._JavaProxy__javaObject.setColorTable(newct)
+
+        # if that one didn't work, keep trying hard to figure out what
+        # the user meant.
+        if (newct == None):
+            # In case user specifies 'full path' to color table like getProjection,
+            # e.g. 'System>Temperature'
+            shortName = (ctName.rsplit('>'))[-1]
+            newct = ctm.getColorTable(shortName)
+
+        if (newct != None):
+            return self._JavaProxy__javaObject.setColorTable(newct)
+        else:
+            raise ValueError(
+                'setEnhancementTable could not find the enhancement table called %s, note: enhancement table names are CASE SENSITIVE!' 
+                    % ctName)
 
     def setDataRange(self, minRange, maxRange):
         """ Change the range of the displayed data (and enhancement table)
