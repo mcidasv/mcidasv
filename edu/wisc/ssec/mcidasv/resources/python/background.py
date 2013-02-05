@@ -1145,7 +1145,7 @@ class _Layer(_JavaProxy):
         if (newct == None):
             # In case user specifies 'full path' to color table like getProjection,
             # e.g. 'System>Temperature'
-            shortName = (ctName.rsplit('>'))[-1]
+            shortName = (ctName.split('>'))[-1]
             newct = ctm.getColorTable(shortName)
 
         if (newct != None):
