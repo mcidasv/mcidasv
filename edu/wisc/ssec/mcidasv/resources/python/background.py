@@ -20,6 +20,7 @@ from java.lang import System
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 from ucar.unidata.idv import DisplayInfo
 from ucar.unidata.idv.ui import IdvWindow
+from ucar.unidata.idv.control.drawing import TextGlyph
 from ucar.unidata.geoloc import LatLonPointImpl
 from ucar.unidata.ui.colortable import ColorTableDefaults
 from ucar.unidata.util import GuiUtils
@@ -913,7 +914,8 @@ class _Display(_JavaProxy):
         # TODO(mike): catch exceptions resulting from writeImage (e.g., if filename has invalid extension)
 
     def annotate(self, text, lat=None, lon=None, line=None, element=None,
-            font=None, color='red', size=None, style=None):
+            font=None, color='red', size=None, style=None,
+            justification = (TextGlyph.JUST_LEFT, TextGlyph.JUST_BOTTOM)):
         """Put a text annotation on this panel
 
         Can specify location by a lat/lon point or number of pixels
@@ -937,6 +939,14 @@ class _Display(_JavaProxy):
                Font defaults come from ViewManager.getDisplayListFont()
            color: text color. Default red, for now I guess. this is GUI default.
                  (optional)
+           justification: 2-element tuple representing the (horizontal, vertical)
+                text justification wrt to the given point.  "center" is valid 
+                in both elements, "left" and "right" are valid for horizontal,
+                "top" and "bottom" are valid for vertical.  Can also just pass
+                single string "center" which would be equivalent to
+                ("center", "center").  Default is ("left", "bottom")... this is
+                to match 1.2 behavior though the default should probably be just
+                "center".... (optional)
 
         Returns:
            a _Layer wrapping a DrawingControl
@@ -957,6 +967,26 @@ class _Display(_JavaProxy):
         pause()
         drawCtl.close()  # close the window that pops up..user doesnt need to see
         glyph = TextGlyph(drawCtl, None, text)
+
+        # deal with horizontal/vertical justification keywords
+        if (str(justification[0]).lower() == "center"):
+            glyph.setHorizontalJustification(TextGlyph.JUST_CENTER)
+        if (str(justification[0]).lower() == "left"):
+            glyph.setHorizontalJustification(TextGlyph.JUST_LEFT)
+        if (str(justification[0]).lower() == "right"):
+            glyph.setHorizontalJustification(TextGlyph.JUST_RIGHT)
+        if (str(justification[1]).lower() == "center"):
+            glyph.setVerticalJustification(TextGlyph.JUST_CENTER)
+        if (str(justification[1]).lower() == "top"):
+            glyph.setVerticalJustification(TextGlyph.JUST_TOP)
+        if (str(justification[1]).lower() == "bottom"):
+            glyph.setVerticalJustification(TextGlyph.JUST_BOTTOM)
+        if (str(justification).lower() == "center"):
+            glyph.setHorizontalJustification(TextGlyph.JUST_CENTER)
+            glyph.setVerticalJustification(TextGlyph.JUST_CENTER)
+        # TODO(mike): code up all the valid combiniations of "justification"
+        # and throw an error if invalid.
+
         if (lat != None) and (lon != None) and (
                 (line == None) and (element == None)):
             # lat lon point
@@ -1103,6 +1133,9 @@ class _Layer(_JavaProxy):
         my_mcv = getStaticMcv()
         ctm = my_mcv.getColorTableManager()
         newct = ctm.getColorTable(ctName)
+        # TODO(mike): This REALLY needs to also handle case where user
+        # inputs the "full" path to the color table (e.g. "System>Temperature")
+        # so it is (can be) consistent with setProjection
         return self._JavaProxy__javaObject.setColorTable(newct)
 
     def setDataRange(self, minRange, maxRange):
