@@ -184,6 +184,23 @@ def getDescriptor(dataset, imageType):
     # no matching descriptor was found so return an error value:
     return -1
 
+def getLocalDataset(dataset, imageType):
+    """Returns a local ADDE entry.
+        
+    Args:
+        dataset: Dataset field from local ADDE server.
+        
+        imageType: Image Type field from local ADDE server.
+
+    Returns: 
+        Valid descriptor string or None if no match was found.
+    """
+    localEntries = getStaticMcv().getServerManager().getLocalEntries()
+    for entry in localEntries:
+        if entry.getName() == imageType and entry.getGroup() == dataset:
+            return entry
+    return None
+
 def makeLocalDataset(group, mask, format, name=None):
     """Creates a local ADDE dataset.
     
