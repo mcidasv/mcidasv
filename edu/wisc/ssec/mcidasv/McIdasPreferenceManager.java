@@ -639,7 +639,13 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         addFormatDataPreferences();
 
         // Advanced
-        addAdvancedPreferences();
+        if (!labelSet.contains(Constants.PREF_LIST_ADVANCED)) {
+        	// due to issue with MemoryOption.getTextComponent, we don't
+        	// want to do this again if Advanced tab is already built.
+        	// (the heap size text field will disappear on second opening
+        	//  of McV preferences window!)
+        	addAdvancedPreferences();
+        }
     }
 
     /**
