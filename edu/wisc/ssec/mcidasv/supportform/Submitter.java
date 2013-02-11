@@ -48,11 +48,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ucar.unidata.util.IOUtil;
-import ucar.unidata.util.Misc;
+//import ucar.unidata.util.Misc;
 import ucar.unidata.util.WrapperException;
 
 import edu.wisc.ssec.mcidasv.util.BackgroundTask;
 
+/**
+ * Abstraction of a background thread that is used to submit support requests
+ * to the McIDAS-V Help Desk Team.
+ */
 public class Submitter extends BackgroundTask<String> {
 
     /** Error message to display if the server had problems. */
