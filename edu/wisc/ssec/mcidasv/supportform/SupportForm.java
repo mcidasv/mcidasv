@@ -69,18 +69,11 @@ public class SupportForm extends JFrame {
     private JCheckBox ccCheckBox;
 
     /**
+     * Creates a support request form that collects information about
+     * the current McIDAS-V session.
      * 
-     */
-    public SupportForm() {
-        this.store = null;
-        this.collector = null;
-        initComponents();
-    }
-
-    /**
-     * 
-     * @param store
-     * @param collector
+     * @param store Storage for persisted user input. Should not be {@code null}.
+     * @param collector Collects information about the current session.
      */
     public SupportForm(IdvObjectStore store, StateCollector collector) {
         this.store = Contract.notNull(store);
@@ -91,7 +84,11 @@ public class SupportForm extends JFrame {
     }
 
     /**
+     * Saves user input for the following: name, email address, email address
+     * confirmation, organization, whether or not to CC the user a copy, and 
+     * whether or not a {@literal "state"} bundle should be included.
      * 
+     * <p>You should initialize the GUI components before calling this method.
      */
     private void persistInput() {
         store.put(IdvUIManager.PROP_HELP_NAME, getUser());
@@ -104,7 +101,11 @@ public class SupportForm extends JFrame {
     }
 
     /**
+     * Loads user input for the following: name, email address, email address
+     * confirmation, organization, whether or not to CC the user a copy, and 
+     * whether or not a {@literal "state"} bundle should be included.
      * 
+     * <p>You should initialize the GUI components before calling this method.
      */
     private void unpersistInput() {
         userField.setText(store.get(IdvUIManager.PROP_HELP_NAME, ""));
@@ -416,7 +417,7 @@ public class SupportForm extends JFrame {
         }
         JOptionPane.showMessageDialog(this, msg, "Problem sending support request", JOptionPane.ERROR_MESSAGE);
     }
-    
+
     /**
      * Checks to see if there is <i>anything</i> in the name, email, 
      * email confirmation, subject, and description.
@@ -442,27 +443,27 @@ public class SupportForm extends JFrame {
         }
         return checkEmailAddresses();
     }
-    
+
     private void attachmentOneButtonActionPerformed(ActionEvent evt) {
         attachFileToField(attachmentOneField);
     }
-    
+
     private void attachmentTwoButtonActionPerformed(ActionEvent evt) {
         attachFileToField(attachmentTwoField);
     }
-    
+
     private void attachmentOneFieldMouseClicked(MouseEvent evt) {
         if (attachmentOneField.getText().isEmpty()) {
             attachFileToField(attachmentOneField);
         }
     }
-    
+
     private void attachmentTwoFieldMouseClicked(MouseEvent evt) {
         if (attachmentTwoField.getText().isEmpty()) {
             attachFileToField(attachmentTwoField);
         }
     }
-    
+
     private void showInvalidInputs() {
         // how to display these?
         JOptionPane.showMessageDialog(this, "You must provide at least your name, email address, subject, and description.", "Missing required input", JOptionPane.ERROR_MESSAGE);
@@ -521,7 +522,9 @@ public class SupportForm extends JFrame {
     }
 
     /**
-     * Launch the application.
+     * Launch a test of the Support Request Form.
+     * 
+     * @param args Ignored.
      */
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
