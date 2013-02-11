@@ -32,9 +32,16 @@ package edu.wisc.ssec.mcidasv.util;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
+import java.util.Collection;
 
 /**
+ * Abstraction of {@link FocusTraversalPolicy} that allows for easy creation of
+ * the traversal policy.
  * 
+ * <p>Note that the {@literal "delta"} parameter of both 
+ * {@link #cycle(Component, int)} and {@link #indexCycle(int, int)} can be any
+ * positive or negative integer. Both methods compute indices using the wonders
+ * of modular arithmetic.
  */
 public class FocusTraveller extends FocusTraversalPolicy {
 
@@ -52,7 +59,16 @@ public class FocusTraveller extends FocusTraversalPolicy {
     }
 
     /**
+     * Creates the {@link FocusTraversalPolicy} for the given components.
      * 
+     * @param componentsToTraverse Components to traverse. Cannot be {@code null}.
+     */
+    public FocusTraveller(final Collection<Component> componentsToTraverse) {
+        components = componentsToTraverse.toArray(new Component[0]);
+    }
+
+    /**
+     * Cycles through valid index values.
      * 
      * @param index Current index.
      * @param delta Index of next component, relative to {@code index}.
@@ -65,7 +81,7 @@ public class FocusTraveller extends FocusTraversalPolicy {
     }
 
     /**
-     * 
+     * Cycles through components. 
      * 
      * @param currentComponent Cannot be {@code null}.
      * @param delta Index of next component, relative to {@code currentComponent}.
