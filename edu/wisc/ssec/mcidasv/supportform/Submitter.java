@@ -48,12 +48,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ucar.unidata.util.IOUtil;
+import ucar.unidata.util.Misc;
 import ucar.unidata.util.WrapperException;
 
 import edu.wisc.ssec.mcidasv.util.BackgroundTask;
 
 public class Submitter extends BackgroundTask<String> {
 
+    /** Error message to display if the server had problems. */
+    public static final String POST_ERROR = "Server encountered an error while attempting to forward message to mug@ssec.wisc.edu.\n\nPlease try sending email in your email client to mug@ssec.wisc.edu. We apologize for the inconvenience.";
+
+    /** Logging object. */
     private static final Logger logger = LoggerFactory.getLogger(Submitter.class);
 
     /** We'll follow up to this many redirects for {@code requestUrl}. */
@@ -74,6 +79,11 @@ public class Submitter extends BackgroundTask<String> {
     /** Handy reference to the status code (and more) of our {@code POST}. */
     private PostMethod method = null;
 
+    /**
+     * Prepare a support request to be sent (off of the event dispatch thread).
+     * 
+     * @param form Support request form to send. Cannot be {@code null}.
+     */
     public Submitter(final SupportForm form) {
         this.form = form;
     }
@@ -183,6 +193,11 @@ public class Submitter extends BackgroundTask<String> {
         return method;
     }
 
+    /**
+     * Attempt to POST contents of support request form to {@link #requestUrl}.
+     * 
+     * @throws WrapperException if there was a problem on the server.
+     */
     protected String compute() {
         // logic ripped from the IDV's HttpFormEntry#doPost(List, String)
         try {
@@ -205,10 +220,26 @@ public class Submitter extends BackgroundTask<String> {
             }
             return IOUtil.readContents(method.getResponseBodyAsStream());
         } catch (Exception e) {
-            throw new WrapperException("doing post", e);
+            throw new WrapperException(POST_ERROR, e);
         }
     }
 
+//    protected String compute() {
+//        try {
+//            Misc.sleep(2000);
+//            return "dummy success!";
+//        } catch (Exception e) {
+//            throw new WrapperException(POST_ERROR, e);
+//        }
+//    }
+
+    /**
+     * Handles completion of a support request.
+     * 
+     * @param result Result of {@link #compute()}.
+     * @param exception Exception thrown from {@link #compute()}, if any.
+     * @param cancelled Whether or not the user opted to cancel.
+     */
     @Override protected void onCompletion(String result, Throwable exception, boolean cancelled) {
         logger.trace("result={} exception={} cancelled={}", new Object[] { result, exception, cancelled });
         if (cancelled) {
