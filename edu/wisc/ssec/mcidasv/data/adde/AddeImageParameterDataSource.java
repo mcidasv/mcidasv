@@ -579,24 +579,19 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 	                logger.trace("src before={}", src);
 	                src = replaceKey(src, AddeImageURL.KEY_UNIT, bandInfo.getPreferredUnit());
 	                if (selectionProperties.containsKey(AddeImageURL.KEY_PLACE)) {
-	                	System.out.println("CONTAINS KEY_PLACE");
 	                    src = replaceKey(src, AddeImageURL.KEY_PLACE, selectionProperties.get(AddeImageURL.KEY_PLACE));
 	                }
 	                if (selectionProperties.containsKey(AddeImageURL.KEY_LATLON)) {
-	                	System.out.println("CONTAINS KEY_LATLON");
 	                    src = replaceKey(src, AddeImageURL.KEY_LINEELE, AddeImageURL.KEY_LATLON, selectionProperties.get(AddeImageURL.KEY_LATLON));
 	                }
 	                if (selectionProperties.containsKey(AddeImageURL.KEY_LINEELE)) {
-	                	System.out.println("CONTAINS KEY_LINELE");
 	                    src = removeKey(src, AddeImageURL.KEY_LATLON);
 	                    src = replaceKey(src, AddeImageURL.KEY_LINEELE, selectionProperties.get(AddeImageURL.KEY_LINEELE));
 	                }
 	                if (selectionProperties.containsKey(AddeImageURL.KEY_MAG)) {
-	                	System.out.println("CONTAINS KEY_MAG");
 	                    src = replaceKey(src, AddeImageURL.KEY_MAG, selectionProperties.get(AddeImageURL.KEY_MAG));
 	                }
 	                if (selectionProperties.containsKey(AddeImageURL.KEY_SIZE)) {
-	                	System.out.println("CONTAINS KEY_SIZE");
 	                    src = replaceKey(src, AddeImageURL.KEY_SIZE, selectionProperties.get(AddeImageURL.KEY_SIZE));
 	                }
 	                logger.trace("src after={}", src);
