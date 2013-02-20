@@ -32,6 +32,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageFilter
 <div class="pagetitle">Description of Formulas - Image Filters (Beta)</div>
 <p>The following describes each formula included in the Image Filter Formulas section
   of McIDAS-V.</p>
+<p><strong>Note:</strong> All of these formulas  utilize a Select Input window&nbsp;to enter values to be used by the formula. You can choose if you want to save these values in a bundle if you wish to create one. Each field of the Select Input window has a <strong>Save in Bundle</strong> option&nbsp;(chosen by default). If you keep this option selected, the value(s) you choose will be stored in the bundle, and if all values are saved, the formula will automatically execute when you load in your bundle without any user input. If you do not save the values in your bundle, the values you use will not be saved, and the formula will not automatically execute without requiring the user to enter/change values.</p>
 <ul>
   <li>  <a href="#clean">Clean Image Filter</a></li>
   <li><a href="#cloud">Cloud Image Filter</a></li>
@@ -110,7 +111,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageFilter
    <p><em>BT Max</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>The maximum brightness value for calibration (default=100).</p></td>
+   <p>The maximum brightness value for calibration (default=255).</p></td>
    </tr>
 </table>
 <p><a name="cloud" id="cloud"></a><strong>Cloud Image Filter (replace, constant)</strong></p>
@@ -218,7 +219,7 @@ has only two values.</p>
    <p><em>BT Max</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>The maximum brightness value for calibration (default=100).</p></td>
+   <p>The maximum brightness value for calibration (default=255).</p></td>
    </tr>
   <tr>
 <td width="120" colspan="1" rowspan="1" valign="top"><p>Equation for each <em>ddataset</em> element:</p><a name="pgfId-1072405" id="pgfId-1072405"></a>
@@ -298,7 +299,7 @@ else <em>ddataset</em> = <em>replace2</em></p>
    <p><em>BT Max</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>The maximum brightness value for calibration (default=100).</p></td>
+   <p>The maximum brightness value for calibration (default=255).</p></td>
    </tr>
   <tr>
   <td width="120" rowspan="1" colspan="1" valign="top">
@@ -337,7 +338,7 @@ else <em>ddataset</em> = <em>replace</em></p>
    <p><em>BT Max</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>The maximum brightness value for calibration (default=100).</p></td>
+   <p>The maximum brightness value for calibration (default=255).</p></td>
    </tr>
    <tr>
 <td valign="top" rowspan="1" colspan="1" width="120">
@@ -379,7 +380,7 @@ else <em>ddataset</em> = <em>replace</em></p>
    <p><em>BT Max</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>The maximum brightness value for calibration (default=100).</p></td>
+   <p>The maximum brightness value for calibration (default=255).</p></td>
    </tr>
 <td valign="top" rowspan="1" colspan="1" width="120">
 <p>Equation for each <em>ddataset</em> element: </p>
@@ -436,7 +437,7 @@ else <em>ddataset</em> = <em>replace</em></p>
    <p><em>BT Max</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>The maximum brightness value for calibration (default=100).</p></td>
+   <p>The maximum brightness value for calibration (default=255).</p></td>
    </tr>
      <tr>
 <td width="120" colspan="1" rowspan="1" valign="top"><p>Equation for each <em>ddataset</em> element:</p>
@@ -490,7 +491,7 @@ else <em>ddataset</em> = <em>replace</em></p>
    <p><em>BT Max</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>The maximum brightness value for calibration (default=100).</p></td>
+   <p>The maximum brightness value for calibration (default=255).</p></td>
    </tr>
   <tr>
   <td width="120" rowspan="1" colspan="1" valign="top"><p>Equation for each <em>ddataset</em> element: </p><a name="pgfId-1072405" id="pgfId-1072405"></a>
@@ -524,7 +525,7 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
    <p><em>elecoef</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>The element coefficient; 0.0 &lt; <em>elecoef</em> &lt; 1.0 (default=<em>linecoef</em>).</p>
+   <p>The element coefficient; 0.0 &lt; <em>elecoef</em> &lt; 1.0 (default=0.5).</p>
    </td>
    </tr>
    <tr>
@@ -546,7 +547,7 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
    <p><em>BT Max</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>The maximum brightness value for calibration (default=100).</p></td>
+   <p>The maximum brightness value for calibration (default=255).</p></td>
    </tr>
   <tr>
   <td width="120" valign="top" rowspan="1" colspan="1">
@@ -602,7 +603,7 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
    <p><em>BT Max</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>The maximum brightness value for calibration (default=100).</p></td>
+   <p>The maximum brightness value for calibration (default=255).</p></td>
    </tr>
   <tr>
   <td width="120" valign="top" rowspan="1" colspan="1">
@@ -660,7 +661,7 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
    <p><em>BT Max</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>The maximum brightness value for calibration (default=100).</p></td>
+   <p>The maximum brightness value for calibration (default=255).</p></td>
    </tr>
 </table>
 <p><a name="replace" id="replace"></a><strong>Replace Image  Filter (New Value, Old Value)</strong></p>
@@ -707,7 +708,7 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
    <p><em>BT Max</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>The maximum brightness value for calibration (default=100).</p></td>
+   <p>The maximum brightness value for calibration (default=255).</p></td>
    </tr>
    <tr>
   <td width="120" valign="top" rowspan="1" colspan="1">
@@ -772,7 +773,7 @@ else <em>ddataset</em> = <em>replaceVal</em> </p>
    <p><em>BT Max</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>The maximum brightness value for calibration (default=100).</p></td>
+   <p>The maximum brightness value for calibration (default=255).</p></td>
    </tr>
   <tr>
   <td width="120" valign="top" rowspan="1" colspan="1">

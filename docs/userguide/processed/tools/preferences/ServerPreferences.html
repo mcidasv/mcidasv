@@ -30,15 +30,17 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 <div class="pagetitle">ADDE Servers Preferences</div>
 <p>The User Preferences window is accessed in the Main Display window through the <strong>Edit-&gt;Preferences</strong> menu. The window is also accessible
    by clicking the <strong>Manage servers</strong> button (<img src="../images/Manage.gif" alt="Manage servers button" width="20" height="20"align=absmiddle>) next to the server name of the
-applicable choosers in the<strong> Data Sources</strong> tab of the Data Explorer. The <strong>ADDE Servers</strong> tab allows the user to add and manage a list of active ADDE servers separated by data type. The selected ADDE entries will be included in the list of servers in the <strong>Data Sources</strong> tab of the Data Explorer. Limiting the number of servers in the <strong>Data Sources</strong> tab will make it easier to find the desired sources of data. The image below represents the default settings for the for the <strong>ADDE Servers</strong> tab. All of the ADDE entries are checked on except for 'NAV' and 'UNKNOWN'.</p>
+applicable choosers in the<strong> Data Sources</strong> tab of the Data Explorer. The <strong>ADDE Servers</strong> tab allows the user to add and manage a list of active ADDE servers separated by data type. The selected ADDE entries will be included in the list of servers in the <strong>Data Sources</strong> tab of the Data Explorer. Limiting the number of servers in the <strong>Data Sources</strong> tab will make it easier to find the desired sources of data.</p>
+<p>The list of ADDE Servers is hierarchial, meaning that you can turn off all servers, specific groupings of servers (ex. Point), or individual servers within a group (ex. adde.ucar.edu/RTPTSRC can be turned off under POINT, but the rest can remain selected).</p>
+<p>The image below represents the default settings for the for the <strong>ADDE Servers</strong> tab. All of the ADDE entries are checked on except for 'NAV' and 'UNKNOWN'.</p>
 <div class="images"><img src="../images/NewPictures/ADDEServerPrefs.jpg" alt="Image 1: ADDE Server Preferences (Default)"> <br>
   <span class="caption">Image 1: ADDE Servers Preferences (Default)</span></div>
 <p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-<li class="propertylistitem"><b>Use all ADDE entries -</b> Selects all of the ADDE entries.</li>
-<li class="propertylistitem"><b>Use selected ADDE entries -</b> Uses only selected ADDE entries.</li>
-<li class="propertylistitem"> <img src="../images/preferences/AllOn.gif" alt="All on button" width="147" height="26"align=absmiddle> <strong> -</strong> Selects all of the ADDE entries.</li>
+<li class="propertylistitem"><b>Use all ADDE entries -</b> Selects all of the ADDE entries. With this option selected, it is possible to use every type of ADDE data in McIDAS-V.</li>
+<li class="propertylistitem"><b>Use selected ADDE entries -</b> Uses only selected ADDE entries. This option allows you to individually select which&nbsp;types of ADDE servers are available to be used.</li>
+<li class="propertylistitem"> <img src="../images/preferences/AllOn.gif" alt="All on button" width="147" height="26"align=absmiddle> <strong> -</strong> Selects all of the ADDE entries. With this option selected, it is possible to use every type of ADDE data in McIDAS-V.</li>
 <li class="propertylistitem"> <img src="../images/preferences/AllOff.gif" alt="All off button" width="147" height="26"align=absmiddle> <strong> -</strong> Unselects all of the ADDE entries.</li>
 <li class="propertylistitem"><img src="../images/preferences/AddAddeServers.gif" alt="Add ADDE Servers button" width="147" height="26"align=absmiddle> <strong> -</strong> Opens the ADDE Data Manager where  a <a href="../RemoteDataManager.html">remote server</a> or a <a href="../LocalDataManager.html">local server</a> can be added.</li>
 <li class="propertylistitem"> <img src="../images/preferences/ImportServers.gif" alt="Import Servers button" width="147" height="26"align=absmiddle> <strong> -</strong> Opens the ADDE Data Manager where a <a href="../RemoteDataManager.html">remote server</a> or a <a href="../LocalDataManager.html">local server</a> can be added.</li>

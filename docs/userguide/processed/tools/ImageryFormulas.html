@@ -30,8 +30,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageryForm
 <div class="pagetitle">Description of Formulas - Imagery </div>
 <p>The following describes each formula included in the Imagery Formulas section
   of McIDAS-V.</p>
+<p><strong>Note:</strong> If the formula you select utilizes a Select Input window&nbsp;to enter values to be used by the formula, you can choose if you want to save these values in a bundle if you wish to create one. Each field of the Select Input window has a <strong>Save in Bundle</strong> option&nbsp;(chosen by default). If you keep this option selected, the value(s) you choose will be stored in the bundle, and if all values are saved, the formula will automatically execute when you load in your bundle without any user input. If you do not save the values in your bundle, the values you use will not be saved, and the formula will not automatically execute without requiring the user to enter/change values.</p>
 <p><strong>Geolocate an Image (Upper Left Lat, Upper Left Lon, Lower Right Lat,
-    Lower Right Lon -</strong> Takes an image data object and a lat/lon bounding box and adds
+    Lower Right Lon) -</strong> Takes an image data object and a lat/lon bounding box and adds
   a lat/lon domain to the data. This formula is commonly used in conjunction
   with another formula. </p>
 <table id="imageryformulas" cellpadding="0" cellspacing="0" border="1">
@@ -62,7 +63,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageryForm
 </table>
 <p><strong>Image over topography -</strong> Obtains the latitude coordinate from the grid and returns a grid
 of the latitudes at each point.</p>
-<p><strong>Mask Function -</strong> Allows you to specify a threshold value where only data greater than, less than, greater than or equal to, less than or equal to, or equal to values will display.</p>
+<p><strong>Mask Function -</strong> Allows you to specify a threshold value where only data greater than, less than, greater than or equal to, less than or equal to, or equal to values will display. After defining the initial Input Parameters, a Field Selector window will appear where you can specify <em>inputFieldForMask</em> (the field to be masked) as well as <em>displayFieldToBeMasked</em> (a second field that will be multiplied by the result of the mask of the <em>inputFieldForMask</em>. This field can be either the same field that you apply the mask to, or a different field).</p>
 <table id="imageryformulas" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
@@ -78,10 +79,10 @@ of the latitudes at each point.</p>
   </tr>
   <tr>
     <td width="120" colspan="1" rowspan="1" valign="top"><p><em>useNaN</em></p></td>
-    <td width="510" colspan="2" rowspan="1" valign="top" nowrap><p>Default value = 1</p></td>
+    <td width="510" colspan="2" rowspan="1" valign="top" nowrap><p>Default value = 1. When 0, values outside data will be 0, when 1, values outside data will be unprobeable</p></td>
   </tr>
 </table>
-<p><strong>Mask Within Range -</strong> Allows you to specify a numerical range where&nbsp;data values will display.</p>
+<p><strong>Mask Within Range -</strong> Allows you to specify a numerical range where&nbsp;data values will display. After defining the initial Input Parameters, a Field Selector window will appear where you can specify <em>inputFieldForMask</em> (the field to be masked) as well as <em>displayFieldToBeMasked</em> (a second field that will be multiplied by the result of the mask of the <em>inputFieldForMask</em>. This field can be either the same field that you apply the mask to, or a different field).</p>
 <table id="imageryformulas" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
@@ -97,7 +98,7 @@ of the latitudes at each point.</p>
   </tr>
   <tr>
     <td width="120" colspan="1" rowspan="1" valign="top"><p><em>useNan</em></p></td>
-    <td width="510" colspan="2" rowspan="1" valign="top" nowrap><p>Default value = 0</p></td>
+    <td width="510" colspan="2" rowspan="1" valign="top" nowrap><p>Default value = 0. When 0, values outside data will be 0, when 1, values outside data will be unprobeable</p></td>
   </tr>
 </table>
 <p><strong>Scale images to brightness ranges -</strong> Displays your selected parameter in the Main Display window. Instead of using the color bar range that would be customary for your selected parameter, the standard range for brightness values will be used (i.e. 0-255).</p>

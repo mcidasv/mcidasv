@@ -177,6 +177,22 @@ application/x-java-jnlp-file JNLP
     <div class="faq-category">
         <div class="faq-question"> </div>
     <div class="faq-question">
+      <h4><a name="security" id="security"></a>Q. How do I get around a security error when installing McIDAS-V on my 10.8 OSX machine?</h4>
+    </div>
+      <div class="faq-answer">
+          <p><strong>A.</strong> After double-clicking on the *.dmg installer file, you may see the following error:</p>
+          <blockquote>
+              <pre>"McIDAS-V Installer" can't be opened because it is from an unidentified developer.</pre>
+              <pre>Your security preferences allow installation of only apps from the Mac App Store and identified developers.</pre>
+           </blockquote>
+           <p>To get around this, you could turn off the security checks or follow the next steps which will work around the security for the McIDAS-V installation. To do this, right-click on the installer icon to get a dropdown menu, and choose <b>Open</b>. After choosing <strong>Open</strong>, you should see the following message:</p>
+           <blockquote>
+               <pre>"McIDAS-V Installer" is from an unidentified developer. Are you sure you want to open it?</pre>
+               <pre>Opening "McIDAS-V Installer" will always allow it to run on this Mac.</pre>
+           </blockquote>
+           <p>Once you click <b>Open</b> in this window, you will be prompted to enter a login/password for the administrator account. After entering this information, click <b>OK</b> and the installation should proceed without error.</p>
+      </div>
+    <div class="faq-question">
       <h4><a name="jdk" id="jdk"></a>Q. What do I do if I am told to upgrade JDK when installing McIDAS-V?</h4>
     </div>
       <div class="faq-answer"><strong>A.</strong> A user reported --- The first time I ran the script, it told me I needed

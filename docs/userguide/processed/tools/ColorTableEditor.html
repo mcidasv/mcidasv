@@ -52,12 +52,12 @@ with a particular layer by right-clicking on the layer's color bar in the <a hre
 or through the layer's <a href="../controls/LayerControls.html#edit">Edit menu</a> (<strong>Edit-&gt;Color Table-&gt;Edit Color Table)</strong>.
 You can also click on the button that represents the name of the color bar in the <strong>Layer Controls </strong> tab and select <strong>Edit Color Table</strong>. </p>
 <p>The Color Table Editor starts with a color table loaded in it. If you are
-    working with a data display, the color table in the editor is the same as in
+    working with a data display and you open the Color Table Editor through the <strong>Layer Controls</strong> tab of the Data Explorer, the color table in the editor is the same as in
     the display. If you want to use or edit a different color table, use the <strong>Color
   Tables</strong> menu to select from the categorized list of color tables:</p>
 <div class="images"><img src="images/ColorTablesMenu.gif" alt="Image 2: The Color Tables Menu"><br>
 <span class="caption">Image 2: The Color Tables Menu</span></div>
-<p>Color tables are grouped into categories. Click  on a color table to bring it into the Color Table Editor. To change to the newly selected color table for a display on the Main Display window, click <strong>OK</strong> or <strong>Apply</strong>  at the bottom of the Color Table Editor. <strong>Apply</strong> will save changes to the color table, while   keeping the Color Table Editor open, and <strong>OK</strong> will save   any changes to the color table and close the Color Table Editor. Also,   when editing a color table that is currently being used to display a   layer in the Main Display window, there is an <strong>Auto update</strong> checkbox on the bottom right of the Color Table Editor. When this box   is checked, any changes made to the color table will be applied directly   to the display in the Main Display window.</p>
+<p>Color tables are grouped into categories. Click  on a color table to bring it into the Color Table Editor. To change to the newly selected color table for a display on the Main Display window, click <strong>OK</strong> or <strong>Apply</strong>  at the bottom of the Color Table Editor. <strong>Apply</strong> will save changes to the color table, while   keeping the Color Table Editor open, and <strong>OK</strong> will save   any changes to the color table and close the Color Table Editor. Also,   when editing a color table that is currently being used to display a   layer in the Main Display window, there is an <strong>Auto update</strong> checkbox on the bottom right of the Color Table Editor. When this box   is checked, any changes made to the color table will be applied directly   to the display in the Main Display window. If you are making several changes to the color bar at once, and you have a lot of data displayed in the Main Display, it is recommended that you do not have this option turned on, as it will use up more memory.&nbsp;Once done making changes to the color bar, click <strong>Apply</strong> or<strong> OK</strong> to apply your changes&nbsp;to the displayed data.</p>
 <div class="pagesubtitle"><a name="legend" id="legend"></a>Using the Color Legend</div>
 <div class="images"><img src="images/colortable/Legend.gif" alt="Image 3: The Color Legend"><br>
 <span class="caption">Image 3: The Color Legend</span></div>
@@ -65,7 +65,7 @@ You can also click on the button that represents the name of the color bar in th
   on the<strong> <img src="images/colortable/MinusPlus.gif" alt="Plus/Minus icon" width="38" height="14"align=absmiddle></strong> choices near the left and right ends of the legend.
   New colors are added or removed at each end of the legend with the same color
   as the end color. Pressing Shift+click on any of these buttons will add/remove
-  10 color slots at a time. The minimum number of colors required in the color bar is five, and there is no upper limit.</p>
+  10 color slots at a time. The minimum number of colors required in the color bar is five, and there is no upper limit. The more colors you have in your color bar, the smoother the transition of colors between break points will be if interpolating colors.</p>
 <p>If transparency is set to be anything other than zero, then overlaying the color bar is a black and white checker board to help show
   the degree of transparency. The <strong>History</strong>  <img src="images/colortable/History.gif" alt="History icon" width="36" height="17"align=absmiddle> buttons in the upper left allow you
   to step forward and backward through the changes you have made. Pressing Shift+click
@@ -91,20 +91,21 @@ color in the color chooser when the mouse is clicked and dragged on the color ta
 </ul>
 <div class="pagesubtitle"><a name="breakpoints" id="breakpoints"></a>Using Breakpoints</div>
 <p>The editor uses &quot;breakpoints&quot; indicated along the top of the color legend
-  with triangles and the numerical value. Clicking on a breakpoint makes it
-  active. The active breakpoint will have bold text for the label, and the colored triangle below it will have an outline of yellow. There is only one active breakpoint at a time. Breakpoints are used for a number of things: showing the data and transparency
-  values at a point along the color table and changing the colors (fill, interpolation
-  or transparency).</p>
+  with triangles and the numerical value. By default, the beginning and ending of the color bar will each be a breakpoint. You can add additional breakpoints to the color bar by right-clicking on the color bar and selecting <strong><a href="#add">Add Breakpoint</a></strong>, or by double-clicking on or above the color bar where you want a breakpoint.</p>
+<p>Clicking on a breakpoint makes it
+    active. The active breakpoint will have bold text for the label, and the colored triangle below it will have an outline of yellow. There is only one active breakpoint at a time. Breakpoints are used for a number of things: showing the data and transparency
+    values at a point along the color table and changing the colors (fill, interpolation
+    or transparency).</p>
 <p>The values on the breakpoints are determined by the position of the breakpoint
     along the legend, proportional to the min and max of the Range. Changing the
   minimum and maximum of the Range changes the breakpoint values.</p>
-<p>You can move the active breakpoint several ways:</p>
+<p>You can move the active breakpoint (assuming it isn't locked) in several ways:</p>
 <ul>
-  <li>Drag it with the mouse pointer</li>
+  <li>Left-click and drag it with the mouse pointer</li>
   <li>Move in small increments with the right or left arrow keys (If there is
-    no response, first mouse click on the breakpoint)</li>
-  <li>Right-click on the breakpoint and use the pop-up menu item <strong>Change
-      Breakpoint</strong></li>
+    no response, first left-click on the breakpoint to make it active)</li>
+  <li>Right-click on the breakpoint and use the menu item <strong>Change
+      Breakpoint</strong>. Enter a new value into this field and click <strong>OK</strong></li>
 </ul>
 <p>If you have the <strong>Actively set color</strong> checkbox selected, when you change the
   color in the color chooser that color will be applied to the
@@ -115,9 +116,9 @@ color in the color chooser when the mouse is clicked and dragged on the color ta
 <p>The choices are:</p>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Remove Breakpoint</strong> - Removes the active breakpoint.</li>
-  <li class="propertylistitem"><strong>Lock/Unlock Breakpoint</strong> - Locks or unlock the active breakpoint. When locked, it cannot be moved.</li>
+  <li class="propertylistitem"><strong>Lock/Unlock Breakpoint</strong> - Locks or unlocks the active breakpoint. When locked, it cannot be moved.</li>
   <li class="propertylistitem"><strong>Change Breakpoint</strong> - Sets the breakpoint to a new value.</li>
-  <li class="propertylistitem"><strong>Add Breakpoint -</strong> Adds a new breakpoint to the color bar.</li>
+  <li class="propertylistitem"><strong><a name="add" id="add"></a>Add Breakpoint -</strong> Adds a new breakpoint to the color bar.</li>
   <ul class="propertylist">
   <li class="propertylistitem"><strong>Here -</strong> Adds a new breakpoint where you clicked on the color bar.</li>
   <li class="propertylistitem"><strong>At Data Point -</strong> Adds a new breakpoint at a data value.</li>
@@ -155,6 +156,7 @@ can be saved for future use. To save a new or modified color table simply select
   <li> 3-column RGB color table (*.ascii)</li>
   <li>McIDAS-X color tables (*.ET)</li>
   </ul>
+<p>Another way that you can save all of your color tables at once is to save them as a plugin. This can be done through the <a href="Plugins.html">Plugin Manager</a>, by including your colortables.xml file that is inside of your /User/McIDAS-V directory. You can then pass this on to any McIDAS-V user, and they can install this plugin and obtain all of your color bars without having to individually transfer them.</p>
 <div class="pagesubsubtitle">3-column RGB color table</div>
 <p>The definitions of the 3-column <strong>RGB</strong> color table are divided over a range of
   values. Each line represents one of the equal sized blocks on the color bar, and the bar is saved in the *.ascii format. Ascii files are text files with three  space-separated columns consisting of the RGB component counts. An example is shown below:</p>
@@ -218,8 +220,8 @@ can be saved for future use. To save a new or modified color table simply select
   <li class="propertylistitem"><strong>Save - </strong>Saves changes to a color table.</li>
   <li class="propertylistitem"><strong>Save As... -</strong> Saves a color table and allows you to name it.</li>
   <li class="propertylistitem"><strong>Remove -</strong> Removes an existing color table.</li>
-  <li class="propertylistitem"><strong>Import... -</strong> Allows you to import a color table in the IDV (*.xml), GEMPAK (*.tbl), 3-column RGB (*.ascii), and McIDAS-X (*.et) color table formats.</li>
-  <li class="propertylistitem"><strong>Export... -</strong> Allows you to export a color table in the IDV (*.xml) and GEMPAK (*.tbl) color table formats.</li>
+  <li class="propertylistitem"><strong>Import... -</strong> Imports a color table in the IDV (*.xml), GEMPAK (*.tbl), 3-column RGB (*.ascii), and McIDAS-X (*.et) color table formats.</li>
+  <li class="propertylistitem"><strong>Export... -</strong> Exports a color table in the IDV (*.xml) and GEMPAK (*.tbl) color table formats.</li>
   <li class="propertylistitem"><strong>Close -</strong> Closes the Color Table Editor.</li>
 </ul>
 <p>The <strong>Color Tables </strong>menu has these unique options:</p>
