@@ -23,6 +23,7 @@ function ValidateTOC($tocpath) {
 function ValidateVersions() {
     $notify = "";
     $version = "";
+    $CUR_DIR = getcwd();
     
     # Initialize with version.properties
     chdir($CUR_DIR);
