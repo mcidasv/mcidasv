@@ -112,6 +112,10 @@ function CommitStagedChanges($inquiry, $message) {
     `git commit -m "[$inquiry] $message"`;
 }
 
+function PushLocalCommits() {
+    `git push --quiet origin master`;
+}
+
 function ParseGitStatus($ACTIVITY_DIR) {
     $lines = explode("\n", `git status --porcelain`);
     $untracked_files = array();
@@ -201,6 +205,7 @@ $status = ParseGitStatus($DOC_DIR);
 
 if ($status === true) {
     CommitStagedChanges(0, "Dreamweaver updates synced from web server.");
+    PushLocalCommits();
 } else {
     print "nothing to do...\n";
 }

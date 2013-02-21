@@ -257,8 +257,8 @@
         <git command="pull" dir="${base.dir}" />
     </target>
     
-    <target name="processdocs" description="Keep CVS up to date with changes that were presumably synced from web server.">
-        <exec executable="${basedir}/tools/proc_mcv_docs.php" dir="${basedir}/tools" />
+    <target name="processdocs" description="Keep Git up to date with changes that were presumably synced from web server.">
+        <exec executable="${basedir}/tools/process_dreamweaver_changes.php" dir="${basedir}/tools" />
     </target>
     
     <target name="jythondocs" description="Generate HTML from McIDAS-V Jython docstrings.">
