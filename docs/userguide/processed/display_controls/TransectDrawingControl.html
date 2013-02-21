@@ -55,27 +55,24 @@ are used in the <a href="../ui/TransectViewManager.html">Transect Views</a>. Thi
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Mode -</strong></li>
 	<ul class="propertylist">  <li class="propertylistitem"><img src="images/transect.gif" alt="Create a transect icon" width="20" height="20"align=absmiddle><strong> Create a transect -</strong> Creates a transect in the Main Display window by left-clicking and dragging.</li>
-	    <li class=propertylistitem> <img src="images/pointer.gif" alt="Select icon" align=absmiddle><strong> Select -</strong> Allows you to select one or more transect drawings. To select multiples press the control key. The selected transects will be shown with small magenta rectangles. Once selected you can bring up the transect's property editor by pressing Ctrl+P. You can also delete the selected objects by pressing Ctrl+X. You can select all of the objects by pressing Ctrl+A.</li>
-	    <li class=propertylistitem> <img src="images/Move16.gif" alt="Move or stretch graphic icon"align=absmiddle><strong> Move or stretch graphic -</strong> Allows you to reposition a transect.</li>
+	    <li class=propertylistitem> <img src="images/pointer.gif" alt="Select icon" align=absmiddle><strong><a name="select" id="select"></a>Select -</strong> Allows you to select one or more transect drawings. To select multiples press the control key. The selected transects will be shown with small magenta rectangles. Once selected you can bring up the transect's property editor by pressing Ctrl+P. You can also delete the selected objects by pressing Ctrl+X. You can select all of the objects by pressing Ctrl+A.</li>
+	    <li class=propertylistitem> <img src="images/Move16.gif" alt="Move or stretch graphic icon"align=absmiddle><strong> Move or stretch graphic -</strong> Allows you to reposition a transect&nbsp;without stretching it.</li>
 	    <li class=propertylistitem> <img src="images/Reshape16.gif" alt="Stretch graphic icon"align=absmiddle><strong> Stretch Graphic -</strong> Allows you to move one of the  endpoints of a transect.</li>
-	    <li class=propertylistitem><strong>Enabled -</strong> Allows you to utilize the different mode options.</li>
+	    <li class=propertylistitem><strong>Enabled -</strong> Allows you to utilize the different mode options. If you are done creating/modifying transect lines, you can unselect this option to allow you to work in the Main Display window without creating/modifying any existing transect lines.</li>
     </ul>
-  <li class="propertylistitem"><strong>Z Position -</strong> Allows you to define what is the fixed Z-position.</li>
-  <li class="propertylistitem"><strong>Automatically update transects -</strong> Changes you make are automatically applied to any Transect Views and are also written out into the transects.xml file.</li>
-  <li class="propertylistitem"><strong>Show transects -</strong> Toggles the visibility of the regular transects.</li>
-  <li class="propertylistitem"><strong>Show active transects -</strong> Toggles the visibility of the active transects.</li>
+  <li class="propertylistitem"><strong><a name="ZPosition" id="ZPosition"></a>Z Position -</strong> Allows you to define the Z-position of the transect line. This is the vertical positioning of the transect line&nbsp;in the Main Display window.</li>
+  <li class="propertylistitem"><strong><a name="AutoUpdate" id="AutoUpdate"></a>Automatically update transects -</strong> Makes your most recently drawn transect line the active transect, and it will control the display if you are working with a Transect Display. This will also write out all transects (active and inactive) to a transects.xml file stored in your McIDAS-V directory.</li>
+  <li class="propertylistitem"><strong>Show transects -</strong> Toggles the visibility of all transect lines drawn in the display, other than the active transect, which is controlled by the <strong>Show active transects</strong> item.</li>
+  <li class="propertylistitem"><strong>Show active transects -</strong> Toggles the visibility of the active transects. Active transects are transects that are currently being utilized to create a display in a Transect Display. Active transects are drawn in the color green in the Main Display window.</li>
 </ul>
 <p><a name="style" id="style"></a>The <strong>Style</strong> tab controls the appearance of the transect lines in the Main Display window:</p>
 <div class="images"><img src="images/TransectDrawingControlGui2.gif" alt="Image 2: Style Tab of Transect Drawing Control Properties Window" width="620" height="281"><br>
 <span class="caption">Image 2: Style Tab of the Transect Drawing Control Properties Dialog</span></div>
 <div class="pagesubtitle">Properties</div>
-<p>These menu options apply to the shapes listed in the <strong>Controls</strong> tab. Once modifications have been made in this tab, they will be applied to the next transect you draw in the Main Display window, without changing any transects already created.</p>
+<p>These menu options apply to the shapes listed in the <strong>Controls</strong> tab. Once modifications have been made in this tab, they will be applied to the next transect you draw in the Main Display window, without changing any transects already created. Note that <strong>Font</strong> and <strong>Justification</strong> are not valid options for this control, since there is no text component in the <strong>Controls</strong> tab.</p>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>Color -</strong> Sets the color of the transect in the display.</li>
+<li class="propertylistitem"><strong><a name="color" id="color"></a>Color -</strong> Sets the color of the transect in the display.</li>
 <li class="propertylistitem"><strong>Line Width -</strong> Sets the thickness of the transect drawn in the display.</li>
-<li class="propertylistitem"><strong>Font -</strong> Sets the font of the text in the display.</li>
-<li class="propertylistitem"><strong>Size -</strong> Sets the size of the text in the display.</li>
-<li class="propertylistitem"><strong>Justification -</strong> Sets the justification of the text.</li>
 </ul>
 <p><a name="shapes" id="shapes"></a>The <strong>Shapes</strong> tab lists all of the graphical elements:</p>
 <div class="images"><img src="images/TransectDrawingControlGui3.gif" alt="Shapes tab of the Transect Drawing Control window" width="620" height="281"><br>
@@ -92,35 +89,36 @@ are used in the <a href="../ui/TransectViewManager.html">Transect Views</a>. Thi
 <span class="caption">Image 4: Properties Tab of the Properties Dialog</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>Line Width -</strong> Sets the thickness of the transects being displayed.</li>
-<li class="propertylistitem"><strong>Name -</strong> Sets the name of the transect.</li>
-<li class="propertylistitem"><strong>Visible -</strong> Toggles the visibility of the transect line in the Main Display window.</li>
-<li class="propertylistitem"><strong>Color -</strong> Sets the color of the shape in the display.</li>
-<li class="propertylistitem"><strong>Distance -</strong> Lists the geographical distance the transect covers in the Main Display window.</li>
-<li class="propertylistitem"><strong>Start Label -</strong> Denotes the starting point of the transect line in the display.</li>
-<li class="propertylistitem"><strong>End Label -</strong> Denotes the ending point of the transect line in the display.</li>
+<li class="propertylistitem"><strong>Line Width -</strong> Sets the thickness of the transect line.</li>
+<li class="propertylistitem"><strong>Name -</strong> Sets the name of the transect. This is the name that will be listed in the <strong>Name</strong> column   of the <strong>Shapes</strong> tab of the Drawing Control window.   Setting names of items can make it easier to keep multiple shapes   organized, as opposed to the default of "Transect 1", "Transect 2", etc.</li>
+<li class="propertylistitem"><strong>Visible -</strong> Toggles the visibility of the transect line in the Main Display window. If this item is unchecked, it will not be visible in the Main Display,   but the shape itself will not be deleted. Any transects that aren't visible   will have '(hidden)' listed next to their names in the <strong>Shapes</strong> tab of the Transect Drawing Control window.</li>
+<li class="propertylistitem"><strong>Color -</strong> Sets the color of the transect line in the display.</li>
+<li class="propertylistitem"><strong>Distance -</strong> Lists the geographical distance the transect covers in the Main Display window. This cannot be changed here, and is listed for informative purposes only.</li>
+<li class="propertylistitem"><strong>Start Label -</strong> Sets the label at the beginning of your transect line in the Main Display window. The default value here is <strong>B</strong>, for Beginning.</li>
+<li class="propertylistitem"><strong>End Label -</strong> Sets the label at the end of your transect line in the Main Display window. The default value here is <strong>E</strong>, for Ending.</li>
 </ul>
 <p>The <strong>Points</strong> tab gives general information about each shape:</p>
 <div class="images"><img src="images/TransectDrawingControlGui5.gif" alt="Image 5: Points Tab of the Properties Dialog" width="321" height="328"><br>
 <span class="caption">Image 5: Points Tab of the Properties Dialog</span></div>
+<p>You can modify a latitude/longitude value here by double-clicking in one of the cells for latitude or longitude, entering a new value, clicking in another cell, and clicking Apply or OK. The new latitude/longitude values will be applied to the endpoints of your transect line in the Main Display window.</p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>Latitude -</strong> Lists the latitude value at each point.</li>
-<li class="propertylistitem"><strong>Longitude -</strong> Lists the longitude value at each point.</li>
+<li class="propertylistitem"><strong>Latitude/Longitude -</strong> Lists the latitude/longitude values of the starting and ending points of the transect line.</li>
 <li class="propertylistitem"><img src="images/WritePoints.gif" alt="Write Points button" width="104" height="26"align=absmiddle> <strong> -</strong> Allows you to save the list of points as a Comma-Separated Values (CSV) file (*.csv).</li>
 </ul>
 <div class="pagesubtitle"><a name="menus" id="menus"></a>Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="../controls/LayerControls.html#menus">Menus section</a> of the Layer Controls page. However, there are several options that are unique to this display.</p>
 <p>The <strong>File</strong> menu has these unique options:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Save Transects -</strong> Allows you to save your transect display.</li>
+  <li class="propertylistitem"><strong>Save Transects -</strong> Allows you to save your transect display. This will save information about your transect lines currently displayed in the Main Display window to a transects.xml file stored in your McIDAS-V directory. This file contains information about transect line beginning and end points, color, and starting/ending labels.</li>
+  <li class="propertylistitem">This transects.xml file is important when working with a Transect Display, as these are the transect lines that are listed out under the <strong>Transects</strong> menu item in the Main Display window.&nbsp;This makes it easy to switch between different transect lines for your transect display without having to re-draw lines.</li>
   <li class="propertylistitem"><strong>Save -</strong> Allows you to save the transect display as a bundle or a favorite.</li>
 </ul>
 <p>The <strong>Edit</strong> menu has these unique options:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Remove All -</strong> Removes any drawings from the Main Display window without removing any other items.</li>
-  <li class="propertylistitem"><strong>Apply Color to Selected -</strong> Changes the color of the selected item drawn in the Main Display window.</li>
-  <li class="propertylistitem"><strong>Apply Z Position to Selected -</strong> Changes the Z-position of the selected item drawn in the Main Display window.</li>
+  <li class="propertylistitem"><strong>Remove All -</strong> Removes all transects from the Main Display window without removing any other items. Note, if you have the <strong>Automatically update transects</strong> option turned on, this will delete all transects from your transects.xml file.</li>
+  <li class="propertylistitem"><strong>Apply Color to Selected -</strong> Changes the color of the selected transect drawn in the Main Display window.   After an item is drawn, if you&nbsp;want to change its color in the Main   Display, you can make the item active with the <strong><a href="#select">Select</a></strong> mode, change the <strong><a href="#color">Color</a></strong> in the <strong>Style</strong> tab of the Drawing Control window, and   use the <strong>Apply Color to Selected</strong> menu item to change the   color of the item to the new color you selected.</li>
+  <li class="propertylistitem"><strong>Apply Z Position to Selected -</strong> Applies a modified Z-position (height) to the selected transect drawn in the   Main Display window. After an item is drawn, if you want to change its   vertical positioning in the Main Display, you can make the item active   with the <strong><a href="#select">Select</a></strong> mode, move the <strong><a href="#ZPosition">Z-Position</a></strong> slier in the <strong>Controls</strong> tab of the Drawing Controls to   your new desired position, and use the <strong><a href="#AutoUpdate">Apply Z Position to   Selected</a></strong> menu item to move the item to the new Z-position.</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
