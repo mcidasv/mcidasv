@@ -26,7 +26,7 @@ function ValidateVersions() {
     $CUR_DIR = getcwd();
     
     # Initialize with version.properties
-    chdir($CUR_DIR);
+    chdir("..");
     $lines = file("edu/wisc/ssec/mcidasv/resources/version.properties");
     foreach ($lines as $line) {
         if (preg_match("/major\s+=/", $line)) {
@@ -196,9 +196,9 @@ function ParseGitStatus($ACTIVITY_DIR) {
 $EMAIL = "jbeavers@ssec.wisc.edu";
 
 // $DOC_DIR="/home/mcidasv/mc-v/docs/userguide/processed";
-$DOC_DIR = "docs/userguide/processed";
+$DOC_DIR = "../docs/userguide/processed";
 
-ValidateTOC("docs/userguide/processed/toc.html");
+ValidateTOC("../docs/userguide/processed/toc.html");
 
 ValidateVersions();
 
