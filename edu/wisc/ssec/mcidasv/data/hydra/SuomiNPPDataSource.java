@@ -98,6 +98,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	
 	/** Sources file */
     protected String filename;
+    
+    // for loading bundles, store granule lists here
+    protected List<String> oldSources = new ArrayList<String>();
 
     protected MultiDimensionReader nppAggReader;
 
@@ -127,8 +130,12 @@ public class SuomiNPPDataSource extends HydraDataSource {
     private boolean hasImagePreview = true;
     private boolean isCombinedProduct = false;
     private boolean nameHasBeenSet = false;
+    
+    // if we have unpersisted from a bundle..
+    private boolean unpersisted = false;
+    private int bundleAdapterIndex = 0;
 
-    private FlatField previewImage = null;
+	private FlatField previewImage = null;
        
     private int inTrackDimensionLength = -1;
     
@@ -145,7 +152,16 @@ public class SuomiNPPDataSource extends HydraDataSource {
      * Zero-argument constructor for construction via unpersistence.
      */
     
-    public SuomiNPPDataSource() {}
+    public SuomiNPPDataSource() {
+    	// flag so we know to grab granule list and adapter index
+    	// from persisted state
+    	unpersisted = true;
+    }
+    
+    public SuomiNPPDataSource(String fileName) throws VisADException {
+    	this(null, Misc.newList(fileName), null);
+    	logger.warn("filename only constructor call..");
+    }
 
     /**
      * Construct a new Suomi NPP HDF5 data source.
@@ -190,6 +206,11 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
     public void setup() throws VisADException {
 
+    	// store filenames for possible bundle unpersistence
+    	for (Object o : sources) {
+    		oldSources.add((String) o);
+    	}
+    	
     	// time zone for product labels
     	SimpleTimeZone stz = new SimpleTimeZone(0, "GMT");
     	sdf.setTimeZone(stz);
@@ -260,22 +281,21 @@ public class SuomiNPPDataSource extends HydraDataSource {
 					}
 					Group rg = ncfile.getRootGroup();
 
-	    	    	logger.debug("Root group name: " + rg.getName());
 	    	    	List<Group> gl = rg.getGroups();
 	    	    	if (gl != null) {
 	    	    		for (Group g : gl) {
-	    	    			logger.debug("Group name: " + g.getName());
+	    	    			logger.debug("Group name: " + g.getFullName());
 	    	    			// when we find the Data_Products group, go down another group level and pull out 
 	    	    			// what we will use for nominal day and time (for now anyway).
 	    	    			// XXX TJJ fileCount check is so we don't count the GEO file in time array!
-	    	    			if (g.getName().contains("Data_Products") && (fileCount != sources.size())) {
+	    	    			if (g.getFullName().contains("Data_Products") && (fileCount != sources.size())) {
 	    	    				boolean foundDateTime = false;
 	    	    				List<Group> dpg = g.getGroups();
 	    	    				
 	    	    				// cycle through once looking for XML Product Profiles
 	    	    				for (Group subG : dpg) {
 	    	    					
-	    	    					String subName = subG.getName();
+	    	    					String subName = subG.getFullName();
 	    	    					// use actual product, not geolocation, to id XML Product Profile
 	    	    					if (! subName.contains("-GEO")) {
 	    	    						// determine the instrument name (VIIRS, ATMS, CrIS, OMPS)
@@ -439,17 +459,17 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    	List<Group> gl = rg.getGroups();
     	    	if (gl != null) {
     	    		for (Group g : gl) {
-    	    			logger.debug("Group name: " + g.getName());
+    	    			logger.debug("Group name: " + g.getFullName());
     	    			// XXX just temporary - we are looking through All_Data, finding displayable data
-    	    			if (g.getName().contains("All_Data")) {
+    	    			if (g.getFullName().contains("All_Data")) {
     	    				List<Group> adg = g.getGroups();
     	    				int xDim = -1;
     	    				int yDim = -1;
 
     	    				// two sub-iterations, first one to find geolocation and product dimensions
     	    				for (Group subG : adg) {
-    	    					logger.debug("Sub group name: " + subG.getName());
-    	    					String subName = subG.getName();
+    	    					logger.debug("Sub group name: " + subG.getFullName());
+    	    					String subName = subG.getFullName();
     	    					if (subName.contains("-GEO")) {
     	    						// this is the geolocation data
     	    						List<Variable> vl = subG.getVariables();
@@ -476,8 +496,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
     	    				// second to identify displayable products
     	    				for (Group subG : adg) {
-    	    					logger.debug("Sub group name: " + subG.getName());
-    	    					String subName = subG.getName();
+    	    					logger.debug("Sub group name: " + subG.getFullName());
+    	    					String subName = subG.getFullName();
     	    					// this is the product data
     	    					List<Variable> vl = subG.getVariables();
     	    					for (Variable v : vl) {
@@ -946,12 +966,33 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
     public void initAfterUnpersistence() {
     	try {
+    		sources.clear();
+        	for (Object o : oldSources) {
+        		sources.add((String) o);
+        	}
     		setup();
     	} catch (Exception e) {
+    		e.printStackTrace();
     	}
     }
 
-    /**
+    public int getBundleAdapterIndex() {
+		return bundleAdapterIndex;
+	}
+
+	public void setBundleAdapterIndex(int bundleAdapterIndex) {
+		this.bundleAdapterIndex = bundleAdapterIndex;
+	}
+
+	public List<String> getOldSources() {
+		return oldSources;
+	}
+
+	public void setOldSources(List<String> oldSources) {
+		this.oldSources = oldSources;
+	}
+
+	/**
      * Make and insert the <code>DataChoice</code>-s for this
      * <code>DataSource</code>.
      */
@@ -1092,11 +1133,17 @@ public class SuomiNPPDataSource extends HydraDataSource {
         for (DataChoice dc : dcl) {
         	if (dc.equals(dataChoice)) {
         		aIdx = dcl.indexOf(dc);
+        		logger.warn("storing adapter index for bundles: " + aIdx);
+        		bundleAdapterIndex = aIdx;
         		break;
         	}
         }
         
-        logger.debug("Found dataChoice index: " + aIdx);
+        if (unpersisted) {
+        	logger.warn("setting adapter index from bundle, to: " + bundleAdapterIndex);
+        	aIdx = bundleAdapterIndex;
+        }
+
         adapter = adapters[aIdx];
 
         try {

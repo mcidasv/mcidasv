@@ -211,7 +211,6 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   
 			   boolean foundProduct = false;
 			   for (String s : products) {
-				   logger.debug("Seeing if variable is found in product list: " + s);
 				   if (s.contains(var.getShortName())) {
 					   logger.debug("Valid product: " + var.getShortName());
 					   foundProduct = true;

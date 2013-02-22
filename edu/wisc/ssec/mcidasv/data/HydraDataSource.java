@@ -48,7 +48,7 @@ import visad.VisADException;
 public class HydraDataSource extends DataSourceImpl  {
 
     /** List of sources files */
-    protected final List sources = new ArrayList();
+    protected List sources = new ArrayList();
 
     public static String request;
 
