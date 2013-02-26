@@ -1,0 +1,11 @@
+<!xml version="1.0"?>
+<project name="mcidasv" default="info">
+    <target name="info" description="Print information about this file.">
+        <echo>
+            This file is intended to be a place to keep Ant experiments that 
+            may not be ready for other people to try.
+            
+            All changes to official builds and whatnot will happen in build.xml.
+        </echo>
+    </target>
+</project>
