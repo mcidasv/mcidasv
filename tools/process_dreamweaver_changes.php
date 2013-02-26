@@ -124,10 +124,7 @@ function ParseGitStatus($ACTIVITY_DIR) {
     $removed_files = array();
     foreach ($lines as $line) {
         $status = substr($line, 0, 2);
-        
-        // git status --porcelain results in file paths that are relative to
-        // the root of the repository, *not* the current directory.
-        $filepath = "../" . substr($line, 3);
+        $filepath = substr($line, 3);
         
         // print "status: '$status' filepath: '$filepath' line: '$line'\n";
         if (substr($filepath, 0, 1) === "\"") {
@@ -141,7 +138,10 @@ function ParseGitStatus($ACTIVITY_DIR) {
         // DO NOT TRIM STATUS!!!
         // $filepath = "\"$ACTIVITY_DIR/".trim($filepath)."\"";
         
-        if (substr($filepath, 0, strlen($ACTIVITY_DIR)) !== $ACTIVITY_DIR) {
+        // git status --porcelain results in file paths that are relative to
+        // the root of the repository, *not* the current directory.
+        $relativepath = "../" . $filepath;
+        if (substr($relativepath, 0, strlen($ACTIVITY_DIR)) !== $ACTIVITY_DIR) {
             // print "not interested in files outside '$ACTIVITY_DIR'; filepath: $filepath\n";
             continue;
         } else {
