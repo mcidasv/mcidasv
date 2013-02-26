@@ -36,7 +36,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('display_controls/
 <p>The transect drawing controls are a version of the <a href="DrawingControl.html">Drawing
     Controls</a> that allows you to view, create, and modify the transect lines that
 are used in the <a href="../ui/TransectViewManager.html">Transect Views</a>. This option can be found in the Main Display window under the <strong>Display-&gt;Draw Transect </strong>menu item or through the <strong>Transects</strong> menu in the Transect View.</p>
-<p>This display control is a representation of the set of transects that are defined by the transect resource. Not only does it have its own state (that can be saved in a bundle, for example), but it also writes out any transects you may create or change into your local McIDAS-V state directory in a transects.xml file.</p>
+<p>This display control is a representation of the set of transects that are defined by the transect resource. Not only does it have its own state (that can be saved in a bundle, for example), but it also writes out any transects you may create or change into your local McIDAS-V state directory in a transects.xml file. This transects.xml file (if one is created) is carried over from session to session. Therefore, if you draw transects in one session and save the transects&nbsp;(via the <strong>File-&gt;Save</strong> or <strong>Automatically update transects items</strong>), the same transects will appear in subsequent sessions when you open the Transect Drawing Control widget.</p>
 <p> In this control, there is only one shape that you can draw, a Transect Line. This control also shows a non-editable Transect Shape which displays the full transect line used by any Transect Views, called the &quot;Active Transects&quot;. There are also a set of transect lines that are non-editable that are from the system transects property. For an active transect, if the Transect View that it represents has a max distance set then the transect will show this max distance as a rectangular box.</p>
 <p>The Transect Drawing Control window consists of three tabs: <strong>Controls</strong>, <strong>Style</strong>, and <strong>Shapes</strong>.</p>
 <ul>
@@ -55,9 +55,9 @@ are used in the <a href="../ui/TransectViewManager.html">Transect Views</a>. Thi
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Mode -</strong></li>
 	<ul class="propertylist">  <li class="propertylistitem"><img src="images/transect.gif" alt="Create a transect icon" width="20" height="20"align=absmiddle><strong> Create a transect -</strong> Creates a transect in the Main Display window by left-clicking and dragging.</li>
-	    <li class=propertylistitem> <img src="images/pointer.gif" alt="Select icon" align=absmiddle><strong><a name="select" id="select"></a>Select -</strong> Allows you to select one or more transect drawings. To select multiples press the control key. The selected transects will be shown with small magenta rectangles. Once selected you can bring up the transect's property editor by pressing Ctrl+P. You can also delete the selected objects by pressing Ctrl+X. You can select all of the objects by pressing Ctrl+A.</li>
-	    <li class=propertylistitem> <img src="images/Move16.gif" alt="Move or stretch graphic icon"align=absmiddle><strong> Move or stretch graphic -</strong> Allows you to reposition a transect&nbsp;without stretching it.</li>
-	    <li class=propertylistitem> <img src="images/Reshape16.gif" alt="Stretch graphic icon"align=absmiddle><strong> Stretch Graphic -</strong> Allows you to move one of the  endpoints of a transect.</li>
+	    <li class=propertylistitem> <img src="images/pointer.gif" alt="Select icon" align=absmiddle><strong><a name="select" id="select"></a> Select -</strong> Allows you to select one or more transect drawings. To select multiples press the control key. The selected transects will be shown with small magenta rectangles. Once selected you can bring up the transect's property editor by pressing Ctrl+P. You can also delete the selected objects by pressing Ctrl+X. You can select all of the objects by pressing Ctrl+A.</li>
+	    <li class=propertylistitem> <img src="images/Move16.gif" alt="Move or stretch graphic icon"align=absmiddle><strong> Move or stretch graphic -</strong> Allows you to reposition a transect&nbsp;without stretching (changing the distance between the endpoints) it.</li>
+	    <li class=propertylistitem> <img src="images/Reshape16.gif" alt="Stretch graphic icon"align=absmiddle><strong> Stretch Graphic -</strong> Allows you to move one of the  endpoints of a transect. The other endpoint will&nbsp;remain in its fixed location.</li>
 	    <li class=propertylistitem><strong>Enabled -</strong> Allows you to utilize the different mode options. If you are done creating/modifying transect lines, you can unselect this option to allow you to work in the Main Display window without creating/modifying any existing transect lines.</li>
     </ul>
   <li class="propertylistitem"><strong><a name="ZPosition" id="ZPosition"></a>Z Position -</strong> Allows you to define the Z-position of the transect line. This is the vertical positioning of the transect line&nbsp;in the Main Display window.</li>
@@ -80,7 +80,7 @@ are used in the <a href="../ui/TransectViewManager.html">Transect Views</a>. Thi
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Name -</strong> Lists the names of the transects.</li>
-<li class="propertylistitem"><strong>Type -</strong> Lists the type of shape in the display.</li>
+<li class="propertylistitem"><strong>Type -</strong> Lists the type of shape in the display. This will always be listed as 'Transect' because that is the only shape you can create from the <strong>Controls</strong> tab</li>
 <li class="propertylistitem"><strong>Coordinates -</strong> Lists the coordinates used to display the transect line.</li>
 </ul>
 <p>Double-clicking on an element in the <strong>Shapes</strong> tab will show its properties editor, which consists of two tabs: <strong>Properties</strong> and <strong>Points</strong>.</p>

@@ -42,8 +42,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
   memory allocated by McIDAS-V at startup. Use the first bubble to choose a percentage
   of available memory, or use the second bubble to enter a specific value. The
   new amount of memory will be saved and used in subsequent sessions. For more
-  information, see the Setting Memory Usage section in <a href="../../Starting.html">Downloading
-  and Running McIDAS-V</a>.</li>
+  information, see the <a href="../../Starting.html#memory">Setting Memory Usage</a> section in Downloading
+  and Running McIDAS-V.</li>
 <li class="propertylistitem"><a name="defaultbundle" id="defaultbundle"></a><b>Specify default bundle - </b> Loads the selected bundle at startup
   by setting the &quot;-bundle&quot; command line flag.
   Select a default bundle in the tree below the checkbox, which shows the bundles
@@ -90,9 +90,10 @@ of larger datasets because of the more efficient use of memory. Unchecking this
   which vary by Operating System. </li>
   </ul>
 <div class="pagesubtitle">Java Threads</div>
+<p>If you are running McIDAS-V on a multi-core machine, you can configure it to render individual time steps in parallel when working with a loop of data. You can also do remote data reads in parallel. This typically results in a 50% reduction in overall data reading and rendering time. For more information, see <a href="../../misc/PerformanceTuning.html#parallelrender">Parallel&nbsp;Rendering and Data Reading</a>.</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><b>Rendering -</b> Sets the number of Java threads to use for rendering.</li>
-  <li class="propertylistitem"><b>Reading -</b> Sets the number of Java threads to use for reading.
+  <li class="propertylistitem"><b>Rendering -</b> Sets the number of Java threads to use for rendering. This number defaults to the number of processors on your machine.</li>
+  <li class="propertylistitem"><b>Reading -</b> Sets the number of Java threads to use for reading. This number is dependent on the configuration of the server machine. This defaults to 4. This is used when reading individual time steps of data from remote ADDE and OpenDAP servers. 
 </li></ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
