@@ -1,11 +1,22 @@
-<!xml version="1.0"?>
+<?xml version="1.0"?>
 <project name="mcidasv" default="info">
     <target name="info" description="Print information about this file.">
         <echo>
-            This file is intended to be a place to keep Ant experiments that 
-            may not be ready for other people to try.
-            
-            All changes to official builds and whatnot will happen in build.xml.
+This file is intended to be a place to keep Ant experiments that may not be 
+ready for other people to try.
+
+All changes to official builds and whatnot will happen in build.xml.
+
+Ant will use "build.xml" unless you tell it otherwise:
+  ant -f build-customized.xml info
+
+Creating a shell alias to do the above is recommended!
+
+You can tell Git to ignore any changes to this file by running:
+  git update-index --assume-unchanged build-customized.xml
+
+And you can re-enable change tracking by running:
+  git update-index --no-assume-unchanged build-customized.xml
         </echo>
     </target>
 </project>
