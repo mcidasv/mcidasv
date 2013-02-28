@@ -9,6 +9,8 @@ docs/javadoc/
 mcidas/
 
 # Eclipse-specific junk
+.settings
+.pydevproject
 .classpath
 .project
 bin/*
