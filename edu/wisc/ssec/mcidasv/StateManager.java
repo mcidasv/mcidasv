@@ -247,9 +247,14 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 	 * Connect to McIDAS website and look for latest stable version
 	 */
 	public String getMcIdasVersionStable() {
+		String offscreen = "0";
+		if (super.getIdv().getArgsManager().getIsOffScreen()) {
+			offscreen = "1";
+		}
+
 		String version = "";
 		try {
-			version = IOUtil.readContents(Constants.HOMEPAGE_URL+'/'+Constants.VERSION_URL+"?requesting="+getMcIdasVersion()+"&os="+getOSName(), "");
+			version = IOUtil.readContents(Constants.HOMEPAGE_URL+'/'+Constants.VERSION_URL+"?requesting="+getMcIdasVersion()+"&os="+getOSName()+"&offscreen="+offscreen, "");
 		} catch (Exception e) {}
 		return version.trim();
 	}
@@ -382,13 +387,16 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 	}
 	
 	public void checkForNewerVersionStable(boolean notifyDialog) {
-		
-		/** Shortcut this whole process if we are processing offscreen */
-		if (super.getIdv().getArgsManager().getIsOffScreen())
+
+		/** Get the stable version from the website (for statistics recording) */
+		String thatVersion = getMcIdasVersionStable();
+
+		/** Shortcut the rest of the process if we are processing offscreen */
+		if (super.getIdv().getArgsManager().getIsOffScreen()) {
 			return;
+		}
 
 		String thisVersion = getMcIdasVersion();
-		String thatVersion = getMcIdasVersionStable();
 		String titleText = "Version Check";
 		
 		if (thisVersion.equals("") || thatVersion.equals("")) {
@@ -425,9 +433,10 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 	
 	public void checkForNewerVersionPrerelease(boolean notifyDialog) {
 		
-		/** Shortcut this whole process if we are processing offscreen */
-		if (super.getIdv().getArgsManager().getIsOffScreen())
+		/** Shortcut the rest of the process if we are processing offscreen */
+		if (super.getIdv().getArgsManager().getIsOffScreen()) {
 			return;
+		}
 
 		String thisVersion = getMcIdasVersion();
 		String thatVersion = getMcIdasVersionPrerelease();
