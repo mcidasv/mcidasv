@@ -92,7 +92,8 @@
     <property name="javadoc.level" value="private" />
     
     <!-- List of McIDAS-V jars -->
-    <fileset id="mcv.libs" dir="${lib.dir}">
+    <!-- <fileset id="mcv.libs" dir="${lib.dir}"> -->
+    <fileset id="mcv.libs" dir="${dist.dir}">
         <include name="sysout-over-slf4j-1.0.2.jar" />
         <include name="miglayout-core-4.2.jar" />
         <include name="miglayout-swing-4.2.jar" />
@@ -119,7 +120,8 @@
     </fileset>
     
     <!-- List of IDV jars -->
-    <fileset id="idv.libs" dir="${idvlib.dir}">
+    <!-- <fileset id="idv.libs" dir="${idvlib.dir}"> -->
+    <fileset id="idv.libs" dir="${dist.dir}">
         <include name="auxdata.jar" />
         <include name="local-visad.jar" />
         <include name="visad.jar" />
@@ -319,6 +321,11 @@
     
     <!-- Build the edu tree -->
     <target name="build" description="Build the edu tree">
+        <mkdir dir="${dist.dir}" />
+        <copy todir="${dist.dir}" preservelastmodified="true">
+            <fileset dir="${idvlib.dir}" includes="**/*.jar" />
+            <fileset dir="${lib.dir}" includes="**/*.jar" />
+        </copy>
         <javac srcdir="${base.dir}" source="${source.ver}" target="${target.ver}"
             debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
             <compilerarg value="-Xlint:${xlint}" />
@@ -330,7 +337,7 @@
     <target name="startupmanager" depends="clean, build"
         description="Build only the startup manager">
         <tstamp prefix="jar" />
-        <mkdir dir="${dist.dir}" />
+        <!-- <mkdir dir="${dist.dir}" /> -->
         <jar destfile="${dist.dir}/${app.smjar}" index="true">
             <fileset dir="${base.dir}">
                 <patternset refid="startupmanager.includes" />
@@ -348,7 +355,7 @@
     <!-- Create the standalone Jython console jar file -->
     <target name="jar.jython" depends="build"
         description="Create the standalone Jython console jar file">
-        <mkdir dir="${dist.dir}" />
+        <!-- <mkdir dir="${dist.dir}" /> -->
         <tstamp prefix="jar" />
         <jar destfile="${dist.dir}/${jython.jarfile}">
             <fileset dir="${base.dir}">
@@ -365,12 +372,12 @@
     
     <!-- Jar the base application jar file -->
     <target name="jar.base" description="Jar the base application jar file">
-        <mkdir dir="${dist.dir}" />
+        <!-- <mkdir dir="${dist.dir}" /> -->
         <tstamp prefix="jar" />
         <manifestclasspath property="mcidasv.class.path" jarfile="${dist.dir}/{${app.jarname}">
             <classpath refid="app.classpath" />
         </manifestclasspath>
-        <jar destfile="${dist.dir}/${app.jarname}" index="true">
+        <jar destfile="${dist.dir}/${app.jarname}" index="false">
             <fileset dir="${base.dir}">
                 <patternset refid="jar.includes" />
             </fileset>
@@ -385,12 +392,12 @@
 
     <!-- Jar the local-idv jar file -->
     <target name="jar.local-idv" description="Jar the local-idv jar file">
-        <mkdir dir="${dist.dir}" />
+        <!-- <mkdir dir="${dist.dir}" /> -->
         <tstamp prefix="jar" />
         <manifestclasspath property="local-idv.class.path" jarfile="${dist.dir}/{${local-idv.jarname}">
             <classpath refid="app.classpath" />
         </manifestclasspath>
-        <jar destfile="${dist.dir}/${local-idv.jarname}" index="true">
+        <jar destfile="${dist.dir}/${local-idv.jarname}" index="false">
             <fileset dir="${base.dir}">
                 <patternset refid="local-idv.includes" />
             </fileset>
@@ -424,6 +431,7 @@
     </target>
     
     <!-- Include dependencies in single jar file -->
+    <!-- this doesn't appear to work when j3d/jogl is included… -->
     <target name="singlejar" depends="clean, auxdata.nodocs, ncidv.nolog, build"
         description="Include dependencies in single jar file">
         
@@ -433,23 +441,26 @@
         <unzip dest="${build.dir}">
             <fileset refid="mcv.libs" />
             <fileset refid="idv.libs" />
-            <fileset refid="newj3d.libs" />
+            <!-- <fileset refid="newj3d.libs" /> -->
         </unzip>
         
         <!-- Override default VisAD classes with custom ones -->
         <unzip src="${idvlib.dir}/local-visad.jar" dest="${build.dir}" />
 
         <!-- Override default IDV classes with custom ones -->
-        <unzip src="${idvlib.dir}/local-idv.jar" dest="${build.dir}" />
+        <!-- <unzip src="${idvlib.dir}/local-idv.jar" dest="${build.dir}" /> -->
         
         <copy todir="${build.dir}">
             <fileset dir="${base.dir}">
                 <patternset refid="jar.includes" />
+                <patternset refid="local-idv.includes" />
             </fileset>
         </copy>
         
+        <delete dir="${build.dir}/META-INF" failonerror="false" />
+        
         <tstamp prefix="jar" />
-        <jar destfile="${dist.dir}/${app.jarname}" basedir="${build.dir}">
+        <jar destfile="${dist.dir}/${app.jarname}" basedir="${build.dir}" index="false">
             <manifest>
                 <attribute name="Build-By" value="${user.name}" />
                 <attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
