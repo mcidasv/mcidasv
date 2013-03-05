@@ -5,7 +5,7 @@
     
     <!-- Directory definitions -->
     <property name="base.dir" location="." />
-    <property name="build.dir" location="${base.dir}/build" />
+    <property name="build.dir" location="${base.dir}/build/antbuild" />
     <property name="dist.dir" location="${base.dir}/dist" />
     <property name="lib.dir" location="${base.dir}/lib" />
     <property name="idvlib.dir" location="${base.dir}/../IDV/lib" />
@@ -250,7 +250,7 @@
     <target name="clean" description="Delete all class files and temporary build files">
         <delete dir="${dist.dir}" failonerror="false" />
         <delete dir="${javadoc.dir}" failonerror="false" />
-        <delete dir="${build.dir}" failonerror="false" />
+        <delete dir="${base.dir}/build" failonerror="false" />
         <delete failonerror="false">
             <fileset dir="${base.dir}/edu" includes="**/*.class" />
         </delete>
@@ -258,6 +258,9 @@
             <fileset dir="${base.dir}/ucar" includes="**/*.class" />
         </delete>
         <delete file="${build.props}" failonerror="false" />
+        <mkdir dir="${dist.dir}" />
+        <mkdir dir="${javadoc.dir}" />
+        <mkdir dir="${build.dir}" />
     </target>
     
     <!-- Get the latest McIDAS-V source code from CVS -->
@@ -297,7 +300,7 @@
             <format property="build.date" pattern="yyyy-MM-dd HH:mm"
             timezone="UTC" />
         </tstamp>
-        <copy file="${ver.props}" tofile="${build.props}" overwrite="true">
+        <copy file="${ver.props}" tofile="${build.dir}/edu/wisc/ssec/mcidasv/resources/build.properties" overwrite="true">
             <filterset>
                 <filter token="DATE" value="${build.date}" />
                 <filter token="NIGHTLY" value="" />
@@ -311,7 +314,7 @@
             <format property="build.date" pattern="yyyy-MM-dd HH:mm"
             timezone="UTC" />
         </tstamp>
-        <copy file="${ver.props}" tofile="${build.props}" overwrite="true">
+        <copy file="${ver.props}" tofile="${build.dir}/edu/wisc/ssec/mcidasv/resources/build.properties" overwrite="true">
             <filterset>
                 <filter token="DATE" value="${build.date}" />
                 <filter token="NIGHTLY" value="(nightly)" />
@@ -321,16 +324,25 @@
     
     <!-- Build the edu tree -->
     <target name="build" description="Build the edu tree">
+        <mkdir dir="${build.dir}" />
         <mkdir dir="${dist.dir}" />
         <copy todir="${dist.dir}" preservelastmodified="true">
             <fileset dir="${idvlib.dir}" includes="**/*.jar" />
             <fileset dir="${lib.dir}" includes="**/*.jar" />
         </copy>
-        <javac srcdir="${base.dir}" source="${source.ver}" target="${target.ver}"
+        
+        <javac srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
             debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
             <compilerarg value="-Xlint:${xlint}" />
             <classpath refid="app.classpath" />
+            <!-- <classpath refid="master-classpath"/> -->
         </javac>
+        <copy todir="${build.dir}" preservelastmodified="true">
+            <fileset dir="${base.dir}">
+                <patternset refid="jar.includes" />
+                <patternset refid="local-idv.includes" />
+            </fileset>
+        </copy>
     </target>
     
     <!-- Build only the startup manager -->
@@ -339,7 +351,8 @@
         <tstamp prefix="jar" />
         <!-- <mkdir dir="${dist.dir}" /> -->
         <jar destfile="${dist.dir}/${app.smjar}" index="true">
-            <fileset dir="${base.dir}">
+            <!-- <fileset dir="${base.dir}"> -->
+            <fileset dir="${build.dir}">
                 <patternset refid="startupmanager.includes" />
             </fileset>
             <manifest>
@@ -358,7 +371,8 @@
         <!-- <mkdir dir="${dist.dir}" /> -->
         <tstamp prefix="jar" />
         <jar destfile="${dist.dir}/${jython.jarfile}">
-            <fileset dir="${base.dir}">
+            <!-- <fileset dir="${base.dir}"> -->
+            <fileset dir="${build.dir}">
                 <patternset refid="jython.includes" />
             </fileset>
             <manifest>
@@ -373,12 +387,14 @@
     <!-- Jar the base application jar file -->
     <target name="jar.base" description="Jar the base application jar file">
         <!-- <mkdir dir="${dist.dir}" /> -->
+        <!-- <delete file="${dist.dir}/${app.jarname}" failonerror="false" /> -->
         <tstamp prefix="jar" />
         <manifestclasspath property="mcidasv.class.path" jarfile="${dist.dir}/{${app.jarname}">
             <classpath refid="app.classpath" />
         </manifestclasspath>
         <jar destfile="${dist.dir}/${app.jarname}" index="false">
-            <fileset dir="${base.dir}">
+            <!-- <fileset dir="${base.dir}"> -->
+            <fileset dir="${build.dir}">
                 <patternset refid="jar.includes" />
             </fileset>
             <manifest>
@@ -393,12 +409,14 @@
     <!-- Jar the local-idv jar file -->
     <target name="jar.local-idv" description="Jar the local-idv jar file">
         <!-- <mkdir dir="${dist.dir}" /> -->
+        <!-- <delete file="${dist.dir}/${local-idv.jarname}" failonerror="false" /> -->
         <tstamp prefix="jar" />
         <manifestclasspath property="local-idv.class.path" jarfile="${dist.dir}/{${local-idv.jarname}">
             <classpath refid="app.classpath" />
         </manifestclasspath>
         <jar destfile="${dist.dir}/${local-idv.jarname}" index="false">
-            <fileset dir="${base.dir}">
+            <!-- <fileset dir="${base.dir}"> -->
+            <fileset dir="${build.dir}">
                 <patternset refid="local-idv.includes" />
             </fileset>
             <manifest>
@@ -411,10 +429,14 @@
     </target>
     
     <!-- Create jar files and documentation -->
-    <target name="jar"
+    <!-- <target name="jar"
     depends="clean, build, copy.build.props, jar.base, jar.local-idv"
     description="Create jar files and documentation" />
-    
+    --> 
+    <target name="jar"
+    depends="build, copy.build.props, jar.base, jar.local-idv"
+    description="Create jar files and documentation" />
+   
     <!-- Create nightly jar files and documentation -->
     <target name="jar.nightly"
     depends="clean, build, copy.nightly.props, jar.base, jar.local-idv"
@@ -450,13 +472,13 @@
         <!-- Override default IDV classes with custom ones -->
         <!-- <unzip src="${idvlib.dir}/local-idv.jar" dest="${build.dir}" /> -->
         
-        <copy todir="${build.dir}">
-            <fileset dir="${base.dir}">
+<!--         <copy todir="${build.dir}">
+            <fileset dir="${.dir}">
                 <patternset refid="jar.includes" />
                 <patternset refid="local-idv.includes" />
             </fileset>
         </copy>
-        
+ -->        
         <delete dir="${build.dir}/META-INF" failonerror="false" />
         
         <tstamp prefix="jar" />
@@ -473,8 +495,10 @@
     <target name="dist"
         depends="auxdata.nodocs, ncidv.nolog, jar, startupmanager, javadoc.jar, userguide.jar"
         description="Create distribution product" >
-        <copy file="${base.dir}/edu/wisc/ssec/mcidasv/util/GetMem.class" tofile="${dist.dir}/GetMem.class" failonerror="false" />
-        <copy file="${base.dir}/edu/wisc/ssec/mcidasv/util/GetVer.class" tofile="${dist.dir}/GetVer.class" failonerror="false" />
+<!--         <copy file="${base.dir}/edu/wisc/ssec/mcidasv/util/GetMem.class" tofile="${dist.dir}/GetMem.class" failonerror="false" />
+        <copy file="${base.dir}/edu/wisc/ssec/mcidasv/util/GetVer.class" tofile="${dist.dir}/GetVer.class" failonerror="false" /> -->
+        <copy file="${build.dir}/edu/wisc/ssec/mcidasv/util/GetMem.class" tofile="${dist.dir}/GetMem.class" failonerror="false" />
+        <copy file="${build.dir}/edu/wisc/ssec/mcidasv/util/GetVer.class" tofile="${dist.dir}/GetVer.class" failonerror="false" />
     </target>
     
     <!-- Create nightly webstart distribution product -->
