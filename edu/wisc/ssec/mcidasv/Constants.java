@@ -302,6 +302,7 @@ public interface Constants extends IdvConstants {
 
 	/** Location of latest version file under base url */
 	public static final String VERSION_URL = "stable/version.txt";
+	public static final String VERSION_HANDLER_URL = "stable/version.php";
 
 	/** Location of latest prerelease directory under base url */
 	public static final String PRERELEASE_URL = "prerelease/";
