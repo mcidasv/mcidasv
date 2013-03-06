@@ -1,32 +1,50 @@
 This is the main trunk for SSEC's McIDAS-V Project.
 
-Directory Structure
--------------------
+Things of Interest
+------------------
 
-    build.xml                       * Main Ant build file.
-    doc/                            * Project documentation.
-    edu/                            
-    `-- wisc/                       
-        `-- ssec/                   
-            `-- mcidasv/            * General managers and main application 
-                |                     code should go here, e.g., ViewManger, 
-                |                     McIDASV.java.
-                |-- chooser/        * Data choosers should go here.
-                |-- control/        * Display controls should go here.
-                |-- data/           * Datasources should go here.
-                |-- display/        * Displays code should go here.
-                |-- images/         * Application images should go here.
-                |-- jython/         * Linear Combination Jython Interpreter.
-                |-- monitors/       * Monitor the state of a McIDAS-V session.
-                |-- probes/         * Data probes.
-                |-- resources/      * .RBI, .XML, .py, etc... resource should 
-                |                     go here.
-                |-- servermanager/  * Handles local and remote ADDE datasets.
-                |-- startupmanager/ * Manage McIDAS-V startup options.
-                |-- supportform/    * Submit McIDAS-V support requests.
-                |-- ui/             * UI related classes here, e.g., UIManager.
-                `-- util/           * Utility classes can go here.
-    release/                        * Files used by install4J.
+    .                                   
+    ├── build-customized.xml            * User-customizable Ant build file.
+    ├── build.xml                       * Main Ant build file.
+    ├── docs                            
+    │   ├── javadoc                     * API documentation for developers.
+    │   └── userguide                   * Project documentation.
+    ├── edu                             
+    │   └── wisc                        
+    │       └── ssec                    
+    │           ├── mcidas              
+    │           └── mcidasv             * General managers and main application 
+    │               │                     code should go here, e.g., ViewManger, 
+    │               │                     McIDASV.java.
+    │               ├── chooser         * Data choosers should go here.
+    │               ├── control         * Display controls should go here.
+    │               ├── data            * Datasources should go here.
+    │               ├── display         * Displays code should go here.
+    │               ├── images          * DEPRECATED: please use appropriate
+    │               │                     directory within "resources".
+    │               ├── jython          * Linear Combination Jython Interpreter.
+    │               ├── monitors        * Monitor the state of a McIDAS-V session.
+    │               ├── probes          * Data probes.
+    │               ├── resources       * Non-code resources required by 
+    │               │   │                 McIDAS-V should reside here. Things
+    │               │   │                 like RBI, XML, and images.
+    │               │   └── python      * Jython library code.
+    │               ├── servermanager   * Handles local and remote ADDE datasets.
+    │               ├── startupmanager  * Manage McIDAS-V startup options.
+    │               ├── supportform     * Submit McIDAS-V support requests.
+    │               ├── ui              * UI related classes here, e.g., UIManager.
+    │               └── util            * Utility classes can go here.
+    ├── lib                             * McIDAS-V dependencies (other than VisAD/IDV).
+    ├── release                         * Files used by install4J.
+    ├── tools                           
+    │   ├── apidocs                     
+    │   └── external                    
+    │       ├── orphan_icon_finder      
+    │       ├── pluginfeed              
+    │       └── supportreq              
+    └── ucar                            
+                                        
+
 
 Building a new release
 ----------------------

@@ -49,9 +49,18 @@ associated with it.
   <li class=propertylistitem><strong>New Display Tab -</strong> Adds a new display
     tab to your currently open display window. This tab can be a map or globe display with one to four panels. Other speciality
     displays are also available.</li>
-  <li class=propertylistitem><strong>Open File... -</strong> Opens a bundle.</li>
+  <li class=propertylistitem><strong>Open File... -</strong> Opens an Open File window, that allows you to load a bundle into your session. There are four options you can use when loading in a bundle:</li>
+  <ul class="propertylist">
+  <li class="propertylistitem"><strong>Create new window(s) -</strong> Displays the bundle's data in a separate Main Display window&nbsp;without changing anything with your previously existing Main Display window.</li>
+  <li class="propertylistitem">
+  <strong>Merge with active tab(s) -</strong> Adds the a display of the bundle's data to your currently active tab in the Main Display window.&nbsp;This will not remove any previously existing displays in the tab.</li>
+  <li class="propertylistitem">
+  <strong>Add new tab(s) to current window -</strong> Adds tabs to your previously existing Main Display window to display the bundle's data. This will not remove any previously existing displays in other tabs.</li>
+  <li class="propertylistitem">
+  <strong>Replace session -</strong> Removes any previously existing displays, data, and&nbsp;tab/panel configuration to load the bundle in from scratch.</li>
+  </ul>
   <li class=propertylistitem><strong>Save Favorite -</strong> Allows you to easily
-    create a set of <a href="../Bundles.html#favorites">favorite bundles</a> and readily access them through the <strong>Bundles</strong> menu.</li>
+    create a set of <a href="../Bundles.html#favorites">favorite bundles</a> and readily access them through the <strong>Bundles</strong> menu. A favorite bundle can also be used as the <a href="../tools/preferences/AdvancedPreferences.html#defaultbundle">Default Bundle</a>.</li>
   <li class=propertylistitem><strong>Save Bundle -</strong> Allows you to save
     the current application state as a <a href="../Bundles.html">bundle</a>.</li>
     <!-- or Web Start JNLP file-->
@@ -60,15 +69,14 @@ associated with it.
     you to manage the default layout of McIDAS-V. The default layout saves the
     window placement and the number of tabs and panels.</li>
     <ul class=propertylist>
-      <li class=propertylistitem><strong>Save -</strong> Saves the current layout as the default layout.</li>
+      <li class=propertylistitem><strong>Save -</strong> Saves the current layout as the default layout. This creates a layout.mcv file in your McIDAS-V directory.</li>
       <li class=propertylistitem><strong>Remove -</strong> Removes the currently saved default layout.</li>
 <li class=propertylistitem>Note: Saving the default layout does not affect the maps displayed in
       each panel or the data loaded at the beginning of each McIDAS-V session.
-      To change map defaults, use the <strong>File-&gt;Default Maps-&gt;Save as the Default Map
-      Set</strong> menu item in the <a href="../controls/MapDisplayControl.html">Map
-      Controls</a> window. Change the default projection in the <a href="../tools/preferences/DisplayWindowPreferences.html"><strong>Display
-      Window</strong></a> tab of the User Preferences window, or automatically load a Favorite bundle by selecting
-      a default bundle in the Default section of the <a href="../tools/preferences/AdvancedPreferences.html"><strong>Advanced</strong></a> tab of the User Preferences window.</li>
+      Map defaults can be set in the <strong>Layer Controls</strong> tab of the Data Explorer in the <a href="../controls/MapDisplayControl.html">Map Controls</a>. To change map defaults, use the <strong>File-&gt;Default Maps-&gt;Save as the Default Map
+      Set</strong> menu item. Change the default projection in the <a href="../tools/preferences/DisplayWindowPreferences.html"><strong>Display
+      Window</strong></a> tab of the User Preferences window, or automatically load a <a href="../Bundles.html#favorites">Favorite bundle</a> by selecting
+      a <a href="../tools/preferences/AvailableDisplaysPreferences.html#defaultbundle">default bundle</a> in the <strong>Defaults</strong> panel of the <strong>Advanced</strong> tab of the User Preferences window.</li>
     </ul>
   <li class=propertylistitem><strong>Exit -</strong> Exits McIDAS-V.</li>
 </ul>
@@ -80,9 +88,9 @@ associated with it.
     <ul class="propertylist">
         <li class=propertylistitem><strong>All Layers and Data Sources -</strong>
         Removes all layers and loaded data sources.</li>
-      <li class=propertylistitem><strong>All Layers -</strong> Remove all layers.</li>
+      <li class=propertylistitem><strong>All Layers -</strong> Remove all layers. This will remove any displays or items listed in the Legend of the&nbsp;Main Display window, but no data will be removed.</li>
       <li class=propertylistitem><strong>All Data Sources -</strong> Removes all loaded
-        data sources. The layers are unaffected.</li>
+        data sources&nbsp;without removing any layers. This will retain the displays.</li>
 </ul>
   <li class=propertylistitem><strong>Preferences... -</strong> Opens the <a href="../tools/preferences/Preferences.html">User
       Preferences</a> window, allowing you to edit settings for McIDAS-V.</li>
@@ -139,7 +147,7 @@ This menu allows you to configure and edit different McIDAS-V resources.
       Model Editor</a>, which allows you to view, create, and modify station models
       for plotting point data.</li>
   <li class=propertylistitem><strong>Parameters -</strong> Contains
-    items related to parameters in McIDAS-V.</li>
+    items related to parameters in McIDAS-V. Parameters are used to determine how field names from different data sources are read and interpreted into McIDAS-V.</li>
     <ul class="propertylist">
       <li class=propertylistitem><strong>Aliases -</strong> Opens the <a href="../tools/AliasEditor.html">Parameter
           Alias Editor</a>, which allows you to define aliases for parameters
@@ -157,11 +165,11 @@ This menu allows you to configure and edit different McIDAS-V resources.
         the <a href="../tools/ProjectionManager.html">Projection Manager</a>,
         which allows you to choose, edit, and save map projections for use in
         McIDAS-V.</li>
-      <li class=propertylistitem><strong>Restore Saved View -</strong> Restores the previously saved view.</li>
+      <li class=propertylistitem><strong>Restore Saved View -</strong> Restores the previously saved view. This will list out various previously saved views and allow you&nbsp;to delete previously saved views as well.</li>
       <li class=propertylistitem><strong>Delete Saved Views -</strong> Deletes
-        the previously saved view.</li>
+        a previously saved view.</li>
       <li class=propertylistitem><strong>Save Current View -</strong> Saves the
-        current view. This does not include any layers that are loaded in, only the zoom level, projection, and location.</li>
+        current view. This does not include any layers that are loaded in, only the zoom level, projection, and location. When you save a current view, you can apply a name to the viewpoint. This name will be used to list out the viewpoint under the <strong>Projections</strong> menu of the Main Display as well as under <strong>Restore Saved View</strong>. Any saved viewpoints will be saved in the viewpoints.xml file stored in the McIDAS-V directory.</li>
     </ul>
   <li class=propertylistitem><strong>Formulas -</strong> Contains items
     related to end user formulas.</li>
@@ -177,7 +185,7 @@ This menu allows you to configure and edit different McIDAS-V resources.
       <li class=propertylistitem><strong>Import -</strong> Imports a formula from
         a file.</li>
       <li class=propertylistitem><strong>Export -</strong> Exports a formula to
-        a file.</li>
+        a file. This opens an Export Formulas window that lists out all of the native formulas in McIDAS-V, as&nbsp;well as any formulas you may have created yourself. The format of the file containing the formula is *.xml.</li>
     </ul>
   <li class=propertylistitem><strong>Plugins</strong></li>
     <ul class="propertylist">

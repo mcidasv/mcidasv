@@ -17,7 +17,7 @@
     <property name="doc.dir" location="${base.dir}/docs" />
     <property name="javadoc.dir" location="${doc.dir}/javadoc" />
     <property name="userguide.dir" location="${doc.dir}/userguide" />
-    <property name="heap.dir" location="/tmp/javaheaps" />
+    <property name="heap.dir" location="/tmp/mcidasv-heapdump.hprof" />
     
     <!-- For example: "/Applications/McIDAS/adde" on OS X and NOT "/Applications/McIDAS/adde/bin" -->
     <!-- <property name="addeservers.dir" location="/path/to/local/adde/root" /> --> 
@@ -490,13 +490,14 @@
       <!--<jvmarg value="-noverify" />-->
       <!--<jvmarg value="-XX:+DoEscapeAnalysis" />-->
       <!-- 
-        You might want to uncomment the following two lines. They'll have the 
-        JVM dump the heap's contents on an OutOfMemory exception (very helpful!)
-        ${heap.dir} defaults to "/tmp/javaheaps/", but feel free to change it.
+        The following two lines will allow the JVM to dump the heap's 
+        contents on an OutOfMemory exception (very helpful!).
+        ${heap.dir} defaults to "/tmp/mcidasv-heapdump.hprof" but feel free 
+        to change it.
       --> 
-      <!--
       <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
       <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
+      <!--
       <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
       <sysproperty key="debug.adde.reqs" value="false" />
       -->
