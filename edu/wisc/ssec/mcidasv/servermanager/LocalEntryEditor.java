@@ -354,7 +354,7 @@ public class LocalEntryEditor extends javax.swing.JDialog {
             setLastPath(mask);
         }
         
-        AddeFormat format = (AddeFormat)formatComboBox.getSelectedItem();
+        AddeFormat format = (AddeFormat) formatComboBox.getSelectedItem();
         LocalAddeEntry entry = new LocalAddeEntry.Builder(name, group, mask, format).status(EntryStatus.ENABLED).build();
         
         // if adding a new entry, make sure dataset is not a duplicate
@@ -363,9 +363,12 @@ public class LocalEntryEditor extends javax.swing.JDialog {
         	for (AddeEntry storeEntry : entryStore.getEntrySet()) {
         		String storeGroup = storeEntry.getGroup();
         		if (newGroup.equals(storeGroup)) {
-        			JOptionPane.showMessageDialog(this.getContentPane(), 
-        					"Group specified is a duplicate, please correct this.");
-        			return null;
+        			// only apply this restriction to MSG HRIT data
+        			if ((format.equals(AddeFormat.MSG_HRIT_FD)) || (format.equals(AddeFormat.MSG_HRIT_HRV))) {
+        				JOptionPane.showMessageDialog(this.getContentPane(), 
+        						"Dataset specified is a duplicate, not supported with MSG HRIT format.");
+        				return null;
+        			}
         		}
         	}
         }
