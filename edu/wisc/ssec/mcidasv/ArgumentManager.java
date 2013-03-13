@@ -50,9 +50,18 @@ import ucar.unidata.util.PatternFileFilter;
  */
 public class ArgumentManager extends ArgsManager {
 
+    /** McIDAS-V flag that signifies everything that follows is a Jython argument. */
+    public static final String ARG_JYTHONARGS = "-scriptargs";
+
     /** usage message */
     public static final String USAGE_MESSAGE =
         "Usage: runMcV [OPTIONS] <bundle/script files, e.g., .mcv, .mcvz, .py>";
+
+    /** Jython arguments, if any. */
+    private List<String> jythonArguments;
+    
+    /** Jython script to execute, or {@literal "<none>"} if one was not given. */
+    private String jythonScript;
 
     /**
      *  Given by the "-user" argument. Alternative user path for bundles,  resources, etc.
@@ -67,6 +76,16 @@ public class ArgumentManager extends ArgsManager {
      */
     public ArgumentManager(IntegratedDataViewer idv, String[] args) {
         super(idv, args);
+        jythonArguments = new ArrayList<String>();
+        jythonScript = "<none>";
+    }
+
+    private static List<String> extractJythonArgs(int index, String[] args) {
+        List<String> jythonArgs = new ArrayList<String>(args.length);
+        for (int i = index; i < args.length; i++) {
+            jythonArgs.add(args[i]);
+        }
+        return jythonArgs;
     }
 
     /**
@@ -101,14 +120,24 @@ public class ArgumentManager extends ArgsManager {
             System.err.println(getUsageMessage());
             ((McIDASV)getIdv()).exit(1);
         } else if (checkArg(arg, "-script", args, idx, 1) || checkArg(arg, "-pyfile", args, idx, 1)) {
-            scriptingFiles.add(args[idx++]);
+            String scriptArg = args[idx++];
+            jythonScript = scriptArg;
+            scriptingFiles.add(scriptArg);
             if (!getIslInteractive()) {
                 setIsOffScreen(true);
             }
         } else if ("-console".equals(arg)) {
             System.err.println("*** WARNING: console flag is likely to go away soon!");
-        }
-        else {
+        } else if (ARG_JYTHONARGS.equals(arg)) {
+            if (scriptingFiles.isEmpty()) {
+                System.err.println("*** WARNING: Jython script arguments will be ignored unless you provide a Jython script to execute!");
+            } else {
+                jythonArguments.addAll(extractJythonArgs(idx, args));
+                
+                // jump to end of args to halt further idv processing.
+                return args.length;
+            }
+        } else {
             if (ARG_ISLINTERACTIVE.equals(arg) || ARG_B64ISL.equals(arg) || ARG_ISLFILE.equals(arg) || isIslFile(arg)) {
                 System.err.println("*** WARNING: ISL is being deprecated!");
             }
@@ -160,6 +189,7 @@ public class ArgumentManager extends ArgsManager {
 //            + msg("<scriptfile.isl>", "(Run the IDV script in batch mode)")
             + msg("-script", "<jython script file to evaluate>")
             + msg("-pyfile", "<jython script file to evaluate>")
+            + msg(ARG_JYTHONARGS, "All arguments after this flag will be considered Jython arguments.")
 //            + msg(ARG_B64ISL, "<base64 encoded inline isl> This will run the isl in interactive mode")
 //            + msg(ARG_ISLINTERACTIVE, "run any isl files in interactive mode")
             + msg(ARG_IMAGE, "<image file name> (create a jpeg image and then exit)")
@@ -182,7 +212,39 @@ public class ArgumentManager extends ArgsManager {
             + msg(ARG_TRACEONLY, "<trace pattern> (Print out trace messages that match the pattern)")
             + msg("-console", "[ fix for getting the console functionality in install4j launcher ]");
     }
-
+    
+    /**
+     * Determine whether or not the user has provided any arguments for a 
+     * Jython script.
+     * 
+     * @return {@code true} if the user has provided Jython arguments, 
+     * {@code false} otherwise.
+     */
+    public boolean hasJythonArguments() {
+        return !jythonArguments.isEmpty();
+    }
+    
+    /**
+     * Returns Jython arguments. <b>Note:</b> this does not include the Jython
+     * script that will be executed.
+     * 
+     * @return Either a {@link List} of {@link String Strings} containing the
+     * arguments or an empty {@code List} if there were no arguments given.
+     */
+    public List<String> getJythonArguments() {
+        return jythonArguments;
+    }
+    
+    /**
+     * Returns the name of the Jython script the user has provided.
+     * 
+     * @return Either the path to a Jython file or {@literal "<none>"} if the
+     * user did not provide a script.
+     */
+    public String getJythonScript() {
+        return jythonScript;
+    }
+    
     /**
      * @see ArgsManager#getBundleFileFilters()
      */

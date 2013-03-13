@@ -70,6 +70,12 @@ for jythonpath in _mcvinit_jythonpaths():
 from edu.wisc.ssec.mcidasv import McIDASV
 _mcv = McIDASV.getStaticMcv()
 
+# make sys.argv look as if the user ran "jython file.py arg1 ... argN"
+from edu.wisc.ssec.mcidasv import ArgumentManager
+argManager = _mcv.getArgsManager()
+if argManager.hasJythonArguments():
+    sys.argv = [argManager.getJythonScript()] + argManager.getJythonArguments()
+
 # need to get some IDV-specifc init done
 from ucar.unidata.idv.ui import ImageGenerator
 islInterpreter = ImageGenerator(_mcv)
