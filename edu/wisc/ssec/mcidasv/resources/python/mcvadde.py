@@ -165,6 +165,29 @@ def isAddeDebugEnabled(defaultValue=False):
     return EntryStore.isAddeDebugEnabled(defaultValue)
 
 
+def getDescriptor(dataset, imageType):
+    """Get the descriptor for a local ADDE entry
+
+    (this wasn't included in the 1.2 release, but enough people are using it
+    that we'll want to keep it for backward compatibility.)
+        
+    Args:
+        dataset: Dataset field from local ADDE server
+        imageType: Image Type field from local ADDE server
+
+    Returns: valid descriptor string or -1 if no match was found
+    """
+    # get a list of local ADDE server entries
+    localEntries = getStaticMcv().getServerManager().getLocalEntries()
+    for entry in localEntries:
+        if entry.getName() == imageType and entry.getGroup() == dataset:
+            # descriptor found; convert to upper case and return it
+            desc = str(entry.getDescriptor()).upper()
+            return desc
+    # no matching descriptor was found so return an error value:
+    return -1
+
+
 def getLocalADDEEntry(dataset, imageType):
     """Get the descriptor for a local ADDE entry.
         
