@@ -60,10 +60,6 @@ def _mcvinit_jythonpaths():
         jars['mcidasv'] + '/edu/wisc/ssec/mcidasv/resources/python',
         jars['mcidasv'] + '/edu/wisc/ssec/mcidasv/resources/python/utilities',
         jars['mcidasv'] + '/edu/wisc/ssec/mcidasv/resources/python/linearcombo',
-        # putting this here so I can run from non-Ant eclipse build (no mcidasv.jar)
-        '/Users/mhiley/v/mcidasv/edu/wisc/ssec/mcidasv/resources/python',
-        '/Users/mhiley/v/mcidasv/edu/wisc/ssec/mcidasv/resources/python/utilities',
-        '/Users/mhiley/v/mcidasv/edu/wisc/ssec/mcidasv/resources/python/linearcombo',
     ]
 
 for jythonpath in _mcvinit_jythonpaths():
