@@ -60,6 +60,10 @@ def _mcvinit_jythonpaths():
         jars['mcidasv'] + '/edu/wisc/ssec/mcidasv/resources/python',
         jars['mcidasv'] + '/edu/wisc/ssec/mcidasv/resources/python/utilities',
         jars['mcidasv'] + '/edu/wisc/ssec/mcidasv/resources/python/linearcombo',
+        # putting this here so I can run from non-Ant eclipse build (no mcidasv.jar)
+        '/Users/mhiley/v/mcidasv/edu/wisc/ssec/mcidasv/resources/python',
+        '/Users/mhiley/v/mcidasv/edu/wisc/ssec/mcidasv/resources/python/utilities',
+        '/Users/mhiley/v/mcidasv/edu/wisc/ssec/mcidasv/resources/python/linearcombo',
     ]
 
 for jythonpath in _mcvinit_jythonpaths():
@@ -115,7 +119,7 @@ from mcvadde import (
     getADDEImage, listADDEImages, params1, params_area_coords,
     params_image_coords, params_sizeall, disableAddeDebug, enableAddeDebug,
     isAddeDebugEnabled, LATLON, AREA, IMAGE, ULEFT, CENTER, testADDEImage,
-    makeLocalDataset
+    makeLocalADDEEntry
 )
 
 from interactive import (
