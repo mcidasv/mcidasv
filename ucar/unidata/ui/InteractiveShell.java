@@ -482,7 +482,6 @@ public class InteractiveShell implements HyperlinkListener {
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
                 editorPane.setText(sb.toString());
-                // no longer doing a "scrollRectToVisible" here, see "doMakeContents"
             }
         });
     }

@@ -419,7 +419,6 @@ public class JythonShell extends InteractiveShell {
                     // I use 8192 as a threshold because this is apparently the max
                     // that the PythonInterpreter will send to it's OutputStream at a 
                     // single time...not sure how to choose this threshold more intelligently.
-                    // TODO: think of smart way to inform user that their output is being truncated.
                     print(output);
                     output(output.replace("<", "&lt;")
                                  .replace(">", "&gt;")
@@ -638,23 +637,16 @@ public class JythonShell extends InteractiveShell {
                 }
             }
             PythonInterpreter interp = getInterpreter();
-            // MJH March2013: commenting out start/endBufferingOutput calls-
-            // we want the shell output to display as soon as it's available!
-            // Is this smart though??? obviously at some point someone
-            // thought it was a good idea to buffer this output!
-            //startBufferingOutput();
+            // MJH March2013: no longer doing a startBufferingOutput here
             interp.exec(sb.toString());
-            //endBufferingOutput();
             
             // write off history to "store" so user doesn't have to save explicitly.
             saveHistory();
             
             jythonLogger.info(sb.toString());
         } catch (PyException pse) {
-            //endBufferingOutput();
             output("<font color=\"red\">" + formatCode(pse.toString()) + "</font><br/>");
         } catch (Exception exc) {
-            //endBufferingOutput();
             output("<font color=\"red\">" + formatCode(exc.toString()) + "</font><br/>");
         }
     }
@@ -666,7 +658,6 @@ public class JythonShell extends InteractiveShell {
      */
     public void printType(Data d) {
         try {
-            //startBufferingOutput();
             MathType t = d.getType();
             visad.jmet.DumpType.dumpMathType(t, outputStream);
             output("<hr>DataType analysis...");
@@ -674,7 +665,6 @@ public class JythonShell extends InteractiveShell {
         } catch (Exception exc) {
             logException("An error occurred printing types", exc);
         }
-        //endBufferingOutput();
     }
 
     /**
