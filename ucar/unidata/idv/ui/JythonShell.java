@@ -412,6 +412,7 @@ public class JythonShell extends InteractiveShell {
         interp.set("shell", this);
         outputStream = new OutputStream() {
             @Override public void write(byte[] b, int off, int len) {
+                String output = new String(b, off, len);
                 if (len < 8192) {
                     // only print "short" output. This combats problem of the Jython
                     // Shell effectively locking up when user prints a large data object.
@@ -419,13 +420,19 @@ public class JythonShell extends InteractiveShell {
                     // that the PythonInterpreter will send to it's OutputStream at a 
                     // single time...not sure how to choose this threshold more intelligently.
                     // TODO: think of smart way to inform user that their output is being truncated.
-                    String output = new String(b, off, len);
                     print(output);
                     output(output.replace("<", "&lt;")
                                  .replace(">", "&gt;")
                                  .replace("\n", "<br>")
                                  .replace(" ", "&nbsp;")
                                  .replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;"));
+                    // end buffering (important if we're getting here after hitting big output chunks).
+                    endBufferingOutput();
+                } else {
+                    // we've hit a big chunk of output; start buffering!
+                    startBufferingOutput();
+                    output(output.substring(0, 50) +
+                            "<font color=\"red\">" + ".....output truncated" + "</font><br/>");
                 }
             }
             private void print(final String output) {

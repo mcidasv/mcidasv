@@ -62,6 +62,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.text.DefaultCaret;
 import javax.swing.text.JTextComponent;
 
 import org.slf4j.Logger;
@@ -216,10 +217,16 @@ public class InteractiveShell implements HyperlinkListener {
      * @return _more_
      */
     protected JComponent doMakeContents() {
+        
         editorPane = new JEditorPane();
         editorPane.setEditable(false);
         editorPane.setContentType("text/html");
         editorPane.addHyperlinkListener(this);
+        // http://www.coderanch.com/t/537810/GUI/java/auto-scroll-bottom-jtextarea
+        // scroll to bottom on text updates:   
+        DefaultCaret caret = (DefaultCaret) editorPane.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        
         JScrollPane scroller = GuiUtils.makeScrollPane(editorPane, 400, 300);
         scroller.setPreferredSize(new Dimension(400, 300));
         commandFld = new JTextField();
@@ -475,7 +482,7 @@ public class InteractiveShell implements HyperlinkListener {
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
                 editorPane.setText(sb.toString());
-                editorPane.scrollRectToVisible(new Rectangle(0, 10000, 1, 1));
+                // no longer doing a "scrollRectToVisible" here, see "doMakeContents"
             }
         });
     }
