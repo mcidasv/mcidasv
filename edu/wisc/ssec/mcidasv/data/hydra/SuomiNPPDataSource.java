@@ -99,8 +99,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	/** Sources file */
     protected String filename;
     
-    // for loading bundles, store granule lists here
+    // for loading bundles, store granule lists and geo lists here
     protected List<String> oldSources = new ArrayList<String>();
+    protected List<String> geoSources = new ArrayList<String>();
 
     protected MultiDimensionReader nppAggReader;
 
@@ -442,6 +443,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    			}
 	    			logger.debug("Cobbled together GEO file name: " + geoFilename);
 	    			fGeo.setAttribute("location", geoFilename);
+	    			// add this to list used if we create a zipped bundle
+	    			geoSources.add(geoFilename);
 	    			agg.addContent(fGeo);
     			}
 
@@ -497,7 +500,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    				// second to identify displayable products
     	    				for (Group subG : adg) {
     	    					logger.debug("Sub group name: " + subG.getFullName());
-    	    					String subName = subG.getFullName();
     	    					// this is the product data
     	    					List<Variable> vl = subG.getVariables();
     	    					for (Variable v : vl) {
@@ -783,8 +785,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
         	if (is3D) {
 
         		// 3D data is either ATMS, OMPS, or CrIS
-        		if ((instrumentName.getName() != null) && (instrumentName.getStringValue().equals("ATMS"))) {
-            		//hasChannelSelect = true;
+        		if ((instrumentName.getShortName() != null) && (instrumentName.getStringValue().equals("ATMS"))) {
+
         			spectTable.put(SpectrumAdapter.channelIndex_name, "Channel");
             		swathTable.put(SpectrumAdapter.channelIndex_name, "Channel");
             		
@@ -976,7 +978,34 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	}
     }
 
-    public int getBundleAdapterIndex() {
+    /* (non-Javadoc)
+	 * @see edu.wisc.ssec.mcidasv.data.HydraDataSource#canSaveDataToLocalDisk()
+	 */
+	@Override
+	public boolean canSaveDataToLocalDisk() {
+		// At present, Suomi data is always data granules on disk
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see ucar.unidata.data.DataSourceImpl#saveDataToLocalDisk(java.lang.String, java.lang.Object, boolean)
+	 */
+	@Override
+	protected List saveDataToLocalDisk(String filePrefix, Object loadId,
+			boolean changeLinks) throws Exception {
+		// need to make a list of all data granule files
+		// PLUS all geolocation granule files, but only if accessed separate!
+		List<String> fileList = new ArrayList<String>();
+		for (int i = 0; i < oldSources.size(); i++) {
+			fileList.add(oldSources.get(i));
+		}
+		for (int i = 0; i < geoSources.size(); i++) {
+			fileList.add(geoSources.get(i));
+		}
+		return fileList;
+	}
+
+	public int getBundleAdapterIndex() {
 		return bundleAdapterIndex;
 	}
 
