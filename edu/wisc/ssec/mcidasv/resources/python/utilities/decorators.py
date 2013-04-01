@@ -1,3 +1,4 @@
+import sys
 import warnings
 
 def deprecated(replacement=None):
@@ -40,3 +41,14 @@ def deprecated(replacement=None):
                 return oldfun(*args, **kwargs)
         return inner
     return outer
+
+def default_import(f):
+    """A decorator that automatically adds whatever is being decorated to __all__."""
+    # Taken from:
+    # http://code.activestate.com/recipes/576993-public-decorator-adds-an-item-to-__all__/
+    all = sys.modules[f.__module__].__dict__.setdefault('__all__', [])
+    if f.__name__ not in all:  # Prevent duplicates if run from an IDE.
+        all.append(f.__name__)
+    return f
+
+default_import(default_import)
