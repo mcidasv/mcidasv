@@ -258,9 +258,9 @@ def makeLocalADDEEntry(dataset, imageType, mask, format, save=False):
     else:
         isTemp = False
     
-    localDataset = LocalAddeEntry.Builder(name, group, mask, convertedFormat).status(EntryStatus.ENABLED).temporary(isTemp).build()
-    getStaticMcv().getServerManager().addEntry(localDataset)
-    return localDataset
+    localEntry = LocalAddeEntry.Builder(name, group, mask, convertedFormat).status(EntryStatus.ENABLED).temporary(isTemp).build()
+    getStaticMcv().getServerManager().addEntry(localEntry)
+    return localEntry
     
 
 def listADDEImages(server, dataset, descriptor,
@@ -507,12 +507,12 @@ def testADDEImage(localEntry=None,
                     by servers using McIDAS accounting; default = ('idv','0')
         debug: send debug information to file; default=False
     """
-    if localDataset:
-        server = localDataset.getAddress()
-        dataset = localDataset.getGroup()
-        descriptor = localDataset.getDescriptor()
+    if localEntry:
+        server = localEntry.getAddress()
+        dataset = localEntry.getGroup()
+        descriptor = localEntry.getDescriptor()
     elif (server is None) or (dataset is None) or (descriptor is None):
-        raise TypeError('must provide localDataset or server, dataset, and descriptor values')
+        raise TypeError('must provide localEntry or server, dataset, and descriptor values')
     
     # still need to handle dates+times
     # todo: don't break!
