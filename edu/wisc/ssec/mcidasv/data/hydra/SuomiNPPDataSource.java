@@ -248,9 +248,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	ArrayList<String> unsignedFlags = new ArrayList<String>();
     	ArrayList<String> unpackFlags = new ArrayList<String>();
     	
-    	// time for each product in milliseconds since epoch
-    	ArrayList<Long> productTimes = new ArrayList<Long>();
-    	
     	// geo product IDs for each granule
     	ArrayList<String> geoProductIDs = new ArrayList<String>();
     	
@@ -335,8 +332,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    	    							String sTime = aTime.getStringValue();
 	    	    							logger.debug("For day/time, using: " + sDate + sTime.substring(0, sTime.indexOf('Z') - 3));
 	    	    							Date d = sdf.parse(sDate + sTime.substring(0, sTime.indexOf('Z') - 3));
-	    	    							productTimes.add(new Long(d.getTime()));
-	    	    							logger.debug("ms since epoch: " + d.getTime());
 	    	    							foundDateTime = true;
 	    	    							// set time for display to day/time of 1st granule examined
 	    	    							if (! nameHasBeenSet) {
@@ -362,12 +357,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    		}
     		}
     		
-    		for (Long l : productTimes) {
-    			logger.debug("Product time: " + l);
-    		}
-    		
     		// build each union aggregation element
     		for (int elementNum = 0; elementNum < sources.size(); elementNum++) {
+    			
     			String s = (String) sources.get(elementNum);
     			
     			// build an XML (NCML actually) representation of the union aggregation of these two files
@@ -968,10 +960,13 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
     public void initAfterUnpersistence() {
     	try {
-    		sources.clear();
-        	for (Object o : oldSources) {
-        		sources.add((String) o);
-        	}
+    		if (! oldSources.isEmpty()) {
+    			sources.clear();
+    			for (Object o : oldSources) {
+    				sources.add((String) o);
+    			}
+    			oldSources.clear();
+    		}
     		setup();
     	} catch (Exception e) {
     		e.printStackTrace();
@@ -996,11 +991,11 @@ public class SuomiNPPDataSource extends HydraDataSource {
 		// need to make a list of all data granule files
 		// PLUS all geolocation granule files, but only if accessed separate!
 		List<String> fileList = new ArrayList<String>();
-		for (int i = 0; i < oldSources.size(); i++) {
-			fileList.add(oldSources.get(i));
+		for (Object o : sources) {
+			fileList.add((String) o);
 		}
-		for (int i = 0; i < geoSources.size(); i++) {
-			fileList.add(geoSources.get(i));
+		for (String s : geoSources) {
+			fileList.add(s);
 		}
 		return fileList;
 	}

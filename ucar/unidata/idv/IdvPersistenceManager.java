@@ -30,8 +30,6 @@
 
 package ucar.unidata.idv;
 
-
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -42,7 +40,6 @@ import ucar.unidata.data.DataSourceResults;
 
 import ucar.unidata.data.grid.GridDataSource;
 
-
 import ucar.unidata.idv.chooser.*;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.ui.DataSelector;
@@ -50,9 +47,6 @@ import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.idv.ui.IslDialog;
 import ucar.unidata.idv.ui.LoadBundleDialog;
 import ucar.unidata.idv.ui.QuicklinkPanel;
-import ucar.unidata.idv.ui.WindowInfo;
-import ucar.unidata.ui.RovingProgress;
-
 
 import ucar.unidata.util.ColorTable;
 
@@ -60,7 +54,6 @@ import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
 
 import ucar.unidata.util.IOUtil;
-import ucar.unidata.util.JobManager;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.ObjectPair;
@@ -72,35 +65,26 @@ import ucar.unidata.util.Trace;
 
 import ucar.unidata.util.TwoFacedObject;
 
-
 import ucar.unidata.xml.*;
 
 import ucar.unidata.xml.XmlUtil;
 
 import visad.util.ThreadManager;
 
-
 import java.awt.*;
 import java.awt.event.*;
 
 import java.io.*;
 
-import java.lang.reflect.*;
-
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Properties;
 
 import java.util.Vector;
 import java.util.zip.*;
 
 import javax.swing.*;
-import javax.swing.text.*;
-
-
-
 
 /**
  * This class defines what is to be saved when we are
@@ -1417,7 +1401,15 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
                     ZipEntry zipEntry =
                         new ZipEntry(IOUtil.getFileTail(file));
                     dialog.setText("Writing " + zipEntry.getName());
-                    zos.putNextEntry(zipEntry);
+                    try {
+                    	zos.putNextEntry(zipEntry);
+                    // catch dupe entry exceptions, benign so continue
+                    } catch (ZipException ze) {
+                    	if (ze.getMessage().startsWith("duplicate entry")) {
+                    		zos.closeEntry();
+                    		continue;
+                    	}
+                    }
                     IOUtil.writeTo(IOUtil.getInputStream(file, getClass()),
                                    zos);
                     zos.closeEntry();
@@ -2392,7 +2384,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
                 }
             }
 
-            //Check for realative files.
+            // Check for relative files.
             data.put(ID_DATASOURCES, dataSources);
         }
 
@@ -2711,8 +2703,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
 
         String bundleContents = null;
         try {
-            //Is this a zip file
-            //            System.err.println ("file "  + xmlFile);
+            // Is this a zip file
             if (isZidv) {
                 //                System.err.println (" is zidv");
                 boolean ask   = getStore().get(PREF_ZIDV_ASK, true);
