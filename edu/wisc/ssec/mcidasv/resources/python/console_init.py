@@ -107,7 +107,7 @@ from background import (
     allLayerTypes, allProjections, allWindows, boomstick, collectGarbage,
     colorTableNames, firstDisplay, firstWindow, getColorTable, getProjection,
     managedDataSource, pause, performAction, projectionNames, removeAllData,
-    removeAllLayers, setViewSize, _MappedAreaImageFlatField
+    removeAllLayers, setViewSize, _MappedAreaImageFlatField, writeImageAtIndex
 )
 
 from mcvadde import (

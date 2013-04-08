@@ -1989,3 +1989,28 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=No
         display.setSize(width, height)
 
     return display  # TODO: return list of all displays instead
+
+def writeImageAtIndex(fname, idx, params='', quality=1.0):
+    """Captures a particular animation step from the active display.
+    
+    Args:
+        fname: Filename for the captured image.
+        
+        idx: Zero-based index of the desired animation step.
+        
+        params: IDV ISL directives. Default value is "".
+        
+        quality: Image quality (for formats like JPEG). Values may be 
+        between 0.0 and 1.0. Default value is 1.0.
+        
+    Returns:
+        Nothing.
+    """
+    from ucar.unidata.idv.ui import ImageGenerator
+    isl = ImageGenerator.makeXmlFromString(params)
+    xml = '<image file="%s" animation_index="%s" quality="%s">%s</image>' % \
+        (fname, idx, quality, isl)
+    elem = islInterpreter.makeElement(xml)
+    macros = islInterpreter.applyMacros(fname)
+    islInterpreter.captureImage(macros, elem)
+
