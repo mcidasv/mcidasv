@@ -96,7 +96,7 @@ public class HRITChooser extends FileChooser {
     		files = f.listFiles(
     			new java.io.FileFilter() {
     				public boolean accept(File f) {
-    		            if ((f.getName().endsWith("__")) && (f.getName().contains("MSG2"))) {
+    		            if ((f.getName().endsWith("__")) && (f.getName().matches(".*MSG[2-3].*"))) {
     		            	return true;
     		            } else {
     		            	return false;
@@ -166,7 +166,7 @@ public class HRITChooser extends FileChooser {
         public void propertyChange(PropertyChangeEvent e) {
             String prop = e.getPropertyName();
 
-            //If the directory changed, reload the combo box with new image type choices.
+            // If the directory changed, reload the combo box with new image type choices.
             if (JFileChooser.DIRECTORY_CHANGED_PROPERTY.equals(prop)) {
             	Vector<String> availableTypes = getAvailableHRITTypes(jfc.getCurrentDirectory().getPath());
             	reloadComboBox(availableTypes);
@@ -195,11 +195,11 @@ public class HRITChooser extends FileChooser {
                 return true;
             }
 
-            // XXX TJJ - at present, we are ONLY allowing MSG2 segment data files
-            // through the filter which have already bee Wavelet decompressed
+            // XXX TJJ - at present, we are ONLY allowing MSG2 and MSG3 segment data files
+            // through the filter which have already been Wavelet decompressed
             // (i.e., they end with __ and not C_ )
             String fileName = f.getName();
-            if ((fileName.endsWith("__")) && (fileName.contains("MSG2")) && (fileName.length() >= 58)) {
+            if ((fileName.endsWith("__")) && (fileName.matches(".*MSG[2-3].*")) && (fileName.length() >= 58)) {
             	if (extraFilter != null) {
             		if (fileName.contains(extraFilter)) {
             			return true;
@@ -214,7 +214,7 @@ public class HRITChooser extends FileChooser {
 
         }
 
-        //The description of this filter
+        // The description of this filter
         public String getDescription() {
             return "HRIT Data";
         }
@@ -329,7 +329,7 @@ public class HRITChooser extends FileChooser {
         	ArrayList<File> matches = new ArrayList<File>();
         	for (int i = 0; i < fileList.length; i++) {
         		if ((fileList[i].getName().endsWith("__")) && 
-        			(fileList[i].getName().contains("MSG2")) && 
+        			(fileList[i].getName().matches(".*MSG[2-3].*")) && 
         			(fileList[i].getName().length() >= 58)) {
         			tmpChannel = fileList[i].getName().substring(26, 32);
         			tmpTime = fileList[i].getName().substring(46, 58);
@@ -345,7 +345,7 @@ public class HRITChooser extends FileChooser {
         	for (int i = 0; i < matches.size(); i++) {
         		fileSet[i] = (File) matches.get(i);
         	}
-            //super.setSelectedFiles(selectedFiles);
+
         	super.setSelectedFiles(fileSet);
             setHaveData( !((selectedFiles == null)
                            || (selectedFiles.length == 0)));
