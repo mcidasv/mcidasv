@@ -251,7 +251,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   boolean notDisplayable = false;
 			   while (dimIter.hasNext()) {
 				   Dimension dim = (Dimension) dimIter.next();
-				   String s = dim.getName();
+				   String s = dim.getShortName();
 				   logger.debug("DIMENSION name: " + s);
 				   if ((s != null) && (!s.isEmpty())) {
 					   if ((! s.equals(inTrackDimensionName)) && 
@@ -263,7 +263,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 						   break;
 					   }
 				   }
-				   String dimName = dim.getName();
+				   String dimName = dim.getShortName();
 				   logger.debug("GranuleAggregation init, variable: " + varName + ", dimension name: " + dimName + ", length: " + dim.getLength());
 				   if (dimName == null) dimName = "dim" + cnt;
 				   dimNames[cnt] = dimName;
@@ -353,24 +353,22 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   for (int i = 0; i < numDimensions; i++) {
 		   if (is2D) {
 			   // XXX TJJ - if empty name, in-track index is 0
-			   if ((dList.get(i).getName() == null) || (dList.get(i).getName().isEmpty())) {
-				   logger.debug("WARNING: Empty dimension name!, assuming in-track dim is 0");
+			   if ((dList.get(i).getShortName() == null) || (dList.get(i).getShortName().isEmpty())) {
+				   logger.warn("Empty dimension name!, assuming in-track dim is 0");
 				   return 0;
 			   }
-			   logger.debug("Comparing: " + dList.get(i).getName() + " with: " + inTrackName);
-			   if (dList.get(i).getName().equals(inTrackName)) {
+			   if (dList.get(i).getShortName().equals(inTrackName)) {
 				   index = i;
 				   break;
 			   }
 		   }
 		   if (is3D) {
 			   // XXX TJJ - if empty name, in-track index is 0
-			   if ((dList.get(i).getName() == null) || (dList.get(i).getName().isEmpty())) {
-				   logger.debug("WARNING: Empty dimension name!, assuming in-track dim is 0");
+			   if ((dList.get(i).getShortName() == null) || (dList.get(i).getShortName().isEmpty())) {
+				   logger.warn("Empty dimension name!, assuming in-track dim is 0");
 				   return 0;
 			   }
-			   logger.debug("Comparing: " + dList.get(i).getName() + " with: " + inTrackName);
-			   if (dList.get(i).getName().equals(inTrackName)) {
+			   if (dList.get(i).getShortName().equals(inTrackName)) {
 				   index = i;
 				   break;
 			   }
