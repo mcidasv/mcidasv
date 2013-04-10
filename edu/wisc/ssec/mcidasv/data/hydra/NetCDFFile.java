@@ -127,7 +127,7 @@ public class NetCDFFile implements MultiDimensionReader {
        int cnt = 0;
        while(dimIter.hasNext()) {
          Dimension dim = (Dimension) dimIter.next();
-         String dim_name = dim.getName();
+         String dim_name = dim.getShortName();
          if (dim_name == null) dim_name = "dim"+cnt;
          dimNames[cnt] = dim_name;
          dimLengths[cnt] = dim.getLength();
