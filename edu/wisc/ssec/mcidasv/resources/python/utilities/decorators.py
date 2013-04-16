@@ -1,6 +1,33 @@
 import sys
 import warnings
 
+from functools import wraps
+
+from java.lang import Runnable
+from javax.swing import SwingUtilities
+
+class RunnableWrapper(Runnable):
+    def __init__(self, func, args, kwargs):
+        self._func = func
+        self._args = args
+        self._kwargs = kwargs
+        
+    def run(self):
+        self._func(*self._args, **self._kwargs)
+
+def _swingRunner(func, *args, **kwargs):
+    if SwingUtilities.isEventDispatchThread():
+        func(*args, **kwargs)
+    else:
+        runnable = RunnableWrapper(func, args, kwargs)
+        SwingUtilities.invokeLater(runnable)
+
+def swing_thread_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        _swingRunner(func, *args, **kwargs)
+    return wrapper
+
 def deprecated(replacement=None):
     """A decorator which can be used to mark functions as deprecated.
     replacement is a callable that will be called with the same args
