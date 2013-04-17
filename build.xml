@@ -485,9 +485,8 @@
       <assertions refid="mcv.assertions"/>
       <jvmarg value="-XX:+UseConcMarkSweepGC" />
       <jvmarg value="-XX:+CMSClassUnloadingEnabled" />
-      <jvmarg value="-XX:+CMSPermGenSweepingEnabled" />
       <jvmarg value="-XX:MaxPermSize=512m" />
-      <!--<jvmarg value="-noverify" />-->
+      <jvmarg value="-noverify" />
       <!--<jvmarg value="-XX:+DoEscapeAnalysis" />-->
       <!-- 
         The following two lines will allow the JVM to dump the heap's 
