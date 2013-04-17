@@ -8,6 +8,7 @@ from contextlib import contextmanager
 
 # from shell import makeDataSource
 from decorators import deprecated
+from decorators import swing_thread_required
 from interactive import _expandpath
 
 from org.slf4j import Logger
@@ -792,25 +793,26 @@ class _Display(_JavaProxy):
         """Returns a list of all layers used by this Display."""
         
         return [_Layer(displayControl) for displayControl in self._JavaProxy__javaObject.getControls()]
-
+        
+    @swing_thread_required
     def createLayer(self, layerType, data):
         """Creates a new _Layer in this _Display
-
+        
         Args:
             layerType: ID string that represents a type of layer. The valid names
                        can be determined with the "allLayerTypes()" function.
-
+                       
             data: a VisAD Data object to be displayed, or a list of them
-
+            
         Returns:
             The _Layer that was created in this _Display
-
+            
         Raises:
             ValueError:  if layerType isn't valid
         """
         from ucar.unidata.data import DataDataChoice
         from visad.meteorology import ImageSequenceImpl
-
+        
         # need to get short control description from long name
         mcv = getStaticMcv()
         controlID = None
@@ -825,14 +827,14 @@ class _Display(_JavaProxy):
             # imagedisplay can handle loops anyway.
             #print "DEBUG: doing an imagedisplay instead of an imagesequence"
             controlID = 'imagedisplay'
-
+            
         # Set the panel/display that a new DisplayControl will be put into
         # TODO(mike):  set this back to what it was before?
         mcv.getVMManager().setLastActiveViewManager(self._JavaProxy__javaObject)
-
+        
         # for now, don't deal with case where data arg is already a DataChoice.
         # (can add support for this later if needed...)
-
+        
         # the imagedisplay control appears to want an ImageSequenceImpl,
         # so try to force one.
         # This will work if data is an array of NavigatedImage's (or
@@ -843,17 +845,17 @@ class _Display(_JavaProxy):
         except TypeError, te:
             #print "DEBUG: ImageSequenceImpl constructor failed but thats ok"
             pass
-
+            
         # TODO: first arg in DataDataChoice constructor is shortname macro.
         # (can't do anything better now cause we don't have metadata).
         newLayer = mcv.doMakeControl(controlID, 
                 [DataDataChoice("shortname macro goes here", data)])
-
+        
         # wait for thread to finish
         pause()
-
+        
         wrappedLayer = _Layer(newLayer)
-
+        
         defaultLabel = ''
         try:
             defaultLabel = '%s - %s' % (data['sensor-type'], data['nominal-time'])
@@ -862,11 +864,11 @@ class _Display(_JavaProxy):
             # data is a dictionary but doesn't contain the desired key
             #print 'DEBUG: unable to create default layer label'
             pass
-
+            
         wrappedLayer.setLayerLabel(label=defaultLabel)
-
+        
         return wrappedLayer
-
+        
     def captureImage(self, filename, quality=1.0, height=-1, width=-1):
         """Attempt at a replacement for ISL writeImage
 
