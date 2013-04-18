@@ -485,6 +485,7 @@
       <assertions refid="mcv.assertions"/>
       <jvmarg value="-XX:+UseConcMarkSweepGC" />
       <jvmarg value="-XX:+CMSClassUnloadingEnabled" />
+      <jvmarg value="-XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses" />
       <jvmarg value="-XX:MaxPermSize=512m" />
       <jvmarg value="-noverify" />
       <!--<jvmarg value="-XX:+DoEscapeAnalysis" />-->
