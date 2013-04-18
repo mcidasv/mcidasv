@@ -32,19 +32,43 @@ public class HydrometeorClassificationControl extends edu.wisc.ssec.mcidasv.cont
 
         if ((r != null) && !r.isMissing()) {
             
-            // TODO: find full list of numerical codes and the category they represent
+            // list of codes found here:
+            // (51.2.2) http://www.roc.noaa.gov/wsr88d/PublicDocs/ICDs/2620003R.pdf
             String str;
-            if (r.getValue()  == 40) {
-                str = "DRY SNOW!!!";
-            } else {
-                str = "NOT DRY SNOW :(";
+            switch ((int) r.getValue()) {
+                case 0:  str = "SNR<Threshold";  // black
+                         break;
+                case 10:  str = "Biological";  // medium gray
+                         break;
+                case 20:  str = "AP/Ground Clutter";  // dark gray
+                         break;
+                case 30:  str = "Ice Crystals";  // light pink
+                         break;
+                case 40:  str = "Dry Snow";  // light blue
+                         break;
+                case 50:  str = "Wet Snow";  // medium blue
+                         break;
+                case 60:  str = "Light-Moderate Rain";  // light green
+                         break;
+                case 70:  str = "Heavy Rain";  // medium green
+                         break;
+                case 80:  str = "Big Drops Rain";  // dark yellow
+                         break;
+                case 90:  str = "Graupel";  // medium pink
+                         break;
+                case 100: str = "Hail, Possibly With Rain";  // red
+                         break;
+                case 140: str = "Unknown Type";  // purple
+                         break;
+                case 150: str = "RF";  // dark purple
+                         break;
+                default: str = "code undefined";
+                         break;
             }
 
-            result.add("<tr><td>AHHHHHH" + getMenuLabel()
+            result.add("<tr><td>" + getMenuLabel()
                        + ":</td><td  align=\"right\">"
-                       + str + ((currentLevel != null)
-                    ? ("@" + currentLevel)
-                    : "") + "</td></tr>");
+                       + str + "</td></tr>");
         }
         return result;
 
