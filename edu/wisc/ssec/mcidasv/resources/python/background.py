@@ -8,7 +8,8 @@ from contextlib import contextmanager
 
 # from shell import makeDataSource
 from decorators import deprecated
-from decorators import swing_thread_required
+from decorators import gui_invoke_later
+from decorators import gui_invoke_now
 from interactive import _expandpath
 
 from org.slf4j import Logger
@@ -794,7 +795,7 @@ class _Display(_JavaProxy):
         
         return [_Layer(displayControl) for displayControl in self._JavaProxy__javaObject.getControls()]
         
-    @swing_thread_required
+    @gui_invoke_later
     def createLayer(self, layerType, data):
         """Creates a new _Layer in this _Display
         
