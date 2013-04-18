@@ -466,7 +466,23 @@ public class JythonShell extends InteractiveShell {
         if (resetConfirmed) {
             shellResetting = true;
             try {
+                // regrettably the following code does NOT clean up the heap :(
+                //Object o = getInterpreter().getLocals();
+                //if ((o != null) && (o instanceof PyStringMap)) {
+                //    PyStringMap map = (PyStringMap)o;
+                //    map.clear();
+                //}
                 
+                // Yes, I know calling System.gc() is bad form. 
+                // My justifications: 
+                // * McIDAS-V users frequently work with large datasets. 
+                //   When they need to reclaim heap space they *truly* 
+                //   do need it.
+                // * Jython Shell resets are only triggered by the user 
+                //   explicitly requesting a reset (via GUI or script).
+                // * Resets are rare, and McIDAS-V uses the CMS GC algorithm in
+                //   an attempt to minimize any performance hits.
+                System.gc();
                 super.clear();
                 createInterpreter();
             } catch (Exception exc) {
