@@ -3,29 +3,48 @@ import warnings
 
 from functools import wraps
 
-from java.lang import Runnable
+from java.util.concurrent import Callable
+from java.util.concurrent import FutureTask
+
 from javax.swing import SwingUtilities
 
-class RunnableWrapper(Runnable):
+class _JythonCallable(Callable):
     def __init__(self, func, args, kwargs):
         self._func = func
         self._args = args
         self._kwargs = kwargs
         
-    def run(self):
-        self._func(*self._args, **self._kwargs)
+    def call(self):
+        return self._func(*self._args, **self._kwargs)
 
 def _swingRunner(func, *args, **kwargs):
     if SwingUtilities.isEventDispatchThread():
-        func(*args, **kwargs)
+        return func(*args, **kwargs)
     else:
-        runnable = RunnableWrapper(func, args, kwargs)
-        SwingUtilities.invokeLater(runnable)
+        wrappedCode = _JythonCallable(func, args, kwargs)
+        task = FutureTask(wrappedCode)
+        SwingUtilities.invokeLater(task)
+        return task.get()
 
-def swing_thread_required(func):
+def _swingWaitForResult(func, *args, **kwargs):
+    if SwingUtilities.isEventDispatchThread():
+        return func(*args, **kwargs)
+        
+    wrappedCode = _JythonCallable(func, args, kwargs)
+    task = FutureTask(wrappedCode)
+    SwingUtilities.invokeAndWait(task)
+    return task.get()
+
+def gui_invoke_later(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        _swingRunner(func, *args, **kwargs)
+        return _swingRunner(func, *args, **kwargs)
+    return wrapper
+
+def gui_invoke_now(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        return _swingWaitForResult(func, *args, **kwargs)
     return wrapper
 
 def deprecated(replacement=None):
