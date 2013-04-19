@@ -36,7 +36,7 @@ public class HydrometeorClassificationControl extends edu.wisc.ssec.mcidasv.cont
             // (51.2.2) http://www.roc.noaa.gov/wsr88d/PublicDocs/ICDs/2620003R.pdf
             String str;
             switch ((int) r.getValue()) {
-                case 0:  str = "SNR<Threshold";  // black
+                case 0:  str = "SNR&lt;Threshold";  // black
                          break;
                 case 10:  str = "Biological";  // medium gray
                          break;
@@ -58,6 +58,8 @@ public class HydrometeorClassificationControl extends edu.wisc.ssec.mcidasv.cont
                          break;
                 case 100: str = "Hail, Possibly With Rain";  // red
                          break;
+                // classification algorithm reports "unknown type" here.
+                // How to distinguish this from "McV doesnt understand the code"?
                 case 140: str = "Unknown Type";  // purple
                          break;
                 case 150: str = "RF";  // dark purple
