@@ -9,7 +9,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters (Beta)"/>
+         value="Image Filters"/>
       <category value="IMAGE-*-*"/>
     </categories>
     <operands/>
@@ -23,7 +23,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters (Beta)"/>
+         value="Image Filters"/>
       <category value="IMAGE-*-*"/>
     </categories>
     <operands/>
@@ -37,7 +37,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters (Beta)"/>
+         value="Image Filters"/>
       <category value="IMAGE-*-*"/>
     </categories>
     <operands/>
@@ -51,7 +51,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters (Beta)"/>
+         value="Image Filters"/>
       <category value="IMAGE-*-*"/>
     </categories>
     <operands/>
@@ -65,7 +65,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters (Beta)"/>
+         value="Image Filters"/>
       <category value="IMAGE-*-*"/>
     </categories>
     <operands/>
@@ -79,7 +79,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters (Beta)"/>
+         value="Image Filters"/>
       <category value="IMAGE-*-*"/>
     </categories>
     <operands/>
@@ -93,7 +93,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters (Beta)"/>
+         value="Image Filters"/>
       <category value="IMAGE-*-*"/>
     </categories>
     <operands/>
@@ -107,7 +107,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters (Beta)"/>
+         value="Image Filters"/>
       <category value="IMAGE-*-*"/>
       <category value="GRID-2D-*"/>
     </categories>
@@ -122,7 +122,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters (Beta)"/>
+         value="Image Filters"/>
       <category value="IMAGE-*-*"/>
       <category value="GRID-2D-*"/>
     </categories>
@@ -137,7 +137,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters (Beta)"/>
+         value="Image Filters"/>
       <category value="IMAGE-*-*"/>
     </categories>
     <operands/>
@@ -151,7 +151,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters (Beta)"/>
+         value="Image Filters"/>
       <category value="IMAGE-*-*"/>
     </categories>
     <operands/>
@@ -165,7 +165,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters (Beta)"/>
+         value="Image Filters"/>
       <category value="IMAGE-*-*"/>
     </categories>
     <operands/>
@@ -179,7 +179,7 @@
     <categories>
       <category
          display="true"
-         value="Image Filters (Beta)"/>
+         value="Image Filters"/>
       <category value="IMAGE-*-*"/>
     </categories>
     <operands/>
