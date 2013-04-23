@@ -347,6 +347,7 @@ def getADDEImage(localEntry=None, server=None, dataset=None, descriptor=None,
     day=None,
     time=None,
     debug=False,
+    track=False,
     band=None,
     size=None):
     """Requests data from an ADDE Image server - returns both data and metadata objects.
@@ -383,6 +384,7 @@ def getADDEImage(localEntry=None, server=None, dataset=None, descriptor=None,
         accounting: ('user', 'project number') user and project number required
                     by servers using McIDAS accounting; default = ('idv','0')
         debug: send debug information to file; default=False
+        track: default=False
     """
     
     # still need to handle dates+times
@@ -437,8 +439,8 @@ def getADDEImage(localEntry=None, server=None, dataset=None, descriptor=None,
     else:
         band = ''
     
-    addeUrlFormat = "adde://%s/imagedata?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s"
-    url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position)
+    addeUrlFormat = "adde://%s/imagedata?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s&TRACK=%d"
+    url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position, track)
     retvals = (-1, -1)
     
     try:
@@ -470,6 +472,7 @@ def testADDEImage(localEntry=None,
     day=None,
     time=None,
     debug=False,
+    track=False,
     band=None,
     size=None):
     """Requests data from an ADDE Image server - returns both data and metadata objects.
@@ -506,6 +509,7 @@ def testADDEImage(localEntry=None,
         accounting: ('user', 'project number') user and project number required
                     by servers using McIDAS accounting; default = ('idv','0')
         debug: send debug information to file; default=False
+        track: default=False.
     """
     if localEntry:
         server = localEntry.getAddress()
@@ -565,9 +569,9 @@ def testADDEImage(localEntry=None,
         band = '&BAND=%s' % (str(band))
     else:
         band = ''
-    
-    addeUrlFormat = "adde://%s/imagedata?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s"
-    url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position)
+        
+    addeUrlFormat = "adde://%s/imagedata?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s&TRACK=%d"
+    url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position, track)
     retvals = (-1, -1)
     
     try:
