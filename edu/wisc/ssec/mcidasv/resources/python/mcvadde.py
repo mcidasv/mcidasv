@@ -553,9 +553,16 @@ def testADDEImage(localEntry=None,
     if localEntry:
         server = localEntry.getAddress()
         dataset = localEntry.getGroup()
-        descriptor = localEntry.getDescriptor()
+        descriptor = localEntry.getDescriptor().upper()
     elif (server is None) or (dataset is None) or (descriptor is None):
-        raise TypeError('must provide localEntry or server, dataset, and descriptor values')
+        raise TypeError("must provide localEntry or server, dataset, and descriptor values")
+    
+    if server == "localhost" or server == "127.0.0.1":
+        port = EntryStore.getLocalPort()
+    else:
+        port = "112"
+        
+    server = '%s:%s' % (server, port)
     
     # still need to handle dates+times
     # todo: don't break!
@@ -609,8 +616,8 @@ def testADDEImage(localEntry=None,
     else:
         band = ''
         
-    addeUrlFormat = "adde://%s/imagedata?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s&TRACK=%d"
-    url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position, track)
+    addeUrlFormat = "adde://%s/imagedata?&PORT=%s&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s&TRACK=%d"
+    url = addeUrlFormat % (server, port, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position, track)
     retvals = (-1, -1)
     
     try:
