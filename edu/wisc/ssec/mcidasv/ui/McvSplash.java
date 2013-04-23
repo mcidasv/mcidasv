@@ -242,12 +242,12 @@ public class McvSplash extends JWindow {
 		if (version == null) return null;
 		
 		try {
-			int p = version.indexOf('b');
+			int p = version.indexOf("beta");
 			if (p > 0) {
 				hilited += "<br><font color=red>THIS IS BETA SOFTWARE</font>";
 			}
 			else {
-				p = version.indexOf('a');
+				p = version.indexOf("alpha");
 				if (p > 0) {
 					hilited += "<br><font color=red>THIS IS ALPHA SOFTWARE</font>";
 				}
