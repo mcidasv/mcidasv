@@ -294,9 +294,6 @@ def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
     if not imageType:
         imageType = "%s_%s" % (format, dataset)
         
-    if not mask.endswith("/*"):
-        mask = mask + "/*"
-        
     localEntry = LocalAddeEntry.Builder(dataset, imageType, mask, convertedFormat).status(EntryStatus.ENABLED).temporary((not save)).build()
     getStaticMcv().getServerManager().addEntry(localEntry)
     return localEntry
