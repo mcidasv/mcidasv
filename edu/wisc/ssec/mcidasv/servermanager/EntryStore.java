@@ -352,12 +352,20 @@ public class EntryStore {
      * Saves the current set of ADDE servers to the user's preferences.
      */
     public void saveEntries() {
-//        idvStore.put(PREF_ADDE_ENTRIES, arrList(trie.values()));
+        idvStore.put(PREF_ADDE_ENTRIES, arrList(trie.values()));
+        idvStore.saveIfNeeded();
+        try {
+            EntryTransforms.writeResolvFile(ADDE_RESOLV, getLocalEntries());
+        } catch (IOException e) {
+            logger.error("EntryStore: RESOLV.SRV missing; expected=\""+ADDE_RESOLV+"\"");
+        }
+    }
+
+    public void saveForShutdown() {
         idvStore.put(PREF_ADDE_ENTRIES, arrList(getPersistedEntrySet()));
         idvStore.saveIfNeeded();
         try {
             EntryTransforms.writeResolvFile(ADDE_RESOLV, getPersistedLocalEntries());
-//            EntryTransforms.writeResolvFile(ADDE_RESOLV, getLocalEntries());
         } catch (IOException e) {
             logger.error("EntryStore: RESOLV.SRV missing; expected=\""+ADDE_RESOLV+"\"");
         }

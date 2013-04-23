@@ -1575,7 +1575,7 @@ public class McIDASV extends IntegratedDataViewer {
         LogUtil.setShowErrorsInGui(false);
 
         if (addeEntries != null) {
-            addeEntries.saveEntries();
+            addeEntries.saveForShutdown();
             addeEntries.stopLocalServer();
         }
 
