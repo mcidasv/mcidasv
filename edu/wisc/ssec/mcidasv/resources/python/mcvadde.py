@@ -54,6 +54,40 @@ def _areaDirectoryToDictionary(areaDirectory):
     d['start-time'] = areaDirectory.getStartTime()
     return d
 
+_formats = {
+    "AMSR-E L 1b":                                              AddeFormat.AMSRE_L1B,
+    "LRIT GOES-9":                                              AddeFormat.LRIT_GOES9,
+    "LRIT GOES-10":                                             AddeFormat.LRIT_GOES10,
+    "LRIT GOES-11":                                             AddeFormat.LRIT_GOES11,
+    "LRIT GOES-12":                                             AddeFormat.LRIT_GOES12,
+    "LRIT MET-5":                                               AddeFormat.LRIT_MET5,
+    "LRIT MET-7":                                               AddeFormat.LRIT_MET7,
+    "LRIT MTSAT-1R":                                            AddeFormat.LRIT_MTSAT1R,
+    "McIDAS Area":                                              AddeFormat.MCIDAS_AREA,
+    "Meteosat OpenMTP":                                         AddeFormat.METEOSAT_OPENMTP,
+    "Metop AVHRR L 1b":                                         AddeFormat.METOP_AVHRR_L1B,
+    "MODIS MOD 02 - Level-1B Calibrated Geolocated Radiances":  AddeFormat.MODIS_L1B_MOD02,
+    "MODIS MOD 02":                                             AddeFormat.MODIS_L1B_MOD02,
+    "MODIS MOD 04 - Aerosol Product":                           AddeFormat.MODIS_L2_MOD04,
+    "MODIS MOD 04":                                             AddeFormat.MODIS_L2_MOD04,
+    "MODIS MOD 06 - Cloud Product":                             AddeFormat.MODIS_L2_MOD06,
+    "MODIS MOD 06":                                             AddeFormat.MODIS_L2_MOD06,
+    "MODIS MOD 07 - Atmospheric Profiles":                      AddeFormat.MODIS_L2_MOD07,
+    "MODIS MOD 07":                                             AddeFormat.MODIS_L2_MOD07,
+    "MODIS MOD 28 - Sea Surface Temperature":                   AddeFormat.MODIS_L2_MOD28,
+    "MODIS MOD 28":                                             AddeFormat.MODIS_L2_MOD28,
+    "MODIS MOD 35 - Cloud Mask":                                AddeFormat.MODIS_L2_MOD35,
+    "MODIS MOD 35":                                             AddeFormat.MODIS_L2_MOD35,
+    "MODIS MOD R - Corrected Reflectance":                      AddeFormat.MODIS_L2_MODR,
+    "MODIS MOD R":                                              AddeFormat.MODIS_L2_MODR,
+    "MSG HRIT FD":                                              AddeFormat.MSG_HRIT_FD,
+    "MSG HRIT HRV":                                             AddeFormat.MSG_HRIT_HRV,
+    "MTSAT HRIT":                                               AddeFormat.MTSAT_HRIT,
+    "NOAA AVHRR L 1b":                                          AddeFormat.NOAA_AVHRR_L1B,
+    "SSMI":                                                     AddeFormat.SSMI,
+    "TRMM":                                                     AddeFormat.TRMM,
+}
+
 DEFAULT_ACCOUNTING = ('idv', '0')
 
 CoordinateSystems = enum('AREA', 'LATLON', 'IMAGE')
@@ -70,6 +104,7 @@ class AddeJythonInvalidProjectError(AddeJythonError): pass
 class AddeJythonInvalidPortError(AddeJythonError): pass
 class AddeJythonInvalidUserError(AddeJythonError): pass
 class AddeJythonUnknownDataError(AddeJythonError): pass
+# class AddeJythonUnknownFormatError(AddeJythonError): pass
 
 # alias = ADDE  alias
 # server = ADDE server
@@ -209,7 +244,7 @@ def getLocalADDEEntry(dataset, imageType):
     # no matching descriptor was found so return an error value:
     return -1
 
-def makeLocalADDEEntry(dataset, imageType, mask, format, save=False):
+def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
     """Creates a local ADDE entry in the server table.
     
     Required Args:
@@ -251,14 +286,18 @@ def makeLocalADDEEntry(dataset, imageType, mask, format, save=False):
     Returns:
         The newly created local ADDE dataset.
     """
-    convertedFormat = strToAddeFormat(format)
-    if not name:
-        isTemp = True
-        name = 'TEMP-%s-%s' % (format, group)
-    else:
-        isTemp = False
+    convertedFormat = _formats.get(format, AddeFormat.INVALID)
     
-    localEntry = LocalAddeEntry.Builder(name, group, mask, convertedFormat).status(EntryStatus.ENABLED).temporary(isTemp).build()
+    if convertedFormat is AddeFormat.INVALID:
+        raise AddeJythonError("Unknown format '%s' specified." % (format))
+        
+    if not imageType:
+        imageType = "%s_%s" % (format, dataset)
+        
+    if not mask.endswith("/*"):
+        mask = mask + "/*"
+        
+    localEntry = LocalAddeEntry.Builder(dataset, imageType, mask, convertedFormat).status(EntryStatus.ENABLED).temporary((not save)).build()
     getStaticMcv().getServerManager().addEntry(localEntry)
     return localEntry
     
