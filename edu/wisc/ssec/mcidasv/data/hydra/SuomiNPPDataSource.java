@@ -32,6 +32,7 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 
 import edu.wisc.ssec.mcidasv.data.HydraDataSource;
 import edu.wisc.ssec.mcidasv.data.PreviewSelection;
+import edu.wisc.ssec.mcidasv.data.QualityFlag;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -68,6 +69,7 @@ import ucar.nc2.Dimension;
 import ucar.nc2.Group;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
+import ucar.nc2.dataset.VariableDS;
 
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
@@ -110,6 +112,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     private ArrayList<MultiSpectralData> msd_CrIS = new ArrayList<MultiSpectralData>();
     private ArrayList<MultiSpectralData> multiSpectralData = new ArrayList<MultiSpectralData>();
     private HashMap<String, MultiSpectralData> msdMap = new HashMap<String, MultiSpectralData>();
+    private HashMap<String, QualityFlag> qfMap = new HashMap<String, QualityFlag>();
 
     private static final String DATA_DESCRIPTION = "Suomi NPP Data";
     
@@ -335,7 +338,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    	    							foundDateTime = true;
 	    	    							// set time for display to day/time of 1st granule examined
 	    	    							if (! nameHasBeenSet) {
-	    	    								setName(instrumentName.getStringValue() + " " + sdfOut.format(d));
+	    	    								setName(instrumentName.getStringValue() + " " + sdfOut.format(d)
+	    	    										+ ", " + sources.size() + " Granule");
 	    	    								nameHasBeenSet = true;
 	    	    							}
 	    	    							break;
@@ -450,6 +454,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    	NetcdfFile ncdff = ((NetCDFFile) netCDFReader).getNetCDFFile();
     	    	
     	    	Group rg = ncdff.getRootGroup();
+    	    	// this is a list filled with unpacked qflag products, if any
+    	    	ArrayList<VariableDS> qfProds = new ArrayList<VariableDS>();
 
     	    	List<Group> gl = rg.getGroups();
     	    	if (gl != null) {
@@ -500,8 +506,50 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    						logger.debug("Variable: " + vName);
     	    						String varShortName = vName.substring(vName.lastIndexOf(SEPARATOR_CHAR) + 1);
 
+    	    						// Special code to handle quality flags. We throw out anything
+    	    						// that does not match bounds of the geolocation data
+    	    						
+    	    						if (varShortName.startsWith("QF")) {
+    	    							logger.debug("Handling Quality Flag: " + varShortName);
+    	    							
+        	    						// this check is done later for ALL varialbles, but we need
+    	    							// it early here to weed out those quality flags that are 
+    	    							// simply a small set of data w/no granule geo nbounds
+    	    							boolean xScanOk = false;
+        	    						boolean yScanOk = false;
+        	    						List<Dimension> dl = v.getDimensions();
+        	    						for (Dimension d : dl) {
+        	    							// in order to consider this a displayable product, make sure
+        	    							// both scan direction dimensions are present and look like a granule
+        	    							if (d.getLength() == xDim) {
+        	    								xScanOk = true;
+        	    							}
+        	    							if (d.getLength() == yDim) {
+        	    								yScanOk = true;
+        	    							}
+        	    						}
+        	    						if (! (xScanOk && yScanOk)) {
+        	    							logger.debug("SKIPPING QF, does not match geo bounds: " + varShortName);
+        	    							continue;
+        	    						}
+        	    						
+    	    							ArrayList<QualityFlag> qfal = nppPP.getQualityFlags(varShortName);
+    	    							if (qfal != null) {
+    	    								for (QualityFlag qf : qfal) {
+    	    									qf.setPackedName(vName);
+    	    									// make a copy of the qflag variable
+    	    									// NOTE: by using a VariableDS here, the original
+    	    									// variable is used for the I/O, this matters!
+    	    									VariableDS vqf = new VariableDS(null, v, false);
+    	    									vqf.setShortName(qf.getName());
+    	    									logger.debug("New var full name: " + vqf.getFullName());
+    	    	    							qfProds.add(vqf);
+    	    	    							qfMap.put(vqf.getFullName(), qf);
+    	    								}
+    	    							}
+    	    						}
+
     	    						// for CrIS instrument, only taking real calibrated values for now
-    	    						logger.debug("INSTRUMENT NAME: " + instrumentName);
     	    						if (instrumentName.getStringValue().equals("CrIS")) {
     	    							if (! varShortName.startsWith(crisFilter)) {
     	    								logger.debug("Skipping variable: " + varShortName);
@@ -522,7 +570,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    							logger.debug("Skipping data of size: " + dt.getSize());
     	    							continue;
     	    						}
-    	    						List al = v.getAttributes();
 
     	    						List<Dimension> dl = v.getDimensions();
     	    						if (dl.size() > 4) {
@@ -540,7 +587,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
     	    						boolean xScanOk = false;
     	    						boolean yScanOk = false;
-    	    						// boolean zScanOk = false;
     	    						for (Dimension d : dl) {
     	    							// in order to consider this a displayable product, make sure
     	    							// both scan direction dimensions are present and look like a granule
@@ -724,6 +770,19 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    		}
     	    	}
     	    	
+    	    	// add in any unpacked qflag products
+    	    	for (VariableDS qfV: qfProds) {
+    	    		// skip the spares - they are reserved for future use
+    	    		if (qfV.getFullName().endsWith("Spare")) {
+    	    			continue;
+    	    		}
+    	    		ncdff.addVariable(null, qfV);
+    	    		logger.info("Adding QF product: " + qfV.getFullName());
+    	    		pathToProducts.add(qfV.getFullName());
+    	    		unsignedFlags.add("true");
+    	    		unpackFlags.add("false");
+    	    	}
+    	    	
     		    ncdfal.add((NetCDFFile) netCDFReader);
     		}
     		
@@ -738,6 +797,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	// initialize the aggregation reader object
     	try {
     		nppAggReader = new GranuleAggregation(ncdfal, pathToProducts, inTrackDimensionLength, "Track", "XTrack");
+    		((GranuleAggregation) nppAggReader).setQfMap(qfMap);
     	} catch (Exception e) {
     		throw new VisADException("Unable to initialize aggregation reader");
     	}
