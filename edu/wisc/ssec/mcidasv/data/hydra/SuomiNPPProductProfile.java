@@ -58,6 +58,8 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import edu.wisc.ssec.mcidasv.data.QualityFlag;
+
 public class SuomiNPPProductProfile {
 	
 	private static final Logger logger = LoggerFactory.getLogger(SuomiNPPProductProfile.class);
@@ -69,6 +71,7 @@ public class SuomiNPPProductProfile {
 	HashMap<String, String> rangeMax = new HashMap<String, String>();
 	HashMap<String, String> scaleFactorName = new HashMap<String, String>();
 	HashMap<String, ArrayList<Float>> fillValues = new HashMap<String, ArrayList<Float>>();
+	HashMap<String, ArrayList<QualityFlag>> qualityFlags = new HashMap<String, ArrayList<QualityFlag>>();
 
 	public SuomiNPPProductProfile() throws ParserConfigurationException, SAXException, IOException {
 
@@ -155,7 +158,6 @@ public class SuomiNPPProductProfile {
 				String line = dirReader.readLine();
 				boolean found = false;
 				while (line != null) {
-					logger.trace("looking at line: " + line);
 					if (line.contains(attrName + "-PP")) {
 						found = true;
 						break;
@@ -164,7 +166,7 @@ public class SuomiNPPProductProfile {
 				}
 				ios.close();
 				if (found == true) {
-					logger.trace("Found profile: " + attrName);
+					logger.info("Found profile: " + attrName);
 					return line;
 				}
 			} catch (IOException ioe) {
@@ -177,7 +179,8 @@ public class SuomiNPPProductProfile {
 	}
 	
 	public void addMetaDataFromFile(String fileName) throws SAXException, IOException {
-		logger.trace("Attempting to parse XML Product Profile: " + fileName);
+		
+		logger.debug("Attempting to parse XML Product Profile: " + fileName);
 		Document d = null;
 		InputStream ios = null;
 		if (readFromJar) {
@@ -189,78 +192,158 @@ public class SuomiNPPProductProfile {
 			ios = getClass().getResourceAsStream("resources/NPP/XML_Product_Profiles/" + fileName);
 			d = db.parse(ios);
 		}
+		
 		NodeList nl = d.getElementsByTagName("Field");
 		for (int i = 0; i < nl.getLength(); i++) {
 			ArrayList<Float> fValAL = new ArrayList<Float>();
+			ArrayList<QualityFlag> qfAL = new ArrayList<QualityFlag>();
 			Node n = nl.item(i);
 			NodeList children = n.getChildNodes();
 			NodeList datum = null;
 			String name = null;
+			boolean isQF = false;
 			
-			// cycle through once, finding name and datum node
+			// cycle through once, finding name and datum node(s)
+			// NOTE: may be multiple datum notes, e.g. QF quality flags
 			for (int j = 0; j < children.getLength(); j++) {
+				
 				Node child = children.item(j);
-				logger.trace("looking at node name: " + child.getNodeName());
 				if (child.getNodeName().equals("Name")) {
 					name = child.getTextContent();
-					logger.trace("Found Suomi NPP product name: " + name);
+					logger.info("Found Suomi NPP product name: " + name);
+					if (name.startsWith("QF")) {
+						isQF = true;
+					}
 				}
+				
 				if (child.getNodeName().equals("Datum")) {
+					
 					datum = child.getChildNodes();
-					logger.trace("Found Datum node");
-				}
-			}
-			
-			String rMin = null;
-			String rMax = null;		
-			String sFactorName = null;	
+					String rMin = null;
+					String rMax = null;		
+					String sFactorName = null;	
 
-			if ((name != null) && (datum != null)) {
-				for (int j = 0; j < datum.getLength(); j++) {
-					Node child = datum.item(j);
-					if (child.getNodeName().equals("RangeMin")) {
-						rMin = child.getTextContent();
-					}
-					if (child.getNodeName().equals("RangeMax")) {
-						rMax = child.getTextContent();
-					}
-					if (child.getNodeName().equals("ScaleFactorName")) {
-						sFactorName = child.getTextContent();
-					}
-					if (child.getNodeName().equals("FillValue")) {
-						// go one level further to child element Value
-						NodeList grandChildren = child.getChildNodes();
-						for (int k = 0; k < grandChildren.getLength(); k++) {
-							Node grandChild = grandChildren.item(k);
-							if (grandChild.getNodeName().equals("Value")) {
-								String fillValueStr = grandChild.getTextContent();
-								fValAL.add(new Float(Float.parseFloat(fillValueStr)));
+					if ((name != null) && (datum != null)) {
+						
+						// if it's a quality flag, do separate loop 
+						// and store relevant info in a bean
+						if (isQF) {
+							QualityFlag qf = null;
+							int bitOffset = -1;
+							int numBits = -1;
+							String description = null;
+							boolean haveOffs = false;
+							boolean haveSize = false;
+							boolean haveDesc = false;
+							for (int k = 0; k < datum.getLength(); k++) {
+								Node datumChild = datum.item(k);
+								if (datumChild.getNodeName().equals("DatumOffset")) {
+									String s = datumChild.getTextContent();
+									bitOffset = Integer.parseInt(s);
+									haveOffs = true;
+								}
+								if (datumChild.getNodeName().equals("DataType")) {
+									String s = datumChild.getTextContent();
+									// we will only handle the bit fields.
+									// others cause an exception so just catch and continue
+									try {
+										numBits = Integer.parseInt(s.substring(0, 1));
+									} catch (NumberFormatException nfe) {
+										continue;
+									}
+									haveSize = true;
+								}
+								if (datumChild.getNodeName().equals("Description")) {
+									String s = datumChild.getTextContent();
+									// first, special check for "Test" flags, want to 
+									// include the relevant bands on those.  Seem to
+									// directly follow test name in parens
+									if (s.contains("Test (")) {
+										int idx = s.indexOf(")");
+										if (idx > 0) {
+											description = s.substring(0, idx + 1);
+										}
+									} else {
+										// lose any ancillary (in parentheses) info
+										int endIdx = s.indexOf("(");
+										if (endIdx > 0) {
+											description = s.substring(0, endIdx);
+										} else {
+											description = s;
+										}
+									}
+									// another "ancillary info weedout" check, sometimes
+									// there is long trailing info after " - "
+									if (description.contains(" - ")) {
+										int idx = description.indexOf(" - ");
+										description = description.substring(0, idx);
+									}
+									// Now, crunch out any whitespace
+									description = description.replaceAll("\\s+", "");
+									haveDesc = true;
+								}
+								if (haveOffs && haveSize && haveDesc) {
+									break;
+								}
+							}
+							if (haveOffs && haveSize && haveDesc) {
+								qf = new QualityFlag(bitOffset, numBits, description);
+								qfAL.add(qf);
+							}
+						}
+						
+						for (int k = 0; k < datum.getLength(); k++) {
+							
+							Node datumChild = datum.item(k);
+							if (datumChild.getNodeName().equals("RangeMin")) {
+								rMin = datumChild.getTextContent();
+							}
+							if (datumChild.getNodeName().equals("RangeMax")) {
+								rMax = datumChild.getTextContent();
+							}
+							if (datumChild.getNodeName().equals("ScaleFactorName")) {
+								sFactorName = datumChild.getTextContent();
+							}
+							if (datumChild.getNodeName().equals("FillValue")) {
+								// go one level further to datumChild element Value
+								NodeList grandChildren = datumChild.getChildNodes();
+								for (int l = 0; l < grandChildren.getLength(); l++) {
+									Node grandChild = grandChildren.item(l);
+									if (grandChild.getNodeName().equals("Value")) {
+										String fillValueStr = grandChild.getTextContent();
+										fValAL.add(new Float(Float.parseFloat(fillValueStr)));
+									}
+								}
 							}
 						}
 					}
+					
+					if ((name != null) && (rMin != null)) {
+						logger.info("Adding range min: " + rMin + " for product: " + name);
+						rangeMin.put(name, rMin);
+					}
+					
+					if ((name != null) && (rMax != null)) {
+						logger.info("Adding range max: " + rMax + " for product: " + name);
+						rangeMax.put(name, rMax);
+					}
+					
+					if ((name != null) && (sFactorName != null)) {
+						logger.info("Adding scale factor name: " + sFactorName + " for product: " + name);
+						scaleFactorName.put(name, sFactorName);
+					}
+					
+					if ((name != null) && (! fValAL.isEmpty())) {
+						logger.info("Adding fill value array for product: " + name);
+						fillValues.put(name, fValAL);
+					}
+					
+					if ((name != null) && (! qfAL.isEmpty())) {
+						logger.info("Adding quality flags array for product: " + name);
+						qualityFlags.put(name, qfAL);
+					}
 				}
 			}
-			
-			if ((name != null) && (rMin != null)) {
-				logger.trace("Adding range min: " + rMin + " for product: " + name);
-				rangeMin.put(name, rMin);
-			}
-			
-			if ((name != null) && (rMax != null)) {
-				logger.trace("Adding range max: " + rMax + " for product: " + name);
-				rangeMax.put(name, rMax);
-			}
-			
-			if ((name != null) && (sFactorName != null)) {
-				logger.trace("Adding scale factor name: " + sFactorName + " for product: " + name);
-				scaleFactorName.put(name, sFactorName);
-			}
-			
-			if ((name != null) && (! fValAL.isEmpty())) {
-				logger.trace("Adding fill value array for product: " + name);
-				fillValues.put(name, fValAL);
-			}
-			
 		}
 		if (ios != null) {
 			try {
@@ -300,6 +383,10 @@ public class SuomiNPPProductProfile {
 	
 	public ArrayList<Float> getFillValues(String name) {
 		return fillValues.get(name);
+	}
+	
+	public ArrayList<QualityFlag> getQualityFlags(String name) {
+		return qualityFlags.get(name);
 	}
 
 }

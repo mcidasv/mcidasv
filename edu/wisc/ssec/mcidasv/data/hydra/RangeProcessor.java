@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.wisc.ssec.mcidasv.data.QualityFlag;
+
 import visad.util.Util;
 
 public class RangeProcessor {
@@ -205,6 +207,70 @@ public class RangeProcessor {
 		return fltArray;
 	}
 
+	/**
+	 * Process a range of data from a byte array where bytes are packed bit
+	 * or multi-bit fields of quality flags.  Based on info in a QualityFlag
+	 * object passed in, we extract and return values for that flag.
+	 * 
+	 * @param values input values
+	 * @param subset optional subset
+	 * @param qf quality flag  
+	 * @return processed range
+	 */
+	
+	public float[] processRangeQualityFlag(byte[] values, HashMap subset, QualityFlag qf) {
+
+		if (subset != null) {
+			if (subset.get(multiScaleDimName) != null) {
+				soIndex  = (int) ((double[])subset.get(multiScaleDimName))[0];
+			}
+		}
+
+		float[] newValues = new float[values.length];
+
+		float val = 0f;
+		int bitOffset = qf.getBitOffset();
+		int divisor = 1;
+		switch (bitOffset) {
+		case 1:
+			divisor = 2;
+			break;
+		case 2:
+			divisor = 4;
+			break;
+		case 3:
+			divisor = 8;
+			break;
+		case 4:
+			divisor = 16;
+			break;
+		case 5:
+			divisor = 32;
+			break;
+		case 6:
+			divisor = 64;
+			break;
+		case 7:
+			divisor = 128;
+			break;
+		}
+		int numBits = qf.getNumBits();
+		int mask = (int) 0x00000001;
+		if (numBits == 2) {
+			mask = (int) 0x00000003;
+		}
+
+		int i = 0;
+		for (int k = 0; k < values.length; k++) {
+			val = (float) values[k];   
+			i = Util.unsignedByteToInt(values[k]);
+			val = (float) ((i / divisor) & mask);
+			newValues[k] = val;
+		}
+		
+		return newValues;
+	}
+	
 	/**
 	 * Process a range of data from a byte array
 	 * @param values
