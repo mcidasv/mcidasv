@@ -51,51 +51,54 @@ public class SuomiNPPQfControl extends edu.wisc.ssec.mcidasv.control.ImagePlanVi
     @Override protected List getCursorReadoutInner(EarthLocation el,
                                                    Real animationValue,
                                                    int animationStep,
-                                                   List<ReadoutInfo> samples)
-              //throws Exception {
-             {
-        //logger.trace("Made it to getCursorReadoutInner");
+                                                   List<ReadoutInfo> samples) throws Exception {
         try {
-            //logger.trace("Made it to getCursorReadoutInner inside try block");
-
-        if (currentSlice == null) {
-            return null;
-        }
-        List result = new ArrayList();
-        Real r = GridUtil.sampleToReal(
-                     currentSlice, el, animationValue, getSamplingModeValue(NEAREST_NEIGHBOR));
-        if (r != null) {
-            ReadoutInfo readoutInfo = new ReadoutInfo(this, r, el,
-                                          animationValue);
-            readoutInfo.setUnit(getDisplayUnit());
-            readoutInfo.setRange(getRange());
-            samples.add(readoutInfo);
-        }
-
-        if ((r != null) && !r.isMissing()) {
-            
-            //logger.trace("cursor value: {}", r.getValue());
-            DataChoice dc = getDataChoice();
-            // TODO: not use string concatenation?
-            // TODO: why do we have to append All_Data anyway?
-            String prod = "All_Data/"+dc.toString();
-            //logger.trace("prod: {}", prod);
-            QualityFlag qf = ((SuomiNPPDataSource) getDataSource()).getQfMap().get(prod);
-            //logger.trace("qf: {}", qf.toString());
-            Integer intVal = (int) r.getValue();
-            //logger.trace("intVal: {}", intVal.toString());
-            String str = qf.getNameForValue(intVal.toString());
-            //logger.trace("str: {}", str);
-            
-            result.add("<tr><td>" + getMenuLabel()
-                       + ":</td><td  align=\"right\">"
-                       + str + "</td></tr>");
-        }
-        return result;
-        } catch (Exception exc) {
-            logger.trace("Caugh exception: {}", exc.toString());
-            return null;
-        }
+        
+            if (currentSlice == null) {
+                return null;
+            }
+            List result = new ArrayList();
+            Real r = GridUtil.sampleToReal(
+                         currentSlice, el, animationValue, getSamplingModeValue(NEAREST_NEIGHBOR));
+            if (r != null) {
+                ReadoutInfo readoutInfo = new ReadoutInfo(this, r, el,
+                                              animationValue);
+                readoutInfo.setUnit(getDisplayUnit());
+                readoutInfo.setRange(getRange());
+                samples.add(readoutInfo);
+            }
+    
+            if ((r != null) && !r.isMissing()) {
+                
+                //logger.trace("cursor value: {}", r.getValue());
+                DataChoice dc = getDataChoice();
+                // TODO: why do we have to append All_Data anyway?
+                String prod = ("All_Data/").concat(dc.toString());
+                //logger.trace("prod: {}", prod);
+                QualityFlag qf = ((SuomiNPPDataSource) getDataSource()).getQfMap().get(prod);
+                //logger.trace("qf: {}", qf.toString());
+                Integer intVal = (int) r.getValue();
+                //logger.trace("intVal: {}", intVal.toString());
+                // getNameForValue wants a STRING representation of an INTEGER
+                String str = qf.getNameForValue(intVal.toString());
+                //logger.trace("str: {}", str);
+                
+                result.add("<tr><td>" + getMenuLabel()
+                           + ":</td><td  align=\"right\">"
+                           + str + "</td></tr>");
+    
+                return result;
+            }
+            } catch (Exception exc) {
+                // Just catching the exception here so we can send it to logger,
+                // otherwise it'll get caught in DisplayControlImpl.getCursorReadout,
+                // get lost in LogUtil.consoleMessage (where do those go??...),
+                // and "doCursorReadout" will be mysteriously shut off.
+                logger.warn("Exception caught: {}", exc.getMessage());
+                // re-throw it so DisplayControlImpl can still do its thing.
+                throw exc;
+            }
+        return null;
 
     }
 }
