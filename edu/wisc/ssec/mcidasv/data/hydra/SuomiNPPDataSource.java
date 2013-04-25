@@ -1163,7 +1163,14 @@ public class SuomiNPPDataSource extends HydraDataSource {
       return filename;
     }
     
-    public void setDatasetName(String name) {
+    /**
+	 * @return the qfMap
+	 */
+	public HashMap<String, QualityFlag> getQfMap() {
+		return qfMap;
+	}
+
+	public void setDatasetName(String name) {
       filename = name;
     }
 

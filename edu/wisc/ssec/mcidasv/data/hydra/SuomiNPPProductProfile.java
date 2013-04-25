@@ -229,6 +229,7 @@ public class SuomiNPPProductProfile {
 						// and store relevant info in a bean
 						if (isQF) {
 							QualityFlag qf = null;
+							HashMap<String, String> hm = new HashMap<String, String>();
 							int bitOffset = -1;
 							int numBits = -1;
 							String description = null;
@@ -282,12 +283,30 @@ public class SuomiNPPProductProfile {
 									description = description.replaceAll("\\s+", "");
 									haveDesc = true;
 								}
-								if (haveOffs && haveSize && haveDesc) {
-									break;
+								if (datumChild.getNodeName().equals("LegendEntry")) {
+									NodeList legendChildren = datumChild.getChildNodes();
+									boolean gotName = false;
+									boolean gotValue = false;
+									String nameStr = null;
+									String valueStr = null;
+									for (int legIdx = 0; legIdx < legendChildren.getLength(); legIdx++) { 
+										Node legendChild = legendChildren.item(legIdx);
+										if (legendChild.getNodeName().equals("Name")) {
+											nameStr = legendChild.getTextContent();
+											gotName = true;
+										}
+										if (legendChild.getNodeName().equals("Value")) {
+											valueStr = legendChild.getTextContent();
+											gotValue = true;
+										}
+									}
+									if (gotName && gotValue) {
+										hm.put(valueStr, nameStr);
+									}
 								}
 							}
 							if (haveOffs && haveSize && haveDesc) {
-								qf = new QualityFlag(bitOffset, numBits, description);
+								qf = new QualityFlag(bitOffset, numBits, description, hm);
 								qfAL.add(qf);
 							}
 						}
