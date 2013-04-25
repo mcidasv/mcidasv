@@ -259,6 +259,9 @@ public class RangeProcessor {
 		if (numBits == 2) {
 			mask = (int) 0x00000003;
 		}
+		if (numBits == 3) {
+			mask = (int) 0x00000007;
+		}
 
 		int i = 0;
 		for (int k = 0; k < values.length; k++) {

@@ -30,6 +30,8 @@
 
 package edu.wisc.ssec.mcidasv.data;
 
+import java.util.HashMap;
+
 /**
  * @author tommyj
  * 
@@ -44,6 +46,7 @@ public class QualityFlag {
 	private int numBits = -1;
 	private String name = null;
 	private String packedName = null;
+	private HashMap<String, String> hm = null;
 	
 	/**
 	 * @param bitOffset
@@ -51,10 +54,11 @@ public class QualityFlag {
 	 * @param name
 	 */
 	
-	public QualityFlag(int bitOffset, int numBits, String name) {
+	public QualityFlag(int bitOffset, int numBits, String name, HashMap<String, String> hm) {
 		this.bitOffset = bitOffset;
 		this.numBits = numBits;
 		this.name = name;
+		this.hm = hm;
 	}
 
 	/**
@@ -111,6 +115,32 @@ public class QualityFlag {
 	 */
 	public void setPackedName(String packedName) {
 		this.packedName = packedName;
+	}
+
+	/**
+	 * @return the hm
+	 */
+	public HashMap<String, String> getHm() {
+		return hm;
+	}
+
+	/**
+	 * @param hm the hm to set
+	 */
+	public void setHm(HashMap<String, String> hm) {
+		this.hm = hm;
+	}
+	
+	/**
+	 * @return the name for a discreet value for this flag
+	 */
+	public String getNameForValue(String valueStr) {
+		if (hm != null) {
+			if (hm.containsKey(valueStr)) {
+				return hm.get(valueStr);
+			}
+		}
+		return null;
 	}
 	
 }
