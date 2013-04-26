@@ -230,7 +230,9 @@ public class RangeProcessor {
 
 		float val = 0f;
 		int bitOffset = qf.getBitOffset();
-		int divisor = 1;
+		int divisor = -1;
+		
+		// map bit offset to a divisor
 		switch (bitOffset) {
 		case 1:
 			divisor = 2;
@@ -253,14 +255,39 @@ public class RangeProcessor {
 		case 7:
 			divisor = 128;
 			break;
+		default:
+			divisor = 1;
+			break;
 		}
+		
+		// now map bit width to a mask
 		int numBits = qf.getNumBits();
-		int mask = (int) 0x00000001;
-		if (numBits == 2) {
+		int mask = -1;
+		switch (numBits) {
+		case 1:
+			mask = (int) 0x00000001;
+			break;
+		case 2:
 			mask = (int) 0x00000003;
-		}
-		if (numBits == 3) {
+			break;
+		case 3:
 			mask = (int) 0x00000007;
+			break;
+		case 4:
+			mask = (int) 0x0000000F;
+			break;
+		case 5:
+			mask = (int) 0x0000001F;
+			break;
+		case 6:
+			mask = (int) 0x0000003F;
+			break;
+		case 7:
+			mask = (int) 0x0000007F;
+			break;
+		default:
+			mask = (int) 0x00000000;
+			break;
 		}
 
 		int i = 0;
