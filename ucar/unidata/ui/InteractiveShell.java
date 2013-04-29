@@ -407,12 +407,13 @@ public class InteractiveShell implements HyperlinkListener {
     }
 
     /**
-     * _more_
+     * Clear out the Shell GUI and history. 
      */
     public void clear() {
         historyIdx = -1;
         history.clear();
         clearOutput();
+        getCommandFld().setText("");
     }
 
     public void clearOutput() {
