@@ -86,6 +86,7 @@ _formats = {
     "NOAA AVHRR L 1b":                                          AddeFormat.NOAA_AVHRR_L1B,
     "SSMI":                                                     AddeFormat.SSMI,
     "TRMM":                                                     AddeFormat.TRMM,
+    "GINI":                                                     AddeFormat.GINI,
 }
 
 DEFAULT_ACCOUNTING = ('idv', '0')
@@ -281,6 +282,7 @@ def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
             "NOAA AVHRR L 1b"                                          "NOAA AVHRR L 1b"   "LV1B_NOAA"
             "SSMI"                                                     "SSMI"              "SMIN"
             "TRMM"                                                     "TRMM"              "TMIN"
+            "GINI"                                                     "GINI"              "GINI"
             =========================================================  ==================  ============
                     
     Returns:
