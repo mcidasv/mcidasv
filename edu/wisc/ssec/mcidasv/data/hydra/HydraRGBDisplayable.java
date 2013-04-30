@@ -98,6 +98,8 @@ public class HydraRGBDisplayable extends DisplayableData {
      */
     private float[][] colorPalette = null;
 
+    private String colorPaletteName = null;
+
     /** color ScalarMap */
     private volatile ScalarMap colorMap;
 
@@ -176,6 +178,12 @@ public class HydraRGBDisplayable extends DisplayableData {
         this(name, rgbRealType, indexRealType, null, alphaflag, null, multiSpecCntrl);
     }
 
+    public HydraRGBDisplayable(String name, RealType rgbRealType, RealType indexRealType, float[][] colorPalette, boolean alphaflag, Range initRange,
+                   HydraControl multiSpecCntrl)
+            throws VisADException, RemoteException {
+        this(name, rgbRealType, indexRealType, colorPalette, null, alphaflag, initRange, multiSpecCntrl);
+    }
+
     /**
      * Constructs from a name for the Displayable and the type of the
      * RGB parameter.
@@ -191,7 +199,7 @@ public class HydraRGBDisplayable extends DisplayableData {
      * @throws VisADException   VisAD failure.
      * @throws RemoteException  Java RMI failure.
      */
-    public HydraRGBDisplayable(String name, RealType rgbRealType, RealType indexRealType, float[][] colorPalette, boolean alphaflag, Range initRange,
+    public HydraRGBDisplayable(String name, RealType rgbRealType, RealType indexRealType, float[][] colorPalette, String colorPaletteName, boolean alphaflag, Range initRange,
                    HydraControl multiSpecCntrl)
             throws VisADException, RemoteException {
 
@@ -201,6 +209,7 @@ public class HydraRGBDisplayable extends DisplayableData {
         this.selectRealType = rgbRealType;
         this.indexRealType  = indexRealType;
         this.colorPalette = colorPalette;
+        this.colorPaletteName = colorPaletteName;
         this.alphaflag    = alphaflag;
         this.multiSpecCntrl = multiSpecCntrl;
 
@@ -369,16 +378,34 @@ public class HydraRGBDisplayable extends DisplayableData {
      * a fixed association of color table and range of values.
      *
      * @param colorPalette     the color table or color-alpha table desired
+     * @param colorPaletteName name for the color table (can be null)
      * @throws VisADException  if a core VisAD failure occurs.
      * @throws RemoteException if a Java RMI failure occurs.
      */
-    public void setColorPalette(float[][] colorPalette)
+    public void setColorPalette(float[][] colorPalette, String name)
             throws RemoteException, VisADException {
         if (colorControl != null) {
             colorControl.setTable(colorPalette);
         }
 
         this.colorPalette = colorPalette;
+        this.colorPaletteName = name;
+    }
+
+    /**
+     * This method sets the color palette
+     * according to the color table in argument;
+     * pair this method with setRange(lo,high) to get
+     * a fixed association of color table and range of values;
+     * asigns null (doesn't have a name) for the name.
+     *
+     * @param colorPalette     the color table or color-alpha table desired
+     * @throws VisADException  if a core VisAD failure occurs.
+     * @throws RemoteException if a Java RMI failure occurs.
+     */
+    public void setColorPalette(float[][] colorPalette)
+            throws VisADException, RemoteException {
+        setColorPalette(colorPalette, null);
     }
 
     /**
@@ -388,6 +415,10 @@ public class HydraRGBDisplayable extends DisplayableData {
      */
     public float[][] getColorPalette() {
         return colorPalette;
+    }
+
+    public String getColorPaletteName() {
+        return colorPaletteName;
     }
 
     /**
