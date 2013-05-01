@@ -865,7 +865,7 @@ public class EntryTransforms {
         StringBuilder s = new StringBuilder(100);
         if (mask.length() > 3 && ":".equals(mask.substring(1, 2))) {
             String newFileMask = mask;
-            String driveLetter = newFileMask.substring(0,1).toLowerCase();
+            String driveLetter = newFileMask.substring(0, 1).toLowerCase();
             newFileMask = newFileMask.substring(3);
             newFileMask = newFileMask.replace('\\', '/');
             s.append("/cygdrive/").append(driveLetter).append('/').append(newFileMask);
@@ -928,7 +928,7 @@ public class EntryTransforms {
         String tmpFileMask = entry.getFileMask();
         if (tmpFileMask.length() > 3 && ":".equals(tmpFileMask.substring(1, 2))) {
             String newFileMask = tmpFileMask;
-            String driveLetter = newFileMask.substring(0,1).toLowerCase();
+            String driveLetter = newFileMask.substring(0, 1).toLowerCase();
             newFileMask = newFileMask.substring(3);
             newFileMask = newFileMask.replace('\\', '/');
             s.append(",MASK=/cygdrive/").append(driveLetter).append('/').append(newFileMask);

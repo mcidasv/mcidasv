@@ -1,6 +1,52 @@
 import sys
 import warnings
 
+from functools import wraps
+
+from java.util.concurrent import Callable
+from java.util.concurrent import FutureTask
+
+from javax.swing import SwingUtilities
+
+class _JythonCallable(Callable):
+    def __init__(self, func, args, kwargs):
+        self._func = func
+        self._args = args
+        self._kwargs = kwargs
+        
+    def call(self):
+        return self._func(*self._args, **self._kwargs)
+
+def _swingRunner(func, *args, **kwargs):
+    if SwingUtilities.isEventDispatchThread():
+        return func(*args, **kwargs)
+    else:
+        wrappedCode = _JythonCallable(func, args, kwargs)
+        task = FutureTask(wrappedCode)
+        SwingUtilities.invokeLater(task)
+        return task.get()
+
+def _swingWaitForResult(func, *args, **kwargs):
+    if SwingUtilities.isEventDispatchThread():
+        return func(*args, **kwargs)
+        
+    wrappedCode = _JythonCallable(func, args, kwargs)
+    task = FutureTask(wrappedCode)
+    SwingUtilities.invokeAndWait(task)
+    return task.get()
+
+def gui_invoke_later(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        return _swingRunner(func, *args, **kwargs)
+    return wrapper
+
+def gui_invoke_now(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        return _swingWaitForResult(func, *args, **kwargs)
+    return wrapper
+
 def deprecated(replacement=None):
     """A decorator which can be used to mark functions as deprecated.
     replacement is a callable that will be called with the same args

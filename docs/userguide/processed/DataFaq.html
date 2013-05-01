@@ -282,6 +282,93 @@ application/x-java-jnlp-file JNLP
       <p><strong>A.</strong> If you have individual files of gridded data for multiple time&nbsp;steps that you want to display as a single layer to utilize the&nbsp;Time Animation Widget, there are two methods of doing this. First, in the <strong>Data Sources</strong> tab of the Data Explorer, navigate to the <strong>Gridded Data-&gt;Local</strong> or the <strong>General Files/Directories </strong>chooser. Select the <em>Aggregate Grids by Time </em><strong>Data Type</strong>, navigate to the directory where your files are stored, and use Shift+click to select the files you wish to include in your layer. In the <strong>Field Selector</strong>, you will see that all of the times you&nbsp;selected for the data are grouped together. You can select your display type, create the display, and all of the data times will be loaded in as one layer and you can animate through them.</p>
       <p>Alternatively, you can add all of the files individually through the <strong>Gridded Data-&gt;Local</strong> or <strong>General-&gt;Files/Directories</strong> chooser (without the&nbsp;<em>Aggregate Grids by Time </em><strong>Data Type</strong>) and use the<em> Make a time sequence from single time grids/images</em> formula. This is a native formula of McIDAS-V that can be found under the <strong>Miscellaneous </strong>tree of formulas in the <strong>Field Selector</strong>. Using this formula, you can select all of the individual files,&nbsp;and McIDAS-V will add all of them to the Main Display window as a single layer you can animate through time.</p>
     </div>
+    <a name="windbarb" id="windbarb"></a>
+    <div class="faq-question">
+      <h4>Q. <a class="faq-question-link" href="DataFaq.html#windbarb">What are the wind speed thresholds for different wind barbs?</a></h4>
+    </div>
+    <div class="faq-answer">
+      <p><strong>A.</strong> Below is a table that shows different wind speed thresholds when it comes to plotting wind barbs of gridded or point data.&nbsp; In this table, 'x' represents wind speed in knots.</p>
+      <table width="410" border="1">
+          <tr>
+              <th scope="col">Wind Barb</th>
+              <th scope="col">Knots</th>
+              <th scope="col">Wind Barb</th>
+              <th scope="col">Knots</th>
+          </tr>
+          <tr>
+              <th scope="col"><img src="images/WindBarbs/calm.gif" alt="Calm" width="28" height="23"></th>
+              <td>x&nbsp;= 0</td>
+              <th scope="col"><img src="images/WindBarbs/55kt.gif" width="42" height="18" alt="55kt"></th>
+              <td>52.6 &le; x &le; 57.5</td>
+          </tr>
+          <tr>
+              <th scope="col"><img src="images/WindBarbs/2kt.gif" width="49" height="20" alt="2kt"></th>
+              <td>0 &lt; x &le; 2.5</td>
+              <th scope="col"><img src="images/WindBarbs/60kt.gif" width="41" height="19" alt="60kt"></th>
+              <td>57.6 &le; x &le; 62.5</td>
+          </tr>
+          <tr>
+              <th scope="col"><img src="images/WindBarbs/5kt.gif" width="45" height="17" alt="5kt"></th>
+              <td>2.6 &le; x &le; 7.5</td>
+              <th scope="col"><img src="images/WindBarbs/65kt.gif" width="43" height="19" alt="65kt"></th>
+              <td>62.6 &le; x &le; 67.5</td>
+          </tr>
+          <tr>
+              <th scope="col"><img src="images/WindBarbs/10kt.gif" width="46" height="17" alt="10kt"></th>
+              <td>7.6 &le; x &le; 12.5</td>
+              <th scope="col"><img src="images/WindBarbs/70kt.gif" width="42" height="20" alt="70kt"></th>
+              <td>67.6 &le; x &le; 72.5</td>
+          </tr>
+          <tr>
+              <th scope="col"><img src="images/WindBarbs/15kt.gif" width="47" height="19" alt="15kt"></th>
+              <td>12.6 &le; x &le; 17.5</td>
+              <th scope="col"><img src="images/WindBarbs/75kt.gif" width="43" height="18" alt="75kt"></th>
+              <td>72.6 &le; x &le; 77.5</td>
+          </tr>
+          <tr>
+              <th scope="col"><img src="images/WindBarbs/20kt.gif" width="46" height="21" alt="20kt"></th>
+              <td>17.6 &le; x &le; 22.5</td>
+              <th scope="col"><img src="images/WindBarbs/80kt.gif" width="42" height="18" alt="80kt"></th>
+              <td>77.6 &le; x &le; 82.5</td>
+          </tr>
+          <tr>
+              <th scope="col"><img src="images/WindBarbs/25kt.gif" width="46" height="19" alt="25kt"></th>
+              <td>22.6 &le; x &le; 27.5</td>
+              <th scope="col"><img src="images/WindBarbs/85kt.gif" width="41" height="19" alt="85kt"></th>
+              <td>82.6 &le; x &le; 87.5</td>
+          </tr>
+          <tr>
+              <th scope="col"><img src="images/WindBarbs/30kt.gif" width="45" height="17" alt="30kt"></th>
+              <td>27.6 &le; x &le; 32.5</td>
+              <th scope="col"><img src="images/WindBarbs/90kt.gif" width="40" height="18" alt="90kt"></th>
+              <td>87.6 &le; x &le; 92.5</td>
+          </tr>
+          <tr>
+              <th scope="col"><img src="images/WindBarbs/35kt.gif" width="48" height="21" alt="35kt"></th>
+              <td>32.6 &le; x &le; 37.5</td>
+              <th scope="col"><img src="images/WindBarbs/95kt.gif" width="45" height="19" alt="95kt"></th>
+              <td>92.6 &le; x &le; 97.5</td>
+          </tr>
+          <tr>
+              <th scope="col"><img src="images/WindBarbs/40kt.gif" width="48" height="18" alt="40kt"></th>
+              <td>37.6 &le; x &le; 42.5</td>
+              <th scope="col"><img src="images/WindBarbs/100.gif" width="41" height="18" alt="100kt"></th>
+              <td>97.6 &le; x &le; 102.5</td>
+          </tr>
+          <tr>
+              <th scope="col"><img src="images/WindBarbs/45kt.gif" width="47" height="19" alt="45kt"></th>
+              <td>42.6 &le; x &le; 47.5</td>
+              <th scope="col"><img src="images/WindBarbs/105.gif" width="43" height="17" alt="105kt"></th>
+              <td>102.6 &le; x &le; 107.5</td>
+          </tr>
+          <tr>
+              <th scope="col"><img src="images/WindBarbs/50kt.gif" width="43" height="19" alt="50kt"></th>
+              <td>47.6 &le; x &le; 52.5</td>
+              <th scope="col"><img src="images/WindBarbs/110kt.gif" width="41" height="17" alt="110kt"></th>
+              <td>107.6 &le; x &le; 112.5</td>
+          </tr>
+      </table>
+    </div>
   </div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">

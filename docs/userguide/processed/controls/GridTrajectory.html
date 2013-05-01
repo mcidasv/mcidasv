@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Grid Trajectory Controls</title>
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<!-- InstanceBeginEditable name="CurrentFile" -->
+<script language="javascript" type="text/javascript">
+function setParentPage() { if (parent.setPage) parent.setPage('controls/GridTrajectory.html',true); }
+</script>
+<!-- InstanceEndEditable -->
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+<body onLoad="setParentPage();">
+<div class="TopTitleNav">
+  <p class="style2" style="text-align:left; "> 
+  	[<!-- InstanceBeginEditable name="GoToPrevious" --><a href="HovmollerControl.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	<span style="padding-left: 15px; "> 
+	[<!-- InstanceBeginEditable name="GoToNext" --><a href="../page_satelliteandradardisplays.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	</span> </p>
+  <hr align="center">
+</div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Grid Trajectory Controls</div>
+<xxxmeta xxxname="jhid" value="idv.controls.volumerendercontrol">
+<div class="pagesubtitle">Overview</div>
+<p>The Trajectory Colored By Parameter display type is capable of working with gridded data containing u and v-wind components, as well as a scalar quantity to color them by.&nbsp;You can create both 2D and 3D trajectories dependent on what is contained in your data.&nbsp;To use this display type, you can use the grid formulas Grid 2D Trajectory or Grid 3D Trajectory.&nbsp;These formulas will request for your scalar quantity, as well&nbsp;as individual u and v-wind&nbsp;fields. An alternative to the formulas is utilizing the new derived 2D and 3D fields of your data, Grid 2D Trajectory and Grid 3D Trajectory. When using these fields, all you need to specify is the scalar quantity, and McIDAS-V will pull out the relevant u&nbsp;and v-wind components (as well as the vertical component when creating 3D Trajectories).</p>
+<p>After clicking <strong>Create Display</strong> and choosing your field(s), you will arrive at the <strong>Layer Controls</strong> tab of the Data Explorer, where you will define the properties of your trajectories.</p>
+<div class="images"><img src="images/GridTrajectories1.gif" width="500" height="314" alt="Image 1: Grid Trajectories Layer Controls"><br><span class="caption">Image 1: Grid Trajectories Layer Controls</span></div>
+<div class="pagesubtitle">Properties</div>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Levels -</strong> Sets the vertical level where your trajectories will originate.</li>
+  <li class="propertylistitem"><strong>Trajectory Initial Area -</strong> Allows you to determine where your trajectories will originate from. While the trajectories originate at these locations, they are not bounded by the <strong>Trajectory Initial Area</strong>. They can extend beyond these boundaries up to the geographical extent of your data. You can draw multiple different <strong>Trajectory Initial Areas</strong> of the same type, but you cannot mix different types:</li>
+  <ul class="propertylist">
+  <li class="propertylistitem"><strong>Points -</strong> Plots individual points on the Main Display where the trajectories will originate from.</li>
+  <li class="propertylistitem"><strong>ClosePolygon -</strong> Allows you to click and drag in the Main Display window to draw a shape around any desired area. The trajectories will originate from everywhere inside of the shape. By default, they will be spaced apart at the resolution of the grid.</li>
+  <li class="propertylistitem"><strong>Rectangle -</strong> Allows you to click and drag in the Main Display window to draw a rectangle around any desired area. The trajectories will originate from everywhere inside of the shape. By default, they will be spaced apart at the resolution of the grid.</li>
+  </ul>
+  <li class="propertylistitem"><strong>Initial Area Skip Factor -</strong> Sets the skip factor of the trajectories. This is an option when using <strong>ClosePolygon</strong> and <strong>Rectangle Trajectory Initial Areas</strong>. By default, this value is 1.0, meaning that the trajectories will be spaced by the model resolution. You can change this number by typing a value into the field and pressing Enter, or by using the slider. Raising this value will result in fewer trajectories being drawn in your display.</li>
+  <li class="propertylistitem"><strong>Backward trajectory -</strong> Creates backward trajectories instead of the default, which is forward trajectories.</li>
+  <li class="propertylistitem"><img src="images/CreateTrajectory.gif" width="133" height="26" alt="Create Trajectory Button" align="absmiddle"><strong> -</strong> Creates your trajectories utilizing the information provided in the <strong>Level</strong>, <strong>Trajectory Initial Area</strong>, and <strong>Initial Area Skip Factor</strong> fields. These trajectories will be displayed in the Main Display window.</li>
+  <li class="propertylistitem"><img src="images/RemoveTrajectories.gif" width="20" height="24" alt="Remove Trajectories" align="absmiddle"><strong>Remove existing glyphs and trajectories -</strong> Removes&nbsp;any trajectories and trajectory initial areas from the Main Display window.</li>
+  </ul>
+  <p>Once you click <img src="images/CreateTrajectory.gif" width="133" height="26" alt="Create Trajectory Button" align="absmiddle"> to create your trajectories, the options in the <strong>Layer Controls</strong> will expand to include more controls. This is composed of two tabs: <strong>Layout</strong>, and <strong>Times</strong>.</p>
+  <p>The <strong>Layout</strong> tab allows you to set various aesthetic aspects of your display:</p>
+  <div class="images"><img src="images/GridTrajectories2.gif" width="501" height="470" alt="Image 2: Grid Trajectories Layout Tab"><br><span class="caption">Image 2: Grid Trajectories Layout Tab</span></div>
+  <div class="pagesubtitle">Properties</div>
+  <ul class="propertylist">
+  <li class="propertylistitem"><strong>Color Table -</strong> Shows the active color table and the associated high and low data values   in the units of the display. As the mouse pointer is moved over the   color bar, the value at a particular color is shown. Right click on the   color bar or click on the button that displays the name of the Color   Table to make modifications to the color bar. This allows you to open   the <a href="http://www.ssec.wisc.edu/mcidas/doc/mcv_guide/working/tools/ColorTableEditor.html">Color   Table Editor</a>, change the range, select other color tables, etc. This option sets the color of the trajectories drawn in the Main Display window.</li>
+  <li class="propertylistitem"><strong>Visible Range -</strong> Determines what parts of the data is actually        shown. Click the <img src="images/Change.gif" width="77" height="26" alt="Change Button" align="absmiddle"> button to set the    range of data shown. Once the checkbox is checked, the Visible Range   will be applied to the data in the Main Display window.&nbsp;The current visible range is listed next to <strong>From:</strong>.</li>
+  <li class="propertylistitem"><strong>Line Width -</strong> Sets the thickness of the trajectory lines in the Main Display window.&nbsp; You can change this value by typing a value into the field and pressing Enter, or by using the slider. The default value here is 1.0.</li>
+  </ul>
+<p>The <strong>Times</strong> tab allows you to determine how many times are included with each trajectory.
+<div class="images"><img src="images/GridTrajectories3.gif" width="501" height="470" alt="Image 3: Grid Trajectories Times Tab"><br>
+<span class="caption">Image 3: Grid Trajectories Times Tab</span></div>
+<div class="pagesubtitle">Properties</div>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Times to Use -</strong> Sets if you are using <strong>Nominal Time</strong> or <strong>Track Times</strong> to display your data. You can use <strong>Show Every</strong> and <strong>Enabled</strong> to limit the number of time steps in your loop. For example, if you are using&nbsp;6-hourly data, you can use a <strong>Show Every</strong> value of 720 minutes, enable it, and your time steps will be&nbsp;cut in half.</li>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Nominal Time -</strong> Displays the entire length of all trajectories in one time step. This will not allow for a loop of data.</li>
+<li class="propertylistitem"><strong>Track Times -</strong> Displays the parcel trajectories in a series of time steps, allowing you to easily see how the parcel moves through time in a loop. This is the default option for <strong>Times to Use</strong>.</li>
+</ul>
+<li class="propertylistitem"><strong>Time Mode -</strong> Allows you to control how much of each trajectory is shown at each time step. By default, the entire length of each trajectory is shown, which can lead to a cluttered display if you are working with a lot of trajectories. An example use of this is when working with 6-hourly data, and you set each trajectory to use 12-hours worth of data, meaning two time steps in each trajectory. To set <strong>Time Mode</strong>, click the 
+    <img src="images/TimeMode.gif" width="25" height="23" alt="Time Mode Button" align="absmiddle"> button to get to the Time Settings window:
+<div class="images"><img src="images/GridTrajectories4.gif" width="430" height="224" alt="Image 4: Time Settings Window"><br><span class="caption">Image 4: Time Settings Window</span></div>
+<p>This time setting is different than that used for the general <strong><a href="../ui/Animation.html#animationset">Define Animation Times</a></strong>  tab of the Time Animation Widget since it has no influence on the number of time steps in the loop, but rather the amount of data shown at each time step. You can utilize various options for <strong>Start Time</strong> and <strong>End Time</strong> to determine how much of each trajectory will be shown at each time step.</p>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Start Time -</strong> Sets the first time used in the trajectory at each time step.</li>
+<li class="propertylistitem"><strong>Use First Time from Data -</strong> Begins the trajectories with the first time of the data.</li>
+<li class="propertylistitem"><strong>From Animation Time -</strong> Begins the trajectories at a time relative to the current animation time.
+<li class="propertylistitem"><strong>Relative to End Time -</strong> Begins the trajectories at a time relative to the end time of the trajectory. Note that you must use <strong>offset</strong> to determine how far back from the end time you are starting.</li>
+<li class="propertylistitem"><strong>Fixed -</strong> Sets the start/end time to be a fixed time. Note that this must be a time included with your data.</li>
+<li class="propertylistitem"><strong>Offset -</strong> Sets the temporal offset (either positive or negative) from the value selected for&nbsp;<strong>Start Time</strong> and <strong>End Time</strong>. This option can be used with any of the provided choices for <strong>Start Time</strong> and <strong>End Time</strong>. The default is 0m, which means that the actual starting and ending times are what was selected.</li>
+</ul>
+</ul>
+<div class="pagesubtitle">Menus</div>
+<p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="LayerControls.html#menus">Menus section</a> of the Layer Controls page. However, there are a couple of options unique to this display.</p>
+<p>The <strong>File</strong> menu has these unique options:</p>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Export Drawing -</strong> Allows you to export your <strong>Trajectory Initial Area</strong> as a drawing file (*.xgrf). You can also select <strong>Load as map data</strong>, which will add your shape to the <strong>Field Selector</strong>. You can then load in this shape again in subsequent sessions using <strong>Import Drawing</strong>.</li>
+<li class="propertylistitem"><strong>Import Drawing -</strong> Allows you to import a drawing file (*.xgrf) which draws a <strong>Trajectory Initial Area</strong>. Once you import the drawing, you can click <img src="images/CreateTrajectory.gif" width="133" height="26" alt="Create Trajectory Button" align="absmiddle"> and trajectories will be drawn using this shape.</li>
+</ul>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav">
+  <hr align="center">
+  <p class="style2" style="text-align:left; "> 
+  	[<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="HovmollerControl.html">Go to Previous</a><!-- InstanceEndEditable -->] 
+	<span style="padding-left: 15px; "> 
+	[<!-- InstanceBeginEditable name="GoToNext2" --><a href="../page_satelliteandradardisplays.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	</span></p>
+</div>
+</body>
+<!-- InstanceEnd --></html>

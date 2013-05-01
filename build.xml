@@ -5,7 +5,7 @@
     
     <!-- Directory definitions -->
     <property name="base.dir" location="." />
-    <property name="build.dir" location="${base.dir}/build" />
+    <property name="build.dir" location="${base.dir}/build/antbuild" />
     <property name="dist.dir" location="${base.dir}/dist" />
     <property name="lib.dir" location="${base.dir}/lib" />
     <property name="idvlib.dir" location="${base.dir}/../IDV/lib" />
@@ -82,8 +82,8 @@
     <!-- Compiler options -->
     <property name="debug.flag" value="true" />
     <property name="deprecation.flag" value="false" />
-    <property name="source.ver" value="1.5" />
-    <property name="target.ver" value="1.5" />
+    <property name="source.ver" value="1.6" />
+    <property name="target.ver" value="1.6" />
     
     <!-- Which warnings to show, use javac -X for help -->
     <property name="xlint" value="deprecation" />
@@ -92,25 +92,26 @@
     <property name="javadoc.level" value="private" />
     
     <!-- The CLASSPATH specified within McV's manifest -->
-    <property name="jar.base.classpath" value="sysout-over-slf4j-1.0.2.jar miglayout-4.0-swing.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar eventbus-1.3.jar logback-core-0.9.29.jar logback-classic-0.9.29.jar log4j-over-slf4j-1.6.1.jar slf4j-api-1.6.1.jar commons-math-2.2.jar rsyntaxtextarea-2.0.2.jar" />
-
+    <property name="jar.base.classpath" value="sysout-over-slf4j-1.0.2.jar miglayout-core-4.2.jar miglayout-swing-4.2.jar eventbus-1.4.jar logback-core-1.0.12.jar logback-classic-1.0.12.jar log4j-over-slf4j-1.7.5.jar slf4j-api-1.7.5.jar local-idv.jar repositorytds.jar commons-math3-3.2.jar rsyntaxtextarea-2.0.6.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar" />
+    
     <!-- List of McIDAS-V jars -->
-    <fileset id="mcv.libs" dir="${lib.dir}">
+    <fileset id="mcv.libs" dir="${dist.dir}">
         <include name="sysout-over-slf4j-1.0.2.jar" />
-        <include name="miglayout-4.0-swing.jar" />
-        <include name="eventbus-1.3.jar" />
-        <include name="logback-core-0.9.29.jar" />
-        <include name="logback-classic-0.9.29.jar" />
-        <include name="log4j-over-slf4j-1.6.1.jar" />
-        <include name="slf4j-api-1.6.1.jar" />
+        <include name="miglayout-core-4.2.jar" />
+        <include name="miglayout-swing-4.2.jar" />
+        <include name="eventbus-1.4.jar" />
+        <include name="logback-core-1.0.12.jar" />
+        <include name="logback-classic-1.0.12.jar" />
+        <include name="log4j-over-slf4j-1.7.5.jar" />
+        <include name="slf4j-api-1.7.5.jar" />
         <include name="local-idv.jar" />
         <include name="repositorytds.jar" />
-        <include name="commons-math-2.2.jar" />
-        <include name="rsyntaxtextarea-2.0.2.jar" />
+        <include name="commons-math3-3.2.jar" />
+        <include name="rsyntaxtextarea-2.0.6.jar" />
     </fileset>
     
     <!-- List of IDV jars -->
-    <fileset id="idv.libs" dir="${idvlib.dir}">
+    <fileset id="idv.libs" dir="${dist.dir}">
         <include name="auxdata.jar" />
         <include name="local-visad.jar" />
         <include name="visad.jar" />
@@ -118,13 +119,20 @@
         <include name="external.jar" />
         <include name="ncIdv.jar" />
         <include name="idv.jar" />
-      <include name="repositorytds.jar" />
+        <include name="repositorytds.jar" />
     </fileset>
     
     <!-- Shared classpath -->
     <path id="app.classpath">
-        <pathelement location="${base.dir}" />
-      <!--<pathelement location="${dist.dir}/mcidasv.jar" />-->
+        <pathelement location="${dist.dir}/mcidasv.jar" />
+        <pathelement location="${dist.dir}/local-idv.jar" />
+        <fileset refid="mcv.libs" />
+        <fileset refid="idv.libs" />
+    </path>
+    
+    <path id="bundle.classpath">
+        <pathelement location="${dist.dir}/mcidasv.jar" />
+        <pathelement location="${dist.dir}/local-idv.jar" />
         <fileset refid="mcv.libs" />
         <fileset refid="idv.libs" />
     </path>
@@ -135,7 +143,7 @@
         <include name="edu/**/resources/**/*" />
         <include name="edu/**/images/**/*" />
     </patternset>
-
+    
     <!-- Files to include in local-idv jar -->
     <patternset id="local-idv.includes">
         <include name="ucar/**/*.class" />
@@ -231,7 +239,7 @@
     <target name="clean" description="Delete all class files and temporary build files">
         <delete dir="${dist.dir}" failonerror="false" />
         <delete dir="${javadoc.dir}" failonerror="false" />
-        <delete dir="${build.dir}" failonerror="false" />
+        <delete dir="${base.dir}/build" failonerror="false" />
         <delete failonerror="false">
             <fileset dir="${base.dir}/edu" includes="**/*.class" />
         </delete>
@@ -239,6 +247,9 @@
             <fileset dir="${base.dir}/ucar" includes="**/*.class" />
         </delete>
         <delete file="${build.props}" failonerror="false" />
+        <mkdir dir="${dist.dir}" />
+        <mkdir dir="${javadoc.dir}" />
+        <mkdir dir="${build.dir}" />
     </target>
     
     <!-- Get the latest McIDAS-V source code from CVS -->
@@ -278,7 +289,7 @@
             <format property="build.date" pattern="yyyy-MM-dd HH:mm"
             timezone="UTC" />
         </tstamp>
-        <copy file="${ver.props}" tofile="${build.props}" overwrite="true">
+        <copy file="${ver.props}" tofile="${build.dir}/edu/wisc/ssec/mcidasv/resources/build.properties" overwrite="true">
             <filterset>
                 <filter token="DATE" value="${build.date}" />
                 <filter token="NIGHTLY" value="" />
@@ -292,7 +303,7 @@
             <format property="build.date" pattern="yyyy-MM-dd HH:mm"
             timezone="UTC" />
         </tstamp>
-        <copy file="${ver.props}" tofile="${build.props}" overwrite="true">
+        <copy file="${ver.props}" tofile="${build.dir}/edu/wisc/ssec/mcidasv/resources/build.properties" overwrite="true">
             <filterset>
                 <filter token="DATE" value="${build.date}" />
                 <filter token="NIGHTLY" value="(nightly)" />
@@ -302,20 +313,34 @@
     
     <!-- Build the edu tree -->
     <target name="build" description="Build the edu tree">
-        <javac srcdir="${base.dir}" source="${source.ver}" target="${target.ver}"
+        <mkdir dir="${build.dir}" />
+        <mkdir dir="${dist.dir}" />
+        <copy todir="${dist.dir}" preservelastmodified="true">
+            <fileset dir="${idvlib.dir}" includes="**/*.jar" />
+            <fileset dir="${lib.dir}" includes="**/*.jar" />
+        </copy>
+        
+        <javac srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
             debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
             <compilerarg value="-Xlint:${xlint}" />
             <classpath refid="app.classpath" />
         </javac>
+        <copy todir="${build.dir}" preservelastmodified="true">
+            <fileset dir="${base.dir}">
+                <patternset refid="jar.includes" />
+                <patternset refid="local-idv.includes" />
+            </fileset>
+        </copy>
     </target>
     
     <!-- Build only the startup manager -->
     <target name="startupmanager" depends="clean, build"
         description="Build only the startup manager">
         <tstamp prefix="jar" />
-        <mkdir dir="${dist.dir}" />
+        <!-- <mkdir dir="${dist.dir}" /> -->
         <jar destfile="${dist.dir}/${app.smjar}" index="true">
-            <fileset dir="${base.dir}">
+            <!-- <fileset dir="${base.dir}"> -->
+            <fileset dir="${build.dir}">
                 <patternset refid="startupmanager.includes" />
             </fileset>
             <manifest>
@@ -331,10 +356,11 @@
     <!-- Create the standalone Jython console jar file -->
     <target name="jar.jython" depends="build"
         description="Create the standalone Jython console jar file">
-        <mkdir dir="${dist.dir}" />
+        <!-- <mkdir dir="${dist.dir}" /> -->
         <tstamp prefix="jar" />
         <jar destfile="${dist.dir}/${jython.jarfile}">
-            <fileset dir="${base.dir}">
+            <!-- <fileset dir="${base.dir}"> -->
+            <fileset dir="${build.dir}">
                 <patternset refid="jython.includes" />
             </fileset>
             <manifest>
@@ -348,16 +374,21 @@
     
     <!-- Jar the base application jar file -->
     <target name="jar.base" description="Jar the base application jar file">
-        <mkdir dir="${dist.dir}" />
+        <!-- <mkdir dir="${dist.dir}" /> -->
+        <!-- <delete file="${dist.dir}/${app.jarname}" failonerror="false" /> -->
         <tstamp prefix="jar" />
-        <jar destfile="${dist.dir}/${app.jarname}" index="true">
-            <fileset dir="${base.dir}">
+        <manifestclasspath property="mcidasv.class.path" jarfile="${dist.dir}/{${app.jarname}">
+            <classpath refid="app.classpath" />
+        </manifestclasspath>
+        <jar destfile="${dist.dir}/${app.jarname}" index="false">
+            <!-- <fileset dir="${base.dir}"> -->
+            <fileset dir="${build.dir}">
                 <patternset refid="jar.includes" />
             </fileset>
             <manifest>
                 <attribute name="Build-By" value="${user.name}" />
                 <attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
-                <attribute name="Class-Path" value="${jar.base.classpath}" />
+                <attribute name="Class-Path" value="${mcidasv.class.path}" />
                 <attribute name="Main-Class" value="${app.mainclass}" />
             </manifest>
         </jar>
@@ -365,26 +396,35 @@
 
     <!-- Jar the local-idv jar file -->
     <target name="jar.local-idv" description="Jar the local-idv jar file">
-        <mkdir dir="${dist.dir}" />
+        <!-- <mkdir dir="${dist.dir}" /> -->
+        <!-- <delete file="${dist.dir}/${local-idv.jarname}" failonerror="false" /> -->
         <tstamp prefix="jar" />
-        <jar destfile="${dist.dir}/${local-idv.jarname}" index="true">
-            <fileset dir="${base.dir}">
+        <manifestclasspath property="local-idv.class.path" jarfile="${dist.dir}/{${local-idv.jarname}">
+            <classpath refid="app.classpath" />
+        </manifestclasspath>
+        <jar destfile="${dist.dir}/${local-idv.jarname}" index="false">
+            <!-- <fileset dir="${base.dir}"> -->
+            <fileset dir="${build.dir}">
                 <patternset refid="local-idv.includes" />
             </fileset>
             <manifest>
                 <attribute name="Build-By" value="${user.name}" />
                 <attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
-                <attribute name="Class-Path" value="${jar.base.classpath}" />
+                <attribute name="Class-Path" value="${local-idv.class.path}" />
                 <attribute name="Main-Class" value="${app.mainclass}" />
             </manifest>
         </jar>
     </target>
     
     <!-- Create jar files and documentation -->
-    <target name="jar"
+    <!-- <target name="jar"
     depends="clean, build, copy.build.props, jar.base, jar.local-idv"
     description="Create jar files and documentation" />
-    
+    --> 
+    <target name="jar"
+    depends="build, copy.build.props, jar.base, jar.local-idv"
+    description="Create jar files and documentation" />
+   
     <!-- Create nightly jar files and documentation -->
     <target name="jar.nightly"
     depends="clean, build, copy.nightly.props, jar.base, jar.local-idv"
@@ -401,6 +441,7 @@
     </target>
     
     <!-- Include dependencies in single jar file -->
+    <!-- this doesn't appear to work when j3d/jogl is included… -->
     <target name="singlejar" depends="clean, auxdata.nodocs, ncidv.nolog, build"
         description="Include dependencies in single jar file">
         
@@ -410,22 +451,26 @@
         <unzip dest="${build.dir}">
             <fileset refid="mcv.libs" />
             <fileset refid="idv.libs" />
+            <!-- <fileset refid="newj3d.libs" /> -->
         </unzip>
         
         <!-- Override default VisAD classes with custom ones -->
         <unzip src="${idvlib.dir}/local-visad.jar" dest="${build.dir}" />
 
         <!-- Override default IDV classes with custom ones -->
-        <unzip src="${idvlib.dir}/local-idv.jar" dest="${build.dir}" />
+        <!-- <unzip src="${idvlib.dir}/local-idv.jar" dest="${build.dir}" /> -->
         
-        <copy todir="${build.dir}">
-            <fileset dir="${base.dir}">
+<!--         <copy todir="${build.dir}">
+            <fileset dir="${.dir}">
                 <patternset refid="jar.includes" />
+                <patternset refid="local-idv.includes" />
             </fileset>
         </copy>
+ -->        
+        <delete dir="${build.dir}/META-INF" failonerror="false" />
         
         <tstamp prefix="jar" />
-        <jar destfile="${dist.dir}/${app.jarname}" basedir="${build.dir}">
+        <jar destfile="${dist.dir}/${app.jarname}" basedir="${build.dir}" index="false">
             <manifest>
                 <attribute name="Build-By" value="${user.name}" />
                 <attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
@@ -438,8 +483,10 @@
     <target name="dist"
         depends="auxdata.nodocs, ncidv.nolog, jar, startupmanager, javadoc.jar, userguide.jar"
         description="Create distribution product" >
-        <copy file="${base.dir}/edu/wisc/ssec/mcidasv/util/GetMem.class" tofile="${dist.dir}/GetMem.class" failonerror="false" />
-        <copy file="${base.dir}/edu/wisc/ssec/mcidasv/util/GetVer.class" tofile="${dist.dir}/GetVer.class" failonerror="false" />
+<!--         <copy file="${base.dir}/edu/wisc/ssec/mcidasv/util/GetMem.class" tofile="${dist.dir}/GetMem.class" failonerror="false" />
+        <copy file="${base.dir}/edu/wisc/ssec/mcidasv/util/GetVer.class" tofile="${dist.dir}/GetVer.class" failonerror="false" /> -->
+        <copy file="${build.dir}/edu/wisc/ssec/mcidasv/util/GetMem.class" tofile="${dist.dir}/GetMem.class" failonerror="false" />
+        <copy file="${build.dir}/edu/wisc/ssec/mcidasv/util/GetVer.class" tofile="${dist.dir}/GetVer.class" failonerror="false" />
     </target>
     
     <!-- Create nightly webstart distribution product -->
@@ -462,32 +509,13 @@
   <!-- Build and run McIDAS-V application (large memory) -->
   <target name="jar.runlarge" depends="jar" description="Build and run McIDAS-V application (large memory)">
     <java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
-      <classpath>
-        <pathelement location="${lib.dir}/sysout-over-slf4j-1.0.2.jar" />
-        <pathelement location="${lib.dir}/log4j-over-slf4j-1.6.1.jar" />
-        <pathelement location="${lib.dir}/logback-classic-0.9.29.jar" />
-        <pathelement location="${lib.dir}/logback-core-0.9.29.jar" />
-        <pathelement location="${lib.dir}/miglayout-4.0-swing.jar" />
-        <pathelement location="${lib.dir}/slf4j-api-1.6.1.jar" />
-        <pathelement location="${lib.dir}/commons-math-2.2.jar" />
-        <pathelement location="${lib.dir}/rsyntaxtextarea-2.0.2.jar" />
-        <pathelement location="${lib.dir}/eventbus-1.3.jar" />
-        <pathelement location="${dist.dir}/${app.jarname}" />
-        <pathelement location="${idvlib.dir}/auxdata.jar" />
-        <pathelement location="${idvlib.dir}/external.jar" />
-        <pathelement location="${dist.dir}/local-idv.jar" />
-        <pathelement location="${idvlib.dir}/idv.jar" />
-        <pathelement location="${idvlib.dir}/local-visad.jar" />
-        <pathelement location="${idvlib.dir}/ncIdv.jar" />
-        <pathelement location="${idvlib.dir}/visad.jar" />
-        <pathelement location="${idvlib.dir}/jython.jar" />
-      </classpath>
+      <classpath refid="app.classpath" />
       <assertions refid="mcv.assertions"/>
       <jvmarg value="-XX:+UseConcMarkSweepGC" />
       <jvmarg value="-XX:+CMSClassUnloadingEnabled" />
-      <jvmarg value="-XX:+CMSPermGenSweepingEnabled" />
+      <jvmarg value="-XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses" />
       <jvmarg value="-XX:MaxPermSize=512m" />
-      <!--<jvmarg value="-noverify" />-->
+      <jvmarg value="-noverify" />
       <!--<jvmarg value="-XX:+DoEscapeAnalysis" />-->
       <!-- 
         The following two lines will allow the JVM to dump the heap's 
@@ -523,25 +551,7 @@
 
   <target name="debug.runlarge" depends="jar" description="Build and run McIDAS-V application (large memory)">
     <java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
-      <classpath>
-        <pathelement location="${lib.dir}/sysout-over-slf4j-1.0.2.jar" />
-        <pathelement location="${lib.dir}/log4j-over-slf4j-1.6.1.jar" />
-        <pathelement location="${lib.dir}/logback-classic-0.9.29.jar" />
-        <pathelement location="${lib.dir}/logback-core-0.9.29.jar" />
-        <pathelement location="${lib.dir}/miglayout-4.0-swing.jar" />
-        <pathelement location="${lib.dir}/slf4j-api-1.6.1.jar" />
-        <pathelement location="${lib.dir}/commons-math-2.2.jar" />
-        <pathelement location="${idvlib.dir}/jython.jar" />
-        <pathelement location="${lib.dir}/eventbus-1.3.jar" />
-        <pathelement location="${dist.dir}/${app.jarname}" />
-        <pathelement location="${idvlib.dir}/auxdata.jar" />
-        <pathelement location="${idvlib.dir}/external.jar" />
-        <pathelement location="${dist.dir}/local-idv.jar" />
-        <pathelement location="${idvlib.dir}/idv.jar" />
-        <pathelement location="${idvlib.dir}/local-visad.jar" />
-        <pathelement location="${idvlib.dir}/ncIdv.jar" />
-        <pathelement location="${idvlib.dir}/visad.jar" />
-      </classpath>
+      <classpath refid="app.classpath" />
       <assertions refid="mcv.assertions"/>
       <!-- Prepares the JVM for a debugging session on port 8001 -->
       <jvmarg value="-Xdebug"/>
@@ -829,25 +839,7 @@
     <!-- Build and run McIDAS-V application (large memory) -->
     <target name="profiler.runlarge" depends="jar" description="Build and run McIDAS-V application (large memory)">
         <java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
-            <classpath>
-                <pathelement location="${lib.dir}/sysout-over-slf4j-1.0.2.jar" />
-                <pathelement location="${lib.dir}/log4j-over-slf4j-1.6.1.jar" />
-                <pathelement location="${lib.dir}/logback-classic-0.9.29.jar" />
-                <pathelement location="${lib.dir}/logback-core-0.9.29.jar" />
-                <pathelement location="${lib.dir}/miglayout-4.0-swing.jar" />
-                <pathelement location="${lib.dir}/slf4j-api-1.6.1.jar" />
-                <pathelement location="${lib.dir}/commons-math-2.2.jar" />
-                <pathelement location="${lib.dir}/eventbus-1.3.jar" />
-                <pathelement location="${dist.dir}/${app.jarname}" />
-                <pathelement location="${idvlib.dir}/auxdata.jar" />
-                <pathelement location="${idvlib.dir}/external.jar" />
-                <pathelement location="${dist.dir}/local-idv.jar" />
-                <pathelement location="${idvlib.dir}/idv.jar" />
-                <pathelement location="${idvlib.dir}/local-visad.jar" />
-                <pathelement location="${idvlib.dir}/ncIdv.jar" />
-                <pathelement location="${idvlib.dir}/visad.jar" />
-                <pathelement location="${idvlib.dir}/jython.jar" />
-            </classpath>
+            <classpath refid="app.classpath" />
             <assertions refid="mcv.assertions"/>
             <jvmarg value="-agentpath:${yourkit.agentlib}=${yourkit.options}" />
             <jvmarg value="-XX:+UseConcMarkSweepGC" />

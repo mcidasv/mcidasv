@@ -29,13 +29,21 @@
  */
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import visad.*;
 import java.rmi.RemoteException;
 
-import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
-import org.apache.commons.math.stat.correlation.PearsonsCorrelation;
-import org.apache.commons.math.stat.correlation.Covariance;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
+import visad.Data;
+import visad.FlatField;
+import visad.FunctionType;
+import visad.MathType;
+import visad.Real;
+import visad.RealTuple;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.TupleType;
+import visad.VisADException;
 
 public class Statistics {
 
