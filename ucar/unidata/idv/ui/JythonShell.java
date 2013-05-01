@@ -422,7 +422,7 @@ public class JythonShell extends InteractiveShell {
                     print(output);
                     output(output.replace("<", "&lt;")
                                  .replace(">", "&gt;")
-                                 .replace("\n", "<br>")
+                                 .replace("\n", "<br/>")
                                  .replace(" ", "&nbsp;")
                                  .replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;"));
                     // end buffering (important if we're getting here after hitting big output chunks).
@@ -592,7 +592,7 @@ public class JythonShell extends InteractiveShell {
             .replace(" ", "&nbsp;")
             .replace("<", "&lt;")
             .replace(">", "&gt;")
-            .replace("\n", "<br>");
+            .replace("\n", "<br/>");
     }
 
     /**
