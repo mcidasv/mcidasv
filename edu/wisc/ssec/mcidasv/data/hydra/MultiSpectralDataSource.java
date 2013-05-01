@@ -84,7 +84,6 @@ import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
 import edu.wisc.ssec.mcidasv.data.HydraDataSource;
 import edu.wisc.ssec.mcidasv.data.PreviewSelection;
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
-//import edu.wisc.ssec.mcidasv.data.hydra.InsatL1BCoordinateSystem1;
 
 /**
  * A data source for Multi Dimension Data 
