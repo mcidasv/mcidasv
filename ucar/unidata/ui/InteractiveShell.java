@@ -40,12 +40,19 @@ import static ucar.unidata.xml.XmlUtil.encodeBase64;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,10 +67,15 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.TransferHandler;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.JTextComponent;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.parser.ParserDelegator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -221,6 +233,7 @@ public class InteractiveShell implements HyperlinkListener {
         editorPane = new JEditorPane();
         editorPane.setEditable(false);
         editorPane.setContentType("text/html");
+        editorPane.setTransferHandler(new HTMLCleanupTransferHandler());
         editorPane.addHyperlinkListener(this);
         // http://www.coderanch.com/t/537810/GUI/java/auto-scroll-bottom-jtextarea
         // scroll to bottom on text updates:   
@@ -562,6 +575,131 @@ public class InteractiveShell implements HyperlinkListener {
      */
     protected void setDividerLocation(int loc) {
         this.getJSplitPane().setDividerLocation(loc);
+    }
+    
+}
+
+class HTMLCleanupTransferHandler extends TransferHandler {
+    
+    private static final Logger logger = LoggerFactory.getLogger(HTMLCleanupTransferHandler.class);
+    
+    protected Transferable createTransferable(JComponent c) {
+        final JEditorPane pane = (JEditorPane)c;
+        final String htmlText = pane.getSelectedText();
+        final String plainText = extractText(new StringReader(htmlText));
+        return new HTMLCleanupTransferable(plainText, htmlText);
+    }
+    
+    public String extractText(Reader reader) {
+        final List<String> list = new ArrayList<String>();
+        
+        HTMLEditorKit.ParserCallback parserCallback = new HTMLEditorKit.ParserCallback() {
+            public void handleText(final char[] data, final int pos) {
+//                logger.trace("data={} pos={}", data, pos);
+                for (int i = 0; i < data.length; i++) {
+//                    logger.trace("  data[{}]={} (char={}) (int={})", i, data[i], Character.valueOf(data[i]), Integer.valueOf(data[i]));
+                    if (Character.isSpaceChar(data[i])) {
+//                        logger.trace("    inserting space at {}", i);
+                        data[i] = ' ';
+                    }
+                }
+                list.add(new String(data));
+            }
+            
+            public void handleStartTag(HTML.Tag tag, MutableAttributeSet attribute, int pos) {
+//                logger.trace("tag={}, attribute={} pos={}", tag, attribute, pos);
+            }
+            
+            public void handleEndTag(HTML.Tag t, final int pos) {
+//                logger.trace("tag={} pos={}", t, pos);
+            }
+            
+            public void handleSimpleTag(HTML.Tag t, MutableAttributeSet a, final int pos) {
+//                logger.trace("tag={}, attribute={} pos={}", t, a, pos);
+//                if (t.equals(HTML.Tag.BR)) {
+//                    list.add("\n");
+//                }
+            }
+            
+            public void handleComment(final char[] data, final int pos) {
+//                logger.trace("data={} pos={}", data, pos);
+            }
+            
+            public void handleError(final String errMsg, final int pos) {
+//                logger.trace("errMsg={} pos={}", errMsg, pos);
+            }
+        };
+        
+        try {
+            new ParserDelegator().parse(reader, parserCallback, true);
+        } catch (IOException e) {
+            logger.error("Error parsing copied text", e);
+        }
+
+        StringBuilder result = new StringBuilder();
+        for (String s : list) {
+            result.append(s);
+        }
+        return result.toString();
+    }
+    
+    @Override public void exportToClipboard(JComponent comp, Clipboard clip, int action) throws IllegalStateException {
+        if (action == COPY) {
+            clip.setContents(this.createTransferable(comp), null);
+        }
+    }
+    
+    @Override public int getSourceActions(JComponent c) {
+        return COPY;
+    }
+    
+}
+
+class HTMLCleanupTransferable implements Transferable {
+    
+    private static final DataFlavor[] supportedFlavors;
+    
+    static {
+        try {
+            supportedFlavors = new DataFlavor[]{
+                    new DataFlavor("text/html;class=java.lang.String"),
+                    new DataFlavor("text/plain;class=java.lang.String")
+            };
+        } catch (ClassNotFoundException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+    
+    private final String plainData;
+    
+    private final String htmlData;
+    
+    public HTMLCleanupTransferable(String plainData, String htmlData) {
+        this.plainData = plainData;
+        this.htmlData = htmlData;
+    }
+    
+    @Override public DataFlavor[] getTransferDataFlavors() {
+        return supportedFlavors;
+    }
+    
+    @Override public boolean isDataFlavorSupported(DataFlavor flavor) {
+        for (DataFlavor supportedFlavor : supportedFlavors) {
+            if (supportedFlavor == flavor) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    @Override public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+        if (flavor.equals(supportedFlavors[0])) {
+            return htmlData;
+        }
+        if (flavor.equals(supportedFlavors[1])) {
+            return plainData;
+        }
+        throw new UnsupportedFlavorException(flavor);
     }
 }
 
