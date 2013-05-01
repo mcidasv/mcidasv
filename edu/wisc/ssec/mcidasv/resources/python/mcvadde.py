@@ -55,38 +55,57 @@ def _areaDirectoryToDictionary(areaDirectory):
     return d
 
 _formats = {
-    "AMSR-E L 1b":                                              AddeFormat.AMSRE_L1B,
-    "LRIT GOES-9":                                              AddeFormat.LRIT_GOES9,
-    "LRIT GOES-10":                                             AddeFormat.LRIT_GOES10,
-    "LRIT GOES-11":                                             AddeFormat.LRIT_GOES11,
-    "LRIT GOES-12":                                             AddeFormat.LRIT_GOES12,
-    "LRIT MET-5":                                               AddeFormat.LRIT_MET5,
-    "LRIT MET-7":                                               AddeFormat.LRIT_MET7,
-    "LRIT MTSAT-1R":                                            AddeFormat.LRIT_MTSAT1R,
-    "McIDAS Area":                                              AddeFormat.MCIDAS_AREA,
-    "Meteosat OpenMTP":                                         AddeFormat.METEOSAT_OPENMTP,
-    "Metop AVHRR L 1b":                                         AddeFormat.METOP_AVHRR_L1B,
-    "MODIS MOD 02 - Level-1B Calibrated Geolocated Radiances":  AddeFormat.MODIS_L1B_MOD02,
-    "MODIS MOD 02":                                             AddeFormat.MODIS_L1B_MOD02,
-    "MODIS MOD 04 - Aerosol Product":                           AddeFormat.MODIS_L2_MOD04,
-    "MODIS MOD 04":                                             AddeFormat.MODIS_L2_MOD04,
-    "MODIS MOD 06 - Cloud Product":                             AddeFormat.MODIS_L2_MOD06,
-    "MODIS MOD 06":                                             AddeFormat.MODIS_L2_MOD06,
-    "MODIS MOD 07 - Atmospheric Profiles":                      AddeFormat.MODIS_L2_MOD07,
-    "MODIS MOD 07":                                             AddeFormat.MODIS_L2_MOD07,
-    "MODIS MOD 28 - Sea Surface Temperature":                   AddeFormat.MODIS_L2_MOD28,
-    "MODIS MOD 28":                                             AddeFormat.MODIS_L2_MOD28,
-    "MODIS MOD 35 - Cloud Mask":                                AddeFormat.MODIS_L2_MOD35,
-    "MODIS MOD 35":                                             AddeFormat.MODIS_L2_MOD35,
-    "MODIS MOD R - Corrected Reflectance":                      AddeFormat.MODIS_L2_MODR,
-    "MODIS MOD R":                                              AddeFormat.MODIS_L2_MODR,
-    "MSG HRIT FD":                                              AddeFormat.MSG_HRIT_FD,
-    "MSG HRIT HRV":                                             AddeFormat.MSG_HRIT_HRV,
-    "MTSAT HRIT":                                               AddeFormat.MTSAT_HRIT,
-    "NOAA AVHRR L 1b":                                          AddeFormat.NOAA_AVHRR_L1B,
-    "SSMI":                                                     AddeFormat.SSMI,
-    "TRMM":                                                     AddeFormat.TRMM,
-    "GINI":                                                     AddeFormat.GINI,
+    "AMSR-E Rain Product":                                     AddeFormat.AMSRE_RAIN_PRODUCT,
+    "AMRR":                                                    AddeFormat.AMSRE_RAIN_PRODUCT,
+    "AMSR-E L 1b":                                             AddeFormat.AMSRE_L1B,
+    "AMSR":                                                    AddeFormat.AMSRE_L1B,
+    "LRIT GOES-9":                                             AddeFormat.LRIT_GOES9,
+    "FSDX_G9":                                                 AddeFormat.LRIT_GOES9,
+    "LRIT GOES-10":                                            AddeFormat.LRIT_GOES10,
+    "FSDX_G10":                                                AddeFormat.LRIT_GOES10,
+    "LRIT GOES-11":                                            AddeFormat.LRIT_GOES11,
+    "FSDX_G11":                                                AddeFormat.LRIT_GOES11,
+    "LRIT GOES-12":                                            AddeFormat.LRIT_GOES12,
+    "FSDX_G12":                                                AddeFormat.LRIT_GOES12,
+    "LRIT MET-5":                                              AddeFormat.LRIT_MET5,
+    "FSDX_M5":                                                 AddeFormat.LRIT_MET5,
+    "LRIT MET-7":                                              AddeFormat.LRIT_MET7,
+    "FSDX_M7":                                                 AddeFormat.LRIT_MET7,
+    "LRIT MTSAT-1R":                                           AddeFormat.LRIT_MTSAT1R,
+    "FSDX_MT":                                                 AddeFormat.LRIT_MTSAT1R,
+    "McIDAS Area":                                             AddeFormat.MCIDAS_AREA,
+    "AREA":                                                    AddeFormat.MCIDAS_AREA,
+    "Meteosat OpenMTP":                                        AddeFormat.METEOSAT_OPENMTP,
+    "OMTP":                                                    AddeFormat.METEOSAT_OPENMTP,
+    "Metop AVHRR L 1b":                                        AddeFormat.METOP_AVHRR_L1B,
+    "LV1B_METOP":                                              AddeFormat.METOP_AVHRR_L1B,
+    "MODIS MOD 02 - Level-1B Calibrated Geolocated Radiances": AddeFormat.MODIS_L1B_MOD02,
+    "MODS":                                                    AddeFormat.MODIS_L1B_MOD02,
+    "MODIS MOD 04 - Aerosol Product":                          AddeFormat.MODIS_L2_MOD04,
+    "MOD4":                                                    AddeFormat.MODIS_L2_MOD04,
+    "MODIS MOD 06 - Cloud Product":                            AddeFormat.MODIS_L2_MOD06,
+    "MODX_06":                                                 AddeFormat.MODIS_L2_MOD06,
+    "MODIS MOD 07 - Atmospheric Profiles":                     AddeFormat.MODIS_L2_MOD07,
+    "MODX_07":                                                 AddeFormat.MODIS_L2_MOD07,
+    "MODIS MOD 28 - Sea Surface Temperature":                  AddeFormat.MODIS_L2_MOD28,
+    "MOD8":                                                    AddeFormat.MODIS_L2_MOD28,
+    "MODIS MOD 35 - Cloud Mask":                               AddeFormat.MODIS_L2_MOD35,
+    "MODX_35":                                                 AddeFormat.MODIS_L2_MOD35,
+    "MODIS MOD R - Corrected Reflectance":                     AddeFormat.MODIS_L2_MODR,
+    "MODR":                                                    AddeFormat.MODIS_L2_MODR,
+    "MSG HRIT FD":                                             AddeFormat.MSG_HRIT_FD,
+    "MSGT_FD":                                                 AddeFormat.MSG_HRIT_FD,
+    "MSG HRIT HRV":                                            AddeFormat.MSG_HRIT_HRV,
+    "MSGT_HRV":                                                AddeFormat.MSG_HRIT_HRV,
+    "MTSAT HRIT":                                              AddeFormat.MTSAT_HRIT,
+    "MTST":                                                    AddeFormat.MTSAT_HRIT,
+    "NOAA AVHRR L 1b":                                         AddeFormat.NOAA_AVHRR_L1B,
+    "LV1B_NOAA":                                               AddeFormat.NOAA_AVHRR_L1B,
+    "SSMI":                                                    AddeFormat.SSMI,
+    "SMIN":                                                    AddeFormat.SSMI,
+    "TRMM":                                                    AddeFormat.TRMM,
+    "TMIN":                                                    AddeFormat.TRMM,
+    "GINI":                                                    AddeFormat.GINI,
 }
 
 DEFAULT_ACCOUNTING = ('idv', '0')
@@ -253,37 +272,38 @@ def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
         imageType: Image type name for local server entry. The image type name is limited to twelve characters or less. (default=format_dataset)
         mask: Directory containing the files used by the created dataset.
         save: True saves entry into the server table. False will cause the entry to be removed at the end of this McIDAS-V session. (default=False)
-        format: Data format of the files within the dataset. Either the Full Name, Short Name or Server Name can be used as valid options:
-    
-            =========================================================  ==================  ============
-            Full Name                                                  Short Name          Server Name
-            =========================================================  ==================  ============
-            "AMSR-E L 1b"                                              "AMSR-E L 1b"       "AMSR"
-            "LRIT GOES-9"                                              "LRIT GOES-9"       "FSDX_G9"
-            "LRIT GOES-10"                                             "LRIT GOES-10"      "FSDX_G10"
-            "LRIT GOES-11"                                             "LRIT GOES-11"      "FSDX_G11"
-            "LRIT GOES-12"                                             "LRIT GOES-12"      "FSDX_G12"
-            "LRIT MET-5"                                               "LRIT MET-5"        "FSDX_M5"
-            "LRIT MET-7"                                               "LRIT MET-7"        "FSDX_M7"
-            "LRIT MTSAT-1R"                                            "LRIT MTSAT-1R"     "FSDX_MT"
-            "McIDAS Area"                                              "McIDAS Area"       "AREA"
-            "Meteosat OpenMTP"                                         "Meteosat OpenMTP"  "OMTP"
-            "Metop AVHRR L 1b"                                         "Metop AVHRR L 1b"  "LV1B_METOP"
-            "MODIS MOD 02 - Level-1B Calibrated Geolocated Radiances"  "MODIS MOD 02"      "MODS"
-            "MODIS MOD 04 - Aerosol Product"                           "MODIS MOD 04"      "MOD4"
-            "MODIS MOD 06 - Cloud Product"                             "MODIS MOD 06"      "MODX"
-            "MODIS MOD 07 - Atmospheric Profiles"                      "MODIS MOD 07"      "MODX"
-            "MODIS MOD 28 - Sea Surface Temperature"                   "MODIS MOD 28"      "MOD8"
-            "MODIS MOD 35 - Cloud Mask"                                "MODIS MOD 35"      "MODX"
-            "MODIS MOD R - Corrected Reflectance"                      "MODIS MOD R"       "MODR"
-            "MSG HRIT FD"                                              "MSG HRIT FD"       "MSGT_FD"
-            "MSG HRIT HRV"                                             "MSG HRIT HRV"      "MSGT_HRV"
-            "MTSAT HRIT"                                               "MTSAT HRIT"        "MTST"
-            "NOAA AVHRR L 1b"                                          "NOAA AVHRR L 1b"   "LV1B_NOAA"
-            "SSMI"                                                     "SSMI"              "SMIN"
-            "TRMM"                                                     "TRMM"              "TMIN"
-            "GINI"                                                     "GINI"              "GINI"
-            =========================================================  ==================  ============
+        format: Data format of the files within the dataset. Either the Full Name or Short Name can be used as valid options:
+            
+            =========================================================  ============
+            Full Name                                                  Short Name  
+            =========================================================  ============
+            "AMSR-E Rain Product"                                      "AMRR"
+            "AMSR-E L 1b"                                              "AMSR"
+            "LRIT GOES-9"                                              "FSDX_G9"
+            "LRIT GOES-10"                                             "FSDX_G10"
+            "LRIT GOES-11"                                             "FSDX_G11"
+            "LRIT GOES-12"                                             "FSDX_G12"
+            "LRIT MET-5"                                               "FSDX_M5"
+            "LRIT MET-7"                                               "FSDX_M7"
+            "LRIT MTSAT-1R"                                            "FSDX_MT"
+            "McIDAS Area"                                              "AREA"
+            "Meteosat OpenMTP"                                         "OMTP"
+            "Metop AVHRR L 1b"                                         "LV1B_METOP"
+            "MODIS MOD 02 - Level-1B Calibrated Geolocated Radiances"  "MODS"
+            "MODIS MOD 04 - Aerosol Product"                           "MOD4"
+            "MODIS MOD 06 - Cloud Product"                             "MODX_06"
+            "MODIS MOD 07 - Atmospheric Profiles"                      "MODX_07"
+            "MODIS MOD 28 - Sea Surface Temperature"                   "MOD8"
+            "MODIS MOD 35 - Cloud Mask"                                "MODX_35"
+            "MODIS MOD R - Corrected Reflectance"                      "MODR"
+            "MSG HRIT FD"                                              "MSGT_FD"
+            "MSG HRIT HRV"                                             "MSGT_HRV"
+            "MTSAT HRIT"                                               "MTST"
+            "NOAA AVHRR L 1b"                                          "LV1B_NOAA"
+            "SSMI"                                                     "SMIN"
+            "TRMM"                                                     "TMIN"
+            "GINI"                                                     "GINI"
+            =========================================================  ============
                     
     Returns:
         The newly created local ADDE dataset.
