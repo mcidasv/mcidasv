@@ -111,7 +111,7 @@ if [ -f "./jre/bin/java" ]; then
   JAVA_BIN="./jre/bin/java"
 else
   if [ -n "${JAVA_HOME}" ]; then
-    JAVA_BIN="\"${JAVA_HOME}/bin/java\""
+    JAVA_BIN="${JAVA_HOME}/bin/java"
   fi
 fi
 
