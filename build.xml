@@ -82,8 +82,8 @@
     <!-- Compiler options -->
     <property name="debug.flag" value="true" />
     <property name="deprecation.flag" value="false" />
-    <property name="source.ver" value="1.5" />
-    <property name="target.ver" value="1.5" />
+    <property name="source.ver" value="1.6" />
+    <property name="target.ver" value="1.6" />
     
     <!-- Which warnings to show, use javac -X for help -->
     <property name="xlint" value="deprecation" />
