@@ -120,6 +120,7 @@ ULEFT = Places.ULEFT
 CENTER = Places.CENTER
 
 class AddeJythonError(Exception): pass
+class AddeJythonInvalidDatasetError(AddeJythonError): pass
 class AddeJythonInvalidProjectError(AddeJythonError): pass
 class AddeJythonInvalidPortError(AddeJythonError): pass
 class AddeJythonInvalidUserError(AddeJythonError): pass
@@ -308,6 +309,10 @@ def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
     Returns:
         The newly created local ADDE dataset.
     """
+    
+    if len(dataset) > 8 or not dataset.isupper() or any(c in dataset for c in "/. []%"):
+        raise AddeJythonInvalidDatasetError("Dataset '%s' is not valid." % (dataset))
+        
     convertedFormat = _formats.get(format, AddeFormat.INVALID)
     
     if convertedFormat is AddeFormat.INVALID:
@@ -316,7 +321,7 @@ def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
     if not imageType:
         imageType = "%s_%s" % (format, dataset)
         
-    localEntry = LocalAddeEntry.Builder(dataset, imageType, mask, convertedFormat).status(EntryStatus.ENABLED).temporary((not save)).build()
+    localEntry = LocalAddeEntry.Builder(imageType, dataset, mask, convertedFormat).status(EntryStatus.ENABLED).temporary((not save)).build()
     getStaticMcv().getServerManager().addEntry(localEntry)
     return localEntry
     
