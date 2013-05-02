@@ -334,7 +334,7 @@
     </target>
     
     <!-- Build only the startup manager -->
-    <target name="startupmanager" depends="clean, build"
+    <target name="startupmanager" depends="build"
         description="Build only the startup manager">
         <tstamp prefix="jar" />
         <!-- <mkdir dir="${dist.dir}" /> -->
