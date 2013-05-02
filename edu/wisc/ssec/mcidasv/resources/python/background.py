@@ -1876,7 +1876,6 @@ MAP2D = _NoOp('MAP2D')
 GLOBE = _NoOp('GLOBE')
 TRANSECT = _NoOp('TRANSECT')
 
-@gui_invoke_later
 def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
     """Call _buildWindowInternal (from Jython Shell) or _buildWindowBackground (from background)
     """
@@ -1916,7 +1915,7 @@ def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
             else:
                 bounds = window.getBounds()
                 print 'creating window: width=%d height=%d rows=%d cols=%d panelTypes=%s' % (bounds.width, bounds.height, rows, cols, panelTypes)
-            
+                
             panels = []
             for holder in window.getComponentGroups()[0].getDisplayComponents():
                 for viewManager in holder.getViewManagers():
@@ -1926,7 +1925,7 @@ def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
             return panels
         except NullPointerException, e:
             raise RuntimeError("could not build window", e)
-
+            
     def _buildWindowBackground(height, width, panelTypes):
         """
          (1) create a new MapViewManager.  This is the default type of ViewManager
@@ -1954,7 +1953,7 @@ def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
         
         newVM = getStaticMcv().getVMManager().createViewManager(None, propString)
         return [_Display(newVM)]
-    
+        
     # end of internal method definitions..this is buildWindow now.
     if panelTypes is None:
         panelTypes = [MAP] * (rows * cols)
@@ -1963,14 +1962,14 @@ def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
     elif isinstance(panelTypes, types.ListType):
         if len(panelTypes) != (rows * cols):
             raise ValueError('panelTypes needs to contain rows*cols elements')
-    
+            
     if getStaticMcv().getArgsManager().getIsOffScreen():
         return _buildWindowBackground(height, width, panelTypes)
     else:
         if len(panelTypes) > 1:
             print '* WARNING: buildWindow will only build one panel when run from the background'
         return _buildWindowInternal(width, height, rows, cols, panelTypes)
-
+        
 def makeLogger(name):
     """ """
     return  LoggerFactory.getLogger(name)
