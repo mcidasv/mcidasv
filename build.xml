@@ -181,6 +181,31 @@
         </sequential>
     </macrodef>
     
+    <macrodef name="git-fetch">
+        <attribute name="dir" default="" />
+        <attribute name="remote" default="origin" />
+        <sequential>
+            <echo message="git fetch @{remote}" />
+            <exec executable="git" dir="@{dir}">
+                <arg value="fetch" />
+                <arg value="@{remote}" />
+            </exec>
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="git-merge">
+        <attribute name="dir" default="" />
+        <attribute name="remote" default="origin" />
+        <attribute name="branch" default="master" />
+        <sequential>
+            <echo message="git merge @{remote}/@{branch}" />
+            <exec executable="git" dir="@{dir}">
+                <arg value="merge" />
+                <arg value="@{remote}/@{branch}" />
+            </exec>
+        </sequential>
+    </macrodef>
+    
     <!-- Controls the status of Java's assertion feature. -->
     <assertions id="mcv.assertions">
         <!-- Enable all assertions: -->
@@ -265,7 +290,8 @@
     </target>
     
     <target name="gitupdate" description="Get the latest McIDAS-V source from Github.">
-        <git command="pull" dir="${base.dir}" />
+        <git-fetch dir="${base.dir}" />
+        <git-merge dir="${base.dir}" />
     </target>
     
     <target name="processdocs" description="Keep Git up to date with changes that were presumably synced from web server.">
