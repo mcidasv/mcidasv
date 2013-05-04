@@ -30,13 +30,12 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -98,100 +97,79 @@ public class SuomiNPPProductProfile {
 	 */
 	
 	public String getProfileFileName(String attrName) {
+		
 		// sanity check
 		if (attrName == null) return null;
 		
-		// print top level classloader files
-		// this is how we will tell if we need to pull the profiles out of a jar file
-		
-		readFromJar = false;
-        ClassLoader loader = getClass().getClassLoader();
-        InputStream in = loader.getResourceAsStream(".");
-        BufferedReader rdr = new BufferedReader(new InputStreamReader(in));
-        String l;
-        try {
-			while ((l = rdr.readLine()) != null) {
-			    if (l.equals("mcidasv.jar")) {
-			    	readFromJar = true;
-			    }
+		// Locate the base app JAR file
+		File mcvJar = findMcVJar();
+		if (mcvJar == null) return null;
+
+		// we need to pull the XML Product Profiles out of mcidasv.jar
+		JarFile jar;
+		try {
+			jar = new JarFile(mcvJar);
+			// gives ALL entries in jar
+			Enumeration<JarEntry> entries = jar.entries();
+			boolean found = false;
+			String name = null;
+			while (entries.hasMoreElements()) {
+				name = entries.nextElement().getName();
+				// filter according to the profiles
+				if (name.contains("XML_Product_Profiles")) { 
+					logger.trace("looking at line: " + name);
+					if (name.contains(attrName + "-PP")) {
+						found = true;
+						break;
+					}
+				}
 			}
-			rdr.close();
+			if (found == true) {
+				logger.trace("Found profile: " + name);
+				return name;
+			}
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		}
 
-		// we need to pull the XML Product Profiles out of mcidasv.jar
-		if (readFromJar) {
-			JarFile jar;
-			try {
-				jar = new JarFile(URLDecoder.decode("mcidasv.jar", "UTF-8"));
-				Enumeration<JarEntry> entries = jar.entries(); //gives ALL entries in jar
-				boolean found = false;
-				String name = null;
-				while (entries.hasMoreElements()) {
-					name = entries.nextElement().getName();
-					if (name.contains("XML_Product_Profiles")) { // filter according to the profiles
-						logger.trace("looking at line: " + name);
-						if (name.contains(attrName + "-PP")) {
-							found = true;
-							break;
-						}
-					}
-				}
-				if (found == true) {
-					logger.trace("Found profile: " + name);
-					return name;
-				}
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-				return null;
-			} catch (IOException e) {
-				e.printStackTrace();
-				return null;
-			}
-		} else {
-			// read contents of XML Product Profile directory as stream
-			InputStream ios = getClass().getResourceAsStream("resources/NPP/XML_Product_Profiles/");
-			BufferedReader dirReader = new BufferedReader(new InputStreamReader(ios));
-			try {
-				String line = dirReader.readLine();
-				boolean found = false;
-				while (line != null) {
-					if (line.contains(attrName + "-PP")) {
-						found = true;
-						break;
-					}
-					line = dirReader.readLine();
-				}
-				ios.close();
-				if (found == true) {
-					logger.info("Found profile: " + attrName);
-					return line;
-				}
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
-				return null;
-			}
-		}
-
 		return null;
 	}
+
+	/**
+	 * @param mcvJar
+	 * @return the File object which for mcidasv.jar, or null if not found
+	 */
 	
+	private File findMcVJar() {
+		File mcvJar = null;
+		try {
+			mcvJar = new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
+		} catch (URISyntaxException urise) {
+			// just log the exception for analysis
+			urise.printStackTrace();
+		}
+		return mcvJar;
+	}
+	
+	@SuppressWarnings("deprecation")
 	public void addMetaDataFromFile(String fileName) throws SAXException, IOException {
 		
-		logger.debug("Attempting to parse XML Product Profile: " + fileName);
+		File mcvJar = findMcVJar();
+		if (mcvJar == null) {
+			logger.error("Unable to parse Suomi XML Product Profile");
+			return;
+		}
+
 		Document d = null;
 		InputStream ios = null;
-		if (readFromJar) {
-			JarFile jar = new JarFile(URLDecoder.decode("mcidasv.jar", "UTF-8"));
-			JarEntry je = jar.getJarEntry(fileName);
-			ios = jar.getInputStream(je);
-			d = db.parse(ios);
-		} else {
-			ios = getClass().getResourceAsStream("resources/NPP/XML_Product_Profiles/" + fileName);
-			d = db.parse(ios);
-		}
+		JarFile jar = new JarFile(mcvJar);
+		JarEntry je = jar.getJarEntry(fileName);
+		ios = jar.getInputStream(je);
+		d = db.parse(ios);
 		
 		NodeList nl = d.getElementsByTagName("Field");
 		for (int i = 0; i < nl.getLength(); i++) {
@@ -259,12 +237,15 @@ public class SuomiNPPProductProfile {
 									// first, special check for "Test" flags, want to 
 									// include the relevant bands on those.  Seem to
 									// directly follow test name in parens
+									boolean isTest = false;
 									if (s.contains("Test (")) {
+										isTest = true;
 										int idx = s.indexOf(")");
 										if (idx > 0) {
 											description = s.substring(0, idx + 1);
 										}
 									} else {
+										// for non-Test flags, we DO want to
 										// lose any ancillary (in parentheses) info
 										int endIdx = s.indexOf("(");
 										if (endIdx > 0) {
@@ -274,13 +255,18 @@ public class SuomiNPPProductProfile {
 										}
 									}
 									// another "ancillary info weedout" check, sometimes
-									// there is long trailing info after " - "
-									if (description.contains(" - ")) {
+									// there is long misc trailing info after " - "
+									if ((description.contains(" - ")) && !isTest) {
 										int idx = description.indexOf(" - ");
 										description = description.substring(0, idx);
 									}
-									// Now, crunch out any whitespace
-									description = description.replaceAll("\\s+", "");
+									// ensure what's left is a valid NetCDF object name
+									description= ucar.nc2.iosp.netcdf3.N3iosp.makeValidNetcdf3ObjectName(description);
+									// valid name maker sometimes leaves trailing underscore - remove these
+									if (description.endsWith("_")) {
+										description = description.substring(0, description.length() - 1);
+									}
+									logger.info("Final name: " + description);
 									haveDesc = true;
 								}
 								if (datumChild.getNodeName().equals("LegendEntry")) {

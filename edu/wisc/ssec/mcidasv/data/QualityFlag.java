@@ -142,5 +142,14 @@ public class QualityFlag {
 		}
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "QualityFlag [bitOffset=" + bitOffset + ", numBits=" + numBits
+				+ ", name=" + name + ", packedName=" + packedName + "]";
+	}
 	
 }
