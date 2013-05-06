@@ -228,13 +228,13 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	// flag to indicate data is 3-dimensions (X, Y, channel or band)
     	boolean is3D = false;
     	
-    	// check source filenames to see if this is a combined product
-    	// XXX TJJ - looking for "underscore" is NOT GUARANTEED TO WORK! FIXME 
-    	String prodStr = filename.substring(
-    			filename.lastIndexOf(File.separatorChar) + 1, 
-    			filename.lastIndexOf(File.separatorChar) + 1 + filename.indexOf("_"));
+    	// check source filenames to see if this is a combined product. everything
+    	// from last file separator to first underscore should be product info
+    	int lastSeparator = filename.lastIndexOf(File.separatorChar);
+    	int firstUnderscore = filename.indexOf("_", lastSeparator + 1);
+    	String prodStr = filename.substring(lastSeparator + 1, firstUnderscore);
         StringTokenizer st = new StringTokenizer(prodStr, "-");
-        logger.debug("check for embedded GEO, tokenizing: " + prodStr);
+        logger.debug("SNPPDS check for embedded GEO, tokenizing: " + prodStr);
         while (st.hasMoreTokens()) {
         	String singleProd = st.nextToken();
         	logger.debug("Next token: " + singleProd);
@@ -540,7 +540,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    									// make a copy of the qflag variable
     	    									// NOTE: by using a VariableDS here, the original
     	    									// variable is used for the I/O, this matters!
-    	    									VariableDS vqf = new VariableDS(null, v, false);
+    	    									VariableDS vqf = new VariableDS(subG, v, false);
     	    									vqf.setShortName(qf.getName());
     	    									logger.debug("New var full name: " + vqf.getFullName());
     	    	    							qfProds.add(vqf);
@@ -776,8 +776,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    		if (qfV.getFullName().endsWith("Spare")) {
     	    			continue;
     	    		}
-    	    		ncdff.addVariable(null, qfV);
-    	    		logger.info("Adding QF product: " + qfV.getFullName());
+    	    		ncdff.addVariable(qfV.getGroup(), qfV);
+    	    		logger.trace("Adding QF product: " + qfV.getFullName());
     	    		pathToProducts.add(qfV.getFullName());
     	    		unsignedFlags.add("true");
     	    		unpackFlags.add("false");
@@ -1224,14 +1224,14 @@ public class SuomiNPPDataSource extends HydraDataSource {
         for (DataChoice dc : dcl) {
         	if (dc.equals(dataChoice)) {
         		aIdx = dcl.indexOf(dc);
-        		logger.warn("storing adapter index for bundles: " + aIdx);
+        		logger.trace("storing adapter index for bundles: " + aIdx);
         		bundleAdapterIndex = aIdx;
         		break;
         	}
         }
         
         if (unpersisted) {
-        	logger.warn("setting adapter index from bundle, to: " + bundleAdapterIndex);
+        	logger.trace("setting adapter index from bundle, to: " + bundleAdapterIndex);
         	aIdx = bundleAdapterIndex;
         }
 
@@ -1322,7 +1322,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     			  FlatField image = (FlatField) dataChoice.getData(null);
     			  components.add(new PreviewSelection(dataChoice, image, null));
     		  } catch (Exception e) {
-    			  logger.error("Can't make PreviewSelection: "+e);
+    			  logger.error("Can't make PreviewSelection: " + e);
     			  e.printStackTrace();
     		  }
     	  }
