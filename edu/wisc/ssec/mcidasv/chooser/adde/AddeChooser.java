@@ -1404,14 +1404,16 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             logger.debug("readDesc: buff={}", buff.toString());
             DataSetInfo  dsinfo = new DataSetInfo(buff.toString());
             descriptorTable = dsinfo.getDescriptionTable();
-            String[] names = new String[descriptorTable.size()];
-            Enumeration enumeration = descriptorTable.keys();
-            for (int i = 0; enumeration.hasMoreElements(); i++) {
-                Object thisElement = enumeration.nextElement();
-                if (!isLocalServer())
-                    names[i] = descriptorTable.get(thisElement).toString() + nameSeparator + thisElement.toString();
-                else
-                    names[i] = thisElement.toString();
+            List<String> descriptorList = dsinfo.getDescriptorList();
+            List<String> commentList = dsinfo.getCommentList();
+            int count = commentList.size();
+            String[] names = new String[count];
+            for (int i = 0; i < count; i++) {
+                if (!isLocalServer()) {
+                    names[i] = descriptorList.get(i) + nameSeparator + commentList.get(i);
+                } else {
+                    names[i] = commentList.get(i);
+                }
             }
             logger.debug("readDesc: names={}", names);
             Arrays.sort(names);
