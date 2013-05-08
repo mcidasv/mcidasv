@@ -131,17 +131,23 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * @version $Revision$
  */
 public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser implements Constants {
-
+    
     private static final Logger logger = LoggerFactory.getLogger(AddeChooser.class);
-
+    
     private JComboBox serverSelector;
-
+    
     /** List of descriptors */
     private PreferenceList descList;
-
+    
     /** Descriptor/name hashtable */
     protected Hashtable descriptorTable;
-
+    
+    /** List of available descriptors. */
+    protected List<String> descriptorList;
+    
+    /** List of comments associated with list of descriptors. */
+    protected List<String> commentList;
+    
     /** Property for the descriptor table */
     public static final String DESCRIPTOR_TABLE = "DESCRIPTOR_TABLE";
 
@@ -236,6 +242,9 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     public AddeChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
         AnnotationProcessor.process(this);
+        descriptorList = new ArrayList<String>();
+        commentList = new ArrayList<String>();
+        
         simpleMode = !getProperty(IdvChooser.ATTR_SHOWDETAILS, true);
 
         loadButton = McVGuiUtils.makeImageTextButton(ICON_ACCEPT_SMALL, getLoadCommandName());
@@ -1403,9 +1412,12 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             buff.append("&type=").append(getDataType());
             logger.debug("readDesc: buff={}", buff.toString());
             DataSetInfo  dsinfo = new DataSetInfo(buff.toString());
+            
             descriptorTable = dsinfo.getDescriptionTable();
-            List<String> descriptorList = dsinfo.getDescriptorList();
-            List<String> commentList = dsinfo.getCommentList();
+            descriptorList.clear();
+            commentList.clear();
+            descriptorList.addAll(dsinfo.getDescriptorList());
+            commentList.addAll(dsinfo.getCommentList());
             int count = commentList.size();
             String[] names = new String[count];
             for (int i = 0; i < count; i++) {
@@ -1439,6 +1451,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             }
             descriptorComboBox.addItem(LABEL_SELECT);
             for (int j = 0; j < names.length; j++) {
+                logger.trace("adding names[{}}='{}' to combo box", j, names[j]);
                 descriptorComboBox.addItem(names[j]);
             }
             ignoreDescriptorChange = false;
@@ -1473,13 +1486,14 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     protected String getDescriptor() {
         return getDescriptorFromSelection(getSelectedDescriptor());
     }
-
+    
     /**
      * Get the descriptor relating to the selection.
      *
-     * @param selection   String name from the widget
+     * @param selection String name from the widget. Can be {@code null}.
      *
-     * @return  the descriptor
+     * @return Either the descriptor associated with {@code selection} or {@code null} if {@link #descriptorTable} or 
+     * {@code selection} is {@code null}.
      */
     protected String getDescriptorFromSelection(String selection) {
         if (descriptorTable == null) {
@@ -1488,17 +1502,23 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         if (selection == null) {
             return null;
         }
-
+        
+        String descriptor = null;
         if (!selection.contains(nameSeparator)) {
-            return (String)descriptorTable.get(selection);
-        }
-        else {
+            descriptor = (String)descriptorTable.get(selection);
+        } else {
             String[] toks = selection.split(nameSeparator, 2);
-            String key = toks[1].trim();
-            return (String)descriptorTable.get(key);
+            String firstToken = toks[0].trim();
+            if (descriptorList.contains(firstToken)) {
+                descriptor = firstToken;
+            } else {
+                String key = toks[1].trim();
+                descriptor = (String)descriptorTable.get(key);
+            }
         }
+        return descriptor;
     }
-
+    
     /**
      * Get the selected descriptor.
      *
