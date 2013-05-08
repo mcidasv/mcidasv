@@ -982,9 +982,9 @@ class _Display(_JavaProxy):
         # TODO(mike): catch exceptions resulting from writeImage (e.g., if filename has invalid extension)
         
     @gui_invoke_later
-    def annotate(self, text, latitude=None, longitude=None, line=None, element=None,
+    def annotate(self, text, lat=None, lon=None, line=None, element=None,
             font=None, color='red', size=None, style=None,
-            justification = (TextGlyph.JUST_LEFT, TextGlyph.JUST_BOTTOM)):
+            alignment = ("center", "center")):
         """Put a text annotation on this panel
         
         Can specify location by a lat/lon point or number of pixels
@@ -1008,20 +1008,20 @@ class _Display(_JavaProxy):
                Font defaults come from ViewManager.getDisplayListFont()
            color: text color. Default red, for now I guess. this is GUI default.
                  (optional)
-           justification: 2-element tuple representing the (horizontal, vertical)
-                text justification wrt to the given point.  "center" is valid 
+           alignment: 2-element tuple representing the (horizontal, vertical)
+                text alignment wrt to the given point.  "center" is valid 
                 in both elements, "left" and "right" are valid for horizontal,
                 "top" and "bottom" are valid for vertical.  Can also just pass
                 single string "center" which would be equivalent to
-                ("center", "center").  Default is ("left", "bottom")... this is
-                to match 1.2 behavior though the default should probably be just
-                "center".... (optional)
+                ("center", "center").  Default is ("center", "center"),
+                so "alignment" is optional
                 
         Returns:
            a _Layer wrapping a DrawingControl
            
         Raises:
-            ValueError: if didn't get proper lat/lon or line/element combo
+            ValueError: if didn't get proper lat/lon or line/element combo,
+            or invalid strings in alignment
         """
         import colorutils
         import visad.georef.EarthLocationTuple as EarthLocationTuple
@@ -1030,31 +1030,44 @@ class _Display(_JavaProxy):
         
         # TODO: only create one drawingControl for each panel
         drawCtl = getStaticMcv().doMakeControl('drawingcontrol')
-        drawCtl.setName('jythonannotation')
-        drawCtl.setLegendLabelTemplate('Jython Annotation')
+        drawCtl.setName(text)
+        drawCtl.setLegendLabelTemplate(text)
         drawCtl.setShowInDisplayList(False)
         pause()
         drawCtl.close()  # close the window that pops up..user doesnt need to see
         glyph = TextGlyph(drawCtl, None, text)
-        
-        # deal with horizontal/vertical justification keywords
-        if (str(justification[0]).lower() == "center"):
+
+        horAlign = str(alignment[0]).lower()
+        vertAlign = str(alignment[1]).lower()
+        if str(alignment).lower() != "center":
+            if (horAlign != "left"
+                    and horAlign != "center"
+                    and horAlign != "right"):
+                raise ValueError('first element of alignment keyword must be "left", "center", or "right"')
+            if (vertAlign != "top"
+                    and vertAlign != "center"
+                    and vertAlign != "bottom"):
+                raise ValueError('second element of alignment keyword must be "top", "center", or "bottom"')
+
+        # deal with horizontal/vertical justification keywords.
+        # Unfortunately, we need to "reverse" the justification w.r.t.
+        # IDV terminology ("right" becomes "left"), because we've decided
+        # on the opposite model of alignment as the IDV...
+        if (horAlign == "center"):
             glyph.setHorizontalJustification(TextGlyph.JUST_CENTER)
-        if (str(justification[0]).lower() == "left"):
-            glyph.setHorizontalJustification(TextGlyph.JUST_LEFT)
-        if (str(justification[0]).lower() == "right"):
+        if (horAlign == "left"):
             glyph.setHorizontalJustification(TextGlyph.JUST_RIGHT)
-        if (str(justification[1]).lower() == "center"):
+        if (horAlign == "right"):
+            glyph.setHorizontalJustification(TextGlyph.JUST_LEFT)
+        if (vertAlign == "center"):
             glyph.setVerticalJustification(TextGlyph.JUST_CENTER)
-        if (str(justification[1]).lower() == "top"):
-            glyph.setVerticalJustification(TextGlyph.JUST_TOP)
-        if (str(justification[1]).lower() == "bottom"):
+        if (vertAlign == "top"):
             glyph.setVerticalJustification(TextGlyph.JUST_BOTTOM)
-        if (str(justification).lower() == "center"):
+        if (vertAlign == "bottom"):
+            glyph.setVerticalJustification(TextGlyph.JUST_TOP)
+        if (str(alignment).lower() == "center"):
             glyph.setHorizontalJustification(TextGlyph.JUST_CENTER)
             glyph.setVerticalJustification(TextGlyph.JUST_CENTER)
-        # TODO(mike): code up all the valid combiniations of "justification"
-        # and throw an error if invalid.
         
         if (lat != None) and (lon != None) and (
                 (line == None) and (element == None)):
@@ -1076,21 +1089,12 @@ class _Display(_JavaProxy):
             raise ValueError(
             "You must specify either lat AND lon, OR line AND element")
             
-        # do the usual gymastics for font and color stuff.
-        # if color == None:
-        #     newColor = java.awt.Color(255, 0, 0)  # default red
-        # else:
-        #     rgb = colorutils.convertColor(color)
-        #     r = rgb[0].getConstant()
-        #     g = rgb[1].getConstant()
-        #     b = rgb[2].getConstant()
-        #     newColor = java.awt.Color(r, g, b)
         newColor = colorutils.convertColorToJava(color)
         
         currentFont = self._JavaProxy__javaObject.getDisplayListFont()
         newFont = _getNewFont(currentFont, fontName=font, size=size, style=style)
         
-        glyph.setName("GlyphFromJython")  # not visible after drawCtl.close()
+        glyph.setName(text)  # not visible after drawCtl.close()
         glyph.setColor(newColor)
         glyph.setFont(newFont)
         pointList = java.util.ArrayList()
