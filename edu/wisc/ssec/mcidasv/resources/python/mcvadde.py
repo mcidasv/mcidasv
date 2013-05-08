@@ -245,25 +245,23 @@ def getDescriptor(dataset, imageType):
 
 
 def getLocalADDEEntry(dataset, imageType):
-    """Get the descriptor for a local ADDE entry.
+    """Get the local ADDE entry matching the given dataset and imageType.
         
     Args:
         dataset: Local ADDE entry dataset name.
         
         imageType: Image type name of local ADDE entry.
-
+        
     Returns: 
-        Valid descriptor string or None if no match was found.
+        Valid local ADDE entry or None if no match was found.
     """
     # get a list of local ADDE server entries
     localEntries = getStaticMcv().getServerManager().getLocalEntries()
     for entry in localEntries:
         if entry.getName() == imageType and entry.getGroup() == dataset:
-            # descriptor found; convert to upper case and return it
-            desc = str(entry.getDescriptor()).upper()
-            return desc
+            return entry
     # no matching descriptor was found so return an error value:
-    return -1
+    return None
 
 def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
     """Creates a local ADDE entry in the server table.
