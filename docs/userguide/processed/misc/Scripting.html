@@ -29,7 +29,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting.ht
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Scripting</div>
 <p>McIDAS-V can be scripted to create and manipulate images and movies. The scripting
-  is accomplished using Jython. Jython is an implemenation of the Python language
+  is accomplished using Jython. Jython is an implementation of the Python language
   in Java and follows Python syntax. </p>
 <p>McIDAS-V scripting can be done from the <a href="../tools/JythonShell.html">Jython
     shell</a>, or a Jython script can be invoked as a command line argument.</p>
@@ -79,6 +79,16 @@ paths to avoid Windows interpreting it as an escape sequence.):
   <ul>
   <li><a href="#captureImage">captureImage</a></li>
   <li><a href="#writeMovie">writeMovie</a></li>
+</ul>
+<strong>Environment:
+  </strong>
+  <ul>
+  <li><a href="#printHistoryLength">getJythonShellMaxHistoryLength</a></li>
+  <li><a href="#setHistoryLength">setJythonShellMaxHistoryLength</a></li>
+  <li><a href="#collectGarbage">collectGarbage</a></li>
+  <li><a href="#removeAllLayers">removeAllLayers</a></li>
+  <li><a href="#removeAllData">removeAllData</a></li>
+  <li><a href="#expandpath">expandpath</a></li>
 </ul>
 <hr>
 <h3>Create an Object: </h3>
@@ -274,8 +284,7 @@ preferences<br></div>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setLayerVisible(visible)</em></div>
 <div class="TwoTabIndent">visible - True displays layer</div>
 <div class="ThreeTabIndent"> &nbsp;&nbsp;False turns off layer</div>
-<div class="OneTabIndent">
-</div>
+
 
 <p>&nbsp;</p>
 
@@ -295,7 +304,6 @@ preferences<br></div>
   with openBundle, the sizes default to size of the display window when the bundle
   was saved. If data was loaded using createLayer, the sizes default to those
   defined in buildWindow. </div>
-</p>
 
 <p>&nbsp;</p>
 <p><strong><a name="writeMovie" id="writeMovie"></a>writeMovie -</strong> Writes
@@ -304,10 +312,17 @@ preferences<br></div>
 <div class="TwoTabIndent">file - name of file, file format determine by file
   extension; valid options: .gif, .mov</div>
 <div class="TwoTabIndent">Keywords:</div>
-<div class="ThreeTabIndent">resize width= height= &nbsp;&nbsp;frame size of the movie
-  </p>
-</div>
+<div class="ThreeTabIndent">resize width= height= &nbsp;&nbsp;frame size of the movie</div>
+
 <p>&nbsp;</p>
+
+<h3>Environment: </h3>
+<p><strong><a name="printHistoryLength" id="printHistoryLength"></a>print getJythonShellMaxHistoryLength( ) -</strong> Returns the current number of commands that are saved. These are the commands that will be listed out with <strong>File&gt;List Saved History</strong> from the Jython Shell, as well as the commands that will be added to the Local Jython Library from the <strong>File&gt;Save Commands to Jython Library</strong> menu item from the Jython Shell. The default number of commands saved to the history is 100.</p>
+<p><strong><a name="setHistoryLength" id="setHistoryLength"></a>setJythonShellMaxHistoryLength( ) -</strong> Sets the number of commands that will be saved.&nbsp;The number of commands that will be saved will be the number you enter in the parentheses.&nbsp;The default number of commands that will be saved to the history is 100.</p>
+<p><strong><a name="collectGarbage" id="collectGarbage"></a>collectGarbage( ) -</strong> Performs a garbage collection to free up memory.</p>
+<p><strong><a name="removeAllLayers" id="removeAllLayers"></a>removeAllLayers( ) -</strong> Removes all layers that have been applied to your displays.</p>
+<p><strong><a name="removeAllData" id="removeAllData"></a>removeAllData( ) -</strong> Removes all data sources you have added during your session without removing any displays.</p>
+<p><strong><a name="expandpath" id="expandpath"></a>expandpath( ) -</strong> Understands environmental variables such as &quot;~&quot; and &quot;..&quot;.&nbsp;For example, on Windows, you can enter&nbsp;'print expandpath(&quot;$HOMEPATH&quot;)', and the output will be \Users\username.</p>
 <p>For users looking for more functionality from McIDAS-V scripting, additional
   functions can be found in the Java docs for 
   <a href="http://www.ssec.wisc.edu/visad-docs/javadoc/index.html" target="_blank">visAD</a>, 
