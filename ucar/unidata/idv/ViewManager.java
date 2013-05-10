@@ -5645,6 +5645,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
             control.firstFrameDone();
         }
         updateDisplayList();
+        
+        // force a pack() so that the preferred size of this ViewManager's component
+        // is respected after adding the "last active" border.
+        Window window = GuiUtils.getWindow(getComponent());
+        if (window != null) {
+            window.pack();
+        }
     }
 
     /**
