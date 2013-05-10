@@ -923,7 +923,6 @@ class _Display(_JavaProxy):
         
         return wrappedLayer
         
-    @gui_invoke_later
     def captureImage(self, filename, quality=1.0, height=-1, width=-1):
         """Attempt at a replacement for ISL writeImage
         
