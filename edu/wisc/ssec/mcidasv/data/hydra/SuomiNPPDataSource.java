@@ -53,10 +53,10 @@ import java.util.SimpleTimeZone;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.Namespace;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
+import org.jdom2.output.XMLOutputter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
