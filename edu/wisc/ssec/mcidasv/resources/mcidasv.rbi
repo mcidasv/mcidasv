@@ -393,7 +393,7 @@
     <resource label="Ensemble grid routines" location="%IDVPATH%/python/ensemble.py">
       <property name="category" value="System"/>
     </resource>
-    <resource label="ISL" location="%IDVPATH%/isl.py">
+    <resource label="ISL" location="%IDVPATH%/python/isl.py">
       <property name="category" value="System"/>
       <property name="showineditor" value="true"/>
     </resource>

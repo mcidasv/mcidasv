@@ -32,6 +32,7 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 
 import edu.wisc.ssec.mcidasv.data.HydraDataSource;
 import edu.wisc.ssec.mcidasv.data.PreviewSelection;
+import edu.wisc.ssec.mcidasv.data.QualityFlag;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -52,10 +53,10 @@ import java.util.SimpleTimeZone;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.Namespace;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
+import org.jdom2.output.XMLOutputter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +69,7 @@ import ucar.nc2.Dimension;
 import ucar.nc2.Group;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
+import ucar.nc2.dataset.VariableDS;
 
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
@@ -99,8 +101,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	/** Sources file */
     protected String filename;
     
-    // for loading bundles, store granule lists here
+    // for loading bundles, store granule lists and geo lists here
     protected List<String> oldSources = new ArrayList<String>();
+    protected List<String> geoSources = new ArrayList<String>();
 
     protected MultiDimensionReader nppAggReader;
 
@@ -109,6 +112,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     private ArrayList<MultiSpectralData> msd_CrIS = new ArrayList<MultiSpectralData>();
     private ArrayList<MultiSpectralData> multiSpectralData = new ArrayList<MultiSpectralData>();
     private HashMap<String, MultiSpectralData> msdMap = new HashMap<String, MultiSpectralData>();
+    private HashMap<String, QualityFlag> qfMap = new HashMap<String, QualityFlag>();
 
     private static final String DATA_DESCRIPTION = "Suomi NPP Data";
     
@@ -224,13 +228,13 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	// flag to indicate data is 3-dimensions (X, Y, channel or band)
     	boolean is3D = false;
     	
-    	// check source filenames to see if this is a combined product
-    	// XXX TJJ - looking for "underscore" is NOT GUARANTEED TO WORK! FIXME 
-    	String prodStr = filename.substring(
-    			filename.lastIndexOf(File.separatorChar) + 1, 
-    			filename.lastIndexOf(File.separatorChar) + 1 + filename.indexOf("_"));
+    	// check source filenames to see if this is a combined product. everything
+    	// from last file separator to first underscore should be product info
+    	int lastSeparator = filename.lastIndexOf(File.separatorChar);
+    	int firstUnderscore = filename.indexOf("_", lastSeparator + 1);
+    	String prodStr = filename.substring(lastSeparator + 1, firstUnderscore);
         StringTokenizer st = new StringTokenizer(prodStr, "-");
-        logger.debug("check for embedded GEO, tokenizing: " + prodStr);
+        logger.debug("SNPPDS check for embedded GEO, tokenizing: " + prodStr);
         while (st.hasMoreTokens()) {
         	String singleProd = st.nextToken();
         	logger.debug("Next token: " + singleProd);
@@ -246,9 +250,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	// various metatdata we'll need to gather on a per-product basis
     	ArrayList<String> unsignedFlags = new ArrayList<String>();
     	ArrayList<String> unpackFlags = new ArrayList<String>();
-    	
-    	// time for each product in milliseconds since epoch
-    	ArrayList<Long> productTimes = new ArrayList<Long>();
     	
     	// geo product IDs for each granule
     	ArrayList<String> geoProductIDs = new ArrayList<String>();
@@ -334,12 +335,11 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    	    							String sTime = aTime.getStringValue();
 	    	    							logger.debug("For day/time, using: " + sDate + sTime.substring(0, sTime.indexOf('Z') - 3));
 	    	    							Date d = sdf.parse(sDate + sTime.substring(0, sTime.indexOf('Z') - 3));
-	    	    							productTimes.add(new Long(d.getTime()));
-	    	    							logger.debug("ms since epoch: " + d.getTime());
 	    	    							foundDateTime = true;
 	    	    							// set time for display to day/time of 1st granule examined
 	    	    							if (! nameHasBeenSet) {
-	    	    								setName(instrumentName.getStringValue() + " " + sdfOut.format(d));
+	    	    								setName(instrumentName.getStringValue() + " " + sdfOut.format(d)
+	    	    										+ ", " + sources.size() + " Granule");
 	    	    								nameHasBeenSet = true;
 	    	    							}
 	    	    							break;
@@ -361,12 +361,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    		}
     		}
     		
-    		for (Long l : productTimes) {
-    			logger.debug("Product time: " + l);
-    		}
-    		
     		// build each union aggregation element
     		for (int elementNum = 0; elementNum < sources.size(); elementNum++) {
+    			
     			String s = (String) sources.get(elementNum);
     			
     			// build an XML (NCML actually) representation of the union aggregation of these two files
@@ -442,6 +439,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    			}
 	    			logger.debug("Cobbled together GEO file name: " + geoFilename);
 	    			fGeo.setAttribute("location", geoFilename);
+	    			// add this to list used if we create a zipped bundle
+	    			geoSources.add(geoFilename);
 	    			agg.addContent(fGeo);
     			}
 
@@ -455,6 +454,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    	NetcdfFile ncdff = ((NetCDFFile) netCDFReader).getNetCDFFile();
     	    	
     	    	Group rg = ncdff.getRootGroup();
+    	    	// this is a list filled with unpacked qflag products, if any
+    	    	ArrayList<VariableDS> qfProds = new ArrayList<VariableDS>();
 
     	    	List<Group> gl = rg.getGroups();
     	    	if (gl != null) {
@@ -497,7 +498,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    				// second to identify displayable products
     	    				for (Group subG : adg) {
     	    					logger.debug("Sub group name: " + subG.getFullName());
-    	    					String subName = subG.getFullName();
     	    					// this is the product data
     	    					List<Variable> vl = subG.getVariables();
     	    					for (Variable v : vl) {
@@ -506,8 +506,50 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    						logger.debug("Variable: " + vName);
     	    						String varShortName = vName.substring(vName.lastIndexOf(SEPARATOR_CHAR) + 1);
 
+    	    						// Special code to handle quality flags. We throw out anything
+    	    						// that does not match bounds of the geolocation data
+    	    						
+    	    						if (varShortName.startsWith("QF")) {
+    	    							logger.debug("Handling Quality Flag: " + varShortName);
+    	    							
+        	    						// this check is done later for ALL varialbles, but we need
+    	    							// it early here to weed out those quality flags that are 
+    	    							// simply a small set of data w/no granule geo nbounds
+    	    							boolean xScanOk = false;
+        	    						boolean yScanOk = false;
+        	    						List<Dimension> dl = v.getDimensions();
+        	    						for (Dimension d : dl) {
+        	    							// in order to consider this a displayable product, make sure
+        	    							// both scan direction dimensions are present and look like a granule
+        	    							if (d.getLength() == xDim) {
+        	    								xScanOk = true;
+        	    							}
+        	    							if (d.getLength() == yDim) {
+        	    								yScanOk = true;
+        	    							}
+        	    						}
+        	    						if (! (xScanOk && yScanOk)) {
+        	    							logger.debug("SKIPPING QF, does not match geo bounds: " + varShortName);
+        	    							continue;
+        	    						}
+        	    						
+    	    							ArrayList<QualityFlag> qfal = nppPP.getQualityFlags(varShortName);
+    	    							if (qfal != null) {
+    	    								for (QualityFlag qf : qfal) {
+    	    									qf.setPackedName(vName);
+    	    									// make a copy of the qflag variable
+    	    									// NOTE: by using a VariableDS here, the original
+    	    									// variable is used for the I/O, this matters!
+    	    									VariableDS vqf = new VariableDS(subG, v, false);
+    	    									vqf.setShortName(qf.getName());
+    	    									logger.debug("New var full name: " + vqf.getFullName());
+    	    	    							qfProds.add(vqf);
+    	    	    							qfMap.put(vqf.getFullName(), qf);
+    	    								}
+    	    							}
+    	    						}
+
     	    						// for CrIS instrument, only taking real calibrated values for now
-    	    						logger.debug("INSTRUMENT NAME: " + instrumentName);
     	    						if (instrumentName.getStringValue().equals("CrIS")) {
     	    							if (! varShortName.startsWith(crisFilter)) {
     	    								logger.debug("Skipping variable: " + varShortName);
@@ -528,7 +570,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    							logger.debug("Skipping data of size: " + dt.getSize());
     	    							continue;
     	    						}
-    	    						List al = v.getAttributes();
 
     	    						List<Dimension> dl = v.getDimensions();
     	    						if (dl.size() > 4) {
@@ -546,7 +587,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
     	    						boolean xScanOk = false;
     	    						boolean yScanOk = false;
-    	    						// boolean zScanOk = false;
     	    						for (Dimension d : dl) {
     	    							// in order to consider this a displayable product, make sure
     	    							// both scan direction dimensions are present and look like a granule
@@ -730,6 +770,19 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    		}
     	    	}
     	    	
+    	    	// add in any unpacked qflag products
+    	    	for (VariableDS qfV: qfProds) {
+    	    		// skip the spares - they are reserved for future use
+    	    		if (qfV.getFullName().endsWith("Spare")) {
+    	    			continue;
+    	    		}
+    	    		ncdff.addVariable(qfV.getGroup(), qfV);
+    	    		logger.trace("Adding QF product: " + qfV.getFullName());
+    	    		pathToProducts.add(qfV.getFullName());
+    	    		unsignedFlags.add("true");
+    	    		unpackFlags.add("false");
+    	    	}
+    	    	
     		    ncdfal.add((NetCDFFile) netCDFReader);
     		}
     		
@@ -744,6 +797,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	// initialize the aggregation reader object
     	try {
     		nppAggReader = new GranuleAggregation(ncdfal, pathToProducts, inTrackDimensionLength, "Track", "XTrack");
+    		((GranuleAggregation) nppAggReader).setQfMap(qfMap);
     	} catch (Exception e) {
     		throw new VisADException("Unable to initialize aggregation reader");
     	}
@@ -783,8 +837,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
         	if (is3D) {
 
         		// 3D data is either ATMS, OMPS, or CrIS
-        		if ((instrumentName.getName() != null) && (instrumentName.getStringValue().equals("ATMS"))) {
-            		//hasChannelSelect = true;
+        		if ((instrumentName.getShortName() != null) && (instrumentName.getStringValue().equals("ATMS"))) {
+
         			spectTable.put(SpectrumAdapter.channelIndex_name, "Channel");
             		swathTable.put(SpectrumAdapter.channelIndex_name, "Channel");
             		
@@ -966,17 +1020,47 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
     public void initAfterUnpersistence() {
     	try {
-    		sources.clear();
-        	for (Object o : oldSources) {
-        		sources.add((String) o);
-        	}
+    		if (! oldSources.isEmpty()) {
+    			sources.clear();
+    			for (Object o : oldSources) {
+    				sources.add((String) o);
+    			}
+    			oldSources.clear();
+    		}
     		setup();
     	} catch (Exception e) {
     		e.printStackTrace();
     	}
     }
 
-    public int getBundleAdapterIndex() {
+    /* (non-Javadoc)
+	 * @see edu.wisc.ssec.mcidasv.data.HydraDataSource#canSaveDataToLocalDisk()
+	 */
+	@Override
+	public boolean canSaveDataToLocalDisk() {
+		// At present, Suomi data is always data granules on disk
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see ucar.unidata.data.DataSourceImpl#saveDataToLocalDisk(java.lang.String, java.lang.Object, boolean)
+	 */
+	@Override
+	protected List saveDataToLocalDisk(String filePrefix, Object loadId,
+			boolean changeLinks) throws Exception {
+		// need to make a list of all data granule files
+		// PLUS all geolocation granule files, but only if accessed separate!
+		List<String> fileList = new ArrayList<String>();
+		for (Object o : sources) {
+			fileList.add((String) o);
+		}
+		for (String s : geoSources) {
+			fileList.add(s);
+		}
+		return fileList;
+	}
+
+	public int getBundleAdapterIndex() {
 		return bundleAdapterIndex;
 	}
 
@@ -1079,7 +1163,14 @@ public class SuomiNPPDataSource extends HydraDataSource {
       return filename;
     }
     
-    public void setDatasetName(String name) {
+    /**
+	 * @return the qfMap
+	 */
+	public HashMap<String, QualityFlag> getQfMap() {
+		return qfMap;
+	}
+
+	public void setDatasetName(String name) {
       filename = name;
     }
 
@@ -1133,14 +1224,14 @@ public class SuomiNPPDataSource extends HydraDataSource {
         for (DataChoice dc : dcl) {
         	if (dc.equals(dataChoice)) {
         		aIdx = dcl.indexOf(dc);
-        		logger.warn("storing adapter index for bundles: " + aIdx);
+        		logger.trace("storing adapter index for bundles: " + aIdx);
         		bundleAdapterIndex = aIdx;
         		break;
         	}
         }
         
         if (unpersisted) {
-        	logger.warn("setting adapter index from bundle, to: " + bundleAdapterIndex);
+        	logger.trace("setting adapter index from bundle, to: " + bundleAdapterIndex);
         	aIdx = bundleAdapterIndex;
         }
 
@@ -1231,7 +1322,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     			  FlatField image = (FlatField) dataChoice.getData(null);
     			  components.add(new PreviewSelection(dataChoice, image, null));
     		  } catch (Exception e) {
-    			  logger.error("Can't make PreviewSelection: "+e);
+    			  logger.error("Can't make PreviewSelection: " + e);
     			  e.printStackTrace();
     		  }
     	  }

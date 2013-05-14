@@ -14,6 +14,7 @@ mcidas/
 .classpath
 .project
 bin/*
+build/*
 
 # OS Junk
 .DS_Store

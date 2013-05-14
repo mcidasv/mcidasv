@@ -360,7 +360,8 @@ public class MyRubberBandBoxRendererJ3D extends DirectManipulationRendererJ3D {
       float r = findRayManifoldIntersection(true, origin, direction, tuple,
                                             otherindex, othervalue);
       if (r == r) {
-        return 0.0f;
+        // force pick close strategy: if close enough to another manipulation renderer
+        return getDisplayRenderer().getPickThreshhold() - 0.005f;
       }
       else {
         return Float.MAX_VALUE;

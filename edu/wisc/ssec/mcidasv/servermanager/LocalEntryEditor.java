@@ -43,6 +43,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
@@ -326,19 +327,51 @@ public class LocalEntryEditor extends javax.swing.JDialog {
      * Poll the various UI components and attempt to construct valid ADDE
      * entries based upon the information provided by the user.
      * 
+     * @param newEntry a boolean, true if we are adding a new entry
      * @return {@link Set} of entries that represent the user's input, or an
      * empty {@code Set} if the input was somehow invalid.
      */
-    private Set<LocalAddeEntry> pollWidgets() {
+    
+    private Set<LocalAddeEntry> pollWidgets(boolean newEntry) {
         String group = datasetField.getText();
         String name = typeField.getText();
         String mask = getLastPath();
+        
+        // consider the UI in error if any field blank
+        if (group.isEmpty() || name.isEmpty() || mask.isEmpty()) {
+        	JOptionPane.showMessageDialog(this.getContentPane(), 
+        			"Group, Name, or Mask field is empty, please correct this.");
+        	return null;
+        }
+        
+        // TJJ - if block below is rendered irrelevant since I now do an empty
+        // mask check above, but I am leaving it here in case there is some
+        // good reason we wanted to allow mask to be set by previous edit
+        // (which I assume was the original intent).
+        
         if (mask.isEmpty() && !directoryField.getText().isEmpty()) {
             mask = directoryField.getText();
             setLastPath(mask);
         }
-        AddeFormat format = (AddeFormat)formatComboBox.getSelectedItem();
+        
+        AddeFormat format = (AddeFormat) formatComboBox.getSelectedItem();
         LocalAddeEntry entry = new LocalAddeEntry.Builder(name, group, mask, format).status(EntryStatus.ENABLED).build();
+        
+        // if adding a new entry, make sure dataset is not a duplicate
+        if (newEntry) {
+        	String newGroup = entry.getGroup();
+        	for (AddeEntry storeEntry : entryStore.getEntrySet()) {
+        		String storeGroup = storeEntry.getGroup();
+        		if (newGroup.equals(storeGroup)) {
+        			// only apply this restriction to MSG HRIT data
+        			if ((format.equals(AddeFormat.MSG_HRIT_FD)) || (format.equals(AddeFormat.MSG_HRIT_HRV))) {
+        				JOptionPane.showMessageDialog(this.getContentPane(), 
+        						"Dataset specified is a duplicate, not supported with MSG HRIT format.");
+        				return null;
+        			}
+        		}
+        	}
+        }
         return Collections.singleton(entry);
     }
 
@@ -349,26 +382,28 @@ public class LocalEntryEditor extends javax.swing.JDialog {
      * server manager GUI if it is available.
      */
     private void addEntry() {
-        Set<LocalAddeEntry> addedEntries = pollWidgets();
-        entryStore.addEntries(addedEntries);
-        if (isDisplayable()) {
-            dispose();
+        Set<LocalAddeEntry> addedEntries = pollWidgets(true);
+        if (addedEntries != null) {
+        	entryStore.addEntries(addedEntries);
+        	if (isDisplayable()) {
+        		dispose();
+        	}
         }
         if (managerController != null) {
-//            managerController.addEntries(addedEntries);
             managerController.refreshDisplay();
         }
     }
 
     private void editEntry() {
-        Set<LocalAddeEntry> newEntries = pollWidgets();
+        Set<LocalAddeEntry> newEntries = pollWidgets(false);
         Set<LocalAddeEntry> currentEntries = Collections.singleton(currentEntry);
-        entryStore.replaceEntries(currentEntries, newEntries);
-        if (isDisplayable()) {
-            dispose();
+        if (newEntries != null) {
+        	entryStore.replaceEntries(currentEntries, newEntries);
+        	if (isDisplayable()) {
+        		dispose();
+        	}
         }
         if (managerController != null) {
-//            managerController.replaceEntries(currentEntries, newEntries);
             managerController.refreshDisplay();
         }
     }

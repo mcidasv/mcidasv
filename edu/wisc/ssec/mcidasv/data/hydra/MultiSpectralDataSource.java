@@ -70,6 +70,7 @@ import visad.VisADException;
 import visad.FunctionType;
 import visad.RealType;
 import visad.RealTupleType;
+import visad.Linear1DSet;
 import visad.Linear2DSet;
 import visad.Gridded2DSet;
 import visad.CoordinateSystem;
@@ -211,7 +212,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
         if ( name.startsWith("AIRS")) {
           HashMap table = SpectrumAdapter.getEmptyMetadataTable();
-          table.put(SpectrumAdapter.array_name, "L1B_AIRS_Science/Data Fields/radiances");
+          table.put(SpectrumAdapter.array_name, "L1B_AIRS_Science/Data_Fields/radiances");
           table.put(SpectrumAdapter.range_name, "radiances");
           table.put(SpectrumAdapter.channelIndex_name, "Channel");
           table.put(SpectrumAdapter.ancillary_file_name, "/edu/wisc/ssec/mcidasv/data/hydra/resources/airs/L2.chan_prop.2003.11.19.v6.6.9.anc");
@@ -220,10 +221,10 @@ public class MultiSpectralDataSource extends HydraDataSource {
           spectrumAdapter = new AIRS_L1B_Spectrum(reader, table);
                                                                                                                                                      
           table = SwathAdapter.getEmptyMetadataTable();
-          table.put("array_name", "L1B_AIRS_Science/Data Fields/radiances");
+          table.put("array_name", "L1B_AIRS_Science/Data_Fields/radiances");
           table.put(SwathAdapter.range_name, "radiances");
-          table.put("lon_array_name", "L1B_AIRS_Science/Geolocation Fields/Longitude");
-          table.put("lat_array_name", "L1B_AIRS_Science/Geolocation Fields/Latitude");
+          table.put("lon_array_name", "L1B_AIRS_Science/Geolocation_Fields/Longitude");
+          table.put("lat_array_name", "L1B_AIRS_Science/Geolocation_Fields/Latitude");
           table.put("XTrack", "GeoXTrack");
           table.put("Track", "GeoTrack");
           table.put("geo_Track", "GeoTrack");
@@ -303,11 +304,11 @@ public class MultiSpectralDataSource extends HydraDataSource {
                (name.startsWith("a1") && (name.indexOf("1000m") > 0)) || 
                (name.startsWith("t1") && (name.indexOf("1000m") > 0)) ) {
          HashMap table = SwathAdapter.getEmptyMetadataTable();
-         table.put("array_name", "MODIS_SWATH_Type_L1B/Data Fields/EV_1KM_Emissive");
-         table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Longitude");
-         table.put("lat_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Latitude");
-         //table.put("lon_array_name", "MODIS_Swath_Type_GEO/Geolocation Fields/Longitude");
-         //table.put("lat_array_name", "MODIS_Swath_Type_GEO/Geolocation Fields/Latitude");
+         table.put("array_name", "MODIS_SWATH_Type_L1B/Data_Fields/EV_1KM_Emissive");
+         table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation_Fields/Longitude");
+         table.put("lat_array_name", "MODIS_SWATH_Type_L1B/Geolocation_Fields/Latitude");
+         //table.put("lon_array_name", "MODIS_Swath_Type_GEO/Geolocation_Fields/Longitude");
+         //table.put("lat_array_name", "MODIS_Swath_Type_GEO/Geolocation_Fields/Latitude");
          table.put("XTrack", "Max_EV_frames");
          table.put("Track", "10*nscans");
          table.put("geo_Track", "2*nscans");
@@ -329,12 +330,12 @@ public class MultiSpectralDataSource extends HydraDataSource {
          logger.debug("Trying to create MODIS 1K GranuleAggregation reader...");
          TreeSet<String> products = new TreeSet<String>();
          products.add((String) table.get("array_name"));
-         products.add("MODIS_SWATH_Type_L1B/Data Fields/EV_1KM_RefSB");
-         products.add("MODIS_SWATH_Type_L1B/Data Fields/EV_250_Aggr1km_RefSB");
-         products.add("MODIS_SWATH_Type_L1B/Data Fields/EV_500_Aggr1km_RefSB");
-         products.add("MODIS_SWATH_Type_L1B/Data Fields/EV_250_Aggr500_RefSB");
-         products.add("MODIS_SWATH_Type_L1B/Data Fields/EV_250_RefSB");
-         products.add("MODIS_SWATH_Type_L1B/Data Fields/EV_500_RefSB");
+         products.add("MODIS_SWATH_Type_L1B/Data_Fields/EV_1KM_RefSB");
+         products.add("MODIS_SWATH_Type_L1B/Data_Fields/EV_250_Aggr1km_RefSB");
+         products.add("MODIS_SWATH_Type_L1B/Data_Fields/EV_500_Aggr1km_RefSB");
+         products.add("MODIS_SWATH_Type_L1B/Data_Fields/EV_250_Aggr500_RefSB");
+         products.add("MODIS_SWATH_Type_L1B/Data_Fields/EV_250_RefSB");
+         products.add("MODIS_SWATH_Type_L1B/Data_Fields/EV_500_RefSB");
          products.add((String) table.get("lon_array_name"));
          products.add((String) table.get("lat_array_name"));
          if (doAggregation) {
@@ -352,7 +353,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          HashMap subset = swathAdapter.getDefaultSubset();
 
          table = SpectrumAdapter.getEmptyMetadataTable();
-         table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data Fields/EV_1KM_Emissive");
+         table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data_Fields/EV_1KM_Emissive");
          table.put(SpectrumAdapter.channelIndex_name, "Band_1KM_Emissive");
          table.put(SpectrumAdapter.x_dim_name, "Max_EV_frames");
          table.put(SpectrumAdapter.y_dim_name, "10*nscans");
@@ -375,9 +376,9 @@ public class MultiSpectralDataSource extends HydraDataSource {
          //--- aggregate reflective bands
          table = SwathAdapter.getEmptyMetadataTable();
 
-         table.put("array_name", "MODIS_SWATH_Type_L1B/Data Fields/EV_1KM_RefSB");
-         table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Longitude");
-         table.put("lat_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Latitude");
+         table.put("array_name", "MODIS_SWATH_Type_L1B/Data_Fields/EV_1KM_RefSB");
+         table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation_Fields/Longitude");
+         table.put("lat_array_name", "MODIS_SWATH_Type_L1B/Geolocation_Fields/Latitude");
          table.put("XTrack", "Max_EV_frames");
          table.put("Track", "10*nscans");
          table.put("geo_Track", "2*nscans");
@@ -398,7 +399,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          sadapt0.setDefaultStride(10);
 
          table = SpectrumAdapter.getEmptyMetadataTable();
-         table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data Fields/EV_1KM_RefSB");
+         table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data_Fields/EV_1KM_RefSB");
          table.put(SpectrumAdapter.channelIndex_name, "Band_1KM_RefSB");
          table.put(SpectrumAdapter.x_dim_name, "Max_EV_frames");
          table.put(SpectrumAdapter.y_dim_name, "10*nscans");
@@ -419,9 +420,9 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
          table = SwathAdapter.getEmptyMetadataTable();
 
-         table.put("array_name", "MODIS_SWATH_Type_L1B/Data Fields/EV_250_Aggr1km_RefSB");
-         table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Longitude");
-         table.put("lat_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Latitude");
+         table.put("array_name", "MODIS_SWATH_Type_L1B/Data_Fields/EV_250_Aggr1km_RefSB");
+         table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation_Fields/Longitude");
+         table.put("lat_array_name", "MODIS_SWATH_Type_L1B/Geolocation_Fields/Latitude");
          table.put("XTrack", "Max_EV_frames");
          table.put("Track", "10*nscans");
          table.put("geo_Track", "2*nscans");
@@ -441,7 +442,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          SwathAdapter sadapt1 = new SwathAdapter(reader, table);
 
          table = SpectrumAdapter.getEmptyMetadataTable();
-         table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data Fields/EV_250_Aggr1km_RefSB");
+         table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data_Fields/EV_250_Aggr1km_RefSB");
          table.put(SpectrumAdapter.channelIndex_name, "Band_250M");
          table.put(SpectrumAdapter.x_dim_name, "Max_EV_frames");
          table.put(SpectrumAdapter.y_dim_name, "10*nscans");
@@ -455,9 +456,9 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
          table = SwathAdapter.getEmptyMetadataTable();
 
-         table.put("array_name", "MODIS_SWATH_Type_L1B/Data Fields/EV_500_Aggr1km_RefSB");
-         table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Longitude");
-         table.put("lat_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Latitude");
+         table.put("array_name", "MODIS_SWATH_Type_L1B/Data_Fields/EV_500_Aggr1km_RefSB");
+         table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation_Fields/Longitude");
+         table.put("lat_array_name", "MODIS_SWATH_Type_L1B/Geolocation_Fields/Latitude");
          table.put("XTrack", "Max_EV_frames");
          table.put("Track", "10*nscans");
          table.put("geo_Track", "2*nscans");
@@ -478,7 +479,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
 
          table = SpectrumAdapter.getEmptyMetadataTable();
-         table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data Fields/EV_500_Aggr1km_RefSB");
+         table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data_Fields/EV_500_Aggr1km_RefSB");
          table.put(SpectrumAdapter.channelIndex_name, "Band_500M");
          table.put(SpectrumAdapter.x_dim_name, "Max_EV_frames");
          table.put(SpectrumAdapter.y_dim_name, "10*nscans");
@@ -499,9 +500,9 @@ public class MultiSpectralDataSource extends HydraDataSource {
                (name.startsWith("a1") && (name.indexOf("250m") > 0)) ||
                (name.startsWith("t1") && (name.indexOf("250m") > 0)) ) {
          HashMap table = SwathAdapter.getEmptyMetadataTable();
-         table.put("array_name", "MODIS_SWATH_Type_L1B/Data Fields/EV_250_RefSB");
-         table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Longitude");
-         table.put("lat_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Latitude");
+         table.put("array_name", "MODIS_SWATH_Type_L1B/Data_Fields/EV_250_RefSB");
+         table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation_Fields/Longitude");
+         table.put("lat_array_name", "MODIS_SWATH_Type_L1B/Geolocation_Fields/Latitude");
          table.put("XTrack", "4*Max_EV_frames");
          table.put("Track", "40*nscans");
          table.put("geo_Track", "10*nscans");
@@ -521,7 +522,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          swathAdapter.setDefaultStride(40);
 
          table = SpectrumAdapter.getEmptyMetadataTable();
-         table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data Fields/EV_250_RefSB");
+         table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data_Fields/EV_250_RefSB");
          table.put(SpectrumAdapter.channelIndex_name, "Band_250M");
          table.put(SpectrumAdapter.x_dim_name, "4*Max_EV_frames");
          table.put(SpectrumAdapter.y_dim_name, "40*nscans");
@@ -550,9 +551,9 @@ public class MultiSpectralDataSource extends HydraDataSource {
                (name.startsWith("a1") && (name.indexOf("500m") > 0)) ||
                (name.startsWith("t1") && (name.indexOf("500m") > 0)) ) {
          HashMap table = SwathAdapter.getEmptyMetadataTable();
-         table.put("array_name", "MODIS_SWATH_Type_L1B/Data Fields/EV_250_Aggr500_RefSB");
-         table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Longitude");
-         table.put("lat_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Latitude");
+         table.put("array_name", "MODIS_SWATH_Type_L1B/Data_Fields/EV_250_Aggr500_RefSB");
+         table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation_Fields/Longitude");
+         table.put("lat_array_name", "MODIS_SWATH_Type_L1B/Geolocation_Fields/Latitude");
          table.put("XTrack", "2*Max_EV_frames");
          table.put("Track", "20*nscans");
          table.put("geo_Track", "10*nscans");
@@ -572,7 +573,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          swathAdapter0.setDefaultStride(20);
 
          table = SpectrumAdapter.getEmptyMetadataTable();
-         table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data Fields/EV_250_Aggr500_RefSB");
+         table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data_Fields/EV_250_Aggr500_RefSB");
          table.put(SpectrumAdapter.channelIndex_name, "Band_250M");
          table.put(SpectrumAdapter.x_dim_name, "2*Max_EV_frames");
          table.put(SpectrumAdapter.y_dim_name, "20*nscans");
@@ -586,9 +587,9 @@ public class MultiSpectralDataSource extends HydraDataSource {
          MultiSpectralData multiSpectData0 = new MultiSpectralData(swathAdapter0, spectrumAdapter0, "Reflectance", "Reflectance", "MODIS", "Aqua");
 
          table = SwathAdapter.getEmptyMetadataTable();
-         table.put("array_name", "MODIS_SWATH_Type_L1B/Data Fields/EV_500_RefSB");
-         table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Longitude");
-         table.put("lat_array_name", "MODIS_SWATH_Type_L1B/Geolocation Fields/Latitude");
+         table.put("array_name", "MODIS_SWATH_Type_L1B/Data_Fields/EV_500_RefSB");
+         table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation_Fields/Longitude");
+         table.put("lat_array_name", "MODIS_SWATH_Type_L1B/Geolocation_Fields/Latitude");
          table.put("XTrack", "2*Max_EV_frames");
          table.put("Track", "20*nscans");
          table.put("geo_Track", "10*nscans");
@@ -608,7 +609,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          swathAdapter1.setDefaultStride(20);
 
          table = SpectrumAdapter.getEmptyMetadataTable();
-         table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data Fields/EV_500_RefSB");
+         table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data_Fields/EV_500_RefSB");
          table.put(SpectrumAdapter.channelIndex_name, "Band_500M");
          table.put(SpectrumAdapter.x_dim_name, "2*Max_EV_frames");
          table.put(SpectrumAdapter.y_dim_name, "20*nscans");
@@ -799,7 +800,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
        }
        else {
           HashMap table = SwathAdapter.getEmptyMetadataTable();
-          table.put("array_name", "MODIS_SWATH_Type_L1B/Data Fields/EV_1KM_Emissive");
+          table.put("array_name", "MODIS_SWATH_Type_L1B/Data_Fields/EV_1KM_Emissive");
           table.put("lon_array_name", "pixel_longitude");
           table.put("lat_array_name", "pixel_latitude");
           table.put("XTrack", "elements");
@@ -1090,7 +1091,6 @@ public class MultiSpectralDataSource extends HydraDataSource {
         }
       }
     }
-
 
 
   public static MapProjection getDataProjection(FlatField fltField) throws Exception {

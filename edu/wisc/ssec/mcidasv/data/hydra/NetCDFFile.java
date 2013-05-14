@@ -42,10 +42,10 @@ import java.net.URL;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
 
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.XMLOutputter;
-import org.jdom.Document;
-import org.jdom.Element;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.XMLOutputter;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 
 public class NetCDFFile implements MultiDimensionReader {
@@ -75,10 +75,10 @@ public class NetCDFFile implements MultiDimensionReader {
 
      list = ((Element)list.get(1)).getChildren();
 
-     org.jdom.Attribute attr1 = (org.jdom.Attribute) (((Element)list.get(0)).getAttributes()).get(0);
+     org.jdom2.Attribute attr1 = (org.jdom2.Attribute) (((Element)list.get(0)).getAttributes()).get(0);
      attr1.setValue(filename);
 
-     org.jdom.Attribute attr2 = (org.jdom.Attribute) (((Element)list.get(1)).getAttributes()).get(0);
+     org.jdom2.Attribute attr2 = (org.jdom2.Attribute) (((Element)list.get(1)).getAttributes()).get(0);
      attr2.setValue(other);
 
      XMLOutputter xmlOut = new XMLOutputter();
@@ -103,7 +103,7 @@ public class NetCDFFile implements MultiDimensionReader {
      init();
    }
      
-   public NetCDFFile(String filename, org.jdom.Element root) throws Exception {
+   public NetCDFFile(String filename, org.jdom2.Element root) throws Exception {
 	  ncfile = NcMLReader.readNcML(filename, root, null);
 	  init();
    }
@@ -127,7 +127,7 @@ public class NetCDFFile implements MultiDimensionReader {
        int cnt = 0;
        while(dimIter.hasNext()) {
          Dimension dim = (Dimension) dimIter.next();
-         String dim_name = dim.getName();
+         String dim_name = dim.getShortName();
          if (dim_name == null) dim_name = "dim"+cnt;
          dimNames[cnt] = dim_name;
          dimLengths[cnt] = dim.getLength();

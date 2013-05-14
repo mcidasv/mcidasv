@@ -54,6 +54,60 @@ def _areaDirectoryToDictionary(areaDirectory):
     d['start-time'] = areaDirectory.getStartTime()
     return d
 
+_formats = {
+    "AMSR-E Rain Product":                                     AddeFormat.AMSRE_RAIN_PRODUCT,
+    "AMRR":                                                    AddeFormat.AMSRE_RAIN_PRODUCT,
+    "AMSR-E L 1b":                                             AddeFormat.AMSRE_L1B,
+    "AMSR":                                                    AddeFormat.AMSRE_L1B,
+    "LRIT GOES-9":                                             AddeFormat.LRIT_GOES9,
+    "FSDX_G9":                                                 AddeFormat.LRIT_GOES9,
+    "LRIT GOES-10":                                            AddeFormat.LRIT_GOES10,
+    "FSDX_G10":                                                AddeFormat.LRIT_GOES10,
+    "LRIT GOES-11":                                            AddeFormat.LRIT_GOES11,
+    "FSDX_G11":                                                AddeFormat.LRIT_GOES11,
+    "LRIT GOES-12":                                            AddeFormat.LRIT_GOES12,
+    "FSDX_G12":                                                AddeFormat.LRIT_GOES12,
+    "LRIT MET-5":                                              AddeFormat.LRIT_MET5,
+    "FSDX_M5":                                                 AddeFormat.LRIT_MET5,
+    "LRIT MET-7":                                              AddeFormat.LRIT_MET7,
+    "FSDX_M7":                                                 AddeFormat.LRIT_MET7,
+    "LRIT MTSAT-1R":                                           AddeFormat.LRIT_MTSAT1R,
+    "FSDX_MT":                                                 AddeFormat.LRIT_MTSAT1R,
+    "McIDAS Area":                                             AddeFormat.MCIDAS_AREA,
+    "AREA":                                                    AddeFormat.MCIDAS_AREA,
+    "Meteosat OpenMTP":                                        AddeFormat.METEOSAT_OPENMTP,
+    "OMTP":                                                    AddeFormat.METEOSAT_OPENMTP,
+    "Metop AVHRR L 1b":                                        AddeFormat.METOP_AVHRR_L1B,
+    "LV1B_METOP":                                              AddeFormat.METOP_AVHRR_L1B,
+    "MODIS MOD 02 - Level-1B Calibrated Geolocated Radiances": AddeFormat.MODIS_L1B_MOD02,
+    "MODS":                                                    AddeFormat.MODIS_L1B_MOD02,
+    "MODIS MOD 04 - Aerosol Product":                          AddeFormat.MODIS_L2_MOD04,
+    "MOD4":                                                    AddeFormat.MODIS_L2_MOD04,
+    "MODIS MOD 06 - Cloud Product":                            AddeFormat.MODIS_L2_MOD06,
+    "MODX_06":                                                 AddeFormat.MODIS_L2_MOD06,
+    "MODIS MOD 07 - Atmospheric Profiles":                     AddeFormat.MODIS_L2_MOD07,
+    "MODX_07":                                                 AddeFormat.MODIS_L2_MOD07,
+    "MODIS MOD 28 - Sea Surface Temperature":                  AddeFormat.MODIS_L2_MOD28,
+    "MOD8":                                                    AddeFormat.MODIS_L2_MOD28,
+    "MODIS MOD 35 - Cloud Mask":                               AddeFormat.MODIS_L2_MOD35,
+    "MODX_35":                                                 AddeFormat.MODIS_L2_MOD35,
+    "MODIS MOD R - Corrected Reflectance":                     AddeFormat.MODIS_L2_MODR,
+    "MODR":                                                    AddeFormat.MODIS_L2_MODR,
+    "MSG HRIT FD":                                             AddeFormat.MSG_HRIT_FD,
+    "MSGT_FD":                                                 AddeFormat.MSG_HRIT_FD,
+    "MSG HRIT HRV":                                            AddeFormat.MSG_HRIT_HRV,
+    "MSGT_HRV":                                                AddeFormat.MSG_HRIT_HRV,
+    "MTSAT HRIT":                                              AddeFormat.MTSAT_HRIT,
+    "MTST":                                                    AddeFormat.MTSAT_HRIT,
+    "NOAA AVHRR L 1b":                                         AddeFormat.NOAA_AVHRR_L1B,
+    "LV1B_NOAA":                                               AddeFormat.NOAA_AVHRR_L1B,
+    "SSMI":                                                    AddeFormat.SSMI,
+    "SMIN":                                                    AddeFormat.SSMI,
+    "TRMM":                                                    AddeFormat.TRMM,
+    "TMIN":                                                    AddeFormat.TRMM,
+    "GINI":                                                    AddeFormat.GINI,
+}
+
 DEFAULT_ACCOUNTING = ('idv', '0')
 
 CoordinateSystems = enum('AREA', 'LATLON', 'IMAGE')
@@ -66,10 +120,12 @@ ULEFT = Places.ULEFT
 CENTER = Places.CENTER
 
 class AddeJythonError(Exception): pass
+class AddeJythonInvalidDatasetError(AddeJythonError): pass
 class AddeJythonInvalidProjectError(AddeJythonError): pass
 class AddeJythonInvalidPortError(AddeJythonError): pass
 class AddeJythonInvalidUserError(AddeJythonError): pass
 class AddeJythonUnknownDataError(AddeJythonError): pass
+# class AddeJythonUnknownFormatError(AddeJythonError): pass
 
 # alias = ADDE  alias
 # server = ADDE server
@@ -167,6 +223,9 @@ def isAddeDebugEnabled(defaultValue=False):
 
 def getDescriptor(dataset, imageType):
     """Get the descriptor for a local ADDE entry
+
+    (this wasn't included in the 1.2 release, but enough people are using it
+    that we'll want to keep it for backward compatibility.)
         
     Args:
         dataset: Dataset field from local ADDE server
@@ -184,81 +243,85 @@ def getDescriptor(dataset, imageType):
     # no matching descriptor was found so return an error value:
     return -1
 
-def getLocalDataset(dataset, imageType):
-    """Returns a local ADDE entry.
+
+def getLocalADDEEntry(dataset, imageType):
+    """Get the local ADDE entry matching the given dataset and imageType.
         
     Args:
-        dataset: Dataset field from local ADDE server.
+        dataset: Local ADDE entry dataset name.
         
-        imageType: Image Type field from local ADDE server.
-
+        imageType: Image type name of local ADDE entry.
+        
     Returns: 
-        Valid descriptor string or None if no match was found.
+        Valid local ADDE entry or None if no match was found.
     """
+    # get a list of local ADDE server entries
     localEntries = getStaticMcv().getServerManager().getLocalEntries()
     for entry in localEntries:
         if entry.getName() == imageType and entry.getGroup() == dataset:
             return entry
+    # no matching descriptor was found so return an error value:
     return None
 
-def makeLocalDataset(group, mask, format, name=None):
-    """Creates a local ADDE dataset.
+def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
+    """Creates a local ADDE entry in the server table.
     
     Required Args:
-        group: Name of the group associated with the created dataset.
+        dataset: Name of the group associated with the created dataset.
+        imageType: Image type name for local server entry. The image type name is limited to twelve characters or less. (default=format_dataset)
         mask: Directory containing the files used by the created dataset.
-        format: The format of the files within the dataset. See next section for possible values.
-    
-    Valid Format Values:
-        'MCIDAS_AREA': McIDAS AREA
-        'MCIDAS_MD': McIDAS MD
-        'AMSRE_L1B': AMSR-E Level 1b
-        'AMSRE_RAIN_PRODUCT': AMSR-E Rain Product
-        'GINI': GINI
-        'LRIT_GOES9': EUMETCast LRIT GOES-9
-        'LRIT_GOES10': EUMETCast LRIT GOES-10
-        'LRIT_GOES11': EUMETCast LRIT GOES-11
-        'LRIT_GOES12': EUMETCast LRIT GOES-12
-        'LRIT_MET5': EUMETCast LRIT MET-5
-        'LRIT_MET7': EUMETCast LRIT MET-7
-        'LRIT_MTSAT1R': EUMETCast LRIT MTSAT-1R
-        'METEOSAT_OPENMTP': Meteosat OpenMTP
-        'METOP_AVHRR_L1B': Metop AVHRR Level 1b
-        'MODIS_L1B_MOD02': MODIS Level 1b
-        'MODIS_L2_MOD06': MODIS Level 2 (Cloud Top Properties)
-        'MODIS_L2_MOD07': MODIS Level 2 (Atmospheric Profile)
-        'MODIS_L2_MOD35': MODIS Level 2 (Cloud Mask)
-        'MODIS_L2_MOD04': MODIS Level 2 (Aerosol)
-        'MODIS_L2_MOD28': MODIS Level 2 (Sea Surface Temperature)
-        'MODIS_L2_MODR': MODIS Level 2 (Corrected Reflectance)
-        'MSG_HRIT_FD': MSG HRIT (Full Disk)
-        'MSG_HRIT_HRV': MSG HRIT (High Resolution Visible)
-        'MTSAT_HRIT': MTSAT HRIT
-        'NOAA_AVHRR_L1B': NOAA AVHRR Level 1b
-        'SSMI': Terrascan netCDF (SMIN)
-        'TRMM': Terrascan netCDF (TMIN)
-    
-    Optional Args:
-        name: The name of the dataset. If no value is provided, the dataset 
-              created by this function will be considered temporary and will
-              only exist for the lifetime of the current McIDAS-V session.
-              
-              If a "name" was provided, the resulting dataset will be treated
-              just like any other created via the server manager.
-        
+        save: True saves entry into the server table. False will cause the entry to be removed at the end of this McIDAS-V session. (default=False)
+        format: Data format of the files within the dataset. Either the Full Name or Short Name can be used as valid options:
+            
+            =========================================================  ============
+            Full Name                                                  Short Name  
+            =========================================================  ============
+            "AMSR-E Rain Product"                                      "AMRR"
+            "AMSR-E L 1b"                                              "AMSR"
+            "LRIT GOES-9"                                              "FSDX_G9"
+            "LRIT GOES-10"                                             "FSDX_G10"
+            "LRIT GOES-11"                                             "FSDX_G11"
+            "LRIT GOES-12"                                             "FSDX_G12"
+            "LRIT MET-5"                                               "FSDX_M5"
+            "LRIT MET-7"                                               "FSDX_M7"
+            "LRIT MTSAT-1R"                                            "FSDX_MT"
+            "McIDAS Area"                                              "AREA"
+            "Meteosat OpenMTP"                                         "OMTP"
+            "Metop AVHRR L 1b"                                         "LV1B_METOP"
+            "MODIS MOD 02 - Level-1B Calibrated Geolocated Radiances"  "MODS"
+            "MODIS MOD 04 - Aerosol Product"                           "MOD4"
+            "MODIS MOD 06 - Cloud Product"                             "MODX_06"
+            "MODIS MOD 07 - Atmospheric Profiles"                      "MODX_07"
+            "MODIS MOD 28 - Sea Surface Temperature"                   "MOD8"
+            "MODIS MOD 35 - Cloud Mask"                                "MODX_35"
+            "MODIS MOD R - Corrected Reflectance"                      "MODR"
+            "MSG HRIT FD"                                              "MSGT_FD"
+            "MSG HRIT HRV"                                             "MSGT_HRV"
+            "MTSAT HRIT"                                               "MTST"
+            "NOAA AVHRR L 1b"                                          "LV1B_NOAA"
+            "SSMI"                                                     "SMIN"
+            "TRMM"                                                     "TMIN"
+            "GINI"                                                     "GINI"
+            =========================================================  ============
+                    
     Returns:
         The newly created local ADDE dataset.
     """
-    convertedFormat = strToAddeFormat(format)
-    if not name:
-        isTemp = True
-        name = 'TEMP-%s-%s' % (format, group)
-    else:
-        isTemp = False
     
-    localDataset = LocalAddeEntry.Builder(name, group, mask, convertedFormat).status(EntryStatus.ENABLED).temporary(isTemp).build()
-    getStaticMcv().getServerManager().addEntry(localDataset)
-    return localDataset
+    if len(dataset) > 8 or not dataset.isupper() or any(c in dataset for c in "/. []%"):
+        raise AddeJythonInvalidDatasetError("Dataset '%s' is not valid." % (dataset))
+        
+    convertedFormat = _formats.get(format, AddeFormat.INVALID)
+    
+    if convertedFormat is AddeFormat.INVALID:
+        raise AddeJythonError("Unknown format '%s' specified." % (format))
+        
+    if not imageType:
+        imageType = "%s_%s" % (format, dataset)
+        
+    localEntry = LocalAddeEntry.Builder(imageType, dataset, mask, convertedFormat).status(EntryStatus.ENABLED).temporary((not save)).build()
+    getStaticMcv().getServerManager().addEntry(localEntry)
+    return localEntry
     
 
 def listADDEImages(server, dataset, descriptor,
@@ -274,6 +337,22 @@ def listADDEImages(server, dataset, descriptor,
     debug=False,
     band=None,
     size=None):
+    """Creates a list of ADDE images.
+    
+    Args:
+        localEntry: Local ADDE dataset.
+        server: ADDE server.
+        dataset: ADDE dataset group name.
+        descriptor: ADDE dataset descriptor.
+        day: Day range. ('begin date', 'end date')
+        time: ('begin time', 'end time')
+        position: Position number. (default='all')
+        band: McIDAS band number; only images that have matching band number will be returned.
+        accounting: ('user', 'project number') User and project number required by servers using McIDAS accounting. default = ('idv','0')
+    
+    Returns:
+        ADDE image matching the given criteria, if any.
+    """
 
     user = accounting[0]
     proj = accounting[1]
@@ -318,7 +397,7 @@ def listADDEImages(server, dataset, descriptor,
     adl = AreaDirectoryList(url)
     return adl.getSortedDirs()
 
-def getADDEImage(server, dataset, descriptor,
+def getADDEImage(localEntry=None, server=None, dataset=None, descriptor=None,
     accounting=DEFAULT_ACCOUNTING,
     location=None,
     coordinateSystem=CoordinateSystems.LATLON,
@@ -329,139 +408,23 @@ def getADDEImage(server, dataset, descriptor,
     day=None,
     time=None,
     debug=False,
+    track=False,
     band=None,
     size=None):
-    """Requests data from an ADDE Image server - returns both data and metadata objects
+    """Requests data from an ADDE Image server - returns both data and metadata objects.
 
-    Args:
-        server= ADDE server
-        dataset= ADDE dataset group name
-        descriptor= ADDE dataset descriptor
-        day= day range ('begin date','end date')
-        time= ('begin time','end time')
-        coordinateSystem= coordinate system to use for retrieving data
-                            AREA       AREA file coordinates - zero based
-                            LATLON   latitude and longitude coordinates
-                            IMAGE     image coordinates - one based
-        location=(x,y)
-                            x           AREA line, latitude, or IMAGE line
-                            y           AREA element, longitude, or IMAGE element
-        place = CENTER places specified location (x,y) at center of panel
-                            ULEFT places specified location (x,y) at upper-left coordinate of panel
-        band= McIDAS band number; must be specified if requesting data from 
-              multi-banded image; default=band in image
-        unit= calibration unit to request; default = 'BRIT'
-        position= time relative (negative values) or absolute (positive values) 
-                  position in the dataset; default=0 (most recent image)
-        size= number of lines and elements to request; default=(480,640)
-        mag= magnification of data (line,element), negative number used for 
-            sampling data; default=(1,1)
-        accounting= ('user', 'project number') user and project number required 
-                    by servers using McIDAS accounting; default = ('idv','0')
-    """
-    
-    # still need to handle dates+times
-    # todo: don't break!
-    user = accounting[0]
-    proj = accounting[1]
-    debug = str(debug).lower()
-    mag = '%s %s' % (mag[0], mag[1])
-    
-    if place is Places.CENTER:
-        place = 'CENTER'
-    elif place is Places.ULEFT:
-        place = 'ULEFT'
-    else:
-        raise ValueError()
-    
-    if coordinateSystem is CoordinateSystems.LATLON:
-        coordSys = 'LATLON'
-        coordType = 'E'
-    elif coordinateSystem is CoordinateSystems.AREA:
-        coordSys = 'LINELE'
-        coordType = 'A'
-    elif coordinateSystem is CoordinateSystems.IMAGE:
-        coordSys = 'LINELE'
-        coordType = 'I'
-    else:
-        raise ValueError()
-    
-    if location:
-        location = '&%s=%s %s %s' % (coordSys, location[0], location[1], coordType)
-    else:
-        location = ''
-    
-    if day:
-        day = '&DAY=%s' % (day)
-    else:
-        day = ''
-    
-    if size:
-        if size == 'ALL':
-            size = '99999 99999'
-        else:
-            size = '%s %s' % (size[0], size[1])
-    
-    if time:
-        time = '%s %s I' % (time[0], time[1])
-    else:
-        time = ''
-    
-    if band:
-        band = '&BAND=%s' % (str(band))
-    else:
-        band = ''
-    
-    addeUrlFormat = "adde://%s/imagedata?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s"
-    url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position)
-    retvals = (-1, -1)
-    
-    try:
-        area = AreaAdapter(url)
-        areaDirectory = AreaAdapter.getAreaDirectory(area)
-        if debug:
-            elements = areaDirectory.getElements()
-            lines = areaDirectory.getLines()
-            print 'url:', url
-            print 'lines=%s elements=%d' % (lines, elements)
-        retvals = (_areaDirectoryToDictionary(areaDirectory), area.getData())
-    except Exception, err:
-        if debug:
-            print 'exception: %s\n' % (str(err))
-            print 'problem with adde url:', url
-    
-    return retvals
-
-
-def testADDEImage(localDataset=None,
-    server=None, dataset=None, descriptor=None,
-    accounting=DEFAULT_ACCOUNTING,
-    location=None,
-    coordinateSystem=CoordinateSystems.LATLON,
-    place=Places.CENTER,
-    mag=(1, 1),
-    position=0,
-    unit='BRIT',
-    day=None,
-    time=None,
-    debug=False,
-    band=None,
-    size=None):
-    """Requests data from an ADDE Image server - returns both data and metadata objects
-
-    Note: you must provide values for *either* the "localDataset" parameter (see makeLocalDataset)
-    or the server, dataset, and descriptor parameters.
+    An ADDE request must include values for either localEntry or the combination of server, dataset and descriptor.
 
     Required Args:
-        localDataset: 
-        server: ADDE server
-        dataset: ADDE dataset group name
-        descriptor: ADDE dataset descriptor
+        localEntry: Local data set defined by makeLocalADDEEntry. 
+        server: ADDE server.
+        dataset: ADDE dataset group name.
+        descriptor: ADDE dataset descriptor.
         
         
     Optional Args:
-        day: day range ('begin date','end date')
-        time: ('begin time','end time')
+        day: Day range ('begin date','end date')
+        time: ('begin time', 'end time')
         coordinateSystem: coordinate system to use for retrieving data
                             AREA       AREA file coordinates - zero based
                             LATLON   latitude and longitude coordinates
@@ -481,13 +444,9 @@ def testADDEImage(localDataset=None,
              sampling data; default=(1,1)
         accounting: ('user', 'project number') user and project number required
                     by servers using McIDAS accounting; default = ('idv','0')
+        debug: send debug information to file; default=False
+        track: default=False
     """
-    if localDataset:
-        server = localDataset.getAddress()
-        dataset = localDataset.getGroup()
-        descriptor = localDataset.getDescriptor()
-    elif (server is None) or (dataset is None) or (descriptor is None):
-        raise TypeError('must provide localDataset or server, dataset, and descriptor values')
     
     # still need to handle dates+times
     # todo: don't break!
@@ -541,8 +500,146 @@ def testADDEImage(localDataset=None,
     else:
         band = ''
     
-    addeUrlFormat = "adde://%s/imagedata?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s"
-    url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position)
+    addeUrlFormat = "adde://%s/imagedata?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s&TRACK=%d"
+    url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position, track)
+    retvals = (-1, -1)
+    
+    try:
+        area = AreaAdapter(url)
+        areaDirectory = AreaAdapter.getAreaDirectory(area)
+        if debug:
+            elements = areaDirectory.getElements()
+            lines = areaDirectory.getLines()
+            print 'url:', url
+            print 'lines=%s elements=%d' % (lines, elements)
+        retvals = (_areaDirectoryToDictionary(areaDirectory), area.getData())
+    except Exception, err:
+        if debug:
+            print 'exception: %s\n' % (str(err))
+            print 'problem with adde url:', url
+    
+    return retvals
+
+
+def testADDEImage(localEntry=None,
+    server=None, dataset=None, descriptor=None,
+    accounting=DEFAULT_ACCOUNTING,
+    location=None,
+    coordinateSystem=CoordinateSystems.LATLON,
+    place=Places.CENTER,
+    mag=(1, 1),
+    position=0,
+    unit='BRIT',
+    day=None,
+    time=None,
+    debug=False,
+    track=False,
+    band=None,
+    size=None):
+    """Requests data from an ADDE Image server - returns both data and metadata objects.
+
+    An ADDE request must include values for either localEntry or the combination of server, dataset and descriptor.
+
+    Required Args:
+        localEntry: Local data set defined by makeLocalADDEEntry. 
+        server: ADDE server.
+        dataset: ADDE dataset group name.
+        descriptor: ADDE dataset descriptor.
+        
+        
+    Optional Args:
+        day: Day range ('begin date','end date')
+        time: ('begin time', 'end time')
+        coordinateSystem: coordinate system to use for retrieving data
+                            AREA       AREA file coordinates - zero based
+                            LATLON   latitude and longitude coordinates
+                            IMAGE     image coordinates - one based
+        location: (x,y)
+                            x           AREA line, latitude, or IMAGE line
+                            y           AREA element, longitude, or IMAGE element
+        place: CENTER places specified location (x,y) at center of panel
+                            ULEFT places specified location (x,y) at upper-left coordinate of panel
+        band: McIDAS band number; must be specified if requesting data from
+              multi-banded image; default=band in image
+        unit: calibration unit to request; default = 'BRIT'
+        position: time relative (negative values) or absolute (positive values)
+                  position in the dataset; default=0 (most recent image)
+        size: number of lines and elements to request; default=(480,640)
+        mag: magnification of data (line,element), negative number used for
+             sampling data; default=(1,1)
+        accounting: ('user', 'project number') user and project number required
+                    by servers using McIDAS accounting; default = ('idv','0')
+        debug: send debug information to file; default=False
+        track: default=False.
+    """
+    if localEntry:
+        server = localEntry.getAddress()
+        dataset = localEntry.getGroup()
+        descriptor = localEntry.getDescriptor().upper()
+    elif (server is None) or (dataset is None) or (descriptor is None):
+        raise TypeError("must provide localEntry or server, dataset, and descriptor values")
+    
+    if server == "localhost" or server == "127.0.0.1":
+        port = EntryStore.getLocalPort()
+    else:
+        port = "112"
+        
+    server = '%s:%s' % (server, port)
+    
+    # still need to handle dates+times
+    # todo: don't break!
+    user = accounting[0]
+    proj = accounting[1]
+    debug = str(debug).lower()
+    mag = '%s %s' % (mag[0], mag[1])
+    
+    if place is Places.CENTER:
+        place = 'CENTER'
+    elif place is Places.ULEFT:
+        place = 'ULEFT'
+    else:
+        raise ValueError()
+    
+    if coordinateSystem is CoordinateSystems.LATLON:
+        coordSys = 'LATLON'
+        coordType = 'E'
+    elif coordinateSystem is CoordinateSystems.AREA:
+        coordSys = 'LINELE'
+        coordType = 'A'
+    elif coordinateSystem is CoordinateSystems.IMAGE:
+        coordSys = 'LINELE'
+        coordType = 'I'
+    else:
+        raise ValueError()
+    
+    if location:
+        location = '&%s=%s %s %s' % (coordSys, location[0], location[1], coordType)
+    else:
+        location = ''
+    
+    if day:
+        day = '&DAY=%s' % (day)
+    else:
+        day = ''
+    
+    if size:
+        if size == 'ALL':
+            size = '99999 99999'
+        else:
+            size = '%s %s' % (size[0], size[1])
+    
+    if time:
+        time = '%s %s I' % (time[0], time[1])
+    else:
+        time = ''
+    
+    if band:
+        band = '&BAND=%s' % (str(band))
+    else:
+        band = ''
+        
+    addeUrlFormat = "adde://%s/imagedata?&PORT=%s&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s&TRACK=%d"
+    url = addeUrlFormat % (server, port, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position, track)
     retvals = (-1, -1)
     
     try:

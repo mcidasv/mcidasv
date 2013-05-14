@@ -125,7 +125,16 @@ public class StatsTable extends AbstractTableModel {
       "Std Dev","Correlation","Difference Maximum",
       "Difference Minimum","Difference Mean","Area [km^2]"};
 
-    public StatsTable() { super();
+    boolean saveStats = true;
+
+
+    public StatsTable() {
+      this(true);
+    }
+
+    public StatsTable(boolean saveStats) { super();
+      this.saveStats = saveStats;
+
       data = new String[maxRows][maxCols];
       numCols = 1;
 
@@ -163,7 +172,9 @@ public class StatsTable extends AbstractTableModel {
       statsWindow.getContentPane().add(sp,BorderLayout.NORTH);
       JPanel bpan = new JPanel(new FlowLayout());
       bpan.add(saveStatsButt);
-      statsWindow.getContentPane().add(bpan,BorderLayout.SOUTH);
+      if (saveStats) {
+        statsWindow.getContentPane().add(bpan,BorderLayout.SOUTH);
+      }
       statsWindow.setSize(650,340);
       statsWindow.pack();
       statsWindow.addWindowListener(new WindowAdapter() {

@@ -38,46 +38,24 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
   <li><a href="#ensemble">Ensemble</a></li>
 </ul>
 <ul class="propertylist">
-<li class="propertylistitem"><a name="trajectory" id="trajectory"></a><strong>Create 2D Flow Trajectory (u, v, s, s0)</strong> - Uses the Trajectory Colored By Parameter display type to plot 2-dimensional trajectories from data that includes u- and v-wind components. The actual parameter chosen for s0 will not be used in the plot, but the <strong>Region</strong> tab for this parameter will be used as the geographic area where the trajectories originate.</li class="propertylistitem">
-  <li class="propertylistitem"><table id="gridformulas2" cellpadding="0" cellspacing="0" border="1">
-      <tr>
-          <td colspan="1"><strong>Input Parameter</strong></td>
-          <td width="630"><strong>Definition
-            </strong></tr>
-      <tr>
-          <td width="140" colspan="1" rowspan="1" valign="top">
-              <p><em>u</em></p>
-          </td>
-          <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-              <p>The u-component of the wind.</p>
-          </td>
-      </tr>
-      <tr>
-   <td width="140" colspan="1" rowspan="1" valign="top">
-   <p><em>v</em></p>
-   </td>
-   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>The v-component of the wind.</p>
-   </td>
-   </tr>
+<li class="propertylistitem"><strong>Define a grid diagnostic  (gddiag) - </strong>Defines a grid diagnostic to perform. </li class="propertylistitem">
+<li class="propertylistitem"><table id="gridformulas1" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
    <tr>
    <td width="140" colspan="1" rowspan="1" valign="top">
-   <p><em>s</em></p>
+   <p><em>gddiag </em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>The scalar parameter (will be used to color the trajectory lines).</p>
-   </td>
-   </tr>
-      <tr>
-   <td width="140" colspan="1" rowspan="1" valign="top">
-   <p><em>s</em>0</p>
-   </td>
-   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>Sets the region where the trajectories originate. The actual parameter chosen will not be used.</p>
+   <p>Grid diagnostic. For more information, see the Grid Diagnostics section of  <a href="JythonLib.html#griddiag">Jython Library</a>.</p>
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>Create 3D Flow Trajectory (u, v, w, s, s0)</strong> - Uses the Trajectory Colored By Parameter display type to plot 3-dimensional trajectories from data that includes u-, v-, and w-wind components. The actual parameter chosen for s0 will not be used in the plot, but the <strong>Region</strong> tab for this parameter will be used as the geographic area where the trajectories originate.</li class="propertylistitem">
+<li class="propertylistitem"><strong>Find latitude of grid points  (fieldimpl) - </strong>Obtains the latitude coordinate from the grid at each location and plots the latitude at each point on the map.</li class="propertylistitem">
+<li class="propertylistitem"><strong>Find longitude of grid points (fieldimpl)</strong> - Obtains the longitude coordinate from the grid at each location and plots the longitude at each point on the map.</li>
+<li class="propertylistitem"><a name="trajectory" id="trajectory"></a><strong>Create 2D Trajectory (parameter, U Component, V Component)</strong> - Uses the Trajectory Colored By Parameter display type to plot 2-dimensional trajectories from data that includes u- and v-wind components and a scalar quantity to color the trajectories by. For information on how to work with this display, see <a href="../controls/GridTrajectory.html">Grid Trajectory Controls</a>.</li class="propertylistitem">
   <li class="propertylistitem"><table id="gridformulas2" cellpadding="0" cellspacing="0" border="1">
       <tr>
           <td colspan="1"><strong>Input Parameter</strong></td>
@@ -85,58 +63,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
             </strong></tr>
       <tr>
           <td width="140" colspan="1" rowspan="1" valign="top">
-              <p><em>u</em></p>
+              <p><em>parameter</em></p>
           </td>
           <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-              <p>The u-component of the wind.</p>
-          </td>
-      </tr>
-      <tr>
-   <td width="140" colspan="1" rowspan="1" valign="top">
-   <p><em>v</em></p>
-   </td>
-   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>The v-component of the wind.</p>
-   </td>
-   </tr>
-         <tr>
-   <td width="140" colspan="1" rowspan="1" valign="top">
-   <p><em>w</em></p>
-   </td>
-   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>The w-component of the wind.</p>
-   </td>
-   </tr>
-   <tr>
-   <td width="140" colspan="1" rowspan="1" valign="top">
-   <p><em>s</em></p>
-   </td>
-   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>The scalar parameter (will be used to color the trajectory lines).</p>
-   </td>
-   </tr>
-      <tr>
-   <td width="140" colspan="1" rowspan="1" valign="top">
-   <p><em>s</em>0</p>
-   </td>
-   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>Sets the region where the trajectories originate. The actual parameter chosen will not be used.</p>
-   </td>
-   </tr>
-</table></li>
-<li class="propertylistitem"><strong>Horizontal Advection (from %N1% &amp; %N2%) (scalar parameter, U Component,
-  V Component)</strong> - Calculates horizontal advection from U and V components.</li class="propertylistitem">
-  <li class="propertylistitem"><table id="gridformulas2" cellpadding="0" cellspacing="0" border="1">
-      <tr>
-          <td colspan="1"><strong>Input Parameter</strong></td>
-          <td width="630"><strong>Definition
-            </strong></tr>
-      <tr>
-          <td width="140" colspan="1" rowspan="1" valign="top">
-              <p><em>scalar parameter</em></p>
-          </td>
-          <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-              <p>Scalar Parameter (the parameter that will be mapped).</p>
+              <p>The scalar quantity that the trajectories will be colored by.</p>
           </td>
       </tr>
       <tr>
@@ -156,23 +86,45 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>Define a grid diagnostic  (gddiag) - </strong>Defines a grid diagnostic to perform. </li class="propertylistitem">
-<li class="propertylistitem"><table id="gridformulas1" cellpadding="0" cellspacing="0" border="1">
-  <tr>
-    <td colspan="1"><strong>Input Parameter</strong></td>
-   <td width="630"><strong>Definition
-   </strong></tr>
-   <tr>
+<li class="propertylistitem"><strong>Create 3D Trajectory (parameter, U Component, V Component, W Component)</strong> - Uses the Trajectory Colored By Parameter display type to plot 3-dimensional trajectories from data that includes u-, v-, and w-wind components. For information on how to work with this display, see <a href="../controls/GridTrajectory.html">Grid Trajectory Controls</a>.</li class="propertylistitem">
+  <li class="propertylistitem"><table id="gridformulas2" cellpadding="0" cellspacing="0" border="1">
+      <tr>
+          <td colspan="1"><strong>Input Parameter</strong></td>
+          <td width="630"><strong>Definition
+            </strong></tr>
+      <tr>
+          <td width="140" colspan="1" rowspan="1" valign="top">
+              <p><em>parameter</em></p>
+          </td>
+          <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+              <p>The scalar quantity that the trajectories will be colored by.</p>
+          </td>
+      </tr>
+      <tr>
    <td width="140" colspan="1" rowspan="1" valign="top">
-   <p><em>gddiag </em></p>
+   <p><em>U Component</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-   <p>Grid diagnostic. For more information, see the Grid Diagnostics section of  <a href="JythonLib.html#griddiag">Jython Library</a>.</p>
+   <p>The u-component of the wind.</p>
+   </td>
+   </tr>
+         <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>V Component</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The v-component of the wind.</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>W Component</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The vertical component of the data.</p>
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>Find latitude of grid points  (fieldimpl) - </strong>Obtains the latitude coordinate from the grid at each location and plots the latitude at each point on the map.</li class="propertylistitem">
-<li class="propertylistitem"><strong>Find longitude of grid points (fieldimpl)</strong> - Obtains the longitude coordinate from the grid at each location and plots the longitude at each point on the map.</li class="propertylistitem">
 <li class="propertylistitem"><strong>Horizontal Advection (from %N1% &amp; %N2%) (scalar parameter, U Component,
   V Component)</strong> - Calculates horizontal advection from U and V components.</li class="propertylistitem">
   <li class="propertylistitem"><table id="gridformulas2" cellpadding="0" cellspacing="0" border="1">

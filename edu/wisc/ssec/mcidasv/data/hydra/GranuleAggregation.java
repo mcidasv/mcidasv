@@ -39,6 +39,8 @@ import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.wisc.ssec.mcidasv.data.QualityFlag;
+
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.Range;
@@ -74,6 +76,10 @@ public class GranuleAggregation implements MultiDimensionReader {
    ArrayList<HashMap<String, int[]>> varDimLengthsList = new ArrayList<HashMap<String, int[]>>();
    ArrayList<HashMap<String, Class>> varDataTypeList = new ArrayList<HashMap<String, Class>>();
    ArrayList<HashMap<String, Integer>> varGranuleRatiosList = new ArrayList<HashMap<String, Integer>>();
+   
+   // except quality flags - only need one hashmap per aggregation
+   // it maps the broken out variable name back to the original packed variable name
+   HashMap<String, QualityFlag> qfMap = null;
 
    // variable can have bulk array processor set by the application
    HashMap<String, RangeProcessor> varToRangeProcessor = new HashMap<String, RangeProcessor>();
@@ -83,6 +89,7 @@ public class GranuleAggregation implements MultiDimensionReader {
    private String inTrackDimensionName = null;
    private String crossTrackDimensionName = null;
    private TreeSet<String> products;
+   private String origName = null;
 
    public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, TreeSet<String> products, int granuleLength, String inTrackDimensionName, String crossTrackDimensionName) throws Exception {
 	   if (ncdfal == null) throw new Exception("No data: empty Suomi NPP aggregation object");
@@ -96,21 +103,34 @@ public class GranuleAggregation implements MultiDimensionReader {
    }
   
    public Class getArrayType(String array_name) {
-     return varDataTypeList.get(0).get(array_name);
+	   array_name = mapNameIfQualityFlag(array_name);
+	   return varDataTypeList.get(0).get(array_name);
    }
 
    public String[] getDimensionNames(String array_name) {
-	   logger.debug("GranuleAggregation.getDimensionNames, requested: " + array_name);
-     return varDimNamesList.get(0).get(array_name);
+	   array_name = mapNameIfQualityFlag(array_name);
+	   return varDimNamesList.get(0).get(array_name);
    }
 
    public int[] getDimensionLengths(String array_name) {
-	   logger.debug("GranuleAggregation.getDimensionLengths, requested: " + array_name);
-	   int[] lengths = varDimLengthsList.get(0).get(array_name);
-	   for (int i = 0; i < lengths.length; i++) {
-		   logger.debug("Length: " + lengths[i]);
+	   array_name = mapNameIfQualityFlag(array_name);
+	   return varDimLengthsList.get(0).get(array_name);
+   }
+
+   private String mapNameIfQualityFlag(String array_name) {
+	   // only applies if name is from a packed quality flag
+	   // we pull data from the "mapped" variable name, a packed byte
+	   if (qfMap != null) {
+		   logger.debug("mapNameIfQualityFlag, checking key: " + array_name);
+		   if (qfMap.containsKey(array_name)) {
+			   origName = array_name;
+			   QualityFlag qf = qfMap.get(array_name);
+			   String mappedName = qf.getPackedName();
+			   logger.debug("Mapped to: " + mappedName);
+			   return mappedName;
+		   }
 	   }
-     return varDimLengthsList.get(0).get(array_name);
+	   return array_name;
    }
 
    public float[] getFloatArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
@@ -251,8 +271,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   boolean notDisplayable = false;
 			   while (dimIter.hasNext()) {
 				   Dimension dim = (Dimension) dimIter.next();
-				   String s = dim.getName();
-				   logger.debug("DIMENSION name: " + s);
+				   String s = dim.getShortName();
 				   if ((s != null) && (!s.isEmpty())) {
 					   if ((! s.equals(inTrackDimensionName)) && 
 							   ((! s.startsWith("Band")) && (cnt == 0)) &&
@@ -263,7 +282,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 						   break;
 					   }
 				   }
-				   String dimName = dim.getName();
+				   String dimName = dim.getShortName();
 				   logger.debug("GranuleAggregation init, variable: " + varName + ", dimension name: " + dimName + ", length: " + dim.getLength());
 				   if (dimName == null) dimName = "dim" + cnt;
 				   dimNames[cnt] = dimName;
@@ -353,24 +372,22 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   for (int i = 0; i < numDimensions; i++) {
 		   if (is2D) {
 			   // XXX TJJ - if empty name, in-track index is 0
-			   if ((dList.get(i).getName() == null) || (dList.get(i).getName().isEmpty())) {
-				   logger.debug("WARNING: Empty dimension name!, assuming in-track dim is 0");
+			   if ((dList.get(i).getShortName() == null) || (dList.get(i).getShortName().isEmpty())) {
+				   logger.warn("Empty dimension name!, assuming in-track dim is 0");
 				   return 0;
 			   }
-			   logger.debug("Comparing: " + dList.get(i).getName() + " with: " + inTrackName);
-			   if (dList.get(i).getName().equals(inTrackName)) {
+			   if (dList.get(i).getShortName().equals(inTrackName)) {
 				   index = i;
 				   break;
 			   }
 		   }
 		   if (is3D) {
 			   // XXX TJJ - if empty name, in-track index is 0
-			   if ((dList.get(i).getName() == null) || (dList.get(i).getName().isEmpty())) {
-				   logger.debug("WARNING: Empty dimension name!, assuming in-track dim is 0");
+			   if ((dList.get(i).getShortName() == null) || (dList.get(i).getShortName().isEmpty())) {
+				   logger.warn("Empty dimension name!, assuming in-track dim is 0");
 				   return 0;
 			   }
-			   logger.debug("Comparing: " + dList.get(i).getName() + " with: " + inTrackName);
-			   if (dList.get(i).getName().equals(inTrackName)) {
+			   if (dList.get(i).getShortName().equals(inTrackName)) {
 				   index = i;
 				   break;
 			   }
@@ -383,6 +400,7 @@ public class GranuleAggregation implements MultiDimensionReader {
    
    private synchronized Object readArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
 	   
+	   array_name = mapNameIfQualityFlag(array_name);
 	   // how many dimensions are we dealing with
 	   int dimensionCount = start.length;
 	   
@@ -514,24 +532,30 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   Object o = java.lang.reflect.Array.newInstance(outType, totalLength);
            
 	   int destPos = 0;
-           int granIdx = 0;
+	   int granIdx = 0;
 
-    	   for (Array a : arrayList) {
-    		   if (a != null) {
-    			   Object primArray = a.copyTo1DJavaArray();
-    			   primArray = processArray(array_name, arrayType, granIdx, primArray, rngProcessor, start, count);
-    			   System.arraycopy(primArray, 0, o, destPos, (int) a.getSize());
-    			   destPos += a.getSize();
-    		   }
-    		   granIdx++;
-    	   }
-
-
+	   for (Array a : arrayList) {
+		   if (a != null) {
+			   Object primArray = a.copyTo1DJavaArray();
+			   primArray = processArray(array_name, arrayType, granIdx, primArray, rngProcessor, start, count);
+			   System.arraycopy(primArray, 0, o, destPos, (int) a.getSize());
+			   destPos += a.getSize();
+		   }
+		   granIdx++;
+	   }
+       
 	   return o;
    }
    
+   /**
+    * @param qfMap the qfMap to set
+    */
+   public void setQfMap(HashMap<String, QualityFlag> qfMap) {
+	   this.qfMap = qfMap;
+   }
+
    public HashMap getVarMap() {
-     return varMapList.get(0);
+	   return varMapList.get(0);
    }
 
    public ArrayList<NetCDFFile> getReaders() {
@@ -540,9 +564,10 @@ public class GranuleAggregation implements MultiDimensionReader {
 
    /* pass individual granule pieces just read from dataset through the RangeProcessor */
    private Object processArray(String array_name, Class arrayType, int granIdx, Object values, RangeProcessor rngProcessor, int[] start, int[] count) {
-     if (rngProcessor == null) {
-       return values;
-     }
+	   
+	   if (rngProcessor == null) {
+		   return values;
+	   }
      else {
         ((AggregationRangeProcessor)rngProcessor).setWhichRangeProcessor(granIdx);
 
@@ -575,7 +600,13 @@ public class GranuleAggregation implements MultiDimensionReader {
            if (arrayType == Short.TYPE) {
               outArray = rngProcessor.processRange((short[]) values, null);
            } else if (arrayType == Byte.TYPE) {
-              outArray = rngProcessor.processRange((byte[]) values, null);
+        	   // if variable is a bit-field quality flag, apply mask
+        	   if (qfMap.containsKey(origName)) {
+        		   QualityFlag qf = qfMap.get(origName);
+        		   outArray = rngProcessor.processRangeQualityFlag((byte[]) values, null, qf);
+        	   } else {
+        		   outArray = rngProcessor.processRange((byte[]) values, null);
+        	   }
            } else if (arrayType == Float.TYPE) {
               outArray = rngProcessor.processRange((float[]) values, null);
            } else if (arrayType == Double.TYPE) {
@@ -583,7 +614,7 @@ public class GranuleAggregation implements MultiDimensionReader {
            }
 
         }
-
+        
         return outArray;
      }
    }

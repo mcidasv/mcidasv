@@ -8,6 +8,8 @@ from contextlib import contextmanager
 
 # from shell import makeDataSource
 from decorators import deprecated
+from decorators import gui_invoke_later
+from decorators import gui_invoke_now
 from interactive import _expandpath
 
 from org.slf4j import Logger
@@ -42,6 +44,7 @@ from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 from edu.wisc.ssec.mcidasv.servermanager import EntryStore
 from visad.data.mcidas import AreaAdapter
 
+@gui_invoke_later
 def pause():
     getStaticMcv().waitUntilDisplaysAreDone()
 
@@ -86,77 +89,77 @@ def managedDataSource(path, cleanup=True, dataType=None):
         # the "with" block has relinquished control; time to clean up!
         if cleanup:
             boomstick()
-
-
+            
+            
 class _MappedData(object):
     """ 'Abstract' class for combined VisAD Data / Python dictionary objects
-
+    
     Subclasses should override the _getDirValue method.
     """
     def __init__(self, keys):
         self._keys = keys
-
+        
     def _getDirValue(self, key):
         # subclasses should override!
         raise NotImplementedError()
-
+        
     def getDictionary(self):
         return dict(self.iteritems())
-
+        
     def __repr__(self):
         return repr(dict(self.iteritems()))
-    
+        
     def __len__(self):
         return len(self._keys)
-    
+        
     def __getitem__(self, key):
         try:
             return self._getDirValue(key)
         except KeyError:
             raise KeyError()
-    
+            
     def __iter__(self):
         for x in self._keys:
             yield x
-    
+            
     def __contains__(self, item):
         for value in self.itervalues():
             if item == value:
                 return True
         return False
-    
+        
     def keys(self):
         return list(self._keys)
-    
+        
     def items(self):
         mappedItems = []
         for key in self._keys:
             mappedItems.append((key, self._getDirValue(key)))
         return mappedItems
-    
+        
     def iteritems(self):
         for key in self._keys:
             yield (key, self._getDirValue(key))
-    
+            
     def iterkeys(self):
         return iter(self._keys)
-    
+        
     def itervalues(self):
         for key in self._keys:
             yield self._getDirValue(key)
-    
+            
     def values(self):
         return [self._getDirValue(key) for key in self._keys]
-    
+        
     def has_key(self, key):
         return key in self._keys
-    
+        
     def get(self, key, default=None):
         try:
             return self._getDirValue(key)
         except KeyError:
             return default
-    
+            
     def __reversed__(self): raise NotImplementedError()
     def __setitem__(self, key, value): raise NotImplementedError()
     def __delitem__(self, key): raise NotImplementedError()
@@ -164,8 +167,8 @@ class _MappedData(object):
     def pop(self, key, *args): raise NotImplementedError()
     def popitem(self): raise NotImplementedError()
     def update(self, newDict=None, **kwargs): raise NotImplementedError()
-
-
+    
+    
 class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
     def __init__(self, aiff, areaFile, areaDirectory, addeDescriptor, 
             startTime):
@@ -189,7 +192,7 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
                 aiff.RangeCoordinateSystems, aiff.RangeSet,
                 aiff.RangeUnits, aiff.readLabel)
         self.startTime = startTime
-
+        
     # http://stackoverflow.com/questions/141545/overloading-init-in-python
     @classmethod
     def fromUrl(cls, imageUrl):
@@ -212,8 +215,8 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
                 rangeCoordSys, rangeSets, units, samples, "READLABEL")
         return cls(aiff, areaFile, areaDirectory, addeDescriptor, 
                 ff.getStartTime())
-
-
+                
+                
     # NOTE: This is only suitable for proof-of-concept. 
     # Python does not allow Java-esque method overloading, so I had to fake 
     # it with this hack. 
@@ -245,7 +248,7 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
     
     def _getDirValue(self, key):
         from visad import DateTime
-
+        
         if key not in self._keys:
             raise KeyError('unknown key: %s' % key)
         if key == 'bands':
@@ -294,9 +297,9 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
 
 class _JavaProxy(object):
     """One sentence description goes here
-
+    
     This is where a more complete description of the class would go.
-
+    
     Attributes:
         attr_one: Blurb about attr_one goes here.
         foo: Blurb about foo.
@@ -306,17 +309,17 @@ class _JavaProxy(object):
         
         self.__javaObject = javaObject
         self.__initialized = True
-
+        
     def getJavaInstance(self):
         """Returns the actual VisAD/IDV/McIDAS-V object being proxied."""
         
         return self.__javaObject
-
+        
     def __str__(self):
         """Returns the results of running the proxied object's toString() method."""
         
         return self.__javaObject.toString()
-
+        
     def __getattr__(self, attr):
         """Forwards object attribute lookups to the internal VisAD/IDV/McIDAS-V object."""
         
@@ -331,24 +334,25 @@ class _JavaProxy(object):
                 return self.__dict__[attr]
             else:
                 raise AttributeError(attr)
-
+                
     def __setattr__(self, attr, val):
         """Forwards object attribute changes to the internal VisAD/IDV/McIDAS-V object."""
         
         if not '_JavaProxy__initialized' in self.__dict__:
             self.__dict__[attr] = val
             return
-
+            
         if hasattr(self.__javaObject, attr):
             setattr(self.__javaObject, attr, val)
         else:
             self.__dict__[attr] = val
-
+            
+@gui_invoke_later
 def _getNewFont(currentFont, fontName, style, size):
     """Helper class for setLayerLabelFont and setColorScaleFont
        since they need to accomplish the same task
        (see those functions for more details)
-
+       
     Args:
         currentFont: an existing font to use for "default" font properties
         fontName: new fontName
@@ -361,7 +365,7 @@ def _getNewFont(currentFont, fontName, style, size):
     if isinstance(style, str):
         # we need all caps
         style = style.upper()
-    
+        
     if style == "BOLD":
         style = java.awt.Font.BOLD
     elif style == "ITALIC":
@@ -370,12 +374,12 @@ def _getNewFont(currentFont, fontName, style, size):
         style = java.awt.Font.PLAIN
     else:
         style = currentFont.getStyle()
-
+        
     if size == None:
         size = currentFont.getSize()
     else:
         size = int(size)
-
+        
     if fontName != None:
         # check if fontName is valid
         fontList = list(ucar.unidata.util.GuiUtils.getFontList())
@@ -399,9 +403,9 @@ def _getNewFont(currentFont, fontName, style, size):
     else:
         # leave as-is if fontName is None
         fontName = currentFont.getFontName()
-
+        
     return java.awt.Font(fontName, style, size)
-
+    
 class _Window(_JavaProxy):
     def __init__(self, javaObject):
         """Blank for now. javaObject = IdvWindow
@@ -409,7 +413,8 @@ class _Window(_JavaProxy):
         """
         
         _JavaProxy.__init__(self, javaObject)
-
+        
+    @gui_invoke_later
     def createTab(self, skinId='idv.skin.oneview.map'):
         from ucar.unidata.idv import IdvResourceManager
         from edu.wisc.ssec.mcidasv.util.McVGuiUtils import idvGroupsToMcv
@@ -426,39 +431,45 @@ class _Window(_JavaProxy):
             group = idvGroupsToMcv(window)
             holder = group[0].makeSkinAtIndex(skinToIdx[skinId])
             return _Tab(holder)
-
+            
     #def setCurrentTabIndex(self, index):
     #    """Sets the tab at the given index to be the active tab."""
     #    # TODO(jon): remove this method?
     #    self._JavaProxy__javaObject.getComponentGroups()[0].setActiveIndex(index)
     #
+    @gui_invoke_later
     def getCurrentTab(self):
         """Returns the currently active tab."""
-
+        
         # mcv windows should only have one component group
         return _Tab(self._JavaProxy__javaObject.getComponentGroups()[0].getActiveComponentHolder())
-
+        
+    @gui_invoke_later
     def getTabAtIndex(self, index):
         """Returns the tab at the given index."""
         
         return _Tab(self._JavaProxy__javaObject.getComponentGroups()[0].getHolderAt(index))
-
+        
+    @gui_invoke_later
     def getTabCount(self):
         """Returns the number of tabs."""
-
+        
         return self._JavaProxy__javaObject.getComponentGroups()[0].getDisplayComponentCount()
-
+        
+    @gui_invoke_later
     def getTabs(self):
         """Returns a list of the available tabs."""
-
+        
         return [_Tab(holder) for holder in self._JavaProxy__javaObject.getComponentGroups()[0].getDisplayComponents()]
-
+        
+    @gui_invoke_later
     def getSize(self):
         """Returns the width and height of the wrapped IdvWindow."""
-
+        
         dims = self._JavaProxy__javaObject.getSize()
         return dims.getWidth(), dims.getHeight()
-
+        
+    @gui_invoke_later
     def getBounds(self):
         """Returns the xy-coords of the upper left corner, as well as the width
         and height of the wrapped IdvWindow.
@@ -472,15 +483,18 @@ class _Tab(_JavaProxy):
         """Blank for now. javaObject = McvComponentHolder
         """
         _JavaProxy.__init__(self, javaObject)
-
+        
+    @gui_invoke_later
     def getName(self):
         """Returns the name of this tab."""
         return self._JavaProxy__javaObject.getName()
-
+        
+    @gui_invoke_later
     def setName(self, newTabName):
         """Set this tab's name to a given string value."""
         self._JavaProxy__javaObject.setName(newTabName)
-
+        
+    @gui_invoke_later
     def getDisplays(self):
         """Returns a list of the displays contained within this tab."""
         return [_Display(viewManager) for viewManager in self._JavaProxy__javaObject.getViewManagers()]
@@ -519,7 +533,8 @@ class _Display(_JavaProxy):
                 visible=javaObject.getShowDisplayList(),
             )
         _Display.displayWrappers.append(self)
-
+        
+    @gui_invoke_later
     def getDisplayType(self):
         # TODO(jon): how to refer to 2d map displays?
         # MapViewManager, IdvUIManager.COMP_MAPVIEW
@@ -537,23 +552,28 @@ class _Display(_JavaProxy):
             return IdvUIManager.COMP_TRANSECTVIEW
         else:
             return IdvUIManager.COMP_VIEW
-
+            
+    @gui_invoke_later
     def toggleFullScreen(self):
         self._JavaProxy__javaObject.toggleFullScreen()
-
+        
+    @gui_invoke_later
     def getFullScreenSize(self):
         width = self._JavaProxy__javaObject.getFullScreenWidth()
         height = self._JavaProxy__javaObject.getFullScreenHeight()
         return width, height
-    
+        
+    @gui_invoke_later
     def setFullScreenSize(self, width, height):
         self._JavaProxy__javaObject.setFullScreenWidth(width)
         self._JavaProxy__javaObject.setFullScreenHeight(height)
-    
+        
+    @gui_invoke_later
     def getSize(self):
         size = self._JavaProxy__javaObject.getComponent().getSize()
         return size.getWidth(), size.getHeight()
-
+        
+    @gui_invoke_later
     def setSize(self, width, height):
         if getStaticMcv().getArgsManager().getIsOffScreen():
             self.setSizeBackground(width, height)
@@ -568,10 +588,11 @@ class _Display(_JavaProxy):
             from javax.swing import JFrame
             window = JFrame()
             window.getContentPane().add(navigatedComponent)
-
+            
         window.pack()
         print 'new: %s\ncur: %s\nmin: %s\nmax: %s\nprf: %s' % (size, navigatedComponent.getSize(), navigatedComponent.getMinimumSize(), navigatedComponent.getMaximumSize(), navigatedComponent.getPreferredSize())
-
+        
+    @gui_invoke_later
     def setSizeBackground(self, width, height):
         curWindowObj = self._JavaProxy__javaObject
         # get some properties of the current window
@@ -581,10 +602,10 @@ class _Display(_JavaProxy):
         projection = curWindowObj.getMapDisplay().getMapProjection()
         # other stuff.. wireframe, DisplayList properties... more?
         wireframe = curWindowObj.getWireframe()
-
+        
         newWindow = buildWindow(width, height)[0]
         newWindowObj = newWindow._JavaProxy__javaObject
-
+        
         # this is somewhat akin to dragging layers in the GUI
         layers = self.getLayers()
         for layer in layers:
@@ -600,85 +621,109 @@ class _Display(_JavaProxy):
                 # (ViewManager.controlMoved eventually leads to a
                 #  McIDASVViewPanel.addControlTab which does component stuff):
                 #layerObj.moveTo(newWindow._JavaProxy__javaObject)
-
+                
         # set the new window's viewpoint, projection, etc.
         newWindowObj.getMapDisplay().setMapProjection(projection)
         newWindowObj.setDisplayMatrix(displayMatrix)
         newWindowObj.setWireframe(wireframe)
-
+        
         # DisplayList/layer label stuff
         newWindowObj.setShowDisplayList(self.labelDict['visible'])
         newWindowObj.setDisplayListColor(self.labelDict['color'])
         newWindowObj.setDisplayListFont(self.labelDict['font'])
         newWindowObj.updateDisplayList()
-
+        
         # note, can't just do 'self = newWindow' since self is local
         self._JavaProxy__javaObject = newWindow._JavaProxy__javaObject
-
+        
     # @deprecated(self.setSize)
+    @gui_invoke_later
     def setDimensions(self, x, y, width, height):
         self._JavaProxy__javaObject.setDisplayBounds(Rectangle(x, y, width, height))
         self.setSize(width, height)
-
+        
     # @deprecated(self.getSize)
+    @gui_invoke_later
     def getDimensions(self):
         rect = self._JavaProxy__javaObject.getDisplayBounds()
         return rect.x, rect.y, rect.width, rect.height
-
+        
     def getDataAtLocation(self, latitude, longitude):
         #earthLocation = Util.makeEarthLocation(latitude, longitude)
         #for layer in self._JavaProxy__javaObject.getControls():
         pass
-
+        
     def getDataSources(self):
         pass
-
+        
+    @gui_invoke_later
     def getProjection(self):
         """Returns the map projection currently in use."""
         return _Projection(self._JavaProxy__javaObject.getMapDisplay().getMapProjection())
-
+        
+    @gui_invoke_later
     def setProjection(self, projection):
-        """ Set the current projection
+        """ Set the current projection.
         
         Args:
             projection: can be either:
                 (1) a string that specifies the desired projection in the format:
                 'US>States>West>Texas'
-
+                
                 or
-
+                
                 (2) a _Layer object.  Projection will get set to the 'native'
                 projection for that layer
-
+                
         Raises:
             ValueError:  if projection isn't a valid projection name or existing layer
         """
         # TODO(mike): catch a NameError if projection isn't defined.
         # Currently able to catch AttributeError but not NameError, hmm..
-
+        
+        # if isinstance(projection, _Layer):
+        #     projObj = projection._JavaProxy__javaObject.getDataProjection()
+        #     self._JavaProxy__javaObject.getMapDisplay().resetMapParameters(True)
+        #     return self._JavaProxy__javaObject.getMapDisplay().setMapProjection(projObj)
+        
+        # if isinstance(projection, str):
+        #     projObj = getProjection(projection)._JavaProxy__javaObject
+        #     self._JavaProxy__javaObject.getMapDisplay().resetMapParameters(True)
+        #     return self._JavaProxy__javaObject.getMapDisplay().setMapProjection(projObj)
+        
         if isinstance(projection, _Layer):
             projObj = projection._JavaProxy__javaObject.getDataProjection()
-            return self._JavaProxy__javaObject.getMapDisplay().setMapProjection(projObj)
-        
-        if isinstance(projection, str):
+        elif isinstance(projection, str):
             projObj = getProjection(projection)._JavaProxy__javaObject
-            return self._JavaProxy__javaObject.getMapDisplay().setMapProjection(projObj)
-
-        # if user does something like pass in an int
-        raise ValueError('valid arguments to setProjection are (1) a string defining a valid' +
-                          ' projection name, or (2) a _Layer object whose data' +
-                          ' projection you want to use')
-        
+        else:
+            # if user does something like pass in an int
+            raise ValueError('valid arguments to setProjection are (1) a string defining a valid' +
+                             ' projection name, or (2) a _Layer object whose data' +
+                             ' projection you want to use')
+            
+        currentProj = self._JavaProxy__javaObject.getMapDisplay().getMapProjection()
+        if projObj == currentProj:
+            print 'projections match!'
+            self._JavaProxy__javaObject.getMapDisplay().resetMapParameters(True)
+        else:
+            print 'projections differ: %s %s' % (projObj, currentProj)
+            print 'types: %s %s' % (type(projObj), type(currentProj))
+            self._JavaProxy__javaObject.getMapDisplay().setMapProjection(projObj)
+            
+    @gui_invoke_later
     def resetProjection(self):
         return self._JavaProxy__javaObject.getMapDisplay().resetProjection()
-
+        
+    @gui_invoke_later
     def getVerticaleScaleUnit(self):
         return self._JavaProxy__javaObject.getMapDisplay().getVerticalRangeUnit()
-
+        
+    @gui_invoke_later
     def getVerticalScaleRange(self):
         verticalRange = self._JavaProxy__javaObject.getMapDisplay().getVerticalRange()
         return verticalRange[0], verticalRange[1]
-
+        
+    @gui_invoke_later
     def getMaps(self):
         """Returns a dictionary of maps and their status for the display."""
         
@@ -689,7 +734,8 @@ class _Display(_JavaProxy):
         for mapState in mapLayer.getMapStates():
             mapStates[mapState.getSource()] = mapState.getVisible()
         return mapStates
-
+        
+    @gui_invoke_later
     def setMaps(self, mapStates):
         """Allows for controlling the visibility of all available maps for
         the display.
@@ -700,49 +746,54 @@ class _Display(_JavaProxy):
             mapSource = currentState.getSource()
             if mapSource in mapStates:
                 currentState.setVisible(mapStates[mapSource])
-
+                
+    @gui_invoke_later
     def getCenter(self, includeScale=False):
         """Returns the latitude and longitude at the display's center."""
         
         position = self._JavaProxy__javaObject.getScreenCenter()
         latitude = position.getLatitude().getValue()
         longitude = position.getLongitude().getValue()
-
+        
         # validate! (visad's EarthLocation allows for bad values!)
         llp = LatLonPointImpl(latitude, longitude)
-
+        
         if includeScale:
             result = llp.getLatitude(), llp.getLongitude(), self.getScaleFactor()
         else:
             result = llp.getLatitude(), llp.getLongitude()
-
+            
         return result
-
+        
+    @gui_invoke_later
     def setScaleFactor(self, scale):
         """ """
         
         self._JavaProxy__javaObject.getMapDisplay().zoom(scale)
-
+        
+    @gui_invoke_later
     def getScaleFactor(self):
         return self._JavaProxy__javaObject.getMapDisplay().getScale()
-
+        
+    @gui_invoke_later
     def center(self, latitude, longitude, scale=1.0):
         self.setCenter(latitude, longitude)
         #self.setScaleFactor(scale)
-
+        
+    @gui_invoke_later
     def setCenter(self, latitude, longitude, scale=1.0):
         """Centers the display over a given latitude and longitude.
-
+        
         Please be aware that something like:
         setCenter(lat, long, 1.2)
         setCenter(lat, long, 1.2)
         the second call will rescale the display to be 1.2 times the size of
         the display *after the first call.* Or, those calls are essentially
         the same as "setCenter(lat, long, 2.4)".
-
+        
         Note on above issue: it might be useful if this does a "resetProjection" every time,
         so that "scale" behaves more predicatbly   --mike
-
+        
         Args:
         latitude:
         longitude:
@@ -761,15 +812,17 @@ class _Display(_JavaProxy):
         validated = LatLonPointImpl(latitude, longitude)
         earthLocation = Util.makeEarthLocation(validated.getLatitude(), validated.getLongitude())
         mapDisplay = self._JavaProxy__javaObject.getMapDisplay()
-
+        
         #  accept scale keyword as argument.  Seems to be working now  --mike
         mapDisplay.centerAndZoom(earthLocation, False, scale)
-
+        
+    @gui_invoke_later
     def getBackgroundColor(self):
         """Returns the Java AWT color object of the background color (or None)."""
         
         return self._JavaProxy__javaObject.getMapDisplay().getBackground()
-
+        
+    @gui_invoke_later
     def setBackgroundColor(self, color=java.awt.Color.CYAN):
         """Sets the display's background color to the given AWT color. Defaults to cyan."""
         
@@ -783,34 +836,37 @@ class _Display(_JavaProxy):
 #        # the map layer will typically be the first layer... still buggy :(
 #        return self._JavaProxy__javaObject.getControls()[0]
 
+    @gui_invoke_later
     def getLayer(self, index):
         """Returns the layer at the given index (zero-based!) for this Display"""
         
         return _Layer(self._JavaProxy__javaObject.getControls()[index])
-
+        
+    @gui_invoke_later
     def getLayers(self):
         """Returns a list of all layers used by this Display."""
         
         return [_Layer(displayControl) for displayControl in self._JavaProxy__javaObject.getControls()]
-
+        
+    @gui_invoke_later
     def createLayer(self, layerType, data):
         """Creates a new _Layer in this _Display
-
+        
         Args:
             layerType: ID string that represents a type of layer. The valid names
                        can be determined with the "allLayerTypes()" function.
-
+                       
             data: a VisAD Data object to be displayed, or a list of them
-
+            
         Returns:
             The _Layer that was created in this _Display
-
+            
         Raises:
             ValueError:  if layerType isn't valid
         """
         from ucar.unidata.data import DataDataChoice
         from visad.meteorology import ImageSequenceImpl
-
+        
         # need to get short control description from long name
         mcv = getStaticMcv()
         controlID = None
@@ -825,14 +881,14 @@ class _Display(_JavaProxy):
             # imagedisplay can handle loops anyway.
             #print "DEBUG: doing an imagedisplay instead of an imagesequence"
             controlID = 'imagedisplay'
-
+            
         # Set the panel/display that a new DisplayControl will be put into
         # TODO(mike):  set this back to what it was before?
         mcv.getVMManager().setLastActiveViewManager(self._JavaProxy__javaObject)
-
+        
         # for now, don't deal with case where data arg is already a DataChoice.
         # (can add support for this later if needed...)
-
+        
         # the imagedisplay control appears to want an ImageSequenceImpl,
         # so try to force one.
         # This will work if data is an array of NavigatedImage's (or
@@ -843,17 +899,17 @@ class _Display(_JavaProxy):
         except TypeError, te:
             #print "DEBUG: ImageSequenceImpl constructor failed but thats ok"
             pass
-
+            
         # TODO: first arg in DataDataChoice constructor is shortname macro.
         # (can't do anything better now cause we don't have metadata).
         newLayer = mcv.doMakeControl(controlID, 
                 [DataDataChoice("shortname macro goes here", data)])
-
+        
         # wait for thread to finish
         pause()
-
+        
         wrappedLayer = _Layer(newLayer)
-
+        
         defaultLabel = ''
         try:
             defaultLabel = '%s - %s' % (data['sensor-type'], data['nominal-time'])
@@ -862,37 +918,37 @@ class _Display(_JavaProxy):
             # data is a dictionary but doesn't contain the desired key
             #print 'DEBUG: unable to create default layer label'
             pass
-
+            
         wrappedLayer.setLayerLabel(label=defaultLabel)
-
+        
         return wrappedLayer
-
+        
     def captureImage(self, filename, quality=1.0, height=-1, width=-1):
         """Attempt at a replacement for ISL writeImage
-
+        
         Args:
             filename
             quality:  float between 0.0 and 1.0 (relevant for JPEG's)
                     0.0 is highest compression / smallest file size / worst quality
                     1.0 is least compression / biggest file size / best qualit
             height, width: size of image
-
+            
         Raises:
             ValueError:  if filename is a directory
             RuntimeError: if height and width specified here after an annotate
-
+            
         """
         import visad.DisplayException as DisplayException
-
+        
         # do some sanity checking on filename
         filename = _expandpath(filename)
-
+        
         isDir = os.path.isdir(filename)
-
+        
         if isDir:
             # this isn't really good enough.  could be permissions issue, etc.
             raise ValueError(filename, " is a directory")
-        
+            
         if (height != -1) and (width != -1):
             try:
                 self.setSize(width, height)
@@ -901,29 +957,41 @@ class _Display(_JavaProxy):
                     # this should only happen if captureImage is called
                     # with a height and width after an annotate() in the background
                     raise RuntimeError("Height/width for captureImage is currently not supported after a text annotation.  You can specify height/width with buildWindow or openBundle instead, then leave height/width out of your call to captureImage.")
-
+                    
         # the results aren't good if we don't pause first
         pause()
-
+        
         imageFile = java.io.File(filename)
         # yes, I'm still calling writeImage. But it's a different writeImage!!!
         #  (this is ViewManager.writeImage, not ImageGenerator.writeImage)
         # (2nd arg has something to do with whether image gets written in current thread...)
+        # fileRoot, fileExt = os.path.splitext(filename.lower())
+        # if fileExt == '.pdf':
+        #     self._JavaProxy__javaObject.writeImageToFile(COMPONENT_HERE, filename)
+        # elif fileExt == '.kmz':
+        #     pass
+        # elif fileExt == '.kml':
+        #     pass
+        # elif fileExt == '.svg':
+        #     pass
+        # else:
+        
         self._JavaProxy__javaObject.writeImage(imageFile, True, quality)
-
+        
         # TODO(mike): catch exceptions resulting from writeImage (e.g., if filename has invalid extension)
-
+        
+    @gui_invoke_later
     def annotate(self, text, lat=None, lon=None, line=None, element=None,
             font=None, color='red', size=None, style=None,
-            justification = (TextGlyph.JUST_LEFT, TextGlyph.JUST_BOTTOM)):
+            alignment = ("center", "center")):
         """Put a text annotation on this panel
-
+        
         Can specify location by a lat/lon point or number of pixels
         from upper left corner of screen (lines from top, elements from left).
         (but not both!).
-
+        
         The location specifies the *bottom left* point of the text string.
-
+        
         Args:  (need text and one of lat/lon or line/element). rest are optional.
            text: the text for annotation
            lat, lon:  need to be specified together.  (required)
@@ -939,54 +1007,67 @@ class _Display(_JavaProxy):
                Font defaults come from ViewManager.getDisplayListFont()
            color: text color. Default red, for now I guess. this is GUI default.
                  (optional)
-           justification: 2-element tuple representing the (horizontal, vertical)
-                text justification wrt to the given point.  "center" is valid 
+           alignment: 2-element tuple representing the (horizontal, vertical)
+                text alignment wrt to the given point.  "center" is valid 
                 in both elements, "left" and "right" are valid for horizontal,
                 "top" and "bottom" are valid for vertical.  Can also just pass
                 single string "center" which would be equivalent to
-                ("center", "center").  Default is ("left", "bottom")... this is
-                to match 1.2 behavior though the default should probably be just
-                "center".... (optional)
-
+                ("center", "center").  Default is ("center", "center"),
+                so "alignment" is optional
+                
         Returns:
            a _Layer wrapping a DrawingControl
-
+           
         Raises:
-            ValueError: if didn't get proper lat/lon or line/element combo
+            ValueError: if didn't get proper lat/lon or line/element combo,
+            or invalid strings in alignment
         """
         import colorutils
         import visad.georef.EarthLocationTuple as EarthLocationTuple
         import ucar.unidata.idv.control.drawing.TextGlyph as TextGlyph
         import ucar.unidata.idv.control.drawing.DrawingGlyph as DrawingGlyph
-
+        
         # TODO: only create one drawingControl for each panel
         drawCtl = getStaticMcv().doMakeControl('drawingcontrol')
-        drawCtl.setName('jythonannotation')
-        drawCtl.setLegendLabelTemplate('Jython Annotation')
+        drawCtl.setName(text)
+        drawCtl.setLegendLabelTemplate(text)
         drawCtl.setShowInDisplayList(False)
         pause()
         drawCtl.close()  # close the window that pops up..user doesnt need to see
         glyph = TextGlyph(drawCtl, None, text)
 
-        # deal with horizontal/vertical justification keywords
-        if (str(justification[0]).lower() == "center"):
-            glyph.setHorizontalJustification(TextGlyph.JUST_CENTER)
-        if (str(justification[0]).lower() == "left"):
-            glyph.setHorizontalJustification(TextGlyph.JUST_LEFT)
-        if (str(justification[0]).lower() == "right"):
-            glyph.setHorizontalJustification(TextGlyph.JUST_RIGHT)
-        if (str(justification[1]).lower() == "center"):
-            glyph.setVerticalJustification(TextGlyph.JUST_CENTER)
-        if (str(justification[1]).lower() == "top"):
-            glyph.setVerticalJustification(TextGlyph.JUST_TOP)
-        if (str(justification[1]).lower() == "bottom"):
-            glyph.setVerticalJustification(TextGlyph.JUST_BOTTOM)
-        if (str(justification).lower() == "center"):
-            glyph.setHorizontalJustification(TextGlyph.JUST_CENTER)
-            glyph.setVerticalJustification(TextGlyph.JUST_CENTER)
-        # TODO(mike): code up all the valid combiniations of "justification"
-        # and throw an error if invalid.
+        horAlign = str(alignment[0]).lower()
+        vertAlign = str(alignment[1]).lower()
+        if str(alignment).lower() != "center":
+            if (horAlign != "left"
+                    and horAlign != "center"
+                    and horAlign != "right"):
+                raise ValueError('first element of alignment keyword must be "left", "center", or "right"')
+            if (vertAlign != "top"
+                    and vertAlign != "center"
+                    and vertAlign != "bottom"):
+                raise ValueError('second element of alignment keyword must be "top", "center", or "bottom"')
 
+        # deal with horizontal/vertical justification keywords.
+        # Unfortunately, we need to "reverse" the justification w.r.t.
+        # IDV terminology ("right" becomes "left"), because we've decided
+        # on the opposite model of alignment as the IDV...
+        if (horAlign == "center"):
+            glyph.setHorizontalJustification(TextGlyph.JUST_CENTER)
+        if (horAlign == "left"):
+            glyph.setHorizontalJustification(TextGlyph.JUST_RIGHT)
+        if (horAlign == "right"):
+            glyph.setHorizontalJustification(TextGlyph.JUST_LEFT)
+        if (vertAlign == "center"):
+            glyph.setVerticalJustification(TextGlyph.JUST_CENTER)
+        if (vertAlign == "top"):
+            glyph.setVerticalJustification(TextGlyph.JUST_BOTTOM)
+        if (vertAlign == "bottom"):
+            glyph.setVerticalJustification(TextGlyph.JUST_TOP)
+        if (str(alignment).lower() == "center"):
+            glyph.setHorizontalJustification(TextGlyph.JUST_CENTER)
+            glyph.setVerticalJustification(TextGlyph.JUST_CENTER)
+        
         if (lat != None) and (lon != None) and (
                 (line == None) and (element == None)):
             # lat lon point
@@ -1006,22 +1087,13 @@ class _Display(_JavaProxy):
         else:
             raise ValueError(
             "You must specify either lat AND lon, OR line AND element")
-
-        # do the usual gymastics for font and color stuff.
-        # if color == None:
-        #     newColor = java.awt.Color(255, 0, 0)  # default red
-        # else:
-        #     rgb = colorutils.convertColor(color)
-        #     r = rgb[0].getConstant()
-        #     g = rgb[1].getConstant()
-        #     b = rgb[2].getConstant()
-        #     newColor = java.awt.Color(r, g, b)
+            
         newColor = colorutils.convertColorToJava(color)
-
+        
         currentFont = self._JavaProxy__javaObject.getDisplayListFont()
         newFont = _getNewFont(currentFont, fontName=font, size=size, style=style)
-
-        glyph.setName("GlyphFromJython")  # not visible after drawCtl.close()
+        
+        glyph.setName(text)  # not visible after drawCtl.close()
         glyph.setColor(newColor)
         glyph.setFont(newFont)
         pointList = java.util.ArrayList()
@@ -1029,38 +1101,39 @@ class _Display(_JavaProxy):
         glyph.setPoints(pointList)
         drawCtl.addGlyph(glyph)
         return _Layer(drawCtl)
-
+        
+    @gui_invoke_later
     def setViewpoint(self, viewpointName):
         """Convenience method for changing to a saved "Viewpoint"
-
+        
         Note, a user can define viewpoints via the "Projections -> Viewpoints"
         menu in the main McV window.
-
+        
         Args:  
                viewpointName:  the name given to the viewpoint by the user
                                when saving.
-
+                               
         Raises:
                valueError:   if viewpointName isn't a saved viewpoint.
         """
         # Get list of saved viewpoints... These are actually "ViewState" objects
         viewpoints = getStaticMcv().getVMManager().getVMState()
-
+        
         # Pick the desired viewpoint out of the list
         desiredViewpoint = None
         for viewpoint in viewpoints:
             if viewpoint.getName() == viewpointName:
                 desiredViewpoint = viewpoint
                 break
-
+                
         if desiredViewpoint is None:
             raise ValueError("No viewpoint with the name %s could be found" %
                     viewpointName)
-
+                    
         # change the display to the saved viewpoint
         self._JavaProxy__javaObject.initWith(desiredViewpoint)
-
-
+        
+        
 # TODO(jon): still not sure what to offer here.
 class _Layer(_JavaProxy):
     def __init__(self, javaObject):
@@ -1072,12 +1145,13 @@ class _Layer(_JavaProxy):
         
         #_JavaProxy.__init__(self, javaObject).addDisplayInfo()
         _JavaProxy.__init__(self, javaObject)
-
+        
+    @gui_invoke_later
     def _getDisplayWrapper(self):
         """Helper method for layer label setters
-
+        
         Returns: _Display associated with this _Layer
-
+        
         Raises: LookupError if no _Display is found
         """
         for wrapper in _Display.displayWrappers:
@@ -1085,19 +1159,20 @@ class _Layer(_JavaProxy):
                     self._JavaProxy__javaObject.getViewManager().getUniqueId()):
                 return wrapper
         raise LookupError('Couldnt find a _Display for this _Layer')
-
+        
     def getFrameCount(self):
         # looking like ucar.visad.display.AnimationWidget is the place to be
         pass
-
+        
     def getFrameDataAtLocation(self, latitude, longitude, frame):
         # just return the value
         pass
-
+        
     def getDataAtLocation(self, latitude, longitude):
         # should return a dict of timestamp: value ??
         pass
-
+        
+    @gui_invoke_later
     def setEnhancement(self, name=None, range=None):
         """Wrapper for setEnhancementTable and setDataRange
         Args:
@@ -1108,11 +1183,12 @@ class _Layer(_JavaProxy):
         """
         if (name != None):  # leave as-is if not specified
             self.setEnhancementTable(name)
-
+            
         # but 'range' is a Python built-in.........
         if (range != None):
             self.setDataRange(range[0], range[1])
-
+            
+    @gui_invoke_later
     def getEnhancementTable(self):
         """Get the current enhancement table.
         
@@ -1120,7 +1196,8 @@ class _Layer(_JavaProxy):
             The actual enhancement table object.
         """
         return self._JavaProxy__javaObject.getColorTable()
-
+        
+    @gui_invoke_later
     def setEnhancementTable(self, ctName):
         """Change the enhancement table.
 
@@ -1139,7 +1216,7 @@ class _Layer(_JavaProxy):
         my_mcv = getStaticMcv()
         ctm = my_mcv.getColorTableManager()
         newct = ctm.getColorTable(ctName)
-
+        
         # if that one didn't work, keep trying hard to figure out what
         # the user meant.
         if (newct == None):
@@ -1147,39 +1224,41 @@ class _Layer(_JavaProxy):
             # e.g. 'System>Temperature'
             shortName = (ctName.split('>'))[-1]
             newct = ctm.getColorTable(shortName)
-
+            
         if (newct != None):
             return self._JavaProxy__javaObject.setColorTable(newct)
         else:
             raise ValueError(
                 'setEnhancementTable could not find the enhancement table called %s, note: enhancement table names are CASE SENSITIVE!' 
                     % ctName)
-
+            
+    @gui_invoke_later
     def setDataRange(self, minRange, maxRange):
         """ Change the range of the displayed data (and enhancement table)
-
+        
         Args:
             minRange: if min_range evaluates to false, leave as-is
             maxRange: if max_range evaluates to false, leave as-is
-
+            
         Returns: nothing
         """
         from ucar.unidata.util import Range
         
         currentRange = Range(minRange, maxRange)
         # currentRange = self._JavaProxy__javaObject.getRange()
-
+        
         # if (minRange != None):
         #     currentRange.setMin(minRange)
-
+        
         # if (maxRange != None):
         #     currentRange.setMax(maxRange)
-
+        
         self._JavaProxy__javaObject.setRange(currentRange)
-
+        
+    @gui_invoke_later
     def setColorScale(self, visible=True, placement=None, font=None, style=None, size=None, color=None):
         """Wrapper function for all the color scale manipulation stuff
-
+        
         Args:
             visible: boolean whether to display color scale (default True)
             placement: location of color scale. valid strings are
@@ -1191,26 +1270,27 @@ class _Layer(_JavaProxy):
         """
         # assume user wants color scale visible unless otherwise specified
         self.setColorScaleVisible(visible)
-
+        
         if (placement != None):
             self.setColorScalePlacement(placement)
-
+            
         if (font != None):  # let setColorScaleFont handle default
             self.setColorScaleFont(fontName=font)
-
+            
         if (style != None):
             self.setColorScaleFont(style=style)
-
+            
         if (size != None):  # let setColorScaleFont handle default
             self.setColorScaleFont(size=size)
-        
+            
         if (color != None):
             self.setColorScaleFontColor(color)
-
+            
+    @gui_invoke_later
     def setColorScaleVisible(self, status):
         """Set visibility of Color Scale (the legend thing that actually shows
            up overlaid on the map)
-
+        
         Args:
             status:  boolean for whether to show color scale
         """
@@ -1219,14 +1299,15 @@ class _Layer(_JavaProxy):
             self._JavaProxy__javaObject.setColorScaleVisible(status)
         else:
             raise ValueError('parameter for setColorScaleVisible must be boolean (either True or False')
-
+            
+    @gui_invoke_later
     def setColorScalePlacement(self, pos):
         """Set the placement of the color scale on the map.
-
+        
         Args:
             pos: string that can be either "Left", "Top", "Bottom", or "Right"
                  (NOT case sensitive!)
-
+                 
         Raises:
             ValueError:  if pos is not one of the four valid choices
         """
@@ -1234,7 +1315,7 @@ class _Layer(_JavaProxy):
             # handy string method that does exactly what we need:
             # (first letter capitalized, the rest are small)
             pos = pos.capitalize()
-
+            
         if (pos == 'Left') or (pos == 'Top') or (pos == 'Bottom') or (pos == 'Right'):
             info = self._JavaProxy__javaObject.getColorScaleInfo()
             info.setPlacement(pos)
@@ -1244,33 +1325,34 @@ class _Layer(_JavaProxy):
         else:
             raise ValueError(pos, 'is not valid. The only valid strings are:    '+
                                    'Top  |  Bottom  |  Left  |  Right')
-
+            
     def setColorScaleFont(self, fontName=None, style=None, size=None):
         """For the color scale, change the font, font style, and/or font size
-
+        
         Args:
             fontName (optional): string containing font name (default: leave as-is)
                                     (case-insensitive)
             style (optional): string containing either NONE (default: as-is), BOLD, or ITALIC
                                 (case-insensitive)
             size (optional):  font size (default: as-is)
-
+            
         Returns: nothing
         """
-
+        
         info = self._JavaProxy__javaObject.getColorScaleInfo()
-
+        
         currentFont = info.getLabelFont()
         newFont = _getNewFont(currentFont, fontName, style, size)
-
+        
         info.setLabelFont(newFont)
         self._JavaProxy__javaObject.setColorScaleInfo(info)
-
+        
+    @gui_invoke_later
     def setColorScaleFontColor(self, color):
         """Set color of color scale labels
         Args:
             color can be rgb list or tuple, or string giving name of a color
-
+            
         I'm leaning toward keeping this separate from setColorScaleFont since
         it wraps around a different java method (setLabelColor)
         """
@@ -1285,15 +1367,17 @@ class _Layer(_JavaProxy):
         info = self._JavaProxy__javaObject.getColorScaleInfo()
         info.setLabelColor(newColor)
         self._JavaProxy__javaObject.setColorScaleInfo(info)
-
+        
+    @gui_invoke_later
     def setLayerVisible(self, status):
         """Set visibility of this layer
-
+        
         Args:
             status:  boolean for visibility of layer
         """
         self._JavaProxy__javaObject.setDisplayVisibility(status)
-
+        
+    @gui_invoke_later
     def getLayerLabel(self):
         """Returns the current layer label text.
         
@@ -1301,15 +1385,16 @@ class _Layer(_JavaProxy):
             string containing a layer label.
         """
         return self._JavaProxy__javaObject.getDisplayListTemplate()
-
+        
+    @gui_invoke_later
     def setLayerLabel(self, label=None, visible=True, font=None, style=None, size=None, color=None):
         """ Set the layer label (the string of text at the bottom of maps) and other
             properties of layer labels.  Confusingly and not helpful is that properties of layer labels
             are set per panel instead of per layer.  So really, this should be a function of _Display
             instead of _Layer...?
-
+            
         (In Java-land, Layer Labels are "Display Lists")
-
+        
         Args:
             label:  a string defining the layer label (default: as-is)
                   Note, macros (eg %datasourcename%) will get expanded but
@@ -1322,31 +1407,32 @@ class _Layer(_JavaProxy):
                Valid options are 'bold', 'italic', 'none'
             size: size of font. default defined in user preferences.
             color: 'colorname' string or [R, G, B] list
-
+            
         Returns:  nothing
         """
         if (label != None):
             label = str(label)  # convert to str if possible
             self._JavaProxy__javaObject.setDisplayListTemplate(label)
-
+            
         self.setLayerLabelVisible(visible)
         self._getDisplayWrapper().labelDict['visible'] = visible
-
+        
         if (font != None):
             self.setLayerLabelFont(fontName=font)
-
+            
         if (style != None):
             self.setLayerLabelFont(style=style)
-
+            
         if (size != None):  # let setColorScaleFont handle default
             self.setLayerLabelFont(size=size)
-        
+            
         if (color != None):
             self.setLayerLabelColor(color)
-
+            
         self._JavaProxy__javaObject.getViewManager().updateDisplayList()
         pause()
-
+        
+    @gui_invoke_later
     def getLayerVisible(self):
         """Determine whether or not this layer is visible.
         
@@ -1354,7 +1440,8 @@ class _Layer(_JavaProxy):
             True if visible, False otherwise.
         """
         return self._JavaProxy__javaObject.getDisplayVisibility()
-
+        
+    @gui_invoke_later
     def setLayerLabelVisible(self, status):
         """Set whether the Display List is shown for this ViewManager
 
@@ -1369,11 +1456,12 @@ class _Layer(_JavaProxy):
             self._getDisplayWrapper().labelDict['visible'] = status
         else:
             raise ValueError('parameter for setLayerLabelVisible must be boolean (either True or False')
-
+            
+    @gui_invoke_later
     def setLayerLabelColor(self, color):
         """Set color of Display List labels (confusingly, these are per panel
             and not per layer).
-
+    
         Args:
             color can be rgb list or tuple, or string giving name of a color
         """
@@ -1387,10 +1475,11 @@ class _Layer(_JavaProxy):
         
         self._JavaProxy__javaObject.getViewManager().setDisplayListColor(newColor)
         self._getDisplayWrapper().labelDict['color'] = newColor
-
+        
+    @gui_invoke_later
     def setLayerLabelFont(self, fontName=None, style=None, size=None):
         """ set the font of Display List
-
+        
         Args:
             fontName (optional): string containing font name (default: leave as-is)
                                     (case-insensitive)
@@ -1403,8 +1492,8 @@ class _Layer(_JavaProxy):
         newFont = _getNewFont(currentFont, fontName, style, size)
         vm.setDisplayListFont(newFont)
         self._getDisplayWrapper().labelDict['font'] = newFont
-
-
+        
+        
 # TODO(jon): this (and its accompanying subclasses) are a productivity rabbit
 # hole!
 class _DataSource(_JavaProxy):
@@ -1423,7 +1512,8 @@ class _DataSource(_JavaProxy):
            elementSize
         """
         _JavaProxy.__init__(self, javaObject)
-    
+        
+    @gui_invoke_later
     def allDataChoices(self):
         """Return a list of strings describing all available data choices
             MIKE
@@ -1432,7 +1522,8 @@ class _DataSource(_JavaProxy):
         # in later method calls
         choices = self._JavaProxy__javaObject.getDataChoices()
         return [choice.description for choice in choices]
-
+        
+    @gui_invoke_later
     def getDataChoice(self, dataChoiceName):
         """Return a _DataChoice associated with this _DataSource
            
@@ -1450,7 +1541,7 @@ class _DataSource(_JavaProxy):
             if choice.description == dataChoiceName:
                 return _DataChoice(choice)
         raise ValueError("There is no data choice by that name for this data source")
-
+        
 class _DataChoice(_JavaProxy):
     def __init__(self, javaObject):
         """Represents a specific field within a data source
@@ -1459,30 +1550,32 @@ class _DataChoice(_JavaProxy):
            MIKE
         """
         _JavaProxy.__init__(self, javaObject)
-
+        
+    @gui_invoke_later
     def allLevels(self):
         """List all levels for this data choice.
         """
         return self._JavaProxy__javaObject.getAllLevels()
-
+        
+    @gui_invoke_later
     def setLevel(self, level):
         """Set which level you want from this data choice before plotting.
             TODO(mike): This is extremely experimental at the moment...
-
+            
             Works for some data sources (model grids) but not others (radar)
-
+            
         Args:
             level: one of the elements in the list returned by getLevels()
         """
         self._JavaProxy__javaObject.setLevelSelection(level)
         return
-
+        
 # TODO(jon): still not sure what people want to see in here
 class _Projection(_JavaProxy):
     def __init__(self, javaObject):
         """Creates a proxy for ucar.unidata.geoloc.Projection objects."""
         _JavaProxy.__init__(self, javaObject)
-
+        
 # TODO(jon): a *LOT* of this functionality isn't currently offered by colortables...
 class _ColorTable(_JavaProxy):
     def __init__(self, javaObject):
@@ -1497,7 +1590,7 @@ class _ColorTable(_JavaProxy):
            minorInterval
         """
         _JavaProxy.__init__(self, javaObject)
-
+        
 # TODO(jon): "annotation" is ambiguous...does it refer to the layer description
 # or a drawing control?
 class _Annotation(_JavaProxy):
@@ -1530,30 +1623,32 @@ class _Annotation(_JavaProxy):
     def getCoordinates(self):
         # (x,y) tuple
         pass
-
+        
+@gui_invoke_later
 def setViewSize(width, height):
     """Set the view size to a given width and height.
-
+    
     Longer description goes here.
-
+    
     Args:
         width:
         height:
     """
     getStaticMcv().getStateManager().setViewSize(java.awt.Dimension(width, height))
-
+    
+@gui_invoke_later
 def getColorTable(name=ColorTableDefaults.NAME_DEFAULT):
     """Return the ColorTable associated with the given name.
-
+    
     Longer description goes here.
-
+    
     Args:
         name: The name of the desired ColorTable. If no name was given, the
               name of the IDV's default ColorTable will be used.
-
+              
     Returns:
         The first ColorTable with a matching name.
-
+        
     Raises:
         LookupError: If there was no ColorTable with the given name.
     """
@@ -1562,38 +1657,45 @@ def getColorTable(name=ColorTableDefaults.NAME_DEFAULT):
         return _ColorTable(colorTable)
     else:
         raise LookupError("Couldn't find a ColorTable named ", name, "; try calling 'colorTableNames()' to get the available ColorTables.")
-
+        
+@gui_invoke_later
 def colorTableNames():
     """Returns a list of the valid color table names."""
     return [colorTable.getName() for colorTable in getStaticMcv().getColorTableManager().getColorTables()]
-
+    
+@gui_invoke_later
 def allColorTables():
     """Returns a list of the available color tables."""
     return [_ColorTable(colorTable) for colorTable in getStaticMcv().getColorTableManager().getColorTables()]
-
+    
+@gui_invoke_later
 def firstWindow():
     return _Window(IdvWindow.getMainWindows()[0])
-
+    
+@gui_invoke_later
 def allWindows():
     return [_Window(window) for window in IdvWindow.getMainWindows()]
-
+    
+@gui_invoke_later
 def firstDisplay():
     """Returns the first display
-
+    
     Longer description goes here.
-
+    
     Returns:
          The first Display (aka ViewManager).
-
+         
     Raises:
         IndexError: If there are no Displays.
     """
     return _Display(getStaticMcv().getVMManager().getViewManagers().get(0))
-
+    
+@gui_invoke_later
 def allDisplays():
     """Returns a list of all McIDAS-V displays (aka ViewManagers)"""
     return [_Display(viewManager) for viewManager in getStaticMcv().getVMManager().getViewManagers()]
-
+    
+@gui_invoke_later
 def activeDisplay():
     """Returns the active McIDAS-V display."""
     return _Display(getStaticMcv().getVMManager().getLastActiveViewManager())
@@ -1602,6 +1704,7 @@ def activeDisplay():
 #     """Returns a list of the McIDAS-V displays within the given window."""
 #     pass
 
+@gui_invoke_later
 def createDataSource(path, filetype):
     """Currently just a wrapper around makeDataSource in shell.py
        
@@ -1622,7 +1725,8 @@ def createDataSource(path, filetype):
         if desc.label == filetype:
             return _DataSource(makeDataSource(path, type=desc.id))
     raise ValueError("Couldn't find that data source type")
-
+    
+@gui_invoke_later
 def allDataSourceNames():
     """Returns a list of all possible data source types
        (specifically, the verbose descriptions as they appear in the GUI)
@@ -1632,54 +1736,61 @@ def allDataSourceNames():
     dm = mcv.getDataManager()
     # want to return list of labels only, not DataSourceDescriptor's
     return [desc.label for desc in dm.getDescriptors()]
-
+    
+@gui_invoke_later
 def allLayerTypes():
     """Returns a list of the available layer type names"""
     return getStaticMcv().getAllControlDescriptors()
-
+    
+@gui_invoke_later
 def allProjections():
     """Returns a list of the available projections."""
     return [_Projection(projection) for projection in getStaticMcv().getIdvProjectionManager().getProjections()]
-
+    
+@gui_invoke_later
 def allFontNames():
     """Return a list of strings representing all available font names"""
     return [font.toString() for font in ucar.unidata.util.GuiUtils.getFontList()]
-
+    
+@gui_invoke_later
 def projectionNames():
     """Returns a list of the available projection names"""
     return [projection.getName() for projection in getStaticMcv().getIdvProjectionManager().getProjections()]
-
+    
+@gui_invoke_later
 def getProjection(name=''):
     """Returns the projection associated with the given name.
-
+    
     Longer description here.
-
+    
     Args:
         name: Name of the desired projection.
-
+        
     Returns:
         The first projection whose name matches the given name. If the given
         name is empty (or None), McIDAS-V's default projection is returned.
         (does that make sense!?)
-
+        
     Raises:
         ValueError: If there was no projection with the given name.
     """
     mcv = getStaticMcv()
     if not name:
         return _Projection(mcv.getIdvProjectionManager().getDefaultProjection())
-
+        
     for projection in mcv.getIdvProjectionManager().getProjections():
         if name == projection.getName():
             return _Projection(projection)
     else:
         raise ValueError("Couldn't find a projection named ", name, "; try calling 'projectionNames()' to get the available projection names.")
-
+        
+@gui_invoke_later
 def allActions():
     """Returns the available McIDAS-V action identifiers."""
     actions = getStaticMcv().getIdvUIManager().getCachedActions().getAllActions()
     return [action.getId() for action in actions]
-
+    
+@gui_invoke_later
 def performAction(action):
     # not terribly different from "idv.handleAction('action:edit.paramdefaults')"
     # key diffs:
@@ -1691,12 +1802,12 @@ def performAction(action):
     else:
         prefixedId = action
         action = action.replace('action:', '')
-
+        
     if action in available:
         getStaticMcv().handleAction(prefixedId)
     else:
         raise ValueError("Couldn't find the action ID ", action, "; try calling 'allActions()' to get the available action IDs.")
-
+        
 # def load_enhancement(name=''):
 #     """Nothing yet."""
 #     pass
@@ -1725,22 +1836,25 @@ def collect_garbage():
 def collectGarbage():
     """Signals to Java that it should free any memory that isn't in use."""
     System.gc()
-
+    
+@gui_invoke_later
 def removeAllData():
     """Removes all of the current data sources WITHOUT prompting."""
     getStaticMcv().removeAllData(False)
-
+    
+@gui_invoke_later
 def removeAllLayers():
     """Removes all of the current layers WITHOUT prompting."""
     getStaticMcv().removeAllLayers(False)
-
+    
+@gui_invoke_later
 def boomstick():
     """ This is [your] BOOOMSTICK! """
     mcv = getStaticMcv()
     mcv.removeAllLayers(False)
     mcv.removeAllData(False)
     System.gc()
-
+    
 def setJythonShellMaxHistoryLength(newHistoryLength):
     """Set the number of commands remembered in the Jython Shell History"""
     from ucar.unidata.idv.ui import JythonShell
@@ -1804,7 +1918,7 @@ def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
             else:
                 bounds = window.getBounds()
                 print 'creating window: width=%d height=%d rows=%d cols=%d panelTypes=%s' % (bounds.width, bounds.height, rows, cols, panelTypes)
-            
+                
             panels = []
             for holder in window.getComponentGroups()[0].getDisplayComponents():
                 for viewManager in holder.getViewManagers():
@@ -1814,7 +1928,7 @@ def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
             return panels
         except NullPointerException, e:
             raise RuntimeError("could not build window", e)
-
+            
     def _buildWindowBackground(height, width, panelTypes):
         """
          (1) create a new MapViewManager.  This is the default type of ViewManager
@@ -1842,7 +1956,7 @@ def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
         
         newVM = getStaticMcv().getVMManager().createViewManager(None, propString)
         return [_Display(newVM)]
-    
+        
     # end of internal method definitions..this is buildWindow now.
     if panelTypes is None:
         panelTypes = [MAP] * (rows * cols)
@@ -1851,18 +1965,19 @@ def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
     elif isinstance(panelTypes, types.ListType):
         if len(panelTypes) != (rows * cols):
             raise ValueError('panelTypes needs to contain rows*cols elements')
-    
+            
     if getStaticMcv().getArgsManager().getIsOffScreen():
         return _buildWindowBackground(height, width, panelTypes)
     else:
         if len(panelTypes) > 1:
             print '* WARNING: buildWindow will only build one panel when run from the background'
         return _buildWindowInternal(width, height, rows, cols, panelTypes)
-
+        
 def makeLogger(name):
     """ """
     return  LoggerFactory.getLogger(name)
-
+    
+@gui_invoke_later
 # def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=None):
 def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=None):
     """Open a bundle using the decodeXmlFile from PersistenceManager
@@ -1892,23 +2007,23 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=No
     """
     from edu.wisc.ssec.mcidasv import McIdasPreferenceManager
     from edu.wisc.ssec.mcidasv import PersistenceManager
-
+    
     my_mcv = getStaticMcv()
     sm = my_mcv.getStateManager()
     mpm = McIdasPreferenceManager # for some of the PREF constants
-
+    
     # Allows user to specify file with for example, ~/bundlefile.mcv
     bundle = _expandpath(bundle)
-
+    
     fileExists = os.path.exists(bundle)
     isDir = os.path.isdir(bundle)
-
+    
     if (not fileExists) or isDir:
         raise ValueError("File does not exist or is a directory")
-
+        
     #if ((height == -1) and (width != -1)) or ((height != -1) and (width == -1)):
     #    raise ValueError("Please specify both a width and height")
-
+    
     # get current relevant user preferences so we can override them
     #   and then change them back
     # careful about the second argument here...this is default if preference
@@ -1923,7 +2038,7 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=No
     pref_confirm_data = sm.getPreference(mpm.PREF_CONFIRM_REMOVE_DATA, True)
     pref_confirm_layers = sm.getPreference(mpm.PREF_CONFIRM_REMOVE_LAYERS, True)
     pref_confirm_both = sm.getPreference(mpm.PREF_CONFIRM_REMOVE_BOTH, True)
-
+    
     # set relevant preferences to values that make sense for non-GUI mode
     sm.putPreference(my_mcv.PREF_ZIDV_ASK, False)
     sm.putPreference(my_mcv.PREF_OPEN_ASK, False)
@@ -1939,9 +2054,9 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=No
     # (also need to check for existence of this directory, etc.)
     #my_mcv.getStore().put(my_mcv.PREF_ZIDV_DIRECTORY, something??)
     sm.writePreferences()
-
+    
     pm = my_mcv.getPersistenceManager()
-
+    
     if (dataDictionary != None):
         # It turns out the whole dictionary thing boils down to a call to
         # PersistenceManager.setFileMapping which takes a list of ids and
@@ -1961,16 +2076,16 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=No
                 fileList.add(value)
             fileLists.add(fileList)
         pm.setFileMapping(ids, fileLists)
-
+        
     checkToRemove = clear
     letUserChangeData = 0    # not sure about this
     bundleProperties = None  # not sure what this does..just send it None for now
     pm.decodeXmlFile(bundle, label, checkToRemove, letUserChangeData, bundleProperties)
     pause()  # this might be controversial...?
-
+    
     if (dataDictionary != None):
         pm.clearFileMapping()
-
+        
     # change relevant preferences back to original values
     sm.putPreference(my_mcv.PREF_ZIDV_ASK, pref_zidv_ask_user)
     sm.putPreference(my_mcv.PREF_OPEN_ASK, pref_open_ask_user)
@@ -1982,10 +2097,36 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=No
     sm.putPreference(mpm.PREF_CONFIRM_REMOVE_LAYERS, pref_confirm_layers)
     sm.putPreference(mpm.PREF_CONFIRM_REMOVE_BOTH, pref_confirm_both)
     sm.writePreferences()
-
+    
     display = activeDisplay()
-
+    
     if (height != -1) and (width != -1):
         display.setSize(width, height)
-
+        
     return display  # TODO: return list of all displays instead
+    
+@gui_invoke_later
+def writeImageAtIndex(fname, idx, params='', quality=1.0):
+    """Captures a particular animation step from the active display.
+    
+    Args:
+        fname: Filename for the captured image.
+        
+        idx: Zero-based index of the desired animation step.
+        
+        params: IDV ISL directives. Default value is "".
+        
+        quality: Image quality (for formats like JPEG). Values may be 
+        between 0.0 and 1.0. Default value is 1.0.
+        
+    Returns:
+        Nothing.
+    """
+    from ucar.unidata.idv.ui import ImageGenerator
+    isl = ImageGenerator.makeXmlFromString(params)
+    xml = '<image file="%s" animation_index="%s" quality="%s">%s</image>' % \
+        (fname, idx, quality, isl)
+    elem = islInterpreter.makeElement(xml)
+    macros = islInterpreter.applyMacros(fname)
+    islInterpreter.captureImage(macros, elem)
+

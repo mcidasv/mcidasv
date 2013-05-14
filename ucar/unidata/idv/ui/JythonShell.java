@@ -413,12 +413,26 @@ public class JythonShell extends InteractiveShell {
         outputStream = new OutputStream() {
             @Override public void write(byte[] b, int off, int len) {
                 String output = new String(b, off, len);
-                print(output);
-                output(output.replace("<", "&lt;")
-                             .replace(">", "&gt;")
-                             .replace("\n", "<br>")
-                             .replace(" ", "&nbsp;")
-                             .replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;"));
+                if (len < 8192) {
+                    // only print "short" output. This combats problem of the Jython
+                    // Shell effectively locking up when user prints a large data object.
+                    // I use 8192 as a threshold because this is apparently the max
+                    // that the PythonInterpreter will send to it's OutputStream at a 
+                    // single time...not sure how to choose this threshold more intelligently.
+                    print(output);
+                    output(output.replace("<", "&lt;")
+                                 .replace(">", "&gt;")
+                                 .replace("\n", "<br/>")
+                                 .replace(" ", "&nbsp;")
+                                 .replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;"));
+                    // end buffering (important if we're getting here after hitting big output chunks).
+                    endBufferingOutput();
+                } else {
+                    // we've hit a big chunk of output; start buffering!
+                    startBufferingOutput();
+                    output(output.substring(0, 50) +
+                            "<font color=\"red\">" + ".....output truncated" + "</font><br/>");
+                }
             }
             private void print(final String output) {
                 jythonLogger.info("{}", output);
@@ -452,7 +466,23 @@ public class JythonShell extends InteractiveShell {
         if (resetConfirmed) {
             shellResetting = true;
             try {
+                // regrettably the following code does NOT clean up the heap :(
+                //Object o = getInterpreter().getLocals();
+                //if ((o != null) && (o instanceof PyStringMap)) {
+                //    PyStringMap map = (PyStringMap)o;
+                //    map.clear();
+                //}
                 
+                // Yes, I know calling System.gc() is bad form. 
+                // My justifications: 
+                // * McIDAS-V users frequently work with large datasets. 
+                //   When they need to reclaim heap space they *truly* 
+                //   do need it.
+                // * Jython Shell resets are only triggered by the user 
+                //   explicitly requesting a reset (via GUI or script).
+                // * Resets are rare, and McIDAS-V uses the CMS GC algorithm in
+                //   an attempt to minimize any performance hits.
+                System.gc();
                 super.clear();
                 createInterpreter();
             } catch (Exception exc) {
@@ -562,7 +592,7 @@ public class JythonShell extends InteractiveShell {
             .replace(" ", "&nbsp;")
             .replace("<", "&lt;")
             .replace(">", "&gt;")
-            .replace("\n", "<br>");
+            .replace("\n", "<br/>");
     }
 
     /**
@@ -623,21 +653,16 @@ public class JythonShell extends InteractiveShell {
                 }
             }
             PythonInterpreter interp = getInterpreter();
-            startBufferingOutput();
+            // MJH March2013: no longer doing a startBufferingOutput here
             interp.exec(sb.toString());
-            endBufferingOutput();
             
             // write off history to "store" so user doesn't have to save explicitly.
             saveHistory();
             
             jythonLogger.info(sb.toString());
         } catch (PyException pse) {
-            endBufferingOutput();
             output("<font color=\"red\">" + formatCode(pse.toString()) + "</font><br/>");
-        } catch (IOException exc) {
-            logException("An error occurred trying to write to jython_history file", exc);
         } catch (Exception exc) {
-            endBufferingOutput();
             output("<font color=\"red\">" + formatCode(exc.toString()) + "</font><br/>");
         }
     }
@@ -649,7 +674,6 @@ public class JythonShell extends InteractiveShell {
      */
     public void printType(Data d) {
         try {
-            startBufferingOutput();
             MathType t = d.getType();
             visad.jmet.DumpType.dumpMathType(t, outputStream);
             output("<hr>DataType analysis...");
@@ -657,7 +681,6 @@ public class JythonShell extends InteractiveShell {
         } catch (Exception exc) {
             logException("An error occurred printing types", exc);
         }
-        endBufferingOutput();
     }
 
     /**

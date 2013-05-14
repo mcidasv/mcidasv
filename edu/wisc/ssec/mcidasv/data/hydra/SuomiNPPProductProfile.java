@@ -30,13 +30,12 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -58,6 +57,8 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import edu.wisc.ssec.mcidasv.data.QualityFlag;
+
 public class SuomiNPPProductProfile {
 	
 	private static final Logger logger = LoggerFactory.getLogger(SuomiNPPProductProfile.class);
@@ -69,6 +70,7 @@ public class SuomiNPPProductProfile {
 	HashMap<String, String> rangeMax = new HashMap<String, String>();
 	HashMap<String, String> scaleFactorName = new HashMap<String, String>();
 	HashMap<String, ArrayList<Float>> fillValues = new HashMap<String, ArrayList<Float>>();
+	HashMap<String, ArrayList<QualityFlag>> qualityFlags = new HashMap<String, ArrayList<QualityFlag>>();
 
 	public SuomiNPPProductProfile() throws ParserConfigurationException, SAXException, IOException {
 
@@ -95,172 +97,258 @@ public class SuomiNPPProductProfile {
 	 */
 	
 	public String getProfileFileName(String attrName) {
+		
 		// sanity check
 		if (attrName == null) return null;
 		
-		// print top level classloader files
-		// this is how we will tell if we need to pull the profiles out of a jar file
-		
-		readFromJar = false;
-        ClassLoader loader = getClass().getClassLoader();
-        InputStream in = loader.getResourceAsStream(".");
-        BufferedReader rdr = new BufferedReader(new InputStreamReader(in));
-        String l;
-        try {
-			while ((l = rdr.readLine()) != null) {
-			    if (l.equals("mcidasv.jar")) {
-			    	readFromJar = true;
-			    }
+		// Locate the base app JAR file
+		File mcvJar = findMcVJar();
+		if (mcvJar == null) return null;
+
+		// we need to pull the XML Product Profiles out of mcidasv.jar
+		JarFile jar;
+		try {
+			jar = new JarFile(mcvJar);
+			// gives ALL entries in jar
+			Enumeration<JarEntry> entries = jar.entries();
+			boolean found = false;
+			String name = null;
+			while (entries.hasMoreElements()) {
+				name = entries.nextElement().getName();
+				// filter according to the profiles
+				if (name.contains("XML_Product_Profiles")) { 
+					logger.trace("looking at line: " + name);
+					if (name.contains(attrName + "-PP")) {
+						found = true;
+						break;
+					}
+				}
 			}
-			rdr.close();
+			if (found == true) {
+				logger.trace("Found profile: " + name);
+				return name;
+			}
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		}
 
-		// we need to pull the XML Product Profiles out of mcidasv.jar
-		if (readFromJar) {
-			JarFile jar;
-			try {
-				jar = new JarFile(URLDecoder.decode("mcidasv.jar", "UTF-8"));
-				Enumeration<JarEntry> entries = jar.entries(); //gives ALL entries in jar
-				boolean found = false;
-				String name = null;
-				while (entries.hasMoreElements()) {
-					name = entries.nextElement().getName();
-					if (name.contains("XML_Product_Profiles")) { // filter according to the profiles
-						logger.trace("looking at line: " + name);
-						if (name.contains(attrName + "-PP")) {
-							found = true;
-							break;
-						}
-					}
-				}
-				if (found == true) {
-					logger.trace("Found profile: " + name);
-					return name;
-				}
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-				return null;
-			} catch (IOException e) {
-				e.printStackTrace();
-				return null;
-			}
-		} else {
-			// read contents of XML Product Profile directory as stream
-			InputStream ios = getClass().getResourceAsStream("resources/NPP/XML_Product_Profiles/");
-			BufferedReader dirReader = new BufferedReader(new InputStreamReader(ios));
-			try {
-				String line = dirReader.readLine();
-				boolean found = false;
-				while (line != null) {
-					logger.trace("looking at line: " + line);
-					if (line.contains(attrName + "-PP")) {
-						found = true;
-						break;
-					}
-					line = dirReader.readLine();
-				}
-				ios.close();
-				if (found == true) {
-					logger.trace("Found profile: " + attrName);
-					return line;
-				}
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
-				return null;
-			}
-		}
-
 		return null;
 	}
+
+	/**
+	 * @param mcvJar
+	 * @return the File object which for mcidasv.jar, or null if not found
+	 */
 	
+	private File findMcVJar() {
+		File mcvJar = null;
+		try {
+			mcvJar = new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
+		} catch (URISyntaxException urise) {
+			// just log the exception for analysis
+			urise.printStackTrace();
+		}
+		return mcvJar;
+	}
+	
+	@SuppressWarnings("deprecation")
 	public void addMetaDataFromFile(String fileName) throws SAXException, IOException {
-		logger.trace("Attempting to parse XML Product Profile: " + fileName);
+		
+		File mcvJar = findMcVJar();
+		if (mcvJar == null) {
+			logger.error("Unable to parse Suomi XML Product Profile");
+			return;
+		}
+
 		Document d = null;
 		InputStream ios = null;
-		if (readFromJar) {
-			JarFile jar = new JarFile(URLDecoder.decode("mcidasv.jar", "UTF-8"));
-			JarEntry je = jar.getJarEntry(fileName);
-			ios = jar.getInputStream(je);
-			d = db.parse(ios);
-		} else {
-			ios = getClass().getResourceAsStream("resources/NPP/XML_Product_Profiles/" + fileName);
-			d = db.parse(ios);
-		}
+		JarFile jar = new JarFile(mcvJar);
+		JarEntry je = jar.getJarEntry(fileName);
+		ios = jar.getInputStream(je);
+		d = db.parse(ios);
+		
 		NodeList nl = d.getElementsByTagName("Field");
 		for (int i = 0; i < nl.getLength(); i++) {
 			ArrayList<Float> fValAL = new ArrayList<Float>();
+			ArrayList<QualityFlag> qfAL = new ArrayList<QualityFlag>();
 			Node n = nl.item(i);
 			NodeList children = n.getChildNodes();
 			NodeList datum = null;
 			String name = null;
+			boolean isQF = false;
 			
-			// cycle through once, finding name and datum node
+			// cycle through once, finding name and datum node(s)
+			// NOTE: may be multiple datum notes, e.g. QF quality flags
 			for (int j = 0; j < children.getLength(); j++) {
+				
 				Node child = children.item(j);
-				logger.trace("looking at node name: " + child.getNodeName());
 				if (child.getNodeName().equals("Name")) {
 					name = child.getTextContent();
-					logger.trace("Found Suomi NPP product name: " + name);
+					logger.info("Found Suomi NPP product name: " + name);
+					if (name.startsWith("QF")) {
+						isQF = true;
+					}
 				}
+				
 				if (child.getNodeName().equals("Datum")) {
+					
 					datum = child.getChildNodes();
-					logger.trace("Found Datum node");
-				}
-			}
-			
-			String rMin = null;
-			String rMax = null;		
-			String sFactorName = null;	
+					String rMin = null;
+					String rMax = null;		
+					String sFactorName = null;	
 
-			if ((name != null) && (datum != null)) {
-				for (int j = 0; j < datum.getLength(); j++) {
-					Node child = datum.item(j);
-					if (child.getNodeName().equals("RangeMin")) {
-						rMin = child.getTextContent();
-					}
-					if (child.getNodeName().equals("RangeMax")) {
-						rMax = child.getTextContent();
-					}
-					if (child.getNodeName().equals("ScaleFactorName")) {
-						sFactorName = child.getTextContent();
-					}
-					if (child.getNodeName().equals("FillValue")) {
-						// go one level further to child element Value
-						NodeList grandChildren = child.getChildNodes();
-						for (int k = 0; k < grandChildren.getLength(); k++) {
-							Node grandChild = grandChildren.item(k);
-							if (grandChild.getNodeName().equals("Value")) {
-								String fillValueStr = grandChild.getTextContent();
-								fValAL.add(new Float(Float.parseFloat(fillValueStr)));
+					if ((name != null) && (datum != null)) {
+						
+						// if it's a quality flag, do separate loop 
+						// and store relevant info in a bean
+						if (isQF) {
+							QualityFlag qf = null;
+							HashMap<String, String> hm = new HashMap<String, String>();
+							int bitOffset = -1;
+							int numBits = -1;
+							String description = null;
+							boolean haveOffs = false;
+							boolean haveSize = false;
+							boolean haveDesc = false;
+							for (int k = 0; k < datum.getLength(); k++) {
+								Node datumChild = datum.item(k);
+								if (datumChild.getNodeName().equals("DatumOffset")) {
+									String s = datumChild.getTextContent();
+									bitOffset = Integer.parseInt(s);
+									haveOffs = true;
+								}
+								if (datumChild.getNodeName().equals("DataType")) {
+									String s = datumChild.getTextContent();
+									// we will only handle the bit fields.
+									// others cause an exception so just catch and continue
+									try {
+										numBits = Integer.parseInt(s.substring(0, 1));
+									} catch (NumberFormatException nfe) {
+										continue;
+									}
+									haveSize = true;
+								}
+								if (datumChild.getNodeName().equals("Description")) {
+									String s = datumChild.getTextContent();
+									// first, special check for "Test" flags, want to 
+									// include the relevant bands on those.  Seem to
+									// directly follow test name in parens
+									boolean isTest = false;
+									if (s.contains("Test (")) {
+										isTest = true;
+										int idx = s.indexOf(")");
+										if (idx > 0) {
+											description = s.substring(0, idx + 1);
+										}
+									} else {
+										// for non-Test flags, we DO want to
+										// lose any ancillary (in parentheses) info
+										int endIdx = s.indexOf("(");
+										if (endIdx > 0) {
+											description = s.substring(0, endIdx);
+										} else {
+											description = s;
+										}
+									}
+									// another "ancillary info weedout" check, sometimes
+									// there is long misc trailing info after " - "
+									if ((description.contains(" - ")) && !isTest) {
+										int idx = description.indexOf(" - ");
+										description = description.substring(0, idx);
+									}
+									// ensure what's left is a valid NetCDF object name
+									description= ucar.nc2.iosp.netcdf3.N3iosp.makeValidNetcdf3ObjectName(description);
+									// valid name maker sometimes leaves trailing underscore - remove these
+									if (description.endsWith("_")) {
+										description = description.substring(0, description.length() - 1);
+									}
+									logger.info("Final name: " + description);
+									haveDesc = true;
+								}
+								if (datumChild.getNodeName().equals("LegendEntry")) {
+									NodeList legendChildren = datumChild.getChildNodes();
+									boolean gotName = false;
+									boolean gotValue = false;
+									String nameStr = null;
+									String valueStr = null;
+									for (int legIdx = 0; legIdx < legendChildren.getLength(); legIdx++) { 
+										Node legendChild = legendChildren.item(legIdx);
+										if (legendChild.getNodeName().equals("Name")) {
+											nameStr = legendChild.getTextContent();
+											gotName = true;
+										}
+										if (legendChild.getNodeName().equals("Value")) {
+											valueStr = legendChild.getTextContent();
+											gotValue = true;
+										}
+									}
+									if (gotName && gotValue) {
+										hm.put(valueStr, nameStr);
+									}
+								}
+							}
+							if (haveOffs && haveSize && haveDesc) {
+								qf = new QualityFlag(bitOffset, numBits, description, hm);
+								qfAL.add(qf);
+							}
+						}
+						
+						for (int k = 0; k < datum.getLength(); k++) {
+							
+							Node datumChild = datum.item(k);
+							if (datumChild.getNodeName().equals("RangeMin")) {
+								rMin = datumChild.getTextContent();
+							}
+							if (datumChild.getNodeName().equals("RangeMax")) {
+								rMax = datumChild.getTextContent();
+							}
+							if (datumChild.getNodeName().equals("ScaleFactorName")) {
+								sFactorName = datumChild.getTextContent();
+							}
+							if (datumChild.getNodeName().equals("FillValue")) {
+								// go one level further to datumChild element Value
+								NodeList grandChildren = datumChild.getChildNodes();
+								for (int l = 0; l < grandChildren.getLength(); l++) {
+									Node grandChild = grandChildren.item(l);
+									if (grandChild.getNodeName().equals("Value")) {
+										String fillValueStr = grandChild.getTextContent();
+										fValAL.add(new Float(Float.parseFloat(fillValueStr)));
+									}
+								}
 							}
 						}
 					}
+					
+					if ((name != null) && (rMin != null)) {
+						logger.info("Adding range min: " + rMin + " for product: " + name);
+						rangeMin.put(name, rMin);
+					}
+					
+					if ((name != null) && (rMax != null)) {
+						logger.info("Adding range max: " + rMax + " for product: " + name);
+						rangeMax.put(name, rMax);
+					}
+					
+					if ((name != null) && (sFactorName != null)) {
+						logger.info("Adding scale factor name: " + sFactorName + " for product: " + name);
+						scaleFactorName.put(name, sFactorName);
+					}
+					
+					if ((name != null) && (! fValAL.isEmpty())) {
+						logger.info("Adding fill value array for product: " + name);
+						fillValues.put(name, fValAL);
+					}
+					
+					if ((name != null) && (! qfAL.isEmpty())) {
+						logger.info("Adding quality flags array for product: " + name);
+						qualityFlags.put(name, qfAL);
+					}
 				}
 			}
-			
-			if ((name != null) && (rMin != null)) {
-				logger.trace("Adding range min: " + rMin + " for product: " + name);
-				rangeMin.put(name, rMin);
-			}
-			
-			if ((name != null) && (rMax != null)) {
-				logger.trace("Adding range max: " + rMax + " for product: " + name);
-				rangeMax.put(name, rMax);
-			}
-			
-			if ((name != null) && (sFactorName != null)) {
-				logger.trace("Adding scale factor name: " + sFactorName + " for product: " + name);
-				scaleFactorName.put(name, sFactorName);
-			}
-			
-			if ((name != null) && (! fValAL.isEmpty())) {
-				logger.trace("Adding fill value array for product: " + name);
-				fillValues.put(name, fValAL);
-			}
-			
 		}
 		if (ios != null) {
 			try {
@@ -300,6 +388,10 @@ public class SuomiNPPProductProfile {
 	
 	public ArrayList<Float> getFillValues(String name) {
 		return fillValues.get(name);
+	}
+	
+	public ArrayList<QualityFlag> getQualityFlags(String name) {
+		return qualityFlags.get(name);
 	}
 
 }

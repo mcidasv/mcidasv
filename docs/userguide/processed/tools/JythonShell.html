@@ -36,13 +36,13 @@ is brought up with the <strong>Tools-&gt;Formulas-&gt;Jython Shell</strong> menu
 <span class="caption">Image 1: Jython Shell Window</span></div>
 <p>The Jython shell consists of an output window on the top and an input field
   on the bottom. The user enters Jython into the input field. When Enter or <img src="images/Evaluate.gif" alt="Evaluate button" width="85" height="26"align=absmiddle> is
-  pressed the Jython is evaluated and any output is shown in the output window. Note that Enter will only evaluate the field if the field has not been expanded.</p>
+  pressed the Jython is evaluated and any output is shown in the output window. Note that Enter will only evaluate the field if the field has not been expanded. If your are using multi-line input for your commands, you can evaluate the commands with Shift+Enter.</p>
 <p>The icons shown with every Jython entry in the output window allow you to
   select the particular Jython or re-evaluate it.</p>
-<p>The entry window can be expanded with the <img src="images/JythonExpand.gif" width="13" height="13" alt="Jython Expand double down arrows"align=absmiddle> to the right of the command line. When the entry field is expanded, you can enter more than one line of code to be processed at once. When the entry field isn't expanded, you are limited to evaluating one line of code at a time.</p>
-<p>Pressing the "Up" arrow and "Down" arrow (also Ctrl+P, Ctrl+N) in the
-  entry field goes up and down through the history of commands.</p>
-<p>After you have entered a command, the command will be listed above the Evaluate field. To the right of the command, there are two buttons. The <img src="images/DownArrow.gif" width="18" height="18" alt="Down Arrow button"align="absmiddle"> button enters the formula back into the Evaluate field without evaluating it. The <img src="images/ReEval.gif" width="17" height="18" alt="Reevaluate button"align="absmiddle"> button reevaluates the previously entered command without having to manually reenter it.</p>
+<p>The entry window can be expanded with the <img src="images/JythonExpand.gif" width="13" height="13" alt="Jython Expand double down arrows"align=absmiddle> to the right of the command line. When the entry field is expanded, you can enter more than one line of code to be processed at once. When the entry field isn't expanded, you are limited to evaluating one line of code at a time. As an alternative to the <img src="images/JythonExpand.gif" width="13" height="13" alt="Jython Expand double down arrows"align=absmiddle> button, you can use Ctrl+/ to change between single and multi-line command line structure.</p>
+<p>Pressing the "Up" arrow and "Down" arrow  in the
+  entry field goes up and down through the history of commands when you are in single-line input. If you are using multi-line input, use Ctrl+P, Ctrl+N&nbsp;to cycle through previously-executed commands.</p>
+<p>After you have entered a and evaluated command, the command will be listed above the Evaluate field. To the right of the command, there are two buttons. The <img src="images/DownArrow.gif" width="18" height="18" alt="Down Arrow button"align="absmiddle"> button enters the formula back into the Evaluate field without evaluating it. The <img src="images/ReEval.gif" width="17" height="18" alt="Reevaluate button"align="absmiddle"> button reevaluates the previously entered command without having to manually reenter it.</p>
 <p>Right-clicking in the entry field brings up a menu that allows you to:</p>
 <ul class="propertylist">
   <li class="propertylistitem">Add an entry from the history.</li>
@@ -62,9 +62,8 @@ is brought up with the <strong>Tools-&gt;Formulas-&gt;Jython Shell</strong> menu
     </ul>
 <p>The <strong>Edit</strong> menu has these unique items:</p>
     <ul class="propertylist">
-      <li class="propertylistitem"><strong>Clear All</strong> - Clears the history and anything in the output
-        window.</li>
-      <li class="propertylistitem"><strong>Clear Output</strong> - Clears the output window.</li>
+      <li class="propertylistitem"><strong>Reset Jython Shell</strong> - Removes any saved variables and commands, as well as clears the output window.</li>
+      <li class="propertylistitem"><strong>Clear Output Buffer</strong> - Removes any text in the output window, but does not remove any variables or commands from the history.</li>
       <li class="propertylistitem"><strong>Auto-select Operands</strong> - Causes the
         Jython shell to analyze every command entered to see if there are references
         to variables that have not been set. It will bring up the Data Selection
