@@ -1,9 +1,7 @@
 /*
- * $Id: McIDASV.java,v 1.126 2012/11/08 21:06:52 mhiley Exp $
- *
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2012
+ * Copyright 2007-2013
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA

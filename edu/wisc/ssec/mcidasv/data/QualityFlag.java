@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * This file is part of McIDAS-V
  *
  * Copyright 2007-2013

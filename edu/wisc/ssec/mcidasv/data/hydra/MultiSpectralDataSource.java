@@ -1,9 +1,7 @@
 /*
- * $Id: MultiSpectralDataSource.java,v 1.50 2012/09/12 13:51:02 rink Exp $
- *
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2012
+ * Copyright 2007-2013
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
