@@ -55,7 +55,9 @@ paths to avoid Windows interpreting it as an escape sequence.):
 <ul>
   <li><a href="#buildWindow">buildWindow</a></li>
   <li><a href="#openBundle">openBundle</a></li>
+  <li><a href="#makeLocalADDE">makeLocalADDEEntry</a></li>
   <li><a href="#getADDEImage">getADDEImage</a></li>
+  <li><a href="#getLocalADDE">getLocalADDEEntry</a></li>
   <li><a href="#createLayer">createLayer</a></li>
 </ul>
   <strong>Modify the Display Object:
@@ -121,10 +123,127 @@ paths to avoid Windows interpreting it as an escape sequence.):
 </div>
 </p>
 <p>&nbsp;</p>
+<p><strong><a name="makeLocalADDE" id="makeLocalADDE"></a>makeLocalADDEEntry -</strong> Creates a local ADDE entry in the server table<br>
+<div class="OneTabIndent">Usage: <em>localDataset= makeLocalADDEEntry(keywords)</em></div>
+<div class="TwoTabIndent">Keywords:</div>
+<div class="ThreeTabIndent">dataset= name of the dataset - limit of 8 characters</div>
+<div class="ThreeTabIndent">imageType = image type name for local server entry. (default=<em>format_dataset</em>)</div>
+<div class="ThreeTabIndent">save = True - saves entry into the server table<br>
+&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; False - entry is removed after McIDAS-V session is ended (default)</div>
+<div class="ThreeTabIndent">mask= directory containing the files used by the created dataset</div>
+<div class="ThreeTabIndent">format= data format of files within the dataset. Either Full Name or Short Name can be used as valid options:</div>
+<div class="ThreeTabIndent"><table width="525" border="1">
+    <tr>
+        <th width="420" scope="col"><strong>Full Name</strong></th>
+        <th width="105" scope="col"><strong>Short Name</strong></th>
+    </tr>
+    <tr>
+        <td>&quot;AMSR-E L1b&quot;</td>
+        <td>&quot;AMSR&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;LRIT GOES-9&quot;</td>
+        <td>&quot;FSDX_G9&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;LRIT GOES-10&quot;</td>
+        <td>&quot;FSDX_G10&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;LRIT GOES-11&quot;</td>
+        <td>&quot;FSDX_G11&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;LRIT GOES-12&quot;</td>
+        <td>&quot;FSDX_G12&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;LRIT MET-5&quot;</td>
+        <td>&quot;FSDX_M5&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;LRIT MET-7&quot;</td>
+        <td>&quot;FSDX_M7&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;LRIT MTSAT-1R&quot;</td>
+        <td>&quot;FSDX_MT&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;McIDAS Area&quot;</td>
+        <td>&quot;AREA&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;Meteosat OpenMTP&quot;</td>
+        <td>&quot;OMTP&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;Metop AVHRR L 1b&quot;</td>
+        <td>&quot;LV1B_METOP&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MODIS MOD 02 - Level 1B Calibrated Geolocated Radiances&quot;</td>
+        <td>&quot;MODS&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MODIS MOD 04 - Aerosol Product&quot;</td>
+        <td>&quot;MOD4&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MODIS MOD 06 - Cloud Product&quot;</td>
+        <td>&quot;MODX_06&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MODIS MOD 07 - Atmospheric&nbsp;Profiles&quot;</td>
+        <td>&quot;MODX_07&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MODIS MOD 28 - Sea Surface Temperature&quot;</td>
+        <td>&quot;MOD8&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MODIS MOD 35 - Cloud Mask&quot;</td>
+        <td>&quot;MODX_35&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MODIS MOD R - Corrected Reflectance&quot;</td>
+        <td>&quot;MODR&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MSG HRIT FD&quot;</td>
+        <td>&quot;MSGT_FD&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MSG HRIT HRV&quot;</td>
+        <td>&quot;MSGT_HRV&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MTSAT HRIT&quot;</td>
+        <td>&quot;MTST&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;NOAA AVHRR L 1b&quot;</td>
+        <td>&quot;LV1B_NOAA&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;SSMI&quot;</td>
+        <td>&quot;SMIN&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;TRMM&quot;</td>
+        <td>&quot;TMIN&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;GINI&quot;</td>
+        <td>&quot;GINI&quot;</td>
+    </tr>
+</table></div>
+<p>&nbsp;</p>
 <p><strong><a name="getADDEImage" id="getADDEImage"></a>getADDEImage -</strong> Requests
   data from an ADDE Image server - returns both data and metadata objects<br>
 <div class="OneTabIndent">Usage: <em>myMetaData,myData= getADDEImage(keywords)</em></div>
 <div class="TwoTabIndent">Keywords:</div>
+<div class="ThreeTabIndent">localEntry= local dataset defined by makeLocalADDEEntry</div>
 <div class="ThreeTabIndent">server= ADDE server</div>
 <div class="ThreeTabIndent">dataset= ADDE dataset group name</div>
 <div class="ThreeTabIndent">descriptor= ADDE dataset descriptor</div>
@@ -157,6 +276,15 @@ paths to avoid Windows interpreting it as an escape sequence.):
   number used for sampling data; default=(1,1)</div>
 <div class="ThreeTabIndent">accounting= ('user', 'project number') user and project
   number required by servers using McIDAS accounting; default = ('idv','0')</div>
+  <div class="ThreeTabIndent">debug= send debug information to file; default=False</div>
+  <div class="TwoTabIndent">Remarks: An ADDE request must include values for either localEntry or the combination of server, dataset, and descriptor.</div>
+</p>
+<p>&nbsp;</p>
+<p><strong><a name="getLocalADDE" id="getLocalADDE"></a>getLocalADDEEntry -</strong> Gets the descriptor for a local ADDE entry<br>
+<div class="OneTabIndent">Usage: <em>localDescriptor= getLocalADDEEntry(keywords)</em></div>
+<div class="TwoTabIndent">Keywords:</div>
+<div class="ThreeTabIndent">dataset= local ADDE entry dataset name</div>
+<div class="ThreeTabIndent">imageType= image type of local ADDE entry</div>
 </p>
 <p>&nbsp;</p>
 <p><strong><a name="createLayer" id="createLayer"></a>createLayer -</strong> Creates
