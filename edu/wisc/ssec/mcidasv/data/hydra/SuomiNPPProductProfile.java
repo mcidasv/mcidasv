@@ -1,9 +1,7 @@
 /*
- * $Id: SuomiNPPProductProfile.java,v 1.2 2012/02/19 17:35:42 davep Exp $
- *
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2012
+ * Copyright 2007-2013
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
