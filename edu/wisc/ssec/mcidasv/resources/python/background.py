@@ -907,13 +907,12 @@ class _Display(_JavaProxy):
             #print "DEBUG: ImageSequenceImpl constructor failed but thats ok"
             pass
             
-        # TODO: first arg in DataDataChoice constructor is shortname macro.
-        # (can't do anything better now cause we don't have metadata).
-        newLayer = mcv.doMakeControl(controlID, 
-                [DataDataChoice("shortname macro goes here", data)])
-        
-        # wait for thread to finish
-        pause()
+        # use the full doMakeControl signature,
+        # so we can send False as initDisplayInThread
+        newLayer = mcv.doMakeControl( 
+                [DataDataChoice("shortname macro goes here", data)],
+                getStaticMcv().getControlDescriptor(controlID),
+                None, None, False)
         
         wrappedLayer = _Layer(newLayer)
         
@@ -966,6 +965,7 @@ class _Display(_JavaProxy):
                     raise RuntimeError("Height/width for captureImage is currently not supported after a text annotation.  You can specify height/width with buildWindow or openBundle instead, then leave height/width out of your call to captureImage.")
                     
         # the results aren't good if we don't pause first
+        # MJH 2013-05-15 - leave this pause in, we aren't running captureImage on the EDT
         pause()
         
         imageFile = java.io.File(filename)
@@ -1039,7 +1039,6 @@ class _Display(_JavaProxy):
         drawCtl.setName(text)
         drawCtl.setLegendLabelTemplate(text)
         drawCtl.setShowInDisplayList(False)
-        pause()
         drawCtl.close()  # close the window that pops up..user doesnt need to see
         glyph = TextGlyph(drawCtl, None, text)
 
@@ -1437,7 +1436,6 @@ class _Layer(_JavaProxy):
             self.setLayerLabelColor(color)
             
         self._JavaProxy__javaObject.getViewManager().updateDisplayList()
-        pause()
         
     @gui_invoke_later
     def getLayerVisible(self):
@@ -2088,7 +2086,7 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=No
     letUserChangeData = 0    # not sure about this
     bundleProperties = None  # not sure what this does..just send it None for now
     pm.decodeXmlFile(bundle, label, checkToRemove, letUserChangeData, bundleProperties)
-    pause()  # this might be controversial...?
+    pause()  # MJH 2013-05-15 not sure about this one...
     
     if (dataDictionary != None):
         pm.clearFileMapping()
