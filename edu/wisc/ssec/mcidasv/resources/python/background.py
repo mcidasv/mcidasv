@@ -579,11 +579,18 @@ class _Display(_JavaProxy):
             self.setSizeBackground(width, height)
             return
         size = Dimension(width, height)
+        #me = self._JavaProxy__javaObject
         navigatedComponent = self._JavaProxy__javaObject.getComponent()
         navigatedComponent.setMinimumSize(size)
         navigatedComponent.setMaximumSize(size)
         navigatedComponent.setPreferredSize(size)
         window = GuiUtils.getWindow(navigatedComponent)
+        #me.getMaster().getDisplay().getComponent().setPreferredSize(size)
+        #me.getMaster().getDisplay().getComponent().setMaximumSize(size)
+        #me.getMaster().getDisplay().getComponent().setMinimumSize(size)
+        #me.getMaster().getDisplay().getDisplayRenderer().getCanvas().setPreferredSize(size)
+        #me.getMaster().getDisplay().getDisplayRenderer().getCanvas().setMaximumSize(size)
+        #me.getMaster().getDisplay().getDisplayRenderer().getCanvas().setMinimumSize(size)
         if not window:
             from javax.swing import JFrame
             window = JFrame()
