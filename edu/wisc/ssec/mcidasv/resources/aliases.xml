@@ -24,4 +24,7 @@
   <alias aliases=".*_Band.*_TEMP" label="BrightnessTemp" name="BrightnessTemp"/>
   <alias aliases="Total_Attenuated_Backscatter_532" label="TotalAttenuatedBackscatter_532" name="TAB_532"/>
   <alias aliases="7_Band16_*" label="HydrometeorClassification" name="HydrometeorClassification"/>
+
+  <!-- temp fix for inq 1129.  remove once Geopotential_isobaric alias is in IDV's aliases.xml -->
+  <alias aliases="Geopotential,Geopotential_isobaric" label="Geopotential" name="GP"/>
 </aliases>
