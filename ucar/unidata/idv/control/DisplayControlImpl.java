@@ -197,6 +197,8 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.text.JTextComponent;
 
+import edu.wisc.ssec.mcidasv.data.adde.AddeImageParameterDataSource;
+
 
 /**
  * This is the main base class for all DisplayControls.
@@ -3921,6 +3923,23 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      */
     protected String getLongParamName() {
         DataChoice dataChoice = getDataChoice();
+
+        // MJH 2013-05-16:  hack so that %longname% macro gets set consistently
+        // for data choices from AddeImageParameterDataSource.  (I can't just
+        // force dataChoice.getDescription() to get initialized consistently,
+        // because that would screw up the Field Selector data tree.)  This 
+        // should probably be temporary.  (See doMakeDataChoices in ImageDataSource-
+        // the behavior is different depending on whether there is more than
+        // one calibration unit present).
+        if (dataChoice instanceof DirectDataChoice) {
+            DataSource dataSource = ((DirectDataChoice)dataChoice).getDataSource();
+            if (dataSource instanceof AddeImageParameterDataSource) {
+                // return the nice verbose channel info instead of just calibration unit.
+                return dataChoice.getId().toString();
+            }
+        }
+        // end hack
+        
         return ((dataChoice == null)
                 ? null
                 : dataChoice.getDescription());
