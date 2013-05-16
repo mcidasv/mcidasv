@@ -963,10 +963,6 @@ class _Display(_JavaProxy):
                     # this should only happen if captureImage is called
                     # with a height and width after an annotate() in the background
                     raise RuntimeError("Height/width for captureImage is currently not supported after a text annotation.  You can specify height/width with buildWindow or openBundle instead, then leave height/width out of your call to captureImage.")
-                    
-        # the results aren't good if we don't pause first
-        # MJH 2013-05-15 - leave this pause in, we aren't running captureImage on the EDT
-        pause()
         
         imageFile = java.io.File(filename)
         # yes, I'm still calling writeImage. But it's a different writeImage!!!
@@ -1035,7 +1031,10 @@ class _Display(_JavaProxy):
         import ucar.unidata.idv.control.drawing.DrawingGlyph as DrawingGlyph
         
         # TODO: only create one drawingControl for each panel
-        drawCtl = getStaticMcv().doMakeControl('drawingcontrol')
+        # "False" here means do not "initDisplayInThread":
+        drawCtl = getStaticMcv().doMakeControl( [],
+                getStaticMcv().getControlDescriptor('drawingcontrol'),
+                None, None, False)
         drawCtl.setName(text)
         drawCtl.setLegendLabelTemplate(text)
         drawCtl.setShowInDisplayList(False)
