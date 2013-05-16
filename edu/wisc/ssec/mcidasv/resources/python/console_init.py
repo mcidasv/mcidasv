@@ -2,7 +2,8 @@ from __future__ import with_statement
 import sys
 import os
 
-from java.lang import System
+import java
+from java.lang import Integer, System
 
 # This is an ugly hack to deal with Jython's sys.path strangeness: if you
 # want to import a non-compiled python module contained in a JAR, sys.path
@@ -81,6 +82,23 @@ from ucar.unidata.idv.ui import ImageGenerator
 islInterpreter = ImageGenerator(_mcv)
 
 from edu.wisc.ssec.mcidasv.data.hydra import Statistics
+
+# TODO(jon): is this really what we want!?
+from visad.python.JPythonMethods import *
+
+from ucar.visad import Util
+
+from ucar.unidata.util import StringUtil
+
+from ucar.unidata.data import DataUtil
+from ucar.unidata.data import DataSelection
+from ucar.unidata.data import GeoLocationInfo
+from ucar.unidata.data import GeoSelection
+
+from ucar.unidata.data.grid import GridMath
+from ucar.unidata.data.grid import GridUtil
+from ucar.unidata.data.grid import DerivedGridFactory
+from ucar.unidata.data.grid import GridTrajectory
 
 try:
     import imageFilters
