@@ -1128,28 +1128,28 @@ public class JythonManager extends IdvManager implements ActionListener {
         try {
             InputStream consoleInitializer = IOUtil.getInputStream(CONSOLE_INIT, JythonManager.class);
             interpreter.execfile(consoleInitializer, CONSOLE_INIT);
-//            interpreter.execfile(consoleInitializer);
             consoleInitializer.close();
         } catch (IOException e) {
             logException("Failed to initialize Jython's sys.path.", e);
         }
-        interpreter.exec("import sys");
-        interpreter.exec("import java");
-        interpreter.exec("sys.add_package('visad')");
-        interpreter.exec("sys.add_package('visad.python')");
-        interpreter.exec("sys.add_package('visad.data.units')");
-        interpreter.exec("from visad.python.JPythonMethods import *");
-        interpreter.exec("import ucar.unidata.data.grid.GridUtil as GridUtil");
-        interpreter.exec("import ucar.unidata.data.DataSelection as DataSelection");
-        interpreter.exec("import ucar.unidata.data.GeoLocationInfo as GeoLocationInfo");
-        interpreter.exec("import ucar.unidata.data.GeoSelection as GeoSelection");
-        interpreter.exec("from java.lang import Integer");
-        interpreter.exec("import ucar.unidata.data.grid.GridMath as GridMath");
-        interpreter.exec("import ucar.unidata.data.DataUtil as DataUtil");
-        interpreter.exec("import ucar.visad.Util as Util");
-        interpreter.exec("import ucar.unidata.util.StringUtil as StringUtil");
-        interpreter.exec("import ucar.unidata.data.grid.DerivedGridFactory as DerivedGridFactory");
-        interpreter.exec("from console_init import deprecated");
+
+        // interpreter.exec("import sys");
+        // interpreter.exec("import java");
+        // interpreter.exec("sys.add_package('visad')");
+        // interpreter.exec("sys.add_package('visad.python')");
+        // interpreter.exec("sys.add_package('visad.data.units')");
+        // interpreter.exec("from visad.python.JPythonMethods import *");
+        // interpreter.exec("import ucar.unidata.data.grid.GridUtil as GridUtil");
+        // interpreter.exec("import ucar.unidata.data.DataSelection as DataSelection");
+        // interpreter.exec("import ucar.unidata.data.GeoLocationInfo as GeoLocationInfo");
+        // interpreter.exec("import ucar.unidata.data.GeoSelection as GeoSelection");
+        // interpreter.exec("from java.lang import Integer");
+        // interpreter.exec("import ucar.unidata.data.grid.GridMath as GridMath");
+        // interpreter.exec("import ucar.unidata.data.DataUtil as DataUtil");
+        // interpreter.exec("import ucar.visad.Util as Util");
+        // interpreter.exec("import ucar.unidata.util.StringUtil as StringUtil");
+        // interpreter.exec("import ucar.unidata.data.grid.DerivedGridFactory as DerivedGridFactory");
+        // interpreter.exec("from console_init import deprecated");
         //interpreter.exec("from visad import FlatField");
         //interpreter.exec("from visad import FieldImpl");
     }
