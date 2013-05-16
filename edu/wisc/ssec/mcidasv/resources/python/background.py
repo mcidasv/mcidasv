@@ -944,6 +944,9 @@ class _Display(_JavaProxy):
             
         """
         import visad.DisplayException as DisplayException
+
+        # this pause is apparently critical
+        pause()
         
         # do some sanity checking on filename
         filename = _expandpath(filename)
