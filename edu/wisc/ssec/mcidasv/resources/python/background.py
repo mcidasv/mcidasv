@@ -44,7 +44,6 @@ from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 from edu.wisc.ssec.mcidasv.servermanager import EntryStore
 from visad.data.mcidas import AreaAdapter
 
-@gui_invoke_later
 def pause():
     getStaticMcv().waitUntilDisplaysAreDone()
 
