@@ -516,6 +516,13 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    							boolean xScanOk = false;
         	    						boolean yScanOk = false;
         	    						List<Dimension> dl = v.getDimensions();
+        	    						
+        	    						// toss out > 2D Quality Flags 
+        	    						if (dl.size() > 2) {
+        	    							logger.debug("SKIPPING QF, > 2D: " + varShortName);
+        	    							continue;
+        	    						}
+        	    						
         	    						for (Dimension d : dl) {
         	    							// in order to consider this a displayable product, make sure
         	    							// both scan direction dimensions are present and look like a granule
@@ -526,6 +533,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
         	    								yScanOk = true;
         	    							}
         	    						}
+        	    						
         	    						if (! (xScanOk && yScanOk)) {
         	    							logger.debug("SKIPPING QF, does not match geo bounds: " + varShortName);
         	    							continue;
@@ -539,7 +547,12 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    									// NOTE: by using a VariableDS here, the original
     	    									// variable is used for the I/O, this matters!
     	    									VariableDS vqf = new VariableDS(subG, v, false);
-    	    									vqf.setShortName(qf.getName());
+    	    									// prefix with QF num to help guarantee uniqueness across groups
+    	    									// this will cover most cases, but could still be dupe names
+    	    									// within a single QF.  This is handled when fetching XMLPP metadata
+    	    									vqf.setShortName(
+    	    											varShortName.substring(0, 3) + "_" + qf.getName()
+    	    									);
     	    									logger.debug("New var full name: " + vqf.getFullName());
     	    	    							qfProds.add(vqf);
     	    	    							qfMap.put(vqf.getFullName(), qf);
@@ -772,6 +785,10 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    	for (VariableDS qfV: qfProds) {
     	    		// skip the spares - they are reserved for future use
     	    		if (qfV.getFullName().endsWith("Spare")) {
+    	    			continue;
+    	    		}
+    	    		// String.endwWith is case sensitive so gott check both cases
+    	    		if (qfV.getFullName().endsWith("spare")) {
     	    			continue;
     	    		}
     	    		ncdff.addVariable(qfV.getGroup(), qfV);
