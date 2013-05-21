@@ -97,8 +97,46 @@ public class Statistics {
       pCorrelation = new PearsonsCorrelation();
    }
 
+   /** get the number of points in the domain of the FlatField
+   *
+   * @return number of points
+   */
    public int numPoints() {
      return numPoints;
+   }
+
+   /** get the number of non-missing points in each range component
+   *
+   * @return number of non-missing points
+   */
+   public int[] getNumGoodPoints() {
+     return numGoodPoints;
+   }
+
+   /* get the DescriptiveStatistics instances being used for each
+   *   range component
+   *
+   * @return the DescriptiveStatistics[] instances
+   */
+   public DescriptiveStatistics[] getDescriptiveStats() {
+     return descriptiveStats;
+   }
+
+   /* get the original range values
+   *
+   *@return the original range values
+   */
+   public double[][] getRngVals() {
+     return rngVals;
+   }
+
+   /* get the range values actually used (missing removed)
+   *
+   *@return range values used
+   */
+
+   public double[][] getValues() {
+     return values_x;
    }
 
    private double[] removeMissing(double[] vals) {
