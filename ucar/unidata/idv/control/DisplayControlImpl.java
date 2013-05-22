@@ -3935,7 +3935,9 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             DataSource dataSource = ((DirectDataChoice)dataChoice).getDataSource();
             if (dataSource instanceof AddeImageParameterDataSource) {
                 // return the nice verbose channel info instead of just calibration unit.
-                return dataChoice.getId().toString();
+                if (dataChoice.getId() != null) {
+                    return dataChoice.getId().toString();
+                }
             }
         }
         // end hack
