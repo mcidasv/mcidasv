@@ -380,7 +380,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    			Element fGeo  = new Element("netcdf", ns);
 	
 	    			String geoFilename = s.substring(0, s.lastIndexOf(File.separatorChar) + 1);
-	    			String fileNameRelative = s.substring(s.lastIndexOf(File.separatorChar) + 1);
 	    			// check if we have the whole file name or just the prefix
 	    			String geoProductID = geoProductIDs.get(elementNum);
 	    			if (geoProductID.endsWith("h5")) {
@@ -389,18 +388,16 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    				geoFilename += geoProductID;
 	    				geoFilename += s.substring(s.lastIndexOf(File.separatorChar) + 6);
 	    			}
-	    			// XXX TJJ - temporary check to swap for terrain corrected geo if needed.
-	    			// This is until we learn the formal logic for which geo to look for/use
+	    			// Be sure file as specified by N_GEO_Ref global attribute really is there.
 	    			File tmpGeo = new File(geoFilename);
 	    			if (! tmpGeo.exists()) {
-	    				// this one looks for GMTCO instead of GMODO
+	    				// Ok, the expected file defined (supposedly) exactly by a global att is not there...
+	    				// We need to check for similar geo files with different creation dates
 	    				String geoFileRelative = geoFilename.substring(geoFilename.lastIndexOf(File.separatorChar) + 1);
-	    				if (fileNameRelative.startsWith("SVM")) {
-	    					geoFileRelative = geoFileRelative.replace("OD", "TC");
-	    				}
-	    				if (fileNameRelative.startsWith("SVI")) {
-	    					geoFileRelative = geoFileRelative.replace("MG", "TC");
-	    				}
+	    				// also check for Terrain Corrected version of geo
+	    				String geoTerrainCorrected = geoFileRelative;
+	    				geoTerrainCorrected = geoTerrainCorrected.replace("OD", "TC");
+	    				geoTerrainCorrected = geoTerrainCorrected.replace("MG", "TC");
 	    				
 	    				// now we make a file filter, and see if a matching geo file is present
 	    				File fList = new File(geoFilename.substring(0, geoFilename.lastIndexOf(File.separatorChar) + 1)); // current directory
@@ -422,11 +419,22 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    					}
 	    					// get the file name for convenience
 	    					String fName = file.getName();
-	    					// is it one of the geo types we are looking for?
+	    					// is it one of the standard Ellipsoid geo types we are looking for?
 	    					if (fName.substring(0, 5).equals(geoFileRelative.substring(0, 5))) {
 	    						int geoStartIdx = geoFileRelative.indexOf("_d");
 	    						int prdStartIdx = fName.indexOf("_d");
 	    						String s1 = geoFileRelative.substring(geoStartIdx, geoStartIdx + 35);
+	    						String s2 = fName.substring(prdStartIdx, prdStartIdx + 35);
+	    						if (s1.equals(s2)) {
+	    							geoFilename = s.substring(0, s.lastIndexOf(File.separatorChar) + 1) + fName;
+	    							break;
+	    						}
+	    					}
+	    					// same check, but for Terrain Corrected version
+	    					if (fName.substring(0, 5).equals(geoTerrainCorrected.substring(0, 5))) {
+	    						int geoStartIdx = geoTerrainCorrected.indexOf("_d");
+	    						int prdStartIdx = fName.indexOf("_d");
+	    						String s1 = geoTerrainCorrected.substring(geoStartIdx, geoStartIdx + 35);
 	    						String s2 = fName.substring(prdStartIdx, prdStartIdx + 35);
 	    						if (s1.equals(s2)) {
 	    							geoFilename = s.substring(0, s.lastIndexOf(File.separatorChar) + 1) + fName;
