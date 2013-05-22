@@ -37,6 +37,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -178,6 +179,9 @@ public class SuomiNPPProductProfile {
 			NodeList datum = null;
 			String name = null;
 			boolean isQF = false;
+			// temporary set used to guarantee unique names within quality flag
+			HashSet<String> hs = new HashSet<String>();
+			int uniqueCounter = 2;
 			
 			// cycle through once, finding name and datum node(s)
 			// NOTE: may be multiple datum notes, e.g. QF quality flags
@@ -189,6 +193,7 @@ public class SuomiNPPProductProfile {
 					logger.info("Found Suomi NPP product name: " + name);
 					if (name.startsWith("QF")) {
 						isQF = true;
+						uniqueCounter = 2;
 					}
 				}
 				
@@ -257,6 +262,14 @@ public class SuomiNPPProductProfile {
 									if ((description.contains(" - ")) && !isTest) {
 										int idx = description.indexOf(" - ");
 										description = description.substring(0, idx);
+										boolean added = hs.add(name + description);
+										// if HashSet add fails, it's a dupe name.
+										// tack on incrementing digit to make it unique
+										if (! added) {
+											description = description + "_" + uniqueCounter;
+											hs.add(name + description);
+											uniqueCounter++;
+										}
 									}
 									// ensure what's left is a valid NetCDF object name
 									description= ucar.nc2.iosp.netcdf3.N3iosp.makeValidNetcdf3ObjectName(description);
