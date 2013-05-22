@@ -11,6 +11,12 @@ $havestart=0;
 $stop=0;
 
 $versionfile="/var/apache/www/htdocs/mcidas/software/v/stable/version.txt";
+if ($_GET["version"]) {
+  $version = $_GET["version"];
+}
+else {
+  $version = file_get_contents($versionfile);
+}
 
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -33,7 +39,7 @@ li { margin-bottom: 0px; }
 <p>
 <img src="../../../images/mcidas-logos/mcidasv_500x250.png">
 <h1>McIDAS-V User's Guide</h1>
-<h2>Version 1.2</h2>
+<h2>Version <?php print $version; ?></h2>
 </td></tr>
 </table>
 
