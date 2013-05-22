@@ -540,6 +540,10 @@ def testADDEImage(localEntry=None,
 
     An ADDE request must include values for either localEntry or the combination of server, dataset and descriptor.
 
+    ***Note to users:  testADDEImage is test code, some of which may be used to 
+    improve the getADDEImage function in the future.  It will not be included 
+    in future versions so should not be used in user scripts. 
+
     Required Args:
         localEntry: Local data set defined by makeLocalADDEEntry. 
         server: ADDE server.
@@ -572,6 +576,7 @@ def testADDEImage(localEntry=None,
         debug: send debug information to file; default=False
         track: default=False.
     """
+    print 'Warning: testADDEImage is test code, some of which may be used to improve the getADDEImage function in the future.  It will not be included in future versions so should not be used in user scripts.'
     if localEntry:
         server = localEntry.getAddress()
         dataset = localEntry.getGroup()
