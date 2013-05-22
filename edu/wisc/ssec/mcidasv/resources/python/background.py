@@ -709,11 +709,11 @@ class _Display(_JavaProxy):
             
         currentProj = self._JavaProxy__javaObject.getMapDisplay().getMapProjection()
         if projObj == currentProj:
-            print 'projections match!'
+            #print 'projections match!'
             self._JavaProxy__javaObject.getMapDisplay().resetMapParameters(True)
         else:
-            print 'projections differ: %s %s' % (projObj, currentProj)
-            print 'types: %s %s' % (type(projObj), type(currentProj))
+            #print 'projections differ: %s %s' % (projObj, currentProj)
+            #print 'types: %s %s' % (type(projObj), type(currentProj))
             self._JavaProxy__javaObject.getMapDisplay().setMapProjection(projObj)
             
     @gui_invoke_later
