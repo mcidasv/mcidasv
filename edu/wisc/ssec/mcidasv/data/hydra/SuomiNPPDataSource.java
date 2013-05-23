@@ -1067,12 +1067,12 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    } else {
     	        // leave in original unpersistence code - this will get run for unzipped bundles.
     	        // TODO: do we need to handle the "Save with relative paths" case specially?
-        		if (! oldSources.isEmpty()) {
-        			sources.clear();
-        			for (Object o : oldSources) {
-        				sources.add((String) o);
-        			}
-        		}
+        	    if (! oldSources.isEmpty()) {
+                    sources.clear();
+                    for (Object o : oldSources) {
+                        sources.add((String) o);
+                    }
+                }
     	    }
     	    oldSources.clear();
     		setup();
