@@ -1,12 +1,14 @@
 #!/usr/bin/php -q
 <?php
 
-$COPYRIGHT="/home/mcidasv/mc-v/release/licenses/COPYRIGHT";
-$NOTICE="/home/mcidasv/mc-v/release/licenses/NOTICE";
-$VERSION_FILE="/home/mcidasv/mc-v/edu/wisc/ssec/mcidasv/resources/version.properties";
+$BASE="/home/mcidasv/mcidasv-github/mcidasv";
 
-$README="/home/mcidasv/mc-v/release/README.html";
-$LICENSE="/home/mcidasv/mc-v/docs/userguide/processed/License.html";
+$COPYRIGHT=$BASE."/release/licenses/COPYRIGHT";
+$NOTICE=$BASE."/release/licenses/NOTICE";
+$VERSION_FILE=$BASE."/edu/wisc/ssec/mcidasv/resources/version.properties";
+
+$README=$BASE."/release/README.html";
+$LICENSE=$BASE."/docs/userguide/processed/License.html";
 
 $LICENSE_REMOTE="/var/apache/www/htdocs/mcidas/doc/mcv_guide/working/License.html";
 
