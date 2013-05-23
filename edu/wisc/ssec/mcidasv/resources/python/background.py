@@ -985,7 +985,7 @@ class _Display(_JavaProxy):
         
         # TODO(mike): catch exceptions resulting from writeImage (e.g., if filename has invalid extension)
         
-    @gui_invoke_later
+    #@gui_invoke_later
     def annotate(self, text, lat=None, lon=None, line=None, element=None,
             font=None, color='red', size=None, style=None,
             alignment = ("center", "center")):
@@ -1040,6 +1040,7 @@ class _Display(_JavaProxy):
         drawCtl.setName(text)
         drawCtl.setLegendLabelTemplate(text)
         drawCtl.setShowInDisplayList(False)
+        pause()
         drawCtl.close()  # close the window that pops up..user doesnt need to see
         glyph = TextGlyph(drawCtl, None, text)
 
