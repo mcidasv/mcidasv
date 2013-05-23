@@ -152,7 +152,7 @@ public class PersistenceManager extends IdvPersistenceManager {
      * Macro used as a place holder for wherever the IDV decides to place 
      * extracted contents of a bundle. 
      */
-    private static final String MACRO_ZIDVPATH = '%'+PROP_ZIDVPATH+'%';
+    public static final String MACRO_ZIDVPATH = '%'+PROP_ZIDVPATH+'%';
 
     static ucar.unidata.util.LogUtil.LogCategory log_ =
         ucar.unidata.util.LogUtil.getLogInstance(IdvManager.class.getName());

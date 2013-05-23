@@ -28,6 +28,8 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
+import edu.wisc.ssec.mcidasv.McIDASV;
+import edu.wisc.ssec.mcidasv.PersistenceManager;
 import edu.wisc.ssec.mcidasv.data.HydraDataSource;
 import edu.wisc.ssec.mcidasv.data.PreviewSelection;
 import edu.wisc.ssec.mcidasv.data.QualityFlag;
@@ -77,6 +79,7 @@ import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.data.GeoSelection;
+import ucar.unidata.idv.IdvPersistenceManager;
 
 import ucar.unidata.util.Misc;
 
@@ -1043,13 +1046,35 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
     public void initAfterUnpersistence() {
     	try {
-    		if (! oldSources.isEmpty()) {
-    			sources.clear();
-    			for (Object o : oldSources) {
-    				sources.add((String) o);
-    			}
-    			oldSources.clear();
-    		}
+    	    if (getTmpPaths() != null) {
+    	        // New code for zipped bundles-
+    	        // we want 'sources' to point to wherever the zipped data was unpacked.
+    	        sources.clear();
+    	        // following PersistenceManager.fixBulkDataSources, get temporary data location
+    	        String zidvPath = 
+    	                McIDASV.getStaticMcv().getStateManager().
+    	                getProperty(IdvPersistenceManager.PROP_ZIDVPATH, "");
+    	        for (Object o : getTmpPaths()) {
+    	            String tempPath = (String) o;
+    	            // replace macro string with actual path
+    	            String expandedPath = tempPath.replace(PersistenceManager.MACRO_ZIDVPATH, zidvPath);
+    	            // we don't want to add nav files to this list!:
+    	            File f = new File(expandedPath);
+    	            if (!f.getName().matches(JPSSUtilities.SUOMI_GEO_REGEX)) {
+    	                sources.add(expandedPath);
+    	            }
+    	        }
+    	    } else {
+    	        // leave in original unpersistence code - this will get run for unzipped bundles.
+    	        // TODO: do we need to handle the "Save with relative paths" case specially?
+        		if (! oldSources.isEmpty()) {
+        			sources.clear();
+        			for (Object o : oldSources) {
+        				sources.add((String) o);
+        			}
+        		}
+    	    }
+    	    oldSources.clear();
     		setup();
     	} catch (Exception e) {
     		e.printStackTrace();
