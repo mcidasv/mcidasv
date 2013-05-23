@@ -111,15 +111,6 @@ public class Statistics {
      return numGoodPoints;
    }
 
-   /* get the DescriptiveStatistics instances being used for each
-   *   range component
-   *
-   * @return the DescriptiveStatistics[] instances
-   */
-   public DescriptiveStatistics[] getDescriptiveStats() {
-     return descriptiveStats;
-   }
-
    /* get the original range values
    *
    *@return the original range values
