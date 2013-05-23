@@ -116,6 +116,33 @@ public abstract class JPSSUtilities {
     	"GATRO",
     	"IVMIM",
     	"VMUGE"
-	};    
+	};  
+	
+	// This regular expression matches a Suomi NPP geolocation granule, see 
+	// spec in CDFCB-X Volume 1, Page 21
+	public static final String SUOMI_GEO_REGEX =
+    		// Geo Id, Single (ex: GMODO)
+			// NOTE: This MUST match the list of product ids in static array above!
+    		"(GATMO|GCRSO|GAERO|GCLDO|GDNBO|GNCCO|GIGTO|GIMGO|GITCO|" + 
+			"GMGTO|GMODO|GMTCO|GNHFO|GOTCO|GOSCO|GONPO|GONCO|GCRIO|GATRO|IVMIM|VMUGE)" + 
+			JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		// Spacecraft Id (ex: npp)
+    		"\\w\\w\\w" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		// Data Start Date (ex: dYYYYMMDD)
+    		"d20[0-3]\\d[0-1]\\d[0-3]\\d" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		// Data Start Time (ex: tHHMMSSS)
+    		"t[0-2]\\d[0-5]\\d[0-6]\\d\\d" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		// Data Stop Time (ex: eHHMMSSS)
+    		"e[0-2]\\d[0-5]\\d[0-6]\\d\\d" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		// Orbit Number (ex: b00015)
+    		"b\\d\\d\\d\\d\\d" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		// Creation Date (ex: cYYYYMMDDHHMMSSSSSSSS)
+    		"c20[0-3]\\d[0-1]\\d[0-3]\\d[0-2]\\d[0-5]\\d[0-6]\\d\\d\\d\\d\\d\\d\\d" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		// Origin (ex: navo)
+    		"\\w\\w\\w\\w" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		// Domain (ex: ops)
+    		"\\w\\w\\w" + 
+    		// HDF5 suffix
+    		".h5";
 	
 }
