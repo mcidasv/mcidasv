@@ -29,23 +29,35 @@ package edu.wisc.ssec.mcidasv.chooser;
 
 import org.w3c.dom.Element;
 
+import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.util.PreferenceList;
 
+/**
+ * A very simple chooser that allows for convenient access of remote model data.
+ */
 public class TDSGridChooser extends XmlChooser {
 
     /**
      * Create the <code>XmlChooser</code>
      *
-     * @param mgr The <code>IdvChooserManager</code>
-     * @param root  The xml root that defines this chooser
+     * @param mgr The {@link IdvChooserManager}. Cannot be {@code null}.
+     * @param root XML root that defines this chooser. Cannot be {@code null}.
      *
      */
     public TDSGridChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
     }
 
-    public PreferenceList getPreferenceList(String listProp) {
-        return super.getPreferenceList("idv.data.grid.list");
+    /**
+     * Overridden by McIDAS-V so that we're always calling 
+     * {@link IdvChooser#getPreferenceList(String, boolean)} and thus always
+     * performing a merge of user preferences and values from 
+     * {@code mcidasv.properties}.
+     * 
+     * @param listProp Ignored for this chooser.
+     */
+    @Override public PreferenceList getPreferenceList(String listProp) {
+        return super.getPreferenceList("idv.data.grid.list", true);
     }
 }
