@@ -35,28 +35,26 @@ import org.w3c.dom.Element;
 import ucar.ma2.Array;
 import ucar.ma2.InvalidRangeException;
 import ucar.ma2.Range;
-
 import ucar.nc2.Attribute;
 import ucar.nc2.Group;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
-
 import ucar.nc2.dataset.*;
 import ucar.nc2.dt.GridCoordSystem;
 import ucar.nc2.dt.grid.*;
+import ucar.nc2.grib.GribVariableRenamer;
 import ucar.nc2.util.NamedAnything;
 
 
 
 import ucar.unidata.data.*;
-
 import ucar.unidata.geoloc.*;
 import ucar.unidata.geoloc.projection.*;
-
 import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.IdvConstants;
+import ucar.unidata.idv.VariableRenamer;
+import ucar.unidata.idv.ui.DataTreeDialog;
 import ucar.unidata.ui.TextSearcher;
-
 import ucar.unidata.util.CacheManager;
 import ucar.unidata.util.CatalogUtil;
 import ucar.unidata.util.ContourInfo;
@@ -71,32 +69,21 @@ import ucar.unidata.util.ThreeDSize;
 import ucar.unidata.util.Trace;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.util.WrapperException;
-
 import ucar.unidata.xml.*;
-
 import ucar.visad.Util;
-
-
 import visad.*;
-
 import visad.georef.EarthLocation;
 import visad.georef.EarthLocationTuple;
-
 import visad.util.DataUtility;
 
 import java.awt.Dimension;
 import java.awt.Font;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
-
 import java.io.*;
-
 import java.net.URL;
-
 import java.rmi.RemoteException;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
@@ -108,7 +95,6 @@ import java.util.TreeSet;
 import java.util.UUID;
 
 import javax.swing.*;
-
 
 import edu.wisc.ssec.mcidasv.data.BadNetCDFWidget;
 
@@ -201,8 +187,8 @@ public class GeoGridDataSource extends GridDataSource {
     /** for properties_ */
     private JCheckBox reverseTimesCheckbox;
 
-
-
+    private GribVariableRenamer gribRenamer = new GribVariableRenamer();
+    
     /**
      * Default constructor
      */
@@ -1475,8 +1461,8 @@ public class GeoGridDataSource extends GridDataSource {
             return null;
         }
         Object  extraCacheKey = null;
+        GeoGrid geoGrid       = findGridForDataChoice(myDataset, dataChoice);
         String  paramName     = dataChoice.getStringId();
-        GeoGrid geoGrid       = myDataset.findGridByName(paramName);
         if (geoGrid == null) {
             return null;
         }
@@ -1859,6 +1845,104 @@ public class GeoGridDataSource extends GridDataSource {
         return fieldImpl;
     }  // end makeField
 
+
+    /**
+     * Find the grid in the dataset from the DataChoice
+     *
+     * @param ds  the grid dataset
+     * @param dc  the data choice
+     * @return the GeoGrid or null dataset doesn't exist or if variable not found
+     */
+    public GeoGrid findGridForDataChoice(GridDataset ds, DataChoice dc) {
+        if (ds == null) {
+            return null;
+        }
+        String name = dc.getStringId();
+
+        /**
+         *
+         * Look for new name for parameter
+         * If name already exists in dataset, then the old name is returned
+         *
+         */
+
+        /** handles general variable renaming */
+
+        List<String> newName           = gribRenamer.matchNcepNames(ds, name);
+        List<String> userRemappedNames = DataManager.getNewVariableName(name);
+
+        // check IDV variable renaming first
+        if ((userRemappedNames != null) && !userRemappedNames.isEmpty()) {
+            for (String remappedName : userRemappedNames) {
+                GeoGrid tmpGeoGrid = ds.findGridByName(remappedName);
+                if (tmpGeoGrid != null) {
+                    name = remappedName;
+                    dc.setId(name);
+                    dc.setName(name);
+                    return tmpGeoGrid;
+                }
+            }
+        }
+        // ok, match not found in the user remapping...let's try netCDF-Java's map
+        if (newName.size() == 1) {
+            // a unique name has been returned from netCDF-Java - use it!
+            name = newName.get(0);
+        } else if (newName.size() > 0) {
+            // netCDF-Java returned more than one match (no match was found in the
+            // IDV tables)...ask user which one is correct
+            LogUtil.printMessage("Multiple Matches Found for " + name);
+            LogUtil.printMessage("Possible new variable names are:");
+            List<String> newDescription = new ArrayList<String>();
+            for (String possibleNewName : newName) {
+                LogUtil.printMessage("    " + possibleNewName);
+                newDescription.add(
+                    ds.getDataVariable(possibleNewName).getDescription());
+            }
+            LogUtil.printMessage("Please update your bundle.");
+            if (getIdv().getViewManager().isInteractive()) {
+                //Misc.printStack("findgrid", 10);
+                String msg1 =
+                    "The variable name has changed.  Please select a new match.<br><br>";
+                String msg2 = "Possible new names for the variable <i>"
+                              + dc.getDescription() + "</i> are:<br><br>";
+                String msg3 = StringUtil.join("<br>", newDescription);
+                String label = "<html>" + msg1 + msg2 + "<i>" + msg3
+                               + "</i></html>";
+                
+                List<DataCategory> cats = new ArrayList<DataCategory>();
+                for (String possibleNewName : newName) {
+                    cats.add(new DataCategory("param:"+possibleNewName,false));
+                }
+
+                DataOperand operand = new DataOperand(name, label, cats,
+                                          false);
+
+                DataTreeDialog dataDialog = new DataTreeDialog(getIdv(),
+                                                null, Misc.newList(operand),
+                                                Misc.newList(this),
+                                                Misc.newList(dc), false);
+                List choices = dataDialog.getSelected();
+                if ((choices != null) && (choices.size() > 0)) {
+                    DataChoice dc_new =
+                        (DataChoice) ((List) choices.get(0)).get(0);
+                    name = dc_new.getStringId();
+                    dc.setId(name);
+                    dc.setName(name);
+                    GeoGrid geoGrid = ds.findGridByName(name);
+                    return geoGrid;
+                }
+            }
+        } else {
+            // ok, no matches found anywhere...return null
+            return null;
+        }
+
+        dc.setId(name);
+        dc.setName(name);
+
+        GeoGrid geoGrid = ds.findGridByName(name);
+        return geoGrid;
+    }
 
     /**
      * Utility to check if we should ignore the given z axis

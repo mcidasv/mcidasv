@@ -35,7 +35,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -62,7 +61,6 @@ import org.apache.batik.util.DoublyIndexedTable.Entry;
 import org.python.core.PyObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -79,6 +77,7 @@ import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.SavedBundle;
+import ucar.unidata.idv.ServerUrlRemapper;
 import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.control.DisplayControlImpl;
@@ -101,7 +100,6 @@ import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.Trace;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlResourceCollection;
-
 import edu.wisc.ssec.mcidasv.control.ImagePlanViewControl;
 import edu.wisc.ssec.mcidasv.probes.ReadoutProbe;
 import edu.wisc.ssec.mcidasv.ui.McIDASVXmlUi;
@@ -790,7 +788,7 @@ public class PersistenceManager extends IdvPersistenceManager {
                 limitWindows);
         }
     }
-
+    
     /**
      * <p>Hijacks the third part of the bundle loading pipeline.</p>
      * 
@@ -805,46 +803,54 @@ public class PersistenceManager extends IdvPersistenceManager {
                                                boolean didRemoveAll, 
                                                boolean letUserChangeData, 
                                                boolean limitNewWindows) {
-
+                                               
         LoadBundleDialog loadDialog = new LoadBundleDialog(this, label);
-
+        
         boolean inError = false;
-
+        
         if ( !fromCollab) {
             showWaitCursor();
             if (showDialog) {
                 loadDialog.showDialog();
             }
         }
-
+        
         if (xmlFile != null) {
             getStateManager().putProperty(PROP_BUNDLEPATH,
                                           IOUtil.getFileRoot(xmlFile));
         }
-
+        
         getStateManager().putProperty(PROP_LOADINGXML, true);
         try {
             xml = applyPropertiesToBundle(xml);
             if (xml == null) {
                 return;
             }
-
+            
 //            checkForBadMaps(xmlFile);
-
+            // perform any URL remapping that might be needed
+            ServerUrlRemapper remapper = new ServerUrlRemapper(getIdv());
+            Element bundleRoot = remapper.remapUrlsInBundle(xml);
+            if (bundleRoot == null) {
+                return;
+            }
+            
+            remapper = null;
+            
             Trace.call1("Decode.toObject");
-            Object data = getIdv().getEncoderForRead().toObject(xml);
+            Object data = getIdv().getEncoderForRead().toObject(bundleRoot);
             Trace.call2("Decode.toObject");
-
+            
             if (data != null) {
                 Hashtable properties = new Hashtable();
                 if (data instanceof Hashtable) {
                     Hashtable ht = (Hashtable) data;
-
+                    
                     instantiateFromBundle(ht, fromCollab, loadDialog,
                                           shouldMerge, bundleProperties,
                                           didRemoveAll, letUserChangeData, 
                                           limitNewWindows);
-
+                                          
                 } else if (data instanceof DisplayControl) {
                     ((DisplayControl) data).initAfterUnPersistence(getIdv(),
                                                                    properties);
@@ -858,7 +864,7 @@ public class PersistenceManager extends IdvPersistenceManager {
                                              "Decoding xml. Unknown object type:"
                                              + data.getClass().getName());
                 }
-
+                
                 if ( !fromCollab && getIdv().haveCollabManager()) {
                     getCollabManager().write(getCollabManager().MSG_BUNDLE,
                                              xml);
@@ -870,22 +876,22 @@ public class PersistenceManager extends IdvPersistenceManager {
             } else {
                 logException("Error loading bundle", exc);
             }
-
+            
             inError = true;
         }
-
+        
         if (!fromCollab) {
             showNormalCursor();
         }
-
+        
         getStateManager().putProperty(PROP_BUNDLEPATH, "");
         getStateManager().putProperty(PROP_ZIDVPATH, "");
         getStateManager().putProperty(PROP_LOADINGXML, false);
-
+        
         if (!inError && getIdv().getInteractiveMode() && xmlFile != null) {
             getIdv().addToHistoryList(xmlFile);
         }
-
+        
         loadDialog.dispose();
         if (loadDialog.getShouldRemoveItems()) {
             List displayControls = loadDialog.getDisplayControls();
@@ -901,10 +907,10 @@ public class PersistenceManager extends IdvPersistenceManager {
                 getIdv().removeDataSource((DataSource) dataSources.get(i));
             }
         }
-
+        
         loadDialog.clear();
     }
-
+    
     // initial pass at trying to fix bundles with resources mcv hasn't heard of
     private void checkForBadMaps(final String bundlePath) {
         String xpath = "//property[@name=\"InitialMap\"]/string|//property[@name=\"MapStates\"]//property[@name=\"Source\"]/string";
