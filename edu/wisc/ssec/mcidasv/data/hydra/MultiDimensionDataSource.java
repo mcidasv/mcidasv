@@ -182,9 +182,9 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
         if ( name.startsWith("MOD04") || name.startsWith("MYD04")) {
           HashMap table = SwathAdapter.getEmptyMetadataTable();
-          table.put("array_name", "mod04/Data Fields/Optical_Depth_Land_And_Ocean");
-          table.put("lon_array_name", "mod04/Geolocation Fields/Longitude");
-          table.put("lat_array_name", "mod04/Geolocation Fields/Latitude");
+          table.put("array_name", "mod04/Data_Fields/Optical_Depth_Land_And_Ocean");
+          table.put("lon_array_name", "mod04/Geolocation_Fields/Longitude");
+          table.put("lat_array_name", "mod04/Geolocation_Fields/Latitude");
           table.put("XTrack", "Cell_Across_Swath");
           table.put("Track", "Cell_Along_Swath");
           table.put("geo_Track", "Cell_Along_Swath");
@@ -212,8 +212,8 @@ public class MultiDimensionDataSource extends HydraDataSource {
           for (int k=0; k<arrayNames.length; k++) {
             HashMap table = SwathAdapter.getEmptyMetadataTable();
             table.put("array_name", path.concat(arrayNames[k]));
-            table.put("lon_array_name", "mod06/Geolocation Fields/Longitude");
-            table.put("lat_array_name", "mod06/Geolocation Fields/Latitude");
+            table.put("lon_array_name", "mod06/Geolocation_Fields/Longitude");
+            table.put("lat_array_name", "mod06/Geolocation_Fields/Latitude");
             table.put("XTrack", "Cell_Across_Swath_1km");
             table.put("Track", "Cell_Along_Swath_1km");
             table.put("geo_Track", "Cell_Along_Swath_5km");
@@ -239,8 +239,8 @@ public class MultiDimensionDataSource extends HydraDataSource {
           for (int k=0; k<arrayNames_5km.length; k++) {
             HashMap table = SwathAdapter.getEmptyMetadataTable();
             table.put("array_name", path.concat(arrayNames_5km[k]));
-            table.put("lon_array_name", "mod06/Geolocation Fields/Longitude");
-            table.put("lat_array_name", "mod06/Geolocation Fields/Latitude");
+            table.put("lon_array_name", "mod06/Geolocation_Fields/Longitude");
+            table.put("lat_array_name", "mod06/Geolocation_Fields/Latitude");
             table.put("XTrack", "Cell_Across_Swath_5km");
             table.put("Track", "Cell_Along_Swath_5km");
             table.put("geo_Track", "Cell_Along_Swath_5km");
@@ -465,7 +465,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          propsArray = new Hashtable[2];
 
          HashMap table = ProfileAlongTrack.getEmptyMetadataTable();
-         table.put(ProfileAlongTrack.array_name, "2B-GEOPROF/Data Fields/Radar_Reflectivity");
+         table.put(ProfileAlongTrack.array_name, "2B-GEOPROF/Data_Fields/Radar_Reflectivity");
          table.put(ProfileAlongTrack.range_name, "2B-GEOPROF_RadarReflectivity");
          table.put(ProfileAlongTrack.scale_name, "factor");
          table.put(ProfileAlongTrack.offset_name, "offset");
@@ -474,9 +474,9 @@ public class MultiDimensionDataSource extends HydraDataSource {
          table.put(ProfileAlongTrack.ancillary_file_name, "/edu/wisc/ssec/mcidasv/data/hydra/resources/cloudsat/altitude");
          table.put(ProfileAlongTrack.trackDim_name, "nray");
          table.put(ProfileAlongTrack.vertDim_name, "nbin");
-         table.put(ProfileAlongTrack.profileTime_name, "2B-GEOPROF/Geolocation Fields/Profile_Time");
-         table.put(ProfileAlongTrack.longitude_name, "2B-GEOPROF/Geolocation Fields/Longitude");
-         table.put(ProfileAlongTrack.latitude_name, "2B-GEOPROF/Geolocation Fields/Latitude");
+         table.put(ProfileAlongTrack.profileTime_name, "2B-GEOPROF/Geolocation_Fields/Profile_Time");
+         table.put(ProfileAlongTrack.longitude_name, "2B-GEOPROF/Geolocation_Fields/Longitude");
+         table.put(ProfileAlongTrack.latitude_name, "2B-GEOPROF/Geolocation_Fields/Latitude");
          table.put(ProfileAlongTrack.product_name, "2B-GEOPROF");
          ProfileAlongTrack adapter = new CloudSat2D(reader, table);
          ProfileAlongTrack3D adapter3D = new ProfileAlongTrack3D(adapter);
@@ -489,19 +489,19 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
          ArrayAdapter[] adapter_s = new ArrayAdapter[3];
          table = ProfileAlongTrack.getEmptyMetadataTable();
-         table.put(ProfileAlongTrack.array_name, "2B-GEOPROF/Geolocation Fields/Latitude");
+         table.put(ProfileAlongTrack.array_name, "2B-GEOPROF/Geolocation_Fields/Latitude");
          table.put(ProfileAlongTrack.range_name, "Latitude");
          table.put(ProfileAlongTrack.trackDim_name, "nray");
          adapter_s[0] = new ArrayAdapter(reader, table);
 
          table = ProfileAlongTrack.getEmptyMetadataTable();
-         table.put(ProfileAlongTrack.array_name, "2B-GEOPROF/Geolocation Fields/DEM_elevation");
+         table.put(ProfileAlongTrack.array_name, "2B-GEOPROF/Geolocation_Fields/DEM_elevation");
          table.put(ProfileAlongTrack.range_name, "DEM_elevation");
          table.put(ProfileAlongTrack.trackDim_name, "nray");
          adapter_s[1] = new ArrayAdapter(reader, table);
 
          table = ProfileAlongTrack.getEmptyMetadataTable();
-         table.put(ProfileAlongTrack.array_name, "2B-GEOPROF/Geolocation Fields/Longitude");
+         table.put(ProfileAlongTrack.array_name, "2B-GEOPROF/Geolocation_Fields/Longitude");
          table.put(ProfileAlongTrack.range_name, "Longitude");
          table.put(ProfileAlongTrack.trackDim_name, "nray");
          adapter_s[2] = new ArrayAdapter(reader, table);
