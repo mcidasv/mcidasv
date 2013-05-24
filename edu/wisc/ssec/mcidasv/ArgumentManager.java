@@ -28,17 +28,18 @@
 
 package edu.wisc.ssec.mcidasv;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
-
 import ucar.unidata.idv.ArgsManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.PatternFileFilter;
+import visad.VisADException;
 
 /**
  * McIDAS-V needs to handle a few command line flags/options that the IDV does
@@ -241,6 +242,29 @@ public class ArgumentManager extends ArgsManager {
      */
     public String getJythonScript() {
         return jythonScript;
+    }
+    
+    /**
+     * Gets called by the IDV to process the set of initial files, e.g.,
+     * default bundles, command line bundles, jnlp files, etc.
+     * 
+     * <p>Overridden by McIDAS-V to remove bundle file paths that are zero
+     * characters long. This was happening because {@code runMcV.bat} was
+     * always passing {@literal '-bundle ""'} on the command line (for Windows). 
+     * 
+     * @throws VisADException When something untoward happens
+     * @throws RemoteException When something untoward happens
+     */
+    @Override protected void processInitialBundles()
+            throws VisADException, RemoteException 
+    {
+        for (int i = 0; i < argXidvFiles.size(); i++) {
+            String path = (String)argXidvFiles.get(i);
+            if (path.isEmpty()) {
+                argXidvFiles.remove(i);
+            }
+        }
+        super.processInitialBundles();
     }
     
     /**

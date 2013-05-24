@@ -519,6 +519,12 @@ public class PersistenceManager extends IdvPersistenceManager {
                                  boolean letUserChangeData,
                                  Hashtable bundleProperties) {
 
+        logger.trace("loading bundle: '{}'", xmlFile);
+        if (xmlFile.isEmpty()) {
+            logger.warn("attempted to open a filename that is zero characters long");
+            return false;
+        }
+        
         String name = ((label != null) ? label : IOUtil.getFileTail(xmlFile));
 
         boolean shouldMerge = getStore().get(PREF_OPEN_MERGE, true);
