@@ -41,8 +41,7 @@ paths to avoid Windows interpreting it as an escape sequence.):
 <pre>	runMcV.bat -script C:\\home\\user\\example.py </pre>
 <p>When invoked as a command line argument, the user interface will not be shown.
   However, McIDAS-V still needs to be run with an active window system (e.g.,
-  X, MS Windows) for it to run. If running under a Linux/Unix machine and you
-  don't have an X server running you need to run McIDAS-V under the X virtual
+  X, MS Windows) for it to run. If running under a Linux/Unix machine with no X server running, McIDAS-V must be run under the X virtual
   frame buffer, xvfb. </p>
 <p>&nbsp;</p>
 <hr>
@@ -317,27 +316,34 @@ preferences<br></div>
 <p>&nbsp;</p>
 <h3>Environment: </h3>
 <p><strong><a name="printHistoryLength" id="printHistoryLength"></a>getJythonShellMaxHistoryLength( ) -</strong> Returns the current number of commands that are saved.
-<div class="OneTabIndent">Usage: <em>print getJythonShellMaxHistoryLength()</em></div>
-<div class="OneTabIndent">Remarks:</div>
-<div class="TwoTabIndent">The output from this command will be the number of previous commands that will be listed out with <strong>File>Save Commands to Jython Library</strong> menu item, as well as the commands that will be added to the Local Jython Library from the <strong>File>Save Commands to Jython Library</strong> menu item from the Jython Shell. The default number of commands saved to the history is 100.</div></p>
-<p>&nbsp;</p>
-<p><strong><a name="setHistoryLength" id="setHistoryLength"></a>setJythonShellMaxHistoryLength( ) -</strong> Sets the number of commands that will be saved.<br>
+<div class="OneTabIndent">Usage: <em>print getJythonShellMaxHistoryLength()</em><br></div>
+<strong><a name="setHistoryLength" id="setHistoryLength2"></a>setJythonShellMaxHistoryLength( ) -</strong> Sets the number of commands that will be saved.<br>
 <div class="OneTabIndent">Usage: <em>setJythonShellMaxHistoryLength(number)</em></div>
+</div>
 <div class="OneTabIndent">Remarks:</div>
-<div class="TwoTabIndent">The number of commands saved will be the number you enter in the parentheses. The default number of commands that will be saved to the history is 100.</div></p>
+<div class="TwoTabIndent">This is the number of commands that will be listed out with the <strong>File>List Saved History</strong> menu item in the Jython Shell, as well as the number that will be added to the Local Jython Library from the <strong>File>Save Commands to Jython Library</strong> menu item. The default number of commands saved to the history is 100.</div></p>
 <p>&nbsp;</p>
 <p><strong><a name="collectGarbage" id="collectGarbage"></a>collectGarbage( ) -</strong> Performs a garbage collection to free up memory.
 <div class="OneTabIndent">Usage: <em>collectGarbage()</em></div>
 </p>
 <p>&nbsp;</p>
-<p><strong><a name="removeAllLayers" id="removeAllLayers"></a>removeAllLayers( ) -</strong> Removes all layers that have been applied to your displays.
-<div class="OneTabIndent">Usage: <em>removeAllLayers()</em></div></p>
+<p><strong><a name="expandpath" id="expandpath"></a>expandpath( ) -</strong> Expands the path entered.
+<div class="OneTabIndent">Usage: <em>expandpath(path)</em></div>
+<div class="OneTabIndent">Remarks:</div>
+<div class="TwoTabIndent">Understands environmental variables such as &quot;~&quot; and &quot;..&quot;.&nbsp;For example, on Windows, &nbsp;'print expandpath(&quot;$HOMEPATH&quot;)' will print \Users\username.</div>
+</p>
 <p>&nbsp;</p>
-<p><strong><a name="removeAllData" id="removeAllData"></a>removeAllData( ) -</strong> Removes all data sources you have added during your session without removing any displays.
+<p><strong><a name="removeAllData" id="removeAllData"></a>removeAllData( ) -</strong> Removes all data sources added during the current session, without removing any displays.
 <div class="OneTabIndent">Usage: <em>removeAllData()</em></div>
 </p>
 <p>&nbsp;</p>
-<p><strong><a name="expandpath" id="expandpath"></a>expandpath( ) -</strong> Understands environmental variables such as &quot;~&quot; and &quot;..&quot;.&nbsp;For example, on Windows, you can enter&nbsp;'print expandpath(&quot;$HOMEPATH&quot;)', and the output will be \Users\username.</p>
+<p><strong><a name="removeAllLayers" id="removeAllLayers"></a>removeAllLayers( ) -</strong> Removes all layers that have been displayed.
+<div class="OneTabIndent">Usage: <em>removeAllLayers()</em></div></p>
+<p>&nbsp;</p>
+
+</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
 <p>For users looking for more functionality from McIDAS-V scripting, additional
   functions can be found in the Java docs for 
   <a href="http://www.ssec.wisc.edu/visad-docs/javadoc/index.html" target="_blank">visAD</a>, 
