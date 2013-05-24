@@ -600,4 +600,20 @@
     <resource location="%SITEPATH%/gempakparamtable.tbl"/>
     <resource location="%IDVPATH%/gempakparamtable.tbl"/>
   </resources>
+  
+  <!-- Where to find url maps -->
+  <resources name="idv.resource.urlmaps">
+    <resource location="%USERPATH%/urlmaps.xml"/>
+    <resource location="%SITEPATH%/urlmaps.xml"/>
+    <resource location="%APPPATH%/urlmaps.xml"/>
+    <resource location="%IDVPATH%/urlmaps.xml"/>
+  </resources>
+
+  <!-- Where to find variable renaming maps for use at the datasource level -->
+  <resources name="idv.resource.variablerenamer">
+    <resource location="%USERPATH%/varrenamer.xml"/>
+    <resource location="%SITEPATH%/varrenamer.xml"/>
+    <resource location="%APPPATH%/varrenamer.xml"/>
+    <resource location="%IDVPATH%/varrenamer.xml"/>
+  </resources>
 </resourcebundle>
