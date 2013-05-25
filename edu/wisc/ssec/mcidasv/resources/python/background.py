@@ -1031,8 +1031,13 @@ class _Display(_JavaProxy):
         import visad.georef.EarthLocationTuple as EarthLocationTuple
         import ucar.unidata.idv.control.drawing.TextGlyph as TextGlyph
         import ucar.unidata.idv.control.drawing.DrawingGlyph as DrawingGlyph
+
+        # Force into offscreen mode for the moment so drawing control
+        # properties window doesn't flash
+        # (see DisplayControlImpl.createIdvWindow for why this works)
+        initOffScreen = getStaticMcv().getArgsManager().getIsOffScreen()
+        getStaticMcv().getArgsManager().setIsOffScreen(True)
         
-        # TODO: only create one drawingControl for each panel
         # "False" here means do not "initDisplayInThread":
         drawCtl = getStaticMcv().doMakeControl( [],
                 getStaticMcv().getControlDescriptor('drawingcontrol'),
@@ -1041,7 +1046,10 @@ class _Display(_JavaProxy):
         drawCtl.setLegendLabelTemplate(text)
         drawCtl.setShowInDisplayList(False)
         pause()
-        drawCtl.close()  # close the window that pops up..user doesnt need to see
+
+        # set offscreen mode back to whatever it was
+        getStaticMcv().getArgsManager().setIsOffScreen(initOffScreen)
+
         glyph = TextGlyph(drawCtl, None, text)
 
         horAlign = str(alignment[0]).lower()
