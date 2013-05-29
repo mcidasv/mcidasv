@@ -192,6 +192,7 @@ public class EntryStore {
         putEntries(trie, prefEntries);
         putEntries(trie, userEntries);
         putEntries(trie, systemEntries);
+        saveEntries();
     }
 
     /**
