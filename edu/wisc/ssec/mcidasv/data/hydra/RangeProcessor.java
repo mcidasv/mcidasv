@@ -765,6 +765,10 @@ class CloudSat_2B_GEOPROF_RangeProcessor extends RangeProcessor {
 
 	public CloudSat_2B_GEOPROF_RangeProcessor(MultiDimensionReader reader, HashMap metadata) throws Exception {
 		super(reader, metadata);
+                if (scale == null) { // use implicit default value since E05, E06 has removed the scale/offset from the Radar Refl variable
+                   scale = new float[] {100f};
+                   offset = new float[] {0f};
+                }
 	}
 
 	public float[] processRange(short[] values, HashMap subset) {
