@@ -192,8 +192,8 @@ function ParseGitStatus($ACTIVITY_DIR) {
     }
 }
 
-// $EMAIL = "beckys@ssec.wisc.edu,barryr@ssec.wisc.edu,davep@ssec.wisc.edu,robert.carp@ssec.wisc.edu";
-$EMAIL = "jbeavers@ssec.wisc.edu";
+$EMAIL = "beckys@ssec.wisc.edu,barryr@ssec.wisc.edu,davep@ssec.wisc.edu,robert.carp@ssec.wisc.edu,jbeavers@ssec.wisc.edu";
+
 
 // $DOC_DIR="/home/mcidasv/mc-v/docs/userguide/processed";
 $DOC_DIR = "../docs/userguide/processed";
