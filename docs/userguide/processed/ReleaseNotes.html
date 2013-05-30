@@ -123,7 +123,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
   <div><strong> </strong>
     <p> A new version of the netCDF-Java library (4.3.16) is included in this  release. This version of netCDF-Java includes major changes to the way GRIB 1  and 2 files are handled. See  the <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/GribFiles.html" target="_blank"> netCDF-Java GRIB documentation</a> for a more details on these changes. </p>
     <p> One major outcome of this change is that GRIB variable names will now be  generated in a very general way. This means that bundles that were generated  with a previous version of McIDAS-V might break. In order to aid users in the  transition between netCDF-Java 4.2 and 4.3, the netCDF-Java library has provided  a mapping of old variable names and new variable names for the datasets served  on the Unidata THREDDS Data Server (TDS), and this mapping is being used 'under  the hood' in McIDAS-V to minimize the impact of these changes on users. </p>
-    <p> For users reading GRIB files from other locations (local files or other remote  servers), the IDV now allows users to make custom variable name mappings. New  variable mappings should be placed in the McIDAS-V/varrenamer.xml file. The structure of this file is quite simple: </p>
+    <p> For users reading GRIB files from other locations (local files or other remote  servers), McIDAS-V now allows users to make custom variable name mappings. New  variable mappings should be placed in the McIDAS-V/varrenamer.xml file. The structure of this file is quite simple: </p>
     <p><tt> &lt;varrenamers&gt;<br>
       <br>
       &nbsp;&nbsp;&lt;varrenamer<br>
