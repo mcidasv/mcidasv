@@ -470,7 +470,7 @@ public class SystemState {
      * to characterize what we're interested in, so let's leave it at 
      * {@literal "whatever seems useful"}.
      * 
-     * @param The McIDASV {@literal "god"} object.
+     * @param mcv The McIDASV {@literal "god"} object.
      * 
      * @return Information about the state of McIDAS-V.
      */
@@ -520,7 +520,7 @@ public class SystemState {
      * Builds a (filtered) subset of the McIDAS-V system properties and returns
      * the results as a {@code String}.
      * 
-     * @param The McIDASV {@literal "god"} object.
+     * @param mcv The McIDASV {@literal "god"} object.
      * 
      * @return The McIDAS-V system properties in the following format: 
      * {@code KEY=VALUE\n}. This is so we kinda-sorta conform to the standard
@@ -536,7 +536,7 @@ public class SystemState {
      * Builds the McIDAS-V system properties and returns the results as a 
      * {@code String}.
      * 
-     * @param The McIDASV {@literal "god"} object.
+     * @param mcv The McIDASV {@literal "god"} object.
      * @param firehose If {@code true}, enables {@literal "unfiltered"} output.
      * 
      * @return The McIDAS-V system properties in the following format: 
