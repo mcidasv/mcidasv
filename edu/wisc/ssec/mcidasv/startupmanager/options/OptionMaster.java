@@ -42,12 +42,10 @@ import java.util.Map;
 import java.util.Set;
 
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
-import edu.wisc.ssec.mcidasv.startupmanager.StartupManager.Platform;
+import edu.wisc.ssec.mcidasv.startupmanager.Platform;
 
-public enum OptionMaster {
-    /** The lone OptionMaster instance. */
-    INSTANCE;
-
+public class OptionMaster {
+    
     // TODO(jon): write CollectionHelpers.zip() and CollectionHelpers.zipWith()
     public final Object[][] blahblah = {
         { "HEAP_SIZE", "Memory", "512m", Type.MEMORY, OptionPlatform.ALL, Visibility.VISIBLE },
@@ -72,14 +70,14 @@ public enum OptionMaster {
         // temp bandaid for people suffering from permgen problems.
         { "USE_CMSGC", "Enable concurrent mark-sweep garbage collector", "0", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
     };
-
+    
     /**
      * {@link Option}s can be either platform-specific or applicable to all
      * platforms. Options that are platform-specific still appear in the 
      * UI, but their component is not enabled.
      */
     public enum OptionPlatform { ALL, UNIXLIKE, WINDOWS };
-
+    
     /**
      * The different types of {@link Option}s.
      * @see TextOption
@@ -87,21 +85,30 @@ public enum OptionMaster {
      * @see MemoryOption
      */
     public enum Type { TEXT, BOOLEAN, MEMORY, DIRTREE, SLIDER };
-
+    
     /** 
      * Different ways that an {@link Option} might be displayed.
      */
     public enum Visibility { VISIBLE, HIDDEN };
-
+    
     /** Maps an option ID to the corresponding object. */
     private final Map<String, Option> optionMap;
-
+    
+    private static OptionMaster instance;
+    
     OptionMaster() {
         normalizeUserDirectory();
         optionMap = buildOptions(blahblah);
 //        readStartup();
     }
-
+    
+    public static OptionMaster getInstance() {
+        if (instance == null) {
+            instance = new OptionMaster();
+        }
+        return instance;
+    }
+    
     /**
      * Creates the specified options and returns a mapping of the option ID
      * to the actual {@link Option} object.
@@ -117,7 +124,7 @@ public enum OptionMaster {
         // TODO(jon): seriously, get that zip stuff working! this array 
         // stuff is BAD.
         Map<String, Option> optMap = new HashMap<String, Option>();
-
+        
         for (Object[] arrayOption : options) {
             String id = (String)arrayOption[0];
             String label = (String)arrayOption[1];
@@ -125,7 +132,7 @@ public enum OptionMaster {
             Type type = (Type)arrayOption[3];
             OptionPlatform platform = (OptionPlatform)arrayOption[4];
             Visibility visibility = (Visibility)arrayOption[5];
-
+            
             Option newOption;
             switch (type) {
                 case TEXT:
@@ -154,7 +161,7 @@ public enum OptionMaster {
         }
         return optMap;
     }
-
+    
     /**
      * Converts a {@link Platform} to its corresponding 
      * {@link OptionPlatform} type.
@@ -166,15 +173,17 @@ public enum OptionMaster {
      */
     // a lame-o hack :(
     protected OptionPlatform convertToOptionPlatform() {
-        Platform platform = StartupManager.INSTANCE.getPlatform();
+        Platform platform = StartupManager.getInstance().getPlatform();
         switch (platform) {
-            case WINDOWS: return OptionPlatform.WINDOWS;
-            case UNIXLIKE: return OptionPlatform.UNIXLIKE;
+            case WINDOWS: 
+                return OptionPlatform.WINDOWS;
+            case UNIXLIKE: 
+                return OptionPlatform.UNIXLIKE;
             default: 
                 throw new AssertionError("Unknown platform: " + platform);
         }
     }
-
+    
     /**
      * Returns the {@link Option} mapped to {@code id}.
      * 
@@ -186,100 +195,105 @@ public enum OptionMaster {
     public Option getOption(final String id) {
         return optionMap.get(id);
     }
-
+    
     // TODO(jon): getAllOptions and optionsBy* really need some work.
     // I want to eventually do something like:
     // Collection<Option> = getOpts().byPlatform(WINDOWS, ALL).byType(BOOLEAN).byVis(HIDDEN)
     public Collection<Option> getAllOptions() {
         return Collections.unmodifiableCollection(optionMap.values());
     }
-
+    
     public Collection<Option> optionsByPlatform(
         final Set<OptionPlatform> platforms) 
     {
-        if (platforms == null)
+        if (platforms == null) {
             throw new NullPointerException();
-
+        }
         Collection<Option> allOptions = getAllOptions();
         Collection<Option> filteredOptions = 
             new ArrayList<Option>(allOptions.size());
-        for (Option option : allOptions)
-            if (platforms.contains(option.getOptionPlatform()))
+        for (Option option : allOptions) {
+            if (platforms.contains(option.getOptionPlatform())) {
                 filteredOptions.add(option);
-//      return Collections.unmodifiableCollection(filteredOptions);
+            }
+        }
         return filteredOptions;
     }
-
+    
     public Collection<Option> optionsByType(final Set<Type> types) {
-        if (types == null)
+        if (types == null) {
             throw new NullPointerException();
-
+        }
         Collection<Option> allOptions = getAllOptions();
         Collection<Option> filteredOptions = 
             new ArrayList<Option>(allOptions.size());
-        for (Option option : allOptions)
-            if (types.contains(option.getOptionType()))
+        for (Option option : allOptions) {
+            if (types.contains(option.getOptionType())) {
                 filteredOptions.add(option);
-//      return Collections.unmodifiableCollection(filteredOptions);
+            }
+        }
         return filteredOptions;
     }
-
+    
     public Collection<Option> optionsByVisibility(
         final Set<Visibility> visibilities) 
     {
-        if (visibilities == null)
+        if (visibilities == null) {
             throw new NullPointerException();
-
+        }
         Collection<Option> allOptions = getAllOptions();
         Collection<Option> filteredOptions = 
             new ArrayList<Option>(allOptions.size());
-        for (Option option : allOptions)
-            if (visibilities.contains(option.getOptionVisibility()))
+        for (Option option : allOptions) {
+            if (visibilities.contains(option.getOptionVisibility())) {
                 filteredOptions.add(option);
-//        return Collections.unmodifiableCollection(filteredOptions);
+            }
+        }
         return filteredOptions;
     }
-
+    
     private void normalizeUserDirectory() {
-        Platform platform = StartupManager.INSTANCE.getPlatform();
+        StartupManager startup = StartupManager.getInstance();
+        Platform platform = startup.getPlatform();
         File dir = new File(platform.getUserDirectory());
         File prefs = new File(platform.getUserPrefs());
-
-        if (!dir.exists())
+        
+        if (!dir.exists()) {
             dir.mkdir();
-
+        }
         if (!prefs.exists()) {
             try {
                 File defaultPrefs = new File(platform.getDefaultPrefs());
-                StartupManager.INSTANCE.copy(defaultPrefs, prefs);
+                startup.copy(defaultPrefs, prefs);
             } catch (IOException e) {
                 System.err.println("Non-fatal error copying user preference template: "+e.getMessage());
             }
         }
     }
-
+    
     public void readStartup() {
         String contents;
         String line;
-
+        
         File script = 
-            new File(StartupManager.INSTANCE.getPlatform().getUserPrefs());
+            new File(StartupManager.getInstance().getPlatform().getUserPrefs());
         System.err.println("reading "+script);
-        if (script.getPath().length() == 0)
+        if (script.getPath().isEmpty()) {
             return;
-
+        }
         try {
             BufferedReader br = new BufferedReader(new FileReader(script));
             while ((line = br.readLine()) != null) {
-                if (line.startsWith("#"))
+                if (line.startsWith("#")) {
                     continue;
-
+                }
                 contents = line.replace("=\"", "=");
                 String[] chunks = contents.replace("SET ", "").split("=");
                 if (chunks.length == 2) {
                     Option option = getOption(chunks[0]);
-                    if (option != null)
+                    if (option != null) {
                         option.fromPrefsFormat(line);
+                    }
                 }
             }
             br.close();
@@ -287,25 +301,26 @@ public enum OptionMaster {
             System.err.println("Non-fatal error reading the user preferences: "+e.getMessage());
         }
     }
-
+    
     public void writeStartup() {
         File script = 
-            new File(StartupManager.INSTANCE.getPlatform().getUserPrefs());
-        if (script.getPath().length() == 0)
+            new File(StartupManager.getInstance().getPlatform().getUserPrefs());
+        if (script.getPath().isEmpty()) {
             return;
-
+        }
         // TODO(jon): use filters when you've made 'em less stupid
         String newLine = 
-            StartupManager.INSTANCE.getPlatform().getNewLine();
+                StartupManager.getInstance().getPlatform().getNewLine();
         OptionPlatform currentPlatform = convertToOptionPlatform();
         StringBuilder contents = new StringBuilder();
         for (Object[] arrayOption : blahblah) {
             Option option = getOption((String)arrayOption[0]);
             OptionPlatform platform = option.getOptionPlatform();
-            if (platform == OptionPlatform.ALL || platform == currentPlatform)
+            if (platform == OptionPlatform.ALL || platform == currentPlatform) {
                 contents.append(option.toPrefsFormat() + newLine);
+            }
         }
-
+        
         try {
             BufferedWriter out = 
                 new BufferedWriter(new FileWriter(script));

@@ -1213,17 +1213,25 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
-     * Return the current {@literal "userpath"}
+     * Return the current {@literal "userpath"}.
+     * 
+     * @return Path to the user's {@literal "McIDAS-V directory"}.
      */
     public String getUserDirectory() {
-        return StartupManager.INSTANCE.getPlatform().getUserDirectory();
+        return StartupManager.getInstance().getPlatform().getUserDirectory();
     }
 
     /**
-     * Return the path to a file within {@literal "userpath"}
+     * Return the path to a file within {@literal "userpath"}.
+     * 
+     * @param filename File within the userpath.
+     * 
+     * @return Path to a file within the user's {@literal "McIDAS-V directory"}.
+     * No path validation is performed, so please be aware that the returned
+     * path may not exist.
      */
     public String getUserFile(String filename) {
-        return StartupManager.INSTANCE.getPlatform().getUserFile(filename);
+        return StartupManager.getInstance().getPlatform().getUserFile(filename);
     }
 
     /**
@@ -1375,12 +1383,12 @@ public class McIDASV extends IntegratedDataViewer {
         assert path != null : "Cannot create a null path";
         FileOutputStream out = null;
         PrintStream p = null;
-
-        File dir = new File(StartupManager.INSTANCE.getPlatform().getUserDirectory());
+        
+        File dir = new File(StartupManager.getInstance().getPlatform().getUserDirectory());
         if (!dir.exists()) {
             dir.mkdir();
         }
-
+        
         try {
             out = new FileOutputStream(path);
             p = new PrintStream(out);
@@ -1494,7 +1502,7 @@ public class McIDASV extends IntegratedDataViewer {
      * @see #SESSION_FILE
      */
     public static String getSessionFilePath() {
-        return StartupManager.INSTANCE.getPlatform().getUserFile("session.tmp");
+        return StartupManager.getInstance().getPlatform().getUserFile("session.tmp");
     }
 
     /**
