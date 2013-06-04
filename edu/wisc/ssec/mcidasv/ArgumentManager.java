@@ -65,7 +65,7 @@ public class ArgumentManager extends ArgsManager {
     /**
      *  Given by the "-user" argument. Alternative user path for bundles,  resources, etc.
      */
-    String defaultUserDirectory = StartupManager.INSTANCE.getPlatform().getUserDirectory();
+    String defaultUserDirectory = StartupManager.getInstance().getPlatform().getUserDirectory();
 
     /**
      * Just bubblin' on up the inheritance hierarchy.

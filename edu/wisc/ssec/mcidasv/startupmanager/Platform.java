@@ -154,11 +154,11 @@ public enum Platform {
      * @return Path to a file in the user's directory.
      */
     public String getUserFile(String filename) {
-        return getUserDirectory()+pathSeparator+filename;
+        return getUserDirectory() + pathSeparator + filename;
     }
     
     public String getUserBundles() {
-        return getUserDirectory()+pathSeparator+"bundles";
+        return getUserDirectory() + pathSeparator + "bundles";
     }
     
     /**

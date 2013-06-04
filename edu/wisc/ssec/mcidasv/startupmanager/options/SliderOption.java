@@ -57,7 +57,7 @@ public class SliderOption extends AbstractOption {
             Visibility optionVisibility) 
     {
         super(id, label, Type.SLIDER, optionPlatform, optionVisibility);
-        total = StartupManager.INSTANCE.getPlatform().getAvailableMemory();
+        total = StartupManager.getInstance().getPlatform().getAvailableMemory();
         setValue(defaultValue);
     }
     

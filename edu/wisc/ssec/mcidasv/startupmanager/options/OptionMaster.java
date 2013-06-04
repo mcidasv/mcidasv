@@ -166,7 +166,7 @@ public enum OptionMaster {
      */
     // a lame-o hack :(
     protected OptionPlatform convertToOptionPlatform() {
-        Platform platform = StartupManager.INSTANCE.getPlatform();
+        Platform platform = StartupManager.getInstance().getPlatform();
         switch (platform) {
             case WINDOWS: 
                 return OptionPlatform.WINDOWS;
@@ -246,7 +246,8 @@ public enum OptionMaster {
     }
     
     private void normalizeUserDirectory() {
-        Platform platform = StartupManager.INSTANCE.getPlatform();
+        StartupManager startup = StartupManager.getInstance();
+        Platform platform = startup.getPlatform();
         File dir = new File(platform.getUserDirectory());
         File prefs = new File(platform.getUserPrefs());
         
@@ -256,7 +257,7 @@ public enum OptionMaster {
         if (!prefs.exists()) {
             try {
                 File defaultPrefs = new File(platform.getDefaultPrefs());
-                StartupManager.INSTANCE.copy(defaultPrefs, prefs);
+                startup.copy(defaultPrefs, prefs);
             } catch (IOException e) {
                 System.err.println("Non-fatal error copying user preference template: "+e.getMessage());
             }
@@ -268,7 +269,7 @@ public enum OptionMaster {
         String line;
         
         File script = 
-            new File(StartupManager.INSTANCE.getPlatform().getUserPrefs());
+            new File(StartupManager.getInstance().getPlatform().getUserPrefs());
         System.err.println("reading "+script);
         if (script.getPath().isEmpty()) {
             return;
@@ -296,13 +297,13 @@ public enum OptionMaster {
     
     public void writeStartup() {
         File script = 
-            new File(StartupManager.INSTANCE.getPlatform().getUserPrefs());
+            new File(StartupManager.getInstance().getPlatform().getUserPrefs());
         if (script.getPath().isEmpty()) {
             return;
         }
         // TODO(jon): use filters when you've made 'em less stupid
         String newLine = 
-            StartupManager.INSTANCE.getPlatform().getNewLine();
+                StartupManager.getInstance().getPlatform().getNewLine();
         OptionPlatform currentPlatform = convertToOptionPlatform();
         StringBuilder contents = new StringBuilder();
         for (Object[] arrayOption : blahblah) {

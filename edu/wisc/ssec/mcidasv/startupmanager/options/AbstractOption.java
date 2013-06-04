@@ -112,7 +112,7 @@ public abstract class AbstractOption implements Option {
     private boolean isValidPrefFormat(final String text) {
         assert text != null;
         boolean hasSet = text.contains("SET ");
-        boolean isWin = (StartupManager.INSTANCE.getPlatform() == Platform.WINDOWS);
+        boolean isWin = (StartupManager.getInstance().getPlatform() == Platform.WINDOWS);
         return (isWin == hasSet);
     }
 
@@ -183,7 +183,7 @@ public abstract class AbstractOption implements Option {
             throw new IllegalArgumentException("Incorrect syntax for this platform: " + text);
         }
         String copy = new String(text);
-        if (StartupManager.INSTANCE.getPlatform() == Platform.WINDOWS) {
+        if (StartupManager.getInstance().getPlatform() == Platform.WINDOWS) {
             copy = copy.replace("SET ", "");
         }
         String[] chunks = copy.split("=");
@@ -207,7 +207,7 @@ public abstract class AbstractOption implements Option {
     public String toPrefsFormat() {
         StringBuilder str = new StringBuilder(optionId);
         String value = getValue();
-        if (StartupManager.INSTANCE.getPlatform() == Platform.WINDOWS) {
+        if (StartupManager.getInstance().getPlatform() == Platform.WINDOWS) {
             str.insert(0, "SET ");
         }
         return str.append("=").append(value).toString();

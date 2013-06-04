@@ -84,9 +84,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 // using an enum to enforce singleton-ness is a hack, but it's been pretty 
 // effective. OptionMaster is used in a similar way. The remaining enums are 
 // used in the more traditional fashion.
-public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
-    /** Lone instance of the startup manager. */
-    INSTANCE;
+public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
     
     // TODO(jon): replace
     public static final String[][] PREF_PANELS = {
@@ -138,6 +136,19 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
     
     /** Contains the various buttons (Apply, Ok, Help, Cancel). */
     private JPanel COMMAND_ROW_PANEL;
+    
+    private static StartupManager instance;
+    
+    private StartupManager() {
+        
+    }
+    
+    public static StartupManager getInstance() {
+        if (instance == null) {
+            instance = new StartupManager();
+        }
+        return instance;
+    }
     
     /**
      * Creates and returns the rendering hints for the GUI. 
@@ -524,7 +535,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             super("Apply");
         }
         public void actionPerformed(final ActionEvent e) {
-            StartupManager.INSTANCE.handleApply();
+            StartupManager.getInstance().handleApply();
         }
     }
     
@@ -533,7 +544,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             super("OK");
         }
         public void actionPerformed(final ActionEvent e) {
-            StartupManager.INSTANCE.handleOk();
+            StartupManager.getInstance().handleOk();
         }
     }
     
@@ -542,7 +553,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             super("Help");
         }
         public void actionPerformed(final ActionEvent e) {
-            StartupManager.INSTANCE.handleHelp();
+            StartupManager.getInstance().handleHelp();
         }
     }
     
@@ -551,7 +562,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             super("Cancel");
         }
         public void actionPerformed(final ActionEvent e) {
-            StartupManager.INSTANCE.handleCancel();
+            StartupManager.getInstance().handleCancel();
         }
     }
     
@@ -605,7 +616,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
     }
     
     public static int getMaximumHeapSize() {
-        int sysmem = StartupManager.INSTANCE.getPlatform().getAvailableMemory();
+        int sysmem = StartupManager.getInstance().getPlatform().getAvailableMemory();
         if (sysmem > Constants.MAX_MEMORY_32BIT &&
                 System.getProperty("os.arch").indexOf("64") < 0) {
             return Constants.MAX_MEMORY_32BIT;
@@ -657,7 +668,7 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         if (args == null) {
             throw new NullPointerException("Arguments list cannot be null");
         }
-        StartupManager sm = StartupManager.INSTANCE;
+        StartupManager sm = StartupManager.getInstance();
         Platform platform = sm.getPlatform();
         
         Properties props = getArgs(ignoreUnknown, fromStartupManager, args, getDefaultProperties());
@@ -667,6 +678,6 @@ public enum StartupManager implements edu.wisc.ssec.mcidasv.Constants {
     
     public static void main(String[] args) {
         applyArgs(false, true, args);
-        StartupManager.INSTANCE.createDisplay();
+        StartupManager.getInstance().createDisplay();
     }
 }

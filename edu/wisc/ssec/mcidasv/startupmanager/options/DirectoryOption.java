@@ -115,7 +115,7 @@ public class DirectoryOption extends AbstractOption {
         
         JPanel panel = new JPanel(new BorderLayout());
         
-        String path = StartupManager.INSTANCE.getPlatform().getUserBundles();
+        String path = StartupManager.getInstance().getPlatform().getUserBundles();
         DefaultMutableTreeNode root = getRootNode(path);
         if (root == null) {
             return panel;
