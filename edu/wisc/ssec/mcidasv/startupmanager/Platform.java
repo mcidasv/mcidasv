@@ -87,7 +87,7 @@ public enum Platform {
         
         String osName = System.getProperty("os.name");
         if (osName.startsWith("Mac OS X")) {
-            this.userDirectory = System.getProperty("user.home") + pathSeparator + "Documents" + pathSeparator + Constants.USER_DIRECTORY_NAME;             
+            this.userDirectory = System.getProperty("user.home") + pathSeparator + "Documents" + pathSeparator + Constants.USER_DIRECTORY_NAME;
         } else {
             this.userDirectory = System.getProperty("user.home") + pathSeparator + Constants.USER_DIRECTORY_NAME;
         }
@@ -154,11 +154,11 @@ public enum Platform {
      * @return Path to a file in the user's directory.
      */
     public String getUserFile(String filename) {
-        return getUserDirectory()+pathSeparator+filename;
+        return getUserDirectory() + pathSeparator + filename;
     }
     
     public String getUserBundles() {
-        return getUserDirectory()+pathSeparator+"bundles";
+        return getUserDirectory() + pathSeparator + "bundles";
     }
     
     /**

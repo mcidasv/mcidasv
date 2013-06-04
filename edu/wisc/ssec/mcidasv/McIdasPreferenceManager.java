@@ -35,7 +35,6 @@ import static javax.swing.GroupLayout.DEFAULT_SIZE;
 import static javax.swing.GroupLayout.PREFERRED_SIZE;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 
-
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -121,6 +120,7 @@ import visad.Unit;
 import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
 import edu.wisc.ssec.mcidasv.servermanager.AddePreferences;
 import edu.wisc.ssec.mcidasv.servermanager.AddePreferences.AddePrefConglomeration;
+import edu.wisc.ssec.mcidasv.startupmanager.Platform;
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.ui.McvToolbarEditor;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
@@ -771,17 +771,19 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         threadsPanel.setBorder(BorderFactory.createTitledBorder("Java Threads"));
 
         // Build the startup options panel
-        StartupManager.INSTANCE.getPlatform().setUserDirectory(
+        final StartupManager startup = StartupManager.getInstance();
+        Platform platform = startup.getPlatform();
+        platform.setUserDirectory(
                 mcv.getObjectStore().getUserDirectory().toString());
-        StartupManager.INSTANCE.getPlatform().setAvailableMemory(
+        platform.setAvailableMemory(
                mcv.getStateManager().getProperty(Constants.PROP_SYSMEM, "0"));
-        JPanel smPanel = StartupManager.INSTANCE.getAdvancedPanel(true);
+        JPanel smPanel = startup.getAdvancedPanel(true);
         List<JPanel> stuff = Collections.singletonList(smPanel);
 
         PreferenceManager advancedManager = new PreferenceManager() {
             public void applyPreference(XmlObjectStore theStore, Object data) {
                 IdvPreferenceManager.applyWidgets((Hashtable)data, theStore);
-                StartupManager.INSTANCE.handleApply();
+                startup.handleApply();
             }
         };
 

@@ -62,66 +62,79 @@ public class MemoryOption extends AbstractOption implements ActionListener {
         GIGA("G", "gigabytes"),
         TERA("T", "terabytes"),
         PERCENT("P", "percent");
-
+        
         private final String javaChar;
         private final String name;
-
+        
         private Prefix(final String javaChar, final String name) {
             this.javaChar = javaChar;
             this.name = name;
         }
-
+        
         public String getJavaChar() {
             return javaChar.toUpperCase();
         }
-
+        
         public String getName() {
             return name;
         }
-
+        
         public String getJavaFormat(final String value) {
             long longVal = Long.parseLong(value);
             return longVal + javaChar;
         }
-
+        
         @Override public String toString() {
             return name;
         }
     }
-
+    
     private enum State { 
         VALID(Color.BLACK, Color.WHITE),
         WARN(Color.BLACK, new Color(255, 255, 204)),
         ERROR(Color.WHITE, Color.PINK);
-
+        
         private final Color foreground;
+        
         private final Color background;
-
+        
         private State(final Color foreground, final Color background) {
             this.foreground = foreground;
             this.background = background;
         }
         
-        public Color getForeground() { return foreground; }
-        public Color getBackground() { return background; }
+        public Color getForeground() { 
+            return foreground; 
+        }
+        
+        public Color getBackground() { 
+            return background; 
+        }
     }
-
+    
     private final static Prefix[] PREFIXES = { Prefix.MEGA, Prefix.GIGA, Prefix.TERA };
+    
     private Prefix currentPrefix = Prefix.MEGA;
-
+    
     private static final Pattern MEMSTRING = 
         Pattern.compile("^(\\d+)([M|G|T|P]?)$", Pattern.CASE_INSENSITIVE);
-
+    
     private final String defaultPrefValue;
+    
     private String failsafeValue = "512M";
+    
     private String value = failsafeValue; // bootstrap
-
+    
     private JRadioButton jrbSlider = new JRadioButton();
+    
     private JRadioButton jrbNumber = new JRadioButton();
+    
     private ButtonGroup jtbBg = GuiUtils.buttonGroup(jrbSlider, jrbNumber);
-
+    
     private JPanel sliderPanel = new JPanel();
+    
     private JLabel sliderLabel = new JLabel();
+    
     private JSlider slider = new JSlider();
 
     private JPanel textPanel = new JPanel();
@@ -164,8 +177,9 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     private String[] getNames(final Prefix[] arr) {
         assert arr != null;
         String[] newArr = new String[arr.length];
-        for (int i = 0; i < arr.length; i++)
+        for (int i = 0; i < arr.length; i++) {
             newArr[i] = arr[i].getName();
+        }
         return newArr;
     }
 
@@ -185,28 +199,30 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equals("slider")) {
+        if ("slider".equals(e.getActionCommand())) {
             GuiUtils.enableTree(sliderPanel, true);
             GuiUtils.enableTree(textPanel, false);
             // Trigger the listener
             int sliderValue = slider.getValue();
-            if (sliderValue==minSliderValue)
-            	slider.setValue(maxSliderValue);
-            else
-            	slider.setValue(minSliderValue);
+            if (sliderValue==minSliderValue) {
+                slider.setValue(maxSliderValue);
+            } else {
+                slider.setValue(minSliderValue);
+            }
             slider.setValue(sliderValue);
-        }
-        else {
+        } else {
             GuiUtils.enableTree(sliderPanel, false);
             GuiUtils.enableTree(textPanel, true);
             // Trigger the listener
             handleNewValue(text, memVals);
         }
     }
-
+    
     public ChangeListener percentListener = new ChangeListener() {
         public void stateChanged(ChangeEvent evt) {
-            if (!sliderPanel.isEnabled()) return;
+            if (!sliderPanel.isEnabled()) {
+                return;
+            }
             int sliderValue = ((JSlider)evt.getSource()).getValue();
             setValue(sliderValue + Prefix.PERCENT.getJavaChar());
             text.setText("" + Math.round(sliderValue / 100.0 * maxmem));
@@ -217,44 +233,44 @@ public class MemoryOption extends AbstractOption implements ActionListener {
         if (!textPanel.isEnabled()) return;
         assert field != null;
         assert box != null;
-
+        
         try {
             String newValue = field.getText();
             String huh = ((Prefix)box.getSelectedItem()).getJavaFormat(newValue);
-
-            if (!isValid())
+            
+            if (!isValid()) {
                 setState(State.VALID);
-
+            }
             setValue(huh);
         } catch (IllegalArgumentException e) {
             setState(State.ERROR);
             text.setToolTipText("This value must be an integer greater than zero.");
         }
     }
-
+    
     public JComponent getComponent() {
         JPanel topPanel = GuiUtils.hbox(jrbSlider, getSliderComponent());
         JPanel bottomPanel = GuiUtils.hbox(jrbNumber, getTextComponent());
         if (isSlider()) {
             GuiUtils.enableTree(sliderPanel, true);
             GuiUtils.enableTree(textPanel, false);
-        }
-        else {
+        } else {
             GuiUtils.enableTree(sliderPanel, false);
             GuiUtils.enableTree(textPanel, true);
         }
-        if (maxmem==0) {
-        	jrbSlider.setEnabled(false);
-//        	jrbNumber.setEnabled(false);
+        if (maxmem == 0) {
+            jrbSlider.setEnabled(false);
         }
         doneInit = true;
         return McVGuiUtils.topBottom(topPanel, bottomPanel, null);
     }
     
     public JComponent getSliderComponent() {
-        sliderLabel = new JLabel("Use "+initSliderValue+"% ");
+        sliderLabel = new JLabel("Use " + initSliderValue + "% ");
         String memoryString = maxmem + "mb";
-        if (maxmem==0) memoryString="Unknown";
+        if (maxmem == 0) {
+            memoryString="Unknown";
+        }
         JLabel postLabel = new JLabel(" of available memory (" + memoryString + ")");
         JComponent[] sliderComps = GuiUtils.makeSliderPopup(minSliderValue, maxSliderValue+1, initSliderValue, percentListener);
         slider = (JSlider) sliderComps[1];
@@ -268,7 +284,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
         sliderPanel = GuiUtils.hbox(sliderLabel, sliderComps[0], postLabel);
         return sliderPanel;
     }
-
+    
     public JComponent getTextComponent() {
         text.setText(initTextValue);
         text.addKeyListener(new KeyAdapter() {
@@ -287,16 +303,17 @@ public class MemoryOption extends AbstractOption implements ActionListener {
         textPanel = GuiUtils.hbox(text, memVals);
         return textPanel;
     }
-
+    
     public String toString() {
         return String.format(
             "[MemoryOption@%x: value=%s, currentPrefix=%s, isSlider=%s]", 
             hashCode(), value, currentPrefix, isSlider());
     }
-
+    
     public String getValue() {
-        if (!isValid())
+        if (!isValid()) {
             return defaultPrefValue;
+        }
         return currentPrefix.getJavaFormat(value);
     }
 
@@ -304,54 +321,58 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     // can be replaced with a legal val.
     @Override public void fromPrefsFormat(final String prefText) {
         try {
-        	super.fromPrefsFormat(prefText);
+            super.fromPrefsFormat(prefText);
         } catch (IllegalArgumentException e) {
             setValue(failsafeValue);
         }
     }
-
-    public void setValue(final String newValue) {   	
+    
+    public void setValue(final String newValue) {
         Matcher m = MEMSTRING.matcher(newValue);
-        if (!m.matches())
+        if (!m.matches()) {
             throw new IllegalArgumentException("Badly formatted memory string: "+newValue);
-
+        }
         String quantity = m.group(1);
         String prefix = m.group(2);
         
         // Fall back on failsafe value if user wants a percentage of an unknown maxmem
         if (maxmem==0 && prefix.toUpperCase().equals(Prefix.PERCENT.getJavaChar())) {
             m = MEMSTRING.matcher(failsafeValue);
-            if (!m.matches())
+            if (!m.matches()) {
                 throw new IllegalArgumentException("Badly formatted memory string: "+failsafeValue);
+            }
             quantity = m.group(1);
             prefix = m.group(2);
         }
 
         int intVal = Integer.parseInt(quantity);
-        if (intVal <= 0)
+        if (intVal <= 0) {
             throw new IllegalArgumentException("Memory cannot be less than or equal to zero: "+newValue);
-        if (prefix.length() == 0)
+        }
+        if (prefix.isEmpty()) {
             prefix = "M";
-        
+        }
         value = quantity;
         
         if (prefix.toUpperCase().equals(Prefix.PERCENT.getJavaChar())) {
             currentPrefix = Prefix.PERCENT;
-
+            
             // Work around all the default settings going on
             initSliderValue = Integer.parseInt(value);
             initPrefixValue = Prefix.MEGA;
             initTextValue = "" + (int)Math.round(initSliderValue * maxmem / 100.0);
-
-            sliderLabel.setText("Use "+value+"% ");
-            if (maxmem>0) {
+            
+            sliderLabel.setText("Use " + value + "% ");
+            if (maxmem > 0) {
                 memVals.setSelectedItem(initPrefixValue);
                 text.setText(initTextValue);
             }
-            if (!doneInit) jrbSlider.setSelected(true);
+            if (!doneInit) {
+                jrbSlider.setSelected(true);
+            }
             return;
         }
-
+        
         for (Prefix tmp : PREFIXES) {
             if (prefix.toUpperCase().equals(tmp.getJavaChar())) {
                 currentPrefix = tmp;
@@ -374,7 +395,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
                 return;
             }
         }
-
+        
         throw new IllegalArgumentException("Could not find matching memory prefix for \""+prefix+"\" in string: "+newValue);
     }
 }

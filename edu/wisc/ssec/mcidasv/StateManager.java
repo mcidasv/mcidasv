@@ -74,7 +74,7 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
         IdvObjectStore store = new IdvObjectStore(getIdv(),
                                    getStoreSystemName(), getStoreName(),
                                    getIdv().getEncoderForRead(),
-                               	   StartupManager.INSTANCE.getPlatform().getUserDirectory());
+                                   StartupManager.getInstance().getPlatform().getUserDirectory());
         initObjectStore(store);
         return store;
     }
@@ -229,7 +229,7 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
      * Overridden to set default of McIDAS-V
      */
     public String getStoreSystemName() {
-        return StartupManager.INSTANCE.getPlatform().getUserDirectory();
+        return StartupManager.getInstance().getPlatform().getUserDirectory();
     }
 
     /**
@@ -518,7 +518,7 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 	}
 	
 	private String getNoticePath() {
-        return StartupManager.INSTANCE.getPlatform().getUserFile("notice.txt");
+        return StartupManager.getInstance().getPlatform().getUserFile("notice.txt");
 	}
 
 	private String getNoticeCached() {

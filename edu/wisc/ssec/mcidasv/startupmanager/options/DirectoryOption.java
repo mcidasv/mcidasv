@@ -56,22 +56,23 @@ import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.Visibility;
 
 public class DirectoryOption extends AbstractOption {
     private DefaultMutableTreeNode selected = null;
+    
     private String value = "";
+    
     private final String defaultValue;
-
+    
     public DirectoryOption(final String id, final String label, final String defaultValue, final OptionPlatform optionPlatform, final Visibility optionVisibility) {
         super(id, label, Type.DIRTREE, optionPlatform, optionVisibility);
         this.defaultValue = defaultValue;
-
         setValue(defaultValue);
     }
-
+    
     private void exploreDirectory(final String directory, final DefaultMutableTreeNode parent) {
         assert directory != null : "Cannot traverse a null directory";
-
+        
         File dir = new File(directory);
         assert dir.exists() : "Cannot traverse a directory that does not exist";
-
+        
         for (File f : dir.listFiles()) {
             DefaultMutableTreeNode current = new DefaultMutableTreeNode(f);
             if (f.isDirectory()) {
@@ -84,7 +85,7 @@ public class DirectoryOption extends AbstractOption {
             }
         }
     }
-
+    
     private DefaultMutableTreeNode getRootNode(final String path) {
         File bundleDir = new File(path);
         if (bundleDir.isDirectory()) {
@@ -93,17 +94,18 @@ public class DirectoryOption extends AbstractOption {
         }
         return null;
     }
-
+    
     private void useSelectedTreeValue(final JTree tree) {
         assert tree != null : "cannot use a null JTree";
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
-
+        
         File f = (File)node.getUserObject();
-        if (f.isDirectory())
+        if (f.isDirectory()) {
             setValue(defaultValue);
-        else
+        } else {
             setValue(node.toString());
-
+        }
+        
         TreePath nodePath = new TreePath(node.getPath());
         tree.setSelectionPath(nodePath);
         tree.scrollPathToVisible(nodePath);
@@ -112,11 +114,13 @@ public class DirectoryOption extends AbstractOption {
     public JComponent getComponent() {
         
         JPanel panel = new JPanel(new BorderLayout());
-
-        String path = StartupManager.INSTANCE.getPlatform().getUserBundles();
+        
+        String path = StartupManager.getInstance().getPlatform().getUserBundles();
         DefaultMutableTreeNode root = getRootNode(path);
-        if (root == null) return panel;
-//            throw new AssertionError("Directory missing; can't traverse "+path);
+        if (root == null) {
+            return panel;
+        }
+        
         final JTree tree = new JTree(root);
         tree.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(final TreeSelectionEvent e) {
@@ -126,12 +130,12 @@ public class DirectoryOption extends AbstractOption {
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         JScrollPane scroller = new JScrollPane(tree);
         exploreDirectory(path, root);
-
+        
         ToolTipManager.sharedInstance().registerComponent(tree);
         tree.setCellRenderer(new TreeCellRenderer());
-        scroller.setPreferredSize(new Dimension(140,130));
+        scroller.setPreferredSize(new Dimension(140, 130));
         tree.expandRow(0);
-
+        
         if (selected != null) {
             TreePath nodePath = new TreePath(selected.getPath());
             tree.setSelectionPath(nodePath);
@@ -149,24 +153,24 @@ public class DirectoryOption extends AbstractOption {
                 }
             }
         });
-
+        
         panel.add(enabled, BorderLayout.PAGE_START);
         panel.add(scroller, BorderLayout.PAGE_END);
         return panel;
     }
-
+    
     public String getValue() {
-        return "\""+value+"\"";
+        return "\"" + value + "\"";
     }
-
+    
     public String getUnquotedValue() {
         return value;
     }
-
+    
     public void setValue(final String newValue) {
         value = newValue.replaceAll("\"", "");
     }
-
+    
     public String toString() {
         return String.format("[DirectoryOption@%x: optionId=%s, value=%s]", hashCode(), getOptionId(), getValue());
     }
