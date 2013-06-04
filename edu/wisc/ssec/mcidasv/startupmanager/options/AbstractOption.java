@@ -32,6 +32,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 
+import edu.wisc.ssec.mcidasv.startupmanager.Platform;
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.OptionPlatform;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.Type;
@@ -89,10 +90,12 @@ public abstract class AbstractOption implements Option {
      */
     protected boolean onValidPlatform() {
         OptionPlatform platform = getOptionPlatform();
-        if (platform == OptionPlatform.ALL)
+        if (platform == OptionPlatform.ALL) {
             return true;
-        if (platform == OptionMaster.INSTANCE.convertToOptionPlatform())
+        }
+        if (platform == OptionMaster.INSTANCE.convertToOptionPlatform()) {
             return true;
+        }
         return false;
     }
 
@@ -109,7 +112,7 @@ public abstract class AbstractOption implements Option {
     private boolean isValidPrefFormat(final String text) {
         assert text != null;
         boolean hasSet = text.contains("SET ");
-        boolean isWin = (StartupManager.INSTANCE.getPlatform() == StartupManager.Platform.WINDOWS);
+        boolean isWin = (StartupManager.INSTANCE.getPlatform() == Platform.WINDOWS);
         return (isWin == hasSet);
     }
 
@@ -176,18 +179,19 @@ public abstract class AbstractOption implements Option {
      * format for the current platform.
      */
     public void fromPrefsFormat(final String text) {
-        if (!isValidPrefFormat(text))
+        if (!isValidPrefFormat(text)) {
             throw new IllegalArgumentException("Incorrect syntax for this platform: " + text);
-
+        }
         String copy = new String(text);
-        if (StartupManager.INSTANCE.getPlatform() == StartupManager.Platform.WINDOWS)
+        if (StartupManager.INSTANCE.getPlatform() == Platform.WINDOWS) {
             copy = copy.replace("SET ", "");
-
+        }
         String[] chunks = copy.split("=");
-        if (chunks.length == 2 && chunks[0].equals(optionId))
+        if (chunks.length == 2 && chunks[0].equals(optionId)) {
             setValue(chunks[1]);
-        else
+        } else {
             setValue("");
+        }
     }
 
     /**
@@ -203,12 +207,9 @@ public abstract class AbstractOption implements Option {
     public String toPrefsFormat() {
         StringBuilder str = new StringBuilder(optionId);
         String value = getValue();
-        if (StartupManager.INSTANCE.getPlatform() == 
-            StartupManager.Platform.WINDOWS) 
-        {
+        if (StartupManager.INSTANCE.getPlatform() == Platform.WINDOWS) {
             str.insert(0, "SET ");
         }
-
         return str.append("=").append(value).toString();
     }
 
