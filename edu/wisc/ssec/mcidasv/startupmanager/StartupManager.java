@@ -197,14 +197,14 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
      * preferences (within McIDAS-V) can force an update to the startup prefs.
      */
     public void handleApply() {
-        OptionMaster.INSTANCE.writeStartup();
+        OptionMaster.getInstance().writeStartup();
     }
     
     /**
      * Saves the preference changes.
      */
     protected void handleOk() {
-        OptionMaster.INSTANCE.writeStartup();
+        OptionMaster.getInstance().writeStartup();
         System.exit(0);
     }
     
@@ -258,7 +258,7 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
      * @return Panel with all of the various startup options.
      */
     private JPanel buildAdvancedPanel() {
-        OptionMaster optMaster = OptionMaster.INSTANCE;
+        OptionMaster optMaster = OptionMaster.getInstance();
         MemoryOption heapSize = (MemoryOption)optMaster.getOption("HEAP_SIZE");
         BooleanOption jogl = (BooleanOption)optMaster.getOption("JOGL_TOGL");
         BooleanOption use3d = (BooleanOption)optMaster.getOption("USE_3DSTUFF");
@@ -377,7 +377,7 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
      */
     public JPanel getAdvancedPanel(final boolean forceBuild) {
         if (forceBuild || ADVANCED_PANEL == null) {
-            OptionMaster.INSTANCE.readStartup();
+            OptionMaster.getInstance().readStartup();
             ADVANCED_PANEL = buildAdvancedPanel();
         }
         return ADVANCED_PANEL;

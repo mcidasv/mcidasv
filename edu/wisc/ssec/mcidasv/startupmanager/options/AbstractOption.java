@@ -93,7 +93,7 @@ public abstract class AbstractOption implements Option {
         if (platform == OptionPlatform.ALL) {
             return true;
         }
-        if (platform == OptionMaster.INSTANCE.convertToOptionPlatform()) {
+        if (platform == OptionMaster.getInstance().convertToOptionPlatform()) {
             return true;
         }
         return false;

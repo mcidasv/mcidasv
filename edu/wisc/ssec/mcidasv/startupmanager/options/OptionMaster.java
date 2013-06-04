@@ -44,9 +44,7 @@ import java.util.Set;
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.startupmanager.Platform;
 
-public enum OptionMaster {
-    /** The lone OptionMaster instance. */
-    INSTANCE;
+public class OptionMaster {
     
     // TODO(jon): write CollectionHelpers.zip() and CollectionHelpers.zipWith()
     public final Object[][] blahblah = {
@@ -96,10 +94,19 @@ public enum OptionMaster {
     /** Maps an option ID to the corresponding object. */
     private final Map<String, Option> optionMap;
     
+    private static OptionMaster instance;
+    
     OptionMaster() {
         normalizeUserDirectory();
         optionMap = buildOptions(blahblah);
 //        readStartup();
+    }
+    
+    public static OptionMaster getInstance() {
+        if (instance == null) {
+            instance = new OptionMaster();
+        }
+        return instance;
     }
     
     /**
