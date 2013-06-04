@@ -323,7 +323,7 @@ public class SystemState {
     }
 
     /**
-     * Returns a {@Link Map} containing any relevant version information. 
+     * Returns a {@link Map} containing any relevant version information. 
      * 
      * <p>Currently this information consists of the date visad.jar was built, 
      * as well as the (then-current) Subversion revision number.
