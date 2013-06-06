@@ -54,6 +54,8 @@ paths to avoid Windows interpreting it as an escape sequence.):
 <ul>
   <li><a href="#buildWindow">buildWindow</a></li>
   <li><a href="#openBundle">openBundle</a></li>
+  <li><a href="#makeLocalADDE">makeLocalADDEEntry</a></li>
+  <li><a href="#getLocalADDE">getLocalADDEEntry</a></li>
   <li><a href="#getADDEImage">getADDEImage</a></li>
   <li><a href="#createLayer">createLayer</a></li>
 </ul>
@@ -93,7 +95,7 @@ paths to avoid Windows interpreting it as an escape sequence.):
 <h3>Create an Object: </h3>
 <p><strong><a name="buildWindow" id="buildWindow"></a></strong>
 <strong>buildWindow -</strong> Creates
-  a window and returns an array of panels (single panel currently supported)<br>
+  a window and returns an array of panels (single panel currently supported)</p>
 <div class="OneTabIndent">Usage: <em> panel=buildWindow(keywords)</em></div>
 <div class="TwoTabIndent">Keywords:</div>
 <div class="ThreeTabIndent">height= height of the window</div>
@@ -101,11 +103,8 @@ paths to avoid Windows interpreting it as an escape sequence.):
 <div class="ThreeTabIndent">panelTypes= type of display to create</div>
 <div class="FourTabIndent">MAP (default)</div>
 <div class="FourTabIndent">GLOBE</div>
-</p>
-
-<p>&nbsp;</p>
 <p><strong><a name="openBundle" id="openBundle"></a>openBundle -</strong> Creates
-  a new window and displays contents of a bundle<br>
+  a new window and displays contents of a bundle</p>
 <div class="OneTabIndent">Usage: <em>openBundle(bundle file, keywords)</em></div>
 <div class="TwoTabIndent">bundle file - file name of bundle (required)</div>
 <div class="TwoTabIndent">Keywords:</div>
@@ -118,10 +117,128 @@ paths to avoid Windows interpreting it as an escape sequence.):
   the full path name/names  of the data that will be used in place of the data
   in the bundle
 </div>
-</p>
-<p>&nbsp;</p>
+<p><strong><a name="makeLocalADDE" id="makeLocalADDE"></a>makeLocalADDEEntry -</strong> Creates a local ADDE entry in the server table</p>
+<div class="OneTabIndent">Usage: <em>localDataset= makeLocalADDEEntry(keywords)</em></div>
+<div class="TwoTabIndent">Keywords:</div>
+<div class="ThreeTabIndent">dataset= name of the dataset - limit of 8 characters</div>
+<div class="ThreeTabIndent">imageType = image type name for local server entry. (default=<em>format_dataset</em>)</div>
+<div class="ThreeTabIndent">save = True - saves entry into the server table<br>
+&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; False - entry is removed after McIDAS-V session is ended (default)</div>
+<div class="ThreeTabIndent">mask= directory containing the files used by the created dataset</div>
+<div class="ThreeTabIndent">format= data format of files within the dataset. Either Full Name or Short Name can be used as valid options:</div>
+<div class="ThreeTabIndent"><table width="525" border="1">
+    <tr>
+        <th width="420" scope="col"><strong>Full Name</strong></th>
+        <th width="105" scope="col"><strong>Short Name</strong></th>
+    </tr>
+    <tr>
+        <td>&quot;AMSR-E L1b&quot;</td>
+        <td>&quot;AMSR&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;LRIT GOES-9&quot;</td>
+        <td>&quot;FSDX_G9&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;LRIT GOES-10&quot;</td>
+        <td>&quot;FSDX_G10&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;LRIT GOES-11&quot;</td>
+        <td>&quot;FSDX_G11&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;LRIT GOES-12&quot;</td>
+        <td>&quot;FSDX_G12&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;LRIT MET-5&quot;</td>
+        <td>&quot;FSDX_M5&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;LRIT MET-7&quot;</td>
+        <td>&quot;FSDX_M7&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;LRIT MTSAT-1R&quot;</td>
+        <td>&quot;FSDX_MT&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;McIDAS Area&quot;</td>
+        <td>&quot;AREA&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;Meteosat OpenMTP&quot;</td>
+        <td>&quot;OMTP&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;Metop AVHRR L 1b&quot;</td>
+        <td>&quot;LV1B_METOP&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MODIS MOD 02 - Level 1B Calibrated Geolocated Radiances&quot;</td>
+        <td>&quot;MODS&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MODIS MOD 04 - Aerosol Product&quot;</td>
+        <td>&quot;MOD4&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MODIS MOD 06 - Cloud Product&quot;</td>
+        <td>&quot;MODX_06&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MODIS MOD 07 - Atmospheric&nbsp;Profiles&quot;</td>
+        <td>&quot;MODX_07&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MODIS MOD 28 - Sea Surface Temperature&quot;</td>
+        <td>&quot;MOD8&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MODIS MOD 35 - Cloud Mask&quot;</td>
+        <td>&quot;MODX_35&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MODIS MOD R - Corrected Reflectance&quot;</td>
+        <td>&quot;MODR&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MSG HRIT FD&quot;</td>
+        <td>&quot;MSGT_FD&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MSG HRIT HRV&quot;</td>
+        <td>&quot;MSGT_HRV&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MTSAT HRIT&quot;</td>
+        <td>&quot;MTST&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;NOAA AVHRR L 1b&quot;</td>
+        <td>&quot;LV1B_NOAA&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;SSMI&quot;</td>
+        <td>&quot;SMIN&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;TRMM&quot;</td>
+        <td>&quot;TMIN&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;GINI&quot;</td>
+        <td>&quot;GINI&quot;</td>
+    </tr>
+</table></div>
+<p><strong><a name="getLocalADDE" id="getLocalADDE"></a>getLocalADDEEntry -</strong> Gets the descriptor for a local ADDE entry</p>
+<div class="OneTabIndent">Usage: <em>localDescriptor= getLocalADDEEntry(keywords)</em></div>
+<div class="TwoTabIndent">Keywords:</div>
+<div class="ThreeTabIndent">dataset= local ADDE entry dataset name</div>
+<div class="ThreeTabIndent">imageType= image type of local ADDE entry</div>
 <p><strong><a name="getADDEImage" id="getADDEImage"></a>getADDEImage -</strong> Requests
-  data from an ADDE Image server - returns both data and metadata objects<br>
+  data from an ADDE Image server - returns both data and metadata objects</p>
 <div class="OneTabIndent">Usage: <em>myMetaData,myData= getADDEImage(keywords)</em></div>
 <div class="TwoTabIndent">Keywords:</div>
 <div class="ThreeTabIndent">server= ADDE server</div>
@@ -157,20 +274,17 @@ paths to avoid Windows interpreting it as an escape sequence.):
 <div class="ThreeTabIndent">accounting= ('user', 'project number') user and project
   number required by servers using McIDAS accounting; default = ('idv','0')</div>
   <div class="ThreeTabIndent">debug= send debug information to file; default=False</div>
-</p>
-<p>&nbsp;</p>
 <p><strong><a name="createLayer" id="createLayer"></a>createLayer -</strong> Creates
-  a new data layer in a panel<br>
+  a new data layer in a panel</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer = panel[0].createLayer(display
     type, myData)</em></div>
 <div class="TwoTabIndent">display type - display type for layer; valid options
   shown in Field Selector (e.g. 'Image Display', 'Image Sequence Display')</div>
 <div class="TwoTabIndent">myData - data object to display (from getADDEImage)</div>
-</p>
 <p>&nbsp;</p>
 <h3>Modify the Display Object: </h3>
 <p><strong><a name="annotate" id="annotate"></a>annotate -</strong> Writes text
-  to a panel <br>
+  to a panel</p>
 <div class="OneTabIndent">Usage: <em>panel[0].annotate(text,keywords)</em></div>
 <div class="TwoTabIndent">text - annotation string </div>
 <div class="TwoTabIndent">Keywords:</div>
@@ -185,41 +299,32 @@ paths to avoid Windows interpreting it as an escape sequence.):
 <div class="FourTabIndent">-or- </div>
 <div class="FourTabIndent">[R,G,B] fractional scaling factor for each red, green
   and blue value (0 to 1)</div>
-</p>
-
-<p>&nbsp;</p>
 <p><strong><a name="setCenter" id="setCenter"></a>setCenter -&nbsp;</strong>
-Centers the display on a specified latitude/longitude and sets a scaling factor <br>
+Centers the display on a specified latitude/longitude and sets a scaling factor</p>
 <div class="OneTabIndent">Usage: <em>panel[0].setCenter(latitude,longitude,keywords) </em></div>
 <div class="TwoTabIndent">latitude - centers the display at the specified latitude (no default, required parameter) </div>
 <div class="TwoTabIndent">longitude - centers the display at the specified longitude (no default, required parameter) </div>
-
 <div class="TwoTabIndent">Keywords:</div>
 <div class="ThreeTabIndent">  scale= scale factor for map; default=current scale factor<br>
   Scale factors between 0 and 1 zoom out centered on the specified
   latitude/longitude and scale factors greater than 1 zoom in.</div>
-</p>
-<p>&nbsp;</p>
 <p><strong><a name="setProjection" id="setProjection"></a>setProjection -</strong> Sets
-  the projection of a panel<br>
+  the projection of a panel</p>
 <div class="OneTabIndent">Usage: <em>panel[0].setProjection(projection)</em></div>
 <div class="TwoTabIndent">projection - &nbsp; string specifying the projection;
   e.g., 'US&gt;Southeastern U.S.'</div>
 <div class="FourTabIndent">-or-</div>
 <div class="FourTabIndent"> the name of the layer returned by createLayer, which
   uses the default projection of that data </div>
-</p>
-<p>&nbsp;</p>
 <p><strong><a name="setWireframe" id="setWireframe"></a>setWireframe -</strong> Turns
-  wire frame box on or off<br>
+  wire frame box on or off</p>
 <div class="OneTabIndent">Usage: <em>panel[0].setWireframe(visible)</em></div>
 <div class="TwoTabIndent">visible - True displays wire frame box, False turns
   off wire frame box</div>
-</p>
 <p>&nbsp;</p>
 <h3>Modify the Layer Object: </h3>
 <p><strong><a name="setColorScale" id="setColorScale"></a>setColorScale -</strong> Displays
-  color scale on a panel and specifies its attributes<br>
+  color scale on a panel and specifies its attributes</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setColorScale(keywords)</em></div>
 <div class="TwoTabIndent">Keywords:</div>
 <div class="ThreeTabIndent">visible= True displays color scale (default)</div>
@@ -243,9 +348,6 @@ preferences<br></div>
 <div class="FourTabIndent">-or- </div>
 <div class="FourTabIndent">[R,G,B] fractional scaling factor for each red, green
   and blue value (0 to 1)</div>
-</p>
-
-<p>&nbsp;</p>
 <p><strong><a name="setEnhancement" id="setEnhancement"></a>setEnhancement -&nbsp;</strong>Applies
   a color table and defines data range of data in a layer<br>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setEnhancement(color table,keywords)</em></div>
@@ -254,11 +356,8 @@ preferences<br></div>
 <div class="TwoTabIndent">Keywords:</div>
 <div class="ThreeTabIndent">range=(min,max) enhancement range; default= (min,max)
   of data</div>
-</p>
-
-<p>&nbsp;</p>
 <p><strong><a name="setLayerLabel" id="setLayerLabel"></a>setLayerLabel -</strong> Toggles
-  a layer label on/off and defines its attributes<br>
+  a layer label on/off and defines its attributes</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setLayerLabel(label,keywords)</em></div>
 <div class="TwoTabIndent">label - layer label string </div>
 <div class="TwoTabIndent">Keywords:</div>
@@ -277,20 +376,15 @@ preferences<br></div>
 <div class="FourTabIndent">-or- </div>
 <div class="FourTabIndent">[R,G,B] fractional scaling factor for each red, green
   and blue value (0 to 1)</div>
-
-<p>&nbsp;</p>
 <p><strong><a name="setLayerVisible" id="setLayerVisible"></a>setLayerVisible
-    -</strong> Toggles layer visibility on/off
+    -</strong> Toggles layer visibility on/off</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setLayerVisible(visible)</em></div>
 <div class="TwoTabIndent">visible - True displays layer</div>
 <div class="ThreeTabIndent"> &nbsp;&nbsp;False turns off layer</div>
-
-
 <p>&nbsp;</p>
-
 <h3>Save the Display: </h3>
 <p><strong><a name="captureImage" id="captureImage"></a>captureImage -</strong> Writes
-  panel display to a file<br>
+  panel display to a file</p>
 <div class="OneTabIndent">Usage:<em> panel[0].captureImage(file, keywords)</em></div>
 <div class="TwoTabIndent">file - name of file, file format determine by file
   extension; valid options: .jpg, .gif, .png, .pdf, .svg, .kml, .kmz</div>
@@ -304,8 +398,7 @@ preferences<br></div>
   with openBundle, the sizes default to size of the display window when the bundle
   was saved. If data was loaded using createLayer, the sizes default to those
   defined in buildWindow. </div>
-
-<p>&nbsp;</p>
+</p>
 <p><strong><a name="writeMovie" id="writeMovie"></a>writeMovie -</strong> Writes
   an image sequence to a movie file (ISL function) <br>
 <div class="OneTabIndent">Usage:<em> writeMovie(file,keywords) </em></div>
@@ -316,34 +409,21 @@ preferences<br></div>
 <p>&nbsp;</p>
 <h3>Environment: </h3>
 <p><strong><a name="printHistoryLength" id="printHistoryLength"></a>getJythonShellMaxHistoryLength( ) -</strong> Returns the current number of commands that are saved.
-<div class="OneTabIndent">Usage: <em>print getJythonShellMaxHistoryLength()</em><br></div>
-<strong><a name="setHistoryLength" id="setHistoryLength2"></a>setJythonShellMaxHistoryLength( ) -</strong> Sets the number of commands that will be saved.<br>
+<div class="OneTabIndent">Usage: <em>print getJythonShellMaxHistoryLength()</em></div>
+<p><strong><a name="setHistoryLength" id="setHistoryLength2"></a>setJythonShellMaxHistoryLength( ) -</strong> Sets the number of commands that will be saved.</p>
 <div class="OneTabIndent">Usage: <em>setJythonShellMaxHistoryLength(number)</em></div>
-</div>
 <div class="OneTabIndent">Remarks:</div>
-<div class="TwoTabIndent">This is the number of commands that will be listed out with the <strong>File>List Saved History</strong> menu item in the Jython Shell, as well as the number that will be added to the Local Jython Library from the <strong>File>Save Commands to Jython Library</strong> menu item. The default number of commands saved to the history is 100.</div></p>
-<p>&nbsp;</p>
-<p><strong><a name="collectGarbage" id="collectGarbage"></a>collectGarbage( ) -</strong> Performs a garbage collection to free up memory.
+<div class="TwoTabIndent">This is the number of commands that will be listed out with the <strong>File>List Saved History</strong> menu item in the Jython Shell, as well as the number that will be added to the Local Jython Library from the <strong>File>Save Commands to Jython Library</strong> menu item. The default number of commands saved to the history is 100.</div>
+<p><strong><a name="collectGarbage" id="collectGarbage"></a>collectGarbage( ) -</strong> Performs a garbage collection to free up memory.</p>
 <div class="OneTabIndent">Usage: <em>collectGarbage()</em></div>
-</p>
-<p>&nbsp;</p>
-<p><strong><a name="expandpath" id="expandpath"></a>expandpath( ) -</strong> Expands the path entered.
+<p><strong><a name="expandpath" id="expandpath"></a>expandpath( ) -</strong> Expands the path entered.</p>
 <div class="OneTabIndent">Usage: <em>expandpath(path)</em></div>
 <div class="OneTabIndent">Remarks:</div>
 <div class="TwoTabIndent">Understands environmental variables such as &quot;~&quot; and &quot;..&quot;.&nbsp;For example, on Windows, &nbsp;'print expandpath(&quot;$HOMEPATH&quot;)' will print \Users\username.</div>
-</p>
-<p>&nbsp;</p>
-<p><strong><a name="removeAllData" id="removeAllData"></a>removeAllData( ) -</strong> Removes all data sources added during the current session, without removing any displays.
+<p><strong><a name="removeAllData" id="removeAllData"></a>removeAllData( ) -</strong> Removes all data sources added during the current session, without removing any displays.</p>
 <div class="OneTabIndent">Usage: <em>removeAllData()</em></div>
-</p>
-<p>&nbsp;</p>
-<p><strong><a name="removeAllLayers" id="removeAllLayers"></a>removeAllLayers( ) -</strong> Removes all layers that have been displayed.
-<div class="OneTabIndent">Usage: <em>removeAllLayers()</em></div></p>
-<p>&nbsp;</p>
-
-</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+<p><strong><a name="removeAllLayers" id="removeAllLayers"></a>removeAllLayers( ) -</strong> Removes all layers that have been displayed.</p>
+<div class="OneTabIndent">Usage: <em>removeAllLayers()</em></div>
 <p>For users looking for more functionality from McIDAS-V scripting, additional
   functions can be found in the Java docs for 
   <a href="http://www.ssec.wisc.edu/visad-docs/javadoc/index.html" target="_blank">visAD</a>, 
