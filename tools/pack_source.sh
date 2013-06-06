@@ -12,9 +12,9 @@
 # IDV_DIR=/home/mcidasv/idv
 # MCV_DIR=/home/mcidasv/mc-v
 # MEDIA_DIR=/home/mcidasv/install4j/media
-IDV_DIR="../../IDV"
-MCV_DIR="../../mcidasv"
-MEDIA_DIR="../../install4j/media"
+IDV_DIR="/home/mcidasv/mcidasv-github/IDV"
+MCV_DIR="/home/mcidasv/mcidasv-github/mcidasv"
+MEDIA_DIR="/home/mcidasv/install4j/media"
 CUR_DIR="${PWD}"
 
 # Get the version
