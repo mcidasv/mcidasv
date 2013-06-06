@@ -2,6 +2,7 @@
 <?php
 
 function ValidateTOC($tocpath) {
+    global $EMAIL;
     $notify = "";
     $lines = file($tocpath);
     $valid_link = "[A-Za-z0-9#\.\/\" ]+";
@@ -21,6 +22,7 @@ function ValidateTOC($tocpath) {
 }
 
 function ValidateVersions() {
+    global $DEBUG, $EMAIL;
     $notify = "";
     $version = "";
     $CUR_DIR = getcwd();
@@ -194,6 +196,7 @@ function ParseGitStatus($ACTIVITY_DIR) {
 
 $EMAIL = "beckys@ssec.wisc.edu,barryr@ssec.wisc.edu,davep@ssec.wisc.edu,robert.carp@ssec.wisc.edu,jbeavers@ssec.wisc.edu";
 
+$DEBUG = false;
 
 // $DOC_DIR="/home/mcidasv/mc-v/docs/userguide/processed";
 $DOC_DIR = "../docs/userguide/processed";
