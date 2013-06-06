@@ -397,7 +397,7 @@ def listADDEImages(server, dataset, descriptor,
     adl = AreaDirectoryList(url)
     return adl.getSortedDirs()
 
-def getADDEImage(localEntry=None, server=None, dataset=None, descriptor=None,
+def oldADDEImage(localEntry=None, server=None, dataset=None, descriptor=None,
     accounting=DEFAULT_ACCOUNTING,
     location=None,
     coordinateSystem=CoordinateSystems.LATLON,
@@ -521,7 +521,7 @@ def getADDEImage(localEntry=None, server=None, dataset=None, descriptor=None,
     return retvals
 
 
-def testADDEImage(localEntry=None,
+def getADDEImage(localEntry=None,
     server=None, dataset=None, descriptor=None,
     accounting=DEFAULT_ACCOUNTING,
     location=None,
@@ -576,14 +576,14 @@ def testADDEImage(localEntry=None,
         debug: send debug information to file; default=False
         track: default=False.
     """
-    print 'Warning: testADDEImage is test code, some of which may be used to improve the getADDEImage function in the future.  It will not be included in future versions so should not be used in user scripts.'
+    
     if localEntry:
         server = localEntry.getAddress()
         dataset = localEntry.getGroup()
         descriptor = localEntry.getDescriptor().upper()
     elif (server is None) or (dataset is None) or (descriptor is None):
         raise TypeError("must provide localEntry or server, dataset, and descriptor values")
-    
+        
     if server == "localhost" or server == "127.0.0.1":
         port = EntryStore.getLocalPort()
     else:
@@ -645,14 +645,14 @@ def testADDEImage(localEntry=None,
         
     addeUrlFormat = "adde://%s/imagedata?&PORT=%s&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s&TRACK=%d"
     url = addeUrlFormat % (server, port, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position, track)
-    retvals = (-1, -1)
     
     try:
         mapped = _MappedAreaImageFlatField.fromUrl(url)
-        retvals = mapped.getDictionary(), mapped
+        return mapped.getDictionary(), mapped
     except AreaFileException, e:
-        print 'AreaFileException: url:', url, e
+        # print 'AreaFileException: url:', url, e
+        raise AddeJythonError(e)
     except AddeURLException, e:
-        print 'AddeURLException: url:', url, e
-    
-    return retvals
+        # print 'AddeURLException: url:', url, e
+        raise AddeJythonError(e)
+
