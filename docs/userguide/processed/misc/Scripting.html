@@ -103,6 +103,9 @@ paths to avoid Windows interpreting it as an escape sequence.):
 <div class="ThreeTabIndent">panelTypes= type of display to create</div>
 <div class="FourTabIndent">MAP (default)</div>
 <div class="FourTabIndent">GLOBE</div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>panel=buildWindow(height=600,width=800,panelTypes=GLOBE)</em></div>
+<div class="TwoTabIndent"><em>panel=buildWindow(height=600,width=800,panelTypes=MAP)</em></div>
 <p><strong><a name="openBundle" id="openBundle"></a>openBundle -</strong> Creates
   a new window and displays contents of a bundle</p>
 <div class="OneTabIndent">Usage: <em>openBundle(bundle file, keywords)</em></div>
@@ -232,11 +235,17 @@ paths to avoid Windows interpreting it as an escape sequence.):
         <td>&quot;GINI&quot;</td>
     </tr>
 </table></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>dataPath = 'C:\\Users\\myuser\\Data\\AREA'</em></div>
+<div class="TwoTabIndent"><em>makeLocalADDEEntry(dataset='AREA', imageType='Area files', save=True, mask=dataPath, format='McIDAS Area')</em></div>
 <p><strong><a name="getLocalADDE" id="getLocalADDE"></a>getLocalADDEEntry -</strong> Gets the descriptor for a local ADDE entry</p>
 <div class="OneTabIndent">Usage: <em>localDescriptor= getLocalADDEEntry(keywords)</em></div>
 <div class="TwoTabIndent">Keywords:</div>
 <div class="ThreeTabIndent">dataset= local ADDE entry dataset name</div>
 <div class="ThreeTabIndent">imageType= image type of local ADDE entry</div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>desc = getLocalADDEEntry(dataset='AREA',imageType='Area files')</em></div>
+<div class="ThreeTabIndent">Should be used after makeLocalADDEEntry. Once you run this command, you can use <em>localEntry=desc</em> in your getADDEImage command.</div>
 <p><strong><a name="getADDEImage" id="getADDEImage"></a>getADDEImage -</strong> Requests
   data from an ADDE Image server - returns both data and metadata objects</p>
 <div class="OneTabIndent">Usage: <em>myMetaData,myData= getADDEImage(keywords)</em></div>
@@ -274,6 +283,8 @@ paths to avoid Windows interpreting it as an escape sequence.):
 <div class="ThreeTabIndent">accounting= ('user', 'project number') user and project
   number required by servers using McIDAS accounting; default = ('idv','0')</div>
   <div class="ThreeTabIndent">debug= send debug information to file; default=False</div>
+  <div class="OneTabIndent">Examples:</div>
+  <div class="TwoTabIndent"><em>metadata,data = getADDEImage(debug=True,localEntry=desc, size='ALL', mag=(1,1), unit='BRIT')</em></div>
 <p><strong><a name="createLayer" id="createLayer"></a>createLayer -</strong> Creates
   a new data layer in a panel</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer = panel[0].createLayer(display
@@ -281,6 +292,9 @@ paths to avoid Windows interpreting it as an escape sequence.):
 <div class="TwoTabIndent">display type - display type for layer; valid options
   shown in Field Selector (e.g. 'Image Display', 'Image Sequence Display')</div>
 <div class="TwoTabIndent">myData - data object to display (from getADDEImage)</div>
+<div class="OneTabIndent">Examples:</div>
+<div class="TwoTabIndent"><em>layer=panel[0].createLayer('Image Display', data)</em></div>
+<div class="ThreeTabIndent">This is used in conjunction with getLocalADDEEntry.</div>
 <p>&nbsp;</p>
 <h3>Modify the Display Object: </h3>
 <p><strong><a name="annotate" id="annotate"></a>annotate -</strong> Writes text
@@ -299,6 +313,9 @@ paths to avoid Windows interpreting it as an escape sequence.):
 <div class="FourTabIndent">-or- </div>
 <div class="FourTabIndent">[R,G,B] fractional scaling factor for each red, green
   and blue value (0 to 1)</div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>panel[0].annotate('EQUATOR',size=20, font='SansSerif.bold', lat=0, lon=-90, color='Red')</em></div>
+<div class="ThreeTabIndent">This is used in conjunction with buildWindow</div>
 <p><strong><a name="setCenter" id="setCenter"></a>setCenter -&nbsp;</strong>
 Centers the display on a specified latitude/longitude and sets a scaling factor</p>
 <div class="OneTabIndent">Usage: <em>panel[0].setCenter(latitude,longitude,keywords) </em></div>
@@ -308,6 +325,9 @@ Centers the display on a specified latitude/longitude and sets a scaling factor<
 <div class="ThreeTabIndent">  scale= scale factor for map; default=current scale factor<br>
   Scale factors between 0 and 1 zoom out centered on the specified
   latitude/longitude and scale factors greater than 1 zoom in.</div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>panel[0].setCenter(latitude=45, longitude=-75, scale=20</em></div>
+<div class="ThreeTabIndent">This is used in conjunction with buildWindow</div>
 <p><strong><a name="setProjection" id="setProjection"></a>setProjection -</strong> Sets
   the projection of a panel</p>
 <div class="OneTabIndent">Usage: <em>panel[0].setProjection(projection)</em></div>
@@ -316,11 +336,18 @@ Centers the display on a specified latitude/longitude and sets a scaling factor<
 <div class="FourTabIndent">-or-</div>
 <div class="FourTabIndent"> the name of the layer returned by createLayer, which
   uses the default projection of that data </div>
+  <div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>panel[0].setProjection('US>States>N-Z>Pennsylvania')</em></div>
+  <div class="ThreeTabIndent">This is used in conjunction with buildWindow</div>
 <p><strong><a name="setWireframe" id="setWireframe"></a>setWireframe -</strong> Turns
   wire frame box on or off</p>
 <div class="OneTabIndent">Usage: <em>panel[0].setWireframe(visible)</em></div>
 <div class="TwoTabIndent">visible - True displays wire frame box, False turns
   off wire frame box</div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>panel[0].setWireframe(False)</em></div>
+<div class="TwoTabIndent"><em>panel[0].setWireframe(True)</em></div>
+<div class="ThreeTabIndent">This is used in conjunction with buildWindow</div>
 <p>&nbsp;</p>
 <h3>Modify the Layer Object: </h3>
 <p><strong><a name="setColorScale" id="setColorScale"></a>setColorScale -</strong> Displays
