@@ -245,11 +245,12 @@ paths to avoid Windows interpreting it as an escape sequence.):
 <div class="ThreeTabIndent">imageType= image type of local ADDE entry</div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>desc = getLocalADDEEntry(dataset='AREA',imageType='Area files')</em></div>
-<div class="ThreeTabIndent">Should be used after makeLocalADDEEntry. Once you run this command, you can use <em>localEntry=desc</em> in your getADDEImage command.</div>
+<div class="ThreeTabIndent">Note: Should be used after makeLocalADDEEntry. Once you run this command, you can use <em>localEntry=desc</em> in your getADDEImage command.</div>
 <p><strong><a name="getADDEImage" id="getADDEImage"></a>getADDEImage -</strong> Requests
   data from an ADDE Image server - returns both data and metadata objects</p>
 <div class="OneTabIndent">Usage: <em>myMetaData,myData= getADDEImage(keywords)</em></div>
 <div class="TwoTabIndent">Keywords:</div>
+<div class="ThreeTabIndent">localEntry = local dataset defined by makeLocalADDEEntry</div>
 <div class="ThreeTabIndent">server= ADDE server</div>
 <div class="ThreeTabIndent">dataset= ADDE dataset group name</div>
 <div class="ThreeTabIndent">descriptor= ADDE dataset descriptor</div>
@@ -294,7 +295,7 @@ paths to avoid Windows interpreting it as an escape sequence.):
 <div class="TwoTabIndent">myData - data object to display (from getADDEImage)</div>
 <div class="OneTabIndent">Examples:</div>
 <div class="TwoTabIndent"><em>layer=panel[0].createLayer('Image Display', data)</em></div>
-<div class="ThreeTabIndent">This is used in conjunction with getLocalADDEEntry.</div>
+<div class="ThreeTabIndent">Note: This is used in conjunction with getLocalADDEEntry.</div>
 <p>&nbsp;</p>
 <h3>Modify the Display Object: </h3>
 <p><strong><a name="annotate" id="annotate"></a>annotate -</strong> Writes text
@@ -315,7 +316,7 @@ paths to avoid Windows interpreting it as an escape sequence.):
   and blue value (0 to 1)</div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>panel[0].annotate('EQUATOR',size=20, font='SansSerif.bold', lat=0, lon=-90, color='Red')</em></div>
-<div class="ThreeTabIndent">This is used in conjunction with buildWindow</div>
+<div class="ThreeTabIndent">Note: This is used in conjunction with buildWindow</div>
 <p><strong><a name="setCenter" id="setCenter"></a>setCenter -&nbsp;</strong>
 Centers the display on a specified latitude/longitude and sets a scaling factor</p>
 <div class="OneTabIndent">Usage: <em>panel[0].setCenter(latitude,longitude,keywords) </em></div>
@@ -327,7 +328,7 @@ Centers the display on a specified latitude/longitude and sets a scaling factor<
   latitude/longitude and scale factors greater than 1 zoom in.</div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>panel[0].setCenter(latitude=45, longitude=-75, scale=20</em></div>
-<div class="ThreeTabIndent">This is used in conjunction with buildWindow</div>
+<div class="ThreeTabIndent">Note: This is used in conjunction with buildWindow</div>
 <p><strong><a name="setProjection" id="setProjection"></a>setProjection -</strong> Sets
   the projection of a panel</p>
 <div class="OneTabIndent">Usage: <em>panel[0].setProjection(projection)</em></div>
@@ -338,7 +339,7 @@ Centers the display on a specified latitude/longitude and sets a scaling factor<
   uses the default projection of that data </div>
   <div class="OneTabIndent">Example:</div>
   <div class="TwoTabIndent"><em>panel[0].setProjection('US>States>N-Z>Pennsylvania')</em></div>
-  <div class="ThreeTabIndent">This is used in conjunction with buildWindow</div>
+  <div class="ThreeTabIndent">Note: This is used in conjunction with buildWindow</div>
 <p><strong><a name="setWireframe" id="setWireframe"></a>setWireframe -</strong> Turns
   wire frame box on or off</p>
 <div class="OneTabIndent">Usage: <em>panel[0].setWireframe(visible)</em></div>
@@ -347,7 +348,7 @@ Centers the display on a specified latitude/longitude and sets a scaling factor<
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>panel[0].setWireframe(False)</em></div>
 <div class="TwoTabIndent"><em>panel[0].setWireframe(True)</em></div>
-<div class="ThreeTabIndent">This is used in conjunction with buildWindow</div>
+<div class="ThreeTabIndent">Note: This is used in conjunction with buildWindow</div>
 <p>&nbsp;</p>
 <h3>Modify the Layer Object: </h3>
 <p><strong><a name="setColorScale" id="setColorScale"></a>setColorScale -</strong> Displays
@@ -365,9 +366,9 @@ Centers the display on a specified latitude/longitude and sets a scaling factor<
   preferences</div>
 <div class="ThreeTabIndent">  style= font style; default=font defined in user
       preferences </div>
-  <div class="FourTabIndent">BOLD bolded font</div>
-<div class="FourTabIndent">ITALIC italicized font</div>
-<div class="FourTabIndent">NONE </div>
+  <div class="FourTabIndent">'BOLD' bolded font</div>
+<div class="FourTabIndent">'ITALIC' italicized font</div>
+<div class="FourTabIndent">'NONE' </div>
 <div class="ThreeTabIndent">size= size of font; default=size of font defined
   in user preferences</div>
 <div class="ThreeTabIndent">  color= 'color name'; default=color defined in user
@@ -375,6 +376,9 @@ preferences<br></div>
 <div class="FourTabIndent">-or- </div>
 <div class="FourTabIndent">[R,G,B] fractional scaling factor for each red, green
   and blue value (0 to 1)</div>
+  <div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>layer.setColorScale(placement='left',font='SansSerif',size=18.0,color='green'</em></div>
+  <div class="ThreeTabIndent">Note: This is used in conjunction with createLayer.</div>
 <p><strong><a name="setEnhancement" id="setEnhancement"></a>setEnhancement -&nbsp;</strong>Applies
   a color table and defines data range of data in a layer<br>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setEnhancement(color table,keywords)</em></div>
@@ -383,6 +387,9 @@ preferences<br></div>
 <div class="TwoTabIndent">Keywords:</div>
 <div class="ThreeTabIndent">range=(min,max) enhancement range; default= (min,max)
   of data</div>
+  <div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>layer.setEnhancement('Longwave Infrared Deep Convection',range=(20,250))</em></div>
+  <div class="ThreeTabIndent">Note: This is used in conjunction with createLayer</div>
 <p><strong><a name="setLayerLabel" id="setLayerLabel"></a>setLayerLabel -</strong> Toggles
   a layer label on/off and defines its attributes</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setLayerLabel(label,keywords)</em></div>
@@ -393,9 +400,9 @@ preferences<br></div>
   preferences</div>
 <div class="ThreeTabIndent">  style= font style; default=font defined in user
 preferences </div>
-  <div class="FourTabIndent">BOLD bolded font</div>
-<div class="FourTabIndent">ITALIC italicized font</div>
-<div class="FourTabIndent">NONE </div>
+  <div class="FourTabIndent">'BOLD' bolded font</div>
+<div class="FourTabIndent">'ITALIC' italicized font</div>
+<div class="FourTabIndent">'NONE' </div>
 <div class="ThreeTabIndent">size= size of font; default=size of font defined
   in user preferences</div>
 <div class="ThreeTabIndent">  color= 'color name'; default=color defined in user
@@ -403,11 +410,17 @@ preferences<br></div>
 <div class="FourTabIndent">-or- </div>
 <div class="FourTabIndent">[R,G,B] fractional scaling factor for each red, green
   and blue value (0 to 1)</div>
+  <div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>layer.setLayerLabel(label='%displayname% %timestamp%', size=15, color=blue', style='BOLD'</em></div>
+  <div class="ThreeTabIndent">Note: This is used in conjunction with createLayer</div>
 <p><strong><a name="setLayerVisible" id="setLayerVisible"></a>setLayerVisible
     -</strong> Toggles layer visibility on/off</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setLayerVisible(visible)</em></div>
 <div class="TwoTabIndent">visible - True displays layer</div>
 <div class="ThreeTabIndent"> &nbsp;&nbsp;False turns off layer</div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>layer.setLayerVisible(False)</em></div>
+<div class="ThreeTabIndent">Note: This is used in conjunction with createLayer</div>
 <p>&nbsp;</p>
 <h3>Save the Display: </h3>
 <p><strong><a name="captureImage" id="captureImage"></a>captureImage -</strong> Writes
@@ -424,7 +437,9 @@ preferences<br></div>
 <div class="TwoTabIndent">If captureImage is used to save a panel that was created
   with openBundle, the sizes default to size of the display window when the bundle
   was saved. If data was loaded using createLayer, the sizes default to those
-  defined in buildWindow. </div>
+  defined in buildWindow.</div>
+  <div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>panel[0].captureImage("C:\\Users\\myuser\\Image.png"</em>)</div>
 </p>
 <p><strong><a name="writeMovie" id="writeMovie"></a>writeMovie -</strong> Writes
   an image sequence to a movie file (ISL function) <br>
@@ -433,6 +448,8 @@ preferences<br></div>
   extension; valid options: .gif, .mov</div>
 <div class="TwoTabIndent">Keywords:</div>
 <div class="ThreeTabIndent">resize width= height= &nbsp;&nbsp;frame size of the movie</div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>writeMovie("C:\\Users\\myuser\\movie.gif')</em></div>
 <p>&nbsp;</p>
 <h3>Environment: </h3>
 <p><strong><a name="printHistoryLength" id="printHistoryLength"></a>getJythonShellMaxHistoryLength( ) -</strong> Returns the current number of commands that are saved.
@@ -441,6 +458,8 @@ preferences<br></div>
 <div class="OneTabIndent">Usage: <em>setJythonShellMaxHistoryLength(number)</em></div>
 <div class="OneTabIndent">Remarks:</div>
 <div class="TwoTabIndent">This is the number of commands that will be listed out with the <strong>File>List Saved History</strong> menu item in the Jython Shell, as well as the number that will be added to the Local Jython Library from the <strong>File>Save Commands to Jython Library</strong> menu item. The default number of commands saved to the history is 100.</div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>setJythonShellMaxHistoryLength(25)</em></div>
 <p><strong><a name="collectGarbage" id="collectGarbage"></a>collectGarbage( ) -</strong> Performs a garbage collection to free up memory.</p>
 <div class="OneTabIndent">Usage: <em>collectGarbage()</em></div>
 <p><strong><a name="expandpath" id="expandpath"></a>expandpath( ) -</strong> Expands the path entered.</p>
