@@ -1458,9 +1458,9 @@ public abstract class ImageDataSource extends DataSourceImpl {
      */
     private List getDescriptors(DataChoice dataChoice, DataSelection subset) {
 
-        List    times = getTimesFromDataSelection(subset, dataChoice);
-        boolean usingTimeDriver = 
-            (subset != null && subset.getTimeDriverTimes() != null);
+        List times = getTimesFromDataSelection(subset, dataChoice);
+        boolean usingTimeDriver = ((subset != null)
+                                   && (subset.getTimeDriverTimes() != null));
         if (usingTimeDriver) {
             times = subset.getTimeDriverTimes();
         }
@@ -1470,6 +1470,7 @@ public abstract class ImageDataSource extends DataSourceImpl {
 
         List descriptors = new ArrayList();
         if (usingTimeDriver) {
+            if (imageList.isEmpty()) return imageList;
             AddeImageDescriptor aid = getDescriptor(imageList.get(0));
             if (aid.getImageInfo() != null) {
                 try {
@@ -1501,7 +1502,7 @@ public abstract class ImageDataSource extends DataSourceImpl {
                         endDay   = day + " 23:59:59";
                         start = DateTime.createDateTime(startDay,
                                 DateTime.DEFAULT_TIME_FORMAT);
-                        end = DateTime.createDateTime(endDay,
+                        end = UtcDate.createDateTime(endDay,
                                 DateTime.DEFAULT_TIME_FORMAT);
                         aii.setStartDate(new Date((long) (start
                             .getValue(CommonUnit
@@ -1511,8 +1512,27 @@ public abstract class ImageDataSource extends DataSourceImpl {
                                 .secondsSinceTheEpoch) * 1000)));
                         // make the request for the times (AreaDirectoryList)
                         aii.setRequestType(aii.REQ_IMAGEDIR);
-                        AreaDirectoryList ad =
-                            new AreaDirectoryList(aii.getURLString());
+                        AreaDirectoryList ad;
+                        try {  // we may be asking for a date that doesn't exist
+                            ad = new AreaDirectoryList(aii.getURLString());
+                        } catch (AreaFileException afe) {
+                            // If there's an error, we just ignore it.  In the
+                            // end, the descriptor list will be empty if there is no
+                            // data for any of the days.
+                            continue;
+
+                            // TODO: This is a hack because different servers return different
+                            // messages.  AREA and GINI servers seem to have "no images" in the
+                            // exception message when there are no images.
+                            //String message = afe.getMessage().toLowerCase();
+                            //if (message.indexOf("no images") >= 0 || 
+                            //    message.indexOf("error generating list of files") >= 0) {
+                            //    continue;
+                            //} else {
+                            //    throw afe;
+                            //}
+
+                        }
                         AreaDirectory[][] dirs = ad.getSortedDirs();
                         for (int d = 0; d < dirs.length; d++) {
                             AreaDirectory dir = dirs[d][0];
@@ -1552,7 +1572,13 @@ public abstract class ImageDataSource extends DataSourceImpl {
                     System.out.println("Got an exception: "
                                        + excp.getMessage());
                 }
+                // we do this so save data local will work.  However, if
+                // this then gets set to be the time driver, it would not
+                // necessarily be correct
+                imageList = descriptors;
                 return descriptors;
+            } else if (imageList != null) {
+                return imageList;
             }
         }
         for (Iterator iter = times.iterator(); iter.hasNext(); ) {
@@ -1644,10 +1670,10 @@ public abstract class ImageDataSource extends DataSourceImpl {
 
 
     /**
-     * _more_
+     * Set the band information on the data choice
      *
-     * @param dataChoice _more_
-     * @param aii _more_
+     * @param dataChoice  the data choice
+     * @param aii  the AddeImageInfo with the image stuff
      */
     private void setBandInfo(DataChoice dataChoice, AddeImageInfo aii) {
         BandInfo bi = (BandInfo) dataChoice.getId();
