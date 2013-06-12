@@ -2,6 +2,8 @@ import os
 import types
 
 import java.awt.Color.CYAN
+import java.awt.Dimension
+
 import ucar.unidata.util.Range
 
 from contextlib import contextmanager
@@ -15,7 +17,6 @@ from interactive import _expandpath
 from org.slf4j import Logger
 from org.slf4j import LoggerFactory
 
-from java.awt import Dimension
 from java.awt import Rectangle
 from java.lang import NullPointerException
 from java.lang import System
@@ -577,7 +578,7 @@ class _Display(_JavaProxy):
         if getStaticMcv().getArgsManager().getIsOffScreen():
             self.setSizeBackground(width, height)
             return
-        size = Dimension(width, height)
+        size = java.awt.Dimension(width, height)
         #me = self._JavaProxy__javaObject
         navigatedComponent = self._JavaProxy__javaObject.getComponent()
         navigatedComponent.setMinimumSize(size)
