@@ -66,23 +66,23 @@ import java.util.concurrent.Executors;
  * This class handles all the GUI elements of a McIDAS-V support request.
  */
 public class SupportForm extends JFrame {
-
+    
     public static final String PROP_SUPPORTREQ_BUNDLE = "mcv.supportreq.bundle";
-
+    
     public static final String PROP_SUPPORTREQ_CC = "mcv.supportreq.cc";
-
+    
     public static final String PROP_SUPPORTREQ_CONFIRMEMAIL = "mcv.supportreq.confirmedemail";
-
+    
     private static final String HELP_ID = "idv.tools.supportrequestform";
-
+    
     private static ExecutorService exec = Executors.newCachedThreadPool();
-
+    
     private final IdvObjectStore store;
-
+    
     private final StateCollector collector;
-
+    
     private final CancelListener listener = new CancelListener();
-
+    
     private JPanel contentPane;
     private JTextField userField;
     private JTextField emailField;
@@ -94,7 +94,7 @@ public class SupportForm extends JFrame {
     private JTextArea descriptionArea;
     private JCheckBox bundleCheckBox;
     private JCheckBox ccCheckBox;
-
+    
     /**
      * Creates a support request form that collects information about
      * the current McIDAS-V session.
@@ -109,7 +109,7 @@ public class SupportForm extends JFrame {
         unpersistInput();
         otherDoFocusThingNow();
     }
-
+    
     /**
      * Saves user input for the following: name, email address, email address
      * confirmation, organization, whether or not to CC the user a copy, and 
@@ -126,7 +126,7 @@ public class SupportForm extends JFrame {
         store.put(PROP_SUPPORTREQ_BUNDLE, getSendBundle());
         store.save();
     }
-
+    
     /**
      * Loads user input for the following: name, email address, email address
      * confirmation, organization, whether or not to CC the user a copy, and 
@@ -142,7 +142,7 @@ public class SupportForm extends JFrame {
         ccCheckBox.setSelected(store.get(PROP_SUPPORTREQ_CC, true));
         bundleCheckBox.setSelected(store.get(PROP_SUPPORTREQ_BUNDLE, false));
     }
-
+    
     /**
      * Create the frame.
      */
@@ -281,7 +281,7 @@ public class SupportForm extends JFrame {
         contentPane.add(sendButton, "cell 1 12,alignx right");
         contentPane.setFocusTraversalPolicy(new FocusTraveller(userField, emailField, confirmField, organizationField, subjectField, descriptionArea, attachmentOneButton, attachmentTwoButton, bundleCheckBox, ccCheckBox, helpButton, cancelButton, sendButton));
     }
-
+    
     /**
      * Checks {@link #emailField} and {@link #confirmField} to see if they 
      * match (case is ignored).
@@ -291,7 +291,7 @@ public class SupportForm extends JFrame {
     public boolean checkEmailAddresses() {
         return emailField.getText().equalsIgnoreCase(confirmField.getText());
     }
-
+    
     /**
      * Returns whatever occupies {@link #userField}.
      * 
@@ -300,7 +300,7 @@ public class SupportForm extends JFrame {
     public String getUser() {
         return userField.getText();
     }
-
+    
     /**
      * Returns whatever currently lives in {@link #emailField}.
      * 
@@ -309,7 +309,7 @@ public class SupportForm extends JFrame {
     public String getEmail() {
         return emailField.getText();
     }
-
+    
     /**
      * Returns whatever currently lives in {@link #confirmField}.
      * 
@@ -318,7 +318,7 @@ public class SupportForm extends JFrame {
     public String getConfirmedEmail() {
         return confirmField.getText();
     }
-
+    
     /**
      * Returns whatever resides in {@link #subjectField}.
      * 
@@ -327,7 +327,7 @@ public class SupportForm extends JFrame {
     public String getSubject() {
         return subjectField.getText();
     }
-
+    
     /**
      * Returns whatever has commandeered {@link #organizationField}.
      * 
@@ -336,7 +336,7 @@ public class SupportForm extends JFrame {
     public String getOrganization() {
         return organizationField.getText();
     }
-
+    
     /**
      * Returns whatever is ensconced inside {@link #descriptionArea}.
      * 
@@ -345,7 +345,7 @@ public class SupportForm extends JFrame {
     public String getDescription() {
         return descriptionArea.getText();
     }
-
+    
     /**
      * Checks whether or not the user has attached a file in the 
      * {@literal "first file"} slot.
@@ -355,7 +355,7 @@ public class SupportForm extends JFrame {
     public boolean hasAttachmentOne() {
         return new File(attachmentOneField.getText()).exists();
     }
-
+    
     /**
      * Checks whether or not the user has attached a file in the 
      * {@literal "second file"} slot.
@@ -365,7 +365,7 @@ public class SupportForm extends JFrame {
     public boolean hasAttachmentTwo() {
         return new File(attachmentTwoField.getText()).exists();
     }
-
+    
     /**
      * Returns whatever file path has monopolized {@link #attachmentOneField}.
      * 
@@ -375,7 +375,7 @@ public class SupportForm extends JFrame {
     public String getAttachmentOne() {
         return attachmentOneField.getText();
     }
-
+    
     /**
      * Returns whatever file path has appeared within 
      * {@link #attachmentTwoField}.
@@ -386,12 +386,12 @@ public class SupportForm extends JFrame {
     public String getAttachmentTwo() {
         return attachmentTwoField.getText();
     }
-
+    
     // TODO: javadocs!
     public boolean getSendCopy() {
         return ccCheckBox.isSelected();
     }
-
+    
     public boolean getSendBundle() {
         return bundleCheckBox.isSelected();
     }
@@ -399,23 +399,23 @@ public class SupportForm extends JFrame {
     public byte[] getExtraState() {
         return collector.getContents();
     }
-
+    
     public String getExtraStateName() {
         return collector.getExtraAttachmentName();
     }
-
+    
     public boolean canBundleState() {
         return collector.canBundleState();
     }
-
+    
     public byte[] getBundledState() {
         return collector.getBundledState();
     }
-
+    
     public String getBundledStateName() {
         return collector.getBundleAttachmentName();
     }
-
+    
     public boolean canSendLog() {
         String path = collector.getLogPath();
         if (path == null || path.isEmpty()) {
@@ -423,17 +423,18 @@ public class SupportForm extends JFrame {
         }
         return new File(path).exists();
     }
-
+    
     public String getLogPath() {
         return collector.getLogPath();
     }
-
+    
     // TODO: dialogs are bad news bears.
     public void showSuccess() {
-        this.setVisible(false);
-        JOptionPane.showMessageDialog(this, "Support request sent successfully.", "Success", JOptionPane.DEFAULT_OPTION);
+        setVisible(false);
+        dispose();
+        JOptionPane.showMessageDialog(null, "Support request sent successfully.", "Success", JOptionPane.DEFAULT_OPTION);
     }
-
+    
     // TODO: dialogs are bad news hares.
     public void showFailure(final String reason) {
         String msg = "";
@@ -444,7 +445,7 @@ public class SupportForm extends JFrame {
         }
         JOptionPane.showMessageDialog(this, msg, "Problem sending support request", JOptionPane.ERROR_MESSAGE);
     }
-
+    
     /**
      * Checks to see if there is <i>anything</i> in the name, email, 
      * email confirmation, subject, and description.
@@ -470,49 +471,49 @@ public class SupportForm extends JFrame {
         }
         return checkEmailAddresses();
     }
-
+    
     private void attachmentOneButtonActionPerformed(ActionEvent evt) {
         attachFileToField(attachmentOneField);
     }
-
+    
     private void attachmentTwoButtonActionPerformed(ActionEvent evt) {
         attachFileToField(attachmentTwoField);
     }
-
+    
     private void attachmentOneFieldMouseClicked(MouseEvent evt) {
         if (attachmentOneField.getText().isEmpty()) {
             attachFileToField(attachmentOneField);
         }
     }
-
+    
     private void attachmentTwoFieldMouseClicked(MouseEvent evt) {
         if (attachmentTwoField.getText().isEmpty()) {
             attachFileToField(attachmentTwoField);
         }
     }
-
+    
     private void showInvalidInputs() {
         // how to display these?
         JOptionPane.showMessageDialog(this, "You must provide at least your name, email address, subject, and description.", "Missing required input", JOptionPane.ERROR_MESSAGE);
     }
-
+    
     private void sendRequest(ActionEvent evt) {
         // check input validity
         if (!validInput()) {
             showInvalidInputs();
             return;
         }
-
+        
         // persist things that need it.
         persistInput();
-
+        
         // create a background thread
         listener.task = new Submitter(this);
-
+        
         // send the worker thread to the mines
         exec.execute(listener.task);
     }
-
+    
     /**
      * Due to some fields persisting user input between McIDAS-V sessions we
      * set the focus to be on the first of these fields <i>lacking</i> input.
@@ -520,7 +521,7 @@ public class SupportForm extends JFrame {
     private void otherDoFocusThingNow() {
         List<JTextComponent> comps = CollectionHelpers.list(userField, 
             emailField, confirmField, organizationField, subjectField, descriptionArea);
-
+        
         for (JTextComponent comp : comps) {
             if (comp.getText().isEmpty()) {
                 comp.requestFocus(true);
@@ -528,7 +529,7 @@ public class SupportForm extends JFrame {
             }
         }
     }
-
+    
     private static void attachFileToField(final JTextField field) {
         String current = field.getText();
         JFileChooser jfc = new JFileChooser(current);
@@ -536,7 +537,7 @@ public class SupportForm extends JFrame {
             field.setText(jfc.getSelectedFile().toString());
         }
     }
-
+    
     private class CancelListener implements ActionListener {
         BackgroundTask<?> task;
         public void actionPerformed(ActionEvent e) {
@@ -547,7 +548,7 @@ public class SupportForm extends JFrame {
             dispose();
         }
     }
-
+    
     /**
      * Launch a test of the Support Request Form.
      * 
@@ -567,5 +568,4 @@ public class SupportForm extends JFrame {
             }
         });
     }
-    
 }
