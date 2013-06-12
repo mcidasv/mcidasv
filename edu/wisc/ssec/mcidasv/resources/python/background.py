@@ -654,8 +654,8 @@ class _Display(_JavaProxy):
         rect = self._JavaProxy__javaObject.getDisplayBounds()
         return rect.x, rect.y, rect.width, rect.height
         
-    def getDataAtLocation(self, latitude, longitude):
-        #earthLocation = Util.makeEarthLocation(latitude, longitude)
+    def getDataAtLocation(self, lat, lon):
+        #earthLocation = Util.makeEarthLocation(lat, lon)
         #for layer in self._JavaProxy__javaObject.getControls():
         pass
         
@@ -782,12 +782,12 @@ class _Display(_JavaProxy):
         return self._JavaProxy__javaObject.getMapDisplay().getScale()
         
     @gui_invoke_later
-    def center(self, latitude, longitude, scale=1.0):
-        self.setCenter(latitude, longitude)
+    def center(self, lat, lon, scale=1.0):
+        self.setCenter(lat, lon)
         #self.setScaleFactor(scale)
         
     @gui_invoke_later
-    def setCenter(self, latitude, longitude, scale=1.0):
+    def setCenter(self, lat, lon, scale=1.0):
         """Centers the display over a given latitude and longitude.
         
         Please be aware that something like:
@@ -801,8 +801,8 @@ class _Display(_JavaProxy):
         so that "scale" behaves more predicatbly   --mike
         
         Args:
-        latitude:
-        longitude:
+        lat:
+        lon:
         scale: Optional parameter for "zooming". Default value (1.0) results in no rescaling;
             greater than 1.0 "zooms in", less than 1.0 "zooms out"
         """
@@ -815,7 +815,7 @@ class _Display(_JavaProxy):
         # glTranslatef(destCenter.x, destCenter.y, 0.0);
         # glScalef(scaleX, scaleY, 0.0);
         # glTranslatef(sourceCenter.x * -1.0, sourceCenter.y * -1.0, 0.0);
-        validated = LatLonPointImpl(latitude, longitude)
+        validated = LatLonPointImpl(lat, lon)
         earthLocation = Util.makeEarthLocation(validated.getLatitude(), validated.getLongitude())
         mapDisplay = self._JavaProxy__javaObject.getMapDisplay()
         
@@ -902,7 +902,7 @@ class _Display(_JavaProxy):
         try:
             # (maybe we only want to do this in the 'imagedisplay' case?)
             data = ImageSequenceImpl(data)
-        except TypeError, te:
+        except TypeError:
             #print "DEBUG: ImageSequenceImpl constructor failed but thats ok"
             pass
             
@@ -1180,11 +1180,11 @@ class _Layer(_JavaProxy):
         # looking like ucar.visad.display.AnimationWidget is the place to be
         pass
         
-    def getFrameDataAtLocation(self, latitude, longitude, frame):
+    def getFrameDataAtLocation(self, lat, lon, frame):
         # just return the value
         pass
         
-    def getDataAtLocation(self, latitude, longitude):
+    def getDataAtLocation(self, lat, lon):
         # should return a dict of timestamp: value ??
         pass
         
