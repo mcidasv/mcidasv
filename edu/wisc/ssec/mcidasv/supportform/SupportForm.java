@@ -94,6 +94,9 @@ public class SupportForm extends JFrame {
     private JTextArea descriptionArea;
     private JCheckBox bundleCheckBox;
     private JCheckBox ccCheckBox;
+    private JButton sendButton;
+    private JButton cancelButton;
+    private JButton helpButton;
     
     /**
      * Creates a support request form that collects information about
@@ -260,7 +263,7 @@ public class SupportForm extends JFrame {
         ccCheckBox.setSelected(true);
         contentPane.add(ccCheckBox, "cell 1 10,alignx left");
         
-        JButton helpButton = new JButton("Help");
+        helpButton = new JButton("Help");
         helpButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 ucar.unidata.ui.Help.getDefaultHelp().gotoTarget(HELP_ID);
@@ -268,11 +271,11 @@ public class SupportForm extends JFrame {
         });
         contentPane.add(helpButton, "flowx,cell 1 12,alignx right");
         
-        JButton cancelButton = new JButton("Cancel");
+        cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(listener);
         contentPane.add(cancelButton, "cell 1 12,alignx right");
         
-        JButton sendButton = new JButton("Send Request");
+        sendButton = new JButton("Send Request");
         sendButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 sendRequest(evt);
@@ -444,6 +447,9 @@ public class SupportForm extends JFrame {
             msg = "Error sending request:\n"+reason;
         }
         JOptionPane.showMessageDialog(this, msg, "Problem sending support request", JOptionPane.ERROR_MESSAGE);
+        if (sendButton != null) {
+            sendButton.setEnabled(true);
+        }
     }
     
     /**
@@ -502,6 +508,12 @@ public class SupportForm extends JFrame {
         if (!validInput()) {
             showInvalidInputs();
             return;
+        }
+        
+        // disable the ability to send more requests until we get a status
+        // reply from the server.
+        if (sendButton != null) {
+            sendButton.setEnabled(false);
         }
         
         // persist things that need it.
