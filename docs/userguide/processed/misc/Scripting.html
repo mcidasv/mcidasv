@@ -98,11 +98,24 @@ paths to avoid Windows interpreting it as an escape sequence.):
   a window and returns an array of panels (single panel currently supported)</p>
 <div class="OneTabIndent">Usage: <em> panel=buildWindow(keywords)</em></div>
 <div class="TwoTabIndent">Keywords:</div>
-<div class="ThreeTabIndent">height= height of the window</div>
-<div class="ThreeTabIndent">width= width of the window</div>
-<div class="ThreeTabIndent">panelTypes= type of display to create</div>
-<div class="FourTabIndent">MAP (default)</div>
-<div class="FourTabIndent">GLOBE</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">height=</td>
+      <td>
+          height of the window
+        </td>
+    </tr>
+    <tr>
+      <td valign="top">width=</td>
+      <td>width of the window</td>
+    </tr>
+    <tr>
+      <td valign="top">panelTypes=</td>
+      <td>type of display to create<br>
+          MAP (default)<br>GLOBE</td>
+    </tr>
+  </table>
+</div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>panel=buildWindow(height=600,width=800,panelTypes=GLOBE)</em></div>
 <div class="TwoTabIndent"><em>panel=buildWindow(height=600,width=800,panelTypes=MAP)</em></div>
@@ -111,25 +124,47 @@ paths to avoid Windows interpreting it as an escape sequence.):
 <div class="OneTabIndent">Usage: <em>openBundle(bundle file, keywords)</em></div>
 <div class="TwoTabIndent">bundle file - file name of bundle (required)</div>
 <div class="TwoTabIndent">Keywords:</div>
-<div class="ThreeTabIndent">height= height of display; default= height of the
-  display window when the bundle was saved</div>
-<div class="ThreeTabIndent">width= width of display; default= width of the display
-  window when the bundle was saved</div>
-<div class="ThreeTabIndent">dataDictionary= a dictionary where the keys are datasource
-  names,  and the values are either a string or list of strings representing
-  the full path name/names  of the data that will be used in place of the data
-  in the bundle
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">height=</td>
+      <td>height of display; default= height of the    display window when the bundle was saved</td>
+    </tr>
+    <tr>
+      <td valign="top">width=</td>
+      <td>width of display; default= width of the display    window when the bundle was saved</td>
+    </tr>
+    <tr>
+      <td valign="top">dataDirectory=</td>
+      <td>a dictionary where the keys are datasource    names,  and the values are either a string or list of strings   representing    the full path name/names  of the data that will be used in place of   the data    in the bundle </td>
+    </tr>
+  </table>
 </div>
 <p><strong><a name="makeLocalADDE" id="makeLocalADDE"></a>makeLocalADDEEntry -</strong> Creates a local ADDE entry in the server table</p>
 <div class="OneTabIndent">Usage: <em>localDataset= makeLocalADDEEntry(keywords)</em></div>
 <div class="TwoTabIndent">Keywords:</div>
-<div class="ThreeTabIndent">dataset= name of the dataset - limit of 8 characters</div>
-<div class="ThreeTabIndent">imageType = image type name for local server entry. (default=<em>format_dataset</em>)</div>
-<div class="ThreeTabIndent">save = True - saves entry into the server table<br>
-&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; False - entry is removed after McIDAS-V session is ended (default)</div>
-<div class="ThreeTabIndent">mask= directory containing the files used by the created dataset</div>
-<div class="ThreeTabIndent">format= data format of files within the dataset. Either Full Name or Short Name can be used as valid options:</div>
-<div class="ThreeTabIndent"><table width="525" border="1">
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">dataset=</td>
+      <td>name of the dataset - limit of 8 characters</td>
+    </tr>
+    <tr>
+      <td valign="top">imageType=</td>
+      <td>image type name for local server entry. (default=<em>format_dataset</em>)</td>
+    </tr>
+    <tr>
+      <td valign="top">save=</td>
+      <td>True - saves entry into the server table; False - entry is removed after   McIDAS-V session is ended (default)</td>
+    </tr>
+    <tr>
+      <td valign="top">mask=</td>
+      <td>directory containing the files used by the created dataset</td>
+    </tr>
+    <tr>
+      <td valign="top">format=</td>
+      <td>data format of files within the dataset. Either Full Name or Short Name   can be used as valid options:</td>
+    </tr>
+  </table></div>
+<div class="ThreeTabIndent2"><table width="525" border="1">
     <tr>
         <th width="420" scope="col"><strong>Full Name</strong></th>
         <th width="105" scope="col"><strong>Short Name</strong></th>
@@ -241,50 +276,96 @@ paths to avoid Windows interpreting it as an escape sequence.):
 <p><strong><a name="getLocalADDE" id="getLocalADDE"></a>getLocalADDEEntry -</strong> Gets the descriptor for a local ADDE entry</p>
 <div class="OneTabIndent">Usage: <em>localDescriptor= getLocalADDEEntry(keywords)</em></div>
 <div class="TwoTabIndent">Keywords:</div>
-<div class="ThreeTabIndent">dataset= local ADDE entry dataset name</div>
-<div class="ThreeTabIndent">imageType= image type of local ADDE entry</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">dataset=</td>
+      <td>local ADDE entry dataset name</td>
+    </tr>
+    <tr>
+      <td valign="top">imageType=</td>
+      <td>image type of local ADDE entry</td>
+    </tr>
+</table></div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>desc = getLocalADDEEntry(dataset='AREA',imageType='Area files')</em></div>
-<div class="ThreeTabIndent">Note: Should be used after makeLocalADDEEntry. Once you run this command, you can use <em>localEntry=desc</em> in your getADDEImage command.</div>
+<div class="ThreeTabIndent2">Note: Should be used after makeLocalADDEEntry. Once you run this command, you can use <em>localEntry=desc</em> in your getADDEImage command.</div>
 <p><strong><a name="getADDEImage" id="getADDEImage"></a>getADDEImage -</strong> Requests
   data from an ADDE Image server - returns both data and metadata objects</p>
 <div class="OneTabIndent">Usage: <em>myMetaData,myData= getADDEImage(keywords)</em></div>
 <div class="TwoTabIndent">Keywords:</div>
-<div class="ThreeTabIndent">localEntry = local dataset defined by makeLocalADDEEntry</div>
-<div class="ThreeTabIndent">server= ADDE server</div>
-<div class="ThreeTabIndent">dataset= ADDE dataset group name</div>
-<div class="ThreeTabIndent">descriptor= ADDE dataset descriptor</div>
-<div class="ThreeTabIndent">day= day range ('begin date','end date')</div>
-<div class="ThreeTabIndent">time= ('begin time','end time')</div>
-<div class="ThreeTabIndent">coordinateSystem= coordinate system to use for retrieving
-  data
-<div class="OneTabIndent">AREA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AREA file coordinates - zero
-  based</div>
-<div class="OneTabIndent">LATLON&nbsp;&nbsp;&nbsp;latitude and longitude coordinates</div>
-<div class="OneTabIndent">IMAGE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;image coordinates
-  - one based</div></div> 
-<div class="ThreeTabIndent">location=(x,y)<br>
-</div>
-<div class="FourTabIndent">x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AREA
-  line, latitude, or IMAGE line</div>
-<div class="FourTabIndent">y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AREA
-  element, longitude, or IMAGE element</div>
-<div class="ThreeTabIndent">place = CENTER places specified location (x,y) at
-  center of panel</div>
-<div class="FourTabIndent">&nbsp;ULEFT places specified location (x,y) at upper-left
-  coordinate of panel</div>
-<div class="ThreeTabIndent">band= McIDAS band number; must be specified if requesting
-  data from multi-banded image; default=band in image </div>
-<div class="ThreeTabIndent">unit= calibration unit to request; default = 'BRIT'</div>
-<div class="ThreeTabIndent">position= time relative (negative values) or absolute
-  (positive values) position in the dataset; default=0 (most recent image)</div>
-<div class="ThreeTabIndent">size= number of lines and elements to request; default=(480,640)</div>
-<div class="ThreeTabIndent">mag= magnification of data (line,element), negative
-  number used for sampling data; default=(1,1)</div>
-<div class="ThreeTabIndent">accounting= ('user', 'project number') user and project
-  number required by servers using McIDAS accounting; default = ('idv','0')</div>
-  <div class="ThreeTabIndent">debug= send debug information to file; default=False</div>
-  <div class="OneTabIndent">Examples:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">localEntry=</td>
+      <td>local dataset defined by makeLocalADDEEntry</td>
+    </tr>
+    <tr>
+      <td valign="top">server=</td>
+      <td>ADDE server</td>
+    </tr>
+        <tr>
+      <td valign="top">dataset=</td>
+      <td>ADDE dataset group name</td>
+    </tr>
+        <tr>
+      <td valign="top">descriptor=</td>
+      <td>ADDE dataset descriptor</td>
+    </tr>
+        <tr>
+      <td valign="top">day=</td>
+      <td>day range ('begin date','end date')</td>
+    </tr>
+        <tr>
+      <td valign="top">time=</td>
+      <td>('begin time','end time')</td>
+    </tr>
+        <tr>
+      <td valign="top">coordinateSystem=</td>
+      <td>coordinate system to use for retrieving    data <br>
+      AREA = AREA file coordinates - zero based<br>
+      LATLON = latitude and longitude coordinates<br>
+      IMAGE = image coordinates - one based</td>
+    </tr>
+        <tr>
+      <td valign="top">location=</td>
+      <td>(x,y)<br>
+      x = AREA line, latitude, or IMAGE line<br>
+      y = AREA element, longitude, or IMAGE element</td>
+    </tr>
+        <tr>
+      <td valign="top">place=</td>
+      <td>CENTER places specified location (x,y) at    center of panel<br>
+          ULEFT places specified location (x,y) at upper-left    coordinate of panel</td>
+    </tr>
+        <tr>
+      <td valign="top">band=</td>
+      <td>McIDAS band number; must be specified if requesting    data from multi-banded image; default=band in image </td>
+    </tr>
+        <tr>
+      <td valign="top">unit=</td>
+      <td>calibration unit to request; default = 'BRIT'</td>
+    </tr>
+        <tr>
+      <td valign="top">position=</td>
+      <td>time relative (negative values) or absolute    (positive values) position in the dataset; default=0 (most recent   image)</td>
+    </tr>
+        <tr>
+      <td valign="top">size=</td>
+      <td>number of lines and elements to request; default=(480,640)</td>
+    </tr>
+        <tr>
+      <td valign="top">mag=</td>
+      <td>magnification of data (line,element), negative    number used for sampling data; default=(1,1)</td>
+    </tr>
+        <tr>
+      <td valign="top">accounting=</td>
+      <td> ('user', 'project number') user and project    number required by servers using McIDAS accounting; default =   ('idv','0')</td>
+    </tr>
+        <tr>
+      <td valign="top">debug=</td>
+      <td>send debug information to file; default=False</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Examples:</div>
   <div class="TwoTabIndent"><em>metadata,data = getADDEImage(debug=True,localEntry=desc, size='ALL', mag=(1,1), unit='BRIT')</em></div>
 <p><strong><a name="createLayer" id="createLayer"></a>createLayer -</strong> Creates
   a new data layer in a panel</p>
@@ -295,7 +376,7 @@ paths to avoid Windows interpreting it as an escape sequence.):
 <div class="TwoTabIndent">myData - data object to display (from getADDEImage)</div>
 <div class="OneTabIndent">Examples:</div>
 <div class="TwoTabIndent"><em>layer=panel[0].createLayer('Image Display', data)</em></div>
-<div class="ThreeTabIndent">Note: This is used in conjunction with getLocalADDEEntry.</div>
+<div class="ThreeTabIndent2">Note: This is used in conjunction with getLocalADDEEntry.</div>
 <p>&nbsp;</p>
 <h3>Modify the Display Object: </h3>
 <p><strong><a name="annotate" id="annotate"></a>annotate -</strong> Writes text
@@ -303,32 +384,50 @@ paths to avoid Windows interpreting it as an escape sequence.):
 <div class="OneTabIndent">Usage: <em>panel[0].annotate(text,keywords)</em></div>
 <div class="TwoTabIndent">text - annotation string </div>
 <div class="TwoTabIndent">Keywords:</div>
-<div class="ThreeTabIndent">lat=, lon= Start text string at specified latitude and longitude (must be used together)</div>
-<div class="ThreeTabIndent">line=, element= Start text string at specified panel
-   line and element (must be used together)</div>
-
-<div class="ThreeTabIndent">font= name of font; default is system dependent </div>
-<div class="ThreeTabIndent">size= size of font; default 12 </div>
-<div class="ThreeTabIndent">  color= 'color name'; default='red'<br>
-</div>
-<div class="FourTabIndent">-or- </div>
-<div class="FourTabIndent">[R,G,B] fractional scaling factor for each red, green
-  and blue value (0 to 1)</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">lat=, lon=</td>
+      <td>start text string at specified latitude and longitude (must be used   together)</td>
+    </tr>
+    <tr>
+      <td valign="top">line=, element=</td>
+      <td>start text string at specified panel     line and element (must be used together)</td>
+    </tr>
+    <tr>
+      <td valign="top">font=</td>
+      <td>name of font; default is system dependent </td>
+    </tr>
+    <tr>
+      <td valign="top">size=</td>
+      <td>size of font; default = size of font defined    in user preferences</td>
+    </tr>
+    <tr>
+      <td valign="top">color=</td>
+      <td>'color name'; default = 'red'<br>
+      -or-<br>
+      [R,G,B] fractional scaling factor for each red, green and blue value (0 to 1)</td>
+    </tr>
+</table></div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>panel[0].annotate('EQUATOR',size=20, font='SansSerif.bold', lat=0, lon=-90, color='Red')</em></div>
-<div class="ThreeTabIndent">Note: This is used in conjunction with buildWindow</div>
+<div class="ThreeTabIndent2">Note: This is used in conjunction with buildWindow</div>
 <p><strong><a name="setCenter" id="setCenter"></a>setCenter -&nbsp;</strong>
 Centers the display on a specified latitude/longitude and sets a scaling factor</p>
 <div class="OneTabIndent">Usage: <em>panel[0].setCenter(latitude,longitude,keywords) </em></div>
 <div class="TwoTabIndent">latitude - centers the display at the specified latitude (no default, required parameter) </div>
 <div class="TwoTabIndent">longitude - centers the display at the specified longitude (no default, required parameter) </div>
 <div class="TwoTabIndent">Keywords:</div>
-<div class="ThreeTabIndent">  scale= scale factor for map; default=current scale factor<br>
-  Scale factors between 0 and 1 zoom out centered on the specified
-  latitude/longitude and scale factors greater than 1 zoom in.</div>
+<div class="ThreeTabIndent2">  <table class="noborder">
+    <tr>
+      <td valign="top">scale=</td>
+      <td>scale factor for map; default = current scale factor</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Remarks:</div>
+<div class="TwoTabIndent">Scale factors between 0 and 1 zoom out centered on the specified latitude/longitude and scale factors greater than 1 zoom in.</div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>panel[0].setCenter(latitude=45, longitude=-75, scale=20</em></div>
-<div class="ThreeTabIndent">Note: This is used in conjunction with buildWindow</div>
+<div class="ThreeTabIndent2">Note: This is used in conjunction with buildWindow</div>
 <p><strong><a name="setProjection" id="setProjection"></a>setProjection -</strong> Sets
   the projection of a panel</p>
 <div class="OneTabIndent">Usage: <em>panel[0].setProjection(projection)</em></div>
@@ -339,7 +438,7 @@ Centers the display on a specified latitude/longitude and sets a scaling factor<
   uses the default projection of that data </div>
   <div class="OneTabIndent">Example:</div>
   <div class="TwoTabIndent"><em>panel[0].setProjection('US>States>N-Z>Pennsylvania')</em></div>
-  <div class="ThreeTabIndent">Note: This is used in conjunction with buildWindow</div>
+  <div class="ThreeTabIndent2">Note: This is used in conjunction with buildWindow</div>
 <p><strong><a name="setWireframe" id="setWireframe"></a>setWireframe -</strong> Turns
   wire frame box on or off</p>
 <div class="OneTabIndent">Usage: <em>panel[0].setWireframe(visible)</em></div>
@@ -348,45 +447,64 @@ Centers the display on a specified latitude/longitude and sets a scaling factor<
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>panel[0].setWireframe(False)</em></div>
 <div class="TwoTabIndent"><em>panel[0].setWireframe(True)</em></div>
-<div class="ThreeTabIndent">Note: This is used in conjunction with buildWindow</div>
+<div class="ThreeTabIndent2">Note: This is used in conjunction with buildWindow</div>
 <p>&nbsp;</p>
 <h3>Modify the Layer Object: </h3>
 <p><strong><a name="setColorScale" id="setColorScale"></a>setColorScale -</strong> Displays
   color scale on a panel and specifies its attributes</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setColorScale(keywords)</em></div>
 <div class="TwoTabIndent">Keywords:</div>
-<div class="ThreeTabIndent">visible= True displays color scale (default)</div>
-<div class="ThreeTabIndent">placement= location of color scale  <br>
-  <div class="OneTabIndent">
-  'Top'  (default)<br>
-  'Bottom'<br>
-  'Left'<br>
-  'Right'</div></div>
-<div class="ThreeTabIndent">font= name of font; default=font defined in user
-  preferences</div>
-<div class="ThreeTabIndent">  style= font style; default=font defined in user
-      preferences </div>
-  <div class="FourTabIndent">'BOLD' bolded font</div>
-<div class="FourTabIndent">'ITALIC' italicized font</div>
-<div class="FourTabIndent">'NONE' </div>
-<div class="ThreeTabIndent">size= size of font; default=size of font defined
-  in user preferences</div>
-<div class="ThreeTabIndent">  color= 'color name'; default=color defined in user
-preferences<br></div>
-<div class="FourTabIndent">-or- </div>
-<div class="FourTabIndent">[R,G,B] fractional scaling factor for each red, green
-  and blue value (0 to 1)</div>
-  <div class="OneTabIndent">Example:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">visible=</td>
+      <td>True - displays color scale (default)</td>
+    </tr>
+    <tr>
+      <td valign="top">placement=</td>
+      <td>location of color scale <br>
+      'Top' (default)<br>
+      'Bottom'<br>
+      'Left'<br>
+      'Right'</td>
+    </tr>
+    <tr>
+      <td valign="top">font=</td>
+      <td>name of font; default = font defined in User    Preferences</td>
+    </tr>
+    <tr>
+      <td valign="top">style=</td>
+      <td>font style; default=font defined in user preferences<br>
+      'BOLD' - bolded font<br>
+      'ITALIC' - italicized font<br>
+      'NONE'</td>
+    </tr>
+    <tr>
+      <td valign="top">size=</td>
+      <td>size of font; default = size of font defined    in User Preferences</td>
+    </tr>
+    <tr>
+      <td valign="top">color=</td>
+      <td>'color name'; default = color defined in User  Preferences<br>
+      -or-<br>
+      [R,G,B] fractional scaling factor for each red, green and blue value (0 to 1)</td>
+    </tr>
+</table></div>
+<div class="ThreeTabIndent"></div>
+<div class="OneTabIndent">Example:</div>
   <div class="TwoTabIndent"><em>layer.setColorScale(placement='left',font='SansSerif',size=18.0,color='green'</em></div>
-  <div class="ThreeTabIndent">Note: This is used in conjunction with createLayer.</div>
+  <div class="ThreeTabIndent2">Note: This is used in conjunction with createLayer.</div>
 <p><strong><a name="setEnhancement" id="setEnhancement"></a>setEnhancement -&nbsp;</strong>Applies
   a color table and defines data range of data in a layer<br>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setEnhancement(color table,keywords)</em></div>
 <div class="TwoTabIndent">color table - color table name e.g., 'Longwave Infrared
   Deep Convection'</div>
 <div class="TwoTabIndent">Keywords:</div>
-<div class="ThreeTabIndent">range=(min,max) enhancement range; default= (min,max)
-  of data</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">range=</td>
+      <td>(min,max) enhancement range; default = (min,max)    of data</td>
+    </tr>
+</table></div>
   <div class="OneTabIndent">Example:</div>
   <div class="TwoTabIndent"><em>layer.setEnhancement('Longwave Infrared Deep Convection',range=(20,250))</em></div>
   <div class="ThreeTabIndent">Note: This is used in conjunction with createLayer</div>
@@ -395,32 +513,44 @@ preferences<br></div>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setLayerLabel(label,keywords)</em></div>
 <div class="TwoTabIndent">label - layer label string </div>
 <div class="TwoTabIndent">Keywords:</div>
-<div class="ThreeTabIndent">visible= True displays layer label</div>
-<div class="ThreeTabIndent">font= name of font; default=font defined in user
-  preferences</div>
-<div class="ThreeTabIndent">  style= font style; default=font defined in user
-preferences </div>
-  <div class="FourTabIndent">'BOLD' bolded font</div>
-<div class="FourTabIndent">'ITALIC' italicized font</div>
-<div class="FourTabIndent">'NONE' </div>
-<div class="ThreeTabIndent">size= size of font; default=size of font defined
-  in user preferences</div>
-<div class="ThreeTabIndent">  color= 'color name'; default=color defined in user
-preferences<br></div>
-<div class="FourTabIndent">-or- </div>
-<div class="FourTabIndent">[R,G,B] fractional scaling factor for each red, green
-  and blue value (0 to 1)</div>
-  <div class="OneTabIndent">Example:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">visible=</td>
+      <td>True - displays layer label(default)</td>
+    </tr>
+    <tr>
+      <td valign="top">font=</td>
+      <td>name of font; default = font defined in User    Preferences</td>
+    </tr>
+    <tr>
+      <td valign="top">style=</td>
+      <td>font style; default = font defined in user preferences<br>
+      'BOLD' - bolded font<br>
+      'ITALIC' - italicized font<br>
+      'NONE'</td>
+    </tr>
+    <tr>
+      <td valign="top">size=</td>
+      <td>size of font; default = size of font defined    in User Preferences</td>
+    </tr>
+    <tr>
+      <td valign="top">color=</td>
+      <td>'color name'; default = color defined in User  Preferences<br>
+      -or-<br>
+      [R,G,B] fractional scaling factor for each red, green and blue value (0 to 1)</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Example:</div>
   <div class="TwoTabIndent"><em>layer.setLayerLabel(label='%displayname% %timestamp%', size=15, color=blue', style='BOLD'</em></div>
-  <div class="ThreeTabIndent">Note: This is used in conjunction with createLayer</div>
+  <div class="ThreeTabIndent2">Note: This is used in conjunction with createLayer</div>
 <p><strong><a name="setLayerVisible" id="setLayerVisible"></a>setLayerVisible
     -</strong> Toggles layer visibility on/off</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setLayerVisible(visible)</em></div>
 <div class="TwoTabIndent">visible - True displays layer</div>
-<div class="ThreeTabIndent"> &nbsp;&nbsp;False turns off layer</div>
+<div class="ThreeTabIndent2"> &nbsp;&nbsp;False turns off layer</div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>layer.setLayerVisible(False)</em></div>
-<div class="ThreeTabIndent">Note: This is used in conjunction with createLayer</div>
+<div class="ThreeTabIndent2">Note: This is used in conjunction with createLayer</div>
 <p>&nbsp;</p>
 <h3>Save the Display: </h3>
 <p><strong><a name="captureImage" id="captureImage"></a>captureImage -</strong> Writes
@@ -429,10 +559,20 @@ preferences<br></div>
 <div class="TwoTabIndent">file - name of file, file format determine by file
   extension; valid options: .jpg, .gif, .png, .pdf, .svg, .kml, .kmz</div>
 <div class="TwoTabIndent">Keywords:</div>
-<div class="ThreeTabIndent">height= height of image (default - see Remarks)</div>
-<div class="ThreeTabIndent">width= width of image (default - see Remarks)</div>
-<div class="ThreeTabIndent">quality= quality of jpg file (0.0 to 1.0); default=1.0;
-  not used with other formats</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">height=</td>
+      <td>height of image (default - see Remarks)</td>
+    </tr>
+    <tr>
+      <td valign="top">width=</td>
+      <td>width of image (default - see Remarks)</td>
+    </tr>
+    <tr>
+      <td valign="top">quality=</td>
+      <td>quality of jpg file (0.0 to 1.0); default=1.0;    not used with other formats</td>
+    </tr>
+  </table></div>
 <div class="OneTabIndent">Remarks:</div>
 <div class="TwoTabIndent">If captureImage is used to save a panel that was created
   with openBundle, the sizes default to size of the display window when the bundle
@@ -447,9 +587,18 @@ preferences<br></div>
 <div class="TwoTabIndent">file - name of file, file format determine by file
   extension; valid options: .gif, .mov</div>
 <div class="TwoTabIndent">Keywords:</div>
-<div class="ThreeTabIndent">resize width= height= &nbsp;&nbsp;frame size of the movie</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+<tr>
+      <td valign="top">height=</td>
+      <td>height of image (default = height of window)</td>
+    </tr>
+    <tr>
+      <td valign="top">width=</td>
+      <td>width of image (default = width of window)</td>
+    </tr>
+  </table></div>
 <div class="OneTabIndent">Example:</div>
-<div class="TwoTabIndent"><em>writeMovie("C:\\Users\\myuser\\movie.gif')</em></div>
+<div class="TwoTabIndent"><em>writeMovie('C:\\Users\\myuser\\movie.gif')</em></div>
 <p>&nbsp;</p>
 <h3>Environment: </h3>
 <p><strong><a name="printHistoryLength" id="printHistoryLength"></a>getJythonShellMaxHistoryLength( ) -</strong> Returns the current number of commands that are saved.
@@ -468,6 +617,8 @@ preferences<br></div>
 <div class="TwoTabIndent">Understands environmental variables such as &quot;~&quot; and &quot;..&quot;.&nbsp;For example, on Windows, &nbsp;'print expandpath(&quot;$HOMEPATH&quot;)' will print \Users\username.</div>
 <p><strong><a name="removeAllData" id="removeAllData"></a>removeAllData( ) -</strong> Removes all data sources added during the current session, without removing any displays.</p>
 <div class="OneTabIndent">Usage: <em>removeAllData()</em></div>
+<p><strong><a name="removeAllLayers" id="removeAllLayers"></a>removeAllLayers( ) -</strong> Removes all layers that have been displayed.</p>
+<div class="OneTabIndent">Usage: <em>removeAllLayers()</em></div>
 <p><strong><a name="removeAllLayers" id="removeAllLayers"></a>removeAllLayers( ) -</strong> Removes all layers that have been displayed.</p>
 <div class="OneTabIndent">Usage: <em>removeAllLayers()</em></div>
 <p>For users looking for more functionality from McIDAS-V scripting, additional

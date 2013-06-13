@@ -83,8 +83,13 @@ A.faq-category-link {
 	padding-left: 80px;
 }
 .ThreeTabIndent {
+	padding-left: 145px;
+	text-indent: -25px;
+}
+.ThreeTabIndent2 {
 	padding-left: 120px;
 }
+
 .FourTabIndent {
 	padding-left: 160px;
 }
@@ -232,7 +237,9 @@ table {
 }
 
 table.noborder {
-  border: 0px;
+	border: 0px;
+	margin-top: -2px;
+	margin-bottom: -2px;
   }
   
 td {
