@@ -285,7 +285,15 @@
 
     <div class="indented" id="miscellaneous">
       <span class="link" onClick="setPage('Bundles.html');">Bundles</span><br>
-      <span class="link" onClick="setPage('misc/Scripting.html');">Scripting</span><br>
+      <span class="toggle" onClick="toggleChildren(this,'scripting');">+</span>
+      <span class="link" onClick="setPage('misc/Scripting/Scripting.html');">Scripting</span><br>
+      <div class="indented" id="scripting">
+      <span class="link" onClick="setPage('misc/Scripting/CreateObject.html');">Create an Object</span><br>
+      <span class="link" onClick="setPage('misc/Scripting/ModifyDisplayObject.html');">Modify the Display Object</span><br>
+      <span class="link" onClick="setPage('misc/Scripting/ModifyLayerObject.html');">Modify the Layer Object</span><br>
+      <span class="link" onClick="setPage('misc/Scripting/SaveDisplay.html');">Save the Display</span><br>
+      <span class="link" onClick="setPage('misc/Scripting/Environment.html');">Environment</span><br>
+      </div>
       <span class="link" onClick="setPage('collab/Sharing.html');">Sharing</span><br>
       <span class="link" onClick="setPage('misc/SiteConfiguration.html');">Site Configuration</span><br>
       <span class="link" onClick="setPage('misc/PluginJarFiles.html');">Plugin Jar Files</span><br>

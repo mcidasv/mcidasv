@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Modify the Layer Object</title>
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<!-- InstanceBeginEditable name="CurrentFile" -->
+<script language="javascript" type="text/javascript">
+function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/ModifyLayerObject.html',true); }
+</script>
+<!-- InstanceEndEditable -->
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+<body onLoad="setParentPage();">
+<div class="TopTitleNav">
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="ModifyDisplayObject.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="SaveDisplay.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span> </p>
+  <hr align="center">
+</div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Modify the Layer Object</div>
+<strong><a name="setColorScale" id="setColorScale"></a>setColorScale -</strong></strong> Displays
+  color scale on a panel and specifies its attributes</p>
+<div class="OneTabIndent">Usage: <em>myDataLayer.setColorScale(keywords)</em></div>
+<div class="TwoTabIndent">Keywords:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">visible=</td>
+      <td>True - displays color scale (default)</td>
+    </tr>
+    <tr>
+      <td valign="top">placement=</td>
+      <td>location of color scale <br>
+      'Top' (default)<br>
+      'Bottom'<br>
+      'Left'<br>
+      'Right'</td>
+    </tr>
+    <tr>
+      <td valign="top">font=</td>
+      <td>name of font; default = font defined in User    Preferences</td>
+    </tr>
+    <tr>
+      <td valign="top">style=</td>
+      <td>font style; default=font defined in user preferences<br>
+      'BOLD' - bolded font<br>
+      'ITALIC' - italicized font<br>
+      'NONE'</td>
+    </tr>
+    <tr>
+      <td valign="top">size=</td>
+      <td>size of font; default = size of font defined    in User Preferences</td>
+    </tr>
+    <tr>
+      <td valign="top">color=</td>
+      <td>'color name'; default = color defined in User  Preferences<br>
+      -or-<br>
+      [R,G,B] fractional scaling factor for each red, green and blue value (0 to 1)</td>
+    </tr>
+</table></div>
+<div class="ThreeTabIndent"></div>
+<div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>layer.setColorScale(placement='left',font='SansSerif',size=18.0,color='green'</em></div>
+<p><strong><a name="setEnhancement" id="setEnhancement"></a>setEnhancement -&nbsp;</strong>Applies
+  a color table and defines data range of data in a layer<br>
+<div class="OneTabIndent">Usage: <em>myDataLayer.setEnhancement(color table,keywords)</em></div>
+<div class="TwoTabIndent">color table - color table name e.g., 'Longwave Infrared
+  Deep Convection'</div>
+<div class="TwoTabIndent">Keywords:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">range=</td>
+      <td>(min,max) enhancement range; default = (min,max)    of data</td>
+    </tr>
+</table></div>
+  <div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>layer.setEnhancement('Longwave Infrared Deep Convection',range=(20,250))</em></div>
+<p><strong><a name="setLayerLabel" id="setLayerLabel"></a>setLayerLabel -</strong> Toggles
+  a layer label on/off and defines its attributes</p>
+<div class="OneTabIndent">Usage: <em>myDataLayer.setLayerLabel(label,keywords)</em></div>
+<div class="TwoTabIndent">label - layer label string </div>
+<div class="TwoTabIndent">Keywords:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">visible=</td>
+      <td>True - displays layer label(default)</td>
+    </tr>
+    <tr>
+      <td valign="top">font=</td>
+      <td>name of font; default = font defined in User    Preferences</td>
+    </tr>
+    <tr>
+      <td valign="top">style=</td>
+      <td>font style; default = font defined in user preferences<br>
+      'BOLD' - bolded font<br>
+      'ITALIC' - italicized font<br>
+      'NONE'</td>
+    </tr>
+    <tr>
+      <td valign="top">size=</td>
+      <td>size of font; default = size of font defined    in User Preferences</td>
+    </tr>
+    <tr>
+      <td valign="top">color=</td>
+      <td>'color name'; default = color defined in User  Preferences<br>
+      -or-<br>
+      [R,G,B] fractional scaling factor for each red, green and blue value (0 to 1)</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>layer.setLayerLabel('%displayname% %timestamp%', size=15, color=blue', style='BOLD'</em></div>
+<p><strong><a name="setLayerVisible" id="setLayerVisible"></a>setLayerVisible
+    -</strong> Toggles layer visibility on/off</p>
+<div class="OneTabIndent">Usage: <em>myDataLayer.setLayerVisible(visible)</em></div>
+<div class="TwoTabIndent">visible - True displays layer</div>
+<div class="ThreeTabIndent2"> &nbsp;&nbsp;False turns off layer</div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>layer.setLayerVisible(False)</em></div>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav">
+  <hr align="center">
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="ModifyDisplayObject.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="SaveDisplay.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span></p>
+</div>
+</body>
+<!-- InstanceEnd -->
+</html>

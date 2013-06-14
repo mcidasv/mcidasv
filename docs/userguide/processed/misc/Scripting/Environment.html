@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Environment</title>
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<!-- InstanceBeginEditable name="CurrentFile" -->
+<script language="javascript" type="text/javascript">
+function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Environment.html',true); }
+</script>
+<!-- InstanceEndEditable -->
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+<body onLoad="setParentPage();">
+<div class="TopTitleNav">
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="SaveDisplay.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="../../collab/Sharing.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span> </p>
+  <hr align="center">
+</div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Environment</div>
+<a name="getHistoryLength" id="getHistoryLength"></a><strong>getJythonShellMaxHistoryLength( ) -</strong></strong> Returns the current number of commands that are saved.
+<div class="OneTabIndent">Usage: <em>print getJythonShellMaxHistoryLength()</em></div>
+<p><strong><a name="setHistoryLength" id="setHistoryLength2"></a>setJythonShellMaxHistoryLength( ) -</strong> Sets the number of commands that will be saved.</p>
+<div class="OneTabIndent">Usage: <em>setJythonShellMaxHistoryLength(number)</em></div>
+<div class="OneTabIndent">Remarks:</div>
+<div class="TwoTabIndent">This is the number of commands that will be listed out with the <strong>File>List Saved History</strong> menu item in the Jython Shell, as well as the number that will be added to the Local Jython Library from the <strong>File>Save Commands to Jython Library</strong> menu item. The default number of commands saved to the history is 100.</div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>setJythonShellMaxHistoryLength(25)</em></div>
+<p><strong><a name="collectGarbage" id="collectGarbage"></a>collectGarbage( ) -</strong> Performs a garbage collection to free up memory.</p>
+<div class="OneTabIndent">Usage: <em>collectGarbage()</em></div>
+<p><strong><a name="removeAllData" id="removeAllData"></a>removeAllData( ) -</strong> Removes all data sources added during the current session, without removing any displays.</p>
+<div class="OneTabIndent">Usage: <em>removeAllData()</em></div>
+<p><strong><a name="removeAllLayers" id="removeAllLayers"></a>removeAllLayers( ) -</strong> Removes all layers that have been displayed.</p>
+<div class="OneTabIndent">Usage: <em>removeAllLayers()</em></div>
+<p><strong><a name="expandpath" id="expandpath"></a>expandpath( ) -</strong> Expands the path entered.</p>
+<div class="OneTabIndent">Usage: <em>expandpath(path)</em></div>
+<div class="OneTabIndent">Remarks:</div>
+<div class="TwoTabIndent">Understands environmental variables such as &quot;~&quot; and &quot;..&quot;.&nbsp;For example, on Windows, &nbsp;'print expandpath(&quot;$HOMEPATH&quot;)' will print \Users\username.</div>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav">
+  <hr align="center">
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="SaveDisplay.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="../../collab/Sharing.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span></p>
+</div>
+</body>
+<!-- InstanceEnd -->
+</html>
