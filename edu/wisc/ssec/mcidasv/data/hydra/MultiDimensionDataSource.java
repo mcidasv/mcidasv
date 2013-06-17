@@ -200,7 +200,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
         }
         else if ( name.startsWith("MOD06") || name.startsWith("MYD06")) {
           hasImagePreview = true;
-          String path = "mod06/Data Fields/";
+          String path = "mod06/Data_Fields/";
           String[] arrayNames = new String[] {"Cloud_Optical_Thickness", "Cloud_Effective_Radius", "Cloud_Water_Path"};
           String[] arrayNames_5km = new String[] {"Cloud_Top_Pressure", "Cloud_Top_Temperature", "Cloud_Fraction"};
   
