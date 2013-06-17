@@ -68,7 +68,6 @@ import visad.VisADException;
 import visad.FunctionType;
 import visad.RealType;
 import visad.RealTupleType;
-import visad.Linear1DSet;
 import visad.Linear2DSet;
 import visad.Gridded2DSet;
 import visad.CoordinateSystem;
@@ -199,12 +198,11 @@ public class MultiSpectralDataSource extends HydraDataSource {
           }
         }
         catch (Exception e) {
-          e.printStackTrace();
-          System.out.println("cannot create NetCDF reader for file: "+filename);
+        	e.printStackTrace();
+        	logger.error("Cannot create NetCDF reader for file: " + filename);
         }
                                                                                                                                                      
         Hashtable<String, String[]> properties = new Hashtable<String, String[]>(); 
-
 
         multiSpectData_s.clear();
 
@@ -338,7 +336,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          products.add((String) table.get("lat_array_name"));
          if (doAggregation) {
         	 try {
-        		 reader = new GranuleAggregation(ncdfal, products, 2030, "10*nscans", "Max_EV_frames");
+        		 reader = new GranuleAggregation(ncdfal, products, "10*nscans", "2*nscans", "Max_EV_frames");
         	 } catch (Exception e) {
         		 throw new VisADException("Unable to initialize aggregation reader");
         	 }
@@ -515,7 +513,20 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put(SwathAdapter.geo_track_skip_name, Double.toString(4.0));
          table.put(SwathAdapter.geo_xtrack_skip_name, Double.toString(4.0));
          table.put(SwathAdapter.multiScaleDimensionIndex, Integer.toString(0));
-
+         // initialize the aggregation reader object
+         logger.debug("Trying to create MODIS 1K GranuleAggregation reader...");
+         TreeSet<String> products = new TreeSet<String>();
+         products.add((String) table.get("array_name"));
+         products.add("MODIS_SWATH_Type_L1B/Data_Fields/EV_250_RefSB");
+         products.add((String) table.get("lon_array_name"));
+         products.add((String) table.get("lat_array_name"));
+         if (doAggregation) {
+        	 try {
+        		 reader = new GranuleAggregation(ncdfal, products, "40*nscans", "10*nscans", "4*Max_EV_frames");
+        	 } catch (Exception e) {
+        		 throw new VisADException("Unable to initialize aggregation reader");
+        	 }
+         }
          swathAdapter = new SwathAdapter(reader, table);
          swathAdapter.setDefaultStride(40);
 
@@ -566,6 +577,22 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put(SwathAdapter.geo_track_skip_name, Double.toString(2.0));
          table.put(SwathAdapter.geo_xtrack_skip_name, Double.toString(2.0));
          table.put(SwathAdapter.multiScaleDimensionIndex, Integer.toString(0));
+
+         // initialize the aggregation reader object
+         logger.debug("Trying to create MODIS 1K GranuleAggregation reader...");
+         TreeSet<String> products = new TreeSet<String>();
+         products.add((String) table.get("array_name"));
+         products.add("MODIS_SWATH_Type_L1B/Data_Fields/EV_500_RefSB");
+         products.add("MODIS_SWATH_Type_L1B/Data_Fields/EV_250_Aggr500_RefSB");
+         products.add((String) table.get("lon_array_name"));
+         products.add((String) table.get("lat_array_name"));
+         if (doAggregation) {
+        	 try {
+        		 reader = new GranuleAggregation(ncdfal, products, "20*nscans", "10*nscans", "2*Max_EV_frames");
+        	 } catch (Exception e) {
+        		 throw new VisADException("Unable to initialize aggregation reader");
+        	 }
+         }
 
          SwathAdapter swathAdapter0 = new SwathAdapter(reader, table);
          swathAdapter0.setDefaultStride(20);
