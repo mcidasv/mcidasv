@@ -141,8 +141,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
     private int bundleAdapterIndex = 0;
 
 	private FlatField previewImage = null;
-       
-    private int inTrackDimensionLength = -1;
     
     // need our own separator char since it's always Unix-style in the Suomi NPP files
     private static final String SEPARATOR_CHAR = "/";
@@ -493,7 +491,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    								logger.debug("Lat along track dim: " + dAlongTrack.getLength());
     	    								Dimension dAcrossTrack = v.getDimension(1);
     	    								xDim = dAcrossTrack.getLength();
-    	    								inTrackDimensionLength = yDim;
     	    								logger.debug("Lat across track dim: " + dAcrossTrack.getLength());
     	    							}
     	    							if (v.getFullName().endsWith(SEPARATOR_CHAR + "Longitude")) {
@@ -822,7 +819,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	
     	// initialize the aggregation reader object
     	try {
-    		nppAggReader = new GranuleAggregation(ncdfal, pathToProducts, inTrackDimensionLength, "Track", "XTrack");
+    		nppAggReader = new GranuleAggregation(ncdfal, pathToProducts, "Track", "XTrack");
     		((GranuleAggregation) nppAggReader).setQfMap(qfMap);
     	} catch (Exception e) {
     		throw new VisADException("Unable to initialize aggregation reader");

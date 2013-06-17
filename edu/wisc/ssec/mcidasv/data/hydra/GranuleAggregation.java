@@ -50,7 +50,9 @@ import ucar.nc2.Structure;
 import ucar.nc2.Variable;
 
 /**
- * This file should be renamed - think about that Tommy.
+ * Provides a view and operations on a set of contiguous data granules as if they 
+ * were a single granule.
+ * 
  * This file needs to implement the same signatures NetCDFFile does,
  * but for aggregations of consecutive granules.
  * 
@@ -73,7 +75,10 @@ public class GranuleAggregation implements MultiDimensionReader {
    ArrayList<HashMap<String, String[]>> varDimNamesList = new ArrayList<HashMap<String, String[]>>();
    ArrayList<HashMap<String, int[]>> varDimLengthsList = new ArrayList<HashMap<String, int[]>>();
    ArrayList<HashMap<String, Class>> varDataTypeList = new ArrayList<HashMap<String, Class>>();
-   ArrayList<HashMap<String, Integer>> varGranuleRatiosList = new ArrayList<HashMap<String, Integer>>();
+
+   HashMap<String, HashMap<Integer, Integer>> varGranInTrackLengths = new HashMap<String, HashMap<Integer, Integer>>();
+   HashMap<String, Integer> varToAggrInTrackLength = new HashMap<String, Integer>();
+   HashMap<String, int[]> varAggrDimLengths = new HashMap<String, int[]>();
    
    // except quality flags - only need one hashmap per aggregation
    // it maps the broken out variable name back to the original packed variable name
@@ -83,23 +88,26 @@ public class GranuleAggregation implements MultiDimensionReader {
    HashMap<String, RangeProcessor> varToRangeProcessor = new HashMap<String, RangeProcessor>();
    
    private int granuleCount = -1;
-   private int granuleLength = -1;
    private String inTrackDimensionName = null;
+   private String inTrackGeoDimensionName = null;
    private String crossTrackDimensionName = null;
    private TreeSet<String> products;
    private String origName = null;
 
-   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, TreeSet<String> products, int granuleLength, String inTrackDimensionName, String crossTrackDimensionName) throws Exception {
+   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, TreeSet<String> products, String inTrackDimensionName, String inTrackGeoDimensionName, String crossTrackDimensionName) throws Exception {
 	   if (ncdfal == null) throw new Exception("No data: empty Suomi NPP aggregation object");
-	   logger.debug("granule length: " + granuleLength + " inTrack: " + inTrackDimensionName);
-	   this.granuleLength = granuleLength;
 	   this.inTrackDimensionName = inTrackDimensionName;
 	   this.crossTrackDimensionName = crossTrackDimensionName;
+	   this.inTrackGeoDimensionName = inTrackGeoDimensionName;
        this.ncdfal = ncdfal;
        this.products = products;
 	   init(ncdfal);
    }
-  
+
+   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, TreeSet<String> products, String inTrackDimensionName, String crossTrackDimensionName) throws Exception {
+        this(ncdfal, products, inTrackDimensionName, inTrackDimensionName, crossTrackDimensionName);
+   }
+
    public Class getArrayType(String array_name) {
 	   array_name = mapNameIfQualityFlag(array_name);
 	   return varDataTypeList.get(0).get(array_name);
@@ -112,7 +120,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 
    public int[] getDimensionLengths(String array_name) {
 	   array_name = mapNameIfQualityFlag(array_name);
-	   return varDimLengthsList.get(0).get(array_name);
+	   return varAggrDimLengths.get(array_name);
    }
 
    private String mapNameIfQualityFlag(String array_name) {
@@ -209,18 +217,26 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   
 	   granuleCount = nclist.size();
 	   logger.debug("Granule count: " + granuleCount);
+
+       NetcdfFile ncfile = nclist.get(0); //All files have to have same structure
+       Iterator<Variable> varIter = ncfile.getVariables().iterator();
+       while (varIter.hasNext()) {
+           Variable var = varIter.next();
+           varAggrDimLengths.put(var.getFullName(), new int[var.getRank()]);
+           varGranInTrackLengths.put(var.getFullName(), new HashMap<Integer, Integer>()); 
+       }
+
 	   
 	   for (int ncIdx = 0; ncIdx < nclist.size(); ncIdx++) {
 		   
-		   NetcdfFile ncfile = nclist.get(ncIdx);
+		   ncfile = nclist.get(ncIdx);
 		   
 		   HashMap<String, Variable> varMap = new HashMap<String, Variable>();
 		   HashMap<String, String[]> varDimNames = new HashMap<String, String[]>();
 		   HashMap<String, int[]> varDimLengths = new HashMap<String, int[]>();
 		   HashMap<String, Class> varDataType = new HashMap<String, Class>();
-		   HashMap<String, Integer> varGranuleRatios = new HashMap<String, Integer>();
 		   
-		   Iterator varIter = ncfile.getVariables().iterator();
+		   varIter = ncfile.getVariables().iterator();
 		   int varInTrackIndex = -1;
 		   while (varIter.hasNext()) {
 			   Variable var = (Variable) varIter.next();
@@ -262,13 +278,15 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   
 			   String varName = var.getFullName();
 			   varMap.put(varName, var);
-			   Iterator dimIter = var.getDimensions().iterator();
+			   Iterator<Dimension> dimIter = var.getDimensions().iterator();
 			   String[] dimNames = new String[rank];
 			   int[] dimLengths = new int[rank];
 			   int cnt = 0;
 			   boolean notDisplayable = false;
+			   varInTrackIndex = getInTrackIndex(var);
+
 			   while (dimIter.hasNext()) {
-				   Dimension dim = (Dimension) dimIter.next();
+				   Dimension dim = dimIter.next();
 				   String s = dim.getShortName();
 				   if ((s != null) && (!s.isEmpty())) {
 					   if ((! s.equals(inTrackDimensionName)) && 
@@ -290,31 +308,37 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   
 			   // skip to next variable if it's not displayable data
 			   if (notDisplayable) continue;
+
+			   int[] aggrDimLengths = varAggrDimLengths.get(varName);
+			   for (int i = 0; i < rank; i++) {
+				   if (i == varInTrackIndex) {
+					   aggrDimLengths[i] += dimLengths[i];
+				   } else {
+					   aggrDimLengths[i] = dimLengths[i];
+				   }
+			   }
 			   
-			   varInTrackIndex = getInTrackIndex(var);
-			   logger.debug("Found in-track index of: " + varInTrackIndex);
-			   
+			   varDimNames.put(varName, dimNames);
+			   varDataType.put(varName, var.getDataType().getPrimitiveClassType());
+
 			   if (varInTrackIndex < 0) {
 				   logger.debug("Skipping variable with unknown dimension: " + var.getShortName());
 				   continue;
 			   }
-			   
-			   // store the ratio of this variable's in-track length to the granule length
-			   varGranuleRatios.put(varName, new Integer(granuleLength / dimLengths[varInTrackIndex]));
+
+			   HashMap<Integer, Integer> granIdxToInTrackLen = varGranInTrackLengths.get(varName);
+			   granIdxToInTrackLen.put(ncIdx, new Integer(dimLengths[varInTrackIndex]));
 			   
 			   dimLengths[varInTrackIndex] = dimLengths[varInTrackIndex] * granuleCount;
-			   
-			   varDimNames.put(varName, dimNames);
-			   varDimLengths.put(varName, dimLengths);
 			   varDataType.put(varName, var.getDataType().getPrimitiveClassType());
 		   }
 		   
 		   // add the new hashmaps to our enclosing lists
 		   varMapList.add(varMap);
 		   varDimNamesList.add(varDimNames);
-		   varDimLengthsList.add(varDimLengths);
 		   varDataTypeList.add(varDataType);
-		   varGranuleRatiosList.add(varGranuleRatios);
+
+		   varDimLengthsList.add(varDimLengths);
 	   }
    }
    
@@ -341,7 +365,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 		   if (v.getFullName().startsWith("All_Data")) {
 			   inTrackName = inTrackDimensionName;
 		   } else {
-			   inTrackName = "2*nscans";
+			   inTrackName = inTrackGeoDimensionName;
 		   }
 	   } else {
 		   inTrackName = inTrackDimensionName;
@@ -406,18 +430,45 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   Variable vTmp = varMapList.get(0).get(array_name);
 	   int vInTrackIndex = getInTrackIndex(vTmp);
 	   
-	   int vGranuleRatio = varGranuleRatiosList.get(0).get(array_name);
-	   int vGranuleLength = granuleLength / vGranuleRatio;
+	   int loGranuleId = 0;
+	   int hiGranuleId = 0;
+
+	   HashMap<Integer, Integer> granIdxToInTrackLen = varGranInTrackLengths.get(array_name);
+	   int numGrans = granIdxToInTrackLen.size();
+
+	   int[] vGranuleLengths = new int[numGrans];
+	   for (int k = 0; k < numGrans; k++) {
+		   vGranuleLengths[k] = granIdxToInTrackLen.get(k);
+	   }
+
+	   int strt = start[vInTrackIndex];
+	   int stp = strt + (count[vInTrackIndex] - 1) * stride[vInTrackIndex];
+	   int cnt = 0;
+	   for (int k = 0; k < numGrans; k++) {
+		   int granLen = granIdxToInTrackLen.get(k);
+		   cnt += granLen;
+		   if (strt < cnt) {
+			   loGranuleId = k;
+			   break;
+		   }
+	   }
+
+	   cnt = 0;
+	   for (int k = 0; k < numGrans; k++) {
+		   int granLen = granIdxToInTrackLen.get(k);
+		   cnt += granLen;
+		   if (stp < cnt) {
+			   hiGranuleId = k;
+			   break;
+		   }
+	   }
+	   logger.debug("loGranuleId: " + loGranuleId);
+	   logger.debug("hiGranuleId: " + hiGranuleId);
 	   
-	   logger.debug("READING: " + array_name + ", INTRACKINDEX: " + vInTrackIndex +
-			   ", RATIO: " + vGranuleRatio);
-	   
-	   // which granules will we be dealing with?
-	   int loGranuleId = start[vInTrackIndex] / vGranuleLength;
-	   int hiGranuleId = (start[vInTrackIndex] + ((count[vInTrackIndex] - 1) * stride[vInTrackIndex])) / vGranuleLength;
-	   
+
 	   // next, we break out the offsets, counts, and strides for each granule
 	   int granuleSpan = hiGranuleId - loGranuleId + 1;
+
 	   logger.debug("readArray req, loGran: " + loGranuleId + ", hiGran: " + 
 			   hiGranuleId + ", granule span: " + granuleSpan + ", dimCount: " + dimensionCount);
 	   for (int i = 0; i < dimensionCount; i++) {
@@ -425,15 +476,20 @@ public class GranuleAggregation implements MultiDimensionReader {
 		   logger.debug("count[" + i + "]: " + count[i]);
 		   logger.debug("stride[" + i + "]: " + stride[i]);
 	   }
+
 	   int [][] startSet = new int [granuleSpan][dimensionCount];
 	   int [][] countSet = new int [granuleSpan][dimensionCount];
 	   int [][] strideSet = new int [granuleSpan][dimensionCount];
 	   int countSubtotal = 0;
+
+       int inTrackTotal = 0;
+       for (int i = 0; i < loGranuleId; i++) {
+           inTrackTotal += vGranuleLengths[i];
+       }
 	   
 	   // this part is a little tricky - set the values for each granule we need to access for this read
-	   int granuleNumber = loGranuleId;
 	   for (int i = 0; i < granuleSpan; i++) {
-		   granuleNumber++;
+           inTrackTotal += vGranuleLengths[loGranuleId+i];
 		   for (int j = 0; j < dimensionCount; j++) {
 			   // for all indeces other than the in-track index, the numbers match what was passed in
 			   if (j != vInTrackIndex) {
@@ -444,9 +500,9 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   // for the in-track index, it's not so easy...
 				   // for first granule, start is what's passed in
 				   if (i == 0) {
-					   startSet[i][j] = start[j] % vGranuleLength;
+					   startSet[i][j] = start[j] - (inTrackTotal - vGranuleLengths[loGranuleId]);
 				   } else {
-					   startSet[i][j] = ((vGranuleLength * granuleNumber) - start[j]) % stride[j];
+					   startSet[i][j] = (inTrackTotal - start[j]) % stride[j];
 				   }
 				   // counts may be different for start, end, and middle granules
 				   if (i == 0) {
@@ -455,8 +511,8 @@ public class GranuleAggregation implements MultiDimensionReader {
 						   countSet[i][j] = count[j] * stride[j];
 					   // or is this the first of multiple granules...
 					   } else {
-						   if (((vGranuleLength * granuleNumber) - start[j]) < (count[j] * stride[j])) {	
-							   countSet[i][j] = ((vGranuleLength * granuleNumber) - start[j]);
+						   if ((inTrackTotal - start[j]) < (count[j] * stride[j])) {	
+                                                           countSet[i][j] = inTrackTotal - start[j];
 						   } else {
 							   countSet[i][j] = count[j] * stride[j];
 						   }
@@ -465,15 +521,15 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   } else {
 					   // middle granules
 					   if (i < (granuleSpan - 1)) {
-						   countSet[i][j] = vGranuleLength;
+						   countSet[i][j] = vGranuleLengths[loGranuleId+i];
 						   countSubtotal += countSet[i][j];
 					   } else {
 						   // the end granule
 						   countSet[i][j] = (count[j] * stride[j]) - countSubtotal;
 						   // XXX TJJ - limiting count to valid numbers here, why??
 						   // need to revisit, see why this condition manifests
-						   if (countSet[i][j] > (vGranuleLength - startSet[i][j])) 
-							   countSet[i][j] = vGranuleLength - startSet[i][j];
+						   if (countSet[i][j] > (vGranuleLengths[loGranuleId+i] - startSet[i][j])) 
+							   countSet[i][j] = vGranuleLengths[loGranuleId+i] - startSet[i][j];
 					   }
 				   }
 				   // luckily, stride never changes
@@ -505,7 +561,6 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   }
 				   rangeListCount++;
 				   Array subarray = var.read(rangeList);
-				   //dataType = subarray.getElementType();
 				   totalLength += subarray.getSize();
 				   arrayList.add(subarray);
 			   }
@@ -617,8 +672,9 @@ public class GranuleAggregation implements MultiDimensionReader {
      }
    }
 
-   /* Application can supply a RangeProcessor for an variable 'arrayName' */
+   /* Application can supply a RangeProcessor for a variable 'arrayName' */
    public void addRangeProcessor(String arrayName, RangeProcessor rangeProcessor) {
-     varToRangeProcessor.put(arrayName, rangeProcessor);
+	   varToRangeProcessor.put(arrayName, rangeProcessor);
    }
+   
 }

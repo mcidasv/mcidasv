@@ -28,76 +28,51 @@
 
 package edu.wisc.ssec.mcidasv.data;
 
-import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
-import edu.wisc.ssec.mcidasv.data.hydra.SubsetRubberBandBox;
-import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
-import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
-import edu.wisc.ssec.mcidasv.data.hydra.HydraContext;
-import edu.wisc.ssec.mcidasv.control.LambertAEA;
-
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.geom.Rectangle2D;
+import java.net.URL;
 import java.rmi.RemoteException;
-
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
 
-import ucar.unidata.data.DataSource;
-import ucar.unidata.data.DataSourceImpl;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
-import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.DataSelection;
-import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DataSelectionComponent;
+import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.DirectDataChoice;
-import ucar.unidata.data.GeoLocationInfo;
-import ucar.unidata.data.GeoSelection;
-import ucar.unidata.data.GeoSelectionPanel;
 import ucar.unidata.data.grid.GridUtil;
-
 import ucar.unidata.idv.DisplayConventions;
-
-import ucar.unidata.geoloc.*;
-import ucar.unidata.util.Range;
-import ucar.unidata.util.Misc;
 import ucar.unidata.util.ColorTable;
-
-import visad.Data;
-import visad.FlatField;
-import visad.GriddedSet;
-import visad.Gridded2DSet;
-import visad.SampledSet;
-import visad.VisADException;
-import visad.georef.MapProjection;
-import visad.data.mcidas.BaseMapAdapter;
-
-import java.io.File;
-import java.net.URL;
-
-import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.geom.Rectangle2D;
-
-import visad.*;
-import visad.bom.RubberBandBoxRendererJ3D;
-import visad.java3d.DisplayImplJ3D;
-import visad.java3d.TwoDDisplayRendererJ3D;
-import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
+import ucar.unidata.util.Range;
 import ucar.unidata.view.geoloc.MapProjectionDisplay;
-import java.awt.Component;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import ucar.visad.display.XYDisplay;
-import ucar.visad.display.MapLines;
+import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
 import ucar.visad.display.DisplayMaster;
-import ucar.visad.display.LineDrawing;
-import ucar.visad.display.RubberBandBox;
+import ucar.visad.display.MapLines;
 
-import ucar.visad.ProjectionCoordinateSystem;
-import ucar.unidata.geoloc.projection.LatLonProjection;
+import visad.BaseColorControl;
+import visad.CellImpl;
+import visad.FlatField;
+import visad.FunctionType;
+import visad.Gridded2DSet;
+import visad.RealType;
+import visad.SampledSet;
+import visad.ScalarMap;
+import visad.VisADException;
+import visad.data.mcidas.BaseMapAdapter;
+import visad.georef.MapProjection;
 
+import edu.wisc.ssec.mcidasv.control.LambertAEA;
+import edu.wisc.ssec.mcidasv.data.hydra.HydraContext;
+import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
+import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
+import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
+import edu.wisc.ssec.mcidasv.data.hydra.SubsetRubberBandBox;
 
 public class PreviewSelection extends DataSelectionComponent {
       DataChoice dataChoice;
@@ -216,8 +191,8 @@ public class PreviewSelection extends DataSelectionComponent {
            if (key instanceof MultiDimensionSubset) {
              hasSubset = true;
              MultiDimensionSubset select = (MultiDimensionSubset) table.get(key);
-             //HydraContext hydraContext = HydraContext.getHydraContext(dataSource, dataCategory);
-             HydraContext hydraContext = HydraContext.getHydraContext();
+             HydraContext hydraContext = HydraContext.getHydraContext(dataSource, dataCategory);
+             // HydraContext hydraContext = HydraContext.getHydraContext();
              if (hydraContext.getMultiDimensionSubset() == null) {
                 hydraContext.setMultiDimensionSubset(select);
              }
@@ -246,8 +221,8 @@ public class PreviewSelection extends DataSelectionComponent {
              y_coords[1] = hi[1];
 
              if (hasSubset) {
-               //HydraContext hydraContext = HydraContext.getHydraContext(dataSource, dataCategory);
-               HydraContext hydraContext = HydraContext.getHydraContext();
+               HydraContext hydraContext = HydraContext.getHydraContext(dataSource, dataCategory);
+               // HydraContext hydraContext = HydraContext.getHydraContext();
                MultiDimensionSubset select = hydraContext.getMultiDimensionSubset();
                HashMap map = select.getSubset();
 
@@ -334,8 +309,8 @@ public class PreviewSelection extends DataSelectionComponent {
                                                                                                                                              
       public void applyToDataSelection(DataSelection dataSelection) {
          if (hasSubset) {
-           //HydraContext hydraContext = HydraContext.getHydraContext(dataSource, dataCategory);
-           HydraContext hydraContext = HydraContext.getHydraContext();
+           HydraContext hydraContext = HydraContext.getHydraContext(dataSource, dataCategory);
+           // HydraContext hydraContext = HydraContext.getHydraContext();
            Hashtable table = dataChoice.getProperties();
            table.put(MultiDimensionSubset.key, hydraContext.getMultiDimensionSubset());
 
