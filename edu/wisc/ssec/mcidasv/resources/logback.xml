@@ -47,7 +47,7 @@
   <!-- logging only listens for things at "INFO" level within mcv (by default)
        valid levels are: TRACE, DEBUG, INFO, WARN, ERROR, OFF
        be sure to skim over http://logback.qos.ch/manual/architecture.html#basic_selection -->
-  <root level="TRACE">
+  <root level="INFO">
     <appender-ref ref="FILE" />
   </root>
 
@@ -64,4 +64,5 @@
   <logger name="ucar.grib" level="OFF" />
   <logger name="org.bushe.swing.event" level="OFF" />
   <logger name="org.apache.commons.httpclient" level="OFF" />
+  <logger name="org.python" level="OFF" />
 </configuration>
