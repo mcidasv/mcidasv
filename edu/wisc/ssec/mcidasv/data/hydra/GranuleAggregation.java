@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,10 +90,10 @@ public class GranuleAggregation implements MultiDimensionReader {
    private String inTrackDimensionName = null;
    private String inTrackGeoDimensionName = null;
    private String crossTrackDimensionName = null;
-   private TreeSet<String> products;
+   private ArrayList<String> products;
    private String origName = null;
 
-   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, TreeSet<String> products, String inTrackDimensionName, String inTrackGeoDimensionName, String crossTrackDimensionName) throws Exception {
+   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, ArrayList<String> products, String inTrackDimensionName, String inTrackGeoDimensionName, String crossTrackDimensionName) throws Exception {
 	   if (ncdfal == null) throw new Exception("No data: empty Suomi NPP aggregation object");
 	   this.inTrackDimensionName = inTrackDimensionName;
 	   this.crossTrackDimensionName = crossTrackDimensionName;
@@ -104,7 +103,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   init(ncdfal);
    }
 
-   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, TreeSet<String> products, String inTrackDimensionName, String crossTrackDimensionName) throws Exception {
+   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, ArrayList<String> products, String inTrackDimensionName, String crossTrackDimensionName) throws Exception {
         this(ncdfal, products, inTrackDimensionName, inTrackDimensionName, crossTrackDimensionName);
    }
 

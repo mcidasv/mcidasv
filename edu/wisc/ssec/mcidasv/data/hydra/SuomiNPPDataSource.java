@@ -51,7 +51,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.SimpleTimeZone;
 import java.util.StringTokenizer;
-import java.util.TreeSet;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -222,7 +221,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	// looking to populate 3 things - path to lat, path to lon, path to relevant products
     	String pathToLat = null;
     	String pathToLon = null;
-    	TreeSet<String> pathToProducts = new TreeSet<String>();
+    	ArrayList<String> pathToProducts = new ArrayList<String>();
     	
     	// flag to indicate data is 3-dimensions (X, Y, channel or band)
     	boolean is3D = false;
@@ -405,7 +404,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
 	    				FilenameFilter geoFilter = new FilenameFilter() {
 	    					public boolean accept(File dir, String name) {
-	    						if ((name.startsWith("G")) && (name.endsWith(".h5"))) {
+	    						if (name.matches(JPSSUtilities.SUOMI_GEO_REGEX)) {
 	    							return true;
 	    						} else {
 	    							return false;
