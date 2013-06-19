@@ -267,18 +267,6 @@
         <mkdir dir="${build.dir}" />
     </target>
     
-    <!-- Get the latest McIDAS-V source code from CVS -->
-    <target name="cvsupdate" description="Get the latest McIDAS-V source code from CVS">
-        <cvs cvsRoot="${cvs.root}" cvsRsh="${cvs.rsh}" failonerror="true"
-            dest="${base.dir}">
-            <commandline>
-                <argument value="update" />
-                <argument value="-d" />
-                <argument value="-C" />
-            </commandline>
-        </cvs>
-    </target>
-    
     <target name="gitupdate" description="Get the latest McIDAS-V source from Github.">
         <git-pull-rebase dir="${base.dir}" />
     </target>
