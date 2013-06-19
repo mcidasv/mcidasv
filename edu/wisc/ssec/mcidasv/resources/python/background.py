@@ -705,8 +705,7 @@ class _Display(_JavaProxy):
         else:
             # if user does something like pass in an int
             raise ValueError('valid arguments to setProjection are (1) a string defining a valid' +
-                             ' projection name, or (2) a _Layer object whose data' +
-                             ' projection you want to use')
+                             ' projection name, or (2) a _Layer object with the desired data projection.')
             
         currentProj = self._JavaProxy__javaObject.getMapDisplay().getMapProjection()
         if projObj == currentProj:
@@ -881,7 +880,7 @@ class _Display(_JavaProxy):
             if desc.label == layerType:
                 controlID = desc.controlId
         if controlID == None:
-            raise ValueError("You did not provide a valid layer type")
+            raise ValueError("Layer type '%s' is invalid; please see output of allLayerTypes() for available layer types.")
         if controlID == 'imagesequence':
             # hack for backward compatibility: don't let user do an
             # imagesequence since it requires a strange DataChoice and 
@@ -965,7 +964,7 @@ class _Display(_JavaProxy):
                 if "ScalarMap cannot belong to two Displays" in target.getMessage():
                     # this should only happen if captureImage is called
                     # with a height and width after an annotate() in the background
-                    raise RuntimeError("Height/width for captureImage is currently not supported after a text annotation.  You can specify height/width with buildWindow or openBundle instead, then leave height/width out of your call to captureImage.")
+                    raise RuntimeError("Height/width for captureImage is currently not supported after a text annotation. Height/Width can be specified with buildWindow or openBundle instead, then leave height/width out of subsequent calls to captureImage.")
         
         imageFile = java.io.File(filename)
         # yes, I'm still calling writeImage. But it's a different writeImage!!!
@@ -1102,8 +1101,7 @@ class _Display(_JavaProxy):
             # note: (element, line) note (line, element):
             point = mapDisplay.getSpatialCoordinatesFromScreen(element, line)
         else:
-            raise ValueError(
-            "You must specify either lat AND lon, OR line AND element")
+            raise ValueError("No location was provided; please specify either lat AND lon or line AND element.")
             
         newColor = colorutils.convertColorToJava(color)
         
