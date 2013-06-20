@@ -125,8 +125,8 @@ line.</p>
   disk using the "Make Remote Data Local" facility. The following ADDE types
   are supported: satellite, radar, point, sounding and forecast fronts. There
 is also preliminary support for grids on remote servers<sup>*</sup> (see below).</p>
-<p>This is used in two ways. First, the user can right click on a data source
-  in the Field Selector and select "Make Data Local" for remote data sources.
+<p>This is used in two ways. First, the user can right-click on a data source
+  in the <strong>Field Selector</strong> and select "Make Data Local" for remote data sources.
   McIDAS-V prompts for a file directory and a file prefix (the default is to
   use the name of the data source) and the remote data is copied over. For multiple
   files the format used is: &lt;directory&gt;&lt;prefix&gt;&lt;file count&gt;.&lt;suffix&gt;.
@@ -140,7 +140,7 @@ is also preliminary support for grids on remote servers<sup>*</sup> (see below).
   This support relies on some extra service information in the catalogs which,
   right at this moment, is not included in the regular IDV gridded data catalog
   but is included for model data under the "File_Access" dataset in the main
-  motherlode catalog: http://motherlode.ucar.edu:8080/thredds/catalog.xml When
+  thredds catalog: http://www.unidata.ucar.edu/georesources/threddsRtModels.xml When
   saving gridded data the user is prompted for the fields to save and the geo-spatial
   subset is used to subset the grids. As of right now, there is not yet support
   for sub-setting on times and grid stride/decimation.</p>

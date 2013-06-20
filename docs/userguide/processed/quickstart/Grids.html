@@ -42,11 +42,11 @@ include:</p>
 <p>In the Data Explorer window, select the <a href="../data/choosers/index.html"><strong>Data Sources</strong></a> tab. On the left side of this tab, select <strong>Gridded Data-&gt;Remote </strong> from the list of available choosers.
 For more information about the catalog chooser, see <a href="../data/choosers/GridChooser.html">Choosing
 Gridded Data</a>.</p>
-<div class="images"><img src="../data/choosers/images/GridRemoteChooser.gif" alt="Image 1: Data Sources Tab of the Data Explorer"><br>
+<div class="images"><img src="../data/choosers/images/GridRemoteChooser.gif" width="1007" height="663" alt="Image 1: Data Sources Tab of the Data Explorer"><br>
 <span class="caption">Image 1: Data Sources Tab of the Data Explorer</span></div>
-<p>Choose one of the remote <strong>Catalogs:</strong> such as <strong>http://motherlode.ucar.edu:8080/thredds/idv/models.xml</strong> for
+<p>Choose one of the remote <strong>Catalogs:</strong> such as <strong>http://www.unidata.ucar.edu/georesources/threddsRtModels.xml</strong> for
 Unidata's catalog of near real-time model output.</p>
-<p>A tree view of the catalog will be displayed. Open one, such as the "NCEP Model Data -&gt; Global Forecast System Model -&gt; NCEP GFS CONUS 80 km", by using the
+<p>A tree view of the catalog will be displayed. Open one, such as the "NCEP Model Data -&gt; Global Forecast System (GFS) -&gt; GFS-CONUS 80km -&gt; files -&gt; Latest NCEP GFS CONUS 80km", by using the
   tab icons (<img src="../data/images/TreeTagClosed.gif" alt="Tab icon"align=absmiddle>).</p>
 <p>The list of this model's run times appears. Click on one time to select it,
   and then click  the <img src="images/AddSource.gif" alt="Add Source button" width="180" height="24"align=absmiddle> button. You have selected
@@ -57,32 +57,30 @@ Unidata's catalog of near real-time model output.</p>
     of data categorized as 2D and 3D fields. Click on the 2D grid tab (<img src="../data/images/TreeTagClosed.gif" alt="Tab icon"align=absmiddle>)
     to expand that category list. A list of all 2D grid parameters in the data
     source appears. When one of the fields is selected, the list of applicable
-    displays will be added to the <strong>Displays</strong> panel.</p>
-<div class="images"><img src="images/CatalogSelector.gif" alt="Image 2: Field Selector Tab of the Data Explorer"><br>
+    display types will be added to the <strong>Displays</strong> panel.</p>
+<div class="images"><img src="images/CatalogSelector.gif" width="936" height="499" alt="Image 2: Field Selector Tab of the Data Explorer"><br>
 <span class="caption">Image 2: Field Selector Tab of the Data Explorer</span></div>
-<p>Create a Contour Plan View display by selecting that display in the list and
-  clicking on the <strong>Create Display</strong> button. The display will be
-  created and shown in the Main Display window. The display's <a href="../ui/Legend.html">Legend</a> should also be shown.
-  You can open the <a href="../controls/PlanViewControl.html">control window</a> by
-  right clicking on the name in the legend and selecting <strong>Control
+<p>Create a Contour Plan View display of a parameter by selecting a field to display in the <strong>Fields</strong> panel and selecting Contour Plan View in the <strong>Displays</strong> panel.&nbsp; Click the <strong>Create Display</strong> button. The display will be
+  created and shown in the Main Display window. The display's <a href="../ui/Legend.html">Legend</a> should also be shown on the right side of the Main Display window.
+  You can open the <a href="../controls/PlanViewControl.html">Layer Controls</a> for the item by
+  right-clicking on the name in the legend and selecting <strong>Control
   Window</strong>.</p>
 <div class="images"><img src="images/SLPContours.gif" alt="Contour Display in the Main Display Window"><br>
 <span class="caption">Image 3: Contour Plan View Display in the Main Display Window</span></div>
 <div class="pagesubtitle"><a name="3dplot" id="3dplot"></a>Creating a Plot of 3D Data</div>
 <p>In the <strong>Field Selector</strong> tab of the Data Explorer, click on the 3D grid tab to expand that category. A list of all 3D grid parameters
 appears. To make a plot, first select a parameter name such as "Geopotential
-height at isobaric levels".</p>
+height @ Isobaric surface".</p>
 <p>Display types suitable for this parameter are listed in then <strong>Displays</strong> panel.
   Select the Contour Plan View display, and click  the <strong>Create Display</strong> button.</p>
-<p>The initial plot is at the lowest level in the data grid, such as 1000 millibars
-  in this example. To shift the level to other levels:</p>
+<p>The initial plot is at the highest level in the data grid, such as 100 millibars. To shift the level to other levels:</p>
 <ul>
-  <li>Right click on the Legend (such as "T Contour Plan View Level 1000") and select <strong>Control Window</strong>.</li>
-  <li>In the Control window, click on the <strong>Levels:</strong> box to bring
-    up the pop-up menu of native grid levels for the data.</li>
+  <li>Left-click on the blue text in the Legend for your 3D layer.&nbsp; This takes you to the <strong>Layer Controls tab</strong> of the Data Explorer.</li>
+  <li>In the <strong>Data Explorer</strong>, click on the <strong>Levels:</strong> box to bring
+    up the drop-down list of native grid levels for the data.</li>
   <li>Select the desired level from the list.</li>
 </ul>
-<p>The data in the Main Display window will now be representative of the new level you have selected.</p>
+<p>The data in the Main Display window will now be displayed at the new level you have selected.</p>
 <p>To zoom, pan, or rotate this 3D display, see <a href="../ui/Navigation.html">Zooming, Panning, and Rotating</a>. To toggle on the time animation loop, use the Run/Stop icon in the <a href="../ui/Animation.html#animation">Time
 Animation Widget</a>. To remove an existing display, use the <strong>File-&gt;Remove
 Display</strong> menu of the <strong>Layer Controls</strong> tab.</p>
