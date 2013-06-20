@@ -753,7 +753,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             threadRenderList.add(new Integer(i));
         }
         Integer threadRenderMax = new Integer(mcv.getMaxRenderThreadCount());
-        final JComboBox threadRenderComboBox = McVGuiUtils.makeComboBox(threadRenderList, threadRenderMax);        
+        final JComboBox threadRenderComboBox = McVGuiUtils.makeComboBox(threadRenderList, threadRenderMax);
         widgets.put(PREF_THREADS_RENDER, threadRenderComboBox);
 
         Vector threadReadList = new Vector();
@@ -761,7 +761,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             threadReadList.add(new Integer(i));
         }
         Integer threadReadMax = new Integer(mcv.getMaxDataThreadCount());
-        final JComboBox threadReadComboBox = McVGuiUtils.makeComboBox(threadReadList, threadReadMax);        
+        final JComboBox threadReadComboBox = McVGuiUtils.makeComboBox(threadReadList, threadReadMax);
         widgets.put(PREF_THREADS_DATA, threadReadComboBox);
 
         JPanel threadsPanel = McVGuiUtils.topBottom(

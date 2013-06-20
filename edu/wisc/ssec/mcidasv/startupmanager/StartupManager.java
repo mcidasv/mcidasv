@@ -53,6 +53,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -76,6 +77,7 @@ import edu.wisc.ssec.mcidasv.ArgumentManager;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.startupmanager.options.BooleanOption;
 import edu.wisc.ssec.mcidasv.startupmanager.options.DirectoryOption;
+import edu.wisc.ssec.mcidasv.startupmanager.options.LoggerLevelOption;
 import edu.wisc.ssec.mcidasv.startupmanager.options.MemoryOption;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster;
 import edu.wisc.ssec.mcidasv.startupmanager.options.TextOption;
@@ -234,7 +236,7 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             return getAdvancedPanel(true);
         }
         String key = ((JLabel)listModel.getElementAt(index)).getText();
-        if (!key.equals(Constants.PREF_LIST_ADVANCED)) {
+        if (Constants.PREF_LIST_ADVANCED.equals(key)) {
             return getUnavailablePanel();
         }
         return getAdvancedPanel(true);
@@ -259,17 +261,18 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
      */
     private JPanel buildAdvancedPanel() {
         OptionMaster optMaster = OptionMaster.getInstance();
-        MemoryOption heapSize = (MemoryOption)optMaster.getOption("HEAP_SIZE");
-        BooleanOption jogl = (BooleanOption)optMaster.getOption("JOGL_TOGL");
-        BooleanOption use3d = (BooleanOption)optMaster.getOption("USE_3DSTUFF");
-        BooleanOption defaultBundle = (BooleanOption)optMaster.getOption("DEFAULT_LAYOUT");
-        BooleanOption useDirect3d = (BooleanOption)optMaster.getOption("D3DREND");
-        BooleanOption useCmsCollector = (BooleanOption)optMaster.getOption("USE_CMSGC");
-        BooleanOption useNpot = (BooleanOption)optMaster.getOption("USE_NPOT");
-        BooleanOption useGeometryByRef = (BooleanOption)optMaster.getOption("USE_GEOBYREF");
-        BooleanOption useImageByRef = (BooleanOption)optMaster.getOption("USE_IMAGEBYREF");
-        DirectoryOption startupBundle = (DirectoryOption)optMaster.getOption("STARTUP_BUNDLE");
-        TextOption jvmArgs = (TextOption)optMaster.getOption("JVM_ARGS");
+        MemoryOption heapSize = optMaster.getMemoryOption("HEAP_SIZE");
+        BooleanOption jogl = optMaster.getBooleanOption("JOGL_TOGL");
+        BooleanOption use3d = optMaster.getBooleanOption("USE_3DSTUFF");
+        BooleanOption defaultBundle = optMaster.getBooleanOption("DEFAULT_LAYOUT");
+        BooleanOption useDirect3d = optMaster.getBooleanOption("D3DREND");
+        BooleanOption useCmsCollector = optMaster.getBooleanOption("USE_CMSGC");
+        BooleanOption useNpot = optMaster.getBooleanOption("USE_NPOT");
+        BooleanOption useGeometryByRef = optMaster.getBooleanOption("USE_GEOBYREF");
+        BooleanOption useImageByRef = optMaster.getBooleanOption("USE_IMAGEBYREF");
+        DirectoryOption startupBundle = optMaster.getDirectoryOption("STARTUP_BUNDLE");
+//        TextOption jvmArgs = optMaster.getTextOption("JVM_ARGS");
+        LoggerLevelOption logLevel = optMaster.getLoggerLevelOption("LOG_LEVEL");
         
         JPanel startupPanel = new JPanel();
         startupPanel.setBorder(BorderFactory.createTitledBorder("Startup Options"));
@@ -278,34 +281,38 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         JPanel heapPanel = McVGuiUtils.makeLabeledComponent(heapSize.getLabel()+":", heapSize.getComponent());
         
         // Build the 3D panel
-        JCheckBox use3dCheckBox = (JCheckBox)use3d.getComponent();
+        JCheckBox use3dCheckBox = use3d.getComponent();
         use3dCheckBox.setText(use3d.getLabel());
-        final JCheckBox joglCheckBox = (JCheckBox)jogl.getComponent();
+        final JCheckBox joglCheckBox = jogl.getComponent();
         joglCheckBox.setText(jogl.getLabel());
-        final JCheckBox direct3dBox = (JCheckBox)useDirect3d.getComponent();
+        final JCheckBox direct3dBox = useDirect3d.getComponent();
         direct3dBox.setText(useDirect3d.getLabel());
         
         JPanel internalPanel = McVGuiUtils.topCenterBottom(use3dCheckBox, joglCheckBox, direct3dBox);
         JPanel j3dPanel = McVGuiUtils.makeLabeledComponent("3D:", internalPanel);
         
         // Build the bundle panel
-        JPanel startupBundlePanel = (JPanel)startupBundle.getComponent();
-        JCheckBox defaultBundleCheckBox = (JCheckBox)defaultBundle.getComponent();
+        JPanel startupBundlePanel = startupBundle.getComponent();
+        JCheckBox defaultBundleCheckBox = defaultBundle.getComponent();
         defaultBundleCheckBox.setText(defaultBundle.getLabel());
         JPanel bundlePanel = McVGuiUtils.makeLabeledComponent(startupBundle.getLabel()+":",
             McVGuiUtils.topBottom(startupBundlePanel, defaultBundleCheckBox, McVGuiUtils.Prefer.TOP));
             
-        JCheckBox useCmsCollectorCheckBox = (JCheckBox)useCmsCollector.getComponent();
+        JCheckBox useCmsCollectorCheckBox = useCmsCollector.getComponent();
         useCmsCollectorCheckBox.setText(useCmsCollector.getLabel());
         
-        JCheckBox useGeometryByRefCheckBox = (JCheckBox)useGeometryByRef.getComponent();
+        JCheckBox useGeometryByRefCheckBox = useGeometryByRef.getComponent();
         useGeometryByRefCheckBox.setText(useGeometryByRef.getLabel());
         
-        JCheckBox useImageByRefCheckBox = (JCheckBox)useImageByRef.getComponent();
+        JCheckBox useImageByRefCheckBox = useImageByRef.getComponent();
         useImageByRefCheckBox.setText(useImageByRef.getLabel());
         
-        JCheckBox useNpotCheckBox = (JCheckBox)useNpot.getComponent();
+        JCheckBox useNpotCheckBox = useNpot.getComponent();
         useNpotCheckBox.setText(useNpot.getLabel());
+        
+        JComboBox logLevelComboBox = logLevel.getComponent();
+        
+        JPanel logLevelPanel = McVGuiUtils.makeLabeledComponent(logLevel.getLabel()+":", logLevelComboBox);
         
         JPanel miscPanel = McVGuiUtils.makeLabeledComponent("Misc:", useCmsCollectorCheckBox);
         
@@ -324,8 +331,9 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
                 .addComponent(heapPanel)
                 .addComponent(j3dPanel)
                 .addComponent(bundlePanel)
-                .addComponent(miscPanel)
                 .addComponent(visadPanel)
+                .addComponent(miscPanel)
+                .addComponent(logLevelPanel)
         );
         panelLayout.setVerticalGroup(
             panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -337,6 +345,8 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
                 .addComponent(j3dPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(visadPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(logLevelPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(miscPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             )
@@ -662,7 +672,7 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
      * 
      * @throws NullPointerException if {@code args} is null.
      * 
-     * @see #getArgs(boolean, String[], Properties)
+     * @see #getArgs(boolean, boolean, String[], Properties)
      */
     public static void applyArgs(final boolean ignoreUnknown, final boolean fromStartupManager, final String[] args) {
         if (args == null) {

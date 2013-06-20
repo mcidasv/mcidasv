@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -69,6 +70,7 @@ public class OptionMaster {
         { "USE_NPOT", "Enable Non-Power of Two (NPOT) textures", "0", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
         // temp bandaid for people suffering from permgen problems.
         { "USE_CMSGC", "Enable concurrent mark-sweep garbage collector", "0", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
+        { "LOG_LEVEL", "Log Level", "INFO", Type.LOGLEVEL, OptionPlatform.ALL, Visibility.VISIBLE },
     };
     
     /**
@@ -80,11 +82,15 @@ public class OptionMaster {
     
     /**
      * The different types of {@link Option}s.
+     * 
      * @see TextOption
      * @see BooleanOption
      * @see MemoryOption
+     * @see DirectoryOption
+     * @see SliderOption
+     * @see LoggerLevelOption
      */
-    public enum Type { TEXT, BOOLEAN, MEMORY, DIRTREE, SLIDER };
+    public enum Type { TEXT, BOOLEAN, MEMORY, DIRTREE, SLIDER, LOGLEVEL };
     
     /** 
      * Different ways that an {@link Option} might be displayed.
@@ -92,11 +98,11 @@ public class OptionMaster {
     public enum Visibility { VISIBLE, HIDDEN };
     
     /** Maps an option ID to the corresponding object. */
-    private final Map<String, Option> optionMap;
+    private Map<String, ? extends Option> optionMap;
     
     private static OptionMaster instance;
     
-    OptionMaster() {
+    public OptionMaster() {
         normalizeUserDirectory();
         optionMap = buildOptions(blahblah);
 //        readStartup();
@@ -123,7 +129,7 @@ public class OptionMaster {
     private Map<String, Option> buildOptions(final Object[][] options) {
         // TODO(jon): seriously, get that zip stuff working! this array 
         // stuff is BAD.
-        Map<String, Option> optMap = new HashMap<String, Option>();
+        Map<String, Option> optMap = new HashMap<String, Option>(options.length);
         
         for (Object[] arrayOption : options) {
             String id = (String)arrayOption[0];
@@ -133,31 +139,29 @@ public class OptionMaster {
             OptionPlatform platform = (OptionPlatform)arrayOption[4];
             Visibility visibility = (Visibility)arrayOption[5];
             
-            Option newOption;
             switch (type) {
                 case TEXT:
-                    newOption = new TextOption(id, label, defaultValue, 
-                        platform, visibility);
+                    optMap.put(id, new TextOption(id, label, defaultValue, platform, visibility));
                     break;
                 case BOOLEAN:
-                    newOption = new BooleanOption(id, label, defaultValue, 
-                        platform, visibility);
+                    optMap.put(id, new BooleanOption(id, label, defaultValue, platform, visibility));
                     break;
                 case MEMORY:
-                    newOption = new MemoryOption(id, label, defaultValue, 
-                        platform, visibility);
+                    optMap.put(id, new MemoryOption(id, label, defaultValue, platform, visibility));
                     break;
                 case DIRTREE:
-                    newOption = new DirectoryOption(id, label, defaultValue, platform, visibility);
+                    optMap.put(id, new DirectoryOption(id, label, defaultValue, platform, visibility));
                     break;
                 case SLIDER:
-                    newOption = new SliderOption(id, label, defaultValue, platform, visibility);
+                    optMap.put(id, new SliderOption(id, label, defaultValue, platform, visibility));
+                    break;
+                case LOGLEVEL:
+                    optMap.put(id, new LoggerLevelOption(id, label, defaultValue, platform, visibility));
                     break;
                 default:
                      throw new AssertionError(type + 
                          " is not known to OptionMaster.buildOptions()");
             }
-            optMap.put(id, newOption);
         }
         return optMap;
     }
@@ -192,25 +196,102 @@ public class OptionMaster {
      * @return Either the {@code Option} associated with {@code id}, or 
      * {@code null} if there was no association.
      */
-    public Option getOption(final String id) {
+    private Option getOption(final String id) {
         return optionMap.get(id);
+    }
+    
+    /**
+     * 
+     * @param id
+     * 
+     * @return
+     */
+    public MemoryOption getMemoryOption(final String id) {
+        return (MemoryOption)optionMap.get(id);
+    }
+    
+    /**
+     * 
+     * 
+     * @param id
+     * 
+     * @return
+     */
+    public BooleanOption getBooleanOption(final String id) {
+        return (BooleanOption)optionMap.get(id);
+    }
+    
+    /**
+     * 
+     * 
+     * @param id
+     * 
+     * @return
+     */
+    public DirectoryOption getDirectoryOption(final String id) {
+        return (DirectoryOption)optionMap.get(id);
+    }
+    
+    /**
+     * 
+     * 
+     * @param id
+     * 
+     * @return
+     */
+    public SliderOption getSliderOption(final String id) {
+        return (SliderOption)optionMap.get(id);
+    }
+    
+    /**
+     * 
+     * 
+     * @param id
+     * 
+     * @return
+     */
+    public TextOption getTextOption(final String id) {
+        return (TextOption)optionMap.get(id);
+    }
+    
+    /**
+     * 
+     * 
+     * @param id
+     * 
+     * @return
+     */
+    public LoggerLevelOption getLoggerLevelOption(final String id) {
+        return (LoggerLevelOption)optionMap.get(id);
     }
     
     // TODO(jon): getAllOptions and optionsBy* really need some work.
     // I want to eventually do something like:
     // Collection<Option> = getOpts().byPlatform(WINDOWS, ALL).byType(BOOLEAN).byVis(HIDDEN)
+    /**
+     * 
+     * 
+     * @return
+     */
     public Collection<Option> getAllOptions() {
         return Collections.unmodifiableCollection(optionMap.values());
     }
     
-    public Collection<Option> optionsByPlatform(
-        final Set<OptionPlatform> platforms) 
+    /**
+     * 
+     * 
+     * @param platforms
+     * 
+     * @return
+     */
+    public List<Option> optionsByPlatform(
+        final Collection<OptionPlatform> platforms) 
     {
         if (platforms == null) {
             throw new NullPointerException();
         }
         Collection<Option> allOptions = getAllOptions();
-        Collection<Option> filteredOptions = 
+        List<Option> filteredOptions = 
             new ArrayList<Option>(allOptions.size());
         for (Option option : allOptions) {
             if (platforms.contains(option.getOptionPlatform())) {
@@ -220,6 +301,13 @@ public class OptionMaster {
         return filteredOptions;
     }
     
+    /**
+     * 
+     * 
+     * @param types
+     * 
+     * @return
+     */
     public Collection<Option> optionsByType(final Set<Type> types) {
         if (types == null) {
             throw new NullPointerException();
@@ -235,6 +323,13 @@ public class OptionMaster {
         return filteredOptions;
     }
     
+    /**
+     * 
+     * 
+     * @param visibilities
+     * 
+     * @return
+     */
     public Collection<Option> optionsByVisibility(
         final Set<Visibility> visibilities) 
     {

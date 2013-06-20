@@ -111,7 +111,7 @@ public class DirectoryOption extends AbstractOption {
         tree.scrollPathToVisible(nodePath);
     }
     
-    public JComponent getComponent() {
+    public JPanel getComponent() {
         
         JPanel panel = new JPanel(new BorderLayout());
         

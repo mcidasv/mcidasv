@@ -50,7 +50,7 @@ public class TextOption extends AbstractOption {
         setValue(defaultValue);
     }
     
-    public JComponent getComponent() {
+    public JTextField getComponent() {
         final JTextField tf = new JTextField(getValue(), 10);
         tf.addKeyListener(new KeyAdapter() {
             public void keyReleased(final KeyEvent e) {

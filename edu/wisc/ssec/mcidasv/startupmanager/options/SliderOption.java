@@ -72,7 +72,7 @@ public class SliderOption extends AbstractOption {
         };
     }
     
-    public JComponent getComponent() {
+    public JPanel getComponent() {
         JLabel sliderLabel = new JLabel("Use "+sliderValue+"% ");
         JLabel postLabel = new JLabel(" of available memory ("+total+"mb)");
         

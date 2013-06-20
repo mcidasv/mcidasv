@@ -136,30 +136,33 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     private JLabel sliderLabel = new JLabel();
     
     private JSlider slider = new JSlider();
-
+    
     private JPanel textPanel = new JPanel();
     private McVTextField text = new McVTextField();
     private JComboBox memVals = new JComboBox(PREFIXES);
     private String initTextValue = value;
     private Prefix initPrefixValue = currentPrefix;
-
+    
     private int minSliderValue = 10;
     private int maxSliderValue = 80;
     private int initSliderValue = minSliderValue;
-
+    
     private int maxmem = StartupManager.getMaximumHeapSize();
-
+    
     private State currentState = State.VALID;
-
+    
     private boolean doneInit = false;
-
+    
     public MemoryOption(final String id, final String label, 
         final String defaultValue, final OptionPlatform optionPlatform,
         final Visibility optionVisibility) 
     {
         super(id, label, Type.MEMORY, optionPlatform, optionVisibility);
-        if (maxmem==0) defaultPrefValue=failsafeValue;
-        else defaultPrefValue = defaultValue;
+        if (maxmem == 0) {
+            defaultPrefValue = failsafeValue;
+        } else {
+            defaultPrefValue = defaultValue;
+        }
         try {
             setValue(defaultPrefValue);
         } catch (IllegalArgumentException e) {
@@ -173,7 +176,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
         sliderPanel.setEnabled(false);
         textPanel.setEnabled(false);
     }
-
+    
     private String[] getNames(final Prefix[] arr) {
         assert arr != null;
         String[] newArr = new String[arr.length];
@@ -182,22 +185,22 @@ public class MemoryOption extends AbstractOption implements ActionListener {
         }
         return newArr;
     }
-
+    
     private void setState(final State newState) {
         assert newState != null : newState;
         currentState = newState;
         text.setForeground(currentState.getForeground());
         text.setBackground(currentState.getBackground());
     }
-
+    
     private boolean isValid() {
         return currentState == State.VALID;
     }
-
+    
     private boolean isSlider() {
         return currentPrefix.equals(Prefix.PERCENT);
     }
-
+    
     public void actionPerformed(ActionEvent e) {
         if ("slider".equals(e.getActionCommand())) {
             GuiUtils.enableTree(sliderPanel, true);
@@ -248,7 +251,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
         }
     }
     
-    public JComponent getComponent() {
+    public JPanel getComponent() {
         JPanel topPanel = GuiUtils.hbox(jrbSlider, getSliderComponent());
         JPanel bottomPanel = GuiUtils.hbox(jrbNumber, getTextComponent());
         if (isSlider()) {
@@ -316,7 +319,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
         }
         return currentPrefix.getJavaFormat(value);
     }
-
+    
     // overridden so that any illegal vals coming *out of* a runMcV.prefs
     // can be replaced with a legal val.
     @Override public void fromPrefsFormat(final String prefText) {
@@ -344,7 +347,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
             quantity = m.group(1);
             prefix = m.group(2);
         }
-
+        
         int intVal = Integer.parseInt(quantity);
         if (intVal <= 0) {
             throw new IllegalArgumentException("Memory cannot be less than or equal to zero: "+newValue);

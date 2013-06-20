@@ -46,7 +46,7 @@ public class BooleanOption extends AbstractOption {
         setValue(defaultValue);
     }
     
-    public JComponent getComponent() {
+    public JCheckBox getComponent() {
         final JCheckBox cb = new JCheckBox();
         cb.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
