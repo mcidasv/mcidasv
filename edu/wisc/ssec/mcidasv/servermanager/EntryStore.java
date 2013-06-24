@@ -278,7 +278,13 @@ public class EntryStore {
     }
 
     protected String[] getAddeCommands() {
-        return new String[] { ADDE_MCSERVL, "-p", localPort, "-v" };
+    	String mcvPID = System.getProperty("mcv.pid");
+    	if (mcvPID == null) {
+    		return new String[] { ADDE_MCSERVL, "-p", localPort, "-v" };
+    	}
+    	else {
+    		return new String[] { ADDE_MCSERVL, "-i", mcvPID, "-v" };    		
+    	}
     }
 
     /**
