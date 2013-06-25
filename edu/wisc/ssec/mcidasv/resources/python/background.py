@@ -2119,7 +2119,6 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=No
         
     return display  # TODO: return list of all displays instead
     
-@gui_invoke_later
 def writeImageAtIndex(fname, idx, params='', quality=1.0):
     """Captures a particular animation step from the active display.
     
