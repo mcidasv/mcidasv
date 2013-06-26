@@ -27,6 +27,7 @@
  */
 package edu.wisc.ssec.mcidasv.chooser;
 
+import java.awt.BorderLayout;
 import java.io.File;
 
 import java.text.ParseException;
@@ -37,6 +38,7 @@ import java.util.Vector;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.filechooser.FileFilter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -240,11 +242,20 @@ public class SuomiNPPChooser extends FileChooser {
     
     protected JPanel getCenterPanel() {
     	JPanel centerPanel = super.getCenterPanel();
-    	
-        fileChooser.setAcceptAllFileFilterUsed(false);
-        fileChooser.setFileFilter(new SuomiNPPFilter());
 
-        return centerPanel;
+    	JPanel jp = new JPanel(new BorderLayout()) {
+    		public void paint(java.awt.Graphics g) {
+    			FileFilter ff = fileChooser.getFileFilter();
+    			if (! (ff instanceof SuomiNPPFilter)) {
+    				fileChooser.setAcceptAllFileFilterUsed(false);
+    				fileChooser.setFileFilter(new SuomiNPPFilter());
+    			}
+    			super.paint(g);
+    		}
+    	};
+    	jp.add(centerPanel);
+
+    	return jp; 
     }
     
 }
