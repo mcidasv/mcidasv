@@ -26,7 +26,13 @@ from edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry import ServerName
 
 from visad.data.mcidas import AreaAdapter
 
-# from java.util import Calendar, Date, GregorianCalendar, TimeZone
+from java.lang import StringBuffer
+from java.text import FieldPosition
+from java.text import SimpleDateFormat
+from java.util import Calendar
+from java.util import Date
+from java.util import GregorianCalendar
+from java.util import TimeZone
 
 # credit for enum goes to http://stackoverflow.com/a/1695250
 def enum(*sequential, **named):
@@ -423,7 +429,7 @@ def listADDEImages(server, dataset, descriptor,
     # greg = GregorianCalendar(2013, 5, 1)
     # greg.set(Calendar.HOUR, 6)
     # greg.set(Calendar.MINUTE, 45)
-    # tz = TimeZone.getTimeZone("Z")
+    tz = TimeZone.getTimeZone("Z")
     # greg.setTimeZone(tz)
     # date = greg.getTime()
     
@@ -436,19 +442,41 @@ def listADDEImages(server, dataset, descriptor,
     # adl = AreaDirectoryList(au.getURLString())
     dirs = adl.getSortedDirs()
     # print dirs
+    dateFormat = SimpleDateFormat()
+    dateFormat.setTimeZone(tz)
+    dateFormat.applyPattern('yyyyDDD')
+    
+    timeFormat = SimpleDateFormat();
+    timeFormat.setTimeZone(tz)
+    timeFormat.applyPattern('HH:mm:ss')
     temp = []
     for i, d in enumerate(dirs[0]):
         # print i, d.getBands(), d.getSensorType(), d.getCenterLatitude(), d.getCenterLongitude()
         # print d
         # print '------'
+        startTime = d.getStartTime()
+        tempDay = dateFormat.format(startTime, StringBuffer(), FieldPosition(0)).toString()
+        tempTime = timeFormat.format(startTime, StringBuffer(), FieldPosition(0)).toString()
+        # nominalTime = d.getNominalTime()
+        # print 'nominal:', nominalTime
+        print '-------'
+        
+        tempBand = list(d.getBands())
+        if len(tempBand) == 1:
+            tempBand = tempBand[0]
+        else:
+            # raise Exception
+            pass
+            
         dt = {
             'server': server,
             'dataset': dataset,
             'descriptor': descriptor,
-            'band': d.getBands(),
-            'position': i,
+            'band': tempBand,
             'debug': debug,
             'accounting': accounting,
+            'day': tempDay,
+            'time': (tempTime, tempTime),
         }
         temp.append(dt)
     return temp
