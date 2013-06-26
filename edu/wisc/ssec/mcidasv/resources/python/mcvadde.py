@@ -26,6 +26,8 @@ from edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry import ServerName
 
 from visad.data.mcidas import AreaAdapter
 
+# from java.util import Calendar, Date, GregorianCalendar, TimeZone
+
 # credit for enum goes to http://stackoverflow.com/a/1695250
 def enum(*sequential, **named):
     enums = dict(zip(sequential, range(len(sequential))), **named)
@@ -324,14 +326,15 @@ def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
     return localEntry
     
 
+
 def listADDEImages(server, dataset, descriptor,
     accounting=DEFAULT_ACCOUNTING,
     location=None,
     coordinateSystem=CoordinateSystems.LATLON,
-    place=Places.CENTER,
-    mag=(1, 1),
-    position='all',
-    unit='BRIT',
+    place=None,
+    mag=None,
+    position='ALL',
+    unit=None,
     day=None,
     time=None,
     debug=False,
@@ -349,22 +352,32 @@ def listADDEImages(server, dataset, descriptor,
         position: Position number. (default='all')
         band: McIDAS band number; only images that have matching band number will be returned.
         accounting: ('user', 'project number') User and project number required by servers using McIDAS accounting. default = ('idv','0')
-    
+        
     Returns:
         ADDE image matching the given criteria, if any.
     """
-
+    
     user = accounting[0]
     proj = accounting[1]
     debug = str(debug).lower()
-    mag = '%s %s' % (mag[0], mag[1])
+    
+    if mag:
+        mag = '&MAG=%s %s' % (mag[0], mag[1])
+    else:
+        mag = ''
+    
+    if unit:
+        unit = '&UNIT=%s' % (unit)
+    else:
+        unit = ''
     
     if place is Places.CENTER:
-        place = 'CENTER'
+        place = '&PLACE=CENTER'
     elif place is Places.ULEFT:
-        place = 'ULEFT'
+        place = '&PLACE=ULEFT'
     else:
-        raise ValueError()
+        # raise ValueError()
+        place = ''
     
     if coordinateSystem is CoordinateSystems.LATLON:
         coordSys = 'LATLON'
@@ -375,27 +388,71 @@ def listADDEImages(server, dataset, descriptor,
     
     if location:
         location = '%s=%s %s' % (coordSys, location[0], location[1])
+    else:
+        location = ''
     
     if day:
         day = '&DAY=%s' % (day)
     
     if size:
         if size == 'ALL':
-            size = '99999 99999'
+            size = '&SIZE=99999 99999'
         else:
-            size = '%s %s' % (size[0], size[1])
+            size = '&SIZE=%s %s' % (size[0], size[1])
+    else:
+        size = ''
     
     if time:
         time = '%s %s I' % (time[0], time[1])
+    else:
+        time = ''
     
     if band:
         band = '&BAND=%s' % (str(band))
+    else:
+        band = '&BAND=ALL'
     
-    addeUrlFormat = "adde://%s/imagedir?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s&%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s"
+    # TODO(jon): this is a disaster. find a better solution.
+    # addeUrlFormat = "adde://%s/imagedirectory?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s%s%s&UNIT=%s%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s"
+    addeUrlFormat = "adde://%s/imagedirectory?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s%s%s%s%s%s&TIME=%s&POS=%s"
     url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position)
     print url
     adl = AreaDirectoryList(url)
-    return adl.getSortedDirs()
+    # return adl.getSortedDirs()
+    
+    # greg = GregorianCalendar(2013, 5, 1)
+    # greg.set(Calendar.HOUR, 6)
+    # greg.set(Calendar.MINUTE, 45)
+    # tz = TimeZone.getTimeZone("Z")
+    # greg.setTimeZone(tz)
+    # date = greg.getTime()
+    
+    # from edu.wisc.ssec.mcidas.adde import AddeImageURL
+    # au = AddeImageURL(server, "imagedirectory", dataset, descriptor)
+    # au.setUser(user)
+    # au.setProject(int(proj))
+    # au.setStartDate(date)
+    # print au.getURLString()
+    # adl = AreaDirectoryList(au.getURLString())
+    dirs = adl.getSortedDirs()
+    # print dirs
+    temp = []
+    for i, d in enumerate(dirs[0]):
+        # print i, d.getBands(), d.getSensorType(), d.getCenterLatitude(), d.getCenterLongitude()
+        # print d
+        # print '------'
+        dt = {
+            'server': server,
+            'dataset': dataset,
+            'descriptor': descriptor,
+            'band': d.getBands(),
+            'position': i,
+            'debug': debug,
+            'accounting': accounting,
+        }
+        temp.append(dt)
+    return temp
+
 
 def oldADDEImage(localEntry=None, server=None, dataset=None, descriptor=None,
     accounting=DEFAULT_ACCOUNTING,
