@@ -436,6 +436,16 @@ def listADDEImages(server, dataset, descriptor,
     else:
         band = '&BAND=ALL'
         
+    tz = TimeZone.getTimeZone("Z")
+    
+    dateFormat = SimpleDateFormat()
+    dateFormat.setTimeZone(tz)
+    dateFormat.applyPattern('yyyyDDD')
+    
+    timeFormat = SimpleDateFormat();
+    timeFormat.setTimeZone(tz)
+    timeFormat.applyPattern('HH:mm:ss')
+    
     addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=112&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s%(unit)s%(mag)s%(day)s&TIME=%(time)s&POS=%(position)s"
     
     areaDirectories = []
@@ -465,42 +475,12 @@ def listADDEImages(server, dataset, descriptor,
         for areaDirectory in dirs[0]:
             areaDirectories.append(areaDirectory)
             
-    # return adl.getSortedDirs()
-    
-    # greg = GregorianCalendar(2013, 5, 1)
-    # greg.set(Calendar.HOUR, 6)
-    # greg.set(Calendar.MINUTE, 45)
-    tz = TimeZone.getTimeZone("Z")
-    # greg.setTimeZone(tz)
-    # date = greg.getTime()
-    
-    # from edu.wisc.ssec.mcidas.adde import AddeImageURL
-    # au = AddeImageURL(server, "imagedirectory", dataset, descriptor)
-    # au.setUser(user)
-    # au.setProject(int(proj))
-    # au.setStartDate(date)
-    # print au.getURLString()
-    # adl = AreaDirectoryList(au.getURLString())
-    dateFormat = SimpleDateFormat()
-    dateFormat.setTimeZone(tz)
-    dateFormat.applyPattern('yyyyDDD')
-    
-    timeFormat = SimpleDateFormat();
-    timeFormat.setTimeZone(tz)
-    timeFormat.applyPattern('HH:mm:ss')
     temp = []
     for i, d in enumerate(areaDirectories):
         # print i, d.getBands(), d.getSensorType(), d.getCenterLatitude(), d.getCenterLongitude()
-        # print d
-        # print '------'
-        # startTime = d.getStartTime()
-        # tempDay = dateFormat.format(startTime, StringBuffer(), FieldPosition(0)).toString()
-        # tempTime = timeFormat.format(startTime, StringBuffer(), FieldPosition(0)).toString()
         nominalTime = d.getNominalTime()
         tempDay = dateFormat.format(nominalTime, StringBuffer(), FieldPosition(0)).toString()
         tempTime = timeFormat.format(nominalTime, StringBuffer(), FieldPosition(0)).toString()
-        # print 'nominal:', nominalTime
-        # print '-------'
         
         tempBand = list(d.getBands())
         if len(tempBand) == 1:
