@@ -68,7 +68,7 @@ def _normalizeDates(dates):
     # tuple of two items signifies range of days
     normalized = []
     if isinstance(dates, str):
-        normalized.append(day)
+        normalized.append(dates)
     elif isinstance(dates, list) or isinstance(dates, set):
         [normalized.append(date) for date in dates]
     elif isinstance(dates, tuple) and len(dates) == 2:
@@ -385,12 +385,12 @@ def listADDEImages(server, dataset, descriptor,
         mag = '&MAG=%s %s' % (mag[0], mag[1])
     else:
         mag = ''
-    
+        
     if unit:
         unit = '&UNIT=%s' % (unit)
     else:
         unit = ''
-    
+        
     if place is Places.CENTER:
         place = '&PLACE=CENTER'
     elif place is Places.ULEFT:
@@ -398,22 +398,27 @@ def listADDEImages(server, dataset, descriptor,
     else:
         # raise ValueError()
         place = ''
-    
+        
     if coordinateSystem is CoordinateSystems.LATLON:
         coordSys = 'LATLON'
     elif coordinateSystem is CoordinateSystems.AREA or coordinateSystem is CoordinateSystems.IMAGE:
         coordSys = 'LINELE'
     else:
         raise ValueError()
-    
+        
     if location:
         location = '%s=%s %s' % (coordSys, location[0], location[1])
     else:
         location = ''
-    
+        
+    dates = _normalizeDates(day)
+    if not dates:
+        # raise exception
+        pass
+        
     if day:
         day = '&DAY=%s' % (day)
-    
+        
     if size:
         if size == 'ALL':
             size = '&SIZE=99999 99999'
@@ -421,26 +426,36 @@ def listADDEImages(server, dataset, descriptor,
             size = '&SIZE=%s %s' % (size[0], size[1])
     else:
         size = ''
-    
+        
     if time:
         time = '%s %s I' % (time[0], time[1])
     else:
         time = ''
-    
+        
     if band:
         band = '&BAND=%s' % (str(band))
     else:
         band = '&BAND=ALL'
-    
-    dates = _normalizeDates(day)
-    if not dates:
-        # raise exception
-        pass
         
-    # TODO(jon): this is a disaster. find a better solution.
-    # addeUrlFormat = "adde://%s/imagedirectory?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s%s%s&UNIT=%s%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s"
-    addeUrlFormat = "adde://%s/imagedirectory?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s%s%s%s%s%s&TIME=%s&POS=%s"
-    url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position)
+    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=112&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s%(unit)s%(mag)s%(day)s&TIME=%(time)s&POS=%(position)s"
+    formatValues = {
+        'server': server,
+        'user': user,
+        'proj': proj,
+        'debug': debug,
+        'dataset': dataset,
+        'descriptor': descriptor,
+        'band': band,
+        'location': location,
+        'place': place,
+        'size': size,
+        'unit': unit,
+        'mag': mag,
+        'day': day,
+        'time': time,
+        'position': position,
+    }
+    url = addeUrlFormat % formatValues
     print url
     adl = AreaDirectoryList(url)
     # return adl.getSortedDirs()
@@ -474,11 +489,13 @@ def listADDEImages(server, dataset, descriptor,
         # print d
         # print '------'
         startTime = d.getStartTime()
-        tempDay = dateFormat.format(startTime, StringBuffer(), FieldPosition(0)).toString()
-        tempTime = timeFormat.format(startTime, StringBuffer(), FieldPosition(0)).toString()
-        # nominalTime = d.getNominalTime()
+        # tempDay = dateFormat.format(startTime, StringBuffer(), FieldPosition(0)).toString()
+        # tempTime = timeFormat.format(startTime, StringBuffer(), FieldPosition(0)).toString()
+        nominalTime = d.getNominalTime()
+        tempDay = dateFormat.format(nominalTime, StringBuffer(), FieldPosition(0)).toString()
+        tempTime = timeFormat.format(nominalTime, StringBuffer(), FieldPosition(0)).toString()
         # print 'nominal:', nominalTime
-        print '-------'
+        # print '-------'
         
         tempBand = list(d.getBands())
         if len(tempBand) == 1:
@@ -733,10 +750,12 @@ def getADDEImage(localEntry=None,
     
     if size:
         if size == 'ALL':
-            size = '99999 99999'
+            size = '&SIZE=99999 99999'
         else:
-            size = '%s %s' % (size[0], size[1])
-    
+            size = '&SIZE=%s %s' % (size[0], size[1])
+    else:
+        size = ''
+        
     if time:
         time = '%s %s I' % (time[0], time[1])
     else:
@@ -747,8 +766,28 @@ def getADDEImage(localEntry=None,
     else:
         band = ''
         
-    addeUrlFormat = "adde://%s/imagedata?&PORT=%s&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s&TRACK=%d"
-    url = addeUrlFormat % (server, port, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position, track)
+    addeUrlFormat = "adde://%(server)s/imagedata?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s&PLACE=%(place)s%(size)s&UNIT=%(unit)s&MAG=%(mag)s&SPAC=4&NAV=X&AUX=YES&DOC=X%(day)s&TIME=%(time)s&POS=%(position)s&TRACK=%(track)d"
+    formatValues = {
+        'server': server,
+        'port': port,
+        'user': user,
+        'proj': proj,
+        'debug': debug,
+        'dataset': dataset,
+        'descriptor': descriptor,
+        'band': band,
+        'location': location,
+        'place': place,
+        'size': size,
+        'unit': unit,
+        'mag': mag,
+        'day': day,
+        'time': time,
+        'position': position,
+        'track': track,
+    }
+    url = addeUrlFormat % formatValues
+    print url
     
     try:
         mapped = _MappedAreaImageFlatField.fromUrl(url)
