@@ -416,9 +416,6 @@ def listADDEImages(server, dataset, descriptor,
         # raise exception
         pass
         
-    if day:
-        day = '&DAY=%s' % (day)
-        
     if size:
         if size == 'ALL':
             size = '&SIZE=99999 99999'
@@ -438,26 +435,35 @@ def listADDEImages(server, dataset, descriptor,
         band = '&BAND=ALL'
         
     addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=112&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s%(unit)s%(mag)s%(day)s&TIME=%(time)s&POS=%(position)s"
-    formatValues = {
-        'server': server,
-        'user': user,
-        'proj': proj,
-        'debug': debug,
-        'dataset': dataset,
-        'descriptor': descriptor,
-        'band': band,
-        'location': location,
-        'place': place,
-        'size': size,
-        'unit': unit,
-        'mag': mag,
-        'day': day,
-        'time': time,
-        'position': position,
-    }
-    url = addeUrlFormat % formatValues
-    print url
-    adl = AreaDirectoryList(url)
+    
+    areaDirectories = []
+    for date in dates:
+        urlDate = '&DAY=%s' % (date)
+        formatValues = {
+            'server': server,
+            'user': user,
+            'proj': proj,
+            'debug': debug,
+            'dataset': dataset,
+            'descriptor': descriptor,
+            'band': band,
+            'location': location,
+            'place': place,
+            'size': size,
+            'unit': unit,
+            'mag': mag,
+            'day': urlDate,
+            'time': time,
+            'position': position,
+        }
+        url = addeUrlFormat % formatValues
+        print url
+        adl = AreaDirectoryList(url)
+        dirs = adl.getSortedDirs()
+        # print dirs
+        for areaDirectory in dirs[0]:
+            areaDirectories.append(areaDirectory)
+            
     # return adl.getSortedDirs()
     
     # greg = GregorianCalendar(2013, 5, 1)
@@ -474,8 +480,6 @@ def listADDEImages(server, dataset, descriptor,
     # au.setStartDate(date)
     # print au.getURLString()
     # adl = AreaDirectoryList(au.getURLString())
-    dirs = adl.getSortedDirs()
-    # print dirs
     dateFormat = SimpleDateFormat()
     dateFormat.setTimeZone(tz)
     dateFormat.applyPattern('yyyyDDD')
@@ -484,11 +488,11 @@ def listADDEImages(server, dataset, descriptor,
     timeFormat.setTimeZone(tz)
     timeFormat.applyPattern('HH:mm:ss')
     temp = []
-    for i, d in enumerate(dirs[0]):
+    for i, d in enumerate(areaDirectories):
         # print i, d.getBands(), d.getSensorType(), d.getCenterLatitude(), d.getCenterLongitude()
         # print d
         # print '------'
-        startTime = d.getStartTime()
+        # startTime = d.getStartTime()
         # tempDay = dateFormat.format(startTime, StringBuffer(), FieldPosition(0)).toString()
         # tempTime = timeFormat.format(startTime, StringBuffer(), FieldPosition(0)).toString()
         nominalTime = d.getNominalTime()
