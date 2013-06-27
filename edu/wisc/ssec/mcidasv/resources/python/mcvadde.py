@@ -61,7 +61,21 @@ def _areaDirectoryToDictionary(areaDirectory):
     d['source-type'] = areaDirectory.getSourceType()
     d['start-time'] = areaDirectory.getStartTime()
     return d
-
+    
+def _normalizeDates(dates):
+    # string only ever signifies single day
+    # list or set signifies at least one day
+    # tuple of two items signifies range of days
+    normalized = []
+    if isinstance(dates, str):
+        normalized.append(day)
+    elif isinstance(dates, list) or isinstance(dates, set):
+        [normalized.append(date) for date in dates]
+    elif isinstance(dates, tuple) and len(dates) == 2:
+        start, stop = int(dates[0]), int(dates[1])
+        [normalized.append(str(date)) for date in range(start, stop+1)]
+    return normalized
+    
 _formats = {
     "AMSR-E Rain Product":                                     AddeFormat.AMSRE_RAIN_PRODUCT,
     "AMRR":                                                    AddeFormat.AMSRE_RAIN_PRODUCT,
@@ -418,6 +432,11 @@ def listADDEImages(server, dataset, descriptor,
     else:
         band = '&BAND=ALL'
     
+    dates = _normalizeDates(day)
+    if not dates:
+        # raise exception
+        pass
+        
     # TODO(jon): this is a disaster. find a better solution.
     # addeUrlFormat = "adde://%s/imagedirectory?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s%s%s&UNIT=%s%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s"
     addeUrlFormat = "adde://%s/imagedirectory?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s%s%s%s%s%s&TIME=%s&POS=%s"
