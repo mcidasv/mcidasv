@@ -66,14 +66,16 @@ def _normalizeDates(dates):
     # string only ever signifies single day
     # list or set signifies at least one day
     # tuple of two items signifies range of days
-    normalized = []
+    normalized = None
     if isinstance(dates, str):
-        normalized.append(dates)
+        normalized = [dates]
     elif isinstance(dates, list) or isinstance(dates, set):
-        [normalized.append(date) for date in dates]
+        normalized = [date for date in dates]
     elif isinstance(dates, tuple) and len(dates) == 2:
         start, stop = int(dates[0]), int(dates[1])
-        [normalized.append(str(date)) for date in range(start, stop+1)]
+        normalized = [str(date) for date in range(start, stop + 1)]
+    else:
+        normalized = []
     return normalized
     
 _formats = {
@@ -460,7 +462,6 @@ def listADDEImages(server, dataset, descriptor,
         print url
         adl = AreaDirectoryList(url)
         dirs = adl.getSortedDirs()
-        # print dirs
         for areaDirectory in dirs[0]:
             areaDirectories.append(areaDirectory)
             
