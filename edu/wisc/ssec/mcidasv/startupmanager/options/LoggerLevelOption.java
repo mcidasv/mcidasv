@@ -66,7 +66,7 @@ public class LoggerLevelOption extends AbstractOption {
     
     /** 
      * {@code String} representation of the user's selection, or the default
-     * value provided to {@link #LoggerLevelOption(String, String, String, OptionPlatform, Visibility)}. 
+     * value provided to the constructor. 
      */
     private String currentChoice;
     
@@ -93,8 +93,8 @@ public class LoggerLevelOption extends AbstractOption {
     }
     
     /**
-     * Builds a {@link JComboBox} containing the logging levels to select. 
-     * Defaults to the {@code String} specified in {@link #LoggerLevelOption(String, String, String, OptionPlatform, Visibility)}.
+     * Builds a {@link JComboBox} containing the logging levels to select. Defaults to the {@code String} specified 
+     * in the constructor.
      * 
      * @return {@code JComboBox} to present to the user.
      */
@@ -121,7 +121,9 @@ public class LoggerLevelOption extends AbstractOption {
     }
     
     /**
-     * Stores the user's selected logging level.
+     * Stores the user's selected logging level. Note that this can be called from third-party or the GUI! If the call
+     * originates from the GUI, an infinite loop is avoided by using the {@link JComboBox#setSelectedItem(Object)} 
+     * behavior that does <b>not</b> generate {@link ItemEvent ItemEvents} if the selection did not actually change.
      * 
      * @param value {@code String} representation of the desired logging 
      * level. Should not be {@code null}.
