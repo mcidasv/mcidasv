@@ -833,15 +833,11 @@ class _Display(_JavaProxy):
         """Sets the display's background color to the given AWT color. Defaults to cyan."""
         
         self._JavaProxy__javaObject.getMapDisplay().setBackground(color)
-
-#    def addLayer(self, newLayer):
-#        """Adds a new display layer (display control) to the end of this display's layer list."""
-#        self._JavaProxy__javaObject.addDisplayInfo(DisplayInfo(_))
-
+        
 #    def getMapLayer(self):
 #        # the map layer will typically be the first layer... still buggy :(
 #        return self._JavaProxy__javaObject.getControls()[0]
-
+    
     @gui_invoke_later
     def getLayer(self, index):
         """Returns the layer at the given index (zero-based!) for this Display"""
