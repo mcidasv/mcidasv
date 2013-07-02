@@ -100,7 +100,7 @@ public enum Platform {
     /**
      * Sets the path to the user's userpath directory explicitly.
      * 
-     * @param path New path.
+     * @param path New path. Cannot be {@code null}.
      */
     public void setUserDirectory(final String path) {
         userDirectory = path;
@@ -117,7 +117,7 @@ public enum Platform {
      * @throws IllegalArgumentException if {@code megabytes} is less than
      * zero or does not represent an integer.
      * 
-     * @see StartupManager#getArgs(String[], Properties)
+     * @see StartupManager#getArgs
      */
     public void setAvailableMemory(String megabytes) {
         if (megabytes == null) {
@@ -148,10 +148,14 @@ public enum Platform {
     }
     
     /**
-     * Returns the path to a file in the user's {@literal "userpath"} directory
+     * Returns the path to a file in the user's {@literal "userpath"} directory.
      * 
-     * @param filename
-     * @return Path to a file in the user's directory.
+     * @param filename Filename within the {@code userpath}. Cannot be 
+     * {@code null}, but does not need to be a filename that already exists 
+     * within the {@code userpath}.
+     * 
+     * @return Path to a file in the user's directory. <b>Note:</b> the file 
+     * may not yet exist.
      */
     public String getUserFile(String filename) {
         return getUserDirectory() + pathSeparator + filename;
