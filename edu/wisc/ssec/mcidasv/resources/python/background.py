@@ -500,10 +500,10 @@ class _Tab(_JavaProxy):
         return [_Display(viewManager) for viewManager in self._JavaProxy__javaObject.getViewManagers()]
 
 class _Display(_JavaProxy):
-
+    
     # this allows a _Layer to find it's associated _Display
     displayWrappers = []
-
+    
     def __init__(self, javaObject, labelDict=None):
         """Blank for now. javaObject = ViewManager
            displayType
@@ -834,10 +834,19 @@ class _Display(_JavaProxy):
         
         self._JavaProxy__javaObject.getMapDisplay().setBackground(color)
         
-#    def getMapLayer(self):
-#        # the map layer will typically be the first layer... still buggy :(
-#        return self._JavaProxy__javaObject.getControls()[0]
-    
+    @gui_invoke_later
+    def getMapLayer(self):
+        """Returns the map layer for this display, or None if no map layer could be found."""
+        # TODO(jon): can there be multiple MapDisplayControls per ViewManager?
+        from ucar.unidata.idv.control import MapDisplayControl
+        controls = self._JavaProxy__javaObject.getControls()
+        mapLayer = None
+        for control in controls:
+            if isinstance(control, MapDisplayControl):
+                mapLayer = _Layer(control)
+                break
+        return mapLayer
+        
     @gui_invoke_later
     def getLayer(self, index):
         """Returns the layer at the given index (zero-based!) for this Display"""
