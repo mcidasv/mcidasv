@@ -48,6 +48,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.SimpleTimeZone;
 import java.util.StringTokenizer;
@@ -134,10 +136,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
     private boolean hasImagePreview = true;
     private boolean isCombinedProduct = false;
     private boolean nameHasBeenSet = false;
-    
-    // if we have unpersisted from a bundle..
-    private boolean unpersisted = false;
-    private int bundleAdapterIndex = 0;
 
 	private FlatField previewImage = null;
     
@@ -155,9 +153,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
      */
     
     public SuomiNPPDataSource() {
-    	// flag so we know to grab granule list and adapter index
-    	// from persisted state
-    	unpersisted = true;
     }
     
     public SuomiNPPDataSource(String fileName) throws VisADException {
@@ -221,7 +216,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	// looking to populate 3 things - path to lat, path to lon, path to relevant products
     	String pathToLat = null;
     	String pathToLon = null;
-    	ArrayList<String> pathToProducts = new ArrayList<String>();
+    	LinkedHashSet<String> pathToProducts = new LinkedHashSet<String>();
     	
     	// flag to indicate data is 3-dimensions (X, Y, channel or band)
     	boolean is3D = false;
@@ -246,11 +241,11 @@ public class SuomiNPPDataSource extends HydraDataSource {
         }
     	
     	// various metatdata we'll need to gather on a per-product basis
-    	ArrayList<String> unsignedFlags = new ArrayList<String>();
-    	ArrayList<String> unpackFlags = new ArrayList<String>();
+        LinkedHashMap<String, String> unsignedFlags = new LinkedHashMap<String, String>();
+        LinkedHashMap<String, String> unpackFlags = new LinkedHashMap<String, String>();
     	
     	// geo product IDs for each granule
-    	ArrayList<String> geoProductIDs = new ArrayList<String>();
+    	LinkedHashSet<String> geoProductIDs = new LinkedHashSet<String>();
     	
     	// aggregations will use sets of NetCDFFile readers
     	ArrayList<NetCDFFile> ncdfal = new ArrayList<NetCDFFile>();
@@ -360,6 +355,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     		}
     		
     		// build each union aggregation element
+    		Iterator<String> iterator = geoProductIDs.iterator();
     		for (int elementNum = 0; elementNum < sources.size(); elementNum++) {
     			
     			String s = (String) sources.get(elementNum);
@@ -381,7 +377,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	
 	    			String geoFilename = s.substring(0, s.lastIndexOf(File.separatorChar) + 1);
 	    			// check if we have the whole file name or just the prefix
-	    			String geoProductID = geoProductIDs.get(elementNum);
+	    			String geoProductID = iterator.next();
 	    			if (geoProductID.endsWith("h5")) {
 	    				geoFilename += geoProductID;
 	    			} else {
@@ -515,6 +511,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    						// that does not match bounds of the geolocation data
     	    						
     	    						if (varShortName.startsWith("QF")) {
+    	    							
     	    							logger.debug("Handling Quality Flag: " + varShortName);
     	    							
         	    						// this check is done later for ALL varialbles, but we need
@@ -767,18 +764,18 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    							Attribute aUnsigned = v.findAttribute("_Unsigned");
     	    							if (aUnsigned != null) {
     	    								logger.debug("_Unsigned attribute value: " + aUnsigned.getStringValue());
-    	    								unsignedFlags.add(aUnsigned.getStringValue());
+    	    								unsignedFlags.put(v.getFullName(), aUnsigned.getStringValue());
     	    							} else {
-    	    								unsignedFlags.add("false");
+    	    								unsignedFlags.put(v.getFullName(), "false");
     	    							}
 
     	    							if (unpackFlag) {
-    	    								unpackFlags.add("true");
+    	    								unpackFlags.put(v.getFullName(), "true");
     	    							} else {
-    	    								unpackFlags.add("false");
+    	    								unpackFlags.put(v.getFullName(), "false");
     	    							}
 
-    	    							logger.debug("Adding product: " + v.getShortName());
+    	    							logger.debug("Adding product: " + v.getFullName());
     	    							pathToProducts.add(v.getFullName());
 
     	    						}
@@ -801,8 +798,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    		ncdff.addVariable(qfV.getGroup(), qfV);
     	    		logger.trace("Adding QF product: " + qfV.getFullName());
     	    		pathToProducts.add(qfV.getFullName());
-    	    		unsignedFlags.add("true");
-    	    		unpackFlags.add("false");
+    	    		unsignedFlags.put(qfV.getFullName(), "true");
+    	    		unpackFlags.put(qfV.getFullName(), "false");
     	    	}
     	    	
     		    ncdfal.add((NetCDFFile) netCDFReader);
@@ -837,7 +834,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	int pIdx = 0;
     	while (iterator.hasNext()) {
     		String pStr = (String) iterator.next();
-    		logger.debug("Working on adapter number " + (pIdx + 1));
+    		logger.debug("Working on adapter number " + (pIdx + 1) + ": " + pStr);
         	HashMap<String, Object> swathTable = SwathAdapter.getEmptyMetadataTable();
         	HashMap<String, Object> spectTable = SpectrumAdapter.getEmptyMetadataTable();
         	swathTable.put("array_name", pStr);
@@ -958,12 +955,12 @@ public class SuomiNPPDataSource extends HydraDataSource {
         		}
         	}
         	
-        	String unsignedAttributeStr = unsignedFlags.get(pIdx);
+        	String unsignedAttributeStr = unsignedFlags.get(pStr);
         	if (unsignedAttributeStr.equals("true")) {
         		swathTable.put("unsigned", unsignedAttributeStr);
         	}
         	
-        	String unpackFlagStr = unpackFlags.get(pIdx);
+        	String unpackFlagStr = unpackFlags.get(pStr);
         	if (unpackFlagStr.equals("true")) {
         		swathTable.put("unpack", "true");
         	}
@@ -1102,14 +1099,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
 			fileList.add(s);
 		}
 		return fileList;
-	}
-
-	public int getBundleAdapterIndex() {
-		return bundleAdapterIndex;
-	}
-
-	public void setBundleAdapterIndex(int bundleAdapterIndex) {
-		this.bundleAdapterIndex = bundleAdapterIndex;
 	}
 
 	public List<String> getOldSources() {
@@ -1266,17 +1255,10 @@ public class SuomiNPPDataSource extends HydraDataSource {
         int aIdx = 0;
         List<DataChoice> dcl = getDataChoices();
         for (DataChoice dc : dcl) {
-        	if (dc.equals(dataChoice)) {
+        	if (dc.getName().equals(dataChoice.getName())) {
         		aIdx = dcl.indexOf(dc);
-        		logger.trace("storing adapter index for bundles: " + aIdx);
-        		bundleAdapterIndex = aIdx;
         		break;
         	}
-        }
-        
-        if (unpersisted) {
-        	logger.trace("setting adapter index from bundle, to: " + bundleAdapterIndex);
-        	aIdx = bundleAdapterIndex;
         }
 
         adapter = adapters[aIdx];

@@ -31,6 +31,7 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -90,10 +91,10 @@ public class GranuleAggregation implements MultiDimensionReader {
    private String inTrackDimensionName = null;
    private String inTrackGeoDimensionName = null;
    private String crossTrackDimensionName = null;
-   private ArrayList<String> products;
+   private LinkedHashSet<String> products;
    private String origName = null;
 
-   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, ArrayList<String> products, String inTrackDimensionName, String inTrackGeoDimensionName, String crossTrackDimensionName) throws Exception {
+   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, LinkedHashSet<String> products, String inTrackDimensionName, String inTrackGeoDimensionName, String crossTrackDimensionName) throws Exception {
 	   if (ncdfal == null) throw new Exception("No data: empty Suomi NPP aggregation object");
 	   this.inTrackDimensionName = inTrackDimensionName;
 	   this.crossTrackDimensionName = crossTrackDimensionName;
@@ -103,7 +104,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   init(ncdfal);
    }
 
-   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, ArrayList<String> products, String inTrackDimensionName, String crossTrackDimensionName) throws Exception {
+   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, LinkedHashSet<String> products, String inTrackDimensionName, String crossTrackDimensionName) throws Exception {
         this(ncdfal, products, inTrackDimensionName, inTrackDimensionName, crossTrackDimensionName);
    }
 
@@ -240,12 +241,12 @@ public class GranuleAggregation implements MultiDimensionReader {
 		   while (varIter.hasNext()) {
 			   Variable var = (Variable) varIter.next();
 			   
-			   logger.debug("Working on variable: " + var.getShortName());
+			   logger.debug("Working on variable: " + var.getFullName());
 			   
 			   boolean foundProduct = false;
 			   for (String s : products) {
-				   if (s.contains(var.getShortName())) {
-					   logger.debug("Valid product: " + var.getShortName());
+				   if (s.contains(var.getFullName())) {
+					   logger.debug("Valid product: " + var.getFullName());
 					   foundProduct = true;
 				   }
 				   // we'll also pass Lat and Lon, needed for nav
@@ -258,7 +259,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   }
 			   
 			   if (! foundProduct) {
-				   logger.debug("Skipping variable: " + var.getShortName());
+				   logger.debug("Skipping variable: " + var.getFullName());
 				   continue;
 			   }
 			   
@@ -271,7 +272,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   
 			   // bypass any less-than-2D variables for now...
 			   if (rank < 2) {
-				   logger.debug("Skipping 1D variable: " + var.getShortName());
+				   logger.debug("Skipping 1D variable: " + var.getFullName());
 				   continue;
 			   }
 			   
@@ -321,7 +322,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   varDataType.put(varName, var.getDataType().getPrimitiveClassType());
 
 			   if (varInTrackIndex < 0) {
-				   logger.debug("Skipping variable with unknown dimension: " + var.getShortName());
+				   logger.debug("Skipping variable with unknown dimension: " + var.getFullName());
 				   continue;
 			   }
 

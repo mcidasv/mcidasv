@@ -41,6 +41,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -323,7 +324,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          
          // initialize the aggregation reader object
          logger.debug("Trying to create MODIS 1K GranuleAggregation reader...");
-         ArrayList<String> products = new ArrayList<String>();
+         LinkedHashSet<String> products = new LinkedHashSet<String>();
          products.add((String) table.get("array_name"));
          products.add("MODIS_SWATH_Type_L1B/Data_Fields/EV_1KM_RefSB");
          products.add("MODIS_SWATH_Type_L1B/Data_Fields/EV_250_Aggr1km_RefSB");
@@ -514,7 +515,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          table.put(SwathAdapter.multiScaleDimensionIndex, Integer.toString(0));
          // initialize the aggregation reader object
          logger.debug("Trying to create MODIS 1K GranuleAggregation reader...");
-         ArrayList<String> products = new ArrayList<String>();
+         LinkedHashSet<String> products = new LinkedHashSet<String>();
          products.add((String) table.get("array_name"));
          products.add("MODIS_SWATH_Type_L1B/Data_Fields/EV_250_RefSB");
          products.add((String) table.get("lon_array_name"));
@@ -579,7 +580,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
          // initialize the aggregation reader object
          logger.debug("Trying to create MODIS 1K GranuleAggregation reader...");
-         ArrayList<String> products = new ArrayList<String>();
+         LinkedHashSet<String> products = new LinkedHashSet<String>();
          products.add((String) table.get("array_name"));
          products.add("MODIS_SWATH_Type_L1B/Data_Fields/EV_500_RefSB");
          products.add("MODIS_SWATH_Type_L1B/Data_Fields/EV_250_Aggr500_RefSB");
