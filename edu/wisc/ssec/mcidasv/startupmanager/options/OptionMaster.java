@@ -196,13 +196,13 @@ public class OptionMaster {
      * @return Either the {@code Option} associated with {@code id}, or 
      * {@code null} if there was no association.
      * 
-     * @deprecated As of McIDAS-V 1.4b1, replaced by
-     * {@link #getMemoryOption}, 
-     * {@link #getBooleanOption}, 
-     * {@link #getDirectoryOption},
-     * {@link #getSliderOption},
-     * {@link #getTextOption},
-     * {@link #getLoggerLevelOption}
+     * 
+     * @see #getMemoryOption
+     * @see #getBooleanOption
+     * @see #getDirectoryOption
+     * @see #getSliderOption
+     * @see #getTextOption
+     * @see #getLoggerLevelOption
      */
     private Option getOption(final String id) {
         return optionMap.get(id);
