@@ -735,7 +735,7 @@ class _Display(_JavaProxy):
         
         # dict of mapName->boolean (describes if a map is enabled or not.)
         # this might fail for transect displays....
-        mapLayer = self._JavaProxy__javaObject.getControls()[0]
+        mapLayer = self.getMapLayer()
         mapStates = {}
         for mapState in mapLayer.getMapStates():
             mapStates[mapState.getSource()] = mapState.getVisible()
@@ -747,7 +747,7 @@ class _Display(_JavaProxy):
         the display.
         """
         
-        mapLayer = self._JavaProxy__javaObject.getControls()[0]
+        mapLayer = self.getMapLayer()
         for currentState in mapLayer.getMapStates():
             mapSource = currentState.getSource()
             if mapSource in mapStates:
@@ -885,7 +885,7 @@ class _Display(_JavaProxy):
             if desc.label == layerType:
                 controlID = desc.controlId
         if controlID == None:
-            raise ValueError("Layer type '%s' is invalid; please see output of allLayerTypes() for available layer types.")
+            raise ValueError("Layer type '%s' is invalid; please see output of allLayerTypes() for available layer types." % (layerType))
         if controlID == 'imagesequence':
             # hack for backward compatibility: don't let user do an
             # imagesequence since it requires a strange DataChoice and 
