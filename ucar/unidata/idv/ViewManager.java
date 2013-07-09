@@ -1,46 +1,40 @@
 /*
- * This file is part of McIDAS-V
- *
- * Copyright 2007-2013
- * Space Science and Engineering Center (SSEC)
- * University of Wisconsin - Madison
- * 1225 W. Dayton Street, Madison, WI 53706, USA
- * http://www.ssec.wisc.edu/mcidas
+ * Copyright 1997-2013 Unidata Program Center/University Corporation for
+ * Atmospheric Research, P.O. Box 3000, Boulder, CO 80307,
+ * support@unidata.ucar.edu.
  * 
- * All Rights Reserved
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or (at
+ * your option) any later version.
  * 
- * McIDAS-V is built on Unidata's IDV and SSEC's VisAD libraries, and
- * some McIDAS-V source code is based on IDV and VisAD source code.  
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+ * General Public License for more details.
  * 
- * McIDAS-V is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- * 
- * McIDAS-V is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser Public License
- * along with this program.  If not, see http://www.gnu.org/licenses.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation,
+ * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
 package ucar.unidata.idv;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import ucar.unidata.collab.SharableImpl;
+import ucar.unidata.data.DataSource;
+import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.data.gis.KmlDataSource;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.publish.PublishManager;
 import ucar.unidata.idv.ui.BottomLegend;
+import ucar.unidata.idv.ui.IdvComponentGroup;
+import ucar.unidata.idv.ui.IdvComponentHolder;
 import ucar.unidata.idv.ui.IdvLegend;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.idv.ui.IdvWindow;
@@ -77,6 +71,7 @@ import ucar.unidata.xml.XmlUtil;
 import ucar.visad.Util;
 import ucar.visad.display.Animation;
 import ucar.visad.display.AnimationInfo;
+import ucar.visad.display.AnimationSetInfo;
 import ucar.visad.display.AnimationWidget;
 import ucar.visad.display.CompositeDisplayable;
 import ucar.visad.display.DisplayMaster;
@@ -109,6 +104,7 @@ import visad.java3d.DisplayImplJ3D;
 import visad.java3d.DisplayRendererJ3D;
 
 
+import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -151,10 +147,12 @@ import java.text.DecimalFormat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -196,116 +194,51 @@ import javax.vecmath.Vector3f;
 
 //import org.apache.batik.svggen.SVGGraphics2D;
 
-
-
 /**
  * A wrapper around a {@link ucar.visad.display.DisplayMaster}.
  * Provides an interface for managing user interactions, gui creation, etc.
  *
  * @author IDV development team
  */
-
 public class ViewManager extends SharableImpl implements ActionListener,
         ItemListener, ControlListener, DisplayListener {
-
-    /** Used to log errors */
-    static ucar.unidata.util.LogUtil.LogCategory log_ =
-        ucar.unidata.util.LogUtil.getLogInstance(ViewManager.class.getName());
-
-
-    /** Xml tag for the color pair */
-    public static final String TAG_COLORPAIR = "colorpair";
-
-    /** Xml tag for the color pairs xml */
-    public static final String TAG_COLORPAIRS = "colorpairs";
-
-
-    /** Prefix used for preference String ids */
-    public static final String PREF_PREFIX = "View.";
 
     /** Preference for clipping at 3d box_ */
     public static final String PREF_3DCLIP = "View.3Dclip";
 
-    /** Preference for  showing the wireframe box */
-    public static final String PREF_SHOWSCALES = "View.ShowScales";
-
-    /** Preference for  showing the wireframe box */
-    public static final String PREF_SHOWTRANSECTSCALES =
-        "View.ShowTransectScales";
-
-
-    /** Preference for showing cursor readout */
-    public static final String PREF_SHOWCURSOR = "View.ShowCursor";
-
-    /** Preference for showing cursor readout */
-    public static final String PREF_SHOWDISPLAYLIST = "View.ShowDisplayList";
-
-
-    /** Preference for sharing view points */
-    public static final String PREF_SHAREVIEWS = "View.ShareViews";
-
-    /** are the toolbars floatable */
-    public static final String PREF_TOOLBARSFLOATABLE =
-        "idv.viewmanager.toolbars.floatable";
-
-
+    /** Preference for showing the time string in the display */
+    public static final String PREF_ANIREADOUT = "View.AniReadout";
 
     /** For the bg color */
     public static final String PREF_BGCOLOR = "View.BackgroundColor";
 
+    /** For the currently selected panel. */
+    public static final String PREF_BORDERCOLOR = "View.BorderHighlightColor";
 
-    /** For the foreground color */
-    public static final String PREF_FGCOLOR = "View.ForegroundColor";
-
-
-
-    /** For the display list font */
-    public static final String PREF_DISPLAYLISTFONT = "View.DisplayListFont";
-
-    /** For the display list color */
-    public static final String PREF_DISPLAYLISTCOLOR =
-        "View.DisplayListColor";
-
-    /** For hiding/showing components of the toolbar */
-    public static final String PREF_SHOWTOOLBAR = "View.ShowToolBar";
-
-    /** Show the side legend */
-    public static final String PREF_SHOWSIDELEGEND = "View.ShowSideLegend";
-
-    /** Show the bottom legend */
-    public static final String PREF_SHOWBOTTOMLEGEND =
-        "View.ShowBottomLegend";
-
-
-    /** Show the bottom legend */
-    public static final String PREF_SHOWANIMATIONBOXES =
-        "View.ShowAnimationBoxes";
-
-
-    /** Preference for  showing the wireframe box */
-    public static final String PREF_WIREFRAME = "View.Wireframe";
-
-    /** Preference for showing the time string in the display */
-    public static final String PREF_ANIREADOUT = "View.AniReadout";
-
-
-    /** Preference for  3d or 2d _ */
-    public static final String PREF_DIMENSION = "View.Dimension";
-
-    /** For the visibility of the please wait message */
-    public static final String PREF_WAITMSG = "View.WaitVisible";
-
-    /** for the contour label size */
-    public static final String PREF_CONTOUR_LABELSIZE =
-        "idv.contour.labelsize";
+    /** for the contour label Font */
+    public static final String PREF_CONTOUR_LABELALIGN =
+        "idv.contour.alignlabel";
 
     /** for the contour label Font */
     public static final String PREF_CONTOUR_LABELFONT =
         "idv.contour.labelfont";
 
-    /** for the contour label Font */
-    public static final String PREF_CONTOUR_LABELALIGN =
-        "idv.contour.alignlabel";
+    /** for the contour label size */
+    public static final String PREF_CONTOUR_LABELSIZE =
+        "idv.contour.labelsize";
+
+    /** Preference for  3d or 2d _ */
+    public static final String PREF_DIMENSION = "View.Dimension";
+
+    /** For the display list color */
+    public static final String PREF_DISPLAYLISTCOLOR =
+        "View.DisplayListColor";
+
+    /** For the display list font */
+    public static final String PREF_DISPLAYLISTFONT = "View.DisplayListFont";
+
+    /** For the foreground color */
+    public static final String PREF_FGCOLOR = "View.ForegroundColor";
 
     /** for the logo */
     public static final String PREF_LOGO = "idv.viewmanager.logo";
@@ -314,450 +247,105 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public static final String PREF_LOGO_POSITION_OFFSET =
         "idv.viewmanager.logo.position";
 
+    /** for the logo scale */
+    public static final String PREF_LOGO_SCALE = "idv.viewmanager.logo.scale";
+
     /** for the logo visibility */
     public static final String PREF_LOGO_VISIBILITY =
         "idv.viewmanager.logo.visible";
 
-    /** for the logo scale */
-    public static final String PREF_LOGO_SCALE = "idv.viewmanager.logo.scale";
+    /** Prefix used for preference String ids */
+    public static final String PREF_PREFIX = "View.";
 
+    /** Preference for sharing view points */
+    public static final String PREF_SHAREVIEWS = "View.ShareViews";
+
+    /** Show the bottom legend */
+    public static final String PREF_SHOWANIMATIONBOXES =
+        "View.ShowAnimationBoxes";
+
+    /** Show the bottom legend */
+    public static final String PREF_SHOWBOTTOMLEGEND =
+        "View.ShowBottomLegend";
+
+    /** Preference for showing cursor readout */
+    public static final String PREF_SHOWCURSOR = "View.ShowCursor";
+
+    /** Preference for showing cursor readout */
+    public static final String PREF_SHOWDISPLAYLIST = "View.ShowDisplayList";
+
+    /** Preference for  showing the wireframe box */
+    public static final String PREF_SHOWSCALES = "View.ShowScales";
+
+    /** Show the side legend */
+    public static final String PREF_SHOWSIDELEGEND = "View.ShowSideLegend";
+
+    /** For hiding/showing components of the toolbar */
+    public static final String PREF_SHOWTOOLBAR = "View.ShowToolBar";
+
+    /** Preference for  showing the wireframe box */
+    public static final String PREF_SHOWTRANSECTSCALES =
+        "View.ShowTransectScales";
+
+    /** are the toolbars floatable */
+    public static final String PREF_TOOLBARSFLOATABLE =
+        "idv.viewmanager.toolbars.floatable";
+
+    /** For the visibility of the top compenent */
+    public static final String PREF_TOPBAR_VISIBLE = "View.TopBarVisible";
+
+    /** For the visibility of the please wait message */
+    public static final String PREF_WAITMSG = "View.WaitVisible";
+
+    /** Preference for  showing the wireframe box */
+    public static final String PREF_WIREFRAME = "View.Wireframe";
+
+    /** Property id for component resizing */
+    public static final String PROP_COMPONENT_RESIZED =
+        "View.ComponentResized";
+
+    /** Xml tag for the color pair */
+    public static final String TAG_COLORPAIR = "colorpair";
+
+    /** Xml tag for the color pairs xml */
+    public static final String TAG_COLORPAIRS = "colorpairs";
 
     /** border width */
     public static final int borderWidth = 3;
 
-    /** border hightlight color */
-    //public static Color borderHighlightColor = new Color(255, 255, 204);
-    //    public static Color borderHighlightColor = Color.magenta;
-    public static Color borderHighlightColor = Color.blue;
+    /** counter */
+    static int cnt = 0;
 
-    /** For the currently selected panel. */
-    public static final String PREF_BORDERCOLOR = "View.BorderHighlightColor";
+    /** Used to log errors */
+    static ucar.unidata.util.LogUtil.LogCategory log_ =
+        ucar.unidata.util.LogUtil.getLogInstance(ViewManager.class.getName());
 
     /** line border */
     private static final Border lineBorder =
         BorderFactory.createLineBorder(Color.gray);
 
-    /** highlight border */
-    protected static Border highlightBorder;
-
-    /** normal border */
-    protected static Border normalBorder;
-
-
-    /** is shared flag */
-    private boolean isShared = true;
-
-    /** Do we focus on this one only when the user clicks */
-    protected boolean clickToFocus = true;
-
-    /** Has this view manager been destroyed. */
-    private boolean isDestroyed = false;
-
-    /** Is the the currently active VM */
-    protected boolean lastActive = false;
-
-    /** Keeps track of the last time this VM was set as the active VM */
-    protected long lastTimeActivated = 0;
-
-    /** Holds the location of the side legend divider */
-    private int sideDividerLocation = -1;
-
-    /** name label */
-    protected JLabel nameLabel;
-
-    /** Keep around the split pane location */
-    private double initialSplitPaneLocation = 0.75;
-
-
-    /** A flag to turn off all toolbars */
-    private boolean showToolbars = true;
-
-
-    /** Acts as the timestamp of the wait key call */
-    int currentWaitKey = 0;
-
-    /** Tracks if the mouse is down */
-    boolean mouseDown = false;
-
-    /** The projection matrix when the mouse is first pressed */
-    private double[] mousePressedMatrix;
-
-    /** the name of the view manager */
-    private String name;
-
-    /** Has the init() method been called on this ViewManager? */
-    private boolean haveInitialized = false;
-
-    /** flag for init done */
-    private boolean initDone = false;
-
-    /** Handles history */
-    private CommandManager commandManager;
-
-    /** The window for full screen */
-    protected JFrame fullScreenWindow;
-
-    /** We can set the full screen to a specific size for image capture */
-    private int fullScreenWidth = 0;
-
-    /** We can set the full screen to a specific size for image capture */
-    private int fullScreenHeight = 0;
-
-    /** For full screen properties */
-    private JTextField fullScreenWidthFld;
-
-    /** For full screen properties */
-    private JTextField fullScreenHeightFld;
-
-    /** For logo properties */
-    private JCheckBox logoVisCbx;
-
-    /** For logo properties */
-    private JTextField logoFileField;
-
-    /** For logo properties */
-    private String logoFile;
-
-    /** For logo properties */
-    private ScreenAnnotatorJ3D annotator;
-
-    /** For logo properties */
-    //private boolean logoVisibility = false;
-
-    /** For logo properties */
-    private String logoPosition = null;
-
-    /** For logo properties */
-    private float logoScale = -1f;
-
-    /**
-     * We keep the window bounds around for persisting/unpersisting
-     * this ViewManager.
-     */
-
-    /** flag for light changes */
-    private boolean ignoreLightChanges = false;
-
-    /** lock lights button */
-    private JToggleButton lockLightsBtn;
-
-    /** The inner gui */
-    protected JComponent innerContents;
-
-    /** The outer most GUI Component */
-    JComponent fullContents;
-
-    /**
-     * We keep the window bounds around for persisting/unpersisting
-     * this ViewManager.
-     */
-    protected Rectangle windowBounds;
-
-    /**
-     * This is used when persisting/unpersisting to record whether
-     * this ViewManager had been in its own window.
-     */
-    private boolean hasWindow = false;
-
-    /** List of {@link IdvLegend}s */
-    private List<IdvLegend> legends = new ArrayList();
-
-    /** The side legend */
-    private SideLegend sideLegend;
-
-    /** Holds the side legend */
-    private JComponent sideLegendContainer;
-
-
-
-    /** This holds the side legend */
-    private JComponent sideLegendComponent;
-
-    /** gui */
-    JPanel contentsWrapper;
-
-    /** gui */
-    JComponent centerPanel;
-
-    /** gui */
-    JComponent centerPanelWrapper;
-
-    /** tracks wether the legend is shown, hidden or is floating */
-    private String legendState = IdvLegend.STATE_DOCKED;
-
-
-    /** flag for where the legend is */
-    private boolean legendOnLeft = false;
-
-    /** The current foreground color */
-    private Color foreground = null;
-
-    /** The current background color */
-    private Color background = null;
-
-    /** This holds the visibility toggle animation commands. */
-    protected JMenu animationMenu;
-
-    /** The menu bar */
-    private JMenuBar menuBar;
-
-
-    /** List of Components that are shown in the left side, vertical tool bar */
-    protected List toolbars = new ArrayList();
-
-
-    /**
-     * List of the ids (String), one for each component in the toolbars list
-     * We keep this around so the user could have a preference to show or not
-     * show toolbar components.
-     */
-    protected List toolbarIds = new ArrayList();
-
-
-    /**
-     * List of the names (String), one for each component in the toolbars list
-     * We keep this around so the user could have a preference to show or not
-     * show toolbar components.
-     */
-    protected List toolbarNames = new ArrayList();
-
-
-
-    /** The default size for this ViewManager. */
-    private Dimension defaultSize;
-
-
-    /** for making timelines component */
-    private Object TIMELINES_MUTEX = new Object();
-
-    /** timelines */
-    private List timelines = new ArrayList();
-
-    /** the timeline that shows the animation set */
-    private Timeline animationTimeline;
-
-    /** for timelines */
-    private JComponent timelineHolder;
-
-    /** for timelines */
-    JDialog timelineDialog;
-
-    /** The animation widget */
-    private AnimationWidget animationWidget;
-
-    /** This allows us to have an animation from an external source for doing movie captures */
-    private AnimationWidget externalAnimationWidget;
-
-    /** The panel that holds the animation widget */
-    protected JComponent animationHolder;
-
-    /** We create this Animation and add it into the DisplayMaster */
-    private Animation animation;
-
-    /** This allows us to have an animation from an external source for doing movie captures */
-    private Animation externalAnimation;
-
-    /** Holds the animation state from the AnimationWidget */
-    private AnimationInfo animationInfo;
-
-
-    /** This is the split pane that holds the side legend */
-    private JSplitPane mainSplitPane;
-
-    /** The last split pane divider location when we do the float/embed */
-    private int lastDividerLoc = -1;
-
-    /** split pane location */
-    private int splitPaneLocation = -1;
-
-
-    /**
-     *  This holds the list of DisplayInfos being displayed in this ViewManager.
-     *  The DisplayInfo holds the Displayable and the DisplayControl.
-     */
-    private List<DisplayInfo> displayInfos = new ArrayList<DisplayInfo>();
-
-
-    /** Do we show the control menu */
-    protected boolean showControlMenu = true;
-
-    /** Do we show the control legends */
-    protected boolean showControlLegend = true;
-
-
-
-    /** The {@link ucar.visad.display.DisplayMaster} */
-    private DisplayMaster master;
-
-    /** The bounds of the display_ */
-    protected Rectangle displayBounds;
-
-    /**
-     * The keyboard behavior we add to the display that routes key type
-     *  event to this ViewManager.
-     */
-    private IdvKeyboardBehavior keyboardBehavior;
-
-
-    //    ViewDescriptor viewDescriptor;
-
-    /** Describes this ViewManager (mostly has a name) */
-    List aliases = new ArrayList();
-
-
-
-    /** The ProjectionControl from the DisplayMaster */
-    private ProjectionControl projectionControl;
-
-
-    /** The IDV_ */
-    private IntegratedDataViewer idv;
-
-
-    /**
-     * When toggling the visibility of display controls this is the
-     * index of the currently shown display control
-     */
-    private int currentVisibilityIdx = -1;
-
-    /** Flag when we are running the display control visibility animation */
-    private boolean runVisibilityAnimation = false;
-
-    /** How fast do we automatically toggle  visibility */
-    private int animationSpeed = 1000;
-
-    /** The GUI component to show the visiblity toggle animation */
-    private JCheckBoxMenuItem animationCB;
-
-
-    /** Keeps track of how many wait cursor calls have been made */
-    private int outstandingWaits = 0;
-
-    /** Have we seen the first frame done event from the display */
-    private boolean receivedFirstFrameDone = false;
-
-    /** For making movies */
-    private ImageSequenceGrabber isg;
-
-
-    /**
-     *  A mapping from (String) id to BooleanProperty.
-     */
-    private Hashtable booleanPropertyMap = new Hashtable();
-
-    /** List of BooleanProperty-s */
-    private List booleanProperties = new ArrayList();
-
-    /** Holds the values to force them to be persisted */
-    private Hashtable booleanPropertiesForPersistence;
-
-
-    /** init properties */
-    private String initProperties;
-
-    /** aspect ratio */
-    private double[] aspectRatio;
-
-
-    /** Keep the aspect ratio values around when we show the properties dialog */
-    private double[] originalAspectSliderValues = { 0, 0, 0 };
-
-    /** aspect sliders */
-    private JSlider[] aspectSliders = { null, null, null };
-
-
-    /** aspect slider labels */
-    private JLabel[] aspectLbls = { null, null, null };
-
-    /** aspect slider labels values */
-    private String[] aspectText = { "X", "Y", "Z" };
-
-    /**
-     *  The viewpoint matrix when we are (un)persisted
-     */
-    private double[] initMatrix;
-
-    /** skin properties */
-    private Hashtable skinProperties;
-
-    /** name field */
-    private JTextField nameFld;
-
-    /** properties map */
-    private Hashtable propertiesMap;
-
-    /** properties dialog */
-    JDialog propertiesDialog;
-
-    /** is the properties dialog shown */
-    boolean propertiesDialogShown = false;
-
-    /** the matrix label */
-    JLabel matrixLabel;
-
-    /** decimal format */
-    DecimalFormat fmt = new DecimalFormat("####0.0###");
-
-    /** the view menu */
-    JMenu viewMenu;
-
-    /** foreground color swatch */
-    private GuiUtils.ColorSwatch fgPropertiesSwatch;
-
-    /** background color swatch */
-    private GuiUtils.ColorSwatch bgPropertiesSwatch;
-
-    /** background color swatch */
-    private GuiUtils.ColorSwatch dlPropertiesSwatch;
-
-    /** Holds the display list displayables */
-    private CompositeDisplayable displayListDisplayables;
-
-    /** mutext for the display list */
-    private Object MUTEX_DISPLAYLIST = new Object();
-
     /** default display list font */
     private static final Font defaultFont = FontSelector.DEFAULT_FONT;
 
-    /**
-     *  Used to hold the font of the display list displayable
-     */
-    private Font displayListFont = null;
+    /** border hightlight color */
 
-    /**
-     *  Used to hold the font of the display list displayable
-     */
-    private Color displayListColor = null;
+    // public static Color borderHighlightColor = new Color(255, 255, 204);
+    // public static Color borderHighlightColor = Color.magenta;
+    public static Color borderHighlightColor = Color.blue;
 
-    /**
-     * DisplayList font selector
-     */
-    private FontSelector fontSelector;
+    /** logo positions */
+    protected static TwoFacedObject[] logoPoses = { new TwoFacedObject(
+                                                      "Lower Left", "ll"),
+            new TwoFacedObject("Upper Left", "ul"),
+            new TwoFacedObject("Upper Right", "ur"),
+            new TwoFacedObject("Lower Right", "lr"),
+            new TwoFacedObject("Center", "mm"), };
 
-    /** Just in case this synchs the legend filling */
-    private Object LEGENDMUTEX = new Object();
+    /** xxx */
+    static int xxx = 0;
 
-    /** are we currently about to fill the legends */
-    private boolean fillLegendsPending = false;
-
-    /** The last time we tried to fill the legends */
-    private long fillLegendsTime = 0;
-
-
-    /** hi res button */
-    private static JRadioButton hiBtn;
-
-    /** publish checkbox */
-    private JComboBox publishCbx;
-
-    /** medium res button */
-    private static JRadioButton medBtn;
-
-    /** low res button */
-    private static JRadioButton lowBtn;
-
-    /** main display button */
-    private static JRadioButton mainDisplayBtn;
+    /** All views button */
+    private static JRadioButton allViewsBtn;
 
     /** For capturing images */
     private static JCheckBox backgroundTransparentBtn;
@@ -768,64 +356,462 @@ public class ViewManager extends SharableImpl implements ActionListener,
     /** full window button */
     private static JRadioButton fullWindowBtn;
 
+    /** hi res button */
+    private static JRadioButton hiBtn;
 
-    /** Last time we saw a FRAME_DONE event */
-    private long lastFrameDoneTime = 0;
+    /** highlight border */
+    protected static Border highlightBorder;
 
+    /** low res button */
+    private static JRadioButton lowBtn;
 
-    /** general properties */
-    private Hashtable properties = new Hashtable();
+    /** main display button */
+    private static JRadioButton mainDisplayBtn;
 
+    /** medium res button */
+    private static JRadioButton medBtn;
 
-    /** counter */
-    static int cnt = 0;
+    /** normal border */
+    protected static Border normalBorder;
 
-    /** instance counter */
-    int mycnt = cnt++;
+    /** How fast do we automatically toggle  visibility */
+    private int animationSpeed = 1000;
+
+    /** aspect slider labels */
+    private JLabel[] aspectLbls = { null, null, null };
+
+    /** aspect sliders */
+    private JSlider[] aspectSliders = { null, null, null };
+
+    /** aspect slider labels values */
+    private String[] aspectText = { "X", "Y", "Z" };
+
+    /** The current background color */
+    private Color background = null;
 
     /** Keeps track of when we update display list when the component resizes_ */
     private int componentResizeCnt = 0;
 
-    /** are we dirty ;-) */
-    private boolean dirty = false;
+    /**
+     * When toggling the visibility of display controls this is the
+     * index of the currently shown display control
+     */
+    private int currentVisibilityIdx = -1;
 
+    /** Acts as the timestamp of the wait key call */
+    int currentWaitKey = 0;
 
-    /** Vector Graphics renderer */
-    private VectorGraphicsRenderer vectorRenderer;
+    /**
+     *  Used to hold the font of the display list displayable
+     */
+    private Color displayListColor = null;
 
-    /** init view state name */
-    private String initViewStateName;
+    /**
+     *  Used to hold the font of the display list displayable
+     */
+    private Font displayListFont = null;
 
+    /** The last time we tried to fill the legends */
+    private long fillLegendsTime = 0;
+
+    /** The current foreground color */
+    private Color foreground = null;
+
+    /** We can set the full screen to a specific size for image capture */
+    private int fullScreenHeight = 0;
+
+    /** We can set the full screen to a specific size for image capture */
+    private int fullScreenWidth = 0;
+
+    /** Keep around the split pane location */
+    private double initialSplitPaneLocation = 0.75;
+
+    /** is shared flag */
+    private boolean isShared = true;
+
+    /** Has this view manager been destroyed. */
+    private boolean isDestroyed = false;
+
+    /** Do we focus on this one only when the user clicks */
+    protected boolean clickToFocus = true;
+
+    /** Is the the currently active VM */
+    protected boolean lastActive = false;
+
+    /** The last split pane divider location when we do the float/embed */
+    private int lastDividerLoc = -1;
+
+    /** Last time we saw a FRAME_DONE event */
+    private long lastFrameDoneTime = 0;
+
+    /** Keeps track of the last time this VM was set as the active VM */
+    protected long lastTimeActivated = 0;
+
+    /** For logo properties */
+
+    // private boolean logoVisibility = false;
+
+    /** For logo properties */
+    private String logoPosition = null;
+
+    /** For logo properties */
+    private float logoScale = -1f;
+
+    /** Keep the aspect ratio values around when we show the properties dialog */
+    private double[] originalAspectSliderValues = { 0, 0, 0 };
+
+    /** Keeps track of how many wait cursor calls have been made */
+    private int outstandingWaits = 0;
+
+    /** Holds the location of the side legend divider */
+    private int sideDividerLocation = -1;
+
+    /** A flag to turn off all toolbars */
+    private boolean showToolbars = true;
+
+    /** Tracks if the mouse is down */
+    boolean mouseDown = false;
+
+    /** List of {@link IdvLegend}s */
+    private List<IdvLegend> legends = new ArrayList();
+
+    /** tracks wether the legend is shown, hidden or is floating */
+    private String legendState = IdvLegend.STATE_DOCKED;
+
+    /** flag for where the legend is */
+    private boolean legendOnLeft = false;
+
+    /** flag for init done */
+    private boolean initDone = false;
+
+    /**
+     * We keep the window bounds around for persisting/unpersisting
+     * this ViewManager.
+     */
+
+    /** flag for light changes */
+    private boolean ignoreLightChanges = false;
+
+    /** Has the init() method been called on this ViewManager? */
+    private boolean haveInitialized = false;
+
+    /**
+     * This is used when persisting/unpersisting to record whether
+     * this ViewManager had been in its own window.
+     */
+    private boolean hasWindow = false;
+
+    /** split pane location */
+    private int splitPaneLocation = -1;
+
+    /** List of Components that are shown in the left side, vertical tool bar */
+    protected List toolbars = new ArrayList();
+
+    /**
+     * List of the names (String), one for each component in the toolbars list
+     * We keep this around so the user could have a preference to show or not
+     * show toolbar components.
+     */
+    protected List toolbarNames = new ArrayList();
+
+    /**
+     * List of the ids (String), one for each component in the toolbars list
+     * We keep this around so the user could have a preference to show or not
+     * show toolbar components.
+     */
+    protected List toolbarIds = new ArrayList();
+
+    /** timelines */
+    private List timelines = new ArrayList();
+
+    /** Do we show the control menu */
+    protected boolean showControlMenu = true;
+
+    /** Do we show the control legends */
+    protected boolean showControlLegend = true;
+
+    /** Flag when we are running the display control visibility animation */
+    private boolean runVisibilityAnimation = false;
 
     /** removeables */
     private List<Removable> removables = new ArrayList<Removable>();
 
-    /** logo position box */
-    private JComboBox logoPositionBox;
+    /** Have we seen the first frame done event from the display */
+    private boolean receivedFirstFrameDone = false;
 
-    /** logo sizer control */
-    private JSlider logoSizer;
+    /** is the properties dialog shown */
+    boolean propertiesDialogShown = false;
 
-    /** the logo size label */
-    private JLabel logoSizeLabel;
+    /** general properties */
+    private Hashtable properties = new Hashtable();
+
+    /** instance counter */
+    int mycnt = cnt++;
+
+    /** decimal format */
+    DecimalFormat fmt = new DecimalFormat("####0.0###");
+
+    /** are we currently about to fill the legends */
+    private boolean fillLegendsPending = false;
+
+    /**
+     *  This holds the list of DisplayInfos being displayed in this ViewManager.
+     *  The DisplayInfo holds the Displayable and the DisplayControl.
+     */
+    private List<DisplayInfo> displayInfos = new ArrayList<DisplayInfo>();
+
+    /** are we dirty ;-) */
+    private boolean dirty = false;
+
+    /**
+     *  A mapping from (String) id to BooleanProperty.
+     */
+    private Hashtable booleanPropertyMap = new Hashtable();
+
+    /** List of BooleanProperty-s */
+    private List booleanProperties = new ArrayList();
+
+    // ViewDescriptor viewDescriptor;
+
+    /** Describes this ViewManager (mostly has a name) */
+    List aliases = new ArrayList();
+
+    /** for making timelines component */
+    private Object TIMELINES_MUTEX = new Object();
+
+    /** mutext for the display list */
+    private Object MUTEX_DISPLAYLIST = new Object();
+
+    /** a mutex for accessing the display master */
+    private Object MASTER_MUTEX = new Object();
+
+    /** Just in case this synchs the legend filling */
+    private Object LEGENDMUTEX = new Object();
+
+    /** flag for using the image panel */
+    boolean usingImagePanel = false;
+
+    /** my cnt */
+    int xmycnt = xxx++;
+
+    /** We create this Animation and add it into the DisplayMaster */
+    private Animation animation;
+
+    /** The GUI component to show the visiblity toggle animation */
+    private JCheckBoxMenuItem animationCB;
+
+    /** The panel that holds the animation widget */
+    protected JComponent animationHolder;
+
+    /** Holds the animation state from the AnimationWidget */
+    private AnimationInfo animationInfo;
+
+    /** This holds the visibility toggle animation commands. */
+    protected JMenu animationMenu;
+
+    /** the timeline that shows the animation set */
+    private Timeline animationTimeline;
+
+    /** The animation widget */
+    private AnimationWidget animationWidget;
+
+    /** For logo properties */
+    private ScreenAnnotatorJ3D annotator;
+
+    /** aspect ratio */
+    private double[] aspectRatio;
+
+    /** background color swatch */
+    private GuiUtils.ColorSwatch bgPropertiesSwatch;
+
+    /** Holds the values to force them to be persisted */
+    private Hashtable booleanPropertiesForPersistence;
+
+    /** gui */
+    JComponent centerPanel;
+
+    /** gui */
+    JComponent centerPanelWrapper;
+
+    /** Handles history */
+    private CommandManager commandManager;
+
+    /** gui */
+    JPanel contentsWrapper;
+
+    /** The default size for this ViewManager. */
+    private Dimension defaultSize;
+
+    /** The bounds of the display_ */
+    protected Rectangle displayBounds;
+
+    /** Holds the display list displayables */
+    private CompositeDisplayable displayListDisplayables;
+
+    /** background color swatch */
+    private GuiUtils.ColorSwatch dlPropertiesSwatch;
+
+    /** This allows us to have an animation from an external source for doing movie captures */
+    private Animation externalAnimation;
+
+    /** This allows us to have an animation from an external source for doing movie captures */
+    private AnimationWidget externalAnimationWidget;
+
+    /** foreground color swatch */
+    private GuiUtils.ColorSwatch fgPropertiesSwatch;
+
+    /**
+     * DisplayList font selector
+     */
+    private FontSelector fontSelector;
+
+    /** The outer most GUI Component */
+    JComponent fullContents;
+
+    /** For full screen properties */
+    private JTextField fullScreenHeightFld;
+
+    /** For full screen properties */
+    private JTextField fullScreenWidthFld;
+
+    /** The window for full screen */
+    protected JFrame fullScreenWindow;
+
+    /** The IDV_ */
+    private IntegratedDataViewer idv;
+
+    /** image panel */
+    private ImagePanel imagePanel;
+
+    /**
+     *  The viewpoint matrix when we are (un)persisted
+     */
+    private double[] initMatrix;
+
+    /** init properties */
+    private String initProperties;
+
+    /** init view state name */
+    private String initViewStateName;
+
+    /** The inner gui */
+    protected JComponent innerContents;
+
+    /** For making movies */
+    private ImageSequenceGrabber isg;
+
+    /**
+     * The keyboard behavior we add to the display that routes key type
+     *  event to this ViewManager.
+     */
+    private IdvKeyboardBehavior keyboardBehavior;
+
+    /** last coordinates */
+    private List<TwoFacedObject> lastCoords;
+
+    /** last matrix */
+    private double[] lastMatrix;
+
+    /** list of lights */
+    private List<LightInfo> lights;
+
+    /** lock lights button */
+    private JToggleButton lockLightsBtn;
+
+    /** For logo properties */
+    private String logoFile;
+
+    /** For logo properties */
+    private JTextField logoFileField;
 
     /** the logo offset field */
     private JTextField logoOffsetTextField;
 
-    /** logo positions */
-    protected static TwoFacedObject[] logoPoses = { new TwoFacedObject(
-                                                      "Lower Left", "ll"),
-            new TwoFacedObject("Upper Left", "ul"),
-            new TwoFacedObject("Upper Right", "ur"),
-            new TwoFacedObject("Lower Right", "lr"),
-            new TwoFacedObject("Center", "mm"), };
+    /** logo position box */
+    private JComboBox logoPositionBox;
 
+    /** the logo size label */
+    private JLabel logoSizeLabel;
+
+    /** logo sizer control */
+    private JSlider logoSizer;
+
+    /** For logo properties */
+    private JCheckBox logoVisCbx;
+
+    /** This is the split pane that holds the side legend */
+    private JSplitPane mainSplitPane;
+
+    /** The {@link ucar.visad.display.DisplayMaster} */
+    private DisplayMaster master;
+
+    /** the matrix label */
+    JLabel matrixLabel;
+
+    /** The menu bar */
+    private JMenuBar menuBar;
+
+    /** The projection matrix when the mouse is first pressed */
+    private double[] mousePressedMatrix;
+
+    /** the name of the view manager */
+    private String name;
+
+    /** name field */
+    private JTextField nameFld;
+
+    /** name label */
+    protected JLabel nameLabel;
+
+    /** The ProjectionControl from the DisplayMaster */
+    private ProjectionControl projectionControl;
+
+    /** properties dialog */
+    JDialog propertiesDialog;
+
+    /** properties map */
+    private Hashtable propertiesMap;
+
+    /** publish checkbox */
+    private JComboBox publishCbx;
+
+    /** The side legend */
+    private SideLegend sideLegend;
+
+    /** This holds the side legend */
+    private JComponent sideLegendComponent;
+
+    /** Holds the side legend */
+    private JComponent sideLegendContainer;
+
+    /** skin properties */
+    private Hashtable skinProperties;
+
+    /** for timelines */
+    JDialog timelineDialog;
+
+    /** for timelines */
+    private JComponent timelineHolder;
+
+    /** The menu bar */
+    private Component topBar;
+
+    /** the view menu */
+    JMenu viewMenu;
+
+    /** flag for sharing */
+    private boolean wasSharing;
+
+    /**
+     * We keep the window bounds around for persisting/unpersisting
+     * this ViewManager.
+     */
+    protected Rectangle windowBounds;
 
     /**
      *  A parameter-less ctor for the XmlEncoder based decoding.
      */
     public ViewManager() {}
-
 
     /**
      * Create  this ViewManager
@@ -836,7 +822,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         this.idv = (IntegratedDataViewer) viewContext;
         setHighlightBorder(getStore().get(PREF_BORDERCOLOR, Color.blue));
     }
-
 
     /**
      *  Instantiate this ViewManager with the given AnimationInfo
@@ -859,31 +844,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
                        ViewDescriptor viewDescriptor, String properties) {
         this(viewContext, viewDescriptor, properties, null);
     }
-
-
-    /**
-     *  Instantiate this ViewManager with the given AnimationInfo
-     *
-     * @param viewContext As  a hack this really better be an IntegratedDataViewer
-     * @param viewDescriptor  the view descriptor
-     * @param properties a list of semi-colon separated properties
-     * @param info The initial animation info
-     */
-    public ViewManager(ViewContext viewContext,
-                       ViewDescriptor viewDescriptor, String properties,
-                       AnimationInfo info) {
-        this(viewContext);
-        //        if(this instanceof MapViewManager)
-        this.animationInfo  = info;
-        this.initProperties = properties;
-        if ((viewDescriptor == null)
-                || viewDescriptor.nameEquals(ViewDescriptor.LASTACTIVE)) {
-            viewDescriptor = new ViewDescriptor();
-        }
-        addViewDescriptor(viewDescriptor);
-        setHighlightBorder(getStore().get(PREF_BORDERCOLOR, Color.blue));
-    }
-
 
     /**
      * Create  this ViewManager
@@ -908,6 +868,31 @@ public class ViewManager extends SharableImpl implements ActionListener,
         setDisplayMaster(master);
     }
 
+    /**
+     *  Instantiate this ViewManager with the given AnimationInfo
+     *
+     * @param viewContext As  a hack this really better be an IntegratedDataViewer
+     * @param viewDescriptor  the view descriptor
+     * @param properties a list of semi-colon separated properties
+     * @param info The initial animation info
+     */
+    public ViewManager(ViewContext viewContext,
+                       ViewDescriptor viewDescriptor, String properties,
+                       AnimationInfo info) {
+        this(viewContext);
+
+        // if(this instanceof MapViewManager)
+        this.animationInfo  = info;
+        this.initProperties = properties;
+
+        if ((viewDescriptor == null)
+                || viewDescriptor.nameEquals(ViewDescriptor.LASTACTIVE)) {
+            viewDescriptor = new ViewDescriptor();
+        }
+
+        addViewDescriptor(viewDescriptor);
+        setHighlightBorder(getStore().get(PREF_BORDERCOLOR, Color.blue));
+    }
 
     /**
      * Initialize.
@@ -919,41 +904,34 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (haveInitialized) {
             return;
         }
-        Trace.call1("ViewManager.init");
 
+        Trace.call1("ViewManager.init");
         haveInitialized = true;
         initSharable();
         Trace.call1("ViewManager.init getMaster()");
         getMaster();
         Trace.call2("ViewManager.init getMaster()");
-
         getMaster().addKeyboardBehavior(keyboardBehavior =
             new IdvKeyboardBehavior(this));
         addRemovable(keyboardBehavior);
-
         Trace.call1("ViewManager.init setBooleanProperties()");
         setBooleanProperties(this);
         Trace.call2("ViewManager.init setBooleanProperties()");
 
-
-
         Animation animation = getAnimation();
+
         if (animation != null) {
             getMaster().setAnimation(animation, animationWidget);
-            //            getMaster().addDisplayable(animation);
-        }
 
+            // getMaster().addDisplayable(animation);
+        }
 
         Trace.call1("ViewManager.init initWith");
         initWith(this);
         Trace.call2("ViewManager.init initWith");
-
-
         Trace.call2("ViewManager.init");
-
         initDone = true;
     }
-
 
     /**
      * Get the array of animation times
@@ -964,6 +942,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (animationWidget != null) {
             return animationWidget.getTimes();
         }
+
         return null;
     }
 
@@ -977,16 +956,24 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public List<DateTime> getTimeDriverTimes()
             throws VisADException, RemoteException {
+        if (getAnimationInfo() != null) {
+            AnimationSetInfo asi = getAnimationInfo().getAnimationSetInfo();
+            if (asi.getActive() && asi.getIsTimeDriver()) {
+                DateTime[] times = getAnimationTimes();
+                return (List<DateTime>) Misc.toList(times);
+            }
+        }
         for (DisplayControl control : (List<DisplayControl>) getControls()) {
             if (control.getIsTimeDriver()) {
                 Set        timeSet = control.getTimeSet();
                 DateTime[] times   = Animation.getDateTimeArray(timeSet);
+
                 return (List<DateTime>) Misc.toList(times);
             }
         }
+
         return null;
     }
-
 
     /**
      * have we initialized
@@ -1013,21 +1000,21 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public void initFromSkin(Element skinNode) {
         NodeList elements = XmlUtil.getElements(skinNode, "property");
+
         for (int childIdx = 0; childIdx < elements.getLength(); childIdx++) {
             Element child = (Element) elements.item(childIdx);
             String  name  = XmlUtil.getAttribute(child, "name");
             String  value = XmlUtil.getAttribute(child, "value");
+
             if ( !setProperty(name, value, true)) {
                 if (skinProperties == null) {
                     skinProperties = new Hashtable();
                 }
+
                 skinProperties.put(name, value);
             }
         }
     }
-
-
-
 
     /**
      * Handle the drop action
@@ -1037,12 +1024,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public void doDrop(Object object) {
         DisplayControl control = (DisplayControl) object;
         ViewManager    vm      = control.getViewManager();
+
         if ((vm == null) || (vm == this)) {
             return;
         }
+
         control.moveTo(this);
     }
-
 
     /**
      * Create the ui
@@ -1051,39 +1039,48 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
         try {
             init();
+
             if (initProperties != null) {
-                //We set initProperties to null so we don't infinite loop
+
+                // We set initProperties to null so we don't infinite loop
                 String tmp = initProperties;
+
                 initProperties = null;
                 parseProperties(tmp);
-
             }
         } catch (Exception exp) {
             logException("Initializing UI", exp);
         }
+
         if (fullContents != null) {
             return;
         }
 
         JComponent baseContents = (JComponent) doMakeContents();
+
         baseContents    = makeDropPanel(baseContents, false);
         innerContents   = GuiUtils.center(baseContents);
         contentsWrapper = GuiUtils.center(innerContents);
         menuBar         = doMakeMenuBar();
+
         if (menuBar != null) {
             menuBar.setBorderPainted(false);
             menuBar.setMargin(new Insets(0, 0, 0, 0));
             menuBar.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
             menuBar.setOpaque(false);
         }
+
         nameLabel = GuiUtils.cLabel(" ");
         updateNameLabel();
+
         if (showToolbars) {
             initToolBars();
         }
 
         checkToolBarVisibility();
+
         Component topRight;
+
         if (animationWidget == null) {
             topRight = GuiUtils.filler();
         } else {
@@ -1091,20 +1088,28 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 GuiUtils.inset(animationWidget.getContents(),
                                new Insets(0, 0, 0, 4));
         }
+
         JPanel leftNav = GuiUtils.topCenter(GuiUtils.doLayout(toolbars, 1,
                              GuiUtils.WT_N, GuiUtils.WT_N), null);
 
-
-        Component topBar = GuiUtils.leftCenterRight(GuiUtils.bottom(menuBar),
-                               GuiUtils.bottom(nameLabel), topRight);
+        // Component topBar = GuiUtils.leftCenterRight(GuiUtils.bottom(menuBar),
+        topBar = GuiUtils.leftCenterRight(GuiUtils.bottom(menuBar),
+                                          GuiUtils.bottom(nameLabel),
+                                          topRight);
         centerPanel = GuiUtils.topCenter(topBar, contentsWrapper);
+        topBar.setVisible(getTopBarVisible());
+
         if (getShowBottomLegend()) {
             IdvLegend bottomLegend = new BottomLegend(this);
+
             addRemovable(bottomLegend);
+
             synchronized (legends) {
                 legends.add(bottomLegend);
             }
+
             JComponent contents = bottomLegend.getContents();
+
             if (showControlLegend) {
                 centerPanel = GuiUtils.vsplit(centerPanel, contents, 1.0);
                 bottomLegend.setTheContainer(centerPanel);
@@ -1112,23 +1117,25 @@ public class ViewManager extends SharableImpl implements ActionListener,
             }
         }
 
-        //Create it if we need to
+        // Create it if we need to
         if (sideLegend == null) {
             sideLegend = new SideLegend(this);
             addRemovable(sideLegend);
         }
+
         synchronized (legends) {
             if (getShowSideLegend()) {
                 legends.add(sideLegend);
             }
         }
+
         sideLegendComponent = getSideComponent(sideLegend.getContents());
         sideLegendContainer = new JPanel(new BorderLayout());
         sideLegendContainer.add(BorderLayout.CENTER, sideLegendComponent);
-        //Set the contents from the side legend in case the sideLegendComponent is not just the 
-        //contents from the legend
-        sideLegend.setContentsToUse(sideLegendComponent);
 
+        // Set the contents from the side legend in case the sideLegendComponent is not just the
+        // contents from the legend
+        sideLegend.setContentsToUse(sideLegendComponent);
 
         JComponent leftComp  = (legendOnLeft
                                 ? sideLegendContainer
@@ -1136,6 +1143,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         JComponent rightComp = (legendOnLeft
                                 ? centerPanel
                                 : sideLegendContainer);
+
         mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftComp,
                                        rightComp);
 
@@ -1144,24 +1152,24 @@ public class ViewManager extends SharableImpl implements ActionListener,
         } else {
             mainSplitPane.setResizeWeight(0.80);
         }
+
         mainSplitPane.setOneTouchExpandable(true);
+
         if (splitPaneLocation >= 0) {
-            //SPLIT       mainSplitPane.setDividerLocation(splitPaneLocation);
+
+            // SPLIT       mainSplitPane.setDividerLocation(splitPaneLocation);
         }
 
-
-        //        centerPanelWrapper = new JPanel(new BorderLayout());
+        // centerPanelWrapper = new JPanel(new BorderLayout());
         centerPanelWrapper = (showControlLegend)
                              ? GuiUtils.center(mainSplitPane)
                              : GuiUtils.center(centerPanel);
         fullContents       = GuiUtils.leftCenter(leftNav, centerPanelWrapper);
         fullContents.setBorder(getContentsBorder());
-
         insertSideLegend();
         fillLegends();
 
     }
-
 
     /**
      * Set the position state of the side legend
@@ -1173,8 +1181,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         insertSideLegend();
     }
 
-
-
     /**
      * Place the side legend where it belongs
      */
@@ -1184,6 +1190,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
             sideLegendContainer.removeAll();
             sideLegendContainer.add(BorderLayout.CENTER, sideLegendComponent);
             sideLegendContainer.repaint();
+
             if (lastDividerLoc >= 0) {
                 mainSplitPane.setDividerLocation(lastDividerLoc);
             } else {
@@ -1194,12 +1201,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
             sideLegendContainer.removeAll();
             sideLegendContainer.repaint();
             sideLegend.floatLegend();
+
             if (legendOnLeft) {
                 mainSplitPane.setDividerLocation(0);
             } else {
                 mainSplitPane.setDividerLocation(
                     mainSplitPane.getBounds().width);
-
             }
         } else if (legendState.equals(IdvLegend.STATE_HIDDEN)) {
             lastDividerLoc = mainSplitPane.getDividerLocation();
@@ -1207,6 +1214,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
             sideLegendContainer.repaint();
             sideLegend.unFloatLegend();
             sideLegendContainer.add(BorderLayout.CENTER, sideLegendComponent);
+
             if (legendOnLeft) {
                 mainSplitPane.setDividerLocation(0);
             } else {
@@ -1215,12 +1223,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
             }
         }
     }
-
-
-
-
-
-
 
     /**
      * Make a dnd panel
@@ -1239,13 +1241,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 if ( !(object instanceof DisplayControl)) {
                     return false;
                 }
+
                 return okToImportDisplay((DisplayControl) object);
             }
         };
 
         return dropPanel;
     }
-
 
     /**
      * Can this view manager import the given display control. e.g., from a drag-and-drop
@@ -1256,13 +1258,14 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public boolean okToImportDisplay(DisplayControl control) {
         ViewManager vm = control.getViewManager();
+
         if ((vm == null) || (vm == ViewManager.this)
                 || !vm.getClass().equals(ViewManager.this.getClass())) {
             return false;
         }
+
         return true;
     }
-
 
     /**
      * Set the contents boreder
@@ -1275,7 +1278,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         }
     }
 
-
     /**
      * Get the border for the contents
      *
@@ -1285,59 +1287,68 @@ public class ViewManager extends SharableImpl implements ActionListener,
         return BorderFactory.createMatteBorder(1, 1, 0, 0, Color.gray);
     }
 
-
     /**
      * Show the properties dialog
      */
     public void showPropertiesDialog() {
-        //        propertiesDialog = GuiUtils.createDialog("Properties", true);
-        //Make the dialog non-modal
+
+        // propertiesDialog = GuiUtils.createDialog("Properties", true);
+        // Make the dialog non-modal
         ActionListener listener = new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 String cmd = event.getActionCommand();
+
                 if (cmd.equals(GuiUtils.CMD_OK)
                         || cmd.equals(GuiUtils.CMD_APPLY)) {
                     if ( !applyProperties()) {
                         return;
                     }
+
                     getIdvUIManager().viewManagerChanged(ViewManager.this);
                 }
+
                 if (cmd.equals(GuiUtils.CMD_OK)
                         || cmd.equals(GuiUtils.CMD_CANCEL)) {
                     propertiesDialog.dispose();
                     propertiesDialogShown = false;
-                    //                    propertiesDialog = null;
+
+                    // propertiesDialog = null;
                 }
             }
         };
-
-
         JComponent buttons = GuiUtils.makeApplyOkCancelButtons(listener);
-        JComponent comp =
+        JComponent comp                   =
             GuiUtils.inset(GuiUtils.centerBottom(getPropertiesComponent(),
                 buttons), 5);
         boolean newOne = false;
+
         if (propertiesDialog == null) {
             IdvWindow myWindow = getDisplayWindow();
             Window    window   = null;
+
             if (myWindow != null) {
                 window = myWindow.getWindow();
             }
+
             propertiesDialog = GuiUtils.createDialog(window, "Properties",
                     false);
             newOne = true;
         }
+
         propertiesDialog.getContentPane().removeAll();
         propertiesDialog.getContentPane().add(comp);
         propertiesDialog.pack();
         setMatrixLabel(true);
+
         if (newOne) {
             GuiUtils.showDialogNearSrc(viewMenu, propertiesDialog);
         } else {
-            propertiesDialog.setVisible(true);
+            propertiesDialog.show();
         }
+
         propertiesDialogShown = true;
-        //        propertiesDialog.show();
+
+        // propertiesDialog.show();
     }
 
     /**
@@ -1347,7 +1358,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public JComponent getPropertiesComponent() {
         JTabbedPane tabbedPane = new JTabbedPane();
+
         addPropertiesComponents(tabbedPane);
+
         return tabbedPane;
     }
 
@@ -1362,14 +1375,19 @@ public class ViewManager extends SharableImpl implements ActionListener,
                                         ? name
                                         : ""), 20);
         propertiesMap = new Hashtable();
+
         List props = new ArrayList();
+
         for (int i = 0; i < booleanProperties.size(); i++) {
             BooleanProperty bp  = (BooleanProperty) booleanProperties.get(i);
             JCheckBox       cbx = new JCheckBox(bp.getName(), bp.getValue());
+
             propertiesMap.put(cbx, bp);
             props.add(GuiUtils.left(cbx));
         }
+
         GuiUtils.tmpInsets = new Insets(0, 5, 0, 5);
+
         JComponent propsComp = GuiUtils.doLayout(props, 2, GuiUtils.WT_N,
                                    GuiUtils.WT_N);
 
@@ -1379,23 +1397,24 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 "Set Foreground Color");
 
         List colorProps = new ArrayList();
+
         colorProps.add(GuiUtils.rLabel("Foreground:"));
         colorProps.add(fgPropertiesSwatch);
         colorProps.add(GuiUtils.rLabel("Background:"));
         colorProps.add(bgPropertiesSwatch);
         GuiUtils.tmpInsets = new Insets(2, 2, 2, 2);
+
         JComponent colorPanel = GuiUtils.doLayout(colorProps, 4,
                                     GuiUtils.WT_N, GuiUtils.WT_N);
+
         colorPanel.setBorder(BorderFactory.createTitledBorder("Colors"));
-
-
         fontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false,
                                         false);
         fontSelector.setFont(getDisplayListFont());
         dlPropertiesSwatch = new GuiUtils.ColorSwatch(getDisplayListColor(),
                 "Set Display List Color");
-
         GuiUtils.tmpInsets = GuiUtils.INSETS_5;
+
         JComponent fontPanel = GuiUtils.doLayout(new Component[] {
                                    GuiUtils.rLabel("   Font: "),
                                    GuiUtils
@@ -1410,7 +1429,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
                                                GuiUtils.WT_N);
 
         fontPanel.setBorder(BorderFactory.createTitledBorder("Display List"));
-
         fullScreenWidthFld  = new JTextField(((fullScreenWidth > 0)
                 ? "" + fullScreenWidth
                 : ""), 5);
@@ -1420,6 +1438,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         fullScreenWidthFld.setToolTipText("Leave blank or 0 for full screen");
         fullScreenHeightFld.setToolTipText(
             "Leave blank or 0 for full screen");
+
         JPanel fullScreenPanel =
             GuiUtils.left(GuiUtils.hbox(new JLabel("Width: "),
                                         fullScreenWidthFld,
@@ -1429,33 +1448,37 @@ public class ViewManager extends SharableImpl implements ActionListener,
         fullScreenPanel.setBorder(
             BorderFactory.createTitledBorder("Full Screen Dimensions"));
 
-        //logoVisCbx = new JCheckBox("", getLogoVisibility());
+        // logoVisCbx = new JCheckBox("", getLogoVisibility());
         logoFileField = new JTextField(getLogoFile());
         logoFileField.setToolTipText("Enter a file or URL");
+
         // top panel
         JButton browseButton = new JButton("Browse..");
+
         browseButton.setToolTipText("Choose a logo from disk");
         browseButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 String filename =
                     FileManager.getReadFile(FileManager.FILTER_IMAGE);
+
                 if (filename == null) {
                     return;
                 }
+
                 logoFileField.setText(filename);
             }
         });
 
         String[] logos = parseLogoPosition(getLogoPosition());
+
         logoPositionBox = new JComboBox(logoPoses);
         logoPositionBox.setToolTipText("Set the logo position on the screen");
         logoPositionBox.setSelectedItem(findLoc(logos[0]));
-
         logoOffsetTextField = new JTextField(logos[1]);
         logoOffsetTextField.setToolTipText(
             "Set an offset from the position (x,y)");
-
         logoSizeLabel = new JLabel("" + getLogoScale());
+
         ChangeListener listener = new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 logoSizeLabel.setText("" + logoSizer.getValue() / 10.f);
@@ -1463,11 +1486,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
         };
         JComponent[] sliderComps = GuiUtils.makeSliderPopup(0, 20,
                                        (int) (getLogoScale() * 10), listener);
+
         logoSizer = (JSlider) sliderComps[1];
         sliderComps[0].setToolTipText("Change Logo Scale Value");
 
         JPanel logoPanel = GuiUtils.vbox(
-        //GuiUtils.leftCenter(GuiUtils.rLabel("Visible: "), GuiUtils.leftCenter(logoVisCbx, GuiUtils.filler())),
+        // GuiUtils.leftCenter(GuiUtils.rLabel("Visible: "), GuiUtils.leftCenter(logoVisCbx, GuiUtils.filler())),
         GuiUtils.centerRight(logoFileField, browseButton), GuiUtils.hbox(
             GuiUtils.leftCenter(
                 GuiUtils.rLabel("Screen Position: "),
@@ -1476,8 +1500,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     logoOffsetTextField), GuiUtils.leftCenter(
                         GuiUtils.rLabel("Scale: "),
                         GuiUtils.leftRight(logoSizeLabel, sliderComps[0]))));
-        logoPanel.setBorder(BorderFactory.createTitledBorder("Logo"));
 
+        logoPanel.setBorder(BorderFactory.createTitledBorder("Logo"));
         propsComp = GuiUtils.vbox(new Component[] { propsComp,
                 GuiUtils.inset(colorPanel, new Insets(10, 5, 5, 5)),
                 GuiUtils.inset(fontPanel, new Insets(10, 5, 5, 5)),
@@ -1508,6 +1532,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         } else if (loc.equalsIgnoreCase("mm")) {
             return logoPoses[4];
         }
+
         return logoPoses[0];
     }
 
@@ -1520,11 +1545,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     protected String[] parseLogoPosition(String position) {
         String logoP, logoO;
+
         if ((position == null) || position.isEmpty()) {
             logoP = "ll";
             logoO = "0,0";
         } else {
             int firstComma = position.indexOf(",");
+
             if (firstComma > 0) {
                 logoP = position.substring(0, firstComma - 1);
                 logoO = position.substring(firstComma + 1);
@@ -1533,6 +1560,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 logoO = "0,0";
             }
         }
+
         return new String[] { logoP, logoO };
     }
 
@@ -1548,7 +1576,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if ((pos == null) || pos.isEmpty()) {
             return "";
         }
+
         int firstComma = pos.indexOf(",");
+
         if (firstComma > 0) {
             return pos;
         } else {
@@ -1556,11 +1586,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 offset = "0,0";
             }
         }
+
         return pos + "," + offset;
     }
-
-
-
 
     /**
      * Add a JTabbedPane to the properties component
@@ -1574,10 +1602,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
         tabbedPane.add(
             "Aspect Ratio",
             GuiUtils.inset(GuiUtils.top(getAspectPropertiesComponent()), 5));
+
         if (lights != null) {
             try {
-
-
                 if (lockLightsBtn == null) {
                     lockLightsBtn = GuiUtils.getToggleButton(
                         "/auxdata/ui/icons/link_break.png", 0, 0);
@@ -1593,21 +1620,25 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 }
 
                 List comps = new ArrayList();
+
                 for (LightInfo lightInfo : lights) {
                     ObjectListener listener = new ObjectListener(lightInfo) {
                         public void actionPerformed(ActionEvent ae) {
-
                             LightInfo theLight = (LightInfo) theObject;
+
                             if (ignoreLightChanges) {
                                 return;
                             }
+
                             ignoreLightChanges = true;
                             theLight.applyProperties();
+
                             if (lockLightsBtn.isSelected()) {
                                 for (LightInfo light : lights) {
                                     if (light == theLight) {
                                         continue;
                                     }
+
                                     light.setVisible(theLight.getVisible(),
                                             true);
                                     light.updateLight();
@@ -1618,31 +1649,37 @@ public class ViewManager extends SharableImpl implements ActionListener,
                         }
                         public void stateChanged(ChangeEvent e) {
                             JSlider slider = (JSlider) e.getSource();
+
                             if (ignoreLightChanges
                                     || slider.getValueIsAdjusting()) {
                                 return;
                             }
+
                             LightInfo theLight = (LightInfo) theObject;
+
                             ignoreLightChanges = true;
                             theLight.applyProperties();
+
                             if (lockLightsBtn.isSelected()) {
                                 for (LightInfo light : lights) {
                                     if (light == theLight) {
                                         continue;
                                     }
+
                                     light.setColor(theLight.getColor(), true);
                                     light.updateLight();
                                 }
-
                             }
+
                             ignoreLightChanges = false;
                         }
-
                     };
+
                     lightInfo.getPropertyComponents(comps, listener);
                 }
 
                 JComponent lightsComp = GuiUtils.formLayout(comps);
+
                 tabbedPane.add(
                     "Lighting",
                     GuiUtils.inset(
@@ -1656,8 +1693,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         }
     }
 
-
-
     /**
      * Handle an aspect slider change.
      *
@@ -1669,7 +1704,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         }
     }
 
-
     /**
      * Reset the aspect sliders.
      */
@@ -1677,15 +1711,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (aspectRatio == null) {
             aspectRatio = master.getDisplayAspect();
         }
+
         for (int i = 0; i < 3; i++) {
             aspectSliders[i].setValue((int) (aspectRatio[i] * 10));
             aspectLbls[i].setText("" + aspectRatio[i]);
         }
     }
-
-
-    /** list of lights */
-    private List<LightInfo> lights;
 
     /**
      * Initialize the lights
@@ -1697,22 +1728,22 @@ public class ViewManager extends SharableImpl implements ActionListener,
             lights = new ArrayList<LightInfo>();
             createInitialLights();
         }
+
         BranchGroup lightsNode = new BranchGroup();
+
         lightsNode.setCapability(BranchGroup.ALLOW_DETACH);
         lightsNode.setCapability(Group.ALLOW_CHILDREN_READ);
         lightsNode.setCapability(Group.ALLOW_CHILDREN_WRITE);
         lightsNode.setCapability(Group.ALLOW_CHILDREN_EXTEND);
-
 
         for (LightInfo lightInfo : lights) {
             lightsNode.addChild(lightInfo.getLight());
         }
 
         renderer.getTrans().addChild(lightsNode);
-        //        renderer.getRoot().addChild(lightsNode);
 
+        // renderer.getRoot().addChild(lightsNode);
     }
-
 
     /**
      * Make the lights brighter
@@ -1721,11 +1752,11 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (lights == null) {
             return;
         }
+
         for (LightInfo lightInfo : lights) {
             lightInfo.brighter();
         }
     }
-
 
     /**
      * Create the initial lights
@@ -1736,25 +1767,19 @@ public class ViewManager extends SharableImpl implements ActionListener,
             new Point3d(0.0, 0.0, 0.0), new Point3d(0.0, 0.0, 0.0),
             new Point3d(0.0, 0.0, 0.0), new Point3d(0.0, 0.0, 0.0)
         };
-
         Vector3f[] directions = new Vector3f[] {
             new Vector3f(0.0f, 0.0f, 1.0f), new Vector3f(0.0f, 0.0f, -1.0f),
             new Vector3f(0.0f, -1.0f, 0.0f), new Vector3f(0.0f, 1.0f, 0.0f),
             new Vector3f(1.0f, 0.0f, 0.0f), new Vector3f(-1.0f, 0.0f, 0.0f)
         };
-
-
         String[] names = {
             "Over", "Under", "Top", "Bottom", "Right", "Left"
         };
+
         for (int i = 0; i < directions.length; i++) {
             lights.add(new LightInfo(names[i], locations[i], directions[i]));
         }
     }
-
-
-
-
 
     /**
      * Get the aspect properties component
@@ -1763,10 +1788,11 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     protected JComponent getAspectPropertiesComponent() {
         try {
-            DisplayMaster master = getMaster();
-            JButton resetBtn = GuiUtils.makeButton("Reset", this,
+            DisplayMaster master   = getMaster();
+            JButton       resetBtn = GuiUtils.makeButton("Reset", this,
                                    "resetAspectSliders");
             List comps = new ArrayList();
+
             comps.add(resetBtn);
             comps.add(GuiUtils.filler());
 
@@ -1778,15 +1804,16 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 comps.add(GuiUtils.centerRight(aspectSliders[i],
                         aspectLbls[i]));
             }
+
             resetAspectSliders();
             originalAspectSliderValues = new double[] {
                 aspectSliders[0].getValue() / 10.0,
                 aspectSliders[1].getValue() / 10.0,
                 aspectSliders[2].getValue() / 10.0 };
             GuiUtils.tmpInsets = new Insets(5, 5, 5, 5);
+
             JComponent contents = GuiUtils.doLayout(comps, 2, GuiUtils.WT_NY,
                                       GuiUtils.WT_N);
-
 
             matrixLabel = new JLabel("<html></html>");
             matrixLabel.setBorder(
@@ -1795,19 +1822,14 @@ public class ViewManager extends SharableImpl implements ActionListener,
             contents = GuiUtils.centerBottom(contents,
                                              GuiUtils.inset(matrixLabel,
                                                  new Insets(20, 0, 0, 0)));
+
             return contents;
         } catch (Exception exc) {
             logException("Creating aspect dialog", exc);
         }
+
         return null;
     }
-
-
-    /** last matrix */
-    private double[] lastMatrix;
-
-    /** last coordinates */
-    private List<TwoFacedObject> lastCoords;
 
     /**
      * Set the matrix label
@@ -1819,9 +1841,11 @@ public class ViewManager extends SharableImpl implements ActionListener,
             if (matrixLabel == null) {
                 return;
             }
+
             if ( !force && !propertiesDialogShown) {
                 return;
             }
+
             if ( !force) {
                 try {
                     matrixLabel.getLocationOnScreen();
@@ -1829,40 +1853,48 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     return;
                 }
             }
+
             double[]             currentMatrix = getDisplayMatrix();
             boolean changed = !Misc.equals(lastMatrix, currentMatrix);
             List<TwoFacedObject> coords        = null;
+
             if (getMaster() instanceof NavigatedDisplay) {
                 coords =
                     ((NavigatedDisplay) getMaster()).getScreenCoordinates();
+
                 if ( !Misc.equals(coords, lastCoords)) {
                     changed = true;
                 }
             }
+
             if ( !changed) {
                 return;
             }
 
             lastMatrix = currentMatrix;
+
             double[] trans = { 0.0, 0.0, 0.0 };
             double[] rot   = { 0.0, 0.0, 0.0 };
             double[] scale = { 0.0, 0.0, 0.0 };
+
             getMaster().getMouseBehavior().instance_unmake_matrix(rot, scale,
                     trans, currentMatrix);
 
-
-
             StringBuffer sb = new StringBuffer();
+
             sb.append(
                 "<html><table width=100%><tr><td width=33%></td><td width=33%>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td width=33%>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>" + "<tr><td align=right>Rotation:</td><td align=right>" + fmt(rot[0]) + "</td><td align=right>" + fmt(rot[1]) + "</td><td align=right>" + fmt(rot[2]) + "</td></tr>" + "<tr><td align=right>Translation:</td><td align=right>" + fmt(trans[0]) + "</td><td align=right>" + fmt(trans[1]) + "</td><td align=right>" + fmt(trans[2]) + "</td></tr>" + "<tr><td align=right>Scale:</td><td align=right>" + fmt(scale[0]) + "</td><td>" + fmt(scale[1]) + "</td><td>" + fmt(scale[2]) + "</td></tr>");
 
             if (getMaster() instanceof NavigatedDisplay) {
                 NavigatedDisplay navDisplay = (NavigatedDisplay) getMaster();
+
                 sb.append(
                     "<tr><td></td><td colspan=3 align=center>Box</td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td colspan=2 align=center>Screen</td></tr>");
+
                 for (TwoFacedObject tfo : coords) {
                     double[] xyz     = (double[]) tfo.getId();
                     int[]    scoords = navDisplay.getScreenCoordinates(xyz);
+
                     sb.append("<tr align=right><td align=right>");
                     sb.append(tfo.toString() + ":");
                     sb.append("</td><td>");
@@ -1879,13 +1911,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     sb.append("</td></tr>");
                 }
             }
-            sb.append("</table>");
 
+            sb.append("</table>");
             matrixLabel.setText(sb.toString());
         } catch (Exception exc) {
             LogUtil.consoleMessage("Error:" + exc);
         }
-
     }
 
     /**
@@ -1899,9 +1930,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (d == -0.0) {
             d = 0.0;
         }
+
         return fmt.format(d);
     }
-
 
     /**
      * Apply properties
@@ -1917,6 +1948,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
         int width  = 0;
         int height = 0;
+
         if (fullScreenWidthFld.getText().trim().equals("")
                 || fullScreenWidthFld.getText().trim().equals("0")) {
             width = 0;
@@ -1924,7 +1956,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
             width =
                 new Integer(fullScreenWidthFld.getText().trim()).intValue();
         }
-
 
         if (fullScreenHeightFld.getText().trim().equals("")
                 || fullScreenHeightFld.getText().trim().equals("0")) {
@@ -1937,34 +1968,34 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if ((width != fullScreenWidth) || (height != fullScreenHeight)) {
             fullScreenWidth  = width;
             fullScreenHeight = height;
-            //Reset the window size if we are in full screen
+
+            // Reset the window size if we are in full screen
             if ((fullScreenWindow != null) && (width != 0) && (height != 0)) {
                 Dimension  theSize      = new Dimension(width, height);
                 JComponent navComponent = getComponent();
+
                 navComponent.setMinimumSize(theSize);
                 navComponent.setPreferredSize(theSize);
                 GuiUtils.getWindow(navComponent).pack();
             }
         }
 
-
-
-
-
-
         try {
             setName(nameFld.getText());
+
             for (Enumeration keys = propertiesMap.keys();
                     keys.hasMoreElements(); ) {
                 JCheckBox       cbx = (JCheckBox) keys.nextElement();
-                BooleanProperty bp  =
-                    (BooleanProperty) propertiesMap.get(cbx);
+                BooleanProperty bp  = (BooleanProperty) propertiesMap.get(cbx);
+
                 bp.setValue(cbx.isSelected());
             }
+
             setColors(fgPropertiesSwatch.getSwatchColor(),
                       bgPropertiesSwatch.getSwatchColor());
 
             Font f = fontSelector.getFont();
+
             setDisplayListFont(f);
             setDisplayListColor(dlPropertiesSwatch.getSwatchColor());
             updateDisplayList();
@@ -1974,79 +2005,93 @@ public class ViewManager extends SharableImpl implements ActionListener,
                                           aspectSliders[1].getValue() / 10.0,
                                           aspectSliders[2].getValue()
                                           / 10.0 };
+
             if ( !Arrays.equals(newAspectRatio, originalAspectSliderValues)) {
-                //              System.err.println("aspect ratios differ:");
-                //              Misc.printArray("old:" , originalAspectSliderValues);
-                //              Misc.printArray("new:", newAspectRatio);
+
+                // System.err.println("aspect ratios differ:");
+                // Misc.printArray("old:" , originalAspectSliderValues);
+                // Misc.printArray("new:", newAspectRatio);
                 aspectRatio = newAspectRatio;
                 getMaster().setDisplayAspect(aspectRatio);
             }
 
-            //setLogoVisibility(logoVisCbx.isSelected());
+            // setLogoVisibility(logoVisCbx.isSelected());
             logoFile = logoFileField.getText().trim();
-            //setLogoAnchor(((TwoFacedObject) logoAnchorBox.getSelectedItem()).getId().toString());
+
+            // setLogoAnchor(((TwoFacedObject) logoAnchorBox.getSelectedItem()).getId().toString());
             String logoPos =
                 ((TwoFacedObject) logoPositionBox.getSelectedItem()).getId()
                     .toString();
             String logoOff = logoOffsetTextField.getText().trim();
+
             setLogoPosition(makeLogoPosition(logoPos, logoOff));
             setLogoScale(logoSizer.getValue() / 10.f);
             updateAnnotations();
+
             return true;
         } catch (Exception exp) {
             logException("Applying properties", exp);
+
             return false;
         }
-
     }
 
     /**
      * Update the annotations
      */
     protected void updateAnnotations() {
-
         try {
             DisplayImpl display = (DisplayImpl) getMaster().getDisplay();
+
             if (display instanceof DisplayImplJ3D) {
                 if (annotator == null) {
                     annotator = new ScreenAnnotatorJ3D(display);
                 }
+
                 annotator.clear();
+
                 Component comp = display.getComponent();
+
                 if (comp == null) {
                     return;
                 }
+
                 Rectangle bounds = comp.getBounds();
-                //System.out.println("window bounds: " + bounds);
+
+                // System.out.println("window bounds: " + bounds);
                 if ((bounds.width == 0) || (bounds.height == 0)
                         || (logoFile == null) || logoFile.isEmpty()
                         || !getLogoVisibility()) {
                     annotator.draw();
+
                     return;
                 }
 
                 Image logo = ImageUtils.readImage(logoFile, true, true);
+
                 if (logo == null) {
-                    //throw new VisADException("Logo file: " + logoFile + " does not exist.");
+
+                    // throw new VisADException("Logo file: " + logoFile + " does not exist.");
                     System.err.println("Logo file: " + logoFile
                                        + " does not exist.");
+
                     return;
                 }
 
                 Point ap = ImageUtils.parsePoint(getLogoPosition(), bounds);
-                //System.out.println("screen point = " + ap);
 
-                int   baseX = ap.x;
-                int   baseY = ap.y;
-                float zval  = getPerspectiveView()
-                              ? 1
-                              : display.getDisplayRenderer().getMode2D()
-                                ? 1.5f
-                                : 2;
-
+                // System.out.println("screen point = " + ap);
+                int      baseX   = ap.x;
+                int      baseY   = ap.y;
+                float    zval    = getPerspectiveView()
+                                   ? 1
+                                   : display.getDisplayRenderer().getMode2D()
+                                     ? 1.5f
+                                     : 2;
                 ImageJ3D logoJ3D = new ImageJ3D(logo,
                                        getImageAnchor(getLogoPosition()),
                                        baseX, baseY, zval, getLogoScale());
+
                 annotator.add(logoJ3D);
                 annotator.draw();
             }
@@ -2064,9 +2109,11 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     private int getImageAnchor(String loc) {
         int index = loc.indexOf(",");
+
         if (index > 0) {
             loc = loc.substring(0, index);
         }
+
         if (loc.equalsIgnoreCase("ll")) {
             return ImageJ3D.BOTTOM_LEFT;
         } else if (loc.equalsIgnoreCase("ul")) {
@@ -2078,9 +2125,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
         } else if (loc.equalsIgnoreCase("mm")) {
             return ImageJ3D.CENTER;
         }
+
         return ImageJ3D.BOTTOM_LEFT;
     }
-
 
     /**
      * Called after this object has been unpersisted from xml.
@@ -2097,7 +2144,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         initBooleanProperties();
     }
 
-
     /**
      * Init with a view state
      *
@@ -2107,11 +2153,11 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public void initWith(ViewState viewState) throws Exception {
         double[] matrix = (double[]) viewState.get(ViewState.PROP_MATRIX);
+
         if (matrix != null) {
             setDisplayMatrix(matrix);
         }
     }
-
 
     /**
      * Initialize this ViewManager with the state in the that ViewManager
@@ -2121,10 +2167,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public final void initWith(ViewManager that) {
         initWith(that, false);
     }
-
-
-    /** flag for sharing */
-    private boolean wasSharing;
 
     /**
      * Initialize this ViewManager with the state in the that ViewManager.
@@ -2160,41 +2202,47 @@ public class ViewManager extends SharableImpl implements ActionListener,
             throws VisADException, RemoteException {
         if (that != this) {
             this.aspectRatio = that.aspectRatio;
+
             List newAliases = that.aliases;
+
             for (int aliasIdx = 0; aliasIdx < newAliases.size(); aliasIdx++) {
                 ViewDescriptor vd = (ViewDescriptor) newAliases.get(aliasIdx);
+
                 addViewDescriptor(vd);
             }
-            this.properties.putAll(that.properties);
 
+            this.properties.putAll(that.properties);
 
             if (that.lights != null) {
                 this.lights = new ArrayList<LightInfo>();
+
                 for (LightInfo lightInfo : that.lights) {
                     this.lights.add(new LightInfo(lightInfo));
                 }
             }
         }
 
-
-        //        if(true) return;
-
+        // if(true) return;
         if ((that.name != null) && (that.name.trim().length() > 0)) {
             setName(that.name);
         }
 
         if ( !ignoreWindow) {
             Rectangle bounds = that.windowBounds;
+
             if (bounds != null) {
-                //                System.err.println ("  vm.initWith-2" );
-                //                Misc.sleep(10000);
+
+                // System.err.println ("  vm.initWith-2" );
+                // Misc.sleep(10000);
                 setWindowBounds(bounds);
-                //                System.err.println ("  vm.initWith-2 after" );
-                //                Misc.sleep(10000);
+
+                // System.err.println ("  vm.initWith-2 after" );
+                // Misc.sleep(10000);
             }
         }
 
         if ((that.animationInfo != null) && (this.animationWidget != null)) {
+            this.animationInfo = that.animationInfo;
             this.animationWidget.setProperties(that.animationInfo);
         }
 
@@ -2204,10 +2252,10 @@ public class ViewManager extends SharableImpl implements ActionListener,
             }
         }
 
-
         if (this != that) {
             this.setSharing(wasSharing = that.getSharing());
         }
+
         setBooleanProperties(that);
         setColors(that.getForeground(), that.getBackground());
         setDisplayListFont(that.getDisplayListFont());
@@ -2217,22 +2265,19 @@ public class ViewManager extends SharableImpl implements ActionListener,
         setLogoPosition(that.getLogoPosition());
         updateAnnotations();
 
-
         if ((sideLegend != null) && (that.sideLegend != null)) {
             sideLegend.initWith(that.sideLegend);
         }
 
         if (that.sideDividerLocation > 0) {
             sideDividerLocation = that.sideDividerLocation;
+
             if (mainSplitPane != null) {
+
                 // mainSplitPane.setDividerLocation(sideDividerLocation);
             }
         }
     }
-
-
-
-
 
     /**
      * This gets called when the initial guis (windows, etc) have been created and shown
@@ -2242,9 +2287,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         toFront();
     }
 
-
-
-
     /**
      * This is here to set the IDV when this object has been unpersisted.
      * @param idv The IDV
@@ -2252,7 +2294,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public void setIdv(IntegratedDataViewer idv) {
         this.idv = idv;
     }
-
 
     /**
      * Get the IDV
@@ -2262,8 +2303,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public IntegratedDataViewer getIdv() {
         return this.idv;
     }
-
-
 
     /**
      * Set the different boolean flags from thise held by the
@@ -2280,17 +2319,18 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (booleanPropertyMap.size() == 0) {
             initBooleanProperties();
         }
+
         for (int i = 0; i < booleanProperties.size(); i++) {
             BooleanProperty myProperty =
                 (BooleanProperty) booleanProperties.get(i);
             BooleanProperty hisProperty =
                 vm.getBooleanProperty(myProperty.getId());
+
             if (hisProperty != null) {
                 myProperty.setValue(hisProperty.getValue());
             }
         }
     }
-
 
     /**
      * The BooleanProperty identified byt he given id has changed.
@@ -2307,6 +2347,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
             setSharing(value);
         } else if (id.equals(PREF_WIREFRAME)) {
             DisplayRenderer renderer = getDisplayRenderer();
+
             if (renderer != null) {
                 renderer.setBoxOn(value);
             }
@@ -2314,8 +2355,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
             if (master != null) {
                 master.setAnimationStringVisible(value);
             }
+        } else if (id.equals(PREF_TOPBAR_VISIBLE)) {
+            if (topBar != null) {
+                topBar.setVisible(value);
+            }
         } else if (id.equals(PREF_WAITMSG)) {
             DisplayMaster master = getMaster();
+
             if (master != null) {
                 master.setWaitMessageVisible(value);
             }
@@ -2334,11 +2380,14 @@ public class ViewManager extends SharableImpl implements ActionListener,
             ActionListener listener = new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
                     String cmd = ae.getActionCommand();
+
                     if (cmd.equals(GuiUtils.CMD_OK)
                             || cmd.equals(GuiUtils.CMD_CANCEL)) {
                         timelineDialog.dispose();
-                        //timelineDialog = null;
+
+                        // timelineDialog = null;
                     }
+
                     if (cmd.equals(GuiUtils.CMD_UPDATE)) {
                         updateTimelines(true);
                     }
@@ -2357,10 +2406,10 @@ public class ViewManager extends SharableImpl implements ActionListener,
             timelineDialog.pack();
             timelineDialog.setLocation(200, 200);
         }
+
         timelineDialog.setVisible(true);
         GuiUtils.toFront(timelineDialog);
     }
-
 
     /**
      * set the animation time
@@ -2382,7 +2431,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     protected void animationTimeChanged() {}
 
-
     /**
      * update the timelines display
      *
@@ -2393,13 +2441,17 @@ public class ViewManager extends SharableImpl implements ActionListener,
             if (force) {
                 JComponent comp = getTimelineComponent();
             }
+
             timelineDialog.invalidate();
             timelineDialog.validate();
             timelineDialog.repaint();
+
             Real value = animation.getCurrentAnimationValue();
+
             try {
                 for (int i = 0; i < timelines.size(); i++) {
                     MyTimeline timeline = (MyTimeline) timelines.get(i);
+
                     timeline.update(value);
                 }
             } catch (Exception exp) {
@@ -2407,178 +2459,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
             }
         }
     }
-
-
-    /**
-     * Class MyTimeline for the animation timeline
-     *
-     *
-     * @author IDV Development Team
-     * @version $Revision$
-     */
-    private class MyTimeline extends Timeline {
-
-        /** the times */
-        Set timeSet;
-
-        /** member */
-        JLabel label;
-
-        /** the right component */
-        JLabel rightComp;
-
-        /** member */
-        Real animationValue;
-
-        /** member */
-        DisplayControl control;
-
-        /**
-         * ctor
-         *
-         *
-         * @param timeSet the times
-         * @param dates dates
-         * @param w width
-         * @param control the display control
-         */
-        public MyTimeline(Set timeSet, List dates, int w,
-                          DisplayControl control) {
-            super(dates, w);
-            this.timeSet = timeSet;
-            this.control = control;
-            this.label   = control.makeLegendLabel();
-            if (idv.getUseTimeDriver()) {
-                this.rightComp = GuiUtils.rLabel(control.getIsTimeDriver()
-                        ? "Time Driver"
-                        : "");
-            } else {
-                this.rightComp = GuiUtils.rLabel("");
-            }
-            setIsCapableOfSelection(false);
-        }
-
-        /**
-         * ctor
-         *
-         * @param dates dates
-         * @param w width
-         * @param h height
-         */
-        public MyTimeline(List dates, int w, int h) {
-            super(dates, w, h);
-            setIsCapableOfSelection(false);
-        }
-
-
-        /**
-         * These are a list of earth locations used to draw sunrise/sunset
-         *
-         * @return locations for sunrise/sunset
-         */
-        public List getSunriseLocations() {
-            return getIdv().getIdvUIManager().getMapLocations();
-        }
-
-        /**
-         * override base class method to use different color
-         *
-         * @return color
-         */
-        public Color getColorTimeUnselected() {
-            return Color.black;
-        }
-
-
-
-        /**
-         * handle double click
-         *
-         * @param e event
-         */
-        public void mouseClicked(MouseEvent e) {
-            if (e.getClickCount() < 2) {
-                super.mouseClicked(e);
-                return;
-            }
-            setAnimationTime(toDate(e.getX()));
-        }
-
-
-        /**
-         * time changed
-         *
-         * @param value new time
-         *
-         * @throws RemoteException on badness
-         * @throws VisADException on badness
-         */
-        public void update(Real value)
-                throws VisADException, RemoteException {
-            if (control != null) {
-                timeSet = control.getTimeSet();
-                if (timeSet != null) {
-                    DateTime[] times = Animation.getDateTimeArray(timeSet);
-                    setDatedThings(
-                        DatedObject.wrap(ucar.visad.Util.makeDates(times)));
-                }
-            }
-            setAnimationValue(value);
-        }
-
-        /**
-         * set animation value and repaint
-         *
-         * @param value value
-         *
-         * @throws RemoteException On badness
-         * @throws VisADException On badness
-         */
-        public void setAnimationValue(Real value)
-                throws VisADException, RemoteException {
-            this.animationValue = value;
-            if ((timeSet != null) && (value != null)) {
-                int  index       = ucar.visad.Util.findIndex(timeSet, value);
-                List datedThings = getDatedThings();
-                if ((index >= 0) && (index < datedThings.size())) {
-                    setSelected(Misc.newList(datedThings.get(index)));
-                    return;
-                }
-                if (getSelected().size() > 0) {
-                    setSelected(new ArrayList());
-                }
-            }
-            repaint();
-        }
-
-        /**
-         *  paint animation time
-         *
-         * @param g graphics
-         */
-        public void paintBackgroundDecoration(Graphics2D g) {
-            super.paintBackgroundDecoration(g);
-            Dimension d = getSize();
-            if ((control != null) && !control.getDisplayVisibility()) {
-                g.setColor(Color.lightGray);
-                g.fillRect(0, 0, d.width, d.height);
-            }
-
-            if (animationValue instanceof DateTime) {
-                try {
-                    Date date =
-                        ucar.visad.Util.makeDate((DateTime) animationValue);
-                    int x = toLocation(date);
-                    g.setColor(Color.gray);
-                    g.fillRect(x - 1, 0, 2, d.height);
-                } catch (Exception exp) {
-                    logException("Painting timeline", exp);
-                }
-            }
-        }
-    }
-
-
 
     /**
      * make the timeline gui
@@ -2589,22 +2469,24 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
         try {
             synchronized (TIMELINES_MUTEX) {
-
                 Insets lblInsets    = new Insets(5, 0, 0, 0);
                 List   controls     = getControls();
                 List   allTimes     = new ArrayList();
                 List   comps        = new ArrayList();
                 List   oldTimelines = new ArrayList(timelines);
+
                 timelines = new ArrayList();
 
                 if (animationWidget != null) {
                     List datedThings = DatedObject.wrap(
                                            Util.makeDates(
                                                animationWidget.getTimes()));
+
                     if (animationTimeline == null) {
                         animationTimeline = new MyTimeline(datedThings, 300,
                                 100);
                     }
+
                     if (datedThings.size() > 0) {
                         allTimes.addAll(datedThings);
                         timelines.add(animationTimeline);
@@ -2619,37 +2501,46 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 for (int i = controls.size() - 1; i >= 0; i--) {
                     DisplayControl control = (DisplayControl) controls.get(i);
                     Set            timeSet = control.getTimeSet();
+
                     if (timeSet == null) {
                         continue;
                     }
+
                     DateTime[] times = Animation.getDateTimeArray(timeSet);
-                    List datedObjects =
+                    List       datedObjects =
                         DatedObject.wrap(ucar.visad.Util.makeDates(times));
+
                     if (datedObjects.size() == 0) {
                         continue;
                     }
+
                     allTimes.addAll(datedObjects);
 
                     MyTimeline timeline = null;
+
                     for (int j = 0; j < oldTimelines.size(); j++) {
                         MyTimeline oldTimeline =
                             (MyTimeline) oldTimelines.get(j);
+
                         if (oldTimeline.control == control) {
                             timeline = oldTimeline;
                             oldTimelines.remove(oldTimeline);
+
                             break;
                         }
                     }
 
-
                     if (timeline == null) {
-                        //                    System.err.println ("new timeline");
+
+                        // System.err.println ("new timeline");
                         timeline = new MyTimeline(timeSet, datedObjects, 300,
                                 control);
                     }
+
                     if (timelines.size() > 0) {
                         timeline.setShortDisplay(true);
                     }
+
                     timelines.add(timeline);
                     comps.add(
                         GuiUtils.inset(
@@ -2658,24 +2549,31 @@ public class ViewManager extends SharableImpl implements ActionListener,
                                 timeline.rightComp), lblInsets));
                     comps.add(timeline.getContents(false));
                 }
+
                 allTimes = DatedObject.sort(allTimes, true);
+
                 if (allTimes.size() > 1) {
                     Date startDate = ((DatedThing) allTimes.get(0)).getDate();
                     Date endDate = ((DatedThing) allTimes.get(allTimes.size()
                                        - 1)).getDate();
+
                     for (int i = 0; i < timelines.size(); i++) {
                         MyTimeline timeline = (MyTimeline) timelines.get(i);
+
                         timeline.setStartDate(startDate);
                         timeline.setEndDate(endDate);
                         timeline.expandByPercent(1.1, false);
                     }
                 }
+
                 for (int i = 0; i < timelines.size(); i++) {
                     MyTimeline timeline = (MyTimeline) timelines.get(i);
+
                     timeline.setGroup(timelines);
                 }
 
                 GuiUtils.tmpInsets = new Insets(1, 1, 1, 1);
+
                 JComponent comp = GuiUtils.doLayout(comps, 1, GuiUtils.WT_Y,
                                       GuiUtils.WT_N);
                 JScrollPane sp =
@@ -2683,35 +2581,41 @@ public class ViewManager extends SharableImpl implements ActionListener,
                         GuiUtils.top(GuiUtils.inset(comp, 5)),
                         ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
                 sp.setPreferredSize(new Dimension(300, 400));
+
                 if (timelineHolder == null) {
                     timelineHolder = new JPanel(new BorderLayout());
                 }
+
                 timelineHolder.removeAll();
-                //            timelineHolder.add(BorderLayout.CENTER, GuiUtils.top(sp));
+
+                // timelineHolder.add(BorderLayout.CENTER, GuiUtils.top(sp));
                 timelineHolder.add(BorderLayout.CENTER, sp);
                 timelineHolder.invalidate();
                 timelineHolder.repaint();
+
                 return timelineHolder;
             }
         } catch (Exception exp) {
             logException("Creating timeline", exp);
         }
+
         return new JPanel();
 
-
     }
-
 
     /**
      * Populate the display list
      */
     public void updateDisplayList() {
+
         try {
             synchronized (MUTEX_DISPLAYLIST) {
                 if ( !hasDisplayMaster()) {
                     return;
                 }
+
                 if (displayListDisplayables == null) {
                     displayListDisplayables = new CompositeDisplayable();
                     displayListDisplayables.setUseTimesInAnimation(false);
@@ -2719,20 +2623,19 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     getMaster().removeDisplayable(displayListDisplayables);
                     displayListDisplayables.clearDisplayables();
                 }
+
                 if ( !getShowDisplayList()) {
                     return;
                 }
 
                 List controls = getControls();
-
                 Hashtable<String, List<TextDisplayable>> catMap =
                     new Hashtable<String, List<TextDisplayable>>();
-                List<String> cats = new ArrayList<String>();
+                List<String>          cats = new ArrayList<String>();
                 List<TextDisplayable> textDisplayables =
                     new ArrayList<TextDisplayable>();
 
-
-                //Seed the list first so we get the right order
+                // Seed the list first so we get the right order
                 if (sideLegend != null) {
                     for (String cat : sideLegend.getDisplayCategories()) {
                         cats.add(cat);
@@ -2742,43 +2645,54 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
                 for (int i = controls.size() - 1; i >= 0; i--) {
                     DisplayControl control = (DisplayControl) controls.get(i);
+
                     if ( !control.getShowInDisplayList()
                             || !control.getDisplayVisibility()) {
                         continue;
                     }
+
                     TextDisplayable d =
                         (TextDisplayable) control.getDisplayListDisplayable(
                             this);
+
                     if (d == null) {
                         continue;
                     }
 
                     String cat = control.getDisplayCategory();
+
                     if (cat == null) {
                         cat = "Displays";
                     }
+
                     List<TextDisplayable> l = catMap.get(cat);
+
                     if (l == null) {
                         l = new ArrayList<TextDisplayable>();
                         catMap.put(cat, l);
                         cats.add(cat);
                     }
+
                     l.add(d);
                     textDisplayables.add(d);
                 }
 
-
                 boolean grouped = getStateManager().getPreferenceOrProperty(
                                       IdvConstants.PROP_DISPLAYLIST_GROUP,
                                       false);
+
                 if (grouped) {
                     int count = 0;
+
                     for (int i = cats.size() - 1; i >= 0; i--) {
                         String                cat          = cats.get(i);
                         List<TextDisplayable> displayables = catMap.get(cat);
+
                         for (int j = displayables.size() - 1; j >= 0; j--) {
                             TextDisplayable d = displayables.get(j);
+
                             count++;
+
                             if (setDisplayablePosition(d, count)) {
                                 displayListDisplayables.addDisplayable(d);
                             }
@@ -2788,6 +2702,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     for (int count = 0; count < textDisplayables.size();
                             count++) {
                         TextDisplayable d = textDisplayables.get(count);
+
                         if (setDisplayablePosition(d, count + 1)) {
                             displayListDisplayables.addDisplayable(d);
                         }
@@ -2795,11 +2710,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 }
 
                 getMaster().addDisplayable(displayListDisplayables);
-                //displayListDisplayables.setVisible(true);
+
+                // displayListDisplayables.setVisible(true);
             }
         } catch (Exception exp) {
             logException("Setting display list", exp);
         }
+
     }
 
     /**
@@ -2811,20 +2728,23 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * @return true if successful
      */
     private boolean setDisplayablePosition(Displayable d, int number) {
-
         try {
             DisplayMaster master  = getMaster();
             DisplayImpl   display = (DisplayImpl) master.getDisplay();
             Rectangle     r       = master.getScreenBounds();
             double[]      xyz     = new double[3];
+
             if ( !r.isEmpty()) {
+
                 // System.out.println("screen bounds = " + r);
                 float scale = getDisplayListFont().getSize() / 12.f;
                 int   x     = r.x + (int) (.5f * r.width);
-                int y = r.y
+                int   y     = r.y
                         + (int) ((1.f - ((.025 * scale) * number))
                                  * r.height);
+
                 xyz = Util.getVWorldCoords(display, x, y, xyz);
+
                 double zval = getPerspectiveView()
                               ? xyz[2]
                               : 2.0;
@@ -2834,11 +2754,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     new ConstantMap(xyz[1], Display.YAxis),
                 // new ConstantMap(2.0, Display.ZAxis) });  // set at top of box
                 new ConstantMap(zval, Display.ZAxis) });  // set at top of box
+
                 return true;
             }
         } catch (VisADException ve) {
             ve.printStackTrace();
         } catch (RemoteException re) {}
+
         return false;
     }
 
@@ -2850,8 +2772,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public boolean getPerspectiveView() {
         return false;
     }
-
-
 
     /**
      * Get the intial BooleanProperties
@@ -2876,10 +2796,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
                                       true));
         props.add(new BooleanProperty(PREF_LOGO_VISIBILITY, "Show Logo",
                                       "Toggle logo in display", false));
-
+        props.add(new BooleanProperty(PREF_TOPBAR_VISIBLE, "Show Top Bar",
+                                      "Toggle top bar", true));
     }
-
-
 
     /**
      * Debug
@@ -2887,6 +2806,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * @param msg message to print
      */
     private void debug(String msg) {
+
         // System.err.println (msg);
     }
 
@@ -2895,25 +2815,32 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * These hold all of the different flag based display state.
      */
     protected void initBooleanProperties() {
+
         // debug("initBooleanProperties");
         if (booleanPropertiesForPersistence == null) {
+
             // debug("\tno bpforpersistence");
         }
+
         List props = new ArrayList();
+
         getInitialBooleanProperties(props);
+
         StateManager   stateManager = getStateManager();
         XmlObjectStore store        = getStore();
+
         if (booleanPropertiesForPersistence != null) {
             booleanPropertiesForPersistence =
                 stateManager.processPropertyTable(
                     booleanPropertiesForPersistence);
         }
+
         for (int i = 0; i < props.size(); i++) {
             BooleanProperty bp = (BooleanProperty) props.get(i);
+
             initializeBooleanProperty(bp);
         }
     }
-
 
     /**
      * Initialize a BooleanProperty
@@ -2924,6 +2851,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         StateManager   stateManager = getStateManager();
         XmlObjectStore store        = getStore();
         boolean        defaultValue = bp.getDefault();
+
         if (stateManager != null) {
             defaultValue = getStateManager().getProperty(bp.getId(),
                     defaultValue);
@@ -2932,38 +2860,41 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (store != null) {
             defaultValue = store.get(bp.getId(), defaultValue);
         }
+
         if (booleanPropertiesForPersistence != null) {
             Boolean b =
                 (Boolean) booleanPropertiesForPersistence.get(bp.getId());
-            //                System.err.println("has for persistence: " + b);
+
+            // System.err.println("has for persistence: " + b);
             if (b != null) {
                 bp.setValue(b.booleanValue());
             }
         }
+
         // debug("\tbp: " + bp);
         BooleanProperty existingBp =
             (BooleanProperty) booleanPropertyMap.get(bp.getId());
+
         if ((existingBp != null)
                 && (booleanPropertiesForPersistence == null)) {
+
             // debug("\thave existing " + existingBp);
             bp.setValue(existingBp.getValue());
         }
 
-
         BooleanProperty newBp = new BooleanProperty(bp) {
             public void setValueInner(boolean value) throws Exception {
                 super.setValueInner(value);
+
                 if (getHaveInitialized()) {
                     handleBooleanPropertyChange(getId(), value);
                 }
             }
         };
+
         newBp.setDefault(defaultValue);
         addBooleanProperty(newBp);
-
     }
-
-
 
     /**
      * Check to see if this view manager has the property
@@ -2975,7 +2906,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     protected boolean hasBooleanProperty(String propertyId) {
         return booleanPropertyMap.get(propertyId) != null;
     }
-
 
     /**
      * Find, or create,  the BooleanProperty identified with the  given id
@@ -3000,17 +2930,19 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (booleanPropertyMap.size() == 0) {
             initBooleanProperties();
         }
+
         BooleanProperty bp =
             (BooleanProperty) booleanPropertyMap.get(propertyId);
+
         if (bp == null) {
             bp = new BooleanProperty(propertyId, propertyId, propertyId,
                                      dflt);
             booleanPropertyMap.put(bp.getId(), bp);
             initializeBooleanProperty(bp);
         }
+
         return bp;
     }
-
 
     /**
      * Helper to set the value of a BooleanProperty
@@ -3022,7 +2954,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         getBooleanProperty(propertyId).setValue(value);
     }
 
-
     /**
      * Get the value of the BooleanProperty
      *
@@ -3032,7 +2963,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     protected boolean getBp(String propertyId) {
         return getBp(propertyId, true);
     }
-
 
     /**
      * Get a BooleanProperty (local implementation)
@@ -3045,7 +2975,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     protected boolean getBp(String propertyId, boolean dflt) {
         return getBooleanProperty(propertyId, dflt).getValue();
     }
-
 
     /**
      * Set the  share view state flag
@@ -3072,7 +3001,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         setBp(PREF_SHOWDISPLAYLIST, value);
     }
 
-
     /**
      *  Get  the show display list flag
      * @return The flag value
@@ -3098,7 +3026,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         return getBp(PREF_WAITMSG);
     }
 
-
     /**
      * Add in the BooleanProperty into the list of properties.
      *
@@ -3110,18 +3037,19 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 for (int i = 0; i < booleanProperties.size(); i++) {
                     BooleanProperty other =
                         (BooleanProperty) booleanProperties.get(i);
+
                     if (other.getId().equals(bp.getId())) {
                         booleanProperties.remove(other);
+
                         break;
                     }
                 }
             }
+
             booleanPropertyMap.put(bp.getId(), bp);
             booleanProperties.add(bp);
         }
     }
-
-
 
     /**
      * Set the BooleanPropertiesForPersistence property.
@@ -3139,17 +3067,18 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public Hashtable getBooleanPropertiesForPersistence() {
         Hashtable tmp = new Hashtable();
+
         for (Iterator iter = booleanPropertyMap.values().iterator();
                 iter.hasNext(); ) {
             BooleanProperty bp = (BooleanProperty) iter.next();
+
             if (bp.hasValue()) {
                 tmp.put(bp.getId(), new Boolean(bp.getValue()));
             }
         }
+
         return tmp;
     }
-
-
 
     /**
      * A helper to create a check box menu item from the
@@ -3162,16 +3091,18 @@ public class ViewManager extends SharableImpl implements ActionListener,
     protected JCheckBoxMenuItem createCBMI(JMenu menu, final String id) {
         final JCheckBoxMenuItem mi = getBooleanProperty(id).createCBMI();
         String                  s  = mi.getText();
+
         if (s.startsWith("Show ")) {
             s = s.substring(5);
             mi.setText(s);
         }
+
         if (menu != null) {
             menu.add(mi);
         }
+
         return mi;
     }
-
 
     /**
      * Set the  show wireframe flag
@@ -3190,7 +3121,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         return getBp(PREF_WIREFRAME);
     }
 
-
     /**
      * Set the show display scale flag
      *
@@ -3207,9 +3137,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public boolean getShowScales() {
         return getBp(PREF_SHOWSCALES);
     }
-
-
-
 
     /**
      * Get the component that holds the side legend
@@ -3234,7 +3161,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         return sideLegend;
     }
 
-
     /**
      * Set the InitialSplitPaneLocation property.
      *
@@ -3243,7 +3169,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public void setInitialSplitPaneLocation(double value) {
         initialSplitPaneLocation = value;
     }
-
 
     /**
      * Set the state of the legend
@@ -3256,8 +3181,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         insertSideLegend();
     }
 
-
-
     /**
      * Some user preferences have changed.
      */
@@ -3265,6 +3188,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         for (Iterator iter = booleanPropertyMap.values().iterator();
                 iter.hasNext(); ) {
             BooleanProperty bp = (BooleanProperty) iter.next();
+
             bp.setValue(getStore().get(bp.getId(), bp.getValue()));
         }
 
@@ -3274,10 +3198,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
         setDisplayListFont(getStore().get(PREF_DISPLAYLISTFONT, defaultFont));
         setDisplayListColor(getStore().get(PREF_DISPLAYLISTCOLOR,
                                            (Color) null));
+
         if (animationOk()) {
             animationInfo.setBoxesVisible(getShowAnimationBoxes());
             animationWidget.setProperties(animationInfo);
         }
+
         setLogoFile(getStore().get(PREF_LOGO, ""));
         setLogoVisibility(getStore().get(PREF_LOGO_VISIBILITY, false));
         setLogoScale(getStore().get(PREF_LOGO_SCALE, 1.0f));
@@ -3296,8 +3222,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 getStore().get(PREF_SHOWTOOLBAR + toolbarIds.get(i), true));
         }
     }
-
-
 
     /**
      * Setter method for xml persistence. Does this
@@ -3319,8 +3243,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         return (getDisplayWindow() != null);
     }
 
-
-
     /**
      * This returns the value of the hasWindow member which
      * was set when unpersisting.
@@ -3331,20 +3253,18 @@ public class ViewManager extends SharableImpl implements ActionListener,
         return hasWindow;
     }
 
-
     /*
      * Getter method for xml persistence
      *
      * @return The bounds of the window
-    public Rectangle getWindowBounds() {
-        IdvWindow myWindow = getDisplayWindow();
-        if (myWindow != null) {
-            return myWindow.getBounds();
-        }
-        return windowBounds;
-    }
+     * public Rectangle getWindowBounds() {
+     *   IdvWindow myWindow = getDisplayWindow();
+     *   if (myWindow != null) {
+     *       return myWindow.getBounds();
+     *   }
+     *   return windowBounds;
+     * }
      */
-
 
     /**
      * Setter method for xml persistence
@@ -3353,16 +3273,18 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public void setWindowBounds(Rectangle r) {
         windowBounds = r;
+
         IdvWindow myWindow = getDisplayWindow();
+
         if ((myWindow != null) && (r != null)) {
             boolean wasVisible = myWindow.isVisible();
-            //            myWindow.setVisible(false);
+
+            // myWindow.setVisible(false);
             myWindow.setBounds(r);
-            //            myWindow.setVisible(wasVisible);
+
+            // myWindow.setVisible(wasVisible);
         }
     }
-
-
 
     /**
      * Set the window that this ViewManager is shown in.
@@ -3381,6 +3303,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
             w.setWindowBounds(windowBounds);
             windowBounds = null;
         }
+
         final WindowAdapter[] wa = { null };
 
         w.addWindowListener(wa[0] = new WindowAdapter() {
@@ -3403,11 +3326,11 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (legends == null) {
             return new ArrayList<IdvLegend>();
         }
+
         synchronized (legends) {
             return new ArrayList<IdvLegend>(legends);
         }
     }
-
 
     /**
      * Called when the window is closed. This method closes any open legends.
@@ -3416,11 +3339,11 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (legends == null) {
             return;
         }
+
         for (IdvLegend legend : getLegends()) {
             legend.doClose();
         }
     }
-
 
     /**
      * Show (float) all legends
@@ -3430,7 +3353,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
             legend.showLegend();
         }
     }
-
 
     /**
      * We call this getDisplayWindow instead of getWindow so the
@@ -3442,9 +3364,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (fullContents == null) {
             return null;
         }
+
         return IdvWindow.findWindow(fullContents);
     }
-
 
     /**
      * Set the default size of the DisplayMaster held by this view.
@@ -3464,9 +3386,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (defaultSize == null) {
             defaultSize = new Dimension(600, 400);
         }
+
         return defaultSize;
     }
-
 
     /**
      * A hook so derived classes can add in their own preference widgets.
@@ -3474,7 +3396,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * @param preferenceManager The preference manager
      */
     public void initPreferences(IdvPreferenceManager preferenceManager) {}
-
 
     /**
      * Wrapper around {@link IntegratedDataViewer#getStore()}
@@ -3487,8 +3408,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 : idv.getStore());
     }
 
-
-
     /**
      * Get the list of  Projections available.
      *
@@ -3497,7 +3416,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public List getProjectionList() {
         return getIdv().getIdvProjectionManager().getProjections();
     }
-
 
     /**
      * Get the {@link IdvResourceManager} to use.
@@ -3509,7 +3427,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 ? null
                 : idv.getResourceManager());
     }
-
 
     /**
      * Get the {@link StateManager} to use.
@@ -3533,7 +3450,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 : idv.getPublishManager());
     }
 
-
     /**
      * Get the {@link ucar.unidata.idv.ui.IdvUIManager} to use.
      *
@@ -3544,7 +3460,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 ? null
                 : idv.getIdvUIManager());
     }
-
 
     /**
      *  Get the {@link VMManager} to use.
@@ -3557,8 +3472,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 : idv.getVMManager());
     }
 
-
-
     /**
      * Parse and apply the properties in the semi-colon delimited
      * list of name=value pairs.
@@ -3569,15 +3482,20 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (properties == null) {
             return;
         }
+
         List props = StringUtil.split(properties, ";");
+
         for (int i = 0; i < props.size(); i++) {
             String nameValue = (String) props.get(i);
             int    idx       = nameValue.indexOf("=");
+
             if (idx < 0) {
                 continue;
             }
+
             String propName  = nameValue.substring(0, idx).trim();
             String propValue = nameValue.substring(idx + 1);
+
             setProperty(propName, propValue, false);
         }
     }
@@ -3600,13 +3518,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
         } catch (Exception exc) {
             logException("setProperty:" + name + " value= " + value, exc);
         }
+
         return false;
     }
-
-
-
-
-
 
     /**
      * Is the DisplayMaster currently active.
@@ -3617,27 +3531,26 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (master == null) {
             return false;
         }
+
         return master.isActive();
     }
-
-
 
     /**
      * Set the {@link ucar.visad.display.DisplayMaster} inactive.
      */
     public void setMasterInactive() {
-        //Make sure we have an initialized DisplayMaster
+
+        // Make sure we have an initialized DisplayMaster
         if (master == null) {
             return;
         }
+
         try {
             master.setDisplayInactive();
         } catch (Exception exp) {
             logException("setMasterInactive", exp);
         }
     }
-
-
 
     /**
      * Set the {@link ucar.visad.display.DisplayMaster} active
@@ -3654,23 +3567,22 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * @param force  if true, force it active
      */
     public void setMasterActive(boolean force) {
-        //Make sure we have an initialized DisplayMaster
+
+        // Make sure we have an initialized DisplayMaster
         if (master == null) {
             return;
         }
+
         try {
-//            if (force) {
-//                master.setActive(true);
-//            } else {
-//                master.setDisplayActive();
-//            }
-            master.setDisplayActive();
+            if (force) {
+                master.setActive(true);
+            } else {
+                master.setDisplayActive();
+            }
         } catch (Exception exp) {
             logException("setMasterActive", exp);
         }
     }
-
-
 
     /**
      * Get the location of the side legend or -1 if there is no side legend
@@ -3679,12 +3591,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public int getSideDividerLocation() {
         JSplitPane tmp = mainSplitPane;
+
         if (tmp != null) {
             return tmp.getDividerLocation();
         }
+
         return -1;
     }
-
 
     /**
      * Set the location  of the side legend. This really just saves it
@@ -3695,65 +3608,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public void setSideDividerLocation(int l) {
         sideDividerLocation = l;
     }
-
-
-
-    /**
-     * Class MatrixCommand manages changes to the viewpoint matrix
-     *
-     *
-     * @author IDV Development Team
-     * @version $Revision$
-     */
-    public static class MatrixCommand extends Command {
-
-        /** The viewmanager */
-        ViewManager viewManager;
-
-        /** The old matrix */
-        double[] oldMatrix;
-
-        /** The new matrix */
-        double[] newMatrix;
-
-        /**
-         * ctor
-         *
-         * @param viewManager The vm
-         * @param oldMatrix  The old matrix
-         * @param newMatrix  The new matrix
-         */
-        public MatrixCommand(ViewManager viewManager, double[] oldMatrix,
-                             double[] newMatrix) {
-            this.viewManager = viewManager;
-            this.oldMatrix   = oldMatrix;
-            this.newMatrix   = newMatrix;
-        }
-
-        /**
-         * Redo
-         */
-        public void redoCommand() {
-            try {
-                viewManager.getMaster().setProjectionMatrix(newMatrix);
-            } catch (Exception exp) {
-                viewManager.logException("setProjectionMatrix", exp);
-            }
-        }
-
-        /**
-         * Undo
-         */
-        public void undoCommand() {
-            try {
-                viewManager.getMaster().setProjectionMatrix(oldMatrix);
-            } catch (Exception exp) {
-                viewManager.logException("setProjectionMatrix", exp);
-            }
-        }
-    }
-
-
 
     /**
      * Add the command to the command manager. Use this for undo/redo commands.
@@ -3773,23 +3627,24 @@ public class ViewManager extends SharableImpl implements ActionListener,
         char c    = keyEvent.getKeyChar();
         int  code = keyEvent.getKeyCode();
         int  id   = keyEvent.getID();
+
         if (id == KeyEvent.KEY_PRESSED) {
             if (GuiUtils.isControlKey(keyEvent)) {
                 if (code == KeyEvent.VK_Z) {
-                    //                    getCommandManager().move(-1);
+
+                    // getCommandManager().move(-1);
                 } else if (code == KeyEvent.VK_Y) {
-                    //                    getCommandManager().move(1);
+
+                    // getCommandManager().move(1);
                 }
+
                 return;
             }
         }
 
-
         if (id != KeyEvent.KEY_RELEASED) {
             return;
         }
-
-
 
         if (code == KeyEvent.VK_F1) {
             runVisibilityAnimation = false;
@@ -3800,12 +3655,15 @@ public class ViewManager extends SharableImpl implements ActionListener,
             turnOnOffAllDisplays(false);
         } else if (GuiUtils.isControlKey(keyEvent, KeyEvent.VK_I)) {
             doSaveImageInThread();
+
             return;
         } else if (GuiUtils.isControlKey(keyEvent, KeyEvent.VK_M)) {
             startImageCapture();
+
             return;
         } else if (GuiUtils.isControlKey(keyEvent, KeyEvent.VK_B)) {
             getIdv().doSaveAs();
+
             return;
         } else if ( !Character.isDigit(c)) {
             return;
@@ -3822,27 +3680,29 @@ public class ViewManager extends SharableImpl implements ActionListener,
         }
     }
 
-
     /**
      * Turn on/off the display control visibility toggling animation
      *
      * @param state Turn on or off.
      */
     public void setAnimatedVisibility(boolean state) {
-        logger.trace("state={} runVisibilityAnimation={}", state, runVisibilityAnimation);
         if (state == runVisibilityAnimation) {
             return;
         }
+
         runVisibilityAnimation = state;
+
         if (runVisibilityAnimation) {
             Thread t = new Thread() {
                 public void run() {
                     if (getIsDestroyed()) {
                         return;
                     }
+
                     while (runVisibilityAnimation && !getIsDestroyed()
                             && !getDisplayInfos().isEmpty()) {
                         int sleepTime = stepVisibilityToggle();
+
                         try {
                             Thread.sleep((sleepTime < 0)
                                          ? animationSpeed
@@ -3851,19 +3711,18 @@ public class ViewManager extends SharableImpl implements ActionListener,
                             return;
                         }
                     }
+
                     if (getIsDestroyed()) {
                         return;
                     }
+
                     if (getDisplayInfos().isEmpty()) {
-                        logger.trace("forcing viz animation to false");
                         runVisibilityAnimation = false;
                     }
                 }
             };
+
             t.start();
-            this.setVisibilityAnimationCheckBox("On");
-        } else {
-            this.setVisibilityAnimationCheckBox("Off");
         }
     }
 
@@ -3875,16 +3734,17 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public void turnOnOffAllDisplays(boolean on) {
         runVisibilityAnimation = false;
+
         List controls = getControls();
+
         for (int i = controls.size() - 1; i >= 0; i--) {
             DisplayControl control = (DisplayControl) controls.get(i);
+
             if ( !control.getLockVisibilityToggle()) {
                 control.setDisplayVisibility(on);
             }
         }
-
     }
-
 
     /**
      * Tell the display controls that the projection has changed.
@@ -3893,12 +3753,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     protected void notifyDisplayControls(String property) {
         List controls = getControls();
+
         for (int i = 0; i < controls.size(); i++) {
             DisplayControl control = (DisplayControl) controls.get(i);
+
             control.viewManagerChanged(property);
         }
     }
-
 
     /**
      * This turns on the visbility of the next  display control
@@ -3912,55 +3773,59 @@ public class ViewManager extends SharableImpl implements ActionListener,
         } else {
             currentVisibilityIdx++;
         }
+
         List controls                = getControls();
-
         int  visbilityAnimationPause = -1;
-
         int  cnt                     = 0;
-        //Find the next one in the list that is not locked
+
+        // Find the next one in the list that is not locked
         while (cnt < controls.size()) {
             if (currentVisibilityIdx >= controls.size()) {
                 currentVisibilityIdx = 0;
             }
+
             DisplayControl control =
                 (DisplayControl) controls.get(currentVisibilityIdx);
+
             if ( !control.getLockVisibilityToggle()) {
                 visbilityAnimationPause =
                     control.getVisbilityAnimationPause();
-                break;
 
+                break;
             }
+
             currentVisibilityIdx++;
             cnt++;
         }
 
         List unlockedControls = new ArrayList();
+
         for (int i = 0; i < controls.size(); i++) {
             DisplayControl control = (DisplayControl) controls.get(i);
+
             if ( !control.getLockVisibilityToggle()) {
                 unlockedControls.add(control);
             }
         }
 
-
         for (int i = 0; i < controls.size(); i++) {
             DisplayControl control = (DisplayControl) controls.get(i);
+
             if (control.getLockVisibilityToggle()) {
                 continue;
             }
-            //Special case for when we only have we. We just flip-flop its visibility
+
+            // Special case for when we only have we. We just flip-flop its visibility
             if (unlockedControls.size() == 1) {
                 control.setDisplayVisibility(
                      !control.getDisplayVisibility());
             } else {
                 control.setDisplayVisibility(i == currentVisibilityIdx);
             }
-
         }
 
         return visbilityAnimationPause;
     }
-
 
     /**
      *  Show the idx'th DisplayControl. Turn off the visiblity of the others (except
@@ -3970,23 +3835,27 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     private void stepVisibilityToggle(int idx) {
         idx--;
+
         List controls = getControls();
+
         if (idx >= controls.size()) {
             return;
         }
+
         int cnt = 0;
+
         for (int i = controls.size() - 1; i >= 0; i--) {
             DisplayControl control = (DisplayControl) controls.get(i);
+
             if (cnt == idx) {
                 control.setDisplayVisibility(true);
             } else if ( !control.getLockVisibilityToggle()) {
                 control.setDisplayVisibility(false);
             }
+
             cnt++;
         }
     }
-
-
 
     /**
      * Add the given component into the list of toolbar
@@ -4018,7 +3887,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         return getStore().get(PREF_SHOWBOTTOMLEGEND, false);
     }
 
-
     /**
      * Should we show the side legend that holds the list of
      * display controls.
@@ -4029,8 +3897,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         return getStore().get(PREF_SHOWSIDELEGEND, true);
     }
 
-
-
     /**
      * Should we show the animation widget boxes
      *
@@ -4040,8 +3906,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         return getStore().get(PREF_SHOWANIMATIONBOXES, true);
     }
 
-
-
     /**
      * Set whether we should show any of the display control legends
      *
@@ -4049,6 +3913,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public void setShowControlLegend(boolean b) {
         showControlLegend = b;
+
         if (showControlLegend) {
             legendState = IdvLegend.STATE_DOCKED;
         } else {
@@ -4083,8 +3948,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         return legendState;
     }
 
-
-
     /**
      * Create and return the menu bar.
      *
@@ -4092,8 +3955,10 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     protected JMenuBar doMakeMenuBar() {
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
+
         List     items   = doMakeMenuList();
         JMenuBar menuBar = GuiUtils.makeMenuBar(items);
+
         return menuBar;
     }
 
@@ -4116,17 +3981,19 @@ public class ViewManager extends SharableImpl implements ActionListener,
         ArrayList controls          = new ArrayList();
         List      localDisplayInfos = getDisplayInfos();
         Hashtable seen              = new Hashtable();
+
         for (int i = 0; i < localDisplayInfos.size(); i++) {
             DisplayControl control =
                 ((DisplayInfo) localDisplayInfos.get(i)).getDisplayControl();
+
             if (seen.get(control) == null) {
                 seen.put(control, control);
                 controls.add(control);
             }
         }
+
         return controls;
     }
-
 
     /**
      * Handle the display data changing
@@ -4135,6 +4002,10 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public void displayDataChanged(DisplayControl displayControl) {
         if (idv.getUseTimeDriver() && displayControl.getIsTimeDriver()) {
+            // now, reload any that are using time drives
+            reloadTimeDriverDataSources(displayControl);
+        }
+        /*
             for (DisplayControl control :
                     (List<DisplayControl>) getControls()) {
                 if ( !control.equals(displayControl)
@@ -4150,6 +4021,74 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 }
             }
         }
+        */
+    }
+
+    /**
+     * Reload the data sources associated with controls using time drivers.
+     * @param displayControl the time driver control, or null if using the Animation
+     */
+    private void reloadTimeDriverDataSources(DisplayControl displayControl) {
+        List<DataSource> uniqueSources =
+            Collections.synchronizedList(new ArrayList<DataSource>());
+
+        if (idv.getUseTimeDriver()
+                && ((displayControl == null)
+                    || displayControl.getIsTimeDriver())) {
+            for (DisplayControl control :
+                    (List<DisplayControl>) getControls()) {
+                if (((displayControl == null) || !control
+                        .equals(
+                            displayControl)) && ((DisplayControlImpl) control)
+                                .getUsesTimeDriver()) {
+                    List controlSources =
+                        ((DisplayControlImpl) control).getDataSources();
+                    for (int i = 0; i < controlSources.size(); i++) {
+                        DataSourceImpl ds =
+                            (DataSourceImpl) controlSources.get(i);
+                        if ( !uniqueSources.contains(ds)) {
+                            uniqueSources.add(ds);
+                        }
+                    }
+                }
+            }
+        }
+        for (DataSource source : uniqueSources) {
+            try {
+                Misc.run(source, "reloadData");
+            } catch (Exception e) {
+                logException("Error reloading data source for "
+                             + source.getName(), e);
+            }
+        }
+    }
+
+    /**
+     * Handle the time set from the animation widget changing
+     */
+    public void animationDriverChanged() {
+        // first, turn off any control time drivers
+        for (DisplayControl control : (List<DisplayControl>) getControls()) {
+            if (((DisplayControlImpl) control).getIsTimeDriver()) {
+                ((DisplayControlImpl) control).setIsTimeDriver(false);
+                // make sure it will listen to the animation driver
+                ((DisplayControlImpl) control).setUsesTimeDriver(true);
+            }
+        }
+        // now, reload any that are using time drives
+        reloadTimeDriverDataSources(null);
+        /*
+        for (DisplayControl control : (List<DisplayControl>) getControls()) {
+            try {
+                if (((DisplayControlImpl) control).getUsesTimeDriver()) {
+                    ((DisplayControlImpl) control).reloadDataSourceInThread();
+                }
+            } catch (Exception e) {
+                logException("Error reloading data source for "
+                             + control.getLabel(), e);
+            }
+        }
+        */
     }
 
     /**
@@ -4161,16 +4100,17 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public List getControlsForLegend() {
         List legendControls = new ArrayList();
         List controls       = getControls();
+
         for (int i = 0; i < controls.size(); i++) {
             DisplayControl control = (DisplayControl) controls.get(i);
+
             if (control.getShowInLegend()) {
                 legendControls.add(control);
             }
         }
+
         return legendControls;
     }
-
-
 
     /**
      * Set the foreground and background colors in the display.
@@ -4185,10 +4125,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (foreground == null) {
             foreground = this.foreground;
         }
+
         this.foreground = foreground;
+
         if (background == null) {
             background = this.background;
         }
+
         this.background = background;
 
         if ( !hasDisplayMaster()) {
@@ -4197,15 +4140,15 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
         getMaster().setBackground(background);
         getMaster().setForeground(foreground);
+
         if (legends == null) {
             return;
         }
+
         for (IdvLegend legend : getLegends()) {
             legend.setColors(foreground, background);
         }
     }
-
-
 
     /**
      * This goes through the list of display controls and, if
@@ -4219,14 +4162,15 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     private void setDisplayCategoryVisiblity(String category, boolean on) {
         List controls = getControls();
+
         for (int i = controls.size() - 1; i >= 0; i--) {
             DisplayControl control = (DisplayControl) controls.get(i);
+
             if (Misc.equals(control.getDisplayCategory(), category)) {
                 control.setDisplayVisibility(on);
             }
         }
     }
-
 
     /**
      * Called when the dispay category or other state of the display control has changed.
@@ -4236,6 +4180,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public void displayControlChanged(DisplayControl displayControl) {
         fillLegends();
+
         if (timelineDialog != null) {
             timelineDialog.repaint();
         }
@@ -4251,9 +4196,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (timelineDialog != null) {
             timelineDialog.repaint();
         }
+
         updateDisplayList();
     }
-
 
     /**
      * This is called when the list of display controls has changed.
@@ -4266,23 +4211,25 @@ public class ViewManager extends SharableImpl implements ActionListener,
         } else {
             dirty = true;
         }
-
     }
-
 
     /**
      * tell the legends to fill themselves
      */
     protected void reallyFillLegends() {
-        //If we are not loading a bundle then fill the legends right now
+
+        // If we are not loading a bundle then fill the legends right now
         if ( !getStateManager().isLoadingXml()
                 || !shouldDoThingsRightAway()) {
             fillLegendsInner();
         } else {
-            //else fill them in about 1 second
+
+            // else fill them in about 1 second
             fillLegendsTime = System.currentTimeMillis() + 1000;
+
             if ( !fillLegendsPending) {
-                //If none pending then start the thread
+
+                // If none pending then start the thread
                 fillLegendsPending = true;
                 Misc.run(this, "fillLegendsLater");
             }
@@ -4294,22 +4241,23 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * and then fill the legends
      */
     public void fillLegendsLater() {
-        //We keep looping until there hasn't been a recent addition to the legends
-        //or until something else has filled the legends
+
+        // We keep looping until there hasn't been a recent addition to the legends
+        // or until something else has filled the legends
         while (fillLegendsPending) {
             long diff = fillLegendsTime - System.currentTimeMillis();
+
             if (diff > 0) {
                 Misc.sleep(diff);
             } else {
                 if (fillLegendsPending) {
                     fillLegendsInner();
                 }
+
                 break;
             }
         }
     }
-
-
 
     /**
      * actually fill the legends and update the display list
@@ -4317,14 +4265,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
     protected void fillLegendsInner() {
         fillLegendsPending = false;
         updateDisplayList();
+
         synchronized (LEGENDMUTEX) {
             for (IdvLegend legend : getLegends()) {
                 legend.fillLegend();
             }
         }
     }
-
-
 
     /**
      * This is called when the list of display controls has changed
@@ -4337,63 +4284,69 @@ public class ViewManager extends SharableImpl implements ActionListener,
         JMenuItem item     = null;
         boolean   didone   = false;
         int       cnt      = 0;
+
         if (getShowSideLegend()) {
             if ( !legendState.equals(IdvLegend.STATE_HIDDEN)) {
                 displayMenu.add(GuiUtils.makeMenuItem("Hide Legend", this,
                         "setSideLegendPosition", IdvLegend.STATE_HIDDEN));
             }
+
             if ( !legendState.equals(IdvLegend.STATE_DOCKED)) {
                 displayMenu.add(GuiUtils.makeMenuItem("Embed Legend", this,
                         "setSideLegendPosition", IdvLegend.STATE_DOCKED));
             }
+
             if ( !legendState.equals(IdvLegend.STATE_FLOAT)) {
                 displayMenu.add(GuiUtils.makeMenuItem("Float Legend", this,
                         "setSideLegendPosition", IdvLegend.STATE_FLOAT));
             }
+
             displayMenu.addSeparator();
         }
 
         for (int i = controls.size() - 1; i >= 0; i--) {
             DisplayControl control = (DisplayControl) controls.get(i);
+
             if ( !didone) {
                 didone = true;
                 displayMenu.add(GuiUtils.makeMenuItem("Remove All Displays",
                         this, "clearDisplays"));
+
                 if (animationMenu == null) {
                     animationMenu = new JMenu("Visibility Animation");
                     animationCB   = new JCheckBoxMenuItem("On");
-                    animationCB.setSelected("On".equals(getVisibilityAnimationCheckBox()));
                     animationCB.addActionListener(new ObjectListener(null) {
                         public void actionPerformed(ActionEvent event) {
-                            setVisibilityAnimationCheckBox("On");
                             setAnimatedVisibility(((JCheckBoxMenuItem) event
                                 .getSource()).isSelected());
                         }
                     });
-
                     animationMenu.add(animationCB);
                     item = new JMenuItem("Faster");
-                    item.setSelected("Faster".equals(getVisibilityAnimationCheckBox()));
                     item.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent event) {
-                            fasterVisibilityAnimation();
+                            if (animationSpeed > 300) {
+                                animationSpeed -= 200;
+                            }
                         }
                     });
                     animationMenu.add(item);
                     item = new JMenuItem("Slower");
-                    item.setSelected("Slower".equals(getVisibilityAnimationCheckBox()));
                     item.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent event) {
-                            slowerVisibilityAnimation();
+                            animationSpeed += 200;
                         }
                     });
                     animationMenu.add(item);
                 }
+
                 displayMenu.add(animationMenu);
                 displayMenu.addSeparator();
             }
+
             String legendOrder = " #" + (++cnt) + "  ";
             String label       = legendOrder + " " + control.getMenuLabel();
+
             displayMenu.add(GuiUtils.makeMenu(label,
                     control.getControlMenus(displayMenu)));
         }
@@ -4402,7 +4355,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
             displayMenu.add(new JLabel("No displays"));
         }
     }
-
 
     /**
      * Adds the given display listener to the
@@ -4414,10 +4366,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         getMaster().addDisplayListener(listener);
     }
 
-
-
-
-
     /**
      * A wrapper  around {@link IdvBase#getDisplayConventions()}
      *
@@ -4426,8 +4374,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public DisplayConventions getDisplayConventions() {
         return idv.getDisplayConventions();
     }
-
-
 
     /**
      * This removes the given {@link DisplayInfo}.
@@ -4444,19 +4390,22 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (getIsDestroyed()) {
             return;
         }
+
         synchronized (displayInfos) {
             displayInfos.remove(displayInfo);
         }
+
         if (master != null) {
             Displayable displayable = displayInfo.getDisplayable();
+
             if (displayable != null) {
                 master.removeDisplayable(displayable);
             }
         }
+
         fillLegends();
         updateTimelines(true);
     }
-
 
     /**
      * This is called by display controls and allows us to force fast rendering
@@ -4468,8 +4417,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public boolean getUseFastRendering(boolean b) {
         return b;
     }
-
-
 
     /**
      * Add the display infos
@@ -4485,8 +4432,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
             return;
         }
 
-
         setMasterInactive();
+
         try {
             if (master != null) {
                 for (DisplayInfo info : displayInfos) {
@@ -4494,22 +4441,20 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 }
             }
 
-
             if (shouldDoThingsRightAway()) {
                 fillLegends();
                 updateTimelines(true);
+
                 if ( !getStateManager().isLoadingXml()) {
                     toFront();
                 }
             } else {
                 dirty = true;
             }
-
         } finally {
             setMasterActive();
         }
     }
-
 
     /**
      *  Add the DisplayInfo to the list of DisplayInfo-s
@@ -4534,8 +4479,10 @@ public class ViewManager extends SharableImpl implements ActionListener,
             if (displayInfos.contains(displayInfo)) {
                 return true;
             }
+
             displayInfos.add(displayInfo);
         }
+
         if (master != null) {
             if (shouldDoThingsRightAway()) {
                 master.addDisplayable(displayInfo.getDisplayable());
@@ -4546,9 +4493,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
         return true;
     }
-
-
-
 
     /**
      * Update display if needed
@@ -4561,29 +4505,37 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if ( !dirty || (master == null)) {
             return;
         }
+
         dirty = false;
+
         List tmpList = getDisplayInfos();
+
         master.setDisplayInactive();
+
         for (int i = 0; i < tmpList.size(); i++) {
             DisplayInfo displayInfo = (DisplayInfo) tmpList.get(i);
+
             master.addDisplayable(displayInfo.getDisplayable());
         }
+
         reallyFillLegends();
-        //This sets the master active
+
+        // This sets the master active
         master.draw();
     }
-
 
     /**
      * Bring the window that contains this ViewManager to the front
      */
     public void toFront() {
         Window window = GuiUtils.getWindow(getComponent());
-        //        IdvWindow idvWindow = getDisplayWindow();
+
+        // IdvWindow idvWindow = getDisplayWindow();
         if (window != null) {
             GuiUtils.toFront(window);
-            //            indow.show();
-            //            idvWindow.toFront();
+
+            // indow.show();
+            // idvWindow.toFront();
         }
     }
 
@@ -4594,24 +4546,28 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (getIsDestroyed()) {
             return;
         }
+
         try {
-            //            setMasterInactive();
+
+            // setMasterInactive();
             List tmpList = getDisplayInfos();
+
             for (int i = 0; i < tmpList.size(); i++) {
                 DisplayControl dc =
                     ((DisplayInfo) tmpList.get(i)).getDisplayControl();
+
                 if (dc.getCanDoRemoveAll()) {
                     dc.doRemove();
                 }
             }
-            //            setMasterActive();
+
+            // setMasterActive();
             fillLegends();
             updateTimelines(true);
         } catch (Exception exp) {
             logException("clearDisplays", exp);
         }
     }
-
 
     /**
      * This gets called when a display control has been moved to this viewmanager
@@ -4630,13 +4586,14 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     protected JMenu makeShowMenu() {
         JMenu showMenu = new JMenu("Show");
+
         createCBMI(showMenu, PREF_WIREFRAME);
         createCBMI(showMenu, PREF_WAITMSG);
         createCBMI(showMenu, PREF_SHOWDISPLAYLIST);
+        createCBMI(showMenu, PREF_TOPBAR_VISIBLE);
+
         return showMenu;
     }
-
-
 
     /**
      * Create and return the view menu.
@@ -4646,10 +4603,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public JMenu makeViewMenu() {
         JMenu viewMenu = GuiUtils.makeDynamicMenu("View", this,
                              "firstInitializeViewMenu");
+
         viewMenu.setMnemonic(GuiUtils.charToKeyCode("V"));
+
         if (this.viewMenu == null) {
             this.viewMenu = viewMenu;
         }
+
         return viewMenu;
     }
 
@@ -4664,7 +4624,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         menuItems.addAll(doMakeMenuList());
     }
 
-
     /**
      * Initialize the view menu.
      * This gets called first and allows us to translate the component tree
@@ -4676,8 +4635,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         Msg.translateTree(viewMenu);
     }
 
-
-
     /**
      * Dynamically initialize the view menu
      *
@@ -4687,15 +4644,16 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (showControlMenu) {
             JMenu displayMenu = GuiUtils.makeDynamicMenu("Displays", this,
                                     "initDisplayMenu");
+
             viewMenu.add(displayMenu);
             viewMenu.addSeparator();
         }
 
-
-
         List renderItems = new ArrayList();
+
         renderItems.add(GuiUtils.makeMenuItem("Make Frames", this,
                 "makeFrames"));
+
         if (usingImagePanel) {
             renderItems.add(GuiUtils.makeMenuItem("Reset to display", this,
                     "useDisplay"));
@@ -4704,25 +4662,27 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     "useImages"));
         }
 
-        //        viewMenu.add(GuiUtils.makeMenu("Rendering", renderItems));
-
+        // viewMenu.add(GuiUtils.makeMenu("Rendering", renderItems));
         JMenu captureMenu = new JMenu("Capture");
+
         viewMenu.add(captureMenu);
+
         JMenuItem mi;
+
         captureMenu.add(
             mi = (JMenuItem) GuiUtils.setIcon(
                 GuiUtils.makeMenuItem(
                     "Image...  Ctrl+I", this,
                     "doSaveImageInThread"), "/auxdata/ui/icons/camera.png"));
-        //        mi.setMnemonic(GuiUtils.charToKeyCode("C"));
+
+        // mi.setMnemonic(GuiUtils.charToKeyCode("C"));
         captureMenu.add(
             mi = (JMenuItem) GuiUtils.setIcon(
                 GuiUtils.makeMenuItem(
                     "Movie...  Ctrl+M", this,
                     "startImageCapture"), "/auxdata/ui/icons/film.png"));
-        //        mi.setMnemonic(GuiUtils.charToKeyCode("M"));
 
-
+        // mi.setMnemonic(GuiUtils.charToKeyCode("M"));
         captureMenu.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("Print...",
                 this, "doPrintImage", null,
                 true), "/auxdata/ui/icons/printer.png"));
@@ -4733,8 +4693,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         }
     }
 
-
-
     /**
      * Make the saved views menu
      *
@@ -4744,7 +4702,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         return GuiUtils.makeDynamicMenu("Viewpoints", this,
                                         "initViewStateMenu");
     }
-
 
     /**
      * Initialize the View State menu
@@ -4767,19 +4724,22 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public boolean isCompatibleWith(ViewManager vm) {
         IdvWindow thisWindow = getDisplayWindow();
+
         if (thisWindow != null) {
-            //If this is being called it means the given vm is from an old bundle
-            //And we only want to be compatible with it if we are in the default window
+
+            // If this is being called it means the given vm is from an old bundle
+            // And we only want to be compatible with it if we are in the default window
             String skin = thisWindow.getSkinPath();
+
             if ((skin != null)
                     && !Misc.equals(
                         "/ucar/unidata/idv/resources/skins/skin.xml", skin)) {
                 return false;
             }
         }
+
         return getClass().equals(vm.getClass());
     }
-
 
     /**
      * Is this ViewState appropriate for me?
@@ -4792,7 +4752,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         return getClass().getName().toString().equals(
             viewState.getViewClassName().trim());
     }
-
 
     /**
      * Make the view state menu
@@ -4834,11 +4793,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         return externalAnimation;
     }
 
-
-
-
-
-
     /**
      * Get the ExternalAnimationWidget property.
      *
@@ -4847,8 +4801,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public AnimationWidget getExternalAnimationWidget() {
         return externalAnimationWidget;
     }
-
-
 
     /**
      * Return the {@link ucar.visad.display.Animation}
@@ -4867,13 +4819,14 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     animationInfo =
                         (AnimationInfo) getIdv().getPersistenceManager()
                             .getPrototype(AnimationInfo.class);
+
                     if (animationInfo == null) {
                         animationInfo = new AnimationInfo();
                         animationInfo.setBoxesVisible(
                             getShowAnimationBoxes());
                     }
-
                 }
+
                 animationWidget = new AnimationWidget(animationInfo);
                 animationWidget.setUniqueId(getUniqueId() + "_anim");
                 animation = new Animation();
@@ -4881,23 +4834,31 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 animation.addPropertyChangeListener(
                     new PropertyChangeListener() {
                     public void propertyChange(PropertyChangeEvent evt) {
+                        AnimationInfo aniInfo = animation.getAnimationInfo();
                         try {
                             if (evt.getPropertyName().equals(
                                     Animation.ANI_VALUE)) {
                                 animationTimeChanged();
                                 updateTimelines(false);
+
                                 if (imagePanel != null) {
                                     imagePanel.setSelectedFile(
                                         animation.getCurrent());
                                 }
                             } else if (evt.getPropertyName().equals(
-                                    Animation.ANI_SET) && (animationTimeline
-                                        != null)) {
+                                    Animation.ANI_SET)) {
                                 if (animationTimeline != null) {
                                     animationTimeline.setDatedThings(
                                         DatedObject.wrap(
                                             Util.makeDates(
                                                 animationWidget.getTimes())));
+                                }
+                                if ((aniInfo != null) && aniInfo
+                                        .getAnimationSetInfo()
+                                        .getActive() && aniInfo
+                                        .getAnimationSetInfo()
+                                        .getIsTimeDriver()) {
+                                    animationDriverChanged();
                                 }
                             }
                         } catch (Exception exp) {
@@ -4905,7 +4866,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
                         }
                     }
                 });
-
             } catch (Exception exp) {
                 logException("getAnimation", exp);
             }
@@ -4943,10 +4903,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (animationWidget != null) {
             return animationWidget.getAnimationInfo();
         }
+
         return null;
     }
-
-
 
     /**
      * Has this ViewManager been destroyed. A destroyed  ViewManager
@@ -4959,7 +4918,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         return isDestroyed;
     }
 
-
     /**
      * Add a removeable object
      *
@@ -4968,7 +4926,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public void addRemovable(Removable removable) {
         removables.add(removable);
     }
-
 
     /**
      * Destroy this view manager. Turn off all pending wait cursor
@@ -4981,21 +4938,24 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (isDestroyed) {
             return;
         }
+
         isDestroyed = true;
         getIdvUIManager().viewManagerDestroyed(this);
 
         for (Removable removable : removables) {
             removable.doRemove();
         }
+
         removables = null;
 
-
-        //First get rid of the  displays
-        //Do this here so we don't get into any infinite loops with
-        //the transectdrawingcontrol
+        // First get rid of the  displays
+        // Do this here so we don't get into any infinite loops with
+        // the transectdrawingcontrol
         setMasterInactive();
+
         if (displayInfos != null) {
             List tmpList = getDisplayInfos();
+
             for (int i = 0; i < tmpList.size(); i++) {
                 try {
                     ((DisplayInfo) tmpList.get(
@@ -5004,30 +4964,24 @@ public class ViewManager extends SharableImpl implements ActionListener,
             }
         }
 
-
         if (getVMManager() != null) {
             getVMManager().removeViewManager(this);
         }
 
-        //Make sure we clear out any outstanding wait cursor calls
+        // Make sure we clear out any outstanding wait cursor calls
         while (outstandingWaits-- >= 0) {
-            //            getIdvUIManager().showNormalCursor();
+
+            // getIdvUIManager().showNormalCursor();
         }
-
-
-
-
 
         removeSharable();
 
         if (timelineDialog != null) {
             timelineDialog.dispose();
-
         }
 
         if (propertiesDialog != null) {
             propertiesDialog.dispose();
-
         }
 
         if (animationWidget != null) {
@@ -5039,18 +4993,22 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 if (displayListDisplayables != null) {
                     master.removeDisplayable(displayListDisplayables);
                 }
+
                 master.destroy();
             } catch (Throwable exp) {
-                //Ignore  any errors when we destroy the DisplayMaster
+
+                // Ignore  any errors when we destroy the DisplayMaster
                 Throwable wrappedExc = LogUtil.getInnerException(exp);
+
                 LogUtil.consoleMessage(
                     "Had an error destroying the DisplayMaster:"
                     + wrappedExc);
-                //logException("Destroying the View Manager", exp);
+
+                // logException("Destroying the View Manager", exp);
             } finally {}
+
             master = null;
         }
-
 
         if (animationMenu != null) {
             GuiUtils.empty(animationMenu, true);
@@ -5068,7 +5026,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
             GuiUtils.empty(fullContents, true);
         }
 
-        //Be somewhat overly agressive about nulling out references, etc.
+        // Be somewhat overly agressive about nulling out references, etc.
         timelineDialog          = null;
         propertiesDialog        = null;
         animationWidget         = null;
@@ -5084,7 +5042,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         menuBar                 = null;
         fullContents            = null;
         idv                     = null;
-
         displayInfos.clear();
 
     }
@@ -5097,10 +5054,10 @@ public class ViewManager extends SharableImpl implements ActionListener,
     protected List<DisplayInfo> getDisplayInfos() {
         synchronized (displayInfos) {
             List<DisplayInfo> tmp = new ArrayList<DisplayInfo>(displayInfos);
+
             return tmp;
         }
     }
-
 
     /**
      * Return the string representation of this object
@@ -5109,7 +5066,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public String toString() {
         return "View:" + getViewDescriptor();
-        //        return "View:" + cnt;
+
+        // return "View:" + cnt;
     }
 
     /**
@@ -5120,7 +5078,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public String getTypeName() {
         return "View";
     }
-
 
     /**
      * Get the {@link ViewDescriptor}. The ViewDescriptor
@@ -5133,6 +5090,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (aliases.size() > 0) {
             return (ViewDescriptor) aliases.get(0);
         }
+
         return null;
     }
 
@@ -5173,15 +5131,17 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if ( !isClassOk(vd)) {
             return false;
         }
+
         for (int i = 0; i < aliases.size(); i++) {
             ViewDescriptor viewDescriptor = (ViewDescriptor) aliases.get(i);
+
             if (viewDescriptor.nameEquals(vd)) {
                 return true;
             }
         }
+
         return false;
     }
-
 
     /**
      * Can this view manager be used in exchange for the given view manager
@@ -5192,7 +5152,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public boolean canBe(ViewManager that) {
         return that.getClass().equals(this.getClass());
     }
-
 
     /**
      * If the given view descriptor has one or more class names is the class name
@@ -5206,11 +5165,15 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (vd == null) {
             return false;
         }
+
         List classNames = vd.getClassNames();
+
         if ((classNames == null) || (classNames.size() == 0)) {
             return true;
         }
+
         String className = getClass().getName();
+
         return classNames.contains(className);
     }
 
@@ -5223,7 +5186,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         return this;
     }
 
-
     /**
      * Override the base class method to return a (hopefully)
      * unique id.
@@ -5232,12 +5194,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public String getUniqueId() {
         ViewDescriptor viewDescriptor = getViewDescriptor();
+
         if (viewDescriptor != null) {
             return viewDescriptor.getName();
         }
+
         return Misc.getUniqueId();
     }
-
 
     /**
      * Return the GUI component from the
@@ -5258,6 +5221,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (fullContents == null) {
             initUI();
         }
+
         return fullContents;
     }
 
@@ -5282,12 +5246,11 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (master == null) {
             return new JPanel();
         }
+
         Component mc = master.getComponent();
+
         return GuiUtils.topCenter(null, mc);
     }
-
-
-
 
     /**
      * Set the cursor in the component of the main display
@@ -5296,11 +5259,11 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public void setCursorInDisplay(Cursor c) {
         JComponent comp = getComponent();
+
         if (comp != null) {
             comp.setCursor(c);
         }
     }
-
 
     /**
      * See if this has a display master
@@ -5311,10 +5274,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         return master != null;
     }
 
-
-    /** a mutex for accessing the display master */
-    private Object MASTER_MUTEX = new Object();
-
     /**
      * Get the {@link ucar.visad.display.DisplayMaster}.
      *
@@ -5323,26 +5282,34 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public DisplayMaster getMaster() {
         if (master == null) {
             try {
-                //we want to synchronize here so we don't make 2 (or more) versions of the displaymaster
+
+                // we want to synchronize here so we don't make 2 (or more) versions of the displaymaster
                 synchronized (MASTER_MUTEX) {
-                    //If we had been blocked by another thread creating the DisplayMaste
-                    //check if we have a master
+
+                    // If we had been blocked by another thread creating the DisplayMaste
+                    // check if we have a master
                     if (master != null) {
                         return master;
                     }
+
                     // might need these for the display initialization
                     if (initProperties != null) {
                         String tmp = initProperties;
+
                         initProperties = null;
                         parseProperties(tmp);
                     }
-                    //Use a local tmpMaster variable so we don't set the master member before we're ready to
+
+                    // Use a local tmpMaster variable so we don't set the master member before we're ready to
                     DisplayMaster tmpMaster = doMakeDisplayMaster();
+
                     if (tmpMaster == null) {
                         return null;
                     }
+
                     DisplayRenderer renderer =
                         tmpMaster.getDisplay().getDisplayRenderer();
+
                     if (renderer instanceof DisplayRendererJ3D) {
                         initLights((DisplayRendererJ3D) renderer);
                     }
@@ -5357,8 +5324,10 @@ public class ViewManager extends SharableImpl implements ActionListener,
                         tmpMaster.setWheelEventMap(
                             getIdv().getPreferenceManager().getWheelMap());
                     }
+
                     GraphicsModeControl gmc =
                         tmpMaster.getDisplay().getGraphicsModeControl();
+
                     gmc.setCacheAppearances(true);
                     gmc.setMergeGeometries(true);
                     setDisplayMaster(tmpMaster);
@@ -5373,16 +5342,16 @@ public class ViewManager extends SharableImpl implements ActionListener,
                         Trace.call2(
                             "ViewManager.getMaster updateDisplayList");
                     }
+
                     master = tmpMaster;
                 }
             } catch (Exception exc) {
                 logException("Creating display master", exc);
             }
         }
+
         return master;
     }
-
-
 
     /**
      * A hack for when we are running isl and don't want to update the display incrementally
@@ -5393,8 +5362,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public boolean shouldDoThingsRightAway() {
         return true;
     }
-
-
 
     /**
      * Is this an interactive session
@@ -5419,8 +5386,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         return null;
     }
 
-
-
     /**
      * get the display renderer
      *
@@ -5429,11 +5394,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public DisplayRenderer getDisplayRenderer() {
         if (master != null) {
             DisplayImpl vdisplay = (DisplayImpl) master.getDisplay();
+
             return vdisplay.getDisplayRenderer();
         }
+
         return null;
     }
-
 
     /**
      * Set the {@link ucar.visad.display.DisplayMaster}
@@ -5442,24 +5408,27 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     protected void setDisplayMaster(DisplayMaster master) {
         if (this.master != null) {
-            //TODO: How should we handle this?
-            //throw new IllegalArgumentException ("Already have one display master set");
+
+            // TODO: How should we handle this?
+            // throw new IllegalArgumentException ("Already have one display master set");
         }
+
         this.master = master;
+
         DisplayImpl display = (DisplayImpl) master.getDisplay();
+
         display.addDisplayListener(this);
         display.enableEvent(DisplayEvent.MOUSE_PRESSED);
         display.enableEvent(DisplayEvent.COMPONENT_RESIZED);
-
         resetProjectionControl();
     }
-
 
     /**
      * Reset the projection control
      */
     protected void resetProjectionControl() {
         DisplayImpl display = (DisplayImpl) master.getDisplay();
+
         projectionControl = display.getProjectionControl();
         projectionControl.addControlListener(this);
     }
@@ -5473,7 +5442,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         return projectionControl;
     }
 
-
     /**
      * Create, if needed, and return the command manager
      *
@@ -5483,10 +5451,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (commandManager == null) {
             commandManager = new CommandManager(100);
         }
+
         return commandManager;
     }
-
-
 
     /**
      * This is the default method (no-op) for
@@ -5498,6 +5465,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if ( !initDone || getIsDestroyed()) {
             return;
         }
+
         handleControlChanged(e);
     }
 
@@ -5507,10 +5475,10 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * @param e the event.
      */
     protected void handleControlChanged(ControlEvent e) {
-        //Set the matrix label in the properties dialog
+
+        // Set the matrix label in the properties dialog
         setMatrixLabel(false);
     }
-
 
     /**
      *  An implementation of the the DisplayListener interface.
@@ -5526,16 +5494,18 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public void displayChanged(DisplayEvent de)
             throws VisADException, RemoteException {
+
         int        eventId    = de.getId();
         InputEvent inputEvent = de.getInputEvent();
+
         if (getIsDestroyed()) {
             return;
         }
 
         if (eventId == DisplayEvent.MOUSE_PRESSED) {
-            //            System.err.println (" mouse pressed");
-        }
 
+            // System.err.println (" mouse pressed");
+        }
 
         if (getIsShared() && !lastActive) {
             if (eventId == DisplayEvent.MOUSE_PRESSED) {
@@ -5549,6 +5519,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (eventId == DisplayEvent.KEY_PRESSED) {
             if ((inputEvent instanceof KeyEvent)) {
                 KeyEvent keyEvent = (KeyEvent) inputEvent;
+
                 if ((keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE)) {
                     Misc.runInABit(100, this, "resetFullScreen", null);
                 } else if ((keyEvent.getKeyCode() == KeyEvent.VK_F5)) {
@@ -5558,23 +5529,30 @@ public class ViewManager extends SharableImpl implements ActionListener,
         } else if (eventId == DisplayEvent.WAIT_ON) {
             if (LogUtil.getTestMode()) {
                 outstandingWaits++;
+
                 if (outstandingWaits == 1) {
                     getIdvUIManager().showWaitCursor();
-                    //                    System.err.println ("waiton:" + outstandingWaits + " " + getIdvUIManager().getWaitCursorCount());
+
+                    // System.err.println ("waiton:" + outstandingWaits + " " + getIdvUIManager().getWaitCursorCount());
                 }
             } else {
                 waitCursorInABit(++currentWaitKey);
             }
         } else if (eventId == DisplayEvent.WAIT_OFF) {
-            //            Trace.msg("waitOff");
+
+            // Trace.msg("waitOff");
             currentWaitKey++;
+
             if (outstandingWaits == 0) {
                 return;
             }
+
             outstandingWaits--;
+
             if (outstandingWaits <= 0) {
                 getIdvUIManager().showNormalCursor();
-                //                System.err.println ("waitoff:" + outstandingWaits + " " + getIdvUIManager().getWaitCursorCount());
+
+                // System.err.println ("waitoff:" + outstandingWaits + " " + getIdvUIManager().getWaitCursorCount());
                 outstandingWaits = 0;
             }
         } else if (eventId == DisplayEvent.MOUSE_PRESSED) {
@@ -5582,41 +5560,46 @@ public class ViewManager extends SharableImpl implements ActionListener,
             mousePressedMatrix = getMaster().getProjectionMatrix();
         } else if (eventId == DisplayEvent.MOUSE_RELEASED) {
             mouseDown = false;
+
             double[] currentMatrix = getMaster().getProjectionMatrix();
+
             if ((mousePressedMatrix != null)
                     && !Arrays.equals(currentMatrix, mousePressedMatrix)) {
                 addCommand(new MatrixCommand(this, mousePressedMatrix,
                                              currentMatrix));
             }
-            mousePressedMatrix = null;
 
+            mousePressedMatrix = null;
         } else if (eventId == DisplayEvent.FRAME_DONE) {
             if ( !receivedFirstFrameDone) {
                 doneFirstFrame();
             }
+
             lastFrameDoneTime = System.currentTimeMillis();
-            //            System.err.println(lastFrameDoneTime+ " FRAME DONE");
+
+            // System.err.println(lastFrameDoneTime+ " FRAME DONE");
         } else if (eventId == DisplayEvent.COMPONENT_RESIZED) {
             final int myComponentResizeCnt = ++componentResizeCnt;
+
             Misc.runInABit(200, new Runnable() {
                 public void run() {
                     if (isDestroyed) {
                         return;
                     }
+
                     if (myComponentResizeCnt == componentResizeCnt) {
                         updateAnnotations();
                         updateDisplayList();
+                        notifyDisplayControls(PROP_COMPONENT_RESIZED);
                     }
                 }
             });
-
         } else {
-            //      System.err.println ("??? id:" + eventId);
+
+            // System.err.println ("??? id:" + eventId);
         }
+
     }
-
-
-
 
     /**
      * Get the last time we've seen a FRAME_DONE event
@@ -5631,25 +5614,23 @@ public class ViewManager extends SharableImpl implements ActionListener,
      *  We have received the very first framedone event. Tell the controls
      */
     protected void doneFirstFrame() {
-        //call setLastActive to set the active border
+
+        // call setLastActive to set the active border
         if (getIsShared()) {
             setLastActive(lastActive);
         }
 
         receivedFirstFrameDone = true;
+
         List controls = getControls();
+
         for (int i = controls.size() - 1; i >= 0; i--) {
             DisplayControl control = (DisplayControl) controls.get(i);
+
             control.firstFrameDone();
         }
+
         updateDisplayList();
-        
-        // force a pack() so that the preferred size of this ViewManager's component
-        // is respected after adding the "last active" border.
-        Window window = GuiUtils.getWindow(getComponent());
-        if (window != null) {
-            window.pack();
-        }
     }
 
     /**
@@ -5665,7 +5646,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 if (timeStamp != currentWaitKey) {
                     return;
                 }
+
                 outstandingWaits++;
+
                 if (outstandingWaits == 1) {
                     getIdvUIManager().showWaitCursor();
                 }
@@ -5680,12 +5663,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
      *
      * @param  e ItemEvent whose state has changed.
      */
-
     public void itemStateChanged(ItemEvent e) {
         Object source = e.getItemSelectable();
     }
-
-
 
     /**
      * Required interface for ActionEvents, to implement ActionListener
@@ -5694,13 +5674,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * @param event an ActionEvent
      */
     public void actionPerformed(ActionEvent event) {}
-
-
-    /** image panel */
-    private ImagePanel imagePanel;
-
-    /** flag for using the image panel */
-    boolean usingImagePanel = false;
 
     /**
      * Make frames
@@ -5718,13 +5691,14 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if ( !usingImagePanel) {
             return false;
         }
+
         usingImagePanel = false;
         contentsWrapper.removeAll();
         contentsWrapper.add(BorderLayout.CENTER, innerContents);
         contentsWrapper.revalidate();
-        //        animation.setEnabled(true);
-        return true;
 
+        // animation.setEnabled(true);
+        return true;
     }
 
     /**
@@ -5734,13 +5708,16 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (true) {
             return;
         }
+
         if (usingImagePanel) {
             return;
         }
+
         if (imagePanel == null) {
             imagePanel = new ImagePanel();
         }
-        //        animation.setEnabled(false);
+
+        // animation.setEnabled(false);
         contentsWrapper.removeAll();
         contentsWrapper.add(BorderLayout.CENTER, imagePanel);
         contentsWrapper.revalidate();
@@ -5757,18 +5734,21 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (true) {
             return;
         }
+
         if (imagePanel == null) {
             imagePanel = new ImagePanel();
         }
+
         imagePanel.setFiles(images);
+
         if (animation != null) {
             imagePanel.setSelectedFile(animation.getCurrent());
         }
+
         if (andShow) {
             useImages();
         }
     }
-
 
     /**
      * Start the image capture if we are not currently doing that.
@@ -5778,11 +5758,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (isg != null) {
             LogUtil.userMessage("The Movie Capture dialog window is open");
             isg.show();
+
             return;
         }
+
         isg = new ImageSequenceGrabber(this);
     }
-
 
     /**
      *  The given grabber is done. Null out the <code>isg</code>
@@ -5796,7 +5777,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         }
     }
 
-
     /**
      * This shows and brings to the front the display window, sleeps for
      * a bit and then makes a screen snapshot and writes it out
@@ -5807,6 +5787,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public void writeTestArchive(String archivePath) {
         try {
             String imageFile = archivePath + ".png";
+
             toFront();
             Misc.sleepSeconds(1);
             System.err.println("Writing image:" + imageFile);
@@ -5814,9 +5795,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         } catch (Exception exc) {
             logException("writeTestArchive", exc);
         }
-
     }
-
 
     /**
      * show the window I am in
@@ -5824,7 +5803,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public void showWindow() {
         toFront();
     }
-
 
     /**
      * Create a screen image and write it to the given file
@@ -5875,7 +5853,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         writeImage(file, block, false);
     }
 
-
     /**
      * Create a screen image and write it to the given file
      *
@@ -5910,7 +5887,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         getVMManager().saveViewManagerState(this);
     }
 
-
     /**
      * User has requested saving display as an image. Prompt
      * for a filename and save the image to it.
@@ -5919,19 +5895,22 @@ public class ViewManager extends SharableImpl implements ActionListener,
         doSaveImage(false);
     }
 
-
     /**
      * Print an image
      */
     public void doPrintImage() {
         try {
             toFront();
+
             PrinterJob printJob = PrinterJob.getPrinterJob();
+
             printJob.setPrintable(
                 ((DisplayImpl) getMaster().getDisplay()).getPrintable());
+
             if ( !printJob.printDialog()) {
                 return;
             }
+
             printJob.print();
         } catch (Exception exc) {
             logException("There was an error printing the image", exc);
@@ -5946,6 +5925,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public void setView(String view) {
         if (getMaster() instanceof NavigatedDisplay) {
             NavigatedDisplay navDisplay = (NavigatedDisplay) getMaster();
+
             navDisplay.setView(view);
         }
     }
@@ -5957,10 +5937,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public void doSaveImageInThread() {
         Misc.run(this, "doSaveImage");
     }
-
-
-
-
 
     /**
      * Does this viewmanager have any bounds that are visible.
@@ -5994,7 +5970,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public void doSaveImage(boolean andSaveBundle) {
 
         SecurityManager backup = System.getSecurityManager();
+
         System.setSecurityManager(null);
+
         try {
             if (hiBtn == null) {
                 hiBtn  = new JRadioButton("High", true);
@@ -6004,45 +5982,51 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 backgroundTransparentBtn = new JCheckBox("BG Transparent");
                 backgroundTransparentBtn.setToolTipText(
                     "Set the background color to be transparent");
-                mainDisplayBtn = new JRadioButton("View", true);
-                contentsBtn    = new JRadioButton("View & Legend", false);
-                fullWindowBtn  = new JRadioButton("Full Window", false);
-                GuiUtils.buttonGroup(mainDisplayBtn,
+                mainDisplayBtn = new JRadioButton("Current View", true);
+                allViewsBtn    = new JRadioButton("All Views", false);
+                contentsBtn    = new JRadioButton("Current View & Legend",
+                        false);
+                fullWindowBtn = new JRadioButton("Full Window", false);
+                GuiUtils.buttonGroup(mainDisplayBtn, allViewsBtn,
                                      fullWindowBtn).add(contentsBtn);
             }
 
             if (publishCbx == null) {
                 publishCbx = getIdv().getPublishManager().makeSelector();
             }
+
             hiBtn.setBorder(null);
             medBtn.setBorder(null);
             lowBtn.setBorder(null);
             mainDisplayBtn.setBorder(null);
+            allViewsBtn.setBorder(null);
             contentsBtn.setBorder(null);
             fullWindowBtn.setBorder(null);
+
             List comps = new ArrayList();
-            comps.add(new JLabel("Quality:"));
-            comps.add(GuiUtils.inset(GuiUtils.vbox(hiBtn, medBtn, lowBtn),
-                                     new Insets(2, 8, 10, 0)));
 
             comps.add(new JLabel("Capture What:"));
             comps.add(GuiUtils.inset(GuiUtils.vbox(mainDisplayBtn,
-                    contentsBtn, fullWindowBtn), new Insets(2, 8, 10, 0)));
-
+                    contentsBtn, allViewsBtn, fullWindowBtn), new Insets(2,
+                        8, 10, 0)));
+            comps.add(new JLabel("Quality:"));
+            comps.add(GuiUtils.inset(GuiUtils.hbox(hiBtn, medBtn, lowBtn),
+                                     new Insets(3, 0, 1, 0)));
             comps.add(backgroundTransparentBtn);
+
             if (publishCbx != null) {
                 comps.add(GuiUtils.inset(publishCbx,
                                          new Insets(10, 0, 0, 0)));
             }
-            JComponent accessory = GuiUtils.vbox(comps);
 
-
+            JComponent        accessory     = GuiUtils.vbox(comps);
             PatternFileFilter captureFilter =
                 new PatternFileFilter(
                     ".+\\.jpg|.+\\.gif|.+\\.jpeg|.+\\.png|.+\\.pdf|.+\\.ps|.+\\.svg",
                     "Image files (*.jpg,*.gif,*.png,*.pdf,*.ps,*.svg)");
             List            filters = Misc.newList(captureFilter);
             GeoLocationInfo bounds  = getVisibleGeoBounds();
+
             if (bounds != null) {
                 filters.add(KmlDataSource.FILTER_KML);
             }
@@ -6051,84 +6035,87 @@ public class ViewManager extends SharableImpl implements ActionListener,
                                   FileManager.SUFFIX_JPG,
                                   GuiUtils.top(GuiUtils.inset(accessory, 5)));
 
-
-
             if (filename != null) {
                 if (isVectorGraphicsFile(filename)) {
-                    if (vectorRenderer == null) {
-                        vectorRenderer = new VectorGraphicsRenderer(this);
+                    List<ViewManager> l = new ArrayList<ViewManager>();
+
+                    if (allViewsBtn.isSelected()) {  // All Views
+                        for (Object o :
+                                getDisplayWindow().getViewManagers()) {
+                            l.add((ViewManager) o);
+                        }
+                    } else {
+                        l.add(this);
                     }
+
+                    VectorGraphicsRenderer vectorRenderer =
+                        new VectorGraphicsRenderer(l,
+                            getColumnCountFromVM(l));
+
                     if (vectorRenderer.showConfigDialog()) {
                         vectorRenderer.renderTo(filename);
                         getIdv().getPublishManager().publishContent(filename,
                                 this, publishCbx);
                     }
+
                     System.setSecurityManager(backup);
+
                     return;
                 }
 
                 float quality = 1.0f;
+
                 if (medBtn.isSelected()) {
                     quality = 0.6f;
                 } else if (lowBtn.isSelected()) {
                     quality = 0.2f;
                 }
+
                 if (false && mainDisplayBtn.isSelected()) {
-                    //For now we'll try the robot based capture for everything.
+
+                    // For now we'll try the robot based capture for everything.
                     writeImage(new File(filename), false, quality);
                 } else {
-                    Component comp;
-                    String    whichComponent;
-                    if (fullWindowBtn.isSelected()) {
-                        comp           = getDisplayWindow().getComponent();
+                    List<Component> views = new ArrayList<Component>();
+                    String          whichComponent;
+
+                    if (fullWindowBtn.isSelected()) {          // Full Window
+                        views.add(getDisplayWindow().getComponent());
                         whichComponent = "full window";
-                    } else if (mainDisplayBtn.isSelected()) {
-                        comp           = getMaster().getComponent();
+                    } else if (mainDisplayBtn.isSelected()) {  // Current Active View
+                        views.add(getMaster().getComponent());
                         whichComponent = "main display";
-                    } else {
-                        comp           = getContents();
+                    } else if (allViewsBtn.isSelected()) {
+                        List<ViewManager> viewManagers =
+                            new ArrayList<ViewManager>();
+                        viewManagers.addAll(
+                            getDisplayWindow().getViewManagers());
+                        for (IdvComponentGroup icg :
+                                getDisplayWindow().getComponentGroups()) {
+                            for (IdvComponentHolder idh :
+                                    (List<IdvComponentHolder>) icg
+                                        .getDisplayComponents()) {
+                                viewManagers.addAll(idh.getViewManagers());
+                            }
+                        }
+                        for (ViewManager v : viewManagers) {
+                            views.add(v.getComponent());
+                        }
+                        whichComponent = "all displays";
+                    } else {  // View & Legend
+                        views.add(getContents());
                         whichComponent = "contents";
                     }
-                    Dimension             dim = comp.getSize();
-                    Point                 loc = comp.getLocationOnScreen();
-                    GraphicsConfiguration gc =
-                        comp.getGraphicsConfiguration();
-                    Robot robot = new Robot(gc.getDevice());
 
-                    if ((gc.getBounds().x > 0) || (gc.getBounds().y > 0)) {
-                        System.err.println("Offsetting location:" + loc
-                                           + " by gc bounds: "
-                                           + gc.getBounds().x + " "
-                                           + gc.getBounds().y);
-                        loc.x -= gc.getBounds().x;
-                        loc.y -= gc.getBounds().y;
-                        System.err.println("new location:" + loc);
-                    }
+                    List<BufferedImage> images = makeBufferedImages(views,
+                                                     whichComponent);
+                    BufferedImage image =
+                        (BufferedImage) ImageUtils.gridImages2(images, 0,
+                            Color.GRAY,
+                            ImageUtils.getColumnCountFromComps(views));
 
-                    if ((dim.width <= 0) || (dim.height <= 0)) {
-                        throw new IllegalStateException("Bad component size:"
-                                + dim.width + " X " + dim.height
-                                + " for component:" + whichComponent);
-                    }
-
-                    toFront();
-                    Misc.sleep(250);
-                    BufferedImage image;
-
-                    try {
-                        image =
-                            robot.createScreenCapture(new Rectangle(loc.x,
-                                loc.y, dim.width, dim.height));
-                    } catch (Exception exc) {
-                        logException("Error capturing image for component:"
-                                     + whichComponent + " location:" + loc.x
-                                     + "x" + loc.y + " dimension:"
-                                     + dim.width + "x" + dim.height, exc);
-                        return;
-                    }
-
-
-                    if (backgroundTransparentBtn.isSelected()) {
+                    if ((image != null)
+                            && backgroundTransparentBtn.isSelected()) {
                         image = ImageUtils.makeColorTransparent(image,
                                 getBackground());
                     }
@@ -6137,9 +6124,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
                         if ( !checkForKmlImageCapture()) {
                             return;
                         }
+
                         String kmlFilename = filename;
                         String suffix      = ".png";
+
                         filename = IOUtil.stripExtension(filename) + suffix;
+
                         if (kmlFilename.endsWith(".kml")) {
                             KmlDataSource.writeToFile(kmlFilename, bounds,
                                     filename);
@@ -6150,32 +6140,42 @@ public class ViewManager extends SharableImpl implements ActionListener,
                             ZipOutputStream zos = new ZipOutputStream(
                                                       new FileOutputStream(
                                                           kmlFilename));
+
                             zos.putNextEntry(new ZipEntry(tail + ".kml"));
+
                             byte[] kmlBytes = KmlDataSource.createKml(bounds,
                                                   tail + suffix).getBytes();
+
                             zos.write(kmlBytes, 0, kmlBytes.length);
+
                             String tmpFile =
                                 IOUtil.joinDir(getIdv().getObjectStore()
                                     .getUserTmpDirectory(), Math.random()
                                         + "" + System.currentTimeMillis()
                                         + suffix);
+
                             ImageUtils.writeImageToFile(image, tmpFile,
                                     quality);
+
                             byte[] imageBytes = IOUtil.readBytes(
                                                     new FileInputStream(
                                                         tmpFile));
+
                             zos.putNextEntry(new ZipEntry(tail + suffix));
                             zos.write(imageBytes, 0, imageBytes.length);
                             zos.close();
                             getIdv().getPublishManager().publishContent(
                                 kmlFilename, this, publishCbx);
+
                             return;
                         }
                     }
+
                     ImageUtils.writeImageToFile(image, filename, quality);
                     getIdv().getPublishManager().publishContent(filename,
                             this, publishCbx);
                 }
+
                 if (andSaveBundle) {
                     filename = IOUtil.stripExtension(filename) + ".jnlp";
                     getIdv().getPersistenceManager().doSave(filename);
@@ -6184,11 +6184,99 @@ public class ViewManager extends SharableImpl implements ActionListener,
         } catch (Exception exp) {
             logException("doSaveImage", exp);
         }
+
         // for webstart
         System.setSecurityManager(backup);
 
     }
 
+    /**
+     * Gets the column count from view managers.
+     *
+     * @param viewManagers the viewManagers
+     *
+     * @return the column count from vm
+     */
+    private static int getColumnCountFromVM(
+            List<? extends ViewManager> viewManagers) {
+        List<Component> l = new LinkedList<Component>();
+
+        for (ViewManager v : viewManagers) {
+            l.add(v.getComponent());
+        }
+
+        return ImageUtils.getColumnCountFromComps(l);
+    }
+
+    /**
+     * Make buffered images.
+     *
+     * @param views the views
+     * @param whichComponent  which component
+     * @return the list of buffered images
+     * @throws AWTException the awt exception
+     */
+    private List<BufferedImage> makeBufferedImages(List<Component> views,
+            String whichComponent)
+            throws AWTException {
+        List<BufferedImage> bis = new LinkedList<BufferedImage>();
+
+        for (Component c : views) {
+            bis.add(makeBufferedImage(c, whichComponent));
+        }
+
+        return bis;
+    }
+
+    /**
+     * Make buffered image.
+     *
+     * @param comp the component
+     * @param whichComponent which component
+     * @return the buffered image
+     * @throws AWTException the AWT exception
+     */
+    private BufferedImage makeBufferedImage(Component comp,
+                                            String whichComponent)
+            throws AWTException {
+        Dimension             dim   = comp.getSize();
+        Point                 loc   = comp.getLocationOnScreen();
+        GraphicsConfiguration gc    = comp.getGraphicsConfiguration();
+        Robot                 robot = new Robot(gc.getDevice());
+
+        if ((gc.getBounds().x > 0) || (gc.getBounds().y > 0)) {
+            System.err.println("Offsetting location:" + loc
+                               + " by gc bounds: " + gc.getBounds().x + " "
+                               + gc.getBounds().y);
+            loc.x -= gc.getBounds().x;
+            loc.y -= gc.getBounds().y;
+            System.err.println("new location:" + loc);
+        }
+
+        if ((dim.width <= 0) || (dim.height <= 0)) {
+            throw new IllegalStateException("Bad component size:" + dim.width
+                                            + " X " + dim.height
+                                            + " for component:"
+                                            + whichComponent);
+        }
+
+        toFront();
+        Misc.sleep(250);
+
+        BufferedImage image = null;
+
+        try {
+            image = robot.createScreenCapture(new Rectangle(loc.x, loc.y,
+                    dim.width, dim.height));
+        } catch (Exception exc) {
+            logException("Error capturing image for component:"
+                         + whichComponent + " location:" + loc.x + "x"
+                         + loc.y + " dimension:" + dim.width + "x"
+                         + dim.height, exc);
+        }
+
+        return image;
+    }
 
     /**
      * Check if its ok to capture a kmz file
@@ -6198,7 +6286,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     protected boolean checkForKmlImageCapture() {
         return false;
     }
-
 
     /**
      * Paint the display list in a 2D graphics
@@ -6229,12 +6316,15 @@ public class ViewManager extends SharableImpl implements ActionListener,
         Font f   = ((font != null)
                     ? font
                     : getDisplayListFont());
+
         graphics.setFont(f);
+
         FontMetrics fm         = graphics.getFontMetrics();
         int         lineHeight = fm.getAscent() + fm.getDescent();
         int         startY;
         int         offsetY;
         int         totalHeight = 0;
+
         if (bottom) {
             startY      = height - 4;
             offsetY     = -(lineHeight + 1);
@@ -6249,22 +6339,29 @@ public class ViewManager extends SharableImpl implements ActionListener,
             if ( !control.getShowInDisplayList()) {
                 continue;
             }
+
             Data data = control.getDataForDisplayList();
+
             if (data == null) {
                 continue;
             }
+
             String text = null;
+
             if (data instanceof visad.Text) {
                 text = ((visad.Text) data).getValue();
             } else if (data instanceof FieldImpl) {
                 Animation anime = getAnimation();
+
                 if (anime != null) {
                     Real now = anime.getCurrentAnimationValue();
+
                     if (now != null) {
-                        FieldImpl fi = (FieldImpl) data;
-                        Data rangeValue = fi.evaluate(now,
+                        FieldImpl fi         = (FieldImpl) data;
+                        Data      rangeValue = fi.evaluate(now,
                                               Data.NEAREST_NEIGHBOR,
                                               Data.NO_ERRORS);
+
                         if ((rangeValue != null)
                                 && (rangeValue instanceof visad.Text)) {
                             text = ((visad.Text) rangeValue).getValue();
@@ -6272,28 +6369,32 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     }
                 }
             }
+
             if ((text == null) || (text.length() == 0)) {
                 continue;
             }
+
             Color c = ((color != null)
                        ? color
                        : getDisplayListColor());
+
             if (c == null) {
                 c = ((ucar.unidata.idv.control.DisplayControlImpl) control)
                     .getDisplayListColor();
             }
+
             graphics.setColor(c);
+
             int lineWidth = fm.stringWidth(text);
+
             graphics.drawString(text, width / 2 - lineWidth / 2,
                                 startY + offsetY * cnt);
             totalHeight += Math.abs(offsetY);
             cnt++;
         }
+
         return totalHeight;
     }
-
-
-
 
     /**
      * Hook into the publishing interface to &quot;publish&quot;
@@ -6303,8 +6404,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         doPublishImage(null);
     }
 
-
-
     /**
      * Hook into the publishing interface to &quot;publish&quot;
      * the screen image.
@@ -6312,9 +6411,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * @param props Properties to pass through to the publish manager.
      */
     public void doPublishImage(final String props) {
+
         // user has requested saving display as an image
         SecurityManager backup = System.getSecurityManager();
+
         System.setSecurityManager(null);
+
         try {
             Misc.run(new Runnable() {
                 public void run() {
@@ -6323,6 +6425,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     String file =
                         IOUtil.joinDir(getStore().getUserTmpDirectory(),
                                        tail);
+
                     writeImage(file, true);
                     getPublishManager().doPublish("Publish JPEG file", file,
                             props);
@@ -6331,11 +6434,10 @@ public class ViewManager extends SharableImpl implements ActionListener,
         } catch (Exception exp) {
             logException("doSaveImage", exp);
         }
+
         // for webstart
         System.setSecurityManager(backup);
     }
-
-
 
     /**
      * Helper to log errors
@@ -6346,69 +6448,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public void logException(String msg, Throwable exc) {
         LogUtil.printException(log_, msg, exc);
     }
-
-
-
-
-    /**
-     * Class IdvKeyboardBehavior is used to route keyboard events
-     * from the display to this ViewManager.
-     *
-     *
-     * @author IDV development team
-     */
-    private static class IdvKeyboardBehavior implements KeyboardBehavior,
-            Removable {
-
-        /** The ViewManager */
-        ViewManager viewManager;
-
-        /**
-         * Create me
-         *
-         * @param viewManager The ViewManager
-         */
-        public IdvKeyboardBehavior(ViewManager viewManager) {
-            this.viewManager = viewManager;
-        }
-
-        /**
-         * Remove me
-         */
-        public void doRemove() {
-            viewManager = null;
-        }
-
-
-        /**
-         * Needed for the interface
-         *
-         * @param function function
-         * @param keycode keycode
-         * @param modifiers modifiers
-         */
-        public void mapKeyToFunction(int function, int keycode,
-                                     int modifiers) {}
-
-        /**
-         * Route the key pressed event to the ViewManager
-         *
-         * @param keyEvent The event
-         */
-        public void processKeyEvent(KeyEvent keyEvent) {
-            viewManager.keyWasTyped(keyEvent);
-        }
-
-        /**
-         * Needed for the interface
-         *
-         * @param function function
-         */
-        public void execFunction(int function) {}
-
-    }
-
-    ;
 
     /**
      * make the color set menu
@@ -6430,41 +6469,49 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 "showColorPairDialog"), "/auxdata/ui/icons/color_swatch.png"));
 
         JMenu deleteMenu = new JMenu("Delete");
+
         colorMenu.add(deleteMenu);
         colorMenu.addSeparator();
 
-        boolean addedToDelete = false;
-
+        boolean               addedToDelete = false;
         XmlResourceCollection colors = getResourceManager().getXmlResources(
                                            IdvResourceManager.RSC_COLORPAIRS);
-
         boolean didone = false;
+
         for (int colorResourceIdx = 0; colorResourceIdx < colors.size();
                 colorResourceIdx++) {
             Element root = colors.getRoot(colorResourceIdx, false);
+
             if (root == null) {
                 continue;
             }
+
             List nodes = XmlUtil.findChildren(root, TAG_COLORPAIR);
+
             for (int colorIdx = 0; colorIdx < nodes.size(); colorIdx++) {
-                Element node = (Element) nodes.get(colorIdx);
-                final Color fg = XmlUtil.getAttribute(node, "foreground",
+                Element     node = (Element) nodes.get(colorIdx);
+                final Color fg   = XmlUtil.getAttribute(node, "foreground",
                                      (Color) Color.black);
                 final Color bg = XmlUtil.getAttribute(node, "background",
                                      (Color) Color.white);
                 final String label = XmlUtil.getAttribute(node, "label");
-                JMenuItem mi = new JMenuItem(GuiUtils.getLocalName(label,
+                JMenuItem    mi    = new JMenuItem(GuiUtils.getLocalName(label,
                                    (colorResourceIdx == 0)));
+
                 try {
                     JLabel lbl = new JLabel("  T  ");
+
                     lbl.setSize(new Dimension(30, 20));
                     lbl.setForeground(fg);
                     lbl.setBackground(bg);
                     lbl.setOpaque(true);
+
                     Image image = ImageUtils.getImage(lbl);
+
                     mi.setIcon(new ImageIcon(image));
-                    //                    if(!didone)
-                    //                        didone = !GuiUtils.showOkCancelDialog(null,null,lbl,null);
+
+                    // if(!didone)
+                    // didone = !GuiUtils.showOkCancelDialog(null,null,lbl,null);
                 } catch (Exception exc) {
                     exc.printStackTrace();
                 }
@@ -6488,10 +6535,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
             deleteMenu.setEnabled(false);
             deleteMenu.setToolTipText("No user defined colors");
         }
+
         Msg.translateTree(colorMenu);
     }
-
-
 
     /**
      * Remove the named color pair from the users xml
@@ -6504,6 +6550,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         Element root = colors.getWritableRoot("<colorpairs></colorpairs>");
         Element colorNode = XmlUtil.findElement(root, TAG_COLORPAIR, "label",
                                 name);
+
         try {
             if (colorNode != null) {
                 root.removeChild(colorNode);
@@ -6512,20 +6559,19 @@ public class ViewManager extends SharableImpl implements ActionListener,
         } catch (Exception exc) {
             LogUtil.printException(log_, "writing chooser xml", exc);
         }
-
     }
-
 
     /**
      * Show the dialog that allows the user to change the foreground/background colors
      */
     public void showColorPairDialog() {
-        //TODO
+
+        // TODO
         final JDialog dialog = new JDialog((JFrame) null,
                                            "Background/Foreground Color",
                                            true);
-        JLabel bgLbl = GuiUtils.rLabel("Background:");
-        JLabel fgLbl = GuiUtils.rLabel("Foreground:");
+        JLabel             bgLbl   = GuiUtils.rLabel("Background:");
+        JLabel             fgLbl   = GuiUtils.rLabel("Foreground:");
         final JComponent[] bgComps =
             GuiUtils.makeColorSwatchWidget(getBackground(),
                                            "Set Background Color");
@@ -6534,17 +6580,18 @@ public class ViewManager extends SharableImpl implements ActionListener,
                                            "Set Foreground Color");
 
         GuiUtils.tmpInsets = new Insets(5, 5, 5, 5);
+
         JPanel         top      = GuiUtils.doLayout(new Component[] {
             bgLbl, bgComps[0], bgComps[1], fgLbl, fgComps[0], fgComps[1]
         }, 3, GuiUtils.WT_NYN, GuiUtils.WT_N);
-
-
         ActionListener listener = new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 String cmd = ae.getActionCommand();
+
                 if (cmd.equals(GuiUtils.CMD_SAVEAS)) {
                     saveColors(fgComps[0].getBackground(),
                                bgComps[0].getBackground());
+
                     return;
                 }
 
@@ -6553,25 +6600,24 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     setColors(fgComps[0].getBackground(),
                               bgComps[0].getBackground());
                 }
+
                 if (cmd.equals(GuiUtils.CMD_OK)
                         || cmd.equals(GuiUtils.CMD_CANCEL)) {
                     dialog.dispose();
                 }
             }
         };
-
-
         JPanel contents = GuiUtils.vbox(top,
                                         GuiUtils.makeButtons(listener,
                                             new String[] {
                                                 GuiUtils.CMD_SAVEAS,
                 GuiUtils.CMD_APPLY, GuiUtils.CMD_OK, GuiUtils.CMD_CANCEL }));
+
         dialog.getContentPane().add(GuiUtils.inset(contents, 5));
         dialog.pack();
         dialog.setLocation(GuiUtils.getLocation(null));
         dialog.setVisible(true);
     }
-
 
     /**
      * Prompt the user for a color name, make sure it is unique, and write
@@ -6581,11 +6627,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * @param bg Background color
      */
     private void saveColors(Color fg, Color bg) {
-        String name = "";
+        String                name   = "";
         XmlResourceCollection colors = getResourceManager().getXmlResources(
                                            IdvResourceManager.RSC_COLORPAIRS);
-
-
         Document colorDoc =
             colors.getWritableDocument("<colorpairs></colorpairs>");
         Element root = colors.getWritableRoot("<colorpairs></colorpairs>");
@@ -6594,20 +6638,27 @@ public class ViewManager extends SharableImpl implements ActionListener,
             name = GuiUtils.getInput(
                 "Please provide a name to save the colors as",
                 "Color name: ", name);
+
             if (name == null) {
                 return;
             }
+
             name = name.trim();
+
             if (name.length() == 0) {
                 LogUtil.userMessage(
                     "Please enter a name for the new color pair");
+
                 continue;
             }
+
             List    nodes     = XmlUtil.findChildren(root, TAG_COLORPAIR);
             boolean nameOk    = true;
             Element colorPair = null;
+
             for (int colorIdx = 0; colorIdx < nodes.size(); colorIdx++) {
                 Element node = (Element) nodes.get(colorIdx);
+
                 if (XmlUtil.getAttribute(node, "label", "").equals(name)) {
                     int result =
                         GuiUtils.showYesNoCancelDialog(
@@ -6615,31 +6666,40 @@ public class ViewManager extends SharableImpl implements ActionListener,
                             "A color pair with the name: " + name
                             + " already exists."
                             + "Do you want to overwrite it?", "Color name exists");
+
                     if (result == 2) {
                         return;
                     }
+
                     if (result == 1) {
                         nameOk = false;
                     }
+
                     colorPair = node;
+
                     break;
                 }
             }
+
             if ( !nameOk) {
                 continue;
             }
+
             if (colorPair == null) {
                 colorPair = colorDoc.createElement(TAG_COLORPAIR);
             }
+
             colorPair.setAttribute("label", name);
             XmlUtil.setAttribute(colorPair, "foreground", fg);
             XmlUtil.setAttribute(colorPair, "background", bg);
             root.appendChild(colorPair);
+
             try {
                 colors.writeWritable();
             } catch (Exception exc) {
                 LogUtil.printException(log_, "writing chooser xml", exc);
             }
+
             return;
         }
     }
@@ -6653,9 +6713,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (foreground == null) {
             foreground = getDefaultForeground();
         }
+
         return foreground;
     }
-
 
     /**
      * Get the default foreground color
@@ -6665,7 +6725,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     protected Color getDefaultForeground() {
         return getStore().get(PREF_FGCOLOR, Color.white);
     }
-
 
     /**
      * Get the default background color
@@ -6685,9 +6744,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         foreground = c;
     }
 
-
-
-
     /**
      * Get the background color or black if it is null
      *
@@ -6697,9 +6753,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (background == null) {
             background = getDefaultBackground();
         }
+
         return background;
     }
-
 
     /**
      * Set the background color
@@ -6717,6 +6773,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public void setSideLegend(SideLegend value) {
         sideLegend = value;
+
         if (sideLegend != null) {
             sideLegend.setViewManager(this);
         }
@@ -6738,12 +6795,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public boolean getToolbarsFloatable() {
         String prop = getSkinProperty(PREF_TOOLBARSFLOATABLE);
+
         if (prop == null) {
             return false;
         }
+
         return new Boolean(prop).booleanValue();
     }
-
 
     /**
      * Turn  on/off  the showing of the toolbars
@@ -6753,7 +6811,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public void setShowToolBars(boolean v) {
         showToolbars = v;
     }
-
 
     /**
      * Set whether this view manager is the last one active. That is,
@@ -6768,13 +6825,17 @@ public class ViewManager extends SharableImpl implements ActionListener,
         }
 
         lastActive = b;
+
         if (lastActive) {
             lastTimeActivated = System.currentTimeMillis();
         }
+
         VMManager  vmManager = getVMManager();
         JComponent contents  = innerContents;
+
         if ((contents != null) && (vmManager != null)) {
             boolean haveMany = vmManager.haveMoreThanOneMainViewManager();
+
             if (getIsShared()) {
                 if (haveMany && b) {
                     contents.setBorder(getHighlightBorder());
@@ -6783,12 +6844,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 }
             }
         }
+
         IdvUIManager idvUIManager = getIdvUIManager();
+
         if (idvUIManager != null) {
             idvUIManager.viewManagerActiveChanged(this);
         }
     }
-
 
     /**
      * Get the normal border
@@ -6799,9 +6861,11 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (normalBorder == null) {
             int    bw    = borderWidth;
             Border outer = BorderFactory.createEmptyBorder(bw, bw, bw, bw);
+
             normalBorder = BorderFactory.createCompoundBorder(outer,
                     lineBorder);
         }
+
         return normalBorder;
     }
 
@@ -6812,12 +6876,14 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public static Border getHighlightBorder() {
         if (highlightBorder == null) {
-            int bw = borderWidth;
+            int    bw    = borderWidth;
             Border outer = new MatteBorder(new Insets(bw, bw, bw, bw),
                                            borderHighlightColor);
+
             highlightBorder = BorderFactory.createCompoundBorder(outer,
                     lineBorder);
         }
+
         return highlightBorder;
     }
 
@@ -6838,10 +6904,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public boolean showHighlight() {
         boolean haveMany = getVMManager().haveMoreThanOneMainViewManager();
+
         return haveMany && lastActive;
     }
-
-
 
     /**
      * Get the time that this was last the active VM
@@ -6851,8 +6916,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public long getLastTimeActivated() {
         return lastTimeActivated;
     }
-
-
 
     /**
      * Set the DisplayBounds property.
@@ -6872,10 +6935,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (master != null) {
             return master.getScreenBounds();
         }
+
         return displayBounds;
     }
-
-
 
     /**
      * Are we in full screen mode.
@@ -6907,21 +6969,27 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
         Runnable runnable = new Runnable() {
             public void run() {
-                //                    System.err.println("reset full screen:" + Thread.currentThread());
+
+                // System.err.println("reset full screen:" + Thread.currentThread());
                 JComponent navComponent = getComponent();
+
                 innerContents.add(BorderLayout.CENTER, navComponent);
                 fullScreenWindow.setVisible(false);
                 fullScreenWindow.dispose();
                 fullScreenWindow = null;
+
                 AnimationWidget animationWidget = getAnimationWidget();
+
                 if ((animationWidget != null) && (animationHolder != null)) {
-                    //            animationHolder.add(BorderLayout.CENTER,
-                    //                                animationWidget.getContents());
+
+                    // animationHolder.add(BorderLayout.CENTER,
+                    // animationWidget.getContents());
                     animationHolder.add(animationWidget.getContents());
                 }
             }
         };
-        //        GuiUtils.invokeInSwingThread(runnable);
+
+        // GuiUtils.invokeInSwingThread(runnable);
         Misc.run(runnable);
     }
 
@@ -6929,45 +6997,53 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * Go to full screen mode
      */
     public void setFullScreen() {
-
         Dimension fixedSize = null;
+
         if ((fullScreenWidth > 0) && (fullScreenHeight > 0)) {
             fixedSize = new Dimension(fullScreenWidth, fullScreenHeight);
         }
+
         if (innerContents == null) {
             return;
         }
 
         if (fullScreenWindow != null) {
             resetFullScreen();
+
             return;
         }
+
         JComponent navComponent = getComponent();
+
         innerContents.remove(navComponent);
 
-
         Dimension theSize = fixedSize;
+
         if (theSize == null) {
             theSize        = Toolkit.getDefaultToolkit().getScreenSize();
             theSize.height -= 50;
         }
+
         navComponent.setMinimumSize(theSize);
         navComponent.setPreferredSize(theSize);
+
         AnimationWidget animationWidget = getAnimationWidget();
         JComponent      rightPanel      = (JComponent) GuiUtils.filler();
+
         if (animationWidget != null) {
             rightPanel = animationWidget.getContents();
         }
 
-        JComponent menuBar = doMakeMenuBar();
+        JComponent menuBar    = doMakeMenuBar();
         JComponent cancelBtn1 =
             GuiUtils.makeImageButton("/auxdata/ui/icons/cancel.gif", this,
                                      "resetFullScreen");
         JComponent cancelBtn2 =
             GuiUtils.makeImageButton("/auxdata/ui/icons/cancel.gif", this,
                                      "resetFullScreen");
-        //If they set the width to be smallish then don't include the
-        //animation and the menu bar
+
+        // If they set the width to be smallish then don't include the
+        // animation and the menu bar
         if (theSize.width < 300) {
             rightPanel = new JPanel();
             menuBar    = new JPanel();
@@ -6981,35 +7057,35 @@ public class ViewManager extends SharableImpl implements ActionListener,
         JPanel contents = GuiUtils.topCenterBottom(top, navComponent, bottom);
 
         fullScreenWindow = new JFrame();
+
         if (fixedSize == null) {
             fullScreenWindow.setUndecorated(true);
         }
-        fullScreenWindow.getContentPane().add(contents);
 
+        fullScreenWindow.getContentPane().add(contents);
 
         if (fixedSize == null) {
             fullScreenWindow.setSize(
                 Toolkit.getDefaultToolkit().getScreenSize());
         } else {}
+
         fullScreenWindow.pack();
+
         int yOffset = 0;
+
         if (GuiUtils.isMac()) {
             yOffset = 23;
         }
+
         if (fixedSize == null) {
             fullScreenWindow.setLocation(0, 0 + yOffset);
         } else {
             fullScreenWindow.setLocation(20, 20 + yOffset);
         }
+
         fullScreenWindow.setVisible(true);
         navComponent.requestFocus();
     }
-
-
-
-
-
-
 
     /**
      * Set the click to focus property. When true this VM only gets focus on a mouse click
@@ -7036,6 +7112,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public void setAliases(List value) {
         aliases = value;
+
         if ((aliases != null) && (aliases.size() > 0)) {
             aliases = Misc.newList(aliases.get(0));
         }
@@ -7047,13 +7124,14 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * @return The Aliases
      */
     public List getAliases() {
-        //Only return the first one
+
+        // Only return the first one
         if (aliases.size() > 0) {
             return Misc.newList(aliases.get(0));
         }
+
         return aliases;
     }
-
 
     /**
      * Set the display matrix array
@@ -7065,16 +7143,22 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public void setDisplayMatrix(double[] newMatrix)
             throws VisADException, RemoteException {
         initMatrix = newMatrix;
+
         if ((newMatrix == null) || !hasDisplayMaster()) {
             return;
         }
+
         double[] displayMatrix = getProjectionControl().getMatrix();
+
         if (displayMatrix.length != newMatrix.length) {
             initMatrix = ProjectionControl.matrixDConvert(newMatrix);
         }
+
         if (getIdv().getArgsManager().getIsOffScreen()) {
-            //            System.err.println("Setting projection matrix");
+
+            // System.err.println("Setting projection matrix");
         }
+
         getMaster().setProjectionMatrix(initMatrix);
     }
 
@@ -7087,10 +7171,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (getProjectionControl() == null) {
             return initMatrix;
         }
+
         return getProjectionControl().getMatrix();
     }
-
-
 
     /**
      * Toggle the animation string visibility.
@@ -7102,7 +7185,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
     }
 
     /**
-     * Toggle the animation string visibility.
+     * Get the animation string visibility.
      * @return visible  true to make it visible
      * @deprecated Use getAniReadout now
      */
@@ -7110,6 +7193,21 @@ public class ViewManager extends SharableImpl implements ActionListener,
         return getAniReadout();
     }
 
+    /**
+     * Toggle the top component visibility.
+     * @param visible  true to make it visible
+     */
+    public void setTopBarVisible(boolean visible) {
+        setBp(PREF_TOPBAR_VISIBLE, visible);
+    }
+
+    /**
+     * Get the top component visibility.
+     * @return visible  true to make it visible
+     */
+    public boolean getTopBarVisible() {
+        return getBp(PREF_TOPBAR_VISIBLE);
+    }
 
     /**
      * Set the  show animation readout flag
@@ -7119,7 +7217,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public void setAniReadout(boolean value) {
         setBp(PREF_ANIREADOUT, value);
     }
-
 
     /**
      * Get  the animation readout  flag
@@ -7146,12 +7243,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (nameLabel == null) {
             return;
         }
-        //        nameLabel.setText("View:" + cnt);
+
+        // nameLabel.setText("View:" + cnt);
         if (name != null) {
             nameLabel.setText(name);
         }
     }
-
 
     /**
      *  Get the Name property.
@@ -7162,7 +7259,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         return name;
     }
 
-
     /**
      * Set the AspectRatio property.
      *
@@ -7171,12 +7267,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public void setAspectRatio(double[] value) {
         aspectRatio = value;
     }
-
-    /** xxx */
-    static int xxx = 0;
-
-    /** my cnt */
-    int xmycnt = xxx++;
 
     /**
      * Print the aspect
@@ -7193,7 +7283,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         }
     }
 
-
     /**
      * Get the AspectRatio property.
      *
@@ -7202,7 +7291,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public double[] getAspectRatio() {
         return aspectRatio;
     }
-
 
     /**
      * Set the SkinProperties property.
@@ -7231,12 +7319,15 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public String getSkinProperty(String name) {
         String prop = null;
+
         if (skinProperties != null) {
             prop = (String) skinProperties.get(name);
         }
+
         if (prop == null) {
             prop = (String) getStateManager().getProperty(name);
         }
+
         return prop;
     }
 
@@ -7295,6 +7386,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
             displayListFont = getStore().get(PREF_DISPLAYLISTFONT,
                                              defaultFont);
         }
+
         return displayListFont;
     }
 
@@ -7317,6 +7409,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
             displayListColor = getStore().get(PREF_DISPLAYLISTCOLOR,
                     (Color) null);
         }
+
         return displayListColor;
     }
 
@@ -7355,7 +7448,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public int getFullScreenHeight() {
         return fullScreenHeight;
     }
-
 
     /**
      * Set the Properties property.
@@ -7423,7 +7515,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         return lights;
     }
 
-
     /**
      *  Set the SplitPaneLocation property.
      *
@@ -7440,12 +7531,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public int getSplitPaneLocation() {
         JSplitPane tmp = mainSplitPane;
+
         if (tmp != null) {
             return tmp.getDividerLocation();
         }
+
         return -1;
     }
-
 
     /**
      * Initialize the ViewState
@@ -7456,7 +7548,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         viewState.put(ViewState.PROP_MATRIX, getDisplayMatrix());
     }
 
-
     /**
      * Make a ViewState
      *
@@ -7464,11 +7555,11 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public ViewState doMakeViewState() {
         ViewState viewState = new ViewState(getClass().getName());
+
         initViewState(viewState);
+
         return viewState;
     }
-
-
 
     /**
      * Set the initial ViewState name
@@ -7493,12 +7584,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
      *
      * @return  the logo file or URL
      */
-    public String getLogoFile() {
+    protected String getLogoFile() {
         if (logoFile == null) {
             logoFile =
                 getIdv().getStateManager().getPreferenceOrProperty(PREF_LOGO,
                     "");
         }
+
         return logoFile;
     }
 
@@ -7521,6 +7613,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
             logoPosition = getIdv().getStateManager().getPreferenceOrProperty(
                 PREF_LOGO_POSITION_OFFSET, "");
         }
+
         return logoPosition;
     }
 
@@ -7544,6 +7637,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 (float) getIdv().getStateManager().getPreferenceOrProperty(
                     PREF_LOGO_SCALE, 1f);
         }
+
         return logoScale;
     }
 
@@ -7574,7 +7668,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
         return getBp(PREF_LOGO_VISIBILITY);
     }
 
-
     /**
      * Ensure that there is only one time driver for this view
      *
@@ -7583,68 +7676,316 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * @param displayControl  the time driver control
      */
     public void ensureOnlyOneTimeDriver(DisplayControl displayControl) {
+        if ((getAnimationInfo() != null)
+                && (getAnimationInfo().getAnimationSetInfo() != null)
+                && getAnimationInfo().getAnimationSetInfo().getActive()) {
+            AnimationInfo ai = getAnimationWidget().getAnimationInfo();
+            ai.getAnimationSetInfo().setIsTimeDriver(false);
+            getAnimationWidget().setProperties(ai);
+        }
         for (DisplayControl control : (List<DisplayControl>) getControls()) {
             if ( !control.equals(displayControl)
                     && control.getIsTimeDriver()) {
                 ((DisplayControlImpl) control).setIsTimeDriver(false);
+                // but make it listen to the other one now
+                ((DisplayControlImpl) control).setUsesTimeDriver(true);
+            }
+        }
+    }
+
+    /**
+     * Class IdvKeyboardBehavior is used to route keyboard events
+     * from the display to this ViewManager.
+     *
+     *
+     * @author IDV development team
+     */
+    private static class IdvKeyboardBehavior implements KeyboardBehavior,
+            Removable {
+
+        /** The ViewManager */
+        ViewManager viewManager;
+
+        /**
+         * Create me
+         *
+         * @param viewManager The ViewManager
+         */
+        public IdvKeyboardBehavior(ViewManager viewManager) {
+            this.viewManager = viewManager;
+        }
+
+        /**
+         * Remove me
+         */
+        public void doRemove() {
+            viewManager = null;
+        }
+
+        /**
+         * Needed for the interface
+         *
+         * @param function function
+         * @param keycode keycode
+         * @param modifiers modifiers
+         */
+        public void mapKeyToFunction(int function, int keycode,
+                                     int modifiers) {}
+
+        /**
+         * Route the key pressed event to the ViewManager
+         *
+         * @param keyEvent The event
+         */
+        public void processKeyEvent(KeyEvent keyEvent) {
+            viewManager.keyWasTyped(keyEvent);
+        }
+
+        /**
+         * Needed for the interface
+         *
+         * @param function function
+         */
+        public void execFunction(int function) {}
+    }
+
+
+    /**
+     * Class MatrixCommand manages changes to the viewpoint matrix
+     *
+     *
+     * @author IDV Development Team
+     * @version $Revision: 1.401 $
+     */
+    public static class MatrixCommand extends Command {
+
+        /** The new matrix */
+        double[] newMatrix;
+
+        /** The old matrix */
+        double[] oldMatrix;
+
+        /** The viewmanager */
+        ViewManager viewManager;
+
+        /**
+         * ctor
+         *
+         * @param viewManager The vm
+         * @param oldMatrix  The old matrix
+         * @param newMatrix  The new matrix
+         */
+        public MatrixCommand(ViewManager viewManager, double[] oldMatrix,
+                             double[] newMatrix) {
+            this.viewManager = viewManager;
+            this.oldMatrix   = oldMatrix;
+            this.newMatrix   = newMatrix;
+        }
+
+        /**
+         * Redo
+         */
+        public void redoCommand() {
+            try {
+                viewManager.getMaster().setProjectionMatrix(newMatrix);
+            } catch (Exception exp) {
+                viewManager.logException("setProjectionMatrix", exp);
             }
         }
 
-    }
-    
-    
-    /**** BEGIN MCV ADDONS ****/
-    private static final Logger logger = LoggerFactory.getLogger(ViewManager.class);
-    
-    private String animationCheckBox = "Off";
-    
-    public void fasterVisibilityAnimation() {
-        setVisibilityAnimationCheckBox("Faster");
-        if (animationSpeed > 300) {
-            animationSpeed -= 200;
-        }
-        logger.trace("animationSpeed: {}", animationSpeed);
-    }
-    
-    public void slowerVisibilityAnimation() {
-        setVisibilityAnimationCheckBox("Slower");
-        animationSpeed += 200;
-        logger.trace("animationSpeed: {}", animationSpeed);
-    }
-    
-    public void setVisibilityAnimationSpeed(int animationSpeed) {
-        this.animationSpeed = animationSpeed;
-        logger.trace("animationSpeed: {}", animationSpeed);
-    }
-    
-    public int getVisibilityAnimationSpeed() {
-        return this.animationSpeed;
-    }
-
-    public void setVisibilityAnimationCheckBox(String value) {
-        if ("On".equals(value) || "Faster".equals(value) || "Slower".equals(value)) {
-            animationCheckBox = value;
-        } else {
-            animationCheckBox = "Off";
+        /**
+         * Undo
+         */
+        public void undoCommand() {
+            try {
+                viewManager.getMaster().setProjectionMatrix(oldMatrix);
+            } catch (Exception exp) {
+                viewManager.logException("setProjectionMatrix", exp);
+            }
         }
     }
 
-    public void setAnimatedVisibilityCheckBox(boolean enabled) {
-        if (enabled) {
-            setVisibilityAnimationCheckBox("On");
-        } else {
-            setVisibilityAnimationCheckBox("Off");
+
+    /**
+     * Class MyTimeline for the animation timeline
+     *
+     *
+     * @author IDV Development Team
+     * @version $Revision: 1.401 $
+     */
+    private class MyTimeline extends Timeline {
+
+        /** member */
+        Real animationValue;
+
+        /** member */
+        DisplayControl control;
+
+        /** member */
+        JLabel label;
+
+        /** the right component */
+        JLabel rightComp;
+
+        /** the times */
+        Set timeSet;
+
+        /**
+         * ctor
+         *
+         * @param dates dates
+         * @param w width
+         * @param h height
+         */
+        public MyTimeline(List dates, int w, int h) {
+            super(dates, w, h);
+            setIsCapableOfSelection(false);
         }
-        setAnimatedVisibility(enabled);
+
+        /**
+         * ctor
+         *
+         *
+         * @param timeSet the times
+         * @param dates dates
+         * @param w width
+         * @param control the display control
+         */
+        public MyTimeline(Set timeSet, List dates, int w,
+                          DisplayControl control) {
+            super(dates, w);
+            this.timeSet = timeSet;
+            this.control = control;
+            this.label   = control.makeLegendLabel();
+
+            if (idv.getUseTimeDriver()) {
+                this.rightComp = GuiUtils.rLabel(control.getIsTimeDriver()
+                        ? "Time Driver"
+                        : "");
+            } else {
+                this.rightComp = GuiUtils.rLabel("");
+            }
+
+            setIsCapableOfSelection(false);
+        }
+
+        /**
+         * These are a list of earth locations used to draw sunrise/sunset
+         *
+         * @return locations for sunrise/sunset
+         */
+        public List getSunriseLocations() {
+            return getIdv().getIdvUIManager().getMapLocations();
+        }
+
+        /**
+         * override base class method to use different color
+         *
+         * @return color
+         */
+        public Color getColorTimeUnselected() {
+            return Color.black;
+        }
+
+        /**
+         * handle double click
+         *
+         * @param e event
+         */
+        public void mouseClicked(MouseEvent e) {
+            if (e.getClickCount() < 2) {
+                super.mouseClicked(e);
+
+                return;
+            }
+
+            setAnimationTime(toDate(e.getX()));
+        }
+
+        /**
+         * time changed
+         *
+         * @param value new time
+         *
+         * @throws RemoteException on badness
+         * @throws VisADException on badness
+         */
+        public void update(Real value)
+                throws VisADException, RemoteException {
+            if (control != null) {
+                timeSet = control.getTimeSet();
+
+                if (timeSet != null) {
+                    DateTime[] times = Animation.getDateTimeArray(timeSet);
+
+                    setDatedThings(
+                        DatedObject.wrap(ucar.visad.Util.makeDates(times)));
+                }
+            }
+
+            setAnimationValue(value);
+        }
+
+        /**
+         * set animation value and repaint
+         *
+         * @param value value
+         *
+         * @throws RemoteException On badness
+         * @throws VisADException On badness
+         */
+        public void setAnimationValue(Real value)
+                throws VisADException, RemoteException {
+            this.animationValue = value;
+
+            if ((timeSet != null) && (value != null)) {
+                int  index       = ucar.visad.Util.findIndex(timeSet, value);
+                List datedThings = getDatedThings();
+
+                if ((index >= 0) && (index < datedThings.size())) {
+                    setSelected(Misc.newList(datedThings.get(index)));
+
+                    return;
+                }
+
+                if (getSelected().size() > 0) {
+                    setSelected(new ArrayList());
+                }
+            }
+
+            repaint();
+        }
+
+        /**
+         *  paint animation time
+         *
+         * @param g graphics
+         */
+        public void paintBackgroundDecoration(Graphics2D g) {
+            super.paintBackgroundDecoration(g);
+
+            Dimension d = getSize();
+
+            if ((control != null) && !control.getDisplayVisibility()) {
+                g.setColor(Color.lightGray);
+                g.fillRect(0, 0, d.width, d.height);
+            }
+
+            if (animationValue instanceof DateTime) {
+                try {
+                    Date date =
+                        ucar.visad.Util.makeDate((DateTime) animationValue);
+                    int x = toLocation(date);
+
+                    g.setColor(Color.gray);
+                    g.fillRect(x - 1, 0, 2, d.height);
+                } catch (Exception exp) {
+                    logException("Painting timeline", exp);
+                }
+            }
+        }
     }
 
-    public String getVisibilityAnimationCheckBox() {
-        return animationCheckBox;
-    }
 
-    public boolean getAnimatedVisibility() {
-        return runVisibilityAnimation;
-    }
-    /**** END MCV ADDONS ****/
-
+    ;
 }
