@@ -20,6 +20,10 @@
 
 package ucar.unidata.idv;
 
+/**** BEGIN MCV ADDONS ****/
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+/**** END MCV ADDONS ****/
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -67,7 +71,6 @@ import ucar.unidata.view.geoloc.NavigatedDisplay;
 import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
-
 import ucar.visad.Util;
 import ucar.visad.display.Animation;
 import ucar.visad.display.AnimationInfo;
@@ -77,7 +80,6 @@ import ucar.visad.display.CompositeDisplayable;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.Displayable;
 import ucar.visad.display.TextDisplayable;
-
 import visad.ConstantMap;
 import visad.ControlEvent;
 import visad.ControlListener;
@@ -96,12 +98,12 @@ import visad.ProjectionControl;
 import visad.Real;
 import visad.Set;
 import visad.VisADException;
-
 import visad.bom.annotations.ImageJ3D;
 import visad.bom.annotations.ScreenAnnotatorJ3D;
-
 import visad.java3d.DisplayImplJ3D;
 import visad.java3d.DisplayRendererJ3D;
+
+
 
 
 import java.awt.AWTException;
@@ -133,18 +135,13 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.awt.print.PrinterJob;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-
 import java.rmi.RemoteException;
-
 import java.text.DecimalFormat;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -159,7 +156,6 @@ import java.util.zip.ZipOutputStream;
 
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Group;
-
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -187,7 +183,6 @@ import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3f;
 
@@ -3680,12 +3675,14 @@ public class ViewManager extends SharableImpl implements ActionListener,
         }
     }
 
+    /**** BEGIN MCV ADDONS ****/
     /**
      * Turn on/off the display control visibility toggling animation
      *
      * @param state Turn on or off.
      */
     public void setAnimatedVisibility(boolean state) {
+        logger.trace("state={} runVisibilityAnimation={}", state, runVisibilityAnimation);
         if (state == runVisibilityAnimation) {
             return;
         }
@@ -3717,14 +3714,20 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     }
 
                     if (getDisplayInfos().isEmpty()) {
+                        logger.trace("forcing viz animation to false");
                         runVisibilityAnimation = false;
                     }
                 }
             };
 
             t.start();
+            
+            this.setVisibilityAnimationCheckBox("On");
+        } else {
+            this.setVisibilityAnimationCheckBox("Off");
         }
     }
+    /**** END MCV ADDONS ****/
 
     /**
      * This turns off the visiblity toggle animation and sets the
@@ -4315,28 +4318,32 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 if (animationMenu == null) {
                     animationMenu = new JMenu("Visibility Animation");
                     animationCB   = new JCheckBoxMenuItem("On");
+                    /**** BEGIN MCV ADDONS ****/
+                    animationCB.setSelected("On".equals(getVisibilityAnimationCheckBox()));
                     animationCB.addActionListener(new ObjectListener(null) {
                         public void actionPerformed(ActionEvent event) {
+                            setVisibilityAnimationCheckBox("On");
                             setAnimatedVisibility(((JCheckBoxMenuItem) event
                                 .getSource()).isSelected());
                         }
                     });
                     animationMenu.add(animationCB);
                     item = new JMenuItem("Faster");
+                    item.setSelected("Faster".equals(getVisibilityAnimationCheckBox()));
                     item.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent event) {
-                            if (animationSpeed > 300) {
-                                animationSpeed -= 200;
-                            }
+                            fasterVisibilityAnimation();
                         }
                     });
                     animationMenu.add(item);
                     item = new JMenuItem("Slower");
+                    item.setSelected("Slower".equals(getVisibilityAnimationCheckBox()));
                     item.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent event) {
-                            animationSpeed += 200;
+                            slowerVisibilityAnimation();
                         }
                     });
+                    /**** END MCV ADDONS ****/
                     animationMenu.add(item);
                 }
 
@@ -5631,6 +5638,14 @@ public class ViewManager extends SharableImpl implements ActionListener,
         }
 
         updateDisplayList();
+        /**** BEGIN MCV ADDONS ****/
+        // force a pack() so that the preferred size of this ViewManager's component
+        // is respected after adding the "last active" border.
+        Window window = GuiUtils.getWindow(getComponent());
+        if (window != null) {
+            window.pack();
+        }
+        /**** END MCV ADDONS ****/
     }
 
     /**
@@ -7988,4 +8003,57 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
 
     ;
+    /**** BEGIN MCV ADDONS ****/
+    private static final Logger logger = LoggerFactory.getLogger(ViewManager.class);
+    
+    private String animationCheckBox = "Off";
+    
+    public void fasterVisibilityAnimation() {
+        setVisibilityAnimationCheckBox("Faster");
+        if (animationSpeed > 300) {
+            animationSpeed -= 200;
+        }
+        logger.trace("animationSpeed: {}", animationSpeed);
+    }
+    
+    public void slowerVisibilityAnimation() {
+        setVisibilityAnimationCheckBox("Slower");
+        animationSpeed += 200;
+        logger.trace("animationSpeed: {}", animationSpeed);
+    }
+    
+    public void setVisibilityAnimationSpeed(int animationSpeed) {
+        this.animationSpeed = animationSpeed;
+        logger.trace("animationSpeed: {}", animationSpeed);
+    }
+    
+    public int getVisibilityAnimationSpeed() {
+        return this.animationSpeed;
+    }
+    
+    public void setVisibilityAnimationCheckBox(String value) {
+        if ("On".equals(value) || "Faster".equals(value) || "Slower".equals(value)) {
+            animationCheckBox = value;
+        } else {
+            animationCheckBox = "Off";
+        }
+    }
+    
+    public void setAnimatedVisibilityCheckBox(boolean enabled) {
+        if (enabled) {
+            setVisibilityAnimationCheckBox("On");
+        } else {
+            setVisibilityAnimationCheckBox("Off");
+        }
+        setAnimatedVisibility(enabled);
+    }
+    
+    public String getVisibilityAnimationCheckBox() {
+        return animationCheckBox;
+    }
+    
+    public boolean getAnimatedVisibility() {
+        return runVisibilityAnimation;
+    }
+    /**** END MCV ADDONS ****/
 }
