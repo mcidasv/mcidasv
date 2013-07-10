@@ -419,11 +419,11 @@ class _Window(_JavaProxy):
         from ucar.unidata.idv import IdvResourceManager
         from edu.wisc.ssec.mcidasv.util.McVGuiUtils import idvGroupsToMcv
         skins = getStaticMcv().getResourceManager().getXmlResources(IdvResourceManager.RSC_SKIN)
-
+        
         skinToIdx = {}
         for x in range(skins.size()):
             skinToIdx[skins.getProperty('skinid', x)] = x
-        
+            
         if not skinId in skinToIdx:
             raise LookupError()
         else:
@@ -541,7 +541,7 @@ class _Display(_JavaProxy):
         # MapViewManager.getUseGlobeDisplay(), IdvUIManager.COMP_GLOBEVIEW
         # TransectViewManager, IdvUIManager.COMP_TRANSECTVIEW
         from ucar.unidata.idv.ui import IdvUIManager
-
+        
         className = self._JavaProxy__javaObject.getClass().getCanonicalName()
         if className == 'ucar.unidata.idv.MapViewManager':
             if self._JavaProxy__javaObject.getUseGlobeDisplay():
@@ -791,6 +791,36 @@ class _Display(_JavaProxy):
         """Centers the display over a given latitude and longitude.
         
         Please be aware that something like:
+        activeDisplay().setCenter(lat, lon, 1.2)
+        activeDisplay().setCenter(lat, lon, 1.2)
+        the second call will rescale the display to be 1.2 times the size of
+        the display *after the first call.* Or, those calls are essentially
+        the same as "activeDisplay().setCenter(lat, lon, 2.4)".
+        
+        Note on above issue: it might be useful if this does a "resetProjection" every time,
+        so that "scale" behaves more predicatbly   --mike
+        
+        Args:
+        lat:
+        lon:
+        scale: Optional parameter for "zooming". Default value (1.0) results in no rescaling;
+            greater than 1.0 "zooms in", less than 1.0 "zooms out"
+        """
+        validated = LatLonPointImpl(lat, lon)
+        earthLocation = Util.makeEarthLocation(validated.getLatitude(), validated.getLongitude())
+        mapDisplay = self._JavaProxy__javaObject.getMapDisplay()
+        
+        # no idea what the problem is here...
+        mapDisplay.centerAndZoom(earthLocation, False, scale)
+        # try to position correctly
+        mapDisplay.centerAndZoom(earthLocation, False, 1.0)
+        mapDisplay.centerAndZoom(earthLocation, False, 1.0)
+        
+    @gui_invoke_later
+    def testCenter(self, lat, lon, scale=1.0):
+        """Centers the display over a given latitude and longitude.
+        
+        Please be aware that something like:
         setCenter(lat, long, 1.2)
         setCenter(lat, long, 1.2)
         the second call will rescale the display to be 1.2 times the size of
@@ -949,7 +979,7 @@ class _Display(_JavaProxy):
             
         """
         import visad.DisplayException as DisplayException
-
+        
         # this pause is apparently critical
         pause()
         
@@ -970,7 +1000,7 @@ class _Display(_JavaProxy):
                     # this should only happen if captureImage is called
                     # with a height and width after an annotate() in the background
                     raise RuntimeError("Height/width for captureImage is currently not supported after a text annotation. Height/Width can be specified with buildWindow or openBundle instead, then leave height/width out of subsequent calls to captureImage.")
-        
+                    
         imageFile = java.io.File(filename)
         # yes, I'm still calling writeImage. But it's a different writeImage!!!
         #  (this is ViewManager.writeImage, not ImageGenerator.writeImage)
@@ -1036,7 +1066,7 @@ class _Display(_JavaProxy):
         import visad.georef.EarthLocationTuple as EarthLocationTuple
         import ucar.unidata.idv.control.drawing.TextGlyph as TextGlyph
         import ucar.unidata.idv.control.drawing.DrawingGlyph as DrawingGlyph
-
+        
         # Force into offscreen mode for the moment so drawing control
         # properties window doesn't flash
         # (see DisplayControlImpl.createIdvWindow for why this works)
@@ -1051,12 +1081,12 @@ class _Display(_JavaProxy):
         drawCtl.setLegendLabelTemplate(text)
         drawCtl.setShowInDisplayList(False)
         pause()
-
+        
         # set offscreen mode back to whatever it was
         getStaticMcv().getArgsManager().setIsOffScreen(initOffScreen)
-
+        
         glyph = TextGlyph(drawCtl, None, text)
-
+        
         horAlign = str(alignment[0]).lower()
         vertAlign = str(alignment[1]).lower()
         if str(alignment).lower() != "center":
@@ -1068,7 +1098,7 @@ class _Display(_JavaProxy):
                     and vertAlign != "center"
                     and vertAlign != "bottom"):
                 raise ValueError('second element of alignment keyword must be "top", "center", or "bottom"')
-
+                
         # deal with horizontal/vertical justification keywords.
         # Unfortunately, we need to "reverse" the justification w.r.t.
         # IDV terminology ("right" becomes "left"), because we've decided
@@ -1088,7 +1118,7 @@ class _Display(_JavaProxy):
         if (str(alignment).lower() == "center"):
             glyph.setHorizontalJustification(TextGlyph.JUST_CENTER)
             glyph.setVerticalJustification(TextGlyph.JUST_CENTER)
-        
+            
         if (lat != None) and (lon != None) and (
                 (line == None) and (element == None)):
             # lat lon point
@@ -1220,7 +1250,7 @@ class _Layer(_JavaProxy):
     @gui_invoke_later
     def setEnhancementTable(self, ctName):
         """Change the enhancement table.
-
+        
         Args:
             ctName:  the name of the enhancement table. Unlike setProjection,
                      you don't NEED to specify "parent" table directories,
