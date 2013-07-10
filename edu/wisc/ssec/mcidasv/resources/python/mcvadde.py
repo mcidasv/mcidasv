@@ -386,7 +386,7 @@ def listADDEImages(server, dataset, descriptor,
     coordinateSystem=CoordinateSystems.LATLON,
     place=None,
     mag=None,
-    position='ALL',
+    position='0',
     unit=None,
     day=None,
     time=None,
@@ -402,7 +402,7 @@ def listADDEImages(server, dataset, descriptor,
         descriptor: ADDE dataset descriptor.
         day: Day range. ('begin date', 'end date')
         time: ('begin time', 'end time')
-        position: Position number. (default='all')
+        position: Position number. (default='0')
         band: McIDAS band number; only images that have matching band number will be returned.
         accounting: ('user', 'project number') User and project number required by servers using McIDAS accounting. default = ('idv','0')
         
