@@ -143,6 +143,37 @@ Places = enum(ULEFT='Upper Left', CENTER='Center')
 ULEFT = Places.ULEFT
 CENTER = Places.CENTER
 
+class _AreaDirectoryList(object):
+    def __init__(self, values=None):
+        self.values = values or []
+        
+    def __len__(self):
+        return len(self.values)
+        
+    def __getitem__(self, key):
+        return self.values[key]
+        
+    def __setitem__(self, key, value):
+        self.values[key] = value
+        
+    def __delitem__(self, key):
+        del self.values[key]
+        
+    def __iter__(self):
+        return iter(self.values)
+        
+    def __reversed__(self):
+        return _AreaDirectoryList(reversed(self.values))
+        
+    def append(self, value):
+        self.values.append(value)
+        
+    def __repr__(self):
+        return repr(self.values)
+        
+    def __str__(self):
+        return str(self.values)
+        
 class AddeJythonError(Exception): pass
 class AddeJythonInvalidDatasetError(AddeJythonError): pass
 class AddeJythonInvalidProjectError(AddeJythonError): pass
@@ -475,7 +506,7 @@ def listADDEImages(server, dataset, descriptor,
         for areaDirectory in dirs[0]:
             areaDirectories.append(areaDirectory)
             
-    temp = []
+    temp = _AreaDirectoryList()
     for i, d in enumerate(areaDirectories):
         # print i, d.getBands(), d.getSensorType(), d.getCenterLatitude(), d.getCenterLongitude()
         nominalTime = d.getNominalTime()
