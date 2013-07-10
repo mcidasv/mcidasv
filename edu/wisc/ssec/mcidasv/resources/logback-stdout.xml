@@ -20,15 +20,18 @@
 
   <!-- you can override the root level for specific packages -->
   <!-- <logger name="edu.wisc.ssec.mcidasv" level="TRACE"/> -->
-<!--   <logger name="ucar.unidata.idv.ui" level="TRACE" />
-  <logger name="edu.wisc.ssec.mcidasv.ui" level="TRACE" />
- -->  <!-- logging is disabled within mcv (by default)
+
+  <!-- use the logging level specified by the "loglevel" Java system property.
+       if the "loglevel" property was not set, logging will only listen for 
+       things at "INFO" level within mcv (by default)
+       
        valid levels are: TRACE, DEBUG, INFO, WARN, ERROR, OFF
        be sure to skim over http://logback.qos.ch/manual/architecture.html#basic_selection -->
-  <root level="INFO">
+  <root level="${loglevel:-INFO}">
     <appender-ref ref="STDOUT" />
   </root>
-  
+
+  <!-- Disable some initial status messages from the stdout/stderr redirect library -->
   <logger name="uk.org.lidalia.sysoutslf4j" level="OFF" />
   
   <logger name="jython" level="INFO">
@@ -38,10 +41,8 @@
     <appender-ref ref="JYTHON" />
   </logger>
   
-  
   <!-- Let's use this section of the file to group loggers that spew *way* too much output. -->
-  <!-- <logger name="httpclient.wire.content" level="OFF" /> --><!-- really only an issue when the root logger is set to TRACE. -->
-  <logger name="httpclient.wire.content" level="OFF" /> <!-- really only an issue when the root logger is set to TRACE. -->
+  <logger name="httpclient.wire.content" level="OFF" />
   <logger name="org.apache.commons.httpclient" level="OFF" />
   <logger name="org.bushe.swing.event" level="OFF" />
   <logger name="ucar.grib" level="OFF" />
