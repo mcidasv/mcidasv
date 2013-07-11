@@ -208,18 +208,10 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
             tab.add("Settings",
                 GuiUtils.inset(GuiUtils.top(doMakeWidgetComponent()), 5));
             
-            // MH: DEBUG: just add a dummy component to this tab for now..
+            // MH: just add a dummy component to this tab for now..
             //            don't init histogram until the tab is clicked.
-            //tab.add("Histogram", GuiUtils.inset(getHistogramTabComponent(),5));
-            tab.add("Histogram", new JLabel("blah blah no one should ever see this"));
-            
-            /** MH: get rid of extraneous stuff messing with tab focus, etc.
-            //Set this here so we don't get odd crud on the screen
-            //When the MyTabbedPane goes to paint itself the first time it
-            //will set the tab back to 0
-            tab.setSelectedIndex(1);
-            GuiUtils.handleHeavyWeightComponentsInTabs(tab);
-            */
+            tab.add("Histogram", new JLabel("Histogram not yet initialized"));
+
             return tab;
         } catch (Exception exc) {
             logException("doMakeContents", exc);
@@ -232,21 +224,15 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
      * in a standalone method, so we can wait and call it only after the
      * histogram is actually initialized.
      */
-    private void finishHistogramStuff() {
+    private void setInitialHistogramRange() {
         try {
-            // ColorTableWidget ctw = getColorTableWidget(getRange());
             Range range = getRange();
-            // int lo = (int)range.getMin();
-            // int hi = (int)range.getMax();
             double lo = range.getMin();
             double hi = range.getMax();
-            //boolean flag = histoWrapper.modifyRange(lo, hi);
-            // MH: not sure what the point of setPopupFlag is...
-            //((MyTabbedPane) tab).setPopupFlag(!flag);
             histoWrapper.setHigh(hi);
             histoWrapper.setLow(lo);
         } catch (Exception exc) {
-            logException("finishHistogramStuff", exc);
+            logException("setInitialHistogramRange", exc);
         }
     }
 
@@ -269,7 +255,6 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
         } else {
             Hashtable props = dataSource.getProperties();
             try {
-//                this.dataSelection = dataChoice.getDataSelection();
                 DataSelection testSelection = datachoice.getDataSelection();
                 DataSelection realSelection = getDataSelection();
                 if (testSelection == null) {
@@ -284,9 +269,6 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
                         image = (FlatField)datachoice.getData(null);
                     }
                 } else {
-//                    if (dataChoice.getDataSelection() == null) {
-//                        dataChoice.setDataSelection(dataSelection)
-//                    }
                     Data data = dataSource.getData(datachoice, null, dataSelection, props);
                     if (data instanceof ImageSequenceImpl) {
                         seq = (ImageSequenceImpl) data;
@@ -304,11 +286,6 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
                         image = (FlatField)seq.getImage(0);
                 }
                 histoWrapper.loadData(image);
-                /*
-            double lo = histoWrapper.getLow();
-            double hi = histoWrapper.getHigh();
-            contrastStretch(lo, hi);
-                 */
             } catch (Exception e) {
                 logger.error("attempting to set up histogram", e);
             }
@@ -980,53 +957,37 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
         }
         /**
          *
-         * Handle when the tab has changed. When we move to tab 1 then hide the heavy
-         * component. Show it on change to tab 0.
+         * Only make the histogram once the user clicks the Histogram tab
+         * for the first time.
          *
          * @param e The event
          */
         public void stateChanged(ChangeEvent e) {
-            /** MH: not sure what the point of any of this is.. skip for now
-            if (!getActive() || !getHaveInitialized()) {
-                return;
-            }
-            if ((getSelectedIndex() == 1) && popupFlag) {
-                JLabel label = new JLabel("Can't make a histogram");
-                JPanel contents = GuiUtils.top(GuiUtils.inset(label, label.getText().length() + 12));
-                GuiUtils.showOkDialog(null, "Data Unavailable", contents, null);
-                setPopupFlag(false);
-            }
-            */
             // MH: don't make the histogram until user clicks the tab.
             // TODO: make this independent of ordering of tabs...
+            // TODO: need to change the cursor to indicate stuff is happening...
             if (getSelectedIndex() == 1  && !haveDoneHistogramInit) {
                 this.setComponentAt(1, GuiUtils.inset(getHistogramTabComponent(),5));
-                finishHistogramStuff();
+                setInitialHistogramRange();
                 haveDoneHistogramInit = true;
             }
         }
 
+        /**
+         * MH: Not really doing anything useful...but will leave it here for now...
+         */
         private void setPopupFlag(boolean flag) {
             this.popupFlag = flag;
         }
 
         /**
-         * The first time we paint toggle the selected index. This seems to get rid of
-         * screen crud
+         * MH: Not really doing anything useful...but will leave it here for now...
          *
          * @param g graphics
          */
         public void paint(java.awt.Graphics g) {
             if (!painted) {
                 painted = true;
-                
-                /** MH: what's the point of this? I don't see any "crud"-just skip for now
-                 * because it screws up our ability to tell whether the Histogram tab
-                 * has been clicked yet!
-                setSelectedIndex(1);
-                setSelectedIndex(0);
-                repaint();
-                */
             }
             super.paint(g);
         }
