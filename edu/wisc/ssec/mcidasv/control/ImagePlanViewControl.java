@@ -1001,6 +1001,7 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
             // TODO: make this independent of ordering of tabs...
             if (getSelectedIndex() == 1  && !haveDoneHistogramInit) {
                 this.setComponentAt(1, GuiUtils.inset(getHistogramTabComponent(),5));
+                finishHistogramStuff();
                 haveDoneHistogramInit = true;
             }
         }
