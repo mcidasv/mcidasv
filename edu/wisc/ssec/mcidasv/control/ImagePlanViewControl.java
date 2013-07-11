@@ -207,27 +207,47 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
             JTabbedPane tab = new MyTabbedPane();
             tab.add("Settings",
                 GuiUtils.inset(GuiUtils.top(doMakeWidgetComponent()), 5));
-            tab.add("Histogram", GuiUtils.inset(getHistogramTabComponent(),5));
+            
+            // MH: DEBUG: just add a dummy component to this tab for now..
+            //            don't init histogram until the tab is clicked.
+            //tab.add("Histogram", GuiUtils.inset(getHistogramTabComponent(),5));
+            tab.add("Histogram", new JLabel("blah blah no one should ever see this"));
+            
+            /** MH: get rid of extraneous stuff messing with tab focus, etc.
             //Set this here so we don't get odd crud on the screen
             //When the MyTabbedPane goes to paint itself the first time it
             //will set the tab back to 0
             tab.setSelectedIndex(1);
             GuiUtils.handleHeavyWeightComponentsInTabs(tab);
-//            ColorTableWidget ctw = getColorTableWidget(getRange());
-            Range range = getRange();
-//            int lo = (int)range.getMin();
-//            int hi = (int)range.getMax();
-            double lo = range.getMin();
-            double hi = range.getMax();
-            boolean flag = histoWrapper.modifyRange(lo, hi);
-            ((MyTabbedPane)tab).setPopupFlag(!flag);
-            histoWrapper.setHigh(hi);
-            histoWrapper.setLow(lo);
+            */
             return tab;
         } catch (Exception exc) {
             logException("doMakeContents", exc);
         }
         return null;
+    }
+    
+    /**
+     * Take out the histogram-related stuff that was in doMakeContents and put it
+     * in a standalone method, so we can wait and call it only after the
+     * histogram is actually initialized.
+     */
+    private void finishHistogramStuff() {
+        try {
+            // ColorTableWidget ctw = getColorTableWidget(getRange());
+            Range range = getRange();
+            // int lo = (int)range.getMin();
+            // int hi = (int)range.getMax();
+            double lo = range.getMin();
+            double hi = range.getMax();
+            //boolean flag = histoWrapper.modifyRange(lo, hi);
+            // MH: not sure what the point of setPopupFlag is...
+            //((MyTabbedPane) tab).setPopupFlag(!flag);
+            histoWrapper.setHigh(hi);
+            histoWrapper.setLow(lo);
+        } catch (Exception exc) {
+            logException("finishHistogramStuff", exc);
+        }
     }
 
     protected JComponent getHistogramTabComponent() {
@@ -948,6 +968,8 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
         boolean painted = false;
 
         boolean popupFlag = false;
+        
+        boolean haveDoneHistogramInit = false;
 
         /**
          * Creates a new {@code MyTabbedPane} that gets immediately registered
@@ -964,6 +986,7 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
          * @param e The event
          */
         public void stateChanged(ChangeEvent e) {
+            /** MH: not sure what the point of any of this is.. skip for now
             if (!getActive() || !getHaveInitialized()) {
                 return;
             }
@@ -972,6 +995,13 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
                 JPanel contents = GuiUtils.top(GuiUtils.inset(label, label.getText().length() + 12));
                 GuiUtils.showOkDialog(null, "Data Unavailable", contents, null);
                 setPopupFlag(false);
+            }
+            */
+            // MH: don't make the histogram until user clicks the tab.
+            // TODO: make this independent of ordering of tabs...
+            if (getSelectedIndex() == 1  && !haveDoneHistogramInit) {
+                this.setComponentAt(1, GuiUtils.inset(getHistogramTabComponent(),5));
+                haveDoneHistogramInit = true;
             }
         }
 
@@ -988,9 +1018,14 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
         public void paint(java.awt.Graphics g) {
             if (!painted) {
                 painted = true;
+                
+                /** MH: what's the point of this? I don't see any "crud"-just skip for now
+                 * because it screws up our ability to tell whether the Histogram tab
+                 * has been clicked yet!
                 setSelectedIndex(1);
                 setSelectedIndex(0);
                 repaint();
+                */
             }
             super.paint(g);
         }
