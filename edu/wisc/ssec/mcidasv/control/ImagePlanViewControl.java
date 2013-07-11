@@ -964,10 +964,11 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
          */
         public void stateChanged(ChangeEvent e) {
             // MH: don't make the histogram until user clicks the tab.
-            // TODO: make this independent of ordering of tabs...
             // TODO: need to change the cursor to indicate stuff is happening...
-            if (getSelectedIndex() == 1  && !haveDoneHistogramInit) {
-                this.setComponentAt(1, GuiUtils.inset(getHistogramTabComponent(),5));
+            if (getTitleAt(getSelectedIndex()).equals("Histogram")  
+                    && !haveDoneHistogramInit) {
+                this.setComponentAt(getSelectedIndex(), 
+                        GuiUtils.inset(getHistogramTabComponent(),5));
                 setInitialHistogramRange();
                 haveDoneHistogramInit = true;
             }
