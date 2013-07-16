@@ -444,11 +444,6 @@ def listADDEImages(server, dataset, descriptor,
     else:
         location = ''
         
-    dates = _normalizeDates(day)
-    if not dates:
-        # raise exception
-        pass
-        
     if size:
         if size == 'ALL':
             size = '&SIZE=99999 99999'
@@ -458,7 +453,7 @@ def listADDEImages(server, dataset, descriptor,
         size = ''
         
     if time:
-        time = '%s %s I' % (time[0], time[1])
+        time = '&TIME=%s %s I' % (time[0], time[1])
     else:
         time = ''
         
@@ -477,11 +472,12 @@ def listADDEImages(server, dataset, descriptor,
     timeFormat.setTimeZone(tz)
     timeFormat.applyPattern('HH:mm:ss')
     
-    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=112&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s%(unit)s%(mag)s%(day)s&TIME=%(time)s&POS=%(position)s"
+    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=112&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s%(unit)s%(mag)s%(day)s%(time)s&POS=%(position)s"
     
     areaDirectories = []
-    for date in dates:
-        urlDate = '&DAY=%s' % (date)
+    
+    dates = _normalizeDates(day)
+    if not dates:
         formatValues = {
             'server': server,
             'user': user,
@@ -495,7 +491,7 @@ def listADDEImages(server, dataset, descriptor,
             'size': size,
             'unit': unit,
             'mag': mag,
-            'day': urlDate,
+            'day': '',
             'time': time,
             'position': position,
         }
@@ -505,10 +501,37 @@ def listADDEImages(server, dataset, descriptor,
         dirs = adl.getSortedDirs()
         for areaDirectory in dirs[0]:
             areaDirectories.append(areaDirectory)
+    else:
+        for date in dates:
+            urlDate = '&DAY=%s' % (date)
+            formatValues = {
+                'server': server,
+                'user': user,
+                'proj': proj,
+                'debug': debug,
+                'dataset': dataset,
+                'descriptor': descriptor,
+                'band': band,
+                'location': location,
+                'place': place,
+                'size': size,
+                'unit': unit,
+                'mag': mag,
+                'day': urlDate,
+                'time': time,
+                'position': position,
+            }
+            url = addeUrlFormat % formatValues
+            print url
+            adl = AreaDirectoryList(url)
+            dirs = adl.getSortedDirs()
+            for areaDirectory in dirs[0]:
+                areaDirectories.append(areaDirectory)
             
     temp = _AreaDirectoryList()
     for i, d in enumerate(areaDirectories):
         # print i, d.getBands(), d.getSensorType(), d.getCenterLatitude(), d.getCenterLongitude()
+        print i, d
         nominalTime = d.getNominalTime()
         tempDay = dateFormat.format(nominalTime, StringBuffer(), FieldPosition(0)).toString()
         tempTime = timeFormat.format(nominalTime, StringBuffer(), FieldPosition(0)).toString()
@@ -529,6 +552,10 @@ def listADDEImages(server, dataset, descriptor,
             'accounting': accounting,
             'day': tempDay,
             'time': (tempTime, tempTime),
+            'coordinateSystem': CoordinateSystems.AREA,
+            'location': (d.getLines(), d.getElements()),
+            
+            
         }
         temp.append(dt)
     return temp
