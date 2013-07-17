@@ -74,6 +74,7 @@ import ucar.visad.display.XYDisplay;
 import edu.wisc.ssec.mcidasv.control.HydraCombo;
 import edu.wisc.ssec.mcidasv.control.HydraControl;
 import edu.wisc.ssec.mcidasv.control.LinearCombo;
+import edu.wisc.ssec.mcidasv.control.MultiSpectralControl;
 import edu.wisc.ssec.mcidasv.data.HydraDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.GrabLineRendererJ3D;
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
@@ -163,7 +164,6 @@ public class MultiSpectralDisplay implements DisplayListener {
                 }
               }
               HashMap subset = select.getSubset();
-//              logger.debug("waveNumber={} subset={}", waveNumber, subset);
               image = data.getImage(waveNumber, subset);
               image = changeRangeType(image, uniqueRangeType);
             }
@@ -432,6 +432,7 @@ public class MultiSpectralDisplay implements DisplayListener {
             return selectors.get(id);
 
         DragLine selector = new DragLine(this, id, color, initialRangeY);
+        selector.setHydraControl(displayControl);
         selector.setSelectedValue(waveNumber);
         selectors.put(id, selector);
         return selector;
@@ -707,6 +708,8 @@ public class MultiSpectralDisplay implements DisplayListener {
         private DataReference selector;
 
         private MultiSpectralDisplay multiSpectralDisplay;
+        
+        private HydraControl hydraControl;
 
         private RealType domainType;
         private RealType rangeType;
@@ -763,7 +766,7 @@ public class MultiSpectralDisplay implements DisplayListener {
             line = new DataReferenceImpl(lineId);
 
             display = multiSpectralDisplay.getDisplay();
-            
+
             display.addReferences(new GrabLineRendererJ3D(domain), new DataReference[] { selector }, new ConstantMap[][] { mappings });
             display.addReference(line, cloneMappedColor(color));
 
@@ -819,7 +822,25 @@ public class MultiSpectralDisplay implements DisplayListener {
 
             selector.setData(new Real(domainType, val));
             lastSelectedValue = val;
+            
+            if (hydraControl instanceof MultiSpectralControl) {
+            	((MultiSpectralControl) hydraControl).setWavelengthLabel
+            	(
+            			MultiSpectralControl.WAVENUMLABEL + val
+            	);
+            }
             multiSpectralDisplay.updateControlSelector(controlId, val);
         }
+
+		/**
+		 * Set the display control so we can call back and update
+		 * wavelength readout in real time.
+		 * 
+		 * @param hydraControl the display control to set
+		 */
+        
+		public void setHydraControl(HydraControl hydraControl) {
+			this.hydraControl = hydraControl;
+		}
     }
 }

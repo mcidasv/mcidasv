@@ -73,6 +73,9 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import visad.DataReference;
 import visad.DataReferenceImpl;
 import visad.FlatField;
@@ -107,7 +110,15 @@ import edu.wisc.ssec.mcidasv.util.Contract;
 
 public class MultiSpectralControl extends HydraControl {
 
-    private String PARAM = "BrightnessTemp";
+	private static final Logger logger = LoggerFactory.getLogger(MultiSpectralControl.class);
+	
+	private String PARAM = "BrightnessTemp";
+	
+	// So MultiSpectralDisplay can consistently update the wavelength label
+	// Note hacky leading spaces - needed because GUI builder does not
+	// accept a horizontal strut component.
+	public static String WAVENUMLABEL = "   Wavelength: ";
+	private JLabel wavelengthLabel = new JLabel();
 
     private static final int DEFAULT_FLAGS = 
         FLAG_COLORTABLE | FLAG_ZPOSITION;
@@ -168,7 +179,7 @@ public class MultiSpectralControl extends HydraControl {
         // map the data choice to display.
         ((McIDASV)getIdv()).getMcvDataManager().setHydraDisplay(choice, display);
 
-        //- intialize the Displayable with data before adding to DisplayControl
+        // initialize the Displayable with data before adding to DisplayControl
         DisplayableData imageDisplay = display.getImageDisplay();
         FlatField image = display.getImageData();
 
@@ -227,6 +238,20 @@ public class MultiSpectralControl extends HydraControl {
 
         return true;
     }
+    
+    /**
+     * Updates the Wavelength label when user manipulates drag line UI
+     * 
+     * @param s full label text, prefix and numeric value
+     * 
+     */
+    
+	public void setWavelengthLabel(String s) {
+		if (s != null) {
+			wavelengthLabel.setText(s);
+		}
+		return;
+	}
 
     @Override public void initDone() {
         try {
@@ -269,6 +294,7 @@ public class MultiSpectralControl extends HydraControl {
      * 
      * @see DisplayControl#setDisplayVisibility(boolean)
      */
+    
     @Override public void setDisplayVisibility(boolean on) {
         super.setDisplayVisibility(on);
         for (Spectrum s : spectra) {
@@ -597,9 +623,10 @@ public class MultiSpectralControl extends HydraControl {
           JLabel nameLabel = new JLabel("Band: ");
           compList.add(nameLabel);
           compList.add(bandBox);
+          compList.add(wavelengthLabel);
         }
 
-        JPanel waveNo = GuiUtils.center(GuiUtils.doLayout(compList, 2, GuiUtils.WT_N, GuiUtils.WT_N));
+        JPanel waveNo = GuiUtils.center(GuiUtils.doLayout(compList, 3, GuiUtils.WT_N, GuiUtils.WT_N));
         return GuiUtils.centerBottom(display.getDisplayComponent(), waveNo);
     }
 
