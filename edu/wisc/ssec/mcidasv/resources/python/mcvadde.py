@@ -553,7 +553,7 @@ def listADDEImages(server, dataset, descriptor,
             'day': tempDay,
             'time': (tempTime, tempTime),
             'coordinateSystem': CoordinateSystems.AREA,
-            'location': (d.getLines(), d.getElements()),
+            'size': (d.getLines(), d.getElements()),
             
             
         }
