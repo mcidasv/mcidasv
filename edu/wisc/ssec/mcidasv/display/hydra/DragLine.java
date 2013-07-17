@@ -25,29 +25,30 @@
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
+
 package edu.wisc.ssec.mcidasv.display.hydra;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
 
 import ucar.unidata.util.LogUtil;
+
+import visad.CellImpl;
+import visad.ConstantMap;
+import visad.DataReference;
+import visad.DataReferenceImpl;
+import visad.Display;
+import visad.Gridded1DSet;
+import visad.Gridded2DSet;
+import visad.LocalDisplay;
+import visad.Real;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.VisADException;
+
 import edu.wisc.ssec.mcidasv.data.hydra.GrabLineRendererJ3D;
-import visad.util.Util;
-
-
-import visad.*;
-
 
     public class DragLine extends CellImpl {
+    	
         private final String selectorId = hashCode() + "_selector";
         private final String lineId = hashCode() + "_line";
         private final String controlId;
@@ -59,7 +60,6 @@ import visad.*;
         private DataReference selector;
 
         private RealType domainType;
-        private RealType rangeType;
 
         private RealTupleType tupleType;
 
@@ -68,7 +68,6 @@ import visad.*;
         private float[] YRANGE;
 
         protected float lastSelectedValue;
-
 
         public DragLine(Gridded1DSet domain, RealType domainType, RealType rangeType,
             final float lastSelectedValue, LocalDisplay display, final String controlId, 

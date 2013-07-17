@@ -32,13 +32,30 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import visad.*;
+import java.rmi.RemoteException;
+import java.util.Enumeration;
+import java.util.Vector;
 
-import javax.media.j3d.*;
-import javax.vecmath.*;
-
-import java.util.*;
-import java.rmi.*;
+import visad.CommonUnit;
+import visad.Data;
+import visad.DataDisplayLink;
+import visad.DataReference;
+import visad.Display;
+import visad.DisplayImpl;
+import visad.DisplayRealType;
+import visad.DisplayTupleType;
+import visad.Gridded1DSet;
+import visad.MathType;
+import visad.Real;
+import visad.RealTuple;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.ScalarMap;
+import visad.ShadowRealType;
+import visad.ShadowType;
+import visad.Unit;
+import visad.VisADException;
+import visad.VisADRay;
 
 /**
  Grab and drag lines parallel to a coordinate axis.  For simple
@@ -52,7 +69,6 @@ public class GrabLineRendererJ3D extends visad.java3d.DirectManipulationRenderer
 
   private float[][] spatialValues = null;
 
-
   private int closeIndex = -1;
 
   private float offsetx = 0.0f, offsety = 0.0f, offsetz = 0.0f;
@@ -64,19 +80,16 @@ public class GrabLineRendererJ3D extends visad.java3d.DirectManipulationRenderer
   private transient MathType type = null;
   private transient ShadowType shadow = null;
 
-
   private float point_x, point_y, point_z;
   private float line_x, line_y, line_z;
 
   private float[] f = new float[1];
   private float[] d = new float[1];
-  private float[][] value = new float[1][1];
 
   private String notRealType = "not RealType";
   private String whyNotDirect = null;
 
   private boolean pickCrawlToCursor = true;
-  //-private boolean pickCrawlToCursor = false;
 
   private int[] axisToComponent = {-1, -1, -1};
   private ScalarMap[] directMap = {null, null, null};
@@ -91,7 +104,6 @@ public class GrabLineRendererJ3D extends visad.java3d.DirectManipulationRenderer
 
   private int mouseModifiersMask  = 0;
   private int mouseModifiersValue = 0;
-
 
   public GrabLineRendererJ3D() {
     this(null);
@@ -209,6 +221,10 @@ spatialValues[1][i] + " " + spatialValues[2][i] + " d = " + d);
   public synchronized void drag_direct(VisADRay ray, boolean first,
                                        int mouseModifiers) {
     if (display == null) return;
+    
+    // disable printing of the cursor info string
+    getDisplayRenderer().setCursorStringOn(false);
+    
     // System.out.println("drag_direct " + first + " " + type);
     if (spatialValues == null || ref == null || shadow == null ||
         link == null) return;
@@ -310,23 +326,6 @@ spatialValues[1][i] + " " + spatialValues[2][i] + " d = " + d);
             // RealType rtype = (RealType) data.getType();
             rtype = (RealType) type;
             newData = new Real(rtype, (double) d[0], rtype.getDefaultUnit(), null);
-            /**
-            // create location string
-            Vector vect = new Vector();
-            Real r = new Real(rtype, d[0]);
-            Unit overrideUnit = getDirectMap(i).getOverrideUnit();
-            Unit rtunit = rtype.getDefaultUnit();
-            // units not part of Time string
-            if (overrideUnit != null && !overrideUnit.equals(rtunit) &&
-                (!Unit.canConvert(rtunit, CommonUnit.secondsSinceTheEpoch) ||
-                 rtunit.getAbsoluteUnit().equals(rtunit))) {
-              double dval =  overrideUnit.toThis((double) d[0], rtunit);
-              r = new Real(rtype, dval, overrideUnit);
-            }
-            String valueString = r.toValueString();
-            vect.addElement(rtype.getName() + " = " + valueString);
-            getDisplayRenderer().setCursorStringVector(vect);
-            **/
             break;
           }
         }
@@ -335,9 +334,8 @@ spatialValues[1][i] + " " + spatialValues[2][i] + " d = " + d);
           if (idx[0] != last_idx && idx[0] >= 0) {
             newData = new Real(rtype, (double)samples[0][idx[0]], rtype.getDefaultUnit(), null);
 
-
             // create location string
-            Vector vect = new Vector();
+            Vector<String> vect = new Vector<String>();
             //-Real r = new Real(rtype, d[0]);
             Real r = new Real(rtype, samples[0][idx[0]]);
             Unit overrideUnit = getDirectMap(ii).getOverrideUnit();
@@ -353,7 +351,6 @@ spatialValues[1][i] + " " + spatialValues[2][i] + " d = " + d);
             vect.addElement(rtype.getName() + " = " + valueString);
             getDisplayRenderer().setCursorStringVector(vect);
 
-
             ref.setData(newData);
             link.clearData();
             last_idx = idx[0];
@@ -368,7 +365,7 @@ spatialValues[1][i] + " " + spatialValues[2][i] + " d = " + d);
         addPoint(xx);
         int n = ((RealTuple) data).getDimension();
         Real[] reals = new Real[n];
-        Vector vect = new Vector();
+        Vector<String> vect = new Vector<String>();
         for (int i=0; i<3; i++) {
           int j = getAxisToComponent(i);
           if (j >= 0) {
@@ -377,21 +374,6 @@ spatialValues[1][i] + " " + spatialValues[2][i] + " d = " + d);
             Real c = (Real) ((RealTuple) data).getComponent(j);
             rtype = (RealType) c.getType();
             reals[j] = new Real(rtype, (double) d[0], rtype.getDefaultUnit(), null);
-            /**
-            // create location string
-            Real r = new Real(rtype, d[0]);
-            Unit overrideUnit = getDirectMap(i).getOverrideUnit();
-            Unit rtunit = rtype.getDefaultUnit();
-            // units not part of Time string
-            if (overrideUnit != null && !overrideUnit.equals(rtunit) &&
-                (!Unit.canConvert(rtunit, CommonUnit.secondsSinceTheEpoch) ||
-                 rtunit.getAbsoluteUnit().equals(rtunit))) {
-              double dval = overrideUnit.toThis((double) d[0], rtunit);
-              r = new Real(rtype, dval, overrideUnit);
-            }
-            String valueString = r.toValueString();
-            vect.addElement(rtype.getName() + " = " + valueString);
-            **/
           }
         }
         getDisplayRenderer().setCursorStringVector(vect);
@@ -410,9 +392,8 @@ spatialValues[1][i] + " " + spatialValues[2][i] + " d = " + d);
           if (idx[0] != last_idx && idx[0] >= 0) {
             newData = new Real(rtype, (double)samples[0][idx[0]], rtype.getDefaultUnit(), null);
                                                                                                                   
-                                                                                                                  
             // create location string
-            vect = new Vector();
+            vect = new Vector<String>();
             //-Real r = new Real(rtype, d[0]);
             Real r = new Real(rtype, samples[0][idx[0]]);
             Unit overrideUnit = getDirectMap(ii).getOverrideUnit();
@@ -427,8 +408,7 @@ spatialValues[1][i] + " " + spatialValues[2][i] + " d = " + d);
             String valueString = r.toValueString();
             vect.addElement(rtype.getName() + " = " + valueString);
             getDisplayRenderer().setCursorStringVector(vect);
-                                                                                                                  
-                                                                                                                  
+            
             ref.setData(newData);
             link.clearData();
             last_idx = idx[0];
