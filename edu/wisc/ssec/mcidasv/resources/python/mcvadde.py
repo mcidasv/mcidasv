@@ -530,7 +530,7 @@ def listADDEImages(server, dataset, descriptor,
             
     temp = _AreaDirectoryList()
     for i, d in enumerate(areaDirectories):
-        # print i, d.getBands(), d.getSensorType(), d.getCenterLatitude(), d.getCenterLongitude()
+        # print i, d, d.getBands(), d.getSensorType(), d.getCenterLatitude(), d.getCenterLongitude()
         print i, d
         nominalTime = d.getNominalTime()
         tempDay = dateFormat.format(nominalTime, StringBuffer(), FieldPosition(0)).toString()
@@ -782,10 +782,8 @@ def getADDEImage(localEntry=None,
         raise ValueError()
     
     if location:
-        originalLocation = location
         location = '&%s=%s %s %s' % (coordSys, location[0], location[1], coordType)
     else:
-        originalLocation = location
         location = ''
     
     if day:
@@ -836,11 +834,6 @@ def getADDEImage(localEntry=None,
     
     try:
         mapped = _MappedAreaImageFlatField.fromUrl(url)
-        if coordinateSystem is CoordinateSystems.LATLON and place == 'CENTER':
-            areaDir = mapped.areaDirectory
-            areaDir.setCenterLatitude(float(originalLocation[0]))
-            areaDir.setCenterLongitude(float(originalLocation[1]))
-            
         return mapped.getDictionary(), mapped
     except AreaFileException, e:
         # print 'AreaFileException: url:', url, e
