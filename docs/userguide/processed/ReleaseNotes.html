@@ -42,6 +42,123 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="pagesubtitle">McIDAS-V <br>
   Version 1.4beta1</div>
 <hr size="4" noshade>
+<p>The items below reflect the changes since the 1.3 release.</p>
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat1_1.4b1">Documentation
+    Changes</a></div>
+<div class="faq-category">
+  <ul class="noindent">
+    <li><strong><a class="faq-question-link" href="#doc1.4b1">McIDAS-V User's
+          Guide</a></strong></li>
+  </ul>
+</div>
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat2_1.4b1">Display
+    Changes</a></div>
+<div class="faq-category">
+  <ul class="noindent">
+    <li><strong><a class="faq-question-link" href="#unit1.4b1">Add Unit to Color Scale in Display</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#wavelength1.4b1">Wavelength Readout for the MultiSpectral Display</a></strong></li>
+  </ul>
+</div>
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_1.4b1">Data
+    Changes</a></div>
+<strong></strong>
+<div class="faq-category">
+  <ul class="noindent">
+    <li><strong><a class="faq-question-link" href="#modis1.4b1">MODIS Granule Aggregation</a></strong></li>
+  </ul>
+</div>
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_1.4b1">Other
+    Changes</a></div>
+<div class="faq-category">
+  <ul class="noindent">
+    <li><strong><a class="faq-question-link" href= "#scripting1.4b1">Scripting</a></strong></li>
+    <li><strong><a class="faq-question-link" href= "#zipped1.4b1">Change to Save Data Window when Saving a Zipped Bundle</a></strong></li>
+    <li><strong><a class="faq-question-link" href= "#logging1.4b1">Logging Level</a></strong></li>
+  </ul>
+</div>
+  <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat5_1.4b1">Under
+    Development</a></div>
+<div class="faq-category">
+  <ul class="noindent">
+    <li><strong><a class="faq-question-link" href="#npp1.4b1">Suomi NPP Chooser</a></strong></li>
+    <li><strong><a href="#polar1.4b1" class="faq-question-link">Polar Orbit Track Chooser</a></strong></li></ul></div>
+<hr>
+<div class="faq-bottom">
+  <div class="faq-category-title"><a name="faq1_cat1_1.4b1" id="faq1_cat1_1.4b1"></a>Documentation
+    Changes</div>
+  <div class="faq-category"><a name="doc1.4b1" id="doc1.4b1"></a>
+    <h4>McIDAS-V User's Guide</h4>
+    <div class="faq-answer">Updated the McIDAS-V User's Guide to contain new
+      features and more detailed content.</div>
+  </div>
+</div>
+<div class="faq-category-title"><a name="faq1_cat2_1.4b1" id="faq1_cat2_1.4b1"></a>Display
+  Changes</div>
+<div class="faq-category"><a name="unit1.4b1" id="unit1.4b1"></a>
+  <h4><strong><a class="faq-question-link" href="#lalo1.2b1">Add Unit to Color Scale in Display</a></strong></h4>
+  <div class="faq-answer">Added the ability to add&nbsp;a unit to the color scale in the Main Display.&nbsp;A color scale can be added to the display through the Color Scale tab of the Properties window for the layer. In this tab, there is now a Visible checkbox that, when selected, will display the unit of your data on the color scale in the display.</div></div>
+  <div class="faq-category"><a name="wavelength1.4b1" id="wavelength1.4b1"></a>
+  <h4><strong><a class="faq-question-link" href="#lalo1.2b1">Wavelength Readout for the MultiSpectral Display</a></strong></h4>
+<div class="faq-answer">Added a readout of wavelength when displaying multispectral data using the MultiSpectral display type.&nbsp;This wavelength readout will be at the bottom of the Layer Controls tab alongside the Band dropdown menu.&nbsp;This helps to make this display type more user-friendly.</div></div>
+<div class="faq-bottom">
+  <div class="faq-category-title"><a name="faq1_cat3_1.4b1" id="faq1_cat3_1.4b1"></a>Data
+    Changes</div>
+  <div class="faq-category"><a name="modis1.4b1" id="modis1.4b1"></a>
+    <h4>MODIS Granule Aggregation</h4>
+    <div class="faq-answer">Generalized MODIS aggregation to work with half and quarter kilometer resolution data.&nbsp;Also, you can now aggregate mixed-length granules together.</div>
+  </div>
+</div>
+<div class="faq-category-title"><a name="faq1_cat4_1.4b1" id="faq1_cat4_1.4b1"></a>Other
+Changes</div>
+<div class="faq-category">
+  <div class="faq-answer"></div>
+</div>
+<div class="faq-category"><a name="scripting1.4b1" id="scripting1.4b1"></a>
+  <h4><strong>Scripting</strong></h4>
+<div class="faq-answer">
+    <p>Continued to add to the suite of fully          supported Jython scripting tools introduced in McIDAS-V 1.2. The functions and methods in          this suite can be used to load and display data, manipulate the          display, and save the images. This allows the user to          automatically process data and generate displays for web pages          and other environments. This scripting can be done from the          Jython shell within McIDAS-V, or from a Jython script that can          be invoked as a command line argument. Please see <a href="misc/Scripting/Scripting.html">Scripting</a> for the list of supported functions, an&nbsp;example script, and links to various Java docs.</p>
+    <p>Since the release of McIDAS-V 1.3, there are new functions designed to work with ADDE data.&nbsp; These functions are:</p>
+    <p>makeLocalADDEEntry - Creates a local ADDE entry in the server table.</p>
+    <p>getLocalADDEEntry - Gets the descriptor for a local ADDE Entry.</p>
+    <p>There is also a new version of getADDEImage that gives different output than the previous version.</p>
+</div></div>
+<div class="faq-category"><a name="zipped1.4b1" id="zipped1.4b1"></a>
+  <h4><strong><a class="faq-question-link" href= "#zipped1.4b1">Change to Save Data Window when Saving a Zipped Bundle</a></strong></h4>
+<div class="faq-answer">
+    <p>Changed the Save Data window when saving a zipped bundle to make it easier to determine what data will get saved with your bundle.&nbsp;This is now done through radio buttons.</p>
+    </p>
+</div>
+</div>
+<div class="faq-category"><a name="logging1.4b1" id="logging1.4b1"></a>
+  <h4><strong><a class="faq-question-link" href= "#zipped1.3b1">Logging Level</a></strong></h4>
+<div class="faq-answer">
+    <p>Added the ability to set logging level in the Advanced tab of the User Preferences window.&nbsp;The logging level you&nbsp;select will determine how much information gets written out to your mcidasv.log file in your McIDAS-V directory. For more information about each of the logging levels and what they entail, please see the <a href="tools/preferences/AdvancedPreferences.html#loglevel">Log Level</a> section of the Advanced Preferences page.</p>
+    </p>
+</div>
+</div>
+<div class="faq-category-title"><a name="faq1_cat5_1.4b1" id="faq1_cat5_1.4b1"></a>Under
+Development</div>
+<div class="faq-category"><a name="npp1.4b1" id="npp1.4b1"></a>
+  <h4>Suomi NPP Chooser</h4>
+  <div class="faq-answer">
+      <p>Added the ability to work with Suomi NPP data from NOAA CLASS that includes the data and geolocation within the same file. You can now display non-consecutive granules. You can also now aggregate granules together regardless of granule size. VIIRS SVI data from CLASS can now be displayed. Saving of both zipped and unzipped bundles containing NPP data is now supported.</p>
+      <p>There has been added functionality for working with VIIRS Cloud Mask products as well.&nbsp;If you load in a GMODO-IICMO* product, there are various quality flag products included with the data. McIDAS-V now has the ability to determine which quality flag products are included with&nbsp;the data as well as what cloud mask fields can be produced from them. Therefore, if you load in a GMODO-IICMO* file, you will see fields such as 'Cloud Phase', 'Volcanic Ash', 'Dust', 'Fire', etc.</p>
+      <p>This is currently
+          located in the Under Development list of choosers in the Data Sources tab
+          of the Data Explorer and is available for user feedback through the <a href="http://dcdbs.ssec.wisc.edu/mcidasv/forums/" target="_blank">McIDAS-V
+              Support Forums</a>. As the IDPS (Interface Data Processing Segment) begins to distribute new types of NPP data, we test it in McIDAS-V and make any necessary changes to be able to get the data to display.</p>
+</div></div>
+    <div class="faq-category"><a name="polar1.4b1" id="polar1.4b1"></a>
+  <h4>Polar Orbit Track Chooser</h4>
+  <div class="faq-answer">Reworked the Polar Orbit Track chooser to enable easier access to local files. This is currently
+    located in the Under Development list of choosers in the Data Sources tab
+    of the Data Explorer and is available for user feedback through the <a href="http://dcdbs.ssec.wisc.edu/mcidasv/forums/" target="_blank">McIDAS-V
+    Support Forums</a>.</div>
+</div>
+    <hr size="4" noshade>
+<div class="pagesubtitle">McIDAS-V <br>
+  Version 1.3</div>
+<hr size="4" noshade>
 <p>The items below reflect the changes since the 1.2 release.</p>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat1_1.3b1">Documentation
     Changes</a></div>
