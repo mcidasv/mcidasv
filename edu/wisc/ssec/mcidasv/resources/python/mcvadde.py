@@ -133,6 +133,7 @@ _formats = {
 }
 
 DEFAULT_ACCOUNTING = ('idv', '0')
+DEFAULT_SIZE = (480, 640)
 
 CoordinateSystems = enum('AREA', 'LATLON', 'IMAGE')
 AREA = CoordinateSystems.AREA
@@ -536,28 +537,27 @@ def listADDEImages(server, dataset, descriptor,
         tempDay = dateFormat.format(nominalTime, StringBuffer(), FieldPosition(0)).toString()
         tempTime = timeFormat.format(nominalTime, StringBuffer(), FieldPosition(0)).toString()
         
-        tempBand = list(d.getBands())
-        if len(tempBand) == 1:
-            tempBand = tempBand[0]
-        else:
-            # raise Exception
-            pass
-            
-        dt = {
-            'server': server,
-            'dataset': dataset,
-            'descriptor': descriptor,
-            'band': tempBand,
-            'debug': debug,
-            'accounting': accounting,
-            'day': tempDay,
-            'time': (tempTime, tempTime),
-            'coordinateSystem': CoordinateSystems.AREA,
-            'size': (d.getLines(), d.getElements()),
-            
-            
-        }
-        temp.append(dt)
+        bandList = list(d.getBands())
+        for band in bandList:
+            dt = {
+                'server': server,
+                'dataset': dataset,
+                'descriptor': descriptor,
+                'band': band,
+                'bandList': bandList,
+                'debug': debug,
+                'accounting': accounting,
+                'day': tempDay,
+                'time': (tempTime, tempTime),
+                'coordinateSystem': CoordinateSystems.AREA,
+                'imageSize': (d.getLines(), d.getElements()),
+                'centerLocation': (d.getCenterLatitude(), d.getCenterLongitude()),
+                'resolution': (d.getCenterLatitudeResolution(), d.getCenterLongitudeResolution()),
+                # 'unitList':
+                # 'unit'
+                
+            }
+            temp.append(dt)
     return temp
 
 
@@ -574,7 +574,7 @@ def oldADDEImage(localEntry=None, server=None, dataset=None, descriptor=None,
     debug=False,
     track=False,
     band=None,
-    size=None):
+    size=DEFAULT_SIZE):
     """Requests data from an ADDE Image server - returns both data and metadata objects.
 
     An ADDE request must include values for either localEntry or the combination of server, dataset and descriptor.
@@ -699,7 +699,8 @@ def getADDEImage(localEntry=None,
     debug=False,
     track=False,
     band=None,
-    size=None):
+    size=DEFAULT_SIZE,
+    **kwargs):
     """Requests data from an ADDE Image server - returns both data and metadata objects.
 
     An ADDE request must include values for either localEntry or the combination of server, dataset and descriptor.
