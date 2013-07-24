@@ -421,8 +421,10 @@ def listADDEImages(server, dataset, descriptor,
         mag = ''
         
     if unit:
+        origUnit = unit
         unit = '&UNIT=%s' % (unit)
     else:
+        # origUnit = None
         unit = ''
         
     if place is Places.CENTER:
@@ -531,32 +533,44 @@ def listADDEImages(server, dataset, descriptor,
             
     temp = _AreaDirectoryList()
     for i, d in enumerate(areaDirectories):
-        # print i, d, d.getBands(), d.getSensorType(), d.getCenterLatitude(), d.getCenterLongitude()
+        # print i, d, d.getBands(), d.getSensorType(), d.getCenterLatitude(), d.getCenterLongitude(), d.getCalInfo()
         print i, d
         nominalTime = d.getNominalTime()
-        tempDay = dateFormat.format(nominalTime, StringBuffer(), FieldPosition(0)).toString()
-        tempTime = timeFormat.format(nominalTime, StringBuffer(), FieldPosition(0)).toString()
+        # tempDay = dateFormat.format(nominalTime, StringBuffer(), FieldPosition(0)).toString()
+        # tempTime = timeFormat.format(nominalTime, StringBuffer(), FieldPosition(0)).toString()
+        tempDay = str(dateFormat.format(nominalTime, StringBuffer(), FieldPosition(0)))
+        tempTime = str(timeFormat.format(nominalTime, StringBuffer(), FieldPosition(0)))
         
         bandList = list(d.getBands())
+        # tempUnitList = list(d.getCalInfo()[0])
+        # unitList = tempUnitList[::2]
+        # unitDescList = tempUnitList[1::2]
+        # calInfo = dict(zip(unitList, unitDescList))
+        if unit:
+            unitList = [origUnit]
+        else:
+            unitList = map(str, list(d.getCalInfo()[0])[::2])
+            print unitList
+
         for band in bandList:
-            dt = {
-                'server': server,
-                'dataset': dataset,
-                'descriptor': descriptor,
-                'band': band,
-                'bandList': bandList,
-                'debug': debug,
-                'accounting': accounting,
-                'day': tempDay,
-                'time': (tempTime, tempTime),
-                'coordinateSystem': CoordinateSystems.AREA,
-                'imageSize': (d.getLines(), d.getElements()),
-                'centerLocation': (d.getCenterLatitude(), d.getCenterLongitude()),
-                'resolution': (d.getCenterLatitudeResolution(), d.getCenterLongitudeResolution()),
-                # 'unitList':
-                # 'unit'
-                
-            }
+            for calUnit in unitList:
+                dt = {
+                    'server': server,
+                    'dataset': dataset,
+                    'descriptor': descriptor,
+                    'band': band,
+                    'bandList': bandList,
+                    'debug': debug,
+                    'accounting': accounting,
+                    'day': tempDay,
+                    'time': (tempTime, tempTime),
+                    'coordinateSystem': CoordinateSystems.AREA,
+                    'imageSize': (d.getLines(), d.getElements()),
+                    'centerLocation': (d.getCenterLatitude(), d.getCenterLongitude()),
+                    'resolution': (d.getCenterLatitudeResolution(), d.getCenterLongitudeResolution()),
+                    'unitList': unitList,
+                    'unit': calUnit,
+                }
             temp.append(dt)
     return temp
 
