@@ -8,7 +8,7 @@ import ucar.unidata.util.Range
 
 from contextlib import contextmanager
 
-# from shell import makeDataSource
+from shell import makeDataSource
 from decorators import deprecated
 from decorators import gui_invoke_later
 from decorators import gui_invoke_now
