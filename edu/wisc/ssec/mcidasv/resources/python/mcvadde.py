@@ -530,7 +530,7 @@ def listADDEImages(server, dataset, descriptor,
             dirs = adl.getSortedDirs()
             for areaDirectory in dirs[0]:
                 areaDirectories.append(areaDirectory)
-            
+                
     temp = _AreaDirectoryList()
     for i, d in enumerate(areaDirectories):
         # print i, d, d.getBands(), d.getSensorType(), d.getCenterLatitude(), d.getCenterLongitude(), d.getCalInfo()
@@ -551,7 +551,7 @@ def listADDEImages(server, dataset, descriptor,
         else:
             unitList = map(str, list(d.getCalInfo()[0])[::2])
             print unitList
-
+            
         for band in bandList:
             for calUnit in unitList:
                 dt = {
@@ -573,8 +573,7 @@ def listADDEImages(server, dataset, descriptor,
                 }
             temp.append(dt)
     return temp
-
-
+    
 def oldADDEImage(localEntry=None, server=None, dataset=None, descriptor=None,
     accounting=DEFAULT_ACCOUNTING,
     location=None,
