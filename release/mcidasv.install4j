@@ -13,8 +13,8 @@
     </searchSequence>
     <variables>
       <variable name="INSTALLDIR" value="${compiler:sys.fullName}-System" description="" category="" />
-      <variable name="SRCDIR" value="${compiler:sys.install4jHome}/../mcidasv-github/IDV/lib" description="" category="" />
-      <variable name="MCVDIR" value="${compiler:sys.install4jHome}/../mcidasv-github/mcidasv" description="" category="" />
+      <variable name="SRCDIR" value="${compiler:sys.install4jHome}/../IDV/lib" description="" category="" />
+      <variable name="MCVDIR" value="${compiler:sys.install4jHome}/../mcidasv" description="" category="" />
       <variable name="ADDEDIR" value="${compiler:sys.install4jHome}/../adde" description="" category="" />
     </variables>
     <mergedProjects />
