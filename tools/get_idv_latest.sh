@@ -30,5 +30,6 @@ cd ${DEST_DIR}
 wget ${URL}/${FILE} && unzip -o ${FILE} && rm -f ${FILE}
 cd ${OLDPWD}
 
-echo "IDV JAR files updated on Pappy; will appear in the next McIDAS-V nightly build." |\
+SELF=`hostname`
+echo "IDV JAR files updated on ${SELF}; will appear in the next McIDAS-V nightly build." |\
 	mail -s "AUTO: New IDV JAR files" mug.team@ssec.wisc.edu
