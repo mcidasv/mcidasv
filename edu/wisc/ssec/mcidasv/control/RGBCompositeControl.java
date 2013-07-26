@@ -27,21 +27,31 @@
  */
 package edu.wisc.ssec.mcidasv.control;
 
-import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import net.miginfocom.swing.MigLayout;
+
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataSelection;
+import ucar.unidata.idv.control.DisplayControlImpl;
+import ucar.unidata.util.ColorTable;
+import ucar.unidata.util.LogUtil;
+import ucar.visad.display.DisplayMaster;
+
 import visad.BaseColorControl;
+import visad.CoordinateSystem;
+import visad.Data;
 import visad.FieldImpl;
 import visad.FlatField;
 import visad.FunctionType;
@@ -50,22 +60,9 @@ import visad.ScalarMapControlEvent;
 import visad.ScalarMapEvent;
 import visad.ScalarMapListener;
 import visad.VisADException;
-import visad.Data;
-import visad.CoordinateSystem;
-
 import visad.georef.MapProjection;
 
-import ucar.unidata.data.DataChoice;
-import ucar.unidata.data.DataSelection;
-import ucar.unidata.data.grid.GridDataInstance;
-import ucar.unidata.idv.control.DisplayControlImpl;
-import ucar.unidata.util.ColorTable;
-import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Range;
-import ucar.visad.display.DisplayMaster;
-
 import edu.wisc.ssec.mcidasv.data.hydra.ImageRGBDisplayable;
-
 
 public class RGBCompositeControl extends DisplayControlImpl {
 
@@ -92,15 +89,12 @@ public class RGBCompositeControl extends DisplayControlImpl {
 
    private FieldImpl imageField = null;
    private MapProjection mapProjection = null;
-
-
+        
    private double gamma = 1.0;
 
    private double redGamma = 1.0;
    private double grnGamma = 1.0;
    private double bluGamma = 1.0;
-
-   private boolean hasRange = false;
 
    private final JTextField gammaTxtFld =
         new JTextField(Float.toString(1f), 4);
@@ -138,17 +132,16 @@ public class RGBCompositeControl extends DisplayControlImpl {
 
      Iterator iter = imageDisplay.getScalarMapSet().iterator();
      while (iter.hasNext()) {
-       ScalarMap map = (ScalarMap) iter.next();
-       double[] datRng = map.getRange();
-       if (map.getScalarName().startsWith("redimage")) {
-		redMap = map;
-	}
-       if (map.getScalarName().startsWith("greenimage")) {
-		grnMap = map;
-	}
-       if (map.getScalarName().startsWith("blueimage")) {
-		bluMap = map;
-	}
+    	 ScalarMap map = (ScalarMap) iter.next();
+    	 if (map.getScalarName().startsWith("redimage")) {
+    		 redMap = map;
+    	 }
+    	 if (map.getScalarName().startsWith("greenimage")) {
+    		 grnMap = map;
+    	 }
+    	 if (map.getScalarName().startsWith("blueimage")) {
+    		 bluMap = map;
+    	 }
      }
 
      if (checkRange()) { //- from unpersistence if true, initialize gui, ScalarMaps
@@ -462,24 +455,20 @@ public class RGBCompositeControl extends DisplayControlImpl {
 
    public Container doMakeContents() {
 
-     JPanel bigPanel = new JPanel(new BorderLayout());
-     JPanel subPanel = new JPanel(new GridLayout(4,1));
+     JButton allGammaButton = new JButton("Apply to All Gamma Fields");
+     allGammaButton.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
+             String tmp = gammaTxtFld.getText().trim();
+             updateGamma(Double.valueOf(tmp));
+         }
+     });
 
-     JPanel gammaPanel = new JPanel(new FlowLayout());
-          final JLabel nameLabel = new JLabel("Gamma: ");
-
-          gammaTxtFld.addActionListener(new ActionListener() {
-              public void actionPerformed(ActionEvent e) {
-                  String tmp = gammaTxtFld.getText().trim();
-                  updateGamma(Double.valueOf(tmp));
-              }
-          });
-
-     gammaPanel.add(nameLabel);
-     gammaPanel.add(gammaTxtFld);
-
-     JPanel redPanel = new JPanel(new FlowLayout());
-     redPanel.add(new JLabel("Red range: "));
+      gammaTxtFld.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+              String tmp = gammaTxtFld.getText().trim();
+              updateGamma(Double.valueOf(tmp));
+          }
+      });
    
      redLowTxtFld.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
@@ -487,14 +476,13 @@ public class RGBCompositeControl extends DisplayControlImpl {
             updateRedRange(Double.valueOf(tmp), redRange[1]);
          }
      });
-     redPanel.add(redLowTxtFld);
+     
      redHighTxtFld.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
             String tmp = redHighTxtFld.getText().trim();
             updateRedRange(redRange[0], Double.valueOf(tmp));
          }
      });
-     redPanel.add(redHighTxtFld);
 
      redGammaTxtFld.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
@@ -502,12 +490,9 @@ public class RGBCompositeControl extends DisplayControlImpl {
              updateRedGamma(Double.valueOf(tmp));
          }
      });
-     redPanel.add(new JLabel("Gamma:"));
-     redPanel.add(redGammaTxtFld);
 
-     JButton button = new JButton("reset");
-     redPanel.add(button);
-     button.addActionListener(new ActionListener() {
+     JButton redReset = new JButton("Reset");
+     redReset.addActionListener(new ActionListener() {
        public void actionPerformed(ActionEvent e) {
          updateRedRange(initRedRange[0], initRedRange[1]);
          redRange[0] = initRedRange[0];
@@ -518,9 +503,6 @@ public class RGBCompositeControl extends DisplayControlImpl {
          redGammaTxtFld.setText("1.0");
        }
      });
-
-     JPanel grnPanel = new JPanel(new FlowLayout());
-     grnPanel.add(new JLabel("Green range: "));
    
      grnLowTxtFld.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
@@ -528,14 +510,13 @@ public class RGBCompositeControl extends DisplayControlImpl {
             updateGrnRange(Double.valueOf(tmp), grnRange[1]);
          }
      });
-     grnPanel.add(grnLowTxtFld);
+
      grnHighTxtFld.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
             String tmp = grnHighTxtFld.getText().trim();
             updateGrnRange(grnRange[0], Double.valueOf(tmp));
          }
      });
-     grnPanel.add(grnHighTxtFld);
 
      grnGammaTxtFld.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
@@ -543,13 +524,9 @@ public class RGBCompositeControl extends DisplayControlImpl {
              updateGrnGamma(Double.valueOf(tmp));
          }
      });
-     grnPanel.add(new JLabel("Gamma:"));
-     grnPanel.add(grnGammaTxtFld);
 
-
-     button = new JButton("reset");
-     grnPanel.add(button);
-     button.addActionListener(new ActionListener() {
+     JButton grnReset = new JButton("Reset");
+     grnReset.addActionListener(new ActionListener() {
        public void actionPerformed(ActionEvent e) {
          updateGrnRange(initGrnRange[0], initGrnRange[1]);
          grnRange[0] = initGrnRange[0];
@@ -560,11 +537,6 @@ public class RGBCompositeControl extends DisplayControlImpl {
          grnGammaTxtFld.setText("1.0");
        }
      });
-
-
-
-     JPanel bluPanel = new JPanel(new FlowLayout());
-     bluPanel.add(new JLabel("Blue range: "));
    
      bluLowTxtFld.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
@@ -572,14 +544,13 @@ public class RGBCompositeControl extends DisplayControlImpl {
             updateBluRange(Double.valueOf(tmp), bluRange[1]);
          }
      });
-     bluPanel.add(bluLowTxtFld);
+
      bluHighTxtFld.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
             String tmp = bluHighTxtFld.getText().trim();
             updateBluRange(bluRange[0], Double.valueOf(tmp));
          }
      });
-     bluPanel.add(bluHighTxtFld);
 
      bluGammaTxtFld.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
@@ -587,12 +558,9 @@ public class RGBCompositeControl extends DisplayControlImpl {
              updateBluGamma(Double.valueOf(tmp));
          }
      });
-     bluPanel.add(new JLabel("Gamma:"));
-     bluPanel.add(bluGammaTxtFld);
 
-     button = new JButton("reset");
-     bluPanel.add(button);
-     button.addActionListener(new ActionListener() {
+     JButton bluReset = new JButton("Reset");
+     bluReset.addActionListener(new ActionListener() {
        public void actionPerformed(ActionEvent e) {
          updateBluRange(initBluRange[0], initBluRange[1]);
          bluRange[0] = initBluRange[0];
@@ -604,8 +572,7 @@ public class RGBCompositeControl extends DisplayControlImpl {
        }
      });
 
-     JButton applyButton = new JButton("Apply All");
-     gammaPanel.add(applyButton);
+     JButton applyButton = new JButton("Apply");
      applyButton.addActionListener(new ActionListener() {
        public void actionPerformed(ActionEvent e) {
             String redLow = redLowTxtFld.getText().trim();
@@ -626,16 +593,42 @@ public class RGBCompositeControl extends DisplayControlImpl {
             updateBluGamma(Double.valueOf(tmp));
        }
      });
+     
+     JPanel topPanel = new JPanel(new MigLayout());
+     topPanel.add(new JLabel("Red range: "));
+     topPanel.add(redLowTxtFld);
+     topPanel.add(redHighTxtFld);
+     topPanel.add(new JLabel("Red Gamma: "));
+     topPanel.add(redGammaTxtFld);
+     topPanel.add(redReset, "wrap");
+     
+     topPanel.add(new JLabel("Green range: "));
+     topPanel.add(grnLowTxtFld);
+     topPanel.add(grnHighTxtFld);
+     topPanel.add(new JLabel("Green Gamma: "));
+     topPanel.add(grnGammaTxtFld);
+     topPanel.add(grnReset, "wrap");
+     
+     topPanel.add(new JLabel("Blue range: "));
+     topPanel.add(bluLowTxtFld);
+     topPanel.add(bluHighTxtFld);
+     topPanel.add(new JLabel("Blue Gamma: "));
+     topPanel.add(bluGammaTxtFld);
+     topPanel.add(bluReset, "wrap");
+     
+     topPanel.add(Box.createHorizontalStrut(1), "span 5");
+     topPanel.add(applyButton, "wrap");
+     
+     JPanel bottomPanel = new JPanel(new MigLayout());
+     bottomPanel.add(new JLabel("Common Gamma: "));
+     bottomPanel.add(gammaTxtFld);
+     bottomPanel.add(allGammaButton);
+     
+     JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+     mainPanel.add(topPanel);
+     mainPanel.add(bottomPanel);
 
-
-     subPanel.add(redPanel);
-     subPanel.add(grnPanel);
-     subPanel.add(bluPanel);
-     subPanel.add(gammaPanel);
-
-     bigPanel.add(subPanel, BorderLayout.NORTH);
-
-     return bigPanel;
+     return mainPanel;
    }
 
   private class ColorMapListener implements ScalarMapListener
@@ -661,7 +654,7 @@ public class RGBCompositeControl extends DisplayControlImpl {
     }
 
     public void mapChanged(ScalarMapEvent event) throws RemoteException, VisADException {	
-      if (event.getId() == event.AUTO_SCALE) {
+      if (event.getId() == ScalarMapEvent.AUTO_SCALE) {
             double[] rng = clrMap.getRange();
 	    boolean shouldRemove = false;
 	    //Ghansham: decide whether it is first time. The cleaner way
@@ -681,7 +674,7 @@ public class RGBCompositeControl extends DisplayControlImpl {
 		clrMap.disableAutoScale();
 	    }
       }
-      else if (event.getId() == event.MANUAL) {
+      else if (event.getId() == ScalarMapEvent.MANUAL) {
             double[] rng = clrMap.getRange();
             range[0] = rng[0];
             range[1] = rng[1];
