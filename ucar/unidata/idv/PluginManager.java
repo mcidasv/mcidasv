@@ -28,38 +28,64 @@
 
 package ucar.unidata.idv;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
-import org.w3c.dom.Document;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Vector;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
 
 import ucar.unidata.data.DataGroup;
 import ucar.unidata.data.DerivedDataDescriptor;
-
-import ucar.unidata.geoloc.*;
-import ucar.unidata.idv.IdvResourceManager;
-
-
-import ucar.unidata.idv.control.DisplayControlImpl;
+import ucar.unidata.geoloc.Projection;
+import ucar.unidata.geoloc.ProjectionImpl;
 import ucar.unidata.idv.control.DisplaySetting;
-import ucar.unidata.idv.ui.IdvUIManager;
-import ucar.unidata.idv.ui.IdvWindow;
-import ucar.unidata.idv.ui.ImageGenerator;
-import ucar.unidata.idv.ui.LoadBundleDialog;
 import ucar.unidata.idv.ui.ParamInfo;
-import ucar.unidata.idv.ui.WindowInfo;
-import ucar.unidata.ui.RovingProgress;
 import ucar.unidata.ui.colortable.ColorTableManager;
 import ucar.unidata.ui.symbol.StationModel;
-
-
 import ucar.unidata.util.ColorTable;
-
 import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.HtmlUtil;
-
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.JobManager;
 import ucar.unidata.util.LogUtil;
@@ -67,50 +93,13 @@ import ucar.unidata.util.MenuUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Msg;
 import ucar.unidata.util.ObjectListener;
-import ucar.unidata.util.ObjectPair;
 import ucar.unidata.util.PluginClassLoader;
-import ucar.unidata.util.Prototypable;
-import ucar.unidata.util.PrototypeManager;
 import ucar.unidata.util.ResourceCollection;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.Trace;
-
 import ucar.unidata.util.TwoFacedObject;
-
-
-import ucar.unidata.util.WrapperException;
-
-import ucar.unidata.xml.*;
-
+import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
-
-import java.awt.*;
-import java.awt.event.*;
-
-import java.io.*;
-
-import java.lang.reflect.*;
-
-import java.net.*;
-
-import java.security.*;
-
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Properties;
-
-import java.util.Vector;
-
-import java.util.jar.*;
-
-
-import java.util.regex.*;
-
-import javax.swing.*;
-
-
 
 /**
  *
@@ -1277,16 +1266,15 @@ public class PluginManager extends IdvManager {
 
             propertyPanel =
                 GuiUtils.makeScrollPane(GuiUtils.inset(propertyPanel, 5),
-                                        200, 200);
-            propertyPanel.setPreferredSize(new Dimension(150, 200));
-            propertyPanel.setSize(150, 200);
+                                        200, 300);
+            propertyPanel.setPreferredSize(new Dimension(150, 250));
+            propertyPanel.setSize(150, 250);
 
-            JComponent rbiPanel = GuiUtils.vbox(rbiCheckBoxes);
-            rbiPanel = GuiUtils.makeScrollPane(rbiPanel, 200, 300);
-            rbiPanel.setSize(new Dimension(150, 250));
-            rbiPanel = GuiUtils.topCenter(
-                new JLabel("Select the system resources to exclude"),
-                GuiUtils.top(rbiPanel));
+            JPanel rbiMiddle = new JPanel(new BorderLayout());
+            rbiMiddle.add(BorderLayout.NORTH, new JLabel("Select the system resources to exclude"));
+            rbiMiddle.add(BorderLayout.CENTER, GuiUtils.vbox(rbiCheckBoxes));
+            
+            JComponent rbiPanel = GuiUtils.makeScrollPane(GuiUtils.inset(rbiMiddle, 5), 200, 300);
 
             JTabbedPane tab = new JTabbedPane();
             tab.add("Resources", center);
