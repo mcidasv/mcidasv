@@ -279,14 +279,14 @@ def isAddeDebugEnabled(defaultValue=False):
 
 def getDescriptor(dataset, imageType):
     """Get the descriptor for a local ADDE entry
-
+    
     (this wasn't included in the 1.2 release, but enough people are using it
     that we'll want to keep it for backward compatibility.)
         
     Args:
         dataset: Dataset field from local ADDE server
         imageType: Image Type field from local ADDE server
-
+        
     Returns: valid descriptor string or -1 if no match was found
     """
     # get a list of local ADDE server entries
@@ -564,7 +564,7 @@ def listADDEImages(server, dataset, descriptor,
                     'accounting': accounting,
                     'day': tempDay,
                     'time': (tempTime, tempTime),
-                    'coordinateSystem': CoordinateSystems.AREA,
+                    # 'coordinateSystem': CoordinateSystems.AREA,
                     'imageSize': (d.getLines(), d.getElements()),
                     'centerLocation': (d.getCenterLatitude(), d.getCenterLongitude()),
                     'resolution': (d.getCenterLatitudeResolution(), d.getCenterLongitudeResolution()),
@@ -801,7 +801,10 @@ def getADDEImage(localEntry=None,
         location = ''
     
     if day:
-        day = '&DAY=%s' % (day)
+        if isinstance(day, str):
+            day = '&DAY=%s %s' % (day, day)
+        elif isinstance(day, tuple):
+            day = '&DAY=%s %s' % (day[0], day[1])
     else:
         day = ''
     
