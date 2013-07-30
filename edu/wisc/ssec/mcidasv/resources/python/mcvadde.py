@@ -476,6 +476,7 @@ def listADDEImages(server, dataset, descriptor,
     
     addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=112&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s%(unit)s%(mag)s%(day)s%(time)s&POS=%(position)s"
     
+    urls = []
     areaDirectories = []
     
     dates = _normalizeDates(day)
@@ -502,6 +503,7 @@ def listADDEImages(server, dataset, descriptor,
         adl = AreaDirectoryList(url)
         dirs = adl.getSortedDirs()
         for areaDirectory in dirs[0]:
+            urls.append(url)
             areaDirectories.append(areaDirectory)
     else:
         for date in dates:
@@ -528,6 +530,7 @@ def listADDEImages(server, dataset, descriptor,
             adl = AreaDirectoryList(url)
             dirs = adl.getSortedDirs()
             for areaDirectory in dirs[0]:
+                urls.append(url)
                 areaDirectories.append(areaDirectory)
                 
     temp = _AreaDirectoryList()
@@ -568,6 +571,26 @@ def listADDEImages(server, dataset, descriptor,
                     'resolution': (d.getCenterLatitudeResolution(), d.getCenterLongitudeResolution()),
                     'unitList': unitList,
                     'unitType': calUnit,
+                    'bands': bandList,
+                    'band-count': d.getNumberOfBands(),
+                    'calinfo': map(str, list(d.getCalInfo()[0])),
+                    'calibration-scale-factor': d.getCalibrationScaleFactor(),
+                    'calibration-type': str(d.getCalibrationType()),
+                    'calibration-unit-name': d.getCalibrationUnitName(),
+                    'center-latitude': d.getCenterLatitude(),
+                    'center-latitude-resolution': d.getCenterLatitudeResolution(),
+                    'center-longitude': d.getCenterLongitude(),
+                    'center-longitude-resolution': d.getCenterLongitudeResolution(),
+                    'directory-block': list(d.getDirectoryBlock()),
+                    'elements': d.getElements(),
+                    'lines': d.getLines(),
+                    'memo-field': str(d.getMemoField()),
+                    'nominal-time': d.getNominalTime(),
+                    'sensor-id': d.getSensorID(),
+                    'sensor-type': str(d.getSensorType()),
+                    'source-type': str(d.getSourceType()),
+                    'start-time': d.getStartTime(),
+                    'url': urls[i],
                 }
             temp.append(dt)
     return temp
