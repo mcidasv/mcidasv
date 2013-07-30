@@ -378,7 +378,6 @@ def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
     localEntry = LocalAddeEntry.Builder(imageType, dataset, mask, convertedFormat).status(EntryStatus.ENABLED).temporary((not save)).build()
     getStaticMcv().getServerManager().addEntry(localEntry)
     return localEntry
-    
 
 
 def listADDEImages(server, dataset, descriptor,
@@ -826,7 +825,7 @@ def getADDEImage(localEntry=None,
     else:
         band = ''
         
-    addeUrlFormat = "adde://%(server)s/imagedata?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s&PLACE=%(place)s%(size)s&UNIT=%(unit)s&MAG=%(mag)s&SPAC=4&NAV=X&AUX=YES&DOC=X%(day)s&TIME=%(time)s&POS=%(position)s&TRACK=%(track)d"
+    addeUrlFormat = "adde://%(server)s/imagedata?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s&PLACE=%(place)s%(size)s&UNIT=%(unit)s&MAG=%(mag)s&SPAC=4&NAV=X&AUX=YES&DOC=X%(day)s&TIME=%(time)s&POS=%(position)s&TRACK=%(track)d"
     formatValues = {
         'server': server,
         'port': port,
