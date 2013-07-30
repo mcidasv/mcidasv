@@ -78,6 +78,20 @@ def _normalizeDates(dates):
         normalized = []
     return normalized
     
+def _normalizeUnits(units):
+    # how to handle units='ALL'?
+    normalized = None
+    if isinstance(units, str):
+        if units == 'ALL':
+            normalized = []
+        else:
+            normalized = [units]
+    elif isinstance(units, list) or isinstance(units, tuple) or isinstance(units, set):
+        normalized = [unit for unit in units]
+    elif not units:
+        normalized = ['BRIT']
+    return normalized
+    
 _formats = {
     "AMSR-E Rain Product":                                     AddeFormat.AMSRE_RAIN_PRODUCT,
     "AMRR":                                                    AddeFormat.AMSRE_RAIN_PRODUCT,
