@@ -24,6 +24,8 @@ from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import strToServerName
 from edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry import AddeFormat
 from edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry import ServerName
 
+from visad import DateTime
+
 from visad.data.mcidas import AreaAdapter
 
 from java.lang import StringBuffer
@@ -599,11 +601,11 @@ def listADDEImages(server, dataset, descriptor,
                     'elements': d.getElements(),
                     'lines': d.getLines(),
                     'memo-field': str(d.getMemoField()),
-                    'nominal-time': d.getNominalTime(),
+                    'nominal-time': DateTime(d.getNominalTime()),
                     'sensor-id': d.getSensorID(),
                     'sensor-type': str(d.getSensorType()),
                     'source-type': str(d.getSourceType()),
-                    'start-time': d.getStartTime(),
+                    'start-time': DateTime(d.getStartTime()),
                     'url': urls[i],
                 }
             temp.append(dt)
