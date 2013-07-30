@@ -442,7 +442,7 @@ def listADDEImages(server, dataset, descriptor,
         raise ValueError()
         
     if location:
-        location = '%s=%s %s' % (coordSys, location[0], location[1])
+        location = '&%s=%s %s' % (coordSys, location[0], location[1])
     else:
         location = ''
         
