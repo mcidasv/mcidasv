@@ -490,24 +490,25 @@ public class McVGuiUtils implements Constants {
     public static JComboBox makeComboBox(final Collection<?> items, final Object selected) {
         return makeComboBox(items, selected, null);
     }
-
+    
     public static JComboBox makeComboBox(final Collection<?> items, final Object selected, final Width width) {
         JComboBox newComboBox = getEditableBox(items, selected);
         setComponentWidth(newComboBox, width);
         return newComboBox;
     }
-
+    
     public static void setListData(final JComboBox box, final Collection<?> items, final Object selected) {
         box.removeAllItems();
         if (items != null) {
-            for (Object o : items)
+            for (Object o : items) {
                 box.addItem(o);
+            }
+            if (selected != null && !items.contains(selected)) {
+                box.addItem(selected);
+            }
         }
-
-        if (selected != null && !items.contains(selected))
-            box.addItem(selected);
     }
-
+    
     public static JComboBox getEditableBox(final Collection<?> items, final Object selected) {
         JComboBox fld = new JComboBox();
         fld.setEditable(true);
