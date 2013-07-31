@@ -81,7 +81,6 @@ import org.slf4j.LoggerFactory;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
 
-
 /**
  * This class provides  an abstract interactive shell
  *
@@ -89,46 +88,46 @@ import ucar.unidata.util.Misc;
  * @version $Revision$Date: 2012/04/25 17:03:28 $
  */
 public class InteractiveShell implements HyperlinkListener {
-
+    
     private static final Logger logger = LoggerFactory.getLogger(InteractiveShell.class);
-
+    
     private static Object MUTEX =  new Object();
-
+    
     /** _more_ */
     protected JFrame frame;
-
+    
     /** _more_ */
     protected JTextField commandFld;
-
+    
     /** _more_ */
     protected JTextArea commandArea;
-
+    
     /** _more_ */
     private JButton flipBtn;
-
+    
     /** _more_ */
     private GuiUtils.CardLayoutPanel cardLayoutPanel;
-
+    
     /** _more_ */
     protected JEditorPane editorPane;
-
+    
     /** _more_ */
     protected StringBuffer sb = new StringBuffer();
-
+    
     private boolean bufferOutput = false;
-
+    
     /** _more_ */
     protected final List<String> history = new ArrayList<String>();
-
+    
     /** _more_ */
     protected int historyIdx = -1;
-
+    
     /** _more_          */
     private String title;
-
+    
     /** _more_          */
     protected JComponent contents;
-
+    
     /**
      * _more_
      *
@@ -137,7 +136,7 @@ public class InteractiveShell implements HyperlinkListener {
     public InteractiveShell(String title) {
         this.title = title;
     }
-
+    
     /**
      * _more_
      */
@@ -149,7 +148,7 @@ public class InteractiveShell implements HyperlinkListener {
         frame.setVisible(true);
         registerWindow(frame);
     }
-
+    
     public void close() {
         frame.dispose();
         contents = null;
@@ -163,11 +162,11 @@ public class InteractiveShell implements HyperlinkListener {
         commandFld = null;
         frame = null;
     }
-
+    
     public void show() {
         frame.setVisible(true);
     }
-
+    
     protected String getHref(String text, String label) {
         return new StringBuilder("<a href=\"")
             .append(encodeBase64(("text:" + text).getBytes()))
@@ -175,15 +174,15 @@ public class InteractiveShell implements HyperlinkListener {
             .append(label)
             .append("</a>").toString();
     }
-
+    
     protected void showWaitCursor() {
         frame.setCursor(GuiUtils.waitCursor);
     }
-
+    
     protected void showNormalCursor() {
         frame.setCursor(GuiUtils.normalCursor);
     }
-
+    
     /**
      * _more_
      */
@@ -191,7 +190,7 @@ public class InteractiveShell implements HyperlinkListener {
         contents = doMakeContents();
         makeFrame();
     }
-
+    
     /**
      * _more_
      *
@@ -214,13 +213,13 @@ public class InteractiveShell implements HyperlinkListener {
             setText(url.substring(5));
         }
     }
-
+    
     public void setText(String text) {
         JTextComponent field = getCommandFld();
         field.setText(text);
         field.requestFocus();
     }
-
+    
     /**
      * _more_
      *
@@ -255,7 +254,7 @@ public class InteractiveShell implements HyperlinkListener {
                 }
             }
         });
-
+        
         commandArea = new JTextArea("", 4, 30);
         GuiUtils.setFixedWidthFont(commandArea);
         GuiUtils.addKeyBindings(commandArea);
@@ -281,17 +280,17 @@ public class InteractiveShell implements HyperlinkListener {
             GuiUtils.top(evalBtn),
             GuiUtils.inset(cardLayoutPanel, 2),
             GuiUtils.top(flipBtn));
-
+            
         JComponent contents = GuiUtils.vsplit(scroller, bottom,300);
         contents = GuiUtils.inset(contents, 5);
-
+        
         JMenuBar menuBar = doMakeMenuBar();
         if (menuBar != null) {
             contents = GuiUtils.topCenter(menuBar, contents);
         }
         return contents;
     }
-
+    
     /**
      * _more_
      *
@@ -299,7 +298,7 @@ public class InteractiveShell implements HyperlinkListener {
      * @param e _more_
      */
     protected void handleRightMouseClick(JTextComponent commandFld, MouseEvent e) {}
-
+    
     /**
      * _more_
      *
@@ -308,14 +307,14 @@ public class InteractiveShell implements HyperlinkListener {
     protected JMenuBar doMakeMenuBar() {
         return null;
     }
-
+    
     /**
      * _more_
      */
     public void toFront() {
         GuiUtils.toFront(frame);
     }
-
+    
     /**
      * _more_
      */
@@ -329,7 +328,7 @@ public class InteractiveShell implements HyperlinkListener {
         // save the user a redundant mouse click:
         getCommandFld().requestFocusInWindow();
     }
-
+    
     /**
      * _more_
      *
@@ -338,11 +337,11 @@ public class InteractiveShell implements HyperlinkListener {
     public void insertText(String t) {
         GuiUtils.insertText(getCommandFld(), t);
     }
-
+    
     public void handleEvaluationAction() {
         eval();
     }
-
+    
     public void handleHistoryPreviousAction() {
         int historySize = history.size();
         if ((historyIdx < 0) || (historyIdx >= historySize)) {
@@ -357,7 +356,7 @@ public class InteractiveShell implements HyperlinkListener {
             getCommandFld().setText(history.get(historyIdx));
         }
     }
-
+    
     public void handleHistoryNextAction() {
         int historySize = history.size();
         if ((historyIdx < 0) || (historyIdx >= historySize)) {
@@ -372,11 +371,11 @@ public class InteractiveShell implements HyperlinkListener {
             getCommandFld().setText(history.get(historyIdx));
         }
     }
-
+    
     public void handleFlipCommandAreaAction() {
         flipField();
     }
-
+    
     /**
      * _more_
      *
@@ -402,7 +401,7 @@ public class InteractiveShell implements HyperlinkListener {
             handleFlipCommandAreaAction();
         }
     }
-
+    
     /**
      * _more_
      *
@@ -416,7 +415,7 @@ public class InteractiveShell implements HyperlinkListener {
         commandField.setText(t);
         commandField.setCaretPosition(pos + s.length());
     }
-
+    
     /**
      * Clear out the Shell GUI and history. 
      */
@@ -426,12 +425,12 @@ public class InteractiveShell implements HyperlinkListener {
         clearOutput();
         getCommandFld().setText("");
     }
-
+    
     public void clearOutput() {
         sb = new StringBuffer();
         editorPane.setText("");
     }
-
+    
     /**
      * _more_
      *
@@ -443,7 +442,7 @@ public class InteractiveShell implements HyperlinkListener {
         }
         return commandArea;
     }
-
+    
     /**
      * _more_
      */
@@ -480,16 +479,16 @@ public class InteractiveShell implements HyperlinkListener {
         historyIdx = -1;
         Misc.run(this, "eval", cmd);
     }
-
+    
     protected void startBufferingOutput() {
         bufferOutput = true;
     }
-
+    
     protected void endBufferingOutput() {
         bufferOutput = false;
         updateText();
     }
-
+    
     private void updateText() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
@@ -497,7 +496,7 @@ public class InteractiveShell implements HyperlinkListener {
             }
         });
     }
-
+    
     /**
      * _more_
      *
@@ -509,7 +508,7 @@ public class InteractiveShell implements HyperlinkListener {
             updateText();
         }
     }
-
+    
     /**
      * _more_
      *
@@ -529,7 +528,7 @@ public class InteractiveShell implements HyperlinkListener {
             .append(encoded1)
             .append("\"><img alt=\"Reload\" src=\"idvresource:/auxdata/ui/icons/Refresh16.gif\" border=0></a></td></tr></table></div>").toString());
     }
-
+    
     /**
      * _more_
      *
@@ -540,7 +539,7 @@ public class InteractiveShell implements HyperlinkListener {
     protected String formatCode(String code) {
         return code;
     }
-
+    
     /**
      * 
      * @return a reference to this shell's JSplitPane that holds the text input and text output areas
@@ -553,7 +552,7 @@ public class InteractiveShell implements HyperlinkListener {
         JPanel panel2 = (JPanel) panel1.getComponent(1);
         return (JSplitPane) panel2.getComponent(0);
     }
-
+    
     /**
      * Get the location of the horizontal JSplitPane divider that separates the text input area
      * from the text output.
@@ -563,7 +562,7 @@ public class InteractiveShell implements HyperlinkListener {
     protected int getDividerLocation() {
         return this.getJSplitPane().getDividerLocation();
     }
-
+    
     /**
      * Set the location of the horizontal JSplitPane divider that separates the text input area
      * from the text output.
@@ -596,9 +595,12 @@ class HTMLCleanupTransferHandler extends TransferHandler {
 //                logger.trace("data={} pos={}", data, pos);
                 for (int i = 0; i < data.length; i++) {
 //                    logger.trace("  data[{}]={} (char={}) (int={})", i, data[i], Character.valueOf(data[i]), Integer.valueOf(data[i]));
-                    if (Character.isSpaceChar(data[i])) {
+                    if (data[i] == 160) {
 //                        logger.trace("    inserting space at {}", i);
                         data[i] = ' ';
+                    } else if (data[i] == 32) {
+//                        logger.trace("    inserting newline at {}", i);
+                        data[i] = '\n';
                     }
                 }
                 list.add(new String(data));
@@ -633,7 +635,7 @@ class HTMLCleanupTransferHandler extends TransferHandler {
         } catch (IOException e) {
             logger.error("Error parsing copied text", e);
         }
-
+        
         StringBuilder result = new StringBuilder();
         for (String s : list) {
             result.append(s);

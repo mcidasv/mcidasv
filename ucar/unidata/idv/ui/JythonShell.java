@@ -104,15 +104,18 @@ import edu.wisc.ssec.mcidasv.McIDASV;
  * @version $Revision$Date: 2012/10/03 20:10:23 $
  */
 public class JythonShell extends InteractiveShell {
-
-    private static final Logger logger = LoggerFactory.getLogger(JythonShell.class);
+    
+    private static final Logger logger = 
+        LoggerFactory.getLogger(JythonShell.class);
     
     /** property that holds jython shell window location and size. */
-    public static final String PROP_JYTHON_WINDOW = "prop.jython.shell.windowrect";
+    public static final String PROP_JYTHON_WINDOW = 
+        "prop.jython.shell.windowrect";
     
     /** property that hold location of divider bar between text input/output areas */
-    public static final String PROP_JYTHON_DIVIDER = "prop.jython.shell.divider";
-
+    public static final String PROP_JYTHON_DIVIDER = 
+        "prop.jython.shell.divider";
+    
     /** property that holds the history */
     public static final String PROP_JYTHON_SHELL_HISTORY =
         "prop.jython.shell.history";
@@ -121,34 +124,36 @@ public class JythonShell extends InteractiveShell {
     public static final String PROP_JYTHON_SHELL_MAX_HISTORY_LENGTH =
         "prop.jython.shell.maxhistorylength";
     
-    public static final String PROP_JYTHON_SHELL_DISABLE_RESET_WARNING = "prop.jython.shell.disableresetwarning";
+    public static final String PROP_JYTHON_SHELL_DISABLE_RESET_WARNING = 
+        "prop.jython.shell.disableresetwarning";
     
     /** max number of commands saved in history */
     public static final int DEFAULT_MAX_HISTORY_LENGTH = 100;
-
+    
     /** Jython shell window title. */
     public static final String WINDOW_TITLE = "Jython Shell";
-
-    protected static final Logger jythonLogger = LoggerFactory.getLogger("jython");
-
+    
+    protected static final Logger jythonLogger = 
+        LoggerFactory.getLogger("jython");
+    
     /** {@code true} while a shell reset is taking place, {@code false} otherwise. */
     private boolean shellResetting = false;
-
+    
     /** idv */
     private IntegratedDataViewer idv;
-
+    
     /** interp */
     private PythonInterpreter interp;
-
+    
     /** output stream for interp */
     private OutputStream outputStream;
-
+    
     /** _more_          */
     private boolean autoSelect = false;
-
+    
     /** _more_          */
     ImageGenerator islInterpreter;
-
+    
     /**
      * ctor
      *
@@ -167,7 +172,7 @@ public class JythonShell extends InteractiveShell {
         //Create the gui
         init();
     }
-
+    
     /**
      * Run when the user has closed the Jython shell window.
      */
@@ -176,7 +181,7 @@ public class JythonShell extends InteractiveShell {
         saveDividerLocation(idv.getStore(), getDividerLocation());
         super.close();
     }
-
+    
     /**
      * Print the Jython shell history.
      */
@@ -185,33 +190,33 @@ public class JythonShell extends InteractiveShell {
             super.eval(history.get(i));
         }
     }
-
+    
     /**
      * Write Jython shell history.
      */
     public void saveHistory() {
-    	
-    	// trim the history array to desired length
-    	while (history.size() > loadMaxHistoryLength(idv.getStore(), DEFAULT_MAX_HISTORY_LENGTH)) {
-    		// remove the "oldest" command
-    		history.remove(0);
-    	}
-    	
+        
+        // trim the history array to desired length
+        while (history.size() > loadMaxHistoryLength(idv.getStore(), DEFAULT_MAX_HISTORY_LENGTH)) {
+            // remove the "oldest" command
+            history.remove(0);
+        }
+        
         IdvObjectStore store = idv.getStore();
         store.put(PROP_JYTHON_SHELL_HISTORY, history);
         store.save(); // TODO: do we REALLY want to do this every command?
     }
-
+    
     @Override public void flipField() {
         super.flipField();
         getCommandFld().requestFocusInWindow();
     }
-
+    
     @Override public void toFront() {
         getCommandFld().requestFocusInWindow();
         GuiUtils.toFront(frame);
     }
-
+    
     /**
      * This gets called by the base class to make the frame.
      * If you don't want this to popup then make this method a noop
@@ -226,7 +231,7 @@ public class JythonShell extends InteractiveShell {
         frame.setVisible(true);
         registerWindow(frame);
         setDividerLocation(loadDividerLocation(idv.getStore(), getDividerLocation()));
-
+        
         frame.addWindowFocusListener(new WindowFocusListener() {
             @Override public void windowGainedFocus(WindowEvent event) {
                 getCommandFld().requestFocusInWindow();
@@ -234,7 +239,7 @@ public class JythonShell extends InteractiveShell {
             @Override public void windowLostFocus(WindowEvent event) {
             }
         });
-
+        
         // when the window closes remove the interpreter
         frame.addWindowListener(new WindowAdapter() {
             @Override public void windowClosing(WindowEvent e) {
@@ -245,7 +250,7 @@ public class JythonShell extends InteractiveShell {
             }
         });
     }
-
+    
     /**
      * Get the interpreter. Note: if {@link #interp} is {@code null}, this 
      * method will call {@link #createInterpreter()} to create a new 
@@ -259,7 +264,7 @@ public class JythonShell extends InteractiveShell {
         }
         return interp;
     }
-
+    
     /**
      * popup menu
      *
@@ -283,7 +288,7 @@ public class JythonShell extends InteractiveShell {
           //            System.err.println(t);
           */
         t = null;
-
+        
         List<JMenuItem> items = new ArrayList<JMenuItem>();
         if (history.isEmpty()) {
             List<JMenuItem> historyItems = new ArrayList<JMenuItem>();
@@ -296,21 +301,21 @@ public class JythonShell extends InteractiveShell {
             }
             items.add(makeMenu("History", historyItems));
         }
-
+        
         items.add(makeMenu("Insert Procedure Call", idv.getJythonManager().makeProcedureMenu(this, "insertText", t)));
-
+        
         JMenu dataMenu = makeMenu("Insert Data Source Type", getDataMenuItems());
         GuiUtils.limitMenuSize(dataMenu, "Data Source Types", 10);
         items.add(dataMenu);
         items.add(makeMenu("Insert Display Type", getDisplayMenuItems()));
         items.add(makeMenu("Insert Idv Action", idv.getIdvUIManager().makeActionMenu(this, "insertText", true)));
-
+        
         JPopupMenu popup = GuiUtils.makePopupMenu(items);
         if (popup != null) {
             popup.show(cmdFld, 0, (int) cmdFld.getBounds().getHeight());
         }
     }
-
+    
     /**
      * List the variables in the interpreter
      */
@@ -333,7 +338,7 @@ public class JythonShell extends InteractiveShell {
         }
         output(sb.toString());
     }
-
+    
     /**
      * Add the idv action
      *
@@ -342,7 +347,7 @@ public class JythonShell extends InteractiveShell {
     public void insertAction(String action) {
         insertText(new StringBuilder("idv.handleAction('action:").append(action).append("')").toString());
     }
-
+    
     /**
      * handle event
      *
@@ -355,14 +360,14 @@ public class JythonShell extends InteractiveShell {
             showProcedurePopup(cmdFld);
         }
     }
-
+    
     /**
      * show help
      */
     public void showHelp() {
         idv.getIdvUIManager().showHelp("idv.tools.jythonshell");
     }
-
+    
     /**
      * Take all of the commands and write them to the library
      */
@@ -387,7 +392,7 @@ public class JythonShell extends InteractiveShell {
         s.append("#From shell\n").append("\n\n");
         idv.getJythonManager().appendJython(s.toString());
     }
-
+    
     /**
      * create interp
      */
@@ -440,7 +445,7 @@ public class JythonShell extends InteractiveShell {
         interp.setOut(outputStream);
         interp.setErr(outputStream);
     }
-
+    
     /**
      * Clear everything, gui and make new interp
      */
@@ -513,20 +518,20 @@ public class JythonShell extends InteractiveShell {
         items.add(makeMenuItem("List Saved History", this, "listHistory"));
         items.add(makeMenuItem("List Current Variables", this, "listVars"));
         menuBar.add(makeMenu("File", items));
-
+        
         items.clear();
         items.add(makeMenuItem("Reset Jython Shell", this, "clear"));
         items.add(makeMenuItem("Clear Output Buffer", this, "clearOutput"));
         items.add(makeCheckboxMenuItem("Auto-select Operands", this, "autoSelect", null));
         //        items.add(GuiUtils.makeMenu("Insert Display Type", getDisplayMenuItems()));
         menuBar.add(makeMenu("Edit", items));
-
+        
         items.clear();
         items.add(makeMenuItem("Help", this, "showHelp"));
         menuBar.add(makeMenu("Help", items));
         return menuBar;
     }
-
+    
     /**
      * get menu items
      *
@@ -549,7 +554,7 @@ public class JythonShell extends InteractiveShell {
         }
         return displayMenuItems;
     }
-
+    
     /**
      * _more_
      *
@@ -567,7 +572,7 @@ public class JythonShell extends InteractiveShell {
         }
         return items;
     }
-
+    
     /**
      * handle event
      *
@@ -577,7 +582,7 @@ public class JythonShell extends InteractiveShell {
     @Override protected void handleRightMouseClick(JTextComponent commandFld, MouseEvent e) {
         showProcedurePopup(commandFld);
     }
-
+    
     /**
      * Format code to output
      *
@@ -592,7 +597,7 @@ public class JythonShell extends InteractiveShell {
             .replace(">", "&gt;")
             .replace("\n", "<br/>");
     }
-
+    
     /**
      * eval
      *
@@ -664,7 +669,7 @@ public class JythonShell extends InteractiveShell {
             output("<font color=\"red\">" + formatCode(exc.toString()) + "</font><br/>");
         }
     }
-
+    
     /**
      * print type
      *
@@ -680,7 +685,7 @@ public class JythonShell extends InteractiveShell {
             logException("An error occurred printing types", exc);
         }
     }
-
+    
     /**
      * Set the AutoSelect property.
      *
@@ -689,7 +694,7 @@ public class JythonShell extends InteractiveShell {
     public void setAutoSelect(boolean value) {
         autoSelect = value;
     }
-
+    
     /**
      * Get the AutoSelect property.
      *
@@ -698,7 +703,7 @@ public class JythonShell extends InteractiveShell {
     public boolean getAutoSelect() {
         return autoSelect;
     }
-
+    
     /**
      * 
      * 
@@ -717,7 +722,7 @@ public class JythonShell extends InteractiveShell {
         store.remove("prop.jython.shell.windowbounds");
         return windowBounds;
     }
-
+    
     /**
      * 
      * 
@@ -773,7 +778,7 @@ public class JythonShell extends InteractiveShell {
         }
         return historyLength;
     }
-
+    
     /**
      * 
      * 
