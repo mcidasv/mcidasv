@@ -362,12 +362,10 @@ public abstract class NavigatedViewManager extends ViewManager {
      * @param w window for readout
      */
     private void initReadout(IdvWindow w) {
-        if ((w != null) && (readout != null)) {
-
-            // GuiUtils.setFixedWidthFont(w.getMsgLabel());
+        if (w != null) {
             readout.setValueDisplay(w.getMsgLabel());
-            setReadoutFormat();
         }
+        setReadoutFormat();
     }
 
     /**
