@@ -838,7 +838,7 @@ def getADDEImage(localEntry=None,
         location = ''
     
     if day:
-        if isinstance(day, str):
+        if isinstance(day, str) or isinstance(day, int):
             day = '&DAY=%s %s' % (day, day)
         elif isinstance(day, tuple):
             day = '&DAY=%s %s' % (day[0], day[1])
