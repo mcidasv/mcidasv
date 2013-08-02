@@ -71,8 +71,10 @@ def _normalizeDates(dates):
     normalized = None
     if isinstance(dates, str):
         normalized = [dates]
+    elif isinstance(dates, int):
+        normalized = [str(dates)]
     elif isinstance(dates, list) or isinstance(dates, set):
-        normalized = [date for date in dates]
+        normalized = [str(date) for date in dates]
     elif isinstance(dates, tuple) and len(dates) == 2:
         start, stop = int(dates[0]), int(dates[1])
         normalized = [str(date) for date in range(start, stop + 1)]
