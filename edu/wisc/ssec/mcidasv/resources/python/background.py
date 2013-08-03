@@ -89,7 +89,6 @@ def managedDataSource(path, cleanup=True, dataType=None):
         if cleanup:
             boomstick()
             
-            
 class _MappedData(object):
     """ 'Abstract' class for combined VisAD Data / Python dictionary objects
     

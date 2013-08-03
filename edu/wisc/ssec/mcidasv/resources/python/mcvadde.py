@@ -40,7 +40,7 @@ from java.util import TimeZone
 def enum(*sequential, **named):
     enums = dict(zip(sequential, range(len(sequential))), **named)
     return type('Enum', (), enums)
-
+    
 def _areaDirectoryToDictionary(areaDirectory):
     d = dict()
     d['bands'] = areaDirectory.getBands()
@@ -285,16 +285,13 @@ params_sizeall = dict(
 
 def enableAddeDebug():
     EntryStore.setAddeDebugEnabled(True)
-
-
+    
 def disableAddeDebug():
     EntryStore.setAddeDebugEnabled(False)
-
-
+    
 def isAddeDebugEnabled(defaultValue=False):
     return EntryStore.isAddeDebugEnabled(defaultValue)
-
-
+    
 def getDescriptor(dataset, imageType):
     """Get the descriptor for a local ADDE entry
     
@@ -316,11 +313,10 @@ def getDescriptor(dataset, imageType):
             return desc
     # no matching descriptor was found so return an error value:
     return -1
-
-
+    
 def getLocalADDEEntry(dataset, imageType):
     """Get the local ADDE entry matching the given dataset and imageType.
-        
+    
     Args:
         dataset: Local ADDE entry dataset name.
         
@@ -336,7 +332,7 @@ def getLocalADDEEntry(dataset, imageType):
             return entry
     # no matching descriptor was found so return an error value:
     return None
-
+    
 def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
     """Creates a local ADDE entry in the server table.
     
@@ -396,8 +392,7 @@ def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
     localEntry = LocalAddeEntry.Builder(imageType, dataset, mask, convertedFormat).status(EntryStatus.ENABLED).temporary((not save)).build()
     getStaticMcv().getServerManager().addEntry(localEntry)
     return localEntry
-
-
+    
 def listADDEImages(server, dataset, descriptor,
     accounting=DEFAULT_ACCOUNTING,
     location=None,
@@ -677,7 +672,7 @@ def oldADDEImage(localEntry=None, server=None, dataset=None, descriptor=None,
         place = 'ULEFT'
     else:
         raise ValueError()
-    
+        
     if coordinateSystem is CoordinateSystems.LATLON:
         coordSys = 'LATLON'
         coordType = 'E'
@@ -689,33 +684,33 @@ def oldADDEImage(localEntry=None, server=None, dataset=None, descriptor=None,
         coordType = 'I'
     else:
         raise ValueError()
-    
+        
     if location:
         location = '&%s=%s %s %s' % (coordSys, location[0], location[1], coordType)
     else:
         location = ''
-    
+        
     if day:
         day = '&DAY=%s' % (day)
     else:
         day = ''
-    
+        
     if size:
         if size == 'ALL':
             size = '99999 99999'
         else:
             size = '%s %s' % (size[0], size[1])
-    
+            
     if time:
         time = '%s %s I' % (time[0], time[1])
     else:
         time = ''
-    
+        
     if band:
         band = '&BAND=%s' % (str(band))
     else:
         band = ''
-    
+        
     addeUrlFormat = "adde://%s/imagedata?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s&TRACK=%d"
     url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position, track)
     retvals = (-1, -1)
@@ -733,10 +728,9 @@ def oldADDEImage(localEntry=None, server=None, dataset=None, descriptor=None,
         if debug:
             print 'exception: %s\n' % (str(err))
             print 'problem with adde url:', url
-    
+            
     return retvals
-
-
+    
 def getADDEImage(localEntry=None,
     server=None, dataset=None, descriptor=None,
     accounting=DEFAULT_ACCOUNTING,
@@ -754,13 +748,13 @@ def getADDEImage(localEntry=None,
     size=DEFAULT_SIZE,
     **kwargs):
     """Requests data from an ADDE Image server - returns both data and metadata objects.
-
+    
     An ADDE request must include values for either localEntry or the combination of server, dataset and descriptor.
-
+    
     ***Note to users:  testADDEImage is test code, some of which may be used to 
     improve the getADDEImage function in the future.  It will not be included 
     in future versions so should not be used in user scripts. 
-
+    
     Required Args:
         localEntry: Local data set defined by makeLocalADDEEntry. 
         server: ADDE server.
@@ -821,7 +815,7 @@ def getADDEImage(localEntry=None,
         place = 'ULEFT'
     else:
         raise ValueError()
-    
+        
     if coordinateSystem is CoordinateSystems.LATLON:
         coordSys = 'LATLON'
         coordType = 'E'
@@ -833,12 +827,12 @@ def getADDEImage(localEntry=None,
         coordType = 'I'
     else:
         raise ValueError()
-    
+        
     if location:
         location = '&%s=%s %s %s' % (coordSys, location[0], location[1], coordType)
     else:
         location = ''
-    
+        
     if day:
         if isinstance(day, str) or isinstance(day, int):
             day = '&DAY=%s %s' % (day, day)
@@ -846,7 +840,7 @@ def getADDEImage(localEntry=None,
             day = '&DAY=%s %s' % (day[0], day[1])
     else:
         day = ''
-    
+        
     if size:
         if size == 'ALL':
             size = '&SIZE=99999 99999'
@@ -859,7 +853,7 @@ def getADDEImage(localEntry=None,
         time = '%s %s I' % (time[0], time[1])
     else:
         time = ''
-    
+        
     if band:
         band = '&BAND=%s' % (str(band))
     else:
@@ -897,4 +891,4 @@ def getADDEImage(localEntry=None,
     except AddeURLException, e:
         # print 'AddeURLException: url:', url, e
         raise AddeJythonError(e)
-
+        
