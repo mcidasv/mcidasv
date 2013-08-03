@@ -49,10 +49,10 @@ import ucar.unidata.idv.ui.ImageGenerator;
 import ucar.unidata.idv.ui.JythonShell;
 
 public class JythonManager extends ucar.unidata.idv.JythonManager {
-
+    
     /** Trusty logging object. */
     private static final Logger logger = LoggerFactory.getLogger(JythonManager.class);
-
+    
     private JythonShell jythonShell;
     
     /**
@@ -63,7 +63,7 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
     public JythonManager(IntegratedDataViewer idv) {
         super(idv);
     }
-
+    
     /**
      * Create a Jython shell, if one doesn't already exist. This will also 
      * bring the window {@literal "to the front"} of the rest of the McIDAS-V
@@ -79,12 +79,21 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
         jythonShell.toFront();
         return jythonShell;
     }
-
+    
+    /** 
+     * Returns the Jython Shell associated with this {@code JythonManager}.
+     * 
+     * @return Jython Shell being used by this manager. May be {@code null}.
+     */
+    public JythonShell getShell() {
+        return jythonShell;
+    }
+    
     @Override public PythonInterpreter createInterpreter() {
         PythonInterpreter interpreter = super.createInterpreter();
         return interpreter;
     }
-
+    
     @Override public void removeInterpreter(PythonInterpreter interpreter) {
         super.removeInterpreter(interpreter);
         if (jythonShell != null && !jythonShell.isShellResetting() && jythonShell.getInterpreter().equals(interpreter)) {
@@ -92,7 +101,7 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
             jythonShell = null;
         }
     }
-
+    
     /**
      * Overridden so that McIDAS-V can inject a variable named {@code _idv}
      * into {@code interpreter's} globals.
@@ -104,10 +113,10 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
         interpreter.set("idv", getIdv());
         super.initBasicInterpreter(interpreter);
     }
-
+    
     /**
      * Overridden so that McIDAS-V can add an {@code islInterpreter} object
-     * to the interpreter's locals (before executing the c ontents of {@code}.
+     * to the interpreter's locals (before executing the contents of {@code}.
      * 
      * @param code Jython code to evaluate. {@code null} is probably a bad idea.
      * @param properties {@code String->Object} pairs to insert into the 
@@ -129,7 +138,7 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
         }
         super.evaluateTrusted(code, properties);
     }
-
+    
     /**
      * Return the list of menu items to use when the user has clicked on a 
      * formula {@link DataSource}.
@@ -158,5 +167,5 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
         menuItems.add(makeMenuItem("Export", this, "exportFormulas"));
         return menuItems;
     }
-
+    
 }

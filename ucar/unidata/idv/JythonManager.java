@@ -169,71 +169,65 @@ import ucar.unidata.util.TwoFacedObject;
  * @author IDV development team
  */
 public class JythonManager extends IdvManager implements ActionListener {
-
+    
     /** Trusty logging object. */
     private static final Logger logger = LoggerFactory.getLogger(JythonManager.class);
-
+    
     /** The path to the editor executable */
     public static final String PROP_JYTHON_EDITOR = "idv.jython.editor";
-
+    
     /** color to use for diabled editors */
     private static final Color COLOR_DISABLED = new Color(210, 210, 210);
-
+    
     /** any errors */
     private boolean inError = false;
-
-    /** Hodls the temporary jython */
-//    private String tmpJython = "";
-
+    
     /** the jtree on the left that lists the different python files */
     private TreePanel treePanel;
-
+    
     /** One text component per tab */
     private List<LibHolder> libHolders = new ArrayList<LibHolder>();
-
-    /** Shows the temp jython */
-//    private JTextArea tmpTextArea = new JTextArea();
-
+    
     /** tmp lib */
     private LibHolder tmpHolder;
-
+    
     /**
      * This holds all of the  end-user formulas, the ones
      * from the system and the ones from the users local space.
      */
     private DescriptorDataSource descriptorDataSource;
-
+    
     /** Formula descriptors */
     List<DerivedDataDescriptor> descriptors;
-
+    
     /**
      * This is the interpreter used for processing the
      * UI commands. e.g., the ones in defaultmenu.xml
      */
     private PythonInterpreter uiInterpreter = null;
-
+    
     /** the text searching widget */
     private TextSearcher textSearcher;
-
+    
     /** Used to evaluate derived data choices */
     private PythonInterpreter derivedDataInterpreter;
-
+    
     /** The jython editor */
     private LibHolder mainHolder;
-
+    
     /**
      * List of all active interpreters. We keep these around so when
      * the user changes the jython library we can reevaluate the code
      * in each interpreter.
      */
     private List<PythonInterpreter> interpreters = new ArrayList<PythonInterpreter>();
-
+    
     /** The edit menu item */
     private JMenuItem editFileMenuItem;
-
+    
     /** local python dir */
     private String pythonDir;
-
+    
     /**
      * Create the manager and call initPython.
      *
@@ -261,7 +255,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         writeJythonLib();
         initPython();
     }
-
+    
     /**
      * write out the jython library
      */
@@ -301,7 +295,7 @@ public class JythonManager extends IdvManager implements ActionListener {
             logException("Making jython lib directory", exc);
         }
     }
-
+    
     /**
      * Initialize the Python package in a thread.
      * We define the python cache to be in the users
@@ -319,7 +313,7 @@ public class JythonManager extends IdvManager implements ActionListener {
             });
         }
     }
-
+    
     /**
      * Initialize the python interpreter. This gets called from initPython inside of a thread.
      */
@@ -346,7 +340,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         } catch (Exception exc) {
             logException("Writing jython lib", exc);
         }
-
+        
         Properties pythonProps = new Properties();
         if (cacheDir != null) {
             pythonProps.put("python.home", cacheDir);
@@ -361,7 +355,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         //      sys.add_package ("visad");
         //      sys.add_package ("visad.python");
     }
-
+    
     // TODO(jon): dox!
     private static boolean addToSysPath(PySystemState sys, final String path) {
         PyString pyStrPath = Py.newString(path);
@@ -371,7 +365,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         return result;
     }
-
+    
     /**
      * make formulas from the methods in the lib
      */
@@ -383,7 +377,7 @@ public class JythonManager extends IdvManager implements ActionListener {
             if (docString == Py.None) {
                 continue;
             }
-
+            
             List<String> lines = split(docString.toString().trim(), "\n", true, true);
             String formulaId = null;
             String desc = null;
@@ -423,14 +417,14 @@ public class JythonManager extends IdvManager implements ActionListener {
             }
         }
     }
-
+    
     /**
      * Create, if needed, and show the jython editor.
      */
     public void showJythonEditor() {
         super.show();
     }
-
+    
     /**
      * Find the visible library
      *
@@ -449,7 +443,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         return null;
     }
-
+    
     /**
      * Export selcted text of current tab to plugin
      */
@@ -479,7 +473,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         getIdv().getPluginManager().addText(text, "jython.py");
     }
-
+    
     /**
      * Export  to plugin
      */
@@ -487,7 +481,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         LibHolder holder = findVisibleComponent();
         getIdv().getPluginManager().addText(holder.getText(), "jython.py");
     }
-
+    
     /**
      * Create the jython editor. We create a tree panel that holds
      * each valid jython library defined in the
@@ -496,12 +490,10 @@ public class JythonManager extends IdvManager implements ActionListener {
      * @return The gui contents
      */
     @Override protected JComponent doMakeContents() {
-
-
         if (contents != null) {
             return contents;
         }
-
+        
         try {
             ResourceCollection resources = getResourceManager().getResources(
                                                IdvResourceManager.RSC_JYTHON);
@@ -584,7 +576,7 @@ public class JythonManager extends IdvManager implements ActionListener {
             return null;
         }
     }
-
+    
     /**
      * Save on exit if anything is changed
      *
@@ -622,17 +614,17 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         return true;
     }
-
+    
     /**
      * Make lib for editing
-     *
+     * 
      * @param editable is this editor editable
      * @param label label
      * @param path file
      * @param text text
-     *
+     * 
      * @return LibHolder
-     *
+     * 
      * @throws VisADException On badness
      */
     private LibHolder makeLibHolder(boolean editable, String label, String path, String text)
@@ -725,11 +717,11 @@ public class JythonManager extends IdvManager implements ActionListener {
                 popup.show(jythonEditor.getTextComponent(), e.getX(), e.getY());
             }
         });
-
+        
         jythonEditor.setPreferredSize(new Dimension(500, 400));
         JComponent wrapper = GuiUtils.center(jythonEditor);
         LibHolder libHolder = new LibHolder(editable, this, label, jythonEditor, path, wrapper);
-
+        
         holderArray[0] = libHolder;
         if (mainHolder == null) {
             mainHolder = libHolder;
@@ -741,7 +733,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         if (text != null) {
             jythonEditor.setText(text);
-
+            
             /**
              * for highlighting text
              * List funcs = findJythonMethods(true,
@@ -769,7 +761,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         return libHolder;
     }
-
+    
     /**
      * Make a formula
      *
@@ -801,7 +793,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         showFormulaDialog(ddd, isNew);
     }
-
+    
     /**
      * make new library
      */
@@ -833,7 +825,7 @@ public class JythonManager extends IdvManager implements ActionListener {
                          exc);
         }
     }
-
+    
     /**
      * the libs
      *
@@ -842,7 +834,7 @@ public class JythonManager extends IdvManager implements ActionListener {
     public List getLibHolders() {
         return libHolders;
     }
-
+    
     /**
      * remove lib
      *
@@ -863,7 +855,7 @@ public class JythonManager extends IdvManager implements ActionListener {
             logException("An error occurred removing jython library", exc);
         }
     }
-
+    
     /**
      * make men
      *
@@ -886,7 +878,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         fileMenu.addSeparator();
         fileMenu.add(makeMenuItem("Close", this, "close"));
     }
-
+    
     /**
      * Gets called when the IDV is quitting. Kills the editor process if there is one
      */
@@ -903,14 +895,14 @@ public class JythonManager extends IdvManager implements ActionListener {
             }
         }
     }
-
+    
     /**
      * Edit the jython in the external editor
      */
     public void editInExternalEditor() {
         Misc.run(this, "editInExternalEditorInner", findVisibleComponent());
     }
-
+    
     /**
      * Edit the jython in the external editor
      *
@@ -928,7 +920,7 @@ public class JythonManager extends IdvManager implements ActionListener {
             holder.wrapper.repaint();
             editFileMenuItem.setEnabled(false);
             holder.pythonEditor.setEnabled(false);
-
+            
             String filename = holder.filePath;
             File file = new File(filename);
             long fileTime = file.lastModified();
@@ -936,7 +928,7 @@ public class JythonManager extends IdvManager implements ActionListener {
             if (command.length() == 0) {
                 return;
             }
-
+            
             List<String> toks = split(command, " ", true, true);
             if (command.indexOf("%filename%") < 0) {
                 toks.add("%filename%");
@@ -963,7 +955,7 @@ public class JythonManager extends IdvManager implements ActionListener {
                     }
                 });
             }
-
+            
             //This seems to hang?
             while (holder.editProcess != null) {
                 Misc.sleep(1000);
@@ -986,7 +978,7 @@ public class JythonManager extends IdvManager implements ActionListener {
             logException("An error occurred editing jython library", exc);
         }
     }
-
+    
     /**
      * Get the window titlexxx
      *
@@ -995,14 +987,14 @@ public class JythonManager extends IdvManager implements ActionListener {
     @Override public String getWindowTitle() {
         return "Jython libraries";
     }
-
+    
     /**
      * SHow help
      */
     public void showHelp() {
         showHelp("idv.tools.jython");
     }
-
+    
     /**
      * show the help
      *
@@ -1011,7 +1003,7 @@ public class JythonManager extends IdvManager implements ActionListener {
     public void showHelp(String help) {
         getIdvUIManager().showHelp(help);
     }
-
+    
     /**
      * Factory method to create and interpreter. This
      * also adds the interpreter into the list of interpreters.
@@ -1023,16 +1015,16 @@ public class JythonManager extends IdvManager implements ActionListener {
         addInterpreter(interp);
         return interp;
     }
-
+    
     /**
-     * Create  a jython shell
+     * Create a Jython shell
      *
      * @return shell
      */
     public JythonShell createShell() {
         return new JythonShell(getIdv());
     }
-
+    
     /**
      * Add the interpreter into the list of interpreters. Also
      * calls {@link #initInterpreter(PythonInterpreter)}
@@ -1043,7 +1035,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         interpreters.add(interp);
         initInterpreter(interp);
     }
-
+    
     /**
      * Remove the interpreter from the list of interpreters.
      *
@@ -1052,7 +1044,7 @@ public class JythonManager extends IdvManager implements ActionListener {
     public void removeInterpreter(PythonInterpreter interp) {
         interpreters.remove(interp);
     }
-
+    
     /**
      * Have the given interpreter evaluate the
      * contents of each valid  Jython library defined in the given resources
@@ -1091,7 +1083,7 @@ public class JythonManager extends IdvManager implements ActionListener {
             }
         }
     }
-
+    
     /**
      * Any errors
      *
@@ -1100,7 +1092,7 @@ public class JythonManager extends IdvManager implements ActionListener {
     public boolean getInError() {
         return inError;
     }
-
+    
     /**
      * Setup some basic state in the given interpreter.
      * Set the idv and datamanager variables.
@@ -1114,9 +1106,9 @@ public class JythonManager extends IdvManager implements ActionListener {
         interpreter.set("datamanager", getDataManager());
         interpreter.set("installmanager", getInstallManager());
     }
-
+    
     public static final String CONSOLE_INIT = "/edu/wisc/ssec/mcidasv/resources/python/console_init.py";
-
+    
     /**
      * initialize the interp
      *
@@ -1132,7 +1124,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         } catch (IOException e) {
             logException("Failed to initialize Jython's sys.path.", e);
         }
-
+        
         // interpreter.exec("import sys");
         // interpreter.exec("import java");
         // interpreter.exec("sys.add_package('visad')");
@@ -1153,7 +1145,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         //interpreter.exec("from visad import FlatField");
         //interpreter.exec("from visad import FieldImpl");
     }
-
+    
     /**
      *  Initialize the given interpreter. Add in variables for "idv" and "datamanager"
      *  If initVisadLibs is true then load in the visad libs, etc.
@@ -1186,7 +1178,7 @@ public class JythonManager extends IdvManager implements ActionListener {
             interpreter.exec(jython);
         }
     }
-
+    
     /**
      * Get the end user edited text from the jython editor.
      *
@@ -1196,7 +1188,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         getContents();
         return mainHolder.getText();
     }
-
+    
     /**
      * Append the given jython to the temp jython
      *
@@ -1212,7 +1204,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         evaluateLibJython(false, tmpHolder);
     }
-
+    
     /**
      * Append the given jython to that is from a bundle to the users jython
      *
@@ -1230,7 +1222,7 @@ public class JythonManager extends IdvManager implements ActionListener {
             .append(jython).toString());
         writeJythonLib(mainHolder);
     }
-
+    
     /**
      * APpend jython to main editable lib
      *
@@ -1244,7 +1236,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         show();
         GuiUtils.showComponentInTabs(mainHolder.outerContents);
     }
-
+    
     /**
      *  Have all of the interpreters evaluate the libraries
      *
@@ -1293,12 +1285,11 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         return ok;
     }
-
+    
     /**
      * Save the end user jython code from the jython editor into
      * the user's .unidata/idv area.
-     *
-     *
+     * 
      * @param holder lib
      * @return success
      */
@@ -1316,16 +1307,16 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         return false;
     }
-
+    
     /**
-     *  Make sure the given jython code matches the pattern (after removing whitespace):
-     *  idv.procedure_name ('arg1', arg2, ..., argn)
-     *  where if an arg is not in single quotes it cannot contain
-     *  a procedure call.
+     * Make sure the given jython code matches the pattern (after removing whitespace):
+     * idv.procedure_name ('arg1', arg2, ..., argn)
+     * where if an arg is not in single quotes it cannot contain
+     * a procedure call.
      * <p>
      * We have this here so (hopefully) a user won't inadvertently execute
      * rogue jython code  on their machine.
-     *
+     * 
      * @param jython The code
      * @return Does the code  just call into idv or datamanager methods.
      */
@@ -1340,21 +1331,21 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         return true;
     }
-
+    
     /**
-     *  Evaluate the given jython code. This code is untrusted  and has to be
-     *  of the form (idv|datamanager).some_method (param1, param2, ..., paramN);
-     *
+     * Evaluate the given jython code. This code is untrusted  and has to be
+     * of the form (idv|datamanager).some_method (param1, param2, ..., paramN);
+     * 
      * @param jythonCode The code to execute
      */
     public void evaluateUntrusted(String jythonCode) {
         evaluateUntrusted(jythonCode, null);
     }
-
+    
     /**
-     *  Evaluate the given jython code. This code is untrusted  and has to be
-     *  of the form (idv|datamanager).some_method (param1, param2, ..., paramN);
-     *
+     * Evaluate the given jython code. This code is untrusted  and has to be
+     * of the form (idv|datamanager).some_method (param1, param2, ..., paramN);
+     * 
      * @param jythonCode The code to execute
      * @param properties If non-null then populate the interpreter with the name/value pairs
      */
@@ -1365,20 +1356,20 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         evaluateTrusted(jythonCode, properties);
     }
-
+    
     /**
-     *  Interpret the given jython code. This code is trusted, i.e.,
+     * Interpret the given jython code. This code is trusted, i.e.,
      * it is not checked to make sure it is only calling idv or datamanager
      * methods.
-     *
+     * 
      * @param code The code toe evaluate
      */
     public void evaluateTrusted(String code) {
         evaluateTrusted(code, null);
     }
-
+    
     /**
-     *  Interpret the given jython code. This code is trusted, i.e.,
+     * Interpret the given jython code. This code is trusted, i.e.,
      * it is not checked to make sure it is only calling idv or datamanager
      * methods.
      *
@@ -1394,11 +1385,11 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         interp.exec(code);
     }
-
+    
     /**
-     *  Create (if needed) and initialize a Jython interpreter. The initialization is to map
-     *  the variable "idv" to this instance of the idv and map "datamanager" to the DataManager
-     *
+     * Create (if needed) and initialize a Jython interpreter. The initialization is to map
+     * the variable "idv" to this instance of the idv and map "datamanager" to the DataManager
+     * 
      * @return The interpreter to be used for theUI
      */
     public PythonInterpreter getUiInterpreter() {
@@ -1409,7 +1400,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         return uiInterpreter;
     }
-
+    
     /**
      * Update derived needs when the DataGroups change
      */
@@ -1418,7 +1409,7 @@ public class JythonManager extends IdvManager implements ActionListener {
             descriptors.get(dddIdx).updateDataGroups();
         }
     }
-
+    
     /**
      * Initialize the {@link ucar.unidata.data.DerivedDataDescriptor}s
      * that are defined in the RSC_DERIVED  resource collection
@@ -1445,7 +1436,7 @@ public class JythonManager extends IdvManager implements ActionListener {
             logException("Initializing user formulas", exc);
         }
     }
-
+    
     /**
      * Popup dialog to select formulas
      *
@@ -1483,7 +1474,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         return selected;
     }
-
+    
     /**
      * Export selected formulas to plugin
      */
@@ -1494,7 +1485,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         getIdv().getPluginManager().addObject(selected);
     }
-
+    
     /**
      * Export user formulas
      */
@@ -1514,7 +1505,7 @@ public class JythonManager extends IdvManager implements ActionListener {
             logException("Writing file: " + filename, exc);
         }
     }
-
+    
     /**
      * Import user formulas
      */
@@ -1539,7 +1530,7 @@ public class JythonManager extends IdvManager implements ActionListener {
             logException("Importing  formulas", exc);
         }
     }
-
+    
     /**
      * Save the user created  formulas.
      */
@@ -1557,11 +1548,11 @@ public class JythonManager extends IdvManager implements ActionListener {
             return;
         }
     }
-
+    
     /**
      * Create the list of menu items for editing a data choice
      * that represents an end user formula.
-     *
+     * 
      * @param dataChoice The end user formula data choice
      * @param items List of menu items to add to
      */
@@ -1618,10 +1609,10 @@ public class JythonManager extends IdvManager implements ActionListener {
         items.add(makeMenuItem("Export to Plugin", idv.getPluginManager(), "addObject", ddd));
         //items.add(GuiUtils.MENU_SEPARATOR);
     }
-
+    
     /**
      * Delete the data choice if it is a user formula
-     *
+     * 
      * @param dataChoice The data choice to delete
      */
     public void deleteKeyPressed(DataChoice dataChoice) {
@@ -1630,18 +1621,18 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         DerivedDataDescriptor ddd =
             ((DerivedDataChoice)dataChoice).getDataDescriptor();
-
+            
         if (ddd.getIsLocalUsers()) {
             removeFormula((DerivedDataChoice)dataChoice);
         }
     }
-
+    
     /**
      * This simply clones the given data choice and calls getData
      * on it. We have this here so the user can explicitly, through the
      * GUI, evaluate a formula data choice. This way they
-     *  don't have to  create a display to simply evaluate a formula.
-     *
+     * don't have to  create a display to simply evaluate a formula.
+     * 
      * @param dataChoice The data chocie to evaluate
      */
     public void evaluateDataChoice(DataChoice dataChoice) {
@@ -1655,20 +1646,20 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         showNormalCursor();
     }
-
+    
     /**
      * Remove a formula from the IDV.  You can only remove end user
      * formulas that are in the editable list.
-     *
+     * 
      * @param dataChoice  formula data choice
      */
     public void removeFormula(DerivedDataChoice dataChoice) {
         // we can only remove end user formulas
         removeFormula(dataChoice.getDataDescriptor());
     }
-
+    
     /**
-     * remove formula
+     * Remove formula
      *
      * @param ddd ddd
      */
@@ -1682,7 +1673,7 @@ public class JythonManager extends IdvManager implements ActionListener {
             userMessage("Can't remove a system formula");
         }
     }
-
+    
     /**
      * Called when a formula data choice has changed (i.e.,
      * added, removed or edited.
@@ -1698,7 +1689,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         writeUserFormulas();
         getIdvUIManager().dataSourceChanged(descriptorDataSource);
     }
-
+    
     /**
      * Add a formula to the IDV.
      *
@@ -1707,9 +1698,9 @@ public class JythonManager extends IdvManager implements ActionListener {
     public void addFormula(DerivedDataDescriptor ddd) {
         descriptorChanged(ddd);
     }
-
+    
     /**
-     *  Return the list of menu items to use when the user has clicked on a formula DataSource.
+     * Return the list of menu items to use when the user has clicked on a formula DataSource.
      *
      * @param dataSource The data source clicked on
      * @return List of menu items
@@ -1726,7 +1717,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         return menuItems;
     }
-
+    
     private JMenuItem iconMenuItem(String label, String action, String iconPath) {
         JMenuItem mi = makeMenuItem(label, this, action);
         if (GuiUtils.getIconsInMenus()) {
@@ -1734,7 +1725,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         return mi;
     }
-
+    
     /**
      * make the edit menu items for the formula data source
      *
@@ -1743,7 +1734,7 @@ public class JythonManager extends IdvManager implements ActionListener {
     public List doMakeEditMenuItems() {
         return doMakeEditMenuItems(descriptorDataSource);
     }
-
+    
     /**
      * make the edit menu items for the given formula data source
      *
@@ -1806,7 +1797,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         return editMenuItems;
     }
-
+    
     /**
      * Show the formula dialog with no initial state.
      * We do this to create a new formula.
@@ -1814,7 +1805,7 @@ public class JythonManager extends IdvManager implements ActionListener {
     public void showFormulaDialog() {
         showFormulaDialog(null);
     }
-
+    
     /**
      * get formula descriptors
      *
@@ -1823,7 +1814,7 @@ public class JythonManager extends IdvManager implements ActionListener {
     public List<DerivedDataDescriptor> getDescriptors() {
         return descriptors;
     }
-
+    
     /**
      * Get all end user formulas
      *
@@ -1838,7 +1829,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         return formulas;
     }
-
+    
     /**
      * Get all local descriptors
      *
@@ -1853,10 +1844,10 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         return formulas;
     }
-
+    
     /**
      * Get all end user formulas
-     *
+     * 
      * @return end user formulas
      */
     public List<DerivedDataDescriptor> getDefaultDescriptors() {
@@ -1868,19 +1859,19 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         return formulas;
     }
-
+    
     /**
      * Show formula dialog with the given initial DDD.
-     *
+     * 
      * @param descriptor The descriptor for the formula.
      */
     public void showFormulaDialog(DerivedDataDescriptor descriptor) {
         showFormulaDialog(descriptor, (descriptor == null));
     }
-
+    
     /**
      * show the formula dialog
-     *
+     * 
      * @param descriptor the formula
      * @param isNew is this a new one or are we just changing it
      */
@@ -1905,50 +1896,49 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         new FormulaDialog(getIdv(), descriptor, null, categories, isNew);
     }
-
+    
     /**
      * Get the descriptor data source
      *
      * @return  The descriptor data source
      */
-
     public DescriptorDataSource getDescriptorDataSource() {
         return descriptorDataSource;
     }
-
+    
     /** Used to synchronize when creating the derivedData interpreter */
     private static Object MUTEX = new Object();
-
+    
     /**
      *  We keep track of past methods that have been used so we don't have
      *  to tell the interpreter to import more than once (though perhaps
      *  the interp tracks this itself?)
      */
     private static Map<String, String> seenMethods = new HashMap<String, String>();
-
+    
     /**
-     *  We keep track of past package paths that have been used so we don't have
-     *  to tell the interpreter to import more than once (though perhaps
-     *  the interp tracks this itself?)
+     * We keep track of past package paths that have been used so we don't have
+     * to tell the interpreter to import more than once (though perhaps
+     * the interp tracks this itself?)
      */
     private static Map<String, String> seenPaths = new HashMap<String, String>();
-
+    
     /**
-     *  Create a (singleton) jython interpreter and initialize it with the set
-     *  of classes defined in the xml
-     *
+     * Create a (singleton) jython interpreter and initialize it with the set
+     * of classes defined in the xml
+     * 
      * @return The singleton Jython interpreter for derived data execution
      */
     public PythonInterpreter getDerivedDataInterpreter() {
         return getDerivedDataInterpreter(null);
     }
-
+    
     /**
-     *  Create a (singleton) jython interpreter and initialize it with the set
-     *  of classes defined in the xml and (if needed) with the
-     *  class path represented by the methodName argument (if methodName
-     *  is of the form: some.package.path.SomeClass.someMethod).
-     *
+     * Create a (singleton) jython interpreter and initialize it with the set
+     * of classes defined in the xml and (if needed) with the
+     * class path represented by the methodName argument (if methodName
+     * is of the form: some.package.path.SomeClass.someMethod).
+     * 
      * @param methodName Used to initialize the interpreter (if non -null)
      * @return The singleton Jython interpreter for derived data execution
      */
@@ -1975,11 +1965,10 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         return derivedDataInterpreter;
     }
-
+    
     /**
      * Make menu
-     *
-     *
+     * 
      * @param object object to call
      * @param method method to call
      * @param prefix prefic
@@ -2025,13 +2014,13 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         return menuItems;
     }
-
+    
     /**
      * utility
-     *
+     * 
      * @param func func
      * @param props props
-     *
+     * 
      * @return call string
      */
     private String makeCallString(PyFunction func, Map<String, String> props) {
@@ -2052,10 +2041,10 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         return sb.append(')').toString();
     }
-
+    
     /**
      * find methods
-     *
+     * 
      * @param justList If true just the functions
      * 
      * @return A list of Object arrays. First element in array is the name of the lib. Second is the list of PyFunction-s
@@ -2063,10 +2052,10 @@ public class JythonManager extends IdvManager implements ActionListener {
     public List findJythonMethods(boolean justList) {
         return findJythonMethods(justList, getLibHolders());
     }
-
+    
     /**
      * Find methods.
-     *
+     * 
      * @param justList If true just the function
      * @param holders libs
      * 
@@ -2092,12 +2081,12 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         return result;
     }
-
+    
     /**
      * main
-     *
+     * 
      * @param args args
-     *
+     * 
      * @throws Exception on badness
      */
     public static void main(String[] args) throws Exception {
@@ -2122,9 +2111,9 @@ public class JythonManager extends IdvManager implements ActionListener {
                 }
                 funcs.add(new Object[] { pair.__finditem__(0).toString(), pair.__finditem__(1) });
             }
-
+            
             funcs = Misc.sortTuples(funcs, true);
-
+            
             for (int itemIdx = 0; itemIdx < funcs.size(); itemIdx++) {
                 Object[] pair = (Object[])funcs.get(itemIdx);
                 PyFunction func = (PyFunction)pair[1];
@@ -2162,50 +2151,48 @@ public class JythonManager extends IdvManager implements ActionListener {
             //            interpreter.exec("dir(" + mod +")");
         }
     }
-
-
+    
     /**
      * Class LibHolder holds all things for a single lib
-     *
-     *
+     * 
      * @author IDV Development Team
      * @version $Revision$
      */
     public static class LibHolder extends TextSearcher.TextWrapper {
-
+        
         /** the jython manager */
         JythonManager jythonManager;
-
+        
         /** am I editable */
         private boolean editable;
-
+        
         /** functions in lib */
         List<Object[]> functions;
-
+        
         /** label */
         String label;
-
+        
         /** widget */
         MyPythonEditor pythonEditor;
-
+        
         /** file */
         String filePath;
-
+        
         /** widget */
         JComponent wrapper;
-
+        
         /** widget */
         JComponent outerContents;
-
+        
         /** widget */
         JButton saveBtn;
-
+        
         /** for external editing */
         Process editProcess;
-
+        
         /**
          * ctor
-         *
+         * 
          * @param editable am I editable
          * @param jythonManager the jython manager
          * @param label lable
@@ -2237,19 +2224,19 @@ public class JythonManager extends IdvManager implements ActionListener {
                 pythonEditor.getLineNumberComponent().setBackground(COLOR_DISABLED);
             }
         }
-
+        
         /**
          * name
-         *
+         * 
          * @return name
          */
         public String getName() {
             return label;
         }
-
+        
         /**
          * Parse the functions if needed
-         *
+         * 
          * @return functions
          */
         public List<Object[]> getFunctions() {
@@ -2278,37 +2265,37 @@ public class JythonManager extends IdvManager implements ActionListener {
             }
             return functions;
         }
-
+        
         /**
          * Is this lib editable
-         *
+         * 
          * @return is editable
          */
         public boolean isEditable() {
             return editable;
         }
-
+        
         /**
          * Get text
-         *
+         * 
          * @return text
          */
         public String getText() {
             return pythonEditor.getText();
         }
-
+        
         /**
          * Set text
-         *
+         * 
          * @param text text
          */
         public void setText(String text) {
             setText(text, true);
         }
-
+        
         /**
          * Set text
-         *
+         * 
          * @param text text
          * @param andEnable enable
          */
@@ -2319,7 +2306,7 @@ public class JythonManager extends IdvManager implements ActionListener {
                 functions = null;
             }
         }
-
+        
         /**
          * copy
          */
@@ -2327,11 +2314,10 @@ public class JythonManager extends IdvManager implements ActionListener {
             pythonEditor.copy();
         }
     }
-
+    
     /**
      * Class MyPythonEditor the editor class
-     *
-     *
+     * 
      * @author IDV Development Team
      * @version $Revision$
      */
@@ -2339,11 +2325,11 @@ public class JythonManager extends IdvManager implements ActionListener {
     private static class MyPythonEditor extends JPythonEditor {
         /**
          * ctor
-         *
+         * 
          * @throws VisADException on badness
          */
         public MyPythonEditor() throws VisADException {}
-
+        
         /**
          * get the component that shows the line numbers
          *

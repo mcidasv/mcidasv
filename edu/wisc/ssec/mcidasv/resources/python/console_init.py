@@ -16,7 +16,7 @@ def _mcvinit_classpath_hack():
         Windows: "C:\Program Files\McIDAS-V-System"
         OS X: "/Applications/McIDAS-V-System"
         Linux: ""
-    
+        
     Returns:
         A dictionary with "mcidasv", "idv", and "visad" keys.
     """
@@ -38,9 +38,9 @@ def _mcvinit_classpath_hack():
             idv_jar = entry
         elif entry.endswith('visad.jar'):
             visad_jar = entry
-    
+            
     return {'mcidasv': mcv_jar, 'idv': idv_jar, 'visad': visad_jar}
-
+    
 def _mcvinit_jythonpaths():
     """Creates a list of paths containing required Python source code.
     
@@ -62,11 +62,11 @@ def _mcvinit_jythonpaths():
         jars['mcidasv'] + '/edu/wisc/ssec/mcidasv/resources/python/utilities',
         jars['mcidasv'] + '/edu/wisc/ssec/mcidasv/resources/python/linearcombo',
     ]
-
+    
 for jythonpath in _mcvinit_jythonpaths():
     if not jythonpath in sys.path:
         sys.path.append(jythonpath)
-
+        
 # this is intentionally the first IDV/McV thing imported
 from edu.wisc.ssec.mcidasv import McIDASV
 _mcv = McIDASV.getStaticMcv()
@@ -76,7 +76,7 @@ from edu.wisc.ssec.mcidasv import ArgumentManager
 argManager = _mcv.getArgsManager()
 if argManager.hasJythonArguments():
     sys.argv = [argManager.getJythonScript()] + argManager.getJythonArguments()
-
+    
 # need to get some IDV-specifc init done
 from ucar.unidata.idv.ui import ImageGenerator
 islInterpreter = ImageGenerator(_mcv)
@@ -107,7 +107,7 @@ except ImportError, e:
     print 'sys.path contents:'
     for i, path in enumerate(sys.path):
         print i, path
-
+        
 try:
     import shell as idvshell
 except ImportError, e:
@@ -115,7 +115,7 @@ except ImportError, e:
     print 'sys.path contents:'
     for i, path in enumerate(sys.path):
         print i, path
-
+        
 from see import see
 
 from decorators import deprecated
@@ -125,7 +125,7 @@ from background import (
     allLayerTypes, allProjections, allWindows, boomstick, collectGarbage,
     colorTableNames, firstDisplay, firstWindow, getColorTable, getProjection,
     managedDataSource, pause, performAction, projectionNames, removeAllData,
-    removeAllLayers, setViewSize, _MappedAreaImageFlatField, writeImageAtIndex
+    removeAllLayers, setViewSize, _MappedAreaImageFlatField, writeImageAtIndex,
 )
 
 from mcvadde import (
@@ -133,12 +133,12 @@ from mcvadde import (
     oldADDEImage, listADDEImages, params1, params_area_coords,
     params_image_coords, params_sizeall, disableAddeDebug, enableAddeDebug,
     isAddeDebugEnabled, LATLON, AREA, IMAGE, ULEFT, CENTER, getADDEImage,
-    makeLocalADDEEntry
+    makeLocalADDEEntry,
 )
 
 from interactive import (
     describeActions, dumpObj, expandpath, ncdump, ncdumpToString, today, tomorrow,
-    yesterday, _expandpath, _today, _tomorrow, _yesterday
+    yesterday, _expandpath, _today, _tomorrow, _yesterday, getLogLevel, setLogLevel,
 )
 
 _user_python = os.path.join(_mcv.getStore().getUserDirectory().toString(), 'python')
@@ -149,3 +149,4 @@ if os.path.exists(_user_python):
         if ext == '.py':
             globals()[modname] = __import__(modname, globals(), locals(), ['*'], -1)
         del modname, ext
+        

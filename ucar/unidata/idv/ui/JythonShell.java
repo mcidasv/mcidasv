@@ -105,34 +105,37 @@ import edu.wisc.ssec.mcidasv.McIDASV;
  */
 public class JythonShell extends InteractiveShell {
     
+    /** Internal logging object. */
     private static final Logger logger = 
         LoggerFactory.getLogger(JythonShell.class);
     
-    /** property that holds jython shell window location and size. */
+    /** Property that holds jython shell window location and size. */
     public static final String PROP_JYTHON_WINDOW = 
         "prop.jython.shell.windowrect";
     
-    /** property that hold location of divider bar between text input/output areas */
+    /** Property that hold location of divider bar between text input/output areas. */
     public static final String PROP_JYTHON_DIVIDER = 
         "prop.jython.shell.divider";
     
-    /** property that holds the history */
+    /** Property that holds the history */
     public static final String PROP_JYTHON_SHELL_HISTORY =
         "prop.jython.shell.history";
     
-    /** property that holds the maximum length of the Jython Shell history */
+    /** Property that holds the maximum length of the Jython Shell history. */
     public static final String PROP_JYTHON_SHELL_MAX_HISTORY_LENGTH =
         "prop.jython.shell.maxhistorylength";
     
+    /** Property that determines whether or not the user is warned before resetting the Jython Shell. */
     public static final String PROP_JYTHON_SHELL_DISABLE_RESET_WARNING = 
         "prop.jython.shell.disableresetwarning";
     
-    /** max number of commands saved in history */
+    /** Max number of commands saved in history. */
     public static final int DEFAULT_MAX_HISTORY_LENGTH = 100;
     
     /** Jython shell window title. */
     public static final String WINDOW_TITLE = "Jython Shell";
     
+    /** Logging object used for Jython-specific logging output. */
     protected static final Logger jythonLogger = 
         LoggerFactory.getLogger("jython");
     
@@ -705,7 +708,7 @@ public class JythonShell extends InteractiveShell {
     }
     
     /**
-     * 
+     * Loads the dimensions of the Jython Shell window.
      * 
      * @param store The {@link IdvObjectStore} that contains persisted session values. Cannot be {@code null}.
      * @param defaultBounds Window bounds to use if {@code PROP_JYTHON_WINDOW_BOUNDS} does not have an associated value. Cannot be {@code null}.
@@ -724,7 +727,7 @@ public class JythonShell extends InteractiveShell {
     }
     
     /**
-     * 
+     * Saves the dimensions of the Jython Shell window.
      * 
      * @param store The {@link IdvObjectStore} that contains persisted session values. Cannot be {@code null}.
      * @param windowBounds Window bounds to associate with {@code PROP_JYTHON_WINDOW_BOUNDS}. Cannot be {@code null}.
@@ -736,7 +739,7 @@ public class JythonShell extends InteractiveShell {
     }
     
     /**
-     * 
+     * Loads the position of the bar dividing the input and output regions.
      * 
      * @param store The {@link IdvObjectStore} that contains persisted session values. Cannot be {@code null}.
      * @param defaultDividerLocation location to use if {@code PROP_JYTHON_DIVIDER} does not have an associated value. Cannot be {@code null}.
@@ -753,7 +756,7 @@ public class JythonShell extends InteractiveShell {
     }
 
     /**
-     * 
+     * Saves the position of the bar dividing the input and output regions.
      * 
      * @param store The {@link IdvObjectStore} that contains persisted session values. Cannot be {@code null}.
      * @param dividerLocation distance from top of window of the horizontal divider bar separating text input/output.
@@ -763,7 +766,7 @@ public class JythonShell extends InteractiveShell {
     }
     
     /**
-     * 
+     * Loads the maximum number of items stored in the Jython Shell history.
      * 
      * @param store The {@link IdvObjectStore} that contains persisted session values. Cannot be {@code null}.
      * @param defaultLength history length to use if {@code PROP_JYTHON_SHELL_MAX_HISTORY_LENGTH} does not have an associated value. Cannot be {@code null}.
@@ -780,7 +783,7 @@ public class JythonShell extends InteractiveShell {
     }
     
     /**
-     * 
+     * Saves the maximum number of items stored in the Jython Shell history.
      * 
      * @param store The {@link IdvObjectStore} that contains persisted session values. Cannot be {@code null}.
      * @param historyLength history length to associate with {@code PROP_JYTHON_SHELL_MAX_HISTORY_LENGTH}. Cannot be {@code null}.

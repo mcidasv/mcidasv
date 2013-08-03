@@ -89,8 +89,10 @@ import ucar.unidata.util.Misc;
  */
 public class InteractiveShell implements HyperlinkListener {
     
+    /** */
     private static final Logger logger = LoggerFactory.getLogger(InteractiveShell.class);
     
+    /** */
     private static Object MUTEX =  new Object();
     
     /** _more_ */
@@ -114,6 +116,7 @@ public class InteractiveShell implements HyperlinkListener {
     /** _more_ */
     protected StringBuffer sb = new StringBuffer();
     
+    /** */
     private boolean bufferOutput = false;
     
     /** _more_ */
@@ -122,10 +125,10 @@ public class InteractiveShell implements HyperlinkListener {
     /** _more_ */
     protected int historyIdx = -1;
     
-    /** _more_          */
+    /** _more_ */
     private String title;
     
-    /** _more_          */
+    /** _more_ */
     protected JComponent contents;
     
     /**
@@ -218,6 +221,19 @@ public class InteractiveShell implements HyperlinkListener {
         JTextComponent field = getCommandFld();
         field.setText(text);
         field.requestFocus();
+    }
+    
+    public void setMultilineText(final String text) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                JTextComponent inputField = getCommandFld();
+                if (!(inputField instanceof JTextArea)) {
+                    flipField();
+                    inputField = getCommandFld();
+                }
+                inputField.setText(text);
+            }
+        });
     }
     
     /**
