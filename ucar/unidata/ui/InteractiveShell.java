@@ -89,7 +89,7 @@ import ucar.unidata.util.Misc;
  */
 public class InteractiveShell implements HyperlinkListener {
     
-    /** */
+    /** Logging object. */
     private static final Logger logger = LoggerFactory.getLogger(InteractiveShell.class);
     
     /** */
@@ -217,12 +217,32 @@ public class InteractiveShell implements HyperlinkListener {
         }
     }
     
+    /**
+     * Sets the contents of {@link #getCommandFld()} to {@code text}.
+     * 
+     * <p>Note: this differs from {@link #setMultilineText(String)} in that
+     * the {@literal "input mode"} is not changed.</p>
+     * 
+     * @param text Text to put in the {@literal "command field"}. Should not be
+     * {@code null}.
+     */
     public void setText(String text) {
         JTextComponent field = getCommandFld();
         field.setText(text);
         field.requestFocus();
     }
     
+    /**
+     * Sets the contents of {@link #getCommandFld()} to 
+     * {@code text} in {@literal "multiline mode"}.
+     * 
+     * <p>Note: this differs from {@link #setText(String)} in that the 
+     * {@literal "input mode"} <b>is</b> changed to allow 
+     * {@literal "multiline"} input.</p>
+     * 
+     * @param text Text to put in the {@literal "command field"}. Should not be
+     * {@code null}.
+     */
     public void setMultilineText(final String text) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
