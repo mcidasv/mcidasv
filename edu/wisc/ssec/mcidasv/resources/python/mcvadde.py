@@ -393,7 +393,8 @@ def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
     getStaticMcv().getServerManager().addEntry(localEntry)
     return localEntry
     
-def listADDEImages(server, dataset, descriptor,
+def listADDEImages(localEntry=None,
+    server=None, dataset=None, descriptor=None,
     accounting=DEFAULT_ACCOUNTING,
     location=None,
     coordinateSystem=CoordinateSystems.LATLON,
@@ -422,7 +423,13 @@ def listADDEImages(server, dataset, descriptor,
     Returns:
         ADDE image matching the given criteria, if any.
     """
-    
+    if localEntry:
+        server = localEntry.getAddress()
+        dataset = localEntry.getGroup()
+        descriptor = localEntry.getDescriptor().upper()
+    elif (server is None) or (dataset is None) or (descriptor is None):
+        raise TypeError("must provide localEntry or server, dataset, and descriptor values.")
+        
     user = accounting[0]
     proj = accounting[1]
     debug = str(debug).lower()
@@ -793,7 +800,7 @@ def getADDEImage(localEntry=None,
         dataset = localEntry.getGroup()
         descriptor = localEntry.getDescriptor().upper()
     elif (server is None) or (dataset is None) or (descriptor is None):
-        raise TypeError("must provide localEntry or server, dataset, and descriptor values")
+        raise TypeError("must provide localEntry or server, dataset, and descriptor values.")
         
     if server == "localhost" or server == "127.0.0.1":
         port = EntryStore.getLocalPort()
