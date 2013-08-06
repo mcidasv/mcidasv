@@ -137,8 +137,9 @@ from mcvadde import (
 )
 
 from interactive import (
-    describeActions, dumpObj, expandpath, ncdump, ncdumpToString, today, tomorrow,
-    yesterday, _expandpath, _today, _tomorrow, _yesterday, getLogLevel, setLogLevel,
+    describeActions, dumpObj, editFile, expandpath, ncdump, ncdumpToString, 
+    today, tomorrow, yesterday, _expandpath, _today, _tomorrow, _yesterday, 
+    getLogLevel, setLogLevel,
 )
 
 _user_python = os.path.join(_mcv.getStore().getUserDirectory().toString(), 'python')
