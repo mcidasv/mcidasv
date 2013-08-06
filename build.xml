@@ -110,6 +110,8 @@
         <include name="repositorytds.jar" />
         <include name="commons-math3-3.2.jar" />
         <include name="rsyntaxtextarea-2.0.6.jar" />
+        <include name="jythonlib-2.7-b1.jar" />
+        <include name="jython-2.7-b1.jar" />
     </fileset>
     
     <!-- List of IDV jars -->
@@ -117,7 +119,6 @@
         <include name="auxdata.jar" />
         <include name="local-visad.jar" />
         <include name="visad.jar" />
-        <include name="jython.jar" />
         <include name="external.jar" />
         <include name="ncIdv.jar" />
         <include name="idv.jar" />
