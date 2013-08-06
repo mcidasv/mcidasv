@@ -239,24 +239,30 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         else:
             raise Exception(
                "_MappedAreaImageFlatField.binary got unexpected number of args")
-    
-
+            
     def test(self):
         return self.aid
-    
+        
+    def _getCalInfo(self):
+        calInfo = self.areaDirectory.getCalInfo()
+        if calInfo:
+            return map(str, list(calInfo[0]))
+        else:
+            return []
+            
     def _getDirValue(self, key):
         from visad import DateTime
         
         if key not in self._keys:
             raise KeyError('unknown key: %s' % key)
         if key == 'bands':
-            return self.areaDirectory.getBands()
+            return list(self.areaDirectory.getBands())
         elif key == 'calinfo':
-            return self.areaDirectory.getCalInfo()
+            return self._getCalInfo()
         elif key == 'calibration-scale-factor':
             return self.areaDirectory.getCalibrationScaleFactor()
         elif key == 'calibration-type':
-            return self.areaDirectory.getCalibrationType()
+            return str(self.areaDirectory.getCalibrationType())
         elif key == 'calibration-unit-name':
             return self.areaDirectory.getCalibrationUnitName()
         elif key == 'center-latitude':
@@ -268,13 +274,13 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         elif key == 'center-longitude-resolution':
             return self.areaDirectory.getCenterLongitudeResolution()
         elif key == 'directory-block':
-            return self.areaDirectory.getDirectoryBlock()
+            return list(self.areaDirectory.getDirectoryBlock())
         elif key == 'elements':
             return self.areaDirectory.getElements()
         elif key == 'lines':
             return self.areaDirectory.getLines()
         elif key == 'memo-field':
-            return self.areaDirectory.getMemoField()
+            return str(self.areaDirectory.getMemoField())
         elif key == 'nominal-time':
             return DateTime(self.areaDirectory.getNominalTime())
         elif key == 'band-count':
@@ -282,13 +288,13 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         elif key == 'sensor-id':
             return self.areaDirectory.getSensorID()
         elif key == 'sensor-type':
-            return self.areaDirectory.getSensorType()
+            return str(self.areaDirectory.getSensorType())
         elif key == 'source-type':
-            return self.areaDirectory.getSourceType()
+            return str(self.areaDirectory.getSourceType())
         elif key == 'start-time':
             return DateTime(self.areaDirectory.getStartTime())
         elif key == 'url':
-            return self.aid.getSource()
+            return str(self.aid.getSource())
         else:
             raise KeyError('should not be capable of reaching here: %s')
 
