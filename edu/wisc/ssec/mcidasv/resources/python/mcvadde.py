@@ -393,6 +393,160 @@ def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
     getStaticMcv().getServerManager().addEntry(localEntry)
     return localEntry
     
+def listADDEImageTimes(localEntry=None,
+    server=None, dataset=None, descriptor=None,
+    accounting=DEFAULT_ACCOUNTING,
+    location=None,
+    coordinateSystem=CoordinateSystems.LATLON,
+    place=None,
+    mag=None,
+    position=0,
+    unit=None,
+    day=None,
+    time=None,
+    debug=False,
+    band=None,
+    size=None):
+    
+    if localEntry:
+        server = localEntry.getAddress()
+        dataset = localEntry.getGroup()
+        descriptor = localEntry.getDescriptor().upper()
+    elif (server is None) or (dataset is None) or (descriptor is None):
+        raise TypeError("must provide localEntry or server, dataset, and descriptor values.")
+        
+    if server == "localhost" or server == "127.0.0.1":
+        port = EntryStore.getLocalPort()
+    else:
+        port = "112"
+        
+    server = '%s:%s' % (server, port)
+    
+    user = accounting[0]
+    proj = accounting[1]
+    debug = str(debug).lower()
+    
+    if mag:
+        mag = '&MAG=%s %s' % (mag[0], mag[1])
+    else:
+        mag = ''
+        
+    if unit:
+        origUnit = unit
+        unit = '&UNIT=%s' % (unit)
+    else:
+        # origUnit = None
+        unit = ''
+        
+    if place is Places.CENTER:
+        place = '&PLACE=CENTER'
+    elif place is Places.ULEFT:
+        place = '&PLACE=ULEFT'
+    else:
+        # raise ValueError()
+        place = ''
+        
+    if coordinateSystem is CoordinateSystems.LATLON:
+        coordSys = 'LATLON'
+    elif coordinateSystem is CoordinateSystems.AREA or coordinateSystem is CoordinateSystems.IMAGE:
+        coordSys = 'LINELE'
+    else:
+        raise ValueError()
+        
+    if location:
+        location = '&%s=%s %s' % (coordSys, location[0], location[1])
+    else:
+        location = ''
+        
+    if size:
+        if size == 'ALL':
+            size = '&SIZE=99999 99999'
+        else:
+            size = '&SIZE=%s %s' % (size[0], size[1])
+    else:
+        size = ''
+        
+    if time:
+        time = '&TIME=%s %s I' % (time[0], time[1])
+    else:
+        time = ''
+        
+    if band:
+        band = '&BAND=%s' % (str(band))
+    else:
+        band = '&BAND=ALL'
+        
+    tz = TimeZone.getTimeZone("Z")
+    
+    dateFormat = SimpleDateFormat()
+    dateFormat.setTimeZone(tz)
+    dateFormat.applyPattern('yyyyDDD')
+    
+    timeFormat = SimpleDateFormat();
+    timeFormat.setTimeZone(tz)
+    timeFormat.applyPattern('HH:mm:ss')
+    
+    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=112&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s%(unit)s%(mag)s%(day)s%(time)s&POS=%(position)s"
+    
+    urls = []
+    areaDirectories = []
+    
+    dates = _normalizeDates(day)
+    if not dates:
+        formatValues = {
+            'server': server,
+            'user': user,
+            'proj': proj,
+            'debug': debug,
+            'dataset': dataset,
+            'descriptor': descriptor,
+            'band': band,
+            'location': location,
+            'place': place,
+            'size': size,
+            'unit': unit,
+            'mag': mag,
+            'day': '',
+            'time': time,
+            'position': position,
+        }
+        url = addeUrlFormat % formatValues
+        print url
+        adl = AreaDirectoryList(url)
+        dirs = adl.getSortedDirs()
+        for areaDirectory in dirs[0]:
+            urls.append(url)
+            areaDirectories.append(areaDirectory)
+    else:
+        for date in dates:
+            urlDate = '&DAY=%s' % (date)
+            formatValues = {
+                'server': server,
+                'user': user,
+                'proj': proj,
+                'debug': debug,
+                'dataset': dataset,
+                'descriptor': descriptor,
+                'band': band,
+                'location': location,
+                'place': place,
+                'size': size,
+                'unit': unit,
+                'mag': mag,
+                'day': urlDate,
+                'time': time,
+                'position': position,
+            }
+            url = addeUrlFormat % formatValues
+            print url
+            adl = AreaDirectoryList(url)
+            dirs = adl.getSortedDirs()
+            for areaDirectory in dirs[0]:
+                urls.append(url)
+                areaDirectories.append(areaDirectory)
+                
+    return [d.getNominalTime() for d in areaDirectories]
+    
 def listADDEImages(localEntry=None,
     server=None, dataset=None, descriptor=None,
     accounting=DEFAULT_ACCOUNTING,
