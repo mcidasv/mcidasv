@@ -48,17 +48,22 @@ import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ui.ImageGenerator;
 import ucar.unidata.idv.ui.JythonShell;
 
+/**
+ * Overrides the IDV's {@link ucar.unidata.idv.JythonManager JythonManager} to 
+ * associate a {@link JythonShell} with a given {@code JythonManager}.
+ */
 public class JythonManager extends ucar.unidata.idv.JythonManager {
     
     /** Trusty logging object. */
     private static final Logger logger = LoggerFactory.getLogger(JythonManager.class);
     
+    /** Associated Jython Shell. May be {@code null}. */
     private JythonShell jythonShell;
     
     /**
      * Create the manager and call initPython.
      *
-     * @param idv The IDV
+     * @param idv The IDV.
      */
     public JythonManager(IntegratedDataViewer idv) {
         super(idv);
@@ -68,7 +73,7 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
      * Create a Jython shell, if one doesn't already exist. This will also 
      * bring the window {@literal "to the front"} of the rest of the McIDAS-V
      * session.
-     *
+     * 
      * @return JythonShell object for interactive Jython usage.
      */
     public JythonShell createShell() {
@@ -89,11 +94,24 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
         return jythonShell;
     }
     
+    /**
+     * Create and initialize a Jython interpreter.
+     * 
+     * @return Newly created Jython interpreter.
+     */
     @Override public PythonInterpreter createInterpreter() {
         PythonInterpreter interpreter = super.createInterpreter();
         return interpreter;
     }
     
+    /**
+     * Removes the given interpreter from the list of active interpreters. 
+     * 
+     * <p>Also attempts to close any Jython Shell associated with the 
+     * interpreter.</p>
+     * 
+     * @param interpreter Interpreter to remove. Should not be {@code null}. 
+     */
     @Override public void removeInterpreter(PythonInterpreter interpreter) {
         super.removeInterpreter(interpreter);
         if (jythonShell != null && !jythonShell.isShellResetting() && jythonShell.getInterpreter().equals(interpreter)) {
