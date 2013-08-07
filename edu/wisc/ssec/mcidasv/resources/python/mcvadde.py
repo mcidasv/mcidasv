@@ -430,6 +430,13 @@ def listADDEImages(localEntry=None,
     elif (server is None) or (dataset is None) or (descriptor is None):
         raise TypeError("must provide localEntry or server, dataset, and descriptor values.")
         
+    if server == "localhost" or server == "127.0.0.1":
+        port = EntryStore.getLocalPort()
+    else:
+        port = "112"
+        
+    server = '%s:%s' % (server, port)
+    
     user = accounting[0]
     proj = accounting[1]
     debug = str(debug).lower()
