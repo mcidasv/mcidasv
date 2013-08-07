@@ -145,12 +145,6 @@ def setLogLevel(level, loggerName='ROOT'):
     convertedLevel = currentLevel.toLevel(level, currentLevel.INFO)
     logger.setLevel(convertedLevel)
     
-def _setLogLevel(level, loggerName='ROOT'):
-    logger = LoggerFactory.getLogger(loggerName)
-    currentLevel = logger.getLevel()
-    convertedLevel = currentLevel.toLevel(level, currentLevel.INFO)
-    logger.setLevel(convertedLevel)
-    
 def deleteLogFile():
     """Removes the active log file."""
     os.remove(getLogFile())
