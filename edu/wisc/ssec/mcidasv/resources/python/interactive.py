@@ -28,6 +28,7 @@ from org.slf4j import LoggerFactory
 
 _CONTEXT_ASSERT_MSG = "expected 'default' context; got '%s'"
 _APPENDER_ASSERT_MSG = "expected appender to be a subclass of FileAppender; got '%s'"
+_CONTEXT_FIND_LOGGER = "expected logger '%s' to be added to default context"
 
 def runFile(path, showContents=False):
     pass
@@ -121,9 +122,30 @@ def getLogFile():
     
 def getLogLevel(loggerName='ROOT'):
     logger = LoggerFactory.getLogger(loggerName)
-    return { 'level': logger.getLevel(), 'effectiveLevel':logger.getEffectiveLevel() }
+    if logger.getLevel():
+        level = str(logger.getLevel())
+    else:
+        level = None
+        
+    if logger.getEffectiveLevel():
+        effectiveLevel = str(logger.getEffectiveLevel())
+    else:
+        effectiveLevel = None
+        
+    return { 'level': level, 'effectiveLevel': effectiveLevel }
     
 def setLogLevel(level, loggerName='ROOT'):
+    context = LoggerFactory.getILoggerFactory()
+    logger = context.exists(loggerName)
+    if not logger:
+        logger = context.getLogger(loggerName)
+    currentLevel = logger.getLevel()
+    if not currentLevel:
+        currentLevel = logger.getEffectiveLevel()
+    convertedLevel = currentLevel.toLevel(level, currentLevel.INFO)
+    logger.setLevel(convertedLevel)
+    
+def _setLogLevel(level, loggerName='ROOT'):
     logger = LoggerFactory.getLogger(loggerName)
     currentLevel = logger.getLevel()
     convertedLevel = currentLevel.toLevel(level, currentLevel.INFO)
