@@ -545,7 +545,7 @@ def listADDEImageTimes(localEntry=None,
                 urls.append(url)
                 areaDirectories.append(areaDirectory)
                 
-    return [d.getNominalTime() for d in areaDirectories]
+    return [DateTime(d.getNominalTime()) for d in areaDirectories]
     
 def listADDEImages(localEntry=None,
     server=None, dataset=None, descriptor=None,
