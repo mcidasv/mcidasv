@@ -26,37 +26,37 @@ public class LoggerLevelOption extends AbstractOption {
      * {@code String} representation of Logback's {@literal "TRACE"} logging 
      * level. 
      */
-    private static final String TRACE = "TRACE";
+    private static final String TRACE = Level.TRACE.toString();
     
     /** 
      * {@code String} representation of Logback's {@literal "DEBUG"} logging 
      * level. 
      */
-    private static final String DEBUG = "DEBUG";
+    private static final String DEBUG = Level.DEBUG.toString();
     
     /** 
      * {@code String} representation of Logback's {@literal "INFO"} logging 
      * level. 
      */
-    private static final String INFO = "INFO";
+    private static final String INFO = Level.INFO.toString();
     
     /** 
      * {@code String} representation of Logback's {@literal "WARN"} logging 
      * level. 
      */
-    private static final String WARN = "WARN";
+    private static final String WARN = Level.WARN.toString();
     
     /** 
      * {@code String} representation of Logback's {@literal "ERROR"} logging 
      * level. 
      */
-    private static final String ERROR = "ERROR";
+    private static final String ERROR = Level.ERROR.toString();
     
     /** 
      * {@code String} representation of Logback's {@literal "OFF"} logging 
      * level. 
      */
-    private static final String OFF = "OFF";
+    private static final String OFF = Level.OFF.toString();
     
     /** 
      * {@code JComboBox} that will eventually contain logging levels to 
@@ -144,11 +144,14 @@ public class LoggerLevelOption extends AbstractOption {
                 }
             }
         });
-        System.out.println("this: "+this);
     }
     
     /**
      * Converts a {@code String} value to the corresponding logging level.
+     * 
+     * <p>This functionality is similar to 
+     * {@link Level#toLevel(String, Level)}, but for this use case it is 
+     * preferable to know if an invalid {@code value} was provided.</p>
      * 
      * @param value Value to convert.
      * 
