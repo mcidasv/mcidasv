@@ -620,7 +620,7 @@ class HTMLCleanupTransferHandler extends TransferHandler {
         final JEditorPane pane = (JEditorPane)c;
         final String htmlText = pane.getSelectedText();
         final String plainText = extractText(new StringReader(htmlText));
-        return new HTMLCleanupTransferable(plainText, htmlText);
+        return new HTMLCleanupTransferable(plainText);
     }
     
     public String extractText(Reader reader) {
@@ -697,9 +697,8 @@ class HTMLCleanupTransferable implements Transferable {
     
     static {
         try {
-            supportedFlavors = new DataFlavor[]{
-                    new DataFlavor("text/html;class=java.lang.String"),
-                    new DataFlavor("text/plain;class=java.lang.String")
+            supportedFlavors = new DataFlavor[] {
+                new DataFlavor("text/plain;class=java.lang.String"),
             };
         } catch (ClassNotFoundException e) {
             throw new ExceptionInInitializerError(e);
@@ -708,11 +707,8 @@ class HTMLCleanupTransferable implements Transferable {
     
     private final String plainData;
     
-    private final String htmlData;
-    
-    public HTMLCleanupTransferable(String plainData, String htmlData) {
+    public HTMLCleanupTransferable(String plainData) {
         this.plainData = plainData;
-        this.htmlData = htmlData;
     }
     
     @Override public DataFlavor[] getTransferDataFlavors() {
@@ -730,9 +726,6 @@ class HTMLCleanupTransferable implements Transferable {
     
     @Override public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
         if (flavor.equals(supportedFlavors[0])) {
-            return htmlData;
-        }
-        if (flavor.equals(supportedFlavors[1])) {
             return plainData;
         }
         throw new UnsupportedFlavorException(flavor);
