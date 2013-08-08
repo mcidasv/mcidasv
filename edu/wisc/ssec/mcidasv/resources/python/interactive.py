@@ -29,6 +29,7 @@ from org.slf4j import LoggerFactory
 _CONTEXT_ASSERT_MSG = "expected 'default' context; got '%s'"
 _APPENDER_ASSERT_MSG = "expected appender to be a subclass of FileAppender; got '%s'"
 _CONTEXT_FIND_LOGGER = "expected logger '%s' to be added to default context"
+_BAD_LOGGERNAME = "Cannot save log level if loggerName is not 'ROOT' (given loggerName is '%s')."
 
 def runFile(path, showContents=False):
     pass
@@ -134,7 +135,15 @@ def getLogLevel(loggerName='ROOT'):
         
     return { 'level': level, 'effectiveLevel': effectiveLevel }
     
-def setLogLevel(level, loggerName='ROOT'):
+def setLogLevel(level, loggerName='ROOT', temporary=True):
+    if not temporary:
+        if loggerName != 'ROOT':
+            raise ValueError(_BAD_LOGGERNAME % (loggerName))
+        
+        from edu.wisc.ssec.mcidasv.startupmanager.options import OptionMaster
+        optMaster = OptionMaster.getInstance()
+        optMaster.getLoggerLevelOption("LOG_LEVEL").setValue(level)
+        
     context = LoggerFactory.getILoggerFactory()
     logger = context.exists(loggerName)
     if not logger:
