@@ -143,6 +143,7 @@ def setLogLevel(level, loggerName='ROOT', temporary=True):
         from edu.wisc.ssec.mcidasv.startupmanager.options import OptionMaster
         optMaster = OptionMaster.getInstance()
         optMaster.getLoggerLevelOption("LOG_LEVEL").setValue(level)
+        optMaster.writeStartup()
         
     context = LoggerFactory.getILoggerFactory()
     logger = context.exists(loggerName)
