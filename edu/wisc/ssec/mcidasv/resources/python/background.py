@@ -1310,7 +1310,7 @@ class _Layer(_JavaProxy):
         self._JavaProxy__javaObject.setRange(currentRange)
         
     @gui_invoke_later
-    def setColorScale(self, visible=True, placement=None, font=None, style=None, size=None, color=None):
+    def setColorScale(self, visible=True, placement=None, font=None, style=None, size=None, color=None, showUnit=None):
         """Wrapper function for all the color scale manipulation stuff
         
         Args:
@@ -1339,6 +1339,9 @@ class _Layer(_JavaProxy):
             
         if (color != None):
             self.setColorScaleFontColor(color)
+
+        if (showUnit != None):
+            self.setColorScaleShowUnit(showUnit)
             
     @gui_invoke_later
     def setColorScaleVisible(self, status):
@@ -1420,6 +1423,16 @@ class _Layer(_JavaProxy):
         
         info = self._JavaProxy__javaObject.getColorScaleInfo()
         info.setLabelColor(newColor)
+        self._JavaProxy__javaObject.setColorScaleInfo(info)
+
+    @gui_invoke_later
+    def setColorScaleShowUnit(self, showUnit):
+        """Set whether the unit is shown at the end of the color scale
+        Args:
+            showUnit:  boolean, to set visibility of unit label
+        """
+        info = self._JavaProxy__javaObject.getColorScaleInfo()
+        info.setUnitVisible(showUnit)
         self._JavaProxy__javaObject.setColorScaleInfo(info)
         
     @gui_invoke_later
