@@ -2043,8 +2043,6 @@ def makeLogger(name):
     """ """
     return  LoggerFactory.getLogger(name)
     
-@gui_invoke_later
-# def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=None):
 def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=None):
     """Open a bundle using the decodeXmlFile from PersistenceManager
 
