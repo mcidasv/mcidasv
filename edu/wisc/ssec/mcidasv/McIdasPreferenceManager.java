@@ -672,8 +672,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     
     /**
      * Create the toolbar preference panel
-     *
-     * @param preferenceManager The preference manager
      */
     public void addToolbarPreferences() {
         if (toolbarEditor == null) {
@@ -1951,15 +1949,16 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     }
     
     /**
-     * Parse the full chooser name for a category
+     * Parse the full chooser name for a category.
      * 
-     * @param chooserName
+     * @param chooserName Name of a chooser. Cannot be {@code null}.
      * 
-     * @return
+     * @return {@literal "Category"} associated with {@code chooserName} or 
+     * {@literal "Other"} if no category is available.
      */
     private String getChooserCategory(String chooserName) {
         String chooserCategory = "Other";
-        int indexSep = chooserName.indexOf(">");
+        int indexSep = chooserName.indexOf('>');
         if (indexSep >= 0) {
             chooserCategory = chooserName.substring(0, indexSep);
         }
@@ -1967,17 +1966,18 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     }
     
     /**
-     * Parse the full chooser name for a short name
+     * Parse the full chooser name for a short name.
      * 
-     * @param chooserName
+     * @param chooserName Name of a chooser. Cannot be {@code null}.
      * 
-     * @return
+     * @return The {@literal "short name"} of {@code chooserName}.
      */
     private String getChooserShortName(String chooserName) {
         String chooserShortName = chooserName;
-        int indexSep = chooserName.indexOf(">");
+        int indexSep = chooserName.indexOf('>');
         if (indexSep >= 0 && chooserName.length() > indexSep + 1) {
-            chooserShortName = chooserName.substring(indexSep + 1, chooserName.length());
+            chooserShortName = 
+                chooserName.substring(indexSep + 1, chooserName.length());
         }
         return chooserShortName;
     }
