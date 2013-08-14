@@ -17,8 +17,16 @@ from org.slf4j import Logger
 from org.slf4j import LoggerFactory
 
 from java.awt import Rectangle
+
 from java.lang import NullPointerException
+from java.lang import StringBuffer
 from java.lang import System
+
+from java.text import FieldPosition
+from java.text import SimpleDateFormat
+
+from java.util import TimeZone
+
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 from ucar.unidata.idv import DisplayInfo
 from ucar.unidata.idv.ui import IdvWindow
@@ -174,12 +182,15 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         Make a _MappedAreaImageFlatField from an existing AreaImageFlatField
         """
         # self.__mappedObject = AreaImageFlatField.createImmediate(areaDirectory, imageUrl)
-        keys = ['bands', 'calinfo', 'calibration-scale-factor', 
-                'calibration-type', 'calibration-unit-name', 'center-latitude', 
-                'center-latitude-resolution', 'center-longitude', 
-                'center-longitude-resolution', 'directory-block', 'elements', 
-                'lines', 'memo-field', 'nominal-time', 'band-count', 
-                'sensor-id', 'sensor-type', 'source-type', 'start-time', 'url']
+        keys = [ 'band-count', 'bandList', 'bandNumber', 'bands', 
+                 'calibration-scale-factor', 'calibration-type', 
+                 'calibration-unit-name', 'calinfo', 'center-latitude', 
+                 'center-latitude-resolution', 'center-longitude', 
+                 'center-longitude-resolution', 'day', 'directory-block', 
+                 'elements', 'lines', 'memo-field', 'nominal-time', 
+                 'sensor-id', 'sensor-type', 'source-type', 'start-time', 
+                 'url',]
+                 
         _MappedData.__init__(self, keys)
         self.areaFile = areaFile
         self.areaDirectory = areaDirectory
@@ -250,13 +261,31 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         else:
             return []
             
+    def _getDay(self):
+        nominal = self.areaDirectory.getNominalTime()
+        dateFmt = SimpleDateFormat()
+        dateFmt.setTimeZone(TimeZone.getTimeZone('Z'))
+        dateFmt.applyPattern('yyyyDDD')
+        return str(dateFmt.format(nominal, StringBuffer(), FieldPosition(0)))
+        
+    def _getBand(self):
+        bands = self._getDirValue('bands')
+        if len(bands) == 1:
+            return bands[0]
+        else:
+            return bands
+            
     def _getDirValue(self, key):
         from visad import DateTime
         
         if key not in self._keys:
             raise KeyError('unknown key: %s' % key)
-        if key == 'bands':
+        if key == 'bands' or key == 'bandList':
             return list(self.areaDirectory.getBands())
+        elif key == 'bandNumber':
+            return self._getBand()
+        elif key == 'day':
+            return self._getDay()
         elif key == 'calinfo':
             return self._getCalInfo()
         elif key == 'calibration-scale-factor':
