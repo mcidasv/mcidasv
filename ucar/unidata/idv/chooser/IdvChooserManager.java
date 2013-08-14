@@ -539,7 +539,12 @@ public class IdvChooserManager extends IdvManager {
         if (theseChoosers == null) {
             theseChoosers = new ArrayList();
         }
-        Hashtable<String, Boolean> chooserPrefs = (Hashtable<String, Boolean>)getIdv().getStore().get("idv.choosers");
+        IdvObjectStore store = getIdv().getStore();
+        Hashtable<String, Boolean> chooserPrefs = null;
+        Boolean allChoosers = (Boolean)store.get(IdvConstants.PROP_CHOOSERS_ALL);
+        if (allChoosers == null || !allChoosers.booleanValue()) {
+            chooserPrefs = (Hashtable<String, Boolean>)store.get(IdvConstants.PROP_CHOOSERS);
+        }
         choosersWeAreCreating = theseChoosers;
         for (int resourceIdx = 0; resourceIdx < fixedChoosers.size();
                 resourceIdx++) {
