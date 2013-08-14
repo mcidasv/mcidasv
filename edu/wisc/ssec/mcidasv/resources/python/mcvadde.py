@@ -77,7 +77,7 @@ def _normalizeDates(dates):
         normalized = [str(date) for date in dates]
     elif isinstance(dates, tuple) and len(dates) == 2:
         start, stop = int(dates[0]), int(dates[1])
-        normalized = [str(date) for date in range(start, stop + 1)]
+        normalized = ['%s %s' % (str(start), str(stop))]
     else:
         normalized = []
     return normalized
