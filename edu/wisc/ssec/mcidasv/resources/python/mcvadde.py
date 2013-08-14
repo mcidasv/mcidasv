@@ -400,7 +400,7 @@ def listADDEImageTimes(localEntry=None,
     coordinateSystem=CoordinateSystems.LATLON,
     place=None,
     mag=None,
-    position=0,
+    position=None,
     unit=None,
     day=None,
     time=None,
@@ -476,7 +476,19 @@ def listADDEImageTimes(localEntry=None,
     else:
         band = '&BAND=ALL'
         
-    tz = TimeZone.getTimeZone("Z")
+    if position is not None:
+        if isinstance(position, int):
+            position = '&POS=%s' % (position)
+        elif isinstance(position, tuple):
+            if len(position) != 2:
+                raise ValueError('position range may only contain values for the beginning and end of a range.')
+            position = '&POS=%s %s' % (str(position[0]), str(position[1]))
+        else:
+            position = '&POS=%s' % (str(position).upper())
+    else:
+        position = '&POS=ALL'
+        
+    tz = TimeZone.getTimeZone('Z')
     
     dateFormat = SimpleDateFormat()
     dateFormat.setTimeZone(tz)
@@ -486,7 +498,7 @@ def listADDEImageTimes(localEntry=None,
     timeFormat.setTimeZone(tz)
     timeFormat.applyPattern('HH:mm:ss')
     
-    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=112&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s%(unit)s%(mag)s%(day)s%(time)s&POS=%(position)s"
+    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=112&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s%(unit)s%(mag)s%(day)s%(time)s%(position)s"
     
     urls = []
     areaDirectories = []
@@ -513,10 +525,11 @@ def listADDEImageTimes(localEntry=None,
         url = addeUrlFormat % formatValues
         print url
         adl = AreaDirectoryList(url)
-        dirs = adl.getSortedDirs()
-        for areaDirectory in dirs[0]:
-            urls.append(url)
-            areaDirectories.append(areaDirectory)
+        results = adl.getSortedDirs()
+        for imageTimes in results:
+            for areaDirectory in imageTimes:
+                urls.append(url)
+                areaDirectories.append(areaDirectory)
     else:
         for date in dates:
             urlDate = '&DAY=%s' % (date)
@@ -540,12 +553,16 @@ def listADDEImageTimes(localEntry=None,
             url = addeUrlFormat % formatValues
             print url
             adl = AreaDirectoryList(url)
-            dirs = adl.getSortedDirs()
-            for areaDirectory in dirs[0]:
-                urls.append(url)
-                areaDirectories.append(areaDirectory)
-                
-    return [DateTime(d.getNominalTime()) for d in areaDirectories]
+            results = adl.getSortedDirs()
+            for imageTimes in results:
+                for areaDirectory in imageTimes:
+                    urls.append(url)
+                    areaDirectories.append(areaDirectory)
+                    
+    times = set()
+    for d in areaDirectories:
+        times.add(DateTime(d.getNominalTime()))
+    return sorted(times)
     
 def listADDEImages(localEntry=None,
     server=None, dataset=None, descriptor=None,
@@ -554,7 +571,7 @@ def listADDEImages(localEntry=None,
     coordinateSystem=CoordinateSystems.LATLON,
     place=None,
     mag=None,
-    position=0,
+    position=None,
     unit=None,
     day=None,
     time=None,
@@ -645,7 +662,19 @@ def listADDEImages(localEntry=None,
     else:
         band = '&BAND=ALL'
         
-    tz = TimeZone.getTimeZone("Z")
+    if position is not None:
+        if isinstance(position, int):
+            position = '&POS=%s' % (position)
+        elif isinstance(position, tuple):
+            if len(position) != 2:
+                raise ValueError('position range may only contain values for the beginning and end of a range.')
+            position = '&POS=%s %s' % (str(position[0]), str(position[1]))
+        else:
+            position = '&POS=%s' % (str(position).upper())
+    else:
+        position = '&POS=ALL'
+        
+    tz = TimeZone.getTimeZone('Z')
     
     dateFormat = SimpleDateFormat()
     dateFormat.setTimeZone(tz)
@@ -655,7 +684,7 @@ def listADDEImages(localEntry=None,
     timeFormat.setTimeZone(tz)
     timeFormat.applyPattern('HH:mm:ss')
     
-    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=112&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s%(unit)s%(mag)s%(day)s%(time)s&POS=%(position)s"
+    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=112&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s%(unit)s%(mag)s%(day)s%(time)s%(position)s"
     
     urls = []
     areaDirectories = []
@@ -682,10 +711,11 @@ def listADDEImages(localEntry=None,
         url = addeUrlFormat % formatValues
         print url
         adl = AreaDirectoryList(url)
-        dirs = adl.getSortedDirs()
-        for areaDirectory in dirs[0]:
-            urls.append(url)
-            areaDirectories.append(areaDirectory)
+        results = adl.getSortedDirs()
+        for imageTimes in results:
+            for areaDirectory in imageTimes:
+                urls.append(url)
+                areaDirectories.append(areaDirectory)
     else:
         for date in dates:
             urlDate = '&DAY=%s' % (date)
@@ -709,10 +739,11 @@ def listADDEImages(localEntry=None,
             url = addeUrlFormat % formatValues
             print url
             adl = AreaDirectoryList(url)
-            dirs = adl.getSortedDirs()
-            for areaDirectory in dirs[0]:
-                urls.append(url)
-                areaDirectories.append(areaDirectory)
+            results = adl.getSortedDirs()
+            for imageTimes in results:
+                for areaDirectory in imageTimes:
+                    urls.append(url)
+                    areaDirectories.append(areaDirectory)
                 
     temp = _AreaDirectoryList()
     for i, d in enumerate(areaDirectories):
