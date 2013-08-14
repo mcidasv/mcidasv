@@ -165,6 +165,19 @@ class _MappedData(object):
             return self._getDirValue(key)
         except KeyError:
             return default
+
+    def getMacrosDict(self):
+        """return a dictionary mapping IDV macro strings to reasonable defaults
+        for this object
+        """
+        # subclasses should override!
+        raise NotImplementedError()
+
+    def getDefaultLayerLabel(self):
+        """return a reasonable default layer label for this class
+        """
+        # subclasses should override!
+        raise NotImplementedError()
             
     def __reversed__(self): raise NotImplementedError()
     def __setitem__(self, key, value): raise NotImplementedError()
@@ -327,6 +340,21 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         else:
             raise KeyError('should not be capable of reaching here: %s')
 
+    def getMacrosDict(self):
+        """return a dictionary mapping IDV macro strings to reasonable defaults
+        for this object
+        """
+        longname = '%s band %s %s' % (self['sensor-type'], self['bands'][0], self['calibration-type'])
+        shortname = self['sensor-type']
+        macros = {'longname':longname, 'shortname':shortname}
+        return macros
+
+    def getDefaultLayerLabel(self):
+        """return a reasonable default layer label for this class
+        """
+        # note the double percent sign- we are 'escaping' the percent signs
+        defaultLabel = '%s band %s %s %%timestamp%%' % (self['sensor-type'], self['bands'][0], self['calibration-type'])
+        return defaultLabel
 
 class _JavaProxy(object):
     """One sentence description goes here
@@ -966,31 +994,54 @@ class _Display(_JavaProxy):
         # the imagedisplay control appears to want an ImageSequenceImpl,
         # so try to force one.
         # This will work if data is an array of NavigatedImage's (or
-        # SingleBandedImage's).
+        # SingleBandedImage's), or just a single one of those.
+        firstData = data  # keep a ref to the first image in the list
+                           # for layer labeling, etc.
         try:
-            # (maybe we only want to do this in the 'imagedisplay' case?)
             data = ImageSequenceImpl(data)
+            firstData = firstData[0]
         except TypeError:
-            #print "DEBUG: ImageSequenceImpl constructor failed but thats ok"
+            # try one more time for case of single image
+            try:
+                data = ImageSequenceImpl([data])
+                # firstData is set properly here
+            except TypeError:
+                # ImageSequenceImpl constructor failed for both single
+                # image and list of image cases, but that's OK
+                firstData = None
+
+        # figure out the shortname and longname macros if possible,
+        # and default layer label
+
+        # this is questionable... but I think this is better for debugging
+        # than just setting to an empty string
+        longname = 'unable to set longname macro'
+        shortname = 'unable to set shortname macro'
+
+        defaultLabel = ''
+        try:
+            longname = firstData.getMacrosDict()['longname']
+            shortname = firstData.getMacrosDict()['shortname']
+            defaultLabel = firstData.getDefaultLayerLabel()
+        except AttributeError:
+            # should catch case where firstData is None, AND case where
+            # the method doesn't exist
+            # (not a dealbreaker...should probably log it though?)
             pass
-            
+
         # use the full doMakeControl signature,
         # so we can send False as initDisplayInThread
+
+        # first param of DataDataChoice constructor is %shortname% macro
+        ddc = DataDataChoice(shortname, data)
+        # setting the description should set the %longname% macro
+        ddc.setDescription(longname)
         newLayer = mcv.doMakeControl( 
-                [DataDataChoice("shortname macro goes here", data)],
+                [ddc],
                 getStaticMcv().getControlDescriptor(controlID),
                 None, None, False)
         
         wrappedLayer = _Layer(newLayer)
-        
-        defaultLabel = ''
-        try:
-            defaultLabel = '%s - %s' % (data['sensor-type'], data['nominal-time'])
-        except (TypeError, KeyError):
-            # get TypeError if data isn't a dictionary, get KeyError if
-            # data is a dictionary but doesn't contain the desired key
-            #print 'DEBUG: unable to create default layer label'
-            pass
             
         wrappedLayer.setLayerLabel(label=defaultLabel)
         
