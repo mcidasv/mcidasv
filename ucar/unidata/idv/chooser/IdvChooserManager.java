@@ -539,6 +539,7 @@ public class IdvChooserManager extends IdvManager {
         if (theseChoosers == null) {
             theseChoosers = new ArrayList();
         }
+        Hashtable<String, Boolean> chooserPrefs = (Hashtable<String, Boolean>)getIdv().getStore().get("idv.choosers");
         choosersWeAreCreating = theseChoosers;
         for (int resourceIdx = 0; resourceIdx < fixedChoosers.size();
                 resourceIdx++) {
@@ -573,6 +574,18 @@ public class IdvChooserManager extends IdvManager {
                         }
                     }
                     otherXml.append(XmlUtil.toString(node));
+                } else if (XmlUi.TAG_PANEL.equals(node.getTagName())) {
+                    String xml = XmlUtil.toString(node);
+                    NodeList children = node.getChildNodes();
+                    for (int k = 0; k < children.getLength(); k++) {
+                        String id = extractChooserId(children.item(k));
+                        if (id != null) {
+                            Boolean chooserStatus = chooserPrefs.get(id);
+                            if (chooserStatus != null && chooserStatus.booleanValue()) {
+                                sb.append(XmlUtil.toString(node));
+                            }
+                        }
+                    }
                 } else {
                     sb.append(XmlUtil.toString(node));
                 }
@@ -620,6 +633,27 @@ public class IdvChooserManager extends IdvManager {
         Msg.translateTree(contents, true, false);
         return contents;
 
+    }
+
+    /**
+     * Attempts to extract the value of the {@code id} attribute for a given
+     * chooser element and/or node.
+     * 
+     * @param chooser Chooser element.
+     * 
+     * @return Either {@code null} or the value of the chooser's {@code id}
+     * attribute.
+     */
+    private String extractChooserId(Node chooser) {
+        String id = null;
+        if (IdvUIManager.COMP_CHOOSER.equals(chooser.getNodeName())) {
+            NamedNodeMap attrs = chooser.getAttributes();
+            Node idNode = attrs.getNamedItem("id");
+            if (idNode != null) {
+                id = idNode.getNodeValue();
+            }
+        }
+        return id;
     }
 
     /**
