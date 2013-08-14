@@ -574,7 +574,7 @@ public class IdvChooserManager extends IdvManager {
                         }
                     }
                     otherXml.append(XmlUtil.toString(node));
-                } else if (XmlUi.TAG_PANEL.equals(node.getTagName())) {
+                } else if (XmlUi.TAG_PANEL.equals(node.getTagName()) && chooserPrefs != null) {
                     String xml = XmlUtil.toString(node);
                     NodeList children = node.getChildNodes();
                     for (int k = 0; k < children.getLength(); k++) {
