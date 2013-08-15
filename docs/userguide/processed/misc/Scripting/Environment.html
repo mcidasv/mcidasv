@@ -45,7 +45,56 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/En
 <p><strong><a name="expandpath" id="expandpath"></a>expandpath( ) -</strong> Expands the path entered.</p>
 <div class="OneTabIndent">Usage: <em>expandpath(path)</em></div>
 <div class="OneTabIndent">Remarks:</div>
-<div class="TwoTabIndent">Understands environmental variables such as &quot;~&quot; and &quot;..&quot;.&nbsp;For example, on Windows, &nbsp;'print expandpath(&quot;$HOMEPATH&quot;)' will print \Users\username.</div>
+<div class="TwoTabIndent">Understands environmental variables such as &quot;~&quot; and &quot;..&quot;.</div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>print expandpath('$HOMEPATH')</em></div>
+<p><strong><a name="editfile" id="editfile"></a>editFile( ) -</strong> Pastes the content of a text file into the text input field of the Jython Shell.</p>
+<div class="OneTabIndent">Usage: <em>editFile(path)</em></div>
+<div class="OneTabIndent">path - Directory path to the file to be added to the Jython Shell.</div>
+<div class="OneTabIndent">Remarks:</div>
+<div class="TwoTabIndent">Pastes the text of an existing file into the text input field of the Jython Shell.  This makes it easy to evaluate and edit scripts.</div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>editFile('C:\\Users\\myuser\\myscript.py')</em></div>
+<p><strong><a name="getloglevel" id="getloglevel"></a>getLogLevel( ) -</strong> Sets the logging level to be used by McIDAS-V.</p>
+<div class="OneTabIndent">Usage: <em>print getLogLevel()</em></div>
+<div class="OneTabIndent">Remarks:</div>
+<div class="TwoTabIndent">Returns the current logging level being used by McIDAS-V. This is composed of two items, level and effectiveLevel.</div>
+<div class="TwoTabIndent"><table class="noborder">
+<tr>
+      <td valign="top">level-</td>
+      <td>The logging level of the directory path used in the command.&nbsp;If a directory path is not specified, this is the logging level for the session as a whole.</td>
+    </tr>
+    <tr>
+      <td valign="top">effectiveLevel-</td>
+      <td>The logging level for the specific module specified in the command</td>
+    </tr></table></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>print getLogLevel( )</em></div>
+<div class="ThreeTabIndent">This returns the logging level&nbsp;for everything as long as a logging level for another directory hasn't already been set.</div>
+<p><strong><a name="setloglevel" id="setloglevel"></a>setLogLevel( ) -</strong> Sets the logging level to be used by McIDAS-V.</p>
+<div class="OneTabIndent">
+    Usage: <em>setLogLevel(level,keywords)</em>
+</div>
+<div class="OneTabIndent">level- Logging level to be used.&nbsp;This can be set to <em>TRACE</em>, <em>DEBUG</em>, <em>INFO</em>, <em>WARN</em>, <em>ERROR</em>, or <em>OFF</em>. Information about each of these logging levels can be found in the <a href="../../tools/preferences/AdvancedPreferences.html#loglevel">Advanced Preferences</a> page.</div>
+<div class="OneTabIndent">Keywords:</div>
+<div class="TwoTabIndent"><table class="noborder">
+<tr>
+      <td valign="top">temporary=</td>
+      <td>determines if the logging level will be saved from session to session&nbsp;(default = True)</td>
+    </tr></table></div>
+<div class="OneTabIndent">Remarks:</div>
+<div class="TwoTabIndent">This command can be used to set the logging level for the session as a whole, and it can also be used to set logging levels for specific directories to control what type of output goes to mcidasv.log.</div>
+<div class="OneTabIndent">Examples:</div>
+<div class="TwoTabIndent"><em>setLogLevel('TRACE')</em></div>
+<div class="ThreeTabIndent">Sets the logging level&nbsp;for everything to <em>Trace</em> as long as a logging level for another directory hasn't already been set.</div>
+<div class="TwoTabIndent"><em>print getLogLevel()</em></div>
+<div class="ThreeTabIndent">Returns the global logging level in McIDAS-V.&nbsp; Both <em>level</em> and <em>effectiveLevel</em> are set to <em>TRACE</em>.</div>
+<div class="TwoTabIndent"><em>setLogLevel('DEBUG','edu.wisc.ssec')</em></div>
+<div class="ThreeTabIndent">Sets the logging level&nbsp;for everything contained within <em>edu.wisc.ssec</em> is set&nbsp;to <em>DEBUG</em>.</div>
+<div class="TwoTabIndent"><em>print getLogLevel('edu.wisc.ssec')</em></div>
+<div class="ThreeTabIndent">Returns the <em>level</em> and <em>effectiveLevel</em> of <em>edu.wisc.ssec</em>. Both levels are set to <em>DEBUG</em> since the logging level was explicitly set for <em>edu.wisc.ssec</em> in the previous command.</div>
+<div class="TwoTabIndent"><em>print getLogLevel('edu.wisc.ssec.mcidasv.servermanager')</em></div>
+<div class="ThreeTabIndent">Returns the <em>level</em> and <em>effectiveLevel</em> of <em>edu.wisc.ssec.mcidasv.servermanager</em>. The value returned for <em>level</em> is <em>None</em> and the value returned for <em>effectiveLevel</em> is <em>DEBUG</em>. <em>level</em> is returned as <em>None</em> because none of the <em>setLogLevel</em> commands executed above explicitly referenced this exact directory. <em>effectiveLevel</em> is set as <em>DEBUG</em> because <em>mcidasv.servermanager</em> is contained within the <em>edu.wisc.ssec</em> path, which was set to <em>DEBUG</em> in the last <em>setLogLevel</em> example.</div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
