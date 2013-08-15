@@ -235,6 +235,7 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         units = ff.getRangeUnits()[0]
         aiff = AreaImageFlatField(addeDescriptor, ftype, domainSet, 
                 rangeCoordSys, rangeSets, units, samples, "READLABEL")
+        areaFile.close()
         return cls(aiff, areaFile, areaDirectory, addeDescriptor, 
                 ff.getStartTime())
                 
