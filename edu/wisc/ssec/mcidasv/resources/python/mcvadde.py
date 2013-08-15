@@ -486,7 +486,7 @@ def listADDEImageTimes(localEntry=None,
         else:
             position = '&POS=%s' % (str(position).upper())
     else:
-        position = '&POS=ALL'
+        position = '&POS=0'
         
     tz = TimeZone.getTimeZone('Z')
     
@@ -672,7 +672,7 @@ def listADDEImages(localEntry=None,
         else:
             position = '&POS=%s' % (str(position).upper())
     else:
-        position = '&POS=ALL'
+        position = '&POS=0'
         
     tz = TimeZone.getTimeZone('Z')
     
