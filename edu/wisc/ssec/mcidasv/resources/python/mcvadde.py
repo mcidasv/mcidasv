@@ -1085,11 +1085,7 @@ def getADDEImage(localEntry=None,
         mapped = _MappedAreaImageFlatField.fromUrl(url)
         return mapped.getDictionary(), mapped
     except AreaFileException, e:
-        if kwargs.get('socketdebug', False):
-            print 'AreaFileException: url:', url, e
         raise AddeJythonError(e)
     except AddeURLException, e:
-        if kwargs.get('socketdebug', False):
-            print 'AddeURLException: url:', url, e
         raise AddeJythonError(e)
         
