@@ -28,6 +28,7 @@ from visad import DateTime
 
 from visad.data.mcidas import AreaAdapter
 
+from java.lang import String
 from java.lang import StringBuffer
 from java.text import FieldPosition
 from java.text import SimpleDateFormat
@@ -69,15 +70,17 @@ def _normalizeDates(dates):
     # list or set signifies at least one day
     # tuple of two items signifies range of days
     normalized = None
-    if isinstance(dates, str):
-        normalized = [dates]
+    if dates is None:
+        normalized = ['']
+    elif isinstance(dates, (str, unicode, String)):
+        normalized = [str('&DAY='+dates)]
     elif isinstance(dates, int):
-        normalized = [str(dates)]
+        normalized = ['&DAY='+str(dates)]
     elif len(dates) == 2:
         start, stop = int(dates[0]), int(dates[1])
-        normalized = ['%s %s' % (str(start), str(stop))]
+        normalized = ['&DAY=%s %s' % (str(start), str(stop))]
     else:
-        normalized = []
+        normalized = ['']
     return normalized
     
 def _normalizeUnits(units):
@@ -502,7 +505,7 @@ def listADDEImageTimes(localEntry=None,
     areaDirectories = []
     
     dates = _normalizeDates(day)
-    if not dates:
+    for date in dates:
         formatValues = {
             'server': server,
             'user': user,
@@ -516,7 +519,7 @@ def listADDEImageTimes(localEntry=None,
             'size': size,
             'unit': unit,
             'mag': mag,
-            'day': '',
+            'day': date,
             'time': time,
             'position': position,
         }
@@ -528,35 +531,7 @@ def listADDEImageTimes(localEntry=None,
             for areaDirectory in imageTimes:
                 urls.append(url)
                 areaDirectories.append(areaDirectory)
-    else:
-        for date in dates:
-            urlDate = '&DAY=%s' % (date)
-            formatValues = {
-                'server': server,
-                'user': user,
-                'proj': proj,
-                'debug': debug,
-                'dataset': dataset,
-                'descriptor': descriptor,
-                'band': band,
-                'location': location,
-                'place': place,
-                'size': size,
-                'unit': unit,
-                'mag': mag,
-                'day': urlDate,
-                'time': time,
-                'position': position,
-            }
-            url = addeUrlFormat % formatValues
-            print url
-            adl = AreaDirectoryList(url)
-            results = adl.getSortedDirs()
-            for imageTimes in results:
-                for areaDirectory in imageTimes:
-                    urls.append(url)
-                    areaDirectories.append(areaDirectory)
-                    
+                
     times = set()
     for d in areaDirectories:
         times.add(DateTime(d.getNominalTime()))
@@ -688,7 +663,7 @@ def listADDEImages(localEntry=None,
     areaDirectories = []
     
     dates = _normalizeDates(day)
-    if not dates:
+    for date in dates:
         formatValues = {
             'server': server,
             'user': user,
@@ -702,7 +677,7 @@ def listADDEImages(localEntry=None,
             'size': size,
             'unit': unit,
             'mag': mag,
-            'day': '',
+            'day': date,
             'time': time,
             'position': position,
         }
@@ -714,34 +689,6 @@ def listADDEImages(localEntry=None,
             for areaDirectory in imageTimes:
                 urls.append(url)
                 areaDirectories.append(areaDirectory)
-    else:
-        for date in dates:
-            urlDate = '&DAY=%s' % (date)
-            formatValues = {
-                'server': server,
-                'user': user,
-                'proj': proj,
-                'debug': debug,
-                'dataset': dataset,
-                'descriptor': descriptor,
-                'band': band,
-                'location': location,
-                'place': place,
-                'size': size,
-                'unit': unit,
-                'mag': mag,
-                'day': urlDate,
-                'time': time,
-                'position': position,
-            }
-            url = addeUrlFormat % formatValues
-            print url
-            adl = AreaDirectoryList(url)
-            results = adl.getSortedDirs()
-            for imageTimes in results:
-                for areaDirectory in imageTimes:
-                    urls.append(url)
-                    areaDirectories.append(areaDirectory)
                 
     temp = _AreaDirectoryList()
     for i, d in enumerate(areaDirectories):
