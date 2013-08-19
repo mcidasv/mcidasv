@@ -73,9 +73,7 @@ def _normalizeDates(dates):
         normalized = [dates]
     elif isinstance(dates, int):
         normalized = [str(dates)]
-    elif isinstance(dates, list) or isinstance(dates, set):
-        normalized = [str(date) for date in dates]
-    elif isinstance(dates, tuple) and len(dates) == 2:
+    elif len(dates) == 2:
         start, stop = int(dates[0]), int(dates[1])
         normalized = ['%s %s' % (str(start), str(stop))]
     else:
@@ -747,11 +745,8 @@ def listADDEImages(localEntry=None,
                 
     temp = _AreaDirectoryList()
     for i, d in enumerate(areaDirectories):
-        # print i, d, d.getBands(), d.getSensorType(), d.getCenterLatitude(), d.getCenterLongitude(), d.getCalInfo()
         print i, d
         nominalTime = d.getNominalTime()
-        # tempDay = dateFormat.format(nominalTime, StringBuffer(), FieldPosition(0)).toString()
-        # tempTime = timeFormat.format(nominalTime, StringBuffer(), FieldPosition(0)).toString()
         tempDay = str(dateFormat.format(nominalTime, StringBuffer(), FieldPosition(0)))
         tempTime = str(timeFormat.format(nominalTime, StringBuffer(), FieldPosition(0)))
         
