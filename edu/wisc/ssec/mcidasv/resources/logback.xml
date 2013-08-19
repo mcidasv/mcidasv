@@ -57,13 +57,6 @@
   <!-- Disable some initial status messages from the stdout/stderr redirect library -->
   <logger name="uk.org.lidalia.sysoutslf4j" level="OFF" />
   
-  <logger name="jython" level="INFO">
-    <!-- remember: jython is like a subclass of the root logger; including the STDOUT -->
-    <!-- appender will only result in duplicate output. -->
-    <!-- <appender-ref ref="STDOUT" /> -->
-    <appender-ref ref="JYTHON" />
-  </logger>
-  
   <!-- Let's use this section of the file to group loggers that spew *way* too much output. -->
   <logger name="httpclient.wire.content" level="OFF" />
   <logger name="org.apache.commons.httpclient" level="OFF" />
