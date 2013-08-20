@@ -83,18 +83,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/En
       <td>determines if the logging level will be saved from session to session&nbsp;(default = True)</td>
     </tr></table></div>
 <div class="OneTabIndent">Remarks:</div>
-<div class="TwoTabIndent">This command can be used to set the logging level for the session as a whole, and it can also be used to set logging levels for specific directories to control what type of output goes to mcidasv.log.</div>
+<div class="TwoTabIndent">This command can be used to set the logging level for the session as a whole, and it can also be used to set logging levels for specific directories to control what type of logging output goes to mcidasv.log.</div>
 <div class="OneTabIndent">Examples:</div>
 <div class="TwoTabIndent"><em>setLogLevel('TRACE')</em></div>
 <div class="ThreeTabIndent">Sets the logging level&nbsp;for everything to <em>Trace</em> as long as a logging level for another directory hasn't already been set.</div>
 <div class="TwoTabIndent"><em>print getLogLevel()</em></div>
 <div class="ThreeTabIndent">Returns the global logging level in McIDAS-V.&nbsp; Both <em>level</em> and <em>effectiveLevel</em> are set to <em>TRACE</em>.</div>
-<div class="TwoTabIndent"><em>setLogLevel('DEBUG','edu.wisc.ssec')</em></div>
-<div class="ThreeTabIndent">Sets the logging level&nbsp;for everything contained within <em>edu.wisc.ssec</em> is set&nbsp;to <em>DEBUG</em>.</div>
-<div class="TwoTabIndent"><em>print getLogLevel('edu.wisc.ssec')</em></div>
-<div class="ThreeTabIndent">Returns the <em>level</em> and <em>effectiveLevel</em> of <em>edu.wisc.ssec</em>. Both levels are set to <em>DEBUG</em> since the logging level was explicitly set for <em>edu.wisc.ssec</em> in the previous command.</div>
-<div class="TwoTabIndent"><em>print getLogLevel('edu.wisc.ssec.mcidasv.servermanager')</em></div>
-<div class="ThreeTabIndent">Returns the <em>level</em> and <em>effectiveLevel</em> of <em>edu.wisc.ssec.mcidasv.servermanager</em>. The value returned for <em>level</em> is <em>None</em> and the value returned for <em>effectiveLevel</em> is <em>DEBUG</em>. <em>level</em> is returned as <em>None</em> because none of the <em>setLogLevel</em> commands executed above explicitly referenced this exact directory. <em>effectiveLevel</em> is set as <em>DEBUG</em> because <em>mcidasv.servermanager</em> is contained within the <em>edu.wisc.ssec</em> path, which was set to <em>DEBUG</em> in the last <em>setLogLevel</em> example.</div>
+
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">

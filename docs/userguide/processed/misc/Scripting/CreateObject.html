@@ -304,7 +304,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
 <div class="OneTabIndent">Example:</div>
   <div class="TwoTabIndent"><em>metadata,data = getADDEImage(debug=True,localEntry=desc, size='ALL', mag=(1,1), unit='BRIT')</em></div>
   <p><strong><a name="listADDEImages" id="listADDEImages"></a>listADDEImages -</strong> Lists
-  data from an ADDE Image server that matches the keywords in the request - returns  metadata objects</p>
+  data from an ADDE Image server that matches the keywords in the request - returns  metadata objects which can be passed into getADDEImage</p>
 <div class="OneTabIndent">Usage: <em>directoryList = listADDEImages(keywords)</em></div>
 <div class="TwoTabIndent">Keywords:</div>
 <div class="ThreeTabIndent2"><table class="noborder">
@@ -381,8 +381,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
 </table></div>
 <div class="OneTabIndent">Example:</div>
   <div class="TwoTabIndent"><em>directoryList = listADDEImages(localEntry=desc, band=4, unit='TEMP')</em></div>
-    <p><strong><a name="listADDEImageTimes" id="listADDEImageTimes"></a>listADDEImageTimes -</strong> Returns a list of available times of data that match the keywords in your request.</p>
-<div class="OneTabIndent">Usage: <em>directoryList = listADDEImages(keywords)</em></div>
+    <p><strong><a name="listADDEImageTimes" id="listADDEImageTimes"></a>listADDEImageTimes -</strong> Returns a list of available dates and times of data that match the keywords in your request</p>
+<div class="OneTabIndent">Usage: <em>directoryList = listADDEImageTimes(keywords)</em></div>
 <div class="TwoTabIndent">Keywords:</div>
 <div class="ThreeTabIndent2"><table class="noborder">
     <tr>
