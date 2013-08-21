@@ -8,6 +8,14 @@ from java.util.concurrent import FutureTask
 
 from javax.swing import SwingUtilities
 
+from visad import Field
+from visad import FlatField
+from visad.meteorology import ImageSequenceImpl
+from visad.meteorology import SingleBandedImage
+
+from ucar.unidata.data.grid import GridUtil
+
+
 class _JythonCallable(Callable):
     def __init__(self, func, args, kwargs):
         self._func = func
@@ -16,7 +24,28 @@ class _JythonCallable(Callable):
         
     def call(self):
         return self._func(*self._args, **self._kwargs)
-
+        
+def transform_flatfields(func, *args):
+    @wraps(func)
+    def wrapper(*args):
+        wrappedArgs = []
+        for i, arg in enumerate(args):
+            # print '%s: %s' % (i, arg)
+            if isinstance(arg, SingleBandedImage):
+                arg = ImageSequenceImpl([arg])
+            wrappedArgs.append(arg)
+        # print [type(a) for a in wrappedArgs]
+        result = func(*wrappedArgs)
+        # print 'result type=%s' % (type(result))
+        if GridUtil.isTimeSequence(result) and len(result) == 1:
+            # print 'attempting conversion...'
+            result = result.getImage(0)
+        # else:
+            # print 'not a time sequence! isseq=%s seqtype=%s' % (GridUtil.isSequence(result), GridUtil.getSequenceType(result))
+        # print 'returning type=%s' % (type(result))
+        return result
+    return wrapper
+    
 def _swingRunner(func, *args, **kwargs):
     if SwingUtilities.isEventDispatchThread():
         return func(*args, **kwargs)
