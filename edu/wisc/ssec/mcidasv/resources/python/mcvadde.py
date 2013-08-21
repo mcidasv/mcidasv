@@ -408,7 +408,7 @@ def listADDEImageTimes(localEntry=None,
     debug=False,
     band=None,
     size=None,
-    showUrls=False):
+    showUrls=True):
     
     if localEntry:
         server = localEntry.getAddress()
@@ -553,7 +553,7 @@ def listADDEImages(localEntry=None,
     debug=False,
     band=None,
     size=None,
-    showUrls=False):
+    showUrls=True):
     """Creates a list of ADDE images.
     
     Args:
@@ -889,7 +889,7 @@ def getADDEImage(localEntry=None,
     track=False,
     band=None,
     size=DEFAULT_SIZE,
-    showUrls=False,
+    showUrls=True,
     **kwargs):
     """Requests data from an ADDE Image server - returns both data and metadata objects.
     
