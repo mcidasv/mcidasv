@@ -407,7 +407,8 @@ def listADDEImageTimes(localEntry=None,
     time=None,
     debug=False,
     band=None,
-    size=None):
+    size=None,
+    showUrls=False):
     
     if localEntry:
         server = localEntry.getAddress()
@@ -524,7 +525,8 @@ def listADDEImageTimes(localEntry=None,
             'position': position,
         }
         url = addeUrlFormat % formatValues
-        print url
+        if showUrls:
+            print url
         adl = AreaDirectoryList(url)
         results = adl.getSortedDirs()
         for imageTimes in results:
@@ -550,7 +552,8 @@ def listADDEImages(localEntry=None,
     time=None,
     debug=False,
     band=None,
-    size=None):
+    size=None,
+    showUrls=False):
     """Creates a list of ADDE images.
     
     Args:
@@ -682,7 +685,8 @@ def listADDEImages(localEntry=None,
             'position': position,
         }
         url = addeUrlFormat % formatValues
-        print url
+        if showUrls:
+            print url
         adl = AreaDirectoryList(url)
         results = adl.getSortedDirs()
         for imageTimes in results:
@@ -692,7 +696,6 @@ def listADDEImages(localEntry=None,
                 
     temp = _AreaDirectoryList()
     for i, d in enumerate(areaDirectories):
-        print i, d
         nominalTime = d.getNominalTime()
         tempDay = str(dateFormat.format(nominalTime, StringBuffer(), FieldPosition(0)))
         tempTime = str(timeFormat.format(nominalTime, StringBuffer(), FieldPosition(0)))
@@ -706,7 +709,6 @@ def listADDEImages(localEntry=None,
             unitList = [origUnit]
         else:
             unitList = map(str, list(d.getCalInfo()[0])[::2])
-            print unitList
             
         for band in bandList:
             for calUnit in unitList:
@@ -887,6 +889,7 @@ def getADDEImage(localEntry=None,
     track=False,
     band=None,
     size=DEFAULT_SIZE,
+    showUrls=False,
     **kwargs):
     """Requests data from an ADDE Image server - returns both data and metadata objects.
     
@@ -1021,7 +1024,8 @@ def getADDEImage(localEntry=None,
         'track': track,
     }
     url = addeUrlFormat % formatValues
-    print url
+    if showUrls:
+        print url
     
     try:
         mapped = _MappedAreaImageFlatField.fromUrl(url)
