@@ -31,8 +31,8 @@ _APPENDER_ASSERT_MSG = "expected appender to be a subclass of FileAppender; got 
 _CONTEXT_FIND_LOGGER = "expected logger '%s' to be added to default context"
 _BAD_LOGGERNAME = "Cannot save log level if loggerName is not 'ROOT' (given loggerName is '%s')."
 
-def runFile(path, showContents=False):
-    pass
+# def runFile(path, showContents=False):
+#     raise NotImplementedError()
     
 def editFile(path):
     """Import file contents into the Jython Shell input field."""
