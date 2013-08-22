@@ -8,9 +8,12 @@ from edu.wisc.ssec.mcidas import AreaFileFactory
 from edu.wisc.ssec.mcidas import AreaDirectory
 from edu.wisc.ssec.mcidas import AreaDirectoryList
 from edu.wisc.ssec.mcidas.adde import AddeURLException
+from edu.wisc.ssec.mcidas.adde import AddeTextReader
+from edu.wisc.ssec.mcidas.adde import AddeSatBands
 
 from ucar.unidata.data.imagery import AddeImageDescriptor
 from ucar.visad.data import AreaImageFlatField
+from ucar.unidata.util import StringUtil
 
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 
@@ -1029,9 +1032,24 @@ def getADDEImage(localEntry=None,
     
     try:
         mapped = _MappedAreaImageFlatField.fromUrl(url)
-        return mapped.getDictionary(), mapped
     except AreaFileException, e:
         raise AddeJythonError(e)
     except AddeURLException, e:
         raise AddeJythonError(e)
-        
+
+    ########### also get satband file
+    # TODO: cache the SATBAND file somehow so we don't have to run the same request over and over?
+    # TODO: getADDEImage shouldn't fail if we can't get the SATBAND file.
+    #             need to implement proper exception handling logic...
+
+    # follow AddeImageChooser.appendMiscKeyValues in determining which extra keys to add
+    satbandUrlFormat = "adde://%(server)s/text?&FILE=SATBAND&COMPRESS=gzip&PORT=%(port)s&DEBUG=%(debug)s&VERSION=1&USER=&(user)s&PROJ=%(proj)s"
+    satbandUrl = satbandUrlFormat % formatValues
+    # follow AddeChooser.readTextLines
+    reader = AddeTextReader(satbandUrl)
+    if ( reader.getStatusCode <= 0):
+        print "AddeTextReader initialization failed"
+    lines = reader.getLinesOfText()
+    mapped.addeSatBands = AddeSatBands(StringUtil.listToStringArray(lines))
+
+    return mapped.getDictionary(), mapped

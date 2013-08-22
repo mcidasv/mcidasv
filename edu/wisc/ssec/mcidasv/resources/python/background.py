@@ -202,12 +202,13 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
                  'center-longitude-resolution', 'day', 'directory-block', 
                  'elements', 'lines', 'memo-field', 'nominal-time', 
                  'sensor-id', 'sensor-type', 'source-type', 'start-time', 
-                 'url',]
+                 'url', 'satband-band-label',]
                  
         _MappedData.__init__(self, keys)
         self.areaFile = areaFile
         self.areaDirectory = areaDirectory
         self.addeDescriptor = addeDescriptor
+        self.addeSatBands = None  # necessary?...
         # call the copy constructor
         AreaImageFlatField.__init__(self, aiff, False, aiff.getType(),
                 aiff.getDomainSet(), aiff.RangeCoordinateSystem,
@@ -338,6 +339,14 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
             return DateTime(self.areaDirectory.getStartTime())
         elif key == 'url':
             return str(self.aid.getSource())
+        elif key == 'satband-band-label':
+            if (self.addeSatBands is not None):
+                bandDescr = self.addeSatBands.getBandDescr(
+                        self.areaDirectory.getSensorID(),
+                        self.areaDirectory.getSourceType())
+                return bandDescr[self['bandNumber']]
+            else:
+                return ''
         else:
             raise KeyError('should not be capable of reaching here: %s')
 
@@ -356,6 +365,7 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         # note the double percent sign- we are 'escaping' the percent signs
         defaultLabel = '%s band %s %s %%timestamp%%' % (self['sensor-type'], self['bands'][0], self['calibration-type'])
         return defaultLabel
+
 
 class _JavaProxy(object):
     """One sentence description goes here
