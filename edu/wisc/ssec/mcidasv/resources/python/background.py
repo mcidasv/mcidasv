@@ -2124,7 +2124,7 @@ def makeLogger(name):
     """ """
     return  LoggerFactory.getLogger(name)
     
-def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=None):
+def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=None, mode=None):
     """Open a bundle using the decodeXmlFile from PersistenceManager
 
     Args:
@@ -2142,6 +2142,12 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=No
         The keys specify the name of the data source (as shown in e.g.,
         the Field Selector tab).  The values can be either a single
         file or a list of files to use for the given datasource.
+
+        mode method used to load the bundle
+            newWindow - opens bundle in a new window w/o removing any previously existing layers and data
+            merge - merges the bundle's layers and data with the current tab in your existing display window
+            newTab - adds a new tab(s) to your current display window for the bundle's data w/o removing any previously existing layers and data
+            replace - replaces the current session in place of the bundle.  This removes any previously loaded layers and data as well as your existing window/tab/panel configuration (default).
 
     Returns:
         the result of activeDisplay()
@@ -2184,17 +2190,34 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=No
     pref_confirm_layers = sm.getPreference(mpm.PREF_CONFIRM_REMOVE_LAYERS, True)
     pref_confirm_both = sm.getPreference(mpm.PREF_CONFIRM_REMOVE_BOTH, True)
     
+    # see McIdasPreferenceManager:1360 for what these should get set to
+    if (str(mode).lower() == 'newwindow'):
+        sm.putPreference(my_mcv.PREF_OPEN_REMOVE, False)
+        sm.putPreference(my_mcv.PREF_OPEN_MERGE, False)
+    elif (str(mode).lower() == 'merge'):
+        sm.putPreference(my_mcv.PREF_OPEN_REMOVE, True)
+        sm.putPreference(my_mcv.PREF_OPEN_MERGE, False)
+    elif (str(mode).lower() == 'newtab'):
+        sm.putPreference(my_mcv.PREF_OPEN_REMOVE, False)
+        sm.putPreference(my_mcv.PREF_OPEN_MERGE, True)
+    elif (str(mode).lower() == 'replace'):
+        sm.putPreference(my_mcv.PREF_OPEN_REMOVE, True)
+        sm.putPreference(my_mcv.PREF_OPEN_MERGE, True)
+    else:
+        # do "replace" by default"
+        sm.putPreference(my_mcv.PREF_OPEN_REMOVE, True)
+        sm.putPreference(my_mcv.PREF_OPEN_MERGE, True)
     # set relevant preferences to values that make sense for non-GUI mode
     sm.putPreference(my_mcv.PREF_ZIDV_ASK, False)
     sm.putPreference(my_mcv.PREF_OPEN_ASK, False)
     # For REMOVE and MERGE, we want to do the same thing as what McIdasPreferenceManager
     # does for "Replace Session" (set both to true)
-    sm.putPreference(my_mcv.PREF_OPEN_REMOVE, True)
-    sm.putPreference(my_mcv.PREF_OPEN_MERGE, True)
     sm.putPreference(my_mcv.PREF_ZIDV_SAVETOTMP, True)
     sm.putPreference(mpm.PREF_CONFIRM_REMOVE_DATA, False)
     sm.putPreference(mpm.PREF_CONFIRM_REMOVE_LAYERS, False)
     sm.putPreference(mpm.PREF_CONFIRM_REMOVE_BOTH, False)
+
+
     # ZIDV_DIRECTORY should come from keyword
     # (also need to check for existence of this directory, etc.)
     #my_mcv.getStore().put(my_mcv.PREF_ZIDV_DIRECTORY, something??)
