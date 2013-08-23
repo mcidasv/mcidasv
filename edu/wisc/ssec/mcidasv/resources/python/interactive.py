@@ -34,12 +34,22 @@ _BAD_LOGGERNAME = "Cannot save log level if loggerName is not 'ROOT' (given logg
 # def runFile(path, showContents=False):
 #     raise NotImplementedError()
     
-def editFile(path):
-    """Import file contents into the Jython Shell input field."""
+def editFile(path, cleanup=False):
+    """Import file contents into the Jython Shell input field.
+    
+    Args:
+        path: Required string value that represents a path to a file.
+        
+        cleanup: Optional boolean value that defaults to False. If set to True,
+        calls to removeAllData() and removeAllLayers() are added to the 
+        beginning of the Jython Shell input text field.
+    """
     fp = open(path, 'r')
     try:
         shell = getStaticMcv().getJythonManager().getShell()
         lines = ''
+        if cleanup:
+            lines += '# removeAllData and removeAllLayers were added because editFile was called with "cleanup" set to True.\nremoveAllData()\nremoveAllLayers()\n\n'
         for line in fp:
             lines += line
         shell.setMultilineText(lines)
