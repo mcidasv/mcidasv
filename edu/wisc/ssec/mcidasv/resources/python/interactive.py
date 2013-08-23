@@ -38,13 +38,14 @@ def editFile(path, cleanup=False):
     """Import file contents into the Jython Shell input field.
     
     Args:
-        path: Required string value that represents a path to a file.
+        path: Required string value that represents a path to a file. The string
+        is validated with expandpath, so paths like "~/test.py" will work.
         
         cleanup: Optional boolean value that defaults to False. If set to True,
         calls to removeAllData() and removeAllLayers() are added to the 
         beginning of the Jython Shell input text field.
     """
-    fp = open(path, 'r')
+    fp = open(expandpath(path), 'r')
     try:
         shell = getStaticMcv().getJythonManager().getShell()
         lines = ''
