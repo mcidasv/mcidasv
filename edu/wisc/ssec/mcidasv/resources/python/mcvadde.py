@@ -534,9 +534,18 @@ def listADDEImageTimes(localEntry=None,
                 urls.append(url)
                 areaDirectories.append(areaDirectory)
                 
-    times = set()
+    uniques = set()
+    times = []
     for d in areaDirectories:
-        times.add(DateTime(d.getNominalTime()))
+        dt = DateTime(d.getNominalTime())
+        if dt not in uniques:
+            d = { 
+                'day': str(dt.formattedString('yyyyDDD', tz)), 
+                'time': str(dt.timeString()),
+            }
+            times.append(d)
+            uniques.add(dt)
+    uniques = None
     return sorted(times)
     
 def listADDEImages(localEntry=None,
