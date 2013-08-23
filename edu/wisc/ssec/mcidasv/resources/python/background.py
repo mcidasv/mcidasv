@@ -245,8 +245,8 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
     # it with this hack. 
     def binary(self, *args, **kwargs):
         argCount = len(args)
-        print 'caught simple binary op:', len(args)
-        print 'args:', args
+        # print 'caught simple binary op:', len(args)
+        # print 'args:', args
         if argCount == 4:
             data, op, sampling_mode, error_mode = args
             result = AreaImageFlatField.binary(self, data, op, sampling_mode, 
@@ -659,7 +659,7 @@ class _Display(_JavaProxy):
             window.getContentPane().add(navigatedComponent)
             
         window.pack()
-        print 'new: %s\ncur: %s\nmin: %s\nmax: %s\nprf: %s' % (size, navigatedComponent.getSize(), navigatedComponent.getMinimumSize(), navigatedComponent.getMaximumSize(), navigatedComponent.getPreferredSize())
+        # print 'new: %s\ncur: %s\nmin: %s\nmax: %s\nprf: %s' % (size, navigatedComponent.getSize(), navigatedComponent.getMinimumSize(), navigatedComponent.getMaximumSize(), navigatedComponent.getPreferredSize())
         
     @gui_invoke_later
     def setSizeBackground(self, width, height):
@@ -771,7 +771,7 @@ class _Display(_JavaProxy):
             
         currentProj = self._JavaProxy__javaObject.getMapDisplay().getMapProjection()
         if projObj == currentProj:
-            #print 'projections match!'
+            # print 'projections match!'
             self._JavaProxy__javaObject.getMapDisplay().resetMapParameters(True)
         else:
             #print 'projections differ: %s %s' % (projObj, currentProj)
@@ -2061,10 +2061,11 @@ def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
         try:
             window = PersistenceManager.buildDynamicSkin(width, height, rows, cols, panelTypes)
             if width > 0 and height > 0:
-                print 'creating window: width=%d height=%d rows=%d cols=%d panelTypes=%s' % (width, height, rows, cols, panelTypes)
+                # print 'creating window: width=%d height=%d rows=%d cols=%d panelTypes=%s' % (width, height, rows, cols, panelTypes)
+                pass
             else:
                 bounds = window.getBounds()
-                print 'creating window: width=%d height=%d rows=%d cols=%d panelTypes=%s' % (bounds.width, bounds.height, rows, cols, panelTypes)
+                # print 'creating window: width=%d height=%d rows=%d cols=%d panelTypes=%s' % (bounds.width, bounds.height, rows, cols, panelTypes)
                 
             panels = []
             for holder in window.getComponentGroups()[0].getDisplayComponents():
