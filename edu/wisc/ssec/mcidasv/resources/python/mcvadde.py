@@ -1003,7 +1003,12 @@ def getADDEImage(localEntry=None,
         size = ''
         
     if time:
-        time = '%s %s I' % (time[0], time[1])
+        if isinstance(time, (str, unicode, String)):
+            time = '%s %s I' % (str(time), str(time))
+        elif len(time) == 2:
+            time = '%s %s I' % (str(time[0]), str(time[1]))
+        else:
+            raise ValueError("could not understand the given time value: %s" % (time))
     else:
         time = ''
         
