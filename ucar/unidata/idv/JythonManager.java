@@ -63,6 +63,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -72,7 +73,6 @@ import java.util.Properties;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -110,6 +110,7 @@ import javax.swing.text.JTextComponent;
 //import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
 //import org.fife.ui.rsyntaxtextarea.Token;
 //import org.fife.ui.rtextarea.RTextScrollPane;
+
 import org.python.core.Py;
 import org.python.core.PyObject;
 import org.python.core.PyString;
@@ -121,6 +122,7 @@ import org.python.core.PySystemState;
 import org.python.core.PyTableCode;
 import org.python.core.PyTuple;
 import org.python.util.PythonInterpreter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -178,6 +180,12 @@ public class JythonManager extends IdvManager implements ActionListener {
     
     /** color to use for diabled editors */
     private static final Color COLOR_DISABLED = new Color(210, 210, 210);
+    
+    /** Logging object used for Jython-specific logging output. */
+    protected static final Logger jythonLogger = LoggerFactory.getLogger("jython");
+    
+    /** output stream for interp */
+    private OutputStream outputStream;
     
     /** any errors */
     private boolean inError = false;
@@ -1007,12 +1015,23 @@ public class JythonManager extends IdvManager implements ActionListener {
     /**
      * Factory method to create and interpreter. This
      * also adds the interpreter into the list of interpreters.
-     *
+     * 
      * @return The new interpreter
      */
     public PythonInterpreter createInterpreter() {
         PythonInterpreter interp = new PythonInterpreter();
         addInterpreter(interp);
+        outputStream = new OutputStream() {
+            @Override public void write(byte[] b, int off, int len) {
+                print(new String(b, off, len));
+            }
+            private void print(final String output) {
+                jythonLogger.info("{}", output);
+            }
+            @Override public void write(int b) {}
+        };
+        interp.setOut(outputStream);
+        interp.setErr(outputStream);
         return interp;
     }
     
