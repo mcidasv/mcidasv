@@ -222,10 +222,10 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         Create an AreaImageFlatField from a URL, then make a 
         _MappedAreaImageFlatField
         """
-        areaFile = AreaFileFactory.getAreaFileInstance(imageUrl)
-        areaDirectory = areaFile.getAreaDirectory()
-        addeDescriptor = AddeImageDescriptor(areaDirectory, imageUrl)
         aa = AreaAdapter(imageUrl, False)
+        areaFile = aa.getAreaFile()
+        areaDirectory = aa.getAreaDirectory()
+        addeDescriptor = AddeImageDescriptor(areaDirectory, imageUrl)
         ff = aa.getImage()
         samples = ff.unpackFloats()
         ftype = ff.getType()
@@ -248,8 +248,6 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
     # it with this hack. 
     def binary(self, *args, **kwargs):
         argCount = len(args)
-        # print 'caught simple binary op:', len(args)
-        # print 'args:', args
         if argCount == 4:
             data, op, sampling_mode, error_mode = args
             result = AreaImageFlatField.binary(self, data, op, sampling_mode, 
