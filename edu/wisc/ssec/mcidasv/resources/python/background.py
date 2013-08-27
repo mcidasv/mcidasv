@@ -239,7 +239,10 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         return cls(aiff, areaFile, areaDirectory, addeDescriptor, 
                 ff.getStartTime())
                 
-                
+    def clone(self):
+        # i'm so sorry :(
+        return self * 1
+        
     # NOTE: This is only suitable for proof-of-concept. 
     # Python does not allow Java-esque method overloading, so I had to fake 
     # it with this hack. 
