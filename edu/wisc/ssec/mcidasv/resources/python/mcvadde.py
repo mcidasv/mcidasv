@@ -1,6 +1,16 @@
+import os
+import hashlib
+import threading
+import time
+import urllib2
+
 from collections import namedtuple
 
 from background import _MappedAreaImageFlatField
+
+from java.util.concurrent import Callable
+from java.util.concurrent import Executors
+from java.util.concurrent import ExecutorCompletionService
 
 from edu.wisc.ssec.mcidas import AreaFile
 from edu.wisc.ssec.mcidas import AreaFileException
@@ -8,9 +18,12 @@ from edu.wisc.ssec.mcidas import AreaFileFactory
 from edu.wisc.ssec.mcidas import AreaDirectory
 from edu.wisc.ssec.mcidas import AreaDirectoryList
 from edu.wisc.ssec.mcidas.adde import AddeURLException
+from edu.wisc.ssec.mcidas.adde import AddeTextReader
+from edu.wisc.ssec.mcidas.adde import AddeSatBands
 
 from ucar.unidata.data.imagery import AddeImageDescriptor
 from ucar.visad.data import AreaImageFlatField
+from ucar.unidata.util import StringUtil
 
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 
@@ -163,6 +176,62 @@ Places = enum(ULEFT='Upper Left', CENTER='Center')
 ULEFT = Places.ULEFT
 CENTER = Places.CENTER
 
+MAX_CONCURRENT = 5
+
+pool = Executors.newFixedThreadPool(MAX_CONCURRENT)
+
+ecs = ExecutorCompletionService(pool)
+
+def _satBandUrl(**kwargs):
+    # needs at least server, port, debug, user, and proj
+    # follow AddeImageChooser.appendMiscKeyValues in determining which extra keys to add
+    satbandUrlFormat = "adde://%(server)s/text?&FILE=SATBAND&COMPRESS=gzip&PORT=%(port)s&DEBUG=%(debug)s&VERSION=1&USER=%(user)s&PROJ=%(proj)s"
+    return satbandUrlFormat % kwargs
+    
+# NOTE: remember that Callable means that the "task" returns some kind of 
+# result from CallableObj.get()!
+# RunnableObj.get() just returns null.
+class _SatBandReq(Callable):
+    def __init__(self, url):
+        self.url = url
+        self.started = None
+        self.completed = None
+        self.result = None
+        self.thread_used = None
+        self.exception = None
+        
+    def __str__(self):
+        if self.exception:
+             return "[%s] %s download error %s in %.2fs" % \
+                (self.thread_used, self.url, self.exception,
+                 self.completed - self.started, ) #, self.result)
+        elif self.completed:
+            return "[%s] %s downloaded %dK in %.2fs" % \
+                (self.thread_used, self.url, len(self.result)/1024,
+                 self.completed - self.started, ) #, self.result)
+        elif self.started:
+            return "[%s] %s started at %s" % \
+                (self.thread_used, self.url, self.started)
+        else:
+            return "[%s] %s not yet scheduled" % \
+                (self.thread_used, self.url)
+                
+    # needed to implement the Callable interface;
+    # any exceptions will be wrapped as either ExecutionException
+    # or InterruptedException
+    def call(self):
+        self.thread_used = threading.currentThread().getName()
+        self.started = time.time()
+        try:
+            reader = AddeTextReader(self.url)
+            if reader.getStatusCode() > 0:
+                lines = StringUtil.listToStringArray(reader.getLinesOfText())
+                self.result = AddeSatBands(lines)
+        except Exception, ex:
+            self.exception = ex
+        self.completed = time.time()
+        return self.result
+        
 class _AreaDirectoryList(object):
     def __init__(self, values=None):
         self.values = values or []
@@ -1041,11 +1110,20 @@ def getADDEImage(localEntry=None,
     if showUrls:
         print url
     
+    # build an object that returns the SATBAND file.
+    satBandRequest = _SatBandReq(_satBandUrl(**formatValues))
+    
+    # submit the request
+    futureSatband = ecs.submit(satBandRequest)
+    
     try:
         mapped = _MappedAreaImageFlatField.fromUrl(url)
+        # the commented code will immediately attempt to grab the SATBAND file;
+        # the uncommented code *should* be lazy-loaded.
+        # mapped.addeSatBands = futureSatband.get()
+        mapped.addeSatBands = futureSatband
         return mapped.getDictionary(), mapped
     except AreaFileException, e:
         raise AddeJythonError(e)
     except AddeURLException, e:
         raise AddeJythonError(e)
-        
