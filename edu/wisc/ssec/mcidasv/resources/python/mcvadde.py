@@ -1082,7 +1082,11 @@ def getADDEImage(localEntry=None,
         time = ''
         
     if band:
-        band = '&BAND=%s' % (str(band))
+        try:
+            band = int(band)
+            band = '&BAND=%s' % (str(band))
+        except:
+            raise ValueError("band must be a single integer value; could not convert '%s' to an integer." % (band))
     else:
         band = ''
         
