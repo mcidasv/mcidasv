@@ -458,7 +458,7 @@ public class FormulaDialog extends JFrame implements ActionListener {
         double[] stretchyY = new double[] { 0, 0, 0, 1 };
         GuiUtils.tmpInsets = new Insets(4, 4, 4, 4);
         JPanel bottomPanel = GuiUtils.doLayout(new Component[] {
-            GuiUtils.rLabel("Description:"), descField,
+            
             GuiUtils.rLabel("Group:"), categoryBox,
             GuiUtils.rLabel("Displays:"), radioBtnPanel,
             GuiUtils.top(allOnOffPanel), cdScroll,
@@ -608,15 +608,24 @@ public class FormulaDialog extends JFrame implements ActionListener {
         checkAdvancedState(advancedBtn, advancedIconBtn);
         advancedBtn.addActionListener(advancedListener);
         advancedIconBtn.addActionListener(advancedListener);
+        
+        JLabel descriptionLabel = GuiUtils.rLabel("Description: ");
+        JLabel idLabel = GuiUtils.rLabel("ID: ");
+        JLabel formulaLabel = GuiUtils.rLabel("Formula: ");
+        
+        descriptionLabel.setToolTipText("The description is shown in Field Selector");
+        idLabel.setToolTipText("ID is used with the parameter defaults");
+        formulaLabel.setToolTipText("Mathematical formula to be used");
+        
         GuiUtils.tmpInsets = new Insets(4, 4, 0, 4);
-        Container topPanel = GuiUtils.doLayout(new Component[] {
-            GuiUtils.rLabel("Name:"), nameField,
-            GuiUtils.rLabel("       Formula:"),
+            Container topPanel = GuiUtils.doLayout(new Component[] {
+            descriptionLabel, descField,
+            idLabel, nameField,
+            formulaLabel,
             GuiUtils.centerRight(formulaField,
                                  GuiUtils.hbox(evalBtn, jythonBtn)),
             GuiUtils.rLabel("Advanced"), GuiUtils.left(advancedIconBtn)
         }, 2, GuiUtils.WT_NY, GuiUtils.WT_N);
-
         JPanel innerPanel = GuiUtils.doLayout(Misc.newList(topPanel,
                                 theBottomPanel), 1, GuiUtils.WT_Y,
                                     GuiUtils.WT_NY);
@@ -1097,16 +1106,31 @@ public class FormulaDialog extends JFrame implements ActionListener {
      */
     public void actionPerformed(ActionEvent event) {
         String cmd = event.getActionCommand();
+        
         if (cmd.equals(CMD_ADD)) {
-            if (addOrChange()) {
+            if (((descField.getText() == null) || (descField.getText().isEmpty())) ||
+            ((nameField.getText() == null) || (nameField.getText().isEmpty())) ||
+            ((formulaField.getText() == null) || (formulaField.getText().isEmpty()))) {
+                JOptionPane.showMessageDialog(this, "Values for Description, ID and Forumla must be entered");
+            }
+            else {
+                if (addOrChange()) {
                 closeFormulaDialog();
+                }
             }
             return;
         }
 
         if (cmd.equals(CMD_CHANGE)) {
-            if (addOrChange()) {
+            if (((descField.getText() == null) || (descField.getText().isEmpty())) ||
+            ((nameField.getText() == null) || (nameField.getText().isEmpty())) ||
+            ((formulaField.getText() == null) || (formulaField.getText().isEmpty()))) {
+                JOptionPane.showMessageDialog(this, "Values for Description, ID and Forumla must be entered");
+            }
+            else {
+                if (addOrChange()) {
                 closeFormulaDialog();
+                }
             }
             return;
         }
