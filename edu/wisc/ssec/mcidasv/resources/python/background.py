@@ -26,6 +26,7 @@ from java.text import FieldPosition
 from java.text import SimpleDateFormat
 
 from java.util import TimeZone
+from java.util.concurrent import FutureTask
 
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 from ucar.unidata.idv import DisplayInfo
@@ -202,12 +203,13 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
                  'center-longitude-resolution', 'day', 'directory-block', 
                  'elements', 'lines', 'memo-field', 'nominal-time', 
                  'sensor-id', 'sensor-type', 'source-type', 'start-time', 
-                 'url',]
+                 'url','satband-band-label',]
                  
         _MappedData.__init__(self, keys)
         self.areaFile = areaFile
         self.areaDirectory = areaDirectory
         self.addeDescriptor = addeDescriptor
+        self.addeSatBands = None
         # call the copy constructor
         AreaImageFlatField.__init__(self, aiff, False, aiff.getType(),
                 aiff.getDomainSet(), aiff.RangeCoordinateSystem,
@@ -290,6 +292,19 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         else:
             return bands
             
+    def _handleSatBand(self):
+        # grab result if we haven't already done so
+        if isinstance(self.addeSatBands, FutureTask):
+            self.addeSatBands = self.addeSatBands.get()
+            
+        if self.addeSatBands:
+            bandDescr = self.addeSatBands.getBandDescr(
+                self.areaDirectory.getSensorID(),
+                self.areaDirectory.getSourceType())
+            return bandDescr[self._getBand()]
+        else:
+            return ''
+            
     def _getDirValue(self, key):
         from visad import DateTime
         
@@ -339,6 +354,8 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
             return DateTime(self.areaDirectory.getStartTime())
         elif key == 'url':
             return str(self.aid.getSource())
+        elif key == 'satband-band-label':
+            return self._handleSatBand()
         else:
             raise KeyError('should not be capable of reaching here: %s')
 
