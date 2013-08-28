@@ -664,8 +664,6 @@ public class JythonShell extends InteractiveShell {
             
             // write off history to "store" so user doesn't have to save explicitly.
             saveHistory();
-            
-            jythonLogger.info(sb.toString());
         } catch (PyException pse) {
             output("<font color=\"red\">" + formatCode(pse.toString()) + "</font><br/>");
         } catch (Exception exc) {
