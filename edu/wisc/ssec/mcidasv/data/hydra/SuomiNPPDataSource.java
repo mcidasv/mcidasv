@@ -122,6 +122,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
     Attribute instrumentName = null;
     private String productName = null;
     
+    // product related variables and flags
+    boolean isEDR = false;
+    
     // for now, we are only handling CrIS variables that match this filter and SCAN dimensions
     private String crisFilter = "ES_Real";
     
@@ -295,6 +298,16 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    	    						// determine the instrument name (VIIRS, ATMS, CrIS, OMPS)
 	    	    						instrumentName = subG.findAttribute("Instrument_Short_Name");
 
+	    	    						// note any EDR products, will need to check for and remove
+	    	    						// fill scans later
+	    	    						Attribute adtt = subG.findAttribute("N_Dataset_Type_Tag");
+	    	    						if (adtt != null) {
+	    	    							String baseName = adtt.getStringValue();
+	    	    							if ((baseName != null) && (baseName.equals("EDR"))) {
+	    	    								isEDR = true;
+	    	    							}
+	    	    						}
+	    	    						
 	    	    						// This is also where we find the attribute which tells us which
 	    	    						// XML Product Profile to use!
 	    	    						Attribute axpp = subG.findAttribute("N_Collection_Short_Name");
@@ -815,7 +828,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	
     	// initialize the aggregation reader object
     	try {
-    		nppAggReader = new GranuleAggregation(ncdfal, pathToProducts, "Track", "XTrack");
+    		nppAggReader = new GranuleAggregation(ncdfal, pathToProducts, "Track", "XTrack", isEDR);
     		((GranuleAggregation) nppAggReader).setQfMap(qfMap);
     	} catch (Exception e) {
     		throw new VisADException("Unable to initialize aggregation reader");
