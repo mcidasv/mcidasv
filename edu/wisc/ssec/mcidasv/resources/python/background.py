@@ -363,7 +363,9 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         """return a dictionary mapping IDV macro strings to reasonable defaults
         for this object
         """
-        longname = '%s band %s %s' % (self['sensor-type'], self['bands'][0], self['calibration-type'])
+        #longname = '%s band %s %s' % (self['sensor-type'], self['bands'][0], self['calibration-type'])
+        # use SATBAND string now that we have it:
+        longname = '%s %s' % (self['sensor-type'], self['satband-band-label'])
         shortname = self['sensor-type']
         macros = {'longname':longname, 'shortname':shortname}
         return macros
@@ -372,7 +374,9 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         """return a reasonable default layer label for this class
         """
         # note the double percent sign- we are 'escaping' the percent signs
-        defaultLabel = '%s band %s %s %%timestamp%%' % (self['sensor-type'], self['bands'][0], self['calibration-type'])
+        #defaultLabel = '%s band %s %s %%timestamp%%' % (self['sensor-type'], self['bands'][0], self['calibration-type'])
+        # use %longname% now that it is getting set w/ SATBAND string:
+        defaultLabel = '%longname% %timestamp%'
         return defaultLabel
 
 class _JavaProxy(object):
