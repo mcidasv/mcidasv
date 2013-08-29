@@ -366,7 +366,7 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         #longname = '%s band %s %s' % (self['sensor-type'], self['bands'][0], self['calibration-type'])
         # use SATBAND string now that we have it:
         longname = '%s %s' % (self['sensor-type'], self['satband-band-label'])
-        shortname = self['sensor-type']
+        shortname = '%s_Band%s_%s' % (self['sensor-id'], self['bands'][0],  self['calibration-type'])
         macros = {'longname':longname, 'shortname':shortname}
         return macros
 
