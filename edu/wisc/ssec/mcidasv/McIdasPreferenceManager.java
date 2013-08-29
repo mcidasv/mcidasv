@@ -198,6 +198,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     
     private static final String LEGEND_TEMPLATE_DATA = "%datasourcename% - %displayname%";
     private static final String DISPLAY_LIST_TEMPLATE_DATA = "%datasourcename% - %displayname% " + UtcDate.MACRO_TIMESTAMP;
+    private static final String TEMPLATE_IMAGEDISPLAY = "%longname% " + UtcDate.MACRO_TIMESTAMP;
     
     private static final String TEMPLATE_NO_DATA = "%displayname%";
     
@@ -307,6 +308,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         
         setEmptyPref("idv.displaylist.template.data", DISPLAY_LIST_TEMPLATE_DATA);
         setEmptyPref("idv.displaylist.template.nodata", TEMPLATE_NO_DATA);
+        setEmptyPref("idv.displaylist.template.imagedisplay", TEMPLATE_IMAGEDISPLAY);
         setEmptyPref("idv.legendlabel.template.data", LEGEND_TEMPLATE_DATA);
         setEmptyPref("idv.legendlabel.template.nodata", TEMPLATE_NO_DATA);
     }
