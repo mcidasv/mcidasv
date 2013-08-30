@@ -72,10 +72,17 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
       <td valign="top">dataDirectory=</td>
       <td>a dictionary where the keys are datasource    names,  and the values are either a string or list of strings   representing    the full path name/names  of the data that will be used in place of   the data    in the bundle </td>
     </tr>
+        <tr>
+      <td valign="top">mode=</td>
+      <td>specifies the method that will be used to open the bundle<br>
+          REPLACE - Removes any previously-loaded layers and data sources and replaces the current session with the bundle's data (default)<br>
+          NEWWINDOW - Loads the bundle's data and displays into a new window, without removing any previously-loaded layers and data sources<br>
+          MERGE - Loads the bundle's data and displays into the current tab of the active display window without removing any previously-loaded layers and data sources<br>NEWTAB - Loads the bundle's data and displays into a new tab of the active display window without removing any previously-loaded layers and data sources</td>
+    </tr>
   </table>
 </div>
 <div class="OneTabIndent">Example:</div>
-<div class="TwoTabIndent"><em>openBundle('C:\\Users\\myuser\\bundle.mcv')</em></div>
+<div class="TwoTabIndent"><em>openBundle('C:\\Users\\myuser\\bundle.mcv',mode='NEWTAB')</em></div>
 <p><strong><a name="makeLocalADDE" id="makeLocalADDE"></a>makeLocalADDEEntry -</strong> Creates a local ADDE entry in the server table</p>
 <div class="OneTabIndent">Usage: <em>localDataset= makeLocalADDEEntry(keywords)</em></div>
 <div class="TwoTabIndent">Keywords:</div>
