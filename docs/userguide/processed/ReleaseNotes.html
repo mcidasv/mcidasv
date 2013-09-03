@@ -121,6 +121,8 @@ Changes</div>
     <p>Since the release of McIDAS-V 1.3, there are new functions designed to work with ADDE data.&nbsp; These functions are:</p>
     <p>makeLocalADDEEntry - Creates a local ADDE entry in the server table.</p>
     <p>getLocalADDEEntry - Gets the descriptor for a local ADDE Entry.</p>
+    <p>listADDEImages - Lists data from an ADDE image server.</p>
+    <p>listADDEImageTimes - Lists available dates and times of data from an image server.</p>
     <p>There is also a new version of getADDEImage that gives different output than the previous version.</p>
 </div></div>
 <div class="faq-category"><a name="zipped1.4b1" id="zipped1.4b1"></a>
@@ -149,8 +151,9 @@ Development</div>
 <div class="faq-category"><a name="npp1.4b1" id="npp1.4b1"></a>
   <h4>Suomi NPP Chooser</h4>
   <div class="faq-answer">
-      <p>Added the ability to work with Suomi NPP data from NOAA CLASS that includes the data and geolocation within the same file. You can now display non-consecutive granules. You can also now aggregate granules together regardless of granule size. VIIRS SVI data from CLASS can now be displayed. Saving of both zipped and unzipped bundles containing NPP data is now supported.</p>
-      <p>There has been added functionality for working with VIIRS Cloud Mask products as well.&nbsp;If you load in a GMODO-IICMO* product, there are various quality flag products included with the data. McIDAS-V now has the ability to determine which quality flag products are included with&nbsp;the data as well as what cloud mask fields can be produced from them. Therefore, if you load in a GMODO-IICMO* file, you will see fields such as 'Cloud Phase', 'Volcanic Ash', 'Dust', 'Fire', etc.</p>
+      <p>Added the ability to work with Suomi NPP data from NOAA CLASS that includes the data and geolocation within the same file. Non-consecutive granules can now be displayed, and granules can now be aggregated regardless of granule size. VIIRS SVI data from CLASS can now be displayed. Saving of both zipped and unzipped bundles containing NPP data is now supported.</p>
+      <p>There has been added functionality for working with VIIRS Cloud Mask products.&nbsp;If a GMODO-IICMO* product is loaded, there are various quality flag products included with the data. McIDAS-V now has the ability to determine which quality flag products are included with the data as well as what cloud mask fields can be produced from them. With cloud mask products, fields such as 'Cloud Phase', 'Volcanic Ash', 'Dust' and 'Fire' can be displayed.</p>
+      <p>There has been added functionality for working with VIIRS EDR (Environmental Data Records)&nbsp;products.&nbsp;These products include fields such as cloud heights, pressures, and temperatures, sea surface temperatures, and snow cover.</p>
       <p>This is currently
           located in the Under Development list of choosers in the Data Sources tab
           of the Data Explorer and is available for user feedback through the <a href="http://dcdbs.ssec.wisc.edu/mcidasv/forums/" target="_blank">McIDAS-V

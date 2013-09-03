@@ -38,28 +38,23 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/PluginCreat
 <li><a href="#writing_the_plugin">Writing the Plugin</a></li>
 <li><a href="#menus">Menus</a></li>
 </ul>
-<a name="adding_resources" id="adding_resources"></a>
-<div class="pagesubtitle">Adding Resources</div>
-<p>To add in a file, use the <strong>File-&gt;Add File</strong> menu item. The file dialog will come up listing the contents of your local McIDAS-V directory. This is where all of the various resources that are created are stored. For example, if you wanted to include all of your color tables then add the colortables.xml file. Use the <strong>File-&gt;Add Preferences</strong> menu item to add your User Preferences to a resource, such as a bundle you are creating or editing.  You can also add individual resources through the <strong>File-&gt;Add Resource</strong> menu item. You can also add resources through the various resource editors (e.g., Jython Editor, Parameter Defaults,Parameter Aliases). Typically this facility is available through the editor's <strong>File</strong> menu.</p>
-<a name="resources_list" id="resources_list"></a>
-<div class="pagesubtitle">Resources List</div>
+<div class="pagesubtitle"><a name="adding_resources" id="adding_resources"></a>Adding Resources</div>
+<p>To add in a file, use the <strong>File-&gt;Add File</strong> menu item. The file dialog will come up listing the contents of your local McIDAS-V directory. This is where all of the various resources that are created are stored. For example, if to include all of the color tables, add the colortables.xml file. Use the <strong>File-&gt;Add Preferences</strong> menu item to add your User Preferences to a resource, such as a bundle you are creating or editing.  Individual resources can be added through the <strong>File-&gt;Add Resource</strong> menu item. Resources can also be added through the various resource editors (e.g., Jython Editor, Parameter Defaults, Parameter Aliases). Typically this facility is available through the editor's <strong>File</strong> menu.</p>
+<div class="pagesubtitle"><a name="resources_list" id="resources_list"></a>Resources List</div>
 <p>Each file, preference, and resource that is added into the Plugin Creator is listed under the <strong>Resources</strong> tab:</p>
 <a name="image1" id="image1"></a>
 <div class="images"><img src="images/PluginCreatorResources.gif" alt="Image 1: Resources Tab of the Plugin Creator"> <br>
   <span class="caption">Image 1: Resources Tab of the Plugin Creator</span></div>
-<p>You can delete the selected resource in the list by clicking the <img src="images/DeletePlugin.gif" alt="Delete a plugin button" width="21" height="20"align=absmiddle> button or by pressing the delete key.</p>
-<a name="excludes" id="excludes"></a>
-<div class="pagesubtitle">Excludes</div>
-<p>The <strong>Excludes</strong> tab allows you to exclude system default resources. For example, in the below screen shot, Color tables and Map projections are excluded. When
+<p>Resources can be deleted by clicking the <img src="images/DeletePlugin.gif" alt="Delete a plugin button" width="21" height="20"align=absmiddle> button or by pressing the delete key when a resource is selected.</p>
+<div class="pagesubtitle"><a name="excludes" id="excludes"></a>Excludes</div>
+<p>The <strong>Excludes</strong> tab allows for the exclusion of system default resources. For example, in the below image, Color tables and Map projections are excluded. When
 the plugin that is defined here is loaded into McIDAS-V, the excludes will result
 in only the Color tables and Map projections that are defined in this plugin to be
 used.</p> <a name="image2" id="image2"></a>
 <div class="images"><img src="images/PluginCreatorExcludes.gif" alt="Image 2: Excludes tab of the Plugin Creator"> <br>
   <span class="caption">Image 2: Excludes Tab of the Plugin Creator</span></div>
-<p></p>
-<a name="properties" id="properties"></a>
-<div class="pagesubtitle">Properties</div>
-<p>The <strong>Properties</strong> tab allows you to overwrite different properties McIDAS-V uses. This listing is broken up into three categories: <strong>User Interface</strong>, <strong>Data</strong>, and <strong>Miscellaneous</strong>.</p> <a name="image3" id="image3"></a>
+<div class="pagesubtitle"><a name="properties" id="properties"></a>Properties</div>
+<p>The <strong>Properties</strong> tab allows the user to overwrite different properties McIDAS-V uses. This listing is broken up into three categories: <strong>User Interface</strong>, <strong>Data</strong>, and <strong>Miscellaneous</strong>.</p> <a name="image3" id="image3"></a>
 <div class="images"><img src="images/PluginCreatorProperties.gif" alt="Image 3: Properties Tab of the Plugin Creator"> <br>
   <span class="caption">Image 3: Properties Tab of the Plugin Creator</span></div>
 <p>The <strong>User Interface</strong> category primarily affects the aesthetic appearance and basic usability in McIDAS-V. These options allow you to decide if you want to do the following:</p>
@@ -82,7 +77,7 @@ used.</p> <a name="image2" id="image2"></a>
   <li class="propertylistitem">Which Level II Remote Radar Catalogs will be included.</li>
   <li class="propertylistitem">Whether to merge Catalogs and Servers together.</li>
 </ul>
-<p>The <strong>Miscellaneous</strong> category affects many features of McIDAS-V. While these options affect many things that go on 'under the hood' of McIDAS-V, there is a great deal that can be changed with these options.. These options allow you to decide  the following:</p>
+<p>The <strong>Miscellaneous</strong> category affects many features of McIDAS-V. While these options affect many things that go on 'under the hood' of McIDAS-V, there is a great deal that can be changed with these options. These options allow you to decide  the following:</p>
 <ul class="propertylist">
   <li class="propertylistitem">If you are going to use 3D or not in your displays.</li>
   <li class="propertylistitem">How globe and map projections are plotted in the Main Display window.</li>
@@ -92,10 +87,9 @@ used.</p> <a name="image2" id="image2"></a>
   <li class="propertylistitem">If and how information will be shown as quicklinks.</li>
   <li class="propertylistitem">The vertical range for Globe, Map, and Transect displays.</li>
 </ul>
-<a name="writing_the_plugin" id="writing_the_plugin"></a>
-<div class="pagesubtitle">Writing the Plugin</div>
+<div class="pagesubtitle"><a name="writing_the_plugin" id="writing_the_plugin"></a>Writing the Plugin</div>
 <p>To write the plugin, click the <img src="images/WritePlugin.gif" alt="Write Plugin button" width="109" height="26"align=absmiddle> button. If you have not specified a plugin file name, (i.e., a .jar file) you will be prompted. If you also want to install the plugin to your local McIDAS-V plugins area, select the Install checkbox. You can choose a specific location to save the plugin to by selecting the  <img src="images/Browse.gif" width="78" height="26" alt="Browse button"align=absmiddle> button, or by typing the file path into the field. Note: You will need to restart McIDAS-V for any installed plugins to take effect.</p>
-<a name="menus" id="menus"></a><div class="pagesubtitle">Menus</div>
+<div class="pagesubtitle"><a name="menus" id="menus"></a>Menus</div>
 <p>Many of the menu items seen utilizing the Plugin Creator tool are unique to this menu item.</p>
 <p>The <strong>File </strong>menu has these unique options:</p>
 <ul class="propertylist">
