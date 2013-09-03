@@ -491,7 +491,7 @@ def listADDEImageTimes(localEntry=None,
     else:
         port = "112"
         
-    server = '%s:%s' % (server, port)
+    # server = '%s:%s' % (server, port)
     
     user = accounting[0]
     proj = accounting[1]
@@ -569,7 +569,7 @@ def listADDEImageTimes(localEntry=None,
     timeFormat.setTimeZone(tz)
     timeFormat.applyPattern('HH:mm:ss')
     
-    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=112&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s%(unit)s%(mag)s%(day)s%(time)s%(position)s"
+    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s%(unit)s%(mag)s%(day)s%(time)s%(position)s"
     
     urls = []
     areaDirectories = []
@@ -578,6 +578,7 @@ def listADDEImageTimes(localEntry=None,
     for date in dates:
         formatValues = {
             'server': server,
+            'port': port,
             'user': user,
             'proj': proj,
             'debug': debug,
@@ -660,7 +661,7 @@ def listADDEImages(localEntry=None,
     else:
         port = "112"
         
-    server = '%s:%s' % (server, port)
+    # server = '%s:%s' % (server, port)
     
     user = accounting[0]
     proj = accounting[1]
@@ -738,7 +739,7 @@ def listADDEImages(localEntry=None,
     timeFormat.setTimeZone(tz)
     timeFormat.applyPattern('HH:mm:ss')
     
-    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=112&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s%(unit)s%(mag)s%(day)s%(time)s%(position)s"
+    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s%(unit)s%(mag)s%(day)s%(time)s%(position)s"
     
     urls = []
     areaDirectories = []
@@ -747,6 +748,7 @@ def listADDEImages(localEntry=None,
     for date in dates:
         formatValues = {
             'server': server,
+            'port': port,
             'user': user,
             'proj': proj,
             'debug': debug,
@@ -1022,7 +1024,7 @@ def getADDEImage(localEntry=None,
     else:
         port = "112"
         
-    server = '%s:%s' % (server, port)
+    # server = '%s:%s' % (server, port)
     
     # still need to handle dates+times
     # todo: don't break!
