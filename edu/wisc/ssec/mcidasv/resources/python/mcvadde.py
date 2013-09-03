@@ -1,7 +1,6 @@
 import os
 import hashlib
 import threading
-import time
 import urllib2
 
 from collections import namedtuple
@@ -194,24 +193,21 @@ def _satBandUrl(**kwargs):
 class _SatBandReq(Callable):
     def __init__(self, url):
         self.url = url
-        self.started = None
-        self.completed = None
         self.result = None
         self.thread_used = None
         self.exception = None
         
     def __str__(self):
         if self.exception:
-             return "[%s] %s download error %s in %.2fs" % \
-                (self.thread_used, self.url, self.exception,
-                 self.completed - self.started, ) #, self.result)
+             return "[%s] %s download error %s" % \
+                (self.thread_used, self.url, self.exception)
         elif self.completed:
-            return "[%s] %s downloaded %dK in %.2fs" % \
-                (self.thread_used, self.url, len(self.result)/1024,
-                 self.completed - self.started, ) #, self.result)
+            return "[%s] %s downloaded %dK" % \
+                (self.thread_used, self.url, len(self.result)/1024)
+                 
         elif self.started:
-            return "[%s] %s started at %s" % \
-                (self.thread_used, self.url, self.started)
+            return "[%s] %s started" % \
+                (self.thread_used, self.url)
         else:
             return "[%s] %s not yet scheduled" % \
                 (self.thread_used, self.url)
@@ -221,7 +217,6 @@ class _SatBandReq(Callable):
     # or InterruptedException
     def call(self):
         self.thread_used = threading.currentThread().getName()
-        self.started = time.time()
         try:
             reader = AddeTextReader(self.url)
             if reader.getStatusCode() > 0:
@@ -229,7 +224,6 @@ class _SatBandReq(Callable):
                 self.result = AddeSatBands(lines)
         except Exception, ex:
             self.exception = ex
-        self.completed = time.time()
         return self.result
         
 class _AreaDirectoryList(object):
