@@ -20,13 +20,18 @@ for FILE in $FILES; do
 done
 
 echo ""
-echo "Update these files on the webserver:"
-echo ""
-for FILE in $WEB; do
-	echo "  $FILE"
-done
-
-echo ""
-echo "CTRL+C now to skip CVS commit..."
+echo "CTRL+C now to skip GIT commit..."
 read CONTYN
-cvs commit $FILES
+git commit $FILES
+if [ $? -ne 0 ]; then
+	echo "GIT push aborted"
+else
+	echo "Pushing commits to master..."
+	cd .. && git push --quiet origin master && cd -
+	echo ""
+	echo "Update these files on the webserver:"
+	echo ""
+	for FILE in $WEB; do
+		echo "  $FILE"
+	done
+fi
