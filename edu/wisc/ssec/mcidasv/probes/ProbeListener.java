@@ -65,4 +65,12 @@ public interface ProbeListener extends EventListener {
      * opposites of each other.
      */
     public void probeVisibilityChanged(final ProbeEvent<Boolean> event);
+    
+    /**
+     * Invoked when a probe's location format pattern has changed.
+     * 
+     * @param event Describes the probe that changed, the old format pattern,
+     * and the probe's new format pattern.
+     */
+    public void probeFormatPatternChanged(final ProbeEvent<String> event);
 }

@@ -94,7 +94,7 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     
     private RealTuple prevPos = null;
     
-    public ReadoutProbe(final DisplayMaster master, final FlatField field, final Color color, final boolean visible) throws VisADException, RemoteException {
+    public ReadoutProbe(final DisplayMaster master, final FlatField field, final Color color, final String pattern, final boolean visible) throws VisADException, RemoteException {
         super();
         this.master = notNull(master, "DisplayMaster can't be null");
         this.field = notNull(field, "Field can't be null");
@@ -112,8 +112,8 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
         probe.addPropertyChangeListener(this);
         probe.setPointSize(getDisplayScale());
         
-        numFmt.setMaximumFractionDigits(2);
-        
+        numFmt.applyPattern(pattern);
+
         master.addDisplayable(valueDisplay);
         master.addDisplayable(probe);
         setField(field);
@@ -192,8 +192,8 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     }
     
     /**
-     * Notifies the registered {@link ProbeListener}s that this probe's 
-     * position has changed.
+     * Notifies the registered {@link ProbeListener ProbeListeners} that this 
+     * probe's position has changed.
      * 
      * @param previous Previous position.
      * @param current Current position.
@@ -209,8 +209,8 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     }
     
     /**
-     * Notifies the registered {@link ProbeListener}s that this probe's color
-     * has changed.
+     * Notifies the registered {@link ProbeListener ProbeListeners} that this 
+     * probe's color has changed.
      * 
      * @param previous Previous color.
      * @param current Current color.
@@ -226,9 +226,9 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     }
     
     /**
-     * Notifies registered {@link ProbeListener}s that this probe's visibility
-     * has changed. Only takes a {@literal "previous"} value, which is negated
-     * to form the {@literal "current"} value.
+     * Notifies registered {@link ProbeListener ProbeListeners} that this 
+     * probe's visibility has changed. Only takes a {@literal "previous"} 
+     * value, which is negated to form the {@literal "current"} value.
      * 
      * @param previous Visibility <b>before</b> change.
      */
@@ -236,6 +236,20 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
         ProbeEvent<Boolean> event = new ProbeEvent<Boolean>(this, previous, !previous);
         for (ProbeListener listener : listeners) {
             listener.probeVisibilityChanged(event);
+        }
+    }
+    
+    /**
+     * Notifies the registered {@link ProbeListener ProbeListeners} that this 
+     * probe's location format pattern has changed.
+     * 
+     * @param previous Previous location format pattern.
+     * @param current Current location format pattern.
+     */
+    protected void fireProbeFormatPatternChanged(final String previous, final String current) {
+        ProbeEvent<String> event = new ProbeEvent<String>(this, previous, current);
+        for (ProbeListener listener : listeners) {
+            listener.probeFormatPatternChanged(event);
         }
     }
     
@@ -320,6 +334,50 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     
     public void quietlySetColor(final Color newColor) {
         setColor(newColor, true);
+    }
+    
+    /**
+     * Update the location format pattern for the current probe.
+     * 
+     * @param pattern New location format pattern. Cannot be {@code null}.
+     */
+    public void setFormatPattern(final String pattern) {
+        setFormatPattern(pattern, false);
+    }
+    
+    /**
+     * Update the location format pattern for the current probe, but 
+     * <b>do not</b> fire off any events.
+     * 
+     * @param pattern New location format pattern. Cannot be {@code null}.
+     */
+    public void quietlySetFormatPattern(final String pattern) {
+        setFormatPattern(pattern, true);
+    }
+    
+    /**
+     * Update the location format pattern for the current probe and optionally
+     * fire off an update event.
+     * 
+     * @param pattern New location format pattern. Cannot be {@code null}.
+     * @param quietly Whether or not to fire a format pattern change update.
+     */
+    private void setFormatPattern(final String pattern, final boolean quietly) {
+        String previous = numFmt.toPattern();
+        numFmt.applyPattern(pattern);
+        
+        if (!quietly) {
+            fireProbeFormatPatternChanged(previous, pattern);
+        }
+    }
+    
+    /**
+     * 
+     * 
+     * @return
+     */
+    public String getFormatPattern() {
+        return numFmt.toPattern();
     }
     
     public void handleProbeUpdate() {
