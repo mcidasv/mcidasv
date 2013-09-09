@@ -660,7 +660,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   if (i == 0) {
 					   startSet[i][j] = start[j] - (inTrackTotal - vGranuleLengths[loGranuleId]);
 				   } else {
-					   startSet[i][j] = (inTrackTotal - vGranuleLengths[i] - start[j]) % stride[j];
+					   startSet[i][j] = (inTrackTotal - start[j]) % stride[j];
 				   }
 				   // counts may be different for start, end, and middle granules
 				   if (i == 0) {
