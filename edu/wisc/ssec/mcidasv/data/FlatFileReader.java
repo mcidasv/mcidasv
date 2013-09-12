@@ -91,7 +91,7 @@ public class FlatFileReader {
 	private int myNavigation = HeaderInfo.kNavigationUnknown;
 	
 	/** the actual floats read from the file */
-	float[] floatData = null;
+	private float[] floatData = null;
 	
 	/** cache the nav info when possible */
 	Gridded2DSet navigationSet = null;
@@ -100,7 +100,9 @@ public class FlatFileReader {
     /**
      * Ctor for xml encoding
      */
-    public FlatFileReader() {}
+    public FlatFileReader() {
+    	this.floatData = null;
+    }
 
     /**
      * CTOR
@@ -108,6 +110,7 @@ public class FlatFileReader {
      * @param filename The filename
      */
     public FlatFileReader(String filename) {
+    	this.floatData = null;
         this.url = filename;
     }
 
@@ -120,6 +123,7 @@ public class FlatFileReader {
      * @param band The band
      */
     public FlatFileReader(String filename, int lines, int elements) {
+    	this.floatData = null;
         this.url = filename;
         this.lines = lines;
         this.elements = elements;
@@ -248,7 +252,7 @@ public class FlatFileReader {
 		int pixelPointer = 0;
 
 		int readPixels = this.strideElements * this.strideLines;
-        floatData = new float[readPixels];
+        this.floatData = new float[readPixels];
 		byte[] readBytes = new byte[readEach];
 
     	try {            
@@ -308,19 +312,19 @@ public class FlatFileReader {
     			int readOffset = pixelPointer - startPointer;		    			
     			switch (this.myFormat) {
     			case HeaderInfo.kFormat1ByteUInt:
-    				floatData[curPixel++] = (float)bytesTo1ByteUInt(readBytes, readOffset);
+    				this.floatData[curPixel++] = (float)bytesTo1ByteUInt(readBytes, readOffset);
     				break;
     			case HeaderInfo.kFormat2ByteUInt:
-    				floatData[curPixel++] = (float)bytesTo2ByteUInt(readBytes, readOffset);
+    				this.floatData[curPixel++] = (float)bytesTo2ByteUInt(readBytes, readOffset);
     				break;
     			case HeaderInfo.kFormat2ByteSInt:
-    				floatData[curPixel++] = (float)bytesTo2ByteSInt(readBytes, readOffset);
+    				this.floatData[curPixel++] = (float)bytesTo2ByteSInt(readBytes, readOffset);
     				break;
     			case HeaderInfo.kFormat4ByteSInt:
-    				floatData[curPixel++] = (float)bytesTo4ByteSInt(readBytes, readOffset);
+    				this.floatData[curPixel++] = (float)bytesTo4ByteSInt(readBytes, readOffset);
     				break;
     			case HeaderInfo.kFormat4ByteFloat:
-    				floatData[curPixel++] = (float)bytesTo4ByteFloat(readBytes, readOffset);
+    				this.floatData[curPixel++] = (float)bytesTo4ByteFloat(readBytes, readOffset);
     				break;
     			}
 
@@ -353,7 +357,7 @@ public class FlatFileReader {
 		int curLine = 0;
 		
 		int readPixels = this.strideElements * this.strideLines;
-        floatData = new float[readPixels];
+		this.floatData = new float[readPixels];
         
     	try {            
     		InputStream is = IOUtil.getInputStream(url, getClass());
@@ -366,7 +370,7 @@ public class FlatFileReader {
             	for (int i=0; i<words.length; i++) {
             		
         			if (curLine % stride == 0 && curElement % stride == 0) {
-        				floatData[curPixel++] = Float.parseFloat(words[i]);
+        				this.floatData[curPixel++] = Float.parseFloat(words[i]);
         			}
         			
         			// Keep track of what element/line we are reading so we can stride appropriately
@@ -398,7 +402,7 @@ public class FlatFileReader {
     private Data getDataFromImage() {
     	System.out.println("FlatFileInfo.getDataFromImage()");
     	try {
-    		floatData = new float[0];
+    		this.floatData = new float[0];
     		InputStream is = IOUtil.getInputStream(url, getClass());
     		byte[] imageContent = IOUtil.readBytes(is);
     		Image image = Toolkit.getDefaultToolkit().createImage(imageContent);
@@ -627,7 +631,7 @@ public class FlatFileReader {
     			d = getDataFromImage();
     			break;
     		default:
-    			floatData = getFloats();
+    			this.floatData = getFloats();
     			field = getFlatField();
 //    			d = GridUtil.setSpatialDomain(field, navigationSet);
     			d = field;
@@ -651,7 +655,7 @@ public class FlatFileReader {
     public float[] getFloats() {
     	System.out.println("FlatFileInfo.getFloats()");
     	
-    	if (floatData != null) return floatData;
+    	if (this.floatData != null) return this.floatData;
     	
     	switch (this.myFormat) {
     	case HeaderInfo.kFormatImage:
@@ -670,9 +674,9 @@ public class FlatFileReader {
 //    	File justName = new File(url);
 //    	try {
 //    		BufferedWriter out = new BufferedWriter(new FileWriter("/tmp/mcv/" + justName.getName()));
-//    		for (int i=0; i<floatData.length; i++) {
+//    		for (int i=0; i<this.floatData.length; i++) {
 //    			if (i%strideElements==0) out.write("New line " + (i/strideElements) + " at element " + i + "\n");
-//    			out.write(floatData[i] + "\n");
+//    			out.write(this.floatData[i] + "\n");
 //    		}
 //    		out.close();
 //    	} 
@@ -682,7 +686,7 @@ public class FlatFileReader {
 
 		
     	
-    	return floatData;
+    	return this.floatData;
     }
         
     /**
@@ -709,7 +713,7 @@ public class FlatFileReader {
 
         FlatField    field      = new FlatField(image_type, domain_set);
 
-        float[][]    samples    = new float[][] { floatData };
+        float[][]    samples    = new float[][] { this.floatData };
         try {
             field.setSamples(samples, false);
         } catch (RemoteException e) {

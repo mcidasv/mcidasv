@@ -139,7 +139,7 @@ public class FlatFileChooser extends IdvChooser implements Constants {
     private JRadioButton radioEndianBig = new JRadioButton("Big", false);
     private JComboBox comboByteFormat = new JComboBox();
     private JComboBox comboInterleave = new JComboBox();
-    private JTextField textOffset = new JTextField();
+    private JTextField textOffset = new JTextField("0");
     private JPanel panelBinary = new JPanel();
     private JTextField textDelimiter = new JTextField();
     private JPanel panelASCII = new JPanel();
@@ -684,7 +684,9 @@ public class FlatFileChooser extends IdvChooser implements Constants {
 
         // Set appropriate defaults
         // Bands
+        bandFiles.clear();
         bandFiles.add(thisFile.getAbsolutePath());
+        bandNames.clear();
         bandNames.add("Flat data");
 
         // Set the properties in the GUI
@@ -722,7 +724,7 @@ public class FlatFileChooser extends IdvChooser implements Constants {
         textLatLonScale.setText("");
         checkEastPositive.setSelected(false);
 
-        textOffset.setText("");
+        textOffset.setText("0");
         textMissing.setText("");
     }
     
