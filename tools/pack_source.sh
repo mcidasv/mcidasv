@@ -12,8 +12,8 @@
 # IDV_DIR=/home/mcidasv/idv
 # MCV_DIR=/home/mcidasv/mc-v
 # MEDIA_DIR=/home/mcidasv/install4j/media
-IDV_DIR="/home/mcidasv/mcidasv-github/IDV"
-MCV_DIR="/home/mcidasv/mcidasv-github/mcidasv"
+IDV_DIR="/home/mcidasv/IDV"
+MCV_DIR="/home/mcidasv/mcidasv"
 MEDIA_DIR="/home/mcidasv/install4j/media"
 CUR_DIR="${PWD}"
 

@@ -97,7 +97,8 @@ package for the following operating systems:
     </tr>
   </table>
 <p>A GUI will walk you through the installation steps and allow you to create
-  a program group and/or desktop icon.</p>
+  a program group and/or desktop icon.&nbsp;When McIDAS-V is installed, a McIDAS-V-System directory will be created in your installation directory.&nbsp;This directory contains system files necessary to run McIDAS-V and users should not save files to the McIDAS-V-System directory.</p>
+<p>Note: Windows users should not install McIDAS-V in the <strong>/Program Files</strong> directory as this can lead to permissions problems.</p>
 <p>If an error occurs, please see the <a href="Faq.html"> FAQ</a> for information
   on solutions to common errors reported by users installing and running McIDAS-V.
   If you do not see your error listed, please send a support request to <a href="../../../misc/contact.html?mcv" target="_blank">McIDAS-V
@@ -113,9 +114,10 @@ package for the following operating systems:
   on solutions to common errors reported by users installing and running McIDAS-V.
   If you do not see your error listed, send a support request to <a href="../../../misc/contact.html?mcv" target="_blank">McIDAS-V
   Support</a> or use the Support Request Form in the Help menu of McIDAS-V.</p>
+<p>Note: When McIDAS-V is first run, a <strong>/McIDAS-V</strong> directory will be created in the user path.&nbsp;This directory contains information about user-specified settings as well as XML files for color tables, projections, etc. that are used by McIDAS-V.&nbsp;Users can write files to this directory.</p>
 <p>McIDAS-X users who install McIDAS-V and want to run their McIDAS-X commands in the McIDAS-V environment via the Bridge must also be running McIDAS-X on the same computer. Sites that have joined the McIDAS Users' Group
-  and purchased McIDAS-X support can download the current version of McIDAS-X from
-  the <a href="../../../software/x/index.html" target="_blank">McIDAS-X
+    and purchased McIDAS-X support can download the current version of McIDAS-X from
+    the <a href="../../../software/x/index.html" target="_blank">McIDAS-X
 Downloads</a> page.</p>
 <div class="pagesubtitle"><a name="memory" id="memory"></a>Setting Memory Usage</div>
 <p>By default, McIDAS-V uses 80% of the available memory on your machine. The
@@ -133,7 +135,6 @@ the Main Display window.</p>
 <p>The source code for McIDAS-V is available for <a href="../../../software/v/download.html"target="_blank">download</a>.
   For instructions on building McIDAS-V from source, see the <a href="misc/SourceBuild.html">Building
   McIDAS-V from Source</a> document.
-<br>
 </p>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">

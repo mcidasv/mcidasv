@@ -226,8 +226,16 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
     }
     
     /**
+     * Returns the preferences panel that corresponds with the user's 
+     * {@code JList} selection.
      * 
-     * @return
+     * <p>In the context of the startup manager, this means that any 
+     * {@code JList} selection <i>other than</i> {@literal "Advanced"} will
+     * return the results of {@link #getUnavailablePanel()}. Otherwise the
+     * results of {@link #getAdvancedPanel(boolean)} will be returned.
+     * 
+     * @return Either the advanced preferences panel or an 
+     * {@literal "unavailable"}, depending upon the user's selection.
      */
     private Container getSelectedPanel() {
         ListModel listModel = panelList.getModel();
@@ -588,6 +596,25 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         return props;
     }
     
+    /**
+     * Extract any command-line properties and their corresponding values.
+     * 
+     * <p>May print out usage information if a badly formatted 
+     * {@literal "property=value"} pair is encountered, or when an unknown 
+     * argument is found (depending on value of the {@code ignoreUnknown} 
+     * parameter). 
+     * 
+     * <p><b>NOTE:</b> {@code null} is not a permitted value for any parameter.
+     * 
+     * @param ignoreUnknown Whether or not to handle unknown arguments.
+     * @param fromStartupManager Whether or not this call originated from 
+     * {@code startupmanager.jar}.
+     * @param args Array containing command-line arguments.
+     * @param defaults Default parameter values.
+     * 
+     * @return Command-line arguments as a collection of property identifiers
+     * and values.
+     */
     public static Properties getArgs(final boolean ignoreUnknown, 
         final boolean fromStartupManager, final String[] args, 
         final Properties defaults) 

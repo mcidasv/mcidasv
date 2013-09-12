@@ -72,10 +72,17 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
       <td valign="top">dataDirectory=</td>
       <td>a dictionary where the keys are datasource    names,  and the values are either a string or list of strings   representing    the full path name/names  of the data that will be used in place of   the data    in the bundle </td>
     </tr>
+        <tr>
+      <td valign="top">mode=</td>
+      <td>specifies the method that will be used to open the bundle<br>
+          REPLACE - Removes any previously-loaded layers and data sources and replaces the current session with the bundle's data (default)<br>
+          NEWWINDOW - Loads the bundle's data and displays into a new window, without removing any previously-loaded layers and data sources<br>
+          MERGE - Loads the bundle's data and displays into the current tab of the active display window without removing any previously-loaded layers and data sources<br>NEWTAB - Loads the bundle's data and displays into a new tab of the active display window without removing any previously-loaded layers and data sources</td>
+    </tr>
   </table>
 </div>
 <div class="OneTabIndent">Example:</div>
-<div class="TwoTabIndent"><em>openBundle("C:\\Users\\myuser\\bundle.mcv")</em></div>
+<div class="TwoTabIndent"><em>openBundle('C:\\Users\\myuser\\bundle.mcv',mode='NEWTAB')</em></div>
 <p><strong><a name="makeLocalADDE" id="makeLocalADDE"></a>makeLocalADDEEntry -</strong> Creates a local ADDE entry in the server table</p>
 <div class="OneTabIndent">Usage: <em>localDataset= makeLocalADDEEntry(keywords)</em></div>
 <div class="TwoTabIndent">Keywords:</div>
@@ -248,7 +255,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
     </tr>
         <tr>
       <td valign="top">day=</td>
-      <td>day range ('begin date','end date')</td>
+      <td>single day ('date 1') or as a day range ('begin date','end date')</td>
     </tr>
         <tr>
       <td valign="top">time=</td>
@@ -303,6 +310,161 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
 </table></div>
 <div class="OneTabIndent">Example:</div>
   <div class="TwoTabIndent"><em>metadata,data = getADDEImage(debug=True,localEntry=desc, size='ALL', mag=(1,1), unit='BRIT')</em></div>
+  <p><strong><a name="listADDEImages" id="listADDEImages"></a>listADDEImages -</strong> Lists
+  data from an ADDE Image server that matches the keywords in the request - returns  metadata objects which can be passed into getADDEImage</p>
+<div class="OneTabIndent">Usage: <em>directoryList = listADDEImages(keywords)</em></div>
+<div class="TwoTabIndent">Keywords:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">localEntry=</td>
+      <td>local dataset defined by makeLocalADDEEntry</td>
+    </tr>
+    <tr>
+      <td valign="top">server=</td>
+      <td>ADDE server</td>
+    </tr>
+        <tr>
+      <td valign="top">dataset=</td>
+      <td>ADDE dataset group name</td>
+    </tr>
+        <tr>
+      <td valign="top">descriptor=</td>
+      <td>ADDE dataset descriptor</td>
+    </tr>
+        <tr>
+      <td valign="top">day=</td>
+      <td>single day ('date 1') or as a day range ('begin date','end date')</td>
+    </tr>
+        <tr>
+      <td valign="top">time=</td>
+      <td>('begin time','end time')</td>
+    </tr>
+        <tr>
+      <td valign="top">coordinateSystem=</td>
+      <td>coordinate system to use for retrieving    data <br>
+      AREA = AREA file coordinates - zero based<br>
+      LATLON = latitude and longitude coordinates<br>
+      IMAGE = image coordinates - one based</td>
+    </tr>
+        <tr>
+      <td valign="top">location=</td>
+      <td>(x,y)<br>
+      x = AREA line, latitude, or IMAGE line<br>
+      y = AREA element, longitude, or IMAGE element</td>
+    </tr>
+        <tr>
+      <td valign="top">place=</td>
+      <td>CENTER places specified location (x,y) at    center of panel<br>
+          ULEFT places specified location (x,y) at upper-left    coordinate of panel</td>
+    </tr>
+        <tr>
+      <td valign="top">band=</td>
+      <td>McIDAS band number; must be specified if requesting    data from multi-banded image; default=band in image </td>
+    </tr>
+        <tr>
+      <td valign="top">unit=</td>
+      <td>calibration unit to request; default = 'BRIT'</td>
+    </tr>
+        <tr>
+      <td valign="top">position=</td>
+      <td>time relative (negative values) or absolute    (positive values) position in the dataset; default=0 (most recent   image)</td>
+    </tr>
+        <tr>
+      <td valign="top">size=</td>
+      <td>number of lines and elements to request; default=(480,640)</td>
+    </tr>
+        <tr>
+      <td valign="top">mag=</td>
+      <td>magnification of data (line,element), negative    number used for sampling data; default=(1,1)</td>
+    </tr>
+        <tr>
+      <td valign="top">accounting=</td>
+      <td> ('user', 'project number') user and project    number required by servers using McIDAS accounting; default =   ('idv','0')</td>
+    </tr>
+        <tr>
+      <td valign="top">debug=</td>
+      <td>send debug information to file; default=False</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>directoryList = listADDEImages(localEntry=desc, band=4, unit='TEMP')</em></div>
+    <p><strong><a name="listADDEImageTimes" id="listADDEImageTimes"></a>listADDEImageTimes -</strong> Returns a list of available dates and times of data that match the keywords in the request</p>
+<div class="OneTabIndent">Usage: <em>directoryList = listADDEImageTimes(keywords)</em></div>
+<div class="TwoTabIndent">Keywords:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">localEntry=</td>
+      <td>local dataset defined by makeLocalADDEEntry</td>
+    </tr>
+    <tr>
+      <td valign="top">server=</td>
+      <td>ADDE server</td>
+    </tr>
+        <tr>
+      <td valign="top">dataset=</td>
+      <td>ADDE dataset group name</td>
+    </tr>
+        <tr>
+      <td valign="top">descriptor=</td>
+      <td>ADDE dataset descriptor</td>
+    </tr>
+        <tr>
+      <td valign="top">day=</td>
+      <td>single day ('date 1') or as a day range ('begin date','end date')</td>
+    </tr>
+        <tr>
+      <td valign="top">time=</td>
+      <td>('begin time','end time')</td>
+    </tr>
+        <tr>
+      <td valign="top">coordinateSystem=</td>
+      <td>coordinate system to use for retrieving    data <br>
+      AREA = AREA file coordinates - zero based<br>
+      LATLON = latitude and longitude coordinates<br>
+      IMAGE = image coordinates - one based</td>
+    </tr>
+        <tr>
+      <td valign="top">location=</td>
+      <td>(x,y)<br>
+      x = AREA line, latitude, or IMAGE line<br>
+      y = AREA element, longitude, or IMAGE element</td>
+    </tr>
+        <tr>
+      <td valign="top">place=</td>
+      <td>CENTER places specified location (x,y) at    center of panel<br>
+          ULEFT places specified location (x,y) at upper-left    coordinate of panel</td>
+    </tr>
+        <tr>
+      <td valign="top">band=</td>
+      <td>McIDAS band number; must be specified if requesting    data from multi-banded image; default=band in image </td>
+    </tr>
+        <tr>
+      <td valign="top">unit=</td>
+      <td>calibration unit to request; default = 'BRIT'</td>
+    </tr>
+        <tr>
+      <td valign="top">position=</td>
+      <td>time relative (negative values) or absolute    (positive values) position in the dataset; default=0 (most recent   image)</td>
+    </tr>
+        <tr>
+      <td valign="top">size=</td>
+      <td>number of lines and elements to request; default=(480,640)</td>
+    </tr>
+        <tr>
+      <td valign="top">mag=</td>
+      <td>magnification of data (line,element), negative    number used for sampling data; default=(1,1)</td>
+    </tr>
+        <tr>
+      <td valign="top">accounting=</td>
+      <td> ('user', 'project number') user and project    number required by servers using McIDAS accounting; default =   ('idv','0')</td>
+    </tr>
+        <tr>
+      <td valign="top">debug=</td>
+      <td>send debug information to file; default=False</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>print listADDEImageTimes(localEntry=desc, band=4, unit='TEMP')</em></div>
 <p><strong><a name="createLayer" id="createLayer"></a>createLayer -</strong> Creates
   a new data layer in a panel</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer = panel[0].createLayer(display

@@ -28,70 +28,98 @@ from org.slf4j import LoggerFactory
 
 _CONTEXT_ASSERT_MSG = "expected 'default' context; got '%s'"
 _APPENDER_ASSERT_MSG = "expected appender to be a subclass of FileAppender; got '%s'"
+_CONTEXT_FIND_LOGGER = "expected logger '%s' to be added to default context"
+_BAD_LOGGERNAME = "Cannot save log level if loggerName is not 'ROOT' (given loggerName is '%s')."
 
+# def runFile(path, showContents=False):
+#     raise NotImplementedError()
+    
+def editFile(path, cleanup=False):
+    """Import file contents into the Jython Shell input field.
+    
+    Args:
+        path: Required string value that represents a path to a file. The string
+        is validated with expandpath, so paths like "~/test.py" will work.
+        
+        cleanup: Optional boolean value that defaults to False. If set to True,
+        calls to removeAllData() and removeAllLayers() are added to the 
+        beginning of the Jython Shell input text field.
+    """
+    fp = open(expandpath(path), 'r')
+    try:
+        shell = getStaticMcv().getJythonManager().getShell()
+        lines = ''
+        if cleanup:
+            lines += '# removeAllData and removeAllLayers were added because editFile was called with "cleanup" set to True.\nremoveAllData()\nremoveAllLayers()\n\n'
+        for line in fp:
+            lines += line
+        shell.setMultilineText(lines)
+    finally:
+        fp.close()
+        
 def today(dateFormat=None):
     """Returns today's date in either the user's specified format, or YYYYDDD (default)."""
     dateFormat = dateFormat or '%Y%j'
     return datetime.date.today().strftime(dateFormat)
-
+    
 def tomorrow(dateFormat=None):
     """Returns tomorrow's date in either the user's specified format, or YYYYDDD (default)."""
     dateFormat = dateFormat or '%Y%j'
     return (datetime.date.today() + datetime.timedelta(days=1)).strftime(dateFormat)
-
+    
 def yesterday(dateFormat=None):
     """Returns yesterday's date in either the user's specified format, or YYYYDDD (default)."""
     dateFormat = dateFormat or '%Y%j'
     return (datetime.date.today() - datetime.timedelta(days=1)).strftime(dateFormat)
-
+    
 def expandpath(path):
     """Expands ENV variables, fixes things like '~', and then normalizes the
     given path."""
     return os.path.normpath(os.path.expanduser(os.path.expandvars(path)))
-
+    
 @deprecated(today)
 def _today(dateFormat=None):
     return today(dateFormat)
-
+    
 @deprecated(tomorrow)
 def _tomorrow(dateFormat=None):
     return _tomorrow(dateFormat)
-
+    
 @deprecated(yesterday)
 def _yesterday(dateFormat=None):
     return _yesterday(dateFormat)
-
+    
 @deprecated(expandpath)
 def _expandpath(path):
     return expandpath
-
+    
 def getUserPath():
     """Returns the path to the user's McIDAS-V directory."""
     return getStaticMcv().getStore().getUserDirectory().getPath()
-
+    
 def getMouseEarthLocation():
     display = getStaticMcv().getVMManager().getLastActiveViewManager()
     master = display.getMaster()
     visadLat, visadLon = master.getCursorLatitude(), master.getCursorLongitude()
     return visadLat.getValue(), visadLon.getValue()
-
+    
 def describeActions(pattern=None):
-    # """Prints out a list of the McIDAS-V actions.
-
-    # The output is ordered alphabetically and grouped by functionality. Each
-    # identifier can be "run" like so:
-
-    # performAction(identifier)
-    # performAction('edit.paramdefaults')
-
-    # Args:
-    #     pattern: Searches for the given pattern within the action identifier
-    #              strings as well as action descriptions.
-    # """
+    """Prints out a list of the McIDAS-V actions.
+    
+    The output is ordered alphabetically and grouped by functionality. Each
+    identifier can be "run" like so:
+    
+    performAction(identifier)
+    performAction('edit.paramdefaults')
+    
+    Args:
+        pattern: Searches for the given pattern within the action identifier
+                 strings as well as action descriptions.
+    """
     # actions = _mcv.getIdvUIManager().getCachedActions().getAllActions()
     actions = getStaticMcv().getIdvUIManager().getCachedActions().getAllActions()
     print sorted([action.getId() for action in actions])
-
+    
 def getLogFile():
     # TODO(jon): this will likely have to change as the complexity of
     #            logback.xml increases. :(
@@ -103,19 +131,53 @@ def getLogFile():
     appender = [x for x in logger.iteratorForAppenders()].pop()
     assert isinstance(appender, FileAppender), _APPENDER_ASSERT_MSG % type(appender).getCanonicalName()
     return appender.getFile()
-
+    
+def getLogLevel(loggerName='ROOT'):
+    logger = LoggerFactory.getLogger(loggerName)
+    if logger.getLevel():
+        level = str(logger.getLevel())
+    else:
+        level = None
+        
+    if logger.getEffectiveLevel():
+        effectiveLevel = str(logger.getEffectiveLevel())
+    else:
+        effectiveLevel = None
+        
+    return { 'level': level, 'effectiveLevel': effectiveLevel }
+    
+def setLogLevel(level, loggerName='ROOT', temporary=True):
+    if not temporary:
+        if loggerName != 'ROOT':
+            raise ValueError(_BAD_LOGGERNAME % (loggerName))
+        
+        from edu.wisc.ssec.mcidasv.startupmanager.options import OptionMaster
+        optMaster = OptionMaster.getInstance()
+        optMaster.getLoggerLevelOption("LOG_LEVEL").setValue(level)
+        optMaster.writeStartup()
+        
+    context = LoggerFactory.getILoggerFactory()
+    logger = context.exists(loggerName)
+    if not logger:
+        logger = context.getLogger(loggerName)
+    currentLevel = logger.getLevel()
+    if not currentLevel:
+        currentLevel = logger.getEffectiveLevel()
+    convertedLevel = currentLevel.toLevel(level, currentLevel.INFO)
+    logger.setLevel(convertedLevel)
+    
 def deleteLogFile():
     """Removes the active log file."""
     os.remove(getLogFile())
-
+    
 def moveLogFile(destination):
     """Move the active log file to a given destination."""
     shutil.move(getLogFile(), _expandpath(destination))
-
+    
 def copyLogFile(destination):
     """Copies the active log files to a given destination."""
     shutil.copy2(getLogFile(), _expandpath(destination))
-
+    
 def ncdump(path, output_format='cdl', show_values='c', vars=None):
     """Print contents of a given netCDF file.
     
@@ -137,7 +199,7 @@ def ncdump(path, output_format='cdl', show_values='c', vars=None):
     results = ncdumpToString(path, output_format, show_values, vars)
     if results:
         print results
-
+        
 def ncdumpToString(path, output_format='cdl', show_values='c', vars=None):
     """Returns contents of a given netCDF file as a string.
     
@@ -162,14 +224,14 @@ def ncdumpToString(path, output_format='cdl', show_values='c', vars=None):
     from java.io import IOException
     from java.io import StringWriter
     from ucar.nc2 import NCdumpW
-
+    
     # build up commandline args to send off to netCDF-land (it wants 'em as a
     # string for some reason)
     args = '%s -%s -%s ' % (path, output_format, show_values)
     if vars:
         for var in vars:
             args = '%s -v %s' % (args, var)
-
+            
     writer = StringWriter()
     
     try:
@@ -177,19 +239,19 @@ def ncdumpToString(path, output_format='cdl', show_values='c', vars=None):
     except IOException, ioe:
         print 'Error attempting to list contents of', path
         print ioe
-    
+        
     return writer.toString()
-
+    
 def dump_active_display():
     """ Returns the currently-active display object."""
     pass
-
+    
 # The dumpObj code has been adapted from
 # http://code.activestate.com/recipes/137951/
 def printDict(di, format="%-25s %s"):
     for (key, val) in di.items():
         print format % (str(key)+':', val)
-
+        
 def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
     """Print a nicely formatted overview of an object.
 
@@ -255,7 +317,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
             classes.append((slot, attr))
         else:
             attrs.append((slot, attr))
-    
+            
     # Organize them
     methods.sort()
     builtins.sort()
@@ -271,13 +333,13 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
             return s[0:maxlen] + ' ...(%d more chars)...' % (len(s) - maxlen)
         else:
             return s
-    
+            
     # Summary of introspection attributes
     if objclass == '':
         objclass = type(obj).__name__
     if objclass is None:
         objclass = obj.__class__.__name__
-    
+        
     intro = "Instance of class '%s' as defined in module %s with id %d" % \
             (objclass, objmodule, id(obj))
     print '\n'.join(prettyPrint(intro, maxlen))
@@ -290,8 +352,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
     print
     print prettyPrintCols(('Documentation string:',
                             truncstring(objdoc, maxspew)),
-                          normalwidths, ' ')
-    
+                            normalwidths, ' ')
     # Built-in methods
     if builtins:
         bi_str = delchars(str(builtins), "[']") or str(None)
@@ -299,7 +360,6 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
         print prettyPrintCols(('Built-in Methods:',
                                truncstring(bi_str, maxspew)),
                                normalwidths, ', ')
-    
     # Classes
     if classes:
         print
@@ -309,8 +369,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
         print prettyPrintCols(('',
                                 classname,
                                 truncstring(classdoc, maxspew)),
-                              tabbedwidths, ' ')
-    
+                                tabbedwidths, ' ')
     # User methods
     if methods:
         print
@@ -320,8 +379,7 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
         print prettyPrintCols(('',
                                 methodname,
                                 truncstring(methoddoc, maxspew)),
-                              tabbedwidths, ' ')
-    
+                                tabbedwidths, ' ')
     # Attributes
     if attrs:
         print
@@ -330,8 +388,8 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
         print prettyPrintCols(('',
                                 attr,
                                 truncstring(str(val), maxspew)),
-                              tabbedwidths, ' ')
-
+                                tabbedwidths, ' ')
+                                
 def prettyPrintCols(strings, widths, split=' '):
     """Pretty prints text in colums, with each string breaking at
     split according to prettyPrint.  margins gives the corresponding
@@ -345,16 +403,16 @@ def prettyPrintCols(strings, widths, split=' '):
     cols = [''] * len(strings)
     for i in range(len(strings)):
         cols[i] = prettyPrint(strings[i], widths[i], split)
-    
+        
     # prepare a format line
     format = ''.join(['%%-%ds' % width for width in widths[0:-1]]) + '%s'
     
     def formatline(*cols):
         return format % tuple(map(lambda s: (s or ''), cols))
-    
+        
     # generate the formatted text
     return '\n'.join(map(formatline, *cols))
-
+    
 def prettyPrint(string, maxlen=75, split=' '):
     """Pretty prints the given string to break at an occurrence of
     split where necessary to avoid lines longer than maxlen.
@@ -372,9 +430,9 @@ def prettyPrint(string, maxlen=75, split=' '):
         eol = string.rfind(split, oldeol, oldeol+maxlen+len(split))
         lines.append(string[oldeol:eol])
         oldeol = eol + len(split)
-    
+        
     return lines
-
+    
 def nukenewlines(string):
     """Strip newlines and any trailing/following whitespace; rejoin
     with a single space where the newlines were.
@@ -385,7 +443,7 @@ def nukenewlines(string):
         return ''
     lines = string.splitlines()
     return ' '.join([line.strip() for line in lines])
-
+    
 def delchars(str, chars):
     """Returns a string for which all occurrences of characters in
     chars have been removed."""
@@ -393,7 +451,7 @@ def delchars(str, chars):
     # whip up a string that will leave all characters unmolested.
     identity = ''.join([chr(x) for x in range(256)])
     return str.translate(identity, chars)
-
+    
 def javaInstanceMethods(clazz):
     """Returns names of instance methods for a given Java class."""
     names = set()
@@ -409,7 +467,7 @@ def javaInstanceMethods(clazz):
         if not ispython(base):
             names = names | javaInstanceMethods(base)
     return names
-
+    
 def javaStaticMethods(clazz):
     """Returns names of static methods for a given Java class."""
     static_methods = {}
@@ -422,7 +480,7 @@ def javaStaticMethods(clazz):
         if not ispython(base):
             methods.extend(javaStaticMethods(base))
     return methods
-
+    
 def javaStaticFields(clazz):
     """Returns names of static fields for a given Java class."""
     static_fields = {}
@@ -435,7 +493,7 @@ def javaStaticFields(clazz):
         if not ispython(base):
             fields.extend(javaStaticFields(base))
     return fields
-
+    
 def ispython22(object):
     """Determine whether or not the object is Python (2.2.*) code."""
     object_type = type(object)
@@ -452,7 +510,7 @@ def ispython22(object):
         python = True
     
     return python
-
+    
 def ispython25(object):
     """Determine whether or not the object is Python (2.5.*) code."""
     if isinstance(object, Class):
@@ -466,7 +524,7 @@ def ispython25(object):
     else:
         python = True
     return python
-
+    
 if sys.version.startswith('2.5'):
     ispython = ispython25
 else:

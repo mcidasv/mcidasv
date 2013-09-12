@@ -66,10 +66,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
       -or-<br>
       [R,G,B] fractional scaling factor for each red, green and blue value (0 to 1)</td>
     </tr>
+    <tr>
+      <td valign="top">showUnit=</td>
+      <td>toggles the visibility of the display unit on the color scale (default = False)</td>
+    </tr>
 </table></div>
 <div class="ThreeTabIndent"></div>
 <div class="OneTabIndent">Example:</div>
-  <div class="TwoTabIndent"><em>layer.setColorScale(placement='left',font='SansSerif',size=18.0,color='green'</em></div>
+  <div class="TwoTabIndent"><em>layer.setColorScale(placement='Left',font='SansSerif',size=18.0,color='green',showUnit=True</em>)</div>
 <p><strong><a name="setEnhancement" id="setEnhancement"></a>setEnhancement -&nbsp;</strong>Applies
   a color table and defines data range of data in a layer<br>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setEnhancement(color table,keywords)</em></div>
@@ -87,7 +91,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
 <p><strong><a name="setLayerLabel" id="setLayerLabel"></a>setLayerLabel -</strong> Toggles
   a layer label on/off and defines its attributes</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setLayerLabel(label,keywords)</em></div>
-<div class="TwoTabIndent">label - layer label string </div>
+<div class="TwoTabIndent">label - layer label string. this can include macros</div>
 <div class="TwoTabIndent">Keywords:</div>
 <div class="ThreeTabIndent2"><table class="noborder">
     <tr>
@@ -96,7 +100,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
     </tr>
     <tr>
       <td valign="top">font=</td>
-      <td>name of font; default = font defined in User    Preferences</td>
+      <td>name of font; default = font defined in User    Preferences.</td>
     </tr>
     <tr>
       <td valign="top">style=</td>
@@ -117,7 +121,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
     </tr>
 </table></div>
 <div class="OneTabIndent">Example:</div>
-  <div class="TwoTabIndent"><em>layer.setLayerLabel('%displayname% %timestamp%', size=15, color=blue', style='BOLD'</em></div>
+  <div class="TwoTabIndent"><em>layer.setLayerLabel('%displayname% %timestamp%', size=15, color='blue', style='BOLD'</em>)</div>
 <p><strong><a name="setLayerVisible" id="setLayerVisible"></a>setLayerVisible
     -</strong> Toggles layer visibility on/off</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setLayerVisible(visible)</em></div>

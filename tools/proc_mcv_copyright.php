@@ -1,7 +1,7 @@
 #!/usr/bin/php -q
 <?php
 
-$BASE="/home/mcidasv/mcidasv-github/mcidasv";
+$BASE="/home/mcidasv/mcidasv";
 
 $COPYRIGHT=$BASE."/release/licenses/COPYRIGHT";
 $NOTICE=$BASE."/release/licenses/NOTICE";

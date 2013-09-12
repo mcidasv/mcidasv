@@ -203,7 +203,7 @@ public class SuomiNPPFilter extends FileFilter {
 
     				FilenameFilter geoFilter = new FilenameFilter() {
     					public boolean accept(File dir, String name) {
-    						if ((name.startsWith("G")) && (name.endsWith(".h5"))) {
+    						if (name.matches(JPSSUtilities.SUOMI_GEO_REGEX)) {
     							return true;
     						} else {
     							return false;
@@ -247,7 +247,7 @@ public class SuomiNPPFilter extends FileFilter {
 
     				FilenameFilter geoFilter = new FilenameFilter() {
     					public boolean accept(File dir, String name) {
-    						if ((name.startsWith("G")) && (name.endsWith(".h5"))) {
+    						if (name.matches(JPSSUtilities.SUOMI_GEO_REGEX)) {
     							return true;
     						} else {
     							return false;

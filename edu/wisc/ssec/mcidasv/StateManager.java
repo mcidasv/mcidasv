@@ -130,23 +130,32 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
         
         return versionAbout;
     }
-
+    
     public String getMcIdasVersion() {
         if (version != null) {
             return version;
         }
-
+        
         Properties props = new Properties();
         props = Misc.readProperties((String) getProperty(Constants.PROP_VERSIONFILE), null, getClass());
         String maj = props.getProperty(PROP_VERSION_MAJOR, "0");
         String min = props.getProperty(PROP_VERSION_MINOR, "0");
         String rel = props.getProperty(PROP_VERSION_RELEASE, "");
-
+        
         version = maj.concat(".").concat(min).concat(rel);
-
+        
         return version;
     }
-
+    
+    /**
+     * Returns the current Jython version.
+     * 
+     * @return Jython's version information.
+     */
+    @Override public String getJythonVersion() {
+        return org.python.Version.PY_VERSION;
+    }
+    
     /**
      * Get a property
      *
@@ -156,20 +165,21 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
      */
     @Override public Object getProperty(final String name) {
         Object value = null;
-        if (McIDASV.isMac())
+        if (McIDASV.isMac()) {
             value = getProperties().get("mac."+name);
-
-        if (value == null) 
+        }
+        if (value == null) {
             value = getProperties().get(name);
-
+        }
         if (value == null) {
             String fixedName = StateManager.fixIds(name);
-            if (!name.equals(fixedName))
+            if (!name.equals(fixedName)) {
                 return getProperties().get(fixedName);
+            }
         }
         return value;
     }
-
+    
     /**
      * Returns information about the current version of McIDAS-V and the IDV,
      * along with their respective build dates.

@@ -148,13 +148,13 @@ import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
-
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.PersistenceManager;
 import edu.wisc.ssec.mcidasv.StateManager;
 import edu.wisc.ssec.mcidasv.supportform.McvStateCollector;
 import edu.wisc.ssec.mcidasv.supportform.SupportForm;
+import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import edu.wisc.ssec.mcidasv.util.Contract;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.MemoryMonitor;
@@ -1652,7 +1652,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         }
         return attrs;
     }
-
+    
     /**
      * <p>
      * Builds a tree out of the bundles that should appear within the McV
@@ -1672,64 +1672,64 @@ public class UIManager extends IdvUIManager implements ActionListener {
         // handy reference to parent nodes
         Hashtable<String, BundleTreeNode> mapper =
             new Hashtable<String, BundleTreeNode>();
-
+            
         final String TOOLBAR = "Toolbar";
-
+        
         int bundleType = IdvPersistenceManager.BUNDLES_FAVORITES;
-
+        
         final List<SavedBundle> bundles =
             getPersistenceManager().getBundles(bundleType);
-
+            
         // iterate through all toolbar bundles
         for (SavedBundle bundle : bundles) {
             String categoryPath = "";
             String lastCategory = "";
             String grandParentPath = "";
-
+            
             // build the "path" to the bundle. these paths basically look like
             // "Toolbar>category>subcategory>." so "category" is a category of
             // toolbar bundles and subcategory is a subcategory of that. The
             // IDV will build nice JPopupMenus with everything that appears in
             // "category," so McV needs to do the same thing. thus McV needs to
             // figure out the complete path to each toolbar bundle!
-            List<String> categories = bundle.getCategories();
-            if (categories != null && categories.size() > 0
-                && categories.get(0).equals(TOOLBAR) == false)
+            List<String> categories = CollectionHelpers.cast(bundle.getCategories());
+            if (categories == null || categories.isEmpty() || !TOOLBAR.equals(categories.get(0))) {
                 continue;
-
+            }
+            
             for (String category : categories) {
                 grandParentPath = categoryPath;
-                categoryPath += category + ">";
+                categoryPath += category + '>';
                 lastCategory = category;
             }
-
+            
             // if the current path hasn't been encountered yet there is some
             // work to do.
-            if (mapper.containsKey(categoryPath) == false) {
+            if (!mapper.containsKey(categoryPath)) {
                 // create the "parent" node for this bundle. note that no
                 // SavedBundle is stored for parent nodes!
                 BundleTreeNode newParent = new BundleTreeNode(lastCategory);
-
+                
                 // make sure that we store the fact that we've seen this path
                 mapper.put(categoryPath, newParent);
-
+                
                 // also need to add newParent to grandparent's kids!
-                if (lastCategory.equals(TOOLBAR) == false) {
+                if (!TOOLBAR.equals(lastCategory)) {
                     BundleTreeNode grandParent = mapper.get(grandParentPath);
                     grandParent.addChild(newParent);
                 }
             }
-
+            
             // so the tree book-keeping (if any) is done and we can just add
             // the current SavedBundle to its parent node within the tree.
             BundleTreeNode parent = mapper.get(categoryPath);
             parent.addChild(new BundleTreeNode(bundle.getName(), bundle));
         }
-
+        
         // return the root of the tree.
         return mapper.get("Toolbar>");
     }
-
+    
     /**
      * Recursively builds the contents of the (first call) JPopupMenu. This is
      * where that tree annoyance stuff comes in handy. This is basically a

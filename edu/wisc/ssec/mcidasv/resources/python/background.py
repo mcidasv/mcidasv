@@ -8,7 +8,6 @@ import ucar.unidata.util.Range
 
 from contextlib import contextmanager
 
-# from shell import makeDataSource
 from decorators import deprecated
 from decorators import gui_invoke_later
 from decorators import gui_invoke_now
@@ -18,8 +17,17 @@ from org.slf4j import Logger
 from org.slf4j import LoggerFactory
 
 from java.awt import Rectangle
+
 from java.lang import NullPointerException
+from java.lang import StringBuffer
 from java.lang import System
+
+from java.text import FieldPosition
+from java.text import SimpleDateFormat
+
+from java.util import TimeZone
+from java.util.concurrent import FutureTask
+
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 from ucar.unidata.idv import DisplayInfo
 from ucar.unidata.idv.ui import IdvWindow
@@ -90,7 +98,6 @@ def managedDataSource(path, cleanup=True, dataType=None):
         if cleanup:
             boomstick()
             
-            
 class _MappedData(object):
     """ 'Abstract' class for combined VisAD Data / Python dictionary objects
     
@@ -159,6 +166,19 @@ class _MappedData(object):
             return self._getDirValue(key)
         except KeyError:
             return default
+
+    def getMacrosDict(self):
+        """return a dictionary mapping IDV macro strings to reasonable defaults
+        for this object
+        """
+        # subclasses should override!
+        raise NotImplementedError()
+
+    def getDefaultLayerLabel(self):
+        """return a reasonable default layer label for this class
+        """
+        # subclasses should override!
+        raise NotImplementedError()
             
     def __reversed__(self): raise NotImplementedError()
     def __setitem__(self, key, value): raise NotImplementedError()
@@ -176,16 +196,20 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         Make a _MappedAreaImageFlatField from an existing AreaImageFlatField
         """
         # self.__mappedObject = AreaImageFlatField.createImmediate(areaDirectory, imageUrl)
-        keys = ['bands', 'calinfo', 'calibration-scale-factor', 
-                'calibration-type', 'calibration-unit-name', 'center-latitude', 
-                'center-latitude-resolution', 'center-longitude', 
-                'center-longitude-resolution', 'directory-block', 'elements', 
-                'lines', 'memo-field', 'nominal-time', 'band-count', 
-                'sensor-id', 'sensor-type', 'source-type', 'start-time', 'url']
+        keys = [ 'band-count', 'bandList', 'bandNumber', 'bands', 
+                 'calibration-scale-factor', 'calibration-type', 
+                 'calibration-unit-name', 'calinfo', 'center-latitude', 
+                 'center-latitude-resolution', 'center-longitude', 
+                 'center-longitude-resolution', 'day', 'directory-block', 
+                 'elements', 'lines', 'memo-field', 'nominal-time', 
+                 'sensor-id', 'sensor-type', 'source-type', 'start-time', 
+                 'url','satband-band-label',]
+                 
         _MappedData.__init__(self, keys)
         self.areaFile = areaFile
         self.areaDirectory = areaDirectory
         self.addeDescriptor = addeDescriptor
+        self.addeSatBands = None
         # call the copy constructor
         AreaImageFlatField.__init__(self, aiff, False, aiff.getType(),
                 aiff.getDomainSet(), aiff.RangeCoordinateSystem,
@@ -200,10 +224,10 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         Create an AreaImageFlatField from a URL, then make a 
         _MappedAreaImageFlatField
         """
-        areaFile = AreaFileFactory.getAreaFileInstance(imageUrl)
-        areaDirectory = areaFile.getAreaDirectory()
-        addeDescriptor = AddeImageDescriptor(areaDirectory, imageUrl)
         aa = AreaAdapter(imageUrl, False)
+        areaFile = aa.getAreaFile()
+        areaDirectory = aa.getAreaDirectory()
+        addeDescriptor = AddeImageDescriptor(areaDirectory, imageUrl)
         ff = aa.getImage()
         samples = ff.unpackFloats()
         ftype = ff.getType()
@@ -213,17 +237,19 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         units = ff.getRangeUnits()[0]
         aiff = AreaImageFlatField(addeDescriptor, ftype, domainSet, 
                 rangeCoordSys, rangeSets, units, samples, "READLABEL")
+        areaFile.close()
         return cls(aiff, areaFile, areaDirectory, addeDescriptor, 
                 ff.getStartTime())
                 
-                
+    def clone(self):
+        # i'm so sorry :(
+        return self * 1
+        
     # NOTE: This is only suitable for proof-of-concept. 
     # Python does not allow Java-esque method overloading, so I had to fake 
     # it with this hack. 
     def binary(self, *args, **kwargs):
         argCount = len(args)
-        print 'caught simple binary op:', len(args)
-        print 'args:', args
         if argCount == 4:
             data, op, sampling_mode, error_mode = args
             result = AreaImageFlatField.binary(self, data, op, sampling_mode, 
@@ -241,24 +267,61 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         else:
             raise Exception(
                "_MappedAreaImageFlatField.binary got unexpected number of args")
-    
-
+            
     def test(self):
         return self.aid
-    
+        
+    def _getCalInfo(self):
+        calInfo = self.areaDirectory.getCalInfo()
+        if calInfo:
+            return map(str, list(calInfo[0]))
+        else:
+            return []
+            
+    def _getDay(self):
+        nominal = self.areaDirectory.getNominalTime()
+        dateFmt = SimpleDateFormat()
+        dateFmt.setTimeZone(TimeZone.getTimeZone('Z'))
+        dateFmt.applyPattern('yyyyDDD')
+        return str(dateFmt.format(nominal, StringBuffer(), FieldPosition(0)))
+        
+    def _getBand(self):
+        bands = self._getDirValue('bands')
+        if len(bands) == 1:
+            return bands[0]
+        else:
+            return bands
+            
+    def _handleSatBand(self):
+        # grab result if we haven't already done so
+        if isinstance(self.addeSatBands, FutureTask):
+            self.addeSatBands = self.addeSatBands.get()
+            
+        if self.addeSatBands:
+            bandDescr = self.addeSatBands.getBandDescr(
+                self.areaDirectory.getSensorID(),
+                self.areaDirectory.getSourceType())
+            return bandDescr[self._getBand()]
+        else:
+            return ''
+            
     def _getDirValue(self, key):
         from visad import DateTime
         
         if key not in self._keys:
             raise KeyError('unknown key: %s' % key)
-        if key == 'bands':
-            return self.areaDirectory.getBands()
+        if key == 'bands' or key == 'bandList':
+            return list(self.areaDirectory.getBands())
+        elif key == 'bandNumber':
+            return self._getBand()
+        elif key == 'day':
+            return self._getDay()
         elif key == 'calinfo':
-            return self.areaDirectory.getCalInfo()
+            return self._getCalInfo()
         elif key == 'calibration-scale-factor':
             return self.areaDirectory.getCalibrationScaleFactor()
         elif key == 'calibration-type':
-            return self.areaDirectory.getCalibrationType()
+            return str(self.areaDirectory.getCalibrationType())
         elif key == 'calibration-unit-name':
             return self.areaDirectory.getCalibrationUnitName()
         elif key == 'center-latitude':
@@ -270,13 +333,13 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         elif key == 'center-longitude-resolution':
             return self.areaDirectory.getCenterLongitudeResolution()
         elif key == 'directory-block':
-            return self.areaDirectory.getDirectoryBlock()
+            return list(self.areaDirectory.getDirectoryBlock())
         elif key == 'elements':
             return self.areaDirectory.getElements()
         elif key == 'lines':
             return self.areaDirectory.getLines()
         elif key == 'memo-field':
-            return self.areaDirectory.getMemoField()
+            return str(self.areaDirectory.getMemoField())
         elif key == 'nominal-time':
             return DateTime(self.areaDirectory.getNominalTime())
         elif key == 'band-count':
@@ -284,16 +347,37 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         elif key == 'sensor-id':
             return self.areaDirectory.getSensorID()
         elif key == 'sensor-type':
-            return self.areaDirectory.getSensorType()
+            return str(self.areaDirectory.getSensorType())
         elif key == 'source-type':
-            return self.areaDirectory.getSourceType()
+            return str(self.areaDirectory.getSourceType())
         elif key == 'start-time':
             return DateTime(self.areaDirectory.getStartTime())
         elif key == 'url':
-            return self.aid.getSource()
+            return str(self.aid.getSource())
+        elif key == 'satband-band-label':
+            return self._handleSatBand()
         else:
             raise KeyError('should not be capable of reaching here: %s')
 
+    def getMacrosDict(self):
+        """return a dictionary mapping IDV macro strings to reasonable defaults
+        for this object
+        """
+        #longname = '%s band %s %s' % (self['sensor-type'], self['bands'][0], self['calibration-type'])
+        # use SATBAND string now that we have it:
+        longname = '%s %s' % (self['sensor-type'], self['satband-band-label'])
+        shortname = '%s_Band%s_%s' % (self['sensor-id'], self['bands'][0],  self['calibration-type'])
+        macros = {'longname':longname, 'shortname':shortname}
+        return macros
+
+    def getDefaultLayerLabel(self):
+        """return a reasonable default layer label for this class
+        """
+        # note the double percent sign- we are 'escaping' the percent signs
+        #defaultLabel = '%s band %s %s %%timestamp%%' % (self['sensor-type'], self['bands'][0], self['calibration-type'])
+        # use %longname% now that it is getting set w/ SATBAND string:
+        defaultLabel = '%longname% %timestamp%'
+        return defaultLabel
 
 class _JavaProxy(object):
     """One sentence description goes here
@@ -419,11 +503,11 @@ class _Window(_JavaProxy):
         from ucar.unidata.idv import IdvResourceManager
         from edu.wisc.ssec.mcidasv.util.McVGuiUtils import idvGroupsToMcv
         skins = getStaticMcv().getResourceManager().getXmlResources(IdvResourceManager.RSC_SKIN)
-
+        
         skinToIdx = {}
         for x in range(skins.size()):
             skinToIdx[skins.getProperty('skinid', x)] = x
-        
+            
         if not skinId in skinToIdx:
             raise LookupError()
         else:
@@ -500,10 +584,10 @@ class _Tab(_JavaProxy):
         return [_Display(viewManager) for viewManager in self._JavaProxy__javaObject.getViewManagers()]
 
 class _Display(_JavaProxy):
-
+    
     # this allows a _Layer to find it's associated _Display
     displayWrappers = []
-
+    
     def __init__(self, javaObject, labelDict=None):
         """Blank for now. javaObject = ViewManager
            displayType
@@ -541,7 +625,7 @@ class _Display(_JavaProxy):
         # MapViewManager.getUseGlobeDisplay(), IdvUIManager.COMP_GLOBEVIEW
         # TransectViewManager, IdvUIManager.COMP_TRANSECTVIEW
         from ucar.unidata.idv.ui import IdvUIManager
-
+        
         className = self._JavaProxy__javaObject.getClass().getCanonicalName()
         if className == 'ucar.unidata.idv.MapViewManager':
             if self._JavaProxy__javaObject.getUseGlobeDisplay():
@@ -597,7 +681,7 @@ class _Display(_JavaProxy):
             window.getContentPane().add(navigatedComponent)
             
         window.pack()
-        print 'new: %s\ncur: %s\nmin: %s\nmax: %s\nprf: %s' % (size, navigatedComponent.getSize(), navigatedComponent.getMinimumSize(), navigatedComponent.getMaximumSize(), navigatedComponent.getPreferredSize())
+        # print 'new: %s\ncur: %s\nmin: %s\nmax: %s\nprf: %s' % (size, navigatedComponent.getSize(), navigatedComponent.getMinimumSize(), navigatedComponent.getMaximumSize(), navigatedComponent.getPreferredSize())
         
     @gui_invoke_later
     def setSizeBackground(self, width, height):
@@ -709,7 +793,7 @@ class _Display(_JavaProxy):
             
         currentProj = self._JavaProxy__javaObject.getMapDisplay().getMapProjection()
         if projObj == currentProj:
-            #print 'projections match!'
+            # print 'projections match!'
             self._JavaProxy__javaObject.getMapDisplay().resetMapParameters(True)
         else:
             #print 'projections differ: %s %s' % (projObj, currentProj)
@@ -735,7 +819,7 @@ class _Display(_JavaProxy):
         
         # dict of mapName->boolean (describes if a map is enabled or not.)
         # this might fail for transect displays....
-        mapLayer = self._JavaProxy__javaObject.getControls()[0]
+        mapLayer = self.getMapLayer()
         mapStates = {}
         for mapState in mapLayer.getMapStates():
             mapStates[mapState.getSource()] = mapState.getVisible()
@@ -747,7 +831,7 @@ class _Display(_JavaProxy):
         the display.
         """
         
-        mapLayer = self._JavaProxy__javaObject.getControls()[0]
+        mapLayer = self.getMapLayer()
         for currentState in mapLayer.getMapStates():
             mapSource = currentState.getSource()
             if mapSource in mapStates:
@@ -788,6 +872,36 @@ class _Display(_JavaProxy):
         
     @gui_invoke_later
     def setCenter(self, lat, lon, scale=1.0):
+        """Centers the display over a given latitude and longitude.
+        
+        Please be aware that something like:
+        activeDisplay().setCenter(lat, lon, 1.2)
+        activeDisplay().setCenter(lat, lon, 1.2)
+        the second call will rescale the display to be 1.2 times the size of
+        the display *after the first call.* Or, those calls are essentially
+        the same as "activeDisplay().setCenter(lat, lon, 2.4)".
+        
+        Note on above issue: it might be useful if this does a "resetProjection" every time,
+        so that "scale" behaves more predicatbly   --mike
+        
+        Args:
+        lat:
+        lon:
+        scale: Optional parameter for "zooming". Default value (1.0) results in no rescaling;
+            greater than 1.0 "zooms in", less than 1.0 "zooms out"
+        """
+        validated = LatLonPointImpl(lat, lon)
+        earthLocation = Util.makeEarthLocation(validated.getLatitude(), validated.getLongitude())
+        mapDisplay = self._JavaProxy__javaObject.getMapDisplay()
+        
+        # no idea what the problem is here...
+        mapDisplay.centerAndZoom(earthLocation, False, scale)
+        # try to position correctly
+        mapDisplay.centerAndZoom(earthLocation, False, 1.0)
+        mapDisplay.centerAndZoom(earthLocation, False, 1.0)
+        
+    @gui_invoke_later
+    def testCenter(self, lat, lon, scale=1.0):
         """Centers the display over a given latitude and longitude.
         
         Please be aware that something like:
@@ -833,15 +947,20 @@ class _Display(_JavaProxy):
         """Sets the display's background color to the given AWT color. Defaults to cyan."""
         
         self._JavaProxy__javaObject.getMapDisplay().setBackground(color)
-
-#    def addLayer(self, newLayer):
-#        """Adds a new display layer (display control) to the end of this display's layer list."""
-#        self._JavaProxy__javaObject.addDisplayInfo(DisplayInfo(_))
-
-#    def getMapLayer(self):
-#        # the map layer will typically be the first layer... still buggy :(
-#        return self._JavaProxy__javaObject.getControls()[0]
-
+        
+    @gui_invoke_later
+    def getMapLayer(self):
+        """Returns the map layer for this display, or None if no map layer could be found."""
+        # TODO(jon): can there be multiple MapDisplayControls per ViewManager?
+        from ucar.unidata.idv.control import MapDisplayControl
+        controls = self._JavaProxy__javaObject.getControls()
+        mapLayer = None
+        for control in controls:
+            if isinstance(control, MapDisplayControl):
+                mapLayer = _Layer(control)
+                break
+        return mapLayer
+        
     @gui_invoke_later
     def getLayer(self, index):
         """Returns the layer at the given index (zero-based!) for this Display"""
@@ -880,7 +999,7 @@ class _Display(_JavaProxy):
             if desc.label == layerType:
                 controlID = desc.controlId
         if controlID == None:
-            raise ValueError("Layer type '%s' is invalid; please see output of allLayerTypes() for available layer types.")
+            raise ValueError("Layer type '%s' is invalid; please see output of allLayerTypes() for available layer types." % (layerType))
         if controlID == 'imagesequence':
             # hack for backward compatibility: don't let user do an
             # imagesequence since it requires a strange DataChoice and 
@@ -898,31 +1017,54 @@ class _Display(_JavaProxy):
         # the imagedisplay control appears to want an ImageSequenceImpl,
         # so try to force one.
         # This will work if data is an array of NavigatedImage's (or
-        # SingleBandedImage's).
+        # SingleBandedImage's), or just a single one of those.
+        firstData = data  # keep a ref to the first image in the list
+                           # for layer labeling, etc.
         try:
-            # (maybe we only want to do this in the 'imagedisplay' case?)
             data = ImageSequenceImpl(data)
+            firstData = firstData[0]
         except TypeError:
-            #print "DEBUG: ImageSequenceImpl constructor failed but thats ok"
+            # try one more time for case of single image
+            try:
+                data = ImageSequenceImpl([data])
+                # firstData is set properly here
+            except TypeError:
+                # ImageSequenceImpl constructor failed for both single
+                # image and list of image cases, but that's OK
+                firstData = None
+
+        # figure out the shortname and longname macros if possible,
+        # and default layer label
+
+        # this is questionable... but I think this is better for debugging
+        # than just setting to an empty string
+        longname = 'unable to set longname macro'
+        shortname = 'unable to set shortname macro'
+
+        defaultLabel = ''
+        try:
+            longname = firstData.getMacrosDict()['longname']
+            shortname = firstData.getMacrosDict()['shortname']
+            defaultLabel = firstData.getDefaultLayerLabel()
+        except AttributeError:
+            # should catch case where firstData is None, AND case where
+            # the method doesn't exist
+            # (not a dealbreaker...should probably log it though?)
             pass
-            
+
         # use the full doMakeControl signature,
         # so we can send False as initDisplayInThread
+
+        # first param of DataDataChoice constructor is %shortname% macro
+        ddc = DataDataChoice(shortname, data)
+        # setting the description should set the %longname% macro
+        ddc.setDescription(longname)
         newLayer = mcv.doMakeControl( 
-                [DataDataChoice("shortname macro goes here", data)],
+                [ddc],
                 getStaticMcv().getControlDescriptor(controlID),
                 None, None, False)
         
         wrappedLayer = _Layer(newLayer)
-        
-        defaultLabel = ''
-        try:
-            defaultLabel = '%s - %s' % (data['sensor-type'], data['nominal-time'])
-        except (TypeError, KeyError):
-            # get TypeError if data isn't a dictionary, get KeyError if
-            # data is a dictionary but doesn't contain the desired key
-            #print 'DEBUG: unable to create default layer label'
-            pass
             
         wrappedLayer.setLayerLabel(label=defaultLabel)
         
@@ -944,7 +1086,7 @@ class _Display(_JavaProxy):
             
         """
         import visad.DisplayException as DisplayException
-
+        
         # this pause is apparently critical
         pause()
         
@@ -965,7 +1107,7 @@ class _Display(_JavaProxy):
                     # this should only happen if captureImage is called
                     # with a height and width after an annotate() in the background
                     raise RuntimeError("Height/width for captureImage is currently not supported after a text annotation. Height/Width can be specified with buildWindow or openBundle instead, then leave height/width out of subsequent calls to captureImage.")
-        
+                    
         imageFile = java.io.File(filename)
         # yes, I'm still calling writeImage. But it's a different writeImage!!!
         #  (this is ViewManager.writeImage, not ImageGenerator.writeImage)
@@ -1031,7 +1173,7 @@ class _Display(_JavaProxy):
         import visad.georef.EarthLocationTuple as EarthLocationTuple
         import ucar.unidata.idv.control.drawing.TextGlyph as TextGlyph
         import ucar.unidata.idv.control.drawing.DrawingGlyph as DrawingGlyph
-
+        
         # Force into offscreen mode for the moment so drawing control
         # properties window doesn't flash
         # (see DisplayControlImpl.createIdvWindow for why this works)
@@ -1046,12 +1188,12 @@ class _Display(_JavaProxy):
         drawCtl.setLegendLabelTemplate(text)
         drawCtl.setShowInDisplayList(False)
         pause()
-
+        
         # set offscreen mode back to whatever it was
         getStaticMcv().getArgsManager().setIsOffScreen(initOffScreen)
-
+        
         glyph = TextGlyph(drawCtl, None, text)
-
+        
         horAlign = str(alignment[0]).lower()
         vertAlign = str(alignment[1]).lower()
         if str(alignment).lower() != "center":
@@ -1063,7 +1205,7 @@ class _Display(_JavaProxy):
                     and vertAlign != "center"
                     and vertAlign != "bottom"):
                 raise ValueError('second element of alignment keyword must be "top", "center", or "bottom"')
-
+                
         # deal with horizontal/vertical justification keywords.
         # Unfortunately, we need to "reverse" the justification w.r.t.
         # IDV terminology ("right" becomes "left"), because we've decided
@@ -1083,7 +1225,7 @@ class _Display(_JavaProxy):
         if (str(alignment).lower() == "center"):
             glyph.setHorizontalJustification(TextGlyph.JUST_CENTER)
             glyph.setVerticalJustification(TextGlyph.JUST_CENTER)
-        
+            
         if (lat != None) and (lon != None) and (
                 (line == None) and (element == None)):
             # lat lon point
@@ -1215,7 +1357,7 @@ class _Layer(_JavaProxy):
     @gui_invoke_later
     def setEnhancementTable(self, ctName):
         """Change the enhancement table.
-
+        
         Args:
             ctName:  the name of the enhancement table. Unlike setProjection,
                      you don't NEED to specify "parent" table directories,
@@ -1271,7 +1413,7 @@ class _Layer(_JavaProxy):
         self._JavaProxy__javaObject.setRange(currentRange)
         
     @gui_invoke_later
-    def setColorScale(self, visible=True, placement=None, font=None, style=None, size=None, color=None):
+    def setColorScale(self, visible=True, placement=None, font=None, style=None, size=None, color=None, showUnit=None):
         """Wrapper function for all the color scale manipulation stuff
         
         Args:
@@ -1300,6 +1442,9 @@ class _Layer(_JavaProxy):
             
         if (color != None):
             self.setColorScaleFontColor(color)
+
+        if (showUnit != None):
+            self.setColorScaleShowUnit(showUnit)
             
     @gui_invoke_later
     def setColorScaleVisible(self, status):
@@ -1381,6 +1526,16 @@ class _Layer(_JavaProxy):
         
         info = self._JavaProxy__javaObject.getColorScaleInfo()
         info.setLabelColor(newColor)
+        self._JavaProxy__javaObject.setColorScaleInfo(info)
+
+    @gui_invoke_later
+    def setColorScaleShowUnit(self, showUnit):
+        """Set whether the unit is shown at the end of the color scale
+        Args:
+            showUnit:  boolean, to set visibility of unit label
+        """
+        info = self._JavaProxy__javaObject.getColorScaleInfo()
+        info.setUnitVisible(showUnit)
         self._JavaProxy__javaObject.setColorScaleInfo(info)
         
     @gui_invoke_later
@@ -1928,10 +2083,11 @@ def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
         try:
             window = PersistenceManager.buildDynamicSkin(width, height, rows, cols, panelTypes)
             if width > 0 and height > 0:
-                print 'creating window: width=%d height=%d rows=%d cols=%d panelTypes=%s' % (width, height, rows, cols, panelTypes)
+                # print 'creating window: width=%d height=%d rows=%d cols=%d panelTypes=%s' % (width, height, rows, cols, panelTypes)
+                pass
             else:
                 bounds = window.getBounds()
-                print 'creating window: width=%d height=%d rows=%d cols=%d panelTypes=%s' % (bounds.width, bounds.height, rows, cols, panelTypes)
+                # print 'creating window: width=%d height=%d rows=%d cols=%d panelTypes=%s' % (bounds.width, bounds.height, rows, cols, panelTypes)
                 
             panels = []
             for holder in window.getComponentGroups()[0].getDisplayComponents():
@@ -1991,9 +2147,7 @@ def makeLogger(name):
     """ """
     return  LoggerFactory.getLogger(name)
     
-@gui_invoke_later
-# def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=None):
-def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=None):
+def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=None, mode=None):
     """Open a bundle using the decodeXmlFile from PersistenceManager
 
     Args:
@@ -2011,6 +2165,12 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=No
         The keys specify the name of the data source (as shown in e.g.,
         the Field Selector tab).  The values can be either a single
         file or a list of files to use for the given datasource.
+
+        mode method used to load the bundle
+            newWindow - opens bundle in a new window w/o removing any previously existing layers and data
+            merge - merges the bundle's layers and data with the current tab in your existing display window
+            newTab - adds a new tab(s) to your current display window for the bundle's data w/o removing any previously existing layers and data
+            replace - replaces the current session in place of the bundle.  This removes any previously loaded layers and data as well as your existing window/tab/panel configuration (default).
 
     Returns:
         the result of activeDisplay()
@@ -2053,17 +2213,34 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=No
     pref_confirm_layers = sm.getPreference(mpm.PREF_CONFIRM_REMOVE_LAYERS, True)
     pref_confirm_both = sm.getPreference(mpm.PREF_CONFIRM_REMOVE_BOTH, True)
     
+    # see McIdasPreferenceManager:1360 for what these should get set to
+    if (str(mode).lower() == 'newwindow'):
+        sm.putPreference(my_mcv.PREF_OPEN_REMOVE, False)
+        sm.putPreference(my_mcv.PREF_OPEN_MERGE, False)
+    elif (str(mode).lower() == 'merge'):
+        sm.putPreference(my_mcv.PREF_OPEN_REMOVE, True)
+        sm.putPreference(my_mcv.PREF_OPEN_MERGE, False)
+    elif (str(mode).lower() == 'newtab'):
+        sm.putPreference(my_mcv.PREF_OPEN_REMOVE, False)
+        sm.putPreference(my_mcv.PREF_OPEN_MERGE, True)
+    elif (str(mode).lower() == 'replace'):
+        sm.putPreference(my_mcv.PREF_OPEN_REMOVE, True)
+        sm.putPreference(my_mcv.PREF_OPEN_MERGE, True)
+    else:
+        # do "replace" by default"
+        sm.putPreference(my_mcv.PREF_OPEN_REMOVE, True)
+        sm.putPreference(my_mcv.PREF_OPEN_MERGE, True)
     # set relevant preferences to values that make sense for non-GUI mode
     sm.putPreference(my_mcv.PREF_ZIDV_ASK, False)
     sm.putPreference(my_mcv.PREF_OPEN_ASK, False)
     # For REMOVE and MERGE, we want to do the same thing as what McIdasPreferenceManager
     # does for "Replace Session" (set both to true)
-    sm.putPreference(my_mcv.PREF_OPEN_REMOVE, True)
-    sm.putPreference(my_mcv.PREF_OPEN_MERGE, True)
     sm.putPreference(my_mcv.PREF_ZIDV_SAVETOTMP, True)
     sm.putPreference(mpm.PREF_CONFIRM_REMOVE_DATA, False)
     sm.putPreference(mpm.PREF_CONFIRM_REMOVE_LAYERS, False)
     sm.putPreference(mpm.PREF_CONFIRM_REMOVE_BOTH, False)
+
+
     # ZIDV_DIRECTORY should come from keyword
     # (also need to check for existence of this directory, etc.)
     #my_mcv.getStore().put(my_mcv.PREF_ZIDV_DIRECTORY, something??)
@@ -2119,7 +2296,6 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=No
         
     return display  # TODO: return list of all displays instead
     
-@gui_invoke_later
 def writeImageAtIndex(fname, idx, params='', quality=1.0):
     """Captures a particular animation step from the active display.
     

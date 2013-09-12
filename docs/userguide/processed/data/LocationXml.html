@@ -35,9 +35,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/LocationXml.
 <li><a href="#xml">Locations XML</a></li>
 <li><a href="#csv">CSV Format</a></li>
 <li><a href="#georss">GeoRSS Format</a></li>
+<li><a href="#kmlkmz">KML/KMZ Format</a></li>
 </ul>
-<a name="xml" id="xml"></a>
-<div class="pagesubtitle">Locations XML</div>
+<div class="pagesubtitle"><a name="xml" id="xml"></a>Locations XML</div>
 <p>The main one format McIDAS-V uses is a custom locations xml format. This format still has some nomenclature from when it was atmospheric science related (e.g. "stations"). A simple example:</p>
 <blockquote>
 <pre>
@@ -81,13 +81,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/LocationXml.
          lat="39:47:12" lon="-104:32:45" elev="1675"/&gt;
 </pre></blockquote>
 <p>These can be displayed by the station model used in the <a href="../controls/StationLocationControl.html">Location Display Control</a>.</p>
-<p>If you want to create a permenant list of station that shows up in the <strong>Display-&gt;Locations</strong> menu in the Main Display window, you can create a file called userstations.xml in the McIDAS-V directory under your user's home directory. The format would look like:</p>
+<p>If you want to create a permanent list of station that shows up in the <strong>Display-&gt;Locations</strong> menu in the Main Display window, you can create a file called userstations.xml in the McIDAS-V directory under your user's home directory. The format would look like:</p>
 <blockquote>
 <pre>
 <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;ISO-8859-1&quot;?&gt;
 &lt;stationtables&gt;
 
-&lt;stationtable name=&quot;SubsetA&quot; caregory=&quot;My Custom Stations&quot;&gt;
+&lt;stationtable name=&quot;SubsetA&quot; category=&quot;My Custom Stations&quot;&gt;
 (list of stations for SubsetA)
 &lt;/stationtable&gt;
 
@@ -96,8 +96,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/LocationXml.
 &lt;/stationtable&gt;
 &lt;/stationtables&gt;</pre></blockquote>
 <p>This will show up in the <strong>Display->Locations</strong> menu as a top menu called <strong>My Custom Stations</strong> and sub menus <strong>SubsetA</strong> and <strong>SubsetB</strong>. After adding this XML file in through the Files/Directories chooser, you must first restart McIDAS-V before the stations will be listed.</p>
-<p><a name="csv" id="csv"></a></p>
-<div class="pagesubtitle">CSV Format</div>
+<div class="pagesubtitle"><a name="csv" id="csv"></a>CSV Format</div>
 <p>Location data can be defined in a CSV (Comma Separated Value) format. The first line is a comma separated list of column names. There must be columns that are latitude and longitude. These are denoted with (case insensitive):</p>
 <pre>
 latitude
@@ -120,10 +119,11 @@ Boulder,40,-107,5430[feet],CO
 Miami,30,-95,0[feet],FL
 ...
 </pre>
-<a name="georss" id="georss"></a>
-<div class="pagesubtitle">GeoRSS Format</div>
-<p>McIDAS-V can also read GeoRSS formats. This is a geocoded RSS feed. An example is the USGS earthquake feed:</p>
-<p><a href="http://earthquake.usgs.gov/eqcenter/recenteqsww/catalogs/eqs7day-M2.5.xml" target="_blank">http://earthquake.usgs.gov/eqcenter/recenteqsww/catalogs/eqs7day-M2.5.xml</a></p>
+<div class="pagesubtitle"><a name="georss" id="georss"></a>GeoRSS Format</div>
+<p>McIDAS-V can also read GeoRSS formats. This is a geocoded RSS feed.</p>
+<div class="pagesubtitle"><a name="kmlkmz" id="kmlkmz"></a>KML/KMZ Format</div>
+<p>McIDAS-V can also read KML/KMZ formats.&nbsp;This type of file can be read in through the <a href="choosers/FileChooser.html">General&gt;Files/Directories Chooser</a> of the <strong>Data Sources</strong> tab of the Data Explorer with the <em>Google Earth Files KML/KMZ</em> <strong>Data Type</strong>.&nbsp; An example file from the USGS&nbsp;can be found here:</p>
+<p><a href="http://comcat.cr.usgs.gov/earthquakes/eventpage/usb000ije3.kml">http://comcat.cr.usgs.gov/earthquakes/eventpage/usb000ije3.kml</a></p>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">

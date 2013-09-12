@@ -36,12 +36,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JTextField;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -56,30 +52,26 @@ import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.Range;
 import org.jfree.data.statistics.HistogramType;
-import org.jfree.util.Log;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.idv.DisplayControl;
+import ucar.unidata.idv.control.DisplayControlImpl;
+import ucar.unidata.idv.control.chart.DataChoiceWrapper;
+import ucar.unidata.idv.control.chart.HistogramWrapper;
+import ucar.unidata.idv.control.chart.MyHistogramDataset;
+import ucar.unidata.idv.control.multi.DisplayGroup;
+import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.LogUtil;
 
 import visad.FlatField;
 import visad.Unit;
 import visad.VisADException;
 
-import ucar.unidata.data.DataCancelException;
-import ucar.unidata.data.DataChoice;
-import ucar.unidata.idv.DisplayControl;
-import ucar.unidata.idv.control.DisplayControlImpl;
-import ucar.unidata.idv.control.chart.ChartWrapper;
-import ucar.unidata.idv.control.chart.DataChoiceWrapper;
-import ucar.unidata.idv.control.chart.HistogramWrapper;
-import ucar.unidata.idv.control.chart.MyHistogramDataset;
-import ucar.unidata.idv.control.multi.DisplayGroup;
-import ucar.unidata.idv.ui.ImageSequenceGrabber;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Misc;
-
 /**
- * Wraps a JFreeChart histograms to ease working with VisAD data.
+ * Wraps a JFreeChart histogram to ease working with VisAD data.
  */
 public class McIDASVHistogramWrapper extends HistogramWrapper {
 
@@ -199,11 +191,10 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
                             } else {
                                 newRange = new ucar.unidata.util.Range(newLow, newHigh);
                             }
-                            ((DisplayControlImpl)imageControl).setRange(newRange);
+                            ((DisplayControlImpl) imageControl).setRange(newRange);
                         } catch (Exception e) {
                             System.out.println("Can't set new range e=" + e);
                         }
-                        ValueAxis rangeAxis = plot.getRangeAxis();
                     }
                 });
 
@@ -242,7 +233,7 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
     }
 
     /**
-     * reset the axis'
+     * reset the histogram to its previous range
      */
     public void resetPlot() {
         if (chart == null) {
@@ -251,10 +242,10 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
         if (!(chart.getPlot() instanceof XYPlot)) {
             return;
         }
-        XYPlot plot = (XYPlot)chart.getPlot();
+        XYPlot plot = (XYPlot) chart.getPlot();
         int    rcnt = plot.getRangeAxisCount();
         for (int i = 0; i < rcnt; i++) {
-            ValueAxis axis = (ValueAxis)plot.getRangeAxis(i);
+            ValueAxis axis = (ValueAxis) plot.getRangeAxis(i);
             axis.setAutoRange(true);
         }
         int dcnt = plot.getDomainAxisCount();
@@ -265,7 +256,6 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
             } catch (Exception e) {
                 logger.warn("jfreechart does not like ranges to be high -> low", e);
             }
-            axis.setAutoRange(true);
         }
     }
 

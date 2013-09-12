@@ -1,6 +1,15 @@
+import os
+import hashlib
+import threading
+import urllib2
+
 from collections import namedtuple
 
 from background import _MappedAreaImageFlatField
+
+from java.util.concurrent import Callable
+from java.util.concurrent import Executors
+from java.util.concurrent import ExecutorCompletionService
 
 from edu.wisc.ssec.mcidas import AreaFile
 from edu.wisc.ssec.mcidas import AreaFileException
@@ -8,9 +17,12 @@ from edu.wisc.ssec.mcidas import AreaFileFactory
 from edu.wisc.ssec.mcidas import AreaDirectory
 from edu.wisc.ssec.mcidas import AreaDirectoryList
 from edu.wisc.ssec.mcidas.adde import AddeURLException
+from edu.wisc.ssec.mcidas.adde import AddeTextReader
+from edu.wisc.ssec.mcidas.adde import AddeSatBands
 
 from ucar.unidata.data.imagery import AddeImageDescriptor
 from ucar.visad.data import AreaImageFlatField
+from ucar.unidata.util import StringUtil
 
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 
@@ -24,13 +36,24 @@ from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import strToServerName
 from edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry import AddeFormat
 from edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry import ServerName
 
+from visad import DateTime
+
 from visad.data.mcidas import AreaAdapter
+
+from java.lang import String
+from java.lang import StringBuffer
+from java.text import FieldPosition
+from java.text import SimpleDateFormat
+from java.util import Calendar
+from java.util import Date
+from java.util import GregorianCalendar
+from java.util import TimeZone
 
 # credit for enum goes to http://stackoverflow.com/a/1695250
 def enum(*sequential, **named):
     enums = dict(zip(sequential, range(len(sequential))), **named)
     return type('Enum', (), enums)
-
+    
 def _areaDirectoryToDictionary(areaDirectory):
     d = dict()
     d['bands'] = areaDirectory.getBands()
@@ -53,7 +76,39 @@ def _areaDirectoryToDictionary(areaDirectory):
     d['source-type'] = areaDirectory.getSourceType()
     d['start-time'] = areaDirectory.getStartTime()
     return d
-
+    
+def _normalizeDates(dates):
+    # string only ever signifies single day
+    # list or set signifies at least one day
+    # tuple of two items signifies range of days
+    normalized = None
+    if dates is None:
+        normalized = ['']
+    elif isinstance(dates, (str, unicode, String)):
+        normalized = [str('&DAY='+dates)]
+    elif isinstance(dates, int):
+        normalized = ['&DAY='+str(dates)]
+    elif len(dates) == 2:
+        start, stop = int(dates[0]), int(dates[1])
+        normalized = ['&DAY=%s %s' % (str(start), str(stop))]
+    else:
+        normalized = ['']
+    return normalized
+    
+def _normalizeUnits(units):
+    # how to handle units='ALL'?
+    normalized = None
+    if isinstance(units, str):
+        if units == 'ALL':
+            normalized = []
+        else:
+            normalized = [units]
+    elif isinstance(units, list) or isinstance(units, tuple) or isinstance(units, set):
+        normalized = [unit for unit in units]
+    elif not units:
+        normalized = ['BRIT']
+    return normalized
+    
 _formats = {
     "AMSR-E Rain Product":                                     AddeFormat.AMSRE_RAIN_PRODUCT,
     "AMRR":                                                    AddeFormat.AMSRE_RAIN_PRODUCT,
@@ -109,6 +164,7 @@ _formats = {
 }
 
 DEFAULT_ACCOUNTING = ('idv', '0')
+DEFAULT_SIZE = (480, 640)
 
 CoordinateSystems = enum('AREA', 'LATLON', 'IMAGE')
 AREA = CoordinateSystems.AREA
@@ -119,6 +175,88 @@ Places = enum(ULEFT='Upper Left', CENTER='Center')
 ULEFT = Places.ULEFT
 CENTER = Places.CENTER
 
+MAX_CONCURRENT = 5
+
+pool = Executors.newFixedThreadPool(MAX_CONCURRENT)
+
+ecs = ExecutorCompletionService(pool)
+
+def _satBandUrl(**kwargs):
+    # needs at least server, port, debug, user, and proj
+    # follow AddeImageChooser.appendMiscKeyValues in determining which extra keys to add
+    satbandUrlFormat = "adde://%(server)s/text?&FILE=SATBAND&COMPRESS=gzip&PORT=%(port)s&DEBUG=%(debug)s&VERSION=1&USER=%(user)s&PROJ=%(proj)s"
+    return satbandUrlFormat % kwargs
+    
+# NOTE: remember that Callable means that the "task" returns some kind of 
+# result from CallableObj.get()!
+# RunnableObj.get() just returns null.
+class _SatBandReq(Callable):
+    def __init__(self, url):
+        self.url = url
+        self.result = None
+        self.thread_used = None
+        self.exception = None
+        
+    def __str__(self):
+        if self.exception:
+             return "[%s] %s download error %s" % \
+                (self.thread_used, self.url, self.exception)
+        elif self.completed:
+            return "[%s] %s downloaded %dK" % \
+                (self.thread_used, self.url, len(self.result)/1024)
+                 
+        elif self.started:
+            return "[%s] %s started" % \
+                (self.thread_used, self.url)
+        else:
+            return "[%s] %s not yet scheduled" % \
+                (self.thread_used, self.url)
+                
+    # needed to implement the Callable interface;
+    # any exceptions will be wrapped as either ExecutionException
+    # or InterruptedException
+    def call(self):
+        self.thread_used = threading.currentThread().getName()
+        try:
+            reader = AddeTextReader(self.url)
+            if reader.getStatusCode() > 0:
+                lines = StringUtil.listToStringArray(reader.getLinesOfText())
+                self.result = AddeSatBands(lines)
+        except Exception, ex:
+            self.exception = ex
+        return self.result
+        
+class _AreaDirectoryList(object):
+    def __init__(self, values=None):
+        self.values = values or []
+        
+    def __len__(self):
+        return len(self.values)
+        
+    def __getitem__(self, key):
+        return self.values[key]
+        
+    def __setitem__(self, key, value):
+        self.values[key] = value
+        
+    def __delitem__(self, key):
+        del self.values[key]
+        
+    def __iter__(self):
+        return iter(self.values)
+        
+    def __reversed__(self):
+        return _AreaDirectoryList(reversed(self.values))
+        
+    def append(self, value):
+        self.values.append(value)
+        
+    def __repr__(self):
+        return repr(self.values)
+        
+    def __str__(self):
+        return str(self.values)
+        
 class AddeJythonError(Exception): pass
 class AddeJythonInvalidDatasetError(AddeJythonError): pass
 class AddeJythonInvalidProjectError(AddeJythonError): pass
@@ -211,26 +349,23 @@ params_sizeall = dict(
 
 def enableAddeDebug():
     EntryStore.setAddeDebugEnabled(True)
-
-
+    
 def disableAddeDebug():
     EntryStore.setAddeDebugEnabled(False)
-
-
+    
 def isAddeDebugEnabled(defaultValue=False):
     return EntryStore.isAddeDebugEnabled(defaultValue)
-
-
+    
 def getDescriptor(dataset, imageType):
     """Get the descriptor for a local ADDE entry
-
+    
     (this wasn't included in the 1.2 release, but enough people are using it
     that we'll want to keep it for backward compatibility.)
         
     Args:
         dataset: Dataset field from local ADDE server
         imageType: Image Type field from local ADDE server
-
+        
     Returns: valid descriptor string or -1 if no match was found
     """
     # get a list of local ADDE server entries
@@ -242,11 +377,10 @@ def getDescriptor(dataset, imageType):
             return desc
     # no matching descriptor was found so return an error value:
     return -1
-
-
+    
 def getLocalADDEEntry(dataset, imageType):
     """Get the local ADDE entry matching the given dataset and imageType.
-        
+    
     Args:
         dataset: Local ADDE entry dataset name.
         
@@ -262,7 +396,7 @@ def getLocalADDEEntry(dataset, imageType):
             return entry
     # no matching descriptor was found so return an error value:
     return None
-
+    
 def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
     """Creates a local ADDE entry in the server table.
     
@@ -323,20 +457,176 @@ def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
     getStaticMcv().getServerManager().addEntry(localEntry)
     return localEntry
     
-
-def listADDEImages(server, dataset, descriptor,
+def listADDEImageTimes(localEntry=None,
+    server=None, dataset=None, descriptor=None,
     accounting=DEFAULT_ACCOUNTING,
     location=None,
     coordinateSystem=CoordinateSystems.LATLON,
-    place=Places.CENTER,
-    mag=(1, 1),
-    position='all',
-    unit='BRIT',
+    place=None,
+    mag=None,
+    position=None,
+    unit=None,
     day=None,
     time=None,
     debug=False,
     band=None,
-    size=None):
+    size=None,
+    showUrls=True):
+    
+    if localEntry:
+        server = localEntry.getAddress()
+        dataset = localEntry.getGroup()
+        descriptor = localEntry.getDescriptor().upper()
+    elif (server is None) or (dataset is None) or (descriptor is None):
+        raise TypeError("must provide localEntry or server, dataset, and descriptor values.")
+        
+    if server == "localhost" or server == "127.0.0.1":
+        port = EntryStore.getLocalPort()
+    else:
+        port = "112"
+        
+    # server = '%s:%s' % (server, port)
+    
+    user = accounting[0]
+    proj = accounting[1]
+    debug = str(debug).lower()
+    
+    if mag:
+        mag = '&MAG=%s %s' % (mag[0], mag[1])
+    else:
+        mag = ''
+        
+    if unit:
+        origUnit = unit
+        unit = '&UNIT=%s' % (unit)
+    else:
+        # origUnit = None
+        unit = ''
+        
+    if place is Places.CENTER:
+        place = '&PLACE=CENTER'
+    elif place is Places.ULEFT:
+        place = '&PLACE=ULEFT'
+    else:
+        # raise ValueError()
+        place = ''
+        
+    if coordinateSystem is CoordinateSystems.LATLON:
+        coordSys = 'LATLON'
+    elif coordinateSystem is CoordinateSystems.AREA or coordinateSystem is CoordinateSystems.IMAGE:
+        coordSys = 'LINELE'
+    else:
+        raise ValueError()
+        
+    if location:
+        location = '&%s=%s %s' % (coordSys, location[0], location[1])
+    else:
+        location = ''
+        
+    if size:
+        if size == 'ALL':
+            size = '&SIZE=99999 99999'
+        else:
+            size = '&SIZE=%s %s' % (size[0], size[1])
+    else:
+        size = ''
+        
+    if time:
+        time = '&TIME=%s %s I' % (time[0], time[1])
+    else:
+        time = ''
+        
+    if band:
+        band = '&BAND=%s' % (str(band))
+    else:
+        band = '&BAND=ALL'
+        
+    if position is not None:
+        if isinstance(position, int):
+            position = '&POS=%s' % (position)
+        elif isinstance(position, tuple):
+            if len(position) != 2:
+                raise ValueError('position range may only contain values for the beginning and end of a range.')
+            position = '&POS=%s %s' % (str(position[0]), str(position[1]))
+        else:
+            position = '&POS=%s' % (str(position).upper())
+    else:
+        position = '&POS=0'
+        
+    tz = TimeZone.getTimeZone('Z')
+    
+    dateFormat = SimpleDateFormat()
+    dateFormat.setTimeZone(tz)
+    dateFormat.applyPattern('yyyyDDD')
+    
+    timeFormat = SimpleDateFormat();
+    timeFormat.setTimeZone(tz)
+    timeFormat.applyPattern('HH:mm:ss')
+    
+    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s%(unit)s%(mag)s%(day)s%(time)s%(position)s"
+    
+    urls = []
+    areaDirectories = []
+    
+    dates = _normalizeDates(day)
+    for date in dates:
+        formatValues = {
+            'server': server,
+            'port': port,
+            'user': user,
+            'proj': proj,
+            'debug': debug,
+            'dataset': dataset,
+            'descriptor': descriptor,
+            'band': band,
+            'location': location,
+            'place': place,
+            'size': size,
+            'unit': unit,
+            'mag': mag,
+            'day': date,
+            'time': time,
+            'position': position,
+        }
+        url = addeUrlFormat % formatValues
+        if showUrls:
+            print url
+        adl = AreaDirectoryList(url)
+        results = adl.getSortedDirs()
+        for imageTimes in results:
+            for areaDirectory in imageTimes:
+                urls.append(url)
+                areaDirectories.append(areaDirectory)
+                
+    uniques = set()
+    times = []
+    for d in areaDirectories:
+        dt = DateTime(d.getNominalTime())
+        if dt not in uniques:
+            d = { 
+                'day': str(dt.formattedString('yyyyDDD', tz)), 
+                'time': str(dt.formattedString('HH:mm:ss', tz)),
+            }
+            times.append(d)
+            uniques.add(dt)
+    uniques = None
+    return sorted(times)
+    
+def listADDEImages(localEntry=None,
+    server=None, dataset=None, descriptor=None,
+    accounting=DEFAULT_ACCOUNTING,
+    location=None,
+    coordinateSystem=CoordinateSystems.LATLON,
+    place=None,
+    mag=None,
+    position=None,
+    unit=None,
+    day=None,
+    time=None,
+    debug=False,
+    band=None,
+    size=None,
+    showUrls=True):
     """Creates a list of ADDE images.
     
     Args:
@@ -346,57 +636,195 @@ def listADDEImages(server, dataset, descriptor,
         descriptor: ADDE dataset descriptor.
         day: Day range. ('begin date', 'end date')
         time: ('begin time', 'end time')
-        position: Position number. (default='all')
+        position: Position number. Values may be integers or the string "ALL". (default=0)
         band: McIDAS band number; only images that have matching band number will be returned.
         accounting: ('user', 'project number') User and project number required by servers using McIDAS accounting. default = ('idv','0')
-    
+        
     Returns:
         ADDE image matching the given criteria, if any.
     """
-
+    if localEntry:
+        server = localEntry.getAddress()
+        dataset = localEntry.getGroup()
+        descriptor = localEntry.getDescriptor().upper()
+    elif (server is None) or (dataset is None) or (descriptor is None):
+        raise TypeError("must provide localEntry or server, dataset, and descriptor values.")
+        
+    if server == "localhost" or server == "127.0.0.1":
+        port = EntryStore.getLocalPort()
+    else:
+        port = "112"
+        
+    # server = '%s:%s' % (server, port)
+    
     user = accounting[0]
     proj = accounting[1]
     debug = str(debug).lower()
-    mag = '%s %s' % (mag[0], mag[1])
     
-    if place is Places.CENTER:
-        place = 'CENTER'
-    elif place is Places.ULEFT:
-        place = 'ULEFT'
+    if mag:
+        mag = '&MAG=%s %s' % (mag[0], mag[1])
     else:
-        raise ValueError()
-    
+        mag = ''
+        
+    if unit:
+        origUnit = unit
+        unit = '&UNIT=%s' % (unit)
+    else:
+        # origUnit = None
+        unit = ''
+        
+    if place is Places.CENTER:
+        place = '&PLACE=CENTER'
+    elif place is Places.ULEFT:
+        place = '&PLACE=ULEFT'
+    else:
+        # raise ValueError()
+        place = ''
+        
     if coordinateSystem is CoordinateSystems.LATLON:
         coordSys = 'LATLON'
     elif coordinateSystem is CoordinateSystems.AREA or coordinateSystem is CoordinateSystems.IMAGE:
         coordSys = 'LINELE'
     else:
         raise ValueError()
-    
+        
     if location:
-        location = '%s=%s %s' % (coordSys, location[0], location[1])
-    
-    if day:
-        day = '&DAY=%s' % (day)
-    
+        location = '&%s=%s %s' % (coordSys, location[0], location[1])
+    else:
+        location = ''
+        
     if size:
         if size == 'ALL':
-            size = '99999 99999'
+            size = '&SIZE=99999 99999'
         else:
-            size = '%s %s' % (size[0], size[1])
-    
+            size = '&SIZE=%s %s' % (size[0], size[1])
+    else:
+        size = ''
+        
     if time:
-        time = '%s %s I' % (time[0], time[1])
-    
+        time = '&TIME=%s %s I' % (time[0], time[1])
+    else:
+        time = ''
+        
     if band:
         band = '&BAND=%s' % (str(band))
+    else:
+        band = '&BAND=ALL'
+        
+    if position is not None:
+        if isinstance(position, int):
+            position = '&POS=%s' % (position)
+        elif isinstance(position, tuple):
+            if len(position) != 2:
+                raise ValueError('position range may only contain values for the beginning and end of a range.')
+            position = '&POS=%s %s' % (str(position[0]), str(position[1]))
+        else:
+            position = '&POS=%s' % (str(position).upper())
+    else:
+        position = '&POS=0'
+        
+    tz = TimeZone.getTimeZone('Z')
     
-    addeUrlFormat = "adde://%s/imagedir?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s&%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s"
-    url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position)
-    print url
-    adl = AreaDirectoryList(url)
-    return adl.getSortedDirs()
-
+    dateFormat = SimpleDateFormat()
+    dateFormat.setTimeZone(tz)
+    dateFormat.applyPattern('yyyyDDD')
+    
+    timeFormat = SimpleDateFormat();
+    timeFormat.setTimeZone(tz)
+    timeFormat.applyPattern('HH:mm:ss')
+    
+    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s%(unit)s%(mag)s%(day)s%(time)s%(position)s"
+    
+    urls = []
+    areaDirectories = []
+    
+    dates = _normalizeDates(day)
+    for date in dates:
+        formatValues = {
+            'server': server,
+            'port': port,
+            'user': user,
+            'proj': proj,
+            'debug': debug,
+            'dataset': dataset,
+            'descriptor': descriptor,
+            'band': band,
+            'location': location,
+            'place': place,
+            'size': size,
+            'unit': unit,
+            'mag': mag,
+            'day': date,
+            'time': time,
+            'position': position,
+        }
+        url = addeUrlFormat % formatValues
+        if showUrls:
+            print url
+        adl = AreaDirectoryList(url)
+        results = adl.getSortedDirs()
+        for imageTimes in results:
+            for areaDirectory in imageTimes:
+                urls.append(url)
+                areaDirectories.append(areaDirectory)
+                
+    temp = _AreaDirectoryList()
+    for i, d in enumerate(areaDirectories):
+        nominalTime = d.getNominalTime()
+        tempDay = str(dateFormat.format(nominalTime, StringBuffer(), FieldPosition(0)))
+        tempTime = str(timeFormat.format(nominalTime, StringBuffer(), FieldPosition(0)))
+        
+        bandList = list(d.getBands())
+        # tempUnitList = list(d.getCalInfo()[0])
+        # unitList = tempUnitList[::2]
+        # unitDescList = tempUnitList[1::2]
+        # calInfo = dict(zip(unitList, unitDescList))
+        if unit:
+            unitList = [origUnit]
+        else:
+            unitList = map(str, list(d.getCalInfo()[0])[::2])
+            
+        for band in bandList:
+            for calUnit in unitList:
+                dt = {
+                    'server': server,
+                    'dataset': dataset,
+                    'descriptor': descriptor,
+                    'bandNumber': band,
+                    'bandList': bandList,
+                    'debug': debug,
+                    'accounting': accounting,
+                    'day': tempDay,
+                    'time': tempTime,
+                    'imageSize': (d.getLines(), d.getElements()),
+                    'centerLocation': (d.getCenterLatitude(), d.getCenterLongitude()),
+                    'resolution': (d.getCenterLatitudeResolution(), d.getCenterLongitudeResolution()),
+                    'unitList': unitList,
+                    'unitType': calUnit,
+                    'bands': bandList,
+                    'band-count': d.getNumberOfBands(),
+                    'calinfo': map(str, list(d.getCalInfo()[0])),
+                    'calibration-scale-factor': d.getCalibrationScaleFactor(),
+                    'calibration-type': str(d.getCalibrationType()),
+                    'calibration-unit-name': d.getCalibrationUnitName(),
+                    'center-latitude': d.getCenterLatitude(),
+                    'center-latitude-resolution': d.getCenterLatitudeResolution(),
+                    'center-longitude': d.getCenterLongitude(),
+                    'center-longitude-resolution': d.getCenterLongitudeResolution(),
+                    'directory-block': list(d.getDirectoryBlock()),
+                    'elements': d.getElements(),
+                    'lines': d.getLines(),
+                    'memo-field': str(d.getMemoField()),
+                    'nominal-time': DateTime(d.getNominalTime()),
+                    'sensor-id': d.getSensorID(),
+                    'sensor-type': str(d.getSensorType()),
+                    'source-type': str(d.getSourceType()),
+                    'start-time': DateTime(d.getStartTime()),
+                    'url': urls[i],
+                }
+            temp.append(dt)
+    return temp
+    
 def oldADDEImage(localEntry=None, server=None, dataset=None, descriptor=None,
     accounting=DEFAULT_ACCOUNTING,
     location=None,
@@ -410,7 +838,7 @@ def oldADDEImage(localEntry=None, server=None, dataset=None, descriptor=None,
     debug=False,
     track=False,
     band=None,
-    size=None):
+    size=DEFAULT_SIZE):
     """Requests data from an ADDE Image server - returns both data and metadata objects.
 
     An ADDE request must include values for either localEntry or the combination of server, dataset and descriptor.
@@ -461,7 +889,7 @@ def oldADDEImage(localEntry=None, server=None, dataset=None, descriptor=None,
         place = 'ULEFT'
     else:
         raise ValueError()
-    
+        
     if coordinateSystem is CoordinateSystems.LATLON:
         coordSys = 'LATLON'
         coordType = 'E'
@@ -473,33 +901,33 @@ def oldADDEImage(localEntry=None, server=None, dataset=None, descriptor=None,
         coordType = 'I'
     else:
         raise ValueError()
-    
+        
     if location:
         location = '&%s=%s %s %s' % (coordSys, location[0], location[1], coordType)
     else:
         location = ''
-    
+        
     if day:
         day = '&DAY=%s' % (day)
     else:
         day = ''
-    
+        
     if size:
         if size == 'ALL':
             size = '99999 99999'
         else:
             size = '%s %s' % (size[0], size[1])
-    
+            
     if time:
         time = '%s %s I' % (time[0], time[1])
     else:
         time = ''
-    
+        
     if band:
         band = '&BAND=%s' % (str(band))
     else:
         band = ''
-    
+        
     addeUrlFormat = "adde://%s/imagedata?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s&TRACK=%d"
     url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position, track)
     retvals = (-1, -1)
@@ -517,10 +945,9 @@ def oldADDEImage(localEntry=None, server=None, dataset=None, descriptor=None,
         if debug:
             print 'exception: %s\n' % (str(err))
             print 'problem with adde url:', url
-    
+            
     return retvals
-
-
+    
 def getADDEImage(localEntry=None,
     server=None, dataset=None, descriptor=None,
     accounting=DEFAULT_ACCOUNTING,
@@ -535,15 +962,17 @@ def getADDEImage(localEntry=None,
     debug=False,
     track=False,
     band=None,
-    size=None):
+    size=DEFAULT_SIZE,
+    showUrls=True,
+    **kwargs):
     """Requests data from an ADDE Image server - returns both data and metadata objects.
-
+    
     An ADDE request must include values for either localEntry or the combination of server, dataset and descriptor.
-
+    
     ***Note to users:  testADDEImage is test code, some of which may be used to 
     improve the getADDEImage function in the future.  It will not be included 
     in future versions so should not be used in user scripts. 
-
+    
     Required Args:
         localEntry: Local data set defined by makeLocalADDEEntry. 
         server: ADDE server.
@@ -582,14 +1011,14 @@ def getADDEImage(localEntry=None,
         dataset = localEntry.getGroup()
         descriptor = localEntry.getDescriptor().upper()
     elif (server is None) or (dataset is None) or (descriptor is None):
-        raise TypeError("must provide localEntry or server, dataset, and descriptor values")
+        raise TypeError("must provide localEntry or server, dataset, and descriptor values.")
         
     if server == "localhost" or server == "127.0.0.1":
         port = EntryStore.getLocalPort()
     else:
         port = "112"
         
-    server = '%s:%s' % (server, port)
+    # server = '%s:%s' % (server, port)
     
     # still need to handle dates+times
     # todo: don't break!
@@ -604,7 +1033,7 @@ def getADDEImage(localEntry=None,
         place = 'ULEFT'
     else:
         raise ValueError()
-    
+        
     if coordinateSystem is CoordinateSystems.LATLON:
         coordSys = 'LATLON'
         coordType = 'E'
@@ -616,43 +1045,85 @@ def getADDEImage(localEntry=None,
         coordType = 'I'
     else:
         raise ValueError()
-    
+        
     if location:
         location = '&%s=%s %s %s' % (coordSys, location[0], location[1], coordType)
     else:
         location = ''
-    
+        
     if day:
-        day = '&DAY=%s' % (day)
+        if isinstance(day, tuple):
+            day = '&DAY=%s %s' % (day[0], day[1])
+        else:
+            day = '&DAY=%s %s' % (day, day)
     else:
         day = ''
-    
+        
     if size:
         if size == 'ALL':
-            size = '99999 99999'
+            size = '&SIZE=99999 99999'
         else:
-            size = '%s %s' % (size[0], size[1])
-    
+            size = '&SIZE=%s %s' % (size[0], size[1])
+    else:
+        size = ''
+        
     if time:
-        time = '%s %s I' % (time[0], time[1])
+        if isinstance(time, (str, unicode, String)):
+            time = '%s %s I' % (str(time), str(time))
+        elif len(time) == 2:
+            time = '%s %s I' % (str(time[0]), str(time[1]))
+        else:
+            raise ValueError("could not understand the given time value: %s" % (time))
     else:
         time = ''
-    
+        
     if band:
-        band = '&BAND=%s' % (str(band))
+        try:
+            band = int(band)
+            band = '&BAND=%s' % (str(band))
+        except:
+            raise ValueError("band must be a single integer value; could not convert '%s' to an integer." % (band))
     else:
         band = ''
         
-    addeUrlFormat = "adde://%s/imagedata?&PORT=%s&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s&TRACK=%d"
-    url = addeUrlFormat % (server, port, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position, track)
+    addeUrlFormat = "adde://%(server)s/imagedata?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s&PLACE=%(place)s%(size)s&UNIT=%(unit)s&MAG=%(mag)s&SPAC=4&NAV=X&AUX=YES&DOC=X%(day)s&TIME=%(time)s&POS=%(position)s&TRACK=%(track)d"
+    formatValues = {
+        'server': server,
+        'port': port,
+        'user': user,
+        'proj': proj,
+        'debug': debug,
+        'dataset': dataset,
+        'descriptor': descriptor,
+        'band': band,
+        'location': location,
+        'place': place,
+        'size': size,
+        'unit': unit,
+        'mag': mag,
+        'day': day,
+        'time': time,
+        'position': position,
+        'track': track,
+    }
+    url = addeUrlFormat % formatValues
+    if showUrls:
+        print url
+    
+    # build an object that returns the SATBAND file.
+    satBandRequest = _SatBandReq(_satBandUrl(**formatValues))
+    
+    # submit the request
+    futureSatband = ecs.submit(satBandRequest)
     
     try:
         mapped = _MappedAreaImageFlatField.fromUrl(url)
+        # the commented code will immediately attempt to grab the SATBAND file;
+        # the uncommented code *should* be lazy-loaded.
+        # mapped.addeSatBands = futureSatband.get()
+        mapped.addeSatBands = futureSatband
         return mapped.getDictionary(), mapped
     except AreaFileException, e:
-        # print 'AreaFileException: url:', url, e
         raise AddeJythonError(e)
     except AddeURLException, e:
-        # print 'AddeURLException: url:', url, e
         raise AddeJythonError(e)
-

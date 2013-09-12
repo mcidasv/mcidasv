@@ -60,65 +60,76 @@ import ucar.unidata.util.TwoFacedObject;
 import edu.wisc.ssec.mcidasv.McIDASV;
 
 /**
- *  This class shows a tree on the left and a card panel on the right.
- *  
- *  Ripped right out of the IDV, for the time being.
+ * This class shows a tree on the left and a card panel on the right.
  */
 @SuppressWarnings("serial") 
 public class TreePanel extends JPanel implements TreeSelectionListener {
-
+    
     public static final String CATEGORY_DELIMITER = ">";
-
-    /** The root */
-    private final DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
-
-    /** the model */
-    private final DefaultTreeModel treeModel = new DefaultTreeModel(root);
-
-    /** the tree */
-    private final JTree tree = new JTree(treeModel);
-
-    /** The scroller */
-    private final JScrollPane treeView = new JScrollPane(tree);
-
-    /** The panel */
+    
+    /** The root. */
+    private final DefaultMutableTreeNode root;
+    
+    /** The model. */
+    private final DefaultTreeModel treeModel;
+    
+    /** The tree. */
+    private final JTree tree;
+    
+    /** The scroller. */
+    private final JScrollPane treeView;
+    
+    /** The panel. */
     private GuiUtils.CardLayoutPanel panel;
-
+    
     /** _more_ */
-    private final JPanel emptyPanel = new JPanel(new BorderLayout());
-
+    private final JPanel emptyPanel;
+    
     /** _more_ */
-    private final Map<String, Component> catComponents = newMap();
-
-    /** Maps categories to tree node */
-    private final Map<String, DefaultMutableTreeNode> catToNode = newMap();
-
-    /** Maps components to tree node */
-    private final Map<Component, DefaultMutableTreeNode> compToNode = newMap();
-
-    /** ok to respond to selection changes */
-    private boolean okToUpdateTree = true;
-
-    private boolean okToSave = false;
-
+    private final Map<String, Component> catComponents;
+    
+    /** Maps categories to tree node. */
+    private final Map<String, DefaultMutableTreeNode> catToNode;
+    
+    /** Maps components to tree node. */
+    private final Map<Component, DefaultMutableTreeNode> compToNode;
+    
+    /** Okay to respond to selection changes. */
+    private boolean okToUpdateTree;
+    
+    /** Whether or not it is okay to save. */
+    private boolean okToSave;
+    
     /**
-     * ctor
+     * Default constructor. Calls {@link #TreePanel(boolean, int)} with 
+     * {@code useSplitPane} set to {@code true} and {@code treeWidth} set to 
+     * {@code -1}.
      */
     public TreePanel() {
         this(true, -1);
     }
-
+    
     /**
-     * _more_
-     *
-     * @param useSplitPane _more_
-     * @param treeWidth _more_
+     * Constructor that actually does the work.
+     * 
+     * @param useSplitPane Whether or not to use a split pane.
+     * @param treeWidth Width of the component containing the tree.
      */
     public TreePanel(boolean useSplitPane, int treeWidth) {
+        root = new DefaultMutableTreeNode("");
+        treeModel = new DefaultTreeModel(root);
+        tree = new JTree(treeModel);
+        treeView = new JScrollPane(tree);
+        emptyPanel = new JPanel(new BorderLayout());
+        catComponents = newMap();
+        catToNode = newMap();
+        compToNode = newMap();
+        okToUpdateTree = true;
+        okToSave = false;
         setLayout(new BorderLayout());
         tree.setRootVisible(false);
         tree.setShowsRootHandles(true);
-
+        
         DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer() {
             public Component getTreeCellRendererComponent(JTree theTree,
                 Object value, boolean sel, boolean expanded, boolean leaf, 
@@ -126,16 +137,17 @@ public class TreePanel extends JPanel implements TreeSelectionListener {
             {
                 super.getTreeCellRendererComponent(theTree, value, sel,
                     expanded, leaf, row, hasFocus);
-
-                if (!(value instanceof MyTreeNode))
+                
+                if (!(value instanceof MyTreeNode)) {
                     return this;
-
+                }
+                
                 MyTreeNode node = (MyTreeNode) value;
-                if (node.icon != null)
+                if (node.icon != null) {
                     setIcon(node.icon);
-                else
+                } else {
                     setIcon(null);
-
+                }
                 return this;
             }
         };
@@ -143,7 +155,7 @@ public class TreePanel extends JPanel implements TreeSelectionListener {
         renderer.setOpenIcon(null);
         renderer.setClosedIcon(null);
         tree.setCellRenderer(renderer);
-
+        
         panel = new GuiUtils.CardLayoutPanel() {
             public void show(Component comp) {
                 super.show(comp);
@@ -151,10 +163,11 @@ public class TreePanel extends JPanel implements TreeSelectionListener {
             }
         };
         panel.addCard(emptyPanel);
-
-        if (treeWidth > 0)
+        
+        if (treeWidth > 0) {
             treeView.setPreferredSize(new Dimension(treeWidth, 100));
-
+        }
+        
         JComponent center;
         if (useSplitPane) {
             JSplitPane splitPane = ((treeWidth > 0)
@@ -165,50 +178,60 @@ public class TreePanel extends JPanel implements TreeSelectionListener {
         } else {
             center = GuiUtils.leftCenter(treeView, panel);
         }
-
+        
         this.add(BorderLayout.CENTER, center);
         tree.addTreeSelectionListener(this);
     }
-
+    
     public Component getVisibleComponent() {
         return panel.getVisibleComponent();
     }
-
+    
     /**
-     * Handle tree selection changed
+     * Handle tree selection changed.
      *
-     * @param e event
+     * @param e Event to handle. Cannot be {@code null}.
      */
     public void valueChanged(TreeSelectionEvent e) {
-        if (!okToUpdateTree)
+        if (!okToUpdateTree) {
             return;
-
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
-        if (node == null)
+        }
+        
+        DefaultMutableTreeNode node = 
+            (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
+            
+        if (node == null) {
             return;
-
+        }
+        
         saveCurrentPath(node);
-
+        
+        Component componentToShow = emptyPanel;
         if (node.isLeaf()) {
-            TwoFacedObject tfo = (TwoFacedObject)node.getUserObject();
-            panel.show((Component) tfo.getId());
+            if (node.getUserObject() instanceof TwoFacedObject) {
+                TwoFacedObject tfo = (TwoFacedObject)node.getUserObject();
+                componentToShow = (Component)tfo.getId();
+            }
         } else {
             if (node.getUserObject() instanceof TwoFacedObject) {
                 TwoFacedObject tfo = (TwoFacedObject)node.getUserObject();
                 JComponent interior = (JComponent)catComponents.get(tfo.getId());
-                if (interior == null)
-                    return;
-
-                if (!panel.contains(interior))
+                if (interior != null && !panel.contains(interior)) {
                     panel.addCard(interior);
-
-                panel.show(interior);
-                return;
+                    componentToShow = interior;
+                }
             }
-            panel.show(emptyPanel);
         }
+        panel.show(componentToShow);
     }
-
+    
+    /**
+     * Associate an icon with a component.
+     * 
+     * @param comp Component to associate with {@code icon}.
+     * @param icon Icon to associate with {@code comp}. Should not be 
+     * {@code null}.
+     */
     public void setIcon(Component comp, ImageIcon icon) {
         MyTreeNode node = (MyTreeNode)compToNode.get(comp);
         if (node != null) {
@@ -216,10 +239,10 @@ public class TreePanel extends JPanel implements TreeSelectionListener {
             tree.repaint();
         }
     }
-
+    
     /**
-     * Add the component to the panel
-     *
+     * Add the component to the panel.
+     * 
      * @param component component
      * @param category tree category. May be null.
      * @param label Tree node label
@@ -231,7 +254,7 @@ public class TreePanel extends JPanel implements TreeSelectionListener {
         TwoFacedObject tfo = new TwoFacedObject(label, component);
         DefaultMutableTreeNode panelNode = new MyTreeNode(tfo, icon);
         compToNode.put(component, panelNode);
-
+        
         if (category == null) {
             root.add(panelNode);
         } else {
@@ -255,7 +278,7 @@ public class TreePanel extends JPanel implements TreeSelectionListener {
         panel.addCard(component);
         treeChanged();
     }
-
+    
     private void treeChanged() {
         // presumably okay--this method is older IDV code.
         @SuppressWarnings("unchecked")
@@ -263,17 +286,17 @@ public class TreePanel extends JPanel implements TreeSelectionListener {
         treeModel.nodeStructureChanged(root);
         GuiUtils.expandPathsAfterChange(tree, stuff, root);
     }
-
+    
     /**
      * _more_
-     *
+     * 
      * @param cat _more_
      * @param comp _more_
      */
     public void addCategoryComponent(String cat, JComponent comp) {
         catComponents.put(CATEGORY_DELIMITER + cat, comp);
     }
-
+    
     /**
      * _more_
      *
@@ -291,15 +314,20 @@ public class TreePanel extends JPanel implements TreeSelectionListener {
         panel.remove(component);
         treeChanged();
     }
-
+    
+    /**
+     * Show the given {@code component}.
+     * 
+     * @param component Component to show. Should not be {@code null}.
+     */
     public void show(Component component) {
         panel.show(component);
     }
-
+    
     /**
-     * Show the tree node that corresponds to the component
+     * Show the tree node that corresponds to the component.
      *
-     * @param component comp
+     * @param component Component whose corresponding tree node to show. Should not be {@code null}.
      */
     public void showPath(Component component) {
         if (component != null) {
@@ -313,25 +341,27 @@ public class TreePanel extends JPanel implements TreeSelectionListener {
             }
         }
     }
-
+    
     /**
-     * Open all paths
+     * Open all tree paths.
      */
     public void openAll() {
-        for (int i = 0; i < tree.getRowCount(); i++)
+        for (int i = 0; i < tree.getRowCount(); i++) {
             tree.expandPath(tree.getPathForRow(i));
+        }
         showPath(panel.getVisibleComponent());
     }
-
+    
     /**
-     * Close all paths
+     * Close all tree paths.
      */
     public void closeAll() {
-        for (int i = 0; i < tree.getRowCount(); i++)
+        for (int i = 0; i < tree.getRowCount(); i++) {
             tree.collapsePath(tree.getPathForRow(i));
+        }
         showPath(panel.getVisibleComponent());
     }
-
+    
     /**
      * Attempts to select the path from a previous McIDAS-V session. If no 
      * path was persisted, the method attempts to use the {@literal "first"} 
@@ -342,82 +372,86 @@ public class TreePanel extends JPanel implements TreeSelectionListener {
      */
     public void showPersistedSelection() {
         okToSave = true;
-
+        
         String path = loadSavedPath();
-
+        
         TreePath tp = findByName(tree, tokenizePath(path));
-        if (tp == null || tp.getPathCount() == 1)
+        if (tp == null || tp.getPathCount() == 1) {
             tp = getPathToFirstLeaf(new TreePath(root));
-
+        }
+        
         tree.setSelectionPath(tp);
         tree.expandPath(tp);
     }
 
     private void saveCurrentPath(final DefaultMutableTreeNode node) {
         assert node != null;
-        if (!okToSave)
+        if (!okToSave) {
             return;
-
+        }
         McIDASV mcv = McIDASV.getStaticMcv();
-        if (mcv != null)
+        if (mcv != null) {
             mcv.getStore().put("mcv.treepanel.savedpath", getPath(node));
+        }
     }
-
+    
     private String loadSavedPath() {
         String path = "";
         McIDASV mcv = McIDASV.getStaticMcv();
-        if (mcv == null)
+        if (mcv == null) {
             return path;
-
+        }
         path = mcv.getStore().get("mcv.treepanel.savedpath", "");
-        if (path.length() > 0)
+        if (path.length() > 0) {
             return path;
-
+        }
+        
         TreePath tp = getPathToFirstLeaf(new TreePath(root));
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)tp.getLastPathComponent();
         path = TreePanel.getPath(node);
         mcv.getStore().put("mcv.treepanel.savedpath", path);
-
+        
         return path;
     }
-
+    
     public static List<String> tokenizePath(final String path) {
-        if (path == null)
+        if (path == null) {
             throw new NullPointerException("Cannot tokenize a null path");
-
-        List<String> tokens = arrList();
+        }
         StringTokenizer tokenizer = new StringTokenizer(path, CATEGORY_DELIMITER);
+        List<String> tokens = arrList(tokenizer.countTokens() + 1);
         tokens.add("");
         while (tokenizer.hasMoreTokens()) {
             tokens.add(tokenizer.nextToken());
         }
         return tokens;
     }
-
+    
     public static String getPath(final DefaultMutableTreeNode node) {
-        if (node == null)
+        if (node == null) {
             throw new NullPointerException("Cannot get the path of a null node");
-
+        }
         StringBuilder path = new StringBuilder("");
         TreeNode[] nodes = node.getPath();
         TreeNode root = nodes[0];
         for (TreeNode n : nodes) {
-            if (n == root)
+            if (n == root) {
                 path.append(n.toString());
-            else
-                path.append(CATEGORY_DELIMITER + n.toString());
+            } else {
+                path.append(CATEGORY_DELIMITER).append(n.toString());
+            }
         }
         return path.toString();
     }
-
+    
     public static DefaultMutableTreeNode findNodeByPath(JTree tree, String path) {
         TreePath tpath = findByName(tree, tokenizePath(path));
-        if (tpath == null)
+        if (tpath == null) {
             return null;
-
+        }
         return (DefaultMutableTreeNode)tpath.getLastPathComponent();
     }
-
+    
     public static TreePath findByName(JTree tree, List<String> names) {
         TreeNode root = (TreeNode)tree.getModel().getRoot();
         return searchTree(new TreePath(root), names, 0);
@@ -428,65 +462,71 @@ public class TreePanel extends JPanel implements TreeSelectionListener {
         assert parent != null;
         assert nodes != null;
         assert depth >= 0;
-
+        
         TreeNode node = (TreeNode)parent.getLastPathComponent();
-        if (node == null)
+        if (node == null) {
             return null;
-
+        }
         String payload = node.toString();
-
+        
         // If equal, go down the branch
-        if (nodes.get(depth) == null)
+        if (nodes.get(depth) == null) {
             return null;
-
+        }
+        
         if (payload.equals(nodes.get(depth).toString())) {
             // If at end, return match
-            if (depth == nodes.size() - 1)
+            if (depth == nodes.size() - 1) {
                 return parent;
-
+            }
+            
             // Traverse children
             if (node.getChildCount() >= 0) {
                 for (Enumeration<TreeNode> e = node.children(); e.hasMoreElements();) {
                     TreeNode n = e.nextElement();
                     TreePath path = parent.pathByAddingChild(n);
                     TreePath result = searchTree(path, nodes, depth + 1);
-
+                    
                     // Found a match
-                    if (result != null)
+                    if (result != null) {
                         return result;
+                    }
                 }
             }
         }
-
+        
         // No match at this branch
         return null;
     }
-
+    
     @SuppressWarnings("unchecked") 
     private static TreePath getPathToFirstLeaf(final TreePath searchPath) {
         TreeNode node = (TreeNode)searchPath.getLastPathComponent();
-        if (node == null)
+        if (node == null) {
             return null;
-
-        if (node.isLeaf())
+        }
+        
+        if (node.isLeaf()) {
             return searchPath;
-
+        }
+        
         for (Enumeration<TreeNode> e = node.children(); e.hasMoreElements();) {
             TreeNode n = e.nextElement();
             TreePath newPath = searchPath.pathByAddingChild(n);
             TreePath result = getPathToFirstLeaf(newPath);
-            if (result != null)
+            if (result != null) {
                 return result;
+            }
         }
         return null;
     }
-
+    
     /**
      * TreeNode extensions that allows us to associate an icon with this node.
      */
     private static class MyTreeNode extends DefaultMutableTreeNode {
         public ImageIcon icon;
-
+        
         public MyTreeNode(Object o, ImageIcon icon) {
             super(o);
             this.icon = icon;

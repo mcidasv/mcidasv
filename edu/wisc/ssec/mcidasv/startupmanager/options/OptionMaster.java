@@ -195,71 +195,98 @@ public class OptionMaster {
      * 
      * @return Either the {@code Option} associated with {@code id}, or 
      * {@code null} if there was no association.
+     * 
+     * 
+     * @see #getMemoryOption
+     * @see #getBooleanOption
+     * @see #getDirectoryOption
+     * @see #getSliderOption
+     * @see #getTextOption
+     * @see #getLoggerLevelOption
      */
     private Option getOption(final String id) {
         return optionMap.get(id);
     }
     
     /**
+     * Searches {@link #optionMap} for the {@link MemoryOption} that 
+     * corresponds with the given {@code id}.
      * 
-     * @param id
+     * @param id Identifier for the desired {@code MemoryOption}. 
+     * Should not be {@code null}.
      * 
-     * @return
+     * @return Either the {@code MemoryOption} that corresponds to {@code id} 
+     * or {@code null}.
      */
     public MemoryOption getMemoryOption(final String id) {
         return (MemoryOption)optionMap.get(id);
     }
     
     /**
+     * Searches {@link #optionMap} for the {@link BooleanOption} that 
+     * corresponds with the given {@code id}.
      * 
+     * @param id Identifier for the desired {@code BooleanOption}. 
+     * Should not be {@code null}.
      * 
-     * @param id
-     * 
-     * @return
+     * @return Either the {@code BooleanOption} that corresponds to {@code id} 
+     * or {@code null}.
      */
     public BooleanOption getBooleanOption(final String id) {
         return (BooleanOption)optionMap.get(id);
     }
     
     /**
+     * Searches {@link #optionMap} for the {@link DirectoryOption} that 
+     * corresponds with the given {@code id}.
      * 
+     * @param id Identifier for the desired {@code DirectoryOption}. 
+     * Should not be {@code null}.
      * 
-     * @param id
-     * 
-     * @return
+     * @return Either the {@code DirectoryOption} that corresponds to 
+     * {@code id} or {@code null}.
      */
     public DirectoryOption getDirectoryOption(final String id) {
         return (DirectoryOption)optionMap.get(id);
     }
     
     /**
+     * Searches {@link #optionMap} for the {@link SliderOption} that 
+     * corresponds with the given {@code id}.
      * 
+     * @param id Identifier for the desired {@code SliderOption}. 
+     * Should not be {@code null}.
      * 
-     * @param id
-     * 
-     * @return
+     * @return Either the {@code SliderOption} that corresponds to {@code id} 
+     * or {@code null}.
      */
     public SliderOption getSliderOption(final String id) {
         return (SliderOption)optionMap.get(id);
     }
     
     /**
+     * Searches {@link #optionMap} for the {@link TextOption} that 
+     * corresponds with the given {@code id}.
      * 
+     * @param id Identifier for the desired {@code TextOption}. 
+     * Should not be {@code null}.
      * 
-     * @param id
-     * 
-     * @return
+     * @return Either the {@code TextOption} that corresponds to {@code id} 
+     * or {@code null}.
      */
     public TextOption getTextOption(final String id) {
         return (TextOption)optionMap.get(id);
     }
     
     /**
+     * Searches {@link #optionMap} for the {@link LoggerLevelOption} that 
+     * corresponds with the given {@code id}.
      * 
+     * @param id Identifier for the desired {@code LoggerLevelOption}. 
+     * Should not be {@code null}.
      * 
-     * @param id
-     * 
-     * @return
+     * @return Either the {@code LoggerLevelOption} that corresponds to {@code id} 
+     * or {@code null}.
      */
     public LoggerLevelOption getLoggerLevelOption(final String id) {
         return (LoggerLevelOption)optionMap.get(id);
@@ -269,20 +296,23 @@ public class OptionMaster {
     // I want to eventually do something like:
     // Collection<Option> = getOpts().byPlatform(WINDOWS, ALL).byType(BOOLEAN).byVis(HIDDEN)
     /**
+     * Returns all the available startup manager options.
      * 
-     * 
-     * @return
+     * @return Either all available startup manager options or an empty 
+     * {@link Collection}.
      */
     public Collection<Option> getAllOptions() {
         return Collections.unmodifiableCollection(optionMap.values());
     }
     
     /**
+     * Returns the {@link Option Options} applicable to the given 
+     * {@link OptionPlatform OptionPlatforms}.
      * 
+     * @param platforms Desired platforms. Cannot be {@code null}.
      * 
-     * @param platforms
-     * 
-     * @return
+     * @return Either a {@link List} of {code Option}-s applicable to
+     * {@code platforms} or an empty {@code List}.
      */
     public List<Option> optionsByPlatform(
         final Collection<OptionPlatform> platforms) 
@@ -302,18 +332,20 @@ public class OptionMaster {
     }
     
     /**
+     * Returns the {@link Option Options} that match the given 
+     * {@link Type Types}. 
      * 
+     * @param types Desired {@code Option} types. Cannot be {@code null}.
      * 
-     * @param types
-     * 
-     * @return
+     * @return Either the {@code List} of {@code Option}-s that match the given 
+     * types or an empty {@code List}.
      */
-    public Collection<Option> optionsByType(final Set<Type> types) {
+    public List<Option> optionsByType(final Collection<Type> types) {
         if (types == null) {
             throw new NullPointerException();
         }
         Collection<Option> allOptions = getAllOptions();
-        Collection<Option> filteredOptions = 
+        List<Option> filteredOptions = 
             new ArrayList<Option>(allOptions.size());
         for (Option option : allOptions) {
             if (types.contains(option.getOptionType())) {
@@ -324,20 +356,22 @@ public class OptionMaster {
     }
     
     /**
+     * Returns the {@link Option Options} that match the given levels of 
+     * {@link Visibility visibility}.
      * 
+     * @param visibilities Desired visibility levels. Cannot be {@code null}.
      * 
-     * @param visibilities
-     * 
-     * @return
+     * @return Either the {@code List} of {@code Option}-s that match the given 
+     * visibility levels or an empty {@code List}. 
      */
-    public Collection<Option> optionsByVisibility(
-        final Set<Visibility> visibilities) 
+    public List<Option> optionsByVisibility(
+        final Collection<Visibility> visibilities) 
     {
         if (visibilities == null) {
             throw new NullPointerException();
         }
         Collection<Option> allOptions = getAllOptions();
-        Collection<Option> filteredOptions = 
+        List<Option> filteredOptions = 
             new ArrayList<Option>(allOptions.size());
         for (Option option : allOptions) {
             if (visibilities.contains(option.getOptionVisibility())) {

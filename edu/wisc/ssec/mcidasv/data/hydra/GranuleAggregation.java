@@ -31,6 +31,7 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -40,6 +41,8 @@ import edu.wisc.ssec.mcidasv.data.QualityFlag;
 
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
+import ucar.ma2.Index;
+import ucar.ma2.IndexIterator;
 import ucar.ma2.Range;
 
 import ucar.nc2.Attribute;
@@ -72,12 +75,17 @@ public class GranuleAggregation implements MultiDimensionReader {
    // need an ArrayList for each variable hashmap structure
    ArrayList<HashMap<String, Variable>> varMapList = new ArrayList<HashMap<String, Variable>>();
    ArrayList<HashMap<String, String[]>> varDimNamesList = new ArrayList<HashMap<String, String[]>>();
-   ArrayList<HashMap<String, int[]>> varDimLengthsList = new ArrayList<HashMap<String, int[]>>();
    ArrayList<HashMap<String, Class>> varDataTypeList = new ArrayList<HashMap<String, Class>>();
 
+   // map of granule index and granule in-track length for each variable
    HashMap<String, HashMap<Integer, Integer>> varGranInTrackLengths = new HashMap<String, HashMap<Integer, Integer>>();
-   HashMap<String, Integer> varToAggrInTrackLength = new HashMap<String, Integer>();
    HashMap<String, int[]> varAggrDimLengths = new HashMap<String, int[]>();
+   
+   // this object is used to handle granules like VIIRS Imagery EDRs, where scan
+   // gaps of varying sizes and locations in the granule must be removed.  If 
+   // present, an initial read with these "cut" ranges will be done before subsetting
+   HashMap<Integer, ArrayList<Range>> granCutRanges = new HashMap<Integer, ArrayList<Range>>();
+   HashMap<Integer, Integer> granCutScans = new HashMap<Integer, Integer>();
    
    // except quality flags - only need one hashmap per aggregation
    // it maps the broken out variable name back to the original packed variable name
@@ -90,21 +98,37 @@ public class GranuleAggregation implements MultiDimensionReader {
    private String inTrackDimensionName = null;
    private String inTrackGeoDimensionName = null;
    private String crossTrackDimensionName = null;
-   private ArrayList<String> products;
+   private LinkedHashSet<String> products;
    private String origName = null;
+   private boolean isEDR = false;
 
-   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, ArrayList<String> products, String inTrackDimensionName, String inTrackGeoDimensionName, String crossTrackDimensionName) throws Exception {
+   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, LinkedHashSet<String> products, 
+		   String inTrackDimensionName, String inTrackGeoDimensionName, 
+		   String crossTrackDimensionName, boolean isEDR) throws Exception {
 	   if (ncdfal == null) throw new Exception("No data: empty Suomi NPP aggregation object");
 	   this.inTrackDimensionName = inTrackDimensionName;
 	   this.crossTrackDimensionName = crossTrackDimensionName;
 	   this.inTrackGeoDimensionName = inTrackGeoDimensionName;
        this.ncdfal = ncdfal;
        this.products = products;
+       this.isEDR = isEDR;
 	   init(ncdfal);
    }
-
-   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, ArrayList<String> products, String inTrackDimensionName, String crossTrackDimensionName) throws Exception {
-        this(ncdfal, products, inTrackDimensionName, inTrackDimensionName, crossTrackDimensionName);
+   
+   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, LinkedHashSet<String> products, 
+		   String inTrackDimensionName, String inTrackGeoDimensionName, 
+		   String crossTrackDimensionName) throws Exception {
+	   this(ncdfal, products, inTrackDimensionName, inTrackGeoDimensionName, crossTrackDimensionName, false);
+   }
+   
+   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, LinkedHashSet<String> products, 
+		   String inTrackDimensionName, String crossTrackDimensionName) throws Exception {
+       this(ncdfal, products, inTrackDimensionName, inTrackDimensionName, crossTrackDimensionName, false);
+   }
+   
+   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, LinkedHashSet<String> products, 
+		   String inTrackDimensionName, String crossTrackDimensionName, boolean isEDR) throws Exception {
+        this(ncdfal, products, inTrackDimensionName, inTrackDimensionName, crossTrackDimensionName, isEDR);
    }
 
    public Class getArrayType(String array_name) {
@@ -119,6 +143,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 
    public int[] getDimensionLengths(String array_name) {
 	   array_name = mapNameIfQualityFlag(array_name);
+	   logger.debug("For var " + array_name + ", sending back dim len: " + varAggrDimLengths.get(array_name));
 	   return varAggrDimLengths.get(array_name);
    }
 
@@ -136,6 +161,20 @@ public class GranuleAggregation implements MultiDimensionReader {
 		   }
 	   }
 	   return array_name;
+   }
+
+   /**
+    * @return the isEDR
+    */
+   public boolean isEDR() {
+	   return isEDR;
+   }
+
+   /**
+    * @param isEDR the isEDR to set
+    */
+   public void setEDR(boolean isEDR) {
+	   this.isEDR = isEDR;
    }
 
    public float[] getFloatArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
@@ -217,14 +256,129 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   granuleCount = nclist.size();
 	   logger.debug("Granule count: " + granuleCount);
 
-       NetcdfFile ncfile = nclist.get(0); //All files have to have same structure
-       Iterator<Variable> varIter = ncfile.getVariables().iterator();
-       while (varIter.hasNext()) {
-           Variable var = varIter.next();
-           varAggrDimLengths.put(var.getFullName(), new int[var.getRank()]);
-           varGranInTrackLengths.put(var.getFullName(), new HashMap<Integer, Integer>()); 
-       }
+       // All files do NOT have the same structure, so need to look at each ncfile
+	   // For ex, some MODIS granules have slightly different in-track and along-track 
+	   // lengths
+	   
+	   NetcdfFile ncfile = null;
+	   for (int ncIdx = 0; ncIdx < nclist.size(); ncIdx++) {
+		   
+		   // good place to initialize the cut Range ArrayList for each granule
+		   Integer granuleIndex = new Integer(ncIdx);
+		   ArrayList<Range> al = new ArrayList<Range>();
+		   granCutRanges.put(granuleIndex, al);
+		   int cutScanCount = 0;
+		   
+		   ncfile = nclist.get(ncIdx); 
+		   
+		   Iterator<Variable> varIter = ncfile.getVariables().iterator();
+		   while (varIter.hasNext()) {
+			   Variable var = varIter.next();
+			   logger.debug("Variable " + var.getShortName() + ", Rank: " + var.getRank());
+			   varAggrDimLengths.put(var.getFullName(), new int[var.getRank()]);
+			   varGranInTrackLengths.put(var.getFullName(), new HashMap<Integer, Integer>()); 
+			   
+			   // Here, let's try to check the data for EDR fill lines
+			   // and if found, try to handle it by simply adjusting the dimensions
+			   // for this granule.  Sound like a plan?  We'll see...
+			   
+			   if (isEDR) {
+				   
+				   logger.debug("IS an EDR, need to look for fill scans...");
+				   // look through lat grid, look for missing scans
+				   String varName = var.getShortName();
+				   if (varName.endsWith("Latitude")) {
+					   // iterate through the scan lines, looking for fill lines
+					   // NOTE: we only need to check the first column! so set
+					   // up an appropriate Range to cut the read down significantly
+					   int[] shape = var.getShape();
+					   ArrayList<Range> alr = new ArrayList<Range>();
+					   alr.add(new Range(0, shape[0] - 1, 1));
+					   alr.add(new Range(0, 1, 1));
+					   Array a = var.read(alr);
+					   logger.debug("Lat shape: " + shape[0] + " by " + shape[1]);
+					   int scanLength = shape[1];
+					   Index index = a.getIndex();
+					   float fVal = 0.0f;
 
+					   int rangeOffset = 1;
+					   int rangeCount = 0;
+					   boolean prvScanWasCut = false;
+					   boolean needClosingRange = false;
+					   boolean hadCutRanges = false;
+					   boolean someMissing = false;
+
+					   for (int i = 0; i < shape[0]; i++) {
+
+						   someMissing = false;
+						   fVal = a.getFloat(index.set(i, 0));
+						   if (fVal < -90.0f) {
+							   someMissing = true;
+						   }
+
+						   if (someMissing) {
+							   hadCutRanges = true;
+							   cutScanCount++;
+							   logger.debug("Found a cut scan " + (i + 1)
+									   + ", last val: " + fVal);
+							   if ((prvScanWasCut) || (i == 0)) {
+								   if (i == 0) {
+									   rangeOffset = 1;
+								   } else {
+									   rangeOffset = i + 2;
+								   }
+							   } else {
+								   try {
+									   // We are using 2D ranges
+									   logger.debug("Adding Range: " + rangeOffset
+											   + ", " + i + ", 1");
+									   al.add(new Range(rangeOffset, i, 1));
+									   logger.debug("Adding Range: " + 1 + ", "
+											   + (scanLength - 1) + ", 1");
+									   al.add(new Range(0, scanLength - 1, 1));
+								   } catch (Exception e) {
+									   e.printStackTrace();
+								   }
+								   rangeCount = 0;
+								   rangeOffset = i + 1;
+							   }
+							   prvScanWasCut = true;
+						   } else {
+							   prvScanWasCut = false;
+							   rangeCount += scanLength;
+						   }
+
+						   // check to see if closing Range needed, good data at end
+						   if ((! prvScanWasCut) && (i == (scanLength - 1))) {
+							   needClosingRange = true;
+						   }
+					   }
+
+					   if (needClosingRange) {
+						   // We are using 2D ranges
+						   al.add(new Range(rangeOffset, rangeOffset + shape[0]
+								   - 1, 1));
+						   al.add(new Range(0, scanLength - 1, 1));
+						   logger.debug("Adding closing cut Range, offs: "
+								   + rangeOffset + ", len: " + rangeCount);
+					   }
+
+					   // if only one contiguous range, process as a normal clean granule
+					   if (! hadCutRanges) {
+						   al.clear();
+					   }
+
+					   granCutScans.put(granuleIndex, new Integer(cutScanCount));
+					   logger.debug("Total scans cut this granule: "
+							   + cutScanCount);
+
+				   }
+			   } else {
+				   granCutScans.put(granuleIndex, new Integer(0));
+				   logger.debug("is NOT an EDR, no need to check for fill scans...");
+			   }
+		   }
+	   }
 	   
 	   for (int ncIdx = 0; ncIdx < nclist.size(); ncIdx++) {
 		   
@@ -232,20 +386,19 @@ public class GranuleAggregation implements MultiDimensionReader {
 		   
 		   HashMap<String, Variable> varMap = new HashMap<String, Variable>();
 		   HashMap<String, String[]> varDimNames = new HashMap<String, String[]>();
-		   HashMap<String, int[]> varDimLengths = new HashMap<String, int[]>();
 		   HashMap<String, Class> varDataType = new HashMap<String, Class>();
 		   
-		   varIter = ncfile.getVariables().iterator();
+		   Iterator<Variable> varIter = ncfile.getVariables().iterator();
 		   int varInTrackIndex = -1;
 		   while (varIter.hasNext()) {
 			   Variable var = (Variable) varIter.next();
 			   
-			   logger.debug("Working on variable: " + var.getShortName());
+			   logger.debug("Working on variable: " + var.getFullName());
 			   
 			   boolean foundProduct = false;
 			   for (String s : products) {
-				   if (s.contains(var.getShortName())) {
-					   logger.debug("Valid product: " + var.getShortName());
+				   if (s.contains(var.getFullName())) {
+					   logger.debug("Valid product: " + var.getFullName());
 					   foundProduct = true;
 				   }
 				   // we'll also pass Lat and Lon, needed for nav
@@ -258,7 +411,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   }
 			   
 			   if (! foundProduct) {
-				   logger.debug("Skipping variable: " + var.getShortName());
+				   logger.debug("Skipping variable: " + var.getFullName());
 				   continue;
 			   }
 			   
@@ -271,7 +424,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   
 			   // bypass any less-than-2D variables for now...
 			   if (rank < 2) {
-				   logger.debug("Skipping 1D variable: " + var.getShortName());
+				   logger.debug("Skipping 1D variable: " + var.getFullName());
 				   continue;
 			   }
 			   
@@ -307,7 +460,12 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   
 			   // skip to next variable if it's not displayable data
 			   if (notDisplayable) continue;
-
+			   
+			   // adjust in-track dimension if needed (scans were cut)
+			   int cutScans = granCutScans.get(ncIdx);
+			   dimLengths[varInTrackIndex] = dimLengths[varInTrackIndex] - cutScans;
+			   
+			   // XXX TJJ - can below block go away?  Think so...
 			   int[] aggrDimLengths = varAggrDimLengths.get(varName);
 			   for (int i = 0; i < rank; i++) {
 				   if (i == varInTrackIndex) {
@@ -321,7 +479,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   varDataType.put(varName, var.getDataType().getPrimitiveClassType());
 
 			   if (varInTrackIndex < 0) {
-				   logger.debug("Skipping variable with unknown dimension: " + var.getShortName());
+				   logger.debug("Skipping variable with unknown dimension: " + var.getFullName());
 				   continue;
 			   }
 
@@ -336,8 +494,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 		   varMapList.add(varMap);
 		   varDimNamesList.add(varDimNames);
 		   varDataTypeList.add(varDataType);
-
-		   varDimLengthsList.add(varDimLengths);
+		   
 	   }
    }
    
@@ -438,6 +595,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   int[] vGranuleLengths = new int[numGrans];
 	   for (int k = 0; k < numGrans; k++) {
 		   vGranuleLengths[k] = granIdxToInTrackLen.get(k);
+		   logger.debug("readArray, gran len: " + vGranuleLengths[k] + ", scans cut: " + granCutScans.get(k));
 	   }
 
 	   int strt = start[vInTrackIndex];
@@ -467,9 +625,10 @@ public class GranuleAggregation implements MultiDimensionReader {
 
 	   // next, we break out the offsets, counts, and strides for each granule
 	   int granuleSpan = hiGranuleId - loGranuleId + 1;
-
+	   
 	   logger.debug("readArray req, loGran: " + loGranuleId + ", hiGran: " + 
 			   hiGranuleId + ", granule span: " + granuleSpan + ", dimCount: " + dimensionCount);
+	   
 	   for (int i = 0; i < dimensionCount; i++) {
 		   logger.debug("start[" + i + "]: " + start[i]);
 		   logger.debug("count[" + i + "]: " + count[i]);
@@ -559,9 +718,51 @@ public class GranuleAggregation implements MultiDimensionReader {
 					   rangeList.add(dimensionIdx, range);
 				   }
 				   rangeListCount++;
-				   Array subarray = var.read(rangeList);
-				   totalLength += subarray.getSize();
-				   arrayList.add(subarray);
+				   
+				   // If there were chunks of fill data to remove...
+				   ArrayList<Range> al = granCutRanges.get(new Integer(granuleIdx));
+				   if (! al.isEmpty()) {
+					   ArrayList<Variable> varChunks = new ArrayList<Variable>();
+					   for (int rangeCount = 0; rangeCount < al.size(); rangeCount+=2) {
+						   ArrayList<Range> rl = new ArrayList<Range>();
+						   rl.add(al.get(rangeCount));
+						   rl.add(al.get(rangeCount + 1));
+						   varChunks.add(var.section(rl));
+					   }
+
+					   int [] newShape = var.getShape();
+					   int cutScans = granCutScans.get(granuleIdx);
+					   newShape[0] = newShape[0] - cutScans;
+					   logger.debug("New Shape: " + newShape[0] + ", " + newShape[1]);
+					   Array single = Array.factory(var.getDataType(), newShape);
+
+					   // now read variable chunk data into single contiguous array
+					   int idx = 0;
+					   for (Variable v : varChunks) {
+						   Array data = v.read();
+						   int [] tmpShape = v.getShape();
+						   for (int tIdx = 0; tIdx < tmpShape.length; tIdx++) {
+							   logger.debug("Shape[" + tIdx + "]: " + tmpShape[tIdx]);
+						   }
+						   IndexIterator ii = data.getIndexIterator();
+						   while (ii.hasNext()) {
+							   single.setFloat(idx, ii.getFloatNext());
+							   idx++;
+						   }
+					   }
+
+					   // finally, apply subset ranges
+					   Array subarray = single.section(rangeList);
+					   totalLength += subarray.getSize();
+					   arrayList.add(subarray);
+					   logger.debug("Size of final data array: " + subarray.getSize());
+
+				   } else {
+					   Array subarray = var.read(rangeList);
+					   totalLength += subarray.getSize();
+					   arrayList.add(subarray);
+				   }
+				   
 			   }
 			   // put in an empty ArrayList placeholder to retain a slot for each granule
 		   } else {

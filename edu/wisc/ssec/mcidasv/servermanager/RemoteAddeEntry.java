@@ -591,6 +591,7 @@ public class RemoteAddeEntry implements AddeEntry {
         try { 
             socket = new Socket(host, ADDE_PORT);
             connected = true;
+            socket.close();
         } catch (UnknownHostException e) {
             logger.debug("can't resolve IP for '{}'", entry.getAddress());
             connected = false;
@@ -598,9 +599,6 @@ public class RemoteAddeEntry implements AddeEntry {
             logger.debug("IO problem while connecting to '{}': {}", entry.getAddress(), e.getMessage());
             connected = false;
         }
-        try {
-            socket.close();
-        } catch (Exception e) {}
         logger.debug("host={} result={}", entry.getAddress(), connected);
         return connected;
     }

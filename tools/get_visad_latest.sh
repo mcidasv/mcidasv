@@ -14,3 +14,7 @@ mkdir -p ${DEST_DIR}
 cd ${DEST_DIR}
 wget ${URL}/${FILE} -O ${FILE}
 cd ${OLDPWD}
+
+SELF=`hostname`
+echo "VisAD JAR file updated on ${SELF}; will appear in the next McIDAS-V nightly build." |\
+        mail -s "AUTO: New VisAD JAR file" mug.team@ssec.wisc.edu

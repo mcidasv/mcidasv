@@ -3,7 +3,7 @@
   PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 1.0//EN"
          "http://java.sun.com/javase/technologies/desktop/javahelp/toc_1_0.dtd">
 <toc version="1.0">
-<tocitem text="McIDAS-V User's Guide, Version 1.4beta1" target="idv.toc">
+<tocitem text="McIDAS-V User's Guide, Version 1.4beta2" target="idv.toc">
 <tocitem text="What is McIDAS-V?" target="idv.mcidasv"/>
 <tocitem text="Overview" target="idv.page_overview">
     <tocitem text="Release Notes" target="idv.releasenotes"/>
@@ -175,7 +175,7 @@
             <tocitem text="Description of Formulas - Maps" target="idv.tools.mapformulas"/>
             <tocitem text="Description of Formulas - Miscellaneous" target="idv.tools.miscellaneousformulas"/>
             <tocitem text="Description of Formulas - Grids" target="idv.tools.gridformulas"/>
-            <tocitem text="Description of Formulas - Image Filters (Beta)" target="idv.tools.imagefilterformulas"/>
+            <tocitem text="Description of Formulas - Image Filters" target="idv.tools.imagefilterformulas"/>
             <tocitem text="Description of Formulas - Export" target="idv.tools.exportformulas"/>
             <tocitem text="Description of Formulas - Imagery" target="idv.tools.imageryformulas"/>
         </tocitem>
@@ -190,11 +190,12 @@
 <tocitem text="Miscellaneous" target="idv.page_miscellaneous">
     <tocitem text="Bundles" target="idv.bundles"/>
 	<tocitem text="Scripting" target="idv.misc.scripting.scripting">
-	    <tocitem text="Create an Object" target="idv.scripting.createanobject"/>
-		<tocitem text="Modify the Display Object" target="idv.scripting.modifydisplayobject"/>
-		<tocitem text="Modify the Layer Object" target="idv.scripting.modifylayerobject"/>
-		<tocitem text="Save the Display" target="idv.scripting.savedisplay"/>
-		<tocitem text="Environment" target="idv.scripting.environment"/>
+	    <tocitem text="Create an Object" target="idv.misc.scripting.createobject"/>
+		<tocitem text="Modify the Display Object" target="idv.misc.scripting.modifydisplayobject"/>
+		<tocitem text="Modify the Layer Object" target="idv.misc.scripting.modifylayerobject"/>
+		<tocitem text="Save the Display" target="idv.misc.scripting.savedisplay"/>
+		<tocitem text="Environment" target="idv.misc.scripting.environment"/>
+	</tocitem>	
     <tocitem text="Sharing" target="idv.collab.sharing"/>
     <tocitem text="Site Configuration" target="idv.misc.siteconfiguration"/>
 	<tocitem text="Plugin Jar Files" target="idv.misc.pluginjarfiles"/>

@@ -280,10 +280,10 @@ public class EntryStore {
     protected String[] getAddeCommands() {
     	String mcvPID = System.getProperty("mcv.pid");
     	if (mcvPID == null) {
-    		return new String[] { ADDE_MCSERVL, "-p", localPort, "-v" };
+    		return new String[] { ADDE_MCSERVL, "-v", "-p", localPort };
     	}
     	else {
-    		return new String[] { ADDE_MCSERVL, "-i", mcvPID, "-v" };    		
+    		return new String[] { ADDE_MCSERVL, "-v", "-p", localPort, "-i", mcvPID };    		
     	}
     }
 
