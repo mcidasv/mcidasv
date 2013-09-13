@@ -301,9 +301,10 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
             bandDescr = self.addeSatBands.getBandDescr(
                 self.areaDirectory.getSensorID(),
                 self.areaDirectory.getSourceType())
-            return bandDescr[self._getBand()]
-        else:
-            return ''
+            if bandDescr:
+                return bandDescr[self._getBand()]
+
+        return ''
             
     def _getDirValue(self, key):
         from visad import DateTime
