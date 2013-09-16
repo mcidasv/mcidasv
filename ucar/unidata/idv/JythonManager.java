@@ -2003,7 +2003,7 @@ public class JythonManager extends IdvManager implements ActionListener {
      */
     private String makeCallString(PyFunction func, Map<String, String> props) {
         StringBuilder sb = new StringBuilder(func.__name__).append('(');
-        PyTableCode tc = (PyTableCode)func.__code__;
+        PyTableCode tc = (PyTableCode)func.func_code;
         for (int argIdx = 0; argIdx < tc.co_argcount; argIdx++) {
             if (argIdx > 0) {
                 sb.append(", ");
@@ -2100,7 +2100,7 @@ public class JythonManager extends IdvManager implements ActionListener {
                     .append("\n<p><a name=\"").append(func.__name__)
                     .append("\"></a><code class=\"command\">")
                     .append(func.__name__ ).append('(');
-                PyTableCode tc = (PyTableCode)func.__code__;
+                PyTableCode tc = (PyTableCode)func.func_code;
                 for (int argIdx = 0; argIdx < tc.co_argcount; argIdx++) {
                     if (argIdx > 0) {
                         sb.append(", ");
@@ -2108,7 +2108,7 @@ public class JythonManager extends IdvManager implements ActionListener {
                     sb.append(tc.co_varnames[argIdx]);
                 }
                 sb.append("):</code><p style=\"padding:0;margin-left:20;margin-top:0\">\n");
-                PyObject docString = func.__code__;
+                PyObject docString = func.func_code;
                 if (docString != Py.None) {
                     String doc = docString.toString().trim();
                     doc = replace(doc,"\n","<br>");
