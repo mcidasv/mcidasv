@@ -45,8 +45,7 @@ def editFile(path, cleanup=False):
         calls to removeAllData() and removeAllLayers() are added to the 
         beginning of the Jython Shell input text field.
     """
-    fp = open(expandpath(path), 'r')
-    try:
+    with open(path, 'r') as fp:
         shell = getStaticMcv().getJythonManager().getShell()
         lines = ''
         if cleanup:
@@ -54,8 +53,6 @@ def editFile(path, cleanup=False):
         for line in fp:
             lines += line
         shell.setMultilineText(lines)
-    finally:
-        fp.close()
         
 def today(dateFormat=None):
     """Returns today's date in either the user's specified format, or YYYYDDD (default)."""
