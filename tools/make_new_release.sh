@@ -80,7 +80,7 @@ echo "##########################################################################
 echo "Commit the release to the webpage (manual)"
 echo ""
 echo "When you are ready to make the release public, simply update the file:"
-echo "  /var/apache/www/htdocs/mcidas/software/v/stable/versiontxt"
+echo "  /var/apache/www/htdocs/mcidas/software/v/stable/version.txt"
 echo ""
 echo "NOTE: Nightlies are NOT updated on the webserver when the contents of"
 echo "version.txt does not match the greatest version directory!  This prevents the"
