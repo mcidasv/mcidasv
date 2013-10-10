@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <resourcebundle name="Default">
 
-<!-- Where the colortables are  -->
+  <!-- paths to cursor readout translations -->
+  <resources name="idv.resource.translations">
+    <resource
+      label="Translations"
+      location="%IDVPATH%/translations.xml"/>
+  </resources>
+
+  <!-- Where the colortables are  -->
   <resources name="idv.resource.colortables">
     <resource location="%USERPATH%/colortables.xml"/>
     <resource location="%SITEPATH%/colortables.xml"/>
@@ -9,7 +16,7 @@
     <resource location="%IDVPATH%/colortables.xml"/>
   </resources>
 
-<!-- Where the xml is that defines the data choosers  -->
+  <!-- Where the xml is that defines the data choosers  -->
   <resources name="idv.resource.choosers">
     <resource location="%APPPATH%/choosers.xml"/>
     <resource location="%SITEPATH%/choosers.xml"/>
@@ -24,7 +31,7 @@
     <resource location="%IDVPATH%/servers.xml"/>
   </resources>
 
-<!--The different user interfaces available   -->
+  <!--The different user interfaces available   -->
   <resources name="idv.resource.skin">
     <resource
        label="User's View"
