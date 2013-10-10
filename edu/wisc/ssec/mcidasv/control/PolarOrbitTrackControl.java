@@ -36,12 +36,13 @@ import edu.wisc.ssec.mcidasv.data.adde.sgp4.AstroConst;
 import edu.wisc.ssec.mcidasv.data.hydra.CurveDrawer;
 import edu.wisc.ssec.mcidasv.util.XmlUtil;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.lang.Math;
@@ -51,16 +52,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+
+import net.miginfocom.swing.MigLayout;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,18 +105,18 @@ import visad.georef.LatLonPoint;
 import visad.georef.LatLonTuple;
 
 /**
- * {@link ucar.unidata.idv.control.PolarOrbitTrackControl} with some McIDAS-V
+ * {@link ucar.unidata.idv.control.DisplayControlImpl} with some McIDAS-V
  * specific extensions. Namely parameter sets and support for inverted 
  * parameter defaults.
  */
 
-public class PolarOrbitTrackControl extends DisplayControlImpl {
+public class PolarOrbitTrackControl extends DisplayControlImpl implements ActionListener, ItemListener {
 
     private static final Logger logger = LoggerFactory.getLogger(PolarOrbitTrackControl.class);
 
     private JLabel satelliteName = new JLabel("");
     private static final JLabel kmLabel = new JLabel("km");
-    private JTextField swathWidthFld = new JTextField(" ", 5);
+    private JTextField swathWidthFld = null;
     private JPanel swathWidthPanel;
     private JButton saveBtn;
     
@@ -129,6 +136,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     private JComboBox locationComboBox;
     private JTextField locationEditor;
+    private JCheckBox jcb;
 
     private String station = "";
     private TextDisplayable groundStationDsp;
@@ -142,7 +150,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private JLabel latLabel;
     private JLabel lonLabel;
     private JLabel altLabel;
-    private JTextField antennaAngle = new JTextField("5", 5);
+    private JTextField antennaAngle = new JTextField("" + DEFAULT_ANTENNA_ANGLE, DEFAULT_ANTENNA_ANGLE);
 
     private ActionListener fontSizeChange;
 
@@ -156,15 +164,21 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     private JSlider fontSizeSlider;
     private JSlider gsSizeSlider;
+    private JSpinner js = null;
     private JTextField fontSizeFld = new JTextField();
 
     private CompositeDisplayable trackDsp;
+    private CompositeDisplayable timeLabelDsp;
     private CompositeDisplayable swathDsp;
     private CompositeDisplayable circleDsp;
     private TupleType tupleType;
+    
+    // time label variables
+    private static final int DEFAULT_LABEL_INTERVAL = 5;
+    private int labelInterval = DEFAULT_LABEL_INTERVAL;
 
     private int fontSize;
-    private int defaultSize = 3;
+    private int defaultSize = 1;
     private ColorSwatch colorSwatch;
     private Color color;
     private Color defaultColor = Color.GREEN;
@@ -189,6 +203,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private static final String TAG_SATELLITE = "satellite";
     private static final String ATTR_NAME = "name";
     private static final String ATTR_WIDTH = "width";
+
+	private static final String SWATH_MODS = "SwathMods";
+	private static final String SAVE_CMD = "Save";
     private Element root = null;
 
     public PolarOrbitTrackControl() {
@@ -200,7 +217,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 IOUtil.readContents(SWATH_WIDTHS, McIdasPreferenceManager.class);
             root = XmlUtil.getRoot(xml);
         } catch (Exception e) {
-            System.out.println("problem reading swathwidths.xml e=" + e);
+            logger.error("problem reading swathwidths.xml e=" + e);
         }
     }
 
@@ -230,10 +247,11 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         }
         try {
             trackDsp = new CompositeDisplayable();
+            timeLabelDsp = new CompositeDisplayable();
             swathDsp = new CompositeDisplayable();
             circleDsp = new CompositeDisplayable();
         } catch (Exception e) {
-            System.out.println("problem creating composite displayable e=" + e);
+            logger.error("problem creating composite displayable e=" + e);
             return false;
         }
         boolean result = super.init((DataChoice)this.getDataChoices().get(0));
@@ -255,7 +273,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             satZ = xyz[2] / 5.0;
             applyTrackPosition();
         } catch (Exception e) {
-            System.out.println("get display center e=" + e);
+            logger.error("get display center e=" + e);
         }
 
         return result;
@@ -281,29 +299,29 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     double dlon = llt.getLongitude().getValue();
 
                     if (doTrack) {
-                        String str = ((Text)tupleComps[0]).getValue();
-                        dts.add(str);
-                        int indx = str.indexOf(" ") + 1;
-                        String subStr = "- " + str.substring(indx, indx+5);
-                        TextDisplayable time = new TextDisplayable(getTextType());
-                        time.setJustification(TextControl.Justification.LEFT);
-                        time.setVerticalJustification(TextControl.Justification.CENTER);
-                        time.setColor(color);
- 
-                        RealTuple lonLat =
-                            new RealTuple(RealTupleType.SpatialEarth2DTuple,
-                                new double[] { dlon, dlat });
-                        if ((i % 5) == 0) {
+                        if ((i % labelInterval) == 0) {
+                            String str = ((Text)tupleComps[0]).getValue();
+                            logger.info("Adding time for str: " + str);
+                            dts.add(str);
+                            int indx = str.indexOf(" ") + 1;
+                            String subStr = "- " + str.substring(indx, indx+5);
+                            TextDisplayable time = new TextDisplayable(getTextType());
+                            time.setJustification(TextControl.Justification.LEFT);
+                            time.setVerticalJustification(TextControl.Justification.CENTER);
+                            time.setColor(color);
+                            
+                            RealTuple lonLat =
+                                new RealTuple(RealTupleType.SpatialEarth2DTuple,
+                                    new double[] { dlon, dlat });
                             Tuple tup = new Tuple(getTupleType(),
                                 new Data[] { lonLat, new Text(getTextType(), subStr)});
                             time.setData(tup);
-                            trackDsp.addDisplayable(time);
+                            timeLabelDsp.addDisplayable(time);
+                            logger.info("Mod check, i: " + i);
                         }
                     }
-                    float lat = (float) dlat;
-                    float lon = (float) dlon;
-                    latlon[0][i] = lat;
-                    latlon[1][i] = lon;
+                    latlon[0][i] = (float) dlat;
+                    latlon[1][i] = (float) dlon;
                 }
 
                 if (doTrack) {
@@ -322,6 +340,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     trackDsp.setLineWidth(2.0f);
 
                     addDisplayable(trackDsp, FLAG_COLORTABLE);
+                    addDisplayable(timeLabelDsp, FLAG_COLORTABLE);
                 }
 
                 float[][][] crv = getSwath(latlon);
@@ -361,7 +380,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 addDisplayable(swathDsp, FLAG_COLORTABLE);
             }
         } catch (Exception e) {
-            System.out.println("getData e=" + e);
+            logger.error("getData e=" + e);
         }
         return;
     }
@@ -414,7 +433,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 ++indx;
             }
         } catch (Exception e) {
-            System.out.println("e=" + e);
+            logger.error("e=" + e);
             return null;
         }
         return ret;
@@ -426,8 +445,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             t = new TupleType(new MathType[] {RealTupleType.SpatialEarth2DTuple,
                                               getTextType()});
         } catch (Exception e) {
-            System.out.println("\nPolarOrbitTrackControl.makeTupleType e=" + e);
-            System.out.println("    textType=" + getTextType());
+            logger.error("\nPolarOrbitTrackControl.makeTupleType e=" + e);
+            logger.error("    textType=" + getTextType());
         }
         return t;
     }
@@ -441,7 +460,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     setBackground(c);
                     getIdv().showNormalCursor();
                 } catch (Exception e) {
-                    System.out.println("\nsetColor e=" + e);
+                    logger.error("\nsetColor e=" + e);
                     setColor(defaultColor);
                 }
             }
@@ -458,7 +477,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     setBackground(c);
                     getIdv().showNormalCursor();
                 } catch (Exception e) {
-                    System.out.println("\nsetAntColor e=" + e);
+                    logger.error("\nsetAntColor e=" + e);
                     setAntColor(defaultAntColor);
                 }
             }
@@ -505,41 +524,75 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         gsSizeSlider.setValue(GS_SLIDER_MIN);
         
         fontSizePanel = new JPanel();
-        fontSizePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        fontSizePanel.add(new JLabel("Font Size: "));
-        fontSizePanel.add(fontSizeFld);
-        fontSizePanel.add(fontSizeSlider);
+        fontSizePanel.setLayout(new BoxLayout(fontSizePanel, BoxLayout.Y_AXIS));
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        jcb = new JCheckBox("Labels On/Off");
+        jcb.setSelected(true);
+        jcb.addItemListener(this);
+        topPanel.add(jcb);
+        
+        // same row, add label interval spinner
+        Integer defaultInterval = new Integer(5); 
+        Integer minInterval = new Integer(1);
+        Integer maxInterval = new Integer(120); 
+        Integer intervalStep = new Integer(1); 
+        SpinnerNumberModel snm = 
+        		new SpinnerNumberModel(defaultInterval, minInterval, maxInterval, intervalStep);
+        JLabel intervalLabel = new JLabel("Label Interval:");
+        JLabel intervalUnits = new JLabel("minutes");
+        js = new JSpinner(snm);
+        topPanel.add(Box.createHorizontalStrut(5));
+        topPanel.add(intervalLabel);
+        topPanel.add(js);
+        topPanel.add(intervalUnits);
+        
+        fontSizePanel.add(topPanel);
+        JPanel botPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        botPanel.add(new JLabel("Font Size: "));
+        botPanel.add(fontSizeFld);
+        botPanel.add(fontSizeSlider);
+        fontSizePanel.add(botPanel);
 
         Color swatchColor = getColor();
         colorSwatch = (GuiUtils.ColorSwatch)makeColorBox(swatchColor);
         
         colorPanel = new JPanel();
         colorPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        colorPanel.add(new JLabel("Set Color: "));
+        colorPanel.add(new JLabel("Swath Color: "));
         colorPanel.add(colorSwatch);
         
         JPanel groundStationPanel = makeGroundStationPanel();
 
         swathWidthPanel = makeSwathWidthPanel();
         
-        JPanel outerPanel = new JPanel(new BorderLayout());
+        JPanel outerPanel = new JPanel(new MigLayout());
+        // outerPanel.setLayout(new BoxLayout(outerPanel, BoxLayout.Y_AXIS));
         
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.add(swathWidthPanel);
-        mainPanel.add(fontSizePanel);
-        mainPanel.add(colorPanel);
-        mainPanel.add(locationPanel);
-        mainPanel.add(groundStationPanel);
-        mainPanel.add(latLonAltPanel);
-        mainPanel.add(antColorPanel);
+        JPanel mainPanel = new JPanel(new MigLayout());
+        // mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(BorderFactory.createTitledBorder(" Swath Width Controls "));
+        mainPanel.add(swathWidthPanel, "wrap");
+        mainPanel.add(fontSizePanel, "wrap");
+        mainPanel.add(colorPanel, "wrap");
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton applySwathMods = new JButton("Apply");
+        applySwathMods.setActionCommand(SWATH_MODS);
+        applySwathMods.addActionListener(this);
+        bottomPanel.add(applySwathMods);
+        mainPanel.add(bottomPanel);
         
-        outerPanel.add(mainPanel, BorderLayout.NORTH);
+        outerPanel.add(mainPanel, "wrap");
+        outerPanel.add(groundStationPanel, "wrap");
         
         return outerPanel;
     }
 
     private JPanel makeGroundStationPanel() {
+    	
+    	JPanel jp = new JPanel(new MigLayout());
+        // jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
+        jp.setBorder(BorderFactory.createTitledBorder(" Ground Station Controls "));
+
         locationComboBox = new JComboBox();
         locationComboBox.setEditable(true);
         locationEditor = (JTextField) locationComboBox.getEditor().getEditorComponent();
@@ -625,21 +678,30 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         
         antColorPanel = new JPanel();
         antColorPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        antColorPanel.add(new JLabel("Set Ground Station Color: "));
+        antColorPanel.add(new JLabel("Ground Station Color: "));
         antColorPanel.add(antColorSwatch);
         
         antColorPanel.add(Box.createHorizontalStrut(5));
-        antColorPanel.add(new JLabel("Set Ground Station Line Width: "));
+        antColorPanel.add(new JLabel("Ground Station Line Width: "));
         antColorPanel.add(gsSizeSlider);
         
-        return latLonAltPanel;
+        jp.add(locationPanel, "wrap");
+        jp.add(latLonAltPanel, "wrap");
+        jp.add(antColorPanel, "wrap");
+        
+        JPanel bottomRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton applyGroundStationMods = new JButton("Apply");
+        bottomRow.add(applyGroundStationMods);
+        jp.add(bottomRow);
+        
+        return jp;
     }
 
     private JPanel makeSwathWidthPanel() {
         if (dataChoice != null)
             satelliteName = new JLabel(dataChoice.getName());
-        Double dWidth = new Double(width);
-        swathWidthFld = new JTextField(dWidth.toString(), 6);
+        Integer isw = new Integer((int) width);
+        swathWidthFld = new JTextField(isw.toString(), 5);
         swathWidthFld.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 changeSwathWidth();
@@ -647,6 +709,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         });
 
         saveBtn = new JButton("Save");
+        saveBtn.setActionCommand(SAVE_CMD);
+        saveBtn.addActionListener(this);
 
         JPanel jp = new JPanel(new FlowLayout(FlowLayout.LEFT));
         jp.add(new JLabel("Satellite: "));
@@ -662,18 +726,36 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     }
 
     private void changeSwathWidth() {
-        String str = swathWidthFld.getText();
-        Double dVal = new Double(str.trim());
-        double val = dVal.doubleValue();
-        setSwathWidth(val);
-        try {
-            removeDisplayable(swathDsp);
-            Data data = getData(getDataInstance());
-            swathDsp = new CompositeDisplayable();
-            createTrackDisplay(data, false);
-        } catch (Exception e) {
-            System.out.println("\nproblem redrawing swaths e=" + e);
-        }
+
+    	String s = swathWidthFld.getText().trim();
+    	int val = -1;
+    	try {
+    		val = Integer.parseInt(s);
+    	} catch (NumberFormatException nfe) {
+    		// throw up a dialog to tell user the problem
+    		JOptionPane.showMessageDialog(latLonAltPanel, 
+    				"Invalid swath width: must be an integer value in km");
+    		return;
+    	}
+
+    	int earthDiam = (int) ((AstroConst.R_Earth_major * 2) / 1000);
+    	if ((val < 1) || (val > earthDiam)) {
+    		// throw up a dialog to tell user the problem
+    		JOptionPane.showMessageDialog(latLonAltPanel, 
+    				"Swath width valid range is " + 1 + 
+    				" to " + earthDiam + " (Earth diameter) km");
+    		return;
+    	} else {
+    		setSwathWidth(val);
+    		try {
+    			removeDisplayable(swathDsp);
+    			Data data = getData(getDataInstance());
+    			swathDsp = new CompositeDisplayable();
+    			createTrackDisplay(data, false);
+    		} catch (Exception e) {
+    			logger.error("\nproblem redrawing swaths e=" + e);
+    		}
+    	}
     }
 
     private void setSwathWidth(double val) {
@@ -688,8 +770,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         try {
             DisplayRealType dispType = navDsp.getDisplayAltitudeType();
             trackDsp.setConstantPosition(satZ, dispType);
+            timeLabelDsp.setConstantPosition(satZ, dispType);
         } catch (Exception exc) {
-            System.out.println("Setting track z-position exc=" + exc);
+            logger.error("Setting track z-position exc=" + exc);
         }
     }
 
@@ -710,17 +793,16 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 addDisplayable(circleDsp, FLAG_COLORTABLE);
             }
         } catch (Exception e) {
-            System.out.println("redrawCoverageCircle e=" + e);
+            logger.error("redrawCoverageCircle e=" + e);
         }
     }
 
     private CurveDrawer drawCoverageCircle(double lat, double lon, double satAlt, Color color) {
 
-        /* mean earthRadius in km */
+        /* mean Earth radius in km */
         double earthRadius = AstroConst.R_Earth_mean / 1000.0;
         satAlt += earthRadius;
-        double pi = Math.PI;
-        double SAC = pi / 2.0 + Math.toRadians(getAntennaAngle());
+        double SAC = Math.PI / 2.0 + Math.toRadians(getAntennaAngle());
         double sinASC = earthRadius * Math.sin(SAC) / satAlt;
         double dist = earthRadius * (Math.PI - SAC - Math.asin(sinASC));
         double rat = dist / earthRadius;
@@ -762,7 +844,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             coverageCircle.setData(uset);
             coverageCircle.setDrawingEnabled(false);
         } catch (Exception e) {
-            System.out.println("drawCoverageCircle e=" + e);
+            logger.error("drawCoverageCircle e=" + e);
             return null;
         }
         return coverageCircle;
@@ -780,7 +862,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 fontSizeFld.setText(new Integer(size).toString());
             }
         } catch (Exception e) {
-            System.out.println("Exception in PolarOrbitTrackControl.setFontSizeTextField e=" + e);
+            logger.error("Exception in PolarOrbitTrackControl.setFontSizeTextField e=" + e);
         }
     }
 
@@ -791,28 +873,41 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 fontSizeSlider.setValue(size);
             }
         } catch (Exception e) {
-            System.out.println("Exception in PolarOrbitTrackControl.moveFontSizeSlider e=" + e);
+            logger.error("Exception in PolarOrbitTrackControl.moveFontSizeSlider e=" + e);
         }
     }
 
     private void setDisplayableTextSize(int size) {
         size = setFontSize(size);
         try {
-            float fSize = (float) size / 10.0f;
-            int num = trackDsp.displayableCount() - 1;
-            TextDisplayable textDsp = null;
-            for (int i = num; i > -1; i--) {
-                Displayable dsp = trackDsp.getDisplayable(i);
-                if (dsp instanceof TextDisplayable) {
-                    textDsp = (TextDisplayable)dsp;
-                    break;
-                }
-            }
-            if (textDsp != null) {
-                textDsp.setTextSize(fSize);
+            // float fSize = (float) size / 10.0f;
+        	float fSize = (float) size;
+            logger.info("fSize: " + fSize);
+//            // XXX TJJ need to swap for time label displayable contents..
+//            int num = trackDsp.displayableCount() - 1;
+//            TextDisplayable textDsp = null;
+//            for (int i = num; i > -1; i--) {
+//                Displayable dsp = trackDsp.getDisplayable(i);
+//                if (dsp instanceof TextDisplayable) {
+//                    textDsp = (TextDisplayable)dsp;
+//                    break;
+//                }
+//            }
+//            if (textDsp != null) {
+//                textDsp.setTextSize(fSize);
+//            }
+            int num = timeLabelDsp.displayableCount();
+            for (int i = 0; i < num; i++) {
+            	Displayable dsp = timeLabelDsp.getDisplayable(i);
+            	if (dsp instanceof TextDisplayable) {
+            		if (i == 0) {
+            			logger.info("ORIG TXT SZ: " + ((TextDisplayable) dsp).getTextSize());
+            		}
+            		((TextDisplayable) dsp).setTextSize(fSize);
+            	}
             }
         } catch (Exception e) {
-            System.out.println("Exception in PolarOrbitTrackControl.setDisplayableTextSize e=" + e);
+            logger.error("Exception in PolarOrbitTrackControl.setDisplayableTextSize e=" + e);
         }
     }
 
@@ -831,10 +926,11 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         if (c == null) c = defaultColor;
         try {
             trackDsp.setColor(c);
+            timeLabelDsp.setColor(c);
             swathDsp.setColor(c);
             color = c;
         } catch (Exception e) {
-            System.out.println("Exception in PolarOrbitTrackControl.setColor e=" + e);
+            logger.error("Exception in PolarOrbitTrackControl.setColor e=" + e);
         }
     }
 
@@ -849,7 +945,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             antColor = c;
             circleDsp.setColor(c);
         } catch (Exception e) {
-            System.out.println("Exception in PolarOrbitTrackControl.setAntColor e=" + e);
+            logger.error("Exception in PolarOrbitTrackControl.setAntColor e=" + e);
         }
     }
 
@@ -937,7 +1033,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 new Data[] { lonLat, new Text(getTextType(), str)});
             groundStationDsp.setData(tup);
         } catch (Exception e) {
-            System.out.println("drawGroundStation e=" + e);
+            logger.error("drawGroundStation e=" + e);
         }
     }
         
@@ -975,5 +1071,107 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     private TupleType getTupleType() {
         return tupleType;
+    }
+    
+    /**
+     * Deal with action events
+     *
+     * @param  ae the ActionEvent fired when the user applys changes
+     */
+
+    public void actionPerformed(ActionEvent ae) {
+    	
+    	// swath-related changes
+    	if (SWATH_MODS.equals(ae.getActionCommand())) {
+    		logger.info("Apply Swath Mods...");
+    		
+    		// see if label interval has changed
+    		SpinnerNumberModel snm = (SpinnerNumberModel) (js.getModel());
+    		int tmpLabelInterval = ((Integer) snm.getValue()).intValue();
+    		if (tmpLabelInterval != labelInterval) {
+    			logger.info("Label interval change from: " + labelInterval +
+    					" to: " + tmpLabelInterval);
+    			labelInterval = tmpLabelInterval;
+    			try {
+    				// remove the current set of labels
+    				int numLabels = timeLabelDsp.displayableCount();
+    				for (int i = 0; i < numLabels; i++) {
+    					timeLabelDsp.removeDisplayable(0);
+    				}
+    				// get the currently loaded data
+    				Data data = getData(getDataInstance());
+					if (data instanceof Tuple) {
+		                Data[] dataArr = ((Tuple) data).getComponents();
+
+		                int npts = dataArr.length;
+
+		                for (int i = 0; i < npts; i++) {
+		                    Tuple t = (Tuple) dataArr[i];
+		                    Data[] tupleComps = t.getComponents();
+
+		                    LatLonTuple llt = (LatLonTuple)tupleComps[1];
+		                    double dlat = llt.getLatitude().getValue();
+		                    double dlon = llt.getLongitude().getValue();
+
+	                        if ((i % labelInterval) == 0) {
+	                            String str = ((Text)tupleComps[0]).getValue();
+	                            logger.info("Adding time for str: " + str);
+	                            int indx = str.indexOf(" ") + 1;
+	                            String subStr = "- " + str.substring(indx, indx+5);
+	                            TextDisplayable time = new TextDisplayable(getTextType());
+	                            time.setJustification(TextControl.Justification.LEFT);
+	                            time.setVerticalJustification(TextControl.Justification.CENTER);
+	                            time.setColor(color);
+	                            
+	                            RealTuple lonLat =
+	                                new RealTuple(RealTupleType.SpatialEarth2DTuple,
+	                                    new double[] { dlon, dlat });
+	                            Tuple tup = new Tuple(getTupleType(),
+	                                new Data[] { lonLat, new Text(getTextType(), subStr)});
+	                            time.setData(tup);
+	                            timeLabelDsp.addDisplayable(time);
+	                        }
+		                }
+		            }
+				} catch (RemoteException re) {
+					re.printStackTrace();
+				} catch (VisADException vade) {
+					vade.printStackTrace();
+				}
+    		}
+    		
+    		updateDisplayList();
+    		return;
+    	}
+    	
+    	// Save button - not yet implemented
+    	if (SAVE_CMD.equals(ae.getActionCommand())) {
+    		// throw up a dialog to tell user
+    		JOptionPane.showMessageDialog(latLonAltPanel, 
+    				"Save option is not yet implemented.");
+    		return;
+    	}
+
+    }
+    
+    public void itemStateChanged(ItemEvent e) {
+
+    	// only one checkbox, either checked or not!
+        try {
+			if (e.getStateChange() == ItemEvent.DESELECTED) {
+				logger.info("Labels OFF...");
+					timeLabelDsp.setVisible(false);
+					updateDisplayList();
+			} else {
+				logger.info("Labels ON...");
+					timeLabelDsp.setVisible(true);
+					updateDisplayList();
+			}
+		} catch (RemoteException re) {
+			re.printStackTrace();
+		} catch (VisADException vade) {
+			vade.printStackTrace();
+		}
+
     }
 }
