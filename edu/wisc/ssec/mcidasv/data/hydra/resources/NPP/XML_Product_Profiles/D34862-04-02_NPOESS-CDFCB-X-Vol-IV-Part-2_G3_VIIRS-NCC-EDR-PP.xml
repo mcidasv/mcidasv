@@ -32,8 +32,8 @@
 				<Scaled>1</Scaled>
 				<ScaleFactorName>AlbedoFactors</ScaleFactorName>
 				<MeasurementUnits>unitless</MeasurementUnits>
-				<RangeMin>0</RangeMin>
-				<RangeMax>5</RangeMax>
+				<RangeMin>-10</RangeMin>
+				<RangeMax>1000</RangeMax>
 				<DataType>unsigned 16-bit integer</DataType>
 				<FillValue>
 					<Name>NA_UINT16_FILL</Name>
