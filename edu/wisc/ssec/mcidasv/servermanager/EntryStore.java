@@ -248,7 +248,7 @@ public class EntryStore {
     protected String[] getWindowsAddeEnv() {
         // Drive letters should come from environment
         // Java drive is not necessarily system drive
-        return new String[] {
+        String[] results = new String[] {
             "PATH=" + ADDE_BIN,
             "MCPATH=" + USER_DIRECTORY+':'+ADDE_DATA,
             "MCNOPREPEND=1",
@@ -261,10 +261,12 @@ public class EntryStore {
             "HOMEDRIVE=" + System.getenv("HOMEDRIVE"),
             "HOMEPATH=\\Windows"
         };
+        logger.trace("results={}", results);
+        return results;
     }
 
     protected String[] getUnixAddeEnv() {
-        return new String[] {
+        String[] results = new String[] {
             "PATH=" + ADDE_BIN,
             "MCPATH=" + USER_DIRECTORY+':'+ADDE_DATA,
             "LD_LIBRARY_PATH=" + ADDE_BIN,
@@ -275,6 +277,8 @@ public class EntryStore {
             "MCJAVAPATH=" + System.getProperty("java.home"),
             "MCBUFRJARPATH=" + ADDE_BIN
         };
+        logger.trace("results={}", results);
+        return results;
     }
 
     protected String[] getAddeCommands() {
