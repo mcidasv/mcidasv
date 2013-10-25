@@ -818,6 +818,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
     
     @Override protected void handleConnectionError(Exception e) {
+        logger.error("handling connection error", e);
         if (e != null && e.getMessage() != null) {
             String msg = e.getMessage();
             int msgPos = msg.indexOf("AddeURLException:");
