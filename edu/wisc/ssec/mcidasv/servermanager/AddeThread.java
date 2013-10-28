@@ -27,8 +27,10 @@
  */
 package edu.wisc.ssec.mcidasv.servermanager;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Map;
 
 import org.bushe.swing.event.EventBus;
 
@@ -46,7 +48,7 @@ public class AddeThread extends Thread {
     private static final Logger logger = LoggerFactory.getLogger(AddeThread.class);
 
     /** Mcserv events. */
-    public enum McservEvent { 
+    public enum McservEvent {
         /** Mcservl is actively listening. */
         ACTIVE("Local servers are running."),
         /** Mcservl has died unexpectedly. */
@@ -61,7 +63,7 @@ public class AddeThread extends Thread {
 
         /**
          * Creates an object that represents the status of a mcservl process.
-         * 
+         *
          * @param message Should not be {@code null}.
          */
         private McservEvent(final String message) {
@@ -69,8 +71,8 @@ public class AddeThread extends Thread {
         }
 
         /**
-         * 
-         * 
+         *
+         *
          * @return Format string associated with an event.
          */
         public String getMessage() {
@@ -78,42 +80,41 @@ public class AddeThread extends Thread {
         }
     };
 
-    /** */
+    /** mcservl process. */
     Process proc;
+
+    /** The user's {@literal "user.path"}. */
+    private final String userDirectory;
 
     /** Server manager. */
     private final EntryStore entryStore;
 
     /**
      * Creates a thread that controls a mcservl process.
-     * 
+     *
      * @param entryStore Server manager.
      */
-    public AddeThread(final EntryStore entryStore) {
+    public AddeThread(final EntryStore entryStore, final String userDirectory) {
         this.entryStore = entryStore;
+        this.userDirectory = userDirectory;
     }
 
     public void run() {
         StringBuilder err = new StringBuilder();
-        String[] cmds = entryStore.getAddeCommands();
-        String[] env = (McIDASV.isWindows()) ? entryStore.getWindowsAddeEnv() : entryStore.getUnixAddeEnv();
+        Map<String, String> addeEnv = (McIDASV.isWindows()) ? entryStore.getWindowsAddeEnvironment() : entryStore.getUnixAddeEnviroment();
 
-        StringBuilder temp = new StringBuilder(512);
-        for (String cmd : cmds) {
-            temp.append(cmd).append(' ');
-        }
-        logger.trace("command={}", temp.toString());
-        temp = new StringBuilder(1024).append("{ ");
-        for (String e : env) {
-            temp.append(e).append(", ");
-        }
-        temp.append('}');
-        logger.trace("env={}", temp.toString());
-        temp = null;
+        // prepare mcservl with appropriate enviroment and working directory.
+        ProcessBuilder pb = new ProcessBuilder(entryStore.getAddeCommands());
+        pb.environment().putAll(addeEnv);
+        pb.directory(new File(userDirectory));
+
+        logger.trace("command='{}'", pb.command());
+        logger.trace("working directory='{}'", pb.directory());
+        logger.trace("environment={}", addeEnv);
 
         try {
             //start ADDE binary with "-p PORT" and set environment appropriately
-            proc = Runtime.getRuntime().exec(cmds, env);
+            proc = pb.start();
 
             //create thread for reading inputStream (process' stdout)
             StreamReaderThread outThread = new StreamReaderThread(proc.getInputStream(), new StringBuilder());
@@ -149,7 +150,7 @@ public class AddeThread extends Thread {
         } catch (InterruptedException e) {
             McservEvent type = McservEvent.DIED;
 //            if (entryStore.getRestarting()) {
-                type = McservEvent.STARTED;
+            type = McservEvent.STARTED;
 //            }
             EventBus.publish(type);
         } catch (Exception e) {
@@ -158,7 +159,7 @@ public class AddeThread extends Thread {
     }
 
     /**
-     * 
+     *
      */
     public void stopProcess() {
         proc.destroy();
