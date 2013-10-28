@@ -23,6 +23,7 @@ package ucar.unidata.idv;
 /**** BEGIN MCV ADDONS ****/
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.swing.SwingUtilities;
 /**** END MCV ADDONS ****/
 
 import org.w3c.dom.Document;
@@ -3722,9 +3723,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
             t.start();
             
-            this.setVisibilityAnimationCheckBox("On");
+            this.setVisibilityAnimationCheckBox(ON);
         } else {
-            this.setVisibilityAnimationCheckBox("Off");
+            this.setVisibilityAnimationCheckBox(OFF);
         }
     }
     /**** END MCV ADDONS ****/
@@ -4317,27 +4318,27 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
                 if (animationMenu == null) {
                     animationMenu = new JMenu("Visibility Animation");
-                    animationCB   = new JCheckBoxMenuItem("On");
                     /**** BEGIN MCV ADDONS ****/
-                    animationCB.setSelected("On".equals(getVisibilityAnimationCheckBox()));
+                    animationCB   = new JCheckBoxMenuItem(ON);
+                    animationCB.setSelected(ON.equals(getVisibilityAnimationCheckBox()));
                     animationCB.addActionListener(new ObjectListener(null) {
                         public void actionPerformed(ActionEvent event) {
-                            setVisibilityAnimationCheckBox("On");
+                            setVisibilityAnimationCheckBox(ON);
                             setAnimatedVisibility(((JCheckBoxMenuItem) event
                                 .getSource()).isSelected());
                         }
                     });
                     animationMenu.add(animationCB);
-                    item = new JMenuItem("Faster");
-                    item.setSelected("Faster".equals(getVisibilityAnimationCheckBox()));
+                    item = new JMenuItem(FASTER);
+                    item.setSelected(FASTER.equals(getVisibilityAnimationCheckBox()));
                     item.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent event) {
                             fasterVisibilityAnimation();
                         }
                     });
                     animationMenu.add(item);
-                    item = new JMenuItem("Slower");
-                    item.setSelected("Slower".equals(getVisibilityAnimationCheckBox()));
+                    item = new JMenuItem(SLOWER);
+                    item.setSelected(SLOWER.equals(getVisibilityAnimationCheckBox()));
                     item.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent event) {
                             slowerVisibilityAnimation();
@@ -8005,11 +8006,16 @@ public class ViewManager extends SharableImpl implements ActionListener,
     ;
     /**** BEGIN MCV ADDONS ****/
     private static final Logger logger = LoggerFactory.getLogger(ViewManager.class);
-    
-    private String animationCheckBox = "Off";
+
+    private static final String ON = "On";
+    private static final String OFF = "Off";
+    private static final String FASTER = "Faster";
+    private static final String SLOWER = "Slower";
+
+    private String animationCheckBox = OFF;
     
     public void fasterVisibilityAnimation() {
-        setVisibilityAnimationCheckBox("Faster");
+        setVisibilityAnimationCheckBox(FASTER);
         if (animationSpeed > 300) {
             animationSpeed -= 200;
         }
@@ -8017,7 +8023,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
     }
     
     public void slowerVisibilityAnimation() {
-        setVisibilityAnimationCheckBox("Slower");
+        setVisibilityAnimationCheckBox(SLOWER);
         animationSpeed += 200;
         logger.trace("animationSpeed: {}", animationSpeed);
     }
@@ -8032,23 +8038,33 @@ public class ViewManager extends SharableImpl implements ActionListener,
     }
     
     public void setVisibilityAnimationCheckBox(String value) {
-        if ("On".equals(value) || "Faster".equals(value) || "Slower".equals(value)) {
+        final boolean enabled;
+        if (ON.equals(value) || FASTER.equals(value) || SLOWER.equals(value)) {
             animationCheckBox = value;
+            enabled = true;
         } else {
-            animationCheckBox = "Off";
+            animationCheckBox = OFF;
+            enabled = false;
         }
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override public void run() {
+                animationCB.setSelected(enabled);
+            }
+        });
     }
     
     public void setAnimatedVisibilityCheckBox(boolean enabled) {
         if (enabled) {
-            setVisibilityAnimationCheckBox("On");
+            setVisibilityAnimationCheckBox(ON);
         } else {
-            setVisibilityAnimationCheckBox("Off");
+            setVisibilityAnimationCheckBox(OFF);
         }
         setAnimatedVisibility(enabled);
     }
     
     public String getVisibilityAnimationCheckBox() {
+
         return animationCheckBox;
     }
     
