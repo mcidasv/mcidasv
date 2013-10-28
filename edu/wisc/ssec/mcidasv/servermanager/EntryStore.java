@@ -241,74 +241,50 @@ public class EntryStore {
         }
     }
 
-    /**
-     * Gets the {@link ucar.unidata.idv.IdvObjectStore IdvObjectStore} being used by McIDAS-V.
-     *
-     * @return McIDAS-V's {@code IdvObjectStore}.
-     */
     public IdvObjectStore getIdvStore() {
         return idvStore;
     }
 
-    /**
-     * Gets a mapping of environment variables and their values that are
-     * required to launch mcservl under Windows.
-     *
-     * @return {@code HashMap} of environment variables and their
-     * corresponding values.
-     */
-    protected Map<String, String> getWindowsAddeEnvironment() {
-        Map<String, String> env = new HashMap<String, String>(11);
-        env.put("PATH", ADDE_BIN);
-        env.put("MCPATH", USER_DIRECTORY+':'+ADDE_DATA);
-        env.put("MCNOPREPEND", "1");
-        env.put("MCTRACE", MCTRACE);
-        env.put("MCTRACK", "NO");
-        env.put("MCJAVAPATH", System.getProperty("java.home"));
-        env.put("MCBUFRJARPATH", ADDE_BIN);
-        env.put("SYSTEMDRIVE", System.getenv("SystemDrive"));
-        env.put("SYSTEMROOT", System.getenv("SystemRoot"));
-        env.put("HOMEDRIVE", System.getenv("HOMEDRIVE"));
-        env.put("HOMEPATH", "\\Windows");
-        return env;
+    protected String[] getWindowsAddeEnv() {
+        // Drive letters should come from environment
+        // Java drive is not necessarily system drive
+        return new String[] {
+            "PATH=" + ADDE_BIN,
+            "MCPATH=" + USER_DIRECTORY+':'+ADDE_DATA,
+            "MCNOPREPEND=1",
+            "MCTRACE=" + MCTRACE,
+            "MCTRACK=NO",
+            "MCJAVAPATH=" + System.getProperty("java.home"),
+            "MCBUFRJARPATH=" + ADDE_BIN,
+            "SYSTEMDRIVE=" + System.getenv("SystemDrive"),
+            "SYSTEMROOT=" + System.getenv("SystemRoot"),
+            "HOMEDRIVE=" + System.getenv("HOMEDRIVE"),
+            "HOMEPATH=\\Windows"
+        };
     }
 
-    /**
-     * Gets a mapping of environment variables and their values that are
-     * required to launch mcservl on Unix-like systems.
-     *
-     * @return {@code HashMap} of environment variables and their
-     * corresponding values.
-     */
-    protected Map<String, String> getUnixAddeEnviroment() {
-        Map<String, String> env = new HashMap<String, String>(9);
-        env.put("PATH", ADDE_BIN);
-        env.put("MCPATH", USER_DIRECTORY+':'+ADDE_DATA);
-        env.put("LD_LIBRARY_PATH", ADDE_BIN);
-        env.put("DYLD_LIBRARY_PATH", ADDE_BIN);
-        env.put("MCNOPREPEND", "1");
-        env.put("MCTRACE", MCTRACE);
-        env.put("MCTRACK", "NO");
-        env.put("MCJAVAPATH", System.getProperty("java.home"));
-        env.put("MCBUFRJARPATH", ADDE_BIN);
-        return env;
+    protected String[] getUnixAddeEnv() {
+        return new String[] {
+            "PATH=" + ADDE_BIN,
+            "MCPATH=" + USER_DIRECTORY+':'+ADDE_DATA,
+            "LD_LIBRARY_PATH=" + ADDE_BIN,
+            "DYLD_LIBRARY_PATH=" + ADDE_BIN,
+            "MCNOPREPEND=1",
+            "MCTRACE=" + MCTRACE,
+            "MCTRACK=NO",
+            "MCJAVAPATH=" + System.getProperty("java.home"),
+            "MCBUFRJARPATH=" + ADDE_BIN
+        };
     }
 
-    /**
-     * Gets the commandline used to launch mcservl.
-     *
-     * @return An array of {@code String} values that will be used to launch
-     * mcservl.
-     */
     protected String[] getAddeCommands() {
-        String mcvPID = System.getProperty("mcv.pid");
-        String[] command;
-        if (mcvPID == null) {
-            command = new String[] { ADDE_MCSERVL, "-v", "-p", localPort };
-        } else {
-            command = new String[] { ADDE_MCSERVL, "-v", "-p", localPort, "-i", mcvPID };
-        }
-        return command;
+    	String mcvPID = System.getProperty("mcv.pid");
+    	if (mcvPID == null) {
+    		return new String[] { ADDE_MCSERVL, "-v", "-p", localPort };
+    	}
+    	else {
+    		return new String[] { ADDE_MCSERVL, "-v", "-p", localPort, "-i", mcvPID };    		
+    	}
     }
 
     /**
@@ -1027,7 +1003,7 @@ public class EntryStore {
         if ((new File(ADDE_MCSERVL)).exists()) {
             // Create and start the thread if there isn't already one running
             if (!checkLocalServer()) {
-                thread = new AddeThread(this, USER_DIRECTORY);
+                thread = new AddeThread(this);
                 thread.start();
                 EventBus.publish(McservEvent.STARTED);
                 logger.debug("started mcservl? checkLocalServer={}", checkLocalServer());
