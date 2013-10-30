@@ -41,6 +41,8 @@ import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 
+import org.python.modules.posix.PosixModule;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -278,13 +280,13 @@ public class EntryStore {
     }
 
     protected String[] getAddeCommands() {
-    	String mcvPID = System.getProperty("mcv.pid");
-    	if (mcvPID == null) {
-    		return new String[] { ADDE_MCSERVL, "-v", "-p", localPort };
-    	}
-    	else {
-    		return new String[] { ADDE_MCSERVL, "-v", "-p", localPort, "-i", mcvPID };    		
-    	}
+        String mcvPID = Integer.toString(PosixModule.getpid());
+        if ((mcvPID == null) || ("0".equals(mcvPID))) {
+            return new String[] { ADDE_MCSERVL, "-v", "-p", localPort };
+        }
+        else {
+            return new String[] { ADDE_MCSERVL, "-v", "-p", localPort, "-i", mcvPID };
+        }
     }
 
     /**
