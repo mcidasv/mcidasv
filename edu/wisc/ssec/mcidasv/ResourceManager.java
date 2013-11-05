@@ -272,8 +272,9 @@ public class ResourceManager extends IdvResourceManager {
 
     /**
      * Returns either a {@literal "normal"} {@link ResourceCollection} or a
-     * {@link XmlResourceCollection}, based upon {@code rsrc}.
-     * 
+     * {@link ucar.unidata.xml.XmlResourceCollection XmlResourceCollection},
+     * based upon {@code rsrc}.
+     *
      * @param rsrc XML representation of a resource collection. Should not be 
      * {@code null}.
      * @param name The {@literal "name"} to associate with the returned 
