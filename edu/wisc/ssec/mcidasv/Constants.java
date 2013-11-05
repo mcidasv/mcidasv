@@ -30,14 +30,11 @@ package edu.wisc.ssec.mcidasv;
 
 import java.awt.Color;
 
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
-
 import ucar.unidata.idv.IdvConstants;
 import ucar.unidata.util.PatternFileFilter;
 
 /**
  * Application wide constants.
- * @version $Id$
  */
 public interface Constants extends IdvConstants {
 

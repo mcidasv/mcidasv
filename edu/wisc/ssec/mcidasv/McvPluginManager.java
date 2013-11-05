@@ -29,23 +29,22 @@
 package edu.wisc.ssec.mcidasv;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JLabel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.wisc.ssec.mcidasv.servermanager.LocalEntryEditor;
-
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.PluginManager;
-import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.ResourceCollection;
 
+import edu.wisc.ssec.mcidasv.servermanager.LocalEntryEditor;
+
+/**
+ * McIDAS-V extension to the IDV's {@link PluginManager}. The chief difference
+ * is that all requests for plugins are redirected to SSEC rather than Unidata.
+ */
 public class McvPluginManager extends PluginManager {
 
     private static final Logger logger = LoggerFactory.getLogger(LocalEntryEditor.class);

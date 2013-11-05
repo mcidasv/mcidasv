@@ -58,8 +58,9 @@ import ucar.unidata.util.ResourceCollection.Resource;
 import ucar.unidata.util.StringUtil;
 
 /**
- * @author McIDAS-V Team
- * @version $Id$
+ * McIDAS-V's resource manager. The chief differences from Unidata's
+ * {@link IdvResourceManager} are supporting {@literal "default"} McIDAS-V
+ * bundles, and some initial attempts at safer resource handling.
  */
 public class ResourceManager extends IdvResourceManager {
 
