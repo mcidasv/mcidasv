@@ -128,7 +128,7 @@ public class UrlChooser extends ucar.unidata.idv.chooser.UrlChooser implements C
     }
 
     /**
-     * toggle the combobox with the text area
+     * Toggle the combobox with the text area.
      */
     public void switchFields() {
         if (showBox) {
@@ -164,14 +164,14 @@ public class UrlChooser extends ucar.unidata.idv.chooser.UrlChooser implements C
     }
 
     /**
-     * Handle the action event from the GUI
+     * Handle the action event from the GUI.
      */
     @Override public void doLoadInThread() {
         loadURL();
     }
 
     /**
-     * Wrapper around {@see #loadURLInner()}, showing the wait cursor
+     * Wrapper around {@link #loadURLInner()}, showing the wait cursor.
      */
     private void loadURL() {
         showWaitCursor();

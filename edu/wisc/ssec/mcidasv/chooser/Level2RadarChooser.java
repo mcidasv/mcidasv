@@ -125,8 +125,9 @@ public class Level2RadarChooser extends FileChooser {
     }
 
     /**
-     * Label for getDataSourcesComponent selector
-     * @return
+     * Label for {@link #getDataSourcesComponent()} selector.
+     *
+     * @return {@code String} to use as the label for data sources selector.
      */
     protected String getDataSourcesLabel() {
     	return "Station:";

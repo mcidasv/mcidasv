@@ -177,13 +177,7 @@ public class McIdasBridgeChooser extends IdvChooser implements Constants {
         makeDataSource("", "MCIDASX", ht);
         showNormalCursor();
     }
-    
 
-    /**
-     * Make the GUI
-     *
-     * @return The GUI
-     */
     private JLabel statusLabel = new JLabel("Status");
 
     @Override
@@ -192,7 +186,12 @@ public class McIdasBridgeChooser extends IdvChooser implements Constants {
             statusString = "";
         statusLabel.setText(statusString);
     }
-    
+
+    /**
+     * Make the GUI.
+     *
+     * @return The GUI.
+     */
     protected JComponent doMakeContents() {
         JPanel myPanel = new JPanel();
         

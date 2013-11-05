@@ -153,8 +153,9 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
     }
     
     /**
-     * Label for getDataSourcesComponent selector
-     * @return
+     * Label for {@link #getDataSourcesComponent()} selector.
+     *
+     * @return {@code String} to use as the label for data type selector.
      */
     protected String getDataSourcesLabel() {
         return "Data Type:";

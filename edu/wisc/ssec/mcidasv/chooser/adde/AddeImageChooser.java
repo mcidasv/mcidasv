@@ -2482,11 +2482,10 @@ public class AddeImageChooser extends AddeChooser implements
     }
 
     /**
-     * Show the given error to the user. If it was an Adde exception that was a
-     * bad server error then print out a nice message.
+     * Show the given error to the user. If it was an ADDE exception that was
+     * a bad server error then print out a nice message.
      * 
-     * @param excp
-     *            The exception
+     * @param e Exception to be handled.
      */
     protected void handleConnectionError(Exception e) {
         if (e != null && e.getMessage() != null) {
