@@ -72,6 +72,7 @@ import ucar.unidata.view.geoloc.NavigatedDisplay;
 import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
+
 import ucar.visad.Util;
 import ucar.visad.display.Animation;
 import ucar.visad.display.AnimationInfo;
@@ -81,6 +82,7 @@ import ucar.visad.display.CompositeDisplayable;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.Displayable;
 import ucar.visad.display.TextDisplayable;
+
 import visad.ConstantMap;
 import visad.ControlEvent;
 import visad.ControlListener;
@@ -99,12 +101,12 @@ import visad.ProjectionControl;
 import visad.Real;
 import visad.Set;
 import visad.VisADException;
+
 import visad.bom.annotations.ImageJ3D;
 import visad.bom.annotations.ScreenAnnotatorJ3D;
+
 import visad.java3d.DisplayImplJ3D;
 import visad.java3d.DisplayRendererJ3D;
-
-
 
 
 import java.awt.AWTException;
@@ -136,13 +138,18 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.awt.print.PrinterJob;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+
 import java.rmi.RemoteException;
+
 import java.text.DecimalFormat;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -157,6 +164,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Group;
+
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -184,6 +192,7 @@ import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3f;
 
@@ -1113,58 +1122,55 @@ public class ViewManager extends SharableImpl implements ActionListener,
             }
         }
 
-        // Create it if we need to
-        if (sideLegend == null) {
-            sideLegend = new SideLegend(this);
-            addRemovable(sideLegend);
-        }
+        if (getShowSideLegend()) {
+            // Create it if we need to
+            if (sideLegend == null) {
+                sideLegend = new SideLegend(this);
+                addRemovable(sideLegend);
+            }
 
-        synchronized (legends) {
-            if (getShowSideLegend()) {
+            synchronized (legends) {
                 legends.add(sideLegend);
             }
-        }
+        
 
-        sideLegendComponent = getSideComponent(sideLegend.getContents());
-        sideLegendContainer = new JPanel(new BorderLayout());
-        sideLegendContainer.add(BorderLayout.CENTER, sideLegendComponent);
+            sideLegendComponent = getSideComponent(sideLegend.getContents());
+            sideLegendContainer = new JPanel(new BorderLayout());
+            sideLegendContainer.add(BorderLayout.CENTER, sideLegendComponent);
 
-        // Set the contents from the side legend in case the sideLegendComponent is not just the
-        // contents from the legend
-        sideLegend.setContentsToUse(sideLegendComponent);
+            // Set the contents from the side legend in case the sideLegendComponent is not just the
+            // contents from the legend
+            sideLegend.setContentsToUse(sideLegendComponent);
 
-        JComponent leftComp  = (legendOnLeft
-                                ? sideLegendContainer
-                                : centerPanel);
-        JComponent rightComp = (legendOnLeft
-                                ? centerPanel
-                                : sideLegendContainer);
+            JComponent leftComp  = (legendOnLeft
+                                    ? sideLegendContainer
+                                    : centerPanel);
+            JComponent rightComp = (legendOnLeft
+                                    ? centerPanel
+                                    : sideLegendContainer);
 
-        mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftComp,
-                                       rightComp);
+            mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, 
+                                       leftComp,rightComp);
 
-        if (legendOnLeft) {
-            mainSplitPane.setResizeWeight(0.20);
+            if (legendOnLeft) {
+                mainSplitPane.setResizeWeight(0.20);
+            } else {
+                mainSplitPane.setResizeWeight(0.80);
+            }
+
+            mainSplitPane.setOneTouchExpandable(true);
+
+            centerPanelWrapper = (showControlLegend)
+                                  ? GuiUtils.center(mainSplitPane)
+                                  : GuiUtils.center(centerPanel);
+            insertSideLegend();
         } else {
-            mainSplitPane.setResizeWeight(0.80);
+            centerPanelWrapper = GuiUtils.center(centerPanel);
         }
 
-        mainSplitPane.setOneTouchExpandable(true);
-
-        if (splitPaneLocation >= 0) {
-
-            // SPLIT       mainSplitPane.setDividerLocation(splitPaneLocation);
-        }
-
-        // centerPanelWrapper = new JPanel(new BorderLayout());
-        centerPanelWrapper = (showControlLegend)
-                             ? GuiUtils.center(mainSplitPane)
-                             : GuiUtils.center(centerPanel);
-        fullContents       = GuiUtils.leftCenter(leftNav, centerPanelWrapper);
+        fullContents = GuiUtils.leftCenter(leftNav, centerPanelWrapper);
         fullContents.setBorder(getContentsBorder());
-        insertSideLegend();
         fillLegends();
-
     }
 
     /**
