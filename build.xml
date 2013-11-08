@@ -693,8 +693,12 @@
     
     <!-- Generate the javadoc documentation -->
     <target name="javadoc" description="Generate the javadoc documentation">
-        
+        <tstamp>
+            <format property="javadoc.build.date" pattern="yyyy-MM-dd HH:mm Z" timezone="UTC" />
+        </tstamp>
         <javadoc access="${javadoc.level}"
+            header="generated at ${javadoc.build.date}"
+            footer="generated at ${javadoc.build.date}"
             author="true"
             breakiterator="yes"
             destdir="${javadoc.dir}"
