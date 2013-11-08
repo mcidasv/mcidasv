@@ -973,9 +973,13 @@ class _Display(_JavaProxy):
         """Returns a list of all layers used by this Display."""
         
         return [_Layer(displayControl) for displayControl in self._JavaProxy__javaObject.getControls()]
-        
+
     @gui_invoke_later
     def createLayer(self, layerType, data):
+        self.createLayerWithShortname(layerType, data, 'unable to set shortname macro')
+        
+    @gui_invoke_later
+    def createLayerWithShortname(self, layerType, data, shortname):
         """Creates a new _Layer in this _Display
         
         Args:
@@ -1040,7 +1044,7 @@ class _Display(_JavaProxy):
         # this is questionable... but I think this is better for debugging
         # than just setting to an empty string
         longname = 'unable to set longname macro'
-        shortname = 'unable to set shortname macro'
+        #shortname = 'unable to set shortname macro'
 
         defaultLabel = ''
         try:
