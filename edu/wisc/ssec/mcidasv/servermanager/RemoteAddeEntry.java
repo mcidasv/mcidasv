@@ -671,6 +671,12 @@ public class RemoteAddeEntry implements AddeEntry {
         serverInfo.setSelectedGroup(entry.getGroup());
         String[] datasets = serverInfo.getDatasetList();
         if (datasets != null && datasets.length > 0) {
+        	// TJJ 7 Nov 2013, not my proudest moment. See Inq #905
+        	// if type is NEXR, this is a Radar server, not Image
+        	String ff = serverInfo.getFileFormat();
+        	if ((ff != null) && (ff.equals("NEXR"))) {
+        		entry.entryType = AddeEntry.EntryType.RADAR;
+        	}
             return AddeStatus.OK;
         } else {
             return AddeStatus.BAD_GROUP;
