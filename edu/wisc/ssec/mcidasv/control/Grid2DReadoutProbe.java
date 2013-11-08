@@ -209,11 +209,11 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
     }
 
     /**
-     * Make the probe with the specific <code>Color</code> and
-     * <code>ViewDescriptor</code>.
+     * Make the probe with the specific {@link Color} and associate it with
+     * the given {@link DisplayMaster}.
      *
-     * @param probeColor    color for the probe
-     * @param view  view descriptor
+     * @param probeColor Color of the probe.
+     * @param master {@code DisplayMaster} of the display we will be probing.
      *
      * @throws RemoteException  Java RMI error
      * @throws VisADException   VisAD Error
@@ -408,7 +408,7 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
      * when we get a sharable event to move the probe point. Subclasses
      * need to implement this.
      *
-     * @param position  new position for the probe.
+     * @param newPos New position for the probe.
      */
     protected void probePositionChanged(final RealTuple newPos) {
         if (!currentPosition.equals(newPos)) {
