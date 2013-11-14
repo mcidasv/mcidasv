@@ -75,7 +75,7 @@
     <property name="run.smallheap" value="1024m" />
     <property name="run.largeheap" value="6656m" />
     
-    <property name="logback.default.config" value="edu/wisc/ssec/mcidasv/resources/logback.xml" />
+    <property name="logback.default.config" value="${userpath.dir}/logback.xml" />
     
     <!-- Nightly build properties -->
     <property name="cvs.root" value="${user.name}@cvs.ssec.wisc.edu:/cvsroot" />
@@ -144,6 +144,8 @@
         <include name="edu/**/*.class" />
         <include name="edu/**/resources/**/*" />
         <include name="edu/**/images/**/*" />
+        <include name="logback.xml" />
+        <include name="logback-stdout.xml" />
     </patternset>
     
     <!-- Files to include in local-idv jar -->
@@ -548,7 +550,7 @@
       <sysproperty key="debug.adde.reqs" value="true" />
       <sysproperty key="idv.usetimedriver" value="true" />
       <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
-      <sysproperty key="logback.configurationFile" value="edu/wisc/ssec/mcidasv/resources/logback-stdout.xml" />
+      <sysproperty key="logback.configurationFile" value="${logback.default.config}" />
 
       <sysproperty key="visad.java3d.textureNpot" value="true" />
       <sysproperty key="visad.java3d.imageByRef" value="true" />
@@ -591,7 +593,7 @@
       <sysproperty key="mcv.userpath" value="/Users/${user.name}/Documents/McIDAS-V"/>
       <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
       <sysproperty key="debug.adde.reqs" value="true" />
-      <sysproperty key="logback.configurationFile" value="edu/wisc/ssec/mcidasv/resources/logback-stdout.xml" />
+      <sysproperty key="logback.configurationFile" value="${logback.default.config}" />
       <sysproperty key="python.security.respectJavaAccessibility" value="false" />
       <!--<sysproperty key="idv.usetimedriver" value="true" />-->
       <arg value="-forceaqua" />
@@ -867,7 +869,7 @@
             <sysproperty key="debug.adde.reqs" value="true" />
             <sysproperty key="idv.usetimedriver" value="true" />
             <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
-            <sysproperty key="logback.configurationFile" value="edu/wisc/ssec/mcidasv/resources/logback-stdout.xml" />
+            <sysproperty key="logback.configurationFile" value="${logback.default.config}" />
             <sysproperty key="visad.java3d.textureNpot" value="true" />
             <sysproperty key="visad.java3d.imageByRef" value="true" />
             <sysproperty key="visad.java3d.geometryByRef" value="true" />

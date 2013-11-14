@@ -7,7 +7,7 @@
   scan and scanPeriod: please see the Logback documentation:
   http://logback.qos.ch/manual/configuration.html#autoScan
  -->
-<configuration>
+<configuration debug="true">
 
   <!-- sets up a rotating mcidasv.log. every time mcidasv.log reaches 1MB, this
        will move mcidasv.log to mcidasv.1.log.zip and create a new mcidasv.log.
