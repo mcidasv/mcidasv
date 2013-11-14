@@ -19,7 +19,7 @@
         be given a name conforming to "mcidasv_yyyyMMdd_HHmmss.log".
         
         If you are using autoscanning, be aware that any reloads will result
-        in mcidasv.log being rolled--just like a normal startup!
+        in mcidasv.log being rolled. Just like a normal startup!
         
         currently all log files are being kept! :( -->
   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
