@@ -976,7 +976,7 @@ class _Display(_JavaProxy):
 
     @gui_invoke_later
     def createLayer(self, layerType, data):
-        self.createLayerWithShortname(layerType, data, 'unable to set shortname macro')
+        return self.createLayerWithShortname(layerType, data, 'unable to set shortname macro')
         
     @gui_invoke_later
     def createLayerWithShortname(self, layerType, data, shortname):
