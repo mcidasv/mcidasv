@@ -57,6 +57,10 @@
   <logger name="uk.org.lidalia.sysoutslf4j" level="OFF" />
   
   <!-- Let's use this section of the file to group loggers that spew *way* too much output. -->
+  <logger name="java" level="OFF" />
+  <logger name="sun" level="OFF" />
+  <logger name="javax" level="OFF" />
+  <logger name="j3d" level="OFF" />
   <logger name="httpclient.wire.content" level="OFF" />
   <logger name="org.apache.commons.httpclient" level="OFF" />
   <logger name="org.bushe.swing.event" level="OFF" />

@@ -30,6 +30,7 @@ package edu.wisc.ssec.mcidasv;
 
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 
+import org.slf4j.bridge.SLF4JBridgeHandler;
 import static ucar.unidata.xml.XmlUtil.getAttribute;
 
 import java.awt.Insets;
@@ -1549,16 +1550,24 @@ public class McIDASV extends IntegratedDataViewer {
      * @throws Exception When something untoward happens
      */
     public static void main(String[] args) throws Exception {
-//        SysOutOverSLF4J.registerLoggingSystem("ch.qos.logback");
         SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(LogLevel.INFO, LogLevel.WARN);
+
+        // Optionally remove existing handlers attached to j.u.l root logger
+        SLF4JBridgeHandler.removeHandlersForRootLogger();  // (since SLF4J 1.6.5)
+
+        // add SLF4JBridgeHandler to j.u.l's root logger, should be done once during
+        // the initialization phase of your application
+        SLF4JBridgeHandler.install();
+
+        long sysMem = Long.valueOf(SystemState.queryOpSysProps().get("opsys.memory.physical.total"));
         logger.info("=============================================================================");
         logger.info("Starting McIDAS-V @ {}", new Date());
         logger.info("Versions:");
         logger.info("{}", SystemState.getMcvVersionString());
         logger.info("{}", SystemState.getIdvVersionString());
         logger.info("{}", SystemState.getVisadVersionString());
-        long sysMem = Long.valueOf(SystemState.queryOpSysProps().get("opsys.memory.physical.total"));
         logger.info("{} MB system memory", Math.round(sysMem/1024/1024));
+
         applyArgs(args);
         if (!hadCleanExit(SESSION_FILE)) {
             previousStart = extractDate(SESSION_FILE);
