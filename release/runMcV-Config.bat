@@ -31,7 +31,7 @@ IF EXIST "%USERPROFILE%\.mcidasv" (
 
 SET LOGBACK_CONFIG="%MCV_USERPATH%/logback.xml"
 
-set MCV_CLASSPATH=%CD%\;%CD%\mcv_userguide.jar;%CD%\sysout-over-slf4j-1.0.2.jar;%CD%\commons-math-2.2.jar;%CD%\log4j-over-slf4j-1.6.1.jar;%CD%\logback-classic-0.9.29.jar;%CD%\logback-core-0.9.29.jar;%CD%\miglayout-4.0-swing.jar;%CD%\slf4j-api-1.6.1.jar;%CD%\jython.jar;%CD%\eventbus-1.3.jar;%CD%\mcidasv.jar;%CD%\auxdata.jar;%CD%\external.jar;%CD%\local-idv.jar;%CD%\idv.jar;%CD%\local-visad.jar;%CD%\ncIdv.jar;%CD%\visad.jar
+set MCV_CLASSPATH=%CD%\;%CD%\mcv_userguide.jar;%CD%\mcidasv.jar
 
 REM Get the amount of system memory
 echo Reading system configuration...

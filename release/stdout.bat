@@ -152,7 +152,7 @@ copy /y mcidasv.log "%MCV_TEMP%" && more /e +%START% "%MCV_TEMP%" > "%MCV_LOG%" 
 :startup
 REM Start McIDAS-V
 
-set MCV_CLASSPATH=%CD%\;%CD%\log4j-over-slf4j-1.6.1.jar;%CD%\logback-classic-0.9.28.jar;%CD%\logback-core-0.9.28.jar;%CD%\miglayout-3.7.3.jar;%CD%\slf4j-api-1.6.1.jar;%CD%\jython.jar;%CD%\eventbus-1.3.jar;%CD%\mcidasv.jar;%CD%\auxdata.jar;%CD%\external.jar;%CD%\local-idv.jar;%CD%\idv.jar;%CD%\local-visad.jar;%CD%\ncIdv.jar;%CD%\visad.jar
+set MCV_CLASSPATH=%CD%\;%CD%\mcv_userguide.jar;%CD%\mcidasv.jar
 
 @echo Command line: jre\bin\java.exe -Xmx%HEAP_SIZE% %JVM_ARGS% %D3D_FLAG% -Dlogback.configurationFile=%LOGBACK_CONFIG% -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
 
