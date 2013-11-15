@@ -200,7 +200,7 @@ public class EntryStore {
     /**
      * Searches {@code entries} for {@link AddeEntry} objects with two characteristics:
      * <ul>
-     * <li>the object source is {@link EntrySource#System}</li>
+     * <li>the object source is {@link EntrySource#SYSTEM}</li>
      * <li>the object is <b>not</b> in {@code systemEntries}</li>
      * </ul>
      * 
