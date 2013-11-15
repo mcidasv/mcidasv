@@ -98,7 +98,7 @@ SET ALLOW_NPOT=false
 ) ELSE (
 SET ALLOW_NPOT=true
 )
-SET LOGBACK_CONFIG="edu/wisc/ssec/mcidasv/resources/logback.xml"
+SET LOGBACK_CONFIG="%MCV_USERPATH%/logback.xml"
 
 REM Get the amount of system memorys
 echo Reading system configuration...

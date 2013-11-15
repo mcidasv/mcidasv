@@ -187,7 +187,7 @@ else
     LOGGING_LEVEL="INFO"
 fi
 
-LOGBACK_CONFIG="edu/wisc/ssec/mcidasv/resources/logback.xml"
+LOGBACK_CONFIG="${MCV_USERPATH}/logback.xml"
 
 # Gather up previously set values.
 MCV_USERPATH_ESCAPED=`echo ${MCV_USERPATH} |sed -e 's/ /\\\\ /g'`

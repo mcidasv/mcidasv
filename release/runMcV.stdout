@@ -179,7 +179,7 @@ else
     ALLOW_NPOT="true"
 fi
 
-LOGBACK_CONFIG="edu/wisc/ssec/mcidasv/resources/logback.xml"
+LOGBACK_CONFIG="${MCV_USERPATH}/logback.xml"
 
 # Gather up previously set values.
 JAVA_FLAGS="-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${JVM_ARGS} -Dlogback.configurationFile=${LOGBACK_CONFIG}"

@@ -4,42 +4,41 @@
   debug: generates some SLF4J debug; acceptable values are "true" or "false".
          defaults to "false".
 
-  scan and scanPeriod: please see the Logback documentation:
+  scan and scanPeriod: these options allow you to configure Logback to watch
+  your logback.xml file for any changes and will reload if anything is different.
+  
+  please see the Logback autoscanning documentation:
   http://logback.qos.ch/manual/configuration.html#autoScan
  -->
-<configuration>
+ <!-- <configuration debug="true" scan="true" scanPeriod="5 seconds"> -->
+<configuration debug="false">
 
-  <!-- sets up a rotating mcidasv.log. every time mcidasv.log reaches 1MB, this
-       will move mcidasv.log to mcidasv.1.log.zip and create a new mcidasv.log.
-       the appender is configured to keep around (at most):
-       
-       mcidasv.log (active log file)
-       mcidasv.1.log.zip 
-       mcidasv.2.log.zip
-       mcidasv.3.log.zip
-       
-       anything after mcidasv.3.log.zip is discarded. -->
+  <!--  sets up a rotating mcidasv.log. every time mcidasv is started will
+        check for a mcidasv.log file in the userpath. if one exists, the 
+        file will be moved into the "logs" subdirectory of the userpath and
+        be given a name conforming to "mcidasv_yyyyMMdd_HHmmss.log".
+        
+        If you are using autoscanning, be aware that any reloads will result
+        in mcidasv.log being rolled. Just like a normal startup!
+        
+        currently all log files are being kept! :( -->
   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <file>${mcv.userpath}/mcidasv.log</file>
-    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-      <fileNamePattern>${mcv.userpath}/mcidasv.%i.log.zip</fileNamePattern>
-      <minIndex>1</minIndex>
-      <maxIndex>3</maxIndex>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${mcv.userpath}/logs/mcidasv_%d{yyyyMMdd}_%d{HHmmss,aux}.log</fileNamePattern>
+      <TimeBasedFileNamingAndTriggeringPolicy class="edu.wisc.ssec.mcidasv.util.StartupTriggeringPolicy" />
     </rollingPolicy>
-    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-      <maxFileSize>1MB</maxFileSize>
-    </triggeringPolicy>
     <encoder>
       <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %method: %msg%n</pattern>
     </encoder>
   </appender>
 
-  <appender name="JYTHON" class="ch.qos.logback.core.FileAppender">
+  <!-- <appender name="JYTHON" class="ch.qos.logback.core.FileAppender">
     <file>${mcv.userpath}/jython.log</file>
     <encoder>
       <pattern># %d{HH:mm:ss.SSS} [%thread] %level:%n%msg%n</pattern>
     </encoder>
-  </appender>
+  </appender> -->
 
   <!-- you can override the root level for specific packages -->
   <!-- <logger name="edu.wisc.ssec.mcidasv" level="TRACE"/> -->
@@ -58,11 +57,18 @@
   <logger name="uk.org.lidalia.sysoutslf4j" level="OFF" />
   
   <!-- Let's use this section of the file to group loggers that spew *way* too much output. -->
+  <logger name="java" level="OFF" />
+  <logger name="sun" level="OFF" />
+  <logger name="javax" level="OFF" />
+  <logger name="j3d" level="OFF" />
   <logger name="httpclient.wire.content" level="OFF" />
   <logger name="org.apache.commons.httpclient" level="OFF" />
   <logger name="org.bushe.swing.event" level="OFF" />
   <logger name="ucar.grib" level="OFF" />
   <logger name="org.python" level="OFF" />
   <logger name="httpclient" level="OFF" />
+  <logger name="edu.wisc.ssec.mcidas.adde.AddeServerInfo" level="OFF" />
+  <logger name="edu.wisc.ssec.mcidas.adde.AddeTextReader" level="OFF" />
+  <logger name="edu.wisc.ssec.mcidas.adde.DataSetInfo" level="OFF" />
   <!-- End of verbose logger section -->
 </configuration>
