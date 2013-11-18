@@ -37,6 +37,7 @@ import edu.wisc.ssec.mcidasv.data.hydra.SuomiNPPDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.idv.control.ImagePlanViewControl;
 
 import ucar.unidata.data.DataChoice;
@@ -49,6 +50,22 @@ import visad.georef.EarthLocation;
 public class SuomiNPPQfControl extends ImagePlanViewControl {
     
     private static final Logger logger = LoggerFactory.getLogger(SuomiNPPQfControl.class);
+
+    /**
+     * Get the {@literal "first"} {@link DataSourceImpl} associated with this
+     * control.
+     *
+     * @return Either the first {@code DataSourceImpl} for this control, or
+     * {@code null}.
+     */
+    public DataSourceImpl getDataSource() {
+        DataSourceImpl ds = null;
+        List dataSources = getDataSources();
+        if (!dataSources.isEmpty()) {
+            ds = (DataSourceImpl)dataSources.get(0);
+        }
+        return ds;
+    }
 
     @Override protected List getCursorReadoutInner(EarthLocation el,
                                                    Real animationValue,
