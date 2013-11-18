@@ -1102,7 +1102,7 @@ class _Display(_JavaProxy):
             RuntimeError: if height and width specified here after an annotate
             
         """
-        import visad.DisplayException as DisplayException
+        from visad import DisplayException
         
         # this pause is apparently critical
         pause()
@@ -1138,8 +1138,7 @@ class _Display(_JavaProxy):
         
     #@gui_invoke_later
     def annotate(self, text, lat=None, lon=None, line=None, element=None,
-            font=None, color='red', size=None, style=None,
-            alignment = ("center", "center")):
+        font=None, color='red', size=None, style=None, alignment=None):
         """Put a text annotation on this panel
         
         Can specify location by a lat/lon point or number of pixels
@@ -1155,7 +1154,7 @@ class _Display(_JavaProxy):
            line, element: need to be specified together.
                       Line is number of pixels from top, element is number
                       of pixels from left, for bottom left point of text.
-                      Or, can do element="CENTER" which centers the text 
+                      Or, can do element="CENTER" which centers the text
                       horizontally.
            font: name of a font.   (optional)
            size: size of font. (optional)
@@ -1164,12 +1163,12 @@ class _Display(_JavaProxy):
            color: text color. Default red, for now I guess. this is GUI default.
                  (optional)
            alignment: 2-element tuple representing the (horizontal, vertical)
-                text alignment wrt to the given point.  "center" is valid 
+                text alignment wrt to the given point.  "center" is valid
                 in both elements, "left" and "right" are valid for horizontal,
                 "top" and "bottom" are valid for vertical.  Can also just pass
                 single string "center" which would be equivalent to
                 ("center", "center").  Default is ("center", "center"),
-                so "alignment" is optional
+                so "alignment" is optional.
                 
         Returns:
            a _Layer wrapping a DrawingControl
@@ -1179,9 +1178,11 @@ class _Display(_JavaProxy):
             or invalid strings in alignment
         """
         import colorutils
-        import visad.georef.EarthLocationTuple as EarthLocationTuple
-        import ucar.unidata.idv.control.drawing.TextGlyph as TextGlyph
-        import ucar.unidata.idv.control.drawing.DrawingGlyph as DrawingGlyph
+        from visad.georef import EarthLocationTuple
+        from ucar.unidata.idv.control.drawing import DrawingGlyph
+        from ucar.unidata.idv.control.drawing import TextGlyph
+        
+        alignment = alignment or ('center', 'center')
         
         # Force into offscreen mode for the moment so drawing control
         # properties window doesn't flash
@@ -1190,12 +1191,13 @@ class _Display(_JavaProxy):
         getStaticMcv().getArgsManager().setIsOffScreen(True)
         
         # "False" here means do not "initDisplayInThread":
-        drawCtl = getStaticMcv().doMakeControl( [],
-                getStaticMcv().getControlDescriptor('drawingcontrol'),
-                None, None, False)
+        drawCtl = getStaticMcv().doMakeControl([],
+            getStaticMcv().getControlDescriptor('drawingcontrol'),
+            None, None, False)
         drawCtl.setName(text)
         drawCtl.setLegendLabelTemplate(text)
         drawCtl.setShowInDisplayList(False)
+        
         pause()
         
         # set offscreen mode back to whatever it was
@@ -1206,14 +1208,11 @@ class _Display(_JavaProxy):
         horAlign = str(alignment[0]).lower()
         vertAlign = str(alignment[1]).lower()
         if str(alignment).lower() != "center":
-            if (horAlign != "left"
-                    and horAlign != "center"
-                    and horAlign != "right"):
-                raise ValueError('first element of alignment keyword must be "left", "center", or "right"')
-            if (vertAlign != "top"
-                    and vertAlign != "center"
-                    and vertAlign != "bottom"):
-                raise ValueError('second element of alignment keyword must be "top", "center", or "bottom"')
+            if horAlign != "left" and horAlign != "center" and horAlign != "right":
+                raise ValueError('First element of alignment keyword must be "left", "center", or "right".')
+                
+            if vertAlign != "top" and vertAlign != "center" and vertAlign != "bottom":
+                raise ValueError('Second element of alignment keyword must be "top", "center", or "bottom".')
                 
         # deal with horizontal/vertical justification keywords.
         # Unfortunately, we need to "reverse" the justification w.r.t.
@@ -1225,12 +1224,14 @@ class _Display(_JavaProxy):
             glyph.setHorizontalJustification(TextGlyph.JUST_RIGHT)
         if horAlign == "right":
             glyph.setHorizontalJustification(TextGlyph.JUST_LEFT)
+            
         if vertAlign == "center":
             glyph.setVerticalJustification(TextGlyph.JUST_CENTER)
         if vertAlign == "top":
             glyph.setVerticalJustification(TextGlyph.JUST_BOTTOM)
         if vertAlign == "bottom":
             glyph.setVerticalJustification(TextGlyph.JUST_TOP)
+            
         if str(alignment).lower() == "center":
             glyph.setHorizontalJustification(TextGlyph.JUST_CENTER)
             glyph.setVerticalJustification(TextGlyph.JUST_CENTER)
