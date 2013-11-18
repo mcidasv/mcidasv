@@ -499,7 +499,7 @@ def ispython22(object):
     object_type = type(object)
     if object_type.__name__.startswith('java') or isinstance(object, PyReflectedFunction):
         python = False
-    elif object_type is types.MethodType:
+    elif isinstance(object, types.MethodType):
         try:
             object.__dict__
             python = True
@@ -519,7 +519,7 @@ def ispython25(object):
         python = False
     elif isinstance(object, PyReflectedFunction):
         python = False
-    elif type(object) == types.MethodType and not ispython(object.im_class):
+    elif isinstance(object, types.MethodType) and not ispython(object.im_class):
         python = False
     else:
         python = True

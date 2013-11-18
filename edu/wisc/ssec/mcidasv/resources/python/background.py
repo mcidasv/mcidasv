@@ -180,15 +180,27 @@ class _MappedData(object):
         # subclasses should override!
         raise NotImplementedError()
             
-    def __reversed__(self): raise NotImplementedError()
-    def __setitem__(self, key, value): raise NotImplementedError()
-    def __delitem__(self, key): raise NotImplementedError()
-    def setdefault(self, key, failobj=None): raise NotImplementedError()
-    def pop(self, key, *args): raise NotImplementedError()
-    def popitem(self): raise NotImplementedError()
-    def update(self, newDict=None, **kwargs): raise NotImplementedError()
-    
-    
+    def __reversed__(self):
+        raise NotImplementedError()
+        
+    def __setitem__(self, key, value):
+        raise NotImplementedError()
+        
+    def __delitem__(self, key):
+        raise NotImplementedError()
+        
+    def setdefault(self, key, failobj=None):
+        raise NotImplementedError()
+        
+    def pop(self, key, *args):
+        raise NotImplementedError()
+        
+    def popitem(self):
+        raise NotImplementedError()
+        
+    def update(self, newDict=None, **kwargs):
+        raise NotImplementedError()
+        
 class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
     def __init__(self, aiff, areaFile, areaDirectory, addeDescriptor, 
             startTime):
@@ -212,9 +224,9 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         self.addeSatBands = None
         # call the copy constructor
         AreaImageFlatField.__init__(self, aiff, False, aiff.getType(),
-                aiff.getDomainSet(), aiff.RangeCoordinateSystem,
-                aiff.RangeCoordinateSystems, aiff.RangeSet,
-                aiff.RangeUnits, aiff.readLabel)
+            aiff.getDomainSet(), aiff.RangeCoordinateSystem,
+            aiff.RangeCoordinateSystems, aiff.RangeSet,
+            aiff.RangeUnits, aiff.readLabel)
         self.startTime = startTime
         
     # http://stackoverflow.com/questions/141545/overloading-init-in-python
@@ -368,7 +380,7 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         # use SATBAND string now that we have it:
         longname = '%s %s' % (self['sensor-type'], self['satband-band-label'])
         shortname = '%s_Band%s_%s' % (self['sensor-id'], self['bands'][0],  self['calibration-type'])
-        macros = {'longname':longname, 'shortname':shortname}
+        macros = {'longname': longname, 'shortname': shortname}
         return macros
 
     def getDefaultLayerLabel(self):
@@ -460,12 +472,12 @@ def _getNewFont(currentFont, fontName, style, size):
     else:
         style = currentFont.getStyle()
         
-    if size == None:
+    if size is None:
         size = currentFont.getSize()
     else:
         size = int(size)
         
-    if fontName != None:
+    if fontName is not None:
         # check if fontName is valid
         fontList = list(ucar.unidata.util.GuiUtils.getFontList())
         # Add Java Platform required fonts to this list. This avoids issues 
@@ -480,7 +492,7 @@ def _getNewFont(currentFont, fontName, style, size):
             if str(availableFont).lower() == fontName.lower():
                 fontName = str(availableFont)
                 foundFont = True
-        if foundFont == False:
+        if not foundFont:
             # if fontName is STILL None, then user provided an invalid font name
             raise ValueError(
                     "Could not find the following fontName:", fontName, 
@@ -610,7 +622,7 @@ class _Display(_JavaProxy):
            z-rotate
         """
         _JavaProxy.__init__(self, javaObject)
-        if labelDict == None:
+        if labelDict is None:
             # DisplayList / layer label properties
             self.labelDict = dict(
                 font=javaObject.getDisplayListFont(),
@@ -1003,7 +1015,7 @@ class _Display(_JavaProxy):
         for desc in mcv.getControlDescriptors():
             if desc.label == layerType:
                 controlID = desc.controlId
-        if controlID == None:
+        if controlID is None:
             raise ValueError("Layer type '%s' is invalid; please see output of allLayerTypes() for available layer types." % (layerType))
         if controlID == 'imagesequence':
             # hack for backward compatibility: don't let user do an
@@ -1207,32 +1219,30 @@ class _Display(_JavaProxy):
         # Unfortunately, we need to "reverse" the justification w.r.t.
         # IDV terminology ("right" becomes "left"), because we've decided
         # on the opposite model of alignment as the IDV...
-        if (horAlign == "center"):
+        if horAlign == "center":
             glyph.setHorizontalJustification(TextGlyph.JUST_CENTER)
-        if (horAlign == "left"):
+        if horAlign == "left":
             glyph.setHorizontalJustification(TextGlyph.JUST_RIGHT)
-        if (horAlign == "right"):
+        if horAlign == "right":
             glyph.setHorizontalJustification(TextGlyph.JUST_LEFT)
-        if (vertAlign == "center"):
+        if vertAlign == "center":
             glyph.setVerticalJustification(TextGlyph.JUST_CENTER)
-        if (vertAlign == "top"):
+        if vertAlign == "top":
             glyph.setVerticalJustification(TextGlyph.JUST_BOTTOM)
-        if (vertAlign == "bottom"):
+        if vertAlign == "bottom":
             glyph.setVerticalJustification(TextGlyph.JUST_TOP)
-        if (str(alignment).lower() == "center"):
+        if str(alignment).lower() == "center":
             glyph.setHorizontalJustification(TextGlyph.JUST_CENTER)
             glyph.setVerticalJustification(TextGlyph.JUST_CENTER)
             
-        if (lat != None) and (lon != None) and (
-                (line == None) and (element == None)):
+        if (lat is not None) and (lon is not None) and ((line is None) and (element is None)):
             # lat lon point
             point = EarthLocationTuple(lat, lon, 0.0)  # TODO: not sure about altitude
             glyph.setCoordType(DrawingGlyph.COORD_LATLONALT)
-        elif (line != None) and (element != None) and (
-                (lat == None) and (lon == None)):
+        elif (line is not None) and (element is not None) and ((lat is None) and (lon is None)):
             if (str(element).lower() == "center"):
                 dims = self.getDimensions()
-                element = dims[2] / 2 # should be middle pixel
+                element = dims[2] / 2  # should be middle pixel
                 glyph.setHorizontalJustification(TextGlyph.JUST_CENTER)
             # screen coordinates
             glyph.setCoordType(DrawingGlyph.COORD_XYZ)
@@ -1263,7 +1273,7 @@ class _Display(_JavaProxy):
         Note, a user can define viewpoints via the "Projections -> Viewpoints"
         menu in the main McV window.
         
-        Args:  
+        Args:
                viewpointName:  the name given to the viewpoint by the user
                                when saving.
                                
@@ -1335,11 +1345,11 @@ class _Layer(_JavaProxy):
                  do.  Case sensitive!
            Range: 2-element list specifying min and max data range
         """
-        if (name != None):  # leave as-is if not specified
+        if name is not None:  # leave as-is if not specified
             self.setEnhancementTable(name)
             
         # but 'range' is a Python built-in.........
-        if (range != None):
+        if range is not None:
             self.setDataRange(range[0], range[1])
             
     @gui_invoke_later
@@ -1373,13 +1383,13 @@ class _Layer(_JavaProxy):
         
         # if that one didn't work, keep trying hard to figure out what
         # the user meant.
-        if (newct == None):
+        if newct is None:
             # In case user specifies 'full path' to color table like getProjection,
             # e.g. 'System>Temperature'
             shortName = (ctName.split('>'))[-1]
             newct = ctm.getColorTable(shortName)
             
-        if (newct != None):
+        if newct is not None:
             return self._JavaProxy__javaObject.setColorTable(newct)
         else:
             raise ValueError(
@@ -1425,22 +1435,22 @@ class _Layer(_JavaProxy):
         # assume user wants color scale visible unless otherwise specified
         self.setColorScaleVisible(visible)
         
-        if (placement != None):
+        if placement is not None:
             self.setColorScalePlacement(placement)
             
-        if (font != None):  # let setColorScaleFont handle default
+        if font is not None:  # let setColorScaleFont handle default
             self.setColorScaleFont(fontName=font)
             
-        if (style != None):
+        if style is not None:
             self.setColorScaleFont(style=style)
             
-        if (size != None):  # let setColorScaleFont handle default
+        if size is not None:  # let setColorScaleFont handle default
             self.setColorScaleFont(size=size)
             
-        if (color != None):
+        if color is not None:
             self.setColorScaleFontColor(color)
 
-        if (showUnit != None):
+        if showUnit is not None:
             self.setColorScaleShowUnit(showUnit)
             
     @gui_invoke_later
@@ -1577,23 +1587,23 @@ class _Layer(_JavaProxy):
             
         Returns:  nothing
         """
-        if (label != None):
+        if label is not None:
             label = str(label)  # convert to str if possible
             self._JavaProxy__javaObject.setDisplayListTemplate(label)
             
         self.setLayerLabelVisible(visible)
         self._getDisplayWrapper().labelDict['visible'] = visible
         
-        if (font != None):
+        if font is not None:
             self.setLayerLabelFont(fontName=font)
             
-        if (style != None):
+        if style is not None:
             self.setLayerLabelFont(style=style)
             
-        if (size != None):  # let setColorScaleFont handle default
+        if size is not None:  # let setColorScaleFont handle default
             self.setLayerLabelFont(size=size)
             
-        if (color != None):
+        if color is not None:
             self.setLayerLabelColor(color)
             
         self._JavaProxy__javaObject.getViewManager().updateDisplayList()
@@ -1770,22 +1780,30 @@ class _Annotation(_JavaProxy):
            yLocation
         """
         _JavaProxy.__init__(self, javaObject)
+        
     def getFontName(self):
         pass
+        
     def getFontColor(self):
         pass
+        
     def getFontSize(self):
         pass
+        
     def getFontStyle(self):
         pass
+        
     def getFontInfo(self):
         # return a tuple: name, size, color, style? (like bold, etc)
         # would REALLY like to have named tuples here...
         pass
+        
     def getText(self):
         pass
+        
     def setText(self, text):
         pass
+        
     def getCoordinates(self):
         # (x,y) tuple
         pass
@@ -2105,7 +2123,7 @@ def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
           
           Default size:  600 x 400
         """
-        if (height > 0) and (width > 0):
+        if height > 0 and width > 0:
             dim = java.awt.Dimension(width, height)
             # this utilizes the fact that doMakeDisplayMaster in MapViewManager gets it's default
             # dimension from StateManager.getViewSize().  It's slightly hack but much easier
@@ -2211,22 +2229,23 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=No
     pref_confirm_both = sm.getPreference(mpm.PREF_CONFIRM_REMOVE_BOTH, True)
     
     # see McIdasPreferenceManager:1360 for what these should get set to
-    if (str(mode).lower() == 'newwindow'):
+    if str(mode).lower() == 'newwindow':
         sm.putPreference(my_mcv.PREF_OPEN_REMOVE, False)
         sm.putPreference(my_mcv.PREF_OPEN_MERGE, False)
-    elif (str(mode).lower() == 'merge'):
+    elif str(mode).lower() == 'merge':
         sm.putPreference(my_mcv.PREF_OPEN_REMOVE, True)
         sm.putPreference(my_mcv.PREF_OPEN_MERGE, False)
-    elif (str(mode).lower() == 'newtab'):
+    elif str(mode).lower() == 'newtab':
         sm.putPreference(my_mcv.PREF_OPEN_REMOVE, False)
         sm.putPreference(my_mcv.PREF_OPEN_MERGE, True)
-    elif (str(mode).lower() == 'replace'):
+    elif str(mode).lower() == 'replace':
         sm.putPreference(my_mcv.PREF_OPEN_REMOVE, True)
         sm.putPreference(my_mcv.PREF_OPEN_MERGE, True)
     else:
         # do "replace" by default"
         sm.putPreference(my_mcv.PREF_OPEN_REMOVE, True)
         sm.putPreference(my_mcv.PREF_OPEN_MERGE, True)
+        
     # set relevant preferences to values that make sense for non-GUI mode
     sm.putPreference(my_mcv.PREF_ZIDV_ASK, False)
     sm.putPreference(my_mcv.PREF_OPEN_ASK, False)
@@ -2245,7 +2264,7 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=No
     
     pm = my_mcv.getPersistenceManager()
     
-    if (dataDictionary != None):
+    if dataDictionary is not None:
         # It turns out the whole dictionary thing boils down to a call to
         # PersistenceManager.setFileMapping which takes a list of ids and
         # a list containing lists of files for each datasource id.  Then we
@@ -2271,7 +2290,7 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=No
     pm.decodeXmlFile(bundle, label, checkToRemove, letUserChangeData, bundleProperties)
     pause()  # MJH 2013-05-15 not sure about this one...
     
-    if (dataDictionary != None):
+    if dataDictionary is not None:
         pm.clearFileMapping()
         
     # change relevant preferences back to original values
@@ -2288,7 +2307,7 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=No
     
     display = activeDisplay()
     
-    if (height != -1) and (width != -1):
+    if height != -1 and width != -1:
         display.setSize(width, height)
         
     return display  # TODO: return list of all displays instead
