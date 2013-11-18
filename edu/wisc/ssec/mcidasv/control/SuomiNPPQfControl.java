@@ -37,6 +37,8 @@ import edu.wisc.ssec.mcidasv.data.hydra.SuomiNPPDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ucar.unidata.idv.control.ImagePlanViewControl;
+
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.idv.control.ReadoutInfo;
@@ -44,7 +46,7 @@ import ucar.unidata.idv.control.ReadoutInfo;
 import visad.Real;
 import visad.georef.EarthLocation;
 
-public class SuomiNPPQfControl extends edu.wisc.ssec.mcidasv.control.ImagePlanViewControl {
+public class SuomiNPPQfControl extends ImagePlanViewControl {
     
     private static final Logger logger = LoggerFactory.getLogger(SuomiNPPQfControl.class);
 

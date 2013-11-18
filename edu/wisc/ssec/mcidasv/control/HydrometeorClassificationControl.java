@@ -31,12 +31,14 @@ package edu.wisc.ssec.mcidasv.control;
 import java.util.ArrayList;
 import java.util.List;
 
+import ucar.unidata.idv.control.ImagePlanViewControl;
+
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.idv.control.ReadoutInfo;
 import visad.Real;
 import visad.georef.EarthLocation;
 
-public class HydrometeorClassificationControl extends edu.wisc.ssec.mcidasv.control.ImagePlanViewControl {
+public class HydrometeorClassificationControl extends ImagePlanViewControl {
 
     @Override protected List getCursorReadoutInner(EarthLocation el,
                                                    Real animationValue,
