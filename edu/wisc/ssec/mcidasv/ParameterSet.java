@@ -31,7 +31,6 @@ package edu.wisc.ssec.mcidasv;
 
 import org.w3c.dom.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ucar.unidata.util.StringUtil;

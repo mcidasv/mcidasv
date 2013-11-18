@@ -35,10 +35,15 @@ import org.bushe.swing.event.EventBus;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Thread that actually execs mcservl
  */
 public class AddeThread extends Thread {
+
+    private static final Logger logger = LoggerFactory.getLogger(AddeThread.class);
 
     /** Mcserv events. */
     public enum McservEvent { 
@@ -92,6 +97,20 @@ public class AddeThread extends Thread {
         StringBuilder err = new StringBuilder();
         String[] cmds = entryStore.getAddeCommands();
         String[] env = (McIDASV.isWindows()) ? entryStore.getWindowsAddeEnv() : entryStore.getUnixAddeEnv();
+
+        StringBuilder temp = new StringBuilder(512);
+        for (String cmd : cmds) {
+            temp.append(cmd).append(' ');
+        }
+        logger.trace("command={}", temp.toString());
+        temp = new StringBuilder(1024).append("{ ");
+        for (String e : env) {
+            temp.append(e).append(", ");
+        }
+        temp.append('}');
+        logger.trace("env={}", temp.toString());
+        temp = null;
+
         try {
             //start ADDE binary with "-p PORT" and set environment appropriately
             proc = Runtime.getRuntime().exec(cmds, env);

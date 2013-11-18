@@ -16,6 +16,9 @@ mcidas/
 bin/*
 build/*
 
+# IntelliJ Idea junk
+*.iml
+
 # OS Junk
 .DS_Store
 /bin

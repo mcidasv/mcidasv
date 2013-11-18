@@ -67,7 +67,7 @@ SET D3D_FLAG=
 
 REM Show the welcome window if needed
 if "%SHOW_WELCOME%"=="1" (
-jre\bin\javaw.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow
+jre\bin\javaw.exe -Dmcv.userpath="%MCV_USERPATH%" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow
 if ERRORLEVEL 1 GOTO end
 )
 
@@ -98,12 +98,12 @@ SET ALLOW_NPOT=false
 ) ELSE (
 SET ALLOW_NPOT=true
 )
-SET LOGBACK_CONFIG="edu/wisc/ssec/mcidasv/resources/logback.xml"
-        
+SET LOGBACK_CONFIG="%MCV_USERPATH%\logback.xml"
+
 REM Get the amount of system memorys
 echo Reading system configuration...
 SET /a SYS_MEM=0
-FOR /F %%i IN ('jre\bin\java.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
+FOR /F %%i IN ('jre\bin\java.exe -Dmcv.userpath="%MCV_USERPATH%" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
 
 SET MCV_FLAGS=-Didv.3d=%ENABLE_3D% -Didv.sysmem=%SYS_MEM% -Dvisad.java3d.textureNpot=%ALLOW_NPOT% -Dvisad.java3d.imageByRef=%IMAGE_BY_REF% -Dvisad.java3d.geometryByRef=%GEOMETRY_BY_REF% -userpath "%MCV_USERPATH%"
 
@@ -145,8 +145,7 @@ IF EXIST "jre\bin\client\classes.jsa" (
 @echo *** notice: not using class data sharing
 )
 
-
-set MCV_CLASSPATH=%CD%\;%CD%\mcv_userguide.jar;%CD%\rsyntaxtextarea-2.0.2.jar;%CD%\sysout-over-slf4j-1.0.2.jar;%CD%\commons-math-2.2.jar;%CD%\log4j-over-slf4j-1.6.1.jar;%CD%\logback-classic-0.9.29.jar;%CD%\logback-core-0.9.29.jar;%CD%\miglayout-4.0-swing.jar;%CD%\slf4j-api-1.6.1.jar;%CD%\jython.jar;%CD%\eventbus-1.3.jar;%CD%\mcidasv.jar;%CD%\auxdata.jar;%CD%\external.jar;%CD%\local-idv.jar;%CD%\idv.jar;%CD%\local-visad.jar;%CD%\ncIdv.jar;%CD%\visad.jar
+set MCV_CLASSPATH=%CD%\;%CD%\mcv_userguide.jar;%CD%\mcidasv.jar
 
 @echo Command line: jre\bin\java.exe -XX:MaxPermSize=128m -Xmx%HEAP_SIZE% %JVM_ARGS% %D3D_FLAG% -Dpython.security.respectJavaAccessibility=false -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
 

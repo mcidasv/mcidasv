@@ -124,7 +124,7 @@ if [ "${SHOW_WELCOME}" = "1" ]; then
         OSX_FLAGS=""
     fi
     
-    ${JAVA_BIN} ${OSX_FLAGS} -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow 2>/dev/null
+    ${JAVA_BIN} ${OSX_FLAGS} -Dmcv.userpath=\"${MCV_USERPATH}\" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow 2>/dev/null
     if [ $? -eq 1 ]; then
         exit 1
     fi
@@ -133,7 +133,7 @@ fi
 # Get the version and amount of system memory
 echo "Reading system configuration..."
 # SYS_VER=`${JAVA_BIN} -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetVer 2>/dev/null`
-SYS_MEM=`${JAVA_BIN} -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2>/dev/null`
+SYS_MEM=`${JAVA_BIN} -Dmcv.userpath=\"${MCV_USERPATH}\" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2>/dev/null`
 echo "sys mem: ${SYS_MEM}"
 
 # We have system memory, so try to set heap size if a percent was requested
@@ -181,7 +181,7 @@ else
     ALLOW_NPOT="true"
 fi
 
-LOGBACK_CONFIG="edu/wisc/ssec/mcidasv/resources/logback.xml"
+LOGBACK_CONFIG="${MCV_USERPATH}/logback.xml"
 
 # Gather up previously set values.
 MCV_USERPATH_ESCAPED=`echo ${MCV_USERPATH} |sed -e 's/ /\\\\ /g'`
@@ -245,7 +245,7 @@ MCV_FLAGS="${MCV_FLAGS} -userpath \"${MCV_USERPATH}\" ${DEFAULT_BUNDLE}"
 #   fi
 # fi
 
-MCV_CLASSPATH=".:./rsyntaxtextarea-2.0.2.jar:./sysout-over-slf4j-1.0.2.jar:./commons-math-2.2.jar:./mcv_userguide.jar:./log4j-over-slf4j-1.6.1.jar:./logback-classic-0.9.29.jar:./logback-core-0.9.29.jar:./miglayout-4.0-swing.jar:./slf4j-api-1.6.1.jar:./jython.jar:./eventbus-1.3.jar:./mcidasv.jar:./auxdata.jar:./external.jar:./local-idv.jar:./idv.jar:./local-visad.jar:./ncIdv.jar:./visad.jar"
+MCV_CLASSPATH=".:./mcv_userguide.jar:./mcidasv.jar"
 
 # # Log this session
 # echo "################" >>"${MCV_LOG}"

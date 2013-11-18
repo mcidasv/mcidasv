@@ -452,7 +452,10 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   }
 				   String dimName = dim.getShortName();
 				   logger.debug("GranuleAggregation init, variable: " + varName + ", dimension name: " + dimName + ", length: " + dim.getLength());
-				   if (dimName == null) dimName = "dim" + cnt;
+				   if (dimName == null)  dimName = "dim" + cnt;
+				   if (dimName.isEmpty()) {
+					   dimName = "dim" + cnt;
+				   }
 				   dimNames[cnt] = dimName;
 				   dimLengths[cnt] = dim.getLength();
 				   cnt++;
@@ -661,6 +664,10 @@ public class GranuleAggregation implements MultiDimensionReader {
 					   startSet[i][j] = start[j] - (inTrackTotal - vGranuleLengths[loGranuleId]);
 				   } else {
 					   startSet[i][j] = (inTrackTotal - start[j]) % stride[j];
+					   // TJJ Sep 2013, zero-base starts that offset into subsequent granules
+					   if (startSet[i][j] > 0) {
+						   startSet[i][j]--;
+					   }
 				   }
 				   // counts may be different for start, end, and middle granules
 				   if (i == 0) {

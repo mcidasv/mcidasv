@@ -29,13 +29,13 @@ IF EXIST "%USERPROFILE%\.mcidasv" (
 
 :hasuserpath
 
-SET LOGBACK_CONFIG="edu/wisc/ssec/mcidasv/resources/logback.xml"
+SET LOGBACK_CONFIG="%MCV_USERPATH%\logback.xml"
 
-set MCV_CLASSPATH=%CD%\;%CD%\mcv_userguide.jar;%CD%\sysout-over-slf4j-1.0.2.jar;%CD%\commons-math-2.2.jar;%CD%\log4j-over-slf4j-1.6.1.jar;%CD%\logback-classic-0.9.29.jar;%CD%\logback-core-0.9.29.jar;%CD%\miglayout-4.0-swing.jar;%CD%\slf4j-api-1.6.1.jar;%CD%\jython.jar;%CD%\eventbus-1.3.jar;%CD%\mcidasv.jar;%CD%\auxdata.jar;%CD%\external.jar;%CD%\local-idv.jar;%CD%\idv.jar;%CD%\local-visad.jar;%CD%\ncIdv.jar;%CD%\visad.jar
+set MCV_CLASSPATH=%CD%\;%CD%\mcv_userguide.jar;%CD%\mcidasv.jar
 
 REM Get the amount of system memory
 echo Reading system configuration...
 SET SYS_MEM=0
-FOR /F %%i IN ('jre\bin\java.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
+FOR /F %%i IN ('jre\bin\java.exe -Dmcv.userpath="%MCV_USERPATH%" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
 
-jre\bin\java -Dlogback.configurationFile=%LOGBACK_CONFIG% -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.startupmanager.StartupManager -Didv.sysmem=%SYS_MEM% -userpath "%MCV_USERPATH%" %MCV_PARAMS%
+jre\bin\java -Dmcv.userpath="%MCV_USERPATH%" -Dlogback.configurationFile=%LOGBACK_CONFIG% -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.startupmanager.StartupManager -Didv.sysmem=%SYS_MEM% -userpath "%MCV_USERPATH%" %MCV_PARAMS%

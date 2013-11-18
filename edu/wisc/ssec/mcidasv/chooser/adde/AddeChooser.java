@@ -818,6 +818,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
     
     @Override protected void handleConnectionError(Exception e) {
+        logger.error("handling connection error", e);
         if (e != null && e.getMessage() != null) {
             String msg = e.getMessage();
             int msgPos = msg.indexOf("AddeURLException:");
@@ -1027,7 +1028,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
     
     /**
-     * Show the parameter set manager
+     * Show the parameter set manager.
      */
     private void showParameterSetDialog(final String parameterSetType) {
         ParameterTree tree = (ParameterTree) parameterTrees.get(parameterSetType);
@@ -1043,7 +1044,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
 
     /**
-     * Clear the selected parameter set
+     * Clear the selected parameter set.
      */
     protected void clearParameterSet() {
         restoreElement = null;
@@ -1052,10 +1053,13 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
 
     /**
-     * Restore the selected parameter set using element attributes
+     * Restore the selected parameter set using element attributes.
      * 
-     * @param restoreElement
-     * @return
+     * @param restoreElement {@code Element} with the desired attributes.
+     * {@code null} values are permitted.
+     *
+     * @return {@code true} if the parameter set was restored, {@code false}
+     * otherwise.
      */
     protected boolean restoreParameterSet(Element restoreElement) {
         if (restoreElement == null) return false;
@@ -1631,8 +1635,9 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
 
     /**
-     * Is the group selector editable?  Override if ya want.
-     * @return
+     * Is the group selector editable?
+     *
+     * @return Always returns {@code true}.
      */
     protected boolean isGroupEditable() {
         return true;
@@ -1820,7 +1825,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     private GuiUtils.CardLayoutPanel timesCardPanelExtra;
 
     /**
-     * Set the relative and absolute extra components
+     * Set the relative and absolute extra components.
      */
     protected JPanel makeTimesPanel(JComponent relativeCard, JComponent absoluteCard) {
         JPanel timesPanel = super.makeTimesPanel(false,true);
@@ -1840,13 +1845,6 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         return timesPanel;
     }
 
-    /**
-     * Make the UI for this selector.
-     * 
-     * Thank you NetBeans for helping with the layout!
-     * 
-     * @return The gui
-     */ 
     private JPanel innerPanel = new JPanel();
 
     private JLabel statusLabel = new JLabel("Status");
@@ -1869,7 +1867,11 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
 
     /**
-     * Create the basic layout
+     * Make the UI for this selector.
+     *
+     * Thank you NetBeans for helping with the layout!
+     *
+     * @return The GUI.
      */
     protected JComponent doMakeContents() {
         JPanel outerPanel = new JPanel();

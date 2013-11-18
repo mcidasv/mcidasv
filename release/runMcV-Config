@@ -69,7 +69,7 @@ fi
 
 # Get the amount of system memory
 echo "Reading system configuration..."
-SYS_MEM=`${JAVA_BIN} -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2>/dev/null`
+SYS_MEM=`${JAVA_BIN} -Dmcv.userpath=\"${MCV_USERPATH}\" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2>/dev/null`
 
 ################################################################################
 # OS specific settings
@@ -84,7 +84,7 @@ fi
 # Done with OS specific settings
 ################################################################################
 
-MCV_CLASSPATH=".:./commons-math-2.2.jar:./mcv_userguide.jar:./log4j-over-slf4j-1.6.1.jar:./logback-classic-0.9.29.jar:./logback-core-0.9.29.jar:./miglayout-4.0-swing.jar:./slf4j-api-1.6.1.jar:./jython.jar:./eventbus-1.3.jar:./mcidasv.jar:./auxdata.jar:./external.jar:./local-idv.jar:./idv.jar:./local-visad.jar:./ncIdv.jar:./visad.jar"
+MCV_CLASSPATH=".:./mcv_userguide.jar:./mcidasv.jar"
 
 # Run it
-${JAVA_BIN} ${JAVA_FLAGS} -classpath "${MCV_CLASSPATH}" -da edu.wisc.ssec.mcidasv.startupmanager.StartupManager -Didv.sysmem=${SYS_MEM} -userpath "${MCV_USERPATH}" $*
+${JAVA_BIN} ${JAVA_FLAGS} -Dmcv.userpath=\"${MCV_USERPATH}\" -classpath "${MCV_CLASSPATH}" -da edu.wisc.ssec.mcidasv.startupmanager.StartupManager -Didv.sysmem=${SYS_MEM} -userpath "${MCV_USERPATH}" $*

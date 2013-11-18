@@ -49,6 +49,7 @@ import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
+
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.util.SystemState;
 

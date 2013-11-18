@@ -863,16 +863,9 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         
         return myPanel;
     }
-    
-    /**
-     * Make the UI for this selector.
-     * 
-     * Thank you NetBeans for helping with the layout!
-     * 
-     * @return The gui
-     */ 
+
     private JPanel innerPanel = doMakeInnerPanel();
-        
+
     private JLabel statusLabel = new JLabel("Status");
 
     @Override
@@ -886,6 +879,13 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         innerPanel = newInnerPanel;
     }
 
+    /**
+     * Make the UI for this selector.
+     *
+     * Thank you NetBeans for helping with the layout!
+     *
+     * @return The GUI.
+     */
     public JComponent doMakeContents() {
         JPanel outerPanel = new JPanel();
 

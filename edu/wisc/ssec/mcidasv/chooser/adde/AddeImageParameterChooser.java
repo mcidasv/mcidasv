@@ -120,27 +120,27 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
     /**
      * Return the parameter type associated with this chooser.  Override!
      */
-    @Override
-    protected String getParameterSetType() {
+    @Override protected String getParameterSetType() {
         return "addeimagery";
     }
     
     /**
      * Return the data source ID.  Used by extending classes.
      */
-    @Override
-    protected String getDataSourceId() {
+    @Override protected String getDataSourceId() {
         return "ADDE.IMAGE.V";
     }
-    
+
     /**
-     * Restore the selected parameter set using element attributes
-     * 
-     * @param restoreElement
-     * @return
+     * Restore the selected parameter set using element attributes.
+     *
+     * @param restoreElement {@code Element} with the desired attributes.
+     * {@code null} values are permitted.
+     *
+     * @return {@code true} if the parameter set was restored, {@code false}
+     * otherwise.
      */
-    @Override
-    protected boolean restoreParameterSet(Element restoreElement) {
+    @Override protected boolean restoreParameterSet(Element restoreElement) {
         boolean okay = super.restoreParameterSet(restoreElement);
         if (!okay) return okay;
         
@@ -176,22 +176,23 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
      *
      * @return The value of the property to use in the request string
      */
-    @Override
-    protected String getPropValue(String prop, AreaDirectory ad) {
+    @Override protected String getPropValue(String prop, AreaDirectory ad) {
         String propValue = super.getPropValue(prop, ad);
         if (prop.equals(PROP_NAV)) {
             propValue = TwoFacedObject.getIdString(navComboBox.getSelectedItem());
         }
         return propValue;
     }
-    
+
     /**
-     * Optionally override any defaults per parameter chooser
-     * @param property
-     * @return
+     * Get the default value for a key
+     *
+     * @param property property (key type)
+     * @param dflt default value
+     *
+     * @return Value for key or dflt if not found.
      */
-    @Override
-    protected String getDefault(String property, String dflt) {
+    @Override protected String getDefault(String property, String dflt) {
         String paramDefault = super.getDefault(property, dflt);
         if (property.equals(PROP_NAV)) {
             if (restoreElement != null) {

@@ -301,9 +301,10 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
             bandDescr = self.addeSatBands.getBandDescr(
                 self.areaDirectory.getSensorID(),
                 self.areaDirectory.getSourceType())
-            return bandDescr[self._getBand()]
-        else:
-            return ''
+            if bandDescr:
+                return bandDescr[self._getBand()]
+
+        return ''
             
     def _getDirValue(self, key):
         from visad import DateTime
@@ -972,9 +973,13 @@ class _Display(_JavaProxy):
         """Returns a list of all layers used by this Display."""
         
         return [_Layer(displayControl) for displayControl in self._JavaProxy__javaObject.getControls()]
-        
+
     @gui_invoke_later
     def createLayer(self, layerType, data):
+        return self.createLayerWithShortname(layerType, data, 'unable to set shortname macro')
+        
+    @gui_invoke_later
+    def createLayerWithShortname(self, layerType, data, shortname):
         """Creates a new _Layer in this _Display
         
         Args:
@@ -1039,7 +1044,7 @@ class _Display(_JavaProxy):
         # this is questionable... but I think this is better for debugging
         # than just setting to an empty string
         longname = 'unable to set longname macro'
-        shortname = 'unable to set shortname macro'
+        #shortname = 'unable to set shortname macro'
 
         defaultLabel = ''
         try:
@@ -1099,7 +1104,7 @@ class _Display(_JavaProxy):
             # this isn't really good enough.  could be permissions issue, etc.
             raise ValueError(filename, " is a directory")
             
-        if (height != -1) and (width != -1):
+        if height != -1 and width != -1:
             try:
                 self.setSize(width, height)
             except DisplayException, target:
@@ -1109,22 +1114,14 @@ class _Display(_JavaProxy):
                     raise RuntimeError("Height/width for captureImage is currently not supported after a text annotation. Height/Width can be specified with buildWindow or openBundle instead, then leave height/width out of subsequent calls to captureImage.")
                     
         imageFile = java.io.File(filename)
-        # yes, I'm still calling writeImage. But it's a different writeImage!!!
-        #  (this is ViewManager.writeImage, not ImageGenerator.writeImage)
-        # (2nd arg has something to do with whether image gets written in current thread...)
-        # fileRoot, fileExt = os.path.splitext(filename.lower())
-        # if fileExt == '.pdf':
-        #     self._JavaProxy__javaObject.writeImageToFile(COMPONENT_HERE, filename)
-        # elif fileExt == '.kmz':
-        #     pass
-        # elif fileExt == '.kml':
-        #     pass
-        # elif fileExt == '.svg':
-        #     pass
-        # else:
-        
-        self._JavaProxy__javaObject.writeImage(imageFile, True, quality)
-        
+        fileRoot, fileExt = os.path.splitext(filename.lower())
+        extensions = ['.pdf', '.kmz', '.kml', '.svg']
+        if fileExt in extensions:
+            islInterpreter.writeImage(filename, "", quality)
+        else:
+            # 2nd arg is whether image is written in current thread
+            self._JavaProxy__javaObject.writeImage(imageFile, True, quality)
+            
         # TODO(mike): catch exceptions resulting from writeImage (e.g., if filename has invalid extension)
         
     #@gui_invoke_later

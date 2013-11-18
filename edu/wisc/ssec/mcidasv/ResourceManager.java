@@ -58,8 +58,9 @@ import ucar.unidata.util.ResourceCollection.Resource;
 import ucar.unidata.util.StringUtil;
 
 /**
- * @author McIDAS-V Team
- * @version $Id$
+ * McIDAS-V's resource manager. The chief differences from Unidata's
+ * {@link IdvResourceManager} are supporting {@literal "default"} McIDAS-V
+ * bundles, and some initial attempts at safer resource handling.
  */
 public class ResourceManager extends IdvResourceManager {
 
@@ -271,8 +272,9 @@ public class ResourceManager extends IdvResourceManager {
 
     /**
      * Returns either a {@literal "normal"} {@link ResourceCollection} or a
-     * {@link XmlResourceCollection}, based upon {@code rsrc}.
-     * 
+     * {@link ucar.unidata.xml.XmlResourceCollection XmlResourceCollection},
+     * based upon {@code rsrc}.
+     *
      * @param rsrc XML representation of a resource collection. Should not be 
      * {@code null}.
      * @param name The {@literal "name"} to associate with the returned 

@@ -28,26 +28,22 @@
 
 package edu.wisc.ssec.mcidasv;
 
-import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newHashSet;
-
 import java.util.List;
-import java.util.Set;
 import java.util.Stack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import edu.wisc.ssec.mcidasv.ui.McvComponentHolder;
-import edu.wisc.ssec.mcidasv.ui.UIManager;
 
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.VMManager;
 import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.control.DisplayControlImpl;
-import ucar.unidata.ui.ComponentGroup;
 import ucar.unidata.ui.ComponentHolder;
 import ucar.unidata.util.GuiUtils;
+
+import edu.wisc.ssec.mcidasv.ui.McvComponentHolder;
+import edu.wisc.ssec.mcidasv.ui.UIManager;
 
 /**
  * <p>McIDAS-V needs to manage ViewManagers in a slightly different way than 

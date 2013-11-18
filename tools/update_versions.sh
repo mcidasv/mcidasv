@@ -15,23 +15,37 @@ WEB="
 /var/apache/www/htdocs/mcidas/doc/mcv_guide/working/toc.html
 "
 
+echo ""
+echo "You will be editing files containing the McIDAS-V version string."
+echo "In each file, update the version and save the changes (using :wq)."
+echo "[Enter to continue]"
+read CONTYN
+
 for FILE in $FILES; do
 	vi $FILE
 done
 
 echo ""
-echo "CTRL+C now to skip GIT commit..."
-read CONTYN
-git commit $FILES
-if [ $? -ne 0 ]; then
-	echo "GIT push aborted"
+echo "Done editing files."
+echo -n "Commit to GIT [y/N]? "
+read COMMITYN
+
+echo ""
+if [ "$COMMITYN" = "y" ]; then
+	git commit $FILES
+	if [ $? -ne 0 ]; then
+		echo "GIT push aborted."
+	else
+		echo "Pushing commits to master..."
+		cd .. && git push --quiet origin master && cd -
+		echo ""
+		echo "NOTE: Update these files on the webserver to reflect your version changes:"
+		echo ""
+			for FILE in $WEB; do
+			echo "  $FILE"
+		done
+	fi
 else
-	echo "Pushing commits to master..."
-	cd .. && git push --quiet origin master && cd -
-	echo ""
-	echo "Update these files on the webserver:"
-	echo ""
-	for FILE in $WEB; do
-		echo "  $FILE"
-	done
+	echo "GIT commit skipped.  Any changes will be overwritten with the next GIT update."
 fi
+echo ""

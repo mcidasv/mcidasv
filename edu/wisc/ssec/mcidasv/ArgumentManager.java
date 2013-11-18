@@ -33,13 +33,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
+import visad.VisADException;
+
 import ucar.unidata.idv.ArgsManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.PatternFileFilter;
-import visad.VisADException;
+
+import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 
 /**
  * McIDAS-V needs to handle a few command line flags/options that the IDV does

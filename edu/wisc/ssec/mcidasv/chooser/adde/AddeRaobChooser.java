@@ -268,7 +268,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
     
     /**
      * Add a listener to the given combobox that will set the
-     * state to unconnected
+     * state to unconnected.
      *
      * @param box The box to listen to.
      */
@@ -285,7 +285,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
     }
     
     /**
-     * Reset the descriptor stuff
+     * Reset the descriptor stuff.
      */
     protected void resetDescriptorBox() {
         ignoreDescriptorChange = true;
@@ -298,9 +298,9 @@ public class AddeRaobChooser extends AddePointDataChooser {
     }
     
     /**
-     * Initialize the descriptor list from a list of names
+     * Initialize the descriptor list from a list of names.
      *
-     * @param names  list of names
+     * @param names2 List of names.
      */
     protected void setDescriptors2(String[] names2) {
         synchronized (WIDGET_MUTEX) {
