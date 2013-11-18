@@ -123,7 +123,7 @@ if [ "${SHOW_WELCOME}" = "1" ]; then
         OSX_FLAGS=""
     fi
     
-    ${JAVA_BIN} ${OSX_FLAGS} -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow 2>/dev/null
+    ${JAVA_BIN} ${OSX_FLAGS} -Dmcv.userpath=\"${MCV_USERPATH}\" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow 2>/dev/null
     if [ $? -eq 1 ]; then
         exit 1
     fi
@@ -131,8 +131,8 @@ fi
 
 # Get the version and amount of system memory
 echo "Reading system configuration..."
-SYS_VER=`${JAVA_BIN} -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetVer 2>/dev/null`
-SYS_MEM=`${JAVA_BIN} -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2>/dev/null`
+SYS_VER=`${JAVA_BIN} -Dmcv.userpath=\"${MCV_USERPATH}\" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetVer 2>/dev/null`
+SYS_MEM=`${JAVA_BIN} -Dmcv.userpath=\"${MCV_USERPATH}\" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2>/dev/null`
 
 # We have system memory, so try to set heap size if a percent was requested
 if [ ${HEAP_PERCENT} -gt 0 ]; then
@@ -182,7 +182,7 @@ fi
 LOGBACK_CONFIG="${MCV_USERPATH}/logback.xml"
 
 # Gather up previously set values.
-JAVA_FLAGS="-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${JVM_ARGS} -Dlogback.configurationFile=${LOGBACK_CONFIG}"
+JAVA_FLAGS="-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${JVM_ARGS} -Dlogback.configurationFile=${LOGBACK_CONFIG} -Dmcv.userpath=\"${MCV_USERPATH}\""
 MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Dvisad.java3d.textureNpot=${ALLOW_NPOT} -Dvisad.java3d.imageByRef=${IMAGE_BY_REF} -Dvisad.java3d.geometryByRef=${GEOMETRY_BY_REF} -Didv.3d=${IDV_3D} -Didv.sysmem=${SYS_MEM} ${DEFAULT_BUNDLE} -userpath ${MCV_USERPATH}"
 echo "mcv flags: ${MCV_FLAGS}"
 ################################################################################
