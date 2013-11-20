@@ -56,10 +56,13 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import ucar.unidata.idv.chooser.IdvChooserManager;
@@ -83,6 +86,8 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
 
 	private static final long serialVersionUID = 1L;
+	
+	private static final Logger logger = LoggerFactory.getLogger(PolarOrbitTrackChooser.class);
 
 	// chooser for local files
 	TLEFileChooser tlefc = null;
@@ -104,6 +109,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
             this, "showGroups", null, "List public datasets");
 
     private JComboBox serverSelector;
+    private JRadioButton localBtn;
     private JRadioButton addeBtn;
     private JRadioButton urlBtn;
     private JLabel descLabel;
@@ -115,6 +121,8 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
     /** The list of urls */
     private JComboBox box;
     private JTextField boxEditor;
+
+	private boolean propsOk = false;
 
     /** text type */
     private static final String TLE_TYPE = "text";
@@ -199,13 +207,20 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         // load the local and remote choices in a Box in center panel
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.PAGE_AXIS));
-        JPanel localPanel = new JPanel();
-        localPanel.setBorder(BorderFactory.createTitledBorder("Local"));
+        JPanel localPanel = new JPanel(new BorderLayout());
+        
+        // create border like the remote panel (titled) but include the
+        // gap that remote panel creates with various GroupLayout effects
+        localPanel.setBorder(BorderFactory.createCompoundBorder(
+        		BorderFactory.createTitledBorder("Local"), 
+        		BorderFactory.createEmptyBorder(GAP_RELATED, GAP_RELATED, GAP_RELATED, GAP_RELATED)));
+        
         JPanel remotePanel = new JPanel();
         remotePanel.setBorder(BorderFactory.createTitledBorder("Remote"));
         
         // populate the local access panel
-        localPanel.add(tlefc);
+        localPanel.add(localBtn, BorderLayout.NORTH);
+        localPanel.add(tlefc, BorderLayout.CENTER);
         
         // populate the remote access panel
         remotePanel.add(addePanel);
@@ -232,11 +247,34 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
     private JComponent makeAddePanel() {
         JPanel outerPanel = new JPanel();
 
+        localBtn = new JRadioButton("File", false);
         addeBtn = new JRadioButton("ADDE", true);
         urlBtn = new JRadioButton("URL", false);
-        GuiUtils.buttonGroup(addeBtn, urlBtn);
+        GuiUtils.buttonGroup(localBtn, addeBtn, urlBtn);
+        
+        localBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	// enable the file chooser
+            	tlefc.setEnabled(true);
+            	// disable everything else? Just following pattern below
+                for (int i=0; i<5; i++) {
+                    JComponent comp = (JComponent) (addeList.get(i));
+                    comp.setEnabled(false);
+                    enableDescriptors(false);
+                }
+                for (int i=5; i<7; i++) {
+                    JComponent comp = (JComponent) (addeList.get(i));
+                    comp.setEnabled(false);
+                }
+            }
+        });
+        
+        // TJJ Nov 2013, I need to figure out what these 
+        // hardcoded component ids are!
         addeBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+            	// disable the file chooser
+            	tlefc.setEnabled(false);
                 for (int i=0; i<5; i++) {
                     JComponent comp = (JComponent)(addeList.get(i));
                     comp.setEnabled(true);
@@ -248,23 +286,28 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
                 }
             }
         });
+        
+        // TJJ Nov 2013, I need to figure out what these 
+        // hardcoded component ids are!
         urlBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+            	// disable the file chooser
+            	tlefc.setEnabled(false);
                 for (int i=5; i<7; i++) {
-                    JComponent comp = (JComponent)(addeList.get(i));
+                    JComponent comp = (JComponent) (addeList.get(i));
                     comp.setEnabled(true);
                 }
                 loadButton.setEnabled(true);
                 for (int i=0; i<5; i++) {
-                    JComponent comp = (JComponent)(addeList.get(i));
+                    JComponent comp = (JComponent) (addeList.get(i));
                     comp.setEnabled(false);
                     enableDescriptors(false);
                 }
             }
         });
-        JLabel serverLabel = new JLabel("     Server:");
-        JLabel urlLabel = new JLabel("     URL:");
-        descLabel = new JLabel("     Descriptor:");
+        JLabel serverLabel = new JLabel("Server:");
+        JLabel urlLabel = new JLabel("URL:");
+        descLabel = new JLabel("Descriptor:");
         descLabel.setEnabled(false);
         descriptorComboBox.setEnabled(false);
 
@@ -292,7 +335,6 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         });
         urlLabel.setEnabled(false);
         box.setEnabled(false);
-        JLabel spaceLab = new JLabel("     ");
 
         GroupLayout layout = new GroupLayout(outerPanel);
         outerPanel.setLayout(layout);
@@ -318,7 +360,6 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
                             .addPreferredGap(RELATED, DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(connectButton))
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(spaceLab)
                             .addComponent(descLabel)
                             .addGap(GAP_RELATED)
                             .addComponent(descriptorComboBox))
@@ -344,7 +385,6 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
                     .addComponent(connectButton))
                 .addPreferredGap(RELATED)
                 .addGroup(layout.createParallelGroup(BASELINE)
-                    .addComponent(spaceLab)
                     .addComponent(descLabel)
                     .addComponent(descriptorComboBox))
                 .addPreferredGap(UNRELATED)
@@ -367,6 +407,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
     }
     
     public void enableFileLoad(boolean val) {
+    	logger.info("Enabling load button...");
     	loadButton.setEnabled(val);
     }
 
@@ -425,12 +466,13 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
      * 
      */
     public void doLoadInThread() {
-        String obj = "TLE";
         prefList.saveState(box);
         Hashtable ht = new Hashtable();
         getDataSourceProperties(ht);
-        makeDataSource(obj, getDataSourceId(), ht);
-        saveServerState();
+        if (propsOk) {
+        	makeDataSource("TLE", getDataSourceId(), ht);
+        	saveServerState();
+        }
     }
 
     /**
@@ -439,27 +481,54 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
      * @param ht
      *            Hashtable of properties
      */
+    
     protected void getDataSourceProperties(Hashtable ht) {
-    	if (tlefc.getSelectedFile() == null) {
-	        if (addeBtn.isSelected()) {
-	            super.getDataSourceProperties(ht);
-	            ht.put(DATASET_NAME_KEY, getDatasetName());
-	            String server = getServer();
-	            ht.put(TLE_SERVER_NAME_KEY, server);
-	            String group = getGroup();
-	            ht.put(TLE_GROUP_NAME_KEY, group);
-	            Map<String, String> acct = getAccounting(server, group);
-	            String user = acct.get("user");
-	            String proj = acct.get("proj");
-	            ht.put(TLE_USER_ID_KEY, user);
-	            ht.put(TLE_PROJECT_NUMBER_KEY, proj);
-	        } else {
-	            ht.put(URL_NAME_KEY, box.getSelectedItem());
-	        }
-    	} else {
-            // else if file, set a new key...
-    		ht.put(LOCAL_FILE_KEY, tlefc.getSelectedFile());
+    	
+    	// Local data
+    	if (localBtn.isSelected()) {
+    		if (tlefc.getSelectedFile() != null) {
+                // local file, set a new key...
+        		ht.put(LOCAL_FILE_KEY, tlefc.getSelectedFile());
+        		propsOk = true;
+    		} else {
+    			JOptionPane.showMessageDialog(this, "No file selected.");
+    			propsOk = false;
+    		}
     	}
+    	
+    	// Remote data, ADDE
+    	if (addeBtn.isSelected()) {
+    		if (getState() == STATE_CONNECTED) {
+	    		super.getDataSourceProperties(ht);
+	    		ht.put(DATASET_NAME_KEY, getDatasetName());
+	    		String server = getServer();
+	    		ht.put(TLE_SERVER_NAME_KEY, server);
+	    		String group = getGroup();
+	    		ht.put(TLE_GROUP_NAME_KEY, group);
+	    		Map<String, String> acct = getAccounting(server, group);
+	    		String user = acct.get("user");
+	    		String proj = acct.get("proj");
+	    		ht.put(TLE_USER_ID_KEY, user);
+	    		ht.put(TLE_PROJECT_NUMBER_KEY, proj);
+	    		propsOk = true;
+    		} else {
+    			JOptionPane.showMessageDialog(this, "No ADDE server connection.");
+    			propsOk = false;
+    		}
+    	}
+    	
+    	// Remote or Local, URL
+    	if (urlBtn.isSelected()) {
+    		String s = (String) box.getSelectedItem();
+    		if ((s != null) && (! s.isEmpty())) {
+    			ht.put(URL_NAME_KEY, box.getSelectedItem());
+    			propsOk = true;
+    		} else {
+    			JOptionPane.showMessageDialog(this, "Please provide a valid URL.");
+    			propsOk = false;
+    		}
+    	}
+    	
     }
 
     private String getDatasetName() {

@@ -30,6 +30,7 @@ package edu.wisc.ssec.mcidasv.chooser;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
@@ -97,9 +98,11 @@ public class TLEFileChooser extends JFileChooser implements PropertyChangeListen
 		if (propName.equals(SELECTED_FILE_CHANGED_PROPERTY)) {
 			// tell the chooser we have a file to load
 			if (potc != null) {
-				if (this.accept(this.getSelectedFile())) {
-					logger.debug("File selected, enabling Add Source button...");
-					potc.enableFileLoad(true);
+				File f = getSelectedFile();
+				if ((f != null) && (accept(f))) {
+					if (! f.isDirectory()) {
+						potc.enableFileLoad(true);
+					}
 				} else {
 					potc.enableFileLoad(false);
 				}
