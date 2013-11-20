@@ -188,22 +188,27 @@ public class AddePointDataChooser extends AddeChooser {
         try {
             StringBuffer buff = getGroupUrl(REQ_DATASETINFO, getGroup());
             buff.append("&type=").append(getDataType());
-            DataSetInfo  dsinfo = new DataSetInfo(buff.toString());
+            DataSetInfo dsinfo = new DataSetInfo(buff.toString());
             descriptorTable = dsinfo.getDescriptionTable();
             
             // Only show descriptorsAllowPrefix if set
             for (Enumeration e = descriptorTable.keys(); e.hasMoreElements();) {
                 Object key = e.nextElement();
-                String str = (String) descriptorTable.get(key);
-                if (!descriptorsAllowPrefix.isEmpty() && str.indexOf(descriptorsAllowPrefix) != 0)
+                String str = (String)descriptorTable.get(key);
+                if (!descriptorsAllowPrefix.isEmpty() && str.indexOf(descriptorsAllowPrefix) != 0) {
                     descriptorTable.remove(key);
+                }
             }
             
             String[] names = new String[descriptorTable.size()];
             Enumeration enumeration = descriptorTable.keys();
             for (int i = 0; enumeration.hasMoreElements(); i++) {
                 Object thisElement = enumeration.nextElement();
-                names[i] = descriptorTable.get(thisElement).toString() + " - " + thisElement.toString();
+                if (!isLocalServer()) {
+                    names[i] = descriptorTable.get(thisElement).toString() + nameSeparator + thisElement.toString();
+                } else {
+                    names[i] = thisElement.toString();
+                }
             }
             Arrays.sort(names);
             setDescriptors(names);
