@@ -1453,7 +1453,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             }
             descriptorComboBox.addItem(LABEL_SELECT);
             for (int j = 0; j < names.length; j++) {
-                logger.trace("adding names[{}}='{}' to combo box", j, names[j]);
+                logger.trace("adding names[{}]='{}' to combo box", j, names[j]);
                 descriptorComboBox.addItem(names[j]);
             }
             ignoreDescriptorChange = false;
