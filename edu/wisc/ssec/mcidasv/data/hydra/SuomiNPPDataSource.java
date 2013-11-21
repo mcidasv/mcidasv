@@ -1182,7 +1182,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
         // If it's M12 - M16, it's a BrightnessTemperature, otherwise Reflectance
         if (name.endsWith("BrightnessTemperatureOrReflectance")) {
         	name = name.substring(0, name.length() - "BrightnessTemperatureOrReflectance".length());
-        	if (whichEDR.matches("M12|M13|M15|M16")) {
+        	if (whichEDR.matches("M12|M13|M14|M15|M16")) {
         		name = name + "BrightnessTemperature";
         	} else {
         		name = name + "Reflectance";
@@ -1202,7 +1202,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
         // If it's M12 - M16, it's a BrightnessTemperature, otherwise Reflectance
         if (name.endsWith("BrightnessTemperatureOrReflectance")) {
         	name = name.substring(0, name.length() - "BrightnessTemperatureOrReflectance".length());
-        	if (whichEDR.matches("M12|M13|M15|M16")) {
+        	if (whichEDR.matches("M12|M13|M14|M15|M16")) {
         		name = name + "BrightnessTemperature";
         	} else {
         		name = name + "Reflectance";
