@@ -253,6 +253,7 @@ public class EntryStore {
         return new String[] {
             "PATH=" + ADDE_BIN,
             "MCPATH=" + USER_DIRECTORY+':'+ADDE_DATA,
+            "MCUSERDIR=" + USER_DIRECTORY,
             "MCNOPREPEND=1",
             "MCTRACE=" + MCTRACE,
             "MCTRACK=NO",
@@ -269,6 +270,7 @@ public class EntryStore {
         return new String[] {
             "PATH=" + ADDE_BIN,
             "MCPATH=" + USER_DIRECTORY+':'+ADDE_DATA,
+            "MCUSERDIR=" + USER_DIRECTORY,
             "LD_LIBRARY_PATH=" + ADDE_BIN,
             "DYLD_LIBRARY_PATH=" + ADDE_BIN,
             "MCNOPREPEND=1",
@@ -280,12 +282,12 @@ public class EntryStore {
     }
 
     protected String[] getAddeCommands() {
-//        String mcvPID = Integer.toString(PosixModule.getpid());
-//        if ((mcvPID == null) || ("0".equals(mcvPID))) {
-//            return new String[] { ADDE_MCSERVL, "-v", "-p", localPort };
-//        } else {
-//            return new String[] { ADDE_MCSERVL, "-v", "-p", localPort, "-i", mcvPID };
-//        }
+        String mcvPID = Integer.toString(PosixModule.getpid());
+        if ((mcvPID == null) || ("0".equals(mcvPID))) {
+            return new String[] { ADDE_MCSERVL, "-v", "-p", localPort };
+        } else {
+            return new String[] { ADDE_MCSERVL, "-v", "-p", localPort, "-i", mcvPID };
+        }
         return new String[] { ADDE_MCSERVL, "-v", "-p", localPort };
     }
 
