@@ -288,7 +288,7 @@ public class EntryStore {
         } else {
             return new String[] { ADDE_MCSERVL, "-v", "-p", localPort, "-i", mcvPID };
         }
-        return new String[] { ADDE_MCSERVL, "-v", "-p", localPort };
+//        return new String[] { ADDE_MCSERVL, "-v", "-p", localPort };
     }
 
     /**
