@@ -190,7 +190,7 @@ public class SuomiNPPProductProfile {
 				Node child = children.item(j);
 				if (child.getNodeName().equals("Name")) {
 					name = child.getTextContent();
-					logger.info("Found Suomi NPP product name: " + name);
+					logger.debug("Found Suomi NPP product name: " + name);
 					if (name.startsWith("QF")) {
 						isQF = true;
 						uniqueCounter = 2;
@@ -277,7 +277,7 @@ public class SuomiNPPProductProfile {
 									if (description.endsWith("_")) {
 										description = description.substring(0, description.length() - 1);
 									}
-									logger.info("Final name: " + description);
+									logger.debug("Final name: " + description);
 									haveDesc = true;
 								}
 								if (datumChild.getNodeName().equals("LegendEntry")) {
@@ -334,28 +334,49 @@ public class SuomiNPPProductProfile {
 						}
 					}
 					
+					boolean rangeMinOk = false;
+					boolean rangeMaxOk = false;
+					
 					if ((name != null) && (rMin != null)) {
-						logger.info("Adding range min: " + rMin + " for product: " + name);
-						rangeMin.put(name, rMin);
+						// make sure the field parses to a numeric value
+						try {
+							Float.parseFloat(rMin);
+							rangeMinOk = true;
+						} catch (NumberFormatException nfe) {
+							// do nothing, just won't use ranges for this variable
+						}
 					}
 					
 					if ((name != null) && (rMax != null)) {
-						logger.info("Adding range max: " + rMax + " for product: " + name);
+						// make sure the field parses to a numeric value
+						try {
+							Float.parseFloat(rMax);
+							rangeMaxOk = true;
+						} catch (NumberFormatException nfe) {
+							// do nothing, just won't use ranges for this variable
+						}
+					}
+					
+					// only use range if min and max checked out
+					if ((rangeMinOk) && (rangeMaxOk)) {
+						logger.debug("Adding range min: " + rMin + " for product: " + name);
+						logger.debug("Adding range max: " + rMax + " for product: " + name);
+						rangeMin.put(name, rMin);
 						rangeMax.put(name, rMax);
 					}
 					
 					if ((name != null) && (sFactorName != null)) {
-						logger.info("Adding scale factor name: " + sFactorName + " for product: " + name);
+						logger.debug("Adding scale factor name: " + sFactorName + " for product: " + name);
 						scaleFactorName.put(name, sFactorName);
 					}
 					
 					if ((name != null) && (! fValAL.isEmpty())) {
-						logger.info("Adding fill value array for product: " + name);
+						logger.debug("Adding fill value array for product: " + name);
 						fillValues.put(name, fValAL);
 					}
 					
 					if ((name != null) && (! qfAL.isEmpty())) {
-						logger.info("Adding quality flags array for product: " + name);
+						logger.debug("Adding quality flags array for product: " + name);
 						qualityFlags.put(name, qfAL);
 					}
 				}
