@@ -283,12 +283,11 @@ public class EntryStore {
 
     protected String[] getAddeCommands() {
         String mcvPID = Integer.toString(PosixModule.getpid());
-        if ((mcvPID == null) || ("0".equals(mcvPID))) {
+        if (McIDASV.isWindows() || (mcvPID == null) || ("0".equals(mcvPID))) {
             return new String[] { ADDE_MCSERVL, "-v", "-p", localPort };
         } else {
             return new String[] { ADDE_MCSERVL, "-v", "-p", localPort, "-i", mcvPID };
         }
-//        return new String[] { ADDE_MCSERVL, "-v", "-p", localPort };
     }
 
     /**
