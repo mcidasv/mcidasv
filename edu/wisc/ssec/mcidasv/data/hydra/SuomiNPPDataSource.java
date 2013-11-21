@@ -124,6 +124,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     
     // product related variables and flags
     boolean isEDR = false;
+    String whichEDR = "";
     
     // for now, we are only handling CrIS variables that match this filter and SCAN dimensions
     private String crisFilter = "ES_Real";
@@ -305,6 +306,15 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    	    							String baseName = adtt.getStringValue();
 	    	    							if ((baseName != null) && (baseName.equals("EDR"))) {
 	    	    								isEDR = true;
+	    	    								// have to loop through sub groups variables to determine band
+	    	    								List<Variable> tmpVar = subG.getVariables();
+	    	    								for (Variable v : tmpVar) {
+	    	    									// if Imagery EDR attribute for band is specified, save it
+	    	    									Attribute mBand = v.findAttribute("Band_ID");
+	    	    									if (mBand != null) {
+	    	    										whichEDR = mBand.getStringValue();
+	    	    									}
+	    	    								}
 	    	    							}
 	    	    						}
 	    	    						
@@ -804,7 +814,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    		if (qfV.getFullName().endsWith("Spare")) {
     	    			continue;
     	    		}
-    	    		// String.endwWith is case sensitive so gott check both cases
+    	    		// String.endsWith is case sensitive so gotta check both cases
     	    		if (qfV.getFullName().endsWith("spare")) {
     	    			continue;
     	    		}
@@ -1168,6 +1178,16 @@ public class SuomiNPPDataSource extends HydraDataSource {
         DataSelection dataSel = new MultiDimensionSubset(defaultSubset);
         Hashtable subset = new Hashtable();
         subset.put(new MultiDimensionSubset(), dataSel);
+        // TJJ Hack check for uber-odd case of data type varies for same variable
+        // If it's M12 - M16, it's a BrightnessTemperature, otherwise Reflectance
+        if (name.endsWith("BrightnessTemperatureOrReflectance")) {
+        	name = name.substring(0, name.length() - "BrightnessTemperatureOrReflectance".length());
+        	if (whichEDR.matches("M12|M13|M15|M16")) {
+        		name = name + "BrightnessTemperature";
+        	} else {
+        		name = name + "Reflectance";
+        	}
+        }
         DirectDataChoice ddc = new DirectDataChoice(this, idx, name, name, categories, subset);
         return ddc;
     }
@@ -1178,6 +1198,16 @@ public class SuomiNPPDataSource extends HydraDataSource {
         Hashtable subset = new Hashtable();
         subset.put(MultiDimensionSubset.key, dataSel);
         subset.put(MultiSpectralDataSource.paramKey, adapter.getParameter());
+        // TJJ Hack check for uber-odd case of data type varies for same variable
+        // If it's M12 - M16, it's a BrightnessTemperature, otherwise Reflectance
+        if (name.endsWith("BrightnessTemperatureOrReflectance")) {
+        	name = name.substring(0, name.length() - "BrightnessTemperatureOrReflectance".length());
+        	if (whichEDR.matches("M12|M13|M15|M16")) {
+        		name = name + "BrightnessTemperature";
+        	} else {
+        		name = name + "Reflectance";
+        	}
+        }
         DirectDataChoice ddc = new DirectDataChoice(this, new Integer(idx), name, name, categories, subset);
         ddc.setProperties(subset);
         return ddc;

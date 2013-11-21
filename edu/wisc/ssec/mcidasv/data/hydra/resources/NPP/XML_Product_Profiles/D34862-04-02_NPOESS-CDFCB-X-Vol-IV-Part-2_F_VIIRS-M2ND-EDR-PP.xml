@@ -94,7 +94,7 @@
 				<Description>Brightness Temperatures (for an emissive M-Band) or Top of Atmosphere Reflectances (for a reflective M-Band) for the selected M-Band</Description>
 				<DatumOffset>0</DatumOffset>
 				<Scaled>1</Scaled>
-				<ScaleFactorName>BrightnessTemperatureReflectanceFactors</ScaleFactorName>
+				<ScaleFactorName>BrightnessTemperatureOrReflectanceFactors</ScaleFactorName>
 				<MeasurementUnits>kelvin (for BrightnessTemp) or unitless (for Reflectance)</MeasurementUnits>
 				<RangeMin>Varies (for BrightnessTemp) or 0.00 (for Reflectance)</RangeMin>
 				<RangeMax>Varies (for BrightnessTemp) or 1.60 (for Reflectance)</RangeMax>
