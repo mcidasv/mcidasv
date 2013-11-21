@@ -1186,7 +1186,6 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     public void setHaveData(boolean have) {
         super.setHaveData(have);
         if (have && shouldAddSource) {
-            System.out.println("Adding source at setHaveData");
             // Even though setHaveData should mean we can go, we can't... wait a few jiffies
             Misc.runInABit(100, AddeChooser.this, "doClickLoad", null);
         }
@@ -1259,6 +1258,11 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * @return status code
      */
     protected int checkIfServerIsOk() {
+        EntryStore servManager = ((McIDASV)getIdv()).getServerManager();
+        if (isLocalServer() && !servManager.checkLocalServer()) {
+        	LogUtil.userErrorMessage("Local servers are stopped.\n\nLocal servers can be restarted from the 'Tools' menu:\n  Tools > Manage ADDE Datasets >\nLocal Servers > Start Local Servers");
+        	return STATUS_ERROR;
+        }
         try {
             StringBuffer buff = getUrl(REQ_TEXT);
             appendKeyValue(buff, PROP_FILE, FILE_PUBLICSRV);
@@ -1269,75 +1273,60 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             return STATUS_OK;
         } catch (AddeURLException ae) {
             String aes = ae.toString();
-            if (aes.indexOf("Invalid project number") >= 0) {
-                LogUtil.userErrorMessage("Invalid project number");
-                return STATUS_NEEDSLOGIN;
-            }
-            if (aes.indexOf("Invalid user id") >= 0) {
-                LogUtil.userErrorMessage("Invalid user ID");
-                return STATUS_NEEDSLOGIN;
-            }
-            if (aes.indexOf("Accounting data") >= 0) {
+            if (aes.indexOf("Invalid project number") >= 0 ||
+                aes.indexOf("Invalid user id") >= 0 ||
+                aes.indexOf("Accounting data") >= 0) {
+                LogUtil.userErrorMessage("Invalid login.\n\nPlease verify your username and password.");
+                logger.debug("Invalid login");
+                setState(STATE_UNCONNECTED);
+                setHaveData(false);
+                resetDescriptorBox();
                 return STATUS_NEEDSLOGIN;
             }
             if (aes.indexOf("cannot run server 'txtgserv'") >= 0) {
                 return STATUS_OK;
             }
-            LogUtil.userErrorMessage("Error connecting to server " + getServer() + ":\n"
-                                     + ae.getMessage());
+            LogUtil.userErrorMessage("Error connecting to server " + getServer() + ":\n" + ae.getMessage());
+            logger.debug("Error connecting to server");
+            setState(STATE_UNCONNECTED);
+            setHaveData(false);
+            resetDescriptorBox();
             return STATUS_ERROR;
         } catch (ConnectException exc) {
             setState(STATE_UNCONNECTED);
             setHaveData(false);
             resetDescriptorBox();
             String message = "Error connecting to server " + getServer();
-            if (isLocalServer())
-                message += "\n\nLocal servers can be restarted from the\n'Local ADDE Data Manager' in the 'Tools' menu";
+            if (isLocalServer()) {
+            	if (!servManager.checkLocalServer()) {
+                    message += "\n\nLocal servers can be restarted from the 'Tools' menu:\n  Tools > Manage ADDE Datasets >\n Local Servers > Start Local Servers";            		
+            	}
+            	else {
+            		message += "\n\nLocal servers appear to be running.\nYour firewall may be preventing access.";
+            	}
+            }
             LogUtil.userErrorMessage(message);
+            logger.debug("Error connecting to server");
             return STATUS_ERROR;
         } catch (EOFException exc) {
             setState(STATE_UNCONNECTED);
             setHaveData(false);
             resetDescriptorBox();
             LogUtil.userErrorMessage("Server " + getServer() + " is not responding");
+            logger.debug("Server is not responding");
             return STATUS_ERROR;
         } catch (Exception exc) {
+            setState(STATE_UNCONNECTED);
+            setHaveData(false);
+            resetDescriptorBox();
             logException("Connecting to server: " + getServer(), exc);
+            logger.debug("Error connecting to server");
             return STATUS_ERROR;
         }
     }
 
     public boolean canAccessServer() {
-//        Set<Types> defaultTypes = EnumSet.of(ServerPropertyDialog.convertDataType(getDataType()));
-//        while (true) {
-//            int status = checkIfServerIsOk();
-//            if (status == STATUS_OK) {
-//                break;
-//            }
-//            if (status == STATUS_ERROR) {
-//                setState(STATE_UNCONNECTED);
-//                return false;
-//            }
-//
-////            AddeServer server = getAddeServer();
-//            AddeServer server = getAddeServer2(serverSelector, groupSelector);
-//            Map<String, String> accounting = serverManager.getAccountingFor(server, type)
-//
-//            String name = server.getName();
-//            String group = getGroup();
-//            String user = accounting.get("user");
-//            String proj = accounting.get("proj");
-//
-//            ServerPropertyDialog dialog = new ServerPropertyDialog(null, true, serverManager);
-//            dialog.setTitle("Edit Server Information");
-//            dialog.showDialog(name, group, user, proj, defaultTypes);
-//
-//            if (!dialog.getAddedDatasetDescriptors().isEmpty()) {
-//                System.err.println("verified info: " + dialog.getAddedDatasetDescriptors());
-//                break;
-//            }
-//        }
-        return true;
+    	return (checkIfServerIsOk() == STATUS_OK);
     }
 
     public Map<String, String> getAccountingInfo() {
@@ -1377,10 +1366,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         setDescriptors(null);
         setDoAbsoluteTimes(false);
         if (!canAccessServer()) {
-            logger.debug("couldn't connect! shucks! golly!");
             return;
-        } else {
-            logger.debug("you have successfully used the server manager! it is a miracle!");
         }
         readFromServer();
         saveServerState();
