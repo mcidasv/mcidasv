@@ -1261,7 +1261,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         EntryStore servManager = ((McIDASV)getIdv()).getServerManager();
         if (isLocalServer() && !servManager.checkLocalServer()) {
         	LogUtil.userErrorMessage("Local servers are stopped.\n\nLocal servers can be restarted from the 'Tools' menu:\n  Tools > Manage ADDE Datasets >\nLocal Servers > Start Local Servers");
-        	return STATUS_ERROR;
+        	logger.info("Local servers are stopped");
+            return STATUS_ERROR;
         }
         try {
             StringBuffer buff = getUrl(REQ_TEXT);
@@ -1277,7 +1278,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
                 aes.indexOf("Invalid user id") >= 0 ||
                 aes.indexOf("Accounting data") >= 0) {
                 LogUtil.userErrorMessage("Invalid login.\n\nPlease verify your username and password.");
-                logger.debug("Invalid login");
+                logger.info("Invalid login");
                 setState(STATE_UNCONNECTED);
                 setHaveData(false);
                 resetDescriptorBox();
@@ -1287,7 +1288,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
                 return STATUS_OK;
             }
             LogUtil.userErrorMessage("Error connecting to server " + getServer() + ":\n" + ae.getMessage());
-            logger.debug("Error connecting to server");
+            logger.info("Error connecting to server");
             setState(STATE_UNCONNECTED);
             setHaveData(false);
             resetDescriptorBox();
@@ -1296,31 +1297,34 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             setState(STATE_UNCONNECTED);
             setHaveData(false);
             resetDescriptorBox();
-            String message = "Error connecting to server " + getServer();
+            String message = "Error connecting to server " + getServer
+            String info = "Error connecting to server";
             if (isLocalServer()) {
             	if (!servManager.checkLocalServer()) {
                     message += "\n\nLocal servers can be restarted from the 'Tools' menu:\n  Tools > Manage ADDE Datasets >\n Local Servers > Start Local Servers";            		
-            	}
+                    info += " (Local servers are stopped)";
+                }
             	else {
-            		message += "\n\nLocal servers appear to be running.\nYour firewall may be preventing access.";
+                    message += "\n\nLocal servers appear to be running.\nYour firewall may be preventing access.";
+                    info += " (Local servers are running)";
             	}
             }
             LogUtil.userErrorMessage(message);
-            logger.debug("Error connecting to server");
+            logger.info(info);
             return STATUS_ERROR;
         } catch (EOFException exc) {
             setState(STATE_UNCONNECTED);
             setHaveData(false);
             resetDescriptorBox();
             LogUtil.userErrorMessage("Server " + getServer() + " is not responding");
-            logger.debug("Server is not responding");
+            logger.info("Server is not responding");
             return STATUS_ERROR;
         } catch (Exception exc) {
             setState(STATE_UNCONNECTED);
             setHaveData(false);
             resetDescriptorBox();
             logException("Connecting to server: " + getServer(), exc);
-            logger.debug("Error connecting to server");
+            logger.info("Error connecting to server");
             return STATUS_ERROR;
         }
     }
