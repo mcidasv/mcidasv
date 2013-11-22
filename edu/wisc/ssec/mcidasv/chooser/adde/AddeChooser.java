@@ -1297,7 +1297,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             setState(STATE_UNCONNECTED);
             setHaveData(false);
             resetDescriptorBox();
-            String message = "Error connecting to server " + getServer
+            String message = "Error connecting to server " + getServer();
             String info = "Error connecting to server";
             if (isLocalServer()) {
             	if (!servManager.checkLocalServer()) {
