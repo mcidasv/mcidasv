@@ -51,10 +51,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
  <li> <a class="childlist-link" href="#memory"> System Memory and Processor Speed </a></li>
  <li><a class="childlist-link" href="#disk"> </a><a class="childlist-link" href="#network">Internet
      Connection for Downloading McIDAS-V and Accessing Data</a></li>
+      <li><a class="childlist-link" href="#firewalls">Firewalls</a></li>
  </ul>  
-   <h3>Operating Systems<a name="os"></a></h3>
+ <h3>Operating Systems<a name="os"></a></h3>
   <p> The chart below lists the software versions, by vendor, that McIDAS-V is known to run on, and that McIDAS User Services  tests:</p>
-<p>
 <table border="1" style="margin-left:20px; " width="75%">
     <tr>
         <th><div align="center">OS</div></th>
@@ -155,9 +155,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
 <li><strong>NVIDIA</strong></li>
 <ul>
   <li>Desktop - <a href="http://www.nvidia.com/Download/index.aspx?lang=en-us" target="_blank">http://www.nvidia.com/Download/index.aspx?lang=en-us</a></li>
-  <li>Laptop - <a href="http://www.nvidia.com/object/notebook_drivers.html" target="_blank">http://www.nvidia.com/object/notebook_drivers.html</a></li><p>
+  <li>Laptop - <a href="http://www.nvidia.com/object/notebook_drivers.html" target="_blank">http://www.nvidia.com/object/notebook_drivers.html</a></li>
   </ul>
-<li><strong>ATI </strong>- <a href="http://support.amd.com/us/gpudownload/Pages/index.aspx" target="_blank">http://support.amd.com/us/gpudownload/Pages/index.aspx</a></li><p></p>
+<li><strong>ATI </strong>- <a href="http://support.amd.com/us/gpudownload/Pages/index.aspx" target="_blank">http://support.amd.com/us/gpudownload/Pages/index.aspx</a></li>
 <li><strong>Intel</strong> - <a href="http://downloadcenter.intel.com/" target="_blank">http://downloadcenter.intel.com/</a></li>
 </ul>
 <h3><br>
@@ -260,8 +260,26 @@ into twice that size. You will have to download the installer file in
 order to begin installing McIDAS-V.
   <p> McIDAS-V is designed to access data on remote servers on the Internet, as
   well as from local files. Downloading data from remote servers benefits from
-  a fast connection to the Internet, since many data fields are large. </p>
-
+  a fast connection to the Internet, since many data fields are large.</p>
+<h3>
+  Firewalls<a name="firewalls"></a></h3>
+  <p>There are various ports that may have to be opened on your machine to access data in McIDAS-V.</p>
+  <ul>
+  <li>If unable to connect to local servers, verify that the following port is open:</li>
+  <ul>
+    <li><strong>Port 8112 -</strong> Used when connecting to local servers. See <a href="tools/LocalDataManager.html#status">Local ADDE Data Manager</a> for information about the status message of local servers at the bottom of the ADDE Data Manager.</li>
+  </ul>
+  <li>If unable to connect to remote servers (image, radar, point, upper air and profiler data), or you can not access Catalog data, verify that the following ports are open:</li>
+  <ul>
+    <li><strong>Port 112 -</strong> Used when connecting to ADDE servers</li>
+    <li><strong>Port 8080 -</strong> Used when connecting to the THREDDS data server</li>
+    </ul>
+    <li>Other ports that McIDAS-V uses are:</li>
+    <ul>
+    <li><strong>Port 21 -</strong> Used for FTP data</li>
+    <li><strong>Port 80 -</strong> Used for Web data</li>
+  </ul>
+</ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
