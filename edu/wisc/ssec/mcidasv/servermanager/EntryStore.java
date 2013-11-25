@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 
 import org.w3c.dom.Element;
 
+import ucar.unidata.util.LogUtil;
 import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.chooser.adde.AddeServer;
@@ -1006,6 +1007,11 @@ public class EntryStore {
         if ((new File(ADDE_MCSERVL)).exists()) {
             // Create and start the thread if there isn't already one running
             if (!checkLocalServer()) {
+                if (!testLocalServer()) {
+                    LogUtil.userErrorMessage("Local servers cannot write to userpath:\n"+USER_DIRECTORY);
+                    logger.info("Local servers cannot write to userpath");
+                    return;
+                }
                 thread = new AddeThread(this);
                 thread.start();
                 EventBus.publish(McservEvent.STARTED);
@@ -1036,6 +1042,29 @@ public class EntryStore {
         } else {
             logger.debug("mcservl is not running.");
         }
+    }
+    
+    /**
+     * Test to see if the thread can access userpath
+     * 
+     * @return {@code true} if the local server can access userpath, {@code fals
+e} otherwise.
+     */
+    public boolean testLocalServer() {
+        StringBuilder err = new StringBuilder();
+        String[] cmds = new String[] { ADDE_MCSERVL, "-t" };
+        String[] env = (McIDASV.isWindows()) ? getWindowsAddeEnv() : getUnixAddeEnv();
+
+        try {
+            Process proc = Runtime.getRuntime().exec(cmds, env);
+            int result = proc.waitFor();
+            if (result != 0) {
+                return false;
+            }
+        } catch (Exception e) {
+                return false;
+        }
+        return true;
     }
 
     /**
