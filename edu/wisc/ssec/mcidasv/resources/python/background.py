@@ -1180,7 +1180,6 @@ class _Display(_JavaProxy):
         import colorutils
         from visad.georef import EarthLocationTuple
         from ucar.unidata.idv.control.drawing import DrawingGlyph
-        from ucar.unidata.idv.control.drawing import TextGlyph
         
         alignment = alignment or ('center', 'center')
         
