@@ -27,7 +27,7 @@ echo "Getting new IDV nightly libraries..."
 export OLDPWD=${PWD}
 mkdir -p ${DEST_DIR}
 cd ${DEST_DIR}
-wget ${URL}/${FILE} && unzip -o ${FILE} && rm -f ${FILE}
+curl -O ${URL}/${FILE} && unzip -o ${FILE} && rm -f ${FILE}
 cd ${OLDPWD}
 
 SELF=`hostname`
