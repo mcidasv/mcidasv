@@ -29,7 +29,6 @@
 package edu.wisc.ssec.mcidasv.util;
 
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
-import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newHashSet;
 
 import static javax.swing.GroupLayout.DEFAULT_SIZE;
@@ -992,7 +991,7 @@ public class McVGuiUtils implements Constants {
         McIDASV mcv = McIDASV.getStaticMcv();
         int viewManagerCount = ESTIMATED_VM_COUNT;
         if (mcv != null) {
-            ViewManagerManager vmm = cast(mcv.getVMManager());
+            ViewManagerManager vmm = (ViewManagerManager)mcv.getVMManager();
             viewManagerCount = vmm.getViewManagerCount();
         }
         return viewManagerCount;
@@ -1002,7 +1001,7 @@ public class McVGuiUtils implements Constants {
         McIDASV mcv = McIDASV.getStaticMcv();
         int holderCount = ESTIMATED_VM_COUNT;
         if (mcv != null) {
-            UIManager uiManager = cast(mcv.getIdvUIManager());
+            UIManager uiManager = (UIManager)mcv.getIdvUIManager();
             holderCount = uiManager.getComponentHolderCount();
         }
         return holderCount;
@@ -1012,7 +1011,7 @@ public class McVGuiUtils implements Constants {
         McIDASV mcv = McIDASV.getStaticMcv();
         int groupCount = ESTIMATED_VM_COUNT;
         if (mcv != null) {
-            UIManager uiManager = cast(mcv.getIdvUIManager());
+            UIManager uiManager = (UIManager)mcv.getIdvUIManager();
             groupCount = uiManager.getComponentGroupCount();
         }
         return groupCount;
@@ -1033,7 +1032,7 @@ public class McVGuiUtils implements Constants {
         McIDASV mcv = McIDASV.getStaticMcv();
         List<ViewManager> vms = Collections.emptyList();
         if (mcv != null) {
-            ViewManagerManager vmm = cast(mcv.getVMManager());
+            ViewManagerManager vmm = (ViewManagerManager)mcv.getVMManager();
             vms = arrList(vmm.getViewManagers());
         }
         return vms;
@@ -1129,7 +1128,7 @@ public class McVGuiUtils implements Constants {
     public static List<IdvComponentHolder> getComponentHolders(
             final WindowInfo windowInfo) {
         Collection<Object> comps =
-            cast(windowInfo.getPersistentComponents().values());
+            (Collection<Object>)windowInfo.getPersistentComponents().values();
         List<IdvComponentHolder> holders = arrList(getHolderCount());
         for (Object comp : comps) {
             if (!(comp instanceof IdvComponentGroup)) {
@@ -1162,7 +1161,7 @@ public class McVGuiUtils implements Constants {
             final IdvComponentGroup group) 
             {
         List<IdvComponentHolder> holders = arrList(getHolderCount());
-        List<ComponentHolder> comps = cast(group.getDisplayComponents());
+        List<ComponentHolder> comps = (List<ComponentHolder>)group.getDisplayComponents();
         if (comps.isEmpty()) {
             return holders;
         }
@@ -1186,7 +1185,7 @@ public class McVGuiUtils implements Constants {
         List<IdvComponentGroup> groups = arrList(getGroupCount());
         groups.add(group);
 
-        List<ComponentHolder> comps = cast(group.getDisplayComponents());
+        List<ComponentHolder> comps = (List<ComponentHolder>)group.getDisplayComponents();
         if (comps.isEmpty())
             return groups;
 
@@ -1205,7 +1204,7 @@ public class McVGuiUtils implements Constants {
     public static List<IdvComponentGroup> getComponentGroups(
             final WindowInfo window) 
             {
-        Collection<Object> comps = cast(window.getPersistentComponents().values());
+        Collection<Object> comps = (Collection<Object>)window.getPersistentComponents().values();
         for (Object comp : comps) {
             if (comp instanceof IdvComponentGroup) {
                 return getComponentGroups((IdvComponentGroup)comp);
@@ -1244,7 +1243,7 @@ public class McVGuiUtils implements Constants {
      *         groups.
      */
     public static boolean hasNestedGroups(final IdvComponentGroup group) {
-        List<ComponentHolder> comps = cast(group.getDisplayComponents());
+        List<ComponentHolder> comps = (List<ComponentHolder>)group.getDisplayComponents();
         for (ComponentHolder comp : comps) {
             if (comp instanceof IdvComponentGroup) {
                 return true;
@@ -1281,7 +1280,7 @@ public class McVGuiUtils implements Constants {
      * @return All windows that contain at least one component group.
      */
     public static List<IdvWindow> getAllDisplayWindows() {
-        List<IdvWindow> allWindows = cast(IdvWindow.getWindows());
+        List<IdvWindow> allWindows = (List<IdvWindow>)IdvWindow.getWindows();
         List<IdvWindow> windows = arrList(allWindows.size());
         for (IdvWindow w : allWindows) {
             if (!w.getComponentGroups().isEmpty()) {

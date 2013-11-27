@@ -28,7 +28,6 @@
 package edu.wisc.ssec.mcidasv.util;
 
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
-import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashMap;
 
 import java.io.BufferedReader;
@@ -488,7 +487,7 @@ public class SystemState {
 
         // loop through resources
         List<IdvResource> resources =
-                cast(mcv.getResourceManager().getResources());
+                (List<IdvResource>)mcv.getResourceManager().getResources();
         for (IdvResource resource : resources) {
             String id = resource.getId();
             props.put(id+".description", resource.getDescription());

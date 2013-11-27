@@ -27,8 +27,6 @@
  */
 package edu.wisc.ssec.mcidasv.ui;
 
-import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
-
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -51,8 +49,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ucar.unidata.idv.ViewManager;
-import ucar.unidata.idv.ui.IdvComponentGroup;
-import ucar.unidata.idv.ui.IdvWindow;
 
 public class LayerAnimationWindow extends JFrame {
 

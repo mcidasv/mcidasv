@@ -29,7 +29,6 @@ package edu.wisc.ssec.mcidasv.servermanager;
 
 import static edu.wisc.ssec.mcidasv.util.Contract.notNull;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
-import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashMap;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 
@@ -596,7 +595,7 @@ public class EntryStore {
 
     public AddeAccount getAccountingFor(final AddeServer idvServer, String typeAsStr) {
         String address = idvServer.getName();
-        List<AddeServer.Group> groups = cast(idvServer.getGroups());
+        List<AddeServer.Group> groups = (List<AddeServer.Group>)idvServer.getGroups();
         if (groups != null && !groups.isEmpty()) {
             EntryType type = EntryTransforms.strToEntryType(typeAsStr);
             return getAccountingFor(address, groups.get(0).getName(), type);

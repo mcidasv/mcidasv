@@ -1692,7 +1692,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             // IDV will build nice JPopupMenus with everything that appears in
             // "category," so McV needs to do the same thing. thus McV needs to
             // figure out the complete path to each toolbar bundle!
-            List<String> categories = CollectionHelpers.cast(bundle.getCategories());
+            List<String> categories = (List<String>)bundle.getCategories();
             if (categories == null || categories.isEmpty() || !TOOLBAR.equals(categories.get(0))) {
                 continue;
             }

@@ -32,7 +32,6 @@ import static ucar.unidata.xml.XmlUtil.findChildren;
 import static ucar.unidata.xml.XmlUtil.getAttribute;
 
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
-import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.map;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newMap;
@@ -181,7 +180,7 @@ public class EntryTransforms {
     protected static Set<RemoteAddeEntry> convertUserXml(final Element root) {
         // <entry name="SERVER/DATASET" user="ASDF" proj="0000" source="user" enabled="true" type="image"/>
         Pattern slashSplit = Pattern.compile("/");
-        List<Element> elements = cast(findChildren(root, "entry"));
+        List<Element> elements = (List<Element>)findChildren(root, "entry");
         Set<RemoteAddeEntry> entries = newLinkedHashSet(elements.size());
         for (Element entryXml : elements) {
             String name = getAttribute(entryXml, "name");
