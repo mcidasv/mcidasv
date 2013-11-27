@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import ucar.unidata.util.StringUtil;
 import visad.VisADException;
 
 import ucar.unidata.idv.ArgsManager;
@@ -141,6 +142,11 @@ public class ArgumentManager extends ArgsManager {
         } else {
             if (ARG_ISLINTERACTIVE.equals(arg) || ARG_B64ISL.equals(arg) || ARG_ISLFILE.equals(arg) || isIslFile(arg)) {
                 System.err.println("*** WARNING: ISL is being deprecated!");
+            } else if (arg.startsWith("-D")) {
+                List<String> l = StringUtil.split(arg.substring(2), "=");
+                if (l.size() == 2) {
+                    System.setProperty(l.get(0), l.get(1));
+                }
             }
             return super.parseArg(arg, args, idx);
         }
