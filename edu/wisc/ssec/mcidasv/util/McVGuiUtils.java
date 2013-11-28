@@ -138,8 +138,10 @@ public class McVGuiUtils implements Constants {
 
     /**
      * Create a standard sized, right-justified label
-     * @param title
-     * @return
+     *
+     * @param title Label text. Should not be {@code null}.
+     *
+     * @return A new label.
      */
     public static JLabel makeLabelRight(String title) {
         return makeLabelRight(title, null);
@@ -154,9 +156,11 @@ public class McVGuiUtils implements Constants {
     }
 
     /**
-     * Create a standard sized, left-justified label
-     * @param title
-     * @return
+     * Create a standard sized, left-justified label.
+     *
+     * @param title Label text. Should not be {@code null}.
+     *
+     * @return A new label.
      */
     public static JLabel makeLabelLeft(String title) {
         return makeLabelLeft(title, null);
@@ -171,10 +175,12 @@ public class McVGuiUtils implements Constants {
     }
 
     /**
-     * Create a sized, labeled component
-     * @param label
-     * @param thing
-     * @return
+     * Create a sized, labeled component.
+     *
+     * @param label Label for {@code thing}. Should not be {@code null}.
+     * @param thing Component to label. Should not be {@code null}.
+     *
+     * @return A component with its label to the right.
      */
     public static JPanel makeLabeledComponent(String label, JComponent thing) {
         return makeLabeledComponent(makeLabelRight(label), thing);
@@ -216,10 +222,12 @@ public class McVGuiUtils implements Constants {
     }
 
     /**
-     * Create a sized, labeled component
-     * @param label
-     * @param thing
-     * @return
+     * Create a sized, labeled component.
+     *
+     * @param thing Component to label. Should not be {@code null}.
+     * @param label Label for {@code thing}. Should not be {@code null}.
+     *
+     * @return A labeled component.
      */
     public static JPanel makeComponentLabeled(JComponent thing, String label) {
         return makeComponentLabeled(thing, new JLabel(label));
@@ -519,9 +527,11 @@ public class McVGuiUtils implements Constants {
     }
 
     /**
-     * Create a standard sized text field
-     * @param value
-     * @return
+     * Create a standard sized text field.
+     *
+     * @param value Text to place within the text field. Should not be {@code null}.
+     *
+     * @return {@link JTextField} with initial text taken from {@code value}.
      */
     public static JTextField makeTextField(String value) {
         return makeTextField(value, null);
@@ -581,12 +591,14 @@ public class McVGuiUtils implements Constants {
     }
 
     /**
-     * Use GroupLayout for stacking components vertically
-     * Set center to resize vertically
-     * @param top
-     * @param center
-     * @param bottom
-     * @return
+     * Use GroupLayout for stacking components vertically.
+     * Set center to resize vertically.
+     *
+     * @param top Component to place at the top of the newly created panel. Should not be {@code null}.
+     * @param center Component to place in the center of the newly created panel. Should not be {@code null}.
+     * @param bottom Component to place at the bottom of the newly created panel. Should not be {@code null}.
+     *
+     * @return New {@link JPanel} with the given components in the top, center, and bottom positions.
      */
     public static JPanel topCenterBottom(JComponent top, JComponent center, JComponent bottom) {
         JPanel newPanel = new JPanel();
@@ -613,11 +625,13 @@ public class McVGuiUtils implements Constants {
     }
 
     /**
-     * Use GroupLayout for stacking components vertically
-     * @param top
-     * @param bottom
-     * @param which
-     * @return
+     * Use GroupLayout for stacking components vertically.
+     *
+     * @param top Component to place at the top of the newly created panel. Should not be {@code null}.
+     * @param bottom Component to place at the bottom of the newly created panel. Should not be {@code null}.
+     * @param which Which component's size to prefer. Should not be {@code null}.
+     *
+     * @return New {@link JPanel} with the given components.
      */
     public static JPanel topBottom(JComponent top, JComponent bottom, Prefer which) {
         JPanel newPanel = new JPanel();
@@ -647,20 +661,26 @@ public class McVGuiUtils implements Constants {
     }
 
     /**
-     * Use GroupLayout for wrapping components to stop vertical resizing
-     * @param left
-     * @param right
-     * @return
+     * Use GroupLayout for wrapping components to stop vertical resizing.
+     *
+     * @param left Left component. Should not be {@code null}.
+     * @param right Right component. Should not be {@code null}.
+     *
+     * @return New {@link JPanel} with the given components side-by-side.
      */
     public static JPanel sideBySide(JComponent left, JComponent right) {
         return sideBySide(left, right, GAP_RELATED);
     }
 
     /**
-     * Use GroupLayout for wrapping components to stop vertical resizing
-     * @param left
-     * @param right
-     * @return
+     * Use GroupLayout for wrapping components to stop vertical resizing.
+     *
+     * @param left Left component. Should not be {@code null}.
+     * @param right Right component. Should not be {@code null}.
+     * @param gap Gap between {@code left} and {@code right}.
+     *
+     * @return New {@link JPanel} with the given components side-by-side,
+     * separated by value from {@code gap}.
      */
     public static JPanel sideBySide(JComponent left, JComponent right, int gap) {
         JPanel newPanel = new JPanel();
@@ -686,7 +706,11 @@ public class McVGuiUtils implements Constants {
     }
 
     /**
-     * Use GroupLayout for wrapping a list of components horizontally
+     * Use GroupLayout for wrapping a list of components horizontally.
+     *
+     * @param components Components to stack horizontally. Should not be {@code null}.
+     *
+     * @return {@link JPanel} with the given components.
      */
     public static JPanel horizontal(Component[] components) {
         JPanel newPanel = new JPanel();
@@ -718,7 +742,11 @@ public class McVGuiUtils implements Constants {
     }
 
     /**
-     * Use GroupLayout for wrapping a list of components vertically
+     * Use GroupLayout for wrapping a list of components vertically.
+     *
+     * @param components Components to stack vertically. Should not be {@code null}.
+     *
+     * @return {@link JPanel} with the given components.
      */
     public static JPanel vertical(Component[] components) {
         JPanel newPanel = new JPanel();
@@ -758,13 +786,13 @@ public class McVGuiUtils implements Constants {
      *   Windows: OK on left
      *   Mac: OK on right
      * - Add icons when we understand the button name
-     * 
-     * TODO: Revisit this?  Could hamper GUI performance.  But it is niiice...
-     * 
-     * @param idvButtonPanel
-     * @return
+     *
+     * @param idvButtonPanel {@link JPanel} to scan for understood button names. Should not be {@code null}.
+     *
+     * @return The given {@code JPanel} with pretty buttons (where possible).
      */
-    public static JPanel makePrettyButtons(JPanel idvButtonPanel) {    	
+    // TODO: Revisit this?  Could hamper GUI performance.  But it is niiice...
+    public static JPanel makePrettyButtons(JPanel idvButtonPanel) {
         // These are the buttons we know about
         JButton buttonOK = null;
         JButton buttonApply = null;
@@ -852,10 +880,11 @@ public class McVGuiUtils implements Constants {
     }
 
     /**
-     * Take a list of buttons and make them pretty
+     * Take a list of buttons and make them pretty.
      * 
-     * @param buttonList
-     * @return list
+     * @param buttonList List of buttons. Should not be {@code null}.
+     *
+     * @return An {@link List} of pretty buttons.
      */
     public static List makePrettyButtons(List buttonList) {
         int size = buttonList.size();
@@ -871,19 +900,23 @@ public class McVGuiUtils implements Constants {
     }
 
     /**
-     * Convenience method to make a button based solely on its name
-     * @param name
-     * @return
+     * Convenience method to make a button based solely on its name.
+     *
+     * @param name Button text. Should not be {@code null}.
+     *
+     * @return A {@literal "pretty"} button.
      */
     public static JButton makePrettyButton(String name) {
         return makePrettyButton(new JButton(name));
     }
 
     /**
-     * - Add icons when we understand the button name
+     * Add icons when we understand the button name.
      * 
-     * @param button
-     * @return button
+     * @param button Button to make pretty. Should not be {@code null}.
+     *
+     * @return button Either the given {@code button} with an icon, or just the given
+     * {@code button} (if the name was not understood).
      */
     public static JButton makePrettyButton(JButton button) {
         McVGuiUtils.setComponentWidth(button, Width.ONEHALF);
