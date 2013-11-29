@@ -9,10 +9,10 @@
     <property name="dist.dir" location="${base.dir}/dist" />
     <property name="lib.dir" location="${base.dir}/lib" />
     <property name="sharedlib.dir" location="${lib.dir}/share" />
-    <property name="linuxx86lib.dir" location="${lib.dir}/linux-amd64" />
-    <property name="linuxx64lib.dir" location="${lib.dir}/linux-i586" />
-    <property name="windowsx86lib.dir" location="${lib.dir}/windows-amd64" />
-    <property name="windowsx64lib.dir" location="${lib.dir}/windows-i586" />
+    <property name="linuxx86lib.dir" location="${lib.dir}/linux-i586" />
+    <property name="linuxx64lib.dir" location="${lib.dir}/linux-amd64" />
+    <property name="windowsx86lib.dir" location="${lib.dir}/windows-i586" />
+    <property name="windowsx64lib.dir" location="${lib.dir}/windows-amd64" />
     <property name="macosxlib.dir" location="${lib.dir}/macosx" />
     <property name="idvlib.dir" location="${base.dir}/../IDV/lib" />
     <property name="resource.dir" location="${base.dir}/edu/wisc/ssec/mcidasv/resources" />
