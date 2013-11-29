@@ -183,7 +183,7 @@
         <fileset refid="idv.libs" />
     </path>
     
-    <path id="linux_x84.app.classpath">
+    <path id="linux_x64.app.classpath">
         <pathelement location="${dist.dir}/mcidasv.jar" />
         <pathelement location="${dist.dir}/local-idv.jar" />
         <fileset refid="mcv.libs" />
