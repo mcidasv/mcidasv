@@ -437,9 +437,7 @@ public class McIDASVViewPanel extends IdvManager implements ViewPanel {
 	}
 
 	/**
-	 * Initialize the button state
-	 *
-	 * @param idv the idv
+	 * Initialize the button state.
 	 */
 	protected void initButtonState() {
 		if (fgColor != null)

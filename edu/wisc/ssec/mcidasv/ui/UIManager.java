@@ -1154,7 +1154,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 //        ((McIDASV)getIdv()).getMonitorManager().addListener(label);
 //        window.setComponent(Constants.COMP_MONITORPANEL, label);
 
-        boolean isClockShowing = Boolean.getBoolean(getStateManager().getPreferenceOrProperty(PROP_SHOWCLOCK, "true"));
+        boolean isClockShowing = Boolean.getBoolean(getStateManager().getPreferenceOrProperty(PROP_SHOWCLOCK_VIEW, "true"));
         MemoryMonitor mm = new MemoryMonitor(getStateManager(), 75, 95, isClockShowing);
         mm.setBorder(getStatusBorder());
 
@@ -1553,8 +1553,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * <p>Overridden in McIDAS-V so that we can fool the IDV into working with
      * our icons that allow for multiple {@literal "styles"}.
      * 
-     * @returns A {@link List} of {@link String}s that correspond to 
-     * {@link IdvAction}s.
+     * @return {@link List} of {@link String}s that correspond to
+     * {@link IdvAction IdvActions}.
      */
     @Override public List<String> getActions() {
         return idvActions.getAttributes(ActionAttribute.ID);
@@ -3710,12 +3710,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * 
          * <p>The upshot is that this value <b>will not be a valid path in 
          * McIDAS-V</b>. Use either {@link IdvAction#getMenuIcon()} or 
-         * {@link IdvAction#getIconForStyle(ToolbarStyle)}.
+         * {@link IdvAction#getIconForStyle}.
          * 
          * @see IdvUIManager#ATTR_IMAGE
          * @see IdvAction#getRawIconPath()
          * @see IdvAction#getMenuIcon()
-         * @see IdvAction#getIconForStyle(ToolbarStyle)
+         * @see IdvAction#getIconForStyle
          */
         ICON(ATTR_IMAGE), 
 
@@ -4059,7 +4059,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * with this action. Remember that this is actually a {@literal "format string"}
          * and should not be considered a valid path! 
          * 
-         * @see #getIconForStyle(ToolbarStyle)
+         * @see #getIconForStyle
          */
         public String getRawIconPath() {
             return attributes.get(ActionAttribute.ICON);

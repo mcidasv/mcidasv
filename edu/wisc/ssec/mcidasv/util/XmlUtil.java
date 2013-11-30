@@ -104,33 +104,39 @@ public abstract class XmlUtil extends ucar.unidata.xml.XmlUtil {
     }
     
     /**
-     * Find the element described by nameList (path)
+     * Find the element described by nameList (path).
      * 
      * @param parent
      * @param nameList
-     * @return
+     *
+     * @return {@code Element} described by the given path, or {@code null} if
+     * there was a problem.
      */
-    public static Element getElementAtNamedPath(Node parent, List<String>nameList) {
+    public static Element getElementAtNamedPath(Node parent, List<String> nameList) {
         return getMakeElementAtNamedPath(parent, nameList, "", false);
     }
     
     /**
-     * Make the element described by nameList (path)
+     * Make the element described by nameList (path).
      * 
      * @param parent
      * @param nameList
-     * @return
+     *
+     * @return {@code Element} described by the given path, or {@code null} if
+     * there was a problem.
      */
-    public static Element makeElementAtNamedPath(Node parent, List<String>nameList, String tagname) {
+    public static Element makeElementAtNamedPath(Node parent, List<String> nameList, String tagname) {
         return getMakeElementAtNamedPath(parent, nameList, tagname, true);
     }
     
     /**
-     * Find the element described by nameList (path)
+     * Find the element described by nameList (path).
      * 
      * @param parent
      * @param nameList
-     * @return
+     *
+     * @return {@code Element} described by the given path, or {@code null} if
+     * there was a problem.
      */
     public static Element getMakeElementAtNamedPath(Node parent, List<String> nameList, String tagName, boolean makeNew) {
         Element thisElement = null;

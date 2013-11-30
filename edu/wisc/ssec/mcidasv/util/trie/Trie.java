@@ -155,8 +155,8 @@ public interface Trie<K, V> extends SortedMap<K, V> {
      * <tr><td>REMOVE</td><td>Remove the entry and continue iterating</td></tr>
      * </table>
 
-     * Note: {@link Trie#select(Object, org.limewire.collection.Trie.Cursor)} does
-     * not support <code>REMOVE</code>.
+     * Note: {@link Trie#select(Object, edu.wisc.ssec.mcidasv.util.trie.Trie.Cursor)}
+     * does not support <code>REMOVE</code>.
      *
      * @param <K> Key Type
      * @param <V> Key Value

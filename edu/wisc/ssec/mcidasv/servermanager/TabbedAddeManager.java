@@ -1792,11 +1792,12 @@ public class TabbedAddeManager extends JFrame {
     }
 
     /**
+     * Construct an {@link Icon} object using the image at the specified
+     * {@code path}.
      * 
+     * @param path Path to image to use as an icon. Should not be {@code null}.
      * 
-     * @param path
-     * 
-     * @return
+     * @return Icon object with the desired image.
      */
     private static Icon icon(final String path) {
         return GuiUtils.getImageIcon(path, TabbedAddeManager.class, true);

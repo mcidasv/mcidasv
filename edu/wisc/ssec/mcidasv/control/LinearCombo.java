@@ -297,11 +297,11 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
     }
 
     /**
+     * Return a mapping of names to their {@link edu.wisc.ssec.mcidasv.control.LinearCombo.Selector Selectors}.
      * 
+     * @param objMap {@code Map} of objects.
      * 
-     * @param objMap
-     * 
-     * @return
+     * @return Map of name to {@code Selector}.
      */
     private Map<String, Selector> mapNamesToThings(final Map<String, Object> objMap) {
         assert objMap != null : objMap;
@@ -568,7 +568,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         /**
          * Returns the known Jython names associated with this Selector.
          * 
-         * @param {@literal "Names"} (aka variables) in a Jython namespace that
+         * @return {@literal "Names"} (aka variables) in a Jython namespace that
          * refer to this Selector. Collection may be empty, but never 
          * {@code null}.
          */
@@ -634,44 +634,46 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 
         /**
          * Returns the {@literal "selected"} wave number associated with this
-         * Selector.
+         * {@code Selector}.
          * 
-         * @return Wave number currently selected by this Selector.
+         * @return Wave number currently selected by this {@code Selector}.
          */
         public float getWaveNumber() {
             return waveNumber;
         }
 
         /**
+         * Returns the color associated with this {@code Selector}.
          * 
-         * 
-         * @return
+         * @return {@literal "Color"} for this {@code Selector}.
          */
         public ConstantMap[] getColor() {
             return color;
         }
 
         /**
+         * Returns the data selected by the location of this {@code Selector}.
          * 
-         * 
-         * @return 
+         * @return Data selected by this {@code Selector}.
          */
         public Data getData() {
             return control.getMultiSpectralDisplay().getImageDataFrom(waveNumber);
         }
 
         /**
+         * Returns an identifier for this {@code Selector}.
          * 
-         * 
-         * @return 
+         * @return ID for this {@code Selector}.
          */
        public String getId() {
             return ID;
         }
 
        /**
-        * 
-        * @return 
+        * Returns a {@code String} representation of the relevant information
+        * {@literal "stored"} by this {@code Selector}.
+        *
+        * @return {@code String} representation of this {@code Selector}.
         */
        @Override public String toString() {
            int hashLen = 0;

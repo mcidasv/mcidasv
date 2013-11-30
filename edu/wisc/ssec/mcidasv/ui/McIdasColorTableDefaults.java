@@ -167,11 +167,13 @@ public class McIdasColorTableDefaults {
 
 
     /**
-     * Convert strings of integers to scaled colors
-     * @param reds list of red strings
-     * @param green list of green strings
-     * @param blue list of blue strings
-     * @return color table of scaled floats
+     * Convert strings of integers to scaled colors.
+     *
+     * @param reds Array containing red strings.
+     * @param greens Array containing green strings.
+     * @param blues Array containing blue strings.
+     *
+     * @return Color table of scaled floats.
      */
     static private float[][] processInts(List reds, List greens, List blues) {
         List colors = new ArrayList();
@@ -192,11 +194,13 @@ public class McIdasColorTableDefaults {
 
 
     /**
-     * Convert strings of floats to scaled colors
-     * @param reds list of red strings
-     * @param green list of green strings
-     * @param blue list of blue strings
-     * @return color table of scaled floats
+     * Convert strings of floats to scaled colors.
+     *
+     * @param reds List containing red strings.
+     * @param greens List containing green strings.
+     * @param blues List containing blue strings.
+     *
+     * @return Color table of scaled floats.
      */
     static private float[][] processFloats(List reds, List greens, List blues) {
         int num = reds.size();
@@ -205,11 +209,6 @@ public class McIdasColorTableDefaults {
             colorTable[0][i] = new Float((String)reds.get(i)).floatValue();
             colorTable[1][i] = new Float((String)greens.get(i)).floatValue();
             colorTable[2][i] = new Float((String)blues.get(i)).floatValue();
-/*
-            System.out.println(colorTable[0][i] + " " +
-                               colorTable[1][i] + " " +
-                               colorTable[2][i]);
-*/
         }
         return colorTable;
     }

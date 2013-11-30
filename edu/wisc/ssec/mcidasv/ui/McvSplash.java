@@ -230,10 +230,12 @@ public class McvSplash extends JWindow {
     }
     
     /**
-     * Highlight the minor version number if it exists
+     * Highlight the minor version number if it exists.
      * 
-     * @param version
-     * @return
+     * @param version Version string. {@code null} is allowed.
+     *
+     * @return {@code null} if {@code version} is {@code null}, otherwise
+     * a {@code String} containing HTML markup.
      */
     private String hiliteRevision(String version) {
 		String hilited = version;

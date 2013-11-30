@@ -475,7 +475,7 @@ public class McvComponentGroup extends IdvComponentGroup {
 
     /**
      * Used to set the tab associated with {@code holder} as the active tab 
-     * in our {@link JTabbedPane}.
+     * in our {@link javax.swing.JTabbedPane JTabbedPane}.
      * 
      * @param holder The active component holder.
      */

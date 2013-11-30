@@ -50,7 +50,7 @@ public class FocusTraveller extends FocusTraversalPolicy {
     /**
      * Creates the {@link FocusTraversalPolicy}.
      * 
-     * @param components Components to traverse, in the desired order. 
+     * @param componentsToTraverse Components to traverse, in the desired order.
      * Cannot be {@code null}.
      */
     public FocusTraveller(final Component... componentsToTraverse) {
