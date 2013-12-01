@@ -29,9 +29,10 @@ package edu.wisc.ssec.mcidasv.util;
 
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.list;
 
+import java.awt.Desktop;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -40,13 +41,17 @@ import ucar.unidata.util.LogUtil;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
 
+/**
+ * A simple utility class for opening a web browser to a given link.
+ */
 public final class WebBrowser {
 
     /** Probe Unix-like systems for these browsers, in this order. */
     private static final List<String> unixBrowsers = 
-        list("firefox", "konqueror", "opera", "mozilla", "netscape");
+        list("firefox", "chromium-browser", "google-chrome", "konqueror",
+             "opera", "mozilla", "netscape");
 
-    /** None shall instantiate WebBrowser!! */
+    /** Do not create instances of {@code WebBrowser}. */
     private WebBrowser() { }
 
     /**
@@ -73,56 +78,45 @@ public final class WebBrowser {
     public static void browse(final String url) {
         // if the user has taken the trouble to explicitly provide the path to 
         // a web browser, we should probably use it. 
-        if (tryUserSpecifiedBrowser(url))
+        if (tryUserSpecifiedBrowser(url)) {
             return;
+        }
 
         // determine whether or not we can use the 1.6 classes
-        if (canAttemptNewStyle())
-            if (openNewStyle(url))
+        if (canAttemptNewStyle()) {
+            if (openNewStyle(url)) {
                 return;
+            }
+        }
 
         // if not, use the hacky stuff.
         openOldStyle(url);
     }
 
     /**
-     * Uses the new functionality in {@link java.awt.Desktop} to try opening
-     * the browser. Because McIDAS-V does not yet require Java 1.6, and 
-     * {@code Desktop} was introduced in 1.6, we have to jump through some
-     * reflection hoops.
-     * 
+     * Use the functionality within {@link java.awt.Desktop} to try opening
+     * the user's preferred web browser.
+     *
      * @param url URL to visit.
      * 
      * @return Either {@code true} if things look ok, {@code false} if there 
      * were problems.
      */
     private static boolean openNewStyle(final String url) {
-        boolean retVal = true;
-        try {
-            Class<?> desktop = Class.forName("java.awt.Desktop");
-            Method isDesktopSupported = desktop.getMethod("isDesktopSupported", (Class<?>[])null);
-            Boolean b = (Boolean)isDesktopSupported.invoke(null, (Object[])null);
-            if (b.booleanValue()) {
-                final Object desktopInstance = desktop.getMethod("getDesktop", (Class<?>[])null).invoke(null, (Object[])null);
-                Class<?> desktopAction = Class.forName("java.awt.Desktop$Action");
-                Method isSupported = desktop.getMethod("isSupported", new Class[] { desktopAction });
-                Object browseConst = desktopAction.getField("BROWSE").get(null);
-                b = (Boolean)isSupported.invoke(desktopInstance, browseConst);
-                if (b.booleanValue()) {
-                    final Method browse = desktop.getMethod("browse", new Class[]{ URI.class });
-                    browse.invoke(desktopInstance, new URI(url));
+        boolean retVal = false;
+        if (Desktop.isDesktopSupported()) {
+            Desktop desktop = Desktop.getDesktop();
+            if (desktop.isSupported(Desktop.Action.BROWSE)) {
+                try {
+                    desktop.browse(new URI(url));
+                    // well... the assumption is that there was not a problem
                     retVal = true;
-                } else {
-                    retVal = false;
+                } catch (URISyntaxException e) {
+                    LogUtil.logException("Bad syntax in URI: "+url, e);
+                } catch (IOException e) {
+                    LogUtil.logException("Problem accessing URI: "+url, e);
                 }
-            } else {
-                retVal = false;
             }
-        } catch (ClassNotFoundException e) {
-            // JDK 5, ignore
-            retVal = false;
-        } catch (Exception e) {
-            retVal = false;
         }
         return retVal;
     }
@@ -169,18 +163,19 @@ public final class WebBrowser {
      */
     private static boolean tryUserSpecifiedBrowser(final String url) {
         McIDASV mcv = McIDASV.getStaticMcv();
+        boolean retVal = false;
         if (mcv != null) {
             String browserPath = mcv.getProperty("idv.browser.path", (String)null);
-            if (browserPath != null && browserPath.trim().length() > 0) {
+            if (browserPath != null && !browserPath.trim().isEmpty()) {
                 try {
                     Runtime.getRuntime().exec(browserPath+' '+url);
-                    return true;
+                    retVal = true;
                 } catch (Exception e) {
                     LogUtil.logException("Executing browser: "+browserPath, e);
                 }
             }
         }
-        return false;
+        return retVal;
     }
 
     /**
@@ -192,15 +187,14 @@ public final class WebBrowser {
      * otherwise.
      */
     private static boolean canAttemptNewStyle() {
-        if (Boolean.getBoolean("java.net.useSystemProxies") && isUnix()) {
-            // remove this check if JDK's bug 6496491 is fixed or if we can 
-            // assume ORBit >= 2.14.2 and gnome-vfs >= 2.16.1
-            return false;
-        } 
-        return true;
+        // remove this check if JDK's bug 6496491 is fixed or if we can
+        // assume ORBit >= 2.14.2 and gnome-vfs >= 2.16.1
+        return isUnix() && Boolean.valueOf(System.getProperty("java.net.useSystemProxies", "true"));
     }
 
     /**
+     * Test for whether or not the current platform is Mac OS X.
+     *
      * @return Are we shiny, happy OS X users?
      */
     private static boolean isMac() {
@@ -208,6 +202,9 @@ public final class WebBrowser {
     }
 
     /**
+     * Test for whether or not the current platform is some form of
+     * {@literal "unix"} (but not OS X!).
+     *
      * @return Do we perhaps think that beards and suspenders are the height 
      * of fashion?
      */
@@ -216,6 +213,8 @@ public final class WebBrowser {
     }
 
     /**
+     * Test for whether or not the current platform is Windows.
+     *
      * @return Are we running Windows??
      */
     private static boolean isWindows() {
