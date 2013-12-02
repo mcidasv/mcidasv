@@ -1154,7 +1154,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 //        ((McIDASV)getIdv()).getMonitorManager().addListener(label);
 //        window.setComponent(Constants.COMP_MONITORPANEL, label);
 
-        boolean isClockShowing = Boolean.getBoolean(getStateManager().getPreferenceOrProperty(PROP_SHOWCLOCK_VIEW, "true"));
+        boolean isClockShowing = Boolean.getBoolean(getStateManager().getPreferenceOrProperty(PROP_SHOWCLOCK, "true"));
         MemoryMonitor mm = new MemoryMonitor(getStateManager(), 75, 95, isClockShowing);
         mm.setBorder(getStatusBorder());
 
