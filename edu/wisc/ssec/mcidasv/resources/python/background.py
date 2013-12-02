@@ -967,8 +967,32 @@ class _Display(_JavaProxy):
         return '%s,%s,%s' % (translateTable[position], xoff, yoff)
         
     @gui_invoke_later
-    def setLogo(self, image, position, xOffset=0, yOffset=0, visibility=True, scale=1.0):
+    def setLogo(self, image, position='Lower Left', xOffset=0, yOffset=0, visibility=True, scale=1.0):
+        """Set a logo for the display.
         
+        If individual logo "properties" need to be manipulated after calling
+        this method, there are the following _Display methods available:
+            setLogoFile
+            setLogoPosition
+            setLogoVisibility
+            setLogoScale
+            
+        Required Args:
+            image: Path to the image to use as a logo.
+            
+        Optional Args:
+            position: Section of the screen where the logo should be placed. 
+                      Acceptable values are "Lower Left", "Upper Left", 
+                      "Upper Right", "Lower Right", and "Center". Case does not
+                      matter. Default value is "Lower Left".
+            xOffset: Integer value for x-axis offset from position. Default 
+                     value is 0.
+            xOffset: Integer value for y-axis offset from position. Default 
+                     value is 0.
+            visibility: Boolean value for whether or not the logo is 
+                        immediately visible. Default value is True.
+            scale: Default value is 1.0.
+        """
         idvPos = self._translateLogoPosition(position, xOffset, yOffset)
         
         self._JavaProxy__javaObject.setLogoFile(image)
