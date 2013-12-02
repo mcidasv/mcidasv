@@ -955,6 +955,27 @@ class _Display(_JavaProxy):
         
         return self._JavaProxy__javaObject.getMapDisplay().getBackground()
         
+    def _translateLogoPosition(self, position, xoff, yoff):
+        position = position.lower()
+        translateTable = {
+            'lower left': 'll', 'll': 'll',
+            'upper left': 'ul', 'ul': 'ul',
+            'upper right': 'ur', 'ur': 'ur',
+            'lower right': 'lr', 'lr': 'lr',
+            'center': 'mm', 'mm': 'mm',
+        }
+        return '%s,%s,%s' % (translateTable[position], xoff, yoff)
+        
+    @gui_invoke_later
+    def setLogo(self, image, position, xOffset=0, yOffset=0, visibility=True, scale=1.0):
+        
+        idvPos = self._translateLogoPosition(position, xOffset, yOffset)
+        
+        self._JavaProxy__javaObject.setLogoFile(image)
+        self._JavaProxy__javaObject.setLogoPosition(idvPos)
+        self._JavaProxy__javaObject.setLogoVisibility(visibility)
+        self._JavaProxy__javaObject.setLogoScale(scale)
+        
     @gui_invoke_later
     def setBackgroundColor(self, color=java.awt.Color.CYAN):
         """Sets the display's background color to the given AWT color. Defaults to cyan."""
