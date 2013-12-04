@@ -83,9 +83,10 @@ import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster;
 import edu.wisc.ssec.mcidasv.startupmanager.options.TextOption;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
-// using an enum to enforce singleton-ness is a hack, but it's been pretty 
-// effective. OptionMaster is used in a similar way. The remaining enums are 
-// used in the more traditional fashion.
+/**
+ * Manages the McIDAS-V startup options in a context that is completely free
+ * from the traditional IDV/McIDAS-V overhead.
+ */
 public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
     
     // TODO(jon): replace
@@ -244,7 +245,7 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             return getAdvancedPanel(true);
         }
         String key = ((JLabel)listModel.getElementAt(index)).getText();
-        if (Constants.PREF_LIST_ADVANCED.equals(key)) {
+        if (!Constants.PREF_LIST_ADVANCED.equals(key)) {
             return getUnavailablePanel();
         }
         return getAdvancedPanel(true);
