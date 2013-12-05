@@ -987,19 +987,55 @@ class _Display(_JavaProxy):
                       matter. Default value is "Lower Left".
             xOffset: Integer value for x-axis offset from position. Default 
                      value is 0.
-            xOffset: Integer value for y-axis offset from position. Default 
+            yOffset: Integer value for y-axis offset from position. Default 
                      value is 0.
             visibility: Boolean value for whether or not the logo is 
                         immediately visible. Default value is True.
             scale: Default value is 1.0.
+        
+        Raises:
+            IOError: if image does not exist.
+            
+            ValueError: if the position was invalid.
         """
-        idvPos = self._translateLogoPosition(position, xOffset, yOffset)
+        if not os.path.exists(image):
+            raise IOError("'%s' does not exist." % (image))
+            
+        try:
+            idvPos = self._translateLogoPosition(position, xOffset, yOffset)
+            self._JavaProxy__javaObject.setLogoFile(image)
+            self._JavaProxy__javaObject.setLogoPosition(idvPos)
+            self._JavaProxy__javaObject.setLogoVisibility(visibility)
+            self._JavaProxy__javaObject.setLogoScale(scale)
+        except KeyError:
+            raise ValueError("Position '%s' is not valid. Please provide one of 'Lower Left', 'Upper Left', 'Upper Right', 'Lower Right', or 'Center'." % (position))
+            
+    @gui_invoke_later
+    def setLogoPosition(self, position, xOffset=0, yOffset=0):
+        """Set the position of the display's logo.
         
-        self._JavaProxy__javaObject.setLogoFile(image)
-        self._JavaProxy__javaObject.setLogoPosition(idvPos)
-        self._JavaProxy__javaObject.setLogoVisibility(visibility)
-        self._JavaProxy__javaObject.setLogoScale(scale)
-        
+        Required Args:
+            position: Section of the screen where the logo should be placed. 
+                      Acceptable values are "Lower Left", "Upper Left", 
+                      "Upper Right", "Lower Right", and "Center". Case does not
+                      matter.
+        Optional Args:
+            xOffset: Integer value for x-axis offset from position. Default 
+                     value is 0.
+            yOffset: Integer value for y-axis offset from position. Default 
+                     value is 0.
+        Raises:
+            ValueError: if the position was invalid.
+        """
+        try:
+            idvPos = self._translateLogoPosition(position, xOffset, yOffset)
+            vis = self._JavaProxy__javaObject.getLogoVisibility()
+            self._JavaProxy__javaObject.setLogoPosition(idvPos)
+            # display doesn't update without this step.
+            self._JavaProxy__javaObject.setLogoVisibility(vis)
+        except KeyError:
+            raise ValueError("Position '%s' is not valid. Please provide one of 'Lower Left', 'Upper Left', 'Upper Right', 'Lower Right', or 'Center'." % (position))
+            
     @gui_invoke_later
     def setBackgroundColor(self, color=java.awt.Color.CYAN):
         """Sets the display's background color to the given AWT color. Defaults to cyan."""
