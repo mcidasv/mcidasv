@@ -54,6 +54,21 @@ def enum(*sequential, **named):
     enums = dict(zip(sequential, range(len(sequential))), **named)
     return type('Enum', (), enums)
     
+def _checkADDEParameters(hasCoordSys, hasPlace, hasLocation, size):
+    retval = True
+    
+    if isinstance(size, str):
+        s = size.upper()
+    else:
+        s = size
+        
+    print 'hasCoordSys=%s hasPlace=%s hasLocation=%s; size=%s' % (hasCoordSys, hasPlace, hasLocation, size)
+    # if hasCoordSys and hasPlace and hasLocation and (s == 'ALL' or s == 'SAME'):
+    if (hasCoordSys or hasPlace or hasLocation) and (s == 'ALL' or s == 'SAME'):
+        #raise ValueError("Cannot specify coordinate system, place, or location while also providing a size of '%s'." % (size))
+        retval = False
+    return retval
+    
 def _areaDirectoryToDictionary(areaDirectory):
     d = dict()
     d['bands'] = areaDirectory.getBands()
@@ -461,7 +476,7 @@ def listADDEImageTimes(localEntry=None,
     server=None, dataset=None, descriptor=None,
     accounting=DEFAULT_ACCOUNTING,
     location=None,
-    coordinateSystem=CoordinateSystems.LATLON,
+    coordinateSystem=None,
     place=None,
     mag=None,
     position=None,
@@ -491,6 +506,13 @@ def listADDEImageTimes(localEntry=None,
     proj = accounting[1]
     debug = str(debug).lower()
     
+    hasCoordSys = coordinateSystem or False
+    hasPlace = place or False
+    hasLocation = location or False
+    
+    if not _checkADDEParameters(hasCoordSys, hasPlace, hasLocation, size):
+        raise ValueError("Cannot specify coordinate system, place, or location while also providing a size of '%s'." % (size))
+        
     if mag:
         mag = '&MAG=%s %s' % (mag[0], mag[1])
     else:
@@ -511,15 +533,12 @@ def listADDEImageTimes(localEntry=None,
         # raise ValueError()
         place = ''
         
-    if coordinateSystem is CoordinateSystems.LATLON:
+    if coordinateSystem is CoordinateSystems.LATLON or coordinateSystem is None:
         coordSys = 'LATLON'
     elif coordinateSystem is CoordinateSystems.AREA or coordinateSystem is CoordinateSystems.IMAGE:
         coordSys = 'LINELE'
     else:
-        raise ValueError()
-        
-    if coordSys == 'LATLON' and (size == 'ALL' or size == 'all'):
-        raise ValueError("Cannot specify lat/lon coordinate system and size of '%s'." % (size))
+        raise ValueError("Invalid coordinateSystem value.")
         
     if location:
         location = '&%s=%s %s' % (coordSys, location[0], location[1])
@@ -619,7 +638,7 @@ def listADDEImages(localEntry=None,
     server=None, dataset=None, descriptor=None,
     accounting=DEFAULT_ACCOUNTING,
     location=None,
-    coordinateSystem=CoordinateSystems.LATLON,
+    coordinateSystem=None,
     place=None,
     mag=None,
     position=None,
@@ -664,6 +683,13 @@ def listADDEImages(localEntry=None,
     proj = accounting[1]
     debug = str(debug).lower()
     
+    hasCoordSys = coordinateSystem or False
+    hasPlace = place or False
+    hasLocation = location or False
+    
+    if not _checkADDEParameters(hasCoordSys, hasPlace, hasLocation, size):
+        raise ValueError("Cannot specify coordinate system, place, or location while also providing a size of '%s'." % (size))
+        
     if mag:
         mag = '&MAG=%s %s' % (mag[0], mag[1])
     else:
@@ -684,15 +710,12 @@ def listADDEImages(localEntry=None,
         # raise ValueError()
         place = ''
         
-    if coordinateSystem is CoordinateSystems.LATLON:
+    if coordinateSystem is CoordinateSystems.LATLON or coordinateSystem is None:
         coordSys = 'LATLON'
     elif coordinateSystem is CoordinateSystems.AREA or coordinateSystem is CoordinateSystems.IMAGE:
         coordSys = 'LINELE'
     else:
-        raise ValueError()
-        
-    if coordSys == 'LATLON' and (size == 'ALL' or size == 'all'):
-        raise ValueError("Cannot specify lat/lon coordinate system and size of '%s'." % (size))
+        raise ValueError("Invalid coordinateSystem value.")
         
     if location:
         location = '&%s=%s %s' % (coordSys, location[0], location[1])
@@ -958,8 +981,8 @@ def getADDEImage(localEntry=None,
     server=None, dataset=None, descriptor=None,
     accounting=DEFAULT_ACCOUNTING,
     location=None,
-    coordinateSystem=CoordinateSystems.LATLON,
-    place=Places.CENTER,
+    coordinateSystem=None,
+    place=None,
     mag=(1, 1),
     position=0,
     unit='BRIT',
@@ -1033,14 +1056,21 @@ def getADDEImage(localEntry=None,
     debug = str(debug).lower()
     mag = '%s %s' % (mag[0], mag[1])
     
-    if place is Places.CENTER:
+    hasCoordSys = coordinateSystem or False
+    hasPlace = place or False
+    hasLocation = location or False
+    
+    if not _checkADDEParameters(hasCoordSys, hasPlace, hasLocation, size):
+        raise ValueError("Cannot specify coordinate system, place, or location while also providing a size of '%s'." % (size))
+        
+    if place is Places.CENTER or place is None:
         place = 'CENTER'
     elif place is Places.ULEFT:
         place = 'ULEFT'
     else:
-        raise ValueError()
+        raise ValueError("Invalid place value.")
         
-    if coordinateSystem is CoordinateSystems.LATLON:
+    if coordinateSystem is CoordinateSystems.LATLON or coordinateSystem is None:
         coordSys = 'LATLON'
         coordType = 'E'
     elif coordinateSystem is CoordinateSystems.AREA:
@@ -1050,10 +1080,7 @@ def getADDEImage(localEntry=None,
         coordSys = 'LINELE'
         coordType = 'I'
     else:
-        raise ValueError()
-        
-    if coordSys == 'LATLON' and (size == 'ALL' or size == 'all'):
-        raise ValueError("Cannot specify lat/lon coordinate system and size of '%s'." % (size))
+        raise ValueError("Invalid coordinateSystem value.")
         
     if location:
         location = '&%s=%s %s %s' % (coordSys, location[0], location[1], coordType)
