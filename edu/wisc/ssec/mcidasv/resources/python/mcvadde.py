@@ -62,10 +62,8 @@ def _checkADDEParameters(hasCoordSys, hasPlace, hasLocation, size):
     else:
         s = size
         
-    print 'hasCoordSys=%s hasPlace=%s hasLocation=%s; size=%s' % (hasCoordSys, hasPlace, hasLocation, size)
     # if hasCoordSys and hasPlace and hasLocation and (s == 'ALL' or s == 'SAME'):
     if (hasCoordSys or hasPlace or hasLocation) and (s == 'ALL' or s == 'SAME'):
-        #raise ValueError("Cannot specify coordinate system, place, or location while also providing a size of '%s'." % (size))
         retval = False
     return retval
     
