@@ -1009,7 +1009,37 @@ class _Display(_JavaProxy):
             self._JavaProxy__javaObject.setLogoScale(scale)
         except KeyError:
             raise ValueError("Position '%s' is not valid. Please provide one of 'Lower Left', 'Upper Left', 'Upper Right', 'Lower Right', or 'Center'." % (position))
+    
+    @gui_invoke_later
+    def setLogoFile(self, image):
+        """Set the image to use as the display's logo.
+        
+        Required Args:
+            image: Path to the image to use as a logo.
+        
+        Raises:
+            IOError: if image does not exist.
+        """
+        if not os.path.exists(image):
+            raise IOError("'%s' does not exist." % (image))
             
+        vis = self._JavaProxy__javaObject.getLogoVisibility()
+        self._JavaProxy__javaObject.setLogoFile(image)
+        # display doesn't update without this step.
+        self._JavaProxy__javaObject.setLogoVisibility(vis)
+        
+    @gui_invoke_later
+    def setLogoScale(self, scale):
+        """Set the scale of the display's logo.
+        
+        Required Args:
+            scale: New logo scale.
+        """
+        vis = self._JavaProxy__javaObject.getLogoVisibility()
+        self._JavaProxy__javaObject.setLogoScale(scale)
+        # display doesn't update without this step.
+        self._JavaProxy__javaObject.setLogoVisibility(vis)
+        
     @gui_invoke_later
     def setLogoPosition(self, position, xOffset=0, yOffset=0):
         """Set the position of the display's logo.
