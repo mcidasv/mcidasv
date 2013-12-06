@@ -518,6 +518,9 @@ def listADDEImageTimes(localEntry=None,
     else:
         raise ValueError()
         
+    if coordSys == 'LATLON' and (size == 'ALL' or size == 'all'):
+        raise ValueError("Cannot specify lat/lon coordinate system and size of '%s'." % (size))
+        
     if location:
         location = '&%s=%s %s' % (coordSys, location[0], location[1])
     else:
@@ -687,6 +690,9 @@ def listADDEImages(localEntry=None,
         coordSys = 'LINELE'
     else:
         raise ValueError()
+        
+    if coordSys == 'LATLON' and (size == 'ALL' or size == 'all'):
+        raise ValueError("Cannot specify lat/lon coordinate system and size of '%s'." % (size))
         
     if location:
         location = '&%s=%s %s' % (coordSys, location[0], location[1])
@@ -974,7 +980,7 @@ def getADDEImage(localEntry=None,
     in future versions so should not be used in user scripts. 
     
     Required Args:
-        localEntry: Local data set defined by makeLocalADDEEntry. 
+        localEntry: Local data set defined by makeLocalADDEEntry.
         server: ADDE server.
         dataset: ADDE dataset group name.
         descriptor: ADDE dataset descriptor.
@@ -1045,6 +1051,9 @@ def getADDEImage(localEntry=None,
         coordType = 'I'
     else:
         raise ValueError()
+        
+    if coordSys == 'LATLON' and (size == 'ALL' or size == 'all'):
+        raise ValueError("Cannot specify lat/lon coordinate system and size of '%s'." % (size))
         
     if location:
         location = '&%s=%s %s %s' % (coordSys, location[0], location[1], coordType)
