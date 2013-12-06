@@ -37,11 +37,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
           but have not been tested.
 </p>
         <p>To run McIDAS-V, a system will need to have a minimum of a <strong>500 MHz processor and 512 MB of RAM free</strong>. However, if you are purchasing a new system, it is recommended that an Intel system
-            running McIDAS-V have at least a <b>2 GHz processor and 4 GB memory
-            (RAM)</b>.  Please note that Java on 32 bit operating systems can
+            running McIDAS-V have at least a <b>2 GHz processor, 4 GB memory
+            (RAM<strong>), and at least 1 GB free hard drive space</strong></b>.  Please note that Java on 32 bit operating systems can
             only utilize 1536 MB, while 64 bit operating systems can utilize
-            all of the available memory. Performance will be better with
-    faster processors and more memory. We have seen the best results with NVIDIA hardware and drivers.</p>
+            all of the available memory. Performance will be better with      faster processors and more memory. We have seen the best results with NVIDIA hardware and drivers.</p>
 
         <p> Detailed requirements for the following are listed below:</p>
  <ul>
@@ -49,9 +48,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
  <li><a class="childlist-link" href="#video">Graphics Cards and Drivers </a></li>
  <li><a class="childlist-link" href="#java">Java Versions</a></li>
  <li> <a class="childlist-link" href="#memory"> System Memory and Processor Speed </a></li>
- <li><a class="childlist-link" href="#disk"> </a><a class="childlist-link" href="#network">Internet
-     Connection for Downloading McIDAS-V and Accessing Data</a></li>
-      <li><a class="childlist-link" href="#firewalls">Firewalls</a></li>
+ <li><a class="childlist-link" href="#networking">Networking</a><a class="childlist-link" href="#firewalls"></a></li>
  </ul>  
  <h3>Operating Systems<a name="os"></a></h3>
   <p> The chart below lists the software versions, by vendor, that McIDAS-V is known to run on, and that McIDAS User Services  tests:</p>
@@ -253,33 +250,18 @@ System Memory and Processor Speed<a name="memory"></a></h3>
   McIDAS-V have at least a <b>2 GHz processor and 4 GB memory (RAM)</b>. Performance
   will be even better with faster processors and more memory.</p>
 <h3>
-  Internet Connection for Downloading McIDAS-V
-    and Accessing Data<a name="network"></a></h3>
-  You will need about 200 MB disk space for the installer file, which will uncompress
-into twice that size. You will have to download the installer file in
-order to begin installing McIDAS-V.
-  <p> McIDAS-V is designed to access data on remote servers on the Internet, as
+Networking<a name="networking" id="networking"></a></h3>
+  <p>McIDAS-V is designed to access data on remote servers on the Internet, as
   well as from local files. Downloading data from remote servers benefits from
-  a fast connection to the Internet, since many data fields are large.</p>
-<h3>
-  Firewalls<a name="firewalls"></a></h3>
-  <p>There are various ports that may have to be opened on your machine to access data in McIDAS-V.</p>
-  <ul>
-  <li>If unable to connect to local servers, verify that the following port is open:</li>
-  <ul>
-    <li><strong>Port 8112 -</strong> Used when connecting to local servers. See <a href="tools/LocalDataManager.html#status">Local ADDE Data Manager</a> for information about the status message of local servers at the bottom of the ADDE Data Manager.</li>
+    a fast connection to the Internet, since many data fields are large.</p>
+  <p>The following ports are used to access remote data, and must be open through any firewalls or proxies at your location:</p>
+<ul>
+    <li><strong>21 -</strong> FTP</li>
+    <li><strong>80 -</strong> WWW</li>
+    <li><strong>112 -</strong> ADDE servers (imagery, radar, point, upper air and profiler data)</li>
+    <li><strong>8080 -</strong> THREDDS data servers</li>
   </ul>
-  <li>If unable to connect to remote servers (image, radar, point, upper air and profiler data), or you can not access Catalog data, verify that the following ports are open:</li>
-  <ul>
-    <li><strong>Port 112 -</strong> Used when connecting to ADDE servers</li>
-    <li><strong>Port 8080 -</strong> Used when connecting to the THREDDS data server</li>
-    </ul>
-    <li>Other ports that McIDAS-V uses are:</li>
-    <ul>
-    <li><strong>Port 21 -</strong> Used for FTP data</li>
-    <li><strong>Port 80 -</strong> Used for Web data</li>
-  </ul>
-</ul>
+  <p>When accessing local data via &lt;LOCAL-DATA&gt; ADDE datasets, <em>incoming</em> ports <strong>8112 - 8122</strong> must be allowed (Windows users may need to explicitly allow this connection). The <a href="tools/LocalDataManager.html">Local ADDE Data Manager</a> will attempt to connect to ports 8112 to 8122. If port 8112 cannot be connected to, port 8113 will be attempted, and then 8114 and so on.</p>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
