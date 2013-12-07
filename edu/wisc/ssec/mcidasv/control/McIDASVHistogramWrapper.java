@@ -313,8 +313,9 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
     }
 
     /**
-     * 
-     * @return
+     * @return {@link ActionListener} that listens for
+     * {@link ChartPanel#PROPERTIES_COMMAND} events and shows the histogram
+     * properties.
      */
     private ActionListener buildHistoPropsListener() {
         return new ActionListener() {

@@ -50,7 +50,8 @@ public class ProfilerTimeHeightControl
     public ProfilerTimeHeightControl() {}
 
     /**
-     * Construct the {@link DisplayMaster}, {@link Displayable}, frame, and 
+     * Construct the {@link ucar.visad.display.DisplayMaster DisplayMaster},
+     * {@link ucar.visad.display.Displayable Displayable}, frame, and
      * controls. Overridden in McIDAS-V so that we can force the value of 
      * {@code isLatestOnLeft} to its previous value (defaults to {@code false}).
      *
