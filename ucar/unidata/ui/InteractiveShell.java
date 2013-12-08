@@ -75,6 +75,7 @@ import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.parser.ParserDelegator;
 
+import edu.wisc.ssec.mcidasv.util.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,7 +121,7 @@ public class InteractiveShell implements HyperlinkListener {
     private boolean bufferOutput = false;
     
     /** _more_ */
-    protected final List<String> history = new ArrayList<String>();
+    protected final List<ShellHistoryEntry> history = new ArrayList<ShellHistoryEntry>();
     
     /** _more_ */
     protected int historyIdx = -1;
@@ -389,7 +390,9 @@ public class InteractiveShell implements HyperlinkListener {
             }
         }
         if ((historyIdx >= 0) && (historyIdx < historySize)) {
-            getCommandFld().setText(history.get(historyIdx));
+            ShellHistoryEntry entry = history.get(historyIdx);
+            setInputMode(entry.getInputMode());
+            getCommandFld().setText(entry.getEntryText());
         }
     }
     
@@ -404,7 +407,9 @@ public class InteractiveShell implements HyperlinkListener {
             }
         }
         if ((historyIdx >= 0) && (historyIdx < historySize)) {
-            getCommandFld().setText(history.get(historyIdx));
+            ShellHistoryEntry entry = history.get(historyIdx);
+            setInputMode(entry.getInputMode());
+            getCommandFld().setText(entry.getEntryText());
         }
     }
     
@@ -478,7 +483,42 @@ public class InteractiveShell implements HyperlinkListener {
         }
         return commandArea;
     }
-    
+
+    /**
+     * Set the input mode of the shell GUI. If {@code mode} is
+     * {@link ShellHistoryMode#UNKNOWN} or the same as the result of
+     * {@link #getInputMode()}, no action will taken.
+     *
+     * @param mode New input mode for the shell GUI. Cannot be {@code null}.
+     *
+     * @throws NullPointerException if {@code mode} is {@code null}.
+     */
+    public void setInputMode(final ShellHistoryMode mode) {
+        Contract.notNull(mode, "Cannot use a null mode.");
+        if (mode != ShellHistoryMode.UNKNOWN && mode != getInputMode()) {
+            flipField();
+        }
+    }
+
+    /**
+     * Determine the <b>current</b> input mode of the shell GUI.
+     *
+     * @return {@link ShellHistoryMode} that corresponds with the state of the
+     * shell GUI.
+     */
+    public ShellHistoryMode getInputMode() {
+        JTextComponent commandField = getCommandFld();
+        ShellHistoryMode mode;
+        if (commandField instanceof  JTextField) {
+            mode = ShellHistoryMode.SINGLE;
+        } else if (commandField instanceof JTextArea) {
+            mode = ShellHistoryMode.MULTILINE;
+        } else {
+            mode = ShellHistoryMode.UNKNOWN;
+        }
+        return mode;
+    }
+
     /**
      * _more_
      */
@@ -490,7 +530,7 @@ public class InteractiveShell implements HyperlinkListener {
                 Toolkit.getDefaultToolkit().beep();
                 return;
             }
-            cmd = history.get(history.size()-1);
+            cmd = history.get(history.size() - 1).getEntryText();
         } else if (cmd.trim().startsWith("!")) {
             if (history.isEmpty()) {
                 Toolkit.getDefaultToolkit().beep();
@@ -499,7 +539,7 @@ public class InteractiveShell implements HyperlinkListener {
             String prefix = cmd.substring(1);
             cmd = null;
             for (int i = history.size() - 1; i >= 0; i--) {
-                String tmp = history.get(i);
+                String tmp = history.get(i).getEntryText();
                 if (tmp.startsWith(prefix)) {
                     cmd = tmp;
                     break;
@@ -511,7 +551,8 @@ public class InteractiveShell implements HyperlinkListener {
             }
         }
         cmdFld.setText("");
-        history.add(cmd);
+//        history.add(cmd);
+        history.add(new ShellHistoryEntry(cmd, getInputMode()));
         historyIdx = -1;
         Misc.run(this, "eval", cmd);
     }
@@ -609,7 +650,140 @@ public class InteractiveShell implements HyperlinkListener {
     protected void setDividerLocation(int loc) {
         this.getJSplitPane().setDividerLocation(loc);
     }
-    
+
+    /**
+     * Attempts to convert a {@link String} to a {@link ShellHistoryMode}.
+     *
+     * @param mode {@code String} representation of a {@code ShellHistoryMode}.
+     * Cannot be {@code null}.
+     *
+     * @return Uses {@link ShellHistoryMode#valueOf(String)} to convert
+     * {@code mode} to a {@code ShellHistoryMode} and returns. If no conversion
+     * was possible, returns {@link ShellHistoryMode#UNKNOWN}.
+     *
+     * @throws NullPointerException if {@code mode} is {@code null}.
+     */
+    public static ShellHistoryMode strToShellHistoryMode(final String mode) {
+        ShellHistoryMode historyMode = ShellHistoryMode.UNKNOWN;
+        Contract.notNull(mode, "Cannot convert a null mode.");
+        try {
+            historyMode = ShellHistoryMode.valueOf(mode.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            // TODO(jon): what should be done?
+        }
+        return historyMode;
+    }
+
+    /**
+     * Determine whether or not {@code entryText} appears to contain multiple
+     * lines. This method looks for occurrences of the {@code line.separator}
+     * {@link System} property.
+     *
+     * @param entryText {@code String} to test. Cannot be {@code null}.
+     *
+     * @return Either {@link ShellHistoryMode#SINGLE} or
+     * {@link ShellHistoryMode#MULTILINE}.
+     */
+    public static ShellHistoryMode detectInputMode(final String entryText) {
+        Contract.notNull(entryText, "Cannot test a null entryText.");
+        ShellHistoryMode mode;
+        if (entryText.contains(System.getProperty("line.separator"))) {
+            mode = ShellHistoryMode.MULTILINE;
+        } else {
+            mode = ShellHistoryMode.SINGLE;
+        }
+        return mode;
+    }
+
+    public enum ShellHistoryMode {
+        SINGLE,
+        MULTILINE,
+        UNKNOWN;
+    }
+
+    /**
+     * Represents an entry in the shell's history. This is currently limited to
+     * the entry text and the input mode of the shell when the entry text was
+     * run.
+     */
+    public static class ShellHistoryEntry {
+
+        /** Input from the user. */
+        private final String entryText;
+
+        /** Shell input mode. */
+        private final ShellHistoryMode inputMode;
+
+        /**
+         * Creates a new history entry from the given text. This method will
+         * use {@link #detectInputMode(String)} to try determining the input
+         * mode.
+         *
+         * <p>This method is mostly used when converting old-style {@code String}
+         * history entries into {@code ShellHistoryEntry} entries.
+         * </p>
+         *
+         * @param entryText Entry text. Cannot be {@code null}.
+         */
+        public ShellHistoryEntry(final String entryText) {
+            this(entryText, detectInputMode(entryText));
+        }
+
+        /**
+         * Creates a new history entry from the given text and attempts to
+         * convert {@code inputMode} into one of the types of {@link ShellHistoryMode}.
+         *
+         * <p>This method is useful for deserializing
+         * {@link ucar.unidata.xml.XmlEncoder XmlEncoder} results.</p>
+         *
+         * @param entryText Entry text. Cannot be {@code null}.
+         * @param inputMode {@code String} representation of a
+         * {@code ShellHistoryMode}. Cannot be {@code null}.
+         */
+        public ShellHistoryEntry(final String entryText, final String inputMode) {
+            this(entryText, strToShellHistoryMode(inputMode));
+        }
+
+        /**
+         * Creates a new history entry from the given text and its input mode.
+         *
+         * @param entryText Entry text. Cannot be {@code null}.
+         * @param inputMode Input mode from when the text was entered.
+         */
+        public ShellHistoryEntry(final String entryText, final ShellHistoryMode inputMode) {
+            this.entryText = entryText;
+            this.inputMode = inputMode;
+        }
+
+        /**
+         * Get the text of the history entry.
+         *
+         * @return Text of the user's input.
+         */
+        public String getEntryText() {
+            return entryText;
+        }
+
+        /**
+         * Get the input mode that the shell was using when the user entered
+         * their input.
+         *
+         * @return Input mode at time of text entry.
+         */
+        public ShellHistoryMode getInputMode() {
+            return inputMode;
+        }
+
+        /**
+         * {@code String} representation of the current history entry.
+         *
+         * @return String that looks like
+         * {@code [ShellHistoryMode@ADDRESS: entryText=..., inputMode=...]}.
+         */
+        public String toString() {
+            return String.format("[ShellHistoryEntry@%x: entryText=%s, inputMode=%s]", hashCode(), entryText, inputMode);
+        }
+    }
 }
 
 class HTMLCleanupTransferHandler extends TransferHandler {
@@ -731,4 +905,3 @@ class HTMLCleanupTransferable implements Transferable {
         throw new UnsupportedFlavorException(flavor);
     }
 }
-

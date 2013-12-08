@@ -69,6 +69,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.text.JTextComponent;
 
+
 import org.python.core.PyException;
 import org.python.core.PyFunction;
 import org.python.core.PyJavaPackage;
@@ -96,6 +97,7 @@ import ucar.unidata.ui.InteractiveShell;
 import ucar.unidata.util.GuiUtils;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
+import edu.wisc.ssec.mcidasv.util.Contract;
 
 /**
  * This class provides  an interactive shell for running JYthon
@@ -156,7 +158,7 @@ public class JythonShell extends InteractiveShell {
     
     /** _more_          */
     ImageGenerator islInterpreter;
-    
+
     /**
      * ctor
      *
@@ -165,7 +167,7 @@ public class JythonShell extends InteractiveShell {
     public JythonShell(IntegratedDataViewer theIdv) {
         super(WINDOW_TITLE);
         this.idv = theIdv;
-        List<String> oldHistory = (List<String>)idv.getStore().get(PROP_JYTHON_SHELL_HISTORY);
+        List<ShellHistoryEntry> oldHistory = convertStringHistory(idv.getStore());
         if (oldHistory != null) {
             history.clear();
             history.addAll(oldHistory);
@@ -190,7 +192,7 @@ public class JythonShell extends InteractiveShell {
      */
     public void listHistory() {
         for (int i = 0; i < history.size(); i++) {
-            super.eval(history.get(i));
+            super.eval(history.get(i).getEntryText());
         }
     }
     
@@ -296,7 +298,7 @@ public class JythonShell extends InteractiveShell {
         if (history.isEmpty()) {
             List<JMenuItem> historyItems = new ArrayList<JMenuItem>();
             for (int i = history.size() - 1; i >= 0; i--) {
-                String block = history.get(i);
+                String block = history.get(i).getEntryText();
                 historyItems.add(
                     makeMenuItem(
                         block, this, "eval",
@@ -788,5 +790,36 @@ public class JythonShell extends InteractiveShell {
      */
     public static void saveMaxHistoryLength(final IdvObjectStore store, final int historyLength) {
         store.put(PROP_JYTHON_SHELL_MAX_HISTORY_LENGTH,  historyLength);
+    }
+
+    /**
+     * Converts {@link String}-based shell history entries into
+     * {@link ShellHistoryEntry ShellHistoryEntries}.
+     *
+     * @param store {@link IdvObjectStore} containing the shell history.
+     * Cannot be {@code null}.
+     *
+     * @return Shell history as an {@link ArrayList} of
+     * {@code ShellHistoryEntry} entries.
+     */
+    public static List<ShellHistoryEntry> convertStringHistory(IdvObjectStore store) {
+        store = Contract.notNull(store, "Cannot use a null store");
+        List<?> oldEntries = (List<?>)store.get(PROP_JYTHON_SHELL_HISTORY);
+        List<ShellHistoryEntry> entries = new ArrayList<ShellHistoryEntry>(oldEntries.size());
+        for (Object e : oldEntries) {
+            ShellHistoryEntry entry;
+            if (e instanceof String) {
+                entry = new ShellHistoryEntry((String)e);
+                logger.trace("convert string entry: {}", entry);
+            } else if (e instanceof ShellHistoryEntry) {
+                entry = (ShellHistoryEntry)e;
+                logger.trace("no conversion needed: {}", entry);
+            } else {
+                entry = new ShellHistoryEntry(e.toString());
+                logger.trace("unknown type: {}, entry: {}", e.getClass().toString(), entry);
+            }
+            entries.add(entry);
+        }
+        return entries;
     }
 }

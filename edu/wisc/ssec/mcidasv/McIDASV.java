@@ -29,9 +29,9 @@
 package edu.wisc.ssec.mcidasv;
 
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
+import static ucar.unidata.xml.XmlUtil.getAttribute;
 
 import org.slf4j.bridge.SLF4JBridgeHandler;
-import static ucar.unidata.xml.XmlUtil.getAttribute;
 
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -63,6 +63,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import ucar.unidata.ui.InteractiveShell;
 import visad.VisADException;
 
 import ucar.unidata.data.DataManager;
@@ -80,6 +81,8 @@ import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.ui.colortable.ColorTableManager;
+import ucar.unidata.ui.InteractiveShell.ShellHistoryEntry;
+import ucar.unidata.ui.InteractiveShell.ShellHistoryMode;
 import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
@@ -295,6 +298,15 @@ public class McIDASV extends IntegratedDataViewer {
             }
         });
 
+        encoder.addDelegateForClass(ShellHistoryEntry.class, new XmlDelegateImpl() {
+            @Override public Element createElement(XmlEncoder e, Object o) {
+                ShellHistoryEntry entry = (ShellHistoryEntry)o;
+                List args = Misc.newList(entry.getEntryText(), entry.getInputMode().toString());
+                List types = Misc.newList(String.class, String.class);
+                return e.createObjectConstructorElement(o, args, types);
+            }
+        });
+
         // TODO(jon): ultra fashion makeover!!
         encoder.addDelegateForClass(RemoteAddeEntry.class, new XmlDelegateImpl() {
             @Override public Element createElement(XmlEncoder e, Object o) {
@@ -427,13 +439,13 @@ public class McIDASV extends IntegratedDataViewer {
          * Move legacy classes to a new location
          */
         encoder.registerNewClassName("edu.wisc.ssec.mcidasv.data.Test2ImageDataSource",
-			"edu.wisc.ssec.mcidasv.data.adde.AddeImageParameterDataSource");
+            "edu.wisc.ssec.mcidasv.data.adde.AddeImageParameterDataSource");
         encoder.registerNewClassName("edu.wisc.ssec.mcidasv.data.Test2AddeImageDataSource",
-        	"edu.wisc.ssec.mcidasv.data.adde.AddeImageParameterDataSource");
+            "edu.wisc.ssec.mcidasv.data.adde.AddeImageParameterDataSource");
         encoder.registerNewClassName("edu.wisc.ssec.mcidasv.data.AddePointDataSource",
-			"edu.wisc.ssec.mcidasv.data.adde.AddePointDataSource");
+            "edu.wisc.ssec.mcidasv.data.adde.AddePointDataSource");
         encoder.registerNewClassName("edu.wisc.ssec.mcidasv.data.AddeSoundingAdapter",
-			"edu.wisc.ssec.mcidasv.data.adde.AddeSoundingAdapter");
+            "edu.wisc.ssec.mcidasv.data.adde.AddeSoundingAdapter");
     }
 
     /**
