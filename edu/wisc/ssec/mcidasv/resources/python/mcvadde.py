@@ -62,7 +62,6 @@ def _checkADDEParameters(hasCoordSys, hasPlace, hasLocation, size):
     else:
         s = size
         
-    # if hasCoordSys and hasPlace and hasLocation and (s == 'ALL' or s == 'SAME'):
     if (hasCoordSys or hasPlace or hasLocation) and (s == 'ALL' or s == 'SAME'):
         retval = False
     return retval
@@ -179,7 +178,7 @@ _formats = {
 DEFAULT_ACCOUNTING = ('idv', '0')
 DEFAULT_SIZE = (480, 640)
 
-CoordinateSystems = enum('AREA', 'LATLON', 'IMAGE')
+CoordinateSystems = enum(AREA='AREA', LATLON='LATLON', IMAGE='IMAGE')
 AREA = CoordinateSystems.AREA
 LATLON = CoordinateSystems.LATLON
 IMAGE = CoordinateSystems.IMAGE
