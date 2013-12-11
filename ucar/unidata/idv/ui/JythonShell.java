@@ -52,7 +52,9 @@ import java.io.OutputStream;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -805,6 +807,10 @@ public class JythonShell extends InteractiveShell {
     public static List<ShellHistoryEntry> convertStringHistory(IdvObjectStore store) {
         store = Contract.notNull(store, "Cannot use a null store");
         List<?> oldEntries = (List<?>)store.get(PROP_JYTHON_SHELL_HISTORY);
+        if (oldEntries == null) {
+            oldEntries = Collections.emptyList();
+            logger.trace("no history to convert; using empty list");
+        }
         List<ShellHistoryEntry> entries = new ArrayList<ShellHistoryEntry>(oldEntries.size());
         for (Object e : oldEntries) {
             ShellHistoryEntry entry;
