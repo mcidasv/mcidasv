@@ -1509,7 +1509,24 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         JComboBox distanceComboBox = getIdv().getDisplayConventions().makeUnitBox(distanceUnit, null);
         McVGuiUtils.setComponentWidth(distanceComboBox, Width.DOUBLE);
         widgets.put(PREF_DISTANCEUNIT, distanceComboBox);
-        
+
+        // Locale stuff (largely ripped out of IDV prefs)
+        JLabel localeLabel = McVGuiUtils.makeLabelRight("Number Style:", Width.ONEHALF);
+        String defaultLocale = getStore().get(PREF_LOCALE, "SYSTEM_LOCALE");
+        JRadioButton sysLocale = new JRadioButton("System Default",
+            defaultLocale.equals("SYSTEM_LOCALE"));
+
+        sysLocale.setToolTipText(
+            "Use the system default locale for number formatting");
+
+        JRadioButton usLocale = new JRadioButton("English/US",
+            !defaultLocale.equals("SYSTEM_LOCALE"));
+
+        usLocale.setToolTipText("Use the US number formatting");
+        GuiUtils.buttonGroup(sysLocale, usLocale);
+        widgets.put("SYSTEM_LOCALE", sysLocale);
+        widgets.put("US_LOCALE", usLocale);
+
         // Format panel layout
         javax.swing.GroupLayout formatLayout = new javax.swing.GroupLayout(formatPanel);
         formatPanel.setLayout(formatLayout);
@@ -1547,7 +1564,13 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                     .addGroup(formatLayout.createSequentialGroup()
                         .addComponent(distanceLabel)
                         .addGap(GAP_RELATED)
-                        .addComponent(distanceComboBox)))
+                        .addComponent(distanceComboBox))
+                    .addGroup(formatLayout.createSequentialGroup()
+                        .addComponent(localeLabel)
+                        .addGap(GAP_RELATED)
+                        .addComponent(sysLocale)
+                        .addGap(GAP_RELATED)
+                        .addComponent(usLocale)))
                 .addContainerGap(DEFAULT_SIZE, Short.MAX_VALUE))
         );
         formatLayout.setVerticalGroup(
@@ -1577,12 +1600,17 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                 .addGroup(formatLayout.createParallelGroup(BASELINE)
                     .addComponent(distanceComboBox)
                     .addComponent(distanceLabel))
+                .addPreferredGap(RELATED)
+                .addGroup(formatLayout.createParallelGroup(BASELINE)
+                    .addComponent(localeLabel)
+                    .addComponent(sysLocale)
+                    .addComponent(usLocale))
                 .addContainerGap(DEFAULT_SIZE, Short.MAX_VALUE))
         );
         
         JPanel dataPanel = new JPanel();
         dataPanel.setBorder(BorderFactory.createTitledBorder("Data"));
-        
+
         // Sampling stuff
         JLabel sampleLabel = McVGuiUtils.makeLabelRight("Sampling Mode:", Width.ONEHALF);
         
