@@ -85,19 +85,22 @@ in the 3 dimensional display.
   <li class=propertylistitem><strong>New/Edit -</strong> Opens the <a href="../tools/ProjectionManager.html">Projection Manager</a> dialog to view, create and edit projections.</li>
   <li class=propertylistitem><strong>Use Displayed Area -</strong> Maintains your current projection and viewpoint, but wraps a wireframe box around the region you are zoomed in over.</li>
   <a name="goto"></a>
-  <li class=propertylistitem><strong>Go to Address -</strong> Changes the projection to a given address, zip code,
-  city, etc.</li>
+  <li class=propertylistitem><strong>Go to Address -</strong> Centers the display over a given address, zip code,
+  city, specific locations, etc.</li>
       <div class="images"><img src="images/Address.gif" alt="Image 1: Go To Address Dialog"><br>
 <span class="caption">Image 1: Go To Address Dialog</span></div>
-     <p> The formats include:</p>
-  </li>
+<ul class="propertylist">
+<li class="propertylistitem"><Strong>Address -</Strong> Specifies a location to center the display over. Listed below are valid options for this field:</li>
 <ul class="propertylist">
 <li class="propertylistitem">
-12345 oak street, my town, my state<br>
-  my town, my state<br>
-  80303 (zip code)<br>
-  latitude longitude<br>
-"ip" for the location of this computer</li>
+12345 oak street, my town, my state</li>
+<li class="propertylistitem">my town, my state</li>
+<li class="propertylistitem">80303 (zip code)</li>
+<li class="propertylistitem">latitude longitude</li> 
+<li class="propertylistitem">specific locations (e.g. Millersville University)
+</li>
+</ul>
+<li class="propertylistitem"><strong>Reproject -</strong> Reprojects the display over the location in <strong>Address</strong> and zooms in on the location. If this option is not checked, the projection does not change, but the display will center itself over the location specified in the <strong>Address</strong> field.</li>
 </ul>
   <li class=propertylistitem><strong><a name="autosetpro"></a>Auto-set Projection -</strong> Toggles the behavior of automatically setting the projection
     to the projection of the most recent display that has been added. <span class="faq-answer">When checked on, the map projection will be automatically switched to match the native projection of the newest data source added. When checked off, the current map projection will remain for any additional data source added to the display. This may be desirable when you have set up a view of a particular area and want to retain it when displaying new data.</span></li>

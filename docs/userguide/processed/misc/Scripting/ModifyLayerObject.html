@@ -31,7 +31,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
 <strong><a name="setColorScale" id="setColorScale"></a>setColorScale -</strong></strong> Displays
   color scale on a panel and specifies its attributes</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setColorScale(keywords)</em></div>
-<div class="TwoTabIndent">Keywords:</div>
+<div class="TwoTabIndent">Keywords - optional:</div>
 <div class="ThreeTabIndent2"><table class="noborder">
     <tr>
       <td valign="top">visible=</td>
@@ -76,10 +76,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
   <div class="TwoTabIndent"><em>layer.setColorScale(placement='Left',font='SansSerif',size=18.0,color='green',showUnit=True</em>)</div>
 <p><strong><a name="setEnhancement" id="setEnhancement"></a>setEnhancement -&nbsp;</strong>Applies
   a color table and defines data range of data in a layer<br>
-<div class="OneTabIndent">Usage: <em>myDataLayer.setEnhancement(color table,keywords)</em></div>
-<div class="TwoTabIndent">color table - color table name e.g., 'Longwave Infrared
-  Deep Convection'</div>
-<div class="TwoTabIndent">Keywords:</div>
+<div class="OneTabIndent">Usage: <em>myDataLayer.setEnhancement(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+<tr>
+  <td valign="top">color table =</td>
+  <td>color table name e.g., 'Longwave Infrared
+Deep Convection'</td></tr></table></div>
+<div class="TwoTabIndent">Keywords - optional:</div>
 <div class="ThreeTabIndent2"><table class="noborder">
     <tr>
       <td valign="top">range=</td>
@@ -90,9 +94,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
   <div class="TwoTabIndent"><em>layer.setEnhancement('Longwave Infrared Deep Convection',range=(20,250))</em></div>
 <p><strong><a name="setLayerLabel" id="setLayerLabel"></a>setLayerLabel -</strong> Toggles
   a layer label on/off and defines its attributes</p>
-<div class="OneTabIndent">Usage: <em>myDataLayer.setLayerLabel(label,keywords)</em></div>
-<div class="TwoTabIndent">label - layer label string. this can include macros</div>
-<div class="TwoTabIndent">Keywords:</div>
+<div class="OneTabIndent">Usage: <em>myDataLayer.setLayerLabel(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+<tr>
+<td>label =</td>
+<td>layer label string. This can include macros</td></tr></table></div>
+<div class="TwoTabIndent">Keywords - optional:</div>
 <div class="ThreeTabIndent2"><table class="noborder">
     <tr>
       <td valign="top">visible=</td>
@@ -123,10 +131,17 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
 <div class="OneTabIndent">Example:</div>
   <div class="TwoTabIndent"><em>layer.setLayerLabel('%displayname% %timestamp%', size=15, color='blue', style='BOLD'</em>)</div>
 <p><strong><a name="setLayerVisible" id="setLayerVisible"></a>setLayerVisible
-    -</strong> Toggles layer visibility on/off</p>
-<div class="OneTabIndent">Usage: <em>myDataLayer.setLayerVisible(visible)</em></div>
-<div class="TwoTabIndent">visible - True displays layer</div>
-<div class="ThreeTabIndent2"> &nbsp;&nbsp;False turns off layer</div>
+    -</strong> Toggles layer visibility on/off, this includes any color scale or layer labels for the layer</p>
+<div class="OneTabIndent">Usage: <em>myDataLayer.setLayerVisible(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">visible=</td>
+      <td>sets the visibility of the layer<br>
+      True - displays the layer<br>
+      False - does not display the layer</td>
+    </tr>
+</table></div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>layer.setLayerVisible(False)</em></div>
 <!-- InstanceEndEditable -->

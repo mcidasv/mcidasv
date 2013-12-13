@@ -30,10 +30,15 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
 <div class="pagetitle">Save the Display</div>
 <strong><a name="captureImage" id="captureImage"></a>captureImage -</strong></strong> Writes
   panel display to a file</p>
-<div class="OneTabIndent">Usage:<em> panel[0].captureImage(file, keywords)</em></div>
-<div class="TwoTabIndent">file - name of file, file format determine by file
-  extension; valid options: .jpg, .gif, .png<!---, .pdf, .svg, .kml, .kmz--></div>
-<div class="TwoTabIndent">Keywords:</div>
+<div class="OneTabIndent">Usage:<em> panel[0].captureImage(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">file=</td>
+      <td>name of file, file format determined by file extension; valid options: .jpg, .gif, .png<!---, .pdf, .svg, .kml, .kmz---></td>
+    </tr>
+</table></div>
+<div class="TwoTabIndent">Keywords - optional:</div>
 <div class="ThreeTabIndent2"><table class="noborder">
     <tr>
       <td valign="top">height=</td>
@@ -57,10 +62,15 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
   <div class="TwoTabIndent"><em>panel[0].captureImage('C:\\Users\\myuser\\Image.png'</em>)</div>
 <p><strong><a name="writeMovie" id="writeMovie"></a>writeMovie -</strong> Writes
   an image sequence to a movie file (ISL function) <br>
-<div class="OneTabIndent">Usage:<em> writeMovie(file,keywords) </em></div>
-<div class="TwoTabIndent">file - name of file, file format determine by file
-  extension; valid options: .gif, .mov</div>
-<div class="TwoTabIndent">Keywords:</div>
+<div class="OneTabIndent">Usage:<em> writeMovie(keywords) </em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">file=</td>
+      <td>name of file, file format determined by file extension; valid options: .gif, .mov</td>
+    </tr>
+</table></div>
+<div class="TwoTabIndent">Keywords - optional:</div>
 <div class="ThreeTabIndent2"><table class="noborder">
 <tr>
       <td valign="top">resize width= height=</td>

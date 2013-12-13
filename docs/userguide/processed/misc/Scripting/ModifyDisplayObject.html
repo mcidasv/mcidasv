@@ -30,18 +30,24 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
 <div class="pagetitle">Modify the Display Object</div>
 <p><strong><a name="annotate" id="annotate"></a>annotate -</strong> Writes text
   to a panel</p>
-<div class="OneTabIndent">Usage: <em>panel[0].annotate(text,keywords)</em></div>
-<div class="TwoTabIndent">text - annotation string </div>
-<div class="TwoTabIndent">Keywords:</div>
+<div class="OneTabIndent">Usage: <em>panel[0].annotate(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
 <div class="ThreeTabIndent2"><table class="noborder">
     <tr>
+      <td valign="top">text=</td>
+      <td>annotation string</td>
+    </tr>
+    <tr>
       <td valign="top">lat=, lon=</td>
-      <td>center text string at specified latitude and longitude (must be used   together)</td>
+      <td>center text string at specified latitude and longitude (must be used together) -or-</td>
     </tr>
     <tr>
       <td valign="top">line=, element=</td>
       <td>center text string at specified panel     line and element (must be used together)</td>
     </tr>
+</table></div>
+<div class="TwoTabIndent">Keywords - optional:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
     <tr>
       <td valign="top">font=</td>
       <td>name of font; default is system dependent, this uses the default defined in User Preferences</td>
@@ -61,10 +67,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
 <div class="TwoTabIndent"><em>panel[0].annotate('EQUATOR',size=20, font='SansSerif.bold', lat=0, lon=-90, color='Green')</em></div>
 <p><strong><a name="setCenter" id="setCenter"></a>setCenter -&nbsp;</strong>
 Centers the display on a specified latitude/longitude and sets a scaling factor</p>
-<div class="OneTabIndent">Usage: <em>panel[0].setCenter(lat,lon,keywords) </em></div>
+<div class="OneTabIndent">Usage: <em>panel[0].setCenter(keywords) </em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
 <div class="TwoTabIndent">lat - centers the display at the specified latitude (no default, required parameter) </div>
 <div class="TwoTabIndent">lon - centers the display at the specified longitude (no default, required parameter) </div>
-<div class="TwoTabIndent">Keywords:</div>
+<div class="TwoTabIndent">Keywords - optional:</div>
 <div class="ThreeTabIndent2">  <table class="noborder">
     <tr>
       <td valign="top">scale=</td>
@@ -77,17 +85,28 @@ Centers the display on a specified latitude/longitude and sets a scaling factor<
 <div class="TwoTabIndent"><em>panel[0].setCenter(45, -75, scale=20</em>)</div>
 <p><strong><a name="setProjection" id="setProjection"></a>setProjection -</strong> Sets
   the projection of a panel</p>
-<div class="OneTabIndent">Usage: <em>panel[0].setProjection(projection)</em></div>
-<div class="TwoTabIndent">projection - string specifying the projection;
-e.g., 'US&gt;Southeastern U.S.' or the name of the layer returned by createLayer, which uses the default projection of that data</div>
+<div class="OneTabIndent">Usage: <em>panel[0].setProjection(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+<tr>
+      <td valign="top">projection=</td>
+      <td>string specifying the projection; e.g., 'US>Southeastern U.S.' or the name of the layer returned from createLayer, which uses the default projection of that data</td>
+    </tr></table></div>
   <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>panel[0].setProjection('US>States>N-Z>Pennsylvania')</em></div>
 <p><strong><a name="setWireframe" id="setWireframe"></a>setWireframe -</strong> Turns
 wire frame box on or off</p>
-<div class="OneTabIndent">Usage: <em>panel[0].setWireframe(visible)</em></div>
-<div class="TwoTabIndent">visible - True displays wire frame box, False turns
-off wire frame box</div>
-<div class="OneTabIndent">Example:</div>
+<div class="OneTabIndent">Usage: <em>panel[0].setWireframe(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">visible=</td>
+      <td>sets the visibility of the wireframe box<br>
+      True - displays the wireframe box<br>
+      False - does not display the wireframe box</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Examples:</div>
 <div class="TwoTabIndent"><em>panel[0].setWireframe(False)</em></div>
 <div class="TwoTabIndent"><em>panel[0].setWireframe(True)</em></div>
 <!-- InstanceEndEditable -->

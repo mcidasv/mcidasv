@@ -32,7 +32,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
 <strong>buildWindow -</strong> Creates
   a window and returns an array of panels (single panel currently supported)</p>
 <div class="OneTabIndent">Usage: <em> panel=buildWindow(keywords)</em></div>
-<div class="TwoTabIndent">Keywords:</div>
+<div class="TwoTabIndent">Keywords - optional:</div>
 <div class="ThreeTabIndent2"><table class="noborder">
     <tr>
       <td valign="top">height=</td>
@@ -56,9 +56,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
 <div class="TwoTabIndent"><em>panel=buildWindow(height=600,width=800,panelTypes=MAP)</em></div>
 <p><strong><a name="openBundle" id="openBundle"></a>openBundle -</strong> Creates
   a new window and displays contents of a bundle</p>
-<div class="OneTabIndent">Usage: <em>openBundle(bundle file, keywords)</em></div>
-<div class="TwoTabIndent">bundle file - file name of bundle (required)</div>
-<div class="TwoTabIndent">Keywords:</div>
+<div class="OneTabIndent">Usage: <em>openBundle(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="TwoTabIndent"> <tr>
+      <td valign="top">bundle file=</td>
+      <td>file name of bundle</td>
+    </tr></div>
+<div class="TwoTabIndent">Keywords - optional:</div>
 <div class="ThreeTabIndent2"><table class="noborder">
     <tr>
       <td valign="top">height=</td>
@@ -84,31 +88,24 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>openBundle('C:\\Users\\myuser\\bundle.mcv',mode='NEWTAB')</em></div>
 <p><strong><a name="makeLocalADDE" id="makeLocalADDE"></a>makeLocalADDEEntry -</strong> Creates a local ADDE entry in the server table</p>
-<div class="OneTabIndent">Usage: <em>localDataset= makeLocalADDEEntry(keywords)</em></div>
-<div class="TwoTabIndent">Keywords:</div>
-<div class="ThreeTabIndent2"><table class="noborder">
+<div class="OneTabIndent">Usage: <em>localDataset=makeLocalADDEEntry(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="TwoTabIndent"> <table class="noborder">
     <tr>
       <td valign="top">dataset=</td>
-      <td>name of the dataset - limit of 8 characters</td>
-    </tr>
-    <tr>
-      <td valign="top">imageType=</td>
-      <td>image type name for local server entry. (default=<em>format_dataset</em>)</td>
-    </tr>
-    <tr>
-      <td valign="top">save=</td>
-      <td>True - saves entry into the server table; False - entry is removed after   McIDAS-V session is ended (default)</td>
+      <td>name of dataset - limit of 8 characters</td>
     </tr>
     <tr>
       <td valign="top">mask=</td>
-      <td>directory containing the files used by the created dataset</td>
+      <td>directory containing the files used by the dataset</td>
     </tr>
     <tr>
       <td valign="top">format=</td>
-      <td>data format of files within the dataset. Either Full Name or Short Name   can be used as valid options:</td>
+      <td>data format of files used within the dataset. Either Full Name or Short Name can be used as valid options</td>
     </tr>
-  </table></div>
-<div class="ThreeTabIndent2"><table width="525" border="1">
+</table></div>
+<div class="TwoTabIndent">
+<table width="525" border="1">
     <tr>
         <th width="420" scope="col"><strong>Full Name</strong></th>
         <th width="105" scope="col"><strong>Short Name</strong></th>
@@ -214,13 +211,26 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
         <td>&quot;GINI&quot;</td>
     </tr>
 </table></div>
+<div class="TwoTabIndent">Keywords - optional:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">imageType=</td>
+      <td>image type name for local server entry. (default=<em>format_dataset</em>)</td>
+    </tr>
+    <tr>
+      <td valign="top">save=</td>
+      <td>determines if the dataset will be retained from session to session (default = False)<br>
+      TRUE = retains the dataset between sessions<br>
+      FALSE = does not retain the dataset between sessions</td>
+    </tr>
+</table></div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>dataPath = 'C:\\Users\\myuser\\Data\\AREA'</em></div>
-<div class="TwoTabIndent"><em>makeLocalADDEEntry(dataset='AREA', imageType='Area files', save=True, mask=dataPath, format='McIDAS Area')</em></div>
+<div class="TwoTabIndent"><em>areaDataset=makeLocalADDEEntry(dataset='AREA', imageType='Area files', save=True, mask=dataPath, format='McIDAS Area')</em></div>
 <p><strong><a name="getLocalADDE" id="getLocalADDE"></a>getLocalADDEEntry -</strong> Gets the descriptor for a local ADDE entry</p>
-<div class="OneTabIndent">Usage: <em>localDescriptor= getLocalADDEEntry(keywords)</em></div>
-<div class="TwoTabIndent">Keywords:</div>
-<div class="ThreeTabIndent2"><table class="noborder">
+<div class="OneTabIndent">Usage: <em>localDescriptor=getLocalADDEEntry(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="TwoTabIndent"><table class="noborder">
     <tr>
       <td valign="top">dataset=</td>
       <td>local ADDE entry dataset name</td>
@@ -234,13 +244,16 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
 <div class="TwoTabIndent"><em>desc = getLocalADDEEntry(dataset='AREA',imageType='Area files')</em></div>
 <p><strong><a name="getADDEImage" id="getADDEImage"></a>getADDEImage -</strong> Requests
   data from an ADDE Image server - returns both data and metadata objects</p>
-<div class="OneTabIndent">Usage: <em>myMetaData,myData= getADDEImage(keywords)</em></div>
-<div class="TwoTabIndent">Keywords:</div>
+<div class="OneTabIndent">Usage: Local: <em>metadataLocal,dataLocal=getADDEImage(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required (local):</div>
 <div class="ThreeTabIndent2"><table class="noborder">
     <tr>
       <td valign="top">localEntry=</td>
-      <td>local dataset defined by makeLocalADDEEntry</td>
+      <td>local dataset defined by makeLocalADDEEntry or the descriptor returned from getLocalADDEEntry</td>
     </tr>
+    </table></div>
+<div class="TwoTabIndent">Keywords - required (remote):</div>
+<div class="ThreeTabIndent2"><table class="noborder">
     <tr>
       <td valign="top">server=</td>
       <td>ADDE server</td>
@@ -253,13 +266,16 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
       <td valign="top">descriptor=</td>
       <td>ADDE dataset descriptor</td>
     </tr>
+    </table></div>
+    <div class="TwoTabIndent">Keywords - optional:</div>
+  <div class="ThreeTabIndent2"><table class="noborder">
         <tr>
       <td valign="top">day=</td>
-      <td>single day ('date 1') or as a day range ('begin date','end date')</td>
+      <td>single day ('date 1') or as a day range ('begin date','end date'); default=most recent day included in data</td>
     </tr>
         <tr>
       <td valign="top">time=</td>
-      <td>('begin time','end time')</td>
+      <td>('begin time','end time'); default=most recent time included in data</td>
     </tr>
         <tr>
       <td valign="top">coordinateSystem=</td>
@@ -276,12 +292,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
     </tr>
         <tr>
       <td valign="top">place=</td>
-      <td>CENTER places specified location (x,y) at    center of panel<br>
+      <td>CENTER places specified location (x,y) at    center of panel (default)<br>
           ULEFT places specified location (x,y) at upper-left    coordinate of panel</td>
     </tr>
         <tr>
       <td valign="top">band=</td>
-      <td>McIDAS band number; must be specified if requesting    data from multi-banded image; default=band in image </td>
+      <td>McIDAS band number; must be specified if requesting    data from multi-banded image; default=band in image</td>
     </tr>
         <tr>
       <td valign="top">unit=</td>
@@ -307,18 +323,30 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
       <td valign="top">debug=</td>
       <td>send debug information to file; default=False</td>
     </tr>
+            <tr>
+      <td valign="top">track=</td>
+      <td>
+      True = with real-time data, will wait until the most recent image is complete before pulling it in<br>
+      False = with real-time data, will not wait until the most recent image is complete before pulling it in. Dependent on when the getADDEImage command is run, this may result in an incomplete image.<br>
+      default=False</td>
+    </tr>
+        <tr>
 </table></div>
-<div class="OneTabIndent">Example:</div>
-  <div class="TwoTabIndent"><em>metadata,data = getADDEImage(debug=True,localEntry=desc, size='ALL', mag=(1,1), unit='BRIT')</em></div>
+<div class="OneTabIndent">Examples:</div>
+  <div class="TwoTabIndent"><em>metadataLocal,dataLocal = getADDEImage(localEntry=desc, size='ALL', mag=(1,1), unit='BRIT',debug=True)</em></div>
+<div class="TwoTabIndent"><em>metadataRemote,dataRemote = getADDEImage(server='adde.ucar.edu',dataset='RTIMAGES',descriptor='GE-IR',band=4,unit='TEMP')</em></div>
   <p><strong><a name="listADDEImages" id="listADDEImages"></a>listADDEImages -</strong> Lists
   data from an ADDE Image server that matches the keywords in the request - returns  metadata objects which can be passed into getADDEImage</p>
 <div class="OneTabIndent">Usage: <em>directoryList = listADDEImages(keywords)</em></div>
-<div class="TwoTabIndent">Keywords:</div>
+<div class="TwoTabIndent">Keywords - required (local):</div>
 <div class="ThreeTabIndent2"><table class="noborder">
     <tr>
       <td valign="top">localEntry=</td>
-      <td>local dataset defined by makeLocalADDEEntry</td>
+      <td>local dataset defined by makeLocalADDEEntry or the descriptor returned from getLocalADDEEntry</td>
     </tr>
+    </table></div>
+<div class="TwoTabIndent">Keywords - required (remote):</div>
+<div class="ThreeTabIndent2"><table class="noborder">
     <tr>
       <td valign="top">server=</td>
       <td>ADDE server</td>
@@ -331,13 +359,16 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
       <td valign="top">descriptor=</td>
       <td>ADDE dataset descriptor</td>
     </tr>
+    </table></div>
+<div class="TwoTabIndent">Keywords - optional:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
         <tr>
       <td valign="top">day=</td>
-      <td>single day ('date 1') or as a day range ('begin date','end date')</td>
+      <td>single day ('date 1') or as a day range ('begin date','end date'); default=most recent day included in data</td>
     </tr>
         <tr>
       <td valign="top">time=</td>
-      <td>('begin time','end time')</td>
+      <td>('begin time','end time'); default=most recent time included in data</td>
     </tr>
         <tr>
       <td valign="top">coordinateSystem=</td>
@@ -354,12 +385,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
     </tr>
         <tr>
       <td valign="top">place=</td>
-      <td>CENTER places specified location (x,y) at    center of panel<br>
+      <td>CENTER places specified location (x,y) at    center of panel (default)<br>
           ULEFT places specified location (x,y) at upper-left    coordinate of panel</td>
     </tr>
         <tr>
       <td valign="top">band=</td>
-      <td>McIDAS band number; must be specified if requesting    data from multi-banded image; default=band in image </td>
+      <td>McIDAS band number; must be specified if requesting    data from multi-banded image; default=band in image</td>
     </tr>
         <tr>
       <td valign="top">unit=</td>
@@ -386,16 +417,20 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
       <td>send debug information to file; default=False</td>
     </tr>
 </table></div>
-<div class="OneTabIndent">Example:</div>
-  <div class="TwoTabIndent"><em>directoryList = listADDEImages(localEntry=desc, band=4, unit='TEMP')</em></div>
+<div class="OneTabIndent">Examples:</div>
+  <div class="TwoTabIndent"><em>directoryListLocal = listADDEImages(localEntry=desc, band=4, unit='TEMP')</em><br>
+<em>directoryListRemote = listADDEImages(server='adde.ucar.edu',dataset='RTIMAGES',descriptor='GE-VIS',unit='RAW')</em></div>
     <p><strong><a name="listADDEImageTimes" id="listADDEImageTimes"></a>listADDEImageTimes -</strong> Returns a list of available dates and times of data that match the keywords in the request</p>
 <div class="OneTabIndent">Usage: <em>directoryList = listADDEImageTimes(keywords)</em></div>
-<div class="TwoTabIndent">Keywords:</div>
+<div class="TwoTabIndent">Keywords - required (local):</div>
 <div class="ThreeTabIndent2"><table class="noborder">
     <tr>
       <td valign="top">localEntry=</td>
-      <td>local dataset defined by makeLocalADDEEntry</td>
+      <td>local dataset defined by makeLocalADDEEntry or the descriptor returned from getLocalADDEEntry</td>
     </tr>
+    </table></div>
+<div class="TwoTabIndent">Keywords - required (remote):</div>
+<div class="ThreeTabIndent2"><table class="noborder">  
     <tr>
       <td valign="top">server=</td>
       <td>ADDE server</td>
@@ -408,13 +443,16 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
       <td valign="top">descriptor=</td>
       <td>ADDE dataset descriptor</td>
     </tr>
+    </table></div>
+<div class="TwoTabIndent">Keywords - optional:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
         <tr>
       <td valign="top">day=</td>
-      <td>single day ('date 1') or as a day range ('begin date','end date')</td>
+      <td>single day ('date 1') or as a day range ('begin date','end date'); default=most recent day included in data</td>
     </tr>
         <tr>
       <td valign="top">time=</td>
-      <td>('begin time','end time')</td>
+      <td>('begin time','end time'); default=most recent time included in data</td>
     </tr>
         <tr>
       <td valign="top">coordinateSystem=</td>
@@ -431,7 +469,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
     </tr>
         <tr>
       <td valign="top">place=</td>
-      <td>CENTER places specified location (x,y) at    center of panel<br>
+      <td>CENTER places specified location (x,y) at    center of panel (default)<br>
           ULEFT places specified location (x,y) at upper-left    coordinate of panel</td>
     </tr>
         <tr>
@@ -463,15 +501,24 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
       <td>send debug information to file; default=False</td>
     </tr>
 </table></div>
-<div class="OneTabIndent">Example:</div>
-  <div class="TwoTabIndent"><em>print listADDEImageTimes(localEntry=desc, band=4, unit='TEMP')</em></div>
+<div class="OneTabIndent">Examples:</div>
+  <div class="TwoTabIndent"><em>print listADDEImageTimes(localEntry=desc, position=-5)</em><br>
+<em>print listADDEImageTimes(server='adde.ucar.edu',dataset='RTIMAGES',descriptor='GE-IR',time=('02:00','04:00'),position='ALL')</em></div>
 <p><strong><a name="createLayer" id="createLayer"></a>createLayer -</strong> Creates
   a new data layer in a panel</p>
-<div class="OneTabIndent">Usage: <em>myDataLayer = panel[0].createLayer(display
-    type, myData)</em></div>
-<div class="TwoTabIndent">display type - display type for layer; valid options
-  shown in Field Selector (e.g. 'Image Display', 'Image Sequence Display')</div>
-<div class="TwoTabIndent">myData - data object to display (from getADDEImage)</div>
+<div class="OneTabIndent">Usage: <em>myDataLayer = panel[0].createLayer(keywords)</em></div>
+    <div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">display type=</td>
+      <td>display type for layer; valid options
+  shown in Field Selector (e.g. 'Image Display', 'Image Sequence Display')</td>
+    </tr>
+    <tr>
+      <td valign="top">myData=</td>
+      <td>data object to display (from getADDEImage)</td>
+    </tr>
+</table></div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>layer=panel[0].createLayer('Image Display', data)</em></div>
 <!-- InstanceEndEditable -->
