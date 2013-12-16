@@ -61,6 +61,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -528,6 +529,18 @@ public class UIManager extends IdvUIManager implements ActionListener {
             getStore().put(PREF_LOOKANDFEEL, "apple.laf.AquaLookAndFeel");
             super.loadLookAndFeel();
             getStore().put(PREF_LOOKANDFEEL, previousLF);
+
+            // locale code was taken out of IDVUIManager's "loadLookAndFeel".
+            //
+            // if the locale preference is set to "system", there will *NOT*
+            // be a PREF_LOCALE -> "Locale.EXAMPLE" key/value pair in main.xml;
+            // as you're using the default state of the preference.
+            // this also means that if there is a non-null value associated
+            // with PREF_LOCALE, the user has selected the US locale.
+            String locale = getStore().get(PREF_LOCALE, (String)null);
+            if (locale != null) {
+                Locale.setDefault(Locale.US);
+            }
         } else {
             super.loadLookAndFeel();
         }
