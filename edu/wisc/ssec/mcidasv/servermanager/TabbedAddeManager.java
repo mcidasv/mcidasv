@@ -389,7 +389,7 @@ public class TabbedAddeManager extends JFrame {
     /**
      * Shows a local ADDE entry editor <b>with</b> the appropriate fields
      * pre-populated, using the values from {@code entry}. This is intended to 
-     * handled {@literal "editing"} a local ADDE dataset.
+     * handle {@literal "editing"} a local ADDE dataset.
      * 
      * @param entry Entry to edit; should not be {@code null}.
      */
