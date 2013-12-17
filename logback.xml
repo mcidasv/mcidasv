@@ -13,6 +13,16 @@
  <!-- <configuration debug="true" scan="true" scanPeriod="5 seconds"> -->
 <configuration debug="false">
 
+  <!-- disable default logback status messsages; comment this out to debug
+       logging issues (and consider switching the uncommented configuration tag
+       for the one that is commented!). -->
+  <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+
+  <!-- make sure logback levels get propagated to java.util.logging -->
+  <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+    <resetJUL>true</resetJUL>
+  </contextListener>
+
   <!--  sets up a rotating mcidasv.log. every time mcidasv is started will
         check for a mcidasv.log file in the userpath. if one exists, the 
         file will be moved into the "logs" subdirectory of the userpath and
