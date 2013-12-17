@@ -38,7 +38,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ParameterDe
   <p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-    <li class="propertylistitem"><strong>Parameter -</strong> Represents the name of the parameter. The double down arrows allow you to change the parameter to one of a loaded data source, or a predefined alias. The parameter name is included with data that is loaded into McIDAS-V.</li>
+    <li class="propertylistitem"><strong>Parameter -</strong> Represents the name of the parameter. The double down arrows allow you to change the parameter to one of a loaded data source, or a predefined alias. The parameter name is included with data that is loaded into McIDAS-V. This field can also be the <strong>Name</strong> defined in the <a href="Formulas.html#name">Formula Editor</a>.</li>
     <li class="propertylistitem"><strong>Color Table -</strong> Sets the color table to be used to display the parameter.</li>
     <li class="propertylistitem"><strong>Range -</strong> Sets the range that the color bar will cover, from low to high.</li>
     <li class="propertylistitem"><strong>Contours -</strong> Sets the spacing (difference in value) between contours.</li>
@@ -50,9 +50,9 @@ you override system defaults.</p>
   the Parameter Defaults window allows you to select what properties
   you want to modify and define:</p>
 <a name="image2" id="image2"></a>
-<div class="images"><img src="images/ParamDefaultsProperties.gif" width="550" height="605" alt="Image 2: Parameter Defaults Properties"><br>
+<div class="images"><img src="images/ParamDefaultsProperties.gif" width="500" height="690" alt="Image 2: Parameter Defaults Properties"><br>
   <span class="caption">Image 2: Parameter Defaults Properties</span></div>
-<p>In the example above, any time a parameter named &quot;rh&quot; is used to define a field, the data will display with the <strong>Relative Humidity</strong> color bar, a range of 0-100, units of &quot;%&quot;, and contour values as specified in the window. If you wish to define an individual item, such as <strong>Range</strong>, make sure the <strong>Defined</strong> checkbox is selected. If it is not checked, then any values stored in this window will not be saved as a default. From the <strong>User defaults</strong> tab, you can also right-click
+<p>In the example above, any time a parameter named &quot;rh&quot; is used to define a field, the data will display with the <strong>Relative Humidity</strong> color bar, a range of 0-100, and contour values as specified in the window. If you wish to define an individual item, such as <strong>Range</strong>, make sure the <strong>Defined</strong> checkbox is selected. If it is not checked, then any values stored in this window will not be saved as a default. From the <strong>User defaults</strong> tab, you can also right-click
 on a row to add a new row, edit the settings for the row, delete the row, or export an individual row as a plugin. </p>
 <p>The parameter names are given in regular expression syntax to help match with
     actual data names. Plain text is matched exactly. The string dot star, ".*",
@@ -91,6 +91,7 @@ means "any text here." The ^ means "begin with the following text exactly&quot;.
   <li class="propertylistitem"><strong>Labels: Size -</strong> Sets the font size of the contour labels.</li>
   <li class="propertylistitem"><strong>Labels: Align -</strong> Sets the way contour labels will be written on the contours. <strong>Along Contours</strong> means the labels will be written along contours, and while they will not be written upside down, there is a chance they will be written at an angle depending on the layout of the contours. <strong>Horizontal</strong> means the contour labels will be written on the contour, but it will be written in the horizontal and not on an angle.</li>
   <li class="propertylistitem"><strong>Frequency -</strong> Sets the frequency of labels along the contour lines. There will be more   labels displayed as the slider is moved from left to right.</li>
+  <li class="propertylistitem"><strong>Label Every Nth Line -</strong> Determines how many contour lines will be labeled in the display. By default this is set to a value of 2, which means that every other contour line will be labeled. Decrease this value to increase the number of contours with labels, and increase this number to decrease the number of contours with labels.</li>
 </ul>
 <div class="pagesubtitle">Menus</div>
 <p>The <strong>File</strong> menu has these unique items:</p>
