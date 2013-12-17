@@ -1593,8 +1593,7 @@ public class McIDASV extends IntegratedDataViewer {
 
             McIDASV myself = new McIDASV(args);
         } catch (IllegalArgumentException e) {
-            System.err.println("McIDAS-V could not initialize itself. Please report this message and the following output to mug@ssec.wisc.edu.");
-            e.printStackTrace();
+            System.err.println("McIDAS-V could not initialize itself. "+e.getMessage());
         }
     }
 
