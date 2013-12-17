@@ -27,6 +27,8 @@
  */
 package edu.wisc.ssec.mcidasv.startupmanager;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Properties;
 
 import edu.wisc.ssec.mcidasv.Constants;
@@ -98,11 +100,40 @@ public enum Platform {
     }
     
     /**
-     * Sets the path to the user's userpath directory explicitly.
+     * Sets the path to the user's {@literal "userpath"} directory explicitly.
+     * If the specified path does not yet exist, this method will first
+     * attempt to create it. The method will then attempt to verify whether or
+     * not McIDAS-V can use the path.
      * 
-     * @param path New path. Cannot be {@code null}.
+     * @param path New path. Cannot be {@code null}, but does not have to exist
+     * prior to running this method. Be aware that this method will attempt to
+     * create {@code path} if it does not already exist.
+     *
+     * @throws IllegalArgumentException if {@code path} is not a
+     * directory, or if it not both readable and writable.
      */
-    public void setUserDirectory(final String path) {
+    public void setUserDirectory(final String path) throws IllegalArgumentException {
+        File tmp = new File(path);
+        if (!tmp.exists()) {
+            tmp.mkdir();
+        }
+
+        // TODO(jon): or would tmp.isFile() suffice?
+        if (tmp.exists() && !tmp.isDirectory()) {
+            throw new IllegalArgumentException("'"+path+"' is not a directory.");
+        }
+
+        boolean canRead = tmp.canRead();
+        boolean canWrite = tmp.canWrite();
+
+        if (!canRead && !canWrite) {
+            throw new IllegalArgumentException("'"+path+"' must be both readable and writable by McIDAS-V.");
+        } else if (!canRead) {
+            throw new IllegalArgumentException("'"+path+"' must be readable by McIDAS-V.");
+        } else if (!canWrite) {
+            throw new IllegalArgumentException("'"+path+"' must be writable by McIDAS-V.");
+        }
+
         userDirectory = path;
         userPrefs = userDirectory + pathSeparator + defaultPrefs;
     }

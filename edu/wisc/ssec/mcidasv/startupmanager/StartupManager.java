@@ -702,7 +702,7 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
      * 
      * @see #getArgs(boolean, boolean, String[], Properties)
      */
-    public static void applyArgs(final boolean ignoreUnknown, final boolean fromStartupManager, final String[] args) {
+    public static void applyArgs(final boolean ignoreUnknown, final boolean fromStartupManager, final String[] args) throws IllegalArgumentException {
         if (args == null) {
             throw new NullPointerException("Arguments list cannot be null");
         }

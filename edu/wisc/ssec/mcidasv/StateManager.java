@@ -31,6 +31,7 @@ package edu.wisc.ssec.mcidasv;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Hashtable;
@@ -46,7 +47,9 @@ import javax.swing.event.HyperlinkListener;
 
 import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.util.FileManager;
 import ucar.unidata.util.IOUtil;
+import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
 
@@ -54,6 +57,10 @@ import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.util.SystemState;
 
 public class StateManager extends ucar.unidata.idv.StateManager implements Constants, HyperlinkListener {
+
+    public static final String USERPATH_IS_BAD_MESSAGE = "<html>McIDAS-V is unable to create or write to the local user's directory.<br>Please select a directory.</html>";
+
+    public static final String USERPATH_PICK = "Please select a directory to use as the McIDAS-V user path.";
 
     /** Lazily-loaded VisAD build date. */
     private String visadDate;
@@ -69,15 +76,40 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
     }
 
     /**
-     * Override to set the right user directory
+     * Override to set the right user directory.
+     *
+     * @return Newly created object store.
      */
-    protected IdvObjectStore doMakeObjectStore() {
+    @Override protected IdvObjectStore doMakeObjectStore() {
         IdvObjectStore store = new IdvObjectStore(getIdv(),
                                    getStoreSystemName(), getStoreName(),
                                    getIdv().getEncoderForRead(),
                                    StartupManager.getInstance().getPlatform().getUserDirectory());
         initObjectStore(store);
         return store;
+    }
+
+    /**
+     * Initialize the given object store. This mostly initializes the user's
+     * {@literal "userpath"} directory when it is first created.
+     *
+     * @param store Object store to initialize. Cannot be {@code null}.
+     */
+    @Override protected void initObjectStore(IdvObjectStore store) {
+        while (!store.userDirectoryOk()) {
+            LogUtil.userMessage(USERPATH_IS_BAD_MESSAGE);
+            File dir = FileManager.getDirectory(null, USERPATH_PICK);
+            if (dir != null) {
+                store.setOverrideDirectory(dir);
+            } else {
+                System.exit(0);
+            }
+        }
+
+        if (store.getMadeUserDirectory()) {
+            initNewUserDirectory(store.getUserDirectory());
+        }
+        initUserDirectory(store.getUserDirectory());
     }
 
     /**

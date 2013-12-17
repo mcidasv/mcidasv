@@ -1562,31 +1562,40 @@ public class McIDASV extends IntegratedDataViewer {
      * @throws Exception When something untoward happens
      */
     public static void main(String[] args) throws Exception {
-        SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(LogLevel.INFO, LogLevel.WARN);
+        try {
+            applyArgs(args);
 
-        // Optionally remove existing handlers attached to j.u.l root logger
-        SLF4JBridgeHandler.removeHandlersForRootLogger();  // (since SLF4J 1.6.5)
+            SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(LogLevel.INFO, LogLevel.WARN);
 
-        // add SLF4JBridgeHandler to j.u.l's root logger, should be done once during
-        // the initialization phase of your application
-        SLF4JBridgeHandler.install();
+            // Optionally remove existing handlers attached to j.u.l root logger
+            SLF4JBridgeHandler.removeHandlersForRootLogger();  // (since SLF4J 1.6.5)
 
-        long sysMem = Long.valueOf(SystemState.queryOpSysProps().get("opsys.memory.physical.total"));
-        logger.info("=============================================================================");
-        logger.info("Starting McIDAS-V @ {}", new Date());
-        logger.info("Versions:");
-        logger.info("{}", SystemState.getMcvVersionString());
-        logger.info("{}", SystemState.getIdvVersionString());
-        logger.info("{}", SystemState.getVisadVersionString());
-        logger.info("{} MB system memory", Math.round(sysMem/1024/1024));
+            // add SLF4JBridgeHandler to j.u.l's root logger, should be done once during
+            // the initialization phase of your application
+            SLF4JBridgeHandler.install();
 
-        applyArgs(args);
-        if (!hadCleanExit(SESSION_FILE)) {
-            previousStart = extractDate(SESSION_FILE);
+            LogUtil.configure();
+
+            long sysMem = Long.valueOf(SystemState.queryOpSysProps().get("opsys.memory.physical.total"));
+            logger.info("=============================================================================");
+            logger.info("Starting McIDAS-V @ {}", new Date());
+            logger.info("Versions:");
+            logger.info("{}", SystemState.getMcvVersionString());
+            logger.info("{}", SystemState.getIdvVersionString());
+            logger.info("{}", SystemState.getVisadVersionString());
+            logger.info("{} MB system memory", Math.round(sysMem/1024/1024));
+
+            if (!hadCleanExit(SESSION_FILE)) {
+                previousStart = extractDate(SESSION_FILE);
+            }
+
+            createSessionFile(SESSION_FILE);
+
+            McIDASV myself = new McIDASV(args);
+        } catch (IllegalArgumentException e) {
+            System.err.println("McIDAS-V could not initialize itself. Please report this message and the following output to mug@ssec.wisc.edu.");
+            e.printStackTrace();
         }
-        createSessionFile(SESSION_FILE);
-        LogUtil.configure();
-        McIDASV myself = new McIDASV(args);
     }
 
     /**
