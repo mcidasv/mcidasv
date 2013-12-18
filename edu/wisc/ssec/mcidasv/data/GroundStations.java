@@ -38,19 +38,29 @@ import java.net.URLConnection;
 
 import java.util.HashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import visad.georef.EarthLocationTuple;
 
 public class GroundStations
 {
-    private static final String card00 = "KMSN,SSEC,43.1398578,-89.3375136,270.4";
+	private static final Logger logger = LoggerFactory.getLogger(GroundStations.class);
+	private static final String card00 = "KMSN,SSEC,43.1398578,-89.3375136,270.4";
     public static String groundStationDB = "data/groundstations/groundstations_db.csv";
     private HashMap<String, EarthLocationTuple> namedLocs = new HashMap<String, EarthLocationTuple>();
 
-    public GroundStations(String topCard)
+    /**
+	 * No-arg constructor for empty list which gets populated on-the-fly later.
+	 */
+    
+	public GroundStations() {
+	}
+
+	public GroundStations(String topCard)
     {
         // read data files for Ground Stations
-        try
-        {
+        try {
             BufferedReader gsReader = null; // initialization of reader 
             
             //see if local file exists, if not stream from web
@@ -97,7 +107,8 @@ public class GroundStations
         }
         catch (Exception e)
         {
-             System.out.println("ERROR IN GROUND STATION READING POSSIBLE FILE FORMAT OR MISSING FILES:");
+        	e.printStackTrace();
+            logger.error("ERROR: Problem reading ground stations, missing file or invalid file format");
         }
     } // constructor
 
