@@ -1198,14 +1198,47 @@ class _Display(_JavaProxy):
         
         return wrappedLayer
         
+        
+    def _captureAsVector(self, filename):
+        from ucar.unidata.idv import VectorGraphicsRenderer
+        
+        renderer = VectorGraphicsRenderer(self._JavaProxy__javaObject)
+        if renderer.showConfigDialog():
+            renderer.renderTo(filename)
+        
+    def _captureAsKml(self, filename, quality):
+        from java.awt import Color
+        from java.util import ArrayList
+        from ucar.unidata.data.gis import KmlDataSource
+        from ucar.unidata.ui import ImageUtils
+        
+        bounds = self._JavaProxy__javaObject.getVisibleGeoBounds()
+        if not bounds:
+            raise RuntimeError("Could not determine geographic bounds of display; is the display navigable?")
+            
+        fileRoot, fileExt = os.path.splitext(filename)
+        kmlImagePath = fileRoot + '.png'
+        views = ArrayList(1)
+        views.add(self._JavaProxy__javaObject.getMaster().getComponent())
+        columns = ImageUtils.getColumnCountFromComps(views)
+        whichComponent = "main display"
+        
+        images = self._JavaProxy__javaObject.makeBufferedImages(views, whichComponent)
+        
+        image = ImageUtils.gridImages2(images, 0, Color.GRAY, columns)
+        
+        KmlDataSource.writeToFile(filename, bounds, kmlImagePath)
+        
+        ImageUtils.writeImageToFile(image, kmlImagePath, quality)
+        
     def captureImage(self, filename, quality=1.0, height=-1, width=-1):
-        """Attempt at a replacement for ISL writeImage
+        """Attempt at a replacement for ISL writeImage.
         
         Args:
-            filename
+            filename: 
             quality:  float between 0.0 and 1.0 (relevant for JPEG's)
                     0.0 is highest compression / smallest file size / worst quality
-                    1.0 is least compression / biggest file size / best qualit
+                    1.0 is least compression / biggest file size / best quality
             height, width: size of image
             
         Raises:
@@ -1213,6 +1246,7 @@ class _Display(_JavaProxy):
             RuntimeError: if height and width specified here after an annotate
             
         """
+        from ucar.unidata.idv.ViewManager import isVectorGraphicsFile
         from visad import DisplayException
         
         # this pause is apparently critical
@@ -1238,8 +1272,12 @@ class _Display(_JavaProxy):
                     
         imageFile = java.io.File(filename)
         fileRoot, fileExt = os.path.splitext(filename.lower())
-        extensions = ['.pdf', '.kmz', '.kml', '.svg']
-        if fileExt in extensions:
+        extensions = ['.pdf', '.kmz', '.svg']
+        if isVectorGraphicsFile(filename):
+            self._captureAsVector(filename)
+        elif fileExt == '.kml':
+            self._captureAsKml(filename, quality)
+        elif fileExt in extensions:
             islInterpreter.writeImage(filename, "", quality)
         else:
             # 2nd arg is whether image is written in current thread
