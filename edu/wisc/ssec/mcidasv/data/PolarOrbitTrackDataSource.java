@@ -62,7 +62,6 @@ import visad.georef.LatLonTuple;
 import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 import edu.wisc.ssec.mcidasv.chooser.PolarOrbitTrackChooser;
 import edu.wisc.ssec.mcidasv.data.adde.sgp4.SGP4SatData;
-import edu.wisc.ssec.mcidasv.data.adde.sgp4.SGP4unit;
 import edu.wisc.ssec.mcidasv.data.adde.sgp4.SatelliteTleSGP4;
 import edu.wisc.ssec.mcidasv.data.adde.sgp4.TLE;
 import edu.wisc.ssec.mcidasv.data.adde.sgp4.Time;
@@ -87,8 +86,6 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
 
     private SGP4SatData data = new SGP4SatData();
     private TLE tle;
-
-    public static double pi = SGP4unit.pi;
 
     private Hashtable selectionProps;
 
@@ -116,11 +113,7 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
                               String filename, Hashtable properties)
            throws VisADException {
         super(descriptor, filename, null, properties);
-/*
-        System.out.println("\nPolarOrbitTrackDataSource:");
-        System.out.println("    descriptor=" + descriptor);
-        System.out.println("    filename=" + filename);
-*/
+
         tleCards = new ArrayList();
         choices = new ArrayList();
         
@@ -202,196 +195,18 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
         decodeCard1(card);
     }
 
-    public void initAfterCreation() {
-    }
-
-    /**
-     * Make the data choices associated with this source.
-     */
-    protected void doMakeDataChoices() {
-        String category = "TLE";
-        for (int i=0; i<choices.size(); i++) {
-            String name  = ((String)choices.get(i)).trim();
-            addDataChoice(
-                new DirectDataChoice(
-                    this, name, name, name,
-                    DataCategory.parseCategories(category, false)));
-        }
-    }
-
-    /**
-     * Initialize the {@link ucar.unidata.data.DataCategory} objects that
-     * this data source uses. 
-     */
-    private void makeCategories() {
-        twoDCategories = DataCategory.parseCategories("TLE", false);
-    }
-
-    /**
-     * Actually get the data identified by the given DataChoce. The default is
-     * to call the getDataInner that does not take the requestProperties. This
-     * allows other, non unidata.data DataSource-s (that follow the old API)
-     * to work.
-     *
-     * @param dataChoice        The data choice that identifies the requested
-     *                          data.
-     * @param category          The data category of the request.
-     * @param dataSelection     Identifies any subsetting of the data.
-     * @param requestProperties Hashtable that holds any detailed request
-     *                          properties.
-     *
-     * @return The visad.Text object
-     *
-     * @throws RemoteException    Java RMI problem
-     * @throws VisADException     VisAD problem
-     */
-    
-    protected Data getDataInner(DataChoice dataChoice, DataCategory category,
-                                DataSelection dataSelection,
-                                Hashtable requestProperties)
-            throws VisADException, RemoteException {
-/*
-        System.out.println("\ngetDataInner:");
-        System.out.println("    dTime=" + dTime);
-        System.out.println("    dataChoice=" + dataChoice);
-        System.out.println("    category=" + category);
-        System.out.println("    dataSelection=" + dataSelection + "\n");
-        System.out.println("categories for dataChoice: " + dataChoice.getCategories());
-*/
-
-        boolean gotit = false;
-        int index = -1;
-        String choiceName = dataChoice.getName();
-        String tleLine1 = "";
-        String tleLine2 = "";
-
-        while(!gotit) {
-            index++;
-            String name = ((String)tleCards.get(index)).trim();
-            if (name.equals(choiceName)) {
-                data.name = name; 
-/*
-                System.out.println("\n" + tleCards.get(index));
-                System.out.println(tleCards.get(index+1));
-                System.out.println(tleCards.get(index+2) + "\n");
-*/
-                index++;
-                String card = (String)tleCards.get(index);
-                tleLine1 = card;
-                int ncomps = decodeCard1(card);
-                if (ncomps < 0) return null;
-                index++;
-                card = (String)tleCards.get(index);
-                tleLine2 = card;
-                ncomps += decodeCard2(card);
-                gotit= true;
+    private int checksum(String str) {
+        int sum = 0;
+        byte[] bites = str.getBytes();
+        for (int i=0; i<bites.length; i++) {
+            int val = (int)bites[i];
+            if ((val > 47) && (val < 58)) {
+                sum += val - 48;
+            } else if (val == 45) {
+                ++sum;
             }
-            if (index+3 > tleCards.size()) gotit = true;
         }
-        if (gotit == false) return null;
-
-        this.selectionProps = dataSelection.getProperties();
-/*
-        Enumeration propEnum = this.selectionProps.keys();
-        for (int i = 0; propEnum.hasMoreElements(); i++) {
-            String key = propEnum.nextElement().toString();
-            String val = (String)this.selectionProps.get(key);
-            System.out.println("key=" + key + " val=" + val);
-        }
-*/
-        tle = new TLE(choiceName, tleLine1, tleLine2);
-
-        String endStr = (String)this.selectionProps.get("ETime");
-        Double dEnd = new Double(endStr);
-        double endJulianDate = dEnd.doubleValue();
-        julDate1 = endJulianDate;
-
-        try
-        {
-            prop = new SatelliteTleSGP4(tle.getSatName(), tle.getLine1(), tle.getLine2());
-            prop.setShowGroundTrack(false);
-        }
-        catch(Exception e)
-        {
-            logger.error("Error Creating SGP4 Satellite e=" + e);
-            System.exit(1);
-        }
-
-        Time time = new Time(
-                        (new Integer((String)this.selectionProps.get("Year"))).intValue(),
-                        (new Integer((String)this.selectionProps.get("Month"))).intValue(),
-                        (new Integer((String)this.selectionProps.get("Day"))).intValue(),
-                        (new Integer((String)this.selectionProps.get("Hours"))).intValue(),
-                        (new Integer((String)this.selectionProps.get("Mins"))).intValue(),
-                        (new Double((String)this.selectionProps.get("Secs"))).doubleValue());
-        double julianDate = time.getJulianDate();
-        julDate0 = julianDate;
-        Vector v = new Vector();
-
-        while (julianDate <= julDate1) {
-            // prop to the desired time
-            prop.propogate2JulDate(julianDate);
-
-            // get the lat/long/altitude [radians, radians, meters]
-            double[] lla = prop.getLLA();
-            double lat = lla[0]*180.0/Math.PI;
-            double lon = lla[1]*180.0/Math.PI;
-
-/*
-             System.out.println(time.getDateTimeStr() + " Lat: " + lat
-                                                      + " Lon: " + lon
-                                                      + " Alt: " + alt);
- */
-            Tuple data = new Tuple(new Data[] { new Text(time.getDateTimeStr()),
-                                                new LatLonTuple(
-                                                    lat,
-                                                    lon
-                                                )}
-                         );
-            v.add(data);
-            time.add(Time.MINUTE, dTime);
-            julianDate = time.getJulianDate();
-        }
-
-        return new Tuple((Data[]) v.toArray(new Data[v.size()]), false);
-    }
-
-    public double getNearestAltToGroundStation(double gsLat, double gsLon) {
-        double retAlt = 0.0;
-        Time time = new Time(
-                        (new Integer((String)this.selectionProps.get("Year"))).intValue(),
-                        (new Integer((String)this.selectionProps.get("Month"))).intValue(),
-                        (new Integer((String)this.selectionProps.get("Day"))).intValue(),
-                        (new Integer((String)this.selectionProps.get("Hours"))).intValue(),
-                        (new Integer((String)this.selectionProps.get("Mins"))).intValue(),
-                        (new Double((String)this.selectionProps.get("Secs"))).doubleValue());
-
-        double minDist = 999999.99;
-        double julianDate = julDate0;
-
-        while (julianDate <= julDate1) {
-            // prop to the desired time
-            prop.propogate2JulDate(julianDate);
-
-            // get the lat/long/altitude [radians, radians, meters]
-            double[] lla = prop.getLLA();
-            double lat = lla[0]*180.0/Math.PI;
-            double lon = lla[1]*180.0/Math.PI;
-            double alt = lla[2];
-            //System.out.println("    " + time.getDateTimeStr() + ": lat=" + lat + " lon=" + lon + " alt=" + alt);
-
-            double latDiff = (gsLat - lat) * (gsLat - lat);
-            double lonDiff = (gsLon - lon) * (gsLon - lon);
-            double dist = Math.sqrt(latDiff+lonDiff);
-            if (dist < minDist) {
-                minDist = dist;
-                retAlt = alt;
-            }
-            time.add(Time.MINUTE, dTime);
-            julianDate = time.getJulianDate();
-        }
-
-        return retAlt;
+        return sum % 10;
     }
 
     private int decodeCard1(String card) {
@@ -556,10 +371,138 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
         return ret;
     }
 
-    private int getInt(int beg, int end,  String card) {
-        String str = card.substring(beg, end);
-        str = str.trim();
-        return (new Integer(str)).intValue();
+    /**
+     * Make the data choices associated with this source.
+     */
+    protected void doMakeDataChoices() {
+        String category = "TLE";
+        for (int i=0; i<choices.size(); i++) {
+            String name  = ((String)choices.get(i)).trim();
+            addDataChoice(
+                new DirectDataChoice(
+                    this, name, name, name,
+                    DataCategory.parseCategories(category, false)));
+        }
+    }
+
+    /**
+     * Actually get the data identified by the given DataChoce. The default is
+     * to call the getDataInner that does not take the requestProperties. This
+     * allows other, non unidata.data DataSource-s (that follow the old API)
+     * to work.
+     *
+     * @param dataChoice        The data choice that identifies the requested
+     *                          data.
+     * @param category          The data category of the request.
+     * @param dataSelection     Identifies any subsetting of the data.
+     * @param requestProperties Hashtable that holds any detailed request
+     *                          properties.
+     *
+     * @return The visad.Text object
+     *
+     * @throws RemoteException    Java RMI problem
+     * @throws VisADException     VisAD problem
+     */
+    
+    protected Data getDataInner(DataChoice dataChoice, DataCategory category,
+                                DataSelection dataSelection,
+                                Hashtable requestProperties)
+            throws VisADException, RemoteException {
+
+        boolean gotit = false;
+        int index = -1;
+        String choiceName = dataChoice.getName();
+        String tleLine1 = "";
+        String tleLine2 = "";
+
+        while (!gotit) {
+            index++;
+            String name = ((String) tleCards.get(index)).trim();
+            if (name.equals(choiceName)) {
+                data.name = name; 
+/*
+                System.out.println("\n" + tleCards.get(index));
+                System.out.println(tleCards.get(index+1));
+                System.out.println(tleCards.get(index+2) + "\n");
+*/
+                index++;
+                String card = (String) tleCards.get(index);
+                tleLine1 = card;
+                int ncomps = decodeCard1(card);
+                if (ncomps < 0) return null;
+                index++;
+                card = (String) tleCards.get(index);
+                tleLine2 = card;
+                ncomps += decodeCard2(card);
+                gotit= true;
+            }
+            if (index+3 > tleCards.size()) gotit = true;
+        }
+        if (gotit == false) return null;
+
+        this.selectionProps = dataSelection.getProperties();
+/*
+        Enumeration propEnum = this.selectionProps.keys();
+        for (int i = 0; propEnum.hasMoreElements(); i++) {
+            String key = propEnum.nextElement().toString();
+            String val = (String)this.selectionProps.get(key);
+            System.out.println("key=" + key + " val=" + val);
+        }
+*/
+        tle = new TLE(choiceName, tleLine1, tleLine2);
+
+        String endStr = (String)this.selectionProps.get("ETime");
+        Double dEnd = new Double(endStr);
+        double endJulianDate = dEnd.doubleValue();
+        julDate1 = endJulianDate;
+
+		try {
+			prop = new SatelliteTleSGP4(tle.getSatName(), tle.getLine1(),
+					tle.getLine2());
+			prop.setShowGroundTrack(false);
+		} catch (Exception e) {
+			logger.error("Error Creating SGP4 Satellite");
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+        Time time = new Time(
+                        (new Integer((String)this.selectionProps.get("Year"))).intValue(),
+                        (new Integer((String)this.selectionProps.get("Month"))).intValue(),
+                        (new Integer((String)this.selectionProps.get("Day"))).intValue(),
+                        (new Integer((String)this.selectionProps.get("Hours"))).intValue(),
+                        (new Integer((String)this.selectionProps.get("Mins"))).intValue(),
+                        (new Double((String)this.selectionProps.get("Secs"))).doubleValue());
+        double julianDate = time.getJulianDate();
+        julDate0 = julianDate;
+        Vector v = new Vector();
+
+        while (julianDate <= julDate1) {
+            // prop to the desired time
+            prop.propogate2JulDate(julianDate);
+
+            // get the lat/long/altitude [radians, radians, meters]
+            double[] lla = prop.getLLA();
+            double lat = lla[0]*180.0/Math.PI;
+            double lon = lla[1]*180.0/Math.PI;
+
+/*
+             System.out.println(time.getDateTimeStr() + " Lat: " + lat
+                                                      + " Lon: " + lon
+                                                      + " Alt: " + alt);
+ */
+            Tuple data = new Tuple(new Data[] { new Text(time.getDateTimeStr()),
+                                                new LatLonTuple(
+                                                    lat,
+                                                    lon
+                                                )}
+                         );
+            v.add(data);
+            time.add(Time.MINUTE, dTime);
+            julianDate = time.getJulianDate();
+        }
+
+        return new Tuple((Data[]) v.toArray(new Data[v.size()]), false);
     }
 
     private double getDouble(int beg, int end, String card) {
@@ -568,18 +511,55 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
         return (new Double(str)).doubleValue();
     }
 
-    private int checksum(String str) {
-        int sum = 0;
-        byte[] bites = str.getBytes();
-        for (int i=0; i<bites.length; i++) {
-            int val = (int)bites[i];
-            if ((val > 47) && (val < 58)) {
-                sum += val - 48;
-            } else if (val == 45) {
-                ++sum;
+    public int getDTime() {
+        return dTime;
+    }
+
+    private int getInt(int beg, int end,  String card) {
+        String str = card.substring(beg, end);
+        str = str.trim();
+        return (new Integer(str)).intValue();
+    }
+
+    public double getNearestAltToGroundStation(double gsLat, double gsLon) {
+        double retAlt = 0.0;
+        Time time = new Time(
+                        (new Integer((String)this.selectionProps.get("Year"))).intValue(),
+                        (new Integer((String)this.selectionProps.get("Month"))).intValue(),
+                        (new Integer((String)this.selectionProps.get("Day"))).intValue(),
+                        (new Integer((String)this.selectionProps.get("Hours"))).intValue(),
+                        (new Integer((String)this.selectionProps.get("Mins"))).intValue(),
+                        (new Double((String)this.selectionProps.get("Secs"))).doubleValue());
+
+        double minDist = 999999.99;
+        double julianDate = julDate0;
+
+        while (julianDate <= julDate1) {
+            // prop to the desired time
+            prop.propogate2JulDate(julianDate);
+
+            // get the lat/long/altitude [radians, radians, meters]
+            double[] lla = prop.getLLA();
+            double lat = lla[0]*180.0/Math.PI;
+            double lon = lla[1]*180.0/Math.PI;
+            double alt = lla[2];
+            //System.out.println("    " + time.getDateTimeStr() + ": lat=" + lat + " lon=" + lon + " alt=" + alt);
+
+            double latDiff = (gsLat - lat) * (gsLat - lat);
+            double lonDiff = (gsLon - lon) * (gsLon - lon);
+            double dist = Math.sqrt(latDiff+lonDiff);
+            if (dist < minDist) {
+                minDist = dist;
+                retAlt = alt;
             }
+            time.add(Time.MINUTE, dTime);
+            julianDate = time.getJulianDate();
         }
-        return sum % 10;
+
+        return retAlt;
+    }
+
+    public void initAfterCreation() {
     }
 
     protected void initDataSelectionComponents(
@@ -604,26 +584,11 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
     }
 
     /**
-     * Show the dialog
-     *
-     * @param initTabName What tab should we show. May be null.
-     * @param modal Is dialog modal
-     *
-     * @return success
+     * Initialize the {@link ucar.unidata.data.DataCategory} objects that
+     * this data source uses. 
      */
-    public boolean showPropertiesDialog(String initTabName, boolean modal) {
-        //System.out.println("\n\nshowPropertiesDialog:");
-        boolean ret = super.showPropertiesDialog(initTabName, modal);
-        return ret;
-    }
-
-    public int getDTime() {
-        return dTime;
-    }
-
-    public void setDTime(int val) {
-        //System.out.println("PolarOrbitTrackDataSource setDTime: val=" + val);
-        dTime = val;
+    private void makeCategories() {
+        twoDCategories = DataCategory.parseCategories("TLE", false);
     }
 
     private void notTLE() {
@@ -631,5 +596,26 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
         choices = new ArrayList();
         setInError(true, "\nSource does not contain TLE data");
     }
+
+    public void setDTime(int val) {
+        //System.out.println("PolarOrbitTrackDataSource setDTime: val=" + val);
+        dTime = val;
+    }
+
+    /**
+     * Show the dialog
+     *
+     * @param initTabName What tab should we show. May be null.
+     * @param modal Is dialog modal
+     *
+     * @return success
+     */
+    
+    public boolean showPropertiesDialog(String initTabName, boolean modal) {
+        //System.out.println("\n\nshowPropertiesDialog:");
+        boolean ret = super.showPropertiesDialog(initTabName, modal);
+        return ret;
+    }
+    
 }
 
