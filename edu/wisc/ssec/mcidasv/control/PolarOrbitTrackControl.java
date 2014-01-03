@@ -133,7 +133,12 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
 
     private JComboBox locationComboBox;
     private JComboBox jcbStationsPlotted;
-    private JCheckBox jcb;
+    private JCheckBox jcbLabels;
+    private JCheckBox jcbSwathEdges;
+    
+    // names to distinguish checkbox event sources
+    private static final String CHECKBOX_LABELS = "CHECKBOX_LABELS";
+    private static final String CHECKBOX_SWATH_EDGES = "CHECKBOX_SWATH_EDGES";
 
     private String station = "";
 
@@ -325,7 +330,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
 		                    Tuple t = (Tuple) dataArr[i];
 		                    Data[] tupleComps = t.getComponents();
 
-		                    LatLonTuple llt = (LatLonTuple)tupleComps[1];
+		                    LatLonTuple llt = (LatLonTuple) tupleComps[1];
 		                    double dlat = llt.getLatitude().getValue();
 		                    double dlon = llt.getLongitude().getValue();
 
@@ -573,10 +578,11 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
         fontSizePanel = new JPanel();
         fontSizePanel.setLayout(new BoxLayout(fontSizePanel, BoxLayout.Y_AXIS));
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
-        jcb = new JCheckBox("Labels On/Off");
-        jcb.setSelected(true);
-        jcb.addItemListener(this);
-        topPanel.add(jcb);
+        jcbLabels = new JCheckBox("Labels On/Off");
+        jcbLabels.setSelected(true);
+        jcbLabels.setName(CHECKBOX_LABELS);
+        jcbLabels.addItemListener(this);
+        topPanel.add(jcbLabels);
         
         // same row, add label interval spinner
         Integer defaultInterval = new Integer(5); 
@@ -592,6 +598,14 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
         topPanel.add(intervalLabel);
         topPanel.add(js);
         topPanel.add(intervalUnits);
+        
+        // last on this panel, check box to turn on/off swath line edges
+        topPanel.add(Box.createHorizontalStrut(5));
+        jcbSwathEdges = new JCheckBox("Swath Edges On/Off");
+        jcbSwathEdges.setSelected(true);
+        jcbSwathEdges.setName(CHECKBOX_SWATH_EDGES);
+        jcbSwathEdges.addItemListener(this);
+        topPanel.add(jcbSwathEdges);
         
         fontSizePanel.add(topPanel);
         JPanel botPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
@@ -857,14 +871,24 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
 
     public void itemStateChanged(ItemEvent e) {
 
-    	// only one checkbox, either checked or not!
+    	// now we got multiple checkboxes, so first see which one applies
+    	String source = ((JCheckBox) e.getSource()).getName();
     	try {
-    		if (e.getStateChange() == ItemEvent.DESELECTED) {
-    			timeLabelDsp.setVisible(false);
-    			updateDisplayList();
-    		} else {
-    			timeLabelDsp.setVisible(true);
-    			updateDisplayList();
+    		if (source.equals(CHECKBOX_LABELS)) {
+    			if (e.getStateChange() == ItemEvent.DESELECTED) {
+    				timeLabelDsp.setVisible(false);
+    			} else {
+    				timeLabelDsp.setVisible(true);
+    			}
+				updateDisplayList();
+    		}
+    		if (source.equals(CHECKBOX_SWATH_EDGES)) {
+    			if (e.getStateChange() == ItemEvent.DESELECTED) {
+    				swathEdgeDsp.setVisible(false);
+    			} else {
+    				swathEdgeDsp.setVisible(true);
+    			}
+				updateDisplayList();
     		}
     	} catch (RemoteException re) {
     		re.printStackTrace();
