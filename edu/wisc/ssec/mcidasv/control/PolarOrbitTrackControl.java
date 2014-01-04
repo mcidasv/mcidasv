@@ -187,7 +187,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
     private Color defaultAntColor = Color.MAGENTA;
     private PolarOrbitTrackDataSource dataSource;
 
-    private CurveDrawer coverageCircle;
     private double satelliteAltitude = 0.0;
 
     private double centerAlt = 0.0;
@@ -199,8 +198,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
     private TextType gsTextType = null;
     private double curWidth = 0.0d;
     private double prvWidth = 0.0d;
+    private static final float FONT_SCALE_FACTOR = 12.0f;
     
-    // line width for drawing swath edges
+    // line width for drawing track center and swath edges
     private float prvSwathCenterWidth = 2.0f;
     private float curSwathCenterWidth = 2.0f;
     private float prvSwathEdgeWidth = 1.0f;
@@ -262,6 +262,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
     			jcbStationsPlotted.setSelectedItem(station);
     			plotCoverageCircles();
     		}
+    		updateDisplayList();
     		return;
     	}
     	
@@ -276,6 +277,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
     			jcbStationsPlotted.removeItem(station);
     			plotCoverageCircles();
     		}
+    		updateDisplayList();
     		return;
     	}
     	
@@ -344,7 +346,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
 	                            time.setVerticalJustification(TextControl.Justification.CENTER);
 	                            time.setColor(curSwathColor);
 	                            time.setFont(otFontSelector.getFont());
-	                            time.setTextSize((float) otFontSelector.getFontSize() / 12.0f);
+	                            time.setTextSize((float) otFontSelector.getFontSize() / FONT_SCALE_FACTOR);
 	                            time.setSphere(inGlobeDisplay());
 	                            
 	                            RealTuple lonLat =
@@ -479,7 +481,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
                             time.setJustification(TextControl.Justification.LEFT);
                             time.setVerticalJustification(TextControl.Justification.CENTER);
                             time.setColor(curSwathColor);
-                    		time.setTextSize((float) otFontSelector.getFontSize() / 12.0f);
+                    		time.setTextSize((float) otFontSelector.getFontSize() / FONT_SCALE_FACTOR);
                     		time.setFont(otFontSelector.getFont());
                     		time.setSphere(inGlobeDisplay());
                             
@@ -652,7 +654,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
         return outerPanel;
     }
 
-    private CurveDrawer drawCoverageCircle(double lat, double lon, double satAlt, Color color) {
+    private CurveDrawer makeCoverageCircle(double lat, double lon, double satAlt, Color color) {
 
         /* mean Earth radius in km */
         double earthRadius = AstroConst.R_Earth_mean / 1000.0;
@@ -671,7 +673,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
         double sinLon = -Math.sin(lon);
         double cosLon = Math.cos(lon);
         for (int i = 0; i < npts; i++) {
-            double azimuth = Math.toRadians((double)i);
+            double azimuth = Math.toRadians((double) i);
             double cosBear = Math.cos(azimuth);
             double sinBear = Math.sin(azimuth);
             double z = cosDist * sinLat +
@@ -680,13 +682,14 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
                        sinDist * (sinLon * sinBear - sinLat * cosLon * cosBear);
             double x = cosLat * sinLon * cosDist -
                        sinDist * (cosLon * sinBear + sinLat * sinLon * cosBear);
-            double r = Math.sqrt(x*x + y*y);
+            double r = Math.sqrt(x * x + y * y);
             double latRad = Math.atan2(z, r);
             double lonRad = 0.0;
             if (r > 0.0) lonRad = -Math.atan2(x, y);
             latlon[0][i] = (float) Math.toDegrees(latRad);
             latlon[1][i] = (float) Math.toDegrees(lonRad);
         }
+        CurveDrawer coverageCircle = null;
         try {
             Gridded2DSet circle = new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple,
                                latlon, npts);
@@ -717,7 +720,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
         if (!dataSources.isEmpty()) {
             int nsrc = dataSources.size();
             for (int i = 0; i < nsrc; i++) {
-                ds = (DataSourceImpl) dataSources.get(nsrc-i-1);
+                ds = (DataSourceImpl) dataSources.get(nsrc - i - 1);
                 if (ds instanceof PolarOrbitTrackDataSource) {
                     gotit = true;
                     break;
@@ -747,11 +750,11 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
         try {
             int indx = 0;
             for (int i = 1; i < npt; i++) {
-                double latA = Math.toRadians(track[0][i-1]);
-                double lonA = Math.toRadians(track[1][i-1]);
+                double latA = Math.toRadians(track[0][i - 1]);
+                double lonA = Math.toRadians(track[1][i - 1]);
 
-                double latB = Math.toRadians(track[0][i+1]);
-                double lonB = Math.toRadians(track[1][i+1]);
+                double latB = Math.toRadians(track[0][i + 1]);
+                double lonB = Math.toRadians(track[1][i + 1]);
 
                 double diffLon = lonB - lonA;
                 double bX = Math.cos(latB) * Math.cos(diffLon);
@@ -869,13 +872,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
         return result;
     }
 
-    public void itemStateChanged(ItemEvent e) {
+    public void itemStateChanged(ItemEvent ie) {
 
     	// now we got multiple checkboxes, so first see which one applies
-    	String source = ((JCheckBox) e.getSource()).getName();
+    	String source = ((JCheckBox) ie.getSource()).getName();
     	try {
     		if (source.equals(CHECKBOX_LABELS)) {
-    			if (e.getStateChange() == ItemEvent.DESELECTED) {
+    			if (ie.getStateChange() == ItemEvent.DESELECTED) {
     				timeLabelDsp.setVisible(false);
     			} else {
     				timeLabelDsp.setVisible(true);
@@ -883,7 +886,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
 				updateDisplayList();
     		}
     		if (source.equals(CHECKBOX_SWATH_EDGES)) {
-    			if (e.getStateChange() == ItemEvent.DESELECTED) {
+    			if (ie.getStateChange() == ItemEvent.DESELECTED) {
     				swathEdgeDsp.setVisible(false);
     			} else {
     				swathEdgeDsp.setVisible(true);
@@ -908,7 +911,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
     		groundStationDsp.setVerticalJustification(TextControl.Justification.CENTER);
     		groundStationDsp.setColor(getAntColor());
     		groundStationDsp.setFont(gsFontSelector.getFont());
-    		groundStationDsp.setTextSize((float) gsFontSelector.getFontSize() / 12.0f);
+    		groundStationDsp.setTextSize((float) gsFontSelector.getFontSize() / FONT_SCALE_FACTOR);
     		groundStationDsp.setSphere(inGlobeDisplay());
 
     		double dlat = getLatitude();
@@ -946,9 +949,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
         latLabel.setText(elt.getLatitude().toString());
         lonLabel.setText(elt.getLongitude().toString());
         altLabel.setText(elt.getAltitude().toString());
-
-        setLatitude();
-        setLongitude();
         
         locationPanel = new JPanel();
         locationPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -1056,11 +1056,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
     private void plotCoverageCircles() {
         try {
 
-            int num = circleDsp.displayableCount();
+        	int num = circleDsp.displayableCount();
             for (int i = 0; i < num; i++) {
             	// yes, always 0th it's a queue
                 circleDsp.removeDisplayable(0);
             }
+            removeDisplayable(circleDsp);
+            circleDsp = null;
     		int numLabels = stationLabelDsp.displayableCount();
     		for (int i = 0; i < numLabels; i++) {
     			// yes, always 0th it's a queue
@@ -1068,26 +1070,29 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
     		}
 
     		int numPlotted = jcbStationsPlotted.getItemCount();
+            circleDsp = new CompositeDisplayable();
     		for (int i = 0; i < numPlotted; i++) {
     			String s = (String) jcbStationsPlotted.getItemAt(i);
                 EarthLocationTuple elt = stationMap.get(s);
                 latLabel.setText(elt.getLatitude().toString());
                 lonLabel.setText(elt.getLongitude().toString());
                 altLabel.setText(elt.getAltitude().toString());
-                setLatitude();
-                setLongitude();
+                latitude = Double.parseDouble(latLabel.getText());
+                longitude = Double.parseDouble(lonLabel.getText());
                 setSatelliteAltitude(dataSource.getNearestAltToGroundStation(latitude, longitude) / 1000.0);
                 
-                if (drawCoverageCircle(Math.toRadians(latitude), Math.toRadians(longitude),
-                           satelliteAltitude, getAntColor()) != null) {
+                CurveDrawer cd = makeCoverageCircle(Math.toRadians(latitude), Math.toRadians(longitude),
+                        satelliteAltitude, getAntColor());
+                if (cd != null) {
                 	logger.debug("Drawing ground station, station name: " + s);
                     labelGroundStation(s);
                     circleDsp.setColor(getAntColor());
-                    coverageCircle.setLineWidth(jcbGSLineWidth.getSelectedIndex() + 1);
-                    circleDsp.addDisplayable(coverageCircle);
-                    addDisplayable(circleDsp, FLAG_COLORTABLE);
+                    cd.setLineWidth(jcbGSLineWidth.getSelectedIndex() + 1);
+                    circleDsp.addDisplayable(cd);
+                    
                 }
     		}
+    		addDisplayable(circleDsp, FLAG_COLORTABLE);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1102,14 +1107,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
         } catch (Exception e) {
             logger.error("Exception in PolarOrbitTrackControl.setAntColor e=" + e);
         }
-    }
-
-    public void setLatitude() {
-    	latitude = Double.parseDouble(latLabel.getText());
-    }
-
-    public void setLongitude() {
-        longitude = Double.parseDouble(lonLabel.getText());
     }
         
     private void setSatelliteAltitude(double val) {
