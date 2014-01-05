@@ -80,6 +80,7 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.GuiUtils.ColorSwatch;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
+import ucar.visad.Util;
 import ucar.visad.display.CompositeDisplayable;
 import ucar.visad.display.TextDisplayable;
 
@@ -146,6 +147,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
     private static final int DEFAULT_ANTENNA_ANGLE = 5;
     private static final int MAX_ANTENNA_ANGLE = 90;
     private int curAngle = DEFAULT_ANTENNA_ANGLE;
+    private static final double LABEL_DISTANCE_THRESHOLD = 5.0d;
 
     private DataChoice dataChoice;
 
@@ -327,6 +329,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
 		                Data[] dataArr = ((Tuple) data).getComponents();
 
 		                int npts = dataArr.length;
+		                double distance = 0.0d;
+		                LatLonTuple prvPoint = null;
 
 		                for (int i = 0; i < npts; i++) {
 		                    Tuple t = (Tuple) dataArr[i];
@@ -337,7 +341,16 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
 		                    double dlon = llt.getLongitude().getValue();
 
 	                        if ((i % labelInterval) == 0) {
-	                            String str = ((Text)  tupleComps[0]).getValue();
+	                        	
+			                    if (prvPoint != null) {
+			                    	distance = Util.distance(prvPoint, llt);
+			                    	logger.debug("Distance: " + distance);
+			                    	if (distance < LABEL_DISTANCE_THRESHOLD) {
+			                    		continue;
+			                    	}
+			                    }
+			                    
+	                            String str = ((Text) tupleComps[0]).getValue();
 	                            logger.debug("Adding time for str: " + str);
 	                            int indx = str.indexOf(" ") + 1;
 	                            String subStr = "- " + str.substring(indx, indx+5);
@@ -356,7 +369,10 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
 	                                new Data[] { lonLat, new Text(otTextType, subStr)});
 	                            time.setData(tup);
 	                            timeLabelDsp.addDisplayable(time);
+	                            
+		                        prvPoint = llt;
 	                        }
+
 		                }
 		            }
 					
@@ -462,6 +478,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
 
                 int npts = dataArr.length;
                 float[][] latlon = new float[2][npts];
+                double distance = 0.0d;
+                LatLonTuple prvPoint = null;
 
                 for (int i = 0; i < npts; i++) {
                     Tuple t = (Tuple) dataArr[i];
@@ -473,6 +491,17 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
 
                     if (doTrack) {
                         if ((i % labelInterval) == 0) {
+		                    
+                        	if (prvPoint != null) {
+                        		distance = Util.distance(prvPoint, llt);
+                        		logger.debug("Distance: " + distance);
+                        		if (distance < LABEL_DISTANCE_THRESHOLD) {
+                                    latlon[0][i] = (float) dlat;
+                                    latlon[1][i] = (float) dlon;
+                        			continue;
+                        		}
+                        	}
+                        	
                             String str = ((Text) tupleComps[0]).getValue();
                             dts.add(str);
                             int indx = str.indexOf(" ") + 1;
@@ -492,6 +521,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
                                 new Data[] { lonLat, new Text(otTextType, subStr)});
                             time.setData(tup);
                             timeLabelDsp.addDisplayable(time);
+                            
+                            prvPoint = llt;
                         }
                     }
                     latlon[0][i] = (float) dlat;
@@ -510,7 +541,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
                     trackLines.setDrawingEnabled(false);
 
                     trackDsp.setColor(curSwathColor);
-                    logger.debug("SETTING CENTER: " + curSwathCenterWidth);
                     trackDsp.setLineWidth(curSwathCenterWidth);
 
                     addDisplayable(trackDsp, FLAG_COLORTABLE);
