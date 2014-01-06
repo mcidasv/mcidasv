@@ -134,6 +134,10 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
 
     private JComboBox locationComboBox;
     private JComboBox jcbStationsPlotted;
+    String [] lineStyles = new String[] { "_____", "_ _ _", ".....", "_._._" };
+    private JComboBox jcbTrackLineStyle = new JComboBox(lineStyles);
+    private JComboBox jcbEdgeLineStyle = new JComboBox(lineStyles);
+    private JComboBox jcbStationLineStyle = new JComboBox(lineStyles);
     private JCheckBox jcbLabels;
     private JCheckBox jcbSwathEdges;
     
@@ -164,8 +168,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
     
     // line width combo boxes, GS: Ground Station, SC: Swath Center, SE: Swath Edge
     private JComboBox jcbGSLineWidth;
-    private JComboBox jcbSCLineWidth;
-    private JComboBox jcbSELineWidth;
+    private JComboBox jcbSCLineWidth = new JComboBox();
+    private JComboBox jcbSELineWidth = new JComboBox();
     private JSpinner js = null;
 
     private CompositeDisplayable trackDsp;
@@ -200,6 +204,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
     private TextType gsTextType = null;
     private double curWidth = 0.0d;
     private double prvWidth = 0.0d;
+    // TODO: event handler for ground station controls needs conditional handling checks
+    // e.g., utilize the unused variable below
+    private int prvStationLineStyle = -1;
+    private int prvTrackLineStyle = -1;
+    private int prvEdgeLineStyle = -1;
+    private int curTrackLineStyle = -1;
+    private int curEdgeLineStyle = -1;
     private static final float FONT_SCALE_FACTOR = 12.0f;
     
     // line width for drawing track center and swath edges
@@ -294,6 +305,11 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
     		if (curSwathCenterWidth != prvSwathCenterWidth) swathChanged = true;
     		if (curSwathEdgeWidth != prvSwathEdgeWidth) swathChanged = true;
     		
+    		curTrackLineStyle = jcbTrackLineStyle.getSelectedIndex();
+    		if (curTrackLineStyle != prvTrackLineStyle) swathChanged = true; 
+    		curEdgeLineStyle = jcbEdgeLineStyle.getSelectedIndex();
+    		if (curEdgeLineStyle != prvEdgeLineStyle) swathChanged = true;
+    		
     		curSwathColor = colorSwatch.getColor();
     		if (! curSwathColor.equals(prvSwathColor)) swathChanged = true;
     		
@@ -344,7 +360,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
 	                        	
 			                    if (prvPoint != null) {
 			                    	distance = Util.distance(prvPoint, llt);
-			                    	logger.debug("Distance: " + distance);
 			                    	if (distance < LABEL_DISTANCE_THRESHOLD) {
 			                    		continue;
 			                    	}
@@ -451,7 +466,10 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
 
     private void changeSwathWidth() {
 
+    	logger.debug("changeSwathWidth() in...");
     	if ((curWidth != prvWidth) || 
+    			(curTrackLineStyle != prvTrackLineStyle) ||
+    			(curEdgeLineStyle != prvEdgeLineStyle) ||
     			(curSwathCenterWidth != prvSwathCenterWidth) ||
     			(curSwathEdgeWidth != prvSwathEdgeWidth) ||
     			(curSwathColor != prvSwathColor)) {
@@ -459,10 +477,16 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
     		prvSwathCenterWidth = curSwathCenterWidth;
     		prvSwathEdgeWidth = curSwathEdgeWidth;
     		prvSwathColor = curSwathColor;
+    		prvTrackLineStyle = curTrackLineStyle;
+    		prvEdgeLineStyle = curEdgeLineStyle;
     		try {
     			removeDisplayable(swathEdgeDsp);
+    			removeDisplayable(trackDsp);
+    			swathEdgeDsp = null;
+    			trackDsp = null;
     			Data data = getData(getDataInstance());
     			swathEdgeDsp = new CompositeDisplayable();
+    			trackDsp = new CompositeDisplayable();
     			createTrackDisplay(data, true);
     		} catch (Exception e) {
     			e.printStackTrace();
@@ -471,6 +495,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
     }
     
     private void createTrackDisplay(Data data, boolean doTrack) {
+    	logger.debug("createTrackDisplay() in...");
         try {
             List<String> dts = new ArrayList<String>();
             if (data instanceof Tuple) {
@@ -537,11 +562,11 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
                     UnionSet uset = new UnionSet(set);
                     CurveDrawer trackLines = new CurveDrawer(uset);
                     trackLines.setData(uset);
-                    trackDsp.addDisplayable(trackLines);
                     trackLines.setDrawingEnabled(false);
-
+                    trackLines.setLineStyle(jcbTrackLineStyle.getSelectedIndex());
+                    trackDsp.addDisplayable(trackLines);
                     trackDsp.setColor(curSwathColor);
-                    trackDsp.setLineWidth(curSwathCenterWidth);
+                    trackDsp.setLineWidth(jcbSCLineWidth.getSelectedIndex() + 1);
 
                     addDisplayable(trackDsp, FLAG_COLORTABLE);
                     addDisplayable(timeLabelDsp, FLAG_COLORTABLE);
@@ -564,7 +589,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
                 lSet[0] = left;
                 UnionSet lUSet = new UnionSet(lSet);
                 CurveDrawer leftLines = new CurveDrawer(lUSet);
-                leftLines.setLineStyle(1);
+                leftLines.setLineStyle(jcbEdgeLineStyle.getSelectedIndex());
                 leftLines.setData(lUSet);
                 swathEdgeDsp.addDisplayable(leftLines);
                 leftLines.setDrawingEnabled(false);
@@ -575,7 +600,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
                 rSet[0] = right;
                 UnionSet rUSet = new UnionSet(rSet);
                 CurveDrawer rightLines = new CurveDrawer(rUSet);
-                rightLines.setLineStyle(1);
+                rightLines.setLineStyle(jcbEdgeLineStyle.getSelectedIndex());
                 rightLines.setData(rUSet);
                 swathEdgeDsp.addDisplayable(rightLines);
                 rightLines.setDrawingEnabled(false);
@@ -598,14 +623,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
      */
     
     public Container doMakeContents() {
-        
-        String [] lineGSWidths = {"1", "2", "3", "4"};
-        String [] lineSCWidths = {"1", "2", "3", "4"};
-        String [] lineSEWidths = {"1", "2", "3", "4"};
-        jcbGSLineWidth = new JComboBox(lineGSWidths);
-        jcbSCLineWidth = new JComboBox(lineSCWidths);
-        jcbSCLineWidth.setSelectedIndex(1);
-        jcbSELineWidth = new JComboBox(lineSEWidths);
         
         fontSizePanel = new JPanel();
         fontSizePanel.setLayout(new BoxLayout(fontSizePanel, BoxLayout.Y_AXIS));
@@ -631,6 +648,17 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
         topPanel.add(js);
         topPanel.add(intervalUnits);
         
+        // line style for drawing swath track and width edges
+        jcbTrackLineStyle.addActionListener(this);
+        // init to solid
+        jcbTrackLineStyle.setSelectedIndex(0);
+        curTrackLineStyle = jcbTrackLineStyle.getSelectedIndex();
+
+        jcbEdgeLineStyle.addActionListener(this);
+        // init to dashed
+        jcbEdgeLineStyle.setSelectedIndex(1);
+        curEdgeLineStyle = jcbEdgeLineStyle.getSelectedIndex();
+        
         // last on this panel, check box to turn on/off swath line edges
         topPanel.add(Box.createHorizontalStrut(5));
         jcbSwathEdges = new JCheckBox("Swath Edges On/Off");
@@ -649,16 +677,24 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
         colorSwatch.setPreferredSize(new Dimension(30, 30));
         
         colorPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
-        colorPanel.add(new JLabel("Swath Color: "));
+        colorPanel.add(new JLabel("Color: "));
         colorPanel.add(colorSwatch);
         
         colorPanel.add(Box.createHorizontalStrut(5));
-        colorPanel.add(new JLabel("Swath Center Line Width: "));
+        colorPanel.add(new JLabel("Track Width: "));
         colorPanel.add(jcbSCLineWidth);
         
+        colorPanel.add(Box.createHorizontalStrut(4));
+        colorPanel.add(new JLabel("Track Style: "));
+        colorPanel.add(jcbTrackLineStyle);
+        
         colorPanel.add(Box.createHorizontalStrut(5));
-        colorPanel.add(new JLabel("Swath Edge Line Width: "));
+        colorPanel.add(new JLabel("Edge Width: "));
         colorPanel.add(jcbSELineWidth);
+        
+        colorPanel.add(Box.createHorizontalStrut(4));
+        colorPanel.add(new JLabel("Edge Style: "));
+        colorPanel.add(jcbEdgeLineStyle);
         
         JPanel groundStationPanel = makeGroundStationPanel();
 
@@ -667,7 +703,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
         JPanel outerPanel = new JPanel(new MigLayout());
         
         JPanel mainPanel = new JPanel(new MigLayout());
-        mainPanel.setBorder(BorderFactory.createTitledBorder(" Swath Width Controls "));
+        mainPanel.setBorder(BorderFactory.createTitledBorder(" Swath Controls "));
         mainPanel.add(swathWidthPanel, "wrap");
         mainPanel.add(fontSizePanel, "wrap");
         mainPanel.add(colorPanel, "wrap");
@@ -727,7 +763,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
             set[0] = circle;
             UnionSet uset = new UnionSet(set);
             coverageCircle = new CurveDrawer(uset);
-            coverageCircle.setLineStyle(jcbGSLineWidth.getSelectedIndex() + 1);
+            coverageCircle.setLineWidth(jcbGSLineWidth.getSelectedIndex() + 1);
+            coverageCircle.setLineStyle(jcbStationLineStyle.getSelectedIndex());
             coverageCircle.setColor(getAntColor());
             coverageCircle.setData(uset);
             coverageCircle.setDrawingEnabled(false);
@@ -830,10 +867,18 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
     @Override public boolean init(DataChoice dataChoice) 
         throws VisADException, RemoteException 
     {
-        // instantiate labels
+        logger.debug("init() in...");
+    	// instantiate components we need to exist at initialization
     	latLabel = new JLabel();
     	lonLabel = new JLabel();
     	altLabel = new JLabel();
+        String [] lineWidths = {"1", "2", "3", "4"};
+        jcbGSLineWidth = new JComboBox(lineWidths);
+        jcbSCLineWidth = new JComboBox(lineWidths);
+        // initialize swath center (track line) to width 2
+        jcbSCLineWidth.setSelectedIndex(1);
+        jcbEdgeLineStyle.setSelectedIndex(1);
+        jcbSELineWidth = new JComboBox(lineWidths);
         otFontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
         otFontSelector.setFont(FontSelector.DEFAULT_FONT);
         gsFontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
@@ -963,6 +1008,12 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
     	JPanel jp = new JPanel(new MigLayout());
         jp.setBorder(BorderFactory.createTitledBorder(" Ground Station Controls "));
 
+        // line style for drawing coverage circles
+        jcbStationLineStyle = new JComboBox(new String[] { "_____", "_ _ _", ".....", "_._._" });
+        jcbStationLineStyle.addActionListener(this);
+        jcbStationLineStyle.setSelectedIndex(1);
+        prvStationLineStyle = jcbStationLineStyle.getSelectedIndex();
+        
         locationComboBox = new JComboBox();
         jcbStationsPlotted = new JComboBox();
 
@@ -1022,12 +1073,16 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
         
         antColorPanel = new JPanel();
         antColorPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        antColorPanel.add(new JLabel("Ground Station Color: "));
+        antColorPanel.add(new JLabel("Color: "));
         antColorPanel.add(antColorSwatch);
         
         antColorPanel.add(Box.createHorizontalStrut(5));
-        antColorPanel.add(new JLabel("Ground Station Line Width: "));
+        antColorPanel.add(new JLabel("Line Width: "));
         antColorPanel.add(jcbGSLineWidth);
+        
+        antColorPanel.add(Box.createHorizontalStrut(5));
+        antColorPanel.add(new JLabel("Line Style: "));
+        antColorPanel.add(jcbStationLineStyle);
         
         antColorPanel.add(Box.createHorizontalStrut(5));
         antColorPanel.add(new JLabel("Antenna Angle: "));
