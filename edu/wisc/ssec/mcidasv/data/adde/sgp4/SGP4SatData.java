@@ -38,8 +38,11 @@ import java.io.Serializable;
  * converted to Java by:
  * @author Shawn E. Gano, shawn@gano.name
  */
+
 public class SGP4SatData implements Serializable
 {
+
+  private static final long serialVersionUID = 1L;
   public int   satnum; // changed to int SEG
   public int    epochyr, epochtynumrev;
   public int    error; // 0 = ok, 1= eccentricity (sgp4),   6 = satellite decay, 7 = tle data

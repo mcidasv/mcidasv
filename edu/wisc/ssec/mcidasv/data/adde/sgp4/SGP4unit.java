@@ -89,7 +89,6 @@ package edu.wisc.ssec.mcidasv.data.adde.sgp4;
  */
 public class SGP4unit
 {
-    public static double pi = 3.14159265358979323846;
 
     public static enum Gravconsttype
     {
@@ -184,7 +183,7 @@ public class SGP4unit
         //double inclp,nodep,argpp,mp; // ep -- input and output
 
         /* --------------------- local variables ------------------------ */
-        final double twopi = 2.0 * pi;
+        final double twopi = 2.0 * Math.PI;
         double alfdp, betdp, cosip, cosop, dalf, dbet, dls,
                 f2, f3, pe, pgh, ph, pinc, pl,
                 sel, ses, sghl, sghs, shll, shs, sil,
@@ -291,7 +290,7 @@ public class SGP4unit
                 {
                     nodep = nodep + twopi;
                 }
-                if(Math.abs(xnoh - nodep) > pi)
+                if(Math.abs(xnoh - nodep) > Math.PI)
                 {
                     if(nodep < xnoh)
                     {
@@ -481,7 +480,7 @@ public class SGP4unit
         final double zcosis = 0.91744867;
         final double zcosgs = 0.1945905;
         final double zsings = -0.98088458;
-        final double twopi = 2.0 * pi;
+        final double twopi = 2.0 * Math.PI;
 
         /* --------------------- local variables ------------------------ */
         int lsflg;
@@ -775,7 +774,7 @@ public class SGP4unit
         double dndt; // em,nm, inclm, argpm, nodem, mm are also inputs
 
         /* --------------------- local variables ------------------------ */
-        final double twopi = 2.0 * pi;
+        final double twopi = 2.0 * Math.PI;
 
         double ainv2, aonv = 0.0, cosisq, eoc, f220, f221, f311,
                 f321, f322, f330, f441, f442, f522, f523,
@@ -829,7 +828,7 @@ public class SGP4unit
         sghs = ss4 * zns * (sz31 + sz33 - 6.0);
         shs = -zns * ss2 * (sz21 + sz23);
         // sgp4fix for 180 deg incl
-        if((inclm < 5.2359877e-2) || (inclm > pi - 5.2359877e-2))
+        if((inclm < 5.2359877e-2) || (inclm > Math.PI - 5.2359877e-2))
         {
             shs = 0.0;
         }
@@ -846,7 +845,7 @@ public class SGP4unit
         sghl = s4 * znl * (z31 + z33 - 6.0);
         shll = -znl * s2 * (z21 + z23);
         // sgp4fix for 180 deg incl
-        if((inclm < 5.2359877e-2) || (inclm > pi - 5.2359877e-2))
+        if((inclm < 5.2359877e-2) || (inclm > Math.PI - 5.2359877e-2))
         {
             shll = 0.0;
         }
@@ -1106,7 +1105,7 @@ public class SGP4unit
         // Return variables (that are not also inputs)---------------------
         double dndt;
 
-        final double twopi = 2.0 * pi;
+        final double twopi = 2.0 * Math.PI;
         int iretn, iret;
         double delt, ft, theta, x2li, x2omi, xl, xldot, xnddt, xndt, xomi, g22, g32,
                 g44, g52, g54, fasx2, fasx4, fasx6, rptim, step2, stepn, stepp;
@@ -1341,7 +1340,7 @@ public class SGP4unit
         // sgp4fix use old way of finding gst
         double ds70;
         double ts70, tfrac, c1, thgr70, fk5r, c1p2p, thgr, thgro;
-        final double twopi = 2.0 * pi;
+        final double twopi = 2.0 * Math.PI;
 
         /* ----------------------- earth constants ---------------------- */
         // sgp4fix identify constants and allow alternate values
@@ -1777,7 +1776,7 @@ public class SGP4unit
             satrec.x7thm1 = 7.0 * cosio2 - 1.0;
 
             /* --------------- deep space initialization ------------- */
-            if((2 * pi / satrec.no) >= 225.0)
+            if((2 * Math.PI / satrec.no) >= 225.0)
             {
                 satrec.method = 'd';
                 satrec.isimp = 1;
@@ -2042,7 +2041,7 @@ public class SGP4unit
         // the old check used 1.0 + cos(pi-1.0e-9), but then compared it to
         // 1.5 e-12, so the threshold was changed to 1.5e-12 for consistency
         final double temp4 = 1.5e-12;
-        twopi = 2.0 * pi;
+        twopi = 2.0 * Math.PI;
         x2o3 = 2.0 / 3.0;
         // sgp4fix identify constants and allow alternate values
         double[] temp5 = getgravconst(satrec.gravconsttype);//, tumin, mu, radiusearthkm, xke, j2, j3, j4, j3oj2 );
@@ -2195,8 +2194,8 @@ public class SGP4unit
             if(xincp < 0.0)
             {
                 xincp = -xincp;
-                nodep = nodep + pi;
-                argpp = argpp - pi;
+                nodep = nodep + Math.PI;
+                argpp = argpp - Math.PI;
             }
             if((ep < 0.0) || (ep > 1.0))
             {
@@ -2361,8 +2360,8 @@ public class SGP4unit
      */
     public static double gstime(double jdut1)
     {
-        final double twopi = 2.0 * pi;
-        final double deg2rad = pi / 180.0;
+        final double twopi = 2.0 * Math.PI;
+        final double deg2rad = Math.PI / 180.0;
         double temp, tut1;
 
         tut1 = (jdut1 - 2451545.0) / 36525.0;

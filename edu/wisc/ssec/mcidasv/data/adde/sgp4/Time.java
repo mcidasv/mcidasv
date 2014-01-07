@@ -39,9 +39,13 @@ import java.util.TimeZone;
  * Used to keep track of a time and convert to multiple formats.
  * @author Shawn E. Gano
  */
+
 public class Time implements java.io.Serializable
 {     
-    // time units
+
+	private static final long serialVersionUID = 1L;
+	
+	// time units
     /**
      * year type
      */

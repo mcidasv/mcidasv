@@ -29,26 +29,17 @@
 //package jsattrak.coverage;
 package edu.wisc.ssec.mcidasv.data.adde.sgp4;
 
-import edu.wisc.ssec.mcidasv.data.GroundStations;
-
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Hashtable;
 import java.util.Vector;
-/*
-import jsattrak.gui.J2dEarthLabel2;
-import jsattrak.objects.AbstractSatellite;
-import jsattrak.objects.GroundStation;
-import name.gano.astro.GeoFunctions;
-import name.gano.astro.time.Time;
-*/
 
 /**
  *
  * @author Shawn
  */
+
 //public class CoverageAnalyzer implements JSatTrakRenderable,JSatTrakTimeDependent
 public class CoverageAnalyzer
 {

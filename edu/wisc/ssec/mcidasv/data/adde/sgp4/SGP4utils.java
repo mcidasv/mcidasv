@@ -68,7 +68,7 @@ import java.text.ParsePosition;
  */
 public class SGP4utils
 {
-    public static double pi = SGP4unit.pi;
+
     public static char OPSMODE_AFSPC = 'a';
     public static char OPSMODE_IMPROVED = 'i';
 
@@ -86,8 +86,8 @@ public class SGP4utils
      */
     public static boolean readTLEandIniSGP4(String satName, String line1, String line2, char opsmode, SGP4unit.Gravconsttype whichconst, SGP4SatData satrec)
     {
-        final double deg2rad = pi / 180.0;         //   0.0174532925199433
-        final double xpdotp = 1440.0 / (2.0 * pi);  // 229.1831180523293
+        final double deg2rad = Math.PI / 180.0;         //   0.0174532925199433
+        final double xpdotp = 1440.0 / (2.0 * Math.PI);  // 229.1831180523293
 
         double sec, tumin;//, mu, radiusearthkm, xke, j2, j3, j4, j3oj2;
 //        double startsec, stopsec, startdayofyr, stopdayofyr, jdstart, jdstop;

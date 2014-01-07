@@ -32,9 +32,12 @@ package edu.wisc.ssec.mcidasv.data.adde.sgp4;
  *
  * @author ganos
  */
+
 public class TLE implements java.io.Serializable
 {
-    String line0 = ""; // name line
+
+	private static final long serialVersionUID = 1L;
+	String line0 = ""; // name line
     String line1 = ""; // first line
     String line2 = ""; // second line
     

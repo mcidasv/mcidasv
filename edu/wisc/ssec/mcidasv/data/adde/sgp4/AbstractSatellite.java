@@ -28,10 +28,7 @@
 
 package edu.wisc.ssec.mcidasv.data.adde.sgp4;
 
-import java.awt.Color;
 import java.io.Serializable;
-//import jsattrak.utilities.TLE;
-//import name.gano.worldwind.modelloader.WWModel3D_new;
 
 /**
  *
@@ -47,7 +44,8 @@ public abstract class AbstractSatellite implements Serializable
      */
 //    public abstract double[] calculateJ2KPositionFromUT(double julDate);
 
-    /**
+	private static final long serialVersionUID = 1L;
+	/**
      * Calculate TEME of date position of this sat at a given JulDateTime (doesn't save the time) - can be useful for event searches or optimization
      * @param julDate - julian date
      * @return j2k position of satellite in meters
