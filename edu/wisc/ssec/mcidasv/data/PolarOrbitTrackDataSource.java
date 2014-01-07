@@ -81,8 +81,8 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
     /** list of twod categories */
     private List twoDCategories;
 
-    private List tleCards = new ArrayList();
-    private List choices = new ArrayList();
+    private ArrayList<String> tleCards = new ArrayList<String>();
+    private ArrayList<String> choices = new ArrayList<String>();
 
     private SGP4SatData data = new SGP4SatData();
     private TLE tle;
@@ -114,8 +114,8 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
            throws VisADException {
         super(descriptor, filename, null, properties);
 
-        tleCards = new ArrayList();
-        choices = new ArrayList();
+        tleCards = new ArrayList<String>();
+        choices = new ArrayList<String>();
         
         // we dealing with a local file?
         if (properties.containsKey(PolarOrbitTrackChooser.LOCAL_FILE_KEY)) {
@@ -149,13 +149,13 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
                 return;
             } else {
                 String[] cards = StringUtil.listToStringArray(lines);
-                for (int i=0; i<cards.length; i++) {
+                for (int i = 0; i < cards.length; i++) {
                     String str = cards[i];
                     if (str.length() > 0) {
-                        tleCards.add(cards[i]);
+                        tleCards.add(stripNonValidXMLCharacters(cards[i]));
                         int indx = cards[i].indexOf(" ");
                         if (indx < 0) {
-                            choices.add(cards[i]);
+                            choices.add(stripNonValidXMLCharacters(cards[i]));
                         }
                     }
                 }
@@ -172,9 +172,9 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
                 String nextLine = null;
                 while ((nextLine = tleReader.readLine()) != null) {
                     if (nextLine.length() > 0) {
-                        tleCards.add(nextLine);
+                        tleCards.add(stripNonValidXMLCharacters(nextLine));
                         if (nextLine.length() < 50) {
-                            choices.add(nextLine);
+                            choices.add(stripNonValidXMLCharacters(nextLine));
                         }
                     }
                 }
@@ -191,15 +191,15 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
             notTLE();
             return;
         }
-        String card = (String)tleCards.get(1);
+        String card = (String) tleCards.get(1);
         decodeCard1(card);
     }
 
     private int checksum(String str) {
         int sum = 0;
         byte[] bites = str.getBytes();
-        for (int i=0; i<bites.length; i++) {
-            int val = (int)bites[i];
+        for (int i = 0; i < bites.length; i++) {
+            int val = (int) bites[i];
             if ((val > 47) && (val < 58)) {
                 sum += val - 48;
             } else if (val == 45) {
@@ -210,11 +210,8 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
     }
 
     private int decodeCard1(String card) {
-/*
-        System.out.println("\ndecodeCard1:");
-        System.out.println("    card=" + card);
-        System.out.println("    length=" + card.length());
-*/
+
+    	logger.debug("Decoding card: " + card);
         int satId = 0;
         double ddd = 1.0;
         double firstDev = 1.0;
@@ -376,8 +373,8 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
      */
     protected void doMakeDataChoices() {
         String category = "TLE";
-        for (int i=0; i<choices.size(); i++) {
-            String name  = ((String)choices.get(i)).trim();
+        for (int i = 0; i < choices.size(); i++) {
+            String name  = ((String) choices.get(i)).trim();
             addDataChoice(
                 new DirectDataChoice(
                     this, name, name, name,
@@ -451,7 +448,7 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
 */
         tle = new TLE(choiceName, tleLine1, tleLine2);
 
-        String endStr = (String)this.selectionProps.get("ETime");
+        String endStr = (String) this.selectionProps.get("ETime");
         Double dEnd = new Double(endStr);
         double endJulianDate = dEnd.doubleValue();
         julDate1 = endJulianDate;
@@ -518,10 +515,50 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
     private int getInt(int beg, int end,  String card) {
         String str = card.substring(beg, end);
         str = str.trim();
-        return (new Integer(str)).intValue();
+        // TJJ Jan 2013 - this should get fixed, I've noticed it fails to parse
+        // numbers with a leading zero (e.g. +0.0).  This is handled in Java 7,
+        // so ideally the problem just goes away soon.
+        int tmp = Integer.parseInt(str);
+        return tmp;
     }
 
-    public double getNearestAltToGroundStation(double gsLat, double gsLon) {
+	/**
+	 * choices needs to persist to support bundles
+	 * @return the choices
+	 */
+    
+	public ArrayList<String> getChoices() {
+		return choices;
+	}
+
+	/**
+	 * choices needs to persist to support bundles
+	 * @param choices the choices to set
+	 */
+	
+	public void setChoices(ArrayList<String> choices) {
+		this.choices = choices;
+	}
+
+	/**
+	 * tleCards needs to persist to support bundles
+	 * @return the tleCards
+	 */
+	
+	public ArrayList<String> getTleCards() {
+		return tleCards;
+	}
+
+	/**
+	 * tleCards needs to persist to support bundles
+	 * @param tleCards the tleCards to set
+	 */
+	
+	public void setTleCards(ArrayList<String> tleCards) {
+		this.tleCards = tleCards;
+	}
+
+	public double getNearestAltToGroundStation(double gsLat, double gsLon) {
         double retAlt = 0.0;
         Time time = new Time(
                         (new Integer((String)this.selectionProps.get("Year"))).intValue(),
@@ -540,8 +577,8 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
 
             // get the lat/long/altitude [radians, radians, meters]
             double[] lla = prop.getLLA();
-            double lat = lla[0]*180.0/Math.PI;
-            double lon = lla[1]*180.0/Math.PI;
+            double lat = lla[0] * 180.0 / Math.PI;
+            double lon = lla[1] * 180.0 / Math.PI;
             double alt = lla[2];
             //System.out.println("    " + time.getDateTimeStr() + ": lat=" + lat + " lon=" + lon + " alt=" + alt);
 
@@ -592,8 +629,8 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
     }
 
     private void notTLE() {
-        tleCards = new ArrayList();
-        choices = new ArrayList();
+        tleCards = new ArrayList<String>();
+        choices = new ArrayList<String>();
         setInError(true, "\nSource does not contain TLE data");
     }
 
@@ -615,6 +652,40 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
         //System.out.println("\n\nshowPropertiesDialog:");
         boolean ret = super.showPropertiesDialog(initTabName, modal);
         return ret;
+    }
+    
+    /**
+     * TJJ Jan 2013 - this utility method should get moved to... good guess,
+     * a utility class.  Needed because invalid XML characters were getting 
+     * added to bundles.  This strips them out.
+     * 
+     * This method ensures that the output String has only
+     * valid XML unicode characters as specified by the
+     * XML 1.0 standard. For reference, please see
+     * <a href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-Char">the
+     * standard</a>. This method will return an empty
+     * String if the input is null or empty.
+     *
+     * @param in The String whose non-valid characters we want to remove.
+     * @return The in String, stripped of non-valid characters.
+     */
+    
+    public String stripNonValidXMLCharacters(String in) {
+        StringBuffer out = new StringBuffer(); // Used to hold the output.
+        char current; // Used to reference the current character.
+
+        if (in == null || ("".equals(in))) return ""; // vacancy test.
+        for (int i = 0; i < in.length(); i++) {
+            current = in.charAt(i); // NOTE: No IndexOutOfBoundsException caught here; it should not happen.
+            if ((current == 0x9) ||
+                (current == 0xA) ||
+                (current == 0xD) ||
+                ((current >= 0x20) && (current <= 0xD7FF)) ||
+                ((current >= 0xE000) && (current <= 0xFFFD)) ||
+                ((current >= 0x10000) && (current <= 0x10FFFF)))
+                out.append(current);
+        }
+        return out.toString();
     }
     
 }
