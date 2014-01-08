@@ -28,7 +28,6 @@
 
 package edu.wisc.ssec.mcidasv.chooser;
 
-import static javax.swing.GroupLayout.DEFAULT_SIZE;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
 import static javax.swing.GroupLayout.Alignment.TRAILING;
@@ -36,7 +35,6 @@ import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -65,10 +63,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.PreferenceList;
-
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.chooser.adde.AddeChooser;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
@@ -183,11 +181,15 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
     
     @Override
     public JComponent doMakeContents() {
+    	
+    	logger.debug("doMakeContents() in...");
         JPanel outerPanel = new JPanel();
         JPanel addePanel = new JPanel();
         addePanel = (JPanel) makeAddePanel();
         
-        tlefc = new TLEFileChooser(".");
+        // retrieve our last visited directory
+        String path = (String) getIdv().getStateManager().getPreference(IdvChooser.PREF_DEFAULTDIR + getId());
+        tlefc = new TLEFileChooser(path);
         tlefc.setPotc(this);
 
         JButton helpButton = McVGuiUtils.makeImageButton(ICON_HELP, "Show help");
@@ -233,11 +235,11 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         
         // populate and add the control panel
         controlPanel.add(helpButton);
-        controlPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        controlPanel.add(Box.createHorizontalStrut(5));
         controlPanel.add(refreshButton);
-        controlPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        controlPanel.add(Box.createHorizontalStrut(5));
         controlPanel.add(cancelButton);
-        controlPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        controlPanel.add(Box.createHorizontalStrut(5));
         controlPanel.add(loadButton);
         outerPanel.add(controlPanel, BorderLayout.PAGE_END);
 
@@ -276,12 +278,12 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
             	// disable the file chooser
             	tlefc.setEnabled(false);
                 for (int i=0; i<5; i++) {
-                    JComponent comp = (JComponent)(addeList.get(i));
+                    JComponent comp = (JComponent) (addeList.get(i));
                     comp.setEnabled(true);
                     enableDescriptors(true);
                 }
                 for (int i=5; i<7; i++) {
-                    JComponent comp = (JComponent)(addeList.get(i));
+                    JComponent comp = (JComponent) (addeList.get(i));
                     comp.setEnabled(false);
                 }
             }
@@ -326,7 +328,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
 
         prefList = getPreferenceList(PREF_URLLIST);
         box = prefList.createComboBox(CMD_LOAD, this);
-        boxEditor = (JTextField)box.getEditor().getEditorComponent();
+        boxEditor = (JTextField) box.getEditor().getEditorComponent();
         boxEditor.addKeyListener(new KeyListener() {
             public void keyPressed(KeyEvent e) {}
             public void keyReleased(KeyEvent e) {
@@ -357,7 +359,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
                             .addComponent(groupSelector)
                             .addGap(GAP_RELATED)
                             .addComponent(publicButton)
-                            .addPreferredGap(RELATED, DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addPreferredGap(RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(connectButton))
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(descLabel)
@@ -407,7 +409,6 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
     }
     
     public void enableFileLoad(boolean val) {
-    	logger.info("Enabling load button...");
     	loadButton.setEnabled(val);
     }
 

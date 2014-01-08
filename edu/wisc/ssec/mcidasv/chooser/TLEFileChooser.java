@@ -39,6 +39,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ucar.unidata.idv.chooser.IdvChooser;
+
 /**
  * An extension of JFileChooser to handle Two-Line Element (TLE)
  * files, for plotting satellite orbit tracks.
@@ -66,6 +68,7 @@ public class TLEFileChooser extends JFileChooser implements PropertyChangeListen
 	
     public TLEFileChooser(String path) {
         super(path);
+        logger.debug("TLEFileChooser constructor...");
         setControlButtonsAreShown(false);
         setMultiSelectionEnabled(false);
         FileFilter filter = new FileNameExtensionFilter("TLE files", "txt");
@@ -73,7 +76,6 @@ public class TLEFileChooser extends JFileChooser implements PropertyChangeListen
         setAcceptAllFileFilterUsed(false);
         setFileFilter(filter);
         addPropertyChangeListener(this);
-        logger.debug("TLEFileChooser constructor...");
     }
 
     /**
@@ -101,13 +103,17 @@ public class TLEFileChooser extends JFileChooser implements PropertyChangeListen
 				File f = getSelectedFile();
 				if ((f != null) && (accept(f))) {
 					if (! f.isDirectory()) {
+						// update last visited directory here
+						potc.getIdv().getStateManager().writePreference(
+								IdvChooser.PREF_DEFAULTDIR + potc.getId(), getSelectedFile().getParent()
+						);
 						potc.enableFileLoad(true);
 					}
 				} else {
 					potc.enableFileLoad(false);
 				}
 			} else {
-				logger.debug("null potc, wt?");
+				logger.warn("null potc, must be set by caller before use.");
 			}
 		}
 	}
