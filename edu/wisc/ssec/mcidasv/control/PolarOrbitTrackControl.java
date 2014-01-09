@@ -159,6 +159,11 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
     private JLabel lonLabel;
     private JLabel altLabel;
     private JTextField antennaAngle = new JTextField("" + DEFAULT_ANTENNA_ANGLE, DEFAULT_ANTENNA_ANGLE);
+    
+    // custom ground station UI components
+    JTextField customLat = null;
+    JTextField customLon = null;
+    JTextField customLab = null;
 
     /** the font selectors, Orbit Track (ot) and Ground Station (gs) */
     private FontSelector otFontSelector;
@@ -229,6 +234,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
 	private static final String STATION_MODS = "GroundStation";
 	private static final String STATION_ADD = "AddStation";
 	private static final String STATION_REM = "RemStation";
+	private static final String CUSTOM_ADD = "AddCustom";
 
     private Element root = null;
 
@@ -253,6 +259,65 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
      */
 
     public void actionPerformed(ActionEvent ae) {
+    	
+    	// user trying to add a custom ground station
+    	if (CUSTOM_ADD.equals(ae.getActionCommand())) {
+    		logger.debug("Custom Ground Station...");
+    		String labStr = customLab.getText();
+    		if ((labStr == null) || (labStr.isEmpty())) {
+            	JOptionPane.showMessageDialog(null, 
+    			"Please provide a label for the custom ground station.");
+            	return;
+    		}
+    		float fLat;
+    		float fLon;
+    		try {
+				fLat = Float.parseFloat(customLat.getText());
+				fLon = Float.parseFloat(customLon.getText());
+			} catch (NumberFormatException nfe) {
+            	JOptionPane.showMessageDialog(null, 
+    			"Latitude and Longitude must be floating point numbers, please correct.");
+            	return;
+			}
+    		if ((fLat < -90) || (fLat > 90)) {
+            	JOptionPane.showMessageDialog(null, 
+    			"Latitude is out of valid range: " + fLat);
+            	return;
+    		}
+    		if ((fLon < -180) || (fLon > 180)) {
+            	JOptionPane.showMessageDialog(null, 
+    			"Longitude is out of valid range: " + fLon);
+            	return;
+    		}
+    		// last check, is this label already used?
+    		int numPlotted = jcbStationsPlotted.getItemCount();
+    		for (int i = 0; i < numPlotted; i++) {
+    			String s = (String) jcbStationsPlotted.getItemAt(i);
+    			if ((s != null) && s.equals(station)) {
+                	JOptionPane.showMessageDialog(null, 
+                		"A station with this label has already been plotted: " + s);
+                    return;
+    			}
+    		}
+    		// if we made it this far, fields are valid, we can create a custom ground station
+    		// create new earth location, add it to stations plotted, set index, 
+			jcbStationsPlotted.addItem(labStr);
+			jcbStationsPlotted.setSelectedItem(labStr);
+			// make an Earth location
+			double dAlt = dataSource.getNearestAltToGroundStation(latitude, longitude) / 1000.0;
+			EarthLocationTuple elt = null;
+			try {
+				elt = new EarthLocationTuple(fLat, fLon, dAlt);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			} catch (VisADException e) {
+				e.printStackTrace();
+			}
+			stationMap.put(labStr, elt);
+			plotCoverageCircles();
+			updateDisplayList();
+    		return;
+    	}
     	
     	// user trying to add a new ground station to those plotted on display
     	if (STATION_ADD.equals(ae.getActionCommand())) {
@@ -1025,11 +1090,12 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
         GuiUtils.setListData(locationComboBox, keySet.toArray());
 
         // initialize with first Earth Location in our map
-        EarthLocationTuple elt = stationMap.get(locationComboBox.getSelectedItem());
-
-        latLabel.setText(elt.getLatitude().toString());
-        lonLabel.setText(elt.getLongitude().toString());
-        altLabel.setText(elt.getAltitude().toString());
+        if (! stationMap.isEmpty()) {
+        	EarthLocationTuple elt = stationMap.get(locationComboBox.getSelectedItem());
+        	latLabel.setText(elt.getLatitude().toString());
+        	lonLabel.setText(elt.getLongitude().toString());
+        	altLabel.setText(elt.getAltitude().toString());
+        }
         
         locationPanel = new JPanel();
         locationPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -1039,6 +1105,22 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
         addButton.setActionCommand(STATION_ADD);
         addButton.addActionListener(this);
         locationPanel.add(addButton);
+        
+        JPanel customPanel = new JPanel();
+        customPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        customPanel.add(new JLabel("Custom Ground Station:    Latitude: "));
+        customLat = new JTextField(6);
+        customPanel.add(customLat);
+        customPanel.add(new JLabel("Longitude: "));
+        customLon = new JTextField(6);
+        customPanel.add(customLon);
+        customPanel.add(new JLabel("Label: "));
+        customLab = new JTextField(6);
+        customPanel.add(customLab);
+        JButton customButton = new JButton("Add Custom");
+        customButton.setActionCommand(CUSTOM_ADD);
+        customButton.addActionListener(this);
+        customPanel.add(customButton);
         
         JPanel plottedStationsPanel = new JPanel();
         plottedStationsPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -1089,6 +1171,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
         antColorPanel.add(antennaAngle);
         
         jp.add(locationPanel, "wrap");
+        jp.add(customPanel, "wrap");
         jp.add(plottedStationsPanel, "wrap");
         jp.add(latLonAltPanel, "wrap");
         jp.add(Box.createVerticalStrut(5), "wrap");
@@ -1162,6 +1245,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
                 latLabel.setText(elt.getLatitude().toString());
                 lonLabel.setText(elt.getLongitude().toString());
                 altLabel.setText(elt.getAltitude().toString());
+                // quick and easy way to limit sig digits to something not too crazy
+                if (altLabel.getText().length() > 10) altLabel.setText(altLabel.getText().substring(0, 9));
                 latitude = Double.parseDouble(latLabel.getText());
                 longitude = Double.parseDouble(lonLabel.getText());
                 setSatelliteAltitude(dataSource.getNearestAltToGroundStation(latitude, longitude) / 1000.0);

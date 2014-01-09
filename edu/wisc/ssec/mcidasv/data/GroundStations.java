@@ -112,9 +112,9 @@ public class GroundStations
         }
     } // constructor
 
-    public int getGroundStationCount() {
-        return namedLocs.size();
-    }
+//    public int getGroundStationCount() {
+//        return namedLocs.size();
+//    }
     
     public HashMap getGroundStations() {
     	return namedLocs;
