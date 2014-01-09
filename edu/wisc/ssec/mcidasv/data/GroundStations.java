@@ -111,10 +111,6 @@ public class GroundStations
             logger.error("ERROR: Problem reading ground stations, missing file or invalid file format");
         }
     } // constructor
-
-//    public int getGroundStationCount() {
-//        return namedLocs.size();
-//    }
     
     public HashMap getGroundStations() {
     	return namedLocs;
