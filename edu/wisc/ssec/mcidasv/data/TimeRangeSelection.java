@@ -66,8 +66,8 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
       private JDateChooser begDay = null;
       private JDateChooser endDay = null;
 
-      protected static final String PROP_BEGTIME = "BeginTime";
-      protected static final String PROP_ENDTIME = "EndTime";
+      public static final String PROP_BEGTIME = "BeginTime";
+      public static final String PROP_ENDTIME = "EndTime";
       protected static final String PROP_BTIME = "BTime";
       protected static final String PROP_ETIME = "ETime";
       protected static final String PROP_YEAR = "Year";

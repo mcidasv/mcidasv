@@ -32,6 +32,7 @@ import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
 
 import edu.wisc.ssec.mcidasv.data.GroundStations;
 import edu.wisc.ssec.mcidasv.data.PolarOrbitTrackDataSource;
+import edu.wisc.ssec.mcidasv.data.TimeRangeSelection;
 import edu.wisc.ssec.mcidasv.data.adde.sgp4.AstroConst;
 import edu.wisc.ssec.mcidasv.data.hydra.CurveDrawer;
 import edu.wisc.ssec.mcidasv.util.XmlUtil;
@@ -42,9 +43,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.lang.Math;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -80,6 +79,7 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.GuiUtils.ColorSwatch;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
+import ucar.visad.UtcDate;
 import ucar.visad.Util;
 import ucar.visad.display.CompositeDisplayable;
 import ucar.visad.display.TextDisplayable;
@@ -109,7 +109,7 @@ import visad.georef.LatLonTuple;
  * parameter defaults.
  */
 
-public class PolarOrbitTrackControl extends DisplayControlImpl implements ActionListener, ItemListener {
+public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(PolarOrbitTrackControl.class);
 
@@ -863,7 +863,39 @@ public class PolarOrbitTrackControl extends DisplayControlImpl implements Action
         return (PolarOrbitTrackDataSource) ds;
     }
 
-    public double getLatitude() {
+	/* (non-Javadoc)
+	 * @see ucar.unidata.idv.control.DisplayControlImpl#getDisplayListData()
+	 */
+	@Override
+	protected Data getDisplayListData() {
+		// get time range that was specified in the Field Selector
+		String startTime = (String) getDataInstance().getDataSelection().getProperties().get(TimeRangeSelection.PROP_BEGTIME);
+		String endTime = (String) getDataInstance().getDataSelection().getProperties().get(TimeRangeSelection.PROP_ENDTIME);
+		
+		// get the template used for the Display Properties Layer Label
+		String labelTemplate = getDisplayListTemplate();
+
+		// see if time macro is enabled
+		boolean hasTimeMacro = UtcDate.containsTimeMacro(labelTemplate);
+		
+		// fetch the label superclass would normally generate
+		Data data = super.getDisplayListData();
+		
+		// if so, modify label with time range for this selection
+		if (hasTimeMacro) {
+			try {
+				TextType tt = TextType.getTextType(DISPLAY_LIST_NAME);
+				data  = new Text(tt, data.toString() + startTime + " - " + endTime);
+			} catch (VisADException vade) {
+				vade.printStackTrace();
+			}
+		}
+		
+		// return either original or modified data object
+		return data;
+	}
+
+	public double getLatitude() {
         return latitude;
     }
 
