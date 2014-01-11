@@ -78,8 +78,8 @@
      id="tle"
      categories="TLE"
      class="edu.wisc.ssec.mcidasv.control.PolarOrbitTrackControl"
-     description="Polar Orbit Track"
-     label="Polar Orbit Track"
+     description="Satellite Orbit Track"
+     label="Satellite Orbit Track"
      properties="windowVisible=true;"/>
   <control
      id="imagedisplay"
