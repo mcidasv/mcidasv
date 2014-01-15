@@ -36,6 +36,7 @@ from ucar.unidata.geoloc import LatLonPointImpl
 from ucar.unidata.ui.colortable import ColorTableDefaults
 from ucar.unidata.util import GuiUtils
 from ucar.visad import Util
+from ucar.visad.data import GeoGridFlatField
 
 # from collections import namedtuple
 
@@ -391,6 +392,42 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         # use %longname% now that it is getting set w/ SATBAND string:
         defaultLabel = '%longname% %timestamp%'
         return defaultLabel
+
+class _MappedGeoGridFlatField(_MappedData, GeoGridFlatField):
+    """ implements the 'mega-object' class for grids read with loadFile
+    """
+    def __init__(self, ggff, geogrid):
+        self.geogrid = geogrid
+        keys = ['attributes', 'datatype', 'description', 'info',
+                'levels', 'units', 'times', 'projection']
+        _MappedData.__init__(self, keys)
+        # call the "copy constructor", not copying values
+        GeoGridFlatField.__init__(self, ggff, False, ggff.getType(), 
+                ggff.getDomainSet(), ggff.RangeCoordinateSystem, 
+                ggff.RangeCoordinateSystems, ggff.RangeSet,
+                ggff.RangeUnits)
+    
+    def _getDirValue(self, key):
+        if key not in self._keys:
+            raise KeyError('unknown key: %s' % key)
+        if key == 'attributes':
+            return self.geogrid.getAttributes()
+        if key == 'datatype':
+            return self.geogrid.getDataType()
+        if key == 'description':
+            return self.geogrid.getDescription()
+        if key == 'info':
+            return self.geogrid.getInfo()
+        if key == 'levels':
+            return self.geogrid.getLevels()
+        if key == 'units':
+            return self.geogrid.getUnitsString()
+        if key == 'times':
+            return self.geogrid.getTimes()
+        if key == 'projection':
+            return self.geogrid.getProjection()
+        else:
+            raise KeyError('should not be capable of reaching here: %s')
 
 class _JavaProxy(object):
     """One sentence description goes here
@@ -2484,4 +2521,61 @@ def writeImageAtIndex(fname, idx, params='', quality=1.0):
     elem = islInterpreter.makeElement(xml)
     macros = islInterpreter.applyMacros(fname)
     islInterpreter.captureImage(macros, elem)
+
+def loadFile(filename=None, field=None, level=None, subset=None, 
+        time=None, **kwargs): 
+    """method for loading anything handled by the netCDF-java library
+       (netCDF, HDF, GRIB...)
+    """
+    from ucar.nc2.dt.grid import GridDataset
+    from ucar.unidata.data.grid import GeoGridAdapter
+    from visad import Real
+    from ucar.visad.data import GeoGridFlatField
+    from ucar.unidata.data.grid import GridUtil
+
+    dataType = 'Grid files (netCDF/GRIB/OPeNDAP/GEMPAK)'
+    if filename:
+        dataSource = createDataSource(filename, dataType)
+        gridDataset = GridDataset.open(filename)
+    else:
+        raise ValueError('no filename provided')
+
+    if field:
+        geogrid = gridDataset.findGridByName(field)
+        adapter = GeoGridAdapter(dataSource.getJavaInstance(), geogrid)
+    else:
+        raise ValueError('no field name provided')
+
+    if subset:
+        # use'makeSubset' method from Geogrid class.
+        # need to think about how user will pass this arg.
+        raise NotImplementedError('subset feature not implemented yet')
+
+    # get the FieldImpl
+    field = adapter.getData()
+
+    if time:
+        # get the flatfield...just treat time as an index right now for testing
+        # purposes
+        # TODO: let user pass an actual timestamp.
+        ff = field.getSample(time)
+    else:
+        # default to first time step...
+        ff = field.getSample(0)
+
+    # now we have flatfield, but with all levels
+    # don't need to handle case where user doesn't specify level-
+    # just let the IDV decide which to display
+    if level:
+        # this works for my test case but needs serious testing...
+        initdom = adapter.getInitialSpatialDomain(geogrid)
+        realtype = ff.getType().getDomain()[2]
+        theSlice = GridUtil.makeSliceFromLevel(initdom, Real(realtype, level))
+        ff = GeoGridFlatField(
+                geogrid, "readlock??", 0, theSlice, ff.getType())
+
+    # make the 'mega-object'
+    mapped = _MappedGeoGridFlatField(ff, geogrid)
+
+    return mapped
 
