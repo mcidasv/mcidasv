@@ -3,6 +3,8 @@ import hashlib
 import threading
 import urllib2
 
+import java.lang.Exception
+
 from collections import namedtuple
 
 from background import _MappedAreaImageFlatField
@@ -11,11 +13,14 @@ from java.util.concurrent import Callable
 from java.util.concurrent import Executors
 from java.util.concurrent import ExecutorCompletionService
 
+
 from edu.wisc.ssec.mcidas import AreaFile
 from edu.wisc.ssec.mcidas import AreaFileException
 from edu.wisc.ssec.mcidas import AreaFileFactory
 from edu.wisc.ssec.mcidas import AreaDirectory
 from edu.wisc.ssec.mcidas import AreaDirectoryList
+
+from edu.wisc.ssec.mcidas.adde import AddeException
 from edu.wisc.ssec.mcidas.adde import AddeURLException
 from edu.wisc.ssec.mcidas.adde import AddeTextReader
 from edu.wisc.ssec.mcidas.adde import AddeSatBands
@@ -269,7 +274,7 @@ class _AreaDirectoryList(object):
     def __str__(self):
         return str(self.values)
         
-class AddeJythonError(Exception): pass
+class AddeJythonError(Exception, java.lang.Exception): pass
 class AddeJythonInvalidDatasetError(AddeJythonError): pass
 class AddeJythonInvalidProjectError(AddeJythonError): pass
 class AddeJythonInvalidPortError(AddeJythonError): pass
@@ -1159,4 +1164,9 @@ def getADDEImage(localEntry=None,
     except AreaFileException, e:
         raise AddeJythonError(e)
     except AddeURLException, e:
+        raise AddeJythonError(e)
+    except AddeException, e:
+        if e.hasAddeErrorCode():
+            if e.getAddeErrorCode() == -5000:
+                raise AddeJythonUnknownDataError(e)
         raise AddeJythonError(e)

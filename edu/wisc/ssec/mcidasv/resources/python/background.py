@@ -53,6 +53,7 @@ from ucar.visad.data import AreaImageFlatField
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 from edu.wisc.ssec.mcidasv.servermanager import EntryStore
 from visad.data.mcidas import AreaAdapter
+from edu.wisc.ssec.mcidasv.util import ErrorCodeAreaAdapter
 
 def pause():
     getStaticMcv().waitUntilDisplaysAreDone()
@@ -203,20 +204,19 @@ class _MappedData(object):
         raise NotImplementedError()
         
 class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
-    def __init__(self, aiff, areaFile, areaDirectory, addeDescriptor, 
-            startTime):
-        """ 
+    def __init__(self, aiff, areaFile, areaDirectory, addeDescriptor, startTime):
+        """
         Make a _MappedAreaImageFlatField from an existing AreaImageFlatField
         """
         # self.__mappedObject = AreaImageFlatField.createImmediate(areaDirectory, imageUrl)
-        keys = [ 'band-count', 'bandList', 'bandNumber', 'bands', 
-                 'calibration-scale-factor', 'calibration-type', 
-                 'calibration-unit-name', 'calinfo', 'center-latitude', 
-                 'center-latitude-resolution', 'center-longitude', 
-                 'center-longitude-resolution', 'day', 'directory-block', 
-                 'elements', 'lines', 'memo-field', 'nominal-time', 
-                 'sensor-id', 'sensor-type', 'source-type', 'start-time', 
-                 'url','satband-band-label',]
+        keys = [ 'band-count', 'bandList', 'bandNumber', 'bands',
+                 'calibration-scale-factor', 'calibration-type',
+                 'calibration-unit-name', 'calinfo', 'center-latitude',
+                 'center-latitude-resolution', 'center-longitude',
+                 'center-longitude-resolution', 'day', 'directory-block',
+                 'elements', 'lines', 'memo-field', 'nominal-time',
+                 'sensor-id', 'sensor-type', 'source-type', 'start-time',
+                 'url','satband-band-label', ]
                  
         _MappedData.__init__(self, keys)
         self.areaFile = areaFile
@@ -234,10 +234,10 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
     @classmethod
     def fromUrl(cls, imageUrl):
         """
-        Create an AreaImageFlatField from a URL, then make a 
+        Create an AreaImageFlatField from a URL, then make a
         _MappedAreaImageFlatField
         """
-        aa = AreaAdapter(imageUrl, False)
+        aa = ErrorCodeAreaAdapter.createAreaAdapter(imageUrl)
         areaFile = aa.getAreaFile()
         areaDirectory = aa.getAreaDirectory()
         addeDescriptor = AddeImageDescriptor(areaDirectory, imageUrl)
@@ -248,10 +248,10 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         rangeCoordSys = ff.getRangeCoordinateSystem()[0]
         rangeSets = ff.getRangeSets()
         units = ff.getRangeUnits()[0]
-        aiff = AreaImageFlatField(addeDescriptor, ftype, domainSet, 
+        aiff = AreaImageFlatField(addeDescriptor, ftype, domainSet,
                 rangeCoordSys, rangeSets, units, samples, "READLABEL")
         areaFile.close()
-        return cls(aiff, areaFile, areaDirectory, addeDescriptor, 
+        return cls(aiff, areaFile, areaDirectory, addeDescriptor,
                 ff.getStartTime())
                 
     def clone(self):
