@@ -2554,7 +2554,10 @@ def loadFile(filename=None, field=None, level=None, subset=None,
     # get the FieldImpl
     field = adapter.getData()
 
-    if time:
+    if not GridUtil.isSequence(field):
+        # not a time sequence / already a flatfield
+        ff = field
+    elif time:
         # get the flatfield...just treat time as an index right now for testing
         # purposes
         # TODO: let user pass an actual timestamp.
