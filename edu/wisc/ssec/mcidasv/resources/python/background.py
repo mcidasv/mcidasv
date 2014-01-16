@@ -396,10 +396,12 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
 class _MappedGeoGridFlatField(_MappedData, GeoGridFlatField):
     """ implements the 'mega-object' class for grids read with loadFile
     """
-    def __init__(self, ggff, geogrid):
+    def __init__(self, ggff, geogrid, filename, field):
         self.geogrid = geogrid
+        self.filename = filename
+        self.field = field
         keys = ['attributes', 'datatype', 'description', 'info',
-                'levels', 'units', 'times', 'projection']
+                'levels', 'units', 'times', 'projection', 'field', 'filename']
         _MappedData.__init__(self, keys)
         # call the "copy constructor", not copying values
         GeoGridFlatField.__init__(self, ggff, False, ggff.getType(), 
@@ -426,8 +428,32 @@ class _MappedGeoGridFlatField(_MappedData, GeoGridFlatField):
             return self.geogrid.getTimes()
         if key == 'projection':
             return self.geogrid.getProjection()
+        if key == 'field':
+            return self.field
+        if key == 'filename':
+            return self.filename
         else:
             raise KeyError('should not be capable of reaching here: %s')
+
+    def getMacrosDict(self):
+        """return a dictionary mapping IDV macro strings to reasonable defaults
+        for this object
+        """
+        from os.path import basename
+        longname = self['description']
+        shortname = self['field']
+        #TODO: figure out how to actually set this macro (in createLayer)
+        datasourcename = basename(self['filename'])
+        macros = {'longname': longname, 'shortname': shortname,
+                  'datasourcename': datasourcename 
+                  }
+        return macros
+
+    def getDefaultLayerLabel(self):
+        """return a reasonable default layer label for this class
+        """
+        defaultLabel = '%longname% %timestamp%'
+        return defaultLabel
 
 class _JavaProxy(object):
     """One sentence description goes here
@@ -1196,7 +1222,7 @@ class _Display(_JavaProxy):
             except TypeError:
                 # ImageSequenceImpl constructor failed for both single
                 # image and list of image cases, but that's OK
-                firstData = None
+                pass
 
         # figure out the shortname and longname macros if possible,
         # and default layer label
@@ -2552,19 +2578,19 @@ def loadFile(filename=None, field=None, level=None, subset=None,
         raise NotImplementedError('subset feature not implemented yet')
 
     # get the FieldImpl
-    field = adapter.getData()
+    fieldImpl = adapter.getData()
 
-    if not GridUtil.isSequence(field):
+    if not GridUtil.isSequence(fieldImpl):
         # not a time sequence / already a flatfield
-        ff = field
+        ff = fieldImpl
     elif time:
         # get the flatfield...just treat time as an index right now for testing
         # purposes
         # TODO: let user pass an actual timestamp.
-        ff = field.getSample(time)
+        ff = fieldImpl.getSample(time)
     else:
         # default to first time step...
-        ff = field.getSample(0)
+        ff = fieldImpl.getSample(0)
 
     # now we have flatfield, but with all levels
     # don't need to handle case where user doesn't specify level-
@@ -2578,7 +2604,7 @@ def loadFile(filename=None, field=None, level=None, subset=None,
                 geogrid, "readlock??", 0, theSlice, ff.getType())
 
     # make the 'mega-object'
-    mapped = _MappedGeoGridFlatField(ff, geogrid)
+    mapped = _MappedGeoGridFlatField(ff, geogrid, filename, field)
 
     return mapped
 
