@@ -50,10 +50,13 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.text.MaskFormatter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * JTextFieldDateEditor is the default editor used by JDateChooser. It is a
- * formatted text field, that colores valid dates green/black and invalid dates
- * red. The date format patten and mask can be set manually. If not set, the
+ * formatted text field, that colors valid dates green/black and invalid dates
+ * red. The date format pattern and mask can be set manually. If not set, the
  * MEDIUM pattern of a SimpleDateFormat with regards to the actual locale is
  * used.
  * 
@@ -61,9 +64,12 @@ import javax.swing.text.MaskFormatter;
  * @version $LastChangedRevision: 97 $
  * @version $LastChangedDate: 2006-05-24 17:30:41 +0200 (Mi, 24 Mai 2006) $
  */
+
 public class JTextFieldDateEditor extends JFormattedTextField implements IDateEditor,
 		CaretListener, FocusListener, ActionListener {
 
+	private static final Logger logger = LoggerFactory.getLogger(JTextFieldDateEditor.class);
+	
 	private static final long serialVersionUID = -8901842591101625304L;
 
 	protected Date date;
@@ -186,6 +192,7 @@ public class JTextFieldDateEditor extends JFormattedTextField implements IDateEd
 
 			String formattedDate = dateFormatter.format(date);
 			try {
+				logger.debug("Setting text: " + formattedDate);
 				setText(formattedDate);
 			} catch (RuntimeException e) {
 				e.printStackTrace();
@@ -314,7 +321,7 @@ public class JTextFieldDateEditor extends JFormattedTextField implements IDateEd
 
 	/**
 	 * Creates a mask from a date pattern. This is a very simple (and
-	 * incomplete) implementation thet works only with numbers. A date pattern
+	 * incomplete) implementation that works only with numbers. A date pattern
 	 * of "MM/dd/yy" will result in the mask "##/##/##". Probably you want to
 	 * override this method if it does not fit your needs.
 	 * 
@@ -322,6 +329,7 @@ public class JTextFieldDateEditor extends JFormattedTextField implements IDateEd
 	 *            the date pattern
 	 * @return the mask
 	 */
+	
 	public String createMaskFromDatePattern(String datePattern) {
 		String symbols = "GyMdkHmsSEDFwWahKzZ";
 		String mask = "";
@@ -398,10 +406,11 @@ public class JTextFieldDateEditor extends JFormattedTextField implements IDateEd
 	}
 
 	/**
-	 * Enables and disabled the compoment. It also fixes the background bug
-	 * 4991597 and sets the background explicitely to a
+	 * Enables and disabled the component. It also fixes the background bug
+	 * 4991597 and sets the background explicitly to a
 	 * TextField.inactiveBackground.
 	 */
+	
 	public void setEnabled(boolean b) {
 		super.setEnabled(b);
 		if (!b) {

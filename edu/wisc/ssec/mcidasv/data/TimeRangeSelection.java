@@ -103,6 +103,12 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
         begDay.setMaximumSize(new Dimension(140, 20));
         endDay = new JDateChooser(defaultDay);
         endDay.setMaximumSize(new Dimension(140, 20));
+        
+        // make them listen to each other to maintain range validity (beg <= end) and vice versa
+        begDay.getJCalendar().getDayChooser().setName(JDayChooser.BEG_DAY);
+        endDay.getJCalendar().getDayChooser().setName(JDayChooser.END_DAY);
+        begDay.getJCalendar().getDayChooser().addPropertyChangeListener("day", endDay);
+        endDay.getJCalendar().getDayChooser().addPropertyChangeListener("day", begDay);
 
         GroupLayout layout = new GroupLayout(timeRangeComp);
         timeRangeComp.setLayout(layout);

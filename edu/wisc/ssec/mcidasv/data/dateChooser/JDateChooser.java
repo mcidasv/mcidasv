@@ -51,8 +51,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * A date chooser containig a date editor and a button, that makes a JCalendar
+ * A date chooser containing a date editor and a button, that makes a JCalendar
  * visible for choosing a date. If no date editor is specified, a
  * JTextFieldDateEditor is used as default.
  * 
@@ -60,9 +63,12 @@ import javax.swing.event.ChangeListener;
  * @version $LastChangedRevision: 101 $
  * @version $LastChangedDate: 2006-06-04 14:42:29 +0200 (So, 04 Jun 2006) $
  */
+
 public class JDateChooser extends JPanel implements ActionListener,
 		PropertyChangeListener {
 
+	private static final Logger logger = LoggerFactory.getLogger(JDateChooser.class);
+	
 	private static final long serialVersionUID = -4306412745720670722L;
 
 	protected IDateEditor dateEditor;
@@ -309,6 +315,7 @@ public class JDateChooser extends JPanel implements ActionListener,
 	 *            the event
 	 */
 	public void propertyChange(PropertyChangeEvent evt) {
+		
 		if (evt.getPropertyName().equals("day")) {
 			if (popup.isVisible()) {
 				dateSelected = true;
@@ -322,6 +329,65 @@ public class JDateChooser extends JPanel implements ActionListener,
 				setDate((Date) evt.getNewValue());
 			}
 		}
+		
+		// if event source was a day chooser, may need to check start/end day bounds
+		if (evt.getSource() instanceof JDayChooser) {
+
+			JDayChooser jdcSrc = (JDayChooser) evt.getSource();
+			
+			String srcName = jdcSrc.getName();
+			String dstName = jcalendar.getDayChooser().getName();
+			if ((srcName != null) && (dstName != null)) {
+				
+				// property event from start day chooser to end day chooser
+				if (srcName.equals(JDayChooser.BEG_DAY) && (dstName.equals(JDayChooser.END_DAY))) {
+					JDayChooser jdcDst = jcalendar.getDayChooser();
+					Calendar srcCal = Calendar.getInstance();
+					srcCal.set(Calendar.YEAR, jdcSrc.getYear());
+					srcCal.set(Calendar.MONTH, jdcSrc.getMonth());
+					srcCal.set(Calendar.DAY_OF_MONTH, jdcSrc.getDay());
+					Calendar dstCal = Calendar.getInstance();
+					dstCal.set(Calendar.YEAR, jdcDst.getYear());
+					dstCal.set(Calendar.MONTH, jdcDst.getMonth());
+					dstCal.set(Calendar.DAY_OF_MONTH, jdcDst.getDay());
+					if (srcCal.after(dstCal)) {
+						logger.debug("Adjusting: Src date exceeds Dst date...");
+						jdcDst.setDay(srcCal.get(Calendar.DAY_OF_MONTH));
+						jdcDst.setMonth(srcCal.get(Calendar.MONTH));
+						jdcDst.setYear(srcCal.get(Calendar.YEAR) - 1900);
+						dateEditor.setDate(srcCal.getTime());
+						if (getParent() != null) {
+							getParent().invalidate();
+						}
+					}
+				}
+				
+				// property event from end day chooser to start day chooser
+				if (srcName.equals(JDayChooser.END_DAY) && (dstName.equals(JDayChooser.BEG_DAY))) {
+					JDayChooser jdcDst = jcalendar.getDayChooser();
+					Calendar srcCal = Calendar.getInstance();
+					srcCal.set(Calendar.YEAR, jdcSrc.getYear());
+					srcCal.set(Calendar.MONTH, jdcSrc.getMonth());
+					srcCal.set(Calendar.DAY_OF_MONTH, jdcSrc.getDay());
+					Calendar dstCal = Calendar.getInstance();
+					dstCal.set(Calendar.YEAR, jdcDst.getYear());
+					dstCal.set(Calendar.MONTH, jdcDst.getMonth());
+					dstCal.set(Calendar.DAY_OF_MONTH, jdcDst.getDay());
+					if (srcCal.before(dstCal)) {
+						logger.debug("Adjusting: End date preceeds Src date...");
+						jdcDst.setDay(srcCal.get(Calendar.DAY_OF_MONTH));
+						jdcDst.setMonth(srcCal.get(Calendar.MONTH));
+						jdcDst.setYear(srcCal.get(Calendar.YEAR) - 1900);
+						dateEditor.setDate(srcCal.getTime());
+						if (getParent() != null) {
+							getParent().invalidate();
+						}
+					}
+				}
+				
+			}
+		}
+		
 	}
 
 	/**
@@ -346,6 +412,13 @@ public class JDateChooser extends JPanel implements ActionListener,
 		super.setLocale(l);
 		dateEditor.setLocale(l);
 		jcalendar.setLocale(l);
+	}
+
+	/**
+	 * @return the jcalendar
+	 */
+	public JCalendar getJcalendar() {
+		return jcalendar;
 	}
 
 	/**

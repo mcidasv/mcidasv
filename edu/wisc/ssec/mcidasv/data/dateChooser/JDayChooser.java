@@ -61,7 +61,10 @@ import javax.swing.UIManager;
  */
 public class JDayChooser extends JPanel implements ActionListener, KeyListener,
 		FocusListener {
+	
 	private static final long serialVersionUID = 5876398337018781820L;
+	public static final String BEG_DAY = "BEG_DAY";
+	public static final String END_DAY = "END_DAY";
 
 	protected JButton[] days;
 
@@ -498,6 +501,28 @@ public class JDayChooser extends JPanel implements ActionListener, KeyListener,
 	 */
 	public int getDay() {
 		return day;
+	}
+	
+	/**
+	 * Returns the selected month.
+	 * 
+	 * @return the month value
+	 * 
+	 * @see #setMonth
+	 */
+	public int getMonth() {
+		return calendar.get(Calendar.MONTH);
+	}
+	
+	/**
+	 * Returns the selected year.
+	 * 
+	 * @return the year value
+	 * 
+	 * @see #setYear
+	 */
+	public int getYear() {
+		return calendar.get(Calendar.YEAR);
 	}
 
 	/**
