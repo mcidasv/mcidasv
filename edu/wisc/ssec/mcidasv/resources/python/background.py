@@ -2572,6 +2572,7 @@ def loadFile(filename=None, field=None, level=None, subset=None,
         raise ValueError('no field name provided')
     
     if level:
+        # TODO: type checking on level
         # expecting string specifying value and units, e.g. "1000 hPa"
         levelWanted = Util.toReal(level)
         levels = geogrid.getLevels()
@@ -2584,6 +2585,13 @@ def loadFile(filename=None, field=None, level=None, subset=None,
                 geogrid = geogrid.subset(None, Range(i, i), None, None)
                 break
 
+    if time: 
+        # TODO: type checking on time
+        geogrid = geogrid.subset(Range(time, time), None, None, None)
+    else:
+        # default to first time step...
+        geogrid = geogrid.subset(Range(0, 0), None, None, None)
+
     adapter = GeoGridAdapter(dataSource.getJavaInstance(), geogrid)
 
     if subset:
@@ -2591,20 +2599,9 @@ def loadFile(filename=None, field=None, level=None, subset=None,
         # need to think about how user will pass this arg.
         raise NotImplementedError('subset feature not implemented yet')
 
-    # get the FieldImpl
+    # get the flatfield
     fieldImpl = adapter.getData()
-
-    if not GridUtil.isSequence(fieldImpl):
-        # not a time sequence / already a flatfield
-        ff = fieldImpl
-    elif time:
-        # get the flatfield...just treat time as an index right now for testing
-        # purposes
-        # TODO: let user pass an actual timestamp.
-        ff = fieldImpl.getSample(time)
-    else:
-        # default to first time step...
-        ff = fieldImpl.getSample(0)
+    ff = fieldImpl.getSample(0) # b/c we are certain there is only one time step.
 
     # make the 'mega-object'
     mapped = _MappedGeoGridFlatField(ff, geogrid, filename, field)
