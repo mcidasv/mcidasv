@@ -1211,6 +1211,26 @@ class _Display(_JavaProxy):
         # SingleBandedImage's), or just a single one of those.
         firstData = data  # keep a ref to the first image in the list
                            # for layer labeling, etc.
+
+        # TODO: something more elegant than this type check?
+        # (i.e. type checking should be done in makeMappedGeoGridFlatFieldSequence
+        #  which could raise an exception in event of wrong data type.)
+        try:
+            if isinstance(data[0], _MappedGeoGridFlatField):
+                data = makeMappedGeoGridFlatFieldSequence(data)
+                firstData = data[0]
+        except KeyError:
+            # perhaps a single _MappedGeoGridFlatField
+            # (which is also a dict, so subscripting with 0 gives KeyError)
+            if isinstance(data, _MappedGeoGridFlatField):
+                data = makeMappedGeoGridFlatFieldSequence([data])
+                firstData = data
+        except TypeError:
+            # perhaps not a list or a _MappedGeoGridFlatField
+            pass
+
+        # TODO: don't need to run this code if already have successfully
+        #       run makeMappedGeoGridFlatFieldSequence...
         try:
             data = ImageSequenceImpl(data)
             firstData = firstData[0]
@@ -2607,4 +2627,32 @@ def loadFile(filename=None, field=None, level=None, subset=None,
     mapped = _MappedGeoGridFlatField(ff, geogrid, filename, field)
 
     return mapped
+
+def makeMappedGeoGridFlatFieldSequence(sequence):
+    """turn a list of _MappedGeoGridFlatField's into a FieldImpl with time
+       domain that is suitable for displaying. 
+       For now this is "dumb" ... assume input is:
+       - in temporal order
+       - a list of _MappedGeoGridFlatField's read from loadFile
+       - and therefore each element has a 'times' key that looks like:
+            2000-01-24 12:00:00Z
+    """
+    from ucar.visad import Util
+    from visad import DateTime
+    from visad import FieldImpl
+    from visad import FunctionType
+    from visad import RealType
+    dateTimes = []
+    for ff in sequence:
+        # major TODO: generalize this bit...(especially time zone issue)
+        DateTime.resetFormat()
+        dateTimes.append(
+            DateTime.createDateTime(ff['times'][0].getName()[:-1]))
+    timeSet = Util.makeTimeSet(dateTimes)
+    ftype = FunctionType(RealType.Time, ff.getType())
+    fi = FieldImpl(ftype, timeSet)
+    for i, ff in enumerate(sequence):
+        fi.setSample(i, ff)
+    return fi
+
 
