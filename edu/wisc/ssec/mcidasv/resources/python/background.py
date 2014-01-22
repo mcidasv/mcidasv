@@ -2555,9 +2555,9 @@ def loadFile(filename=None, field=None, level=None, subset=None,
     """
     from ucar.nc2.dt.grid import GridDataset
     from ucar.unidata.data.grid import GeoGridAdapter
-    from visad import Real
-    from ucar.visad.data import GeoGridFlatField
     from ucar.unidata.data.grid import GridUtil
+    from ucar.ma2 import Range
+    from ucar.visad import Util
 
     dataType = 'Grid files (netCDF/GRIB/OPeNDAP/GEMPAK)'
     if filename:
@@ -2568,9 +2568,23 @@ def loadFile(filename=None, field=None, level=None, subset=None,
 
     if field:
         geogrid = gridDataset.findGridByName(field)
-        adapter = GeoGridAdapter(dataSource.getJavaInstance(), geogrid)
     else:
         raise ValueError('no field name provided')
+    
+    if level:
+        # expecting string specifying value and units, e.g. "1000 hPa"
+        levelWanted = Util.toReal(level)
+        levels = geogrid.getLevels()
+        for i, levelToTest in enumerate(levels):
+            levelString = '%s %s' % (levelToTest.getName(), levelToTest.getDescription())
+            levelReal = Util.toReal(levelString)
+            # actually utilize visad comparison magic!
+            if levelWanted == levelReal:
+                # slice the desired level
+                geogrid = geogrid.subset(None, Range(i, i), None, None)
+                break
+
+    adapter = GeoGridAdapter(dataSource.getJavaInstance(), geogrid)
 
     if subset:
         # use'makeSubset' method from Geogrid class.
@@ -2591,17 +2605,6 @@ def loadFile(filename=None, field=None, level=None, subset=None,
     else:
         # default to first time step...
         ff = fieldImpl.getSample(0)
-
-    # now we have flatfield, but with all levels
-    # don't need to handle case where user doesn't specify level-
-    # just let the IDV decide which to display
-    if level:
-        # this works for my test case but needs serious testing...
-        initdom = adapter.getInitialSpatialDomain(geogrid)
-        realtype = ff.getType().getDomain()[2]
-        theSlice = GridUtil.makeSliceFromLevel(initdom, Real(realtype, level))
-        ff = GeoGridFlatField(
-                geogrid, "readlock??", 0, theSlice, ff.getType())
 
     # make the 'mega-object'
     mapped = _MappedGeoGridFlatField(ff, geogrid, filename, field)
