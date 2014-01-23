@@ -70,16 +70,13 @@ import edu.wisc.ssec.mcidasv.data.adde.sgp4.Time;
  * Class for Two-Line-Element data sources, to plot orbit tracks
  * on McIDAS-V display window.
  *
- * @author Tommy Jasmin
+ * @author Gail Dengel and Tommy Jasmin
  * @version $Revision$
  */
 
 public class PolarOrbitTrackDataSource extends DataSourceImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(PolarOrbitTrackDataSource.class);
-
-    /** list of twod categories */
-    private List twoDCategories;
 
     private ArrayList<String> tleCards = new ArrayList<String>();
     private ArrayList<String> choices = new ArrayList<String>();
@@ -480,8 +477,8 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
 
             // get the lat/long/altitude [radians, radians, meters]
             double[] lla = prop.getLLA();
-            double lat = lla[0]*180.0/Math.PI;
-            double lon = lla[1]*180.0/Math.PI;
+            double lat = lla[0] * 180.0 / Math.PI;
+            double lon = lla[1] * 180.0 / Math.PI;
 
 /*
              System.out.println(time.getDateTimeStr() + " Lat: " + lat
@@ -618,14 +615,6 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
             logger.error("problem creating TimeRangeSelection e=" + e);
         }
         idv.showNormalCursor();
-    }
-
-    /**
-     * Initialize the {@link ucar.unidata.data.DataCategory} objects that
-     * this data source uses. 
-     */
-    private void makeCategories() {
-        twoDCategories = DataCategory.parseCategories("TLE", false);
     }
 
     private void notTLE() {
