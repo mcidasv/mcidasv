@@ -2659,7 +2659,7 @@ def loadFileListFieldsInFile(filename):
     from ucar.nc2.dt.grid import GridDataset
     gridDataset = GridDataset.open(filename)
     for grid in gridDataset.getGrids():
-        print '%s %s' % (grid.getName(), grid.getDescription())
+        print '%s ; %s' % (grid.getName(), grid.getDescription())
 
 def loadFileListLevelsInField(filename, field):
     from ucar.nc2.dt.grid import GridDataset
