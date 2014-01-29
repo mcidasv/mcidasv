@@ -2574,10 +2574,11 @@ def loadFile(filename=None, field=None, level=None, subset=None,
        (netCDF, HDF, GRIB...)
     """
     from ucar.nc2.dt.grid import GridDataset
+    from ucar.unidata.data import DataUtil
     from ucar.unidata.data.grid import GeoGridAdapter
-    from ucar.unidata.data.grid import GridUtil
     from ucar.ma2 import Range
     from ucar.visad import Util
+    from visad import DateTime
 
     dataType = 'Grid files (netCDF/GRIB/OPeNDAP/GEMPAK)'
     if filename:
@@ -2606,8 +2607,22 @@ def loadFile(filename=None, field=None, level=None, subset=None,
                 break
 
     if time: 
-        # TODO: type checking on time
-        geogrid = geogrid.subset(Range(time, time), None, None, None)
+        if isinstance(time, str):
+            foundTime = False
+            # make a visad DateTime out of the string, and compare to the 
+            # times in the file by creating visad DateTime's out of those.
+            dateTime = DateTime.createDateTime(time)
+            dateTimesInFile = DataUtil.makeDateTimes(geogrid.getCoordinateSystem().getTimeAxis1D())
+            for i, timeInFile in enumerate(dateTimesInFile):
+                if dateTime.equals(timeInFile):
+                    geogrid = geogrid.subset(Range(i, i), None, None, None)
+                    foundTime = True
+                    break
+            if not foundTime:
+                raise ValueError('Could not find time specified: %s' % time)
+        else:
+            # assume time is integer specifying time step index
+            geogrid = geogrid.subset(Range(time, time), None, None, None)
     else:
         # default to first time step...
         geogrid = geogrid.subset(Range(0, 0), None, None, None)
