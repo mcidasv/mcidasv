@@ -2655,4 +2655,23 @@ def makeMappedGeoGridFlatFieldSequence(sequence):
         fi.setSample(i, ff)
     return fi
 
+def loadFileListFieldsInFile(filename):
+    from ucar.nc2.dt.grid import GridDataset
+    gridDataset = GridDataset.open(filename)
+    for grid in gridDataset.getGrids():
+        print '%s %s' % (grid.getName(), grid.getDescription())
+
+def loadFileListLevelsInField(filename, field):
+    from ucar.nc2.dt.grid import GridDataset
+    gridDataset = GridDataset.open(filename)
+    geogrid = gridDataset.findGridByName(field)
+    for level in geogrid.getLevels():
+        print '%s %s' % (level.getName(), level.getDescription())
+
+def loadFileListTimesInField(filename, field):
+    from ucar.nc2.dt.grid import GridDataset
+    gridDataset = GridDataset.open(filename)
+    geogrid = gridDataset.findGridByName(field)
+    for time in geogrid.getTimes():
+        print time
 
