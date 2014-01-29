@@ -2634,20 +2634,16 @@ def makeMappedGeoGridFlatFieldSequence(sequence):
        For now this is "dumb" ... assume input is:
        - in temporal order
        - a list of _MappedGeoGridFlatField's read from loadFile
-       - and therefore each element has a 'times' key that looks like:
-            2000-01-24 12:00:00Z
     """
+    from ucar.unidata.data import DataUtil
     from ucar.visad import Util
-    from visad import DateTime
     from visad import FieldImpl
     from visad import FunctionType
     from visad import RealType
     dateTimes = []
     for ff in sequence:
-        # major TODO: generalize this bit...(especially time zone issue)
-        DateTime.resetFormat()
-        dateTimes.append(
-            DateTime.createDateTime(ff['times'][0].getName()[:-1]))
+        timeAxis = ff.geogrid.getCoordinateSystem().getTimeAxis1D()
+        dateTimes.append(DataUtil.makeDateTimes(timeAxis)[0])
     timeSet = Util.makeTimeSet(dateTimes)
     ftype = FunctionType(RealType.Time, ff.getType())
     fi = FieldImpl(ftype, timeSet)
