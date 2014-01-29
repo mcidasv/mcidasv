@@ -787,19 +787,20 @@ public class InteractiveShell implements HyperlinkListener {
 }
 
 class HTMLCleanupTransferHandler extends TransferHandler {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(HTMLCleanupTransferHandler.class);
-    
+
     protected Transferable createTransferable(JComponent c) {
         final JEditorPane pane = (JEditorPane)c;
-        final String htmlText = pane.getSelectedText();
+        final String htmlText = pane.getSelectedText().replace("<", "&lt;").replace(">", "&gt;");
         final String plainText = extractText(new StringReader(htmlText));
+//        logger.trace("htmltext=\"{}\" plaintext=\"{}\"", htmlText, plainText);
         return new HTMLCleanupTransferable(plainText);
     }
-    
+
     public String extractText(Reader reader) {
         final List<String> list = new ArrayList<String>();
-        
+
         HTMLEditorKit.ParserCallback parserCallback = new HTMLEditorKit.ParserCallback() {
             public void handleText(final char[] data, final int pos) {
 //                logger.trace("data={} pos={}", data, pos);
@@ -815,60 +816,59 @@ class HTMLCleanupTransferHandler extends TransferHandler {
                 }
                 list.add(new String(data));
             }
-            
+
             public void handleStartTag(HTML.Tag tag, MutableAttributeSet attribute, int pos) {
 //                logger.trace("tag={}, attribute={} pos={}", tag, attribute, pos);
             }
-            
+
             public void handleEndTag(HTML.Tag t, final int pos) {
 //                logger.trace("tag={} pos={}", t, pos);
             }
-            
+
             public void handleSimpleTag(HTML.Tag t, MutableAttributeSet a, final int pos) {
 //                logger.trace("tag={}, attribute={} pos={}", t, a, pos);
-//                if (t.equals(HTML.Tag.BR)) {
-//                    list.add("\n");
-//                }
+                if (t.equals(HTML.Tag.BR)) {
+                    list.add("\n");
+                }
             }
-            
+
             public void handleComment(final char[] data, final int pos) {
 //                logger.trace("data={} pos={}", data, pos);
             }
-            
+
             public void handleError(final String errMsg, final int pos) {
 //                logger.trace("errMsg={} pos={}", errMsg, pos);
             }
         };
-        
+
         try {
             new ParserDelegator().parse(reader, parserCallback, true);
         } catch (IOException e) {
             logger.error("Error parsing copied text", e);
         }
-        
+
         StringBuilder result = new StringBuilder();
         for (String s : list) {
             result.append(s);
         }
         return result.toString();
     }
-    
+
     @Override public void exportToClipboard(JComponent comp, Clipboard clip, int action) throws IllegalStateException {
         if (action == COPY) {
             clip.setContents(this.createTransferable(comp), null);
         }
     }
-    
+
     @Override public int getSourceActions(JComponent c) {
         return COPY;
     }
-    
 }
 
 class HTMLCleanupTransferable implements Transferable {
-    
+
     private static final DataFlavor[] supportedFlavors;
-    
+
     static {
         try {
             supportedFlavors = new DataFlavor[] {
@@ -878,17 +878,17 @@ class HTMLCleanupTransferable implements Transferable {
             throw new ExceptionInInitializerError(e);
         }
     }
-    
+
     private final String plainData;
-    
+
     public HTMLCleanupTransferable(String plainData) {
         this.plainData = plainData;
     }
-    
+
     @Override public DataFlavor[] getTransferDataFlavors() {
         return supportedFlavors;
     }
-    
+
     @Override public boolean isDataFlavorSupported(DataFlavor flavor) {
         for (DataFlavor supportedFlavor : supportedFlavors) {
             if (supportedFlavor == flavor) {
@@ -897,7 +897,7 @@ class HTMLCleanupTransferable implements Transferable {
         }
         return false;
     }
-    
+
     @Override public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
         if (flavor.equals(supportedFlavors[0])) {
             return plainData;
