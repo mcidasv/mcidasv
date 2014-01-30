@@ -400,6 +400,7 @@ class _MappedGeoGridFlatField(_MappedData, GeoGridFlatField):
         self.geogrid = geogrid
         self.filename = filename
         self.field = field
+        self.levelReal = None
         keys = ['attributes', 'datatype', 'description', 'info',
                 'levels', 'units', 'times', 'projection', 'field', 'filename']
         _MappedData.__init__(self, keys)
@@ -1268,12 +1269,16 @@ class _Display(_JavaProxy):
 
         # first param of DataDataChoice constructor is %shortname% macro
         ddc = DataDataChoice(shortname, data)
+        if isinstance(firstData, _MappedGeoGridFlatField):
+            # this will get the %level% macro filled in,
+            # and the GUI will reflect the level in other places.
+            ddc.setLevelSelection(firstData.levelReal)
         # setting the description should set the %longname% macro
         ddc.setDescription(longname)
         newLayer = mcv.doMakeControl( 
                 [ddc],
                 getStaticMcv().getControlDescriptor(controlID),
-                None, None, False)
+                None, ddc.getDataSelection(), False)
         
         wrappedLayer = _Layer(newLayer)
             
@@ -2592,6 +2597,7 @@ def loadFile(filename=None, field=None, level=None, subset=None,
     else:
         raise ValueError('no field name provided')
     
+    levelReal = None
     if level:
         # TODO: type checking on level
         # expecting string specifying value and units, e.g. "1000 hPa"
@@ -2599,11 +2605,12 @@ def loadFile(filename=None, field=None, level=None, subset=None,
         levels = geogrid.getLevels()
         for i, levelToTest in enumerate(levels):
             levelString = '%s %s' % (levelToTest.getName(), levelToTest.getDescription())
-            levelReal = Util.toReal(levelString)
+            curLevelReal = Util.toReal(levelString)
             # actually utilize visad comparison magic!
-            if levelWanted == levelReal:
+            if levelWanted == curLevelReal:
                 # slice the desired level
                 geogrid = geogrid.subset(None, Range(i, i), None, None)
+                levelReal = curLevelReal
                 break
 
     if time: 
@@ -2640,6 +2647,7 @@ def loadFile(filename=None, field=None, level=None, subset=None,
 
     # make the 'mega-object'
     mapped = _MappedGeoGridFlatField(ff, geogrid, filename, field)
+    mapped.levelReal = levelReal
 
     return mapped
 
