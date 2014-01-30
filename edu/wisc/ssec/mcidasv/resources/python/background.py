@@ -1217,14 +1217,14 @@ class _Display(_JavaProxy):
         #  which could raise an exception in event of wrong data type.)
         try:
             if isinstance(data[0], _MappedGeoGridFlatField):
-                data = makeMappedGeoGridFlatFieldSequence(data)
                 firstData = data[0]
+                data = makeMappedGeoGridFlatFieldSequence(data)
         except KeyError:
             # perhaps a single _MappedGeoGridFlatField
             # (which is also a dict, so subscripting with 0 gives KeyError)
             if isinstance(data, _MappedGeoGridFlatField):
-                data = makeMappedGeoGridFlatFieldSequence([data])
                 firstData = data
+                data = makeMappedGeoGridFlatFieldSequence([data])
         except TypeError:
             # perhaps not a list or a _MappedGeoGridFlatField
             pass
