@@ -453,7 +453,7 @@ class _MappedGeoGridFlatField(_MappedData, GeoGridFlatField):
     def getDefaultLayerLabel(self):
         """return a reasonable default layer label for this class
         """
-        defaultLabel = '%longname% %timestamp%'
+        defaultLabel = '%shortname% %level% - %timestamp%'
         return defaultLabel
 
 class _JavaProxy(object):
