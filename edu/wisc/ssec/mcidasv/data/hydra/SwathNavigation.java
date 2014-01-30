@@ -28,14 +28,13 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import visad.Set;
-import visad.Gridded2DSet;
-import visad.Gridded2DDoubleSet;
-import visad.Linear2DSet;
-import visad.CoordinateSystem;
-import visad.GridCoordinateSystem;
-import visad.RealTupleType;
 import java.util.HashMap;
+
+import visad.CoordinateSystem;
+import visad.Gridded2DDoubleSet;
+import visad.Gridded2DSet;
+import visad.Linear2DSet;
+import visad.RealTupleType;
 
 public class SwathNavigation implements Navigation  {
 
@@ -86,7 +85,6 @@ public class SwathNavigation implements Navigation  {
   String offset_name = "OFFSET_NAME";
   String fillValue_name = "_FILLVALUE";
 
-
   int numDims = 2;
 
   Class type;
@@ -103,22 +101,17 @@ public class SwathNavigation implements Navigation  {
     lat_array_name = (String)metadata.get(SwathAdapter.lat_array_name);
 
     String[] lon_dim_names = null;
-    String[] lat_dim_names = null;
 
-    String[] lonDimNames = (String[]) metadata.get(SwathAdapter.lon_array_dimension_names); 
-    String[] latDimNames = (String[]) metadata.get(SwathAdapter.lat_array_dimension_names); 
+    String[] lonDimNames = (String[]) metadata.get(SwathAdapter.lon_array_dimension_names);  
 
     if (lonDimNames != null) {
       lon_dim_names = lonDimNames;
-      lat_dim_names = latDimNames;
     }
     else {
       lon_dim_names = reader.getDimensionNames(lon_array_name);
-      lat_dim_names = reader.getDimensionNames(lat_array_name);
     }
 
     int[] lon_dim_lengths = reader.getDimensionLengths(lon_array_name);
-    int[] lat_dim_lengths = reader.getDimensionLengths(lat_array_name);
 
     numDims = lon_dim_lengths.length;
     geo_stride = new int[numDims];
