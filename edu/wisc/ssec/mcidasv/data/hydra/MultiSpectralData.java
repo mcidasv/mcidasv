@@ -434,17 +434,8 @@ public class MultiSpectralData extends MultiDimensionAdapter {
             break;
           }
          }
+         // TJJ - should these be validated? See history, lost some dead code here
          corners = new float[][] {{lonA,lonB,lonC,lonD},{latA,latB,latC,latD}};
-         for (int k=0; k<corners[0].length; k++) {
-            float lon = corners[0][k];
-            float lat = corners[1][k];
-            /**
-            if (lon < minLon) minLon = lon;
-            if (lat < minLat) minLat = lat;
-            if (lon > maxLon) maxLon = lon;
-            if (lat > maxLat) maxLat = lat;
-            */
-         }
        } catch (Exception e) {
        }
     }
@@ -478,10 +469,6 @@ public class MultiSpectralData extends MultiDimensionAdapter {
       } catch (Exception e) {
       }
     }
-
-
-    float del_lon = maxLon - minLon;
-    float del_lat = maxLat - minLat;
 
     return corners;
   }
