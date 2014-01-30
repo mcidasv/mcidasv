@@ -393,13 +393,13 @@ public class SuomiNPPProductProfile {
 
 	/**
 	 * Check if this product profile has a product AND metadata
-	 * Only need to check one of the possible fields
+	 * Checking presence of a Range alone is not sufficient.
 	 * @param product name
 	 * @return true if both conditions met
 	 */
 	
 	public boolean hasNameAndMetaData(String name) {
-		if (rangeMin.containsKey(name)) {
+		if ((rangeMin.containsKey(name) || (fillValues.containsKey(name)))) {
 			return true;
 		} else {
 			return false;
