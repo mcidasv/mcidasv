@@ -915,6 +915,47 @@ class _Display(_JavaProxy):
                 currentState.setVisible(mapStates[mapSource])
                 
     @gui_invoke_later
+    def getMapVisibilityByDescription(self, description):
+        """Return the visibility of the map matching the given description.
+        
+        Args:
+            description: Corresponds to the label used by the GUI. Case does
+                         not matter.
+                         
+        Raises:
+            KeyError: if no maps matching the given description could be found.
+        """
+        originalDescription = description
+        description = str(description).lower()
+        for mapState in self.getMapLayer().getMapStates():
+            mapDescription = str(mapState.getDescription()).lower()
+            if description == mapDescription:
+                return mapState.getVisible()
+        raise KeyError("No map matching '%s'" % originalDescription)
+        
+    @gui_invoke_later
+    def setMapVisibilityByDescription(self, description, visibility):
+        """Return the visibility of the map matching the given description.
+        
+        Args:
+            description: Corresponds to the label used by the GUI. Case does
+                         not matter.
+                         
+            visibility: Boolean value for the new map visibility.
+                        
+        Raises:
+            KeyError: if no maps matching the given description could be found.
+        """
+        originalDescription = description
+        description = str(description).lower()
+        for mapState in self.getMapLayer().getMapStates():
+            mapDescription = str(mapState.getDescription()).lower()
+            if description == mapDescription:
+                mapState.setVisible(visibility)
+                return
+        raise KeyError("No map matching '%s'" % originalDescription)
+        
+    @gui_invoke_later
     def getCenter(self, includeScale=False):
         """Returns the latitude and longitude at the display's center."""
         
