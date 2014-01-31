@@ -31,6 +31,10 @@ import ch.qos.logback.core.joran.spi.NoAutoStart;
 import ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy;
 import ch.qos.logback.core.rolling.RolloverFailure;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.Comparator;
+
 /**
  * This is a Logback {@literal "triggering policy"} that forces a log
  * {@literal "roll"} upon starting McIDAS-V.
@@ -43,15 +47,74 @@ import ch.qos.logback.core.rolling.RolloverFailure;
 public class StartupTriggeringPolicy<E>
         extends DefaultTimeBasedFileNamingAndTriggeringPolicy<E> {
 
+    private void renameOldLogDirectory() {
+        String userpath = System.getProperty("mcv.userpath");
+        if (userpath != null) {
+            String oldLogPath = userpath + File.separatorChar + "logs";
+            String newLogPath = userpath + File.separatorChar + "archived_logs";
+            File oldDirectory = new File(oldLogPath);
+            File newDirectory = new File(newLogPath);
+            if (oldDirectory.exists() && !newDirectory.exists()) {
+                oldDirectory.renameTo(newDirectory);
+            }
+//            if (oldDirectory.exists() && !newDirectory.exists()) {
+//                if (!oldDirectory.renameTo(newDirectory)) {
+//                    addInfo("could not rename '" + oldLogPath + "' to '" + newLogPath + '\'');
+//                }
+//            } else if (!oldDirectory.exists() && newDirectory.exists()) {
+//                addInfo("a-ok");
+//            } else {
+//                addInfo("check yer assumptions!");
+//            }
+//        } else {
+//            addInfo("could not determine userpath");
+//        }
+        }
+    }
+
+    private void cleanupArchivedLogs(int keepFiles) {
+        String userpath = System.getProperty("mcv.userpath");
+        if (userpath != null) {
+            File logDirectory = new File(userpath + File.separatorChar + "archived_logs");
+            File[] files = logDirectory.listFiles();
+            if (files.length > keepFiles) {
+                new Thread(asyncCleanFiles(keepFiles, files)).start();
+            }
+        }
+    }
+
+    private Runnable asyncCleanFiles(final int keep, final File[] files) {
+        return new Runnable() {
+            public void run() {
+                Arrays.sort(files, new Comparator<File>() {
+                    public int compare(File f1, File f2) {
+                        return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
+                    }
+                });
+                for (int i = keep-1; i < files.length; i++) {
+                    addInfo("remove '"+files[i]+'\'');
+//                    files[i].delete();
+                }
+            }
+        };
+    }
+
     @Override public void start() {
+        renameOldLogDirectory();
         super.start();
         nextCheck = 0L;
         isTriggeringEvent(null, null);
         try {
             tbrp.rollover();
+            int maxHistory = tbrp.getMaxHistory();
+            if (maxHistory > 0) {
+                addInfo("keep "+maxHistory+" most recent archived logs");
+                cleanupArchivedLogs(maxHistory);
+            } else {
+                addInfo("maxHistory not set; not cleaning archiving logs");
+            }
         } catch (RolloverFailure e) {
             //Do nothing
         }
     }
-
 }

@@ -36,6 +36,7 @@
     <file>${mcv.userpath}/mcidasv.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <fileNamePattern>${mcv.userpath}/logs/mcidasv_%d{yyyyMMdd}_%d{HHmmss,aux}.log</fileNamePattern>
+      <maxHistory>10</maxHistory>
       <TimeBasedFileNamingAndTriggeringPolicy class="edu.wisc.ssec.mcidasv.util.StartupTriggeringPolicy" />
     </rollingPolicy>
     <encoder>
