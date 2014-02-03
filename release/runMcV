@@ -8,11 +8,16 @@ if [ `uname -s` = "Darwin" ]; then
 fi
 
 MCV_USERPATH="${DOCUMENT_DIRECTORY}/McIDAS-V"
+MCV_LOGPATH="${MCV_USERPATH}/mcidasv.log"
 
 # Check for -userpath parameter
 while [ "$1" != "" ]; do
   if [ "$1" = "-userpath" ]; then
     MCV_USERPATH="$2"
+    shift
+    shift
+  elif [ "$1" = "-logpath" ]; then
+    MCV_LOGPATH="$2"
     shift
     shift
   else
@@ -195,7 +200,7 @@ MCV_USERPATH_ESCAPED=`echo ${MCV_USERPATH} |sed -e 's/ /\\\\ /g'`
 # McV will now expect Java3D 1.5.2 and JOGL 1.1.1 to be living in ./javaextdir
 MCV_EXTDIR="-Djava.ext.dirs=\"${PWD}/javaextdir\":\"${PWD}/jre/lib/ext\":\"${HOME}/Library/Java/Extensions\""
 
-JAVA_FLAGS=" -XX:MaxPermSize=128m -Xmx${HEAP_SIZE} -XX:MaxPermSize=128m ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${JVM_ARGS} ${MCV_EXTDIR} -Dloglevel=\"${LOGGING_LEVEL}\" -Dlogback.configurationFile=\"${LOGBACK_CONFIG}\" -Dmcv.userpath=\"${MCV_USERPATH}\" -Dmcv.logpath=\"${MCV_USERPATH}/mcidasv.log\" -Dpython.security.respectJavaAccessibility=false"
+JAVA_FLAGS=" -XX:MaxPermSize=128m -Xmx${HEAP_SIZE} -XX:MaxPermSize=128m ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${JVM_ARGS} ${MCV_EXTDIR} -Dloglevel=\"${LOGGING_LEVEL}\" -Dlogback.configurationFile=\"${LOGBACK_CONFIG}\" -Dmcv.userpath=\"${MCV_USERPATH}\" -Dmcv.logpath=\"${MCV_LOGPATH}\" -Dpython.security.respectJavaAccessibility=false"
 MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Dvisad.java3d.textureNpot=${ALLOW_NPOT} -Dvisad.java3d.imageByRef=${IMAGE_BY_REF} -Dvisad.java3d.geometryByRef=${GEOMETRY_BY_REF} -Didv.3d=${IDV_3D} -Didv.sysmem=${SYS_MEM}"
 echo "mcv flags: ${MCV_FLAGS}"
 ################################################################################

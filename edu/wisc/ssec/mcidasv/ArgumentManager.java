@@ -55,6 +55,8 @@ public class ArgumentManager extends ArgsManager {
     /** McIDAS-V flag that signifies everything that follows is a Jython argument. */
     public static final String ARG_JYTHONARGS = "-scriptargs";
 
+    public static final String ARG_LOGPATH = "-logpath";
+
     /** usage message */
     public static final String USAGE_MESSAGE =
         "Usage: runMcV [OPTIONS] <bundle/script files, e.g., .mcv, .mcvz, .py>";
@@ -139,6 +141,10 @@ public class ArgumentManager extends ArgsManager {
                 // jump to end of args to halt further idv processing.
                 return args.length;
             }
+        } else if (checkArg(arg, ARG_LOGPATH, args, idx, 1)) {
+            String argValue = args[idx++];
+            persistentCommandLineArgs.add(ARG_LOGPATH);
+            persistentCommandLineArgs.add(argValue);
         } else {
             if (ARG_ISLINTERACTIVE.equals(arg) || ARG_B64ISL.equals(arg) || ARG_ISLFILE.equals(arg) || isIslFile(arg)) {
                 System.err.println("*** WARNING: ISL is being deprecated!");
@@ -189,6 +195,7 @@ public class ArgumentManager extends ArgsManager {
             + msg(ARG_NOONEINSTANCE, "(Don't do the one instance port)")
             + msg(ARG_NOPREF, "(Don't read in the user preferences)")
             + msg(ARG_USERPATH, "<user directory to use>")
+            + msg(ARG_LOGPATH, "<path to log file>")
             + msg(ARG_SITEPATH, "<url path to find site resources>")
             + msg(ARG_NOGUI, "(Don't show the main window gui)")
             + msg(ARG_DATA, "<data source> (Load the data source)")
