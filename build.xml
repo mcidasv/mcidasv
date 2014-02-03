@@ -547,7 +547,8 @@
       <sysproperty key="debug.adde.reqs" value="false" />
       -->
       <sysproperty key="loglevel" value="${run.log.level}" />
-      <sysproperty key="mcv.userpath" value="/Users/${user.name}/Documents/McIDAS-V"/>
+      <sysproperty key="mcv.userpath" value="${userpath.dir}" />
+      <sysproperty key="mcv.logpath" value="${userpath.dir}/mcidasv.log" />
       <sysproperty key="debug.adde.reqs" value="true" />
       <sysproperty key="idv.usetimedriver" value="true" />
       <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
@@ -591,7 +592,8 @@
       --> 
       <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
       <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
-      <sysproperty key="mcv.userpath" value="/Users/${user.name}/Documents/McIDAS-V"/>
+      <sysproperty key="mcv.userpath" value="${userpath.dir}" />
+      <sysproperty key="mcv.logpath" value="${userpath.dir}/mcidasv.log" />
       <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
       <sysproperty key="debug.adde.reqs" value="true" />
       <sysproperty key="logback.configurationFile" value="${logback.default.config}" />
