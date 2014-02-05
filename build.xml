@@ -94,7 +94,7 @@
     <property name="javadoc.level" value="private" />
     
     <!-- The CLASSPATH specified within McV's manifest -->
-    <property name="jar.base.classpath" value="sysout-over-slf4j-1.0.2.jar miglayout-core-4.2.jar miglayout-swing-4.2.jar eventbus-1.4.jar logback-core-1.1.10.jar logback-classic-1.1.10.jar log4j-over-slf4j-1.7.5.jar slf4j-api-1.7.5.jar local-idv.jar repositorytds.jar commons-math3-3.2.jar rsyntaxtextarea-2.5.0.jar jul-to-slf4j-1.7.5.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar" />
+    <property name="jar.base.classpath" value="sysout-over-slf4j-1.0.2.jar miglayout-core-4.2.jar miglayout-swing-4.2.jar eventbus-1.4.jar logback-core-1.1.10.jar logback-classic-1.1.10.jar log4j-over-slf4j-1.7.5.jar slf4j-api-1.7.5.jar local-idv.jar repositorytds.jar commons-math3-3.2.jar rsyntaxtextarea-2.5.1.jar jul-to-slf4j-1.7.5.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar" />
     
     <!-- List of McIDAS-V jars -->
     <fileset id="mcv.libs" dir="${dist.dir}">
@@ -109,7 +109,7 @@
         <include name="local-idv.jar" />
         <include name="repositorytds.jar" />
         <include name="commons-math3-3.2.jar" />
-        <include name="rsyntaxtextarea-2.5.0.jar" />
+        <include name="rsyntaxtextarea-2.5.1.jar" />
         <include name="jul-to-slf4j-1.7.5.jar" />
     </fileset>
     
