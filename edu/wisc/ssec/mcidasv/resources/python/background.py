@@ -456,6 +456,27 @@ class _MappedGeoGridFlatField(_MappedData, GeoGridFlatField):
         defaultLabel = '%shortname% %level% - %timestamp%'
         return defaultLabel
 
+    def binary(self, *args, **kwargs):
+        argCount = len(args)
+        if argCount == 4:
+            data, op, sampling_mode, error_mode = args
+            result = GeoGridFlatField.binary(self, data, op, sampling_mode, 
+                error_mode)
+            # here, we just want to return what we get from super.binary
+            # (basically, only override the 5 arg version)
+            return result
+        elif argCount == 5:
+            data, op, new_type, sampling_mode, error_mode = args
+            result = GeoGridFlatField.binary(self, data, op, new_type, 
+                sampling_mode, error_mode)
+            result = _MappedGeoGridFlatField(result,
+                    self.geogrid, self.filename, self.field)
+            result.levelReal = self.levelReal #TODO put this in ctor
+            return result
+        else:
+            raise Exception(
+               "_MappedGeoGridFlatField.binary got unexpected number of args")
+
 class _JavaProxy(object):
     """One sentence description goes here
     
