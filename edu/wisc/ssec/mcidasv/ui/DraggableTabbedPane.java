@@ -55,19 +55,22 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import javax.swing.plaf.metal.MetalTabbedPaneUI;
 
+import java.util.EnumMap;
+import java.util.List;
+
 import org.w3c.dom.Element;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ui.IdvWindow;
@@ -75,8 +78,8 @@ import ucar.unidata.ui.ComponentGroup;
 import ucar.unidata.ui.ComponentHolder;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.xml.XmlUtil;
+
 import edu.wisc.ssec.mcidasv.Constants;
-import edu.wisc.ssec.mcidasv.ui.DraggableTabbedPane.TabButton.ButtonState;
 
 /**
  * This is a rather simplistic drag and drop enabled JTabbedPane. It allows
@@ -88,6 +91,9 @@ public class DraggableTabbedPane extends JTabbedPane implements
 {
     private static final long serialVersionUID = -5710302260509445686L;
 
+    private static final Logger logger =
+        LoggerFactory.getLogger(DraggableTabbedPane.class);
+
     /** Local shorthand for the actions we're accepting. */
     private static final int VALID_ACTION = DnDConstants.ACTION_COPY_OR_MOVE;
 
@@ -95,16 +101,37 @@ public class DraggableTabbedPane extends JTabbedPane implements
     private static final String IDX_ICON = 
         "/edu/wisc/ssec/mcidasv/resources/icons/tabmenu/go-down.png";
 
+    private static final Color unselected = new Color(165, 165, 165);
+    private static final Color selected = new Color(225, 225, 225);
+
+    private static final String INDEX_COLOR_METAL = "#AAAAAA";
+
+    private static final String INDEX_COLOR_UGLY_TABS = "#708090";
+
+    /** The actual image that we'll use to display the index indications. */
+    private final Image INDICATOR =
+        new ImageIcon(getClass().getResource(IDX_ICON)).getImage();
+
+    public enum ButtonState { DEFAULT, PRESSED, DISABLED, ROLLOVER };
+
+    /** Path to icon that represents the default button state. */
+    private static final String ICON_DEFAULT =
+        "/edu/wisc/ssec/mcidasv/resources/icons/closetab/metal_close_enabled.png";
+
+    /** Path to icon that represents the pressed button state. */
+    private static final String ICON_PRESSED =
+        "/edu/wisc/ssec/mcidasv/resources/icons/closetab/metal_close_pressed.png";
+
+    /** Path to icon that represents the rollover button state. */
+    private static final String ICON_ROLLOVER =
+        "/edu/wisc/ssec/mcidasv/resources/icons/closetab/metal_close_rollover.png";
+
     /** 
      * Used to signal across all DraggableTabbedPanes that the component 
      * currently being dragged originated in another window. This'll let McV
      * determine if it has to do a quiet ComponentHolder transfer.
      */
     protected static boolean outsideDrag = false;
-
-    /** The actual image that we'll use to display the index indications. */
-    private final Image INDICATOR = 
-        (new ImageIcon(getClass().getResource(IDX_ICON))).getImage();
 
     /** The tab index where the drag started. */
     private int sourceIndex = -1;
@@ -127,6 +154,9 @@ public class DraggableTabbedPane extends JTabbedPane implements
     /** Keep around this reference so that we can access the UI Manager. */
     private IntegratedDataViewer idv;
 
+    /** RGB string for the color of the current tab. */
+    private String currentTabColor = INDEX_COLOR_METAL;
+
     /**
      * Mostly just registers that this component should listen for drag and
      * drop operations.
@@ -135,7 +165,9 @@ public class DraggableTabbedPane extends JTabbedPane implements
      * @param idv The main IDV instance.
      * @param group The {@link McvComponentGroup} that holds this component's tabs.
      */
-    public DraggableTabbedPane(IdvWindow win, IntegratedDataViewer idv, McvComponentGroup group) {
+    public DraggableTabbedPane(IdvWindow win, IntegratedDataViewer idv,
+        McvComponentGroup group)
+    {
         dropTarget = new DropTarget(this, this);
         dragSource = new DragSource();
         dragSource.createDefaultDragGestureRecognizer(this, VALID_ACTION, this);
@@ -148,11 +180,11 @@ public class DraggableTabbedPane extends JTabbedPane implements
         addMouseMotionListener(this);
 
         if (getUI() instanceof MetalTabbedPaneUI) {
-            setUI(new CloseableMetalTabbedPaneUI(SwingUtilities.LEFT));
-            currentTabColor = indexColorMetal;
+            setUI(new CloseableMetalTabbedPaneUI(SwingConstants.LEFT));
+            currentTabColor = INDEX_COLOR_METAL;
         } else {
-            setUI(new CloseableTabbedPaneUI(SwingUtilities.LEFT));
-            currentTabColor = indexColorUglyTabs;
+            setUI(new CloseableTabbedPaneUI(SwingConstants.LEFT));
+            currentTabColor = INDEX_COLOR_UGLY_TABS;
         }
     }
 
@@ -161,7 +193,7 @@ public class DraggableTabbedPane extends JTabbedPane implements
      * gesture. Used to populate the things that the user is attempting to 
      * drag. 
      */
-    public void dragGestureRecognized(DragGestureEvent e) {
+    @Override public void dragGestureRecognized(DragGestureEvent e) {
         sourceIndex = getSelectedIndex();
 
         // transferable allows us to store the current DraggableTabbedPane and
@@ -170,30 +202,31 @@ public class DraggableTabbedPane extends JTabbedPane implements
         Transferable transferable = new TransferableIndex(this, sourceIndex);
 
         Cursor cursor = DragSource.DefaultMoveDrop;
-        if (e.getDragAction() != DnDConstants.ACTION_MOVE)
+        if (e.getDragAction() != DnDConstants.ACTION_MOVE) {
             cursor = DragSource.DefaultCopyDrop;
-
+        }
         dragSource.startDrag(e, cursor, transferable, this);
     }
 
     /** 
-     * Triggered when the user drags into <tt>dropTarget</tt>.
+     * Triggered when the user drags into {@code dropTarget}.
      */
-    public void dragEnter(DropTargetDragEvent e) {
+    @Override public void dragEnter(DropTargetDragEvent e) {
         DataFlavor[] flave = e.getCurrentDataFlavors();
-        if ((flave.length == 0) || !(flave[0] instanceof DraggableTabFlavor))
+        if ((flave.length == 0) || !(flave[0] instanceof DraggableTabFlavor)) {
             return;
+        }
 
-        //System.out.print("entered window outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex);
+//        logger.trace("entered window outsideDrag={} sourceIndex={}", outsideDrag, sourceIndex);
 
         // if the DraggableTabbedPane associated with this drag isn't the 
         // "current" DraggableTabbedPane we're dealing with a drag from another
         // window and we need to make this DraggableTabbedPane aware of that.
         if (((DraggableTabFlavor)flave[0]).getDragTab() != this) {
-            //System.out.println(" coming from outside!");
+//            logger.trace("  coming from outside");
             outsideDrag = true;
         } else {
-            //System.out.println(" re-entered parent window");
+//            logger.trace("  re-entered parent window");
             outsideDrag = false;
         }
     }
@@ -201,10 +234,9 @@ public class DraggableTabbedPane extends JTabbedPane implements
     /**
      * Triggered when the user drags out of {@code dropTarget}.
      */
-    public void dragExit(DropTargetEvent e) {
-        //      System.out.println("drag left a window outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex);
+    @Override public void dragExit(DropTargetEvent e) {
+//        logger.trace("drag left a window outsideDrag={} sourceIndex={}", outsideDrag, sourceIndex);
         overIndex = -1;
-
         //outsideDrag = true;
         repaint();
     }
@@ -215,14 +247,14 @@ public class DraggableTabbedPane extends JTabbedPane implements
      * 
      * @param e Information about the current state of the drag.
      */
-    public void dragOver(DropTargetDragEvent e) {
-        //      System.out.println("dragOver outsideDrag=" + outsideDrag + " sourceIndex=" + sourceIndex);
-        if ((!outsideDrag) && (sourceIndex == -1))
+    @Override public void dragOver(DropTargetDragEvent e) {
+//        logger.trace("dragOver outsideDrag={} sourceIndex={}", outsideDrag, sourceIndex);
+        if (!outsideDrag && (sourceIndex == -1)) {
             return;
+        }
 
         Point dropPoint = e.getLocation();
         overIndex = indexAtLocation(dropPoint.x, dropPoint.y);
-
         repaint();
     }
 
@@ -231,13 +263,14 @@ public class DraggableTabbedPane extends JTabbedPane implements
      * 
      * @param e State that we'll need in order to handle the drop.
      */
-    public void drop(DropTargetDropEvent e) {
+    @Override public void drop(DropTargetDropEvent e) {
         // if the dragged ComponentHolder was dragged from another window we
         // must do a behind-the-scenes transfer from its old ComponentGroup to 
         // the end of the new ComponentGroup.
         if (outsideDrag) {
             DataFlavor[] flave = e.getCurrentDataFlavors();
-            DraggableTabbedPane other = ((DraggableTabFlavor)flave[0]).getDragTab();
+            DraggableTabbedPane other =
+                ((DraggableTabFlavor)flave[0]).getDragTab();
 
             ComponentHolder target = other.removeDragged();
             sourceIndex = group.quietAddComponent(target);
@@ -252,8 +285,9 @@ public class DraggableTabbedPane extends JTabbedPane implements
 
             // make sure the user chose to drop over a valid area/thing first
             // then do the actual drop.
-            if ((dropIndex != -1) && (getComponentAt(dropIndex) != null))
+            if ((dropIndex != -1) && (getComponentAt(dropIndex) != null)) {
                 doDrop(sourceIndex, dropIndex);
+            }
 
             // clean up anything associated with the current drag and drop
             e.getDropTargetContext().dropComplete(true);
@@ -265,8 +299,8 @@ public class DraggableTabbedPane extends JTabbedPane implements
     }
 
     /**
-     * {@literal "Quietly"} removes the dragged component from its group. If the
-     * last component in a group has been dragged out of the group, the 
+     * {@literal "Quietly"} removes the dragged component from its group. If
+     * the last component in a group has been dragged out of the group, the
      * associated window will be killed.
      * 
      * @return The removed component.
@@ -289,7 +323,6 @@ public class DraggableTabbedPane extends JTabbedPane implements
     public void doDrop(int srcIdx, int dstIdx) {
         List<ComponentHolder> comps = group.getDisplayComponents();
         ComponentHolder src = comps.get(srcIdx);
-
         group.removeComponent(src);
         group.addComponent(src, dstIdx);
     }
@@ -300,14 +333,12 @@ public class DraggableTabbedPane extends JTabbedPane implements
      */
     @Override public void paint(Graphics g) {
         super.paint(g);
-
-        if (overIndex == -1)
-            return;
-
-        Rectangle bounds = getBoundsAt(overIndex);
-
-        if (bounds != null)
-            g.drawImage(INDICATOR, bounds.x-7, bounds.y, null);
+        if (overIndex >= 0) {
+            Rectangle bounds = getBoundsAt(overIndex);
+            if (bounds != null) {
+                g.drawImage(INDICATOR, bounds.x-7, bounds.y, null);
+            }
+        }
     }
 
     /**
@@ -324,8 +355,9 @@ public class DraggableTabbedPane extends JTabbedPane implements
         ComponentHolder h = comps.get(index);
         String newTitle = 
             UIManager.makeTitle(idv.getStateManager().getTitle(), h.getName());
-        if (window != null)
+        if (window != null) {
             window.setTitle(newTitle);
+        }
     }
 
     /**
@@ -344,15 +376,15 @@ public class DraggableTabbedPane extends JTabbedPane implements
 
         // whatever is returned here needs to be serializable. so we can't just
         // return the tabbedPane. :(
-        public Object getTransferData(DataFlavor flavor) {
+        @Override public Object getTransferData(DataFlavor flavor) {
             return index;
         }
 
-        public DataFlavor[] getTransferDataFlavors() {
+        @Override public DataFlavor[] getTransferDataFlavors() {
             return new DataFlavor[] { new DraggableTabFlavor(tabbedPane) };
         }
 
-        public boolean isDataFlavorSupported(DataFlavor flavor) {
+        @Override public boolean isDataFlavorSupported(DataFlavor flavor) {
             return true;
         }
     }
@@ -391,20 +423,20 @@ public class DraggableTabbedPane extends JTabbedPane implements
      * @param drop The x- and y-coordinates where the user dropped the tab.
      */
     private void newWindowDrag(ComponentHolder dragged, Point drop) {
-        //      if ((dragged == null) || (window == null))
-        if (dragged == null)
+        if (dragged == null) {
             return;
+        }
 
         UIManager ui = (UIManager)idv.getIdvUIManager();
 
         try {
-            Element skinRoot = XmlUtil.getRoot(Constants.BLANK_COMP_GROUP, getClass());
+            Element skinRoot =
+                XmlUtil.getRoot(Constants.BLANK_COMP_GROUP, getClass());
 
             // create the new window with visibility off, so we can position 
             // the window in a sensible way before the user has to see it.
-            IdvWindow w = ui.createNewWindow(null, false, "McIDAS-V", 
-                    Constants.BLANK_COMP_GROUP, 
-                    skinRoot, false, null);
+            IdvWindow w = ui.createNewWindow(null, false, "McIDAS-V",
+                Constants.BLANK_COMP_GROUP, skinRoot, false, null);
 
             // make the new window the same size as the old and center the 
             // *top* of the window over the drop point.
@@ -415,15 +447,14 @@ public class DraggableTabbedPane extends JTabbedPane implements
             w.setBounds(new Rectangle(startX, drop.y, width, height));
 
             // be sure to add the dragged component holder to the new window.
-            ComponentGroup newGroup = 
-                (ComponentGroup)w.getComponentGroups().get(0);
+            ComponentGroup newGroup = w.getComponentGroups().get(0);
 
             newGroup.addComponent(dragged);
 
             // let there be a window
             w.setVisible(true);
         } catch (Throwable e) {
-            e.printStackTrace();
+            logger.error("Error creating new window from dragged tab", e);
         }
     }
 
@@ -447,37 +478,37 @@ public class DraggableTabbedPane extends JTabbedPane implements
     }
 
     // required methods that we don't need to implement yet.
-    public void dragEnter(DragSourceDragEvent e) { }
-    public void dragExit(DragSourceEvent e) { }
-    public void dragOver(DragSourceDragEvent e) { }
-    public void dropActionChanged(DragSourceDragEvent e) { }
-    public void dropActionChanged(DropTargetDragEvent e) { }
+    @Override public void dragEnter(DragSourceDragEvent e) { }
+    @Override public void dragExit(DragSourceEvent e) { }
+    @Override public void dragOver(DragSourceDragEvent e) { }
+    @Override public void dropActionChanged(DragSourceDragEvent e) { }
+    @Override public void dropActionChanged(DropTargetDragEvent e) { }
 
-    public void mouseClicked(final MouseEvent e) {
+    @Override public void mouseClicked(final MouseEvent e) {
         processMouseEvents(e);
     }
 
-    public void mouseExited(final MouseEvent e) {
+    @Override public void mouseExited(final MouseEvent e) {
         processMouseEvents(e);
     }
 
-    public void mousePressed(final MouseEvent e) {
+    @Override public void mousePressed(final MouseEvent e) {
         processMouseEvents(e);
     }
 
-    public void mouseEntered(final MouseEvent e) {
+    @Override public void mouseEntered(final MouseEvent e) {
         processMouseEvents(e);
     }
 
-    public void mouseMoved(final MouseEvent e) {
+    @Override public void mouseMoved(final MouseEvent e) {
         processMouseEvents(e);
     }
 
-    public void mouseDragged(final MouseEvent e) {
+    @Override public void mouseDragged(final MouseEvent e) {
         processMouseEvents(e);
     }
 
-    public void mouseReleased(final MouseEvent e) {
+    @Override public void mouseReleased(final MouseEvent e) {
         processMouseEvents(e);
     }
 
@@ -486,21 +517,26 @@ public class DraggableTabbedPane extends JTabbedPane implements
         int eventY = e.getY();
 
         int tabIndex = getUI().tabForCoordinate(this, eventX, eventY);
-        if (tabIndex < 0)
+        if (tabIndex < 0) {
             return;
+        }
 
         TabButton icon = (TabButton)getIconAt(tabIndex);
-        if (icon == null)
+        if (icon == null) {
             return;
+        }
 
         int id = e.getID();
         Rectangle iconBounds = icon.getBounds();
         if (!iconBounds.contains(eventX, eventY) || id == MouseEvent.MOUSE_EXITED) {
-            if (icon.getState() == ButtonState.ROLLOVER || icon.getState() == ButtonState.PRESSED)
+            ButtonState state = icon.getState();
+            if (state == ButtonState.ROLLOVER || state == ButtonState.PRESSED) {
                 icon.setState(ButtonState.DEFAULT);
+            }
 
-            if (e.getClickCount() >= 2 && !e.isPopupTrigger() && id == MouseEvent.MOUSE_CLICKED)
+            if (e.getClickCount() >= 2 && !e.isPopupTrigger() && id == MouseEvent.MOUSE_CLICKED) {
                 group.renameDisplay(tabIndex);
+            }
 
             repaint(iconBounds);
             return;
@@ -522,22 +558,19 @@ public class DraggableTabbedPane extends JTabbedPane implements
     }
 
     public void addTab(String title, Component component, Icon extraIcon) {
-        if (getTabCount() < 9)
-            title = "<html><font color=\""+currentTabColor+"\">"+(getTabCount()+1)+"</font> "+title+"</html>";
-        else if (getTabCount() == 9)
-            title = "<html><font color=\""+currentTabColor+"\">0</font> "+title+"</html>";
+        int tabCount = getTabCount();
+        int displayNumber = 0;
+        if (tabCount < 9) {
+            displayNumber = tabCount + 1;
+        } else if (tabCount == 9) {
+            displayNumber = 0;
+        }
+        title = "<html><font color=\"" + currentTabColor+"\">"+displayNumber+"</font>"+title+"</html>";
         super.addTab(title, new TabButton(), component);
     }
 
-    private static final Color unselected = new Color(165, 165, 165);
-    private static final Color selected = new Color(225, 225, 225);
-
-    private static final String indexColorMetal = "#AAAAAA";
-    private static final String indexColorUglyTabs = "#708090";
-    private String currentTabColor = indexColorMetal;
-
     class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
-        private int horizontalTextPosition = SwingUtilities.LEFT;
+        private int horizontalTextPosition = SwingConstants.LEFT;
 
         public CloseableTabbedPaneUI() { }
 
@@ -550,24 +583,28 @@ public class DraggableTabbedPane extends JTabbedPane implements
             Rectangle tabRect, Rectangle iconRect, Rectangle textRect, 
             boolean isSelected) 
         {
-            if (tabPane.getTabCount() == 0)
+            if (tabPane.getTabCount() == 0) {
                 return;
+            }
 
             textRect.x = textRect.y = iconRect.x = iconRect.y = 0;
             javax.swing.text.View v = getTextViewForTab(tabIndex);
-            if (v != null)
+            if (v != null) {
                 tabPane.putClientProperty("html", v);
+            }
 
-            SwingUtilities.layoutCompoundLabel((JComponent)tabPane,
-                    metrics, title, icon,
-                    SwingUtilities.CENTER,
-                    SwingUtilities.CENTER,
-                    SwingUtilities.CENTER,
-                    horizontalTextPosition,
-                    tabRect,
-                    iconRect,
-                    textRect,
-                    textIconGap + 2);
+            SwingUtilities.layoutCompoundLabel(tabPane,
+                metrics,
+                title,
+                icon,
+                SwingConstants.CENTER,
+                SwingConstants.CENTER,
+                SwingConstants.CENTER,
+                horizontalTextPosition,
+                tabRect,
+                iconRect,
+                textRect,
+                textIconGap + 2);
 
             int xNudge = getTabLabelShiftX(tabPlacement, tabIndex, isSelected);
             int yNudge = getTabLabelShiftY(tabPlacement, tabIndex, isSelected);
@@ -577,13 +614,15 @@ public class DraggableTabbedPane extends JTabbedPane implements
             textRect.y += yNudge;
         }
 
-        @Override protected void paintTabBackground(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {
-            if (!isSelected) {
-                g.setColor(unselected);
-            } else {
+        @Override protected void paintTabBackground(Graphics g,
+            int tabPlacement, int tabIndex, int x, int y, int w, int h,
+            boolean isSelected)
+        {
+            if (isSelected) {
                 g.setColor(selected);
+            } else {
+                g.setColor(unselected);
             }
-
             g.fillRect(x, y, w, h);
             g.setColor(selected);
             g.drawLine(x, y, x, y+h);
@@ -605,41 +644,46 @@ public class DraggableTabbedPane extends JTabbedPane implements
             Rectangle tabRect, Rectangle iconRect, Rectangle textRect, 
             boolean isSelected) 
         {
-            if (tabPane.getTabCount() == 0)
-                return;
+            if (tabPane.getTabCount() != 0) {
+                textRect.x = 0;
+                textRect.y = 0;
+                iconRect.x = 0;
+                iconRect.y = 0;
 
-            textRect.x = 0;
-            textRect.y = 0;
-            iconRect.x = 0;
-            iconRect.y = 0;
+                javax.swing.text.View v = getTextViewForTab(tabIndex);
+                if (v != null) {
+                    tabPane.putClientProperty("html", v);
+                }
 
-            javax.swing.text.View v = getTextViewForTab(tabIndex);
-            if (v != null)
-                tabPane.putClientProperty("html", v);
-
-            SwingUtilities.layoutCompoundLabel((JComponent)tabPane,
-                    metrics, title, icon,
-                    SwingUtilities.CENTER,
-                    SwingUtilities.CENTER,
-                    SwingUtilities.CENTER,
+                SwingUtilities.layoutCompoundLabel(tabPane,
+                    metrics,
+                    title,
+                    icon,
+                    SwingConstants.CENTER,
+                    SwingConstants.CENTER,
+                    SwingConstants.CENTER,
                     horizontalTextPosition,
                     tabRect,
                     iconRect,
                     textRect,
                     textIconGap + 2);
 
-            int xNudge = getTabLabelShiftX(tabPlacement, tabIndex, isSelected);
-            int yNudge = getTabLabelShiftY(tabPlacement, tabIndex, isSelected);
-            iconRect.x += xNudge;
-            iconRect.y += yNudge;
-            textRect.x += xNudge;
-            textRect.y += yNudge;
+                int xNudge =
+                    getTabLabelShiftX(tabPlacement, tabIndex, isSelected);
+                int yNudge =
+                    getTabLabelShiftY(tabPlacement, tabIndex, isSelected);
+                iconRect.x += xNudge;
+                iconRect.y += yNudge;
+                textRect.x += xNudge;
+                textRect.y += yNudge;
+            }
         }
     }
 
     public static class TabButton implements Icon {
-        public enum ButtonState { DEFAULT, PRESSED, DISABLED, ROLLOVER };
-        private static final Map<ButtonState, String> iconPaths = new HashMap<ButtonState, String>();
+
+        private static final EnumMap<ButtonState, String> iconPaths =
+            new EnumMap<ButtonState, String>(ButtonState.class);
 
         private ButtonState currentState = ButtonState.DEFAULT;
         private int iconWidth = 0;
@@ -649,37 +693,41 @@ public class DraggableTabbedPane extends JTabbedPane implements
         private int posY = 0;
 
         public TabButton() {
-            setStateIcon(ButtonState.DEFAULT, "/edu/wisc/ssec/mcidasv/resources/icons/closetab/metal_close_enabled.png");
-            setStateIcon(ButtonState.PRESSED, "/edu/wisc/ssec/mcidasv/resources/icons/closetab/metal_close_pressed.png");
-            setStateIcon(ButtonState.ROLLOVER, "/edu/wisc/ssec/mcidasv/resources/icons/closetab/metal_close_rollover.png");
+            setStateIcon(ButtonState.DEFAULT, ICON_DEFAULT);
+            setStateIcon(ButtonState.PRESSED, ICON_PRESSED);
+            setStateIcon(ButtonState.ROLLOVER, ICON_ROLLOVER);
             setState(ButtonState.DEFAULT);
         }
 
         public static Icon getStateIcon(final ButtonState state) {
             String path = iconPaths.get(state);
-            if (path == null)
+            if (path == null) {
                 path = iconPaths.get(ButtonState.DEFAULT);
+            }
             return GuiUtils.getImageIcon(path);
         }
 
-        public static void setStateIcon(final ButtonState state, final String path) {
+        public static void setStateIcon(final ButtonState state,
+            final String path)
+        {
             iconPaths.put(state, path);
         }
 
         public static String getStateIconPath(final ButtonState state) {
-            if (!iconPaths.containsKey(state))
-                return iconPaths.get(ButtonState.DEFAULT);
-            return iconPaths.get(state);
+            String path = iconPaths.get(ButtonState.DEFAULT);
+            if (iconPaths.containsKey(state)) {
+                path = iconPaths.get(state);
+            }
+            return path;
         }
 
         public void setState(final ButtonState state) {
             currentState = state;
             Icon currentIcon = getStateIcon(state);
-            if (currentIcon == null)
-                return;
-
-            iconWidth = currentIcon.getIconWidth();
-            iconHeight = currentIcon.getIconHeight();
+            if (currentIcon != null) {
+                iconWidth = currentIcon.getIconWidth();
+                iconHeight = currentIcon.getIconHeight();
+            }
         }
 
         public ButtonState getState() {
@@ -690,21 +738,20 @@ public class DraggableTabbedPane extends JTabbedPane implements
             return getStateIcon(currentState);
         }
 
-        public void paintIcon(Component c, Graphics g, int x, int y) {
+        @Override public void paintIcon(Component c, Graphics g, int x, int y) {
             Icon current = getIcon();
-            if (current == null)
-                return;
-
-            posX = x;
-            posY = y;
-            current.paintIcon(c, g, x, y);
+            if (current != null) {
+                posX = x;
+                posY = y;
+                current.paintIcon(c, g, x, y);
+            }
         }
 
-        public int getIconWidth() {
+        @Override public int getIconWidth() {
             return iconWidth;
         }
 
-        public int getIconHeight() {
+        @Override public int getIconHeight() {
             return iconHeight;
         }
 
