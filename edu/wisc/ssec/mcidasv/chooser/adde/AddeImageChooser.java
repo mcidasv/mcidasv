@@ -67,6 +67,7 @@ import javax.swing.JToggleButton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import edu.wisc.ssec.mcidas.adde.AddeURLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -2489,9 +2490,9 @@ public class AddeImageChooser extends AddeChooser implements
      */
     protected void handleConnectionError(Exception e) {
         if (e != null && e.getMessage() != null) {
-            String msg = e.getMessage().toLowerCase();
-            if ((e instanceof AreaFileException)
-                    && (msg.indexOf("must be used with archived datasets") >= 0)) {
+            Throwable cause = e.getCause();
+            String msg = cause.getMessage().toLowerCase();
+            if ((cause instanceof AddeURLException) && msg.contains("must be used with archived datasets")) {
                 getArchiveDay();
                 return;
             }
