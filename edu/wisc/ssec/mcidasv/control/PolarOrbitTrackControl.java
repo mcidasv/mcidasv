@@ -1140,15 +1140,15 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         
         JPanel customPanel = new JPanel();
         customPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        customPanel.add(new JLabel("Custom Ground Station:    Latitude: "));
+        customPanel.add(new JLabel("Custom Ground Station:    Label: "));
+        customLab = new JTextField(6);
+        customPanel.add(customLab);
+        customPanel.add(new JLabel("Latitude: "));
         customLat = new JTextField(6);
         customPanel.add(customLat);
         customPanel.add(new JLabel("Longitude: "));
         customLon = new JTextField(6);
         customPanel.add(customLon);
-        customPanel.add(new JLabel("Label: "));
-        customLab = new JTextField(6);
-        customPanel.add(customLab);
         JButton customButton = new JButton("Add Custom");
         customButton.setActionCommand(CUSTOM_ADD);
         customButton.addActionListener(this);
