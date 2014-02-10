@@ -147,7 +147,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     private String station = "";
 
-    private static final int SWATH_WIDTH_MIN = 0;
+    private static final int SWATH_WIDTH_MIN = 1;
+    // TJJ Feb 2014 - need to determine max of any sensor. VIIRS is over 3000 km
+    private static final int SWATH_WIDTH_MAX = 4000;
     private static final int DEFAULT_ANTENNA_ANGLE = 5;
     private static final int MAX_ANTENNA_ANGLE = 90;
     private int curAngle = DEFAULT_ANTENNA_ANGLE;
@@ -1331,12 +1333,11 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     		return -1;
     	}
 
-    	int earthDiam = (int) ((AstroConst.R_Earth_major * 2) / 1000);
-    	if ((val < SWATH_WIDTH_MIN) || (val > earthDiam)) {
+    	if ((val < SWATH_WIDTH_MIN) || (val > SWATH_WIDTH_MAX)) {
     		// throw up a dialog to tell user the problem
     		JOptionPane.showMessageDialog(latLonAltPanel, 
     				"Swath width valid range is " + SWATH_WIDTH_MIN + 
-    				" to " + earthDiam + " (Earth diameter) km");
+    				" to " + SWATH_WIDTH_MAX + " km");
     		return -1;
     	}
     	return val;
