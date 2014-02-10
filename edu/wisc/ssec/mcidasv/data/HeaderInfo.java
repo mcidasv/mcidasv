@@ -81,7 +81,7 @@ public class HeaderInfo {
 	/**
 	 * CTOR
 	 *
-	 * @param filename The filename
+	 * @param thisFile File to use. Cannot be {@code null}.
 	 */
 	public HeaderInfo(File thisFile) {
 		this(thisFile.getAbsolutePath());

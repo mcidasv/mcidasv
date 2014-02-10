@@ -71,7 +71,7 @@ import edu.wisc.ssec.mcidasv.control.McIdasComponents;
 import edu.wisc.ssec.mcidasv.control.McIdasImageSequenceControl;
 
 /**
- * Used to cache a data choice and its data
+ * Used to cache a data choice and its data.
  *
  * @author IDV development team
  * @version $Revision$
@@ -149,7 +149,7 @@ public class McIdasXDataSource extends DataSourceImpl  {
     /**
      * Make a list of McIDAS-X frames
      *
-     * @param frames  List of frame numbers
+     * @param inFrameNumbers List of frame numbers. Cannot be {@code null}.
      *
      * @return ImageDataset
      */
@@ -583,7 +583,7 @@ public class McIdasXDataSource extends DataSourceImpl  {
          * CTOR
          *
          * @param index The index
-         * @param fd The fd
+         * @param frame The {@literal "FD"}.
          */
         public FrameDataInfo(int index, McIdasFrame frame) {
             this.index = index;

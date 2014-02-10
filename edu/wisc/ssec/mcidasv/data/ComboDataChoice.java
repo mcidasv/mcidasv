@@ -82,10 +82,11 @@ public class ComboDataChoice extends DataChoice {
     }
 
     /**
-     *  Create a new DataChoice.
+     * Create a new DataChoice with a random identifier.
      *
-     * @param name The short name of this choice.
-     * @param data The data
+     * @param name Short name of this choice.
+     * @param categories List of {@link DataCategory DataCategories}.
+     * @param props Properties for this data choice. {@code null} is allowed.
      */
     public ComboDataChoice(String name, List categories, Hashtable props) {
         super(Math.random(), name, name, categories, props);
@@ -99,7 +100,7 @@ public class ComboDataChoice extends DataChoice {
     }
 
     /**
-     * Clone me
+     * Clone me.
      *
      * @return my clone
      */

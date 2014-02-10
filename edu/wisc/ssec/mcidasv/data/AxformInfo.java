@@ -48,7 +48,7 @@ public class AxformInfo extends HeaderInfo {
 	/**
 	 * CTOR
 	 *
-	 * @param filename The filename
+	 * @param thisFile File to use.
 	 */
 	public AxformInfo(File thisFile) {
 		this(thisFile.getAbsolutePath());

@@ -120,7 +120,6 @@ public class FlatFileReader {
      * @param filename The filename
      * @param lines The number of lines
      * @param elements The number of elements
-     * @param band The band
      */
     public FlatFileReader(String filename, int lines, int elements) {
     	this.floatData = null;
@@ -131,8 +130,12 @@ public class FlatFileReader {
     }
     
     /**
-     * @param delimiter The data value delimiter
-     * @param dataScale The data scale factor
+     * @param format
+     * @param interleave
+     * @param bigEndian
+     * @param offset
+     * @param band
+     * @param bandCount
      */
     public void setBinaryInfo(int format, String interleave, boolean bigEndian, int offset, int band, int bandCount) {
         this.myFormat = format;
@@ -155,8 +158,6 @@ public class FlatFileReader {
     }
 
     /**
-     * @param delimiter The data value delimiter
-     * @param dataScale The data scale factor
      */
     public void setImageInfo() {
 		this.myFormat = HeaderInfo.kFormatImage;
@@ -178,8 +179,8 @@ public class FlatFileReader {
     }
     
     /**
-     * @param ulLat The latitude file
-     * @param ulLon The longitude file
+     * @param latFile Path to the latitude file.
+     * @param lonFile Path to the longitude file.
      * @param latlonScale The navigation value scaling
      */
     public void setNavFiles(String latFile, String lonFile, int latlonScale) {

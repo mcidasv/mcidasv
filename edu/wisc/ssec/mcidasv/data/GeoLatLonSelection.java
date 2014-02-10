@@ -1304,7 +1304,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
     /**
      * Translate a place name into a human readable form
      *
-     * @param place raw name
+     * @param thisPlace raw name
      *
      * @return human readable name
      */
@@ -1791,9 +1791,9 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
     }
 
     /**
-     * Handle the line mag slider changed event 
+     * Handle the line mag slider changed event.
      *
-     * @param evt  the event
+     * @param autoSetSize Whether or not the size is automatically set.
      */
     protected void lineMagSliderChanged(boolean autoSetSize) {
         try {
@@ -1878,17 +1878,15 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         return value - 1;
     }
 
-
     /**
-     * _more_
+     * Create a menu item based upon a given location.
      *
-     * @param el _more_
-     * @param name _more_
-     * @param listener _more_
+     * @param llp Location to use in the resulting menu item. Cannot be
+     * {@code null}.
+     * @param name Name of {@code location}. Cannot be {@code null}.
      *
-     * @return _more_
+     * @return Menu item based on {@code llp} and {@code name}.
      */
-
     private JMenuItem makeLocationMenuItem(final LatLonPoint llp,
                                            final String name) {
         JMenuItem mi = null;
@@ -1907,7 +1905,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
         }
         return mi;
     }
-
 
     public boolean getIsLineEle() {
         return this.isLineEle;

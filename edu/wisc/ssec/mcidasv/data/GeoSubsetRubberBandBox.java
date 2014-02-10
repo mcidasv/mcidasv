@@ -80,11 +80,11 @@ public class GeoSubsetRubberBandBox extends SubsetRubberBandBox {
      * Construct a RubberBandBox using xType as the X coordinate and
      * yType as the Y coordinate of the box.
      *
-     * @param  xType   RealType of the X coordinate of the box
-     * @param  yType   RealType of the Y coordinate of the box
+     * @param data
+     * @param displayCS
      *
-     * @throws VisADException   VisAD error
-     * @throws RemoteException   Remote error
+     * @throws VisADException VisAD error
+     * @throws RemoteException Remote error
      */
     public GeoSubsetRubberBandBox(FlatField data, CoordinateSystem displayCS)
             throws VisADException, RemoteException {
@@ -106,15 +106,15 @@ public class GeoSubsetRubberBandBox extends SubsetRubberBandBox {
         this(false, data, displayCS, mask, lastBoxOn);
     }
 
-
-
     /**
      * Construct a RubberBandBox using xType as the X coordinate and
      * yType as the Y coordinate of the box.
      *
-     * @param xType   RealType of the X coordinate of the box
-     * @param yType   RealType of the Y coordinate of the box
-     * @param mask    key mask to use for rubberbanding
+     * @param isLL
+     * @param data
+     * @param displayCS
+     * @param mask Key mask to use for rubberbanding
+     * @param lastBoxOn
      *
      * @throws VisADException   VisAD error
      * @throws RemoteException   Remote error
@@ -143,7 +143,6 @@ public class GeoSubsetRubberBandBox extends SubsetRubberBandBox {
 
         new_cs = new GeoDataToDisplayCoordinateSystem(isLL, cs, displayCS);
         resetExtremes();
-        
 
         DisplayRealType displayLineType =
            new DisplayRealType("displayLine_"+count, true, 0.0, 10000.0, 0.0, null);

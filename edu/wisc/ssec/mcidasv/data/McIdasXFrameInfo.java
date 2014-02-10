@@ -28,7 +28,6 @@
 
 package edu.wisc.ssec.mcidasv.data;
 
-import edu.wisc.ssec.mcidasv.data.McIdasXInfo;
 import edu.wisc.ssec.mcidas.AREAnav;
 
 import java.io.*;
@@ -77,10 +76,11 @@ public class McIdasXFrameInfo {
     }
     
     /**
-     * Copy constructor
+     * Create a new McIDAS-X frame using the given frame number and
+     * {@literal "info"} object.
      *
-     * @param that The McIdasXFrameInfo to copy
-     *
+     * @param frameNumber Frame number.
+     * @param xInfo McIDAS-X {@literal "info"} object. Cannot be {@code null}.
      */
     public McIdasXFrameInfo(int frameNumber, McIdasXInfo xInfo) {
 //    	System.out.println("McIdasXFrameInfo constructor: frame " + frameNumber + ", xInfo " + xInfo.toString());

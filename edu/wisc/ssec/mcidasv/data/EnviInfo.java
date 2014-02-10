@@ -48,7 +48,7 @@ public class EnviInfo extends HeaderInfo {
 	/**
 	 * CTOR
 	 *
-	 * @param filename The filename
+	 * @param thisFile File to use.
 	 */
 	public EnviInfo(File thisFile) {
 		this(thisFile.getAbsolutePath());

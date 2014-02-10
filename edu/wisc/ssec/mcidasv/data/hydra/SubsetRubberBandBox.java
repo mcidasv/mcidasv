@@ -72,11 +72,11 @@ public class SubsetRubberBandBox extends LineDrawing {
      * Construct a RubberBandBox using xType as the X coordinate and
      * yType as the Y coordinate of the box.
      *
-     * @param  xType   RealType of the X coordinate of the box
-     * @param  yType   RealType of the Y coordinate of the box
+     * @param data
+     * @param displayCS
      *
-     * @throws VisADException   VisAD error
-     * @throws RemoteException   Remote error
+     * @throws VisADException VisAD error
+     * @throws RemoteException Remote error
      */
     public SubsetRubberBandBox(FlatField data, CoordinateSystem displayCS)
             throws VisADException, RemoteException {
@@ -104,9 +104,11 @@ public class SubsetRubberBandBox extends LineDrawing {
      * Construct a RubberBandBox using xType as the X coordinate and
      * yType as the Y coordinate of the box.
      *
-     * @param xType   RealType of the X coordinate of the box
-     * @param yType   RealType of the Y coordinate of the box
-     * @param mask    key mask to use for rubberbanding
+     * @param isLL
+     * @param data
+     * @param displayCS
+     * @param mask Key mask to use for rubberbanding
+     * @param lastBoxOn
      *
      * @throws VisADException   VisAD error
      * @throws RemoteException   Remote error
