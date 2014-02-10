@@ -67,15 +67,12 @@ import javax.swing.JToggleButton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import edu.wisc.ssec.mcidas.adde.AddeURLException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidas.AreaDirectoryList;
-import edu.wisc.ssec.mcidas.AreaFileException;
 import edu.wisc.ssec.mcidas.McIDASException;
+import edu.wisc.ssec.mcidas.adde.AddeURLException;
 import edu.wisc.ssec.mcidas.adde.AddeSatBands;
 import edu.wisc.ssec.mcidas.adde.AddeURL;
 
@@ -91,7 +88,6 @@ import ucar.unidata.data.imagery.ImageDataset;
 import ucar.unidata.idv.IdvResourceManager;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.chooser.adde.AddeServer;
-import ucar.unidata.ui.DateTimePicker;
 import ucar.unidata.ui.LatLonWidget;
 import ucar.unidata.util.Format;
 import ucar.unidata.util.GuiUtils;
@@ -104,7 +100,11 @@ import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
 import ucar.visad.UtcDate;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
+import edu.wisc.ssec.mcidasv.ui.JCalendarPicker;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 /**
@@ -565,7 +565,7 @@ public class AddeImageChooser extends AddeChooser implements
      */
     public void getArchiveDay() {
         final JDialog dialog = GuiUtils.createDialog("Set Archive Day", true);
-        final DateTimePicker dtp = new DateTimePicker((Date) null, false);
+        final JCalendarPicker picker = new JCalendarPicker(false);
         if (archiveDay != null) {
             if (archiveDayFormatter == null) {
                 archiveDayFormatter = new SimpleDateFormat(UtcDate.YMD_FORMAT);
@@ -573,7 +573,7 @@ public class AddeImageChooser extends AddeChooser implements
             Date d = null;
             try {
                 d = archiveDayFormatter.parse(archiveDay);
-                dtp.setDate(d);
+                picker.setDate(d);
             } catch (Exception e) {
                 logException("parsing archive day " + archiveDay, e);
             }
@@ -589,7 +589,7 @@ public class AddeImageChooser extends AddeChooser implements
                     descriptorChanged();
                 } else if (cmd.equals(GuiUtils.CMD_OK)) {
                     try {
-                        DateTime dt = new DateTime(dtp.getDate());
+                        DateTime dt = new DateTime(picker.getDate());
                         archiveDay = UtcDate.getYMD(dt);
                         // archiveDayLabel.setText(UtcDate.formatUtcDate(dt,
                         // "MMM dd, yyyy"));
@@ -609,7 +609,7 @@ public class AddeImageChooser extends AddeChooser implements
 
         JComponent contents = GuiUtils.topCenterBottom(GuiUtils.inset(GuiUtils
                 .lLabel("Please select a day for this dataset:"), 10), GuiUtils
-                .inset(dtp, 10), buttons);
+                .inset(picker, 10), buttons);
         Point p = new Point(200, 200);
         if (archiveDayBtn != null) {
             try {
