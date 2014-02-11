@@ -40,7 +40,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -89,9 +88,6 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
 
 	// chooser for local files
 	TLEFileChooser tlefc = null;
-	
-	// set when loading a local file
-	File localFile = null;
 	
 	/** Connect button--we need to be able to disable this */
     JButton connectButton = McVGuiUtils.makeImageTextButton(ICON_CONNECT_SMALL, "Connect");
@@ -168,6 +164,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
 	/**
 	 * Return the data source ID.  Used by extending classes.
 	 */
+    
     @Override
 	protected String getDataSourceId() {
 		return "TLE";
@@ -464,14 +461,18 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
     /**
      * User said go, we go. 
      * Create the TLE DataSource
-     * 
      */
+    
     public void doLoadInThread() {
         prefList.saveState(box);
+        String dsName = "TLE";
+        if (tlefc.getSelectedFile() != null) {
+        	dsName = tlefc.getSelectedFile().getName();
+        }
         Hashtable ht = new Hashtable();
         getDataSourceProperties(ht);
         if (propsOk) {
-        	makeDataSource("TLE", getDataSourceId(), ht);
+        	makeDataSource(dsName, getDataSourceId(), ht);
         	saveServerState();
         }
     }
