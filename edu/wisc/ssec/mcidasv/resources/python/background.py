@@ -2635,8 +2635,9 @@ def writeImageAtIndex(fname, idx, params='', quality=1.0):
     macros = islInterpreter.applyMacros(fname)
     islInterpreter.captureImage(macros, elem)
 
-def loadFile(filename=None, field=None, level=None, subset=None, 
-        time=None, **kwargs): 
+def loadFile(filename=None, field=None, level=None,
+        time=None, xStride=1, yStride=1, 
+        xRange=None, yRange=None, **kwargs): 
     """method for loading anything handled by the netCDF-java library
        (netCDF, HDF, GRIB...)
     """
@@ -2696,12 +2697,18 @@ def loadFile(filename=None, field=None, level=None, subset=None,
         # default to first time step...
         geogrid = geogrid.subset(Range(0, 0), None, None, None)
 
-    adapter = GeoGridAdapter(dataSource.getJavaInstance(), geogrid)
+    if xRange or yRange: 
+        if xRange:
+            xRange = Range(xRange[0], xRange[1])
+        if yRange:
+            yRange = Range(yRange[0], yRange[1])
+        geogrid = geogrid.subset(None, None, yRange, xRange)
 
-    if subset:
-        # use'makeSubset' method from Geogrid class.
-        # need to think about how user will pass this arg.
-        raise NotImplementedError('subset feature not implemented yet')
+    # TODO: type checking
+    # TODO: if inputs == 1, eliminate this call?
+    geogrid = geogrid.subset(None, None, None, 1, yStride, xStride)
+
+    adapter = GeoGridAdapter(dataSource.getJavaInstance(), geogrid)
 
     # get the flatfield
     fieldImpl = adapter.getData()
