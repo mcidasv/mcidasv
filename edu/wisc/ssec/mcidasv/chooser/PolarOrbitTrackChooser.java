@@ -242,6 +242,21 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
 
         return outerPanel;
     }
+    
+    /**
+     * Used by the local file chooser to make sure we are in Local Mode
+     * (the radio button is selected).  Helps to retain cleaner state.
+     *
+     * @return true if Local File Mode radio button is selected
+     */
+    
+    public boolean localMode() {
+    	if (localBtn.isSelected()) {
+    		return true;
+    	} else {
+    		return false;
+    	}
+    }
 
     private JComponent makeAddePanel() {
         JPanel outerPanel = new JPanel();
@@ -255,6 +270,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
             public void actionPerformed(ActionEvent e) {
             	// enable the file chooser
             	tlefc.setEnabled(true);
+            	enableFileLoad(false);
             	// disable everything else? Just following pattern below
                 for (int i=0; i<5; i++) {
                     JComponent comp = (JComponent) (addeList.get(i));
@@ -274,6 +290,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
             public void actionPerformed(ActionEvent e) {
             	// disable the file chooser
             	tlefc.setEnabled(false);
+            	enableFileLoad(false);
                 for (int i=0; i<5; i++) {
                     JComponent comp = (JComponent) (addeList.get(i));
                     comp.setEnabled(true);
@@ -292,6 +309,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
             public void actionPerformed(ActionEvent e) {
             	// disable the file chooser
             	tlefc.setEnabled(false);
+            	enableFileLoad(false);
                 for (int i=5; i<7; i++) {
                     JComponent comp = (JComponent) (addeList.get(i));
                     comp.setEnabled(true);

@@ -45,7 +45,7 @@ import ucar.unidata.idv.chooser.IdvChooser;
  * An extension of JFileChooser to handle Two-Line Element (TLE)
  * files, for plotting satellite orbit tracks.
  * 
- * @author tommyj
+ * @author Gail Dengel and Tommy Jasmin
  *
  */
 
@@ -101,7 +101,7 @@ public class TLEFileChooser extends JFileChooser implements PropertyChangeListen
 			// tell the chooser we have a file to load
 			if (potc != null) {
 				File f = getSelectedFile();
-				if ((f != null) && (accept(f))) {
+				if ((f != null) && (accept(f)) && (potc.localMode())) {
 					if (! f.isDirectory()) {
 						// update last visited directory here
 						potc.getIdv().getStateManager().writePreference(
