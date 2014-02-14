@@ -51,8 +51,8 @@ import ucar.unidata.util.GuiUtils;
  */
 public class JCalendarPicker extends JPanel {
 
-    /** Default time zone */
-    private static TimeZone defaultTimeZone;
+    /** Currently {@literal "GMT"}. */
+    private static final String DEFAULT_TIMEZONE_ID = "GMT";
 
     /** Date chooser */
     private JDateChooser dateChooser;
@@ -68,7 +68,7 @@ public class JCalendarPicker extends JPanel {
      * initial date and includes the {@literal "hour picker"}.
      */
     public JCalendarPicker() {
-        this(null, true);
+        this(null, null, true);
     }
 
     /**
@@ -77,7 +77,7 @@ public class JCalendarPicker extends JPanel {
      * @param includeHours Whether or not to include an hour picker.
      */
     public JCalendarPicker(boolean includeHours) {
-        this(null, includeHours);
+        this(null, null, includeHours);
     }
 
     /**
@@ -86,16 +86,20 @@ public class JCalendarPicker extends JPanel {
      * @param date Initial date. {@code null} is allowed.
      */
     public JCalendarPicker(Date date) {
-        this(date, true);
+        this(date, null, true);
     }
 
     /**
      * Create a {@code JCalendarPicker} with the initial date.
      *
      * @param date Initial date. {@code null} is allowed.
+     * @param timeZoneId Time zone identifier. If {@code null},
+     * {@literal "GMT"} is used.
      * @param includeHours {@code true} to have an hour picker.
+     *
+     * @see TimeZone#getTimeZone(String)
      */
-    public JCalendarPicker(Date date, boolean includeHours) {
+    public JCalendarPicker(Date date, String timeZoneId, boolean includeHours) {
         jc = new JCalendar();
         Calendar calendar = getCalendar(null);
         jc.getDayChooser().setCalendar(calendar);
@@ -112,7 +116,10 @@ public class JCalendarPicker extends JPanel {
             new JSpinner.DateEditor(spinner, "HH:mm");
         spinner.setEditor(editor);
         JComponent timeComp;
-        String timeZoneLabel = ' ' + TimeZone.getDefault().getID();
+        if (timeZoneId == null) {
+            timeZoneId = DEFAULT_TIMEZONE_ID;
+        }
+        String timeZoneLabel = ' ' + TimeZone.getTimeZone(timeZoneId).getID();
         if (includeHours) {
             timeComp = GuiUtils.hbox(spinner, new JLabel(timeZoneLabel), 5);
         } else {
@@ -125,33 +132,9 @@ public class JCalendarPicker extends JPanel {
     }
 
     /**
-     * Set the default time zone for all instances.
+     * Get the {@link Date} that has been set.
      *
-     * @param timeZone Default time zone. {@code null} is allowed, but be aware
-     * that it will result in calls to {@link #getDefaultTimeZone()} returning
-     * {@literal "GMT"}.
-     */
-    public static void setDefaultTimeZone(TimeZone timeZone) {
-        defaultTimeZone = timeZone;
-    }
-
-    /**
-     * Get the default time zone. If one has not been set, this method will
-     * use {@literal "GMT"}.
-     *
-     * @return Default time zone.
-     */
-    public static TimeZone getDefaultTimeZone() {
-        if (defaultTimeZone == null) {
-            defaultTimeZone = TimeZone.getTimeZone("GMT");
-        }
-        return defaultTimeZone;
-    }
-
-    /**
-     * Get the Date that has been set
-     *
-     * @return the date
+     * @return {@code Date} that represents the user's selection.
      */
     public Date getDate() {
         Date d = dateChooser.getDate();
@@ -171,28 +154,29 @@ public class JCalendarPicker extends JPanel {
     }
 
     /**
-     * Get the calendar for this object
+     * Get the calendar for this instance.
      *
-     * @param d the date
+     * @param date The date. If {@code null}, the current time in the system's
+     * default time zone will be used instead.
      *
-     * @return the associated calendar
+     * @return {@link GregorianCalendar} associated with {@code date}.
      */
-    private Calendar getCalendar(Date d) {
+    private Calendar getCalendar(Date date) {
         Calendar calendar = new GregorianCalendar();
-        if (d != null) {
-            calendar.setTime(d);
+        if (date != null) {
+            calendar.setTime(date);
         }
         return calendar;
     }
 
     /**
-     * Set the Date.
+     * Set the {@link Date} that will be used to populate the GUI components.
      *
-     * @param d the new Date
+     * @param date {@code Date}.
      */
-    public void setDate(Date d) {
-        Calendar c = getCalendar(d);
+    public void setDate(Date date) {
+        Calendar c = getCalendar(date);
         dateChooser.setDate(c.getTime());
-        timeModel.setValue(d);
+        timeModel.setValue(date);
     }
 }
