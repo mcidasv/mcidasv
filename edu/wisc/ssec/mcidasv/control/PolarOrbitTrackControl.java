@@ -693,12 +693,12 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         
         fontSizePanel = new JPanel();
         fontSizePanel.setLayout(new BoxLayout(fontSizePanel, BoxLayout.Y_AXIS));
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
+        JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
         jcbLabels = new JCheckBox("Labels On/Off");
         jcbLabels.setSelected(true);
         jcbLabels.setName(CHECKBOX_LABELS);
         jcbLabels.addItemListener(this);
-        topPanel.add(jcbLabels);
+        labelPanel.add(jcbLabels);
         
         // same row, add label interval spinner
         Integer defaultInterval = new Integer(5); 
@@ -710,10 +710,10 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         JLabel intervalLabel = new JLabel("Label Interval:");
         JLabel intervalUnits = new JLabel("minutes");
         js = new JSpinner(snm);
-        topPanel.add(Box.createHorizontalStrut(5));
-        topPanel.add(intervalLabel);
-        topPanel.add(js);
-        topPanel.add(intervalUnits);
+        labelPanel.add(Box.createHorizontalStrut(5));
+        labelPanel.add(intervalLabel);
+        labelPanel.add(js);
+        labelPanel.add(intervalUnits);
         
         // line style for drawing swath track and width edges
         jcbTrackLineStyle.addActionListener(this);
@@ -726,15 +726,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         jcbEdgeLineStyle.setSelectedIndex(1);
         curEdgeLineStyle = jcbEdgeLineStyle.getSelectedIndex();
         
-        // last on this panel, check box to turn on/off swath line edges
-        topPanel.add(Box.createHorizontalStrut(5));
-        jcbSwathEdges = new JCheckBox("Swath Edges On/Off");
-        jcbSwathEdges.setSelected(true);
-        jcbSwathEdges.setName(CHECKBOX_SWATH_EDGES);
-        jcbSwathEdges.addItemListener(this);
-        topPanel.add(jcbSwathEdges);
-        
-        fontSizePanel.add(topPanel);
+        fontSizePanel.add(labelPanel);
         JPanel botPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
         botPanel.add(new JLabel("Font: "));
         botPanel.add(otFontSelector.getComponent());
@@ -1229,6 +1221,15 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         swathWidthFld = new JTextField(isw.toString(), 5);
 
         JPanel jp = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        
+        // first on this panel, check box to turn on/off swath line edges
+        jcbSwathEdges = new JCheckBox("Swath Edges On/Off");
+        jcbSwathEdges.setSelected(true);
+        jcbSwathEdges.setName(CHECKBOX_SWATH_EDGES);
+        jcbSwathEdges.addItemListener(this);
+        jp.add(jcbSwathEdges);
+        
+        jp.add(Box.createHorizontalStrut(5));
         jp.add(new JLabel("Satellite: "));
         jp.add(satelliteName);
         jp.add(Box.createHorizontalStrut(5));
