@@ -44,15 +44,13 @@ import javax.swing.SpinnerDateModel;
 import com.toedter.calendar.JCalendar;
 import com.toedter.calendar.JDateChooser;
 
+import ucar.unidata.idv.IdvConstants;
 import ucar.unidata.util.GuiUtils;
 
 /**
  * This class is just a backport of the IDV's old {@code DateTimePicker}.
  */
 public class JCalendarPicker extends JPanel {
-
-    /** Currently {@literal "GMT"}. */
-    private static final String DEFAULT_TIMEZONE_ID = "GMT";
 
     /** Date chooser */
     private JDateChooser dateChooser;
@@ -94,7 +92,7 @@ public class JCalendarPicker extends JPanel {
      *
      * @param date Initial date. {@code null} is allowed.
      * @param timeZoneId Time zone identifier. If {@code null},
-     * {@literal "GMT"} is used.
+     * {@link IdvConstants#DEFAULT_TIMEZONE} is used.
      * @param includeHours {@code true} to have an hour picker.
      *
      * @see TimeZone#getTimeZone(String)
@@ -117,7 +115,7 @@ public class JCalendarPicker extends JPanel {
         spinner.setEditor(editor);
         JComponent timeComp;
         if (timeZoneId == null) {
-            timeZoneId = DEFAULT_TIMEZONE_ID;
+            timeZoneId = IdvConstants.DEFAULT_TIMEZONE;
         }
         String timeZoneLabel = ' ' + TimeZone.getTimeZone(timeZoneId).getID();
         if (includeHours) {
