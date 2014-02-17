@@ -65,6 +65,7 @@ import edu.wisc.ssec.mcidasv.data.adde.sgp4.SGP4SatData;
 import edu.wisc.ssec.mcidasv.data.adde.sgp4.SatelliteTleSGP4;
 import edu.wisc.ssec.mcidasv.data.adde.sgp4.TLE;
 import edu.wisc.ssec.mcidasv.data.adde.sgp4.Time;
+import edu.wisc.ssec.mcidasv.util.XmlUtil;
 
 /**
  * Class for Two-Line-Element data sources, to plot orbit tracks
@@ -149,10 +150,10 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
                 for (int i = 0; i < cards.length; i++) {
                     String str = cards[i];
                     if (str.length() > 0) {
-                        tleCards.add(stripNonValidXMLCharacters(cards[i]));
+                        tleCards.add(XmlUtil.stripNonValidXMLCharacters(cards[i]));
                         int indx = cards[i].indexOf(" ");
                         if (indx < 0) {
-                            choices.add(stripNonValidXMLCharacters(cards[i]));
+                            choices.add(XmlUtil.stripNonValidXMLCharacters(cards[i]));
                         }
                     }
                 }
@@ -169,9 +170,9 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
                 String nextLine = null;
                 while ((nextLine = tleReader.readLine()) != null) {
                     if (nextLine.length() > 0) {
-                        tleCards.add(stripNonValidXMLCharacters(nextLine));
+                        tleCards.add(XmlUtil.stripNonValidXMLCharacters(nextLine));
                         if (nextLine.length() < 50) {
-                            choices.add(stripNonValidXMLCharacters(nextLine));
+                            choices.add(XmlUtil.stripNonValidXMLCharacters(nextLine));
                         }
                     }
                 }
@@ -641,40 +642,6 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
         //System.out.println("\n\nshowPropertiesDialog:");
         boolean ret = super.showPropertiesDialog(initTabName, modal);
         return ret;
-    }
-    
-    /**
-     * TJJ Jan 2013 - this utility method should get moved to... good guess,
-     * a utility class.  Needed because invalid XML characters were getting 
-     * added to bundles.  This strips them out.
-     * 
-     * This method ensures that the output String has only
-     * valid XML unicode characters as specified by the
-     * XML 1.0 standard. For reference, please see
-     * <a href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-Char">the
-     * standard</a>. This method will return an empty
-     * String if the input is null or empty.
-     *
-     * @param in The String whose non-valid characters we want to remove.
-     * @return The in String, stripped of non-valid characters.
-     */
-    
-    public String stripNonValidXMLCharacters(String in) {
-        StringBuffer out = new StringBuffer(); // Used to hold the output.
-        char current; // Used to reference the current character.
-
-        if (in == null || ("".equals(in))) return ""; // vacancy test.
-        for (int i = 0; i < in.length(); i++) {
-            current = in.charAt(i); // NOTE: No IndexOutOfBoundsException caught here; it should not happen.
-            if ((current == 0x9) ||
-                (current == 0xA) ||
-                (current == 0xD) ||
-                ((current >= 0x20) && (current <= 0xD7FF)) ||
-                ((current >= 0xE000) && (current <= 0xFFFD)) ||
-                ((current >= 0x10000) && (current <= 0x10FFFF)))
-                out.append(current);
-        }
-        return out.toString();
     }
     
 }
