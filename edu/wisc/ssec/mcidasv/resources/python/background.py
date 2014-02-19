@@ -1661,7 +1661,7 @@ class _Layer(_JavaProxy):
         return self._JavaProxy__javaObject.getColorTable()
         
     @gui_invoke_later
-    def setEnhancementTable(self, ctName):
+    def setEnhancementTable(self, ctName, transparency=None):
         """Change the enhancement table.
         
         Args:
@@ -1670,9 +1670,10 @@ class _Layer(_JavaProxy):
                      (but it will work if you do).  However, this is
                      CASE SENSITIVE!  Can't really help this because IDV stores
                      color table names case-sensitively.
+            transparency:  set the overall transparency of the color table
                      
         Raises:
-            ValueError:  couldn't find ctName
+            ValueError:  couldn't find ctName or transparency invalid value
         Returns: nothing
         """
         
@@ -1687,6 +1688,11 @@ class _Layer(_JavaProxy):
             # e.g. 'System>Temperature'
             shortName = (ctName.split('>'))[-1]
             newct = ctm.getColorTable(shortName)
+
+        if transparency:
+            if (transparency > 1.0) or (transparency < 0.0):
+                raise ValueError('transparency must be between 0 and 1')
+            newct.setTransparency(transparency)
             
         if newct is not None:
             return self._JavaProxy__javaObject.setColorTable(newct)
