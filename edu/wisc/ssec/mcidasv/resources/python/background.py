@@ -2637,16 +2637,21 @@ def writeImageAtIndex(fname, idx, params='', quality=1.0):
 
 def loadFile(filename=None, field=None, level=None,
         time=None, xStride=1, yStride=1, 
-        xRange=None, yRange=None, **kwargs): 
+        xRange=None, yRange=None, latLonBounds=None, **kwargs): 
     """method for loading anything handled by the netCDF-java library
        (netCDF, HDF, GRIB...)
     """
     from ucar.nc2.dt.grid import GridDataset
     from ucar.unidata.data import DataUtil
     from ucar.unidata.data.grid import GeoGridAdapter
+    from ucar.unidata.geoloc import LatLonPointImpl
+    from ucar.unidata.geoloc import LatLonRect
     from ucar.ma2 import Range
     from ucar.visad import Util
     from visad import DateTime
+
+    if (xStride < 1) or (yStride < 1):
+        raise ValueError("xStride and yStride must be 1 or greater")
 
     dataType = 'Grid files (netCDF/GRIB/OPeNDAP/GEMPAK)'
     if filename:
@@ -2704,9 +2709,16 @@ def loadFile(filename=None, field=None, level=None,
             yRange = Range(yRange[0], yRange[1])
         geogrid = geogrid.subset(None, None, yRange, xRange)
 
+    if latLonBounds:
+        # TODO: type checking
+        a = latLonBounds
+        left = LatLonPointImpl(a[0], a[1]) # lat, lon
+        right = LatLonPointImpl(a[2], a[3]) # lat, lon
+        latLonBounds = LatLonRect(left, right)
+
     # TODO: type checking
     # TODO: if inputs == 1, eliminate this call?
-    geogrid = geogrid.subset(None, None, None, 1, yStride, xStride)
+    geogrid = geogrid.subset(None, None, latLonBounds, 1, yStride, xStride)
 
     adapter = GeoGridAdapter(dataSource.getJavaInstance(), geogrid)
 
