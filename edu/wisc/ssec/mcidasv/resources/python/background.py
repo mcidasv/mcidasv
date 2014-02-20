@@ -11,7 +11,7 @@ from contextlib import contextmanager
 from decorators import deprecated
 from decorators import gui_invoke_later
 from decorators import gui_invoke_now
-from interactive import _expandpath
+from interactive import expandpath
 
 from org.slf4j import Logger
 from org.slf4j import LoggerFactory
@@ -1403,7 +1403,7 @@ class _Display(_JavaProxy):
         pause()
         
         # do some sanity checking on filename
-        filename = _expandpath(filename)
+        filename = expandpath(filename)
         
         isDir = os.path.isdir(filename)
         
@@ -2507,7 +2507,7 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=No
     mpm = McIdasPreferenceManager # for some of the PREF constants
     
     # Allows user to specify file with for example, ~/bundlefile.mcv
-    bundle = _expandpath(bundle)
+    bundle = expandpath(bundle)
     
     fileExists = os.path.exists(bundle)
     isDir = os.path.isdir(bundle)
