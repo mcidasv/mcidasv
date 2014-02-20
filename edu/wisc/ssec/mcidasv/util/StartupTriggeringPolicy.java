@@ -92,8 +92,8 @@ public class StartupTriggeringPolicy<E>
                     }
                 });
                 for (int i = keep-1; i < files.length; i++) {
-                    addInfo("remove '"+files[i]+'\'');
-//                    files[i].delete();
+                    addInfo("removing '"+files[i]+'\'');
+                    files[i].delete();
                 }
             }
         };
@@ -114,7 +114,7 @@ public class StartupTriggeringPolicy<E>
                 addInfo("maxHistory not set; not cleaning archiving logs");
             }
         } catch (RolloverFailure e) {
-            //Do nothing
+            addError("could not perform rollover of log file", e);
         }
     }
 }
