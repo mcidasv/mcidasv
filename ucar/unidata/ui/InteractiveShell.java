@@ -157,7 +157,6 @@ public class InteractiveShell implements HyperlinkListener {
         frame.dispose();
         contents = null;
         title = null;
-        history.clear();
         sb = null;
         editorPane = null;
         cardLayoutPanel = null;
