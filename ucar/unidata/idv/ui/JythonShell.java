@@ -102,7 +102,7 @@ import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.util.Contract;
 
 /**
- * This class provides  an interactive shell for running JYthon
+ * This class provides an interactive shell for running Jython.
  *
  * @author IDV development team
  * @version $Revision$Date: 2012/10/03 20:10:23 $
@@ -169,6 +169,7 @@ public class JythonShell extends InteractiveShell {
     public JythonShell(IntegratedDataViewer theIdv) {
         super(WINDOW_TITLE);
         this.idv = theIdv;
+
         List<ShellHistoryEntry> oldHistory = convertStringHistory(idv.getStore());
         if (oldHistory != null) {
             history.clear();
@@ -202,7 +203,6 @@ public class JythonShell extends InteractiveShell {
      * Write Jython shell history.
      */
     public void saveHistory() {
-        
         // trim the history array to desired length
         while (history.size() > loadMaxHistoryLength(idv.getStore(), DEFAULT_MAX_HISTORY_LENGTH)) {
             // remove the "oldest" command
@@ -411,7 +411,7 @@ public class JythonShell extends InteractiveShell {
         try {
             interp = jythonManager.createInterpreter();
         } catch (Exception exc) {
-            logException("An error occurred creating the interpeter", exc);
+            logException("An error occurred creating the interpreter", exc);
             return;
         }
         if (islInterpreter == null) {
@@ -545,11 +545,11 @@ public class JythonShell extends InteractiveShell {
      * @return items
      */
     protected List<JMenuItem> getDisplayMenuItems() {
-        List<JMenuItem> displayMenuItems = new ArrayList<JMenuItem>();
         List<ControlDescriptor> cds = idv.getControlDescriptors();
-        Map<String, JMenu> catMenus = new HashMap<String, JMenu>();
+        List<JMenuItem> displayMenuItems = new ArrayList<JMenuItem>(cds.size());
+        Map<String, JMenu> catMenus = new HashMap<String, JMenu>(cds.size());
         for (ControlDescriptor cd : cds) {
-            JMenu catMenu = (JMenu)catMenus.get(cd.getDisplayCategory());
+            JMenu catMenu = catMenus.get(cd.getDisplayCategory());
             if (catMenu == null) {
                 String category = cd.getDisplayCategory();
                 catMenu = new JMenu(category);
@@ -723,8 +723,6 @@ public class JythonShell extends InteractiveShell {
             store.put(PROP_JYTHON_WINDOW, defaultBounds);
             windowBounds = defaultBounds;
         }
-        // TODO(jon): remove these calls after a little time has passed.
-        store.remove("prop.jython.shell.windowbounds");
         return windowBounds;
     }
     
@@ -736,10 +734,8 @@ public class JythonShell extends InteractiveShell {
      */
     public static void saveWindowBounds(final IdvObjectStore store, final Rectangle windowBounds) {
         store.put(PROP_JYTHON_WINDOW, windowBounds);
-        // TODO(jon): remove these calls after a little time has passed.
-        store.remove("prop.jython.shell.windowbounds");
     }
-    
+
     /**
      * Loads the position of the bar dividing the input and output regions.
      * 
@@ -751,8 +747,8 @@ public class JythonShell extends InteractiveShell {
     public static int loadDividerLocation(final IdvObjectStore store, final int defaultDividerLocation) {
         Integer dividerLocation = (Integer)store.get(PROP_JYTHON_DIVIDER);
         if (dividerLocation == null) {
-        	store.put(PROP_JYTHON_DIVIDER, defaultDividerLocation);
-        	dividerLocation = defaultDividerLocation;
+            store.put(PROP_JYTHON_DIVIDER, defaultDividerLocation);
+            dividerLocation = defaultDividerLocation;
         }
         return dividerLocation;
     }
