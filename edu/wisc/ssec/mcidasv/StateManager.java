@@ -190,11 +190,11 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
     }
     
     /**
-     * Get a property
+     * Get a property.
      *
-     * @param name name of the property
+     * @param name Name of the property. Cannot be {@code null}.
      *
-     * @return  the property or null
+     * @return Value associated with {@code name} or {@code null}.
      */
     @Override public Object getProperty(final String name) {
         Object value = null;
@@ -212,7 +212,103 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
         }
         return value;
     }
-    
+
+    /**
+     * Find the value associated with the given ID by checking the
+     * {@literal "properties"}, and if nothing was found, check the preferences.
+     *
+     * @param name Property or preference ID. Cannot be {@code null}.
+     *
+     * @return Either the value associated with {@code name} or {@code null}.
+     */
+    public Object getPropertyOrPreference(String name) {
+        Object o = getProperty(name);
+        if (o == null) {
+            o = getPreference(name);
+        }
+        return o;
+    }
+
+    /**
+     * Find the {@link String} value associated with the given ID by checking
+     * the {@literal "properties"}, and if nothing was found, check the
+     * preferences.
+     *
+     * @param name Property or preference ID. Cannot be {@code null}.
+     * @param dflt Value to return if there is no property or preference
+     * associated with {@code name}
+     *
+     * @return Either the value associated with {@code name} or {@code dflt}.
+     */
+    public String getPropertyOrPreference(String name, String dflt) {
+        String value = dflt;
+        Object o = getPropertyOrPreference(name);
+        if (o != null) {
+            value = o.toString();
+        }
+        return value;
+    }
+
+    /**
+     * Find the {@link Integer} value associated with the given ID by checking
+     * the {@literal "properties"}, and if nothing was found, check the
+     * preferences.
+     *
+     * @param name Property or preference ID. Cannot be {@code null}.
+     * @param dflt Value to return if there is no property or preference
+     * associated with {@code name}
+     *
+     * @return Either the value associated with {@code name} or {@code dflt}.
+     */
+    public int getPropertyOrPreference(String name, int dflt) {
+        int value = dflt;
+        Object o = getPropertyOrPreference(name);
+        if (o != null) {
+            value = Integer.valueOf(o.toString());
+        }
+        return value;
+    }
+
+    /**
+     * Find the {@link Double} value associated with the given ID by checking
+     * the {@literal "properties"}, and if nothing was found, check the
+     * preferences.
+     *
+     * @param name Property or preference ID. Cannot be {@code null}.
+     * @param dflt Value to return if there is no property or preference
+     * associated with {@code name}
+     *
+     * @return Either the value associated with {@code name} or {@code dflt}.
+     */
+    public double getPropertyOrPreference(String name, double dflt) {
+        double value = dflt;
+        Object o = getPropertyOrPreference(name);
+        if (o != null) {
+            value = Double.valueOf(o.toString());
+        }
+        return value;
+    }
+
+    /**
+     * Find the {@link Boolean} value associated with the given ID by checking
+     * the {@literal "properties"}, and if nothing was found, check the
+     * preferences.
+     *
+     * @param name Property or preference ID. Cannot be {@code null}.
+     * @param dflt Value to return if there is no property or preference
+     * associated with {@code name}
+     *
+     * @return Either the value associated with {@code name} or {@code dflt}.
+     */
+    public boolean getPropertyOrPreference(String name, boolean dflt) {
+        boolean value = dflt;
+        Object o = getPropertyOrPreference(name);
+        if (o != null) {
+            value = Boolean.valueOf(o.toString());
+        }
+        return value;
+    }
+
     /**
      * Returns information about the current version of McIDAS-V and the IDV,
      * along with their respective build dates.

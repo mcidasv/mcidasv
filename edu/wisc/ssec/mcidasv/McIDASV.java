@@ -63,7 +63,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import ucar.unidata.ui.InteractiveShell;
 import visad.VisADException;
 
 import ucar.unidata.data.DataManager;
@@ -82,7 +81,6 @@ import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.ui.colortable.ColorTableManager;
 import ucar.unidata.ui.InteractiveShell.ShellHistoryEntry;
-import ucar.unidata.ui.InteractiveShell.ShellHistoryMode;
 import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
@@ -250,6 +248,28 @@ public class McIDASV extends IntegratedDataViewer {
 
     public void MacOSXPreferences() {
         showPreferenceManager();
+    }
+
+    /**
+     * Get the maximum number of threads to be used when rendering in VisAD.
+     *
+     * @return Number of threads for rendering. Default value is the same as
+     * {@link Runtime#availableProcessors()}.
+     */
+    @Override public int getMaxRenderThreadCount() {
+        StateManager stateManager = (StateManager)getStateManager();
+        return stateManager.getPropertyOrPreference(PREF_THREADS_RENDER,
+            Runtime.getRuntime().availableProcessors());
+    }
+
+    /**
+     * Get the maximum number of threads to be used when reading data.
+     *
+     * @return Number of threads for reading data. Default value is {@code 4}.
+     */
+    @Override public int getMaxDataThreadCount() {
+        StateManager stateManager = (StateManager)getStateManager();
+        return stateManager.getPropertyOrPreference(PREF_THREADS_DATA, 4);
     }
 
     /**
@@ -920,23 +940,35 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
-     * Called after the IDV has finished setting everything up after starting.
-     * McIDAS-V is currently only using this method to determine if the last
-     * {@literal "exit"} was clean--whether or not {@code SESSION_FILE} was 
-     * removed before the McIDAS-V process terminated.
+     * This method is useful for storing commandline {@literal "properties"}
+     * with the user's preferences.
      */
-    @Override public void initDone() {
-        super.initDone();
+    private void overridePreferences() {
+        StateManager stateManager = (StateManager)getStateManager();
+        int renderThreads = getMaxRenderThreadCount();
+        stateManager.putPreference(PREF_THREADS_RENDER, renderThreads);
+        stateManager.putPreference(PREF_THREADS_DATA, getMaxDataThreadCount());
+        visad.util.ThreadManager.setGlobalMaxThreads(renderThreads);
+    }
+
+    /**
+     * Determine if the last {@literal "exit"} was clean--whether or not
+     * {@code SESSION_FILE} was removed before the McIDAS-V process terminated.
+     *
+     * <p>If the exit was not clean, the user is prompted to submit a support
+     * request.</p>
+     */
+    private void detectAndHandleCrash() {
         GuiUtils.setApplicationTitle("");
         if (cleanExit || getArgsManager().getIsOffScreen()) {
             return;
         }
 
-        String msg = "The previous McIDAS-V session did not exit cleanly.<br>"+ 
-                     "Do you want to send the log file to the McIDAS Help Desk?";
+        String msg = "The previous McIDAS-V session did not exit cleanly.<br>"+
+            "Do you want to send the log file to the McIDAS Help Desk?";
         if (previousStart != null) {
-            msg = "The previous McIDAS-V session (start time: %s) did not exit cleanly.<br>"+ 
-                  "Do you want to send the log file to the McIDAS Help Desk?";
+            msg = "The previous McIDAS-V session (start time: %s) did not exit cleanly.<br>"+
+                "Do you want to send the log file to the McIDAS Help Desk?";
             msg = String.format(msg, previousStart);
         }
 
@@ -946,12 +978,12 @@ public class McIDASV extends IntegratedDataViewer {
         }
 
         Set<WarningResult> result = showWarningDialog(
-                "Report Crash",
-                msg,
-                "mcv.crash.boom.send.report",
-                "Always ask?",
-                "Open support form",
-                "Do not report");
+            "Report Crash",
+            msg,
+            "mcv.crash.boom.send.report",
+            "Always ask?",
+            "Open support form",
+            "Do not report");
 
         getStore().put("mcv.crash.boom.send.report", result.contains(WarningResult.SHOW));
         if (!result.contains(WarningResult.OK)) {
@@ -959,6 +991,31 @@ public class McIDASV extends IntegratedDataViewer {
         }
 
         getIdvUIManager().showSupportForm();
+    }
+
+    /**
+     * Called after the IDV has finished setting everything up after starting.
+     * McIDAS-V is currently only using this method to determine if the last
+     * {@literal "exit"} was clean--whether or not {@code SESSION_FILE} was 
+     * removed before the McIDAS-V process terminated.
+     *
+     * Called after the IDV has finished setting everything up. McIDAS-V uses
+     * this method to handle:
+     *
+     * <ul>
+     *   <li>The presence of certain properties on the commandline.</li>
+     *   <li>Detection and handling of a crashed McIDAS-V session.</li>
+     * </ul>
+     *
+     * @see #overridePreferences()
+     * @see #detectAndHandleCrash()
+     */
+    @Override public void initDone() {
+        super.initDone();
+
+        overridePreferences();
+
+        detectAndHandleCrash();
     }
 
     /**
