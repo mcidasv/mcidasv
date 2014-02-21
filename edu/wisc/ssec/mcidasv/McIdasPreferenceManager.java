@@ -747,29 +747,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         
         McIDASV mcv = (McIDASV)getIdv();
         
-        // Build the threads panel
-        Vector threadRenderList = new Vector();
-        for(int i = 1;i <= Runtime.getRuntime().availableProcessors();i++) {
-            threadRenderList.add(new Integer(i));
-        }
-        Integer threadRenderMax = new Integer(mcv.getMaxRenderThreadCount());
-        final JComboBox threadRenderComboBox = McVGuiUtils.makeComboBox(threadRenderList, threadRenderMax);
-        widgets.put(PREF_THREADS_RENDER, threadRenderComboBox);
-        
-        Vector threadReadList = new Vector();
-        for(int i = 1; i <= 12; i++) {
-            threadReadList.add(new Integer(i));
-        }
-        Integer threadReadMax = new Integer(mcv.getMaxDataThreadCount());
-        final JComboBox threadReadComboBox = McVGuiUtils.makeComboBox(threadReadList, threadReadMax);
-        widgets.put(PREF_THREADS_DATA, threadReadComboBox);
-        
-        JPanel threadsPanel = McVGuiUtils.topBottom(
-            McVGuiUtils.makeLabeledComponent("Rendering:", threadRenderComboBox),
-            McVGuiUtils.makeLabeledComponent("Reading:", threadReadComboBox),
-            Prefer.NEITHER);
-        threadsPanel.setBorder(BorderFactory.createTitledBorder("Java Threads"));
-        
         // Build the startup options panel
         final StartupManager startup = StartupManager.getInstance();
         Platform platform = startup.getPlatform();
@@ -797,8 +774,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(LEADING)
-                    .addComponent(smPanel, TRAILING, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(threadsPanel, TRAILING, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(smPanel, TRAILING, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -806,8 +782,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(smPanel, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
-                .addGap(GAP_UNRELATED)
-                .addComponent(threadsPanel, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
                 .addContainerGap(DEFAULT_SIZE, Short.MAX_VALUE))
         );
         
