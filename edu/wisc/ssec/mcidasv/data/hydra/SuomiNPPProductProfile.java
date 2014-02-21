@@ -67,6 +67,7 @@ public class SuomiNPPProductProfile {
 	boolean readFromJar = false;
 	HashMap<String, String> rangeMin = new HashMap<String, String>();
 	HashMap<String, String> rangeMax = new HashMap<String, String>();
+	HashMap<String, String> units = new HashMap<String, String>();
 	HashMap<String, String> scaleFactorName = new HashMap<String, String>();
 	HashMap<String, ArrayList<Float>> fillValues = new HashMap<String, ArrayList<Float>>();
 	HashMap<String, ArrayList<QualityFlag>> qualityFlags = new HashMap<String, ArrayList<QualityFlag>>();
@@ -123,6 +124,7 @@ public class SuomiNPPProductProfile {
 					}
 				}
 			}
+			jar.close();
 			if (found == true) {
 				logger.trace("Found profile: " + name);
 				return name;
@@ -201,7 +203,8 @@ public class SuomiNPPProductProfile {
 					
 					datum = child.getChildNodes();
 					String rMin = null;
-					String rMax = null;		
+					String rMax = null;	
+					String unitStr = null;
 					String sFactorName = null;	
 
 					if ((name != null) && (datum != null)) {
@@ -317,6 +320,9 @@ public class SuomiNPPProductProfile {
 							if (datumChild.getNodeName().equals("RangeMax")) {
 								rMax = datumChild.getTextContent();
 							}
+							if (datumChild.getNodeName().equals("MeasurementUnits")) {
+								unitStr = datumChild.getTextContent();
+							}
 							if (datumChild.getNodeName().equals("ScaleFactorName")) {
 								sFactorName = datumChild.getTextContent();
 							}
@@ -365,6 +371,12 @@ public class SuomiNPPProductProfile {
 						rangeMax.put(name, rMax);
 					}
 					
+					if ((name != null) && (unitStr != null)) {
+						units.put(name, unitStr);
+					} else {
+						units.put(name, "Unknown");
+					}
+					
 					if ((name != null) && (sFactorName != null)) {
 						logger.debug("Adding scale factor name: " + sFactorName + " for product: " + name);
 						scaleFactorName.put(name, sFactorName);
@@ -385,6 +397,7 @@ public class SuomiNPPProductProfile {
 		if (ios != null) {
 			try {
 				ios.close();
+				jar.close();
 			} catch (IOException ioe) {
 				// do nothing
 			}
@@ -412,6 +425,10 @@ public class SuomiNPPProductProfile {
 	
 	public String getRangeMax(String name) {
 		return rangeMax.get(name);
+	}
+	
+	public String getUnits(String name) {
+		return units.get(name);
 	}
 	
 	public String getScaleFactorName(String name) {

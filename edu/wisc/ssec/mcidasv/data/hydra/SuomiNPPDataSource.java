@@ -85,7 +85,9 @@ import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.util.Misc;
 
 import visad.Data;
+import visad.DerivedUnit;
 import visad.FlatField;
+import visad.RealType;
 import visad.VisADException;
 
 import visad.util.Util;
@@ -256,6 +258,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	
     	// we should be able to find an XML Product Profile for each data/product type
     	SuomiNPPProductProfile nppPP = null;
+    	// and also Profile metadata for geolocation variables
+    	boolean haveGeoMetaData = false;
     	   	
     	try {
     		
@@ -498,6 +502,15 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    					String subName = subG.getFullName();
     	    					if (subName.contains("-GEO")) {
     	    						// this is the geolocation data
+    	    						String geoBaseName = subG.getShortName();
+    	    						geoBaseName = geoBaseName.substring(0, geoBaseName.indexOf('_'));
+    	    						logger.debug("SHORT GEO NAME: " + geoBaseName);
+    	    						if (! haveGeoMetaData) {
+        	    						String geoProfileFileName = nppPP.getProfileFileName(geoBaseName);
+	    								// also add meta dataf from geolocation profile
+	    								nppPP.addMetaDataFromFile(geoProfileFileName);
+    	    							haveGeoMetaData = true;
+    	    						}
     	    						List<Variable> vl = subG.getVariables();
     	    						for (Variable v : vl) {
     	    							if (v.getFullName().endsWith(SEPARATOR_CHAR + "Latitude")) {
@@ -1035,6 +1048,13 @@ public class SuomiNPPDataSource extends HydraDataSource {
                 }
                 
         	} else {
+        		String varName = pStr.substring(pStr.indexOf(SEPARATOR_CHAR) + 1);
+        		String varShortName = pStr.substring(pStr.lastIndexOf(SEPARATOR_CHAR) + 1);
+        		String units = nppPP.getUnits(varShortName);
+        		if (units == null) units = "Unknown";
+        		DerivedUnit du = new DerivedUnit(units);
+        		// associate this variable with these units, if not done already
+        		RealType.getRealType(varName, du);
         		adapters[pIdx] = new SwathAdapter(nppAggReader, swathTable);
         		if (pIdx == 0) {
         			defaultSubset = adapters[pIdx].getDefaultSubset();
