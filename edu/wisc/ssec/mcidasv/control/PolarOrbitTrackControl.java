@@ -98,9 +98,7 @@ import visad.Tuple;
 import visad.TupleType;
 import visad.UnionSet;
 import visad.VisADException;
-import visad.georef.EarthLocation;
 import visad.georef.EarthLocationTuple;
-import visad.georef.LatLonPoint;
 import visad.georef.LatLonTuple;
 
 /**
@@ -132,12 +130,12 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     /** Property name to get the list or URLs */
     public final String PREF_GROUNDSTATIONS = "mcv.groundstations";
 
-    private JComboBox locationComboBox;
-    private JComboBox jcbStationsPlotted;
+    private JComboBox<String> locationComboBox;
+    private JComboBox<String> jcbStationsPlotted;
     String [] lineStyles = new String[] { "_____", "_ _ _", ".....", "_._._" };
-    private JComboBox jcbTrackLineStyle = new JComboBox(lineStyles);
-    private JComboBox jcbEdgeLineStyle = new JComboBox(lineStyles);
-    private JComboBox jcbStationLineStyle = new JComboBox(lineStyles);
+    private JComboBox<String> jcbTrackLineStyle = new JComboBox<String>(lineStyles);
+    private JComboBox<String> jcbEdgeLineStyle = new JComboBox<String>(lineStyles);
+    private JComboBox<String> jcbStationLineStyle = new JComboBox<String>(lineStyles);
     private JCheckBox jcbLabels;
     private JCheckBox jcbSwathEdges;
     
@@ -174,9 +172,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private Font gsCurFont = FontSelector.DEFAULT_FONT;
     
     // line width combo boxes, GS: Ground Station, SC: Swath Center, SE: Swath Edge
-    private JComboBox jcbGSLineWidth;
-    private JComboBox jcbSCLineWidth = new JComboBox();
-    private JComboBox jcbSELineWidth = new JComboBox();
+    private JComboBox<String> jcbGSLineWidth;
+    private JComboBox<String> jcbSCLineWidth;
+    private JComboBox<String> jcbSELineWidth;
     private JSpinner js = null;
 
     private CompositeDisplayable trackDsp;
@@ -963,12 +961,12 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     	lonLabel = new JLabel();
     	altLabel = new JLabel();
         String [] lineWidths = {"1", "2", "3", "4"};
-        jcbGSLineWidth = new JComboBox(lineWidths);
-        jcbSCLineWidth = new JComboBox(lineWidths);
+        jcbGSLineWidth = new JComboBox<String>(lineWidths);
+        jcbSCLineWidth = new JComboBox<String>(lineWidths);
         // initialize swath center (track line) to width 2
         jcbSCLineWidth.setSelectedIndex(1);
         jcbEdgeLineStyle.setSelectedIndex(1);
-        jcbSELineWidth = new JComboBox(lineWidths);
+        jcbSELineWidth = new JComboBox<String>(lineWidths);
         otFontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
         otFontSelector.setFont(FontSelector.DEFAULT_FONT);
         gsFontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
@@ -1022,7 +1020,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         try {
             navDsp = getNavigatedDisplay();
             float defaultZ = getMapViewManager().getDefaultMapPosition();
-            // we're just nudging a big so tracks (and their labels) get drawn over
+            // we're just nudging a bit so tracks (and their labels) get drawn over
             // ground stations (and their labels), which get drawn over default map level
             // user can change this in map controls if they prefer maps on top
             gsZ = defaultZ + 0.25f;
@@ -1101,13 +1099,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         jp.setBorder(BorderFactory.createTitledBorder(" Ground Station Controls "));
 
         // line style for drawing coverage circles
-        jcbStationLineStyle = new JComboBox(new String[] { "_____", "_ _ _", ".....", "_._._" });
+        jcbStationLineStyle = new JComboBox<String>(new String[] { "_____", "_ _ _", ".....", "_._._" });
         jcbStationLineStyle.addActionListener(this);
         jcbStationLineStyle.setSelectedIndex(1);
         prvStationLineStyle = jcbStationLineStyle.getSelectedIndex();
         
-        locationComboBox = new JComboBox();
-        jcbStationsPlotted = new JComboBox();
+        locationComboBox = new JComboBox<String>();
+        jcbStationsPlotted = new JComboBox<String>();
 
         // Ground Stations are now a natural-order map (alphabetical)
         GroundStations gs = new GroundStations(null);
