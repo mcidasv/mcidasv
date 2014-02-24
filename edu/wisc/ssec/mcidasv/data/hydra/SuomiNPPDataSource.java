@@ -88,8 +88,12 @@ import visad.Data;
 import visad.DerivedUnit;
 import visad.FlatField;
 import visad.RealType;
+import visad.Unit;
 import visad.VisADException;
 
+import visad.data.units.NoSuchUnitException;
+import visad.data.units.ParseException;
+import visad.data.units.Parser;
 import visad.util.Util;
 
 /**
@@ -1052,9 +1056,18 @@ public class SuomiNPPDataSource extends HydraDataSource {
         		String varShortName = pStr.substring(pStr.lastIndexOf(SEPARATOR_CHAR) + 1);
         		String units = nppPP.getUnits(varShortName);
         		if (units == null) units = "Unknown";
-        		DerivedUnit du = new DerivedUnit(units);
+        		Unit u = null;
+        		try {
+					u = Parser.parse(units);
+				} catch (NoSuchUnitException e) {
+					u = new DerivedUnit(units);
+					logger.warn("Unkown units: " + units);
+				} catch (ParseException e) {
+					u = new DerivedUnit(units);
+					logger.warn("Unparseable units: " + units);
+				}
         		// associate this variable with these units, if not done already
-        		RealType.getRealType(varName, du);
+        		RealType.getRealType(varName, u);
         		adapters[pIdx] = new SwathAdapter(nppAggReader, swathTable);
         		if (pIdx == 0) {
         			defaultSubset = adapters[pIdx].getDefaultSubset();
