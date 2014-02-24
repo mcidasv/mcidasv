@@ -202,10 +202,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     private double satelliteAltitude = 0.0;
 
-    private double centerAlt = 0.0;
-    private double centerLat = 0.0;
-    private double centerLon = 0.0;
-    private double satZ = 0.0;
+    private double trackZ = 0.0d;
+    private double gsZ = 0.0d;
     private NavigatedDisplay navDsp = null;
     private TextType otTextType = null;
     private TextType gsTextType = null;
@@ -523,9 +521,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private void applyTrackPosition() {
         try {
             DisplayRealType dispType = navDsp.getDisplayAltitudeType();
-            trackDsp.setConstantPosition(satZ, dispType);
-            timeLabelDsp.setConstantPosition(satZ, dispType);
-            stationLabelDsp.setConstantPosition(satZ, dispType);
+            trackDsp.setConstantPosition(trackZ, dispType);
+            timeLabelDsp.setConstantPosition(trackZ, dispType);
+            stationLabelDsp.setConstantPosition(gsZ, dispType);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -827,6 +825,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             coverageCircle.setColor(getAntColor());
             coverageCircle.setData(uset);
             coverageCircle.setDrawingEnabled(false);
+            coverageCircle.setConstantPosition(gsZ, navDsp.getDisplayAltitudeType());
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -1022,14 +1021,15 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         dataSource = getDataSource();
         try {
             navDsp = getNavigatedDisplay();
-            EarthLocation earthLoc = navDsp.getCenterPoint();
-            LatLonPoint llp = earthLoc.getLatLonPoint();
-            centerLat = llp.getLatitude().getValue();
-            centerLon = llp.getLongitude().getValue();
-            centerAlt = dataSource.getNearestAltToGroundStation(centerLat, centerLon) / 1000.0;
-            EarthLocationTuple elt = new EarthLocationTuple(centerLat, centerLon, centerAlt);
-            double[] xyz = navDsp.getSpatialCoordinates((EarthLocation) elt).getValues();
-            satZ = xyz[2] / 5.0;
+            float defaultZ = getMapViewManager().getDefaultMapPosition();
+            // we're just nudging a big so tracks (and their labels) get drawn over
+            // ground stations (and their labels), which get drawn over default map level
+            // user can change this in map controls if they prefer maps on top
+            gsZ = defaultZ + 0.25f;
+            trackZ = defaultZ + 0.5f;
+            // range on "map level" stuff is -1 to 1, stay within these limits
+            if (trackZ > 1.0f) trackZ = 1.0f;
+            if (gsZ > 1.0f) gsZ = 1.0f;
             applyTrackPosition();
         } catch (Exception e) {
             logger.error("get display center e=" + e);
@@ -1088,6 +1088,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     		Tuple tup = new Tuple(makeTupleType(STATION_MODS),
     				new Data[] { lonLat, new Text(gsTextType, str)});
     		groundStationDsp.setData(tup);
+    		groundStationDsp.setConstantPosition(gsZ, navDsp.getDisplayAltitudeType());
     		stationLabelDsp.addDisplayable(groundStationDsp);
     	} catch (Exception e) {
     		e.printStackTrace();
@@ -1274,6 +1275,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     		int numPlotted = jcbStationsPlotted.getItemCount();
             circleDsp = new CompositeDisplayable();
+            circleDsp.setConstantPosition(gsZ, navDsp.getDisplayAltitudeType());
     		for (int i = 0; i < numPlotted; i++) {
     			String s = (String) jcbStationsPlotted.getItemAt(i);
                 EarthLocationTuple elt = stationMap.get(s);
@@ -1294,7 +1296,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     circleDsp.setColor(getAntColor());
                     cd.setLineWidth(jcbGSLineWidth.getSelectedIndex() + 1);
                     circleDsp.addDisplayable(cd);
-                    
                 }
     		}
     		addDisplayable(circleDsp, FLAG_COLORTABLE);
