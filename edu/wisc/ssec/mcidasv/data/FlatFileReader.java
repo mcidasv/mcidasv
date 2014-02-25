@@ -310,24 +310,30 @@ public class FlatFileReader {
 
     			}
     			
-    			int readOffset = pixelPointer - startPointer;		    			
+    			int readOffset = pixelPointer - startPointer;
+    			float readFloat = 0.0f;
     			switch (this.myFormat) {
     			case HeaderInfo.kFormat1ByteUInt:
-    				this.floatData[curPixel++] = (float)bytesTo1ByteUInt(readBytes, readOffset);
+    				readFloat = (float)bytesTo1ByteUInt(readBytes, readOffset);
     				break;
     			case HeaderInfo.kFormat2ByteUInt:
-    				this.floatData[curPixel++] = (float)bytesTo2ByteUInt(readBytes, readOffset);
+    				int newInt = bytesTo2ByteUInt(readBytes, readOffset);
+    				if (this.bigEndian) {
+    					newInt = (((newInt&0xff)<<8)|((newInt&0xff00)>>8));
+    				}
+    				readFloat = (float)newInt;
     				break;
     			case HeaderInfo.kFormat2ByteSInt:
-    				this.floatData[curPixel++] = (float)bytesTo2ByteSInt(readBytes, readOffset);
+    				readFloat = (float)bytesTo2ByteSInt(readBytes, readOffset);
     				break;
     			case HeaderInfo.kFormat4ByteSInt:
-    				this.floatData[curPixel++] = (float)bytesTo4ByteSInt(readBytes, readOffset);
+    				readFloat = (float)bytesTo4ByteSInt(readBytes, readOffset);
     				break;
     			case HeaderInfo.kFormat4ByteFloat:
-    				this.floatData[curPixel++] = (float)bytesTo4ByteFloat(readBytes, readOffset);
+    				readFloat = (float)bytesTo4ByteFloat(readBytes, readOffset);
     				break;
     			}
+    			this.floatData[curPixel++] = readFloat;
 
     			curElement+=stride;
     			if (curElement >= elements) {
