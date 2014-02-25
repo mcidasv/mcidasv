@@ -217,7 +217,7 @@ class Clip(ImageFormatting):
         return islString.strip() + '; '
         
 class Colorbar(ImageFormatting):
-    def __init__(self, display, width, height, orientation, tickmarks, interval, values, place, anchor, showlines, suffix, suffixfrequency, showunit, transparency, color, lineColor):
+    def __init__(self, display, width, height, orientation, tickMarks, interval, values, place, anchor, showLines, suffix, suffixFrequency, showUnit, transparency, color, lineColor):
         if display:
             self.display = 'display=%s' % (display)
         else:
@@ -238,10 +238,10 @@ class Colorbar(ImageFormatting):
         else:
             self.orientation = ''
             
-        if tickmarks:
-            self.tickmarks = 'tickmarks=%s' % (tickmarks)
+        if tickMarks:
+            self.tickMarks = 'tickmarks=%s' % (tickMarks)
         else:
-            self.tickmarks = ''
+            self.tickMarks = ''
             
         if interval:
             self.interval = 'interval=%s' % (interval)
@@ -263,25 +263,25 @@ class Colorbar(ImageFormatting):
         else:
             self.anchor = ''
             
-        if showlines:
-            self.showlines = 'showlines=%s' % (showlines)
+        if showLines:
+            self.showLines = 'showlines=%s' % (showLines)
         else:
-            self.showlines = ''
+            self.showLines = ''
             
         if suffix:
             self.suffix = 'suffix=%s' % (suffix)
         else:
             self.suffix = ''
             
-        if suffixfrequency:
-            self.suffixfrequency = 'suffixfrequency=%s' % (suffixfrequency)
+        if suffixFrequency:
+            self.suffixFrequency = 'suffixfrequency=%s' % (suffixFrequency)
         else:
-            self.suffixfrequency = ''
+            self.suffixFrequency = ''
             
-        if showunit:
-            self.showunit = 'showunit=%s' % (showunit)
+        if showUnit:
+            self.showUnit = 'showunit=%s' % (showUnit)
         else:
-            self.showunit = ''
+            self.showUnit = ''
             
         if transparency:
             self.transparency = 'transparency=%s' % (transparency)
@@ -299,7 +299,7 @@ class Colorbar(ImageFormatting):
             self.lineColor = ''
             
     def toIsl(self):
-        islString = "colorbar %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s" % (self.display, self.width, self.height, self.orientation, self.tickmarks, self.interval, self.values, self.place, self.anchor, self.showlines, self.suffix, self.suffixfrequency, self.showunit, self.transparency, self.color, self.lineColor)
+        islString = "colorbar %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s" % (self.display, self.width, self.height, self.orientation, self.tickMarks, self.interval, self.values, self.place, self.anchor, self.showLines, self.suffix, self.suffixFrequency, self.showUnit, self.transparency, self.color, self.lineColor)
         return islString.strip() + '; '
         
 class TransparentColor(ImageFormatting):
