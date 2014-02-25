@@ -130,12 +130,12 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     /** Property name to get the list or URLs */
     public final String PREF_GROUNDSTATIONS = "mcv.groundstations";
 
-    private JComboBox<String> locationComboBox;
-    private JComboBox<String> jcbStationsPlotted;
+    private JComboBox locationComboBox;
+    private JComboBox jcbStationsPlotted;
     String [] lineStyles = new String[] { "_____", "_ _ _", ".....", "_._._" };
-    private JComboBox<String> jcbTrackLineStyle = new JComboBox<String>(lineStyles);
-    private JComboBox<String> jcbEdgeLineStyle = new JComboBox<String>(lineStyles);
-    private JComboBox<String> jcbStationLineStyle = new JComboBox<String>(lineStyles);
+    private JComboBox jcbTrackLineStyle = new JComboBox(lineStyles);
+    private JComboBox jcbEdgeLineStyle = new JComboBox(lineStyles);
+    private JComboBox jcbStationLineStyle = new JComboBox(lineStyles);
     private JCheckBox jcbLabels;
     private JCheckBox jcbSwathEdges;
     
@@ -172,9 +172,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private Font gsCurFont = FontSelector.DEFAULT_FONT;
     
     // line width combo boxes, GS: Ground Station, SC: Swath Center, SE: Swath Edge
-    private JComboBox<String> jcbGSLineWidth;
-    private JComboBox<String> jcbSCLineWidth;
-    private JComboBox<String> jcbSELineWidth;
+    private JComboBox jcbGSLineWidth;
+    private JComboBox jcbSCLineWidth;
+    private JComboBox jcbSELineWidth;
     private JSpinner js = null;
 
     private CompositeDisplayable trackDsp;
@@ -961,12 +961,12 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     	lonLabel = new JLabel();
     	altLabel = new JLabel();
         String [] lineWidths = {"1", "2", "3", "4"};
-        jcbGSLineWidth = new JComboBox<String>(lineWidths);
-        jcbSCLineWidth = new JComboBox<String>(lineWidths);
+        jcbGSLineWidth = new JComboBox(lineWidths);
+        jcbSCLineWidth = new JComboBox(lineWidths);
         // initialize swath center (track line) to width 2
         jcbSCLineWidth.setSelectedIndex(1);
         jcbEdgeLineStyle.setSelectedIndex(1);
-        jcbSELineWidth = new JComboBox<String>(lineWidths);
+        jcbSELineWidth = new JComboBox(lineWidths);
         otFontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
         otFontSelector.setFont(FontSelector.DEFAULT_FONT);
         gsFontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
@@ -1099,13 +1099,14 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         jp.setBorder(BorderFactory.createTitledBorder(" Ground Station Controls "));
 
         // line style for drawing coverage circles
-        jcbStationLineStyle = new JComboBox<String>(new String[] { "_____", "_ _ _", ".....", "_._._" });
+//        jcbStationLineStyle = new JComboBox(new String[] { "_____", "_ _ _", ".....", "_._._" });
+        jcbStationLineStyle = new JComboBox(lineStyles);
         jcbStationLineStyle.addActionListener(this);
         jcbStationLineStyle.setSelectedIndex(1);
         prvStationLineStyle = jcbStationLineStyle.getSelectedIndex();
         
-        locationComboBox = new JComboBox<String>();
-        jcbStationsPlotted = new JComboBox<String>();
+        locationComboBox = new JComboBox();
+        jcbStationsPlotted = new JComboBox();
 
         // Ground Stations are now a natural-order map (alphabetical)
         GroundStations gs = new GroundStations(null);
