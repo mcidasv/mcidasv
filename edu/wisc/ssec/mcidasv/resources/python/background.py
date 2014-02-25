@@ -1381,6 +1381,42 @@ class _Display(_JavaProxy):
         
         ImageUtils.writeImageToFile(image, kmlImagePath, quality)
         
+    def _testCaptureImage(self, filename, quality=1.0, height=-1, width=-1, formatting=None):
+        """Don't use this method for anything other than testing!"""
+        
+        formatting = formatting or []
+        
+        # this pause is apparently critical
+        pause()
+        
+        # do some sanity checking on filename
+        filename = expandpath(filename)
+        
+        isDir = os.path.isdir(filename)
+        
+        if isDir:
+            # this isn't really good enough.  could be permissions issue, etc.
+            raise ValueError(filename, " is a directory")
+            
+        isl = ''
+        
+        for formatter in formatting:
+            isl += formatter.toIsl()
+            
+        if height != -1 and width != -1:
+            resizeIsl = 'resize height=%s; resize width=%s; ' % (height, width)
+            isl += resizeIsl
+        if self._JavaProxy__javaObject.getLogoVisibility():
+            logoFile = self._JavaProxy__javaObject.getLogoFile()
+            logoPosition = self._JavaProxy__javaObject.getLogoPosition().upper()
+            logoAnchor = logoPosition[0:2]
+            # logoScale = self._JavaProxy__javaObject.getLogoScale()
+            logoIsl = 'overlay image=%s anchor=%s place=%s; ' % (logoFile, logoAnchor, logoPosition)
+            isl += logoIsl
+            
+        print 'isl=%s' % (isl[:-2])
+        islInterpreter.writeImage(filename, isl[:-2], quality)
+        
     def captureImage(self, filename, quality=1.0, height=-1, width=-1):
         """Attempt at a replacement for ISL writeImage.
         

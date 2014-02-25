@@ -137,9 +137,14 @@ from mcvadde import (
 )
 
 from interactive import (
-    describeActions, dumpObj, editFile, expandpath, ncdump, ncdumpToString, 
-    today, tomorrow, yesterday, _expandpath, _today, _tomorrow, _yesterday, 
+    describeActions, dumpObj, editFile, expandpath, ncdump, ncdumpToString,
+    today, tomorrow, yesterday, _expandpath, _today, _tomorrow, _yesterday,
     getLogLevel, setLogLevel,
+)
+
+from isltest import (
+    ImageFormatting, Matte, ImageOverlay, TextOverlay, Clip, Colorbar,
+    TransparentColor, TransparentBackground
 )
 
 _user_python = os.path.join(_mcv.getStore().getUserDirectory().toString(), 'python')
