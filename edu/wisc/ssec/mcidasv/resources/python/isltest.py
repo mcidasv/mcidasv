@@ -323,3 +323,15 @@ class TransparentBackground(ImageFormatting):
         
     def toIsl(self):
         return "backgroundtransparent ; "
+        
+class Resize(ImageFormatting):
+    def __init__(self, dimensions):
+        if dimensions and len(dimensions) == 2:
+            self.width = 'width=%s' % (dimensions[0])
+            self.height = 'height=%s' % (dimensions[1])
+        else:
+            raise ValueError()
+            
+    def toIsl(self):
+        islString = "resize %s %s" % (self.width, self.height)
+        return islString.strip() + '; '

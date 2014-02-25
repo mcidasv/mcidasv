@@ -1381,7 +1381,7 @@ class _Display(_JavaProxy):
         
         ImageUtils.writeImageToFile(image, kmlImagePath, quality)
         
-    def _testCaptureImage(self, filename, quality=1.0, height=-1, width=-1, formatting=None):
+    def _testCaptureImage(self, filename, quality=1.0, formatting=None, ignoreLogo=False):
         """Don't use this method for anything other than testing!"""
         
         formatting = formatting or []
@@ -1403,10 +1403,7 @@ class _Display(_JavaProxy):
         for formatter in formatting:
             isl += formatter.toIsl()
             
-        if height != -1 and width != -1:
-            resizeIsl = 'resize height=%s; resize width=%s; ' % (height, width)
-            isl += resizeIsl
-        if self._JavaProxy__javaObject.getLogoVisibility():
+        if not ignoreLogo and self._JavaProxy__javaObject.getLogoVisibility():
             logoFile = self._JavaProxy__javaObject.getLogoFile()
             logoPosition = self._JavaProxy__javaObject.getLogoPosition().upper()
             logoAnchor = logoPosition[0:2]
