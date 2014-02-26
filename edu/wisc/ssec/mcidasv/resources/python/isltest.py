@@ -131,7 +131,7 @@ class TextOverlay(ImageFormatting):
         return islString.strip() + '; '
         
 class Clip(ImageFormatting):
-    def __init__(self, north, south, east, west, top, bottom, left, right, display, space, hspace, vspace, spaceLeft,spaceRight,spaceTop, spaceBottom):
+    def __init__(self, north=None, south=None, east=None, west=None, top=None, bottom=None, left=None, right=None, display=None, space=None, hspace=None, vspace=None, spaceLeft=None, spaceRight=None, spaceTop=None, spaceBottom=None):
         if north:
             self.north = 'north=%s' % (north)
         else:
@@ -217,7 +217,7 @@ class Clip(ImageFormatting):
         return islString.strip() + '; '
         
 class Colorbar(ImageFormatting):
-    def __init__(self, display, width, height, orientation, tickMarks, interval, values, place, anchor, showLines, suffix, suffixFrequency, showUnit, transparency, color, lineColor):
+    def __init__(self, display=None, width=None, height=None, orientation=None, tickMarks=None, interval=None, values=None, place=None, anchor=None, showLines=None, suffix=None, suffixFrequency=None, showUnit=None, transparency=None, color=None, lineColor=None):
         if display:
             self.display = 'display=%s' % (display)
         else:
