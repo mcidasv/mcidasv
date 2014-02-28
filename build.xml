@@ -76,7 +76,12 @@
     <property name="run.largeheap" value="6656m" />
     
     <property name="logback.default.config" value="${userpath.dir}/logback.xml" />
-    
+
+    <!-- VisAD Properties -->
+    <!-- visad.texturemax is a workaround for the bizarro problem detailed at
+         dcdbs.ssec.wisc.edu/mcidasv/forums/viewtopic.php?f=24&t=1378 -->
+    <property name="visad.texturemax" value="4096" />
+
     <!-- Nightly build properties -->
     <property name="cvs.root" value="${user.name}@cvs.ssec.wisc.edu:/cvsroot" />
     <property name="cvs.rsh" value="ssh" />
@@ -546,6 +551,7 @@
       <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
       <sysproperty key="debug.adde.reqs" value="false" />
       -->
+      <!--<sysproperty key="textureWidthMax" value="${visad.texturemax}" />-->
       <sysproperty key="loglevel" value="${run.log.level}" />
       <sysproperty key="mcv.userpath" value="${userpath.dir}" />
       <sysproperty key="mcv.logpath" value="${userpath.dir}/mcidasv.log" />
@@ -592,6 +598,7 @@
       --> 
       <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
       <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
+      <!--<sysproperty key="textureWidthMax" value="${visad.texturemax}" />-->
       <sysproperty key="mcv.userpath" value="${userpath.dir}" />
       <sysproperty key="mcv.logpath" value="${userpath.dir}/mcidasv.log" />
       <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
