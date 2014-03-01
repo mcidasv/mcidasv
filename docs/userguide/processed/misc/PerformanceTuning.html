@@ -94,16 +94,20 @@ the problem.</p>
 <a name="parallelrender" id="parallelrender"></a>
 <div class="pagesubtitle"> Parallel Rendering and Data
   Reading</div> 
-
 If you are running McIDAS-V on  a multi-core machine you can configure it
  to render individual time steps in parallel. You can also do remote data reads
  in parallel. This typically results in a 50% reduction in overall data 
 reading and rendering time.
+<p>The number of  Rendering and Reading java threads can be set on the command line when starting McIDAS-V. To set these values, run the following when starting McIDAS-V (substitute in a numerical value in place of <strong>#</strong> in the commands to set the rendering and reading thread values):</p>
+<ul list='propertylist'>
+<li list='propertylistitem'><strong>Linux and Mac -</strong> ./runMcV -Didv.threads.render.max=# -Didv.threads.render.data=#</li>
+<li list='propertylistitem'><strong>Windows -</strong> runMcV.bat -Didv.threads.render.max=# -Didv.threads.render.data=#</li>
+</ul>
+<ul list='propertylist'>
+<li list='propertylistitem'><strong>Didv.threads.render.max -</strong> Sets the number of Java threads to use for rendering. This number defaults to the number of processors on the machine running McIDAS-V.</li>
+<li list='propertylistitem'><strong>Didv.threads.render.data -</strong> Sets the number of Java threads to use for reading. This number is   dependent on the configuration of the server machine. This defaults to   4. This is used when reading individual time steps of data from remote   ADDE and OpenDAP servers.</li>
+</ul>
 <p>
-There are 2  preferences in the User Preference's <strong><a href="../tools/preferences/AdvancedPreferences.html">Advanced</a></strong> tab.
-One is the number of threads used for rendering. This defaults to the number
-of processors on your machine. The second is the number of threads used for
-data reading. This defaults to 4.<p>
 For rendering McIDAS-V will render each time step in parallel.
 Note: Since the rendering processes can allocate temporary memory, it is 
 possible to exhaust the available memory if too many threads are running

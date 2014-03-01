@@ -33,7 +33,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
   configure the settings before running McIDAS-V, execute the <em>runMcV-Config</em> command
   from the directory where McIDAS-V was installed (normally McIDAS-V-System)
   or by selecting <strong>Configure McIDAS-V</strong> in the Windows <strong>Start</strong> menu. The below image represents the default settings for the <strong>Advanced</strong> tab.</p>
-<div class="images"><img src="../images/preferences/Advanced.gif" width="975" height="644" alt="Image 1: Advanced Preferences (Default)"><br>
+<div class="images"><img src="../images/preferences/Advanced.gif" width="973" height="627" alt="Image 1: Advanced Preferences (Default)"><br>
   <span class="caption">Image 1: Advanced Preferences (Default)</span></div>
 <p></p>
 <div class="pagesubtitle">Startup Options</div>
@@ -98,12 +98,6 @@ of larger datasets because of the more efficient use of memory. Unchecking this
   the McIDAS-V threads are running. Unchecking this option uses the JVM defaults,
   which vary by Operating System. </li>
 </ul>
-<div class="pagesubtitle">Java Threads</div>
-<p>If running McIDAS-V on a multi-core machine, McIDAS-V can be configured to render individual time steps in parallel when working with a loop of data. McIDAS-V can also do remote data reads in parallel. This typically results in a 50% reduction in overall data reading and rendering time. For more information, see <a href="../../misc/PerformanceTuning.html#parallelrender">Parallel&nbsp;Rendering and Data Reading</a>.</p>
-<ul class="propertylist">
-  <li class="propertylistitem"><b>Rendering -</b> Sets the number of Java threads to use for rendering. This number defaults to the number of processors on the machine.</li>
-  <li class="propertylistitem"><b>Reading -</b> Sets the number of Java threads to use for reading. This number is dependent on the configuration of the server machine. This defaults to 4. This is used when reading individual time steps of data from remote ADDE and OpenDAP servers. 
-</li></ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
