@@ -46,7 +46,12 @@ import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.startupmanager.Platform;
 
 public class OptionMaster {
-    
+
+    public final static String SET_PREFIX = "SET ";
+    public final static String EMPTY_STRING = "";
+    public final static String QUOTE_STRING = "\"";
+    public final static char QUOTE_CHAR = '"';
+
     // TODO(jon): write CollectionHelpers.zip() and CollectionHelpers.zipWith()
     public final Object[][] blahblah = {
         { "HEAP_SIZE", "Memory", "512m", Type.MEMORY, OptionPlatform.ALL, Visibility.VISIBLE },
@@ -54,10 +59,6 @@ public class OptionMaster {
         { "USE_3DSTUFF", "Enable 3D controls", "1", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
         { "DEFAULT_LAYOUT", "Load default layout", "1", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
         { "STARTUP_BUNDLE", "Defaults", "", Type.DIRTREE, OptionPlatform.ALL, Visibility.VISIBLE },
-        /**
-         * SLIDER_TEST seems unnecessary...?
-         */
-//        { "SLIDER_TEST", "Slider Test", "50P", Type.SLIDER, OptionPlatform.ALL, Visibility.VISIBLE },
         /**
          * TODO: DAVEP: TomW's windows machine needs SET D3DREND= to work properly.
          * Not sure why, but it shouldn't hurt other users.  Investigate after Alpha10
@@ -71,6 +72,7 @@ public class OptionMaster {
         // temp bandaid for people suffering from permgen problems.
         { "USE_CMSGC", "Enable concurrent mark-sweep garbage collector", "0", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
         { "LOG_LEVEL", "Log Level", "INFO", Type.LOGLEVEL, OptionPlatform.ALL, Visibility.VISIBLE },
+        { "JVM_OPTIONS", "Java Virtual Machine Options", "", Type.TEXT, OptionPlatform.ALL, Visibility.VISIBLE },
     };
     
     /**
@@ -416,13 +418,18 @@ public class OptionMaster {
                 if (line.startsWith("#")) {
                     continue;
                 }
-                contents = line.replace("=\"", "=");
-                String[] chunks = contents.replace("SET ", "").split("=");
-                if (chunks.length == 2) {
-                    Option option = getOption(chunks[0]);
+                int splitAt = line.indexOf('=');
+                if (splitAt >= 0) {
+                    String id = line.replace(SET_PREFIX, EMPTY_STRING).substring(0, splitAt);
+                    Option option = getOption(id);
                     if (option != null) {
+                        System.err.println("setting '"+id+"' with '"+line+'\'');
                         option.fromPrefsFormat(line);
+                    } else {
+                        System.err.println("Warning: Unknown ID '"+id+'\'');
                     }
+                } else {
+                    System.err.println("Warning: Bad line format '"+line+'\'');
                 }
             }
             br.close();
@@ -441,12 +448,12 @@ public class OptionMaster {
         String newLine = 
                 StartupManager.getInstance().getPlatform().getNewLine();
         OptionPlatform currentPlatform = convertToOptionPlatform();
-        StringBuilder contents = new StringBuilder();
+        StringBuilder contents = new StringBuilder(2048);
         for (Object[] arrayOption : blahblah) {
             Option option = getOption((String)arrayOption[0]);
             OptionPlatform platform = option.getOptionPlatform();
             if (platform == OptionPlatform.ALL || platform == currentPlatform) {
-                contents.append(option.toPrefsFormat() + newLine);
+                contents.append(option.toPrefsFormat()).append(newLine);
             }
         }
         

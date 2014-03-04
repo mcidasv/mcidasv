@@ -25,8 +25,12 @@
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
-
 package edu.wisc.ssec.mcidasv.startupmanager.options;
+
+import static edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.EMPTY_STRING;
+import static edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.QUOTE_CHAR;
+import static edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.QUOTE_STRING;
+import static edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.SET_PREFIX;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -109,17 +113,17 @@ public abstract class AbstractOption implements Option {
      * 
      * @return Whether or not the string is valid.
      */
-    private boolean isValidPrefFormat(final String text) {
+    protected boolean isValidPrefFormat(final String text) {
         assert text != null;
-        boolean hasSet = text.contains("SET ");
-        boolean isWin = (StartupManager.getInstance().getPlatform() == Platform.WINDOWS);
-        return (isWin == hasSet);
+        boolean hasSet = text.contains(SET_PREFIX);
+        boolean isWin = StartupManager.getInstance().getPlatform() == Platform.WINDOWS;
+        return isWin == hasSet;
     }
 
     /**
      * Returns this option's type.
      * 
-     * @return The option's type.
+     * @return Option's type.
      * 
      * @see Type
      */
@@ -130,7 +134,7 @@ public abstract class AbstractOption implements Option {
     /**
      * Returns the platform(s) to which this option applies.
      * 
-     * @return The option's platform.
+     * @return Option's platform.
      * 
      * @see OptionPlatform
      */
@@ -152,7 +156,7 @@ public abstract class AbstractOption implements Option {
     /**
      * Returns the ID used when referring to this option.
      * 
-     * @return The option's ID.
+     * @return Option's ID.
      */
     public String getOptionId() {
         return optionId;
@@ -162,7 +166,7 @@ public abstract class AbstractOption implements Option {
      * Returns a brief description of this option. Mostly useful for 
      * providing a GUI label.
      * 
-     * @return The option's label.
+     * @return Option's label.
      */
     public String getLabel() {
         return label;
@@ -184,13 +188,13 @@ public abstract class AbstractOption implements Option {
         }
         String copy = new String(text);
         if (StartupManager.getInstance().getPlatform() == Platform.WINDOWS) {
-            copy = copy.replace("SET ", "");
+            copy = copy.replace(SET_PREFIX, EMPTY_STRING);
         }
         String[] chunks = copy.split("=");
         if (chunks.length == 2 && chunks[0].equals(optionId)) {
             setValue(chunks[1]);
         } else {
-            setValue("");
+            setValue(EMPTY_STRING);
         }
     }
 
@@ -205,26 +209,35 @@ public abstract class AbstractOption implements Option {
      * @see #isValidPrefFormat(String)
      */
     public String toPrefsFormat() {
+        Platform platform = StartupManager.getInstance().getPlatform();
         StringBuilder str = new StringBuilder(optionId);
         String value = getValue();
-        if (StartupManager.getInstance().getPlatform() == Platform.WINDOWS) {
-            str.insert(0, "SET ");
+        if (platform == Platform.WINDOWS) {
+            str.insert(0, SET_PREFIX);
         }
-        return str.append("=").append(value).toString();
+        str.append('=');
+        if ((platform != Platform.WINDOWS) && value.contains(" ")) {
+            str.append(QUOTE_CHAR).append(value).append(QUOTE_CHAR);
+        } else {
+            str.append(value);
+        }
+        return str.toString();
     }
 
     /**
      * Returns the GUI component that represents the option. 
-     * {@link BooleanOption}s are represented by a {@link JCheckBox}, while
-     * {@link TextOption}s appear as a {@link JTextField}.
+     * {@link BooleanOption BooleanOptions} are represented by a
+     * {@link JCheckBox}, while {@link TextOption TextOptions} appear as a
+     * {@link JTextField}.
      * 
      * @return The GUI representation of this option.
      */
     public abstract JComponent getComponent();
 
     /**
-     * Returns the value of the option. Note that {@link BooleanOption}s
-     * return either "0" or "1".
+     * Returns the value of the option. Note that
+     * {@link BooleanOption BooleanOptions} return either {@literal "0"} or
+     * {@literal "1"}.
      * 
      * @return The current value of the option.
      */
@@ -232,7 +245,8 @@ public abstract class AbstractOption implements Option {
 
     /**
      * Forces the value of the option to the data specified. Note that 
-     * {@link BooleanOption}s accept either "0", or "1".
+     * {@link BooleanOption BooleanOptions} accept either {@literal "0"}, or
+     * {@literal "1"}.
      * 
      * @param value New value to use.
      */
@@ -241,7 +255,7 @@ public abstract class AbstractOption implements Option {
     /**
      * Friendly string representation of the option.
      * 
-     * @return String containing relevant info about the option.
+     * @return {@code String} containing relevant info about the option.
      * 
      * @see TextOption#toString()
      * @see BooleanOption#toString()

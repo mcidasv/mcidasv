@@ -38,18 +38,21 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import java.util.List;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -60,7 +63,9 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.LayoutStyle;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
@@ -73,6 +78,7 @@ import ucar.unidata.ui.Help;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.StringUtil;
+
 import edu.wisc.ssec.mcidasv.ArgumentManager;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.startupmanager.options.BooleanOption;
@@ -280,14 +286,14 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         BooleanOption useGeometryByRef = optMaster.getBooleanOption("USE_GEOBYREF");
         BooleanOption useImageByRef = optMaster.getBooleanOption("USE_IMAGEBYREF");
         DirectoryOption startupBundle = optMaster.getDirectoryOption("STARTUP_BUNDLE");
-//        TextOption jvmArgs = optMaster.getTextOption("JVM_ARGS");
+        TextOption jvmArgs = optMaster.getTextOption("JVM_OPTIONS");
         LoggerLevelOption logLevel = optMaster.getLoggerLevelOption("LOG_LEVEL");
         
         JPanel startupPanel = new JPanel();
         startupPanel.setBorder(BorderFactory.createTitledBorder("Startup Options"));
         
         // Build the memory panel
-        JPanel heapPanel = McVGuiUtils.makeLabeledComponent(heapSize.getLabel()+":", heapSize.getComponent());
+        JPanel heapPanel = McVGuiUtils.makeLabeledComponent(heapSize.getLabel()+':', heapSize.getComponent());
         
         // Build the 3D panel
         JCheckBox use3dCheckBox = use3d.getComponent();
@@ -320,11 +326,14 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         useNpotCheckBox.setText(useNpot.getLabel());
         
         JComboBox logLevelComboBox = logLevel.getComponent();
-        
+
         JPanel logLevelPanel = McVGuiUtils.makeLabeledComponent(logLevel.getLabel()+":", logLevelComboBox);
         
         JPanel miscPanel = McVGuiUtils.makeLabeledComponent("Misc:", useCmsCollectorCheckBox);
-        
+
+        JTextField jvmArgsField = jvmArgs.getComponent();
+        JPanel jvmPanel = McVGuiUtils.makeLabeledComponent("Java Flags:", jvmArgsField);
+
         Component[] visadComponents = new Component[] {
                 useGeometryByRefCheckBox,
                 useImageByRefCheckBox,
@@ -333,31 +342,34 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         
         JPanel visadPanel = McVGuiUtils.makeLabeledComponent("VisAD:", McVGuiUtils.vertical(visadComponents));
         
-        javax.swing.GroupLayout panelLayout = new javax.swing.GroupLayout(startupPanel);
+        GroupLayout panelLayout = new GroupLayout(startupPanel);
         startupPanel.setLayout(panelLayout);
         panelLayout.setHorizontalGroup(
-            panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addComponent(heapPanel)
                 .addComponent(j3dPanel)
                 .addComponent(bundlePanel)
                 .addComponent(visadPanel)
-                .addComponent(miscPanel)
                 .addComponent(logLevelPanel)
+                .addComponent(miscPanel)
+                .addComponent(jvmPanel)
         );
         panelLayout.setVerticalGroup(
-            panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(panelLayout.createSequentialGroup()
-                .addComponent(heapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(bundlePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(j3dPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(visadPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(logLevelPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(miscPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(heapPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(bundlePanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(j3dPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(visadPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(logLevelPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(miscPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jvmPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
             )
         );
         return startupPanel;
