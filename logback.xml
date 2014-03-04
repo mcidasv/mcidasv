@@ -29,11 +29,13 @@
         be given a name conforming to "mcidasv_yyyyMMdd_HHmmss.log".
         
         If you are using autoscanning, be aware that any reloads will result
-        in mcidasv.log being rolled. Just like a normal startup! -->
+        in mcidasv.log being rolled. Just like a normal startup!
+        
+        currently the last 10 log files are being kept -->
   <appender name="FILE" class="edu.wisc.ssec.mcidasv.util.UserpathRollingFileAppender">
     <file>${mcv.logpath}</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>${mcv.userpath}/logs/mcidasv_%d{yyyyMMdd}_%d{HHmmss,aux}.log</fileNamePattern>
+      <fileNamePattern>${mcv.userpath}/archived_logs/mcidasv_%d{yyyyMMdd}_%d{HHmmss,aux}.log</fileNamePattern>
       <maxHistory>10</maxHistory>
       <TimeBasedFileNamingAndTriggeringPolicy class="edu.wisc.ssec.mcidasv.util.StartupTriggeringPolicy" />
     </rollingPolicy>
@@ -43,7 +45,8 @@
   </appender>
 
   <!-- <appender name="JYTHON" class="ch.qos.logback.core.FileAppender">
-    <file>${mcv.userpath}/jython.log</file>
+    <file>${mcv.userpath}/mcidasv.log</file>
+    <prudent>true</prudent>
     <encoder>
       <pattern># %d{HH:mm:ss.SSS} [%thread] %level:%n%msg%n</pattern>
     </encoder>
@@ -79,5 +82,6 @@
   <logger name="edu.wisc.ssec.mcidas.adde.AddeServerInfo" level="OFF" />
   <logger name="edu.wisc.ssec.mcidas.adde.AddeTextReader" level="OFF" />
   <logger name="edu.wisc.ssec.mcidas.adde.DataSetInfo" level="OFF" />
+  <logger name="net.sf.ehcache" level="OFF" />
   <!-- End of verbose logger section -->
 </configuration>
