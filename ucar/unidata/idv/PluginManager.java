@@ -2020,7 +2020,7 @@ public class PluginManager extends IdvManager {
         String filename = "";
         while (true) {
             filename = GuiUtils.getInput(
-                "Please enter the URL to an IDV  plugins jar file", "URL: ",
+                "Please enter the URL to a McIDAS-V plugin JAR file", "URL: ",
                 filename);
             if ((filename == null) || (filename.trim().length() == 0)) {
                 return;
