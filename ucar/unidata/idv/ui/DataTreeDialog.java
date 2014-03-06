@@ -34,6 +34,8 @@ import ucar.unidata.util.StringUtil;
 import visad.DateTime;
 
 
+import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -51,6 +53,7 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -58,7 +61,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-
+import javax.swing.JTextField;
 
 
 /**
@@ -183,8 +186,8 @@ public class DataTreeDialog implements ActionListener {
             final DataOperand operand      = (DataOperand) operands.get(i);
             List              categoryList = operand.getCategories();
             final DataTree dataTree = new DataTree(idv, dataSources,
-                                          categoryList,
-                                          operand.getParamName(), null);
+                categoryList,
+                operand.getParamName(), null);
             final int theIndex = i;
             dataTree.getTree().addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent me) {
@@ -204,7 +207,7 @@ public class DataTreeDialog implements ActionListener {
             } else if (operand.getPattern() != null) {
                 String pattern = "pattern:" + operand.getPattern();
                 for (int dataSourceIdx = 0;
-                        dataSourceIdx < dataSources.size(); dataSourceIdx++) {
+                     dataSourceIdx < dataSources.size(); dataSourceIdx++) {
                     DataSource dataSource =
                         (DataSource) dataSources.get(dataSourceIdx);
                     List choices = dataSource.findDataChoices(pattern);
@@ -314,9 +317,9 @@ public class DataTreeDialog implements ActionListener {
      * @return The GUI
      */
     private Component doMakeContents() {
-        List topComponents   = new ArrayList();
-        List timeComponents  = new ArrayList();
-        List multiComponents = new ArrayList();
+        List<JComponent> topComponents   = new ArrayList<JComponent>(operands.size() * 2);
+        List<JComponent> timeComponents  = new ArrayList<JComponent>(operands.size());
+        List<JComponent> multiComponents = new ArrayList<JComponent>(operands.size());
         for (int i = 0; i < operands.size(); i++) {
             DataOperand operand   = (DataOperand) operands.get(i);
             DataTree    dataTree  = (DataTree) dataTrees.get(i);
@@ -347,9 +350,13 @@ public class DataTreeDialog implements ActionListener {
             labelString = StringUtil.replace(labelString, "_", " ");
             if ( !labelString.startsWith("<html")) {
                 labelString = "<html>Field: <i><b>" + labelString
-                              + "</b></i></html>";
+                    + "</b></i></html>";
             }
             JLabel label = new JLabel(labelString);
+
+            DataTreeSearcher searcher = new DataTreeSearcher(dataTree);
+            JComponent header = GuiUtils.leftRight(label, searcher.getSearcherComponent());
+
             scroller.setPreferredSize(new Dimension(250, 300));
 
             JComponent treeContents = scroller;
@@ -360,17 +367,19 @@ public class DataTreeDialog implements ActionListener {
                     GuiUtils.makeScrollPane(multiList, 250, 100);
                 multiScroller.setPreferredSize(new Dimension(250, 100));
                 JButton multiBtn = GuiUtils.makeButton("Add selected>>",
-                                       this, "addMultiple",
-                                       new Integer(index));
+                    this, "addMultiple",
+                    new Integer(index));
                 multiComp = GuiUtils.topCenter(GuiUtils.left(multiBtn),
-                        multiScroller);
+                    multiScroller);
                 //                treeContents = GuiUtils.vbox((treeContents, multiBtn), multiScroller);
             } else {
                 multiComp = new JPanel();
             }
             multiComponents.add(multiComp);
-            topComponents.add(GuiUtils.topCenter(GuiUtils.inset(label,
-                    new Insets(10, 5, 0, 10)), treeContents));
+//            topComponents.add(GuiUtils.topCenter(GuiUtils.inset(label,
+//                    new Insets(10, 5, 0, 10)), treeContents));
+            topComponents.add(GuiUtils.topCenter(GuiUtils.inset(header,
+                new Insets(10, 5, 0, 10)), treeContents));
             timeComponents.add(dsw.getContents());
         }
         if (includeSubsetWidget) {
@@ -379,8 +388,8 @@ public class DataTreeDialog implements ActionListener {
         }
         GuiUtils.tmpInsets = new Insets(4, 6, 4, 6);
         Component trees = GuiUtils.doLayout(topComponents,
-                                            topComponents.size() / 3,
-                                            GuiUtils.WT_Y, GuiUtils.WT_YYN);
+            topComponents.size() / 3,
+            GuiUtils.WT_Y, GuiUtils.WT_YYN);
         JPanel buttons = GuiUtils.makeButtons(this, new String[] {  /* CMD_POPUPDATACHOOSER,*/
             GuiUtils.CMD_OK, GuiUtils.CMD_CANCEL
         });
@@ -429,14 +438,14 @@ public class DataTreeDialog implements ActionListener {
             dataSelection = dsw.createDataSelection(true);
             DataTree dataTree = (DataTree) dataTrees.get(i);
             List selectedFromTree = DataChoice.cloneDataChoices(
-                                        dataTree.getSelectedDataChoices());
+                dataTree.getSelectedDataChoices());
 
             if (idv.getUseTimeDriver()
-                    && dsw.getTimeOption().equals(
-                        DataSelectionWidget.USE_DRIVERTIMES)) {
+                && dsw.getTimeOption().equals(
+                DataSelectionWidget.USE_DRIVERTIMES)) {
                 ViewManager vm = idv.getViewManager();
                 dataSelection.putProperty(DataSelection.PROP_USESTIMEDRIVER,
-                                          true);
+                    true);
                 try {
                     List<DateTime> times = vm.getTimeDriverTimes();
                     dataSelection.setTheTimeDriverTimes(times);
@@ -444,8 +453,8 @@ public class DataTreeDialog implements ActionListener {
             }
 
             for (int dataChoiceIdx = 0;
-                    dataChoiceIdx < selectedFromTree.size();
-                    dataChoiceIdx++) {
+                 dataChoiceIdx < selectedFromTree.size();
+                 dataChoiceIdx++) {
                 ((DataChoice) selectedFromTree.get(
                     dataChoiceIdx)).setDataSelection(dataSelection);
             }
@@ -479,4 +488,117 @@ public class DataTreeDialog implements ActionListener {
         }
     }
 
+    public static class DataTreeSearcher {
+
+        private final Object SEARCH_MUTEX = new Object();
+
+        private static final String SEARCH_ICON_PATH = "/auxdata/ui/icons/Search16.gif";
+
+        private static final String CANCEL_ICON_PATH = "/auxdata/ui/icons/cancel.gif";
+
+        private DataTree dataTree;
+
+        private JTextField searchField;
+
+        private JButton searchButton;
+
+        private JPanel searchFieldPanel;
+
+        private JPanel searchPanel;
+
+        private boolean showingSearchField = false;
+
+        private static ImageIcon searchIcon;
+
+        private static ImageIcon cancelIcon;
+
+        public DataTreeSearcher(DataTree dataTree) {
+            this.dataTree = dataTree;
+        }
+
+        public JPanel getSearcherComponent() {
+            dataTree.getTree().addKeyListener(new KeyAdapter() {
+                @Override public void keyPressed(KeyEvent e) {
+                    if ( !showingSearchField) {
+                        if (((e.getKeyCode() == KeyEvent.VK_F)
+                            && e.isControlDown()) || (e.getKeyCode()
+                            == KeyEvent.VK_SLASH)) {
+                            searchButtonPressed();
+                        }
+                    } else {
+                        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                            searchButtonPressed();
+                        }
+                    }
+                }
+            });
+
+            searchField = new JTextField("", 7);
+            searchField.addKeyListener(new KeyAdapter() {
+                @Override public void keyReleased(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                        searchButtonPressed();
+                    } else {
+                        doSearch(e.getKeyCode() != KeyEvent.VK_ENTER);
+                    }
+                }
+            });
+
+            searchFieldPanel = new JPanel(new CardLayout());
+            searchFieldPanel.add("empty", new JLabel(" "));
+            searchFieldPanel.add("field", searchField);
+
+            searchButton = GuiUtils.makeImageButton(SEARCH_ICON_PATH, this, "searchButtonPressed");
+
+            if (searchIcon == null) {
+                searchIcon = GuiUtils.getImageIcon(SEARCH_ICON_PATH, true);
+            }
+
+            if (cancelIcon == null) {
+                cancelIcon = GuiUtils.getImageIcon(CANCEL_ICON_PATH, true);
+            }
+            searchPanel = GuiUtils.centerRight(searchFieldPanel, searchButton);
+
+            return searchPanel;
+        }
+
+        public void searchButtonPressed() {
+            CardLayout cardLayout = (CardLayout)searchFieldPanel.getLayout();
+            if (!showingSearchField) {
+                cardLayout.show(searchFieldPanel, "field");
+                searchField.requestFocus();
+                searchButton.setIcon(cancelIcon);
+            } else {
+                searchButton.setIcon(searchIcon);
+                cardLayout.show(searchFieldPanel, "empty");
+            }
+            showingSearchField = !showingSearchField;
+        }
+
+        public void doSearch(boolean andClear) {
+            synchronized (SEARCH_MUTEX) {
+                String s = searchField.getText().trim();
+                if (s.isEmpty()) {
+                    dataTree.clearSearchState();
+                    searchField.setBackground(Color.WHITE);
+                    return;
+                }
+
+                if (andClear) {
+                    dataTree.clearSearchState();
+                }
+
+                if (dataTree.doSearch(s, searchButton)) {
+                    searchField.setBackground(Color.WHITE);
+                } else {
+                    dataTree.clearSearchState();
+                    if (dataTree.doSearch(s, searchButton)) {
+                        searchField.setBackground(Color.WHITE);
+                    } else {
+                        searchField.setBackground(DataSelector.COLOR_BADSEARCH);
+                    }
+                }
+            }
+        }
+    }
 }
