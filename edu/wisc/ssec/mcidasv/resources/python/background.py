@@ -457,6 +457,8 @@ class _MappedGeoGridFlatField(_MappedData, GeoGridFlatField):
         return defaultLabel
 
     def binary(self, *args, **kwargs):
+        from ucar.unidata.data.grid import GridUtil
+        from ucar.unidata.data.grid import GridMath
         argCount = len(args)
         if argCount == 4:
             data, op, sampling_mode, error_mode = args
@@ -467,8 +469,26 @@ class _MappedGeoGridFlatField(_MappedData, GeoGridFlatField):
             return result
         elif argCount == 5:
             data, op, new_type, sampling_mode, error_mode = args
-            result = GeoGridFlatField.binary(self, data, op, new_type, 
-                sampling_mode, error_mode)
+            # only want to run through GridMath.doMath if actually 2D case-
+            # this avoids recursion loop for 3D case.  (use same test as in
+            # GridMath.doMath)
+            is3D = GridUtil.is3D(self)
+            isVolume = GridUtil.isVolume(self)
+            isSlice = (not isVolume) and is3D
+            if (isSlice):
+                # run through GridMath.doMath to leverage "make2DGridFromSlice",
+                # otherwise we get a VisADException for 2D case.
+                # TODO: pass through sampling mode
+                newFF = GridMath.doMath(self, data, op)
+                result = GeoGridFlatField(newFF.getType(),
+                                           newFF.getDomainSet(),
+                                           newFF.getRangeCoordinateSystem()[0],
+                                           newFF.getRangeSets(),
+                                           newFF.getRangeUnits()[0],
+                                           newFF.unpackFloats())
+            else:
+                result = GeoGridFlatField.binary(self, data, op, new_type, 
+                    sampling_mode, error_mode)
             result = _MappedGeoGridFlatField(result,
                     self.geogrid, self.filename, self.field)
             result.levelReal = self.levelReal #TODO put this in ctor
