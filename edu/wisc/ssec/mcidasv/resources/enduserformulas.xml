@@ -191,7 +191,7 @@
     </categories>
     <operands categories=""/>
   </derived>
-  <derived description="Mask Function" formula="mask(inputFieldForMask,comparison[isuser=true,type=choice,choices=&lt;;&gt;;==;=&lt;;=&gt;],float(cutoff[isuser=true,default=9999]),bool(float(useNaN[isuser=true,default=1])))*displayFieldToBeMasked" id="mask" isdefault="false" isenduser="true">
+  <derived description="Mask Value" formula="mask(inputFieldForMask,comparison[isuser=true,type=choice,choices=&lt;;&gt;;==;=&lt;;=&gt;],float(cutoff[isuser=true,default=9999]),bool(float(useNaN[isuser=true,default=1])))*displayFieldToBeMasked" id="mask" isdefault="false" isenduser="true">
     <categories>
       <category display="true" value="Imagery"/>
       <category value="display:readout.probe"/>
@@ -203,7 +203,7 @@
     </categories>
     <operands categories=""/>
   </derived>
-  <derived description="Mask Within Range" formula="maskWithinRange(inputFieldForMask,float(minValue[isuser=true,default=0]), float(maxValue[isuser=true,default=270]),bool(float(useNan[isuser=true,default=0])))*displayFieldToBeMasked" id="mask" isdefault="false" isenduser="true">
+  <derived description="Mask Values Within Range" formula="maskWithinRange(inputFieldForMask,float(minValue[isuser=true,default=0]), float(maxValue[isuser=true,default=270]),bool(float(useNan[isuser=true,default=0])))*displayFieldToBeMasked" id="mask" isdefault="false" isenduser="true">
     <categories>
       <category display="true" value="Imagery"/>
       <category value="display:readout.probe"/>
