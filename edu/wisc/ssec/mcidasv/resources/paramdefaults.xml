@@ -8,6 +8,7 @@
   <param name="BrightnessTemp"  range_max="320.0" range_min="180.0" table="Inverse Gray shade"/>
   <param name="Reflectance.*"  range_max="1.0" range_min="0.0" table="Gray scale"/>
   <param name="Reflective_Bands"  range_max="1.0" range_min="0.0" table="Gray scale"/>
+  <param name="Emissive_Bands" table="Inverse Gray shade"/>
   <param name="TAB_532" range_max="0.1" range_min="0.0004" table="calipso_TAB"/>
   <param name="Total_Attenuated_Backscatter_532" range_max="0.1" range_min="0.0004" table="calipso_TAB"/>
   <param name="2B-GEOPROF_RadarReflectivity" range_max="40" range_min="-30" table="2B-GEOPROF_RadarReflectivity"/>
