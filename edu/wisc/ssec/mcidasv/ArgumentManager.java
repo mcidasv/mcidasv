@@ -287,7 +287,7 @@ public class ArgumentManager extends ArgsManager {
      */
     @Override public List<PatternFileFilter> getBundleFileFilters() {
         List<PatternFileFilter> filters = new ArrayList<PatternFileFilter>(); 
-        Collections.addAll(filters, getXidvFileFilter(), getZidvFileFilter(), FILTER_JNLP, FILTER_ISL, super.getXidvFileFilter(), super.getZidvFileFilter());
+        Collections.addAll(filters, getXidvFileFilter(), getZidvFileFilter(), FILTER_JNLP);
         return filters;
     }
 
@@ -307,12 +307,11 @@ public class ArgumentManager extends ArgsManager {
      */
     public List<PatternFileFilter> getBundleFilters(final boolean fromOpen) {
         List<PatternFileFilter> filters = new ArrayList<PatternFileFilter>();
-
-        if (fromOpen)
+        if (fromOpen) {
             Collections.addAll(filters, getXidvZidvFileFilter(), FILTER_JNLP, FILTER_ISL, super.getXidvZidvFileFilter());
-        else
+        } else {
             filters.addAll(getBundleFileFilters());
-
+        }
         return filters;
     }
 
