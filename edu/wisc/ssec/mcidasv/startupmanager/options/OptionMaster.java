@@ -401,9 +401,8 @@ public class OptionMaster {
             }
         }
     }
-    
+
     public void readStartup() {
-        String contents;
         String line;
         
         File script = 
@@ -418,9 +417,10 @@ public class OptionMaster {
                 if (line.startsWith("#")) {
                     continue;
                 }
+
                 int splitAt = line.indexOf('=');
                 if (splitAt >= 0) {
-                    String id = line.replace(SET_PREFIX, EMPTY_STRING).substring(0, splitAt);
+                    String id = line.substring(0, splitAt).replace(SET_PREFIX, EMPTY_STRING);
                     Option option = getOption(id);
                     if (option != null) {
                         System.err.println("setting '"+id+"' with '"+line+'\'');
