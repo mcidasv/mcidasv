@@ -81,9 +81,9 @@ if ERRORLEVEL 1 GOTO end
 
 REM temp: toggles the CMS collector
 IF "%USE_CMSGC%"=="1" (
-SET JVM_ARGS=-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled
+SET GC_ARGS=-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled
 ) ELSE (
-SET JVM_ARGS=
+SET GC_ARGS=
 )
 
 REM temp?: toggles the visad.java3d.geometryByRef property
@@ -118,10 +118,18 @@ SET MCV_FLAGS=-Didv.3d=%ENABLE_3D% -Didv.sysmem=%SYS_MEM% -Dvisad.java3d.texture
 REM Append the specified startup bundle to the args getting passed to Mcv
 IF DEFINED STARTUP_BUNDLE SET MCV_FLAGS=%MCV_FLAGS% -bundle %STARTUP_BUNDLE%
 
+REM control mcidasv root logger level
 IF DEFINED LOG_LEVEL (
 SET LOGGING_LEVEL=%LOG_LEVEL%
 ) ELSE (
 SET LOGGING_LEVEL=INFO
+)
+
+REM allow the user to supply args to the JVM. caveat emptor!
+IF DEFINED JVM_OPTIONS (
+SET JVM_ARGS=%JVM_OPTIONS%
+) ELSE (
+SET JVM_ARGS=
 )
 
 REM Check for valid HEAP_SIZE
@@ -161,8 +169,8 @@ IF EXIST "jre\bin\client\classes.jsa" (
 
 set MCV_CLASSPATH=%CD%\;%CD%\mcv_userguide.jar;%CD%\mcidasv.jar
 
-@echo Command line: jre\bin\java.exe -XX:MaxPermSize=128m -Xmx%HEAP_SIZE% %JVM_ARGS% %D3D_FLAG% -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
+@echo Command line: jre\bin\java.exe -XX:MaxPermSize=128m -Xmx%HEAP_SIZE% %GC_ARGS% %JVM_ARGS% %D3D_FLAG% -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
 
-start /B jre\bin\javaw.exe -XX:MaxPermSize=128m -Xmx%HEAP_SIZE% %JVM_ARGS% %D3D_FLAG% -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
+start /B jre\bin\javaw.exe -XX:MaxPermSize=128m -Xmx%HEAP_SIZE% %GC_ARGS% %JVM_ARGS% %D3D_FLAG% -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
 
 :end
