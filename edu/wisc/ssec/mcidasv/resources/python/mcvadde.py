@@ -531,6 +531,8 @@ def listADDEImageTimes(localEntry=None,
         place = '&PLACE=CENTER'
     elif place is Places.ULEFT:
         place = '&PLACE=ULEFT'
+    elif isinstance(place, tuple):
+        place = '&PLACE=%s %s' % (place[0], place[1])
     else:
         # raise ValueError()
         place = ''
@@ -708,6 +710,8 @@ def listADDEImages(localEntry=None,
         place = '&PLACE=CENTER'
     elif place is Places.ULEFT:
         place = '&PLACE=ULEFT'
+    elif isinstance(place, tuple):
+        place = '&PLACE=%s %s' % (place[0], place[1])
     else:
         # raise ValueError()
         place = ''
@@ -1066,9 +1070,11 @@ def getADDEImage(localEntry=None,
         raise ValueError("Cannot specify coordinate system, place, or location while also providing a size of '%s'." % (size))
         
     if place is Places.CENTER or place is None:
-        place = 'CENTER'
+        place = '&PLACE=CENTER'
     elif place is Places.ULEFT:
-        place = 'ULEFT'
+        place = '&PLACE=ULEFT'
+    elif isinstance(place, tuple):
+        place = '&PLACE=%s %s' % (place[0], place[1])
     else:
         raise ValueError("Invalid place value.")
         
@@ -1124,7 +1130,7 @@ def getADDEImage(localEntry=None,
     else:
         band = ''
         
-    addeUrlFormat = "adde://%(server)s/imagedata?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s&PLACE=%(place)s%(size)s&UNIT=%(unit)s&MAG=%(mag)s&SPAC=4&NAV=X&AUX=YES&DOC=X%(day)s&TIME=%(time)s&POS=%(position)s&TRACKING=%(track)d"
+    addeUrlFormat = "adde://%(server)s/imagedata?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s&UNIT=%(unit)s&MAG=%(mag)s&SPAC=4&NAV=X&AUX=YES&DOC=X%(day)s&TIME=%(time)s&POS=%(position)s&TRACKING=%(track)d"
     formatValues = {
         'server': server,
         'port': port,
