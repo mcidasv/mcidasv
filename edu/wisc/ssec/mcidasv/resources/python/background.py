@@ -2699,6 +2699,20 @@ def loadFile(filename=None, field=None, level=None,
         xRange=None, yRange=None, latLonBounds=None, **kwargs): 
     """method for loading anything handled by the netCDF-java library
        (netCDF, HDF, GRIB...)
+
+    Args:
+        filename
+        field
+        level
+        time
+        xStride
+        yStride
+        xRange
+        yRange
+        latLonBounds
+
+    Returns:
+        _MappedGeoGridFlatField with the requested data
     """
     from ucar.nc2.dt.grid import GridDataset
     from ucar.unidata.data import DataUtil
