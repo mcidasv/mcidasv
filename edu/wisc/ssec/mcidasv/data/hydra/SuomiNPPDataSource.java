@@ -51,6 +51,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.SimpleTimeZone;
 import java.util.StringTokenizer;
 
@@ -207,9 +208,12 @@ public class SuomiNPPDataSource extends HydraDataSource {
         for (Object o : sources) {
         	logger.debug("Suomi NPP source file: " + (String) o);
         }
-
+        
         setup();
+        
+        initQfTranslations();
     }
+    
 
     public void setup() throws VisADException {
 
@@ -1438,6 +1442,35 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	  }
       }
       
+    }
+    
+    /**
+     * Add Integer->String translations to IDV's
+     * "translations" resource, so they will be made available
+     * to the data probe of Image Display's.
+     */
+    public void initQfTranslations() {
+    	
+        Map<String, Map<Integer, String>> translations =
+                getIdv().getResourceManager().
+                getTranslationsHashtable();
+        
+        for (String qfKey : qfMap.keySet()) {
+        	// This string needs to match up with the data choice name:
+        	String qfKeySubstr = qfKey.replace("All_Data/", "");
+        	// check if we've already added map for this QF
+        	if (!translations.containsKey(qfKeySubstr)) {
+	        	Map<String, String> hm = qfMap.get(qfKey).getHm();
+	        	Map<Integer, String> newMap = 
+	        			new HashMap<Integer, String>(hm.size());
+	        	for (String dataValueKey : hm.keySet()) {
+	        		// convert Map<String, String> to Map<Integer, String>
+	        		Integer intKey = Integer.parseInt(dataValueKey);
+	        		newMap.put(intKey, hm.get(dataValueKey));
+	        	}
+	        	translations.put(qfKeySubstr, newMap);
+        	}
+        }
     }
     
 }

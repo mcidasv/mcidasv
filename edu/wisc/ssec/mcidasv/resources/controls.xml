@@ -98,14 +98,6 @@
      displaycategory="Radar Displays"
      properties="windowVisible=true;"/>
   <control
-     id="suominppqf"
-     categories="VIIRS*"
-     class="edu.wisc.ssec.mcidasv.control.SuomiNPPQfControl"
-     description="Suomi NPP Quality Flag Display"
-     label="Suomi NPP Quality Flag Display"
-     displaycategory="Imagery"
-     properties="windowVisible=true;"/>
-  <control
      id="rgbcomposite"
      categories="RGBC"
      class="edu.wisc.ssec.mcidasv.control.RGBCompositeControl"
