@@ -6463,6 +6463,9 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             helpIds.add("idv.controls." + displayId);
         }
         Class myClass = getClass();
+        if (myClass.equals(ucar.unidata.idv.control.TextProductControl.class) || myClass.equals(ucar.unidata.idv.control.storm.StormTrackControl.class)) {
+            helpIds.add("idv.tools." + Misc.getClassName(myClass).toLowerCase());
+        }
         while ( !(myClass.equals(DisplayControlImpl.class))) {
             helpIds.add("idv.controls."
                         + Misc.getClassName(myClass).toLowerCase());
