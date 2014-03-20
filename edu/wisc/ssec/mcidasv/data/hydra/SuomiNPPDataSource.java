@@ -1461,7 +1461,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
         	// check if we've already added map for this QF
         	if (!translations.containsKey(qfKeySubstr)) {
 	        	Map<String, String> hm = qfMap.get(qfKey).getHm();
-	        	Map<Integer, String> newMap = new HashMap();
+	        	Map<Integer, String> newMap = 
+	        			new HashMap<Integer, String>(hm.size());
 	        	for (String dataValueKey : hm.keySet()) {
 	        		// convert Map<String, String> to Map<Integer, String>
 	        		Integer intKey = Integer.parseInt(dataValueKey);
