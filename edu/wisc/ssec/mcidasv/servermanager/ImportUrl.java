@@ -112,36 +112,36 @@ public class ImportUrl extends JDialog implements ActionListener {
             public void removeUpdate(final DocumentEvent e) {}
         });
         
-        acctBox = new JCheckBox("Use default accounting?");
+        acctBox = new JCheckBox("Use ADDE accounting?");
         acctBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 boolean selected = acctBox.isSelected();
-                userLabel.setEnabled(!selected);
-                userField.setEnabled(!selected);
-                projLabel.setEnabled(!selected);
-                projField.setEnabled(!selected);
+                userLabel.setEnabled(selected);
+                userField.setEnabled(selected);
+                projLabel.setEnabled(selected);
+                projField.setEnabled(selected);
             }
         });
-        acctBox.setSelected(true);
+        acctBox.setSelected(false);
         contentPanel.add(acctBox, "cell 1 1");
         
         userLabel = new JLabel("Username:");
-        userLabel.setEnabled(!acctBox.isSelected());
+        userLabel.setEnabled(acctBox.isSelected());
         contentPanel.add(userLabel, "cell 0 2,alignx trailing");
         
         userField = new JTextField();
         contentPanel.add(userField, "cell 1 2,growx");
         userField.setColumns(4);
-        userField.setEnabled(!acctBox.isSelected());
+        userField.setEnabled(acctBox.isSelected());
         
         projLabel = new JLabel("Project #:");
-        projLabel.setEnabled(!acctBox.isSelected());
+        projLabel.setEnabled(acctBox.isSelected());
         contentPanel.add(projLabel, "cell 0 3,alignx trailing");
         
         projField = new JTextField();
         contentPanel.add(projField, "cell 1 3,growx");
         projField.setColumns(4);
-        projField.setEnabled(!acctBox.isSelected());
+        projField.setEnabled(acctBox.isSelected());
         
         {
             JPanel buttonPane = new JPanel();
@@ -175,7 +175,7 @@ public class ImportUrl extends JDialog implements ActionListener {
             String path = mctableField.getText().trim();
             String user = AddeEntry.DEFAULT_ACCOUNT.getUsername();
             String proj = AddeEntry.DEFAULT_ACCOUNT.getProject();
-            if (!acctBox.isSelected()) {
+            if (acctBox.isSelected()) {
                 user = userField.getText().trim();
                 proj = projField.getText().trim();
             }
