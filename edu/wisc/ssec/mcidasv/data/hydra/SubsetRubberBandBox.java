@@ -28,21 +28,34 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import edu.wisc.ssec.mcidasv.data.hydra.MyRubberBandBoxRendererJ3D;
+import java.rmi.RemoteException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ucar.visad.display.Displayable;
 import ucar.visad.display.LineDrawing;
-
-import visad.*;
-import visad.bom.*;
-
-import java.rmi.RemoteException;
-
-import java.awt.event.InputEvent;
-
+import visad.CartesianProductCoordinateSystem;
+import visad.CoordinateSystem;
+import visad.DataRenderer;
+import visad.DisplayRealType;
+import visad.DisplayTupleType;
+import visad.FlatField;
+import visad.FunctionType;
+import visad.GridCoordinateSystem;
+import visad.Gridded2DSet;
+import visad.Gridded3DSet;
+import visad.GriddedSet;
+import visad.IdentityCoordinateSystem;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.ScalarMap;
+import visad.VisADException;
 
 public class SubsetRubberBandBox extends LineDrawing {
 
+	private static final Logger logger = LoggerFactory.getLogger(SubsetRubberBandBox.class);
+	
     /** x type for the box */
     private RealType xType;
 
@@ -58,13 +71,12 @@ public class SubsetRubberBandBox extends LineDrawing {
     /** mouse event mask */
     private int mask;
 
-    private FlatField data;
-    private boolean isLL;
     private boolean lastBoxOn;
+    
+    private int elemMax = -1;
+    private int lineMax = -1;
 
     private CoordinateSystem dataCS;
-
-    private CoordinateSystem displayCS;
 
     private static int count = 0;
 
@@ -78,6 +90,7 @@ public class SubsetRubberBandBox extends LineDrawing {
      * @throws VisADException VisAD error
      * @throws RemoteException Remote error
      */
+    
     public SubsetRubberBandBox(FlatField data, CoordinateSystem displayCS)
             throws VisADException, RemoteException {
         this(false, data, displayCS, 0);
@@ -113,13 +126,11 @@ public class SubsetRubberBandBox extends LineDrawing {
      * @throws VisADException   VisAD error
      * @throws RemoteException   Remote error
      */
+    
     public SubsetRubberBandBox(boolean isLL, FlatField data, CoordinateSystem displayCS, int mask, boolean lastBoxOn)
             throws VisADException, RemoteException {
         super("Subset Rubber Band Box");
 
-        this.data = data;
-        this.displayCS = displayCS;
-        this.isLL = isLL;
         this.lastBoxOn =  lastBoxOn;
 
         RealTupleType rtype = ((FunctionType)data.getType()).getDomain();
@@ -162,6 +173,12 @@ public class SubsetRubberBandBox extends LineDrawing {
         float[] low = domainSet.getLow();
         float[] hi  = domainSet.getHi();
 
+        logger.debug("Element range: " + low[1] + " to " + hi[1]);
+        logger.debug("Line range: " + low[0] + " to " + hi[0]);
+        
+        elemMax = (int) hi[1];
+        lineMax = (int) hi[0];
+        
         elemMap.setRange(low[1], hi[1]);
         lineMap.setRange(low[0], hi[0]);
 
@@ -197,13 +214,12 @@ public class SubsetRubberBandBox extends LineDrawing {
      * @throws RemoteException
      * @throws VisADException
      */
+    
     protected void dataChange() throws VisADException, RemoteException {
-
-        bounds = (Gridded2DSet) getData();
-            float[] highs = bounds.getHi();
-            float[] lows = bounds.getLow();
-            if (highs != null && lows != null)
-        super.dataChange();
+    	bounds = (Gridded2DSet) getData();
+    	float[] highs = bounds.getHi();
+    	float[] lows = bounds.getLow();
+    	if (highs != null && lows != null) super.dataChange();
     }
 
     /**
@@ -213,15 +229,31 @@ public class SubsetRubberBandBox extends LineDrawing {
      *
      * @return  set containing the opposite corners of the box.
      */
+    
     public Gridded2DSet getBounds() {
         return bounds;
     }
 
     /**
+	 * @return the elemMax
+	 */
+	public int getElemMax() {
+		return elemMax;
+	}
+
+	/**
+	 * @return the lineMax
+	 */
+	public int getLineMax() {
+		return lineMax;
+	}
+
+	/**
      * Get the DataRenderer used for this displayable.
      *
      * @return  RubberBandBoxRendererJ3D associated with this displayable
      */
+	
     protected DataRenderer getDataRenderer() {
         rubberBandBox = new MyRubberBandBoxRendererJ3D(xType, yType, mask,
                 mask);
@@ -255,10 +287,11 @@ public class SubsetRubberBandBox extends LineDrawing {
 
 
 class DataToDisplayCoordinateSystem extends CoordinateSystem {
+
+  private static final long serialVersionUID = 1L;
   private CoordinateSystem dataCS;
   private CoordinateSystem displayCS;
   private boolean isLL;
-
 
   DataToDisplayCoordinateSystem(boolean isLL, CoordinateSystem dataCS, CoordinateSystem displayCS) throws VisADException {
     super(displayCS.getReference(), null);

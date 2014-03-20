@@ -54,9 +54,6 @@ MA 02111-1307, USA
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import java.awt.event.InputEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.rmi.RemoteException;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -66,32 +63,23 @@ import javax.media.j3d.BranchGroup;
 import javax.media.j3d.GeometryArray;
 import javax.media.j3d.Group;
 import javax.media.j3d.Shape3D;
-import javax.swing.BoxLayout;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 import visad.BadDirectManipulationException;
-import visad.CellImpl;
 import visad.CoordinateSystem;
 import visad.DataDisplayLink;
 import visad.DataReference;
-import visad.DataReferenceImpl;
 import visad.Display;
 import visad.DisplayImpl;
 import visad.DisplayRealType;
 import visad.DisplayTupleType;
-import visad.FlatField;
-import visad.FunctionType;
 import visad.GraphicsModeControl;
 import visad.Gridded2DSet;
 import visad.Gridded3DSet;
-import visad.Integer2DSet;
 import visad.Real;
 import visad.RealTupleType;
 import visad.RealType;
 import visad.ScalarMap;
 import visad.ScalarType;
-import visad.Set;
 import visad.ShadowType;
 import visad.Unit;
 import visad.VisADException;
@@ -184,14 +172,10 @@ public class MyRubberBandBoxRendererJ3D extends DirectManipulationRendererJ3D {
   /** arrays of length one for inverseScaleValues */
   private float[] f = new float[1];
   private float[] d = new float[1];
-  private float[] value = new float[2];
 
   /** information calculated by checkDirect */
   /** explanation for invalid use of DirectManipulationRenderer */
   private String whyNotDirect = null;
-  /** dimension of direct manipulation
-      (always 2 for RubberBandBoxRendererJ3D) */
-  private int directManifoldDimension = 2;
   /** spatial DisplayTupleType other than
       DisplaySpatialCartesianTuple */
   private DisplayTupleType tuple;
@@ -316,12 +300,7 @@ public class MyRubberBandBoxRendererJ3D extends DirectManipulationRendererJ3D {
       tuplecs = tuple.getCoordinateSystem();
     }
 
-    directManifoldDimension = 2;
     setIsDirectManipulation(true);
-  }
-
-  private int getDirectManifoldDimension() {
-    return directManifoldDimension;
   }
 
   public String getWhyNotDirect() {
@@ -332,7 +311,7 @@ public class MyRubberBandBoxRendererJ3D extends DirectManipulationRendererJ3D {
     // may need to do this for performance
   }
 
-// methods customized from DataRenderer:
+  // methods customized from DataRenderer:
 
   public CoordinateSystem getDisplayCoordinateSystem() {
     return tuplecs;

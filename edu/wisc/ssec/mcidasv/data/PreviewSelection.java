@@ -40,6 +40,9 @@ import java.util.Hashtable;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
@@ -75,6 +78,9 @@ import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.data.hydra.SubsetRubberBandBox;
 
 public class PreviewSelection extends DataSelectionComponent {
+	
+	private static final Logger logger = LoggerFactory.getLogger(PreviewSelection.class);
+	
       DataChoice dataChoice;
       FlatField image;
       boolean isLL;
@@ -212,13 +218,39 @@ public class PreviewSelection extends DataSelectionComponent {
                return;
              }
              Gridded2DSet set = rbb.getBounds();
+
              float[] low = set.getLow();
              float[] hi = set.getHi();
+             
+             // TJJ Mar 2014
+             // The checks below are because the subset rubber-band box selector is
+             // able to select regions outside the granule bounds, which causes 
+             // errors.  The simplest solution was to check the selection bounds
+             // and constrain them if they go outside granule bounds.
+             
              x_coords[0] = low[0];
+             if (x_coords[0] < 0)  {
+            	 logger.debug("Constraining X lo bound: " + low[0] + " to: " + 0);
+            	 x_coords[0] = 0;
+             }
              x_coords[1] = hi[0];
+             int lineMax = rbb.getLineMax();
+             if (x_coords[1] > lineMax) {
+            	 logger.debug("Constraining X hi bound: " + hi[0] + " to: " + lineMax);
+            	 x_coords[1] = lineMax;
+             }
 
              y_coords[0] = low[1];
+             if (y_coords[0] < 0) {
+            	 logger.debug("Constraining Y lo bound: " + low[1] + " to: " + 0);
+            	 y_coords[0] = 0;
+             }
              y_coords[1] = hi[1];
+             int elemMax = rbb.getElemMax();
+             if (y_coords[1] > elemMax) {
+            	 logger.debug("Constraining Y hi bound: " + hi[1] + " to: " + elemMax);
+            	 y_coords[1] = elemMax;
+             }
 
              if (hasSubset) {
                HydraContext hydraContext = HydraContext.getHydraContext(dataSource, dataCategory);
