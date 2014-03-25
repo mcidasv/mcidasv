@@ -90,14 +90,6 @@
      displaycategory="Imagery"
      properties="windowVisible=true;"/>
   <control
-     id="hydrometeorclass"
-     categories="param:7_Band16_RAW;param:7_Band16_BRIT;param:7_Band16_HC"
-     class="edu.wisc.ssec.mcidasv.control.HydrometeorClassificationControl"
-     description="Hydrometeor Classification Display"
-     label="Hydrometeor Classification Display"
-     displaycategory="Radar Displays"
-     properties="windowVisible=true;"/>
-  <control
      id="rgbcomposite"
      categories="RGBC"
      class="edu.wisc.ssec.mcidasv.control.RGBCompositeControl"
