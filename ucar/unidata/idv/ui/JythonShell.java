@@ -605,7 +605,27 @@ public class JythonShell extends InteractiveShell {
             .replace(">", "&gt;")
             .replace("\n", "<br/>");
     }
-    
+
+    protected String formatJavaException(Exception exception) {
+        String out = formatCode(exception.toString());
+        return out;
+    }
+
+    protected String formatJythonException(PyException exception) {
+        Throwable cause = exception.getCause();
+        String out;
+        if (cause != null) {
+            out = exception.getCause().toString();
+            if (out.startsWith("java.util.concurrent.ExecutionException: ")) {
+                out = out.substring(41);
+            }
+        } else {
+            out = exception.toString();
+        }
+        out = formatCode(out);
+        return out;
+    }
+
     /**
      * eval
      *
@@ -670,13 +690,13 @@ public class JythonShell extends InteractiveShell {
             PythonInterpreter interp = getInterpreter();
             // MJH March2013: no longer doing a startBufferingOutput here
             interp.exec(sb.toString());
-            
+
             // write off history to "store" so user doesn't have to save explicitly.
             saveHistory();
         } catch (PyException pse) {
-            output("<font color=\"red\">" + formatCode(pse.toString()) + "</font><br/>");
+            output("<font color=\"red\">" + formatJythonException(pse) + "</font><br/>");
         } catch (Exception exc) {
-            output("<font color=\"red\">" + formatCode(exc.toString()) + "</font><br/>");
+            output("<font color=\"red\">" + formatJavaException(exc) + "</font><br/>");
         }
     }
     
