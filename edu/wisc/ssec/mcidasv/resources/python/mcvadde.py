@@ -531,8 +531,6 @@ def listADDEImageTimes(localEntry=None,
         place = '&PLACE=CENTER'
     elif place is Places.ULEFT:
         place = '&PLACE=ULEFT'
-    elif isinstance(place, tuple):
-        place = '&PLACE=%s %s' % (place[0], place[1])
     else:
         # raise ValueError()
         place = ''
@@ -547,7 +545,7 @@ def listADDEImageTimes(localEntry=None,
     if location:
         location = '&%s=%s %s' % (coordSys, location[0], location[1])
     else:
-        location = ''
+        location = '%s=0 0' % (coordSys)
         
     if size:
         if size == 'ALL':
@@ -710,8 +708,6 @@ def listADDEImages(localEntry=None,
         place = '&PLACE=CENTER'
     elif place is Places.ULEFT:
         place = '&PLACE=ULEFT'
-    elif isinstance(place, tuple):
-        place = '&PLACE=%s %s' % (place[0], place[1])
     else:
         # raise ValueError()
         place = ''
@@ -726,7 +722,7 @@ def listADDEImages(localEntry=None,
     if location:
         location = '&%s=%s %s' % (coordSys, location[0], location[1])
     else:
-        location = ''
+        location = '&%s=0 0' % (coordSys)
         
     if size:
         if size == 'ALL':
@@ -1073,8 +1069,6 @@ def getADDEImage(localEntry=None,
         place = '&PLACE=CENTER'
     elif place is Places.ULEFT:
         place = '&PLACE=ULEFT'
-    elif isinstance(place, tuple):
-        place = '&PLACE=%s %s' % (place[0], place[1])
     else:
         raise ValueError("Invalid place value.")
         
@@ -1090,10 +1084,10 @@ def getADDEImage(localEntry=None,
     else:
         raise ValueError("Invalid coordinateSystem value.")
         
-    if location:
+    if location and isinstance(location, tuple) and len(location) == 2:
         location = '&%s=%s %s %s' % (coordSys, location[0], location[1], coordType)
     else:
-        location = ''
+        location = '&%s=0 0 %s' % (coordSys, coordType)
         
     if day:
         if isinstance(day, tuple):
