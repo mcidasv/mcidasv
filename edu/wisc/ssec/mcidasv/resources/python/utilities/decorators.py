@@ -60,13 +60,16 @@ def _swingRunner(func, *args, **kwargs):
         print 'auto-catch invokeLater:', type(e), e
 
 def _swingWaitForResult(func, *args, **kwargs):
-    if SwingUtilities.isEventDispatchThread():
-        return func(*args, **kwargs)
-        
-    wrappedCode = _JythonCallable(func, args, kwargs)
-    task = FutureTask(wrappedCode)
-    SwingUtilities.invokeAndWait(task)
-    return task.get()
+    try:
+        if SwingUtilities.isEventDispatchThread():
+            return func(*args, **kwargs)
+            
+        wrappedCode = _JythonCallable(func, args, kwargs)
+        task = FutureTask(wrappedCode)
+        SwingUtilities.invokeAndWait(task)
+        return task.get()
+    except ExecutionException, e:
+        print 'auto-catch invokeLater:', type(e), e
 
 def gui_invoke_later(func):
     @wraps(func)
