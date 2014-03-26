@@ -15,6 +15,7 @@ from visad.meteorology import SingleBandedImage
 
 from ucar.unidata.data.grid import GridUtil
 
+from java.util.concurrent import ExecutionException
 
 class _JythonCallable(Callable):
     def __init__(self, func, args, kwargs):
@@ -47,13 +48,16 @@ def transform_flatfields(func, *args):
     return wrapper
     
 def _swingRunner(func, *args, **kwargs):
-    if SwingUtilities.isEventDispatchThread():
-        return func(*args, **kwargs)
-    else:
-        wrappedCode = _JythonCallable(func, args, kwargs)
-        task = FutureTask(wrappedCode)
-        SwingUtilities.invokeLater(task)
-        return task.get()
+    try:
+        if SwingUtilities.isEventDispatchThread():
+            return func(*args, **kwargs)
+        else:
+            wrappedCode = _JythonCallable(func, args, kwargs)
+            task = FutureTask(wrappedCode)
+            SwingUtilities.invokeLater(task)
+            return task.get()
+    except ExecutionException, e:
+        print 'auto-catch invokeLater:', type(e), e
 
 def _swingWaitForResult(func, *args, **kwargs):
     if SwingUtilities.isEventDispatchThread():

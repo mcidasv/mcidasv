@@ -577,6 +577,7 @@ public class JythonShell extends InteractiveShell {
             }
             items.add(makeMenuItem(label, this, "insert", '\'' + ids.get(0) + '\''));
         }
+        logger.trace("items size={}", items.size());
         return items;
     }
     
@@ -616,17 +617,21 @@ public class JythonShell extends InteractiveShell {
                 return;
             }
             StringBuilder sb = new StringBuilder(jython.length() * 2);
+//            sb.append("try:\n");
             for (String line : split(jython, "\n", false, false)) {
                 if (line.trim().startsWith("?")) {
                     while (!line.startsWith("?")) {
+//                        sb.append("    ");
                         sb.append(line.substring(0, 1));
                         line = line.substring(1);
                     }
                     line = "print " + line.trim().substring(1);
                 }
+//                sb.append("    ");
                 sb.append(line).append('\n');
             }
-            
+
+//            sb.append("except ExecutionException, _xyz:\n    print 'auto-catch:', type(_xyz), _xyz\n");
             String code = sb.toString().trim();
             super.eval(code);
             
@@ -642,14 +647,14 @@ public class JythonShell extends InteractiveShell {
                 }
                 
                 List<DataOperand> operands = DerivedDataChoice.parseOperands(code);
-                List<DataOperand> unboundOperands = new ArrayList<DataOperand>();
+                List<DataOperand> unboundOperands = new ArrayList<DataOperand>(operands.size());
                 for (DataOperand operand : operands) {
                     PyObject obj = interp.get(operand.getParamName());
                     if (obj == null) {
                         unboundOperands.add(operand);
                     }
                 }
-                
+
                 if (!unboundOperands.isEmpty()) {
                     List<DataChoice> result = (List<DataChoice>)idv.selectDataChoices(unboundOperands);
                     if (result == null) {
