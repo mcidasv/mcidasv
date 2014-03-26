@@ -30,10 +30,13 @@ package edu.wisc.ssec.mcidasv.util;
 import ch.qos.logback.core.joran.spi.NoAutoStart;
 import ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy;
 import ch.qos.logback.core.rolling.RolloverFailure;
+import ch.qos.logback.core.rolling.helper.CompressionMode;
+import ch.qos.logback.core.rolling.helper.FileFilterUtil;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 
 /**
  * This is a Logback {@literal "triggering policy"} that forces a log
