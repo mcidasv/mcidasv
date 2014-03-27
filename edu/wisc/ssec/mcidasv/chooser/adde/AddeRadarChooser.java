@@ -352,6 +352,11 @@ public class AddeRadarChooser extends AddeImageChooser {
         if (prop.equals(PROP_ID)) {
             return getSelectedStation();
         }
+        if (prop.equals(PROP_SPAC)) {
+        	// Don't want this to default to "1" or it will break 
+        	// Hydrometeor Classification product...see inquiry 1518
+        	return "4";
+        }
         return super.getDefaultPropValue(prop, ad, forDisplay);
     }
 
