@@ -46,14 +46,14 @@
        linestyle="0"
        />
 
-  <map
-       source="/auxdata/maps/Countries.zip"
-       description="World Country Outlines"
-       visible="false"
-       color="0x00FFFF"
-       linewidth="1.0"
-       linestyle="0"
-       />
+  <!--<map-->
+       <!--source="/auxdata/maps/Countries.zip"-->
+       <!--description="World Country Outlines"-->
+       <!--visible="false"-->
+       <!--color="0x00FFFF"-->
+       <!--linewidth="1.0"-->
+       <!--linestyle="0"-->
+       <!--/>-->
 
        
  <!-- Low-res version of another map
