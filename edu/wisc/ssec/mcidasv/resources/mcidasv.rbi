@@ -577,7 +577,7 @@
     <resource location="%SITEPATH%/imagesets.xml"/>
     <resource location="%APPPATH%/imagesets.xml"/>
     <resource location="%IDVPATH%/imagesets.xml"/>
-    <resource location="http://www.unidata.ucar.edu/georesources/webcams/images/index.xml"/>
+    <resource location="%APPPATH%/webcams.xml"/>
   </resources>
 
   <resources name="idv.resource.displaysettings">

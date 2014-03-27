@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<imagesets base="http://www.unidata.ucar.edu/georesources/webcams/images" name="IDV Webcams">
+<group name="Rockies">
+<imageset name="UCAR Boulder, CO"  index="ucarboulder_co/index.xml"  lat="40.01" lon="-105.26"/>
+<imageset name="NOAA Boulder, CO"  index="noaaboulder_co/index.xml"  lat="39.9917" lon="-105.2618"/>
+<imageset name="Flatirons Boulder, CO"  index="flatironsboulder_co/index.xml"  lat="40.0" lon="-105.0"/>
+<imageset name="Eldora Mountain, CO"  index="eldoramountain_co/index.xml"  lat="39.94" lon="-105.58"/>
+<imageset name="Rocky Mountain National Park, CO"  index="rockymountainnationalpark_co/index.xml"  lat="40.426" lon="-105.573"/>
+<imageset name="University of NorthernColorado, Greeley, CO"  index="universityofnortherncolorado_greeley_co/index.xml"  lat="40.42418" lon="-104.693098"/>
+<imageset name="Denver, CO"  index="denver_co/index.xml"  lat="39.75" lon="-105"/>
+<imageset name="Eisenhower Tunnel, CO"  index="eisenhowertunnel_co/index.xml"  lat="39.68" lon="-105.9"/>
+<imageset name="Pikes Peak, CO"  index="pikespeak_co/index.xml"  lat="38.84056" lon="-105.04389"/>
+<imageset name="Ouray, CO"  index="ouray_co/index.xml"  lat="38.04" lon="-107.76"/>
+<imageset name="Laramie, WY"  index="laramie_wy/index.xml"  lat="41.316" lon="-105.578"/>
+<imageset name="Grand Tetons, WY"  index="grandtetons_wy/index.xml"  lat="43.74111" lon="-110.80167"/>
+<imageset name="Bridger Bowl, MT"  index="bridgerbowl_mt/index.xml"  lat="45.819727" lon="-110.917782"/>
+</group>
+<group name="National Parks">
+<imageset name="Glacier NP - Goat Haunt, MT"  index="glaciernpgoathaunt_mt/index.xml"  lat="48.95786" lon="-113.89206"/>
+<imageset name="Glacier NP - St. Mary, MT"  index="glaciernpstmary_mt/index.xml"  lat="48.729" lon="-113.442"/>
+<imageset name="Glacier NP - Lake McDonald, MT"  index="glaciernplakemcdonald_mt/index.xml"  lat="48.52936" lon="-113.99487"/>
+<imageset name="Glacier NP - Two Medicine, MT"  index="glaciernptwomedicine_mt/index.xml"  lat="48.49859" lon="-113.34755"/>
+<imageset name="Old Faithful, WY"  index="oldfaithful_wy/index.xml"  lat="44.45972" lon="-110.83139"/>
+<imageset name="Theodore Roosevelt National Park, ND"  index="theodorerooseveltnationalpark_nd/index.xml"  lat="46.94889" lon="-103.43306"/>
+<imageset name="Big Bend National Park,TX"  index="bigbendnationalpark_tx/index.xml"  lat="29.25" lon="-103.25"/>
+<imageset name="Olympic National Park"  index="olympicnationalpark/index.xml"  lat="47.934" lon="-123.371"/>
+<imageset name="Lake Crescent,WA"  index="lakecrescent_wa/index.xml"  lat="48.094531" lon="-123.805311"/>
+<imageset name="Mount Rainier National Park"  index="mountrainiernationalpark/index.xml"  lat="46.88333" lon="-121.88333"/>
+<imageset name="North Cascades National Park"  index="northcascadesnationalpark/index.xml"  lat="48.66667" lon="-121.25028"/>
+<imageset name="Point Reyes National Seashore"  index="pointreyesnationalseashore/index.xml"  lat="38.06667" lon="-122.88333"/>
+<imageset name="Yosemite National Park"  index="yosemitenationalpark/index.xml"  lat="37.85" lon="-119.56667"/>
+<imageset name="Joshua Tree National Park"  index="joshuatreenationalpark/index.xml"  lat="35.12861" lon="-116.03667"/>
+<imageset name="Washington, D.C."  index="washington_dc/index.xml"  lat="38.3" lon="-77.0"/>
+<imageset name="Baltimore,MD"  index="baltimore_md/index.xml"  lat="39.285848" lon="-76.61311"/>
+<imageset name="Frostburg,MD"  index="frostburg_md/index.xml"  lat="39.658142" lon="-78.928357"/>
+<imageset name="Great Smoky Mountains National Park"  index="greatsmokymountainsnationalpark/index.xml"  lat="35.60056" lon="-83.50889"/>
+<imageset name="Grand Canyon - Yavapai Point"  index="grandcanyonyavapaipoint/index.xml"  lat="36.06502" lon="-112.11841"/>
+<imageset name="Denali National Park "  index="denalinationalpark/index.xml"  lat="63.46" lon="-150.87162"/>
+<imageset name="Mammoth Cave National Park"  index="mammothcavenationalpark/index.xml"  lat="37.186699" lon="-86.098999"/>
+<imageset name="Hawaii Volcanoes National Park"  index="hawaiivolcanoesnationalpark/index.xml"  lat="19.428749" lon="-155.253677"/>
+</group>
+<group name="West Coast">
+<imageset name="San Francisco,CA"  index="sanfrancisco_ca/index.xml"  lat="37.76298" lon="-122.440395"/>
+<imageset name="Berkeley,CA"  index="berkeley_ca/index.xml"  lat="37.86972" lon="-122.25778"/>
+<imageset name="San Jose State"  index="sanjosestate/index.xml"  lat="37.3044" lon="-121.85"/>
+<imageset name="Mt. Wilson, CA"  index="mtwilson_ca/index.xml"  lat="34.22583" lon="-118.05639"/>
+<imageset name="Los Angeles, CA"  index="losangeles_ca/index.xml"  lat="34" lon="-118.24"/>
+<imageset name="San Diego,CA"  index="sandiego_ca/index.xml"  lat="32.715685" lon="-117.161724"/>
+<imageset name="Whiskey Town,CA"  index="whiskeytown_ca/index.xml"  lat="44.30315" lon="-118.324272"/>
+<imageset name="Mono Lake"  index="monolake/index.xml"  lat="38.01667" lon="-119.00833"/>
+<imageset name="Owens Lake"  index="owenslake/index.xml"  lat="36.501" lon="-117.902"/>
+<imageset name="Mount St. Helens, WA"  index="mountsthelens_wa/index.xml"  lat="46.272" lon="-122.152"/>
+<imageset name="Eugene, OR"  index="eugene_or/index.xml"  lat="44.04" lon="-123.07"/>
+<imageset name="Portland, OR"  index="portland_or/index.xml"  lat="45.516905" lon="-122.659244"/>
+<imageset name="PDX International Airport, OR"  index="pdxinternationalairport_or/index.xml"  lat="45.588267" lon="-122.594398"/>
+<imageset name="Seattle,WA"  index="seattle_wa/index.xml"  lat="47.444" lon="-122.317"/>
+<imageset name="Pullman,WA"  index="pullman_wa/index.xml"  lat="46.73193" lon="-117.165365"/>
+</group>
+<group name="Alaska">
+<imageset name="Anchorage, AK"  index="anchorage_ak/index.xml"  lat="61.21" lon="-149.92"/>
+<imageset name="Augustine Volcano, AK"  index="augustinevolcano_ak/index.xml"  lat="59.3626" lon="-153.435"/>
+</group>
+<group name="Southwest">
+<imageset name="Tuscon, AZ"  index="tuscon_az/index.xml"  lat="32.22694" lon="-110.96083"/>
+<imageset name="Mount Lemmon, AZ"  index="mountlemmon_az/index.xml"  lat="32.4456" lon="-110.7447"/>
+<imageset name="Bellemont, AZ"  index="bellemont_az/index.xml"  lat="35.24" lon="-111.84"/>
+<imageset name="Kitt Peak, AZ"  index="kittpeak_az/index.xml"  lat="31.9639671" lon=" -111.5998359"/>
+<imageset name="Las Cruces, NM"  index="lascruces_nm/index.xml"  lat="32.3" lon="-106.7"/>
+<imageset name="Cloudcroft, NM"  index="cloudcroft_nm/index.xml"  lat="32.957313" lon="-105.742485"/>
+<imageset name="Albuquerque,NM"  index="albuquerque_nm/index.xml"  lat="35.1029697" lon=" -106.6703963"/>
+<imageset name="Fort Worth, TX"  index="fortworth_tx/index.xml"  lat="32.725409" lon=" -97.3208496"/>
+<imageset name="Lubbock,TX"  index="lubbock_tx/index.xml"  lat="33.5777778" lon=" -101.8547222"/>
+<imageset name="Halls Crossing, Lake Powell, UT"  index="hallscrossing_lakepowell_ut/index.xml"  lat="37.45694" lon="-110.7122"/>
+<imageset name="Wahweap, Lake Powell, UT"  index="wahweap_lakepowell_ut/index.xml"  lat="37.01278" lon="-111.48944"/>
+<imageset name="Logan, UT"  index="logan_ut/index.xml"  lat="41.73444" lon="-111.85361"/>
+<imageset name="University of Utah at Salt Lake City, UT"  index="universityofutahatsaltlakecity_ut/index.xml"  lat="40.76623" lon="-111.84755"/>
+<imageset name="Zion National Park, UT"  index="zionnationalpark_ut/index.xml"  lat="37" lon="-113"/>
+<imageset name="Moab, UT"  index="moab_ut/index.xml"  lat="38.573316" lon="-109.549839"/>
+<imageset name="Boise,ID"  index="boise_id/index.xml"  lat="43.60698" lon="-116.193409"/>
+</group>
+<group name="Midwest">
+<imageset name="Saint Louis Univertiy,MO"  index="saintlouisunivertiy_mo/index.xml"  lat="38.637" lon="-90.234"/>
+<imageset name="Madison,WI"  index="madison_wi/index.xml"  lat="43.07980" lon="-89.38751"/>
+<imageset name="Windsor, Canada"  index="windsor_canada/index.xml"  lat="38.547133" lon="-122.81638"/>
+<imageset name="Chicago, IL"  index="chicago_il/index.xml"  lat="41.8" lon="-87.7"/>
+<imageset name="Lincoln,NE"  index="lincoln_ne/index.xml"  lat="40.7" lon="-96.66"/>
+<imageset name="Watertown,SD"  index="watertown_sd/index.xml"  lat="44.900588" lon="-97.105744"/>
+</group>
+<group name="Northeast">
+<imageset name="Newark,NJ"  index="newark_nj/index.xml"  lat="40.71" lon="-74"/>
+<imageset name="Boston,MA"  index="boston_ma/index.xml"  lat="42" lon="-71"/>
+<imageset name="Hartford,CT"  index="hartford_ct/index.xml"  lat="41.74" lon="-72.65"/>
+<imageset name="Mount Washington, NH"  index="mountwashington_nh/index.xml"  lat="44" lon="-71"/>
+<imageset name="Burlington, VT"  index="burlington_vt/index.xml"  lat="44" lon="-73"/>
+<imageset name="Lyndon State College, VT"  index="lyndonstatecollege_vt/index.xml"  lat="44.53528" lon="-72.02611"/>
+<imageset name="Millersville University of Pennsylvania"  index="millersvilleuniversityofpennsylvania/index.xml"  lat="40" lon="-76.35"/>
+<imageset name="California University of Pennylvania"  index="californiauniversityofpennylvania/index.xml"  lat="40.066" lon="-79.892"/>
+<imageset name="Charleston,WV"  index="charleston_wv/index.xml"  lat="38.350195" lon="-81.638989"/>
+<imageset name="Gettysburg,PA"  index="gettysburg_pa/index.xml"  lat="39.82111" lon="-77.22361"/>
+<imageset name="Acadia National Park, ME"  index="acadianationalpark_me/index.xml"  lat="44.378" lon="-68.2588"/>
+<imageset name="Plymouth State University, NH"  index="plymouthstateuniversity_nh/index.xml"  lat="43.8" lon="-71.7"/>
+</group>
+<group name="Southeast">
+<imageset name="Atlanta,GA"  index="atlanta_ga/index.xml"  lat="33.74889" lon="-84.38806"/>
+<imageset name="Savannah,GA"  index="savannah_ga/index.xml"  lat="32" lon="-81.1"/>
+<imageset name="Miami,FL"  index="miami_fl/index.xml"  lat="25.7" lon="-80.1"/>
+<imageset name="Tampa,FL"  index="tampa_fl/index.xml"  lat="27.84806" lon="-82.26333"/>
+<imageset name="Naples,FL"  index="naples_fl/index.xml"  lat="26.145" lon="-81.795"/>
+<imageset name="Raleigh, NC"  index="raleigh_nc/index.xml"  lat="35" lon="-78"/>
+<imageset name="South Padre Island,TX"  index="southpadreisland_tx/index.xml"  lat="26.1" lon="-97.2"/>
+<imageset name="Galveston,TX"  index="galveston_tx/index.xml"  lat="29.29" lon="-94.79"/>
+<imageset name="La Nouvelle-Orleans, LA"  index="lanouvelleorleans_la/index.xml"  lat="29.951066" lon="-90.071532"/>
+<imageset name="Monroe, LA"  index="monroe_la/index.xml"  lat="32.509311" lon="-92.119301"/>
+<imageset name="Kansas City,MO"  index="kansascity_mo/index.xml"  lat="39.10296" lon="-94.583062"/>
+<imageset name="Grand Forks,ND"  index="grandforks_nd/index.xml"  lat="47.924085" lon="-97.032034"/>
+<imageset name="Scott County, IA"  index="scottcounty_ia/index.xml"  lat="41.61293" lon="-90.606277"/>
+<imageset name="Stillwater, OK"  index="stillwater_ok/index.xml"  lat="36.115607" lon="-97.058368"/>
+<imageset name="Metairie,LA"  index="metairie_la/index.xml"  lat="29.98" lon="-90.15"/>
+</group>
+<group name="Antarctica">
+<imageset name="South Pole"  index="southpole/index.xml"  lat="-90" lon=" -105"/>
+</group>
+<group name="Europe">
+<imageset name="Locarno, Switzerland"  index="locarno_switzerland/index.xml"  lat="46.2" lon=" 8.8"/>
+<imageset name="KNMI, Netherlands"  index="knmi_netherlands/index.xml"  lat="52" lon="5"/>
+</group>
+<group name="Asia">
+<imageset name="Hong Kong, China"  index="hongkong_china/index.xml"  lat="22.3" lon=" 114.18"/>
+</group>
+</imagesets>
