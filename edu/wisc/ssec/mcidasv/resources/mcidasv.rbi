@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <resourcebundle name="Default">
 
+  <!--
+    Hey, you! Yeah, you. If you're thinking about adding a resource to this
+    file, please be aware of the performance implications your change may
+    introduce. Especially try to avoid adding remote files if at all possible.
+
+    The reason is simple. Each additional resource path is potentially more I/O
+    that needs to be performed, particularly at startup.
+
+    Just for kicks:
+
+    http://www.ssec.wisc.edu/~jbeavers/latency/
+
+    And yes, I am very aware that I am referencing a remote resource while
+    warning against doing exactly that.
+  -->
+
   <!-- paths to cursor readout translations -->
   <resources name="idv.resource.translations">
     <resource
