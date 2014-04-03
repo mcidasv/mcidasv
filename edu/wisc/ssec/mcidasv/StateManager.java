@@ -443,10 +443,10 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 	 * <0: this version is greater
 	 * >0: that version is greater
 	 */
-	private int compareVersions(String thisVersion, String thatVersion) {
-		int thisInt = versionToInteger(thisVersion);		
+	public static int compareVersions(String thisVersion, String thatVersion) {
+		int thisInt = versionToInteger(thisVersion);
 		int thatInt = versionToInteger(thatVersion);
-		return (thatInt - thisInt);
+		return thatInt - thisInt;
 	}
 	
 	/**
@@ -454,7 +454,7 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 	 *  where # is one or two digits, a is one of alpha or beta, and () is optional
 	 * Into an integer... (empty) > beta > alpha
 	 */
-	private int versionToInteger(String version) {
+	public static int versionToInteger(String version) {
 		int value = 0;
 		int p;
 		String part;
