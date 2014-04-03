@@ -31,14 +31,48 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ucar.unidata.geoloc.projection.UtmProjection;
 
 public class EnviInfo extends HeaderInfo {
 
 	/** The url */
 	private String dataFile = "";
 	private boolean isEnvi = false;
+	private boolean hasBounds = false;
+	private static final Logger logger = LoggerFactory.getLogger(EnviInfo.class);
+	
+	// Map Info header field indices 
+	// See www.exelisvis.com/docs/ENVIHeaderFiles.html 
+	// for a description of this information
+	enum MapInfoIndex {
+		
+		MAP_INFO_IDX_PROJ_NAME(0), 
+		MAP_INFO_IDX_X_REF(1), 
+		MAP_INFO_IDX_Y_REF(2),
+		MAP_INFO_IDX_EASTING(3),
+		MAP_INFO_IDX_NORTHING(4),
+		MAP_INFO_IDX_X_SIZE(5),
+		MAP_INFO_IDX_Y_SIZE(6),
+		MAP_INFO_IDX_ZONE(7),
+		MAP_INFO_IDX_N_OR_S(8),
+		MAP_INFO_IDX_DATUM(9),
+		MAP_INFO_IDX_UNITS(10);
+		
+		private final int index;
+		
+		private MapInfoIndex(int idx) {
+			index = idx;
+		}
+		
+		public int getIndex() {
+			return index;
+		}
+	}
 
 	/**
 	 * Ctor for xml encoding
@@ -145,6 +179,20 @@ public class EnviInfo extends HeaderInfo {
 //	}
 
 	/**
+	 * @return the hasBounds
+	 */
+	public boolean isHasBounds() {
+		return hasBounds;
+	}
+
+	/**
+	 * @param hasBounds the hasBounds to set
+	 */
+	public void setHasBounds(boolean hasBounds) {
+		this.hasBounds = hasBounds;
+	}
+
+	/**
 	 * Parse a potential ENVI header file
 	 */
 	protected void parseHeader() {
@@ -209,12 +257,19 @@ public class EnviInfo extends HeaderInfo {
 				if (parameter.equals("description")) {
 					setParameter(DESCRIPTION, value);
 				}
+				
+				// TJJ Apr 2014
+				// NOTE: method signatures in parent class should be modified or extended
+				// I had to pass in an Integer object here in order to be able to retrieve
+				// anything other than default values later (both "lines" and "samples")
+				
 				else if (parameter.equals("samples")) {
-					setParameter(ELEMENTS, Integer.parseInt(value));
+					setParameter(ELEMENTS, new Integer(value));
 				}
 				else if (parameter.equals("lines")) {
-					setParameter(LINES, Integer.parseInt(value));
+					setParameter(LINES, new Integer(value));
 				}
+				
 				else if (parameter.equals("header offset")) {
 					setParameter(OFFSET, Integer.parseInt(value));
 				}
@@ -227,6 +282,62 @@ public class EnviInfo extends HeaderInfo {
 				}
 				else if (parameter.equals("interleave")) {
 					setParameter(INTERLEAVE, value.toUpperCase());
+				}
+				else if (parameter.equals("map info")) {
+					logger.debug("Parsing Map Info, value: " + value);
+					
+					ArrayList<String> mapInfo = new ArrayList<String>();
+					String[] mapInfoSplit = value.split(",");
+					for (int i = 0; i < mapInfoSplit.length; i++) {
+						mapInfo.add(mapInfoSplit[i].trim());
+					}
+					
+					// See www.exelisvis.com/docs/ENVIHeaderFiles.html 
+					// for a description of this information
+					// this code handles UTM files
+					
+					String projName = mapInfo.get(MapInfoIndex.MAP_INFO_IDX_PROJ_NAME.getIndex());
+					
+					if (projName.equals("UTM")) {
+						
+						// zone and hemisphere
+						int utmZone = Integer.parseInt(mapInfo.get(MapInfoIndex.MAP_INFO_IDX_ZONE.getIndex()));
+						boolean utmN = false;
+						if (mapInfo.get(MapInfoIndex.MAP_INFO_IDX_N_OR_S.getIndex()).equals("North")) utmN = true;
+						UtmProjection utmp = new UtmProjection(utmZone, utmN);
+						
+						// Java UTM class default units km, adjust if necessary
+						float distFactor = 1.0f;
+						if (mapInfo.get(MapInfoIndex.MAP_INFO_IDX_UNITS.getIndex()).contains("Meters")) distFactor = 1000.0f;
+						
+						// figure out Lat/Lon bounding box from Northing/Easting,
+						// resolution, and grid size
+						float upperLeftX = Float.parseFloat(mapInfo.get(MapInfoIndex.MAP_INFO_IDX_EASTING.getIndex())) / distFactor;
+						float upperLeftY = Float.parseFloat(mapInfo.get(MapInfoIndex.MAP_INFO_IDX_NORTHING.getIndex())) / distFactor;
+						
+						// lines and samples were already seen
+						int numLines = getParameter(LINES, 0);
+						int numSamples = getParameter(ELEMENTS, 0);
+						
+						float xMag = Float.parseFloat(mapInfo.get(MapInfoIndex.MAP_INFO_IDX_X_SIZE.getIndex()));
+						float yMag = Float.parseFloat(mapInfo.get(MapInfoIndex.MAP_INFO_IDX_Y_SIZE.getIndex()));
+						
+						float lowerRightX = upperLeftX + ((numSamples * xMag) / distFactor);
+						float lowerRightY = upperLeftY + ((numLines * yMag) / distFactor);
+						
+						float [][] from = new float[2][2];
+						from [0][0] = upperLeftX;
+						from [1][0] = upperLeftY;
+						from [0][1] = lowerRightX;
+						from [1][1] = lowerRightY;
+						float [][] to = new float[2][2];
+						to = utmp.projToLatLon(from, to);
+						setParameter("BOUNDS.ULLAT", "" + to[0][0]);
+						setParameter("BOUNDS.ULLON", "" + to[1][0]);
+						setParameter("BOUNDS.LRLAT", "" + to[0][1]);
+						setParameter("BOUNDS.LRLON", "" + to[1][1]);
+						hasBounds = true;
+					}
 				}
 				else if (parameter.equals("byte order")) {
 					boolean bigEndian = false;

@@ -28,7 +28,6 @@
 
 package edu.wisc.ssec.mcidasv.chooser;
 
-
 import static javax.swing.GroupLayout.DEFAULT_SIZE;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
@@ -46,6 +45,7 @@ import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -62,6 +62,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import ucar.unidata.idv.IntegratedDataViewer;
@@ -90,6 +92,9 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.IconPanel;
 
 public class FlatFileChooser extends IdvChooser implements Constants {
 
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = LoggerFactory.getLogger(FlatFileChooser.class);
+	
     /** Set default stride to keep dimensions within this */
     private int maxDefDim = 1000;
     
@@ -356,11 +361,14 @@ public class FlatFileChooser extends IdvChooser implements Constants {
                 processAxformHeaderFile(thisFile);
                 doStride = true;
             }
-            else if (first80.indexOf("ENVI") >= 0) {
-                dataFileDescription.setText("ENVI header file");
-                processEnviHeaderFile(thisFile);
+
+            else if (isENVI()) {
+                dataFileDescription.setText("ENVI Data File");
+                logger.debug("Found ENVI file, about to process header...");
+                processEnviHeaderFile(new File(dataFile.getAbsolutePath().replace(".img", ".hdr")));
                 doStride = true;
             }
+            
             else {
                 dataFileDescription.setText("Binary, ASCII or Image data");
                 processGenericFile(thisFile);
@@ -389,7 +397,32 @@ public class FlatFileChooser extends IdvChooser implements Constants {
         }
     }
         
-    /**
+    private boolean isENVI() {
+		// look for a corresponding header file
+    	// filename.replace(".hdr", ".img");
+    	File f = new File (dataFile.getAbsolutePath().replace(".img", ".hdr"));
+    	if (! f.exists()) return false;
+    	
+    	FileReader fr;
+    	try {
+    		fr = new FileReader(f);
+    		char first80c[] = new char[80];
+    		fr.read(first80c, 0, 80);
+    		fr.close();
+    		String first80 = new String(first80c);
+    		if (first80.indexOf("ENVI") < 0) {
+    			return false;
+    		}
+    	} catch (FileNotFoundException fnfe) {
+    		fnfe.printStackTrace();
+    	} catch (IOException ioe) {
+    		ioe.printStackTrace();
+    	}
+
+		return true;
+	}
+
+	/**
      * Special processing for a known data type
      * This deals specifically with AXFORM header files
      */
@@ -508,6 +541,14 @@ public class FlatFileChooser extends IdvChooser implements Constants {
                 textLatFile.setText(latFile.getName());
                 textLonFile.setText(lonFile.getName());
                 radioLatLonFiles.setSelected(true);
+            }
+            
+            // fill in Lat/Lon bounds if we can
+            if (enviInfo.isHasBounds()) {
+            	textLatUL.setText(enviInfo.getParameter("BOUNDS.ULLAT", ""));
+            	textLonUL.setText(enviInfo.getParameter("BOUNDS.ULLON", ""));
+            	textLatLR.setText(enviInfo.getParameter("BOUNDS.LRLAT", ""));
+            	textLonLR.setText(enviInfo.getParameter("BOUNDS.LRLON", ""));
             }
             
             textLatLonScale.setText("1");
