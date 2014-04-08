@@ -900,7 +900,7 @@ public class PersistenceManager extends IdvPersistenceManager {
         getStateManager().putProperty(PROP_LOADINGXML, false);
 
         boolean generatedExceptions = false;
-        if (xmlEncoder != null) {
+        if (xmlEncoder != null && xmlEncoder.getExceptions() != null) {
             generatedExceptions = !xmlEncoder.getExceptions().isEmpty();
         }
 
