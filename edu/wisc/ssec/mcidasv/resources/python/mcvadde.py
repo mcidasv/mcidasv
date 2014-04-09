@@ -760,7 +760,7 @@ def listADDEImages(localEntry=None,
     dateFormat.setTimeZone(tz)
     dateFormat.applyPattern('yyyyDDD')
     
-    timeFormat = SimpleDateFormat();
+    timeFormat = SimpleDateFormat()
     timeFormat.setTimeZone(tz)
     timeFormat.applyPattern('HH:mm:ss')
     
@@ -1062,17 +1062,23 @@ def getADDEImage(localEntry=None,
     hasPlace = place or False
     hasLocation = location or False
     
+    # if hasCoordSys and not hasLocation:
+    #     raise ValueError('Please provide location when specifying coordinate system.')
+    # elif not hasCoordSys and hasLocation:
+    #     raise ValueError('Please provide coordinate system when specifying location.')
+    
     if not _checkADDEParameters(hasCoordSys, hasPlace, hasLocation, size):
         raise ValueError("Cannot specify coordinate system, place, or location while also providing a size of '%s'." % (size))
         
-    if place is Places.CENTER or place is None:
+    if place is Places.CENTER:
         place = '&PLACE=CENTER'
     elif place is Places.ULEFT:
         place = '&PLACE=ULEFT'
     else:
-        raise ValueError("Invalid place value.")
+        # raise ValueError("Invalid place value.")
+        place = ''
         
-    if coordinateSystem is CoordinateSystems.LATLON or coordinateSystem is None:
+    if coordinateSystem is CoordinateSystems.LATLON:
         coordSys = 'LATLON'
         coordType = 'E'
     elif coordinateSystem is CoordinateSystems.AREA:
@@ -1081,13 +1087,13 @@ def getADDEImage(localEntry=None,
     elif coordinateSystem is CoordinateSystems.IMAGE:
         coordSys = 'LINELE'
         coordType = 'I'
-    else:
-        raise ValueError("Invalid coordinateSystem value.")
+    # else:
+        # raise ValueError("Invalid coordinateSystem value.")
         
     if location and isinstance(location, tuple) and len(location) == 2:
         location = '&%s=%s %s %s' % (coordSys, location[0], location[1], coordType)
     else:
-        location = '&%s=0 0 %s' % (coordSys, coordType)
+        location = ''
         
     if day:
         if isinstance(day, tuple):
@@ -1107,9 +1113,9 @@ def getADDEImage(localEntry=None,
         
     if time:
         if isinstance(time, (str, unicode, String)):
-            time = '%s %s I' % (str(time), str(time))
+            time = '&TIME=%s %s I' % (str(time), str(time))
         elif len(time) == 2:
-            time = '%s %s I' % (str(time[0]), str(time[1]))
+            time = '&TIME=%s %s I' % (str(time[0]), str(time[1]))
         else:
             raise ValueError("could not understand the given time value: %s" % (time))
     else:
@@ -1124,7 +1130,7 @@ def getADDEImage(localEntry=None,
     else:
         band = ''
         
-    addeUrlFormat = "adde://%(server)s/imagedata?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s&UNIT=%(unit)s&MAG=%(mag)s&SPAC=4&NAV=X&AUX=YES&DOC=X%(day)s&TIME=%(time)s&POS=%(position)s&TRACKING=%(track)d"
+    addeUrlFormat = "adde://%(server)s/imagedata?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s&UNIT=%(unit)s&MAG=%(mag)s&SPAC=4&NAV=X&AUX=YES&DOC=X%(day)s%(time)s&POS=%(position)s&TRACKING=%(track)d"
     formatValues = {
         'server': server,
         'port': port,
