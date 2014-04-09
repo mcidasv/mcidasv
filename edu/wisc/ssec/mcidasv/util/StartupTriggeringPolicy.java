@@ -59,6 +59,12 @@ public class StartupTriggeringPolicy<E>
             File newDirectory = new File(newLogPath);
             if (oldDirectory.exists() && !newDirectory.exists()) {
                 oldDirectory.renameTo(newDirectory);
+            } else if (!oldDirectory.exists() && !newDirectory.exists()) {
+                if (!newDirectory.mkdir()) {
+                    addWarn("Could not create '"+newLogPath+'\'');
+                } else {
+                    addInfo("Created '"+newLogPath+'\'');
+                }
             }
 //            if (oldDirectory.exists() && !newDirectory.exists()) {
 //                if (!oldDirectory.renameTo(newDirectory)) {
