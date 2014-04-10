@@ -466,7 +466,6 @@
     <resource location="%USERPATH%/maps.xml"/>
     <resource location="%SITEPATH%/maps.xml"/>
     <resource location="%APPPATH%/maps.xml"/>
-    <resource location="/auxdata/maps/maps.xml"/>
   </resources>
 
   <!-- Where we find viewpoints  -->
