@@ -51,11 +51,20 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
           Guide</a></strong></li>
   </ul>
 </div>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat2_1.4b1">Display
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat2_1.5">Display
     Changes</a></div>
 <div class="faq-category">
   <ul class="noindent">
     <li><strong><a class="faq-question-link" href="#contourLabelInterval1.5">Adjust Contour Label Interval</a></strong></li>
+  </ul>
+</div>
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_1.5">Data
+    Changes</a></div>
+<strong></strong>
+<div class="faq-category">
+  <ul class="noindent">
+    <li><strong><a class="faq-question-link" href="#subset1.5">Improved MODIS and NPP Granule Subsetting</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#probe1.5">Improved Probe Output</a></strong></li>
   </ul>
 </div>
 <hr>
@@ -73,6 +82,15 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-category"><a name="contourLabelInterval1.5" id="contourLabelInterval1.5"></a>
   <h4>Adjust Contour Label Interval</h4>
 <div class="faq-answer">Added the ability to set an interval for how many contour lines are labeled.&nbsp;In the Contour Properties Editor window, there is a new Label Every Nth Line item&nbsp;that allows you to set a contour line labeling interval.&nbsp;By default this is set to a value of 2, which means that every other   contour line will be labeled. Decrease this value to increase the number   of contours with labels, and increase this number to decrease the number   of contours with labels.</div></div>
+<div class="faq-category-title"><a name="faq1_cat3_1.5" id="faq1_cat2_1.5"></a>Display
+  Changes</div>
+<div class="faq-category"><a name="subset1.5" id="subset1.5"></a>
+  <h4>Improved MODIS and NPP Granule Subsetting</h4>
+<div class="faq-answer">Added the ability for users to subset entire granules of MODIS and Suomi NPP data. In previous McIDAS-V versions, there were limitations to how close a subset box could be made to the edge of the data. This subsetting occurs in the Region tab of the Field Selector using Shift+click+drag over the data before creating the display.</div></div>
+<div class="faq-category"><a name="probe1.5" id="probe1.5"></a>
+  <h4>Improved Probe Output</h4>
+<div class="faq-answer">Improved probe output for Level III Hydrometeor Classification products and the Suomi NPP Quality Flag fields. For Level III Radar data once a Hydrometeor Classification product is added, an Image Display of the 'Hydro class' field now creates a display with actual text output. Examples of this text output are 'Dry Snow', 'Light-Moderate Rain' and 'Biological'. For Suomi NPP Quality Flags listed in the Field Selector, an Image Display will also provide text output. An example of this output for a 'Fire' QF field would be 'True' or 'False'. An example of this output for a 'Cloud Phase' QF field would be 'Clear', 'Water', and 'Ice'.</div>
+</div>
 <br>
     <hr size="4" noshade>
 <div class="pagesubtitle">McIDAS-V <br>

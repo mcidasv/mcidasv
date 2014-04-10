@@ -71,7 +71,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/StationMode
 <ul class=propertylist>
 <li class=propertylistitem><strong>Parameter -</strong> Represents what parameter the station model item is displaying. This can be a single parameter, such as pressure, or it can be an equation. This is possible because the parameter identifiers in the station model can hold embedded Jython code, and any parameter that begins with &quot;=&quot; is treated as a Jython expression. For example, you can type &quot;=T-Td&quot; for dew point depression. You can also format this as &quot;='Td:'+str(T-Td)&quot;. If you want to format the result of the calculation using the format specifier from the properties dialog, then enter &quot;='Td:'+format(T-Td).</li>
 <li class=propertylistitem><strong>Unit -</strong> Determines the unit that the parameter will use in its display.</li>
-<li class=propertylistitem><strong>Format -</strong> Represents how the numerical value will be displayed. This can affect rounding. An example of how each format will appear is written in the 'ex:' next to the Format field.</li>
+<li class=propertylistitem><strong>Format -</strong> Represents how the numerical value will be displayed. This can affect rounding. An example of how each format will appear is written in the 'ex:' next to the Format field<strong>.</strong> The <strong>0</strong> value will plot the actual numerical value of the data at that place in the number if it exists, and if not a 0 will be plotted at that place. The <strong>#</strong> value will plot the actual numerical value of the data at that place in the number if it exists, and if not it will leave it empty. For example, with a value of 998.5, different <strong>Formats</strong> would plot the value as:</li>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>###0.0# -</strong> plots as: 998.5</li>
+<li class="propertylistitem"><strong>0000.00 -</strong> plots as: 0998.50</li>
+</ul>
 <li class=propertylistitem><strong>Font -</strong> Sets the font of the item's text when displayed in the Main Display window.</li>
 <li class=propertylistitem><strong>Size -</strong> Sets the size of the item's text when displayed in the Main Display window.</li>
 <li class=propertylistitem><strong>Shown -</strong> Determines if the item will be shown as part of the station model.</li>
