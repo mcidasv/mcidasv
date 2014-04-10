@@ -2026,6 +2026,20 @@ class _Layer(_JavaProxy):
         newFont = _getNewFont(currentFont, fontName, style, size)
         vm.setDisplayListFont(newFont)
         self._getDisplayWrapper().labelDict['font'] = newFont
+
+    @gui_invoke_later
+    def setVerticalPosition(self, verticalPosition):
+        """ wrapper around DisplayControlImpl.setZPosition
+
+        Args:
+            verticalPosition: float value between -1 and 1
+
+        Raises:
+            ValueError: if verticalPosition is not valid
+        """
+        if (verticalPosition < -1.0 or verticalPosition > 1.0):
+            raise ValueError('verticalPosition must be between -1.0 and 1.0')
+        self._JavaProxy__javaObject.setZPosition(verticalPosition)
         
         
 # TODO(jon): this (and its accompanying subclasses) are a productivity rabbit
