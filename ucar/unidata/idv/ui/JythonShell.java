@@ -273,11 +273,22 @@ public class JythonShell extends InteractiveShell {
     }
     
     /**
-     * popup menu
+     * Popup menu just outside of the command field widget(s).
      *
      * @param cmdFld field
      */
     public void showProcedurePopup(JTextComponent cmdFld) {
+        showProcedurePopup(cmdFld, 0, (int) cmdFld.getBounds().getHeight());
+    }
+
+    /**
+     * Popup command field menu wherever the user clicked.
+     *
+     * @param cmdFld Command field widget.
+     * @param xPos X coordinate for the popup menu.
+     * @param yPos Y coordinate for the popup menu.
+     */
+    public void showProcedurePopup(JTextComponent cmdFld, int xPos, int yPos) {
         String t = cmdFld.getText();
         /*
           int pos = cmdFld.getCaretPosition();
@@ -319,7 +330,7 @@ public class JythonShell extends InteractiveShell {
         
         JPopupMenu popup = GuiUtils.makePopupMenu(items);
         if (popup != null) {
-            popup.show(cmdFld, 0, (int) cmdFld.getBounds().getHeight());
+            popup.show(cmdFld, xPos, yPos);
         }
     }
     
@@ -588,7 +599,7 @@ public class JythonShell extends InteractiveShell {
      * @param e event
      */
     @Override protected void handleRightMouseClick(JTextComponent commandFld, MouseEvent e) {
-        showProcedurePopup(commandFld);
+        showProcedurePopup(commandFld, e.getX(), e.getY());
     }
     
     /**
