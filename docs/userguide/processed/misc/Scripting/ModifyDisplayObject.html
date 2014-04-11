@@ -93,7 +93,18 @@ Centers the display on a specified latitude/longitude and sets a scaling factor<
       <td>string specifying the projection; e.g., 'US>Southeastern U.S.' or the name of the layer returned from createLayer, which uses the default projection of that data</td>
     </tr></table></div>
   <div class="OneTabIndent">Example:</div>
-<div class="TwoTabIndent"><em>panel[0].setProjection('US>States>N-Z>Pennsylvania')</em></div>
+<div class="TwoTabIndent"><em>panel[0].setProjection(projection='US>States>N-Z>Pennsylvania')</em></div>
+<p><strong><a name="setViewpoint" id="setViewpoint"></a>setViewpoint -</strong> Sets
+  the viewpoint of a panel</p>
+<div class="OneTabIndent">Usage: <em>panel[0].setViewpoint(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+<tr>
+      <td valign="top">viewpointName=</td>
+      <td>string specifying the viewpoint; e.g., 'Viewpoint1'. This works in conjunction with the <strong>Projections-&gt;Viewpoints</strong> menu item in the Main Display window.</td>
+    </tr></table></div>
+  <div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>panel[0].setViewpoint(viewpointName='Viewpoint1')</em></div>
 <p><strong><a name="setWireframe" id="setWireframe"></a>setWireframe -</strong> Turns
 wire frame box on or off</p>
 <div class="OneTabIndent">Usage: <em>panel[0].setWireframe(keywords)</em></div>
