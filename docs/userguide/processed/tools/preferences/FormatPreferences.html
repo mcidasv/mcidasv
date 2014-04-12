@@ -30,7 +30,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 <div class="pagetitle">Formats and Data Preferences</div>
 <p><a name="image1" id="image1"></a>The User Preferences window is accessed in the Main Display window through the <strong>Edit-&gt;Preferences</strong> menu. The <strong>Formats &amp; Data</strong> tab allows the user to define data formats
   and defaults to be used when displaying data. The below image represents the default values for the <strong>Formats &amp; Data</strong> tab.</p>
-<div class="images"><img src="../images/preferences/FormatsAndData.gif" alt="Image 1: Formats and Data Preferences (Default)"> <br>
+<div class="images"><img src="../images/preferences/FormatsAndData.gif" width="791" height="542" alt="Image 1: Formats and Data Preferences (Default)"><br>
   <span class="caption">Image 1: Formats and Data Preferences (Default)</span></div>
   <p></p>
 <div class="pagesubtitle">
@@ -290,6 +290,8 @@ the latitude and longitude values.
 <a name="distanceunit" id="distanceunit"></a>
 <li class="propertylistitem"><b>Distance Unit -</b> Represents the default unit that is used when displaying distances (e.g., in the Range
 and Bearing Control). Note that you must restart McIDAS-V for this change to take effect.</li>
+<a name="numberstyle" id="numberstyle"></a>
+<li class="propertylistitem"><strong>Number Style -</strong> Sets the format for how numbers will be written with regards to the decimal symbol and digit grouping symbol (either a comma or a period). The default for this option is <strong>System Default</strong>, which means that your computer's preference will be used for the number style in McIDAS-V. If your computer's format differs from English, you can set <strong>Number Style</strong> to <strong>English/US</strong>. For example, <strong>English/US</strong> will write out the numerical value of one thousand as &quot;1,000.00&quot;. McIDAS-V must be restarted in order for a change to this preference to take effect.
 </ul>
 <div class="pagesubtitle">Data</div>
 <a name="samplingmode" id="samplingmode"></a>
