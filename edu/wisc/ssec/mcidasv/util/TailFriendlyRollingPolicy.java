@@ -1,5 +1,6 @@
 package edu.wisc.ssec.mcidasv.util;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
@@ -34,8 +35,13 @@ public class TailFriendlyRollingPolicy<E> extends TimeBasedRollingPolicy<E> {
         String elapsedPeriodStem = FileFilterUtil.afterLastSlash(elapsedPeriodsFileName);
 
         if (compressionMode == CompressionMode.NONE) {
-            if (getParentsRawFileProperty() != null) {
-                renameByCopying(getParentsRawFileProperty(), elapsedPeriodsFileName);
+            String src = getParentsRawFileProperty();
+            if (src != null) {
+                if (!isFileEmpty(src)) {
+                    renameByCopying(src, elapsedPeriodsFileName);
+                } else {
+                    addInfo("File '"+src+"' exists and is zero-length; avoiding copy");
+                }
             } // else { nothing to do if CompressionMode == NONE and parentsRawFileProperty == null }
         } else {
             if (getParentsRawFileProperty() == null) {
@@ -87,7 +93,18 @@ public class TailFriendlyRollingPolicy<E> extends TimeBasedRollingPolicy<E> {
                 }
             }
         }
+    }
 
+    /**
+     * Determine if the file at the given path is zero length.
+     *
+     * @param filepath Path to the file to be tested. Cannot be {@code null}.
+     *
+     * @return {@code true} if {@code filepath} exists and is empty.
+     */
+    private static boolean isFileEmpty(String filepath) {
+        File f = new File(filepath);
+        return f.exists() && f.length() == 0L;
     }
 
 }
