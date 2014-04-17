@@ -62,9 +62,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
       -or-<br>
       [R,G,B] fractional scaling factor for each red, green and blue value (0 to 1)</td>
     </tr>
+    tr>
+      <td valign="top">alignment=</td>
+      <td>sets the location of the text with respect to the latitude/longitude or line/element combination entered. The format is alignment=(horizontal,vertical).  For horizontal, values of "left", "right", and "center" can be used. For vertical, values of "top", "bottom" and "center" can be used.  The default is alignment=("center","center") which means the text will be centered at the location of the latitude/longitude or line/element values.</td>
+    </tr>
 </table></div>
 <div class="OneTabIndent">Example:</div>
-<div class="TwoTabIndent"><em>panel[0].annotate('EQUATOR',size=20, font='SansSerif.bold', lat=0, lon=-90, color='Green')</em></div>
+<div class="TwoTabIndent"><em>panel[0].annotate('EQUATOR',size=20, font='SansSerif.bold', lat=0, lon=-90, color='Green',alignment=(&quot;top&quot;,&quot;left&quot;)</em></div>
 <p><strong><a name="setCenter" id="setCenter"></a>setCenter -&nbsp;</strong>
 Centers the display on a specified latitude/longitude and sets a scaling factor</p>
 <div class="OneTabIndent">Usage: <em>panel[0].setCenter(keywords) </em></div>
