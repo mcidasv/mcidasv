@@ -129,6 +129,7 @@ public class JTextFieldDateEditor extends JFormattedTextField implements IDateEd
 		}
 
 		setToolTipText(this.datePattern);
+		setEditable(false);
 		setMaskVisible(showMask);
 
 		addCaretListener(this);

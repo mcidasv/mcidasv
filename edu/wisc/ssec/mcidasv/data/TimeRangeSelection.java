@@ -163,8 +163,110 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
         return timeRangeComp;
     }
 
+    public boolean begTimeOk() {
+        String begTime = beginTimeFld.getText();
+        String[] timeStrings = begTime.split(":");
+        int num = timeStrings.length;
+        if (num != 3) return false;
+        int hours = -1;
+        int mins = -1;
+        int secs = -1; 
+        try {
+        	hours = Integer.parseInt(timeStrings[0]);
+        	mins = Integer.parseInt(timeStrings[1]);
+        	secs = Integer.parseInt(timeStrings[2]);
+        } catch (NumberFormatException nfe) {
+        	return false;
+        }
+        if ((hours < 0) || (hours > 23)) return false;
+        if ((mins < 0) || (mins > 59)) return false;
+        if ((secs < 0) || (secs > 59)) return false;
+        return true;
+    }
+    
+    public boolean endTimeOk() {
+        String endTime = endTimeFld.getText();
+        String[] timeStrings = endTime.split(":");
+        int num = timeStrings.length;
+        if (num != 3) return false;
+        int hours = -1;
+        int mins = -1;
+        int secs = -1;
+        try {
+        	hours = Integer.parseInt(timeStrings[0]);
+        	mins = Integer.parseInt(timeStrings[1]);
+        	secs = Integer.parseInt(timeStrings[2]);
+        } catch (NumberFormatException nfe) {
+        	return false;
+        }
+        if ((hours < 0) || (hours > 23)) return false;
+        if ((mins < 0) || (mins > 59)) return false;
+        if ((secs < 0) || (secs > 59)) return false;
+        return true;
+    }
+    
+    public boolean timeRangeOk() {
+    	
+    	logger.info("timeRangeOk...");
+    	if (! begTimeOk()) return false;
+    	if (! endTimeOk()) return false;
+    	
+        JCalendar cal = begDay.getJCalendar();
+        JDayChooser dayChooser = cal.getDayChooser();
+        int day = dayChooser.getDay();
+        JMonthChooser monthChooser = cal.getMonthChooser();
+        int month = monthChooser.getMonth() + 1;
+        JYearChooser yearChooser = cal.getYearChooser();
+        int year = yearChooser.getYear();
+
+        int hours = 0;
+        int mins = 0;
+        double secs = 0.0;
+        String begTime = beginTimeFld.getText();
+        String[] timeStrings = begTime.split(":");
+        int num = timeStrings.length;
+        if (num > 0)
+            hours = (new Integer(timeStrings[0])).intValue();
+        if (num > 1)
+            mins = (new Integer(timeStrings[1])).intValue();
+        if (num > 2)
+            secs = (new Integer(timeStrings[2])).intValue();
+
+        Time bTime = new Time(year, month, day, hours, mins, secs);
+
+        cal = endDay.getJCalendar();
+        dayChooser = cal.getDayChooser();
+        day = dayChooser.getDay();
+        monthChooser = cal.getMonthChooser();
+        month = monthChooser.getMonth() + 1;
+        yearChooser = cal.getYearChooser();
+        year = yearChooser.getYear();
+
+        String endTime = endTimeFld.getText();
+        timeStrings = endTime.split(":");
+        num = timeStrings.length;
+        if (num > 0)
+            hours = (new Integer(timeStrings[0])).intValue();
+        if (num > 1)
+            mins = (new Integer(timeStrings[1])).intValue();
+        if (num > 2)
+            secs = (new Integer(timeStrings[2])).intValue();
+
+        Time eTime = new Time(year, month, day, hours, mins, secs);
+        
+        if (eTime.getJulianDate() < bTime.getJulianDate()) {
+        	return false;
+        }
+        return true;
+    }
+    
     @Override public void applyToDataSelection(DataSelection dataSelection) {
 
+    	logger.info("applyToDataSelection...");
+    	
+    	if (! begTimeOk()) return;
+    	if (! endTimeOk()) return;
+    	
         if (dataSelection == null) {
             dataSelection = new DataSelection(true);
         }
@@ -188,7 +290,7 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
         if (num > 1)
             mins = (new Integer(timeStrings[1])).intValue();
         if (num > 2)
-            secs = (new Double(timeStrings[2] + ".0")).doubleValue();
+            secs = (new Integer(timeStrings[2])).intValue();
         if ((hours < 0) || (hours > 23)) hours = 0;
         if ((mins < 0) || (mins > 59)) mins = 0;
         if ((secs < 0.0) || (secs > 59.0)) secs = 0.0;
@@ -228,7 +330,7 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
         if (num > 1)
             mins = (new Integer(timeStrings[1])).intValue();
         if (num > 2)
-            secs = (new Double(timeStrings[2] + ".0")).doubleValue();
+            secs = (new Integer(timeStrings[2])).intValue();
         if ((hours < 0) || (hours > 23)) hours = 0;
         if ((mins < 0) || (mins > 59)) mins = 0;
         if ((secs < 0.0) || (secs > 59.0)) secs = 0.0;

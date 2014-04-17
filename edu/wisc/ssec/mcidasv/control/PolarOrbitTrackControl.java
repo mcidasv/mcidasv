@@ -956,6 +956,31 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         throws VisADException, RemoteException 
     {
         logger.debug("init() in...");
+        
+        PolarOrbitTrackDataSource potdc = getDataSource();
+
+        // validate time range before going ahead with control initialization
+        if (! potdc.getTrs().begTimeOk()) {
+        	JOptionPane.showMessageDialog(null, 
+        			"Invalid start time, must follow format HH:MM:SS", 
+        			"Time Range Selection Error", JOptionPane.ERROR_MESSAGE);
+        	return false;
+        }
+        
+        if (! potdc.getTrs().endTimeOk()) {
+        	JOptionPane.showMessageDialog(null, 
+        			"Invalid end time, must follow format HH:MM:SS", 
+        			"Time Range Selection Error", JOptionPane.ERROR_MESSAGE);
+        	return false;
+        }
+        
+        if (! potdc.getTrs().timeRangeOk()) {
+        	JOptionPane.showMessageDialog(null, 
+        			"Invalid time range selection, please correct", 
+        			"Time Range Selection Error", JOptionPane.ERROR_MESSAGE);
+        	return false;
+        }
+        
     	// instantiate components we need to exist at initialization
     	latLabel = new JLabel();
     	lonLabel = new JLabel();

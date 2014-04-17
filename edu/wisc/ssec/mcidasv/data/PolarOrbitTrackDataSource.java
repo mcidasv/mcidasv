@@ -93,6 +93,8 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
     private SatelliteTleSGP4 prop = null;
     private double julDate0 = 0.0;
     private double julDate1 = 0.0;
+    
+    TimeRangeSelection trs = null;
 
     /**
      * Default bean constructor for persistence; does nothing.
@@ -556,6 +558,13 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
 		this.tleCards = tleCards;
 	}
 
+	/**
+	 * @return the trs
+	 */
+	public TimeRangeSelection getTrs() {
+		return trs;
+	}
+
 	public double getNearestAltToGroundStation(double gsLat, double gsLon) {
         double retAlt = 0.0;
         Time time = new Time(
@@ -610,8 +619,8 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
         IntegratedDataViewer idv = getDataContext().getIdv();
         idv.showWaitCursor();
         try {
-            TimeRangeSelection timeSelection = new TimeRangeSelection(this);
-            components.add(timeSelection);
+            trs = new TimeRangeSelection(this);
+            components.add(trs);
         } catch (Exception e) {
             logger.error("problem creating TimeRangeSelection e=" + e);
         }
@@ -625,7 +634,6 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
     }
 
     public void setDTime(int val) {
-        //System.out.println("PolarOrbitTrackDataSource setDTime: val=" + val);
         dTime = val;
     }
 
