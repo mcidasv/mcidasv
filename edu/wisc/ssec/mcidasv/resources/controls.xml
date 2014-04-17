@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <controls>
   <control
+    id="drawingcontrol"
+    xxxcategories="xgrf"
+    class="ucar.unidata.idv.control.DrawingControl"
+    canstandalone="true"
+    icon="/auxdata/ui/icons/pencil.png"
+    label="Drawing Control"
+    displaycategory="General"
+    properties="windowVisible=true;showInTabs=true;showFronts=true;"/>
+  <control
+    id="textproductcontrol"
+    categories="textproducts"
+    class="ucar.unidata.idv.control.TextProductControl"
+    label="Weather Text Product Display"
+    displaycategory="General"
+    properties="windowVisible=true;showInTabs=true"/>
+  <control
      id="multispectral"
      categories="MultiSpectral"
      class="edu.wisc.ssec.mcidasv.control.MultiSpectralControl"
