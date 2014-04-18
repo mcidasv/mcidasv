@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.slf4j.Logger;
@@ -89,6 +90,7 @@ public class PreviewSelection extends DataSelectionComponent {
       double[] x_coords = new double[2];
       double[] y_coords = new double[2];
       boolean hasSubset = false;
+      boolean selectionOutOfBounds = false;
       MapProjectionDisplayJ3D mapProjDsp;
       DisplayMaster dspMaster;
 
@@ -213,6 +215,8 @@ public class PreviewSelection extends DataSelectionComponent {
           public void doAction()
              throws VisADException, RemoteException
            {
+        	  logger.debug("doAction in...");
+        	  
              if (!init) {
                init = true;
                return;
@@ -221,12 +225,32 @@ public class PreviewSelection extends DataSelectionComponent {
 
              float[] low = set.getLow();
              float[] hi = set.getHi();
+
+             // TJJ Apr 2014 
+             // The fact that we can even get here with invalid bounding boxes  
+             // (edges == Infinity) is another problem that should be investigated.
+             // For now we should at least let the user know they selected off 
+             // the valid data bounds
+             
+             int boundsMax = Math.max(rbb.getLineMax(), rbb.getElemMax());
+             if ((low[0] < 0) || (low[0] > boundsMax)) selectionOutOfBounds = true;
+             if ((hi[0] < 0) || (hi[0] > boundsMax)) selectionOutOfBounds = true;
+             if ((low[1] < 0) || (low[1] > boundsMax)) selectionOutOfBounds = true;
+             if ((hi[1] < 0) || (hi[1] > boundsMax)) selectionOutOfBounds = true;
+             
+	       	  if (selectionOutOfBounds) {
+	            	JOptionPane.showMessageDialog(null, 
+	          			"Data selection is not valid, please select within preview bounds", 
+	          			"Data Selection Error", JOptionPane.ERROR_MESSAGE);
+	            	selectionOutOfBounds = false;
+	          	return;
+	      	  }
              
              // TJJ Mar 2014
              // The checks below are because the subset rubber-band box selector is
-             // able to select regions outside the granule bounds, which causes 
+             // able to select regions outside the data bounds, which causes 
              // errors.  The simplest solution was to check the selection bounds
-             // and constrain them if they go outside granule bounds.
+             // and constrain them if they go outside data bounds.
              
              x_coords[0] = low[0];
              if (x_coords[0] < 0)  {
@@ -340,6 +364,7 @@ public class PreviewSelection extends DataSelectionComponent {
       }
                                                                                                                                              
       public void applyToDataSelection(DataSelection dataSelection) {
+    	  
          if (hasSubset) {
            HydraContext hydraContext = HydraContext.getHydraContext(dataSource, dataCategory);
            // HydraContext hydraContext = HydraContext.getHydraContext();
@@ -351,5 +376,6 @@ public class PreviewSelection extends DataSelectionComponent {
 
            dataChoice.setDataSelection(dataSelection);
          }
+         
       }
   }
