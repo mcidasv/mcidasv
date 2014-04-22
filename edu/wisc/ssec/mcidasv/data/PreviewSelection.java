@@ -212,6 +212,7 @@ public class PreviewSelection extends DataSelectionComponent {
         rbb.setColor(Color.green);
         rbb.addAction(new CellImpl() {
           boolean init = false;
+          
           public void doAction()
              throws VisADException, RemoteException
            {
@@ -232,11 +233,14 @@ public class PreviewSelection extends DataSelectionComponent {
              // For now we should at least let the user know they selected off 
              // the valid data bounds
              
-             int boundsMax = Math.max(rbb.getLineMax(), rbb.getElemMax());
-             if ((low[0] < 0) || (low[0] > boundsMax)) selectionOutOfBounds = true;
-             if ((hi[0] < 0) || (hi[0] > boundsMax)) selectionOutOfBounds = true;
-             if ((low[1] < 0) || (low[1] > boundsMax)) selectionOutOfBounds = true;
-             if ((hi[1] < 0) || (hi[1] > boundsMax)) selectionOutOfBounds = true;
+             if ((low[0] == Float.NEGATIVE_INFINITY) || (low[0] == Float.POSITIVE_INFINITY)) 
+            	 selectionOutOfBounds = true;
+             if ((hi[0] == Float.NEGATIVE_INFINITY) || (hi[0] == Float.POSITIVE_INFINITY)) 
+            	 selectionOutOfBounds = true;
+             if ((low[1] == Float.NEGATIVE_INFINITY) || (low[1] == Float.POSITIVE_INFINITY)) 
+            	 selectionOutOfBounds = true;
+             if ((hi[1] == Float.NEGATIVE_INFINITY) || (hi[1] == Float.POSITIVE_INFINITY)) 
+            	 selectionOutOfBounds = true;
              
 	       	  if (selectionOutOfBounds) {
 	            	JOptionPane.showMessageDialog(null, 
@@ -351,17 +355,11 @@ public class PreviewSelection extends DataSelectionComponent {
          return mp;
       }
 
-      public JComponent doMakeContents() {
-        try {
-          JPanel panel = new JPanel(new BorderLayout());
-          panel.add("Center", dspMaster.getDisplayComponent());
-          return panel;
-        }
-        catch (Exception e) {
-          System.out.println(e);
-        }
-        return null;
-      }
+       public JComponent doMakeContents() {
+    	   JPanel panel = new JPanel(new BorderLayout());
+    	   panel.add(BorderLayout.CENTER, dspMaster.getDisplayComponent());
+    	   return panel;
+       }
                                                                                                                                              
       public void applyToDataSelection(DataSelection dataSelection) {
     	  
