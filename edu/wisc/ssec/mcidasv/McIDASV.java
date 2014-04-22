@@ -1607,17 +1607,17 @@ public class McIDASV extends IntegratedDataViewer {
      * @return re-ordered List of shown control descriptors
      */
     @Override public List getControlDescriptors(boolean includeTemplates) {
-    	List l = super.getControlDescriptors(includeTemplates);
-    	for (int i = 0; i < l.size(); i++) {
-    		ControlDescriptor cd = (ControlDescriptor) l.get(i);
-    		if (cd.getControlId().equals("omni")) {
-    			// move the omni control to the end of the list
-    			// so it will never be "default" in Field Selector
-    			l.remove(i);
-    			l.add(cd);
-    		}
-    	}
-    	return l; 
+        List l = super.getControlDescriptors(includeTemplates);
+        for (int i = 0; i < l.size(); i++) {
+            ControlDescriptor cd = (ControlDescriptor) l.get(i);
+            if (cd.getControlId().equals("omni")) {
+                // move the omni control to the end of the list
+                // so it will never be "default" in Field Selector
+                l.remove(i);
+                l.add(cd);
+            }
+        }
+        return l;
     }
 
     /**
