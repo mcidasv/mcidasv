@@ -119,6 +119,12 @@ public class McIDASV extends IntegratedDataViewer {
 
     private static final Logger logger = LoggerFactory.getLogger(McIDASV.class);
 
+    /** Set at the beginning of {@link #main(String[])}. */
+    private static long startTime;
+
+    /** Set at the end of {@link #initDone()}. */
+    private static long estimate;
+
     /** 
      * Path to a {@literal "session"} file--it's created upon McIDAS-V 
      * starting and removed when McIDAS-V exits cleanly. This allows us to
@@ -1016,6 +1022,9 @@ public class McIDASV extends IntegratedDataViewer {
         overridePreferences();
 
         detectAndHandleCrash();
+
+        estimate = System.nanoTime() - startTime;
+        logger.info("estimated startup duration: {} ms", estimate / 1e6);
     }
 
     /**
@@ -1619,6 +1628,8 @@ public class McIDASV extends IntegratedDataViewer {
      * @throws Exception When something untoward happens
      */
     public static void main(String[] args) throws Exception {
+        startTime = System.nanoTime();
+
         try {
             applyArgs(args);
 
