@@ -57,6 +57,11 @@ public class StartupTriggeringPolicy<E>
             String newLogPath = userpath + File.separatorChar + "archived_logs";
             File oldDirectory = new File(oldLogPath);
             File newDirectory = new File(newLogPath);
+
+            // T F = rename
+            // F F = attempt to create
+            // T T = remove old dir
+            // F T = noop
             if (oldDirectory.exists() && !newDirectory.exists()) {
                 oldDirectory.renameTo(newDirectory);
             } else if (!oldDirectory.exists() && !newDirectory.exists()) {
@@ -65,20 +70,44 @@ public class StartupTriggeringPolicy<E>
                 } else {
                     addInfo("Created '"+newLogPath+'\'');
                 }
+            } else if (oldDirectory.exists() && newDirectory.exists()) {
+                addWarn("Both log directories exist; moving files from '" + oldLogPath + "' and attempting to delete");
+                removeOldLogDirectory(oldDirectory, newDirectory);
+            } else if (!oldDirectory.exists() && newDirectory.exists()) {
+                addInfo('\''+oldLogPath+"' does not exist; no cleanup is required");
+            } else {
+                addWarn("Unknown state! oldDirectory.exists()='"+oldDirectory.exists()+"' newDirectory.exists()='"+newDirectory.exists()+'\'');
             }
-//            if (oldDirectory.exists() && !newDirectory.exists()) {
-//                if (!oldDirectory.renameTo(newDirectory)) {
-//                    addInfo("could not rename '" + oldLogPath + "' to '" + newLogPath + '\'');
-//                }
-//            } else if (!oldDirectory.exists() && newDirectory.exists()) {
-//                addInfo("a-ok");
-//            } else {
-//                addInfo("check yer assumptions!");
-//            }
-//        } else {
-//            addInfo("could not determine userpath");
-//        }
         }
+    }
+
+    private void removeOldLogDirectory(File oldDirectory, File newDirectory) {
+        File[] files = oldDirectory.listFiles();
+        new Thread(asyncClearFiles(oldDirectory, newDirectory, files)).start();
+    }
+
+    private Runnable asyncClearFiles(final File oldDirectory, final File newDirectory, final File[] files) {
+        return new Runnable() {
+            public void run() {
+                boolean success = true;
+                for (File f : files) {
+                    File newPath = new File(newDirectory, f.getName());
+                    if (f.renameTo(newPath)) {
+                        addInfo("Moved '"+f.getAbsolutePath()+"' to '"+newPath.getAbsolutePath()+'\'');
+                    } else {
+                        success = false;
+                        addWarn("Could not move '"+f.getAbsolutePath()+"' to '"+newPath.getAbsolutePath()+'\'');
+                    }
+                }
+                if (success) {
+                    if (oldDirectory.delete()) {
+                        addInfo("Removed '"+oldDirectory.getAbsolutePath()+'\'');
+                    } else {
+                        addWarn("Could not remove '"+oldDirectory.getAbsolutePath()+'\'');
+                    }
+                }
+            }
+        };
     }
 
     private void cleanupArchivedLogs(int keepFiles) {
