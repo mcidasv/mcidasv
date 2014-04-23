@@ -45,6 +45,12 @@
     </encoder>
   </appender>
 
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%msg</pattern>
+    </encoder>
+  </appender>
+
   <!-- <appender name="JYTHON" class="ch.qos.logback.core.FileAppender">
     <file>${mcv.userpath}/mcidasv.log</file>
     <prudent>true</prudent>
@@ -65,6 +71,10 @@
   <root level="${loglevel:-INFO}">
     <appender-ref ref="FILE" />
   </root>
+
+  <logger name="mcvstdout" level="INFO">
+    <appender-ref ref="STDOUT" />
+  </logger>
 
   <!-- Disable some initial status messages from the stdout/stderr redirect library -->
   <logger name="uk.org.lidalia.sysoutslf4j" level="OFF" />

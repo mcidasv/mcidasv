@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.util.StringUtil;
 import visad.VisADException;
 
@@ -51,6 +53,8 @@ import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
  * @author McIDAS-V Developers
  */
 public class ArgumentManager extends ArgsManager {
+
+    private static final Logger helpLogger = LoggerFactory.getLogger("mcvstdout");
 
     /** McIDAS-V flag that signifies everything that follows is a Jython argument. */
     public static final String ARG_JYTHONARGS = "-scriptargs";
@@ -120,8 +124,8 @@ public class ArgumentManager extends ArgsManager {
             // preference is and load the Aqua L&F from there.
             McIDASV.useAquaLookAndFeel = true;
         } else if (ARG_HELP.equals(arg)) {
-            System.err.println(USAGE_MESSAGE);
-            System.err.println(getUsageMessage());
+            helpLogger.info(USAGE_MESSAGE);
+            helpLogger.info(getUsageMessage());
             ((McIDASV)getIdv()).exit(1);
         } else if (checkArg(arg, "-script", args, idx, 1) || checkArg(arg, "-pyfile", args, idx, 1)) {
             String scriptArg = args[idx++];
