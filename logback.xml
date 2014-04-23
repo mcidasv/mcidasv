@@ -72,7 +72,7 @@
     <appender-ref ref="FILE" />
   </root>
 
-  <logger name="mcvstdout" level="INFO">
+  <logger name="mcvstdout" level="INFO" additivity="false">
     <appender-ref ref="STDOUT" />
   </logger>
 
