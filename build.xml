@@ -157,6 +157,13 @@
     <!-- Files to include in local-idv jar -->
     <patternset id="local-idv.includes">
         <include name="ucar/**/*.class" />
+        <include name="visad/**/*.class" />
+        <include name="HTTPClient/**/*.class" />
+        <include name="Jama/**/*.class" />
+        <include name="gnu/**/*.class" />
+        <include name="loci/**/*.class" />
+        <include name="ncsa/**/*.class" />
+        <include name="nom/**/*.class" />
     </patternset>
     
     <!-- Files to include in the startup manager jar -->
