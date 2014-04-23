@@ -207,6 +207,11 @@
             <exec executable="git" dir="@{dir}">
                 <arg value="stash" />
             </exec>
+            <echo message="git fetch @{remote}" />
+            <exec executable="git" dir="@{dir}">
+                <arg value="fetch" />
+                <arg value="@{remote}" />
+            </exec>
             <echo message="git pull --rebase @{remote} @{branch}" />
             <exec executable="git" dir="@{dir}">
                 <arg value="pull" />
