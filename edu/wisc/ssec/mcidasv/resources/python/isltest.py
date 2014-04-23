@@ -219,7 +219,7 @@ class Clip(ImageFormatting):
 class Colorbar(ImageFormatting):
     def __init__(self, display=None, width=None, height=None, orientation=None, tickMarks=None, interval=None, values=None, place=None, anchor=None, showLines=None, suffix=None, suffixFrequency=None, showUnit=None, transparency=None, color=None, lineColor=None):
         if display:
-            self.display = 'display=%s' % (display)
+            self.display = 'display=%s' % (display.getJavaInstance().getId())
         else:
             self.display = ''
             
@@ -335,3 +335,12 @@ class Resize(ImageFormatting):
     def toIsl(self):
         islString = "resize %s %s" % (self.width, self.height)
         return islString.strip() + '; '
+
+# formatting = [ Matte(space="100", background="gray"),
+#     Colorbar(display='planview', orientation="top", tickMarks="3", width="400", showLines="true", anchor="LM", place="UM,0,100", showUnit="true"),
+#     Colorbar(display='planview', orientation="top", tickMarks="3", width="400", showLines="true", anchor="LM", place="UM,0,100", showUnit="true"),
+#     Colorbar(display='planview', orientation="bottom", tickMarks="3", width="400", showLines="true",  anchor="UM", place="LM,0,-100", showUnit="true"),
+#     Colorbar(display='planview', orientation="top", tickMarks="3", width="400", showLines="true", anchor="LM", place="LM", showUnit="true"),
+#     Colorbar(display='planview', orientation="left", tickMarks="3", width="20", height="400", showLines="true", anchor="MR", place="ML,100,0", showUnit="true"),
+#     Colorbar(display='planview', orientation="left", tickMarks="3", width="20", height="400", showLines="true", anchor="MR", place="MR", showUnit="true"),
+# ]
