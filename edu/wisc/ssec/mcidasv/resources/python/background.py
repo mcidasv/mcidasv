@@ -1,6 +1,8 @@
 import os
 import types
 
+import isltest
+
 import java.awt.Color.CYAN
 import java.awt.Dimension
 
@@ -1434,6 +1436,14 @@ class _Display(_JavaProxy):
         print 'isl=%s' % (isl[:-2])
         islInterpreter.writeImage(filename, isl[:-2], quality)
         
+        # not terribly happy about this approach...
+        for formatter in formatting:
+            if isinstance(formatter, isltest.Colorbar) and formatter.displayObj:
+                layer = formatter.displayObj
+                if layer.usedTemporaryId:
+                    layer.getJavaInstance().setId(None)
+                    layer.usedTemporaryId = False
+                    
     def captureImage(self, filename, quality=1.0, height=-1, width=-1):
         """Attempt at a replacement for ISL writeImage.
         
@@ -1661,6 +1671,7 @@ class _Layer(_JavaProxy):
         
         #_JavaProxy.__init__(self, javaObject).addDisplayInfo()
         _JavaProxy.__init__(self, javaObject)
+        self.usedTemporaryId = False
         
     @gui_invoke_later
     def _getDisplayWrapper(self):
@@ -1676,6 +1687,11 @@ class _Layer(_JavaProxy):
                 return wrapper
         raise LookupError('Couldnt find a _Display for this _Layer')
         
+    def _ensureIslId(self):
+        if not self._JavaProxy__javaObject.getId():
+            self.usedTemporaryId = True
+            self._JavaProxy__javaObject.setId(self._JavaProxy__javaObject.getUniqueId())
+            
     def getFrameCount(self):
         # looking like ucar.visad.display.AnimationWidget is the place to be
         pass

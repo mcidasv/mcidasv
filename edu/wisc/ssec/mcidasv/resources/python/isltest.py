@@ -219,6 +219,8 @@ class Clip(ImageFormatting):
 class Colorbar(ImageFormatting):
     def __init__(self, display=None, width=None, height=None, orientation=None, tickMarks=None, interval=None, values=None, place=None, anchor=None, showLines=None, suffix=None, suffixFrequency=None, showUnit=None, transparency=None, color=None, lineColor=None):
         if display:
+            self.displayObj = display
+            display._ensureIslId()
             self.display = 'display=%s' % (display.getJavaInstance().getId())
         else:
             self.display = ''
@@ -336,11 +338,21 @@ class Resize(ImageFormatting):
         islString = "resize %s %s" % (self.width, self.height)
         return islString.strip() + '; '
 
-# formatting = [ Matte(space="100", background="gray"),
-#     Colorbar(display='planview', orientation="top", tickMarks="3", width="400", showLines="true", anchor="LM", place="UM,0,100", showUnit="true"),
-#     Colorbar(display='planview', orientation="top", tickMarks="3", width="400", showLines="true", anchor="LM", place="UM,0,100", showUnit="true"),
-#     Colorbar(display='planview', orientation="bottom", tickMarks="3", width="400", showLines="true",  anchor="UM", place="LM,0,-100", showUnit="true"),
-#     Colorbar(display='planview', orientation="top", tickMarks="3", width="400", showLines="true", anchor="LM", place="LM", showUnit="true"),
-#     Colorbar(display='planview', orientation="left", tickMarks="3", width="20", height="400", showLines="true", anchor="MR", place="ML,100,0", showUnit="true"),
-#     Colorbar(display='planview', orientation="left", tickMarks="3", width="20", height="400", showLines="true", anchor="MR", place="MR", showUnit="true"),
+# disp = activeDisplay()
+#
+# disp.setWireframe(False)
+#
+# imgLayer = disp.getLayers()[1]
+# planLayer = disp.getLayers()[2]
+#
+# formatting = [
+#     Matte(space="100", background="gray"),
+#     Colorbar(display=imgLayer, orientation="top", tickMarks="3", width="400", showLines="true", anchor="LM", place="UM,0,100", showUnit="true"),
+#     Colorbar(display=imgLayer, orientation="top", tickMarks="3", width="400", showLines="true", anchor="LM", place="UM,0,100", showUnit="true"),
+#     Colorbar(display=imgLayer, orientation="bottom", tickMarks="3", width="400", showLines="true",  anchor="UM", place="LM,0,-100", showUnit="true"),
+#     Colorbar(display=planLayer, orientation="top", tickMarks="3", width="400", showLines="true", anchor="LM", place="LM", showUnit="true"),
+#     Colorbar(display=planLayer, orientation="left", tickMarks="3", width="20", height="400", showLines="true", anchor="MR", place="ML,100,0", showUnit="true"),
+#     Colorbar(display=planLayer, orientation="left", tickMarks="3", width="20", height="400", showLines="true", anchor="MR", place="MR", showUnit="true"),
 # ]
+#
+# disp._testCaptureImage('/tmp/foo.png', formatting=formatting)
