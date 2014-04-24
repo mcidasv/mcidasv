@@ -29,7 +29,9 @@ package edu.wisc.ssec.mcidasv.data;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,7 +122,7 @@ public class EnviInfo extends HeaderInfo {
 	 */
 	public boolean isNavHeader() {
 		parseHeader();
-		List bandNames = (List)getParameter(BANDNAMES, new ArrayList());
+		List bandNames = (List) getParameter(BANDNAMES, new ArrayList());
 		if (bandNames == null) return false;
 		if (bandNames.contains("Latitude") && bandNames.contains("Longitude")) return true;
 		return false;
@@ -131,15 +133,16 @@ public class EnviInfo extends HeaderInfo {
 	 */
 	public int getLatBandNum() {
 		parseHeader();
-		List bandNames = (List)getParameter(BANDNAMES, new ArrayList());
+		List bandNames = (List) getParameter(BANDNAMES, new ArrayList());
 		for (int i=0; i<bandNames.size(); i++) {
 			if (bandNames.get(i).equals("Latitude")) return i+1;
 		}
 		return -1;
 	}
+	
 	public String getLatBandFile() {
 		parseHeader();
-		List bandFiles = (List)getParameter(BANDFILES, new ArrayList());
+		List bandFiles = (List) getParameter(BANDFILES, new ArrayList());
 		int bandNum = getLatBandNum();
 		if (bandNum < 0) return "";
 		return (String)(bandFiles.get(bandNum-1));
@@ -150,15 +153,16 @@ public class EnviInfo extends HeaderInfo {
 	 */
 	public int getLonBandNum() {
 		parseHeader();
-		List bandNames = (List)getParameter(BANDNAMES, new ArrayList());
+		List bandNames = (List) getParameter(BANDNAMES, new ArrayList());
 		for (int i=0; i<bandNames.size(); i++) {
 			if (bandNames.get(i).equals("Longitude")) return i+1;
 		}
 		return -1;
 	}
+	
 	public String getLonBandFile() {
 		parseHeader();
-		List bandFiles = (List)getParameter(BANDFILES, new ArrayList());
+		List bandFiles = (List) getParameter(BANDFILES, new ArrayList());
 		int bandNum = getLonBandNum();
 		if (bandNum < 0) return "";
 		return (String)(bandFiles.get(bandNum-1));
@@ -195,6 +199,7 @@ public class EnviInfo extends HeaderInfo {
 	/**
 	 * Parse a potential ENVI header file
 	 */
+	
 	protected void parseHeader() {
 		if (haveParsed()) return;
 		if (!doesExist()) {
@@ -209,7 +214,7 @@ public class EnviInfo extends HeaderInfo {
 			String value = "";
 			boolean inValue = false;
 
-			List bandNames = new ArrayList();
+			List<String> bandNames = new ArrayList<String>();
 			List bandFiles = new ArrayList();
 
 			while ((line = br.readLine()) != null) {
@@ -332,10 +337,24 @@ public class EnviInfo extends HeaderInfo {
 						from [1][1] = lowerRightY;
 						float [][] to = new float[2][2];
 						to = utmp.projToLatLon(from, to);
-						setParameter("BOUNDS.ULLAT", "" + to[0][0]);
-						setParameter("BOUNDS.ULLON", "" + to[1][0]);
-						setParameter("BOUNDS.LRLAT", "" + to[0][1]);
-						setParameter("BOUNDS.LRLON", "" + to[1][1]);
+						
+						// Need to check and see if we are correct in assuming which one is upper left
+						if (to[0][0] > to[0][1]) {
+							setParameter("BOUNDS.ULLAT", "" + to[0][0]);
+							setParameter("BOUNDS.ULLON", "" + to[1][0]);
+							setParameter("BOUNDS.LRLAT", "" + to[0][1]);
+							setParameter("BOUNDS.LRLON", "" + to[1][1]);
+						} else {
+							from [0][0] = upperLeftX;
+							from [1][0] = upperLeftY - ((numLines * yMag) / distFactor);
+							from [0][1] = lowerRightX;
+							from [1][1] = lowerRightY - ((numLines * yMag) / distFactor);
+							to = utmp.projToLatLon(from, to);
+							setParameter("BOUNDS.ULLAT", "" + to[0][1]);
+							setParameter("BOUNDS.ULLON", "" + to[1][0]);
+							setParameter("BOUNDS.LRLAT", "" + to[0][0]);
+							setParameter("BOUNDS.LRLON", "" + to[1][1]);
+						}
 						hasBounds = true;
 					}
 				}
@@ -356,8 +375,8 @@ public class EnviInfo extends HeaderInfo {
 					}
 				}
 				else if (parameter.equals("band names")) {
-					bandNames = new ArrayList();
-					bandFiles = new ArrayList();
+					bandNames = new ArrayList<String>();
+					bandFiles = new ArrayList<String>();
 					String[] bandNamesSplit = value.split(",");
 					for (int i=0; i<bandNamesSplit.length; i++) {
 						bandNames.add(bandNamesSplit[i].trim());
@@ -369,9 +388,10 @@ public class EnviInfo extends HeaderInfo {
 
 			}
 			br.close();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
+		} catch (FileNotFoundException fnfe) {
+			fnfe.printStackTrace();
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
 		}
 
 	}
