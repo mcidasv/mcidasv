@@ -738,6 +738,19 @@ class _Display(_JavaProxy):
             )
         _Display.displayWrappers.append(self)
         
+    def _getDisplayIndex(self):
+        mcv = getStaticMcv()
+        index = -1
+        if mcv:
+            currentDescriptor = self._JavaProxy__javaObject.getViewDescriptor()
+            vmManager = mcv.getVMManager()
+            for i, vm in enumerate(vmManager.getViewManagers()):
+                if currentDescriptor == vm.getViewDescriptor():
+                    index = i
+                    break
+                    
+        return index
+        
     @gui_invoke_later
     def getDisplayType(self):
         # TODO(jon): how to refer to 2d map displays?
@@ -1370,7 +1383,6 @@ class _Display(_JavaProxy):
         
         return wrappedLayer
         
-        
     def _captureAsVector(self, filename):
         from ucar.unidata.idv import VectorGraphicsRenderer
         
@@ -1406,6 +1418,9 @@ class _Display(_JavaProxy):
     def _testCaptureImage(self, filename, quality=1.0, formatting=None, ignoreLogo=False):
         """Don't use this method for anything other than testing!"""
         
+        from ucar.unidata.idv.ui import ImageGenerator
+        from ucar.unidata.xml import XmlUtil
+        
         formatting = formatting or []
         
         # this pause is apparently critical
@@ -1433,8 +1448,16 @@ class _Display(_JavaProxy):
             logoIsl = 'overlay image=%s anchor=%s place=%s; ' % (logoFile, logoAnchor, logoPosition)
             isl += logoIsl
             
-        print 'isl=%s' % (isl[:-2])
-        islInterpreter.writeImage(filename, isl[:-2], quality)
+        # print 'isl=%s' % (isl[:-2])
+        
+        islAsXml = ImageGenerator.makeXmlFromString(isl[:-2])
+        index = self._getDisplayIndex()
+        if index:
+            xml = '%s\n<image file="%s" quality="%s" view="#%s">%s</image>' % (XmlUtil.getHeader(), filename, quality, index, islAsXml)
+        else:
+            xml = '%s\n<image file="%s" quality="%s">%s</image>' % (XmlUtil.getHeader(), filename, quality, islAsXml)
+        print 'isl2xml=%s' % (xml)
+        islInterpreter.captureImage(islInterpreter.applyMacros(filename), islInterpreter.makeElement(xml))
         
         # not terribly happy about this approach...
         for formatter in formatting:
