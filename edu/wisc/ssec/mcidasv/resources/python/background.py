@@ -2900,7 +2900,3 @@ def loadFileListTimesInField(filename, field):
     geogrid = gridDataset.findGridByName(field)
     for time in geogrid.getTimes():
         print time
-
-@gui_invoke_later
-def dun_goofed():
-    return 1 / 0

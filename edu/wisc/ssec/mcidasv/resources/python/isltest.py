@@ -337,22 +337,3 @@ class Resize(ImageFormatting):
     def toIsl(self):
         islString = "resize %s %s" % (self.width, self.height)
         return islString.strip() + '; '
-
-# disp = activeDisplay()
-#
-# disp.setWireframe(False)
-#
-# imgLayer = disp.getLayers()[1]
-# planLayer = disp.getLayers()[2]
-#
-# formatting = [
-#     Matte(space="100", background="gray"),
-#     Colorbar(display=imgLayer, orientation="top", tickMarks="3", width="400", showLines="true", anchor="LM", place="UM,0,100", showUnit="true"),
-#     Colorbar(display=imgLayer, orientation="top", tickMarks="3", width="400", showLines="true", anchor="LM", place="UM,0,100", showUnit="true"),
-#     Colorbar(display=imgLayer, orientation="bottom", tickMarks="3", width="400", showLines="true",  anchor="UM", place="LM,0,-100", showUnit="true"),
-#     Colorbar(display=planLayer, orientation="top", tickMarks="3", width="400", showLines="true", anchor="LM", place="LM", showUnit="true"),
-#     Colorbar(display=planLayer, orientation="left", tickMarks="3", width="20", height="400", showLines="true", anchor="MR", place="ML,100,0", showUnit="true"),
-#     Colorbar(display=planLayer, orientation="left", tickMarks="3", width="20", height="400", showLines="true", anchor="MR", place="MR", showUnit="true"),
-# ]
-#
-# disp._testCaptureImage('/tmp/foo.png', formatting=formatting)
