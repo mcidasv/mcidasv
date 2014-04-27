@@ -448,6 +448,9 @@
     <resource label="McIDAS-V ADDE" location="%APPPATH%/python/mcvadde.py">
       <property name="category" value="System" />
     </resource>
+    <resource label="McIDAS-V ISL Formatters" location="%APPPATH%/python/islformatters.py">
+      <property name="category" value="System" />
+    </resource>
   </resources>
 
 <!--We don't use this now. Python libraries     -->

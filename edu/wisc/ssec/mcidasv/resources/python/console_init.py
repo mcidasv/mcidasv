@@ -142,7 +142,7 @@ from interactive import (
     getLogLevel, setLogLevel,
 )
 
-from isltest import (
+from islformatters import (
     ImageFormatting, Matte, ImageOverlay, TextOverlay, Clip, Colorbar,
     TransparentColor, TransparentBackground
 )

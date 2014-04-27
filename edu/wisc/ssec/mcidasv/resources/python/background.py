@@ -1,7 +1,7 @@
 import os
 import types
 
-import isltest
+import islformatters
 
 import java.awt.Color.CYAN
 import java.awt.Dimension
@@ -1461,7 +1461,7 @@ class _Display(_JavaProxy):
         
         # not terribly happy about this approach...
         for formatter in formatting:
-            if isinstance(formatter, isltest.Colorbar) and formatter.displayObj:
+            if isinstance(formatter, islformatters.Colorbar) and formatter.displayObj:
                 layer = formatter.displayObj
                 if layer.usedTemporaryId:
                     layer.getJavaInstance().setId(None)
