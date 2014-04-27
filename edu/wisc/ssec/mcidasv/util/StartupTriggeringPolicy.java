@@ -40,16 +40,21 @@ import java.util.Date;
 
 /**
  * This is a Logback {@literal "triggering policy"} that forces a log
- * {@literal "roll"} upon starting McIDAS-V.
+ * {@literal "roll"} upon starting McIDAS-V. This policy will also attempt to
+ * move the old {@literal "log"} directory to {@literal "archived_logs"} as well
+ * as attempting to remove the oldest {@literal "archived log files"}.
  *
- * <p>All credit for this belongs to
+ * <p>Credit for the initial implementation belongs to
  * <a href="http://stackoverflow.com/a/12408445">this StackOverflow post</a>.</p>
- *
  */
 @NoAutoStart
 public class StartupTriggeringPolicy<E>
         extends DefaultTimeBasedFileNamingAndTriggeringPolicy<E> {
 
+    /**
+     * Responsible for determining what to do about the {@literal "logs"} and
+     * {@literal "archived_logs"} subdirectory situation.
+     */
     private void renameOldLogDirectory() {
         String userpath = System.getProperty("mcv.userpath");
         if (userpath != null) {
@@ -81,11 +86,28 @@ public class StartupTriggeringPolicy<E>
         }
     }
 
+    /**
+     * Fires off a thread that moves all files within {@code oldDirectory}
+     * into {@code newDirectory}.
+     *
+     * @param oldDirectory
+     * @param newDirectory
+     */
     private void removeOldLogDirectory(File oldDirectory, File newDirectory) {
         File[] files = oldDirectory.listFiles();
         new Thread(asyncClearFiles(oldDirectory, newDirectory, files)).start();
     }
 
+    /**
+     * Moves all files within {@code oldDirectory} into {@code newDirectory},
+     * and then removes {@code oldDirectory}.
+     *
+     * @param oldDirectory
+     * @param newDirectory
+     * @param files
+     *
+     * @return
+     */
     private Runnable asyncClearFiles(final File oldDirectory, final File newDirectory, final File[] files) {
         return new Runnable() {
             public void run() {
@@ -110,6 +132,12 @@ public class StartupTriggeringPolicy<E>
         };
     }
 
+    /**
+     * Finds the archived log files and determines whether or not {@link #asyncCleanFiles(int, java.io.File[])}
+     * should be called (and if it should, this method calls it).
+     *
+     * @param keepFiles Number of archived log files to keep around.
+     */
     private void cleanupArchivedLogs(int keepFiles) {
         String userpath = System.getProperty("mcv.userpath");
         if (userpath != null) {
@@ -121,6 +149,15 @@ public class StartupTriggeringPolicy<E>
         }
     }
 
+    /**
+     * Fires off a thread that attempts to remove all but the {@code keep} oldest
+     * files in {@code files} (by using the last modified times).
+     *
+     * @param keep Number of archived log files to keep around.
+     * @param files Archived log files. Cannot be {@code null}.
+     *
+     * @return
+     */
     private Runnable asyncCleanFiles(final int keep, final File[] files) {
         return new Runnable() {
             public void run() {
@@ -137,6 +174,10 @@ public class StartupTriggeringPolicy<E>
         };
     }
 
+    /**
+     * Triggers a {@literal "logback rollover"} and calls
+     * {@link #cleanupArchivedLogs(int)}.
+     */
     @Override public void start() {
         renameOldLogDirectory();
         super.start();

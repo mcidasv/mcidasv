@@ -17,10 +17,19 @@ import ch.qos.logback.core.rolling.helper.FileFilterUtil;
 import ch.qos.logback.core.rolling.helper.RenameUtil;
 import ch.qos.logback.core.util.FileUtil;
 
+/**
+ * This Logback {@literal "rolling policy"} copies the contents of a log file
+ * (in this case, mcidasv.log) to the specified destination, and then
+ * {@literal "zeroes out"} the original log file. This approach allows McIDAS-V
+ * users to run a command like {@literal "tail -f mcidasv.log"} without any
+ * issue. Even on Windows.
+ */
 public class TailFriendlyRollingPolicy<E> extends TimeBasedRollingPolicy<E> {
 
     private Compressor compressor;
+
     private RenameUtil renameUtil = new RenameUtil();
+
     Future<?> future;
 
     @Override public void rollover() throws RolloverFailure {
@@ -72,6 +81,14 @@ public class TailFriendlyRollingPolicy<E> extends TimeBasedRollingPolicy<E> {
         return asyncCompress(tmpTarget, nameOfCompressedFile, innerEntryName);
     }
 
+    /**
+     * Copies the contents of {@code src} into {@code target}, and then
+     * {@literal "zeroes out"} {@code src}.
+     *
+     * @param src Path to the file to be copied. Cannot be {@code null}.
+     * @param target Path to the destination file. Cannot be {@code null}.
+     * @throws RolloverFailure
+     */
     public void renameByCopying(String src, String target)
         throws RolloverFailure {
 
