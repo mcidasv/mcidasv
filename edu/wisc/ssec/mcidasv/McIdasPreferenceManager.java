@@ -66,6 +66,7 @@ import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -588,7 +589,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         buttonPane = McVGuiUtils.makePrettyButtons(buttons);
         
         contents = new JPanel();
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(contents);
+        GroupLayout layout = new GroupLayout(contents);
         contents.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(LEADING)
@@ -767,7 +768,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         JPanel outerPanel = new JPanel();
         
         // Outer panel layout
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(outerPanel);
+        GroupLayout layout = new GroupLayout(outerPanel);
         outerPanel.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(LEADING)
@@ -1036,7 +1037,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         JPanel outerPanel = new JPanel();
         
         // Outer panel layout
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(outerPanel);
+        GroupLayout layout = new GroupLayout(outerPanel);
         outerPanel.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(LEADING)
@@ -1229,7 +1230,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         JPanel outerPanel = new JPanel();
         
         // Outer panel layout
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(outerPanel);
+        GroupLayout layout = new GroupLayout(outerPanel);
         outerPanel.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(LEADING)
@@ -1305,7 +1306,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             }
             
             JPanel inner = new JPanel();
-            javax.swing.GroupLayout layout = new javax.swing.GroupLayout(inner);
+            GroupLayout layout = new GroupLayout(inner);
             inner.setLayout(layout);
             layout.setHorizontalGroup(
                 layout.createParallelGroup(LEADING)
@@ -1502,7 +1503,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         widgets.put("US_LOCALE", usLocale);
 
         // Format panel layout
-        javax.swing.GroupLayout formatLayout = new javax.swing.GroupLayout(formatPanel);
+        GroupLayout formatLayout = new GroupLayout(formatPanel);
         formatPanel.setLayout(formatLayout);
         formatLayout.setHorizontalGroup(
             formatLayout.createParallelGroup(LEADING)
@@ -1640,7 +1641,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         widgets.put(PREF_FIELD_CACHETHRESHOLD, gridField);
         
         // Data panel layout
-        javax.swing.GroupLayout dataLayout = new javax.swing.GroupLayout(dataPanel);
+        GroupLayout dataLayout = new GroupLayout(dataPanel);
         dataPanel.setLayout(dataLayout);
         dataLayout.setHorizontalGroup(
             dataLayout.createParallelGroup(LEADING)
@@ -1711,7 +1712,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         JPanel outerPanel = new JPanel();
         
         // Outer panel layout
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(outerPanel);
+        GroupLayout layout = new GroupLayout(outerPanel);
         outerPanel.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(LEADING)
