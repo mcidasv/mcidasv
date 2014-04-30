@@ -144,7 +144,7 @@ from interactive import (
 
 from islformatters import (
     ImageFormatting, Matte, ImageOverlay, TextOverlay, Clip, Colorbar,
-    TransparentColor, TransparentBackground
+    TransparentColor, TransparentBackground, Center, Viewpoint
 )
 
 _user_python = os.path.join(_mcv.getStore().getUserDirectory().toString(), 'python')
