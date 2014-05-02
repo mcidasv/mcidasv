@@ -2747,6 +2747,7 @@ def writeImageAtIndex(fname, idx, params='', quality=1.0):
     macros = islInterpreter.applyMacros(fname)
     islInterpreter.captureImage(macros, elem)
 
+
 def loadFile(filename=None, field=None, level=None,
         time=None, xStride=1, yStride=1, 
         xRange=None, yRange=None, latLonBounds=None, **kwargs): 
@@ -2769,6 +2770,7 @@ def loadFile(filename=None, field=None, level=None,
     """
     from ucar.nc2.dt.grid import GridDataset
     from ucar.unidata.data import DataUtil
+    from ucar.unidata.data.grid import GridUtil
     from ucar.unidata.data.grid import GeoGridAdapter
     from ucar.unidata.geoloc import LatLonPointImpl
     from ucar.unidata.geoloc import LatLonRect
@@ -2848,9 +2850,11 @@ def loadFile(filename=None, field=None, level=None,
 
     adapter = GeoGridAdapter(dataSource.getJavaInstance(), geogrid)
 
-    # get the flatfield
-    fieldImpl = adapter.getData()
-    ff = fieldImpl.getSample(0) # b/c we are certain there is only one time step.
+    adapterData = adapter.getData()
+    if (GridUtil.isTimeSequence(adapterData)):
+        ff = adapterData.getSample(0)
+    else:
+        ff = adapterData
 
     # make the 'mega-object'
     mapped = _MappedGeoGridFlatField(ff, geogrid, filename, field)
