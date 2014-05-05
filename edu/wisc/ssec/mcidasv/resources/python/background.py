@@ -2876,8 +2876,13 @@ def makeMappedGeoGridFlatFieldSequence(sequence):
     from visad import RealType
     dateTimes = []
     for ff in sequence:
-        timeAxis = ff.geogrid.getCoordinateSystem().getTimeAxis1D()
-        dateTimes.append(DataUtil.makeDateTimes(timeAxis)[0])
+        if ff.geogrid.getCoordinateSystem().hasTimeAxis1D():
+            timeAxis = ff.geogrid.getCoordinateSystem().getTimeAxis1D()
+            dateTimes.append(DataUtil.makeDateTimes(timeAxis)[0])
+        else:
+            # fix for ABI data / data with no time coord: just return plain FF
+            # this will allow data to get displayed, but w/o time info
+            return ff
     timeSet = Util.makeTimeSet(dateTimes)
     ftype = FunctionType(RealType.Time, ff.getType())
     fi = FieldImpl(ftype, timeSet)
