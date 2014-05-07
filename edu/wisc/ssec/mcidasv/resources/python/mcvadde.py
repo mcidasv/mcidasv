@@ -1056,8 +1056,11 @@ def getADDEImage(localEntry=None,
     user = accounting[0]
     proj = accounting[1]
     debug = str(debug).lower()
-    mag = '%s %s' % (mag[0], mag[1])
-    
+    if mag and hasattr(mag, '__getitem__'):
+        mag = '%s %s' % (mag[0], mag[1])
+    else:
+        raise ValueError("Mag keyword must be a tuple or list of at least two elements.")
+        
     hasCoordSys = coordinateSystem or False
     hasPlace = place or False
     hasLocation = location or False
