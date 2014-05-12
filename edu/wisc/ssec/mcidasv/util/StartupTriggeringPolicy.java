@@ -88,10 +88,15 @@ public class StartupTriggeringPolicy<E>
 
     /**
      * Fires off a thread that moves all files within {@code oldDirectory}
-     * into {@code newDirectory}.
+     * into {@code newDirectory}, and then attempts to remove
+     * {@code oldDirectory}.
      *
-     * @param oldDirectory
-     * @param newDirectory
+     * @param oldDirectory {@literal "Old"} log file directory. Be aware that
+     * any files within this directory will be relocated to
+     * {@code newDirectory} and this directory will then be removed. Cannot be
+     * {@code null}.
+     * @param newDirectory Destination for any files within
+     * {@code oldDirectory}. Cannot be {@code null}.
      */
     private void removeOldLogDirectory(File oldDirectory, File newDirectory) {
         File[] files = oldDirectory.listFiles();
@@ -102,11 +107,17 @@ public class StartupTriggeringPolicy<E>
      * Moves all files within {@code oldDirectory} into {@code newDirectory},
      * and then removes {@code oldDirectory}.
      *
-     * @param oldDirectory
-     * @param newDirectory
-     * @param files
+     * @param oldDirectory {@literal "Old"} log file directory. Cannot be
+     * {@code null}.
+     * @param newDirectory {@literal "New"} log file directory. Cannot be
+     * {@code null}.
+     * @param files {link File Files} within {@code oldDirectory} that should
+     * be moved to {@code newDirectory}. Cannot be {@code null}.
      *
-     * @return
+     * @return Thread that will attempt to relocate any files within
+     * {@code oldDirectory} to {@code newDirectory} and then attempt removal
+     * of {@code oldDirectory}. Be aware that this thread has not yet had
+     * {@literal "start"} called.
      */
     private Runnable asyncClearFiles(final File oldDirectory, final File newDirectory, final File[] files) {
         return new Runnable() {
@@ -150,13 +161,15 @@ public class StartupTriggeringPolicy<E>
     }
 
     /**
-     * Fires off a thread that attempts to remove all but the {@code keep} oldest
+     * Creates a thread that attempts to remove all but the {@code keep} oldest
      * files in {@code files} (by using the last modified times).
      *
      * @param keep Number of archived log files to keep around.
      * @param files Archived log files. Cannot be {@code null}.
      *
-     * @return
+     * @return Thread that will attempt to remove everything except the
+     * specified number of archived log files. Be aware that this thread has
+     * not yet had {@literal "start"} called.
      */
     private Runnable asyncCleanFiles(final int keep, final File[] files) {
         return new Runnable() {

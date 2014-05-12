@@ -156,10 +156,16 @@ public class TextOption extends AbstractOption {
     }
 
     /**
+     * If the given {@code String} begins and ends with
+     * {@link OptionMaster#QUOTE_STRING}, this method will return the given
+     * {@code String} without the {@literal "outermost"} quote pair. Otherwise
+     * the {@code String} is returned without modification.
      *
+     * @param value {@code String} from which the outermost pair of quotes
+     * should be removed. Cannot be {@code null}.
      *
-     * @param value
-     * @return
+     * @return Either {@code value} with the outermost pair of quotes removed,
+     * or {@code value}, unmodified.
      */
     public static String removeOutermostQuotes(final String value) {
         String returnValue = value;
