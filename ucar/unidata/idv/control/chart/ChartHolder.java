@@ -446,34 +446,6 @@ public class ChartHolder {
 
         //        chartPanel = new ChartPanel(chart, false,false,false, true,true) {
         chartPanel = new ChartPanel(chart, true) {
-        	
-            @Override
-			public void mouseReleased(MouseEvent e) {
-//                if (SwingUtilities.isRightMouseButton(e)) {
-//                    showPopupMenu(e);
-//                }
-//                else { //Usual Behavior
-                	super.mouseReleased(e);
-//                }
-			}
-
-            @Override            
-			public void mouseClicked(MouseEvent event) {
-                if (SwingUtilities.isRightMouseButton(event)) {
-                    return;
-                }
-                super.mouseClicked(event);
-            }
-			
-            @Override
-            public void mousePressed(MouseEvent event) {
-                requestFocus();
-                if (SwingUtilities.isRightMouseButton(event)) {
-                	//Do nothing, for now.
-                } else {
-                    super.mousePressed(event);
-                }
-            }
 
             @Override
             public void paintComponent(Graphics g) {
