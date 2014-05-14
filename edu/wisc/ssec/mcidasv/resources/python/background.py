@@ -39,6 +39,7 @@ from ucar.unidata.ui.colortable import ColorTableDefaults
 from ucar.unidata.util import GuiUtils
 from ucar.visad import Util
 from ucar.visad.data import GeoGridFlatField
+from visad import FieldImpl
 
 # from collections import namedtuple
 
@@ -109,6 +110,16 @@ class _MappedData(object):
     """
     def __init__(self, keys):
         self._keys = keys
+
+    def initMetadataMap(self):
+        if not isinstance(self, FieldImpl):
+            return
+        hm = self.getMetadataMap()
+        for key in self._keys:
+            hm.put(key, self[key])
+        for key in self.getMacrosDict().keys():
+            hm.put(key, self.getMacrosDict()[key])
+        hm.put('defaultlayerlabel', self.getDefaultLayerLabel())
         
     def _getDirValue(self, key):
         # subclasses should override!
@@ -231,6 +242,7 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
             aiff.RangeCoordinateSystems, aiff.RangeSet,
             aiff.RangeUnits, aiff.readLabel)
         self.startTime = startTime
+        self.initMetadataMap()
         
     # http://stackoverflow.com/questions/141545/overloading-init-in-python
     @classmethod
@@ -260,29 +272,6 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         # i'm so sorry :(
         return self * 1
         
-    # NOTE: This is only suitable for proof-of-concept. 
-    # Python does not allow Java-esque method overloading, so I had to fake 
-    # it with this hack. 
-    def binary(self, *args, **kwargs):
-        argCount = len(args)
-        if argCount == 4:
-            data, op, sampling_mode, error_mode = args
-            result = AreaImageFlatField.binary(self, data, op, sampling_mode, 
-                error_mode)
-            # here, we just want to return what we get from super.binary
-            # (basically, only override the 5 arg version)
-            return result
-        elif argCount == 5:
-            data, op, new_type, sampling_mode, error_mode = args
-            result = AreaImageFlatField.binary(self, data, op, new_type, 
-                sampling_mode, error_mode)
-            return _MappedAreaImageFlatField(result,
-                    self.areaFile, self.areaDirectory, self.addeDescriptor,
-                    self.startTime)
-        else:
-            raise Exception(
-               "_MappedAreaImageFlatField.binary got unexpected number of args")
-            
     def test(self):
         return self.aid
         
@@ -411,6 +400,7 @@ class _MappedGeoGridFlatField(_MappedData, GeoGridFlatField):
                 ggff.getDomainSet(), ggff.RangeCoordinateSystem, 
                 ggff.RangeCoordinateSystems, ggff.RangeSet,
                 ggff.RangeUnits)
+        self.initMetadataMap()
     
     def _getDirValue(self, key):
         if key not in self._keys:
@@ -458,46 +448,6 @@ class _MappedGeoGridFlatField(_MappedData, GeoGridFlatField):
         defaultLabel = '%shortname% %level% - %timestamp%'
         return defaultLabel
 
-    def binary(self, *args, **kwargs):
-        from ucar.unidata.data.grid import GridUtil
-        from ucar.unidata.data.grid import GridMath
-        argCount = len(args)
-        if argCount == 4:
-            data, op, sampling_mode, error_mode = args
-            result = GeoGridFlatField.binary(self, data, op, sampling_mode, 
-                error_mode)
-            # here, we just want to return what we get from super.binary
-            # (basically, only override the 5 arg version)
-            return result
-        elif argCount == 5:
-            data, op, new_type, sampling_mode, error_mode = args
-            # only want to run through GridMath.doMath if actually 2D case-
-            # this avoids recursion loop for 3D case.  (use same test as in
-            # GridMath.doMath)
-            is3D = GridUtil.is3D(self)
-            isVolume = GridUtil.isVolume(self)
-            isSlice = (not isVolume) and is3D
-            if (isSlice):
-                # run through GridMath.doMath to leverage "make2DGridFromSlice",
-                # otherwise we get a VisADException for 2D case.
-                # TODO: pass through sampling mode
-                newFF = GridMath.doMath(self, data, op)
-                result = GeoGridFlatField(newFF.getType(),
-                                           newFF.getDomainSet(),
-                                           newFF.getRangeCoordinateSystem()[0],
-                                           newFF.getRangeSets(),
-                                           newFF.getRangeUnits()[0],
-                                           newFF.unpackFloats())
-            else:
-                result = GeoGridFlatField.binary(self, data, op, new_type, 
-                    sampling_mode, error_mode)
-            result = _MappedGeoGridFlatField(result,
-                    self.geogrid, self.filename, self.field)
-            result.levelReal = self.levelReal #TODO put this in ctor
-            return result
-        else:
-            raise Exception(
-               "_MappedGeoGridFlatField.binary got unexpected number of args")
 
 class _JavaProxy(object):
     """One sentence description goes here
@@ -1293,20 +1243,12 @@ class _Display(_JavaProxy):
             # hack for backward compatibility: don't let user do an
             # imagesequence since it requires a strange DataChoice and 
             # imagedisplay can handle loops anyway.
-            #print "DEBUG: doing an imagedisplay instead of an imagesequence"
             controlID = 'imagedisplay'
             
         # Set the panel/display that a new DisplayControl will be put into
         # TODO(mike):  set this back to what it was before?
         mcv.getVMManager().setLastActiveViewManager(self._JavaProxy__javaObject)
-        
-        # for now, don't deal with case where data arg is already a DataChoice.
-        # (can add support for this later if needed...)
-        
-        # the imagedisplay control appears to want an ImageSequenceImpl,
-        # so try to force one.
-        # This will work if data is an array of NavigatedImage's (or
-        # SingleBandedImage's), or just a single one of those.
+
         firstData = data  # keep a ref to the first image in the list
                            # for layer labeling, etc.
 
@@ -1344,25 +1286,19 @@ class _Display(_JavaProxy):
 
         # figure out the shortname and longname macros if possible,
         # and default layer label
-
-        # this is questionable... but I think this is better for debugging
-        # than just setting to an empty string
         longname = 'unable to set longname macro'
-        #shortname = 'unable to set shortname macro'
-
         defaultLabel = ''
         try:
-            longname = firstData.getMacrosDict()['longname']
-            shortname = firstData.getMacrosDict()['shortname']
-            defaultLabel = firstData.getDefaultLayerLabel()
+            hm = firstData.getMetadataMap()
+            if hm.containsKey('longname'):
+                longname = hm.get('longname')
+            if hm.containsKey('shortname'):
+                shortname = hm.get('shortname')
+            if hm.containsKey('defaultlayerlabel'):
+                defaultLabel = hm.get('defaultlayerlabel')
         except AttributeError:
-            # should catch case where firstData is None, AND case where
-            # the method doesn't exist
-            # (not a dealbreaker...should probably log it though?)
+            # no metadataMap
             pass
-
-        # use the full doMakeControl signature,
-        # so we can send False as initDisplayInThread
 
         # first param of DataDataChoice constructor is %shortname% macro
         ddc = DataDataChoice(shortname, data)
@@ -2871,7 +2807,6 @@ def makeMappedGeoGridFlatFieldSequence(sequence):
     """
     from ucar.unidata.data import DataUtil
     from ucar.visad import Util
-    from visad import FieldImpl
     from visad import FunctionType
     from visad import RealType
     dateTimes = []

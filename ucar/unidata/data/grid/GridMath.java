@@ -173,7 +173,10 @@ public class GridMath {
     public static FieldImpl subtract(FieldImpl grid1, FieldImpl grid2,
                                      boolean useWA)
             throws VisADException {
-        return doMath(grid1, grid2, Data.SUBTRACT, useWA);
+
+        FieldImpl result = doMath(grid1, grid2, Data.SUBTRACT, useWA);
+        result.setMetadataMap(grid1.getMetadataMap());
+        return result;
     }
 
     /**

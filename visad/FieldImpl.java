@@ -31,6 +31,8 @@ import java.rmi.RemoteException;
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
 import java.util.Vector;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
    FieldImpl is the VisAD class for finite samplings of functions
@@ -69,6 +71,9 @@ public class FieldImpl extends FunctionImpl implements Field {
   private VisADRay RangeLock = new VisADRay();
 
   private boolean MissingFlag;
+
+  /** MJH May2014 add String->String Map for keeping arbitrary metadata */
+  private Map<String,String> metadataMap = new HashMap<String,String>();
 
   /** construct a FieldImpl from type;
       use default Set of FunctionType domain;
@@ -3689,6 +3694,16 @@ public class FieldImpl extends FunctionImpl implements Field {
   public Enumeration domainEnumeration()
          throws VisADException, RemoteException {
     return new FieldEnumerator(this);
+  }
+
+
+  public Map<String, String> getMetadataMap() {
+      return metadataMap;
+  }
+	
+	
+  public void setMetadataMap(Map<String, String> metadataMap) {
+      this.metadataMap = metadataMap;
   }
 
 }
