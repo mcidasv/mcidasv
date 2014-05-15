@@ -123,6 +123,7 @@ import visad.util.DataUtility;
 import java.awt.geom.Rectangle2D;
 
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -5719,6 +5720,7 @@ public class GridUtil {
             HSSFRow         row;
             int             sheetIdx = -1;
             List<HSSFSheet> sheets   = new ArrayList<HSSFSheet>();
+            filename = new File(filename).getAbsolutePath();
             OutputStream fileOut =
                 new BufferedOutputStream(new FileOutputStream(filename),
                                          1000000);
@@ -5877,6 +5879,7 @@ public class GridUtil {
         Object loadId =
             JobManager.getManager().startLoad("Writing grid to CF", true);
         try {
+            filename = new File(filename).getAbsolutePath();
             NetcdfFileWriteable ncfile =
                 NetcdfFileWriteable.createNew(filename, false);
             boolean         isTimeSequence = isTimeSequence(grid);
