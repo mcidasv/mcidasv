@@ -1630,6 +1630,9 @@ public class McIDASV extends IntegratedDataViewer {
     public static void main(String[] args) throws Exception {
         startTime = System.nanoTime();
 
+        String mcvUserPath = System.getProperty("mcv.userpath");
+        System.setProperty("user.dir", mcvUserPath);
+
         try {
             applyArgs(args);
 

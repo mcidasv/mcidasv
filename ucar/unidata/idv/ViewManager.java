@@ -339,7 +339,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public static Color borderHighlightColor = Color.blue;
 
     /** logo positions */
-    protected static TwoFacedObject[] logoPoses = { new TwoFacedObject(
+    public static TwoFacedObject[] logoPoses = { new TwoFacedObject(
                                                       "Lower Left", "ll"),
             new TwoFacedObject("Upper Left", "ul"),
             new TwoFacedObject("Upper Right", "ur"),
@@ -1522,7 +1522,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
      *
      * @return  the corresponding TFO
      */
-    protected TwoFacedObject findLoc(String loc) {
+    public static TwoFacedObject findLoc(String loc) {
         if (loc.equalsIgnoreCase("ll")) {
             return logoPoses[0];
         } else if (loc.equalsIgnoreCase("ul")) {
@@ -1545,7 +1545,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
      *
      * @return  the position and offset
      */
-    protected String[] parseLogoPosition(String position) {
+    public static String[] parseLogoPosition(String position) {
         String logoP, logoO;
 
         if ((position == null) || position.isEmpty()) {
@@ -1555,7 +1555,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
             int firstComma = position.indexOf(",");
 
             if (firstComma > 0) {
-                logoP = position.substring(0, firstComma - 1);
+                logoP = position.substring(0, firstComma);
                 logoO = position.substring(firstComma + 1);
             } else {
                 logoP = position;
@@ -1574,7 +1574,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
      *
      * @return  the logo position string
      */
-    protected String makeLogoPosition(String pos, String offset) {
+    public static String makeLogoPosition(String pos, String offset) {
         if ((pos == null) || pos.isEmpty()) {
             return "";
         }

@@ -36,7 +36,6 @@ import static javax.swing.GroupLayout.PREFERRED_SIZE;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -61,7 +60,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
-import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -77,10 +75,13 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -105,6 +106,7 @@ import ucar.unidata.ui.CheckboxCategoryPanel;
 import ucar.unidata.ui.FontSelector;
 import ucar.unidata.ui.HelpTipDialog;
 import ucar.unidata.ui.XmlUi;
+import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
@@ -112,6 +114,7 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.Msg;
 import ucar.unidata.util.ObjectListener;
 import ucar.unidata.util.StringUtil;
+import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.PreferenceManager;
 import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlUtil;
@@ -128,7 +131,6 @@ import edu.wisc.ssec.mcidasv.ui.UIManager;
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Prefer;
 
 /**
  * <p>An extension of {@link ucar.unidata.idv.IdvPreferenceManager} that uses
@@ -1034,6 +1036,75 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         JPanel projPanel = GuiUtils.left(projBox);
         projPanel.setBorder(BorderFactory.createTitledBorder("Default Projection"));
         
+        McIDASV mcv = (McIDASV) getIdv();
+        
+        final JCheckBox logoVizBox = new JCheckBox(
+        		"Show Logo in View",
+        		mcv.getStateManager().getPreferenceOrProperty(
+        				ViewManager.PREF_LOGO_VISIBILITY, false));
+        final JTextField logoField =
+        		new JTextField(mcv.getStateManager().getPreferenceOrProperty(ViewManager.PREF_LOGO,
+        				""));
+        logoField.setToolTipText("Enter a file or URL");
+        // top panel
+        JButton browseButton = new JButton("Browse..");
+        browseButton.setToolTipText("Choose a logo from disk");
+        browseButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent ae) {
+        		String filename =
+        				FileManager.getReadFile(FileManager.FILTER_IMAGE);
+        		if (filename == null) {
+        			return;
+        		}
+        		logoField.setText(filename);
+        	}
+        });
+
+        String[] logos = ViewManager.parseLogoPosition(
+        		mcv.getStateManager().getPreferenceOrProperty(
+        				ViewManager.PREF_LOGO_POSITION_OFFSET, ""));
+        final JComboBox logoPosBox = new JComboBox(ViewManager.logoPoses);
+        logoPosBox.setToolTipText("Set the logo position on the screen");
+        logoPosBox.setSelectedItem(ViewManager.findLoc(logos[0]));
+
+        final JTextField logoOffsetField = new JTextField(logos[1]);
+        logoOffsetField.setToolTipText(
+        		"Set an offset from the position (x,y)");
+
+        float logoScaleFactor =
+        		(float) mcv.getStateManager().getPreferenceOrProperty(ViewManager.PREF_LOGO_SCALE,
+        				1.0);
+        final JLabel logoSizeLab = new JLabel("" + logoScaleFactor);
+        JComponent[] sliderComps = GuiUtils.makeSliderPopup(0, 20,
+        		(int) (logoScaleFactor * 10), null);
+        final JSlider  logoScaleSlider = (JSlider) sliderComps[1];
+        ChangeListener listener        = new ChangeListener() {
+        	public void stateChanged(ChangeEvent e) {
+        		logoSizeLab.setText("" + logoScaleSlider.getValue() / 10.f);
+        	}
+        };
+        logoScaleSlider.addChangeListener(listener);
+        sliderComps[0].setToolTipText("Change Logo Scale Value");
+
+        JPanel logoPanel =
+        		GuiUtils.vbox(
+        				GuiUtils.left(logoVizBox),
+        				GuiUtils.centerRight(logoField, browseButton),
+        				GuiUtils.hbox(
+        						GuiUtils.leftCenter(
+        								GuiUtils.rLabel("Screen Position: "),
+        								logoPosBox), GuiUtils.leftCenter(
+        										GuiUtils.rLabel("Offset: "),
+        										logoOffsetField), GuiUtils.leftCenter(
+        												GuiUtils.rLabel("Scale: "),
+        												GuiUtils.leftRight(
+        														logoSizeLab, sliderComps[0]))));
+        logoPanel = GuiUtils.vbox(GuiUtils.lLabel(""),
+        		GuiUtils.left(GuiUtils.inset(logoPanel,
+        				new Insets(5, 5, 0, 0))));
+        
+        logoPanel.setBorder(BorderFactory.createTitledBorder("Logo"));
+        
         JPanel outerPanel = new JPanel();
         
         // Outer panel layout
@@ -1051,6 +1122,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                     .addComponent(colorPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(legendPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(fontPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(logoPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(projPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -1068,6 +1140,8 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                         .addPreferredGap(RELATED)
                         .addComponent(fontPanel, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
                         .addPreferredGap(RELATED)
+                        .addComponent(logoPanel, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
+                        .addPreferredGap(RELATED)
                         .addComponent(projPanel, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE))
                     .addComponent(panelPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(DEFAULT_SIZE, Short.MAX_VALUE))
@@ -1082,6 +1156,16 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                 theStore.put(MapViewManager.PREF_FGCOLOR, fgComps[0].getBackground());
                 theStore.put(MapViewManager.PREF_BORDERCOLOR, border[0].getBackground());
                 theStore.put(MapViewManager.PREF_DISPLAYLISTFONT, fontSelector.getFont());
+                theStore.put(MapViewManager.PREF_LOGO, logoField.getText());
+                String lpos =
+                    ((TwoFacedObject) logoPosBox.getSelectedItem()).getId()
+                        .toString();
+                String loff = logoOffsetField.getText().trim();
+                theStore.put(MapViewManager.PREF_LOGO_POSITION_OFFSET,
+                             ViewManager.makeLogoPosition(lpos, loff));
+                theStore.put(MapViewManager.PREF_LOGO_VISIBILITY, logoVizBox.isSelected());
+                theStore.put(MapViewManager.PREF_LOGO_SCALE,
+                             logoScaleSlider.getValue() / 10f);
                 theStore.put(MapViewManager.PREF_DISPLAYLISTCOLOR, dlColorWidget.getSwatchColor());
                 theStore.put(MapViewManager.PREF_GLOBEBACKGROUND, globeBg[0].getBackground());
                 ViewManager.setHighlightBorder(border[0].getBackground());
