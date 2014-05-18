@@ -1068,6 +1068,8 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         logoPosBox.setSelectedItem(ViewManager.findLoc(logos[0]));
 
         final JTextField logoOffsetField = new JTextField(logos[1]);
+        // provide enough space for 12 characters
+        logoOffsetField.setColumns(12);
         logoOffsetField.setToolTipText(
         		"Set an offset from the position (x,y)");
 
