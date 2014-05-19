@@ -1629,9 +1629,11 @@ public class McIDASV extends IntegratedDataViewer {
      */
     public static void main(String[] args) throws Exception {
         startTime = System.nanoTime();
-
+        
+/* DJP: Temprorarily retracted--was preventing local servers from starting
         String mcvUserPath = System.getProperty("mcv.userpath");
         System.setProperty("user.dir", mcvUserPath);
+ */
 
         try {
             applyArgs(args);
