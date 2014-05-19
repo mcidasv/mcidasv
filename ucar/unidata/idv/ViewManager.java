@@ -7633,7 +7633,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public String getLogoPosition() {
         if (logoPosition == null) {
             logoPosition = getIdv().getStateManager().getPreferenceOrProperty(
-                PREF_LOGO_POSITION_OFFSET, "");
+                PREF_LOGO_POSITION_OFFSET, "ll,0,0");
         }
 
         return logoPosition;
