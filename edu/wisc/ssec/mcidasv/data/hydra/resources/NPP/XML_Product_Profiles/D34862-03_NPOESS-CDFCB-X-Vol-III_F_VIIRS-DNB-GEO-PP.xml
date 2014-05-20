@@ -139,7 +139,107 @@
 			</Datum>
 		</Field>
 		<Field>
+			<Name>Latitude_TC</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>4064</MinIndex>
+				<MaxIndex>4064</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Latitude of each pixel (positive North)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>degree</MeasurementUnits>
+				<RangeMin>-90</RangeMin>
+				<RangeMax>90</RangeMax>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
 			<Name>Longitude</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>4064</MinIndex>
+				<MaxIndex>4064</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Longitude of each pixel (positive East)</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>degree</MeasurementUnits>
+				<RangeMin>-180</RangeMin>
+				<RangeMax>180</RangeMax>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>Longitude_TC</Name>
 			<Dimension>
 				<Name>AlongTrack</Name>
 				<GranuleBoundary>1</GranuleBoundary>
@@ -490,6 +590,58 @@
 		</Field>
 		<Field>
 			<Name>Height</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>768</MinIndex>
+				<MaxIndex>768</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>4064</MinIndex>
+				<MaxIndex>4064</MaxIndex>
+			</Dimension>
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Ellipsoid-Geoid separation</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>meter</MeasurementUnits>
+				<RangeMin>
+				</RangeMin>
+				<RangeMax>
+				</RangeMax>
+				<DataType>32-bit floating point</DataType>
+				<FillValue>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_FLOAT32_FILL</Name>
+					<Value>-999.4</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>Height_TC</Name>
 			<Dimension>
 				<Name>AlongTrack</Name>
 				<GranuleBoundary>1</GranuleBoundary>
