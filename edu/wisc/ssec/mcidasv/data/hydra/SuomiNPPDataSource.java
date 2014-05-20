@@ -523,7 +523,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    						for (Variable v : vl) {
     	    							if (v.getFullName().endsWith(SEPARATOR_CHAR + "Latitude")) {
     	    								pathToLat = v.getFullName();
-    	    								logger.debug("Lat/Lon Variable: " + v.getFullName());
+    	    								logger.debug("Ellipsoid Lat/Lon Variable: " + v.getFullName());
     	    								// get the dimensions of the lat variable
     	    								Dimension dAlongTrack = v.getDimension(0);
     	    								yDim = dAlongTrack.getLength();
@@ -537,6 +537,24 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    								pathToLon = v.getFullName();
     	    							}
     	    						} 
+    	    						// one more pass in case there is terrain-corrected Lat/Lon
+    	    						for (Variable v : vl) {
+    	    							if (v.getFullName().endsWith(SEPARATOR_CHAR + "Latitude_TC")) {
+    	    								pathToLat = v.getFullName();
+    	    								logger.debug("Switched Lat/Lon Variable to TC: " + v.getFullName());
+    	    								// get the dimensions of the lat variable
+    	    								Dimension dAlongTrack = v.getDimension(0);
+    	    								yDim = dAlongTrack.getLength();
+    	    								logger.debug("Lat along track dim: " + dAlongTrack.getLength());
+    	    								Dimension dAcrossTrack = v.getDimension(1);
+    	    								xDim = dAcrossTrack.getLength();
+    	    								logger.debug("Lat across track dim: " + dAcrossTrack.getLength());
+    	    							}
+    	    							if (v.getFullName().endsWith(SEPARATOR_CHAR + "Longitude_TC")) {
+    	    								// we got dimensions from lat, don't need 'em twice, but need path
+    	    								pathToLon = v.getFullName();
+    	    							}
+    	    						}
     	    					}
     	    				}
 

@@ -287,7 +287,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   logger.debug("IS an EDR, need to look for fill scans...");
 				   // look through lat grid, look for missing scans
 				   String varName = var.getShortName();
-				   if (varName.endsWith("Latitude")) {
+				   if ((varName.endsWith("Latitude")) || (varName.endsWith("Latitude_TC"))){
 					   // iterate through the scan lines, looking for fill lines
 					   // NOTE: we only need to check the first column! so set
 					   // up an appropriate Range to cut the read down significantly
@@ -400,13 +400,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   if (s.contains(var.getFullName())) {
 					   logger.debug("Valid product: " + var.getFullName());
 					   foundProduct = true;
-				   }
-				   // we'll also pass Lat and Lon, needed for nav
-				   if (var.getShortName().equals("Latitude")) {
-					   foundProduct = true;
-				   }
-				   if (var.getShortName().equals("Longitude")) {
-					   foundProduct = true;
+					   break;
 				   }
 			   }
 			   
@@ -444,7 +438,9 @@ public class GranuleAggregation implements MultiDimensionReader {
 					   if ((! s.equals(inTrackDimensionName)) && 
 							   ((! s.startsWith("Band")) && (cnt == 0)) &&
 							   (! varName.endsWith("Latitude")) &&
+							   (! varName.endsWith("Latitude_TC")) &&
 							   (! varName.endsWith("Longitude")) &&
+							   (! varName.endsWith("Longitude_TC")) &&
 							   (! s.equals(crossTrackDimensionName))) {
 						   notDisplayable = true;
 						   break;
@@ -520,7 +516,10 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   logger.debug("getInTrackIndex called for variable: " + v.getShortName());
 	   
 	   // lat/lon vars have different dimension names
-	   if ((v.getFullName().endsWith("Latitude")) || (v.getFullName().endsWith("Longitude"))) {
+	   if ((v.getFullName().endsWith("Latitude")) || 
+			   (v.getFullName().endsWith("Latitude_TC")) ||
+			   (v.getFullName().endsWith("Longitude")) ||
+			   (v.getFullName().endsWith("LongitudeTC"))) {
 		   if (v.getFullName().startsWith("All_Data")) {
 			   inTrackName = inTrackDimensionName;
 		   } else {
