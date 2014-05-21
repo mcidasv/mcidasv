@@ -26,9 +26,9 @@ class _JythonCallable(Callable):
     def call(self):
         return self._func(*self._args, **self._kwargs)
         
-def transform_flatfields(func, *args):
+def transform_flatfields(func, *args, **kwargs):
     @wraps(func)
-    def wrapper(*args):
+    def wrapper(*args, **kwargs):
         wrappedArgs = []
         for i, arg in enumerate(args):
             # print '%s: %s' % (i, arg)
@@ -36,7 +36,14 @@ def transform_flatfields(func, *args):
                 arg = ImageSequenceImpl([arg])
             wrappedArgs.append(arg)
         # print [type(a) for a in wrappedArgs]
-        result = func(*wrappedArgs)
+        wrappedKwargs = {}
+        for keyword in kwargs:
+            keywordValue = kwargs[keyword]
+            if isinstance(keywordValue, SingleBandedImage):
+                keywordValue = ImageSequenceImpl([keywordValue])
+            wrappedKwargs[keyword] = keywordValue
+        # print [type(wrappedKwargs[a]) for a in wrappedKwargs]
+        result = func(*wrappedArgs, **wrappedKwargs)
         # print 'result type=%s' % (type(result))
         if GridUtil.isTimeSequence(result) and len(result) == 1:
             # print 'attempting conversion...'
