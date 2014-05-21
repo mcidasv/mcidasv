@@ -32,8 +32,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 <div class="pagetitle">Display Window Preferences</div>
 <p>The User Preferences window is accessed in the Main Display window through the <strong>Edit-&gt;Preferences</strong> menu.  The <strong>Display Window</strong> tab allows the user to set preferences related to the Main Display window. The image below represents the default settings for the <strong>Display Window</strong> tab.</p>
 <a name="image1" id="image1"></a>
-<div class="images"><img src="../images/NewPictures/DisplayWindowPrefs.jpg" alt="Image 1: Display Window Preferences (Default)">
-  <br>
+<div class="images"><img src="../images/NewPictures/DisplayWindowPrefs.jpg" width="770" height="464" alt="Image 1: Display Window Preferences (Default)"><br>
 <span class="caption">Image 1: Display Window Preferences (Default)</span></div>
 <div class="pagesubtitle">
   <p>Navigation Toolbars</p>
@@ -92,6 +91,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 <ul class="propertylist">
   <li class="propertylistitem"><b>Font - </b>Sets the style of the text at the bottom of the Main Display window listing the layers. Using the dropdown lists, the user can define the font, style, and size of text.</li>
   <li class="propertylistitem"><b>Color -</b> Sets the color of the text at the bottom of the Main Display window.</li>
+</ul>
+<div class="pagesubtitle">Logo</div>
+<ul class="propertylist">
+  <li class="propertylistitem"><b>Show Logo in View - </b>Sets the visibility of the logo in the Main Display.</li>
+  <li class="propertylistitem"><strong>File -</strong> Sets the logo file to use. This can be an image file with the form of *.jpg, *.gif, or *.png.</li>
+  <li class="propertylistitem"><strong>Screen Position -</strong> Sets the position of the logo in the Main Display. This can be  Lower Left, Upper Left, Upper Right, Lower Right, or Center.</li>
+  <li class="propertylistitem"><b>Offset -</b> Sets the x,y pixel offset value from the <strong>Screen Position</strong> field. For example, to place a logo in the lower left of the display, but with a 10 pixel offset between the logo and the boarder of the window, you can specify a <strong>Screen Position</strong> of Lower Left with an <strong>Offset</strong> of 10,-10.</li>
+  <li class="propertylistitem"><strong>Scale -</strong> Sets the size of the logo in the display. A <strong>Scale</strong> of 1 would be the actual size of the image, anything less than 1 will scale the image down to make it smaller, and values greater than 1 will scale the image up to make it larger.</li>
 </ul>
 <div class="pagesubtitle">Default Projection</div>
 <ul class="propertylist">
