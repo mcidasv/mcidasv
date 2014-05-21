@@ -1,6 +1,8 @@
 from visad.python.JPythonMethods import field
 from ucar.unidata.data.grid import GridUtil
 
+from decorators import transform_flatfields
+
 def cloudFilter(sdataset1, sdataset2, user_replace='Default', user_constant=0, user_stretchval='Contrast', user_britlo=0, user_brithi=255):
     """
         cloud filter from McIDAS-X - requires 2 source datasets
@@ -222,7 +224,7 @@ def badLineFilter(vals, bline, eline, element_size, line_size, filter_fill, line
                 
     return vals
 
-
+@transform_flatfields
 def cleanFilter(sdataset, user_fill='Average', user_bline='Default', user_eline='Default', user_pdiff=15, user_ldiff=15, user_stretchval='Contrast', user_britlo=0, user_brithi=255):
     """ clean filter from McIDAS-X
         user_fill    - 'Average': average of surrounding values (default)
@@ -243,7 +245,7 @@ def cleanFilter(sdataset, user_fill='Average', user_bline='Default', user_eline=
     eline = user_eline
     britlo = int(user_britlo)
     brithi = int(user_brithi)
-       
+    
     if bline != 'Default':
         bline = int(bline)
     else:
@@ -266,18 +268,18 @@ def cleanFilter(sdataset, user_fill='Average', user_bline='Default', user_eline=
         [element_size, line_size] = domain.getLengths()
         if eline == 'Default':
             eline = line_size
-        
+            
         vals = shotMain(vals, bline, eline, element_size, line_size, point_diff)
         for i in range(line_size):
             for j in range(element_size):
                 vals[0][i * element_size + j] = scaleOutsideVal(vals[0][i * element_size + j], britlo, brithi)
-        
+                
         filt_low = int(min(vals[0]))
         filt_hi = int(max(vals[0]))
         
         vals = badLineFilter(vals, bline, eline, element_size, line_size, filter_fill, line_diff, filt_low, filt_hi)
         
-        """ update the min/max of the image after the removal of the bad lines """
+        # update the min/max of the image after the removal of the bad lines
         filt_low = int(min(vals[0]))
         filt_hi = int(max(vals[0]))
         
@@ -447,75 +449,6 @@ def coreFilter(sdataset1, sdataset2, user_brkpoint1='Default', user_brkpoint2='D
         range1.setSamples(vals1)
         
     return data1
-
-def cleanFilter(sdataset,user_fill='Average',user_bline='Default',user_eline='Default',user_pdiff=15,user_ldiff=15,user_stretchval='Contrast',user_britlo=0,user_brithi=255):
-   """ clean filter from McIDAS-X
-       user_fill    - 'Average': average of surrounding values (default)
-                    - 'Min'    : source dataset minimum value
-                    - 'Max'    : source dataset maximum value
-       user_bline   - beginning line in the source image to clean (default=first line)
-       user_eline   - ending line in the source image to clean (default = last line)
-       user_pdiff   - absolute difference between an element's value and value of the element on either side 
-       user_ldiff   - percentage difference between a line's average value and the average value of
-                      the line above and below
-       user_britlo    - minimum brightness value for the calibration
-       user_brithi    - maximum brightness value for the calibration
-   """   
-   newData=sdataset.clone()
-   
-   filter_fill = user_fill
-   bline=user_bline
-   eline=user_eline
-   britlo=int(user_britlo)
-   brithi=int(user_brithi)
-      
-   if (bline != 'Default'):
-     bline=int(bline)
-   else:
-     bline=0
-   if (eline != 'Default'):
-     eline=int(eline)
-     
-   filter_diff=int(user_pdiff)
-   l_diff=int(user_ldiff)
-   stretch=user_stretchval
-   
-   for t in range(newData.getDomainSet().getLength()):
-     rangeObject = newData.getSample(t)
-     vals = rangeObject.getFloats(0)
-     in_hi = int(max(vals[0]))
-     in_low = int(min(vals[0]))
-     point_diff = (in_hi - in_low + 1)*(filter_diff/100.0)
-     line_diff = (in_hi - in_low + 1)*(l_diff/100.0) 
-     domain=GridUtil.getSpatialDomain(rangeObject)  
-     [element_size,line_size]=domain.getLengths()
-     if (eline == 'Default'):
-       eline=line_size 
-     
-     vals = shotMain(vals,bline,eline,element_size,line_size,point_diff)
-     for i in range(line_size):
-        for j in range(element_size):
-            vals[0][i*element_size+j]=scaleOutsideVal(vals[0][i*element_size+j],britlo,brithi)
-     
-     filt_low=int(min(vals[0]))
-     filt_hi =int(max(vals[0]))
-            
-     vals = badLineFilter(vals,bline,eline,element_size,line_size,filter_fill,line_diff,filt_low,filt_hi)
-     
-     """ update the min/max of the image after the removal of the bad lines """
-     filt_low=int(min(vals[0]))
-     filt_hi =int(max(vals[0]))
-     
-     if (stretch == 'Contrast'):
-       lookup=contrast(filt_low,filt_hi,britlo,brithi,filt_low,filt_hi)
-     elif (stretch == 'Histogram'):
-       h = makeHistogram(vals,element_size,line_size,filt_low,brithi-britlo)
-       lookup=histoStretch(filt_low,filt_hi,britlo,brithi,h)
-            
-     vals=modify(vals,element_size,line_size,filt_low,lookup)
-     rangeObject.setSamples(vals)     
-             
-   return newData
 
 def shotFilter(sdataset,user_bline='Default',user_eline='Default',user_pdiff=15,user_stretchval='Contrast',user_britlo=0,user_brithi=255):
    """ shot noise filter from McIDAS-X
