@@ -116,7 +116,10 @@ class _MappedData(object):
             return
         hm = self.getMetadataMap()
         for key in self._keys:
-            hm.put(key, self[key])
+            value = self[key]
+            # ConcurrentHashMap doesn't allow null values
+            if value:
+                hm.put(key, value)
         for key in self.getMacrosDict().keys():
             hm.put(key, self.getMacrosDict()[key])
         hm.put('defaultlayerlabel', self.getDefaultLayerLabel())
