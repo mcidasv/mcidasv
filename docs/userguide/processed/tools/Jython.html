@@ -84,6 +84,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/Jython.html
               from my procedure</a></li>
         </ul>
       </div>
+            <div class="faq-question">
+        <ul class="noindent">
+          <li><a class="faq-question-link" href="#faq1_cat1_7">Why do I see "TypeError: object is not callable" messages when scripting?</a></li>
+        </ul>
+      </div>
     </div>
   </div>
   <div class="faq-bottom">
@@ -115,7 +120,7 @@ Q. How do I learn to write Jython?</h4>
       <div class="faq-question">
         <h4>Q. How does Jython work with my data in McIDAS-V?</h4>
       </div>
-      <div class="faq-answer"><strong>A.</strong> McIDAS-V uses the <a href="http://www.ssec.wisc.edu/~billh/visad.html" target="_blank">VisAD</a> package
+      <div class="faq-answer"><strong>A.</strong> McIDAS-V uses the <a href="http://visad.ssec.wisc.edu/" target="_blank">VisAD</a> package
         as as an underlying data model. There is a <a href="http://www.ssec.wisc.edu/~tomw/visadtutor/"target="_blank">VisAD/Jython
         Tutorial</a> available.</div>
       
@@ -170,6 +175,11 @@ Q. How do I learn to write Jython?</h4>
             procedures in the other Jython libraries.</p>
       </div>
       
+      <p><a name="faq1_cat1_6" id="faq1_cat1_7"></a></p>
+      <div class="faq-question">
+        <h4>Q. Why do I see "TypeError: object is not callable" messages when scripting?</h4>
+      </div>
+      <div class="faq-answer"><strong>A.</strong>This error occurs when a user gives a variable the same name as a reserved keyword or function. For a list of reserved Jython functions, please see <a href="http://www.jython.org/docs/library/functions.html"target="_blank">Built-in Functions</a>. Variable names should be unique. </div>
     </div>
   </div>
 </div>
