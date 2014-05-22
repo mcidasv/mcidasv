@@ -42,6 +42,7 @@ import ucar.unidata.idv.flythrough.Flythrough;
 import ucar.unidata.idv.flythrough.FlythroughPoint;
 import ucar.unidata.idv.ui.ContourInfoDialog;
 import ucar.unidata.idv.ui.EarthNavPanel;
+import ucar.unidata.idv.ui.GoToAddressWindow;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.idv.ui.PipPanel;
 import ucar.unidata.ui.Command;
@@ -129,6 +130,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -1601,9 +1603,11 @@ public class MapViewManager extends NavigatedViewManager {
      * Go the a street address
      */
     public void goToAddress() {
-        Misc.run(new Runnable() {
-            public void run() {
-                goToAddressInner();
+        final MapViewManager instance = this;
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override public void run() {
+                GoToAddressWindow goToAddressWindow = new GoToAddressWindow(instance, instance.getStore());
+                goToAddressWindow.setVisible(true);
             }
         });
     }
