@@ -1,6 +1,7 @@
 package ucar.unidata.idv.ui;
 
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -55,6 +56,9 @@ public class GoToAddressWindow extends JFrame {
 
     /** Label used by the {@literal "Cancel"} button. */
     public static final String CANCEL_LABEL = "Cancel";
+
+    /** Minimum allowable x or y position of this window. */
+    public static final int MINIMUM_COORDINATE = 20;
 
     /** Label used by {@link #reprojectCheckBox}. */
     public static final String REPROJECT_LABEL = "Reproject";
@@ -182,6 +186,17 @@ public class GoToAddressWindow extends JFrame {
         setContentPane(contentPane);
         Msg.translateTree(this);
         pack();
+
+        Point center = GuiUtils.getLocation(null);
+        int x = center.x - (getWidth() / 2);
+        int y = center.y - (getHeight() / 2);
+        if (x < MINIMUM_COORDINATE) {
+            x = MINIMUM_COORDINATE;
+        }
+        if (y < MINIMUM_COORDINATE) {
+            y = MINIMUM_COORDINATE;
+        }
+        setLocation(x, y);
     }
 
     /**
@@ -192,7 +207,10 @@ public class GoToAddressWindow extends JFrame {
     }
 
     /**
-     * Responds to the user clicking the {@literal "Apply"} button.
+     * Responds to the user clicking the {@literal "Apply"} button. If the
+     * user has entered an address that can be geolocated, the address list is
+     * persisted, and {@link #changeProjection(visad.georef.LatLonPoint)} is
+     * called.
      */
     public void handleApplyEvent() {
         logger.trace("applying");
@@ -203,6 +221,7 @@ public class GoToAddressWindow extends JFrame {
             if (llp != null) {
                 List<String> addresses = GeoUtils.getSavedAddresses();
                 GuiUtils.setListData(addressComboBox, addresses);
+                store.put(MapViewManager.PREF_ADDRESS_LIST, addresses);
                 changeProjection(llp);
             } else {
                 logger.trace("could not locate '{}'", address);
