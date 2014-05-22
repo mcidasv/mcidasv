@@ -1606,7 +1606,8 @@ public class MapViewManager extends NavigatedViewManager {
         final MapViewManager instance = this;
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
-                GoToAddressWindow goToAddressWindow = new GoToAddressWindow(instance, instance.getStore());
+                GoToAddressWindow goToAddressWindow =
+                    new GoToAddressWindow(instance, instance.getStore());
                 goToAddressWindow.setVisible(true);
             }
         });
