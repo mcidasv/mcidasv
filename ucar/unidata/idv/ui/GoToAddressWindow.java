@@ -19,6 +19,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
@@ -40,6 +41,7 @@ import visad.georef.TrivialMapProjection;
 
 public class GoToAddressWindow extends JFrame {
 
+    /** Logging object. */
     private static final Logger logger = LoggerFactory.getLogger(GoToAddressWindow.class);
 
     /** {@link #addressComboBox} tool tip. */
@@ -68,6 +70,15 @@ public class GoToAddressWindow extends JFrame {
 
     /** Title of the window. */
     public static final String WINDOW_TITLE = "Go To Address";
+
+    /** Title of the {@literal "try again"} dialog. */
+    public static final String TRY_AGAIN_TITLE = "Invalid Address";
+
+    /**
+     * Format string used to create the contents of the {@literal "try again"}
+     * dialog.
+     */
+    public static final String TRY_AGAIN_FORMAT = "Could not locate \"%s\". Would you like to try again?";
 
     /** {@link MapViewManager} that created this instance. */
     private final MapViewManager viewManager;
@@ -178,10 +189,10 @@ public class GoToAddressWindow extends JFrame {
         buttons.add(cancelButton);
 
         JPanel tempPanel = new JPanel();
-        tempPanel.setLayout(new BoxLayout(tempPanel, BoxLayout.X_AXIS));
+        tempPanel.setLayout(new BoxLayout(tempPanel, BoxLayout.LINE_AXIS));
 
         JPanel buttonPanel =
-            LayoutUtil.doLayout(tempPanel, LayoutUtil.getComponentArray(buttons), buttons.size(), GuiUtils.WT_N, GuiUtils.WT_N, null, null, new Insets(5, 5, 5, 5));
+            LayoutUtil.doLayout(tempPanel, LayoutUtil.getComponentArray(buttons), buttons.size(), LayoutUtil.WT_N, LayoutUtil.WT_N, null, null, new Insets(5, 5, 5, 5));
         JPanel contentPane = LayoutUtil.centerBottom(contents, buttonPanel);
         setContentPane(contentPane);
         Msg.translateTree(this);
@@ -203,7 +214,6 @@ public class GoToAddressWindow extends JFrame {
      * Responds to the user closing the window. Currently a no-op.
      */
     public void handleCloseEvent() {
-        logger.trace("closing");
     }
 
     /**
@@ -211,9 +221,13 @@ public class GoToAddressWindow extends JFrame {
      * user has entered an address that can be geolocated, the address list is
      * persisted, and {@link #changeProjection(visad.georef.LatLonPoint)} is
      * called.
+     *
+     * <p>If the address could not be geolocated, the user is asked if they
+     * would like to try again. If they opt not to try again, the window is
+     * closed without persisting the address list.</p>
      */
     public void handleApplyEvent() {
-        logger.trace("applying");
+//        logger.trace("applying");
         String address = getAddressBoxContents();
         if (address != null) {
             LatLonPoint llp =
@@ -224,7 +238,8 @@ public class GoToAddressWindow extends JFrame {
                 store.put(MapViewManager.PREF_ADDRESS_LIST, addresses);
                 changeProjection(llp);
             } else {
-                logger.trace("could not locate '{}'", address);
+                logger.warn("could not locate '{}'", address);
+                tryAgainPrompt(address);
             }
         }
     }
@@ -234,9 +249,13 @@ public class GoToAddressWindow extends JFrame {
      * has entered an address that can be geolocated, this window is closed,
      * the address list is persisted, and
      * {@link #changeProjection(visad.georef.LatLonPoint)} is called.
+     *
+     * <p>If the address could not be geolocated, the user is asked if they
+     * would like to try again. If they opt not to try again, the window is
+     * closed without persisting the address list.</p>
      */
     public void handleOkEvent() {
-        logger.trace("okay");
+//        logger.trace("okay");
         String address = getAddressBoxContents();
         if (address != null) {
             LatLonPoint llp = GeoUtils.getLocationFromAddress(address, null);
@@ -244,7 +263,8 @@ public class GoToAddressWindow extends JFrame {
                 closeWindow(true);
                 changeProjection(llp);
             } else {
-                logger.trace("could not locate '{}'", address);
+                logger.warn("could not locate '{}'", address);
+                tryAgainPrompt(address);
             }
         }
     }
@@ -254,7 +274,7 @@ public class GoToAddressWindow extends JFrame {
      * is simply closed (without changing projection or persisting).
      */
     public void handleCancelEvent() {
-        logger.trace("canceling");
+//        logger.trace("canceling");
         closeWindow(false);
     }
 
@@ -264,7 +284,7 @@ public class GoToAddressWindow extends JFrame {
      * then persisted.
      */
     public void handleReprojectEvent() {
-        logger.trace("reproject status={}", reprojectCheckBox.isSelected());
+//        logger.trace("reproject status={}", reprojectCheckBox.isSelected());
         store.put(MapViewManager.PREF_ADDRESS_REPROJECT, reprojectCheckBox.isSelected());
     }
 
@@ -283,7 +303,8 @@ public class GoToAddressWindow extends JFrame {
                 closeWindow(true);
                 changeProjection(llp);
             } else {
-                logger.trace("could not locate '{}'", address);
+                logger.warn("could not locate '{}'", address);
+                tryAgainPrompt(address);
             }
         }
     }
@@ -296,11 +317,24 @@ public class GoToAddressWindow extends JFrame {
      */
     public void closeWindow(boolean persist) {
         if (persist) {
-            logger.trace("hrm: {}", GeoUtils.getSavedAddresses());
+//            logger.trace("hrm: {}", GeoUtils.getSavedAddresses());
             store.put(MapViewManager.PREF_ADDRESS_LIST, GeoUtils.getSavedAddresses());
         }
         if (isDisplayable()) {
             dispose();
+        }
+    }
+
+    /**
+     *
+     * @param address
+     */
+    private void tryAgainPrompt(String address) {
+        String msg = String.format(TRY_AGAIN_FORMAT, address);
+        // 0 corresponds to "Yes", 1 corresponds with "No"
+        int result = JOptionPane.showConfirmDialog(this, msg, TRY_AGAIN_TITLE, JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (result == 1) {
+            closeWindow(false);
         }
     }
 
@@ -317,7 +351,7 @@ public class GoToAddressWindow extends JFrame {
         Rectangle2D.Float rect =
             new Rectangle2D.Float(x - offset, y - offset, offset * 2, offset * 2);
         try {
-            if (!viewManager.getUseGlobeDisplay() && reprojectCheckBox != null && reprojectCheckBox.isSelected()) {
+            if (!viewManager.getUseGlobeDisplay() && (reprojectCheckBox != null) && reprojectCheckBox.isSelected()) {
                 TrivialMapProjection mp =
                     new TrivialMapProjection(
                         RealTupleType.SpatialEarth2DTuple, rect);
@@ -346,7 +380,7 @@ public class GoToAddressWindow extends JFrame {
                 address = (String)addressComboBox.getEditor().getItem();
             }
         }
-        logger.trace("returning address={}", address);
+//        logger.trace("returning address={}", address);
         return address;
     }
 }
