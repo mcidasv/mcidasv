@@ -38,7 +38,13 @@ import visad.VisADException;
 import visad.georef.LatLonPoint;
 import visad.georef.TrivialMapProjection;
 
-
+/**
+ * This sole purpose of this class to display a window that allows the user to
+ * supply an address, and if the address can be geolocated, reproject the
+ * parent {@link MapViewManager} {@literal "to"} the location of the address.
+ *
+ * <p>Geolocation is generously provided by Google.</p>
+ */
 public class GoToAddressWindow extends JFrame {
 
     /** Logging object. */
@@ -326,6 +332,13 @@ public class GoToAddressWindow extends JFrame {
     }
 
     /**
+     * Called when the user has given an address that could not be geolocated.
+     *
+     * <p>If the user opts to try again, no further action is needed (since
+     * the window is still visible).</p>
+     *
+     * <p>If the user opts to stop trying, the window is closed without
+     * persisting.</p>
      *
      * @param address
      */
