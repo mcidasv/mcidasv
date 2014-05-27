@@ -101,7 +101,7 @@ public class HRITDataSource extends DataSourceImpl  {
     /**
      * Construct a new HRIT data source.
      * @param  descriptor  descriptor for this <code>DataSource</code>
-     * @param  sources   List of filenames
+     * @param  newSources  List of filenames
      * @param  properties  hashtable of properties
      *
      * @throws VisADException problem creating data
@@ -266,7 +266,7 @@ public class HRITDataSource extends DataSourceImpl  {
      * Get the data for the given DataChoice and selection criteria.
      * @param dataChoice         DataChoice for selection
      * @param category           DataCategory for the DataChoice (not used)
-     * @param resolution         resolution criteria
+     * @param dataparams         Resolution criteria.
      * @param requestProperties  extra request properties
      * @return  the Data object for the request
      *
