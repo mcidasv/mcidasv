@@ -33,7 +33,6 @@ import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
 import edu.wisc.ssec.mcidasv.data.GroundStations;
 import edu.wisc.ssec.mcidasv.data.PolarOrbitTrackDataSource;
 import edu.wisc.ssec.mcidasv.data.TimeRangeSelection;
-import edu.wisc.ssec.mcidasv.data.adde.sgp4.AstroConst;
 import edu.wisc.ssec.mcidasv.data.hydra.CurveDrawer;
 import edu.wisc.ssec.mcidasv.util.XmlUtil;
 
@@ -64,6 +63,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
+import name.gano.astro.AstroConst;
 import net.miginfocom.swing.MigLayout;
 
 import org.slf4j.Logger;

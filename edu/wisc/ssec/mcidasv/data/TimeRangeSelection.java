@@ -34,7 +34,7 @@ import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
 import edu.wisc.ssec.mcidasv.Constants;
-import edu.wisc.ssec.mcidasv.data.adde.sgp4.Time;
+
 import edu.wisc.ssec.mcidasv.data.dateChooser.*;
 
 import java.awt.Dimension;
@@ -44,6 +44,7 @@ import java.util.Date;
 
 import javax.swing.*;
 
+import name.gano.astro.time.Time;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
