@@ -515,65 +515,69 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
     private int getInt(int beg, int end,  String card) {
         String str = card.substring(beg, end);
         str = str.trim();
-        // TJJ Jan 2013 - this should get fixed, I've noticed it fails to parse
-        // numbers with a leading zero (e.g. +0.0).  This is handled in Java 7,
-        // so ideally the problem just goes away soon.
-        int tmp = Integer.parseInt(str);
+        // TODO(jon): remove check and parseInteger upon switch to java 7+
+        String javaVersion = System.getProperty("java.version");
+        int tmp;
+        if (javaVersion.startsWith("1.6")) {
+            tmp = parseInteger(str);
+        } else {
+            tmp = Integer.valueOf(str);
+        }
         return tmp;
     }
 
-	/**
-	 * choices needs to persist to support bundles
-	 * @return the choices
-	 */
-    
-	public ArrayList<String> getChoices() {
-		return choices;
-	}
+    /**
+     * choices needs to persist to support bundles
+     * @return the choices
+     */
 
-	/**
-	 * choices needs to persist to support bundles
-	 * @param choices the choices to set
-	 */
-	
-	public void setChoices(ArrayList<String> choices) {
-		this.choices = choices;
-	}
+    public ArrayList<String> getChoices() {
+        return choices;
+    }
 
-	/**
-	 * tleCards needs to persist to support bundles
-	 * @return the tleCards
-	 */
-	
-	public ArrayList<String> getTleCards() {
-		return tleCards;
-	}
+    /**
+     * choices needs to persist to support bundles
+     * @param choices the choices to set
+     */
 
-	/**
-	 * tleCards needs to persist to support bundles
-	 * @param tleCards the tleCards to set
-	 */
-	
-	public void setTleCards(ArrayList<String> tleCards) {
-		this.tleCards = tleCards;
-	}
+    public void setChoices(ArrayList<String> choices) {
+        this.choices = choices;
+    }
 
-	/**
-	 * @return the trs
-	 */
-	public TimeRangeSelection getTrs() {
-		return trs;
-	}
+    /**
+     * tleCards needs to persist to support bundles
+     * @return the tleCards
+     */
 
-	public double getNearestAltToGroundStation(double gsLat, double gsLon) {
+    public ArrayList<String> getTleCards() {
+        return tleCards;
+    }
+
+    /**
+     * tleCards needs to persist to support bundles
+     * @param tleCards the tleCards to set
+     */
+
+    public void setTleCards(ArrayList<String> tleCards) {
+        this.tleCards = tleCards;
+    }
+
+    /**
+     * @return the trs
+     */
+    public TimeRangeSelection getTrs() {
+        return trs;
+    }
+
+    public double getNearestAltToGroundStation(double gsLat, double gsLon) {
         double retAlt = 0.0;
         Time time = new Time(
-                        (new Integer((String)this.selectionProps.get("Year"))).intValue(),
-                        (new Integer((String)this.selectionProps.get("Month"))).intValue(),
-                        (new Integer((String)this.selectionProps.get("Day"))).intValue(),
-                        (new Integer((String)this.selectionProps.get("Hours"))).intValue(),
-                        (new Integer((String)this.selectionProps.get("Mins"))).intValue(),
-                        (new Double((String)this.selectionProps.get("Secs"))).doubleValue());
+            (new Integer((String)this.selectionProps.get("Year"))).intValue(),
+            (new Integer((String)this.selectionProps.get("Month"))).intValue(),
+            (new Integer((String)this.selectionProps.get("Day"))).intValue(),
+            (new Integer((String)this.selectionProps.get("Hours"))).intValue(),
+            (new Integer((String)this.selectionProps.get("Mins"))).intValue(),
+            (new Double((String)this.selectionProps.get("Secs"))).doubleValue());
 
         double minDist = 999999.99;
         double julianDate = julDate0;
@@ -607,7 +611,7 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
     }
 
     protected void initDataSelectionComponents(
-                   List<DataSelectionComponent> components, final DataChoice dataChoice) {
+        List<DataSelectionComponent> components, final DataChoice dataChoice) {
 /*
         System.out.println("\ninitDataSelectionComponents:");
         System.out.println("    components=" + components);
@@ -645,12 +649,67 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
      *
      * @return success
      */
-    
+
     public boolean showPropertiesDialog(String initTabName, boolean modal) {
         //System.out.println("\n\nshowPropertiesDialog:");
         boolean ret = super.showPropertiesDialog(initTabName, modal);
         return ret;
     }
-    
+
+    // taken and slightly simplified version of GNU Classpath's Integer.parseInt:
+    // http://cvs.savannah.gnu.org/viewvc/classpath/java/lang/Integer.java?root=classpath&view=markup
+    // TODO(jon): remove upon switch to java 7+
+    private static int parseInteger(String str) throws NumberFormatException {
+        int radix = 10;
+        if (str == null) {
+            throw new NumberFormatException();
+        }
+
+        int len = str.length();
+
+        if (len == 0) {
+            throw new NumberFormatException("string length is null");
+        }
+
+        int index = 0;
+        boolean isNeg = false;
+        int ch = str.charAt(index);
+        if (ch == '-') {
+            if (len == 1) {
+                throw new NumberFormatException("pure '-'");
+            }
+            isNeg = true;
+            ch = str.charAt(++index);
+        } else if (ch == '+') {
+            if (len == 1) {
+                throw new NumberFormatException("pure '+'");
+            }
+            ch = str.charAt(++index);
+        }
+
+        if (index == len) {
+            throw new NumberFormatException("non terminated number: " + str);
+        }
+
+        int max = Integer.MAX_VALUE / radix;
+        // We can't directly write `max = (MAX_VALUE + 1) / radix'.
+        // So instead we fake it.
+        if (isNeg && ((Integer.MAX_VALUE % radix) == (radix - 1))) {
+            ++max;
+        }
+
+        int val = 0;
+        while (index < len) {
+            if ((val < 0) || (val > max)) {
+                throw new NumberFormatException("number overflow (pos=" + index + ") : " + str);
+            }
+            ch = Character.digit(str.charAt(index++), radix);
+            val = val * radix + ch;
+            if ((ch < 0) || (((val < 0) && (!isNeg || (val != Integer.MIN_VALUE))))) {
+                throw new NumberFormatException("invalid character at position " + index + " in " + str);
+            }
+        }
+        return isNeg ? -val : val;
+    }
 }
 
