@@ -40,7 +40,7 @@ import visad.RealTuple;
  * {@link ReadoutProbe#addProbeListener(ProbeListener)} and listen away!
  */
 public interface ProbeListener extends EventListener {
-
+    
     /**
      * Invoked when a probe's position is changed.
      * 
@@ -48,7 +48,7 @@ public interface ProbeListener extends EventListener {
      * new position.
      */
     public void probePositionChanged(final ProbeEvent<RealTuple> event);
-
+    
     /**
      * Invoked when a probe's color has changed.
      * 
@@ -56,7 +56,7 @@ public interface ProbeListener extends EventListener {
      * new color.
      */
     public void probeColorChanged(final ProbeEvent<Color> event);
-
+    
     /**
      * Invoked when a probe's visibility has changed.
      * 
@@ -65,4 +65,12 @@ public interface ProbeListener extends EventListener {
      * opposites of each other.
      */
     public void probeVisibilityChanged(final ProbeEvent<Boolean> event);
+    
+    /**
+     * Invoked when a probe's location format pattern has changed.
+     * 
+     * @param event Describes the probe that changed, the old format pattern,
+     * and the probe's new format pattern.
+     */
+    public void probeFormatPatternChanged(final ProbeEvent<String> event);
 }

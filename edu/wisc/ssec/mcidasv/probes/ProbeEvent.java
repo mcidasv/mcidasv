@@ -28,9 +28,9 @@
 
 package edu.wisc.ssec.mcidasv.probes;
 
-import java.util.EventObject;
+import static edu.wisc.ssec.mcidasv.util.Contract.notNull;
 
-import edu.wisc.ssec.mcidasv.util.Contract;
+import java.util.EventObject;
 
 /**
  * This class captures a change to a probe and stores both the previous and
@@ -38,17 +38,17 @@ import edu.wisc.ssec.mcidasv.util.Contract;
  */
 @SuppressWarnings("serial")
 public class ProbeEvent<T> extends EventObject {
-
+    
     /**
      * Previous value of the probe.
      */
     private final T oldValue;
-
+    
     /**
      * Current value of the probe.
      */
     private final T newValue;
-
+    
     /**
      * Generated when a {@link ReadoutProbe} changes either its position, 
      * color, or visibility. Currently stores either position, color, or 
@@ -62,19 +62,22 @@ public class ProbeEvent<T> extends EventObject {
      */
     public ProbeEvent(final ReadoutProbe source, final T oldValue, final T newValue) {
         super(source);
-
-        Contract.notNull(source, "Events cannot originate from a null source object");
-        Contract.notNull(oldValue, "Old value cannot be null");
-        Contract.notNull(newValue, "New value cannot be null");
-
-        this.oldValue = oldValue;
-        this.newValue = newValue;
+        
+        notNull(source, "Events cannot originate from a null source object");
+        this.oldValue = notNull(oldValue, "Old value cannot be null");
+        this.newValue = notNull(newValue, "New value cannot be null");
+        
     }
-
+    
+    /**
+     * Returns the probe that generated this event.
+     * 
+     * @return The probe from which this event originated.
+     */
     public ReadoutProbe getProbe() {
         return (ReadoutProbe)getSource();
     }
-
+    
     /**
      * Returns the value of the probe before this event was generated.
      * 
@@ -83,7 +86,7 @@ public class ProbeEvent<T> extends EventObject {
     public T getOldValue() {
         return oldValue;
     }
-
+    
     /**
      * Returns the current (as of this event) value of the probe.
      * 
@@ -92,7 +95,7 @@ public class ProbeEvent<T> extends EventObject {
     public T getNewValue() {
         return newValue;
     }
-
+    
     /**
      * Returns a brief summary of this event. Please note that this format is
      * subject to change.
