@@ -40,6 +40,10 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import jsattrak.objects.SatelliteTleSGP4;
+import jsattrak.utilities.TLE;
+import name.gano.astro.propogators.sgp4_cssi.SGP4SatData;
+import name.gano.astro.time.Time;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,10 +65,6 @@ import visad.georef.LatLonTuple;
 
 import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 import edu.wisc.ssec.mcidasv.chooser.PolarOrbitTrackChooser;
-import edu.wisc.ssec.mcidasv.data.adde.sgp4.SGP4SatData;
-import edu.wisc.ssec.mcidasv.data.adde.sgp4.SatelliteTleSGP4;
-import edu.wisc.ssec.mcidasv.data.adde.sgp4.TLE;
-import edu.wisc.ssec.mcidasv.data.adde.sgp4.Time;
 import edu.wisc.ssec.mcidasv.util.XmlUtil;
 
 /**
