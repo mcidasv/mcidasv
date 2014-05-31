@@ -54,11 +54,10 @@ box corresponding to the current time is colored blue. Click on a box to select 
 
 <div class="pagesubtitle"><a name="animationprop" id="animationprop"></a>Time Animation Properties Dialog</div>
 <p>Click on the <img src="images/Information16.gif" alt="Properties button"align=absmiddle> in the animation controls to see the Time Animation Properties Dialog box. This dialog has two tabs: <strong>Settings</strong> and <strong>Define Animation Times</strong>.</p>
-<p>The <strong>Settings</strong> tab allows you to define how looping will work for your display:</p>
+<p>The <strong>Settings</strong> tab allows for defining how looping will work for the display:</p>
 <div class="images"><img src="images/AnimationProperties1.gif" alt="Image 2: Settings Tab of the Time Animation Properties Dialog"><br>
 <span class="caption">Image 2: Settings Tab of the Time Animation Properties Dialog</span></div>
-<p>By pressing <img src="../tools/images/Apply.gif" alt="Apply button" width="65" height="26"align=absmiddle> or <img src="../tools/images/Ok.gif" alt="OK button" width="51" height="26"align=absmiddle>, you
-  will set the properties in the Animation Widget. If you have the <strong>Save
+<p>By pressing <img src="../tools/images/Apply.gif" alt="Apply button" width="65" height="26"align=absmiddle> or <img src="../tools/images/Ok.gif" alt="OK button" width="51" height="26"align=absmiddle>, the properties will be set in the Animation Widget. If the <strong>Save
   As Default</strong> checkbox checked, then the properties will be saved and
   used every time a new Animation Widget is created. For example, you may find
   that you are always setting the dwell rate to a particular value. You can save
@@ -95,31 +94,33 @@ box corresponding to the current time is colored blue. Click on a box to select 
 </ul>
 </ul>
 <div class="pagesubtitle"><a name="animationset" id="animationset"></a>Define Animation Times Tab</div>
-<p>The<strong> Define Animation Times </strong>tab allows you to define a custom animation time set:</p>
+<p>The<strong> Define Animation Times </strong>tab allows for defining a custom animation time set:</p>
 <div class="images"><img src="images/AnimationProperties2.gif" width="535" height="477" alt="Image 3: Define Animation Times Tab of the Time Animation Properties Dialog"><br>
 <span class="caption">Image 3: Define Animation Times Tab of the Time Animation Properties Dialog</span></div>
 <p>By default, the times used in the animation time set are all of the times from
-the data that is being displayed. However, you can define your own time set by
+the data that is being displayed. However, a specific time set can be defined by
 selecting the <strong>Define your own list of times</strong> button.</p>
-<p>You define how to determine the start time, end time and a time interval. The time interval is used to create the set of time steps (inclusive) between the start and end times. The start time and end time modes are determined one of four ways:</p>
+<p>This allows for defining the start time, end time and a time interval. The time interval is used to create the set of time steps (inclusive) between the start and end times. The start time and end time modes are determined one of four ways:</p>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Use Minimum/Maximum Time from Data -</strong> Sets the beginning/end of the loop to be the minimum/maximum times included with your data.</li>
-<li class="propertylistitem"><strong>Current Time (Now) -</strong> Sets the animation time set to use the current clock time. This is useful for animation of real time data. If you select this option you can then define how often the animation set is updated with the <strong>Refresh Rate</strong> field. The <strong>Round To</strong> field allows you to specify a rounding factor.</li>
-<li class="propertylistitem"><strong>Fixed -</strong> Allows to you to specify a fixed date/time&nbsp;to start/end the loop.</li>
+<li class="propertylistitem"><strong>Current Time (Now) -</strong> Sets the animation time set to use the current clock time. This is useful for animation of real time data. If you select this option you can then define how often the animation set is updated with the <strong>Refresh Rate</strong> field. </li>
+<li class="propertylistitem"><strong>Fixed -</strong> Sets a fixed date/time&nbsp;to start/end the loop.</li>
 <li class="propertylistitem"><strong>Relative to End/Start time -</strong> Allows you to specify the beginning/end of your loop at a time relative to the end/beginning time. For example, you could set the end time to be the Current Time, and set the start time to be relative to the end time minus 1 hour (using the start time offset field). This would have a loop of data over the last hour, with a time step as defined in the interval field. Note: You cannot have start and end times both be relative to one another.</li>
+<li class="propertylistitem"><strong>Interval -</strong> Sets the time interval between time steps in the loop.</li>
+<li class="propertylistitem"><strong>Round To -</strong> Sets the rounding factor for the earliest time in the loop. For example, if the earliest time was 10:23, a 10 minute <strong>Round To</strong> would begin the loop at 10:20, and a 5 minute <strong>Round To</strong> would begin the loop at 10:25.</li>
 </ul>
-<p>Once you select the start and end time modes you can define an offset which is
+<p>Once the start and end time modes have been set, an offset can be
 added (or subtracted) to the base time. To change the offset select the <img src="../images/edit.gif" alt="Offset button"align=absmiddle> button.
-When you do this the Offset dialog will be shown:</p>
+When doing this, the Offset dialog will be shown:</p>
 <div class="images"><img src="images/OffsetDialog.gif" alt="Image 4: Set Round To Value Dialog"><br>
 <span class="caption">Image 4: Set Round To Value Dialog</span></div>
-<p>This allows you to define a time offset by entering years, days, hours and minutes. Note that this&nbsp;Offset dialog will also include a +/- option when selected from <strong>Start Time</strong> or <strong>End Time</strong>.</p>
-<p>The <img src="images/Predefined.gif" width="96" height="26" alt="Predefined Button" align="absmiddle"> button gives you another way to adjust the items in the <strong>Define Animation Times </strong>tab. The two options from this button are Uniform Across Data Range and Real Time.</p>
+<p>This allows for defining a time offset by entering years, days, hours and minutes. Note that this&nbsp;Offset dialog will also include a +/- option when selected from <strong>Start Time</strong> or <strong>End Time</strong>.</p>
+<p>The <img src="images/Predefined.gif" width="96" height="26" alt="Predefined Button" align="absmiddle"> button gives another way to adjust the items in the <strong>Define Animation Times </strong>tab. The two options from this button are Uniform Across Data Range and Real Time.</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Uniform Across Data range -</strong> Opens a Uniform Data Range window, which allows you to control the <strong>Interval</strong>.</li>
+  <li class="propertylistitem"><strong>Uniform Across Data range -</strong> Opens a Uniform Data Range window, which allows for controlling the <strong>Interval</strong>.</li>
   <div class="images"><img src="images/UniformDataRange.gif" width="564" height="170" alt="Image 4: Uniform Data Range Window"><br>
 <span class="caption">Image 4: Uniform Data Range Window</span></div>
-  <li class="propertylistitem"><strong>Real Time -</strong> Opens a Real Time window, which allows you to control the length of the loop, the length of each time step, and how often the data is updated.</li>
+  <li class="propertylistitem"><strong>Real Time -</strong> Opens a Real Time window, which allows for controlling the length of the loop, the length of each time step, and how often the data is updated.</li>
   <div class="images"><img src="images/RealTime.gif" width="502" height="230" alt="Image 5: Real Time Window"><br>
   <span class="caption">Image 5: Real Time Window</span></div>
 </ul>
