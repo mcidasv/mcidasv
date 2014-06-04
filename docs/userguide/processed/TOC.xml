@@ -163,7 +163,7 @@
 	<tocitem text="Weather Text Product Controls" target="idv.tools.textproductcontrol"/>
 	<tocitem text="Storm Track Controls" target="idv.tools.stormtrackcontrol"/>
 	<tocitem text="Color Table Editor" target="idv.tools.colortableeditor"/>
-	<tocitem text="Station Model Editor" target="idv.tools.stationmodeleditor"/>
+	<tocitem text="Layout Model Editor" target="idv.tools.stationmodeleditor"/>
     <tocitem text="Parameter Alias Editor" target="idv.tools.aliaseditor"/>
     <tocitem text="Parameter Defaults Editor" target="idv.tools.parameterdefaultseditor"/>
     <tocitem text="Parameter Groups Editor" target="idv.tools.parametergroupseditor"/>

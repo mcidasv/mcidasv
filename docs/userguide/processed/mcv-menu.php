@@ -250,7 +250,7 @@
       <span class="link" onClick="setPage('tools/TextProductControl.html');">Weather Text Product Controls</span><br>
       <span class="link" onClick="setPage('tools/StormTrackControl.html');">Storm Track Controls</span><br>
       <span class="link" onClick="setPage('tools/ColorTableEditor.html');">Color Table Editor</span><br>
-      <span class="link" onClick="setPage('tools/StationModelEditor.html');">Station Model Editor</span><br>
+      <span class="link" onClick="setPage('tools/StationModelEditor.html');">Layout Model Editor</span><br>
       <span class="link" onClick="setPage('tools/AliasEditor.html');">Parameter Alias Editor</span><br>
       <span class="link" onClick="setPage('tools/ParameterDefaultsEditor.html');">Parameter Defaults Editor</span><br>
       <span class="link" onClick="setPage('tools/ParameterGroupsEditor.html');">Parameter Groups Editor</span><br>
