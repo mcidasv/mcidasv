@@ -157,7 +157,41 @@ public class StartupTriggeringPolicy<E>
             if (files.length > keepFiles) {
                 new Thread(asyncCleanFiles(keepFiles, files)).start();
             }
+            new Thread(asyncCleanReallyOldFiles()).start();
         }
+    }
+
+    /**
+     * Removes log files archived by a very preliminary version of our Logback
+     * configuration. These files reside within the userpath, and are named
+     * {@literal "mcidasv.1.log.zip"}, {@literal "mcidasv.2.log.zip"}, and
+     * {@literal "mcidasv.3.log.zip"}.
+     *
+     * @return Thread that will attempt to remove the three archived log files.
+     */
+    private Runnable asyncCleanReallyOldFiles() {
+        return new Runnable() {
+            public void run() {
+                String userpath = System.getProperty("mcv.userpath");
+                if (userpath != null) {
+                    File oldArchivedLog = new File(userpath + File.separatorChar + "mcidasv.1.log.zip");
+                    if (oldArchivedLog.exists()) {
+                        addInfo("removing '" + oldArchivedLog + '\'');
+                        oldArchivedLog.delete();
+                    }
+                    oldArchivedLog = new File(userpath + File.separatorChar + "mcidasv.2.log.zip");
+                    if (oldArchivedLog.exists()) {
+                        addInfo("removing '" + oldArchivedLog + '\'');
+                        oldArchivedLog.delete();
+                    }
+                    oldArchivedLog = new File(userpath + File.separatorChar + "mcidasv.3.log.zip");
+                    if (oldArchivedLog.exists()) {
+                        addInfo("removing '" + oldArchivedLog + '\'');
+                        oldArchivedLog.delete();
+                    }
+                }
+            }
+        };
     }
 
     /**
