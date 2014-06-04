@@ -506,7 +506,7 @@ class _JavaProxy(object):
             
 @gui_invoke_later
 def _getNewFont(currentFont, fontName, style, size):
-    """Helper class for setLayerLabelFont and setColorScaleFont
+    """Helper function for setLayerLabelFont and setColorScaleFont
        since they need to accomplish the same task
        (see those functions for more details)
        
@@ -2019,6 +2019,61 @@ class _Layer(_JavaProxy):
             raise ValueError('verticalPosition must be between -1.0 and 1.0')
         self._JavaProxy__javaObject.setZPosition(verticalPosition)
         
+    @gui_invoke_later
+    def getLayoutModelName(self):
+        return str(self._JavaProxy__javaObject.getStationModel().getName())
+        
+    @gui_invoke_later
+    def getLayoutModel(self):
+        return self._JavaProxy__javaObject.getStationModel()
+        
+    @gui_invoke_later
+    def setLayoutModel(self, model=None):
+        """Change the station layout model for the current layer.
+        
+        If the type of the given model is a string, this method will attempt to
+        find the first StationModel object whose name is an exact match. If there
+        was not an exact match, the method will try to find a partial match
+        (partial matches occur when the given model string is a
+        case-insensitive substring of a StationModel object's name).
+        
+        More than one partial match is considered ambiguous and will result in
+        a ValueError exception being raised.
+        
+        Optional Args:
+            model: If provided, this can be a string value representing the name
+            of a station model or an actual StationModel object. Default behavior
+            is to use the StationModel object returned by defaultLayoutModel.
+            
+        Raises:
+            ValueError: if model was a string and there was neither an exact nor
+                        partial matches.
+                        
+            ValueError: if model was a string without an exact match, but more
+                        than one partial match.
+                        
+            TypeError: if model's type was neither a string nor StationModel.
+        """
+        from java.lang import String
+        from ucar.unidata.ui.symbol import StationModel
+        
+        if not model:
+            model = defaultLayoutModel()
+        elif isinstance(model, (str, unicode, String)):
+            match, partialMatches = _getLayoutModelByName(model)
+            # print "exact match: '%s'; partials='%s'" % (match, partialMatches)
+            if match is not None:
+                model = match
+            elif len(partialMatches) <= 0:
+                raise ValueError("Could not find an exact or partial match for station layout name '%s'. Call allLayoutModelNames for valid options." % (model))
+            elif len(partialMatches) > 1:
+                raise ValueError("Station layout name '%s' has no exact matches, and resulted in multiple partially matching station model layouts (%s). Please try a more specific name or call allLayoutModelNames for valid options." % (model, partialMatches))
+            else:
+                model = partialMatches[0]
+        elif not isinstance(model, StationModel):
+            raise TypeError("Invalid 'model' parameter type: %s" % (type))
+            
+        self._JavaProxy__javaObject.setStationModel(model)
         
 # TODO(jon): this (and its accompanying subclasses) are a productivity rabbit
 # hole!
@@ -2318,6 +2373,47 @@ def getProjection(name=''):
     else:
         raise ValueError("Couldn't find a projection named ", name, "; try calling 'projectionNames()' to get the available projection names.")
         
+def allLayoutModelNames():
+    """Returns a list of the available station model layout names."""
+    return [str(stationModel.getName()) for stationModel in getStaticMcv().getStationModelManager().getStationModels()]
+    
+def allLayoutModels():
+    """Returns a list of the available station model layout names."""
+    return [stationModel for stationModel in getStaticMcv().getStationModelManager().getStationModels()]
+    
+def defaultLayoutModelName():
+    """Returns the name of the default station model layout."""
+    return str(getStaticMcv().getStationModelManager().getDefaultStationModel().getName())
+    
+def defaultLayoutModel():
+    """Returns the default station model layout."""
+    return getStaticMcv().getStationModelManager().getDefaultStationModel()
+    
+def _getLayoutModelByName(name):
+    """Find station model layouts by name.
+    
+    Args:
+        name: Name of the desired station model layout.
+    
+    Returns:
+        Tuple containing two elements. The first is either a StationModel
+        object or None. The second is (always) a list of StationModel objects
+        whose name is a partial match for the given name.
+    """
+    name = unicode(name)
+    lowered = name.lower()
+    modelManager = getStaticMcv().getStationModelManager()
+    model = None
+    partials = []
+    # if an exact match is found, the contents of partials is irrelevant
+    for tempModel in modelManager.getStationModels():
+        if name == tempModel.getName():
+            model = tempModel
+            break
+        elif lowered in tempModel.getName().lower():
+            partials.append(tempModel)
+    return model, partials
+    
 @gui_invoke_later
 def allActions():
     """Returns the available McIDAS-V action identifiers."""
