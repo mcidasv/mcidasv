@@ -59,7 +59,12 @@ def keepMetadata(func, *args, **kwargs):
     def wrapper(*args, **kwargs):
         print 'inside wrapper'
         result = func(*args, **kwargs)
-        result.setMetadataMap(args[0].getMetadataMap())
+        try:
+            result.setMetadataMap(args[0].getMetadataMap())
+        except IndexError:
+            print 'caught IndexError; length of args is apparently zero'
+        except AttributeError:
+            print 'caught AttributeError; args[0] is not a FlatField'
         return result
     return wrapper
     
