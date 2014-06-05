@@ -9,6 +9,7 @@
    vector operands are named V<sub>n</sub>.  Lowercase u and v refer to the
    grid relative components of a vector.
 """
+from decorators import keepMetadata
 
 
 def GRAVITY():
@@ -52,6 +53,7 @@ def quo(S1,S2,WA=0):
   """
   return GridMath.divide(S1,S2,WA)
 
+@keepMetadata
 def sub(S1,S2,WA=0):
   """ Subtract 
   <div class=jython>

@@ -53,6 +53,15 @@ def transform_flatfields(func, *args, **kwargs):
         # print 'returning type=%s' % (type(result))
         return result
     return wrapper
+
+def keepMetadata(func, *args, **kwargs):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        print 'inside wrapper'
+        result = func(*args, **kwargs)
+        result.setMetadataMap(args[0].getMetadataMap())
+        return result
+    return wrapper
     
 def _swingRunner(func, *args, **kwargs):
     if SwingUtilities.isEventDispatchThread():
