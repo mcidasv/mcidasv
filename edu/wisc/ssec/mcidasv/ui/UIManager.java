@@ -1443,21 +1443,22 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * that should appear in both the Toolbar and the Toolbar Preferences.
      */
     public List<String> readToolbar() {
-        List<String> data = new ArrayList<String>();
-
         final Element root = getToolbarRoot();
-        if (root == null)
+        if (root == null) {
             return null;
+        }
 
         final NodeList elements = XmlUtil.getElements(root);
+        List<String> data = new ArrayList<String>(elements.getLength());
         for (int i = 0; i < elements.getLength(); i++) {
             Element child = (Element)elements.item(i);
-            if (child.getTagName().equals(XmlUi.TAG_BUTTON))
+            if (child.getTagName().equals(XmlUi.TAG_BUTTON)) {
                 data.add(
                     XmlUtil.getAttribute(child, ATTR_ACTION, (String)null)
                         .substring(7));
-            else
+            } else {
                 data.add(null);
+            }
         }
         return data;
     }
@@ -1506,8 +1507,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * current toolbar buttons.
      */
     public List<String> getCachedButtons() {
-        if (cachedButtons == null)
+        if (cachedButtons == null) {
             cachedButtons = readToolbar();
+        }
         return cachedButtons;
     }
 
@@ -1626,13 +1628,16 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * {@code element} is {@code null}.
      */
     private static boolean isValidIdvAction(final Element element) {
-        if (element == null)
+        if (element == null) {
             return false;
+        }
         for (ActionAttribute attribute : ActionAttribute.values()) {
-            if (!attribute.isRequired())
+            if (!attribute.isRequired()) {
                 continue;
-            if (!XmlUtil.hasAttribute(element, attribute.asIdvString()))
+            }
+            if (!XmlUtil.hasAttribute(element, attribute.asIdvString())) {
                 return false;
+            }
         }
         return true;
     }
@@ -1651,17 +1656,19 @@ public class UIManager extends IdvUIManager implements ActionListener {
     private static Map<ActionAttribute, String> actionElementToMap(
         final Element element) 
     {
-        if (element == null)
+        if (element == null) {
             return Collections.emptyMap();
+        }
         // loop through set of action attributes; if element contains attribute "A", add it; return results.
         Map<ActionAttribute, String> attrs = 
             new LinkedHashMap<ActionAttribute, String>();
         for (ActionAttribute attribute : ActionAttribute.values()) {
             String idvStr = attribute.asIdvString();
-            if (XmlUtil.hasAttribute(element, idvStr))
+            if (XmlUtil.hasAttribute(element, idvStr)) {
                 attrs.put(attribute, XmlUtil.getAttribute(element, idvStr));
-            else
+            } else {
                 attrs.put(attribute, attribute.defaultValue());
+            }
         }
         return attrs;
     }
@@ -1683,22 +1690,22 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     public BundleTreeNode buildBundleTree() {
         // handy reference to parent nodes
-        Hashtable<String, BundleTreeNode> mapper =
-            new Hashtable<String, BundleTreeNode>();
-            
+        Map<String, BundleTreeNode> mapper =
+            new HashMap<String, BundleTreeNode>();
+
         final String TOOLBAR = "Toolbar";
-        
+
         int bundleType = IdvPersistenceManager.BUNDLES_FAVORITES;
-        
+
         final List<SavedBundle> bundles =
             getPersistenceManager().getBundles(bundleType);
-            
+
         // iterate through all toolbar bundles
         for (SavedBundle bundle : bundles) {
             String categoryPath = "";
             String lastCategory = "";
             String grandParentPath = "";
-            
+
             // build the "path" to the bundle. these paths basically look like
             // "Toolbar>category>subcategory>." so "category" is a category of
             // toolbar bundles and subcategory is a subcategory of that. The
@@ -1709,36 +1716,28 @@ public class UIManager extends IdvUIManager implements ActionListener {
             if (categories == null || categories.isEmpty() || !TOOLBAR.equals(categories.get(0))) {
                 continue;
             }
-            
+
             for (String category : categories) {
                 grandParentPath = categoryPath;
                 categoryPath += category + '>';
                 lastCategory = category;
-            }
-            
-            // if the current path hasn't been encountered yet there is some
-            // work to do.
-            if (!mapper.containsKey(categoryPath)) {
-                // create the "parent" node for this bundle. note that no
-                // SavedBundle is stored for parent nodes!
-                BundleTreeNode newParent = new BundleTreeNode(lastCategory);
-                
-                // make sure that we store the fact that we've seen this path
-                mapper.put(categoryPath, newParent);
-                
-                // also need to add newParent to grandparent's kids!
-                if (!TOOLBAR.equals(lastCategory)) {
+
+                if (!mapper.containsKey(categoryPath)) {
                     BundleTreeNode grandParent = mapper.get(grandParentPath);
-                    grandParent.addChild(newParent);
+                    BundleTreeNode parent = new BundleTreeNode(category);
+                    if (grandParent != null) {
+                        grandParent.addChild(parent);
+                    }
+                    mapper.put(categoryPath, parent);
                 }
             }
-            
+
             // so the tree book-keeping (if any) is done and we can just add
             // the current SavedBundle to its parent node within the tree.
             BundleTreeNode parent = mapper.get(categoryPath);
             parent.addChild(new BundleTreeNode(bundle.getName(), bundle));
         }
-        
+
         // return the root of the tree.
         return mapper.get("Toolbar>");
     }
@@ -1759,8 +1758,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
             comp.add(test);
 
             // recurse through children to continue building.
-            for (BundleTreeNode kid : node.getChildren())
+            for (BundleTreeNode kid : node.getChildren()) {
                 buildPopupMenu(kid, test);
+            }
 
         } else {
             // nodes with bundles can simply be added to the JMenu
