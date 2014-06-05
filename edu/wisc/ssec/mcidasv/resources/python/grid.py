@@ -1,5 +1,7 @@
 """ This is the doc for the grid module """
+from decorators import keepMetadata
 
+@keepMetadata
 def makeVector(a,b):
   """ Make a vector from 2 components
   <div class=jython>
