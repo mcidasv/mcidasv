@@ -1252,9 +1252,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @return A new toolbar based on the contents of toolbar.xml.
      */
     @Override public JComponent getToolbarUI() {
-        if (toolbars == null)
+        if (toolbars == null) {
             toolbars = new LinkedList<JToolBar>();
-
+        }
         JToolBar toolbar = new JToolBar();
         populateToolbar(toolbar);
         toolbars.add(toolbar);
@@ -1279,12 +1279,14 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     private void populateToolbar(JToolBar toolbar) {
         // clear out the toolbar's current denizens, if any. just a nicety.
-        if (toolbar.getComponentCount() > 0)
+        if (toolbar.getComponentCount() > 0) {
             toolbar.removeAll();
+        }
 
         // ensure that the toolbar popup menu appears
-        if (toolbarMenu == null)
+        if (toolbarMenu == null) {
             toolbarMenu = constructToolbarMenu();
+        }
 
         toolbar.addMouseListener(toolbarMenu);
 
@@ -1316,11 +1318,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
             for (BundleTreeNode tmp : treeRoot.getChildren()) {
 
                 // if this node doesn't have a bundle, it's considered a parent
-                if (tmp.getBundle() == null)
+                if (tmp.getBundle() == null) {
                     addBundleTree(toolbar, tmp);
+                }
                 // otherwise it's just another button to add.
-                else
+                else {
                     addBundle(toolbar, tmp);
+                }
             }
         }
     }
@@ -2654,6 +2658,22 @@ public class UIManager extends IdvUIManager implements ActionListener {
             populateToolbar(toolbar);
             toolbar.setVisible(true);
         }
+    }
+
+    /**
+     * Called when there has been any change to the favorite bundles and is
+     * most useful for triggering an update to the {@literal "toolbar bundles"}.
+     */
+    @Override public void favoriteBundlesChanged() {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                for (JToolBar toolbar : toolbars) {
+                    toolbar.setVisible(false);
+                    populateToolbar(toolbar);
+                    toolbar.setVisible(true);
+                }
+            }
+        });
     }
 
     /**
