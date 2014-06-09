@@ -53,6 +53,20 @@ def transform_flatfields(func, *args, **kwargs):
         # print 'returning type=%s' % (type(result))
         return result
     return wrapper
+
+def keepMetadata(func, *args, **kwargs):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        print 'inside wrapper'
+        result = func(*args, **kwargs)
+        try:
+            result.setMetadataMap(args[0].getMetadataMap())
+        except IndexError:
+            print 'caught IndexError; length of args is apparently zero'
+        except AttributeError:
+            print 'caught AttributeError; args[0] is not a FlatField'
+        return result
+    return wrapper
     
 def _swingRunner(func, *args, **kwargs):
     if SwingUtilities.isEventDispatchThread():
