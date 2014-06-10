@@ -1693,10 +1693,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @return The root BundleTreeNode for the tree containing toolbar bundles.
      */
     public BundleTreeNode buildBundleTree() {
-        // handy reference to parent nodes
-        Map<String, BundleTreeNode> mapper =
-            new HashMap<String, BundleTreeNode>();
-
         final String TOOLBAR = "Toolbar";
 
         int bundleType = IdvPersistenceManager.BUNDLES_FAVORITES;
@@ -1704,11 +1700,14 @@ public class UIManager extends IdvUIManager implements ActionListener {
         final List<SavedBundle> bundles =
             getPersistenceManager().getBundles(bundleType);
 
+        // handy reference to parent nodes; bundle count * 4 seems pretty safe
+        final Map<String, BundleTreeNode> mapper =
+            new HashMap<String, BundleTreeNode>(bundles.size() * 4);
+
         // iterate through all toolbar bundles
         for (SavedBundle bundle : bundles) {
             String categoryPath = "";
-            String lastCategory = "";
-            String grandParentPath = "";
+            String grandParentPath;
 
             // build the "path" to the bundle. these paths basically look like
             // "Toolbar>category>subcategory>." so "category" is a category of
@@ -1724,7 +1723,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
             for (String category : categories) {
                 grandParentPath = categoryPath;
                 categoryPath += category + '>';
-                lastCategory = category;
 
                 if (!mapper.containsKey(categoryPath)) {
                     BundleTreeNode grandParent = mapper.get(grandParentPath);
