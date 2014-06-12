@@ -293,7 +293,7 @@ public class AddeImageParameterChooser extends AddeImageChooser implements Const
         previewBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 XmlObjectStore store = getIdv().getStore();
-                store.put(Constants.PREF_IMAGE_PREVIEW, e.getStateChange());
+                store.put(Constants.PREF_IMAGE_PREVIEW, previewBox.isSelected());
                 store.save();
             }
         });
