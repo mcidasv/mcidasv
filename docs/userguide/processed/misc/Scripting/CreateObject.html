@@ -279,14 +279,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
     </tr>
         <tr>
       <td valign="top">coordinateSystem=</td>
-      <td>coordinate system to use for retrieving    data <br>
+      <td>coordinate system to use for retrieving    data; default=server dependent<br>
       AREA = AREA file coordinates - zero based<br>
       LATLON = latitude and longitude coordinates<br>
       IMAGE = image coordinates - one based</td>
     </tr>
         <tr>
       <td valign="top">location=</td>
-      <td>(x,y)<br>
+      <td>(x,y); default=coordinateSystem dependent<br>
       x = AREA line, latitude, or IMAGE line<br>
       y = AREA element, longitude, or IMAGE element</td>
     </tr>
