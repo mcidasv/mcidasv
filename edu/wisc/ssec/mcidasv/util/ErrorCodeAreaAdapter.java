@@ -95,6 +95,8 @@ public class ErrorCodeAreaAdapter {
             return -5000;
         } else if ("Accounting data was not valid".equals(message)) {
             return -6000;
+        } else if ("Band keyword required for multi-banded image".equals(message)) {
+            return -11011;
         } else {
             Throwable nextCause = cause.getCause();
             if (nextCause != null) {

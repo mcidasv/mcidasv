@@ -312,6 +312,9 @@ class AddeJythonInvalidUserError(AddeJythonError):
 class AddeJythonUnknownDataError(AddeJythonError):
     pass
     
+class AddeJythonBandRequiredError(AddeJythonError):
+    pass
+    
 # class AddeJythonUnknownFormatError(AddeJythonError): pass
 
 # alias = ADDE  alias
@@ -1209,6 +1212,8 @@ def getADDEImage(localEntry=None,
         if e.hasAddeErrorCode():
             if e.getAddeErrorCode() == -5000:
                 raise AddeJythonUnknownDataError(e)
+            elif e.getAddeErrorCode() == -11011:
+                raise AddeJythonBandRequiredError(e)
             elif e.getAddeErrorCode() == -6000:
                 if accounting == DEFAULT_ACCOUNTING:
                     raise AddeJythonAccountingRequiredError(e)
