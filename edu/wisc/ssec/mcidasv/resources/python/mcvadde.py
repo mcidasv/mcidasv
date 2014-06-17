@@ -274,12 +274,38 @@ class _AreaDirectoryList(object):
     def __str__(self):
         return str(self.values)
         
-class AddeJythonError(Exception, java.lang.Exception): pass
-class AddeJythonInvalidDatasetError(AddeJythonError): pass
-class AddeJythonInvalidProjectError(AddeJythonError): pass
-class AddeJythonInvalidPortError(AddeJythonError): pass
-class AddeJythonInvalidUserError(AddeJythonError): pass
-class AddeJythonUnknownDataError(AddeJythonError): pass
+class AddeJythonError(Exception, java.lang.Exception):
+    def __init__(self, ex):
+        Exception.__init__(self, ex)
+        
+        if isinstance(ex, AddeException):
+            self.hasErrorCode = ex.hasAddeErrorCode()
+            self.addeErrorCode = ex.getAddeErrorCode()
+        else:
+            self.hasAddeErrorCode = False
+            self.addeErrorCode = 0
+            
+    def hasAddeErrorCode(self):
+        return self.hasAddeErrorCode
+        
+    def getAddeErrorCode(self):
+        return self.addeErrorCode
+        
+class AddeJythonInvalidDatasetError(AddeJythonError):
+    pass
+    
+class AddeJythonInvalidProjectError(AddeJythonError):
+    pass
+    
+class AddeJythonInvalidPortError(AddeJythonError):
+    pass
+    
+class AddeJythonInvalidUserError(AddeJythonError):
+    pass
+    
+class AddeJythonUnknownDataError(AddeJythonError):
+    pass
+    
 # class AddeJythonUnknownFormatError(AddeJythonError): pass
 
 # alias = ADDE  alias
@@ -1171,6 +1197,7 @@ def getADDEImage(localEntry=None,
     except AddeURLException, e:
         raise AddeJythonError(e)
     except AddeException, e:
+        # print e.hasAddeErrorCode(), e.getAddeErrorCode()
         if e.hasAddeErrorCode():
             if e.getAddeErrorCode() == -5000:
                 raise AddeJythonUnknownDataError(e)
