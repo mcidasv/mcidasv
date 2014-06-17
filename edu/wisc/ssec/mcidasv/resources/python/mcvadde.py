@@ -204,7 +204,7 @@ def _satBandUrl(**kwargs):
     satbandUrlFormat = "adde://%(server)s/text?&FILE=SATBAND&COMPRESS=gzip&PORT=%(port)s&DEBUG=%(debug)s&VERSION=1&USER=%(user)s&PROJ=%(proj)s"
     return satbandUrlFormat % kwargs
     
-# NOTE: remember that Callable means that the "task" returns some kind of 
+# NOTE: remember that Callable means that the "task" returns some kind of
 # result from CallableObj.get()!
 # RunnableObj.get() just returns null.
 class _SatBandReq(Callable):
@@ -291,6 +291,9 @@ class AddeJythonError(Exception, java.lang.Exception):
     def getAddeErrorCode(self):
         return self.addeErrorCode
         
+class AddeJythonInvalidAccountingError(AddeJythonError):
+    pass
+    
 class AddeJythonInvalidDatasetError(AddeJythonError):
     pass
     
@@ -1193,12 +1196,16 @@ def getADDEImage(localEntry=None,
         mapped.addeSatBands = futureSatband
         return mapped.getDictionary(), mapped
     except AreaFileException, e:
+        # print type(e), e.getMessage()
         raise AddeJythonError(e)
     except AddeURLException, e:
+        # print type(e), e.getMessage()
         raise AddeJythonError(e)
     except AddeException, e:
         # print e.hasAddeErrorCode(), e.getAddeErrorCode()
         if e.hasAddeErrorCode():
             if e.getAddeErrorCode() == -5000:
                 raise AddeJythonUnknownDataError(e)
+            elif e.getAddeErrorCode() == -6000:
+                raise AddeJythonInvalidAccountingError(e)
         raise AddeJythonError(e)

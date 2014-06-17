@@ -64,7 +64,12 @@ public class ErrorCodeAreaAdapter {
         try {
             aa = new AreaAdapter(url, false);
         } catch (IOException e) {
-            throw new AddeException(-31337, "Could connect to URL: "+url, e);
+            int errorCode = searchStackTrace(e.getCause());
+            if (errorCode == 0) {
+                throw new AddeException("Could not connect to URL: " + url, e);
+            } else {
+                throw new AddeException(errorCode, "Could not create VisAD data object.", e);
+            }
         } catch (VisADException e) {
             int errorCode = searchStackTrace(e.getCause());
             if (errorCode == 0) {
@@ -88,6 +93,8 @@ public class ErrorCodeAreaAdapter {
             return -1000;
         } else if ("No images satisfy the selection criteria".equals(message)) {
             return -5000;
+        } else if ("Accounting data was not valid".equals(message)) {
+            return -6000;
         } else {
             Throwable nextCause = cause.getCause();
             if (nextCause != null) {
