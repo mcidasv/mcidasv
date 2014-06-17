@@ -44,6 +44,8 @@ public class ErrorCodeAreaAdapter {
 
 //    private static final Logger logger = LoggerFactory.getLogger(ErrorCodeAreaAdapter.class);
 
+    public static final String GENERIC_EXCEPTION_MESSAGE = "Could not create VisAD data object.";
+
     /**
      * Disallow instances of {@code ErrorCodeAdapter}.
      */
@@ -68,14 +70,14 @@ public class ErrorCodeAreaAdapter {
             if (errorCode == 0) {
                 throw new AddeException("Could not connect to URL: " + url, e);
             } else {
-                throw new AddeException(errorCode, "Could not create VisAD data object.", e);
+                throw new AddeException(errorCode, GENERIC_EXCEPTION_MESSAGE, e);
             }
         } catch (VisADException e) {
             int errorCode = searchStackTrace(e.getCause());
             if (errorCode == 0) {
-                throw new AddeException("Could not create VisAD data object.", e);
+                throw new AddeException(GENERIC_EXCEPTION_MESSAGE, e);
             } else {
-                throw new AddeException(errorCode, "Could not create VisAD data object.", e);
+                throw new AddeException(errorCode, GENERIC_EXCEPTION_MESSAGE, e);
             }
         }
         return aa;
