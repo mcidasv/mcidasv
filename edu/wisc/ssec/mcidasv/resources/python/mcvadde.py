@@ -294,6 +294,9 @@ class AddeJythonError(Exception, java.lang.Exception):
 class AddeJythonInvalidAccountingError(AddeJythonError):
     pass
     
+class AddeJythonAccountingRequiredError(AddeJythonError):
+    pass
+    
 class AddeJythonInvalidDatasetError(AddeJythonError):
     pass
     
@@ -1207,5 +1210,8 @@ def getADDEImage(localEntry=None,
             if e.getAddeErrorCode() == -5000:
                 raise AddeJythonUnknownDataError(e)
             elif e.getAddeErrorCode() == -6000:
-                raise AddeJythonInvalidAccountingError(e)
+                if accounting == DEFAULT_ACCOUNTING:
+                    raise AddeJythonAccountingRequiredError(e)
+                else:
+                    raise AddeJythonInvalidAccountingError(e)
         raise AddeJythonError(e)
