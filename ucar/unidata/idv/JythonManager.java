@@ -510,7 +510,7 @@ public class JythonManager extends IdvManager implements ActionListener {
                 return null;
             }
             treePanel  = new TreePanel();
-            libHolders = new ArrayList();
+            libHolders = new ArrayList<LibHolder>(resources.size() * 10);
             int systemCnt = 1;
             Map<String, String> seen = new HashMap<String, String>();
             for (int i = 0; i < resources.size(); i++) {
@@ -594,9 +594,9 @@ public class JythonManager extends IdvManager implements ActionListener {
         if (getArgsManager().isScriptingMode()) {
             return true;
         }
-        List<LibHolder> toSave = new ArrayList<LibHolder>();
+        List<LibHolder> toSave = new ArrayList<LibHolder>(libHolders.size());
         for (int i = libHolders.size() - 1; i >= 0; i--) {
-            LibHolder holder = (LibHolder)libHolders.get(i);
+            LibHolder holder = libHolders.get(i);
             if ((holder.saveBtn == null) || !holder.isEditable()) {
                 continue;
             }
@@ -1840,7 +1840,7 @@ public class JythonManager extends IdvManager implements ActionListener {
      * @return end user formulas
      */
     public List<DerivedDataDescriptor> getEndUserDescriptors() {
-        List<DerivedDataDescriptor> formulas = new ArrayList<DerivedDataDescriptor>();
+        List<DerivedDataDescriptor> formulas = new ArrayList<DerivedDataDescriptor>(descriptors.size());
         for (DerivedDataDescriptor ddd : descriptors) {
             if (ddd.getIsEndUser()) {
                 formulas.add(ddd);
@@ -1855,7 +1855,7 @@ public class JythonManager extends IdvManager implements ActionListener {
      * @return local descriptors
      */
     public List<DerivedDataDescriptor> getLocalDescriptors() {
-        List<DerivedDataDescriptor> formulas = new ArrayList<DerivedDataDescriptor>();
+        List<DerivedDataDescriptor> formulas = new ArrayList<DerivedDataDescriptor>(descriptors.size());
         for (DerivedDataDescriptor ddd : descriptors) {
             if (ddd.getIsLocalUsers()) {
                 formulas.add(ddd);
@@ -1870,7 +1870,7 @@ public class JythonManager extends IdvManager implements ActionListener {
      * @return end user formulas
      */
     public List<DerivedDataDescriptor> getDefaultDescriptors() {
-        List<DerivedDataDescriptor> formulas = new ArrayList<DerivedDataDescriptor>();
+        List<DerivedDataDescriptor> formulas = new ArrayList<DerivedDataDescriptor>(descriptors.size());
         for (DerivedDataDescriptor ddd : descriptors) {
             if (ddd.getIsDefault()) {
                 formulas.add(ddd);
