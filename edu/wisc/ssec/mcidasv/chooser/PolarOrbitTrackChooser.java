@@ -70,6 +70,7 @@ import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.chooser.adde.AddeChooser;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
+import ucar.unidata.xml.XmlObjectStore;
 
 /**
  * Polar Orbit Track Chooser
@@ -79,25 +80,24 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  *
  * @author Gail Dengel and Tommy Jasmin
  */
-
 public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
 
-	private static final long serialVersionUID = 1L;
-	
-	private static final Logger logger = LoggerFactory.getLogger(PolarOrbitTrackChooser.class);
+    private static final long serialVersionUID = 1L;
 
-	// chooser for local files
-	TLEFileChooser tlefc = null;
-	
-	/** Connect button--we need to be able to disable this */
+    private static final Logger logger = LoggerFactory.getLogger(PolarOrbitTrackChooser.class);
+
+    // chooser for local files
+    TLEFileChooser tlefc = null;
+
+    /** Connect button--we need to be able to disable this. */
     JButton connectButton = McVGuiUtils.makeImageTextButton(ICON_CONNECT_SMALL, "Connect");
 
-    /** Manage button */
+    /** Manage button. */
     JButton manageButton =
         McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-system22.png",
             this, "doManager", null, "Manage servers");
 
-    /** Public button--we need to draw a menu from this */
+    /** Public button--we need to draw a menu from this. */
     JButton publicButton =
         McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-layer-controls22.png",
             this, "showGroups", null, "List public datasets");
@@ -107,22 +107,34 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
     private JRadioButton addeBtn;
     private JRadioButton urlBtn;
     private JLabel descLabel;
-    List addeList = new ArrayList();
+    List<JComponent> addeList = new ArrayList<JComponent>();
 
-    /** Manages the pull down list of urls */
+    /** Manages the pull down list of URLs. */
     private PreferenceList prefList;
 
-    /** The list of urls */
+    /** List of URLs. */
     private JComboBox box;
     private JTextField boxEditor;
 
-	private boolean propsOk = false;
+    private boolean propsOk = false;
 
-    /** text type */
+    /** Text type. */
     private static final String TLE_TYPE = "text";
 
-    /** Property name to get the list or urls */
+    /** Property ID used to get the list or URLs. */
     public static final String PREF_URLLIST = "idv.urllist";
+
+    /** Property ID used to determine the last {@literal "source"}. */
+    public static final String PROP_LAST_SOURCE = "mcidasv.chooser.tle.lastsource";
+
+    /** Property value that represents the {@literal "local"} button. */
+    public static final String FILE_SOURCE = "FILE";
+
+    /** Property value that represents the {@literal "ADDE"} button. */
+    public static final String ADDE_SOURCE = "ADDE";
+
+    /** Property value that represents the {@literal "URL"} button. */
+    public static final String URL_SOURCE = "URL";
 
     /**
      * Property for the tle server name key.
@@ -133,20 +145,25 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
     public static String LOCAL_FILE_KEY = "file_object";
 
     /**
-     * Property for the tle group name key.
+     * Property for the TLE group name key.
      * @see #getGroup()
      */
     public static String TLE_GROUP_NAME_KEY = "tle_group";
 
-    /**
-     * Property for the tle user id
-     */
+    /** Property for the TLE user ID. */
     public static String TLE_USER_ID_KEY = "tle_user";
 
-    /**
-     * Property for the tle project number
-     */
+    /** Property for the TLE project number. */
     public static String TLE_PROJECT_NUMBER_KEY = "tle_proj";
+
+    /** TLE data source identifier. */
+    public static final String TLE_DATA_SOURCE_ID = "TLE";
+
+    /** TLE display type. */
+    public static final String TLE_DISPLAY_TYPE = "tledisplay";
+
+    /** TLE data source type. */
+    public static final String TLE_DATA_TYPE = "TEXT";
 
     /**
      * Construct an Adde image selection widget
@@ -154,35 +171,31 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
      * @param mgr The chooser manager
      * @param root The chooser.xml node
      */
-    
     public PolarOrbitTrackChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
         serverSelector = getServerSelector();
         showServers();
     }
     
-	/**
-	 * Return the data source ID.  Used by extending classes.
-	 */
-    
-    @Override
-	protected String getDataSourceId() {
-		return "TLE";
-	}
-    
+    /**
+     * Return the data source ID.
+     *
+     * @return {@link #TLE_DATA_SOURCE_ID}
+     */
+    @Override protected String getDataSourceId() {
+        return TLE_DATA_SOURCE_ID;
+    }
+
     /**
      * Make the UI for this selector.
      *
      * @return The gui
      */
-    
-    @Override
-    public JComponent doMakeContents() {
-    	
-    	logger.debug("doMakeContents() in...");
+    @Override public JComponent doMakeContents() {
+        logger.debug("doMakeContents() in...");
         JPanel outerPanel = new JPanel();
         JPanel addePanel = new JPanel();
-        addePanel = (JPanel) makeAddePanel();
+        addePanel = (JPanel)makeAddePanel();
         
         // retrieve our last visited directory
         String path = (String) getIdv().getStateManager().getPreference(IdvChooser.PREF_DEFAULTDIR + getId());
@@ -211,8 +224,8 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         // create border like the remote panel (titled) but include the
         // gap that remote panel creates with various GroupLayout effects
         localPanel.setBorder(BorderFactory.createCompoundBorder(
-        		BorderFactory.createTitledBorder("Local"), 
-        		BorderFactory.createEmptyBorder(GAP_RELATED, GAP_RELATED, GAP_RELATED, GAP_RELATED)));
+            BorderFactory.createTitledBorder("Local"),
+            BorderFactory.createEmptyBorder(GAP_RELATED, GAP_RELATED, GAP_RELATED, GAP_RELATED)));
         
         JPanel remotePanel = new JPanel();
         remotePanel.setBorder(BorderFactory.createTitledBorder("Remote"));
@@ -249,13 +262,12 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
      *
      * @return true if Local File Mode radio button is selected
      */
-    
     public boolean localMode() {
-    	if (localBtn.isSelected()) {
-    		return true;
-    	} else {
-    		return false;
-    	}
+        if (localBtn.isSelected()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private JComponent makeAddePanel() {
@@ -265,22 +277,26 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         addeBtn = new JRadioButton("ADDE", true);
         urlBtn = new JRadioButton("URL", false);
         GuiUtils.buttonGroup(localBtn, addeBtn, urlBtn);
-        
+
+        final XmlObjectStore store = getIdv().getStore();
+
         localBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	// enable the file chooser
-            	tlefc.setEnabled(true);
-            	enableFileLoad(false);
-            	// disable everything else? Just following pattern below
+                // enable the file chooser
+                tlefc.setEnabled(true);
+                enableFileLoad(false);
+                // disable everything else? Just following pattern below
                 for (int i=0; i<5; i++) {
-                    JComponent comp = (JComponent) (addeList.get(i));
+                    JComponent comp = addeList.get(i);
                     comp.setEnabled(false);
                     enableDescriptors(false);
                 }
                 for (int i=5; i<7; i++) {
-                    JComponent comp = (JComponent) (addeList.get(i));
+                    JComponent comp = addeList.get(i);
                     comp.setEnabled(false);
                 }
+                store.put(PROP_LAST_SOURCE, FILE_SOURCE);
+                store.save();
             }
         });
         
@@ -288,18 +304,20 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         // hardcoded component ids are!
         addeBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	// disable the file chooser
-            	tlefc.setEnabled(false);
-            	enableFileLoad(false);
+                // disable the file chooser
+                tlefc.setEnabled(false);
+                enableFileLoad(false);
                 for (int i=0; i<5; i++) {
-                    JComponent comp = (JComponent) (addeList.get(i));
+                    JComponent comp = addeList.get(i);
                     comp.setEnabled(true);
                     enableDescriptors(true);
                 }
                 for (int i=5; i<7; i++) {
-                    JComponent comp = (JComponent) (addeList.get(i));
+                    JComponent comp = addeList.get(i);
                     comp.setEnabled(false);
                 }
+                store.put(PROP_LAST_SOURCE, ADDE_SOURCE);
+                store.save();
             }
         });
         
@@ -307,19 +325,21 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         // hardcoded component ids are!
         urlBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	// disable the file chooser
-            	tlefc.setEnabled(false);
-            	enableFileLoad(false);
+                // disable the file chooser
+                tlefc.setEnabled(false);
+                enableFileLoad(false);
                 for (int i=5; i<7; i++) {
-                    JComponent comp = (JComponent) (addeList.get(i));
+                    JComponent comp = addeList.get(i);
                     comp.setEnabled(true);
                 }
                 loadButton.setEnabled(true);
                 for (int i=0; i<5; i++) {
-                    JComponent comp = (JComponent) (addeList.get(i));
+                    JComponent comp = addeList.get(i);
                     comp.setEnabled(false);
                     enableDescriptors(false);
                 }
+                store.put(PROP_LAST_SOURCE, URL_SOURCE);
+                store.save();
             }
         });
         JLabel serverLabel = new JLabel("Server:");
@@ -346,8 +366,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         boxEditor = (JTextField) box.getEditor().getEditorComponent();
         boxEditor.addKeyListener(new KeyListener() {
             public void keyPressed(KeyEvent e) {}
-            public void keyReleased(KeyEvent e) {
-            }
+            public void keyReleased(KeyEvent e) {}
             public void keyTyped(KeyEvent e) {}
         });
         urlLabel.setEnabled(false);
@@ -420,11 +439,23 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         addeList.add(urlLabel);
         addeList.add(box);
 
+        String lastSource = store.get(PROP_LAST_SOURCE, FILE_SOURCE);
+        if (FILE_SOURCE.equals(lastSource)) {
+            localBtn.setSelected(true);
+        } else if (ADDE_SOURCE.equals(lastSource)) {
+            addeBtn.setSelected(true);
+        } else if (URL_SOURCE.equals(lastSource)) {
+            urlBtn.setSelected(true);
+        } else {
+            logger.trace("should not be able to arrive here; defaulting to file. (lastSource={})", lastSource);
+            localBtn.setSelected(true);
+        }
+
         return outerPanel;
     }
     
     public void enableFileLoad(boolean val) {
-    	loadButton.setEnabled(val);
+        loadButton.setEnabled(val);
     }
 
     private void enableDescriptors(boolean val) {
@@ -451,121 +482,115 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
     /**
      * Update labels, enable widgets, etc.
      */
-    protected void updateStatus() {
+    @Override protected void updateStatus() {
         super.updateStatus();
         enableWidgets();
     }
 
     /**
-     * Get the data type ID
+     * Get the data type ID.
      *
-     * @return  the data type
+     * @return {@link #TLE_DATA_TYPE}
      */
-
-    public String getDataType() {
-        return "TEXT";
+    @Override public String getDataType() {
+        return TLE_DATA_TYPE;
     }
 
     /**
-      * get the adde server group type to use
-      *
-      * @return group type
-      */
-    @Override
-    protected String getGroupType() {
-            return TLE_TYPE;
+     * Get the adde server group type to use.
+     *
+     * @return {@link #TLE_TYPE}
+     */
+    @Override protected String getGroupType() {
+        return TLE_TYPE;
     }
 
     /**
      * User said go, we go. 
      * Create the TLE DataSource
      */
-    
-    public void doLoadInThread() {
+    @Override public void doLoadInThread() {
         prefList.saveState(box);
-        String dsName = "TLE";
+        String dsName = TLE_DATA_SOURCE_ID;
         if (tlefc.getSelectedFile() != null) {
-        	dsName = tlefc.getSelectedFile().getName();
+            dsName = tlefc.getSelectedFile().getName();
         }
         Hashtable ht = new Hashtable();
         getDataSourceProperties(ht);
         if (propsOk) {
-        	makeDataSource(dsName, getDataSourceId(), ht);
-        	saveServerState();
+            makeDataSource(dsName, TLE_DATA_SOURCE_ID, ht);
+            saveServerState();
         }
     }
 
     /**
      * Get the DataSource properties
      * 
-     * @param ht
-     *            Hashtable of properties
+     * @param ht Hashtable of properties
      */
-    
-    protected void getDataSourceProperties(Hashtable ht) {
-    	
-    	// Local data
-    	if (localBtn.isSelected()) {
-    		if (tlefc.getSelectedFile() != null) {
+    @Override protected void getDataSourceProperties(Hashtable ht) {
+
+        // Local data
+        if (localBtn.isSelected()) {
+            if (tlefc.getSelectedFile() != null) {
                 // local file, set a new key...
-        		ht.put(LOCAL_FILE_KEY, tlefc.getSelectedFile());
-        		propsOk = true;
-    		} else {
-    			JOptionPane.showMessageDialog(this, "No file selected.");
-    			propsOk = false;
-    		}
-    	}
-    	
-    	// Remote data, ADDE
-    	if (addeBtn.isSelected()) {
-    		if (getState() == STATE_CONNECTED) {
-	    		super.getDataSourceProperties(ht);
-	    		ht.put(DATASET_NAME_KEY, getDatasetName());
-	    		String server = getServer();
-	    		ht.put(TLE_SERVER_NAME_KEY, server);
-	    		String group = getGroup();
-	    		ht.put(TLE_GROUP_NAME_KEY, group);
-	    		Map<String, String> acct = getAccounting(server, group);
-	    		String user = acct.get("user");
-	    		String proj = acct.get("proj");
-	    		ht.put(TLE_USER_ID_KEY, user);
-	    		ht.put(TLE_PROJECT_NUMBER_KEY, proj);
-	    		propsOk = true;
-    		} else {
-    			JOptionPane.showMessageDialog(this, "No ADDE server connection.");
-    			propsOk = false;
-    		}
-    	}
-    	
-    	// Remote or Local, URL
-    	if (urlBtn.isSelected()) {
-    		String s = (String) box.getSelectedItem();
-    		if ((s != null) && (! s.isEmpty())) {
-    			ht.put(URL_NAME_KEY, box.getSelectedItem());
-    			propsOk = true;
-    		} else {
-    			JOptionPane.showMessageDialog(this, "Please provide a valid URL.");
-    			propsOk = false;
-    		}
-    	}
-    	
+                ht.put(LOCAL_FILE_KEY, tlefc.getSelectedFile());
+                propsOk = true;
+            } else {
+                JOptionPane.showMessageDialog(this, "No file selected.");
+                propsOk = false;
+            }
+        }
+
+        // Remote data, ADDE
+        if (addeBtn.isSelected()) {
+            if (getState() == STATE_CONNECTED) {
+                super.getDataSourceProperties(ht);
+                ht.put(DATASET_NAME_KEY, getDatasetName());
+                String server = getServer();
+                ht.put(TLE_SERVER_NAME_KEY, server);
+                String group = getGroup();
+                ht.put(TLE_GROUP_NAME_KEY, group);
+                Map<String, String> acct = getAccounting(server, group);
+                String user = acct.get("user");
+                String proj = acct.get("proj");
+                ht.put(TLE_USER_ID_KEY, user);
+                ht.put(TLE_PROJECT_NUMBER_KEY, proj);
+                propsOk = true;
+            } else {
+                JOptionPane.showMessageDialog(this, "No ADDE server connection.");
+                propsOk = false;
+            }
+        }
+
+        // Remote or Local, URL
+        if (urlBtn.isSelected()) {
+            String s = (String) box.getSelectedItem();
+            if ((s != null) && !s.isEmpty()) {
+                ht.put(URL_NAME_KEY, box.getSelectedItem());
+                propsOk = true;
+            } else {
+                JOptionPane.showMessageDialog(this, "Please provide a valid URL.");
+                propsOk = false;
+            }
+        }
     }
 
     private String getDatasetName() {
         return (String) descriptorComboBox.getSelectedItem();
     }
 
-    public void handleConnectFromThread() {
+    @Override public void handleConnectFromThread() {
         super.handleConnectFromThread();
         enableDescriptors(true);
     }
 
     /**
-     * Get the default display type
+     * Get the default display type.
      *
-     * @return  the name of the default display
+     * @return {@link #TLE_DISPLAY_TYPE}
      */
-    protected String getDefaultDisplayType() {
-        return "tledisplay";
+    @Override protected String getDefaultDisplayType() {
+        return TLE_DISPLAY_TYPE;
     }
 }
