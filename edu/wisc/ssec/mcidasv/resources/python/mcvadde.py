@@ -315,6 +315,12 @@ class AddeJythonUnknownDataError(AddeJythonError):
 class AddeJythonBandRequiredError(AddeJythonError):
     pass
     
+class AddeJythonInvalidUnitError(AddeJythonError):
+    pass
+    
+class AddeJythonInvalidPortionError(AddeJythonError):
+    pass
+    
 # class AddeJythonUnknownFormatError(AddeJythonError): pass
 
 # alias = ADDE  alias
@@ -1202,18 +1208,19 @@ def getADDEImage(localEntry=None,
         mapped.addeSatBands = futureSatband
         return mapped.getDictionary(), mapped
     except AreaFileException, e:
-        # print type(e), e.getMessage()
         raise AddeJythonError(e)
     except AddeURLException, e:
-        # print type(e), e.getMessage()
         raise AddeJythonError(e)
     except AddeException, e:
-        # print e.hasAddeErrorCode(), e.getAddeErrorCode()
         if e.hasAddeErrorCode():
             if e.getAddeErrorCode() == -5000:
                 raise AddeJythonUnknownDataError(e)
             elif e.getAddeErrorCode() == -11011:
                 raise AddeJythonBandRequiredError(e)
+            elif e.getAddeErrorCode() == -11007:
+                raise AddeJythonInvalidUnitError(e)
+            elif e.getAddeErrorCode() == -11010:
+                raise AddeJythonInvalidPortionError(e)
             elif e.getAddeErrorCode() == -6000:
                 if accounting == DEFAULT_ACCOUNTING:
                     raise AddeJythonAccountingRequiredError(e)
