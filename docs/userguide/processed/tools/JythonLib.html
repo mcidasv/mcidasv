@@ -42,8 +42,12 @@ This is the doc for the grid module
 <p style="padding:0;margin-left:20;margin-top:0">Average the values in each time step If makeTimes is true (1) then we return a field mapping all of the times to the average. Else we just return the average</p>
 <p><a name="combineFields" id="combineFields"></a><code class="command">combineFields():</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">combine several fields together</p>
+<p><a name="differenceFromBaseTime" id="differenceFromBaseTime"></a><code class="command">differenceFromBaseTime(field):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Set the value of each time step N: D(N)=D(N)-D(0)</p>
 <p><a name="extractLatitudeFromNWPGrid" id="extractLatitudeFromNWPGrid"></a><code class="command">extractLatitudeFromNWPGrid(fieldimpl):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Get the latitude coordinate from a grid. Return a grid of the latitudes at each point.</p>
+<p><a name="extractLongitudeFromNWPGrid" id="extractLongitudeFromNWPGrid"></a><code class="command">extractLongitudeFromNWPGrid(fieldimpl):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Get the longitude coordinate from a grid. Return a grid of the longitudes at each point.</p>
 <p><a name="extractPressureFromNWPGrid" id="extractPressureFromNWPGrid"></a><code class="command">extractPressureFromNWPGrid(fieldimpl):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Get the pressure coordinate from a time series grid and return a grid of the pressure at all points. Input grid must have pressure or height (which is converted to pressure in the standard atmosphere). User must be sure input is a suitable FlatField.</p>
 <p><a name="getAltitude" id="getAltitude"></a><code class="command">getAltitude(z):</code></p>
@@ -55,9 +59,9 @@ This is the doc for the grid module
 <p><a name="getSliceAtLevel" id="getSliceAtLevel"></a><code class="command">getSliceAtLevel(fieldimpl, level):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Extract a 2D horizontal slice from a 3D grid at "Level." level is a real number; must be appropriate for the grid. param fieldimpl is a grid which may have one or more time steps.</p>
 <p><a name="horizontalAdvection" id="horizontalAdvection"></a><code class="command">horizontalAdvection(param, u, v):</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">horizontal advection</p>
+<p style="padding:0;margin-left:20;margin-top:0">Horizontal advection</p>
 <p><a name="horizontalDivergence" id="horizontalDivergence"></a><code class="command">horizontalDivergence(param, u, v):</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">horizontal flux divergence</p>
+<p style="padding:0;margin-left:20;margin-top:0">Horizontal flux divergence</p>
 <p><a name="layerAverage" id="layerAverage"></a><code class="command">layerAverage(grid, top, bottom):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Wrapper for calculating layer average</p>
 <p><a name="layerDiff" id="layerDiff"></a><code class="command">layerDiff(grid, top, bottom):</code></p>
@@ -72,25 +76,41 @@ This is the doc for the grid module
 <p><a name="makeTimeSequence" id="makeTimeSequence"></a><code class="command">makeTimeSequence(g):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Merge a set of single time grids/images into a time sequence</p>
 <p><a name="makeTrueVector" id="makeTrueVector"></a><code class="command">makeTrueVector(u, v):</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">true wind vectors</p>
+<p style="padding:0;margin-left:20;margin-top:0">True wind vectors</p>
 <p><a name="makeVector" id="makeVector"></a><code class="command">makeVector(a, b):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Make a vector from 2 components</p>
 <div class="jython">
 <p style="padding:0;margin-left:20;margin-top:0">makeVector(a,b) = [a,b]</p>
 </div>
+<p><a name="maxOverTime" id="maxOverTime"></a><code class="command">maxOverTime(field, makeTimes):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Take the max of the values in each time step if makeTimes is true (1) then return a field mapping of all times to the average. Else return the max</p>
+<p><a name="mergeTimeSequences" id="mergeTimeSequences"></a><code class="command">mergeTimeSequences(g):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Merge a set of time sequences of grids/images into a single time sequence.  All grids/images must have the same parameter name</p>
+<p><a name="minOverTime" id="minOverTime"></a><code class="command">minOverTime(field, makeTimes):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Take the min of the values in each time step if makeTimes is true (1) then return a field mapping of all times to the average. Else return the min</p>
 <p><a name="newName" id="newName"></a><code class="command">newName(field, varname, copy):</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">create a new field with a new parameter name</p>
+<p style="padding:0;margin-left:20;margin-top:0">Create a new field with a new parameter name</p>
 <p><a name="newUnit" id="newUnit"></a><code class="command">newUnit(field, varname, unitname):</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">set the name and unit on a grid</p>
+<p style="padding:0;margin-left:20;margin-top:0">Set the name and unit on a grid</p>
+<p><a name="noUnit" id="noUnit"></a><code class="command">noUnit(field):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Remove the units from a grid</p>
 <p><a name="resampleGrid" id="resampleGrid"></a><code class="command">resampleGrid(oldGrid, gridwithNewDomain):</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">display gridded data on a new domain</p>
+<p style="padding:0;margin-left:20;margin-top:0">Display gridded data on a new domain</p>
+<p><a name="sumFromBaseTime" id="sumFromBaseTime"></a><code class="command">sumFromBaseTime(field):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Set the value of each time step N: D(N)=D(N)+D(0)</p>
+<p><a name="sumOverTime" id="sumOverTime"></a><code class="command">sumOverTime(field, makeTimes):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Take the sum of the values in each time step if makeTimes is true (1) then return a field mapping of all times to the average. Else return the sum</p>
+<p><a name="timeStepDifference" id="timeStepDifference"></a><code class="command">timeStepDifference(field, offset):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Set the value of each time step N: D(N)=D(N)-D(N+offset) where offset should be negative</p>
+<p><a name="timeStepSum" id="timeStepSum"></a><code class="command">timeStepSum(field, offset):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Set the value of each time step N: D(N)=D(N)+D(N+offset) where offset should be negative</p>
 <p><a name="windShear" id="windShear"></a><code class="command">windShear(u, v, z, top, bottom):</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">calculate the wind shear between discrete layers</p>
+<p style="padding:0;margin-left:20;margin-top:0">Calculate the wind shear between discrete layers</p>
 <div class="jython">
 <p style="padding:0;margin-left:20;margin-top:0">shear = sqrt((u(top)-u(bottom))^2 + (v(top)-v(bottom))^2)/zdiff</p>
 </div>
 <p><a name="windShearVector" id="windShearVector"></a><code class="command">windShearVector(u, v, top, bottom):</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">calculate the u and v layer difference and return as vector</p>
+<p style="padding:0;margin-left:20;margin-top:0">Calculate the u and v layer difference and return as vector</p>
 <p><a name="writeGridToXls" id="writeGridToXls"></a><code class="command">writeGridToXls(grid, filename):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Write out the grid data to an excel spreadsheet</p>
 <a name="griddiag" id="griddiag"></a>
