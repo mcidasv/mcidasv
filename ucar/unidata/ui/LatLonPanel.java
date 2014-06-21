@@ -20,15 +20,15 @@
 
 package ucar.unidata.ui;
 
-
 import ucar.unidata.gis.maps.LatLonData;
+import ucar.unidata.idv.control.MapDisplayControl;
 import ucar.unidata.util.GuiUtils;
-
 
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,16 +38,18 @@ import java.beans.PropertyChangeListener;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
 
 /**
  * A panel to hold the gui for one lat lon line
  */
 public class LatLonPanel extends JPanel {
 
-    /** flag for ignoring events */
+	private static final long serialVersionUID = 1L;
+
+	/** flag for ignoring events */
     private boolean ignoreEvents = false;
 
 
@@ -64,7 +66,6 @@ public class LatLonPanel extends JPanel {
     JTextField baseField;
 
     /** Shows the color */
-    //JButton colorButton;
     GuiUtils.ColorSwatch colorButton;
 
     /** The line width box */
@@ -82,6 +83,7 @@ public class LatLonPanel extends JPanel {
      * @param lld Holds the lat lon data
      *
      */
+    
     public LatLonPanel(LatLonData lld) {
         this.latLonData = lld;
         ignoreEvents    = true;
@@ -103,8 +105,11 @@ public class LatLonPanel extends JPanel {
                 if (ignoreEvents) {
                     return;
                 }
+                validateTextFields();
                 latLonData.setSpacing(
                     new Float(spacingField.getText()).floatValue());
+                // this ensures the formatting is consistent for lat/lon text fields
+                spacingField.setText("" + latLonData.getSpacing());
             }
         });
         baseField = new JTextField(String.valueOf(latLonData.getBase()), 6);
@@ -114,8 +119,16 @@ public class LatLonPanel extends JPanel {
                 if (ignoreEvents) {
                     return;
                 }
-                latLonData.setBase(
-                    new Float(baseField.getText()).floatValue());
+                validateTextFields();
+                if (latLonData.getIsLatitude()) {
+                	latLonData.setBase(
+                			new Float(baseField.getText()).floatValue());
+                } else {
+                	latLonData.setBase(
+                			new Float(baseField.getText()).floatValue());
+                }
+                baseField.setText("" + latLonData.getBase());
+                // this ensures the formatting is consistent for lat/lon text fields
             }
         });
 
@@ -233,18 +246,123 @@ public class LatLonPanel extends JPanel {
         return GuiUtils.doLayout(comps, 8, GuiUtils.WT_N, GuiUtils.WT_N);
     }
 
-
-
-
     /**
      * Apply any of the state in the gui (e.g., spacing) to the  latLonData
      */
+    
     public void applyStateToData() {
         // need to get the TextField values because people could type in a new value
         // without hitting return.  Other widgets should trigger a change
         latLonData.setSpacing(new Float(spacingField.getText()).floatValue());
         latLonData.setBase(new Float(baseField.getText()).floatValue());
     }
+
+
+	/**
+	 * @throws HeadlessException
+	 */
+	private void validateTextFields() throws HeadlessException {
+        
+		float curVal = latLonData.getSpacing();
+		//System.err.println("");
+        //System.err.println("Is this Lat?: " + latLonData.getIsLatitude());
+        boolean isLat = latLonData.getIsLatitude();
+        boolean llLinked = ((MapDisplayControl.LatLonState) latLonData).getMapDisplayControl().getApplyChangesToAllLatLon();
+        //System.err.println("Lat/Lon panels are linked: " + llLinked);
+        // TJJ May 2014, validate input, bad data was causing NPEs
+        try {
+        	
+        	// First check the interval fields
+        	float val = Float.parseFloat(spacingField.getText());
+        	if (val <= 0.0f) {
+        		JOptionPane.showMessageDialog(null, 
+        				"Interval must be greater than zero",
+        				"Invalid Latitude or Longitude Interval",
+        				JOptionPane.ERROR_MESSAGE);
+        		// put text field back to old value
+        		spacingField.setText("" + curVal);
+        		return;
+        	} else {
+        		if (isLat) {
+        			if (val > 180) {
+        				JOptionPane.showMessageDialog(null, 
+        						"Value exceeds valid bounds",
+        						"Invalid Lat/Lon interval",
+        						JOptionPane.ERROR_MESSAGE);
+        				// put text field back to old value
+        				spacingField.setText("" + curVal);
+        				return;
+        			}
+        		} else {
+        			if (llLinked) {
+        				if (val > 180) {
+        					JOptionPane.showMessageDialog(null, 
+        							"Unlink to set Longitude interval > 180",
+        							"Invalid Longitude interval while linked",
+        							JOptionPane.ERROR_MESSAGE);
+        					// put text field back to old value
+        					spacingField.setText("" + curVal);
+        					return;
+        				}
+        			} else {
+        				if (val > 360) {
+        					JOptionPane.showMessageDialog(null, 
+        							"Value exceeds valid bounds",
+        							"Invalid Lat/Lon interval",
+        							JOptionPane.ERROR_MESSAGE);
+        					// put text field back to old value
+        					spacingField.setText("" + curVal);
+        					return;
+        				}
+        			}
+        		}
+        	}
+        } catch (NumberFormatException nfe) {
+        	//System.err.println("NFE: " + spacingField.getText());
+        	// Also an error, different message
+    		JOptionPane.showMessageDialog(null, 
+    				"Value entered is not a number",
+    				"Invalid Latitude or Longitude Interval",
+    				JOptionPane.ERROR_MESSAGE);
+    		// put text field back to old value
+    		spacingField.setText("" + curVal);
+        }
+        
+        // Now the base (offset) fields
+		float curBase = latLonData.getBase();
+        try {
+        	float val = Float.parseFloat(baseField.getText());
+        	if (latLonData.getIsLatitude()) {
+	        	if ((val < -90.0f) || (val > 90.0f)) {
+	        		JOptionPane.showMessageDialog(null, 
+	        				"Value must be a valid Latitude (-90 to 90)",
+	        				"Invalid Relative Latitude",
+	        				JOptionPane.ERROR_MESSAGE);
+	        		// put text field back to old value
+	        		baseField.setText("" + curBase);
+	        	}
+        	} else {
+	        	if ((val < -180.0f) || (val > 180.0f)) {
+	        		JOptionPane.showMessageDialog(null, 
+	        				"Value must be a valid Longitude (-180 to 180)",
+	        				"Invalid Relative Longitude",
+	        				JOptionPane.ERROR_MESSAGE);
+	        		// put text field back to old value
+	        		baseField.setText("" + curBase);
+	        	}
+        	}
+        } catch (NumberFormatException nfe) {
+        	//System.err.println("NFE: " + baseField.getText());
+        	// Also an error, different message
+    		JOptionPane.showMessageDialog(null, 
+    				"Value entered is not a number",
+    				"Invalid Relative Latitude or Longitude",
+    				JOptionPane.ERROR_MESSAGE);
+    		// put text field back to old value
+    		baseField.setText("" + curBase);
+        }
+        
+	}
 
 
     /**
@@ -255,6 +373,20 @@ public class LatLonPanel extends JPanel {
     public LatLonData getLatLonData() {
         return latLonData;
     }
+
+	public void set360(boolean checked) {
+		if (! this.getLatLonData().getIsLatitude()) {
+	        if (checked) {
+	        	// add 180 to lat/lon relative text fields
+	        	Float f = new Float(baseField.getText()).floatValue();
+	        	baseField.setText("" + (f + 180));
+	        } else {
+	        	// subtract 180 to lat/lon relative text fields
+	        	Float f = new Float(baseField.getText()).floatValue();
+	        	baseField.setText("" + (f - 180));
+	        }
+		}
+	}
 
 
 }

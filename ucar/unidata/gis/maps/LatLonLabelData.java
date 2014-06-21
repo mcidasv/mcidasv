@@ -20,30 +20,23 @@
 
 package ucar.unidata.gis.maps;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.rmi.RemoteException;
+import java.util.Arrays;
 
+import sun.misc.Sort;
 import ucar.unidata.ui.FontSelector;
 import ucar.unidata.ui.drawing.Glyph;
 import ucar.unidata.util.Misc;
-
 import ucar.visad.display.LatLonLabels;
-import ucar.visad.display.TextDisplayable;
-
 import visad.TextControl;
 import visad.TextType;
 import visad.VisADException;
 
-
-import java.awt.Color;
-import java.awt.Font;
-
-import java.rmi.RemoteException;
-
-
-
 /**
  * A data structure to hold display attributes for lat/lon labels
  */
-
 
 public class LatLonLabelData {
 
@@ -107,12 +100,12 @@ public class LatLonLabelData {
      *
      */
     public LatLonLabelData(boolean isLatitude, float interval) {
-        this(isLatitude, interval, (isLatitude
-                                    ? -90
-                                    : -180), (isLatitude
-                ? 90
-                : 180), 0, new float[] { 0 }, Glyph.PT_MM, null, Color.white,
-                        true);
+    	this(isLatitude, interval, (isLatitude ? -90 : -180), 
+    							   (isLatitude ? 90 : 180), 
+    							   0, new float[] { 0 }, Glyph.PT_MM, null, Color.white, true);
+    	// TJJ 2014 new default alignments
+    	if (isLatitude) alignment = Glyph.PT_UL;
+    	if (! isLatitude) alignment = Glyph.PT_UR;
     }
 
     /**
@@ -129,6 +122,9 @@ public class LatLonLabelData {
                            float max, float base) {
         this(isLatitude, interval, min, max, base, new float[] { 0 },
              Glyph.PT_MM, null, Color.white, true);
+        // TJJ 2014 new default alignments
+        if (isLatitude) alignment = Glyph.PT_UL;
+        if (! isLatitude) alignment = Glyph.PT_UR;
     }
 
     /**
@@ -157,6 +153,9 @@ public class LatLonLabelData {
         this.minValue      = minValue;
         this.labelLines    = labelLines;
         this.alignment     = alignment;
+        // TJJ 2014 new default alignments
+        if (isLatitude) this.alignment = Glyph.PT_UL;
+        if (! isLatitude) this.alignment = Glyph.PT_UR;
         this.labelFont     = labelFont;
         this.color         = color;
         this.fastRendering = fastRendering;
@@ -203,7 +202,9 @@ public class LatLonLabelData {
      *  Gets called when any of the state has been changed.
      *  Is here so a subclass can be easily notified when something changes.
      */
-    protected void stateChanged() {}
+    protected void stateChanged() {
+    	//System.err.println("stateChanged, but doing nothing...");
+    }
 
 
     /**
@@ -474,6 +475,7 @@ public class LatLonLabelData {
      * @return  the string
      */
     public static String formatLabelLines(float[] vals) {
+    	Arrays.sort(vals);
         StringBuffer buf = new StringBuffer();
         for (int i = 0; i < vals.length; i++) {
             buf.append(vals[i]);

@@ -210,7 +210,7 @@ public class LatLonLines extends LineDrawing {
 
         this.spacing = spacing;
 
-        createLines();
+        if (spacing > 0) createLines();
     }
 
     /**
