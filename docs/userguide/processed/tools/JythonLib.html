@@ -32,7 +32,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/JythonLib.h
 <div class="pagetitle">Jython Library</div>
 <a name="grid" id="grid"></a>
 <h2>Module: grid</h2>
-This is the doc for the grid module
+This is the doc for the grid module. For more information, see <a href="GridFormulas.html">Description of Formulas - Grids</a>.
 <hr>
 <p><a name="applyToRange" id="applyToRange"></a><code class="command">applyToRange(function, data):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Apply the function name to each timestep of the data</p>
@@ -44,20 +44,24 @@ This is the doc for the grid module
 <p style="padding:0;margin-left:20;margin-top:0">combine several fields together</p>
 <p><a name="differenceFromBaseTime" id="differenceFromBaseTime"></a><code class="command">differenceFromBaseTime(field):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Set the value of each time step N: D(N)=D(N)-D(0)</p>
+<p><a name="exportGridToNetcdf" id="exportGridToNetcdf"></a><code class="command">exportGridToNetcdf(grid, filename):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Writes out the gridded data to a CF-compliant netCDF file</p>
 <p><a name="extractLatitudeFromNWPGrid" id="extractLatitudeFromNWPGrid"></a><code class="command">extractLatitudeFromNWPGrid(fieldimpl):</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">Get the latitude coordinate from a grid. Return a grid of the latitudes at each point.</p>
+<p style="padding:0;margin-left:20;margin-top:0">Get the latitude coordinate from a grid. Return a grid of the latitudes at each point</p>
 <p><a name="extractLongitudeFromNWPGrid" id="extractLongitudeFromNWPGrid"></a><code class="command">extractLongitudeFromNWPGrid(fieldimpl):</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">Get the longitude coordinate from a grid. Return a grid of the longitudes at each point.</p>
+<p style="padding:0;margin-left:20;margin-top:0">Get the longitude coordinate from a grid. Return a grid of the longitudes at each point</p>
 <p><a name="extractPressureFromNWPGrid" id="extractPressureFromNWPGrid"></a><code class="command">extractPressureFromNWPGrid(fieldimpl):</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">Get the pressure coordinate from a time series grid and return a grid of the pressure at all points. Input grid must have pressure or height (which is converted to pressure in the standard atmosphere). User must be sure input is a suitable FlatField.</p>
+<p style="padding:0;margin-left:20;margin-top:0">Get the pressure coordinate from a time series grid and return a grid of the pressure at all points. Input grid must have pressure or height (which is converted to pressure in the standard atmosphere). User must be sure input is a suitable FlatField</p>
 <p><a name="getAltitude" id="getAltitude"></a><code class="command">getAltitude(z):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Change units from geopotential meters to meters</p>
 <p><a name="getNthTimeGrid" id="getNthTimeGrid"></a><code class="command">getNthTimeGrid(fieldimpl, Nth):</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">Get the Nth grid in time series of grids; User must be sure input is a suitable data field. returns a single time. Nth is an integer, &gt;=0, &lt;= max index of grid time series.</p>
+<p style="padding:0;margin-left:20;margin-top:0">Get the Nth grid in time series of grids; User must be sure input is a suitable data field. returns a single time. Nth is an integer, &gt;=0, &lt;= max index of grid time series</p>
 <p><a name="getSliceAtAltitude" id="getSliceAtAltitude"></a><code class="command">getSliceAtAltitude(fieldimpl, alt, unit):</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">Extract a 2D horizontal slice from a 3D grid at the given altitude; level is a real number; if unit is supplied, it must be compatible with meters (ft, fathoms, etc) param fieldimpl is a grid which may have one or more time steps.</p>
+<p style="padding:0;margin-left:20;margin-top:0">Extract a 2D horizontal slice from a 3D grid at the given altitude; level is a real number; if unit is supplied, it must be compatible with meters (ft, fathoms, etc) param fieldimpl is a grid which may have one or more time steps</p>
 <p><a name="getSliceAtLevel" id="getSliceAtLevel"></a><code class="command">getSliceAtLevel(fieldimpl, level):</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">Extract a 2D horizontal slice from a 3D grid at "Level." level is a real number; must be appropriate for the grid. param fieldimpl is a grid which may have one or more time steps.</p>
+<p style="padding:0;margin-left:20;margin-top:0">Extract a 2D horizontal slice from a 3D grid at "Level." level is a real number; must be appropriate for the grid. param fieldimpl is a grid which may have one or more time steps</p>
+<p><a name="GP2Z" id="GP2Z"></a><code class="command">GP2Z(gp):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Convert Geopotential (GP) to Height (Z)</p>
 <p><a name="horizontalAdvection" id="horizontalAdvection"></a><code class="command">horizontalAdvection(param, u, v):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Horizontal advection</p>
 <p><a name="horizontalDivergence" id="horizontalDivergence"></a><code class="command">horizontalDivergence(param, u, v):</code></p>
@@ -66,6 +70,8 @@ This is the doc for the grid module
 <p style="padding:0;margin-left:20;margin-top:0">Wrapper for calculating layer average</p>
 <p><a name="layerDiff" id="layerDiff"></a><code class="command">layerDiff(grid, top, bottom):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Wrapper for calculating layer difference</p>
+<p><a name="lonFlip" id="lonFlip"></a><code class="command">lonFlip(grid):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Flip the longitudes in a grid from -180-180 to 0-360 (or vice-versa).  Only works for cyclic rectilinear grids</p>
 <p><a name="make2D" id="make2D"></a><code class="command">make2D(slice):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Make a 2D slice from a 3D slice at a single level</p>
 <p><a name="makeFlowField" id="makeFlowField"></a><code class="command">makeFlowField(a, b, c):</code></p>
@@ -75,6 +81,8 @@ This is the doc for the grid module
 </div>
 <p><a name="makeTimeSequence" id="makeTimeSequence"></a><code class="command">makeTimeSequence(g):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Merge a set of single time grids/images into a time sequence</p>
+<p><a name="makeTopographyFromField" id="makeTopographyFromField"></a><code class="command">makeTopographyFromField(grid):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Make a topography field out of a grid</p>
 <p><a name="makeTrueVector" id="makeTrueVector"></a><code class="command">makeTrueVector(u, v):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">True wind vectors</p>
 <p><a name="makeVector" id="makeVector"></a><code class="command">makeVector(a, b):</code></p>
@@ -82,6 +90,8 @@ This is the doc for the grid module
 <div class="jython">
 <p style="padding:0;margin-left:20;margin-top:0">makeVector(a,b) = [a,b]</p>
 </div>
+<p><a name="maskGrid" id="maskGrid"></a><code class="command">maskGrid(grid, mask, value, resample):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Mask one grid by the values in the other.  Value is the masking value</p>
 <p><a name="maxOverTime" id="maxOverTime"></a><code class="command">maxOverTime(field, makeTimes):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Take the max of the values in each time step if makeTimes is true (1) then return a field mapping of all times to the average. Else return the max</p>
 <p><a name="mergeTimeSequences" id="mergeTimeSequences"></a><code class="command">mergeTimeSequences(g):</code></p>
@@ -96,6 +106,10 @@ This is the doc for the grid module
 <p style="padding:0;margin-left:20;margin-top:0">Remove the units from a grid</p>
 <p><a name="resampleGrid" id="resampleGrid"></a><code class="command">resampleGrid(oldGrid, gridwithNewDomain):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Display gridded data on a new domain</p>
+<p><a name="runave" id="runave"></a><code class="command">runave(grid, nave, option):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Generate a running average. nave = number of steps to average over. option = option for unsmoothed end points (0: set to missing; 1: use symmetry; -1: assume cyclic)</p>
+<p><a name="substitute" id="suubstitute"></a><code class="command">substitute(data, low, high, newValue):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Change values in data between low/high to newValue</p>
 <p><a name="sumFromBaseTime" id="sumFromBaseTime"></a><code class="command">sumFromBaseTime(field):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Set the value of each time step N: D(N)=D(N)+D(0)</p>
 <p><a name="sumOverTime" id="sumOverTime"></a><code class="command">sumOverTime(field, makeTimes):</code></p>
@@ -104,6 +118,10 @@ This is the doc for the grid module
 <p style="padding:0;margin-left:20;margin-top:0">Set the value of each time step N: D(N)=D(N)-D(N+offset) where offset should be negative</p>
 <p><a name="timeStepSum" id="timeStepSum"></a><code class="command">timeStepSum(field, offset):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Set the value of each time step N: D(N)=D(N)+D(N+offset) where offset should be negative</p>
+<p><a name="uvFromWindDir" id="uvFromWindDir"></a><code class="command">uvFromWindDir(dir):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Create the vector field using the wind direction</p>
+<p><a name="wgt_runave" id="wgt_runave"></a><code class="command">wgt_runave(grid, wgts, option):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Generate a weighted running average. wgts = comma separated list of weights option = option for unsmoothed end points (0: set to missing; 1: use symmetry; -1: assume cyclic)</p>
 <p><a name="windShear" id="windShear"></a><code class="command">windShear(u, v, z, top, bottom):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Calculate the wind shear between discrete layers</p>
 <div class="jython">
@@ -138,9 +156,13 @@ This is the doc for the Grid Diagnostics module. These functions are based on th
 <p><a name="avor" id="avor"></a><code class="command">avor(V):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Absolute Vorticity</p>
 <div class="jython">AVOR ( V ) = VOR ( V ) + CORL(V)</div>
+<p><a name="circs" id="circs"></a><code class="command">circs(S, D):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Apply a circular aperature smoothing to the grid points.  The weighting function is the circular aperature diffraction function.  D is the radius of influence in grid increments, increasing D increases the smoothing (default D=2)</p>
 <p><a name="corl" id="corl"></a><code class="command">corl(S):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Coriolis Parameter for all points in a grid</p>
 <div class="jython">CORL = TWO_OMEGA*sin(latr)</div>
+<p><a name="cress" id="cress"></a><code class="command">cress(S, D):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Apply a Cressman smoothing to the grid points.  The smoothed value is given by a weighted average of surrounding grid points.  D is the radius of influence in grid increments, increasing D increases the smoothing (default D=2)</p>
 <p><a name="cros" id="cros"></a><code class="command">cros(V1, V2):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Vector cross product magnitude</p>
 <div class="jython">CROS ( V1, V2 ) = u1 * v2 - u2 * v1</div>
@@ -151,6 +173,11 @@ This is the doc for the Grid Diagnostics module. These functions are based on th
 <p><a name="defr" id="defr"></a><code class="command">defr(V):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Total deformation</p>
 <div class="jython">DEF ( V ) = ( STRD (V) ** 2 + SHR (V) ** 2 ) ** .5</div>
+<p><a name="dirn" id="dirn"></a><code class="command">dirn(V):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">North relative direction of a vector</p>
+<div class="jython">DIRN ( V ) = DIRR ( un(v), vn(v))</div>
+<p><a name="dirr" id="dirr"></a><code class="command">dirr(V):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Grid relative direction of a vector</p>
 <p><a name="div" id="div"></a><code class="command">div(V):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Horizontal Divergence</p>
 <div class="jython">DIV ( V ) = DDX ( u ) + DDY ( v )</div>
@@ -172,6 +199,10 @@ This is the doc for the Grid Diagnostics module. These functions are based on th
 <p><a name="grad" id="grad"></a><code class="command">grad(S):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Gradient of a scalar</p>
 <div class="jython">GRAD ( S ) = [ DDX ( S ), DDY ( S ) ]</div>
+<p><a name="gwfs" id="gwfs"></a><code class="command">gwfs(S, N):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Horizontal smoothing using normally distributed weights  with theoretical response of 1/e for N * delta-x wave.  Increasing N increases the smoothing (default N=6) </p>
+<p><a name="gwfv" id="gwfv"></a><code class="command">gwfv(V, N):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Horizontal smoothing using normally distributed weights  with theoretical response of 1/e for N * delta-x wave.  Increasing N increases the smoothing (default N=6) </p>
 <p><a name="inad" id="inad"></a><code class="command">inad(V1, V2):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Inertial advective wind</p>
 <div class="jython">INAD ( V1, V2 ) = [ DOT ( V1, GRAD (u2) ), DOT ( V1, GRAD (v2) ) ]</div>
@@ -182,7 +213,7 @@ This is the doc for the Grid Diagnostics module. These functions are based on th
 <p style="padding:0;margin-left:20;margin-top:0">Laplacian operator</p>
 <div class="jython">LAP ( S ) = DIV ( GRAD (S) )</div>
 <p><a name="latr" id="latr"></a><code class="command">latr(S):</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">Latitudue all points in a grid</p>
+<p style="padding:0;margin-left:20;margin-top:0">Latitude all points in a grid</p>
 <p><a name="lav" id="lav"></a><code class="command">lav(S, level1, level2):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Layer Average</p>
 <div class="jython">LAV ( S ) = ( S (level1) + S (level2) ) / 2.</div>
@@ -196,18 +227,43 @@ This is the doc for the Grid Diagnostics module. These functions are based on th
 <p><a name="mul" id="mul"></a><code class="command">mul(S1, S2):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Multiply</p>
 <div class="jython">MUL (S1, S2) = S1 * S2</div>
+<p><a name="pvor" id="pvor"></a><code class="command">pvor(S, V):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Potential vorticity (usually from theta and wind)</p>
 <p><a name="quo" id="quo"></a><code class="command">quo(S1, S2):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Divide</p>
 <div class="jython">QUO (S1, S2) = S1 / S2</div>
+<p><a name="qvcl" id="qvcl"></a><code class="command">qvcl(THTA, V):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Q-vector ( K / m / s )</p>
+<div class="jython">QVCL ( THTA, V ) = ( 1/( D (THTA) / DP ) ) *  [ ( DOT ( DVDX (V), GRAD (THTA) ) ),  ( DOT ( DVDY (V), GRAD (THTA) ) ) ] </div>
 <p><a name="qvec" id="qvec"></a><code class="command">qvec(S, V):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Q-vector at a level ( K / m / s )</p>
 <div class="jython">QVEC ( S, V ) = [ - ( DOT ( DVDX (V), GRAD (S) ) ), - ( DOT ( DVDY (V), GRAD (S) ) ) ] where S can be any thermal parameter, usually THTA.</div>
+<p><a name="rects" id="rects"></a><code class="command">rects(S, D):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Apply a rectangular aperature smoothing to the grid points.  The weighting  function is the product of the rectangular aperature diffraction function  in the x and y directions.  D is the radius of influence in grid  increments, increasing D increases the smoothing (default D=2) </p>
+<p><a name="rehl" id="rehl"></a><code class="command">rehl(temp, mixr):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Create relative humidity from temperature and mixing ratio (requires pressure domain)</p>
+<p><a name="savg" id="savg"></a><code class="command">savg(S):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Average over whole grid</p>
+<div class="jython">SAVG (S) = average of all non-missing grid point values</div>
+<p><a name="savs" id="savs"></a><code class="command">savs(S):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Average over grid subset</p>
+<div class="jython">SAVS (S) = average of all non-missing grid point values in the subset area</div>
 <p><a name="sdiv" id="sdiv"></a><code class="command">sdiv(S, V):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Horizontal Flux Divergence</p>
 <div class="jython">SDIV ( S, V ) = S * DIV ( V ) + DOT ( V, GRAD ( S ) )</div>
 <p><a name="shr" id="shr"></a><code class="command">shr(V):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Shear Deformation</p>
 <div class="jython">SHR ( V ) = DDX ( v ) + DDY ( u )</div>
+<p><a name="sm5s" id="sm5s"></a><code class="command">sm5s(S):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Smooth a scalar grid using a 5-point smoother</p>
+<div class="jython">SM5S ( S ) = .5 * S (i,j) + .125 * ( S (i+1,j) + S (i,j+1) +  S (i-1,j) + S (i,j-1) ) </div>
+<p><a name="sm9s" id="sm9s"></a><code class="command">sm9s(S):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Smooth a scalar grid using a 9-point smoother</p>
+<div class="jython">SM9S ( S ) = .25 * S (i,j) + .125 * ( S (i+1,j) + S (i,j+1) +  S (i-1,j) + S (i,j-1) )  + .0625 * ( S (i+1,j+1) +  S (i+1,j-1) +  S (i-1,j+1) +  S (i-1,j-1) ) </div>
+<p><a name="sm5v" id="sm5v"></a><code class="command">sm5v(V):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Smooth a scalar grid using a 5-point smoother (see sm5s)</p>
+<p><a name="sm9v" id="sm9v"></a><code class="command">sm9v(V):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Smooth a scalar grid using a 9-point smoother (see sm9s)</p>
 <p><a name="strd" id="strd"></a><code class="command">strd(V):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Stretching Deformation</p>
 <div class="jython">STRD ( V ) = DDX ( u ) - DDY ( v )</div>
@@ -228,6 +284,9 @@ This is the doc for the Grid Diagnostics module. These functions are based on th
 <p><a name="vadd" id="vadd"></a><code class="command">vadd(V1, V2):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">add the components of 2 vectors</p>
 <div class="jython">VADD (V1, V2) = [ u1+u2, v1+v2 ]</div>
+<p><a name="vecn" id="vecn"></a><code class="command">vecn(S1, S2):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Make a true north vector from two components</p>
+<div class="jython">VECR ( S1, S2 ) = [ S1, S2 ]</div>
 <p><a name="vecr" id="vecr"></a><code class="command">vecr(S1, S2):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Make a vector from two components</p>
 <div class="jython">VECR ( S1, S2 ) = [ S1, S2 ]</div>
@@ -256,7 +315,44 @@ This is the doc for the Grid Diagnostics module. These functions are based on th
 <p><a name="wshr" id="wshr"></a><code class="command">wshr(V, Z, top, bottom):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Magnitude of the vertical wind shear in a layer</p>
 <div class="jython">WSHR ( V ) = MAG [ VLDF (V) ] / LDF (Z)</div>
+<p><a name="xav" id="xav"></a><code class="command">xav(S):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Average along a grid row. KXD = number of points in row;  KNT = number of non-missing points in row;  XAV for a row is stored at every point in that row</p>
+<div class="jython">XAV (S) = ( S (X1) + S (X2) + ... + S (KXD) ) / KNT</div>
+<p><a name="xsum" id="xsum"></a><code class="command">xsum(S):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Sum along a grid row. KXD = number of points in row;  XSUM for a row is stored at every point in that row</p>
+<div class="jython">XSUM (S) = ( S (X1) + S (X2) + ... + S (KXD) )</div>
+<p><a name="yav" id="yav"></a><code class="command">yav(S):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Average along a grid column. KYD = number of points in column;  KNT = number of non-missing points in column  </p>
+<div class="jython">YAV (S) = ( S (Y1) + S (Y2) + ... + S (KYD) ) / KNT</div>
+<p><a name="ysum" id="ysum"></a><code class="command">ysum(S):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Sum along a grid column. KYD = number of points in row;  YSUM for a column is stored at every point in that column</p>
+<div class="jython">YSUM (S) = ( S (Y1) + S (Y2) + ... + S (KYD) )</div>
+<p><a name="zav" id="zav"></a><code class="command">zav(S):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Average across the levels of a grid at all points. KZD = number of levels;  KNT = number of non-missing points in column  </p>
+<div class="jython">ZAV (S) = ( S (Z1) + S (Z2) + ... + S (KZD) ) / KNT</div>
+<p><a name="zsum" id="zsum"></a><code class="command">zsum(S):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Sum across the levels of a grid at all points. KZD = number of levels  ZSUM for a vertical column is stored at every point  </p>
+<div class="jython">ZSUM (S) = ( S (Z1) + S (Z2) + ... + S (KZD) )</div>
 <a name="image" id="image"></a>
+<h2>Module: ensemble</h2>
+This is the doc for the grid ensemble module.  For more information, see <a href="GridFormulas.html">Description of Formulas - Grids</a>.
+<hr>
+<p><a name="ens_mode" id="ens_mode"></a><code class="command">ens_mode(grid):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Mode value</p>
+<p><a name="ens_prcntl" id="ens_prcntl"></a><code class="command">ens_prcntl(grid, percent):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Percentile value</p>
+<p><a name="ens_savg" id="ens_savg"></a><code class="command">ens_savg(grid):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Basic ensemble average</p>
+<p><a name="ens_smax" id="ens_smax"></a><code class="command">ens_smax(grid):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Max value of all members</p>
+<p><a name="ens_smin" id="ens_smin"></a><code class="command">ens_smin(grid):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Minimum value of all members</p>
+<p><a name="ens_srng" id="ens_srng"></a><code class="command">ens_srng(grid):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Max - min grid values</p>
+<p><a name="ens_ssprd" id="ens_ssprd"></a><code class="command">ens_ssprd(grid):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Standard deviation of all members</p>
+<p><a name="ens_uprob" id="ens_uprob"></a><code class="command">ens_uprob(grid, logicalOp1, pValue1, and_or, logicalOp2, pValue2, exptdLoBound, exptdUpBound):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Ensemble univariate probability calculation</p>
 <h2>Module: image</h2>
 <hr>
 <p><a name="combineRGB" id="combineRGB"></a><code class="command">combineRGB(red, green, blue):</code></p>
@@ -265,9 +361,14 @@ This is the doc for the Grid Diagnostics module. These functions are based on th
 <p style="padding:0;margin-left:20;margin-top:0">This takes a image data object and a lat/lon bounding box and adds a lat/lon domain to the data. Use it in conjunction with a formula:</p>
 <a name="maps" id="maps"></a>
 <h2>Module: maps</h2>
+A set of utilities to apply to a map field. For more information, see <a href="MapFormulas.html">Description of Formulas - Maps</a>.
 <hr>
+<p><a name="applyFunctionToValuesInField" id="applyFunctionToValuesInField"></a><code class="command">applyFunctionToValuesInField(function, field, min, max, inside):</code></p>
+<p><a name="applyFunctionToValuesInRange" id="applyFunctionToValuesInRange"></a><code class="command">applyFunctionToValuesInRange(function, range, timeStep, min, max, inside):</code></p>
+<p><a name="applyToIndices" id="applyToIndices"></a><code class="command">applyToIndices(function, range, timeStep, indices):</code></p>
 <p><a name="averageFromMap" id="averageFromMap"></a><code class="command">averageFromMap(field, mapSets):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">mapSets defines a set of polygons. This procedure fills the areas in the field are enclosed by each polygon with the average value within that area</p>
+<p><a name="averageFromMapAndClip" id="averageFromMapAndClip"></a><code class="command">averageFromMapAndClip(field, mapSets):</code></p>
 <p><a name="averageRangeFromMap" id="averageRangeFromMap"></a><code class="command">averageRangeFromMap(range, timeStep, mapSets):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">mapSets defines a set of polygons. This procedure fills the areas in the field are enclosed by each polygon with the average value within that area</p>
 <p><a name="filterMaps" id="filterMaps"></a><code class="command">filterMaps(mapSets, propName, operator, value):</code></p>
@@ -280,6 +381,14 @@ This is the doc for the Grid Diagnostics module. These functions are based on th
 <p style="padding:0;margin-left:20;margin-top:0">Make a 3d map. map - map line data - topo - topography dataset</p>
 <p><a name="makeFieldFromMapBounds" id="makeFieldFromMapBounds"></a><code class="command">makeFieldFromMapBounds(mapSets, length1, length2, fill, unit):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Make a field whose lat/lon area is the bounds of the given mapSet. It has length1 points in the x and length2 in the y. Fill it with the fill value and the given unit</p>
+<p><a name="mapsAbsoluteValue" id="mapsAbsoluteValue"></a><code class="command">mapsAbasoluteValue(originalValues, newValues, indexArray):</code></p>
+<p><a name="mapsApplyToField" id="mapsApplyToField"></a><code class="command">mapsApplyToField(function, field, mapSets, inside):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Fills the areas in the field are enclosed  by each polygon with the average value within that area. mapSets defines a set of polygons</p>
+<p><a name="mapsApplyToRange" id="mapsApplyToRange"></a><code class="command">mapsApplyToRange(function, range, timeStep, mapSets, inside):</code></p>
+<p><a name="mapsAverage" id="mapsAverage"></a><code class="command">mapsAverage(originalValues, newValues, indexArray):</code></p>
+<p><a name="mapsMax" id="mapsMax"></a><code class="command">mapsMax(originalValues, newValues, indexArray, value):</code></p>
+<p><a name="mapsMin" id="mapsMin"></a><code class="command">mapsMin(originalValues, newValues, indexArray, value):</code></p>
+<p><a name="mapsSetValue" id="mapsSetValue"></a><code class="command">mapsSet(originalValues, newValues, indexArray, value):</code></p>
 <p><a name="subsetFromMap" id="subsetFromMap"></a><code class="command">subsetFromMap(field, mapSets, fillValue, inverse):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">mapSets defines a set of polygons. This procedure fills the areas in the field that are not enclosed by the polygons with the fill value. If inverse is 1 then it fills the areas that are enclosed</p>
 <p><a name="subsetRangeFromMap" id="subsetRangeFromMap"></a><code class="command">subsetRangeFromMap(range, timeStep, mapSets, fillValue, inverse):</code></p>
@@ -314,19 +423,25 @@ A set of utilities for selecting data and creating displays. For use from the Jy
 <p style="padding:0;margin-left:20;margin-top:0">Select up to 5 data choices. This returns a List of the data choices, not the actual Data To get the data do:</p>
 <div class="jython">dataList.get(0).getData(None)</div>
 <p><a name="setDataChoices" id="setDataChoices"></a><code class="command">setDataChoices(dataSource):</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">The given dataSource can be an actual data source or the name of a data source. This procedure will define a set of jython variables that correspond to the data choices held by the given data source.</p>
+<p style="padding:0;margin-left:20;margin-top:0">The given dataSource can be an actual data source or the name of a data source. This procedure will define a set of jython variables that correspond to the data choices held by the given data source</p>
 <p><a name="setDataSources" id="setDataSources"></a><code class="command">setDataSources():</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">This procedure will define a set of jython variables, 'dataSource0, dataSource1, ...' that correspond to loaded data sources.</p>
+<p style="padding:0;margin-left:20;margin-top:0">This procedure will define a set of jython variables, 'dataSource0, dataSource1, ...' that correspond to loaded data sources</p>
 <p><a name="showLib" id="showLib"></a><code class="command">showLib():</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Bring up the jython library dialog</p>
 <a name="misc" id="misc"></a>
 <h2>Module: misc</h2>
 A set of miscellaneous utilities.
 <hr>
+<p><a name="cloneArray" id="cloneArray"></a><code class="command">cloneArray(array):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Make a 2 dimensional float array filled with the given value</p>
 <p><a name="idveval" id="idveval"></a><code class="command">idveval(formula):</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">evaluate a formula</p>
+<p style="padding:0;margin-left:20;margin-top:0">Evaluate a formula</p>
 <p><a name="makeFloatArray" id="makeFloatArray"></a><code class="command">makeFloatArray(rows, cols, value):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">A utility to make a 2 dimensional float array filled with the given value</p>
+<p><a name="printSounding" id="printSounding"></a><code class="command">printSounding(sounding):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Print out the values of the sounding data</p>
+<p><a name="printSoundings" id="printSoundings"></a><code class="command">printSoundings(data):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Print out the values of the set of sounding data</p>
 <div class="childlist">
 <table width="100%"></table>
 </div>
