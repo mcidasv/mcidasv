@@ -8,6 +8,12 @@
     <property name="build.dir" location="${base.dir}/build/antbuild" />
     <property name="dist.dir" location="${base.dir}/dist" />
     <property name="lib.dir" location="${base.dir}/lib" />
+    <property name="sharedlib.dir" location="${lib.dir}/share" />
+    <property name="linuxx86lib.dir" location="${lib.dir}/linux-i586" />
+    <property name="linuxx64lib.dir" location="${lib.dir}/linux-amd64" />
+    <property name="windowsx86lib.dir" location="${lib.dir}/windows-i586" />
+    <property name="windowsx64lib.dir" location="${lib.dir}/windows-amd64" />
+    <property name="macosxlib.dir" location="${lib.dir}/macosx" />
     <property name="idvlib.dir" location="${base.dir}/../IDV/lib" />
     <property name="resource.dir" location="${base.dir}/edu/wisc/ssec/mcidasv/resources" />
     <property name="release.dir" location="${base.dir}/release" />
@@ -117,6 +123,15 @@
         <include name="rsyntaxtextarea-2.5.1.jar" />
         <include name="jul-to-slf4j-1.7.6.jar" />
         <include name="JSatTrak.jar"/>
+        <include name="j3dcore.jar" />
+        <include name="j3dutils.jar" />
+        <include name="vecmath.jar" />
+        <include name="gluegen-rt.jar" />
+        <include name="gluegen.jar" />
+        <include name="joal.jar" />
+        <include name="jocl.jar" />
+        <include name="jogl-all-noawt.jar" />
+        <include name="jogl-all.jar" />
     </fileset>
     
     <!-- List of IDV jars -->
@@ -130,7 +145,43 @@
         <include name="idv.jar" />
         <include name="repositorytds.jar" />
     </fileset>
-    
+
+    <fileset id="linux_x64.libs" dir="${dist.dir}">
+        <include name="gluegen-rt-natives-linux-amd64.jar" />
+        <include name="joal-natives-linux-amd64.jar" />
+        <include name="jocl-natives-linux-amd64.jar" />
+        <include name="jogl-all-natives-linux-amd64.jar" />
+    </fileset>
+
+    <fileset id="linux_x86.libs" dir="${dist.dir}">
+        <include name="gluegen-rt-natives-linux-i586.jar" />
+        <include name="joal-natives-linux-i586.jar" />
+        <include name="jocl-natives-linux-i586.jar" />
+        <include name="jogl-all-natives-linux-i586.jar" />
+    </fileset>
+
+    <fileset id="windows_x64.libs" dir="${dist.dir}">
+        <include name="gluegen-rt-natives-windows-amd64.jar" />
+        <include name="joal-natives-windows-amd64.jar" />
+        <include name="jocl-natives-windows-amd64.jar" />
+        <include name="jogl-all-natives-windows-amd64.jar" />
+    </fileset>
+
+    <fileset id="windows_x86.libs" dir="${dist.dir}">
+        <include name="gluegen-rt-natives-windows-i586.jar" />
+        <include name="joal-natives-windows-i586.jar" />
+        <include name="jocl-natives-windows-i586.jar" />
+        <include name="jogl-all-natives-windows-i586.jar" />
+    </fileset>
+
+    <fileset id="macosx.libs" dir="${dist.dir}">
+        <include name="gluegen-rt-natives-macosx-universal.jar" />
+        <include name="joal-natives-macosx-universal.jar" />
+        <include name="jocl-natives-macosx-universal.jar" />
+        <include name="jogl-all-natives-macosx-universal.jar" />
+    </fileset>
+
+
     <!-- Shared classpath -->
     <path id="app.classpath">
         <pathelement location="${dist.dir}/mcidasv.jar" />
@@ -138,7 +189,48 @@
         <fileset refid="mcv.libs" />
         <fileset refid="idv.libs" />
     </path>
-    
+
+    <path id="linux_x64.app.classpath">
+        <pathelement location="${dist.dir}/mcidasv.jar" />
+        <pathelement location="${dist.dir}/local-idv.jar" />
+        <fileset refid="mcv.libs" />
+        <fileset refid="idv.libs" />
+        <fileset refid="linux_x64.libs" />
+    </path>
+
+    <path id="linux_x86.app.classpath">
+        <pathelement location="${dist.dir}/mcidasv.jar" />
+        <pathelement location="${dist.dir}/local-idv.jar" />
+        <fileset refid="mcv.libs" />
+        <fileset refid="idv.libs" />
+        <fileset refid="linux_x86.libs" />
+    </path>
+
+    <path id="windows_x64.app.classpath">
+        <pathelement location="${dist.dir}/mcidasv.jar" />
+        <pathelement location="${dist.dir}/local-idv.jar" />
+        <fileset refid="mcv.libs" />
+        <fileset refid="idv.libs" />
+        <fileset refid="windows_x64.libs" />
+    </path>
+
+    <path id="windows_x86.app.classpath">
+        <pathelement location="${dist.dir}/mcidasv.jar" />
+        <pathelement location="${dist.dir}/local-idv.jar" />
+        <fileset refid="mcv.libs" />
+        <fileset refid="idv.libs" />
+        <fileset refid="windows_x86.libs" />
+    </path>
+
+    <path id="macosx.app.classpath">
+        <pathelement location="${dist.dir}/mcidasv.jar" />
+        <pathelement location="${dist.dir}/local-idv.jar" />
+        <fileset refid="mcv.libs" />
+        <fileset refid="idv.libs" />
+        <fileset refid="macosx.libs" />
+    </path>
+
+
     <path id="bundle.classpath">
         <pathelement location="${dist.dir}/mcidasv.jar" />
         <pathelement location="${dist.dir}/local-idv.jar" />
@@ -345,21 +437,110 @@
             </filterset>
         </copy>
     </target>
-    
+
+    <target name="_build.linux.x86" description="" if="isLinux.x86">
+        <echo>Building linuxx86</echo>
+        <copy todir="${dist.dir}" preservelastmodified="true">
+            <fileset dir="${linuxx86lib.dir}" includes="**/*.jar" />
+        </copy>
+        <javac srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
+               debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
+            <compilerarg value="-Xlint:${xlint}" />
+            <classpath refid="linux_x86.app.classpath" />
+        </javac>
+    </target>
+
+    <target name="_build.linux.x86_64" description="" if="isLinux.x86_64">
+        <echo>Building linuxx64</echo>
+        <copy todir="${dist.dir}" preservelastmodified="true">
+            <fileset dir="${linuxx64lib.dir}" includes="**/*.jar" />
+        </copy>
+        <javac srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
+               debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
+            <compilerarg value="-Xlint:${xlint}" />
+            <classpath refid="linux_x64.app.classpath" />
+        </javac>
+    </target>
+
+    <target name="_build.windows.x86" description="" if="isWindows.x86">
+        <echo>Building winx86</echo>
+        <copy todir="${dist.dir}" preservelastmodified="true">
+            <fileset dir="${windowsx86lib.dir}" includes="**/*.jar" />
+        </copy>
+        <javac srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
+               debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
+            <compilerarg value="-Xlint:${xlint}" />
+            <classpath refid="windows_x86.app.classpath" />
+        </javac>
+    </target>
+
+    <target name="_build.windows.x86_64" description="" if="isWindows.x86_64">
+        <echo>Building winx64</echo>
+        <copy todir="${dist.dir}" preservelastmodified="true">
+            <fileset dir="${windowsx64lib.dir}" includes="**/*.jar" />
+        </copy>
+        <javac srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
+               debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
+            <compilerarg value="-Xlint:${xlint}" />
+            <classpath refid="windows_x64.app.classpath" />
+        </javac>
+    </target>
+
+    <target name="_build.macosx" description="" if="isMac">
+        <echo>Building macosx</echo>
+        <copy todir="${dist.dir}" preservelastmodified="true">
+            <fileset dir="${macosxlib.dir}" includes="**/*.jar" />
+        </copy>
+        <javac srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
+               debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
+            <compilerarg value="-Xlint:${xlint}" />
+            <classpath refid="macosx.app.classpath" />
+        </javac>
+    </target>
+
+
     <!-- Build the edu tree -->
     <target name="build" description="Build the edu tree">
         <mkdir dir="${build.dir}" />
         <mkdir dir="${dist.dir}" />
         <copy todir="${dist.dir}" preservelastmodified="true">
             <fileset dir="${idvlib.dir}" includes="**/*.jar" />
-            <fileset dir="${lib.dir}" includes="**/*.jar" />
+            <!--<fileset dir="${lib.dir}" includes="**/*.jar" />-->
+            <fileset dir="${sharedlib.dir}" includes="**/*.jar" />
         </copy>
         
-        <javac srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
-            debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
-            <compilerarg value="-Xlint:${xlint}" />
-            <classpath refid="app.classpath" />
-        </javac>
+        <!--<javac srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"-->
+            <!--debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">-->
+            <!--<compilerarg value="-Xlint:${xlint}" />-->
+            <!--<classpath refid="app.classpath" />-->
+        <!--</javac>-->
+        <condition property="isLinux.x86">
+            <os family="unix" arch="x86" />
+        </condition>
+        <condition property="isLinux.x86_64">
+            <and>
+                <os family="unix" arch="x86_64"/>
+                <not>
+                    <os family="mac"/>
+                </not>
+            </and>
+        </condition>
+        <condition property="isWindows.x86">
+            <os family="windows" arch="x86" />
+        </condition>
+        <condition property="isWindows.x86_64">
+            <os family="windows" arch="x86_64" />
+        </condition>
+        <condition property="isMac">
+            <os family="mac" />
+        </condition>
+
+        <antcall target="_build.linux.x86" />
+        <antcall target="_build.linux.x86_64" />
+        <antcall target="_build.windows.x86" />
+        <antcall target="_build.windows.x86_64" />
+        <antcall target="_build.macosx"  />
+
         <copy todir="${build.dir}" preservelastmodified="true">
             <fileset dir="${base.dir}">
                 <patternset refid="jar.includes" />
@@ -413,7 +594,12 @@
         <!-- <delete file="${dist.dir}/${app.jarname}" failonerror="false" /> -->
         <tstamp prefix="jar" />
         <manifestclasspath property="mcidasv.class.path" jarfile="${dist.dir}/{${app.jarname}">
-            <classpath refid="app.classpath" />
+            <!--<classpath refid="app.classpath" />-->
+            <classpath refid="linux_x64.app.classpath" />
+            <classpath refid="linux_x86.app.classpath" />
+            <classpath refid="windows_x64.app.classpath" />
+            <classpath refid="windows_x86.app.classpath" />
+            <classpath refid="macosx.app.classpath" />
         </manifestclasspath>
         <jar destfile="${dist.dir}/${app.jarname}" index="false">
             <!-- <fileset dir="${base.dir}"> -->
@@ -435,7 +621,12 @@
         <!-- <delete file="${dist.dir}/${local-idv.jarname}" failonerror="false" /> -->
         <tstamp prefix="jar" />
         <manifestclasspath property="local-idv.class.path" jarfile="${dist.dir}/{${local-idv.jarname}">
-            <classpath refid="app.classpath" />
+            <!--<classpath refid="app.classpath" />-->
+            <classpath refid="linux_x64.app.classpath" />
+            <classpath refid="linux_x86.app.classpath" />
+            <classpath refid="windows_x64.app.classpath" />
+            <classpath refid="windows_x86.app.classpath" />
+            <classpath refid="macosx.app.classpath" />
         </manifestclasspath>
         <jar destfile="${dist.dir}/${local-idv.jarname}" index="false">
             <!-- <fileset dir="${base.dir}"> -->
@@ -543,7 +734,8 @@
 
   <!-- Build and run McIDAS-V application (large memory) -->
   <target name="jar.runlarge" depends="jar" description="Build and run McIDAS-V application (large memory)">
-    <java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
+    <!--<java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">-->
+      <java fork="true" maxmemory="${run.largeheap}" dir="${dist.dir}" jar="${dist.dir}/mcidasv.jar">
       <classpath refid="app.classpath" />
       <assertions refid="mcv.assertions"/>
       <jvmarg value="-XX:+UseConcMarkSweepGC" />
@@ -901,16 +1093,5 @@
             <arg value="-userpath" />
             <arg value="${userpath.dir}" />
         </java>
-    </target>
-    
-    <target name="package-app" depends="jar">
-        <taskdef name="appbundler"
-                 classname="com.joshondesign.appbundler.BundlerTask"
-                 classpath="/Users/jbeavers/repos/java-desktop-stuff/AppBundler/build/classes;/Users/jbeavers/repos/java-desktop-stuff/AppBundler/lib/XMLLib.jar"/>
-        <appbundler bundle="bundle.xml"
-                    target="mac"
-                    destdir="jardist"
-                    libdir="/Applications/mcidasv/nightly/adde;/Volumes/Code/Work/eclipse/mcv/dist;/Volumes/Code/Work/eclipse/mcv/lib;/Volumes/Code/Work/eclipse/github-idv/lib"/>
-                    
     </target>
 </project>
