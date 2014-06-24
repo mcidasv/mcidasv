@@ -345,7 +345,7 @@ public class LatLonPanel extends JPanel {
 	        	if ((val < -180.0f + LatLonLabelPanel.LON_OFFSET) || 
 	        		(val > 180.0f + LatLonLabelPanel.LON_OFFSET)) {
 	        		JOptionPane.showMessageDialog(null, 
-	        				"Value must be a valid Longitude (-180 to 180)",
+	        				"Value must be a valid Longitude " + LatLonLabelPanel.LON_RANGE,
 	        				"Invalid Relative Longitude",
 	        				JOptionPane.ERROR_MESSAGE);
 	        		// put text field back to old value

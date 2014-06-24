@@ -101,7 +101,7 @@ public class LatLonLabelPanel extends JPanel {
     public static int LON_OFFSET = 0;
     
     /** String to use in error messages for valid lon range */
-    String lonRange = "(-180 to 180)";
+    public static String LON_RANGE = "(-180 to 180)";
 
     /**
      * Create a LatLonLabelPanel
@@ -270,7 +270,7 @@ public class LatLonLabelPanel extends JPanel {
                     LatLonPanel llp = ((MapDisplayControl.LatLonLabelState) latLonLabelData).getMapDisplayControl().getLonPanel();
                     if (checked) {
                     	LON_OFFSET = 180;
-                    	lonRange = "(0 to 360)";
+                    	LON_RANGE = "(0 to 360)";
 
                     	// if latitude (MARKED AT LONGITUDES), update the placement points too
                     	LatLonLabelData llldLat = lllpLat.getLatLonLabelData();
@@ -295,7 +295,7 @@ public class LatLonLabelPanel extends JPanel {
                     	}
                     } else {
                     	LON_OFFSET = 0;
-                    	lonRange = "(-180 to 180)";
+                    	LON_RANGE = "(-180 to 180)";
 
                     	LatLonLabelData llldLat = lllpLat.getLatLonLabelData();
                     	float [] val = llldLat.getLabelLines();
@@ -394,9 +394,6 @@ public class LatLonLabelPanel extends JPanel {
         return GuiUtils.vbox(GuiUtils.left(settings), GuiUtils.left(extra));
     }
 
-
-
-
     /**
      * Apply any of the state in the gui (e.g., spacing) to the  latLonData
      */
@@ -420,18 +417,8 @@ public class LatLonLabelPanel extends JPanel {
         // TJJ May 2014, validate input, bad data was causing NPEs
         //System.err.println("Is this Lat?: " + latLonLabelData.getIsLatitude());
         boolean isLat = latLonLabelData.getIsLatitude();
-        // boolean is360 = latLonLabelData.getUse360();
-        LatLonLabelPanel lllpLon = ((MapDisplayControl.LatLonLabelState) latLonLabelData).getMapDisplayControl().getLonLabelPanel();
-        boolean is360Checked = lllpLon.use360Cbx.isSelected();
         boolean llLinked = ((MapDisplayControl.LatLonLabelState) latLonLabelData).getMapDisplayControl().getApplyChangesToAllLabels();
         //System.err.println("Lat/Lon panels are linked: " + llLinked);
-        
-        //System.err.println("360? " + is360Checked);
-        if (is360Checked) {
-        	lonRange = "(0 to 360)";
-        } else {
-        	lonRange = "(-180 to 180)";
-        }
         
         // First check the interval fields
 		float curVal = latLonLabelData.getInterval();
@@ -508,7 +495,7 @@ public class LatLonLabelPanel extends JPanel {
         		// valid range changes depending on convention checkbox
 	        	if ((val < (-180.0f + LON_OFFSET)) || (val > (180.0f + LON_OFFSET))) {
 	        		JOptionPane.showMessageDialog(null, 
-	        				"Value must be a valid Longitude " + lonRange,
+	        				"Value must be a valid Longitude " + LON_RANGE,
 	        				"Invalid Relative Longitude",
 	        				JOptionPane.ERROR_MESSAGE);
 	        		// put text field back to old value
@@ -545,7 +532,7 @@ public class LatLonLabelPanel extends JPanel {
         		for (int idx = 0; idx < val.length; idx++) {
         			if ((val[idx] < (-180.0f + LON_OFFSET)) || (val[idx] > (180.0f + LON_OFFSET))) {
         				JOptionPane.showMessageDialog(null, 
-        						"String must be valid Longitudes " + lonRange + " separated by semicolons",
+        						"String must be valid Longitudes " + LON_RANGE + " separated by semicolons",
         						"Invalid Label Placement Values",
         						JOptionPane.ERROR_MESSAGE);
         				// put text field back to old value
