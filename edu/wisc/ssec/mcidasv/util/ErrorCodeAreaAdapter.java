@@ -103,6 +103,8 @@ public class ErrorCodeAreaAdapter {
             return -11007;
         } else if ("The requested portion of the image does not exist".equals(message)) {
             return -11010;
+        } else if ("Unable to initialize navigation for this image".equals(message)) {
+            return -11001;
         } else {
             Throwable nextCause = cause.getCause();
             if (nextCause != null) {

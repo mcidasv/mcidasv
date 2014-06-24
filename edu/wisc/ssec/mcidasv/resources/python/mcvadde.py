@@ -321,6 +321,9 @@ class AddeJythonInvalidUnitError(AddeJythonError):
 class AddeJythonInvalidPortionError(AddeJythonError):
     pass
     
+class AddeJythonNavigationError(AddeJythonError):
+    pass
+    
 # class AddeJythonUnknownFormatError(AddeJythonError): pass
 
 # alias = ADDE  alias
@@ -1221,6 +1224,8 @@ def getADDEImage(localEntry=None,
                 raise AddeJythonInvalidUnitError(e)
             elif e.getAddeErrorCode() == -11010:
                 raise AddeJythonInvalidPortionError(e)
+            elif e.getAddeErrorCode() == -11001:
+                raise AddeJythonNavigationError(e)
             elif e.getAddeErrorCode() == -6000:
                 if accounting == DEFAULT_ACCOUNTING:
                     raise AddeJythonAccountingRequiredError(e)
