@@ -119,8 +119,10 @@ import ucar.unidata.xml.PreferenceManager;
 import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlUtil;
 import ucar.visad.UtcDate;
+
 import visad.DateTime;
 import visad.Unit;
+
 import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
 import edu.wisc.ssec.mcidasv.servermanager.AddePreferences;
 import edu.wisc.ssec.mcidasv.servermanager.AddePreferences.AddePrefConglomeration;
@@ -275,23 +277,8 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         "yyyy-MM-dd", "EEE, MMM dd yyyy HH:mm z", "HH:mm:ss", "HH:mm", 
         "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd'T'HH:mm:ssZ");
     
-    /** Is this a Unix-style platform? */
-    private boolean isUnixLike = false;
-    
-    /** Is this a Windows platform? */
-    private boolean isWindows = false;
-    
     /** The toolbar editor */
     private McvToolbarEditor toolbarEditor;
-    
-    /** */
-    private String userDirectory;
-    
-    /** */
-    private String userPrefs;
-    
-    /** */
-    private String defaultPrefs;
     
     /**
      * Prep as much as possible for displaying the preference window: load up
@@ -351,9 +338,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         EntryStore remoteAddeStore = ((McIDASV)getIdv()).getServerManager();
         AddePreferences prefs = new AddePreferences(remoteAddeStore);
         AddePrefConglomeration eww = prefs.buildPanel((McIDASV)getIdv());
-        String name = "SERVER MANAGER";
-//        mainPane.add(name, eww.getEntryPanel());
-//        ((CardLayout)mainPane.getLayout()).show(mainPane, name);
     }
     
     /**
@@ -486,34 +470,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         if (e.getValueIsAdjusting() == false) {
             String name = getSelectedName();
             ((CardLayout)mainPane.getLayout()).show(mainPane, name);
-        }
-    }
-    
-    /**
-     * Returns the container the corresponds to the currently selected label in
-     * the JList. Also stores the selected panel so that the next time a user
-     * tries to open the preferences they will start off in the panel they last
-     * selected.
-     * 
-     * @return The current container.
-     */
-    private Container getSelectedPanel() {
-        // make sure the selected panel persists across restarts
-        getIdv().getObjectStore().put(LAST_PREF_PANEL, labelList.getSelectedIndex());
-        String key = ((JLabel)listModel.getElementAt(labelList.getSelectedIndex())).getText();
-        if (key.equals(Constants.PREF_LIST_NAV_CONTROLS)) {
-            return makeEventPanel();
-        }
-        return prefMap.get(key);
-    }
-    
-    private Container getSelectedPanel(final String name) {
-        if (Constants.PREF_LIST_NAV_CONTROLS.equals(name)) {
-            return makeEventPanel();
-        } else if (prefMap.containsKey(name)) {
-            return prefMap.get(name);
-        } else {
-            return null;
         }
     }
     
@@ -1150,7 +1106,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         );
         
         PreferenceManager miscManager = new PreferenceManager() {
-            @SuppressWarnings("unchecked") // applyWidgets called the same way the IDV does it.
+            // applyWidgets called the same way the IDV does it.
             public void applyPreference(XmlObjectStore theStore, Object data) {
                 IdvPreferenceManager.applyWidgets((Hashtable)data, theStore);
                 theStore.put(MapViewManager.PREF_PROJ_DFLT, projBox.getSelectedItem());
@@ -1187,7 +1143,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         StateManager sm = (edu.wisc.ssec.mcidasv.StateManager)mcv.getStateManager();
         
         PreferenceManager basicManager = new PreferenceManager() {
-            @SuppressWarnings("unchecked") // IDV-style call to applyWidgets.
+            // IDV-style call to applyWidgets.
             public void applyPreference(XmlObjectStore theStore, Object data) {
                 applyWidgets((Hashtable)data, theStore);
                 getIdv().getIdvUIManager().setDateFormat();
@@ -1485,8 +1441,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         widgets.put(PREF_TIMEZONE, timeComboBox);
         
         JComponent timeHelpButton = getIdv().makeHelpButton("idv.tools.preferences.dateformat");
-        
-        JLabel timeExLabel = new JLabel("");
         
         try {
             dateExLabel.setText("ex:  " + new DateTime().toString());
@@ -1842,8 +1796,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             (Boolean) getIdv().getPreference(PROP_CHOOSERS_ALL, Boolean.TRUE);
             
         final List<String[]> choosers = getChooserData();
-        
-        final List<JCheckBox> choosersList = new ArrayList<JCheckBox>();
         
         final JRadioButton useAllBtn = new JRadioButton("Use all data sources",
                                            choosersAll.booleanValue());
