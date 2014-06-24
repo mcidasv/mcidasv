@@ -52,7 +52,6 @@ public class LatLonPanel extends JPanel {
 	/** flag for ignoring events */
     private boolean ignoreEvents = false;
 
-
     /** This holds the data that describes the latlon lines */
     private LatLonData latLonData;
 
@@ -342,7 +341,9 @@ public class LatLonPanel extends JPanel {
 	        		baseField.setText("" + curBase);
 	        	}
         	} else {
-	        	if ((val < -180.0f) || (val > 180.0f)) {
+        		// valid range changes depending on convention checkbox
+	        	if ((val < -180.0f + LatLonLabelPanel.LON_OFFSET) || 
+	        		(val > 180.0f + LatLonLabelPanel.LON_OFFSET)) {
 	        		JOptionPane.showMessageDialog(null, 
 	        				"Value must be a valid Longitude (-180 to 180)",
 	        				"Invalid Relative Longitude",
@@ -364,29 +365,14 @@ public class LatLonPanel extends JPanel {
         
 	}
 
+	/**
+	 * Get the latlondata object
+	 *
+	 * @return The latlondata object
+	 */
 
-    /**
-     * Get the latlondata object
-     *
-     * @return The latlondata object
-     */
-    public LatLonData getLatLonData() {
-        return latLonData;
-    }
-
-	public void set360(boolean checked) {
-		if (! this.getLatLonData().getIsLatitude()) {
-	        if (checked) {
-	        	// add 180 to lat/lon relative text fields
-	        	Float f = new Float(baseField.getText()).floatValue();
-	        	baseField.setText("" + (f + 180));
-	        } else {
-	        	// subtract 180 to lat/lon relative text fields
-	        	Float f = new Float(baseField.getText()).floatValue();
-	        	baseField.setText("" + (f - 180));
-	        }
-		}
+	public LatLonData getLatLonData() {
+		return latLonData;
 	}
-
 
 }

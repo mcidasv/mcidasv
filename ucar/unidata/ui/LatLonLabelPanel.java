@@ -251,7 +251,7 @@ public class LatLonLabelPanel extends JPanel {
                 }
             }
         });
-        //GuiUtils.setListData(formatSelector, LABEL_FORMATS);
+
         formatSelector.setSelectedItem(latLonLabelData.getLabelFormat());
         ignoreEvents = false;
 
@@ -267,6 +267,7 @@ public class LatLonLabelPanel extends JPanel {
                     // we also need a ref to Label Latitude panel
                     LatLonLabelPanel lllpLat = ((MapDisplayControl.LatLonLabelState) latLonLabelData).getMapDisplayControl().getLatLabelPanel();
                     LatLonLabelPanel lllpLon = ((MapDisplayControl.LatLonLabelState) latLonLabelData).getMapDisplayControl().getLonLabelPanel();
+                    LatLonPanel llp = ((MapDisplayControl.LatLonLabelState) latLonLabelData).getMapDisplayControl().getLonPanel();
                     if (checked) {
                     	LON_OFFSET = 180;
                     	lonRange = "(0 to 360)";
@@ -287,6 +288,10 @@ public class LatLonLabelPanel extends JPanel {
                     		if (f < 0) {
                     			lllpLon.baseField.setText("" + (f + 360));
                     		}
+                    	}
+                    	Float f = new Float(llp.baseField.getText()).floatValue();
+                    	if (f < 0) {
+                    		llp.baseField.setText("" + (f + 360));
                     	}
                     } else {
                     	LON_OFFSET = 0;
@@ -309,7 +314,13 @@ public class LatLonLabelPanel extends JPanel {
                     			lllpLon.baseField.setText("" + (f - 360));
                     		}
                     	}
+                    	Float f = new Float(llp.baseField.getText()).floatValue();
+                    	if (f > 180) {
+                    		llp.baseField.setText("" + (f - 360));
+                    	}
                     }
+                    applyStateToData();
+                    llp.applyStateToData();
                 }
             }
         });
@@ -494,7 +505,8 @@ public class LatLonLabelPanel extends JPanel {
 	        		baseField.setText("" + curBase);
 	        	}
         	} else {
-	        	if ((val < (-180.0f)) || (val > (180.0f))) {
+        		// valid range changes depending on convention checkbox
+	        	if ((val < (-180.0f + LON_OFFSET)) || (val > (180.0f + LON_OFFSET))) {
 	        		JOptionPane.showMessageDialog(null, 
 	        				"Value must be a valid Longitude " + lonRange,
 	        				"Invalid Relative Longitude",
