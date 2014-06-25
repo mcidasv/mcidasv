@@ -509,11 +509,11 @@
             <fileset dir="${sharedlib.dir}" includes="**/*.jar" />
         </copy>
         
-        <!--<javac srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"-->
-            <!--debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">-->
-            <!--<compilerarg value="-Xlint:${xlint}" />-->
-            <!--<classpath refid="app.classpath" />-->
-        <!--</javac>-->
+        <javac srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
+            debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
+            <compilerarg value="-Xlint:${xlint}" />
+            <classpath refid="app.classpath" />
+        </javac>
         <condition property="isLinux.x86">
             <os family="unix" arch="x86" />
         </condition>
