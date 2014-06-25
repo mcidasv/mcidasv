@@ -88,15 +88,11 @@
          dcdbs.ssec.wisc.edu/mcidasv/forums/viewtopic.php?f=24&t=1378 -->
     <property name="visad.texturemax" value="4096" />
 
-    <!-- Nightly build properties -->
-    <property name="cvs.root" value="${user.name}@cvs.ssec.wisc.edu:/cvsroot" />
-    <property name="cvs.rsh" value="ssh" />
-    
     <!-- Compiler options -->
     <property name="debug.flag" value="true" />
     <property name="deprecation.flag" value="false" />
-    <property name="source.ver" value="1.6" />
-    <property name="target.ver" value="1.6" />
+    <property name="source.ver" value="1.7" />
+    <property name="target.ver" value="1.7" />
     
     <!-- Which warnings to show, use javac -X for help -->
     <property name="xlint" value="deprecation" />
