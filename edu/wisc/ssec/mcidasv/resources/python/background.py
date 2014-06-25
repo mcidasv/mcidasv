@@ -33,6 +33,7 @@ from java.util.concurrent import FutureTask
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 from ucar.unidata.idv import DisplayInfo
 from ucar.unidata.idv.ui import IdvWindow
+from ucar.unidata.idv.control import ValuePlanViewControl
 from ucar.unidata.idv.control.drawing import TextGlyph
 from ucar.unidata.geoloc import LatLonPointImpl
 from ucar.unidata.ui.colortable import ColorTableDefaults
@@ -2021,11 +2022,17 @@ class _Layer(_JavaProxy):
         
     @gui_invoke_later
     def getLayoutModelName(self):
-        return str(self._JavaProxy__javaObject.getStationModel().getName())
-        
+        if isinstance(self._JavaProxy__javaObject, ValuePlanViewControl):
+            return str(self._JavaProxy__javaObject.getLayoutModel().getName())
+        else:
+            return str(self._JavaProxy__javaObject.getStationModel().getName())
+            
     @gui_invoke_later
     def getLayoutModel(self):
-        return self._JavaProxy__javaObject.getStationModel()
+        if isinstance(self._JavaProxy__javaObject, ValuePlanViewControl):
+            return self._JavaProxy__javaObject.getLayoutModel()
+        else:
+            return self._JavaProxy__javaObject.getStationModel()
         
     @gui_invoke_later
     def setLayoutModel(self, model=None):
@@ -2073,7 +2080,10 @@ class _Layer(_JavaProxy):
         elif not isinstance(model, StationModel):
             raise TypeError("Invalid 'model' parameter type: %s" % (type))
             
-        self._JavaProxy__javaObject.setStationModel(model)
+        if isinstance(self._JavaProxy__javaObject, ValuePlanViewControl):
+            self._JavaProxy__javaObject.setLayoutModel(model)
+        else:
+            self._JavaProxy__javaObject.setStationModel(model)
         
 # TODO(jon): this (and its accompanying subclasses) are a productivity rabbit
 # hole!
