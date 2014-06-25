@@ -73,7 +73,7 @@ fi
 # Create MCV_USERPATH directory if it doesn't already exist
 if [ ! -d "${MCV_USERPATH}" ]; then
   mkdir -p "${MCV_USERPATH}"
-  
+
   # toggle the welcome window
   SHOW_WELCOME="1"
 fi
@@ -107,7 +107,8 @@ fi
 
 # Force Java 6 on OS X (for now).
 if [ `uname -s` = "Darwin" ]; then
-  JAVA_HOME=`/usr/libexec/java_home -v 1.6`
+  # JAVA_HOME=`/usr/libexec/java_home -v 1.6`
+  JAVA_HOME="./jre/Contents/Home"
 fi
 
 # Look for java
@@ -128,7 +129,7 @@ if [ "${SHOW_WELCOME}" = "1" ]; then
     else
         OSX_FLAGS=""
     fi
-    
+
     ${JAVA_BIN} ${OSX_FLAGS} -Dmcv.userpath=\"${MCV_USERPATH}\" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow 2>/dev/null
     if [ $? -eq 1 ]; then
         exit 1
@@ -230,7 +231,7 @@ if [ `uname -s` = "Darwin" ]; then
       XBOOTCLASSPATH="-Xbootclasspath/p:${JOGL_CP}:${JAVA3D_CP}"
     fi
   fi
-  
+
   # If we are on Leopard (or later?):
   # Use aqua look & feel to get rid of lightweight/heavyweight 3D overlay problems
   # Get rid of any XBOOTCLASSPATH business and just use system Java3D
@@ -239,7 +240,7 @@ if [ `uname -s` = "Darwin" ]; then
       MCV_FLAGS="${MCV_FLAGS} -forceaqua"
       XBOOTCLASSPATH=
   fi
-  
+
   # Build JAVA_FLAGS and set the dock/menu bar name
   JAVA_FLAGS="${JAVA_FLAGS} ${XBOOTCLASSPATH} -Xdock:name=McIDAS-V -Xdock:icon=mcidasv.icns"
 
