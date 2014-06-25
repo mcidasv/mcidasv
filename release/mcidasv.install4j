@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="5.1.5" transformSequenceNumber="4">
-  <directoryPresets config="${compiler:ADDEDIR}/adde-darwin86.zip" />
-  <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="${compiler:sys.install4jHome}/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.5beta1" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" installerName="" javaMinVersion="1.5" javaMaxVersion="1.6" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
+<install4j version="5.1.12" transformSequenceNumber="4">
+  <directoryPresets config="${compiler:sys.install4jHome}/jres/jre1.7.0_60.jre.zip" />
+  <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="${compiler:sys.install4jHome}/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.5beta2" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" installerName="" javaMinVersion="1.6" javaMaxVersion="1.7" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
       <additionalLanguages />
@@ -30,6 +30,11 @@
       <fileset name="Windows ADDE" id="7406" customizedId="" />
       <fileset name="Solaris Intel ADDE" id="7410" customizedId="" />
       <fileset name="Solaris SPARC ADDE" id="7414" customizedId="" />
+      <fileset name="Linux i586 Native Libraries" id="8085" customizedId="" />
+      <fileset name="Linux amd64 Native Libraries" id="8087" customizedId="" />
+      <fileset name="Windows i586 Native Libraries" id="8089" customizedId="" />
+      <fileset name="Windows amd64 Native Libraries" id="8091" customizedId="" />
+      <fileset name="Mac OS X Native Libraries" id="8093" customizedId="" />
     </filesets>
     <roots>
       <root id="7335" fileset="7334" location="" />
@@ -40,6 +45,11 @@
       <root id="7407" fileset="7406" location="" />
       <root id="7411" fileset="7410" location="" />
       <root id="7415" fileset="7414" location="" />
+      <root id="8086" fileset="8085" location="" />
+      <root id="8088" fileset="8087" location="" />
+      <root id="8090" fileset="8089" location="" />
+      <root id="8092" fileset="8091" location="" />
+      <root id="8094" fileset="8093" location="" />
     </roots>
     <mountPoints>
       <mountPoint id="1" root="" location="" mode="755" />
@@ -51,6 +61,11 @@
       <mountPoint id="7469" root="7407" location="" mode="755" />
       <mountPoint id="7467" root="7411" location="" mode="755" />
       <mountPoint id="7468" root="7415" location="" mode="755" />
+      <mountPoint id="8095" root="8086" location="" mode="755" />
+      <mountPoint id="8096" root="8088" location="" mode="755" />
+      <mountPoint id="8097" root="8090" location="" mode="755" />
+      <mountPoint id="8098" root="8092" location="" mode="755" />
+      <mountPoint id="8099" root="8094" location="" mode="755" />
     </mountPoints>
     <entries>
       <fileEntry mountPoint="1" file="${compiler:SRCDIR}/idv.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
@@ -60,7 +75,7 @@
       <fileEntry mountPoint="1" file="${compiler:SRCDIR}/visad.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="1" file="${compiler:SRCDIR}/jython.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="1" file="${compiler:SRCDIR}/ncIdv.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <dirEntry mountPoint="1" file="${compiler:MCVDIR}/lib" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="direct" subDirectory="" excludeSuffixes="" dirMode="755" overrideDirMode="false">
+      <dirEntry mountPoint="1" file="${compiler:MCVDIR}/lib/share/" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="direct" subDirectory="" excludeSuffixes="" dirMode="755" overrideDirMode="false">
         <exclude>
           <entry location="CVS" fileType="regular" />
         </exclude>
@@ -81,7 +96,7 @@
       <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/remove-adde-zip.sh" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7339" file="${compiler:sys.install4jHome}/jres/j3d-132-linux-x86.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/runMcV-HeapDumpEnabled" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7338" file="${compiler:sys.install4jHome}/jres/macos-java3d_jogl.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7338" file="${compiler:sys.install4jHome}/jres/osxjre.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/icons/mcidasv.icns" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/icons/macos-apps.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/macos-apps-setdir.sh" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
@@ -96,6 +111,26 @@
       <fileEntry mountPoint="7469" file="${compiler:ADDEDIR}/adde-windows.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7467" file="${compiler:ADDEDIR}/adde-soli86.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7468" file="${compiler:ADDEDIR}/adde-solaris.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8095" file="${compiler:MCVDIR}/lib/linux-i586/gluegen-rt-natives-linux-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8095" file="${compiler:MCVDIR}/lib/linux-i586/joal-natives-linux-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8095" file="${compiler:MCVDIR}/lib/linux-i586/jocl-natives-linux-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8095" file="${compiler:MCVDIR}/lib/linux-i586/jogl-all-natives-linux-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8096" file="${compiler:MCVDIR}/lib/linux-amd64/gluegen-rt-natives-linux-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8096" file="${compiler:MCVDIR}/lib/linux-amd64/joal-natives-linux-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8096" file="${compiler:MCVDIR}/lib/linux-amd64/jocl-natives-linux-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8096" file="${compiler:MCVDIR}/lib/linux-amd64/jogl-all-natives-linux-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8097" file="${compiler:MCVDIR}/lib/windows-i586/gluegen-rt-natives-windows-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8097" file="${compiler:MCVDIR}/lib/windows-i586/joal-natives-windows-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8097" file="${compiler:MCVDIR}/lib/windows-i586/jocl-natives-windows-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8097" file="${compiler:MCVDIR}/lib/windows-i586/jogl-all-natives-windows-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8098" file="${compiler:MCVDIR}/lib/windows-amd64/gluegen-rt-natives-windows-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8098" file="${compiler:MCVDIR}/lib/windows-amd64/joal-natives-windows-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8098" file="${compiler:MCVDIR}/lib/windows-amd64/jocl-natives-windows-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8098" file="${compiler:MCVDIR}/lib/windows-amd64/jogl-all-natives-windows-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8099" file="${compiler:MCVDIR}/lib/macosx/gluegen-rt-natives-macosx-universal.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8099" file="${compiler:MCVDIR}/lib/macosx/joal-natives-macosx-universal.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8099" file="${compiler:MCVDIR}/lib/macosx/jocl-natives-macosx-universal.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8099" file="${compiler:MCVDIR}/lib/macosx/jogl-all-natives-macosx-universal.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
     </entries>
     <components>
       <component name="Base components" id="67" customizedId="" displayDescription="false" hideHelpButton="false" selected="true" changeable="false" downloadable="false" hidden="false">
@@ -142,6 +177,17 @@
           <entry location=".i4j_fileset_7406" fileType="regular" />
           <entry location=".i4j_fileset_7410" fileType="regular" />
           <entry location=".i4j_fileset_7414" fileType="regular" />
+        </include>
+        <dependencies />
+      </component>
+      <component name="Platform Specific Libraries" id="8084" customizedId="" displayDescription="false" hideHelpButton="false" selected="true" changeable="true" downloadable="false" hidden="false">
+        <description />
+        <include all="false">
+          <entry location=".i4j_fileset_8085" fileType="regular" />
+          <entry location=".i4j_fileset_8087" fileType="regular" />
+          <entry location=".i4j_fileset_8089" fileType="regular" />
+          <entry location=".i4j_fileset_8091" fileType="regular" />
+          <entry location=".i4j_fileset_8093" fileType="regular" />
         </include>
         <dependencies />
       </component>
@@ -473,7 +519,7 @@ return allowed;</validation>
                 <initScript />
                 <visibilityScript />
               </formComponent>
-              <formComponent name="" id="7356" customizedId="" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+              <formComponent name="" id="7356" customizedId="" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" enabled="false" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.formcomponents.CheckboxComponent">
@@ -544,7 +590,7 @@ return allowed;</validation>
               </formComponent>
             </formComponents>
           </screen>
-          <screen name="Linux Options" id="7665" customizedId="" beanClass="com.install4j.runtime.beans.screens.FormScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
+          <screen name="Linux Options" id="7665" customizedId="" beanClass="com.install4j.runtime.beans.screens.FormScreen" enabled="false" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
                 <object class="com.install4j.runtime.beans.screens.FormScreen">
@@ -664,7 +710,7 @@ return allowed;</validation>
                 </serializedBean>
                 <condition />
               </action>
-              <action name="OS X JOGL" id="4127" customizedId="" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install JOGL">
+              <action name="OS X JOGL" id="4127" customizedId="" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="false" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install JOGL">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
@@ -827,6 +873,34 @@ return allowed;</validation>
                   </java>
                 </serializedBean>
                 <condition>context.getBooleanVariable("createApplicationsLinkAction")</condition>
+              </action>
+              <action name="OS X JRE" id="8208" customizedId="" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
+                      <void property="destinationDirectory">
+                        <object class="java.io.File">
+                          <string>jre</string>
+                        </object>
+                      </void>
+                      <void property="dirMode">
+                        <string>777</string>
+                      </void>
+                      <void property="mode">
+                        <string>777</string>
+                      </void>
+                      <void property="overwriteMode">
+                        <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
+                      </void>
+                      <void property="zipFile">
+                        <object class="java.io.File">
+                          <string>osxjre.zip</string>
+                        </object>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
               </action>
               <action name="Linux x86 ADDE" id="7535" customizedId="" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install ADDE">
                 <serializedBean>
@@ -1209,7 +1283,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
     </applications>
   </installerGui>
   <mediaSets>
-    <unixInstaller name="Linux x86 32bit" id="3" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/linux-i386-1.6.0_31_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="~" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Linux 32-bit" id="3" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/linux-x86-1.7.0_60.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="~" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -1220,10 +1294,13 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <entry location=".i4j_fileset_7332" fileType="regular" />
         <entry location=".i4j_fileset_7336" fileType="regular" />
         <entry location=".i4j_fileset_7404" fileType="regular" />
-        <entry location=".i4j_fileset_7412" fileType="regular" />
         <entry location=".i4j_fileset_7406" fileType="regular" />
         <entry location=".i4j_fileset_7410" fileType="regular" />
         <entry location=".i4j_fileset_7414" fileType="regular" />
+        <entry location=".i4j_fileset_8087" fileType="regular" />
+        <entry location=".i4j_fileset_8089" fileType="regular" />
+        <entry location=".i4j_fileset_8091" fileType="regular" />
+        <entry location=".i4j_fileset_8093" fileType="regular" />
       </exclude>
       <variables />
       <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
@@ -1239,7 +1316,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <content />
       </installerScript>
     </unixInstaller>
-    <unixInstaller name="Linux x86 64bit" id="7557" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86-64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/linux-amd64-1.6.0_31_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="~" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Linux 64-bit" id="7557" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86-64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/linux-amd64-1.7.0_60.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="~" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -1254,6 +1331,10 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <entry location=".i4j_fileset_7406" fileType="regular" />
         <entry location=".i4j_fileset_7410" fileType="regular" />
         <entry location=".i4j_fileset_7414" fileType="regular" />
+        <entry location=".i4j_fileset_8085" fileType="regular" />
+        <entry location=".i4j_fileset_8089" fileType="regular" />
+        <entry location=".i4j_fileset_8091" fileType="regular" />
+        <entry location=".i4j_fileset_8093" fileType="regular" />
       </exclude>
       <variables />
       <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
@@ -1285,6 +1366,9 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <entry location=".i4j_fileset_7406" fileType="regular" />
         <entry location=".i4j_fileset_7410" fileType="regular" />
         <entry location=".i4j_fileset_7414" fileType="regular" />
+        <entry location=".i4j_fileset_8089" fileType="regular" />
+        <entry location=".i4j_fileset_8091" fileType="regular" />
+        <entry location=".i4j_fileset_8093" fileType="regular" />
       </exclude>
       <variables />
       <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
@@ -1301,7 +1385,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <content />
       </installerScript>
     </unixInstaller>
-    <macosFolder name="Mac OS X x86" id="12" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macosx_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="true" customInstallBaseDir="" contentFilesType="1" downloadURL="" signLaunchers="false">
+    <macosFolder name="Mac OS X" id="12" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macosx_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="true" requiredVmIdPrefix="" customInstallBaseDir="" contentFilesType="1" downloadURL="" signLaunchers="false">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -1315,6 +1399,10 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <entry location=".i4j_fileset_7406" fileType="regular" />
         <entry location=".i4j_fileset_7410" fileType="regular" />
         <entry location=".i4j_fileset_7414" fileType="regular" />
+        <entry location=".i4j_fileset_8085" fileType="regular" />
+        <entry location=".i4j_fileset_8087" fileType="regular" />
+        <entry location=".i4j_fileset_8089" fileType="regular" />
+        <entry location=".i4j_fileset_8091" fileType="regular" />
       </exclude>
       <variables />
       <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
@@ -1326,7 +1414,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
       </excludedComponents>
       <includedDownloadableComponents />
     </macosFolder>
-    <windows name="Windows 32bit" id="8" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/windows-x86-1.6.0_31_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
+    <windows name="Windows 32-bit" id="8" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/windows-x86-1.7.0_60.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
       <excludedLaunchers>
         <launcher id="841" />
         <launcher id="1330" />
@@ -1338,9 +1426,12 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <entry location=".i4j_fileset_7332" fileType="regular" />
         <entry location=".i4j_fileset_7408" fileType="regular" />
         <entry location=".i4j_fileset_7404" fileType="regular" />
-        <entry location=".i4j_fileset_7412" fileType="regular" />
         <entry location=".i4j_fileset_7410" fileType="regular" />
         <entry location=".i4j_fileset_7414" fileType="regular" />
+        <entry location=".i4j_fileset_8085" fileType="regular" />
+        <entry location=".i4j_fileset_8087" fileType="regular" />
+        <entry location=".i4j_fileset_8091" fileType="regular" />
+        <entry location=".i4j_fileset_8093" fileType="regular" />
       </exclude>
       <variables />
       <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
@@ -1353,7 +1444,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
       </excludedComponents>
       <includedDownloadableComponents />
     </windows>
-    <windows name="Windows 64bit" id="7720" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="64" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/windows-amd64-1.6.0_31_j3d1.5.2.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
+    <windows name="Windows 64-bit" id="7720" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="64" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/windows-amd64-1.7.0_60.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
       <excludedLaunchers>
         <launcher id="841" />
         <launcher id="1330" />
@@ -1365,9 +1456,12 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <entry location=".i4j_fileset_7332" fileType="regular" />
         <entry location=".i4j_fileset_7408" fileType="regular" />
         <entry location=".i4j_fileset_7404" fileType="regular" />
-        <entry location=".i4j_fileset_7412" fileType="regular" />
         <entry location=".i4j_fileset_7410" fileType="regular" />
         <entry location=".i4j_fileset_7414" fileType="regular" />
+        <entry location=".i4j_fileset_8085" fileType="regular" />
+        <entry location=".i4j_fileset_8087" fileType="regular" />
+        <entry location=".i4j_fileset_8089" fileType="regular" />
+        <entry location=".i4j_fileset_8093" fileType="regular" />
       </exclude>
       <variables />
       <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
@@ -1382,13 +1476,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
     </windows>
   </mediaSets>
   <buildIds buildAll="false">
-    <mediaSet refId="3" />
-    <mediaSet refId="7557" />
-    <mediaSet refId="59" />
     <mediaSet refId="12" />
-    <mediaSet refId="8" />
-    <mediaSet refId="7720" />
   </buildIds>
   <buildOptions verbose="false" faster="false" disableSigning="false" debug="false" />
 </install4j>
-
