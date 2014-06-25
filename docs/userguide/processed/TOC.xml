@@ -195,7 +195,7 @@
 		<tocitem text="Modify the Layer Object" target="idv.misc.scripting.modifylayerobject"/>
 		<tocitem text="Save the Display" target="idv.misc.scripting.savedisplay"/>
 		<tocitem text="Environment" target="idv.misc.scripting.environment"/>
-	</tocitem>
+	</tocitem>	
     <tocitem text="Sharing" target="idv.collab.sharing"/>
     <tocitem text="Site Configuration" target="idv.misc.siteconfiguration"/>
 	<tocitem text="Plugin Jar Files" target="idv.misc.pluginjarfiles"/>
