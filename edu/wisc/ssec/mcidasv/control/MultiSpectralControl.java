@@ -76,6 +76,7 @@ import javax.swing.table.TableCellRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ucar.unidata.idv.DisplayConventions;
 import visad.DataReference;
 import visad.DataReferenceImpl;
 import visad.FlatField;
@@ -488,8 +489,28 @@ public class MultiSpectralControl extends HydraControl {
         return new Range(rangeMin, rangeMax);
     }
 
+    /**
+     * Get the initial {@link ColorTable} associated with this control's parameter name.
+     *
+     * <p>Note: if there is a parameter default associated with the parameter name, that color table will be returned.
+     * If there are <b>no</b> parameter defaults associated with the parameter name, then the {@code ColorTable}
+     * associated with {@literal "BrightnessTemp"} is returned (this is a {@literal "legacy"} behavior).
+     * </p>
+     *
+     * @return {@code ColorTable} to use.
+     */
     @Override protected ColorTable getInitialColorTable() {
-        return getDisplayConventions().getParamColorTable(PARAM);
+        String parameterName = PARAM;
+        DisplayConventions conventions = getDisplayConventions();
+        DataChoice choice = getDataChoice();
+        if (choice != null) {
+            parameterName = getDataChoice().getName();
+        }
+        ColorTable ct = conventions.getParamDefaultsEditor().getParamColorTable(parameterName, false);
+        if (ct == null) {
+            ct = getDisplayConventions().getParamColorTable(PARAM);
+        }
+        return ct;
     }
 
     @Override public Container doMakeContents() {
