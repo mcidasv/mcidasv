@@ -76,20 +76,22 @@ import javax.swing.table.TableCellRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ucar.unidata.idv.DisplayConventions;
 import visad.DataReference;
 import visad.DataReferenceImpl;
 import visad.FlatField;
 import visad.RealTuple;
+import visad.Unit;
 import visad.VisADException;
 import visad.georef.MapProjection;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.idv.DisplayControl;
+import ucar.unidata.idv.DisplayConventions;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.control.ControlWidget;
 import ucar.unidata.idv.control.WrapperWidget;
+import ucar.unidata.idv.ui.ParamDefaultsEditor;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
@@ -111,15 +113,15 @@ import edu.wisc.ssec.mcidasv.util.Contract;
 
 public class MultiSpectralControl extends HydraControl {
 
-	private static final Logger logger = LoggerFactory.getLogger(MultiSpectralControl.class);
-	
-	private String PARAM = "BrightnessTemp";
-	
-	// So MultiSpectralDisplay can consistently update the wavelength label
-	// Note hacky leading spaces - needed because GUI builder does not
-	// accept a horizontal strut component.
-	public static String WAVENUMLABEL = "   Wavelength: ";
-	private JLabel wavelengthLabel = new JLabel();
+    private static final Logger logger = LoggerFactory.getLogger(MultiSpectralControl.class);
+
+    private String PARAM = "BrightnessTemp";
+
+    // So MultiSpectralDisplay can consistently update the wavelength label
+    // Note hacky leading spaces - needed because GUI builder does not
+    // accept a horizontal strut component.
+    public static String WAVENUMLABEL = "   Wavelength: ";
+    private JLabel wavelengthLabel = new JLabel();
 
     private static final int DEFAULT_FLAGS = 
         FLAG_COLORTABLE | FLAG_ZPOSITION;
@@ -482,33 +484,68 @@ public class MultiSpectralControl extends HydraControl {
       return new float[] {min, max};
     }
 
-
-    @Override protected Range getInitialRange() throws VisADException,
-        RemoteException
-    {
-        return new Range(rangeMin, rangeMax);
+    /**
+     * Convenience method for extracting the parameter name.
+     *
+     * @return Results from {@link DataChoice#getName()}, or {@link #PARAM} if
+     * the {@code DataChoice} is (somehow) {@code null}.
+     */
+    private String getParameterName() {
+        String parameterName = PARAM;
+        DataChoice choice = getDataChoice();
+        if (choice != null) {
+            parameterName = choice.getName();
+        }
+        return parameterName;
     }
 
     /**
-     * Get the initial {@link ColorTable} associated with this control's parameter name.
+     * Get the initial {@link Range} for the data and color table.
      *
-     * <p>Note: if there is a parameter default associated with the parameter name, that color table will be returned.
-     * If there are <b>no</b> parameter defaults associated with the parameter name, then the {@code ColorTable}
-     * associated with {@literal "BrightnessTemp"} is returned (this is a {@literal "legacy"} behavior).
+     * <p>Note: if there is a parameter default range associated with the
+     * current parameter name, that will be returned. If there is <b>not</b> a
+     * parameter default range match, a {@code Range} consisting of
+     * {@link #rangeMin} and {@link #rangeMax} will be returned.
+     * </p>
+     *
+     * @return Initial {@code Range} for data and color table.
+     *
+     * @throws VisADException if VisAD had problems.
+     * @throws RemoteException if there was a Java RMI problem.
+     */
+    @Override protected Range getInitialRange() throws VisADException,
+        RemoteException
+    {
+        String parameterName = getParameterName();
+        Unit dispUnit = getDisplayUnit();
+        DisplayConventions conventions = getDisplayConventions();
+        Range paramRange = conventions.getParamRange(parameterName, dispUnit);
+        if (paramRange == null) {
+            paramRange = new Range(rangeMin, rangeMax);
+        }
+        return paramRange;
+    }
+
+    /**
+     * Get the initial {@link ColorTable} associated with this control's
+     * parameter name.
+     *
+     * <p>Note: if there is a parameter default color table associated with
+     * the parameter name, that color table will be returned. If there are
+     * <b>no</b> parameter defaults associated with the parameter name,
+     * then the {@code ColorTable} associated with {@literal "BrightnessTemp"}
+     * is returned (this is a {@literal "legacy"} behavior).
      * </p>
      *
      * @return {@code ColorTable} to use.
      */
     @Override protected ColorTable getInitialColorTable() {
-        String parameterName = PARAM;
+        String parameterName = getParameterName();
         DisplayConventions conventions = getDisplayConventions();
-        DataChoice choice = getDataChoice();
-        if (choice != null) {
-            parameterName = getDataChoice().getName();
-        }
-        ColorTable ct = conventions.getParamDefaultsEditor().getParamColorTable(parameterName, false);
+        ParamDefaultsEditor defaults = conventions.getParamDefaultsEditor();
+        ColorTable ct = defaults.getParamColorTable(parameterName, false);
         if (ct == null) {
-            ct = getDisplayConventions().getParamColorTable(PARAM);
+            ct = conventions.getParamColorTable(PARAM);
         }
         return ct;
     }
