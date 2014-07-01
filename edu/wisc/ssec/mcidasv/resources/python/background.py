@@ -1234,6 +1234,11 @@ class _Display(_JavaProxy):
         """
         from ucar.unidata.data import DataDataChoice
         from visad.meteorology import ImageSequenceImpl
+        from visad.meteorology import SingleBandedImage
+        from visad.meteorology import SingleBandedImageImpl
+        from visad import FlatField
+        from visad import Data
+        from visad import DateTime
         
         # need to get short control description from long name
         mcv = getStaticMcv()
@@ -1256,37 +1261,41 @@ class _Display(_JavaProxy):
         firstData = data  # keep a ref to the first image in the list
                            # for layer labeling, etc.
 
-        # TODO: something more elegant than this type check?
-        # (i.e. type checking should be done in makeMappedGeoGridFlatFieldSequence
-        #  which could raise an exception in event of wrong data type.)
-        try:
-            if isinstance(data[0], _MappedGeoGridFlatField):
-                firstData = data[0]
-                data = makeMappedGeoGridFlatFieldSequence(data)
-        except KeyError:
-            # perhaps a single _MappedGeoGridFlatField
-            # (which is also a dict, so subscripting with 0 gives KeyError)
-            if isinstance(data, _MappedGeoGridFlatField):
-                firstData = data
-                data = makeMappedGeoGridFlatFieldSequence([data])
-        except TypeError:
-            # perhaps not a list or a _MappedGeoGridFlatField
-            pass
+        # make this into a list if it isn't already
+        if isinstance(data, Data):
+            # if it is a Visad Data...it's not a Python list or java ArrayList, etc.
+            data = [data]
+        else:
+            firstData = data[0]
 
-        # TODO: don't need to run this code if already have successfully
-        #       run makeMappedGeoGridFlatFieldSequence...
-        try:
+        if isinstance(data[0], _MappedGeoGridFlatField):
+            data = makeMappedGeoGridFlatFieldSequence(data)
+        elif isinstance(data[0], SingleBandedImage):
             data = ImageSequenceImpl(data)
-            firstData = firstData[0]
-        except TypeError:
-            # try one more time for case of single image
-            try:
-                data = ImageSequenceImpl([data])
-                # firstData is set properly here
-            except TypeError:
-                # ImageSequenceImpl constructor failed for both single
-                # image and list of image cases, but that's OK
-                pass
+        elif isinstance(data[0], FlatField):
+            # this is plain flatfield...need to re-attach time somehow and
+            # make into some kind of time sequence.
+            if isinstance(data[0].getMetadataMap().get('nominal-time'), DateTime):
+                # this was a _MappedAreaImageFlatField
+                newData = []
+                for step in data:
+                    # should be a visad.DateTime:
+                    theTime = step.getMetadataMap().get('nominal-time') 
+                    newData.append(SingleBandedImageImpl(step, theTime,
+                        theTime.toString()))
+                data = ImageSequenceImpl(newData)
+            elif data[0].getMetadataMap().get('times'):
+                # this was a _MappedGeoGridFlatField
+                newData = []
+                for (i, step) in enumerate(data):
+                    # should be a visad.DateTime:
+                    timeStr = step.getMetadataMap().get('times')[0].toString() 
+                    # can't call makeMappedGeoGridFlatFieldSequence cause we don't have a ref to the geogrid!
+                    newData.append(SingleBandedImageImpl(step, DateTime.createDateTime(timeStr),
+                        timeStr))
+                data = ImageSequenceImpl(newData)
+            else:
+                print 'DEBUG: cant get a timestamp to make an ImageSequenceImpl...'
 
         # figure out the shortname and longname macros if possible,
         # and default layer label
