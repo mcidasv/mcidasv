@@ -1237,7 +1237,6 @@ class _Display(_JavaProxy):
         from visad.meteorology import SingleBandedImage
         from visad.meteorology import SingleBandedImageImpl
         from visad import FlatField
-        from visad import Data
         from visad import DateTime
         
         # need to get short control description from long name
@@ -1262,8 +1261,9 @@ class _Display(_JavaProxy):
                            # for layer labeling, etc.
 
         # make this into a list if it isn't already
-        if isinstance(data, Data):
-            # if it is a Visad Data...it's not a Python list or java ArrayList, etc.
+        if isinstance(data, FlatField):
+            # if it is a Visad FlatField..it's not a Python list or java ArrayList, etc.
+            # and also not ALREADY a time sequence.
             data = [data]
         else:
             firstData = data[0]
@@ -1288,7 +1288,9 @@ class _Display(_JavaProxy):
                 # this was a _MappedGeoGridFlatField
                 data = makeFlatFieldSequence(data)
             else:
-                print 'DEBUG: cant get a timestamp to make an ImageSequenceImpl...'
+                # data might already be a proper time sequence and will just work!
+                #print 'DEBUG: cant get a timestamp to make an ImageSequenceImpl...'
+                pass
 
         # figure out the shortname and longname macros if possible,
         # and default layer label
