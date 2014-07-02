@@ -1309,7 +1309,11 @@ class _Display(_JavaProxy):
             pass
 
         # first param of DataDataChoice constructor is %shortname% macro
-        ddc = DataDataChoice(shortname, data)
+        try: 
+            ddc = DataDataChoice(shortname, data)
+        except TypeError:
+            # try one more time; this is to make a plain FlatField w/no time field still work
+            ddc = DataDataChoice(shortname, data[0])
         if isinstance(firstData, _MappedGeoGridFlatField):
             # this will get the %level% macro filled in,
             # and the GUI will reflect the level in other places.
