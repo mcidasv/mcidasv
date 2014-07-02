@@ -1269,7 +1269,7 @@ class _Display(_JavaProxy):
             firstData = data[0]
 
         if isinstance(data[0], _MappedGeoGridFlatField):
-            data = makeMappedGeoGridFlatFieldSequence(data)
+            data = makeFlatFieldSequence(data)
         elif isinstance(data[0], SingleBandedImage):
             data = ImageSequenceImpl(data)
         elif isinstance(data[0], FlatField):
@@ -1286,14 +1286,7 @@ class _Display(_JavaProxy):
                 data = ImageSequenceImpl(newData)
             elif data[0].getMetadataMap().get('times'):
                 # this was a _MappedGeoGridFlatField
-                newData = []
-                for (i, step) in enumerate(data):
-                    # should be a visad.DateTime:
-                    timeStr = step.getMetadataMap().get('times')[0].toString() 
-                    # can't call makeMappedGeoGridFlatFieldSequence cause we don't have a ref to the geogrid!
-                    newData.append(SingleBandedImageImpl(step, DateTime.createDateTime(timeStr),
-                        timeStr))
-                data = ImageSequenceImpl(newData)
+                data = makeFlatFieldSequence(data)
             else:
                 print 'DEBUG: cant get a timestamp to make an ImageSequenceImpl...'
 
@@ -2916,7 +2909,7 @@ def loadFile(filename=None, field=None, level=None,
 
     return mapped
 
-def makeMappedGeoGridFlatFieldSequence(sequence):
+def makeFlatFieldSequence(sequence):
     """turn a list of _MappedGeoGridFlatField's into a FieldImpl with time
        domain that is suitable for displaying. 
        For now this is "dumb" ... assume input is:
@@ -2927,15 +2920,25 @@ def makeMappedGeoGridFlatFieldSequence(sequence):
     from ucar.visad import Util
     from visad import FunctionType
     from visad import RealType
+    from visad import DateTime
     dateTimes = []
-    for ff in sequence:
-        if ff.geogrid.getCoordinateSystem().hasTimeAxis1D():
-            timeAxis = ff.geogrid.getCoordinateSystem().getTimeAxis1D()
-            dateTimes.append(DataUtil.makeDateTimes(timeAxis)[0])
-        else:
-            # fix for ABI data / data with no time coord: just return plain FF
-            # this will allow data to get displayed, but w/o time info
-            return ff
+    try:
+        for ff in sequence:
+            if ff.geogrid.getCoordinateSystem().hasTimeAxis1D():
+                timeAxis = ff.geogrid.getCoordinateSystem().getTimeAxis1D()
+                dateTimes.append(DataUtil.makeDateTimes(timeAxis)[0])
+            else:
+                # fix for ABI data / data with no time coord: just return plain FF
+                # this will allow data to get displayed, but w/o time info
+                return ff
+    except AttributeError:
+        # no geogrid ... try to read from getMetadataMap
+        if sequence[0].getMetadataMap().get('times'):
+            # this was a _MappedGeoGridFlatField
+            for ff in sequence:
+                # should be a visad.DateTime:
+                timeStr = ff.getMetadataMap().get('times')[0].toString() 
+                dateTimes.append(DateTime.createDateTime(timeStr))
     timeSet = Util.makeTimeSet(dateTimes)
     ftype = FunctionType(RealType.Time, ff.getType())
     fi = FieldImpl(ftype, timeSet)
