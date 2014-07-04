@@ -576,7 +576,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    							
     	    							logger.debug("Handling Quality Flag: " + varShortName);
     	    							
-        	    						// this check is done later for ALL varialbles, but we need
+        	    						// this check is done later for ALL variables, but we need
     	    							// it early here to weed out those quality flags that are 
     	    							// simply a small set of data w/no granule geo nbounds
     	    							boolean xScanOk = false;
@@ -680,19 +680,19 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    							useThis = true;
     	    						}
 
-    	    						// new way to validate ATMS variables
+    	    						// For ATMS, only 3-D variable we pass through is BrightnessTemperature
+    	    						// Dimensions for BT are (lon, lat, channel)
     	    						if (instrumentName.getStringValue().equals("ATMS")) {
-    	    							boolean isDisplayableATMS = false;
-    	    							// check variable dimensions, if num channels not present, ditch it
-    	    							for (Dimension d : dl) {
-    	    								if (d.getLength() == JPSSUtilities.ATMSChannelCenterFrequencies.length) {
-    	    									isDisplayableATMS = true;
-    	    									logger.debug("This variable appears to be displayable ATMS");
-    	    									break;
+    	    							if (dl.size() == 3) {
+    	    								boolean isDisplayableATMS = false;
+    	    								for (Dimension d : dl) {
+    	    									if (d.getLength() == JPSSUtilities.ATMSChannelCenterFrequencies.length) {
+    	    										isDisplayableATMS = true;
+    	    										logger.debug("This variable has a dimension matching num ATMS channels");
+    	    										break;
+    	    									}
     	    								}
-    	    							}
-    	    							if (! isDisplayableATMS) {
-    	    								useThis = false;
+    	    								if (! isDisplayableATMS) useThis = false;
     	    							}
     	    						}
 
@@ -1406,8 +1406,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
               data = applyProperties(data, requestProperties, subset, aIdx);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            logger.error("getData exception e=" + e);
+            logger.error("getData Exception: ", e);
         }
         return data;
     }
@@ -1428,37 +1427,12 @@ public class SuomiNPPDataSource extends HydraDataSource {
          List<DataSelectionComponent> components,
              final DataChoice dataChoice) {
       
-      if (System.getProperty("os.name").equals("Mac OS X") && hasImagePreview && hasChannelSelect) {
-          try {
-        	  if (hasImagePreview) {
-        		  components.add(new ImageChannelSelection(new PreviewSelection(dataChoice, previewImage, null), new ChannelSelection(dataChoice)));
-        	  } 
-              if (hasChannelSelect) {
-            	  components.add(new ChannelSelection(dataChoice));
-              }
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
-        }
-      else {
-    	  if (hasImagePreview) {
-    		  try {
-    			  FlatField image = (FlatField) dataChoice.getData(null);
-    			  components.add(new PreviewSelection(dataChoice, image, null));
-    		  } catch (Exception e) {
-    			  logger.error("Can't make PreviewSelection: " + e);
-    			  e.printStackTrace();
-    		  }
-    	  }
-    	  if (hasChannelSelect) {
-    		  try {
-    			  components.add(new ChannelSelection(dataChoice));
-    		  } 
-    		  catch (Exception e) {
-    			  e.printStackTrace();
-    		  }
-    	  }
-      }
+		  try {
+			  FlatField image = (FlatField) dataChoice.getData(null);
+			  components.add(new PreviewSelection(dataChoice, image, null));
+		  } catch (Exception e) {
+			  logger.error("Can't make PreviewSelection: ", e);
+		  }
       
     }
     
@@ -1467,6 +1441,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
      * "translations" resource, so they will be made available
      * to the data probe of Image Display's.
      */
+    
     public void initQfTranslations() {
     	
         Map<String, Map<Integer, String>> translations =
