@@ -67,6 +67,18 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <li><strong><a class="faq-question-link" href="#probe1.5">Improved Probe Output</a></strong></li>
   </ul>
 </div>
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_1.5">Other Changes</a></div>
+<strong></strong>
+<div class="faq-category">
+  <ul class="noindent">
+    <li><strong><a class="faq-question-link" href="#java1.5">Java and Java 3D Versions</a></strong><strong><a class="faq-question-link" href="#probe1.5"></a></strong></li>
+  </ul>
+</div>
+  <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat5_1.5">Under
+    Development</a></div>
+<div class="faq-category">
+  <ul class="noindent">
+    <li><strong><a class="faq-question-link" href="#npp1.5">Suomi NPP Chooser</a></strong></li></ul></div>
 <hr>
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat1_1.5" id="faq1_cat1_1.5"></a>Documentation
@@ -91,6 +103,26 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
   <h4>Improved Probe Output</h4>
 <div class="faq-answer">Improved probe output for Level III Hydrometeor Classification products and the Suomi NPP Quality Flag fields. For Level III Radar data once a Hydrometeor Classification product is added, an Image Display of the 'Hydro class' field now creates a display with actual text output. Examples of this text output are 'Dry Snow', 'Light-Moderate Rain' and 'Biological'. For Suomi NPP Quality Flags listed in the Field Selector, an Image Display will also provide text output. An example of this output for a 'Fire' QF field would be 'True' or 'False'. An example of this output for a 'Cloud Phase' QF field would be 'Clear', 'Water', and 'Ice'.</div>
 </div>
+<div class="faq-category-title"><a name="faq1_cat4_1.5" id="faq1_cat2_1.5"></a>Other
+  Changes</div>
+<div class="faq-category"><a name="java1.5" id="java1.5"></a>
+  <h4>Java and Java 3D Versions</h4>
+<div class="faq-answer">Updated from Java version 1.6.0_31 to 1.7.0_60. Updated Java 3D version from 1.5.2 to 1.6.0.</div></div>
+<div class="faq-category">
+  <div class="faq-answer"></div>
+</div>
+<div class="faq-category-title"><a name="faq1_cat5_1.5" id="faq1_cat5_1.5"></a>Under
+Development</div>
+<div class="faq-category"><a name="npp1.5" id="npp1.5"></a>
+  <h4>Suomi NPP Chooser</h4>
+  <div class="faq-answer">
+      <p>Improved granule subsetting to aid in subsetting an entire granule.</p>
+      <p>Added support for ATMS (Advanced Technology Microwave Sounder) SDR data, including ATMS SDR and ATMS Remapped to CrIS SDR data. To display the Brightness Temperature field of this data, use the MultiSpectral display type, where the channel used for the display can be set through the Layer Controls. Also, additional fields will be visible including height, latitude, longitude, and different satellite angles which can be viewed with the standard Image Display.</p>
+      <p>This is currently
+          located in the Under Development list of choosers in the Data Sources tab
+          of the Data Explorer and is available for user feedback through the <a href="http://mcidas.ssec.wisc.edu/forums/" target="_blank">McIDAS-V
+              Support Forums</a>. As the IDPS (Interface Data Processing Segment) begins to distribute new types of NPP data, we test it in McIDAS-V and make any necessary changes to be able to get the data to display.</p>
+</div></div>
 <br>
     <hr size="4" noshade>
 <div class="pagesubtitle">McIDAS-V <br>
