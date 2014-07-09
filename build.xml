@@ -753,6 +753,8 @@
       <sysproperty key="debug.adde.reqs" value="false" />
       -->
       <!--<sysproperty key="textureWidthMax" value="${visad.texturemax}" />-->
+      <sysproperty key="java.ext.dirs" value="" />
+      <sysproperty key="java.library.path" value="" />
       <sysproperty key="loglevel" value="${run.log.level}" />
       <sysproperty key="mcv.userpath" value="${userpath.dir}" />
       <sysproperty key="mcv.logpath" value="${userpath.dir}/mcidasv.log" />
@@ -799,6 +801,8 @@
       --> 
       <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
       <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
+      <sysproperty key="java.ext.dirs" value="" />
+      <sysproperty key="java.library.path" value="" />
       <sysproperty key="textureWidthMax" value="${visad.texturemax}" />
       <sysproperty key="mcv.userpath" value="${userpath.dir}" />
       <sysproperty key="mcv.logpath" value="${userpath.dir}/mcidasv.log" />

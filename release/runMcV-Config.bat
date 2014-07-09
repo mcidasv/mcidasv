@@ -33,9 +33,12 @@ SET LOGBACK_CONFIG="%MCV_USERPATH%\logback.xml"
 
 set MCV_CLASSPATH=%CD%\;%CD%\mcv_userguide.jar;%CD%\mcidasv.jar
 
+set MCV_EXTPATH=-Djava.ext.dirs=""
+set MCV_LIBPATH=-Djava.library.path=""
+
 REM Get the amount of system memory
 echo Reading system configuration...
 SET SYS_MEM=0
 FOR /F %%i IN ('jre\bin\java.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
 
-jre\bin\java -Dmcv.userpath="%MCV_USERPATH%" -Dlogback.configurationFile=%LOGBACK_CONFIG% -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.startupmanager.StartupManager -Didv.sysmem=%SYS_MEM% -userpath "%MCV_USERPATH%" %MCV_PARAMS%
+jre\bin\java %MCV_EXTPATH% %MCV_LIBPATH% -Dmcv.userpath="%MCV_USERPATH%" -Dlogback.configurationFile=%LOGBACK_CONFIG% -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.startupmanager.StartupManager -Didv.sysmem=%SYS_MEM% -userpath "%MCV_USERPATH%" %MCV_PARAMS%

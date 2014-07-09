@@ -86,5 +86,9 @@ fi
 
 MCV_CLASSPATH=".:./mcv_userguide.jar:./mcidasv.jar"
 
+# McV supplies all of its dependencies; there's no need for the JRE to look elsewhere.
+MCV_EXTDIR="-Djava.ext.dirs=\"\""
+MCV_LIBPATH="-Djava.library.path=\"\""
+
 # Run it
-${JAVA_BIN} ${JAVA_FLAGS} -Dmcv.userpath=\"${MCV_USERPATH}\" -classpath "${MCV_CLASSPATH}" -da edu.wisc.ssec.mcidasv.startupmanager.StartupManager -Didv.sysmem=${SYS_MEM} -userpath "${MCV_USERPATH}" $*
+${JAVA_BIN} ${JAVA_FLAGS} ${MCV_EXTDIR} ${MCV_LIBPATH} -Dmcv.userpath=\"${MCV_USERPATH}\" -classpath "${MCV_CLASSPATH}" -da edu.wisc.ssec.mcidasv.startupmanager.StartupManager -Didv.sysmem=${SYS_MEM} -userpath "${MCV_USERPATH}" $*

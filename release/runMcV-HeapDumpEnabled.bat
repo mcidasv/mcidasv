@@ -147,8 +147,11 @@ IF EXIST "jre\bin\client\classes.jsa" (
 
 set MCV_CLASSPATH=%CD%\;%CD%\mcv_userguide.jar;%CD%\mcidasv.jar
 
-@echo Command line: jre\bin\java.exe -XX:MaxPermSize=128m -Xmx%HEAP_SIZE% -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath="%TEMP%\mcidasv-heapdump.hprof" %JVM_ARGS% %D3D_FLAG% -Dpython.security.respectJavaAccessibility=false -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
+set MCV_EXTPATH=-Djava.ext.dirs=""
+set MCV_LIBPATH=-Djava.library.path=""
 
-start /B jre\bin\javaw.exe -XX:MaxPermSize=128m -Xmx%HEAP_SIZE% -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath="%TEMP%\mcidasv-heapdump.hprof" %JVM_ARGS% %D3D_FLAG% -Dpython.security.respectJavaAccessibility=false -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
+@echo Command line: jre\bin\java.exe -XX:MaxPermSize=128m -Xmx%HEAP_SIZE% -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath="%TEMP%\mcidasv-heapdump.hprof" %JVM_ARGS% %D3D_FLAG% %MCV_EXTPATH% %MCV_LIBPATH% -Dpython.security.respectJavaAccessibility=false -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
+
+start /B jre\bin\javaw.exe -XX:MaxPermSize=128m -Xmx%HEAP_SIZE% -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath="%TEMP%\mcidasv-heapdump.hprof" %JVM_ARGS% %D3D_FLAG% %MCV_EXTPATH% %MCV_LIBPATH% -Dpython.security.respectJavaAccessibility=false -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
 
 :end
