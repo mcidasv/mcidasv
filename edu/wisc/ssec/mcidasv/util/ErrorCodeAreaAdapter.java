@@ -105,6 +105,8 @@ public class ErrorCodeAreaAdapter {
             return -11010;
         } else if ("Unable to initialize navigation for this image".equals(message)) {
             return -11001;
+        } else if (message.endsWith("not present")) {
+            return -11003;
         } else {
             Throwable nextCause = cause.getCause();
             if (nextCause != null) {
