@@ -99,7 +99,7 @@ public class ErrorCodeAreaAdapter {
             return -6000;
         } else if ("Band keyword required for multi-banded image".equals(message)) {
             return -11011;
-        } else if ("Units requested are not available for this image".equals(message)) {
+        } else if (message.startsWith("Units requested are not available for this")) {
             return -11007;
         } else if ("The requested portion of the image does not exist".equals(message)) {
             return -11010;
