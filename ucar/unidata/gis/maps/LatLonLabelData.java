@@ -25,7 +25,6 @@ import java.awt.Font;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 
-import sun.misc.Sort;
 import ucar.unidata.ui.FontSelector;
 import ucar.unidata.ui.drawing.Glyph;
 import ucar.unidata.util.Misc;
