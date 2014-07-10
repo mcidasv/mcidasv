@@ -380,6 +380,36 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
         return "";
     }
 
+    /**
+     * Change property keys from application. to idv.
+     *
+     * @param newTable The table to change
+     *
+     * @return The converted table
+     *
+     * @see ucar.unidata.idv.StateManager#processPropertyTable(java.util.Hashtable)
+     */
+    public static Hashtable mungePropertyTable(Hashtable newTable) {
+        Hashtable processed = new Hashtable();
+        for (Enumeration keys = newTable.keys(); keys.hasMoreElements(); ) {
+            String key   = (String) keys.nextElement();
+            Object value = newTable.get(key);
+            key = StateManager.fixIds(key);
+            if (key.startsWith("idv.gui")) {
+                key = StringUtil.replace(key, "idv.gui", "idv.ui");
+            }
+            if (key.startsWith("View..")) {
+                key = StringUtil.replace(key, "View..", "View.");
+            }
+            if (key.startsWith("View.Map.")) {
+                key = StringUtil.replace(key, "View.Map.", "View.");
+            }
+            processed.put(key, value);
+        }
+        return processed;
+
+    }
+
 	
 	/**
 	 * Connect to McIDAS website and look for latest stable version

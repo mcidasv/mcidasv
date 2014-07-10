@@ -2828,12 +2828,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
         getInitialBooleanProperties(props);
 
-        StateManager   stateManager = getStateManager();
-        XmlObjectStore store        = getStore();
-
         if (booleanPropertiesForPersistence != null) {
             booleanPropertiesForPersistence =
-                stateManager.processPropertyTable(
+                edu.wisc.ssec.mcidasv.StateManager.mungePropertyTable(
                     booleanPropertiesForPersistence);
         }
 
@@ -2929,14 +2926,10 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     protected BooleanProperty getBooleanProperty(String propertyId,
             boolean dflt) {
-    	
-    	// avoid unpersistence order inconsistency bug, we have seen NPEs 
-    	// here because the Map is sometimes instantiated before the IDV ref!
-    	if (getIdv() != null) {
-    		if (booleanPropertyMap.size() == 0) {
-    			initBooleanProperties();
-    		}
-    	}
+
+        if (booleanPropertyMap.isEmpty()) {
+            initBooleanProperties();
+        }
 
         BooleanProperty bp =
             (BooleanProperty) booleanPropertyMap.get(propertyId);
