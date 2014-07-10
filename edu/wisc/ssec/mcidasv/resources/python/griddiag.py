@@ -53,7 +53,7 @@ def quo(S1,S2,WA=0):
   """
   return GridMath.divide(S1,S2,WA)
 
-@keepMetadata
+# @keepMetadata
 def sub(S1,S2,WA=0):
   """ Subtract 
   <div class=jython>
