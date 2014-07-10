@@ -34,9 +34,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
@@ -117,7 +119,7 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
      *
      * @param e  the link's event
      */
-    public void hyperlinkUpdate(HyperlinkEvent e) {
+    @Override public void hyperlinkUpdate(HyperlinkEvent e) {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
             if (e.getURL() == null) {
                 click(e.getDescription());
@@ -367,18 +369,17 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
     /**
      * Overridden to set default of McIDAS-V
      */
-    public String getStoreSystemName() {
+    @Override public String getStoreSystemName() {
         return StartupManager.getInstance().getPlatform().getUserDirectory();
     }
 
     /**
      * Overridden to get dir of the unnecessary second level directory.
-     * 
-     * @see ucar.unidata.idv.StateManager#getStoreName()
      */
-    public String getStoreName() {
+    @Override public String getStoreName() {
         return "";
     }
+
 	
 	/**
 	 * Connect to McIDAS website and look for latest stable version
