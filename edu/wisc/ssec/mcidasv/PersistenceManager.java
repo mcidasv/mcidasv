@@ -1470,7 +1470,7 @@ public class PersistenceManager extends IdvPersistenceManager {
 //    }
 
     private List<WindowInfo> wrapViewManagers(final List<ViewManager> vms) {
-        List<WindowInfo> windows = new ArrayList<WindowInfo>();
+        List<WindowInfo> windows = new ArrayList<WindowInfo>(vms.size());
         for (ViewManager vm : vms) {
             WindowInfo window = new WindowInfo();
             window.setIsAMainWindow(true);
@@ -1486,7 +1486,7 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     private List<ViewManager> generateViewManagers(final List<DisplayControlImpl> controls) {
-        List<ViewManager> vms = new ArrayList<ViewManager>();
+        List<ViewManager> vms = new ArrayList<ViewManager>(controls.size());
         for (DisplayControlImpl control : controls) {
             ViewManager vm = getVMManager().findOrCreateViewManager(control.getDefaultViewDescriptor(), "");
             vms.add(vm);
