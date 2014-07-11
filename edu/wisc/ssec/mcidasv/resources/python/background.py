@@ -274,7 +274,9 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
                 
     def clone(self):
         # i'm so sorry :(
-        return self * 1
+        c = self * 1
+        c.setMetadataMap(self.getMetadataMap())
+        return c
         
     def test(self):
         return self.aid
