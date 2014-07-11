@@ -143,12 +143,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
     public TrackAdapter track_adapter;
 
     private List categories;
-    private boolean hasChannelSelect = false;
-    private boolean hasImagePreview = true;
     private boolean isCombinedProduct = false;
     private boolean nameHasBeenSet = false;
-
-	private FlatField previewImage = null;
     
     // need our own separator char since it's always Unix-style in the Suomi NPP files
     private static final String SEPARATOR_CHAR = "/";
@@ -626,11 +622,31 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    							}
     	    						}
 
-    	    						// for CrIS instrument, only taking real calibrated values for now
+    	    						// for CrIS instrument, first find dimensions of var matching
+    	    						// CrIS filter, then throw out all variables which don't match 
+    	    						// those dimensions
+    	    						
     	    						if (instrumentName.getStringValue().equals("CrIS")) {
-    	    							if (! varShortName.startsWith(crisFilter)) {
-    	    								logger.debug("Skipping variable: " + varShortName);
-    	    								continue;
+    	    							if (! vName.contains("GEO")) {
+	    	    							if (! varShortName.startsWith(crisFilter)) {
+	    	    								logger.debug("Skipping variable: " + varShortName);
+	    	    								continue;
+	    	    							}
+    	    							} else {
+    	    								// these variables are all GEO-related
+    	    								// if they match lat/lon bounds, keep them
+    	    								List<Dimension> dl = v.getDimensions();
+        	    							if (dl.size() == 3) {
+        	    								boolean isDisplayableCrIS = true;
+        	    								for (Dimension d : dl) {
+        	    									if ((d.getLength() != xDim) && (d.getLength() != yDim) && (d.getLength() != 9)) {
+        	    										isDisplayableCrIS = false;
+        	    									}
+        	    								}
+        	    								if (! isDisplayableCrIS) {
+        	    									continue;
+        	    								}
+        	    							}
     	    							}
     	    						}
 
@@ -702,7 +718,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    									(instrumentName.getStringValue().equals("ATMS")) || 
     	    									(instrumentName.getStringValue().contains("OMPS"))) {
     	    								is3D = true;
-    	    								hasChannelSelect = true;
     	    								logger.debug("Handling 3-D data source...");
     	    							}
     	    						}
@@ -1043,13 +1058,15 @@ public class SuomiNPPDataSource extends HydraDataSource {
                 	multiSpectralData.add(msd);
                 } 
                 if (instrumentName.getStringValue().equals("CrIS")) {
-            		adapters[pIdx] = new CrIS_SDR_SwathAdapter(nppAggReader, swathTable);
-            		CrIS_SDR_Spectrum csa = new CrIS_SDR_Spectrum(nppAggReader, spectTable);
-                    DataCategory.createCategory("MultiSpectral");
-                    categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
-                	MultiSpectralData msd = new CrIS_SDR_MultiSpectralData((CrIS_SDR_SwathAdapter) adapters[pIdx], csa); 
-                    msd.setInitialWavenumber(csa.getInitialWavenumber());
-                    msd_CrIS.add(msd);
+                	if (pStr.contains(crisFilter)) {
+	            		adapters[pIdx] = new CrIS_SDR_SwathAdapter(nppAggReader, swathTable);
+	            		CrIS_SDR_Spectrum csa = new CrIS_SDR_Spectrum(nppAggReader, spectTable);
+	                    DataCategory.createCategory("MultiSpectral");
+	                    categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
+	                	MultiSpectralData msd = new CrIS_SDR_MultiSpectralData((CrIS_SDR_SwathAdapter) adapters[pIdx], csa); 
+	                    msd.setInitialWavenumber(csa.getInitialWavenumber());
+	                    msd_CrIS.add(msd);
+                	}
                 }
                 if (instrumentName.getStringValue().contains("OMPS")) {
             		adapters[pIdx] = new SwathAdapter(nppAggReader, swathTable);
@@ -1062,14 +1079,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
                 	multiSpectralData.add(msd);
                 } 
                 if (pIdx == 0) {
-                	// generate preview image for ATMS and OMPS
+                	// generate default subset for ATMS and OMPS
                 	if (! instrumentName.getStringValue().equals("CrIS")) {
                 		defaultSubset = multiSpectralData.get(pIdx).getDefaultSubset();
-                		try {
-                			previewImage = multiSpectralData.get(pIdx).getImage(defaultSubset);
-                		} catch (Exception e) {
-                			e.printStackTrace();
-                		}
                 	}
                 }
                 
@@ -1099,18 +1111,16 @@ public class SuomiNPPDataSource extends HydraDataSource {
     		pIdx++;
     	}
 
-        if (msd_CrIS.size() == 3) {
-          try {
-            MultiSpectralAggr aggr = new MultiSpectralAggr(msd_CrIS.toArray(new MultiSpectralData[msd_CrIS.size()]));
-            aggr.setInitialWavenumber(902.25f);
-            multiSpectralData.add(aggr);
-            defaultSubset = ((MultiSpectralData)msd_CrIS.get(0)).getDefaultSubset();
-            previewImage = ((MultiSpectralData)msd_CrIS.get(0)).getImage(defaultSubset);
-          }
-          catch (Exception e) {
-            System.out.println(e);
-          }
-        }
+    	if (msd_CrIS.size() > 0) {
+    		try {
+    			MultiSpectralAggr aggr = new MultiSpectralAggr(msd_CrIS.toArray(new MultiSpectralData[msd_CrIS.size()]));
+    			aggr.setInitialWavenumber(902.25f);
+    			multiSpectralData.add(aggr);
+    			defaultSubset = ((MultiSpectralData) msd_CrIS.get(0)).getDefaultSubset();
+    		} catch (Exception e) {
+    			logger.error("Exception: ", e);
+    		}
+    	}
 
     	setProperties(properties);
     }
@@ -1148,7 +1158,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    oldSources.clear();
     		setup();
     	} catch (Exception e) {
-    		e.printStackTrace();
+    		logger.error("Exception: ", e);
     	}
     }
 
@@ -1204,11 +1214,12 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    			msdMap.put(choice.getName(), adapter);
 	    			addDataChoice(choice);
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error("Exception: ", e);
 				}
     		}
     		return;
     	}
+    	    	
     	// all other data (VIIRS and 2D EDRs)
     	if (adapters != null) {
     		for (int idx = 0; idx < adapters.length; idx++) {
@@ -1429,7 +1440,12 @@ public class SuomiNPPDataSource extends HydraDataSource {
       
 		  try {
 			  FlatField image = (FlatField) dataChoice.getData(null);
-			  components.add(new PreviewSelection(dataChoice, image, null));
+			  PreviewSelection ps = new PreviewSelection(dataChoice, image, null);
+			  // Region subsetting not yet implemented for CrIS data
+			  if (instrumentName.getStringValue().equals("CrIS")) {
+				  ps.enableSubsetting(false);
+			  }
+			  components.add(ps);
 		  } catch (Exception e) {
 			  logger.error("Can't make PreviewSelection: ", e);
 		  }

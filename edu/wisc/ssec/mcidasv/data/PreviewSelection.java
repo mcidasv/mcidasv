@@ -97,6 +97,7 @@ public class PreviewSelection extends DataSelectionComponent {
       DataSourceImpl dataSource;
 
       DataCategory dataCategory;
+      private SubsetRubberBandBox rbb = null;
 
       static SampledSet lines_outlsupu = null;
       static SampledSet lines_outlsupw = null;
@@ -207,8 +208,7 @@ public class PreviewSelection extends DataSelectionComponent {
            }
         }
 
-        final SubsetRubberBandBox rbb =
-            new SubsetRubberBandBox(isLL, image, ((MapProjectionDisplay)mapProjDsp).getDisplayCoordinateSystem(), 1);
+        rbb = new SubsetRubberBandBox(isLL, image, ((MapProjectionDisplay)mapProjDsp).getDisplayCoordinateSystem(), 1);
         rbb.setColor(Color.green);
         rbb.addAction(new CellImpl() {
           boolean init = false;
@@ -376,4 +376,19 @@ public class PreviewSelection extends DataSelectionComponent {
          }
          
       }
+
+      /**
+       * Enable or disable region subsetting
+       * 
+       * @param b true or false 
+       */
+      
+      public void enableSubsetting(boolean b) {
+    	  try {
+    		  rbb.setVisible(b);
+    	  } catch (RemoteException | VisADException e) {
+    		  e.printStackTrace();
+    	  }
+      }
+	
   }
