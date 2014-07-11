@@ -198,6 +198,10 @@ class _MappedData(object):
         """
         # subclasses should override!
         raise NotImplementedError()
+
+    def clone(self):
+        # i'm so sorry :(
+        return self * 1
             
     def __reversed__(self):
         raise NotImplementedError()
@@ -272,10 +276,6 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         return cls(aiff, areaFile, areaDirectory, addeDescriptor,
                 ff.getStartTime())
                 
-    def clone(self):
-        # i'm so sorry :(
-        return self * 1
-        
     def test(self):
         return self.aid
         
