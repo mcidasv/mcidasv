@@ -2835,14 +2835,20 @@ def loadFile(filename=None, field=None, level=None,
         raise ValueError("xStride and yStride must be 1 or greater")
 
     dataType = 'Grid files (netCDF/GRIB/OPeNDAP/GEMPAK)'
-    if filename:
-        dataSource = createDataSource(filename, dataType)
-        gridDataset = GridDataset.open(filename)
-    else:
+
+    if not filename:
         raise ValueError('no filename provided')
+
+    if not os.path.isfile(filename):
+        raise ValueError('filename does not exist or is a directory: ' + filename)
+
+    dataSource = createDataSource(filename, dataType)
+    gridDataset = GridDataset.open(filename)
 
     if field:
         geogrid = gridDataset.findGridByName(field)
+        if not geogrid:
+            raise ValueError('Failed to create geogrid.  Make sure the field you specified exists in the file (use loadFileListFieldsInFile): ' + field)
     else:
         raise ValueError('no field name provided')
     
