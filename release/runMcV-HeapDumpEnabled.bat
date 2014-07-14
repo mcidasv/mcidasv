@@ -108,7 +108,13 @@ FOR /F %%i IN ('jre\bin\java.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetM
 SET MCV_FLAGS=-Didv.3d=%ENABLE_3D% -Didv.sysmem=%SYS_MEM% -Dvisad.java3d.textureNpot=%ALLOW_NPOT% -Dvisad.java3d.imageByRef=%IMAGE_BY_REF% -Dvisad.java3d.geometryByRef=%GEOMETRY_BY_REF% -userpath "%MCV_USERPATH%"
 
 REM Append the specified startup bundle to the args getting passed to Mcv
-IF DEFINED STARTUP_BUNDLE SET MCV_FLAGS=%MCV_FLAGS% -bundle %STARTUP_BUNDLE%
+IF NOT DEFINED STARTUP_BUNDLE GOTO endbundle
+
+IF NOT EXIST %STARTUP_BUNDLE% GOTO endbundle
+
+SET MCV_FLAGS=%MCV_FLAGS% -bundle %STARTUP_BUNDLE%
+
+:endbundle
 
 REM Check for valid HEAP_SIZE
 SET LAST_CHAR=%HEAP_SIZE:~-1%
