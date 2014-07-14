@@ -154,7 +154,11 @@ fi
 
 # get the default bundle represented so that Mcv can use it
 if [ -n "${STARTUP_BUNDLE}" ]; then
-    DEFAULT_BUNDLE="-bundle \"${STARTUP_BUNDLE}\""
+    if [ -f "${STARTUP_BUNDLE}" ]; then
+        DEFAULT_BUNDLE="-bundle \"${STARTUP_BUNDLE}\""
+    else
+        DEFAULT_BUNDLE=""
+    fi
 else
     DEFAULT_BUNDLE=""
 fi
