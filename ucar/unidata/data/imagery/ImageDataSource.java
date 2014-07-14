@@ -40,6 +40,10 @@ import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.DirectDataChoice;
+import ucar.unidata.idv.DisplayControl;
+import ucar.unidata.idv.IdvConstants;
+import ucar.unidata.idv.ViewManager;
+import ucar.unidata.idv.control.ImagePlanViewControl;
 import ucar.unidata.util.CacheManager;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
@@ -140,6 +144,7 @@ public abstract class ImageDataSource extends DataSourceImpl {
     /** timeMap */
     protected Hashtable timeMap = new Hashtable();
 
+    protected List descriptorsToUse;
 
 
     /**
@@ -342,7 +347,7 @@ public abstract class ImageDataSource extends DataSourceImpl {
         if (isFileBased()) {
             return false;
         }
-        List<BandInfo> bandInfos =
+        /* List<BandInfo> bandInfos =
             (List<BandInfo>) getProperty(PROP_BANDINFO, (Object) null);
         if ((bandInfos == null) || (bandInfos.size() == 0)) {
             return true;
@@ -353,7 +358,7 @@ public abstract class ImageDataSource extends DataSourceImpl {
         List l = bandInfos.get(0).getCalibrationUnits();
         if (l.size() > 1) {
             return false;
-        }
+        }  */
         return true;
     }
 
@@ -371,13 +376,45 @@ public abstract class ImageDataSource extends DataSourceImpl {
     protected List saveDataToLocalDisk(String prefix, Object loadId,
                                        boolean changeLinks)
             throws Exception {
+        List<AddeImageDescriptor> descriptorsToSave = new ArrayList<AddeImageDescriptor>();
+        List displays = getIdv().getDisplayControls();
+        for (int i = 0; i < displays.size(); i++) {
+            DisplayControl dci = (DisplayControl)displays.get(i);
+            if(!(dci instanceof ImagePlanViewControl)) {
+                continue;
+            }
+            List dataChoices = dci.getDataChoices();
+            if (dataChoices == null) {
+                continue;
+            }
+            List finalOnes = new ArrayList();
+            for (int j = 0; j < dataChoices.size(); j++) {
+                ((DataChoice)dataChoices.get(j)).getFinalDataChoices(finalOnes);
+            }
+            for (int dcIdx = 0; dcIdx < finalOnes.size(); dcIdx++) {
+                DataChoice dc = (DataChoice)finalOnes.get(dcIdx);
+                if (!(dc instanceof DirectDataChoice)) {
+                    continue;
+                }
+                DirectDataChoice ddc = (DirectDataChoice) dc;
+                List<AddeImageDescriptor> dList = (List)ddc.getProperty("descriptorsToSave");
+                if(dList != null){
+                    for (AddeImageDescriptor descriptor : dList) {
+                        descriptorsToSave.add(descriptor);
+                    }
+                }
+
+            }
+        }
+
         List urls     = new ArrayList();
         List suffixes = new ArrayList();
         SimpleDateFormat sdf = new SimpleDateFormat("_"
                                    + DATAPATH_DATE_FORMAT);
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-        for (int i = 0; i < imageList.size(); i++) {
-            AddeImageDescriptor aid  = getDescriptor(imageList.get(i));
+
+        for (int i = 0; i < descriptorsToSave.size(); i++) {
+            AddeImageDescriptor aid  = getDescriptor(descriptorsToSave.get(i));
             String              url  = aid.getSource();
             DateTime            dttm = (DateTime) timeMap.get(url);
             if (dttm != null) {
@@ -388,6 +425,7 @@ public abstract class ImageDataSource extends DataSourceImpl {
             }
             urls.add(url);
         }
+
         List newFiles = IOUtil.writeTo(urls, prefix, suffixes, loadId);
         // System.err.println ("files:" + newFiles);
         if (newFiles == null) {
@@ -584,6 +622,15 @@ public abstract class ImageDataSource extends DataSourceImpl {
         return imageList;
     }
 
+    /**
+     * Return the list of {@link AddeImageDescriptor}s that define this
+     * data source.
+     *
+     * @return The list of image descriptors.
+     */
+    public List getDescriptorsToUse() {
+        return descriptorsToUse;
+    }
     /**
      * Set the list of {@link AddeImageDescriptor}s that define this data
      * source.
@@ -836,7 +883,7 @@ public abstract class ImageDataSource extends DataSourceImpl {
      *
      *
      * @author IDV Development Team
-     * @version $Revision$
+     * @version $Revision: 1.76 $
      */
     public static class ImageDataInfo {
 
@@ -1204,7 +1251,7 @@ public abstract class ImageDataSource extends DataSourceImpl {
             throws VisADException, RemoteException {
 
         try {
-            List descriptorsToUse = new ArrayList();
+            descriptorsToUse = new ArrayList();
             if (hasBandInfo(dataChoice)) {
                 descriptorsToUse = getDescriptors(dataChoice, subset);
             } else {
@@ -1232,7 +1279,7 @@ public abstract class ImageDataSource extends DataSourceImpl {
                 }
             }
 
-            if (descriptorsToUse.size() == 0) {
+            if (descriptorsToUse == null || descriptorsToUse.size() == 0) {
                 return null;
             }
             AddeImageInfo biggestPosition = null;
@@ -1456,7 +1503,7 @@ public abstract class ImageDataSource extends DataSourceImpl {
      *
      * @return  list of descriptors matching the selection
      */
-    private List getDescriptors(DataChoice dataChoice, DataSelection subset) {
+    protected List getDescriptors(DataChoice dataChoice, DataSelection subset) {
 
         List times = getTimesFromDataSelection(subset, dataChoice);
         boolean usingTimeDriver = ((subset != null)
@@ -1615,30 +1662,6 @@ public abstract class ImageDataSource extends DataSourceImpl {
                         AddeImageInfo aii =
                             (AddeImageInfo) desc.getImageInfo().clone();
                         setBandInfo(dataChoice, aii);
-                        /*
-                        BandInfo bi = (BandInfo) dataChoice.getId();
-                        List<BandInfo> bandInfos =
-                            (List<BandInfo>) getProperty(PROP_BANDINFO,
-                                (Object) null);
-                        boolean hasBand = true;
-                        //If this data source has been changed after we have create a display
-                        //then the possibility exists that the bandinfo contained by the incoming
-                        //data choice might not be valid. If it isn't then default to the first
-                        //one in the list
-                        if (bandInfos != null) {
-                            hasBand = bandInfos.contains(bi);
-                            if ( !hasBand) {
-                                //                                System.err.println("has band = " + bandInfos.contains(bi));
-                            }
-                            if ( !hasBand && (bandInfos.size() > 0)) {
-                                bi = bandInfos.get(0);
-                            } else {
-                                //Not sure what to do here.
-                            }
-                        }
-                        aii.setBand("" + bi.getBandNumber());
-                        aii.setUnit(bi.getPreferredUnit());
-                        */
                         desc.setImageInfo(aii);
                         desc.setSource(aii.getURLString());
                     }
