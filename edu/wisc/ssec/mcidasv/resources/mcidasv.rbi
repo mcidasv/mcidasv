@@ -389,7 +389,7 @@
 
 <!-- Python libraries    -->
   <resources name="idv.resource.jython">
-    <resource label="User's library" location="%USERPATH%/python/default.py"/>
+    <resource label="User's Library" location="%USERPATH%/python/default.py"/>
     <resource location="%USERPATH%/python">
       <property name="category" value="Local Library"/>
     </resource>
@@ -413,7 +413,7 @@
     <resource label="Grid Routines" location="%APPPATH%/python/grid.py">
       <property name="category" value="System"/>
     </resource>
-    <resource label="Ensemble grid routines" location="%IDVPATH%/python/ensemble.py">
+    <resource label="Ensemble Grid Routines" location="%APPPATH%/python/ensemble.py">
       <property name="category" value="System"/>
     </resource>
     <resource label="ISL" location="%IDVPATH%/python/isl.py">
@@ -429,10 +429,10 @@
     <resource label="Image Routines" location="%IDVPATH%/python/image.py">
       <property name="category" value="System"/>
     </resource>
-    <resource label="Map routines" location="%IDVPATH%/python/maps.py">
+    <resource label="Map Routines" location="%IDVPATH%/python/maps.py">
       <property name="category" value="System"/>
     </resource>
-    <resource label="Miscellaneous routines" location="%IDVPATH%/python/misc.py">
+    <resource label="Miscellaneous Routines" location="%IDVPATH%/python/misc.py">
       <property name="category" value="System"/>
     </resource>
     <resource label="Radar Diagnostics" location="%IDVPATH%/python/radar.py">
@@ -441,7 +441,7 @@
     <resource label="Shell Utilities" location="%IDVPATH%/python/shell.py">
       <property name="category" value="System"/>
     </resource>
-    <resource label="Test routines" location="%IDVPATH%/python/test.py">
+    <resource label="Test Routines" location="%IDVPATH%/python/test.py">
       <property name="category" value="System"/>
       <property name="showineditor" value="false"/>
     </resource>
