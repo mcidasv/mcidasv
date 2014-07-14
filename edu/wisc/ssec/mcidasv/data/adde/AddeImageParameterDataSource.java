@@ -804,8 +804,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     }
 
     protected void initDataSelectionComponents(
-                   List<DataSelectionComponent> components, final DataChoice dataChoice) {
-
+        List components, final DataChoice dataChoice)
+    {
         if (fromBundle && !hasRemoteChoices) {
             components.add(new BundlePreviewSelection("Region (Disabled)"));
             components.add(new BundlePreviewSelection("Advanced (Disabled)"));
@@ -1207,7 +1207,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         LogUtil.userErrorMessage("Error in makePreviewImage  e=" + flag + " " + excp);
     }
 
-    private String removeKey(String src, String key) {
+    public static String removeKey(String src, String key) {
         String returnString = src;
         key = key.toUpperCase() + '=';
         if (returnString.contains(key)) {
@@ -1223,7 +1223,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         return returnString;
     }
 
-    private static <T> String replaceKey(String sourceUrl, String key, T value) {
+    public static String replaceKey(String sourceUrl, String key, Object value) {
         String returnString = sourceUrl;
 
         // make sure we got valid key/value pair
@@ -1258,7 +1258,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         return returnString;
     }
 
-    private static <T> String replaceKey(String src, String oldKey, String newKey, T value) {
+    public static String replaceKey(String src, String oldKey, String newKey, Object value) {
         String returnString = src;
         oldKey = oldKey.toUpperCase() + '=';
         newKey = newKey.toUpperCase() + '=';
@@ -1284,7 +1284,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         baseSource = replaceKey(baseSource, key, value);
     }
 
-    private String getKey(String src, String key) {
+    public static String getKey(String src, String key) {
         String returnString = "";
         key = key.toUpperCase() + '=';
         if (src.contains(key)) {
@@ -1352,14 +1352,26 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      */
     @Override public DataSelection getDataSelection() {
         DataSelection tmp;
-        if (this.laLoSel == null || this.choiceToSel == null || !this.choiceToSel.containsKey(this.laLoSel.getDataChoice())) {
-            logger.trace("* idvland getDataSelection");
-            tmp = super.getDataSelection();
-        } else {
-            logger.trace("* mcv getSelForChoice");
+
+        if (this.laLoSel != null) {
+//            logger.trace("* mcv getSelForChoice: choice='{}'", this.laLoSel.getDataChoice());
             tmp = this.getSelForChoice(this.laLoSel.getDataChoice());
+        } else {
+//            logger.trace("* idvland getDataSelection laLoSel=null: {}; choiceToSel=null: {}", (this.laLoSel==null), (this.choiceToSel==null));
+            tmp = super.getDataSelection();
         }
-        logger.trace("return selection props={} geo={}", tmp.getProperties(), tmp.getGeoSelection());
+//        if (this.laLoSel == null || this.choiceToSel == null || !this.choiceToSel.containsKey(this.laLoSel.getDataChoice())) {
+//            logger.trace("* idvland getDataSelection laLoSel=null: {}; choiceToSel=null: {}", (this.laLoSel==null), (this.choiceToSel==null));
+//            tmp = super.getDataSelection();
+//        } else if (this.laLoSel != null) {
+//            logger.trace("* mcv getSelForChoice");
+//            tmp = this.getSelForChoice(this.laLoSel.getDataChoice());
+//        }
+//        if (tmp != null) {
+//            logger.trace("return selection props={} geo={}", tmp.getProperties(), tmp.getGeoSelection());
+//        } else {
+//            logger.trace("return selection props=null geo=null choiceToSel={} :(", this.choiceToSel);
+//        }
         return tmp;
     }
 
@@ -1368,11 +1380,23 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      * {@code DataChoice} with the given {@code DataSelection}.
      */
     @Override public void setDataSelection(DataSelection s) {
-        super.setDataSelection(s);
-        if (this.laLoSel != null) {
-            this.putSelForChoice(this.laLoSel.getDataChoice(), s);
+        GeoSelection tmp = s.getGeoSelection();
+        if (tmp != null) {
+            GeoLocationInfo bbox = tmp.getBoundingBox();
+            GeoLocationInfo laloBbox = this.laLoSel.getGeoLocationInfo();
+            tmp.setBoundingBox(laloBbox);
+//            logger.trace("incoming bbox={} laLo bbox={}", bbox, laloBbox);
         }
-        logger.trace("setting selection props={} geo={}", s.getProperties(), s.getGeoSelection());
+
+        super.setDataSelection(s);
+
+        if (this.laLoSel != null) {
+//            logger.trace("putting selection for choice={} s={}", this.laLoSel.getDataChoice(), s);
+            this.putSelForChoice(this.laLoSel.getDataChoice(), s);
+        } else {
+//            logger.trace("laLoSel is null; s={}", s);
+        }
+//        logger.trace("setting selection props={} geo={}", s.getProperties(), s.getGeoSelection());
     }
     
 //    @Override public int canShowParameter(String name) {
@@ -1617,7 +1641,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         }
 
         try {
-            List descriptorsToUse = new ArrayList();
+            descriptorsToUse = new ArrayList();
             if (hasBandInfo(dataChoice)) {
                 descriptorsToUse = getDescriptors(dataChoice, subset);
             } else {
@@ -1645,7 +1669,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 }
             }
 
-            if (descriptorsToUse.size() == 0) {
+            if (descriptorsToUse == null || descriptorsToUse.size() == 0) {
                 return null;
             }
             AddeImageInfo biggestPosition = null;
