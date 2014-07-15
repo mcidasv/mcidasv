@@ -30,7 +30,7 @@
     <property name="addeservers.dir" location="/Applications/mcidasv/nightly/adde" />
     
     <!-- Sets the McV userpath -->
-    <property name="userpath.dir" location="/Users/${user.name}/Documents/McIDAS-V" />
+    <property name="userpath.dir" location="${user.home}/Documents/McIDAS-V" />
     
     <!-- Attempt to load the version property file -->
     <property file="${resource.dir}/version.properties" />
@@ -813,7 +813,7 @@
       <!--<sysproperty key="idv.usetimedriver" value="true" />-->
       <arg value="-forceaqua" />
       <arg value="-userpath" />
-      <arg value="/Users/${user.name}/Documents/McIDAS-V" />
+      <arg value="${userpath.dir}" />
     </java>
   </target>
 
