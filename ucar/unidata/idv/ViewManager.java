@@ -339,7 +339,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public static Color borderHighlightColor = Color.blue;
 
     /** logo positions */
-    public static TwoFacedObject[] logoPoses = { new TwoFacedObject(
+    protected static TwoFacedObject[] logoPoses = { new TwoFacedObject(
                                                       "Lower Left", "ll"),
             new TwoFacedObject("Upper Left", "ul"),
             new TwoFacedObject("Upper Right", "ur"),
@@ -1345,7 +1345,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         if (newOne) {
             GuiUtils.showDialogNearSrc(viewMenu, propertiesDialog);
         } else {
-            propertiesDialog.show();
+            propertiesDialog.setVisible(true);
         }
 
         propertiesDialogShown = true;
@@ -1522,7 +1522,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
      *
      * @return  the corresponding TFO
      */
-    public static TwoFacedObject findLoc(String loc) {
+    protected TwoFacedObject findLoc(String loc) {
         if (loc.equalsIgnoreCase("ll")) {
             return logoPoses[0];
         } else if (loc.equalsIgnoreCase("ul")) {
@@ -1545,7 +1545,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
      *
      * @return  the position and offset
      */
-    public static String[] parseLogoPosition(String position) {
+    protected String[] parseLogoPosition(String position) {
         String logoP, logoO;
 
         if ((position == null) || position.isEmpty()) {
@@ -1574,7 +1574,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
      *
      * @return  the logo position string
      */
-    public static String makeLogoPosition(String pos, String offset) {
+    protected String makeLogoPosition(String pos, String offset) {
         if ((pos == null) || pos.isEmpty()) {
             return "";
         }
@@ -2926,8 +2926,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     protected BooleanProperty getBooleanProperty(String propertyId,
             boolean dflt) {
-
-        if (booleanPropertyMap.isEmpty()) {
+        if (booleanPropertyMap.size() == 0) {
             initBooleanProperties();
         }
 
@@ -4039,7 +4038,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
     private void reloadTimeDriverDataSources(DisplayControl displayControl) {
         List<DataSource> uniqueSources =
             Collections.synchronizedList(new ArrayList<DataSource>());
-
+        List<DataSource> dcSources = null;
+        if(displayControl != null)
+            dcSources = ((DisplayControlImpl)displayControl).getDataSources();
         if (idv.getUseTimeDriver()
                 && ((displayControl == null)
                     || displayControl.getIsTimeDriver())) {
@@ -4054,7 +4055,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     for (int i = 0; i < controlSources.size(); i++) {
                         DataSourceImpl ds =
                             (DataSourceImpl) controlSources.get(i);
-                        if ( !uniqueSources.contains(ds)) {
+                        if(displayControl == null && !uniqueSources.contains(ds)){
+                            uniqueSources.add(ds);
+                        } else if (!uniqueSources.contains(ds) && !dcSources.contains(ds)) {
                             uniqueSources.add(ds);
                         }
                     }
@@ -7825,6 +7828,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
         }
     }
 
+    /**
+     * _more_
+     *
+     * @param value _more_
+     */
+    public void setProjectionFromData(boolean value) {}
 
     /**
      * Class MyTimeline for the animation timeline

@@ -44,10 +44,13 @@ import ucar.unidata.view.geoloc.VertScaleInfo;
 import ucar.unidata.view.geoloc.ViewpointControl;
 
 import ucar.visad.display.DisplayMaster;
+import ucar.visad.display.RubberBandBox;
 
+import visad.ActionImpl;
 import visad.ControlEvent;
 import visad.CoordinateSystem;
 import visad.DisplayEvent;
+import visad.Gridded2DSet;
 import visad.MouseHelper;
 import visad.Unit;
 import visad.VisADException;
@@ -144,6 +147,9 @@ public abstract class NavigatedViewManager extends ViewManager {
 
     /** Defines the viewpoint matrix when sharing state */
     public static final String SHARE_MATRIX = "MapViewManager.SHARE_MATRIX";
+
+    /** Defines the rubber band box for sharing state */
+    public static final String SHARE_RUBBERBAND = "NavigatedViewManager.SHARE_RUBBERBAND";
 
     /** How far do we zoom on a zoom in or out */
     public static final double ZOOM_FACTOR =
@@ -280,6 +286,18 @@ public abstract class NavigatedViewManager extends ViewManager {
             }
 
             navDisplay.setCursorStringOn(false);
+            final RubberBandBox rbb = navDisplay.getRubberBandBox();
+            if (rbb != null) {
+            	rbb.addAction(new ActionImpl("Box Change") {
+            		public void doAction() 
+            		throws VisADException, RemoteException {
+            		   Gridded2DSet bounds = rbb.getBounds();
+            		   if (bounds != null) {
+            			   rubberBandBoxChanged();
+            		   }
+            		}
+            	});
+            }
         } catch (Exception e) {
             logException("setDisplayMaster", e);
         }
@@ -547,7 +565,27 @@ public abstract class NavigatedViewManager extends ViewManager {
             return;
         }
 
+        if (dataId.equals(SHARE_RUBBERBAND)) {
+    	    //System.out.println("NVM: Rubber Band Box changed from share");
+            notifyDisplayControls(SHARE_RUBBERBAND);
+            return;
+        }
+
         super.receiveShareData(from, dataId, data);
+    }
+
+    /**
+     * Handle the rubber band box changes.
+     * 
+     * @throws VisADException
+     */
+    protected void rubberBandBoxChanged() throws VisADException {
+        if ( !getInitDone()) {
+            return;
+        }
+    	//System.out.println("NVM: Rubber Band Box changed");
+    	doShare(SHARE_RUBBERBAND, "");
+    	notifyDisplayControls(SHARE_RUBBERBAND);
     }
 
     /**
@@ -724,7 +762,7 @@ public abstract class NavigatedViewManager extends ViewManager {
     protected void verticalRangeChanged() {}
 
     /**
-     * Set the format for the curso readout
+     * Set the format for the cursor readout.
      */
     protected void setReadoutFormat() {
         if (readout != null) {

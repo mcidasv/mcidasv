@@ -198,6 +198,13 @@ public class MapViewManager extends NavigatedViewManager {
     /** Preference for  showing the pip */
     public static final String PREF_SHOWPIP = "View.ShowPip";
 
+    /** Preference for progressive resolution */
+    public static final String PREF_USE_PROGRESSIVE_RESOLUTION = 
+    	"View.UseProgressiveResolution";
+
+    /** label for progressive resolution/disclosure/whatever we call it */
+    public static final String PR_LABEL = "Enable Adaptive Resolution";
+
     /** Preference for showing the globe background */
     public static final String PREF_SHOWGLOBEBACKGROUND =
         "View.ShowGlobeBackground";
@@ -547,6 +554,7 @@ public class MapViewManager extends NavigatedViewManager {
             navDisplay.setPolygonOffsetFactor(
                 getStateManager().getProperty(
                     "idv.map.polygonoffsetfactor", 1));
+
         }
 
 
@@ -1159,6 +1167,8 @@ public class MapViewManager extends NavigatedViewManager {
         if (displayProjectionZoom != 0) {
             getMapDisplay().zoom(displayProjectionZoom);
         }
+        boolean useDisplayRegion = 
+        	getStateManager().getProperty(IdvConstants.PROP_USE_DISPLAYAREA, false);
 
         if (doNotSetProjection) {
             return;
@@ -1186,7 +1196,7 @@ public class MapViewManager extends NavigatedViewManager {
         }
 
         boolean setProjection = false;
-        if (thatProjection != null) {
+        if (thatProjection != null && !useDisplayRegion) {
             setProjection = setMapProjection(thatProjection, false,
                                              mvm.mainProjectionName);
         }
@@ -1526,6 +1536,8 @@ public class MapViewManager extends NavigatedViewManager {
             { "Show \"Please Wait\" Message", PREF_WAITMSG,
               new Boolean(getWaitMessageVisible()) },
             { "Reset Projection With New Data", PREF_PROJ_USEFROMDATA },
+            { PR_LABEL, PREF_USE_PROGRESSIVE_RESOLUTION,
+            	new Boolean(getUseProgressiveResolution())},
             { "Use 3D View", PREF_DIMENSION },
             { "Show Globe Background", PREF_SHOWGLOBEBACKGROUND,
               new Boolean(getStore().get(PREF_SHOWGLOBEBACKGROUND,
@@ -2936,9 +2948,10 @@ public class MapViewManager extends NavigatedViewManager {
         if ((rect.getWidth() == 0) || (rect.getHeight() == 0)) {
             return false;
         } else {
+        	// Try to avoid short/wide and tall/narrow projections.
             if (rect.getWidth() / rect.getHeight() < 0.1) {
                 return false;
-            } else if (rect.getHeight() / rect.getWidth() < 0.1) {
+            } else if (rect.getHeight() / rect.getWidth() < 0.075) {
                 return false;
             }
         }
@@ -3202,6 +3215,8 @@ public class MapViewManager extends NavigatedViewManager {
             createCBMI(projMenu, PREF_PROJ_USEFROMDATA).setToolTipText(
                 "Automatically change viewpoint to the native data projection of new displays");
         }
+        createCBMI(projMenu, PREF_USE_PROGRESSIVE_RESOLUTION).setToolTipText("" +
+        		"Adapt the data resolution to match the display resolution");
         createCBMI(projMenu, PREF_SHAREVIEWS);
         projMenu.add(GuiUtils.makeMenuItem("Set Share Group", this,
                                            "showSharableDialog"));
@@ -3289,6 +3304,8 @@ public class MapViewManager extends NavigatedViewManager {
             if (pipPanelWrapper != null) {
                 pipPanelWrapper.setVisible(value);
             }
+        } else if (id.equals(PREF_USE_PROGRESSIVE_RESOLUTION)) {
+        	// TODO: what do we want to do?
         } else if (id.equals(PREF_SHOWGLOBEBACKGROUND)) {
             if (globeBackgroundDisplayable != null) {
                 globeBackgroundDisplayable.setVisible(value);
@@ -3334,6 +3351,10 @@ public class MapViewManager extends NavigatedViewManager {
 
         props.add(new BooleanProperty(PREF_SHOWPIP, "Show Overview Map",
                                       "Show Overview Map", false));
+
+        props.add(new BooleanProperty(PREF_USE_PROGRESSIVE_RESOLUTION, 
+        		                      PR_LABEL,
+                                      PR_LABEL, true));
 
         if (useGlobeDisplay) {
             props.add(new BooleanProperty(PREF_SHOWGLOBEBACKGROUND,
@@ -3395,6 +3416,14 @@ public class MapViewManager extends NavigatedViewManager {
      */
     public void setShowElevation(boolean value) {}
 
+    /**
+     * _more_
+     *
+     * @param value _more_
+     */
+    public void setProjectionFromData(boolean value) {
+        setUseProjectionFromData(value);
+    }
 
     /**
      * Set the  use projection from data flag
@@ -3475,6 +3504,24 @@ public class MapViewManager extends NavigatedViewManager {
      */
     public boolean getShowPip() {
         return getBp(PREF_SHOWPIP, false);
+    }
+
+    /**
+     * Set the Progressive Resolution property.
+     *
+     * @param value The new value for Progressive Resolution
+     */
+    public void setUseProgressiveResolution(boolean value) {
+        setBp(PREF_USE_PROGRESSIVE_RESOLUTION, value);
+    }
+
+    /**
+     * Get the ProgressiveResolution property.
+     *
+     * @return The ProgressiveResolution
+     */
+    public boolean getUseProgressiveResolution() {
+        return getBp(PREF_USE_PROGRESSIVE_RESOLUTION, true);
     }
 
 
@@ -3891,4 +3938,8 @@ public class MapViewManager extends NavigatedViewManager {
             d.setLonScaleInfo(axisScaleInfo);
         }
     }
+
+
+
+
 }

@@ -69,6 +69,7 @@ import edu.wisc.ssec.mcidas.AreaFileException;
 import edu.wisc.ssec.mcidas.adde.AddeImageURL;
 import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 
+import ucar.unidata.util.Misc;
 import visad.Data;
 import visad.DateTime;
 import visad.FlatField;
@@ -378,16 +379,19 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         return true;
     }
 
-    private Hashtable<DataChoice, DataSelection> choiceToSel = new Hashtable<DataChoice, DataSelection>();
+    private Hashtable<String, DataSelection> choiceToSel = new Hashtable<String, DataSelection>();
 
     public DataSelection getSelForChoice(final DataChoice choice) {
-        return choiceToSel.get(choice);
+        String key = choice.getName();
+        return choiceToSel.get(key);
     }
     public boolean hasSelForChoice(final DataChoice choice) {
-        return choiceToSel.containsKey(choice);
+        String key = choice.getName();
+        return choiceToSel.containsKey(key);
     }
     public void putSelForChoice(final DataChoice choice, final DataSelection sel) {
-        choiceToSel.put(choice, sel);
+        String key = choice.getName();
+        choiceToSel.put(key, sel);
     }
 
     /**
@@ -1354,10 +1358,10 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         DataSelection tmp;
 
         if (this.laLoSel != null) {
-//            logger.trace("* mcv getSelForChoice: choice='{}'", this.laLoSel.getDataChoice());
+            logger.trace("* mcv getSelForChoice: choice='{}'", this.laLoSel.getDataChoice());
             tmp = this.getSelForChoice(this.laLoSel.getDataChoice());
         } else {
-//            logger.trace("* idvland getDataSelection laLoSel=null: {}; choiceToSel=null: {}", (this.laLoSel==null), (this.choiceToSel==null));
+            logger.trace("* idvland getDataSelection laLoSel=null: {}; choiceToSel=null: {}", (this.laLoSel==null), (this.choiceToSel==null));
             tmp = super.getDataSelection();
         }
 //        if (this.laLoSel == null || this.choiceToSel == null || !this.choiceToSel.containsKey(this.laLoSel.getDataChoice())) {
@@ -1367,11 +1371,11 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 //            logger.trace("* mcv getSelForChoice");
 //            tmp = this.getSelForChoice(this.laLoSel.getDataChoice());
 //        }
-//        if (tmp != null) {
-//            logger.trace("return selection props={} geo={}", tmp.getProperties(), tmp.getGeoSelection());
-//        } else {
-//            logger.trace("return selection props=null geo=null choiceToSel={} :(", this.choiceToSel);
-//        }
+        if (tmp != null) {
+            logger.trace("return selection props={} geo={}", tmp.getProperties(), tmp.getGeoSelection());
+        } else {
+            logger.trace("return selection props=null geo=null choiceToSel={} :(", this.choiceToSel);
+        }
         return tmp;
     }
 
@@ -1381,11 +1385,11 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      */
     @Override public void setDataSelection(DataSelection s) {
         GeoSelection tmp = s.getGeoSelection();
-        if (tmp != null) {
+        if (tmp != null && this.laLoSel != null) {
             GeoLocationInfo bbox = tmp.getBoundingBox();
             GeoLocationInfo laloBbox = this.laLoSel.getGeoLocationInfo();
             tmp.setBoundingBox(laloBbox);
-//            logger.trace("incoming bbox={} laLo bbox={}", bbox, laloBbox);
+            logger.trace("incoming bbox={} laLo bbox={}", bbox, laloBbox);
         }
 
         super.setDataSelection(s);
@@ -1394,9 +1398,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 //            logger.trace("putting selection for choice={} s={}", this.laLoSel.getDataChoice(), s);
             this.putSelForChoice(this.laLoSel.getDataChoice(), s);
         } else {
-//            logger.trace("laLoSel is null; s={}", s);
+            logger.trace("laLoSel is null; s={}", s);
         }
-//        logger.trace("setting selection props={} geo={}", s.getProperties(), s.getGeoSelection());
+        logger.trace("setting selection props={} geo={}", s.getProperties(), s.getGeoSelection());
     }
     
 //    @Override public int canShowParameter(String name) {
@@ -2824,7 +2828,57 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         saveLineMag = this.laLoSel.getLineMag();
         saveEleMag = this.laLoSel.getElementMag();
     }
-    
+
+    /**
+     * Return the list of times held by the DataSelection member.
+     *
+     * @return  DataSelection times
+     */
+    public List getDateTimeSelection() {
+//        return super.getDateTimeSelection();
+        DataSelection s = getDataSelection();
+        if (s == null) {
+            logger.trace("oh no getDataSelection is null :(");
+            return null;
+        } else {
+            return s.getTimes();
+        }
+    }
+
+//    /**
+//     * Set the list of selected times for this data source. This is used
+//     * for XML persistence.
+//     *
+//     * @param selectedTimes   List of selected times
+//     */
+    public void setDateTimeSelection(List selectedTimes) {
+//        //Check to see if we need to convert the absolute times into an index list.
+//        if (holdsDateTimes(selectedTimes) && (timesList != null)) {
+//            selectedTimes = Misc.getIndexList(selectedTimes,
+//                getAllDateTimes());
+//        }
+//        getDataSelection().setTimes(selectedTimes);
+        super.setDateTimeSelection(selectedTimes);
+        List selected = getDateTimeSelection();
+        logger.trace("incoming: {} result: {}", selectedTimes, selected);
+    }
+
+    protected boolean canDoProgressiveResolution() {
+        return false;
+    }
+
+    public boolean getIsProgressiveResolution() {
+        return false;
+    }
+
+    public void setIsProgressiveResolution(boolean isPG) {
+
+    }
+
+    public boolean getMatchDisplayRegion() {
+        return false;
+    }
+
     public static class BundlePreviewSelection extends DataSelectionComponent {
         final String label;
         public BundlePreviewSelection(final String label) {
