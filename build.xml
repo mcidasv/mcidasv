@@ -514,12 +514,20 @@
             <os family="unix" arch="x86" />
         </condition>
         <condition property="isLinux.x86_64">
-            <and>
-                <os family="unix" arch="x86_64"/>
-                <not>
-                    <os family="mac"/>
-                </not>
-            </and>
+            <or>
+                <and>
+                    <os family="unix" arch="x86_64"/>
+                    <not>
+                        <os family="mac"/>
+                    </not>
+                </and>
+                <and>
+                    <os family="unix" arch="amd64"/>
+                    <not>
+                        <os family="mac"/>
+                    </not>
+                </and>
+            </or>
         </condition>
         <condition property="isWindows.x86">
             <os family="windows" arch="x86" />
