@@ -107,6 +107,8 @@ public class ErrorCodeAreaAdapter {
             return -11001;
         } else if (message.endsWith("not present")) {
             return -11003;
+        } else if (message.startsWith("Band is not available in ") && message.endsWith(" units")) {
+            return -7000;
         } else {
             Throwable nextCause = cause.getCause();
             if (nextCause != null) {
