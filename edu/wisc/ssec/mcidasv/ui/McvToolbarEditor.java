@@ -160,23 +160,24 @@ public class McvToolbarEditor implements ActionListener {
      * @return Whether or not the entry represents a space.
      */
     public static boolean isSpace(final TwoFacedObject tfo) {
-        return tfo.toString().equals(SPACE);
+        return SPACE.equals(tfo.toString());
     }
 
     /**
      * @return Current toolbar contents as action IDs mapped to labels.
      */
     private List<TwoFacedObject> getCurrentToolbar() {
-        List<TwoFacedObject> icons = new ArrayList<TwoFacedObject>();
+
         List<String> currentIcons = uiManager.getCachedButtons();
         IdvActions allActions = uiManager.getCachedActions();
-
+        List<TwoFacedObject> icons = new ArrayList<>(currentIcons.size());
         for (String actionId : currentIcons) {
             TwoFacedObject tfo;
             if (actionId != null) {
                 String desc = allActions.getAttributeForAction(actionId, ActionAttribute.DESCRIPTION);
-                if (desc == null)
+                if (desc == null) {
                     desc = "No description associated with action \""+actionId+"\"";
+                }
                 tfo = new TwoFacedObject(desc, actionId);
             } else {
                 tfo = new TwoFacedObject(SPACE, SPACE + (spaceCount++));
@@ -192,21 +193,21 @@ public class McvToolbarEditor implements ActionListener {
      */
     private List<TwoFacedObject> getAllActions() {
         IdvActions allActions = uiManager.getCachedActions();
-        List<TwoFacedObject> actions = new ArrayList<TwoFacedObject>();
-
         List<String> actionIds = allActions.getAttributes(ActionAttribute.ID);
+        List<TwoFacedObject> actions = new ArrayList<>(actionIds.size());
         for (String actionId : actionIds) {
             String label = allActions.getAttributeForAction(actionId, ActionAttribute.DESCRIPTION);
-            if (label == null)
+            if (label == null) {
                 label = actionId;
+            }
             actions.add(new TwoFacedObject(label, actionId));
         }
         return actions;
     }
 
     /**
-     * Returns the {@link TwoListPanel} being used to store
-     * the lists of available and selected actions.
+     * Returns the {@link TwoListPanel} being used to store the lists of
+     * available and selected actions.
      */
     public TwoListPanel getTLP() {
         return twoListPanel;
@@ -245,7 +246,7 @@ public class McvToolbarEditor implements ActionListener {
         export2Button.setActionCommand(CMD_EXPORTMENUPLUGIN);
         export2Button.addActionListener(this);
 
-        List<JComponent> buttons = new ArrayList<JComponent>(); 
+        List<JComponent> buttons = new ArrayList<>();
         buttons.add(new JLabel(" "));
         buttons.add(addSpaceButton);
         buttons.add(reloadButton);
@@ -276,7 +277,7 @@ public class McvToolbarEditor implements ActionListener {
 
             Map<String, JMenu> menuIds = uiManager.getMenuIds();
 
-            Vector<TwoFacedObject> menuIdItems = new Vector<TwoFacedObject>();
+            Vector<TwoFacedObject> menuIdItems = new Vector<>();
             menuIdItems.add(new TwoFacedObject("None", null));
 
             for (String id : menuIds.keySet()) {
@@ -307,7 +308,7 @@ public class McvToolbarEditor implements ActionListener {
             }
 
             String menuName = menuNameFld.getText().trim();
-            if (menuName.length() == 0) {
+            if (menuName.isEmpty()) {
                 LogUtil.userMessage(MSG_ENTER_NAME);
                 continue;
             }
@@ -388,28 +389,27 @@ public class McvToolbarEditor implements ActionListener {
      */
     public void actionPerformed(ActionEvent ae) {
         String c = ae.getActionCommand();
-        if (c.equals(CMD_EXPORTMENUPLUGIN) || c.equals(CMD_EXPORTPLUGIN)) {
+        if (CMD_EXPORTMENUPLUGIN.equals(c) || CMD_EXPORTPLUGIN.equals(c)) {
             Object[] tfos = twoListPanel.getToList().getSelectedValues();
-            if (tfos.length == 0)
+            if (tfos.length == 0) {
                 LogUtil.userMessage(MSG_SELECT_ENTRIES);
-            else if (c.equals(CMD_EXPORTMENUPLUGIN))
+            } else if (CMD_EXPORTMENUPLUGIN.equals(c)) {
                 doExportToMenu(tfos);
-            else
+            } else {
                 doExport(tfos);
-        }
-        else if (c.equals(CMD_RELOAD)) {
+            }
+        } else if (CMD_RELOAD.equals(c)) {
             twoListPanel.reload();
-        } 
-        else if (c.equals(CMD_ADDSPACE)) {
+        } else if (CMD_ADDSPACE.equals(c)) {
             twoListPanel.insertEntry(
                 new TwoFacedObject(SPACE, SPACE+(spaceCount++)));
         }
     }
 
     /**
-     * Has <code>twoListPanel</code> been changed?
+     * Has {@code twoListPanel} been changed?
      *
-     * @return <code>true</code> if there have been changes, <code>false</code>
+     * @return {@code true} if there have been changes, {@code false}
      * otherwise.
      */
     public boolean anyChanges() {
@@ -477,6 +477,7 @@ public class McvToolbarEditor implements ActionListener {
      * {@link JList}s.
      */
     private static class IconCellRenderer implements ListCellRenderer {
+
         /** Icon that represents spaces in the current toolbar actions. */
         private static final Icon SPACE_ICON = 
             new SpaceIcon(McvToolbarEditor.ICON_SIZE);
@@ -498,8 +499,9 @@ public class McvToolbarEditor implements ActionListener {
          * @throws NullPointerException if a null McvToolbarEditor was given.
          */
         public IconCellRenderer(final McvToolbarEditor editor) {
-            if (editor == null)
+            if (editor == null) {
                 throw new NullPointerException("Toolbar editor cannot be null");
+            }
             this.editor = editor;
         }
 
@@ -516,10 +518,11 @@ public class McvToolbarEditor implements ActionListener {
                 TwoFacedObject tfo = (TwoFacedObject)value;
                 String text = (String)tfo.getLabel();
                 Icon icon;
-                if (!isSpace(tfo))
+                if (!isSpace(tfo)) {
                     icon = editor.getActionIcon((String)tfo.getId());
-                else
+                } else {
                     icon = SPACE_ICON;
+                }
                 renderer.setIcon(icon);
                 renderer.setText(text);
             }
@@ -534,6 +537,7 @@ public class McvToolbarEditor implements ActionListener {
      * <p>Probably only of use in {@link IconCellRenderer}.
      */
     private static class SpaceIcon implements Icon {
+
         /** {@code dimension * dimension} is the size of the icon. */
         private final int dimension;
 
@@ -546,13 +550,20 @@ public class McvToolbarEditor implements ActionListener {
          * zero.
          */
         public SpaceIcon(final int dimension) {
-            if (dimension <= 0)
+            if (dimension <= 0) {
                 throw new IllegalArgumentException("Dimension must be a positive integer");
+            }
             this.dimension = dimension;
         }
 
-        public int getIconHeight() { return dimension; }
-        public int getIconWidth()  { return dimension; }
+        public int getIconHeight() {
+            return dimension;
+        }
+
+        public int getIconWidth() {
+            return dimension;
+        }
+
         public void paintIcon(Component c, Graphics g, int x, int y) {
             g.setColor(new Color(255, 255, 255, 0));
             g.drawRect(0, 0, dimension, dimension);
