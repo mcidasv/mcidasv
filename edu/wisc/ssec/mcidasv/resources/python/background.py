@@ -2092,7 +2092,48 @@ class _Layer(_JavaProxy):
             self._JavaProxy__javaObject.setLayoutModel(model)
         else:
             self._JavaProxy__javaObject.setStationModel(model)
+            
+    @gui_invoke_later
+    def enableDeclutter(self):
+        if not isinstance(self._JavaProxy__javaObject, ValuePlanViewControl):
+            raise NotImplementedError('decluttering not support for this layer type')
+            
+        if not self._JavaProxy__javaObject.getDeclutter():
+            self._JavaProxy__javaObject.setDeclutter(True)
+            self._JavaProxy__javaObject.loadDataInThread()
         
+    @gui_invoke_later
+    def disableDeclutter(self):
+        if not isinstance(self._JavaProxy__javaObject, ValuePlanViewControl):
+            raise NotImplementedError('decluttering not support for this layer type')
+            
+        if self._JavaProxy__javaObject.getDeclutter():
+            self._JavaProxy__javaObject.setDeclutter(False)
+            self._JavaProxy__javaObject.loadDataInThread()
+        
+    @gui_invoke_later
+    def isDeclutterEnabled(self):
+        if not isinstance(self._JavaProxy__javaObject, ValuePlanViewControl):
+            raise NotImplementedError('decluttering not support for this layer type')
+            
+        return self._JavaProxy__javaObject.getDeclutter()
+        
+    @gui_invoke_later
+    def getDeclutterFilter(self):
+        if not isinstance(self._JavaProxy__javaObject, ValuePlanViewControl):
+            raise NotImplementedError('decluttering not support for this layer type')
+            
+        return self._JavaProxy__javaObject.getDeclutterFilter()
+        
+    @gui_invoke_later
+    def setDeclutterFilter(self, filterFactor):
+        if not isinstance(self._JavaProxy__javaObject, ValuePlanViewControl):
+            raise NotImplementedError('decluttering not support for this layer type')
+            
+        if self._JavaProxy__javaObject.getDeclutterFilter() != filterFactor:
+            self._JavaProxy__javaObject.setDeclutterFilter(filterFactor)
+            self._JavaProxy__javaObject.loadDataInThread()
+            
 # TODO(jon): this (and its accompanying subclasses) are a productivity rabbit
 # hole!
 class _DataSource(_JavaProxy):
