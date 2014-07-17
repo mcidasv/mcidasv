@@ -348,7 +348,7 @@ public class TabbedAddeManager extends JFrame {
         }
 //        if (entrySet.removeAll(removable)) {
         if (serverManager.removeEntries(removable)) {
-            RemoteAddeTableModel tableModel = ((RemoteAddeTableModel)remoteTable.getModel());
+            RemoteAddeTableModel tableModel = (RemoteAddeTableModel)remoteTable.getModel();
             int first = Integer.MAX_VALUE;
             int last = Integer.MIN_VALUE;
             for (RemoteAddeEntry entry : removable) {
@@ -414,7 +414,7 @@ public class TabbedAddeManager extends JFrame {
 //        if (entrySet.removeAll(entries)) {
         if (serverManager.removeEntries(entries)) {
             logger.trace("successful removal of entries={}",entries);
-            LocalAddeTableModel tableModel = ((LocalAddeTableModel)localTable.getModel());
+            LocalAddeTableModel tableModel = (LocalAddeTableModel)localTable.getModel();
             int first = Integer.MAX_VALUE;
             int last = Integer.MIN_VALUE;
             for (LocalAddeEntry entry : entries) {
@@ -957,7 +957,7 @@ public class TabbedAddeManager extends JFrame {
         } else {
             int min = selModel.getMinSelectionIndex();
             int max = selModel.getMaxSelectionIndex();
-            RemoteAddeTableModel tableModel = ((RemoteAddeTableModel)remoteTable.getModel());
+            RemoteAddeTableModel tableModel = (RemoteAddeTableModel)remoteTable.getModel();
             selectedEntries = newLinkedHashSet((max - min) * AddeEntry.EntryType.values().length);
             for (int i = min; i <= max; i++) {
                 if (selModel.isSelectedIndex(i)) {
@@ -983,7 +983,7 @@ public class TabbedAddeManager extends JFrame {
         editRemoteButton.setEnabled(singleSelection);
         editMenuItem.setEnabled(singleSelection);
 
-        boolean hasSelection = (selectedRowCount >= 1) && (!onlyDefaultEntries);
+        boolean hasSelection = (selectedRowCount >= 1) && !onlyDefaultEntries;
         removeRemoteButton.setEnabled(hasSelection);
         removeMenuItem.setEnabled(hasSelection);
     }
@@ -1004,7 +1004,7 @@ public class TabbedAddeManager extends JFrame {
         } else {
             int min = selModel.getMinSelectionIndex();
             int max = selModel.getMaxSelectionIndex();
-            LocalAddeTableModel tableModel = ((LocalAddeTableModel)localTable.getModel());
+            LocalAddeTableModel tableModel = (LocalAddeTableModel)localTable.getModel();
             selectedEntries = newLinkedHashSet(max - min);
             for (int i = min; i <= max; i++) {
                 if (selModel.isSelectedIndex(i)) {
@@ -1017,7 +1017,7 @@ public class TabbedAddeManager extends JFrame {
 
         // the current "edit" dialog doesn't work so well with multiple 
         // servers/datasets, so only allow the user to edit entries one at a time.
-        boolean singleSelection = (selectedEntries.size() == 1);
+        boolean singleSelection = selectedEntries.size() == 1;
         this.editRemoteButton.setEnabled(singleSelection);
         this.editMenuItem.setEnabled(singleSelection);
 
@@ -1070,7 +1070,7 @@ public class TabbedAddeManager extends JFrame {
      * @return {@code true} if there is a single local dataset selected. {@code false} otherwise.
      */
     private boolean hasSingleLocalSelection() {
-        return (selectedLocalEntries.size() == 1);
+        return selectedLocalEntries.size() == 1;
     }
 
     /**

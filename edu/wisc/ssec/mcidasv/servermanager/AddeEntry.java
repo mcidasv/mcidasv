@@ -37,7 +37,7 @@ public interface AddeEntry {
 
     /** Represents the possible actions that an ADDE editor can perform. */
 //    @PersistableEnum
-    public enum EditorAction {
+    enum EditorAction {
         /** Created a new entry; hasn't been verified. */
         ADDED,
 
@@ -61,8 +61,7 @@ public interface AddeEntry {
     };
 
     /** Type of chooser this should appear under. */
-    
-    public enum EntryType {
+    enum EntryType {
         /** {@link edu.wisc.ssec.mcidasv.chooser.adde.AddeImageChooser} */
         IMAGE,
 
@@ -113,7 +112,7 @@ public interface AddeEntry {
     };
     
     /** Sort of a {@literal "misc"} status field... */
-    public enum EntryValidity {
+    enum EntryValidity {
         /** Entry has been verified by connecting to the server. */
         VERIFIED,
 
@@ -146,7 +145,7 @@ public interface AddeEntry {
     };
 
     /** Where did this entry come from? */
-    public enum EntrySource {
+    enum EntrySource {
         /** Entry originated from McIDAS-V. */
         SYSTEM, 
 
@@ -175,7 +174,7 @@ public interface AddeEntry {
      * Has the user elected to disable this entry from appearing in its 
      * relevant chooser? 
      */
-    public enum EntryStatus {
+    enum EntryStatus {
         /** Entry is valid and toggled on. */
         ENABLED,
 
@@ -195,19 +194,18 @@ public interface AddeEntry {
     };
 
     /** Represents the {@literal "no accounting"} entries. */
-    public static final AddeAccount DEFAULT_ACCOUNT = 
-        new AddeAccount("idv", "0");
+    AddeAccount DEFAULT_ACCOUNT = new AddeAccount("idv", "0");
 
     /**
      * Address of the server associated with the current entry. 
      * {@link LocalAddeEntry}s will return {@code localhost}.
      */
-    public String getAddress();
+    String getAddress();
 
     /**
      * Dataset/group located on the server.
      */
-    public String getGroup();
+    String getGroup();
 
     // TODO(jon): what part of a resolv.srv does this represent?
     /**
@@ -215,7 +213,7 @@ public interface AddeEntry {
      * 
      * @return Name associated with this entry.
      */
-    public String getName();
+    String getName();
 
     /**
      * Accounting information associated with the current entry. If the server
@@ -224,62 +222,62 @@ public interface AddeEntry {
      * 
      * @return ADDE account object.
      */
-    public AddeAccount getAccount();
+    AddeAccount getAccount();
 
     /**
      * Type of chooser this entry should appear under.
      * 
      * @return The {@literal "type"} of data associated with this entry.
      */
-    public EntryType getEntryType();
+    EntryType getEntryType();
 
     /**
      * Does this entry represent a {@literal "valid"} ADDE server.
      * 
      * @return Whether or not this entry has been validated.
      */
-    public EntryValidity getEntryValidity();
+    EntryValidity getEntryValidity();
 
     /**
      * Source that specified this entry. For example; allows you to 
      * distinguish {@literal "system"} entries (which cannot be removed, only 
      * disabled) from entries created by the user (full control).
      */
-    public EntrySource getEntrySource();
+    EntrySource getEntrySource();
 
     /**
      * GUI status of the entry. Differs from {@link EntryValidity} in that 
      * {@code EntryStatus} controls this entry showing up in a chooser and has
      * nothing to do with whether or not the entry is a valid ADDE server.
      */
-    public EntryStatus getEntryStatus();
+    EntryStatus getEntryStatus();
 
     /**
      * Handy {@code String} representation of this ADDE entry. Currently looks
      * like {@code ADDRESS/GROUP}, but this is subject to change.
      */
-    public String getEntryText();
+    String getEntryText();
 
     // TODO(jon): should this be removed? this makes the entries mutable!
-    public void setEntryStatus(final EntryStatus newStatus);
+    void setEntryStatus(final EntryStatus newStatus);
 
     // TODO(jon): integrate with parameter sets one fine day?
-    public String getEntryAlias();
+    String getEntryAlias();
 
     // TODO(jon): should this be removed? this makes the entries mutable!
-    public void setEntryAlias(final String newAlias);
+    void setEntryAlias(final String newAlias);
 
     /** */
-    public boolean isEntryTemporary();
+    boolean isEntryTemporary();
 
     /**
      * Currently used as a identifier for convenient storage by the server 
      * manager.
      */
-    public String asStringId();
+    String asStringId();
 
     /**
      * String representation of this entry.
      */
-    public String toString();
+    String toString();
 }

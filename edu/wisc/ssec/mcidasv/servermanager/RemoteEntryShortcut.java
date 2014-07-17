@@ -42,6 +42,7 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.set;
 import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.runOnEDT;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -58,6 +59,11 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import org.slf4j.Logger;
@@ -94,23 +100,23 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
     /** Whether or not to input in the dataset, username, and project fields should be uppercased. */
     private static final String PREF_FORCE_CAPS = "mcv.servers.forcecaps";
 
-    /** Background {@link java.awt.Color Color} of an {@literal "invalid"} {@link javax.swing.JTextField JTextField}. */
+    /** Background {@link java.awt.Color Color} of an {@literal "invalid"} {@link JTextField JTextField}. */
     private static final Color ERROR_FIELD_COLOR = Color.PINK;
 
-    /** Text {@link java.awt.Color Color} of an {@literal "invalid"} {@link javax.swing.JTextField JTextField}. */
+    /** Text {@link java.awt.Color Color} of an {@literal "invalid"} {@link JTextField JTextField}. */
     private static final Color ERROR_TEXT_COLOR = Color.WHITE;
 
-    /** Background {@link java.awt.Color Color} of a {@literal "valid"} {@link javax.swing.JTextField JTextField}. */
+    /** Background {@link java.awt.Color Color} of a {@literal "valid"} {@link JTextField JTextField}. */
     private static final Color NORMAL_FIELD_COLOR = Color.WHITE;
 
-    /** Text {@link java.awt.Color Color} of a {@literal "valid"} {@link javax.swing.JTextField JTextField}. */
+    /** Text {@link java.awt.Color Color} of a {@literal "valid"} {@link JTextField JTextField}. */
     private static final Color NORMAL_TEXT_COLOR = Color.BLACK;
 
     /**
      * Contains any {@code JTextField}s that may be in an invalid
      * (to McIDAS-V) state.
      */
-    private final Set<javax.swing.JTextField> badFields = newLinkedHashSet();
+    private final Set<JTextField> badFields = newLinkedHashSet(25);
 
     /** Reference back to the server manager. */
     private final EntryStore entryStore;
@@ -264,7 +270,7 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
             dispose();
         }
         TabbedAddeManager tmpController = TabbedAddeManager.getTabbedManager();
-        if (refreshManager && tmpController != null) {
+        if (refreshManager && (tmpController != null)) {
             tmpController.refreshDisplay();
         }
     }
@@ -359,7 +365,7 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
      * @param isBad {@code true} means that the field is {@literal "invalid"},
      * {@code false} means that the field is {@literal "valid"}.
      */
-    private void setBadField(final javax.swing.JTextField field, final boolean isBad) {
+    private void setBadField(final JTextField field, final boolean isBad) {
         assert field != null;
         assert field == serverField || field == datasetField || field == userField || field == projField;
 
@@ -399,8 +405,8 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
      * valid.
      */
     private void resetBadFields() {
-        Set<javax.swing.JTextField> fields = new LinkedHashSet<javax.swing.JTextField>(badFields);
-        for (javax.swing.JTextField field : fields) {
+        Set<JTextField> fields = new LinkedHashSet<>(badFields);
+        for (JTextField field : fields) {
             setBadField(field, false);
         }
     }
@@ -450,30 +456,30 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">
     private void initComponents(final List<RemoteAddeEntry> initEntries) {
         assert SwingUtilities.isEventDispatchThread();
-        entryPanel = new javax.swing.JPanel();
-        serverLabel = new javax.swing.JLabel();
-        serverField = new javax.swing.JTextField();
-        datasetLabel = new javax.swing.JLabel();
+        entryPanel = new JPanel();
+        serverLabel = new JLabel();
+        serverField = new JTextField();
+        datasetLabel = new JLabel();
         datasetField = new McVTextField();
-        acctBox = new javax.swing.JCheckBox();
-        userLabel = new javax.swing.JLabel();
+        acctBox = new JCheckBox();
+        userLabel = new JLabel();
         userField = new McVTextField();
-        projLabel = new javax.swing.JLabel();
-        projField = new javax.swing.JTextField();
-        capBox = new javax.swing.JCheckBox();
-        typePanel = new javax.swing.JPanel();
-        imageBox = new javax.swing.JCheckBox();
-        pointBox = new javax.swing.JCheckBox();
-        gridBox = new javax.swing.JCheckBox();
-        textBox = new javax.swing.JCheckBox();
-        navBox = new javax.swing.JCheckBox();
-        radarBox = new javax.swing.JCheckBox();
-        statusPanel = new javax.swing.JPanel();
-        statusLabel = new javax.swing.JLabel();
-        verifyAddButton = new javax.swing.JButton();
-        verifyServer = new javax.swing.JButton();
-        addServer = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
+        projLabel = new JLabel();
+        projField = new JTextField();
+        capBox = new JCheckBox();
+        typePanel = new JPanel();
+        imageBox = new JCheckBox();
+        pointBox = new JCheckBox();
+        gridBox = new JCheckBox();
+        textBox = new JCheckBox();
+        navBox = new JCheckBox();
+        radarBox = new JCheckBox();
+        statusPanel = new JPanel();
+        statusLabel = new JLabel();
+        verifyAddButton = new JButton();
+        verifyServer = new JButton();
+        addServer = new JButton();
+        cancelButton = new JButton();
 
         boolean forceCaps = getForceMcxCaps();
         datasetField.setUppercase(forceCaps);
@@ -504,7 +510,7 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
 
         acctBox.setText("Specify accounting information:");
         acctBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 acctBoxActionPerformed(evt);
             }
         });
@@ -518,7 +524,7 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
         capBox.setText("Automatically capitalize dataset and username?");
         capBox.setSelected(forceCaps);
         capBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 capBoxActionPerformed(evt);
             }
         });
@@ -598,7 +604,7 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
         typePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Dataset Types"));
 
         java.awt.event.ActionListener typeInputListener = new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 if (inErrorState) {
                     verifyAddButton.setEnabled(true);
                     verifyServer.setEnabled(true);
@@ -658,7 +664,7 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
             verifyAddButton.setText("Verify and Save Changes");
         }
         verifyAddButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 if (initEntries == RemoteAddeEntry.INVALID_ENTRIES)
                     verifyAddButtonActionPerformed(evt);
                 else
@@ -672,7 +678,7 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
             verifyServer.setText("Verify Changes");
         }
         verifyServer.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 verifyServerActionPerformed(evt);
             }
         });
@@ -683,7 +689,7 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
             addServer.setText("Save Changes");
         }
         addServer.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 if (initEntries == RemoteAddeEntry.INVALID_ENTRIES) {
                     addServerActionPerformed(evt);
                 } else {
@@ -694,7 +700,7 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
 
         cancelButton.setText("Cancel");
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
             }
         });
@@ -793,7 +799,7 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
         pack();
     }// </editor-fold>
 
-    private void acctBoxActionPerformed(java.awt.event.ActionEvent evt) {
+    private void acctBoxActionPerformed(ActionEvent evt) {
         assert SwingUtilities.isEventDispatchThread();
         resetBadFields();
         boolean enabled = acctBox.isSelected();
@@ -803,7 +809,7 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
         verifyServer.setEnabled(true);
     }
 
-    private void capBoxActionPerformed(java.awt.event.ActionEvent evt) {
+    private void capBoxActionPerformed(ActionEvent evt) {
         assert SwingUtilities.isEventDispatchThread();
         boolean forceCaps = capBox.isSelected();
         datasetField.setUppercase(forceCaps);
@@ -816,7 +822,7 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
         userField.setText(userField.getText().toUpperCase());
     }
 
-    private void verifyAddButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void verifyAddButtonActionPerformed(ActionEvent evt) {
         verifyInput();
         if (!anyBadFields()) {
             setEditorAction(EditorAction.ADDED_VERIFIED);
@@ -828,7 +834,7 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
         }
     }
 
-    private void verifyEditButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void verifyEditButtonActionPerformed(ActionEvent evt) {
         verifyInput();
         if (!anyBadFields()) {
             setEditorAction(EditorAction.EDITED_VERIFIED);
@@ -840,7 +846,7 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
         }
     }
 
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void cancelButtonActionPerformed(ActionEvent evt) {
         setEditorAction(EditorAction.CANCELLED);
         disposeDisplayable(false);
     }
@@ -850,7 +856,7 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
         disposeDisplayable(false);
     }
 
-    private void verifyServerActionPerformed(java.awt.event.ActionEvent evt) {
+    private void verifyServerActionPerformed(ActionEvent evt) {
         verifyInput();
         if (anyBadFields()) {
             // save poll widget state
@@ -863,12 +869,12 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
         }
     }
 
-    private void addServerActionPerformed(java.awt.event.ActionEvent evt) {
+    private void addServerActionPerformed(ActionEvent evt) {
         setEditorAction(EditorAction.ADDED);
         addEntry();
     }
 
-    private void editServerActionPerformed(java.awt.event.ActionEvent evt) {
+    private void editServerActionPerformed(ActionEvent evt) {
         setEditorAction(EditorAction.EDITED);
         editEntry();
     }
@@ -980,7 +986,7 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
     }
 
     private static Map<RemoteAddeEntry, AddeStatus> bulkPut(final Collection<RemoteAddeEntry> entries, final AddeStatus status) {
-        Map<RemoteAddeEntry, AddeStatus> map = new LinkedHashMap<RemoteAddeEntry, AddeStatus>(entries.size());
+        Map<RemoteAddeEntry, AddeStatus> map = new LinkedHashMap<>(entries.size());
         for (RemoteAddeEntry entry : entries) {
             map.put(entry, status);
         }
@@ -1050,36 +1056,36 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
             this.entryStatus = descStatus;
         }
 
-        public StatusWrapper call() throws Exception {
+        @Override public StatusWrapper call() throws Exception {
             entryStatus.setStatus(RemoteAddeEntry.checkEntry(entryStatus.getEntry()));
             return entryStatus;
         }
     }
 
     // Variables declaration - do not modify
-    private javax.swing.JCheckBox acctBox;
-    private javax.swing.JButton addServer;
-    private javax.swing.JButton cancelButton;
-    private javax.swing.JCheckBox capBox;
+    private JCheckBox acctBox;
+    private JButton addServer;
+    private JButton cancelButton;
+    private JCheckBox capBox;
     private McVTextField datasetField;
-    private javax.swing.JLabel datasetLabel;
-    private javax.swing.JPanel entryPanel;
-    private javax.swing.JCheckBox gridBox;
-    private javax.swing.JCheckBox imageBox;
-    private javax.swing.JCheckBox navBox;
-    private javax.swing.JCheckBox pointBox;
-    private javax.swing.JTextField projField;
-    private javax.swing.JLabel projLabel;
-    private javax.swing.JCheckBox radarBox;
-    private javax.swing.JTextField serverField;
-    private javax.swing.JLabel serverLabel;
-    private javax.swing.JLabel statusLabel;
-    private javax.swing.JPanel statusPanel;
-    private javax.swing.JCheckBox textBox;
-    private javax.swing.JPanel typePanel;
+    private JLabel datasetLabel;
+    private JPanel entryPanel;
+    private JCheckBox gridBox;
+    private JCheckBox imageBox;
+    private JCheckBox navBox;
+    private JCheckBox pointBox;
+    private JTextField projField;
+    private JLabel projLabel;
+    private JCheckBox radarBox;
+    private JTextField serverField;
+    private JLabel serverLabel;
+    private JLabel statusLabel;
+    private JPanel statusPanel;
+    private JCheckBox textBox;
+    private JPanel typePanel;
     private McVTextField userField;
-    private javax.swing.JLabel userLabel;
-    private javax.swing.JButton verifyAddButton;
-    private javax.swing.JButton verifyServer;
+    private JLabel userLabel;
+    private JButton verifyAddButton;
+    private JButton verifyServer;
     // End of variables declaration
 }

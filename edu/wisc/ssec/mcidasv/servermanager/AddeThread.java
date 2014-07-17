@@ -39,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Thread that actually execs mcservl
+ * Thread that actually execs the {@literal "mcservl"} process.
  */
 public class AddeThread extends Thread {
 
@@ -64,7 +64,7 @@ public class AddeThread extends Thread {
          * 
          * @param message Should not be {@code null}.
          */
-        private McservEvent(final String message) {
+        McservEvent(final String message) {
             this.message = message;
         }
 
@@ -102,8 +102,7 @@ public class AddeThread extends Thread {
         for (String cmd : cmds) {
             temp.append(cmd).append(' ');
         }
-    	logger.info("Starting mcservl: "+temp.toString());
-        logger.debug("command={}", temp.toString());
+        logger.info("Starting mcservl: {}"+temp.toString());
         temp = new StringBuilder(1024).append("{ ");
         for (String e : env) {
             temp.append(e).append(", ");
@@ -140,8 +139,9 @@ public class AddeThread extends Thread {
 
                 // If the server couldn't start for a known reason, try again on another port
                 //  Retry up to 10 times
-                if ((result==35584 || errString.indexOf("Error binding to port") >= 0) &&
-                        Integer.parseInt(EntryStore.getLocalPort()) < Integer.parseInt(Constants.LOCAL_ADDE_PORT) + 30) {
+                if (((result == 35584) || (errString.indexOf("Error binding to port") >= 0)) &&
+                    (Integer.parseInt(EntryStore.getLocalPort()) < (Integer.parseInt(Constants.LOCAL_ADDE_PORT) + 30)))
+                {
                     EntryStore.setLocalPort(EntryStore.nextLocalPort());
 //                    entryStore.startLocalServer(entryStore.getRestarting());
                     entryStore.startLocalServer();

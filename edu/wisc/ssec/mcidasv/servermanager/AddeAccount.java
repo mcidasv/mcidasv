@@ -51,10 +51,10 @@ public class AddeAccount {
      */
     public AddeAccount(final String user, final String proj) {
         if (user == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("user cannot be null");
         }
         if (proj == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("proj cannot be null");
         }
         username = user;
         project = proj;
@@ -98,18 +98,10 @@ public class AddeAccount {
             return false;
         }
         AddeAccount other = (AddeAccount) obj;
-        if (project == null) {
-            if (other.project != null) {
-                return false;
-            }
-        } else if (!project.equals(other.project)) {
+        if (!project.equals(other.project)) {
             return false;
         }
-        if (username == null) {
-            if (other.username != null) {
-                return false;
-            }
-        } else if (!username.equals(other.username)) {
+        if (!username.equals(other.username)) {
             return false;
         }
         return true;
@@ -124,9 +116,8 @@ public class AddeAccount {
     @Override public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((project == null) ? 0 : project.hashCode());
-        result = prime * result
-            + ((username == null) ? 0 : username.hashCode());
+        result = prime * result + project.hashCode();
+        result = prime * result + username.hashCode();
         return result;
     }
 

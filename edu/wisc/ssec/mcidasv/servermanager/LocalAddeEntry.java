@@ -173,7 +173,7 @@ public class LocalAddeEntry implements AddeEntry {
          * @param tooltip If non-empty, this is used as a tooltip in the local entry editor.
          * @param type {@link EntryType} used by this format.
          */
-        private AddeFormat(final ServerName servName, final String friendlyName, final String tooltip, final EntryType type) {
+        AddeFormat(final ServerName servName, final String friendlyName, final String tooltip, final EntryType type) {
             this.servName = servName;
             this.friendlyName = friendlyName;
             this.tooltip = tooltip;
@@ -187,7 +187,7 @@ public class LocalAddeEntry implements AddeEntry {
          * @param servName {@link ServerName} that McIDAS-X uses for this format.
          * @param friendlyName {@literal "Human readable"} name of the format; returned by {@link #toString()}.
          */
-        private AddeFormat(final ServerName servName, final String friendlyName) {
+        AddeFormat(final ServerName servName, final String friendlyName) {
             this(servName, friendlyName, "", EntryType.IMAGE);
         }
 
@@ -198,7 +198,7 @@ public class LocalAddeEntry implements AddeEntry {
          * @param friendlyName {@literal "Human readable"} name of the format; returned by {@link #toString()}.
          * @param tooltip If non-empty, this is used as a tooltip in the local entry editor.
          */
-        private AddeFormat(final ServerName servName, final String friendlyName, final String tooltip) {
+        AddeFormat(final ServerName servName, final String friendlyName, final String tooltip) {
             this(servName, friendlyName, tooltip, EntryType.IMAGE);
         }
 
@@ -303,10 +303,11 @@ public class LocalAddeEntry implements AddeEntry {
 
     // TODO(jon): fix this noop
     @Override public String getEntryAlias() {
+        String tmp = entryAlias;
         if (entryAlias == null) {
-            return "";
+            tmp = "";
         }
-        return entryAlias;
+        return tmp;
     }
 
     // TODO(jon): fix this noop
@@ -336,8 +337,8 @@ public class LocalAddeEntry implements AddeEntry {
     /**
      * Gets the ADDE descriptor for the current local ADDE entry.
      * 
-     * @return ADDE descriptor (corresponds to the {@literal "N2"} section of a RESOLV.SRV
-     * entry).
+     * @return ADDE descriptor (corresponds to the {@literal "N2"} section of
+     * a RESOLV.SRV entry).
      */
     public String getDescriptor() {
         return descriptor;
@@ -346,8 +347,8 @@ public class LocalAddeEntry implements AddeEntry {
     /**
      * Gets the ADDE dataset format for the current local ADDE entry.
      * 
-     * @return ADDE format (corresponds to the {@literal "MCV"} section of a RESOLV.SRV
-     * entry).
+     * @return ADDE format (corresponds to the {@literal "MCV"} section of a
+     * RESOLV.SRV entry).
      */
     public AddeFormat getFormat() {
         return format;
@@ -356,8 +357,8 @@ public class LocalAddeEntry implements AddeEntry {
     /**
      * Gets the ADDE file mask for the current local ADDE entry.
      * 
-     * @return ADDE file mask (corresponds to the {@literal "MASK"} section of a RESOLV.SRV
-     * entry).
+     * @return ADDE file mask (corresponds to the {@literal "MASK"} section
+     * of a RESOLV.SRV entry).
      */
     public String getMask() {
         return fileMask;
@@ -366,8 +367,8 @@ public class LocalAddeEntry implements AddeEntry {
     /**
      * Gets the ADDE file mask for the current local ADDE entry.
      * 
-     * @return ADDE file mask (corresponds to the {@literal "MASK"} section of a RESOLV.SRV
-     * entry).
+     * @return ADDE file mask (corresponds to the {@literal "MASK"} section
+     * of a RESOLV.SRV entry).
      */
     public String getFileMask() {
         return fileMask;
@@ -408,7 +409,7 @@ public class LocalAddeEntry implements AddeEntry {
      */
     public boolean isValid() {
 //        return !((group.isEmpty()) || (descriptor.isEmpty()) || (name.isEmpty()));
-        return !((group.isEmpty()) || (name.isEmpty()));
+        return !(group.isEmpty() || name.isEmpty());
     }
 
     /**
@@ -418,7 +419,7 @@ public class LocalAddeEntry implements AddeEntry {
      * @return RESOLV.SRV-friendly representation of the current realtime status.
      */
     public String getRealtimeAsString() {
-        return (realtime) ? "Y" : "N";
+        return realtime ? "Y" : "N";
     }
 
     /**

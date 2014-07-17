@@ -39,6 +39,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.DocumentEvent;
@@ -179,7 +180,7 @@ public class ImportUrl extends JDialog implements ActionListener {
                 user = userField.getText().trim();
                 proj = projField.getText().trim();
             }
-            logger.trace("importing: path={} user={} proj={}", new Object[] { path, user, proj});
+            logger.trace("importing: path={} user={} proj={}", path, user, proj);
             if (serverManagerGui != null) {
                 serverManagerGui.importMctable(path, user, proj);
             }
@@ -195,7 +196,7 @@ public class ImportUrl extends JDialog implements ActionListener {
             public void run() {
                 try {
                     ImportUrl dialog = new ImportUrl();
-                    dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                    dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
                     dialog.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();

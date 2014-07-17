@@ -41,7 +41,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -58,6 +57,7 @@ import org.slf4j.LoggerFactory;
 import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.ui.CheckboxCategoryPanel;
 import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.LayoutUtil;
 import ucar.unidata.xml.PreferenceManager;
 import ucar.unidata.xml.XmlObjectStore;
 
@@ -69,10 +69,11 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.util.Contract;
 
 /**
- * The ADDE Server preference panel is <b>almost</b> a read-only {@literal "view"}
- * of the current state of the server manager. The only thing that users can 
- * change from here is the visibility of the individual {@link AddeEntry}s, 
- * though there has been some talk of allowing for reordering.
+ * The ADDE Server preference panel is <b>almost</b> a read-only
+ * {@literal "view"} of the current state of the server manager. The only
+ * thing that users can change from here is the visibility of individual
+ * {@link AddeEntry AddeEntries}, though there has been some talk of allowing
+ * for reordering.
  */
 public class AddePreferences {
 
@@ -191,8 +192,7 @@ public class AddePreferences {
         Map<EntryType, Set<AddeEntry>> entries = 
             entryStore.getVerifiedEntriesByTypes();
 
-        final Map<AddeEntry, JCheckBox> entryToggles = 
-            new LinkedHashMap<AddeEntry, JCheckBox>();
+        final Map<AddeEntry, JCheckBox> entryToggles = new LinkedHashMap<>();
 
         final List<CheckboxCategoryPanel> typePanels = arrList();
         List<JPanel> compList = arrList();
@@ -206,7 +206,7 @@ public class AddePreferences {
                 continue;
             }
             final Set<AddeEntry> subset = entries.get(type);
-            Set<String> observedEntries = new HashSet<String>(subset.size());
+            Set<String> observedEntries = new HashSet<>(subset.size());
             boolean typePanelVis = store.get("addepref.category."+type.toString(), false);
             final CheckboxCategoryPanel typePanel = 
                 new CheckboxCategoryPanel(type.toString(), typePanelVis);
@@ -217,11 +217,11 @@ public class AddePreferences {
                     continue;
                 }
 
-                boolean enabled = (entry.getEntryStatus() == EntryStatus.ENABLED);
+                boolean enabled = entry.getEntryStatus() == EntryStatus.ENABLED;
                 final JCheckBox cbx = new JCheckBox(entryText, enabled);
                 cbx.addActionListener(new ActionListener() {
                     public void actionPerformed(final ActionEvent e) {
-                        EntryStatus status = (cbx.isSelected()) ? EntryStatus.ENABLED : EntryStatus.DISABLED;
+                        EntryStatus status = cbx.isSelected() ? EntryStatus.ENABLED : EntryStatus.DISABLED;
                         logger.trace("entry={} val={} status={} evt={}", new Object[] { entryText, cbx.isSelected(), status, e});
                         entry.setEntryStatus(status);
                         entryToggles.put(entry, cbx);
@@ -231,7 +231,7 @@ public class AddePreferences {
                 });
                 entryToggles.put(entry, cbx);
                 typePanel.addItem(cbx);
-                typePanel.add(GuiUtils.inset(cbx, new Insets(0, 20, 0, 0)));
+                typePanel.add(LayoutUtil.inset(cbx, new Insets(0, 20, 0, 0)));
                 observedEntries.add(entryText);
             }
 
@@ -327,19 +327,19 @@ public class AddePreferences {
         setGUIEnabled(!useAllBtn.isSelected());
 
         JPanel widgetPanel =
-            GuiUtils.topCenter(
-                GuiUtils.hbox(useAllBtn, useTheseBtn),
-                GuiUtils.leftCenter(
-                    GuiUtils.inset(
-                        GuiUtils.top(GuiUtils.vbox(allOn, allOff, addServer, importServers)),
+            LayoutUtil.topCenter(
+                LayoutUtil.hbox(useAllBtn, useTheseBtn),
+                LayoutUtil.leftCenter(
+                    LayoutUtil.inset(
+                        LayoutUtil.top(LayoutUtil.vbox(allOn, allOff, addServer, importServers)),
                         4), cbScroller));
 
         JPanel entryPanel =
-            GuiUtils.topCenter(
-                GuiUtils.inset(
+            LayoutUtil.topCenter(
+                LayoutUtil.inset(
                     new JLabel("Specify the active ADDE servers:"),
                     4), widgetPanel);
-        entryPanel = GuiUtils.inset(GuiUtils.left(entryPanel), 6);
+        entryPanel = LayoutUtil.inset(LayoutUtil.left(entryPanel), 6);
 
         // iterate through all the entries and "apply" any changes: 
         // reordering, removing, visibility changes, etc
@@ -358,8 +358,8 @@ public class AddePreferences {
                     AddeEntry e = entry.getKey();
                     JCheckBox c = entry.getValue();
                     EntryStatus currentStatus = e.getEntryStatus();
-                    EntryStatus nextStatus = (c.isSelected()) ? EntryStatus.ENABLED : EntryStatus.DISABLED;
-                    logger.trace("entry={} type={} old={} new={}", new Object[] { e, e.getEntryType(), currentStatus, nextStatus });
+                    EntryStatus nextStatus = c.isSelected() ? EntryStatus.ENABLED : EntryStatus.DISABLED;
+                    logger.trace("entry={} type={} old={} new={}", e, e.getEntryType(), currentStatus, nextStatus);
 //                    if (currentStatus != nextStatus) {
                         e.setEntryStatus(nextStatus);
                         toggles.put(e, c);

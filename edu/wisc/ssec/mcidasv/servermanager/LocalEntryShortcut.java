@@ -38,6 +38,7 @@ import java.util.Set;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -66,7 +67,7 @@ import edu.wisc.ssec.mcidasv.util.McVTextField;
  * Temporary solution for adding entries via the adde choosers.
  */
 @SuppressWarnings("serial")
-public class LocalEntryShortcut extends javax.swing.JDialog {
+public class LocalEntryShortcut extends JDialog {
 
     private static final Logger logger = LoggerFactory.getLogger(LocalEntryShortcut.class);
 
@@ -74,7 +75,7 @@ public class LocalEntryShortcut extends javax.swing.JDialog {
     private static final String PROP_LAST_PATH = "mcv.localdata.lastpath";
 
     /** The valid local ADDE formats. */
-    private static final DefaultComboBoxModel formats = new DefaultComboBoxModel(new Object[] { AddeFormat.MCIDAS_AREA, AddeFormat.AMSRE_L1B, AddeFormat.AMSRE_RAIN_PRODUCT, AddeFormat.GINI, AddeFormat.LRIT_GOES9, AddeFormat.LRIT_GOES10, AddeFormat.LRIT_GOES11, AddeFormat.LRIT_GOES12, AddeFormat.LRIT_MET5, AddeFormat.LRIT_MET7, AddeFormat.LRIT_MTSAT1R, AddeFormat.METEOSAT_OPENMTP, AddeFormat.METOP_AVHRR_L1B, AddeFormat.MODIS_L1B_MOD02, AddeFormat.MODIS_L2_MOD06, AddeFormat.MODIS_L2_MOD07, AddeFormat.MODIS_L2_MOD35, AddeFormat.MODIS_L2_MOD04, AddeFormat.MODIS_L2_MOD28, AddeFormat.MODIS_L2_MODR, AddeFormat.MSG_HRIT_FD, AddeFormat.MSG_HRIT_HRV, AddeFormat.MTSAT_HRIT, AddeFormat.NOAA_AVHRR_L1B, AddeFormat.SSMI, AddeFormat.TRMM, AddeFormat.MCIDAS_MD });
+    private static final DefaultComboBoxModel<AddeFormat> formats = new DefaultComboBoxModel<>(new AddeFormat[] { AddeFormat.MCIDAS_AREA, AddeFormat.AMSRE_L1B, AddeFormat.AMSRE_RAIN_PRODUCT, AddeFormat.GINI, AddeFormat.LRIT_GOES9, AddeFormat.LRIT_GOES10, AddeFormat.LRIT_GOES11, AddeFormat.LRIT_GOES12, AddeFormat.LRIT_MET5, AddeFormat.LRIT_MET7, AddeFormat.LRIT_MTSAT1R, AddeFormat.METEOSAT_OPENMTP, AddeFormat.METOP_AVHRR_L1B, AddeFormat.MODIS_L1B_MOD02, AddeFormat.MODIS_L2_MOD06, AddeFormat.MODIS_L2_MOD07, AddeFormat.MODIS_L2_MOD35, AddeFormat.MODIS_L2_MOD04, AddeFormat.MODIS_L2_MOD28, AddeFormat.MODIS_L2_MODR, AddeFormat.MSG_HRIT_FD, AddeFormat.MSG_HRIT_HRV, AddeFormat.MTSAT_HRIT, AddeFormat.NOAA_AVHRR_L1B, AddeFormat.SSMI, AddeFormat.TRMM, AddeFormat.MCIDAS_MD });
 
     /** The server manager GUI. Be aware that this can be {@code null}. */
     private final TabbedAddeManager managerController;
@@ -100,7 +101,7 @@ public class LocalEntryShortcut extends javax.swing.JDialog {
      * @param group Name of the group/dataset containing the desired data. Be aware that {@code null} is okay.
      */
     public LocalEntryShortcut(final EntryStore entryStore, final String group) {
-        super((javax.swing.JDialog)null, true);
+        super((JDialog)null, true);
         this.managerController = null;
         this.entryStore = entryStore;
         this.datasetText = group;
@@ -162,7 +163,7 @@ public class LocalEntryShortcut extends javax.swing.JDialog {
         typeField.setColumns(20);
 
         JLabel formatLabel = new JLabel("Format:");
-        formatComboBox = new JComboBox();
+        formatComboBox = new JComboBox<>();
         formatComboBox.setRenderer(new TooltipComboBoxRenderer());
         formatComboBox.setModel(formats);
         formatComboBox.setSelectedIndex(0);
@@ -418,8 +419,9 @@ public class LocalEntryShortcut extends javax.swing.JDialog {
             if (isSelected) {
                 setBackground(list.getSelectionBackground());
                 setForeground(list.getSelectionForeground());
-                if (value != null && (value instanceof AddeFormat))
+                if (value instanceof AddeFormat) {
                     list.setToolTipText(((AddeFormat)value).getTooltip());
+                }
             } else {
                 setBackground(list.getBackground());
                 setForeground(list.getForeground());
@@ -433,7 +435,7 @@ public class LocalEntryShortcut extends javax.swing.JDialog {
     // Variables declaration - do not modify
     private JTextField datasetField;
     private JTextField directoryField;
-    private JComboBox formatComboBox;
+    private JComboBox<AddeFormat> formatComboBox;
     private JTextField typeField;
     // End of variables declaration
 }

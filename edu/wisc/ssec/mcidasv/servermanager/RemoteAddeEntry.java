@@ -537,15 +537,15 @@ public class RemoteAddeEntry implements AddeEntry {
     public static Set<String> readPublicGroups(final RemoteAddeEntry entry) {
         notNull(entry, "entry cannot be null");
         notNull(entry.getAddress());
-        checkArg((entry.getAddress().length() != 0));
+        checkArg(!entry.getAddress().isEmpty());
 
         String user = entry.getAccount().getUsername();
-        if (user == null || user.length() == 0) {
+        if ((user == null) || user.isEmpty()) {
             user = RemoteAddeEntry.DEFAULT_ACCOUNT.getUsername();
         }
 
         String proj = entry.getAccount().getProject();
-        if (proj == null || proj.length() == 0) {
+        if ((proj == null) || proj.isEmpty()) {
             proj = RemoteAddeEntry.DEFAULT_ACCOUNT.getProject();
         }
 
@@ -559,11 +559,11 @@ public class RemoteAddeEntry implements AddeEntry {
             for (String line : (List<String>)reader.getLinesOfText()) {
                 String[] pairs = line.trim().split(",");
                 for (String pair : pairs) {
-                    if (pair == null || pair.length() == 0 || !pair.startsWith("N1")) {
+                    if (pair == null || pair.isEmpty() || !pair.startsWith("N1")) {
                         continue;
                     }
                     String[] keyval = pair.split("=");
-                    if (keyval.length != 2 || keyval[0].length() == 0 || keyval[1].length() == 0 || !keyval[0].equals("N1")) {
+                    if (keyval.length != 2 || keyval[0].isEmpty() || keyval[1].isEmpty() || !keyval[0].equals("N1")) {
                         continue;
                     }
                     groups.add(keyval[1]);
@@ -670,13 +670,13 @@ public class RemoteAddeEntry implements AddeEntry {
 
         serverInfo.setSelectedGroup(entry.getGroup());
         String[] datasets = serverInfo.getDatasetList();
-        if (datasets != null && datasets.length > 0) {
-        	// TJJ 7 Nov 2013, not my proudest moment. See Inq #905
-        	// if type is NEXR, this is a Radar server, not Image
-        	String ff = serverInfo.getFileFormat();
-        	if ((ff != null) && (ff.equals("NEXR"))) {
-        		entry.entryType = AddeEntry.EntryType.RADAR;
-        	}
+        if ((datasets != null) && (datasets.length > 0)) {
+            // TJJ 7 Nov 2013, not my proudest moment. See Inq #905
+            // if type is NEXR, this is a Radar server, not Image
+            String ff = serverInfo.getFileFormat();
+            if ("NEXR".equals(ff)) {
+                entry.entryType = AddeEntry.EntryType.RADAR;
+            }
             return AddeStatus.OK;
         } else {
             return AddeStatus.BAD_GROUP;
@@ -688,7 +688,7 @@ public class RemoteAddeEntry implements AddeEntry {
     }
 
     public static Map<EntryType, AddeStatus> checkEntryTypes(final String host, final String group, final String user, final String proj) {
-        Map<EntryType, AddeStatus> valid = new LinkedHashMap<EntryType, AddeStatus>();
+        Map<EntryType, AddeStatus> valid = new LinkedHashMap<>();
         RemoteAddeEntry entry = new Builder(host, group).account(user, proj).build();
         for (RemoteAddeEntry tmp : EntryTransforms.createEntriesFrom(entry)) {
             valid.put(tmp.getEntryType(), checkEntry(true, tmp));

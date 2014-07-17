@@ -153,7 +153,7 @@ public class EntryStore {
         notNull(rscManager);
 
         this.idvStore = store;
-        this.trie = new PatriciaTrie<String, AddeEntry>(new CharSequenceKeyAnalyzer());
+        this.trie = new PatriciaTrie<>(new CharSequenceKeyAnalyzer());
         this.ADDE_DIRECTORY = getAddeRootDirectory();
         this.ADDE_BIN = ADDE_DIRECTORY + File.separator + "bin";
         this.ADDE_DATA = ADDE_DIRECTORY + File.separator + "data";
@@ -390,7 +390,7 @@ public class EntryStore {
      */
     public List<AddeEntry> getLastAddedByType(final EntryType type) {
         notNull(type);
-        List<AddeEntry> entries = arrList();
+        List<AddeEntry> entries = arrList(lastAdded.size());
         for (AddeEntry entry : lastAdded) {
             if (entry.getEntryType() == type) {
                 entries.add(entry);
@@ -401,7 +401,7 @@ public class EntryStore {
 
     public List<AddeEntry> getLastAddedByTypes(final EnumSet<EntryType> types) {
         notNull(types);
-        List<AddeEntry> entries = arrList();
+        List<AddeEntry> entries = arrList(lastAdded.size());
         for (AddeEntry entry : lastAdded) {
             if (types.contains(entry.getEntryType())) {
                 entries.add(entry);
@@ -427,8 +427,9 @@ public class EntryStore {
         notNull(type);
         Set<AddeEntry> verified = newLinkedHashSet(trie.size());
         for (AddeEntry entry : trie.values()) {
-            if (entry.getEntryType() != type)
+            if (entry.getEntryType() != type) {
                 continue;
+            }
 
             if (entry instanceof LocalAddeEntry) {
                 verified.add(entry);
@@ -699,7 +700,7 @@ public class EntryStore {
         boolean tmpVal = true;
         for (AddeEntry entry : removedEntries) {
             if (entry.getEntrySource() != EntrySource.SYSTEM) {
-                tmpVal = (trie.remove(entry.asStringId()) != null);
+                tmpVal = trie.remove(entry.asStringId()) != null;
                 logger.trace("attempted bulk remove={} status={}", entry, tmpVal);
                 if (!tmpVal) {
                     val = tmpVal;
@@ -721,9 +722,9 @@ public class EntryStore {
      */
     public boolean removeEntry(final AddeEntry entry) {
         notNull(entry);
-        boolean val = (trie.remove(entry.asStringId()) != null);
+        boolean val = trie.remove(entry.asStringId()) != null;
         logger.trace("attempted remove={} status={}", entry, val);
-        Event evt = (val) ? Event.REMOVAL : Event.FAILURE;
+        Event evt = val ? Event.REMOVAL : Event.FAILURE;
         saveEntries();
         EventBus.publish(evt);
         return val;
@@ -796,7 +797,7 @@ public class EntryStore {
         Set<LocalAddeEntry> localEntries = getLocalEntries();
         Set<AddeServer.Group> idvGroups = newLinkedHashSet(localEntries.size());
         for (LocalAddeEntry entry : localEntries) {
-            if (entry.getEntryStatus() == EntryStatus.ENABLED && entry.getEntryValidity() == EntryValidity.VERIFIED) {
+            if ((entry.getEntryStatus() == EntryStatus.ENABLED) && (entry.getEntryValidity() == EntryValidity.VERIFIED)) {
                 String group = entry.getGroup();
                 AddeServer.Group idvGroup = new AddeServer.Group("IMAGE", group, group);
                 idvGroups.add(idvGroup);
@@ -817,7 +818,7 @@ public class EntryStore {
                 continue;
             }
 
-            if (matched.getEntryStatus() == EntryStatus.ENABLED && matched.getEntryValidity() == EntryValidity.VERIFIED && matched.getEntryType() == type) {
+            if ((matched.getEntryStatus() == EntryStatus.ENABLED) && (matched.getEntryValidity() == EntryValidity.VERIFIED) && (matched.getEntryType() == type)) {
                 String group = matched.getGroup();
                 idvGroups.add(new AddeServer.Group(typeStr, group, group));
             }
@@ -1003,7 +1004,7 @@ public class EntryStore {
      * Starts the local server thread (if it isn't already running).
      */
     public void startLocalServer() {
-        if ((new File(ADDE_MCSERVL)).exists()) {
+        if (new File(ADDE_MCSERVL).exists()) {
             // Create and start the thread if there isn't already one running
             if (!checkLocalServer()) {
                 if (!testLocalServer()) {
@@ -1046,13 +1047,13 @@ public class EntryStore {
     /**
      * Test to see if the thread can access userpath
      * 
-     * @return {@code true} if the local server can access userpath, {@code fals
-e} otherwise.
+     * @return {@code true} if the local server can access userpath,
+     * {@code false} otherwise.
      */
     public boolean testLocalServer() {
         StringBuilder err = new StringBuilder();
-        String[] cmds = new String[] { ADDE_MCSERVL, "-t" };
-        String[] env = (McIDASV.isWindows()) ? getWindowsAddeEnv() : getUnixAddeEnv();
+        String[] cmds = { ADDE_MCSERVL, "-t" };
+        String[] env = McIDASV.isWindows() ? getWindowsAddeEnv() : getUnixAddeEnv();
 
         try {
             Process proc = Runtime.getRuntime().exec(cmds, env);
@@ -1069,13 +1070,10 @@ e} otherwise.
     /**
      * Check to see if the thread is running.
      * 
-     * @return {@code true} if the local server thread is running; {@code false} otherwise.
+     * @return {@code true} if the local server thread is running;
+     * {@code false} otherwise.
      */
     public boolean checkLocalServer() {
-        if (thread != null && thread.isAlive()) {
-            return true;
-        } else {
-            return false;
-        }
+        return (thread != null) && thread.isAlive();
     }
 }
