@@ -110,7 +110,7 @@ public final class CollectionHelpers {
      * that {@code Set}s only contain <i>unique</i> elements!
      */
     public static <E> Set<E> set(E... elements) {
-        Set<E> newSet = new LinkedHashSet<E>(elements.length);
+        Set<E> newSet = new LinkedHashSet<>(elements.length);
         Collections.addAll(newSet, elements);
         return newSet;
     }
@@ -283,7 +283,7 @@ public final class CollectionHelpers {
      */
     @SuppressWarnings({"CollectionWithoutInitialCapacity"})
     public static <E> Set<E> newHashSet() {
-        return new HashSet<E>();
+        return new HashSet<>();
     }
 
     /**
@@ -295,7 +295,7 @@ public final class CollectionHelpers {
      * @return A new, empty {@code HashSet} with the given initial capacity.
      */
     public static <E> Set<E> newHashSet(int initialCapacity) {
-        return new HashSet<E>(initialCapacity);
+        return new HashSet<>(initialCapacity);
     }
 
     /**
@@ -307,7 +307,7 @@ public final class CollectionHelpers {
      * {@code original}.
      */
     public static <E> Set<E> newHashSet(Collection<E> original) {
-        return new HashSet<E>(original);
+        return new HashSet<>(original);
     }
 
     /**
@@ -325,7 +325,7 @@ public final class CollectionHelpers {
      */
     @SuppressWarnings({"CollectionWithoutInitialCapacity"})
     public static <E> Set<E> newLinkedHashSet() {
-        return new LinkedHashSet<E>();
+        return new LinkedHashSet<>();
     }
 
     /**
@@ -338,7 +338,7 @@ public final class CollectionHelpers {
      * capacity.
      */
     public static <E> Set<E> newLinkedHashSet(int initialCapacity) {
-        return new LinkedHashSet<E>(initialCapacity);
+        return new LinkedHashSet<>(initialCapacity);
     }
 
     /**
@@ -350,7 +350,7 @@ public final class CollectionHelpers {
      * {@code original}.
      */
     public static <E> Set<E> newLinkedHashSet(Collection<E> original) {
-        return new LinkedHashSet<E>(original);
+        return new LinkedHashSet<>(original);
     }
 
     /**
@@ -368,7 +368,7 @@ public final class CollectionHelpers {
      */
     @SuppressWarnings({"CollectionWithoutInitialCapacity"})
     public static <K, V> Map<K, V> newMap() {
-        return new HashMap<K, V>();
+        return new HashMap<>();
     }
 
     /**
@@ -380,7 +380,7 @@ public final class CollectionHelpers {
      * @return A new, empty {@code HashMap} with the given initial capacity.
      */
     public static <K, V> Map<K, V> newMap(int initialCapacity) {
-        return new HashMap<K, V>(initialCapacity);
+        return new HashMap<>(initialCapacity);
     }
 
     /**
@@ -392,7 +392,7 @@ public final class CollectionHelpers {
      * {@code original}.
      */
     public static <K, V> Map<K, V> newMap(Map<K, V> original) {
-        return new HashMap<K, V>(original);
+        return new HashMap<>(original);
     }
 
     /**
@@ -410,7 +410,7 @@ public final class CollectionHelpers {
      */
     @SuppressWarnings({"CollectionWithoutInitialCapacity"})
     public static <K, V> Map<K, V> newLinkedHashMap() {
-        return new LinkedHashMap<K, V>();
+        return new LinkedHashMap<>();
     }
 
     /**
@@ -423,7 +423,7 @@ public final class CollectionHelpers {
      * capacity.
      */
     public static <K, V> Map<K, V> newLinkedHashMap(int initialCapacity) {
-        return new LinkedHashMap<K, V>(initialCapacity);
+        return new LinkedHashMap<>(initialCapacity);
     }
 
     /**
@@ -435,7 +435,7 @@ public final class CollectionHelpers {
      * {@code original}.
      */
     public static <K, V> Map<K, V> newLinkedHashMap(Map<K, V> original) {
-        return new LinkedHashMap<K, V>(original);
+        return new LinkedHashMap<>(original);
     }
 
     /**
@@ -445,7 +445,7 @@ public final class CollectionHelpers {
      * @return Shiny and new {@code ConcurrentHashMap}
      */
     public static <K, V> Map<K, V> concurrentMap() {
-        return new ConcurrentHashMap<K,V>();
+        return new ConcurrentHashMap<>();
     }
 
     /**
@@ -456,7 +456,7 @@ public final class CollectionHelpers {
      * @return A new, empty {@code CopyOnWriteArrayList}.
      */
     public static <E> List<E> concurrentList() {
-        return new CopyOnWriteArrayList<E>();
+        return new CopyOnWriteArrayList<>();
     }
 
     /**
@@ -471,7 +471,7 @@ public final class CollectionHelpers {
      * as {@code original}.
      */
     public static <E> List<E> concurrentList(Collection<E> original) {
-        return new CopyOnWriteArrayList<E>(original);
+        return new CopyOnWriteArrayList<>(original);
     }
 
     /**
@@ -486,7 +486,7 @@ public final class CollectionHelpers {
      * objects.
      */
     public static <E> List<E> concurrentList(E... elems) {
-        return new CopyOnWriteArrayList<E>(elems);
+        return new CopyOnWriteArrayList<>(elems);
     }
 
     /**
@@ -497,7 +497,7 @@ public final class CollectionHelpers {
      * @return A new, empty {@code CopyOnWriteArraySet}.
      */
     public static <E> Set<E> concurrentSet() {
-        return new CopyOnWriteArraySet<E>();
+        return new CopyOnWriteArraySet<>();
     }
 
     /**
@@ -512,7 +512,7 @@ public final class CollectionHelpers {
      * {@code original}.
      */
     public static <E> Set<E> concurrentSet(Collection<E> original) {
-        return new CopyOnWriteArraySet<E>(original);
+        return new CopyOnWriteArraySet<>(original);
     }
 
     /**
@@ -527,17 +527,17 @@ public final class CollectionHelpers {
      * objects.
      */
     public static <E> Set<E> concurrentSet(E... elems) {
-        Set<E> set = new CopyOnWriteArraySet<E>();
+        Set<E> set = new CopyOnWriteArraySet<>();
         Collections.addAll(set, elems);
         return set;
     }
 
     public static <E> List<E> linkedList() {
-        return new LinkedList<E>();
+        return new LinkedList<>();
     }
 
     public static <E> List<E> linkedList(final Collection<? extends E> c) {
-        return new LinkedList<E>(c);
+        return new LinkedList<>(c);
     }
 
     /**
@@ -558,7 +558,7 @@ public final class CollectionHelpers {
      */
     @SuppressWarnings({"CollectionWithoutInitialCapacity"})
     public static <E> List<E> arrList() {
-        return new ArrayList<E>();
+        return new ArrayList<>();
     }
 
     /**
@@ -572,7 +572,7 @@ public final class CollectionHelpers {
      * @see ArrayList#ArrayList(int)
      */
     public static <E> List<E> arrList(final int capacity) {
-        return new ArrayList<E>(capacity);
+        return new ArrayList<>(capacity);
     }
 
     /**
@@ -586,7 +586,7 @@ public final class CollectionHelpers {
      * @see ArrayList#ArrayList(Collection)
      */
     public static <E> List<E> arrList(final Collection<? extends E> c) {
-        return new ArrayList<E>(c);
+        return new ArrayList<>(c);
     }
 
     /**
@@ -652,7 +652,7 @@ public final class CollectionHelpers {
      * @see #zipMap(java.util.Collection, java.util.Collection)
      */
     public static <K, V> Map<K, V> zipMap(K[] keys, V[] values) {
-        Map<K, V> zipped = new LinkedHashMap<K, V>(keys.length);
+        Map<K, V> zipped = new LinkedHashMap<>(keys.length);
         for (int i = 0; (i < keys.length && i < values.length); i++) {
             zipped.put(keys[i], values[i]);
         }
@@ -672,7 +672,7 @@ public final class CollectionHelpers {
      * @see #zipMap(Object[], Object[])
      */
     public static <K, V> Map<K, V> zipMap(Collection<? extends K> keys, Collection<? extends V> values) {
-        Map<K, V> zipped = new LinkedHashMap<K, V>(keys.size());
+        Map<K, V> zipped = new LinkedHashMap<>(keys.size());
         Iterator<? extends K> keyIterator = keys.iterator();
         Iterator<? extends V> valueIterator = values.iterator();
         while (keyIterator.hasNext() && valueIterator.hasNext()) {

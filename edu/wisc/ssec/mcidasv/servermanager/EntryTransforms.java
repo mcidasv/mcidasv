@@ -123,7 +123,7 @@ public class EntryTransforms {
 
     @SuppressWarnings({"SetReplaceableByEnumSet"})
     public static Set<EntryType> findEntryTypes(final Collection<? extends AddeEntry> entries) {
-        Set<EntryType> types = new HashSet<EntryType>(entries.size());
+        Set<EntryType> types = new HashSet<>(entries.size());
         for (AddeEntry entry : entries) {
             types.add(entry.getEntryType());
         }
