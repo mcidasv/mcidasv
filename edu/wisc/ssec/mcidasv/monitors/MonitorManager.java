@@ -45,9 +45,9 @@ public class MonitorManager {
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
 
-    private final Map<MonitorType, Monitorable> monitors = new ConcurrentHashMap<MonitorType, Monitorable>();
+    private final Map<MonitorType, Monitorable> monitors = new ConcurrentHashMap<>();
 
-    private final Map<Monitorable, ScheduledFuture<?>> woot = new ConcurrentHashMap<Monitorable, ScheduledFuture<?>>();
+    private final Map<Monitorable, ScheduledFuture<?>> woot = new ConcurrentHashMap<>();
 
     public MonitorManager() {
         monitors.put(MonitorType.MEMORY, new MemoryMonitor(this, 75, 95));
@@ -56,8 +56,9 @@ public class MonitorManager {
 
     public void addListener(final MonitorType type, final Monitoring listener) {
         Monitorable m = monitors.get(type);
-        if (!m.hasMonitors())
+        if (!m.hasMonitors()) {
             woot.put(m, scheduler.scheduleWithFixedDelay(m, 0, 2, TimeUnit.SECONDS));
+        }
         m.addMonitor(listener);
     }
 

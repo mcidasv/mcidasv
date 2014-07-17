@@ -41,7 +41,7 @@ import edu.wisc.ssec.mcidasv.monitors.Monitoring;
 
 public class TimeMonitor implements Monitorable {
 
-    private final List<Monitoring> listeners = new CopyOnWriteArrayList<Monitoring>();
+    private final List<Monitoring> listeners = new CopyOnWriteArrayList<>();
     private final SimpleDateFormat clockFormat = new SimpleDateFormat("HH:mm:ss z");
 
     public TimeMonitor() {
@@ -53,8 +53,9 @@ public class TimeMonitor implements Monitorable {
     }
 
     public void removeMonitor(final Monitoring listener) {
-        if (!listeners.isEmpty())
+        if (!listeners.isEmpty()) {
             listeners.remove(listener);
+        }
     }
 
     public boolean hasMonitors() {

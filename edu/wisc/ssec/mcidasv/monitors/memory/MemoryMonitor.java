@@ -27,6 +27,7 @@
  */
 package edu.wisc.ssec.mcidasv.monitors.memory;
 
+import java.awt.Color;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -44,11 +45,16 @@ public class MemoryMonitor implements Monitorable {
     private final DecimalFormat fmt = new DecimalFormat("#0");
 
     private final MonitorManager manager;
+
     private final int percentThreshold;
+
     private final int percentCancel;
+
     private int timesAboveThreshold;
+
     private long lastTimeRanGC = -1;
-    private final List<Monitoring> listeners = new CopyOnWriteArrayList<Monitoring>();
+
+    private final List<Monitoring> listeners = new CopyOnWriteArrayList<>();
 
     public MemoryMonitor(final MonitorManager manager, final int threshold, final int cancel) {
         this.manager = manager;
@@ -61,8 +67,9 @@ public class MemoryMonitor implements Monitorable {
     }
 
     public void removeMonitor(final Monitoring listener) {
-        if (!listeners.isEmpty())
+        if (!listeners.isEmpty()) {
             listeners.remove(listener);
+        }
     }
 
     public boolean hasMonitors() {
@@ -83,8 +90,9 @@ public class MemoryMonitor implements Monitorable {
         int stretchedPercent = 0;
 
         long now = System.currentTimeMillis();
-        if (lastTimeRanGC < 0)
+        if (lastTimeRanGC < 0) {
             lastTimeRanGC = now;
+        }
 
         if (percent > percentThreshold) {
             timesAboveThreshold++;
@@ -114,8 +122,8 @@ public class MemoryMonitor implements Monitorable {
         }
     }
 
-    public static java.awt.Color doColorThing(final int percent) {
+    public static Color doColorThing(final int percent) {
         Float alpha = new Float(percent).floatValue() / 100;
-        return new java.awt.Color(1.0f, 0.0f, 0.0f, alpha);
+        return new Color(1.0f, 0.0f, 0.0f, alpha);
     }
 }

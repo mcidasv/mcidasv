@@ -47,7 +47,7 @@ public interface ProbeListener extends EventListener {
      * @param event Describes the probe that moved, its old position, and its
      * new position.
      */
-    public void probePositionChanged(final ProbeEvent<RealTuple> event);
+    void probePositionChanged(final ProbeEvent<RealTuple> event);
 
     /**
      * Invoked when a probe's color has changed.
@@ -55,7 +55,7 @@ public interface ProbeListener extends EventListener {
      * @param event Describes the probe that changed, its old color, and its
      * new color.
      */
-    public void probeColorChanged(final ProbeEvent<Color> event);
+    void probeColorChanged(final ProbeEvent<Color> event);
 
     /**
      * Invoked when a probe's visibility has changed.
@@ -64,5 +64,5 @@ public interface ProbeListener extends EventListener {
      * the new visibility. The previous and current values will always be the
      * opposites of each other.
      */
-    public void probeVisibilityChanged(final ProbeEvent<Boolean> event);
+    void probeVisibilityChanged(final ProbeEvent<Boolean> event);
 }

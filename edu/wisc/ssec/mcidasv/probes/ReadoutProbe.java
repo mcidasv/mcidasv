@@ -69,7 +69,7 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     private static final TupleType TUPTYPE = makeTupleType();
 
     private final CopyOnWriteArrayList<ProbeListener> listeners = 
-        new CopyOnWriteArrayList<ProbeListener>();
+        new CopyOnWriteArrayList<>();
 
     /** Displays the value of the data at the current position. */
     private final TextDisplayable valueDisplay = createValueDisplay(DEFAULT_COLOR);
@@ -190,9 +190,10 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
         notNull(previous);
         notNull(current);
 
-        ProbeEvent<RealTuple> event = new ProbeEvent<RealTuple>(this, previous, current);
-        for (ProbeListener listener : listeners)
+        ProbeEvent<RealTuple> event = new ProbeEvent<>(this, previous, current);
+        for (ProbeListener listener : listeners) {
             listener.probePositionChanged(event);
+        }
     }
 
     /**
@@ -206,9 +207,10 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
         notNull(previous);
         notNull(current);
 
-        ProbeEvent<Color> event = new ProbeEvent<Color>(this, previous, current);
-        for (ProbeListener listener : listeners)
+        ProbeEvent<Color> event = new ProbeEvent<>(this, previous, current);
+        for (ProbeListener listener : listeners) {
             listener.probeColorChanged(event);
+        }
     }
 
     /**
@@ -219,9 +221,10 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
      * @param previous Visibility <b>before</b> change.
      */
     protected void fireProbeVisibilityChanged(final boolean previous) {
-        ProbeEvent<Boolean> event = new ProbeEvent<Boolean>(this, previous, !previous);
-        for (ProbeListener listener : listeners)
+        ProbeEvent<Boolean> event = new ProbeEvent<>(this, previous, !previous);
+        for (ProbeListener listener : listeners) {
             listener.probeVisibilityChanged(event);
+        }
     }
 
     public void setColor(final Color color) {
@@ -232,8 +235,9 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     private void setColor(final Color color, final boolean quietly) {
         assert color != null;
 
-        if (currentColor.equals(color))
+        if (currentColor.equals(color)) {
             return;
+        }
 
         try {
             probe.setColor(color);
@@ -241,8 +245,9 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
             Color prev = currentColor;
             currentColor = color;
 
-            if (!quietly)
+            if (!quietly) {
                 fireProbeColorChanged(prev, currentColor);
+            }
         } catch (Exception e) {
             LogUtil.logException("Couldn't set the color of the probe", e);
         }
@@ -296,8 +301,9 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
             return;
 
         Tuple positionValue = valueAtPosition(pos, field);
-        if (positionValue == null)
+        if (positionValue == null) {
             return;
+        }
 
         try {
             valueDisplay.setData(positionValue);
@@ -337,8 +343,9 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     }
 
     public void setXYPosition(final RealTuple position) {
-        if (position == null)
+        if (position == null) {
             throw new NullPointerException("cannot use a null position");
+        }
 
         try {
             probe.setPosition(position);
@@ -375,11 +382,13 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
         assert imageData != null : "Cannot provide a null image";
 
         double[] values = position.getValues();
-        if (values[1] < -180)
+        if (values[1] < -180) {
             values[1] += 360f;
+        }
 
-        if (values[0] > 180)
+        if (values[0] > 180) {
             values[0] -= 360f;
+        }
 
         Tuple positionTuple = null;
         try {
@@ -389,11 +398,11 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
 
             Real realVal = (Real)imageData.evaluate(corrected, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
             float val = (float)realVal.getValue();
-            if (Float.isNaN(val))
+            if (Float.isNaN(val)) {
                 currentValue = "NaN";
-            else
+            } else {
                 currentValue = numFmt.format(realVal.getValue());
-
+            }
             positionTuple = new Tuple(TUPTYPE, new Data[] { corrected, new Text(TextType.Generic, currentValue) });
         } catch (Exception e) {
             LogUtil.logException("Encountered trouble when determining value at probe position", e);
@@ -404,7 +413,7 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     private static RealTuple getInitialLinePosition() {
         RealTuple position = null;
         try {
-            double[] center = new double[] { 0.0, 0.0 };
+            double[] center = { 0.0, 0.0 };
             position = new RealTuple(RealTupleType.SpatialCartesian2DTuple, 
                     new double[] { center[0], center[1] });
         } catch (Exception e) {
@@ -451,6 +460,6 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
      */
     public String toString() {
         return String.format("[ReadoutProbe@%x: color=%s, latitude=%s, longitude=%s, value=%f]", 
-            hashCode(), getColor(), getLatitude(), getLongitude(), getValue());
+            hashCode(), currentColor, currentLatitude, currentLongitude, currentValue);
     }
 }
