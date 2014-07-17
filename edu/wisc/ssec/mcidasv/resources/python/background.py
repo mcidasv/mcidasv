@@ -2095,6 +2095,15 @@ class _Layer(_JavaProxy):
             
     @gui_invoke_later
     def enableDeclutter(self):
+        """Enable decluttering of value plot displays.
+        
+        This method will only force a change if the underlying layer has 
+        decluttering disabled.
+        
+        Raises:
+            NotImplementedError: if the underlying layer is not a 
+                                 ValuePlanViewControl.
+        """
         if not isinstance(self._JavaProxy__javaObject, ValuePlanViewControl):
             raise NotImplementedError('decluttering not support for this layer type')
             
@@ -2104,6 +2113,15 @@ class _Layer(_JavaProxy):
         
     @gui_invoke_later
     def disableDeclutter(self):
+        """Disable decluttering of value plot displays.
+        
+        This method will only force a change if the underlying layer has 
+        decluttering enabled.
+        
+        Raises:
+            NotImplementedError: if the underlying layer is not a 
+                                 ValuePlanViewControl.
+        """
         if not isinstance(self._JavaProxy__javaObject, ValuePlanViewControl):
             raise NotImplementedError('decluttering not support for this layer type')
             
@@ -2113,6 +2131,15 @@ class _Layer(_JavaProxy):
         
     @gui_invoke_later
     def isDeclutterEnabled(self):
+        """Determine whether or not decluttering is enabled.
+        
+        Returns:
+            True if decluttering is enabled, False otherwise.
+            
+        Raises:
+            NotImplementedError: if the underlying layer is not a 
+                                 ValuePlanViewControl.
+        """
         if not isinstance(self._JavaProxy__javaObject, ValuePlanViewControl):
             raise NotImplementedError('decluttering not support for this layer type')
             
@@ -2120,6 +2147,15 @@ class _Layer(_JavaProxy):
         
     @gui_invoke_later
     def getDeclutterFilter(self):
+        """Determine the decluttering filter factor.
+        
+        Returns:
+            The decluttering filter factor.
+            
+        Raises:
+            NotImplementedError: if the underlying layer is not a 
+                                 ValuePlanViewControl.
+        """
         if not isinstance(self._JavaProxy__javaObject, ValuePlanViewControl):
             raise NotImplementedError('decluttering not support for this layer type')
             
@@ -2127,6 +2163,17 @@ class _Layer(_JavaProxy):
         
     @gui_invoke_later
     def setDeclutterFilter(self, filterFactor):
+        """Set the decluttering filter factor.
+        
+        Args:
+            filterFactor: a floating point value that controls the number of 
+                          displayed values. Lower means more values, higher 
+                          means less.
+                          
+        Raises:
+            NotImplementedError: if the underlying layer is not a 
+                                 ValuePlanViewControl.
+        """
         if not isinstance(self._JavaProxy__javaObject, ValuePlanViewControl):
             raise NotImplementedError('decluttering not support for this layer type')
             
