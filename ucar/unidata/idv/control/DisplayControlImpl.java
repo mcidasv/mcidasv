@@ -4186,6 +4186,12 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             patterns.add(MACRO_DISPLAYUNIT);
             values.add("" + displayUnit);
         }
+        patterns.add(MACRO_RESOLUTION);
+        if (resolutionReadout == null || resolutionReadout.isEmpty()) {
+            values.add("");
+        } else {
+            values.add(resolutionReadout);
+        }
 
     }
 
