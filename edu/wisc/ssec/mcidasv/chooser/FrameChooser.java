@@ -153,8 +153,7 @@ public abstract class FrameChooser extends ChooserPanel {
      * @return Do we have a series.
      */
     protected boolean haveASeries() {
-        Object[] selectedTimes = getTimesList().getSelectedValues();
-        return selectedTimes.length > 1;
+        return !getTimesList().getSelectedValuesList().isEmpty();
     }
 
     /**

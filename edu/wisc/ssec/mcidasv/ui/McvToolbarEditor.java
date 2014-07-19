@@ -246,7 +246,7 @@ public class McvToolbarEditor implements ActionListener {
         export2Button.setActionCommand(CMD_EXPORTMENUPLUGIN);
         export2Button.addActionListener(this);
 
-        List<JComponent> buttons = new ArrayList<>();
+        List<JComponent> buttons = new ArrayList<>(12);
         buttons.add(new JLabel(" "));
         buttons.add(addSpaceButton);
         buttons.add(reloadButton);
@@ -271,7 +271,7 @@ public class McvToolbarEditor implements ActionListener {
      *
      * @param tfos selected actions
      */
-    private void doExportToMenu(Object[] tfos) {
+    private void doExportToMenu(List<Object> tfos) {
         if (menuNameFld == null) {
             menuNameFld = new JTextField("", 10);
 
@@ -328,8 +328,8 @@ public class McvToolbarEditor implements ActionListener {
 
             xml.append("<menus>\n");
             xml.append("<menu label=\"" + menuName + "\" " + idXml + ">\n");
-            for (int i = 0; i < tfos.length; i++) {
-                TwoFacedObject tfo = (TwoFacedObject)tfos[i];
+            for (int i = 0; i < tfos.size(); i++) {
+                TwoFacedObject tfo = (TwoFacedObject)tfos.get(i);
                 if (isSpace(tfo)) {
                     xml.append("<separator/>\n");
                 } else {
@@ -352,10 +352,10 @@ public class McvToolbarEditor implements ActionListener {
      *
      * @param tfos the actions
      */
-    private void doExport(Object[] tfos) {
+    private void doExport(List<Object> tfos) {
         StringBuffer content = new StringBuffer();
-        for (int i = 0; i < tfos.length; i++) {
-            TwoFacedObject tfo = (TwoFacedObject) tfos[i];
+        for (int i = 0; i < tfos.size(); i++) {
+            TwoFacedObject tfo = (TwoFacedObject)tfos.get(i);
             if (tfo.toString().equals(SPACE)) {
                 content.append("<filler/>\n");
             } else {
@@ -390,9 +390,9 @@ public class McvToolbarEditor implements ActionListener {
     public void actionPerformed(ActionEvent ae) {
         String c = ae.getActionCommand();
         if (CMD_EXPORTMENUPLUGIN.equals(c) || CMD_EXPORTPLUGIN.equals(c)) {
-            Object[] tfos = twoListPanel.getToList().getSelectedValues();
-            if (tfos.length == 0) {
-                LogUtil.userMessage(MSG_SELECT_ENTRIES);
+            List<Object> tfos = twoListPanel.getToList().getSelectedValuesList();
+            if (tfos.isEmpty()) {
+                LogUtil.userErrorMessage(MSG_SELECT_ENTRIES);
             } else if (CMD_EXPORTMENUPLUGIN.equals(c)) {
                 doExportToMenu(tfos);
             } else {

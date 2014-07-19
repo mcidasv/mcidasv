@@ -844,7 +844,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
      * @return the time selected in the list
      */
     public DateTime getSelectedTime() {
-        return (DateTime) timesList.getSelectedValue();
+        return (DateTime)timesList.getSelectedValue();
     }
 
     /**
@@ -853,7 +853,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
      * @return the time selected in the list
      */
     public List getSelectedTimes() {
-        return Misc.toList(timesList.getSelectedValues());
+        return timesList.getSelectedValuesList();
     }
     
     /**
@@ -869,8 +869,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
             public void valueChanged(ListSelectionEvent e) {
                 if ( !timesList.isSelectionEmpty()
                         && !e.getValueIsAdjusting()) {
-                    Object[] t = timesList.getSelectedValues();
-                    newTimes(Misc.toList(t));
+                    newTimes(timesList.getSelectedValuesList());
                 }
             }
         });
