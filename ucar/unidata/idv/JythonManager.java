@@ -1462,7 +1462,7 @@ public class JythonManager extends IdvManager implements ActionListener {
      * @return List of selected formulas
      */
     protected List selectFormulas() {
-        Vector<TwoFacedObject> formulas = new Vector<TwoFacedObject>();
+        Vector<TwoFacedObject> formulas = new Vector<>(descriptors.size());
         for (DerivedDataDescriptor ddd : descriptors) {
             DataCategory cat = ddd.getDisplayCategory();
             String label = "";
@@ -1472,7 +1472,7 @@ public class JythonManager extends IdvManager implements ActionListener {
             label += ddd.getDescription();
             formulas.add(new TwoFacedObject(label, ddd));
         }
-        JList formulaList = new JList(formulas);
+        JList<TwoFacedObject> formulaList = new JList<>(formulas);
         JScrollPane scroller = GuiUtils.makeScrollPane(formulaList, 200, 300);
         JPanel contents =
             GuiUtils.topCenter(
@@ -1482,13 +1482,12 @@ public class JythonManager extends IdvManager implements ActionListener {
         if (!GuiUtils.showOkCancelDialog(null, "Export Formulas", GuiUtils.inset(contents, 5), null)) {
             return null;
         }
-        Object[] items = formulaList.getSelectedValues();
-        if ((items == null) || (items.length == 0)) {
+        List<TwoFacedObject> items = formulaList.getSelectedValuesList();
+        if (items.isEmpty()) {
             return null;
         }
-        List selected = new ArrayList();
-        for (int i = 0; i < items.length; i++) {
-            TwoFacedObject tfo = (TwoFacedObject)items[i];
+        List<Object> selected = new ArrayList<>(items.size());
+        for (TwoFacedObject tfo : items) {
             selected.add(tfo.getId());
         }
         return selected;
@@ -1499,7 +1498,7 @@ public class JythonManager extends IdvManager implements ActionListener {
      */
     public void exportFormulasToPlugin() {
         List<?> selected = selectFormulas();
-        if ((selected == null) || (selected.isEmpty())) {
+        if ((selected == null) || selected.isEmpty()) {
             return;
         }
         getIdv().getPluginManager().addObject(selected);
@@ -1510,7 +1509,7 @@ public class JythonManager extends IdvManager implements ActionListener {
      */
     public void exportFormulas() {
         List<?> selected = selectFormulas();
-        if ((selected == null) || (selected.size() == 0)) {
+        if ((selected == null) || selected.isEmpty()) {
             return;
         }
         String xml = DerivedDataDescriptor.toXml(selected);
