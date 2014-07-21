@@ -113,7 +113,7 @@ public class SystemState {
      */
     private static <T> T hackyMethodCall(final String methodName, final T defaultValue) {
         assert methodName != null : "Cannot invoke a null method name";
-        assert methodName.length() > 0: "Cannot invoke an empty method name";
+        assert !methodName.isEmpty() : "Cannot invoke an empty method name";
         OperatingSystemMXBean osBean = 
             ManagementFactory.getOperatingSystemMXBean();
         T result = defaultValue;
@@ -317,7 +317,15 @@ public class SystemState {
         return "VisAD version " + props.get(Constants.PROP_VISAD_REVISION) + " built " + props.get(Constants.PROP_VISAD_DATE);
     }
 
-    private InputStream getResourceAsStream(final String name) {
+    /**
+     * Open a file for reading.
+     *
+     * @param name File to open.
+     *
+     * @return {@code InputStream} used to read {@code name}, or {@code null}
+     * if {@code name} could not be found.
+     */
+    private static InputStream getResourceAsStream(final String name) {
         return ClassLoader.getSystemResourceAsStream(name);
     }
 
@@ -331,11 +339,10 @@ public class SystemState {
      */
     public static Map<String, String> queryVisadBuildProperties() {
         Map<String, String> props = newLinkedHashMap(4);
-        SystemState sysState = new SystemState();
         BufferedReader input = null;
         
         try {
-            input = new BufferedReader(new InputStreamReader(sysState.getResourceAsStream("DATE")));
+            input = new BufferedReader(new InputStreamReader(getResourceAsStream("DATE")));
             String contents = input.readLine();
             // string should look like: Thu Mar 22 13:01:31 CDT 2012  Rev:5952
             String splitAt = "  Rev:";
@@ -344,8 +351,8 @@ public class SystemState {
             String revision = "ERROR";
             String parseFail = "true";
             if (index > 0) {
-                buildDate = new String(contents.substring(0, index));
-                revision = new String(contents.substring(index + splitAt.length()));
+                buildDate = contents.substring(0, index);
+                revision = contents.substring(index + splitAt.length());
                 parseFail = "false";
             }
             props.put(Constants.PROP_VISAD_ORIGINAL, contents);
@@ -355,7 +362,6 @@ public class SystemState {
         } catch (Exception e) {
             logger.error("could not read from VisAD DATE file", e);
         } finally {
-            sysState = null;
             if (input != null) {
                 try {
                     input.close();
@@ -384,11 +390,10 @@ public class SystemState {
      * @return A {@code Map} of at least the useful parts of build.properties.
      */
     public static Map<String, String> queryIdvBuildProperties() {
-        SystemState sysState = new SystemState();
         Map<String, String> versions = newLinkedHashMap(4);
         InputStream input = null;
         try {
-            input = sysState.getResourceAsStream("ucar/unidata/idv/resources/build.properties");
+            input = getResourceAsStream("ucar/unidata/idv/resources/build.properties");
             Properties props = new Properties();
             props.load(input);
             String major = props.getProperty("idv.version.major", "no_major");
@@ -402,7 +407,6 @@ public class SystemState {
         } catch (Exception e) {
             logger.error("could not read from IDV build.properties", e);
         } finally {
-            sysState = null;
             if (input != null) {
                 try {
                     input.close();
@@ -434,11 +438,10 @@ public class SystemState {
      * @return A {@code Map} of at least the useful parts of build.properties.
      */
     public static Map<String, String> queryMcvBuildProperties() {
-        SystemState sysState = new SystemState();
         Map<String, String> versions = newLinkedHashMap(4);
         InputStream input = null;
         try {
-            input = sysState.getResourceAsStream("edu/wisc/ssec/mcidasv/resources/build.properties");
+            input = getResourceAsStream("edu/wisc/ssec/mcidasv/resources/build.properties");
             Properties props = new Properties();
             props.load(input);
             String major = props.getProperty(Constants.PROP_VERSION_MAJOR, "0");
@@ -452,7 +455,6 @@ public class SystemState {
         } catch (Exception e) {
             logger.error("could not read from McIDAS-V build.properties!", e);
         } finally {
-            sysState = null;
             if (input != null) {
                 try {
                     input.close();
@@ -475,7 +477,8 @@ public class SystemState {
      */
     // need: argsmanager, resource manager
     public static Map<String, Object> queryMcvState(final McIDASV mcv) {
-        Map<String, Object> props = newLinkedHashMap();
+        // through some simple verification, props generally has under 250 elements
+        Map<String, Object> props = newLinkedHashMap(250);
 
         ArgsManager args = mcv.getArgsManager();
         props.put("mcv.state.islinteractive", args.getIslInteractive());
@@ -543,7 +546,7 @@ public class SystemState {
      * {@link Properties} file format.
      */
     public static String getStateAsString(final McIDASV mcv, final boolean firehose) {
-        int builderSize = (firehose) ? 45000 : 1000;
+        int builderSize = firehose ? 45000 : 1000;
         StringBuilder buf = new StringBuilder(builderSize);
 
         Map<String, String> versions = ((StateManager)mcv.getStateManager()).getVersionInfo();
@@ -579,7 +582,7 @@ public class SystemState {
             .append("\n\n# Java 3D:")
             .append("\n# Renderer: ").append(j3dProps.get("j3d.renderer"))
             .append("\n# Pipeline: ").append(j3dProps.get("j3d.pipeline"))
-            .append("\n# Vendor:   ").append(j3dProps.get("j3d.vendor"))
+            .append("\n# Vendor:   ").append(j3dProps.get("native.vendor"))
             .append("\n# Version:  ").append(j3dProps.get("j3d.version"))
             .append("\n\n# Jython:")
             .append("\n# Version:     ").append(jythonProps.get("sys.version_info"))
@@ -587,33 +590,33 @@ public class SystemState {
 
         if (firehose) {
             buf.append("\n\n\n#Firehose:\n\n# SOFTWARE VERSIONS\n");
-            for (String key : (new TreeSet<String>(versions.keySet()))) {
+            for (String key : new TreeSet<>(versions.keySet())) {
                 buf.append(key).append('=').append(versions.get(key)).append('\n');
             }
 
             buf.append("\n# MACHINE PROPERTIES\n");
-            for (String key : (new TreeSet<String>(machineProps.keySet()))) {
+            for (String key : new TreeSet<>(machineProps.keySet())) {
                 buf.append(key).append('=').append(machineProps.get(key)).append('\n');
             }
 
             buf.append("\n# JAVA SYSTEM PROPERTIES\n");
-            for (Object key : (new TreeSet<Object>(sysProps.keySet()))) {
+            for (Object key : new TreeSet<>(sysProps.keySet())) {
                 buf.append(key).append('=').append(sysProps.get(key)).append('\n');
             }
 
             buf.append("\n# JAVA3D/JOGL PROPERTIES\n");
-            for (String key : (new TreeSet<String>(j3dProps.keySet()))) {
+            for (String key : new TreeSet<>(j3dProps.keySet())) {
                 buf.append(key).append('=').append(j3dProps.get(key)).append('\n');
             }
 
             buf.append("\n# JYTHON PROPERTIES\n");
-            for (Object key : (new TreeSet<Object>(jythonProps.keySet()))) {
+            for (Object key : new TreeSet<>(jythonProps.keySet())) {
                 buf.append(key).append('=').append(jythonProps.get(key)).append('\n');
             }
 
             // get idv/mcv properties
             buf.append("\n# IDV AND MCIDAS-V PROPERTIES\n");
-            for (String key : (new TreeSet<String>(mcvProps.keySet()))) {
+            for (String key : new TreeSet<>(mcvProps.keySet())) {
                 buf.append(key).append('=').append(mcvProps.get(key)).append('\n');
             }
         }
