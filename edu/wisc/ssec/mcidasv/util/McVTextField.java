@@ -247,7 +247,7 @@ public class McVTextField extends JTextField {
 	private boolean verifyInput() {
 		boolean isValid = false;
 		String checkValue = this.getText();
-		if (checkValue=="") return true;
+		if (checkValue.isEmpty()) return true;
 		
 		if (this.validStrings != null) {
 			for (String string : validStrings) {
