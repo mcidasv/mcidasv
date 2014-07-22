@@ -2842,7 +2842,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
                         if (IOUtil.writeTo(
                                 zin,
                                 new FileOutputStream(
-                                    IOUtil.joinDir(tmpDir, entryName))) < 0) {
+                                    IOUtil.joinDir(tmpDir, entryName))) < 0L) {
                             //                            JobManager.getManager().stopLoad(loadId);
 
                             return false;

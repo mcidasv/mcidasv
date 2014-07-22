@@ -674,7 +674,7 @@ public class PersistenceManager extends IdvPersistenceManager {
                                 null, false));
                     } else {
 //                        String xmlPath = IOUtil.joinDir(tmpDir, entryName);
-                        if (IOUtil.writeTo(zin, new FileOutputStream(IOUtil.joinDir(tmpDir, entryName))) < 0) {
+                        if (IOUtil.writeTo(zin, new FileOutputStream(IOUtil.joinDir(tmpDir, entryName))) < 0L) {
                             return false;
                         }
                     }
