@@ -1428,7 +1428,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
                     	}
                     }
                     IOUtil.writeTo(IOUtil.getInputStream(file, getClass()),
-                                   zos);
+                                   zos, null, 0L);
                     zos.closeEntry();
                     if (dialog.isCancelled()) {
                         dialog.dispose();
