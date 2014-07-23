@@ -387,4 +387,13 @@ public class ArgumentManager extends ArgsManager {
     public static boolean isBundle(final String name) {
         return (isXmlBundle(name) || isZippedBundle(name));
     }
+
+    /**
+     * Clears out the automatic display creation arguments by setting {@link #initParams} and {@link #initDisplays} to
+     * {@link Collections#emptyList()}.
+     */
+    protected void clearAutomaticDisplayArgs() {
+        initParams = Collections.emptyList();
+        initDisplays = Collections.emptyList();
+    }
 }

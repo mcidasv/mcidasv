@@ -1009,15 +1009,17 @@ public class McIDASV extends IntegratedDataViewer {
      * this method to handle:
      *
      * <ul>
-     *   <li>The presence of certain properties on the commandline.</li>
-     *   <li>Detection and handling of a crashed McIDAS-V session.</li>
+     *   <li>Clearing out the automatic display creation arguments.</li>
+     *   <li>Presence of certain properties on the commandline.</li>
+     *   <li>Detection and handling of a crashed McIDAS-V session (searching for {@code SESSION_FILE}.</li>
      * </ul>
      *
+     * @see ArgumentManager#clearAutomaticDisplayArgs()
      * @see #overridePreferences()
      * @see #detectAndHandleCrash()
      */
     @Override public void initDone() {
-        super.initDone();
+        ((ArgumentManager)argsManager).clearAutomaticDisplayArgs();
 
         overridePreferences();
 
