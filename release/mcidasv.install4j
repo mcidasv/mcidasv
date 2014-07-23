@@ -96,7 +96,6 @@
       <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/remove-adde-zip.sh" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7339" file="${compiler:sys.install4jHome}/jres/j3d-132-linux-x86.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/runMcV-HeapDumpEnabled" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7338" file="${compiler:sys.install4jHome}/jres/osxjre.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/icons/mcidasv.icns" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/icons/macos-apps.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/macos-apps-setdir.sh" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
@@ -1283,7 +1282,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
     </applications>
   </installerGui>
   <mediaSets>
-    <unixInstaller name="Linux 32-bit" id="3" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/linux-x86-1.7.0_60.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="~" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Linux 32-bit" id="3" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/linux-x86-1.7.0_65.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="~" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -1316,7 +1315,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <content />
       </installerScript>
     </unixInstaller>
-    <unixInstaller name="Linux 64-bit" id="7557" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86-64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/linux-amd64-1.7.0_60.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="~" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Linux 64-bit" id="7557" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86-64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/linux-amd64-1.7.0_65.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="~" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -1385,7 +1384,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <content />
       </installerScript>
     </unixInstaller>
-    <macosFolder name="Mac OS X" id="12" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macosx_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="true" requiredVmIdPrefix="" customInstallBaseDir="" contentFilesType="1" downloadURL="" signLaunchers="false">
+    <macosFolder name="Mac OS X" id="12" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macosx_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="macosx-amd64-1.7.0_65" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" requiredVmIdPrefix="" customInstallBaseDir="" contentFilesType="1" downloadURL="" signLaunchers="false">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
@@ -1414,7 +1413,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
       </excludedComponents>
       <includedDownloadableComponents />
     </macosFolder>
-    <windows name="Windows 32-bit" id="8" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/windows-x86-1.7.0_60.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
+    <windows name="Windows 32-bit" id="8" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/windows-x86-1.7.0_65.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
       <excludedLaunchers>
         <launcher id="841" />
         <launcher id="1330" />
@@ -1444,7 +1443,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
       </excludedComponents>
       <includedDownloadableComponents />
     </windows>
-    <windows name="Windows 64-bit" id="7720" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="64" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/windows-amd64-1.7.0_60.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
+    <windows name="Windows 64-bit" id="7720" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="64" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/windows-amd64-1.7.0_65.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
       <excludedLaunchers>
         <launcher id="841" />
         <launcher id="1330" />
@@ -1476,7 +1475,9 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
     </windows>
   </mediaSets>
   <buildIds buildAll="false">
-    <mediaSet refId="12" />
+    <mediaSet refId="3" />
+    <mediaSet refId="7557" />
   </buildIds>
   <buildOptions verbose="false" faster="false" disableSigning="false" debug="false" />
 </install4j>
+
