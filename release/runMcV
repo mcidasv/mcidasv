@@ -105,10 +105,9 @@ if [ -z "${HAS_ALPHA}" ]; then
   HEAP_SIZE="${HEAP_SIZE}M"
 fi
 
-# Force Java 6 on OS X (for now).
+# Point at McV's bundled JRE on OS X. 
 if [ `uname -s` = "Darwin" ]; then
-  # JAVA_HOME=`/usr/libexec/java_home -v 1.6`
-  JAVA_HOME="./jre/Contents/Home"
+  JAVA_HOME="./.install4j/jre.bundle/Contents/Home"
 fi
 
 # Look for java
@@ -117,7 +116,7 @@ if [ -f "./jre/bin/java" ]; then
   JAVA_BIN="./jre/bin/java"
 else
   if [ -n "${JAVA_HOME}" ]; then
-    JAVA_BIN="${JAVA_HOME}/bin/java"
+    JAVA_BIN="${JAVA_HOME}/jre/bin/java"
   fi
 fi
 
