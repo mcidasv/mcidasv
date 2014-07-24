@@ -41,6 +41,7 @@ from ucar.unidata.util import GuiUtils
 from ucar.visad import Util
 from ucar.visad.data import GeoGridFlatField
 from visad import FieldImpl
+from visad import FlatField
 
 # from collections import namedtuple
 
@@ -223,6 +224,21 @@ class _MappedData(object):
         
     def update(self, newDict=None, **kwargs):
         raise NotImplementedError()
+
+class _MappedFlatField(_MappedData, FlatField):
+    def __init__(self, ff):
+        """
+        Make a _MappedFlatField from an existing FlatField
+        """
+        keys = ['this-is-a-mapped-flatfield']
+        _MappedData.__init__(self, keys)
+        # try to call something like a copy constructor
+        FlatField.__init__(self, ff.getType(), ff.getDomainSet(),
+                ff.RangeCoordinateSystem, ff.RangeCoordinateSystems,
+                ff.RangeSet, ff.RangeUnits)
+        # careful here: Python booleans get sent to the java method as an int,
+        # which calls the wrong method.  Solution is to use a java Boolean type.
+        self.packValues(ff.unpackFloats(java.lang.Boolean(False)), False)
         
 class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
     def __init__(self, aiff, areaFile, areaDirectory, addeDescriptor, startTime):
