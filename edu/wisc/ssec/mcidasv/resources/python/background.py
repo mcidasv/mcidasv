@@ -226,19 +226,49 @@ class _MappedData(object):
         raise NotImplementedError()
 
 class _MappedFlatField(_MappedData, FlatField):
-    def __init__(self, ff):
+    def __init__(self, ff, keys):
         """
         Make a _MappedFlatField from an existing FlatField
         """
-        keys = ['this-is-a-mapped-flatfield']
         _MappedData.__init__(self, keys)
-        # try to call something like a copy constructor
         FlatField.__init__(self, ff.getType(), ff.getDomainSet(),
                 ff.RangeCoordinateSystem, ff.RangeCoordinateSystems,
                 ff.RangeSet, ff.RangeUnits)
         # careful here: Python booleans get sent to the java method as an int,
         # which calls the wrong method.  Solution is to use a java Boolean type.
+        # Also; we make sure here not to copy the floats array.
         self.packValues(ff.unpackFloats(java.lang.Boolean(False)), False)
+
+class _MappedVIIRSFlatField(_MappedFlatField):
+    def __init__(self, ff, field):
+        self.field = field
+        keys = ['field']
+        _MappedFlatField.__init__(self, ff, keys)
+        self.initMetadataMap()
+
+    def _getDirValue(self, key):
+        if key not in self._keys:
+            raise KeyError('unknown key: %s' % key)
+        if key == 'field':
+            return self.field
+        else:
+            raise KeyError('should not be capable of reaching here: %s')
+
+    def getMacrosDict(self):
+        """return a dictionary mapping IDV macro strings to reasonable defaults
+        for this object
+        """
+        # TODO: add timestamp, datasourcename
+        # This should be enough to get param defaults applied though.
+        macros = {'longname': self['field'], 'shortname': self['field']}
+        return macros
+
+    def getDefaultLayerLabel(self):
+        """return a reasonable default layer label for this class
+        """
+        # TODO: get %timestamp% into defaultLabel
+        defaultLabel = '%longname%'
+        return defaultLabel
         
 class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
     def __init__(self, aiff, areaFile, areaDirectory, addeDescriptor, startTime):
@@ -3081,3 +3111,45 @@ def loadFileListTimesInField(filename, field):
     geogrid = gridDataset.findGridByName(field)
     for time in geogrid.getTimes():
         print time
+
+def getVIIRSImage(file_list, field, stride=1, **kwargs):
+    """ Experimental function for loading VIIRS imagery
+
+    file_list: list of NPP *data* files.  You need to have geolocation files
+               in the same *directory* as these files, but *do not* include
+               the geolocation files in file_list.
+
+    field:  the name of the field you want to display, as shown in the Field 
+            Selector, e.g., 'VIIRS-M15-SDR_ALL/BrightnessTemperature'
+
+    stride: Optional; set the stride.  Default is full-res (1).  Larger
+            than 1 will give you a lower resolution
+    """
+    from edu.wisc.ssec.mcidasv.data.hydra import SuomiNPPDataSource
+    # First, need to create the data source:
+    # TODO: how to avoid re-creating identical data sources?
+    descriptor = _mcv.getDataManager().getDescriptor('SuomiNPP')
+    # We get lucky; there's already a constructor that takes a list of files:
+    data_source = SuomiNPPDataSource(descriptor, file_list, None)
+
+    # now make the 'data choice' corresponding to the desired field:
+    # not sure about what to pass in as int arg here...
+    data_choice = data_source.doMakeDataChoice(42, field)
+
+    # set the stride as desired.
+    # Note: there might be a cleaner way to do this using 
+    #       SwathAdapter.getDefaultSubset and setDefaultStride; but this works
+    #       for now.
+    multi_dimension_subset = data_choice.getProperties().values().toArray()[0]
+    multi_dimension_subset.coords[0][2] = stride
+    multi_dimension_subset.coords[1][2] = stride
+
+    # get the flatfield; we *want* to pass in a null dataSelection; category and
+    # request properties don't really seem to matter so we pass in null as well.
+    ff = data_source.getData(data_choice, None, None, None)
+
+    # make a _MappedFlatField.
+    mapped_ff = _MappedVIIRSFlatField(ff, field)
+
+    return mapped_ff
+
