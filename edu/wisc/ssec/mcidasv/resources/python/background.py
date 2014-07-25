@@ -3142,8 +3142,9 @@ def getVIIRSImage(file_list, field, stride=1, **kwargs):
     # find out if 'field' exists in the data choices list
     data_choice = None
     for data_choice_in_list in data_source.getDataChoices():
-        if data_choice_in_list.getName() == field:
+        if data_choice_in_list.getName().lower() == field.lower():
             data_choice = data_choice_in_list
+            field = data_choice.getName() # make sure param defaults get applied.
             break
     # TODO: wouldn't it be cool to suggest the correct spelling if we
     #       found a 'close' match here?
