@@ -3121,10 +3121,14 @@ def getVIIRSImage(file_list, field, stride=1, **kwargs):
 
     field:  the name of the field you want to display, as shown in the Field 
             Selector, e.g., 'VIIRS-M15-SDR_ALL/BrightnessTemperature'
-
+ 
     stride: Optional; set the stride.  Default is full-res (1).  Larger
             than 1 will give you a lower resolution
     """
+    # try some quick input validation before doing any real work
+    if not file_list:
+        raise ValueError('File list must contain at least one file.')
+    
     from edu.wisc.ssec.mcidasv.data.hydra import SuomiNPPDataSource
     # First, need to create the data source:
     # TODO: how to avoid re-creating identical data sources?
