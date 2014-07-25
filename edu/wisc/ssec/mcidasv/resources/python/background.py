@@ -3136,9 +3136,21 @@ def getVIIRSImage(file_list, field, stride=1, **kwargs):
     # We get lucky; there's already a constructor that takes a list of files:
     data_source = SuomiNPPDataSource(descriptor, file_list, None)
 
-    # now make the 'data choice' corresponding to the desired field:
-    # not sure about what to pass in as int arg here...
-    data_choice = data_source.doMakeDataChoice(42, field)
+    # make all data choices so we can do error checking on the field parameter.
+    data_source.doMakeDataChoices()
+
+    # find out if 'field' exists in the data choices list
+    data_choice = None
+    for data_choice_in_list in data_source.getDataChoices():
+        if data_choice_in_list.getName() == field:
+            data_choice = data_choice_in_list
+            break
+    # TODO: wouldn't it be cool to suggest the correct spelling if we
+    #       found a 'close' match here?
+    # http://commons.apache.org/proper/commons-lang/apidocs/org/apache/commons/lang3/StringUtils.html#getLevenshteinDistance(java.lang.CharSequence,%20java.lang.CharSequence)
+    if not data_choice:
+        raise ValueError('The "field" you specified (%s) doesn\'t exist in the data.  Make sure "field" parameter matches the name shown in the Field Selector.' %
+                             (field) )
 
     # set the stride as desired.
     # Note: there might be a cleaner way to do this using 
