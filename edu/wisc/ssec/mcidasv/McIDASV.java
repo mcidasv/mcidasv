@@ -1039,12 +1039,12 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
-     * Have the user select an xidv file. If andRemove is true then we remove
-     * all data sources and displays. Then we open the unpersist the bundle in
-     * the xidv file
-     * 
+     * Have the user select a bundle. If andRemove is true then we remove all data sources and displays.
+     *
+     * Then we open the bundle and start doing unpersistence things.
+     *
      * @param filename The filename to open
-     * @param checkUserPreference Should we show, if needed, the Open dialog
+     * @param checkUserPreference Should we show, if needed, the {@literal "open"} dialog
      * @param andRemove If true then first remove all data sources and displays
      */
     private void doOpenInThread(String filename, boolean checkUserPreference,
@@ -1076,26 +1076,22 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
-     * Make edu.wisc.ssec.mcidasv.JythonManager
-     * Factory method to create the
-     * {@link JythonManager}
+     * Factory method to create the McIDAS-V @link JythonManager}.
      *
-     * @return The  jython manager
+     * @return New {@code JythonManager}.
      */
     @Override protected JythonManager doMakeJythonManager() {
-//        return (JythonManager) makeManager(JythonManager.class,
-//                                           new Object[] { idv });
         logger.debug("returning a new JythonManager");
         return new JythonManager(this);
     }
 
     /**
-     * Factory method to create the {@link IdvUIManager}. Here we create our 
-     * own UI manager so it can do McV specific things.
+     * Factory method to create a McIDAS-V {@link McIdasChooserManager}. Here we create our own manager so it can do
+     * McV specific things.
      *
      * @return The UI manager indicated by the startup properties.
      * 
-     * @see ucar.unidata.idv.IdvBase#doMakeIdvUIManager()
+     * @see ucar.unidata.idv.IdvBase#doMakeIdvChooserManager()
      */
     @Override
     protected IdvChooserManager doMakeIdvChooserManager() {
@@ -1106,10 +1102,10 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
-     * Factory method to create the {@link IdvUIManager}. Here we create our 
-     * own UI manager so it can do McV specific things.
+     * Factory method to create the {@link IdvUIManager}. Here we create our own UI manager so it can do McV
+     * specific things.
      *
-     * @return The UI manager indicated by the startup properties.
+     * @return {@link UIManager} indicated by the startup properties.
      * 
      * @see ucar.unidata.idv.IdvBase#doMakeIdvUIManager()
      */
