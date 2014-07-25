@@ -34,7 +34,17 @@ Things of Interest
     │               ├── supportform     * Submit McIDAS-V support requests.
     │               ├── ui              * UI related classes here, e.g., UIManager.
     │               └── util            * Utility classes can go here.
+    |
     ├── lib                             * McIDAS-V dependencies (other than VisAD/IDV).
+    |   |
+    |   ├── linux-amd64                 * 64-bit Linux dependencies.
+    |   ├── linux-i586                  * 32-bit Linux dependencies.
+    |   ├── macosx                      * OS X dependencies
+    |   ├── share                       * Platform independent dependencies. This is
+    |   |                                 where most JAR files will end up.
+    |   ├── windows-amd64               * 64-bit Windows dependencies.
+    |   └── windows-i586                * 32-bit Windows dependencies.
+    |
     ├── release                         * Files used by install4J.
     ├── tools                           
     │   ├── apidocs                     
