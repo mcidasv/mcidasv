@@ -62,7 +62,7 @@
             <tocitem text="Point Volume Controls" target="idv.controls.pointvolumecontrol"/>
 			<tocitem text="Sounding Controls" target="idv.controls.soundingcontrol"/>
 			<tocitem text="Hovmoller Controls" target="idv.controls.hovmollercontrol"/>
-			<tocitem text="Grid Trajectory Controls" target="idv.controls.gridtrajectory.html"/>
+			<tocitem text="Grid Trajectory Controls" target="idv.controls.gridtrajectory"/>
         </tocitem>
         <tocitem text="Satellite and Radar Displays" target="idv.page_satelliteandradardisplays">
             <tocitem text="Image Controls" target="idv.controls.imageplanviewcontrol"/>

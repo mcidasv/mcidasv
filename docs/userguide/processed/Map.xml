@@ -116,7 +116,6 @@
         <mapID target="idv.data.choosers.catalogchooser.image1"      url="data/choosers/CatalogChooser.html#image1" />
         <mapID target="idv.data.choosers.catalogchooser.image2"      url="data/choosers/CatalogChooser.html#image2" />
         <mapID target="idv.data.choosers.flatfilechooser"            url="data/choosers/FlatFileChooser.html" />
-		<mapID target="idv.data.choosers.hritchooser"			     url="data/choosers/EumetcastHritChooser.html" />
         <mapID target="idv.data.choosers.filechooser"                url="data/choosers/FileChooser.html" />
         <mapID target="idv.data.choosers.filechooser.image1"         url="data/choosers/FileChooser.html#image1" />
 		<mapID target="idv.data.choosers.frontchooser"				 url="data/choosers/FrontChooser.html" />

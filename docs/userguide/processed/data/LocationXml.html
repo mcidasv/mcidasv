@@ -38,7 +38,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/LocationXml.
 <li><a href="#kmlkmz">KML/KMZ Format</a></li>
 </ul>
 <div class="pagesubtitle"><a name="xml" id="xml"></a>Locations XML</div>
-<p>The main one format McIDAS-V uses is a custom locations xml format. This format still has some nomenclature from when it was atmospheric science related (e.g. "stations"). A simple example:</p>
+<p>The main format McIDAS-V uses is a custom locations XML format. This format still has some nomenclature from when it was atmospheric science related (e.g. "stations"). A simple example:</p>
 <blockquote>
 <pre>
 &lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
@@ -56,7 +56,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/LocationXml.
     +/-  :, ::                                          ===&gt;       0.0
     Any of the above with N,S,E,W appended
 </pre>
-<p>The <em>elev</em> attribute is optional. By default it is in meters. You can override this default with an <em>elevunit</em> in the stationtable tag. e.g.:</p>
+<p>The <em>elev</em> attribute is optional. By default it is in meters. The default can be overridden with an <em>elevunit</em> in the stationtable tag. e.g.:</p>
 <blockquote>
 <pre>
 &lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
@@ -81,7 +81,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/LocationXml.
          lat="39:47:12" lon="-104:32:45" elev="1675"/&gt;
 </pre></blockquote>
 <p>These can be displayed by the station model used in the <a href="../controls/StationLocationControl.html">Location Display Control</a>.</p>
-<p>If you want to create a permanent list of station that shows up in the <strong>Display-&gt;Locations</strong> menu in the Main Display window, you can create a file called userstations.xml in the McIDAS-V directory under your user's home directory. The format would look like:</p>
+<p>To create a permanent list of stations that show up in the <strong>Display-&gt;Locations</strong> menu in the Main Display window, create a file called userstations.xml in the McIDAS-V directory under your user's home directory. The format would look like:</p>
 <blockquote>
 <pre>
 <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;ISO-8859-1&quot;?&gt;
@@ -95,7 +95,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/LocationXml.
 (list of stations for SubsetB)
 &lt;/stationtable&gt;
 &lt;/stationtables&gt;</pre></blockquote>
-<p>This will show up in the <strong>Display->Locations</strong> menu as a top menu called <strong>My Custom Stations</strong> and sub menus <strong>SubsetA</strong> and <strong>SubsetB</strong>. After adding this XML file in through the Files/Directories chooser, you must first restart McIDAS-V before the stations will be listed.</p>
+<p>This will show up in the <strong>Display->Locations</strong> menu as a top menu called <strong>My Custom Stations</strong> and sub menus <strong>SubsetA</strong> and <strong>SubsetB</strong>. After adding this XML file in through the Files/Directories chooser, McIDAS-V must be restarted before the stations will be listed.</p>
 <div class="pagesubtitle"><a name="csv" id="csv"></a>CSV Format</div>
 <p>Location data can be defined in a CSV (Comma Separated Value) format. The first line is a comma separated list of column names. There must be columns that are latitude and longitude. These are denoted with (case insensitive):</p>
 <pre>
@@ -110,7 +110,7 @@ long
 alt 
 altitude
 </pre>
-<p>The altitude value, if defined, is by default in meters. You can optionally specify a unit with the suffix: "[unit name]" (see example).</p>
+<p>The altitude value, if defined, is by default in meters. Optionally, specify a unit with the suffix: "[unit name]" (see example).</p>
 <p>The first column that is found that is not one of the location columns is taken to be the name of the location.</p>
 <p>Example:</p>
 <pre>
