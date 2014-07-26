@@ -39,9 +39,12 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import ucar.unidata.gis.maps.MapData;
+import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.StringUtil;
+import ucar.unidata.xml.XmlObjectStore;
 
 /**
  * Panel to hold map gui items for one map
@@ -62,7 +65,7 @@ public class MapPanel extends JPanel {
     private JComboBox styleBox;
 
     /** Shows the color */
-    private GuiUtils.ColorSwatch colorButton;
+    private ColorSwatchComponent colorButton;
 
     /** The fast rendering  cbx */
     private JCheckBox fastRenderingCbx;
@@ -72,7 +75,9 @@ public class MapPanel extends JPanel {
 
     /** Are we updating the UI */
     private boolean updatingUI = false;
-    
+
+    private XmlObjectStore store;
+
     /** Limit on map label string length */
     private static final int MAP_LABEL_MAX_LENGTH = 35;
 
@@ -82,7 +87,8 @@ public class MapPanel extends JPanel {
      * @param data The MapData we represent
      *
      */
-    public MapPanel(MapData data) {
+    public MapPanel(XmlObjectStore store, MapData data) {
+        this.store = store;
         mapData = data;
         init();
     }
@@ -177,7 +183,7 @@ public class MapPanel extends JPanel {
             }
         });
         p.add(styleBox);
-        colorButton = new GuiUtils.ColorSwatch(mapData.getColor(),
+        colorButton = new ColorSwatchComponent(store, mapData.getColor(),
                 "Set Map Line Color");
         colorButton.setToolTipText("Set the line color");
         colorButton.addPropertyChangeListener("background",

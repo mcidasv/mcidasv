@@ -21,6 +21,7 @@
 package ucar.unidata.idv.control;
 
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.gis.maps.LatLonData;
 import ucar.unidata.gis.maps.LatLonLabelData;
@@ -871,8 +872,9 @@ public class MapDisplayControl extends DisplayControlImpl {
      */
     protected boolean selectMap() {
 
-        final JPanel colorButton =
-            new GuiUtils.ColorSwatch(DEFAULT_MAP_COLOR, "Set Map Line Color");
+//        final JPanel colorButton =
+//            new GuiUtils.ColorSwatch(DEFAULT_MAP_COLOR, "Set Map Line Color");
+        final JPanel colorButton = new ColorSwatchComponent(getStore(), DEFAULT_MAP_COLOR, "Set Map Line Color");
         colorButton.setToolTipText("Set the line color");
 
         final JTextField catFld = new JTextField("Maps", 20);
@@ -1251,7 +1253,7 @@ public class MapDisplayControl extends DisplayControlImpl {
                 catMap.put(cat, mapPanels);
                 cats.add(cat);
             }
-            MapPanel mapPanel = new MapPanel(mapState);
+            MapPanel mapPanel = new MapPanel(getStore(), mapState);
             mapState.mapPanel = mapPanel;
 
             JButton addBtn = new JButton(addIcon);
