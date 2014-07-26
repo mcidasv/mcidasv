@@ -91,22 +91,29 @@ public class CrIS_SDR_Utility {
      }
    }
 
-   public static float[] psuedoScanReorder(float[] values, int numElems, int numLines) {
-     float[] new_values = new float[values.length];
-      for (int j=0; j<numLines/3; j++) { //- loop over EFOVs or FORs
-        for (int i=0; i<numElems/3; i++) {
-          int i2 = i*3;
-          int j2 = j*3;
-          for (int jj=0; jj<3; jj++) {  //- loop over IFOVs
-            for (int ii=0; ii<3; ii++) {
-              int k = jj*3 + ii;
-              int idx_ma = j*(numElems/3*9) + i*9 + k;
-              int idx_a = (j2+ifov_order[k][0])*numElems + i2+ifov_order[k][1];  // idx_a: aligned
-              new_values[idx_a] = values[idx_ma];
-            }
-          }
-        }
-      }
-      return new_values;
-   }
+	public static float[] psuedoScanReorder(float[] values, int numElems, int numLines) {
+		float[] new_values = new float[values.length];
+		int i2 = -1;
+		int j2 = -1;
+		int k = -1;
+		int idxMA = -1;
+		int idxA = -1;
+		for (int j = 0; j < numLines / 3; j++) { // - loop over EFOVs or FORs
+			for (int i = 0; i < numElems / 3; i++) {
+				i2 = i * 3;
+				j2 = j * 3;
+				for (int jj = 0; jj < 3; jj++) { // - loop over IFOVs
+					for (int ii = 0; ii < 3; ii++) {
+						k = jj * 3 + ii;
+						idxMA = j * (numElems / 3 * 9) + i * 9 + k;
+						idxA = (j2 + ifov_order[k][0]) * numElems + i2
+								+ ifov_order[k][1]; // idxA: aligned
+						new_values[idxA] = values[idxMA];
+					}
+				}
+			}
+		}
+		return new_values;
+	}
+   
 }
