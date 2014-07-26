@@ -909,6 +909,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	
     	Iterator<String> iterator = pathToProducts.iterator();
     	int pIdx = 0;
+    	boolean adapterCreated = false;
     	while (iterator.hasNext()) {
     		String pStr = (String) iterator.next();
     		logger.debug("Working on adapter number " + (pIdx + 1) + ": " + pStr);
@@ -1049,6 +1050,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
         	if (is3D) {
                 if (instrumentName.getStringValue().equals("ATMS")) {
             		adapters[pIdx] = new SwathAdapter(nppAggReader, swathTable);
+            		adapterCreated = true;
             		SpectrumAdapter sa = new SpectrumAdapter(nppAggReader, spectTable);
                     DataCategory.createCategory("MultiSpectral");
                     categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
@@ -1060,6 +1062,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
                 if (instrumentName.getStringValue().equals("CrIS")) {
                 	if (pStr.contains(crisFilter)) {
 	            		adapters[pIdx] = new CrIS_SDR_SwathAdapter(nppAggReader, swathTable);
+	            		adapterCreated = true;
 	            		CrIS_SDR_Spectrum csa = new CrIS_SDR_Spectrum(nppAggReader, spectTable);
 	                    DataCategory.createCategory("MultiSpectral");
 	                    categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
@@ -1070,6 +1073,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
                 }
                 if (instrumentName.getStringValue().contains("OMPS")) {
             		adapters[pIdx] = new SwathAdapter(nppAggReader, swathTable);
+            		adapterCreated = true;
             		SpectrumAdapter sa = new SpectrumAdapter(nppAggReader, spectTable);
                     DataCategory.createCategory("MultiSpectral");
                     categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
@@ -1103,12 +1107,15 @@ public class SuomiNPPDataSource extends HydraDataSource {
         		// associate this variable with these units, if not done already
         		RealType.getRealType(varName, u);
         		adapters[pIdx] = new SwathAdapter(nppAggReader, swathTable);
+        		adapterCreated = true;
         		if (pIdx == 0) {
         			defaultSubset = adapters[pIdx].getDefaultSubset();
         		}
         		categories = DataCategory.parseCategories("IMAGE");
         	}
-    		pIdx++;
+        	// only increment count if we created an adapter, some products are skipped
+    		if (adapterCreated) pIdx++;
+    		adapterCreated = false;
     	}
 
     	if (msd_CrIS.size() > 0) {
