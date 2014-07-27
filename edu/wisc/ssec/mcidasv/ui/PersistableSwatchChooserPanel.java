@@ -44,6 +44,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.accessibility.AccessibleContext;
 import javax.swing.Icon;
 import javax.swing.JColorChooser;
 import javax.swing.JLabel;
@@ -52,6 +53,8 @@ import javax.swing.UIManager;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 
 import org.jdesktop.beans.AbstractBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This has been essentially ripped out of the (wonderful) GNU Classpath
@@ -349,7 +352,6 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
          * Creates a new MainSwatchPanel object.
          */
         MainSwatchPanel() {
-            super();
             numCols = 31;
             numRows = 9;
             initializeColors();
@@ -416,6 +418,7 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
          */
         @Override public String getToolTipText(MouseEvent e) {
             Color c = getColorForPosition(e.getX(), e.getY());
+//            logger.trace("x={} y={} c={}", e.getX(), e.getY(), c);
             if (c == null) {
                 return null;
             }
@@ -541,6 +544,7 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
          */
         @Override public String getToolTipText(MouseEvent e) {
             Color c = getColorForPosition(e.getX(), e.getY());
+//            logger.trace("x={} y={} c={}", e.getX(), e.getY(), c);
             if (c == null) {
                 return null;
             }
@@ -558,7 +562,7 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
          * @param e The MouseEvent.
          */
         @Override public void mousePressed(MouseEvent e) {
-            SwatchPanel panel = (SwatchPanel) e.getSource();
+            SwatchPanel panel = (SwatchPanel)e.getSource();
             Color c = panel.getColorForPosition(e.getX(), e.getY());
             recentPalette.addColorToQueue(c);
             if (tracker != null) {
@@ -782,8 +786,16 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
         JPanel recentPaletteHolder = new JPanel();
 
         mainPalette = new MainSwatchPanel();
+        mainPalette.putClientProperty(AccessibleContext.ACCESSIBLE_NAME_PROPERTY, getDisplayName());
+        mainPalette.setInheritsPopupMenu(true);
+
+        String recentLabel = UIManager.getString("ColorChooser.swatchesRecentText", getLocale());
         recentPalette = new RecentSwatchPanel();
-        JLabel label = new JLabel("Recent:");
+        recentPalette.putClientProperty(AccessibleContext.ACCESSIBLE_NAME_PROPERTY, recentLabel);
+        recentPalette.setInheritsPopupMenu(true);
+
+        JLabel label = new JLabel(recentLabel);
+        label.setLabelFor(recentPalette);
 
         mouseHandler = new MouseHandler();
         mainPalette.addMouseListener(mouseHandler);
@@ -791,10 +803,12 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
 
         mainPaletteHolder.setLayout(new BorderLayout());
         mainPaletteHolder.add(mainPalette, BorderLayout.CENTER);
+        mainPaletteHolder.setInheritsPopupMenu(true);
 
         recentPaletteHolder.setLayout(new RecentPanelLayout());
         recentPaletteHolder.add(label);
         recentPaletteHolder.add(recentPalette);
+        recentPaletteHolder.setInheritsPopupMenu(true);
 
         JPanel main = new JPanel();
         main.add(mainPaletteHolder);
