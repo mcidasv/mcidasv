@@ -176,7 +176,7 @@ public class ColorSwatchComponent extends JPanel implements PropertyChangeListen
     }
 
     private JColorChooser createChooser(PersistableSwatchChooserPanel.ColorTracker tracker) {
-        JColorChooser chooser = new JColorChooser();
+        JColorChooser chooser = new JColorChooser(this.getBackground());
         List<AbstractColorChooserPanel> choosers =
             new ArrayList<>(Arrays.asList(chooser.getChooserPanels()));
         choosers.remove(0);
