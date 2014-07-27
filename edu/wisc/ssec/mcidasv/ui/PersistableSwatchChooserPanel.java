@@ -48,6 +48,7 @@ import javax.swing.Icon;
 import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 
 import org.jdesktop.beans.AbstractBean;
@@ -364,8 +365,7 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
          * @return The color for the given position.
          */
         @Override public Color getColorForPosition(int x, int y) {
-            if (x % (cellWidth + gap) > cellWidth
-                || y % (cellHeight + gap) > cellHeight) {
+            if (((x % (cellWidth + gap)) > cellWidth) || ((y % (cellHeight + gap)) > cellHeight)) {
                 // position is located in gap.
                 return null;
             }
@@ -432,9 +432,6 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
         /** The array for storing recently stored colors. */
         Color[] colors;
 
-        /** The default color. */
-        public static final Color defaultColor = Color.GRAY;
-
         /** The index of the array that is the start. */
         int start = 0;
 
@@ -472,6 +469,8 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
          * This method initializes the colors for the recent swatch panel.
          */
         @Override protected void initializeColors() {
+            final Color defaultColor =
+                UIManager.getColor("ColorChooser.swatchesDefaultRecentColor", getLocale());
             colors = new Color[numRows * numCols];
             for (int i = 0; i < colors.length; i++) {
                 colors[i] = defaultColor;
