@@ -1,22 +1,33 @@
+/*
+ * This file is part of McIDAS-V
+ *
+ * Copyright 2007-2014
+ * Space Science and Engineering Center (SSEC)
+ * University of Wisconsin - Madison
+ * 1225 W. Dayton Street, Madison, WI 53706, USA
+ * http://www.ssec.wisc.edu/mcidas
+ *
+ * All Rights Reserved
+ *
+ * McIDAS-V is built on Unidata's IDV and SSEC's VisAD libraries, and
+ * some McIDAS-V source code is based on IDV and VisAD source code.
+ *
+ * McIDAS-V is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * McIDAS-V is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses.
+ */
+
 package edu.wisc.ssec.mcidasv.ui;
 
-import org.jdesktop.beans.AbstractBean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import ucar.unidata.idv.IdvObjectStore;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.LayoutUtil;
-import ucar.unidata.util.Misc;
-import ucar.unidata.xml.XmlObjectStore;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JColorChooser;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.colorchooser.AbstractColorChooserPanel;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -30,8 +41,24 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.colorchooser.AbstractColorChooserPanel;
+
+import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.LayoutUtil;
+import ucar.unidata.util.MenuUtil;
+import ucar.unidata.util.Misc;
+import ucar.unidata.xml.XmlObjectStore;
+
+import edu.wisc.ssec.mcidasv.Constants;
 
 /**
  * This is largely the same as {@link ucar.unidata.util.GuiUtils.ColorSwatch},
@@ -39,30 +66,32 @@ import java.util.List;
  */
 public class ColorSwatchComponent extends JPanel implements PropertyChangeListener {
 
-//    ColorTracker tracker;
+//    private static final Logger logger = LoggerFactory.getLogger(ColorSwatchComponent.class);
 
-    /** flag for alpha */
+    /** Flag for alpha. */
     boolean doAlpha = false;
 
-    /** color of the swatch */
+    /** Color of the swatch. */
     Color color;
 
-    /** clear button */
+    /** {@literal "Clear"} button. */
     JButton clearBtn;
 
-    /** set button */
+    /** {@literal "Set"} button. */
     JButton setBtn;
 
-    /** label */
+    /** Label */
     String label;
 
+    /** Application object store. */
     private XmlObjectStore store;
 
     /**
      * Create a new ColorSwatch for the specified color
      *
-     * @param c  Color
-     * @param dialogLabel  label for the dialog
+     * @param store Application object store. Cannot be {@code null}.
+     * @param c Color
+     * @param dialogLabel Dialog title.
      */
     public ColorSwatchComponent(XmlObjectStore store, Color c, String dialogLabel) {
         this(store, c, dialogLabel, false);
@@ -71,9 +100,10 @@ public class ColorSwatchComponent extends JPanel implements PropertyChangeListen
     /**
      * Create a new color swatch
      *
-     * @param c   the color
-     * @param dialogLabel label for the dialog
-     * @param alphaOk  use alpha?
+     * @param store Application object store. Cannot be {@code null}.
+     * @param c Color
+     * @param dialogLabel Dialog title.
+     * @param alphaOk Whether or not to use alpha.
      */
     public ColorSwatchComponent(XmlObjectStore store, Color c, String dialogLabel, boolean alphaOk) {
         this.doAlpha = alphaOk;
@@ -88,23 +118,23 @@ public class ColorSwatchComponent extends JPanel implements PropertyChangeListen
 
         clearBtn = new JButton("Clear");
         clearBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
+            @Override public void actionPerformed(ActionEvent ae) {
                 ColorSwatchComponent.this.setBackground(null);
             }
         });
 
         setBtn = new JButton("Set");
         setBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
+            @Override public void actionPerformed(ActionEvent ae) {
                 setColorFromChooser();
             }
         });
 
 
         this.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
+            @Override public void mouseClicked(MouseEvent e) {
                 Misc.run(new Runnable() {
-                    public void run() {
+                    @Override public void run() {
                         showColorChooser();
                     }
                 });
@@ -121,10 +151,8 @@ public class ColorSwatchComponent extends JPanel implements PropertyChangeListen
         tracker.addPropertyChangeListener("colors", this);
         Color         oldColor    = this.getBackground();
         int           alpha       = oldColor.getAlpha();
-//        JColorChooser chooser     = new JColorChooser(oldColor);
         JColorChooser chooser = createChooser(tracker);
         JSlider alphaSlider = new JSlider(0, 255, alpha);
-
 
         JComponent contents;
         if (doAlpha) {
@@ -140,13 +168,10 @@ public class ColorSwatchComponent extends JPanel implements PropertyChangeListen
             return;
         }
         alpha = alphaSlider.getValue();
-        //                    Color newColor = JColorChooser.showDialog(null, label,
-        //                                                              oldColor);
         Color newColor = chooser.getColor();
         if (newColor != null) {
-            newColor = new Color(newColor.getRed(), newColor.getGreen(),
-                newColor.getBlue(), alpha);
-            ColorSwatchComponent.this.userSelectedNewColor(newColor);
+            newColor = new Color(newColor.getRed(), newColor.getGreen(), newColor.getBlue(), alpha);
+            this.userSelectedNewColor(newColor);
         }
     }
 
@@ -156,42 +181,40 @@ public class ColorSwatchComponent extends JPanel implements PropertyChangeListen
             new ArrayList<>(Arrays.asList(chooser.getChooserPanels()));
         choosers.remove(0);
         PersistableSwatchChooserPanel swatch = new PersistableSwatchChooserPanel();
-        List<Color> savedColors = (List<Color>)store.get(PROP_RECENT_COLORS);
-//        if (savedColors != null) {
-//            savedColors = new ArrayList<>();
-//        }
+        List<Color> savedColors =
+            (List<Color>)store.get(Constants.PROP_RECENT_COLORS);
         tracker.setColors(savedColors);
         swatch.setColorTracker(tracker);
-
-//        swatch.setAction(doubleClickAction);
         choosers.add(0, swatch);
         chooser.setChooserPanels(choosers.toArray(new AbstractColorChooserPanel[0]));
         swatch.updateRecentSwatchPanel();
         return chooser;
     }
 
-//    private static final Logger logger = LoggerFactory.getLogger(ColorSwatchComponent.class);
-
-    public static final String PROP_RECENT_COLORS = "mcidasv.colorchooser.recentcolors";
-
-    public void propertyChange(PropertyChangeEvent evt) {
-        store.put(PROP_RECENT_COLORS, evt.getNewValue());
-//        logger.trace("old='{}' new='{}", evt.getOldValue(), evt.getNewValue());
+    /**
+     * Called from {@link PersistableSwatchChooserPanel} when the user has
+     * clicked on a color. This is used to store the list of recent color
+     * selections.
+     *
+     * @param evt Event containing both the old list of colors and the new.
+     */
+    @Override public void propertyChange(PropertyChangeEvent evt) {
+        store.put(Constants.PROP_RECENT_COLORS, evt.getNewValue());
     }
 
     /**
-     * Set color from chooser
+     * Set color from chooser.
      */
     private void setColorFromChooser() {
         Color newColor = JColorChooser.showDialog(null, label,
             this.getBackground());
         if (newColor != null) {
-            ColorSwatchComponent.this.userSelectedNewColor(newColor);
+            this.userSelectedNewColor(newColor);
         }
     }
 
     /**
-     * Get the set button
+     * Get the set button.
      *
      * @return the set button
      */
@@ -200,7 +223,7 @@ public class ColorSwatchComponent extends JPanel implements PropertyChangeListen
     }
 
     /**
-     * Get the clear button
+     * Get the clear button.
      *
      * @return the clear button
      */
@@ -209,7 +232,7 @@ public class ColorSwatchComponent extends JPanel implements PropertyChangeListen
     }
 
     /**
-     * Get the Color of the swatch
+     * Get the Color of the swatch.
      *
      * @return the swatch color
      */
@@ -218,7 +241,8 @@ public class ColorSwatchComponent extends JPanel implements PropertyChangeListen
     }
 
     /**
-     * the user chose a new color. Set the background. THis can be overwritted by client code to act on the color change
+     * User chose a new color. Set the background. This can be overwritted
+     * by client code to act on the color change.
      *
      * @param c color
      */
@@ -227,21 +251,21 @@ public class ColorSwatchComponent extends JPanel implements PropertyChangeListen
     }
 
     /**
-     * Set the background to the color
+     * Set the background to the color.
      *
      * @param c  Color for background
      */
-    public void setBackground(Color c) {
+    @Override public void setBackground(Color c) {
         color = c;
         super.setBackground(c);
     }
 
     /**
-     * Paint this swatch
+     * Paint this swatch.
      *
-     * @param g  graphics
+     * @param g Graphics
      */
-    public void paint(Graphics g) {
+    @Override public void paint(Graphics g) {
         Rectangle b = getBounds();
         if (color != null) {
             g.setColor(Color.black);
@@ -264,7 +288,7 @@ public class ColorSwatchComponent extends JPanel implements PropertyChangeListen
      * @return the panel
      */
     public JComponent getPanel() {
-        return GuiUtils.hbox(this, clearBtn, 4);
+        return LayoutUtil.hbox(this, clearBtn, 4);
     }
 
     /**
@@ -285,10 +309,10 @@ public class ColorSwatchComponent extends JPanel implements PropertyChangeListen
     public JComponent getSetPanel() {
         List comps    = Misc.newList(this);
         JButton popupBtn = new JButton("Change");
-        popupBtn.addActionListener(GuiUtils.makeActionListener(ColorSwatchComponent.this,
+        popupBtn.addActionListener(GuiUtils.makeActionListener(this,
             "popupNameMenu", popupBtn));
         comps.add(popupBtn);
-        return GuiUtils.hbox(comps, 4);
+        return LayoutUtil.hbox(comps, 4);
     }
 
 
@@ -300,12 +324,12 @@ public class ColorSwatchComponent extends JPanel implements PropertyChangeListen
     public void popupNameMenu(JButton popupBtn) {
         List items = new ArrayList();
         for (int i = 0; i < GuiUtils.COLORNAMES.length; i++) {
-            items.add(GuiUtils.makeMenuItem(GuiUtils.COLORNAMES[i], this, "setColorName",
+            items.add(MenuUtil.makeMenuItem(GuiUtils.COLORNAMES[i], this, "setColorName",
                 GuiUtils.COLORNAMES[i]));
         }
-        items.add(GuiUtils.MENU_SEPARATOR);
-        items.add(GuiUtils.makeMenuItem("Custom", this, "setColorName", "custom"));
-        GuiUtils.showPopupMenu(items, popupBtn);
+        items.add(MenuUtil.MENU_SEPARATOR);
+        items.add(MenuUtil.makeMenuItem("Custom", this, "setColorName", "custom"));
+        MenuUtil.showPopupMenu(items, popupBtn);
     }
 
     /**
@@ -314,44 +338,13 @@ public class ColorSwatchComponent extends JPanel implements PropertyChangeListen
      * @param name color name
      */
     public void setColorName(String name) {
-        if (name.equals("custom")) {
+        if ("custom".equals(name)) {
             setColorFromChooser();
-            return;
-        }
-        Color newColor = GuiUtils.decodeColor(name, getBackground());
-        if (newColor != null) {
-            ColorSwatchComponent.this.setBackground(newColor);
+        } else {
+            Color newColor = GuiUtils.decodeColor(name, getBackground());
+            if (newColor != null) {
+                this.setBackground(newColor);
+            }
         }
     }
-
-//    class MainSwatchListener extends MouseAdapter implements Serializable {
-//        @Override
-//        public void mousePressed(MouseEvent e) {
-//            if (!isEnabled())
-//                return;
-//            if (e.getClickCount() == 2) {
-//                handleDoubleClick(e);
-//                return;
-//            }
-//
-//            Color color = ColorSwatchComponent.this.getColorForLocation(e.getX(), e.getY());
-//            ColorSwatchComponent.this,setSelectedColor(color);
-//            if (tracker != null) {
-//                tracker.addColor(color);
-//            } else {
-//                recentSwatchPanel.setMostRecentColor(color);
-//            }
-//        }
-//
-//        /**
-//         * @param e
-//         */
-//        private void handleDoubleClick(MouseEvent e) {
-//            if (action != null) {
-//                action.actionPerformed(null);
-//            }
-//        }
-//    };
-
-
-}
+    }

@@ -1,14 +1,33 @@
+/*
+ * This file is part of McIDAS-V
+ *
+ * Copyright 2007-2014
+ * Space Science and Engineering Center (SSEC)
+ * University of Wisconsin - Madison
+ * 1225 W. Dayton Street, Madison, WI 53706, USA
+ * http://www.ssec.wisc.edu/mcidas
+ *
+ * All Rights Reserved
+ *
+ * McIDAS-V is built on Unidata's IDV and SSEC's VisAD libraries, and
+ * some McIDAS-V source code is based on IDV and VisAD source code.
+ *
+ * McIDAS-V is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * McIDAS-V is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses.
+ */
+
 package edu.wisc.ssec.mcidasv.ui;
 
-import org.jdesktop.beans.AbstractBean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.swing.Icon;
-import javax.swing.JColorChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.colorchooser.AbstractColorChooserPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -22,13 +41,16 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.Serializable;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Deque;
 import java.util.List;
-import java.util.Stack;
+
+import javax.swing.Icon;
+import javax.swing.JColorChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.colorchooser.AbstractColorChooserPanel;
+
+import org.jdesktop.beans.AbstractBean;
 
 /**
  * This has been essentially ripped out of the (wonderful) GNU Classpath
@@ -39,6 +61,9 @@ import java.util.Stack;
  * (though I had to hack things up a bit)
  */
 public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel implements PropertyChangeListener {
+
+//    private static final Logger logger = LoggerFactory.getLogger(PersistableSwatchChooserPanel.class);
+
     /** The main panel that holds the set of choosable colors. */
     MainSwatchPanel mainPalette;
 
@@ -74,7 +99,6 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
          * Creates a new SwatchPanel object.
          */
         SwatchPanel() {
-            super();
             setBackground(Color.WHITE);
         }
 
@@ -84,9 +108,9 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
          *
          * @return The preferred size of the swatch panel.
          */
-        public Dimension getPreferredSize() {
-            int height = numRows * cellHeight + (numRows - 1) * gap;
-            int width = numCols * cellWidth + (numCols - 1) * gap;
+        @Override public Dimension getPreferredSize() {
+            int height = (numRows * cellHeight) + ((numRows - 1) * gap);
+            int width = (numCols * cellWidth) + ((numCols - 1) * gap);
             Insets insets = getInsets();
 
             return new Dimension(width + insets.left + insets.right,
@@ -395,7 +419,8 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
             if (c == null) {
                 return null;
             }
-            return (c.getRed() + "," + c.getGreen() + "," + c.getBlue());
+
+            return String.valueOf(c.getRed()) + ',' + c.getGreen() + ',' + c.getBlue();
         }
     }
 
@@ -403,6 +428,7 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
      * This class is the recent swatch panel. It holds recently selected colors.
      */
     static class RecentSwatchPanel extends SwatchPanel {
+
         /** The array for storing recently stored colors. */
         Color[] colors;
 
@@ -416,7 +442,6 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
          * Creates a new RecentSwatchPanel object.
          */
         RecentSwatchPanel() {
-            super();
             numCols = 5;
             numRows = 7;
             initializeColors();
@@ -432,8 +457,7 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
          * @return The color for the given position.
          */
         @Override public Color getColorForPosition(int x, int y) {
-            if (x % (cellWidth + gap) > cellWidth
-                || y % (cellHeight + gap) > cellHeight) {
+            if (((x % (cellWidth + gap)) > cellWidth) || ((y % (cellHeight + gap)) > cellHeight)) {
                 // position is located in gap.
                 return null;
             }
@@ -479,11 +503,10 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
             colors[start] = c;
         }
 
-        void addColorsToQueue(List<Color> colors) {
-//            logger.trace("adding colors='{}", colors);
-            if ((colors != null) && !colors.isEmpty()) {
-                for (int i = colors.size() - 1; i >= 0; i--) {
-                    addColorToQueue(colors.get(i));
+        void addColorsToQueue(List<Color> colorsToAdd) {
+            if ((colorsToAdd != null) && !colorsToAdd.isEmpty()) {
+                for (int i = colorsToAdd.size() - 1; i >= 0; i--) {
+                    addColorToQueue(colorsToAdd.get(i));
                 }
             }
         }
@@ -493,7 +516,7 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
          *
          * @param g The Graphics object to paint with.
          */
-        public void paint(Graphics g) {
+        @Override public void paint(Graphics g) {
             Color saved = g.getColor();
             Insets insets = getInsets();
             int currX = insets.left;
@@ -517,12 +540,12 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
          *
          * @return The tooltip text.
          */
-        public String getToolTipText(MouseEvent e) {
+        @Override public String getToolTipText(MouseEvent e) {
             Color c = getColorForPosition(e.getX(), e.getY());
             if (c == null) {
                 return null;
             }
-            return c.getRed() + "," + c.getGreen() + "," + c.getBlue();
+            return String.valueOf(c.getRed()) + ',' + c.getGreen() + ',' + c.getBlue();
         }
     }
 
@@ -630,10 +653,9 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
             int ymax = 0;
 
             Component[] comps = parent.getComponents();
-            Dimension pref;
 
-            for (int i = 0; i < comps.length; i++) {
-                pref = comps[i].getPreferredSize();
+            for (Component comp : comps) {
+                Dimension pref = comp.getPreferredSize();
                 if (pref == null) {
                     continue;
                 }
@@ -673,14 +695,13 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
             Dimension parentSize = parent.getSize();
             Insets insets = parent.getInsets();
             int currY = insets.top;
-            Dimension pref;
 
-            for (int i = 0; i < comps.length; i++) {
-                pref = comps[i].getPreferredSize();
+            for (Component comp : comps) {
+                Dimension pref = comp.getPreferredSize();
                 if (pref == null) {
                     continue;
                 }
-                comps[i].setBounds(insets.left, currY, pref.width, pref.height);
+                comp.setBounds(insets.left, currY, pref.width, pref.height);
                 currY += pref.height;
             }
         }
@@ -709,9 +730,8 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
             int height = 0;
             Insets insets = parent.getInsets();
             Component[] comps = parent.getComponents();
-            Dimension pref;
-            for (int i = 0; i < comps.length; i++) {
-                pref = comps[i].getPreferredSize();
+            for (Component comp : comps) {
+                Dimension pref = comp.getPreferredSize();
                 if (pref != null) {
                     width = Math.max(width, pref.width);
                     height += pref.height;
@@ -852,7 +872,7 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
         updateRecentSwatchPanel();
     }
 
-    public void propertyChange(PropertyChangeEvent evt) {
+    @Override public void propertyChange(PropertyChangeEvent evt) {
 //        logger.trace("old='{}' new='{}'", evt.getOldValue(), evt.getNewValue());
 //        updateRecentSwatchPanel();
     }
@@ -864,10 +884,7 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
      */
     protected void updateRecentSwatchPanel() {
         if (recentPalette != null) {
-//            logger.trace("updating!");
             recentPalette.addColorsToQueue(tracker != null ? tracker.getColors() : null);
-        } else {
-//            logger.trace("recentPalette is null!");
         }
     }
 
@@ -884,7 +901,6 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
         public void setColors(List<Color> colors) {
             List<Color> old = getColors();
             this.colors = new ArrayList<>(colors);
-//            logger.trace("old='{}' new='{}", old, this.colors);
             firePropertyChange("colors", old, getColors());
         }
 
@@ -892,8 +908,6 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
             return new ArrayList<>(colors);
         }
     }
-
-//    private static final Logger logger = LoggerFactory.getLogger(PersistableSwatchChooserPanel.class);
 
 //    class MainSwatchListener extends MouseAdapter implements Serializable {
 //        @Override public void mousePressed(MouseEvent e) {

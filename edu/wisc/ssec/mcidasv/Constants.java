@@ -288,6 +288,9 @@ public interface Constants extends IdvConstants {
 	/** Property used to restore the size and position of the dashboard upon start. */
 	public static final String PROP_DASHBOARD_BOUNDS = "mcidasv.dashboard.bounds";
 
+    /** Property used to store and retrieve color selection history. */
+    public static final String PROP_RECENT_COLORS = "mcidasv.colorchooser.recentcolors";
+
 	/** Application property file name. */
 	public static final String PROPERTIES_FILE = 
 		"/edu/wisc/ssec/mcidasv/resources/mcidasv.properties";
