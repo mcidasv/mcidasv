@@ -36,6 +36,7 @@ import static javax.swing.GroupLayout.PREFERRED_SIZE;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -85,6 +86,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.slf4j.Logger;
@@ -925,20 +927,21 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         };
         JPanel panelPanel = makePrefPanel(panelObjects, widgets, getStore());
         panelPanel.setBorder(BorderFactory.createTitledBorder("Panel Configuration"));
-        
-        final JComponent[] globeBg = 
-          GuiUtils.makeColorSwatchWidget(mappy.getGlobeBackgroundColorToUse(), 
-              "Set Globe Background Color");
-        final JComponent[] bgComps =
-            GuiUtils.makeColorSwatchWidget(getStore().get(MapViewManager.PREF_BGCOLOR,
-                mappy.getBackground()), "Set Background Color");
-        final JComponent[] fgComps =
-            GuiUtils.makeColorSwatchWidget(getStore().get(MapViewManager.PREF_FGCOLOR,
-                mappy.getForeground()), "Set Foreground Color"); 
-        final JComponent[] border = 
-            GuiUtils.makeColorSwatchWidget(getStore().get(MapViewManager.PREF_BORDERCOLOR, 
-                Constants.MCV_BLUE_DARK), "Set Selected Panel Border Color");
-        
+
+        XmlObjectStore store = getStore();
+        Color globeColor = mappy.getGlobeBackgroundColor();
+        Color bgColor = store.get(ViewManager.PREF_BGCOLOR, mappy.getBackground());
+        Color fgColor = store.get(ViewManager.PREF_FGCOLOR, mappy.getForeground());
+        Color borderColor = store.get(ViewManager.PREF_BORDERCOLOR, Constants.MCV_BLUE_DARK);
+        ColorSwatchComponent globeSwatch = new ColorSwatchComponent(store, globeColor, "Set Globe Background Color");
+        ColorSwatchComponent bgSwatch = new ColorSwatchComponent(store, bgColor, "Set Background Color");
+        ColorSwatchComponent fgSwatch = new ColorSwatchComponent(store, fgColor, "Set Foreground Color");
+        ColorSwatchComponent borderSwatch = new ColorSwatchComponent(store, borderColor, "Set Selected Panel Border Color");
+        final JComponent[] globeBg = { globeSwatch, globeSwatch.getSetButton(), globeSwatch.getClearButton() };
+        final JComponent[] bgComps = { bgSwatch, bgSwatch.getSetButton(), bgSwatch.getClearButton() };
+        final JComponent[] fgComps = { fgSwatch, fgSwatch.getSetButton(), fgSwatch.getClearButton() };
+        final JComponent[] border = { borderSwatch, borderSwatch.getSetButton(), borderSwatch.getClearButton() };
+
         JPanel colorPanel = GuiUtils.vbox(
                 GuiUtils.hbox(
                         McVGuiUtils.makeLabelRight("Globe Background:", Width.ONEHALF),
@@ -967,9 +970,8 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         final FontSelector fontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
         Font f = getStore().get(MapViewManager.PREF_DISPLAYLISTFONT, mappy.getDisplayListFont());
         fontSelector.setFont(f);
-        final GuiUtils.ColorSwatch dlColorWidget =
-            new GuiUtils.ColorSwatch(getStore().get(MapViewManager.PREF_DISPLAYLISTCOLOR,
-                mappy.getDisplayListColor()), "Set Display List Color");
+        Color dlColor = store.get(MapViewManager.PREF_DISPLAYLISTCOLOR, mappy.getDisplayListColor());
+        final ColorSwatchComponent dlColorWidget = new ColorSwatchComponent(store, dlColor, "Set Display List Color");
                 
         JPanel fontPanel = GuiUtils.vbox(
             GuiUtils.hbox(
@@ -995,25 +997,25 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         McIDASV mcv = (McIDASV) getIdv();
         
         final JCheckBox logoVizBox = new JCheckBox(
-        		"Show Logo in View",
-        		mcv.getStateManager().getPreferenceOrProperty(
-        				ViewManager.PREF_LOGO_VISIBILITY, false));
+            "Show Logo in View",
+            mcv.getStateManager().getPreferenceOrProperty(
+                ViewManager.PREF_LOGO_VISIBILITY, false));
         final JTextField logoField =
-        		new JTextField(mcv.getStateManager().getPreferenceOrProperty(ViewManager.PREF_LOGO,
-        				""));
+            new JTextField(mcv.getStateManager().getPreferenceOrProperty(ViewManager.PREF_LOGO,
+                ""));
         logoField.setToolTipText("Enter a file or URL");
         // top panel
         JButton browseButton = new JButton("Browse..");
         browseButton.setToolTipText("Choose a logo from disk");
         browseButton.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent ae) {
-        		String filename =
-        				FileManager.getReadFile(FileManager.FILTER_IMAGE);
-        		if (filename == null) {
-        			return;
-        		}
-        		logoField.setText(filename);
-        	}
+            public void actionPerformed(ActionEvent ae) {
+                String filename =
+                    FileManager.getReadFile(FileManager.FILTER_IMAGE);
+                if (filename == null) {
+                    return;
+                }
+                logoField.setText(filename);
+            }
         });
 
         String[] logos = ViewManager.parseLogoPosition(
