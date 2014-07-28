@@ -36,6 +36,11 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.LayoutManager;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -77,6 +82,12 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
     /** The mouse handlers for the panels. */
     MouseListener mouseHandler;
 
+    /** Main Palette {@code KeyListener}. */
+    KeyListener mainSwatchKeyListener;
+
+    /** Recent palette {@code KeyListener}. */
+    KeyListener recentSwatchKeyListener;
+
     ColorTracker tracker;
 
     /**
@@ -84,33 +95,102 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
      * hold a set of blocks where colors are displayed.
      */
     abstract static class SwatchPanel extends JPanel {
-        /** The width of each block. */
+
+        /** Width of each block. */
         protected int cellWidth = 10;
 
-        /** The height of each block. */
+        /** Height of each block. */
         protected int cellHeight = 10;
 
-        /** The gap between blocks. */
+        /** Gap between blocks. */
         protected int gap = 1;
 
-        /** The number of rows in the swatch panel. */
+        /** Number of rows in the swatch panel. */
         protected int numRows;
 
-        /** The number of columns in the swatch panel. */
+        /** Number of columns in the swatch panel. */
         protected int numCols;
+
+        /** Row of the selected color's cell. */
+        protected int selRow;
+
+        /** Column of the selected color's cell. */
+        protected int selCol;
 
         /**
          * Creates a new SwatchPanel object.
          */
         SwatchPanel() {
+            selRow = 0;
+            selCol = 0;
             setBackground(Color.WHITE);
+            setFocusable(true);
+
+            addFocusListener(new FocusAdapter() {
+                @Override public void focusGained(FocusEvent e) {
+                    repaint();
+                }
+
+                @Override public void focusLost(FocusEvent e) {
+                    repaint();
+                }
+            });
+
+            addKeyListener(new KeyAdapter() {
+                @Override public void keyPressed(KeyEvent e) {
+                    int code = e.getKeyCode();
+                    switch (code) {
+                        case KeyEvent.VK_UP:
+                            if (selRow > 0) {
+                                selRow--;
+                                repaint();
+                            }
+                            break;
+                        case KeyEvent.VK_DOWN:
+                            if (selRow < numRows - 1) {
+                                selRow++;
+                                repaint();
+                            }
+                            break;
+                        case KeyEvent.VK_LEFT:
+                            if (selCol > 0 && SwatchPanel.this.getComponentOrientation().isLeftToRight()) {
+                                selCol--;
+                                repaint();
+                            } else if (selCol < numCols -1 && !SwatchPanel.this.getComponentOrientation().isLeftToRight()) {
+                                selCol++;
+                                repaint();
+                            }
+                            break;
+                        case KeyEvent.VK_RIGHT:
+                            if (selCol < numCols - 1
+                                && SwatchPanel.this.getComponentOrientation().isLeftToRight()) {
+                                selCol++;
+                                repaint();
+                            } else if (selCol > 0 && !SwatchPanel.this.getComponentOrientation().isLeftToRight()) {
+                                selCol--;
+                                repaint();
+                            }
+                            break;
+                        case KeyEvent.VK_HOME:
+                            selCol = 0;
+                            selRow = 0;
+                            repaint();
+                            break;
+                        case KeyEvent.VK_END:
+                            selCol = numCols - 1;
+                            selRow = numRows - 1;
+                            repaint();
+                            break;
+                    }
+                }
+            });
         }
 
         /**
          * This method returns the preferred size of the swatch panel based on the
          * number of rows and columns and the size of each cell.
          *
-         * @return The preferred size of the swatch panel.
+         * @return Preferred size of the swatch panel.
          */
         @Override public Dimension getPreferredSize() {
             int height = (numRows * cellHeight) + ((numRows - 1) * gap);
@@ -122,19 +202,46 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
         }
 
         /**
+         * Return the {@literal "selected"} color.
+         *
+         * @return The color at {@code selRow} and {@code selCol}.
+         */
+        public Color getSelectedColor() {
+            return getColorForCell(selRow, selCol);
+        }
+
+        /**
          * This method returns the color for the given position.
          *
-         * @param x The x coordinate of the position.
-         * @param y The y coordinate of the position.
+         * @param x X coordinate of the position.
+         * @param y Y coordinate of the position.
          *
          * @return The color at the given position.
          */
         public abstract Color getColorForPosition(int x, int y);
 
         /**
+         * Return the color at a given cell.
+         *
+         * @param row Cell row.
+         * @param column Cell column.
+         *
+         * @return Color of the cell at {@code row} and {@code column}.
+         */
+        public abstract Color getColorForCell(int row, int column);
+
+        /**
          * This method initializes the colors for the swatch panel.
          */
         protected abstract void initializeColors();
+
+        /**
+         * Set the {@literal "selected"} cell using screen location.
+         *
+         * @param x X coordinate of the position.
+         * @param y Y coordinate of the position.
+         */
+        protected abstract void setSelectedCellFromPosition(int x, int y);
     }
 
     /**
@@ -364,10 +471,10 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
         /**
          * This method returns the color for the given position.
          *
-         * @param x The x location for the position.
-         * @param y The y location for the position.
+         * @param x X location for the position.
+         * @param y Y location for the position.
          *
-         * @return The color for the given position.
+         * @return {@link Color} for the given position.
          */
         @Override public Color getColorForPosition(int x, int y) {
             if (((x % (cellWidth + gap)) > cellWidth) || ((y % (cellHeight + gap)) > cellHeight)) {
@@ -378,6 +485,19 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
             int row = y / (cellHeight + gap);
             int col = x / (cellWidth + gap);
             return colors[row * numCols + col];
+        }
+
+        @Override protected void setSelectedCellFromPosition(int x, int y) {
+            if (((x % (cellWidth + gap)) > cellWidth) || ((y % (cellHeight + gap)) > cellHeight)) {
+                // position is located in gap.
+                return;
+            }
+            selRow = y / (cellHeight + gap);
+            selCol = x / (cellWidth + gap);
+        }
+
+        @Override public Color getColorForCell(int row, int column) {
+            return colors[row * numCols + column];
         }
 
         /**
@@ -402,8 +522,22 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
 
             for (int i = 0; i < numRows; i++) {
                 for (int j = 0; j < numCols; j++) {
-                    graphics.setColor(colors[index++]);
+                    Color current = colors[index++];
+                    graphics.setColor(current);
                     graphics.fill3DRect(currX, currY, cellWidth, cellHeight, true);
+                    if ((selRow == i) && (selCol == j) && this.isFocusOwner()) {
+                        Color cursorColor = new Color(current.getRed() < 125 ? 255 : 0,
+                            current.getGreen() < 125 ? 255 : 0,
+                            current.getBlue() < 125 ? 255 : 0);
+
+                        graphics.setColor(cursorColor);
+                        graphics.drawLine(currX, currY, currX + cellWidth - 1, currY);
+                        graphics.drawLine(currX, currY, currX, currY + cellHeight - 1);
+                        graphics.drawLine(currX + cellWidth - 1, currY, currX + cellWidth- 1, currY + cellHeight - 1);
+                        graphics.drawLine(currX, currY + cellHeight - 1, currX + cellWidth - 1, currY + cellHeight - 1);
+                        graphics.drawLine(currX, currY, currX + cellWidth - 1, currY + cellHeight - 1);
+                        graphics.drawLine(currX, currY + cellHeight - 1, currX + cellWidth - 1, currY);
+                    }
                     currX += gap + cellWidth;
                 }
                 currX = insets.left;
@@ -421,7 +555,6 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
          */
         @Override public String getToolTipText(MouseEvent e) {
             Color c = getColorForPosition(e.getX(), e.getY());
-//            logger.trace("x={} y={} c={}", e.getX(), e.getY(), c);
             String tip = null;
             if (c != null) {
                 tip = c.getRed() + ", " + c.getGreen() + ", " + c.getBlue();
@@ -474,6 +607,15 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
             return colors[getIndexForCell(row, col)];
         }
 
+        @Override protected void setSelectedCellFromPosition(int x, int y) {
+            if (((x % (cellWidth + gap)) > cellWidth) || ((y % (cellHeight + gap)) > cellHeight)) {
+                // position is located in gap.
+                return;
+            }
+            selRow = y / (cellHeight + gap);
+            selCol = x / (cellWidth + gap);
+        }
+
         /**
          * This method initializes the colors for the recent swatch panel.
          */
@@ -496,6 +638,10 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
          */
         private int getIndexForCell(int row, int col) {
             return ((row * numCols) + col + start) % (numRows * numCols);
+        }
+
+        public Color getColorForCell(int row, int column) {
+            return colors[getIndexForCell(row, column)];
         }
 
         /**
@@ -532,8 +678,21 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
 
             for (int i = 0; i < numRows; i++) {
                 for (int j = 0; j < numCols; j++) {
-                    g.setColor(colors[getIndexForCell(i, j)]);
+                    Color current = colors[getIndexForCell(i, j)];
+                    g.setColor(current);
                     g.fill3DRect(currX, currY, cellWidth, cellHeight, true);
+                    if ((selRow == i) && (selCol == j) && this.isFocusOwner()) {
+                        Color cursorColor = new Color(current.getRed() < 125 ? 255 : 0,
+                            current.getGreen() < 125 ? 255 : 0,
+                            current.getBlue() < 125 ? 255 : 0);
+                        g.setColor(cursorColor);
+                        g.drawLine(currX, currY, currX + cellWidth - 1, currY);
+                        g.drawLine(currX, currY, currX, currY + cellHeight - 1);
+                        g.drawLine(currX + cellWidth - 1, currY, currX + cellWidth- 1, currY + cellHeight - 1);
+                        g.drawLine(currX, currY + cellHeight - 1, currX + cellWidth - 1, currY + cellHeight - 1);
+                        g.drawLine(currX, currY, currX + cellWidth - 1, currY + cellHeight - 1);
+                        g.drawLine(currX, currY + cellHeight - 1, currX + cellWidth - 1, currY);
+                    }
                     currX += cellWidth + gap;
                 }
                 currX = insets.left;
@@ -569,14 +728,53 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
          * @param e The MouseEvent.
          */
         @Override public void mousePressed(MouseEvent e) {
-            SwatchPanel panel = (SwatchPanel)e.getSource();
-            Color c = panel.getColorForPosition(e.getX(), e.getY());
-            recentPalette.addColorToQueue(c);
-            if (tracker != null) {
-                tracker.addColor(c);
+            if (isEnabled()) {
+                SwatchPanel panel = (SwatchPanel)e.getSource();
+                Color c = panel.getColorForPosition(e.getX(), e.getY());
+                panel.setSelectedCellFromPosition(e.getX(), e.getY());
+                // yes, the "!=" is intentional.
+                if (panel != recentPalette) {
+                    recentPalette.addColorToQueue(c);
+                    if (tracker != null) {
+                        tracker.addColor(c);
+                    }
+                }
+                PersistableSwatchChooserPanel.this.getColorSelectionModel().setSelectedColor(c);
+                PersistableSwatchChooserPanel.this.repaint();
+                panel.requestFocusInWindow();
             }
-            PersistableSwatchChooserPanel.this.getColorSelectionModel().setSelectedColor(c);
-            PersistableSwatchChooserPanel.this.repaint();
+        }
+    }
+
+    /**
+     * This class handles the user {@literal "selecting"} a recently used
+     * color using the space key.
+     */
+    private class RecentSwatchKeyListener extends KeyAdapter {
+        public void keyPressed(KeyEvent e) {
+            if (KeyEvent.VK_SPACE == e.getKeyCode()) {
+                Color color = recentPalette.getSelectedColor();
+                PersistableSwatchChooserPanel.this.getColorSelectionModel().setSelectedColor(color);
+                PersistableSwatchChooserPanel.this.repaint();
+            }
+        }
+    }
+
+    /**
+     * This class handles the user {@literal "selecting"} a color using the
+     * space key.
+     */
+    private class MainSwatchKeyListener extends KeyAdapter {
+        public void keyPressed(KeyEvent e) {
+            if (KeyEvent.VK_SPACE == e.getKeyCode()) {
+                Color color = mainPalette.getSelectedColor();
+                recentPalette.addColorToQueue(color);
+                if (tracker != null) {
+                    tracker.addColor(color);
+                }
+                PersistableSwatchChooserPanel.this.getColorSelectionModel().setSelectedColor(color);
+                PersistableSwatchChooserPanel.this.repaint();
+            }
         }
     }
 
@@ -808,6 +1006,12 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
         mainPalette.addMouseListener(mouseHandler);
         recentPalette.addMouseListener(mouseHandler);
 
+        mainSwatchKeyListener = new MainSwatchKeyListener();
+        mainPalette.addKeyListener(mainSwatchKeyListener);
+
+        recentSwatchKeyListener = new RecentSwatchKeyListener();
+        recentPalette.addKeyListener(recentSwatchKeyListener);
+
         mainPaletteHolder.setLayout(new BorderLayout());
         mainPaletteHolder.add(mainPalette, BorderLayout.CENTER);
         mainPaletteHolder.setInheritsPopupMenu(true);
@@ -830,9 +1034,17 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
      * @param chooser The JColorChooser this panel is being removed from.
      */
     @Override public void uninstallChooserPanel(JColorChooser chooser) {
+        mainPalette.removeMouseListener(mouseHandler);
+        mainPalette.removeKeyListener(mainSwatchKeyListener);
+
+        recentPalette.removeMouseListener(mouseHandler);
+        recentPalette.removeKeyListener(recentSwatchKeyListener);
+
         recentPalette = null;
         mainPalette = null;
-
+        mouseHandler = null;
+        mainSwatchKeyListener = null;
+        recentSwatchKeyListener = null;
         removeAll();
         super.uninstallChooserPanel(chooser);
     }
@@ -884,6 +1096,11 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
         return null;
     }
 
+    /**
+     * Set the color tracking object.
+     *
+     * @param tracker
+     */
     public void setColorTracker(ColorTracker tracker) {
         this.tracker = tracker;
         if (tracker != null) {
@@ -908,52 +1125,50 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
         }
     }
 
+    /**
+     * This class is used to save and restore the recent color choices..
+     */
     public static class ColorTracker extends AbstractBean {
 
+        /** The list of recent {@link Color Colors}. */
         private List<Color> colors = new ArrayList<>();
 
+        /**
+         * Add a {@link Color} to the list of recent color choices. This method
+         * will fire off a {@literal "colors"} property change.
+         *
+         * @param color {@code Color} to be added.
+         */
         public void addColor(Color color) {
             List<Color> old = getColors();
             colors.add(0, color);
             firePropertyChange("colors", old, getColors());
         }
 
+        /**
+         * Set the list of recent color choices. This method is what should be
+         * called when {@literal "restoring"} the recent colors panel.
+         *
+         * <p>This method will fire off a {@literal "colors"} property change.
+         * </p>
+         *
+         * @param colors {@code List} of recent color choices. {@code null}
+         * is allowed, but will result in {@link #colors} being empty.
+         */
         public void setColors(List<Color> colors) {
             List<Color> old = getColors();
             this.colors = new ArrayList<>(colors);
             firePropertyChange("colors", old, getColors());
         }
 
+        /**
+         * Get the recent color choices.
+         *
+         * @return {@link ArrayList} containing the recently picked colors.
+         * May be empty.
+         */
         public List<Color> getColors() {
             return new ArrayList<>(colors);
         }
     }
-
-//    class MainSwatchListener extends MouseAdapter implements Serializable {
-//        @Override public void mousePressed(MouseEvent e) {
-//            if (!isEnabled())
-//                return;
-//            if (e.getClickCount() == 2) {
-//                handleDoubleClick(e);
-//                return;
-//            }
-//
-//            Color color = ColorSwatchComponent.this.getColorForLocation(e.getX(), e.getY());
-//            ColorSwatchComponent.this,setSelectedColor(color);
-//            if (tracker != null) {
-//                tracker.addColor(color);
-//            } else {
-//                recentSwatchPanel.setMostRecentColor(color);
-//            }
-//        }
-//
-//        /**
-//         * @param e
-//         */
-//        private void handleDoubleClick(MouseEvent e) {
-//            if (action != null) {
-//                action.actionPerformed(null);
-//            }
-//        }
-//    };
 }

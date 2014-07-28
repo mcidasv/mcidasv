@@ -183,7 +183,9 @@ public class ColorSwatchComponent extends JPanel implements PropertyChangeListen
         PersistableSwatchChooserPanel swatch = new PersistableSwatchChooserPanel();
         List<Color> savedColors =
             (List<Color>)store.get(Constants.PROP_RECENT_COLORS);
-        tracker.setColors(savedColors);
+        if (savedColors != null) {
+            tracker.setColors(savedColors);
+        }
         swatch.setColorTracker(tracker);
         choosers.add(0, swatch);
         chooser.setChooserPanels(choosers.toArray(new AbstractColorChooserPanel[0]));
