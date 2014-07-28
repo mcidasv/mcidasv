@@ -164,7 +164,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     
     public SuomiNPPDataSource(String fileName) throws VisADException {
     	this(null, Misc.newList(fileName), null);
-    	logger.warn("filename only constructor call..");
+    	logger.debug("filename only constructor call..");
     }
 
     /**
@@ -1099,10 +1099,10 @@ public class SuomiNPPDataSource extends HydraDataSource {
 					u = Parser.parse(units);
 				} catch (NoSuchUnitException e) {
 					u = new DerivedUnit(units);
-					logger.warn("Unkown units: " + units);
+					logger.debug("Unkown units: " + units);
 				} catch (ParseException e) {
 					u = new DerivedUnit(units);
-					logger.warn("Unparseable units: " + units);
+					logger.debug("Unparseable units: " + units);
 				}
         		// associate this variable with these units, if not done already
         		RealType.getRealType(varName, u);
