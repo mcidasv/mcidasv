@@ -355,6 +355,9 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
             numCols = 31;
             numRows = 9;
             initializeColors();
+            // incredibly, this setToolTipText call is how you register to
+            // listen for events
+            setToolTipText("");
             revalidate();
         }
 
@@ -419,11 +422,11 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
         @Override public String getToolTipText(MouseEvent e) {
             Color c = getColorForPosition(e.getX(), e.getY());
 //            logger.trace("x={} y={} c={}", e.getX(), e.getY(), c);
-            if (c == null) {
-                return null;
+            String tip = null;
+            if (c != null) {
+                tip = c.getRed() + ", " + c.getGreen() + ", " + c.getBlue();
             }
-
-            return String.valueOf(c.getRed()) + ',' + c.getGreen() + ',' + c.getBlue();
+            return tip;
         }
     }
 
@@ -445,6 +448,9 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
             numCols = 5;
             numRows = 7;
             initializeColors();
+            // incredibly, this setToolTipText call is how you register to
+            // listen for events
+            setToolTipText("");
             revalidate();
         }
 
@@ -545,10 +551,11 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
         @Override public String getToolTipText(MouseEvent e) {
             Color c = getColorForPosition(e.getX(), e.getY());
 //            logger.trace("x={} y={} c={}", e.getX(), e.getY(), c);
-            if (c == null) {
-                return null;
+            String tip = null;
+            if (c != null) {
+                tip = c.getRed() + ", " + c.getGreen() + ", " + c.getBlue();
             }
-            return String.valueOf(c.getRed()) + ',' + c.getGreen() + ',' + c.getBlue();
+            return tip;
         }
     }
 
