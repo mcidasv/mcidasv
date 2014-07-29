@@ -318,9 +318,6 @@ class AddeJythonBandRequiredError(AddeJythonError):
 class AddeJythonInvalidUnitError(AddeJythonError):
     pass
     
-class AddeJythonInvalidPortionError(AddeJythonError):
-    pass
-    
 class AddeJythonNavigationError(AddeJythonError):
     pass
     
@@ -1233,15 +1230,13 @@ def getADDEImage(localEntry=None,
             elif e.getAddeErrorCode() == -11007:
                 raise AddeJythonInvalidUnitError(e)
             elif e.getAddeErrorCode() == -11010:
-                raise AddeJythonInvalidPortionError(e)
+                raise AddeJythonErrorInvalidSize(e)
             elif e.getAddeErrorCode() == -11001:
                 raise AddeJythonNavigationError(e)
             elif e.getAddeErrorCode() == -11003:
                 raise AddeJythonBandNotPresent(e)
             elif e.getAddeErrorCode() == -7000:
                 raise AddeJythonBandNotPresentInSpecifiedUnits(e)
-            elif e.getAddeErrorCode() == -8000:
-                raise AddeJythonErrorInvalidSize(e)
             elif e.getAddeErrorCode() == -6000:
                 if accounting == DEFAULT_ACCOUNTING:
                     raise AddeJythonAccountingRequiredError(e)
