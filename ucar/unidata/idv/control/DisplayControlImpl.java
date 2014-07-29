@@ -4169,7 +4169,8 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 continue;
             }
             seen.put(dataSource, dataSource);
-            String name = DataSelector.getNameForDataSource(dataSource);
+            // mjh inq 522 hack: don't limit %datasourcename% to 30 chars
+            String name = DataSelector.getNameForDataSource(dataSource, 300000, true);
             if (dataSourceName == null) {
                 dataSourceName = name;
             }
