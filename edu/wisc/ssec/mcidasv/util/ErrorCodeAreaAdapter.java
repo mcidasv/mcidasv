@@ -86,7 +86,7 @@ public class ErrorCodeAreaAdapter {
     // yes. this approach is awful. but since i can't modify the visad code
     // (which is what should be done!)...
     private static int searchStackTrace(final Throwable cause) {
-        if (cause == null || cause.getMessage() == null) {
+        if ((cause == null) || (cause.getMessage() == null)) {
             return -1;
         }
 
@@ -97,15 +97,17 @@ public class ErrorCodeAreaAdapter {
             return -5000;
         } else if ("Accounting data was not valid".equals(message)) {
             return -6000;
-        } else if ("Band keyword required for multi-banded image".equals(message)) {
+        } else if ("Band keyword required for multi-banded image".equals(message) || "No BAND(s) specified".equals(message) || "Band required for multi-banded image".equals(message)) {
             return -11011;
         } else if (message.startsWith("Units requested are not available for this")) {
             return -11007;
-        } else if ("The requested portion of the image does not exist".equals(message)) {
+        } else if ("The requested portion of the image does not exist".equals(message) || "The portion of the image requested does not exist".equals(message)) {
             return -11010;
         } else if ("Unable to initialize navigation for this image".equals(message)) {
             return -11001;
-        } else if (message.endsWith("not present")) {
+        } else if ("Invalid Line SIZE specified".equals(message)) {
+            return -8000;
+        } else if (message.endsWith("not present") || "Invalid BAND specified".equals(message) || "Invalid band number specified".equalsIgnoreCase(message)) {
             return -11003;
         } else if (message.startsWith("Band is not available in ") && message.endsWith(" units")) {
             return -7000;
