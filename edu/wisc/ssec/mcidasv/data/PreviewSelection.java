@@ -168,8 +168,8 @@ public class PreviewSelection extends DataSelectionComponent {
             mapLines.setColor(java.awt.Color.cyan);
             mapProjDsp.addDisplayable(mapLines);
         } catch (Exception excp) {
-            System.out.println("Can't open map file " + mapSource);
-            System.out.println(excp);
+            logger.error("Can't open map file " + mapSource);
+            excp.printStackTrace();
         }
 
         mapLines  = new MapLines("maplines");
@@ -184,8 +184,8 @@ public class PreviewSelection extends DataSelectionComponent {
             mapLines.setColor(java.awt.Color.cyan);
             mapProjDsp.addDisplayable(mapLines);
         } catch (Exception excp) {
-            System.out.println("Can't open map file " + mapSource);
-            System.out.println(excp);
+        	logger.error("Can't open map file " + mapSource);
+            excp.printStackTrace();
         }
 
         mapLines  = new MapLines("maplines");
@@ -200,8 +200,8 @@ public class PreviewSelection extends DataSelectionComponent {
             mapLines.setColor(java.awt.Color.cyan);
             mapProjDsp.addDisplayable(mapLines);
         } catch (Exception excp) {
-            System.out.println("Can't open map file " + mapSource);
-            System.out.println(excp);
+            logger.error("Can't open map file " + mapSource);
+            excp.printStackTrace();
         }
 
 
@@ -297,7 +297,6 @@ public class PreviewSelection extends DataSelectionComponent {
              }
 
              if (hasSubset) {
-            	 logger.warn("YES, SUBSET EXISTS");
                HydraContext hydraContext = HydraContext.getHydraContext();
                MultiDimensionSubset select = hydraContext.getMultiDimensionSubset();
                HashMap map = select.getSubset();
@@ -312,8 +311,6 @@ public class PreviewSelection extends DataSelectionComponent {
                coords1[2] = 1;
                
                hydraContext.setMultiDimensionSubset(new MultiDimensionSubset(map));
-             } else {
-            	 logger.warn("NO SUBSET!");
              }
            }
         });
@@ -368,7 +365,7 @@ public class PreviewSelection extends DataSelectionComponent {
          try {
            mp = new LambertAEA(rect);
          } catch (Exception e) {
-             System.out.println(" getDataProjection"+e);
+             e.printStackTrace();
          }
          return mp;
       }
@@ -382,7 +379,6 @@ public class PreviewSelection extends DataSelectionComponent {
       public void applyToDataSelection(DataSelection dataSelection) {
     	  
     	  if (hasSubset) {
-    		  logger.warn("applyToData, YES, SUBSET EXISTS");
     		  HydraContext hydraContext = null;
     		  if (rgbActive) {
     			  hydraContext = HydraContext.getHydraContext();
@@ -396,8 +392,6 @@ public class PreviewSelection extends DataSelectionComponent {
     		  table.put(MultiDimensionSubset.key, hydraContext.getMultiDimensionSubset());
 
     		  dataChoice.setDataSelection(dataSelection);
-    	  } else {
-    		  logger.warn("applyToData, NO SUBSET!");
     	  }
          
       }
