@@ -30,6 +30,9 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 
 import java.util.HashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import visad.CoordinateSystem;
 import visad.FunctionType;
 import visad.Linear2DSet;
@@ -40,6 +43,7 @@ import visad.Unit;
 
 public class SwathAdapter extends MultiDimensionAdapter {
 
+	  private static final Logger logger = LoggerFactory.getLogger(SwathAdapter.class);
       String nav_type = "Interp";
       boolean lon_lat_trusted = true;
 
@@ -219,13 +223,6 @@ public class SwathAdapter extends MultiDimensionAdapter {
         catch (Exception e) {
           System.out.println("Navigation failed to create");
           e.printStackTrace();
-        }
-
-        if (XTrackLen <= 256) {
-          default_stride = 1;
-        }
-        else {
-          default_stride = (int) XTrackLen/256;
         }
         
         /* force default stride even */

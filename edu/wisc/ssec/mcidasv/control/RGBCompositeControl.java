@@ -32,6 +32,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
+import java.util.Hashtable;
 import java.util.Iterator;
 
 import javax.swing.Box;
@@ -39,6 +40,9 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -66,6 +70,8 @@ import edu.wisc.ssec.mcidasv.data.hydra.ImageRGBDisplayable;
 
 public class RGBCompositeControl extends DisplayControlImpl {
 
+   private static final Logger logger = LoggerFactory.getLogger(RGBCompositeControl.class);
+	
    /** Displayable for the data */
    private ImageRGBDisplayable imageDisplay;
 
@@ -117,18 +123,32 @@ public class RGBCompositeControl extends DisplayControlImpl {
         new JTextField(Float.toString(1f), 10);
    private final JTextField bluHighTxtFld =
         new JTextField(Float.toString(1f), 10);
+   
+   public final static String RGB_IN_PROGRESS_FLAG = "RGB_Active";
 
    public RGBCompositeControl() {
      super();
    }
 
    public boolean init(DataChoice dataChoice) throws VisADException, RemoteException {
+	   
      displayMaster = getViewManager().getMaster();
      DataSelection dataSelection = getDataSelection();
+     
+     // TJJ Jul 2014
+     // by sharing a property via the active View Manager, we can signal all three 
+     // preview windows they are part of an in-progress RGB Composite. If so, it 
+     // appears we need to use a shared HydraContext so our geographic coverage
+     // subset applies across channels.  
+     
+     Hashtable ht = getIdv().getViewManager().getProperties();
+     ht.put(RGB_IN_PROGRESS_FLAG, true);
+     
      imageField = (FieldImpl) dataChoice.getData(dataSelection);
 
-
      imageDisplay = new ImageRGBDisplayable("rgb composite", null, false, imageField);
+     
+     ht.put(RGB_IN_PROGRESS_FLAG, false);
 
      Iterator iter = imageDisplay.getScalarMapSet().iterator();
      while (iter.hasNext()) {

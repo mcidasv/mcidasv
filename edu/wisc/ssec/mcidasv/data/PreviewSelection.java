@@ -72,6 +72,7 @@ import visad.data.mcidas.BaseMapAdapter;
 import visad.georef.MapProjection;
 
 import edu.wisc.ssec.mcidasv.control.LambertAEA;
+import edu.wisc.ssec.mcidasv.control.RGBCompositeControl;
 import edu.wisc.ssec.mcidasv.data.hydra.HydraContext;
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
@@ -85,6 +86,7 @@ public class PreviewSelection extends DataSelectionComponent {
       DataChoice dataChoice;
       FlatField image;
       boolean isLL;
+      boolean rgbActive = false;
       MapProjection sampleProjection;
 
       double[] x_coords = new double[2];
@@ -123,6 +125,17 @@ public class PreviewSelection extends DataSelectionComponent {
         this.image = image;
         this.sampleProjection = sample;
         sample = getDataProjection();
+        
+        // TJJ Jul 2014
+        // by sharing a property via the active View Manager, we can tell if 
+        // this preview is part of an in-progress RGB Composite. If so, it 
+        // appears we need to use a shared HydraContext so our geographic
+        // coverage subset applies across channels.  The flag is set in
+        // RGBCompostiteControl init, and reset after the ImageRGBDisplayable
+        // was successfully returned.
+        
+        Hashtable ht = dataSource.getIdv().getViewManager().getProperties();
+        rgbActive = (boolean) ht.get(RGBCompositeControl.RGB_IN_PROGRESS_FLAG);
 
         DisplayConventions dspConv = dataSource.getDataContext().getIdv().getDisplayConventions();
 
@@ -200,8 +213,12 @@ public class PreviewSelection extends DataSelectionComponent {
            if (key instanceof MultiDimensionSubset) {
              hasSubset = true;
              MultiDimensionSubset select = (MultiDimensionSubset) table.get(key);
-             HydraContext hydraContext = HydraContext.getHydraContext(dataSource, dataCategory);
-             // HydraContext hydraContext = HydraContext.getHydraContext();
+             HydraContext hydraContext = null;
+             if (rgbActive) {
+            	 hydraContext = HydraContext.getHydraContext();
+             } else {
+            	 hydraContext = HydraContext.getHydraContext(dataSource, dataCategory);
+             }
              if (hydraContext.getMultiDimensionSubset() == null) {
                 hydraContext.setMultiDimensionSubset(select);
              }
@@ -216,7 +233,6 @@ public class PreviewSelection extends DataSelectionComponent {
           public void doAction()
              throws VisADException, RemoteException
            {
-        	  logger.debug("doAction in...");
         	  
              if (!init) {
                init = true;
@@ -281,8 +297,8 @@ public class PreviewSelection extends DataSelectionComponent {
              }
 
              if (hasSubset) {
-               HydraContext hydraContext = HydraContext.getHydraContext(dataSource, dataCategory);
-               // HydraContext hydraContext = HydraContext.getHydraContext();
+            	 logger.warn("YES, SUBSET EXISTS");
+               HydraContext hydraContext = HydraContext.getHydraContext();
                MultiDimensionSubset select = hydraContext.getMultiDimensionSubset();
                HashMap map = select.getSubset();
 
@@ -296,6 +312,8 @@ public class PreviewSelection extends DataSelectionComponent {
                coords1[2] = 1;
                
                hydraContext.setMultiDimensionSubset(new MultiDimensionSubset(map));
+             } else {
+            	 logger.warn("NO SUBSET!");
              }
            }
         });
@@ -363,17 +381,24 @@ public class PreviewSelection extends DataSelectionComponent {
                                                                                                                                              
       public void applyToDataSelection(DataSelection dataSelection) {
     	  
-         if (hasSubset) {
-           HydraContext hydraContext = HydraContext.getHydraContext(dataSource, dataCategory);
-           // HydraContext hydraContext = HydraContext.getHydraContext();
-           Hashtable table = dataChoice.getProperties();
-           table.put(MultiDimensionSubset.key, hydraContext.getMultiDimensionSubset());
+    	  if (hasSubset) {
+    		  logger.warn("applyToData, YES, SUBSET EXISTS");
+    		  HydraContext hydraContext = null;
+    		  if (rgbActive) {
+    			  hydraContext = HydraContext.getHydraContext();
+    		  } else {
+    			  hydraContext = HydraContext.getHydraContext(dataSource, dataCategory);
+    		  }
+    		  Hashtable table = dataChoice.getProperties();
+    		  table.put(MultiDimensionSubset.key, hydraContext.getMultiDimensionSubset());
 
-           table = dataSelection.getProperties();
-           table.put(MultiDimensionSubset.key, hydraContext.getMultiDimensionSubset());
+    		  table = dataSelection.getProperties();
+    		  table.put(MultiDimensionSubset.key, hydraContext.getMultiDimensionSubset());
 
-           dataChoice.setDataSelection(dataSelection);
-         }
+    		  dataChoice.setDataSelection(dataSelection);
+    	  } else {
+    		  logger.warn("applyToData, NO SUBSET!");
+    	  }
          
       }
 
