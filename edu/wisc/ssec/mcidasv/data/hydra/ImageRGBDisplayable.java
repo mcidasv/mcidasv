@@ -28,28 +28,33 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import ucar.visad.display.GridDisplayable;
-import ucar.visad.display.DisplayableData;
-import ucar.visad.display.ScalarMapSet;
-
-import ucar.unidata.data.grid.GridUtil;
-
-import ucar.unidata.util.Misc;
-
-import visad.*;
-
-import visad.bom.ImageRendererJ3D;
-import visad.java3d.DefaultRendererJ3D;
-
-import visad.java2d.*;
-import visad.java2d.DefaultRendererJ2D;
-
-import visad.java2d.DisplayRendererJ2D;
-
-
 import java.rmi.RemoteException;
 
+import ucar.unidata.data.grid.GridUtil;
+import ucar.visad.display.DisplayableData;
+import ucar.visad.display.GridDisplayable;
+import ucar.visad.display.ScalarMapSet;
 
+import visad.BadMappingException;
+import visad.BaseColorControl;
+import visad.ConstantMap;
+import visad.DataRenderer;
+import visad.Display;
+import visad.DisplayException;
+import visad.DisplayRealType;
+import visad.FieldImpl;
+import visad.GraphicsModeControl;
+import visad.LocalDisplay;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.ScalarMap;
+import visad.ScalarMapControlEvent;
+import visad.ScalarMapEvent;
+import visad.ScalarMapListener;
+import visad.Set;
+import visad.TupleType;
+import visad.VisADException;
+import visad.bom.ImageRendererJ3D;
 
 /**
  * Provides support for a Displayable that needs a map to
@@ -59,7 +64,6 @@ import java.rmi.RemoteException;
  * @version $Revision$
  */
 public class ImageRGBDisplayable extends DisplayableData implements GridDisplayable {
-
 
     /** color ScalarMaps */
     private volatile ScalarMap[] colorMaps = { null, null, null };
@@ -76,9 +80,6 @@ public class ImageRGBDisplayable extends DisplayableData implements GridDisplaya
     /** flag for whether we use Alpha channel or not */
     private boolean doAlpha = false;
 
-    private static int uniqueID = 0;
-
-
     /**
      * Constructs from a name for the Displayable and the type of the
      * RGB parameter.
@@ -87,11 +88,11 @@ public class ImageRGBDisplayable extends DisplayableData implements GridDisplaya
      * @throws VisADException   VisAD failure.
      * @throws RemoteException  Java RMI failure.
      */
+    
     public ImageRGBDisplayable(String name)
             throws VisADException, RemoteException {
         this(name, false);
     }
-
 
     /**
      * Constructs from a name for the Displayable and the type of the
@@ -102,6 +103,7 @@ public class ImageRGBDisplayable extends DisplayableData implements GridDisplaya
      * @throws VisADException   VisAD failure.
      * @throws RemoteException  Java RMI failure.
      */
+    
     public ImageRGBDisplayable(String name, boolean doAlpha)
             throws VisADException, RemoteException {
         this(name, BaseColorControl.initTableGreyWedge(new float[(doAlpha)
@@ -119,12 +121,12 @@ public class ImageRGBDisplayable extends DisplayableData implements GridDisplaya
      * @throws VisADException   VisAD failure.
      * @throws RemoteException  Java RMI failure.
      */
+    
     public ImageRGBDisplayable(String name, float[][] colorPalette,
                                boolean doAlpha)
             throws VisADException, RemoteException {
         this(name, colorPalette, doAlpha, null);
     }
-
 
     /**
      * Constructs from another instance.  The following attributes are set from
@@ -133,6 +135,7 @@ public class ImageRGBDisplayable extends DisplayableData implements GridDisplaya
      * @throws VisADException   VisAD failure.
      * @throws RemoteException  Java RMI failure.
      */
+    
     protected ImageRGBDisplayable(ImageRGBDisplayable that)
             throws VisADException, RemoteException {
 
@@ -170,8 +173,6 @@ public class ImageRGBDisplayable extends DisplayableData implements GridDisplaya
           }
         }
     }
-      
-
 
     /**
      * Set the data into the Displayable; set RGB Type
@@ -181,6 +182,7 @@ public class ImageRGBDisplayable extends DisplayableData implements GridDisplaya
      * @exception VisADException  from construction of VisAd objects
      * @exception RemoteException from construction of VisAD objects
      */
+    
     public void loadData(FieldImpl field)
             throws VisADException, RemoteException {
         setData(field);
@@ -207,7 +209,6 @@ public class ImageRGBDisplayable extends DisplayableData implements GridDisplaya
             throws RemoteException, VisADException {
 
         if ( !realTupleType.equals(colorTupleType)) {
-            RealTupleType oldValue = colorTupleType;
             colorTupleType = realTupleType;
             setColorMaps();
         }
@@ -235,7 +236,7 @@ public class ImageRGBDisplayable extends DisplayableData implements GridDisplaya
      * <code>super.setScalarMaps(ScalarMapSet)</code>.
      * @param maps              The set of ScalarMap-s to be added.
      * @throws BadMappingException      The RealType of the color parameter
-     *                          has not been set or its ScalarMap is alread in
+     *                          has not been set or its ScalarMap is already in
      *                          the set.
      */
     protected void setScalarMaps(ScalarMapSet maps)
@@ -288,8 +289,8 @@ public class ImageRGBDisplayable extends DisplayableData implements GridDisplaya
                 public void controlChanged(ScalarMapControlEvent event)
                         throws RemoteException, VisADException {
                     int id = event.getId();
-                    if ((id == event.CONTROL_ADDED)
-                            || (id == event.CONTROL_REPLACED)) {
+                    if ((id == ScalarMapEvent.CONTROL_ADDED)
+                            || (id == ScalarMapEvent.CONTROL_REPLACED)) {
                         setColorsInControls(colorPalette, colorMapIndex);
                     }
                 }
@@ -366,7 +367,7 @@ public class ImageRGBDisplayable extends DisplayableData implements GridDisplaya
 
 
     /**
-     * Set colors for the control defined by the given colorMapIndex (0,1 or 2).
+     * Set colors for the control defined by the given colorMapIndex (0, 1, or 2).
      *
      * @param colorPalette The 3xN color palette array
      * @param colorMapIndex Which of the color maps are we setting the color of.

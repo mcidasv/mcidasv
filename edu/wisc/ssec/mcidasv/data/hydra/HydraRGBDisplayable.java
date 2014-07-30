@@ -28,41 +28,30 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
+import java.awt.Color;
 import java.rmi.RemoteException;
 
-import java.util.Iterator;
-
-import java.awt.Color;
-
-import ucar.unidata.beans.*;
-
-import visad.*;
-
-import ucar.visad.display.DisplayMaster;
-import ucar.visad.display.Displayable;
+import ucar.unidata.util.Range;
 import ucar.visad.display.DisplayableData;
 import ucar.visad.display.ScalarMapSet;
-import ucar.unidata.util.Range;
-                                                                                                                                      
+
+import visad.BadMappingException;
+import visad.BaseColorControl;
+import visad.ConstantMap;
+import visad.DataRenderer;
+import visad.Display;
+import visad.RangeControl;
 import visad.RealType;
 import visad.ScalarMap;
-import visad.BadMappingException;
-import visad.LocalDisplay;
-import visad.DataReference;
+import visad.ScalarMapControlEvent;
+import visad.ScalarMapEvent;
+import visad.ScalarMapListener;
+import visad.Unit;
 import visad.VisADException;
-import visad.UnimplementedException;
 import visad.bom.ImageRendererJ3D;
 import visad.java3d.DefaultRendererJ3D;
-import java.rmi.RemoteException;
-                                                                                                                                      
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Iterator;
 
 import edu.wisc.ssec.mcidasv.control.HydraControl;
-import edu.wisc.ssec.mcidasv.control.MultiSpectralControl;
-
 
 public class HydraRGBDisplayable extends DisplayableData {
 
@@ -613,13 +602,8 @@ public class HydraRGBDisplayable extends DisplayableData {
     public void setPointSize(float pointSize)
             throws VisADException, RemoteException {
 
-        float oldValue;
-
         synchronized (this) {
-            oldValue = myPointSize;
-
             addConstantMap(new ConstantMap(pointSize, Display.PointSize));
-
             myPointSize = pointSize;
         }
 
@@ -751,8 +735,8 @@ public class HydraRGBDisplayable extends DisplayableData {
 
                 int id = event.getId();
 
-                if ((id == event.CONTROL_ADDED)
-                        || (id == event.CONTROL_REPLACED)) {
+                if ((id == ScalarMapEvent.CONTROL_ADDED)
+                        || (id == ScalarMapEvent.CONTROL_REPLACED)) {
                     colorControl = (BaseColorControl) colorMap.getControl();
 
                     if (colorControl != null) {
@@ -767,7 +751,7 @@ public class HydraRGBDisplayable extends DisplayableData {
 
             public void mapChanged(ScalarMapEvent event)
                     throws RemoteException, VisADException {
-                if ((event.getId() == event.AUTO_SCALE) && hasRange()) {
+                if ((event.getId() == ScalarMapEvent.AUTO_SCALE) && hasRange()) {
                   double[] rng = colorMap.getRange();
                   if (multiSpecCntrl != null) {
                     multiSpecCntrl.updateRange(new Range(rng));
@@ -778,13 +762,6 @@ public class HydraRGBDisplayable extends DisplayableData {
         ScalarMapSet maps = getScalarMapSet();  //new ScalarMapSet();
         maps.add(colorMap);
         setScalarMapSet(maps);
-    }
-
-    private void setAnimationMap() throws RemoteException, VisADException {
-      animMap = new ScalarMap(indexRealType, Display.Animation);
-      ScalarMapSet maps = getScalarMapSet();
-      maps.add(animMap);
-      setScalarMapSet(maps);
     }
 
     private void setSelectMap() throws RemoteException, VisADException {
@@ -805,7 +782,6 @@ public class HydraRGBDisplayable extends DisplayableData {
             throws RemoteException, VisADException {
 
         if ( !realType.equals(selectRealType)) {
-            RealType oldValue = selectRealType;
             selectRealType = realType;
             setSelectMaps();
             if (useDisplayUnitForColor()) {
@@ -905,8 +881,8 @@ public class HydraRGBDisplayable extends DisplayableData {
 
                 int id = event.getId();
 
-                if ((id == event.CONTROL_ADDED)
-                        || (id == event.CONTROL_REPLACED)) {
+                if ((id == ScalarMapEvent.CONTROL_ADDED)
+                        || (id == ScalarMapEvent.CONTROL_REPLACED)) {
                     selectControl = (RangeControl) selectMap.getControl();
                     if (hasSelectedRange()) {
                         selectControl.setRange(new double[]{ lowSelectedRange,
@@ -917,7 +893,7 @@ public class HydraRGBDisplayable extends DisplayableData {
 
             public void mapChanged(ScalarMapEvent event)
                     throws RemoteException, VisADException {
-                if ((event.getId() == event.AUTO_SCALE)
+                if ((event.getId() == ScalarMapEvent.AUTO_SCALE)
                         && hasSelectMinMax()) {
                     selectMap.setRange(minSelect, maxSelect);
                 }
