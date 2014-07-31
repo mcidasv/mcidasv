@@ -2694,7 +2694,7 @@ def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
          (2) Wrap the MapViewManager in a _Display object
          (3) Wrap the _Display in a list, simply because current calls to buildWindow expect this
           
-          Default size:  600 x 400
+        Default size:  600 x 400
         """
         if height > 0 and width > 0:
             dim = java.awt.Dimension(width, height)
@@ -3065,12 +3065,14 @@ def makeFlatFieldSequence(sequence):
     return fi
 
 def loadFileListFieldsInFile(filename):
+    """Print a list of all fields in a NetCDF/HDF/grib2 file."""
     from ucar.nc2.dt.grid import GridDataset
     gridDataset = GridDataset.open(filename)
     for grid in gridDataset.getGrids():
         print '%s ; %s' % (grid.getName(), grid.getDescription())
 
 def loadFileListLevelsInField(filename, field):
+    """Print a list of all levels in a NetCDF/HDF/grib2 field."""
     from ucar.nc2.dt.grid import GridDataset
     gridDataset = GridDataset.open(filename)
     geogrid = gridDataset.findGridByName(field)
@@ -3078,6 +3080,7 @@ def loadFileListLevelsInField(filename, field):
         print '%s %s' % (level.getName(), level.getDescription())
 
 def loadFileListTimesInField(filename, field):
+    """Print a list of all times in a NetCDF/HDF/grib2 field."""
     from ucar.nc2.dt.grid import GridDataset
     gridDataset = GridDataset.open(filename)
     geogrid = gridDataset.findGridByName(field)
