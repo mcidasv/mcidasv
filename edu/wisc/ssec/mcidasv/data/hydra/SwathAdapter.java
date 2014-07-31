@@ -224,6 +224,12 @@ public class SwathAdapter extends MultiDimensionAdapter {
           System.out.println("Navigation failed to create");
           e.printStackTrace();
         }
+
+		if (XTrackLen <= 256) {
+			default_stride = 1;
+		} else {
+			default_stride = (int) XTrackLen / 256;
+		}
         
         /* force default stride even */
         if (default_stride > 1) {
