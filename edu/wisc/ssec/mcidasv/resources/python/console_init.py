@@ -1,3 +1,5 @@
+"""Module responsible for initializing McIDAS-V Jython environment."""
+
 from __future__ import with_statement
 import sys
 import os
@@ -9,7 +11,7 @@ from java.lang import Integer, System
 # want to import a non-compiled python module contained in a JAR, sys.path
 # must contain something like "/path/to/your.jar/path/to/module"
 def _mcvinit_classpath_hack():
-    """Attempts to locate mcidasv.jar, idv.jar, and visad.jar.
+    r"""Attempt location of mcidasv.jar, idv.jar, and visad.jar.
     
     This function will look for the JARs within the classpath, but will also
     try within the following (platform-dependent) paths:
@@ -42,7 +44,7 @@ def _mcvinit_classpath_hack():
     return {'mcidasv': mcv_jar, 'idv': idv_jar, 'visad': visad_jar}
     
 def _mcvinit_jythonpaths():
-    """Creates a list of paths containing required Python source code.
+    """Create list of paths containing required Python source code.
     
     This function uses _mcvinit_classpath_hack() to locate JARs and then uses
     those paths to create paths to known Python source code within visad.jar,
