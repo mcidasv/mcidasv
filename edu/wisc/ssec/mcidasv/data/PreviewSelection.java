@@ -135,7 +135,9 @@ public class PreviewSelection extends DataSelectionComponent {
         // was successfully returned.
         
         Hashtable ht = dataSource.getIdv().getViewManager().getProperties();
-        rgbActive = (boolean) ht.get(RGBCompositeControl.RGB_IN_PROGRESS_FLAG);
+        if (ht.containsKey(RGBCompositeControl.RGB_IN_PROGRESS_FLAG)) {
+        	rgbActive = (boolean) ht.get(RGBCompositeControl.RGB_IN_PROGRESS_FLAG);
+        }
 
         DisplayConventions dspConv = dataSource.getDataContext().getIdv().getDisplayConventions();
 
