@@ -2624,6 +2624,20 @@ def getJythonShellMaxHistoryLength():
     return JythonShell.loadMaxHistoryLength(
             getStaticMcv().getStore(), JythonShell.DEFAULT_MAX_HISTORY_LENGTH)
 
+def _convertStringToNoOp(s):
+    noopObj = None
+    if isinstance(s, str):
+        upcase = s.upper()
+        if upcase == 'MAP':
+            noopObj = MAP
+        elif upcase == 'MAP2D':
+            noopObj = MAP2D
+        elif upcase == 'GLOBE':
+            noopObj = GLOBE
+        elif upcase == 'TRANSECT':
+            noopObj = TRANSECT
+    return noopObj
+
 class _NoOp(object):
 
     def __init__(self, description='anything'):
@@ -2718,11 +2732,21 @@ def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
     # end of internal method definitions..this is buildWindow now.
     if panelTypes is None:
         panelTypes = [MAP] * (rows * cols)
+    elif isinstance(panelTypes, str):
+        panelType = _convertStringToNoOp(panelTypes)
+        panelTypes = [panelType] * (rows * cols)
     elif isinstance(panelTypes, _NoOp):
         panelTypes = [panelTypes] * (rows * cols)
     elif isinstance(panelTypes, types.ListType):
         if len(panelTypes) != (rows * cols):
             raise ValueError('panelTypes needs to contain rows*cols elements')
+        
+        # attempt to convert any strings we have been given.
+        for (i, val) in enumerate(panelTypes):
+            if isinstance(val, str):
+                panelType = _convertStringToNoOp(val)
+                if panelType:
+                    panelTypes[i] = panelType
             
     if getStaticMcv().getArgsManager().getIsOffScreen():
         return _buildWindowBackground(height, width, panelTypes)
