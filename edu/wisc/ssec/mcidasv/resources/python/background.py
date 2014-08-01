@@ -2971,11 +2971,11 @@ def loadFile(filename=None, field=None, level=None,
     if not filename:
         raise ValueError('no filename provided')
 
-    # hack:  allow through anything that starts with 'http' because the file
+    # hack:  allow through anything that starts with 'http'/'dods' because the file
     # could be located on a thredds server.  The real problem is: I can't
     # catch BadDataException's resulting from createDataSource because they
     # pop up a message to the GUI instead of returning control to here...
-    if not filename.startswith('http'):
+    if not filename.startswith('http') and not filename.startswith('dods'):
         if not os.path.isfile(filename):
             raise ValueError('filename does not exist or is a directory: ' + filename)
 
