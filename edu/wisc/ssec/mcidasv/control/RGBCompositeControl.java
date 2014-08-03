@@ -124,7 +124,7 @@ public class RGBCompositeControl extends DisplayControlImpl {
    private final JTextField bluHighTxtFld =
         new JTextField(Float.toString(1f), 10);
    
-   public final static String RGB_IN_PROGRESS_FLAG = "RGB_Active";
+   public final static String FORMULA_IN_PROGRESS_FLAG = "Formula_Active";
 
    public RGBCompositeControl() {
      super();
@@ -142,13 +142,13 @@ public class RGBCompositeControl extends DisplayControlImpl {
      // subset applies across channels.  
      
      Hashtable ht = getIdv().getViewManager().getProperties();
-     ht.put(RGB_IN_PROGRESS_FLAG, true);
+     ht.put(FORMULA_IN_PROGRESS_FLAG, true);
      
      imageField = (FieldImpl) dataChoice.getData(dataSelection);
 
      imageDisplay = new ImageRGBDisplayable("rgb composite", null, false, imageField);
      
-     ht.put(RGB_IN_PROGRESS_FLAG, false);
+     ht.put(FORMULA_IN_PROGRESS_FLAG, false);
 
      Iterator iter = imageDisplay.getScalarMapSet().iterator();
      while (iter.hasNext()) {

@@ -165,8 +165,16 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
     @Override public boolean init(DataChoice dataChoice) 
         throws VisADException, RemoteException 
     {
-//        this.dataChoice = (DataChoice)this.getDataChoices().get(0);
+        // TJJ Jul 2014
+        // by sharing a property via the active View Manager, we can signal any 
+        // preview windows they are part of an in-progress Formula. If so, it 
+        // appears we need to use a shared HydraContext so our geographic coverage
+        // subset applies across channels, and so we use full res data.  
+        
+        Hashtable ht = getIdv().getViewManager().getProperties();
+        ht.put(RGBCompositeControl.FORMULA_IN_PROGRESS_FLAG, true);
         boolean result = super.init((DataChoice)this.getDataChoices().get(0));
+        ht.put(RGBCompositeControl.FORMULA_IN_PROGRESS_FLAG, false);
         return result;
     }
 

@@ -86,7 +86,7 @@ public class PreviewSelection extends DataSelectionComponent {
       DataChoice dataChoice;
       FlatField image;
       boolean isLL;
-      boolean rgbActive = false;
+      boolean formulaActive = false;
       MapProjection sampleProjection;
 
       double[] x_coords = new double[2];
@@ -128,15 +128,15 @@ public class PreviewSelection extends DataSelectionComponent {
         
         // TJJ Jul 2014
         // by sharing a property via the active View Manager, we can tell if 
-        // this preview is part of an in-progress RGB Composite. If so, it 
+        // this preview is part of an in-progress VIIRS Formula. If so, it 
         // appears we need to use a shared HydraContext so our geographic
         // coverage subset applies across channels.  The flag is set in
-        // RGBCompostiteControl init, and reset after the ImageRGBDisplayable
+        // the originating Control init, and reset after the Displayable
         // was successfully returned.
         
         Hashtable ht = dataSource.getIdv().getViewManager().getProperties();
-        if (ht.containsKey(RGBCompositeControl.RGB_IN_PROGRESS_FLAG)) {
-        	rgbActive = (boolean) ht.get(RGBCompositeControl.RGB_IN_PROGRESS_FLAG);
+        if (ht.containsKey(RGBCompositeControl.FORMULA_IN_PROGRESS_FLAG)) {
+        	formulaActive = (boolean) ht.get(RGBCompositeControl.FORMULA_IN_PROGRESS_FLAG);
         }
 
         DisplayConventions dspConv = dataSource.getDataContext().getIdv().getDisplayConventions();
@@ -216,7 +216,7 @@ public class PreviewSelection extends DataSelectionComponent {
              hasSubset = true;
              MultiDimensionSubset select = (MultiDimensionSubset) table.get(key);
              HydraContext hydraContext = null;
-             if (rgbActive) {
+             if (formulaActive) {
             	 hydraContext = HydraContext.getHydraContext();
              } else {
             	 hydraContext = HydraContext.getHydraContext(dataSource, dataCategory);
@@ -382,7 +382,7 @@ public class PreviewSelection extends DataSelectionComponent {
     	  
     	  if (hasSubset) {
     		  HydraContext hydraContext = null;
-    		  if (rgbActive) {
+    		  if (formulaActive) {
     			  hydraContext = HydraContext.getHydraContext();
     		  } else {
     			  hydraContext = HydraContext.getHydraContext(dataSource, dataCategory);
